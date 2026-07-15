@@ -1,0 +1,4 @@
+[submodule "inspiration/languagetool"]
+	path = inspiration/languagetool
+	url = https://github.com/languagetool-org/languagetool.git
+	branch = master
