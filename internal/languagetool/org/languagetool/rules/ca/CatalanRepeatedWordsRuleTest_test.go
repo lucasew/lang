@@ -1,17 +1,17 @@
 package ca
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/CatalanRepeatedWordsRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/CatalanRepeatedWordsRuleTest.java :: CatalanRepeatedWordsRuleTest.testRule
-func TestCatalanRepeatedWordsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+func TestCatalanRepeatedWordsRule(t *testing.T) {
+	rule := NewCatalanRepeatedWordsRule(nil)
+	sents := []*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("Vull suggerir una idea."),
+		languagetool.AnalyzePlain("Puc suggerir una altra."),
+	}
+	require.Equal(t, 1, len(rule.MatchList(sents)))
 }

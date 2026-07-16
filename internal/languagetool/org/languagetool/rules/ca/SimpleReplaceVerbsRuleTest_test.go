@@ -1,17 +1,16 @@
 package ca
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/SimpleReplaceVerbsRuleTest.java
+// Twin of SimpleReplaceVerbsRuleTest — surface keys only.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/SimpleReplaceVerbsRuleTest.java :: SimpleReplaceVerbsRuleTest.testRule
 func TestSimpleReplaceVerbsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewSimpleReplaceVerbsRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("Va retumbar fort."))
+	require.Equal(t, 1, len(matches))
+	require.Contains(t, matches[0].GetSuggestedReplacements()[0], "retrunyir")
 }

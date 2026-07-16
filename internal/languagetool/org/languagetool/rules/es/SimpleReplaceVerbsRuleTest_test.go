@@ -1,17 +1,17 @@
 package es
 
-// Twin of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SimpleReplaceVerbsRuleTest.java
+// Twin of SimpleReplaceVerbsRuleTest — surface keys only.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SimpleReplaceVerbsRuleTest.java :: SimpleReplaceVerbsRuleTest.testRule
 func TestSimpleReplaceVerbsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewSimpleReplaceVerbsRule(nil)
+	// eruptar is a dictionary key
+	matches := rule.Match(languagetool.AnalyzePlain("Puede eruptar el volcán."))
+	require.Equal(t, 1, len(matches))
+	require.Contains(t, matches[0].GetSuggestedReplacements()[0], "eructar")
 }

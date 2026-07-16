@@ -1,17 +1,19 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanFillerWordsRuleTest.java
+// Twin of GermanFillerWordsRuleTest (minPercent=0 surface mode).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanFillerWordsRuleTest.java :: GermanFillerWordsRuleTest.testRule
 func TestGermanFillerWordsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewGermanFillerWordsRule(nil)
+	require.Equal(t, "FILLER_WORDS_DE", rule.GetID())
+	// With minPercent=0 every filler is reported
+	matches := rule.Match(languagetool.AnalyzePlain("Der Satz enthält augenscheinlich ein Füllwort."))
+	require.Equal(t, 1, len(matches))
+	matches = rule.Match(languagetool.AnalyzePlain("Der Satz enthält augenscheinlich relativ viele Füllwörter."))
+	require.Equal(t, 2, len(matches))
 }

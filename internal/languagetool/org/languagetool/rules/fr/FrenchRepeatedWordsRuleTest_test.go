@@ -1,17 +1,19 @@
 package fr
 
-// Twin of languagetool-language-modules/fr/src/test/java/org/languagetool/rules/fr/FrenchRepeatedWordsRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fr/src/test/java/org/languagetool/rules/fr/FrenchRepeatedWordsRuleTest.java :: FrenchRepeatedWordsRuleTest.testRule
-func TestFrenchRepeatedWordsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+func TestFrenchRepeatedWordsRule(t *testing.T) {
+	rule := NewFrenchRepeatedWordsRule(nil)
+	// maintenant is in synonyms
+	sents := []*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("Je le fais maintenant."),
+		languagetool.AnalyzePlain("Et maintenant j'attends."),
+	}
+	matches := rule.MatchList(sents)
+	require.Equal(t, 1, len(matches))
 }

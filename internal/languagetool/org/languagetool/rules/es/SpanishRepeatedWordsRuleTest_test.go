@@ -1,17 +1,17 @@
 package es
 
-// Twin of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishRepeatedWordsRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishRepeatedWordsRuleTest.java :: SpanishRepeatedWordsRuleTest.testRule
-func TestSpanishRepeatedWordsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+func TestSpanishRepeatedWordsRule(t *testing.T) {
+	rule := NewSpanishRepeatedWordsRule(nil)
+	sents := []*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("Voy a sugerir algo."),
+		languagetool.AnalyzePlain("Puedo sugerir otra cosa."),
+	}
+	require.Equal(t, 1, len(rule.MatchList(sents)))
 }

@@ -1,17 +1,20 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishRepeatedWordsRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishRepeatedWordsRuleTest.java :: EnglishRepeatedWordsRuleTest.testRule
-func TestEnglishRepeatedWordsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+func TestEnglishRepeatedWordsRule(t *testing.T) {
+	rule := NewEnglishRepeatedWordsRule(nil)
+	// need appears twice across two period-ended sentences
+	sents := []*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("I need help."),
+		languagetool.AnalyzePlain("I still need time."),
+	}
+	matches := rule.MatchList(sents)
+	require.Equal(t, 1, len(matches))
+	require.Contains(t, matches[0].GetSuggestedReplacements(), "require")
 }
