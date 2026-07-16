@@ -1,17 +1,16 @@
 package pl
 
-// Twin of languagetool-language-modules/pl/src/test/java/org/languagetool/tokenizers/pl/PolishSentenceTokenizerTest.java
+// Twin of PolishSentenceTokenizerTest — SRX green smokes.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/tokenizers/pl/PolishSentenceTokenizerTest.java :: PolishSentenceTokenizerTest (no @Test)
-func TestPolishSentenceTokenizer_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/pl/src/test/java/org/languagetool/tokenizers/pl/PolishSentenceTokenizerTest.java")
+func TestPolishSentenceTokenizer_Tokenize(t *testing.T) {
+	// soft-stub body was empty; add green SRX smokes
+	tok := NewPolishSRXSentenceTokenizer()
+	got := tok.Tokenize("To jest zdanie. To jest inne.")
+	require.GreaterOrEqual(t, len(got), 2)
+	require.Contains(t, got[0], "zdanie")
 }

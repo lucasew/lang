@@ -21,7 +21,10 @@ var (
 	notSpanishPat  = regexp.MustCompile(`^[lmndts]['’].*$|^.*(ns|[áéó].i[oa]s?)$|^.*(ss|[çàèòïâêôãõìù]|l·l).*$`)
 	notCatalanPat  = regexp.MustCompile(`^.*([áéó].i[oa]s?|d[oa]s)$|^.*[áâêôãõìùñ].*$`)
 	portuguesePat  = regexp.MustCompile(`^.*([áó]ri[oa]|ério)s?$`)
-	punctPattern   = regexp.MustCompile(`[(),.:;!?„“"¡¿\s\[\]{}\-«»”]`)
+	// Match Java PUNCT_PATTERN: hyphen is NOT a member (the `-` between `}` and `«`
+	// is a character range in Java, not a literal hyphen), so "Autohaus-Wirklichkeit"
+	// stays hyphenated until SPACE_OR_HYPHEN_PATTERN splits it.
+	punctPattern = regexp.MustCompile(`[(),.:;!?„“"¡¿\s\[\]{}«»”]`)
 	charsPattern   = regexp.MustCompile(`\p{L}+$`)
 	spaceOrHyphen  = regexp.MustCompile(`[ -]`)
 )

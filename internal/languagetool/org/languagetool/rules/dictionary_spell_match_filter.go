@@ -83,3 +83,36 @@ func (r *DictFilterRule) GetID() string { return r.ID }
 func (r *DictFilterRule) UseDictionaryBasedFilterForMatches() bool {
 	return true
 }
+
+// GetPhrases groups consecutive dictionary-based spelling matches into phrase keys
+// (ports DictionarySpellMatchFilter.getPhrases).
+func (f *DictionarySpellMatchFilter) GetPhrases(ruleMatches []*RuleMatch, plainText string) map[string][]*RuleMatch {
+	phraseToMatches := map[string][]*RuleMatch{}
+	// Java Integer.MIN_VALUE so the first match never counts as adjacent.
+	const intMin = -1 << 31
+	prevToPos := intMin
+	var collectedMatches []*RuleMatch
+	var collectedTerms []string
+	for _, match := range ruleMatches {
+		if match == nil || !usesDictFilter(match) {
+			continue
+		}
+		if match.FromPos < 0 || match.ToPos > len(plainText) || match.FromPos > match.ToPos {
+			continue
+		}
+		covered := plainText[match.FromPos:match.ToPos]
+		if match.FromPos == prevToPos+1 {
+			key := strings.Join(collectedTerms, " ") + " " + covered
+			l := append([]*RuleMatch(nil), collectedMatches...)
+			l = append(l, match)
+			phraseToMatches[key] = l
+		} else {
+			collectedTerms = collectedTerms[:0]
+			collectedMatches = collectedMatches[:0]
+		}
+		collectedTerms = append(collectedTerms, covered)
+		collectedMatches = append(collectedMatches, match)
+		prevToPos = match.ToPos
+	}
+	return phraseToMatches
+}

@@ -17,3 +17,8 @@ func (t TaggedWord) GetPosTag() string { return t.PosTag }
 func (t TaggedWord) Equal(o TaggedWord) bool {
 	return t.Lemma == o.Lemma && t.PosTag == o.PosTag
 }
+
+// String ports TaggedWord.toString → "lemma/posTag".
+func (t TaggedWord) String() string {
+	return t.Lemma + "/" + t.PosTag
+}
