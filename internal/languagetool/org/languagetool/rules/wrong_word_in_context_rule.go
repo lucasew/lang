@@ -103,17 +103,20 @@ func (r *WrongWordInContextRule) Match(sentence *languagetool.AnalyzedSentence) 
 	for _, contextWords := range r.Entries {
 		matchedWord := [2]bool{}
 		matchedPos := [2]int{-1, -1}
+		matchedEnd := [2]int{-1, -1}
 		matchedTok := [2]string{}
 		for k := 1; k < len(tokens) && (!matchedWord[0] || !matchedWord[1]); k++ {
-			t := tokens[k].GetToken()
+			t, endK := joinNoSpaceTokens(tokens, k)
 			if !matchedWord[0] && contextWords.Words[0].MatchString(t) {
 				matchedWord[0] = true
 				matchedPos[0] = k
+				matchedEnd[0] = endK
 				matchedTok[0] = t
 			}
 			if !matchedWord[1] && contextWords.Words[1].MatchString(t) {
 				matchedWord[1] = true
 				matchedPos[1] = k
+				matchedEnd[1] = endK
 				matchedTok[1] = t
 			}
 		}
@@ -123,12 +126,12 @@ func (r *WrongWordInContextRule) Match(sentence *languagetool.AnalyzedSentence) 
 		if matchedWord[0] && !matchedWord[1] {
 			foundWord, notFoundWord = 0, 1
 			startPos = tokens[matchedPos[0]].GetStartPos()
-			endPos = tokens[matchedPos[0]].GetEndPos()
+			endPos = tokens[matchedEnd[0]].GetEndPos()
 			matchedToken = matchedTok[0]
 		} else if matchedWord[1] && !matchedWord[0] {
 			foundWord, notFoundWord = 1, 0
 			startPos = tokens[matchedPos[1]].GetStartPos()
-			endPos = tokens[matchedPos[1]].GetEndPos()
+			endPos = tokens[matchedEnd[1]].GetEndPos()
 			matchedToken = matchedTok[1]
 		}
 		if foundWord == -1 {
@@ -227,5 +230,43 @@ func lemmaCandidates(tok *languagetool.AnalyzedTokenReadings) []string {
 	if len(t) > 4 && strings.HasSuffix(t, "es") {
 		add(t[:len(t)-2])
 	}
+	// Catalan/Spanish imperfect: seguia → seguir
+	if len(t) > 4 && strings.HasSuffix(t, "ia") {
+		stem := t[:len(t)-2]
+		add(stem + "ir")
+		add(stem + "ar")
+		add(stem + "er")
+		add(stem)
+	}
+	if len(t) > 4 && strings.HasSuffix(t, "ava") {
+		stem := t[:len(t)-3]
+		add(stem + "ar")
+		add(stem)
+	}
 	return out
+}
+
+// joinNoSpaceTokens joins middle-dot compounds (Catalan pal·li → pal + · + li)
+// without swallowing sentence punctuation like trailing periods.
+func joinNoSpaceTokens(tokens []*languagetool.AnalyzedTokenReadings, k int) (string, int) {
+	if k < 0 || k >= len(tokens) {
+		return "", k
+	}
+	t := tokens[k].GetToken()
+	end := k
+	for end+1 < len(tokens) && !tokens[end+1].IsWhitespaceBefore() {
+		next := tokens[end+1].GetToken()
+		if next == "·" || next == "‧" || next == "•" {
+			end++
+			t += next
+			continue
+		}
+		if strings.HasSuffix(t, "·") || strings.HasSuffix(t, "‧") {
+			end++
+			t += next
+			continue
+		}
+		break
+	}
+	return t, end
 }
