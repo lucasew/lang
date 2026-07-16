@@ -1,17 +1,20 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/UpperCaseNgramRuleTest.java
+// Twin of UpperCaseNgramRuleTest (surface Tage/Tagen heuristics).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/UpperCaseNgramRuleTest.java :: UpperCaseNgramRuleTest.testRule
 func TestUpperCaseNgramRule_Rule(t *testing.T) {
-	tools.Unimplemented("UpperCaseNgramRuleTest.testRule")
+	rule := NewUpperCaseNgramRule(nil)
+	matchN := func(s string) int {
+		return len(rule.Match(languagetool.AnalyzePlain(s)))
+	}
+	require.Equal(t, 0, matchN("Nach 5 Tagen war es aus."))
+	require.Equal(t, 1, matchN("Nach 5 tagen war es aus."))
+	require.Equal(t, 0, matchN("Sie tagen im Hotel."))
+	require.Equal(t, 1, matchN("Sie Tagen im Hotel."))
 }
