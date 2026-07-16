@@ -1,17 +1,22 @@
 package ar
 
-// Twin of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicInflectedOneWordReplaceRuleTest.java
+// Twin of ArabicInflectedOneWordReplaceRuleTest (surface clitic/stem matching).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicInflectedOneWordReplaceRuleTest.java :: ArabicInflectedOneWordReplaceRuleTest.testRule
 func TestArabicInflectedOneWordReplaceRule_Rule(t *testing.T) {
-	tools.Unimplemented("ArabicInflectedOneWordReplaceRuleTest.testRule")
+	rule := NewArabicInflectedOneWordReplaceRule(nil)
+	matchN := func(s string) int {
+		return len(rule.Match(languagetool.AnalyzePlain(s)))
+	}
+	// Correct
+	require.Equal(t, 0, matchN("أجريت بحوثا في المخبر"))
+	require.Equal(t, 0, matchN("وجعل لكم من أزواجكم بنين وحفدة"))
+	// Errors (inflected / with proclitic)
+	require.NotEqual(t, 0, matchN("أجريت أبحاثا في المخبر"))
+	require.NotEqual(t, 0, matchN("وجعل لكم من أزواجكم بنين وأحفاد"))
 }
