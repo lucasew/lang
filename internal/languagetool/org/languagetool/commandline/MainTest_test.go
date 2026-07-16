@@ -180,20 +180,9 @@ func TestMain_GermanFileWithURL(t *testing.T) {
 }
 func TestMain_PolishFileAPI(t *testing.T)     { t.Skip("unimplemented: PL file API") }
 func TestMain_PolishLineNumbers(t *testing.T) { t.Skip("unimplemented: PL line numbers") }
-func TestMain_BitextModeWithDisabledRule(t *testing.T) {
-	t.Skip("unimplemented: bitext CLI")
-}
-func TestMain_BitextModeWithEnabledRule(t *testing.T) {
-	t.Skip("unimplemented: bitext CLI")
-}
-func TestMain_BitextModeApply(t *testing.T) {
-	t.Skip("unimplemented: bitext CLI")
-}
 func TestMain_BitextWithExternalRule(t *testing.T) {
 	t.Skip("unimplemented: bitext CLI")
 }
-func TestMain_ListUnknown(t *testing.T)   { t.Skip("unimplemented: list unknown words") }
-func TestMain_NoListUnknown(t *testing.T) { t.Skip("unimplemented: list unknown words") }
 func TestMain_ValencianCatalan(t *testing.T) {
 	t.Skip("unimplemented: CA variants via full LT")
 }
