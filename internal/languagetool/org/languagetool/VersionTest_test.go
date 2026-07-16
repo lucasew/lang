@@ -1,17 +1,15 @@
 package languagetool
 
-// Twin of languagetool-core/src/test/java/org/languagetool/VersionTest.java
 import (
+	"runtime"
 	"testing"
-
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/VersionTest.java :: VersionTest.printVersion
+// Port of org.languagetool.VersionTest.printVersion — diagnostic only.
 func TestVersion_PrintVersion(t *testing.T) {
-	tools.Unimplemented("VersionTest.printVersion")
+	// Java logs JVM/OS properties; we log Go runtime equivalents so the twin
+	// exists and runs without panicking.
+	t.Logf("Go version: %s", runtime.Version())
+	t.Logf("OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	t.Logf("NumCPU: %d", runtime.NumCPU())
 }
