@@ -85,6 +85,13 @@ func loadMultiWordLines(r io.Reader) ([]string, error) {
 	return lines, sc.Err()
 }
 
+// SetIgnoreSpelling ports MultiWordChunker.setIgnoreSpelling.
+func (c *MultiWordChunker) SetIgnoreSpelling(v bool) {
+	if c != nil {
+		c.AddIgnoreSpelling = v
+	}
+}
+
 func (c *MultiWordChunker) lazyInit() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -264,7 +271,15 @@ func (c *MultiWordChunker) Disambiguate(input *languagetool.AnalyzedSentence) *l
 							}
 						}
 						if c.AddIgnoreSpelling {
-							// IgnoreSpelling may be unimplemented; skip if missing
+							if finalLen == 0 {
+								output[i].IgnoreSpelling()
+							} else {
+								for m := i; m <= finalLen && m < len(output); m++ {
+									if output[m] != nil {
+										output[m].IgnoreSpelling()
+									}
+								}
+							}
 						}
 					}
 				} else {
@@ -300,6 +315,13 @@ func (c *MultiWordChunker) Disambiguate(input *languagetool.AnalyzedSentence) *l
 						} else {
 							output[i] = prepareNewReading(at, anTokens[i].GetToken(), output[i], false)
 							output[j] = prepareNewReading(at, anTokens[j].GetToken(), output[j], true)
+						}
+					}
+					if c.AddIgnoreSpelling {
+						for m := i; m <= j && m < len(output); m++ {
+							if output[m] != nil {
+								output[m].IgnoreSpelling()
+							}
 						}
 					}
 				}

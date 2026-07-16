@@ -24,6 +24,7 @@ type AnalyzedTokenReadings struct {
 	hasSameLemmas            bool
 	hasTypographicApostrophe bool
 	chunkTags                []string
+	isIgnoredBySpeller       bool
 }
 
 func NewAnalyzedTokenReadings(tok *AnalyzedToken) *AnalyzedTokenReadings {
@@ -71,6 +72,9 @@ func NewAnalyzedTokenReadingsFromOld(old *AnalyzedTokenReadings, newReadings []*
 	}
 	if old.isImmunized {
 		r.Immunize(old.immunizationSrcLine)
+	}
+	if old.isIgnoredBySpeller {
+		r.IgnoreSpelling()
 	}
 	r.historicalAnnotations = old.historicalAnnotations
 	_ = ruleApplied
@@ -287,6 +291,18 @@ func (r *AnalyzedTokenReadings) Immunize(sourceLine int) {
 }
 
 func (r *AnalyzedTokenReadings) IsImmunized() bool { return r.isImmunized }
+
+// IgnoreSpelling ports AnalyzedTokenReadings.ignoreSpelling.
+func (r *AnalyzedTokenReadings) IgnoreSpelling() {
+	if r != nil {
+		r.isIgnoredBySpeller = true
+	}
+}
+
+// IsIgnoredBySpeller ports AnalyzedTokenReadings.isIgnoredBySpeller.
+func (r *AnalyzedTokenReadings) IsIgnoredBySpeller() bool {
+	return r != nil && r.isIgnoredBySpeller
+}
 
 func (r *AnalyzedTokenReadings) String() string {
 	var sb strings.Builder
