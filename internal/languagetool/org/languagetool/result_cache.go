@@ -1,6 +1,10 @@
 package languagetool
 
-import "sync"
+import (
+	"sort"
+	"strings"
+	"sync"
+)
 
 // ResultCache ports org.languagetool.ResultCache with a simple bounded map.
 // Match values are stored as any (typically []*rules.RuleMatch) to avoid an
@@ -26,12 +30,82 @@ func NewResultCache(maxSize int) *ResultCache {
 	}
 }
 
+// inputSentenceKey mirrors InputSentence.Equal dimensions used as a Guava cache key.
 func inputSentenceKey(s InputSentence) string {
 	text := ""
 	if s.Analyzed != nil {
 		text = s.Analyzed.GetText()
 	}
-	return text + "\x00" + s.LanguageCode + "\x00" + s.Mode + "\x00" + string(s.Level)
+	var b strings.Builder
+	b.WriteString(text)
+	b.WriteByte(0)
+	b.WriteString(s.LanguageCode)
+	b.WriteByte(0)
+	b.WriteString(s.MotherTongueCode)
+	b.WriteByte(0)
+	b.WriteString(s.Mode)
+	b.WriteByte(0)
+	b.WriteString(string(s.Level))
+	b.WriteByte(0)
+	b.WriteString(sortedSetKey(s.DisabledRules))
+	b.WriteByte(0)
+	b.WriteString(sortedSetKey(s.DisabledCategories))
+	b.WriteByte(0)
+	b.WriteString(sortedSetKey(s.EnabledRules))
+	b.WriteByte(0)
+	b.WriteString(sortedSetKey(s.EnabledCategories))
+	b.WriteByte(0)
+	b.WriteString(strings.Join(s.AltLanguageCodes, ","))
+	b.WriteByte(0)
+	if s.TextSessionID != nil {
+		b.WriteString(itoa64(*s.TextSessionID))
+	}
+	b.WriteByte(0)
+	// tone tags
+	if len(s.ToneTags) > 0 {
+		keys := make([]string, 0, len(s.ToneTags))
+		for t := range s.ToneTags {
+			keys = append(keys, string(t))
+		}
+		sort.Strings(keys)
+		b.WriteString(strings.Join(keys, ","))
+	}
+	return b.String()
+}
+
+func sortedSetKey(m map[string]struct{}) string {
+	if len(m) == 0 {
+		return ""
+	}
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return strings.Join(keys, ",")
+}
+
+func itoa64(n int64) string {
+	// small helper without strconv import pull for negatives
+	if n == 0 {
+		return "0"
+	}
+	neg := n < 0
+	if neg {
+		n = -n
+	}
+	var buf [20]byte
+	i := len(buf)
+	for n > 0 {
+		i--
+		buf[i] = byte('0' + n%10)
+		n /= 10
+	}
+	if neg {
+		i--
+		buf[i] = '-'
+	}
+	return string(buf[i:])
 }
 
 func simpleInputKey(s SimpleInputSentence) string {
@@ -92,6 +166,41 @@ func (c *ResultCache) PutSentence(key SimpleInputSentence, a *AnalyzedSentence) 
 		}
 	}
 	c.sentences[simpleInputKey(key)] = a
+}
+
+// remoteMatchKey is language-agnostic text key for remote-rule match caching
+// (Java ResultCache remote matches keyed by analyzed sentence content).
+func remoteMatchKey(sentenceText, ruleID string) string {
+	return sentenceText + "\x00" + ruleID
+}
+
+// GetRemoteMatchesIfPresent returns cached remote matches for a sentence text + rule id.
+func (c *ResultCache) GetRemoteMatchesIfPresent(sentenceText, ruleID string) (any, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	v, ok := c.remoteMatches[remoteMatchKey(sentenceText, ruleID)]
+	if ok {
+		c.hits++
+	} else {
+		c.misses++
+	}
+	return v, ok
+}
+
+// PutRemoteMatches stores remote-rule match results for a sentence text + rule id.
+func (c *ResultCache) PutRemoteMatches(sentenceText, ruleID string, matches any) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.maxSize == 0 {
+		return
+	}
+	if len(c.remoteMatches) >= c.maxSize {
+		for k := range c.remoteMatches {
+			delete(c.remoteMatches, k)
+			break
+		}
+	}
+	c.remoteMatches[remoteMatchKey(sentenceText, ruleID)] = matches
 }
 
 func (c *ResultCache) HitCount() int64 {

@@ -1,221 +1,191 @@
 package commandline
 
 // Twin of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java
+//
+// Full end-to-end CLI with language modules deferred; green smokes cover RunWithIO surface
+// (usage, languages, stdin check/json/tagger, exit codes). Integration cases soft-skipped.
 import (
+	"bytes"
+	"io"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testUsageMessage
+// Port of MainTest.testUsageMessage
 func TestMain_UsageMessage(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"--help"}, RunHooks{}, &out, &errb)
+	require.Equal(t, 0, code)
+	require.Contains(t, out.String(), "Usage:")
+	require.Contains(t, out.String(), "--language")
+	require.Contains(t, out.String(), "--json")
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPrintLanguages
+// Port of MainTest.testPrintLanguages
 func TestMain_PrintLanguages(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"--list"}, RunHooks{
+		ListLanguages: func(w io.Writer) error {
+			_, _ = io.WriteString(w, "en-US\nde-DE\nuk-UA\n")
+			return nil
+		},
+	}, &out, &errb)
+	require.Equal(t, 0, code)
+	require.Contains(t, out.String(), "en-US")
+	require.Contains(t, out.String(), "uk-UA")
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testFileWithExternalRule
-func TestMain_FileWithExternalRule(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFile
-func TestMain_EnglishFile(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileAutoDetect
-func TestMain_EnglishFileAutoDetect(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishStdInAutoDetect
-func TestMain_EnglishStdInAutoDetect(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testStdInWithExternalFalseFriends
-func TestMain_StdInWithExternalFalseFriends(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileVerbose
-func TestMain_EnglishFileVerbose(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileApplySuggestions
-func TestMain_EnglishFileApplySuggestions(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishStdIn1
+// Port of MainTest.testEnglishStdIn1 — stdin check hook path
 func TestMain_EnglishStdIn1(t *testing.T) {
-	// contains assertTrue
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "This is an test.", nil },
+		Check: func(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
+			require.Equal(t, "en", opts.Language)
+			require.Equal(t, "This is an test.", text)
+			_, _ = io.WriteString(w, "1.) Line 1, column 9, Rule ID: EN_A_VS_AN\n")
+			return 1, nil
+		},
+	}, &out, &errb)
+	require.Equal(t, 2, code) // matches found
+	require.Contains(t, out.String(), "EN_A_VS_AN")
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishStdIn2
-func TestMain_EnglishStdIn2(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishStdIn3
-func TestMain_EnglishStdIn3(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishStdIn4
-func TestMain_EnglishStdIn4(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishStdInJsonOutput
+// Port of MainTest.testEnglishStdInJsonOutput
 func TestMain_EnglishStdInJsonOutput(t *testing.T) {
-	// contains assertTrue
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "ok", nil },
+		Check: func(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
+			require.Equal(t, OutputJSON, opts.OutputFormat)
+			_, _ = io.WriteString(w, `{"matches":[]}`)
+			return 0, nil
+		},
+	}, &out, &errb)
+	require.Equal(t, 0, code)
+	require.Contains(t, out.String(), `"matches"`)
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishLineMode
-func TestMain_EnglishLineMode(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishParaMode
-func TestMain_EnglishParaMode(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPolishStdInDefaultOff
-func TestMain_PolishStdInDefaultOff(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPolishApiStdInDefaultOff
-func TestMain_PolishApiStdInDefaultOff(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPolishApiStdInDefaultOffNoErrors
-func TestMain_PolishApiStdInDefaultOffNoErrors(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPolishSpelling
-func TestMain_PolishSpelling(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileRuleDisabled
-func TestMain_EnglishFileRuleDisabled(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileRuleEnabled
-func TestMain_EnglishFileRuleEnabled(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileFakeRuleEnabled
-func TestMain_EnglishFileFakeRuleEnabled(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishFileAPI
-func TestMain_EnglishFileAPI(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testGermanFileWithURL
-func TestMain_GermanFileWithURL(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPolishFileAPI
-func TestMain_PolishFileAPI(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testPolishLineNumbers
-func TestMain_PolishLineNumbers(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testEnglishTagger
+// Port of MainTest.testEnglishTagger
 func TestMain_EnglishTagger(t *testing.T) {
-	// contains assertTrue
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-t", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Hello world", nil },
+		Tag: func(w io.Writer, text string, opts *CommandLineOptions) error {
+			require.True(t, opts.TaggerOnly)
+			_, _ = io.WriteString(w, FormatTagLine(text, strings.Fields(text))+"\n")
+			return nil
+		},
+	}, &out, &errb)
+	require.Equal(t, 0, code)
+	require.Contains(t, out.String(), "Hello")
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testBitextMode
-func TestMain_BitextMode(t *testing.T) {
-	// contains assertTrue
+// Port of MainTest.testEnglishFile — ReadFile hook
+func TestMain_EnglishFile(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "sample.txt"}, RunHooks{
+		ReadFile: func(path string) (string, error) {
+			require.Equal(t, "sample.txt", path)
+			return "clean text", nil
+		},
+		Check: func(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
+			require.Equal(t, "clean text", text)
+			return 0, nil
+		},
+	}, &out, &errb)
+	require.Equal(t, 0, code)
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testBitextModeWithDisabledRule
-func TestMain_BitextModeWithDisabledRule(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testBitextModeWithEnabledRule
-func TestMain_BitextModeWithEnabledRule(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testBitextModeApply
-func TestMain_BitextModeApply(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testBitextWithExternalRule
-func TestMain_BitextWithExternalRule(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testListUnknown
-func TestMain_ListUnknown(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testNoListUnknown
-func TestMain_NoListUnknown(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testLangWithCountryVariant
+// Port of MainTest.testLangWithCountryVariant
 func TestMain_LangWithCountryVariant(t *testing.T) {
-	// contains assertTrue
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en-US", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "x", nil },
+		Check: func(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
+			require.Equal(t, "en-US", opts.Language)
+			return 0, nil
+		},
+	}, &out, &errb)
+	require.Equal(t, 0, code)
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testValencianCatalan
+// Remaining Java CLI integration cases need full language modules / bitext / XML filter pipeline.
+func TestMain_FileWithExternalRule(t *testing.T) {
+	t.Skip("unimplemented: external rule XML load for CLI")
+}
+func TestMain_EnglishFileAutoDetect(t *testing.T) {
+	t.Skip("unimplemented: language autodetection")
+}
+func TestMain_EnglishStdInAutoDetect(t *testing.T) {
+	t.Skip("unimplemented: language autodetection")
+}
+func TestMain_StdInWithExternalFalseFriends(t *testing.T) {
+	t.Skip("unimplemented: false-friends CLI path")
+}
+func TestMain_EnglishFileVerbose(t *testing.T) {
+	t.Skip("unimplemented: full EN grammar file verbose")
+}
+func TestMain_EnglishFileApplySuggestions(t *testing.T) {
+	t.Skip("unimplemented: apply suggestions")
+}
+func TestMain_EnglishStdIn2(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
+func TestMain_EnglishStdIn3(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
+func TestMain_EnglishStdIn4(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
+func TestMain_EnglishLineMode(t *testing.T) {
+	t.Skip("unimplemented: line mode pipeline")
+}
+func TestMain_EnglishParaMode(t *testing.T) {
+	t.Skip("unimplemented: paragraph mode pipeline")
+}
+func TestMain_PolishStdInDefaultOff(t *testing.T) {
+	t.Skip("unimplemented: PL rules via CLI")
+}
+func TestMain_PolishApiStdInDefaultOff(t *testing.T) {
+	t.Skip("unimplemented: PL API CLI")
+}
+func TestMain_PolishApiStdInDefaultOffNoErrors(t *testing.T) {
+	t.Skip("unimplemented: PL API CLI")
+}
+func TestMain_PolishSpelling(t *testing.T) { t.Skip("unimplemented: PL spelling CLI") }
+func TestMain_EnglishFileRuleDisabled(t *testing.T) {
+	t.Skip("unimplemented: enable/disable rule file check")
+}
+func TestMain_EnglishFileRuleEnabled(t *testing.T) {
+	t.Skip("unimplemented: enable/disable rule file check")
+}
+func TestMain_EnglishFileFakeRuleEnabled(t *testing.T) {
+	t.Skip("unimplemented: enable/disable rule file check")
+}
+func TestMain_EnglishFileAPI(t *testing.T)  { t.Skip("unimplemented: API XML output") }
+func TestMain_GermanFileWithURL(t *testing.T) {
+	t.Skip("unimplemented: DE file with URL")
+}
+func TestMain_PolishFileAPI(t *testing.T)     { t.Skip("unimplemented: PL file API") }
+func TestMain_PolishLineNumbers(t *testing.T) { t.Skip("unimplemented: PL line numbers") }
+func TestMain_BitextMode(t *testing.T)       { t.Skip("unimplemented: bitext CLI") }
+func TestMain_BitextModeWithDisabledRule(t *testing.T) {
+	t.Skip("unimplemented: bitext CLI")
+}
+func TestMain_BitextModeWithEnabledRule(t *testing.T) {
+	t.Skip("unimplemented: bitext CLI")
+}
+func TestMain_BitextModeApply(t *testing.T) {
+	t.Skip("unimplemented: bitext CLI")
+}
+func TestMain_BitextWithExternalRule(t *testing.T) {
+	t.Skip("unimplemented: bitext CLI")
+}
+func TestMain_ListUnknown(t *testing.T)   { t.Skip("unimplemented: list unknown words") }
+func TestMain_NoListUnknown(t *testing.T) { t.Skip("unimplemented: list unknown words") }
 func TestMain_ValencianCatalan(t *testing.T) {
-	// contains assertTrue
+	t.Skip("unimplemented: CA variants via full LT")
 }
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testCatalan
-func TestMain_Catalan(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testCatalan2
-func TestMain_Catalan2(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testNoXmlFilteringByDefault
+func TestMain_Catalan(t *testing.T)  { t.Skip("unimplemented: CA via full LT") }
+func TestMain_Catalan2(t *testing.T) { t.Skip("unimplemented: CA via full LT") }
 func TestMain_NoXmlFilteringByDefault(t *testing.T) {
-	// contains assertTrue
+	t.Skip("unimplemented: XML filter pipeline")
 }
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/MainTest.java :: MainTest.testXmlFiltering
-func TestMain_XmlFiltering(t *testing.T) {
-	// contains assertFalse
-}
+func TestMain_XmlFiltering(t *testing.T) { t.Skip("unimplemented: XML filter pipeline") }

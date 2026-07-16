@@ -3,6 +3,7 @@ package server
 import (
 	"net"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -38,4 +39,16 @@ func CleanUserQuery(q string, max int) string {
 		return q[:max] + "…"
 	}
 	return q
+}
+
+// sentContentRE matches <sentcontent>…</sentcontent> including newlines (Java DOTALL).
+var sentContentRE = regexp.MustCompile(`(?s)<sentcontent>.*?</sentcontent>`)
+
+// CleanUserTextFromMessage ports ServerTools.cleanUserTextFromMessage.
+// When logging map has inputLogging=no, strips <sentcontent>…</sentcontent> payloads.
+func CleanUserTextFromMessage(message string, logging map[string]string) string {
+	if logging != nil && strings.EqualFold(logging["inputLogging"], "no") {
+		return sentContentRE.ReplaceAllString(message, "<< content removed >>")
+	}
+	return message
 }

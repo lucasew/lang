@@ -64,6 +64,36 @@ func TestTokenAgreementRulesConstruct(t *testing.T) {
 	require.Equal(t, TokenAgreementVerbNounRuleID, NewTokenAgreementVerbNounRule().GetID())
 }
 
+func TestTokenAgreementPrepNounRule(t *testing.T) {
+	r := NewTokenAgreementPrepNounRule()
+	require.Equal(t, TokenAgreementPrepNounRuleID, r.GetID())
+	// "в" governs v_zna / v_mis / v_rod — instrumental (v_oru) is wrong.
+	prepLemma := "в"
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("в", &prepLemma, "prep"),
+		atr("домі", "noun:inanim:m:v_oru"),
+	})
+	require.NotEmpty(t, r.Match(sentBad), "prep+wrong case should match")
+
+	sentGood := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("в", &prepLemma, "prep"),
+		atr("домі", "noun:inanim:m:v_mis"),
+	})
+	require.Empty(t, r.Match(sentGood), "prep+governed case should pass")
+}
+
+func atrLemma(token string, lemma *string, tags ...string) *languagetool.AnalyzedTokenReadings {
+	var readings []*languagetool.AnalyzedToken
+	for _, tg := range tags {
+		t := tg
+		readings = append(readings, languagetool.NewAnalyzedToken(token, &t, lemma))
+	}
+	if len(readings) == 0 {
+		readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(token, nil, lemma)}
+	}
+	return languagetool.NewAnalyzedTokenReadingsList(readings, 0)
+}
+
 func TestNounVerbOverlap(t *testing.T) {
 	// person 3 singular both
 	require.True(t, VerbInflectionsOverlap(
