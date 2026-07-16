@@ -1,17 +1,22 @@
 package ca
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/ReplaceOperationNamesRuleTest.java
+// Twin of ReplaceOperationNamesRuleTest — surface dictionary (no POS filters).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/ReplaceOperationNamesRuleTest.java :: ReplaceOperationNamesRuleTest.testRule
 func TestReplaceOperationNamesRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewReplaceOperationNamesRule(nil)
+	// incorrect (Java twin)
+	for _, s := range []string{
+		"Assecat del braç del riu",
+		"Cal vigilar el filtrat del vi",
+		"El procés d'empaquetat",
+	} {
+		matches := rule.Match(languagetool.AnalyzePlain(s))
+		require.NotEmpty(t, matches, s)
+	}
 }
