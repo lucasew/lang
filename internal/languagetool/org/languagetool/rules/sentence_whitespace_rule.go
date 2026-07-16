@@ -10,15 +10,31 @@ import (
 // SentenceWhitespaceRule ports org.languagetool.rules.SentenceWhitespaceRule.
 type SentenceWhitespaceRule struct {
 	Messages map[string]string
+	// RuleID overrides GetID when set (e.g. DE_SENTENCE_WHITESPACE).
+	RuleID string
+	// MessageAfterSentence / MessageAfterNumber override default messages.
+	MessageAfterSentence string
+	MessageAfterNumber   string
 }
 
 func NewSentenceWhitespaceRule(messages map[string]string) *SentenceWhitespaceRule {
 	return &SentenceWhitespaceRule{Messages: messages}
 }
 
-func (r *SentenceWhitespaceRule) GetID() string { return "SENTENCE_WHITESPACE" }
+func (r *SentenceWhitespaceRule) GetID() string {
+	if r.RuleID != "" {
+		return r.RuleID
+	}
+	return "SENTENCE_WHITESPACE"
+}
 
 func (r *SentenceWhitespaceRule) GetMessage(prevEndsWithNumber bool) string {
+	if prevEndsWithNumber && r.MessageAfterNumber != "" {
+		return r.MessageAfterNumber
+	}
+	if !prevEndsWithNumber && r.MessageAfterSentence != "" {
+		return r.MessageAfterSentence
+	}
 	msg := r.Messages["addSpaceBetweenSentences"]
 	if msg == "" {
 		msg = "Add a space between sentences"
