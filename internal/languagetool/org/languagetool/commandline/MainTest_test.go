@@ -180,7 +180,6 @@ func TestMain_GermanFileWithURL(t *testing.T) {
 }
 func TestMain_PolishFileAPI(t *testing.T)     { t.Skip("unimplemented: PL file API") }
 func TestMain_PolishLineNumbers(t *testing.T) { t.Skip("unimplemented: PL line numbers") }
-func TestMain_BitextMode(t *testing.T)        { t.Skip("unimplemented: bitext CLI") }
 func TestMain_BitextModeWithDisabledRule(t *testing.T) {
 	t.Skip("unimplemented: bitext CLI")
 }
