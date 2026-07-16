@@ -1,12 +1,8 @@
 package languagetool
 
-import (
-	"testing"
+import "testing"
 
-	"github.com/stretchr/testify/require"
-)
-
+// Port of org.languagetool.FailTest — Java marks this @Ignore (circleci only).
 func TestFail_Fail(t *testing.T) {
-	t.Skip("Java @Ignore: just for circleci tests")
-	require.True(t, false)
+	t.Skip("Java FailTest is @Ignore; not run in normal suites")
 }

@@ -42,6 +42,14 @@ type WordTokenizer struct{}
 
 func NewWordTokenizer() *WordTokenizer { return &WordTokenizer{} }
 
+// GetTokenizingCharacters ports WordTokenizer.getTokenizingCharacters.
+func (w *WordTokenizer) GetTokenizingCharacters() string {
+	return tokenizing
+}
+
+// TokenizingCharacters is the shared character set for subclasses.
+func TokenizingCharacters() string { return tokenizing }
+
 func (w *WordTokenizer) Tokenize(text string) []string {
 	if text == "" {
 		return nil
