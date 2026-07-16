@@ -277,3 +277,13 @@ func IsNumericSpace(token string) bool {
 	}
 	return true
 }
+
+// IsNotWordCharacter ports StringTools.isNotWordCharacter (Pattern "[^\p{L}]").matches.
+func IsNotWordCharacter(input string) bool {
+	runes := []rune(input)
+	if len(runes) != 1 {
+		// Java pattern is a single char class; multi-char never matches fully
+		return false
+	}
+	return !unicode.IsLetter(runes[0])
+}
