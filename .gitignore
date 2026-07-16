@@ -7,3 +7,6 @@
 /.idea/
 *.iml
 .DS_Store
+
+# scratch
+*.test

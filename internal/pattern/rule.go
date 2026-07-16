@@ -19,6 +19,8 @@ type Rule struct {
 	Examples []Example
 	// RequiresPOS is true if any token needs postag/chunk/inflected lemma matching.
 	RequiresPOS bool
+	// Incomplete is true if the rule uses features we do not implement yet (filters, unify, …).
+	Incomplete bool
 	// IssueType from rule attribute if present
 	IssueType string
 }

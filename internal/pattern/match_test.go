@@ -73,7 +73,7 @@ func TestUNICODE_CASING_Match(t *testing.T) {
 		t.Fatal("missing rule")
 	}
 	text := "The unicode standard defines almost 150,000 characters."
-	ctx := NewMatchContext("t", "en", text, 0)
+	ctx := NewMatchContext("t", "en", text, 0, nil)
 	got := MatchRule(unicode, ctx)
 	if len(got) != 1 {
 		t.Fatalf("want 1 match, got %d (%+v)", len(got), got)
@@ -102,7 +102,7 @@ func TestOXFORD_COMMA_CASING(t *testing.T) {
 	if rule == nil {
 		t.Fatal("missing")
 	}
-	ctx := NewMatchContext("t", "en", "Are you using the oxford comma?", 0)
+	ctx := NewMatchContext("t", "en", "Are you using the oxford comma?", 0, nil)
 	got := MatchRule(rule, ctx)
 	if len(got) != 1 {
 		t.Fatalf("got %d want 1: %+v", len(got), got)

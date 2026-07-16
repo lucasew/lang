@@ -1,11 +1,13 @@
 package pattern
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 
 	"github.com/lucasew/lang/internal/finding"
 	"github.com/lucasew/lang/internal/pipeline"
+	"github.com/lucasew/lang/internal/tagger"
 )
 
 // MatchContext holds analyzed tokens for matching.
@@ -20,16 +22,27 @@ type MatchContext struct {
 }
 
 // NewMatchContext builds context from a text span.
-func NewMatchContext(file, lang, text string, baseOffset int) MatchContext {
+// If tg is non-nil, non-whitespace tokens receive POS readings.
+func NewMatchContext(file, lang, text string, baseOffset int, tg *tagger.Tagger) MatchContext {
 	all := pipeline.WordTokenize(text)
 	nonWS := make([]pipeline.Token, 0, len(all)+1)
-	nonWS = append(nonWS, pipeline.Token{Text: "SENT_START", Start: 0, End: 0})
+	nonWS = append(nonWS, pipeline.Token{
+		Text:     "SENT_START",
+		Start:    0,
+		End:      0,
+		Readings: []pipeline.Reading{{Lemma: "SENT_START", POS: "SENT_START"}},
+	})
 	spaceBefore := []bool{false}
 	prevWS := false
 	for _, t := range all {
 		if t.Whitespace || isOnlySpace(t.Text) {
 			prevWS = true
 			continue
+		}
+		if tg != nil {
+			for _, r := range tg.TagWord(t.Text) {
+				t.Readings = append(t.Readings, pipeline.Reading{Lemma: r.Lemma, POS: r.POS})
+			}
 		}
 		nonWS = append(nonWS, t)
 		spaceBefore = append(spaceBefore, prevWS)
@@ -55,10 +68,21 @@ func isOnlySpace(s string) bool {
 
 // MatchRule runs one pattern rule against the context.
 func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
-	if r.RequiresPOS || len(r.Tokens) == 0 {
+	if len(r.Tokens) == 0 {
 		return nil
 	}
 	if r.Default == "off" || r.Default == "temp_off" {
+		return nil
+	}
+	if r.Incomplete {
+		return nil
+	}
+	// Premium/AI rule packs need filters/models we do not run yet.
+	if strings.HasPrefix(r.ID, "AI_") || strings.HasPrefix(r.ID, "QB_") {
+		return nil
+	}
+	// Chunk-based rules still unsupported.
+	if ruleNeedsChunk(r) {
 		return nil
 	}
 
@@ -112,6 +136,30 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 	return findings
 }
 
+func ruleNeedsChunk(r *Rule) bool {
+	var check func([]PatToken) bool
+	check = func(ts []PatToken) bool {
+		for _, t := range ts {
+			if t.Chunk != "" {
+				return true
+			}
+			if check(t.Exceptions) || check(t.And) || check(t.Or) {
+				return true
+			}
+		}
+		return false
+	}
+	if check(r.Tokens) {
+		return true
+	}
+	for _, ap := range r.Anti {
+		if check(ap) {
+			return true
+		}
+	}
+	return false
+}
+
 func filterSimpleSuggestions(sugs []string) []string {
 	var out []string
 	for _, s := range sugs {
@@ -137,8 +185,6 @@ func antipatternBlocks(r *Rule, ctx MatchContext, start, end int) bool {
 	return false
 }
 
-// matchTokens matches pattern starting at NonWS[start].
-// Returns end index exclusive and marker rune offsets relative to ctx.Text.
 func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end int, markerFrom, markerTo int) {
 	markerFrom, markerTo = -1, -1
 	ti := start
@@ -149,11 +195,6 @@ func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end 
 		if maxOcc < min {
 			maxOcc = min
 		}
-		if maxOcc < 1 && min == 0 {
-			maxOcc = 0
-		}
-		// Optional with max default 1: already set in loader
-
 		matchedOcc := 0
 		for matchedOcc < maxOcc {
 			if ti >= len(tokens) {
@@ -176,9 +217,7 @@ func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end 
 		if matchedOcc < min {
 			return false, start, -1, -1
 		}
-		// skip: next pattern element may start after skipping up to Skip tokens
 		if pt.Skip > 0 && pi+1 < len(pattern) {
-			// Try to match remaining pattern with various skip amounts — recursive simple approach:
 			next := pattern[pi+1:]
 			limit := pt.Skip
 			for sk := 0; sk <= limit; sk++ {
@@ -210,14 +249,23 @@ func tokenMatches(pt PatToken, ctx MatchContext, ti int) bool {
 	if pt.SpaceBefore == "no" && ti < len(ctx.SpaceBefore) && ctx.SpaceBefore[ti] {
 		return false
 	}
-	if pt.Postag != "" || pt.Chunk != "" || pt.Inflected {
+	if pt.Chunk != "" {
 		return false
 	}
 
-	text := tok.Text
-	match := matchString(pt, text)
+	// String / lemma match
+	textOK := matchText(pt, tok)
+	posOK := matchPOS(pt, tok)
+
+	// LT: if TEST_STRING then text && pos; else pos only (with negations)
+	// We approximate: both dimensions must hold; empty constraints pass.
+	match := textOK && posOK
 	if pt.Negate {
-		match = !match
+		// Negate applies to the string element in LT when present.
+		match = (!textOK) && posOK
+		if pt.Value == "" && pt.Re == nil {
+			match = !posOK
+		}
 	}
 	if !match {
 		return false
@@ -245,6 +293,57 @@ func tokenMatches(pt PatToken, ctx MatchContext, ti int) bool {
 		}
 	}
 	return true
+}
+
+func matchText(pt PatToken, tok pipeline.Token) bool {
+	if pt.Value == "" && pt.Re == nil && !pt.Inflected {
+		return true
+	}
+	if pt.Inflected {
+		// match against lemmas
+		for _, lemma := range tok.Lemmas() {
+			if matchString(pt, lemma) {
+				return true
+			}
+		}
+		// also try surface if no readings
+		return matchString(pt, tok.Text)
+	}
+	return matchString(pt, tok.Text)
+}
+
+func matchPOS(pt PatToken, tok pipeline.Token) bool {
+	if pt.Postag == "" {
+		return true
+	}
+	want := pt.Postag
+	posNeg := pt.NegatePos
+	var hit bool
+	if want == "UNKNOWN" {
+		hit = len(tok.Readings) == 0
+	} else if pt.PostagRegexp {
+		re, err := regexp.Compile("^(?:" + want + ")$")
+		if err != nil {
+			return false
+		}
+		for _, r := range tok.Readings {
+			if re.MatchString(r.POS) {
+				hit = true
+				break
+			}
+		}
+	} else {
+		for _, r := range tok.Readings {
+			if r.POS == want {
+				hit = true
+				break
+			}
+		}
+	}
+	if posNeg {
+		return !hit
+	}
+	return hit
 }
 
 func matchString(pt PatToken, text string) bool {

@@ -14,6 +14,31 @@ type Token struct {
 	End        int // exclusive rune offset
 	Whitespace bool
 	Linebreak  bool
+	// Readings holds POS/lemma analyses (empty = untagged / UNKNOWN).
+	Readings []Reading
+}
+
+// Reading is one morphological analysis (lemma + POS tag).
+type Reading struct {
+	Lemma string
+	POS   string
+}
+
+// Lemmas returns all lemmas (surface form if untagged).
+func (t Token) Lemmas() []string {
+	if len(t.Readings) == 0 {
+		return []string{t.Text}
+	}
+	out := make([]string, 0, len(t.Readings))
+	for _, r := range t.Readings {
+		if r.Lemma != "" {
+			out = append(out, r.Lemma)
+		}
+	}
+	if len(out) == 0 {
+		return []string{t.Text}
+	}
+	return out
 }
 
 // TokenizeWhitespaceAware splits text into non-whitespace runs and single-character

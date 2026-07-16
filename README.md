@@ -10,12 +10,14 @@ See [SPEC.md](./SPEC.md) for the full product contract.
 
 - [mise](https://mise.jdx.dev/) (or Go 1.26+ and optionally JDK for oracle work)
 - LanguageTool submodule (official data + reference)
+- English binary dicts (morfologik POS + speller) via Maven artifact `english-pos-dict`
 
 ```bash
 git clone --recurse-submodules https://github.com/lucasew/lang.git
 cd lang
 # or after clone:
 git submodule update --init --depth 1
+./scripts/fetch-english-dicts.sh   # english.dict + en_US.dict etc.
 
 mise install
 mise exec -- go test ./...
@@ -51,12 +53,14 @@ mise exec -- go run ./cmd/lang languages
 |------|--------|
 | CLI (`lang lint`, formats, exit codes) | done |
 | Data resolve + language discovery | done |
-| SRX sentence split (`segment.srx`) | done (Java `\u` → RE2) |
-| Word tokenizer | done (LT character classes) |
-| Pattern rule XML loader | done (DTD entities, ~5.5k en rules) |
-| Pattern matcher | no-POS subset (POS/inflected skipped) |
+| SRX sentence split (`segment.srx`) | done |
+| Word tokenizer | done |
+| Morfologik FSA (CFSA2) + dictionary lookup | done |
+| English tagger (`english.dict`) | done |
+| English speller (`MORFOLOGIK_RULE_EN_US`) | done (suggestions later) |
+| Pattern XML + POS/inflected match | done (filters/unify/AI incomplete skipped) |
 | `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
-| Tagger / disambiguator | not yet |
+| Disambiguator | not yet |
 | Full 1:1 goldens | growing |
 
 ## License

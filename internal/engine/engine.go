@@ -13,7 +13,9 @@ import (
 	"github.com/lucasew/lang/internal/messages"
 	"github.com/lucasew/lang/internal/pattern"
 	"github.com/lucasew/lang/internal/rules"
+	"github.com/lucasew/lang/internal/speller"
 	"github.com/lucasew/lang/internal/srx"
+	"github.com/lucasew/lang/internal/tagger"
 )
 
 // Options configures a check.
@@ -38,6 +40,9 @@ type Checker struct {
 	msgCache sync.Map // family -> messages.Bundle
 	// pattern rules by language family
 	rulesCache sync.Map // family -> []*pattern.Rule
+	// English tagger/speller (optional until dicts installed)
+	enTagger  *tagger.Tagger
+	enSpeller *speller.Speller
 }
 
 // New resolves data and discovers languages.
@@ -58,11 +63,21 @@ func New(dataDirFlag string) (*Checker, error) {
 	if err != nil {
 		return nil, fmt.Errorf("load segment.srx: %w", err)
 	}
-	return &Checker{dataRoot: root, langs: langs, srxDoc: srxDoc}, nil
+	c := &Checker{dataRoot: root, langs: langs, srxDoc: srxDoc}
+	// Best-effort English resources
+	if tg, err := tagger.OpenEnglish(root); err == nil {
+		c.enTagger = tg
+	}
+	if sp, err := speller.OpenEnglishUS(root); err == nil {
+		c.enSpeller = sp
+	}
+	return c, nil
 }
 
 func (c *Checker) DataRoot() string           { return c.dataRoot }
 func (c *Checker) Languages() []data.Language { return c.langs }
+func (c *Checker) HasEnglishTagger() bool     { return c.enTagger != nil }
+func (c *Checker) HasEnglishSpeller() bool    { return c.enSpeller != nil }
 
 // Check analyzes text for the given file label.
 func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
@@ -95,10 +110,22 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 		findings = append(findings, rules.WordRepeat(text, file, lang.Code, msg)...)
 	}
 
+	// Speller (English US for en*)
+	if c.enSpeller != nil && (lang.Family == "en" || strings.HasPrefix(lang.Code, "en")) {
+		if ruleEnabled(speller.RuleEnUS, opt) {
+			findings = append(findings, c.enSpeller.Check(text, file, lang.Code, msg)...)
+		}
+	}
+
 	// Pattern rules from official grammar XML
 	prules, err := c.patternRules(lang)
 	if err != nil {
 		return nil, err
+	}
+
+	var tg *tagger.Tagger
+	if lang.Family == "en" {
+		tg = c.enTagger
 	}
 
 	sentences := c.srxDoc.Split(text, lang.Family, "_two")
@@ -106,20 +133,16 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 		sentences = []string{text}
 	}
 
-	offset := 0
-	// Map rune offsets: walk text to find sentence starts
 	fullRunes := []rune(text)
 	cursor := 0
 	for _, sent := range sentences {
-		// Find sent in full text starting at cursor
 		sentRunes := []rune(sent)
-		// advance cursor to match
 		pos := indexRunes(fullRunes[cursor:], sentRunes)
 		if pos < 0 {
 			pos = 0
 		}
 		base := cursor + pos
-		ctx := pattern.NewMatchContext(file, lang.Code, sent, base)
+		ctx := pattern.NewMatchContext(file, lang.Code, sent, base, tg)
 		for _, r := range prules {
 			if !ruleEnabled(r.ID, opt) && !ruleEnabled(r.FullID(), opt) {
 				continue
@@ -132,10 +155,8 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 			findings = append(findings, pattern.MatchRule(r, ctx)...)
 		}
 		cursor = base + len(sentRunes)
-		_ = offset
 	}
 
-	// Fix line/column for multi-sentence: recompute from full text using absolute offsets
 	for i := range findings {
 		line, col := offsetToLineColRunes(text, findings[i].Offset)
 		endLine, endCol := offsetToLineColRunes(text, findings[i].EndOffset)
@@ -169,7 +190,6 @@ func (c *Checker) patternRules(lang data.Language) ([]*pattern.Rule, error) {
 	for _, p := range paths {
 		rs, err := pattern.LoadFile(p)
 		if err != nil {
-			// missing optional files ok
 			continue
 		}
 		all = append(all, rs...)
@@ -181,7 +201,6 @@ func (c *Checker) patternRules(lang data.Language) ([]*pattern.Rule, error) {
 func grammarPaths(dataRoot string, lang data.Language) []string {
 	base := filepath.Join(data.LanguageModules(dataRoot), lang.Family, "src", "main", "resources", "org", "languagetool", "rules", lang.Family)
 	var paths []string
-	// All *.xml under rules/<family>/ (grammar, style, punctuation, variants…)
 	_ = filepath.WalkDir(base, func(path string, d os.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return nil

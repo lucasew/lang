@@ -20,15 +20,17 @@ func newDoctorCmd() *cobra.Command {
 			out := cmd.OutOrStdout()
 			fmt.Fprintf(out, "data_root\t%s\n", c.DataRoot())
 			fmt.Fprintf(out, "languages\t%d\n", len(c.Languages()))
+			fmt.Fprintf(out, "english_tagger\t%v\n", c.HasEnglishTagger())
+			fmt.Fprintf(out, "english_speller\t%v\n", c.HasEnglishSpeller())
 			fmt.Fprintln(out, "pipeline_stages:")
 			implemented := map[string]string{
 				pipeline.StageSentenceSplit: "srx (segment.srx)",
-				pipeline.StageTokenize:      "WordTokenizer (+en underscore)",
-				pipeline.StageTag:           "not yet (POS rules skipped)",
+				pipeline.StageTokenize:      "WordTokenizer",
+				pipeline.StageTag:           "morfologik english.dict (en)",
 				pipeline.StageDisambiguate:  "not yet",
-				pipeline.StageRules:         "WHITESPACE_RULE + pattern XML (no-POS subset)",
-				pipeline.StageFilters:       "partial (default=off, antipattern)",
-				pipeline.StageSuggestions:   "static suggestions only",
+				pipeline.StageRules:         "pattern XML + whitespace/word-repeat + speller",
+				pipeline.StageFilters:       "default=off, antipattern, chunk skipped",
+				pipeline.StageSuggestions:   "static suggestions",
 			}
 			for _, s := range pipeline.AllStages {
 				fmt.Fprintf(out, "  %s\t%s\n", s, implemented[s])

@@ -160,22 +160,30 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 				} else if inPattern {
 					r.Tokens = append(r.Tokens, pt)
 				}
-			case "and", "or", "unify", "phraseref", "include":
-				// skip complex constructs: consume element
+			case "and", "or":
+				// and/or inside <token> is handled in parseToken; at pattern level skip + mark incomplete
 				if err := skipElement(dec, t); err != nil {
 					return nil, err
 				}
-				// Mark as requiring advanced features — still try if only and/or of string tokens
-				// For safety, if we skip and/or inside pattern, rule may be incomplete.
-				if inPattern && !inAnti {
-					r.RequiresPOS = true // treat as not safely matchable without full support
+				if inPattern {
+					r.Incomplete = true
 				}
+			case "unify", "phraseref", "include":
+				if err := skipElement(dec, t); err != nil {
+					return nil, err
+				}
+				r.Incomplete = true
 			case "regexp":
-				// whole-rule regexp — skip for now (different matcher)
+				// whole-rule regexp — different matcher
 				if err := skipElement(dec, t); err != nil {
 					return nil, err
 				}
-				r.RequiresPOS = true
+				r.Incomplete = true
+			case "filter":
+				if err := skipElement(dec, t); err != nil {
+					return nil, err
+				}
+				r.Incomplete = true
 			case "message":
 				inMessage = true
 				msgBuilder.Reset()
@@ -196,7 +204,7 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 				exampleCorr = attr(t, "correction")
 				// type="correct" etc. — correction empty means correct example when no correction attr... 
 				// LT uses correction attribute for incorrect examples
-			case "filter", "url", "tags", "tld", "raw_example":
+			case "url", "tags", "tld", "raw_example":
 				if err := skipElement(dec, t); err != nil {
 					return nil, err
 				}
