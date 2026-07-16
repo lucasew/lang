@@ -415,3 +415,10 @@ func ReadStream(r io.Reader) (string, error) {
 	}
 	return string(b), nil
 }
+
+var punctuationMarkRE = regexp.MustCompile(`^[\p{P}']+$`)
+
+// IsPunctuationMark ports StringTools.isPunctuationMark.
+func IsPunctuationMark(input string) bool {
+	return punctuationMarkRE.MatchString(input)
+}
