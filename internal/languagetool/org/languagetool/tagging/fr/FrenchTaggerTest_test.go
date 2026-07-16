@@ -1,22 +1,25 @@
 package fr
 
-// Twin of languagetool-language-modules/fr/src/test/java/org/languagetool/tagging/fr/FrenchTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fr/src/test/java/org/languagetool/tagging/fr/FrenchTaggerTest.java :: FrenchTaggerTest.testDictionary
-func TestFrenchTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: FrenchTaggerTest.testDictionary")
+func TestFrenchTagger_Tagger(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"maison": {tagging.NewTaggedWord("maison", "N")},
+	}
+	tagger := NewFrenchTagger(wt)
+	got := tagger.Tag([]string{"maison", "xyz"})
+	require.Len(t, got, 2)
+	require.NotEmpty(t, got[0].GetReadings())
+	// unknown word still yields a reading
+	require.NotEmpty(t, got[1].GetReadings())
 }
 
-// Port of languagetool-language-modules/fr/src/test/java/org/languagetool/tagging/fr/FrenchTaggerTest.java :: FrenchTaggerTest.testTagger
-func TestFrenchTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: FrenchTaggerTest.testTagger")
+func TestFrenchTagger_DictionaryPath(t *testing.T) {
+	tagger := NewFrenchTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
 }

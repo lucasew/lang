@@ -1,22 +1,25 @@
 package pl
 
-// Twin of languagetool-language-modules/pl/src/test/java/org/languagetool/tagging/pl/PolishTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/tagging/pl/PolishTaggerTest.java :: PolishTaggerTest.testDictionary
-func TestPolishTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: PolishTaggerTest.testDictionary")
+func TestPolishTagger_Tagger(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"dom": {tagging.NewTaggedWord("dom", "N")},
+	}
+	tagger := NewPolishTagger(wt)
+	got := tagger.Tag([]string{"dom", "xyz"})
+	require.Len(t, got, 2)
+	require.NotEmpty(t, got[0].GetReadings())
+	// unknown word still yields a reading
+	require.NotEmpty(t, got[1].GetReadings())
 }
 
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/tagging/pl/PolishTaggerTest.java :: PolishTaggerTest.testTagger
-func TestPolishTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: PolishTaggerTest.testTagger")
+func TestPolishTagger_DictionaryPath(t *testing.T) {
+	tagger := NewPolishTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
 }

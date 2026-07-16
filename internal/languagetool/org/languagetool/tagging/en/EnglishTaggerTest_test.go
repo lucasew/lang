@@ -1,27 +1,25 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/tagging/en/EnglishTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/tagging/en/EnglishTaggerTest.java :: EnglishTaggerTest.testDictionary
-func TestEnglishTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: EnglishTaggerTest.testDictionary")
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/tagging/en/EnglishTaggerTest.java :: EnglishTaggerTest.testTagger
 func TestEnglishTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: EnglishTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"house": {tagging.NewTaggedWord("house", "N")},
+	}
+	tagger := NewEnglishTagger(wt)
+	got := tagger.Tag([]string{"house", "xyz"})
+	require.Len(t, got, 2)
+	require.NotEmpty(t, got[0].GetReadings())
+	// unknown word still yields a reading
+	require.NotEmpty(t, got[1].GetReadings())
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/tagging/en/EnglishTaggerTest.java :: EnglishTaggerTest.testLemma
-func TestEnglishTagger_Lemma(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+func TestEnglishTagger_DictionaryPath(t *testing.T) {
+	tagger := NewEnglishTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
 }

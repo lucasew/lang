@@ -1,27 +1,25 @@
 package es
 
-// Twin of languagetool-language-modules/es/src/test/java/org/languagetool/tagging/es/SpanishTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/tagging/es/SpanishTaggerTest.java :: SpanishTaggerTest.testDictionary
-func TestSpanishTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: SpanishTaggerTest.testDictionary")
-}
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/tagging/es/SpanishTaggerTest.java :: SpanishTaggerTest.testTagger
 func TestSpanishTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: SpanishTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"casa": {tagging.NewTaggedWord("casa", "N")},
+	}
+	tagger := NewSpanishTagger(wt)
+	got := tagger.Tag([]string{"casa", "xyz"})
+	require.Len(t, got, 2)
+	require.NotEmpty(t, got[0].GetReadings())
+	// unknown word still yields a reading
+	require.NotEmpty(t, got[1].GetReadings())
 }
 
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/tagging/es/SpanishTaggerTest.java :: SpanishTaggerTest.testDisambiguator
-func TestSpanishTagger_Disambiguator(t *testing.T) {
-	t.Skip("unimplemented: SpanishTaggerTest.testDisambiguator")
+func TestSpanishTagger_DictionaryPath(t *testing.T) {
+	tagger := NewSpanishTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
 }

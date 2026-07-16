@@ -68,7 +68,13 @@ func TestSentenceRange_EnglishSentenceRange(t *testing.T) {
 	t.Skip("unimplemented: SentenceRangeTest.testEnglishSentenceRange")
 }
 func TestSentenceRange_SpecialCase(t *testing.T) {
-	t.Skip("unimplemented: SentenceRangeTest.testSpecialCase")
+	// Special characters / BOM-like content still produce ranges for non-empty sentences.
+	sentences := []string{"\uFEFFHello.", " World."}
+	text := strings.Join(sentences, "")
+	annotated := markup.NewAnnotatedTextBuilder().AddText(text).Build()
+	ranges := GetRangesFromSentences(annotated, sentences)
+	require.Len(t, ranges, 2)
+	require.Greater(t, ranges[0].GetToPos(), ranges[0].GetFromPos())
 }
 func TestSentenceRange_ExtraWhitespaceCase(t *testing.T) {
 	// Port of ExtraWhitespaceCase using GetRangesFromSentences (no full check2 pipeline).

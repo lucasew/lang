@@ -1,3 +1,18 @@
 package uk
 
-type TokenAgreementPrepNounExceptionHelper struct{}
+// TokenAgreementPrepNounExceptionHelper ports org.languagetool.rules.uk.TokenAgreementPrepNounExceptionHelper (exception surface).
+// Full dictionary-driven exception tables are deferred; callers can inject IsException.
+type TokenAgreementPrepNounExceptionHelper struct {
+	// IsException optional override for tests / full port.
+	IsException func(tokens []string, a, b int) bool
+}
+
+func NewTokenAgreementPrepNounExceptionHelper() *TokenAgreementPrepNounExceptionHelper { return &TokenAgreementPrepNounExceptionHelper{} }
+
+// Exception reports whether the pair at positions should be ignored.
+func (h *TokenAgreementPrepNounExceptionHelper) Exception(tokens []string, a, b int) bool {
+	if h != nil && h.IsException != nil {
+		return h.IsException(tokens, a, b)
+	}
+	return false
+}

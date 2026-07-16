@@ -1,22 +1,25 @@
 package nl
 
-// Twin of languagetool-language-modules/nl/src/test/java/org/languagetool/tagging/nl/DutchTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/tagging/nl/DutchTaggerTest.java :: DutchTaggerTest.testDictionary
-func TestDutchTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: DutchTaggerTest.testDictionary")
+func TestDutchTagger_Tagger(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"huis": {tagging.NewTaggedWord("huis", "N")},
+	}
+	tagger := NewDutchTagger(wt)
+	got := tagger.Tag([]string{"huis", "xyz"})
+	require.Len(t, got, 2)
+	require.NotEmpty(t, got[0].GetReadings())
+	// unknown word still yields a reading
+	require.NotEmpty(t, got[1].GetReadings())
 }
 
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/tagging/nl/DutchTaggerTest.java :: DutchTaggerTest.testTagger
-func TestDutchTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: DutchTaggerTest.testTagger")
+func TestDutchTagger_DictionaryPath(t *testing.T) {
+	tagger := NewDutchTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
 }

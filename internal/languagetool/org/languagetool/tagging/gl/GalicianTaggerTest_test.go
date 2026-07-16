@@ -1,17 +1,25 @@
 package gl
 
-// Twin of languagetool-language-modules/gl/src/test/java/org/languagetool/tagging/gl/GalicianTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/gl/src/test/java/org/languagetool/tagging/gl/GalicianTaggerTest.java :: GalicianTaggerTest.testTagger
 func TestGalicianTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: GalicianTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"casa": {tagging.NewTaggedWord("casa", "N")},
+	}
+	tagger := NewGalicianTagger(wt)
+	got := tagger.Tag([]string{"casa", "xyz"})
+	require.Len(t, got, 2)
+	require.NotEmpty(t, got[0].GetReadings())
+	// unknown word still yields a reading
+	require.NotEmpty(t, got[1].GetReadings())
+}
+
+func TestGalicianTagger_DictionaryPath(t *testing.T) {
+	tagger := NewGalicianTagger(nil)
+	require.NotEmpty(t, tagger.GetDictionaryPath())
 }

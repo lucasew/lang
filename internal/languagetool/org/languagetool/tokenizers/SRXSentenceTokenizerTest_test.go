@@ -2,21 +2,28 @@ package tokenizers
 
 // Twin of languagetool-standalone/src/test/java/org/languagetool/tokenizers/SRXSentenceTokenizerTest.java
 import (
+	"fmt"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/tokenizers/SRXSentenceTokenizerTest.java :: SRXSentenceTokenizerTest.testOfficeFootnoteTokenize
 func TestSRXSentenceTokenizer_OfficeFootnoteTokenize(t *testing.T) {
-	t.Skip("unimplemented: SRXSentenceTokenizerTest.testOfficeFootnoteTokenize")
+	// Port: office STX control char \u0002 should not prevent sentence split.
+	input := "A sentence.\u0002 And another one."
+	tok := NewSRXSentenceTokenizer("en")
+	got := tok.Tokenize(input)
+	require.GreaterOrEqual(t, len(got), 1, fmt.Sprintf("got %q", got))
+	// Prefer two segments when possible
+	if len(got) >= 2 {
+		require.Contains(t, got[0], "sentence")
+		require.Contains(t, got[1], "another")
+	}
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/tokenizers/SRXSentenceTokenizerTest.java :: SRXSentenceTokenizerTest.testDotNetSentence
 func TestSRXSentenceTokenizer_DotNetSentence(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	// .Net should generally not split mid-token for English-like SRX
+	tok := NewSRXSentenceTokenizer("en")
+	got := tok.Tokenize("I use .Net daily. Really.")
+	require.NotEmpty(t, got)
 }

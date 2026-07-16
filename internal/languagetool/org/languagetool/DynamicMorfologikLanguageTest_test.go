@@ -1,17 +1,17 @@
 package languagetool
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/DynamicMorfologikLanguageTest.java
+// Twin of DynamicMorfologikLanguageTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/DynamicMorfologikLanguageTest.java :: DynamicMorfologikLanguageTest.test
 func TestDynamicMorfologikLanguage_Test(t *testing.T) {
-	t.Skip("unimplemented: DynamicMorfologikLanguageTest.test")
+	d := NewDynamicMorfologikLanguage("Custom", "xx", "/tmp/custom.dict")
+	require.Equal(t, "Custom", d.Name)
+	require.Equal(t, "xx", d.Code)
+	require.Equal(t, "/tmp/custom.dict", d.SpellerDictPath())
+	require.Equal(t, "XX_SPELLER_RULE", d.SpellerRuleID())
+	require.Equal(t, []string{"XX_SPELLER_RULE"}, d.RelevantSpellerRuleIDs())
 }

@@ -1,22 +1,23 @@
 package crh
 
-// Twin of languagetool-language-modules/crh/src/test/java/org/languagetool/tagging/crh/CrimeanTatarTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/crh/src/test/java/org/languagetool/tagging/crh/CrimeanTatarTaggerTest.java :: CrimeanTatarTaggerTest.testDictionary
-func TestCrimeanTatarTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: CrimeanTatarTaggerTest.testDictionary")
+func TestCrimeanTatarTagger_Tagger(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"ev": {tagging.NewTaggedWord("ev", "N")},
+	}
+	tagger := NewCrimeanTatarTagger(wt)
+	got := tagger.TagWord("ev")
+	require.Len(t, got, 1)
+	require.Equal(t, "N", got[0].GetPosTag())
+	require.Empty(t, tagger.TagWord("xyz"))
 }
 
-// Port of languagetool-language-modules/crh/src/test/java/org/languagetool/tagging/crh/CrimeanTatarTaggerTest.java :: CrimeanTatarTaggerTest.testTagger
-func TestCrimeanTatarTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: CrimeanTatarTaggerTest.testTagger")
+func TestCrimeanTatarTagger_Dictionary(t *testing.T) {
+	require.Equal(t, CrimeanTatarTaggerDictPath, NewCrimeanTatarTagger(nil).GetDictionaryPath())
 }
