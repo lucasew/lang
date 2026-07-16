@@ -60,6 +60,8 @@ func NewGenericUnpairedQuotesRule(messages map[string]string, start, end []strin
 
 func (r *GenericUnpairedQuotesRule) GetID() string { return r.ruleID }
 
+func (r *GenericUnpairedQuotesRule) SetRuleID(id string) { r.ruleID = id }
+
 // MatchList ports match(List<AnalyzedSentence>).
 func (r *GenericUnpairedQuotesRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	var openingQuotes []quoteSymbolLocator

@@ -4,14 +4,22 @@ package de
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanUnpairedQuotesRuleTest.java :: GermanUnpairedQuotesRuleTest.testGermanRule
 func TestGermanUnpairedQuotesRule_GermanRule(t *testing.T) {
-	tools.Unimplemented("GermanUnpairedQuotesRuleTest.testGermanRule")
+	rule := NewGermanUnpairedQuotesRule(nil)
+	matchN := func(s string) int {
+		return len(rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)}))
+	}
+	// correct
+	require.Equal(t, 0, matchN("»Das sind die Sätze, die sie testen sollen«."))
+	require.Equal(t, 0, matchN("«Das sind die ‹Sätze›, die sie testen sollen»."))
+	require.Equal(t, 0, matchN("»Das sind die ›Sätze‹, die sie testen sollen«."))
+	require.Equal(t, 0, matchN("„Das sind die Sätze, die sie testen sollen.“ „Hier steht ein zweiter Satz.“"))
+	// incorrect
+	require.Equal(t, 1, matchN("Die „Sätze zum Testen."))
+	require.Equal(t, 1, matchN("Die «Sätze zum Testen."))
+	require.Equal(t, 1, matchN("Die »Sätze zum Testen."))
 }
