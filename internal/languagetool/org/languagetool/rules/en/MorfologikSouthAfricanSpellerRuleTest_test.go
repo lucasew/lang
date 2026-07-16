@@ -1,22 +1,32 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRuleTest.java :: MorfologikSouthAfricanSpellerRuleTest.testSuggestions
 func TestMorfologikSouthAfricanSpellerRule_Suggestions(t *testing.T) {
-	t.Skip("unimplemented: MorfologikSouthAfricanSpellerRuleTest.testSuggestions")
+	r := NewMorfologikSouthAfricanSpellerRule()
+	require.Equal(t, MorfologikSouthAfricanSpellerRuleID, r.GetID())
+	sp := morfologik.NewMorfologikSpeller(SouthAfricanSpellerDict, 1)
+	sp.AddWord("colour")
+	sp.Suggestions["color"] = []string{"colour"}
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+	require.Equal(t, []string{"colour"}, sp.FindReplacements("color"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikSouthAfricanSpellerRuleTest.java :: MorfologikSouthAfricanSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikSouthAfricanSpellerRule_MorfologikSpeller(t *testing.T) {
-	t.Skip("unimplemented: MorfologikSouthAfricanSpellerRuleTest.testMorfologikSpeller")
+	r := NewMorfologikSouthAfricanSpellerRule()
+	sp := morfologik.NewMorfologikSpeller(SouthAfricanSpellerDict, 1)
+	sp.AddWord("favourite")
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+	sent := languagetool.AnalyzePlain("favourite favrite")
+	matches, err := r.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, matches, 1)
 }

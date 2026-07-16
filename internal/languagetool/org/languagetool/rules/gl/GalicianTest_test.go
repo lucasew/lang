@@ -1,17 +1,14 @@
 package gl
 
-// Twin of languagetool-language-modules/gl/src/test/java/org/languagetool/rules/gl/GalicianTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/gl/src/test/java/org/languagetool/rules/gl/GalicianTest.java :: GalicianTest.testLanguage
 func TestGalician_Language(t *testing.T) {
-	t.Skip("unimplemented: GalicianTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("gl")
+	require.Equal(t, "gl", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze(`Isto é un texto de proba.`))
 }

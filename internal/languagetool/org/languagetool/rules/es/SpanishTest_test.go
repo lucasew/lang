@@ -1,17 +1,14 @@
 package es
 
-// Twin of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishTest.java :: SpanishTest.testLanguage
 func TestSpanish_Language(t *testing.T) {
-	t.Skip("unimplemented: SpanishTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("es")
+	require.Equal(t, "es", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze(`Esto es un texto de prueba.`))
 }

@@ -1,17 +1,18 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/WordRepeatRuleTest.java
+// Twin of English WordRepeatRuleTest
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/WordRepeatRuleTest.java :: WordRepeatRuleTest.testRule
 func TestWordRepeatRule_Rule(t *testing.T) {
-	t.Skip("unimplemented: WordRepeatRuleTest.testRule")
+	r := rules.NewWordRepeatRule(map[string]string{"repetition": "Repetition"})
+	require.Empty(t, r.Match(languagetool.AnalyzePlain("This is fine")))
+	require.Len(t, r.Match(languagetool.AnalyzePlain("This this is bad")), 1)
+	// Known name repetition ignored by core rule
+	require.Empty(t, r.Match(languagetool.AnalyzePlain("Duran Duran")))
 }

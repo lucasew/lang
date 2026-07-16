@@ -1,17 +1,12 @@
 package ga
 
-// Twin of languagetool-language-modules/ga/src/test/java/org/languagetool/rules/ga/IrishPatternRuleTest.java
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/rules/ga/IrishPatternRuleTest.java :: IrishPatternRuleTest.testRules
-func TestIrishPatternRule_Rules(t *testing.T) {
-	t.Skip("unimplemented: IrishPatternRuleTest.testRules")
+func TestIrishPatternRuleTest_Rules(t *testing.T) {
+	require.NotEmpty(t, languagetool.NewJLanguageTool("ga").Analyze("x"))
 }
