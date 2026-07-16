@@ -116,6 +116,11 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			// legacy alias often used with bitext; treat as bitext flag
 			opts.SetBitext(true)
 		default:
+			// "-" means stdin (not an unknown flag)
+			if a == "-" {
+				opts.SetFilename("-")
+				continue
+			}
 			if strings.HasPrefix(a, "-") {
 				return nil, UnknownParameterException{Param: a}
 			}

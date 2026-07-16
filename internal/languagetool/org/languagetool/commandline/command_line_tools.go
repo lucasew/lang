@@ -1,0 +1,274 @@
+package commandline
+
+import (
+	"fmt"
+	"io"
+	"sort"
+	"strings"
+	"time"
+	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
+
+const defaultContextSize = 45
+
+// TextChecker is a pluggable checker used by CommandLineTools (avoids hard-wiring JLanguageTool).
+type TextChecker interface {
+	Check(text string) ([]*rules.RuleMatch, error)
+}
+
+// TextText runs checker and writes plain-text match output to w.
+// Returns the number of matches.
+func CheckText(w io.Writer, contents string, checker TextChecker) (int, error) {
+	return CheckTextOpts(w, contents, checker, CheckTextOptions{})
+}
+
+// CheckTextOptions controls formatting for CheckTextOpts.
+type CheckTextOptions struct {
+	JSON         bool
+	ContextSize  int // -1 or 0 → default
+	LineOffset   int
+	PrevMatches  int
+	Verbose      bool
+	ListUnknown  bool
+	UnknownWords []string
+	// JSONWriter optional custom JSON body; when nil and JSON is true, emits a minimal array.
+	JSONSerializer func(matches []*rules.RuleMatch, contents string, contextSize int) string
+}
+
+// CheckTextOpts is the full check/print entry used by the CLI.
+func CheckTextOpts(w io.Writer, contents string, checker TextChecker, opts CheckTextOptions) (int, error) {
+	if checker == nil {
+		return 0, fmt.Errorf("nil checker")
+	}
+	if w == nil {
+		w = io.Discard
+	}
+	ctx := opts.ContextSize
+	if ctx <= 0 {
+		ctx = defaultContextSize
+	}
+	start := time.Now()
+	matches, err := checker.Check(contents)
+	if err != nil {
+		return 0, err
+	}
+	if opts.JSON {
+		if opts.JSONSerializer != nil {
+			_, _ = io.WriteString(w, opts.JSONSerializer(matches, contents, ctx))
+		} else {
+			_, _ = io.WriteString(w, matchesToMinimalJSON(matches))
+		}
+		return len(matches), nil
+	}
+	PrintMatches(w, matches, opts.PrevMatches, contents, ctx, opts.LineOffset, opts.Verbose)
+	// sentence count estimate: non-empty lines of punctuation splits
+	sentCount := estimateSentences(contents)
+	DisplayTimeStats(w, start, sentCount)
+	if opts.ListUnknown && len(opts.UnknownWords) > 0 {
+		_, _ = fmt.Fprintf(w, "Unknown words: %s\n", strings.Join(opts.UnknownWords, ", "))
+	}
+	return len(matches), nil
+}
+
+// PrintMatches ports CommandLineTools.printMatches.
+func PrintMatches(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, contents string, contextSize, lineOffset int, verbose bool) {
+	if w == nil {
+		return
+	}
+	if contextSize <= 0 {
+		contextSize = defaultContextSize
+	}
+	ct := tools.NewContextTools()
+	ct.SetContextSize(contextSize)
+	ct.SetEscapeHtml(false)
+	for i, match := range ruleMatches {
+		if match == nil {
+			continue
+		}
+		line, col := lineColumnAt(contents, match.FromPos)
+		line += lineOffset
+		ruleID := ruleIDOf(match)
+		output := fmt.Sprintf("%d.) Line %d, column %d, Rule ID: %s", i+1+prevMatches, line, col, ruleID)
+		if verbose {
+			if sub := ruleSubIDOf(match); sub != "" {
+				output += "[" + sub + "]"
+			}
+		}
+		_, _ = fmt.Fprintln(w, output)
+		_, _ = fmt.Fprintf(w, "Message: %s\n", match.GetMessage())
+		reps := match.GetSuggestedReplacements()
+		if len(reps) > 0 {
+			if len(reps) > 5 {
+				reps = reps[:5]
+			}
+			_, _ = fmt.Fprintf(w, "Suggestion: %s\n", strings.Join(reps, "; "))
+		}
+		_, _ = fmt.Fprintln(w, ct.GetPlainTextContext(match.FromPos, match.ToPos, contents))
+		if i < len(ruleMatches)-1 {
+			_, _ = fmt.Fprintln(w)
+		}
+	}
+}
+
+// DisplayTimeStats ports CommandLineTools.displayTimeStats.
+func DisplayTimeStats(w io.Writer, start time.Time, sentCount int) {
+	if w == nil {
+		return
+	}
+	elapsed := time.Since(start)
+	ms := elapsed.Milliseconds()
+	sec := elapsed.Seconds()
+	var rate float64
+	if sec > 0 {
+		rate = float64(sentCount) / sec
+	}
+	_, _ = fmt.Fprintf(w, "Time: %dms for %d sentences (%.1f sentences/sec)\n", ms, sentCount, rate)
+}
+
+// FormatTagLine formats one analyzed sentence for --taggeronly style output.
+func FormatTagLine(sentenceText string, tokens []string) string {
+	if len(tokens) == 0 {
+		return sentenceText
+	}
+	return sentenceText + "\n" + strings.Join(tokens, " ")
+}
+
+// TagText writes simple token lines for each sentence (pluggable sentence split + token strings).
+func TagText(w io.Writer, contents string, sentences []string, analyze func(sentence string) []string) {
+	if w == nil {
+		return
+	}
+	if analyze == nil {
+		analyze = func(s string) []string { return strings.Fields(s) }
+	}
+	if len(sentences) == 0 {
+		sentences = []string{contents}
+	}
+	for _, s := range sentences {
+		_, _ = fmt.Fprintln(w, FormatTagLine(s, analyze(s)))
+	}
+}
+
+// ProfileRulesOnText runs each rule function over sentences and prints timing table.
+func ProfileRulesOnText(w io.Writer, sentences []string, ruleIDs []string, matchFn func(ruleID, sentence string) int) {
+	if w == nil || matchFn == nil {
+		return
+	}
+	const iterations = 3
+	_, _ = fmt.Fprintf(w, "Testing %d rules\n", len(ruleIDs))
+	_, _ = fmt.Fprintf(w, "%-40s%10s%10s%10s%15s\n", "Rule ID", "Time", "Sentences", "Matches", "Sentences per sec.")
+	for _, id := range ruleIDs {
+		times := make([]int64, iterations)
+		matchCount := 0
+		for k := 0; k < iterations; k++ {
+			start := time.Now()
+			mc := 0
+			for _, s := range sentences {
+				mc += matchFn(id, s)
+			}
+			times[k] = time.Since(start).Milliseconds()
+			matchCount = mc // last iteration count (Java sums across iterations; we report last full pass * iterations-ish)
+			if k == iterations-1 {
+				matchCount = mc
+			}
+		}
+		med := medianMS(times)
+		var rate float64
+		if med > 0 {
+			rate = float64(len(sentences)) / (float64(med) / 1000.0)
+		}
+		_, _ = fmt.Fprintf(w, "%-40s%10d%10d%10d%15.1f\n", id, med, len(sentences), matchCount, rate)
+	}
+}
+
+func medianMS(m []int64) int64 {
+	cp := append([]int64(nil), m...)
+	sort.Slice(cp, func(i, j int) bool { return cp[i] < cp[j] })
+	mid := len(cp) / 2
+	if len(cp)%2 == 1 {
+		return cp[mid]
+	}
+	return (cp[mid-1] + cp[mid]) / 2
+}
+
+func lineColumnAt(text string, pos int) (line, col int) {
+	line, col = 1, 1
+	if pos < 0 {
+		return line, col
+	}
+	if pos > len(text) {
+		pos = len(text)
+	}
+	for i := 0; i < pos; {
+		r, size := utf8.DecodeRuneInString(text[i:])
+		i += size
+		if r == '\n' {
+			line++
+			col = 1
+		} else {
+			col++
+		}
+	}
+	return line, col
+}
+
+func ruleIDOf(m *rules.RuleMatch) string {
+	if m == nil || m.Rule == nil {
+		return "?"
+	}
+	type idder interface{ GetID() string }
+	if r, ok := m.Rule.(idder); ok {
+		return r.GetID()
+	}
+	return fmt.Sprintf("%T", m.Rule)
+}
+
+func ruleSubIDOf(m *rules.RuleMatch) string {
+	if m == nil || m.Rule == nil {
+		return ""
+	}
+	type sub interface{ GetSubID() string }
+	if r, ok := m.Rule.(sub); ok {
+		return r.GetSubID()
+	}
+	return ""
+}
+
+func estimateSentences(text string) int {
+	if strings.TrimSpace(text) == "" {
+		return 0
+	}
+	n := 0
+	for _, p := range strings.FieldsFunc(text, func(r rune) bool {
+		return r == '.' || r == '!' || r == '?' || r == '\n'
+	}) {
+		if strings.TrimSpace(p) != "" {
+			n++
+		}
+	}
+	if n == 0 {
+		return 1
+	}
+	return n
+}
+
+func matchesToMinimalJSON(matches []*rules.RuleMatch) string {
+	var b strings.Builder
+	b.WriteByte('[')
+	for i, m := range matches {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		if m == nil {
+			b.WriteString("null")
+			continue
+		}
+		b.WriteString(fmt.Sprintf(`{"offset":%d,"length":%d,"message":%q,"rule":{"id":%q}}`,
+			m.FromPos, m.ToPos-m.FromPos, m.Message, ruleIDOf(m)))
+	}
+	b.WriteByte(']')
+	return b.String()
+}

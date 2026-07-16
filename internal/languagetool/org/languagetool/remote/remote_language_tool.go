@@ -235,3 +235,62 @@ func truncate(s string, n int) string {
 	}
 	return s[:n] + "…"
 }
+
+// GetConfigurationInfo fetches /v2/configinfo.
+func (r *RemoteLanguageTool) GetConfigurationInfo() (*RemoteConfigurationInfo, error) {
+	if r == nil {
+		return nil, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	endpoint := r.ServerBaseURL + v2ConfigInfo
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("configinfo HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
+	}
+	return ParseRemoteConfigurationInfo(resp.Body)
+}
+
+// GetMaxTextLength fetches /v2/maxtextlength (plain integer body).
+func (r *RemoteLanguageTool) GetMaxTextLength() (int, error) {
+	if r == nil {
+		return 0, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	endpoint := r.ServerBaseURL + v2MaxTextLength
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return 0, err
+	}
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return 0, fmt.Errorf("maxtextlength HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
+	}
+	var n int
+	if _, err := fmt.Sscanf(strings.TrimSpace(string(body)), "%d", &n); err != nil {
+		return 0, err
+	}
+	return n, nil
+}

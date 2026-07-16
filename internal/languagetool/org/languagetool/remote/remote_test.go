@@ -88,3 +88,28 @@ func TestRemoteLanguageToolCheck(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, res.GetMatches())
 }
+
+func TestRemoteConfigurationInfo(t *testing.T) {
+	raw := `{
+	  "software": {"name":"LT","version":"6"},
+	  "parameter": {"maxTextLength": 20000},
+	  "rules": [{"id":"A","description":"x"}]
+	}`
+	info, err := ParseRemoteConfigurationInfoJSON([]byte(raw))
+	require.NoError(t, err)
+	require.Equal(t, 20000, info.GetMaxTextLength())
+	require.Equal(t, "LT", info.GetSoftwareInfo()["name"])
+	require.Len(t, info.GetRemoteRules(), 1)
+	require.Equal(t, "A", info.GetRemoteRules()[0]["id"])
+
+	lt := NewRemoteLanguageTool("http://example.invalid")
+	lt.Client = stubClient{body: raw}
+	got, err := lt.GetConfigurationInfo()
+	require.NoError(t, err)
+	require.Equal(t, 20000, got.GetMaxTextLength())
+
+	lt.Client = stubClient{body: "15000"}
+	n, err := lt.GetMaxTextLength()
+	require.NoError(t, err)
+	require.Equal(t, 15000, n)
+}
