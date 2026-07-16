@@ -42,9 +42,9 @@ type Checker struct {
 	// pattern rules by language family
 	rulesCache sync.Map // family -> []*pattern.Rule
 	// English tagger/speller (optional until dicts installed)
-	enTagger   *tagger.Tagger
-	enSpeller  *speller.Speller
-	enDisambig *disambig.Engine
+	enTagger     *tagger.Tagger
+	enDisambig   *disambig.Engine
+	spellerCache sync.Map // family -> *speller.Speller
 }
 
 // New resolves data and discovers languages.
@@ -70,9 +70,6 @@ func New(dataDirFlag string) (*Checker, error) {
 	if tg, err := tagger.OpenEnglish(root); err == nil {
 		c.enTagger = tg
 	}
-	if sp, err := speller.OpenEnglishUS(root); err == nil {
-		c.enSpeller = sp
-	}
 	if de, err := disambig.LoadEnglish(root); err == nil {
 		c.enDisambig = de
 	}
@@ -82,7 +79,10 @@ func New(dataDirFlag string) (*Checker, error) {
 func (c *Checker) DataRoot() string           { return c.dataRoot }
 func (c *Checker) Languages() []data.Language { return c.langs }
 func (c *Checker) HasEnglishTagger() bool     { return c.enTagger != nil }
-func (c *Checker) HasEnglishSpeller() bool    { return c.enSpeller != nil }
+func (c *Checker) HasEnglishSpeller() bool {
+	_, err := c.spellerFor("en", "en-US")
+	return err == nil
+}
 
 // Check analyzes text for the given file label.
 func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
@@ -115,10 +115,11 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 		findings = append(findings, rules.WordRepeat(text, file, lang.Code, msg)...)
 	}
 
-	// Speller (English US for en*)
-	if c.enSpeller != nil && (lang.Family == "en" || strings.HasPrefix(lang.Code, "en")) {
-		if ruleEnabled(speller.RuleEnUS, opt) {
-			findings = append(findings, c.enSpeller.Check(text, file, lang.Code, msg)...)
+	// Speller when a morfologik hunspell dict is available for the family
+	if sp, err := c.spellerFor(lang.Family, lang.Code); err == nil && sp != nil {
+		// allow disable by rule id
+		if ruleEnabled(sp.RuleID(), opt) {
+			findings = append(findings, sp.Check(text, file, lang.Code, msg)...)
 		}
 	}
 
@@ -189,6 +190,22 @@ func (c *Checker) messages(family string) (messages.Bundle, error) {
 	}
 	c.msgCache.Store(family, b)
 	return b, nil
+}
+
+func (c *Checker) spellerFor(family, code string) (*speller.Speller, error) {
+	if v, ok := c.spellerCache.Load(family); ok {
+		if v == nil {
+			return nil, fmt.Errorf("no speller")
+		}
+		return v.(*speller.Speller), nil
+	}
+	sp, err := speller.OpenForLanguage(c.dataRoot, family, code)
+	if err != nil {
+		c.spellerCache.Store(family, nil)
+		return nil, err
+	}
+	c.spellerCache.Store(family, sp)
+	return sp, nil
 }
 
 func (c *Checker) patternRules(lang data.Language) ([]*pattern.Rule, error) {
