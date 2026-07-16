@@ -1,21 +1,30 @@
 package tools
 
-// Twin of languagetool-core/src/test/java/org/languagetool/tools/LtThreadPoolFactoryTest.java
+// Twin of LtThreadPoolFactoryTest (non-@Ignore cases)
 import (
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/LtThreadPoolFactoryTest.java :: LtThreadPoolFactoryTest.cachedThreadPoolTest
 func TestLtThreadPoolFactory_CachedThreadPoolTest(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	t.Cleanup(ResetLtThreadPoolFactory)
+	a := CreateFixedThreadPoolExecutor("Test-Pool-cached", 10, 20, true)
+	b := DefaultLtThreadPoolFactory.Get("Test-Pool-cached")
+	require.NotNil(t, b)
+	require.Same(t, a, b)
+	// execute a task
+	var n atomic.Int64
+	require.True(t, a.Execute(func() { n.Add(1) }))
+	require.Eventually(t, func() bool { return n.Load() == 1 }, time.Second, 5*time.Millisecond)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/LtThreadPoolFactoryTest.java :: LtThreadPoolFactoryTest.notcachedThreadPoolTest
 func TestLtThreadPoolFactory_NotcachedThreadPoolTest(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	t.Cleanup(ResetLtThreadPoolFactory)
+	a := CreateFixedThreadPoolExecutor("Test-Pool-notCached", 10, 20, false)
+	// non-reuse pools are not registered → Get is nil (Java returns defaultPool)
+	require.Nil(t, DefaultLtThreadPoolFactory.Get("Test-Pool-notCached"))
+	require.NotNil(t, a)
 }

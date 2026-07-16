@@ -1,17 +1,25 @@
 package it
 
-// Twin of languagetool-language-modules/it/src/test/java/org/languagetool/synthesis/it/ItalianSynthesizerTest.java
+// Twin of ItalianSynthesizerTest — full IT synth dict deferred; manual synth smoke.
 import (
+	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/it/src/test/java/org/languagetool/synthesis/it/ItalianSynthesizerTest.java :: ItalianSynthesizerTest (no @Test)
 func TestItalianSynthesizer_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/it/src/test/java/org/languagetool/synthesis/it/ItalianSynthesizerTest.java")
+	// Manual synth format: form\tlemma\tpos
+	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("sono\tessere\tVER:ind+pres+1+s\n"))
+	require.NoError(t, err)
+	s := NewItalianSynthesizer(manual)
+	require.Equal(t, "/it/it_synth.dict", s.ResourceFileName)
+	lemma := "essere"
+	tag := "VER:ind+pres+1+s"
+	tok := languagetool.NewAnalyzedToken("essere", &tag, &lemma)
+	forms, err := s.Synthesize(tok, tag)
+	require.NoError(t, err)
+	require.Contains(t, forms, "sono")
 }
