@@ -16,6 +16,7 @@ type MultiWordChunker2 struct {
 	AllowFirstCapitalized bool
 	RemoveOtherReadings   bool
 	WrapTag               bool
+	AddIgnoreSpelling     bool
 
 	mu             sync.Mutex
 	tokenToEntries map[string][]multiWordEntry
@@ -41,6 +42,7 @@ func NewMultiWordChunker2(lines []string, allowFirstCapitalized bool) *MultiWord
 
 func (c *MultiWordChunker2) SetRemoveOtherReadings(v bool) { c.RemoveOtherReadings = v }
 func (c *MultiWordChunker2) SetWrapTag(v bool)             { c.WrapTag = v }
+func (c *MultiWordChunker2) SetIgnoreSpelling(v bool)      { c.AddIgnoreSpelling = v }
 
 func (c *MultiWordChunker2) lazyInit() {
 	c.mu.Lock()
@@ -97,6 +99,8 @@ func (c *MultiWordChunker2) Disambiguate(input *languagetool.AnalyzedSentence) *
 			continue
 		}
 		multiwordPos := 0
+		startPos := i
+		endPos := i
 		for inputTokenPos := i; multiwordPos < len(entry.tokens) && inputTokenPos < len(inputTokens); inputTokenPos++ {
 			current := inputTokens[inputTokenPos]
 			if current.IsWhitespace() {
@@ -104,7 +108,15 @@ func (c *MultiWordChunker2) Disambiguate(input *languagetool.AnalyzedSentence) *
 			}
 			tag := c.formatPosTag(entry.tag, multiwordPos, len(entry.tokens))
 			output[inputTokenPos] = c.prepareNewReading(entry.lemma(), current.GetToken(), current, tag)
+			endPos = inputTokenPos
 			multiwordPos++
+		}
+		if c.AddIgnoreSpelling {
+			for m := startPos; m <= endPos && m < len(output); m++ {
+				if output[m] != nil {
+					output[m].IgnoreSpelling()
+				}
+			}
 		}
 	}
 	return languagetool.NewAnalyzedSentence(output)

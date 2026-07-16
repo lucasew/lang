@@ -173,8 +173,24 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 				}
 			}
 		}
+	case ActionIgnoreSpelling:
+		for i := first; i <= last && i < len(nws); i++ {
+			if nws[i] != nil {
+				nws[i].IgnoreSpelling()
+			}
+		}
+	case ActionAddChunk:
+		// ADDCHUNK: DisambiguatedPOS is the chunk tag to set on matched tokens
+		if r.DisambiguatedPOS == "" {
+			return
+		}
+		for i := first; i <= last && i < len(nws); i++ {
+			if nws[i] != nil {
+				nws[i].SetChunkTags([]string{r.DisambiguatedPOS})
+			}
+		}
 	default:
-		// UNIFY, IGNORE_SPELLING, ADDCHUNK deferred
+		// UNIFY deferred
 		_ = fmt.Sprintf
 	}
 }

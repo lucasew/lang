@@ -11,14 +11,14 @@ import (
 // AbstractSimpleReplaceRule ports org.languagetool.rules.AbstractSimpleReplaceRule
 // for dictionary-based token replacements (checkLemmas path optional).
 type AbstractSimpleReplaceRule struct {
-	Messages         map[string]string
-	WrongWords       map[string][]string
-	CaseSensitive    bool
-	CheckLemmas      bool
+	Messages          map[string]string
+	WrongWords        map[string][]string
+	CaseSensitive     bool
+	CheckLemmas       bool
 	IgnoreTaggedWords bool
-	ID               string
-	Description      string
-	ShortMsg         string
+	ID                string
+	Description       string
+	ShortMsg          string
 	// MessageFn custom message; if nil uses default.
 	MessageFn func(tokenStr string, replacements []string) string
 	// TokenException optional skip (ports isTokenException).
@@ -49,7 +49,12 @@ func (r *AbstractSimpleReplaceRule) Match(sentence *languagetool.AnalyzedSentenc
 		if r.TokenException != nil && r.TokenException(tokenReadings) {
 			continue
 		}
-		// isIgnoredBySpeller not modeled yet
+		if tokenReadings.IsIgnoredBySpeller() {
+			continue
+		}
+		if r.IgnoreTaggedWords && tokenReadings.IsTagged() {
+			continue
+		}
 		matches := r.findMatches(tokenReadings, sentence)
 		ruleMatches = append(ruleMatches, matches...)
 	}

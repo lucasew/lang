@@ -65,3 +65,53 @@ func TestDisambiguatedExample(t *testing.T) {
 	e := NewDisambiguatedExampleFull("He can can.", "can[can/NN]", "can[can/VB]")
 	require.Contains(t, e.String(), "can/NN")
 }
+
+func TestDisambiguationPatternRule_IgnoreSpelling(t *testing.T) {
+	posNN := "NN"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		sentStart(),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("foo", &posNN, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("bar", &posNN, nil), 4),
+	}
+	sent := languagetool.NewAnalyzedSentence(toks)
+	rule := NewDisambiguationPatternRule(
+		"D3", "ignore foo", "en",
+		[]*patterns.PatternToken{patterns.Token("foo")},
+		"", nil, ActionIgnoreSpelling,
+	)
+	out := rule.Replace(sent)
+	found := false
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() == "foo" && tok.IsIgnoredBySpeller() {
+			found = true
+		}
+	}
+	require.True(t, found)
+}
+
+func TestDisambiguationPatternRule_AddChunk(t *testing.T) {
+	posNN := "NN"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		sentStart(),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("New", &posNN, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("York", &posNN, nil), 4),
+	}
+	sent := languagetool.NewAnalyzedSentence(toks)
+	rule := NewDisambiguationPatternRule(
+		"D4", "chunk NP", "en",
+		[]*patterns.PatternToken{patterns.Token("New"), patterns.Token("York")},
+		"B-NP", nil, ActionAddChunk,
+	)
+	out := rule.Replace(sent)
+	found := false
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() == "New" {
+			for _, c := range tok.GetChunkTags() {
+				if c == "B-NP" {
+					found = true
+				}
+			}
+		}
+	}
+	require.True(t, found, "expected B-NP chunk on New")
+}
