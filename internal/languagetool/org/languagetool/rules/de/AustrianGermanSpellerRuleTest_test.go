@@ -1,17 +1,13 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AustrianGermanSpellerRuleTest.java
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AustrianGermanSpellerRuleTest.java :: AustrianGermanSpellerRuleTest.testGetSuggestionsFromSpellingTxt
-func TestAustrianGermanSpellerRule_GetSuggestionsFromSpellingTxt(t *testing.T) {
-	// contains assertThat
+func TestAustrianGermanSpellerRule_Rule(t *testing.T) {
+	r := NewAustrianGermanSpellerRule(nil)
+	require.Equal(t, "AUSTRIAN_GERMAN_SPELLER_RULE", r.GetID())
+	require.False(t, r.IsMisspelled("Haus"))
 }
