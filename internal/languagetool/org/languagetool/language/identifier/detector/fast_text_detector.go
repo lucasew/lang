@@ -108,6 +108,8 @@ func (d *FastTextDetector) RunFasttext(text string, additionalLanguageCodes []st
 }
 
 // ParseBuffer ports FastTextDetector.parseBuffer.
+// When CanDetect is nil and additionalLanguageCodes is non-empty, only those codes are kept
+// (Java LanguageIdentifierService.canLanguageBeDetected with supported+additional).
 func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []string) (map[string]float64, error) {
 	buffer = strings.TrimSpace(buffer)
 	if buffer == "" {
@@ -126,6 +128,10 @@ func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []
 			Disabled: true,
 		}
 	}
+	allowed := map[string]struct{}{}
+	for _, c := range additionalLanguageCodes {
+		allowed[c] = struct{}{}
+	}
 	probs := map[string]float64{}
 	for i := 0; i < len(values); i += 2 {
 		lang := values[i]
@@ -138,12 +144,14 @@ func (d *FastTextDetector) ParseBuffer(buffer string, additionalLanguageCodes []
 		if err != nil {
 			return nil, err
 		}
-		if d.CanDetect != nil && !d.CanDetect(langCode, additionalLanguageCodes) {
-			continue
-		}
-		// if additional list provided and no CanDetect, still allow known codes
-		if d.CanDetect == nil && len(additionalLanguageCodes) > 0 {
-			// accept all by default
+		if d.CanDetect != nil {
+			if !d.CanDetect(langCode, additionalLanguageCodes) {
+				continue
+			}
+		} else if len(allowed) > 0 {
+			if _, ok := allowed[langCode]; !ok {
+				continue
+			}
 		}
 		probs[langCode] = prob
 	}

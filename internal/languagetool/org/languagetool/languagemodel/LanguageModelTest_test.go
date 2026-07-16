@@ -1,17 +1,19 @@
 package languagemodel
 
-// Twin of languagetool-core/src/test/java/org/languagetool/languagemodel/LanguageModelTest.java
+// Twin of LanguageModelTest (Java has no @Test) — MapLanguageModel smoke.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/languagemodel/LanguageModelTest.java :: LanguageModelTest (no @Test)
 func TestLanguageModel_NoTests(t *testing.T) {
-	t.Log("languagetool-core/src/test/java/org/languagetool/languagemodel/LanguageModelTest.java")
+	m := NewMapLanguageModel()
+	m.Total = 100
+	m.Add([]string{"the"}, 50)
+	m.Add([]string{"cat"}, 10)
+	m.Add([]string{"the", "cat"}, 5)
+	p := m.GetPseudoProbability([]string{"the", "cat"})
+	require.Greater(t, p.GetProb(), 0.0)
+	require.NoError(t, m.Close())
 }

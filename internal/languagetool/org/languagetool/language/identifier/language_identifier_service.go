@@ -37,8 +37,8 @@ func (s *LanguageIdentifierService) SetSimple(id LanguageIdentifier) {
 	s.simpleIdentifier = id
 }
 
-// GetSimpleLanguageIdentifier returns existing simple or creates via factory once.
-func (s *LanguageIdentifierService) GetSimpleLanguageIdentifier(factory func() LanguageIdentifier) LanguageIdentifier {
+// GetSimpleLanguageIdentifierWithFactory returns existing simple or creates via factory once.
+func (s *LanguageIdentifierService) GetSimpleLanguageIdentifierWithFactory(factory func() LanguageIdentifier) LanguageIdentifier {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.simpleIdentifier == nil && factory != nil {
@@ -53,6 +53,45 @@ func (s *LanguageIdentifierService) Clear() {
 	defer s.mu.Unlock()
 	s.defaultIdentifier = nil
 	s.simpleIdentifier = nil
+}
+
+// ClearLanguageIdentifier ports clearLanguageIdentifier("default"|"simple"|"both").
+func (s *LanguageIdentifierService) ClearLanguageIdentifier(typ string) *LanguageIdentifierService {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	switch typ {
+	case "default":
+		s.defaultIdentifier = nil
+	case "simple":
+		s.simpleIdentifier = nil
+	case "both":
+		s.defaultIdentifier = nil
+		s.simpleIdentifier = nil
+	}
+	return s
+}
+
+// GetDefaultLanguageIdentifier returns existing default or creates one (maxLength, ngram/fasttext paths deferred).
+func (s *LanguageIdentifierService) GetDefaultLanguageIdentifier(maxLength int) LanguageIdentifier {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.defaultIdentifier == nil {
+		if maxLength <= 0 {
+			maxLength = DefaultMaxLength
+		}
+		s.defaultIdentifier = NewDefaultLanguageIdentifier(maxLength)
+	}
+	return s.defaultIdentifier
+}
+
+// GetSimpleLanguageIdentifier ports getSimpleLanguageIdentifier(preferredLangCodes).
+func (s *LanguageIdentifierService) GetSimpleLanguageIdentifier(preferred []string) LanguageIdentifier {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.simpleIdentifier == nil {
+		s.simpleIdentifier = NewSimpleLanguageIdentifierWith(preferred, nil)
+	}
+	return s.simpleIdentifier
 }
 
 // CanLanguageBeDetected is true if langCode is in supported or additional lists.

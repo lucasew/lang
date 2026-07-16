@@ -1,6 +1,6 @@
 package errorcorpus
 
-// Error is a corpus gold span (start inclusive, end exclusive).
+// Error is a corpus gold span (start inclusive, end exclusive) in markup or plain text coordinates.
 type Error struct {
 	StartPos   int
 	EndPos     int
@@ -10,11 +10,16 @@ type Error struct {
 // ErrorSentence ports org.languagetool.dev.errorcorpus.ErrorSentence.
 type ErrorSentence struct {
 	MarkupText string
+	PlainText  string
 	Errors     []Error
 }
 
 func NewErrorSentence(markupText string, errors []Error) *ErrorSentence {
-	return &ErrorSentence{MarkupText: markupText, Errors: append([]Error(nil), errors...)}
+	return &ErrorSentence{
+		MarkupText: markupText,
+		PlainText:  markupText, // caller may set PlainText separately
+		Errors:     append([]Error(nil), errors...),
+	}
 }
 
 // MatchSpan is a minimal stand-in for RuleMatch from/to positions.
