@@ -1,22 +1,29 @@
 package language
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/language/SimpleLanguageIdentifierTest.java
+// Twin of SimpleLanguageIdentifierTest
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language/identifier"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/language/SimpleLanguageIdentifierTest.java :: SimpleLanguageIdentifierTest.testDetection
 func TestSimpleLanguageIdentifier_Detection(t *testing.T) {
-	t.Skip("unimplemented: SimpleLanguageIdentifierTest.testDetection")
+	s := identifier.NewSimpleLanguageIdentifier(1000)
+	s.RegisterSpeller("en", func(w string) bool { return w != "the" && w != "cat" && w != "is" })
+	s.RegisterSpeller("de", func(w string) bool { return w != "der" && w != "hund" && w != "ist" })
+	d := s.Detect("the cat is the cat", nil, nil)
+	require.NotNil(t, d)
+	require.Equal(t, "en", d.GetDetectedLanguageCode())
+	d = s.Detect("der hund ist der hund", nil, nil)
+	require.NotNil(t, d)
+	require.Equal(t, "de", d.GetDetectedLanguageCode())
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/language/SimpleLanguageIdentifierTest.java :: SimpleLanguageIdentifierTest.testShortTexts
 func TestSimpleLanguageIdentifier_ShortTexts(t *testing.T) {
-	t.Skip("unimplemented: SimpleLanguageIdentifierTest.testShortTexts")
+	s := identifier.NewSimpleLanguageIdentifier(1000)
+	s.RegisterSpeller("en", func(w string) bool { return true }) // all misspelled
+	// very short / empty
+	require.Nil(t, s.Detect("", nil, nil))
+	require.Nil(t, s.Detect("   ", nil, nil))
 }

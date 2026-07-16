@@ -1,23 +1,31 @@
 package server
 
-// Twin of languagetool-server/src/test/java/org/languagetool/server/ConfidenceMapLoaderTest.java
+// Twin of ConfidenceMapLoaderTest
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-server/src/test/java/org/languagetool/server/ConfidenceMapLoaderTest.java :: ConfidenceMapLoaderTest.testLoading
 func TestConfidenceMapLoader_Loading(t *testing.T) {
-	// contains assertThat
-	// contains assertNotNull
+	dir := t.TempDir()
+	path := filepath.Join(dir, "conf-en.csv")
+	require.NoError(t, os.WriteFile(path, []byte("RULE_A,0.75\n# c\nRULE_B,0.5\n"), 0o644))
+	loader := NewConfidenceMapLoader()
+	m, err := loader.Load(filepath.Join(dir, "conf-{lang}.csv"), []string{"en"})
+	require.NoError(t, err)
+	require.NotEmpty(t, m)
 }
 
-// Port of languagetool-server/src/test/java/org/languagetool/server/ConfidenceMapLoaderTest.java :: ConfidenceMapLoaderTest.testLoadingFail
 func TestConfidenceMapLoader_LoadingFail(t *testing.T) {
-	t.Skip("unimplemented: ConfidenceMapLoaderTest.testLoadingFail")
+	loader := NewConfidenceMapLoader()
+	// missing {lang}
+	_, err := loader.Load("/tmp/conf.csv", []string{"en"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "{lang}")
+	// no files → empty map error
+	_, err = loader.Load(filepath.Join(t.TempDir(), "conf-{lang}.csv"), []string{"zz"})
+	require.Error(t, err)
 }

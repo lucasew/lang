@@ -1,17 +1,18 @@
 package ca
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/MorfologikCatalanSpellerRuleTest.java
+// Twin of MorfologikCatalanSpellerRuleTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/MorfologikCatalanSpellerRuleTest.java :: MorfologikCatalanSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikCatalanSpellerRule_MorfologikSpeller(t *testing.T) {
-	t.Skip("unimplemented: MorfologikCatalanSpellerRuleTest.testMorfologikSpeller")
+	r := NewMorfologikCatalanSpellerRule()
+	require.Equal(t, MorfologikCatalanSpellerRuleID, r.GetID())
+	require.Equal(t, CatalanSpellerDict, r.GetFileName())
+	// Without a loaded dictionary, Match is still safe.
+	matches, err := r.Match(nil)
+	require.NoError(t, err)
+	require.Empty(t, matches)
 }
