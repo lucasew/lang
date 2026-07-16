@@ -1,6 +1,8 @@
 package languagetool
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
@@ -102,4 +104,35 @@ func shiftSentence(s *AnalyzedSentence, delta int) {
 	for _, t := range s.GetTokens() {
 		t.SetStartPos(t.GetStartPos() + delta)
 	}
+}
+
+
+// AnalyzeTextDemo splits text into sentences for Demo-like unit tests.
+// Paragraph boundaries: blank lines (\n\n). Sentence-local token positions
+// (as LT does); TextLevelRule.match accumulates pos across sentences.
+func AnalyzeTextDemo(text string) []*AnalyzedSentence {
+	paras := strings.Split(text, "\n\n")
+	var out []*AnalyzedSentence
+	for pi, para := range paras {
+		chunk := para
+		var sents []*AnalyzedSentence
+		if strings.Contains(chunk, ". ") || strings.Contains(chunk, ".\n") || strings.Contains(chunk, "! ") || strings.Contains(chunk, "? ") {
+			sents = SplitAndAnalyze(chunk)
+		} else if chunk != "" {
+			sents = []*AnalyzedSentence{AnalyzePlain(chunk)}
+		}
+		if pi < len(paras)-1 && len(sents) > 0 {
+			// Ensure last sentence of paragraph ends with \n\n for isParagraphEnd
+			if len(sents) == 1 {
+				sents = []*AnalyzedSentence{AnalyzePlain(chunk + "\n\n")}
+			} else {
+				sents = SplitAndAnalyze(chunk + "\n\n")
+			}
+		}
+		out = append(out, sents...)
+	}
+	if len(out) == 0 && text != "" {
+		return []*AnalyzedSentence{AnalyzePlain(text)}
+	}
+	return out
 }
