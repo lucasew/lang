@@ -50,3 +50,14 @@ func CorrectListToString(items []string, lastSep string) string {
 		return strings.Join(items[:len(items)-1], ", ") + ", " + lastSep + " " + items[len(items)-1]
 	}
 }
+
+// GetFullStackTrace formats an error chain (ports Tools.getFullStackTrace loosely).
+func GetFullStackTrace(err error) string {
+	if err == nil {
+		return ""
+	}
+	return err.Error()
+}
+
+// ConsistencyRulePrefix is the default Language.getConsistencyRulePrefix.
+const ConsistencyRulePrefix = "PREFIXFORCONSISTENCYRULES_"
