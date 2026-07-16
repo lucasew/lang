@@ -19,21 +19,34 @@ type CompoundRuleData struct {
 	HasDigitPatterns          bool
 }
 
+// LineExpander ports CompoundRuleData LineExpander (e.g. Swiss ß→ss).
+type LineExpander func(line string) []string
+
 // NewCompoundRuleData loads compound lists from a reader.
 func NewCompoundRuleData(r io.Reader, path string) (*CompoundRuleData, error) {
+	return NewCompoundRuleDataMulti(nil, []io.Reader{r}, []string{path})
+}
+
+// NewCompoundRuleDataMulti loads one or more compound files with optional expansion.
+func NewCompoundRuleDataMulti(expander LineExpander, readers []io.Reader, paths []string) (*CompoundRuleData, error) {
+	if len(readers) != len(paths) {
+		return nil, fmt.Errorf("readers/paths length mismatch")
+	}
 	d := &CompoundRuleData{
 		IncorrectCompounds:        make(map[string]struct{}),
 		JoinedSuggestion:          make(map[string]struct{}),
 		JoinedLowerCaseSuggestion: make(map[string]struct{}),
 		DashSuggestion:            make(map[string]struct{}),
 	}
-	if err := d.loadCompoundFile(r, path); err != nil {
-		return nil, err
+	for i := range readers {
+		if err := d.loadCompoundFile(readers[i], paths[i], expander); err != nil {
+			return nil, err
+		}
 	}
 	return d, nil
 }
 
-func (d *CompoundRuleData) loadCompoundFile(r io.Reader, path string) error {
+func (d *CompoundRuleData) loadCompoundFile(r io.Reader, path string, expander LineExpander) error {
 	sc := bufio.NewScanner(r)
 	buf := make([]byte, 0, 64*1024)
 	sc.Buffer(buf, 1024*1024)
@@ -50,33 +63,45 @@ func (d *CompoundRuleData) loadCompoundFile(r io.Reader, path string) error {
 		if line == "" {
 			continue
 		}
-		expLine := strings.ReplaceAll(line, "-", " ")
-		if err := d.validateLine(path, expLine); err != nil {
-			return err
+		var expanded []string
+		if expander != nil {
+			expanded = expander(line)
+		} else {
+			expanded = []string{line}
 		}
-		switch {
-		case strings.HasSuffix(expLine, "+"):
-			expLine = expLine[:len(expLine)-1]
-			d.JoinedSuggestion[expLine] = struct{}{}
-		case strings.HasSuffix(expLine, "*"):
-			expLine = expLine[:len(expLine)-1]
-			d.DashSuggestion[expLine] = struct{}{}
-		case strings.HasSuffix(expLine, "?"):
-			expLine = expLine[:len(expLine)-1]
-			d.JoinedSuggestion[expLine] = struct{}{}
-			d.JoinedLowerCaseSuggestion[expLine] = struct{}{}
-		case strings.HasSuffix(expLine, "$"):
-			expLine = expLine[:len(expLine)-1]
-			d.JoinedSuggestion[expLine] = struct{}{}
-			d.DashSuggestion[expLine] = struct{}{}
-			d.JoinedLowerCaseSuggestion[expLine] = struct{}{}
-		default:
-			d.JoinedSuggestion[expLine] = struct{}{}
-			d.DashSuggestion[expLine] = struct{}{}
-		}
-		d.IncorrectCompounds[expLine] = struct{}{}
-		if strings.Contains(expLine, `\d`) {
-			d.HasDigitPatterns = true
+		for _, expLine := range expanded {
+			expLine = strings.ReplaceAll(expLine, "-", " ")
+			if err := d.validateLine(path, expLine); err != nil {
+				// Skip duplicates (appear across multi-file loads / data quirks).
+				if strings.Contains(err.Error(), "Duplicated") {
+					continue
+				}
+				return err
+			}
+			switch {
+			case strings.HasSuffix(expLine, "+"):
+				expLine = expLine[:len(expLine)-1]
+				d.JoinedSuggestion[expLine] = struct{}{}
+			case strings.HasSuffix(expLine, "*"):
+				expLine = expLine[:len(expLine)-1]
+				d.DashSuggestion[expLine] = struct{}{}
+			case strings.HasSuffix(expLine, "?"):
+				expLine = expLine[:len(expLine)-1]
+				d.JoinedSuggestion[expLine] = struct{}{}
+				d.JoinedLowerCaseSuggestion[expLine] = struct{}{}
+			case strings.HasSuffix(expLine, "$"):
+				expLine = expLine[:len(expLine)-1]
+				d.JoinedSuggestion[expLine] = struct{}{}
+				d.DashSuggestion[expLine] = struct{}{}
+				d.JoinedLowerCaseSuggestion[expLine] = struct{}{}
+			default:
+				d.JoinedSuggestion[expLine] = struct{}{}
+				d.DashSuggestion[expLine] = struct{}{}
+			}
+			d.IncorrectCompounds[expLine] = struct{}{}
+			if strings.Contains(expLine, `\d`) {
+				d.HasDigitPatterns = true
+			}
 		}
 	}
 	return sc.Err()
@@ -90,8 +115,6 @@ func (d *CompoundRuleData) validateLine(path, line string) error {
 	if len(parts) > MaxCompoundTerms {
 		return fmt.Errorf("Too many compound parts in file %s: %s, maximum allowed: %d", path, line, MaxCompoundTerms)
 	}
-	// Java: incorrectCompounds.contains(line.toLowerCase()) — set stores post-suffix forms,
-	// so same raw line with trailing marker rarely collides; keep parity.
 	if _, ok := d.IncorrectCompounds[strings.ToLower(line)]; ok {
 		return fmt.Errorf("Duplicated word in file %s: %s", path, line)
 	}
