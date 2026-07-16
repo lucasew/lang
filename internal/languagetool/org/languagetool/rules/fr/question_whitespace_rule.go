@@ -234,3 +234,7 @@ func isHex2(s string) bool {
 
 // silence
 var _ = strings.Contains
+
+// QuestionWhitespaceStrictRule is the Java-name twin of the strict whitespace rule.
+// Construct with NewQuestionWhitespaceStrictRule.
+type QuestionWhitespaceStrictRule = QuestionWhitespaceRule
