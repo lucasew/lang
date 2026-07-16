@@ -112,3 +112,29 @@ func stringToLower(s string) string {
 	}
 	return string(b)
 }
+
+// FirstLongWordToLeftIsUppercase ports the helper used by UpperCaseNgramRule tests:
+// looking left from idx, is there a long (>=4 letter) title/upper word before
+// reaching a sentence boundary-like marker?
+func FirstLongWordToLeftIsUppercase(tokens []*languagetool.AnalyzedTokenReadings, idx int) bool {
+	for i := idx - 1; i >= 0; i-- {
+		if tokens[i] == nil {
+			continue
+		}
+		if tokens[i].IsSentenceStart() {
+			return false
+		}
+		w := tokens[i].GetToken()
+		letters := 0
+		for _, r := range w {
+			if unicode.IsLetter(r) {
+				letters++
+			}
+		}
+		if letters < 4 {
+			continue
+		}
+		return isTitleCase(w) || isAllUpper(w)
+	}
+	return false
+}

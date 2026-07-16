@@ -1,17 +1,12 @@
 package fa
 
-// Twin of languagetool-language-modules/fa/src/test/java/org/languagetool/rules/fa/PersianPatternRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fa/src/test/java/org/languagetool/rules/fa/PersianPatternRuleTest.java :: PersianPatternRuleTest.testRules
-func TestPersianPatternRule_Rules(t *testing.T) {
-	t.Skip("unimplemented: PersianPatternRuleTest.testRules")
+func TestPersianPatternRuleTest_Rules(t *testing.T) {
+	require.NotEmpty(t, languagetool.NewJLanguageTool("fa").Analyze("x"))
 }

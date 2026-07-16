@@ -1,17 +1,14 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishConfusionProbabilityRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ngrams"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishConfusionProbabilityRuleTest.java :: EnglishConfusionProbabilityRuleTest.testConstructor
 func TestEnglishConfusionProbabilityRule_Constructor(t *testing.T) {
-	t.Skip("unimplemented: EnglishConfusionProbabilityRuleTest.testConstructor")
+	r := NewEnglishConfusionProbabilityRule(ngrams.UniformLanguageModel(0.5, 1))
+	require.NotNil(t, r)
+	require.Equal(t, EnglishConfusionRuleID, r.GetID())
 }

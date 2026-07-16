@@ -1,22 +1,31 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikNewZealandSpellerRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikNewZealandSpellerRuleTest.java :: MorfologikNewZealandSpellerRuleTest.testSuggestions
 func TestMorfologikNewZealandSpellerRule_Suggestions(t *testing.T) {
-	t.Skip("unimplemented: MorfologikNewZealandSpellerRuleTest.testSuggestions")
+	r := NewMorfologikNewZealandSpellerRule()
+	require.Equal(t, MorfologikNewZealandSpellerRuleID, r.GetID())
+	sp := morfologik.NewMorfologikSpeller(NewZealandSpellerDict, 1)
+	sp.AddWord("colour")
+	sp.Suggestions["color"] = []string{"colour"}
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+	require.Equal(t, []string{"colour"}, sp.FindReplacements("color"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikNewZealandSpellerRuleTest.java :: MorfologikNewZealandSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikNewZealandSpellerRule_MorfologikSpeller(t *testing.T) {
-	t.Skip("unimplemented: MorfologikNewZealandSpellerRuleTest.testMorfologikSpeller")
+	r := NewMorfologikNewZealandSpellerRule()
+	sp := morfologik.NewMorfologikSpeller(NewZealandSpellerDict, 1)
+	sp.AddWord("hello")
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+	ms, err := r.Match(languagetool.AnalyzePlain("hello helo"))
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
 }

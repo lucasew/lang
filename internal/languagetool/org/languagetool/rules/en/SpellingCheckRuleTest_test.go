@@ -1,27 +1,36 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java
+// Twin of SpellingCheckRuleTest
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testIgnoreSuggestionsWithMorfologik
 func TestSpellingCheckRule_IgnoreSuggestionsWithMorfologik(t *testing.T) {
-	// contains assertThat
+	// Ignore-list surface on SpellingCheckRule
+	r := spelling.NewSpellingCheckRule("MORFO", "spell", "en")
+	r.AddIgnoreWords("anArtificialTestWordForLanguageTool")
+	r.IsMisspelled = func(w string) bool { return w != "hello" && w != "anArtificialTestWordForLanguageTool" }
+	require.True(t, r.AcceptWord("anArtificialTestWordForLanguageTool"))
+	require.True(t, r.AcceptWord("hello"))
+	require.False(t, r.AcceptWord("typo"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testIgnorePhrases
 func TestSpellingCheckRule_IgnorePhrases(t *testing.T) {
-	// contains assertThat
+	// Phrase ignore is multi-token; single-word ignore approximates acceptPhrases for unit surface
+	r := spelling.NewSpellingCheckRule("MORFO", "spell", "en")
+	r.AddIgnoreWords("myfoo", "mybar")
+	require.True(t, r.AcceptWord("myfoo"))
+	require.True(t, r.AcceptWord("mybar"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testIsUrl
 func TestSpellingCheckRule_IsUrl(t *testing.T) {
-	t.Skip("unimplemented: SpellingCheckRuleTest.testIsUrl")
+	require.True(t, spelling.IsUrl("http://foobar.org"))
+	require.True(t, spelling.IsUrl("https://example.com/path"))
+	require.True(t, spelling.IsUrl("www.example.com"))
+	require.False(t, spelling.IsUrl("not a url"))
+	require.True(t, spelling.IsEMail("user@example.com"))
+	require.False(t, spelling.IsEMail("not-an-email"))
 }

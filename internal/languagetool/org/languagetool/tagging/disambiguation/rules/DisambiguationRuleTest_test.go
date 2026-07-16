@@ -1,17 +1,23 @@
 package rules
 
-// Twin of languagetool-core/src/test/java/org/languagetool/tagging/disambiguation/rules/DisambiguationRuleTest.java
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/tagging/disambiguation/rules/DisambiguationRuleTest.java :: DisambiguationRuleTest.testDisambiguationRulesFromXML
 func TestDisambiguationRule_DisambiguationRulesFromXML(t *testing.T) {
-	t.Skip("unimplemented: DisambiguationRuleTest.testDisambiguationRulesFromXML")
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="CD" name="Tag numbers">
+    <pattern>
+      <token regexp="yes">\d+</token>
+    </pattern>
+    <disambig postag="CD"/>
+  </rule>
+</rules>`
+	loaded, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "test.xml")
+	require.NoError(t, err)
+	require.NotEmpty(t, loaded)
+	require.Equal(t, "CD", loaded[0].ID)
 }

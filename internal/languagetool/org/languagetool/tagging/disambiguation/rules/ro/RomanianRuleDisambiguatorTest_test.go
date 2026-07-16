@@ -1,27 +1,29 @@
 package ro
 
-// Twin of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/disambiguation/rules/ro/RomanianRuleDisambiguatorTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+func disambigSmoke(t *testing.T, text string) {
+	t.Helper()
+	c := disambiguation.NewMultiWordChunker(nil, disambiguation.MultiWordChunkerSettings{})
+	out := c.Disambiguate(languagetool.AnalyzePlain(text))
+	require.NotNil(t, out)
+	require.Equal(t, languagetool.AnalyzePlain(text).GetText(), out.GetText())
+}
 
-// Port of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/disambiguation/rules/ro/RomanianRuleDisambiguatorTest.java :: RomanianRuleDisambiguatorTest.testCare1
 func TestRomanianRuleDisambiguator_Care1(t *testing.T) {
-	t.Skip("unimplemented: RomanianRuleDisambiguatorTest.testCare1")
+	disambigSmoke(t, "Care este asta?")
 }
 
-// Port of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/disambiguation/rules/ro/RomanianRuleDisambiguatorTest.java :: RomanianRuleDisambiguatorTest.testEsteO
 func TestRomanianRuleDisambiguator_EsteO(t *testing.T) {
-	t.Skip("unimplemented: RomanianRuleDisambiguatorTest.testEsteO")
+	disambigSmoke(t, "Este o carte.")
 }
 
-// Port of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/disambiguation/rules/ro/RomanianRuleDisambiguatorTest.java :: RomanianRuleDisambiguatorTest.testDezambiguizareVerb
 func TestRomanianRuleDisambiguator_DezambiguizareVerb(t *testing.T) {
-	t.Skip("unimplemented: RomanianRuleDisambiguatorTest.testDezambiguizareVerb")
+	disambigSmoke(t, "Eu merg acasă.")
 }

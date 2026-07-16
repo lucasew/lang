@@ -1,17 +1,20 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishRemoteRuleFilterTest.java
 import (
+	"regexp"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishRemoteRuleFilterTest.java :: EnglishRemoteRuleFilterTest.testRules
 func TestEnglishRemoteRuleFilter_Rules(t *testing.T) {
-	t.Skip("unimplemented: EnglishRemoteRuleFilterTest.testRules")
+	f := rules.NewRemoteRuleFilters()
+	f.Register("en", &rules.FilterRule{IDPattern: regexp.MustCompile(`AI_.*`)})
+	sent := languagetool.AnalyzePlain("ab")
+	drop := rules.NewRuleMatch(rules.NewFakeRule("AI_X"), sent, 0, 2, "d")
+	keep := rules.NewRuleMatch(rules.NewFakeRule("OK"), sent, 0, 2, "k")
+	out := f.FilterMatches("en", sent, []*rules.RuleMatch{drop, keep})
+	require.Len(t, out, 1)
 }

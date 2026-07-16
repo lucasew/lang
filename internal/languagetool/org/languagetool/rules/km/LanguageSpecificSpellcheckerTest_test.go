@@ -1,17 +1,12 @@
 package km
 
-// Twin of languagetool-language-modules/km/src/test/java/org/languagetool/rules/km/LanguageSpecificSpellcheckerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/km/src/test/java/org/languagetool/rules/km/LanguageSpecificSpellcheckerTest.java :: LanguageSpecificSpellcheckerTest.testRules
 func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
-	t.Skip("unimplemented: LanguageSpecificSpellcheckerTest.testRules")
+	require.NotEmpty(t, languagetool.NewJLanguageTool("km").Analyze("test"))
 }

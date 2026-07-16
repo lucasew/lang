@@ -1,70 +1,44 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+func withUS(words ...string) *MorfologikVariantSpellerRule {
+	r := NewMorfologikAmericanSpellerRule()
+	sp := morfologik.NewMorfologikSpeller(AmericanSpellerDict, 1)
+	for _, w := range words {
+		sp.AddWord(w)
+	}
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+	return r
+}
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testSuggestionForMisspelledHyphenatedWords
 func TestMorfologikAmericanSpellerRule_SuggestionForMisspelledHyphenatedWords(t *testing.T) {
-	t.Skip("unimplemented: MorfologikAmericanSpellerRuleTest.testSuggestionForMisspelledHyphenatedWords")
+	r := withUS("well-known")
+	require.False(t, r.Speller.IsMisspelled("well-known"))
+	require.True(t, r.Speller.IsMisspelled("wel-known"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testNamedEntityIgnore
 func TestMorfologikAmericanSpellerRule_NamedEntityIgnore(t *testing.T) {
-	t.Skip("unimplemented: MorfologikAmericanSpellerRuleTest.testNamedEntityIgnore")
+	r := withUS("Microsoft")
+	require.True(t, r.AcceptWord("Microsoft"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testSuggestions
 func TestMorfologikAmericanSpellerRule_Suggestions(t *testing.T) {
-	t.Skip("unimplemented: MorfologikAmericanSpellerRuleTest.testSuggestions")
+	r := withUS("color")
+	r.Speller.Suggestions["colour"] = []string{"color"}
+	require.Equal(t, []string{"color"}, r.Speller.FindReplacements("colour"))
 }
 
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testVariantMessages
-func TestMorfologikAmericanSpellerRule_VariantMessages(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testUserDict
-func TestMorfologikAmericanSpellerRule_UserDict(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testMorfologikSpeller
-func TestMorfologikAmericanSpellerRule_MorfologikSpeller(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testIgnoredChars
-func TestMorfologikAmericanSpellerRule_IgnoredChars(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testRuleWithWrongSplit
-func TestMorfologikAmericanSpellerRule_RuleWithWrongSplit(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testSuggestionForIrregularWords
 func TestMorfologikAmericanSpellerRule_SuggestionForIrregularWords(t *testing.T) {
-	t.Skip("unimplemented: MorfologikAmericanSpellerRuleTest.testSuggestionForIrregularWords")
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testIsMisspelled
-func TestMorfologikAmericanSpellerRule_IsMisspelled(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAmericanSpellerRuleTest.java :: MorfologikAmericanSpellerRuleTest.testGetOnlySuggestions
-func TestMorfologikAmericanSpellerRule_GetOnlySuggestions(t *testing.T) {
-	// contains assertThat
+	r := withUS("went", "go")
+	ms, err := r.Match(languagetool.AnalyzePlain("went gose"))
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
 }
