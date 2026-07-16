@@ -3,32 +3,41 @@ package pipeline
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 )
 
-// English word-character class from EnglishWordTokenizer (approx for RE2).
-var enTokenizerPattern = regexp.MustCompile(`(?i)[±§©@€£¥\$\p{L}\d\x{0300}-\x{036F}\x{00A8}°%‰‱&\x{FFFD}\x{00AD}\x{00AC}\x{FF0C}\x{FF1F}-]+|[^\p{L}\d±§©@€£¥\$\x{0300}-\x{036F}\x{00A8}°%‰‱&\x{FFFD}\x{00AD}\x{00AC}\x{FF0C}\x{FF1F}-]`)
+// English word-character class from EnglishWordTokenizer.
+// Apostrophes are protected via placeholders before matching (as in LT).
+const enWordChars = `±§©@€£¥\$\p{L}\d\x{0300}-\x{036F}\x{00A8}°%‰‱&\x{FFFD}\x{00AD}\x{00AC}\x{FF0C}\x{FF1F}-`
 
-var enContractions = []*regexp.Regexp{
-	regexp.MustCompile(`(?i)^(fo['’]c['’]sle|rec['’][ds]|OK['’]d|cc['’][ds]|DJ['’][d]|[pd]m['’]d|rsvp['’]d)$`),
-	regexp.MustCompile(`(?i)^(['’]?)(are|is|were|was|do|does|did|have|has|had|wo|would|ca|could|sha|should|must|ai|ought|might|need|may|am|dare|das|dass|hai|used|use)(n['’]t)$`),
-	regexp.MustCompile(`(?i)^(.+)(['’]m|['’]re|['’]ll|['’]ve|['’]d|['’]s)(['’-]?)$`),
-	regexp.MustCompile(`(?i)^(['’]t)(was|were|is)$`),
-}
+var (
+	enTokenizerPattern = regexp.MustCompile(`[` + enWordChars + `]+|[^` + enWordChars + `]`)
+	enContractions     = []*regexp.Regexp{
+		regexp.MustCompile(`(?i)^(fo['’]c['’]sle|rec['’][ds]|OK['’]d|cc['’][ds]|DJ['’][d]|[pd]m['’]d|rsvp['’]d)$`),
+		regexp.MustCompile(`(?i)^(['’]?)(are|is|were|was|do|does|did|have|has|had|wo|would|ca|could|sha|should|must|ai|ought|might|need|may|am|dare|das|dass|hai|used|use)(n['’]t)$`),
+		regexp.MustCompile(`(?i)^(.+)(['’]m|['’]re|['’]ll|['’]ve|['’]d|['’]s)(['’-]?)$`),
+		regexp.MustCompile(`(?i)^(['’]t)(was|were|is)$`),
+	}
+)
 
-// EnglishWordTokenize ports EnglishWordTokenizer.tokenize (contraction splits, no URL join yet).
+const (
+	phTypeW = "xxAPOSTYPEWxx"
+	phTypeG = "xxAPOSTYPOGxx"
+)
+
+// EnglishWordTokenize ports EnglishWordTokenizer.tokenize (contraction splits).
 // Offsets are rune indices into the original text.
 func EnglishWordTokenize(text string) []Token {
 	if text == "" {
 		return nil
 	}
-	// Build token strings first, then assign offsets by scanning original.
+	aux := strings.ReplaceAll(text, "'", phTypeW)
+	aux = strings.ReplaceAll(aux, "’", phTypeG)
+
 	var pieces []string
-	aux := text
-	// We don't use placeholder swap; match on original with both quote types.
-	idxs := enTokenizerPattern.FindAllStringIndex(aux, -1)
-	for _, loc := range idxs {
+	for _, loc := range enTokenizerPattern.FindAllStringIndex(aux, -1) {
 		s := aux[loc[0]:loc[1]]
+		s = strings.ReplaceAll(s, phTypeW, "'")
+		s = strings.ReplaceAll(s, phTypeG, "’")
 		if strings.ContainsAny(s, "'’") {
 			split := false
 			for _, pat := range enContractions {
@@ -45,13 +54,11 @@ func EnglishWordTokenize(text string) []Token {
 			if split {
 				continue
 			}
-			// split on apostrophe keeping separators
 			pieces = append(pieces, splitKeep(s, "'’")...)
 			continue
 		}
 		pieces = append(pieces, s)
 	}
-	// Assign offsets by greedy scan in original text
 	return assignOffsets(text, pieces)
 }
 
@@ -81,7 +88,6 @@ func assignOffsets(text string, pieces []string) []Token {
 	pos := 0
 	for _, p := range pieces {
 		pr := []rune(p)
-		// find pr starting at pos
 		found := -1
 		for i := pos; i+len(pr) <= len(runes); i++ {
 			match := true
@@ -97,21 +103,13 @@ func assignOffsets(text string, pieces []string) []Token {
 			}
 		}
 		if found < 0 {
-			// fallback: skip piece
 			continue
 		}
-		// fill whitespace gaps as tokens
 		if found > pos {
-			gap := string(runes[pos:found])
-			tokens = append(tokens, tokenFromRunes(runes, pos, found, true)...)
-			_ = gap
+			tokens = append(tokens, tokenFromRunes(runes, pos, found)...)
 		}
 		start, end := found, found+len(pr)
-		tok := Token{
-			Text:  p,
-			Start: start,
-			End:   end,
-		}
+		tok := Token{Text: p, Start: start, End: end}
 		if isOnlySpaceRunes(pr) {
 			tok.Whitespace = true
 			if p == "\n" || p == "\r" {
@@ -122,29 +120,24 @@ func assignOffsets(text string, pieces []string) []Token {
 		pos = end
 	}
 	if pos < len(runes) {
-		tokens = append(tokens, tokenFromRunes(runes, pos, len(runes), true)...)
+		tokens = append(tokens, tokenFromRunes(runes, pos, len(runes))...)
 	}
 	return tokens
 }
 
-func tokenFromRunes(runes []rune, start, end int, asWS bool) []Token {
-	// emit per-rune whitespace tokens for multi-char gaps
+func tokenFromRunes(runes []rune, start, end int) []Token {
 	var out []Token
 	i := start
 	for i < end {
 		r := runes[i]
 		if r == ' ' || r == '\t' || r == '\n' || r == '\r' || r == '\u00A0' {
 			out = append(out, Token{
-				Text:       string(r),
-				Start:      i,
-				End:        i + 1,
-				Whitespace: true,
-				Linebreak:  r == '\n' || r == '\r',
+				Text: string(r), Start: i, End: i + 1,
+				Whitespace: true, Linebreak: r == '\n' || r == '\r',
 			})
 			i++
 			continue
 		}
-		// non-ws residual chunk
 		j := i + 1
 		for j < end {
 			rj := runes[j]
@@ -178,6 +171,3 @@ func WordTokenizeForLang(langFamily, text string) []Token {
 	}
 	return WordTokenize(text)
 }
-
-// ensure utf8 import used
-var _ = utf8.RuneCountInString
