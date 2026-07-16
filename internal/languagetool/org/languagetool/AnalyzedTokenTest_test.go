@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of org.languagetool.AnalyzedTokenTest
+// Port of org.languagetool.AnalyzedTokenTest — full-strength asserts (1:1).
 
 func TestAnalyzedToken_ToString(t *testing.T) {
 	pos := "POS"

@@ -1,0 +1,17 @@
+package en
+
+// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishRemoteRuleFilterTest.java
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
+
+var _ = require.Equal
+var _ = tools.Unimplemented
+
+// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishRemoteRuleFilterTest.java :: EnglishRemoteRuleFilterTest.testRules
+func TestEnglishRemoteRuleFilter_Rules(t *testing.T) {
+	tools.Unimplemented("EnglishRemoteRuleFilterTest.testRules")
+}

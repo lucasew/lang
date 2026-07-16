@@ -1,0 +1,17 @@
+package languagetool
+
+// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/DynamicMorfologikLanguageTest.java
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+)
+
+var _ = require.Equal
+var _ = tools.Unimplemented
+
+// Port of languagetool-language-modules/en/src/test/java/org/languagetool/DynamicMorfologikLanguageTest.java :: DynamicMorfologikLanguageTest.test
+func TestDynamicMorfologikLanguage_Test(t *testing.T) {
+	tools.Unimplemented("DynamicMorfologikLanguageTest.test")
+}
