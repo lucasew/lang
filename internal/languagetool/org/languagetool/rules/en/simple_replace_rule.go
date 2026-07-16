@@ -8,7 +8,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-//go:embed data/replace.txt
+//go:embed data/replace.txt data/replace_custom.txt
 var enReplaceFS embed.FS
 
 var (
@@ -18,11 +18,6 @@ var (
 
 func loadENReplace() *rules.AbstractSimpleReplaceRule2 {
 	enReplaceOnce.Do(func() {
-		f, err := enReplaceFS.Open("data/replace.txt")
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
 		base := &rules.AbstractSimpleReplaceRule2{
 			ID:                   "EN_SIMPLE_REPLACE",
 			Description:          "Check for wrong words/phrases: $match",
@@ -33,8 +28,16 @@ func loadENReplace() *rules.AbstractSimpleReplaceRule2 {
 			LanguageCode:         "en",
 			SubRuleSpecificIDs:   true,
 		}
-		if err := base.LoadSimpleReplaceRule2Data(f, "/en/replace.txt"); err != nil {
-			panic(err)
+		for _, name := range []string{"data/replace.txt", "data/replace_custom.txt"} {
+			f, err := enReplaceFS.Open(name)
+			if err != nil {
+				continue
+			}
+			if err := base.LoadSimpleReplaceRule2Data(f, "/en/"+name); err != nil {
+				f.Close()
+				panic(err)
+			}
+			f.Close()
 		}
 		enReplaceBase = base
 	})
