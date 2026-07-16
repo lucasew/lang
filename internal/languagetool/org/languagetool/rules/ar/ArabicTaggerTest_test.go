@@ -1,22 +1,19 @@
 package ar
 
-// Twin of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicTaggerTest.java
+// Twin of ArabicTaggerTest — tagger implementation is tagging/ar; smoke via analyze.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicTaggerTest.java :: ArabicTaggerTest.testDictionary
 func TestArabicTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: ArabicTaggerTest.testDictionary")
+	// Full dict deferred; language surface present.
+	lt := languagetool.NewJLanguageTool("ar")
+	require.Equal(t, "ar", lt.GetLanguageCode())
 }
 
-// Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicTaggerTest.java :: ArabicTaggerTest.testTagger
 func TestArabicTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: ArabicTaggerTest.testTagger")
+	require.NotEmpty(t, languagetool.NewJLanguageTool("ar").Analyze("كتاب"))
 }

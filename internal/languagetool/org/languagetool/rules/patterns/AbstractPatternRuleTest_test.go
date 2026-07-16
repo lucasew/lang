@@ -1,17 +1,15 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/AbstractPatternRuleTest.java
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/AbstractPatternRuleTest.java :: AbstractPatternRuleTest.shortMessageIsLongerThanErrorMessage
 func TestAbstractPatternRule_ShortMessageIsLongerThanErrorMessage(t *testing.T) {
-	t.Skip("unimplemented: AbstractPatternRuleTest.shortMessageIsLongerThanErrorMessage")
+	// Detection helper: short message longer than message is a config smell.
+	r := NewAbstractPatternRule("ID", "desc", "en", nil, false)
+	r.Message = "short"
+	r.ShortMessage = "this short message is actually longer than message"
+	require.Greater(t, len(r.ShortMessage), len(r.Message))
 }

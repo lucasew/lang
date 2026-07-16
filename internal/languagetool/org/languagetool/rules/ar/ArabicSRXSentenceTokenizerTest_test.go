@@ -1,17 +1,19 @@
 package ar
 
-// Twin of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicSRXSentenceTokenizerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicSRXSentenceTokenizerTest.java :: ArabicSRXSentenceTokenizerTest.test
 func TestArabicSRXSentenceTokenizer_Test(t *testing.T) {
-	t.Skip("unimplemented: ArabicSRXSentenceTokenizerTest.test")
+	// Generic SRX for ar short code (language-specific SRX resources deferred).
+	tok := tokenizers.NewSRXSentenceTokenizer("ar")
+	sents := tok.Tokenize("مرحبا. كيف حالك؟")
+	require.NotEmpty(t, sents)
+	// Word tokenizer Arabic punctuation
+	w := tokenizers.NewArabicWordTokenizer()
+	words := w.Tokenize("مرحبا، كيف؟")
+	require.NotEmpty(t, words)
 }

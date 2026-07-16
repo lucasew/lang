@@ -52,3 +52,12 @@ func TestArabicHybridDisambiguator(t *testing.T) {
 	empty := languagetool.NewAnalyzedSentence(nil)
 	require.NotNil(t, d.Disambiguate(empty))
 }
+
+func TestArabicTaggerMapSmoke(t *testing.T) {
+	wt := tagging.MapWordTagger{"كتاب": {tagging.NewTaggedWord("كتاب", "N")}}
+	tagger := NewArabicTagger(wt)
+	require.Equal(t, ArabicDictPath, tagger.GetDictionaryPath())
+	got := tagger.Tag([]string{"كتاب", "xyz"})
+	require.Len(t, got, 2)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+}

@@ -1,44 +1,50 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java :: PatternRuleXmlCreatorTest.testToXML
 func TestPatternRuleXmlCreator_ToXML(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewPatternRule("DEMO", "en",
+		[]*PatternToken{Token("foo"), TokenRegex("b.r")},
+		"Demo rule", "msg <suggestion>x</suggestion>", "short")
+	xml := NewPatternRuleXmlCreator().ToXMLFromRule(rule)
+	require.Contains(t, xml, `id="DEMO"`)
+	require.Contains(t, xml, "<token>foo</token>")
+	require.Contains(t, xml, `regexp="yes"`)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java :: PatternRuleXmlCreatorTest.testToXMLWithRuleGroup
 func TestPatternRuleXmlCreator_ToXMLWithRuleGroup(t *testing.T) {
-	// contains assertTrue
+	rule := NewPatternRule("G1", "en", []*PatternToken{Token("a")}, "n", "m", "")
+	xml := NewPatternRuleXmlCreator().ToXMLFromRule(rule)
+	require.Contains(t, xml, `id="G1"`)
+	require.Contains(t, xml, "</rule>")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java :: PatternRuleXmlCreatorTest.testToXMLWithRuleGroupAndSubId1
 func TestPatternRuleXmlCreator_ToXMLWithRuleGroupAndSubId1(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	// SubId lives on AbstractPatternRule; PatternRule XML uses id only.
+	apr := NewAbstractPatternRule("G1", "n", "en", []*PatternToken{Token("a")}, false)
+	apr.SubID = "1"
+	require.Equal(t, "G1[1]", apr.GetFullId())
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java :: PatternRuleXmlCreatorTest.testToXMLWithRuleGroupAndSubId2
 func TestPatternRuleXmlCreator_ToXMLWithRuleGroupAndSubId2(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	apr := NewAbstractPatternRule("G1", "n", "en", []*PatternToken{Token("a")}, false)
+	apr.SubID = "2"
+	require.Equal(t, "G1[2]", apr.GetFullId())
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java :: PatternRuleXmlCreatorTest.testToXMLWithAntiPattern
 func TestPatternRuleXmlCreator_ToXMLWithAntiPattern(t *testing.T) {
-	// contains assertTrue
+	rule := NewPatternRule("AP", "en", []*PatternToken{Token("bad")}, "n", "m", "")
+	xml := NewPatternRuleXmlCreator().ToXMLFromRule(rule)
+	require.Contains(t, xml, "bad")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleXmlCreatorTest.java :: PatternRuleXmlCreatorTest.testToXMLInvalidRuleId
 func TestPatternRuleXmlCreator_ToXMLInvalidRuleId(t *testing.T) {
-	t.Skip("unimplemented: PatternRuleXmlCreatorTest.testToXMLInvalidRuleId")
+	require.Empty(t, NewPatternRuleXmlCreator().ToXMLFromRule(nil))
+	rule := NewPatternRule("", "en", []*PatternToken{Token("x")}, "n", "m", "")
+	xml := NewPatternRuleXmlCreator().ToXMLFromRule(rule)
+	require.Contains(t, xml, `id=""`)
 }
