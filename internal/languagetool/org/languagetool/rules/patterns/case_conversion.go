@@ -30,9 +30,14 @@ const (
 	IncludeAll       IncludeRange = "ALL"
 )
 
-// ConvertCase ports CaseConversionHelper.convertCase.
-// lang is unused until language-specific uppercase rules are wired; uppercase uses tools helpers.
+// ConvertCase ports CaseConversionHelper.convertCase without language-specific rules.
 func ConvertCase(conversion CaseConversion, s, sample string) string {
+	return ConvertCaseLang(conversion, s, sample, "")
+}
+
+// ConvertCaseLang ports CaseConversionHelper.convertCase with language short code
+// (Dutch "ij" → "IJ" when uppercasing the first char).
+func ConvertCaseLang(conversion CaseConversion, s, sample, langShortCode string) string {
 	if tools.IsEmptyStr(s) {
 		return s
 	}
@@ -45,7 +50,7 @@ func ConvertCase(conversion CaseConversion, s, sample string) string {
 			if tools.IsAllUppercase(sample) {
 				token = strings.ToUpper(token)
 			} else {
-				token = tools.UppercaseFirstChar(token)
+				token = uppercaseFirstCharLang(token, langShortCode)
 			}
 		}
 	case CaseStartLower:
@@ -55,15 +60,22 @@ func ConvertCase(conversion CaseConversion, s, sample string) string {
 			token = string(rs)
 		}
 	case CaseStartUpper:
-		token = tools.UppercaseFirstChar(token)
+		token = uppercaseFirstCharLang(token, langShortCode)
 	case CaseAllUpper:
 		token = strings.ToUpper(token)
 	case CaseFirstUpper:
-		token = tools.UppercaseFirstChar(strings.ToLower(token))
+		token = uppercaseFirstCharLang(strings.ToLower(token), langShortCode)
 	case CaseAllLower:
 		token = strings.ToLower(token)
 	case CaseNoTashkeel:
 		token = tools.RemoveTashkeel(token)
 	}
 	return token
+}
+
+func uppercaseFirstCharLang(str, langShortCode string) string {
+	if langShortCode == "nl" && strings.HasPrefix(strings.ToLower(str), "ij") {
+		return "IJ" + str[2:]
+	}
+	return tools.UppercaseFirstChar(str)
 }
