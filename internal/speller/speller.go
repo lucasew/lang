@@ -79,7 +79,7 @@ func (s *Speller) Check(text, file, lang string, msg messages.Bundle) []finding.
 	if message == "spelling" || message == "" {
 		message = "Possible spelling mistake found."
 	}
-	tokens := pipeline.WordTokenize(text)
+	tokens := pipeline.EnglishWordTokenize(text)
 	var out []finding.Finding
 	for _, tok := range tokens {
 		if tok.Whitespace || !isSpellable(tok.Text) {

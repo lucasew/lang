@@ -26,7 +26,7 @@ type MatchContext struct {
 // If tg is non-nil, non-whitespace tokens receive POS readings.
 // Callers may run disambiguation on NonWS afterwards.
 func NewMatchContext(file, lang, text string, baseOffset int, tg *tagger.Tagger) MatchContext {
-	all := pipeline.WordTokenize(text)
+	all := pipeline.WordTokenizeForLang(langFamily(lang), text)
 	nonWS := make([]pipeline.Token, 0, len(all)+1)
 	nonWS = append(nonWS, pipeline.Token{
 		Text:     "SENT_START",
@@ -411,4 +411,11 @@ func runeOffsetToLineCol(text string, runeOffset int) (line, col int) {
 		i++
 	}
 	return line, col
+}
+
+func langFamily(code string) string {
+	if i := strings.IndexByte(code, '-'); i > 0 {
+		return strings.ToLower(code[:i])
+	}
+	return strings.ToLower(code)
 }
