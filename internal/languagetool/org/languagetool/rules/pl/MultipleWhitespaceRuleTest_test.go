@@ -4,14 +4,13 @@ package pl
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/MultipleWhitespaceRuleTest.java :: MultipleWhitespaceRuleTest.testRule
 func TestMultipleWhitespaceRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := rules.NewMultipleWhitespaceRule(nil)
+	require.Equal(t, 0, len(rule.Match([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain("To jest test.")})))
+	require.Equal(t, 1, len(rule.Match([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain("To jest   test.")})))
 }

@@ -1,17 +1,15 @@
 package nl
 
 // Twin of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/DutchWrongWordInContextRuleTest.java
+// Java twin is @Ignore("no tests yet"); smoke-load dictionary.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/DutchWrongWordInContextRuleTest.java :: DutchWrongWordInContextRuleTest (no @Test)
-func TestDutchWrongWordInContextRule_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/DutchWrongWordInContextRuleTest.java")
+func TestDutchWrongWordInContextRule_Rule(t *testing.T) {
+	rule := NewDutchWrongWordInContextRule(nil)
+	require.Equal(t, "DUTCH_WRONG_WORD_IN_CONTEXT", rule.GetID())
+	require.NotEmpty(t, rule.Entries)
 }
