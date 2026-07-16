@@ -118,7 +118,6 @@ func shiftSentence(s *AnalyzedSentence, delta int) {
 	}
 }
 
-
 // AnalyzeTextDemo splits text into sentences for Demo-like unit tests.
 // Paragraph boundaries: blank lines (\n\n). Sentence-local token positions
 // (as LT does); TextLevelRule.match accumulates pos across sentences.
@@ -145,6 +144,56 @@ func AnalyzeTextDemo(text string) []*AnalyzedSentence {
 	}
 	if len(out) == 0 && text != "" {
 		return []*AnalyzedSentence{AnalyzePlain(text)}
+	}
+	return out
+}
+
+// AnalyzeTextLocal splits on .!? like SplitAndAnalyze but keeps sentence-local
+// token positions (TextLevelRule accumulates GetCorrectedTextLength).
+func AnalyzeTextLocal(text string) []*AnalyzedSentence {
+	if text == "" {
+		return nil
+	}
+	// Reuse SplitAndAnalyze structure without offset shift:
+	var parts []string
+	start := 0
+	runes := []rune(text)
+	for i := 0; i < len(runes); i++ {
+		r := runes[i]
+		if r == '.' || r == '!' || r == '?' {
+			if r == '.' && i+1 < len(runes) {
+				n := runes[i+1]
+				if (n >= 'a' && n <= 'z') || (n >= '0' && n <= '9') {
+					continue
+				}
+			}
+			end := i + 1
+			if end < len(runes) && (runes[end] == ' ' || runes[end] == '\n' || runes[end] == '\u00A0') {
+				if runes[end] == '\n' && end+1 < len(runes) && runes[end+1] == '\n' {
+					end++
+					if end < len(runes) && runes[end] == '\n' {
+						end++
+					}
+				} else if runes[end] == ' ' || runes[end] == '\u00A0' {
+					end++
+				} else if runes[end] == '\n' {
+					end++
+				}
+			}
+			parts = append(parts, string(runes[start:end]))
+			start = end
+			i = end - 1
+		}
+	}
+	if start < len(runes) {
+		parts = append(parts, string(runes[start:]))
+	}
+	out := make([]*AnalyzedSentence, 0, len(parts))
+	for _, p := range parts {
+		if p == "" {
+			continue
+		}
+		out = append(out, AnalyzePlain(p))
 	}
 	return out
 }
