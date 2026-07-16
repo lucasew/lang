@@ -137,16 +137,14 @@ func (r *WrongWordInContextRule) Match(sentence *languagetool.AnalyzedSentence) 
 		matchedContext := [2]bool{}
 		for k := 1; k < len(tokens) && (!matchedContext[foundWord] || !matchedContext[notFoundWord]); k++ {
 			if r.MatchLemmas {
-				for j := 0; j < tokens[k].GetReadingsLength() && (!matchedContext[foundWord] || !matchedContext[notFoundWord]); j++ {
-					lemma := tokens[k].GetAnalyzedToken(j).GetLemma()
-					if lemma == nil || *lemma == "" {
-						continue
-					}
+				// Try real lemmas, then surface + light stem guesses (no tagger).
+				cands := lemmaCandidates(tokens[k])
+				for _, cand := range cands {
 					if !matchedContext[foundWord] {
-						matchedContext[foundWord] = contextWords.Contexts[foundWord].MatchString(*lemma)
+						matchedContext[foundWord] = contextWords.Contexts[foundWord].MatchString(cand)
 					}
 					if !matchedContext[notFoundWord] {
-						matchedContext[notFoundWord] = contextWords.Contexts[notFoundWord].MatchString(*lemma)
+						matchedContext[notFoundWord] = contextWords.Contexts[notFoundWord].MatchString(cand)
 					}
 				}
 			} else {
@@ -202,4 +200,32 @@ func (r *WrongWordInContextRule) buildMessage(wrongWord, suggestion, explanation
 	msg = strings.Replace(msg, "$EXPLANATION_SUGGESTION", explanationSuggestion, 1)
 	msg = strings.Replace(msg, "$EXPLANATION_WRONGWORD", explanationWrongWord, 1)
 	return msg
+}
+
+func lemmaCandidates(tok *languagetool.AnalyzedTokenReadings) []string {
+	seen := map[string]bool{}
+	var out []string
+	add := func(s string) {
+		if s == "" || seen[s] {
+			return
+		}
+		seen[s] = true
+		out = append(out, s)
+	}
+	add(tok.GetToken())
+	for _, rd := range tok.GetReadings() {
+		if rd.GetLemma() != nil {
+			add(*rd.GetLemma())
+		}
+	}
+	// Light Romance/Germanic stem guesses when untagged.
+	t := strings.ToLower(tok.GetToken())
+	add(t)
+	if len(t) > 3 && strings.HasSuffix(t, "s") {
+		add(t[:len(t)-1])
+	}
+	if len(t) > 4 && strings.HasSuffix(t, "es") {
+		add(t[:len(t)-2])
+	}
+	return out
 }

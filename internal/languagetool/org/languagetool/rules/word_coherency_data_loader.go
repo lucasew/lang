@@ -63,6 +63,9 @@ func LoadWordCoherencyMap(r io.Reader, path string, expandInflections bool) (map
 }
 
 func addCoherencyPair(d *WordCoherencyData, a, b, baseA, baseB string) {
+	// Keys are lowercased for case-insensitive lookup (DE data uses capital nouns).
+	a = strings.ToLower(a)
+	b = strings.ToLower(b)
 	if a == b {
 		return
 	}
@@ -96,6 +99,14 @@ func coherencySurfaceForms(w string) []string {
 		out = append(out, w+"d", w[:len(w)-1]+"ing")
 	} else {
 		out = append(out, w+"ed", w+"ing")
+	}
+	// German adjective/noun full forms (lemma stand-in without a tagger).
+	for _, suf := range []string{
+		"e", "er", "es", "en", "em",
+		"ere", "erer", "eres", "eren", "erem",
+		"ste", "ster", "stes", "sten", "stem",
+	} {
+		out = append(out, w+suf)
 	}
 	return out
 }

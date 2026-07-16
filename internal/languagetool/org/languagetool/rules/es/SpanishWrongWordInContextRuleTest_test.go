@@ -4,14 +4,27 @@ package es
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishWrongWordInContextRuleTest.java :: SpanishWrongWordInContextRuleTest.testRule
 func TestSpanishWrongWordInContextRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewSpanishWrongWordInContextRule(nil)
+
+	matches := rule.Match(languagetool.AnalyzePlain("Le infringió un duro castigo"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "infligió", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(languagetool.AnalyzePlain("Infligía todas las normas."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Infringía", matches[0].GetSuggestedReplacements()[0])
+
+	// baca / vaca
+	matches = rule.Match(languagetool.AnalyzePlain("La baca da leche."))
+	require.Equal(t, 2, len(matches))
+	require.Equal(t, "vaca", matches[0].GetSuggestedReplacements()[0])
+
+	matches = rule.Match(languagetool.AnalyzePlain("Pon la maleta en la vaca."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "baca", matches[0].GetSuggestedReplacements()[0])
 }
