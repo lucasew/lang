@@ -1,17 +1,24 @@
 package chunking
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/chunking/TokenPredicateTest.java
-import (
-	"testing"
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/chunking/TokenPredicateTest.java :: TokenPredicateTest.test
+// Port of TokenPredicateTest.test — covered by TestTokenPredicate unit tests.
 func TestTokenPredicate_Test(t *testing.T) {
-	tools.Unimplemented("TokenPredicateTest.test")
+	// simple string match
+	tok := NewChunkTaggedToken("foo", nil, nil)
+	requireTrue(t, NewTokenPredicate("foo", true).Apply(tok))
+	requireFalse(t, NewTokenPredicate("bar", true).Apply(tok))
+}
+
+func requireTrue(t *testing.T, v bool) {
+	t.Helper()
+	if !v {
+		t.Fatal("expected true")
+	}
+}
+func requireFalse(t *testing.T, v bool) {
+	t.Helper()
+	if v {
+		t.Fatal("expected false")
+	}
 }
