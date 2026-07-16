@@ -13,6 +13,8 @@ type WordRepeatRule struct {
 	Messages map[string]string
 	// ExtraIgnore is called from Ignore for language-specific exceptions (e.g. EnglishWordRepeatRule).
 	ExtraIgnore func(tokens []*languagetool.AnalyzedTokenReadings, position int) bool
+	// CreateMatchFn optional override for createRuleMatch (e.g. Ukrainian І/і suggestion).
+	CreateMatchFn func(r *WordRepeatRule, sentence *languagetool.AnalyzedSentence, prevToken, token string, prevPos, pos int, msg string) *RuleMatch
 	// IDOverride when non-empty replaces the default WORD_REPEAT_RULE id.
 	IDOverride string
 }
@@ -62,15 +64,14 @@ func (r *WordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleM
 		}
 		if isWord(token) && strings.EqualFold(prevToken, token) && !r.Ignore(tokens, i) {
 			prevPos := tokens[i-1].GetStartPos()
-			// createRuleMatch: prevPos, pos+prevToken.length()
-			// Java: pos = tokens[i].getStartPos(); to = pos+prevToken.length()
-			// Actually: new RuleMatch(..., prevPos, pos+prevToken.length(), ...)
 			pos := tokens[i].GetStartPos()
-			// Java: RuleMatch(this, sentence, prevPos, pos+prevToken.length(), ...)
-			// Wait Java: createRuleMatch(prevToken, token, prevPos, pos, msg, sentence)
-			// and inside: new RuleMatch(this, sentence, prevPos, pos+prevToken.length(), ...)
-			rm := NewRuleMatch(r, sentence, prevPos, pos+utf16Len(prevToken), msg)
-			rm.SetSuggestedReplacement(prevToken)
+			var rm *RuleMatch
+			if r.CreateMatchFn != nil {
+				rm = r.CreateMatchFn(r, sentence, prevToken, token, prevPos, pos, msg)
+			} else {
+				rm = NewRuleMatch(r, sentence, prevPos, pos+utf16Len(prevToken), msg)
+				rm.SetSuggestedReplacement(prevToken)
+			}
 			ruleMatches = append(ruleMatches, rm)
 		}
 		prevToken = token
