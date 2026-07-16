@@ -4,14 +4,13 @@ package ar
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicRedundancyRuleTest.java :: ArabicRedundancyRuleTest.testRule
 func TestArabicRedundancyRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewArabicRedundancyRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("سوف لن"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "لن", matches[0].GetSuggestedReplacements()[0])
 }

@@ -4,29 +4,34 @@ package el
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/GreekRedundancyRuleTest.java :: GreekRedundancyRuleTest.testRule
 func TestGreekRedundancyRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewGreekRedundancyRule(nil)
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Τώρα μπαίνω στο σπίτι."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Απόψε θα βγω."))))
 }
 
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/GreekRedundancyRuleTest.java :: GreekRedundancyRuleTest.testRuleWithinSentence
 func TestGreekRedundancyRule_RuleWithinSentence(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewGreekRedundancyRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("Τώρα μπαίνω μέσα στο σπίτι."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "μπαίνω", matches[0].GetSuggestedReplacements()[0])
 }
 
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/GreekRedundancyRuleTest.java :: GreekRedundancyRuleTest.testRuleBegginingOfSentence
 func TestGreekRedundancyRule_RuleBegginingOfSentence(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewGreekRedundancyRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("Απόψε το βράδυ θα βγω."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Απόψε", matches[0].GetSuggestedReplacements()[0])
 }
 
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/GreekRedundancyRuleTest.java :: GreekRedundancyRuleTest.testRuleMultipleSuggestions
 func TestGreekRedundancyRule_RuleMultipleSuggestions(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewGreekRedundancyRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("Το μαγαζί ήταν ωραίο, αλλά όμως δεν πέρασα καλά."))
+	require.Equal(t, 1, len(matches))
+	// File stores a single replacement string containing a comma (not pipe-separated).
+	require.Equal(t, "αλλά,όμως", matches[0].GetSuggestedReplacements()[0])
 }
