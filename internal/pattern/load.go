@@ -146,7 +146,11 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 				inAnti = true
 				curAnti = nil
 			case "marker":
-				inMarker = true
+				if inExample {
+					exampleRaw.WriteString("<marker>")
+				} else {
+					inMarker = true
+				}
 			case "token":
 				pt, err := parseToken(dec, t, inMarker)
 				if err != nil {
@@ -245,7 +249,11 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 					r.Anti = append(r.Anti, curAnti)
 				}
 			case "marker":
-				inMarker = false
+				if inExample {
+					exampleRaw.WriteString("</marker>")
+				} else {
+					inMarker = false
+				}
 			case "message":
 				inMessage = false
 				r.Message = strings.TrimSpace(msgBuilder.String())
@@ -427,12 +435,22 @@ func attr(se xml.StartElement, name string) string {
 }
 
 func parseExample(raw, correction string) Example {
-	// raw may contain marker tags if we only got CharData — markers often as elements.
-	// Our loader only collected CharData, so markers content is included but tags lost.
-	// Improve: full example text without positions if no markers.
-	text := raw
-	ex := Example{Correction: correction, Text: text}
-	// Try to find leftover marker artifacts
+	ex := Example{Correction: correction}
+	// raw may include <marker>...</marker> (serialized by the loader)
+	const open, close = "<marker>", "</marker>"
+	if i := strings.Index(raw, open); i >= 0 {
+		j := strings.Index(raw, close)
+		if j > i {
+			inner := raw[i+len(open) : j]
+			// MarkerFrom/To are rune offsets in the cleaned example text.
+			ex.Text = raw[:i] + inner + raw[j+len(close):]
+			ex.HasMarker = true
+			ex.MarkerFrom = len([]rune(raw[:i]))
+			ex.MarkerTo = ex.MarkerFrom + len([]rune(inner))
+			return ex
+		}
+	}
+	ex.Text = raw
 	return ex
 }
 

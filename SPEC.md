@@ -140,6 +140,13 @@ Faithful port of LanguageTool’s real analysis chain, not a reduced toy:
 
 **Policy:** steal goldens, translate tests; do not reimplement LT’s entire JUnit runner unless it pays rent. Fixture format should record enough to assert full parity fields (§3.1).
 
+**English grammar examples (ported):** package `internal/ltgolden` loads official `grammar*.xml` via Go’s standard **`encoding/xml`** (`Decoder` + `DecodeElement` + struct tags; DTD entities expanded first). Each LT `<example>` becomes a golden case:
+
+- incorrect (`correction` set): expect a match for the rule ID (span should overlap `<marker>` when present)
+- correct (no `correction`): expect no match for that rule ID
+
+Run: `go test ./internal/ltgolden` (subset by default; `LANG_GOLDEN_ALL=1` for full ~20k cases). Pass-rate gate is ratcheted upward toward 100% 1:1.
+
 ### 3.5 Coverage vs design
 
 | Axis | Bar |
