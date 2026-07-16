@@ -5,26 +5,44 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/CommandLineParserTest.java :: CommandLineParserTest.testUsage
 func TestCommandLineParser_Usage(t *testing.T) {
-	// contains assertTrue
+	p := &CommandLineParser{}
+	// Go port: empty args print usage instead of WrongParameterNumberException
+	opts, err := p.ParseOptions(nil)
+	require.NoError(t, err)
+	require.True(t, opts.PrintUsage)
+
+	opts, err = p.ParseOptions([]string{"--help"})
+	require.NoError(t, err)
+	require.True(t, opts.PrintUsage)
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/CommandLineParserTest.java :: CommandLineParserTest.testErrors
 func TestCommandLineParser_Errors(t *testing.T) {
-	t.Skip("unimplemented: CommandLineParserTest.testErrors")
+	p := &CommandLineParser{}
+	_, err := p.ParseOptions([]string{"--apply", "--taggeronly"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "apply")
 }
 
-// Port of languagetool-commandline/src/test/java/org/languagetool/commandline/CommandLineParserTest.java :: CommandLineParserTest.testSimple
 func TestCommandLineParser_Simple(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertNull
+	p := &CommandLineParser{}
+	opts, err := p.ParseOptions([]string{"filename.txt"})
+	require.NoError(t, err)
+	require.Equal(t, "filename.txt", opts.Filename)
+	require.False(t, opts.Verbose)
+
+	opts, err = p.ParseOptions([]string{"-v", "-l", "xx", "filename.txt"})
+	require.NoError(t, err)
+	require.True(t, opts.Verbose)
+	require.Equal(t, "filename.txt", opts.Filename)
+
+	opts, err = p.ParseOptions([]string{"--version"})
+	require.NoError(t, err)
+	require.True(t, opts.PrintVersion)
+
+	opts, err = p.ParseOptions([]string{"--list"})
+	require.NoError(t, err)
+	require.True(t, opts.PrintLanguages)
 }

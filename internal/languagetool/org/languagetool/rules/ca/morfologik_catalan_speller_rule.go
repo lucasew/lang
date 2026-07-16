@@ -1,3 +1,5 @@
 package ca
 
-// MorfologikCatalanSpellerRule Java twin name — see morfologik_ca_speller_rule.go.
+// MorfologikCatalanSpellerRule is defined in morfologik_ca_speller_rule.go.
+// This file exists for Java twin path discoverability.
+var _ = NewMorfologikCatalanSpellerRule

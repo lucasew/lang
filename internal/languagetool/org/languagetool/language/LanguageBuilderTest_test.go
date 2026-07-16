@@ -4,20 +4,21 @@ package language
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/language/LanguageBuilderTest.java :: LanguageBuilderTest.testMakeAdditionalLanguage
 func TestLanguageBuilder_MakeAdditionalLanguage(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	meta, err := MakeAdditionalLanguage("rules-xy-Fakelanguage.xml")
+	require.NoError(t, err)
+	require.Equal(t, "Fakelanguage", meta.Name)
+	require.Equal(t, "xy", meta.Code)
+	require.True(t, meta.Additional)
+	require.Equal(t, "rules-xy-Fakelanguage.xml", meta.RulesFile)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/language/LanguageBuilderTest.java :: LanguageBuilderTest.testIllegalFileName
 func TestLanguageBuilder_IllegalFileName(t *testing.T) {
-	t.Skip("unimplemented: LanguageBuilderTest.testIllegalFileName")
+	_, err := MakeAdditionalLanguage("foo")
+	require.Error(t, err)
+	var rfe *RuleFilenameException
+	require.ErrorAs(t, err, &rfe)
 }

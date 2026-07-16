@@ -71,5 +71,16 @@ func TestSentenceRange_SpecialCase(t *testing.T) {
 	t.Skip("unimplemented: SentenceRangeTest.testSpecialCase")
 }
 func TestSentenceRange_ExtraWhitespaceCase(t *testing.T) {
-	t.Skip("unimplemented: SentenceRangeTest.testExtraWhitespaceCase")
+	// Port of ExtraWhitespaceCase using GetRangesFromSentences (no full check2 pipeline).
+	text := "Hello, how are you?     This is an test."
+	annotated := markup.NewAnnotatedTextBuilder().AddText(text).Build()
+	sentences := []string{"Hello, how are you?     ", "This is an test."}
+	ranges := GetRangesFromSentences(annotated, sentences)
+	require.Len(t, ranges, 2)
+	require.Equal(t, 0, ranges[0].GetFromPos())
+	require.Equal(t, 19, ranges[0].GetToPos())
+	require.Equal(t, "Hello, how are you?", text[ranges[0].GetFromPos():ranges[0].GetToPos()])
+	require.Equal(t, 24, ranges[1].GetFromPos())
+	require.Equal(t, 40, ranges[1].GetToPos())
+	require.Equal(t, "This is an test.", text[ranges[1].GetFromPos():ranges[1].GetToPos()])
 }
