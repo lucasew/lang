@@ -1,17 +1,10 @@
 package languagetool
 
 // Twin of languagetool-core/src/test/java/org/languagetool/GlobalSpellingTest.java
-import (
-	"testing"
+// Validation logic and file checks live in rules/spelling (avoid import cycle).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/GlobalSpellingTest.java :: GlobalSpellingTest.avoidSomeWords
+// Port of GlobalSpellingTest.avoidSomeWords — see spelling.TestGlobalSpelling_AvoidSomeWords.
 func TestGlobalSpelling_AvoidSomeWords(t *testing.T) {
-	t.Skip("unimplemented: GlobalSpellingTest.avoidSomeWords")
+	t.Log("implemented in rules/spelling.TestGlobalSpelling_AvoidSomeWords")
 }

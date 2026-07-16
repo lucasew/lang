@@ -5,13 +5,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/DemoTest.java :: DemoTest.testLanguage
+// Port of DemoTest.testLanguage — JLanguageTool with demo short code (no language import cycle).
 func TestDemo_Language(t *testing.T) {
-	t.Skip("unimplemented: DemoTest.testLanguage")
+	lt := NewJLanguageTool("xx")
+	require.Equal(t, "xx", lt.GetLanguageCode())
+	sents := lt.Analyze("This is a test.")
+	require.NotEmpty(t, sents)
 }
