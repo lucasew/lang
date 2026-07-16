@@ -4,29 +4,36 @@ package de
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/DashRuleTest.java :: DashRuleTest.testRule
 func TestDashRule_Rule(t *testing.T) {
-	_ = "Die große Diäten-Erhöhung kam dann doch." // assertGood
-	_ = "Die große Diätenerhöhung kam dann doch." // assertGood
-	_ = "Die große Diäten-Erhöhungs-Manie kam dann doch." // assertGood
-	_ = "Die große Diäten- und Gehaltserhöhung kam dann doch." // assertGood
-	_ = "Die große Diäten- sowie Gehaltserhöhung kam dann doch." // assertGood
-	_ = "Die große Diäten- oder Gehaltserhöhung kam dann doch." // assertGood
-	_ = "Erst so - Karl-Heinz dann blah." // assertGood
-	_ = "Erst so -- Karl-Heinz aber..." // assertGood
-	_ = "Nord- und Südkorea" // assertGood
-	_ = "NORD- UND SÜDKOREA" // assertGood
-	_ = "NORD- BZW. SÜDKOREA" // assertGood
-	_ = "Die große Diäten- Erhöhung kam dann doch." // assertBad
-	_ = "Die große Diäten-  Erhöhung kam dann doch." // assertBad
-	_ = "Die große Diäten-Erhöhungs- Manie kam dann doch." // assertBad
-	_ = "Die große Diäten- Erhöhungs-Manie kam dann doch." // assertBad
-	_ = "MAZEDONIEN- SKOPJE Str." // assertBad
+	rule := NewDashRule(nil)
+	assertGood := func(text string) {
+		t.Helper()
+		require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(text))), "good %q", text)
+	}
+	assertBad := func(text string) {
+		t.Helper()
+		require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain(text))), "bad %q", text)
+	}
+
+	assertGood("Die große Diäten-Erhöhung kam dann doch.")
+	assertGood("Die große Diätenerhöhung kam dann doch.")
+	assertGood("Die große Diäten-Erhöhungs-Manie kam dann doch.")
+	assertGood("Die große Diäten- und Gehaltserhöhung kam dann doch.")
+	assertGood("Die große Diäten- sowie Gehaltserhöhung kam dann doch.")
+	assertGood("Die große Diäten- oder Gehaltserhöhung kam dann doch.")
+	assertGood("Erst so - Karl-Heinz dann blah.")
+	assertGood("Erst so -- Karl-Heinz aber...")
+	assertGood("Nord- und Südkorea")
+	assertGood("NORD- UND SÜDKOREA")
+	assertGood("NORD- BZW. SÜDKOREA")
+
+	assertBad("Die große Diäten- Erhöhung kam dann doch.")
+	assertBad("Die große Diäten-  Erhöhung kam dann doch.")
+	assertBad("Die große Diäten-Erhöhungs- Manie kam dann doch.")
+	assertBad("Die große Diäten- Erhöhungs-Manie kam dann doch.")
+	assertBad("MAZEDONIEN- SKOPJE Str.")
 }
