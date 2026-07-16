@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	numeralsEN         = regexp.MustCompile(`^[a-z]$|^(?i)m{0,4}(c[md]|d?c{0,3})(x[cl]|l?x{0,3})(i[xv]|v?i{0,3})$`)
-	containsDigitRE      = regexp.MustCompile(`\d`)
-	onlyLowercaseStart = regexp.MustCompile(`^[a-z][A-Z]`)
-	whitespaceOrQuote  = regexp.MustCompile(`^[ "'„«»‘’“”\n]$`)
-	digitDot           = regexp.MustCompile(`^\d+\. `)
-	linebreakDigitDot  = regexp.MustCompile(`\n\d+\. `)
+	numeralsEN          = regexp.MustCompile(`^[a-z]$|^(?i)m{0,4}(c[md]|d?c{0,3})(x[cl]|l?x{0,3})(i[xv]|v?i{0,3})$`)
+	containsDigitRE     = regexp.MustCompile(`\d`)
+	onlyLowercaseStart  = regexp.MustCompile(`^[a-z][A-Z]`)
+	whitespaceOrQuote   = regexp.MustCompile(`^[ "'„«»‘’“”\n]$`)
+	digitDot            = regexp.MustCompile(`^\d+\. `)
+	linebreakDigitDot   = regexp.MustCompile(`\n\d+\. `)
 	uppercaseExceptions = map[string]bool{
 		"n": true, "w": true, "x86": true, "ⓒ": true, "ø": true,
 		"cc": true, "pH": true, "heylogin": true,
@@ -25,8 +25,10 @@ var (
 
 // UppercaseSentenceStartRule ports org.languagetool.rules.UppercaseSentenceStartRule.
 type UppercaseSentenceStartRule struct {
-	Messages  map[string]string
-	LangCode  string // short code e.g. "en"
+	Messages map[string]string
+	LangCode string // short code e.g. "en"
+	// IsException skips this sentence's start check (language-specific).
+	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
 }
 
 func NewUppercaseSentenceStartRule(messages map[string]string, langCode string) *UppercaseSentenceStartRule {
@@ -58,6 +60,11 @@ func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.Analyze
 		}
 		// dutch special skipped for en demo
 		_ = thirdToken
+
+		if r.IsException != nil && r.IsException(tokens, matchTokenPos) {
+			pos += sentence.GetCorrectedTextLength()
+			continue
+		}
 
 		checkToken := firstToken
 		if secondToken != "" {
