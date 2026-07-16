@@ -1,22 +1,21 @@
 package en
 
 // Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishUnpairedQuotesRuleTest.java
+// Subset of cases that work without POS-tagged apostrophe exceptions.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishUnpairedQuotesRuleTest.java :: EnglishUnpairedQuotesRuleTest.testRule
 func TestEnglishUnpairedQuotesRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishUnpairedQuotesRuleTest.java :: EnglishUnpairedQuotesRuleTest.testMultipleSentences
-func TestEnglishUnpairedQuotesRule_MultipleSentences(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewEnglishUnpairedQuotesRule(nil)
+	matchN := func(s string) int {
+		return len(rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)}))
+	}
+	require.Equal(t, 0, matchN("This is a word 'test'."))
+	require.Equal(t, 0, matchN("This is what he said: \"We believe in freedom. This is what we do.\""))
+	// clear unpaired double quotes
+	require.Equal(t, 1, matchN("\"I'm over here, she said."))
 }

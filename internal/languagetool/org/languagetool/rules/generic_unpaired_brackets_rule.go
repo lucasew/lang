@@ -68,6 +68,8 @@ func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []str
 
 func (r *GenericUnpairedBracketsRule) GetID() string { return r.ruleID }
 
+func (r *GenericUnpairedBracketsRule) SetRuleID(id string) { r.ruleID = id }
+
 func (r *GenericUnpairedBracketsRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	symbolStack := NewUnsyncStack[SymbolLocator]()
 	ruleMatchStack := NewUnsyncStack[SymbolLocator]()
@@ -87,7 +89,7 @@ func (r *GenericUnpairedBracketsRule) MatchList(sentences []*languagetool.Analyz
 		sentenceIdx++
 	}
 
-		isSymmetric := false
+	isSymmetric := false
 	ssSize := symbolStack.Len()
 	if ssSize > 2 && ssSize%2 == 1 {
 		isSymmetric = true
@@ -109,7 +111,7 @@ func (r *GenericUnpairedBracketsRule) MatchList(sentences []*languagetool.Analyz
 	}
 
 	if isSymmetric {
-		loc := symbolStack.At(ssSize/2)
+		loc := symbolStack.At(ssSize / 2)
 		rm := r.createMatch(&ruleMatches, ruleMatchStack, loc.StartPos, loc.Symbol, loc.Sentence, loc.SentenceIdx, fullText)
 		if rm != nil {
 			ruleMatches = append(ruleMatches, rm)
@@ -310,4 +312,3 @@ func isPunctuationNoDot(s string) bool {
 	}
 	return s != "."
 }
-
