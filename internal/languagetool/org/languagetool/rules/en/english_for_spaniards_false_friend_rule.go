@@ -1,0 +1,3 @@
+package en
+
+type EnglishForSpaniardsFalseFriendRule = EnglishForL2SpeakersFalseFriendRule

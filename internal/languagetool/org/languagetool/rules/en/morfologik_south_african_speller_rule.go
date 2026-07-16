@@ -1,0 +1,3 @@
+package en
+
+type MorfologikSouthAfricanSpellerRule = MorfologikVariantSpellerRule
