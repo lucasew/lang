@@ -4,8 +4,8 @@ package tokenizers
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -13,7 +13,7 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-standalone/src/test/java/org/languagetool/tokenizers/SRXSentenceTokenizerTest.java :: SRXSentenceTokenizerTest.testOfficeFootnoteTokenize
 func TestSRXSentenceTokenizer_OfficeFootnoteTokenize(t *testing.T) {
-	tools.Unimplemented("SRXSentenceTokenizerTest.testOfficeFootnoteTokenize")
+	t.Skip("unimplemented: SRXSentenceTokenizerTest.testOfficeFootnoteTokenize")
 }
 
 // Port of languagetool-standalone/src/test/java/org/languagetool/tokenizers/SRXSentenceTokenizerTest.java :: SRXSentenceTokenizerTest.testDotNetSentence
