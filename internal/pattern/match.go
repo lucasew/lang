@@ -1,7 +1,6 @@
 package pattern
 
 import (
-	"regexp"
 	"strconv"
 	"strings"
 	"unicode"
@@ -74,18 +73,15 @@ func isOnlySpace(s string) bool {
 }
 
 // MatchRule runs one pattern rule against the context.
-func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
+// If allowOff is true, default="off"/"temp_off" rules still run (LT example tests force-enable them).
+func MatchRule(r *Rule, ctx MatchContext, allowOff bool) []finding.Finding {
 	if len(r.Tokens) == 0 {
 		return nil
 	}
-	if r.Default == "off" || r.Default == "temp_off" {
+	if !allowOff && (r.Default == "off" || r.Default == "temp_off") {
 		return nil
 	}
 	if r.Incomplete {
-		return nil
-	}
-	// Premium/AI rule packs need filters/models we do not run yet.
-	if strings.HasPrefix(r.ID, "AI_") || strings.HasPrefix(r.ID, "QB_") {
 		return nil
 	}
 
@@ -345,12 +341,11 @@ func matchPOS(pt PatToken, tok pipeline.Token) bool {
 	if want == "UNKNOWN" {
 		hit = len(tok.Readings) == 0
 	} else if pt.PostagRegexp {
-		re, err := regexp.Compile("^(?:" + want + ")$")
-		if err != nil {
+		if pt.PostagRe == nil {
 			return false
 		}
 		for _, r := range tok.Readings {
-			if re.MatchString(r.POS) {
+			if pt.PostagRe.MatchString(r.POS) {
 				hit = true
 				break
 			}

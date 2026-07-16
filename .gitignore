@@ -10,3 +10,4 @@
 
 # scratch
 *.test
+internal/ltgolden/testdata/

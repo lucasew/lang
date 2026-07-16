@@ -163,7 +163,8 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 					continue
 				}
 			}
-			findings = append(findings, pattern.MatchRule(r, ctx)...)
+			allowOff := len(opt.EnabledOnly) > 0
+			findings = append(findings, pattern.MatchRule(r, ctx, allowOff)...)
 		}
 		cursor = base + len(sentRunes)
 	}

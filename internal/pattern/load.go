@@ -372,6 +372,12 @@ func parseToken(dec *xml.Decoder, start xml.StartElement, inMarker bool) (PatTok
 						pt.ChunkRe = re
 					}
 				}
+				if pt.PostagRegexp && pt.Postag != "" {
+					pat := jregex.JavaToGo(pt.Postag)
+					if re, err := regexp.Compile("^(?:" + pat + ")$"); err == nil {
+						pt.PostagRe = re
+					}
+				}
 				return pt, nil
 			}
 		case xml.CharData:

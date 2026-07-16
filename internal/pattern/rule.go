@@ -58,6 +58,7 @@ type PatToken struct {
 	SpaceBefore   string // "", "yes", "no"
 	Postag        string
 	PostagRegexp  bool
+	PostagRe      *regexp.Regexp // compiled when PostagRegexp
 	Chunk         string
 	ChunkRe       *regexp.Regexp // from chunk_re attribute
 	NegatePos     bool

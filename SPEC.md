@@ -140,12 +140,28 @@ Faithful port of LanguageTool’s real analysis chain, not a reduced toy:
 
 **Policy:** steal goldens, translate tests; do not reimplement LT’s entire JUnit runner unless it pays rent. Fixture format should record enough to assert full parity fields (§3.1).
 
-**English grammar examples (ported):** package `internal/ltgolden` loads official `grammar*.xml` via Go’s standard **`encoding/xml`** (`Decoder` + `DecodeElement` + struct tags; DTD entities expanded first). Each LT `<example>` becomes a golden case:
+**Ground-truth suite (all LT tests ported):** package `internal/ltgolden` imports **every** LanguageTool test source with **no intentional omissions**:
 
-- incorrect (`correction` set): expect a match for the rule ID (span should overlap `<marker>` when present)
-- correct (no `correction`): expect no match for that rule ID
+| Source | Loader | Scale (approx.) |
+|--------|--------|------------------|
+| All language `rules/**/*.xml` examples | `encoding/xml` DecodeElement | ~128k |
+| All `disambiguation.xml` examples | `encoding/xml` DecodeElement | ~4.6k |
+| All `*Test.java` under `src/test/java` | string extraction from assertGood/assertBad/check | ~2.4k strings / 715 files |
 
-Run: `go test ./internal/ltgolden` (subset by default; `LANG_GOLDEN_ALL=1` for full ~20k cases). Pass-rate gate is ratcheted upward toward 100% 1:1.
+Inventory guard: `TestPortInventory` fails if file/example counts drop.
+
+Runner: `TestAllGroundTruth` executes the engine against every case (TDD scoreboard toward 100% 1:1).
+
+```bash
+# prove full port inventory
+go test ./internal/ltgolden -run TestPortInventory -v
+
+# TDD loop (full suite, fail on any miss — long)
+go test ./internal/ltgolden -run TestAllGroundTruth -count=1 -timeout 0
+
+# quick sample (also used with -short)
+LANG_GOLDEN_QUICK=1 go test ./internal/ltgolden -run TestAllGroundTruth -v
+```
 
 ### 3.5 Coverage vs design
 

@@ -10,25 +10,24 @@ import (
 	"github.com/lucasew/lang/internal/pattern"
 )
 
-// xmlExample maps LT <example correction="…">…<marker>…</marker>…</example>
-// using encoding/xml struct tags.
+// xmlExample maps LT <example> using encoding/xml.
 type xmlExample struct {
 	Correction string `xml:"correction,attr"`
+	Type       string `xml:"type,attr"` // correct | ambiguous | untouched | …
 	InnerXML   string `xml:",innerxml"`
 }
 
-// xmlRule is the subset of <rule> we need for goldens.
 type xmlRule struct {
 	ID       string       `xml:"id,attr"`
 	Default  string       `xml:"default,attr"`
 	Examples []xmlExample `xml:"example"`
 }
 
-// ExtractCases loads LT grammar XML examples via encoding/xml.Decoder + DecodeElement.
+// ExtractCases loads ALL LT grammar/style XML examples (no rule filtering).
 func ExtractCases(grammarPaths []string) ([]Case, error) {
 	var out []Case
 	for _, p := range grammarPaths {
-		cases, err := extractFile(p)
+		cases, err := extractGrammarFile(p)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", p, err)
 		}
@@ -37,13 +36,13 @@ func ExtractCases(grammarPaths []string) ([]Case, error) {
 	return out, nil
 }
 
-func extractFile(path string) ([]Case, error) {
-	// Expand DTD entities then parse with the standard library decoder.
+func extractGrammarFile(path string) ([]Case, error) {
 	r, err := pattern.OpenExpandedXML(path)
 	if err != nil {
 		return nil, err
 	}
 	dec := xml.NewDecoder(r)
+	lang := langFromRulesPath(path)
 
 	var out []Case
 	for {
@@ -60,7 +59,7 @@ func extractFile(path string) ([]Case, error) {
 		}
 		switch se.Name.Local {
 		case "rulegroup":
-			cases, err := readRuleGroup(dec, se, path)
+			cases, err := readRuleGroup(dec, se, path, lang)
 			if err != nil {
 				return out, err
 			}
@@ -72,22 +71,15 @@ func extractFile(path string) ([]Case, error) {
 			}
 			id := rule.ID
 			if id == "" {
-				continue
+				id = "ANON"
 			}
-			def := rule.Default
-			if def == "" {
-				def = "on"
-			}
-			if skipRule(id, def) {
-				continue
-			}
-			out = append(out, casesFromExamples(id, rule.Examples, path)...)
+			out = append(out, casesFromGrammarExamples(id, rule.Default, rule.Examples, path, lang)...)
 		}
 	}
 	return out, nil
 }
 
-func readRuleGroup(dec *xml.Decoder, start xml.StartElement, path string) ([]Case, error) {
+func readRuleGroup(dec *xml.Decoder, start xml.StartElement, path, lang string) ([]Case, error) {
 	groupID := attr(start, "id")
 	groupDefault := attr(start, "default")
 	groupSub := 0
@@ -115,20 +107,14 @@ func readRuleGroup(dec *xml.Decoder, start xml.StartElement, path string) ([]Cas
 				if def == "" {
 					def = groupDefault
 				}
-				if def == "" {
-					def = "on"
-				}
-				if skipRule(id, def) {
-					continue
-				}
-				out = append(out, casesFromExamples(id, rule.Examples, path)...)
+				out = append(out, casesFromGrammarExamples(id, def, rule.Examples, path, lang)...)
 			case "example":
 				var ex xmlExample
 				if err := dec.DecodeElement(&ex, &t); err != nil {
 					return out, err
 				}
-				if groupID != "" && !skipRule(groupID, orOn(groupDefault)) {
-					out = append(out, casesFromExamples(groupID, []xmlExample{ex}, path)...)
+				if groupID != "" {
+					out = append(out, casesFromGrammarExamples(groupID, groupDefault, []xmlExample{ex}, path, lang)...)
 				}
 			default:
 				if err := dec.Skip(); err != nil {
@@ -143,14 +129,7 @@ func readRuleGroup(dec *xml.Decoder, start xml.StartElement, path string) ([]Cas
 	}
 }
 
-func orOn(d string) string {
-	if d == "" {
-		return "on"
-	}
-	return d
-}
-
-func casesFromExamples(ruleID string, examples []xmlExample, path string) []Case {
+func casesFromGrammarExamples(ruleID, def string, examples []xmlExample, path, lang string) []Case {
 	var out []Case
 	for _, ex := range examples {
 		parsed := parseMarkedInner(ex.InnerXML)
@@ -158,15 +137,25 @@ func casesFromExamples(ruleID string, examples []xmlExample, path string) []Case
 		if text == "" {
 			continue
 		}
+		// LT: correction attr => incorrect example; absence => correct (should not match)
+		// type="correct" also used rarely; type empty + no correction = correct
+		incorrect := ex.Correction != ""
+		if strings.EqualFold(ex.Type, "correct") {
+			incorrect = false
+		}
 		out = append(out, Case{
-			RuleID:     ruleID,
-			Text:       text,
-			Incorrect:  ex.Correction != "",
-			Correction: ex.Correction,
-			HasMarker:  parsed.hasMarker,
-			MarkerFrom: parsed.from,
-			MarkerTo:   parsed.to,
-			SourceFile: path,
+			Kind:        KindGrammarExample,
+			Lang:        lang,
+			RuleID:      ruleID,
+			RuleDefault: def,
+			Text:        text,
+			Incorrect:   incorrect,
+			Correction:  ex.Correction,
+			HasMarker:   parsed.hasMarker,
+			MarkerFrom:  parsed.from,
+			MarkerTo:    parsed.to,
+			SourceFile:  path,
+			ExampleType: ex.Type,
 		})
 	}
 	return out
@@ -184,11 +173,9 @@ func parseMarkedInner(raw string) marked {
 		j := strings.Index(raw, close)
 		if j > i {
 			inner := raw[i+len(open) : j]
-			cleaned := raw[:i] + inner + raw[j+len(close):]
-			// strip any other tags that may appear rarely
-			cleaned = stripTags(cleaned)
-			innerClean := stripTags(inner)
+			cleaned := stripTags(raw[:i] + inner + raw[j+len(close):])
 			prefix := stripTags(raw[:i])
+			innerClean := stripTags(inner)
 			return marked{
 				text:      cleaned,
 				hasMarker: true,
@@ -218,13 +205,6 @@ func stripTags(s string) string {
 	return b.String()
 }
 
-func skipRule(id, def string) bool {
-	if def == "off" || def == "temp_off" {
-		return true
-	}
-	return strings.HasPrefix(id, "AI_") || strings.HasPrefix(id, "QB_")
-}
-
 func attr(se xml.StartElement, name string) string {
 	for _, a := range se.Attr {
 		if a.Name.Local == name {
@@ -234,6 +214,15 @@ func attr(se xml.StartElement, name string) string {
 	return ""
 }
 
-// silence unused in case of build tags
-var _ = filepath.Separator
+func langFromRulesPath(path string) string {
+	// .../languagetool-language-modules/<lang>/.../rules/<lang>/file.xml
+	parts := strings.Split(filepath.ToSlash(path), "/")
+	for i, p := range parts {
+		if p == "languagetool-language-modules" && i+1 < len(parts) {
+			return parts[i+1]
+		}
+	}
+	return "und"
+}
+
 var _ = pattern.OpenExpandedXML
