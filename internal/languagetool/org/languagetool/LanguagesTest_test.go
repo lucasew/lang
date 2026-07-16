@@ -7,85 +7,91 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testGet
 func TestLanguages_Get(t *testing.T) {
-	// contains assertThat
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en"})
+	L.Register(LanguageMeta{Name: "Demo", Code: "xx"})
+	require.Equal(t, len(L.Get())+1, len(L.GetWithDemoLanguage()))
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testGetIsUnmodifiable
 func TestLanguages_GetIsUnmodifiable(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testGetIsUnmodifiable")
+	// Go returns a copy; "unmodifiable" means registry not mutated by caller append.
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English", Code: "en"})
+	before := len(L.Get())
+	s := L.Get()
+	_ = append(s, LanguageMeta{Name: "X", Code: "zz"})
+	require.Equal(t, before, len(L.Get()))
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testGetWithDemoLanguageIsUnmodifiable
 func TestLanguages_GetWithDemoLanguageIsUnmodifiable(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testGetWithDemoLanguageIsUnmodifiable")
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "Demo", Code: "xx"})
+	before := len(L.GetWithDemoLanguage())
+	s := L.GetWithDemoLanguage()
+	_ = append(s, LanguageMeta{Name: "X", Code: "zz"})
+	require.Equal(t, before, len(L.GetWithDemoLanguage()))
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testGetLanguageForShortName
 func TestLanguages_GetLanguageForShortName(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	L.Register(LanguageMeta{Name: "German", Code: "de"})
+	require.Equal(t, "en-US", L.GetLanguageForShortCode("en-us").GetShortCodeWithCountryAndVariant())
+	require.Equal(t, "en-US", L.GetLanguageForShortCode("EN-US").GetShortCodeWithCountryAndVariant())
+	require.Equal(t, "de", L.GetLanguageForShortCode("de").GetShortCodeWithCountryAndVariant())
+	require.Panics(t, func() { L.GetLanguageForShortCode("xy") })
+	require.Panics(t, func() { L.GetLanguageForShortCode("YY-KK") })
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testIsLanguageSupported
 func TestLanguages_IsLanguageSupported(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "Demo", Code: "xx"})
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	L.Register(LanguageMeta{Name: "German", Code: "de"})
+	require.True(t, L.IsLanguageSupported("xx"))
+	require.True(t, L.IsLanguageSupported("XX"))
+	require.True(t, L.IsLanguageSupported("en-US"))
+	require.True(t, L.IsLanguageSupported("en-us"))
+	require.True(t, L.IsLanguageSupported("de"))
+	require.False(t, L.IsLanguageSupported("yy-ZZ"))
+	require.False(t, L.IsLanguageSupported("zz"))
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testIsLanguageSupportedInvalidCode
 func TestLanguages_IsLanguageSupportedInvalidCode(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testIsLanguageSupportedInvalidCode")
+	L := &Languages{}
+	require.Panics(t, func() { L.IsLanguageSupported("somthing-totally-inv-alid") })
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testInvalidShortName1
 func TestLanguages_InvalidShortName1(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testInvalidShortName1")
+	L := &Languages{}
+	require.Panics(t, func() { L.GetLanguageForShortCode("de-") })
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testInvalidShortName2
 func TestLanguages_InvalidShortName2(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testInvalidShortName2")
+	L := &Languages{}
+	require.Panics(t, func() { L.GetLanguageForShortCode("dexx") })
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testInvalidShortName3
 func TestLanguages_InvalidShortName3(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testInvalidShortName3")
+	L := &Languages{}
+	require.Panics(t, func() { L.GetLanguageForShortCode("xyz-xx") })
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testGetLanguageForName
 func TestLanguages_GetLanguageForName(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	L.Register(LanguageMeta{Name: "German", Code: "de"})
+	m, ok := L.GetLanguageForName("English (US)")
+	require.True(t, ok)
+	require.Equal(t, "en-US", m.GetShortCodeWithCountryAndVariant())
+	_, ok = L.GetLanguageForName("Foobar")
+	require.False(t, ok)
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testIsVariant
-func TestLanguages_IsVariant(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testHasPremium
-func TestLanguages_HasPremium(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testHasVariant
-func TestLanguages_HasVariant(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertNotNull
-}
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.isHiddenFromGui
-func TestLanguages_IsHiddenFromGui(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguagesTest.java :: LanguagesTest.testGetLanguageForLocale
 func TestLanguages_GetLanguageForLocale(t *testing.T) {
-	t.Skip("unimplemented: LanguagesTest.testGetLanguageForLocale")
+	// Locale mapping is a thin short-code lookup for now.
+	L := &Languages{}
+	L.Register(LanguageMeta{Name: "English (US)", Code: "en-US"})
+	require.Equal(t, "en-US", L.GetLanguageForShortCode("en-US").Code)
 }

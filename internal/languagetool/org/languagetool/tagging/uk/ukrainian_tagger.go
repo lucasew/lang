@@ -1,3 +1,4 @@
 package uk
 
-// UkrainianTagger is implemented in uk_tagger.go (Java twin name file).
+// UkrainianTagger is defined in uk_tagger.go.
+var _ = NewUkrainianTagger
