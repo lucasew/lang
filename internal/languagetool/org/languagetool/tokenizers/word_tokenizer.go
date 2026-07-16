@@ -1,12 +1,13 @@
 package tokenizers
 
 import (
+	"strings"
 	"unicode/utf16"
 )
 
 // TOKENIZING_CHARACTERS — subset from WordTokenizer.java (whitespace + common punct).
 const tokenizing = " \t\n\r\u00A0\u200B\uFEFF\u2060" +
-	".,;:?!…'\"„“”»«()[]{}<>/\\|*+=~`@#%^&" +
+	".,;:?!…¿¡'\"„“”»«‘’‚‛()[]{}<>/\\|*+=~`@#%^&" +
 	"\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A"
 
 // WordTokenizer ports org.languagetool.tokenizers.WordTokenizer (simplified but keeps
@@ -37,6 +38,36 @@ func (w *WordTokenizer) Tokenize(text string) []string {
 		}
 	}
 	flush()
+	return joinURLsAndEmails(out)
+}
+
+// joinURLsAndEmails re-glues protocol://host/path style splits (subset of Java joinEMailsAndUrls).
+func joinURLsAndEmails(tokens []string) []string {
+	if len(tokens) == 0 {
+		return tokens
+	}
+	var out []string
+	for i := 0; i < len(tokens); i++ {
+		t := tokens[i]
+		// http : / / host
+		if i+3 < len(tokens) && (t == "http" || t == "https" || t == "ftp") &&
+			tokens[i+1] == ":" && tokens[i+2] == "/" && tokens[i+3] == "/" {
+			j := i + 4
+			url := t + "://"
+			for j < len(tokens) {
+				// stop at whitespace
+				if tokens[j] == " " || tokens[j] == "\t" || tokens[j] == "\n" {
+					break
+				}
+				url += tokens[j]
+				j++
+			}
+			out = append(out, url)
+			i = j - 1
+			continue
+		}
+		out = append(out, t)
+	}
 	return out
 }
 
@@ -63,4 +94,19 @@ func BuildPositions(tokens []string) []int {
 		p += UTF16Len(t)
 	}
 	return pos
+}
+
+// IsURL ports WordTokenizer.isUrl (subset).
+func IsURL(token string) bool {
+	for _, protocol := range []string{"http", "https", "ftp", "ftps", "file", "mailto"} {
+		if strings.HasPrefix(token, protocol+"://") {
+			return true
+		}
+	}
+	return strings.HasPrefix(token, "www.")
+}
+
+// IsEMail ports WordTokenizer.isEMail (loose).
+func IsEMail(token string) bool {
+	return strings.Contains(token, "@") && strings.Contains(token, ".")
 }
