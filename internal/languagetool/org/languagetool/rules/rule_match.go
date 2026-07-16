@@ -29,3 +29,15 @@ func (m *RuleMatch) SetSuggestedReplacement(s string) {
 	m.SuggestedReplacements = []string{s}
 }
 func (m *RuleMatch) GetSuggestedReplacements() []string { return m.SuggestedReplacements }
+
+func (m *RuleMatch) GetRule() any      { return m.Rule }
+func (m *RuleMatch) GetMessage() string { return m.Message }
+
+func (m *RuleMatch) SetOffsetPosition(from, to int) {
+	m.FromPos = from
+	m.ToPos = to
+}
+
+func (m *RuleMatch) SetSuggestedReplacements(reps []string) {
+	m.SuggestedReplacements = append([]string(nil), reps...)
+}
