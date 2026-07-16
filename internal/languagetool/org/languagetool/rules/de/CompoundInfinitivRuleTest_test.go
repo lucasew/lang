@@ -1,17 +1,19 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundInfinitivRuleTest.java
+// Twin of CompoundInfinitivRuleTest (surface particle list).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundInfinitivRuleTest.java :: CompoundInfinitivRuleTest.testRule
 func TestCompoundInfinitivRule_Rule(t *testing.T) {
-	// contains assertThat
+	rule := NewCompoundInfinitivRule(nil)
+	matchN := func(s string) int {
+		return len(rule.Match(languagetool.AnalyzePlain(s)))
+	}
+	require.Equal(t, 1, matchN("Ich brachte ihn dazu, mein Zimmer sauber zu machen."))
+	require.Equal(t, 1, matchN("Du brauchst nicht bei mir vorbei zu kommen."))
+	require.Equal(t, 0, matchN("Fang an zu zählen."))
 }
