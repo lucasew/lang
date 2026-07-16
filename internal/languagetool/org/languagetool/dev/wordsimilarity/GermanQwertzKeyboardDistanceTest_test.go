@@ -1,17 +1,30 @@
 package wordsimilarity
 
-// Twin of languagetool-dev/src/test/java/org/languagetool/dev/wordsimilarity/GermanQwertzKeyboardDistanceTest.java
+// Twin of GermanQwertzKeyboardDistanceTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-dev/src/test/java/org/languagetool/dev/wordsimilarity/GermanQwertzKeyboardDistanceTest.java :: GermanQwertzKeyboardDistanceTest.testDistance
+// Port of GermanQwertzKeyboardDistanceTest.testDistance
 func TestGermanQwertzKeyboardDistance_Distance(t *testing.T) {
-	// contains assertThat
+	d := NewGermanQwertzKeyboardDistance()
+	require.Equal(t, float32(0), d.GetDistance('q', 'q'))
+	require.Equal(t, float32(1), d.GetDistance('q', 'w'))
+	require.Equal(t, float32(9), d.GetDistance('q', 'p'))
+	require.Equal(t, float32(1), d.GetDistance('q', 'a'))
+	require.Equal(t, float32(1), d.GetDistance('t', 'g'))
+	require.Equal(t, float32(1), d.GetDistance('a', 's'))
+	require.Equal(t, float32(4), d.GetDistance('a', 'g'))
+	require.Equal(t, float32(1), d.GetDistance('y', 'x'))
+	require.Equal(t, float32(3), d.GetDistance('c', 'n'))
+	require.Equal(t, float32(2), d.GetDistance('q', 'y'))
+	require.Equal(t, float32(8), d.GetDistance('q', 'm'))
+	require.Equal(t, float32(2), d.GetDistance('p', 'ß'))
+	require.Equal(t, float32(3), d.GetDistance('o', 'ß'))
+	// uppercase
+	require.Equal(t, float32(3), d.GetDistance('C', 'n'))
+	require.Equal(t, float32(3), d.GetDistance('c', 'N'))
+	require.Equal(t, float32(3), d.GetDistance('C', 'N'))
 }

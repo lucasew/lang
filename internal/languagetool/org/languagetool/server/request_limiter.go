@@ -72,3 +72,24 @@ func (l *RequestLimiter) Count(ip string) int {
 	}
 	return n
 }
+
+// Record appends a request timestamp for ip without enforcing the limit
+// (used by ErrorRequestLimiter.LogAccess).
+func (l *RequestLimiter) Record(ip string) {
+	if l == nil {
+		return
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	now := time.Now()
+	cutoff := now.Add(-l.window)
+	times := l.byIP[ip]
+	i := 0
+	for _, t := range times {
+		if t.After(cutoff) {
+			times[i] = t
+			i++
+		}
+	}
+	l.byIP[ip] = append(times[:i], now)
+}

@@ -1,42 +1,86 @@
 package languagetool
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java
+// Twin of languagetool-standalone LanguageAnnotatorTest.
+// Full VagueSpellChecker dictionary deferred; pluggable IsValidWord smokes.
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java :: LanguageAnnotatorTest.testGetTokensWithPotentialLanguages
+// Port of LanguageAnnotatorTest.testGetTokensWithPotentialLanguages
 func TestLanguageAnnotator_GetTokensWithPotentialLanguages(t *testing.T) {
-	// contains assertThat
+	a := NewLanguageAnnotator()
+	a.IsValidWord = func(token, lang string) bool {
+		low := strings.ToLower(token)
+		if lang == "en" {
+			return low == "this" || low == "is" || low == "english"
+		}
+		if lang == "de" {
+			return low == "das" || low == "ist" || low == "deutsch"
+		}
+		return false
+	}
+	tokens := a.GetTokensWithPotentialLanguages("This is english. Das ist deutsch.", "en", []string{"de"})
+	require.NotEmpty(t, tokens)
+	var hasEN, hasDE bool
+	for _, tok := range tokens {
+		for _, l := range tok.Langs {
+			if l == "en" {
+				hasEN = true
+			}
+			if l == "de" {
+				hasDE = true
+			}
+		}
+	}
+	require.True(t, hasEN)
+	require.True(t, hasDE)
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java :: LanguageAnnotatorTest.testDetectLanguages
+// Port of LanguageAnnotatorTest.testDetectLanguages
 func TestLanguageAnnotator_DetectLanguages(t *testing.T) {
-	// contains assertThat
+	a := NewLanguageAnnotator()
+	a.IsValidWord = func(token, lang string) bool {
+		if lang == "en" {
+			return token == "hello" || token == "world" || token == "This"
+		}
+		if lang == "de" {
+			return token == "Hallo" || token == "Welt"
+		}
+		return false
+	}
+	frags := a.DetectLanguages("hello world. Hallo Welt.", "en", []string{"de"})
+	require.NotEmpty(t, frags)
+	codes := map[string]bool{}
+	for _, f := range frags {
+		codes[f.LangCode] = true
+	}
+	require.True(t, codes["en"] || codes["de"])
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java :: LanguageAnnotatorTest.testGetTokenRanges
+// Port of LanguageAnnotatorTest.testGetTokenRanges
 func TestLanguageAnnotator_GetTokenRanges(t *testing.T) {
-	// contains assertThat
+	a := NewLanguageAnnotator()
+	tokens := []TokenWithLanguages{
+		{Token: "hi", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "there", Langs: []string{"en"}},
+		{Token: "."},
+		{Token: "ok", Langs: []string{"en"}},
+	}
+	ranges := a.GetTokenRanges(tokens)
+	require.GreaterOrEqual(t, len(ranges), 2)
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java :: LanguageAnnotatorTest.testGetTokenRangesAmbiguous
+// Remaining ambiguous multi-language edge cases need full VagueSpellChecker.
 func TestLanguageAnnotator_GetTokenRangesAmbiguous(t *testing.T) {
-	// contains assertThat
+	t.Skip("unimplemented: ambiguous range matrix needs full spell checker")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java :: LanguageAnnotatorTest.testGetTokenRanges2
 func TestLanguageAnnotator_GetTokenRanges2(t *testing.T) {
-	// contains assertThat
+	t.Skip("unimplemented: range matrix needs full spell checker")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageAnnotatorTest.java :: LanguageAnnotatorTest.testGetTokenRanges3
 func TestLanguageAnnotator_GetTokenRanges3(t *testing.T) {
-	// contains assertThat
+	t.Skip("unimplemented: range matrix needs full spell checker")
 }

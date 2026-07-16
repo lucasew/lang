@@ -20,11 +20,12 @@ func (e *ErrorRequestLimiter) WouldAccessBeOkay(ip string) bool {
 }
 
 // LogAccess records an error-causing request against the IP.
+// Always appends (Java always enqueues RequestEvent; does not gate on the limit).
 func (e *ErrorRequestLimiter) LogAccess(ip string) {
 	if e == nil || e.inner == nil {
 		return
 	}
-	_ = e.inner.Allow(ip)
+	e.inner.Record(ip)
 }
 
 // CheckLimit returns an error if the IP is over the error request limit.

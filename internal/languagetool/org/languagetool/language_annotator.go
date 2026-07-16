@@ -86,6 +86,16 @@ type TokenWithLanguages struct {
 
 func (t TokenWithLanguages) Ambiguous() bool { return len(t.Langs) != 1 }
 
+// GetTokensWithPotentialLanguages is the public entry (Java package-private tests).
+func (a *LanguageAnnotator) GetTokensWithPotentialLanguages(input, mainLang string, secondLangs []string) []TokenWithLanguages {
+	return a.getTokensWithPotentialLanguages(input, mainLang, secondLangs)
+}
+
+// GetTokenRanges is the public entry for sentence-like token range splitting.
+func (a *LanguageAnnotator) GetTokenRanges(tokens []TokenWithLanguages) [][]TokenWithLanguages {
+	return a.getTokenRanges(tokens)
+}
+
 func (a *LanguageAnnotator) getTokensWithPotentialLanguages(input, mainLang string, secondLangs []string) []TokenWithLanguages {
 	raw := a.tokenize(input)
 	tokens := make([]TokenWithLanguages, 0, len(raw))

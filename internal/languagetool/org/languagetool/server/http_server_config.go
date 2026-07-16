@@ -65,13 +65,17 @@ type HTTPServerConfig struct {
 	PreferredLanguages []string
 	LocalAPIMode       bool
 
+	// LanguageModelDir is the optional ngram / LM directory from --languageModel.
+	LanguageModelDir string
+
 	// BlockedReferrers is a list of HTTP Referer / Origin substrings that are rejected.
 	BlockedReferrers []string
 }
 
 const (
-	DefaultHost = "localhost"
-	DefaultPort = 8081
+	DefaultHost           = "localhost"
+	DefaultPort           = 8081
+	LanguageModelOption   = "--languageModel"
 )
 
 func NewHTTPServerConfig() *HTTPServerConfig {
@@ -133,9 +137,24 @@ func (c *HTTPServerConfig) ApplyArgs(args []string) error {
 			c.Verbose = true
 		case "--premiumAlways":
 			c.PremiumAlways = true
+		case LanguageModelOption:
+			if i+1 >= len(args) {
+				return NewIllegalConfigurationError("missing value for --languageModel")
+			}
+			c.LanguageModelDir = args[i+1]
+			i++
 		}
 	}
 	return nil
+}
+
+// NewHTTPServerConfigFromArgs builds a config and applies CLI flags (Java HTTPServerConfig(String[])).
+func NewHTTPServerConfigFromArgs(args []string) (*HTTPServerConfig, error) {
+	c := NewHTTPServerConfig()
+	if err := c.ApplyArgs(args); err != nil {
+		return nil, err
+	}
+	return c, nil
 }
 
 // ApplyProperties applies key=value pairs (simplified property map).
