@@ -1,17 +1,20 @@
 package tokenizers
 
-// Twin of languagetool-core/src/test/java/org/languagetool/tokenizers/SimpleSentenceTokenizerTest.java
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+// Port of org.languagetool.tokenizers.SimpleSentenceTokenizerTest.
 
-// Port of languagetool-core/src/test/java/org/languagetool/tokenizers/SimpleSentenceTokenizerTest.java :: SimpleSentenceTokenizerTest.testTokenize
 func TestSimpleSentenceTokenizer_Tokenize(t *testing.T) {
-	tools.Unimplemented("SimpleSentenceTokenizerTest.testTokenize")
+	// TestTools.testSplit: join parts, tokenize, expect same parts
+	sentences := []string{"Hi! ", "This is a test. ", "Here's more. ", "And even more?? ", "Yes."}
+	var input string
+	for _, s := range sentences {
+		input += s
+	}
+	got := NewSimpleSentenceTokenizer().Tokenize(input)
+	require.Equal(t, sentences, got)
 }
