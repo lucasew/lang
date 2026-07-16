@@ -41,6 +41,11 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			}
 			i++
 			opts.SetLevel(args[i])
+		case "-a", "--apply":
+			if opts.TaggerOnly {
+				return nil, fmt.Errorf("You cannot apply suggestions when tagging only")
+			}
+			opts.SetApplySuggestions(true)
 		case "-t", "--taggeronly":
 			if opts.IsListUnknown() {
 				return nil, fmt.Errorf("You cannot list unknown words when tagging only")

@@ -30,3 +30,10 @@ func TestCommandLineParser(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, opts.PrintUsage)
 }
+
+func TestParseApplyFlag(t *testing.T) {
+	p := &CommandLineParser{}
+	opts, err := p.ParseOptions([]string{"-l", "en", "-a", "-"})
+	require.NoError(t, err)
+	require.True(t, opts.IsApplySuggestions())
+}

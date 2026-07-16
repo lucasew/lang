@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -129,7 +130,21 @@ func TestMain_EnglishFileVerbose(t *testing.T) {
 	t.Skip("unimplemented: full EN grammar file verbose")
 }
 func TestMain_EnglishFileApplySuggestions(t *testing.T) {
-	t.Skip("unimplemented: apply suggestions")
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "sample.txt"}, RunHooks{
+		ReadFile: func(path string) (string, error) {
+			return "I've have a book", nil
+		},
+		Check: func(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
+			require.True(t, opts.IsApplySuggestions())
+			// synthetic match for "have" → "had"
+			m := rules.NewRuleMatch(nil, nil, 5, 9, "tense")
+			m.SetSuggestedReplacement("had")
+			return ApplySuggestionsCheck(w, text, []*rules.RuleMatch{m})
+		},
+	}, &out, &errb)
+	require.Equal(t, 2, code) // one match found
+	require.Contains(t, out.String(), "I've had")
 }
 func TestMain_EnglishStdIn2(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
 func TestMain_EnglishStdIn3(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
@@ -159,13 +174,13 @@ func TestMain_EnglishFileRuleEnabled(t *testing.T) {
 func TestMain_EnglishFileFakeRuleEnabled(t *testing.T) {
 	t.Skip("unimplemented: enable/disable rule file check")
 }
-func TestMain_EnglishFileAPI(t *testing.T)  { t.Skip("unimplemented: API XML output") }
+func TestMain_EnglishFileAPI(t *testing.T) { t.Skip("unimplemented: API XML output") }
 func TestMain_GermanFileWithURL(t *testing.T) {
 	t.Skip("unimplemented: DE file with URL")
 }
 func TestMain_PolishFileAPI(t *testing.T)     { t.Skip("unimplemented: PL file API") }
 func TestMain_PolishLineNumbers(t *testing.T) { t.Skip("unimplemented: PL line numbers") }
-func TestMain_BitextMode(t *testing.T)       { t.Skip("unimplemented: bitext CLI") }
+func TestMain_BitextMode(t *testing.T)        { t.Skip("unimplemented: bitext CLI") }
 func TestMain_BitextModeWithDisabledRule(t *testing.T) {
 	t.Skip("unimplemented: bitext CLI")
 }

@@ -14,6 +14,7 @@ const UsageText = `Usage: languagetool [OPTION]... [FILE]
   -d, --disable RULES      comma-separated disabled rule ids
   -e, --enable RULES       comma-separated enabled rule ids
   -t, --taggeronly         only tag the text
+  -a, --apply              apply first suggestions to text, print result
   -v, --verbose            verbose output
   --json                   JSON output
   --xml                    XML output
@@ -35,7 +36,7 @@ type RunHooks struct {
 	// ListLanguages prints known languages.
 	ListLanguages func(w io.Writer) error
 	// ReadFile loads file contents; nil uses os.ReadFile. Empty filename → stdin via ReadStdin.
-	ReadFile func(path string) (string, error)
+	ReadFile  func(path string) (string, error)
 	ReadStdin func() (string, error)
 }
 
