@@ -8,6 +8,7 @@ import (
 
 // AnalyzePlain ports a minimal getAnalyzedSentence for demo/rule unit tests:
 // SENT_START + WordTokenizer tokens as untagged AnalyzedTokenReadings with start positions.
+// Sets whitespaceBefore from the previous raw token (JLanguageTool analysis loop).
 func AnalyzePlain(text string) *AnalyzedSentence {
 	wt := tokenizers.NewWordTokenizer()
 	raw := wt.Tokenize(text)
@@ -19,14 +20,15 @@ func AnalyzePlain(text string) *AnalyzedSentence {
 	startR := NewAnalyzedTokenReadings(startTok)
 	startR.SetStartPos(0)
 	readings = append(readings, startR)
+	prev := ""
 	for i, tok := range raw {
 		at := NewAnalyzedToken(tok, nil, nil)
-		// whitespaceBefore: if previous is whitespace... simple: false unless after space
-		if i > 0 {
-			// not setting for first version
-		}
 		ar := NewAnalyzedTokenReadingsAt(at, positions[i])
+		if prev != "" {
+			ar.SetWhitespaceBeforeToken(prev)
+		}
 		readings = append(readings, ar)
+		prev = tok
 	}
 	return NewAnalyzedSentence(readings)
 }

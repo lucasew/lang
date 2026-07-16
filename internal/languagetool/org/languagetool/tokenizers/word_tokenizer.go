@@ -6,8 +6,9 @@ import (
 )
 
 // TOKENIZING_CHARACTERS — subset from WordTokenizer.java (whitespace + common punct).
+// Includes angle quotes ›‹ (U+203A/U+2039) used by GenericUnpairedQuotesRule.
 const tokenizing = " \t\n\r\u00A0\u200B\uFEFF\u2060" +
-	".,;:?!…¿¡'\"„“”»«‘’‚‛()[]{}<>/\\|*+=~`@#%^&" +
+	".,;:?!…¿¡'\"„“”»«‘’‚‛›‹()[]{}<>/\\|*+=~`@#%^&" +
 	"\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A"
 
 // WordTokenizer ports org.languagetool.tokenizers.WordTokenizer (simplified but keeps

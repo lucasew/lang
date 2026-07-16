@@ -332,3 +332,24 @@ func (r *AnalyzedTokenReadings) IsFieldCode() bool {
 	return t == "\u0001" || t == "\u0002"
 }
 func (r *AnalyzedTokenReadings) IsWhitespaceBefore() bool { return r.isWhitespaceBefore }
+
+// SetWhitespaceBefore ports AnalyzedTokenReadings.setWhitespaceBefore(boolean) +
+// the prevToken overload used by JLanguageTool (whitespace if prev is whitespace).
+func (r *AnalyzedTokenReadings) SetWhitespaceBefore(v bool) {
+	r.isWhitespaceBefore = v
+	for _, t := range r.anTokReadings {
+		t.SetWhitespaceBefore(v)
+	}
+}
+
+// SetWhitespaceBeforeToken ports setWhitespaceBefore(String prevToken).
+func (r *AnalyzedTokenReadings) SetWhitespaceBeforeToken(prevToken string) {
+	r.SetWhitespaceBefore(prevToken != "" && tools.IsWhitespace(prevToken))
+}
+
+// IsNonWord ports AnalyzedTokenReadings.isNonWord — punctuation/bracket-only tokens.
+func (r *AnalyzedTokenReadings) IsNonWord() bool {
+	return nonWordRE.MatchString(r.token)
+}
+
+var nonWordRE = regexp.MustCompile(`^[.?!…:;,~’'"„“”»«‚‘›‹()\[\]\-–—*×∗·+÷/=]$`)
