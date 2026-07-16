@@ -1,17 +1,14 @@
 package fr
 
-// Twin of languagetool-language-modules/fr/src/test/java/org/languagetool/rules/fr/FrenchTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fr/src/test/java/org/languagetool/rules/fr/FrenchTest.java :: FrenchTest.testLanguage
 func TestFrench_Language(t *testing.T) {
-	t.Skip("unimplemented: FrenchTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("fr")
+	require.Equal(t, "fr", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Bonjour le monde."))
 }

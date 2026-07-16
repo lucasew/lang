@@ -1,42 +1,39 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java :: DemoPatternRuleTest.testRules
 func TestDemoPatternRule_Rules(t *testing.T) {
-	t.Skip("unimplemented: DemoPatternRuleTest.testRules")
+	// Demo language pattern: foo bar
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("foo", nil, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("bar", nil, nil), 4),
+	}
+	sent := languagetool.NewAnalyzedSentence(toks)
+	rule := NewPatternRule("DEMO_RULE", "xx",
+		[]*PatternToken{Token("foo"), Token("bar")},
+		"demo", "found", "")
+	ms, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java :: DemoPatternRuleTest.testGrammarRulesFromXML2
 func TestDemoPatternRule_GrammarRulesFromXML2(t *testing.T) {
-	t.Skip("unimplemented: DemoPatternRuleTest.testGrammarRulesFromXML2")
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java :: DemoPatternRuleTest.testMakeSuggestionUppercase
-func TestDemoPatternRule_MakeSuggestionUppercase(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java :: DemoPatternRuleTest.testRule
-func TestDemoPatternRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java :: DemoPatternRuleTest.testSentenceStart
-func TestDemoPatternRule_SentenceStart(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/DemoPatternRuleTest.java :: DemoPatternRuleTest.testFormatMultipleSynthesis
-func TestDemoPatternRule_FormatMultipleSynthesis(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="DEMO_XML" name="from xml">
+      <pattern><token>hello</token></pattern>
+      <message>hi</message>
+    </rule>
+  </category>
+</rules>`
+	rules, err := NewPatternRuleLoader().GetRulesFromString(xml, "demo.xml", "xx")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Equal(t, "DEMO_XML", rules[0].ID)
 }

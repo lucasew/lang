@@ -1,20 +1,25 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterCreatorTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
+type noopFilter2 struct{}
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterCreatorTest.java :: RuleFilterCreatorTest.testMockFilter
-func TestRuleFilterCreator_MockFilter(t *testing.T) {
-	// contains assertNotNull
+func (noopFilter2) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, patternTokenPos int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+	return match
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterCreatorTest.java :: RuleFilterCreatorTest.testInvalidClassName
-func TestRuleFilterCreator_InvalidClassName(t *testing.T) {
-	t.Skip("unimplemented: RuleFilterCreatorTest.testInvalidClassName")
+func TestRuleFilterCreator_TestInvalidClassName(t *testing.T) {
+	// invalid / unregistered class name panics (Java ClassNotFound-like)
+	c := NewRuleFilterCreator()
+	require.Panics(t, func() { c.GetFilter("org.languagetool.rules.DoesNotExist") })
+	// valid registration works
+	c.Register("org.example.Noop", func() RuleFilter { return noopFilter2{} })
+	require.NotNil(t, c.GetFilter("org.example.Noop"))
 }

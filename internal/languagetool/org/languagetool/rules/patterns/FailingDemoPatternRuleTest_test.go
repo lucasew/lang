@@ -1,22 +1,20 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/FailingDemoPatternRuleTest.java
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/FailingDemoPatternRuleTest.java :: FailingDemoPatternRuleTest.testRulesWithErrors1
 func TestFailingDemoPatternRule_RulesWithErrors1(t *testing.T) {
-	t.Skip("unimplemented: FailingDemoPatternRuleTest.testRulesWithErrors1")
+	// Invalid XML should error
+	_, err := NewPatternRuleLoader().GetRulesFromString(`<rules><broken`, "bad.xml", "xx")
+	require.Error(t, err)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/FailingDemoPatternRuleTest.java :: FailingDemoPatternRuleTest.testRulesWithErrors2
 func TestFailingDemoPatternRule_RulesWithErrors2(t *testing.T) {
-	t.Skip("unimplemented: FailingDemoPatternRuleTest.testRulesWithErrors2")
+	// Empty rules document may parse with zero rules
+	rules, err := NewPatternRuleLoader().GetRulesFromString(`<?xml version="1.0"?><rules></rules>`, "empty.xml", "xx")
+	require.NoError(t, err)
+	require.Empty(t, rules)
 }

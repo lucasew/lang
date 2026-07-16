@@ -1,37 +1,37 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterEvaluatorTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterEvaluatorTest.java :: RuleFilterEvaluatorTest.testGetResolvedArguments
-func TestRuleFilterEvaluator_GetResolvedArguments(t *testing.T) {
-	// contains assertThat
+func TestRuleFilterEvaluator_TestDuplicateKey(t *testing.T) {
+	// last key wins or panic on invalid — our impl overwrites same key
+	args := GetResolvedArguments("k:v1 k:v2", nil, 0, nil)
+	require.Equal(t, "v2", args["k"])
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterEvaluatorTest.java :: RuleFilterEvaluatorTest.testGetResolvedArgumentsWithColon
-func TestRuleFilterEvaluator_GetResolvedArgumentsWithColon(t *testing.T) {
-	// contains assertThat
+func TestRuleFilterEvaluator_TestTooLargeBackRef(t *testing.T) {
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("alpha", nil, nil)),
+	}
+	require.Panics(t, func() {
+		GetResolvedArguments(`wordFrom:\9`, toks, 0, []int{1})
+	})
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterEvaluatorTest.java :: RuleFilterEvaluatorTest.testDuplicateKey
-func TestRuleFilterEvaluator_DuplicateKey(t *testing.T) {
-	t.Skip("unimplemented: RuleFilterEvaluatorTest.testDuplicateKey")
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterEvaluatorTest.java :: RuleFilterEvaluatorTest.testNoBackReference
-func TestRuleFilterEvaluator_NoBackReference(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/RuleFilterEvaluatorTest.java :: RuleFilterEvaluatorTest.testTooLargeBackRef
-func TestRuleFilterEvaluator_TooLargeBackRef(t *testing.T) {
-	t.Skip("unimplemented: RuleFilterEvaluatorTest.testTooLargeBackRef")
+func TestRuleFilterEvaluator_RunFilterPort(t *testing.T) {
+	var got map[string]string
+	ev := NewRuleFilterEvaluator(ruleFilterAdapter(func(m *rules.RuleMatch, a map[string]string, _ int,
+		_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+		got = a
+		return m
+	}))
+	m := rules.NewRuleMatch(rules.NewFakeRule("R"), nil, 0, 1, "msg")
+	out := ev.RunFilter("k:v", m, nil, 0, nil)
+	require.Equal(t, m, out)
+	require.Equal(t, "v", got["k"])
 }

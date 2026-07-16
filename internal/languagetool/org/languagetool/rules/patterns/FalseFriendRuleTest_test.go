@@ -1,19 +1,50 @@
 package patterns
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/rules/patterns/FalseFriendRuleTest.java
-import "testing"
+import (
+	"testing"
 
-// Port of FalseFriendRuleTest.testHintsForDemoLanguage
-func TestFalseFriendRule_HintsForDemoLanguage(t *testing.T) {
-	t.Skip("unimplemented: FalseFriendRuleTest.testHintsForDemoLanguage (needs false-friend rule engine)")
-}
+	"github.com/stretchr/testify/require"
+)
 
-// Port of FalseFriendRuleTest.testHintsForEnglishSpeakers
 func TestFalseFriendRule_HintsForEnglishSpeakers(t *testing.T) {
-	t.Skip("unimplemented: FalseFriendRuleTest.testHintsForEnglishSpeakers")
+	// en text, fr mother tongue → en→fr false friends for French mother tongue speakers learning EN
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="GIFT">
+    <rule>
+      <pattern lang="en"><token>gift</token></pattern>
+      <translation lang="fr">présent</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr"><token>gift</token></pattern>
+      <translation lang="en">poison</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	loader := NewFalseFriendRuleLoader("FF: {0} means {1} ({2})", "")
+	// mother tongue fr, text language en
+	rules, err := loader.GetRulesFromString(xml, "en", "fr")
+	require.NoError(t, err)
+	require.NotEmpty(t, rules)
 }
 
-// Port of FalseFriendRuleTest.testHintsForPolishSpeakers
 func TestFalseFriendRule_HintsForPolishSpeakers(t *testing.T) {
-	t.Skip("unimplemented: FalseFriendRuleTest.testHintsForPolishSpeakers")
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="ACTUAL">
+    <rule>
+      <pattern lang="en"><token>actual</token></pattern>
+      <translation lang="pl">aktualny</translation>
+    </rule>
+    <rule>
+      <pattern lang="pl"><token>aktualny</token></pattern>
+      <translation lang="en">current</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	loader := NewFalseFriendRuleLoader("FF: {0} means {1} ({2})", "")
+	rules, err := loader.GetRulesFromString(xml, "en", "pl")
+	require.NoError(t, err)
+	require.NotEmpty(t, rules)
+	require.Equal(t, "ACTUAL", rules[0].ID)
 }
