@@ -95,3 +95,8 @@ func containsAny(s string, subs []string) bool {
 	}
 	return false
 }
+
+// Tools is the Java-name twin for Dutch compound gluing helpers.
+type Tools struct{}
+
+func (Tools) GlueParts(parts []string) string { return GlueParts(parts) }
