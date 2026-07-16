@@ -1,17 +1,17 @@
 package ekavian
 
-// Twin of languagetool-language-modules/sr/src/test/java/org/languagetool/rules/sr/ekavian/SimpleStyleEkavianReplaceRuleTest.java
+// Twin of languagetool-language-modules/sr/src/test/java/.../SimpleStyleEkavianReplaceRuleTest.java
+// Java twin is empty; exercise dictionary surface matches.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/rules/sr/ekavian/SimpleStyleEkavianReplaceRuleTest.java :: SimpleStyleEkavianReplaceRuleTest.getMessage
 func TestSimpleStyleEkavianReplaceRule_GetMessage(t *testing.T) {
-	tools.Unimplemented("SimpleStyleEkavianReplaceRuleTest.getMessage")
+	rule := NewSimpleStyleEkavianReplaceRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("Купио је компјутер."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "рачунар", matches[0].GetSuggestedReplacements()[0])
 }

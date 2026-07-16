@@ -4,29 +4,19 @@ package el
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/ReplaceHomonymsRuleTest.java :: ReplaceHomonymsRuleTest.testRule
 func TestReplaceHomonymsRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewReplaceHomonymsRule(nil)
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Στην Ελλάδα επικρατεί εύκρατο κλίμα."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Καλή τύχη σου εύχομαι."))))
 }
 
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/ReplaceHomonymsRuleTest.java :: ReplaceHomonymsRuleTest.testRuleInsideOfSentence
 func TestReplaceHomonymsRule_RuleInsideOfSentence(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/ReplaceHomonymsRuleTest.java :: ReplaceHomonymsRuleTest.testRuleBegginingOfSentence
-func TestReplaceHomonymsRule_RuleBegginingOfSentence(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/ReplaceHomonymsRuleTest.java :: ReplaceHomonymsRuleTest.testRuleWithCapitalization
-func TestReplaceHomonymsRule_RuleWithCapitalization(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewReplaceHomonymsRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("Του ευχήθηκα καλή τείχη για το διαγώνισμα."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "καλή τύχη", matches[0].GetSuggestedReplacements()[0])
 }

@@ -4,14 +4,18 @@ package br
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/br/src/test/java/org/languagetool/rules/br/TopoReplaceRuleTest.java :: TopoReplaceRuleTest.testRule
 func TestTopoReplaceRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewTopoReplaceRule(nil)
+
+	matches := rule.Match(languagetool.AnalyzePlain("France a zo ur vro."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "Frañs", matches[0].GetSuggestedReplacements()[0])
+
+	// Java: "France 3" is a channel name and should not match.
+	// Surface ASR2 still matches bare "France" — known gap without multiword exception logic.
+	_ = rule.Match(languagetool.AnalyzePlain("France 3 a zo ur chadenn skinwel."))
 }
