@@ -13,11 +13,13 @@ type CommaWhitespaceRule struct {
 	Messages              map[string]string
 	QuotesWhitespaceCheck bool
 	// CommaCharacter is the punctuation checked for spacing ("," default; Arabic "،"/"؛"/"؟").
-	CommaCharacter        string
+	CommaCharacter string
 	// RuleID overrides GetID when set (language-specific wrappers).
-	RuleID                string
-	fileExt               *regexp.Regexp
-	domain                *regexp.Regexp
+	RuleID string
+	// IsException skips a candidate match at token index i (language-specific).
+	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
+	fileExt     *regexp.Regexp
+	domain      *regexp.Regexp
 }
 
 func NewCommaWhitespaceRule(messages map[string]string) *CommaWhitespaceRule {
@@ -111,7 +113,7 @@ func (r *CommaWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*
 			}
 		}
 
-		if msgSet && msg != "" && !tokens[i].IsImmunized() {
+		if msgSet && msg != "" && !tokens[i].IsImmunized() && (r.IsException == nil || !r.IsException(tokens, i)) {
 			fromPos := tokens[i-1].GetStartPos()
 			if twoSuggestions {
 				fromPos = tokens[i-2].GetStartPos()
