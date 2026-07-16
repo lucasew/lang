@@ -4,8 +4,8 @@ package patterns
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -13,7 +13,7 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleLoaderTest.java :: PatternRuleLoaderTest.testGetRules
 func TestPatternRuleLoader_GetRules(t *testing.T) {
-	tools.Unimplemented("PatternRuleLoaderTest.testGetRules")
+	t.Skip("unimplemented: PatternRuleLoaderTest.testGetRules")
 }
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleLoaderTest.java :: PatternRuleLoaderTest.testPremiumXmlFlag

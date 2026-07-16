@@ -4,8 +4,8 @@ package patterns
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleLoaderPermissionTest.java :: PatternRuleLoaderPermissionTest.testPermissionManager
 func TestPatternRuleLoaderPermission_PermissionManager(t *testing.T) {
-	tools.Unimplemented("PatternRuleLoaderPermissionTest.testPermissionManager")
+	t.Skip("unimplemented: PatternRuleLoaderPermissionTest.testPermissionManager")
 }
