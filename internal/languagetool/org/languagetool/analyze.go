@@ -43,6 +43,7 @@ func AnalyzeSentences(text string) []*AnalyzedSentence {
 // SplitAndAnalyze splits on .!? boundaries for SentenceWhitespaceRule unit tests.
 // Trailing single space after terminator is attached to the previous sentence
 // (so prevSentenceEndsWithWhitespace matches LT SRX-ish behavior for these tests).
+// Periods inside URLs/domains (e.g. example.com) are not treated as boundaries.
 func SplitAndAnalyze(text string) []*AnalyzedSentence {
 	if text == "" {
 		return nil
@@ -53,6 +54,15 @@ func SplitAndAnalyze(text string) []*AnalyzedSentence {
 	for i := 0; i < len(runes); i++ {
 		r := runes[i]
 		if r == '.' || r == '!' || r == '?' {
+			// Do not split on '.' when next is lowercase letter or digit (domain/decimal).
+			// Uppercase after '.' without space is still a sentence boundary
+			// (SentenceWhitespaceRule "text.And next").
+			if r == '.' && i+1 < len(runes) {
+				n := runes[i+1]
+				if (n >= 'a' && n <= 'z') || (n >= '0' && n <= '9') {
+					continue
+				}
+			}
 			end := i + 1
 			// include following single space/newline as part of this sentence
 			if end < len(runes) && (runes[end] == ' ' || runes[end] == '\n' || runes[end] == '\u00A0') {
