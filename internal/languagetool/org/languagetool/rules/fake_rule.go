@@ -1,8 +1,15 @@
 package rules
 
+// Tag ports org.languagetool.Tag (subset used by filters).
+type Tag string
+
+const TagPicky Tag = "picky"
+
 // FakeRule ports org.languagetool.rules.FakeRule for unit tests.
 type FakeRule struct {
-	id string
+	id                    string
+	tags                  []Tag
+	includedAllAtOnce     bool
 }
 
 func NewFakeRule(id string) *FakeRule {
@@ -12,7 +19,28 @@ func NewFakeRule(id string) *FakeRule {
 	return &FakeRule{id: id}
 }
 
+func NewFakeRuleWithTag(id string, tag Tag) *FakeRule {
+	r := NewFakeRule(id)
+	r.tags = []Tag{tag}
+	return r
+}
+
 func (r *FakeRule) GetID() string { return r.id }
+
+func (r *FakeRule) GetTags() []Tag { return r.tags }
+
+func (r *FakeRule) HasTag(tag Tag) bool {
+	for _, t := range r.tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+func (r *FakeRule) IsIncludedInErrorsCorrectedAllAtOnce() bool {
+	return r.includedAllAtOnce
+}
 
 // PatternRule is a minimal stub of org.languagetool.rules.patterns.PatternRule
 // sufficient for RuleWithMaxFilter / SameRuleGroupFilter unit tests.
@@ -43,4 +71,11 @@ type RuleWithID interface {
 type AbstractPatternRule interface {
 	RuleWithID
 	GetSubID() *string
+}
+
+// RuleWithTags optional tags for CleanOverlappingFilter.
+type RuleWithTags interface {
+	RuleWithID
+	GetTags() []Tag
+	IsIncludedInErrorsCorrectedAllAtOnce() bool
 }
