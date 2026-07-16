@@ -73,6 +73,14 @@ func CopyRemoteRuleConfig(c *RemoteRuleConfig) *RemoteRuleConfig {
 
 func (c *RemoteRuleConfig) GetRuleID() string { return c.RuleID }
 func (c *RemoteRuleConfig) GetURL() string    { return c.URL }
+
+// GetFallbackRuleId returns options["fallbackRuleId"] if set.
+func (c *RemoteRuleConfig) GetFallbackRuleId() string {
+	if c == nil || c.Options == nil {
+		return ""
+	}
+	return c.Options[RemoteOptionFallbackRule]
+}
 func (c *RemoteRuleConfig) GetPort() int {
 	if c.Port != nil {
 		return *c.Port
