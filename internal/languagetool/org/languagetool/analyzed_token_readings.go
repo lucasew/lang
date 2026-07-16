@@ -114,6 +114,22 @@ func (r *AnalyzedTokenReadings) HasPosTagStartingWith(posTag string) bool {
 	return false
 }
 
+// HasAnyLemma ports AnalyzedTokenReadings.hasAnyLemma.
+func (r *AnalyzedTokenReadings) HasAnyLemma(lemmas ...string) bool {
+	for _, reading := range r.anTokReadings {
+		lem := reading.GetLemma()
+		if lem == nil {
+			continue
+		}
+		for _, want := range lemmas {
+			if *lem == want {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // IsTagged ports AnalyzedTokenReadings.isTagged — true if any reading has a real POS tag.
 func (r *AnalyzedTokenReadings) IsTagged() bool {
 	for _, element := range r.anTokReadings {
