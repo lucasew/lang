@@ -1,6 +1,8 @@
 package tools
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -150,19 +152,55 @@ func TestStringTools_AllStartWithLowercase(t *testing.T) {
 }
 
 func TestStringTools_ToId(t *testing.T) {
-	Unimplemented("StringToolsTest.testToId")
+	// Java String.toUpperCase maps ß→SS (pre-mapped in ToId for Go parity).
+	require.Equal(t, "BL_Q_A__UEBEL_OEAESSOE", ToId(" Bl'a (übel öäßÖ ", "de"))
+	require.Equal(t, "ÜSS_ÇÃÔ_OÙ_Ñ", ToId("üß çãÔ-où Ñ", "pt"))
+	require.Equal(t, "FOOÓÉÉ", ToId("fooóéÉ", "de"))
 }
 
 func TestStringTools_ReadStream(t *testing.T) {
-	Unimplemented("StringToolsTest.testReadStream")
+	root := findModuleRoot(t)
+	path := filepath.Join(root, "inspiration/languagetool/languagetool-core/src/test/resources/testinput.txt")
+	f, err := os.Open(path)
+	require.NoError(t, err)
+	defer f.Close()
+	content, err := ReadStream(f)
+	require.NoError(t, err)
+	require.Equal(t, "one\ntwo\nöäüß\nșțîâăȘȚÎÂĂ\n", content)
+}
+
+func findModuleRoot(t *testing.T) string {
+	t.Helper()
+	dir, err := os.Getwd()
+	require.NoError(t, err)
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			t.Fatal("go.mod not found")
+		}
+		dir = parent
+	}
 }
 
 func TestStringTools_AddSpace(t *testing.T) {
-	Unimplemented("StringToolsTest.testAddSpace")
+	require.Equal(t, " ", AddSpace("word", "en"))
+	require.Equal(t, "", AddSpace(",", "en"))
+	require.Equal(t, "", AddSpace(",", "en"))
+	require.Equal(t, "", AddSpace(",", "en"))
+	require.Equal(t, "", AddSpace(".", "fr"))
+	require.Equal(t, "", AddSpace(".", "de"))
+	require.Equal(t, " ", AddSpace("!", "fr"))
+	require.Equal(t, "", AddSpace("!", "de"))
 }
 
 func TestStringTools_AsString(t *testing.T) {
-	Unimplemented("StringToolsTest.testAsString")
+	require.Nil(t, AsString(nil))
+	s := "foo!"
+	require.Equal(t, &s, AsString(&s))
+	require.Equal(t, "foo!", AsStringFromValue("foo!"))
 }
 
 func TestStringTools_IsCamelCase(t *testing.T) {
@@ -177,9 +215,20 @@ func TestStringTools_IsCamelCase(t *testing.T) {
 }
 
 func TestStringTools_StringForSpeller(t *testing.T) {
-	Unimplemented("StringToolsTest.testStringForSpeller")
+	arabicChars := "\u064B \u064C \u064D \u064E \u064F \u0650 \u0651 \u0652 \u0670"
+	require.Equal(t, arabicChars, StringForSpeller(arabicChars))
+	russianChars := "а б в г д е ё ж з и й к л м н о п р с т у ф х ц ч ш щ ъ ы ь э ю я"
+	require.Equal(t, russianChars, StringForSpeller(russianChars))
+	require.Equal(t, "   Prueva", StringForSpeller("🧡 Prueva"))
+	// Java: "\uD83E\uDDE1\uD83D\uDEB4\uD83C\uDFFD♂\uFE0F Prueva"
+	emojiStr := "\U0001F9E1\U0001F6B4\U0001F3FD♂\uFE0F Prueva"
+	require.Equal(t, "         Prueva", StringForSpeller(emojiStr))
 }
 
 func TestStringTools_TitlecaseGlobal(t *testing.T) {
-	Unimplemented("StringToolsTest.testTitlecaseGlobal")
+	require.Equal(t, "The Lord of the Rings", TitlecaseGlobal("the lord of the rings"))
+	require.Equal(t, "Rhythm and Blues", TitlecaseGlobal("rhythm And blues"))
+	require.Equal(t, "Memória de Leitura", TitlecaseGlobal("memória de leitura"))
+	require.Equal(t, "Fond du Lac", TitlecaseGlobal("fond du lac"))
+	require.Equal(t, "El Niño de las Islas", TitlecaseGlobal("el niño de Las islas"))
 }

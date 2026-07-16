@@ -287,3 +287,131 @@ func IsNotWordCharacter(input string) bool {
 	}
 	return !unicode.IsLetter(runes[0])
 }
+
+// --- remaining StringTools ports ---
+
+var nonCharID = regexp.MustCompile(`[^A-Z\x{00c0}-\x{00D6}\x{00D8}-\x{00DE}]`)
+
+// ToId ports StringTools.toId(input, language).
+func ToId(input, languageCode string) string {
+	// Java String.toUpperCase maps ß → SS; Go's strings.ToUpper does not.
+	trimmed := strings.TrimSpace(input)
+	trimmed = strings.ReplaceAll(trimmed, "ß", "SS")
+	normalised := strings.ToUpper(trimmed)
+	normalised = strings.ReplaceAll(normalised, " ", "_")
+	normalised = strings.ReplaceAll(normalised, "'", "_Q_")
+	if languageCode == "de" {
+		normalised = strings.ReplaceAll(normalised, "Ä", "AE")
+		normalised = strings.ReplaceAll(normalised, "Ü", "UE")
+		normalised = strings.ReplaceAll(normalised, "Ö", "OE")
+	}
+	return nonCharID.ReplaceAllString(normalised, "_")
+}
+
+// AddSpace ports StringTools.addSpace.
+func AddSpace(word, languageShortCode string) string {
+	space := " "
+	if len([]rune(word)) == 1 {
+		c := []rune(word)[0]
+		if languageShortCode == "fr" {
+			if c == '.' || c == ',' {
+				space = ""
+			}
+		} else {
+			if c == '.' || c == ',' || c == ';' || c == ':' || c == '?' || c == '!' {
+				space = ""
+			}
+		}
+	}
+	return space
+}
+
+// AsString ports StringTools.asString — nil-safe CharSequence to string.
+func AsString(s *string) *string {
+	return s
+}
+
+// AsStringFromValue returns pointer to s (convenience for non-null).
+func AsStringFromValue(s string) string { return s }
+
+var allTitlecaseExceptions = func() map[string]struct{} {
+	lists := [][]string{
+		{"of", "in", "on", "the", "a", "an", "and", "or"},
+		{"e", "ou", "que", "de", "do", "dos", "da", "das", "o", "a", "os", "as", "no", "nos", "na", "nas", "ao", "aos", "à", "às"},
+		{"et", "ou", "que", "qui", "de", "du", "des", "en", "le", "les", "la", "un", "une", "à", "au", "aux"},
+		{"y", "e", "o", "u", "que", "el", "la", "los", "las", "un", "unos", "una", "unas", "del", "nel", "de", "en", "a", "al"},
+		{"von", "in", "im", "an", "am", "vom", "und", "oder", "dass", "ob", "der", "die", "das", "dem", "den", "des", "ein", "eines", "einem", "einen", "einer", "eine", "kein", "keines", "keinem", "keinen", "keiner", "keine"},
+		{"van", "in", "de", "het", "een", "en", "of"},
+	}
+	m := map[string]struct{}{}
+	for _, list := range lists {
+		for _, w := range list {
+			m[w] = struct{}{}
+		}
+	}
+	return m
+}()
+
+// LowercaseFirstCharIfCapitalized ports StringTools.lowercaseFirstCharIfCapitalized.
+func LowercaseFirstCharIfCapitalized(str string) string {
+	if !IsCapitalizedWord(str) {
+		return str
+	}
+	return LowercaseFirstChar(str)
+}
+
+// TitlecaseGlobal ports StringTools.titlecaseGlobal.
+func TitlecaseGlobal(str string) string {
+	parts := strings.Split(str, " ")
+	if len(parts) == 1 {
+		return UppercaseFirstChar(str)
+	}
+	var out []string
+	for i, part := range parts {
+		if i == 0 {
+			out = append(out, UppercaseFirstChar(part))
+			continue
+		}
+		if _, ok := allTitlecaseExceptions[strings.ToLower(part)]; ok {
+			out = append(out, LowercaseFirstCharIfCapitalized(part))
+		} else {
+			out = append(out, UppercaseFirstChar(part))
+		}
+	}
+	return strings.Join(out, " ")
+}
+
+var charsNotForSpelling = regexp.MustCompile(`[^\p{L}\d\p{P}\p{Z}]`)
+
+// StringForSpeller ports StringTools.stringForSpeller — replace non-spelling symbols
+// (e.g. emoji) with same-width spaces using UTF-16 length of the match.
+func StringForSpeller(s string) string {
+	// Java: if length > 1 && codePointCount != length (has supplementary chars)
+	if len(s) > 1 {
+		cps := 0
+		for range s {
+			cps++
+		}
+		// codePointCount vs UTF-16 length
+		if cps != utf16LenTools(s) {
+			// replace each match with spaces of UTF-16 length of match
+			s = charsNotForSpelling.ReplaceAllStringFunc(s, func(found string) string {
+				n := utf16LenTools(found)
+				if n >= 20 {
+					return strings.Repeat(" ", n)
+				}
+				return strings.Repeat(" ", n)
+			})
+		}
+	}
+	return s
+}
+
+// ReadStream ports StringTools.readStream.
+func ReadStream(r io.Reader) (string, error) {
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
