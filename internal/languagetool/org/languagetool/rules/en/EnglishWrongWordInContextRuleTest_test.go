@@ -4,38 +4,60 @@ package en
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishWrongWordInContextRuleTest.java :: EnglishWrongWordInContextRuleTest.testRule
 func TestEnglishWrongWordInContextRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	_ = "I have prescribed you a course of antibiotics." // assertGood
-	_ = "Name one country that does not proscribe theft." // assertGood
-	_ = "He wrote about his addiction to heroin." // assertGood
-	_ = "A heroine is the principal female character in a novel." // assertGood
-	_ = "I bought these books at the church bazaar." // assertGood
-	_ = "She has a bizarre haircut." // assertGood
-	_ = "Forgo the champagne treatment a bridal boutique often provides." // assertGood
-	_ = "He sat there holding his horse by the bridle." // assertGood
-	_ = "They have some great desserts on this menu." // assertGood
-	_ = "They have a great marble statue." // assertGood
-	_ = "Protons and neutrons" // assertGood
-	_ = "The plane taxied to the hangar." // assertGood
-	_ = "I have proscribed you a course of antibiotics." // assertBad
-	_ = "Name one country that does not prescribe theft." // assertBad
-	_ = "We know that heroine is highly addictive." // assertBad
-	_ = "A heroin is the principal female character in a novel." // assertBad
-	_ = "What a bazaar behavior!" // assertBad
-	_ = "The Saturday morning bizarre is worth seeing even if you buy nothing." // assertBad
-	_ = "The bridle party waited on the lawn." // assertBad
-	_ = "Each rider used his own bridal." // assertBad
-	_ = "They have some great deserts on this menu." // assertBad
-	_ = "They have some great marble statutes." // assertBad
-	_ = "Protons and neurons" // assertBad
-	_ = "The plane taxied to the hanger." // assertBad
+	rule := NewEnglishWrongWordInContextRule(nil)
+	assertGood := func(sentence string) {
+		t.Helper()
+		require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(sentence))), "good: %q", sentence)
+	}
+	assertBad := func(sentence string) {
+		t.Helper()
+		require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain(sentence))), "bad: %q", sentence)
+	}
+
+	// prescribe/proscribe
+	assertBad("I have proscribed you a course of antibiotics.")
+	assertGood("I have prescribed you a course of antibiotics.")
+	assertGood("Name one country that does not proscribe theft.")
+	assertBad("Name one country that does not prescribe theft.")
+	matches := rule.Match(languagetool.AnalyzePlain("I have proscribed you a course of antibiotics."))
+	require.Equal(t, "prescribed", matches[0].GetSuggestedReplacements()[0])
+
+	// herion/heroine
+	assertBad("We know that heroine is highly addictive.")
+	assertGood("He wrote about his addiction to heroin.")
+	assertGood("A heroine is the principal female character in a novel.")
+	assertBad("A heroin is the principal female character in a novel.")
+
+	// bizarre/bazaar
+	assertBad("What a bazaar behavior!")
+	assertGood("I bought these books at the church bazaar.")
+	assertGood("She has a bizarre haircut.")
+	assertBad("The Saturday morning bizarre is worth seeing even if you buy nothing.")
+
+	// bridal/bridle
+	assertBad("The bridle party waited on the lawn.")
+	assertGood("Forgo the champagne treatment a bridal boutique often provides.")
+	assertGood("He sat there holding his horse by the bridle.")
+	assertBad("Each rider used his own bridal.")
+
+	// desert/dessert
+	assertBad("They have some great deserts on this menu.")
+	assertGood("They have some great desserts on this menu.")
+
+	// statute/statue
+	assertBad("They have some great marble statutes.")
+	assertGood("They have a great marble statue.")
+
+	// neutron/neuron
+	assertGood("Protons and neutrons")
+	assertBad("Protons and neurons")
+
+	// hangar / hanger
+	assertBad("The plane taxied to the hanger.")
+	assertGood("The plane taxied to the hangar.")
 }

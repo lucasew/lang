@@ -93,6 +93,20 @@ func LowercaseFirstChar(str string) string {
 	return changeFirstCharCase(str, false)
 }
 
+// PreserveCase ports StringTools.preserveCase(inputString, modelString).
+func PreserveCase(inputString, modelString string) string {
+	if modelString == "" {
+		return inputString
+	}
+	if IsCapitalizedWord(modelString) {
+		return UppercaseFirstChar(strings.ToLower(inputString))
+	}
+	if IsAllUppercase(modelString) {
+		return strings.ToUpper(inputString)
+	}
+	return inputString
+}
+
 func changeFirstCharCase(str string, toUpperCase bool) string {
 	if IsEmptyStr(str) {
 		return str
