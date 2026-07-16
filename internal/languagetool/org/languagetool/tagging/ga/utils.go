@@ -116,33 +116,19 @@ func UnLenite(in string) string {
 	return ""
 }
 
-// Demutate attempts reverse lenition/eclipsis (simplified).
+// Demutate ports Utils.demutate (definite-s, lenition, then eclipsis±lenition).
 func Demutate(in string) *Retaggable {
-	if un := UnLenite(in); un != "" {
-		return NewRetaggable(un, "", ":Len:MorphError")
+	if out := UnLeniteDefiniteS(in); out != "" {
+		return NewRetaggable(out, "(?:C[UMC]:)?Noun:.*:DefArt", ":MorphError")
 	}
-	// simple eclipsis reverse for common prefixes
-	lower := strings.ToLower(in)
-	for _, p := range []struct{ pref, tag string }{
-		{"bhf", ":Ecl:MorphError"},
-		{"mb", ":Ecl:MorphError"},
-		{"gc", ":Ecl:MorphError"},
-		{"nd", ":Ecl:MorphError"},
-		{"ng", ":Ecl:MorphError"},
-		{"bp", ":Ecl:MorphError"},
-		{"dt", ":Ecl:MorphError"},
-		{"n-", ":Ecl:MorphError"},
-	} {
-		if strings.HasPrefix(lower, p.pref) {
-			rest := in[len(p.pref):]
-			if p.pref == "bhf" {
-				rest = "f" + in[len(p.pref):]
-				if unicode.IsUpper([]rune(in)[0]) {
-					rest = "F" + in[len(p.pref):]
-				}
-			}
-			return NewRetaggable(rest, "", p.tag)
+	if out := UnLenite(in); out != "" {
+		return NewRetaggable(out, "", ":Len:MorphError")
+	}
+	if out := UnEclipse(in); out != "" {
+		if out2 := UnLenite(out); out2 != "" {
+			return NewRetaggable(out2, "", ":EclLen")
 		}
+		return NewRetaggable(out, "", ":Ecl:MorphError")
 	}
 	return NewRetaggable(in, "", "")
 }
@@ -162,4 +148,181 @@ func MorphWord(in string) []*Retaggable {
 		out = append(out, sfx)
 	}
 	return out
+}
+
+// ToLowerCaseIrish ports Utils.toLowerCaseIrish (tAON → t-aon, nAON → n-aon).
+func ToLowerCaseIrish(s string) string {
+	if len(s) > 1 {
+		r := []rune(s)
+		if (r[0] == 'n' || r[0] == 't') && isUpperVowel(r[1]) {
+			return string(r[0]) + "-" + strings.ToLower(string(r[1:]))
+		}
+	}
+	return strings.ToLower(s)
+}
+
+func isUpperVowel(c rune) bool {
+	switch c {
+	case 'A', 'E', 'I', 'O', 'U', 'Á', 'É', 'Í', 'Ó', 'Ú':
+		return true
+	}
+	return false
+}
+
+// UnEclipseChar ports Utils.unEclipseChar.
+func UnEclipseChar(in string, first, second rune) string {
+	r := []rune(in)
+	if len(r) < 2 {
+		return ""
+	}
+	upperFirst := unicode.ToUpper(first)
+	upperSecond := unicode.ToUpper(second)
+	retSecond := second
+	if r[0] == upperFirst {
+		retSecond = upperSecond
+	}
+	if r[0] != first && r[0] != upperFirst {
+		return ""
+	}
+	// properly eclipsed: first + second
+	if r[0] == first && (r[1] == second || r[1] == upperSecond) {
+		return string(r[1:])
+	}
+	from := 2
+	ch1 := r[1]
+	if len(r) > 3 && r[1] == '-' {
+		from = 3
+		ch1 = r[2]
+	}
+	if ch1 == second || ch1 == upperSecond {
+		return string(retSecond) + string(r[from:])
+	}
+	return ""
+}
+
+// UnEclipse ports Utils.unEclipse (returns "" for Java null).
+func UnEclipse(in string) string {
+	if len([]rune(in)) <= 2 {
+		return ""
+	}
+	r := []rune(in)
+	switch r[0] {
+	case 'N', 'n':
+		ch1 := r[1]
+		if len(r) > 3 && r[1] == '-' {
+			ch1 = r[2]
+		}
+		if ch1 == 'G' || ch1 == 'D' || ch1 == 'g' || ch1 == 'd' || isUpperVowel(ch1) || IsVowel(ch1) {
+			return UnEclipseChar(in, 'n', unicode.ToLower(ch1))
+		}
+		return ""
+	case 'B', 'b':
+		if r[1] == 'p' || r[1] == 'P' || (len(r) > 3 && r[1] == '-') {
+			return UnEclipseChar(in, 'b', 'p')
+		}
+		return unEclipseF(in)
+	case 'D', 'd':
+		return UnEclipseChar(in, 'd', 't')
+	case 'G', 'g':
+		return UnEclipseChar(in, 'g', 'c')
+	case 'M', 'm':
+		return UnEclipseChar(in, 'm', 'b')
+	}
+	return ""
+}
+
+func unEclipseF(in string) string {
+	uppers := []string{"Bhf", "bhF", "Bf", "bF", "Bh-f", "bh-F", "B-f", "b-F"}
+	lowers := []string{"bhf", "bh-f", "bf", "b-f"}
+	for _, start := range uppers {
+		if strings.HasPrefix(in, start) {
+			return "F" + in[len(start):]
+		}
+	}
+	for _, start := range lowers {
+		if strings.HasPrefix(in, start) {
+			return "f" + in[len(start):]
+		}
+	}
+	return ""
+}
+
+// UnLeniteDefiniteS ports Utils.unLeniteDefiniteS ("" for Java null).
+func UnLeniteDefiniteS(in string) string {
+	uppers := []string{"Ts", "T-s", "TS", "T-S", "t-S", "tS"}
+	lowers := []string{"ts", "t-s"}
+	for _, start := range uppers {
+		if strings.HasPrefix(in, start) {
+			return "S" + in[len(start):]
+		}
+	}
+	for _, start := range lowers {
+		if strings.HasPrefix(in, start) {
+			return "s" + in[len(start):]
+		}
+	}
+	return ""
+}
+
+// UnPonc converts dotted consonants (ḃ→bh) — ports Utils.unPonc.
+func UnPonc(s string) string {
+	var b strings.Builder
+	rs := []rune(s)
+	for i, c := range rs {
+		base, ok := unPoncChar(c)
+		if !ok {
+			b.WriteRune(c)
+			continue
+		}
+		b.WriteRune(base)
+		// append h/H
+		if unicode.IsLower(c) {
+			b.WriteByte('h')
+		} else {
+			if i < len(rs)-1 && unicode.IsUpper(rs[i+1]) {
+				b.WriteByte('H')
+			} else if i == len(rs)-1 && i > 0 && unicode.IsUpper(rs[i-1]) {
+				b.WriteByte('H')
+			} else {
+				b.WriteByte('h')
+			}
+		}
+	}
+	return b.String()
+}
+
+func unPoncChar(c rune) (rune, bool) {
+	m := map[rune]rune{
+		'Ḃ': 'B', 'ḃ': 'b',
+		'Ċ': 'C', 'ċ': 'c',
+		'Ḋ': 'D', 'ḋ': 'd',
+		'Ḟ': 'F', 'ḟ': 'f',
+		'Ġ': 'G', 'ġ': 'g',
+		'Ṁ': 'M', 'ṁ': 'm',
+		'Ṗ': 'P', 'ṗ': 'p',
+		'Ṡ': 'S', 'ṡ': 's',
+		'Ṫ': 'T', 'ṫ': 't',
+	}
+	base, ok := m[c]
+	return base, ok
+}
+
+// SimplifyMathematical maps mathematical alphanumeric symbols (bold plane) to ASCII.
+func SimplifyMathematical(s string) string {
+	var out strings.Builder
+	rs := []rune(s)
+	for i := 0; i < len(rs); i++ {
+		// surrogate pair for U+1D400.. as Go runes are already decoded
+		c := rs[i]
+		if c >= 0x1D400 && c <= 0x1D419 { // bold capital A-Z
+			out.WriteRune('A' + (c - 0x1D400))
+			continue
+		}
+		if c >= 0x1D41A && c <= 0x1D433 { // bold small a-z
+			out.WriteRune('a' + (c - 0x1D41A))
+			continue
+		}
+		out.WriteRune(c)
+	}
+	return out.String()
 }

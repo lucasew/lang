@@ -1,17 +1,15 @@
 package spelling
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java
+// Twin of SymSpellRuleTest (Java has no @Test) — surface smoke if SymSpellRule exists.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java :: SymSpellRuleTest (no @Test)
 func TestSymSpellRule_NoTests(t *testing.T) {
-	t.Log("languagetool-core/src/test/java/org/languagetool/rules/spelling/SymSpellRuleTest.java")
+	// package may define SymSpell helpers; ensure SpellingCheckRule still works as fallback
+	r := NewSpellingCheckRule("SYMSPELL", "sym", "en")
+	require.Equal(t, "SYMSPELL", r.GetID())
+	require.NotEmpty(t, r.GetDescription())
 }

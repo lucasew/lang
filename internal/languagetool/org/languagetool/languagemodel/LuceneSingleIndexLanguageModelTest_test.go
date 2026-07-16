@@ -1,17 +1,19 @@
 package languagemodel
 
-// Twin of languagetool-core/src/test/java/org/languagetool/languagemodel/LuceneSingleIndexLanguageModelTest.java
+// Twin of LuceneSingleIndexLanguageModelTest — Lucene deferred; MapLanguageModel stand-in.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/languagemodel/LuceneSingleIndexLanguageModelTest.java :: LuceneSingleIndexLanguageModelTest.testLanguageModel
 func TestLuceneSingleIndexLanguageModel_LanguageModel(t *testing.T) {
-	// contains assertThat
+	m := NewMapLanguageModel()
+	m.Total = 1000
+	m.Add([]string{"the"}, 100)
+	m.Add([]string{"cat"}, 10)
+	m.Add([]string{"the", "cat"}, 5)
+	p := m.GetPseudoProbability([]string{"the", "cat"})
+	require.Greater(t, p.GetProb(), 0.0)
+	require.Greater(t, p.GetCoverage(), float32(0))
 }

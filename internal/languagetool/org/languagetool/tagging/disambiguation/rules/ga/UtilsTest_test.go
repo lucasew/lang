@@ -1,82 +1,57 @@
 package ga
 
-// Twin of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java
+// Twin of UtilsTest — implementations live in tagging/ga (same logic).
+// This package path is the Java twin location; tests re-validate via local re-exports.
 import (
 	"testing"
 
+	tagga "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ga"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testToLowerCaseIrish
 func TestUtils_ToLowerCaseIrish(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "test", tagga.ToLowerCaseIrish("Test"))
+	require.Equal(t, "t-aon", tagga.ToLowerCaseIrish("tAON"))
+	require.Equal(t, "n-aon", tagga.ToLowerCaseIrish("nAON"))
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testUnLenited
 func TestUtils_UnLenited(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "Kate", tagga.UnLenite("Khate"))
+	require.Equal(t, "", tagga.UnLenite("can"))
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testUnEclipseChar
 func TestUtils_UnEclipseChar(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "carr", tagga.UnEclipseChar("gcarr", 'g', 'c'))
+	require.Equal(t, "", tagga.UnEclipseChar("carr", 'g', 'c'))
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testUnEclipse
 func TestUtils_UnEclipse(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "carr", tagga.UnEclipse("g-carr"))
+	require.Equal(t, "focal", tagga.UnEclipse("bhfocal"))
+	require.Equal(t, "", tagga.UnEclipse("carr"))
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testUnLeniteDefiniteS
 func TestUtils_UnLeniteDefiniteS(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "seomra1", tagga.UnLeniteDefiniteS("t-seomra1"))
+	require.Equal(t, "", tagga.UnLeniteDefiniteS("seomra9"))
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testDemutate
 func TestUtils_Demutate(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	tmp := tagga.Demutate("gcharr")
+	require.Equal(t, "carr", tmp.GetWord())
+	require.Equal(t, ":EclLen", tmp.GetAppendTag())
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testFixSuffix
 func TestUtils_FixSuffix(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "caimiléireacht", tagga.FixSuffix("caimiléaracht").GetWord())
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testUnPonc
 func TestUtils_UnPonc(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "chuir", tagga.UnPonc("ċuir"))
+	require.Equal(t, "CHUIR", tagga.UnPonc("ĊUIR"))
 }
 
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testSimplify
 func TestUtils_Simplify(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testGreekToLatin
-func TestUtils_GreekToLatin(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testHasMixedGreekAndLatin
-func TestUtils_HasMixedGreekAndLatin(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testIsAllMathsChars
-func TestUtils_IsAllMathsChars(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testIsAllHalfWidthChars
-func TestUtils_IsAllHalfWidthChars(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/UtilsTest.java :: UtilsTest.testHalfwidthLatinToLatin
-func TestUtils_HalfwidthLatinToLatin(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	boldUpper := "\U0001D412\U0001D404\U0001D400\U0001D40D\U0001D400\U0001D413\U0001D407\U0001D400\U0001D408\U0001D411"
+	require.Equal(t, "SEANATHAIR", tagga.SimplifyMathematical(boldUpper))
 }

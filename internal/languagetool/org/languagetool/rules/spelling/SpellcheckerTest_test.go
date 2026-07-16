@@ -1,17 +1,17 @@
 package spelling
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/spelling/SpellcheckerTest.java
+// Twin of SpellcheckerTest (Java has no @Test) — SpellingCheckRule smoke.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/spelling/SpellcheckerTest.java :: SpellcheckerTest (no @Test)
 func TestSpellchecker_NoTests(t *testing.T) {
-	t.Log("languagetool-core/src/test/java/org/languagetool/rules/spelling/SpellcheckerTest.java")
+	r := NewSpellingCheckRule("MORFOLOGIK_RULE_EN", "spell", "en")
+	r.IsMisspelled = func(w string) bool { return w == "xyzzy" }
+	require.True(t, r.AcceptWord("hello"))
+	require.False(t, r.AcceptWord("xyzzy"))
+	r.AddIgnoreWords("xyzzy")
+	require.True(t, r.AcceptWord("xyzzy"))
 }
