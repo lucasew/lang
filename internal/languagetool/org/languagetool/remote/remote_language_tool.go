@@ -161,8 +161,9 @@ type apiJSON struct {
 	} `json:"language"`
 	Matches []apiMatch `json:"matches"`
 	Software struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
+		Name      string `json:"name"`
+		Version   string `json:"version"`
+		BuildDate string `json:"buildDate"`
 	} `json:"software"`
 	IgnoreRanges []struct {
 		From int    `json:"from"`
@@ -205,7 +206,7 @@ func ParseCheckJSON(data []byte) (*RemoteResult, error) {
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return nil, err
 	}
-	server := NewRemoteServer(raw.Software.Name, raw.Software.Version)
+	server := NewRemoteServerFull(raw.Software.Name, raw.Software.Version, raw.Software.BuildDate)
 	matches := make([]*RemoteRuleMatch, 0, len(raw.Matches))
 	for _, m := range raw.Matches {
 		ctx := m.Context.Text

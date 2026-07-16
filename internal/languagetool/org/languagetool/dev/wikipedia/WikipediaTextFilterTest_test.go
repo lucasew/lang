@@ -1,47 +1,58 @@
 package wikipedia
 
-// Twin of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java
+// Twin of WikipediaTextFilterTest (Java @Ignore class; green simple filter)
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+func assertExtract(t *testing.T, input, expected string) {
+	t.Helper()
+	got := NewSimpleWikipediaTextFilter().Filter(input)
+	require.Equal(t, expected, got)
+}
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testImageRemoval
 func TestWikipediaTextFilter_ImageRemoval(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testImageRemoval")
+	assertExtract(t,
+		"foo [[Datei:Bundesarchiv Bild 183-1990-0803-017.jpg|miniatur|Mit Lothar de Maizière im August 1990]] bar",
+		"foo bar")
 }
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testRemovalOfImageWithLink
 func TestWikipediaTextFilter_RemovalOfImageWithLink(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testRemovalOfImageWithLink")
+	assertExtract(t,
+		"foo [[Datei:Bundesarchiv Bild 183-1990-0803-017.jpg|miniatur|Mit [[Lothar de Maizière]] im August 1990]] bar [[Link]]",
+		"foo bar Link")
 }
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testLink1
 func TestWikipediaTextFilter_Link1(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testLink1")
+	assertExtract(t, "foo [[Test]] bar", "foo Test bar")
 }
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testLink2
 func TestWikipediaTextFilter_Link2(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testLink2")
+	assertExtract(t, "foo [[Target|visible link]] bar", "foo visible link bar")
 }
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testEntity
 func TestWikipediaTextFilter_Entity(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testEntity")
+	assertExtract(t, "rund 20&nbsp;Kilometer südlich", "rund 20\u00A0Kilometer südlich")
+	assertExtract(t, "one&lt;br/&gt;two", "one<br/>two")
+	assertExtract(t, "one &ndash; two", "one – two")
+	assertExtract(t, "one &mdash; two", "one — two")
+	assertExtract(t, "one &amp; two", "one & two")
 }
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testLists
 func TestWikipediaTextFilter_Lists(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testLists")
+	assertExtract(t, "# one\n# two\n", "one\n\ntwo")
+	assertExtract(t, "* one\n* two\n", "one\n\ntwo")
 }
 
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/wikipedia/WikipediaTextFilterTest.java :: WikipediaTextFilterTest.testOtherStuff
 func TestWikipediaTextFilter_OtherStuff(t *testing.T) {
-	t.Skip("unimplemented: WikipediaTextFilterTest.testOtherStuff")
+	assertExtract(t,
+		"Daniel Guerin, ''[http://theanarchistlibrary.org Anarchism: From Theory to Practice]''",
+		"Daniel Guerin, Anarchism: From Theory to Practice")
+	assertExtract(t,
+		"foo <ref>\"At the end of the century in France [http://theanarchistlibrary.org] [[Daniel Guérin]]. ''Anarchism'']</ref>",
+		"foo")
+	assertExtract(t, "The <code>$pattern</code>", "The $pattern")
+	assertExtract(t, "foo <source lang=\"bash\">some source</source> bar", "foo bar")
 }
