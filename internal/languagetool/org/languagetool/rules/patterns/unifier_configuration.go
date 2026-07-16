@@ -47,3 +47,8 @@ func (c *UnifierConfiguration) GetEquivalenceFeatures() map[string][]string {
 	}
 	return out
 }
+
+// CreateUnifier ports UnifierConfiguration.createUnifier.
+func (c *UnifierConfiguration) CreateUnifier() *Unifier {
+	return NewUnifier(c.GetEquivalenceTypes(), c.GetEquivalenceFeatures())
+}

@@ -1,5 +1,7 @@
 package patterns
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
 // PosToken ports PatternToken.PosToken.
 type PosToken struct {
 	PosTag string
@@ -54,4 +56,9 @@ func (p *PatternToken) SetInsideMarker(v bool) { p.InsideMarker = v }
 func (p *PatternToken) SetStringPosException(tokenException string, regexp bool) {
 	p.TokenException = tokenException
 	p.TokenExceptionRE = regexp
+}
+
+// IsMatched ports PatternToken.isMatched for a single AnalyzedToken reading.
+func (p *PatternToken) IsMatched(token *languagetool.AnalyzedToken) bool {
+	return NewPatternTokenMatcher(p).IsMatched(token)
 }
