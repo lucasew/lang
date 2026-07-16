@@ -3,6 +3,7 @@ package uk
 import (
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 // LemmaHelper ports lemma sets and membership helpers from
@@ -158,4 +159,47 @@ func addAll(dst map[string]struct{}, src []string) {
 	for _, s := range src {
 		dst[s] = struct{}{}
 	}
+}
+
+// IsCapitalized ports LemmaHelper.isCapitalized (Ukrainian title-case heuristics).
+func IsCapitalized(word string) bool {
+	if word == "" {
+		return false
+	}
+	runes := []rune(word)
+	if len(runes) < 2 {
+		return false
+	}
+	char0 := runes[0]
+	if !unicode.IsUpper(char0) {
+		return false
+	}
+	// lax on Latin: EuroGas
+	if char0 >= 'A' && char0 <= 'Z' && unicode.IsLower(runes[1]) {
+		return true
+	}
+	prevDash := false
+	sz := len(runes)
+	for i := 1; i < sz; i++ {
+		ch := runes[i]
+		if strings.ContainsRune(ignoreChars, ch) {
+			continue
+		}
+		dash := ch == '-' || ch == '\u2013'
+		if dash {
+			if i == sz-2 && unicode.IsDigit(runes[i+1]) {
+				return true
+			}
+			prevDash = true
+			continue
+		}
+		if ch != '\'' && ch != '\u0301' && ch != '\u00AD' {
+			// prevDash != Character.isUpperCase(ch)
+			if prevDash != unicode.IsUpper(ch) {
+				return false
+			}
+		}
+		prevDash = false
+	}
+	return true
 }
