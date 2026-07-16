@@ -12,7 +12,9 @@ Mapping (predictable transform):
     internal/languagetool/org/languagetool/rules/FooTest_test.go
     func TestRule(t *testing.T)
 
-  testRule → TestRule | test → Test | avoidSomeWords → TestAvoidSomeWords
+  FooTest.testRule → TestFoo_Rule | FooTest.test → TestFoo_Test
+  FooTest.avoidSomeWords → TestFoo_AvoidSomeWords
+  (class prefix avoids same-package collisions e.g. testToString)
 
 Exit 0 only when every twin file and Test* symbol exists (visible to rft).
 """
@@ -41,13 +43,26 @@ RE_PACKAGE = re.compile(r"(?m)^package\s+([\w.]+)\s*;")
 RE_CLASS = re.compile(r"(?m)(?:public\s+)?(?:abstract\s+)?class\s+(\w+Test)\b")
 
 
-def java_method_to_go_test(name: str) -> str:
-    if name == "test":
-        return "Test"
-    if name.startswith("test") and len(name) > 4:
-        rest = name[4:]
-        return "Test" + rest[:1].upper() + rest[1:]
-    return "Test" + name[:1].upper() + name[1:]
+def java_method_to_go_test(class_name: str, method: str) -> str:
+    """Java @Test method → unique Go Test* name (class-prefixed to avoid package collisions).
+
+    AnalyzedTokenTest.testToString → TestAnalyzedToken_ToString
+    WordRepeatRuleTest.test       → TestWordRepeatRule_Test
+    FooTest.avoidSomeWords        → TestFoo_AvoidSomeWords
+    """
+    base = class_name
+    if base.endswith("Test"):
+        base = base[: -len("Test")]
+    if not base:
+        base = class_name
+    if method == "test":
+        meth = "Test"
+    elif method.startswith("test") and len(method) > 4:
+        rest = method[4:]
+        meth = rest[:1].upper() + rest[1:]
+    else:
+        meth = method[:1].upper() + method[1:]
+    return "Test" + base + "_" + meth
 
 
 def run_rft_ls(path: Path) -> list[str]:
@@ -159,10 +174,11 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.self_test:
-        assert java_method_to_go_test("testRule") == "TestRule"
-        assert java_method_to_go_test("test") == "Test"
-        assert java_method_to_go_test("avoidSomeWords") == "TestAvoidSomeWords"
-        assert java_method_to_go_test("testMatch") == "TestMatch"
+        assert java_method_to_go_test("MultipleWhitespaceRuleTest", "testRule") == "TestMultipleWhitespaceRule_Rule"
+        assert java_method_to_go_test("WordRepeatRuleTest", "test") == "TestWordRepeatRule_Test"
+        assert java_method_to_go_test("GlobalSpellingTest", "avoidSomeWords") == "TestGlobalSpelling_AvoidSomeWords"
+        assert java_method_to_go_test("AnalyzedTokenTest", "testToString") == "TestAnalyzedToken_ToString"
+        assert java_method_to_go_test("AnalyzedTokenReadingsTest", "testToString") == "TestAnalyzedTokenReadings_ToString"
         print("self-test ok")
         return 0
 
@@ -187,7 +203,7 @@ def main() -> int:
                 f"{jt.go_file_rel}  ← {jt.rel_java} ({len(jt.methods)} @Test)"
             )
             for jm in jt.methods:
-                gm = java_method_to_go_test(jm)
+                gm = java_method_to_go_test(jt.class_name, jm)
                 missing_methods.append(
                     f"{jt.go_file_rel} :: {gm}  ← {jt.class_name}.{jm}"
                 )
@@ -195,7 +211,7 @@ def main() -> int:
 
         combined = set(pkg_syms) | symbol_set(run_rft_ls(go_file))
         for jm in jt.methods:
-            gm = java_method_to_go_test(jm)
+            gm = java_method_to_go_test(jt.class_name, jm)
             if not has_go_func(combined, gm):
                 missing_methods.append(
                     f"{jt.go_file_rel} :: {gm}  ← {jt.class_name}.{jm}"

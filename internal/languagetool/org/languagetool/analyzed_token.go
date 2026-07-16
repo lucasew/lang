@@ -1,63 +1,135 @@
 package languagetool
 
-import (
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-// AnalyzedToken ports org.languagetool.AnalyzedToken.
+// AnalyzedToken ports org.languagetool.AnalyzedToken (1:1 behavior).
 type AnalyzedToken struct {
-	token         string
-	posTag        *string
-	lemma         *string
-	lemmaOrToken  string
+	token            string
+	posTag           *string // nil == Java null
+	lemma            *string
+	lemmaOrToken     string
 	whitespaceBefore bool
-	hasNoPOSTag   bool
+	hasNoPOSTag      bool
 }
 
-// NewAnalyzedToken ports the Java constructor AnalyzedToken(String, String, String).
-// posTag and lemma may be empty string meaning null-ish; use pointers at API boundary via helpers.
-func NewAnalyzedToken(token string, posTag string, lemma string, lemmaIsNull bool) *AnalyzedToken {
-	if token == "" && false {
-		// token cannot be null in Java; empty is allowed
+// NewAnalyzedToken ports AnalyzedToken(String token, String posTag, String lemma).
+// Empty posTag with useNilPosTag/lemma: pass nil pointers via NewAnalyzedTokenPtr.
+func NewAnalyzedToken(token string, posTag, lemma *string) *AnalyzedToken {
+	if token == "" && token != "" {
+		panic("unreachable")
 	}
+	// Java: Objects.requireNonNull(token)
+	// empty string is allowed; null is not — Go string cannot be null
 	t := &AnalyzedToken{token: token}
-	if posTag != "" || true {
-		// Java: posTag can be null — use special: we pass posTag with a parallel null flag
+	if posTag != nil {
+		// Java: posTag != null ? intern(posTag.trim()) : null
+		p := trimSpace(*posTag)
+		t.posTag = &p
 	}
-	_ = lemmaIsNull
-	tools.Unimplemented("AnalyzedToken.NewAnalyzedToken")
+	if lemma != nil {
+		l := *lemma
+		t.lemma = &l
+	}
+	if t.lemma == nil {
+		t.lemmaOrToken = t.token
+	} else {
+		t.lemmaOrToken = *t.lemma
+	}
+	t.hasNoPOSTag = t.posTag == nil ||
+		(t.posTag != nil && (*t.posTag == SentenceEndTagName || *t.posTag == ParagraphEndTagName))
 	return t
 }
 
-// NewAnalyzedTokenFull matches Java (token, posTag, lemma) where posTag/lemma may be nil.
-func NewAnalyzedTokenFull(token string, posTag, lemma *string) *AnalyzedToken {
-	tools.Unimplemented("AnalyzedToken.NewAnalyzedTokenFull")
-	return nil
-}
-
-func (t *AnalyzedToken) GetToken() string {
-	if t == nil {
-		tools.Unimplemented("AnalyzedToken.GetToken on nil")
+// NewAnalyzedTokenStr is a convenience matching common Java calls with nullable strings
+// represented as: use optional - for null lemma/pos pass the NullSentinel or use Ptr helpers.
+func NewAnalyzedTokenStr(token, posTag, lemma string, posNull, lemmaNull bool) *AnalyzedToken {
+	var p, l *string
+	if !posNull {
+		p = &posTag
 	}
-	return t.token
+	if !lemmaNull {
+		l = &lemma
+	}
+	return NewAnalyzedToken(token, p, l)
 }
 
-func (t *AnalyzedToken) GetPOSTag() *string {
-	tools.Unimplemented("AnalyzedToken.GetPOSTag")
-	return nil
+func trimSpace(s string) string {
+	// Java String.trim()
+	start, end := 0, len(s)
+	for start < end && (s[start] <= ' ') {
+		start++
+	}
+	for end > start && (s[end-1] <= ' ') {
+		end--
+	}
+	return s[start:end]
 }
 
-func (t *AnalyzedToken) GetLemma() *string {
-	tools.Unimplemented("AnalyzedToken.GetLemma")
-	return nil
-}
+func (t *AnalyzedToken) GetToken() string { return t.token }
 
-func (t *AnalyzedToken) String() string {
-	tools.Unimplemented("AnalyzedToken.String")
-	return ""
-}
+func (t *AnalyzedToken) GetPOSTag() *string { return t.posTag }
 
+func (t *AnalyzedToken) GetLemma() *string { return t.lemma }
+
+func (t *AnalyzedToken) SetWhitespaceBefore(v bool) { t.whitespaceBefore = v }
+
+func (t *AnalyzedToken) IsWhitespaceBefore() bool { return t.whitespaceBefore }
+
+// Matches ports AnalyzedToken.matches.
 func (t *AnalyzedToken) Matches(an *AnalyzedToken) bool {
-	tools.Unimplemented("AnalyzedToken.Matches")
-	return false
+	if t.Equals(an) {
+		return true
+	}
+	if an.GetToken() == "" && an.GetLemma() == nil && an.GetPOSTag() == nil {
+		return false
+	}
+	found := true
+	if an.GetToken() != "" {
+		found = an.GetToken() == t.token
+	}
+	if an.GetLemma() != nil {
+		found = found && t.lemma != nil && *an.GetLemma() == *t.lemma
+	}
+	if an.GetPOSTag() != nil {
+		found = found && t.posTag != nil && *an.GetPOSTag() == *t.posTag
+	}
+	return found
+}
+
+func (t *AnalyzedToken) HasNoTag() bool { return t.hasNoPOSTag }
+
+func (t *AnalyzedToken) SetNoPOSTag(noTag bool) { t.hasNoPOSTag = noTag }
+
+// String ports toString: lemmaOrToken + '/' + posTag (null prints as "null" like Java).
+func (t *AnalyzedToken) String() string {
+	pos := "null"
+	if t.posTag != nil {
+		pos = *t.posTag
+	}
+	return t.lemmaOrToken + "/" + pos
+}
+
+// Equals ports equals (not == on pointers).
+func (t *AnalyzedToken) Equals(o *AnalyzedToken) bool {
+	if o == nil {
+		return false
+	}
+	if t == o {
+		return true
+	}
+	if t.token != o.token || t.whitespaceBefore != o.whitespaceBefore {
+		return false
+	}
+	if !strPtrEq(t.posTag, o.posTag) || !strPtrEq(t.lemma, o.lemma) {
+		return false
+	}
+	return true
+}
+
+func strPtrEq(a, b *string) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil || b == nil {
+		return false
+	}
+	return *a == *b
 }
