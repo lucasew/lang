@@ -52,3 +52,7 @@ var AllCategories = []CategoryDef{
 	CatGrammar, CatMisc, CatPlainEnglish, CatRedundancy, CatRegionalisms,
 	CatPunctuation, CatTypography, CatWikipedia, CatTypos,
 }
+
+// Categories is the Java-name twin grouping CategoryDef constants.
+// Prefer Cat* variables (CatGrammar, CatTypos, …).
+type Categories = CategoryDef

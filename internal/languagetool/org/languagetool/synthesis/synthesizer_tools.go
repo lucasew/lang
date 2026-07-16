@@ -21,3 +21,11 @@ func LoadWords(r io.Reader) ([]string, error) {
 	}
 	return result, sc.Err()
 }
+
+// SynthesizerTools ports org.languagetool.synthesis.SynthesizerTools.
+type SynthesizerTools struct{}
+
+// LoadWords loads non-comment lines (same as package LoadWords).
+func (SynthesizerTools) LoadWords(r io.Reader) ([]string, error) {
+	return LoadWords(r)
+}

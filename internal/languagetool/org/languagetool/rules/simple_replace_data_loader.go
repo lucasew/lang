@@ -40,3 +40,11 @@ func LoadSimpleReplaceWords(r io.Reader) (map[string][]string, error) {
 	}
 	return m, sc.Err()
 }
+
+// SimpleReplaceDataLoader ports org.languagetool.rules.SimpleReplaceDataLoader.
+type SimpleReplaceDataLoader struct{}
+
+// LoadWords loads wrong=right|right2 maps from r.
+func (SimpleReplaceDataLoader) LoadWords(r io.Reader) (map[string][]string, error) {
+	return LoadSimpleReplaceWords(r)
+}

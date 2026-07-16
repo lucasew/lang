@@ -125,3 +125,12 @@ func coherencySurfaceForms(w string) []string {
 	}
 	return out
 }
+
+// WordCoherencyDataLoader ports org.languagetool.rules.WordCoherencyDataLoader.
+type WordCoherencyDataLoader struct {
+	ExpandInflections bool
+}
+
+func (l WordCoherencyDataLoader) LoadWords(r io.Reader, path string) (*WordCoherencyData, error) {
+	return LoadWordCoherencyData(r, path, l.ExpandInflections)
+}
