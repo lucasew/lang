@@ -95,8 +95,9 @@ func (r *AbstractSimpleReplaceRule2) LoadSimpleReplaceRule2Data(reader io.Reader
 			msg = parts[1]
 		}
 		confPairParts := strings.SplitN(confPair, "=", 2)
+		// Key-only lines (no '=') are allowed for suggestion-less lists (e.g. profanity).
 		if len(confPairParts) < 2 {
-			return fmt.Errorf("format error in %s: missing suggestion: %s", path, line)
+			confPairParts = []string{confPair, ""}
 		}
 		suggestion := confPairParts[1]
 		for _, wrongForm := range strings.Split(confPairParts[0], "|") {
@@ -104,7 +105,7 @@ func (r *AbstractSimpleReplaceRule2) LoadSimpleReplaceRule2Data(reader io.Reader
 			if r.CaseSens == CaseInsensitive {
 				searchKey = strings.ToLower(wrongForm)
 			}
-			if !r.CheckingCase && searchKey == suggestion {
+			if suggestion != "" && !r.CheckingCase && searchKey == suggestion {
 				return fmt.Errorf("format error in %s: same word both sides: %s", path, line)
 			}
 			swm := SuggestionWithMessage{Suggestion: suggestion, Message: msg}

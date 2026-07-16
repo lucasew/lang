@@ -6,14 +6,21 @@ import (
 
 // DoublePunctuationRule ports org.languagetool.rules.DoublePunctuationRule.
 type DoublePunctuationRule struct {
-	Messages map[string]string
+	Messages   map[string]string
+	RuleID     string // override GetID when set (e.g. DE_DOUBLE_PUNCTUATION)
+	DotMessage string // override two-dots message when set
 }
 
 func NewDoublePunctuationRule(messages map[string]string) *DoublePunctuationRule {
 	return &DoublePunctuationRule{Messages: messages}
 }
 
-func (r *DoublePunctuationRule) GetID() string { return "DOUBLE_PUNCTUATION" }
+func (r *DoublePunctuationRule) GetID() string {
+	if r.RuleID != "" {
+		return r.RuleID
+	}
+	return "DOUBLE_PUNCTUATION"
+}
 
 func (r *DoublePunctuationRule) GetCommaCharacter() string { return "," }
 
@@ -51,7 +58,10 @@ func (r *DoublePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) [
 			if fromPos < 0 {
 				fromPos = 0
 			}
-			msg := r.Messages["two_dots"]
+			msg := r.DotMessage
+			if msg == "" {
+				msg = r.Messages["two_dots"]
+			}
 			if msg == "" {
 				msg = "Two consecutive dots"
 			}

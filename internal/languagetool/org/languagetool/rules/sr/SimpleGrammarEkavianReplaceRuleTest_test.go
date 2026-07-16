@@ -4,14 +4,20 @@ package sr
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sr/ekavian"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/rules/sr/SimpleGrammarEkavianReplaceRuleTest.java :: SimpleGrammarEkavianReplaceRuleTest.testRule
 func TestSimpleGrammarEkavianReplaceRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := ekavian.NewSimpleGrammarEkavianReplaceRule(nil)
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Данас је диван дан."))))
+
+	matches := rule.Match(languagetool.AnalyzePlain("Син је вишљи од оца."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"виши"}, matches[0].GetSuggestedReplacements())
+
+	matches = rule.Match(languagetool.AnalyzePlain("У то оправдано сумљам."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"сумњам"}, matches[0].GetSuggestedReplacements())
 }
