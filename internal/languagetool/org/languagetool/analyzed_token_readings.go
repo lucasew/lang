@@ -9,19 +9,20 @@ import (
 
 // AnalyzedTokenReadings ports org.languagetool.AnalyzedTokenReadings (subset needed for tests; expand 1:1).
 type AnalyzedTokenReadings struct {
-	anTokReadings         []*AnalyzedToken
-	startPos              int
-	token                 string
-	isWhitespace          bool
-	isLinebreak           bool
-	isSentStart           bool
-	isSentEnd             bool
-	isParaEnd             bool
-	isWhitespaceBefore    bool
-	isImmunized           bool
-	immunizationSrcLine   int
-	historicalAnnotations string
-	hasSameLemmas         bool
+	anTokReadings            []*AnalyzedToken
+	startPos                 int
+	token                    string
+	isWhitespace             bool
+	isLinebreak              bool
+	isSentStart              bool
+	isSentEnd                bool
+	isParaEnd                bool
+	isWhitespaceBefore       bool
+	isImmunized              bool
+	immunizationSrcLine      int
+	historicalAnnotations    string
+	hasSameLemmas            bool
+	hasTypographicApostrophe bool
 }
 
 func NewAnalyzedTokenReadings(tok *AnalyzedToken) *AnalyzedTokenReadings {
@@ -121,6 +122,16 @@ func (r *AnalyzedTokenReadings) IsTagged() bool {
 		}
 	}
 	return false
+}
+
+// HasTypographicApostrophe ports AnalyzedTokenReadings.hasTypographicApostrophe.
+func (r *AnalyzedTokenReadings) HasTypographicApostrophe() bool {
+	return r.hasTypographicApostrophe
+}
+
+// SetTypographicApostrophe ports setTypographicApostrophe.
+func (r *AnalyzedTokenReadings) SetTypographicApostrophe(v bool) {
+	r.hasTypographicApostrophe = v
 }
 
 func (r *AnalyzedTokenReadings) MatchesPosTagRegex(posTagRegex string) bool {
