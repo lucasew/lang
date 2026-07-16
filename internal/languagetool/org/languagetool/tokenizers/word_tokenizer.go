@@ -263,3 +263,29 @@ func BuildPositions(tokens []string) []int {
 	}
 	return pos
 }
+
+var (
+	currencySymbols = regexp.MustCompile(`^[A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]$`)
+	// full match expression for token
+	currencyExpression = regexp.MustCompile(`^(?:([A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤])(\d+(?:[.,]\d+)*)|(\d+(?:[.,]\d+)*)([A-Z]*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]))$`)
+)
+
+// IsCurrencyExpression ports WordTokenizer.isCurrencyExpression.
+func IsCurrencyExpression(token string) bool {
+	return currencyExpression.MatchString(token)
+}
+
+// SplitCurrencyExpression ports WordTokenizer.splitCurrencyExpression.
+func SplitCurrencyExpression(token string) []string {
+	m := currencyExpression.FindStringSubmatch(token)
+	if m == nil {
+		return []string{token}
+	}
+	if m[1] != "" && m[2] != "" {
+		return []string{m[1], m[2]}
+	}
+	if m[3] != "" && m[4] != "" {
+		return []string{m[3], m[4]}
+	}
+	return []string{token}
+}

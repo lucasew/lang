@@ -5,148 +5,212 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+func testTokenise(t *testing.T, sentence string, tokens ...string) {
+	t.Helper()
+	w := NewPortugueseWordTokenizer()
+	got := w.Tokenize(sentence)
+	require.Equal(t, tokens, got, "tokenize(%q)", sentence)
+}
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseBreakChars
 func TestPortugueseWordTokenizer_TokeniseBreakChars(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseBreakChars")
+	testTokenise(t, "Isto é\u00A0um teste", "Isto", " ", "é", "\u00A0", "um", " ", "teste")
+	testTokenise(t, "Isto\rquebra", "Isto", "\r", "quebra")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseHyphenNoWhiteSpace
 func TestPortugueseWordTokenizer_TokeniseHyphenNoWhiteSpace(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseHyphenNoWhiteSpace")
+	testTokenise(t, "Agora isto sim é-mesmo!-um teste.",
+		"Agora", " ", "isto", " ", "sim", " ", "é", "-", "mesmo", "!", "-", "um", " ", "teste", ".")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseWordFinalHyphen
 func TestPortugueseWordTokenizer_TokeniseWordFinalHyphen(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseWordFinalHyphen")
+	testTokenise(t, "Agora isto é- realmente!- um teste.",
+		"Agora", " ", "isto", " ", "é", "-", " ", "realmente", "!", "-", " ", "um", " ", "teste", ".")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseMDash
 func TestPortugueseWordTokenizer_TokeniseMDash(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseMDash")
+	testTokenise(t, "Agora isto é—realmente!—um teste.",
+		"Agora", " ", "isto", " ", "é", "—", "realmente", "!", "—", "um", " ", "teste", ".")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseHyphenatedSingleToken
 func TestPortugueseWordTokenizer_TokeniseHyphenatedSingleToken(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseHyphenatedSingleToken")
+	testTokenise(t, "sex-appeal", "sex-appeal")
+	testTokenise(t, "Aix-en-Provence", "Aix-en-Provence")
+	testTokenise(t, "Montemor-o-Novo", "Montemor-o-Novo")
+	testTokenise(t, "Andorra-a-Velha", "Andorra-a-Velha")
+	testTokenise(t, "Tsé-Tung", "Tsé-Tung")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseHyphenatedSplitRegardlessOfLetterCase
 func TestPortugueseWordTokenizer_TokeniseHyphenatedSplitRegardlessOfLetterCase(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseHyphenatedSplitRegardlessOfLetterCase")
+	testTokenise(t, "jiu-jitsu", "jiu-jitsu")
+	testTokenise(t, "Jiu-jitsu", "Jiu-jitsu")
+	testTokenise(t, "JIU-JITSU", "JIU-JITSU")
+	testTokenise(t, "Jiu-Jitsu", "Jiu-Jitsu")
+	testTokenise(t, "franco-prussiano", "franco-prussiano")
+	testTokenise(t, "Franco-prussiano", "Franco-prussiano")
+	testTokenise(t, "Franco-Prussiano", "Franco-Prussiano")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseHyphenatedSplit
 func TestPortugueseWordTokenizer_TokeniseHyphenatedSplit(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseHyphenatedSplit")
+	testTokenise(t, "Paris-São Paulo", "Paris", "-", "São", " ", "Paulo")
+	testTokenise(t, "Sem-Peixe", "Sem", "-", "Peixe")
+	testTokenise(t, "húngaro-americano", "húngaro", "-", "americano")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseHyphenatedClitics
 func TestPortugueseWordTokenizer_TokeniseHyphenatedClitics(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseHyphenatedClitics")
+	testTokenise(t, "diz-se", "diz-se")
+	testTokenise(t, "amamo-lo", "amamo-lo")
+	testTokenise(t, "fi-lo", "fi-lo")
+	testTokenise(t, "pusé-lo", "pusé-lo")
+	testTokenise(t, "canta-lo", "canta-lo")
+	testTokenise(t, "dar-no-lo", "dar-no-lo")
+	testTokenise(t, "dê-mo", "dê", "-", "mo")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseMesoclisis
 func TestPortugueseWordTokenizer_TokeniseMesoclisis(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseMesoclisis")
+	testTokenise(t, "fá-lo-á", "fá-lo-á")
+	testTokenise(t, "dir-lhe-ia", "dir-lhe-ia")
+	testTokenise(t, "banhar-nos-emos", "banhar-nos-emos")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseProductivePrefixes
 func TestPortugueseWordTokenizer_TokeniseProductivePrefixes(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseProductivePrefixes")
+	testTokenise(t, "soto-pôr", "soto-pôr")
+	testTokenise(t, "soto-trepar", "soto-trepar")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseApostrophe
 func TestPortugueseWordTokenizer_TokeniseApostrophe(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseApostrophe")
+	testTokenise(t, "d'água", "d", "'", "água")
+	testTokenise(t, "d’água", "d", "’", "água")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseHashtags
 func TestPortugueseWordTokenizer_TokeniseHashtags(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseHashtags")
+	testTokenise(t, "#CantadasDoBem", "#", "CantadasDoBem")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testDoNotTokeniseUserMentions
 func TestPortugueseWordTokenizer_DoNotTokeniseUserMentions(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testDoNotTokeniseUserMentions")
+	testTokenise(t, "@user", "@user")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseCurrency
 func TestPortugueseWordTokenizer_TokeniseCurrency(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseCurrency")
+	testTokenise(t, "R$45,00", "R$", "45,00")
+	testTokenise(t, "5£", "5", "£")
+	testTokenise(t, "US$249,99", "US$", "249,99")
+	testTokenise(t, "€2.000,00", "€", "2.000,00")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseSplitsPercent
 func TestPortugueseWordTokenizer_TokeniseSplitsPercent(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseSplitsPercent")
+	testTokenise(t, "50%", "50%")
+	testTokenise(t, "50%%", "50%", "%")
+	testTokenise(t, "50%OFF", "50%", "OFF")
+	testTokenise(t, "%50", "%", "50")
+	testTokenise(t, "%", "%")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseNumberAbbreviation
 func TestPortugueseWordTokenizer_TokeniseNumberAbbreviation(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseNumberAbbreviation")
+	testTokenise(t, "Nº666", "Nº666")
+	testTokenise(t, "N°666", "N°666")
+	testTokenise(t, "Nº 420", "Nº", " ", "420")
+	testTokenise(t, "N.º69", "N", ".", "º69")
+	testTokenise(t, "N.º 80085", "N", ".", "º", " ", "80085")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testDoNotTokeniseOrdinalSuperscript
 func TestPortugueseWordTokenizer_DoNotTokeniseOrdinalSuperscript(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testDoNotTokeniseOrdinalSuperscript")
+	testTokenise(t, "1º", "1º")
+	testTokenise(t, "2.º", "2.º")
+	testTokenise(t, "3ºˢ", "3ºˢ")
+	testTokenise(t, "4.ºˢ", "4.ºˢ")
+	testTokenise(t, "5ª", "5ª")
+	testTokenise(t, "6ª", "6ª")
+	testTokenise(t, "7ªˢ", "7ªˢ")
+	testTokenise(t, "8ªˢ", "8ªˢ")
+	testTokenise(t, "9ᵒ", "9ᵒ")
+	testTokenise(t, "10.ᵒ", "10.ᵒ")
+	testTokenise(t, "11ᵒˢ", "11ᵒˢ")
+	testTokenise(t, "12.ᵒˢ", "12.ᵒˢ")
+	testTokenise(t, "13ᵃ", "13ᵃ")
+	testTokenise(t, "14.ᵃ", "14.ᵃ")
+	testTokenise(t, "15ᵃˢ", "15ᵃˢ")
+	testTokenise(t, "16.ᵃˢ", "16.ᵃˢ")
+	testTokenise(t, "17o", "17o")
+	testTokenise(t, "18.o", "18.o")
+	testTokenise(t, "19os", "19os")
+	testTokenise(t, "20.os", "20.os")
+	testTokenise(t, "21a", "21a")
+	testTokenise(t, "22.a", "22.a")
+	testTokenise(t, "23as", "23as")
+	testTokenise(t, "24.as", "24.as")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testDoNotTokeniseDegreeExpressions
 func TestPortugueseWordTokenizer_DoNotTokeniseDegreeExpressions(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testDoNotTokeniseDegreeExpressions")
+	testTokenise(t, "25°", "25°")
+	testTokenise(t, "26,0°", "26,0°")
+	testTokenise(t, "27.0°", "27.0°")
+	testTokenise(t, "28,0°C", "28,0°C")
+	testTokenise(t, "29.0°C", "29.0°C")
+	testTokenise(t, "30,0°c", "30,0°c")
+	testTokenise(t, "31.0°c", "31.0°c")
+	testTokenise(t, "32°Ra", "32°Ra")
+	testTokenise(t, "33,1°Rø", "33,1°Rø")
+	testTokenise(t, "34°N", "34°N")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testDoNotTokeniseSpaceSeparatedThousands
 func TestPortugueseWordTokenizer_DoNotTokeniseSpaceSeparatedThousands(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testDoNotTokeniseSpaceSeparatedThousands")
+	testTokenise(t, "35 000", "35 000")
+	testTokenise(t, "36 000 000", "36 000 000")
+	testTokenise(t, "37 000,00", "37 000,00")
+	testTokenise(t, "38 000 000,00", "38 000 000,00")
+	testTokenise(t, "39 000°", "39 000°")
+	testTokenise(t, "40 000%", "40 000%")
+	testTokenise(t, "41 000º", "41 000º")
+	testTokenise(t, "42 000o", "42 000o")
+	testTokenise(t, "43 00", "43", " ", "00")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseExponent
 func TestPortugueseWordTokenizer_TokeniseExponent(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseExponent")
+	testTokenise(t, "km²", "km", "²")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseCopyrightAndSimilarSymbols
 func TestPortugueseWordTokenizer_TokeniseCopyrightAndSimilarSymbols(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseCopyrightAndSimilarSymbols")
+	testTokenise(t, "Copyright©", "Copyright", "©")
+	testTokenise(t, "Bacana®", "Bacana", "®")
+	testTokenise(t, "Legal™", "Legal", "™")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseEmoji
 func TestPortugueseWordTokenizer_TokeniseEmoji(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseEmoji")
+	testTokenise(t, "☺☺☺Só", "☺", "☺", "☺", "Só")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testDoNotTokeniseModifierDiacritics
 func TestPortugueseWordTokenizer_DoNotTokeniseModifierDiacritics(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testDoNotTokeniseModifierDiacritics")
+	testTokenise(t, "Não", "Não")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseExtraWordEdgeChars
 func TestPortugueseWordTokenizer_TokeniseExtraWordEdgeChars(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseExtraWordEdgeChars")
+	testTokenise(t, "@50", "@50")
+	testTokenise(t, "@@50", "@", "@50")
+	testTokenise(t, "50@", "50", "@")
+	testTokenise(t, "666@50", "666", "@50")
+	testTokenise(t, "50‰", "50‰")
+	testTokenise(t, "50‰‰", "50‰", "‰")
+	testTokenise(t, "‰50", "‰", "50")
+	testTokenise(t, "50‰666", "50‰", "666")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseRarePunctuation
 func TestPortugueseWordTokenizer_TokeniseRarePunctuation(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseRarePunctuation")
+	testTokenise(t, "⌈Herói⌋", "⌈", "Herói", "⌋")
+	testTokenise(t, "″Santo Antônio do Manga″", "″", "Santo", " ", "Antônio", " ", "do", " ", "Manga", "″")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseParagraphSymbol
 func TestPortugueseWordTokenizer_TokeniseParagraphSymbol(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseParagraphSymbol")
+	testTokenise(t, "§1º", "§", "1º")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseComplexEmoji
 func TestPortugueseWordTokenizer_TokeniseComplexEmoji(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseComplexEmoji")
+	testTokenise(t, "🧝🏽‍♀️", "🧝", "🏽", "‍", "♀️")
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tokenizers/pt/PortugueseWordTokenizerTest.java :: PortugueseWordTokenizerTest.testTokeniseUnitsOfMeasure
 func TestPortugueseWordTokenizer_TokeniseUnitsOfMeasure(t *testing.T) {
-	tools.Unimplemented("PortugueseWordTokenizerTest.testTokeniseUnitsOfMeasure")
+	testTokenise(t, "100mm", "100mm")
+	testTokenise(t, "10x10mm", "10x10mm")
+	testTokenise(t, "10×10mm", "10", "×", "10mm")
 }
