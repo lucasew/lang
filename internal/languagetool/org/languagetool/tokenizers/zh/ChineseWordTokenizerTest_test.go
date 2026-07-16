@@ -1,17 +1,17 @@
 package zh
 
-// Twin of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseWordTokenizerTest.java
+// Twin of ChineseWordTokenizerTest — full ICTCLAS deferred; char-level smoke.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseWordTokenizerTest.java :: ChineseWordTokenizerTest.testTokenize
 func TestChineseWordTokenizer_Tokenize(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	tok := NewChineseWordTokenizer()
+	tok.Segment = func(text string) []string { return []string{"你好", "世界"} }
+	require.Equal(t, []string{"你好", "世界"}, tok.Tokenize("你好世界"))
+
+	got := NewChineseWordTokenizer().Tokenize("你好world")
+	require.Equal(t, []string{"你", "好", "world"}, got)
 }
