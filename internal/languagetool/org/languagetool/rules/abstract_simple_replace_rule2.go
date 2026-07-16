@@ -43,6 +43,9 @@ type AbstractSimpleReplaceRule2 struct {
 	SubRuleSpecificIDs   bool
 	CheckingCase         bool
 	LanguageCode         string
+	// MatchShortAllUpperInCheckCase ports setIgnoreShortUppercaseWords(false):
+	// when true, short ALLCAPS tokens (len≤4) still match in CheckingCase mode (Dutch).
+	MatchShortAllUpperInCheckCase bool
 
 	IsException          func(matchedText string) bool
 	IsTokenException     func(atr *languagetool.AnalyzedTokenReadings) bool
@@ -279,9 +282,13 @@ func (r *AbstractSimpleReplaceRule2) createMatch(
 			*checkCaseCoveredUpto = endIndex
 			return
 		}
+		// Allow all-upper case, except for CamelCase suggestions and (by default) short words.
 		if !firstWordInSuggIsCamelCase && originalStr == strings.ToUpper(originalStr) {
-			*checkCaseCoveredUpto = endIndex
-			return
+			const maxLengthShortWords = 4
+			if !r.MatchShortAllUpperInCheckCase || len([]rune(originalStr)) > maxLengthShortWords {
+				*checkCaseCoveredUpto = endIndex
+				return
+			}
 		}
 	}
 
