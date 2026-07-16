@@ -1,17 +1,15 @@
 package remote
 
-// Twin of languagetool-http-client/src/test/java/org/languagetool/remote/RemoteResultTest.java
+// Twin of RemoteResultTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-http-client/src/test/java/org/languagetool/remote/RemoteResultTest.java :: RemoteResultTest.testGetLanguageDetectedCodeOutput
 func TestRemoteResult_GetLanguageDetectedCodeOutput(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	server := NewRemoteServerFull("LanguageTool", "", "")
+	res := NewRemoteResultDetected("English", "en", "en", "English", nil, nil, server)
+	require.Equal(t, "en", res.GetLanguageDetectedCode())
+	require.Equal(t, "English", res.GetLanguageDetectedName())
 }

@@ -1,5 +1,7 @@
 package remote
 
+import "strconv"
+
 // RemoteRuleMatch ports org.languagetool.remote.RemoteRuleMatch.
 type RemoteRuleMatch struct {
 	RuleID              string
@@ -63,3 +65,11 @@ func (m *RemoteRuleMatch) SetShortMessage(s string)  { m.ShortMessage = s }
 func (m *RemoteRuleMatch) SetURL(u string)           { m.URL = u }
 func (m *RemoteRuleMatch) SetCategory(c, id string)  { m.Category, m.CategoryID = c, id }
 func (m *RemoteRuleMatch) SetLocQualityIssueType(t string) { m.LocQualityIssueType = t }
+
+// String ports RemoteRuleMatch.toString → "ruleId@offset-(offset+len)".
+func (m *RemoteRuleMatch) String() string {
+	if m == nil {
+		return ""
+	}
+	return m.RuleID + "@" + strconv.Itoa(m.Offset) + "-" + strconv.Itoa(m.Offset+m.ErrorLength)
+}

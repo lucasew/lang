@@ -1,32 +1,37 @@
 package gui
 
-// Twin of languagetool-gui-commons/src/test/java/org/languagetool/gui/ToolsTest.java
+// Twin of ToolsTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-gui-commons/src/test/java/org/languagetool/gui/ToolsTest.java :: ToolsTest.testShortenComment
 func TestTools_ShortenComment(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	testString := "Lorem ipsum dolor sit amet, consectetur (adipisici elit), sed eiusmod tempor incidunt."
+	require.Equal(t, testString, ShortenComment(testString))
+
+	testLongString := "Lorem ipsum dolor sit amet, consectetur (adipisici elit), sed eiusmod tempor incidunt ut labore (et dolore magna aliqua)."
+	testLongStringShortened := "Lorem ipsum dolor sit amet, consectetur (adipisici elit), sed eiusmod tempor incidunt ut labore."
+	require.Equal(t, testLongStringShortened, ShortenComment(testLongString))
+
+	testVeryLongString := "Lorem ipsum dolor sit amet, consectetur (adipisici elit), sed eiusmod (tempor incidunt [ut labore et dolore magna aliqua])."
+	testVeryLongStringShortened := "Lorem ipsum dolor sit amet, consectetur (adipisici elit), sed eiusmod (tempor incidunt)."
+	require.Equal(t, testVeryLongStringShortened, ShortenComment(testVeryLongString))
 }
 
-// Port of languagetool-gui-commons/src/test/java/org/languagetool/gui/ToolsTest.java :: ToolsTest.testGetLabel
 func TestTools_GetLabel(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "This is a Label", GetLabel("This is a &Label"))
+	require.Equal(t, "Bits & Pieces", GetLabel("Bits && Pieces"))
 }
 
-// Port of languagetool-gui-commons/src/test/java/org/languagetool/gui/ToolsTest.java :: ToolsTest.testGetOOoLabel
 func TestTools_GetOOoLabel(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "Bits & Pieces", GetOOoLabel("Bits && Pieces"))
 }
 
-// Port of languagetool-gui-commons/src/test/java/org/languagetool/gui/ToolsTest.java :: ToolsTest.testGetMnemonic
 func TestTools_GetMnemonic(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, 'F', GetMnemonic("&File"))
+	require.Equal(t, 'O', GetMnemonic("&OK"))
+	require.Equal(t, rune(0), GetMnemonic("File && String operations"))
+	require.Equal(t, 'O', GetMnemonic("File && String &Operations"))
 }

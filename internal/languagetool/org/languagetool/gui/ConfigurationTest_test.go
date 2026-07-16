@@ -1,24 +1,14 @@
 package gui
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/gui/ConfigurationTest.java
+// Twin of ConfigurationTest — full properties save/load deferred.
 import (
 	"testing"
-
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/gui/ConfigurationTest.java :: ConfigurationTest.testSaveAndLoadConfiguration
 func TestConfiguration_SaveAndLoadConfiguration(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	t.Skip("unimplemented: GUI Configuration properties I/O")
 }
 
-// Port of languagetool-standalone/src/test/java/org/languagetool/gui/ConfigurationTest.java :: ConfigurationTest.testSaveAndLoadConfigurationForManyLanguages
 func TestConfiguration_SaveAndLoadConfigurationForManyLanguages(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	t.Skip("unimplemented: GUI Configuration multi-language I/O")
 }

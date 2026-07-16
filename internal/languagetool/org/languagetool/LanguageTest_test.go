@@ -1,44 +1,24 @@
 package languagetool
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java
-import (
-	"testing"
+// Twin of LanguageTest — live tests live in language/LanguageTest_test.go
+// (import cycle if language is imported from this package's tests).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java :: LanguageTest.testRuleFileName
 func TestLanguage_RuleFileName(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	t.Skip("see language.TestLanguage_RuleFileName")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java :: LanguageTest.testGetTranslatedName
 func TestLanguage_GetTranslatedName(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	t.Skip("see language.TestLanguage_GetTranslatedName")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java :: LanguageTest.testGetShortNameWithVariant
 func TestLanguage_GetShortNameWithVariant(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	t.Skip("see language.TestLanguage_GetShortNameWithVariant")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java :: LanguageTest.testEquals
 func TestLanguage_Equals(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	t.Skip("see language.TestLanguage_Equals")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java :: LanguageTest.testEqualsConsiderVariantIfSpecified
 func TestLanguage_EqualsConsiderVariantIfSpecified(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	t.Skip("see language.TestLanguage_EqualsConsiderVariantIfSpecified")
 }
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/LanguageTest.java :: LanguageTest.testCreateDefaultJLanguageTool
 func TestLanguage_CreateDefaultJLanguageTool(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	t.Skip("unimplemented: full JLanguageTool factory for language variants")
 }

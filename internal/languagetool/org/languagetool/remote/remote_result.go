@@ -14,14 +14,27 @@ type RemoteResult struct {
 }
 
 func NewRemoteResult(language, languageCode string, matches []*RemoteRuleMatch, server RemoteServer) *RemoteResult {
+	return NewRemoteResultDetected(language, languageCode, "", "", matches, nil, server)
+}
+
+// NewRemoteResultDetected ports the full RemoteResult constructor with detected language fields.
+func NewRemoteResultDetected(
+	language, languageCode, detectedCode, detectedName string,
+	matches []*RemoteRuleMatch,
+	ignore []RemoteIgnoreRange,
+	server RemoteServer,
+) *RemoteResult {
 	if language == "" || languageCode == "" {
 		panic("language and languageCode required")
 	}
 	return &RemoteResult{
-		Language:     language,
-		LanguageCode: languageCode,
-		Matches:      append([]*RemoteRuleMatch(nil), matches...),
-		Server:       server,
+		Language:             language,
+		LanguageCode:         languageCode,
+		LanguageDetectedCode: detectedCode,
+		LanguageDetectedName: detectedName,
+		Matches:              append([]*RemoteRuleMatch(nil), matches...),
+		IgnoreRanges:         append([]RemoteIgnoreRange(nil), ignore...),
+		Server:               server,
 	}
 }
 
