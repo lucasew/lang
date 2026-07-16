@@ -1,17 +1,23 @@
 package be
 
-// Twin of languagetool-language-modules/be/src/test/java/org/languagetool/tokenizers/be/BelarusianWordTokenizerTest.java
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/be/src/test/java/org/languagetool/tokenizers/be/BelarusianWordTokenizerTest.java :: BelarusianWordTokenizerTest.testTokenize
 func TestBelarusianWordTokenizer_Tokenize(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	w := NewBelarusianWordTokenizer()
+	tokens := w.Tokenize("камп'ютар")
+	require.Equal(t, 1, len(tokens))
+	require.Equal(t, []string{"камп'ютар"}, tokens)
+
+	tokens2 := w.Tokenize("Яно\rразбіваецца")
+	require.Equal(t, 3, len(tokens2))
+	require.Equal(t, "[Яно, \r, разбіваецца]", "["+strings.Join(tokens2, ", ")+"]")
+
+	tokens3 := w.Tokenize("Мой адрас — address@email.com")
+	require.Equal(t, 7, len(tokens3))
+	require.Equal(t, "[Мой,  , адрас,  , —,  , address@email.com]", "["+strings.Join(tokens3, ", ")+"]")
 }
