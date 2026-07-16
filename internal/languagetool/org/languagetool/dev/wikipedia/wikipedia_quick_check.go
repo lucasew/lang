@@ -167,3 +167,28 @@ func ParseMediaWikiAPIContent(completeWikiContent string) (MediaWikiContent, err
 	}
 	return NewMediaWikiContent(content, ts), nil
 }
+
+// ApplyMatchesToMarkup ports checkWikipediaMarkup's suggestion-application loop
+// without running JLanguageTool: caller supplies plain-text MatchSpan list.
+func (c *WikipediaQuickCheck) ApplyMatchesToMarkup(wiki MediaWikiContent, plain string, matches []MatchSpan, marker ErrorMarker) *MarkupAwareWikipediaResult {
+	if marker.StartMarker == "" {
+		marker = DefaultErrorMarker()
+	}
+	mapping := NewPlainTextMappingWithOriginal(plain, wiki.Content)
+	// Prefer identity mapping when plain == filtered original path for simple markup
+	if plain == wiki.Content {
+		mapping = NewPlainTextMapping(plain)
+	}
+	replacer := NewSuggestionReplacerWithMarker(mapping, wiki.Content, marker)
+	var applied []*AppliedRuleMatch
+	internalErrors := 0
+	for _, m := range matches {
+		apps, err := replacer.ApplySuggestionsToOriginalText(m)
+		if err != nil {
+			internalErrors++
+			continue
+		}
+		applied = append(applied, NewAppliedRuleMatch(m.FromPos, m.ToPos, "", apps))
+	}
+	return NewMarkupAwareWikipediaResult(wiki, applied, internalErrors)
+}
