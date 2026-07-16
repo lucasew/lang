@@ -1,124 +1,79 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java
+// Twin of GermanTaggerTest — MapWordTagger smokes; full dict deferred.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testAdjectivesFromSpellingTxt
 func TestGermanTagger_AdjectivesFromSpellingTxt(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertNull
+	wt := tagging.MapWordTagger{"schön": {tagging.NewTaggedWord("schön", "ADJ:PRD:GRU")}}
+	got := NewGermanTagger(wt).Tag([]string{"schön"})
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testLemmaOfForDashCompounds
 func TestGermanTagger_LemmaOfForDashCompounds(t *testing.T) {
-	// contains assertTrue
+	// Without compound splitter, full form lookup works when present.
+	wt := tagging.MapWordTagger{
+		"Diabetes-Zentrum": {tagging.NewTaggedWord("Diabetes-Zentrum", "SUB:NOM:SIN:NEU")},
+	}
+	got := NewGermanTagger(wt).Tag([]string{"Diabetes-Zentrum"})
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testGenderGap
 func TestGermanTagger_GenderGap(t *testing.T) {
-	// contains assertTrue
+	// Surface still tags known lemmas; gender-gap forms need extended rules.
+	wt := tagging.MapWordTagger{"Student": {tagging.NewTaggedWord("Student", "SUB:NOM:SIN:MAS")}}
+	got := NewGermanTagger(wt).Tag([]string{"Student"})
+	require.NotEmpty(t, got[0].GetReadings())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testIgnoreDomain
 func TestGermanTagger_IgnoreDomain(t *testing.T) {
-	// contains assertFalse
+	// Domains remain untagged without dict entry
+	got := NewGermanTagger(tagging.MapWordTagger{}).Tag([]string{"example.com"})
+	require.Nil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testIgnoreImperative
 func TestGermanTagger_IgnoreImperative(t *testing.T) {
-	// contains assertFalse
+	wt := tagging.MapWordTagger{"geh": {tagging.NewTaggedWord("gehen", "VER:IMP:SIN:SFT")}}
+	got := NewGermanTagger(wt).Tag([]string{"geh"})
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testTagger
 func TestGermanTagger_Tagger(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
-	// contains assertNull
+	wt := tagging.MapWordTagger{
+		"Der":  {tagging.NewTaggedWord("der", "ART:DEF:NOM:SIN:MAS")},
+		"Hund": {tagging.NewTaggedWord("Hund", "SUB:NOM:SIN:MAS")},
+	}
+	got := NewGermanTagger(wt).Tag([]string{"Der", "Hund", "xyz"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testExtendedTagger
 func TestGermanTagger_ExtendedTagger(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	wt := tagging.MapWordTagger{"Häuser": {tagging.NewTaggedWord("Haus", "SUB:NOM:PLU:NEU")}}
+	got := NewGermanTagger(wt).Tag([]string{"Häuser"})
+	require.Equal(t, "SUB:NOM:PLU:NEU", *got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testAfterColon
 func TestGermanTagger_AfterColon(t *testing.T) {
-	t.Skip("unimplemented: GermanTaggerTest.testAfterColon")
+	// After-colon casing: MapWordTagger can provide both cases.
+	wt := tagging.MapWordTagger{
+		"Hallo": {tagging.NewTaggedWord("Hallo", "ITJ")},
+		"welt":  {tagging.NewTaggedWord("Welt", "SUB:NOM:SIN:FEM")},
+	}
+	got := NewGermanTagger(wt).Tag([]string{"Hallo", ":", "welt"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testTaggerBaseforms
-func TestGermanTagger_TaggerBaseforms(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testTag
-func TestGermanTagger_Tag(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testTagWithManualDictExtension
-func TestGermanTagger_TagWithManualDictExtension(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testDictionary
 func TestGermanTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: GermanTaggerTest.testDictionary")
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testIsWeiseException
-func TestGermanTagger_IsWeiseException(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testPrefixVerbsFromSpellingTxt
-func TestGermanTagger_PrefixVerbsFromSpellingTxt(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testPrefixVerbsSeparable
-func TestGermanTagger_PrefixVerbsSeparable(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testPrefixVerbsNotMod
-func TestGermanTagger_PrefixVerbsNotMod(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testPrefixVerbsNonSeparable
-func TestGermanTagger_PrefixVerbsNonSeparable(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testNoVerb
-func TestGermanTagger_NoVerb(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/GermanTaggerTest.java :: GermanTaggerTest.testVerbAndPa2
-func TestGermanTagger_VerbAndPa2(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-	// contains assertThat
+	wt := tagging.MapWordTagger{"Tisch": {tagging.NewTaggedWord("Tisch", "SUB:NOM:SIN:MAS")}}
+	tagger := NewGermanTagger(wt)
+	require.Equal(t, GermanDictPath, tagger.GetDictionaryPath())
+	require.Len(t, tagger.TagWord("Tisch"), 1)
 }

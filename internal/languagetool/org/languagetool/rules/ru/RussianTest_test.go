@@ -1,17 +1,15 @@
 package ru
 
-// Twin of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianTest.java
+// Twin of RussianTest.testLanguage — analyze smoke.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianTest.java :: RussianTest.testLanguage
 func TestRussian_Language(t *testing.T) {
-	t.Skip("unimplemented: RussianTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("ru")
+	require.Equal(t, "ru", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Это тест."))
 }

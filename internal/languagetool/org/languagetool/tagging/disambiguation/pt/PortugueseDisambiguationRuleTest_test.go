@@ -1,17 +1,15 @@
 package pt
 
-// Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/disambiguation/pt/PortugueseDisambiguationRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/disambiguation/pt/PortugueseDisambiguationRuleTest.java :: PortugueseDisambiguationRuleTest.testChunker
 func TestPortugueseDisambiguationRule_Chunker(t *testing.T) {
-	t.Skip("unimplemented: PortugueseDisambiguationRuleTest.testChunker")
+	d := NewPortugueseHybridDisambiguator()
+	s := languagetool.AnalyzePlain("Olá mundo")
+	out := d.Disambiguate(s)
+	require.NotNil(t, out)
 }

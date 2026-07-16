@@ -1,6 +1,5 @@
 package zh
 
-// Twin of LanguageSpecificSpellcheckerTest — analyze/speller surface smoke.
 import (
 	"testing"
 
@@ -8,8 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of LanguageSpecificSpellcheckerTest.testRules
 func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
-	lt := languagetool.NewJLanguageTool("zh")
-	require.NotEmpty(t, lt.Analyze("test"))
+	require.NotEmpty(t, languagetool.NewJLanguageTool("zh").Analyze("test"))
 }

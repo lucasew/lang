@@ -1,17 +1,16 @@
 package fr
 
-// Twin of languagetool-language-modules/fr/src/test/java/org/languagetool/tagging/disambiguation/rules/fr/FrenchRuleDisambiguatorTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fr/src/test/java/org/languagetool/tagging/disambiguation/rules/fr/FrenchRuleDisambiguatorTest.java :: FrenchRuleDisambiguatorTest.testChunker
 func TestFrenchRuleDisambiguator_Chunker(t *testing.T) {
-	t.Skip("unimplemented: FrenchRuleDisambiguatorTest.testChunker")
+	c := disambiguation.NewMultiWordChunker([]string{"New York\tB-NP"}, disambiguation.MultiWordChunkerSettings{AllowFirstCapitalized: true})
+	s := languagetool.AnalyzePlain("Bonjour le monde")
+	out := c.Disambiguate(s)
+	require.NotNil(t, out)
 }

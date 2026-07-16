@@ -1,17 +1,15 @@
 package br
 
-// Twin of languagetool-language-modules/br/src/test/java/org/languagetool/rules/br/BretonTest.java
+// Twin of BretonTest.testLanguage — analyze smoke.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/br/src/test/java/org/languagetool/rules/br/BretonTest.java :: BretonTest.testLanguage
 func TestBreton_Language(t *testing.T) {
-	t.Skip("unimplemented: BretonTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("br")
+	require.Equal(t, "br", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Un dest eo."))
 }

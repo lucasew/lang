@@ -1,6 +1,5 @@
 package sv
 
-// Twin of LanguageSpecificSpellcheckerTest — analyze/speller surface smoke.
 import (
 	"testing"
 
@@ -8,8 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of LanguageSpecificSpellcheckerTest.testRules
 func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
-	lt := languagetool.NewJLanguageTool("sv")
-	require.NotEmpty(t, lt.Analyze("test"))
+	require.NotEmpty(t, languagetool.NewJLanguageTool("sv").Analyze("test"))
 }

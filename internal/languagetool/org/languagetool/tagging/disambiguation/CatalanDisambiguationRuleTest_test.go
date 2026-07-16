@@ -1,17 +1,21 @@
 package disambiguation
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/tagging/disambiguation/CatalanDisambiguationRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/tagging/disambiguation/CatalanDisambiguationRuleTest.java :: CatalanDisambiguationRuleTest.testChunker
 func TestCatalanDisambiguationRule_Chunker(t *testing.T) {
-	t.Skip("unimplemented: CatalanDisambiguationRuleTest.testChunker")
+	c := NewMultiWordChunker([]string{"Sant Cugat\tNP"}, MultiWordChunkerSettings{AllowFirstCapitalized: true})
+	tag := languagetool.SentenceStartTagName
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", &tag, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Sant", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Cugat", nil, nil)),
+	}
+	out := c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
+	require.NotNil(t, out)
 }

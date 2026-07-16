@@ -1,17 +1,22 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/tagging/disambiguation/rules/en/EnglishDisambiguationRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/tagging/disambiguation/rules/en/EnglishDisambiguationRuleTest.java :: EnglishDisambiguationRuleTest.testChunker
 func TestEnglishDisambiguationRule_Chunker(t *testing.T) {
-	t.Skip("unimplemented: EnglishDisambiguationRuleTest.testChunker")
+	c := disambiguation.NewMultiWordChunker([]string{"New York\tB-NP"}, disambiguation.MultiWordChunkerSettings{AllowFirstCapitalized: true})
+	tag := languagetool.SentenceStartTagName
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", &tag, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("New", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("York", nil, nil)),
+	}
+	out := c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
+	require.NotNil(t, out)
 }

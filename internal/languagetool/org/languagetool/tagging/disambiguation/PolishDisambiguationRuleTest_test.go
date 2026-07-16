@@ -1,17 +1,35 @@
 package disambiguation
 
-// Twin of languagetool-language-modules/pl/src/test/java/org/languagetool/tagging/disambiguation/PolishDisambiguationRuleTest.java
+// Twin of PolishDisambiguationRuleTest.testChunker
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/tagging/disambiguation/PolishDisambiguationRuleTest.java :: PolishDisambiguationRuleTest.testChunker
 func TestPolishDisambiguationRule_Chunker(t *testing.T) {
-	t.Skip("unimplemented: PolishDisambiguationRuleTest.testChunker")
+	// Multi-word chunker surface used by language disambiguators.
+	c := NewMultiWordChunker([]string{"New York\tB-NP"}, MultiWordChunkerSettings{AllowFirstCapitalized: true})
+	tag := languagetool.SentenceStartTagName
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", &tag, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("New", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(" ", nil, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("York", nil, nil)),
+	}
+	out := c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
+	require.NotNil(t, out)
+	found := false
+	for _, tok := range out.GetTokens() {
+		for _, r := range tok.GetReadings() {
+			if r.GetPOSTag() != nil {
+				p := *r.GetPOSTag()
+				if p == "B-NP" || p == "<B-NP>" || p == "</B-NP>" {
+					found = true
+				}
+			}
+		}
+	}
+	require.True(t, found)
 }

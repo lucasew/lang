@@ -1,17 +1,15 @@
 package eo
 
-// Twin of languagetool-language-modules/eo/src/test/java/org/languagetool/rules/eo/EsperantoTest.java
+// Twin of EsperantoTest.testLanguage — analyze smoke.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/eo/src/test/java/org/languagetool/rules/eo/EsperantoTest.java :: EsperantoTest.testLanguage
 func TestEsperanto_Language(t *testing.T) {
-	t.Skip("unimplemented: EsperantoTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("eo")
+	require.Equal(t, "eo", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Saluton mondo."))
 }

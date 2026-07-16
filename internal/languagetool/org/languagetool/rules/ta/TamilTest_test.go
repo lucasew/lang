@@ -1,17 +1,15 @@
 package ta
 
-// Twin of languagetool-language-modules/ta/src/test/java/org/languagetool/rules/ta/TamilTest.java
+// Twin of TamilTest.testLanguage — analyze smoke.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ta/src/test/java/org/languagetool/rules/ta/TamilTest.java :: TamilTest.testLanguage
 func TestTamil_Language(t *testing.T) {
-	t.Skip("unimplemented: TamilTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("ta")
+	require.Equal(t, "ta", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("இது ஒரு சோதனை."))
 }

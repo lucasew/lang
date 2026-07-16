@@ -1,17 +1,17 @@
 package bitext
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/rules/bitext/StandaloneBitextPatternRuleTest.java
+// Twin of StandaloneBitextPatternRuleTest
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/rules/bitext/StandaloneBitextPatternRuleTest.java :: StandaloneBitextPatternRuleTest.testBitextPatternRuleTest
 func TestStandaloneBitextPatternRule_BitextPatternRuleTest(t *testing.T) {
-	t.Skip("unimplemented: StandaloneBitextPatternRuleTest.testBitextPatternRuleTest")
+	// Built-in structural bitext rules always available.
+	rules := RelevantBitextRules()
+	require.NotEmpty(t, rules)
+	// SameTranslation needs >3 non-whitespace tokens and identical text.
+	matches := CheckBitext("This is a test sentence here", "This is a test sentence here", nil)
+	require.NotEmpty(t, matches)
 }

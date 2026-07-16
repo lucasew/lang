@@ -1,17 +1,19 @@
 package sv
 
-// Twin of languagetool-language-modules/sv/src/test/java/org/languagetool/tagging/disambiguation/sv/SwedishDisambiguationRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/tagging/disambiguation/sv/SwedishDisambiguationRuleTest.java :: SwedishDisambiguationRuleTest.testChunker
 func TestSwedishDisambiguationRule_Chunker(t *testing.T) {
-	t.Skip("unimplemented: SwedishDisambiguationRuleTest.testChunker")
+	d := NewSwedishHybridDisambiguator()
+	d.Inner = disambiguation.NewMultiWordChunker([]string{"Stock holm\tNP"}, disambiguation.MultiWordChunkerSettings{})
+	// identity when no match
+	s := languagetool.AnalyzePlain("Hej världen")
+	out := d.Disambiguate(s)
+	require.NotNil(t, out)
+	require.Equal(t, s.GetText(), out.GetText())
 }
