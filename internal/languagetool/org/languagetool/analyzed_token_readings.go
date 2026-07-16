@@ -331,3 +331,4 @@ func (r *AnalyzedTokenReadings) IsFieldCode() bool {
 	t := r.token
 	return t == "\u0001" || t == "\u0002"
 }
+func (r *AnalyzedTokenReadings) IsWhitespaceBefore() bool { return r.isWhitespaceBefore }

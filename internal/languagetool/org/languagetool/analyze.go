@@ -1,16 +1,12 @@
 package languagetool
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // AnalyzePlain ports a minimal getAnalyzedSentence for demo/rule unit tests:
 // SENT_START + WordTokenizer tokens as untagged AnalyzedTokenReadings with start positions.
 func AnalyzePlain(text string) *AnalyzedSentence {
-	// Soft hyphens are often ignored in LT analysis for rule matching.
-	text = strings.ReplaceAll(text, "\u00AD", "")
 	wt := tokenizers.NewWordTokenizer()
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)

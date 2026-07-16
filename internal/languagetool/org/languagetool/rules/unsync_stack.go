@@ -44,3 +44,7 @@ func (s *UnsyncStack[E]) Search(o E, eq func(a, b E) bool) int {
 	}
 	return -1
 }
+
+func (s *UnsyncStack[E]) Data() []E { return s.data }
+func (s *UnsyncStack[E]) Len() int { return len(s.data) }
+func (s *UnsyncStack[E]) At(i int) E { return s.data[i] }

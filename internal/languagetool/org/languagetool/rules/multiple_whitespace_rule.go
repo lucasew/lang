@@ -32,18 +32,18 @@ func isRemovableWhite(token *languagetool.AnalyzedTokenReadings) bool {
 
 func containsAny(s string, subs ...string) bool {
 	for _, sub := range subs {
-		if len(sub) > 0 && containsStr(s, sub) {
+		if len(sub) > 0 && containsSubstr(s, sub) {
 			return true
 		}
 	}
 	return false
 }
 
-func containsStr(s, sub string) bool {
-	return len(s) >= len(sub) && (s == sub || len(sub) == 0 || indexOf(s, sub) >= 0)
+func containsSubstr(s, sub string) bool {
+	return len(s) >= len(sub) && (s == sub || len(sub) == 0 || indexOfByte(s, sub) >= 0)
 }
 
-func indexOf(s, sub string) int {
+func indexOfByte(s, sub string) int {
 	for i := 0; i+len(sub) <= len(s); i++ {
 		if s[i:i+len(sub)] == sub {
 			return i
