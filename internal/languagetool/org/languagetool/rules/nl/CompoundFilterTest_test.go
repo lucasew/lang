@@ -5,13 +5,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/CompoundFilterTest.java :: CompoundFilterTest.testFilter
-func TestCompoundFilter_Filter(t *testing.T) {
-	tools.Unimplemented("CompoundFilterTest.testFilter")
+// Port of CompoundFilterTest.testFilter
+func TestCompoundFilter_Filter_Twin(t *testing.T) {
+	f := NewCompoundFilter()
+	require.Equal(t, "tv-meubel", f.Suggest([]string{"tv", "meubel"}))
+	require.Equal(t, "rijinstructeur", f.Suggest([]string{"rij", "instructeur"}))
+	require.Equal(t, "ANWB-tv-wagen", f.Suggest([]string{"ANWB", "tv", "wagen"}))
 }
