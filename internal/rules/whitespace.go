@@ -11,8 +11,8 @@ import (
 const (
 	// RuleWhitespace is LanguageTool MultipleWhitespaceRule id.
 	RuleWhitespace = "WHITESPACE_RULE"
-	// SeverityWhitespace is ITSIssueType.Whitespace as LT serializes it.
-	SeverityWhitespace = "whitespace"
+	// TypeWhitespace is ITSIssueType.Whitespace as LT serializes it.
+	TypeWhitespace = "whitespace"
 )
 
 // MultipleWhitespace ports org.languagetool.rules.MultipleWhitespaceRule.
@@ -41,6 +41,7 @@ func MultipleWhitespace(text, file, lang string, msg messages.Bundle) []finding.
 				end := tokens[last].End
 				line, col := runeOffsetToLineCol(text, start)
 				endLine, endCol := runeOffsetToLineCol(text, end)
+				typ, sev := finding.WithType(TypeWhitespace)
 				out = append(out, finding.Finding{
 					File:        file,
 					Line:        line,
@@ -50,7 +51,8 @@ func MultipleWhitespace(text, file, lang string, msg messages.Bundle) []finding.
 					Offset:      start,
 					EndOffset:   end,
 					Rule:        RuleWhitespace,
-					Severity:    SeverityWhitespace,
+					Type:        typ,
+					Severity:    sev,
 					Message:     message,
 					Suggestions: []string{tokens[nFirst].Text},
 					Language:    lang,

@@ -97,6 +97,7 @@ func (s *Speller) Check(text, file, lang string, msg messages.Bundle) []finding.
 		}
 		line, col := offsetLineCol(text, tok.Start)
 		endLine, endCol := offsetLineCol(text, tok.End)
+		typ, sev := finding.WithType("misspelling")
 		out = append(out, finding.Finding{
 			File:      file,
 			Line:      line,
@@ -106,7 +107,8 @@ func (s *Speller) Check(text, file, lang string, msg messages.Bundle) []finding.
 			Offset:    tok.Start,
 			EndOffset: tok.End,
 			Rule:      s.ruleID,
-			Severity:  "misspelling",
+			Type:      typ,
+			Severity:  sev,
 			Message:   message,
 			Language:  lang,
 		})

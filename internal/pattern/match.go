@@ -6,6 +6,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/lucasew/lang/internal/chunker"
 	"github.com/lucasew/lang/internal/finding"
 	"github.com/lucasew/lang/internal/pipeline"
 	"github.com/lucasew/lang/internal/tagger"
@@ -49,6 +50,10 @@ func NewMatchContext(file, lang, text string, baseOffset int, tg *tagger.Tagger)
 		nonWS = append(nonWS, t)
 		spaceBefore = append(spaceBefore, prevWS)
 		prevWS = false
+	}
+	// Chunk after tag, before disambiguation (disambig applied by engine after this).
+	if tg != nil && langFamily(lang) == "en" {
+		chunker.EnglishWithMultiTags(nonWS)
 	}
 	return MatchContext{
 		File: file, Lang: lang, Text: text, BaseOffset: baseOffset,
@@ -114,10 +119,11 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 		absFrom := ctx.BaseOffset + from
 		absTo := ctx.BaseOffset + to
 		line, col := runeOffsetToLineCol(ctx.Text, from)
-		sev := r.IssueType
-		if sev == "" {
-			sev = "other"
+		issueType := r.IssueType
+		if issueType == "" {
+			issueType = "other"
 		}
+		typ, sev := finding.WithType(issueType)
 		msg := r.Message
 		if msg == "" {
 			msg = r.Name
@@ -130,6 +136,7 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 			Offset:      absFrom,
 			EndOffset:   absTo,
 			Rule:        r.FullID(),
+			Type:        typ,
 			Severity:    sev,
 			Message:     msg,
 			Suggestions: filterSimpleSuggestions(r.Suggestions),

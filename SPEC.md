@@ -46,18 +46,29 @@ Each issue exposes at least:
 | Field | Notes |
 |-------|--------|
 | `rule` | Stable upstream rule ID (1:1 with LT) |
-| `severity` | 1:1 with what LT assigns for that match |
+| `type` | LanguageTool **ITS issue type** for the match (e.g. `misspelling`, `whitespace`, `grammar`, `style`, `duplication`). 1:1 with LT’s `locQualityIssueType` serialization (lowercase / hyphenated). |
+| `severity` | **SARIF 2.1** result level only: `error` \| `warning` \| `note` \| `none`. Derived from `type` (see below). Used for CI exit codes and SARIF `result.level`. |
 | `message` | 1:1 with LT message text |
 | `location` | `file:line:col` (standard linter) |
 | `suggestion` | When LT provides one (or more; text mode may show primary / first) |
+
+**Severity mapping (`type` → SARIF `severity`)**
+
+| `type` (ITS) | `severity` |
+|--------------|------------|
+| `misspelling`, `grammar` | `error` |
+| `style`, `register`, `locale-violation`, `locale-specific-content` | `note` |
+| everything else (`whitespace`, `typographical`, `duplication`, `other`, …) | `warning` |
+
+Do **not** put ITS types in `severity`. Do **not** invent parallel severity systems beyond SARIF levels.
 
 **Formats (`--format`)**
 
 | Value | Role |
 |-------|------|
-| `text` (default) | Human linter output; tabwriter-aligned columns OK under the hood. Fields: location, severity, rule, message, suggestion. |
-| `sarif` | SARIF for editors/CI tooling. |
-| `json` | Machine-readable; also useful for goldens/dev. |
+| `text` (default) | Tabwriter columns: `location`, `severity`, `type`, `rule`, `message`, `suggestion`. |
+| `sarif` | SARIF 2.1.0; `result.level` = `severity`; ITS `type` in `result.properties.type`. |
+| `json` | Machine-readable findings (includes `severity` and `type`); useful for goldens/dev. |
 
 Additional formats may be added later; do not block on a large format zoo.
 
@@ -65,8 +76,8 @@ Additional formats may be added later; do not block on a large format zoo.
 
 | Code | When |
 |------|------|
-| `0` | Ran successfully; no **error**-severity findings (warnings/info OK). |
-| `1` | At least one **error**-severity finding. |
+| `0` | Ran successfully; no findings with SARIF severity **`error`** (`warning` / `note` OK). |
+| `1` | At least one finding with severity **`error`**. |
 | `2` (preferred) | Usage / I/O / engine failure (tool did not complete a normal lint). |
 
 Optional later: `--fail-on=warning` (or similar) to fail on lower severities. Default remains “0 on warning.”
@@ -96,7 +107,8 @@ For a given `(language, text, data revision, equivalent options)`:
 | Message | Same as LT |
 | Suggestions | Same as LT (order and strings) |
 | Span | Same character/token offsets as LT (document any intentional tokenization edge cases) |
-| Severity | Same as LT |
+| Type (ITS) | Same as LT `locQualityIssueType` |
+| Severity (SARIF) | Derived from type via the mapping table in §2.2 (not a second LT field) |
 
 Not “similar category in the same region.” Goldens from upstream are law.
 

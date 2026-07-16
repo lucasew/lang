@@ -11,7 +11,7 @@ import (
 
 const (
 	RuleWordRepeat     = "WORD_REPEAT_RULE"
-	SeverityDuplication = "duplication"
+	TypeDuplication = "duplication"
 )
 
 // ignoreList from WordRepeatRule.ignore
@@ -45,6 +45,7 @@ func WordRepeat(text, file, lang string, msg messages.Bundle) []finding.Finding 
 			end := tokens[i].End
 			line, col := runeOffsetToLineCol(text, start)
 			endLine, endCol := runeOffsetToLineCol(text, end)
+			typ, sev := finding.WithType(TypeDuplication)
 			out = append(out, finding.Finding{
 				File:        file,
 				Line:        line,
@@ -54,7 +55,8 @@ func WordRepeat(text, file, lang string, msg messages.Bundle) []finding.Finding 
 				Offset:      start,
 				EndOffset:   end,
 				Rule:        RuleWordRepeat,
-				Severity:    SeverityDuplication,
+				Type:        typ,
+				Severity:    sev,
 				Message:     message,
 				Suggestions: []string{prevTok.Text},
 				Language:    lang,

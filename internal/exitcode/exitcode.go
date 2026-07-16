@@ -1,6 +1,10 @@
 package exitcode
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/lucasew/lang/internal/finding"
+)
 
 const (
 	OK          = 0
@@ -32,14 +36,8 @@ func FromError(err error) int {
 	return ToolFailure
 }
 
-// IsErrorSeverity reports whether a finding severity should fail the process (exit 1).
-// LanguageTool does not use eslint-style levels; we treat spelling/unknown-word class
-// as error and everything else as non-failing by default (SPEC exit policy B).
+// IsErrorSeverity reports whether a SARIF severity should fail the process (exit 1).
+// Default policy: only SARIF "error" fails; warning/note/none do not.
 func IsErrorSeverity(sev string) bool {
-	switch sev {
-	case "misspelling", "UnknownWord", "unknownword", "error":
-		return true
-	default:
-		return false
-	}
+	return sev == finding.SeverityError
 }

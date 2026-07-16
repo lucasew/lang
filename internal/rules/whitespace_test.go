@@ -43,8 +43,11 @@ func TestMultipleWhitespace_LTGoldens(t *testing.T) {
 				if got[i].Message != msg.Get("whitespace_repetition") {
 					t.Errorf("message: got %q", got[i].Message)
 				}
-				if got[i].Severity != SeverityWhitespace {
-					t.Errorf("severity: got %s", got[i].Severity)
+				if got[i].Type != TypeWhitespace {
+					t.Errorf("type: got %s", got[i].Type)
+				}
+				if got[i].Severity != "warning" {
+					t.Errorf("severity: got %s want warning", got[i].Severity)
 				}
 			}
 		})
