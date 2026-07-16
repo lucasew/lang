@@ -45,7 +45,7 @@ func TestHunspellRule_RuleWithSwissGerman(t *testing.T) {
 // Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/HunspellRuleTest.java :: HunspellRuleTest.testPerformance
 func TestHunspellRule_Performance(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("HunspellRuleTest.testPerformance")
+	t.Skip("unimplemented: HunspellRuleTest.testPerformance")
 }
 
 // Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/HunspellRuleTest.java :: HunspellRuleTest.testSeparateCorrectWordPerformance
@@ -58,5 +58,5 @@ func TestHunspellRule_SeparateCorrectWordPerformance(t *testing.T) {
 // Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/HunspellRuleTest.java :: HunspellRuleTest.testCompoundAwareRulePerformance
 func TestHunspellRule_CompoundAwareRulePerformance(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("HunspellRuleTest.testCompoundAwareRulePerformance")
+	t.Skip("unimplemented: HunspellRuleTest.testCompoundAwareRulePerformance")
 }

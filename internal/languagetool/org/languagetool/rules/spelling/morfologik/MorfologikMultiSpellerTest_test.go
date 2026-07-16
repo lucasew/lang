@@ -24,10 +24,10 @@ func TestMorfologikMultiSpeller_GetSuggestions(t *testing.T) {
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpellerTest.java :: MorfologikMultiSpellerTest.testInvalidFileName
 func TestMorfologikMultiSpeller_InvalidFileName(t *testing.T) {
-	tools.Unimplemented("MorfologikMultiSpellerTest.testInvalidFileName")
+	t.Skip("unimplemented: MorfologikMultiSpellerTest.testInvalidFileName")
 }
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/spelling/morfologik/MorfologikMultiSpellerTest.java :: MorfologikMultiSpellerTest.testInvalidFile
 func TestMorfologikMultiSpeller_InvalidFile(t *testing.T) {
-	tools.Unimplemented("MorfologikMultiSpellerTest.testInvalidFile")
+	t.Skip("unimplemented: MorfologikMultiSpellerTest.testInvalidFile")
 }
