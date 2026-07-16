@@ -149,3 +149,11 @@ func WriteSpellingList(w io.Writer, entries []TaggerEntry) error {
 	}
 	return nil
 }
+
+// Separator returns fsa.dict.separator from props.
+func (b *DictionaryBuilder) Separator() string {
+	if b == nil || b.Props == nil {
+		return ""
+	}
+	return b.Props["fsa.dict.separator"]
+}
