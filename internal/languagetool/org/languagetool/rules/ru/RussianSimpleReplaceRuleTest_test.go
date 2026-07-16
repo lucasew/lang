@@ -4,14 +4,18 @@ package ru
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianSimpleReplaceRuleTest.java :: RussianSimpleReplaceRuleTest.testRule
 func TestRussianSimpleReplaceRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewRussianSimpleReplaceRule(nil)
+
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Рост кораллов тут самый быстрый,"))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Книга была порвана."))))
+
+	matches := rule.Match(languagetool.AnalyzePlain("Книга была порвата."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, 1, len(matches[0].GetSuggestedReplacements()))
+	require.Equal(t, "порвана", matches[0].GetSuggestedReplacements()[0])
 }
