@@ -4,14 +4,15 @@ package ga
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ga/src/test/java/org/languagetool/rules/ga/DhaNoBeirtRuleTest.java :: DhaNoBeirtRuleTest.testRule
 func TestDhaNoBeirtRule_Rule(t *testing.T) {
-	tools.Unimplemented("DhaNoBeirtRuleTest.testRule")
+	rule := NewDhaNoBeirtRule(nil)
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Seo abairt bheag."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Tá beirt dheartháireacha agam."))))
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("Tá dhá dheartháireacha agam."))))
+	require.Equal(t, 2, len(rule.Match(languagetool.AnalyzePlain("Seo dhá ab déag"))))
+	require.Equal(t, 2, len(rule.Match(languagetool.AnalyzePlain("Tá dhá dheartháireacha níos aosta déag agam."))))
 }

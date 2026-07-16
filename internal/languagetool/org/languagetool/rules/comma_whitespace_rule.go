@@ -12,6 +12,10 @@ import (
 type CommaWhitespaceRule struct {
 	Messages              map[string]string
 	QuotesWhitespaceCheck bool
+	// CommaCharacter is the punctuation checked for spacing ("," default; Arabic "،"/"؛"/"؟").
+	CommaCharacter        string
+	// RuleID overrides GetID when set (language-specific wrappers).
+	RuleID                string
 	fileExt               *regexp.Regexp
 	domain                *regexp.Regexp
 }
@@ -20,13 +24,24 @@ func NewCommaWhitespaceRule(messages map[string]string) *CommaWhitespaceRule {
 	return &CommaWhitespaceRule{
 		Messages:              messages,
 		QuotesWhitespaceCheck: true,
+		CommaCharacter:        ",",
 		fileExt:               regexp.MustCompile(`^([a-z]{3,4}|[A-Z]{3,4}|ai|mp[34]|MP[34])(-.+)?$`),
 		domain:                regexp.MustCompile(`(?i)^(com|org|net|int|edu|gov|mil|[a-z]{2})$`),
 	}
 }
 
-func (r *CommaWhitespaceRule) GetID() string           { return "COMMA_PARENTHESIS_WHITESPACE" }
-func (r *CommaWhitespaceRule) GetCommaCharacter() string { return "," }
+func (r *CommaWhitespaceRule) GetID() string {
+	if r.RuleID != "" {
+		return r.RuleID
+	}
+	return "COMMA_PARENTHESIS_WHITESPACE"
+}
+func (r *CommaWhitespaceRule) GetCommaCharacter() string {
+	if r.CommaCharacter != "" {
+		return r.CommaCharacter
+	}
+	return ","
+}
 
 func (r *CommaWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
