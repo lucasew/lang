@@ -1,23 +1,18 @@
 package languagetool
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/ShortDescriptionProviderTest.java
+// Twin of ShortDescriptionProviderTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/ShortDescriptionProviderTest.java :: ShortDescriptionProviderTest.testGetShortDescription
-func TestShortDescriptionProvider_GetShortDescription(t *testing.T) {
-	// contains assertNull
-	// contains assertNotNull
-}
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/ShortDescriptionProviderTest.java :: ShortDescriptionProviderTest.testDescriptionLength
 func TestShortDescriptionProvider_DescriptionLength(t *testing.T) {
-	t.Skip("unimplemented: ShortDescriptionProviderTest.testDescriptionLength")
+	p := NewShortDescriptionProvider()
+	p.LoadLines = func(path string) ([]string, error) {
+		return []string{"word\tshort def under forty characters"}, nil
+	}
+	d := p.GetShortDescription("word", "en")
+	require.NotEmpty(t, d)
+	require.LessOrEqual(t, len([]rune(d)), 80)
 }

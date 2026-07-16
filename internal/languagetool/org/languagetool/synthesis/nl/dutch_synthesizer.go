@@ -1,3 +1,4 @@
 package nl
 
-// Java twin name file for synthesizer (implementation in package).
+// DutchSynthesizer Java twin name — implementation in nl_synthesizer.go.
+var _ = NewDutchSynthesizer

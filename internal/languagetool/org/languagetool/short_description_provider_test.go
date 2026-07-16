@@ -1,17 +1,30 @@
 package languagetool
 
 import (
+	"strings"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/broker"
 	"github.com/stretchr/testify/require"
 )
 
 func TestShortDescriptionProvider(t *testing.T) {
-	b := broker.NewMapResourceDataBroker()
-	b.Resource["en/word_definitions.txt"] = "#c\ncat\ta feline\ndog\ta canine\n"
-	p := NewShortDescriptionProvider(b)
-	require.Equal(t, "a feline", p.GetShortDescription("cat", "en"))
-	require.Equal(t, "", p.GetShortDescription("bird", "en"))
-	require.Equal(t, "", p.GetShortDescription("cat", "de"))
+	p := NewShortDescriptionProvider()
+	p.LoadLines = func(path string) ([]string, error) {
+		require.Equal(t, "/en/word_definitions.txt", path)
+		return []string{
+			"# comment",
+			"dog\ta domestic animal",
+			"cat\ta small feline",
+		}, nil
+	}
+	require.Equal(t, "a domestic animal", p.GetShortDescription("dog", "en"))
+	require.Equal(t, "", p.GetShortDescription("wolf", "en"))
+	// cached
+	require.Equal(t, "a small feline", p.GetShortDescription("cat", "en"))
+}
+
+func TestParseWordDefinitions(t *testing.T) {
+	m, err := ParseWordDefinitions(strings.NewReader("a\tb\n"))
+	require.NoError(t, err)
+	require.Equal(t, "b", m["a"])
 }

@@ -25,3 +25,16 @@ func IsLanguageName(s string) bool {
 	_, ok := languageNames[s]
 	return ok
 }
+
+// LanguageNames is the Java-name twin for the language-adjective set.
+type LanguageNames struct{}
+
+func (LanguageNames) Contains(s string) bool { return IsLanguageName(s) }
+
+func (LanguageNames) All() []string {
+	out := make([]string, 0, len(languageNames))
+	for k := range languageNames {
+		out = append(out, k)
+	}
+	return out
+}

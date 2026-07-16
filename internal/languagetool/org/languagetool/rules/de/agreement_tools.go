@@ -29,3 +29,10 @@ func AgreementCategoryString(casus, numerus, genus string, det string, omit map[
 	}
 	return strings.Join(parts, "/")
 }
+
+// AgreementTools is the Java-name twin for agreement category string helpers.
+type AgreementTools struct{}
+
+func (AgreementTools) CategoryString(casus, numerus, genus, det string, omit map[GrammarCategory]bool) string {
+	return AgreementCategoryString(casus, numerus, genus, det, omit)
+}

@@ -29,3 +29,14 @@ func Regex(regex string) *PatternToken {
 func CsRegex(regex string) *PatternToken {
 	return NewPatternTokenBuilder().CsTokenRegex(regex).Build()
 }
+
+// PatternRuleBuilderHelper is the Java-name twin for pattern token builders.
+type PatternRuleBuilderHelper struct{}
+
+func (PatternRuleBuilderHelper) TokenRegex(s string) *PatternToken { return TokenRegex(s) }
+func (PatternRuleBuilderHelper) PosRegex(s string) *PatternToken   { return PosRegex(s) }
+func (PatternRuleBuilderHelper) CsToken(s string) *PatternToken    { return CsToken(s) }
+func (PatternRuleBuilderHelper) Pos(s string) *PatternToken        { return Pos(s) }
+func (PatternRuleBuilderHelper) Token(s string) *PatternToken      { return Token(s) }
+func (PatternRuleBuilderHelper) Regex(s string) *PatternToken      { return Regex(s) }
+func (PatternRuleBuilderHelper) CsRegex(s string) *PatternToken    { return CsRegex(s) }

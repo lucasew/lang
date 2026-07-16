@@ -1,3 +1,4 @@
 package it
 
-// Java twin name file for synthesizer (implementation in package).
+// ItalianSynthesizer Java twin name — implementation in it_synthesizer.go.
+var _ = NewItalianSynthesizer

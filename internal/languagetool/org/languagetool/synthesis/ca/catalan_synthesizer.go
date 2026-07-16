@@ -1,3 +1,5 @@
 package ca
 
-// Java twin name file for synthesizer (implementation in package).
+// CatalanSynthesizer Java twin name — implementation in ca_synthesizer.go
+// (type CatalanSynthesizer, NewCatalanSynthesizer).
+var _ = NewCatalanSynthesizer

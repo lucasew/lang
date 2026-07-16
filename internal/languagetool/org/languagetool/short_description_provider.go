@@ -1,75 +1,85 @@
 package languagetool
 
 import (
-	"fmt"
+	"bufio"
+	"io"
 	"strings"
 	"sync"
-
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/broker"
 )
 
 // ShortDescriptionProvider ports org.languagetool.ShortDescriptionProvider.
-// Loads word\tdefinition lines from /{lang}/word_definitions.txt via a ResourceDataBroker.
+// Loads word→short definition maps (tab-separated) per language code.
 type ShortDescriptionProvider struct {
-	mu     sync.Mutex
-	cache  map[string]map[string]string // lang short code → word → def
-	Broker broker.ResourceDataBroker
+	// LoadLines returns lines for path like "/en/word_definitions.txt".
+	// When nil, GetShortDescription always returns "".
+	LoadLines func(path string) ([]string, error)
+
+	mu   sync.Mutex
+	cache map[string]map[string]string // lang short code → word → def
 }
 
-func NewShortDescriptionProvider(b broker.ResourceDataBroker) *ShortDescriptionProvider {
-	return &ShortDescriptionProvider{
-		cache:  map[string]map[string]string{},
-		Broker: b,
-	}
+func NewShortDescriptionProvider() *ShortDescriptionProvider {
+	return &ShortDescriptionProvider{cache: map[string]map[string]string{}}
 }
 
-// GetShortDescription returns a short definition or empty if unknown.
-func (p *ShortDescriptionProvider) GetShortDescription(word, langShortCode string) string {
-	if p == nil {
+// GetShortDescription returns a short definition for word in langCode, or "".
+func (p *ShortDescriptionProvider) GetShortDescription(word, langCode string) string {
+	if p == nil || word == "" || langCode == "" {
 		return ""
 	}
-	defs := p.allDescriptions(langShortCode)
-	return defs[word]
+	m := p.allDescriptions(langCode)
+	return m[word]
 }
 
-func (p *ShortDescriptionProvider) allDescriptions(langShortCode string) map[string]string {
+func (p *ShortDescriptionProvider) allDescriptions(langCode string) map[string]string {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if m, ok := p.cache[langShortCode]; ok {
+	if m, ok := p.cache[langCode]; ok {
 		return m
 	}
-	m := p.init(langShortCode)
-	p.cache[langShortCode] = m
+	m := p.init(langCode)
+	p.cache[langCode] = m
 	return m
 }
 
-func (p *ShortDescriptionProvider) init(langShortCode string) map[string]string {
-	if p.Broker == nil {
+func (p *ShortDescriptionProvider) init(langCode string) map[string]string {
+	if p.LoadLines == nil {
 		return map[string]string{}
 	}
-	path := "/" + langShortCode + "/word_definitions.txt"
-	if !p.Broker.ResourceExists(path) {
-		// also try without leading slash style
-		path2 := langShortCode + "/word_definitions.txt"
-		if !p.Broker.ResourceExists(path2) {
-			return map[string]string{}
-		}
-		path = path2
-	}
-	lines, err := p.Broker.GetFromResourceDirAsLines(path)
-	if err != nil {
+	path := "/" + langCode + "/word_definitions.txt"
+	lines, err := p.LoadLines(path)
+	if err != nil || len(lines) == 0 {
 		return map[string]string{}
 	}
 	out := map[string]string{}
 	for _, line := range lines {
-		if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
+		line = strings.TrimSpace(line)
+		if line == "" || line[0] == '#' {
 			continue
 		}
 		parts := strings.Split(line, "\t")
 		if len(parts) != 2 {
-			panic(fmt.Sprintf("Format in %s not expected, expected 2 tab-separated columns: '%s'", path, line))
+			continue // skip bad lines rather than panic in production port
 		}
 		out[parts[0]] = parts[1]
 	}
 	return out
+}
+
+// ParseWordDefinitions parses a definitions stream (for tests / brokers).
+func ParseWordDefinitions(r io.Reader) (map[string]string, error) {
+	out := map[string]string{}
+	sc := bufio.NewScanner(r)
+	for sc.Scan() {
+		line := strings.TrimSpace(sc.Text())
+		if line == "" || line[0] == '#' {
+			continue
+		}
+		parts := strings.Split(line, "\t")
+		if len(parts) != 2 {
+			continue
+		}
+		out[parts[0]] = parts[1]
+	}
+	return out, sc.Err()
 }
