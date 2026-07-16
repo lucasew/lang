@@ -169,3 +169,16 @@ func NormalizeWhitespaceForGRPC(s string) string {
 	}
 	return string(out)
 }
+
+// GRPCUtils is the Java-name twin for conversion helpers.
+type GRPCUtils struct{}
+
+func (GRPCUtils) TokenToGRPC(tok *languagetool.AnalyzedToken) GRPCAnalyzedToken {
+	return TokenToGRPC(tok)
+}
+func (GRPCUtils) ReadingsToGRPC(r *languagetool.AnalyzedTokenReadings) GRPCAnalyzedTokenReadings {
+	return ReadingsToGRPC(r)
+}
+func (GRPCUtils) SentenceToGRPC(s *languagetool.AnalyzedSentence) GRPCAnalyzedSentence {
+	return SentenceToGRPC(s)
+}

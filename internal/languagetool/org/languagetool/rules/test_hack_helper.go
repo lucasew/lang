@@ -32,3 +32,8 @@ func containsTest(s string) bool {
 	return len(s) >= 5 && (s[len(s)-5:] == ".test" ||
 		(len(s) > 10 && (s[len(s)-10:] == ".test.exe")))
 }
+
+// TestHackHelper is the Java-name twin for IsTest helpers.
+type TestHackHelper struct{}
+
+func (TestHackHelper) IsJUnitTest() bool { return IsTest() }

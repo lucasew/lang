@@ -92,3 +92,12 @@ func Wrong(example string) IncorrectExample {
 func Fixed(example string) CorrectExample {
 	return NewCorrectExample(example)
 }
+
+// Example is the Java-name twin for building example sentences (Example.wrong / Example.fixed).
+type Example struct{}
+
+// Wrong wraps a wrong-example string.
+func (Example) Wrong(s string) ExampleSentence { return NewExampleSentence(s) }
+
+// Fixed wraps a fixed-example string.
+func (Example) Fixed(s string) ExampleSentence { return NewExampleSentence(s) }

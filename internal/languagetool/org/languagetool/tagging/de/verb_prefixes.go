@@ -27,3 +27,12 @@ func IsVerbPrefix(p string) bool {
 	}
 	return false
 }
+
+// VerbPrefixes is the Java-name twin for the prefix list helpers.
+type VerbPrefixes struct{}
+
+// Get returns a copy of known verb prefixes.
+func (VerbPrefixes) Get() []string { return GetVerbPrefixes() }
+
+// Contains reports whether p is a known prefix.
+func (VerbPrefixes) Contains(p string) bool { return IsVerbPrefix(p) }

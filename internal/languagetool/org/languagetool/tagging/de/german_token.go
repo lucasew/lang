@@ -122,3 +122,7 @@ func splitColon(s string) []string {
 	out = append(out, s[start:])
 	return out
 }
+
+// GermanToken is the Java-name twin namespace for POS/Kasus/Numerus constants
+// (org.languagetool.tagging.de.GermanToken).
+type GermanToken struct{}
