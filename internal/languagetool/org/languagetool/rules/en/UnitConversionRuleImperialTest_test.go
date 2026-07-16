@@ -1,17 +1,15 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/UnitConversionRuleImperialTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/UnitConversionRuleImperialTest.java :: UnitConversionRuleImperialTest.match
 func TestUnitConversionRuleImperial_Match(t *testing.T) {
-	tools.Unimplemented("UnitConversionRuleImperialTest.match")
+	rule := NewUnitConversionRuleImperial(nil)
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("I just drank 3 pints."))))
+	// wrong metres in paren still flags feet
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("I am 6 feet (2.02 m) tall."))))
 }
