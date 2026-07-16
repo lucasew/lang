@@ -7,9 +7,10 @@ const TagPicky Tag = "picky"
 
 // FakeRule ports org.languagetool.rules.FakeRule for unit tests.
 type FakeRule struct {
-	id                    string
-	tags                  []Tag
-	includedAllAtOnce     bool
+	id                string
+	tags              []Tag
+	includedAllAtOnce bool
+	url               string
 }
 
 func NewFakeRule(id string) *FakeRule {
@@ -26,6 +27,19 @@ func NewFakeRuleWithTag(id string, tag Tag) *FakeRule {
 }
 
 func (r *FakeRule) GetID() string { return r.id }
+
+func (r *FakeRule) SetURL(u string) {
+	if r != nil {
+		r.url = u
+	}
+}
+
+func (r *FakeRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.url
+}
 
 func (r *FakeRule) GetTags() []Tag { return r.tags }
 

@@ -1,22 +1,27 @@
 package sk
 
-// Twin of languagetool-language-modules/sk/src/test/java/org/languagetool/tagging/sk/SlovakTaggerTest.java
+// Twin of SlovakTaggerTest
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sk/src/test/java/org/languagetool/tagging/sk/SlovakTaggerTest.java :: SlovakTaggerTest.testDictionary
 func TestSlovakTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: SlovakTaggerTest.testDictionary")
+	wt := tagging.MapWordTagger{"dom": {tagging.NewTaggedWord("dom", "SSis1")}}
+	tagger := NewSlovakTagger(wt)
+	require.Equal(t, SlovakDictPath, tagger.GetDictionaryPath())
+	require.Len(t, tagger.TagWord("dom"), 1)
 }
 
-// Port of languagetool-language-modules/sk/src/test/java/org/languagetool/tagging/sk/SlovakTaggerTest.java :: SlovakTaggerTest.testTagger
 func TestSlovakTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: SlovakTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"toto": {tagging.NewTaggedWord("toto", "PFns1")},
+		"test": {tagging.NewTaggedWord("test", "SSis1")},
+	}
+	got := NewSlovakTagger(wt).Tag([]string{"Toto", "test", "xyz"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }

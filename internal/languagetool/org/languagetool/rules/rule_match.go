@@ -11,6 +11,8 @@ type RuleMatch struct {
 	Message               string
 	ShortMessage          string
 	SuggestedReplacements []string
+	// URL optional match-level link (overrides rule URL when set).
+	URL string
 }
 
 func NewRuleMatch(rule any, sentence *languagetool.AnalyzedSentence, fromPos, toPos int, message string) *RuleMatch {
@@ -40,4 +42,17 @@ func (m *RuleMatch) SetOffsetPosition(from, to int) {
 
 func (m *RuleMatch) SetSuggestedReplacements(reps []string) {
 	m.SuggestedReplacements = append([]string(nil), reps...)
+}
+
+func (m *RuleMatch) SetURL(u string) {
+	if m != nil {
+		m.URL = u
+	}
+}
+
+func (m *RuleMatch) GetURL() string {
+	if m == nil {
+		return ""
+	}
+	return m.URL
 }

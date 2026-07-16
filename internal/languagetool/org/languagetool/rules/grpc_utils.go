@@ -131,6 +131,12 @@ func MatchToGRPC(m *RuleMatch) GRPCMatch {
 	if r, ok := m.Rule.(interface{ GetID() string }); ok {
 		id = r.GetID()
 	}
+	url := m.URL
+	if url == "" {
+		if r, ok := m.Rule.(interface{ GetURL() string }); ok {
+			url = r.GetURL()
+		}
+	}
 	return GRPCMatch{
 		Offset:                m.FromPos,
 		Length:                m.ToPos - m.FromPos,
@@ -138,6 +144,39 @@ func MatchToGRPC(m *RuleMatch) GRPCMatch {
 		SuggestedReplacements: append([]string(nil), m.SuggestedReplacements...),
 		MatchDescription:      m.Message,
 		MatchShortDescription: m.ShortMessage,
+		URL:                   url,
+	}
+}
+
+// CheckLevel ports JLanguageTool.Level for GRPC processing options.
+type CheckLevel string
+
+const (
+	CheckLevelDefault CheckLevel = "DEFAULT"
+	CheckLevelPicky   CheckLevel = "PICKY"
+)
+
+// LevelToGRPC ports GRPCUtils.toGRPC(Level).
+func LevelToGRPC(level CheckLevel) string {
+	switch level {
+	case CheckLevelPicky:
+		return "PICKY"
+	case CheckLevelDefault, "":
+		return "DEFAULT"
+	default:
+		return string(level)
+	}
+}
+
+// LevelFromGRPC ports GRPCUtils.fromGRPC(ProcessingOptions.Level).
+func LevelFromGRPC(level string) CheckLevel {
+	switch level {
+	case "PICKY":
+		return CheckLevelPicky
+	case "DEFAULT", "UNRECOGNIZED", "":
+		return CheckLevelDefault
+	default:
+		return CheckLevel(level)
 	}
 }
 
