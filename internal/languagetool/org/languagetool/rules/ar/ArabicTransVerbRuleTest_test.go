@@ -1,17 +1,18 @@
 package ar
 
-// Twin of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicTransVerbRuleTest.java
+// Twin of ArabicTransVerbRuleTest — surface stem+clitic heuristic.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicTransVerbRuleTest.java :: ArabicTransVerbRuleTest.testRule
 func TestArabicTransVerbRule_Rule(t *testing.T) {
-	tools.Unimplemented("ArabicTransVerbRuleTest.testRule")
+	rule := NewArabicTransVerbRule(nil)
+	require.NotNil(t, rule)
+	// Bare lemma forms should not flag
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("أفاض"))))
+	// Attached-looking form without preposition (surface): أفاضه
+	require.NotEqual(t, 0, len(rule.Match(languagetool.AnalyzePlain("أفاضه الماء"))))
 }
