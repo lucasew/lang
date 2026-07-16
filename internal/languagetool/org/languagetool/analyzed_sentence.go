@@ -211,3 +211,23 @@ func (s *AnalyzedSentence) equalTokens(a, b []*AnalyzedTokenReadings) bool {
 	}
 	return true
 }
+
+// GetCorrectedTextLength ports AnalyzedSentence.getCorrectedTextLength.
+func (s *AnalyzedSentence) GetCorrectedTextLength() int {
+	lenSum := 0
+	for i, element := range s.tokens {
+		// use token length; clean token if we had it
+		t := element.GetToken()
+		n := 0
+		for _, r := range t {
+			if r >= 0x10000 {
+				n += 2
+			} else {
+				n++
+			}
+		}
+		lenSum += n
+		_ = i
+	}
+	return lenSum
+}

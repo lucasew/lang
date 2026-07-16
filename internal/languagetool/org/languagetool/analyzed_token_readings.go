@@ -298,3 +298,31 @@ func (r *AnalyzedTokenReadings) areLemmasSame() bool {
 	}
 	return true
 }
+
+func (r *AnalyzedTokenReadings) GetEndPos() int {
+	// Java: startPos + token.length() UTF-16
+	n := 0
+	for _, rr := range r.token {
+		if rr >= 0x10000 {
+			n += 2
+		} else {
+			n++
+		}
+	}
+	// simpler with utf16
+	return r.startPos + utf16Len(r.token)
+}
+
+func (r *AnalyzedTokenReadings) SetStartPos(p int) { r.startPos = p }
+
+func utf16Len(s string) int {
+	n := 0
+	for _, r := range s {
+		if r >= 0x10000 {
+			n += 2
+		} else {
+			n++
+		}
+	}
+	return n
+}

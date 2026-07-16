@@ -1,47 +1,31 @@
 package rules
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java :: RemoteRuleFiltersTest.load
 func TestRemoteRuleFilters_Load(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	tools.Unimplemented("RemoteRuleFiltersTest.load")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java :: RemoteRuleFiltersTest.testSimpleFilter
 func TestRemoteRuleFilters_SimpleFilter(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	tools.Unimplemented("RemoteRuleFiltersTest.testSimpleFilter")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java :: RemoteRuleFiltersTest.testMultiTokenWhitespace
 func TestRemoteRuleFilters_MultiTokenWhitespace(t *testing.T) {
-	// contains assertTrue
+	tools.Unimplemented("RemoteRuleFiltersTest.testMultiTokenWhitespace")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java :: RemoteRuleFiltersTest.testMarker
 func TestRemoteRuleFilters_Marker(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	tools.Unimplemented("RemoteRuleFiltersTest.testMarker")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java :: RemoteRuleFiltersTest.testAntipattern
 func TestRemoteRuleFilters_Antipattern(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	tools.Unimplemented("RemoteRuleFiltersTest.testAntipattern")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/rules/RemoteRuleFiltersTest.java :: RemoteRuleFiltersTest.testIDRegexFilter
 func TestRemoteRuleFilters_IDRegexFilter(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	tools.Unimplemented("RemoteRuleFiltersTest.testIDRegexFilter")
 }

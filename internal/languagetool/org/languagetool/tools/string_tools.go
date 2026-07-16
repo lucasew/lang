@@ -247,3 +247,33 @@ func IsCamelCase(str string) bool {
 	ok, _ := regexp.MatchString(`^[a-z]+[A-Z][A-Za-z]+$`, str)
 	return ok
 }
+
+func IsNonBreakingWhitespace(str string) bool {
+	return str == "\u00A0"
+}
+
+// IsEmoji — minimal: false for BMP tests; detect surrogate pairs / emoji ranges loosely
+func IsEmoji(token string) bool {
+	for _, r := range token {
+		if r >= 0x1F300 && r <= 0x1FAFF {
+			return true
+		}
+		if r >= 0x2600 && r <= 0x27BF {
+			return true
+		}
+	}
+	// also multi-codepoint emoji as UTF-16 surrogates already decoded to runes
+	return false
+}
+
+func IsNumericSpace(token string) bool {
+	if token == "" {
+		return false
+	}
+	for _, r := range token {
+		if !(unicode.IsDigit(r) || unicode.IsSpace(r)) {
+			return false
+		}
+	}
+	return true
+}
