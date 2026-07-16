@@ -2,6 +2,7 @@ package engine
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -179,19 +180,17 @@ func (c *Checker) patternRules(lang data.Language) ([]*pattern.Rule, error) {
 
 func grammarPaths(dataRoot string, lang data.Language) []string {
 	base := filepath.Join(data.LanguageModules(dataRoot), lang.Family, "src", "main", "resources", "org", "languagetool", "rules", lang.Family)
-	// Common LT layout: rules/<lang>/grammar.xml and variant-specific
 	var paths []string
-	paths = append(paths, filepath.Join(base, "grammar.xml"))
-	// Variant subdir e.g. en/en-US/grammar.xml
-	code := lang.Code
-	if strings.Contains(code, "-") {
-		paths = append(paths, filepath.Join(base, code, "grammar.xml"))
-	}
-	// style etc.
-	paths = append(paths,
-		filepath.Join(base, "style.xml"),
-		filepath.Join(base, "punctuation.xml"),
-	)
+	// All *.xml under rules/<family>/ (grammar, style, punctuation, variants…)
+	_ = filepath.WalkDir(base, func(path string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return nil
+		}
+		if strings.HasSuffix(strings.ToLower(d.Name()), ".xml") {
+			paths = append(paths, path)
+		}
+		return nil
+	})
 	return paths
 }
 
