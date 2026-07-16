@@ -13,12 +13,11 @@ type UkrainianCommaWhitespaceRule struct {
 func NewUkrainianCommaWhitespaceRule(messages map[string]string) *UkrainianCommaWhitespaceRule {
 	base := rules.NewCommaWhitespaceRule(messages)
 	base.IsException = func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool {
-		tok := tokens[tokenIdx].GetToken()
-		return tok == "\u2014" || tok == "\u2013"
+		if tokenIdx < 0 || tokenIdx >= len(tokens) || tokens[tokenIdx] == nil {
+			return false
+		}
+		t := tokens[tokenIdx].GetToken()
+		return t == "\u2014" || t == "\u2013"
 	}
 	return &UkrainianCommaWhitespaceRule{CommaWhitespaceRule: base}
-}
-
-func (r *UkrainianCommaWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.CommaWhitespaceRule.Match(sentence)
 }
