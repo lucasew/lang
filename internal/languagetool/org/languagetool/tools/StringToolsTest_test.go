@@ -148,3 +148,38 @@ func TestStringTools_AllStartWithLowercase(t *testing.T) {
 	require.True(t, AllStartWithLowercase("bilbo"))
 	require.False(t, AllStartWithLowercase("Baggins"))
 }
+
+func TestStringTools_ToId(t *testing.T) {
+	Unimplemented("StringToolsTest.testToId")
+}
+
+func TestStringTools_ReadStream(t *testing.T) {
+	Unimplemented("StringToolsTest.testReadStream")
+}
+
+func TestStringTools_AddSpace(t *testing.T) {
+	Unimplemented("StringToolsTest.testAddSpace")
+}
+
+func TestStringTools_AsString(t *testing.T) {
+	Unimplemented("StringToolsTest.testAsString")
+}
+
+func TestStringTools_IsCamelCase(t *testing.T) {
+	require.False(t, IsCamelCase("abc"))
+	require.False(t, IsCamelCase("ABC"))
+	require.True(t, IsCamelCase("iSomething"))
+	require.True(t, IsCamelCase("iSomeThing"))
+	require.True(t, IsCamelCase("mRNA"))
+	require.True(t, IsCamelCase("microRNA"))
+	require.True(t, IsCamelCase("microSomething"))
+	require.True(t, IsCamelCase("iSomeTHING"))
+}
+
+func TestStringTools_StringForSpeller(t *testing.T) {
+	Unimplemented("StringToolsTest.testStringForSpeller")
+}
+
+func TestStringTools_TitlecaseGlobal(t *testing.T) {
+	Unimplemented("StringToolsTest.testTitlecaseGlobal")
+}
