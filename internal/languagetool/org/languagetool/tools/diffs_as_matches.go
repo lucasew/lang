@@ -326,3 +326,38 @@ func joinWithPreviousMatch(current, previous *PseudoMatch, original string) *Pse
 	b.WriteString(current.GetReplacement())
 	return NewPseudoMatch(b.String(), previous.GetFromPos(), current.GetToPos())
 }
+
+// GetJoinedMatch ports DiffsAsMatches.getJoinedMatch: joins pseudo-matches overlapping [patternFrom, patternTo].
+func (d *DiffsAsMatches) GetJoinedMatch(pseudoMatches []*PseudoMatch, originalSentence string, patternFrom, patternTo int) *PseudoMatch {
+	if len(pseudoMatches) == 0 {
+		return nil
+	}
+	minFrom := -1
+	maxTo := -1
+	previousTo := -1
+	var suggestion strings.Builder
+	for _, match := range pseudoMatches {
+		if (minFrom != -1 && maxTo == -1) || isMatchInRange(match, patternFrom, patternTo) {
+			if minFrom == -1 {
+				minFrom = match.GetFromPos()
+			} else if match.GetFromPos() > previousTo {
+				suggestion.WriteString(originalSentence[previousTo:match.GetFromPos()])
+			}
+			reps := match.GetReplacements()
+			if len(reps) > 0 {
+				suggestion.WriteString(reps[0])
+			}
+			maxTo = match.GetToPos()
+		}
+		previousTo = match.GetToPos()
+	}
+	if minFrom > -1 && maxTo > 0 {
+		return NewPseudoMatch(suggestion.String(), minFrom, maxTo)
+	}
+	return nil
+}
+
+func isMatchInRange(match *PseudoMatch, patternFrom, patternTo int) bool {
+	return (match.GetFromPos() >= patternFrom && match.GetFromPos() <= patternTo) ||
+		(match.GetToPos() >= patternFrom && match.GetToPos() <= patternTo)
+}
