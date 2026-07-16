@@ -1,6 +1,9 @@
 package uk
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 // Inflection ports InflectionHelper.Inflection (Ukrainian gender/case/animacy).
 type Inflection struct {
@@ -96,4 +99,98 @@ func (inf Inflection) CompareTo(o Inflection) int {
 		c2 = 99
 	}
 	return c1 - c2
+}
+
+// --- POS tag extraction (TokenAgreementAdjNounRule patterns) ---
+
+var (
+	adjInflectionRE  = regexp.MustCompile(`:([mfnp]):(v_...)(:r(in)?anim)?`)
+	nounInflectionRE = regexp.MustCompile(`((?:[iu]n)?anim):([mfnps]):(v_...)`)
+)
+
+// GetAdjInflectionsFromTags extracts adj/numr gender/case/anim from POS tags.
+func GetAdjInflectionsFromTags(posTags []string, postagStart string) []Inflection {
+	if postagStart == "" {
+		postagStart = "adj"
+	}
+	var out []Inflection
+	seen := map[string]struct{}{}
+	for _, posTag := range posTags {
+		if posTag == "" || !strings.HasPrefix(posTag, postagStart) {
+			continue
+		}
+		m := adjInflectionRE.FindStringSubmatch(posTag)
+		if m == nil {
+			continue
+		}
+		gen, vidm := m[1], m[2]
+		anim := ""
+		if m[3] != "" {
+			anim = m[3][2:] // strip :r
+		}
+		inf := Inflection{Gender: gen, Case: vidm, AnimTag: anim}
+		key := inf.String() + "|" + anim
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, inf)
+	}
+	return out
+}
+
+// GetAdjCaseInflections is GetAdjInflectionsFromTags with "adj" prefix
+// (case/gender agreement; distinct from verb_inflection_helper.GetAdjInflections).
+func GetAdjCaseInflections(posTags []string) []Inflection {
+	return GetAdjInflectionsFromTags(posTags, "adj")
+}
+
+// GetNumrCaseInflections extracts numr case/gender inflections.
+func GetNumrCaseInflections(posTags []string) []Inflection {
+	return GetAdjInflectionsFromTags(posTags, "numr")
+}
+
+// GetNounCaseInflections is GetNounInflectionsFromTags with no ignore filter.
+func GetNounCaseInflections(posTags []string) []Inflection {
+	return GetNounInflectionsFromTags(posTags, nil)
+}
+
+// GetNounInflectionsFromTags extracts noun gender/case/anim from POS tags.
+// ignoreRE, if non-nil, skips tags that match.
+func GetNounInflectionsFromTags(posTags []string, ignoreRE *regexp.Regexp) []Inflection {
+	var out []Inflection
+	seen := map[string]struct{}{}
+	for _, posTag := range posTags {
+		if posTag == "" {
+			continue
+		}
+		if ignoreRE != nil && ignoreRE.MatchString(posTag) {
+			continue
+		}
+		m := nounInflectionRE.FindStringSubmatch(posTag)
+		if m == nil {
+			continue
+		}
+		anim, gen, vidm := m[1], m[2], m[3]
+		inf := Inflection{Gender: gen, Case: vidm, AnimTag: anim}
+		key := inf.String() + "|" + anim
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, inf)
+	}
+	return out
+}
+
+// InflectionsIntersect reports whether master and slave share an agreeing inflection.
+func InflectionsIntersect(master, slave []Inflection) bool {
+	for _, m := range master {
+		for _, s := range slave {
+			if m.Equals(s) {
+				return true
+			}
+		}
+	}
+	return false
 }
