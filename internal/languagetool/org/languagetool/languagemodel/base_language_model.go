@@ -60,7 +60,10 @@ func (m *BaseLanguageModel) tryGetCount(context []string) int64 {
 
 // GetPseudoProbability ports BaseLanguageModel.getPseudoProbability (chain rule + add-1).
 func (m *BaseLanguageModel) GetPseudoProbability(context []string) ngrams.Probability {
-	if m == nil || m.Counts == nil || len(context) == 0 {
+	if len(context) == 0 {
+		panic("index out of bounds: empty context") // Java IndexOutOfBoundsException
+	}
+	if m == nil || m.Counts == nil {
 		return ngrams.NewProbabilitySimple(0, 0)
 	}
 	if m.total == nil {

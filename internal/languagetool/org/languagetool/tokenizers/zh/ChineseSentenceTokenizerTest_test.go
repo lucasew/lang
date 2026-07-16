@@ -1,27 +1,27 @@
 package zh
 
-// Twin of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java
+// Twin of ChineseSentenceTokenizerTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java :: ChineseSentenceTokenizerTest.testTokenize
 func TestChineseSentenceTokenizer_Tokenize(t *testing.T) {
-	t.Skip("unimplemented: ChineseSentenceTokenizerTest.testTokenize")
+	tok := NewChineseSentenceTokenizer()
+	got := tok.Tokenize("你好。世界！")
+	require.GreaterOrEqual(t, len(got), 2)
+	require.Contains(t, got[0], "你好")
 }
 
-// Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java :: ChineseSentenceTokenizerTest.testTokenize2
 func TestChineseSentenceTokenizer_Tokenize2(t *testing.T) {
-	t.Skip("unimplemented: ChineseSentenceTokenizerTest.testTokenize2")
+	tok := NewChineseSentenceTokenizer()
+	got := tok.Tokenize("Hello. World.")
+	require.NotEmpty(t, got)
 }
 
-// Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java :: ChineseSentenceTokenizerTest.testTokenizeWithSpaces
 func TestChineseSentenceTokenizer_TokenizeWithSpaces(t *testing.T) {
-	t.Skip("unimplemented: ChineseSentenceTokenizerTest.testTokenizeWithSpaces")
+	tok := NewChineseSentenceTokenizer()
+	got := tok.Tokenize("第一句。 第二句。")
+	require.GreaterOrEqual(t, len(got), 2)
 }

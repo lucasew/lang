@@ -17,6 +17,7 @@ type MultiThreadedJLanguageTool struct {
 	poolSize int
 	// Matchers run for each sentence; errors abort that sentence's remaining matchers.
 	Matchers []SentenceMatcherFunc
+	shutdown bool
 }
 
 func NewMultiThreadedJLanguageTool(languageCode string, threadPoolSize int) *MultiThreadedJLanguageTool {
@@ -42,6 +43,9 @@ func (lt *MultiThreadedJLanguageTool) GetThreadPoolSize() int { return lt.poolSi
 // CheckSentences runs matchers over sentences in parallel (up to poolSize workers).
 // Order of results is not guaranteed; per-sentence matcher order is preserved.
 func (lt *MultiThreadedJLanguageTool) CheckSentences(sentences []*AnalyzedSentence) error {
+	if lt != nil && lt.shutdown {
+		panic("MultiThreadedJLanguageTool has been shut down")
+	}
 	if len(sentences) == 0 || len(lt.Matchers) == 0 {
 		return nil
 	}
@@ -89,4 +93,13 @@ func (lt *MultiThreadedJLanguageTool) CheckSentences(sentences []*AnalyzedSenten
 }
 
 // Shutdown is a no-op for the Go worker model (goroutines exit with CheckSentences).
-func (lt *MultiThreadedJLanguageTool) Shutdown() {}
+// Shutdown marks the tool closed; further CheckSentences panics (Java IllegalStateException).
+func (lt *MultiThreadedJLanguageTool) Shutdown() {
+	if lt != nil {
+		lt.shutdown = true
+	}
+}
+
+func (lt *MultiThreadedJLanguageTool) IsShutdown() bool {
+	return lt != nil && lt.shutdown
+}

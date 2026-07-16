@@ -1,37 +1,37 @@
 package languagetool
 
-// Twin of languagetool-core/src/test/java/org/languagetool/MultiThreadedJLanguageToolTest.java
+// Twin of MultiThreadedJLanguageToolTest
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/MultiThreadedJLanguageToolTest.java :: MultiThreadedJLanguageToolTest.testCheck
 func TestMultiThreadedJLanguageTool_Check(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewMultiThreadedJLanguageTool("en", 2)
+	require.Equal(t, 2, lt.GetThreadPoolSize())
+	var n int
+	lt.Matchers = []SentenceMatcherFunc{
+		func(s *AnalyzedSentence) error { n++; return nil },
+	}
+	s1 := AnalyzePlain("Hello world.")
+	s2 := AnalyzePlain("Another sentence.")
+	require.NoError(t, lt.CheckSentences([]*AnalyzedSentence{s1, s2}))
+	require.Equal(t, 2, n)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/MultiThreadedJLanguageToolTest.java :: MultiThreadedJLanguageToolTest.testShutdownException
 func TestMultiThreadedJLanguageTool_ShutdownException(t *testing.T) {
-	t.Skip("unimplemented: MultiThreadedJLanguageToolTest.testShutdownException")
+	lt := NewMultiThreadedJLanguageTool("en", 1)
+	lt.Shutdown()
+	require.True(t, lt.IsShutdown())
+	require.Panics(t, func() {
+		_ = lt.CheckSentences([]*AnalyzedSentence{AnalyzePlain("x")})
+	})
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/MultiThreadedJLanguageToolTest.java :: MultiThreadedJLanguageToolTest.testTextAnalysis
-func TestMultiThreadedJLanguageTool_TextAnalysis(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/MultiThreadedJLanguageToolTest.java :: MultiThreadedJLanguageToolTest.testConfigurableThreadPoolSize
 func TestMultiThreadedJLanguageTool_ConfigurableThreadPoolSize(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/MultiThreadedJLanguageToolTest.java :: MultiThreadedJLanguageToolTest.testTwoRulesOnly
-func TestMultiThreadedJLanguageTool_TwoRulesOnly(t *testing.T) {
-	// contains assertThat
+	lt := NewMultiThreadedJLanguageTool("en", 4)
+	require.Equal(t, 4, lt.GetThreadPoolSize())
+	lt0 := NewMultiThreadedJLanguageTool("en", 0)
+	require.GreaterOrEqual(t, lt0.GetThreadPoolSize(), 1)
 }

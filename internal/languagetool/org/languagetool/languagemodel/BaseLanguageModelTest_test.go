@@ -1,23 +1,26 @@
 package languagemodel
 
-// Twin of languagetool-core/src/test/java/org/languagetool/languagemodel/BaseLanguageModelTest.java
+// Twin of BaseLanguageModelTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/languagemodel/BaseLanguageModelTest.java :: BaseLanguageModelTest.testPseudoProbability
 func TestBaseLanguageModel_PseudoProbability(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertThat
+	m := NewMapLanguageModel()
+	m.Total = 100
+	m.Add([]string{"There"}, 10)
+	m.Add([]string{"are"}, 5)
+	m.Add([]string{"There", "are"}, 4)
+	p := m.GetPseudoProbability([]string{"no", "data", "here"})
+	require.Greater(t, p.GetProb(), 0.0) // add-1 smoothing
+	p2 := m.GetPseudoProbability([]string{"There", "are"})
+	require.Greater(t, p2.GetProb(), 0.0)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/languagemodel/BaseLanguageModelTest.java :: BaseLanguageModelTest.testPseudoProbabilityFail1
 func TestBaseLanguageModel_PseudoProbabilityFail1(t *testing.T) {
-	t.Skip("unimplemented: BaseLanguageModelTest.testPseudoProbabilityFail1")
+	m := NewMapLanguageModel()
+	require.Panics(t, func() { _ = m.GetPseudoProbability(nil) })
+	require.Panics(t, func() { _ = m.GetPseudoProbability([]string{}) })
 }

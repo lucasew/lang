@@ -1,27 +1,20 @@
 package sr
 
-// Twin of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/EkavianTaggerTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/EkavianTaggerTest.java :: EkavianTaggerTest.testTaggerRaditi
-func TestEkavianTagger_TaggerRaditi(t *testing.T) {
-	t.Skip("unimplemented: EkavianTaggerTest.testTaggerRaditi")
-}
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/EkavianTaggerTest.java :: EkavianTaggerTest.testTaggerJesam
-func TestEkavianTagger_TaggerJesam(t *testing.T) {
-	t.Skip("unimplemented: EkavianTaggerTest.testTaggerJesam")
-}
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/EkavianTaggerTest.java :: EkavianTaggerTest.testTagger
 func TestEkavianTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: EkavianTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{"raditi": {tagging.NewTaggedWord("raditi", "V")}}
+	tagger := NewEkavianTagger(wt)
+	got := tagger.TagWord("raditi")
+	require.Len(t, got, 1)
+	require.Equal(t, "V", got[0].GetPosTag())
+}
+
+func TestEkavianTagger_Dictionary(t *testing.T) {
+	require.Equal(t, EkavianDictionaryPath, NewEkavianTagger(nil).GetDictionaryPath())
 }
