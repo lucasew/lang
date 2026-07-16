@@ -1,0 +1,60 @@
+package server
+
+import (
+	"encoding/json"
+	"strings"
+)
+
+// V2TextChecker ports org.languagetool.server.V2TextChecker (JSON API).
+type V2TextChecker struct {
+	*TextChecker
+}
+
+func NewV2TextChecker(cfg *HTTPServerConfig, internal bool, reqCounter *RequestCounter) *V2TextChecker {
+	return &V2TextChecker{TextChecker: NewTextChecker(cfg, internal, reqCounter)}
+}
+
+// GetEnabledRuleIDs ports V2TextChecker.getEnabledRuleIds.
+func (v *V2TextChecker) GetEnabledRuleIDs(parameters map[string]string) []string {
+	return commaSeparated(parameters["enabledRules"])
+}
+
+// GetDisabledRuleIDs ports V2TextChecker.getDisabledRuleIds.
+func (v *V2TextChecker) GetDisabledRuleIDs(parameters map[string]string) []string {
+	return commaSeparated(parameters["disabledRules"])
+}
+
+// GetLanguageAutoDetect ports getLanguageAutoDetect.
+func (v *V2TextChecker) GetLanguageAutoDetect(parameters map[string]string) bool {
+	return strings.EqualFold(parameters["language"], "auto")
+}
+
+// BuildResponse builds a minimal JSON /v2/check response from matches.
+func (v *V2TextChecker) BuildResponse(text, langCode, langName string, matches []RemoteRuleMatch) (string, error) {
+	resp := CheckResponse{
+		Software: NewSoftwareInfo("dev"),
+		Language: LanguageInfo{Name: langName, Code: langCode},
+	}
+	for i := range matches {
+		resp.Matches = append(resp.Matches, matches[i].ToMatchInfo())
+	}
+	if resp.Matches == nil {
+		resp.Matches = []MatchInfo{}
+	}
+	b, err := json.Marshal(resp)
+	if err != nil {
+		return "", err
+	}
+	if v != nil && v.Metrics != nil {
+		v.Metrics.LogCheck(langCode, 0, len(text), len(matches), string(CheckModeAll))
+	}
+	return string(b), nil
+}
+
+// CheckParams adds V2-specific validation on top of TextChecker.
+func (v *V2TextChecker) CheckParams(parameters map[string]string) error {
+	if err := v.TextChecker.CheckParams(parameters); err != nil {
+		return err
+	}
+	return nil
+}
