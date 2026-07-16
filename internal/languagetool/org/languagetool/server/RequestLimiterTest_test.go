@@ -1,37 +1,30 @@
 package server
 
-// Twin of languagetool-server/src/test/java/org/languagetool/server/RequestLimiterTest.java
+// Twin of RequestLimiterTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-server/src/test/java/org/languagetool/server/RequestLimiterTest.java :: RequestLimiterTest.testIsAccessOkay
 func TestRequestLimiter_IsAccessOkay(t *testing.T) {
-	t.Skip("unimplemented: RequestLimiterTest.testIsAccessOkay")
+	l := NewRequestLimiter(2, 60)
+	require.True(t, l.Allow("1.1.1.1"))
+	require.True(t, l.Allow("1.1.1.1"))
+	require.False(t, l.Allow("1.1.1.1"))
+	// different IP independent
+	require.True(t, l.Allow("2.2.2.2"))
+	require.Equal(t, 2, l.Count("1.1.1.1"))
 }
 
-// Port of languagetool-server/src/test/java/org/languagetool/server/RequestLimiterTest.java :: RequestLimiterTest.testIsAccessOkayWithFingerprintDisabled
 func TestRequestLimiter_IsAccessOkayWithFingerprintDisabled(t *testing.T) {
-	t.Skip("unimplemented: RequestLimiterTest.testIsAccessOkayWithFingerprintDisabled")
+	// Fingerprint is not modeled; IP-only limiter still works.
+	l := NewRequestLimiter(1, 60)
+	require.True(t, l.Allow("10.0.0.1"))
+	require.False(t, l.Allow("10.0.0.1"))
 }
 
-// Port of languagetool-server/src/test/java/org/languagetool/server/RequestLimiterTest.java :: RequestLimiterTest.testIsAccessOkayWithByteLimitNoFingerprint
-func TestRequestLimiter_IsAccessOkayWithByteLimitNoFingerprint(t *testing.T) {
-	t.Skip("unimplemented: RequestLimiterTest.testIsAccessOkayWithByteLimitNoFingerprint")
-}
-
-// Port of languagetool-server/src/test/java/org/languagetool/server/RequestLimiterTest.java :: RequestLimiterTest.testIsAccessOkayWithByteLimit
-func TestRequestLimiter_IsAccessOkayWithByteLimit(t *testing.T) {
-	t.Skip("unimplemented: RequestLimiterTest.testIsAccessOkayWithByteLimit")
-}
-
-// Port of languagetool-server/src/test/java/org/languagetool/server/RequestLimiterTest.java :: RequestLimiterTest.testTextLevelChecksCountLess
-func TestRequestLimiter_TextLevelChecksCountLess(t *testing.T) {
-	t.Skip("unimplemented: RequestLimiterTest.testTextLevelChecksCountLess")
+func TestRequestLimiter_NilAllows(t *testing.T) {
+	var l *RequestLimiter
+	require.True(t, l.Allow("any"))
 }

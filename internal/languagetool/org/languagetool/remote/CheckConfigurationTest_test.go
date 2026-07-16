@@ -1,23 +1,31 @@
 package remote
 
-// Twin of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationTest.java
+// Twin of CheckConfigurationTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationTest.java :: CheckConfigurationTest.test
-func TestCheckConfiguration_Test(t *testing.T) {
-	// contains assertThat
-	// contains assertNull
+func TestCheckConfiguration_Null(t *testing.T) {
+	var c *CheckConfiguration
+	_, ok := c.GetLangCode()
+	require.False(t, ok)
+	require.Empty(t, c.GetMotherTongueLangCode())
+	require.False(t, c.IsGuessLanguage())
+	require.Empty(t, c.GetEnabledRuleIDs())
+	require.Empty(t, c.GetDisabledRuleIDs())
+	require.Empty(t, c.GetMode())
 }
 
-// Port of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationTest.java :: CheckConfigurationTest.testNull
-func TestCheckConfiguration_Null(t *testing.T) {
-	t.Skip("unimplemented: CheckConfigurationTest.testNull")
+func TestCheckConfiguration_Values(t *testing.T) {
+	c := &CheckConfiguration{
+		LangCode:       "en",
+		EnabledRuleIDs: []string{"A"},
+		Mode:           "ALL",
+	}
+	code, ok := c.GetLangCode()
+	require.True(t, ok)
+	require.Equal(t, "en", code)
+	require.Equal(t, []string{"A"}, c.GetEnabledRuleIDs())
 }

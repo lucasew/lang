@@ -1,24 +1,30 @@
 package remote
 
-// Twin of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationBuilderTest.java
+// Twin of CheckConfigurationBuilderTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationBuilderTest.java :: CheckConfigurationBuilderTest.test
-func TestCheckConfigurationBuilder_Test(t *testing.T) {
-	// contains assertFalse
-	// contains assertThat
-	// contains assertNull
+func TestCheckConfigurationBuilder_Build(t *testing.T) {
+	b := NewCheckConfigurationBuilder("en")
+	c := b.Build()
+	code, ok := c.GetLangCode()
+	require.True(t, ok)
+	require.Equal(t, "en", code)
 }
 
-// Port of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationBuilderTest.java :: CheckConfigurationBuilderTest.testInvalidConfig
 func TestCheckConfigurationBuilder_InvalidConfig(t *testing.T) {
-	t.Skip("unimplemented: CheckConfigurationBuilderTest.testInvalidConfig")
+	require.Panics(t, func() { NewCheckConfigurationBuilder("") })
+	b := NewAutoDetectCheckConfigurationBuilder()
+	// enabledOnly without rules
+	b.enabledOnly = true
+	require.Panics(t, func() { b.Build() })
+}
+
+func TestCheckConfigurationBuilder_AutoDetect(t *testing.T) {
+	b := NewAutoDetectCheckConfigurationBuilder()
+	c := b.Build()
+	require.True(t, c.IsGuessLanguage())
 }

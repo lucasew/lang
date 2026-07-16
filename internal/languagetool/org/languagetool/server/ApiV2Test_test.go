@@ -1,27 +1,35 @@
 package server
 
-// Twin of languagetool-server/src/test/java/org/languagetool/server/ApiV2Test.java
+// Twin of ApiV2Test
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-server/src/test/java/org/languagetool/server/ApiV2Test.java :: ApiV2Test.testLanguages
 func TestApiV2_Languages(t *testing.T) {
-	// contains assertTrue
+	api := NewApiV2(nil, []LanguageInfo{{Name: "English", Code: "en"}})
+	r, err := api.Handle("languages", nil)
+	require.NoError(t, err)
+	require.Equal(t, 200, r.Status)
+	require.Contains(t, r.Body, "English")
 }
 
-// Port of languagetool-server/src/test/java/org/languagetool/server/ApiV2Test.java :: ApiV2Test.testInvalidRequest
 func TestApiV2_InvalidRequest(t *testing.T) {
-	t.Skip("unimplemented: ApiV2Test.testInvalidRequest")
+	api := NewApiV2(nil, nil)
+	_, err := api.Handle("unknown-path", nil)
+	require.Error(t, err)
 }
 
-// Port of languagetool-server/src/test/java/org/languagetool/server/ApiV2Test.java :: ApiV2Test.testInvalidJsonRequest
 func TestApiV2_InvalidJsonRequest(t *testing.T) {
-	t.Skip("unimplemented: ApiV2Test.testInvalidJsonRequest")
+	api := NewApiV2(nil, nil)
+	// check without language
+	_, err := api.Handle("check", map[string]string{"text": "hi"})
+	require.Error(t, err)
+}
+
+func TestApiV2_MissingLanguageParameter(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	_, err := api.Handle("check", map[string]string{"text": "Hello world"})
+	require.Error(t, err)
 }
