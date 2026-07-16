@@ -1,6 +1,9 @@
 package patterns
 
-import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+)
 
 // PatternRule ports a metadata surface of org.languagetool.rules.patterns.PatternRule
 // (full matcher engine not yet wired).
@@ -50,4 +53,9 @@ func NewFalseFriendPatternRule(id, languageCode string, tokens []*PatternToken, 
 	pr := NewPatternRule(id, languageCode, tokens, description, message, shortMessage)
 	pr.SetTags([]rules.Tag{rules.TagPicky})
 	return &FalseFriendPatternRule{PatternRule: pr}
+}
+
+// Match runs a simplified PatternRuleMatcher against the sentence.
+func (r *PatternRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
+	return NewPatternRuleMatcherFromPattern(r).Match(sentence)
 }
