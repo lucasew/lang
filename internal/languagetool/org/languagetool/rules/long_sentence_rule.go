@@ -19,13 +19,22 @@ var (
 type LongSentenceRule struct {
 	Messages map[string]string
 	MaxWords int
+	// RuleID overrides GetID when set (e.g. TOO_LONG_SENTENCE_DE).
+	RuleID string
+	// ShortMsg optional short message for language wrappers.
+	ShortMsg string
 }
 
 func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentenceRule {
 	return &LongSentenceRule{Messages: messages, MaxWords: maxWords}
 }
 
-func (r *LongSentenceRule) GetID() string { return "TOO_LONG_SENTENCE" }
+func (r *LongSentenceRule) GetID() string {
+	if r.RuleID != "" {
+		return r.RuleID
+	}
+	return "TOO_LONG_SENTENCE"
+}
 
 func (r *LongSentenceRule) GetMessage() string {
 	msg := r.Messages["long_sentence_rule_msg2"]
