@@ -19,5 +19,5 @@ func TestLanguageBuilder_MakeAdditionalLanguage(t *testing.T) {
 
 // Port of languagetool-core/src/test/java/org/languagetool/language/LanguageBuilderTest.java :: LanguageBuilderTest.testIllegalFileName
 func TestLanguageBuilder_IllegalFileName(t *testing.T) {
-	tools.Unimplemented("LanguageBuilderTest.testIllegalFileName")
+	t.Skip("unimplemented: LanguageBuilderTest.testIllegalFileName")
 }

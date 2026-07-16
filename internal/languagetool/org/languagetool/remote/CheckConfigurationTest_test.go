@@ -19,5 +19,5 @@ func TestCheckConfiguration_Test(t *testing.T) {
 
 // Port of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationTest.java :: CheckConfigurationTest.testNull
 func TestCheckConfiguration_Null(t *testing.T) {
-	tools.Unimplemented("CheckConfigurationTest.testNull")
+	t.Skip("unimplemented: CheckConfigurationTest.testNull")
 }

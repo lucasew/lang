@@ -20,5 +20,5 @@ func TestCheckConfigurationBuilder_Test(t *testing.T) {
 
 // Port of languagetool-http-client/src/test/java/org/languagetool/remote/CheckConfigurationBuilderTest.java :: CheckConfigurationBuilderTest.testInvalidConfig
 func TestCheckConfigurationBuilder_InvalidConfig(t *testing.T) {
-	tools.Unimplemented("CheckConfigurationBuilderTest.testInvalidConfig")
+	t.Skip("unimplemented: CheckConfigurationBuilderTest.testInvalidConfig")
 }

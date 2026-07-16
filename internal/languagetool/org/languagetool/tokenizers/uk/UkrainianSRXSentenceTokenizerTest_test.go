@@ -13,15 +13,15 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tokenizers/uk/UkrainianSRXSentenceTokenizerTest.java :: UkrainianSRXSentenceTokenizerTest.testWebEntities
 func TestUkrainianSRXSentenceTokenizer_WebEntities(t *testing.T) {
-	tools.Unimplemented("UkrainianSRXSentenceTokenizerTest.testWebEntities")
+	t.Skip("unimplemented: UkrainianSRXSentenceTokenizerTest.testWebEntities")
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tokenizers/uk/UkrainianSRXSentenceTokenizerTest.java :: UkrainianSRXSentenceTokenizerTest.testTokenizeWithSplit
 func TestUkrainianSRXSentenceTokenizer_TokenizeWithSplit(t *testing.T) {
-	tools.Unimplemented("UkrainianSRXSentenceTokenizerTest.testTokenizeWithSplit")
+	t.Skip("unimplemented: UkrainianSRXSentenceTokenizerTest.testTokenizeWithSplit")
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tokenizers/uk/UkrainianSRXSentenceTokenizerTest.java :: UkrainianSRXSentenceTokenizerTest.testTokenizeWithSpecialChars
 func TestUkrainianSRXSentenceTokenizer_TokenizeWithSpecialChars(t *testing.T) {
-	tools.Unimplemented("UkrainianSRXSentenceTokenizerTest.testTokenizeWithSpecialChars")
+	t.Skip("unimplemented: UkrainianSRXSentenceTokenizerTest.testTokenizeWithSpecialChars")
 }

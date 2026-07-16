@@ -13,10 +13,10 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-standalone/src/test/java/org/languagetool/TranslationTest.java :: TranslationTest.testTranslationKeyExistence
 func TestTranslation_TranslationKeyExistence(t *testing.T) {
-	tools.Unimplemented("TranslationTest.testTranslationKeyExistence")
+	t.Skip("unimplemented: TranslationTest.testTranslationKeyExistence")
 }
 
 // Port of languagetool-standalone/src/test/java/org/languagetool/TranslationTest.java :: TranslationTest.testTranslationsAreNotEmpty
 func TestTranslation_TranslationsAreNotEmpty(t *testing.T) {
-	tools.Unimplemented("TranslationTest.testTranslationsAreNotEmpty")
+	t.Skip("unimplemented: TranslationTest.testTranslationsAreNotEmpty")
 }

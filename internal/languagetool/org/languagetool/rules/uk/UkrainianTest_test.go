@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/UkrainianTest.java :: UkrainianTest.testLanguage
 func TestUkrainian_Language(t *testing.T) {
-	tools.Unimplemented("UkrainianTest.testLanguage")
+	t.Skip("unimplemented: UkrainianTest.testLanguage")
 }

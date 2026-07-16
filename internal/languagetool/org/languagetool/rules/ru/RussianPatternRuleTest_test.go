@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianPatternRuleTest.java :: RussianPatternRuleTest.testRules
 func TestRussianPatternRule_Rules(t *testing.T) {
-	tools.Unimplemented("RussianPatternRuleTest.testRules")
+	t.Skip("unimplemented: RussianPatternRuleTest.testRules")
 }

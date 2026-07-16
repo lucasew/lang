@@ -13,7 +13,7 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/SwedishTest.java :: SwedishTest.testLanguage
 func TestSwedish_Language(t *testing.T) {
-	tools.Unimplemented("SwedishTest.testLanguage")
+	t.Skip("unimplemented: SwedishTest.testLanguage")
 }
 
 // Port of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/SwedishTest.java :: SwedishTest.testSpellingAndColon

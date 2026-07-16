@@ -18,7 +18,7 @@ func TestCommandLineParser_Usage(t *testing.T) {
 
 // Port of languagetool-commandline/src/test/java/org/languagetool/commandline/CommandLineParserTest.java :: CommandLineParserTest.testErrors
 func TestCommandLineParser_Errors(t *testing.T) {
-	tools.Unimplemented("CommandLineParserTest.testErrors")
+	t.Skip("unimplemented: CommandLineParserTest.testErrors")
 }
 
 // Port of languagetool-commandline/src/test/java/org/languagetool/commandline/CommandLineParserTest.java :: CommandLineParserTest.testSimple

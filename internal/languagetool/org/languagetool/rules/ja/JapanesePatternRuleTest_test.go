@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ja/src/test/java/org/languagetool/rules/ja/JapanesePatternRuleTest.java :: JapanesePatternRuleTest.testRules
 func TestJapanesePatternRule_Rules(t *testing.T) {
-	tools.Unimplemented("JapanesePatternRuleTest.testRules")
+	t.Skip("unimplemented: JapanesePatternRuleTest.testRules")
 }

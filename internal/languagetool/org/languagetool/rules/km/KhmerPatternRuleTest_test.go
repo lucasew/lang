@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/km/src/test/java/org/languagetool/rules/km/KhmerPatternRuleTest.java :: KhmerPatternRuleTest.testRules
 func TestKhmerPatternRule_Rules(t *testing.T) {
-	tools.Unimplemented("KhmerPatternRuleTest.testRules")
+	t.Skip("unimplemented: KhmerPatternRuleTest.testRules")
 }

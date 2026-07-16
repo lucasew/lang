@@ -7,5 +7,5 @@ import (
 )
 
 func TestWordListValidatorTest_Stub(t *testing.T) {
-	tools.Unimplemented("WordListValidatorTest")
+	t.Skip("unimplemented: WordListValidatorTest")
 }

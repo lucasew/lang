@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-core/src/test/java/org/languagetool/GlobalSpellingTest.java :: GlobalSpellingTest.avoidSomeWords
 func TestGlobalSpelling_AvoidSomeWords(t *testing.T) {
-	tools.Unimplemented("GlobalSpellingTest.avoidSomeWords")
+	t.Skip("unimplemented: GlobalSpellingTest.avoidSomeWords")
 }

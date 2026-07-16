@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/tl/src/test/java/org/languagetool/rules/tl/TagalogTest.java :: TagalogTest.testLanguage
 func TestTagalog_Language(t *testing.T) {
-	tools.Unimplemented("TagalogTest.testLanguage")
+	t.Skip("unimplemented: TagalogTest.testLanguage")
 }

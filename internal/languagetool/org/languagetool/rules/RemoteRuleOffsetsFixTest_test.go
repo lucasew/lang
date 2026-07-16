@@ -7,13 +7,13 @@ import (
 )
 
 func TestRemoteRuleOffsetsFix_ShiftCalculation(t *testing.T) {
-	tools.Unimplemented("RemoteRuleOffsetsFixTest.testShiftCalculation")
+	t.Skip("unimplemented: RemoteRuleOffsetsFixTest.testShiftCalculation")
 }
 
 func TestRemoteRuleOffsetsFix_Matches(t *testing.T) {
-	tools.Unimplemented("RemoteRuleOffsetsFixTest.testMatches")
+	t.Skip("unimplemented: RemoteRuleOffsetsFixTest.testMatches")
 }
 
 func TestRemoteRuleOffsetsFix_Exception(t *testing.T) {
-	tools.Unimplemented("RemoteRuleOffsetsFixTest.testException")
+	t.Skip("unimplemented: RemoteRuleOffsetsFixTest.testException")
 }

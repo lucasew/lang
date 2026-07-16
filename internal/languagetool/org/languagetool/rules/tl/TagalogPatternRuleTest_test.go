@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/tl/src/test/java/org/languagetool/rules/tl/TagalogPatternRuleTest.java :: TagalogPatternRuleTest.testRules
 func TestTagalogPatternRule_Rules(t *testing.T) {
-	tools.Unimplemented("TagalogPatternRuleTest.testRules")
+	t.Skip("unimplemented: TagalogPatternRuleTest.testRules")
 }

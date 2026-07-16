@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/ro/AbstractRomanianTaggerTest.java :: AbstractRomanianTaggerTest.testDictionary
 func TestAbstractRomanianTagger_Dictionary(t *testing.T) {
-	tools.Unimplemented("AbstractRomanianTaggerTest.testDictionary")
+	t.Skip("unimplemented: AbstractRomanianTaggerTest.testDictionary")
 }

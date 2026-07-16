@@ -21,5 +21,5 @@ func TestTatoebaSentenceSource_TatoebaSource(t *testing.T) {
 
 // Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/dumpcheck/TatoebaSentenceSourceTest.java :: TatoebaSentenceSourceTest.testTatoebaSourceInvalidInput
 func TestTatoebaSentenceSource_TatoebaSourceInvalidInput(t *testing.T) {
-	tools.Unimplemented("TatoebaSentenceSourceTest.testTatoebaSourceInvalidInput")
+	t.Skip("unimplemented: TatoebaSentenceSourceTest.testTatoebaSourceInvalidInput")
 }

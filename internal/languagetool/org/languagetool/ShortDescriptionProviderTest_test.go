@@ -19,5 +19,5 @@ func TestShortDescriptionProvider_GetShortDescription(t *testing.T) {
 
 // Port of languagetool-standalone/src/test/java/org/languagetool/ShortDescriptionProviderTest.java :: ShortDescriptionProviderTest.testDescriptionLength
 func TestShortDescriptionProvider_DescriptionLength(t *testing.T) {
-	tools.Unimplemented("ShortDescriptionProviderTest.testDescriptionLength")
+	t.Skip("unimplemented: ShortDescriptionProviderTest.testDescriptionLength")
 }

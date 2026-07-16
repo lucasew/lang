@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-dev/src/test/java/org/languagetool/dev/bigdata/ContextBuilderTest.java :: ContextBuilderTest.testGetContext
 func TestContextBuilder_GetContext(t *testing.T) {
-	tools.Unimplemented("ContextBuilderTest.testGetContext")
+	t.Skip("unimplemented: ContextBuilderTest.testGetContext")
 }

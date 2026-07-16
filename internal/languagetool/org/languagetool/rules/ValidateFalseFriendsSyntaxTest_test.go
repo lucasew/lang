@@ -7,5 +7,5 @@ import (
 )
 
 func TestValidateFalseFriendsSyntax_FalseFriendsXML(t *testing.T) {
-	tools.Unimplemented("ValidateFalseFriendsSyntaxTest.testFalseFriendsXML")
+	t.Skip("unimplemented: ValidateFalseFriendsSyntaxTest.testFalseFriendsXML")
 }

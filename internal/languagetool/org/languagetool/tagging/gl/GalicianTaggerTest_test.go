@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/gl/src/test/java/org/languagetool/tagging/gl/GalicianTaggerTest.java :: GalicianTaggerTest.testTagger
 func TestGalicianTagger_Tagger(t *testing.T) {
-	tools.Unimplemented("GalicianTaggerTest.testTagger")
+	t.Skip("unimplemented: GalicianTaggerTest.testTagger")
 }

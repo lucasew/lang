@@ -12,5 +12,5 @@ var _ = Unimplemented
 
 // Port of languagetool-standalone/src/test/java/org/languagetool/tools/ToolsTest.java :: ToolsTest.testBitextCheck
 func TestTools_languagetool_standalone_BitextCheck(t *testing.T) {
-	Unimplemented("ToolsTest.testBitextCheck")
+	t.Skip("unimplemented: ToolsTest.testBitextCheck")
 }

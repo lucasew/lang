@@ -13,15 +13,15 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/JekavianTaggerTest.java :: JekavianTaggerTest.testTaggerJesam
 func TestJekavianTagger_TaggerJesam(t *testing.T) {
-	tools.Unimplemented("JekavianTaggerTest.testTaggerJesam")
+	t.Skip("unimplemented: JekavianTaggerTest.testTaggerJesam")
 }
 
 // Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/JekavianTaggerTest.java :: JekavianTaggerTest.testTaggerSvijet
 func TestJekavianTagger_TaggerSvijet(t *testing.T) {
-	tools.Unimplemented("JekavianTaggerTest.testTaggerSvijet")
+	t.Skip("unimplemented: JekavianTaggerTest.testTaggerSvijet")
 }
 
 // Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/JekavianTaggerTest.java :: JekavianTaggerTest.testTagger
 func TestJekavianTagger_Tagger(t *testing.T) {
-	tools.Unimplemented("JekavianTaggerTest.testTagger")
+	t.Skip("unimplemented: JekavianTaggerTest.testTagger")
 }

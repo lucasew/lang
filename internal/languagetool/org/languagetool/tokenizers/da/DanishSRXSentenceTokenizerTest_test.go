@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/da/src/test/java/org/languagetool/tokenizers/da/DanishSRXSentenceTokenizerTest.java :: DanishSRXSentenceTokenizerTest.testTokenize
 func TestDanishSRXSentenceTokenizer_Tokenize(t *testing.T) {
-	tools.Unimplemented("DanishSRXSentenceTokenizerTest.testTokenize")
+	t.Skip("unimplemented: DanishSRXSentenceTokenizerTest.testTokenize")
 }

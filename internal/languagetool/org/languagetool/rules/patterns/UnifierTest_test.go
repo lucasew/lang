@@ -28,7 +28,7 @@ func TestUnifier_UnificationNumberGender(t *testing.T) {
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/UnifierTest.java :: UnifierTest.testMultipleFeats
 func TestUnifier_MultipleFeats(t *testing.T) {
-	tools.Unimplemented("UnifierTest.testMultipleFeats")
+	t.Skip("unimplemented: UnifierTest.testMultipleFeats")
 }
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/UnifierTest.java :: UnifierTest.testMultipleFeatsWithMultipleTypes

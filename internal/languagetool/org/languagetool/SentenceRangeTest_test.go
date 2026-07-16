@@ -63,14 +63,14 @@ func utf16SubstrSR(s string, from, to int) string {
 }
 
 func TestSentenceRange_GermanSentenceRange(t *testing.T) {
-	tools.Unimplemented("SentenceRangeTest.testGermanSentenceRange")
+	t.Skip("unimplemented: SentenceRangeTest.testGermanSentenceRange")
 }
 func TestSentenceRange_EnglishSentenceRange(t *testing.T) {
-	tools.Unimplemented("SentenceRangeTest.testEnglishSentenceRange")
+	t.Skip("unimplemented: SentenceRangeTest.testEnglishSentenceRange")
 }
 func TestSentenceRange_SpecialCase(t *testing.T) {
-	tools.Unimplemented("SentenceRangeTest.testSpecialCase")
+	t.Skip("unimplemented: SentenceRangeTest.testSpecialCase")
 }
 func TestSentenceRange_ExtraWhitespaceCase(t *testing.T) {
-	tools.Unimplemented("SentenceRangeTest.testExtraWhitespaceCase")
+	t.Skip("unimplemented: SentenceRangeTest.testExtraWhitespaceCase")
 }

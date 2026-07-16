@@ -23,10 +23,10 @@ func TestHTTPSServerConfig_MinimalPropertyFile(t *testing.T) {
 
 // Port of languagetool-server/src/test/java/org/languagetool/server/HTTPSServerConfigTest.java :: HTTPSServerConfigTest.testMissingPropertyFile
 func TestHTTPSServerConfig_MissingPropertyFile(t *testing.T) {
-	tools.Unimplemented("HTTPSServerConfigTest.testMissingPropertyFile")
+	t.Skip("unimplemented: HTTPSServerConfigTest.testMissingPropertyFile")
 }
 
 // Port of languagetool-server/src/test/java/org/languagetool/server/HTTPSServerConfigTest.java :: HTTPSServerConfigTest.testIncompletePropertyFile
 func TestHTTPSServerConfig_IncompletePropertyFile(t *testing.T) {
-	tools.Unimplemented("HTTPSServerConfigTest.testIncompletePropertyFile")
+	t.Skip("unimplemented: HTTPSServerConfigTest.testIncompletePropertyFile")
 }

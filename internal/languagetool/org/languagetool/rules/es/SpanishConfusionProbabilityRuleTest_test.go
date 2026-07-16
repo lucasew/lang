@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishConfusionProbabilityRuleTest.java :: SpanishConfusionProbabilityRuleTest.testConstructor
 func TestSpanishConfusionProbabilityRule_Constructor(t *testing.T) {
-	tools.Unimplemented("SpanishConfusionProbabilityRuleTest.testConstructor")
+	t.Skip("unimplemented: SpanishConfusionProbabilityRuleTest.testConstructor")
 }

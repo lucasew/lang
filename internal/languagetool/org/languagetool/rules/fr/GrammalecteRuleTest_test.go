@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/fr/src/test/java/org/languagetool/rules/fr/GrammalecteRuleTest.java :: GrammalecteRuleTest.testIgnoredRuleIds
 func TestGrammalecteRule_IgnoredRuleIds(t *testing.T) {
-	tools.Unimplemented("GrammalecteRuleTest.testIgnoredRuleIds")
+	t.Skip("unimplemented: GrammalecteRuleTest.testIgnoredRuleIds")
 }

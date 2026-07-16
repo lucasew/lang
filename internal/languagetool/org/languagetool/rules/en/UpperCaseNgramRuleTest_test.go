@@ -67,5 +67,5 @@ func TestUpperCaseNgramRule_Rule(t *testing.T) {
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/UpperCaseNgramRuleTest.java :: UpperCaseNgramRuleTest.testFirstLongWordToLeftIsUppercase
 func TestUpperCaseNgramRule_FirstLongWordToLeftIsUppercase(t *testing.T) {
-	tools.Unimplemented("UpperCaseNgramRuleTest.testFirstLongWordToLeftIsUppercase")
+	t.Skip("unimplemented: UpperCaseNgramRuleTest.testFirstLongWordToLeftIsUppercase")
 }

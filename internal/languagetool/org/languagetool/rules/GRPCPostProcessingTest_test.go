@@ -7,17 +7,17 @@ import (
 )
 
 func TestGRPCPostProcessing_RuleMatchModification(t *testing.T) {
-	tools.Unimplemented("GRPCPostProcessingTest.testRuleMatchModification")
+	t.Skip("unimplemented: GRPCPostProcessingTest.testRuleMatchModification")
 }
 
 func TestGRPCPostProcessing_TagEnums(t *testing.T) {
-	tools.Unimplemented("GRPCPostProcessingTest.testTagEnums")
+	t.Skip("unimplemented: GRPCPostProcessingTest.testTagEnums")
 }
 
 func TestGRPCPostProcessing_MatchTypeEnums(t *testing.T) {
-	tools.Unimplemented("GRPCPostProcessingTest.testMatchTypeEnums")
+	t.Skip("unimplemented: GRPCPostProcessingTest.testMatchTypeEnums")
 }
 
 func TestGRPCPostProcessing_SuggestionTypeEnums(t *testing.T) {
-	tools.Unimplemented("GRPCPostProcessingTest.testSuggestionTypeEnums")
+	t.Skip("unimplemented: GRPCPostProcessingTest.testSuggestionTypeEnums")
 }

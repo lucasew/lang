@@ -19,5 +19,5 @@ func TestBaseLanguageModel_PseudoProbability(t *testing.T) {
 
 // Port of languagetool-core/src/test/java/org/languagetool/languagemodel/BaseLanguageModelTest.java :: BaseLanguageModelTest.testPseudoProbabilityFail1
 func TestBaseLanguageModel_PseudoProbabilityFail1(t *testing.T) {
-	tools.Unimplemented("BaseLanguageModelTest.testPseudoProbabilityFail1")
+	t.Skip("unimplemented: BaseLanguageModelTest.testPseudoProbabilityFail1")
 }

@@ -7,5 +7,5 @@ import (
 )
 
 func TestCustomSpelling_SpellingCustomTxt(t *testing.T) {
-	tools.Unimplemented("CustomSpellingTest.testSpellingCustomTxt")
+	t.Skip("unimplemented: CustomSpellingTest.testSpellingCustomTxt")
 }

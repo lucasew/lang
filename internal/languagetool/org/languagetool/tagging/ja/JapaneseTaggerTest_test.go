@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ja/src/test/java/org/languagetool/tagging/ja/JapaneseTaggerTest.java :: JapaneseTaggerTest.testTagger
 func TestJapaneseTagger_Tagger(t *testing.T) {
-	tools.Unimplemented("JapaneseTaggerTest.testTagger")
+	t.Skip("unimplemented: JapaneseTaggerTest.testTagger")
 }

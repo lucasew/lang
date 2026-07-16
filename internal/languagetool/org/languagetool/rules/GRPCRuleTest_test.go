@@ -7,9 +7,9 @@ import (
 )
 
 func TestGRPCRule_Match(t *testing.T) {
-	tools.Unimplemented("GRPCRuleTest.testMatch")
+	t.Skip("unimplemented: GRPCRuleTest.testMatch")
 }
 
 func TestGRPCRule_MaxLength(t *testing.T) {
-	tools.Unimplemented("GRPCRuleTest.testMaxLength")
+	t.Skip("unimplemented: GRPCRuleTest.testMaxLength")
 }

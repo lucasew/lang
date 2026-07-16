@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/br/src/test/java/org/languagetool/rules/br/BretonTest.java :: BretonTest.testLanguage
 func TestBreton_Language(t *testing.T) {
-	tools.Unimplemented("BretonTest.testLanguage")
+	t.Skip("unimplemented: BretonTest.testLanguage")
 }

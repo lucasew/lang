@@ -14,7 +14,7 @@ var _ = tools.Unimplemented
 // Port of languagetool-language-modules/de/src/test/java/org/languagetool/synthesis/GermanSynthesizerTest.java :: GermanSynthesizerTest.testSynthesizeX
 func TestGermanSynthesizer_SynthesizeX(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("GermanSynthesizerTest.testSynthesizeX")
+	t.Skip("unimplemented: GermanSynthesizerTest.testSynthesizeX")
 }
 
 // Port of languagetool-language-modules/de/src/test/java/org/languagetool/synthesis/GermanSynthesizerTest.java :: GermanSynthesizerTest.testSynthesize

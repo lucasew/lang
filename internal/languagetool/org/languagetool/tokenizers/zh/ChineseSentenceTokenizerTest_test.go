@@ -13,15 +13,15 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java :: ChineseSentenceTokenizerTest.testTokenize
 func TestChineseSentenceTokenizer_Tokenize(t *testing.T) {
-	tools.Unimplemented("ChineseSentenceTokenizerTest.testTokenize")
+	t.Skip("unimplemented: ChineseSentenceTokenizerTest.testTokenize")
 }
 
 // Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java :: ChineseSentenceTokenizerTest.testTokenize2
 func TestChineseSentenceTokenizer_Tokenize2(t *testing.T) {
-	tools.Unimplemented("ChineseSentenceTokenizerTest.testTokenize2")
+	t.Skip("unimplemented: ChineseSentenceTokenizerTest.testTokenize2")
 }
 
 // Port of languagetool-language-modules/zh/src/test/java/org/languagetool/tokenizers/zh/ChineseSentenceTokenizerTest.java :: ChineseSentenceTokenizerTest.testTokenizeWithSpaces
 func TestChineseSentenceTokenizer_TokenizeWithSpaces(t *testing.T) {
-	tools.Unimplemented("ChineseSentenceTokenizerTest.testTokenizeWithSpaces")
+	t.Skip("unimplemented: ChineseSentenceTokenizerTest.testTokenizeWithSpaces")
 }

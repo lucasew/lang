@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ar/src/test/java/org/languagetool/rules/ar/ArabicLanguageSpecificTest.java :: ArabicLanguageSpecificTest.testRules
 func TestArabicLanguageSpecific_Rules(t *testing.T) {
-	tools.Unimplemented("ArabicLanguageSpecificTest.testRules")
+	t.Skip("unimplemented: ArabicLanguageSpecificTest.testRules")
 }

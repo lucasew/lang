@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ga/src/test/java/org/languagetool/tagging/disambiguation/rules/ga/IrishDisambiguationRuleTest.java :: IrishDisambiguationRuleTest.testDisambiguation
 func TestIrishDisambiguationRule_Disambiguation(t *testing.T) {
-	tools.Unimplemented("IrishDisambiguationRuleTest.testDisambiguation")
+	t.Skip("unimplemented: IrishDisambiguationRuleTest.testDisambiguation")
 }

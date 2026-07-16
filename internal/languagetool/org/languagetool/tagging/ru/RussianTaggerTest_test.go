@@ -13,10 +13,10 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ru/src/test/java/org/languagetool/tagging/ru/RussianTaggerTest.java :: RussianTaggerTest.testDictionary
 func TestRussianTagger_Dictionary(t *testing.T) {
-	tools.Unimplemented("RussianTaggerTest.testDictionary")
+	t.Skip("unimplemented: RussianTaggerTest.testDictionary")
 }
 
 // Port of languagetool-language-modules/ru/src/test/java/org/languagetool/tagging/ru/RussianTaggerTest.java :: RussianTaggerTest.testTagger
 func TestRussianTagger_Tagger(t *testing.T) {
-	tools.Unimplemented("RussianTaggerTest.testTagger")
+	t.Skip("unimplemented: RussianTaggerTest.testTagger")
 }

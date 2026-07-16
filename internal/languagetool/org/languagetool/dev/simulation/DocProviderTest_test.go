@@ -14,11 +14,11 @@ var _ = tools.Unimplemented
 // Port of languagetool-dev/src/test/java/org/languagetool/dev/simulation/DocProviderTest.java :: DocProviderTest.testDistribution
 func TestDocProvider_Distribution(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("DocProviderTest.testDistribution")
+	t.Skip("unimplemented: DocProviderTest.testDistribution")
 }
 
 // Port of languagetool-dev/src/test/java/org/languagetool/dev/simulation/DocProviderTest.java :: DocProviderTest.testGetDoc
 func TestDocProvider_GetDoc(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("DocProviderTest.testGetDoc")
+	t.Skip("unimplemented: DocProviderTest.testGetDoc")
 }

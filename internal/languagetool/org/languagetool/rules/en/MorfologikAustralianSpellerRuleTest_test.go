@@ -13,7 +13,7 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAustralianSpellerRuleTest.java :: MorfologikAustralianSpellerRuleTest.testSuggestions
 func TestMorfologikAustralianSpellerRule_Suggestions(t *testing.T) {
-	tools.Unimplemented("MorfologikAustralianSpellerRuleTest.testSuggestions")
+	t.Skip("unimplemented: MorfologikAustralianSpellerRuleTest.testSuggestions")
 }
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/MorfologikAustralianSpellerRuleTest.java :: MorfologikAustralianSpellerRuleTest.testMorfologikSpeller

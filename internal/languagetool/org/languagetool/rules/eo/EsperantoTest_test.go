@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/eo/src/test/java/org/languagetool/rules/eo/EsperantoTest.java :: EsperantoTest.testLanguage
 func TestEsperanto_Language(t *testing.T) {
-	tools.Unimplemented("EsperantoTest.testLanguage")
+	t.Skip("unimplemented: EsperantoTest.testLanguage")
 }

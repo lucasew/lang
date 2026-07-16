@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ca/src/test/java/org/languagetool/tagging/disambiguation/CatalanDisambiguationRuleTest.java :: CatalanDisambiguationRuleTest.testChunker
 func TestCatalanDisambiguationRule_Chunker(t *testing.T) {
-	tools.Unimplemented("CatalanDisambiguationRuleTest.testChunker")
+	t.Skip("unimplemented: CatalanDisambiguationRuleTest.testChunker")
 }

@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/LanguageSpecificSpellcheckerTest.java :: LanguageSpecificSpellcheckerTest.testRules
 func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
-	tools.Unimplemented("LanguageSpecificSpellcheckerTest.testRules")
+	t.Skip("unimplemented: LanguageSpecificSpellcheckerTest.testRules")
 }

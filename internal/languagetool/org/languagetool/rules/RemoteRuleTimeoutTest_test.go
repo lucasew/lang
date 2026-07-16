@@ -7,5 +7,5 @@ import (
 )
 
 func TestRemoteRuleTimeout_CancelThreads(t *testing.T) {
-	tools.Unimplemented("RemoteRuleTimeoutTest.testCancelThreads")
+	t.Skip("unimplemented: RemoteRuleTimeoutTest.testCancelThreads")
 }

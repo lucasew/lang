@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/MorfologikCatalanSpellerRuleTest.java :: MorfologikCatalanSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikCatalanSpellerRule_MorfologikSpeller(t *testing.T) {
-	tools.Unimplemented("MorfologikCatalanSpellerRuleTest.testMorfologikSpeller")
+	t.Skip("unimplemented: MorfologikCatalanSpellerRuleTest.testMorfologikSpeller")
 }

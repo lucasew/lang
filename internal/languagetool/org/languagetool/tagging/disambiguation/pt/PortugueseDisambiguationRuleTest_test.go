@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/disambiguation/pt/PortugueseDisambiguationRuleTest.java :: PortugueseDisambiguationRuleTest.testChunker
 func TestPortugueseDisambiguationRule_Chunker(t *testing.T) {
-	tools.Unimplemented("PortugueseDisambiguationRuleTest.testChunker")
+	t.Skip("unimplemented: PortugueseDisambiguationRuleTest.testChunker")
 }

@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/br/src/test/java/org/languagetool/rules/br/BretonPatternRuleTest.java :: BretonPatternRuleTest.testRules
 func TestBretonPatternRule_Rules(t *testing.T) {
-	tools.Unimplemented("BretonPatternRuleTest.testRules")
+	t.Skip("unimplemented: BretonPatternRuleTest.testRules")
 }

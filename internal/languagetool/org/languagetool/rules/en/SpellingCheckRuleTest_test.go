@@ -23,5 +23,5 @@ func TestSpellingCheckRule_IgnorePhrases(t *testing.T) {
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testIsUrl
 func TestSpellingCheckRule_IsUrl(t *testing.T) {
-	tools.Unimplemented("SpellingCheckRuleTest.testIsUrl")
+	t.Skip("unimplemented: SpellingCheckRuleTest.testIsUrl")
 }

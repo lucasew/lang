@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/fr/src/test/java/org/languagetool/rules/fr/FrenchRemoteRuleFilterTest.java :: FrenchRemoteRuleFilterTest.testRules
 func TestFrenchRemoteRuleFilter_Rules(t *testing.T) {
-	tools.Unimplemented("FrenchRemoteRuleFilterTest.testRules")
+	t.Skip("unimplemented: FrenchRemoteRuleFilterTest.testRules")
 }

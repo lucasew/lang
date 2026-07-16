@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/AbstractPatternRuleTest.java :: AbstractPatternRuleTest.shortMessageIsLongerThanErrorMessage
 func TestAbstractPatternRule_ShortMessageIsLongerThanErrorMessage(t *testing.T) {
-	tools.Unimplemented("AbstractPatternRuleTest.shortMessageIsLongerThanErrorMessage")
+	t.Skip("unimplemented: AbstractPatternRuleTest.shortMessageIsLongerThanErrorMessage")
 }

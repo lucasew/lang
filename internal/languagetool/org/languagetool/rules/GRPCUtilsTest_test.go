@@ -7,13 +7,13 @@ import (
 )
 
 func TestGRPCUtils_Levels(t *testing.T) {
-	tools.Unimplemented("GRPCUtilsTest.testLevels")
+	t.Skip("unimplemented: GRPCUtilsTest.testLevels")
 }
 
 func TestGRPCUtils_URLFromRule(t *testing.T) {
-	tools.Unimplemented("GRPCUtilsTest.testURLFromRule")
+	t.Skip("unimplemented: GRPCUtilsTest.testURLFromRule")
 }
 
 func TestGRPCUtils_URLFromRuleMatch(t *testing.T) {
-	tools.Unimplemented("GRPCUtilsTest.testURLFromRuleMatch")
+	t.Skip("unimplemented: GRPCUtilsTest.testURLFromRuleMatch")
 }

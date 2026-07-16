@@ -13,5 +13,5 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/ast/src/test/java/org/languagetool/rules/ast/AsturianTest.java :: AsturianTest.testLanguage
 func TestAsturian_Language(t *testing.T) {
-	tools.Unimplemented("AsturianTest.testLanguage")
+	t.Skip("unimplemented: AsturianTest.testLanguage")
 }

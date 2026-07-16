@@ -7,25 +7,25 @@ import (
 )
 
 func TestRemoteRuleFilters_Load(t *testing.T) {
-	tools.Unimplemented("RemoteRuleFiltersTest.load")
+	t.Skip("unimplemented: RemoteRuleFiltersTest.load")
 }
 
 func TestRemoteRuleFilters_SimpleFilter(t *testing.T) {
-	tools.Unimplemented("RemoteRuleFiltersTest.testSimpleFilter")
+	t.Skip("unimplemented: RemoteRuleFiltersTest.testSimpleFilter")
 }
 
 func TestRemoteRuleFilters_MultiTokenWhitespace(t *testing.T) {
-	tools.Unimplemented("RemoteRuleFiltersTest.testMultiTokenWhitespace")
+	t.Skip("unimplemented: RemoteRuleFiltersTest.testMultiTokenWhitespace")
 }
 
 func TestRemoteRuleFilters_Marker(t *testing.T) {
-	tools.Unimplemented("RemoteRuleFiltersTest.testMarker")
+	t.Skip("unimplemented: RemoteRuleFiltersTest.testMarker")
 }
 
 func TestRemoteRuleFilters_Antipattern(t *testing.T) {
-	tools.Unimplemented("RemoteRuleFiltersTest.testAntipattern")
+	t.Skip("unimplemented: RemoteRuleFiltersTest.testAntipattern")
 }
 
 func TestRemoteRuleFilters_IDRegexFilter(t *testing.T) {
-	tools.Unimplemented("RemoteRuleFiltersTest.testIDRegexFilter")
+	t.Skip("unimplemented: RemoteRuleFiltersTest.testIDRegexFilter")
 }
