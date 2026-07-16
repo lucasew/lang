@@ -1,23 +1,30 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/ProhibitedCompoundRuleTest.java
+// Twin of ProhibitedCompoundRuleTest (surface preferred-direction fragments).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/ProhibitedCompoundRuleTest.java :: ProhibitedCompoundRuleTest.testRule
 func TestProhibitedCompoundRule_Rule(t *testing.T) {
-	tools.Unimplemented("ProhibitedCompoundRuleTest.testRule")
+	rule := NewProhibitedCompoundRule(nil)
+	matchN := func(s string) int {
+		return len(rule.Match(languagetool.AnalyzePlain(s)))
+	}
+	require.Equal(t, 1, matchN("Da steht eine Lehrzeile zu viel."))
+	require.Equal(t, 0, matchN("Eine Leerzeile einfügen."))
+	require.Equal(t, 1, matchN("Das ist ein Mitauto."))
+	require.Equal(t, 1, matchN("Er ist Uhrberliner."))
+	require.Equal(t, 1, matchN("Hier leben die Uhreinwohner."))
+	require.Equal(t, 1, matchN("Eine Lehr-Zeile einfügen."))
+	require.Equal(t, 0, matchN("Das ist Herr Mitauto."))
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/ProhibitedCompoundRuleTest.java :: ProhibitedCompoundRuleTest.testRemoveHyphensAndAdaptCase
 func TestProhibitedCompoundRule_RemoveHyphensAndAdaptCase(t *testing.T) {
-	// contains assertThat
-	// contains assertNull
+	require.Equal(t, "", removeHyphensAndAdaptCase("Marathonläuse"))
+	require.Equal(t, "Marathonläuse", removeHyphensAndAdaptCase("Marathon-Läuse"))
+	require.Equal(t, "Marathonläusetest", removeHyphensAndAdaptCase("Marathon-Läuse-Test"))
+	require.Equal(t, "", removeHyphensAndAdaptCase("S-Bahn"))
 }
