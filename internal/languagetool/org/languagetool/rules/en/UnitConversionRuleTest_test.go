@@ -1,17 +1,20 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/UnitConversionRuleTest.java
+// Twin of UnitConversionRuleTest (simplified surface conversions).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/UnitConversionRuleTest.java :: UnitConversionRuleTest.match
 func TestUnitConversionRule_Match(t *testing.T) {
-	tools.Unimplemented("UnitConversionRuleTest.match")
+	rule := NewUnitConversionRule(nil)
+	matchN := func(s string) int {
+		return len(rule.Match(languagetool.AnalyzePlain(s)))
+	}
+	require.Equal(t, 1, matchN("I am 6 feet tall."))
+	require.Equal(t, 1, matchN("The path is 100 miles long."))
+	require.Equal(t, 0, matchN("I am 6 feet (1.82 m) tall."))
+	require.Equal(t, 0, matchN("The path is 100 miles (160.93 km) long."))
 }
