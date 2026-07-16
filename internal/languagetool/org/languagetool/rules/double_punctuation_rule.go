@@ -6,9 +6,10 @@ import (
 
 // DoublePunctuationRule ports org.languagetool.rules.DoublePunctuationRule.
 type DoublePunctuationRule struct {
-	Messages   map[string]string
-	RuleID     string // override GetID when set (e.g. DE_DOUBLE_PUNCTUATION)
-	DotMessage string // override two-dots message when set
+	Messages       map[string]string
+	RuleID         string // override GetID when set (e.g. DE_DOUBLE_PUNCTUATION)
+	DotMessage     string // override two-dots message when set
+	CommaCharacter string // override comma character (Arabic/Persian "،")
 }
 
 func NewDoublePunctuationRule(messages map[string]string) *DoublePunctuationRule {
@@ -22,7 +23,12 @@ func (r *DoublePunctuationRule) GetID() string {
 	return "DOUBLE_PUNCTUATION"
 }
 
-func (r *DoublePunctuationRule) GetCommaCharacter() string { return "," }
+func (r *DoublePunctuationRule) GetCommaCharacter() string {
+	if r.CommaCharacter != "" {
+		return r.CommaCharacter
+	}
+	return ","
+}
 
 func (r *DoublePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch
