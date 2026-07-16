@@ -64,6 +64,9 @@ type HTTPServerConfig struct {
 	MotherTongue       string
 	PreferredLanguages []string
 	LocalAPIMode       bool
+
+	// BlockedReferrers is a list of HTTP Referer / Origin substrings that are rejected.
+	BlockedReferrers []string
 }
 
 const (
@@ -225,4 +228,38 @@ func (c *HTTPServerConfig) GetMaxPipelinePoolSize() int {
 		return 10
 	}
 	return c.MaxPipelinePoolSize
+}
+
+// SetBlockedReferrers replaces the blocked referrer list (HTTPSServerTest parity).
+func (c *HTTPServerConfig) SetBlockedReferrers(refs []string) {
+	if c == nil {
+		return
+	}
+	c.BlockedReferrers = append([]string(nil), refs...)
+}
+
+// GetBlockedReferrers returns a copy of the blocked referrer list.
+func (c *HTTPServerConfig) GetBlockedReferrers() []string {
+	if c == nil {
+		return nil
+	}
+	return append([]string(nil), c.BlockedReferrers...)
+}
+
+// IsBlockedReferrer reports whether referer/origin matches any blocked entry
+// (substring match, case-sensitive like Java contains checks).
+func (c *HTTPServerConfig) IsBlockedReferrer(referer string) bool {
+	if c == nil || referer == "" {
+		return false
+	}
+	for _, b := range c.BlockedReferrers {
+		b = strings.TrimSpace(b)
+		if b == "" {
+			continue
+		}
+		if strings.Contains(referer, b) {
+			return true
+		}
+	}
+	return false
 }

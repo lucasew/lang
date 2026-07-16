@@ -64,9 +64,8 @@ func (w *PolishWordTokenizer) Tokenize(text string) []string {
 				l = append(l, w.Tokenize(token[1:])...)
 			} else if strings.Contains(token, "-") {
 				tokenParts := strings.Split(token, "-")
-				if polishPrefixes[tokenParts[0]] || w.tagger == nil {
-					l = append(l, token)
-				} else if len(tokenParts) > 0 && len(tokenParts[len(tokenParts)-1]) > 0 &&
+				// Number ranges (1-23) always split, even without a tagger.
+				if len(tokenParts) > 0 && len(tokenParts[len(tokenParts)-1]) > 0 &&
 					unicode.IsDigit(rune(tokenParts[len(tokenParts)-1][0])) {
 					for i, p := range tokenParts {
 						l = append(l, p)
@@ -74,6 +73,8 @@ func (w *PolishWordTokenizer) Tokenize(text string) []string {
 							l = append(l, "-")
 						}
 					}
+				} else if polishPrefixes[tokenParts[0]] || w.tagger == nil {
+					l = append(l, token)
 				} else {
 					// tagger-based compound split
 					l = append(l, w.splitCompoundWithTagger(token, tokenParts)...)

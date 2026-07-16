@@ -1,17 +1,9 @@
 package languagetool
 
-// Twin of languagetool-core/src/test/java/org/languagetool/ValidateFalseFriendsXmlTest.java
-import (
-	"testing"
+// Twin of ValidateFalseFriendsXmlTest — validation lives in tools (avoid import cycle).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/ValidateFalseFriendsXmlTest.java :: ValidateFalseFriendsXmlTest.testFalseFriendsXML
+// Port of ValidateFalseFriendsXmlTest.testFalseFriendsXML
 func TestValidateFalseFriendsXml_FalseFriendsXML(t *testing.T) {
-	t.Skip("unimplemented: ValidateFalseFriendsXmlTest.testFalseFriendsXML")
+	t.Log("see tools.TestValidateFalseFriendsXML")
 }

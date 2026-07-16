@@ -1,22 +1,26 @@
 package ro
 
-// Twin of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/ro/RomanianTaggerDiacriticsTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/ro/RomanianTaggerDiacriticsTest.java :: RomanianTaggerDiacriticsTest.testTaggerMerseseram
 func TestRomanianTaggerDiacritics_TaggerMerseseram(t *testing.T) {
-	t.Skip("unimplemented: RomanianTaggerDiacriticsTest.testTaggerMerseseram")
+	wt := tagging.MapWordTagger{"merseserăm": {tagging.NewTaggedWord("merge", "V")}}
+	got := NewRomanianTagger(wt).Tag([]string{"merseserăm"})
+	require.Len(t, got, 1)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/ro/src/test/java/org/languagetool/tagging/ro/RomanianTaggerDiacriticsTest.java :: RomanianTaggerDiacriticsTest.testTaggerCuscaCutit
 func TestRomanianTaggerDiacritics_TaggerCuscaCutit(t *testing.T) {
-	t.Skip("unimplemented: RomanianTaggerDiacriticsTest.testTaggerCuscaCutit")
+	wt := tagging.MapWordTagger{
+		"cușcă": {tagging.NewTaggedWord("cușcă", "S")},
+		"cuțit": {tagging.NewTaggedWord("cuțit", "S")},
+	}
+	got := NewRomanianTagger(wt).Tag([]string{"cușcă", "cuțit"})
+	require.Len(t, got, 2)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
 }

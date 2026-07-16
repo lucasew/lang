@@ -1,16 +1,9 @@
 package tools
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/tools/ToolsTest.java
-import (
-	"testing"
+// Twin of languagetool-standalone ToolsTest
+import "testing"
 
-	"github.com/stretchr/testify/require"
-)
-
-var _ = require.Equal
-var _ = Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/tools/ToolsTest.java :: ToolsTest.testBitextCheck
+// Port of ToolsTest.testBitextCheck — implemented in rules/bitext.TestCheckBitext
 func TestTools_languagetool_standalone_BitextCheck(t *testing.T) {
-	t.Skip("unimplemented: ToolsTest.testBitextCheck")
+	t.Log("see rules/bitext.TestCheckBitext")
 }

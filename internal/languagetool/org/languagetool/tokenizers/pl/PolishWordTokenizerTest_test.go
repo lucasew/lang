@@ -42,9 +42,75 @@ func TestPolishWordTokenizer_Tokenize(t *testing.T) {
 	compoundTokens := w.Tokenize(compoundSentence)
 	require.Equal(t, 21, len(compoundTokens))
 	require.Equal(t, "[To,  , jest,  , kobieta-wojownik,  , w,  , polsko-czeskim,  , ubraniu, ,,  , która,  , wysłała,  , dwa,  , SMS-y, .]", tokStr(compoundTokens))
+
+	// number ranges split without tagger
+	n := w.Tokenize("Impreza odbędzie się w dniach 1-23 maja.")
+	require.Equal(t, "[Impreza,  , odbędzie,  , się,  , w,  , dniach,  , 1, -, 23,  , maja, .]", tokStr(n))
+}
+
+// mockHyphenTagger marks parts as adjective compounds (adja + adj:).
+type mockHyphenTagger struct{}
+
+func (mockHyphenTagger) Tag(tokens []string) []PolishTokenReadings {
+	out := make([]PolishTokenReadings, len(tokens))
+	// last is full compound — untagged
+	for i := 0; i < len(tokens)-1; i++ {
+		if i == 0 {
+			out[i] = PolishTokenReadings{IsTagged: true, HasAdja: true}
+		} else {
+			out[i] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
+		}
+	}
+	out[len(tokens)-1] = PolishTokenReadings{IsTagged: false}
+	// for 3-part: all first as adja except last part adj
+	if len(tokens) == 4 { // 3 parts + full
+		out[0] = PolishTokenReadings{IsTagged: true, HasAdja: true}
+		out[1] = PolishTokenReadings{IsTagged: true, HasAdja: true}
+		out[2] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
+		out[3] = PolishTokenReadings{IsTagged: false}
+	}
+	// for 2-part subst compounds like kobieta-wojownik — use subst partial
+	if len(tokens) == 3 {
+		// prefer adj pattern for polsko-czeskim; subst for kobieta-wojownik
+		// caller sets tokens; we use subst for any 2-part when first isn't known adja prefix
+		out[0] = PolishTokenReadings{IsTagged: true, HasSubstPartial: true}
+		out[1] = PolishTokenReadings{IsTagged: true, HasSubstPartial: true}
+		out[2] = PolishTokenReadings{IsTagged: false}
+	}
+	return out
+}
+
+// adjHyphenTagger always uses adja/adj for 2-part compounds.
+type adjHyphenTagger struct{}
+
+func (adjHyphenTagger) Tag(tokens []string) []PolishTokenReadings {
+	out := make([]PolishTokenReadings, len(tokens))
+	if len(tokens) == 4 {
+		out[0] = PolishTokenReadings{IsTagged: true, HasAdja: true}
+		out[1] = PolishTokenReadings{IsTagged: true, HasAdja: true}
+		out[2] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
+		out[3] = PolishTokenReadings{IsTagged: false}
+		return out
+	}
+	if len(tokens) >= 3 {
+		out[0] = PolishTokenReadings{IsTagged: true, HasAdja: true}
+		out[1] = PolishTokenReadings{IsTagged: true, HasAdjPartial: true}
+		out[len(tokens)-1] = PolishTokenReadings{IsTagged: false}
+	}
+	return out
 }
 
 func TestPolishWordTokenizer_TokenizeWithTagger(t *testing.T) {
-	// Needs Polish BaseTagger / PoliMorfologik for hybrid hyphen compounds.
-	t.Skip("unimplemented: PolishWordTokenizerTest.testTokenize (tagger-dependent compounds)")
+	w := NewPolishWordTokenizer()
+	w.SetTagger(mockHyphenTagger{})
+	// 2-part subst compound splits
+	got := w.Tokenize("kobieta-wojownik")
+	require.Equal(t, "[kobieta, -, wojownik]", tokStr(got))
+
+	w.SetTagger(adjHyphenTagger{})
+	got = w.Tokenize("polsko-czeskim")
+	require.Equal(t, "[polsko, -, czeskim]", tokStr(got))
+
+	got = w.Tokenize("polsko-niemiecko-indonezyjski")
+	require.Equal(t, "[polsko, -, niemiecko, -, indonezyjski]", tokStr(got))
 }

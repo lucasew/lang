@@ -1,22 +1,27 @@
 package it
 
-// Twin of languagetool-language-modules/it/src/test/java/org/languagetool/tagging/it/ItalianTaggerTest.java
+// Twin of ItalianTaggerTest
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/it/src/test/java/org/languagetool/tagging/it/ItalianTaggerTest.java :: ItalianTaggerTest.testDictionary
 func TestItalianTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: ItalianTaggerTest.testDictionary")
+	wt := tagging.MapWordTagger{"casa": {tagging.NewTaggedWord("casa", "S")}}
+	tagger := NewItalianTagger(wt)
+	require.Equal(t, ItalianDictPath, tagger.GetDictionaryPath())
+	require.Len(t, tagger.TagWord("casa"), 1)
 }
 
-// Port of languagetool-language-modules/it/src/test/java/org/languagetool/tagging/it/ItalianTaggerTest.java :: ItalianTaggerTest.testTagger
 func TestItalianTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: ItalianTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"cane": {tagging.NewTaggedWord("cane", "S")},
+		"bello": {tagging.NewTaggedWord("bello", "A")},
+	}
+	got := NewItalianTagger(wt).Tag([]string{"Cane", "bello", "xyz"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }

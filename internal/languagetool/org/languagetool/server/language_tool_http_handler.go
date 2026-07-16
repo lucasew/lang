@@ -55,6 +55,11 @@ func (h *LanguageToolHttpHandler) IsShutdown() bool {
 // HandlePath routes a path + query without a real HTTP exchange.
 // path is like "/v2/check" or "/v2/languages".
 func (h *LanguageToolHttpHandler) HandlePath(path, remoteIP string, query url.Values) (HandleResult, error) {
+	return h.HandlePathWithReferrer(path, remoteIP, "", query)
+}
+
+// HandlePathWithReferrer is HandlePath with an optional HTTP Referer / Origin value.
+func (h *LanguageToolHttpHandler) HandlePathWithReferrer(path, remoteIP, referer string, query url.Values) (HandleResult, error) {
 	if h == nil || h.shutdown {
 		return HandleResult{}, NewUnavailableError("handler shutdown", nil)
 	}
@@ -62,6 +67,9 @@ func (h *LanguageToolHttpHandler) HandlePath(path, remoteIP string, query url.Va
 		if _, ok := h.AllowedIPs[remoteIP]; !ok && remoteIP != "" {
 			return HandleResult{Status: 403, Body: "IP not allowed"}, nil
 		}
+	}
+	if h.Config != nil && h.Config.IsBlockedReferrer(referer) {
+		return HandleResult{Status: 403, Body: "Referrer not allowed"}, nil
 	}
 	reqID := h.ReqCounter.IncrementRequestCount()
 	h.ReqCounter.IncrementHandleCount(remoteIP, reqID)
