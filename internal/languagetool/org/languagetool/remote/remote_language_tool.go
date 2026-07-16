@@ -27,9 +27,29 @@ type RemoteLanguageTool struct {
 	Client        HTTPDoer
 }
 
+// NewRemoteLanguageTool builds a client for serverBaseURL.
+// Panics if the URL ends with '/', has an empty/unsupported scheme, or is not a valid URL.
+// Supported schemes: http, https (Java MalformedURLException / RuntimeException parity).
 func NewRemoteLanguageTool(serverBaseURL string) *RemoteLanguageTool {
 	if strings.HasSuffix(serverBaseURL, "/") {
 		panic("Server base URL must not end with '/': " + serverBaseURL)
+	}
+	u, err := url.Parse(serverBaseURL)
+	if err != nil {
+		panic("invalid server base URL: " + err.Error())
+	}
+	scheme := strings.ToLower(u.Scheme)
+	switch scheme {
+	case "http", "https":
+		// ok
+	case "":
+		panic("server base URL missing scheme: " + serverBaseURL)
+	default:
+		// ftp, htp typo, etc. — Java throws MalformedURLException / fails at connect
+		panic("unsupported server URL scheme '" + scheme + "': " + serverBaseURL)
+	}
+	if u.Host == "" {
+		panic("server base URL missing host: " + serverBaseURL)
 	}
 	return &RemoteLanguageTool{
 		ServerBaseURL: serverBaseURL,

@@ -4,44 +4,47 @@ package pt
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testDictionary
+// Port of PortugueseTaggerTest.testDictionary
 func TestPortugueseTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testDictionary")
+	wt := tagging.MapWordTagger{
+		"casa": {tagging.NewTaggedWord("casa", "NCFS000")},
+	}
+	tagger := NewPortugueseTagger(wt)
+	require.Equal(t, PortugueseDictPath, tagger.GetDictionaryPath())
+	got := tagger.TagWord("casa")
+	require.Len(t, got, 1)
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testTagger
+// Port of PortugueseTaggerTest.testTagger
 func TestPortugueseTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"isto":  {tagging.NewTaggedWord("isto", "PD0NS000")},
+		"frase": {tagging.NewTaggedWord("frase", "NCFS000")},
+	}
+	got := NewPortugueseTagger(wt).Tag([]string{"Isto", "frase", "xyz"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
 
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testTaggerTagsOrdinalAbbreviations
+// Remaining Java cases need real dict / clitics — soft skip until resources land.
 func TestPortugueseTagger_TaggerTagsOrdinalAbbreviations(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testTaggerTagsOrdinalAbbreviations")
+	t.Skip("unimplemented: needs full Portuguese dict for ordinal abbreviations")
 }
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testContractionTagging
 func TestPortugueseTagger_ContractionTagging(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testContractionTagging")
+	t.Skip("unimplemented: contraction tagging needs dict")
 }
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testTaggerTagsCompoundsRegardlessOfLetterCase
 func TestPortugueseTagger_TaggerTagsCompoundsRegardlessOfLetterCase(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testTaggerTagsCompoundsRegardlessOfLetterCase")
+	t.Skip("unimplemented: compound tagging needs dict")
 }
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testTagProductivePrefixesNotPresentInSpeller
 func TestPortugueseTagger_TagProductivePrefixesNotPresentInSpeller(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testTagProductivePrefixesNotPresentInSpeller")
+	t.Skip("unimplemented: productive prefixes need dict")
 }
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java :: PortugueseTaggerTest.testTaggerTagsVerbsWithEnclitics
 func TestPortugueseTagger_TaggerTagsVerbsWithEnclitics(t *testing.T) {
-	t.Skip("unimplemented: PortugueseTaggerTest.testTaggerTagsVerbsWithEnclitics")
+	t.Skip("unimplemented: enclitics need dict")
 }

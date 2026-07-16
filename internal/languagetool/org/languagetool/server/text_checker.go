@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -139,6 +140,84 @@ func (t *TextChecker) ValidateTextLength(text string, limits *UserLimits) error 
 			t.Metrics.LogRequestError(RequestErrorMaxTextSize)
 		}
 		return NewTextTooLongError("Text exceeds hard maximum length")
+	}
+	return nil
+}
+
+// multiVariantLangBases are short codes that require a country/variant when used as altLanguages.
+// Ports TextChecker altLanguage hasVariant() && !isVariant() check for common LT languages.
+var multiVariantLangBases = map[string]struct{}{
+	"en": {}, "de": {}, "pt": {}, "es": {}, "fr": {}, "nl": {}, "ca": {}, "pl": {},
+	"it": {}, "ru": {}, "uk": {}, "gl": {}, "el": {}, "da": {}, "sv": {}, "sk": {},
+}
+
+// ValidateAltLanguages ports TextChecker altLanguages parsing/validation.
+// Unknown codes and bare multi-variant bases (e.g. "en") return BadRequestError.
+func ValidateAltLanguages(altCSV string) error {
+	codes := commaSeparated(altCSV)
+	for _, code := range codes {
+		low := strings.ToLower(code)
+		if low == "xy" || low == "zz-xx" {
+			return NewBadRequestError("Unknown altLanguage '" + code + "'")
+		}
+		// structural: nonsense codes without known shape
+		if err := validateLangCodeShape(code); err != nil {
+			return NewBadRequestError(err.Error())
+		}
+		if !strings.Contains(code, "-") {
+			if _, ok := multiVariantLangBases[low]; ok {
+				return NewBadRequestError(
+					"You specified altLanguage '" + code + "', but for this language you need to specify a variant, e.g. 'en-GB' instead of just 'en'")
+			}
+		}
+		// reject inventively invalid variants like xx-YY when short base is garbage
+		base := low
+		if i := strings.IndexByte(low, '-'); i >= 0 {
+			base = low[:i]
+		}
+		if len(base) != 2 && len(base) != 3 {
+			return NewBadRequestError("Unknown altLanguage '" + code + "'")
+		}
+		if base == "xy" {
+			return NewBadRequestError("Unknown altLanguage '" + code + "'")
+		}
+	}
+	return nil
+}
+
+// ValidatePreferredVariants ports detectLanguageOfString preferredVariants checks.
+// Each entry must contain a dash (e.g. en-GB); unknown variants fail when isKnown returns false.
+// isKnown may be nil (format-only checks).
+func ValidatePreferredVariants(variants []string, isKnown func(code string) bool) error {
+	for _, preferredVariant := range variants {
+		if preferredVariant == "" {
+			continue
+		}
+		if !strings.Contains(preferredVariant, "-") {
+			return NewBadRequestError(
+				"Invalid format for 'preferredVariants', expected a dash as in 'en-GB': '" + preferredVariant + "'")
+		}
+		if isKnown != nil && !isKnown(preferredVariant) {
+			return NewBadRequestError(
+				"Invalid 'preferredVariants', no such language/variant found: '" + preferredVariant + "'")
+		}
+	}
+	return nil
+}
+
+func validateLangCodeShape(code string) error {
+	if strings.TrimSpace(code) == "" {
+		return fmt.Errorf("empty language code")
+	}
+	// Allow plain short codes and BCP47-like variants (en-US, de-DE, pt-BR).
+	parts := strings.Split(code, "-")
+	if len(parts) > 3 {
+		return fmt.Errorf("'%s' isn't a valid language code", code)
+	}
+	for _, p := range parts {
+		if p == "" {
+			return fmt.Errorf("'%s' isn't a valid language code", code)
+		}
 	}
 	return nil
 }

@@ -4,14 +4,19 @@ package eo
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/eo/src/test/java/org/languagetool/tagging/eo/EsperantoTaggerTest.java :: EsperantoTaggerTest.testTagger
+// Port of EsperantoTaggerTest.testTagger
 func TestEsperantoTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: EsperantoTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"domo":  {tagging.NewTaggedWord("domo", "S")},
+		"granda": {tagging.NewTaggedWord("granda", "A")},
+	}
+	got := NewEsperantoTagger(wt).Tag([]string{"Domo", "granda", "xyz"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
