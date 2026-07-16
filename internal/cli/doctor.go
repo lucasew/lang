@@ -25,16 +25,18 @@ func newDoctorCmd() *cobra.Command {
 			fmt.Fprintln(out, "pipeline_stages:")
 			implemented := map[string]string{
 				pipeline.StageSentenceSplit: "srx (segment.srx)",
-				pipeline.StageTokenize:      "WordTokenizer",
+				pipeline.StageTokenize:      "WordTokenizer (en contractions)",
 				pipeline.StageTag:           "morfologik english.dict (en)",
 				pipeline.StageDisambiguate:  "xml rules subset (en)",
 				pipeline.StageRules:         "pattern XML + whitespace/word-repeat + speller",
-				pipeline.StageFilters:       "default=off, antipattern, chunk skipped",
-				pipeline.StageSuggestions:   "static suggestions",
+				pipeline.StageFilters:       "default=off, antipattern; heuristic BIO chunks (en)",
+				pipeline.StageSuggestions:   "static + speller edit-distance",
 			}
+			// Note: chunking runs after tag inside MatchContext (not a separate stage const).
 			for _, s := range pipeline.AllStages {
 				fmt.Fprintf(out, "  %s\t%s\n", s, implemented[s])
 			}
+			fmt.Fprintln(out, "  chunk\theuristic POS→BIO + NP singular/plural (en; not full OpenNLP)")
 			return nil
 		},
 	}

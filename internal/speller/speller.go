@@ -99,18 +99,19 @@ func (s *Speller) Check(text, file, lang string, msg messages.Bundle) []finding.
 		endLine, endCol := offsetLineCol(text, tok.End)
 		typ, sev := finding.WithType("misspelling")
 		out = append(out, finding.Finding{
-			File:      file,
-			Line:      line,
-			Column:    col,
-			EndLine:   endLine,
-			EndColumn: endCol,
-			Offset:    tok.Start,
-			EndOffset: tok.End,
-			Rule:      s.ruleID,
-			Type:      typ,
-			Severity:  sev,
-			Message:   message,
-			Language:  lang,
+			File:        file,
+			Line:        line,
+			Column:      col,
+			EndLine:     endLine,
+			EndColumn:   endCol,
+			Offset:      tok.Start,
+			EndOffset:   tok.End,
+			Rule:        s.ruleID,
+			Type:        typ,
+			Severity:    sev,
+			Message:     message,
+			Suggestions: s.suggest(w, 5),
+			Language:    lang,
 		})
 	}
 	return out
@@ -122,6 +123,72 @@ func (s *Speller) known(w string) bool {
 	}
 	forms, _ := s.dict.Lookup(w)
 	return len(forms) > 0
+}
+
+// suggest generates simple edit-distance candidates present in the dictionary.
+func (s *Speller) suggest(word string, limit int) []string {
+	if limit <= 0 {
+		limit = 5
+	}
+	seen := map[string]bool{word: true}
+	var out []string
+	add := func(c string) {
+		if c == "" || seen[c] {
+			return
+		}
+		if s.known(c) {
+			seen[c] = true
+			out = append(out, c)
+		}
+	}
+	// lowercase variants
+	lw := strings.ToLower(word)
+	add(lw)
+	if len(lw) > 0 {
+		add(strings.ToUpper(lw[:1]) + lw[1:])
+	}
+	runes := []rune(lw)
+	// deletes
+	for i := range runes {
+		add(string(append(append([]rune{}, runes[:i]...), runes[i+1:]...)))
+	}
+	// transposes
+	for i := 0; i+1 < len(runes); i++ {
+		r := append([]rune{}, runes...)
+		r[i], r[i+1] = r[i+1], r[i]
+		add(string(r))
+	}
+	// replaces with a-z
+	for i := range runes {
+		for c := 'a'; c <= 'z'; c++ {
+			if rune(c) == runes[i] {
+				continue
+			}
+			r := append([]rune{}, runes...)
+			r[i] = c
+			add(string(r))
+			if len(out) >= limit {
+				return out[:limit]
+			}
+		}
+	}
+	// inserts a-z
+	for i := 0; i <= len(runes); i++ {
+		for c := 'a'; c <= 'z'; c++ {
+			r := make([]rune, 0, len(runes)+1)
+			r = append(r, runes[:i]...)
+			r = append(r, c)
+			r = append(r, runes[i:]...)
+			add(string(r))
+			if len(out) >= limit {
+				return out[:limit]
+			}
+		}
+	}
+	if len(out) > limit {
+		out = out[:limit]
+	}
+	return out
 }
 
 func isSpellable(s string) bool {

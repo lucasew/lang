@@ -84,10 +84,10 @@ type ruleGroupState struct {
 
 func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault string, group *ruleGroupState) (*Rule, error) {
 	r := &Rule{
-		ID:       attr(start, "id"),
-		Name:     attr(start, "name"),
-		Category: category,
-		Default:  attr(start, "default"),
+		ID:        attr(start, "id"),
+		Name:      attr(start, "name"),
+		Category:  category,
+		Default:   attr(start, "default"),
 		IssueType: attr(start, "type"),
 	}
 	if group != nil {
@@ -114,20 +114,20 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 	}
 
 	var (
-		inPattern     bool
-		inAnti        bool
-		inMarker      bool
-		inMessage     bool
-		inSuggestion  bool
-		inExample     bool
-		inShort       bool
-		curAnti       []PatToken
-		msgBuilder    strings.Builder
-		sugBuilder    strings.Builder
-		shortBuilder  strings.Builder
-		exampleRaw    strings.Builder
-		exampleCorr   string
-		depthPattern  int
+		inPattern    bool
+		inAnti       bool
+		inMarker     bool
+		inMessage    bool
+		inSuggestion bool
+		inExample    bool
+		inShort      bool
+		curAnti      []PatToken
+		msgBuilder   strings.Builder
+		sugBuilder   strings.Builder
+		shortBuilder strings.Builder
+		exampleRaw   strings.Builder
+		exampleCorr  string
+		depthPattern int
 	)
 
 	// We re-decode the rule element content using a custom walk of tokens until </rule>
@@ -202,7 +202,7 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 				inExample = true
 				exampleRaw.Reset()
 				exampleCorr = attr(t, "correction")
-				// type="correct" etc. — correction empty means correct example when no correction attr... 
+				// type="correct" etc. — correction empty means correct example when no correction attr...
 				// LT uses correction attribute for incorrect examples
 			case "url", "tags", "tld", "raw_example":
 				if err := skipElement(dec, t); err != nil {
@@ -357,6 +357,11 @@ func parseToken(dec *xml.Decoder, start xml.StartElement, inMarker bool) (PatTok
 					re, err := jregex.Compile(pt.Value, pt.CaseSensitive)
 					if err == nil {
 						pt.Re = re
+					}
+				}
+				if cre := attr(start, "chunk_re"); cre != "" {
+					if re, err := regexp.Compile("^(?:" + cre + ")$"); err == nil {
+						pt.ChunkRe = re
 					}
 				}
 				return pt, nil

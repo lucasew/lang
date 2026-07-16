@@ -16,6 +16,8 @@ type Token struct {
 	Linebreak  bool
 	// Readings holds POS/lemma analyses (empty = untagged / UNKNOWN).
 	Readings []Reading
+	// ChunkTags are BIO-style chunk labels (e.g. B-NP-singular, B-VP).
+	ChunkTags []string
 }
 
 // Reading is one morphological analysis (lemma + POS tag).

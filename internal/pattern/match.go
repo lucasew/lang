@@ -88,10 +88,6 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 	if strings.HasPrefix(r.ID, "AI_") || strings.HasPrefix(r.ID, "QB_") {
 		return nil
 	}
-	// Chunk-based rules still unsupported.
-	if ruleNeedsChunk(r) {
-		return nil
-	}
 
 	var findings []finding.Finding
 	tokens := ctx.NonWS
@@ -163,30 +159,6 @@ func expandMatchPlaceholders(msg string, positions []int, tokens []pipeline.Toke
 		msg = strings.ReplaceAll(msg, ph, repl)
 	}
 	return msg
-}
-
-func ruleNeedsChunk(r *Rule) bool {
-	var check func([]PatToken) bool
-	check = func(ts []PatToken) bool {
-		for _, t := range ts {
-			if t.Chunk != "" {
-				return true
-			}
-			if check(t.Exceptions) || check(t.And) || check(t.Or) {
-				return true
-			}
-		}
-		return false
-	}
-	if check(r.Tokens) {
-		return true
-	}
-	for _, ap := range r.Anti {
-		if check(ap) {
-			return true
-		}
-	}
-	return false
 }
 
 func filterSimpleSuggestions(sugs []string) []string {
@@ -285,8 +257,23 @@ func tokenMatches(pt PatToken, ctx MatchContext, ti int) bool {
 	if pt.SpaceBefore == "no" && ti < len(ctx.SpaceBefore) && ctx.SpaceBefore[ti] {
 		return false
 	}
+	// Chunk tags (exact or regex)
 	if pt.Chunk != "" {
-		return false
+		if !hasChunk(tok.ChunkTags, pt.Chunk) {
+			return false
+		}
+	}
+	if pt.ChunkRe != nil {
+		ok := false
+		for _, c := range tok.ChunkTags {
+			if pt.ChunkRe.MatchString(c) {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			return false
+		}
 	}
 
 	// String / lemma match
@@ -425,4 +412,13 @@ func langFamily(code string) string {
 		return strings.ToLower(code[:i])
 	}
 	return strings.ToLower(code)
+}
+
+func hasChunk(tags []string, want string) bool {
+	for _, t := range tags {
+		if t == want {
+			return true
+		}
+	}
+	return false
 }

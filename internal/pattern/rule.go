@@ -52,13 +52,14 @@ type PatToken struct {
 	CaseSensitive bool
 	Negate        bool
 	Inflected     bool
-	Min           int // default 1; 0 means optional
-	Max           int // default 1; -1 means unlimited skip via skip attr separately
-	Skip          int // max tokens to skip after this one
+	Min           int    // default 1; 0 means optional
+	Max           int    // default 1; -1 means unlimited skip via skip attr separately
+	Skip          int    // max tokens to skip after this one
 	SpaceBefore   string // "", "yes", "no"
 	Postag        string
 	PostagRegexp  bool
 	Chunk         string
+	ChunkRe       *regexp.Regexp // from chunk_re attribute
 	NegatePos     bool
 	InsideMarker  bool
 	// Compiled regexp if Regexp
