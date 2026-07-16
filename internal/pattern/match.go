@@ -2,6 +2,7 @@ package pattern
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -91,7 +92,7 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 	tokens := ctx.NonWS
 	n := len(tokens)
 	for start := 0; start < n; start++ {
-		ok, end, markerFrom, markerTo := matchTokens(r.Tokens, ctx, start)
+		ok, end, markerFrom, markerTo, positions := matchTokens(r.Tokens, ctx, start)
 		if !ok {
 			continue
 		}
@@ -121,6 +122,7 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 		if msg == "" {
 			msg = r.Name
 		}
+		msg = expandMatchPlaceholders(msg, positions, tokens)
 		findings = append(findings, finding.Finding{
 			File:        ctx.File,
 			Line:        line,
@@ -135,6 +137,25 @@ func MatchRule(r *Rule, ctx MatchContext) []finding.Finding {
 		})
 	}
 	return findings
+}
+
+func expandMatchPlaceholders(msg string, positions []int, tokens []pipeline.Token) string {
+	// $1 is first pattern element token text (1-based, LT convention).
+	for i := 1; i <= 20; i++ {
+		ph := "$" + strconv.Itoa(i)
+		if !strings.Contains(msg, ph) {
+			continue
+		}
+		repl := ""
+		if i-1 < len(positions) {
+			ti := positions[i-1]
+			if ti >= 0 && ti < len(tokens) {
+				repl = tokens[ti].Text
+			}
+		}
+		msg = strings.ReplaceAll(msg, ph, repl)
+	}
+	return msg
 }
 
 func ruleNeedsChunk(r *Rule) bool {
@@ -177,7 +198,7 @@ func filterSimpleSuggestions(sugs []string) []string {
 func antipatternBlocks(r *Rule, ctx MatchContext, start, end int) bool {
 	for _, ap := range r.Anti {
 		for s := max(0, start-5); s < end && s < len(ctx.NonWS); s++ {
-			ok, _, _, _ := matchTokens(ap, ctx, s)
+			ok, _, _, _, _ := matchTokens(ap, ctx, s)
 			if ok {
 				return true
 			}
@@ -186,10 +207,12 @@ func antipatternBlocks(r *Rule, ctx MatchContext, start, end int) bool {
 	return false
 }
 
-func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end int, markerFrom, markerTo int) {
+// matchTokens returns end index, marker rune offsets, and per-pattern-element token indices.
+func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end int, markerFrom, markerTo int, positions []int) {
 	markerFrom, markerTo = -1, -1
 	ti := start
 	tokens := ctx.NonWS
+	positions = make([]int, 0, len(pattern))
 	for pi := 0; pi < len(pattern); pi++ {
 		pt := pattern[pi]
 		min, maxOcc := pt.Min, pt.Max
@@ -197,11 +220,15 @@ func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end 
 			maxOcc = min
 		}
 		matchedOcc := 0
+		firstTok := -1
 		for matchedOcc < maxOcc {
 			if ti >= len(tokens) {
 				break
 			}
 			if tokenMatches(pt, ctx, ti) {
+				if firstTok < 0 {
+					firstTok = ti
+				}
 				if pt.InsideMarker {
 					t := tokens[ti]
 					if markerFrom < 0 {
@@ -216,8 +243,9 @@ func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end 
 			}
 		}
 		if matchedOcc < min {
-			return false, start, -1, -1
+			return false, start, -1, -1, nil
 		}
+		positions = append(positions, firstTok)
 		if pt.Skip > 0 && pi+1 < len(pattern) {
 			next := pattern[pi+1:]
 			limit := pt.Skip
@@ -225,7 +253,7 @@ func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end 
 				if ti+sk > len(tokens) {
 					break
 				}
-				ok2, end2, mf, mt := matchTokens(next, ctx, ti+sk)
+				ok2, end2, mf, mt, pos2 := matchTokens(next, ctx, ti+sk)
 				if ok2 {
 					if mf >= 0 {
 						if markerFrom < 0 {
@@ -233,13 +261,13 @@ func matchTokens(pattern []PatToken, ctx MatchContext, start int) (ok bool, end 
 						}
 						markerTo = mt
 					}
-					return true, end2, markerFrom, markerTo
+					return true, end2, markerFrom, markerTo, append(positions, pos2...)
 				}
 			}
-			return false, start, -1, -1
+			return false, start, -1, -1, nil
 		}
 	}
-	return true, ti, markerFrom, markerTo
+	return true, ti, markerFrom, markerTo, positions
 }
 
 func tokenMatches(pt PatToken, ctx MatchContext, ti int) bool {

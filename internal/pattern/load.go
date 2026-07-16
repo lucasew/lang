@@ -215,8 +215,21 @@ func parseRule(dec *xml.Decoder, start xml.StartElement, category, catDefault st
 						return nil, err
 					}
 				} else if inMessage {
-					// allow match tags etc as literal for now
-					msgBuilder.WriteString("<" + t.Name.Local + ">")
+					// serialize match/suggestion tags with attributes for later resolution
+					msgBuilder.WriteByte('<')
+					msgBuilder.WriteString(t.Name.Local)
+					for _, a := range t.Attr {
+						msgBuilder.WriteByte(' ')
+						msgBuilder.WriteString(a.Name.Local)
+						msgBuilder.WriteString(`="`)
+						msgBuilder.WriteString(a.Value)
+						msgBuilder.WriteByte('"')
+					}
+					msgBuilder.WriteString("/>")
+					// consume empty element body if any
+					if err := skipElement(dec, t); err != nil {
+						return nil, err
+					}
 				}
 			}
 		case xml.EndElement:
@@ -419,9 +432,11 @@ func parseExample(raw, correction string) Example {
 }
 
 func stripSuggestionTags(s string) string {
+	// Preserve match placeholders as $N for later resolution.
+	reMatch := regexp.MustCompile(`<match\s+no="(\d+)"[^/]*/>`)
+	s = reMatch.ReplaceAllString(s, `$$$1`)
 	s = strings.ReplaceAll(s, "<suggestion>", "'")
 	s = strings.ReplaceAll(s, "</suggestion>", "'")
-	// remove other simple tags
-	re := regexp.MustCompile(`<[^>]+>`)
+	re := regexp.MustCompile(`</?[^>]+>`)
 	return strings.TrimSpace(re.ReplaceAllString(s, ""))
 }
