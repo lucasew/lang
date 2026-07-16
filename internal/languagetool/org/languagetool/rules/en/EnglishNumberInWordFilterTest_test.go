@@ -1,17 +1,14 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishNumberInWordFilterTest.java
+// Twin of EnglishNumberInWordFilterTest.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishNumberInWordFilterTest.java :: EnglishNumberInWordFilterTest.testFilter
 func TestEnglishNumberInWordFilter_Filter(t *testing.T) {
-	tools.Unimplemented("EnglishNumberInWordFilterTest.testFilter")
+	f := NewEnglishNumberInWordFilter()
+	require.Contains(t, f.Suggestions("H0use"), "House")
+	require.Empty(t, f.Suggestions("House"))
 }

@@ -1,17 +1,17 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanNumberInWordFilterTest.java
+// Twin of GermanNumberInWordFilterTest — surface digit-in-word suggestions.
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanNumberInWordFilterTest.java :: GermanNumberInWordFilterTest.testFilter
-func TestGermanNumberInWordFilter_Filter(t *testing.T) {
-	tools.Unimplemented("GermanNumberInWordFilterTest.testFilter")
+func TestGermanNumberInWordFilter(t *testing.T) {
+	f := NewGermanNumberInWordFilter()
+	sugg := f.Suggestions("H0use")
+	require.Contains(t, sugg, "House")
+	sugg2 := f.Suggestions("H4us")
+	require.Contains(t, sugg2, "Hus")
+	require.Empty(t, f.Suggestions("Haus"))
 }
