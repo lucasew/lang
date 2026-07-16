@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/data"
+	"github.com/lucasew/lang/internal/disambig"
 	"github.com/lucasew/lang/internal/finding"
 	"github.com/lucasew/lang/internal/langid"
 	"github.com/lucasew/lang/internal/messages"
@@ -41,8 +42,9 @@ type Checker struct {
 	// pattern rules by language family
 	rulesCache sync.Map // family -> []*pattern.Rule
 	// English tagger/speller (optional until dicts installed)
-	enTagger  *tagger.Tagger
-	enSpeller *speller.Speller
+	enTagger   *tagger.Tagger
+	enSpeller  *speller.Speller
+	enDisambig *disambig.Engine
 }
 
 // New resolves data and discovers languages.
@@ -70,6 +72,9 @@ func New(dataDirFlag string) (*Checker, error) {
 	}
 	if sp, err := speller.OpenEnglishUS(root); err == nil {
 		c.enSpeller = sp
+	}
+	if de, err := disambig.LoadEnglish(root); err == nil {
+		c.enDisambig = de
 	}
 	return c, nil
 }
@@ -124,8 +129,10 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 	}
 
 	var tg *tagger.Tagger
+	var de *disambig.Engine
 	if lang.Family == "en" {
 		tg = c.enTagger
+		de = c.enDisambig
 	}
 
 	sentences := c.srxDoc.Split(text, lang.Family, "_two")
@@ -143,6 +150,9 @@ func (c *Checker) Check(file, text string, opt Options) (*Result, error) {
 		}
 		base := cursor + pos
 		ctx := pattern.NewMatchContext(file, lang.Code, sent, base, tg)
+		if de != nil {
+			ctx.NonWS = de.Apply(ctx.NonWS)
+		}
 		for _, r := range prules {
 			if !ruleEnabled(r.ID, opt) && !ruleEnabled(r.FullID(), opt) {
 				continue

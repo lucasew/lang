@@ -17,6 +17,11 @@ var xmlPredefined = map[string]bool{
 	"lt": true, "gt": true, "amp": true, "apos": true, "quot": true,
 }
 
+// OpenExpandedXML expands custom DTD entities and strips DOCTYPE (shared by grammar + disambiguation).
+func OpenExpandedXML(path string) (io.Reader, error) {
+	return readXMLExpandEntities(path)
+}
+
 // readXMLExpandEntities loads an LT grammar XML file, expands custom DTD entities, strips DOCTYPE.
 func readXMLExpandEntities(path string) (io.Reader, error) {
 	b, err := os.ReadFile(path)

@@ -23,6 +23,7 @@ type MatchContext struct {
 
 // NewMatchContext builds context from a text span.
 // If tg is non-nil, non-whitespace tokens receive POS readings.
+// Callers may run disambiguation on NonWS afterwards.
 func NewMatchContext(file, lang, text string, baseOffset int, tg *tagger.Tagger) MatchContext {
 	all := pipeline.WordTokenize(text)
 	nonWS := make([]pipeline.Token, 0, len(all)+1)

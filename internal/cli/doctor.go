@@ -27,7 +27,7 @@ func newDoctorCmd() *cobra.Command {
 				pipeline.StageSentenceSplit: "srx (segment.srx)",
 				pipeline.StageTokenize:      "WordTokenizer",
 				pipeline.StageTag:           "morfologik english.dict (en)",
-				pipeline.StageDisambiguate:  "not yet",
+				pipeline.StageDisambiguate:  "xml rules subset (en)",
 				pipeline.StageRules:         "pattern XML + whitespace/word-repeat + speller",
 				pipeline.StageFilters:       "default=off, antipattern, chunk skipped",
 				pipeline.StageSuggestions:   "static suggestions",
