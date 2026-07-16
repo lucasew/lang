@@ -13,6 +13,8 @@ type WordRepeatBeginningRule struct {
 	Messages map[string]string
 	// Hooks for language subclasses (EnglishWordRepeatBeginningRule).
 	IsAdverbFn          func(token *languagetool.AnalyzedTokenReadings) bool
+	// IsAdverbAtFn optional context-aware adverb check (e.g. "Sin embargo").
+	IsAdverbAtFn        func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
 	IsExceptionFn       func(token string) bool
 	IsSentenceException func(sentence *languagetool.AnalyzedSentence) bool
 	GetSuggestionsFn    func(token *languagetool.AnalyzedTokenReadings) []string
@@ -33,6 +35,16 @@ func (r *WordRepeatBeginningRule) GetID() string {
 func (r *WordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {
 	if r.IsAdverbFn != nil {
 		return r.IsAdverbFn(token)
+	}
+	return false
+}
+
+func (r *WordRepeatBeginningRule) isAdverbAt(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	if r.IsAdverbAtFn != nil {
+		return r.IsAdverbAtFn(tokens, i)
+	}
+	if i >= 0 && i < len(tokens) {
+		return r.isAdverb(tokens[i])
 	}
 	return false
 }
@@ -95,7 +107,7 @@ func (r *WordRepeatBeginningRule) MatchList(sentences []*languagetool.AnalyzedSe
 					prevSentence != nil &&
 					endsSentenceRE.MatchString(stringsTrim(prevSentence.GetText())) {
 					var shortMsg string
-					if r.isAdverb(analyzedToken) {
+					if r.isAdverbAt(tokens, 1) {
 						shortMsg = r.msg("desc_repetition_beginning_adv", "Adverb repetition at sentence start.")
 					} else if beforeLastToken == token {
 						shortMsg = r.msg("desc_repetition_beginning_word", "Word repetition at sentence start.")
