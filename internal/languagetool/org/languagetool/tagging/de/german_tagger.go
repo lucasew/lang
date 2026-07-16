@@ -124,20 +124,45 @@ func (t *SwissGermanTagger) Tag(sentenceTokens []string) []*languagetool.Analyze
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
-		readings := t.tagOne(word)
-		if len(readings) == 1 && readings[0].GetPOSTag() == nil && strings.Contains(word, "ss") {
-			alt := strings.ReplaceAll(word, "ss", "ß")
-			if alt != word {
-				readings = t.tagOne(alt)
-				// restore surface
-				for _, r := range readings {
-					// rebuild with original surface - NewAnalyzedToken
-					_ = r
-				}
-			}
-		}
+		readings := t.lookupReadings(word)
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 		pos += len([]rune(word))
 	}
 	return out
+}
+
+// Lookup tags a single word (Java GermanTagger.lookup surface).
+func (t *SwissGermanTagger) Lookup(word string) *languagetool.AnalyzedTokenReadings {
+	if t == nil {
+		return nil
+	}
+	readings := t.lookupReadings(word)
+	return languagetool.NewAnalyzedTokenReadingsList(readings, 0)
+}
+
+// Lookup tags a single word on GermanTagger.
+func (t *GermanTagger) Lookup(word string) *languagetool.AnalyzedTokenReadings {
+	if t == nil {
+		return nil
+	}
+	return languagetool.NewAnalyzedTokenReadingsList(t.tagOne(word), 0)
+}
+
+func (t *SwissGermanTagger) lookupReadings(word string) []*languagetool.AnalyzedToken {
+	readings := t.tagOne(word)
+	if len(readings) == 1 && readings[0].GetPOSTag() == nil && strings.Contains(word, "ss") {
+		alt := strings.ReplaceAll(word, "ss", "ß")
+		if alt != word {
+			altReadings := t.tagOne(alt)
+			if len(altReadings) > 0 && altReadings[0].GetPOSTag() != nil {
+				// keep Swiss surface (ss) with DE ß lemmas/tags
+				fixed := make([]*languagetool.AnalyzedToken, 0, len(altReadings))
+				for _, r := range altReadings {
+					fixed = append(fixed, languagetool.NewAnalyzedToken(word, r.GetPOSTag(), r.GetLemma()))
+				}
+				return fixed
+			}
+		}
+	}
+	return readings
 }

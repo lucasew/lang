@@ -1,17 +1,41 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/SwissGermanTaggerTest.java
+// Twin of SwissGermanTaggerTest — MapWordTagger ss↔ß mapping
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/tagging/de/SwissGermanTaggerTest.java :: SwissGermanTaggerTest.testTagger
 func TestSwissGermanTagger_Tagger(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	// DE dict has ß spellings; Swiss uses ss
+	wt := tagging.MapWordTagger{
+		"groß":     {tagging.NewTaggedWord("groß", "ADJ:PRD:GRU")},
+		"anmaßung": {tagging.NewTaggedWord("Anmaßung", "SUB:NOM:SIN:FEM")},
+		"die":      {tagging.NewTaggedWord("die", "ART:DEF:NOM:SIN:FEM")},
+		"auto":     {tagging.NewTaggedWord("Auto", "SUB:NOM:SIN:NEU")},
+	}
+	swiss := NewSwissGermanTagger(wt)
+	german := NewGermanTagger(wt)
+
+	aToken := swiss.Lookup("gross")
+	require.NotNil(t, aToken)
+	require.NotNil(t, aToken.GetReadings()[0].GetPOSTag())
+	require.Equal(t, "gross", aToken.GetReadings()[0].GetToken())
+	require.Equal(t, "groß", *aToken.GetReadings()[0].GetLemma())
+	require.Equal(t, "ADJ:PRD:GRU", *aToken.GetReadings()[0].GetPOSTag())
+
+	aToken2 := swiss.Lookup("Anmassung")
+	require.NotNil(t, aToken2.GetReadings()[0].GetPOSTag())
+	require.Equal(t, "Anmaßung", *aToken2.GetReadings()[0].GetLemma())
+	require.Equal(t, "Anmassung", aToken2.GetReadings()[0].GetToken())
+
+	// same as German for words without ss
+	require.Equal(t,
+		german.Lookup("die").GetReadings()[0].GetToken(),
+		swiss.Lookup("die").GetReadings()[0].GetToken())
+	require.Equal(t,
+		*german.Lookup("Auto").GetReadings()[0].GetLemma(),
+		*swiss.Lookup("Auto").GetReadings()[0].GetLemma())
 }

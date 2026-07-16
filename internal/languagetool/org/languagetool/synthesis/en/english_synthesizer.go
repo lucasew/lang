@@ -30,19 +30,38 @@ func NewEnglishSynthesizer(manual *synthesis.ManualSynthesizer) *EnglishSynthesi
 	base.TagFileName = EnglishTagsFile
 	return &EnglishSynthesizer{
 		BaseSynthesizer: base,
-		AorAn: func(word string) string {
-			// simple vowel heuristic
-			w := strings.ToLower(strings.TrimSpace(word))
-			if w == "" {
-				return "a"
-			}
-			switch w[0] {
-			case 'a', 'e', 'i', 'o', 'u':
-				return "an"
-			default:
-				return "a"
-			}
-		},
+		AorAn: defaultAorAn,
+	}
+}
+
+// defaultAorAn is a lightweight a/an chooser for +DT/+INDT (not full phonetics).
+func defaultAorAn(word string) string {
+	w := strings.ToLower(strings.TrimSpace(word))
+	if w == "" {
+		return "a"
+	}
+	// silent-h exceptions
+	for _, p := range []string{"hour", "honest", "heir", "honour", "honor"} {
+		if strings.HasPrefix(w, p) {
+			return "an"
+		}
+	}
+	// "university", "user", "European" use /ju/ → "a"
+	if w[0] == 'u' && len(w) > 1 {
+		// "umbrella" still "an"
+		if strings.HasPrefix(w, "un") && !strings.HasPrefix(w, "uni") {
+			return "an"
+		}
+		if strings.HasPrefix(w, "umb") || strings.HasPrefix(w, "ump") {
+			return "an"
+		}
+		return "a"
+	}
+	switch w[0] {
+	case 'a', 'e', 'i', 'o':
+		return "an"
+	default:
+		return "a"
 	}
 }
 

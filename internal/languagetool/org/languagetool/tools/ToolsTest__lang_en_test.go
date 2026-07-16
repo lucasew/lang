@@ -1,16 +1,19 @@
 package tools
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/tools/ToolsTest.java
+// Twin of EN ToolsTest.testCorrect — full JLT deferred; CorrectTextFromMatches surface
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/tools/ToolsTest.java :: ToolsTest.testCorrect
 func TestTools_lang_en_Correct(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	// "This is an test." → "This is a test." (EN_A_VS_AN)
+	// "an" at positions 8-10
+	src := "This is an test."
+	require.Equal(t, "an", src[8:10])
+	got := CorrectTextFromMatches(src, []TextMatch{
+		{FromPos: 8, ToPos: 10, SuggestedReplacements: []string{"a"}},
+	})
+	require.Equal(t, "This is a test.", got)
 }
