@@ -10,7 +10,8 @@ import (
 
 func TestWordCoherencyRule_Rule(t *testing.T) {
 	rule := NewWordCoherencyRule(nil)
-	// "organogram, organigram" — two variants in one text
-	sents := languagetool.AnalyzeTextLocal("organogram, organigram")
-	require.Equal(t, 1, len(rule.MatchList(sents)))
+	// "organogram, organigram" as one text with both variants
+	require.Equal(t, 1, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("organogram, organigram"),
+	})))
 }

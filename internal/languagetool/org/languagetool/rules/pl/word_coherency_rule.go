@@ -1,4 +1,4 @@
-package nl
+package pl
 
 import (
 	"embed"
@@ -23,7 +23,8 @@ func loadCoherencyData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
-		d, err := rules.LoadWordCoherencyData(f, "/nl/coherency.txt", false)
+		// Expand case endings for full forms (blefu / bluffem).
+		d, err := rules.LoadWordCoherencyData(f, "/pl/coherency.txt", true)
 		if err != nil {
 			panic(err)
 		}
@@ -32,7 +33,7 @@ func loadCoherencyData() *rules.WordCoherencyData {
 	return coherencyData
 }
 
-// WordCoherencyRule ports org.languagetool.rules.nl.WordCoherencyRule.
+// WordCoherencyRule ports org.languagetool.rules.pl.WordCoherencyRule.
 type WordCoherencyRule struct {
 	*rules.AbstractWordCoherencyRule
 }
@@ -41,12 +42,12 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
 		Messages:    messages,
-		ID:          "NL_WORD_COHERENCY",
-		Description: "Consistente spelling van woorden met meerdere correcte vormen.",
+		ID:          "PL_WORD_COHERENCY",
+		Description: "Jednolita pisownia wyrazów o obocznej dopuszczalnej pisowni",
 		WordMap:     d.WordMap,
 		ToBase:      d.ToBase,
 		MessageFn: func(word1, word2 string) string {
-			return "Gebruik liever niet '" + word1 + "' en '" + word2 + "' door elkaar in een tekst."
+			return "Formy „" + word1 + "” i „" + word2 + "” zwykle nie powinny być używane jednocześnie."
 		},
 	}
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}

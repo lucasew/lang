@@ -108,6 +108,13 @@ func coherencySurfaceForms(w string) []string {
 	} {
 		out = append(out, w+suf)
 	}
+	// Polish noun case endings (blef → blefu, bluff → bluffem, …).
+	for _, suf := range []string{
+		"u", "owi", "em", "ie", "y", "ą", "ę",
+		"ów", "om", "ami", "ach", "ami",
+	} {
+		out = append(out, w+suf)
+	}
 	// Russian soft-sign nouns: нуль → нулю, ноль → ноля, …
 	if strings.HasSuffix(w, "ь") && len([]rune(w)) > 1 {
 		runes := []rune(w)

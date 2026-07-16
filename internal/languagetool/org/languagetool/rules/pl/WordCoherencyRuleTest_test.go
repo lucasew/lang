@@ -4,31 +4,61 @@ package pl
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/WordCoherencyRuleTest.java :: WordCoherencyRuleTest.testRule
 func TestWordCoherencyRule_Rule(t *testing.T) {
-	// contains assertThat
-	_ = "To jest grejpfrut. Dobry grejpfrut." // assertGood
-	_ = "Lubię Twoje blefy. Blef to jest coś." // assertGood
+	rule := NewWordCoherencyRule(nil)
+
+	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest grejpfrut. Dobry grejpfrut."),
+	})))
+	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("Lubię Twoje blefy. Blef to jest coś."),
+	})))
+
+	matches := rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest grapefruit. Dobry grejpfrut."),
+	})
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "grapefruit", matches[0].GetSuggestedReplacements()[0])
+
+	// Single-sentence mixed variants (positions relative to that sentence).
+	matches = rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest jego bluff. A może blef?"),
+	})
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "bluff", matches[0].GetSuggestedReplacements()[0])
 }
 
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/WordCoherencyRuleTest.java :: WordCoherencyRuleTest.testCallIndependence
 func TestWordCoherencyRule_CallIndependence(t *testing.T) {
-	tools.Unimplemented("WordCoherencyRuleTest.testCallIndependence")
+	rule := NewWordCoherencyRule(nil)
+	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest blef."),
+	})))
+	// Independent call — no memory of previous text
+	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("A to nie bluff."),
+	})))
 }
 
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/WordCoherencyRuleTest.java :: WordCoherencyRuleTest.testMatchPosition
 func TestWordCoherencyRule_MatchPosition(t *testing.T) {
-	// contains assertThat
+	rule := NewWordCoherencyRule(nil)
+	matches := rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest blef. Ale nie bluff."),
+	})
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, 22, matches[0].GetFromPos())
+	require.Equal(t, 27, matches[0].GetToPos())
 }
 
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/WordCoherencyRuleTest.java :: WordCoherencyRuleTest.testRuleCompleteTexts
-func TestWordCoherencyRule_RuleCompleteTexts(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+func TestWordCoherencyRule_FullForms(t *testing.T) {
+	rule := NewWordCoherencyRule(nil)
+	require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest blef. Nie wierzysz? Nie widzisz blefu!"),
+	})))
+	require.Equal(t, 1, len(rule.MatchList([]*languagetool.AnalyzedSentence{
+		languagetool.AnalyzePlain("To jest blef. Nie wierzysz? Nie widzisz bluffu!"),
+	})))
 }
