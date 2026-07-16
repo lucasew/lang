@@ -1,3 +1,4 @@
 package ga
 
-// Java twin name file for synthesizer (implementation in package).
+// irish synthesizer Java twin name file.
+var _ = NewIrishSynthesizer

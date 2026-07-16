@@ -1,3 +1,4 @@
 package sk
 
-// Java twin name file for synthesizer (implementation in package).
+// slovak synthesizer Java twin name file.
+var _ = NewSlovakSynthesizer

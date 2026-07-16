@@ -1,3 +1,4 @@
 package gl
 
-// Java twin name file for synthesizer (implementation in package).
+// galician synthesizer Java twin name file.
+var _ = NewGalicianSynthesizer

@@ -1,3 +1,4 @@
 package ro
 
-// Java twin name file for synthesizer (implementation in package).
+// romanian synthesizer Java twin name file.
+var _ = NewRomanianSynthesizer

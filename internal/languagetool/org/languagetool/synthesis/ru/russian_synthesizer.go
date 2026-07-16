@@ -1,3 +1,4 @@
 package ru
 
-// Java twin name file for synthesizer (implementation in package).
+// russian synthesizer Java twin name file.
+var _ = NewRussianSynthesizer

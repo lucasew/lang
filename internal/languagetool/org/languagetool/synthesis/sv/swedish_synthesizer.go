@@ -1,3 +1,4 @@
 package sv
 
-// Java twin name file for synthesizer (implementation in package).
+// swedish synthesizer Java twin name file.
+var _ = NewSwedishSynthesizer
