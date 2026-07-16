@@ -23,6 +23,7 @@ type AnalyzedTokenReadings struct {
 	historicalAnnotations    string
 	hasSameLemmas            bool
 	hasTypographicApostrophe bool
+	chunkTags                []string
 }
 
 func NewAnalyzedTokenReadings(tok *AnalyzedToken) *AnalyzedTokenReadings {
@@ -400,3 +401,36 @@ func (r *AnalyzedTokenReadings) IsNonWord() bool {
 }
 
 var nonWordRE = regexp.MustCompile(`^[.?!…:;,~’'"„“”»«‚‘›‹()\[\]\-–—*×∗·+÷/=]$`)
+
+// SetChunkTags ports AnalyzedTokenReadings.setChunkTags (tags as plain strings).
+func (r *AnalyzedTokenReadings) SetChunkTags(tags []string) {
+	if r == nil {
+		return
+	}
+	r.chunkTags = append([]string(nil), tags...)
+}
+
+// GetChunkTags returns assigned chunk tags (may be nil).
+func (r *AnalyzedTokenReadings) GetChunkTags() []string {
+	if r == nil {
+		return nil
+	}
+	return r.chunkTags
+}
+
+// MatchesChunkRegex reports whether any chunk tag matches the regex.
+func (r *AnalyzedTokenReadings) MatchesChunkRegex(chunkRegex string) bool {
+	if r == nil || chunkRegex == "" {
+		return false
+	}
+	re, err := regexp.Compile(chunkRegex)
+	if err != nil {
+		return false
+	}
+	for _, c := range r.chunkTags {
+		if re.MatchString(c) {
+			return true
+		}
+	}
+	return false
+}

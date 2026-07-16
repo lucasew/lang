@@ -3,8 +3,9 @@ package language
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/chunking"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/noop"
+	chunkxx "github.com/lucasew/lang/internal/languagetool/org/languagetool/chunking/xx"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	disambigxx "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules/xx"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/xx"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
@@ -15,6 +16,9 @@ const DemoShortCode = "xx"
 // Demo ports org.languagetool.language.Demo — always-available test language.
 type Demo struct {
 	Name string
+	// DisambiguationRules optional XML-loaded rules for DemoDisambiguator2.
+	DisambiguationRules any // kept untyped to avoid cycles; set via SetDisambiguator
+	disambiguator       disambiguation.Disambiguator
 }
 
 func NewDemo() *Demo {
@@ -41,12 +45,21 @@ func (d *Demo) CreateDefaultTagger() languagetool.Tagger {
 }
 
 func (d *Demo) CreateDefaultDisambiguator() disambiguation.Disambiguator {
-	// Java uses DemoDisambiguator2; identity noop is fine until that port lands.
-	return noop.NewNoopDisambiguator()
+	if d != nil && d.disambiguator != nil {
+		return d.disambiguator
+	}
+	return disambigxx.NewDemoDisambiguator2()
+}
+
+// SetDisambiguator overrides the default DemoDisambiguator2.
+func (d *Demo) SetDisambiguator(dis disambiguation.Disambiguator) {
+	if d != nil {
+		d.disambiguator = dis
+	}
 }
 
 func (d *Demo) CreateDefaultChunker() chunking.Chunker {
-	return chunking.FuncChunker(func(_ []*languagetool.AnalyzedTokenReadings) {})
+	return chunkxx.NewDemoChunker()
 }
 
 func (d *Demo) CreateDefaultWordTokenizer() tokenizers.Tokenizer {
@@ -64,3 +77,6 @@ func RegisterDemo() {
 		Code: DemoShortCode,
 	})
 }
+
+// Ensure Demo satisfies languagetool.Language.
+var _ languagetool.Language = (*Demo)(nil)
