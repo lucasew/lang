@@ -18,6 +18,9 @@ type AbstractDashRule struct {
 	CompoundPatterns []string // longest first
 	Message          string
 	Description      string
+	// IsLetter reports whether r is a word character for boundary checks.
+	// When nil, ASCII letters are used (EN/PL default). RU/PT override this.
+	IsLetter func(r rune) bool
 }
 
 // LoadDashCompoundPatterns ports AbstractDashRule.loadCompoundFile variants.
@@ -102,16 +105,20 @@ func (r *AbstractDashRule) Match(sentence *languagetool.AnalyzedSentence) []*Rul
 			if startPositions[beginU16] {
 				continue
 			}
-			// boundary: not ASCII letter before/after (Java [a-zA-Z])
+			// boundary: not a language letter before/after (Java isBoundary)
+			isLetter := isASCIILetter
+			if r.IsLetter != nil {
+				isLetter = r.IsLetter
+			}
 			if begin > 0 {
 				r0, _ := lastRune(text[:begin])
-				if isASCIILetter(r0) {
+				if isLetter(r0) {
 					continue
 				}
 			}
 			if end < len(text) {
 				r0, _ := firstRune(text[end:])
-				if isASCIILetter(r0) {
+				if isLetter(r0) {
 					continue
 				}
 			}
