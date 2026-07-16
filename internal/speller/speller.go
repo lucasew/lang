@@ -130,10 +130,15 @@ func (s *Speller) suggest(word string, limit int) []string {
 	if limit <= 0 {
 		limit = 5
 	}
-	seen := map[string]bool{word: true}
+	lw := strings.ToLower(word)
+	seen := map[string]bool{word: true, lw: true}
 	var out []string
 	add := func(c string) {
 		if c == "" || seen[c] {
+			return
+		}
+		// avoid tiny junk suggestions for longer inputs
+		if len([]rune(word)) >= 3 && len([]rune(c)) < 2 {
 			return
 		}
 		if s.known(c) {
@@ -141,38 +146,33 @@ func (s *Speller) suggest(word string, limit int) []string {
 			out = append(out, c)
 		}
 	}
-	// lowercase variants
-	lw := strings.ToLower(word)
-	add(lw)
-	if len(lw) > 0 {
-		add(strings.ToUpper(lw[:1]) + lw[1:])
-	}
 	runes := []rune(lw)
-	// deletes
-	for i := range runes {
-		add(string(append(append([]rune{}, runes[:i]...), runes[i+1:]...)))
-	}
-	// transposes
+	// 1) transposes (often "teh" → "the")
 	for i := 0; i+1 < len(runes); i++ {
 		r := append([]rune{}, runes...)
 		r[i], r[i+1] = r[i+1], r[i]
 		add(string(r))
 	}
-	// replaces with a-z
+	// 2) replaces
 	for i := range runes {
+		orig := runes[i]
 		for c := 'a'; c <= 'z'; c++ {
-			if rune(c) == runes[i] {
+			if rune(c) == orig {
 				continue
 			}
-			r := append([]rune{}, runes...)
-			r[i] = c
-			add(string(r))
+			runes[i] = c
+			add(string(runes))
+			runes[i] = orig
 			if len(out) >= limit {
 				return out[:limit]
 			}
 		}
 	}
-	// inserts a-z
+	// 3) deletes
+	for i := range runes {
+		add(string(append(append([]rune{}, runes[:i]...), runes[i+1:]...)))
+	}
+	// 4) inserts
 	for i := 0; i <= len(runes); i++ {
 		for c := 'a'; c <= 'z'; c++ {
 			r := make([]rune, 0, len(runes)+1)
@@ -185,6 +185,7 @@ func (s *Speller) suggest(word string, limit int) []string {
 			}
 		}
 	}
+	// 5) capitalized form of best
 	if len(out) > limit {
 		out = out[:limit]
 	}

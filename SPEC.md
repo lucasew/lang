@@ -116,10 +116,11 @@ Not “similar category in the same region.” Goldens from upstream are law.
 
 Faithful port of LanguageTool’s real analysis chain, not a reduced toy:
 
-**text → sentence split → tokenize → tag (POS/morph) → disambiguate → pattern/rules → filters → suggestions**
+**text → sentence split → tokenize → tag (POS/morph) → chunk → disambiguate → pattern/rules → filters → suggestions**
 
 - Every stage exists as a real component in the architecture.
 - Stages are implemented by **mirroring upstream behavior and consuming official data**, not by inventing a parallel linguistics stack.
+- **Chunking (en):** currently a POS-driven BIO heuristic plus NP singular/plural refinement (LT’s `EnglishChunkFilter` shape). Full OpenNLP maxent models remain a plateau toward 1:1.
 - Claiming parity for a language pack requires goldens for that pack to pass — not merely “XML parses.”
 
 ### 3.3 Official data
