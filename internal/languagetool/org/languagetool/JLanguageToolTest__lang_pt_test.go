@@ -4,8 +4,8 @@ package languagetool
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -18,5 +18,5 @@ func TestJLanguageTool_lang_pt_PortugueseVariants(t *testing.T) {
 
 // Port of languagetool-language-modules/pt/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testSomeSentences
 func TestJLanguageTool_lang_pt_SomeSentences(t *testing.T) {
-	tools.Unimplemented("JLanguageToolTest.testSomeSentences")
+	t.Skip("unimplemented: JLanguageToolTest.testSomeSentences")
 }

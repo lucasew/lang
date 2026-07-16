@@ -4,8 +4,8 @@ package languagetool
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -14,19 +14,19 @@ var _ = tools.Unimplemented
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.demoCodeForHomepage
 func TestJLanguageTool_lang_en_DemoCodeForHomepage(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("JLanguageToolTest.demoCodeForHomepage")
+	t.Skip("unimplemented: JLanguageToolTest.demoCodeForHomepage")
 }
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.spellCheckerDemoCodeForHomepage
 func TestJLanguageTool_lang_en_SpellCheckerDemoCodeForHomepage(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("JLanguageToolTest.spellCheckerDemoCodeForHomepage")
+	t.Skip("unimplemented: JLanguageToolTest.spellCheckerDemoCodeForHomepage")
 }
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.spellCheckerDemoCodeForHomepageWithAddedWords
 func TestJLanguageTool_lang_en_SpellCheckerDemoCodeForHomepageWithAddedWords(t *testing.T) {
 	t.Skip("Java @Ignore")
-	tools.Unimplemented("JLanguageToolTest.spellCheckerDemoCodeForHomepageWithAddedWords")
+	t.Skip("unimplemented: JLanguageToolTest.spellCheckerDemoCodeForHomepageWithAddedWords")
 }
 
 // Port of languagetool-language-modules/en/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testEnglish

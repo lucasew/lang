@@ -119,13 +119,8 @@ func (r *AbstractTokenBasedRule) CanBeIgnoredFor(sentence *languagetool.Analyzed
 	if sentence == nil {
 		return true
 	}
-	nws := 0
-	for _, t := range sentence.GetTokensWithoutWhitespace() {
-		if t.GetToken() != "" {
-			nws++
-		}
-	}
-	if nws < r.MinTokenCount {
+	// Java compares getTokensWithoutWhitespace().length (includes SENT_START).
+	if len(sentence.GetTokensWithoutWhitespace()) < r.MinTokenCount {
 		return true
 	}
 	for _, th := range r.TokenHints {
