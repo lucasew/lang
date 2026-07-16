@@ -1,38 +1,40 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanHelperTest.java
+// Twin of GermanHelperTest.
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanHelperTest.java :: GermanHelperTest.testHasReadingOfType
-func TestGermanHelper_HasReadingOfType(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanHelperTest.java :: GermanHelperTest.testGetDeterminerNumber
 func TestGermanHelper_GetDeterminerNumber(t *testing.T) {
-	// contains assertThat
+	require.Equal(t, "SIN", GetDeterminerNumber("ART:DEF:DAT:SIN:FEM"))
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanHelperTest.java :: GermanHelperTest.testGetDeterminerDefiniteness
 func TestGermanHelper_GetDeterminerDefiniteness(t *testing.T) {
-	// contains assertThat
+	require.Equal(t, "DEF", GetDeterminerDefiniteness("ART:DEF:DAT:SIN:FEM"))
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanHelperTest.java :: GermanHelperTest.testGetDeterminerCase
 func TestGermanHelper_GetDeterminerCase(t *testing.T) {
-	// contains assertThat
+	require.Equal(t, "DAT", GetDeterminerCase("ART:DEF:DAT:SIN:FEM"))
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanHelperTest.java :: GermanHelperTest.testGetDeterminerGender
 func TestGermanHelper_GetDeterminerGender(t *testing.T) {
-	// contains assertThat
+	require.Equal(t, "", GetDeterminerGender(""))
+	require.Equal(t, "FEM", GetDeterminerGender("ART:DEF:DAT:SIN:FEM"))
+}
+
+func TestGermanHelper_HasReadingOfType(t *testing.T) {
+	tag := "ART:DEF:DAT:SIN:FEM"
+	tok := languagetool.NewAnalyzedTokenStr("der", tag, "", false, true)
+	readings := languagetool.NewAnalyzedTokenReadings(tok)
+	require.True(t, HasReadingOfType(readings, POSDeterminer))
+	require.False(t, HasReadingOfType(readings, POSNomen))
+}
+
+func TestGermanHelper_GetNounFields(t *testing.T) {
+	require.Equal(t, "AKK", GetNounCase("SUB:AKK:SIN:NEU"))
+	require.Equal(t, "SIN", GetNounNumber("SUB:AKK:SIN:NEU"))
+	require.Equal(t, "NEU", GetNounGender("SUB:AKK:SIN:NEU"))
 }
