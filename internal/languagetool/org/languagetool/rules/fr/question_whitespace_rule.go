@@ -17,18 +17,28 @@ const (
 var urlSchemeRE = regexp.MustCompile(`^(file|s?ftp|finger|git|gopher|hdl|https?|shttp|imap|mailto|mms|nntp|s?news(post|reply)?|prospero|rsync|rtspu|sips?|svn|svn\+ssh|telnet|wais)$`)
 
 // QuestionWhitespaceRule ports org.languagetool.rules.fr.QuestionWhitespaceRule.
-// Requires fine/nbsp spaces before ?!;: and around guillemets (non-strict: any
-// whitespace before ?!; is accepted).
+// Non-strict: any whitespace before ?!; is accepted.
+// Strict (Strict=true): only U+202F or U+00A0 count as allowed whitespace; missing
+// space is left to FRENCH_WHITESPACE (mutually exclusive).
 type QuestionWhitespaceRule struct {
 	Messages map[string]string
-	// Strict requires U+202F before ?!; (not implemented for twin; same as non-strict accept).
+	Strict   bool
 }
 
 func NewQuestionWhitespaceRule(messages map[string]string) *QuestionWhitespaceRule {
 	return &QuestionWhitespaceRule{Messages: messages}
 }
 
-func (r *QuestionWhitespaceRule) GetID() string { return "FRENCH_WHITESPACE" }
+func NewQuestionWhitespaceStrictRule(messages map[string]string) *QuestionWhitespaceRule {
+	return &QuestionWhitespaceRule{Messages: messages, Strict: true}
+}
+
+func (r *QuestionWhitespaceRule) GetID() string {
+	if r.Strict {
+		return "FRENCH_WHITESPACE_STRICT"
+	}
+	return "FRENCH_WHITESPACE"
+}
 
 func (r *QuestionWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	tokens := sentence.GetTokens() // include whitespace tokens
@@ -56,7 +66,7 @@ func (r *QuestionWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) 
 		if isPreviousWhitespace {
 			prevTokenToChange = ""
 		}
-		if !isAllowedWhitespaceChar(tokens, i-1) {
+		if !r.isAllowedWhitespaceChar(tokens, i-1) {
 			if token == "?" && prevToken != "!" {
 				msg = "Le point d'interrogation est précédé d'une espace fine insécable."
 				suggestionText = prevTokenToChange + espaceFineInsecable + "?"
@@ -88,7 +98,7 @@ func (r *QuestionWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) 
 				msg = "Le guillemet ouvrant est suivi d'une espace insécable."
 				suggestionText = "«" + nbsp
 				iTo = i - 1
-			} else if !isAllowedWhitespaceChar(tokens, i) {
+			} else if !r.isAllowedWhitespaceChar(tokens, i) {
 				nextToken := ""
 				if i+1 < len(tokens) {
 					nextToken = tokens[i+1].GetToken()
@@ -118,9 +128,15 @@ func (r *QuestionWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) 
 	return ruleMatches
 }
 
-func isAllowedWhitespaceChar(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+func (r *QuestionWhitespaceRule) isAllowedWhitespaceChar(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	if i < 0 || i >= len(tokens) {
 		return false
+	}
+	if r.Strict {
+		// Accept fine/nbsp; also treat non-whitespace as "allowed" so missing-space
+		// cases are left to FRENCH_WHITESPACE (Java mutual exclusivity).
+		t := tokens[i].GetToken()
+		return t == " " || t == " " || !tokens[i].IsWhitespace()
 	}
 	return tokens[i].IsWhitespace()
 }
@@ -128,7 +144,13 @@ func isAllowedWhitespaceChar(tokens []*languagetool.AnalyzedTokenReadings, i int
 // frWhitespaceAntiPattern approximates ANTI_PATTERNS without DisambiguationPatternRule.
 func frWhitespaceAntiPattern(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	tok := tokens[i].GetToken()
-	// smileys :-) :)
+	// smileys :) :-) — also skip the colon of a smiley
+	if tok == ":" && i+1 < len(tokens) {
+		n := tokens[i+1].GetToken()
+		if n == ")" || n == "(" || n == "D" || n == "-" {
+			return true
+		}
+	}
 	if (tok == ")" || tok == "(" || tok == "D") && i >= 1 {
 		if tokens[i-1].GetToken() == "-" && i >= 2 {
 			p := tokens[i-2].GetToken()

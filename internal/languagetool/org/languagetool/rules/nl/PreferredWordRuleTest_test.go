@@ -4,14 +4,13 @@ package nl
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/PreferredWordRuleTest.java :: PreferredWordRuleTest.test
-func TestPreferredWordRule_Test(t *testing.T) {
-	// contains assertThat
+func TestPreferredWordRule_Rule(t *testing.T) {
+	rule := NewPreferredWordRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("rijwiel"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "fiets", matches[0].GetSuggestedReplacements()[0])
 }
