@@ -1,17 +1,17 @@
 package it
 
-// Twin of languagetool-language-modules/it/src/test/java/org/languagetool/rules/it/ItalianTest.java
+// Twin of ItalianTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/it/src/test/java/org/languagetool/rules/it/ItalianTest.java :: ItalianTest.testLanguage
+// Port of ItalianTest.testLanguage
 func TestItalian_Language(t *testing.T) {
-	t.Skip("unimplemented: ItalianTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("it")
+	require.Equal(t, "it", lt.GetLanguageCode())
+	sents := lt.Analyze("Inserite qui il vostro testo.")
+	require.NotEmpty(t, sents)
 }

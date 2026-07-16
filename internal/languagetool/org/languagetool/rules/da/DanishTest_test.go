@@ -1,17 +1,17 @@
 package da
 
-// Twin of languagetool-language-modules/da/src/test/java/org/languagetool/rules/da/DanishTest.java
+// Twin of DanishTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/da/src/test/java/org/languagetool/rules/da/DanishTest.java :: DanishTest.testLanguage
+// Port of DanishTest.testLanguage
 func TestDanish_Language(t *testing.T) {
-	t.Skip("unimplemented: DanishTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("da")
+	require.Equal(t, "da", lt.GetLanguageCode())
+	sents := lt.Analyze("Dette er en testtekst.")
+	require.NotEmpty(t, sents)
 }

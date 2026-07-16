@@ -1,17 +1,17 @@
 package sk
 
-// Twin of languagetool-language-modules/sk/src/test/java/org/languagetool/rules/sk/SlovakTest.java
+// Twin of SlovakTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sk/src/test/java/org/languagetool/rules/sk/SlovakTest.java :: SlovakTest.testLanguage
+// Port of SlovakTest.testLanguage
 func TestSlovak_Language(t *testing.T) {
-	t.Skip("unimplemented: SlovakTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("sk")
+	require.Equal(t, "sk", lt.GetLanguageCode())
+	sents := lt.Analyze("Toto je testovací text.")
+	require.NotEmpty(t, sents)
 }

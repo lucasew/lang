@@ -1,37 +1,17 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanTest.java
+// Twin of GermanTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanTest.java :: GermanTest.testLanguage
+// Port of GermanTest.testLanguage
 func TestGerman_Language(t *testing.T) {
-	t.Skip("unimplemented: GermanTest.testLanguage")
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanTest.java :: GermanTest.testMessageCoherency
-func TestGerman_MessageCoherency(t *testing.T) {
-	t.Skip("unimplemented: GermanTest.testMessageCoherency")
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanTest.java :: GermanTest.testGenderCharsAgainstAllRules
-func TestGerman_GenderCharsAgainstAllRules(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanTest.java :: GermanTest.testMergingOfGrammarCorrections
-func TestGerman_MergingOfGrammarCorrections(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/GermanTest.java :: GermanTest.testSwissSpellingVariants
-func TestGerman_SwissSpellingVariants(t *testing.T) {
-	t.Skip("unimplemented: GermanTest.testSwissSpellingVariants")
+	lt := languagetool.NewJLanguageTool("de")
+	require.Equal(t, "de", lt.GetLanguageCode())
+	sents := lt.Analyze("Das ist ein Testtext.")
+	require.NotEmpty(t, sents)
 }

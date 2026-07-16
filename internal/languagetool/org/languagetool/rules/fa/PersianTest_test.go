@@ -1,17 +1,17 @@
 package fa
 
-// Twin of languagetool-language-modules/fa/src/test/java/org/languagetool/rules/fa/PersianTest.java
+// Twin of PersianTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fa/src/test/java/org/languagetool/rules/fa/PersianTest.java :: PersianTest.testLanguage
+// Port of PersianTest.testLanguage
 func TestPersian_Language(t *testing.T) {
-	t.Skip("unimplemented: PersianTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("fa")
+	require.Equal(t, "fa", lt.GetLanguageCode())
+	sents := lt.Analyze("این یک متن آزمایشی است.")
+	require.NotEmpty(t, sents)
 }

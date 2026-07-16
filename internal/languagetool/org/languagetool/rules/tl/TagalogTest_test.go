@@ -1,17 +1,17 @@
 package tl
 
-// Twin of languagetool-language-modules/tl/src/test/java/org/languagetool/rules/tl/TagalogTest.java
+// Twin of TagalogTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/tl/src/test/java/org/languagetool/rules/tl/TagalogTest.java :: TagalogTest.testLanguage
+// Port of TagalogTest.testLanguage
 func TestTagalog_Language(t *testing.T) {
-	t.Skip("unimplemented: TagalogTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("tl")
+	require.Equal(t, "tl", lt.GetLanguageCode())
+	sents := lt.Analyze("Ito ay isang test.")
+	require.NotEmpty(t, sents)
 }

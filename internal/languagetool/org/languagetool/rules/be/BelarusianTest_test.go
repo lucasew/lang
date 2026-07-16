@@ -1,17 +1,17 @@
 package be
 
-// Twin of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianTest.java
+// Twin of BelarusianTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianTest.java :: BelarusianTest.testLanguage
+// Port of BelarusianTest.testLanguage
 func TestBelarusian_Language(t *testing.T) {
-	t.Skip("unimplemented: BelarusianTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("be")
+	require.Equal(t, "be", lt.GetLanguageCode())
+	sents := lt.Analyze("Гэта тэставы тэкст.")
+	require.NotEmpty(t, sents)
 }

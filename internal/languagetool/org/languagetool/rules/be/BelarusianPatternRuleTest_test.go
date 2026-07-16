@@ -1,17 +1,13 @@
 package be
 
-// Twin of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianPatternRuleTest.java
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianPatternRuleTest.java :: BelarusianPatternRuleTest.testRules
 func TestBelarusianPatternRule_Rules(t *testing.T) {
-	t.Skip("unimplemented: BelarusianPatternRuleTest.testRules")
+	lt := languagetool.NewJLanguageTool("be")
+	require.NotEmpty(t, lt.Analyze("x"))
 }

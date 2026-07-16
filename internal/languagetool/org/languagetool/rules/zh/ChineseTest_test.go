@@ -1,17 +1,17 @@
 package zh
 
-// Twin of languagetool-language-modules/zh/src/test/java/org/languagetool/rules/zh/ChineseTest.java
+// Twin of ChineseTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/zh/src/test/java/org/languagetool/rules/zh/ChineseTest.java :: ChineseTest.testLanguage
+// Port of ChineseTest.testLanguage
 func TestChinese_Language(t *testing.T) {
-	t.Skip("unimplemented: ChineseTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("zh")
+	require.Equal(t, "zh", lt.GetLanguageCode())
+	sents := lt.Analyze("这是一个测试。")
+	require.NotEmpty(t, sents)
 }

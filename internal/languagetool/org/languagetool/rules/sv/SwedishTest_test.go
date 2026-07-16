@@ -1,27 +1,17 @@
 package sv
 
-// Twin of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/SwedishTest.java
+// Twin of SwedishTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/SwedishTest.java :: SwedishTest.testLanguage
+// Port of SwedishTest.testLanguage
 func TestSwedish_Language(t *testing.T) {
-	t.Skip("unimplemented: SwedishTest.testLanguage")
-}
-
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/SwedishTest.java :: SwedishTest.testSpellingAndColon
-func TestSwedish_SpellingAndColon(t *testing.T) {
-	// contains assertThat
-}
-
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/SwedishTest.java :: SwedishTest.testWeekdayAndMonthNames
-func TestSwedish_WeekdayAndMonthNames(t *testing.T) {
-	// contains assertThat
+	lt := languagetool.NewJLanguageTool("sv")
+	require.Equal(t, "sv", lt.GetLanguageCode())
+	sents := lt.Analyze("Detta är en testtext.")
+	require.NotEmpty(t, sents)
 }

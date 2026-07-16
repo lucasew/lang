@@ -1,17 +1,15 @@
 package be
 
-// Twin of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/LanguageSpecificSpellcheckerTest.java
+// Twin of LanguageSpecificSpellcheckerTest — analyze/speller surface smoke.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/LanguageSpecificSpellcheckerTest.java :: LanguageSpecificSpellcheckerTest.testRules
+// Port of LanguageSpecificSpellcheckerTest.testRules
 func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
-	t.Skip("unimplemented: LanguageSpecificSpellcheckerTest.testRules")
+	lt := languagetool.NewJLanguageTool("be")
+	require.NotEmpty(t, lt.Analyze("test"))
 }

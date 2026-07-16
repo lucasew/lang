@@ -1,17 +1,29 @@
 package languagetool
 
-// Twin of languagetool-core/src/test/java/org/languagetool/ResourceBundleToolsTest.java
+// Twin of ResourceBundleToolsTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/ResourceBundleToolsTest.java :: ResourceBundleToolsTest.testGetMessageBundle
+// Port of ResourceBundleToolsTest.testGetMessageBundle
 func TestResourceBundleTools_GetMessageBundle(t *testing.T) {
-	// contains assertNotNull
+	load := func(locale string) MessageBundle {
+		switch locale {
+		case "en":
+			return MessageBundle{"greeting": "Hello", "farewell": "Bye"}
+		case "fr":
+			return MessageBundle{"greeting": "Bonjour"}
+		default:
+			return MessageBundle{}
+		}
+	}
+	tools := NewResourceBundleTools(load)
+	en := tools.GetMessageBundle()
+	require.NotNil(t, en)
+	require.Equal(t, "Hello", en["greeting"])
+	fr := tools.GetMessageBundleFor("fr")
+	require.Equal(t, "Bonjour", fr["greeting"])
+	require.Equal(t, "Bye", fr["farewell"]) // English fallback
 }

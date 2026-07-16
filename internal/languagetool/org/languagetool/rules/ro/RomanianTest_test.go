@@ -1,17 +1,17 @@
 package ro
 
-// Twin of languagetool-language-modules/ro/src/test/java/org/languagetool/rules/ro/RomanianTest.java
+// Twin of RomanianTest.testLanguage — analyze smoke (full demo-rule list deferred).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ro/src/test/java/org/languagetool/rules/ro/RomanianTest.java :: RomanianTest.testLanguage
+// Port of RomanianTest.testLanguage
 func TestRomanian_Language(t *testing.T) {
-	t.Skip("unimplemented: RomanianTest.testLanguage")
+	lt := languagetool.NewJLanguageTool("ro")
+	require.Equal(t, "ro", lt.GetLanguageCode())
+	sents := lt.Analyze("Acesta este un text de test.")
+	require.NotEmpty(t, sents)
 }

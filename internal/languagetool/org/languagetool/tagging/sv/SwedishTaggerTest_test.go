@@ -1,22 +1,27 @@
 package sv
 
-// Twin of languagetool-language-modules/sv/src/test/java/org/languagetool/tagging/sv/SwedishTaggerTest.java
+// Twin of SwedishTaggerTest
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/tagging/sv/SwedishTaggerTest.java :: SwedishTaggerTest.testDictionary
 func TestSwedishTagger_Dictionary(t *testing.T) {
-	t.Skip("unimplemented: SwedishTaggerTest.testDictionary")
+	wt := tagging.MapWordTagger{"hus": {tagging.NewTaggedWord("hus", "NN")}}
+	tagger := NewSwedishTagger(wt)
+	require.Equal(t, SwedishDictPath, tagger.GetDictionaryPath())
+	require.Len(t, tagger.TagWord("hus"), 1)
 }
 
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/tagging/sv/SwedishTaggerTest.java :: SwedishTaggerTest.testTagger
 func TestSwedishTagger_Tagger(t *testing.T) {
-	t.Skip("unimplemented: SwedishTaggerTest.testTagger")
+	wt := tagging.MapWordTagger{
+		"detta": {tagging.NewTaggedWord("detta", "PN")},
+		"test":  {tagging.NewTaggedWord("test", "NN")},
+	}
+	got := NewSwedishTagger(wt).Tag([]string{"Detta", "test", "xyz"})
+	require.Len(t, got, 3)
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
