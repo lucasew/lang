@@ -9,19 +9,19 @@ import (
 
 // AnalyzedTokenReadings ports org.languagetool.AnalyzedTokenReadings (subset needed for tests; expand 1:1).
 type AnalyzedTokenReadings struct {
-	anTokReadings       []*AnalyzedToken
-	startPos            int
-	token               string
-	isWhitespace        bool
-	isLinebreak         bool
-	isSentStart         bool
-	isSentEnd           bool
-	isParaEnd           bool
-	isWhitespaceBefore  bool
-	isImmunized         bool
-	immunizationSrcLine int
+	anTokReadings         []*AnalyzedToken
+	startPos              int
+	token                 string
+	isWhitespace          bool
+	isLinebreak           bool
+	isSentStart           bool
+	isSentEnd             bool
+	isParaEnd             bool
+	isWhitespaceBefore    bool
+	isImmunized           bool
+	immunizationSrcLine   int
 	historicalAnnotations string
-	hasSameLemmas       bool
+	hasSameLemmas         bool
 }
 
 func NewAnalyzedTokenReadings(tok *AnalyzedToken) *AnalyzedTokenReadings {
@@ -97,6 +97,26 @@ func (r *AnalyzedTokenReadings) HasPosTag(posTag string) bool {
 func (r *AnalyzedTokenReadings) HasPartialPosTag(posTag string) bool {
 	for _, reading := range r.anTokReadings {
 		if reading.GetPOSTag() != nil && strings.Contains(*reading.GetPOSTag(), posTag) {
+			return true
+		}
+	}
+	return false
+}
+
+// HasPosTagStartingWith ports AnalyzedTokenReadings.hasPosTagStartingWith.
+func (r *AnalyzedTokenReadings) HasPosTagStartingWith(posTag string) bool {
+	for _, reading := range r.anTokReadings {
+		if reading.GetPOSTag() != nil && strings.HasPrefix(*reading.GetPOSTag(), posTag) {
+			return true
+		}
+	}
+	return false
+}
+
+// IsTagged ports AnalyzedTokenReadings.isTagged — true if any reading has a real POS tag.
+func (r *AnalyzedTokenReadings) IsTagged() bool {
+	for _, element := range r.anTokReadings {
+		if !element.HasNoTag() {
 			return true
 		}
 	}
@@ -197,13 +217,13 @@ func (r *AnalyzedTokenReadings) LeaveReading(token *AnalyzedToken) {
 }
 
 func (r *AnalyzedTokenReadings) GetReadingsLength() int { return len(r.anTokReadings) }
-func (r *AnalyzedTokenReadings) IsWhitespace() bool    { return r.isWhitespace }
-func (r *AnalyzedTokenReadings) IsLinebreak() bool     { return r.isLinebreak }
-func (r *AnalyzedTokenReadings) IsSentenceStart() bool { return r.isSentStart }
-func (r *AnalyzedTokenReadings) IsParagraphEnd() bool  { return r.isParaEnd }
-func (r *AnalyzedTokenReadings) IsSentenceEnd() bool   { return r.isSentEnd }
-func (r *AnalyzedTokenReadings) GetToken() string      { return r.token }
-func (r *AnalyzedTokenReadings) GetStartPos() int      { return r.startPos }
+func (r *AnalyzedTokenReadings) IsWhitespace() bool     { return r.isWhitespace }
+func (r *AnalyzedTokenReadings) IsLinebreak() bool      { return r.isLinebreak }
+func (r *AnalyzedTokenReadings) IsSentenceStart() bool  { return r.isSentStart }
+func (r *AnalyzedTokenReadings) IsParagraphEnd() bool   { return r.isParaEnd }
+func (r *AnalyzedTokenReadings) IsSentenceEnd() bool    { return r.isSentEnd }
+func (r *AnalyzedTokenReadings) GetToken() string       { return r.token }
+func (r *AnalyzedTokenReadings) GetStartPos() int       { return r.startPos }
 
 func (r *AnalyzedTokenReadings) SetParagraphEnd() {
 	if !r.IsParagraphEnd() {
