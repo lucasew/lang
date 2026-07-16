@@ -1,17 +1,21 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SimilarNameRuleTest.java
+// Twin of SimilarNameRuleTest (surface name heuristic).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SimilarNameRuleTest.java :: SimilarNameRuleTest.testRule
 func TestSimilarNameRule_Rule(t *testing.T) {
-	tools.Unimplemented("SimilarNameRuleTest.testRule")
+	rule := NewSimilarNameRule(nil)
+	matchN := func(s string) int {
+		return len(rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)}))
+	}
+	require.Equal(t, 1, matchN("Hier steht Angela Müller. Im nächsten Satz dann Miller."))
+	require.Equal(t, 0, matchN("Hier steht Angela Müller. Im nächsten Satz dann Müllers Ehemann."))
+	require.Equal(t, 0, matchN("Hier steht Angela Müller. Dann Mulla, nicht ähnlich genug."))
+	require.Equal(t, 0, matchN("Ein Mikrocontroller, bei Mikrocontrollern"))
+	require.Equal(t, 0, matchN("Hier steht das Rad Deiner Freundin. Und Deinem Hund geht es gut?"))
 }
