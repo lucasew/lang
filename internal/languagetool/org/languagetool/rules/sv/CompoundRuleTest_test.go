@@ -4,14 +4,27 @@ package sv
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sv/src/test/java/org/languagetool/rules/sv/CompoundRuleTest.java :: CompoundRuleTest.testRule
 func TestCompoundRule_Rule(t *testing.T) {
-	tools.Unimplemented("CompoundRuleTest.testRule")
+	rule := NewCompoundRule(nil)
+	check := func(expectedErrors int, text string, expSuggestions ...string) {
+		t.Helper()
+		matches := rule.Match(languagetool.AnalyzePlain(text))
+		require.Equal(t, expectedErrors, len(matches), "text %q got %v", text, matches)
+		if len(expSuggestions) > 0 {
+			require.Equal(t, 1, expectedErrors)
+			require.Equal(t, expSuggestions, matches[0].GetSuggestedReplacements(), "text %q", text)
+		}
+	}
+	check(0, "IP-Adress")
+	check(0, "moll-tonart")
+	check(0, "e-mail")
+	check(1, "skit bra", "skitbra")
+	check(1, "skit-bra", "skitbra")
+	check(1, "IP Adress", "IP-Adress")
+	check(1, "moll tonart", "moll-tonart", "molltonart")
+	check(1, "e mail", "e-mail")
 }
