@@ -4,15 +4,41 @@ package el
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+func elWRBMessages() map[string]string {
+	return map[string]string{
+		"desc_repetition_beginning_adv":       "Τρεις διαδοχικές προτάσεις αρχίζουν με το ίδιο επίρρημα.",
+		"desc_repetition_beginning_word":      "Τρεις διαδοχικές προτάσεις αρχίζουν με την ίδια λέξη.",
+		"desc_repetition_beginning_thesaurus": "Εξετάστε τη χρήση συνωνύμων.",
+	}
+}
 
-// Port of languagetool-language-modules/el/src/test/java/org/languagetool/rules/el/GreekWordRepeatBeginningRuleTest.java :: GreekWordRepeatBeginningRuleTest.testRule
 func TestGreekWordRepeatBeginningRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	rule := NewGreekWordRepeatBeginningRule(elWRBMessages())
+
+	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Εγώ παίζω ποδόσφαιρο. Εγώ παίζω μπάσκετ"))))
+	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Το αυτοκίνητο είναι καινούργιο. Το ποδήλατο είναι παλιό. Το καράβι είναι καινούργιο."))))
+	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Μία περίπτωση εξηγήθηκε ήδη. Μία άλλη θα αναλυθεί παρακάτω."))))
+
+	matches2 := rule.MatchList(languagetool.SplitAndAnalyze("Επίσης, μιλάω Ελληνικά. Επίσης, μιλάω Αγγλικά."))
+	require.Equal(t, 1, len(matches2))
+	suggs := matches2[0].GetSuggestedReplacements()
+	has := func(s string) bool {
+		for _, x := range suggs {
+			if x == s {
+				return true
+			}
+		}
+		return false
+	}
+	require.True(t, has("Επιπλέον"))
+	require.True(t, has("Ακόμη"))
+	require.True(t, has("Επιπρόσθετα"))
+	require.True(t, has("Συμπληρωματικά"))
+
+	matches1 := rule.MatchList(languagetool.SplitAndAnalyze("Εγώ παίζω μπάσκετ. Εγώ παίζω ποδόσφαιρο. Εγώ παίζω βόλεϊ."))
+	require.Equal(t, 1, len(matches1))
 }
