@@ -1,18 +1,28 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundCoherencyRuleTest.java
+// Twin of CompoundCoherencyRuleTest (surface lemmas).
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/CompoundCoherencyRuleTest.java :: CompoundCoherencyRuleTest.testRule
 func TestCompoundCoherencyRule_Rule(t *testing.T) {
-	t.Skip("Java @Ignore")
-	tools.Unimplemented("CompoundCoherencyRuleTest.testRule")
+	rule := NewCompoundCoherencyRule(nil)
+	match2 := func(s1, s2 string) int {
+		return len(rule.MatchList([]*languagetool.AnalyzedSentence{
+			languagetool.AnalyzePlain(s1),
+			languagetool.AnalyzePlain(s2),
+		}))
+	}
+	require.Equal(t, 0, match2("Ein Jugendfoto.", "Und ein Jugendfoto."))
+	require.Equal(t, 0, match2("Der Zahn-Ärzte-Verband.", "Der Zahn-Ärzte-Verband."))
+
+	// Jugendfoto vs Jugend-Foto
+	require.Equal(t, 1, match2("Ein Jugendfoto.", "Und ein Jugend-Foto."))
+	require.Equal(t, 1, match2("Ein Jugend-Foto.", "Und ein Jugendfoto."))
+
+	// Zahn-Ärzte vs Zahnärzte
+	require.Equal(t, 1, match2("Viele Zahn-Ärzte.", "Oder Zahnärzte."))
 }
