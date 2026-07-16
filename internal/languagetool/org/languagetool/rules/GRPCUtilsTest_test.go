@@ -3,7 +3,6 @@ package rules
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 func TestGRPCUtils_Levels(t *testing.T) {

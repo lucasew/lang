@@ -6,7 +6,6 @@ import (
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
