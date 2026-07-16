@@ -11,37 +11,37 @@ const (
 
 // CommandLineOptions ports org.languagetool.commandline.CommandLineOptions.
 type CommandLineOptions struct {
-	PrintUsage                   bool
-	PrintVersion                 bool
-	PrintLanguages               bool
-	Verbose                      bool
-	Recursive                    bool
-	TaggerOnly                   bool
+	PrintUsage                    bool
+	PrintVersion                  bool
+	PrintLanguages                bool
+	Verbose                       bool
+	Recursive                     bool
+	TaggerOnly                    bool
 	SingleLineBreakMarksParagraph bool
-	OutputFormat                 OutputFormat
-	ListUnknown                  bool
-	ApplySuggestions             bool
-	Profile                      bool
-	Bitext                       bool
-	AutoDetect                   bool
-	XMLFiltering                 bool
-	LineByLine                   bool
-	EnableTempOff                bool
-	CleanOverlapping             bool
-	Level                        string // DEFAULT, PICKY, ...
-	Language                     string
-	MotherTongue                 string
-	LanguageModelPath            string
-	FasttextModelPath            string
-	FasttextBinaryPath           string
-	Encoding                     string
-	Filename                     string
-	DisabledRules                []string
-	EnabledRules                 []string
-	EnabledCategories            []string
-	DisabledCategories           []string
-	UseEnabledOnlyFlag           bool
-	RuleValues                   []string
+	OutputFormat                  OutputFormat
+	ListUnknown                   bool
+	ApplySuggestions              bool
+	Profile                       bool
+	Bitext                        bool
+	AutoDetect                    bool
+	XMLFiltering                  bool
+	LineByLine                    bool
+	EnableTempOff                 bool
+	CleanOverlapping              bool
+	Level                         string // DEFAULT, PICKY, ...
+	Language                      string
+	MotherTongue                  string
+	LanguageModelPath             string
+	FasttextModelPath             string
+	FasttextBinaryPath            string
+	Encoding                      string
+	Filename                      string
+	DisabledRules                 []string
+	EnabledRules                  []string
+	EnabledCategories             []string
+	DisabledCategories            []string
+	UseEnabledOnlyFlag            bool
+	RuleValues                    []string
 }
 
 func NewCommandLineOptions() *CommandLineOptions {
@@ -51,12 +51,12 @@ func NewCommandLineOptions() *CommandLineOptions {
 	}
 }
 
-func (o *CommandLineOptions) SetPrintUsage(v bool)                   { o.PrintUsage = v }
-func (o *CommandLineOptions) SetPrintVersion(v bool)                 { o.PrintVersion = v }
-func (o *CommandLineOptions) SetPrintLanguages(v bool)               { o.PrintLanguages = v }
-func (o *CommandLineOptions) SetVerbose(v bool)                      { o.Verbose = v }
-func (o *CommandLineOptions) SetRecursive(v bool)                    { o.Recursive = v }
-func (o *CommandLineOptions) SetTaggerOnly(v bool)                   { o.TaggerOnly = v }
+func (o *CommandLineOptions) SetPrintUsage(v bool)     { o.PrintUsage = v }
+func (o *CommandLineOptions) SetPrintVersion(v bool)   { o.PrintVersion = v }
+func (o *CommandLineOptions) SetPrintLanguages(v bool) { o.PrintLanguages = v }
+func (o *CommandLineOptions) SetVerbose(v bool)        { o.Verbose = v }
+func (o *CommandLineOptions) SetRecursive(v bool)      { o.Recursive = v }
+func (o *CommandLineOptions) SetTaggerOnly(v bool)     { o.TaggerOnly = v }
 func (o *CommandLineOptions) SetSingleLineBreakMarksParagraph(v bool) {
 	o.SingleLineBreakMarksParagraph = v
 }
