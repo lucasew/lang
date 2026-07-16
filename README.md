@@ -47,16 +47,17 @@ mise exec -- go run ./cmd/lang languages
 
 ## Status
 
-Initial scaffold:
-
 | Area | State |
 |------|--------|
 | CLI (`lang lint`, formats, exit codes) | done |
 | Data resolve + language discovery | done |
-| Pipeline architecture | staged; partial implement |
-| `WHITESPACE_RULE` (MultipleWhitespaceRule) | done (LT test positions) |
-| Tagger / disambiguator / pattern XML | not yet |
-| Full language matrix goldens | not yet |
+| SRX sentence split (`segment.srx`) | done (Java `\u` → RE2) |
+| Word tokenizer | done (LT character classes) |
+| Pattern rule XML loader | done (DTD entities, ~5.5k en rules) |
+| Pattern matcher | no-POS subset (POS/inflected skipped) |
+| `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
+| Tagger / disambiguator | not yet |
+| Full 1:1 goldens | growing |
 
 ## License
 

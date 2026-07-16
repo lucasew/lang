@@ -22,13 +22,13 @@ func newDoctorCmd() *cobra.Command {
 			fmt.Fprintf(out, "languages\t%d\n", len(c.Languages()))
 			fmt.Fprintln(out, "pipeline_stages:")
 			implemented := map[string]string{
-				pipeline.StageSentenceSplit: "partial (single-span text for text-level rules)",
-				pipeline.StageTokenize:      "partial (whitespace-aware tokenizer)",
-				pipeline.StageTag:           "not yet",
+				pipeline.StageSentenceSplit: "srx (segment.srx)",
+				pipeline.StageTokenize:      "WordTokenizer (+en underscore)",
+				pipeline.StageTag:           "not yet (POS rules skipped)",
 				pipeline.StageDisambiguate:  "not yet",
-				pipeline.StageRules:         "partial (WHITESPACE_RULE)",
-				pipeline.StageFilters:       "not yet",
-				pipeline.StageSuggestions:   "partial (via rules)",
+				pipeline.StageRules:         "WHITESPACE_RULE + pattern XML (no-POS subset)",
+				pipeline.StageFilters:       "partial (default=off, antipattern)",
+				pipeline.StageSuggestions:   "static suggestions only",
 			}
 			for _, s := range pipeline.AllStages {
 				fmt.Fprintf(out, "  %s\t%s\n", s, implemented[s])
