@@ -1,0 +1,1094 @@
+pass=627 fail=273 total=900 pct=69.67
+
+FAIL kind=grammar_example lang=ar rule=gender_0001_hadha src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا السلامة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0001_hadha src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذا السلامة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0001_hadha src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا سلامته"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0001_hadha src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا سلامة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0002_hadhihi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذه البطل"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0002_hadhihi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذه البطل"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0003_hadha src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذه الذقن."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0004_hadhihi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا الكتف."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0004_hadhihi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا كتفه."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0004_hadhihi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذا الكتف."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0006_dhalika src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ذلك السلامة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0006_dhalika src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وذلك السلامة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0006_dhalika src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ذلك سلامته"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0006_dhalika src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ذلك سلامة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0007_tilka src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="تلك السلام"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0007_tilka src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="تلك سلام"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0008_dhalika src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="تلك الذقن."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0009_tilka src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ذلك الكتف."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0009_tilka src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ذلك كتفه."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0009_tilka src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وذلك الكتف."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0010_hadhani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان البطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0010_hadhani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذان البطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0010_hadhani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان بطاقتاه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0010_hadhani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان بطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0011_hatani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتان السلامان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0011_hatani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتان سلامان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0012_hadhani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتان الذقنان."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0013_hatani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان الكتفان."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0013_hatani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان كتفاه."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0013_hatani src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذان الكتفان."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0014_hadhayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذين البطاقتين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0014_hadhayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذين البطاقتين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0014_hadhayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذين بطاقتين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0015_hatayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتين السلامين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0015_hatayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتين سلامين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0016_hadhayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتين الذقنين."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0017_hatayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذين الكتفين."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0017_hatayni src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذين الكتفين."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0018_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان الكتابين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0018_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذان الكتابين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0018_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذان كتابين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0019_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذين الكتابان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0019_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهذين الكتابان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0019_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذين كتابان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0020_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="بهذين الكتابان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0020_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وبهذين الكتابان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0020_hadhani_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="كهذين كتابان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0021_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتان البطاقتين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0021_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهاتان البطاقتين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0021_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتان بطاقتين"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0022_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتين البطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0022_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وهاتين البطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0022_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هاتين بطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0023_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="بهاتين البطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0023_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وبهاتين البطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0023_hatayni_case src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="كهاتين بطاقتان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0010_alladhi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="القول التي سمعته"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0010_alladhi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="الطعام التي جلبناه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0011_allati src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="الوشاية الذي سمعتها"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0011_allati src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="الكتابة الذي جلبناها"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0100 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هؤلاء رجال يقظى"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0101 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="شريعة سمحاء"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=gender_0102 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ضبع مفترس"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0000_Qam_bi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="القيام بالضرب"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=grammar_0010_jazem_lm src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لم يجري"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=grammar_0010_jazem_lm src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لم يستطيعون"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=grammar_0010_jazem_lamma src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لما يجري"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=grammar_0010_jazem_lamma src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لما يستطيعون"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=grammar_0010_jazem_la_nahia src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لا تخافون"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=grammar_0011_notjazem_lam_nafia src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لا يخافوا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0008_uqsim_ban src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أقسم بأن يفعل كذا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0008_uqsim_ban src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أقسمت بأن يفعل كذا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0009_illa_wa src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ما تحدث إلا وقال خيرا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0017_in3kas_li src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هل هو انعكاس لشعور عام.."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0024_bikul_ma3ana_kalima src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="خالد\n        شجاع بكل معنى الكلمة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0045_ghyr_bi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لا تستعن غير بالله"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0049_kma_wa_anna src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="المطالعة ممتعة كما\n        وأنها تثري ثقافة القارئ"
+  detail=1 match(es) but none overlap marker [36,41)
+
+FAIL kind=grammar_example lang=ar rule=collo_0057_mimma_da3a src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="كلفني وألح علي،  مما يدعو إلى القلق"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0070_tamahwara_hawla src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يتمحور هذا الأمر حول كذا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0072_sewa_bi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="لا تستعن سوى بالله"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0073_Akhla_manzil src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أخلوا السكان من المنزل"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0078_tawajaba_3ala src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="\u200e\u200e يتوجب علينا أن نفعل كذا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0080_money_laundring src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="محاربة \u200e\u200eغسيل الأموال."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0080_money_laundring src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="محاربة \u200e\u200eلغسيل أموالهم."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0081_shkl_3am src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="\u200eالأمر مستقر بشكل عام في البلاد."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0081_shkl_mnasb src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="\u200eستحل المشكلة بشكل مناسب في وقتها."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0081_shkl_qwi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="\u200eيؤكد بشكل قوي أن الأمر محسوم."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0082_3ibara_3an src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أشعة غاما هي  فوتونات. عبارة عن فوتونات"
+  detail=false positive: 1 match(es)
+
+FAIL kind=grammar_example lang=ar rule=collo_0082_3ibara_3an src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا الجهاز. عبارة عن صندوق فيه"
+  detail=false positive: 1 match(es)
+
+FAIL kind=grammar_example lang=ar rule=collo_0087_ya_abati src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يا أبتي"
+  detail=1 match(es) but none overlap marker [9,16)
+
+FAIL kind=grammar_example lang=ar rule=collo_0088_baka_min_shidati_ta2athuri src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يبكي من شدة التأثير"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=collo_0089_akkada_bianna src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أكد بأنه صادق"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=expression_2106_hl_s src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هل سيباشر فلان؟"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_454_Drbh_bAlArD src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ضربه بالأرض"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_454_Drbh_bAlArD src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يضربونه بالأرض"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_454_Drbh_bAlArD src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ضربوه بالأرض"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_477_mA_Anfk_En src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ما انفك عن اللعب"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=trans_489_yqArb_Eddhm_mn src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يقارب عددهم من ألف"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=trans_509_AEtdhr_En_AlHDwr src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="اعتذر عن الحضور"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=trans_510_Aglq_AlbAb_bAlrtAj src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أغلق الباب بالرتاج"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_512_Alqa_Elyhm_khTAbA__Alqa_khTAbA src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ألقى عليهم خطابا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_526_rAa_mnAmA src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="رأى مناما"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_542_Sdr_AlHkm_bHq src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="صدر الحكم بحق فلان"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_542_Sdr_AlHkm_bHq_2 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="صدر الحكم بحقها"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_542_Sdr_AlHkm_bHq_2 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="صدر الحكم بحقي"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_548_EArD_byn_AlktAb_wASlh_AlmkhTwT src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="عارض بين الكتاب وأصله المخطوط"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_527_ytnAsb_wgHruhu src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="رأيك لا  يتناسب ورأيه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_527_ytnAsb_wgHruhu_2 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="رأيك لا  يتنافى ورأيه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_527_ytnAsb_wgHruhu_3 src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="رأيك لا  يتلاءم ورأيه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_563_nzhr_2lyh_shdhrA src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="نظر إليه شذرا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_563_nzhr_2lyh_shdhrA src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ينظر الرجل إليه شذرا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_563_nzhr_2lyh_shdhrA src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ينظر الرجل إلى السجان شذرا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=exp_507_ASAbh_kll src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أصابه كلل"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_200_madhhool src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يقف مذهولا لا يدري ما يفعل"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0201_mughashan_3layh src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="وقع مغشى عليه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=adj_533_swyt_EAlyt src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="بلغ  الإنتاج سوية عالية"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=adj_533_swyt_EAlyt src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="بلغ  الإنتاج السوية  العالية"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0500_munawwah src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="هذا الرجل المنوه عنه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_05001_istftaa src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="\u200eبدأ الاستفتاء على قانون الانتخاب الجديد"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0502_muta3aref_3alYah src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="عادات متعارف عليها في البلاد"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0502_muta3aref_3alyh src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="شرط متعارف عليه في البلاد"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0503_hawla src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="دراسات حول اللغة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0504_hawla src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="إرشادات حول كذا ..."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_504_mulahadha_hawl src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ملاحظات حوله  ..."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_504_mulahadha_hawl_a src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="ملاحظات حول الأسباب ..."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=syntax_0505_mushrif_li src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="المشرف اللغوي لبرنامج إذاعي."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_0090_takkada_min src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يجب أن  يتأكد  من حدوث كذا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=use_0001_fashila_fi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="فشلت في حياتها الزوجية"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=use_0001_fashila_fi src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="فشل في دراسته"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=use_0081_open_fire src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="فتحت  الشرطة الرصاص على المتظاهرين."
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_0010_ta2amala src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="تأمل خيرا"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_201_AHna_rAs src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أحنى رأسه"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_201_AHna_rAs src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="أحنيت رأسي"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_204_AstqrD_mAl src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="استقرضت المال"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_205_Astql_syArt src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="استقل فلان السيارة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_205_Astql_syArt src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="يستقل فلان السيارة"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_206_Astlft_AnzhAr src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="استلفت ببلاغته الأنظار"
+  detail=missed error (no match for rule)
+
+FAIL kind=grammar_example lang=ar rule=verb_207_Astlft_AnzhAr src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml
+  text="استلفت ببلاغته الأنظار"
+  detail=missed error (no match for rule)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This is a test sentence."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This\ufeff is a test sentence."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This\ufeff\ufeff is a test sentence."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This \ufeffis a test sentence."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This\ufeff\u2060 is a test sentence."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This\ufeff\u2060 is a test sentence."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="\ufeff\ufeffThis is a\n\u2060\ntest sentence..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="This is a test sentence..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="\n\tThis is a test sentence..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="Multiple tabs\t\tare okay"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="\n This is a test sentence..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=en rule=MultipleWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/MultipleWhitespaceRuleTest.java
+  text="\n    This is a test sentence..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=en rule=SentenceWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java
+  text="This is a text. And there's the next sentence."
+  detail=assertGood: 14 finding(s)
+
+FAIL kind=java_unit lang=en rule=SentenceWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java
+  text="This is a text! And there's the next sentence."
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=en rule=SentenceWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java
+  text="This is a text\nAnd there's the next sentence."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=en rule=SentenceWhitespaceRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/SentenceWhitespaceRuleTest.java
+  text="This is a text\n\nAnd there's the next sentence."
+  detail=assertGood: 11 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="this"
+  detail=assertGood: 1 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="a) This is a test sentence."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="iv. This is a test sentence..."
+  detail=assertGood: 18 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="\"iv. This is a test sentence...\""
+  detail=assertGood: 25 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="»iv. This is a test sentence..."
+  detail=assertGood: 19 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="This"
+  detail=assertGood: 1 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="This is"
+  detail=assertGood: 1 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="This is a test sentence"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="http://www.languagetool.org"
+  detail=assertGood: 11 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="eBay can be at sentence start in lowercase."
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="¿Esto es una pregunta?"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="¿Esto es una pregunta?, ¿y esto?"
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=en rule=UppercaseSentenceStartRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/UppercaseSentenceStartRuleTest.java
+  text="ø This is a test sentence with a wrong bullet character."
+  detail=assertGood: 17 finding(s)
+
+FAIL kind=java_unit lang=en rule=WordRepeatRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java
+  text="A test"
+  detail=assertGood: 2 finding(s)
+
+FAIL kind=java_unit lang=en rule=WordRepeatRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java
+  text="A test."
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=en rule=WordRepeatRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java
+  text="A test..."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=WordRepeatRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java
+  text="1 000 000 years"
+  detail=assertGood: 5 finding(s)
+
+FAIL kind=java_unit lang=en rule=WordRepeatRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java
+  text="010 020 030"
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=en rule=WordRepeatRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/WordRepeatRuleTest.java
+  text="��������"
+  detail=assertGood: 1 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Their"
+  detail=assertGood: 2 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="There"
+  detail=assertGood: 1 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="There are new ideas to explore."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Why is their car broken again?"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Is this their useful test?"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Is this there useful test?"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Their are new ideas to explore."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="\"Their are new ideas to explore.\""
+  detail=assertGood: 18 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="But İm dabei gut auszusehen."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Their are new ideas to explore."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="And their are new ideas to explore."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=en rule=ConfusionProbabilityRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-core/src/test/java/org/languagetool/rules/ngrams/ConfusionProbabilityRuleTest.java
+  text="Their are new ideas to explore and their are new plans."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=be rule=BelarusianSpecificCaseRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianSpecificCaseRuleTest.java
+  text="Беларуская Народная Рэспубліка"
+  detail=assertGood: 2 finding(s)
+
+FAIL kind=java_unit lang=be rule=BelarusianSpecificCaseRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianSpecificCaseRuleTest.java
+  text="Папа Рымскі"
+  detail=assertGood: 1 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Kleines Haus am Waldesrand"
+  detail=assertGood: 8 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="\"Kleines Haus am Waldesrand\""
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Wirtschaftliches Wachstum kommt ins Stocken"
+  detail=assertGood: 8 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Unter Berücksichtigung des Übergangs"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Wirklich Frieden herrscht aber noch nicht"
+  detail=assertGood: 11 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Deutscher Taschenbuch Verlag expandiert"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Wohl Anfang 1725 begegnete Bach dem Dichter."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Weniger Personal wird im ganzen Land gebraucht."
+  detail=assertGood: 18 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="National Board of Review"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="International Management"
+  detail=assertGood: 3 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Gemeinsam Sportler anfeuern."
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Viel Spaß beim Arbeiten"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Ganz Europa stand vor einer Neuordnung."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Gesetzlich Versicherte sind davon ausgenommen."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Ausreichend Bananen essen."
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Nachhaltig Yoga praktizieren"
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Überraschend Besuch bekommt er dann von ihr."
+  detail=assertGood: 16 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Ruhig Schlafen & Zentral Wohnen"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Voller Mitleid"
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Voll Mitleid"
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Einzig Fernschüsse brachten Erfolgsaussichten."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Gelangweilt Dinge sortieren hilft als Ablenkung."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Ganzjährig Garten pflegen"
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Herzlich Willkommen bei unseren günstigen Rezepten!"
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="10-tägiges Rückgaberecht"
+  detail=assertGood: 3 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Angeblich Schüsse vor Explosionen gefallen"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Dickes Danke auch an Elena"
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Dickes Dankeschön auch an Elena"
+  detail=assertGood: 11 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Echt Scheiße"
+  detail=assertGood: 3 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Entsprechende Automaten werden heute nicht mehr gebaut"
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Existenziell Bedrohte kriegen einen Taschenrechner"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Flächendeckend Tempo 30"
+  detail=assertGood: 3 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Frei Klavier spielen lernen"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Ganz Eilige können es schaffen"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Gering Gebildete laufen Gefahr ..."
+  detail=assertGood: 14 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Ganz Ohr ist man hier"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Gleichzeitig Muskeln aufbauen und Fett verlieren"
+  detail=assertGood: 11 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Klar Schiff, Erster Offizier!"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Kostenlos Bewegung schnuppern"
+  detail=assertGood: 4 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Prinzipiell Anrecht auf eine Vertretung"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Regelrecht Modell gestanden haben Michel"
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Weitgehend Konsens, auch über ..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Alarmierte Polizeibeamte nahmen den Mann fest."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Anderen Brot und Arbeit ermöglichen - das ist ihr Ziel"
+  detail=assertGood: 19 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Diverse Unwesen, mit denen sich Hellboy beschäftigen muss, ..."
+  detail=assertGood: 26 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Gut Qualifizierte bekommen Angebote"
+  detail=assertGood: 7 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Liebe Mai, wie geht es dir?"
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Willkommen Simpsons-Fan!"
+  detail=assertGood: 3 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Kleinem Haus am Waldesrand ..."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Junger Frau geht das Geld aus"
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRule2Test src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRule2Test.java
+  text="Junge Frau gewinnt im Lotto"
+  detail=assertGood: 11 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Es gibt ein Sprichwort, dem zufolge der tägliche Genuss einer Mandel dem Gedächtnis förderlich sei."
+  detail=assertGood: 33 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="War das Eifersucht?"
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Sie gehörte einst zu den besten Afrikas."
+  detail=assertGood: 17 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Dieses Bild stammt von einem lange Zeit unbekannten Maler."
+  detail=assertGood: 22 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das Staatsoberhaupt ist der Verfassung zufolge der König."
+  detail=assertGood: 17 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Der Ende der 1960er Jahre umgestaltete Garten ist schön."
+  detail=assertGood: 18 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Der Ende der achtziger Jahre umgestaltete Garten hat unter anderem ungefähr 70 verschiedene Sorten von Rosen und Volieren für exotische Vögel."
+  detail=assertGood: 43 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Als Vorboten des Discounthandels sind die Ende der 50er Jahre in der Bundesrepublik Deutschland wiederauflebenden Erscheinungsformen des Beziehungs-, Betriebs- und Belegschaftshandels anzusehen."
+  detail=assertGood: 43 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Die Anfang des letzten Monats umgestaltete Veranda ist schön."
+  detail=assertGood: 19 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Der Mitte 2001 umgestaltete Garten ist schön."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Bis zur Anfang Juni geplanten Eröffnung gebe es noch einiges zu tun."
+  detail=assertGood: 28 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Der fließend Französisch sprechende Präsident dankt stilvoll ab."
+  detail=assertGood: 18 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Inwiefern soll denn das romantische Hoffnungen begründen?"
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Spricht der fließend Französisch?"
+  detail=assertGood: 8 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Spricht dieser fließend Französisch, muss er viel Geld verdienen."
+  detail=assertGood: 20 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Der letzte Woche beschlossene Etat ist unwirksam."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Die Einen sagen dies, die Anderen das."
+  detail=assertGood: 16 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="So ist es in den USA."
+  detail=assertGood: 15 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das ist der Tisch."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das ist das Haus."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das ist die Frau."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das ist das Auto der Frau."
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das gehört dem Mann."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das Auto des Mannes."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das interessiert den Mann."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das interessiert die Männer."
+  detail=assertGood: 9 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das Auto von einem Mann."
+  detail=assertGood: 13 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Das Auto eines Mannes."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Des großen Mannes."
+  detail=assertGood: 6 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Und nach der Nummerierung kommt die Überschrift."
+  detail=assertGood: 17 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Sie wiesen dieselben Verzierungen auf."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Die erwähnte Konferenz ist am Samstag."
+  detail=assertGood: 14 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Sie erreichten 5 Prozent."
+  detail=assertGood: 10 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Sie erreichten mehrere Prozent Zustimmung."
+  detail=assertGood: 12 finding(s)
+
+FAIL kind=java_unit lang=de rule=AgreementRuleTest src=/home/lucasew/WORKSPACE/OPENSOURCE-own/lang/inspiration/languagetool/languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/AgreementRuleTest.java
+  text="Die Bestandteile, aus denen Schwefel besteht."
+  detail=assertGood: 14 finding(s)
+
