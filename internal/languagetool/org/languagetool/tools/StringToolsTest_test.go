@@ -1,134 +1,150 @@
 package tools
 
-// Twin of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = Unimplemented
+// Port of org.languagetool.tools.StringToolsTest (pure methods; Language-dependent later).
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testAssureSet
 func TestStringTools_AssureSet(t *testing.T) {
-	Unimplemented("StringToolsTest.testAssureSet")
+	require.Panics(t, func() { AssureSet("", "varName") })
+	require.Panics(t, func() { AssureSet(" \t", "varName") })
+	// null N/A in Go for first arg
+	AssureSet("foo", "varName")
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testToId
-func TestStringTools_ToId(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testReadStream
-func TestStringTools_ReadStream(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsAllUppercase
 func TestStringTools_IsAllUppercase(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	require.True(t, IsAllUppercase("A"))
+	require.True(t, IsAllUppercase("ABC"))
+	require.True(t, IsAllUppercase("ASV-EDR"))
+	require.True(t, IsAllUppercase("ASV-ÖÄÜ"))
+	require.True(t, IsAllUppercase(""))
+	require.False(t, IsAllUppercase("ß"))
+	require.False(t, IsAllUppercase("AAAAAAAAAAAAq"))
+	require.False(t, IsAllUppercase("a"))
+	require.False(t, IsAllUppercase("abc"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsMixedCase
 func TestStringTools_IsMixedCase(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	require.True(t, IsMixedCase("AbC"))
+	require.True(t, IsMixedCase("MixedCase"))
+	require.True(t, IsMixedCase("iPod"))
+	require.True(t, IsMixedCase("AbCdE"))
+	require.False(t, IsMixedCase(""))
+	require.False(t, IsMixedCase("ABC"))
+	require.False(t, IsMixedCase("abc"))
+	require.False(t, IsMixedCase("!"))
+	require.False(t, IsMixedCase("Word"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsCapitalizedWord
 func TestStringTools_IsCapitalizedWord(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	require.True(t, IsCapitalizedWord("Abc"))
+	require.True(t, IsCapitalizedWord("Uppercase"))
+	require.True(t, IsCapitalizedWord("Ipod"))
+	require.False(t, IsCapitalizedWord(""))
+	require.False(t, IsCapitalizedWord("ABC"))
+	require.False(t, IsCapitalizedWord("abc"))
+	require.False(t, IsCapitalizedWord("!"))
+	require.False(t, IsCapitalizedWord("wOrD"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testStartsWithUppercase
 func TestStringTools_StartsWithUppercase(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	require.True(t, StartsWithUppercase("A"))
+	require.True(t, StartsWithUppercase("ÄÖ"))
+	require.False(t, StartsWithUppercase(""))
+	require.False(t, StartsWithUppercase("ß"))
+	require.False(t, StartsWithUppercase("-"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testUppercaseFirstChar
 func TestStringTools_UppercaseFirstChar(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "", UppercaseFirstChar(""))
+	require.Equal(t, "A", UppercaseFirstChar("A"))
+	require.Equal(t, "Öäü", UppercaseFirstChar("öäü"))
+	require.Equal(t, "ßa", UppercaseFirstChar("ßa"))
+	require.Equal(t, "'Test'", UppercaseFirstChar("'test'"))
+	require.Equal(t, "''Test", UppercaseFirstChar("''test"))
+	require.Equal(t, "''T", UppercaseFirstChar("''t"))
+	require.Equal(t, "'''", UppercaseFirstChar("'''"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testLowercaseFirstChar
 func TestStringTools_LowercaseFirstChar(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "", LowercaseFirstChar(""))
+	require.Equal(t, "a", LowercaseFirstChar("A"))
+	require.Equal(t, "öäü", LowercaseFirstChar("Öäü"))
+	require.Equal(t, "ßa", LowercaseFirstChar("ßa"))
+	require.Equal(t, "'test'", LowercaseFirstChar("'Test'"))
+	require.Equal(t, "''test", LowercaseFirstChar("''Test"))
+	require.Equal(t, "''t", LowercaseFirstChar("''T"))
+	require.Equal(t, "'''", LowercaseFirstChar("'''"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testReaderToString
 func TestStringTools_ReaderToString(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	str, err := ReaderToString(strings.NewReader("bla\nöäü"))
+	require.NoError(t, err)
+	require.Equal(t, "bla\nöäü", str)
+	longStr := strings.Repeat("x", 4000) + "1234567"
+	require.Equal(t, 4007, len(longStr))
+	str2, err := ReaderToString(strings.NewReader(longStr))
+	require.NoError(t, err)
+	require.Equal(t, longStr, str2)
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testEscapeXMLandHTML
 func TestStringTools_EscapeXMLandHTML(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "foo bar", EscapeXML("foo bar"))
+	require.Equal(t, "!ä&quot;&lt;&gt;&amp;&amp;", EscapeXML("!ä\"<>&&"))
+	require.Equal(t, "!ä&quot;&lt;&gt;&amp;&amp;", EscapeHTML("!ä\"<>&&"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testListToString
 func TestStringTools_ListToString(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	list := []string{"foo", "bar", ","}
+	require.Equal(t, "foo,bar,,", strings.Join(list, ","))
+	require.Equal(t, "foo\tbar\t,", strings.Join(list, "\t"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testTrimWhitespace
 func TestStringTools_TrimWhitespace(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "", TrimWhitespace(""))
+	require.Equal(t, "", TrimWhitespace(" "))
+	require.Equal(t, "XXY", TrimWhitespace(" \nXX\t Y"))
+	require.Equal(t, "XXY", TrimWhitespace(" \r\nXX\t Y"))
+	require.Equal(t, "word", TrimWhitespace("word"))
+	require.Equal(t, "1 234,56", TrimWhitespace("1 234,56"))
+	require.Equal(t, "1234,56", TrimWhitespace("1  234,56"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testAddSpace
-func TestStringTools_AddSpace(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsWhitespace
 func TestStringTools_IsWhitespace(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, true, IsWhitespace("\uFEFF"))
+	require.Equal(t, true, IsWhitespace("  "))
+	require.Equal(t, true, IsWhitespace("\t"))
+	require.Equal(t, true, IsWhitespace("\u2002"))
+	require.Equal(t, true, IsWhitespace("\u00a0"))
+	require.Equal(t, false, IsWhitespace("abc"))
+	require.Equal(t, false, IsWhitespace("\u0001"))
+	require.Equal(t, true, IsWhitespace("\u202F"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsPositiveNumber
 func TestStringTools_IsPositiveNumber(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, true, IsPositiveNumber('3'))
+	require.Equal(t, false, IsPositiveNumber('a'))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsEmpty
 func TestStringTools_IsEmpty(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, true, IsEmptyStr(""))
+	require.Equal(t, false, IsEmptyStr("a"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testFilterXML
 func TestStringTools_FilterXML(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	require.Equal(t, "test", FilterXML("test"))
+	require.Equal(t, "<<test>>", FilterXML("<<test>>"))
+	require.Equal(t, "test", FilterXML("<b>test</b>"))
+	require.Equal(t, "A sentence with a test", FilterXML("A sentence with a <em>test</em>"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testAsString
-func TestStringTools_AsString(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertNull
-	require.Equal(t, "foo!", "foo!")
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testIsCamelCase
-func TestStringTools_IsCamelCase(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testStringForSpeller
-func TestStringTools_StringForSpeller(t *testing.T) {
-	// contains assertTrue
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testTitlecaseGlobal
-func TestStringTools_TitlecaseGlobal(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-core/src/test/java/org/languagetool/tools/StringToolsTest.java :: StringToolsTest.testAllStartWithLowercase
 func TestStringTools_AllStartWithLowercase(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	require.True(t, AllStartWithLowercase("the lord of the rings"))
+	require.False(t, AllStartWithLowercase("the Fellowship of the Ring"))
+	require.True(t, AllStartWithLowercase("bilbo"))
+	require.False(t, AllStartWithLowercase("Baggins"))
 }

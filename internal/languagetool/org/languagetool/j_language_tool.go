@@ -1,7 +1,8 @@
 package languagetool
 
-// Constants from org.languagetool.JLanguageTool (subset; expand 1:1 as needed).
+// Constants from org.languagetool.JLanguageTool.
 const (
+	SentenceStartTagName = "SENT_START"
 	SentenceEndTagName   = "SENT_END"
 	ParagraphEndTagName  = "PARA_END"
 )
