@@ -4,14 +4,14 @@ package es
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishWordRepeatRuleTest.java :: SpanishWordRepeatRuleTest.testRule
 func TestSpanishWordRepeatRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewSpanishWordRepeatRule(map[string]string{"repetition": "Repetición"})
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Bienvenido/a a LanguageTool."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("HUCHA-GANGA.ES es la web de referencia."))))
+	// real error still fires
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("Esto es es un error."))))
 }
