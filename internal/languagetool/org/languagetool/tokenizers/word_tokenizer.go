@@ -63,10 +63,10 @@ func (w *WordTokenizer) Tokenize(text string) []string {
 		}
 	}
 	flush()
-	return joinEMailsAndUrls(out)
+	return JoinEMailsAndUrls(out)
 }
 
-func joinEMailsAndUrls(list []string) []string {
+func JoinEMailsAndUrls(list []string) []string {
 	return joinUrls(joinEMails(list))
 }
 

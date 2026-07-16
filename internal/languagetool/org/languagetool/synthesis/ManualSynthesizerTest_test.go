@@ -1,32 +1,62 @@
 package synthesis
 
-// Twin of languagetool-core/src/test/java/org/languagetool/synthesis/ManualSynthesizerTest.java
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
+// Port of org.languagetool.synthesis.ManualSynthesizerTest.
 
-// Port of languagetool-core/src/test/java/org/languagetool/synthesis/ManualSynthesizerTest.java :: ManualSynthesizerTest.testLookupNonExisting
+const synthTestData = `# some test data
+InflectedForm11	Lemma1	POS1
+InflectedForm121	Lemma1	POS2
+InflectedForm122	Lemma1	POS2
+InflectedForm2	Lemma2	POS1
+`
+
+func newSynth(t *testing.T) *ManualSynthesizer {
+	t.Helper()
+	s, err := NewManualSynthesizer(strings.NewReader(synthTestData))
+	require.NoError(t, err)
+	return s
+}
+
 func TestManualSynthesizer_LookupNonExisting(t *testing.T) {
-	// contains assertNull
+	s := newSynth(t)
+	require.Nil(t, s.Lookup("", ""))
+	require.Nil(t, s.LookupPtr(strPtr(""), nil))
+	require.Nil(t, s.LookupPtr(nil, strPtr("")))
+	require.Nil(t, s.LookupPtr(nil, nil))
+	require.Nil(t, s.Lookup("NONE", "UNKNOWN"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/synthesis/ManualSynthesizerTest.java :: ManualSynthesizerTest.testInvalidLookup
 func TestManualSynthesizer_InvalidLookup(t *testing.T) {
-	// contains assertNull
+	s := newSynth(t)
+	require.Nil(t, s.Lookup("NONE", "POS1"))
+	require.Nil(t, s.Lookup("Lemma1", "UNKNOWN"))
+	require.Nil(t, s.Lookup("Lemma1", "POS."))
+	require.Nil(t, s.Lookup("Lemma2", "POS2"))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/synthesis/ManualSynthesizerTest.java :: ManualSynthesizerTest.testValidLookup
 func TestManualSynthesizer_ValidLookup(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	s := newSynth(t)
+	require.Equal(t, "[InflectedForm11]", listStr(s.Lookup("Lemma1", "POS1")))
+	require.Equal(t, "[InflectedForm121, InflectedForm122]", listStr(s.Lookup("Lemma1", "POS2")))
+	require.Equal(t, "[InflectedForm2]", listStr(s.Lookup("Lemma2", "POS1")))
 }
 
-// Port of languagetool-core/src/test/java/org/languagetool/synthesis/ManualSynthesizerTest.java :: ManualSynthesizerTest.testCaseSensitive
-func TestManualSynthesizer_CaseSensitive(t *testing.T) {
-	// contains assertNull
+func listStr(ss []string) string {
+	if ss == nil {
+		return "null"
+	}
+	return "[" + strings.Join(ss, ", ") + "]"
 }
+
+func TestManualSynthesizer_CaseSensitive(t *testing.T) {
+	s := newSynth(t)
+	require.Nil(t, s.Lookup("LEmma1", "POS1"))
+}
+
+func strPtr(s string) *string { return &s }
