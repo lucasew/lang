@@ -4,22 +4,30 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
+
+// pairParser converts a line into a StringPair (nil line → nil pair).
+type pairParser func(line string) (*StringPair, error)
 
 // TabBitextReader ports org.languagetool.bitext.TabBitextReader.
 type TabBitextReader struct {
-	file       *os.File
-	scanner    *bufio.Scanner
-	nextLine   *string
-	nextPair   *StringPair
-	prevLine   string
-	lineCount  int
+	file        *os.File
+	scanner     *bufio.Scanner
+	nextLine    *string
+	nextPair    *StringPair
+	prevLine    string
+	lineCount   int
 	sentencePos int
-	closed     bool
+	closed      bool
+	parse       pairParser
 }
 
 func NewTabBitextReader(filename, encoding string) (*TabBitextReader, error) {
-	// encoding is accepted for API parity; Go opens UTF-8 (tests use UTF-8)
+	return newTabBitextReader(filename, defaultTabParse)
+}
+
+func newTabBitextReader(filename string, parse pairParser) (*TabBitextReader, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -28,57 +36,32 @@ func NewTabBitextReader(filename, encoding string) (*TabBitextReader, error) {
 		file:      f,
 		scanner:   bufio.NewScanner(f),
 		lineCount: -1,
+		parse:     parse,
 	}
 	if r.scanner.Scan() {
 		line := r.scanner.Text()
 		r.nextLine = &line
-		p, err := tab2StringPair(line)
+		p, err := r.parse(line)
 		if err != nil {
 			f.Close()
 			return nil, err
 		}
-		r.nextPair = &p
+		r.nextPair = p
 	}
 	r.prevLine = ""
 	return r, nil
 }
 
-func tab2StringPair(line string) (StringPair, error) {
-	// split on first tab only? Java split("\t") all
-	fields := splitTab(line)
+func defaultTabParse(line string) (*StringPair, error) {
+	if line == "" && line != "" {
+		return nil, nil
+	}
+	fields := strings.Split(line, "\t")
 	if len(fields) < 2 {
-		return StringPair{}, fmt.Errorf("Unexpected format, expected two tab-separated columns: %s", line)
+		return nil, fmt.Errorf("Unexpected format, expected two tab-separated columns: %s", line)
 	}
-	return NewStringPair(fields[0], fields[1]), nil
-}
-
-func splitTab(line string) []string {
-	var fields []string
-	start := 0
-	for i := 0; i < len(line); i++ {
-		if line[i] == '\t' {
-			fields = append(fields, line[start:i])
-			start = i + 1
-		}
-	}
-	fields = append(fields, line[start:])
-	return fields
-}
-
-// All returns all pairs (convenience; Java uses iterator).
-func (r *TabBitextReader) All() ([]StringPair, error) {
-	var out []StringPair
-	for {
-		p, ok, err := r.Next()
-		if err != nil {
-			return out, err
-		}
-		if !ok {
-			break
-		}
-		out = append(out, p)
-	}
-	return out, nil
+	p := NewStringPair(fields[0], fields[1])
+	return &p, nil
 }
 
 func (r *TabBitextReader) HasNext() bool {
@@ -86,27 +69,27 @@ func (r *TabBitextReader) HasNext() bool {
 }
 
 func (r *TabBitextReader) Next() (StringPair, bool, error) {
-	if r.nextLine == nil {
+	if r.nextLine == nil || r.nextPair == nil {
 		return StringPair{}, false, nil
 	}
 	result := *r.nextPair
-	r.sentencePos = len([]rune(result.GetSource())) + 1 // approximate; Java uses length()
+	r.sentencePos = len([]rune(result.GetSource())) + 1
 	r.prevLine = *r.nextLine
 	if r.scanner.Scan() {
 		line := r.scanner.Text()
 		r.nextLine = &line
-		p, err := tab2StringPair(line)
+		p, err := r.parse(line)
 		if err != nil {
 			return result, true, err
 		}
-		r.nextPair = &p
+		r.nextPair = p
 		r.lineCount++
 	} else {
 		r.nextLine = nil
 		r.nextPair = nil
 		r.lineCount++
 		if !r.closed {
-			r.file.Close()
+			_ = r.file.Close()
 			r.closed = true
 		}
 	}
@@ -114,3 +97,4 @@ func (r *TabBitextReader) Next() (StringPair, bool, error) {
 }
 
 func (r *TabBitextReader) GetLineCount() int { return r.lineCount }
+func (r *TabBitextReader) GetCurrentLine() string { return r.prevLine }
