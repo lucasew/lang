@@ -4,14 +4,13 @@ package fa
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/fa/src/test/java/org/languagetool/rules/fa/PersianSpaceBeforeRuleTest.java :: PersianSpaceBeforeRuleTest.testRules
 func TestPersianSpaceBeforeRule_Rules(t *testing.T) {
-	tools.Unimplemented("PersianSpaceBeforeRuleTest.testRules")
+	rule := NewPersianSpaceBeforeRule(nil)
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("به اینجا"))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("من به اینجا"))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("(به اینجا"))))
 }
