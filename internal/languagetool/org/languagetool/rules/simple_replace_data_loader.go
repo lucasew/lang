@@ -29,6 +29,10 @@ func LoadSimpleReplaceWords(r io.Reader) (map[string][]string, error) {
 		wrongForms := strings.Split(parts[0], "|")
 		replacements := strings.Split(parts[1], "|")
 		for _, w := range wrongForms {
+			w = strings.TrimSpace(w)
+			if w == "" {
+				continue // skip empty alternatives from "a||b=..."
+			}
 			// copy replacements slice
 			reps := append([]string(nil), replacements...)
 			m[w] = reps
