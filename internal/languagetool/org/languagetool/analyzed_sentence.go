@@ -231,3 +231,12 @@ func (s *AnalyzedSentence) GetCorrectedTextLength() int {
 	}
 	return lenSum
 }
+
+// GetText ports AnalyzedSentence.getText — original text by concatenating tokens.
+func (s *AnalyzedSentence) GetText() string {
+	var b strings.Builder
+	for _, element := range s.tokens {
+		b.WriteString(element.GetToken())
+	}
+	return b.String()
+}

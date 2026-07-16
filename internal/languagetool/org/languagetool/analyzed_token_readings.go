@@ -326,3 +326,8 @@ func utf16Len(s string) int {
 	}
 	return n
 }
+
+func (r *AnalyzedTokenReadings) IsFieldCode() bool {
+	t := r.token
+	return t == "\u0001" || t == "\u0002"
+}
