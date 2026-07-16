@@ -11,15 +11,27 @@ import (
 // WordRepeatRule ports org.languagetool.rules.WordRepeatRule.
 type WordRepeatRule struct {
 	Messages map[string]string
+	// ExtraIgnore is called from Ignore for language-specific exceptions (e.g. EnglishWordRepeatRule).
+	ExtraIgnore func(tokens []*languagetool.AnalyzedTokenReadings, position int) bool
+	// IDOverride when non-empty replaces the default WORD_REPEAT_RULE id.
+	IDOverride string
 }
 
 func NewWordRepeatRule(messages map[string]string) *WordRepeatRule {
 	return &WordRepeatRule{Messages: messages}
 }
 
-func (r *WordRepeatRule) GetID() string { return "WORD_REPEAT_RULE" }
+func (r *WordRepeatRule) GetID() string {
+	if r.IDOverride != "" {
+		return r.IDOverride
+	}
+	return "WORD_REPEAT_RULE"
+}
 
 func (r *WordRepeatRule) Ignore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
+	if r.ExtraIgnore != nil && r.ExtraIgnore(tokens, position) {
+		return true
+	}
 	for _, w := range []string{"Phi", "Li", "Xiao", "Duran", "Wagga", "Abdullah", "Nwe", "Pago", "Cao"} {
 		if r.wordRepetitionOf(w, tokens, position) {
 			return true
