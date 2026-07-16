@@ -108,5 +108,13 @@ func coherencySurfaceForms(w string) []string {
 	} {
 		out = append(out, w+suf)
 	}
+	// Russian soft-sign nouns: нуль → нулю, ноль → ноля, …
+	if strings.HasSuffix(w, "ь") && len([]rune(w)) > 1 {
+		runes := []rune(w)
+		stem := string(runes[:len(runes)-1])
+		for _, suf := range []string{"я", "ю", "ем", "ём", "е", "и", "ей"} {
+			out = append(out, stem+suf)
+		}
+	}
 	return out
 }

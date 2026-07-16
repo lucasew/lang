@@ -4,14 +4,16 @@ package es
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SimpleReplaceRuleTest.java :: SimpleReplaceRuleTest.testRule
 func TestSimpleReplaceRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	rule := NewSimpleReplaceRule(nil)
+	matches := rule.Match(languagetool.AnalyzePlain("sanitización"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "desinfección", matches[0].GetSuggestedReplacements()[0])
+
+	matches2 := rule.Match(languagetool.AnalyzePlain("Esta frase no tiene errores."))
+	require.Equal(t, 0, len(matches2))
 }

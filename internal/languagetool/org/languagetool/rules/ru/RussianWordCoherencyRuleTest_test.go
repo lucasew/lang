@@ -4,25 +4,40 @@ package ru
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianWordCoherencyRuleTest.java :: RussianWordCoherencyRuleTest.testRule
 func TestRussianWordCoherencyRule_Rule(t *testing.T) {
-	_ = "По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C." // assertGood
-	_ = "По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C." // assertGood
+	assertGood := func(s string) {
+		t.Helper()
+		rule := NewRussianWordCoherencyRule(nil)
+		require.Equal(t, 0, len(rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)})), "good %q", s)
+	}
+	assertError := func(s string) {
+		t.Helper()
+		rule := NewRussianWordCoherencyRule(nil)
+		require.Equal(t, 1, len(rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)})), "error %q", s)
+	}
+	assertGood("По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C.")
+	assertGood("По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C.")
+	assertError("По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C или ноль по шкале Кельвина.")
 }
 
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianWordCoherencyRuleTest.java :: RussianWordCoherencyRuleTest.testCallIndependence
 func TestRussianWordCoherencyRule_CallIndependence(t *testing.T) {
-	tools.Unimplemented("RussianWordCoherencyRuleTest.testCallIndependence")
+	assertGood := func(s string) {
+		t.Helper()
+		require.Equal(t, 0, len(NewRussianWordCoherencyRule(nil).MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)})))
+	}
+	assertGood("Абсолютный нуль.")
+	assertGood("Ноль по шкале Кельвина.")
 }
 
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/RussianWordCoherencyRuleTest.java :: RussianWordCoherencyRuleTest.testRuleCompleteTexts
 func TestRussianWordCoherencyRule_RuleCompleteTexts(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	check := func(s string) int {
+		return len(NewRussianWordCoherencyRule(nil).MatchList(languagetool.AnalyzeTextLocal(s)))
+	}
+	require.Equal(t, 0, check("По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C или нуль по шкале Кельвина."))
+	require.Equal(t, 1, check("По шкале Цельсия абсолютному нулю соответствует температура −273,15 °C или ноль по шкале Кельвина."))
+	require.Equal(t, 1, check("Абсолютный нуль.\n\nСовсем недостижим. И ноль по шкале Кельвина."))
 }
