@@ -58,6 +58,12 @@ func CreateMixingSentenceSource(dumpFileNames []string, langCode string) (*Mixin
 	return NewMixingSentenceSource(sources), nil
 }
 
+// closingSource wraps a file-backed source (file closed by process lifetime).
+type closingSource struct {
+	f     *os.File
+	inner SentenceSource
+}
+
 func (c *closingSource) HasNext() bool           { return c.inner.HasNext() }
 func (c *closingSource) Next() (Sentence, error) { return c.inner.Next() }
 func (c *closingSource) GetSource() string       { return c.inner.GetSource() }
