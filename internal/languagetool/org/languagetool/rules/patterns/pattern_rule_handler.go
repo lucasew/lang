@@ -105,9 +105,15 @@ type grammarRule struct {
 	Default string          `xml:"default,attr"`
 	Pattern *grammarPattern `xml:"pattern"`
 	Regexp  *grammarRegexp  `xml:"regexp"`
+	Filter  *grammarFilter  `xml:"filter"`
 	Message string          `xml:"message"`
 	Short   string          `xml:"short"`
 	URL     string          `xml:"url"`
+}
+
+type grammarFilter struct {
+	Class string `xml:"class,attr"`
+	Args  string `xml:"args,attr"`
 }
 
 type grammarPattern struct {
@@ -196,6 +202,12 @@ func (h *PatternRuleHandler) addRule(xr grammarRule, categoryID string) error {
 			fmt.Sscanf(xr.Regexp.Mark, "%d", &mark)
 		}
 		rr := NewRegexPatternRule(xr.ID, xr.Name, strings.TrimSpace(xr.Message), strings.TrimSpace(xr.Short), "", lang, re, mark)
+		if xr.Filter != nil {
+			rr.FilterArgs = xr.Filter.Args
+			if strings.Contains(xr.Filter.Class, "RegexAntiPatternFilter") || strings.Contains(xr.Filter.Args, "antipatterns:") {
+				// applied at check time via FilterArgs
+			}
+		}
 		h.LoadedRegexRules = append(h.LoadedRegexRules, rr)
 		// also as abstract for listing
 		abs := NewAbstractPatternRule(xr.ID, xr.Name, lang, nil, false)

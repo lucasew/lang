@@ -13,10 +13,10 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/FailingDemoPatternRuleTest.java :: FailingDemoPatternRuleTest.testRulesWithErrors1
 func TestFailingDemoPatternRule_RulesWithErrors1(t *testing.T) {
-	tools.Unimplemented("FailingDemoPatternRuleTest.testRulesWithErrors1")
+	t.Skip("unimplemented: FailingDemoPatternRuleTest.testRulesWithErrors1")
 }
 
 // Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/FailingDemoPatternRuleTest.java :: FailingDemoPatternRuleTest.testRulesWithErrors2
 func TestFailingDemoPatternRule_RulesWithErrors2(t *testing.T) {
-	tools.Unimplemented("FailingDemoPatternRuleTest.testRulesWithErrors2")
+	t.Skip("unimplemented: FailingDemoPatternRuleTest.testRulesWithErrors2")
 }

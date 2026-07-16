@@ -1,6 +1,8 @@
 package patterns
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -44,20 +46,14 @@ func (c *PatternRuleCheck) Check(text string) ([]*rules.RuleMatch, error) {
 	}
 	offset := 0
 	for _, sentText := range sents {
-		words := c.WordTokenizer.Tokenize(sentText)
-		var toks []*languagetool.AnalyzedTokenReadings
-		pos := offset
-		for _, w := range words {
-			// skip pure whitespace tokens for matching (keep positions)
-			if isAllSpace(w) {
-				pos += len(w) // byte length; approximate for ASCII demos
-				continue
+		// AnalyzePlain adds SENT_START and UTF-16-friendly positions.
+		sent := languagetool.AnalyzePlain(sentText)
+		// shift positions by document offset
+		if offset != 0 {
+			for _, t := range sent.GetTokens() {
+				t.SetStartPos(t.GetStartPos() + offset)
 			}
-			toks = append(toks, languagetool.NewAnalyzedTokenReadingsAt(
-				languagetool.NewAnalyzedToken(w, nil, nil), pos))
-			pos += len(w)
 		}
-		sent := languagetool.NewAnalyzedSentence(toks)
 		for _, pr := range c.PatternRules {
 			ms, err := pr.Match(sent)
 			if err != nil {
@@ -74,7 +70,16 @@ func (c *PatternRuleCheck) Check(text string) ([]*rules.RuleMatch, error) {
 				return all, err
 			}
 			for _, m := range ms {
-				// adjust if sentence GetText is only non-ws join — positions are absolute via start pos
+				// apply regex anti-pattern filter when configured on FilterArgs
+				if rr.FilterArgs != "" && strings.Contains(rr.FilterArgs, "antipatterns:") {
+					f := RegexAntiPatternFilter{}
+					// re-map via ResolveFilterArguments
+					args := ResolveFilterArguments(rr.FilterArgs)
+					// AcceptRuleMatch vs AcceptRegexMatch - use regex method
+					if filtered := f.AcceptRegexMatch(m, args, sent); filtered == nil {
+						continue
+					}
+				}
 				rules.NotifyListeners(m, c.Listener)
 				all = append(all, m)
 			}

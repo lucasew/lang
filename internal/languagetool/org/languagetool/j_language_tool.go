@@ -1,5 +1,7 @@
 package languagetool
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+
 // Constants and enums from org.languagetool.JLanguageTool.
 
 const (
@@ -11,7 +13,7 @@ const (
 	StyleFile                   = "style.xml"
 	CustomPatternFile           = "grammar_custom.xml"
 	FalseFriendFile             = "false-friends.xml"
-	MessageBundleName = "org.languagetool.MessagesBundle"
+	MessageBundleName           = "org.languagetool.MessagesBundle"
 	DictionaryFilenameExtension = ".dict"
 )
 
@@ -42,8 +44,7 @@ type JLanguageTool struct {
 	LanguageCode string
 	Mode         Mode
 	Level        Level
-	// Rules registered for sentence-level matching (any rule with Match method deferred).
-	// Matchers implement Match(sentence) ([]*rules.RuleMatch, error) via RuleMatcher-like surface.
+	// sentenceMatchers reserved for future rule wiring.
 	sentenceMatchers []func(sentence *AnalyzedSentence) error
 }
 
@@ -60,3 +61,20 @@ func (lt *JLanguageTool) GetMode() Mode           { return lt.Mode }
 func (lt *JLanguageTool) SetMode(m Mode)          { lt.Mode = m }
 func (lt *JLanguageTool) GetLevel() Level         { return lt.Level }
 func (lt *JLanguageTool) SetLevel(l Level)        { lt.Level = l }
+
+// Analyze splits text into sentences and builds plain analyzed sentences.
+func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
+	st := tokenizers.NewSRXSentenceTokenizer(lt.LanguageCode)
+	parts := st.Tokenize(text)
+	if len(parts) == 0 {
+		if text == "" {
+			return nil
+		}
+		parts = []string{text}
+	}
+	out := make([]*AnalyzedSentence, 0, len(parts))
+	for _, p := range parts {
+		out = append(out, AnalyzePlain(p))
+	}
+	return out
+}
