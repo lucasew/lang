@@ -821,3 +821,89 @@ func FixApostrophes(s string) string {
 	}
 	return s
 }
+
+// DoReplaceEmEn rewrites em/m'/m'hi → en/n'/n'hi before a verb.
+func DoReplaceEmEn(pronounsStr, verbStr string, pronounsAfter bool) string {
+	_ = pronounsAfter
+	switch strings.ToLower(pronounsStr) {
+	case "em":
+		return "en " + verbStr
+	case "m'":
+		return "n'" + verbStr
+	case "m'hi":
+		return "n'hi " + verbStr
+	}
+	return ""
+}
+
+// DoReplaceHiEn rewrites hi → en (same special cases as DoReplaceEmEn for m'/m'hi).
+func DoReplaceHiEn(pronounsStr, verbStr string, pronounsAfter bool) string {
+	_ = pronounsAfter
+	switch strings.ToLower(pronounsStr) {
+	case "hi":
+		return "en " + verbStr
+	case "m'":
+		return "n'" + verbStr
+	case "m'hi":
+		return "n'hi " + verbStr
+	}
+	return ""
+}
+
+// DoAddPronounReflexive adds a reflexive clitic before/after the verb.
+func DoAddPronounReflexive(pronounsStr, verbStr, firstVerbPersonaNumber string, pronounsAfter bool) string {
+	if pronounsAfter {
+		if pContainsReflexivePronoun.MatchString(strings.ToLower(pronounsStr)) {
+			return verbStr + TransformDarrere(pronounsStr, verbStr)
+		}
+		if strings.HasSuffix(verbStr, "r") || strings.HasSuffix(verbStr, "re") {
+			return verbStr + TransformDarrere("-se", verbStr)
+		}
+		return verbStr
+	}
+	pronounToAdd := Transform(pronounsStr, PronounNormalized)
+	if !containsAnyReflexivePronoun(pronounsStr) {
+		pronounToAdd = GetReflexivePronoun(firstVerbPersonaNumber) + " " + pronounToAdd
+	}
+	return TransformDavant(pronounToAdd, verbStr) + verbStr
+}
+
+// DoAddPronounReflexiveImperative adds a reflexive after an imperative verb form.
+func DoAddPronounReflexiveImperative(pronounsStr, verbStr, firstVerbPersonaNumber string) string {
+	if pronounsStr != "" {
+		return ""
+	}
+	pronounToAdd := TransformDarrere(GetReflexivePronoun(firstVerbPersonaNumber), verbStr)
+	if pronounToAdd == "" {
+		return ""
+	}
+	return verbStr + pronounToAdd
+}
+
+// DoAddPronounReflexiveEn adds reflexive + en.
+func DoAddPronounReflexiveEn(pronounsStr, verbStr, firstVerbPersonaNumber string, pronounsAfter bool) string {
+	if pronounsAfter {
+		if pContainsReflexivePronoun.MatchString(strings.ToLower(pronounsStr)) {
+			return verbStr + TransformDarrere(pronounsStr+"'n", verbStr)
+		}
+		return verbStr + TransformDarrere("-se'n", verbStr)
+	}
+	if pronounsStr == "" {
+		return TransformDavant(GetReflexivePronoun(firstVerbPersonaNumber)+" en", verbStr) + verbStr
+	}
+	pronounToAdd := TransformDavant("es "+Transform(pronounsStr, PronounNormalized)+" en", verbStr)
+	if pronounToAdd != "" {
+		return pronounToAdd + verbStr
+	}
+	return TransformDavant(pronounsStr, verbStr) + verbStr
+}
+
+func containsAnyReflexivePronoun(pronounsStr string) bool {
+	normalized := strings.Fields(Transform(strings.ToLower(pronounsStr), PronounNormalized))
+	for _, p := range normalized {
+		if _, ok := LReflexivePronouns[p]; ok {
+			return true
+		}
+	}
+	return false
+}
