@@ -4839,4 +4839,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_INFLUXDB" name="immunize influxdb">
+    <pattern>
+      <token>influxdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INFLUXDB_CAPS" name="immunize InfluxDB">
+    <pattern>
+      <token>InfluxDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALEDB" name="immunize timescaledb">
+    <pattern>
+      <token>timescaledb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALEDB_CAPS" name="immunize TimescaleDB">
+    <pattern>
+      <token>TimescaleDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLICKHOUSE" name="immunize clickhouse">
+    <pattern>
+      <token>clickhouse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLICKHOUSE_CAPS" name="immunize ClickHouse">
+    <pattern>
+      <token>ClickHouse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

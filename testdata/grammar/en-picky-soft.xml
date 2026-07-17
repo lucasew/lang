@@ -3130,5 +3130,28 @@
       <message>Jargon; name process capability index instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MSA" name="msa soft picky">
+      <pattern>
+        <token>msa</token>
+      </pattern>
+      <message>Jargon; name measurement system analysis instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOE" name="doe soft picky">
+      <pattern>
+        <token>doe</token>
+      </pattern>
+      <message>Jargon; name design of experiments instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DESIGN_OF_EXPERIMENTS" name="design of experiments soft picky">
+      <pattern>
+        <token>design</token>
+        <token>of</token>
+        <token>experiments</token>
+      </pattern>
+      <message>Jargon; name structured experimental factor testing instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

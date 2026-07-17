@@ -11047,6 +11047,76 @@
       <message>Did you mean "exercise"?</message>
       <short>excercise</short>
     </rule>
+    <rule id="EN_SOFT_EXPLANATION_MISS2" name="explaination soft">
+      <pattern>
+        <token>explaination</token>
+      </pattern>
+      <message>Did you mean "explanation"?</message>
+      <short>explaination</short>
+    </rule>
+    <rule id="EN_SOFT_EXTENSION_MISS" name="extention soft">
+      <pattern>
+        <token>extention</token>
+      </pattern>
+      <message>Did you mean "extension"?</message>
+      <short>extention</short>
+    </rule>
+    <rule id="EN_SOFT_GENUINELY_MISS" name="genuinly soft">
+      <pattern>
+        <token>genuinly</token>
+      </pattern>
+      <message>Did you mean "genuinely"?</message>
+      <short>genuinly</short>
+    </rule>
+    <rule id="EN_SOFT_IMPLEMENTATION_MISS" name="implemantation soft">
+      <pattern>
+        <token>implemantation</token>
+      </pattern>
+      <message>Did you mean "implementation"?</message>
+      <short>implemantation</short>
+    </rule>
+    <rule id="EN_SOFT_LAUNCH_MISS" name="lauch soft">
+      <pattern>
+        <token>lauch</token>
+      </pattern>
+      <message>Did you mean "launch"?</message>
+      <short>lauch</short>
+    </rule>
+    <rule id="EN_SOFT_NEGOTIATE_MISS" name="negociate soft">
+      <pattern>
+        <token>negociate</token>
+      </pattern>
+      <message>Did you mean "negotiate"?</message>
+      <short>negociate</short>
+    </rule>
+    <rule id="EN_SOFT_PARTICULAR_MISS3" name="particualr soft">
+      <pattern>
+        <token>particualr</token>
+      </pattern>
+      <message>Did you mean "particular"?</message>
+      <short>particualr</short>
+    </rule>
+    <rule id="EN_SOFT_PRESENCE_MISS" name="presance soft">
+      <pattern>
+        <token>presance</token>
+      </pattern>
+      <message>Did you mean "presence"?</message>
+      <short>presance</short>
+    </rule>
+    <rule id="EN_SOFT_PRONUNCIATION_MISS" name="pronounciation soft">
+      <pattern>
+        <token>pronounciation</token>
+      </pattern>
+      <message>Did you mean "pronunciation"?</message>
+      <short>pronounciation</short>
+    </rule>
+    <rule id="EN_SOFT_PSEUDO_MISS" name="psuedo soft">
+      <pattern>
+        <token>psuedo</token>
+      </pattern>
+      <message>Did you mean "pseudo"?</message>
+      <short>psuedo</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

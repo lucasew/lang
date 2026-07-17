@@ -498,3 +498,6 @@ Phyllite Summit RegionNNP
 Gypsum Summit RegionNNP
 Anhydrite Summit RegionNNP
 Halite Summit RegionNNP
+Chert Summit RegionNNP
+Hornfels Summit RegionNNP
+Amphibolite Summit RegionNNP
