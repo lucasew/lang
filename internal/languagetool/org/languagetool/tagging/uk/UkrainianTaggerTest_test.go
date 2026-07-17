@@ -50,7 +50,14 @@ func TestUkrainianTagger_TaggingWithDots(t *testing.T) {
 	out := tg.Tag([]string{"300"})
 	require.True(t, out[0].HasPosTag("number"))
 }
-func TestUkrainianTagger_CompoundNumr(t *testing.T) { t.Skip("unimplemented: compound numr") }
+func TestUkrainianTagger_CompoundNumr(t *testing.T) {
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"2-х", "3-ом", "14"})
+	require.True(t, out[0].HasPosTag("numr"))
+	require.True(t, out[1].HasPosTag("numr"))
+	// bare digits stay number, not numr
+	require.True(t, out[2].HasPosTag("number"))
+}
 func TestUkrainianTagger_DynamicTaggingNumericPair(t *testing.T) {
 	t.Skip("unimplemented: dynamic numeric pair")
 }
@@ -58,7 +65,17 @@ func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 	t.Skip("unimplemented: dynamic numbers")
 }
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
-	t.Skip("unimplemented: dynamic parts")
+	// directional compounds like Південно-Західній
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"Південно-Західній", "північно-східного"})
+	require.True(t, out[0].IsTagged())
+	require.True(t, out[0].HasPartialPosTag("adj"))
+	require.True(t, out[1].IsTagged())
+	require.True(t, out[1].HasPartialPosTag("adj"))
+	// lemma lower with -ий
+	lemma := out[0].GetReadings()[0].GetLemma()
+	require.NotNil(t, lemma)
+	require.Equal(t, "південно-західний", *lemma)
 }
 func TestUkrainianTagger_HypenAndQuote(t *testing.T) {
 	tg := NewUkrainianTagger(tagging.MapWordTagger{})
@@ -77,14 +94,37 @@ func TestUkrainianTagger_DynamicMissingApostrophe(t *testing.T) {
 	t.Skip("unimplemented: missing apostrophe")
 }
 func TestUkrainianTagger_DynamicMissingHyphen(t *testing.T) {
-	t.Skip("unimplemented: missing hyphen")
+	wt := tagging.MapWordTagger{"тест": {tagging.NewTaggedWord("тест", "noun")}}
+	tg := NewUkrainianTagger(wt)
+	// missing hyphen after known prefix: мінітест → tag via міні-тест
+	out := tg.Tag([]string{"мінітест", "напівтест"})
+	require.True(t, out[0].IsTagged())
+	require.True(t, out[1].IsTagged())
 }
 func TestUkrainianTagger_DynamicTaggingFullTagMatch(t *testing.T) {
 	t.Skip("unimplemented: full tag match")
 }
 func TestUkrainianTagger_DynamicTaggingIntj(t *testing.T) {
-	t.Skip("unimplemented: intj")
+	// covered in dynamic_adj_intj_test; keep integration smoke
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"га-га", "геееей"})
+	require.True(t, out[0].HasPosTag("intj") || out[0].HasPartialPosTag("intj"))
 }
 func TestUkrainianTagger_CompoundUpperCase(t *testing.T) {
 	t.Skip("unimplemented: compound upper case")
+}
+
+func TestDynamicDirectionalAdjReadings(t *testing.T) {
+	rs := DynamicDirectionalAdjReadings("Південно-Західній")
+	require.NotEmpty(t, rs)
+	require.Equal(t, "південно-західний", rs[0].Lemma)
+	require.Contains(t, rs[0].POS, "adj")
+	require.Nil(t, DynamicDirectionalAdjReadings("звичайний"))
+}
+
+func TestCompoundNumrPOS(t *testing.T) {
+	require.Equal(t, "numr", CompoundNumrPOS("2-х"))
+	require.Equal(t, "numr", CompoundNumrPOS("3ом"))
+	require.Equal(t, "", CompoundNumrPOS("42"))
+	require.Equal(t, "", CompoundNumrPOS("абв"))
 }

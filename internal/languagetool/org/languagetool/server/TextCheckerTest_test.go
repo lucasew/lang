@@ -54,9 +54,25 @@ func TestTextChecker_InvalidAltLanguages(t *testing.T) {
 	require.NoError(t, ValidateAltLanguages("en-US"))
 }
 
-// Port of TextCheckerTest.testDetectLanguageOfString — Java @Ignore / full detector deferred
+// Port of TextCheckerTest.testDetectLanguageOfString — inject heuristic (full FastText deferred).
 func TestTextChecker_DetectLanguageOfString(t *testing.T) {
-	t.Skip("Java @Ignore / requires language identifier model")
+	// empty text + preferred → preferred[0]
+	require.Equal(t, "en-GB", DetectLanguageOfString("", []string{"en-GB"}, func(string) string { return "" }))
+
+	// detect en + preferred en-GB → promote variant
+	require.Equal(t, "en-GB", DetectLanguageOfString("X", []string{"en-GB"}, func(string) string { return "en" }))
+
+	// English sample + preferred en-ZA among list
+	english := "This is a longer English sample for detection."
+	require.Equal(t, "en-ZA", DetectLanguageOfString(english, []string{"de-AT", "en-ZA"}, func(string) string { return "en" }))
+
+	// German sample + de-AT preferred
+	german := "Das ist ein deutscher Text mit Größe."
+	require.Equal(t, "de-AT", DetectLanguageOfString(german, []string{"de-AT", "en-ZA"}, nil))
+
+	// no preferred: heuristic alone
+	require.Equal(t, "de", DetectLanguageOfString(german, nil, nil))
+	require.Equal(t, "uk", DetectLanguageOfString("Це українська мова з ї.", nil, nil))
 }
 
 // Port of TextCheckerTest.testInvalidPreferredVariant

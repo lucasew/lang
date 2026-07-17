@@ -41,6 +41,15 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		if dyn := DynamicDirectionalAdjReadings(w); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		if lemma, ipos, ok := IntjReading(w); ok {
 			p, l := ipos, lemma
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
@@ -72,6 +81,49 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				return rs
 			}); len(pref) > 0 {
 				readings = pref
+			}
+		}
+		if len(readings) == 0 {
+			for _, cand := range MissingHyphenCandidates(w) {
+				// re-tag hyphenated candidate via compound path specials
+				if dyn := DynamicAdjReadings(cand); len(dyn) > 0 {
+					for _, d := range dyn {
+						p, l := d.POS, d.Lemma
+						readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+					}
+					break
+				}
+				if pref := TryNoDashPrefixTags(strings.ReplaceAll(cand, "-", ""), func(right string) []*languagetool.AnalyzedToken {
+					var rs []*languagetool.AnalyzedToken
+					for _, tw := range t.TagWord(right) {
+						rs = append(rs, toTok(right, tw))
+					}
+					return rs
+				}); len(pref) > 0 {
+					readings = pref
+					break
+				}
+				// direct right-of-hyphen dict lookup (мінітест → міні-тест → тест)
+				if i := strings.Index(cand, "-"); i > 0 {
+					right := cand[i+1:]
+					for _, tw := range t.TagWord(right) {
+						readings = append(readings, toTok(word, tw))
+					}
+					if low := strings.ToLower(right); len(readings) == 0 && right != low {
+						for _, tw := range t.TagWord(low) {
+							readings = append(readings, toTok(word, tw))
+						}
+					}
+					if len(readings) > 0 {
+						break
+					}
+				}
+			}
+		}
+		if len(readings) == 0 {
+			if np := CompoundNumrPOS(w); np != "" {
+				p, l := np, w
+				readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
 			}
 		}
 		if len(readings) == 0 {
