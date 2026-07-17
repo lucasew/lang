@@ -3513,5 +3513,28 @@
       <message>Jargon; name dual-environment cutover deployment instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_SHADOW" name="shadow soft picky">
+      <pattern>
+        <token>shadow</token>
+      </pattern>
+      <message>Jargon; name dual-path production traffic mirroring instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SOAK_TEST" name="soak test soft picky">
+      <pattern>
+        <token>soak</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a long-running endurance reliability test instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FEATURE_TOGGLE" name="feature toggle soft picky">
+      <pattern>
+        <token>feature</token>
+        <token>toggle</token>
+      </pattern>
+      <message>Jargon; name a runtime switch for enabling product behavior instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

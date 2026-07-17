@@ -12307,6 +12307,76 @@
       <message>Did you mean "framework"?</message>
       <short>framwork</short>
     </rule>
+    <rule id="EN_SOFT_FRAMEWORK_MISS2" name="framewrok soft">
+      <pattern>
+        <token>framewrok</token>
+      </pattern>
+      <message>Did you mean "framework"?</message>
+      <short>framewrok</short>
+    </rule>
+    <rule id="EN_SOFT_COMPONENT_MISS" name="componet soft">
+      <pattern>
+        <token>componet</token>
+      </pattern>
+      <message>Did you mean "component"?</message>
+      <short>componet</short>
+    </rule>
+    <rule id="EN_SOFT_COMPONENT_MISS2" name="compnent soft">
+      <pattern>
+        <token>compnent</token>
+      </pattern>
+      <message>Did you mean "component"?</message>
+      <short>compnent</short>
+    </rule>
+    <rule id="EN_SOFT_UTILITY_MISS" name="utilty soft">
+      <pattern>
+        <token>utilty</token>
+      </pattern>
+      <message>Did you mean "utility"?</message>
+      <short>utilty</short>
+    </rule>
+    <rule id="EN_SOFT_RESOURCE_MISS2" name="reource soft">
+      <pattern>
+        <token>reource</token>
+      </pattern>
+      <message>Did you mean "resource"?</message>
+      <short>reource</short>
+    </rule>
+    <rule id="EN_SOFT_MODEL_MISS" name="modle soft">
+      <pattern>
+        <token>modle</token>
+      </pattern>
+      <message>Did you mean "model"?</message>
+      <short>modle</short>
+    </rule>
+    <rule id="EN_SOFT_SCHEMA_MISS" name="scheam soft">
+      <pattern>
+        <token>scheam</token>
+      </pattern>
+      <message>Did you mean "schema"?</message>
+      <short>scheam</short>
+    </rule>
+    <rule id="EN_SOFT_MIGRATION_MISS" name="migraiton soft">
+      <pattern>
+        <token>migraiton</token>
+      </pattern>
+      <message>Did you mean "migration"?</message>
+      <short>migraiton</short>
+    </rule>
+    <rule id="EN_SOFT_FEATURE_MISS2" name="featre soft">
+      <pattern>
+        <token>featre</token>
+      </pattern>
+      <message>Did you mean "feature"?</message>
+      <short>featre</short>
+    </rule>
+    <rule id="EN_SOFT_RELEASE_MISS" name="relese soft">
+      <pattern>
+        <token>relese</token>
+      </pattern>
+      <message>Did you mean "release"?</message>
+      <short>relese</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

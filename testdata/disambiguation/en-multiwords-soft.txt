@@ -552,3 +552,6 @@ Quartzite Ridge RegionNNP
 Dolomite Ridge RegionNNP
 Travertine Ridge RegionNNP
 Phyllite Ridge RegionNNP
+Gypsum Ridge RegionNNP
+Anhydrite Ridge RegionNNP
+Halite Ridge RegionNNP

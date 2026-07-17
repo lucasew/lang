@@ -5487,4 +5487,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_DRIZZLE" name="immunize drizzle">
+    <pattern>
+      <token>drizzle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRIZZLE_CAPS" name="immunize Drizzle">
+    <pattern>
+      <token>Drizzle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEORM" name="immunize typeorm">
+    <pattern>
+      <token>typeorm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEORM_CAPS" name="immunize TypeORM">
+    <pattern>
+      <token>TypeORM</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEQUELIZE" name="immunize sequelize">
+    <pattern>
+      <token>sequelize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEQUELIZE_CAPS" name="immunize Sequelize">
+    <pattern>
+      <token>Sequelize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
