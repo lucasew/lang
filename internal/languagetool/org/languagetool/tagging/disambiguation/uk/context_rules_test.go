@@ -144,3 +144,72 @@ func TestRemoveLowerCaseHomonymsForAbbreviations(t *testing.T) {
 	require.True(t, tok.HasPartialPosTag("abbr"))
 	require.False(t, tok.HasPosTag("part") || tok.HasPartialPosTag("part"))
 }
+
+func TestRemovePluralForNames(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	// plural + singular readings
+	name := atrMulti("Василів", [][2]string{
+		{"Василь", "noun:anim:p:v_rod:prop:fname"},
+		{"Василів", "noun:anim:m:v_naz:prop:lname"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, name})
+	RemovePluralForNames(sent)
+	tok := sent.GetTokensWithoutWhitespace()[1]
+	require.False(t, tok.HasPartialPosTag(":p:"))
+	require.True(t, tok.HasPartialPosTag("lname") || tok.HasPartialPosTag("m:v_naz"))
+
+	// keep plural after numr
+	num := atrSent("два", "numr:p:v_naz")
+	name2 := atrMulti("Андрії", [][2]string{
+		{"Андрій", "noun:anim:p:v_naz:prop:fname"},
+		{"Андрій", "noun:anim:m:v_naz:prop:fname"},
+	})
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, num, name2})
+	RemovePluralForNames(sent2)
+	require.True(t, sent2.GetTokensWithoutWhitespace()[2].HasPartialPosTag(":p:"))
+}
+
+func TestRemoveVerbImpr(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	adj := atrMulti("подальші", [][2]string{{"подальший", "adj:p:v_naz"}})
+	noun := atrMulti("суди", [][2]string{
+		{"суд", "noun:inanim:p:v_naz"},
+		{"судити", "verb:imperf:impr:p:2"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, adj, noun})
+	RemoveVerbImpr(sent)
+	tok := sent.GetTokensWithoutWhitespace()[2]
+	require.True(t, tok.HasPartialPosTag("noun"))
+	require.False(t, tok.HasPartialPosTag("impr"))
+}
+
+func TestPreferVocativeWhenBang(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	adj := atrMulti("Шановні", [][2]string{
+		{"шановний", "adj:p:v_kly:compb"},
+		{"шановний", "adj:p:v_naz:compb"},
+	})
+	noun := atrMulti("депутати", [][2]string{
+		{"депутат", "noun:anim:p:v_kly"},
+		{"депутат", "noun:anim:p:v_naz"},
+	})
+	bang := atrSent("!", "SENT_END")
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, adj, noun, bang})
+	PreferVocativeWhenBang(sent)
+	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_kly"))
+	require.False(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_naz"))
+	require.True(t, sent.GetTokensWithoutWhitespace()[2].HasPartialPosTag("v_kly"))
+	require.False(t, sent.GetTokensWithoutWhitespace()[2].HasPartialPosTag("v_naz"))
+}
+
+func TestRemoveLowerCaseBadForUpperCaseGood(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	tok := atrMulti("Держдепартамент", [][2]string{
+		{"Держдепартамент", "noun:inanim:m:v_naz:prop"},
+		{"держдепартамент", "noun:inanim:m:v_naz:bad"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok})
+	RemoveLowerCaseBadForUpperCaseGood(sent)
+	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("prop"))
+	require.False(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("bad"))
+}

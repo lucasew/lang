@@ -43,6 +43,10 @@ func (d *UkrainianHybridDisambiguator) Disambiguate(in *languagetool.AnalyzedSen
 		RetagFemNames(out)
 		RemoveInanimVKly(out)
 		RemoveLowerCaseHomonymsForAbbreviations(out)
+		RemoveLowerCaseBadForUpperCaseGood(out)
+		RemovePluralForNames(out)
+		RemoveVerbImpr(out)
+		PreferVocativeWhenBang(out)
 		for _, tok := range out.GetTokensWithoutWhitespace() {
 			RemoveVmisReadings(tok)
 		}

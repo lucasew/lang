@@ -450,3 +450,193 @@ func isAllUpperLetters(s string) bool {
 	}
 	return hasLetter
 }
+
+// RemovePluralForNames drops plural proper-name readings unless plural context.
+func RemovePluralForNames(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 1; i < len(tokens); i++ {
+		tok := tokens[i]
+		if tok == nil {
+			continue
+		}
+		// plural adj/numr/багато before → keep plural names
+		if i > 1 && tokens[i-1] != nil {
+			prev := tokens[i-1]
+			if prev.HasPartialPosTag("adj:p") || prev.HasPartialPosTag("numr") || prev.HasPartialPosTag("number") ||
+				prev.HasPartialPosTag(":num") {
+				continue
+			}
+			switch strings.ToLower(prev.GetToken()) {
+			case "багато", "мало", "сотня", "півсотня", "два", "дві", "три", "чотири":
+				continue
+			}
+			// prep з/із before plural name (наймолодшого з Моцартів)
+			if isPrepZ(prev) {
+				continue
+			}
+		}
+		// next is plural lname → keep
+		if i+1 < len(tokens) && tokens[i+1] != nil && tokens[i+1].HasPartialPosTag(":lname") && tokens[i+1].HasPartialPosTag(":p:") {
+			continue
+		}
+		var plurals []*languagetool.AnalyzedToken
+		other := false
+		for _, r := range tok.GetReadings() {
+			if r == nil || r.GetPOSTag() == nil {
+				continue
+			}
+			pos := *r.GetPOSTag()
+			if strings.HasSuffix(pos, "_END") {
+				continue
+			}
+			// plural prop fname/lname
+			if strings.Contains(pos, ":prop") && (strings.Contains(pos, ":p:") || strings.Contains(pos, ":p:v_")) &&
+				(strings.Contains(pos, "fname") || strings.Contains(pos, "lname") || strings.Contains(pos, "geo")) {
+				plurals = append(plurals, r)
+			} else {
+				other = true
+			}
+		}
+		if len(plurals) > 0 && other {
+			for _, r := range plurals {
+				tok.RemoveReading(r, "plural_for_names")
+			}
+		}
+	}
+}
+
+func isPrepZ(tok *languagetool.AnalyzedTokenReadings) bool {
+	low := strings.ToLower(tok.GetToken())
+	if low == "з" || low == "із" || low == "зі" {
+		return true
+	}
+	return tok.HasPartialPosTag("prep") && (low == "з" || low == "із" || low == "зі")
+}
+
+// RemoveLowerCaseBadForUpperCaseGood strips :bad readings when surface is capitalized prop.
+func RemoveLowerCaseBadForUpperCaseGood(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	for _, tok := range input.GetTokensWithoutWhitespace() {
+		if tok == nil || len(tok.GetReadings()) < 2 {
+			continue
+		}
+		s := tok.GetToken()
+		if s == "" {
+			continue
+		}
+		rs := []rune(s)
+		if !unicode.IsUpper(rs[0]) {
+			continue
+		}
+		if !tok.HasPartialPosTag("prop") {
+			continue
+		}
+		// drop readings with :bad whose lemma equals lowercased form of another lemma
+		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+			if r == nil || r.GetPOSTag() == nil {
+				continue
+			}
+			if strings.Contains(*r.GetPOSTag(), ":bad") {
+				tok.RemoveReading(r, "lowercase_bad_vs_uppercase_good")
+			}
+		}
+	}
+}
+
+// RemoveVerbImpr drops verb:impr when token is also noun and previous adj agrees in case/gender soft.
+func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 2; i < len(tokens); i++ {
+		tok, prev := tokens[i], tokens[i-1]
+		if tok == nil || prev == nil {
+			continue
+		}
+		if !hasPOSPrefix(tok, "verb") || !hasPOSPrefix(tok, "noun") || !hasPOSPrefix(prev, "adj") {
+			continue
+		}
+		hasImpr := false
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), "impr") {
+				hasImpr = true
+				break
+			}
+		}
+		if !hasImpr {
+			continue
+		}
+		// soft: if adj and noun share gender letter or both plural
+		if adjNounSoftAgree(prev, tok) {
+			for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+				if r != nil && r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "verb") && strings.Contains(*r.GetPOSTag(), "impr") {
+					tok.RemoveReading(r, "not_an_imperative_2")
+				}
+			}
+		}
+	}
+}
+
+func adjNounSoftAgree(adj, noun *languagetool.AnalyzedTokenReadings) bool {
+	// share :p: or same :m/f/n:
+	for _, a := range adj.GetReadings() {
+		if a == nil || a.GetPOSTag() == nil {
+			continue
+		}
+		ap := *a.GetPOSTag()
+		for _, n := range noun.GetReadings() {
+			if n == nil || n.GetPOSTag() == nil || !strings.HasPrefix(*n.GetPOSTag(), "noun") {
+				continue
+			}
+			np := *n.GetPOSTag()
+			for _, g := range []string{":p:", ":m:", ":f:", ":n:"} {
+				if strings.Contains(ap, g) && strings.Contains(np, g) {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// PreferVocativeWhenBang keeps only v_kly on adj+noun immediately before "!" (звертання).
+func PreferVocativeWhenBang(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 1; i < len(tokens); i++ {
+		if tokens[i] == nil || tokens[i].GetToken() != "!" {
+			continue
+		}
+		// look back at noun then adj
+		for j := i - 1; j >= 1 && j >= i-3; j-- {
+			tok := tokens[j]
+			if tok == nil {
+				continue
+			}
+			if !tok.HasPartialPosTag("v_kly") {
+				continue
+			}
+			// has other cases too → keep only v_kly
+			for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+				if r == nil || r.GetPOSTag() == nil {
+					continue
+				}
+				pos := *r.GetPOSTag()
+				if strings.HasSuffix(pos, "_END") {
+					continue
+				}
+				if !strings.Contains(pos, "v_kly") {
+					tok.RemoveReading(r, "vkly_zvert")
+				}
+			}
+		}
+	}
+}

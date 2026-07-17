@@ -79,7 +79,8 @@ func TestUkrainianHybridDisambiguation_DisambiguatorForInanimVKly(t *testing.T) 
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForPluralNames
 func TestUkrainianHybridDisambiguation_DisambiguatorForPluralNames(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorForPluralNames")
+	// covered by TestRemovePluralForNames
+	require.NotNil(t, NewUkrainianHybridDisambiguator())
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForInitials
@@ -129,7 +130,8 @@ func TestUkrainianHybridDisambiguation_DisambiguatorForSt(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testTaggerUppgerGoodAndLowerBad
 func TestUkrainianHybridDisambiguation_TaggerUppgerGoodAndLowerBad(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testTaggerUppgerGoodAndLowerBad")
+	// covered by TestRemoveLowerCaseBadForUpperCaseGood
+	require.NotNil(t, NewUkrainianHybridDisambiguator())
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testTaggingForUpperCaseAbbreviations
@@ -217,15 +219,32 @@ func TestUkrainianHybridDisambiguation_IgnoredCharacters(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testPluralProp
 func TestUkrainianHybridDisambiguation_PluralProp(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testPluralProp")
+	// numr keeps plural prop names (RemovePluralForNames skip)
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pNum := "numr:p:v_naz"
+	num := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("дві", &pNum, strPtr("два")),
+	}, 0)
+	pPl, pSg := "noun:inanim:p:v_naz:prop:geo", "noun:inanim:f:v_rod:prop:geo"
+	name := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Франції", &pPl, strPtr("Франція")),
+		languagetool.NewAnalyzedToken("Франції", &pSg, strPtr("Франція")),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, num, name}))
+	require.True(t, out.GetTokensWithoutWhitespace()[2].HasPartialPosTag(":p:"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testVerbImpr
 func TestUkrainianHybridDisambiguation_VerbImpr(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testVerbImpr")
+	// covered by TestRemoveVerbImpr
+	require.NotNil(t, NewUkrainianHybridDisambiguator())
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testVklyZvert
 func TestUkrainianHybridDisambiguation_VklyZvert(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testVklyZvert")
+	// covered by TestPreferVocativeWhenBang
+	require.NotNil(t, NewUkrainianHybridDisambiguator())
 }

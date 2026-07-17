@@ -83,9 +83,23 @@ func GetGoogleTokensFromSentence(sentence *languagetool.AnalyzedSentence, addSta
 }
 
 func findOriginalAnalyzedTokens(sentence *languagetool.AnalyzedSentence, startPos, endPos int) []*languagetool.AnalyzedToken {
-	// Trivial: if exactly one token readings covers the span, return its readings.
+	// Exact span match first.
 	for _, tr := range sentence.GetTokens() {
+		if tr == nil {
+			continue
+		}
 		if tr.GetStartPos() == startPos && tr.GetEndPos() == endPos {
+			return tr.GetReadings()
+		}
+	}
+	// Soft: token surface equality when positions differ (tokenizer vs analyzer).
+	// Prefer non-blank tokens whose GetToken matches the substring length span loosely.
+	for _, tr := range sentence.GetTokensWithoutWhitespace() {
+		if tr == nil {
+			continue
+		}
+		// cover when analyzer start aligns and length matches end-start
+		if tr.GetStartPos() == startPos && tr.GetEndPos()-tr.GetStartPos() == endPos-startPos {
 			return tr.GetReadings()
 		}
 	}

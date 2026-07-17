@@ -33,6 +33,11 @@ func AnalyzePlain(text string) *AnalyzedSentence {
 	return NewAnalyzedSentence(readings)
 }
 
+// AnalyzePlainStripSoftHyphen is AnalyzePlain after removing U+00AD (LT ignored chars).
+func AnalyzePlainStripSoftHyphen(text string) *AnalyzedSentence {
+	return AnalyzePlain(strings.ReplaceAll(text, "\u00AD", ""))
+}
+
 // CheckWhitespaceOnly runs MultipleWhitespace-style single-sentence check via callback.
 // Kept in languagetool package for test helpers.
 func AnalyzeSentences(text string) []*AnalyzedSentence {
