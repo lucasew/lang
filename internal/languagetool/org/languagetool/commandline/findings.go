@@ -39,7 +39,10 @@ func MatchesToFindings(matches []*rules.RuleMatch, text, filename, lang string) 
 			continue
 		}
 		id := ruleIDOfMatch(m)
-		_, _, issue, _ := languagetool.SoftRuleMeta(id)
+		issue := m.IssueType
+		if issue == "" {
+			_, _, issue, _ = languagetool.SoftRuleMeta(id)
+		}
 		if issue == "" {
 			issue = "other"
 		}

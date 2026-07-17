@@ -36,4 +36,11 @@ func TestSoftRuleMeta(t *testing.T) {
 	// empty lang → hint from rule id
 	require.Contains(t, SoftRuleURL("DE_SOFT_DAS_DASS", ""), "lang=de")
 	require.Contains(t, SoftRuleURL("EN_A_VS_AN", ""), "lang=en")
+
+	id, name, issue, short = SoftRuleMeta("GIFT")
+	require.Equal(t, "FALSEFRIENDS", id)
+	require.Equal(t, "False Friends", name)
+	require.Equal(t, "misspelling", issue)
+	require.Equal(t, "False friend", short)
+	require.Equal(t, "error", SeverityFromIssueType("misspelling"))
 }

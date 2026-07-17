@@ -55,6 +55,15 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 		}
 		id := ruleIDOfMatch(m)
 		catID, catName, issue, short := languagetool.SoftRuleMeta(id)
+		if m.IssueType != "" {
+			issue = m.IssueType
+		}
+		if m.CategoryID != "" {
+			catID = m.CategoryID
+		}
+		if m.CategoryName != "" {
+			catName = m.CategoryName
+		}
 		desc := languagetool.SoftRuleDescription(id)
 		sm := m.GetShortMessage()
 		if sm == "" {

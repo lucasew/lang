@@ -18,6 +18,12 @@ func FromLocalMatches(ms []languagetool.LocalMatch, sentence *languagetool.Analy
 		if len(m.Suggestions) > 0 {
 			rm.SetSuggestedReplacements(m.Suggestions)
 		}
+		if m.ShortMessage != "" {
+			rm.ShortMessage = m.ShortMessage
+		}
+		rm.IssueType = m.IssueType
+		rm.CategoryID = m.CategoryID
+		rm.CategoryName = m.CategoryName
 		out = append(out, rm)
 	}
 	return out

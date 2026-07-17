@@ -29,7 +29,7 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 		return "STYLE", "Style", "style", "Long sentence"
 	case strings.Contains(id, "LONG_PARAGRAPH"):
 		return "STYLE", "Style", "style", "Long paragraph"
-	case strings.Contains(id, "FALSE_FRIEND"):
+	case strings.Contains(id, "FALSE_FRIEND") || isSoftFalseFriendGroupID(id):
 		return "FALSEFRIENDS", "False Friends", "misspelling", "False friend"
 	// Soft grammar XML slices (e.g. EN_SOFT_*) are grammar, not false friends.
 	case strings.Contains(id, "_SOFT_"):
@@ -66,7 +66,7 @@ func SoftRuleDescription(ruleID string) string {
 		return "Long sentence"
 	case strings.Contains(id, "LONG_PARAGRAPH"):
 		return "Long paragraph"
-	case strings.Contains(id, "FALSE_FRIEND"):
+	case strings.Contains(id, "FALSE_FRIEND") || isSoftFalseFriendGroupID(id):
 		return "False friend"
 	case strings.Contains(id, "_SOFT_"):
 		if i := strings.Index(id, "_SOFT_"); i >= 0 && i+6 < len(id) {
@@ -112,6 +112,16 @@ func SoftRuleURL(ruleID, lang string) string {
 		lang = lang[:i]
 	}
 	return "https://community.languagetool.org/rule/show/" + ruleID + "?lang=" + lang
+}
+
+// isSoftFalseFriendGroupID matches soft false-friends-soft.xml rulegroup ids.
+func isSoftFalseFriendGroupID(id string) bool {
+	switch id {
+	case "ABILITY", "GIFT", "ACTUAL", "LIBRARY", "EVENTUAL":
+		return true
+	default:
+		return false
+	}
 }
 
 // SoftRuleLangHint infers a language code from a rule ID prefix (soft fallback).

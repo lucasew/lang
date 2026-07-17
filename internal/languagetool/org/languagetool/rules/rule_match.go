@@ -13,6 +13,10 @@ type RuleMatch struct {
 	SuggestedReplacements []string
 	// URL optional match-level link (overrides rule URL when set).
 	URL string
+	// Soft metadata carried from LocalMatch (false friends / soft grammar).
+	IssueType    string
+	CategoryID   string
+	CategoryName string
 }
 
 func NewRuleMatch(rule any, sentence *languagetool.AnalyzedSentence, fromPos, toPos int, message string) *RuleMatch {

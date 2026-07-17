@@ -155,7 +155,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			}
 			if strings.EqualFold(base, "en") {
 				en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), map[string][]string{
-					"teh": {"the"}, "recieve": {"receive"},
+					"teh": {"the"}, "recieve": {"receive"}, "seperate": {"separate"},
 				})
 				en.RegisterDemoEnglishTagger(lt)
 			}
@@ -523,6 +523,15 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			id = g.GetID()
 		}
 		catID, catName, issue, short := languagetool.SoftRuleMeta(id)
+		if m.IssueType != "" {
+			issue = m.IssueType
+		}
+		if m.CategoryID != "" {
+			catID = m.CategoryID
+		}
+		if m.CategoryName != "" {
+			catName = m.CategoryName
+		}
 		sm := m.GetShortMessage()
 		if sm == "" {
 			sm = short
