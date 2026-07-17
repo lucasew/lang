@@ -60,12 +60,6 @@ func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
 	t.Skip("unimplemented: dynamic parts")
 }
-func TestUkrainianTagger_DynamicTaggingVmisny(t *testing.T) {
-	t.Skip("unimplemented: vmisny")
-}
-func TestUkrainianTagger_DynamicTaggingXShaped(t *testing.T) {
-	t.Skip("unimplemented: x-shaped")
-}
 func TestUkrainianTagger_HypenAndQuote(t *testing.T) {
 	tg := NewUkrainianTagger(tagging.MapWordTagger{})
 	_ = tg.Tag([]string{"м'ясо"})

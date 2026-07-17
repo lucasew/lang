@@ -32,6 +32,22 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		if dyn := DynamicAdjReadings(w); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
+		if lemma, ipos, ok := IntjReading(w); ok {
+			p, l := ipos, lemma
+			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		for _, tw := range t.TagWord(w) {
 			readings = append(readings, toTok(word, tw))
 		}
