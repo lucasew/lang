@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules>
-  <!-- Soft disambiguation: mark product names ignore-spelling -->
-  <rule id="SOFT_IGNORE_IPHONE" name="ignore iPhone">
+  <!-- Soft POS filter: after "will", keep only VB reading of "run" -->
+  <rule id="SOFT_WILL_RUN_VB" name="will run → VB">
     <pattern>
-      <token>iPhone</token>
+      <token>will</token>
+      <token>run</token>
     </pattern>
-    <disambig action="ignore_spelling"/>
+    <disambig action="filter" postag="VB"/>
   </rule>
-  <rule id="SOFT_IGNORE_GITHUB" name="ignore GitHub">
+  <!-- Soft replace: force NNP on LanguageTool brand token when capitalized form -->
+  <rule id="SOFT_LANGUAGETOOL_NNP" name="LanguageTool → NNP">
     <pattern>
-      <token>GitHub</token>
+      <token>LanguageTool</token>
     </pattern>
-    <disambig action="ignore_spelling"/>
+    <disambig action="replace" postag="NNP"/>
   </rule>
-  <rule id="SOFT_IGNORE_OPENAI" name="ignore OpenAI">
+  <!-- Soft immunize: protect "as" in "as well" is multiword; immunize single "asap" -->
+  <rule id="SOFT_IMMUNIZE_ASAP" name="immunize asap">
     <pattern>
-      <token>OpenAI</token>
+      <token>asap</token>
     </pattern>
-    <disambig action="ignore_spelling"/>
+    <disambig action="immunize"/>
   </rule>
 </rules>

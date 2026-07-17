@@ -1,0 +1,26 @@
+# Soft product / brand / tech names: mark ignore-spelling (one token per line).
+# Case-sensitive surface forms (as typically written).
+iPhone
+iPad
+iOS
+macOS
+GitHub
+GitLab
+OpenAI
+ChatGPT
+Kubernetes
+Docker
+PostgreSQL
+MySQL
+MongoDB
+Redis
+GraphQL
+TypeScript
+JavaScript
+PyTorch
+TensorFlow
+HuggingFace
+LangChain
+LanguageTool
+xAI
+Grok

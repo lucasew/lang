@@ -166,7 +166,14 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 		if r.DisambiguatedPOS == "" {
 			return
 		}
-		for i := first; i <= last && i < len(nws); i++ {
+		// Soft/LT practical default: multi-token patterns filter the *last* token
+		// (context tokens like "will" in "will run" must not lose their tags).
+		// FILTERALL still applies to every matched token.
+		start := first
+		if r.Action == ActionFilter && last >= first {
+			start = last
+		}
+		for i := start; i <= last && i < len(nws); i++ {
 			for _, reading := range append([]*languagetool.AnalyzedToken(nil), nws[i].GetReadings()...) {
 				if reading.GetPOSTag() == nil || *reading.GetPOSTag() != r.DisambiguatedPOS {
 					nws[i].RemoveReading(reading, r.ID)

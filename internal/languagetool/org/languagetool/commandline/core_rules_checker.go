@@ -174,8 +174,12 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
-			// Soft multiword chunker + optional soft XML disambiguation.
-			en.RegisterSoftEnglishDisambiguator(lt, DiscoverEnglishMultiwords(opts), DiscoverEnglishSoftDisambiguationXML(opts))
+			// Soft multiword chunker + soft XML + ignore-spelling word list.
+			en.RegisterSoftEnglishDisambiguator(lt,
+				DiscoverEnglishMultiwords(opts),
+				DiscoverEnglishSoftDisambiguationXML(opts),
+				DiscoverEnglishIgnoreSpellingList(opts),
+			)
 		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
@@ -491,6 +495,16 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		_, _ = fmt.Fprintf(w, "english.dict: %s\n", pos)
 	} else {
 		_, _ = fmt.Fprintf(w, "english.dict: (unset)\n")
+	}
+	if ign := DiscoverEnglishIgnoreSpellingList(opts); ign != "" {
+		_, _ = fmt.Fprintf(w, "ignore-spelling list: %s\n", ign)
+	} else {
+		_, _ = fmt.Fprintf(w, "ignore-spelling list: (unset)\n")
+	}
+	if dx := DiscoverEnglishSoftDisambiguationXML(opts); dx != "" {
+		_, _ = fmt.Fprintf(w, "soft disambiguation XML: %s\n", dx)
+	} else {
+		_, _ = fmt.Fprintf(w, "soft disambiguation XML: (unset)\n")
 	}
 	// smoke check
 	lt, err := configureCoreLT("en", opts)

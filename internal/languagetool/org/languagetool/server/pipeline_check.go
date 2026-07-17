@@ -56,7 +56,7 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		if !taggerOK && demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
 		}
-		en.RegisterSoftEnglishDisambiguator(lt, softEnglishMultiwordsPath(), softEnglishDisambigXMLPath())
+		en.RegisterSoftEnglishDisambiguator(lt, softEnglishMultiwordsPath(), softEnglishDisambigXMLPath(), softEnglishIgnoreSpellingPath())
 	}
 
 	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
@@ -134,6 +134,16 @@ func softEnglishDisambigXMLPath() string {
 		}
 	}
 	return walkUpFind("testdata/disambiguation/en-soft.xml")
+}
+
+// softEnglishIgnoreSpellingPath resolves LANG_IGNORE_SPELLING_FILE or walk-up word list.
+func softEnglishIgnoreSpellingPath() string {
+	if p := os.Getenv("LANG_IGNORE_SPELLING_FILE"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	return walkUpFind("testdata/disambiguation/en-ignore-spelling.txt")
 }
 
 // softEnglishMultiwordsPath resolves LANG_EN_MULTIWORDS or walk-up multiwords.txt.

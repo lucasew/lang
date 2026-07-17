@@ -25,10 +25,10 @@ var softEnglishMultiwords = []string{
 	"Yom Kippur\tNNP",
 }
 
-// RegisterSoftEnglishDisambiguator installs an EnglishHybridDisambiguator with a
-// MultiWordChunker (soft built-in lines + optional tab-separated multiwords file)
-// and optional soft XML disambiguation rules (e.g. ignore_spelling for product names).
-func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwordsPath, softDisambigXMLPath string) {
+// RegisterSoftEnglishDisambiguator installs multiword chunking, optional soft XML
+// rules, and a data-driven ignore-spelling word list on lt.Disambiguator.
+// ignoreSpellingPath is a plain-text list (one surface form per line); empty skips.
+func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwordsPath, softDisambigXMLPath, ignoreSpellingPath string) {
 	if lt == nil {
 		return
 	}
@@ -57,7 +57,86 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 			}
 		}
 	}
-	lt.Disambiguator = hyb
+	var steps []languagetool.SentenceDisambiguator
+	steps = append(steps, hyb)
+	if ignoreSpellingPath != "" {
+		if words, err := loadIgnoreSpellingWords(ignoreSpellingPath); err == nil && len(words) > 0 {
+			steps = append(steps, &ignoreSpellingWordList{words: words})
+		}
+	}
+	if len(steps) == 1 {
+		lt.Disambiguator = steps[0]
+		return
+	}
+	lt.Disambiguator = chainSentenceDisambiguator(steps)
+}
+
+// chainSentenceDisambiguator applies disambiguators in order.
+type chainSentenceDisambiguator []languagetool.SentenceDisambiguator
+
+func (c chainSentenceDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	s := input
+	for _, step := range c {
+		if step == nil || s == nil {
+			continue
+		}
+		if out := step.Disambiguate(s); out != nil {
+			s = out
+		}
+	}
+	return s
+}
+
+// ignoreSpellingWordList marks listed surface forms with IgnoreSpelling (case-sensitive + lower).
+type ignoreSpellingWordList struct {
+	words map[string]struct{}
+}
+
+func (w *ignoreSpellingWordList) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	if input == nil || w == nil || len(w.words) == 0 {
+		return input
+	}
+	for _, tok := range input.GetTokensWithoutWhitespace() {
+		if tok == nil {
+			continue
+		}
+		surface := tok.GetToken()
+		if _, ok := w.words[surface]; ok {
+			tok.IgnoreSpelling()
+			continue
+		}
+		if low := strings.ToLower(surface); low != surface {
+			if _, ok := w.words[low]; ok {
+				tok.IgnoreSpelling()
+			}
+		}
+	}
+	return input
+}
+
+func loadIgnoreSpellingWords(path string) (map[string]struct{}, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	out := map[string]struct{}{}
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		line := strings.TrimSpace(sc.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		if i := strings.IndexByte(line, '#'); i >= 0 {
+			line = strings.TrimSpace(line[:i])
+		}
+		if line == "" {
+			continue
+		}
+		out[line] = struct{}{}
+		out[strings.ToLower(line)] = struct{}{}
+	}
+	return out, sc.Err()
 }
 
 func loadTabSeparatedMultiwords(f *os.File) ([]string, error) {

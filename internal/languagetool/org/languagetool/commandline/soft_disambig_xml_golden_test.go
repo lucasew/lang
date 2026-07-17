@@ -9,14 +9,16 @@ import (
 )
 
 func TestGolden_SoftXMLDisambig_IgnoreProductNames(t *testing.T) {
-	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
-		t.Skip("en-soft.xml not found")
+	if DiscoverEnglishIgnoreSpellingList(nil) == "" && DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("soft disambiguation data not found")
 	}
-	// iPhone / GitHub should not spell-flag when soft XML ignore_spelling is loaded
+	// product/tech names from en-ignore-spelling.txt should not spell-flag
 	for _, text := range []string{
 		"I use an iPhone every day.",
 		"We push code to GitHub daily.",
 		"OpenAI models are popular.",
+		"We deploy with Kubernetes and Docker.",
+		"I prefer TypeScript over JavaScript.",
 	} {
 		t.Run(text, func(t *testing.T) {
 			var buf bytes.Buffer
@@ -29,4 +31,17 @@ func TestGolden_SoftXMLDisambig_IgnoreProductNames(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGolden_SoftXML_WillRunFilter(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" || DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("need en-soft.xml and english.dict")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "I will run tomorrow.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	// run should show VB (possibly only VB after filter)
+	require.Contains(t, s, "run/")
+	require.Contains(t, s, "VB")
 }

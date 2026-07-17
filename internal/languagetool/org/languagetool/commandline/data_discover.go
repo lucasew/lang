@@ -94,6 +94,27 @@ func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
 	return ""
 }
 
+// DiscoverEnglishIgnoreSpellingList finds soft EN ignore-spelling word list
+// (testdata/disambiguation/en-ignore-spelling.txt or LANG_IGNORE_SPELLING_FILE).
+func DiscoverEnglishIgnoreSpellingList(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_IGNORE_SPELLING_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "disambiguation", "en-ignore-spelling.txt"),
+			filepath.Join(opts.GetDataDir(), "en-ignore-spelling.txt"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	return WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-ignore-spelling.txt"))
+}
+
 // DiscoverEnglishSoftDisambiguationXML finds soft EN disambiguation XML
 // (testdata/disambiguation/en-soft.xml or LANG_DISAMBIGUATION_FILE).
 func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
