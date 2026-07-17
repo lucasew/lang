@@ -47,6 +47,30 @@ func TestCoreListRules_PtPTHasRegionalSoft(t *testing.T) {
 	require.NotContains(t, out, "PT_SOFT_AUTOCARRO_BR")
 }
 
+func TestCoreListRules_EsMXHasRegionalSoft(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "es-MX"))
+	out := buf.String()
+	require.Contains(t, out, "ES_SOFT_ORDENADOR_MX")
+	require.NotContains(t, out, "ES_SOFT_COMPUTADORA_ES")
+}
+
+func TestCoreListRules_DeCHHasRegionalSoft(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "de-CH"))
+	out := buf.String()
+	require.Contains(t, out, "DE_SOFT_STRASSE_CH")
+	require.Contains(t, out, "DE_SOFT_DAS_DASS") // shared de-soft.xml
+}
+
+func TestCoreListRules_FrCAHasRegionalSoft(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "fr-CA"))
+	out := buf.String()
+	require.Contains(t, out, "FR_SOFT_WEEKEND_CA")
+	require.Contains(t, out, "FR_SOFT_A_LA")
+}
+
 func TestRunWithIO_RulesSubcommand(t *testing.T) {
 	var out, errb bytes.Buffer
 	code := RunWithIO([]string{"rules", "-l", "en"}, DefaultCoreHooks(), &out, &errb)

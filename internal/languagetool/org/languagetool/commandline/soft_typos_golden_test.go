@@ -1121,6 +1121,187 @@ func TestGolden_ApplySoftPtBRAutocarro(t *testing.T) {
 	require.NotContains(t, out.String(), "autocarro")
 }
 
+func TestGolden_SoftEsMXRegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Uso el ordenador hoy.", "ES_SOFT_ORDENADOR_MX", "computadora"},
+		{"Mi móvil es nuevo.", "ES_SOFT_MOVIL_MX", "celular"},
+		{"Quiero zumo de naranja.", "ES_SOFT_ZUMO_MX", "jugo"},
+		{"El coche es rojo.", "ES_SOFT_COCHE_MX", "carro"},
+		{"Voy a conducir despacio.", "ES_SOFT_CONDUCIR_MX", "manejar"},
+		{"Compré un bolígrafo.", "ES_SOFT_BOLIGRAFO_MX", "pluma"},
+		{"Un melocotón maduro.", "ES_SOFT_MELON_MX", "durazno"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "es-MX"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftEsESRegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Uso la computadora hoy.", "ES_SOFT_COMPUTADORA_ES", "ordenador"},
+		{"Mi celular es nuevo.", "ES_SOFT_CELULAR_ES", "móvil"},
+		{"Quiero jugo de naranja.", "ES_SOFT_JUGO_ES", "zumo"},
+		{"El carro es rojo.", "ES_SOFT_CARRO_ES", "coche"},
+		{"Voy a manejar despacio.", "ES_SOFT_MANEJAR_ES", "conducir"},
+		{"Un durazno maduro.", "ES_SOFT_DURAZNO_ES", "melocotón"},
+		{"Compré una laptop.", "ES_SOFT_LAPTOP_ES", "portátil"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "es-ES"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftDeCHRegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Die Straße ist nass.", "DE_SOFT_STRASSE_CH", "Strasse"},
+		{"Ein groß Haus.", "DE_SOFT_GROSS_CH", "gross"},
+		{"Hier darf man parken.", "DE_SOFT_PARKEN_CH", "parkieren"},
+		{"Mein Fahrrad ist neu.", "DE_SOFT_FAHRRAD_CH", "Velo"},
+		{"Das Handy klingelt.", "DE_SOFT_HANDY_CH", "Natel"},
+		{"Wir grillen heute.", "DE_SOFT_GRILLEN_CH", "grillieren"},
+		{"Es ist heiß draußen.", "DE_SOFT_ZWEI_CH", "heiss"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "de-CH"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftDeATRegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Im Januar schneit es.", "DE_SOFT_JANUAR_AT", "Jänner"},
+		{"Wir essen Kartoffeln.", "DE_SOFT_KARTOFFELN_AT", "Erdäpfel"},
+		{"Frische Tomaten bitte.", "DE_SOFT_TOMATEN_AT", "Paradeiser"},
+		{"Ein Brötchen zum Kaffee.", "DE_SOFT_BROETCHEN_AT", "Semmel"},
+		{"Gebratenes Hähnchen.", "DE_SOFT_HAEHNCHEN_AT", "Hendl"},
+		{"Frischkäse und Quark.", "DE_SOFT_QUARK_AT", "Topfen"},
+		{"Die Treppe ist steil.", "DE_SOFT_TREPPE_AT", "Stiege"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "de-AT"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftFrCARegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Bon week-end à tous.", "FR_SOFT_WEEKEND_CA", "fin de semaine"},
+		{"Envoie un e-mail vite.", "FR_SOFT_EMAIL_CA", "courriel"},
+		{"Mon portable sonne.", "FR_SOFT_PORTABLE_CA", "cellulaire"},
+		{"La voiture est rouge.", "FR_SOFT_VOITURE_CA", "char"},
+		{"Je vais faire des courses.", "FR_SOFT_COURSES_CA", "magasiner"},
+		{"Le parking est plein.", "FR_SOFT_PARKING_CA", "stationnement"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "fr-CA"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftEsMXNotOnEsES(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Uso el ordenador hoy.", &CommandLineOptions{Language: "es-ES"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "ES_SOFT_ORDENADOR_MX", f.Rule, "%+v", findings)
+	}
+}
+
+func TestGolden_ApplySoftEsMXOrdenador(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "es-MX", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Uso el ordenador hoy.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "computadora")
+	require.NotContains(t, out.String(), "ordenador")
+}
+
 func TestGolden_SoftInformalForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string

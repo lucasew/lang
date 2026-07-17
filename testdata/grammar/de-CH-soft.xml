@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="de-CH">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="DE_SOFT_STRASSE_CH" name="Straße soft CH">
+      <pattern>
+        <token>Straße</token>
+      </pattern>
+      <message>In der Schweiz ist "Strasse" (ss) üblich.</message>
+      <short>Straße</short>
+    </rule>
+    <rule id="DE_SOFT_GROSS_CH" name="groß soft CH">
+      <pattern>
+        <token>groß</token>
+      </pattern>
+      <message>In der Schweiz ist "gross" (ss) üblich.</message>
+      <short>groß</short>
+    </rule>
+    <rule id="DE_SOFT_PARKEN_CH" name="parken soft CH">
+      <pattern>
+        <token>parken</token>
+      </pattern>
+      <message>In der Schweiz ist oft "parkieren" üblich.</message>
+      <short>parken</short>
+    </rule>
+    <rule id="DE_SOFT_FAHRRAD_CH" name="Fahrrad soft CH">
+      <pattern>
+        <token>Fahrrad</token>
+      </pattern>
+      <message>In der Schweiz ist "Velo" häufig.</message>
+      <short>Fahrrad</short>
+    </rule>
+    <rule id="DE_SOFT_GEHALT_CH" name="Gehalt soft CH">
+      <pattern>
+        <token>Gehalt</token>
+      </pattern>
+      <message>In der Schweiz ist "Lohn" für Gehalt häufig.</message>
+      <short>Gehalt</short>
+    </rule>
+    <rule id="DE_SOFT_HANDY_CH" name="Handy soft CH">
+      <pattern>
+        <token>Handy</token>
+      </pattern>
+      <message>In der Schweiz ist "Natel" geläufig.</message>
+      <short>Handy</short>
+    </rule>
+    <rule id="DE_SOFT_GRILLEN_CH" name="grillen soft CH">
+      <pattern>
+        <token>grillen</token>
+      </pattern>
+      <message>In der Schweiz ist "grillieren" üblich.</message>
+      <short>grillen</short>
+    </rule>
+    <rule id="DE_SOFT_ZWEI_CH" name="ss spell sample">
+      <pattern>
+        <token>heiß</token>
+      </pattern>
+      <message>In der Schweiz ist "heiss" (ss) üblich.</message>
+      <short>heiß</short>
+    </rule>
+  </category>
+</rules>

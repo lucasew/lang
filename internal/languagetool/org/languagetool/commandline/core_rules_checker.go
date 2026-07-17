@@ -499,6 +499,9 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		for _, name := range []string{
 			"en-US-soft.xml", "en-GB-soft.xml",
 			"pt-BR-soft.xml", "pt-PT-soft.xml",
+			"es-MX-soft.xml", "es-ES-soft.xml",
+			"de-CH-soft.xml", "de-AT-soft.xml",
+			"fr-CA-soft.xml",
 		} {
 			p := filepath.Join(gdir, name)
 			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
@@ -623,6 +626,11 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			{"pt", "Vou a o mercado.", "PT_SOFT_A_O", "pt soft smoke"},
 			{"pt-BR", "Peguei o autocarro cedo.", "PT_SOFT_AUTOCARRO_BR", "pt-BR soft smoke"},
 			{"pt-PT", "Peguei o ônibus cedo.", "PT_SOFT_ONIBUS_PT", "pt-PT soft smoke"},
+			{"es-MX", "Uso el ordenador hoy.", "ES_SOFT_ORDENADOR_MX", "es-MX soft smoke"},
+			{"es-ES", "Uso la computadora hoy.", "ES_SOFT_COMPUTADORA_ES", "es-ES soft smoke"},
+			{"de-CH", "Die Straße ist nass.", "DE_SOFT_STRASSE_CH", "de-CH soft smoke"},
+			{"de-AT", "Im Januar schneit es.", "DE_SOFT_JANUAR_AT", "de-AT soft smoke"},
+			{"fr-CA", "Bon week-end à tous.", "FR_SOFT_WEEKEND_CA", "fr-CA soft smoke"},
 		} {
 			ltL, err := configureCoreLT(sm.lang, opts)
 			if err != nil {
