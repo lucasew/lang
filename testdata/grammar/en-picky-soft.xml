@@ -3217,5 +3217,26 @@
       <message>Jargon; name total productive maintenance instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RACI" name="raci soft picky">
+      <pattern>
+        <token>raci</token>
+      </pattern>
+      <message>Jargon; name responsible-accountable-consulted-informed matrix instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SWOT" name="swot soft picky">
+      <pattern>
+        <token>swot</token>
+      </pattern>
+      <message>Jargon; name strengths-weaknesses-opportunities-threats analysis instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CTQ" name="ctq soft picky">
+      <pattern>
+        <token>ctq</token>
+      </pattern>
+      <message>Jargon; name critical-to-quality requirement instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

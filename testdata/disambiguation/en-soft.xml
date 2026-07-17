@@ -4983,4 +4983,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHITE" name="immunize graphite">
+    <pattern>
+      <token>graphite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHITE_CAPS" name="immunize Graphite">
+    <pattern>
+      <token>Graphite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRUID" name="immunize druid">
+    <pattern>
+      <token>druid</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DRUID_CAPS" name="immunize Druid">
+    <pattern>
+      <token>Druid</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINOT" name="immunize pinot">
+    <pattern>
+      <token>pinot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINOT_CAPS" name="immunize Pinot">
+    <pattern>
+      <token>Pinot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

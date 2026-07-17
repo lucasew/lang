@@ -11327,6 +11327,76 @@
       <message>Did you mean "identifier"?</message>
       <short>identifer</short>
     </rule>
+    <rule id="EN_SOFT_IMPORT_MISS2" name="imoprt soft">
+      <pattern>
+        <token>imoprt</token>
+      </pattern>
+      <message>Did you mean "import"?</message>
+      <short>imoprt</short>
+    </rule>
+    <rule id="EN_SOFT_IMPROVE_MISS" name="imporve soft">
+      <pattern>
+        <token>imporve</token>
+      </pattern>
+      <message>Did you mean "improve"?</message>
+      <short>imporve</short>
+    </rule>
+    <rule id="EN_SOFT_INCLUDE_MISS3" name="inlcude soft">
+      <pattern>
+        <token>inlcude</token>
+      </pattern>
+      <message>Did you mean "include"?</message>
+      <short>inlcude</short>
+    </rule>
+    <rule id="EN_SOFT_INSTANCE_MISS" name="instnace soft">
+      <pattern>
+        <token>instnace</token>
+      </pattern>
+      <message>Did you mean "instance"?</message>
+      <short>instnace</short>
+    </rule>
+    <rule id="EN_SOFT_INTERFACE_MISS" name="inteface soft">
+      <pattern>
+        <token>inteface</token>
+      </pattern>
+      <message>Did you mean "interface"?</message>
+      <short>inteface</short>
+    </rule>
+    <rule id="EN_SOFT_INVALID_MISS" name="invliad soft">
+      <pattern>
+        <token>invliad</token>
+      </pattern>
+      <message>Did you mean "invalid"?</message>
+      <short>invliad</short>
+    </rule>
+    <rule id="EN_SOFT_INSTEAD_MISS4" name="isntead soft">
+      <pattern>
+        <token>isntead</token>
+      </pattern>
+      <message>Did you mean "instead"?</message>
+      <short>isntead</short>
+    </rule>
+    <rule id="EN_SOFT_KNOW_MISS" name="knwo soft">
+      <pattern>
+        <token>knwo</token>
+      </pattern>
+      <message>Did you mean "know"?</message>
+      <short>knwo</short>
+    </rule>
+    <rule id="EN_SOFT_LOAD_MISS" name="laod soft">
+      <pattern>
+        <token>laod</token>
+      </pattern>
+      <message>Did you mean "load"?</message>
+      <short>laod</short>
+    </rule>
+    <rule id="EN_SOFT_LEVEL_MISS" name="levle soft">
+      <pattern>
+        <token>levle</token>
+      </pattern>
+      <message>Did you mean "level"?</message>
+      <short>levle</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

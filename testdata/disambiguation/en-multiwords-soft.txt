@@ -510,3 +510,6 @@ Pegmatite Summit RegionNNP
 Syenite Summit RegionNNP
 Diorite Summit RegionNNP
 Gabbro Summit RegionNNP
+Tonalite Summit RegionNNP
+Anorthosite Summit RegionNNP
+Peridotite Summit RegionNNP
