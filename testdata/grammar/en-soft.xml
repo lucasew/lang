@@ -12937,6 +12937,76 @@
       <message>Did you mean "sidecar"?</message>
       <short>sidecr</short>
     </rule>
+    <rule id="EN_SOFT_INGRESS_MISS" name="ingresss soft">
+      <pattern>
+        <token>ingresss</token>
+      </pattern>
+      <message>Did you mean "ingress"?</message>
+      <short>ingresss</short>
+    </rule>
+    <rule id="EN_SOFT_EGRESS_MISS" name="egres soft">
+      <pattern>
+        <token>egres</token>
+      </pattern>
+      <message>Did you mean "egress"?</message>
+      <short>egres</short>
+    </rule>
+    <rule id="EN_SOFT_NAMESPACE_MISS3" name="namespcae soft">
+      <pattern>
+        <token>namespcae</token>
+      </pattern>
+      <message>Did you mean "namespace"?</message>
+      <short>namespcae</short>
+    </rule>
+    <rule id="EN_SOFT_ROLEBINDING_MISS" name="rolebindng soft">
+      <pattern>
+        <token>rolebindng</token>
+      </pattern>
+      <message>Did you mean "rolebinding"?</message>
+      <short>rolebindng</short>
+    </rule>
+    <rule id="EN_SOFT_NETWORKPOLICY_MISS" name="networkpolic soft">
+      <pattern>
+        <token>networkpolic</token>
+      </pattern>
+      <message>Did you mean "networkpolicy"?</message>
+      <short>networkpolic</short>
+    </rule>
+    <rule id="EN_SOFT_STATEFULSET_MISS" name="statefullset soft">
+      <pattern>
+        <token>statefullset</token>
+      </pattern>
+      <message>Did you mean "statefulset"?</message>
+      <short>statefullset</short>
+    </rule>
+    <rule id="EN_SOFT_DAEMONSET_MISS" name="deamonset soft">
+      <pattern>
+        <token>deamonset</token>
+      </pattern>
+      <message>Did you mean "daemonset"?</message>
+      <short>deamonset</short>
+    </rule>
+    <rule id="EN_SOFT_CRONJOB_MISS" name="cronjobb soft">
+      <pattern>
+        <token>cronjobb</token>
+      </pattern>
+      <message>Did you mean "cronjob"?</message>
+      <short>cronjobb</short>
+    </rule>
+    <rule id="EN_SOFT_JOBQUEUE_MISS" name="jobqueuee soft">
+      <pattern>
+        <token>jobqueuee</token>
+      </pattern>
+      <message>Did you mean "jobqueue"?</message>
+      <short>jobqueuee</short>
+    </rule>
+    <rule id="EN_SOFT_WORKQUEUE_MISS" name="workqueuee soft">
+      <pattern>
+        <token>workqueuee</token>
+      </pattern>
+      <message>Did you mean "workqueue"?</message>
+      <short>workqueuee</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

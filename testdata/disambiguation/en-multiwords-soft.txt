@@ -579,3 +579,6 @@ Lapilli Ridge RegionNNP
 Lamprophyre Ridge RegionNNP
 Carbonatite Ridge RegionNNP
 Komatiite Ridge RegionNNP
+Harzburgite Ridge RegionNNP
+Lherzolite Ridge RegionNNP
+Dunite Peak RegionNNP

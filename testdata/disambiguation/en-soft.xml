@@ -5811,4 +5811,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_YUP" name="immunize yup">
+    <pattern>
+      <token>yup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YUP_CAPS" name="immunize Yup">
+    <pattern>
+      <token>Yup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JOI" name="immunize joi">
+    <pattern>
+      <token>joi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JOI_CAPS" name="immunize Joi">
+    <pattern>
+      <token>Joi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLASSVALIDATOR" name="immunize classvalidator">
+    <pattern>
+      <token>classvalidator</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLASSVALIDATOR_CAPS" name="immunize class-validator">
+    <pattern>
+      <token>class-validator</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

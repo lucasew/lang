@@ -3724,5 +3724,30 @@
       <message>Jargon; name net-new ARR over sales-and-marketing spend instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_EXPANSION_REVENUE" name="expansion revenue soft picky">
+      <pattern>
+        <token>expansion</token>
+        <token>revenue</token>
+      </pattern>
+      <message>Jargon; name upsell and cross-sell recurring revenue growth instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACTION_REVENUE" name="contraction revenue soft picky">
+      <pattern>
+        <token>contraction</token>
+        <token>revenue</token>
+      </pattern>
+      <message>Jargon; name downgrade-related recurring revenue loss instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_REVENUE_RETENTION" name="net revenue retention soft picky">
+      <pattern>
+        <token>net</token>
+        <token>revenue</token>
+        <token>retention</token>
+      </pattern>
+      <message>Jargon; name expansion-adjusted recurring revenue retention instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
