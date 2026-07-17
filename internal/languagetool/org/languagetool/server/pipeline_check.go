@@ -49,7 +49,11 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		if !spellOK && demoSpell {
 			en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), en.CommonDemoSpellerSuggestions)
 		}
-		if demoSpell {
+		taggerOK := false
+		if posPath := softEnglishPOSDictPath(); posPath != "" {
+			taggerOK = en.RegisterBinaryEnglishTagger(lt, posPath)
+		}
+		if !taggerOK && demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
 		}
 	}
@@ -119,6 +123,29 @@ func softEnglishUSDictPath() string {
 		return p
 	}
 	return walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/en_US.dict")
+}
+
+// softEnglishPOSDictPath resolves LANG_ENGLISH_DICT or walk-up third_party english.dict.
+func softEnglishPOSDictPath() string {
+	if p := os.Getenv("LANG_ENGLISH_DICT"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		for _, rel := range []string{
+			dir + "/en/english.dict",
+			dir + "/english.dict",
+		} {
+			if _, err := os.Stat(rel); err == nil {
+				return rel
+			}
+		}
+	}
+	if p := walkUpFind("third_party/english-pos-dict/org/languagetool/resource/en/english.dict"); p != "" {
+		return p
+	}
+	return walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/english.dict")
 }
 
 // softFalseFriendsPath resolves LANG_FALSEFRIENDS_FILE or a well-known testdata path.

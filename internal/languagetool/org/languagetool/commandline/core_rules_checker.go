@@ -166,7 +166,12 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !spellRegistered && demoSpell {
 				en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), en.CommonDemoSpellerSuggestions)
 			}
-			if demoSpell {
+			// Prefer CFSA2 english.dict POS tagger; else demo closed-class map under LANG_DEMO_SPELLER.
+			taggerOK := false
+			if posPath := DiscoverEnglishPOSDict(opts); posPath != "" {
+				taggerOK = en.RegisterBinaryEnglishTagger(lt, posPath)
+			}
+			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
 		}
@@ -355,32 +360,37 @@ func CoreApplySuggestionsHook(w io.Writer, text string, opts *CommandLineOptions
 	return len(withSug), nil
 }
 
-// CoreTagHook prints a soft word-token tag dump for --taggeronly.
+// CoreTagHook prints a word/lemma/POS dump for --taggeronly (uses configureCoreLT tagger).
 func CoreTagHook(w io.Writer, text string, opts *CommandLineOptions) error {
 	if opts != nil && opts.XMLFiltering {
 		text = MaybeFilterXML(text, true)
 	}
 	lang := "en"
-	if opts != nil && opts.Language != "" {
-		lang = opts.Language
+	if opts != nil {
+		if opts.Language != "" {
+			lang = opts.Language
+		}
+		if opts.IsAutoDetect() {
+			lang = ResolveLanguage(text, opts, DetectLanguageHeuristic)
+		}
 	}
-	if opts != nil && opts.IsAutoDetect() {
-		lang = ResolveLanguage(text, opts, DetectLanguageHeuristic)
+	lt, err := configureCoreLT(lang, opts)
+	if err != nil {
+		return err
 	}
-	lt := languagetool.NewJLanguageTool(lang)
 	sents := lt.Analyze(text)
 	for _, s := range sents {
 		if s == nil {
 			continue
 		}
-		var toks []string
+		var parts []string
 		for _, t := range s.GetTokensWithoutWhitespace() {
 			if t == nil || t.IsSentenceStart() || t.IsSentenceEnd() {
 				continue
 			}
-			toks = append(toks, t.GetToken())
+			parts = append(parts, FormatTaggedToken(t))
 		}
-		_, _ = fmt.Fprintln(w, FormatTagLine(s.GetText(), toks))
+		_, _ = fmt.Fprintln(w, FormatTagLine(s.GetText(), parts))
 	}
 	return nil
 }
@@ -471,6 +481,11 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		_, _ = fmt.Fprintf(w, "en_US.dict: %s\n", dict)
 	} else {
 		_, _ = fmt.Fprintf(w, "en_US.dict: (unset)\n")
+	}
+	if pos := DiscoverEnglishPOSDict(opts); pos != "" {
+		_, _ = fmt.Fprintf(w, "english.dict: %s\n", pos)
+	} else {
+		_, _ = fmt.Fprintf(w, "english.dict: (unset)\n")
 	}
 	// smoke check
 	lt, err := configureCoreLT("en", opts)

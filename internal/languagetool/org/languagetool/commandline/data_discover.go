@@ -93,3 +93,33 @@ func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
 	}
 	return ""
 }
+
+// DiscoverEnglishPOSDict finds english.dict for the binary POS tagger.
+// Order: LANG_ENGLISH_DICT, --data-dir/en/english.dict, walk-up third_party and inspiration.
+func DiscoverEnglishPOSDict(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_ENGLISH_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "en", "english.dict"),
+			filepath.Join(opts.GetDataDir(), "english.dict"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	relPaths := []string{
+		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "english.dict"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "english.dict"),
+	}
+	for _, rel := range relPaths {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}

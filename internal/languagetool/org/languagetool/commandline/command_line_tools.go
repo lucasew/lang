@@ -151,6 +151,33 @@ func FormatTagLine(sentenceText string, tokens []string) string {
 	return sentenceText + "\n" + strings.Join(tokens, " ")
 }
 
+// FormatTaggedToken formats surface/lemma/POS for tagger-only dumps.
+func FormatTaggedToken(t *languagetool.AnalyzedTokenReadings) string {
+	if t == nil {
+		return ""
+	}
+	surface := t.GetToken()
+	pos, lemma := "", ""
+	if at := t.GetAnalyzedToken(0); at != nil {
+		if p := at.GetPOSTag(); p != nil {
+			pos = *p
+		}
+		if l := at.GetLemma(); l != nil {
+			lemma = *l
+		}
+	}
+	if pos == "" && lemma == "" {
+		return surface
+	}
+	if lemma == "" {
+		lemma = surface
+	}
+	if pos == "" {
+		pos = "_"
+	}
+	return surface + "/" + lemma + "/" + pos
+}
+
 // TagText writes simple token lines for each sentence (pluggable sentence split + token strings).
 func TagText(w io.Writer, contents string, sentences []string, analyze func(sentence string) []string) {
 	if w == nil {
