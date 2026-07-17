@@ -60,22 +60,63 @@ func TestTokenAgreementAdjNounRule_ExceptionsNumbers(t *testing.T) {
 }
 
 func TestTokenAgreementAdjNounRule_ExceptionsOther(t *testing.T) {
-	t.Skip("soft-skip: full exception dictionary tables")
+	// FakeFemList path already exercises exception helper
+	r := NewTokenAgreementAdjNounRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великий", "adj:m:v_naz"),
+		atr("собака", "noun:anim:f:v_naz"),
+	})
+	// собака is FakeFemList → exception → no match
+	require.Empty(t, r.Match(sent))
 }
 func TestTokenAgreementAdjNounRule_ExceptionsPredic(t *testing.T) {
-	t.Skip("soft-skip: predicative adj exceptions")
+	r := NewTokenAgreementAdjNounRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("винен", "adj:m:v_naz:predic"),
+		atr("хлопець", "noun:anim:m:v_naz"),
+	})
+	require.Empty(t, r.Match(sent), "predicative adj soft exception")
 }
 func TestTokenAgreementAdjNounRule_ExceptionsAdjp(t *testing.T) {
-	t.Skip("soft-skip: adjp exceptions")
+	// pure adjp without case → exception
+	require.True(t, IsAdjpException(atr("зроблено", "adjp:pasv:perf")))
+	require.False(t, IsAdjpException(atr("зроблений", "adj:m:v_naz:adjp:pasv:perf")))
 }
 func TestTokenAgreementAdjNounRule_ExceptionsVerb(t *testing.T) {
-	t.Skip("soft-skip: verb intervening exceptions")
+	// verb between adj and noun resets (not ignorable)
+	r := NewTokenAgreementAdjNounRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великий", "adj:m:v_naz"),
+		atr("був", "verb:imperf:past:m"),
+		atr("будинок", "noun:inanim:f:v_naz"), // wrong gender would flag if adj carried
+	})
+	require.Empty(t, r.Match(sent), "verb intervenes → no adj-noun pair")
 }
 func TestTokenAgreementAdjNounRule_ExceptionsAdj(t *testing.T) {
-	t.Skip("soft-skip: multi-adj chain exceptions")
+	// multi-adj chain: last adj agrees with noun
+	r := NewTokenAgreementAdjNounRule()
+	sentGood := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великий", "adj:m:v_naz"),
+		atr("новий", "adj:m:v_naz"),
+		atr("будинок", "noun:inanim:m:v_naz"),
+	})
+	require.Empty(t, r.Match(sentGood))
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великий", "adj:m:v_naz"),
+		atr("нова", "adj:f:v_naz"),
+		atr("будинок", "noun:inanim:m:v_naz"),
+	})
+	require.NotEmpty(t, r.Match(sentBad), "last adj gender mismatch flags")
 }
 func TestTokenAgreementAdjNounRule_ExceptionsPrepAdj(t *testing.T) {
-	t.Skip("soft-skip: prep+adj tables")
+	// prep before adj does not form adj-noun with prep as left
+	r := NewTokenAgreementAdjNounRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("в", "prep"),
+		atr("великому", "adj:m:v_mis"),
+		atr("будинку", "noun:inanim:m:v_mis"),
+	})
+	require.Empty(t, r.Match(sent))
 }
 func TestTokenAgreementAdjNounRule_ExceptionsPlural(t *testing.T) {
 	r := NewTokenAgreementAdjNounRule()

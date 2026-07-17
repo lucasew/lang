@@ -15,12 +15,15 @@ type TokenAgreementAdjNounRule struct {
 func NewTokenAgreementAdjNounRule() *TokenAgreementAdjNounRule {
 	r := &TokenAgreementAdjNounRule{}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
-		ruleID:      TokenAgreementAdjNounRuleID,
-		description: "Узгодження відмінків, роду і числа прикметника та іменника",
-		shortMsg:    "Узгодження прикметника та іменника",
-		isLeftToken: HasAdjReading,
+		ruleID:       TokenAgreementAdjNounRuleID,
+		description:  "Узгодження відмінків, роду і числа прикметника та іменника",
+		shortMsg:     "Узгодження прикметника та іменника",
+		isLeftToken:  HasAdjReading,
 		isRightToken: HasNounReading,
 		pairChecker: func(left, right *languagetool.AnalyzedTokenReadings) bool {
+			if IsPredicativeAdjException(left) || IsAdjpException(left) {
+				return true
+			}
 			return AdjNounAgree(CollectPOSTags(left), CollectPOSTags(right))
 		},
 		exception: IsAdjNounException,

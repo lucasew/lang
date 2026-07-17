@@ -169,6 +169,34 @@ func isIgnorableAgreementIntervening(tok *languagetool.AnalyzedTokenReadings) bo
 	return false
 }
 
+// IsPredicativeAdjException soft-skips predicative adjectives.
+func IsPredicativeAdjException(adj *languagetool.AnalyzedTokenReadings) bool {
+	for _, p := range CollectPOSTags(adj) {
+		if strings.Contains(p, "predic") || strings.HasPrefix(p, "predic") {
+			return true
+		}
+	}
+	return false
+}
+
+// IsAdjpException soft-skips pure participle adjp without case agreement expectation.
+func IsAdjpException(adj *languagetool.AnalyzedTokenReadings) bool {
+	tags := CollectPOSTags(adj)
+	if len(tags) == 0 {
+		return false
+	}
+	hasAdjp, hasCaseAdj := false, false
+	for _, p := range tags {
+		if strings.Contains(p, "adjp") {
+			hasAdjp = true
+		}
+		if strings.HasPrefix(p, "adj") && strings.Contains(p, "v_") {
+			hasCaseAdj = true
+		}
+	}
+	return hasAdjp && !hasCaseAdj
+}
+
 // --- Exception helper stubs (full tables deferred) ---
 
 // IsAdjNounException ports TokenAgreementAdjNounExceptionHelper surface.

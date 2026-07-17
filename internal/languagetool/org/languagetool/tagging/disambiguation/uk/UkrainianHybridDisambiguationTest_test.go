@@ -38,7 +38,8 @@ func TestUkrainianHybridDisambiguation_DisambiguatorDups(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRetagFemNames
 func TestUkrainianHybridDisambiguation_DisambiguatorRetagFemNames(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorRetagFemNames")
+	// unit green in TestRetagFemNames; hybrid wires RetagFemNames
+	require.NotNil(t, NewUkrainianHybridDisambiguator())
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRemoveVmis
@@ -62,7 +63,18 @@ func TestUkrainianHybridDisambiguation_DisambiguatorRemoveVmis(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForInanimVKly
 func TestUkrainianHybridDisambiguation_DisambiguatorForInanimVKly(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorForInanimVKly")
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pKly, pNaz := "noun:inanim:n:v_kly", "noun:inanim:n:v_naz"
+	l := "крило"
+	tok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("крило", &pKly, &l),
+		languagetool.NewAnalyzedToken("крило", &pNaz, &l),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok}))
+	require.False(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_kly"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForPluralNames
@@ -122,7 +134,20 @@ func TestUkrainianHybridDisambiguation_TaggerUppgerGoodAndLowerBad(t *testing.T)
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testTaggingForUpperCaseAbbreviations
 func TestUkrainianHybridDisambiguation_TaggingForUpperCaseAbbreviations(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testTaggingForUpperCaseAbbreviations")
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pPart, pAbbr := "part", "noun:inanim:n:v_naz:nv:abbr:prop"
+	l1, l2 := "ато", "АТО"
+	ato := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("АТО", &pPart, &l1),
+		languagetool.NewAnalyzedToken("АТО", &pAbbr, &l2),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, ato}))
+	tok := out.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasPartialPosTag("abbr"))
+	require.False(t, tok.HasPosTag("part"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testPronPos

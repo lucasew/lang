@@ -93,3 +93,54 @@ func atrUntagged(token string) *languagetool.AnalyzedTokenReadings {
 		languagetool.NewAnalyzedToken(token, nil, nil),
 	}, 0)
 }
+
+func TestRetagFemNames(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	ledi := atrMulti("леді", [][2]string{{"леді", "noun:anim:f:v_naz:nv"}})
+	// masc lname that should become fem
+	name := atrMulti("Черчилль", [][2]string{{"Черчилль", "noun:anim:m:v_naz:prop:lname"}})
+	verb := atrMulti("була", [][2]string{{"бути", "verb:imperf:past:f"}})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, ledi, name, verb})
+	RetagFemNames(sent)
+	tok := sent.GetTokensWithoutWhitespace()[2]
+	require.True(t, tok.HasPartialPosTag(":f:"))
+	require.True(t, tok.HasPartialPosTag("lname") || tok.HasPartialPosTag("prop"))
+	require.False(t, tok.HasPartialPosTag("noun:anim:m:v_naz:prop"))
+}
+
+func TestRemoveInanimVKly(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	// inanim with both v_kly and v_naz — drop v_kly
+	tok := atrMulti("крило", [][2]string{
+		{"крило", "noun:inanim:n:v_kly"},
+		{"крило", "noun:inanim:n:v_naz"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok})
+	RemoveInanimVKly(sent)
+	require.False(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_kly"))
+	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_naz"))
+
+	// vocative context: keep
+	adj := atrMulti("Ясний", [][2]string{{"ясний", "adj:m:v_kly"}})
+	moon := atrMulti("місяцю", [][2]string{
+		{"місяць", "noun:inanim:m:v_kly"},
+		{"місяць", "noun:inanim:m:v_dav"},
+	})
+	bang := atrSent("!", "SENT_END")
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, adj, moon, bang})
+	RemoveInanimVKly(sent2)
+	require.True(t, sent2.GetTokensWithoutWhitespace()[2].HasPartialPosTag("v_kly"))
+}
+
+func TestRemoveLowerCaseHomonymsForAbbreviations(t *testing.T) {
+	start := atrSent("SENT_START", "SENT_START")
+	ato := atrMulti("АТО", [][2]string{
+		{"ато", "part"},
+		{"АТО", "noun:inanim:n:v_naz:nv:abbr:prop"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, ato})
+	RemoveLowerCaseHomonymsForAbbreviations(sent)
+	tok := sent.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasPartialPosTag("abbr"))
+	require.False(t, tok.HasPosTag("part") || tok.HasPartialPosTag("part"))
+}
