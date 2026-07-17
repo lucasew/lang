@@ -86,6 +86,9 @@ type JLanguageTool struct {
 	activeRuleIDs []string
 	// DisabledRuleIDs soft-disable matches / registration filtering.
 	DisabledRuleIDs map[string]struct{}
+	// DefaultOffRuleIDs are rules that registered with XML default="off" (optional packs).
+	// SOFT_OPTIONAL re-enables these in addition to SOFT_OPT_* inventeds.
+	DefaultOffRuleIDs map[string]struct{}
 	// Cancelled optional early exit for Check.
 	Cancelled CheckCancelledCallback
 	// ListUnknownWords enables GetUnknownWords population during Check/AnalyzeUnknown.
@@ -171,6 +174,30 @@ func (lt *JLanguageTool) DisableRule(ruleID string) {
 		lt.DisabledRuleIDs = map[string]struct{}{}
 	}
 	lt.DisabledRuleIDs[ruleID] = struct{}{}
+}
+
+// MarkDefaultOff records that ruleID was registered with XML default="off".
+func (lt *JLanguageTool) MarkDefaultOff(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	if lt.DefaultOffRuleIDs == nil {
+		lt.DefaultOffRuleIDs = map[string]struct{}{}
+	}
+	lt.DefaultOffRuleIDs[ruleID] = struct{}{}
+}
+
+// GetDefaultOffRuleIDs returns rule IDs registered with default="off".
+func (lt *JLanguageTool) GetDefaultOffRuleIDs() []string {
+	if lt == nil || len(lt.DefaultOffRuleIDs) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(lt.DefaultOffRuleIDs))
+	for id := range lt.DefaultOffRuleIDs {
+		out = append(out, id)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // EnableRule ports enableRule (re-enables a previously disabled rule).

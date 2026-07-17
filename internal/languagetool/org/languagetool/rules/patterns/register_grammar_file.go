@@ -113,9 +113,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 			}
 			return out
 		})
-		// soft: XML default="off" → registered but disabled until -e RULE_ID
+		// soft: XML default="off" → registered but disabled until -e RULE_ID / SOFT_OPTIONAL
 		if ar.DefaultOff {
 			lt.DisableRule(id)
+			lt.MarkDefaultOff(id)
 		}
 		n++
 	}

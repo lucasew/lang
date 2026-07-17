@@ -202,3 +202,34 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 func TestGolden_UpstreamENExamples(t *testing.T) { runUpstreamGoldenSample(t, "en") }
 func TestGolden_UpstreamDEExamples(t *testing.T) { runUpstreamGoldenSample(t, "de") }
 func TestGolden_UpstreamFRExamples(t *testing.T) { runUpstreamGoldenSample(t, "fr") }
+
+// TestGolden_UpstreamOptionalDefaultOff enables SOFT_OPTIONAL so official
+// default="off" style rules from *-optional-upstream-soft.xml fire.
+func TestGolden_UpstreamOptionalDefaultOff(t *testing.T) {
+	// ALSO_SENT_END is default=off in upstream style.xml; vendored into optional pack.
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "You will buy some eggs also.", &CommandLineOptions{
+		Language:     "en",
+		EnabledRules: []string{"SOFT_OPTIONAL"},
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "ALSO_SENT_END" {
+			found = true
+			break
+		}
+	}
+	// Without SOFT_OPTIONAL it should stay quiet
+	var buf2 bytes.Buffer
+	_, err = CoreGoldenHook(&buf2, "You will buy some eggs also.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings2 []Finding
+	require.NoError(t, json.Unmarshal(buf2.Bytes(), &findings2))
+	for _, f := range findings2 {
+		require.NotEqual(t, "ALSO_SENT_END", f.Rule, "optional rule should stay off by default")
+	}
+	require.True(t, found, "SOFT_OPTIONAL should enable ALSO_SENT_END: %+v", findings)
+}

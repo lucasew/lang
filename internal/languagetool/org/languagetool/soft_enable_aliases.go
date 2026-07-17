@@ -4,8 +4,15 @@ import "strings"
 
 // ExpandSoftEnableRuleIDs expands soft bulk-enable tokens among enabled rule IDs.
 // SOFT_OPTIONAL / SOFT_OPT_ALL → every registered id containing SOFT_OPT_
-// (optional soft packs that start with default="off").
+// (legacy optional soft packs) plus any ids listed in defaultOff (upstream
+// optional packs registered with XML default="off").
 func ExpandSoftEnableRuleIDs(registered, enabled []string) []string {
+	return ExpandSoftEnableRuleIDsWithDefaultOff(registered, enabled, nil)
+}
+
+// ExpandSoftEnableRuleIDsWithDefaultOff is like ExpandSoftEnableRuleIDs but also
+// re-enables official default-off rule IDs when SOFT_OPTIONAL is requested.
+func ExpandSoftEnableRuleIDsWithDefaultOff(registered, enabled, defaultOff []string) []string {
 	if len(enabled) == 0 {
 		return enabled
 	}
@@ -28,6 +35,9 @@ func ExpandSoftEnableRuleIDs(registered, enabled []string) []string {
 				if strings.Contains(rid, "SOFT_OPT_") {
 					add(rid)
 				}
+			}
+			for _, rid := range defaultOff {
+				add(rid)
 			}
 			continue
 		}

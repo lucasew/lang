@@ -76,7 +76,8 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	for _, id := range opts.GetDisabledRules() {
 		lt.DisableRule(id)
 	}
-	enabledIDs := languagetool.ExpandSoftEnableRuleIDs(lt.GetAllRegisteredRuleIDs(), opts.GetEnabledRules())
+	enabledIDs := languagetool.ExpandSoftEnableRuleIDsWithDefaultOff(
+		lt.GetAllRegisteredRuleIDs(), opts.GetEnabledRules(), lt.GetDefaultOffRuleIDs())
 	if opts.IsUseEnabledOnly() {
 		enabled := map[string]struct{}{}
 		for _, id := range enabledIDs {
