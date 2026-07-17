@@ -19,8 +19,8 @@ func TestGolden_EmptyLine(t *testing.T) {
 	for _, f := range findings {
 		if f.Rule == "EMPTY_LINE" {
 			found = true
-			require.Equal(t, "whitespace", f.Type)
-			require.Equal(t, "warning", f.Severity)
+			require.Equal(t, "style", f.Type)
+			require.Equal(t, "note", f.Severity)
 		}
 	}
 	require.True(t, found, "%+v", findings)

@@ -17,6 +17,13 @@ func TestSoftRuleMeta(t *testing.T) {
 	require.Equal(t, "GRAMMAR", id)
 	require.Equal(t, "grammar", issue)
 
+	id, name, issue, short = SoftRuleMeta("EMPTY_LINE")
+	require.Equal(t, "STYLE", id)
+	require.Equal(t, "Style", name)
+	require.Equal(t, "style", issue)
+	require.Equal(t, "Empty line", short)
+	require.Equal(t, "Empty line", SoftRuleDescription("EMPTY_LINE"))
+
 	require.Equal(t, "error", SeverityFromIssueType("grammar"))
 	require.Equal(t, "error", SeverityFromIssueType("misspelling"))
 	require.Equal(t, "note", SeverityFromIssueType("style"))

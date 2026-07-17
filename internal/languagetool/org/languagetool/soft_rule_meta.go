@@ -9,8 +9,11 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 	case strings.Contains(id, "MORFOLOGIK") || strings.Contains(id, "HUNSPELL") || strings.Contains(id, "SPELL"):
 		return "TYPOS", "Possible Typo", "misspelling", "Spelling mistake"
 	case strings.Contains(id, "WHITESPACE") || strings.Contains(id, "PUNCT") || id == "COMMA_WHITESPACE" ||
-		id == "DOUBLE_PUNCTUATION" || id == "SENTENCE_WHITESPACE" || id == "EMPTY_LINE":
+		id == "DOUBLE_PUNCTUATION" || id == "SENTENCE_WHITESPACE":
 		return "TYPOGRAPHY", "Typography", "whitespace", "Typography"
+	case id == "EMPTY_LINE":
+		// Java EmptyLineRule: Categories.STYLE + ITSIssueType.Style
+		return "STYLE", "Style", "style", "Empty line"
 	case strings.Contains(id, "WORD_REPEAT"):
 		return "MISC", "Miscellaneous", "duplication", "Word repetition"
 	case id == "EN_A_VS_AN" || strings.Contains(id, "A_VS_AN"):
@@ -51,8 +54,10 @@ func SoftRuleDescription(ruleID string) string {
 		return "Word repetition"
 	case strings.Contains(id, "MORFOLOGIK") || strings.Contains(id, "HUNSPELL") || strings.Contains(id, "SPELL"):
 		return "Possible spelling mistake"
-	case strings.Contains(id, "WHITESPACE") || id == "COMMA_WHITESPACE" || id == "SENTENCE_WHITESPACE" || id == "EMPTY_LINE":
+	case strings.Contains(id, "WHITESPACE") || id == "COMMA_WHITESPACE" || id == "SENTENCE_WHITESPACE":
 		return "Whitespace"
+	case id == "EMPTY_LINE":
+		return "Empty line"
 	case strings.Contains(id, "UNPAIRED") || strings.Contains(id, "BRACKET"):
 		return "Unpaired brackets"
 	case strings.Contains(id, "UPPERCASE") || strings.Contains(id, "SENTENCE_START"):

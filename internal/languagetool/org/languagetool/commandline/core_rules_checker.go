@@ -418,7 +418,8 @@ func CoreListRules(w io.Writer, lang string) error {
 		if issue == "" {
 			issue = "uncategorized"
 		}
-		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\n", id, cat, issue); err != nil {
+		url := languagetool.SoftRuleURL(id, lang)
+		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", id, cat, issue, url); err != nil {
 			return err
 		}
 	}

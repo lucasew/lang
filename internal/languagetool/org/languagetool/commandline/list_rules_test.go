@@ -13,6 +13,8 @@ func TestCoreListRules(t *testing.T) {
 	out := buf.String()
 	require.Contains(t, out, "EN_A_VS_AN")
 	require.Contains(t, out, "GRAMMAR")
+	require.Contains(t, out, "EMPTY_LINE\tSTYLE\tstyle\t")
+	require.Contains(t, out, "community.languagetool.org/rule/show/EMPTY_LINE?lang=en")
 }
 
 func TestRunWithIO_RulesSubcommand(t *testing.T) {
