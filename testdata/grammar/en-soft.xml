@@ -850,6 +850,41 @@
       <message>In American English, "color" is often preferred.</message>
       <short>colour</short>
     </rule>
+    <rule id="EN_SOFT_FAVOURITE_US" name="favourite soft">
+      <pattern>
+        <token>favourite</token>
+      </pattern>
+      <message>In American English, "favorite" is often preferred.</message>
+      <short>favourite</short>
+    </rule>
+    <rule id="EN_SOFT_CENTRE_US" name="centre soft">
+      <pattern>
+        <token>centre</token>
+      </pattern>
+      <message>In American English, "center" is often preferred.</message>
+      <short>centre</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANISE_US" name="organise soft">
+      <pattern>
+        <token>organise</token>
+      </pattern>
+      <message>In American English, "organize" is often preferred.</message>
+      <short>organise</short>
+    </rule>
+    <rule id="EN_SOFT_REALISE_US" name="realise soft">
+      <pattern>
+        <token>realise</token>
+      </pattern>
+      <message>In American English, "realize" is often preferred.</message>
+      <short>realise</short>
+    </rule>
+    <rule id="EN_SOFT_BEHAVIOUR_US" name="behaviour soft">
+      <pattern>
+        <token>behaviour</token>
+      </pattern>
+      <message>In American English, "behavior" is often preferred.</message>
+      <short>behaviour</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

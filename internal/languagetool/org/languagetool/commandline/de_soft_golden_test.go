@@ -42,6 +42,10 @@ func TestGolden_DESoftExtra(t *testing.T) {
 		{"Das gleiche Problem erneut.", "DE_SOFT_DAS_GLEICHE"},
 		{"Das ist der Standart.", "DE_SOFT_STANDART"},
 		{"Für den selben Preis.", "DE_SOFT_DENSELBEN"},
+		{"Er sagt das es stimmt.", "DE_SOFT_SAGT_DAS"},
+		{"Sie meint das es geht.", "DE_SOFT_MEINT_DAS"},
+		{"Ich hoffe das du kommst.", "DE_SOFT_HOFFEN_DAS"},
+		{"Laut dem Bericht stimmt es.", "DE_SOFT_LAUT_DEM"},
 		{"Hallo!!", "DE_SOFT_DOUBLE_BANG"},
 	}
 	for _, tc := range cases {

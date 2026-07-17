@@ -74,6 +74,11 @@ func SoftEnglishPhraseReplacements() map[string]string {
 		"statue of limitations":        "statute of limitations",
 		"escape goat":                  "scapegoat",
 		"few and far in between":       "few and far between",
+		"chuck full":                   "chock-full",
+		"do diligence":                 "due diligence",
+		"peak my interest":             "pique my interest",
+		"reign in":                     "rein in",
+		"shoe in":                      "shoo-in",
 	}
 }
 

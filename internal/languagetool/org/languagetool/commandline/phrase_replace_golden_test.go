@@ -53,6 +53,10 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"The statue of limitations expired.", "statute of limitations"},
 		{"He was the escape goat.", "scapegoat"},
 		{"Opportunities are few and far in between.", "few and far between"},
+		{"Need do diligence here.", "due diligence"},
+		{"Please reign in spending.", "rein in"},
+		{"He is a shoe in for the job.", "shoo-in"},
+		{"That will peak my interest.", "pique my interest"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

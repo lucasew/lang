@@ -98,6 +98,38 @@
       <message>Meinten Sie "denselben"?</message>
       <short>denselben</short>
     </rule>
+    <rule id="DE_SOFT_SAGT_DAS" name="sagt das">
+      <pattern>
+        <token>sagt</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "sagt, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_MEINT_DAS" name="meint das">
+      <pattern>
+        <token>meint</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "meint, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_HOFFEN_DAS" name="hoffe das">
+      <pattern>
+        <token>hoffe</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "hoffe, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_LAUT_DEM" name="laut dem">
+      <pattern>
+        <token>laut</token>
+        <token>dem</token>
+      </pattern>
+      <message>Standardsprachlich oft "laut des" oder "laut" + Dativ-Name.</message>
+      <short>laut</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografie">
     <rule id="DE_SOFT_DOUBLE_BANG" name="doppeltes Ausrufezeichen">

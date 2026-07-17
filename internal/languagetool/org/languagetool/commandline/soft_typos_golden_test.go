@@ -588,6 +588,18 @@ func TestGolden_ApplySoftAmountOfPeople(t *testing.T) {
 	require.Contains(t, out.String(), "number of people")
 }
 
+func TestGolden_ApplySoftAnyways(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Anyways, we left early.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	// soft grammar suggestions are lowercase; apply still rewrites the token
+	require.Contains(t, strings.ToLower(out.String()), "anyway")
+	require.NotContains(t, strings.ToLower(out.String()), "anyways")
+}
+
 func TestGolden_SoftUSVariantHints(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string
@@ -598,6 +610,11 @@ func TestGolden_SoftUSVariantHints(t *testing.T) {
 		{"Wait whilst I check.", "EN_SOFT_WHILST_US", "while"},
 		{"A grey sky.", "EN_SOFT_GREY_US", "gray"},
 		{"Pick a colour.", "EN_SOFT_COLOUR_US", "color"},
+		{"My favourite book.", "EN_SOFT_FAVOURITE_US", "favorite"},
+		{"City centre is busy.", "EN_SOFT_CENTRE_US", "center"},
+		{"Please organise files.", "EN_SOFT_ORGANISE_US", "organize"},
+		{"I realise now.", "EN_SOFT_REALISE_US", "realize"},
+		{"Good behaviour matters.", "EN_SOFT_BEHAVIOUR_US", "behavior"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
