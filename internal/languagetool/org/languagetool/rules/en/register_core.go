@@ -49,6 +49,14 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(cs.GetID(), rules.AsSentenceCheckerSimple(cs.Match))
 	ww := NewEnglishWrongWordInContextRule(nil)
 	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	// Dash compounds (en-dash/em-dash vs hyphen) from compounds.txt patterns.
+	dr := NewEnglishDashRule(nil)
+	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
+	// Regional replace tables (British→American and American→British).
+	us := NewAmericanReplaceRule(nil)
+	lt.AddRuleChecker(us.GetID(), rules.AsSentenceCheckerSimple(us.Match))
+	gb := NewBritishReplaceRule(nil)
+	lt.AddRuleChecker(gb.GetID(), rules.AsSentenceCheckerSimple(gb.Match))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).

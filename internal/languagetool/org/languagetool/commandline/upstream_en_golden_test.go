@@ -322,3 +322,37 @@ func TestGolden_UpstreamWrongWordInContext(t *testing.T) {
 	}
 	require.True(t, found, "expected wrong-word-in-context finding: %+v", findings)
 }
+
+// TestGolden_UpstreamEnglishDash exercises dash compound normalization.
+func TestGolden_UpstreamEnglishDash(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I wear a T – shirt daily.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if strings.Contains(f.Suggestion, "T-shirt") || strings.Contains(f.Rule, "DASH") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected dash rule finding: %+v", findings)
+}
+
+// TestGolden_UpstreamAmericanReplace exercises en-US British→American replace table.
+func TestGolden_UpstreamAmericanReplace(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I love fish fingers for dinner.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_US_SIMPLE_REPLACE" || strings.Contains(strings.ToLower(f.Suggestion), "fish sticks") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected American replace finding: %+v", findings)
+}

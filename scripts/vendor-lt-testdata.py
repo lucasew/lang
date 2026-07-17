@@ -639,6 +639,11 @@ def vendor_lang(lang: str) -> dict:
         if src.is_file():
             copy_file(src, OUT / lang / "rules" / name)
             stats["copied"] += 1
+    # regional replace tables
+    if rules_data.is_dir():
+        for reg in sorted(rules_data.glob("*/replace.txt")):
+            copy_file(reg, OUT / lang / "rules" / reg.parent.name / "replace.txt")
+            stats["copied"] += 1
 
     # derive soft pack + goldens from main grammar (+ style) and regional packs
     all_rules: list[dict] = []
