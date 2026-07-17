@@ -613,10 +613,10 @@ func TestGolden_ApplySoftAnyways(t *testing.T) {
 }
 
 func TestGolden_SoftUSVariantHints(t *testing.T) {
+	// Loaded from testdata/grammar/en-US-soft.xml when language is en-US.
 	cases := []struct {
 		text, rule, sug string
 	}{
-		{"Anyways, we left.", "EN_SOFT_ANYWAYS", "Anyway"}, // sentence-initial SoftPreserveCase
 		{"Walk towards the door.", "EN_SOFT_TOWARDS_US", "toward"},
 		{"Sit amongst friends.", "EN_SOFT_AMONGST_US", "among"},
 		{"Wait whilst I check.", "EN_SOFT_WHILST_US", "while"},
@@ -634,7 +634,7 @@ func TestGolden_SoftUSVariantHints(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
 			var buf bytes.Buffer
-			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en-US"})
 			require.NoError(t, err)
 			var findings []Finding
 			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
@@ -652,6 +652,34 @@ func TestGolden_SoftUSVariantHints(t *testing.T) {
 			require.True(t, found, "%+v", findings)
 		})
 	}
+}
+
+func TestGolden_SoftUSVariantsNotOnPlainEN(t *testing.T) {
+	// en-US-soft.xml must not load for language "en"
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Pick a colour.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "EN_SOFT_COLOUR_US", f.Rule, "%+v", findings)
+	}
+}
+
+func TestGolden_SoftAnywaysOnPlainEN(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Anyways, we left.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_ANYWAYS" {
+			found = true
+			require.Equal(t, "Anyway", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
 }
 
 func TestGolden_SoftSupposeTo(t *testing.T) {

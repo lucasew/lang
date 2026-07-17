@@ -30,3 +30,8 @@ Middle East	NNP
 Far East	NNP
 as soon as	RB
 in addition	RB
+Bay Area	NNP
+East Coast	NNP
+West Coast	NNP
+in particular	RB
+for instance	RB

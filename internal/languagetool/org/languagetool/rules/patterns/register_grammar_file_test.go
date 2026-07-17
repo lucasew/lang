@@ -29,6 +29,24 @@ func TestRegisterSoftGrammarDir_NoDoubleRegister(t *testing.T) {
 	require.Equal(t, 1, bang, "duplicate soft grammar registration: %+v", m)
 }
 
+func TestRegisterSoftGrammarDir_EnUSLoadsVariantPack(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../.."))
+	dir := filepath.Join(root, "testdata/grammar")
+	lt := languagetool.NewJLanguageTool("en-US")
+	n, err := patterns.RegisterSoftGrammarDir(lt, dir, "en-US")
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, n, 1)
+	m := lt.Check("Pick a colour.")
+	found := false
+	for _, x := range m {
+		if x.RuleID == "EN_SOFT_COLOUR_US" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+}
+
 func TestRegisterGrammarFile_SoftEN(t *testing.T) {
 	_, file, _, _ := runtime.Caller(0)
 	// patterns → rules → languagetool → org → languagetool → internal → module root (6)
