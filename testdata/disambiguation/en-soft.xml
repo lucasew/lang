@@ -3831,4 +3831,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_DAX" name="immunize dax">
+    <pattern>
+      <token>dax</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAX_CAPS" name="immunize DAX">
+    <pattern>
+      <token>DAX</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KEYSPACES" name="immunize keyspaces">
+    <pattern>
+      <token>keyspaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KEYSPACES_CAPS" name="immunize Keyspaces">
+    <pattern>
+      <token>Keyspaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDB" name="immunize qldb">
+    <pattern>
+      <token>qldb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDB_CAPS" name="immunize QLDB">
+    <pattern>
+      <token>QLDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

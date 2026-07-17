@@ -414,3 +414,6 @@ Obsidian Corridor RegionNNP
 Basalt Corridor RegionNNP
 Granite Corridor RegionNNP
 Marble Corridor RegionNNP
+Limestone Corridor RegionNNP
+Sandstone Corridor RegionNNP
+Slate Corridor RegionNNP

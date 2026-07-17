@@ -9087,6 +9087,76 @@
       <message>Did you mean "continue"?</message>
       <short>contineu</short>
     </rule>
+    <rule id="EN_SOFT_BELIEVED_MISS2" name="belived soft">
+      <pattern>
+        <token>belived</token>
+      </pattern>
+      <message>Did you mean "believed"?</message>
+      <short>belived</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITTEES_MISS" name="commitees soft">
+      <pattern>
+        <token>commitees</token>
+      </pattern>
+      <message>Did you mean "committees"?</message>
+      <short>commitees</short>
+    </rule>
+    <rule id="EN_SOFT_CONSCIOUSNESS_MISS" name="conciousness soft">
+      <pattern>
+        <token>conciousness</token>
+      </pattern>
+      <message>Did you mean "consciousness"?</message>
+      <short>conciousness</short>
+    </rule>
+    <rule id="EN_SOFT_CONTEMPORARY_MISS" name="contamporary soft">
+      <pattern>
+        <token>contamporary</token>
+      </pattern>
+      <message>Did you mean "contemporary"?</message>
+      <short>contamporary</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUES_MISS" name="contineus soft">
+      <pattern>
+        <token>contineus</token>
+      </pattern>
+      <message>Did you mean "continues"?</message>
+      <short>contineus</short>
+    </rule>
+    <rule id="EN_SOFT_CONSTRUCTIONS_MISS" name="contructions soft">
+      <pattern>
+        <token>contructions</token>
+      </pattern>
+      <message>Did you mean "constructions"?</message>
+      <short>contructions</short>
+    </rule>
+    <rule id="EN_SOFT_CONVENIENT_MISS3" name="convinient soft">
+      <pattern>
+        <token>convinient</token>
+      </pattern>
+      <message>Did you mean "convenient"?</message>
+      <short>convinient</short>
+    </rule>
+    <rule id="EN_SOFT_CONVENIENTLY_MISS" name="conviniently soft">
+      <pattern>
+        <token>conviniently</token>
+      </pattern>
+      <message>Did you mean "conveniently"?</message>
+      <short>conviniently</short>
+    </rule>
+    <rule id="EN_SOFT_CORRESPONDS_MISS" name="correponds soft">
+      <pattern>
+        <token>correponds</token>
+      </pattern>
+      <message>Did you mean "corresponds"?</message>
+      <short>correponds</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINITION_MISS2" name="defination soft">
+      <pattern>
+        <token>defination</token>
+      </pattern>
+      <message>Did you mean "definition"?</message>
+      <short>defination</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

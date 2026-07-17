@@ -2458,5 +2458,30 @@
       <message>Jargon; name composable business predicate objects instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_OPEN_HOST_SERVICE" name="open host service soft picky">
+      <pattern>
+        <token>open</token>
+        <token>host</token>
+        <token>service</token>
+      </pattern>
+      <message>Jargon; name a published integration API boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUBLISHED_LANGUAGE" name="published language soft picky">
+      <pattern>
+        <token>published</token>
+        <token>language</token>
+      </pattern>
+      <message>Jargon; name a shared integration schema instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_SUPPLIER" name="customer supplier soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>supplier</token>
+      </pattern>
+      <message>Jargon; name a directed team dependency relationship instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
