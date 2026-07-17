@@ -676,5 +676,28 @@
       <message>Cliché; consider "think creatively" or name the constraint.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_NO_BRAINER" name="no-brainer soft picky">
+      <pattern>
+        <token>no-brainer</token>
+      </pattern>
+      <message>Cliché; consider "obvious choice" or name why it is easy.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GET_AFTER_IT" name="get after it soft picky">
+      <pattern>
+        <token>get</token>
+        <token>after</token>
+        <token>it</token>
+      </pattern>
+      <message>Vague slogan; consider "start now" or name the next step.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_NET" name="net-net soft picky">
+      <pattern>
+        <token>net-net</token>
+      </pattern>
+      <message>Jargon; consider "bottom line" or state the outcome.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

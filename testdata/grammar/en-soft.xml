@@ -4047,6 +4047,76 @@
       <message>Did you mean "roommates"?</message>
       <short>roomates</short>
     </rule>
+    <rule id="EN_SOFT_SIMILARITY_MISS" name="similiarity soft">
+      <pattern>
+        <token>similiarity</token>
+      </pattern>
+      <message>Did you mean "similarity"?</message>
+      <short>similiarity</short>
+    </rule>
+    <rule id="EN_SOFT_SIEGING_MISS" name="seigeing soft">
+      <pattern>
+        <token>seigeing</token>
+      </pattern>
+      <message>Did you mean "sieging"?</message>
+      <short>seigeing</short>
+    </rule>
+    <rule id="EN_SOFT_SIEGES_MISS" name="seiges soft">
+      <pattern>
+        <token>seiges</token>
+      </pattern>
+      <message>Did you mean "sieges"?</message>
+      <short>seiges</short>
+    </rule>
+    <rule id="EN_SOFT_SEIZURE_MISS" name="siezure soft">
+      <pattern>
+        <token>siezure</token>
+      </pattern>
+      <message>Did you mean "seizure"?</message>
+      <short>siezure</short>
+    </rule>
+    <rule id="EN_SOFT_WRITING_MISS" name="wirting soft">
+      <pattern>
+        <token>wirting</token>
+      </pattern>
+      <message>Did you mean "writing"?</message>
+      <short>wirting</short>
+    </rule>
+    <rule id="EN_SOFT_YIELDING_MISS" name="yeilding soft">
+      <pattern>
+        <token>yeilding</token>
+      </pattern>
+      <message>Did you mean "yielding"?</message>
+      <short>yeilding</short>
+    </rule>
+    <rule id="EN_SOFT_ANNIVERSARY_MISS" name="aniversary soft">
+      <pattern>
+        <token>aniversary</token>
+      </pattern>
+      <message>Did you mean "anniversary"?</message>
+      <short>aniversary</short>
+    </rule>
+    <rule id="EN_SOFT_APPARENTLY_MISS2" name="aparenty soft">
+      <pattern>
+        <token>aparenty</token>
+      </pattern>
+      <message>Did you mean "apparently"?</message>
+      <short>aparenty</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUAINTANCE_MISS2" name="aquiantance soft">
+      <pattern>
+        <token>aquiantance</token>
+      </pattern>
+      <message>Did you mean "acquaintance"?</message>
+      <short>aquiantance</short>
+    </rule>
+    <rule id="EN_SOFT_ARGUMENT_MISS" name="arguemnt soft">
+      <pattern>
+        <token>arguemnt</token>
+      </pattern>
+      <message>Did you mean "argument"?</message>
+      <short>arguemnt</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

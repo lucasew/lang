@@ -198,3 +198,6 @@ in no time	RB
 Tucson Arizona	NNP
 Raleigh North Carolina	NNP
 time and again	RB
+Providence Rhode Island	NNP
+Richmond Virginia	NNP
+sooner or later	RB

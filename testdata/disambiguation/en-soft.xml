@@ -1239,4 +1239,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CUE" name="immunize cue">
+    <pattern>
+      <token>cue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUE_CAPS" name="immunize Cue">
+    <pattern>
+      <token>Cue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BAZEL" name="immunize bazel">
+    <pattern>
+      <token>bazel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BAZEL_CAPS" name="immunize Bazel">
+    <pattern>
+      <token>Bazel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PODMAN" name="immunize podman">
+    <pattern>
+      <token>podman</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PODMAN_CAPS" name="immunize Podman">
+    <pattern>
+      <token>Podman</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
