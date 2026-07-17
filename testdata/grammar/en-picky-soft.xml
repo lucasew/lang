@@ -955,5 +955,29 @@
       <message>Buzzword; name the learning or recovery plan instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_WORKING_BACKWARDS" name="working backwards soft picky">
+      <pattern>
+        <token>working</token>
+        <token>backwards</token>
+      </pattern>
+      <message>Jargon; describe the reverse-planning steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_OBSESSION" name="customer obsession soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>obsession</token>
+      </pattern>
+      <message>Slogan; name the concrete customer outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIP_EARLY" name="ship early soft picky">
+      <pattern>
+        <token>ship</token>
+        <token>early</token>
+      </pattern>
+      <message>Vague slogan; name the release criteria instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

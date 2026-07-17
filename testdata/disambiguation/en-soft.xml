@@ -1635,4 +1635,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SOPS" name="immunize sops">
+    <pattern>
+      <token>sops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOPS_CAPS" name="immunize Sops">
+    <pattern>
+      <token>Sops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULUMI" name="immunize pulumi">
+    <pattern>
+      <token>pulumi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULUMI_CAPS" name="immunize Pulumi">
+    <pattern>
+      <token>Pulumi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAGRUNT" name="immunize terragrunt">
+    <pattern>
+      <token>terragrunt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAGRUNT_CAPS" name="immunize Terragrunt">
+    <pattern>
+      <token>Terragrunt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

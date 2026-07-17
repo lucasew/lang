@@ -4817,6 +4817,76 @@
       <message>Did you mean "amount"?</message>
       <short>ammount</short>
     </rule>
+    <rule id="EN_SOFT_ALMOST_MISS" name="allmost soft">
+      <pattern>
+        <token>allmost</token>
+      </pattern>
+      <message>Did you mean "almost"?</message>
+      <short>allmost</short>
+    </rule>
+    <rule id="EN_SOFT_ALWAYS_MISS" name="allways soft">
+      <pattern>
+        <token>allways</token>
+      </pattern>
+      <message>Did you mean "always"?</message>
+      <short>allways</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCE_MISS" name="anounce soft">
+      <pattern>
+        <token>anounce</token>
+      </pattern>
+      <message>Did you mean "announce"?</message>
+      <short>anounce</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCEMENT_MISS" name="anouncement soft">
+      <pattern>
+        <token>anouncement</token>
+      </pattern>
+      <message>Did you mean "announcement"?</message>
+      <short>anouncement</short>
+    </rule>
+    <rule id="EN_SOFT_APPEARANCE_MISS2" name="apearance soft">
+      <pattern>
+        <token>apearance</token>
+      </pattern>
+      <message>Did you mean "appearance"?</message>
+      <short>apearance</short>
+    </rule>
+    <rule id="EN_SOFT_ASSISTANT_MISS" name="asistant soft">
+      <pattern>
+        <token>asistant</token>
+      </pattern>
+      <message>Did you mean "assistant"?</message>
+      <short>asistant</short>
+    </rule>
+    <rule id="EN_SOFT_ATMOSPHERE_MISS" name="athmosphere soft">
+      <pattern>
+        <token>athmosphere</token>
+      </pattern>
+      <message>Did you mean "atmosphere"?</message>
+      <short>athmosphere</short>
+    </rule>
+    <rule id="EN_SOFT_ATTACHED_MISS" name="attatched soft">
+      <pattern>
+        <token>attatched</token>
+      </pattern>
+      <message>Did you mean "attached"?</message>
+      <short>attatched</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABLE_MISS" name="avaiable soft">
+      <pattern>
+        <token>avaiable</token>
+      </pattern>
+      <message>Did you mean "available"?</message>
+      <short>avaiable</short>
+    </rule>
+    <rule id="EN_SOFT_BACKGROUND_MISS" name="backround soft">
+      <pattern>
+        <token>backround</token>
+      </pattern>
+      <message>Did you mean "background"?</message>
+      <short>backround</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
