@@ -1999,5 +1999,29 @@
       <message>Jargon; name characterization snapshot testing instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CHARACTERIZATION_TEST" name="characterization test soft picky">
+      <pattern>
+        <token>characterization</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name lock-down existing behavior tests instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROPERTY_BASED" name="property based soft picky">
+      <pattern>
+        <token>property</token>
+        <token>based</token>
+      </pattern>
+      <message>Jargon; name generative invariant testing instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MUTATION_TESTING" name="mutation testing soft picky">
+      <pattern>
+        <token>mutation</token>
+        <token>testing</token>
+      </pattern>
+      <message>Jargon; name deliberate-fault test quality checks instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

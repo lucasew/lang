@@ -7757,6 +7757,76 @@
       <message>Did you mean "guidelines"?</message>
       <short>guidlines</short>
     </rule>
+    <rule id="EN_SOFT_FULFILLING_MISS" name="fullfilling soft">
+      <pattern>
+        <token>fullfilling</token>
+      </pattern>
+      <message>Did you mean "fulfilling"?</message>
+      <short>fullfilling</short>
+    </rule>
+    <rule id="EN_SOFT_FULFILLMENT_MISS" name="fullfilment soft">
+      <pattern>
+        <token>fullfilment</token>
+      </pattern>
+      <message>Did you mean "fulfillment"?</message>
+      <short>fullfilment</short>
+    </rule>
+    <rule id="EN_SOFT_GUARANTEES_MISS" name="gaurantees soft">
+      <pattern>
+        <token>gaurantees</token>
+      </pattern>
+      <message>Did you mean "guarantees"?</message>
+      <short>gaurantees</short>
+    </rule>
+    <rule id="EN_SOFT_GUIDELINE_MISS" name="guidline soft">
+      <pattern>
+        <token>guidline</token>
+      </pattern>
+      <message>Did you mean "guideline"?</message>
+      <short>guidline</short>
+    </rule>
+    <rule id="EN_SOFT_HARASSED_MISS" name="harrassed soft">
+      <pattern>
+        <token>harrassed</token>
+      </pattern>
+      <message>Did you mean "harassed"?</message>
+      <short>harrassed</short>
+    </rule>
+    <rule id="EN_SOFT_HIERARCHIES_MISS" name="heirarchies soft">
+      <pattern>
+        <token>heirarchies</token>
+      </pattern>
+      <message>Did you mean "hierarchies"?</message>
+      <short>heirarchies</short>
+    </rule>
+    <rule id="EN_SOFT_HUNDRED_MISS" name="hundered soft">
+      <pattern>
+        <token>hundered</token>
+      </pattern>
+      <message>Did you mean "hundred"?</message>
+      <short>hundered</short>
+    </rule>
+    <rule id="EN_SOFT_IMMENSE_MISS" name="imense soft">
+      <pattern>
+        <token>imense</token>
+      </pattern>
+      <message>Did you mean "immense"?</message>
+      <short>imense</short>
+    </rule>
+    <rule id="EN_SOFT_IMMIGRANT_MISS" name="imigrant soft">
+      <pattern>
+        <token>imigrant</token>
+      </pattern>
+      <message>Did you mean "immigrant"?</message>
+      <short>imigrant</short>
+    </rule>
+    <rule id="EN_SOFT_IMPROVEMENTS_MISS" name="improvments soft">
+      <pattern>
+        <token>improvments</token>
+      </pattern>
+      <message>Did you mean "improvements"?</message>
+      <short>improvments</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

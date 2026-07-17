@@ -3147,4 +3147,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_BATCH" name="immunize batch">
+    <pattern>
+      <token>batch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BATCH_CAPS" name="immunize Batch">
+    <pattern>
+      <token>Batch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EVENTBRIDGE" name="immunize eventbridge">
+    <pattern>
+      <token>eventbridge</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EVENTBRIDGE_CAPS" name="immunize EventBridge">
+    <pattern>
+      <token>EventBridge</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFY" name="immunize amplify">
+    <pattern>
+      <token>amplify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFY_CAPS" name="immunize Amplify">
+    <pattern>
+      <token>Amplify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
