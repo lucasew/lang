@@ -3988,5 +3988,29 @@
       <message>Jargon; name annualized run-rate of recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RECURRING_ARR" name="recurring arr soft picky">
+      <pattern>
+        <token>recurring</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name ongoing annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BILLED_ARR" name="billed arr soft picky">
+      <pattern>
+        <token>billed</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue already invoiced instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOOKED_ARR" name="booked arr soft picky">
+      <pattern>
+        <token>booked</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from closed deals instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

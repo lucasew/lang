@@ -6219,4 +6219,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_STYLETRON" name="immunize styletron">
+    <pattern>
+      <token>styletron</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLETRON_CAPS" name="immunize Styletron">
+    <pattern>
+      <token>Styletron</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTROTURF" name="immunize astroturf">
+    <pattern>
+      <token>astroturf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTROTURF_CAPS" name="immunize Astroturf">
+    <pattern>
+      <token>Astroturf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WINDICSS" name="immunize windicss">
+    <pattern>
+      <token>windicss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WINDICSS_CAPS" name="immunize WindiCSS">
+    <pattern>
+      <token>WindiCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

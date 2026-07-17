@@ -13707,6 +13707,76 @@
       <message>Did you mean "forceflush"?</message>
       <short>forceflushh</short>
     </rule>
+    <rule id="EN_SOFT_B3PROPAGATOR_MISS" name="b3propagatorr soft">
+      <pattern>
+        <token>b3propagatorr</token>
+      </pattern>
+      <message>Did you mean "b3propagator"?</message>
+      <short>b3propagatorr</short>
+    </rule>
+    <rule id="EN_SOFT_W3CPROPAGATOR_MISS" name="w3cpropagatorr soft">
+      <pattern>
+        <token>w3cpropagatorr</token>
+      </pattern>
+      <message>Did you mean "w3cpropagator"?</message>
+      <short>w3cpropagatorr</short>
+    </rule>
+    <rule id="EN_SOFT_JAEGERPROPAGATOR_MISS" name="jaegerpropagatorr soft">
+      <pattern>
+        <token>jaegerpropagatorr</token>
+      </pattern>
+      <message>Did you mean "jaegerpropagator"?</message>
+      <short>jaegerpropagatorr</short>
+    </rule>
+    <rule id="EN_SOFT_OTLPEXPORTER_MISS" name="otlpexporterr soft">
+      <pattern>
+        <token>otlpexporterr</token>
+      </pattern>
+      <message>Did you mean "otlpexporter"?</message>
+      <short>otlpexporterr</short>
+    </rule>
+    <rule id="EN_SOFT_CONSOLEEXPORTER_MISS" name="consoleexporterr soft">
+      <pattern>
+        <token>consoleexporterr</token>
+      </pattern>
+      <message>Did you mean "consoleexporter"?</message>
+      <short>consoleexporterr</short>
+    </rule>
+    <rule id="EN_SOFT_PROMETHEUSEXPORTER_MISS" name="prometheusexporterr soft">
+      <pattern>
+        <token>prometheusexporterr</token>
+      </pattern>
+      <message>Did you mean "prometheusexporter"?</message>
+      <short>prometheusexporterr</short>
+    </rule>
+    <rule id="EN_SOFT_INMEMORYEXPORTER_MISS" name="inmemoryexporterr soft">
+      <pattern>
+        <token>inmemoryexporterr</token>
+      </pattern>
+      <message>Did you mean "inmemoryexporter"?</message>
+      <short>inmemoryexporterr</short>
+    </rule>
+    <rule id="EN_SOFT_MAXEXPORTBATCHSIZE_MISS" name="maxexportbatchsizee soft">
+      <pattern>
+        <token>maxexportbatchsizee</token>
+      </pattern>
+      <message>Did you mean "maxexportbatchsize"?</message>
+      <short>maxexportbatchsizee</short>
+    </rule>
+    <rule id="EN_SOFT_MAXQUEUESIZE_MISS" name="maxqueuesizee soft">
+      <pattern>
+        <token>maxqueuesizee</token>
+      </pattern>
+      <message>Did you mean "maxqueuesize"?</message>
+      <short>maxqueuesizee</short>
+    </rule>
+    <rule id="EN_SOFT_SCHEDULEDELAY_MISS" name="scheduledelayy soft">
+      <pattern>
+        <token>scheduledelayy</token>
+      </pattern>
+      <message>Did you mean "scheduledelay"?</message>
+      <short>scheduledelayy</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
