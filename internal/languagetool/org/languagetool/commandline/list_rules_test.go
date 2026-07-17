@@ -17,18 +17,21 @@ func TestCoreListRules(t *testing.T) {
 	require.Contains(t, out, "GRAMMAR")
 	require.Contains(t, out, "EMPTY_LINE\tSTYLE\tstyle\t")
 	require.Contains(t, out, "community.languagetool.org/rule/show/EMPTY_LINE?lang=en")
-	require.Contains(t, out, "\tcore\n")
-	require.Contains(t, out, "\tsoft\n")
+	require.Contains(t, out, "\tcore\t")
+	require.Contains(t, out, "\tsoft\t")
 	require.Contains(t, out, "EN_SOFT_")
 	require.Contains(t, out, "# total=")
 	require.Contains(t, out, "soft=")
-	// soft listed before core; footer soft breakdown
-	softIdx := strings.Index(out, "\tsoft\n")
-	coreIdx := strings.Index(out, "\tcore\n")
+	// soft listed before core; footer soft breakdown; sixth column on|off
+	softIdx := strings.Index(out, "\tsoft\t")
+	coreIdx := strings.Index(out, "\tcore\t")
 	require.True(t, softIdx >= 0 && coreIdx >= 0 && softIdx < coreIdx, "soft should precede core")
 	require.Contains(t, out, "soft_grammar=")
 	require.Contains(t, out, "soft_style=")
 	require.Contains(t, out, "soft_typographical=")
+	require.Contains(t, out, "soft_off=")
+	require.Contains(t, out, "EN_SOFT_OPT_PRIOR_TO\tSTYLE\tstyle\t")
+	require.Contains(t, out, "\tsoft\toff\n")
 }
 
 func TestCoreListRules_EnUSHasSoftUSSpelling(t *testing.T) {
@@ -36,7 +39,7 @@ func TestCoreListRules_EnUSHasSoftUSSpelling(t *testing.T) {
 	require.NoError(t, CoreListRules(&buf, "en-US"))
 	out := buf.String()
 	require.Contains(t, out, "EN_SOFT_COLOUR_US")
-	require.Contains(t, out, "\tsoft\n")
+	require.Contains(t, out, "\tsoft\t")
 }
 
 func TestCoreListRules_PtBRHasRegionalSoft(t *testing.T) {
@@ -45,7 +48,7 @@ func TestCoreListRules_PtBRHasRegionalSoft(t *testing.T) {
 	out := buf.String()
 	require.Contains(t, out, "PT_SOFT_AUTOCARRO_BR")
 	require.Contains(t, out, "PT_SOFT_A_O") // shared pt-soft.xml still loads
-	require.Contains(t, out, "\tsoft\n")
+	require.Contains(t, out, "\tsoft\t")
 }
 
 func TestCoreListRules_PtPTHasRegionalSoft(t *testing.T) {

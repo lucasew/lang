@@ -494,6 +494,10 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 		return err
 	}
 	ids := lt.GetAllRegisteredRuleIDs()
+	active := map[string]struct{}{}
+	for _, id := range lt.GetAllActiveRuleIDs() {
+		active[id] = struct{}{}
+	}
 	var softIDs, coreIDs []string
 	for _, id := range ids {
 		if strings.Contains(id, "_SOFT_") {
@@ -508,6 +512,7 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	softN := len(softIDs)
 	softByIssue := map[string]int{}
 	pickySoftN := 0
+	softOffN := 0
 	for _, id := range ordered {
 		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
 		if cat == "" {
@@ -525,7 +530,15 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 				pickySoftN++
 			}
 		}
-		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", id, cat, issue, url, kind); err != nil {
+		// soft: sixth column on|off (default="off" soft rules start off)
+		state := "on"
+		if _, ok := active[id]; !ok {
+			state = "off"
+			if kind == "soft" {
+				softOffN++
+			}
+		}
+		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", id, cat, issue, url, kind, state); err != nil {
 			return err
 		}
 	}
@@ -541,6 +554,9 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	}
 	if pickySoftN > 0 {
 		parts = append(parts, fmt.Sprintf("soft_picky=%d", pickySoftN))
+	}
+	if softOffN > 0 {
+		parts = append(parts, fmt.Sprintf("soft_off=%d", softOffN))
 	}
 	if strings.EqualFold(opts.Level, "PICKY") {
 		parts = append(parts, "level=picky")
@@ -609,9 +625,16 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		if pickyN > 0 {
 			_, _ = fmt.Fprintf(w, "picky soft packs: %d\n", pickyN)
 		}
-		optPath := filepath.Join(gdir, "en-optional-soft.xml")
-		if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {
-			_, _ = fmt.Fprintf(w, "en optional soft pack: %s (rules default off; enable with -e)\n", optPath)
+		optN := 0
+		for _, name := range []string{"en-optional-soft.xml", "de-optional-soft.xml", "fr-optional-soft.xml"} {
+			optPath := filepath.Join(gdir, name)
+			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {
+				optN++
+				_, _ = fmt.Fprintf(w, "optional soft pack: %s (default off; enable with -e)\n", optPath)
+			}
+		}
+		if optN > 0 {
+			_, _ = fmt.Fprintf(w, "optional soft packs: %d\n", optN)
 		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)

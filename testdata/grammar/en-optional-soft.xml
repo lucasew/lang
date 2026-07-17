@@ -56,5 +56,36 @@
       <message>Consider "after".</message>
       <short>style</short>
     </rule>
+
+    <rule id="EN_SOFT_OPT_DUE_TO_THE_FACT_OF" name="due to the fact of soft optional" default="off">
+      <pattern>
+        <token>due</token>
+        <token>to</token>
+        <token>the</token>
+        <token>fact</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "because of".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_ORDER_FOR" name="in order for soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>order</token>
+        <token>for</token>
+      </pattern>
+      <message>Consider "so that" or "for".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_FOR_THE_PURPOSE_OF" name="for the purpose of soft optional" default="off">
+      <pattern>
+        <token>for</token>
+        <token>the</token>
+        <token>purpose</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "to" + verb.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

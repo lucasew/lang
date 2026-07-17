@@ -34,6 +34,9 @@ func TestSoftRuleMeta(t *testing.T) {
 	id, _, issue, _ = SoftRuleMeta("EN_SOFT_LOWERCASE_I")
 	require.Equal(t, "CASING", id)
 	require.Equal(t, "typographical", issue)
+	id, _, issue, _ = SoftRuleMeta("EN_SOFT_OPT_PRIOR_TO")
+	require.Equal(t, "STYLE", id)
+	require.Equal(t, "style", issue)
 
 	id, name, issue, short = SoftRuleMeta("EMPTY_LINE")
 	require.Equal(t, "STYLE", id)

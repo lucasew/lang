@@ -1940,6 +1940,9 @@ func TestGolden_SoftOptionalMore(t *testing.T) {
 		{"With regard to fees, wait.", "EN_SOFT_OPT_WITH_REGARD_TO"},
 		{"In the event of rain, cancel.", "EN_SOFT_OPT_IN_THE_EVENT"},
 		{"Subsequent to review, ship.", "EN_SOFT_OPT_SUBSEQUENT_TO"},
+		{"Due to the fact of rain, cancel.", "EN_SOFT_OPT_DUE_TO_THE_FACT_OF"},
+		{"In order for this to work, wait.", "EN_SOFT_OPT_IN_ORDER_FOR"},
+		{"For the purpose of clarity, rewrite.", "EN_SOFT_OPT_FOR_THE_PURPOSE_OF"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -1952,6 +1955,38 @@ func TestGolden_SoftOptionalMore(t *testing.T) {
 			require.Contains(t, out.String(), tc.rule)
 		})
 	}
+}
+
+func TestGolden_SoftOptionalDE(t *testing.T) {
+	text := "Im Rahmen von Tests warten wir."
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "de", "-e", "DE_SOFT_OPT_IM_RAHMEN", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "DE_SOFT_OPT_IM_RAHMEN")
+}
+
+func TestGolden_SoftOptionalFR(t *testing.T) {
+	text := "Dans le cadre de ce projet, on avance."
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "fr", "-e", "FR_SOFT_OPT_DANS_LE_CADRE", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "FR_SOFT_OPT_DANS_LE_CADRE")
+}
+
+func TestGolden_SoftListRulesOptionalOff(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "en"))
+	out := buf.String()
+	require.Contains(t, out, "EN_SOFT_OPT_PRIOR_TO")
+	require.Contains(t, out, "soft_off=")
+	// optional rules listed as off (sixth column)
+	require.Contains(t, out, "\tsoft\toff\n")
 }
 
 func TestGolden_SoftPickyNL(t *testing.T) {

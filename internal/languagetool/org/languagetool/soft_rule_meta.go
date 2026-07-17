@@ -191,7 +191,8 @@ func softStyleID(id string) bool {
 		strings.Contains(id, "SO_SO") || strings.Contains(id, "IRREGARDLESS") ||
 		strings.Contains(id, "SUPPOSABLY") || strings.Contains(id, "ANYWAYS") ||
 		strings.Contains(id, "BEGS_THE_QUESTION") || strings.Contains(id, "SOFT_PICKY") ||
-		strings.Contains(id, "PICKY_") {
+		strings.Contains(id, "PICKY_") || strings.Contains(id, "SOFT_OPT_") ||
+		strings.Contains(id, "_OPT_") {
 		return true
 	}
 	return false
