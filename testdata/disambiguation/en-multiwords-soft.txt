@@ -555,3 +555,6 @@ Phyllite Ridge RegionNNP
 Gypsum Ridge RegionNNP
 Anhydrite Ridge RegionNNP
 Halite Ridge RegionNNP
+Chert Ridge RegionNNP
+Hornfels Ridge RegionNNP
+Amphibolite Ridge RegionNNP

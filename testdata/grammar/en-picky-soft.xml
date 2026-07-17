@@ -3536,5 +3536,29 @@
       <message>Jargon; name a runtime switch for enabling product behavior instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BAKE_TIME" name="bake time soft picky">
+      <pattern>
+        <token>bake</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name a post-deploy observation wait window instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNTHETIC_MONITORING" name="synthetic monitoring soft picky">
+      <pattern>
+        <token>synthetic</token>
+        <token>monitoring</token>
+      </pattern>
+      <message>Jargon; name scripted proactive availability checks instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RING_DEPLOYMENT" name="ring deployment soft picky">
+      <pattern>
+        <token>ring</token>
+        <token>deployment</token>
+      </pattern>
+      <message>Jargon; name staged rollout rings of increasing exposure instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

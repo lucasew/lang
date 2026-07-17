@@ -5523,4 +5523,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_HASURA" name="immunize hasura">
+    <pattern>
+      <token>hasura</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HASURA_CAPS" name="immunize Hasura">
+    <pattern>
+      <token>Hasura</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGREST" name="immunize postgrest">
+    <pattern>
+      <token>postgrest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGREST_CAPS" name="immunize PostgREST">
+    <pattern>
+      <token>PostgREST</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KNEX" name="immunize knex">
+    <pattern>
+      <token>knex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KNEX_CAPS" name="immunize Knex">
+    <pattern>
+      <token>Knex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
