@@ -29,6 +29,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sk"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sv"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
@@ -61,6 +62,7 @@ var Supported = []struct {
 	{"br", "Breton"},
 	{"fa", "Persian"},
 	{"ga", "Irish"},
+	{"sr", "Serbian"},
 	// generic layout + word-repeat packs (no language-specific rule twins yet)
 	{"be", "Belarusian"},
 	{"eo", "Esperanto"},
@@ -68,7 +70,6 @@ var Supported = []struct {
 	{"ja", "Japanese"},
 	{"lt", "Lithuanian"},
 	{"ml", "Malayalam"},
-	{"sr", "Serbian"},
 	{"ta", "Tamil"},
 	{"tl", "Tagalog"},
 	{"zh", "Chinese"},
@@ -168,7 +169,7 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 	case "ml":
 		registerGeneric(lt, "ml", "ML_WORD_REPEAT_RULE")
 	case "sr":
-		registerGeneric(lt, "sr", "SR_WORD_REPEAT_RULE")
+		sr.RegisterCoreSerbianRules(lt)
 	case "ta":
 		registerGeneric(lt, "ta", "TA_WORD_REPEAT_RULE")
 	case "tl":
