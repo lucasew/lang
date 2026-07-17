@@ -62,21 +62,66 @@ func defaultSrxLikeTokenize(text, parCode string) []string {
 	if parCode == "_one" {
 		paras = splitKeep(text, "\n")
 	} else {
-		// two or more newlines end a paragraph
-		re := regexp.MustCompile(`\n{2,}`)
-		parts := re.Split(text, -1)
-		// re-attach separators approximately
-		paras = parts
+		// two or more newlines end a paragraph; keep breaks on the preceding segment
+		// (Java SRX: "He won't\n\n" / "Really.")
+		paras = splitParagraphsTwoBreaks(text)
 	}
 	var out []string
 	for _, p := range paras {
 		if p == "" {
 			continue
 		}
-		out = append(out, simpleSentenceSplit(p)...)
+		sents := simpleSentenceSplit(p)
+		sents = mergeTrailingWhitespaceSents(sents)
+		out = append(out, sents...)
 	}
 	if len(out) == 0 && text != "" {
 		return []string{text}
+	}
+	return out
+}
+
+// splitParagraphsTwoBreaks splits on \n{2,}, attaching the break to the previous paragraph.
+func splitParagraphsTwoBreaks(text string) []string {
+	if text == "" {
+		return nil
+	}
+	re := regexp.MustCompile(`\n{2,}`)
+	idxs := re.FindAllStringIndex(text, -1)
+	if len(idxs) == 0 {
+		return []string{text}
+	}
+	var paras []string
+	start := 0
+	for _, m := range idxs {
+		paras = append(paras, text[start:m[1]])
+		start = m[1]
+	}
+	if start < len(text) {
+		paras = append(paras, text[start:])
+	}
+	var out []string
+	for _, p := range paras {
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// mergeTrailingWhitespaceSents folds pure-whitespace segments into the previous sentence
+// so paragraph breaks stay on the last content sentence (EMPTY_LINE / isParagraphEnd parity).
+func mergeTrailingWhitespaceSents(sents []string) []string {
+	if len(sents) <= 1 {
+		return sents
+	}
+	out := make([]string, 0, len(sents))
+	for _, s := range sents {
+		if len(out) > 0 && strings.TrimSpace(s) == "" {
+			out[len(out)-1] += s
+			continue
+		}
+		out = append(out, s)
 	}
 	return out
 }
