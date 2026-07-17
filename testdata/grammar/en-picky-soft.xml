@@ -2071,5 +2071,30 @@
       <message>Jargon; name a beyond-capacity resilience check instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_END_TO_END" name="end to end soft picky">
+      <pattern>
+        <token>end</token>
+        <token>to</token>
+        <token>end</token>
+      </pattern>
+      <message>Jargon; name a full-path user journey check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INTEGRATION_TEST" name="integration test soft picky">
+      <pattern>
+        <token>integration</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a multi-component boundary check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UNIT_TEST" name="unit test soft picky">
+      <pattern>
+        <token>unit</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a single-function isolation check instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

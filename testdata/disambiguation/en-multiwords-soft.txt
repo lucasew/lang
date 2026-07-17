@@ -366,3 +366,6 @@ Energy Corridor RegionNNP
 Bio Corridor RegionNNP
 Cyber Corridor RegionNNP
 Optics Valley RegionNNP
+Finance Corridor RegionNNP
+Media Corridor RegionNNP
+Defense Corridor RegionNNP

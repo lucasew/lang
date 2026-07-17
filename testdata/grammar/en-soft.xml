@@ -7967,6 +7967,76 @@
       <message>Did you mean "intelligently"?</message>
       <short>inteligently</short>
     </rule>
+    <rule id="EN_SOFT_FINALLY_MISS2" name="fianlly soft">
+      <pattern>
+        <token>fianlly</token>
+      </pattern>
+      <message>Did you mean "finally"?</message>
+      <short>fianlly</short>
+    </rule>
+    <rule id="EN_SOFT_GAUGES_MISS" name="guages soft">
+      <pattern>
+        <token>guages</token>
+      </pattern>
+      <message>Did you mean "gauges"?</message>
+      <short>guages</short>
+    </rule>
+    <rule id="EN_SOFT_IDEOLOGY_MISS" name="idiology soft">
+      <pattern>
+        <token>idiology</token>
+      </pattern>
+      <message>Did you mean "ideology"?</message>
+      <short>idiology</short>
+    </rule>
+    <rule id="EN_SOFT_IGNORANT_MISS" name="ignorent soft">
+      <pattern>
+        <token>ignorent</token>
+      </pattern>
+      <message>Did you mean "ignorant"?</message>
+      <short>ignorent</short>
+    </rule>
+    <rule id="EN_SOFT_IMMATURE_MISS" name="imature soft">
+      <pattern>
+        <token>imature</token>
+      </pattern>
+      <message>Did you mean "immature"?</message>
+      <short>imature</short>
+    </rule>
+    <rule id="EN_SOFT_IMITATING_MISS" name="immitating soft">
+      <pattern>
+        <token>immitating</token>
+      </pattern>
+      <message>Did you mean "imitating"?</message>
+      <short>immitating</short>
+    </rule>
+    <rule id="EN_SOFT_INAPPROPRIATE_MISS2" name="inapropriate soft">
+      <pattern>
+        <token>inapropriate</token>
+      </pattern>
+      <message>Did you mean "inappropriate"?</message>
+      <short>inapropriate</short>
+    </rule>
+    <rule id="EN_SOFT_INCIDENTALLY_MISS" name="incidently soft">
+      <pattern>
+        <token>incidently</token>
+      </pattern>
+      <message>Did you mean "incidentally"?</message>
+      <short>incidently</short>
+    </rule>
+    <rule id="EN_SOFT_INDEPENDENCE_MISS2" name="independece soft">
+      <pattern>
+        <token>independece</token>
+      </pattern>
+      <message>Did you mean "independence"?</message>
+      <short>independece</short>
+    </rule>
+    <rule id="EN_SOFT_INDIVIDUALS_MISS" name="indivduals soft">
+      <pattern>
+        <token>indivduals</token>
+      </pattern>
+      <message>Did you mean "individuals"?</message>
+      <short>indivduals</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

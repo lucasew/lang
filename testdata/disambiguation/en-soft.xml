@@ -3255,4 +3255,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CODECOMMIT" name="immunize codecommit">
+    <pattern>
+      <token>codecommit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODECOMMIT_CAPS" name="immunize CodeCommit">
+    <pattern>
+      <token>CodeCommit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEDEPLOY" name="immunize codedeploy">
+    <pattern>
+      <token>codedeploy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEDEPLOY_CAPS" name="immunize CodeDeploy">
+    <pattern>
+      <token>CodeDeploy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDTRAIL" name="immunize cloudtrail">
+    <pattern>
+      <token>cloudtrail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDTRAIL_CAPS" name="immunize CloudTrail">
+    <pattern>
+      <token>CloudTrail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
