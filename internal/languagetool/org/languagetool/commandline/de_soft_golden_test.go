@@ -46,6 +46,10 @@ func TestGolden_DESoftExtra(t *testing.T) {
 		{"Sie meint das es geht.", "DE_SOFT_MEINT_DAS"},
 		{"Ich hoffe das du kommst.", "DE_SOFT_HOFFEN_DAS"},
 		{"Laut dem Bericht stimmt es.", "DE_SOFT_LAUT_DEM"},
+		{"Anstatt das er kommt, gehe ich.", "DE_SOFT_ANSTATT_DAS"},
+		{"Ohne das zu wissen, ging er.", "DE_SOFT_OHNE_DAS"},
+		{"Das wissen wir sowie so.", "DE_SOFT_SOWIE_SO"},
+		{"Ich bin zufriede damit.", "DE_SOFT_ZUFRIEDE"},
 		{"Hallo!!", "DE_SOFT_DOUBLE_BANG"},
 	}
 	for _, tc := range cases {

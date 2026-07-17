@@ -100,6 +100,36 @@
       <message>Peut-être "quand même"?</message>
       <short>comme même</short>
     </rule>
+    <rule id="FR_SOFT_A_PART" name="a part">
+      <pattern>
+        <token>a</token>
+        <token>part</token>
+      </pattern>
+      <message>Peut-être "à part"?</message>
+      <short>a/à</short>
+    </rule>
+    <rule id="FR_SOFT_LA_OU" name="la ou">
+      <pattern>
+        <token>la</token>
+        <token>ou</token>
+      </pattern>
+      <message>Peut-être "là où"?</message>
+      <short>la/là</short>
+    </rule>
+    <rule id="FR_SOFT_CEST_SA" name="cest sa">
+      <pattern>
+        <token>cest</token>
+      </pattern>
+      <message>Peut-être "c'est"?</message>
+      <short>cest</short>
+    </rule>
+    <rule id="FR_SOFT_PLUTOT_QUE" name="plutot que">
+      <pattern>
+        <token>plutot</token>
+      </pattern>
+      <message>Peut-être "plutôt"?</message>
+      <short>plutot</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typographie">
     <rule id="FR_SOFT_DOUBLE_BANG" name="double point d'exclamation">

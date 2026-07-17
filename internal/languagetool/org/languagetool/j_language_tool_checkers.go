@@ -159,7 +159,10 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 }
 
 // SoftPreserveCase maps suggestion casing from the matched original span.
-// ALL-CAPS match → ALL-CAPS suggestion; leading capital → capitalize suggestion.
+// ALL-CAPS match → ALL-CAPS suggestion; leading capital → capitalize suggestion
+// when the suggestion replaces the whole span (same or more word tokens).
+// Shorter single-token fixes for multi-word matches (e.g. "They is" → "are")
+// keep suggestion casing so apply does not yield "Are …".
 func SoftPreserveCase(matched, suggestion string) string {
 	if matched == "" || suggestion == "" {
 		return suggestion
@@ -179,7 +182,12 @@ func SoftPreserveCase(matched, suggestion string) string {
 	if hasLetter && allUpper {
 		return strings.ToUpper(suggestion)
 	}
-	// leading capital (sentence/title start)
+	// leading capital (sentence/title start) — only when suggestion covers the span
+	mWords := len(strings.Fields(matched))
+	sWords := len(strings.Fields(suggestion))
+	if mWords > 1 && sWords < mWords {
+		return suggestion
+	}
 	for _, r := range matched {
 		if r >= 'A' && r <= 'Z' {
 			rs := []rune(suggestion)

@@ -63,6 +63,12 @@ func TestSoftPreserveCase(t *testing.T) {
 	require.Equal(t, "By accident", SoftPreserveCase("On Accident", "by accident"))
 	require.Equal(t, "BY ACCIDENT", SoftPreserveCase("ON ACCIDENT", "by accident"))
 	require.Equal(t, "Anyway", SoftPreserveCase("Anyways", "anyway"))
+	// multi-word match + shorter suggestion: do not force sentence capital
+	require.Equal(t, "are", SoftPreserveCase("They is", "are"))
+	require.Equal(t, "goes", SoftPreserveCase("He go", "goes"))
+	// full-phrase replacement still capitalizes
+	require.Equal(t, "You're welcome", SoftPreserveCase("Your welcome", "you're welcome"))
+	require.Equal(t, "Between you and me", SoftPreserveCase("Between you and I", "between you and me"))
 }
 
 func TestCheckAnnotatedAndProject(t *testing.T) {

@@ -347,4 +347,115 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_AFAIK" name="immunize afaik">
+    <pattern>
+      <token>afaik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ICYMI" name="immunize icymi">
+    <pattern>
+      <token>icymi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBF" name="immunize tbf">
+    <pattern>
+      <token>tbf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IYKYK" name="immunize iykyk">
+    <pattern>
+      <token>iykyk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FTW" name="immunize ftw">
+    <pattern>
+      <token>ftw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IMO_LOWER" name="immunize imho">
+    <pattern>
+      <token>imho</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_TELL_VB" name="modal tell → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>tell</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_CALL_VB" name="modal call → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>call</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_MOVE_VB" name="modal move → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>move</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_START_VB" name="modal start → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>start</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_TELL" name="to tell → VB">
+    <pattern>
+      <token>to</token>
+      <token>tell</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_CALL" name="to call → VB">
+    <pattern>
+      <token>to</token>
+      <token>call</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_START" name="to start → VB">
+    <pattern>
+      <token>to</token>
+      <token>start</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_MOVE" name="to move → VB">
+    <pattern>
+      <token>to</token>
+      <token>move</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_HELP" name="to help → VB">
+    <pattern>
+      <token>to</token>
+      <token>help</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_XAI_NNP" name="xAI → NNP">
+    <pattern>
+      <token>xAI</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="SOFT_GROK_NNP" name="Grok → NNP">
+    <pattern>
+      <token>Grok</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
 </rules>

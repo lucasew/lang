@@ -35,3 +35,21 @@ East Coast	NNP
 West Coast	NNP
 in particular	RB
 for instance	RB
+as a result	RB
+in the meantime	RB
+at the same time	RB
+for the most part	RB
+North America	NNP
+South America	NNP
+Latin America	NNP
+Asia Pacific	NNP
+New Delhi	NNP
+Tel Aviv	NNP
+Sao Paulo	NNP
+Mexico City	NNP
+San Diego	NNP
+Salt Lake City	NNP
+by and large	RB
+in any case	RB
+at any rate	RB
+from time to time	RB

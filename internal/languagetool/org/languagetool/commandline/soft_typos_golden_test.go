@@ -237,8 +237,8 @@ func TestGolden_SoftConfusablesMore(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string
 	}{
-		{"Whose going to the party?", "EN_SOFT_WHOSE_WHO_S", "who's going"},
-		{"Who's book is this?", "EN_SOFT_WHO_S_BOOK", "whose book"},
+		{"Whose going to the party?", "EN_SOFT_WHOSE_WHO_S", "Who's going"},
+		{"Who's book is this?", "EN_SOFT_WHO_S_BOOK", "Whose book"},
 		{"Please breath deeply now.", "EN_SOFT_BREATH_BREATHE", "breathe deeply"},
 		{"I want to advice you.", "EN_SOFT_ADVICE_ADVISE", "to advise"},
 		{"He do the work.", "EN_SOFT_HE_DO", "does"},
@@ -374,7 +374,7 @@ func TestGolden_SoftWereGoingTo(t *testing.T) {
 	for _, f := range findings {
 		if f.Rule == "EN_SOFT_WERE_WE_RE" {
 			found = true
-			require.Equal(t, "we're going to", f.Suggestion)
+			require.Equal(t, "We're going to", f.Suggestion)
 		}
 	}
 	require.True(t, found, "%+v", findings)
@@ -385,17 +385,17 @@ func TestGolden_SoftFusedWords(t *testing.T) {
 		text, rule, sug string
 	}{
 		{"I have alot of work.", "EN_SOFT_ALOT", "a lot"},
-		{"Infact it works.", "EN_SOFT_INFACT", "in fact"},
+		{"Infact it works.", "EN_SOFT_INFACT", "In fact"},
 		{"Come aswell please.", "EN_SOFT_ASWELL", "as well"},
 		{"Never the less we try.", "EN_SOFT_NEVERTHELESS_SPLIT", "nevertheless"},
-		{"Everytime I try it fails.", "EN_SOFT_EVERYTIME", "every time"},
-		{"Noone knows the answer.", "EN_SOFT_NOONE", "no one"},
+		{"Everytime I try it fails.", "EN_SOFT_EVERYTIME", "Every time"},
+		{"Noone knows the answer.", "EN_SOFT_NOONE", "No one"},
 		{"Don't give into pressure.", "EN_SOFT_INTO_IN_TO", "give in to"},
 		{"Talk to eachother soon.", "EN_SOFT_EACHOTHER", "each other"},
-		{"Inspite of that we stay.", "EN_SOFT_INSPITE", "in spite"},
-		{"Atleast try once.", "EN_SOFT_ATLEAST", "at least"},
-		{"Incase it rains, wait.", "EN_SOFT_INCASE", "in case"},
-		{"Upto ten people may join.", "EN_SOFT_UPTO", "up to"},
+		{"Inspite of that we stay.", "EN_SOFT_INSPITE", "In spite"},
+		{"Atleast try once.", "EN_SOFT_ATLEAST", "At least"},
+		{"Incase it rains, wait.", "EN_SOFT_INCASE", "In case"},
+		{"Upto ten people may join.", "EN_SOFT_UPTO", "Up to"},
 		{"I need to workout daily.", "EN_SOFT_WORKOUT_VERB", "to work out"},
 		{"I need to setup the tool.", "EN_SOFT_SETUP_VERB", "to set up"},
 		{"You need to login first.", "EN_SOFT_LOGIN_VERB", "to log in"},
@@ -820,4 +820,148 @@ func TestGolden_SoftDialectForms(t *testing.T) {
 			require.True(t, found, "%+v", findings)
 		})
 	}
+}
+
+func TestGolden_SoftMoreRedundancyStyle(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"That is an added bonus.", "EN_SOFT_ADDED_BONUS", ""},
+		{"Wait a brief moment.", "EN_SOFT_BRIEF_MOMENT", ""},
+		{"Please join together now.", "EN_SOFT_JOIN_TOGETHER", ""},
+		{"We should plan ahead carefully.", "EN_SOFT_PLAN_AHEAD", ""},
+		{"The problem still remains.", "EN_SOFT_STILL_REMAINS", ""},
+		{"Birds circle around the tree.", "EN_SOFT_CIRCLE_AROUND", ""},
+		{"Please empty out the drawer.", "EN_SOFT_EMPTY_OUT", ""},
+		{"The dress is pink in color.", "EN_SOFT_PINK_IN_COLOR", "pink"},
+		{"The sky is blue in colour.", "EN_SOFT_BLUE_IN_COLOUR", "blue"},
+		{"We need to preplan the trip.", "EN_SOFT_PREPLAN", "plan"},
+		{"Irregardless of the cost, go.", "EN_SOFT_IRREGARDLESS", "Regardless"},
+		{"He is supposably ready.", "EN_SOFT_SUPPOSABLY", "supposedly"},
+		{"They are the exact same.", "EN_SOFT_EXACT_SAME", ""},
+		{"The reason why we left is clear.", "EN_SOFT_REASON_WHY", ""},
+		{"Please return back soon.", "EN_SOFT_RETURN_BACK", ""},
+		{"They ascend up the stairs.", "EN_SOFT_ASCEND_UP", ""},
+		{"They descend down the hill.", "EN_SOFT_DESCEND_DOWN", ""},
+		{"Please enter in the room.", "EN_SOFT_ENTER_IN", "enter the"},
+		{"Continue on with the plan.", "EN_SOFT_CONTINUE_ON", "continue with"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type, "%+v", f)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftExtraTyposMap(t *testing.T) {
+	cases := []struct {
+		text, sug string
+	}{
+		{"I was commited to the goal.", "committed"},
+		{"They are transfered today.", "transferred"},
+		{"A nice restaraunt nearby.", "restaurant"},
+		{"A good questionaire form.", "questionnaire"},
+		{"The rythm is steady.", "rhythm"},
+		{"He is persistant about it.", "persistent"},
+		{"A vaccuum cleaner.", "vacuum"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.sug, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == "MORFOLOGIK_RULE_EN_US" && f.Suggestion == tc.sug {
+					found = true
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftUSGBExtraVariants(t *testing.T) {
+	us := []struct {
+		text, rule, sug string
+	}{
+		{"Dry humour helps.", "EN_SOFT_HUMOUR_US", "humor"},
+		{"Hard labour pays.", "EN_SOFT_LABOUR_US", "labor"},
+		{"Self defence class.", "EN_SOFT_DEFENCE_US", "defense"},
+		{"A driving licence.", "EN_SOFT_LICENCE_US", "license"},
+		{"Please analyse data.", "EN_SOFT_ANALYSE_US", "analyze"},
+	}
+	for _, tc := range us {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en-US"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+	gb := []struct {
+		text, rule, sug string
+	}{
+		{"Dry humor helps.", "EN_SOFT_HUMOR_GB", "humour"},
+		{"Hard labor pays.", "EN_SOFT_LABOR_GB", "labour"},
+		{"Self defense class.", "EN_SOFT_DEFENSE_GB", "defence"},
+		{"A driving license.", "EN_SOFT_LICENSE_GB", "licence"},
+		{"Please analyze data.", "EN_SOFT_ANALYZE_GB", "analyse"},
+	}
+	for _, tc := range gb {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en-GB"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftIrregardless(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Irregardless of cost, ship it.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "Regardless")
+	require.NotContains(t, strings.ToLower(out.String()), "irregardless")
 }

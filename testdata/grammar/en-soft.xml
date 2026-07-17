@@ -1002,5 +1002,160 @@
       <message>In many style guides, prefer "different from".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_ADDED_BONUS" name="added bonus">
+      <pattern>
+        <token>added</token>
+        <token>bonus</token>
+      </pattern>
+      <message>"Added bonus" is often redundant; consider "bonus".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_BRIEF_MOMENT" name="brief moment">
+      <pattern>
+        <token>brief</token>
+        <token>moment</token>
+      </pattern>
+      <message>"Brief moment" is often redundant; consider "moment".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_JOIN_TOGETHER" name="join together">
+      <pattern>
+        <token>join</token>
+        <token>together</token>
+      </pattern>
+      <message>Consider "join" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PLAN_AHEAD" name="plan ahead">
+      <pattern>
+        <token>plan</token>
+        <token>ahead</token>
+      </pattern>
+      <message>"Plan ahead" is often redundant; consider "plan".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_STILL_REMAINS" name="still remains">
+      <pattern>
+        <token>still</token>
+        <token>remains</token>
+      </pattern>
+      <message>Consider "remains" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_CIRCLE_AROUND" name="circle around">
+      <pattern>
+        <token>circle</token>
+        <token>around</token>
+      </pattern>
+      <message>Consider "circle" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_EMPTY_OUT" name="empty out">
+      <pattern>
+        <token>empty</token>
+        <token>out</token>
+        <token>the</token>
+      </pattern>
+      <message>Consider "empty the" for concision.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PINK_IN_COLOR" name="pink in color">
+      <pattern>
+        <token>pink</token>
+        <token>in</token>
+        <token>color</token>
+      </pattern>
+      <message>Did you mean "pink"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_BLUE_IN_COLOUR" name="blue in colour">
+      <pattern>
+        <token>blue</token>
+        <token>in</token>
+        <token>colour</token>
+      </pattern>
+      <message>Did you mean "blue"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PREPLAN" name="preplan">
+      <pattern>
+        <token>preplan</token>
+      </pattern>
+      <message>Did you mean "plan"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_IRREGARDLESS" name="irregardless">
+      <pattern>
+        <token>irregardless</token>
+      </pattern>
+      <message>Did you mean "regardless"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_SUPPOSABLY" name="supposably">
+      <pattern>
+        <token>supposably</token>
+      </pattern>
+      <message>Did you mean "supposedly"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_EXACT_SAME" name="exact same">
+      <pattern>
+        <token>exact</token>
+        <token>same</token>
+      </pattern>
+      <message>Consider "same" or "exactly the same".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_REASON_WHY" name="reason why">
+      <pattern>
+        <token>the</token>
+        <token>reason</token>
+        <token>why</token>
+      </pattern>
+      <message>Consider "the reason" or "why" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_RETURN_BACK" name="return back">
+      <pattern>
+        <token>return</token>
+        <token>back</token>
+      </pattern>
+      <message>Consider "return" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_ASCEND_UP" name="ascend up">
+      <pattern>
+        <token>ascend</token>
+        <token>up</token>
+      </pattern>
+      <message>Consider "ascend" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_DESCEND_DOWN" name="descend down">
+      <pattern>
+        <token>descend</token>
+        <token>down</token>
+      </pattern>
+      <message>Consider "descend" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_ENTER_IN" name="enter in">
+      <pattern>
+        <token>enter</token>
+        <token>in</token>
+        <token>the</token>
+      </pattern>
+      <message>Did you mean "enter the"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUE_ON" name="continue on">
+      <pattern>
+        <token>continue</token>
+        <token>on</token>
+        <token>with</token>
+      </pattern>
+      <message>Did you mean "continue with"?</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

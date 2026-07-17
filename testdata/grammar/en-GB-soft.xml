@@ -78,5 +78,40 @@
       <message>In British English, "modelled" is preferred.</message>
       <short>modeled</short>
     </rule>
+    <rule id="EN_SOFT_HUMOR_GB" name="humor soft">
+      <pattern>
+        <token>humor</token>
+      </pattern>
+      <message>In British English, "humour" is preferred.</message>
+      <short>humor</short>
+    </rule>
+    <rule id="EN_SOFT_LABOR_GB" name="labor soft">
+      <pattern>
+        <token>labor</token>
+      </pattern>
+      <message>In British English, "labour" is preferred.</message>
+      <short>labor</short>
+    </rule>
+    <rule id="EN_SOFT_DEFENSE_GB" name="defense soft">
+      <pattern>
+        <token>defense</token>
+      </pattern>
+      <message>In British English, "defence" is preferred.</message>
+      <short>defense</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_GB" name="license soft">
+      <pattern>
+        <token>license</token>
+      </pattern>
+      <message>In British English, "licence" is preferred.</message>
+      <short>license</short>
+    </rule>
+    <rule id="EN_SOFT_ANALYZE_GB" name="analyze soft">
+      <pattern>
+        <token>analyze</token>
+      </pattern>
+      <message>In British English, "analyse" is preferred.</message>
+      <short>analyze</short>
+    </rule>
   </category>
 </rules>

@@ -92,5 +92,40 @@
       <message>In American English, "modeled" is often preferred.</message>
       <short>modelled</short>
     </rule>
+    <rule id="EN_SOFT_HUMOUR_US" name="humour soft">
+      <pattern>
+        <token>humour</token>
+      </pattern>
+      <message>In American English, "humor" is often preferred.</message>
+      <short>humour</short>
+    </rule>
+    <rule id="EN_SOFT_LABOUR_US" name="labour soft">
+      <pattern>
+        <token>labour</token>
+      </pattern>
+      <message>In American English, "labor" is often preferred.</message>
+      <short>labour</short>
+    </rule>
+    <rule id="EN_SOFT_DEFENCE_US" name="defence soft">
+      <pattern>
+        <token>defence</token>
+      </pattern>
+      <message>In American English, "defense" is often preferred.</message>
+      <short>defence</short>
+    </rule>
+    <rule id="EN_SOFT_LICENCE_US" name="licence soft">
+      <pattern>
+        <token>licence</token>
+      </pattern>
+      <message>In American English, "license" is often preferred for the noun.</message>
+      <short>licence</short>
+    </rule>
+    <rule id="EN_SOFT_ANALYSE_US" name="analyse soft">
+      <pattern>
+        <token>analyse</token>
+      </pattern>
+      <message>In American English, "analyze" is often preferred.</message>
+      <short>analyse</short>
+    </rule>
   </category>
 </rules>

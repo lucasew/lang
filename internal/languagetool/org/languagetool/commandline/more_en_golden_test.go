@@ -86,7 +86,7 @@ func TestGolden_SoftYourYoure(t *testing.T) {
 			found = true
 			require.Equal(t, "grammar", f.Type)
 			require.Equal(t, "error", f.Severity)
-			require.Equal(t, "you're welcome", f.Suggestion)
+			require.Equal(t, "You're welcome", f.Suggestion)
 		}
 	}
 	require.True(t, found, "%+v", findings)

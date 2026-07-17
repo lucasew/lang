@@ -137,6 +137,63 @@ func TestGolden_ImmunizeBtwIrlNoSpell(t *testing.T) {
 		"Smh at this.",
 		"Yolo try it.",
 		"Fomo is real.",
+		"Afaik that is correct.",
+		"Icymi the release shipped.",
+		"Tbf they tried hard.",
+		"Iykyk about that meme.",
+		"Grok ftw today.",
+		"Imho this works.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
+func TestGolden_SoftXML_ModalTellAndToStart(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" || DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("need en-soft.xml and english.dict")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "You should tell them to start early.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	require.Contains(t, s, "tell/")
+	require.Contains(t, s, "start/")
+	require.Contains(t, s, "VB")
+}
+
+func TestGolden_SoftMultiwords_NorthAmerica(t *testing.T) {
+	if DiscoverEnglishMultiwords(nil) == "" {
+		t.Skip("multiwords not found")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "Trade in North America grew.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	require.Contains(t, s, "North")
+	require.True(t,
+		strings.Contains(s, "NNP") || strings.Contains(s, "B-N") || strings.Contains(s, "E-N") || strings.Contains(s, "B-NP"),
+		s,
+	)
+}
+
+func TestGolden_IgnoreSpellingTechNamesExtra(t *testing.T) {
+	if DiscoverEnglishIgnoreSpellingList(nil) == "" && DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("soft disambiguation data not found")
+	}
+	for _, text := range []string{
+		"We deploy with Ollama and DeepSeek.",
+		"Use PyTorch and TensorFlow models.",
+		"ClickHouse and Postgres are fast.",
+		"Ship on Railway or Render.",
 	} {
 		t.Run(text, func(t *testing.T) {
 			var buf bytes.Buffer

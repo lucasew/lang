@@ -130,6 +130,38 @@
       <message>Standardsprachlich oft "laut des" oder "laut" + Dativ-Name.</message>
       <short>laut</short>
     </rule>
+    <rule id="DE_SOFT_ANSTATT_DAS" name="anstatt das">
+      <pattern>
+        <token>anstatt</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "anstatt dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_OHNE_DAS" name="ohne das">
+      <pattern>
+        <token>ohne</token>
+        <token>das</token>
+        <token>zu</token>
+      </pattern>
+      <message>Meinten Sie "ohne dass" (Nebensatz) oder "ohne zu"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_SOWIE_SO" name="sowie so">
+      <pattern>
+        <token>sowie</token>
+        <token>so</token>
+      </pattern>
+      <message>Meinten Sie "sowieso"?</message>
+      <short>sowieso</short>
+    </rule>
+    <rule id="DE_SOFT_ZUFRIEDE" name="zufriede">
+      <pattern>
+        <token>zufriede</token>
+      </pattern>
+      <message>Meinten Sie "zufrieden"?</message>
+      <short>Tippfehler</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografie">
     <rule id="DE_SOFT_DOUBLE_BANG" name="doppeltes Ausrufezeichen">
