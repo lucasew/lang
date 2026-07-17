@@ -8037,6 +8037,76 @@
       <message>Did you mean "individuals"?</message>
       <short>indivduals</short>
     </rule>
+    <rule id="EN_SOFT_HIGHLIGHTS_MISS" name="hightlights soft">
+      <pattern>
+        <token>hightlights</token>
+      </pattern>
+      <message>Did you mean "highlights"?</message>
+      <short>hightlights</short>
+    </rule>
+    <rule id="EN_SOFT_HYGIENIC_MISS" name="hygenic soft">
+      <pattern>
+        <token>hygenic</token>
+      </pattern>
+      <message>Did you mean "hygienic"?</message>
+      <short>hygenic</short>
+    </rule>
+    <rule id="EN_SOFT_HYPOCRITE_MISS" name="hypocrit soft">
+      <pattern>
+        <token>hypocrit</token>
+      </pattern>
+      <message>Did you mean "hypocrite"?</message>
+      <short>hypocrit</short>
+    </rule>
+    <rule id="EN_SOFT_IDEOLOGICAL_MISS" name="idelogical soft">
+      <pattern>
+        <token>idelogical</token>
+      </pattern>
+      <message>Did you mean "ideological"?</message>
+      <short>idelogical</short>
+    </rule>
+    <rule id="EN_SOFT_INAPPROPRIATELY_MISS" name="inapropriately soft">
+      <pattern>
+        <token>inapropriately</token>
+      </pattern>
+      <message>Did you mean "inappropriately"?</message>
+      <short>inapropriately</short>
+    </rule>
+    <rule id="EN_SOFT_INNOCENCE_MISS" name="inocence soft">
+      <pattern>
+        <token>inocence</token>
+      </pattern>
+      <message>Did you mean "innocence"?</message>
+      <short>inocence</short>
+    </rule>
+    <rule id="EN_SOFT_INSPIRATION_MISS" name="inpsiration soft">
+      <pattern>
+        <token>inpsiration</token>
+      </pattern>
+      <message>Did you mean "inspiration"?</message>
+      <short>inpsiration</short>
+    </rule>
+    <rule id="EN_SOFT_INTERPRET_MISS" name="interpet soft">
+      <pattern>
+        <token>interpet</token>
+      </pattern>
+      <message>Did you mean "interpret"?</message>
+      <short>interpet</short>
+    </rule>
+    <rule id="EN_SOFT_INTERNATIONAL_MISS2" name="internatinal soft">
+      <pattern>
+        <token>internatinal</token>
+      </pattern>
+      <message>Did you mean "international"?</message>
+      <short>internatinal</short>
+    </rule>
+    <rule id="EN_SOFT_IRRELEVANT_MISS2" name="irrelavent soft">
+      <pattern>
+        <token>irrelavent</token>
+      </pattern>
+      <message>Did you mean "irrelevant"?</message>
+      <short>irrelavent</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

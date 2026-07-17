@@ -3291,4 +3291,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_APPCONFIG" name="immunize appconfig">
+    <pattern>
+      <token>appconfig</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPCONFIG_CAPS" name="immunize AppConfig">
+    <pattern>
+      <token>AppConfig</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XRAY" name="immunize xray">
+    <pattern>
+      <token>xray</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XRAY_CAPS" name="immunize XRay">
+    <pattern>
+      <token>XRay</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFORMATION" name="immunize cloudformation">
+    <pattern>
+      <token>cloudformation</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFORMATION_CAPS" name="immunize CloudFormation">
+    <pattern>
+      <token>CloudFormation</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

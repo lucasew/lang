@@ -2096,5 +2096,29 @@
       <message>Jargon; name a single-function isolation check instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ACCEPTANCE_TEST" name="acceptance test soft picky">
+      <pattern>
+        <token>acceptance</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a stakeholder criteria check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PERFORMANCE_TEST" name="performance test soft picky">
+      <pattern>
+        <token>performance</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a latency and throughput check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PENETRATION_TEST" name="penetration test soft picky">
+      <pattern>
+        <token>penetration</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name an authorized security attack drill instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

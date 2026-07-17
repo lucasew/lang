@@ -369,3 +369,6 @@ Optics Valley RegionNNP
 Finance Corridor RegionNNP
 Media Corridor RegionNNP
 Defense Corridor RegionNNP
+Health Corridor RegionNNP
+Education Corridor RegionNNP
+Logistics Corridor RegionNNP
