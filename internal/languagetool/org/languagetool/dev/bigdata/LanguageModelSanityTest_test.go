@@ -4,8 +4,8 @@ package bigdata
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
