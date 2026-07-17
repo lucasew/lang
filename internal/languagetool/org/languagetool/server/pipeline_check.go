@@ -71,11 +71,23 @@ func (p *Pipeline) cleanMatches(matches []languagetool.LocalMatch) []languagetoo
 
 // Check runs a language-aware core rule pack on text (full XML grammar deferred).
 // Honors pipeline disabled-rule IDs and optional overlap cleaning.
+// Uses multi-threaded Check for multi-sentence texts (pool size = GOMAXPROCS soft).
 func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	if p == nil {
 		return nil
 	}
-	matches := p.newConfiguredLT().Check(text)
+	lt := p.newConfiguredLT()
+	// promote to multi-threaded wrapper for parallel sentence rules when useful
+	sents := lt.Analyze(text)
+	var matches []languagetool.LocalMatch
+	if len(sents) > 2 {
+		mtl := languagetool.NewMultiThreadedJLanguageTool(lt.GetLanguageCode(), 0)
+		// copy checkers/state by reusing configured tool as base
+		mtl.JLanguageTool = lt
+		matches = mtl.Check(text)
+	} else {
+		matches = lt.Check(text)
+	}
 	return p.cleanMatches(matches)
 }
 

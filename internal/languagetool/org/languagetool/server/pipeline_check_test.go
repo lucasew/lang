@@ -102,3 +102,18 @@ func TestPipeline_EnabledOnly(t *testing.T) {
 		require.Equal(t, "EN_A_VS_AN", x.RuleID)
 	}
 }
+
+func TestPipeline_CheckMultiSentenceParallel(t *testing.T) {
+	p := NewPipeline(NewPipelineSettings("en", "u"))
+	// several sentences with a/an error
+	text := "This is an test. Another line here. And an other issue."
+	m := p.Check(text)
+	require.NotEmpty(t, m)
+	found := false
+	for _, x := range m {
+		if x.RuleID == "EN_A_VS_AN" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+}
