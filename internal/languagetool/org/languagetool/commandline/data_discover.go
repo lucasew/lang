@@ -62,3 +62,34 @@ func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 	}
 	return WalkUpFind("", filepath.Join("testdata", "false-friends-soft.xml"))
 }
+
+// DiscoverEnglishUSDict finds en_US.dict for the binary Morfologik speller.
+// Order: LANG_EN_US_DICT, --data-dir/en/hunspell/en_US.dict, walk-up third_party and inspiration.
+func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_EN_US_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		cand := filepath.Join(opts.GetDataDir(), "en", "hunspell", "en_US.dict")
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+		// also flat layout
+		cand = filepath.Join(opts.GetDataDir(), "en_US.dict")
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+	}
+	relPaths := []string{
+		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict"),
+	}
+	for _, rel := range relPaths {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}

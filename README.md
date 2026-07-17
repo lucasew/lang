@@ -66,7 +66,8 @@ go run ./cmd/lang-server -port 8081 -public
 | Layout (sentence/punct/paragraph whitespace, unpaired, uppercase) | done |
 | Soft grammar packs (`testdata/grammar/*-soft.xml`) | 35 packs; CoreGoldenHook matrix |
 | Soft false friends (`-m` + false-friends-soft.xml) | CoreGoldenHook |
-| Demo EN speller (`LANG_DEMO_SPELLER=1`) | map + edit-distance suggestions |
+| EN speller (`en_US.dict` CFSA2 when present) | MORFOLOGIK_RULE_EN_US |
+| Demo EN speller (`LANG_DEMO_SPELLER=1` fallback) | map + edit-distance suggestions |
 | `--apply` suggestion rewrite | a/an, false friends, soft patterns |
 | Disambiguator | not yet |
 | Full 1:1 goldens | growing |

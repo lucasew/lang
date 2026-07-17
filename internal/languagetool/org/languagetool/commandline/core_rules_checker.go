@@ -148,15 +148,25 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		if dir := DiscoverGrammarDir(opts); dir != "" {
 			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
 		}
-		if os.Getenv("LANG_DEMO_SPELLER") == "1" {
-			base := lang
-			if i := strings.IndexByte(lang, '-'); i > 0 {
-				base = lang[:i]
+		base := lang
+		if i := strings.IndexByte(lang, '-'); i > 0 {
+			base = lang[:i]
+		}
+		if strings.EqualFold(base, "en") {
+			// Prefer CFSA2 en_US.dict when present; else optional map demo speller.
+			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
+			var nearest map[string]struct{}
+			if demoSpell {
+				nearest = en.DemoEnglishKnownWords()
 			}
-			if strings.EqualFold(base, "en") {
-				en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), map[string][]string{
-					"teh": {"the"}, "recieve": {"receive"}, "seperate": {"separate"},
-				})
+			spellRegistered := false
+			if dictPath := DiscoverEnglishUSDict(opts); dictPath != "" {
+				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest)
+			}
+			if !spellRegistered && demoSpell {
+				en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), en.CommonDemoSpellerSuggestions)
+			}
+			if demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
 		}
@@ -457,6 +467,11 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		ff = "(unset)"
 	}
 	_, _ = fmt.Fprintf(w, "false-friends: %s\n", ff)
+	if dict := DiscoverEnglishUSDict(opts); dict != "" {
+		_, _ = fmt.Fprintf(w, "en_US.dict: %s\n", dict)
+	} else {
+		_, _ = fmt.Fprintf(w, "en_US.dict: (unset)\n")
+	}
 	// smoke check
 	lt, err := configureCoreLT("en", opts)
 	if err != nil {

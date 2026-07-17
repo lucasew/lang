@@ -59,6 +59,9 @@ func RegisterDemoEnglishSpeller(lt *languagetool.JLanguageTool, known map[string
 	if lt == nil || known == nil {
 		return
 	}
+	if suggestions == nil {
+		suggestions = CommonDemoSpellerSuggestions
+	}
 	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimpleMapSpellerChecker("MORFOLOGIK_RULE_EN_US", known, suggestions))
 }
 

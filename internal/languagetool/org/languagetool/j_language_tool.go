@@ -451,15 +451,24 @@ func KnownWordSet(words ...string) func(string) bool {
 // When no map entry exists, soft edit-distance suggestions are taken from known
 // (capped dictionary size so demo packs stay cheap).
 func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestions map[string][]string) SentenceChecker {
-	if ruleID == "" {
-		ruleID = "MORFOLOGIK_RULE"
-	}
 	isKnown := func(w string) bool {
 		if _, ok := known[w]; ok {
 			return true
 		}
 		_, ok := known[strings.ToLower(w)]
 		return ok
+	}
+	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, known)
+}
+
+// SimplePredicateSpellerChecker flags letter tokens rejected by isKnown.
+// nearestKnown is optional (edit-distance peers when non-nil and small).
+func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, suggestions map[string][]string, nearestKnown map[string]struct{}) SentenceChecker {
+	if ruleID == "" {
+		ruleID = "MORFOLOGIK_RULE"
+	}
+	if isKnown == nil {
+		isKnown = func(string) bool { return true }
 	}
 	return func(sentence *AnalyzedSentence) []LocalMatch {
 		if sentence == nil {
@@ -491,8 +500,8 @@ func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestio
 					m.Suggestions = append([]string(nil), s...)
 				}
 			}
-			if len(m.Suggestions) == 0 {
-				m.Suggestions = nearestKnownWords(w, known, 2, 5)
+			if len(m.Suggestions) == 0 && nearestKnown != nil {
+				m.Suggestions = nearestKnownWords(w, nearestKnown, 2, 5)
 			}
 			out = append(out, m)
 		}
