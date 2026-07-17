@@ -1,0 +1,14 @@
+[
+  {
+    "rule": "EN_COULD_OF",
+    "type": "grammar",
+    "severity": "error",
+    "message": "Did you mean 'could have'?",
+    "location": "stdin:1:3",
+    "suggestion": "could have",
+    "offset": 2,
+    "length": 8,
+    "file": "stdin",
+    "suggestions": ["could have"]
+  }
+]
