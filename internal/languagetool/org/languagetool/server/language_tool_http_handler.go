@@ -37,7 +37,7 @@ func NewLanguageToolHttpHandler(
 		ErrorRequestLimiter: errLimiter,
 		Server:              srv,
 		TextCheckerV2:       NewV2TextChecker(cfg, internal, rc),
-		ApiV2:               NewApiV2(cfg, nil),
+		ApiV2:               NewApiV2(cfg, DefaultCoreLanguages()),
 		ReqCounter:          rc,
 	}
 }

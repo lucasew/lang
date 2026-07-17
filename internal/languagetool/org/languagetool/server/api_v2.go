@@ -25,6 +25,9 @@ func NewApiV2(cfg *HTTPServerConfig, languages []LanguageInfo) *ApiV2 {
 	if cfg == nil {
 		cfg = NewHTTPServerConfig()
 	}
+	if languages == nil {
+		languages = DefaultCoreLanguages()
+	}
 	return &ApiV2{
 		Config:         cfg,
 		AllowOriginURL: cfg.AllowOriginURL,

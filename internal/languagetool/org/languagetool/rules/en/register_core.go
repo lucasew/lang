@@ -24,4 +24,9 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_thesaurus": "Consider using a thesaurus to find synonyms.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	ls := rules.NewLongSentenceRule(map[string]string{
+		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
+	}, 40)
+	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 }

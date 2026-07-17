@@ -5,7 +5,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreGermanRules installs DE word-repeat + shared layout/punctuation rules.
+// RegisterCoreGermanRules installs DE word-repeat + beginning + long-sentence + shared layout.
 func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -13,4 +13,16 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	rules.RegisterSharedLayoutRules(lt, "de")
 	wr := NewGermanWordRepeatRule(map[string]string{"repetition": "Wortwiederholung"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
+
+	wrb := NewGermanWordRepeatBeginningRule(map[string]string{
+		"desc_repetition_beginning_adv":       "Drei aufeinanderfolgende Sätze beginnen mit demselben Adverb.",
+		"desc_repetition_beginning_word":      "Drei aufeinanderfolgende Sätze beginnen mit demselben Wort.",
+		"desc_repetition_beginning_thesaurus": "Erwägen Sie ein Synonym.",
+	})
+	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	ls := NewLongSentenceRule(map[string]string{
+		"long_sentence_rule_msg2": "Dieser Satz ist zu lang (%d Wörter)",
+	}, 40)
+	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 }

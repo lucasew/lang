@@ -9,13 +9,16 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ar"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/br"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/da"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/el"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fa"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ga"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/gl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/km"
@@ -29,6 +32,36 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sv"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
+
+// Supported lists short codes with dedicated core packs (for /v2/languages etc.).
+var Supported = []struct {
+	Code string
+	Name string
+}{
+	{"en", "English"},
+	{"de", "German"},
+	{"fr", "French"},
+	{"es", "Spanish"},
+	{"nl", "Dutch"},
+	{"pl", "Polish"},
+	{"uk", "Ukrainian"},
+	{"it", "Italian"},
+	{"pt", "Portuguese"},
+	{"ru", "Russian"},
+	{"ca", "Catalan"},
+	{"sv", "Swedish"},
+	{"da", "Danish"},
+	{"gl", "Galician"},
+	{"sk", "Slovak"},
+	{"el", "Greek"},
+	{"ro", "Romanian"},
+	{"ar", "Arabic"},
+	{"km", "Khmer"},
+	{"sl", "Slovenian"},
+	{"br", "Breton"},
+	{"fa", "Persian"},
+	{"ga", "Irish"},
+}
 
 // Register installs the best available core rule pack for lang (e.g. "en-US", "de").
 func Register(lt *languagetool.JLanguageTool, lang string) {
@@ -80,6 +113,12 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 		km.RegisterCoreKhmerRules(lt)
 	case "sl":
 		sl.RegisterCoreSlovenianRules(lt)
+	case "br":
+		br.RegisterCoreBretonRules(lt)
+	case "fa":
+		fa.RegisterCorePersianRules(lt)
+	case "ga":
+		ga.RegisterCoreIrishRules(lt)
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

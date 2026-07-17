@@ -13,6 +13,13 @@ func TestApiV2_Languages(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 200, r.Status)
 	require.Contains(t, r.Body, "English")
+
+	// nil languages → default corepack list
+	api2 := NewApiV2(nil, nil)
+	r2, err := api2.Handle("languages", nil)
+	require.NoError(t, err)
+	require.Contains(t, r2.Body, "German")
+	require.Contains(t, r2.Body, `"code":"de"`)
 }
 
 func TestApiV2_InvalidRequest(t *testing.T) {
