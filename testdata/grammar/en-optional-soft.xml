@@ -178,5 +178,36 @@
       <message>Consider "note that" or state the fact directly.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_WITH_THE_EXCEPTION_OF" name="with the exception of soft optional" default="off">
+      <pattern>
+        <token>with</token>
+        <token>the</token>
+        <token>exception</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "except" or "except for".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_THE_EVENT_THAT" name="in the event that soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>event</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider "if".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_DUE_TO_THE_FACT_THAT" name="due to the fact that soft optional" default="off">
+      <pattern>
+        <token>due</token>
+        <token>to</token>
+        <token>the</token>
+        <token>fact</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider "because".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -2227,6 +2227,76 @@
       <message>Did you mean "disappear"?</message>
       <short>dissapear</short>
     </rule>
+    <rule id="EN_SOFT_DISAPPOINT_MISS" name="dissapoint soft">
+      <pattern>
+        <token>dissapoint</token>
+      </pattern>
+      <message>Did you mean "disappoint"?</message>
+      <short>dissapoint</short>
+    </rule>
+    <rule id="EN_SOFT_EMBARRASS_MISS" name="embarassed soft">
+      <pattern>
+        <token>embarassed</token>
+      </pattern>
+      <message>Did you mean "embarrassed"?</message>
+      <short>embarassed</short>
+    </rule>
+    <rule id="EN_SOFT_EQUIPMENT_MISS" name="equiptment soft">
+      <pattern>
+        <token>equiptment</token>
+      </pattern>
+      <message>Did you mean "equipment"?</message>
+      <short>equiptment</short>
+    </rule>
+    <rule id="EN_SOFT_ESPECIALLY_MISS" name="expecially soft">
+      <pattern>
+        <token>expecially</token>
+      </pattern>
+      <message>Did you mean "especially"?</message>
+      <short>expecially</short>
+    </rule>
+    <rule id="EN_SOFT_EXCELLENT_MISS" name="exellent soft">
+      <pattern>
+        <token>exellent</token>
+      </pattern>
+      <message>Did you mean "excellent"?</message>
+      <short>exellent</short>
+    </rule>
+    <rule id="EN_SOFT_EXPERIENCE_MISS" name="experiance soft">
+      <pattern>
+        <token>experiance</token>
+      </pattern>
+      <message>Did you mean "experience"?</message>
+      <short>experiance</short>
+    </rule>
+    <rule id="EN_SOFT_FAMILIAR_MISS2" name="familar soft">
+      <pattern>
+        <token>familar</token>
+      </pattern>
+      <message>Did you mean "familiar"?</message>
+      <short>familar</short>
+    </rule>
+    <rule id="EN_SOFT_FEBRUARY_MISS" name="febuary soft">
+      <pattern>
+        <token>febuary</token>
+      </pattern>
+      <message>Did you mean "February"?</message>
+      <short>febuary</short>
+    </rule>
+    <rule id="EN_SOFT_FINALLY_MISS" name="finaly soft">
+      <pattern>
+        <token>finaly</token>
+      </pattern>
+      <message>Did you mean "finally"?</message>
+      <short>finaly</short>
+    </rule>
+    <rule id="EN_SOFT_FREQUENTLY_MISS" name="frequenly soft">
+      <pattern>
+        <token>frequenly</token>
+      </pattern>
+      <message>Did you mean "frequently"?</message>
+      <short>frequenly</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

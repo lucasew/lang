@@ -122,3 +122,15 @@ Protobuf
 gRPC
 NixOS
 Homebrew
+Svelte
+SolidJS
+Bun
+Deno
+Zig
+Rustc
+Wasmtime
+Cloudflare
+Workers
+Vercel
+Netlify
+Supabase

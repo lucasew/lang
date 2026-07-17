@@ -125,3 +125,18 @@ in the first place	RB
 at face value	RB
 out of the blue	RB
 once in a while	RB
+Cape Cod	NNP
+Long Island	NNP
+Rhode Island	NNP
+Puerto Rico	NNP
+Hong Kong Island	NNP
+in due course	RB
+in any case	RB
+at any rate	RB
+for the time being	RB
+in the long run	RB
+in the short run	RB
+to a certain extent	RB
+as a matter of fact	RB
+by and large	RB
+more or less	RB
