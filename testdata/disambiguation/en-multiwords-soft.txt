@@ -531,3 +531,6 @@ Latite Summit RegionNNP
 Phonolite Ridge RegionNNP
 Trachyte Summit RegionNNP
 Andesite Ridge RegionNNP
+Ignimbrite Summit RegionNNP
+Felsite Summit RegionNNP
+Tephra Summit RegionNNP

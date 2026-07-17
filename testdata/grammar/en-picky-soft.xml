@@ -3364,5 +3364,26 @@
       <message>Jargon; name gross revenue retention instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_QPS" name="qps soft picky">
+      <pattern>
+        <token>qps</token>
+      </pattern>
+      <message>Jargon; name queries per second instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RPS" name="rps soft picky">
+      <pattern>
+        <token>rps</token>
+      </pattern>
+      <message>Jargon; name requests per second instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SLI" name="sli soft picky">
+      <pattern>
+        <token>sli</token>
+      </pattern>
+      <message>Jargon; name service level indicator instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

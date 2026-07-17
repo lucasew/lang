@@ -5235,4 +5235,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NEO4J" name="immunize neo4j">
+    <pattern>
+      <token>neo4j</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEO4J_CAPS" name="immunize Neo4j">
+    <pattern>
+      <token>Neo4j</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DGRAPH" name="immunize dgraph">
+    <pattern>
+      <token>dgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DGRAPH_CAPS" name="immunize Dgraph">
+    <pattern>
+      <token>Dgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JANUSGRAPH" name="immunize janusgraph">
+    <pattern>
+      <token>janusgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JANUSGRAPH_CAPS" name="immunize JanusGraph">
+    <pattern>
+      <token>JanusGraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

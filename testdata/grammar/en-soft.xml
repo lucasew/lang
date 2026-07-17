@@ -11817,6 +11817,76 @@
       <message>Did you mean "and"?</message>
       <short>nad</short>
     </rule>
+    <rule id="EN_SOFT_WOULD_MISS" name="woudl soft">
+      <pattern>
+        <token>woudl</token>
+      </pattern>
+      <message>Did you mean "would"?</message>
+      <short>woudl</short>
+    </rule>
+    <rule id="EN_SOFT_COULD_MISS" name="coudl soft">
+      <pattern>
+        <token>coudl</token>
+      </pattern>
+      <message>Did you mean "could"?</message>
+      <short>coudl</short>
+    </rule>
+    <rule id="EN_SOFT_SHOULD_MISS2" name="shoud soft">
+      <pattern>
+        <token>shoud</token>
+      </pattern>
+      <message>Did you mean "should"?</message>
+      <short>shoud</short>
+    </rule>
+    <rule id="EN_SOFT_CONFIGURATION_MISS" name="configration soft">
+      <pattern>
+        <token>configration</token>
+      </pattern>
+      <message>Did you mean "configuration"?</message>
+      <short>configration</short>
+    </rule>
+    <rule id="EN_SOFT_AUTHENTICATION_MISS" name="authentification soft">
+      <pattern>
+        <token>authentification</token>
+      </pattern>
+      <message>Did you mean "authentication"?</message>
+      <short>authentification</short>
+    </rule>
+    <rule id="EN_SOFT_RUNNING_MISS" name="runing soft">
+      <pattern>
+        <token>runing</token>
+      </pattern>
+      <message>Did you mean "running"?</message>
+      <short>runing</short>
+    </rule>
+    <rule id="EN_SOFT_STOPPING_MISS" name="stoping soft">
+      <pattern>
+        <token>stoping</token>
+      </pattern>
+      <message>Did you mean "stopping"?</message>
+      <short>stoping</short>
+    </rule>
+    <rule id="EN_SOFT_GETTING_MISS" name="geting soft">
+      <pattern>
+        <token>geting</token>
+      </pattern>
+      <message>Did you mean "getting"?</message>
+      <short>geting</short>
+    </rule>
+    <rule id="EN_SOFT_MAKING_MISS" name="makeing soft">
+      <pattern>
+        <token>makeing</token>
+      </pattern>
+      <message>Did you mean "making"?</message>
+      <short>makeing</short>
+    </rule>
+    <rule id="EN_SOFT_TAKING_MISS" name="takeing soft">
+      <pattern>
+        <token>takeing</token>
+      </pattern>
+      <message>Did you mean "taking"?</message>
+      <short>takeing</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
