@@ -9,5 +9,21 @@
       <message>Possible repeated "and".</message>
       <short>and and</short>
     </rule>
+    <rule id="KM_SOFT_THE_THE" name="the the">
+      <pattern>
+        <token>the</token>
+        <token>the</token>
+      </pattern>
+      <message>Possible repeated "the".</message>
+      <short>the the</short>
+    </rule>
+    <rule id="KM_SOFT_OF_OF" name="of of">
+      <pattern>
+        <token>of</token>
+        <token>of</token>
+      </pattern>
+      <message>Possible repeated "of".</message>
+      <short>of of</short>
+    </rule>
   </category>
 </rules>

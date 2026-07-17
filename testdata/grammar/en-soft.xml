@@ -305,5 +305,59 @@
       <message>Did you mean "should have been"?</message>
       <short>should of</short>
     </rule>
+    <rule id="EN_SOFT_SUPPOSE_TO" name="suppose to">
+      <pattern>
+        <token>suppose</token>
+        <token>to</token>
+      </pattern>
+      <message>Did you mean "supposed to"?</message>
+      <short>suppose to</short>
+    </rule>
+    <!-- Surface forms that exist in the dict but usually want apostrophes -->
+    <rule id="EN_SOFT_CANT" name="cant → can't">
+      <pattern>
+        <token regexp="yes">cant|Cant</token>
+      </pattern>
+      <message>Did you mean "can't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_WONT" name="wont → won't">
+      <pattern>
+        <token regexp="yes">wont|Wont</token>
+      </pattern>
+      <message>Did you mean "won't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_DONT" name="dont → don't">
+      <pattern>
+        <token regexp="yes">dont|Dont</token>
+      </pattern>
+      <message>Did you mean "don't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_DIDNT" name="didnt → didn't">
+      <pattern>
+        <token regexp="yes">didnt|Didnt</token>
+      </pattern>
+      <message>Did you mean "didn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_KIND_OF_A" name="kind of a">
+      <pattern>
+        <token>kind</token>
+        <token>of</token>
+        <token>a</token>
+      </pattern>
+      <message>Consider "kind of" or "a kind of".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_LITERALLY_FIG" name="literally figurative soft">
+      <pattern>
+        <token>literally</token>
+        <token>died</token>
+      </pattern>
+      <message>Figurative "literally" is often marked in picky style guides.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

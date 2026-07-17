@@ -9,5 +9,21 @@
       <message>Possible repeated "ve".</message>
       <short>ve ve</short>
     </rule>
+    <rule id="CRH_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible repeated "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="CRH_SOFT_DA_DA" name="da da">
+      <pattern>
+        <token>da</token>
+        <token>da</token>
+      </pattern>
+      <message>Possible repeated "da".</message>
+      <short>da da</short>
+    </rule>
   </category>
 </rules>

@@ -9,5 +9,21 @@
       <message>Possible repeated "um".</message>
       <short>um um</short>
     </rule>
+    <rule id="ML_SOFT_OR_OR" name="or or">
+      <pattern>
+        <token>or</token>
+        <token>or</token>
+      </pattern>
+      <message>Possible repeated "or".</message>
+      <short>or or</short>
+    </rule>
+    <rule id="ML_SOFT_AND_AND" name="and and">
+      <pattern>
+        <token>and</token>
+        <token>and</token>
+      </pattern>
+      <message>Possible repeated "and".</message>
+      <short>and and</short>
+    </rule>
   </category>
 </rules>

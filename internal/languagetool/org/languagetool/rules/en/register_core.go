@@ -53,6 +53,15 @@ func SoftEnglishPhraseReplacements() map[string]string {
 		"eachother":                    "each other",
 		"never the less":               "nevertheless",
 		"in regards to":                "with regard to",
+		"with regards to":              "with regard to",
+		"all of the sudden":            "all of a sudden",
+		"by in large":                  "by and large",
+		"first come first serve":       "first come, first served",
+		"I could care less":            "I couldn't care less",
+		"mute point":                   "moot point",
+		"slight of hand":               "sleight of hand",
+		"tow the line":                 "toe the line",
+		"wait with baited breath":      "wait with bated breath",
 	}
 }
 
@@ -65,6 +74,9 @@ func SoftEnglishTokenSequences() []patterns.TokenSequenceSpec {
 		{ID: "EN_MUST_OF", Tokens: []string{"must", "of"}, Message: "Did you mean 'must have'?", Suggestion: "must have"},
 		{ID: "EN_MIGHT_OF", Tokens: []string{"might", "of"}, Message: "Did you mean 'might have'?", Suggestion: "might have"},
 		{ID: "EN_TRY_AND", Tokens: []string{"try", "and"}, Message: "Did you mean 'try to'?", Suggestion: "try to"},
+		{ID: "EN_SUPPOSE_TO", Tokens: []string{"suppose", "to"}, Message: "Did you mean 'supposed to'?", Suggestion: "supposed to"},
+		{ID: "EN_USED_TO_GO", Tokens: []string{"use", "to", "go"}, Message: "Did you mean 'used to go'?", Suggestion: "used to go"},
+		{ID: "EN_INTENTS_PURPOSE", Tokens: []string{"intensive", "purposes"}, Message: "Did you mean 'intents and purposes'?", Suggestion: "intents and purposes"},
 	}
 }
 

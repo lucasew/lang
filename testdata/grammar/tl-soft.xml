@@ -6,8 +6,24 @@
         <token>at</token>
         <token>at</token>
       </pattern>
-      <message>Posibleng pag-uulit ng "at".</message>
+      <message>Posibleng ulit ng "at".</message>
       <short>at at</short>
+    </rule>
+    <rule id="TL_SOFT_NG_NG" name="ng ng">
+      <pattern>
+        <token>ng</token>
+        <token>ng</token>
+      </pattern>
+      <message>Posibleng ulit ng "ng".</message>
+      <short>ng ng</short>
+    </rule>
+    <rule id="TL_SOFT_SA_SA" name="sa sa">
+      <pattern>
+        <token>sa</token>
+        <token>sa</token>
+      </pattern>
+      <message>Posibleng ulit ng "sa".</message>
+      <short>sa sa</short>
     </rule>
   </category>
 </rules>

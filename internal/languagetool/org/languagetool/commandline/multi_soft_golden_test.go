@@ -115,6 +115,13 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"ga", "An an madra.", "GA_SOFT_AN_AN", ""},
 		{"zh", "是 是 的。", "ZH_SOFT_SHI_SHI", ""},
 		{"ja", "no no desu.", "JA_SOFT_NO_NO", ""},
+		{"ast", "casa de de madera.", "AST_SOFT_DE_DE", ""},
+		{"be", "кот на на стале.", "BE_SOFT_NA_NA", ""},
+		{"crh", "bir de de eki.", "CRH_SOFT_DE_DE", ""},
+		{"km", "the the book", "KM_SOFT_THE_THE", ""},
+		{"ml", "or or not", "ML_SOFT_OR_OR", ""},
+		{"ta", "and and more", "TA_SOFT_AND_AND", ""},
+		{"tl", "sa sa bahay", "TL_SOFT_SA_SA", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

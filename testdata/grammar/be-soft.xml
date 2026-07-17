@@ -6,8 +6,24 @@
         <token>і</token>
         <token>і</token>
       </pattern>
-      <message>Магчымы паўтор "і".</message>
+      <message>Магчымае паўтарэнне "і".</message>
       <short>і і</short>
+    </rule>
+    <rule id="BE_SOFT_NA_NA" name="на на">
+      <pattern>
+        <token>на</token>
+        <token>на</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "на".</message>
+      <short>на на</short>
+    </rule>
+    <rule id="BE_SOFT_U_U" name="у у">
+      <pattern>
+        <token>у</token>
+        <token>у</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "у".</message>
+      <short>у у</short>
     </rule>
   </category>
 </rules>

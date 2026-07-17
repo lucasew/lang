@@ -40,6 +40,10 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"Questions in regards to your letter.", "with regard to"},
 		{"In regards to your letter.", "with regard to"},
 		{"I did it On Accident.", "by accident"},
+		{"That is a mute point.", "moot point"},
+		{"Please tow the line.", "toe the line"},
+		{"It happened all of the sudden.", "all of a sudden"},
+		{"By in large, we agree.", "by and large"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

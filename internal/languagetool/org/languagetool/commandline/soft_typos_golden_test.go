@@ -262,6 +262,59 @@ func TestGolden_SoftConfusablesMore(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftContractionForms(t *testing.T) {
+	// cant/wont are valid dict words; soft grammar forces apostrophe suggestions.
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"I dont know.", "EN_SOFT_DONT", "don't"},
+		{"She cant come.", "EN_SOFT_CANT", "can't"},
+		{"They wont mind.", "EN_SOFT_WONT", "won't"},
+		{"He didnt call.", "EN_SOFT_DIDNT", "didn't"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			// fallback: typos/speller path also acceptable for some forms
+			if !found {
+				for _, f := range findings {
+					if f.Rule == "MORFOLOGIK_RULE_EN_US" && f.Suggestion == tc.sug {
+						found = true
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftSupposeTo(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "You suppose to leave now.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SUPPOSE_TO" || f.Rule == "EN_SOFT_SUPPOSE_TO" {
+			found = true
+			require.Equal(t, "supposed to", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
 func TestGolden_SoftDialectForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string

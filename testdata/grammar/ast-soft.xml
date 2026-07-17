@@ -9,5 +9,21 @@
       <message>Posible repetición de "y".</message>
       <short>y y</short>
     </rule>
+    <rule id="AST_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posible repetición de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="AST_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Posible repetición de "a".</message>
+      <short>a a</short>
+    </rule>
   </category>
 </rules>
