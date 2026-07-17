@@ -38,17 +38,12 @@ func TestMain_PrintLanguages(t *testing.T) {
 	require.Contains(t, out.String(), "uk-UA")
 }
 
-// Port of MainTest.testEnglishStdIn1 — stdin check hook path
+// Port of MainTest.testEnglishStdIn1 — stdin check via core rule pack
 func TestMain_EnglishStdIn1(t *testing.T) {
 	var out, errb bytes.Buffer
 	code := RunWithIO([]string{"-l", "en", "-"}, RunHooks{
 		ReadStdin: func() (string, error) { return "This is an test.", nil },
-		Check: func(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
-			require.Equal(t, "en", opts.Language)
-			require.Equal(t, "This is an test.", text)
-			_, _ = io.WriteString(w, "1.) Line 1, column 9, Rule ID: EN_A_VS_AN\n")
-			return 1, nil
-		},
+		Check:     CoreCheckHook,
 	}, &out, &errb)
 	require.Equal(t, 2, code) // matches found
 	require.Contains(t, out.String(), "EN_A_VS_AN")
