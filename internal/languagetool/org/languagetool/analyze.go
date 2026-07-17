@@ -4,7 +4,25 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	betok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/be"
+	brtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/br"
+	catok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ca"
+	crhtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/crh"
+	detok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/de"
+	eltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/el"
+	entok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/en"
+	eotok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/eo"
+	estok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/es"
 	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
+	gltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/gl"
+	kmtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/km"
+	nltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/nl"
+	pltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pl"
+	pttok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pt"
+	rotok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ro"
+	rutok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ru"
+	tltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/tl"
+	uktok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/uk"
 )
 
 // AnalyzePlain ports a minimal getAnalyzedSentence for demo/rule unit tests:
@@ -42,15 +60,57 @@ func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentenc
 }
 
 // WordTokenizerForLanguage returns the language-specific soft word tokenizer.
-// Falls back to the generic WordTokenizer.
+// Falls back to the generic WordTokenizer when no language module is available.
 func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 	base := lang
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
 	}
 	switch strings.ToLower(base) {
+	case "ar", "fa":
+		// Arabic-script soft path; Persian uses the same digit/letter splits.
+		if strings.EqualFold(base, "fa") {
+			return tokenizers.NewPersianWordTokenizer()
+		}
+		return tokenizers.NewArabicWordTokenizer()
+	case "be":
+		return betok.NewBelarusianWordTokenizer()
+	case "br":
+		return brtok.NewBretonWordTokenizer()
+	case "ca":
+		return catok.NewCatalanWordTokenizer()
+	case "crh":
+		return crhtok.NewCrimeanTatarWordTokenizer()
+	case "de":
+		return detok.NewGermanWordTokenizer()
+	case "el":
+		return eltok.NewGreekWordTokenizer()
+	case "en":
+		return entok.NewEnglishWordTokenizer()
+	case "eo":
+		return eotok.NewEsperantoWordTokenizer()
+	case "es":
+		return estok.NewSpanishWordTokenizer()
 	case "fr":
 		return frtok.NewFrenchWordTokenizer()
+	case "gl":
+		return gltok.NewGalicianWordTokenizer()
+	case "km":
+		return kmtok.NewKhmerWordTokenizer()
+	case "nl":
+		return nltok.NewDutchWordTokenizer()
+	case "pl":
+		return pltok.NewPolishWordTokenizer()
+	case "pt":
+		return pttok.NewPortugueseWordTokenizer()
+	case "ro":
+		return rotok.NewRomanianWordTokenizer()
+	case "ru":
+		return rutok.NewRussianWordTokenizer()
+	case "tl":
+		return tltok.NewTagalogWordTokenizer()
+	case "uk":
+		return uktok.NewUkrainianWordTokenizer()
 	default:
 		return tokenizers.NewWordTokenizer()
 	}

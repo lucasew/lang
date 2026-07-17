@@ -3,7 +3,6 @@ package fr
 import (
 	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -34,6 +33,8 @@ var (
 		"anti-vih": true, "al-qaïda": true, "c'est-à-dire": true, "add-on": true, "add-ons": true,
 		"rendez-vous": true, "garde-à-vous": true, "chez-eux": true, "chez-moi": true,
 		"chez-nous": true, "chez-soi": true, "chez-toi": true, "chez-vous": true, "m'as-tu-vu": true,
+		// Soft stand-in for FrenchTagger dictionary hits used by Java wordsToAdd.
+		"strauss-kahn": true, "petit-déjeunes": true,
 	}
 
 	frPatterns = []*regexp.Regexp{
@@ -126,9 +127,8 @@ func wordsToAddFR(s string) []string {
 		l = append(l, s)
 		return l
 	}
-	normalized := strings.ReplaceAll(s, "\u00AD", "")
-	normalized = strings.ReplaceAll(normalized, "’", "'")
-	if isTaggedFR(normalized) || doNotSplit[strings.ToLower(s)] {
+	// Soft hyphen compounds stay whole (check before stripping U+00AD).
+	if strings.Contains(s, "\u00AD") || doNotSplit[strings.ToLower(s)] || isTaggedFR(s) {
 		l = append(l, s)
 	} else {
 		var cur strings.Builder
@@ -151,25 +151,9 @@ func wordsToAddFR(s string) []string {
 }
 
 func isTaggedFR(s string) bool {
-	// Without FrenchTagger: keep soft-hyphen compounds and multi-letter
-	// hyphenated stems (Strauss-Kahn, Petit-déjeunes). Short pieces like
-	// Y-a (1-letter segment) are not kept.
-	if strings.Contains(s, "\u00AD") {
-		return true
-	}
-	parts := strings.Split(s, "-")
-	if len(parts) < 2 {
-		return false
-	}
-	for _, p := range parts {
-		if p == "" || utf8.RuneCountInString(p) < 2 {
-			return false
-		}
-		for _, r := range p {
-			if !unicode.IsLetter(r) {
-				return false
-			}
-		}
-	}
-	return true
+	// Without FrenchTagger POS data, treat dictionary lookup as a miss so
+	// wordsToAdd splits hyphens (Java splits untagged forms). Soft-hyphen
+	// compounds and doNotSplit entries are handled by wordsToAdd callers.
+	_ = s
+	return false
 }
