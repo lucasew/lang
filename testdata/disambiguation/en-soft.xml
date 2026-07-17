@@ -2319,4 +2319,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GLUSTER" name="immunize gluster">
+    <pattern>
+      <token>gluster</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLUSTER_CAPS" name="immunize Gluster">
+    <pattern>
+      <token>Gluster</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LUSTRE" name="immunize lustre">
+    <pattern>
+      <token>lustre</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LUSTRE_CAPS" name="immunize Lustre">
+    <pattern>
+      <token>Lustre</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEEGFS" name="immunize beegfs">
+    <pattern>
+      <token>beegfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEEGFS_CAPS" name="immunize BeeGFS">
+    <pattern>
+      <token>BeeGFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

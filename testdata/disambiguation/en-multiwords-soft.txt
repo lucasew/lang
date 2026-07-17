@@ -288,3 +288,6 @@ month to month	RB
 Virginia Beach Virginia	NNP
 year to year	RB
 week to week	RB
+Fort Worth Texas	NNP
+hour to hour	RB
+minute to minute	RB

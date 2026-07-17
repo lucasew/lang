@@ -6147,6 +6147,76 @@
       <message>Did you mean "intention"?</message>
       <short>intension</short>
     </rule>
+    <rule id="EN_SOFT_INSTALL_MISS" name="isntall soft">
+      <pattern>
+        <token>isntall</token>
+      </pattern>
+      <message>Did you mean "install"?</message>
+      <short>isntall</short>
+    </rule>
+    <rule id="EN_SOFT_ISSUE_MISS" name="isue soft">
+      <pattern>
+        <token>isue</token>
+      </pattern>
+      <message>Did you mean "issue"?</message>
+      <short>isue</short>
+    </rule>
+    <rule id="EN_SOFT_JOURNEY_MISS" name="jounrey soft">
+      <pattern>
+        <token>jounrey</token>
+      </pattern>
+      <message>Did you mean "journey"?</message>
+      <short>jounrey</short>
+    </rule>
+    <rule id="EN_SOFT_JUDGEMENT_MISS" name="judement soft">
+      <pattern>
+        <token>judement</token>
+      </pattern>
+      <message>Did you mean "judgement"?</message>
+      <short>judement</short>
+    </rule>
+    <rule id="EN_SOFT_JUSTIFICATION_MISS" name="justifcation soft">
+      <pattern>
+        <token>justifcation</token>
+      </pattern>
+      <message>Did you mean "justification"?</message>
+      <short>justifcation</short>
+    </rule>
+    <rule id="EN_SOFT_INTERESTED_MISS" name="intrested soft">
+      <pattern>
+        <token>intrested</token>
+      </pattern>
+      <message>Did you mean "interested"?</message>
+      <short>intrested</short>
+    </rule>
+    <rule id="EN_SOFT_INVENTORS_MISS" name="inventers soft">
+      <pattern>
+        <token>inventers</token>
+      </pattern>
+      <message>Did you mean "inventors"?</message>
+      <short>inventers</short>
+    </rule>
+    <rule id="EN_SOFT_INVOLVE_MISS2" name="invole soft">
+      <pattern>
+        <token>invole</token>
+      </pattern>
+      <message>Did you mean "involve"?</message>
+      <short>invole</short>
+    </rule>
+    <rule id="EN_SOFT_IRRESPONSIBLE_MISS" name="irresponsable soft">
+      <pattern>
+        <token>irresponsable</token>
+      </pattern>
+      <message>Did you mean "irresponsible"?</message>
+      <short>irresponsable</short>
+    </rule>
+    <rule id="EN_SOFT_INTERNATIONAL_MISS" name="interational soft">
+      <pattern>
+        <token>interational</token>
+      </pattern>
+      <message>Did you mean "international"?</message>
+      <short>interational</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -1436,5 +1436,29 @@
       <message>Jargon; name the knowledge-sharing coverage instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CANARY_DEPLOYMENT" name="canary deployment soft picky">
+      <pattern>
+        <token>canary</token>
+        <token>deployment</token>
+      </pattern>
+      <message>Jargon; name the progressive rollout plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HOT_SPARE" name="hot spare soft picky">
+      <pattern>
+        <token>hot</token>
+        <token>spare</token>
+      </pattern>
+      <message>Jargon; name the standby capacity instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COLD_SPARE" name="cold spare soft picky">
+      <pattern>
+        <token>cold</token>
+        <token>spare</token>
+      </pattern>
+      <message>Jargon; name the offline reserve capacity instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
