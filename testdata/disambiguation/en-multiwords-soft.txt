@@ -645,3 +645,6 @@ Troctolite Mesa RegionNNP
 Norite Mesa RegionNNP
 Gabbro Mesa RegionNNP
 Diabase Mesa RegionNNP
+Dolerite Mesa RegionNNP
+Basanite Ridge RegionNNP
+Picrite Ridge RegionNNP

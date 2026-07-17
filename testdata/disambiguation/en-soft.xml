@@ -6615,4 +6615,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_HEROUI" name="immunize heroui">
+    <pattern>
+      <token>heroui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEROUI_CAPS" name="immunize HeroUI">
+    <pattern>
+      <token>HeroUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BITSUI" name="immunize bitsui">
+    <pattern>
+      <token>bitsui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BITSUI_CAPS" name="immunize BitsUI">
+    <pattern>
+      <token>BitsUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MELTUI" name="immunize meltui">
+    <pattern>
+      <token>meltui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MELTUI_CAPS" name="immunize MeltUI">
+    <pattern>
+      <token>MeltUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

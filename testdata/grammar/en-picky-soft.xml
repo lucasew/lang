@@ -4252,5 +4252,29 @@
       <message>Jargon; name cohort annual recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ENTERPRISE_ARR" name="enterprise arr soft picky">
+      <pattern>
+        <token>enterprise</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name enterprise annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MIDMARKET_ARR" name="midmarket arr soft picky">
+      <pattern>
+        <token>midmarket</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name mid-market annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REGIONAL_ARR" name="regional arr soft picky">
+      <pattern>
+        <token>regional</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name regional annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

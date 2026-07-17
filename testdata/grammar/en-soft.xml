@@ -14477,6 +14477,76 @@
       <message>Did you mean "sumaggregation"?</message>
       <short>sumaggregationn</short>
     </rule>
+    <rule id="EN_SOFT_LASTVALUEAGGREGATION_MISS" name="lastvalueaggregationn soft">
+      <pattern>
+        <token>lastvalueaggregationn</token>
+      </pattern>
+      <message>Did you mean "lastvalueaggregation"?</message>
+      <short>lastvalueaggregationn</short>
+    </rule>
+    <rule id="EN_SOFT_EXPLICITBUCKETAGGREGATION_MISS" name="explicitbucketaggregationn soft">
+      <pattern>
+        <token>explicitbucketaggregationn</token>
+      </pattern>
+      <message>Did you mean "explicitbucketaggregation"?</message>
+      <short>explicitbucketaggregationn</short>
+    </rule>
+    <rule id="EN_SOFT_METRICPRODUCER_MISS" name="metricproducerr soft">
+      <pattern>
+        <token>metricproducerr</token>
+      </pattern>
+      <message>Did you mean "metricproducer"?</message>
+      <short>metricproducerr</short>
+    </rule>
+    <rule id="EN_SOFT_PERIODICMETRICREADER_MISS" name="periodicmetricreaderr soft">
+      <pattern>
+        <token>periodicmetricreaderr</token>
+      </pattern>
+      <message>Did you mean "periodicmetricreader"?</message>
+      <short>periodicmetricreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_MANUALMETRICREADER_MISS" name="manualmetricreaderr soft">
+      <pattern>
+        <token>manualmetricreaderr</token>
+      </pattern>
+      <message>Did you mean "manualmetricreader"?</message>
+      <short>manualmetricreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_COLLECTORMETRICREADER_MISS" name="collectormetricreaderr soft">
+      <pattern>
+        <token>collectormetricreaderr</token>
+      </pattern>
+      <message>Did you mean "collectormetricreader"?</message>
+      <short>collectormetricreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_PUSHMETRICEXPORTER_MISS" name="pushmetricexportterr soft">
+      <pattern>
+        <token>pushmetricexportterr</token>
+      </pattern>
+      <message>Did you mean "pushmetricexporter"?</message>
+      <short>pushmetricexportterr</short>
+    </rule>
+    <rule id="EN_SOFT_PULLMETRICREADER_MISS" name="pullmetricreaderr soft">
+      <pattern>
+        <token>pullmetricreaderr</token>
+      </pattern>
+      <message>Did you mean "pullmetricreader"?</message>
+      <short>pullmetricreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_METRICEXPORTRESULT_MISS" name="metricexportresultt soft">
+      <pattern>
+        <token>metricexportresultt</token>
+      </pattern>
+      <message>Did you mean "metricexportresult"?</message>
+      <short>metricexportresultt</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTDESCRIPTOR_MISS" name="instrumentdescriptorr soft">
+      <pattern>
+        <token>instrumentdescriptorr</token>
+      </pattern>
+      <message>Did you mean "instrumentdescriptor"?</message>
+      <short>instrumentdescriptorr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

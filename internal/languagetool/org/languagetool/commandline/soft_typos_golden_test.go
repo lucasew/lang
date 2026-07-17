@@ -18957,6 +18957,92 @@ func TestGolden_ImmunizeFlowbitePrelineNextui(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave193(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Set lastvalueaggregationn carefully.", "EN_SOFT_LASTVALUEAGGREGATION_MISS", "lastvalueaggregation"},
+		{"Set explicitbucketaggregationn carefully.", "EN_SOFT_EXPLICITBUCKETAGGREGATION_MISS", "explicitbucketaggregation"},
+		{"Configure metricproducerr carefully.", "EN_SOFT_METRICPRODUCER_MISS", "metricproducer"},
+		{"Configure periodicmetricreaderr carefully.", "EN_SOFT_PERIODICMETRICREADER_MISS", "periodicmetricreader"},
+		{"Configure manualmetricreaderr carefully.", "EN_SOFT_MANUALMETRICREADER_MISS", "manualmetricreader"},
+		{"Configure collectormetricreaderr carefully.", "EN_SOFT_COLLECTORMETRICREADER_MISS", "collectormetricreader"},
+		{"Configure pushmetricexportterr carefully.", "EN_SOFT_PUSHMETRICEXPORTER_MISS", "pushmetricexporter"},
+		{"Configure pullmetricreaderr carefully.", "EN_SOFT_PULLMETRICREADER_MISS", "pullmetricreader"},
+		{"Set metricexportresultt carefully.", "EN_SOFT_METRICEXPORTRESULT_MISS", "metricexportresult"},
+		{"Set instrumentdescriptorr carefully.", "EN_SOFT_INSTRUMENTDESCRIPTOR_MISS", "instrumentdescriptor"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyENJargonWave169(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"Track enterprise arr carefully.", "EN_SOFT_PICKY_ENTERPRISE_ARR"},
+		{"Track midmarket arr carefully.", "EN_SOFT_PICKY_MIDMARKET_ARR"},
+		{"Track regional arr carefully.", "EN_SOFT_PICKY_REGIONAL_ARR"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ImmunizeHerouiBitsuiMeltui(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft disambig missing")
+	}
+	for _, text := range []string{
+		"Style with heroui carefully.",
+		"Style with HeroUI carefully.",
+		"Style with bitsui carefully.",
+		"Style with BitsUI carefully.",
+		"Style with meltui carefully.",
+		"Style with MeltUI carefully.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer
