@@ -57,5 +57,46 @@
       <message>Did you mean "had"?</message>
       <short>had of</short>
     </rule>
+    <!-- Soft agreement: surface + POS where tagger is reliable -->
+    <rule id="EN_SOFT_THEY_IS" name="they/we is">
+      <pattern>
+        <token regexp="yes">They|We|they|we</token>
+        <token>is</token>
+      </pattern>
+      <message>Did you mean "are"?</message>
+      <short>agreement</short>
+    </rule>
+    <rule id="EN_SOFT_I_ARE" name="I are">
+      <pattern>
+        <token regexp="yes">I</token>
+        <token>are</token>
+      </pattern>
+      <message>Did you mean "am"?</message>
+      <short>agreement</short>
+    </rule>
+    <rule id="EN_SOFT_HE_ARE" name="he/she/it are">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>are</token>
+      </pattern>
+      <message>Did you mean "is"?</message>
+      <short>agreement</short>
+    </rule>
+    <rule id="EN_SOFT_THIS_ARE" name="this/that are">
+      <pattern>
+        <token regexp="yes">This|That|this|that</token>
+        <token postag="VBP">are</token>
+      </pattern>
+      <message>Did you mean "is"?</message>
+      <short>agreement</short>
+    </rule>
+    <rule id="EN_SOFT_A_PLURAL" name="a + plural noun">
+      <pattern>
+        <token regexp="yes">[Aa]</token>
+        <token postag="NNS"/>
+      </pattern>
+      <message>The article "a" usually does not precede a plural noun.</message>
+      <short>a + plural</short>
+    </rule>
   </category>
 </rules>

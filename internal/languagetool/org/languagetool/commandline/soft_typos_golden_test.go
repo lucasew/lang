@@ -89,3 +89,52 @@ func TestGolden_SoftHadOf(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_SoftAgreement(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"They is ready.", "EN_SOFT_THEY_IS", "are"},
+		{"I are happy.", "EN_SOFT_I_ARE", "am"},
+		{"He are late.", "EN_SOFT_HE_ARE", "is"},
+		{"This are wrong.", "EN_SOFT_THIS_ARE", "is"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftAPlural(t *testing.T) {
+	// needs POS tagger for NNS on "books"
+	if DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("english.dict not found")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "A books are here.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_A_PLURAL" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}

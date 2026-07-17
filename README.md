@@ -60,7 +60,7 @@ go run ./cmd/lang-server -port 8081 -public
 | Word tokenizer | done |
 | Morfologik FSA (CFSA2) + dictionary lookup | done |
 | English tagger (`english.dict`) | done |
-| English speller (`MORFOLOGIK_RULE_EN_US`) | done (suggestions later) |
+| English speller (`MORFOLOGIK_RULE_EN_US`) | done (CFSA2 edit-1 + soft typos TSV) |
 | Pattern XML + POS/inflected match | done (filters/unify/AI incomplete skipped) |
 | `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
 | Layout (sentence/punct/paragraph whitespace, unpaired, uppercase) | done |

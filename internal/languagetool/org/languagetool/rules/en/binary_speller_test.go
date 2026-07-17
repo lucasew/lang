@@ -47,3 +47,24 @@ func TestRegisterBinaryEnglishSpeller(t *testing.T) {
 		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID)
 	}
 }
+
+// CFSA2 SuggestEdits path (not in CommonDemoSpellerSuggestions map).
+func TestRegisterBinaryEnglishSpeller_Edit1Suggestions(t *testing.T) {
+	p := findEnUSDict(t)
+	lt := languagetool.NewJLanguageTool("en")
+	// empty suggestion map so only suggestFn / nearestKnown apply
+	require.True(t, RegisterBinaryEnglishSpeller(lt, p, nil, map[string][]string{}))
+	m := lt.Check("I love langauge.")
+	var found bool
+	for _, x := range m {
+		if x.RuleID != "MORFOLOGIK_RULE_EN_US" {
+			continue
+		}
+		for _, s := range x.Suggestions {
+			if s == "language" {
+				found = true
+			}
+		}
+	}
+	require.True(t, found, "expected language among findings %+v", m)
+}
