@@ -18785,6 +18785,92 @@ func TestGolden_ImmunizeMantineAntdHeadlessui(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave191(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Configure counterbuilderr carefully.", "EN_SOFT_COUNTERBUILDER_MISS", "counterbuilder"},
+		{"Configure histogrambuilderr carefully.", "EN_SOFT_HISTOGRAMBUILDER_MISS", "histogrambuilder"},
+		{"Configure gaugebuilderr carefully.", "EN_SOFT_GAUGEBUILDER_MISS", "gaugebuilder"},
+		{"Configure updowncounterbuilderr carefully.", "EN_SOFT_UPDOWNCOUNTERBUILDER_MISS", "updowncounterbuilder"},
+		{"Configure observablecounterbuilderr carefully.", "EN_SOFT_OBSERVABLECOUNTERBUILDER_MISS", "observablecounterbuilder"},
+		{"Configure observablegaugebuilderr carefully.", "EN_SOFT_OBSERVABLEGAUGEBUILDER_MISS", "observablegaugebuilder"},
+		{"Set callbackregistrationn carefully.", "EN_SOFT_CALLBACKREGISTRATION_MISS", "callbackregistration"},
+		{"Set asynchronousinstrumentt carefully.", "EN_SOFT_ASYNCHRONOUSINSTRUMENT_MISS", "asynchronousinstrument"},
+		{"Set synchronousinstrumentt carefully.", "EN_SOFT_SYNCHRONOUSINSTRUMENT_MISS", "synchronousinstrument"},
+		{"Set aggregationtemporalityy carefully.", "EN_SOFT_AGGREGATIONTEMPORALITY_MISS", "aggregationtemporality"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyENJargonWave167(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"Track gross arr carefully.", "EN_SOFT_PICKY_GROSS_ARR"},
+		{"Track direct arr carefully.", "EN_SOFT_PICKY_DIRECT_ARR"},
+		{"Track selfserve arr carefully.", "EN_SOFT_PICKY_SELFSERVE_ARR"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ImmunizeRadixuiShadcnDaisyui(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft disambig missing")
+	}
+	for _, text := range []string{
+		"Style with radixui carefully.",
+		"Style with RadixUI carefully.",
+		"Style with shadcn carefully.",
+		"Style with Shadcn carefully.",
+		"Style with daisyui carefully.",
+		"Style with DaisyUI carefully.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer

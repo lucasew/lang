@@ -14337,6 +14337,76 @@
       <message>Did you mean "instrumentbuilder"?</message>
       <short>instrumentbuilderr</short>
     </rule>
+    <rule id="EN_SOFT_COUNTERBUILDER_MISS" name="counterbuilderr soft">
+      <pattern>
+        <token>counterbuilderr</token>
+      </pattern>
+      <message>Did you mean "counterbuilder"?</message>
+      <short>counterbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_HISTOGRAMBUILDER_MISS" name="histogrambuilderr soft">
+      <pattern>
+        <token>histogrambuilderr</token>
+      </pattern>
+      <message>Did you mean "histogrambuilder"?</message>
+      <short>histogrambuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_GAUGEBUILDER_MISS" name="gaugebuilderr soft">
+      <pattern>
+        <token>gaugebuilderr</token>
+      </pattern>
+      <message>Did you mean "gaugebuilder"?</message>
+      <short>gaugebuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_UPDOWNCOUNTERBUILDER_MISS" name="updowncounterbuilderr soft">
+      <pattern>
+        <token>updowncounterbuilderr</token>
+      </pattern>
+      <message>Did you mean "updowncounterbuilder"?</message>
+      <short>updowncounterbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_OBSERVABLECOUNTERBUILDER_MISS" name="observablecounterbuilderr soft">
+      <pattern>
+        <token>observablecounterbuilderr</token>
+      </pattern>
+      <message>Did you mean "observablecounterbuilder"?</message>
+      <short>observablecounterbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_OBSERVABLEGAUGEBUILDER_MISS" name="observablegaugebuilderr soft">
+      <pattern>
+        <token>observablegaugebuilderr</token>
+      </pattern>
+      <message>Did you mean "observablegaugebuilder"?</message>
+      <short>observablegaugebuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_CALLBACKREGISTRATION_MISS" name="callbackregistrationn soft">
+      <pattern>
+        <token>callbackregistrationn</token>
+      </pattern>
+      <message>Did you mean "callbackregistration"?</message>
+      <short>callbackregistrationn</short>
+    </rule>
+    <rule id="EN_SOFT_ASYNCHRONOUSINSTRUMENT_MISS" name="asynchronousinstrumentt soft">
+      <pattern>
+        <token>asynchronousinstrumentt</token>
+      </pattern>
+      <message>Did you mean "asynchronousinstrument"?</message>
+      <short>asynchronousinstrumentt</short>
+    </rule>
+    <rule id="EN_SOFT_SYNCHRONOUSINSTRUMENT_MISS" name="synchronousinstrumentt soft">
+      <pattern>
+        <token>synchronousinstrumentt</token>
+      </pattern>
+      <message>Did you mean "synchronousinstrument"?</message>
+      <short>synchronousinstrumentt</short>
+    </rule>
+    <rule id="EN_SOFT_AGGREGATIONTEMPORALITY_MISS" name="aggregationtemporalityy soft">
+      <pattern>
+        <token>aggregationtemporalityy</token>
+      </pattern>
+      <message>Did you mean "aggregationtemporality"?</message>
+      <short>aggregationtemporalityy</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -639,3 +639,6 @@ Pyroxenite Mesa RegionNNP
 Peridotite Mesa RegionNNP
 Kimberlite Mesa RegionNNP
 Lamproite Mesa RegionNNP
+Carbonatite Mesa RegionNNP
+Anorthosite Mesa RegionNNP
+Troctolite Mesa RegionNNP

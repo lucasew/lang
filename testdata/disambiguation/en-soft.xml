@@ -6543,4 +6543,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_RADIXUI" name="immunize radixui">
+    <pattern>
+      <token>radixui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RADIXUI_CAPS" name="immunize RadixUI">
+    <pattern>
+      <token>RadixUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHADCN" name="immunize shadcn">
+    <pattern>
+      <token>shadcn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHADCN_CAPS" name="immunize Shadcn">
+    <pattern>
+      <token>Shadcn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAISYUI" name="immunize daisyui">
+    <pattern>
+      <token>daisyui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DAISYUI_CAPS" name="immunize DaisyUI">
+    <pattern>
+      <token>DaisyUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

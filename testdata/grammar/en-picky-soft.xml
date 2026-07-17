@@ -4204,5 +4204,29 @@
       <message>Jargon; name annual recurring revenue lost to cancellations instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_ARR" name="gross arr soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name gross annual recurring revenue before deductions instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DIRECT_ARR" name="direct arr soft picky">
+      <pattern>
+        <token>direct</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name direct-sourced annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SELFSERVE_ARR" name="selfserve arr soft picky">
+      <pattern>
+        <token>selfserve</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name self-serve annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
