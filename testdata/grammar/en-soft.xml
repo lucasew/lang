@@ -5867,6 +5867,76 @@
       <message>Did you mean "incomplete"?</message>
       <short>incomplet</short>
     </rule>
+    <rule id="EN_SOFT_INADEQUATE_MISS" name="inadequit soft">
+      <pattern>
+        <token>inadequit</token>
+      </pattern>
+      <message>Did you mean "inadequate"?</message>
+      <short>inadequit</short>
+    </rule>
+    <rule id="EN_SOFT_INAPPROPRIATE_MISS" name="inappropiate soft">
+      <pattern>
+        <token>inappropiate</token>
+      </pattern>
+      <message>Did you mean "inappropriate"?</message>
+      <short>inappropiate</short>
+    </rule>
+    <rule id="EN_SOFT_INCOMPETENCE_MISS" name="incompetance soft">
+      <pattern>
+        <token>incompetance</token>
+      </pattern>
+      <message>Did you mean "incompetence"?</message>
+      <short>incompetance</short>
+    </rule>
+    <rule id="EN_SOFT_INEFFICIENT_MISS" name="inefficent soft">
+      <pattern>
+        <token>inefficent</token>
+      </pattern>
+      <message>Did you mean "inefficient"?</message>
+      <short>inefficent</short>
+    </rule>
+    <rule id="EN_SOFT_INEVITABLE_MISS" name="inevitible soft">
+      <pattern>
+        <token>inevitible</token>
+      </pattern>
+      <message>Did you mean "inevitable"?</message>
+      <short>inevitible</short>
+    </rule>
+    <rule id="EN_SOFT_INFINITE_MISS" name="infinit soft">
+      <pattern>
+        <token>infinit</token>
+      </pattern>
+      <message>Did you mean "infinite"?</message>
+      <short>infinit</short>
+    </rule>
+    <rule id="EN_SOFT_INFLAMMATION_MISS" name="inflamation soft">
+      <pattern>
+        <token>inflamation</token>
+      </pattern>
+      <message>Did you mean "inflammation"?</message>
+      <short>inflamation</short>
+    </rule>
+    <rule id="EN_SOFT_INFLUENTIAL_MISS" name="influencial soft">
+      <pattern>
+        <token>influencial</token>
+      </pattern>
+      <message>Did you mean "influential"?</message>
+      <short>influencial</short>
+    </rule>
+    <rule id="EN_SOFT_INFORMATION_MISS" name="infromation soft">
+      <pattern>
+        <token>infromation</token>
+      </pattern>
+      <message>Did you mean "information"?</message>
+      <short>infromation</short>
+    </rule>
+    <rule id="EN_SOFT_IMITATION_MISS" name="immitation soft">
+      <pattern>
+        <token>immitation</token>
+      </pattern>
+      <message>Did you mean "imitation"?</message>
+      <short>immitation</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

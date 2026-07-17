@@ -276,3 +276,6 @@ client server	NN
 Jacksonville Florida	NNP
 server to server	RB
 north to south	RB
+Kansas City Missouri	NNP
+east to west	RB
+out of band	RB

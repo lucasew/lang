@@ -2175,4 +2175,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_LONGHORN" name="immunize longhorn">
+    <pattern>
+      <token>longhorn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LONGHORN_CAPS" name="immunize Longhorn">
+    <pattern>
+      <token>Longhorn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENEBS" name="immunize openebs">
+    <pattern>
+      <token>openebs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENEBS_CAPS" name="immunize OpenEBS">
+    <pattern>
+      <token>OpenEBS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROOK" name="immunize rook">
+    <pattern>
+      <token>rook</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROOK_CAPS" name="immunize Rook">
+    <pattern>
+      <token>Rook</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

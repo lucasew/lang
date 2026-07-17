@@ -1329,5 +1329,33 @@
       <message>Jargon; name the team interface and collaboration contract.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ON_CALL_ROTATION" name="on call rotation soft picky">
+      <pattern>
+        <token>on</token>
+        <token>call</token>
+        <token>rotation</token>
+      </pattern>
+      <message>Jargon; name the paging schedule and ownership instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FOLLOW_THE_SUN" name="follow the sun soft picky">
+      <pattern>
+        <token>follow</token>
+        <token>the</token>
+        <token>sun</token>
+      </pattern>
+      <message>Jargon; name the multi-region handoff model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUS_FACTOR_OF_TWO" name="bus factor of two soft picky">
+      <pattern>
+        <token>bus</token>
+        <token>factor</token>
+        <token>of</token>
+        <token>two</token>
+      </pattern>
+      <message>Jargon; name the knowledge-sharing risk instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
