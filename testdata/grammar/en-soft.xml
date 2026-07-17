@@ -4957,6 +4957,76 @@
       <message>Did you mean "contain"?</message>
       <short>contian</short>
     </rule>
+    <rule id="EN_SOFT_CONVENIENT_MISS2" name="convienent soft">
+      <pattern>
+        <token>convienent</token>
+      </pattern>
+      <message>Did you mean "convenient"?</message>
+      <short>convienent</short>
+    </rule>
+    <rule id="EN_SOFT_CONSIDER_MISS" name="cosider soft">
+      <pattern>
+        <token>cosider</token>
+      </pattern>
+      <message>Did you mean "consider"?</message>
+      <short>cosider</short>
+    </rule>
+    <rule id="EN_SOFT_CONSISTENT_MISS" name="cosistent soft">
+      <pattern>
+        <token>cosistent</token>
+      </pattern>
+      <message>Did you mean "consistent"?</message>
+      <short>cosistent</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITTEE_MISS3" name="comitee soft">
+      <pattern>
+        <token>comitee</token>
+      </pattern>
+      <message>Did you mean "committee"?</message>
+      <short>comitee</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINITELY_MISS3" name="deffinitely soft">
+      <pattern>
+        <token>deffinitely</token>
+      </pattern>
+      <message>Did you mean "definitely"?</message>
+      <short>deffinitely</short>
+    </rule>
+    <rule id="EN_SOFT_DISCUSSIONS_MISS" name="discusions soft">
+      <pattern>
+        <token>discusions</token>
+      </pattern>
+      <message>Did you mean "discussions"?</message>
+      <short>discusions</short>
+    </rule>
+    <rule id="EN_SOFT_EFFORTS_MISS" name="eforts soft">
+      <pattern>
+        <token>eforts</token>
+      </pattern>
+      <message>Did you mean "efforts"?</message>
+      <short>eforts</short>
+    </rule>
+    <rule id="EN_SOFT_EMBARRASSING_MISS2" name="embarasing soft">
+      <pattern>
+        <token>embarasing</token>
+      </pattern>
+      <message>Did you mean "embarrassing"?</message>
+      <short>embarasing</short>
+    </rule>
+    <rule id="EN_SOFT_AWFUL_MISS" name="awfull soft">
+      <pattern>
+        <token>awfull</token>
+      </pattern>
+      <message>Did you mean "awful"?</message>
+      <short>awfull</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUIT_MISS" name="aquit soft">
+      <pattern>
+        <token>aquit</token>
+      </pattern>
+      <message>Did you mean "acquit"?</message>
+      <short>aquit</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

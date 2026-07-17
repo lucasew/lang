@@ -1004,5 +1004,30 @@
       <message>Slogan; describe the startup mindset concretely.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DISAGREE_AND_COMMIT" name="disagree and commit soft picky">
+      <pattern>
+        <token>disagree</token>
+        <token>and</token>
+        <token>commit</token>
+      </pattern>
+      <message>Leadership slogan; name the decision process instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EARN_TRUST" name="earn trust soft picky">
+      <pattern>
+        <token>earn</token>
+        <token>trust</token>
+      </pattern>
+      <message>Slogan; name how trust is built instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DIVE_DEEP" name="dive deep soft picky">
+      <pattern>
+        <token>dive</token>
+        <token>deep</token>
+      </pattern>
+      <message>Jargon; consider "investigate thoroughly" or name the topic.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

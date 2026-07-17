@@ -1707,4 +1707,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_FALCO" name="immunize falco">
+    <pattern>
+      <token>falco</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FALCO_CAPS" name="immunize Falco">
+    <pattern>
+      <token>Falco</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRIVY" name="immunize trivy">
+    <pattern>
+      <token>trivy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRIVY_CAPS" name="immunize Trivy">
+    <pattern>
+      <token>Trivy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRYPE" name="immunize grype">
+    <pattern>
+      <token>grype</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRYPE_CAPS" name="immunize Grype">
+    <pattern>
+      <token>Grype</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

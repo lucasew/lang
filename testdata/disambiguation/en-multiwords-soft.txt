@@ -237,3 +237,6 @@ back and forth	RB
 Tallahassee Florida	NNP
 Columbia South Carolina	NNP
 side by side	RB
+Frankfort Kentucky	NNP
+Indianapolis Indiana	NNP
+hand in hand	RB
