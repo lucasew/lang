@@ -2579,5 +2579,29 @@
       <message>Jargon; name code that reflects an explicit domain model.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_EVENT_MODELING" name="event modeling soft picky">
+      <pattern>
+        <token>event</token>
+        <token>modeling</token>
+      </pattern>
+      <message>Jargon; name timeline-based system design sessions instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EXAMPLE_MAPPING" name="example mapping soft picky">
+      <pattern>
+        <token>example</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name rule-example-question backlog refinement instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STORY_MAPPING" name="story mapping soft picky">
+      <pattern>
+        <token>story</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name backbone-and-walking-skeleton backlog layout instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -4011,4 +4011,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_IVS" name="immunize ivs">
+    <pattern>
+      <token>ivs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IVS_CAPS" name="immunize IVS">
+    <pattern>
+      <token>IVS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIME" name="immunize chime">
+    <pattern>
+      <token>chime</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIME_CAPS" name="immunize Chime">
+    <pattern>
+      <token>Chime</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECT" name="immunize connect">
+    <pattern>
+      <token>connect</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECT_CAPS" name="immunize Connect">
+    <pattern>
+      <token>Connect</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

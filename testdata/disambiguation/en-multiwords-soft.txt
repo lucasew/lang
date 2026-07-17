@@ -429,3 +429,6 @@ Travertine Corridor RegionNNP
 Pumice Corridor RegionNNP
 Tuff Corridor RegionNNP
 Obsidian Ridge RegionNNP
+Andesite Corridor RegionNNP
+Rhyolite Corridor RegionNNP
+Basalt Ridge RegionNNP

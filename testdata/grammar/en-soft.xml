@@ -9437,6 +9437,76 @@
       <message>Did you mean "experience"?</message>
       <short>experance</short>
     </rule>
+    <rule id="EN_SOFT_EMBARRASSMENT_MISS2" name="embarasment soft">
+      <pattern>
+        <token>embarasment</token>
+      </pattern>
+      <message>Did you mean "embarrassment"?</message>
+      <short>embarasment</short>
+    </rule>
+    <rule id="EN_SOFT_EXPERIENCES_MISS" name="experiances soft">
+      <pattern>
+        <token>experiances</token>
+      </pattern>
+      <message>Did you mean "experiences"?</message>
+      <short>experiances</short>
+    </rule>
+    <rule id="EN_SOFT_EXPERIENCING_MISS" name="experiancing soft">
+      <pattern>
+        <token>experiancing</token>
+      </pattern>
+      <message>Did you mean "experiencing"?</message>
+      <short>experiancing</short>
+    </rule>
+    <rule id="EN_SOFT_FRIEND_MISS2" name="firend soft">
+      <pattern>
+        <token>firend</token>
+      </pattern>
+      <message>Did you mean "friend"?</message>
+      <short>firend</short>
+    </rule>
+    <rule id="EN_SOFT_FRIENDS_MISS2" name="firends soft">
+      <pattern>
+        <token>firends</token>
+      </pattern>
+      <message>Did you mean "friends"?</message>
+      <short>firends</short>
+    </rule>
+    <rule id="EN_SOFT_HEIGHT_MISS2" name="heighth soft">
+      <pattern>
+        <token>heighth</token>
+      </pattern>
+      <message>Did you mean "height"?</message>
+      <short>heighth</short>
+    </rule>
+    <rule id="EN_SOFT_HIGHEST_MISS" name="hightest soft">
+      <pattern>
+        <token>hightest</token>
+      </pattern>
+      <message>Did you mean "highest"?</message>
+      <short>hightest</short>
+    </rule>
+    <rule id="EN_SOFT_HYGIENE_MISS3" name="hygine soft">
+      <pattern>
+        <token>hygine</token>
+      </pattern>
+      <message>Did you mean "hygiene"?</message>
+      <short>hygine</short>
+    </rule>
+    <rule id="EN_SOFT_IMMEDIATELY_MISS4" name="imediatey soft">
+      <pattern>
+        <token>imediatey</token>
+      </pattern>
+      <message>Did you mean "immediately"?</message>
+      <short>imediatey</short>
+    </rule>
+    <rule id="EN_SOFT_LITERALLY_MISS2" name="litearally soft">
+      <pattern>
+        <token>litearally</token>
+      </pattern>
+      <message>Did you mean "literally"?</message>
+      <short>litearally</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
