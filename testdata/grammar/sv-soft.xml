@@ -114,6 +114,14 @@
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografi">
+    <rule id="SV_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Ett frågetecken räcker ofta: "?"</message>
+      <short>interpunktion</short>
+    </rule>
     <rule id="SV_SOFT_DOUBLE_BANG" name="dubbelt utropstecken">
       <pattern>
         <token>!</token>

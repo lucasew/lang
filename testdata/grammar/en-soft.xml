@@ -1092,6 +1092,54 @@
       <message>Did you mean "OK"?</message>
       <short>casing</short>
     </rule>
+    <rule id="EN_SOFT_WREAK_HAVOC" name="wreck havoc">
+      <pattern>
+        <token>wreck</token>
+        <token>havoc</token>
+      </pattern>
+      <message>Did you mean "wreak havoc"?</message>
+      <short>wreck/wreak</short>
+    </rule>
+    <rule id="EN_SOFT_FREE_REIN" name="free reign">
+      <pattern>
+        <token>free</token>
+        <token>reign</token>
+      </pattern>
+      <message>Did you mean "free rein"?</message>
+      <short>reign/rein</short>
+    </rule>
+    <rule id="EN_SOFT_BAITED_BREATH" name="baited breath">
+      <pattern>
+        <token>baited</token>
+        <token>breath</token>
+      </pattern>
+      <message>Did you mean "bated breath"?</message>
+      <short>baited/bated</short>
+    </rule>
+    <rule id="EN_SOFT_DAMP_SQUID" name="damp squid">
+      <pattern>
+        <token>damp</token>
+        <token>squid</token>
+      </pattern>
+      <message>Did you mean "damp squib"?</message>
+      <short>squid/squib</short>
+    </rule>
+    <rule id="EN_SOFT_SNEAK_PEAK" name="sneak peak">
+      <pattern>
+        <token>sneak</token>
+        <token>peak</token>
+      </pattern>
+      <message>Did you mean "sneak peek"?</message>
+      <short>peak/peek</short>
+    </rule>
+    <rule id="EN_SOFT_EXTRACT_REVENGE" name="extract revenge">
+      <pattern>
+        <token>extract</token>
+        <token>revenge</token>
+      </pattern>
+      <message>Did you mean "exact revenge"?</message>
+      <short>extract/exact</short>
+    </rule>
   </category>
   <category id="TYPOS" name="Possible Typo">
     <rule id="EN_SOFT_ANYWAYS" name="anyways">

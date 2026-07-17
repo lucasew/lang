@@ -99,6 +99,14 @@
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Типографіка">
+    <rule id="UK_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Часто достатньо одного знака: "?"</message>
+      <short>пунктуація</short>
+    </rule>
     <rule id="UK_SOFT_DOUBLE_BANG" name="подвійний знак оклику">
       <pattern>
         <token>!</token>

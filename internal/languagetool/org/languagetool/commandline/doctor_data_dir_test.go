@@ -59,6 +59,7 @@ func TestCoreDoctor(t *testing.T) {
 		}
 		if strings.Contains(out, "soft spelling pack:") {
 			require.Contains(t, out, "regional soft packs:")
+			require.Contains(t, out, "soft category filters:")
 		}
 	}
 }

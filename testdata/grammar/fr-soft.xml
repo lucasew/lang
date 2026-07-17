@@ -186,6 +186,14 @@
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typographie">
+    <rule id="FR_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Un seul point d'interrogation suffit souvent: "?"</message>
+      <short>ponctuation</short>
+    </rule>
     <rule id="FR_SOFT_DOUBLE_BANG" name="double point d'exclamation">
       <pattern>
         <token>!</token>

@@ -149,6 +149,14 @@
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografía">
+    <rule id="ES_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Considere un solo signo de interrogación: "?"</message>
+      <short>puntuación</short>
+    </rule>
     <rule id="ES_SOFT_DOUBLE_BANG" name="doble exclamación">
       <pattern>
         <token>!</token>

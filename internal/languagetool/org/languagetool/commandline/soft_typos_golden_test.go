@@ -1431,6 +1431,158 @@ func TestGolden_IgnoreSpellingChatGPT(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftDisableCategoriesStyle(t *testing.T) {
+	// STYLE soft rule suppressed; grammar soft confusable remains
+	text := "This is very unique work. Bare with me please."
+	var all bytes.Buffer
+	_, err := CoreGoldenHook(&all, text, &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var allF []Finding
+	require.NoError(t, json.Unmarshal(all.Bytes(), &allF))
+	var hasStyle, hasBare bool
+	for _, f := range allF {
+		if f.Rule == "EN_SOFT_VERY_UNIQUE" {
+			hasStyle = true
+		}
+		if f.Rule == "EN_SOFT_BARE_WITH" {
+			hasBare = true
+		}
+	}
+	require.True(t, hasStyle && hasBare, "%+v", allF)
+
+	var filtered bytes.Buffer
+	_, err = CoreGoldenHook(&filtered, text, &CommandLineOptions{
+		Language:           "en",
+		DisabledCategories: []string{"STYLE"},
+	})
+	require.NoError(t, err)
+	var ff []Finding
+	require.NoError(t, json.Unmarshal(filtered.Bytes(), &ff))
+	for _, f := range ff {
+		require.NotEqual(t, "EN_SOFT_VERY_UNIQUE", f.Rule, "%+v", ff)
+	}
+	foundBare := false
+	for _, f := range ff {
+		if f.Rule == "EN_SOFT_BARE_WITH" {
+			foundBare = true
+		}
+	}
+	require.True(t, foundBare, "%+v", ff)
+}
+
+func TestGolden_SoftEnableCategoriesCasing(t *testing.T) {
+	text := "i think so. Bare with me please."
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{
+		Language:          "en",
+		EnabledCategories: []string{"CASING"},
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	require.NotEmpty(t, findings)
+	// only CASING-category matches (soft lowercase i and/or core sentence-start casing)
+	for _, f := range findings {
+		require.Equal(t, "typographical", f.Type, "%+v", f)
+		require.NotEqual(t, "EN_SOFT_BARE_WITH", f.Rule)
+		require.NotEqual(t, "style", f.Type)
+	}
+	foundLowerI := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_LOWERCASE_I" || f.Rule == "UPPERCASE_SENTENCE_START" {
+			foundLowerI = true
+		}
+	}
+	require.True(t, foundLowerI, "%+v", findings)
+}
+
+func TestGolden_SoftDisableRule(t *testing.T) {
+	// configureCoreLT applies -d via ApplyCLIRuleFilters
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Bare with me please.", &CommandLineOptions{
+		Language: "en",
+	})
+	require.NoError(t, err)
+	var before []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &before))
+	found := false
+	for _, f := range before {
+		if f.Rule == "EN_SOFT_BARE_WITH" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", before)
+
+	// Use RunWithIO -d flag path
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-d", "EN_SOFT_BARE_WITH", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Bare with me please.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s out=%s", code, errb.String(), out.String())
+	require.NotContains(t, out.String(), "EN_SOFT_BARE_WITH")
+}
+
+func TestGolden_SoftIdiomConfusablesWave2(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"They wreck havoc everywhere.", "EN_SOFT_WREAK_HAVOC", "wreak havoc"},
+		{"Give free reign to creativity.", "EN_SOFT_FREE_REIN", "free rein"},
+		{"Wait with baited breath.", "EN_SOFT_BAITED_BREATH", "bated breath"},
+		{"The event was a damp squid.", "EN_SOFT_DAMP_SQUID", "damp squib"},
+		{"Take a sneak peak at this.", "EN_SOFT_SNEAK_PEAK", "sneak peek"},
+		{"They will extract revenge soon.", "EN_SOFT_EXTRACT_REVENGE", "exact revenge"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftMultiLangDoubleQ(t *testing.T) {
+	cases := []struct {
+		lang, text, rule string
+	}{
+		{"de", "Wirklich??", "DE_SOFT_DOUBLE_Q"},
+		{"fr", "Vraiment??", "FR_SOFT_DOUBLE_Q"},
+		{"es", "¿Qué??", "ES_SOFT_DOUBLE_Q"},
+		{"pt", "Sério??", "PT_SOFT_DOUBLE_Q"},
+		{"it", "Davvero??", "IT_SOFT_DOUBLE_Q"},
+		{"nl", "Echt??", "NL_SOFT_DOUBLE_Q"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: tc.lang})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "typographical", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
 func TestGolden_SoftInformalForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string

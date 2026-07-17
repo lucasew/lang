@@ -3,16 +3,21 @@ package languagetool
 import "strings"
 
 // FilterMatchesByCategories drops matches whose SoftRuleMeta / LocalMatch category
-// is disabled, or (when enabledOnly) not in the enabled category set.
+// is disabled, or not in the enabled category set when any are listed.
+// Soft: --enablecategories alone restricts to those categories (does not require
+// --enabledonly, which is reserved for rule-id enable-only mode).
 func FilterMatchesByCategories(ms []LocalMatch, disabled, enabled []string, enabledOnly bool) []LocalMatch {
 	if len(ms) == 0 {
 		return ms
 	}
 	dis := foldSet(disabled)
 	en := foldSet(enabled)
-	if len(dis) == 0 && !(enabledOnly && len(en) > 0) {
+	// enabledOnly is accepted for API parity; non-empty enabled always restricts.
+	restrictToEnabled := len(en) > 0
+	if len(dis) == 0 && !restrictToEnabled {
 		return ms
 	}
+	_ = enabledOnly
 	out := make([]LocalMatch, 0, len(ms))
 	for _, m := range ms {
 		catID := m.CategoryID
@@ -23,7 +28,7 @@ func FilterMatchesByCategories(ms []LocalMatch, disabled, enabled []string, enab
 		if _, drop := dis[key]; drop {
 			continue
 		}
-		if enabledOnly && len(en) > 0 {
+		if restrictToEnabled {
 			if _, ok := en[key]; !ok {
 				continue
 			}

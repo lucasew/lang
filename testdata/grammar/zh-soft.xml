@@ -83,6 +83,14 @@
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
+    <rule id="ZH_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>通常一个问号即可："?"</message>
+      <short>!!</short>
+    </rule>
     <rule id="ZH_SOFT_DOUBLE_BANG" name="double bang">
       <pattern>
         <token>!</token>

@@ -538,6 +538,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		if regionalN > 0 {
 			_, _ = fmt.Fprintf(w, "regional soft packs: %d\n", regionalN)
 		}
+		_, _ = fmt.Fprintf(w, "soft category filters: --disablecategories / --enablecategories\n")
 	}
 	ff := DiscoverFalseFriendsFile(opts)
 	if ff == "" {
