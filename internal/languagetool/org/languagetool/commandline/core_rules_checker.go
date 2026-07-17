@@ -15,8 +15,9 @@ import (
 
 // CoreRulesChecker implements TextChecker using RegisterCore* packs.
 type CoreRulesChecker struct {
-	Lang string
-	lt   *languagetool.JLanguageTool
+	Lang          string
+	lt            *languagetool.JLanguageTool
+	CleanOverlaps bool
 }
 
 // NewCoreRulesChecker builds a checker for lang (e.g. "en", "en-US", "de-DE").
@@ -35,6 +36,17 @@ func (c *CoreRulesChecker) Check(text string) ([]*rules.RuleMatch, error) {
 		return nil, nil
 	}
 	ms := c.lt.Check(text)
+	if c.CleanOverlaps {
+		for i := range ms {
+			id := ms[i].RuleID
+			if id == "EN_A_VS_AN" || strings.Contains(id, "WORD_REPEAT") {
+				ms[i].Priority = 5
+			} else if ms[i].Priority == 0 {
+				ms[i].Priority = 1
+			}
+		}
+		ms = languagetool.CleanOverlappingLocalMatches(ms)
+	}
 	// Attach full-text analysis for print context (soft single blob)
 	sent := languagetool.AnalyzePlain(text)
 	return rules.FromLocalMatches(ms, sent), nil
@@ -204,7 +216,7 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		})
 	}
 
-	checker := &CoreRulesChecker{Lang: lang, lt: lt}
+	checker := &CoreRulesChecker{Lang: lang, lt: lt, CleanOverlaps: opts != nil && opts.CleanOverlapping}
 	cto := CheckTextOptions{
 		JSON:        opts != nil && opts.OutputFormat == OutputJSON,
 		Verbose:     opts != nil && opts.Verbose,

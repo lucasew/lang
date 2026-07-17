@@ -156,3 +156,12 @@ func TestCoreCheckHook_LineByLine(t *testing.T) {
 	require.Equal(t, 2, code)
 	require.Contains(t, out.String(), "EN_A_VS_AN")
 }
+
+func TestCoreRulesChecker_CleanOverlaps(t *testing.T) {
+	c := NewCoreRulesChecker("en")
+	c.CleanOverlaps = true
+	// synthetic overlapping: a/an and others on same region rare; just ensure no panic
+	ms, err := c.Check("This is an test.")
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+}
