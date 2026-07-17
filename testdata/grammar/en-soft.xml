@@ -13147,6 +13147,76 @@
       <message>Did you mean "storageclass"?</message>
       <short>storageclas</short>
     </rule>
+    <rule id="EN_SOFT_INGRESSCLASS_MISS" name="ingressclas soft">
+      <pattern>
+        <token>ingressclas</token>
+      </pattern>
+      <message>Did you mean "ingressclass"?</message>
+      <short>ingressclas</short>
+    </rule>
+    <rule id="EN_SOFT_GATEWAYCLASS_MISS" name="gatewayclas soft">
+      <pattern>
+        <token>gatewayclas</token>
+      </pattern>
+      <message>Did you mean "gatewayclass"?</message>
+      <short>gatewayclas</short>
+    </rule>
+    <rule id="EN_SOFT_HTTPROUTE_MISS" name="httproutee soft">
+      <pattern>
+        <token>httproutee</token>
+      </pattern>
+      <message>Did you mean "httproute"?</message>
+      <short>httproutee</short>
+    </rule>
+    <rule id="EN_SOFT_TCPROUTE_MISS" name="tcproutee soft">
+      <pattern>
+        <token>tcproutee</token>
+      </pattern>
+      <message>Did you mean "tcproute"?</message>
+      <short>tcproutee</short>
+    </rule>
+    <rule id="EN_SOFT_GRPCROUTE_MISS" name="grpcroutee soft">
+      <pattern>
+        <token>grpcroutee</token>
+      </pattern>
+      <message>Did you mean "grpcroute"?</message>
+      <short>grpcroutee</short>
+    </rule>
+    <rule id="EN_SOFT_REFERENCEGRANT_MISS" name="referencgrant soft">
+      <pattern>
+        <token>referencgrant</token>
+      </pattern>
+      <message>Did you mean "referencegrant"?</message>
+      <short>referencgrant</short>
+    </rule>
+    <rule id="EN_SOFT_BACKPRESSURE_MISS" name="backpresure soft">
+      <pattern>
+        <token>backpresure</token>
+      </pattern>
+      <message>Did you mean "backpressure"?</message>
+      <short>backpresure</short>
+    </rule>
+    <rule id="EN_SOFT_RATELIMITING_MISS" name="ratelimitting soft">
+      <pattern>
+        <token>ratelimitting</token>
+      </pattern>
+      <message>Did you mean "ratelimiting"?</message>
+      <short>ratelimitting</short>
+    </rule>
+    <rule id="EN_SOFT_SEMAPHORE_MISS" name="semaphoree soft">
+      <pattern>
+        <token>semaphoree</token>
+      </pattern>
+      <message>Did you mean "semaphore"?</message>
+      <short>semaphoree</short>
+    </rule>
+    <rule id="EN_SOFT_TOKENBUCKET_MISS" name="tokenbuket soft">
+      <pattern>
+        <token>tokenbuket</token>
+      </pattern>
+      <message>Did you mean "tokenbucket"?</message>
+      <short>tokenbuket</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

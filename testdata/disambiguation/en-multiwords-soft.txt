@@ -588,3 +588,6 @@ Anorthosite Peak RegionNNP
 Gabbro Peak RegionNNP
 Diorite Peak RegionNNP
 Syenite Peak RegionNNP
+Pegmatite Peak RegionNNP
+Feldspar Peak RegionNNP
+Quartz Peak RegionNNP

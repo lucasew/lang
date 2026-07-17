@@ -3798,5 +3798,29 @@
       <message>Jargon; name months needed to recover acquisition cost instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ARR_GROWTH" name="arr growth soft picky">
+      <pattern>
+        <token>arr</token>
+        <token>growth</token>
+      </pattern>
+      <message>Jargon; name year-over-year annual recurring revenue increase instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MRR_GROWTH" name="mrr growth soft picky">
+      <pattern>
+        <token>mrr</token>
+        <token>growth</token>
+      </pattern>
+      <message>Jargon; name month-over-month recurring revenue increase instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFERRED_REVENUE" name="deferred revenue soft picky">
+      <pattern>
+        <token>deferred</token>
+        <token>revenue</token>
+      </pattern>
+      <message>Jargon; name prepaid revenue not yet recognized instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

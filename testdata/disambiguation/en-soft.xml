@@ -5919,4 +5919,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_REMIX" name="immunize remix">
+    <pattern>
+      <token>remix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REMIX_CAPS" name="immunize Remix">
+    <pattern>
+      <token>Remix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXT" name="immunize nuxt">
+    <pattern>
+      <token>nuxt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXT_CAPS" name="immunize Nuxt">
+    <pattern>
+      <token>Nuxt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QWIK" name="immunize qwik">
+    <pattern>
+      <token>qwik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QWIK_CAPS" name="immunize Qwik">
+    <pattern>
+      <token>Qwik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
