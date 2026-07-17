@@ -3700,5 +3700,29 @@
       <message>Jargon; name revenue after variable costs per unit instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CHURN_RATE" name="churn rate soft picky">
+      <pattern>
+        <token>churn</token>
+        <token>rate</token>
+      </pattern>
+      <message>Jargon; name the share of customers lost in a period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CAC_PAYBACK" name="cac payback soft picky">
+      <pattern>
+        <token>cac</token>
+        <token>payback</token>
+      </pattern>
+      <message>Jargon; name months to recover acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MAGIC_NUMBER" name="magic number soft picky">
+      <pattern>
+        <token>magic</token>
+        <token>number</token>
+      </pattern>
+      <message>Jargon; name net-new ARR over sales-and-marketing spend instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

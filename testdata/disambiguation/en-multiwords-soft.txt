@@ -576,3 +576,6 @@ Ignimbrite Ridge RegionNNP
 Felsite Ridge RegionNNP
 Tephra Ridge RegionNNP
 Lapilli Ridge RegionNNP
+Lamprophyre Ridge RegionNNP
+Carbonatite Ridge RegionNNP
+Komatiite Ridge RegionNNP

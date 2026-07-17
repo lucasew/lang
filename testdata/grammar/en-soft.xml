@@ -12867,6 +12867,76 @@
       <message>Did you mean "validation"?</message>
       <short>validaiton</short>
     </rule>
+    <rule id="EN_SOFT_ENCRYPTION_MISS2" name="encrypion soft">
+      <pattern>
+        <token>encrypion</token>
+      </pattern>
+      <message>Did you mean "encryption"?</message>
+      <short>encrypion</short>
+    </rule>
+    <rule id="EN_SOFT_DECRYPTION_MISS" name="decrypion soft">
+      <pattern>
+        <token>decrypion</token>
+      </pattern>
+      <message>Did you mean "decryption"?</message>
+      <short>decrypion</short>
+    </rule>
+    <rule id="EN_SOFT_THROTTLING_MISS2" name="throtteling soft">
+      <pattern>
+        <token>throtteling</token>
+      </pattern>
+      <message>Did you mean "throttling"?</message>
+      <short>throtteling</short>
+    </rule>
+    <rule id="EN_SOFT_LOADBALANCER_MISS" name="loadbalancor soft">
+      <pattern>
+        <token>loadbalancor</token>
+      </pattern>
+      <message>Did you mean "loadbalancer"?</message>
+      <short>loadbalancor</short>
+    </rule>
+    <rule id="EN_SOFT_LOADBALANCER_MISS2" name="loadballancer soft">
+      <pattern>
+        <token>loadballancer</token>
+      </pattern>
+      <message>Did you mean "loadbalancer"?</message>
+      <short>loadballancer</short>
+    </rule>
+    <rule id="EN_SOFT_HEALTHCHECK_MISS" name="healthchek soft">
+      <pattern>
+        <token>healthchek</token>
+      </pattern>
+      <message>Did you mean "healthcheck"?</message>
+      <short>healthchek</short>
+    </rule>
+    <rule id="EN_SOFT_HEALTHCHECK_MISS2" name="healthchekc soft">
+      <pattern>
+        <token>healthchekc</token>
+      </pattern>
+      <message>Did you mean "healthcheck"?</message>
+      <short>healthchekc</short>
+    </rule>
+    <rule id="EN_SOFT_READINESS_MISS" name="readynes soft">
+      <pattern>
+        <token>readynes</token>
+      </pattern>
+      <message>Did you mean "readiness"?</message>
+      <short>readynes</short>
+    </rule>
+    <rule id="EN_SOFT_LIVENESS_MISS" name="livenes soft">
+      <pattern>
+        <token>livenes</token>
+      </pattern>
+      <message>Did you mean "liveness"?</message>
+      <short>livenes</short>
+    </rule>
+    <rule id="EN_SOFT_SIDECAR_MISS" name="sidecr soft">
+      <pattern>
+        <token>sidecr</token>
+      </pattern>
+      <message>Did you mean "sidecar"?</message>
+      <short>sidecr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

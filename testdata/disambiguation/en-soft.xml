@@ -5775,4 +5775,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ARKTYPE" name="immunize arktype">
+    <pattern>
+      <token>arktype</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKTYPE_CAPS" name="immunize ArkType">
+    <pattern>
+      <token>ArkType</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPERSTRUCT" name="immunize superstruct">
+    <pattern>
+      <token>superstruct</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPERSTRUCT_CAPS" name="immunize Superstruct">
+    <pattern>
+      <token>Superstruct</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNTYPES" name="immunize runtypes">
+    <pattern>
+      <token>runtypes</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNTYPES_CAPS" name="immunize Runtypes">
+    <pattern>
+      <token>Runtypes</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
