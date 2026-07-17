@@ -30,4 +30,12 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(fgb.GetID(), rules.AsSentenceCheckerSimple(fgb.Match))
 	dp := NewDativePluralStandardReplaceRule(nil)
 	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
+
+	// Official compounds, specific-case, prestandard replace.
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	sc := NewIrishSpecificCaseRule(nil)
+	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
+	pr := NewPrestandardReplaceRule(nil)
+	lt.AddRuleChecker(pr.GetID(), rules.AsSentenceCheckerSimple(pr.Match))
 }

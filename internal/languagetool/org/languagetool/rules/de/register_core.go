@@ -45,4 +45,10 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
 	cc := NewCompoundCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(cc.GetID(), rules.AsTextLevelChecker(cc.MatchList))
+
+	// Official wrong-word-in-context + dash compounds.
+	ww := NewGermanWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	dr := NewDashRule(nil)
+	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
 }

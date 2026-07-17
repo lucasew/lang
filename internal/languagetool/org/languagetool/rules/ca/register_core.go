@@ -34,4 +34,14 @@ func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(ang.GetID(), rules.AsSentenceCheckerSimple(ang.Match))
 	mw := NewSimpleReplaceMultiwordsRule(nil)
 	lt.AddRuleChecker(mw.GetID(), rules.AsSentenceCheckerSimple(mw.Match))
+
+	// Official wrong-word, compounds, IEC diacritics, repeated-words synonyms.
+	ww := NewCatalanWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	di := NewSimpleReplaceDiacriticsIEC(nil)
+	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
+	rw := NewCatalanRepeatedWordsRule(nil)
+	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
 }

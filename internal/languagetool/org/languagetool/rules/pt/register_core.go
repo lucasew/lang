@@ -30,4 +30,18 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	wc := NewPortugueseWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+
+	// Official diacritics, style tables, wrong-word, orthography, agreement.
+	di := NewPortugueseDiacriticsRule(nil)
+	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
+	rd := NewPortugueseRedundancyRule(nil)
+	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
+	pe := NewPortugueseWordinessRule(nil)
+	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
+	ww := NewPortugueseWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	or := NewPortugueseOrthographyReplaceRule(nil)
+	lt.AddRuleChecker(or.GetID(), rules.AsSentenceCheckerSimple(or.Match))
+	ag := NewPortugueseAgreementReplaceRule(nil)
+	lt.AddRuleChecker(ag.GetID(), rules.AsSentenceCheckerSimple(ag.Match))
 }

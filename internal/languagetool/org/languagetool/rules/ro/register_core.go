@@ -25,4 +25,8 @@ func RegisterCoreRomanianRules(lt *languagetool.JLanguageTool) {
 	// Official replace.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+
+	// Official compounds.txt.
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 }

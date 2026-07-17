@@ -27,4 +27,20 @@ func RegisterCoreArabicRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	wc := NewArabicWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+
+	// Official AR data tables (diacritics, style, confusion, dialect, inflected).
+	adi := NewArabicDiacriticsRule(nil)
+	lt.AddRuleChecker(adi.GetID(), rules.AsSentenceCheckerSimple(adi.Match))
+	ard := NewArabicRedundancyRule(nil)
+	lt.AddRuleChecker(ard.GetID(), rules.AsSentenceCheckerSimple(ard.Match))
+	aw := NewArabicWordinessRule(nil)
+	lt.AddRuleChecker(aw.GetID(), rules.AsSentenceCheckerSimple(aw.Match))
+	aww := NewArabicWrongWordInContextRule(nil)
+	lt.AddRuleChecker(aww.GetID(), rules.AsSentenceCheckerSimple(aww.Match))
+	ah := NewArabicHomophonesRule(nil)
+	lt.AddRuleChecker(ah.GetID(), rules.AsSentenceCheckerSimple(ah.Match))
+	ad := NewArabicDarjaRule(nil)
+	lt.AddRuleChecker(ad.GetID(), rules.AsSentenceCheckerSimple(ad.Match))
+	ai := NewArabicInflectedOneWordReplaceRule(nil)
+	lt.AddRuleChecker(ai.GetID(), rules.AsSentenceCheckerSimple(ai.Match))
 }

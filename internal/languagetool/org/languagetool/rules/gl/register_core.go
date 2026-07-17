@@ -26,4 +26,10 @@ func RegisterCoreGalicianRules(lt *languagetool.JLanguageTool) {
 	// Official replace.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+
+	// Official redundancy + wordiness style tables.
+	rd := NewGalicianRedundancyRule(nil)
+	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
+	pe := NewGalicianWordinessRule(nil)
+	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
 }

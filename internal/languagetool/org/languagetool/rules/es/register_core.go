@@ -33,4 +33,10 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 	rw := NewSpanishRepeatedWordsRule(nil)
 	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
+
+	// Official wrong-word-in-context + verb replace tables.
+	ww := NewSpanishWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	vr := NewSimpleReplaceVerbsRule(nil)
+	lt.AddRuleChecker(vr.GetID(), rules.AsSentenceCheckerSimple(vr.Match))
 }

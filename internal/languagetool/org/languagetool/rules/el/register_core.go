@@ -25,4 +25,10 @@ func RegisterCoreGreekRules(lt *languagetool.JLanguageTool) {
 	// Official homonyms replace table (embedded from upstream).
 	hr := NewReplaceHomonymsRule(nil)
 	lt.AddRuleChecker(hr.GetID(), rules.AsSentenceCheckerSimple(hr.Match))
+
+	// Official redundancy + specific-case tables.
+	rd := NewGreekRedundancyRule(nil)
+	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
+	sc := NewGreekSpecificCaseRule(nil)
+	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
 }

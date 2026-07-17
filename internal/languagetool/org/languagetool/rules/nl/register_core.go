@@ -34,4 +34,10 @@ func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 	sc := NewSpaceInCompoundRule(nil)
 	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
+
+	// Official wrong-word-in-context + check-case.
+	ww := NewDutchWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+	cc := NewCheckCaseRule(nil)
+	lt.AddRuleChecker(cc.GetID(), rules.AsSentenceCheckerSimple(cc.Match))
 }

@@ -26,4 +26,8 @@ func RegisterCoreBretonRules(lt *languagetool.JLanguageTool) {
 	// Official topo.txt place-name replace (embedded from upstream).
 	tr := NewTopoReplaceRule(nil)
 	lt.AddRuleChecker(tr.GetID(), rules.AsSentenceCheckerSimple(tr.Match))
+
+	// Official compounds.txt.
+	cr := NewBretonCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 }

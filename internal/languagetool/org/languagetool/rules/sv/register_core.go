@@ -26,4 +26,8 @@ func RegisterCoreSwedishRules(lt *languagetool.JLanguageTool) {
 	// Official coherency.txt (embedded from upstream).
 	wc := NewWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+
+	// Official compounds.txt.
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 }
