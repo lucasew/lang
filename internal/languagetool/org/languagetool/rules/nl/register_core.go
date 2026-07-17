@@ -3,6 +3,7 @@ package nl
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreDutchRules installs shared layout + NL word-repeat + beginning.
@@ -18,4 +19,8 @@ func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_adv":  "Drie opeenvolgende zinnen beginnen met hetzelfde bijwoord.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	patterns.RegisterTokenSequences(lt, "nl", []patterns.TokenSequenceSpec{
+		{ID: "NL_ALS_OF", Tokens: []string{"als", "of"}, Message: "Bedoelde u 'alsof'?", Suggestion: "alsof"},
+	})
 }
