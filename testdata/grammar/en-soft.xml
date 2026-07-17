@@ -2997,6 +2997,76 @@
       <message>Did you mean "success"?</message>
       <short>sucess</short>
     </rule>
+    <rule id="EN_SOFT_THEREFORE_MISS2" name="thierfore soft">
+      <pattern>
+        <token>thierfore</token>
+      </pattern>
+      <message>Did you mean "therefore"?</message>
+      <short>thierfore</short>
+    </rule>
+    <rule id="EN_SOFT_UNFORTUNATELY_MISS2" name="unfortunatley soft">
+      <pattern>
+        <token>unfortunatley</token>
+      </pattern>
+      <message>Did you mean "unfortunately"?</message>
+      <short>unfortunatley</short>
+    </rule>
+    <rule id="EN_SOFT_UNFORESEEN_MISS" name="unforseen soft">
+      <pattern>
+        <token>unforseen</token>
+      </pattern>
+      <message>Did you mean "unforeseen"?</message>
+      <short>unforseen</short>
+    </rule>
+    <rule id="EN_SOFT_UNNECESSARY_MISS" name="unneccessary soft">
+      <pattern>
+        <token>unneccessary</token>
+      </pattern>
+      <message>Did you mean "unnecessary"?</message>
+      <short>unneccessary</short>
+    </rule>
+    <rule id="EN_SOFT_VACUUM_MISS2" name="vaccuum soft">
+      <pattern>
+        <token>vaccuum</token>
+      </pattern>
+      <message>Did you mean "vacuum"?</message>
+      <short>vaccuum</short>
+    </rule>
+    <rule id="EN_SOFT_WHEREVER_MISS" name="whereever soft">
+      <pattern>
+        <token>whereever</token>
+      </pattern>
+      <message>Did you mean "wherever"?</message>
+      <short>whereever</short>
+    </rule>
+    <rule id="EN_SOFT_YESTERDAY_MISS" name="yesturday soft">
+      <pattern>
+        <token>yesturday</token>
+      </pattern>
+      <message>Did you mean "yesterday"?</message>
+      <short>yesturday</short>
+    </rule>
+    <rule id="EN_SOFT_RESTAURANT_MISS2" name="resteraunt soft">
+      <pattern>
+        <token>resteraunt</token>
+      </pattern>
+      <message>Did you mean "restaurant"?</message>
+      <short>resteraunt</short>
+    </rule>
+    <rule id="EN_SOFT_REMEMBER_MISS2" name="rember soft">
+      <pattern>
+        <token>rember</token>
+      </pattern>
+      <message>Did you mean "remember"?</message>
+      <short>rember</short>
+    </rule>
+    <rule id="EN_SOFT_STRENGTHEN_MISS" name="strenghten soft">
+      <pattern>
+        <token>strenghten</token>
+      </pattern>
+      <message>Did you mean "strengthen"?</message>
+      <short>strenghten</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

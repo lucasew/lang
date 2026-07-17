@@ -251,5 +251,27 @@
       <message>Consider stating the note directly.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_FOR_ALL_INTENTS" name="for all intents soft optional" default="off">
+      <pattern>
+        <token>for</token>
+        <token>all</token>
+        <token>intents</token>
+        <token>and</token>
+        <token>purposes</token>
+      </pattern>
+      <message>Consider "essentially" or "in practice".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AS_A_MATTER_OF_FACT" name="as a matter of fact soft optional" default="off">
+      <pattern>
+        <token>as</token>
+        <token>a</token>
+        <token>matter</token>
+        <token>of</token>
+        <token>fact</token>
+      </pattern>
+      <message>Consider "actually" or omit.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

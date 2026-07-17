@@ -150,3 +150,9 @@ yarn
 asdf
 nixpkgs
 flakes
+ripgrep
+fd
+bat
+eza
+zellij
+wezterm

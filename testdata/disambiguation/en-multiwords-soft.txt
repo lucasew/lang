@@ -151,3 +151,7 @@ in the aggregate	RB
 on the whole	RB
 Corpus Christi	NNP
 Santa Fe	NNP
+in due time	RB
+at long last	RB
+San Jose	NNP
+San Juan	NNP
