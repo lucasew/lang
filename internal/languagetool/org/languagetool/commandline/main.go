@@ -31,6 +31,7 @@ Options:
   --xml                    XML output
   --sarif                  SARIF 2.1 output
   --lint                   linter columns (location severity type rule message suggestion)
+  --format FMT             output format: text|lint|json|sarif|xml (text≡lint per SPEC)
   --xmlfilter              remove XML/HTML tags from input before check
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML

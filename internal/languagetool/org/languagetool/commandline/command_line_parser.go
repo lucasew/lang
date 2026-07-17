@@ -146,6 +146,16 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetOutputFormat(OutputSARIF)
 		case "--lint":
 			opts.SetOutputFormat(OutputLint)
+		case "--format":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			f, err := parseOutputFormat(args[i])
+			if err != nil {
+				return nil, err
+			}
+			opts.SetOutputFormat(f)
 		case "--ruleValues", "--rulevalues":
 			if err := needArg(a, i, args); err != nil {
 				return nil, err
@@ -185,6 +195,25 @@ func needArg(flag string, i int, args []string) error {
 		return fmt.Errorf("missing argument for %s", flag)
 	}
 	return nil
+}
+
+// parseOutputFormat maps SPEC --format values to OutputFormat.
+// text and lint both produce SPEC tabwriter columns.
+func parseOutputFormat(s string) (OutputFormat, error) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "text", "lint":
+		return OutputLint, nil
+	case "json":
+		return OutputJSON, nil
+	case "xml":
+		return OutputXML, nil
+	case "sarif":
+		return OutputSARIF, nil
+	case "plaintext", "plain", "lt":
+		return OutputPlaintext, nil
+	default:
+		return "", fmt.Errorf("unknown --format %q (want text|lint|json|sarif|xml|plaintext)", s)
+	}
 }
 
 func splitCSV(s string) []string {

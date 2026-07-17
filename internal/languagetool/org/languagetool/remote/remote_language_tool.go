@@ -17,6 +17,7 @@ const (
 	v2Words         = "/v2/words"
 	v2WordsAdd      = "/v2/words/add"
 	v2WordsDelete   = "/v2/words/delete"
+	v2Info          = "/v2/info"
 )
 
 // HTTPDoer abstracts http.Client for tests.
@@ -343,6 +344,42 @@ func (r *RemoteLanguageTool) GetLanguages() ([]RemoteLanguage, error) {
 		return nil, err
 	}
 	return langs, nil
+}
+
+// GetSoftwareInfo fetches /v2/info (software identity JSON).
+func (r *RemoteLanguageTool) GetSoftwareInfo() (map[string]any, error) {
+	if r == nil {
+		return nil, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	endpoint := r.ServerBaseURL + v2Info
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("info HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
+	}
+	var raw map[string]any
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, err
+	}
+	if sw, ok := raw["software"].(map[string]any); ok {
+		return sw, nil
+	}
+	return raw, nil
 }
 
 // GetMaxTextLength fetches /v2/maxtextlength (plain integer body).

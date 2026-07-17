@@ -19,6 +19,17 @@ func (h *LanguageToolHttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "nil request", http.StatusBadRequest)
 		return
 	}
+	// Soft CORS: always set Allow-Origin when configured; handle OPTIONS preflight.
+	if h.Config != nil && h.Config.AllowOriginURL != "" {
+		w.Header().Set("Access-Control-Allow-Origin", h.Config.AllowOriginURL)
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	}
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	remoteIP := clientIP(r)
 	referer := r.Header.Get("Referer")
 	if referer == "" {
@@ -54,9 +65,6 @@ func (h *LanguageToolHttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		ct = "text/plain; charset=utf-8"
 	}
 	w.Header().Set("Content-Type", ct)
-	if h.Config != nil && h.Config.AllowOriginURL != "" {
-		w.Header().Set("Access-Control-Allow-Origin", h.Config.AllowOriginURL)
-	}
 	w.WriteHeader(status)
 	_, _ = io.WriteString(w, res.Body)
 }
