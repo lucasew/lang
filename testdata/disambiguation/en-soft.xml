@@ -4191,4 +4191,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICEV2" name="immunize pinpointsmsvoicev2">
+    <pattern>
+      <token>pinpointsmsvoicev2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICEV2_CAPS" name="immunize PinpointSMSVoiceV2">
+    <pattern>
+      <token>PinpointSMSVoiceV2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOCIALMESSAGING" name="immunize socialmessaging">
+    <pattern>
+      <token>socialmessaging</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOCIALMESSAGING_CAPS" name="immunize SocialMessaging">
+    <pattern>
+      <token>SocialMessaging</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTEMAIL" name="immunize pinpointemail">
+    <pattern>
+      <token>pinpointemail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTEMAIL_CAPS" name="immunize PinpointEmail">
+    <pattern>
+      <token>PinpointEmail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

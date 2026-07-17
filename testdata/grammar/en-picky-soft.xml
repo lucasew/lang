@@ -2703,5 +2703,31 @@
       <message>Jargon; name weighted shortest job first ranking instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_KANO_MODEL" name="kano model soft picky">
+      <pattern>
+        <token>kano</token>
+        <token>model</token>
+      </pattern>
+      <message>Jargon; name basic-performance-delight feature categories instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COST_OF_DELAY" name="cost of delay soft picky">
+      <pattern>
+        <token>cost</token>
+        <token>of</token>
+        <token>delay</token>
+      </pattern>
+      <message>Jargon; name value lost by waiting to deliver instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_VS_EFFORT" name="value vs effort soft picky">
+      <pattern>
+        <token>value</token>
+        <token>vs</token>
+        <token>effort</token>
+      </pattern>
+      <message>Jargon; name a simple benefit-cost priority plot instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

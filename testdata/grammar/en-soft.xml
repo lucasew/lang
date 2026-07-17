@@ -9787,6 +9787,76 @@
       <message>Did you mean "among"?</message>
       <short>amung</short>
     </rule>
+    <rule id="EN_SOFT_ALMOST_MISS2" name="almst soft">
+      <pattern>
+        <token>almst</token>
+      </pattern>
+      <message>Did you mean "almost"?</message>
+      <short>almst</short>
+    </rule>
+    <rule id="EN_SOFT_ALMOST_MISS3" name="alomst soft">
+      <pattern>
+        <token>alomst</token>
+      </pattern>
+      <message>Did you mean "almost"?</message>
+      <short>alomst</short>
+    </rule>
+    <rule id="EN_SOFT_AMOUNTS_MISS" name="ammounts soft">
+      <pattern>
+        <token>ammounts</token>
+      </pattern>
+      <message>Did you mean "amounts"?</message>
+      <short>ammounts</short>
+    </rule>
+    <rule id="EN_SOFT_ANNIVERSARIES_MISS" name="aniversaries soft">
+      <pattern>
+        <token>aniversaries</token>
+      </pattern>
+      <message>Did you mean "anniversaries"?</message>
+      <short>aniversaries</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCED_MISS" name="annouced soft">
+      <pattern>
+        <token>annouced</token>
+      </pattern>
+      <message>Did you mean "announced"?</message>
+      <short>annouced</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCEMENT_MISS2" name="annoucement soft">
+      <pattern>
+        <token>annoucement</token>
+      </pattern>
+      <message>Did you mean "announcement"?</message>
+      <short>annoucement</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCEMENTS_MISS" name="annoucements soft">
+      <pattern>
+        <token>annoucements</token>
+      </pattern>
+      <message>Did you mean "announcements"?</message>
+      <short>annoucements</short>
+    </rule>
+    <rule id="EN_SOFT_ANOTHER_MISS" name="anothe soft">
+      <pattern>
+        <token>anothe</token>
+      </pattern>
+      <message>Did you mean "another"?</message>
+      <short>anothe</short>
+    </rule>
+    <rule id="EN_SOFT_ANOTHER_MISS2" name="anouther soft">
+      <pattern>
+        <token>anouther</token>
+      </pattern>
+      <message>Did you mean "another"?</message>
+      <short>anouther</short>
+    </rule>
+    <rule id="EN_SOFT_APPRECIATE_MISS" name="appreaciate soft">
+      <pattern>
+        <token>appreaciate</token>
+      </pattern>
+      <message>Did you mean "appreciate"?</message>
+      <short>appreaciate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

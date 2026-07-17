@@ -444,3 +444,6 @@ Vent Corridor RegionNNP
 Caldera Corridor RegionNNP
 Fumarole Corridor RegionNNP
 Lahar Corridor RegionNNP
+Tuff Ridge RegionNNP
+Ash Ridge RegionNNP
+Scoria Ridge RegionNNP
