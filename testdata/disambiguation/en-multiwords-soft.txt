@@ -573,3 +573,6 @@ Websterite Ridge RegionNNP
 Pyroxenite Ridge RegionNNP
 Kimberlite Ridge RegionNNP
 Ignimbrite Ridge RegionNNP
+Felsite Ridge RegionNNP
+Tephra Ridge RegionNNP
+Lapilli Ridge RegionNNP

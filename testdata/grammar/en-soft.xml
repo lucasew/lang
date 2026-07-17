@@ -12797,6 +12797,76 @@
       <message>Did you mean "kubernetes"?</message>
       <short>kuberentes</short>
     </rule>
+    <rule id="EN_SOFT_DOCKERFILE_MISS" name="dockerfilee soft">
+      <pattern>
+        <token>dockerfilee</token>
+      </pattern>
+      <message>Did you mean "dockerfile"?</message>
+      <short>dockerfilee</short>
+    </rule>
+    <rule id="EN_SOFT_DOCKERFILE_MISS2" name="dockerfle soft">
+      <pattern>
+        <token>dockerfle</token>
+      </pattern>
+      <message>Did you mean "dockerfile"?</message>
+      <short>dockerfle</short>
+    </rule>
+    <rule id="EN_SOFT_PIPELINE_MISS" name="pipelne soft">
+      <pattern>
+        <token>pipelne</token>
+      </pattern>
+      <message>Did you mean "pipeline"?</message>
+      <short>pipelne</short>
+    </rule>
+    <rule id="EN_SOFT_MONITORING_MISS" name="monitoreing soft">
+      <pattern>
+        <token>monitoreing</token>
+      </pattern>
+      <message>Did you mean "monitoring"?</message>
+      <short>monitoreing</short>
+    </rule>
+    <rule id="EN_SOFT_TELEMETRY_MISS" name="telemety soft">
+      <pattern>
+        <token>telemety</token>
+      </pattern>
+      <message>Did you mean "telemetry"?</message>
+      <short>telemety</short>
+    </rule>
+    <rule id="EN_SOFT_ALERTING_MISS" name="alertting soft">
+      <pattern>
+        <token>alertting</token>
+      </pattern>
+      <message>Did you mean "alerting"?</message>
+      <short>alertting</short>
+    </rule>
+    <rule id="EN_SOFT_NOTIFICATION_MISS2" name="notifcation soft">
+      <pattern>
+        <token>notifcation</token>
+      </pattern>
+      <message>Did you mean "notification"?</message>
+      <short>notifcation</short>
+    </rule>
+    <rule id="EN_SOFT_SUBSCRIPTION_MISS3" name="subscribtion soft">
+      <pattern>
+        <token>subscribtion</token>
+      </pattern>
+      <message>Did you mean "subscription"?</message>
+      <short>subscribtion</short>
+    </rule>
+    <rule id="EN_SOFT_REGISTRATION_MISS" name="registraton soft">
+      <pattern>
+        <token>registraton</token>
+      </pattern>
+      <message>Did you mean "registration"?</message>
+      <short>registraton</short>
+    </rule>
+    <rule id="EN_SOFT_VALIDATION_MISS2" name="validaiton soft">
+      <pattern>
+        <token>validaiton</token>
+      </pattern>
+      <message>Did you mean "validation"?</message>
+      <short>validaiton</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

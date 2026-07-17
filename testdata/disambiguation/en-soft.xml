@@ -5739,4 +5739,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ZOD" name="immunize zod">
+    <pattern>
+      <token>zod</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZOD_CAPS" name="immunize Zod">
+    <pattern>
+      <token>Zod</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VALIBOT" name="immunize valibot">
+    <pattern>
+      <token>valibot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VALIBOT_CAPS" name="immunize Valibot">
+    <pattern>
+      <token>Valibot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEBOX" name="immunize typebox">
+    <pattern>
+      <token>typebox</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEBOX_CAPS" name="immunize TypeBox">
+    <pattern>
+      <token>TypeBox</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

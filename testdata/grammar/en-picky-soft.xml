@@ -3676,5 +3676,29 @@
       <message>Jargon; name expansion-adjusted recurring revenue retention instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_QUICK_RATIO" name="quick ratio soft picky">
+      <pattern>
+        <token>quick</token>
+        <token>ratio</token>
+      </pattern>
+      <message>Jargon; name cash plus receivables over current liabilities instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAYBACK_PERIOD" name="payback period soft picky">
+      <pattern>
+        <token>payback</token>
+        <token>period</token>
+      </pattern>
+      <message>Jargon; name months to recover customer acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRIBUTION_MARGIN" name="contribution margin soft picky">
+      <pattern>
+        <token>contribution</token>
+        <token>margin</token>
+      </pattern>
+      <message>Jargon; name revenue after variable costs per unit instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
