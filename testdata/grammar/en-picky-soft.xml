@@ -541,5 +541,33 @@
       <message>Vague; consider "take responsibility" or name the owner.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_THE_WAGONS" name="circle the wagons soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>the</token>
+        <token>wagons</token>
+      </pattern>
+      <message>Cliché; consider "defend" or "unite under pressure".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HIT_THE_GROUND_RUNNING" name="hit the ground running soft picky">
+      <pattern>
+        <token>hit</token>
+        <token>the</token>
+        <token>ground</token>
+        <token>running</token>
+      </pattern>
+      <message>Cliché; consider "start productively" or name the ramp-up.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PEEL_THE_ONION" name="peel the onion soft picky">
+      <pattern>
+        <token>peel</token>
+        <token>the</token>
+        <token>onion</token>
+      </pattern>
+      <message>Cliché; consider "dig deeper" or "layer by layer".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

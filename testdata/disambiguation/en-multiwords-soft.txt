@@ -183,3 +183,6 @@ all things considered	RB
 Cleveland Ohio	NNP
 Pittsburgh Pennsylvania	NNP
 in due season	RB
+Baltimore Maryland	NNP
+Louisville Kentucky	NNP
+as a rule	RB

@@ -1059,4 +1059,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SDD" name="immunize sdd">
+    <pattern>
+      <token>sdd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SDD_CAPS" name="immunize SDD">
+    <pattern>
+      <token>SDD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITE" name="immunize vite">
+    <pattern>
+      <token>vite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITE_CAPS" name="immunize Vite">
+    <pattern>
+      <token>Vite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUN" name="immunize bun">
+    <pattern>
+      <token>bun</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUN_CAPS" name="immunize Bun">
+    <pattern>
+      <token>Bun</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

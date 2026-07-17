@@ -3697,6 +3697,76 @@
       <message>Did you mean "religious"?</message>
       <short>religous</short>
     </rule>
+    <rule id="EN_SOFT_REMINISCENT_MISS" name="reminescent soft">
+      <pattern>
+        <token>reminescent</token>
+      </pattern>
+      <message>Did you mean "reminiscent"?</message>
+      <short>reminescent</short>
+    </rule>
+    <rule id="EN_SOFT_RESPONSE_MISS" name="responce soft">
+      <pattern>
+        <token>responce</token>
+      </pattern>
+      <message>Did you mean "response"?</message>
+      <short>responce</short>
+    </rule>
+    <rule id="EN_SOFT_RESEMBLANCE_MISS" name="ressemblance soft">
+      <pattern>
+        <token>ressemblance</token>
+      </pattern>
+      <message>Did you mean "resemblance"?</message>
+      <short>ressemblance</short>
+    </rule>
+    <rule id="EN_SOFT_SACRIFICE_MISS" name="sacrafice soft">
+      <pattern>
+        <token>sacrafice</token>
+      </pattern>
+      <message>Did you mean "sacrifice"?</message>
+      <short>sacrafice</short>
+    </rule>
+    <rule id="EN_SOFT_SAFETY_MISS" name="saftey soft">
+      <pattern>
+        <token>saftey</token>
+      </pattern>
+      <message>Did you mean "safety"?</message>
+      <short>saftey</short>
+    </rule>
+    <rule id="EN_SOFT_SENSE_MISS" name="sence soft">
+      <pattern>
+        <token>sence</token>
+      </pattern>
+      <message>Did you mean "sense"?</message>
+      <short>sence</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVEMENT_MISS" name="acheivement soft">
+      <pattern>
+        <token>acheivement</token>
+      </pattern>
+      <message>Did you mean "achievement"?</message>
+      <short>acheivement</short>
+    </rule>
+    <rule id="EN_SOFT_COLLEAGUE_MISS2" name="collaegue soft">
+      <pattern>
+        <token>collaegue</token>
+      </pattern>
+      <message>Did you mean "colleague"?</message>
+      <short>collaegue</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITTEE_MISS2" name="comittee soft">
+      <pattern>
+        <token>comittee</token>
+      </pattern>
+      <message>Did you mean "committee"?</message>
+      <short>comittee</short>
+    </rule>
+    <rule id="EN_SOFT_COMMISSION_MISS" name="comission soft">
+      <pattern>
+        <token>comission</token>
+      </pattern>
+      <message>Did you mean "commission"?</message>
+      <short>comission</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
