@@ -48,6 +48,11 @@ func SoftEnglishPhraseReplacements() map[string]string {
 		"deep-seeded":                  "deep-seated",
 		"baited breath":                "bated breath",
 		"free reign":                   "free rein",
+		"based off of":                 "based on",
+		"based off":                    "based on",
+		"eachother":                    "each other",
+		"never the less":               "nevertheless",
+		"in regards to":                "with regard to",
 	}
 }
 

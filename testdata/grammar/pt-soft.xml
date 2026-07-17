@@ -9,5 +9,29 @@
       <message>Talvez "ao"?</message>
       <short>a/ao</short>
     </rule>
+    <rule id="PT_SOFT_EM_O" name="em o">
+      <pattern>
+        <token>em</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "no"?</message>
+      <short>em/no</short>
+    </rule>
+    <rule id="PT_SOFT_DE_O" name="de o">
+      <pattern>
+        <token>de</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "do"?</message>
+      <short>de/do</short>
+    </rule>
+    <rule id="PT_SOFT_POR_O" name="por o">
+      <pattern>
+        <token>por</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "pelo"?</message>
+      <short>por/pelo</short>
+    </rule>
   </category>
 </rules>

@@ -9,5 +9,21 @@
       <message>Bedoelde u "alsof"?</message>
       <short>als of</short>
     </rule>
+    <rule id="NL_SOFT_TE_TE" name="te te">
+      <pattern>
+        <token>te</token>
+        <token>te</token>
+      </pattern>
+      <message>Mogelijke herhaling van "te".</message>
+      <short>te te</short>
+    </rule>
+    <rule id="NL_SOFT_MEERDERE_ALS" name="meerder als">
+      <pattern>
+        <token>meer</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "meer dan"?</message>
+      <short>als/dan</short>
+    </rule>
   </category>
 </rules>

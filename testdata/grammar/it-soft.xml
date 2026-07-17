@@ -9,5 +9,29 @@
       <message>Forse "al"?</message>
       <short>a/al</short>
     </rule>
+    <rule id="IT_SOFT_DI_IL" name="di il">
+      <pattern>
+        <token>di</token>
+        <token>il</token>
+      </pattern>
+      <message>Forse "del"?</message>
+      <short>di/del</short>
+    </rule>
+    <rule id="IT_SOFT_IN_IL" name="in il">
+      <pattern>
+        <token>in</token>
+        <token>il</token>
+      </pattern>
+      <message>Forse "nel"?</message>
+      <short>in/nel</short>
+    </rule>
+    <rule id="IT_SOFT_E_E" name="e e">
+      <pattern>
+        <token>e</token>
+        <token>e</token>
+      </pattern>
+      <message>Possibile ripetizione di "e".</message>
+      <short>e e</short>
+    </rule>
   </category>
 </rules>

@@ -35,6 +35,9 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"Here is a case and point.", "case in point"},
 		{"She waited with baited breath.", "bated breath"},
 		{"Give them free reign.", "free rein"},
+		{"This is based off of data.", "based on"},
+		{"Talk to eachother soon.", "each other"},
+		{"Questions in regards to your letter.", "with regard to"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

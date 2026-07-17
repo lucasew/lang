@@ -10,5 +10,38 @@
       <message>Meinten Sie "Ich denke, dass"?</message>
       <short>das/dass</short>
     </rule>
+    <rule id="DE_SOFT_GLAUBE_DAS" name="glaube das">
+      <pattern>
+        <token>glaube</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "glaube, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_SEIT_SEID" name="seit/seid">
+      <pattern>
+        <token>seit</token>
+        <token>ihr</token>
+      </pattern>
+      <message>Meinten Sie "seid ihr"?</message>
+      <short>seit/seid</short>
+    </rule>
+    <rule id="DE_SOFT_WIDER_WIEDER" name="wider/wieder">
+      <pattern>
+        <token>wider</token>
+        <token>sehen</token>
+      </pattern>
+      <message>Meinten Sie "wiedersehen"?</message>
+      <short>wider/wieder</short>
+    </rule>
+    <rule id="DE_SOFT_ALS_WIE" name="größer als wie">
+      <pattern>
+        <token>größer</token>
+        <token>als</token>
+        <token>wie</token>
+      </pattern>
+      <message>Meinten Sie "größer als"?</message>
+      <short>als/wie</short>
+    </rule>
   </category>
 </rules>

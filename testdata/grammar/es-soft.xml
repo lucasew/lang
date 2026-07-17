@@ -9,5 +9,29 @@
       <message>¿Quiso decir "voy allá"?</message>
       <short>haya/allá</short>
     </rule>
+    <rule id="ES_SOFT_A_EL" name="a el">
+      <pattern>
+        <token>a</token>
+        <token>el</token>
+      </pattern>
+      <message>¿Quiso decir "al"?</message>
+      <short>a/al</short>
+    </rule>
+    <rule id="ES_SOFT_DE_EL" name="de el">
+      <pattern>
+        <token>de</token>
+        <token>el</token>
+      </pattern>
+      <message>¿Quiso decir "del"?</message>
+      <short>de/del</short>
+    </rule>
+    <rule id="ES_SOFT_HAY_AY" name="hay/ay">
+      <pattern>
+        <token>ay</token>
+        <token>que</token>
+      </pattern>
+      <message>¿Quiso decir "hay que"?</message>
+      <short>hay/ay</short>
+    </rule>
   </category>
 </rules>

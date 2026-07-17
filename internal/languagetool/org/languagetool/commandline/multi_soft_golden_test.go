@@ -67,3 +67,43 @@ func TestGolden_MultiLangSoftGrammar(t *testing.T) {
 		})
 	}
 }
+
+func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
+	cases := []struct {
+		lang, text, rule, sug string
+	}{
+		{"fr", "Il va a le marché.", "FR_SOFT_A_LE", "au"},
+		{"fr", "Il et grand.", "FR_SOFT_ET_EST", "il est"},
+		{"fr", "ca va bien.", "FR_SOFT_CA_SA", "ça va"},
+		{"es", "Voy a el parque.", "ES_SOFT_A_EL", "al"},
+		{"es", "Viene de el norte.", "ES_SOFT_DE_EL", "del"},
+		{"es", "Ay que hacerlo.", "ES_SOFT_HAY_AY", "hay que"},
+		{"pt", "Estou em o carro.", "PT_SOFT_EM_O", "no"},
+		{"pt", "Livro de o autor.", "PT_SOFT_DE_O", "do"},
+		{"pt", "Passou por o parque.", "PT_SOFT_POR_O", "pelo"},
+		{"it", "Vado di il mercato.", "IT_SOFT_DI_IL", "del"},
+		{"it", "Sono in il giardino.", "IT_SOFT_IN_IL", "nel"},
+		{"nl", "Hij is te te snel.", "NL_SOFT_TE_TE", ""},
+		{"nl", "Meer als gisteren.", "NL_SOFT_MEERDERE_ALS", "meer dan"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: tc.lang})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "grammar", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}

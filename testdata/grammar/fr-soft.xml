@@ -9,5 +9,29 @@
       <message>Peut-être "à la"?</message>
       <short>a/à</short>
     </rule>
+    <rule id="FR_SOFT_A_LE" name="a le">
+      <pattern>
+        <token>a</token>
+        <token>le</token>
+      </pattern>
+      <message>Peut-être "au"?</message>
+      <short>a/au</short>
+    </rule>
+    <rule id="FR_SOFT_ET_EST" name="et/est">
+      <pattern>
+        <token>il</token>
+        <token>et</token>
+      </pattern>
+      <message>Peut-être "il est"?</message>
+      <short>et/est</short>
+    </rule>
+    <rule id="FR_SOFT_CA_SA" name="ca va">
+      <pattern>
+        <token>ca</token>
+        <token>va</token>
+      </pattern>
+      <message>Peut-être "ça va"?</message>
+      <short>ca/ça</short>
+    </rule>
   </category>
 </rules>
