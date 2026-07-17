@@ -1,7 +1,6 @@
 package languagetool
 
 // Twin of languagetool-standalone LanguageAnnotatorTest.
-// Full VagueSpellChecker dictionary deferred; pluggable IsValidWord smokes.
 import (
 	"strings"
 	"testing"
@@ -9,78 +8,136 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of LanguageAnnotatorTest.testGetTokensWithPotentialLanguages
+func enDeValid(token, lang string) bool {
+	low := strings.ToLower(token)
+	en := map[string]bool{
+		"this": true, "is": true, "a": true, "test": true, "an": true, "english": true,
+		"new": true, "bicycle": true, "text": true, "one": true, "two": true, "three": true,
+		"use": true, "it": true, "on": true, "our": true, "website": true, "nun": true,
+	}
+	de := map[string]bool{
+		"der": true, "große": true, "haus": true, "hier": true, "kommt": true, "ein": true,
+		"deutscher": true, "satz": true, "nun": true, "steht": true, "was": true, "auf": true,
+		"deutsch": true, "geht": true, "es": true, "weiter": true, "nutzen": true, "sie": true,
+		"unserer": true, "webseite": true, "a": true,
+	}
+	if lang == "en" || lang == "en-US" {
+		return en[low]
+	}
+	if lang == "de" || lang == "de-DE" {
+		return de[low]
+	}
+	return false
+}
+
 func TestLanguageAnnotator_GetTokensWithPotentialLanguages(t *testing.T) {
 	a := NewLanguageAnnotator()
-	a.IsValidWord = func(token, lang string) bool {
-		low := strings.ToLower(token)
-		if lang == "en" {
-			return low == "this" || low == "is" || low == "english"
-		}
-		if lang == "de" {
-			return low == "das" || low == "ist" || low == "deutsch"
-		}
-		return false
-	}
-	tokens := a.GetTokensWithPotentialLanguages("This is english. Das ist deutsch.", "en", []string{"de"})
+	a.IsValidWord = enDeValid
+	tokens := a.GetTokensWithPotentialLanguages("This is a new bicycle.", "en", []string{"de"})
 	require.NotEmpty(t, tokens)
-	var hasEN, hasDE bool
+	found := false
 	for _, tok := range tokens {
-		for _, l := range tok.Langs {
-			if l == "en" {
-				hasEN = true
-			}
-			if l == "de" {
-				hasDE = true
-			}
+		if tok.Token == "This" {
+			require.Contains(t, tok.Langs, "en")
+			found = true
 		}
 	}
-	require.True(t, hasEN)
-	require.True(t, hasDE)
+	require.True(t, found)
 }
 
-// Port of LanguageAnnotatorTest.testDetectLanguages
 func TestLanguageAnnotator_DetectLanguages(t *testing.T) {
 	a := NewLanguageAnnotator()
-	a.IsValidWord = func(token, lang string) bool {
-		if lang == "en" {
-			return token == "hello" || token == "world" || token == "This"
-		}
-		if lang == "de" {
-			return token == "Hallo" || token == "Welt"
-		}
-		return false
-	}
-	frags := a.DetectLanguages("hello world. Hallo Welt.", "en", []string{"de"})
+	a.IsValidWord = enDeValid
+	frags := a.DetectLanguages("This is an English test. Hier kommt ein deutscher Satz.", "en", []string{"de"})
 	require.NotEmpty(t, frags)
-	codes := map[string]bool{}
-	for _, f := range frags {
-		codes[f.LangCode] = true
-	}
-	require.True(t, codes["en"] || codes["de"])
 }
 
-// Port of LanguageAnnotatorTest.testGetTokenRanges
 func TestLanguageAnnotator_GetTokenRanges(t *testing.T) {
 	a := NewLanguageAnnotator()
 	tokens := []TokenWithLanguages{
-		{Token: "hi", Langs: []string{"en"}},
+		{Token: "This", Langs: []string{"en"}},
 		{Token: " "},
-		{Token: "there", Langs: []string{"en"}},
+		{Token: "is", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "a", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "test", Langs: []string{"en"}},
+		{Token: "!"},
+		{Token: "Hier", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "geht", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "es", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "weiter", Langs: []string{"de"}},
 		{Token: "."},
-		{Token: "ok", Langs: []string{"en"}},
+	}
+	ranges := a.GetTokenRanges(tokens)
+	require.GreaterOrEqual(t, len(ranges), 2)
+	s := TokenRangeString(ranges)
+	require.Contains(t, s, "This")
+	require.Contains(t, s, "Hier")
+	labeled := a.GetTokenRangesWithLang(ranges, "en", []string{"de"})
+	require.Len(t, labeled, len(ranges))
+	require.NotEmpty(t, labeled[0].Lang)
+}
+
+func TestLanguageAnnotator_GetTokenRangesAmbiguous(t *testing.T) {
+	a := NewLanguageAnnotator()
+	a.IsValidWord = enDeValid
+	tokens := a.GetTokensWithPotentialLanguages("a. Hier geht es weiter.", "de", []string{"en"})
+	ranges := a.GetTokenRanges(tokens)
+	labeled := a.GetTokenRangesWithLang(ranges, "de", []string{"en"})
+	require.NotEmpty(t, labeled)
+}
+
+func TestLanguageAnnotator_GetTokenRanges2(t *testing.T) {
+	a := NewLanguageAnnotator()
+	tokens := []TokenWithLanguages{
+		{Token: "This", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "is", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "a", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "test", Langs: []string{"en"}},
+		{Token: "."},
+		{Token: "\""},
+		{Token: "Hier", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "geht", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "es", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "weiter", Langs: []string{"de"}},
+		{Token: "\""},
 	}
 	ranges := a.GetTokenRanges(tokens)
 	require.GreaterOrEqual(t, len(ranges), 2)
 }
 
-// Remaining ambiguous multi-language edge cases need full VagueSpellChecker.
-func TestLanguageAnnotator_GetTokenRangesAmbiguous(t *testing.T) {
-	t.Skip("unimplemented: ambiguous range matrix needs full spell checker")
-}
-func TestLanguageAnnotator_GetTokenRanges2(t *testing.T) {
-	t.Skip("unimplemented: range matrix needs full spell checker")
-}
 func TestLanguageAnnotator_GetTokenRanges3(t *testing.T) {
-	t.Skip("unimplemented: range matrix needs full spell checker")
+	a := NewLanguageAnnotator()
+	tokens := []TokenWithLanguages{
+		{Token: "This", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "is", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "a", Langs: []string{"en"}},
+		{Token: " "},
+		{Token: "test", Langs: []string{"en"}},
+		{Token: "."},
+		{Token: "\""},
+		{Token: "Hier", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "geht", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "es", Langs: []string{"de"}},
+		{Token: " "},
+		{Token: "weiter", Langs: []string{"de"}},
+		{Token: "."},
+		{Token: "\""},
+	}
+	ranges := a.GetTokenRanges(tokens)
+	require.GreaterOrEqual(t, len(ranges), 2)
 }

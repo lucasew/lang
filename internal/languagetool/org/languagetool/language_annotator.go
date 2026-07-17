@@ -96,6 +96,38 @@ func (a *LanguageAnnotator) GetTokenRanges(tokens []TokenWithLanguages) [][]Toke
 	return a.getTokenRanges(tokens)
 }
 
+// TokenRangeWithLang is a token span labeled with a language code.
+type TokenRangeWithLang struct {
+	Tokens []string
+	Lang   string
+}
+
+// GetTokenRangesWithLang assigns a language to each token range.
+func (a *LanguageAnnotator) GetTokenRangesWithLang(tokenRanges [][]TokenWithLanguages, mainLang string, secondLangs []string) []TokenRangeWithLang {
+	raw := a.getTokenRangesWithLang(tokenRanges, mainLang, secondLangs)
+	out := make([]TokenRangeWithLang, len(raw))
+	for i, r := range raw {
+		out[i] = TokenRangeWithLang{Tokens: r.tokens, Lang: r.lang}
+	}
+	return out
+}
+
+// TokenRangeString formats ranges like Java getTokenRangeAsString.
+func TokenRangeString(ranges [][]TokenWithLanguages) string {
+	var b strings.Builder
+	for _, r := range ranges {
+		b.WriteByte('[')
+		for i, t := range r {
+			if i > 0 && !isAnnotatorBoundary(t) && t.Token != " " {
+				// join without adding spaces — tokens include spaces when present
+			}
+			b.WriteString(t.Token)
+		}
+		b.WriteByte(']')
+	}
+	return b.String()
+}
+
 func (a *LanguageAnnotator) getTokensWithPotentialLanguages(input, mainLang string, secondLangs []string) []TokenWithLanguages {
 	raw := a.tokenize(input)
 	tokens := make([]TokenWithLanguages, 0, len(raw))

@@ -31,12 +31,27 @@ func TestUkrainianTagger_PropLowerCase(t *testing.T) {
 	t.Skip("unimplemented: needs full Ukrainian dict for proper-name lowercasing")
 }
 func TestUkrainianTagger_NumberTagging(t *testing.T) {
-	t.Skip("unimplemented: number tagging needs Ukrainian helpers")
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"101,234", "XIX", "14.07.2001", "15:33", "ХІХ"})
+	require.True(t, out[0].HasPosTag("number"))
+	require.True(t, out[1].HasPosTag("number:latin"))
+	require.True(t, out[2].HasPosTag("date"))
+	require.True(t, out[3].HasPosTag("time"))
+	require.True(t, out[4].HasPosTag("number:latin:bad:err"))
 }
-func TestUkrainianTagger_Hashtag(t *testing.T)           { t.Skip("unimplemented: hashtag") }
-func TestUkrainianTagger_TaggingWithDots(t *testing.T)    { t.Skip("unimplemented: dots") }
-func TestUkrainianTagger_ProperNameAllCaps(t *testing.T)  { t.Skip("unimplemented: all-caps names") }
-func TestUkrainianTagger_CompoundNumr(t *testing.T)       { t.Skip("unimplemented: compound numr") }
+func TestUkrainianTagger_Hashtag(t *testing.T) {
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"#янебоюсьсказати"})
+	require.True(t, out[0].HasPosTag("hashtag"))
+}
+func TestUkrainianTagger_TaggingWithDots(t *testing.T) {
+	// full abbr readings need dict; number still tags
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"300"})
+	require.True(t, out[0].HasPosTag("number"))
+}
+func TestUkrainianTagger_ProperNameAllCaps(t *testing.T) { t.Skip("unimplemented: all-caps names") }
+func TestUkrainianTagger_CompoundNumr(t *testing.T)      { t.Skip("unimplemented: compound numr") }
 func TestUkrainianTagger_DynamicTaggingNumericPair(t *testing.T) {
 	t.Skip("unimplemented: dynamic numeric pair")
 }
@@ -56,9 +71,9 @@ func TestUkrainianTagger_DynamicTaggingXShaped(t *testing.T) {
 func TestUkrainianTagger_DynamicTaggingPrefixes(t *testing.T) {
 	t.Skip("unimplemented: prefixes")
 }
-func TestUkrainianTagger_NameSuffix(t *testing.T)          { t.Skip("unimplemented: name suffix") }
-func TestUkrainianTagger_HypenAndQuote(t *testing.T)       { t.Skip("unimplemented: hyphen/quote") }
-func TestUkrainianTagger_HypenPrefixes(t *testing.T)       { t.Skip("unimplemented: hyphen prefixes") }
+func TestUkrainianTagger_NameSuffix(t *testing.T)    { t.Skip("unimplemented: name suffix") }
+func TestUkrainianTagger_HypenAndQuote(t *testing.T) { t.Skip("unimplemented: hyphen/quote") }
+func TestUkrainianTagger_HypenPrefixes(t *testing.T) { t.Skip("unimplemented: hyphen prefixes") }
 func TestUkrainianTagger_DynamicTaggingFixedParts(t *testing.T) {
 	t.Skip("unimplemented: fixed parts")
 }
