@@ -1229,5 +1229,31 @@
       <message>Jargon; name the minimal platform capabilities instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_COMPLICATED_SUBSYSTEM" name="complicated subsystem soft picky">
+      <pattern>
+        <token>complicated</token>
+        <token>subsystem</token>
+      </pattern>
+      <message>Jargon; name the specialized domain ownership instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLATFORM_AS_A_PRODUCT" name="platform as a product soft picky">
+      <pattern>
+        <token>platform</token>
+        <token>as</token>
+        <token>a</token>
+        <token>product</token>
+      </pattern>
+      <message>Jargon; name platform users, roadmap, and SLAs instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INVERSE_CONWAY" name="inverse conway soft picky">
+      <pattern>
+        <token>inverse</token>
+        <token>conway</token>
+      </pattern>
+      <message>Jargon; name the org-structure change and target architecture.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -264,3 +264,6 @@ hand over hand	RB
 end to end	RB
 side to side	RB
 Carson City	NNP
+Sacramento California	NNP
+peer to peer	RB
+point to point	RB

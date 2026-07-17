@@ -2031,4 +2031,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MICROK8S" name="immunize microk8s">
+    <pattern>
+      <token>microk8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MICROK8S_CAPS" name="immunize MicroK8s">
+    <pattern>
+      <token>MicroK8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3S" name="immunize k3s">
+    <pattern>
+      <token>k3s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3S_CAPS" name="immunize K3s">
+    <pattern>
+      <token>K3s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KIND" name="immunize kind">
+    <pattern>
+      <token>kind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KIND_CAPS" name="immunize Kind">
+    <pattern>
+      <token>Kind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

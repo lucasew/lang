@@ -5587,6 +5587,76 @@
       <message>Did you mean "estimate"?</message>
       <short>estamate</short>
     </rule>
+    <rule id="EN_SOFT_ERROR_MISS" name="eror soft">
+      <pattern>
+        <token>eror</token>
+      </pattern>
+      <message>Did you mean "error"?</message>
+      <short>eror</short>
+    </rule>
+    <rule id="EN_SOFT_ERRORS_MISS" name="erors soft">
+      <pattern>
+        <token>erors</token>
+      </pattern>
+      <message>Did you mean "errors"?</message>
+      <short>erors</short>
+    </rule>
+    <rule id="EN_SOFT_ESSENTIALLY_MISS" name="essencialy soft">
+      <pattern>
+        <token>essencialy</token>
+      </pattern>
+      <message>Did you mean "essentially"?</message>
+      <short>essencialy</short>
+    </rule>
+    <rule id="EN_SOFT_ESTABLISHED_MISS" name="estabilished soft">
+      <pattern>
+        <token>estabilished</token>
+      </pattern>
+      <message>Did you mean "established"?</message>
+      <short>estabilished</short>
+    </rule>
+    <rule id="EN_SOFT_ESTIMATION_MISS" name="estamation soft">
+      <pattern>
+        <token>estamation</token>
+      </pattern>
+      <message>Did you mean "estimation"?</message>
+      <short>estamation</short>
+    </rule>
+    <rule id="EN_SOFT_EXAGGERATED_MISS" name="exagerated soft">
+      <pattern>
+        <token>exagerated</token>
+      </pattern>
+      <message>Did you mean "exaggerated"?</message>
+      <short>exagerated</short>
+    </rule>
+    <rule id="EN_SOFT_EXAMINE_MISS" name="examinate soft">
+      <pattern>
+        <token>examinate</token>
+      </pattern>
+      <message>Did you mean "examine"?</message>
+      <short>examinate</short>
+    </rule>
+    <rule id="EN_SOFT_IGNORED_MISS" name="egnored soft">
+      <pattern>
+        <token>egnored</token>
+      </pattern>
+      <message>Did you mean "ignored"?</message>
+      <short>egnored</short>
+    </rule>
+    <rule id="EN_SOFT_EMBEDDED_MISS2" name="embbeded soft">
+      <pattern>
+        <token>embbeded</token>
+      </pattern>
+      <message>Did you mean "embedded"?</message>
+      <short>embbeded</short>
+    </rule>
+    <rule id="EN_SOFT_IMMEDIATELY_MISS3" name="emmediately soft">
+      <pattern>
+        <token>emmediately</token>
+      </pattern>
+      <message>Did you mean "immediately"?</message>
+      <short>emmediately</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
