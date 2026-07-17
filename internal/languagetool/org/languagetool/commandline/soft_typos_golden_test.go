@@ -279,6 +279,13 @@ func TestGolden_SoftContractionForms(t *testing.T) {
 		{"I wouldnt care.", "EN_SOFT_WOULDNT", "wouldn't"},
 		{"Youre welcome.", "EN_SOFT_YOURE", "you're"},
 		{"Theyre leaving.", "EN_SOFT_THEYRE", "they're"},
+		{"I wouldve gone.", "EN_SOFT_WOULDVE", "would've"},
+		{"She couldve won.", "EN_SOFT_COULDVE", "could've"},
+		{"You shouldve called.", "EN_SOFT_SHOULDVE", "should've"},
+		{"He mustve left.", "EN_SOFT_MUSTVE", "must've"},
+		{"It mightve worked.", "EN_SOFT_MIGHTVE", "might've"},
+		{"Thatll do.", "EN_SOFT_THATLL", "that'll"},
+		{"Itll rain soon.", "EN_SOFT_ITLL", "it'll"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

@@ -77,7 +77,7 @@ go run ./cmd/lang-server -port 8081 -public
 | Soft EN typos TSV | `testdata/spelling/en-typos.tsv` suggestions |
 | `--apply` suggestion rewrite | a/an, false friends, soft patterns |
 | `--ignore-words` CSV | suppress spelling matches |
-| Disambiguator | not yet |
+| Disambiguator | soft hybrid (multiwords + XML filter/replace/immunize); full pipeline later |
 | Full 1:1 goldens | growing |
 
 ## License

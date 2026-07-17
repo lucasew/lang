@@ -565,6 +565,55 @@
       <message>Did you mean "to back up"?</message>
       <short>backup</short>
     </rule>
+    <rule id="EN_SOFT_WOULDVE" name="wouldve">
+      <pattern>
+        <token regexp="yes">wouldve|Wouldve|wouldve</token>
+      </pattern>
+      <message>Did you mean "would've"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_COULDVE" name="couldve">
+      <pattern>
+        <token regexp="yes">couldve|Couldve</token>
+      </pattern>
+      <message>Did you mean "could've"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_SHOULDVE" name="shouldve">
+      <pattern>
+        <token regexp="yes">shouldve|Shouldve</token>
+      </pattern>
+      <message>Did you mean "should've"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_MUSTVE" name="mustve">
+      <pattern>
+        <token regexp="yes">mustve|Mustve</token>
+      </pattern>
+      <message>Did you mean "must've"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_MIGHTVE" name="mightve">
+      <pattern>
+        <token regexp="yes">mightve|Mightve</token>
+      </pattern>
+      <message>Did you mean "might've"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_THATLL" name="thatll">
+      <pattern>
+        <token regexp="yes">thatll|Thatll</token>
+      </pattern>
+      <message>Did you mean "that'll"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_ITLL" name="itll">
+      <pattern>
+        <token regexp="yes">itll|Itll</token>
+      </pattern>
+      <message>Did you mean "it'll"?</message>
+      <short>contraction</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

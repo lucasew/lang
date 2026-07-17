@@ -34,6 +34,11 @@ func TestGolden_PickyLevelExtras(t *testing.T) {
 		{"Supposably that is true.", "EN_SUPPOSABLY", "supposedly"},
 		{"I ordered an expresso.", "EN_EXPRESSO", "espresso"},
 		{"They tried to excape.", "EN_EXCAPE", "escape"},
+		{"That was nukeular power.", "EN_NUKEULAR", "nuclear"},
+		{"Go to the libary.", "EN_LIBARY", "library"},
+		{"A mischievious smile.", "EN_MISCHIEVOUS", "mischievous"},
+		{"Please orientate yourself.", "EN_ORIENTATE", "orient"},
+		{"Use preventative measures.", "EN_PREVENTATIVE", "preventive"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

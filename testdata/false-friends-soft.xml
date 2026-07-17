@@ -156,4 +156,61 @@
       <translation lang="en">point / reason</translation>
     </rule>
   </rulegroup>
+
+  <rulegroup id="SENSIBLE">
+    <rule>
+      <pattern lang="en">
+        <token>sensible</token>
+      </pattern>
+      <translation lang="es">prudente / razonable</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>sensible</token>
+      </pattern>
+      <translation lang="en">sensitive</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CONSTIPATED">
+    <rule>
+      <pattern lang="en">
+        <token>constipated</token>
+      </pattern>
+      <translation lang="fr">ayant une constipation</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>constipé</token>
+      </pattern>
+      <translation lang="en">constipated (medical) / also "blocked"</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PRESERVATIVE">
+    <rule>
+      <pattern lang="en">
+        <token>preservative</token>
+      </pattern>
+      <translation lang="fr">conservateur (alimentaire)</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>préservatif</token>
+      </pattern>
+      <translation lang="en">condom</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="EVENTUALLY">
+    <rule>
+      <pattern lang="en">
+        <token>eventually</token>
+      </pattern>
+      <translation lang="es">finalmente</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>eventualmente</token>
+      </pattern>
+      <translation lang="en">possibly / if necessary</translation>
+    </rule>
+  </rulegroup>
 </rules>

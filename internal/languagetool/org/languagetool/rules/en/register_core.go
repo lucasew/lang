@@ -105,6 +105,11 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 		{ID: "EN_SUPPOSABLY", Tokens: []string{"supposably"}, Message: "Did you mean 'supposedly'?", Suggestion: "supposedly"},
 		{ID: "EN_EXPRESSO", Tokens: []string{"expresso"}, Message: "Did you mean 'espresso'?", Suggestion: "espresso"},
 		{ID: "EN_EXCAPE", Tokens: []string{"excape"}, Message: "Did you mean 'escape'?", Suggestion: "escape"},
+		{ID: "EN_NUKEULAR", Tokens: []string{"nukeular"}, Message: "Did you mean 'nuclear'?", Suggestion: "nuclear"},
+		{ID: "EN_LIBARY", Tokens: []string{"libary"}, Message: "Did you mean 'library'?", Suggestion: "library"},
+		{ID: "EN_MISCHIEVOUS", Tokens: []string{"mischievious"}, Message: "Did you mean 'mischievous'?", Suggestion: "mischievous"},
+		{ID: "EN_ORIENTATE", Tokens: []string{"orientate"}, Message: "Prefer 'orient' in American English.", Suggestion: "orient"},
+		{ID: "EN_PREVENTATIVE", Tokens: []string{"preventative"}, Message: "Prefer 'preventive' in many style guides.", Suggestion: "preventive"},
 	})
 }
 
