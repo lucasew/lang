@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="nl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="NL_SOFT_ALS_OF" name="als of">
+      <pattern>
+        <token>als</token>
+        <token>of</token>
+      </pattern>
+      <message>Bedoelde u "alsof"?</message>
+      <short>als of</short>
+    </rule>
+  </category>
+</rules>

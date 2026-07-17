@@ -413,10 +413,11 @@ func SimpleWordRepeatChecker(ruleID string) SentenceChecker {
 			}
 			if prevTok != nil && prevTok.GetToken() == w {
 				out = append(out, LocalMatch{
-					FromPos: prevTok.GetStartPos(),
-					ToPos:   tok.GetEndPos(),
-					Message: "Word repetition",
-					RuleID:  ruleID,
+					FromPos:      prevTok.GetStartPos(),
+					ToPos:        tok.GetEndPos(),
+					Message:      "Word repetition",
+					ShortMessage: "Word repetition",
+					RuleID:       ruleID,
 				})
 			}
 			prevTok = tok
@@ -470,10 +471,11 @@ func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestio
 				continue
 			}
 			m := LocalMatch{
-				FromPos: tok.GetStartPos(),
-				ToPos:   tok.GetEndPos(),
-				Message: "Possible spelling mistake",
-				RuleID:  ruleID,
+				FromPos:      tok.GetStartPos(),
+				ToPos:        tok.GetEndPos(),
+				Message:      "Possible spelling mistake",
+				ShortMessage: "Spelling mistake",
+				RuleID:       ruleID,
 			}
 			if suggestions != nil {
 				if s, ok := suggestions[w]; ok {
@@ -513,17 +515,23 @@ func SimpleAvsAnChecker() SentenceChecker {
 			case "a":
 				if vowel {
 					out = append(out, LocalMatch{
-						FromPos: cur.GetStartPos(), ToPos: cur.GetEndPos(),
-						Message: "Use \"an\" before a vowel sound", RuleID: "EN_A_VS_AN",
-						Suggestions: []string{"an"},
+						FromPos:      cur.GetStartPos(),
+						ToPos:        cur.GetEndPos(),
+						Message:      "Use \"an\" before a vowel sound",
+						ShortMessage: "Wrong article",
+						RuleID:       "EN_A_VS_AN",
+						Suggestions:  []string{"an"},
 					})
 				}
 			case "an":
 				if !vowel {
 					out = append(out, LocalMatch{
-						FromPos: cur.GetStartPos(), ToPos: cur.GetEndPos(),
-						Message: "Use \"a\" before a consonant sound", RuleID: "EN_A_VS_AN",
-						Suggestions: []string{"a"},
+						FromPos:      cur.GetStartPos(),
+						ToPos:        cur.GetEndPos(),
+						Message:      "Use \"a\" before a consonant sound",
+						ShortMessage: "Wrong article",
+						RuleID:       "EN_A_VS_AN",
+						Suggestions:  []string{"a"},
 					})
 				}
 			}

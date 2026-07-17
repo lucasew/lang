@@ -217,6 +217,13 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		}
 		rm := NewRemoteRuleMatch(ruleID, msg, ctx, from-start, from, to-from)
 		rm.ShortMessage = m.ShortMessage
+		catID, catName, issue, short := SoftRuleMeta(ruleID)
+		rm.CategoryID = catID
+		rm.Category = catName
+		rm.LocQualityIssueType = issue
+		if rm.ShortMessage == "" {
+			rm.ShortMessage = short
+		}
 		rm.Replacements = append([]string(nil), m.Suggestions...)
 		out = append(out, *rm)
 	}

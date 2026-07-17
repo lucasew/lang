@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="pl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="PL_SOFT_W_W" name="w w">
+      <pattern>
+        <token>w</token>
+        <token>w</token>
+      </pattern>
+      <message>Możliwe powtórzenie "w".</message>
+      <short>w w</short>
+    </rule>
+  </category>
+</rules>
