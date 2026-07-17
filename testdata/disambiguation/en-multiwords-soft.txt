@@ -417,3 +417,6 @@ Marble Corridor RegionNNP
 Limestone Corridor RegionNNP
 Sandstone Corridor RegionNNP
 Slate Corridor RegionNNP
+Chalk Corridor RegionNNP
+Clay Corridor RegionNNP
+Flint Corridor RegionNNP

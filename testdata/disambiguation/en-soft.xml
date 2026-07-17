@@ -3867,4 +3867,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_AURORA" name="immunize aurora">
+    <pattern>
+      <token>aurora</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AURORA_CAPS" name="immunize Aurora">
+    <pattern>
+      <token>Aurora</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FSX" name="immunize fsx">
+    <pattern>
+      <token>fsx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FSX_CAPS" name="immunize FSx">
+    <pattern>
+      <token>FSx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STORAGEGATEWAY" name="immunize storagegateway">
+    <pattern>
+      <token>storagegateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STORAGEGATEWAY_CAPS" name="immunize StorageGateway">
+    <pattern>
+      <token>StorageGateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -9157,6 +9157,76 @@
       <message>Did you mean "definition"?</message>
       <short>defination</short>
     </rule>
+    <rule id="EN_SOFT_THROUGH_MISS" name="throught soft">
+      <pattern>
+        <token>throught</token>
+      </pattern>
+      <message>Did you mean "through"?</message>
+      <short>throught</short>
+    </rule>
+    <rule id="EN_SOFT_CRITICISMS_MISS" name="critisisms soft">
+      <pattern>
+        <token>critisisms</token>
+      </pattern>
+      <message>Did you mean "criticisms"?</message>
+      <short>critisisms</short>
+    </rule>
+    <rule id="EN_SOFT_DECEIVES_MISS" name="decieves soft">
+      <pattern>
+        <token>decieves</token>
+      </pattern>
+      <message>Did you mean "deceives"?</message>
+      <short>decieves</short>
+    </rule>
+    <rule id="EN_SOFT_DECEIVING_MISS" name="decieving soft">
+      <pattern>
+        <token>decieving</token>
+      </pattern>
+      <message>Did you mean "deceiving"?</message>
+      <short>decieving</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINITIONS_MISS" name="definations soft">
+      <pattern>
+        <token>definations</token>
+      </pattern>
+      <message>Did you mean "definitions"?</message>
+      <short>definations</short>
+    </rule>
+    <rule id="EN_SOFT_DEPENDENT_MISS" name="dependant soft">
+      <pattern>
+        <token>dependant</token>
+      </pattern>
+      <message>Did you mean "dependent"?</message>
+      <short>dependant</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPOINTMENT_MISS" name="disapointment soft">
+      <pattern>
+        <token>disapointment</token>
+      </pattern>
+      <message>Did you mean "disappointment"?</message>
+      <short>disapointment</short>
+    </rule>
+    <rule id="EN_SOFT_LIAISED_MISS" name="liased soft">
+      <pattern>
+        <token>liased</token>
+      </pattern>
+      <message>Did you mean "liaised"?</message>
+      <short>liased</short>
+    </rule>
+    <rule id="EN_SOFT_MILLENNIUMS_MISS" name="milleniums soft">
+      <pattern>
+        <token>milleniums</token>
+      </pattern>
+      <message>Did you mean "millenniums"?</message>
+      <short>milleniums</short>
+    </rule>
+    <rule id="EN_SOFT_MISCHIEVOUSLY_MISS" name="mischieviously soft">
+      <pattern>
+        <token>mischieviously</token>
+      </pattern>
+      <message>Did you mean "mischievously"?</message>
+      <short>mischieviously</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

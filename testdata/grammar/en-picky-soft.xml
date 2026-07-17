@@ -2483,5 +2483,27 @@
       <message>Jargon; name a directed team dependency relationship instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CONFORMIST" name="conformist soft picky">
+      <pattern>
+        <token>conformist</token>
+      </pattern>
+      <message>Jargon; name adopting an upstream model unchanged instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARTNERSHIP" name="partnership soft picky">
+      <pattern>
+        <token>partnership</token>
+      </pattern>
+      <message>Jargon; name a mutual model-alignment relationship instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEPARATE_WAYS" name="separate ways soft picky">
+      <pattern>
+        <token>separate</token>
+        <token>ways</token>
+      </pattern>
+      <message>Jargon; name abandoning shared model integration instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
