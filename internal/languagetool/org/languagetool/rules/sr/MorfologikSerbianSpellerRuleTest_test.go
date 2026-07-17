@@ -1,17 +1,22 @@
 package sr
 
-// Twin of languagetool-language-modules/sr/src/test/java/org/languagetool/rules/sr/MorfologikSerbianSpellerRuleTest.java
+// Twin of MorfologikSerbianSpellerRuleTest (Java has no @Test).
+// Surface smoke via ekavian/jekavian constructors from sibling packages.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sr/ekavian"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sr/jekavian"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/rules/sr/MorfologikSerbianSpellerRuleTest.java :: MorfologikSerbianSpellerRuleTest (no @Test)
+// Port of MorfologikSerbianSpellerRuleTest (no @Test)
 func TestMorfologikSerbianSpellerRule_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/sr/src/test/java/org/languagetool/rules/sr/MorfologikSerbianSpellerRuleTest.java")
+	e := ekavian.NewMorfologikEkavianSpellerRule()
+	require.Equal(t, ekavian.MorfologikEkavianSpellerRuleID, e.GetID())
+	require.Equal(t, ekavian.EkavianSpellerDict, e.GetFileName())
+
+	j := jekavian.NewMorfologikJekavianSpellerRule()
+	require.Equal(t, jekavian.MorfologikJekavianSpellerRuleID, j.GetID())
+	require.Equal(t, jekavian.JekavianSpellerDict, j.GetFileName())
 }

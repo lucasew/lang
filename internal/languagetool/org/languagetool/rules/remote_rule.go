@@ -73,6 +73,68 @@ func (r *RemoteRule) MatchRemote(sentences []*languagetool.AnalyzedSentence) []*
 	return res.Matches
 }
 
+// SuppressMisspelled ports RemoteRule.suppressMisspelled:
+// - suppressMisspelledMatch: drop match if any suggestion is misspelled
+// - suppressMisspelledSuggestions: keep only correctly spelled suggestions; drop if empty
+// isMisspelled may be nil (treat all suggestions as correctly spelled).
+func (r *RemoteRule) SuppressMisspelled(matches []*RuleMatch, isMisspelled func(string) bool) []*RuleMatch {
+	if r == nil || len(matches) == 0 {
+		return matches
+	}
+	if isMisspelled == nil {
+		isMisspelled = func(string) bool { return false }
+	}
+	var out []*RuleMatch
+	for _, m := range matches {
+		if m == nil {
+			continue
+		}
+		id := ""
+		if g, ok := m.Rule.(interface{ GetID() string }); ok {
+			id = g.GetID()
+		}
+		sugs := m.GetSuggestedReplacements()
+		// match suppression: drop if not all suggestions are correctly spelled
+		// Java Pattern.matcher(id).matches() → full-string match
+		if regexFullMatch(r.SuppressMisspelledMatch, id) {
+			allOK := true
+			for _, s := range sugs {
+				if isMisspelled(s) {
+					allOK = false
+					break
+				}
+			}
+			if !allOK {
+				continue
+			}
+		}
+		// suggestion filtering
+		if regexFullMatch(r.SuppressMisspelledSugg, id) {
+			var kept []string
+			for _, s := range sugs {
+				if !isMisspelled(s) {
+					kept = append(kept, s)
+				}
+			}
+			if len(kept) == 0 {
+				continue
+			}
+			m.SetSuggestedReplacements(kept)
+		}
+		out = append(out, m)
+	}
+	return out
+}
+
+// regexFullMatch mirrors Java Matcher.matches() (entire string).
+func regexFullMatch(re *regexp.Regexp, s string) bool {
+	if re == nil {
+		return false
+	}
+	loc := re.FindStringIndex(s)
+	return loc != nil && loc[0] == 0 && loc[1] == len(s)
+}
+
 func boolOpt(m map[string]string, key string, def bool) bool {
 	v, ok := m[key]
 	if !ok {
