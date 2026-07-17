@@ -1385,5 +1385,30 @@
       <message>Jargon; name the detection metric (MTTD) concretely.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GAME_DAY" name="game day soft picky">
+      <pattern>
+        <token>game</token>
+        <token>day</token>
+      </pattern>
+      <message>Jargon; name the reliability exercise instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TABLETOP_EXERCISE" name="tabletop exercise soft picky">
+      <pattern>
+        <token>tabletop</token>
+        <token>exercise</token>
+      </pattern>
+      <message>Jargon; name the scenario walkthrough instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DISASTER_RECOVERY_DRILL" name="disaster recovery drill soft picky">
+      <pattern>
+        <token>disaster</token>
+        <token>recovery</token>
+        <token>drill</token>
+      </pattern>
+      <message>Jargon; name the recovery test objectives instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

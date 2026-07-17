@@ -282,3 +282,6 @@ out of band	RB
 San Antonio Texas	NNP
 New Orleans Louisiana	NNP
 up to date	JJ
+Oklahoma City Oklahoma	NNP
+day to day	RB
+month to month	RB

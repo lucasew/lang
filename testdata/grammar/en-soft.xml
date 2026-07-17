@@ -6007,6 +6007,76 @@
       <message>Did you mean "foreigners"?</message>
       <short>foriegners</short>
     </rule>
+    <rule id="EN_SOFT_INSTEAD_MISS" name="insted soft">
+      <pattern>
+        <token>insted</token>
+      </pattern>
+      <message>Did you mean "instead"?</message>
+      <short>insted</short>
+    </rule>
+    <rule id="EN_SOFT_INSTEAD_MISS2" name="intead soft">
+      <pattern>
+        <token>intead</token>
+      </pattern>
+      <message>Did you mean "instead"?</message>
+      <short>intead</short>
+    </rule>
+    <rule id="EN_SOFT_INTEGRATE_MISS" name="intergrate soft">
+      <pattern>
+        <token>intergrate</token>
+      </pattern>
+      <message>Did you mean "integrate"?</message>
+      <short>intergrate</short>
+    </rule>
+    <rule id="EN_SOFT_INTEGRATION_MISS" name="intergration soft">
+      <pattern>
+        <token>intergration</token>
+      </pattern>
+      <message>Did you mean "integration"?</message>
+      <short>intergration</short>
+    </rule>
+    <rule id="EN_SOFT_INTERMITTENT_MISS" name="intermitent soft">
+      <pattern>
+        <token>intermitent</token>
+      </pattern>
+      <message>Did you mean "intermittent"?</message>
+      <short>intermitent</short>
+    </rule>
+    <rule id="EN_SOFT_INTERNAL_MISS" name="internel soft">
+      <pattern>
+        <token>internel</token>
+      </pattern>
+      <message>Did you mean "internal"?</message>
+      <short>internel</short>
+    </rule>
+    <rule id="EN_SOFT_INITIATIVE_MISS" name="initative soft">
+      <pattern>
+        <token>initative</token>
+      </pattern>
+      <message>Did you mean "initiative"?</message>
+      <short>initative</short>
+    </rule>
+    <rule id="EN_SOFT_INITIALIZED_MISS" name="initalized soft">
+      <pattern>
+        <token>initalized</token>
+      </pattern>
+      <message>Did you mean "initialized"?</message>
+      <short>initalized</short>
+    </rule>
+    <rule id="EN_SOFT_INQUIRIES_MISS" name="inquieries soft">
+      <pattern>
+        <token>inquieries</token>
+      </pattern>
+      <message>Did you mean "inquiries"?</message>
+      <short>inquieries</short>
+    </rule>
+    <rule id="EN_SOFT_INSTALLATIONS_MISS" name="instalations soft">
+      <pattern>
+        <token>instalations</token>
+      </pattern>
+      <message>Did you mean "installations"?</message>
+      <short>instalations</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

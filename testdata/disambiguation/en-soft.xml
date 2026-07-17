@@ -2247,4 +2247,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MINIO" name="immunize minio">
+    <pattern>
+      <token>minio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIO_CAPS" name="immunize MinIO">
+    <pattern>
+      <token>MinIO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEAWEEDFS" name="immunize seaweedfs">
+    <pattern>
+      <token>seaweedfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEAWEEDFS_CAPS" name="immunize SeaweedFS">
+    <pattern>
+      <token>SeaweedFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GARAGE" name="immunize garage">
+    <pattern>
+      <token>garage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GARAGE_CAPS" name="immunize Garage">
+    <pattern>
+      <token>Garage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
