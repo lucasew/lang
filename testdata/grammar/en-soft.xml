@@ -13077,6 +13077,76 @@
       <message>Did you mean "retrybackoff"?</message>
       <short>retrybackof</short>
     </rule>
+    <rule id="EN_SOFT_HORIZONTAL_MISS" name="horizonal soft">
+      <pattern>
+        <token>horizonal</token>
+      </pattern>
+      <message>Did you mean "horizontal"?</message>
+      <short>horizonal</short>
+    </rule>
+    <rule id="EN_SOFT_VERTICALSCALING_MISS" name="verticalscalng soft">
+      <pattern>
+        <token>verticalscalng</token>
+      </pattern>
+      <message>Did you mean "verticalscaling"?</message>
+      <short>verticalscalng</short>
+    </rule>
+    <rule id="EN_SOFT_HORIZONTALSCALING_MISS" name="horizontalscalng soft">
+      <pattern>
+        <token>horizontalscalng</token>
+      </pattern>
+      <message>Did you mean "horizontalscaling"?</message>
+      <short>horizontalscalng</short>
+    </rule>
+    <rule id="EN_SOFT_DEADLETTERQUEUE_MISS" name="deadletterq soft">
+      <pattern>
+        <token>deadletterq</token>
+      </pattern>
+      <message>Did you mean "deadletterqueue"?</message>
+      <short>deadletterq</short>
+    </rule>
+    <rule id="EN_SOFT_INITCONTAINER_MISS" name="initcontainr soft">
+      <pattern>
+        <token>initcontainr</token>
+      </pattern>
+      <message>Did you mean "initcontainer"?</message>
+      <short>initcontainr</short>
+    </rule>
+    <rule id="EN_SOFT_CONFIGMAP_MISS" name="configmapp soft">
+      <pattern>
+        <token>configmapp</token>
+      </pattern>
+      <message>Did you mean "configmap"?</message>
+      <short>configmapp</short>
+    </rule>
+    <rule id="EN_SOFT_SECRETSTORE_MISS" name="secretstoree soft">
+      <pattern>
+        <token>secretstoree</token>
+      </pattern>
+      <message>Did you mean "secretstore"?</message>
+      <short>secretstoree</short>
+    </rule>
+    <rule id="EN_SOFT_PODDISRUPTION_MISS" name="poddisrupton soft">
+      <pattern>
+        <token>poddisrupton</token>
+      </pattern>
+      <message>Did you mean "poddisruption"?</message>
+      <short>poddisrupton</short>
+    </rule>
+    <rule id="EN_SOFT_PERSISTENTVOLUME_MISS" name="persistenvolume soft">
+      <pattern>
+        <token>persistenvolume</token>
+      </pattern>
+      <message>Did you mean "persistentvolume"?</message>
+      <short>persistenvolume</short>
+    </rule>
+    <rule id="EN_SOFT_STORAGECLASS_MISS" name="storageclas soft">
+      <pattern>
+        <token>storageclas</token>
+      </pattern>
+      <message>Did you mean "storageclass"?</message>
+      <short>storageclas</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

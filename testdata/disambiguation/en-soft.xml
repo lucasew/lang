@@ -5883,4 +5883,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ELYSIA" name="immunize elysia">
+    <pattern>
+      <token>elysia</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELYSIA_CAPS" name="immunize Elysia">
+    <pattern>
+      <token>Elysia</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SVELTEKIT" name="immunize sveltekit">
+    <pattern>
+      <token>sveltekit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SVELTEKIT_CAPS" name="immunize SvelteKit">
+    <pattern>
+      <token>SvelteKit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTRO" name="immunize astro">
+    <pattern>
+      <token>astro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ASTRO_CAPS" name="immunize Astro">
+    <pattern>
+      <token>Astro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

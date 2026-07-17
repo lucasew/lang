@@ -3773,5 +3773,30 @@
       <message>Jargon; name growth from more seats on existing accounts instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_REVENUE_RETENTION" name="gross revenue retention soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>revenue</token>
+        <token>retention</token>
+      </pattern>
+      <message>Jargon; name recurring revenue kept before expansion credits instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LTV_CAC" name="ltv cac soft picky">
+      <pattern>
+        <token>ltv</token>
+        <token>cac</token>
+      </pattern>
+      <message>Jargon; name lifetime value over acquisition cost ratio instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAYBACK_MONTHS" name="payback months soft picky">
+      <pattern>
+        <token>payback</token>
+        <token>months</token>
+      </pattern>
+      <message>Jargon; name months needed to recover acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
