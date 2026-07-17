@@ -557,6 +557,18 @@ def vendor_core_fixtures() -> int:
     if ff.is_file():
         copy_file(ff, OUT / "false-friends.xml")
         n += 1
+        # Soft FF loader cannot use external DTD; write a stripped copy.
+        raw = ff.read_text(encoding="utf-8", errors="replace")
+        raw = re.sub(r"<\?xml-stylesheet[^?]*\?>", "", raw)
+        if "<!DOCTYPE" in raw:
+            i = raw.index("<!DOCTYPE")
+            j = raw.find(">", i)
+            if j >= 0:
+                raw = raw[:i] + raw[j + 1 :]
+        nodtd = OUT / "false-friends-nodtd.xml"
+        nodtd.write_text(raw, encoding="utf-8")
+        print(f"  write {nodtd.relative_to(ROOT)}")
+        n += 1
     return n
 
 

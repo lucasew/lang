@@ -129,3 +129,29 @@ func TestGolden_ApplySuggestions_FalseFriend(t *testing.T) {
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	require.Equal(t, "A Geschenk for you.", strings.TrimSpace(out.String()))
 }
+
+
+func TestGolden_FalseFriends_UpstreamVendored(t *testing.T) {
+	// Discover prefers vendored upstream false-friends; exercise official GIFT pair.
+	ff := DiscoverFalseFriendsFile(nil)
+	if ff == "" || !strings.Contains(ff, "upstream") {
+		t.Skip("vendored upstream false-friends not discovered")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "A gift for you.", &CommandLineOptions{
+		Language:         "en",
+		MotherTongue:     "de",
+		FalseFriendsFile: ff,
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "GIFT" || strings.Contains(strings.ToLower(f.Message), "geschenk") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected GIFT false-friend from upstream file %s: %+v", ff, findings)
+}

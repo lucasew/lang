@@ -50,7 +50,8 @@ func DiscoverGrammarDir(opts *CommandLineOptions) string {
 	return WalkUpFind("", filepath.Join("testdata", "grammar"))
 }
 
-// DiscoverFalseFriendsFile finds soft false-friends XML via env/data-dir/walk-up.
+// DiscoverFalseFriendsFile finds false-friends XML via env/data-dir/walk-up.
+// Prefers vendored upstream (DOCTYPE-stripped) over the legacy soft subset.
 func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 	if p := resolveFalseFriendsFile(opts); p != "" {
 		if _, err := os.Stat(p); err == nil {
@@ -60,7 +61,17 @@ func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 			return p
 		}
 	}
-	return WalkUpFind("", filepath.Join("testdata", "false-friends-soft.xml"))
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", "false-friends-nodtd.xml"),
+		filepath.Join("testdata", "upstream", "false-friends.xml"),
+		filepath.Join("testdata", "false-friends-soft.xml"),
+		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources", "org", "languagetool", "rules", "false-friends.xml"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
 }
 
 // DiscoverEnglishUSDict finds en_US.dict for the binary Morfologik speller.
