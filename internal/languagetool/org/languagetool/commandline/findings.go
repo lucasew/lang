@@ -18,10 +18,12 @@ type Finding struct {
 	Message    string `json:"message"`
 	Location   string `json:"location"`
 	Suggestion string `json:"suggestion,omitempty"`
+	// URL is a soft community documentation link for the rule.
+	URL string `json:"url,omitempty"`
 	// Extra fields for golden precision (optional for consumers).
-	Offset int      `json:"offset,omitempty"`
-	Length int      `json:"length,omitempty"`
-	File   string   `json:"file,omitempty"`
+	Offset      int      `json:"offset,omitempty"`
+	Length      int      `json:"length,omitempty"`
+	File        string   `json:"file,omitempty"`
 	Suggestions []string `json:"suggestions,omitempty"`
 }
 
@@ -56,6 +58,7 @@ func MatchesToFindings(matches []*rules.RuleMatch, text, filename string) []Find
 			Message:     m.GetMessage(),
 			Location:    loc,
 			Suggestion:  sug,
+			URL:         languagetool.SoftRuleURL(id, ""),
 			Offset:      m.FromPos,
 			Length:      m.ToPos - m.FromPos,
 			File:        filename,

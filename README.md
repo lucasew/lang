@@ -63,6 +63,8 @@ go run ./cmd/lang-server -port 8081 -public
 | English speller (`MORFOLOGIK_RULE_EN_US`) | done (suggestions later) |
 | Pattern XML + POS/inflected match | done (filters/unify/AI incomplete skipped) |
 | `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
+| Layout (sentence/punct/paragraph whitespace, unpaired, uppercase) | done |
+| Soft EN patterns + style (long sentence/paragraph) | growing goldens |
 | Disambiguator | not yet |
 | Full 1:1 goldens | growing |
 

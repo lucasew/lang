@@ -55,6 +55,7 @@ func MatchesAsSARIF(matches []*rules.RuleMatch, text, filename string) string {
 		Name             string `json:"name,omitempty"`
 		ShortDescription *msg   `json:"shortDescription,omitempty"`
 		FullDescription  *msg   `json:"fullDescription,omitempty"`
+		HelpURI          string `json:"helpUri,omitempty"`
 	}
 	type driver struct {
 		Name  string          `json:"name"`
@@ -90,7 +91,7 @@ func MatchesAsSARIF(matches []*rules.RuleMatch, text, filename string) string {
 		}
 		if _, ok := ruleSeen[id]; !ok && id != "" {
 			ruleSeen[id] = struct{}{}
-			rd := reportingDesc{ID: id, Name: desc}
+			rd := reportingDesc{ID: id, Name: desc, HelpURI: languagetool.SoftRuleURL(id, "")}
 			if short != "" {
 				rd.ShortDescription = &msg{Text: short}
 			}

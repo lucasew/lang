@@ -18,6 +18,7 @@ func TestMatchesAsSARIF(t *testing.T) {
 	require.Contains(t, s, "EN_A_VS_AN")
 	require.Contains(t, s, `"level":"error"`)
 	require.Contains(t, s, `"type":"grammar"`)
+	require.Contains(t, s, `"helpUri":"https://community.languagetool.org/rule/show/EN_A_VS_AN?lang=en"`)
 	var raw map[string]any
 	require.NoError(t, json.Unmarshal([]byte(s), &raw))
 }

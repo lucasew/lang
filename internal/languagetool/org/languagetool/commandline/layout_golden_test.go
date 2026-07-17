@@ -161,3 +161,19 @@ func TestGolden_WhitespacePunctuation_Percent(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_FindingIncludesRuleURL(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "This  has double spaces.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "WHITESPACE_RULE" {
+			found = true
+			require.Contains(t, f.URL, "community.languagetool.org/rule/show/WHITESPACE_RULE")
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
