@@ -163,21 +163,53 @@ def serialize_token(tok: ET.Element) -> dict:
     return d
 
 
+def collapse_or(or_el: ET.Element) -> dict | None:
+    """Collapse a simple <or> of plain surface tokens into one soft regexp token."""
+    alts: list[str] = []
+    for t in or_el:
+        if local(t.tag) != "token":
+            return None
+        # plain surface only inside or (no attrs/exceptions/postag)
+        if list(t) or t.attrib:
+            return None
+        s = (t.text or "").strip()
+        if not s or "&" in s:
+            return None
+        alts.append(s)
+    if len(alts) < 2:
+        return None
+    # Escape for RE; join as non-capturing alternation
+    body = "|".join(re.escape(a) for a in alts)
+    return {"text": body, "regexp": "yes"}
+
+
 def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
     toks: list[dict] = []
+
+    def add_child(child: ET.Element) -> bool:
+        tag = local(child.tag)
+        if tag == "token":
+            if not token_is_soft(child):
+                return False
+            toks.append(serialize_token(child))
+            return True
+        if tag == "or":
+            collapsed = collapse_or(child)
+            if collapsed is None:
+                return False
+            toks.append(collapsed)
+            return True
+        return False
+
     for child in pattern:
         tag = local(child.tag)
         if tag == "marker":
             for t in child:
-                if not token_is_soft(t):
+                if not add_child(t):
                     return None
-                toks.append(serialize_token(t))
             continue
-        if tag != "token":
+        if not add_child(child):
             return None
-        if not token_is_soft(child):
-            return None
-        toks.append(serialize_token(child))
     if not toks:
         return None
     return toks

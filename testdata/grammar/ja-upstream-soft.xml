@@ -2767,6 +2767,15 @@
       <message>誤変換です。<suggestion>一巻の終わり</suggestion>の間違いです。</message>
       <short>IKKANNNOOWARI</short>
     </rule>
+    <rule id="JISINN" name="自身">
+      <pattern>
+        <token>自身</token>
+        <token regexp="yes">が|を</token>
+        <token regexp="yes">ない|持つ</token>
+      </pattern>
+      <message>誤変換です。<suggestion>自信</suggestion>の間違いです。</message>
+      <short>JISINN</short>
+    </rule>
     <rule id="JISINNKAJOU" name="自身過剰">
       <pattern>
         <token skip="2">自身</token>
@@ -4730,6 +4739,14 @@
       </pattern>
       <message>したがっては文の最後にきません。<suggestion>したがって</suggestion>「。」を削除して、文を続けるのが正しいです</message>
       <short>SITAGATTE_END</short>
+    </rule>
+    <rule id="START2" name="スタート2">
+      <pattern>
+        <token regexp="yes">ー|－</token>
+        <token regexp="yes">っ|ゃ|ゅ|ょ</token>
+      </pattern>
+      <message>「ー」の後に小さい文字はきません。「<suggestion>ーや</suggestion>」の間違いではありませんか。</message>
+      <short>START2</short>
     </rule>
     <rule id="TAAINAI" name="他愛ない">
       <pattern>

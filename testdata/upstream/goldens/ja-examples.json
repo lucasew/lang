@@ -3316,6 +3316,12 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "JISINN",
+      "text": "自身がない。",
+      "suggestion": "自信",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "JISINNKAJOU",
       "text": "自身過剰。",
       "suggestion": "自信過剰",
@@ -4087,6 +4093,12 @@
       "rule": "SITYUUNIKATUWOERU",
       "text": "死中に活を得る。",
       "suggestion": "死中に活を求める",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "START2",
+      "text": "たまーゃ",
+      "suggestion": "ーや",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
