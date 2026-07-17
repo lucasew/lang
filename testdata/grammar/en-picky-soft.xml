@@ -2875,5 +2875,29 @@
       <message>Jargon; name a visual pull-based work board instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_THROUGHPUT_CHART" name="throughput chart soft picky">
+      <pattern>
+        <token>throughput</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name items-completed-over-time tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FLOW_EFFICIENCY" name="flow efficiency soft picky">
+      <pattern>
+        <token>flow</token>
+        <token>efficiency</token>
+      </pattern>
+      <message>Jargon; name active-work versus wait-time ratio instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SERVICE_LEVEL" name="service level soft picky">
+      <pattern>
+        <token>service</token>
+        <token>level</token>
+      </pattern>
+      <message>Jargon; name a delivery reliability target instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

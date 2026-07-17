@@ -4443,4 +4443,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_FREERTOS" name="immunize freertos">
+    <pattern>
+      <token>freertos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FREERTOS_CAPS" name="immunize FreeRTOS">
+    <pattern>
+      <token>FreeRTOS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTJOBSDATAPLANE" name="immunize iotjobsdataplane">
+    <pattern>
+      <token>iotjobsdataplane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTJOBSDATAPLANE_CAPS" name="immunize IoTJobsDataPlane">
+    <pattern>
+      <token>IoTJobsDataPlane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSECUREDTUNNELING" name="immunize iotsecuredtunneling">
+    <pattern>
+      <token>iotsecuredtunneling</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSECUREDTUNNELING_CAPS" name="immunize IoTSecureTunneling">
+    <pattern>
+      <token>IoTSecureTunneling</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

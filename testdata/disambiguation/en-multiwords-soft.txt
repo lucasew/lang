@@ -465,3 +465,6 @@ Chalk Peak RegionNNP
 Clay Peak RegionNNP
 Flint Peak RegionNNP
 Shale Peak RegionNNP
+Gneiss Peak RegionNNP
+Schist Peak RegionNNP
+Quartzite Peak RegionNNP

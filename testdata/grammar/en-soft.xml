@@ -10277,6 +10277,76 @@
       <message>Did you mean "businessmen"?</message>
       <short>buisnessmen</short>
     </rule>
+    <rule id="EN_SOFT_CHOSEN_MISS2" name="choisen soft">
+      <pattern>
+        <token>choisen</token>
+      </pattern>
+      <message>Did you mean "chosen"?</message>
+      <short>choisen</short>
+    </rule>
+    <rule id="EN_SOFT_WRITING_MISS2" name="writeing soft">
+      <pattern>
+        <token>writeing</token>
+      </pattern>
+      <message>Did you mean "writing"?</message>
+      <short>writeing</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIVED_MISS2" name="receievd soft">
+      <pattern>
+        <token>receievd</token>
+      </pattern>
+      <message>Did you mean "received"?</message>
+      <short>receievd</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCING_MISS" name="annoucing soft">
+      <pattern>
+        <token>annoucing</token>
+      </pattern>
+      <message>Did you mean "announcing"?</message>
+      <short>annoucing</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCER_MISS" name="annoucer soft">
+      <pattern>
+        <token>annoucer</token>
+      </pattern>
+      <message>Did you mean "announcer"?</message>
+      <short>annoucer</short>
+    </rule>
+    <rule id="EN_SOFT_ADDRESSES_MISS2" name="adressses soft">
+      <pattern>
+        <token>adressses</token>
+      </pattern>
+      <message>Did you mean "addresses"?</message>
+      <short>adressses</short>
+    </rule>
+    <rule id="EN_SOFT_IMPORTANT_MISS" name="importnat soft">
+      <pattern>
+        <token>importnat</token>
+      </pattern>
+      <message>Did you mean "important"?</message>
+      <short>importnat</short>
+    </rule>
+    <rule id="EN_SOFT_POSSIBLE_MISS" name="posible soft">
+      <pattern>
+        <token>posible</token>
+      </pattern>
+      <message>Did you mean "possible"?</message>
+      <short>posible</short>
+    </rule>
+    <rule id="EN_SOFT_BECAUSE_MISS" name="becuase soft">
+      <pattern>
+        <token>becuase</token>
+      </pattern>
+      <message>Did you mean "because"?</message>
+      <short>becuase</short>
+    </rule>
+    <rule id="EN_SOFT_EXAMPLE_MISS" name="exmaple soft">
+      <pattern>
+        <token>exmaple</token>
+      </pattern>
+      <message>Did you mean "example"?</message>
+      <short>exmaple</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
