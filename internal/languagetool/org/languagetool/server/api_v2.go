@@ -165,6 +165,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			// category filters from disabledCategories / enabledCategories
 			DisabledCategories: qp.DisabledCategories,
 			EnabledCategories:  qp.EnabledCategories,
+			RuleValues:         commaSeparated(parameters["ruleValues"]),
 		}
 		if v := parameters["mode"]; v != "" {
 			opts.Mode = CheckMode(strings.ToUpper(v))
@@ -173,13 +174,20 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			opts.Level = CheckLevel(strings.ToUpper(v))
 		}
 		langName := LanguageNameForCode(lang)
+		var warnings []string
+		if autoDetected {
+			preferred := commaSeparated(parameters["preferredVariants"])
+			if len(preferred) == 0 {
+				warnings = append(warnings, "language=auto without preferredVariants; detected variant may be imprecise")
+			}
+		}
 		var body string
 		if annotated != nil {
 			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
-			body, err = a.TextChecker.BuildResponseEx(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected)
+			body, err = a.TextChecker.BuildResponseExWarnings(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings)
 		} else {
 			matches := a.TextChecker.CheckWithOptions(text, lang, opts)
-			body, err = a.TextChecker.BuildResponseEx(text, lang, langName, matches, autoDetected)
+			body, err = a.TextChecker.BuildResponseExWarnings(text, lang, langName, matches, autoDetected, warnings)
 		}
 		if err != nil {
 			return HandleResult{}, err

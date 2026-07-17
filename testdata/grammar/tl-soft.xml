@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="tl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="TL_SOFT_AT_AT" name="at at">
+      <pattern>
+        <token>at</token>
+        <token>at</token>
+      </pattern>
+      <message>Posibleng pag-uulit ng "at".</message>
+      <short>at at</short>
+    </rule>
+  </category>
+</rules>

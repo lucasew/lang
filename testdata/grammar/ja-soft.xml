@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ja">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="JA_SOFT_TO_TO" name="to to">
+      <pattern>
+        <token>to</token>
+        <token>to</token>
+      </pattern>
+      <message>Possible repeated "to".</message>
+      <short>to to</short>
+    </rule>
+  </category>
+</rules>

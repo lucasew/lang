@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="sr">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="SR_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Moguće ponavljanje "i".</message>
+      <short>i i</short>
+    </rule>
+  </category>
+</rules>

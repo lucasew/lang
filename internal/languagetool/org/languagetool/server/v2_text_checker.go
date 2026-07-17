@@ -38,6 +38,11 @@ func (v *V2TextChecker) BuildResponse(text, langCode, langName string, matches [
 
 // BuildResponseEx builds a check response; when autoDetected is true, sets detectedLanguage.
 func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool) (string, error) {
+	return v.BuildResponseExWarnings(text, langCode, langName, matches, autoDetected, nil)
+}
+
+// BuildResponseExWarnings is BuildResponseEx with optional non-fatal warnings.
+func (v *V2TextChecker) BuildResponseExWarnings(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, warnings []string) (string, error) {
 	if langName == "" || langName == langCode {
 		if n := LanguageNameForCode(langCode); n != "" {
 			langName = n
@@ -54,6 +59,9 @@ func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches
 	if autoDetected {
 		dl := lang
 		resp.DetectedLanguage = &dl
+	}
+	if len(warnings) > 0 {
+		resp.Warnings = append([]string(nil), warnings...)
 	}
 	for i := range matches {
 		resp.Matches = append(resp.Matches, matches[i].ToMatchInfo())

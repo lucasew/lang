@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="lt">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="LT_SOFT_IR_IR" name="ir ir">
+      <pattern>
+        <token>ir</token>
+        <token>ir</token>
+      </pattern>
+      <message>Galimas "ir" pakartojimas.</message>
+      <short>ir ir</short>
+    </rule>
+  </category>
+</rules>

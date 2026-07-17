@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="zh">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="ZH_SOFT_DE_DE" name="的 的">
+      <pattern>
+        <token>的</token>
+        <token>的</token>
+      </pattern>
+      <message>可能重复的“的”。</message>
+      <short>的 的</short>
+    </rule>
+  </category>
+</rules>

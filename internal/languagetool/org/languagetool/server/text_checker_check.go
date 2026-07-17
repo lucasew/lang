@@ -1,10 +1,12 @@
 package server
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 )
 
@@ -22,6 +24,8 @@ type CheckOptions struct {
 	// Category filters (SoftRuleMeta / LocalMatch category IDs).
 	DisabledCategories []string
 	EnabledCategories  []string
+	// RuleValues soft configurable rule options (e.g. "TOO_LONG_SENTENCE:10").
+	RuleValues []string
 }
 
 // Check runs core rules for language on text and returns RemoteRuleMatch results.
@@ -70,6 +74,9 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	if len(opts.EnabledCategories) > 0 {
 		keyParts = append(keyParts, "ecat:"+strings.Join(opts.EnabledCategories, ","))
 	}
+	if len(opts.RuleValues) > 0 {
+		keyParts = append(keyParts, "rv:"+strings.Join(opts.RuleValues, ","))
+	}
 	settings.GlobalConfigKey = strings.Join(keyParts, "|")
 	return settings
 }
@@ -113,6 +120,7 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	defer t.releasePipeline(settings, p, fromPool)
 	locals := p.Check(text)
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, text)
+	locals = applyRuleValues(lang, text, locals, opts.RuleValues)
 	locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
 	locals = filterLocalsByCategories(locals, opts)
 	ctxSize := DefaultContextSize
@@ -132,6 +140,7 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	locals := p.CheckAnnotated(at)
 	plain := at.GetPlainText()
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, plain)
+	locals = applyRuleValues(lang, plain, locals, opts.RuleValues)
 	locals = filterLocalsByIgnoreWords(plain, locals, opts.IgnoreWords)
 	locals = filterLocalsByCategories(locals, opts)
 	// Context uses original markup string so projected offsets align.
@@ -150,6 +159,89 @@ func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore
 // filterLocalsByCategories applies disabledCategories / enabledCategories (with enabledOnly).
 func filterLocalsByCategories(ms []languagetool.LocalMatch, opts CheckOptions) []languagetool.LocalMatch {
 	return languagetool.FilterMatchesByCategories(ms, opts.DisabledCategories, opts.EnabledCategories, opts.UseEnabledOnly)
+}
+
+// ParseRuleValues parses "RULE_ID:value,OTHER:2" into a map (soft; last wins).
+func ParseRuleValues(items []string) map[string]string {
+	if len(items) == 0 {
+		return nil
+	}
+	out := map[string]string{}
+	for _, item := range items {
+		item = strings.TrimSpace(item)
+		if item == "" {
+			continue
+		}
+		// also allow comma-joined blob
+		for _, part := range strings.Split(item, ",") {
+			part = strings.TrimSpace(part)
+			if part == "" {
+				continue
+			}
+			i := strings.IndexByte(part, ':')
+			if i <= 0 || i == len(part)-1 {
+				continue
+			}
+			id := strings.TrimSpace(part[:i])
+			val := strings.TrimSpace(part[i+1:])
+			if id != "" && val != "" {
+				out[strings.ToUpper(id)] = val
+			}
+		}
+	}
+	return out
+}
+
+// applyRuleValues re-runs long-sentence detection with a custom max when configured.
+func applyRuleValues(lang, text string, existing []languagetool.LocalMatch, raw []string) []languagetool.LocalMatch {
+	vals := ParseRuleValues(raw)
+	if len(vals) == 0 {
+		return existing
+	}
+	maxStr, ok := vals["TOO_LONG_SENTENCE"]
+	if !ok {
+		maxStr, ok = vals["LONG_SENTENCE_RULE"]
+	}
+	if !ok {
+		return existing
+	}
+	maxWords, err := strconv.Atoi(maxStr)
+	if err != nil || maxWords <= 0 {
+		return existing
+	}
+	// drop existing long-sentence matches
+	out := make([]languagetool.LocalMatch, 0, len(existing))
+	for _, m := range existing {
+		id := strings.ToUpper(m.RuleID)
+		if strings.Contains(id, "LONG_SENTENCE") || strings.Contains(id, "TOO_LONG_SENTENCE") {
+			continue
+		}
+		out = append(out, m)
+	}
+	// soft re-check with custom threshold
+	ls := rules.NewLongSentenceRule(map[string]string{
+		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
+	}, maxWords)
+	lt := languagetool.NewJLanguageTool(lang)
+	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
+	// Disable all other rules so only long-sentence fires
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		if id != ls.GetID() {
+			lt.DisableRule(id)
+		}
+	}
+	for _, m := range lt.Check(text) {
+		if m.RuleID == ls.GetID() || strings.Contains(strings.ToUpper(m.RuleID), "LONG_SENTENCE") || strings.Contains(strings.ToUpper(m.RuleID), "TOO_LONG") {
+			m.CategoryID = "STYLE"
+			m.CategoryName = "Style"
+			m.IssueType = "style"
+			if m.ShortMessage == "" {
+				m.ShortMessage = "Long sentence"
+			}
+			out = append(out, m)
+		}
+	}
+	return out
 }
 
 // applyLevelPickyBoost runs extra EN picky patterns when level is PICKY (soft).
