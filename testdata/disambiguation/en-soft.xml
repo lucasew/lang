@@ -4767,4 +4767,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CADVISOR" name="immunize cadvisor">
+    <pattern>
+      <token>cadvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CADVISOR_CAPS" name="immunize cAdvisor">
+    <pattern>
+      <token>cAdvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMTAIL" name="immunize promtail">
+    <pattern>
+      <token>promtail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMTAIL_CAPS" name="immunize Promtail">
+    <pattern>
+      <token>Promtail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZIPKIN" name="immunize zipkin">
+    <pattern>
+      <token>zipkin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZIPKIN_CAPS" name="immunize Zipkin">
+    <pattern>
+      <token>Zipkin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

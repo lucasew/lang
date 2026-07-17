@@ -492,3 +492,6 @@ Schist Summit RegionNNP
 Quartzite Summit RegionNNP
 Dolomite Summit RegionNNP
 Travertine Summit RegionNNP
+Conglomerate Summit RegionNNP
+Breccia Summit RegionNNP
+Phyllite Summit RegionNNP

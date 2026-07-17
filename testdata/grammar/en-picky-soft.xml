@@ -3086,5 +3086,28 @@
       <message>Jargon; name a two-variable relationship chart instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_HISTOGRAM" name="histogram soft picky">
+      <pattern>
+        <token>histogram</token>
+      </pattern>
+      <message>Jargon; name a frequency distribution bar chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUN_CHART" name="run chart soft picky">
+      <pattern>
+        <token>run</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name a time-ordered process trend chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOX_PLOT" name="box plot soft picky">
+      <pattern>
+        <token>box</token>
+        <token>plot</token>
+      </pattern>
+      <message>Jargon; name a quartile distribution chart instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -10907,6 +10907,76 @@
       <message>Did you mean "difficult"?</message>
       <short>diffcult</short>
     </rule>
+    <rule id="EN_SOFT_IMPORT_MISS" name="improt soft">
+      <pattern>
+        <token>improt</token>
+      </pattern>
+      <message>Did you mean "import"?</message>
+      <short>improt</short>
+    </rule>
+    <rule id="EN_SOFT_BECAUSE_MISS4" name="becouse soft">
+      <pattern>
+        <token>becouse</token>
+      </pattern>
+      <message>Did you mean "because"?</message>
+      <short>becouse</short>
+    </rule>
+    <rule id="EN_SOFT_THAT_MISS" name="taht soft">
+      <pattern>
+        <token>taht</token>
+      </pattern>
+      <message>Did you mean "that"?</message>
+      <short>taht</short>
+    </rule>
+    <rule id="EN_SOFT_THE_MISS" name="hte soft">
+      <pattern>
+        <token>hte</token>
+      </pattern>
+      <message>Did you mean "the"?</message>
+      <short>hte</short>
+    </rule>
+    <rule id="EN_SOFT_WITH_MISS" name="wiht soft">
+      <pattern>
+        <token>wiht</token>
+      </pattern>
+      <message>Did you mean "with"?</message>
+      <short>wiht</short>
+    </rule>
+    <rule id="EN_SOFT_JUST_MISS" name="jsut soft">
+      <pattern>
+        <token>jsut</token>
+      </pattern>
+      <message>Did you mean "just"?</message>
+      <short>jsut</short>
+    </rule>
+    <rule id="EN_SOFT_MAINTENANCE_MISS" name="maintenace soft">
+      <pattern>
+        <token>maintenace</token>
+      </pattern>
+      <message>Did you mean "maintenance"?</message>
+      <short>maintenace</short>
+    </rule>
+    <rule id="EN_SOFT_REPRESENT_MISS" name="repersent soft">
+      <pattern>
+        <token>repersent</token>
+      </pattern>
+      <message>Did you mean "represent"?</message>
+      <short>repersent</short>
+    </rule>
+    <rule id="EN_SOFT_FUNCTION_MISS2" name="fucntion soft">
+      <pattern>
+        <token>fucntion</token>
+      </pattern>
+      <message>Did you mean "function"?</message>
+      <short>fucntion</short>
+    </rule>
+    <rule id="EN_SOFT_RELEVANT_MISS" name="relavent soft">
+      <pattern>
+        <token>relavent</token>
+      </pattern>
+      <message>Did you mean "relevant"?</message>
+      <short>relavent</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
