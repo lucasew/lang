@@ -152,30 +152,41 @@ func FormatTagLine(sentenceText string, tokens []string) string {
 }
 
 // FormatTaggedToken formats surface/lemma/POS for tagger-only dumps.
+// Multiple readings become lemma1|lemma2 / pos1|pos2.
 func FormatTaggedToken(t *languagetool.AnalyzedTokenReadings) string {
 	if t == nil {
 		return ""
 	}
 	surface := t.GetToken()
-	pos, lemma := "", ""
-	if at := t.GetAnalyzedToken(0); at != nil {
-		if p := at.GetPOSTag(); p != nil {
+	var lemmas, poses []string
+	n := t.GetReadingsLength()
+	if n <= 0 {
+		// fallback: try primary slot
+		n = 1
+	}
+	for i := 0; i < n; i++ {
+		at := t.GetAnalyzedToken(i)
+		if at == nil {
+			continue
+		}
+		lem, pos := surface, "_"
+		if l := at.GetLemma(); l != nil && *l != "" {
+			lem = *l
+		}
+		if p := at.GetPOSTag(); p != nil && *p != "" {
 			pos = *p
 		}
-		if l := at.GetLemma(); l != nil {
-			lemma = *l
+		if pos == "_" && lem == surface && i == 0 && n == 1 {
+			// untagged
+			return surface
 		}
+		lemmas = append(lemmas, lem)
+		poses = append(poses, pos)
 	}
-	if pos == "" && lemma == "" {
+	if len(poses) == 0 {
 		return surface
 	}
-	if lemma == "" {
-		lemma = surface
-	}
-	if pos == "" {
-		pos = "_"
-	}
-	return surface + "/" + lemma + "/" + pos
+	return surface + "/" + strings.Join(lemmas, "|") + "/" + strings.Join(poses, "|")
 }
 
 // TagText writes simple token lines for each sentence (pluggable sentence split + token strings).

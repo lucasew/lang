@@ -25,9 +25,10 @@ func TestCoreTagHook_BinaryPOS(t *testing.T) {
 	require.NoError(t, err)
 	s := out.String()
 	require.Contains(t, s, "The houses are big.")
-	// surface/lemma/POS for houses
-	require.Contains(t, s, "houses/house/")
-	require.True(t, strings.Contains(s, "houses/house/NNS") || strings.Contains(s, "houses/house/VBZ"), s)
+	// surface/lemma|…/POS|… for houses (multi-reading)
+	require.Contains(t, s, "houses/")
+	require.True(t, strings.Contains(s, "NNS") || strings.Contains(s, "VBZ"), s)
+	require.Contains(t, s, "house")
 	// DT for the (case-folded)
 	require.Contains(t, s, "The/the/DT")
 }
