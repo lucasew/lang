@@ -50,6 +50,10 @@ func TestPipeline_CheckMultiLang(t *testing.T) {
 		{"nl", "hallo hallo", "NL_WORD_REPEAT_RULE"},
 		{"pl", "test test", "PL_WORD_REPEAT"},
 		{"uk", "без без", "UKRAINIAN_WORD_REPEAT_RULE"},
+		{"it", "ciao ciao", "ITALIAN_WORD_REPEAT_RULE"},
+		{"pt", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
+		{"ru", "тест тест", "RU_WORD_REPEAT_SIMPLE"},
+		{"ca", "hola hola", "CATALAN_WORD_REPEAT_RULE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.lang, func(t *testing.T) {

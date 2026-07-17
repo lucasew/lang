@@ -5,12 +5,16 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
 
@@ -35,6 +39,14 @@ func registerPipelineCore(lt *languagetool.JLanguageTool, lang string) {
 		pl.RegisterCorePolishRules(lt)
 	case "uk":
 		uk.RegisterCoreUkrainianRules(lt)
+	case "it":
+		it.RegisterCoreItalianRules(lt)
+	case "pt":
+		pt.RegisterCorePortugueseRules(lt)
+	case "ru":
+		ru.RegisterCoreRussianRules(lt)
+	case "ca":
+		ca.RegisterCoreCatalanRules(lt)
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}
@@ -69,7 +81,9 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 			switch matches[i].RuleID {
 			case "EN_A_VS_AN", "WORD_REPEAT_RULE", "GERMAN_WORD_REPEAT_RULE",
 				"FR_WORD_REPEAT_RULE", "SPANISH_WORD_REPEAT_RULE", "NL_WORD_REPEAT_RULE",
-				"PL_WORD_REPEAT", "UKRAINIAN_WORD_REPEAT_RULE":
+				"PL_WORD_REPEAT", "UKRAINIAN_WORD_REPEAT_RULE",
+				"ITALIAN_WORD_REPEAT_RULE", "PORTUGUESE_WORD_REPEAT_RULE",
+				"RU_WORD_REPEAT_SIMPLE", "CATALAN_WORD_REPEAT_RULE":
 				matches[i].Priority = 5
 			default:
 				if matches[i].Priority == 0 {

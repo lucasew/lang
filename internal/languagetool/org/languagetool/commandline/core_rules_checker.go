@@ -6,12 +6,16 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -52,6 +56,14 @@ func registerCoreForLang(lt *languagetool.JLanguageTool, lang string) {
 		pl.RegisterCorePolishRules(lt)
 	case "uk":
 		uk.RegisterCoreUkrainianRules(lt)
+	case "it":
+		it.RegisterCoreItalianRules(lt)
+	case "pt":
+		pt.RegisterCorePortugueseRules(lt)
+	case "ru":
+		ru.RegisterCoreRussianRules(lt)
+	case "ca":
+		ca.RegisterCoreCatalanRules(lt)
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

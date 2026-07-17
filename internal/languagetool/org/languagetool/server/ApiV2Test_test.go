@@ -33,3 +33,22 @@ func TestApiV2_MissingLanguageParameter(t *testing.T) {
 	_, err := api.Handle("check", map[string]string{"text": "Hello world"})
 	require.Error(t, err)
 }
+
+func TestApiV2_CheckEngine(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "This is an test.",
+	})
+	require.NoError(t, err)
+	require.Equal(t, 200, r.Status)
+	require.Contains(t, r.Body, "EN_A_VS_AN")
+	require.Contains(t, r.Body, `"matches"`)
+
+	r2, err := api.Handle("check", map[string]string{
+		"language": "fr",
+		"text":     "bonjour bonjour",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r2.Body, "FR_WORD_REPEAT_RULE")
+}

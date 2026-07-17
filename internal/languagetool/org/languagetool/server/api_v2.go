@@ -85,8 +85,15 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if lang == "" {
 			lang = "auto"
 		}
-		// Engine wiring deferred: return empty matches for valid requests.
-		body, err := a.TextChecker.BuildResponse(text, lang, lang, nil)
+		// Soft language-id: heuristic when auto; otherwise use requested code.
+		if strings.EqualFold(lang, "auto") {
+			lang = DetectLanguageOfString(text, nil, nil)
+			if lang == "" {
+				lang = "en"
+			}
+		}
+		disabled := a.TextChecker.GetDisabledRuleIDs(parameters)
+		body, err := a.TextChecker.CheckAndBuildJSON(text, lang, lang, disabled)
 		if err != nil {
 			return HandleResult{}, err
 		}

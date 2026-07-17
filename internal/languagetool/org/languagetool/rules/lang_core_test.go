@@ -5,10 +5,14 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 	"github.com/stretchr/testify/require"
 )
@@ -27,6 +31,10 @@ func TestLangCoreRegisters(t *testing.T) {
 		{"pl", pl.RegisterCorePolishRules, "pl", "test test", "PL_WORD_REPEAT"},
 		// UK word-repeat ignores untagged content words; function doubles still fire
 		{"uk", uk.RegisterCoreUkrainianRules, "uk", "без без", "UKRAINIAN_WORD_REPEAT_RULE"},
+		{"it", it.RegisterCoreItalianRules, "it", "ciao ciao", "ITALIAN_WORD_REPEAT_RULE"},
+		{"pt", pt.RegisterCorePortugueseRules, "pt", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
+		{"ru", ru.RegisterCoreRussianRules, "ru", "тест тест", "RU_WORD_REPEAT_SIMPLE"},
+		{"ca", ca.RegisterCoreCatalanRules, "ca", "hola hola", "CATALAN_WORD_REPEAT_RULE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
