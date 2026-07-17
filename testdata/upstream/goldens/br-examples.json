@@ -1,0 +1,151 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "br",
+  "cases": [
+    {
+      "rule": "HANTER_KANT",
+      "text": "Hanter kant",
+      "suggestion": "Hanter-kant",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "NE_ZO_KET",
+      "text": "Ar brezhoneg e Wened ne zo ket evel e Leon.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "TRO_DRO",
+      "text": "E Pariz ha tro dro.",
+      "suggestion": "tro-dro",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "TORR_PENN",
+      "text": "Torr penn eo an amezeg.",
+      "suggestion": "Torr-penn",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "FOETER_BRO",
+      "text": "Ur foeter bro eo deuet da vezañ.",
+      "suggestion": "foeter-bro",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "END_EEUN",
+      "text": "End eeun",
+      "suggestion": "End-eeun",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "MONT_DONT",
+      "text": "Ur bilhed mont dont evit Naoned.",
+      "suggestion": "mont-dont",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "DERCHENT_DECH",
+      "text": "Derc’hent dec’h",
+      "suggestion": "Derc’hent-dec’h",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "PENN_DA_BENN",
+      "text": "Troet penn da benn",
+      "suggestion": "penn-da-benn",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "PENN_OUZH_PENN",
+      "text": "Troet penn ouzh penn",
+      "suggestion": "penn-ouzh-penn",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "DISKAR_AMZER",
+      "text": "Deuet eo an diskar amzer.",
+      "suggestion": "diskar-amzer",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "SKIANT_PRENET",
+      "text": "Ret eo dit tapout skiant prenet.",
+      "suggestion": "skiant-prenet",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "A_ZEU",
+      "text": "An hañv a-zeu.",
+      "suggestion": "a zeu",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "RAK_SE",
+      "text": "Rak se",
+      "suggestion": "Rak-se",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "ABER_ACH",
+      "text": "An Aber Ac’h a zo ur stêr.",
+      "suggestion": "Aber-Ac’h",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "DAM",
+      "text": "Lavaret em eus da ma zad.",
+      "suggestion": "da’m",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "DAZ",
+      "text": "Lavaret em eus da da dad.",
+      "suggestion": "da’z",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "EM",
+      "text": "E ma c’harr-tan emañ.",
+      "suggestion": "Em",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "EZ",
+      "text": "Poan az peus e da dreid?",
+      "suggestion": "en da",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "MA_EZ_EUS",
+      "text": "Ma ez eus ur gudenn",
+      "suggestion": "Ma’z eus",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "EVEL_BOAZ",
+      "text": "Un abadenn blijus evel boas.",
+      "suggestion": "boaz",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "KET",
+      "text": "Ober a ran chistr, ha ket lambig.",
+      "suggestion": "ha n’eo ket",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "NE_KET",
+      "text": "Ne ket diaes koulskoude.",
+      "suggestion": "N’eo ket",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "PEZH",
+      "text": "Ar pez a lavarez.",
+      "suggestion": "pezh",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    }
+  ]
+}

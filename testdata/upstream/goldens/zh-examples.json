@@ -1,0 +1,3475 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "zh",
+  "cases": [
+    {
+      "rule": "XIAO3_XIAO4",
+      "text": "你做了这等恶事，还以为自己可以消遥法外吗？",
+      "suggestion": "逍遥法外",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZH8",
+      "text": "这婴儿哭声弘亮",
+      "suggestion": "洪亮",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZH9",
+      "text": "我们定婚了",
+      "suggestion": "订婚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XI1_XI2",
+      "text": "女巫用她瘦削白晰的手轻抚他的头发。",
+      "suggestion": "白皙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHOU1_CHOU2",
+      "text": "他拉关系、找门子以便找到一份报筹好的工作。",
+      "suggestion": "报酬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QUE1_QUE2",
+      "text": "他请我去参观他的个人画展,我对绘画不感兴趣,可缺之不恭,最后还是去了。",
+      "suggestion": "却之不恭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NIANG1_NIANG2",
+      "text": "这些，使女兵娘两感动得热泪盈眶。",
+      "suggestion": "娘俩",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JING1_JING2",
+      "text": "狐狸在陷井里被套住。",
+      "suggestion": "陷阱",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YAN1_YAN2",
+      "text": "我脑里一片混乱，宛如活在梦餍之中。",
+      "suggestion": "梦魇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MIAO1_MIAO2",
+      "text": "我缈视这种人，他们没骨气。",
+      "suggestion": "藐视",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MU1_MU2",
+      "text": "他在学生和家长中进行蓦捐。",
+      "suggestion": "募捐",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI1_JI2",
+      "text": "你认识那个被通辑抢银行的人吗?",
+      "suggestion": "通缉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SI1_SI2",
+      "text": "香港功夫片中刀光剑影、激烈撕杀的场面扣人心弦。",
+      "suggestion": "厮杀",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHU1_ZHU2",
+      "text": "我们在那里贮立良久，沉默不语，心里都清楚大家都不会像以前一样了。",
+      "suggestion": "伫立",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHOU1_ZHOU2",
+      "text": "她的脸上布满了绉纹。",
+      "suggestion": "皱纹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHOU3_ZHOU4",
+      "text": "听起来文诌诌的问题，实际上答案很直接。",
+      "suggestion": "文绉绉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DU1_DU2",
+      "text": "连先知带祭司都是亵赎的，就是在我殿中我也看见他们的恶。这是耶和华说的。",
+      "suggestion": "亵渎",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUI1_HUI2",
+      "text": "我发现生活有时挺恢谐的，即使是最平凡的事情也能影响我们的感知。",
+      "suggestion": "诙谐",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIN1_LIN2",
+      "text": "一个密封条或门上有漏缝的微波炉可能使毗临的食物变熟但这很少见。",
+      "suggestion": "毗邻",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PIAO1_PIAO2",
+      "text": "好莱坞两位最骠悍的演员是这对徒有虚名罪犯的绝佳人选。",
+      "suggestion": "剽悍",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FU15_FU16",
+      "text": "但幅射是无形的。",
+      "suggestion": "辐射",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZUAN1_ZUAN2",
+      "text": "为什么你不继续编篡你的词典呢?功亏一篑，你不觉得可惜吗?",
+      "suggestion": "编纂",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHAO1_ZAO2",
+      "text": "眼见事态扩大，造事者赶紧溜之大吉。",
+      "suggestion": "肇事者",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HONG1_HONG2",
+      "text": "太阳把我的屁股晒的暖哄哄的。",
+      "suggestion": "暖烘烘",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FANG1_FANG2",
+      "text": "冷不妨地，平面就会变得更加合适了。",
+      "suggestion": "冷不防",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FANG3_FANG4",
+      "text": "裨官野史是一个汉语成语。",
+      "suggestion": "稗官野史",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAN15_LIAN16",
+      "text": "百练成钢是一个汉语词汇。",
+      "suggestion": "百炼成钢",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "AI1_AI2",
+      "text": "她给人一种和霭可亲的感觉。",
+      "suggestion": "蔼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WU1_WU2",
+      "text": "爱乌及屋是一种很自然的心态。",
+      "suggestion": "爱屋及乌",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BA1_BA2",
+      "text": "见他如此飞扬拔扈,我们都不再理他了。",
+      "suggestion": "飞扬跋扈",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHUAN5_CHUAN6",
+      "text": "他是个双手拿枪的神枪手，左右两手均能百步串杨。",
+      "suggestion": "百步穿杨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHU1_CHU2",
+      "text": "汉武帝罢绌百家、独尊儒术,孔子定于一尊,儒家思想成了正统思想。",
+      "suggestion": "罢黜百家",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHI1_SHI2",
+      "text": "我和哥哥的想法总是背道而驶。",
+      "suggestion": "背道而驰",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QING1_QING2",
+      "text": "单立出这些名目来，自以为弊绝风轻，中间却不知受了多少蒙蔽。",
+      "suggestion": "弊绝风清",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LV1_LV2",
+      "text": "开创任何事业，总是要经过筚路褴缕，艰苦奋斗的过程。",
+      "suggestion": "筚路褴褛",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LI1_LI2",
+      "text": "一提起文化大革命,人们立即不寒而立。",
+      "suggestion": "不寒而栗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BING1_BING2",
+      "text": "实弹射击时,我摒气凝神地注视着靶心。",
+      "suggestion": "屏气凝神",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QU3_QU4",
+      "text": "他灿然一笑，晚霞如血在他身后掩映生姿。",
+      "suggestion": "粲然一笑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DIE3_DIE4",
+      "text": "自从开展“三讲”活动以来,社会上助人为乐的事层见迭出,蔚然成风。",
+      "suggestion": "层见叠出",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHI1_SHI2",
+      "text": "小刚拿着新买的文具盒看了又看，爱不失手。",
+      "suggestion": "爱不释手",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIA5_JIA6",
+      "text": "聪明的弟弟不加思索地回答出了爸爸的问题。",
+      "suggestion": "不假思索",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KAN1_KAN2",
+      "text": "古人的某些言论犹如不堪之论,已深深印在了我的脑海中。",
+      "suggestion": "不刊之论",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI1_YI2",
+      "text": "王阳的有些行为让人不可思异。",
+      "suggestion": "不可思议",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHEN3_SHEN4",
+      "text": "他这种对问题不求深解的学习方法，是成绩无法提高的主要原因。",
+      "suggestion": "不求甚解",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUN1_HUN2",
+      "text": "京剧名丑不仅唱做俱佳，而且善于插科打浑。",
+      "suggestion": "插科打诨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YIN1_YIN2",
+      "text": "如果不加强改革,继续陈陈相应,这家工厂是没有出路的。",
+      "suggestion": "陈陈相因",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LAN13_LAN14",
+      "text": "王代表的发言尽是些陈词烂调。",
+      "suggestion": "陈词滥调",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JING5_JING6",
+      "text": "在处理这起涉及多人的贪污案件时要采取惩一禁百的做法,严惩首犯,区别对待,教育多数。",
+      "suggestion": "惩一儆百",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHI1_CHI2",
+      "text": "对于这类风言风语，哥哥总是斥之以鼻，毫不在意。",
+      "suggestion": "嗤之以鼻",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHONG1_CHONG2",
+      "text": "为了白天的事，他忧心冲冲，辗转反侧。",
+      "suggestion": "忧心忡忡",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QI11_QI12",
+      "text": "收到这份出奇不意的礼物，母亲感动得说不出话来。",
+      "suggestion": "出其不意",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BU1_BU2",
+      "text": "改革开放中,我国除旧补新,取得了一个又一个的胜利。",
+      "suggestion": "除旧布新",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI5_JI6",
+      "text": "没想到你们这么不长进，老是处心集虑地想要分家产。",
+      "suggestion": "处心积虑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SONG1_SONG2",
+      "text": "他的事迹在家乡传颂一时。",
+      "suggestion": "传诵一时",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YE5_YE6",
+      "text": "调查研究要深入细致，一丝不苟；粗枝大意，马马虎虎，是不会达到目的的。",
+      "suggestion": "粗枝大叶",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LAN3_LAN4",
+      "text": "这部电视剧粗制烂造，质量低劣。",
+      "suggestion": "粗制滥造",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CUO7_CUO8",
+      "text": "这无疑是措火积薪,你就不怕吗?",
+      "suggestion": "厝火积薪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CUO3_CUO4",
+      "text": "趁敌人后方空虚，我军打他个错手不及。",
+      "suggestion": "措手不及",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PA1_PA2",
+      "text": "这“倒打一把”是猪八戒的看家本领。",
+      "suggestion": "倒打一耙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHANG3_CHANG4",
+      "text": "学习要循序渐近，急于求成，只能是揠苗助长，得不尝失。",
+      "suggestion": "得不偿失",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LONG1_LONG2",
+      "text": "我很希望兄有空，再画几幅，虽然太有些得垄望蜀。",
+      "suggestion": "得陇望蜀",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BO1_BO2",
+      "text": "西部地区地大物搏，亟待开发，在那里是大有可为的。",
+      "suggestion": "地大物博",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BO3_BO4",
+      "text": "这人心胸狭窄,遇事掂斤拨两的,很不好相处。",
+      "suggestion": "掂斤播两",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GONG11_GONG12",
+      "text": "治愈的方法是以毒功毒。",
+      "suggestion": "以毒攻毒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "AO5_AO6",
+      "text": "在升学考试中,我儿子独占螯头,以最高分考入了全市唯一的一所重点中学。",
+      "suggestion": "独占鳌头",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DU5_DU6",
+      "text": "花钱要花在利人利己的事情上，比如说，堵绝浪费。",
+      "suggestion": "杜绝浪费",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHENG1_ZHENG2",
+      "text": "医生详细地询问了病人的病情，然后对针下药。",
+      "suggestion": "对症下药",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI5_ZHI6",
+      "text": "那个罪犯的暴行简直令人发直！",
+      "suggestion": "令人发指",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FAN1_FAN2",
+      "text": "您这篇文章真是言简意该，要言不繁。",
+      "suggestion": "要言不烦",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FEI3_FEI4",
+      "text": "改革开放以来,真是人才辈出,成绩蜚然。",
+      "suggestion": "成绩斐然",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FEI5_FEI6",
+      "text": "如果邮件的标题有问题或者非夷所思，也不要打开附件。",
+      "suggestion": "匪夷所思",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BIAO1_BIAO2",
+      "text": "他们已分道扬标闯自己的事业去了。",
+      "suggestion": "分道扬镳",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MEN1_MEN2",
+      "text": "他说许多候选人都对当地政府愤闷不平，无法吐露他们的心声。",
+      "suggestion": "愤懑不平",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PEI3_PEI4",
+      "text": "新娘子一身凤冠霞披，非常漂亮！",
+      "suggestion": "凤冠霞帔",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LVE1_LVE2",
+      "text": "浮光略影地游览，怎能深入了解各个地方的风俗民情？",
+      "suggestion": "浮光掠影",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GAI1_GAI2",
+      "text": "李老师写文章旁征博引,又言简意该。",
+      "suggestion": "言简意赅",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUI1_KUI2",
+      "text": "他这次表演功亏一蒉，令人遗憾。",
+      "suggestion": "功亏一篑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUAN3_GUAN4",
+      "text": "观众们全神灌注地观看魔术师的精彩表演。",
+      "suggestion": "全神贯注",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GONG3_GONG4",
+      "text": "鬼斧神功：使原始材料变为成品。",
+      "suggestion": "鬼斧神工",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YU13_YU14",
+      "text": "我们要擦亮眼睛,及时识破敌人的鬼域技俩。",
+      "suggestion": "鬼蜮伎俩",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIN1_JIN2",
+      "text": "在校长面前,李芳禁若寒蝉。",
+      "suggestion": "噤若寒蝉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUI3_KUI4",
+      "text": "他们一家人，原来就都是昏馈无能，苟且偷生，所以这种不幸，在他们看来，反道没有家道兴旺的人家看来那样可怕。",
+      "suggestion": "昏聩无能",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUI5_KUI6",
+      "text": "浑玉朴金",
+      "suggestion": "浑玉璞金",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUO1_HUO2",
+      "text": "出了三峡，江面宽阔，眼前忽然开朗。",
+      "suggestion": "豁然开朗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YANG1_YANG2",
+      "text": "很多国民党员干了许多祸国秧民的事。",
+      "suggestion": "祸国殃民",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI9_JI10",
+      "text": "道德之演进,如大江之行,回旋起伏,变化万端,击浊扬清,终归于进步。",
+      "suggestion": "激浊扬清",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI11_JI12",
+      "text": "如果方法不对，怎么努力也是无计于事。",
+      "suggestion": "无济于事",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI13_JI14",
+      "text": "参加研讨会的各界人士挤挤一堂，气氛相当热烈。",
+      "suggestion": "济济一堂",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHENG1_CHENG2",
+      "text": "经过几年的努力，这座水库的修建已经计日成功了。",
+      "suggestion": "计日程功",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIN8_JIN9",
+      "text": "她曾是个弱不经风的姑娘，由于坚持锻炼身体，成了长跑运动员。",
+      "suggestion": "弱不禁风",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BI11_BI12",
+      "text": "南宁市有许多装修得金壁辉煌的酒楼和宾馆。",
+      "suggestion": "金碧辉煌",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GANG1_GANG2",
+      "text": "但2日早些时候,英国石油公司说,一个带金钢钻头的钢丝锯在切割油管进行到约一半的时候被卡住,工程人员操作水下装置,艰难地工作了好几小时,才将锯取出。",
+      "suggestion": "金刚钻头",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI15_JI16",
+      "text": "如果没有赶超世界先进水平的雄赳赳气昂昂,就不可能挤身于世界发达国家的行列。",
+      "suggestion": "跻身",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PO1_PO2",
+      "text": "他看上去待人诚恳,实际上居心不测。",
+      "suggestion": "居心叵测",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JING7_JING8",
+      "text": "对那些犯罪分子应依法严惩,以警效尤,决不能心慈手软。",
+      "suggestion": "以儆效尤",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHI3_SHI4",
+      "text": "像他这样拒谏是非,一意孤行,是非常危险的。",
+      "suggestion": "拒谏饰非",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PI7_PI8",
+      "text": "中华人民共和国的成立,是一件开天劈地的大事。",
+      "suggestion": "开天辟地",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KAN3_KAN4",
+      "text": "先皇的托孤遗诏,他是否会甘愿辅佐协皇子勘平宇内。",
+      "suggestion": "戡平",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAN1_XIAN2",
+      "text": "地震的那天晚上,他一下子就从床上跳下来,冲到了院里,当时科头洗足,样子十分狼狈。",
+      "suggestion": "科头跣足",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QI3_QI4",
+      "text": "刚才还夸夸奇谈,行家来了你就仗马寒蝉了。",
+      "suggestion": "夸夸其谈",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHAN1_SHAN2",
+      "text": "圣诞节晚会一直持续到深夜三时,大家意兴阑姗才散去。",
+      "suggestion": "意兴阑珊",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LAN5_LAN6",
+      "text": "所有人被白若凡的无耻滥言给震慑住了,从来没见过有人说话能像他这么冠冕堂皇,人家双腿都断了还怎么杀人,刚才明明是他逼着刘四拿刀杀了县令爷。",
+      "suggestion": "无耻谰言",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LAN7_LAN8",
+      "text": "北京大学招生一向很严,向来是宁缺毋烂。",
+      "suggestion": "宁缺毋滥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TAO1_TAO2",
+      "text": "一家六口其乐淘淘的糊口着！",
+      "suggestion": "其乐陶陶",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHU1_SHU2",
+      "text": "他向公安机关提供了大量线索,确有立功渎罪的表现。",
+      "suggestion": "立功赎罪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SELINEIREN",
+      "text": "这个联名通知通知其实早就暴露了他们色厉内忍的本质。",
+      "suggestion": "荏",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAN5_LIAN6",
+      "text": "他们已经离婚了，但仍然藕断丝联地保持联系。",
+      "suggestion": "藕断丝连",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAN7_LIAN8",
+      "text": "反动统治阶级巧立名目，在治水、导淮等等幌子下横征暴殓，中饱私囊。",
+      "suggestion": "横征暴敛",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAO1_LIAO2",
+      "text": "而今伟大的艺术家是廖若晨星了。",
+      "suggestion": "寥若晨星",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIN7_LIN8",
+      "text": "你了解到的只是事情的一麟半爪，全过程你并不了解。",
+      "suggestion": "一鳞半爪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIU1_LIU2",
+      "text": "我在图书馆里流览书刊。",
+      "suggestion": "浏览",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAN9_LIAN10",
+      "text": "这里的景色真美,让人留恋忘返。",
+      "suggestion": "留连忘返",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHONG1_ZHONG2",
+      "text": "李伯伯年事已高,已显得老态龙肿了。",
+      "suggestion": "老态龙钟",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHUN1_CHUN2",
+      "text": "他的厨艺已到了炉火成青的地步。",
+      "suggestion": "炉火纯青",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHAN1_ZHAN2",
+      "text": "作为一个音乐神童而出道的他已经开始在专业领域暂露头角。",
+      "suggestion": "崭露头角",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LV3_LV4",
+      "text": "别看他一介书生,却旅力过人。",
+      "suggestion": "膂力过人",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LVE3_LVE4",
+      "text": "在第二次世界大战中,大独裁者希特勒攻城掠地,横行欧洲,给许多国家的人民带来了极大的灾难。",
+      "suggestion": "攻城略地",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LUN1_LUN2",
+      "text": "小朋友都坐好,今天咱们轮功行赏,回答问题对的发大的,回答错的不给发。",
+      "suggestion": "论功行赏",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MAO1_MAO2",
+      "text": "任何事情我们没有经过仔细筹划就不可冒然从事。",
+      "suggestion": "贸然从事",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MENTINGRUOSHI",
+      "text": "这里人很多，门廷若市。",
+      "suggestion": "门庭若市",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MENG1_MENG2",
+      "text": "少年，我们已经脱离了朦懂无知的小时，尽管思想不太成熟，但是我们已经蜕变成少年。我们有了自己的思想，我们会想怎么展现我们的风采，总会把自己最好的一面展现出来。",
+      "suggestion": "懵懂无知",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MI3_MI4",
+      "text": "为了嫁祸于人，他撒了个迷天大谎。",
+      "suggestion": "弥天大谎",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHA1_CHA2",
+      "text": "公安干警经过明查暗访，终于捣毁了犯罪分子的窝点。",
+      "suggestion": "明察暗访",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MO3_MO4",
+      "text": "关公的忠义仁勇，受到人们的顶礼模拜。",
+      "suggestion": "顶礼膜拜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHONG5_ZHONG6",
+      "text": "一见衷情只需30秒,30秒已经决定我们的一生。",
+      "suggestion": "一见钟情",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MOU1_MOU2",
+      "text": "资本家经常采取投机取巧的办法，囤积居奇，谋取暴利。",
+      "suggestion": "牟取暴利",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "AI3_AI4",
+      "text": "念去去千里烟波，暮蔼沉沉楚天阔。柳永",
+      "suggestion": "暮霭沉沉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HONG3_HONG4",
+      "text": "在这个问题上,古今学者的看法判若洪沟。",
+      "suggestion": "判若鸿沟",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LI5_LI6",
+      "text": "既然是好朋友，就应该披肝厉胆，以诚相待。",
+      "suggestion": "披肝沥胆",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JUE3_JUE4",
+      "text": "文章认为《山海经》是一部内容宏富、奇倔的中国古代文献。",
+      "suggestion": "奇崛",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI17_JI18",
+      "text": "上午的心血全被妹妹破坏了，方兰气极败坏地将妹妹训斥了一顿。",
+      "suggestion": "气急败坏",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIONG1_XIONG2",
+      "text": "他那气势凶凶的样子,真叫人害怕。",
+      "suggestion": "气势汹汹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QI5_QI6",
+      "text": "讫今为止，科学家仍然无法找到宇宙中存在外星人的有力证据。",
+      "suggestion": "迄今为止",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIAN1_QIAN2",
+      "text": "然犹斩将骞旗，追奔逐北，灭迹扫尘，斩其枭帅。",
+      "suggestion": "斩将搴旗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIAN3_QIAN4",
+      "text": "为这个错误我深致欠意。对于调酒。",
+      "suggestion": "深致歉意",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIAO1_QIAO2",
+      "text": "公安机关抓获了一个巧装打扮的特务分子。",
+      "suggestion": "乔装打扮",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GONG5_GONG6",
+      "text": "这座园林设计精美，可谓巧夺天公。",
+      "suggestion": "巧夺天工",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIE3_QIE4",
+      "text": "“精卫填海”那种契而不舍的精神值得我们颂扬。",
+      "suggestion": "锲而不舍",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIN1_QIN2",
+      "text": "老王这番话说得情真意切，浸人心脾。",
+      "suggestion": "沁人心脾",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIONG1_QIONG2",
+      "text": "他没有亲人，穷穷孑立，十分可怜。",
+      "suggestion": "茕茕孑立",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "REN3_REN4",
+      "text": "爸爸在部队工作,妈妈在家里忍劳忍怨。",
+      "suggestion": "任劳任怨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "RU1_RU2",
+      "text": "他年轻有为，个个都说他儒子可教。",
+      "suggestion": "孺子可教",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BI3_BI4",
+      "text": "听说儿子犯了案,他立即如丧考比。",
+      "suggestion": "如丧考妣",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAN3_XIAN4",
+      "text": "现在，正是有志青年大现身手的好机会。",
+      "suggestion": "大显身手",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENG1_SHENG2",
+      "text": "人民丰衣足食,国家空前强大,正是歌舞生平的时代。",
+      "suggestion": "歌舞升平",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QUE7_QUE8",
+      "text": "这位七十多岁的老编辑,一生致力于辞书的编辑出版,退休后还一直在做拾遗补缺的工作。",
+      "suggestion": "拾遗补阙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PO3_PO4",
+      "text": "我军势如爆竹,很快攻占了南京。",
+      "suggestion": "势如破竹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LAN9_LAN10",
+      "text": "为了收来人心,朱由检则顺水推舟。",
+      "suggestion": "收揽人心",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SU1_SU2",
+      "text": "追本朔源,对仗不是文人创造,而是从民歌中得来的。",
+      "suggestion": "追本溯源",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENG3_SHENG4",
+      "text": "他们谈笑风声地走进了校长办公室。",
+      "suggestion": "谈笑风生",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XU5_XU6",
+      "text": "别长嘘短叹了，有什么困难说出来大家会帮你解决的。",
+      "suggestion": "长吁短叹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TANG1_TANG2",
+      "text": "在神话传说里，天上有一座富丽唐皇的宫殿。",
+      "suggestion": "富丽堂皇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUAN7_GUAN8",
+      "text": "此次调动,我很想不通,听他一说,醍醐贯顶,我全理解了。",
+      "suggestion": "醍醐灌顶",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI5_YI6",
+      "text": "多行不义必自毙，天经地仪，不容置疑。",
+      "suggestion": "天经地义",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TING5_TING6",
+      "text": "几年的光景，那个大姐姐已出落成一位婷婷玉立的大姑娘了。",
+      "suggestion": "亭亭玉立",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TING3_TING4",
+      "text": "如今救人如救火，只好挺而走险，直闯虎穴了！",
+      "suggestion": "铤而走险",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHANG9_ZHANG10",
+      "text": "我们正与通货膨涨和失业做斗争。",
+      "suggestion": "通货膨胀",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAN7_XIAN8",
+      "text": "战争一触即发,打入敌方的密探,生怕图穷匕现,在混乱之中逃跑了。",
+      "suggestion": "图穷匕见",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TU1_TU2",
+      "text": "假如你想探访一个美丽的非洲国家，她遭受穆加贝一伙涂毒多年，正在挣扎重生，那么就去吧。",
+      "suggestion": "荼毒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHENG3_CHENG4",
+      "text": "他们两人在工作中推陈相见，有不同的意见，摆在桌面上谈，合作得很好。",
+      "suggestion": "推诚相见",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TUO1_TUO2",
+      "text": "长沙三汇装饰装修质量差,工作人员推托责任。",
+      "suggestion": "推脱责任",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TUI1_TUI2",
+      "text": "我们要坚决清除干部队伍中的退化变质分子。",
+      "suggestion": "蜕化变质",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TUN1_TUN2",
+      "text": "资本家经常采取投机取巧的办法，屯积居奇，牟取暴利。",
+      "suggestion": "囤积居奇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GONG7_GONG8",
+      "text": "对待生活，我们应尽量避免玩世不公的态度。",
+      "suggestion": "玩世不恭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHANG5_CHANG6",
+      "text": "愿我们的友谊万古常青。",
+      "suggestion": "万古长青",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUAN9_GUAN10",
+      "text": "如果不能克勤克俭地持家，万冠家财也有耗尽纺一天。",
+      "suggestion": "万贯家财",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WANG1_WANG2",
+      "text": "想不到他面对此事竟然熟视无睹，置若惘闻。",
+      "suggestion": "置若罔闻",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HU1_HU2",
+      "text": "一考完试,小明就忘夫所以地玩。",
+      "suggestion": "忘乎所以",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WANG3_WANG4",
+      "text": "奶奶在近几年常对我说,我们金家,在晚清时也是名门旺族,祖爷爷也曾是绾黄纡紫,出入皇宫,十分显赫。",
+      "suggestion": "名门望族",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WANG5_WANG6",
+      "text": "听说父亲买回了一台电脑,小明喜出往外。",
+      "suggestion": "喜出望外",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XING1_XING2",
+      "text": "看着对手过硬的专业水平，他只能是望洋心叹。",
+      "suggestion": "望洋兴叹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LEI1_LEI2",
+      "text": "一场大地震把这一带的建筑物震得东倒西歪，危如磊卵。",
+      "suggestion": "危如累卵",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEN1_WEN2",
+      "text": "宇乘风不温不火的打断了张天雷的话,道;“别拍马屁了,我听着恶心,有什么想要求我的赶快讲。",
+      "suggestion": "不瘟不火",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEN3_WEN4",
+      "text": "老爱闻过饰非的人，渐渐会失掉真实自我。",
+      "suggestion": "文过饰非",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEN5_WEN6",
+      "text": "只有精打细算才能有条不稳地生活。",
+      "suggestion": "有条不紊",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIE11_XIE12",
+      "text": "首恶必办,协从不问,才能争取他们中的大多数,以稳定宫中的局势。",
+      "suggestion": "胁从不问",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIN2_JIN3",
+      "text": "天气渐渐冷了，商店里的雪糕无人问斤，寂寞地躺在柜台里。",
+      "suggestion": "无人问津",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANG1_XIANG2",
+      "text": "我们应该努力工作，创造财富，而不应该坐想其成。",
+      "suggestion": "坐享其成",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LI9_LI10",
+      "text": "清朝末年，西太后统治时期，穷奢极侈，暴烈恣睢，丧权辱国，顽固腐朽，加速了清王朝的灭亡。",
+      "suggestion": "暴戾恣睢",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LI11_LI12",
+      "text": "我们一贯强调自立更生，但也不排斥外援。",
+      "suggestion": "自力更生",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MING5_MING6",
+      "text": "她时常表现出一副自名得意的模样。",
+      "suggestion": "自鸣得意",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MING7_MING8",
+      "text": "他刚取得那么一点儿成绩就自名不凡，真让人反感！",
+      "suggestion": "自命不凡",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HE1_HE2",
+      "text": "在错综复杂的形势中,他纵横捭合,应付自如。",
+      "suggestion": "纵横捭阖",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZU1_ZU2",
+      "text": "他卓智多谋，总能想出解决问题的办法。",
+      "suggestion": "足智多谋",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LU1_LU2",
+      "text": "飞机着落时，会感到微微有些震动。",
+      "suggestion": "飞机着陆",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NAO1_NAO2",
+      "text": "看他那抓耳扰腮的样子，不知道又碰上什么为难的事了。",
+      "suggestion": "抓耳挠腮",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YU3_YU4",
+      "text": "得益于天地的钟灵玉秀，青岛女人长的美。",
+      "suggestion": "钟灵毓秀",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FU1_FU2",
+      "text": "新上任的书记,因不浮众望,很快就下台了。",
+      "suggestion": "不孚众望",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHEN10_ZHEN11",
+      "text": "去岁大灾,钱鏐王爷下诏全国减免赋税,振济灾民,他一个前朝皇帝的遥遥华胄又凭什么还受那么高的田租?",
+      "suggestion": "赈济灾民",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUA3_HUA4",
+      "text": "不了解情况就不要在一旁指手划脚地乱发议论。",
+      "suggestion": "指手画脚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHENG3_ZHENG4",
+      "text": "毕业典礼后，大家珍重其事地向班主任张老师深深地鞠躬道别。",
+      "suggestion": "郑重其事",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUI3_HUI4",
+      "text": "风雨如诲，鸡鸣不已。既见君子，云胡不喜？",
+      "suggestion": "风雨如晦",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUI5_HUI6",
+      "text": "小李直言不晦地向社长指出了当前工作中存在的问题。",
+      "suggestion": "直言不讳",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BIAO3_BIAO4",
+      "text": "四禁并举、堵源截流、严格执法、表本兼治。",
+      "suggestion": "标本兼治",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FEN3_FEN4",
+      "text": "做工作要善于抓住要领,不然治丝益纷,那就麻烦了。",
+      "suggestion": "治丝益棼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI11_ZHI12",
+      "text": "警察正在巡逻，街道上轶序井然。",
+      "suggestion": "秩序井然",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHAO1_ZHAO2",
+      "text": "谈到这里，他的险恶用心照然若揭。",
+      "suggestion": "昭然若揭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHU3_SHU4",
+      "text": "亦且仗义输财，偷来的东西，随手散与贫穷负极之人。",
+      "suggestion": "仗义疏财",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHANG3_ZHANG4",
+      "text": "日本鬼子毫无羞耻之心，竟然会明火执杖，公开抢劫百姓的钱财。",
+      "suggestion": "明火执仗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUANG5_HUANG6",
+      "text": "教室里同学们为正燃烧的大火张惶失措。",
+      "suggestion": "张皇失措",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DAN1_DAN2",
+      "text": "报纸应常常刊登好人好事,批评不良倾向,起到彰善惮恶,鼓舞人们前进的作用。",
+      "suggestion": "彰善瘅恶",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZE1_ZE2",
+      "text": "他们无一不是独立自主、囊中羞涩,而且能够忍受种种令人乍舌不已的不便.",
+      "suggestion": "令人咋舌",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ROU1_ROU2",
+      "text": "小说古今杂揉杂陈、寓庄于谐的历史叙事之间形成了跨越时空的契合。",
+      "suggestion": "古今杂糅",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YUN1_YUN2",
+      "text": "革命先烈为中国人民的解放事业陨身不恤的精神令人敬佩，激人奋进。",
+      "suggestion": "殒身不恤",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YUN3_YUN4",
+      "text": "大师的这些话给纭纭众生都带来了很深刻的想法。",
+      "suggestion": "芸芸众生",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YUAN1_YUAN2",
+      "text": "学习上搞沿木求鱼那一套是行不通的。",
+      "suggestion": "缘木求鱼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YOU7_YOU8",
+      "text": "车影憧憧，川流不息，可令一位思想僵滞、宥于成见的旁观者豁然开朗。滚滚向前，转瞬即逝的正是生活本身，它以种种最不引人注目、最野性、最自私的方式展示自身，并以十分冷漠的意志力驱动细菌和热带植物的蔓延。阿兰·德波顿",
+      "suggestion": "囿于成见",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GU3_GU4",
+      "text": "这个人正事不干,专会估名钓誉。",
+      "suggestion": "沽名钓誉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BEI5_BEI6",
+      "text": "李老师的为人在学生中有口皆杯。",
+      "suggestion": "有口皆碑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JING9_JING10",
+      "text": "成天唠唠叨叨的王老太搬走了,这下总算耳根清静了。",
+      "suggestion": "耳根清净",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YOU3_YOU4",
+      "text": "这事与全局利害悠关,要认真对待。",
+      "suggestion": "利害攸关",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YONG3_YONG4",
+      "text": "适龄青年响应国家号召，涌跃报名参军。",
+      "suggestion": "踊跃报名",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YONG5_YONG6",
+      "text": "我们要有永往直前的信念和勇气。",
+      "suggestion": "勇往直前",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BAO1_BAO2",
+      "text": "党团组织都要经常进行整顿，吐故纳新，使我们的队伍永保青春。",
+      "suggestion": "永葆青春",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YONG7_YONG8",
+      "text": "置心一处困难,上坐觉得体内到处拥塞不通,心被牵引。",
+      "suggestion": "壅塞不通",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YONG9_YONG10",
+      "text": "她的一举一动都显得落落大方，壅荣华贵。",
+      "suggestion": "雍荣华贵",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIU3_JIU4",
+      "text": "他为这事能引疚自责,下属都十分敬重他。",
+      "suggestion": "引咎自责",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI7_YI8",
+      "text": "他依仗权势霸占了一大笔国家财产。",
+      "suggestion": "倚仗权势",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI9_YI10",
+      "text": "你才长我一岁，请不要在那儿以老卖老，罗哩罗唆！",
+      "suggestion": "倚老卖老",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI11_YI12",
+      "text": "爷爷神态悠闲地品着香茶，贻然自得。",
+      "suggestion": "怡然自得",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NUO1_NUO2",
+      "text": "方兰一喏千金，答应下的事情从来不会反悔。",
+      "suggestion": "一诺千金",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI15_YI16",
+      "text": "盖房子时，先把地基打坚固再盖，就可一劳永易（，避免以后因地基不稳发生意外。",
+      "suggestion": "一劳永逸",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JUE5_JUE6",
+      "text": "次考试失败就使小明一獗不振了。",
+      "suggestion": "一蹶不振",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YE3_YE4",
+      "text": "这一仗,八路军大显神威,打得鬼子弃甲拽兵,狼狈而回。",
+      "suggestion": "弃甲曳兵",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YAO1_YAO2",
+      "text": "他的父亲当官，所以他经常仗势跃武扬威，同学都很讨厌他。",
+      "suggestion": "耀武扬威",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI13_ZHI14",
+      "text": "一有成绩,他在同学面前就指高气扬了。",
+      "suggestion": "趾高气扬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YANG3_YANG4",
+      "text": "这篇文章他扬扬洒洒地写了一万多字。",
+      "suggestion": "洋洋洒洒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAO3_LIAO4",
+      "text": "夜晚，马路两旁的霓虹灯闪闪烁烁，令人眼花撩乱。",
+      "suggestion": "眼花缭乱",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YAN9_YAN10",
+      "text": "第一条也是最根本的的一条自然法就是，去寻求和平并且延袭下去。",
+      "suggestion": "沿袭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENG7_SHENG8",
+      "text": "圣诞老人的严正申明：不要迷恋爷，爷只是个神话传说；爷没有驯鹿，也没有礼物；爷不会钻烟囱。爷只会给你祝福：神马都是浮云，快乐最重要。祝平安夜平安，圣诞节快乐！",
+      "suggestion": "严正声明",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YAN13_YAN14",
+      "text": "本来是一堂非常生动的生物课,让他讲得味同嚼蜡,把同学们听得厌厌欲睡。",
+      "suggestion": "恹恹欲睡",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YANG5_YANG6",
+      "text": "北京是中华人民共和国这个央央大国的心脏。",
+      "suggestion": "泱泱大国",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QI7_QI8",
+      "text": "他身体魁伟，相貌堂堂，走起路来高视阔步，器度不凡。",
+      "suggestion": "气度不凡",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XUAN5_XUAN6",
+      "text": "小华谈恋爱的事在班上引起喧然大波。",
+      "suggestion": "轩然大波",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIE3_XIE4",
+      "text": "又乾符二年，崔沆放崔瀣，谭者称座主门生，沆泄一气。",
+      "suggestion": "沆瀣一气",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIN1_XIN2",
+      "text": "小刚的想法别出新裁，十分特别。",
+      "suggestion": "别出心裁",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHUO3_ZHUO4",
+      "text": "反动派妄图扑灭革命火种,但心劳日绌,无济于事。",
+      "suggestion": "心劳日拙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XING9_XING10",
+      "text": "一个睡眼醒松的停车场工作人员将车开来.",
+      "suggestion": "睡眼惺松",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XING3_XING4",
+      "text": "有些演员在台上猩猩作态,真让人作呕。",
+      "suggestion": "惺惺作态",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAO5_XIAO6",
+      "text": "九一八日，风雨萧萧，惨痛记忆，仇恨刻骨，日月同悲，全国哀悼。警笛声声，追思往昔，缅怀先烈，展望今天，同仇敌忾。九一八纪念日，警钟长鸣，勿忘国耻，努力奋斗，保卫中华！",
+      "suggestion": "风雨潇潇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GAN1_GAN2",
+      "text": "他多次自励,只要能“救乱”,那怕是宵衣干食,头上再添几许白发,也在所不计。",
+      "suggestion": "宵衣旰食",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI15_ZHI16",
+      "text": "他受到不公平待遇却仍能安置若素。",
+      "suggestion": "安之若素",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI17_YI18",
+      "text": "不熟悉情况，不调查研究，下车一始，就发号施令，这样做工作没有不碰钉子的。",
+      "suggestion": "下车伊始",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHENG5_CHENG6",
+      "text": "这两个环节相辅相承，缺一不可。",
+      "suggestion": "相辅相成",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XI1_ZAI2",
+      "text": "在改革的道路上，难免有这样那样的问题，我们决不能畏崽不前，而应该知难而进。",
+      "suggestion": "畏葸不前",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIE7_XIE8",
+      "text": "律师的律词言之有理，无泄可击。",
+      "suggestion": "无懈可击",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XI3_XI4",
+      "text": "我们一定要做到严查实防,使洪水无细可乘。",
+      "suggestion": "无隙可乘",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHI7_SHI8",
+      "text": "无论我说什么，老板都说好，模稜两可，让人无所是从。",
+      "suggestion": "无所适从",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI19_JI20",
+      "text": "小明对小朋友的指责反唇相击。",
+      "suggestion": "讥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHEN1_CHEN2",
+      "text": "姐姐立志当教师，考上了师范大学真是趁心如意。",
+      "suggestion": "称心如意",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FU3_FU4",
+      "text": "由于工作环境差、入不付出，我国的大部分乡村卫生员已改行或外出打工去了。",
+      "suggestion": "入不敷出",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GAI5_GAI6",
+      "text": "他的壮举显示了中国人民不屈不挠的英雄气慨。",
+      "suggestion": "英雄气概",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUANG1_GUANG2",
+      "text": "她能够发现男子气概之美，存在于一切粗旷的活力和甜蜜的健壮的完美。",
+      "suggestion": "粗犷",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIN4_JIN5",
+      "text": "小萍是个舞迷，只要听到音乐，她就会情不自尽地跳动起来。",
+      "suggestion": "情不自禁",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JU1_JU2",
+      "text": "南京古称金陵,自古就是龙盘虎据之地。",
+      "suggestion": "龙盘虎踞",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KE5_KE6",
+      "text": "灾区的农民精收细打，争取棵粒归仓。",
+      "suggestion": "颗粒归仓",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LEI3_LEI4",
+      "text": "中华民族嬴弱了一个世纪,但现已发愤图强,大搞精神及物质上的建设。",
+      "suggestion": "羸弱",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LEI5_LEI6",
+      "text": "作文课上,文章大多类同,只有一人独出心裁,张斯。",
+      "suggestion": "大多雷同",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "OU5_OU6",
+      "text": "老师们为了我们的学习而沤心沥血。",
+      "suggestion": "呕心沥血",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QI9_QI10",
+      "text": "福冈一带的外资企业星罗旗布。",
+      "suggestion": "星罗棋布",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YUAN7_YUAN8",
+      "text": "新年的钟声已经敲响，幸福的生活渊远流长。",
+      "suggestion": "源远流长",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUI7_KUI8",
+      "text": "几分钟后，众目暌暌之下，一只虎鲸将它们统统吃掉。",
+      "suggestion": "众目睽睽",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANG5_XIANG6",
+      "text": "人心项背是战争胜败的决定因素。",
+      "suggestion": "人心向背",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YONG11_YONG12",
+      "text": "毋用讳言，影视广告不仅创造了斑驳陆离的媒介景观。",
+      "suggestion": "毋庸讳言",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WU11_WU12",
+      "text": "不要支无其词，回答我的问题。",
+      "suggestion": "支吾其词",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CUO5_CUO6",
+      "text": "骨曰切，象曰磋，玉曰琢，石曰磨，切搓琢磨，乃成宝器。人之学问知能成就，犹骨象玉石切磋琢磨也。",
+      "suggestion": "切磋琢磨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WANG7_WANG8",
+      "text": "强颱吹倒了许多人家的住屋，这场无忘之灾，给大家带来惨重的财物损失。",
+      "suggestion": "无妄之灾",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI21_JI22",
+      "text": "他俩谈恋爱已两年多了，还是那么不既不离的，令人费解。",
+      "suggestion": "不即不离",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XING5_XING6",
+      "text": "患者突然昏倒，不醒人事，伴有偏瘫，口眼歪斜，面赤，数日未解大便。",
+      "suggestion": "不省人事",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YU5_YU6",
+      "text": "我们认为下面这些真理是不言而语的：人人生而平等，造物主赋予他们若干不可转让的权利，其中包括生命权自由权和追求幸福的权利。",
+      "suggestion": "不言而喻",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIN3_LIN4",
+      "text": "欢迎业内外人士访问敝司网站，不另赐教！",
+      "suggestion": "不吝赐教",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHI9_SHI10",
+      "text": "如果你足够坚强，你就是世无前例的。菲茨杰拉德",
+      "suggestion": "史无前例",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIE3_JIE4",
+      "text": "正直为人，诚信待人，爱岗敬业，尽心极力。",
+      "suggestion": "尽心竭力",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZAO5_ZAO6",
+      "text": "书本上那些堂而皇之的价值观，言之足足的“成功秘诀”不一定适合每个人的真实需求。",
+      "suggestion": "言之凿凿",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI23_JI24",
+      "text": "从那以后我就从不吃甘蔗了，说我投鼠计器也好，说我杯弓蛇影也好，我就是不吃！",
+      "suggestion": "投鼠忌器",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZI1_ZI2",
+      "text": "宽容如水。宽容，即原谅他人的过错，不耿耿于怀，不淄铢必较，和和气气，做个大方的人。宽容如水般的温柔，在遇到矛盾时，往往比过激的报复更有效。它似一泓清泉，款款抹去彼此一时的敌视，使人冷静、清醒。",
+      "suggestion": "锱铢必较",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GU5_GU6",
+      "text": "十年寒窗，一心只读圣贤书的悬梁刺骨是中国才有的黑色励志幽默。",
+      "suggestion": "悬梁刺股",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HAN1_HAN2",
+      "text": "这次事故死亡的人数震憾人心。",
+      "suggestion": "震撼人心",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIAO1_JIAO2",
+      "text": "文学作品最忌娇揉造作，无病呻吟。",
+      "suggestion": "矫揉造作",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIN6_JIN7",
+      "text": "诚信是诗圣李白的“一诺千斤”；诚信是古代皇帝的“一言九鼎”；诚信是儒家学中的“事实求是”；诚信不是一成不变，而是坚守原则；不是固执死板，而是仁爱负责。",
+      "suggestion": "一诺千金",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KE1_CHAO2",
+      "text": "写诗作文要富有创造，剪裁得体，妙在用心，不落巢臼。",
+      "suggestion": "不落窠臼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUAI1_KUAI2",
+      "text": "在这美不胜收的地方，流传着这样一首烩炙人口的歌。",
+      "suggestion": "脍炙人口",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LUN5_LUN6",
+      "text": "青春，是天边的一抹彩霞，转瞬即逝，却美仑美奂；青春，是湖面上闪光的一道涟漪，随波游走，却鎏光溢彩；青春，是高高枝头上绽放的一簇腊梅，雨雪霜摧，零落为泥，依然香如故。",
+      "suggestion": "美轮美奂",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MA1_MA2",
+      "text": "公安人员正在寻找罪犯犯罪的蛛丝蚂迹。",
+      "suggestion": "蛛丝马迹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIAO3_JIAO4",
+      "text": "人，在最完美的时候是动物中的皎皎者，但是，当他与法律和正义隔绝以后，他便是动物中最坏的东西。他在动物中就是最不神圣的，最野蛮的。亚里士多德",
+      "suggestion": "佼佼者",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CI1_CI2",
+      "text": "维护班级荣誉是每位同学义不容词的责任。",
+      "suggestion": "义不容辞",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HONG5_HONG6",
+      "text": "声音宏亮如虎啸狮吼，声音低细犹如秋雨潇潇。",
+      "suggestion": "声音洪亮",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QUE5_QUE6",
+      "text": "这一点值得商确。",
+      "suggestion": "商榷",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MAN5_MAN6",
+      "text": "漫骂决不是战斗。",
+      "suggestion": "谩骂",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUANG3_HUANG4",
+      "text": "华厦再富丽堂黄，也只是坟上楼阁。莎士比亚",
+      "suggestion": "富丽堂皇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "OU3_OU4",
+      "text": "有些人打着艺术家的金殴无缺,并不等于就真懂艺术。",
+      "suggestion": "金瓯无缺",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GONG9_GONG10",
+      "text": "他对我国现代历史地理学的兴起有开创之功，供献巨大，其炽热的爱国情感、开阔的学术视野，堪称学术界的楷模。",
+      "suggestion": "贡献",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIAN5_JIAN6",
+      "text": "他们都怕直言贾祸,所以箴口不言。",
+      "suggestion": "缄口不言",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PI3_PI4",
+      "text": "学习写作要批沙拣金,切不可记流水账。",
+      "suggestion": "披沙拣金",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JING11_JING12",
+      "text": "时间漫步过宿命的转轮，覆盖住纷繁的凡世，事过景迁，早已是物是人非了。",
+      "suggestion": "事过境迁",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JI25_JI26",
+      "text": "奇角之势的人,也应付一部分责。",
+      "suggestion": "掎角之势",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GENG1_GENG2",
+      "text": "如梗在喉：我知道真象，但又不克不及说出来，真是如鲠在喉呀。",
+      "suggestion": "如鲠在喉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIU5_LIU6",
+      "text": "刻在木板上的名字未必不朽，刻在石头上的名字也未必留芳百世；老师，您的名字刻在我们心灵上，这才真正永存。",
+      "suggestion": "流芳百世",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TIAN1_TIAN2",
+      "text": "每餐都剩那麼多，为何不少煮些？这种暴舔天物的情景，令人心痛。",
+      "suggestion": "暴殄天物",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TU3_TU4",
+      "text": "做好一件事必须要亲身实践，纸上谈兵和按途索骥的做法都应当反对。",
+      "suggestion": "按图索骥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XUN1_XUN2",
+      "text": "循章摘句老雕虫，晓月当帘挂玉弓。不见年年辽海上，文章何处哭秋风。",
+      "suggestion": "寻章摘句",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "AO3_AO4",
+      "text": "在这个飞扬跋扈，个性张扬的时代，我们这些桀傲不驯的青年总是爱展现着自我。这一群曾不被看好的90后，用自己的方式，渲染着青春的风采。",
+      "suggestion": "桀骜不驯",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YIN3_YIN4",
+      "text": "这个光怪陆离的社会，有时万马齐暗、万籁俱寂，有时风起云涌、风云际会，只有卓尔不群，手眼通天的豪杰之士，才能力挽狂澜，鼎足而立！",
+      "suggestion": "万马齐喑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZE3_ZE4",
+      "text": "明察事理的人称为明智，明智的人则能以身作责。",
+      "suggestion": "以身作则",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHUI1_ZHUI2",
+      "text": "你虽在困苦中，也不要揣揣不安，往往总是从暗处流出生命之泉。",
+      "suggestion": "惴惴不安",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZUO5_ZUO6",
+      "text": "锉掉左角,代表虚座以待,礼贤下士。",
+      "suggestion": "虚左以待",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CAN1_CAN2",
+      "text": "从来不喜欢仰望夜空，即使有璀烂夺目的星星眨眼，怕看到那一轮圆月，想到离乡已远的自己是那么孤单；或是怕看到一轮残月，会幻想团圆是何等的珍贵，亦是多么的奢侈……",
+      "suggestion": "璀璨夺目",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIA1_GA2",
+      "text": "夏雨骤然而作，嘎然而止，来得粗犷，豪爽，不若秋雨的缠绵，悱恻，散乱如丝，乱人心扉。",
+      "suggestion": "戛然而止",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIE1_LI2",
+      "text": "不一而足,在这里我就不一一例举了。",
+      "suggestion": "一一列举",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MIAO5_MIAO6",
+      "text": "这在脑部扫瞄中看得出来。",
+      "suggestion": "扫描",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NIU1_NIU2",
+      "text": "她那种扭怩作态的样子,将女孩儿家娇羞柔弱的情状淋漓尽致地表露了出来。",
+      "suggestion": "忸怩作态",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NIE1_NIE2",
+      "text": "我是如此无力,不完整,且烦恼如山,罪蘖深重。",
+      "suggestion": "罪孽深重",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "POU1_BEI2",
+      "text": "游子紧紧地捧着一杯黄土，不，那不是黄土，那是游子依恋的故乡。",
+      "suggestion": "一抔黄土",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PU3_PU4",
+      "text": "人生最低的境界是平凡，其次是超凡脱俗，最高是返朴归真的平凡。周国平",
+      "suggestion": "返璞归真",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PAN1_PAN2",
+      "text": "中国共产党的领导地位坚如盘石。",
+      "suggestion": "坚如磐石",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PEI1_PEI2",
+      "text": "我的话伤害了你，向你陪礼道歉。",
+      "suggestion": "赔礼道歉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YA1_YA2",
+      "text": "上课铃声响过以后，教室里哑雀无声。",
+      "suggestion": "鸦雀无声",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIN3_XIN4",
+      "text": "迷人的春天是令人欢心鼓舞的，虽然春风还是冷飕飕的，心里却感到美滋滋的，也在茁长出新的希望的幼芽。",
+      "suggestion": "欢欣鼓舞",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XUAN7_XUAN8",
+      "text": "把简单的东西变成复杂，需要想像力，但故弄悬虚；把复杂的东西变成简单，需要概括力，更需要诚实。",
+      "suggestion": "故弄玄虚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHEN3_ZHEN4",
+      "text": "这些书的装桢完全相同。",
+      "suggestion": "装帧",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI17_ZHI18",
+      "text": "盈利和股票增殖不是认股权，而是对甘愿冒险的非凡洞见的报偿。",
+      "suggestion": "股票增值",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHONG1_ZHOU2",
+      "text": "马六甲，印度尼西亚，新加坡同意冰释前嫌和舟共济巡逻、逮捕、起诉、监禁海盗。",
+      "suggestion": "和衷共济",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI19_ZHI20",
+      "text": "如此一部卷秩浩繁的小说还得了矛盾文学奖，所以对其思想深度就要抱怀疑态度了。",
+      "suggestion": "卷帙浩繁",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LING1_LING2",
+      "text": "在这四面楚歌里，凭你怎样灵牙俐齿，也只得服从了。",
+      "suggestion": "伶牙俐齿",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MO9_MO10",
+      "text": "悼念那些行将末落的文化传统。",
+      "suggestion": "行将没落",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHEN5_ZHEN6",
+      "text": "有总工程师坐阵指挥,这次试验一定能马到成功。",
+      "suggestion": "坐镇指挥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FAN5_FAN6",
+      "text": "如今罪犯都是狡兔三窟,我们必须严加防犯,多布几个点严阵以待。",
+      "suggestion": "严加防范",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TAO3_TAO4",
+      "text": "不是梦幻般的梦回梁都，却惊天动地；不是惊滔骇浪般的文化苦旅，却心似狂潮，我们心中每一次触动，都使我们心灵版图再一次撕破狭窄，冲破阻碍。",
+      "suggestion": "惊涛骇浪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TONG1_TONG2",
+      "text": "对四大化学实验内容统盘考虑、优化组合，提出了一个具有本校特色的基础化学实验教学新体系。",
+      "suggestion": "通盘考虑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BIAN1_BIAN2",
+      "text": "王刚的文章大胆针贬时弊,振聋发聩,受到人们的好评。",
+      "suggestion": "针砭时弊",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BO5_BO6",
+      "text": "尽管印度新德里存在着一小股“荡妇游行”的势力，但它也是由一位从加拿大归国的年轻女性发起的。如此看来，这也不过是个泊来品。",
+      "suggestion": "舶来品",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIAO5_JIAO6",
+      "text": "为了从竞争对手那里挖墙角，各大公司争相给出诱人的薪酬和福利待遇。",
+      "suggestion": "挖墙脚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LUAN1_LUAN2",
+      "text": "那个害痉孪的孩子四肢不断地抽搐。",
+      "suggestion": "痉挛",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QING1_QIN2",
+      "text": "但为什么唯独玉米成为所有美洲人最为亲睐的食品与崇敬的谷物？",
+      "suggestion": "青睐",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WU13_WU14",
+      "text": "谁都知道他被污告了。",
+      "suggestion": "诬告",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DAN3_DAN4",
+      "text": "此事不容担搁。",
+      "suggestion": "耽搁",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XING1_XIAN2",
+      "text": "要坚决铲除那些在人民群众中掀风作浪的坏人。",
+      "suggestion": "兴风作浪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BU3_BU4",
+      "text": "黑夜里突然传来一阵令人恐布的叫声。",
+      "suggestion": "恐怖",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CAN3_CAN4",
+      "text": "许多人愤怒地反对惨酷的流血娱乐。",
+      "suggestion": "残酷",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FU7_FU8",
+      "text": "而之所以出现这一现象,与中国人对童话的认识浮浅相关。",
+      "suggestion": "肤浅",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHE1_CHE2",
+      "text": "清晨，河水清彻见底，能够照出人的影子来，那些奇形怪状的、大大小小的鹅卵石在河底静静的躺着，各种各样的动物却闹腾起来了",
+      "suggestion": "清澈",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QU5_QU6",
+      "text": "那些为国捐驱的英烈们虽死犹生，永远被我们所铭记。",
+      "suggestion": "为国捐躯",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KENG1_HANG2",
+      "text": "许多无良商人用假冒伪劣商品吭害消费者。",
+      "suggestion": "坑害",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KANG1_KENG2",
+      "text": "海藻：一亩土地两头牛，老婆孩子热坑头，但是你得先有土地呀有了土地有了牛才能招来老婆才能生孩子呀，连农民都懂的道理！",
+      "suggestion": "热炕头",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LUO1_GE2",
+      "text": "每次解放都不相同，都有其自身独特的性质和历史脉胳，然而每次解放都是相同的。",
+      "suggestion": "脉络",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MO11_MO12",
+      "text": "民众对权利和审判的莫不关心的态度对法律来说，是一个坏兆头。庞德",
+      "suggestion": "漠不关心",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "RU3_RU4",
+      "text": "换句话说，对于新鲜观念，人们需要在耳儒目染后才会作出改变。",
+      "suggestion": "耳濡目染",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PI5_PI6",
+      "text": "不过，多方面调查研究显示女人比男人恐怖症发作的经历多，嗜酒成僻的人和吸毒的人更容易犯恐怖症发作的病。",
+      "suggestion": "嗜酒成癖",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHU5_SHU6",
+      "text": "我真的不敢相信，世上竟然还会有他这样不辨黍麦的人。",
+      "suggestion": "不辨菽麦",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SI1_JI2",
+      "text": "子丑寅卯辰己午未申酉戌骇,斩妖除魔,大吉大利,木剑开封。",
+      "suggestion": "辰巳午未",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAO1_LE2",
+      "text": "小刚决心改掉书写了草的坏毛病。",
+      "suggestion": "潦草",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JU3_JU4",
+      "text": "虽然相矩不远，虽然时常见面，行色匆匆难把话谈。彼此牵挂在心间，不用言语心会看得见。深深祝福送给你，愿你一生平安！无论时间怎样流逝，我们的友谊不变！",
+      "suggestion": "相距不远",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIU3_LIU4",
+      "text": "我下意识地将半个柿子椒像着了火的手溜弹扔出老远。",
+      "suggestion": "手榴弹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TI1_TI2",
+      "text": "你先拟个题纲再写。",
+      "suggestion": "提纲",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIE1_XIAO2",
+      "text": "一大片火红的叶子飘落，总有人对它不宵一顾。但我喜爱它，把它夹在书中，珍藏着这美好的回忆。",
+      "suggestion": "不屑一顾",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YIN5_YIN6",
+      "text": "秋姑姑走进了田野，把一望无银的田野边的金黄金黄。稻子长高了，禾苗成熟了，麦子露出笑脸，玉米笑弯了腰，高粱涨红了脸，农民伯伯看在眼里，喜在心头啊！",
+      "suggestion": "一望无垠",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WAN1_WAN2",
+      "text": "她为失去的青春而感到婉惜。",
+      "suggestion": "惋惜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHEN1_SHEN2",
+      "text": "原计划慎密绝妙,非鼻垩挥斤之才,难荷此大任。",
+      "suggestion": "缜密",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XU1_SHU2",
+      "text": "子丑寅卯辰巳午未申酉戍亥!十二玄玄之门,永恒之源,永生不灭!",
+      "suggestion": "申酉戌亥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI1_PAO2",
+      "text": "生命可以不轰轰烈烈，但应抛地有声。",
+      "suggestion": "掷地有声",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEI1_HUI2",
+      "text": "谁敢冒天下之大不讳,侵略弱小国家,我们就反对谁。",
+      "suggestion": "冒天下之大不韪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YOU5_YOU6",
+      "text": "愚昧者怨天由人，无能者长吁短叹，儒弱者颓然放弃。",
+      "suggestion": "怨天尤人",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WO1_GAN2",
+      "text": "讲和谈判因意见分歧危如累卵，而会长从中干旋方转危为安。",
+      "suggestion": "从中斡旋",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WU5_WU6",
+      "text": "关于正式访问俄罗斯并举行中俄总理第十五次定期会悟。",
+      "suggestion": "会晤",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XI1_ZHE2",
+      "text": "雨声浙沥，如杜鹃低鸣，如歌，如泣。",
+      "suggestion": "雨声淅沥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YAN5_YAN6",
+      "text": "国务院总理举行晏会，招待在中国工作的外国专家。",
+      "suggestion": "宴会",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XI5_XI6",
+      "text": "月明星希的夜晚，家家户户的窗户里射出明亮的灯光，就像天上的群星陨落人间。",
+      "suggestion": "月明星稀",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XI1_CHAI2",
+      "text": "为让人们吃透精神，他条分缕拆，举一反三，那慢条斯理的话语，犹如工笔画般细腻。",
+      "suggestion": "条分缕析",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YAN7_YAN8",
+      "text": "阿拉伯人不像欧洲人只是对内地敷演了事地探险，而是寻求在这个地区的贸易能长久做下去。",
+      "suggestion": "敷衍",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YE1_JIE2",
+      "text": "丰雄带着不同的声音竭见默雷不下十余次。",
+      "suggestion": "谒见",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YI19_YI20",
+      "text": "大家一口同声地赞成老师的提议。",
+      "suggestion": "异口同声",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZU1_JU2",
+      "text": "杰克咀咒了一声。",
+      "suggestion": "诅咒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAO1_RAO2",
+      "text": "武警官兵在抗洪第一线个个饶勇善战，不甘示弱。",
+      "suggestion": "骁勇善战",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHA1_BIAN2",
+      "text": "她向我眨了贬眼。",
+      "suggestion": "眨眼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZH6",
+      "text": "多读一些书，让自己多有一点自信，加上你因了解人情事故而产生的一种对人对物的爱与宽恕的涵养。",
+      "suggestion": "人情世故",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANGFUXIANGCHENG",
+      "text": "训诫和爱应该是相辅相承的。",
+      "suggestion": "相辅相成",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XINYUANYIMA",
+      "text": "她心原意马地转过身作了无可奈何的姿势。",
+      "suggestion": "心猿意马",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANGKUANGSHENYI",
+      "text": "心广神怡的事总是让人开心的。",
+      "suggestion": "心旷神怡",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XINXINXIANGYIN",
+      "text": "他们心心相映，一往情深。",
+      "suggestion": "心心相印",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XINGJIKEYI",
+      "text": "有几个行迹可疑的人总是在这儿附近转来转去。",
+      "suggestion": "形迹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAOYULANGLANG",
+      "text": "同事都穿戴漂亮、精神抖擞，时儿讨论激烈，时儿笑语郎郎，感受着团场春天般的温暖。",
+      "suggestion": "朗朗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YIMAIXIANGCHENG",
+      "text": "这是我们党历史性的选择,也是我们党思想理论一脉相成。",
+      "suggestion": "承",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YICUERJIU",
+      "text": "没什么事情是一促而就的。",
+      "suggestion": "蹴",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YIGUZUOQI",
+      "text": "一股作气拿下这项目。",
+      "suggestion": "鼓",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YICHOUMOZHAN",
+      "text": "他现在一愁莫展，不知所措。",
+      "suggestion": "筹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "YIFENTIANYING",
+      "text": "他时而激动满怀，时而义愤填赝；有时热烈激动，有时雄辩过人。",
+      "suggestion": "膺",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHETIANBIRI",
+      "text": "这棵古树，枝繁叶茂，遮天避日。",
+      "suggestion": "蔽",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHANGYIZHIYAN",
+      "text": "李妈仗义直言，为着新儿，也为着自己。",
+      "suggestion": "执言",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHANGHUANGSHICUO",
+      "text": "趁他张慌失措的当儿，她急忙走开，三步并作两步地登上画室的楼梯。",
+      "suggestion": "皇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHANGDENGJIECAI",
+      "text": "店内张灯结采，播放着民族音乐。",
+      "suggestion": "彩",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHISHOUKERE",
+      "text": "这位年轻而又灸手可热的明星，可谓前途无量。",
+      "suggestion": "炙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZHI25_ZHI26",
+      "text": "水边垂钓，闲情逸志。是以物命而为儿戏，刺骨穿肠，于心何忍？愿发仁慈，常起悲心。",
+      "suggestion": "闲情逸致",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WANGZIFEIBO",
+      "text": "觉得自豪的事情是从不妄自非薄。",
+      "suggestion": "菲",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WU9_WU10",
+      "text": "堂堂的正规军对付一群饥饿不堪的污合之众,就像瓮牖绳枢一样,毫不费力。",
+      "suggestion": "乌合之众",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WANBIGUIZHAO",
+      "text": "铁警火速援助，失物完壁归赵。",
+      "suggestion": "璧",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEIWEIDONGTING",
+      "text": "证严法师尾尾动听的话语,至今犹在耳畔。",
+      "suggestion": "娓娓",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEIYUCHOUMOU",
+      "text": "部分城市“未雨筹缪”，江苏先后有四座城市执行限购令,分别是南京、无锡、苏州和徐州。",
+      "suggestion": "绸",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEILISHITU",
+      "text": "他是个势利小人，总是唯利事图。",
+      "suggestion": "是",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WUCAIBINGFEN",
+      "text": "社区里20多名中小学生两人一组,通过默契的配合,用西瓜、葡萄、香蕉等水果在盆上拼出一个个五采缤纷的图案。",
+      "suggestion": "彩",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANGXINGJIANCHU",
+      "text": "他游得这么好,真叫我相形见拙。",
+      "suggestion": "绌",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANGCHEYUNXIAO",
+      "text": "突然，一声巨大的爆裂声响彻云宵。",
+      "suggestion": "霄",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XINHENSHOULA",
+      "text": "这个间谍心狠手棘。",
+      "suggestion": "辣",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XINHUIYILAN",
+      "text": "他的脸上带着一副心恢意懒而又不屑一顾的神情。",
+      "suggestion": "灰",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XINHUIYILENG",
+      "text": "失败之后，他心恢意冷。",
+      "suggestion": "灰",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIUYANSHENGYI",
+      "text": "人民于连年战乱之后，已亟待修养生息。",
+      "suggestion": "休养",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XUXURUSHENG",
+      "text": "她谈起过去的一切仍诩诩如生，记忆犹新。",
+      "suggestion": "栩栩",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIANGTIBINGLUN",
+      "text": "运动员的成就与作家的成就不能相题并论。",
+      "suggestion": "提",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "XIAORONGKEJU",
+      "text": "他的领带鲜艳刺目，面孔却坦率开朗，笑容可鞠，招人喜爱。",
+      "suggestion": "掬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHUSHENGLANGLANG",
+      "text": "学生书声朗朗的晨读让人兴奋。",
+      "suggestion": "琅琅",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHANGXINYUEMU",
+      "text": "我喜欢爽心悦目的电影。",
+      "suggestion": "赏心",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHUIHUOBURONG",
+      "text": "我们是水火不融的一对。",
+      "suggestion": "容",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHUIRUJIAORONG",
+      "text": "我们是水乳交溶的一对。",
+      "suggestion": "融",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHUIXIEBUTONG",
+      "text": "这马路堵得水泻不通。",
+      "suggestion": "水泄",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SIKONGJIANGUAN",
+      "text": "我已经司空见怪了。",
+      "suggestion": "见惯",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SIPILAILIAN",
+      "text": "我死皮癞脸地说。",
+      "suggestion": "赖",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DAN5_DAN6",
+      "text": "惮精竭虑，勤政敬业，以民为本，无私奉献。",
+      "suggestion": "殚精竭虑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SUISHENGFUHE",
+      "text": "我马上随声附合着。",
+      "suggestion": "和",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHUSHIWUDU",
+      "text": "我对他熟视无赌。",
+      "suggestion": "睹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SIXINTADI",
+      "text": "它对我死心踏地的态度很有趣。",
+      "suggestion": "塌",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHANBAGANXIU",
+      "text": "我不会善罢干休的。",
+      "suggestion": "甘",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TANWEIGUANZHI",
+      "text": "奇幻设计的米兰家具时尚前卫令人叹为观之。",
+      "suggestion": "止",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TIANFANDIFU",
+      "text": "从改革开放以来，中国发生了天翻地复的变化。",
+      "suggestion": "覆",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TIANYANMIYU",
+      "text": "他的甜言密语千万别信。",
+      "suggestion": "蜜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TIANBUZHICHI",
+      "text": "你怎么这么括不知耻？为什么要缠着建华？你以为他跟你求婚我就会同意你们在一起吗？",
+      "suggestion": "恬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TIAOBOSHIFEI",
+      "text": "我最讨厌别人挑拨事非了。",
+      "suggestion": "是",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TONGCHOUDIKAI",
+      "text": "幸亏秦师在关键时刻和我同仇敌慨。",
+      "suggestion": "忾",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TOUJIDAOBA",
+      "text": "因为很多人投机捣把，所以楼市很有泡沫",
+      "suggestion": "倒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TAOZHIYAOYAO",
+      "text": "他在连杀14人以后逃之妖妖。",
+      "suggestion": "夭夭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TOUBICONGRONG",
+      "text": "国家八方面优惠政策鼓励高校毕业生投笔从绒。",
+      "suggestion": "戎",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "TIANYIWUFENG",
+      "text": "我和他的配合天衣无逢。",
+      "suggestion": "缝",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PAOGUANGYANGHUI",
+      "text": "蹈光养晦，蓄势待发。",
+      "suggestion": "韬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEIMIBUZHEN",
+      "text": "那场大病以后，他就威靡不振。",
+      "suggestion": "萎",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "WEIMIAOWEIXIAO",
+      "text": "这幅画画的真是唯妙惟肖。",
+      "suggestion": "惟",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENGSHAYUDUO",
+      "text": "我喜欢生杀与夺的权力。",
+      "suggestion": "予",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENGMINGNANFU",
+      "text": "我是个盛名难符的人。",
+      "suggestion": "副",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIKOUFOUREN",
+      "text": "他失口否认这件事。",
+      "suggestion": "矢口",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIBUGUOFU",
+      "text": "每当回忆起过去那段食不裹腹的日子，奶奶就会眼含泪水。",
+      "suggestion": "果",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIZUOYONGZHE",
+      "text": "他是这件事的始作踊者吗？",
+      "suggestion": "俑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIWAITAOYUAN",
+      "text": "这里是世外桃园。",
+      "suggestion": "桃源",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIDEQIFAN",
+      "text": "这样做只会事得其反。",
+      "suggestion": "适",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIMUYIDAI",
+      "text": "让我们试目以待吧。",
+      "suggestion": "拭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHOUDANGQICHONG1",
+      "text": "我首当其充地成为受害者。",
+      "suggestion": "冲",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHOUDANGQICHONG2",
+      "text": "我手当其冲的成为受害者。",
+      "suggestion": "首",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHOUYIFEIQIAN",
+      "text": "这一席话让我受益非浅。",
+      "suggestion": "匪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHOUZHIYUREN",
+      "text": "千万不要受治于人。",
+      "suggestion": "制",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "RENCAIBEICHU",
+      "text": "新演员人才倍出，老演员不久就地位难保了。",
+      "suggestion": "辈",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "RUCHUYIZHE",
+      "text": "在这个问题上，台尔森银行倒是跟国家如出一澈。",
+      "suggestion": "辙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "RUXIUWEIGAN",
+      "text": "我们听说过多少乳嗅未干的年轻人落入头生黄发，脸抹脂粉的女冒险家之手因而断送了生命的故事。",
+      "suggestion": "臭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SANFANWUCI",
+      "text": "我已经三翻五次地告诫你不可以这样了。",
+      "suggestion": "番",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SANLINGWUSHEN",
+      "text": "老师对这条规定已经三令五伸了。",
+      "suggestion": "申",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SENYANBILEI",
+      "text": "这森严壁磊的城堡。",
+      "suggestion": "垒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIJUNDUOWEI",
+      "text": "我杀君夺位的举动很壮观。",
+      "suggestion": "弑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHAMOLVZHOU",
+      "text": "这是沙漠绿州。",
+      "suggestion": "洲",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHIXUEWEIMENG",
+      "text": "我们要插血为盟。",
+      "suggestion": "歃",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHANHONGBAOFA",
+      "text": "犹如山洪爆发一样凶猛。",
+      "suggestion": "暴发",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHANQINGSHUIXIU",
+      "text": "这里山青水秀。",
+      "suggestion": "山清水秀",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHANGCUANXIATIAO",
+      "text": "他像小猴子一样上窜下跳的。",
+      "suggestion": "蹿",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHANGTUXIAXIE",
+      "text": "我今天吃坏了肚子，上吐下泄。",
+      "suggestion": "下泻",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENGDONGJIXI",
+      "text": "我伸东击西地反击。",
+      "suggestion": "声",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENJUJIANCHU",
+      "text": "她在美国的以后几年中深居浅出，除了会见台湾妇女团体的访客外，几乎很少在公众场合露面。",
+      "suggestion": "简",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENCAIYIYI",
+      "text": "昨天那么辛苦了，今天见到的他，还是那么神采弈弈。",
+      "suggestion": "奕奕",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "SHENZHIBUQING",
+      "text": "自从她小孩丢了，她就有点神智不清了。",
+      "suggestion": "神志",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PINGSHUIXIANGFENG",
+      "text": "我俩只是苹水相逢。",
+      "suggestion": "萍",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PIJINZHANJI",
+      "text": "即使劈荆斩棘，我也要完成这项任务。",
+      "suggestion": "披",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "POTIWEIXIAO",
+      "text": "转眼间她破睇为笑。",
+      "suggestion": "涕",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "POFUCHENGZHOU",
+      "text": "我们要有破斧沉舟的决心。",
+      "suggestion": "釜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PANGZHENGBOYIN",
+      "text": "如何做到旁证博引？",
+      "suggestion": "旁征",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "PANLONGFUFENG",
+      "text": "别想着攀龙付凤。",
+      "suggestion": "附",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "POZAIMEIJIE",
+      "text": "此事迫在眉捷。",
+      "suggestion": "睫",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIANJUHOUGONG",
+      "text": "赵云今天的表现前踞后恭，言行相当反常。",
+      "suggestion": "倨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIANGNUZHIMO",
+      "text": "强驽之末，不能入鲁缟；冲风之衰，不能起毛羽。",
+      "suggestion": "弩",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QUQUXIAOSHI",
+      "text": "曲曲小事，何足挂齿。",
+      "suggestion": "区区",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QING3_QING4",
+      "text": "曲径通幽处，禅房花木深。…万籁此都寂，但余钟罄音。",
+      "suggestion": "钟磬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QINGGEMANWU",
+      "text": "这种轻歌慢舞的感觉真好。",
+      "suggestion": "曼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIONGBINGDUWU",
+      "text": "穷兵渎武的君王最终都难道失败的厄运。",
+      "suggestion": "黩武",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QUTUXIXIN",
+      "text": "忠心耿耿的仆人劝他的主人曲突徒薪。",
+      "suggestion": "徙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIUSHUIYIREN",
+      "text": "他正思念他的秋水依人。",
+      "suggestion": "伊",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QINNENGBUZHUO",
+      "text": "勤能补绌是一种很好的学习品质。",
+      "suggestion": "拙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIMAOBUYANG",
+      "text": "这小子其貌不洋。",
+      "suggestion": "扬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QUZHIRUOWU",
+      "text": "村口的饭让乞丐们趋之若骛。",
+      "suggestion": "鹜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "QIARUQIFEN",
+      "text": "用这个词形容他真是恰如其份。",
+      "suggestion": "分",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "如法泡制",
+      "text": "然后，它再对截止到保护区另一边的路段如法泡制。",
+      "suggestion": "炮",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LISHANGWANGLAI",
+      "text": "自然，双方都要作些让步，并且要礼上往来。",
+      "suggestion": "尚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIUYANFEIYU",
+      "text": "他遵守这条规矩是为了杜绝流言非语。",
+      "suggestion": "蜚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LONGFEIFENGWU",
+      "text": "在光滑的纸上，他的笔一路龙飞风舞，用的一例是整齐的大写字母。",
+      "suggestion": "凤",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LUESHENGYICHOU",
+      "text": "班长确实比我们略胜一俦。",
+      "suggestion": "筹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIAOLIAOWUJI",
+      "text": "看演出的观众廖廖无几。",
+      "suggestion": "寥寥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LINCIJIEBI",
+      "text": "南京路上万商云集，商店麟次栉比，商品琳琅满目，不愧为中华第一街。",
+      "suggestion": "鳞",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LIANGCHENMEIJING",
+      "text": "订婚的良晨美景令人难以忘怀，愿你们美梦成真，心想事成。",
+      "suggestion": "辰",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "LUOYINGBINFEN",
+      "text": "忽逢桃花林，夹岸数百步，中无杂树，芳草鲜美，落英宾纷。",
+      "suggestion": "缤",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MAOHESHENLI",
+      "text": "训政体制在形式上对孙中山的训政构想有一定遵循，但在根本精神与原则方面和后者相去甚远，貌和神离。",
+      "suggestion": "合",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MINGBIANSHIFEI",
+      "text": "对男人来说，谈话是明确问题，明辩是非，解决问题的一种方法。",
+      "suggestion": "辨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MINGLIEQIANMAO",
+      "text": "我决心要在这次考试中名列前矛。",
+      "suggestion": "茅",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MANMUCHUANGYI",
+      "text": "巨浪把陆地破坏得满目疮胰。",
+      "suggestion": "痍",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MITIANDAHUANG",
+      "text": "他真有胆量，敢向我撒了个弥天大慌。",
+      "suggestion": "谎",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MINGWANBULING",
+      "text": "况且，在现行的体制下，自然也有应付即使是暝顽不灵的学子。",
+      "suggestion": "冥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MINGFUQISHI",
+      "text": "他是个名负其实的“规劝者”，言语粗鲁，颠三倒四，但辩解起来连我也被吸引住了。",
+      "suggestion": "副",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MINGZAOYISHI",
+      "text": "研究一下他何以能在生前名躁一时也还是值得的。",
+      "suggestion": "噪",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MINGQIANGANJIAN",
+      "text": "最和灵魂相似的，莫过于蜜蜂。他从这朵花飞到那朵花，正像灵魂从这明枪暗剑飞到那颗星；它采密，正像灵魂采集光。",
+      "suggestion": "箭",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MORANHUISHOU",
+      "text": "在暮然回首的刹那，没有怨恨的青春才会了无遗憾，如山冈上那轮静静的满月。",
+      "suggestion": "蓦",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "MAOSUIZIJIAN",
+      "text": "我决定不出示推荐信向这位大名鼎鼎的的哲学家毛遂自茬。",
+      "suggestion": "荐",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NAOXIUCHENGNU",
+      "text": "我喜欢看他脑羞成怒的样子。",
+      "suggestion": "恼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NUYANBIXI",
+      "text": "他奴颜卑膝的样子很令人讨厌。",
+      "suggestion": "婢",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NIESHOUNIEJIAO",
+      "text": "我不喜欢看他总是摄手摄脚。",
+      "suggestion": "蹑手蹑脚",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "NONGQIAOCHENGZHUO",
+      "text": "过于专注反而会弄巧成绌。",
+      "suggestion": "拙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "OUXINLIXUE",
+      "text": "他为这次考试讴心沥血。",
+      "suggestion": "呕",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GANZHIRUYI",
+      "text": "入门经验使他们甘之如贻。",
+      "suggestion": "饴",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUIGUISUISUI",
+      "text": "你在这鬼鬼崇崇做什么呢？",
+      "suggestion": "祟祟",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUMINGDIAOYU",
+      "text": "她总是诂名钓誉。",
+      "suggestion": "沽",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GONGKUIYIKUI",
+      "text": "坚持一下不至于功亏一匮。",
+      "suggestion": "篑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUI9_KUI10",
+      "text": "你们和你们溃乏的同情心。",
+      "suggestion": "匮乏",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GENSHENDIGU",
+      "text": "根深底固的思想已经深深印在我们心中。",
+      "suggestion": "蒂",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUHUORENXIN",
+      "text": "鼓惑人心的人容易遭人烦。",
+      "suggestion": "蛊",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GUYUJILIANG",
+      "text": "这些鬼域伎俩骗不了我的。",
+      "suggestion": "蜮",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HANXINRUKU",
+      "text": "母亲含辛如苦地把我养大。",
+      "suggestion": "茹",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HONGTANGDAXIAO",
+      "text": "他说的笑话使人们轰堂大笑。",
+      "suggestion": "哄",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUOZHONGQVLI",
+      "text": "他们都不想为我火中取粟。",
+      "suggestion": "栗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUSHIDANDAN",
+      "text": "他总是对我的钱包虎视耽耽。",
+      "suggestion": "眈眈",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HAISHISHENLOU",
+      "text": "沙漠中常常可以见到海市辰楼。",
+      "suggestion": "海市蜃楼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "HUNSHENSHIDAN",
+      "text": "他英气风发混身是胆。",
+      "suggestion": "浑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JINBANGTIMING",
+      "text": "经过19年的努力，他终于金榜提名了。",
+      "suggestion": "题名",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIONGJIONGYOUSHEN",
+      "text": "看着他迥迥有神的双眼，我迷失了方向。",
+      "suggestion": "炯炯",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "JIAOSHEYINYI",
+      "text": "政府官员太娇奢淫逸了。",
+      "suggestion": "骄",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUXINGUYI",
+      "text": "他正苦心孤旨地着手把所有这些条规编成一个协调的整体，供世人阅读。",
+      "suggestion": "诣",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUAIZHIRENKOU",
+      "text": "当时许多侩炙人口的诗篇没有流传下来。",
+      "suggestion": "脍",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KOUGANSHEZAO",
+      "text": "他已筋疲力尽，踉跄地走着。嘴里口干舌躁。",
+      "suggestion": "燥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KONGQIANJUEHOU",
+      "text": "一个帝国的部长提出这样的要求，恐怕是恐前绝后的。",
+      "suggestion": "空",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "KUZAOWUWEI",
+      "text": "对于那些不喜欢网球的人来说，大量运动是一种枯躁无味的努力。",
+      "suggestion": "燥",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GANNAOTUDI",
+      "text": "我们纵然肝脑途地，在所不惜。",
+      "suggestion": "涂",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GANENFEIFU",
+      "text": "他这段演讲真是感人肺府。",
+      "suggestion": "腑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FU11_FU12",
+      "text": "好的朋友是一眼清澈的甘泉。浅薄的人胸无城俯，往往轻诺寡信，不知自重。好的朋友清淡如泉，心甘如饴，他永远默默地温润你干渴的心田，就像真正的学问和艺术一样，看似平淡却犹为奇崛，厚积而薄发。",
+      "suggestion": "胸无城府",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FU13_FU14",
+      "text": "我刚才说的全是肺腹之言，希望你能相信我。",
+      "suggestion": "肺腑之言",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "GANBAIXIAFENG",
+      "text": "我对他甘败下风。",
+      "suggestion": "拜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FENGSHENGHELI",
+      "text": "风声鹤戾草木皆兵。",
+      "suggestion": "唳",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FENGMAOLINJIAO",
+      "text": "好东西一直是凤毛鳞角的。",
+      "suggestion": "麟",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FUDICHOUXIN",
+      "text": "只有斧底抽薪才能打败敌人。",
+      "suggestion": "釜",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FUTANGDAOHUO",
+      "text": "我为你赴烫蹈火万死不辞。",
+      "suggestion": "汤",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FANGWEIDUJIAN",
+      "text": "我们应该防微杜惭把危险消灭在萌芽中。",
+      "suggestion": "渐",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FENGCHIDIANCHE",
+      "text": "一辆汽车“风驰电制”而来。",
+      "suggestion": "掣",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FENGYONGFENGYA",
+      "text": "年轻人不应该付庸风雅。",
+      "suggestion": "附庸",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FANYUNFUYU",
+      "text": "他常常翻云复雨，是人摸不清头脑。",
+      "suggestion": "覆",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FANGRENJILIU",
+      "text": "你不应该对孩子放任自留。",
+      "suggestion": "流",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DASHIDAFEI",
+      "text": "一页一页的历史写出来了，大事大非，终于有了无私的公论。",
+      "suggestion": "大是",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ESHOUCHENGQIN",
+      "text": "国人无不额首称庆。",
+      "suggestion": "手",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FAWANGHUIHUI",
+      "text": "法网灰灰疏而不漏。",
+      "suggestion": "恢恢",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FUYUANLIAOKUO",
+      "text": "中国幅圆辽阔，民族众多。",
+      "suggestion": "员",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FAYANGGUANGDA",
+      "text": "奥运精神将继续发扬广大。",
+      "suggestion": "光大",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "FENFATUQIANG",
+      "text": "他决定愤发图强学习英语。",
+      "suggestion": "奋",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHONGERBUWEN",
+      "text": "不要对这件事冲耳不闻，它关系到你的利益。",
+      "suggestion": "充",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHUERFANER",
+      "text": "他总这样出而反尔，迟早会有报应的。",
+      "suggestion": "尔",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CUIXITANXIN",
+      "text": "好久没有这样触膝谈心了。",
+      "suggestion": "促",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CUOTUOSUIYUE",
+      "text": "回忆我的嵯跎岁月，回忆我的青年时光。",
+      "suggestion": "蹉",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHUOCHUOYOUYU",
+      "text": "这些材料拿来做袋子卓卓有余了。",
+      "suggestion": "绰绰有余",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHIZHAFENGYUN",
+      "text": "曾几何时他也是叱诧风云的人物。",
+      "suggestion": "叱咤风云",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHUNQIANGSHEJIAN",
+      "text": "债限谈判唇枪舌箭。",
+      "suggestion": "剑",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CHUNSHENRUHUA",
+      "text": "他的书法真的是出神入画。",
+      "suggestion": "入化",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DACAIXIAOYONG",
+      "text": "叫我做这个工作真的是大才小用啊。",
+      "suggestion": "材",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "DAMINGDINGDING",
+      "text": "这就是大名顶顶的王教授？",
+      "suggestion": "鼎鼎",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ANRANSHISE",
+      "text": "HTC一出便让苹果暗然失色。",
+      "suggestion": "黯",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ANBANGDINGGUO",
+      "text": "要以安帮定国为己任。",
+      "suggestion": "邦",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "AISHENGTANQI",
+      "text": "小明是怎么了，一天都在哀声叹气的。",
+      "suggestion": "唉声叹气",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ANBUJIUBAN",
+      "text": "他就这样按步就班地当上了总经理。",
+      "suggestion": "按部就班",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BANMENNONGFU",
+      "text": "你居然敢在我面前搬门弄斧。",
+      "suggestion": "班",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BASHANSHESHUI",
+      "text": "我们历经艰辛，拔山涉水，终于看到了这美景。",
+      "suggestion": "跋",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BINGXINGBUBEI",
+      "text": "经济全球化与爱国主义并行不背。",
+      "suggestion": "悖",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BINGBINGYOULI",
+      "text": "他衫衫有礼的样子真讨人喜欢。",
+      "suggestion": "彬彬",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BIBIJIESHI",
+      "text": "违法占地、破坏耕地、彼彼皆是、竟无人过问。",
+      "suggestion": "比比",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BUHANERLI",
+      "text": "看了这血腥的图片，我不寒而粟。",
+      "suggestion": "栗",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BINGHUANGMALUAN",
+      "text": "在这个兵慌马乱的年代，要想过好日子真难。",
+      "suggestion": "荒",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BODAJINGSHEN",
+      "text": "中文真的是搏大精深啊！",
+      "suggestion": "博",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BUCHIXIAWEN",
+      "text": "当学生的就是要不齿下问。",
+      "suggestion": "不耻",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "BIECHUJIZHU",
+      "text": "首歌曲创作者匠心独运，别出机抒，真是一首好歌。",
+      "suggestion": "杼",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "惶_皇",
+      "text": "我曾经那样仓惶失措的想着你。",
+      "suggestion": "仓皇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "慌_皇",
+      "text": "我曾经那样仓慌失措的想着你。",
+      "suggestion": "皇",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CANGHAIYISU",
+      "text": "人类的世界，生命是那么的渺小，就如苍海一粟。",
+      "suggestion": "沧海",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CANWURENDAO",
+      "text": "战争期间发生了多次残无人道的屠杀。",
+      "suggestion": "惨",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "CANGENGLENGZHI",
+      "text": "跟风、赶潮流，你吃到的很可能只是残羹冷灸。",
+      "suggestion": "炙",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    },
+    {
+      "rule": "ZH1",
+      "text": "这部小说反应了现实生活",
+      "suggestion": "反映",
+      "source": "languagetool-language-modules/zh/src/main/resources/org/languagetool/rules/zh/grammar.xml"
+    }
+  ]
+}

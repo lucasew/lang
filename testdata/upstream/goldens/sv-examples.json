@@ -1,0 +1,73 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "sv",
+  "cases": [
+    {
+      "rule": "efter-hand",
+      "text": "Det visade sig efterhand att orden borde särskrivas.",
+      "suggestion": "efter hand",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "ALLT_MER",
+      "text": "Det blir allt mer vanligt att folk särskriver.",
+      "suggestion": "alltmer",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "M_FL",
+      "text": "Vi tar med oss Maria, Jens, Sara m fl och åker till Jönköping.",
+      "suggestion": "m.fl.",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "T_EX",
+      "text": "Vi tar t ex fem myror och fyra elefanter.",
+      "suggestion": "t.ex.",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "TEX",
+      "text": "Vi tar tex fem myror och fyra elefanter.",
+      "suggestion": "t.ex.",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "OVERRENS",
+      "text": "Flickorna kom överrens.",
+      "suggestion": "överens",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "MASERA",
+      "text": "Kan du masera mig?",
+      "suggestion": "massera",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "NEG_PLANER_OM",
+      "text": "Hon hade stora planer om det nya systemet.",
+      "suggestion": "planer på",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "NEG_TA_SJALVMORD",
+      "text": "Har du någonsin funderat på att ta självmord.",
+      "suggestion": "begå självmord",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "I_STOR_GRAD",
+      "text": "Affärens kunder är i stor grad nöjda med servicen.",
+      "suggestion": "i hög grad",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "NEG_KLAGOMAL_MOT",
+      "text": "Maria framförde sina klagomål över socialen.",
+      "suggestion": "klagomål mot",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    }
+  ]
+}

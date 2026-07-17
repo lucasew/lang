@@ -1,0 +1,67 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "km",
+  "cases": [
+    {
+      "rule": "HARA_PLANT",
+      "text": "របស់​ពួក​​ហោរ៉ា​ម្នាក់",
+      "suggestion": "ហោរា",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "A_SABAY",
+      "text": "ខ្ញុំ​អសប្បាយ​ខ្លាំង",
+      "suggestion": "អរសប្បាយ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "KHANG_VITNEAN",
+      "text": "​​​ជីវិត​ខាង​វិញ្ញាណ​ដ៏​ល្អ",
+      "suggestion": "ខាងឯវិញ្ញាណ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "THUA_BAU",
+      "text": "ខ្លួន​ទោះ​បើ​ជា​ប្រឈម",
+      "suggestion": "បី",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "BANAT_VERB",
+      "text": "មាន​​បញ្ញត្ត​ជា​អារម្មណ៍",
+      "suggestion": "បញ្ញត្តិ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "NUNG_PDOAL",
+      "text": "ទឹក​ដែល​​​ស្អាត ហើយ​និង​ថ្កល់។",
+      "suggestion": "នឹង​ថ្កល់",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "LENG_TOV",
+      "text": "ខ្ញុំ​លើង​ទៅ​លើ​ផ្ទះ។",
+      "suggestion": "ឡើង​ទៅ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "JEAMUY_NENG",
+      "text": "សូម​ជួយ​កូន​របស់​អ្នក​អោយ​ហាត់​អត់ធ្មត់​ជាមួយ​និង​ក្រុម​គ្រួសារ។",
+      "suggestion": "នឹង",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "JEA_MUY_NENG",
+      "text": "សូម​ជួយ​កូន​របស់​អ្នក​អោយ​ហាត់​អត់ធ្មត់​ជា​មួយ​និង​ក្រុម​គ្រួសារ។",
+      "suggestion": "នឹង",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "DIAL_RU_TE",
+      "text": "តើ​អ្នក​រក​ឃើញ​កំហុស​ដែល​ឬ​ទេ",
+      "suggestion": "ដែរ​ឬ​ទេ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    }
+  ]
+}

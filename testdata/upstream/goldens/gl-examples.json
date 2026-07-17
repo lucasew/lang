@@ -1,0 +1,55 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "gl",
+  "cases": [
+    {
+      "rule": "QUENES",
+      "text": "Non saben quenes son os encargados.",
+      "suggestion": "quen",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "QUENES",
+      "text": "Seguramente quenes máis protestan serán os que máis se beneficien.",
+      "suggestion": "quen",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "SE_BEN",
+      "text": "Se ben os resultados poden parecer similares, non teñen moito que ver os experimentos.",
+      "suggestion": "Aínda que",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ALOMELLOR",
+      "text": "Alomellor non é importante.",
+      "suggestion": "Se cadra",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "COMPACTDISK",
+      "text": "Un compact disk mercado fóra de España non leva canon da SGAE.",
+      "suggestion": "disco compacto",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DESQUE",
+      "text": "Desque se acabou a guerra, guerra quere esta canalla?.",
+      "suggestion": "Así que",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DE_REOLLO",
+      "text": "Observeina de reollo.",
+      "suggestion": "de esguello",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "VISTO_BO",
+      "text": "Patrimonio apraza o seu visto bo á recuperación das mámoas de Castiñeiras.",
+      "suggestion": "visto e prace",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    }
+  ]
+}

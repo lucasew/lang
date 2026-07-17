@@ -1,0 +1,2623 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ca",
+  "cases": [
+    {
+      "rule": "PER_CAUSALITAT",
+      "text": "Per causalitat em vaig trobar el teu cosí al tren.",
+      "suggestion": "casualitat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "UNA_POC",
+      "text": "Em vaig cansar una poc.",
+      "suggestion": "un poc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "UNA_POC",
+      "text": "M'han demanat eixir una poc abans d'hora.",
+      "suggestion": "un poc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "UNA_SOU",
+      "text": "Un cotxe i una sou.",
+      "suggestion": "un sou",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LES_SEGONS",
+      "text": "Em semblen més naturals les segons.",
+      "suggestion": "les segones",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LA_DUBTE",
+      "text": "Hem resolt de seguida la dubte.",
+      "suggestion": "el dubte",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LA_DUBTA",
+      "text": "Hem resolt de seguida la dubta.",
+      "suggestion": "el dubte",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_LES_AFORES",
+      "text": "Això passava a les afores de la ciutat.",
+      "suggestion": "als afores",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOS_PARTS",
+      "text": "L'obra té dos parts.",
+      "suggestion": "dues parts",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMPLE_AMPLA",
+      "text": "És de banda ample mòbil.",
+      "suggestion": "ampla",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SEGON_MA",
+      "text": "Són de segon mà.",
+      "suggestion": "segona",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "UN_ARMA",
+      "text": "Era un arma perillosa.",
+      "suggestion": "una arma",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ELS_ALBORS",
+      "text": "Els albors de la humanitat.",
+      "suggestion": "Les albors",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENTRE_TOTHOM",
+      "text": "Ho farem entre tothom.",
+      "suggestion": "entre tots",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_BLANC_I_NEGRE",
+      "text": "Ho veia tot amb blanc i negre.",
+      "suggestion": "en",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DA_PROP",
+      "text": "d'a prop",
+      "suggestion": "de prop",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_SENSE",
+      "text": "Vaig fer l'excursió amb sense aigua.",
+      "suggestion": "sense",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BAIX_ZERO",
+      "text": "baix zero",
+      "suggestion": "sota zero",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FINS_TOT",
+      "text": "Fins tot jo ho tinc avorrit.",
+      "suggestion": "Fins i tot",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_ENTRE",
+      "text": "Van passar per entre la gentada.",
+      "suggestion": "entre",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CADA_QUI",
+      "text": "De cada qui.",
+      "suggestion": "cadascú",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_CONTRARI",
+      "text": "Si no hi ha declaració en contrari.",
+      "suggestion": "en contra",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "GENS_EN_COMU",
+      "text": "No tenen gens en comú.",
+      "suggestion": "res en comú",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DEL_COM",
+      "text": "El camí per mitjà del com hi arribarem.",
+      "suggestion": "del qual",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALGUNA_COSA_QUE",
+      "text": "Ho va fer, alguna cosa que ens va molestar.",
+      "suggestion": "cosa que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PARA_QUE",
+      "text": "Para què serveix?",
+      "suggestion": "Per a què",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MOLTS_UNS_ALTRES",
+      "text": "Molts uns altres diuen que sí.",
+      "suggestion": "Molts altres",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOBLE_BAIX",
+      "text": "Tocava el doble baix.",
+      "suggestion": "contrabaix",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_NOMES",
+      "text": "Es nomes un suggeriment.",
+      "suggestion": "És només",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "D_ABAIX",
+      "text": "No veurem mai una revolta des d'abaix.",
+      "suggestion": "de baix",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ELS_EU",
+      "text": "Coneixien bé els eu negoci.",
+      "suggestion": "el seu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REPOSTA",
+      "text": "No sé la reposta.",
+      "suggestion": "resposta",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REPOSTES",
+      "text": "No poden donar les repostes correctes fins a l'endemà.",
+      "suggestion": "respostes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENCARE_ENCARA",
+      "text": "Encare no sé què ha passat.",
+      "suggestion": "Encara",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "STEPEHN_HAWKING",
+      "text": "Stephen Hawkins",
+      "suggestion": "Stephen Hawking",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SI_BE_QUE",
+      "text": "S'interessa per la massificació turística, si bé que això en termes de celebració soterrada.",
+      "suggestion": "si bé",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FENT_GIRANT",
+      "text": "Es fa fent girant la pilota.",
+      "suggestion": "girar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "QUANS_QUANTS",
+      "text": "N'he comprat uns quans.",
+      "suggestion": "quants",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "NOVETA_NOVETAT",
+      "text": "No hi ha cap noveta.",
+      "suggestion": "novetat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_DIRECTA",
+      "text": "Una emissió en directa.",
+      "suggestion": "en directe",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_MI_SEN_SEM",
+      "text": "A mi se'n fa difícil acceptar-ho.",
+      "suggestion": "se'm",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TOT_QUE",
+      "text": "M'agrada molt, tot que ara no me'n puc comprar cap.",
+      "suggestion": "tot i que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DEFER_DE_FER",
+      "text": "Com s'ha defer el pagament?",
+      "suggestion": "de fer",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COSTA_COSTAT",
+      "text": "Per un altre costa. la crisi encara no s'ha acabat.",
+      "suggestion": "costat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "UN_APART",
+      "text": "Només em van pagar un apart de la feina.",
+      "suggestion": "una part",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SUIS",
+      "text": "Vam anar a un restaurant suïs.",
+      "suggestion": "suís",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SUIS",
+      "text": "El suïs és el millor.",
+      "suggestion": "suís",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VINDRE_M",
+      "text": "Truqueu i vindre'm de seguida.",
+      "suggestion": "vindrem",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_DURANT",
+      "text": "Progressivament disminuïm el temps en durant el qual mantenim l'atenció.",
+      "suggestion": "durant",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DAVANTS",
+      "text": "Anava davants l'autobús.",
+      "suggestion": "d'abans",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DAVANTS",
+      "text": "Era un dels davants.",
+      "suggestion": "d'abans",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TOTS_PEGATS",
+      "text": "Resoldrem el problema d'àlgebra tots pegats.",
+      "suggestion": "tots plegats",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MHE_MHA",
+      "text": "M'he agradat molt la pel·lícula.",
+      "suggestion": "M'ha",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HE_CONSTAT",
+      "text": "He constat que no van assistir a la reunió.",
+      "suggestion": "He constatat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TAM_COM",
+      "text": "Tam com hem parlat, ens veurem demà.",
+      "suggestion": "Tal com",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TAN_COM",
+      "text": "Hi he pensat tan com he pogut.",
+      "suggestion": "tant com",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VIG_VAIG",
+      "text": "Vig dir-los que vinguessin de seguida.",
+      "suggestion": "Vaig",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PERTOT_PER_TOT",
+      "text": "Pertot el que s'ha exposat.",
+      "suggestion": "Per tot",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DEL_PARTIR",
+      "text": "Aquesta ha estat la decisió del partir.",
+      "suggestion": "partit",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TEMPS_AVENIR",
+      "text": "temps avenir",
+      "suggestion": "temps a venir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HIPISME_HIPPISME",
+      "text": "No m'esperava tot aquest hipisme.",
+      "suggestion": "hippisme",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RESULTAR_RESULTAT",
+      "text": "Això fa, com a resultar, que tothom se'n cansi.",
+      "suggestion": "resultat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COM_HA_ANAT",
+      "text": "Com anat el cap de setmana?",
+      "suggestion": "ha anat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROMBO",
+      "text": "Vaig tenir un trombo.",
+      "suggestion": "trombe",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROMBOS",
+      "text": "Vaig tenir dos trombos.",
+      "suggestion": "trombes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "POTS_SER_POT_SER",
+      "text": "Com pots ser que passi això?",
+      "suggestion": "pot",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "POTS_SER_POTSER",
+      "text": "Pots ser no ens coneixem prou encara.",
+      "suggestion": "Potser",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SERVIA_SERBIA",
+      "text": "Vaig fer un viatge a Sèrvia.",
+      "suggestion": "Sèrbia",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PRES_PRESS",
+      "text": "Oxford University Pres.",
+      "suggestion": "Press",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VA_DE_RETRO",
+      "text": "Va de retro!",
+      "suggestion": "Vade retro",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESTABLIN_ESTABLINT",
+      "text": "Va arribar el primer, establin un nou rècord.",
+      "suggestion": "establint",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ECT_ETC",
+      "text": "Blau, roig, verd, ect.",
+      "suggestion": "etc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "POLLEN",
+      "text": "El pollen dels arbres.",
+      "suggestion": "pol·len",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ATURA_ALTURA",
+      "text": "Hi ha hagut un accident a l'atura de la comarcal A-324.",
+      "suggestion": "altura",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALT_I_BAIXOS",
+      "text": "Van patir alt i baixos.",
+      "suggestion": "alts i baixos",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CA_SA_CASA",
+      "text": "Van comprar una ca sa a la platja.",
+      "suggestion": "casa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAT_HE_TROBAT",
+      "text": "Pel poc que trobat documentat.",
+      "suggestion": "que he trobat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "QUE_VIST",
+      "text": "És de les millors pel·lícules que vist.",
+      "suggestion": "que he vist",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALEGRE",
+      "text": "Era una noia molt alegra.",
+      "suggestion": "alegre",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALEGRE",
+      "text": "La meva alegra terra francesa",
+      "suggestion": "alegre",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FERME",
+      "text": "Ara no vull ferme aquestes preguntes.",
+      "suggestion": "fer-me",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LA_VIST",
+      "text": "¿Algú la vist avui?",
+      "suggestion": "l'ha vist",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CAIRO",
+      "text": "Me'n vaig al Cairo.",
+      "suggestion": "Caire",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AL_PRINCIPI",
+      "text": "Ho havia dit la principi.",
+      "suggestion": "al principi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DIMPROVISA",
+      "text": "Això no d'improvisa",
+      "suggestion": "s'improvisa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ANS_AL_CONTRARI",
+      "text": "Ans el contrari, li va agradar.",
+      "suggestion": "Ans al contrari",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CARREGEN",
+      "text": "Aquí es carregen els camions.",
+      "suggestion": "carreguen",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TOT_SHI_VAL",
+      "text": "Es pensa que tot si val.",
+      "suggestion": "s'hi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HI_I_AL",
+      "text": "Hi al cap del carrer hi havia la plaça.",
+      "suggestion": "I",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VASER",
+      "text": "Vaser alertada per la policia.",
+      "suggestion": "Va ser",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESTRES",
+      "text": "Tenia símptomes d'estres.",
+      "suggestion": "estrès",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RESOL",
+      "text": "Això es ressol fàcilment",
+      "suggestion": "resol",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RESOL",
+      "text": "Ressol aquesta equació.",
+      "suggestion": "Resol",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LA_SE_VA",
+      "text": "Tot i la se va mida petita.",
+      "suggestion": "la seva",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESTRICAMENT",
+      "text": "Definit estricament.",
+      "suggestion": "estrictament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_FOS",
+      "text": "Això va fer que la gent no es fos anarquista.",
+      "suggestion": "es fes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SER_SERVIR",
+      "text": "Llavors vam ser servir només aigua.",
+      "suggestion": "fer servir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HI_HA_VIA",
+      "text": "No hi ha via solució.",
+      "suggestion": "hi havia",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HI_HA_VIA",
+      "text": "Quantes espècies hi ha via de mamuts?",
+      "suggestion": "hi havia",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BACS",
+      "text": "Me'n vaig al País Bacs.",
+      "suggestion": "País Basc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_VER_HAVER",
+      "text": "Podria a ver estat pitjor.",
+      "suggestion": "haver",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AL_VOLTANT",
+      "text": "Vam caminar al voltat del parc.",
+      "suggestion": "al voltant",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RES_AFER",
+      "text": "No hi ha res afer.",
+      "suggestion": "a fer",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FA_VER",
+      "text": "Això ho fa ver ell.",
+      "suggestion": "va fer",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALTRA_ALTA",
+      "text": "Era una peça d'altra qualitat, sí.",
+      "suggestion": "alta",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_A_TENDRE",
+      "text": "No hi ha pressupost per a tendre aquestes necessitats.",
+      "suggestion": "per a atendre",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EL_CAPDAVALL",
+      "text": "El capdavall, és la millor solució.",
+      "suggestion": "Al capdavall",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TAN_SOL_TAN_SOLS",
+      "text": "Eren tan sol quatre.",
+      "suggestion": "tan sols",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AFORA_A_FORA",
+      "text": "I afora, el gos.",
+      "suggestion": "a fora",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "UNIFORMA",
+      "text": "De manera uniforma.",
+      "suggestion": "uniforme",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "APETICIO",
+      "text": "Ho vaig fer apetició dels amics.",
+      "suggestion": "a petició",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DEMA",
+      "text": "Vindré dema.",
+      "suggestion": "demà",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ATENTA_ATEMPTA",
+      "text": "Que atenta contra els drets humans.",
+      "suggestion": "atempta",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ASSEMBLA",
+      "text": "L'assembla.",
+      "suggestion": "assemblea",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ASSEMBLES",
+      "text": "Les assembles.",
+      "suggestion": "assemblees",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_QUE_FA_A",
+      "text": "Per que fa a aquesta qüestió.",
+      "suggestion": "Pel que fa a",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_POSTERITAT",
+      "text": "Ho va fer amb posteritat.",
+      "suggestion": "amb posterioritat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_A_DIT",
+      "text": "És a dit.",
+      "suggestion": "dir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "POCS_DESPRES",
+      "text": "Va passar pocs després.",
+      "suggestion": "poc després",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DAIXO",
+      "text": "Daixò no es parla.",
+      "suggestion": "D'això",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DALLO",
+      "text": "Dallò no es parla.",
+      "suggestion": "D'allò",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALA",
+      "text": "És Alà.",
+      "suggestion": "Al·là",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROMPO",
+      "text": "Ha fet un trompo.",
+      "suggestion": "virolla",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CAL_A_DIR",
+      "text": "Cal a dir que fou així.",
+      "suggestion": "Val a dir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SENSE_CONTAR_COMPTAR",
+      "text": "Sense contar que el 99,9% de les vegades no serveix per a res.",
+      "suggestion": "comptar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALL_LLARG",
+      "text": "All llarg del temps.",
+      "suggestion": "Al llarg",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CASSOS",
+      "text": "En molts cassos.",
+      "suggestion": "casos",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_VES",
+      "text": "En ves d'això, allò.",
+      "suggestion": "En comptes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TORNES",
+      "text": "Em va dir que em trucaria quan tornès.",
+      "suggestion": "tornés",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TANTS_SOLS",
+      "text": "tants sols",
+      "suggestion": "tan sols",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RESPECTA_RESPECTE",
+      "text": "respecta a",
+      "suggestion": "respecte a",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CONTAT_I_DEBATUT",
+      "text": "contat i debatut",
+      "suggestion": "comptat i debatut",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LLUNYA",
+      "text": "Un dia llunya.",
+      "suggestion": "llunyà",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ROSOS",
+      "text": "rosos",
+      "suggestion": "rossos",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EXTRADIU_EXTRADEIX",
+      "text": "La policia extradiu un mafiós italià.",
+      "suggestion": "extradeix",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_HORABAIXA",
+      "text": "Avui a horabaixa",
+      "suggestion": "a hora baixa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "GALES_GALLES",
+      "text": "El país de Gales.",
+      "suggestion": "Gal·les",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOLAR",
+      "text": "dolar",
+      "suggestion": "dòlar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_TOTA_HORA",
+      "text": "a tot hora",
+      "suggestion": "a tota hora",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENTRE_DELLS",
+      "text": "entre d'ells",
+      "suggestion": "entre ells",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FUNDADAMENT",
+      "text": "Parlava fundadament.",
+      "suggestion": "amb fonament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SACRAMENT",
+      "text": "El sacrament de la confessió.",
+      "suggestion": "sagrament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FLUIDAMENT",
+      "text": "fluïdament",
+      "suggestion": "fluidament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PERFETAMENT",
+      "text": "S'entén perfetament",
+      "suggestion": "perfectament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LLUNYAMENT",
+      "text": "Ho veia llunyament",
+      "suggestion": "llunyanament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SOMAMENT",
+      "text": "Estava somament cansat.",
+      "suggestion": "summament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RAPIDAMENT",
+      "text": "rapidament",
+      "suggestion": "ràpidament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALIENAMENT",
+      "text": "alienament",
+      "suggestion": "alineament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PROVABLEMENT",
+      "text": "provablement",
+      "suggestion": "probablement",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "IMPROVABLEMENT",
+      "text": "Improvablement",
+      "suggestion": "Improbablement",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COMPLERTAMENT",
+      "text": "complertament",
+      "suggestion": "completament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DESAFORADAMENT",
+      "text": "desaforadament",
+      "suggestion": "desmesuradament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_BADES_DEBADES",
+      "text": "de bades",
+      "suggestion": "debades",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CONSEGUENT_CONSEQUENT",
+      "text": "per conseqüent",
+      "suggestion": "per consegüent",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EM_VIST",
+      "text": "com em vist",
+      "suggestion": "hem vist",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ABANS_DAHIR",
+      "text": "els riscos d'abans d'ahir.",
+      "suggestion": "abans-d'ahir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SO",
+      "text": "só",
+      "suggestion": "so",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "OL_A",
+      "text": "ol a",
+      "suggestion": "o la",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_VA_FA_CARREC",
+      "text": "es va càrrec",
+      "suggestion": "es fa càrrec",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VA_CARREC",
+      "text": "va càrrec del club",
+      "suggestion": "va a càrrec",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MONTS_MONS_DE_DEU",
+      "text": "per aquests monts de Déu",
+      "suggestion": "mons de Déu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_BANS_ABANS",
+      "text": "a bans de l'actual enrenou",
+      "suggestion": "abans",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TAL_CON_TAL_COM",
+      "text": "tal con",
+      "suggestion": "tal com",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REP_ES_PER_AIXO_QUE",
+      "text": "És per això que hem decidit repetir l'experiència.",
+      "suggestion": "Per aquest motiu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REP_TANMATEIX",
+      "text": "Tanmateix, el resultat fou bo.",
+      "suggestion": "Això no obstant",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REP_A_MES_A_MES",
+      "text": "A més a més, el resultat era bo.",
+      "suggestion": "D'altra banda",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REP_PER_TANT",
+      "text": "Per tant, cal tirar avant.",
+      "suggestion": "En conseqüència",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REP_JA_QUE",
+      "text": "Això és així, ja que no hi ha dubte.n",
+      "suggestion": "perquè",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "REP_DESPRES",
+      "text": "Després ja ho arreglarem.",
+      "suggestion": "En acabat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_EN_AMB_EL",
+      "text": "Amb en final.",
+      "suggestion": "el",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LA_HAIA",
+      "text": "l'Haia",
+      "suggestion": "la Haia",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FORMULA1",
+      "text": "formula 1",
+      "suggestion": "Fórmula 1",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COM_OBI",
+      "text": "Cóm?",
+      "suggestion": "Com",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MES1",
+      "text": "Mes tard t'ho explicaré.",
+      "suggestion": "Més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MES1",
+      "text": "Per mes detalls, vegeu la nostra política de privacitat.",
+      "suggestion": "més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MES1",
+      "text": "Venia del mes enllà.",
+      "suggestion": "més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MES1",
+      "text": "Agost és mes calorós.",
+      "suggestion": "més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MES1",
+      "text": "Només vint-i-cinc menys mes tard.",
+      "suggestion": "més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_FALSA",
+      "text": "Comproveu si la invitació es falsa.",
+      "suggestion": "és",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_N",
+      "text": "És de'n Pep.",
+      "suggestion": "d'en",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HI_HA_PER_A_TANT",
+      "text": "No hi ha per a tant!",
+      "suggestion": "n'hi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LEN",
+      "text": "le'n",
+      "suggestion": "l'en",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DEPENDENT_DEPENENT",
+      "text": "Un servei depenent de la conselleria.",
+      "suggestion": "dependent",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PUNTS_SUSPENSIUS",
+      "text": "Ara mateix...",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TRESCAT",
+      "text": "Ho vaig veure a 3CAT.",
+      "suggestion": "3Cat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOSCAT",
+      "text": "Ho vaig veure a 2CAT.",
+      "suggestion": "2Cat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "WHATSAPP_MAJ_MIN",
+      "text": "T'he escrit un Whatsapp.",
+      "suggestion": "whatsapp",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "KEVLAR",
+      "text": "Uns guants de Kevlar",
+      "suggestion": "kevlar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DRETS_HUMANS",
+      "text": "És una qüestió de Drets Humans.",
+      "suggestion": "drets humans",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VILA_REAL",
+      "text": "Vila-Real",
+      "suggestion": "Vila-real",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BARCA_MAJUSCULES",
+      "text": "En un partit del barça.",
+      "suggestion": "Barça",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BARCA_MAJUSCULES",
+      "text": "Un barça espectacular.",
+      "suggestion": "Barça",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "HOLANDA",
+      "text": "El mes que ve me'n vaig a treballar a holanda.",
+      "suggestion": "Holanda",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SIC_SENSEPUNT",
+      "text": "Va dí [sic.] això.",
+      "suggestion": "sic",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COMETES_BAIXES",
+      "text": "Ara i ací „sempre.",
+      "suggestion": "—",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SENSE_EMBARGAMENT",
+      "text": "Sense embargament, vam trobar una solució satisfactòria.",
+      "suggestion": "Això no obstant",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MERMATS",
+      "text": "Són uns mermats.",
+      "suggestion": "soques",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SEMPRE_I_QUANT",
+      "text": "Sempre i quant sigui legal.",
+      "suggestion": "Sempre que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COSE",
+      "text": "Tinc una cose per a tu.",
+      "suggestion": "una cosa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LIJA",
+      "text": "Ho vam polir amb lija fina.",
+      "suggestion": "paper de vidre fi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PAPA_FRANCISCO",
+      "text": "La visita del papa Francisco a l'Uruguai.",
+      "suggestion": "Francesc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_PER_MIG",
+      "text": "Hi havia interessos de per mig.",
+      "suggestion": "pel mig",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_CALENTA",
+      "text": "Ara que es calenta el Líban.",
+      "suggestion": "s'escalfa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LO_MOLT_QUE",
+      "text": "És curiós lo molt que us interessa la política.",
+      "suggestion": "com",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LO_POC_QUE",
+      "text": "És curiós lo poc que us interessa la política.",
+      "suggestion": "que poc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BLANCANEU",
+      "text": "Blancaneus i els set nans.",
+      "suggestion": "Blancaneu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "D_AMAGADES",
+      "text": "Ho van fer d'amagades.",
+      "suggestion": "d'amagat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_AMAGADES",
+      "text": "Ho van fer a amagades.",
+      "suggestion": "d'amagat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MEDIR",
+      "text": "Medir 2 metres no et fa més intel·ligent.",
+      "suggestion": "Mesurar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_COLLACIO_DE",
+      "text": "A col·lació de l'altra qüestió.",
+      "suggestion": "A propòsit de",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PEL_CAP_DALT",
+      "text": "N'hi havia pel cap dalt quatre.",
+      "suggestion": "pel cap alt",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_ESCAPE",
+      "text": "Via d'escape.",
+      "suggestion": "d'escapament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CEBADA",
+      "text": "La cebada.",
+      "suggestion": "ordi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SENSE_MES",
+      "text": "No ho pots dir així sense més.",
+      "suggestion": "sense més ni més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "XOCA_LA",
+      "text": "Xoca-la!",
+      "suggestion": "Toca-la",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PUNT_I_A_BANDA",
+      "text": "Això va marcar un punt i a banda.",
+      "suggestion": "punt i a part",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_TOTA_PRESSA",
+      "text": "Se'n va anar a tota pressa.",
+      "suggestion": "molt de pressa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "POR_TODO_LO_ALTO",
+      "text": "Ho van celebrar por todo lo alto.",
+      "suggestion": "sense estar-se de res",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BANQUETA_BANC",
+      "text": "En la banqueta dels acusats.",
+      "suggestion": "banc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DALE",
+      "text": "I ell dale que te pego.",
+      "suggestion": "nyic-i-nyac",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_SOBAQUILLO",
+      "text": "Farem un sopar de sobaquillo.",
+      "suggestion": "de recapte",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_TOTA_COSTA",
+      "text": "Ho havia de fer a tota costa.",
+      "suggestion": "a tot preu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOTZE_RAIMS",
+      "text": "Hem de preparar els dotze raïms.",
+      "suggestion": "dotze grans de raïm",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EMES",
+      "text": "Un informe emes pel Parlament.",
+      "suggestion": "emès",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOBLE_RASER",
+      "text": "El doble raser del jutge.",
+      "suggestion": "doble moral",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_LO_MILLOR",
+      "text": "A lo millor portarà un amic.",
+      "suggestion": "Potser",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "VAL_DARAN",
+      "text": "Me'n vaig a la Val d'Aran.",
+      "suggestion": "Vall d'Aran",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TRANQUES_I_BARRANQUES",
+      "text": "a tranques i barranques.",
+      "suggestion": "a empentes i rodolons",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_EL_SEU_DEFECTE",
+      "text": "en el seu defecte",
+      "suggestion": "si no n'hi ha",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_PENES_SI",
+      "text": "Aquesta a penes si compta.",
+      "suggestion": "a penes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DOGV",
+      "text": "Diari Oficial de la Comunitat Valenciana.",
+      "suggestion": "Diari Oficial de la Generalitat Valenciana",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AIXI_MATEIXA",
+      "text": "La Bíblia s'interpreta així mateixa.",
+      "suggestion": "així mateix",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PEL_QUE_FA_REFERENCIA",
+      "text": "Pel que fa referència a la qüestió.",
+      "suggestion": "Pel que fa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SOTA_CAP_CONCEPTE",
+      "text": "No t'ho deixaré fer sota cap concepte.",
+      "suggestion": "per cap motiu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_TOTES_LLUMS",
+      "text": "a totes llums.",
+      "suggestion": "sense cap mena de dubte",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_ESPECIA",
+      "text": "Pagar en espècia.",
+      "suggestion": "en espècie",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_PRESSA",
+      "text": "Vam anar-hi molt a pressa.",
+      "suggestion": "de pressa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BLITZKRIEG",
+      "text": "La blitzkrieg va ser un fracàs.",
+      "suggestion": "guerra llampec",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENTRE_PITOS_I_FLAUTES",
+      "text": "entre pitos i flautes",
+      "suggestion": "entre naps i cols",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TINGUEM_FESTA_PAU",
+      "text": "Tinguem la festa en pau.",
+      "suggestion": "Tranquil·litat i bons aliments",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_BOGA",
+      "text": "Estava en boga.",
+      "suggestion": "en voga",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_TOTHORA",
+      "text": "A tothora.",
+      "suggestion": "A tota hora",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_LA_QUE_ESTA_CAIENT",
+      "text": "amb la que està caient",
+      "suggestion": "tal com va tot",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_UN_OBRIR_I_TANCAR_DULLS",
+      "text": "en un obrir i tancar d'ulls",
+      "suggestion": "en un tancar i obrir d'ulls",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SI_A_CAS",
+      "text": "si a cas",
+      "suggestion": "si de cas",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "GAS_CIUTAT",
+      "text": "gas ciutat",
+      "suggestion": "gas de ciutat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_MAJOR_ABUNDAMENT",
+      "text": "a major abundament",
+      "suggestion": "per si de cas",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AL_PER_MAJOR",
+      "text": "al per major",
+      "suggestion": "a l'engròs",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_MITJAN_TERMINI",
+      "text": "a mitjan termini",
+      "suggestion": "a mitjà termini",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_MARRES",
+      "text": "El tema de marres",
+      "suggestion": "en qüestió",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COLZE_AMB_COLZE",
+      "text": "colze amb colze",
+      "suggestion": "braç a braç",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_CAMISA_DONZE_VARES",
+      "text": "sempre es fica en camisa d'onze vares",
+      "suggestion": "on no el demanen",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AL_FI_I_AL_CAP",
+      "text": "al fi i al cap",
+      "suggestion": "al capdavall",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_ENMIG",
+      "text": "per enmig",
+      "suggestion": "pel mig",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_LES_DURES_I_A_LES_MADURES",
+      "text": "a les dures i a les madures",
+      "suggestion": "a les verdes i a les madures",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_COS_DE_REI",
+      "text": "Vivia a cos de rei.",
+      "suggestion": "a cor què vols, cor què desitges",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_DIA_DAHIR",
+      "text": "a dia d'ahir",
+      "suggestion": "ahir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CARN_DE_GALLINA",
+      "text": "Em va posar la carn de gallina.",
+      "suggestion": "pell de gallina",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_CARTA_CABAL",
+      "text": "a carta cabal",
+      "suggestion": "com no n'hi ha",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_BONES_A_PRIMERES",
+      "text": "de bones a primeres",
+      "suggestion": "d'entrada",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_LES_BONES",
+      "text": "¿Ho faràs per les bones o no?",
+      "suggestion": "sense més ni més",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_LES_MALES",
+      "text": "¿Caldrà que ho fem per les males?",
+      "suggestion": "a les males",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_TAL_QUE",
+      "text": "amb tal que vinguis",
+      "suggestion": "sempre que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_CAP_A_CAIGUDA",
+      "text": "anar de cap a caiguda",
+      "suggestion": "de capa caiguda",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_CARES_A",
+      "text": "de cares a",
+      "suggestion": "de cara a",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ACTE_SEGUIT",
+      "text": "acte seguit, va tancar la porta",
+      "suggestion": "tot seguit",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_BRACOS_CREUATS",
+      "text": "Ja pots esperar de braços creuats.",
+      "suggestion": "de braços plegats",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_ELS_BRACOS_CREUATS",
+      "text": "ja pots esperar amb els braços creuats",
+      "suggestion": "amb els braços plegats",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BUSCA_I_CAPTURA",
+      "text": "el criminal està en busca i captura",
+      "suggestion": "crida i cerca",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COBRAMENT_REVERTIT",
+      "text": "una trucada de cobrament revertit",
+      "suggestion": "cobrament a destinació",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DIMMEDIAT",
+      "text": "posa't a fer feina d'immediat",
+      "suggestion": "immediatament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_JURE_DE_IURE",
+      "text": "Espanya retorna de jure a l'absolutisme",
+      "suggestion": "de iure",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_PEU",
+      "text": "Cansa molt estar tant temps de peu",
+      "suggestion": "dret",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_AMB_ESCREIX",
+      "text": "ho supera en escreix",
+      "suggestion": "amb escreix",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ELECTR_VOLT",
+      "text": "L'electró volt",
+      "suggestion": "electronvolt",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_LENSEMS",
+      "text": "Hem d'actuar a l'ensems",
+      "suggestion": "ensems",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENTRE_PARENTESI",
+      "text": "cal posar-ho entre parèntesi",
+      "suggestion": "entre parèntesis",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_GROSSO_MODO",
+      "text": "a grosso modo",
+      "suggestion": "grosso modo",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PAPER_SECANT",
+      "text": "hem comprat paper secant",
+      "suggestion": "paper assecant",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PALS_A_LES_RODES",
+      "text": "pals a les rodes",
+      "suggestion": "bastons a les rodes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_DE_PROMPTE",
+      "text": "Per de prompte, ja m’havia semblat una persona de confiança",
+      "suggestion": "De primer antuvi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_LES_MIL_MERAVELLES",
+      "text": "a les mil meravelles",
+      "suggestion": "a meravella",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_MIL_AMORS",
+      "text": "de mil amors",
+      "suggestion": "a mans besades",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_REDOS",
+      "text": "a redòs dels cingles de Sant Joan",
+      "suggestion": "a redós",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AMB_RESPECTE_A",
+      "text": "amb respecte als cursos",
+      "suggestion": "respecte a",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AL_ROIG_VIU",
+      "text": "al roig viu",
+      "suggestion": "encès",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_SANT_DE_QUE",
+      "text": "a sant de què?",
+      "suggestion": "per quins set sous",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_SOCAREL",
+      "text": "És un català de soca rel",
+      "suggestion": "de soca-rel",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_LA_TERCERA_VA_LA_VENCUDA",
+      "text": "a la tercera va la vençuda",
+      "suggestion": "la tercera és la bona",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PRECS_I_PREGUNTES",
+      "text": "precs i preguntes",
+      "suggestion": "torn obert de paraules",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_CAPA_CAIGUDA",
+      "text": "anar de capa caiguda",
+      "suggestion": "de baixa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_DURES_PENES",
+      "text": "a dures penes",
+      "suggestion": "amb prou feines",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_CARA_PER_AMUNT",
+      "text": "aquest exercici s'ha de fer de cara per amunt",
+      "suggestion": "de cara enlaire",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DENTS_UNGLES",
+      "text": "Es va defensar amb ungles i dents.",
+      "suggestion": "amb dents i ungles",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_DRET_I_A_TORT",
+      "text": "a dret i a tort.",
+      "suggestion": "a tort i a dret",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_AIXI_DIRHO",
+      "text": "per així dir-ho",
+      "suggestion": "per dir-ho així",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENLLA_I_ENCA",
+      "text": "enllà i ençà",
+      "suggestion": "ençà i enllà",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RESUMEN_RESUM",
+      "text": "En resumen, ara ha quedat tot clar.",
+      "suggestion": "resum",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FORAGIT",
+      "text": "Era un foragit.",
+      "suggestion": "malfactor",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TERMINIS",
+      "text": "Terminis d'ús d'aquest lloc web.",
+      "suggestion": "Termes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AIXINA",
+      "text": "Ho farem aixina.",
+      "suggestion": "així",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "NIT_VELLA",
+      "text": "Farem una festa la Nit Vella.",
+      "suggestion": "nit de Cap d'Any",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "NIT_BONA",
+      "text": "Farem una festa la Nit Bona.",
+      "suggestion": "nit de Nadal",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "NIT_BONA",
+      "text": "Una Nit Bona de fa molts anys.",
+      "suggestion": "nit de Nadal",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BASQUET",
+      "text": "El club de basquet taronja.",
+      "suggestion": "bàsquet",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "INDIVIDUO",
+      "text": "És un individuo perillós.",
+      "suggestion": "individu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AQUOS",
+      "text": "En un medi aquos.",
+      "suggestion": "aquós",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DINAL",
+      "text": "Destinació dinal.",
+      "suggestion": "final",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DINALS",
+      "text": "Destinacions dinals.",
+      "suggestion": "finals",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COTXOS",
+      "text": "No hi ha cotxos de lloguer.",
+      "suggestion": "cotxes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COMBA",
+      "text": "Jugaven a saltar la comba.",
+      "suggestion": "corda",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENTADA",
+      "text": "L'entada del concert no era gaire cara.",
+      "suggestion": "entrada",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENTADES",
+      "text": "Les entades del concert no eren gaire cares.",
+      "suggestion": "entrades",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALUMANT",
+      "text": "Un alumant amb problemes d'atenció.",
+      "suggestion": "alumnat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALUMATS",
+      "text": "Els alumats.",
+      "suggestion": "alumnats",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ERADA",
+      "text": "Hem fet una erada greu.",
+      "suggestion": "errada",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ERADES",
+      "text": "Hem fet massa erades greus.",
+      "suggestion": "errades",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TALER",
+      "text": "Mala peça al taler.",
+      "suggestion": "taller",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TALERS",
+      "text": "Tenim talers d'escriptura a la vesprada.",
+      "suggestion": "tallers",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ARROSAR_ARROSSAR",
+      "text": "Cal més aigua a l'arrosar.",
+      "suggestion": "arrossar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LLENGUAT",
+      "text": "Tenia un llenguat precís i rigorós.",
+      "suggestion": "llenguatge",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TRAUME_TRAUMA",
+      "text": "Tenia un traume.",
+      "suggestion": "trauma",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FERLA",
+      "text": "No cal ferla.",
+      "suggestion": "fer-la",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FERLES",
+      "text": "No cal ferles ara.",
+      "suggestion": "fer-les",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESQUERA",
+      "text": "Porta 2 esquera.",
+      "suggestion": "esquerra",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESQUERE",
+      "text": "Porta 2 esquere.",
+      "suggestion": "esquerre",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CODIALS",
+      "text": "Salutacions codials.",
+      "suggestion": "cordials",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MONICA",
+      "text": "Una exposició a Santa mònica.",
+      "suggestion": "Mònica",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LAQUE",
+      "text": "Aquesta és laque m'agrada.",
+      "suggestion": "la que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PREGUERA",
+      "text": "Durant la preguera.",
+      "suggestion": "preguerra",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SENYALADAMENT",
+      "text": "Van dir, senyaladament, que no podia ser.",
+      "suggestion": "assenyaladament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_CARA",
+      "text": "No ha vingut en cara.",
+      "suggestion": "encara",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DALTABAIXOS",
+      "text": "Va viure molts daltabaixos.",
+      "suggestion": "alts i baixos",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ALTELL",
+      "text": "És a l'altell.",
+      "suggestion": "dalts",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ANTES",
+      "text": "Has de vindre antes.",
+      "suggestion": "abans",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BRILLANTES",
+      "text": "La brillantés.",
+      "suggestion": "brillantor",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SOBAT",
+      "text": "Molt sobat.",
+      "suggestion": "suat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CARI",
+      "text": "Ei, cari!",
+      "suggestion": "rei",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TUIT",
+      "text": "Ha fet un tuït.",
+      "suggestion": "piulada",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TUITS",
+      "text": "Ha fet molts tuïts.",
+      "suggestion": "piulades",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TOTA_VEGADA_QUE",
+      "text": "tota vegada que.",
+      "suggestion": "ja que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "APROPOSIT",
+      "text": "Van venir apropòsit.",
+      "suggestion": "a propòsit",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CORDURA",
+      "text": "cordura",
+      "suggestion": "seny",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "METJA",
+      "text": "Ha vingut el metja?",
+      "suggestion": "metge",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CALENTAMENT",
+      "text": "calentament",
+      "suggestion": "escalfament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PERTINENCIES",
+      "text": "pertinències",
+      "suggestion": "pertinences",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PORTANTVEUS",
+      "text": "Els portantveus del partit.",
+      "suggestion": "portaveus",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PLAC",
+      "text": "A llarg plaç.",
+      "suggestion": "termini",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AGALLES",
+      "text": "agalles",
+      "suggestion": "ganyes",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AGALLA",
+      "text": "Una agalla",
+      "suggestion": "ganya",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TRANSFONS_REREFONS",
+      "text": "transfons",
+      "suggestion": "rerefons",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RETXAS_REBUIG",
+      "text": "Va patir el retxàs de tothom.",
+      "suggestion": "rebuig",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RETRAS_RETARD",
+      "text": "Retràs en l'assignació de farmàcies.",
+      "suggestion": "Retard",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RETRAS_RETARD",
+      "text": "Disculpeu el retràs",
+      "suggestion": "retard",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RETRAS_RETARD",
+      "text": "Disculpeu el retràs.",
+      "suggestion": "retard",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "RETRAS_RETARD",
+      "text": "Disculpeu pel retràs.",
+      "suggestion": "retard",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ANADA_VOLTA",
+      "text": "anada i volta",
+      "suggestion": "anada i tornada",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "XOLLO",
+      "text": "xollo",
+      "suggestion": "ganga",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESTEVA",
+      "text": "Esteva",
+      "suggestion": "Esteve",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TENNIS",
+      "text": "tennis",
+      "suggestion": "tenis",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SENSE_PREVI_AVIS",
+      "text": "Van canviar les condicions sense previ avís.",
+      "suggestion": "sense avisar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "BONES_PASQUES",
+      "text": "Bones Pasqües!",
+      "suggestion": "Bon Nadal",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LLEPABOTES",
+      "text": "És un llepabotes",
+      "suggestion": "llepaculs",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TRES_QUARTS_DEL_MATEIX",
+      "text": "I la feina de l'altre és tres quarts del mateix.",
+      "suggestion": "si fa no fa igual",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PEL_SEU_PROPI_PEU",
+      "text": "Se'n va anar pel seu propi peu.",
+      "suggestion": "caminant",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TANT_ES_VAL",
+      "text": "Tant es val que facis una cosa com l'altra.",
+      "suggestion": "Tant se val",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_TOTS_LLOCS",
+      "text": "Es ficava per tots llocs.",
+      "suggestion": "pertot arreu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PER_TOTES_PARTS",
+      "text": "Es ficava per totes parts.",
+      "suggestion": "pertot arreu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_UN_ALTRE_ORDRE_DE_COSES",
+      "text": "En un altre ordre de coses.",
+      "suggestion": "Per una altra banda",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COPA_AMÈRICA",
+      "text": "No participa en aquesta edició de la Copa de l'Amèrica.",
+      "suggestion": "Copa Amèrica",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_ALLO_QUE_RESPECTA",
+      "text": "En allò que respecta a la qüestió primera.",
+      "suggestion": "Pel que respecta a",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AUS_DE_CORRAL",
+      "text": "Aus de corral",
+      "suggestion": "Aviram",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PALMA",
+      "text": "Vivien a Palma de Mallorca.",
+      "suggestion": "Palma",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COLQUE",
+      "text": "Vindrà colque amic.",
+      "suggestion": "qualque",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FOIE",
+      "text": "Per a acabar el menú hi ha un foie.",
+      "suggestion": "foie-gras",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AVIRAM",
+      "text": "Aus de corral",
+      "suggestion": "Aviram",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_EL_SEU_CONJUNT",
+      "text": "En el seu conjunt, aquestes solucions són més pràctiques.",
+      "suggestion": "En conjunt",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "QUE_ET_BOMBIN",
+      "text": "Que et follin!",
+      "suggestion": "Que et bombin",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FREDAT",
+      "text": "Fa fredat.",
+      "suggestion": "feredat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SI_O_SI",
+      "text": "Ho hem de fer sí o sí.",
+      "suggestion": "tant sí com no",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ATENA",
+      "text": "Atenea",
+      "suggestion": "Atena",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "EN_ENTREDIT",
+      "text": "ho va posar en entredit",
+      "suggestion": "en dubte",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CATALUNYA_DEL_NORD",
+      "text": "Catalunya Nord.",
+      "suggestion": "Catalunya del Nord",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_CIENCIA_CERTA",
+      "text": "Això ho sap a ciència certa.",
+      "suggestion": "del cert",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FINS_A_LA_SACIETAT",
+      "text": "Ho van fer fins a la sacietat.",
+      "suggestion": "fins a l'avorriment",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_BEN_SEGUR",
+      "text": "De ben segur que vindrà.",
+      "suggestion": "Ben segur",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TOT_I_AIXI",
+      "text": "tot i així",
+      "suggestion": "així i tot",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SEMPRE_I_QUAN",
+      "text": "Sempre i quan sigui legal.",
+      "suggestion": "Sempre que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "GAIRE_RES",
+      "text": "No som gaire res.",
+      "suggestion": "pràcticament res",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "GAIRE_GENS",
+      "text": "No m'agrada gaire gens.",
+      "suggestion": "pràcticament gens",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_LA_NIT_AL_MATI",
+      "text": "de la nit al matí",
+      "suggestion": "de la nit al dia",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DINER",
+      "text": "No tinc diner.",
+      "suggestion": "diners",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DINER",
+      "text": "Amb diner públic tot s'hi val.",
+      "suggestion": "diners públics",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SUFICIENTMENT",
+      "text": "Ell és suficientment despert per a entendre-ho.",
+      "suggestion": "prou",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FREQUENTMENT",
+      "text": "Ell és despert freqüentment a les nits.",
+      "suggestion": "sovint",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AL_MATI_SEGUENT",
+      "text": "al matí següent",
+      "suggestion": "l'endemà",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "INCLUSIVE",
+      "text": "inclusive",
+      "suggestion": "inclusivament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MES_MENOR",
+      "text": "La temperatura és més menor.",
+      "suggestion": "menor",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AIXI_COM_TAMBE",
+      "text": "La música així com també la literatura.",
+      "suggestion": "i també",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TOT_INCLOENT",
+      "text": "sense desmerèixer els anteriors, tot incloent-hi el muntatge de la Fura dels Baus",
+      "suggestion": "incloent",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COMICIS_ELECTORALS",
+      "text": "comicis electorals.",
+      "suggestion": "comicis",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "LLAPISSOS",
+      "text": "Els llàpissos.",
+      "suggestion": "llapis",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ESCLAR",
+      "text": "Esclar que sí.",
+      "suggestion": "És clar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ENCABAT",
+      "text": "Encabat vindré.",
+      "suggestion": "En acabat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SISPLAU",
+      "text": "Sisplau, veniu.",
+      "suggestion": "Si us plau",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CARCAMAL",
+      "text": "Quin carcamal!",
+      "suggestion": "persona decrèpita",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "CARCAMALS",
+      "text": "Quins carcamals!",
+      "suggestion": "persones decrèpites",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MUMARE",
+      "text": "I què farà, mumare?",
+      "suggestion": "ma mare",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AHI",
+      "text": "ahí",
+      "suggestion": "aquí",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "XIRINGUITO",
+      "text": "Vés al xiringuito.",
+      "suggestion": "barraca",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "XIRINGUITOS",
+      "text": "Cal tancar els xiringuitos.",
+      "suggestion": "barraques",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_REFILO",
+      "text": "La va veure passar de refiló.",
+      "suggestion": "de passada",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COLZE_A_COLZE",
+      "text": "colze a colze",
+      "suggestion": "braç a braç",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_FI_DE_COMPTES",
+      "text": "a fi de comptes, no en traurem res",
+      "suggestion": "al cap i a la fi",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PEGAMENT",
+      "text": "¿Has comprat pegament?",
+      "suggestion": "goma",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ULTRAVIOLETA",
+      "text": "Els raigs ultravioleta.",
+      "suggestion": "ultraviolat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MANUALITATS",
+      "text": "Li agrada fer manualitats.",
+      "suggestion": "treballs manuals",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MANUALITAT",
+      "text": "Fa una manualitat.",
+      "suggestion": "treball manual",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "COLORINS",
+      "text": "Tenia colorins.",
+      "suggestion": "coloraines",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ARRASTRONS",
+      "text": "Anava a arrastrons.",
+      "suggestion": "a rossegons",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_MIDA_QUE",
+      "text": "A mida que aneu eixint, pagueu.",
+      "suggestion": "A mesura que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "DE_REPENT",
+      "text": "de repent.",
+      "suggestion": "de sobte",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "MENTRES",
+      "text": "mentres cantava",
+      "suggestion": "mentre",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "APRETADAMENT",
+      "text": "Molt apretadament.",
+      "suggestion": "estretament",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_SOVINT",
+      "text": "a sovint",
+      "suggestion": "sovint",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ANDAMI",
+      "text": "Un andami.",
+      "suggestion": "bastida",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ANDAMIS",
+      "text": "Els andamis.",
+      "suggestion": "bastides",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "I_O",
+      "text": "Digueu-me si voleu pomes i/o peres.",
+      "suggestion": "o",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "QUELCOM_RELATIU",
+      "text": "Tot això ho faig per dignitat, quelcom que tu no has tingut.",
+      "suggestion": "cosa que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "QUELCOM_RELATIU",
+      "text": "Vivim uns dies excepcionals, quelcom que ens fa estar angoixats",
+      "suggestion": "cosa que",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "AQUESTOS",
+      "text": "En aquestos casos",
+      "suggestion": "aquests",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ICC_ICCUB",
+      "text": "Vam fer una visita a l'ICC.",
+      "suggestion": "ICCUB",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SPACEX",
+      "text": "Elon Musk va fundar space x.",
+      "suggestion": "SpaceX",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "JANE_AUSTEN",
+      "text": "Jean austen.",
+      "suggestion": "Jane Austen",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "JANE_FONDA",
+      "text": "Jean Fonda.",
+      "suggestion": "Jane Fonda",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "A_PUNT",
+      "text": "Ho vaig veure a A Punt.",
+      "suggestion": "À Punt",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "is",
+  "cases": [
+    {
+      "rule": "ARFLEIFÐ",
+      "text": "Þessi vandi er arfleið nýlendutímans.",
+      "suggestion": "arfleifð",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "FARM_FRAM",
+      "text": "Við horfum farm á veginn.",
+      "suggestion": "fram",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "LEITI",
+      "text": "Breytingar eru á næsta leyti.",
+      "suggestion": "leiti",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "SYNA",
+      "text": "Hann ætlar að sína henni nýju buxurnar.",
+      "suggestion": "sýna",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "AD_GEFNU_TILEFNI",
+      "text": "Ég mun af gefnu tilefni gera grein fyrir skoðun minni.",
+      "suggestion": "að",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "AD_ASETTU_RADI",
+      "text": "Glæpurinn var framinn að ásettu ráði.",
+      "suggestion": "af",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "ILLAN_BIFUR",
+      "text": "Hún hefur illa bifur á súrmat.",
+      "suggestion": "illan",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "ENN_ÞÁ",
+      "text": "Þú ert ennþá í liðinu.",
+      "suggestion": "enn þá",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "ENN_FREMUR",
+      "text": "Hún er ennfremur ráðin til að stýra nefndinni.",
+      "suggestion": "enn fremur",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "BAKA_TIL",
+      "text": "Kötturinn heldur sig jafnan bakatil í garðinum.",
+      "suggestion": "baka til",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "FYRIR_FRAM",
+      "text": "María fékk verkefnið greitt fyrirfram.",
+      "suggestion": "fyrir fram",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "EINS_OG",
+      "text": "Blómið er gult einsog sólin.",
+      "suggestion": "eins og",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "MEÐ_FRAM",
+      "text": "Við gengum meðfram ströndinni.",
+      "suggestion": "með fram",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "HÉR_MEÐ",
+      "text": "Þær eru hérmeð skráðar í sambúð.",
+      "suggestion": "hér með",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "INN_Í",
+      "text": "Börnin örkuðu inní skólastofuna.",
+      "suggestion": "inn í",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "ÚT_FRÁ",
+      "text": "Það kviknaði í útfrá kertaskreytingu.",
+      "suggestion": "út frá",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "FRAM_HJÁ",
+      "text": "Músin læddist framhjá kettinum.",
+      "suggestion": "fram hjá",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "ÁFRAM",
+      "text": "Jón hljóp á fram eftir veginum.",
+      "suggestion": "áfram",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "UMFRAM",
+      "text": "Hagnaður var um fram væntingar.",
+      "suggestion": "umfram",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "DUGIR",
+      "text": "Þessi frammistaða dugar þeim ekki.",
+      "suggestion": "dugir",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    },
+    {
+      "rule": "ÁRÓSAR",
+      "text": "Heimabær mömmu minnar heitir Århus.",
+      "suggestion": "Árósar",
+      "source": "languagetool-language-modules/is/src/main/resources/org/languagetool/rules/is/grammar.xml"
+    }
+  ]
+}

@@ -1,0 +1,361 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ar",
+  "cases": [
+    {
+      "rule": "gender_00",
+      "text": "آسيا هي الأكبر بين القارات",
+      "suggestion": "هي الكبرى",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_11_alakbar_min",
+      "text": "الأعداد الأكبر من 10",
+      "suggestion": "التي هي أكبر من",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0030",
+      "text": "حتى أنه لم يفهم كلامي",
+      "suggestion": "حتى إنه لم",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0038_siwa_3ala",
+      "text": "لم أحصل سوى على كتاب واحد",
+      "suggestion": "على سوى",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0042_3ada_3an",
+      "text": "يوجد 50 رجلا عدا عن الأطفال",
+      "suggestion": "عدا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0046_thanaia",
+      "text": "يحمل في ثنايا قلبه كل خير",
+      "suggestion": "في أثناء",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0049_kma_anna",
+      "text": "كان للجهاز أثر كبير ...، كما أن استخدامه سيزداد ...",
+      "suggestion": "ثم أن",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0050_kma_yumkin_an",
+      "text": "يعمل الحاسوب في ...، كما يمكن أن تحتاج تجهيزاته إلى...",
+      "suggestion": "ويمكن أن",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0051_labudda_wa_ann",
+      "text": "لابد وأن تتغير الحال",
+      "suggestion": "لابدَّ أن",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0053_la_yajibu_an",
+      "text": "لا يجب أن تذهب",
+      "suggestion": "يَجِبُ ألاّ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0055_ma_tamalaka",
+      "text": "ما تمالك نفسه أن بكى",
+      "suggestion": "ما تَمَالَكَ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0058_nahika_3an",
+      "text": "يجيد لغتين، ناهيك عن لغته الأصلية",
+      "suggestion": "بَلْهَ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0060_nif_wa_mi2a",
+      "text": "جاء نيف ومئة رجل",
+      "suggestion": "مئةُ ونَيِّفٌ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0062_hakadha_Ashyaa",
+      "text": "إن هكذا أشياء",
+      "suggestion": "مثل هذه الأشياء",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0063_hal_in",
+      "text": "هل إن غبت عن العمل أعاقب؟",
+      "suggestion": "أإن",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0065_hal_lam",
+      "text": "هل لم يباشر فلان؟",
+      "suggestion": "أمَا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0066_al_adha",
+      "text": "والأدهى من ذلك أن ...",
+      "suggestion": "والأدهى",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0067_a3jabu",
+      "text": "والأعجب من ذلك قوله...",
+      "suggestion": "والأعجب",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0069_wahuwa_alahsanu",
+      "text": "وهو الأحسن من كل هذا",
+      "suggestion": "وهو أَحْسَنُ مِن",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0074_3ala_Auhbati",
+      "text": "‎أنا ‎‎ على أهبة الاستعداد للقيام بهذا الأمر",
+      "suggestion": "مستعد",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0074_3ala_Auhbati",
+      "text": "‎أنا ‎‎ على أهبة الاستعداد للقيام بهذا الأمر",
+      "suggestion": "مستعد",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0077_a3la_raghmi_min",
+      "text": "على الرغم من أنّ المسألة صعبة",
+      "suggestion": "مع أنّ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0077_a3la_raghmi_min",
+      "text": "على الرغم من كون البلوتونيوم مادة سامة",
+      "suggestion": "مع أنّ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0079_Anif_aldhikr",
+      "text": "الخيار‎‎ الآنف الذكر .",
+      "suggestion": "المذكور آنفا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0082_3ibara_3an",
+      "text": "أشعة غاما هي فوتونات. عبارة عن فوتونات",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0082_3ibara_3an",
+      "text": "هذا الجهاز. عبارة عن صندوق فيه",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0084_lawal_marra",
+      "text": "‎يقام في دمشق معرض المخطوطات . لأول مرة",
+      "suggestion": "أول",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0085_3an_kathab",
+      "text": "‎نتابع الأمر . عن كثب",
+      "suggestion": "من",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0087_ya_abati",
+      "text": "يا أبتي",
+      "suggestion": "يا أبَتِ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0093_liawal_wahla",
+      "text": "يبدو ذلك غامضا لأول وهلة",
+      "suggestion": "أول وهلة",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "collo_0094_la_syama",
+      "text": "سأحقق ما تريد سيما الراتب",
+      "suggestion": "لا سيّما",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "exp_219_Amsa_AlmsA2",
+      "text": "أمسى المساء",
+      "suggestion": "وافَى",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "syntax_0400_wadhaha",
+      "text": "هذا الأمر في غاية الوضاحة",
+      "suggestion": "الوضوح",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "syntax_0509_dhida_sadamat",
+      "text": "ساعة ضد الصدمات",
+      "suggestion": "تتحمل الصدمات",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "verb_0093_qam_biawdih",
+      "text": "قام بأوده",
+      "suggestion": "عالَه",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0002_mo2akharan",
+      "text": "وقع مؤخرا",
+      "suggestion": "حديثًا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0003_إمارة",
+      "text": "إمارة الشيء",
+      "suggestion": "أمارة",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0006_dhata",
+      "text": "هاتان المرأتان ذاتا مكانة عالية",
+      "suggestion": "ذواتا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0008_dho_khotora",
+      "text": "موقف ذو خطورة",
+      "suggestion": "شديد الْخَطَر",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0019_tasamama",
+      "text": "تصامم عن الحديث",
+      "suggestion": "تَصَامَّ عن الحديث",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0022_janobi",
+      "text": "تقع دمشق جنوبي حلب",
+      "suggestion": "جنوبَ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0023_khessisan",
+      "text": "فعله خصيصا لك",
+      "suggestion": "خِصِّيصَى",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0027_raghma",
+      "text": "يحبها رغم كرهها له",
+      "suggestion": "على الرغْم",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0029_shawyan",
+      "text": "شوى اللحم شويا",
+      "suggestion": "شَيًّا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0031_lawahdihi",
+      "text": "سافر لوحده",
+      "suggestion": "وَحْدَهُ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0040_wallati",
+      "text": "سنتبع سياسة الترغيب والتي ستكون..",
+      "suggestion": "التي",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0041_walladhi",
+      "text": "سيبدأ قريبا الفصل الدراسي الثاني والذي مدته ثلاثة أشهر",
+      "suggestion": "الذي",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0044_idhTarada",
+      "text": "اضطرد الأمر",
+      "suggestion": "اطَّرَدَ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0061_musbaqan",
+      "text": "فعل ذلك‎‎ مسبقا",
+      "suggestion": "مقدّمًا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0062_wabittali",
+      "text": "‎أنا أكلت، ‎‎ وبالتالي أنا شبعت.",
+      "suggestion": "ثَمّ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0063_bmathabati",
+      "text": "أنت بمثابة أبي.",
+      "suggestion": "بمنزلة",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0063_bmathabati",
+      "text": "هذه الأداة بمثابة حاسوب.",
+      "suggestion": "بمنزلة",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0063_bmathabati",
+      "text": "د عدم إجابتكم بمثابة موافقةٍ.",
+      "suggestion": "بمنزلة",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0067_bihasabi",
+      "text": "تصنف هذه الأنواع بحسب مصادر الطاقة",
+      "suggestion": "حَسَبَ",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "worduse_0075_kakull",
+      "text": "‎ عند النظر إلى الموضوع ككل",
+      "suggestion": "كليًّا",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "redund_0001_sawfa_lan",
+      "text": "‎سوف لن أفعل هذا الأمر",
+      "suggestion": "لن",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "redend_0002_wa_Akhiran",
+      "text": "وأخيرا وليس آخرا ، أختم كلامي بكذا",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "redund_0005_ila_3inda",
+      "text": "ذهبت إلى عند فلان",
+      "suggestion": "عند",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    },
+    {
+      "rule": "unsorted",
+      "text": "تشكل هذه الطريقة إنجازا ...",
+      "suggestion": "تُعدُّ هذه",
+      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
+    }
+  ]
+}

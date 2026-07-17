@@ -1,0 +1,97 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "eo",
+  "cases": [
+    {
+      "rule": "EK_DE",
+      "text": "Mi lernas Esperanton ek de la jaro 2005.",
+      "suggestion": "ekde",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NE_JAM",
+      "text": "Mi ne jam studis la lecionon.",
+      "suggestion": "ankoraŭ ne",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TIELMANIERE",
+      "text": "Mi ne ŝatas ŝin tielmaniere.",
+      "suggestion": "tiumaniere",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_ESTIEL",
+      "text": "Mi estiel franco ŝatas fromaĝon.",
+      "suggestion": "estante",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_MEN",
+      "text": "Men vinon, mi petas.",
+      "suggestion": "Malpli",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_FAR",
+      "text": "La libro estis verkita far fama aŭtoro.",
+      "suggestion": "de",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SOR",
+      "text": "Mi iras sor.",
+      "suggestion": "supren",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SOB",
+      "text": "Mi iras sob.",
+      "suggestion": "suben",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_NEN",
+      "text": "Li respondis nen.",
+      "suggestion": "ne",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SIS",
+      "text": "Ŝi havis sis infanojn.",
+      "suggestion": "ses",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SEPEN",
+      "text": "Ŝi havis sepen infanojn.",
+      "suggestion": "sep",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "JA_JES",
+      "text": "Ja jes!",
+      "suggestion": "Jes Ja",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "UNUN",
+      "text": "Mi aĉetis unun panon.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "DA_LA",
+      "text": "Donu al mi glaseton da la vino.",
+      "suggestion": "de",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "OKEJ",
+      "text": "Okej!",
+      "suggestion": "O kej",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    }
+  ]
+}

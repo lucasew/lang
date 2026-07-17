@@ -1,0 +1,49 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "da",
+  "cases": [
+    {
+      "rule": "fuldtud",
+      "text": "Han var fuldtud tilfreds.",
+      "suggestion": "fuldt ud",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "hvorlænge",
+      "text": "Hvorlænge skal vi vente?",
+      "suggestion": "Hvor længe",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "ombord",
+      "text": "Kaptajnen gik ombord på skibet.",
+      "suggestion": "om bord",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "tilsidst",
+      "text": "Tilsidst var der ikke flere tilbage på skibet.",
+      "suggestion": "Til sidst",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "alting",
+      "text": "Butikken havde al ting.",
+      "suggestion": "alting",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "ekstra",
+      "text": "Kaptajnen gik extra meget ind for fiskeri.",
+      "suggestion": "ekstra",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "overbord",
+      "text": "Kaptajnen faldt overbord i den høje sø.",
+      "suggestion": "over bord",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    }
+  ]
+}

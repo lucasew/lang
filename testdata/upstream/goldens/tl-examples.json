@@ -1,0 +1,79 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "tl",
+  "cases": [
+    {
+      "rule": "ANG_ANG",
+      "text": "Maganda ang ang tanawin.",
+      "suggestion": "ang mga",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "MGA_MGA",
+      "text": "Maganda mga mga tanawin.",
+      "suggestion": "ang mga",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NG_NG",
+      "text": "Pinalakad ng ng abogado si Maria.",
+      "suggestion": "ng mga",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "LAGGING",
+      "text": "Kapag lagging kapiling kita, sumasaya ako.",
+      "suggestion": "laging",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "NAGGING",
+      "text": "Siya ay nagging aso.",
+      "suggestion": "naging",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "CAKE",
+      "text": "Kumain kami ng cake kagabi.",
+      "suggestion": "keyk",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "SCORE",
+      "text": "Ano na ang score?",
+      "suggestion": "iskor",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "LIQUID",
+      "text": "Bakit may liquid?",
+      "suggestion": "likido",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "JEEP",
+      "text": "Pumara ka ng jeep.",
+      "suggestion": "dyip",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "RESEARCH",
+      "text": "Gumawa tayo ng research.",
+      "suggestion": "riserts",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "WHERE",
+      "text": "Ano ba, where na kayo?",
+      "suggestion": "nasaan",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "YOU",
+      "text": "Ano ba, nasaan na you?",
+      "suggestion": "ikaw",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    }
+  ]
+}

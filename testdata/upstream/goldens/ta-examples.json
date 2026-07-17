@@ -1,0 +1,19 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "ta",
+  "cases": [
+    {
+      "rule": "illaamal",
+      "text": "திட்டியதோடு மட்டும் இல்லாமல் அடிக்கவும் செய்தான்.",
+      "suggestion": "மட்டுமில்லாமல்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "mattil",
+      "text": "அவரைப் பொறுத்த மட்டில் பிரச்சனை முடிந்தது.",
+      "suggestion": "பொறுத்தமட்டில்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    }
+  ]
+}

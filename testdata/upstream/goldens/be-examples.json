@@ -1,0 +1,31 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "be",
+  "cases": [
+    {
+      "rule": "pa_fakcie",
+      "text": "А па факту атрымалася, што сіл няма.",
+      "suggestion": "па факце",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Pry_vyhliadzie",
+      "text": "Я пры выглядзе павука пабяжаў на вуліцу.",
+      "suggestion": "як пабачыш",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Tautalohija_sionniaszni_dzien",
+      "text": "Сітуацыя на сённяшні дзень.",
+      "suggestion": "сёння",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Tautalohija_niekalki_pachutczej",
+      "text": "некалькі пахутчэй",
+      "suggestion": "пахутчэй",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    }
+  ]
+}
