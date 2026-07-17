@@ -162,6 +162,14 @@ func (lt *JLanguageTool) EnableRule(ruleID string) {
 	delete(lt.DisabledRuleIDs, ruleID)
 }
 
+// GetAllRegisteredRuleIDs returns every rule ID registered via AddRuleChecker / AddTextLevelRuleChecker.
+func (lt *JLanguageTool) GetAllRegisteredRuleIDs() []string {
+	if lt == nil {
+		return nil
+	}
+	return append([]string(nil), lt.activeRuleIDs...)
+}
+
 // GetAllActiveRuleIDs returns registered rule IDs that are not disabled.
 func (lt *JLanguageTool) GetAllActiveRuleIDs() []string {
 	if lt == nil {

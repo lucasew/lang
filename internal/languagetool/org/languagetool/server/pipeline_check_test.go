@@ -90,3 +90,15 @@ func TestTextChecker_CheckRemote(t *testing.T) {
 	require.NoError(t, err)
 	require.Contains(t, json, "WHITESPACE_RULE")
 }
+
+func TestPipeline_EnabledOnly(t *testing.T) {
+	s := NewPipelineSettings("en", "u")
+	s.Query.UseEnabledOnly = true
+	s.Query.EnabledRules = []string{"EN_A_VS_AN"}
+	p := NewPipeline(s)
+	m := p.Check("This is an test. hello  world")
+	require.NotEmpty(t, m)
+	for _, x := range m {
+		require.Equal(t, "EN_A_VS_AN", x.RuleID)
+	}
+}

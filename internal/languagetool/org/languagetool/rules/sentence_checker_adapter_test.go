@@ -50,6 +50,7 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	require.Contains(t, active, "EN_A_VS_AN")
 	require.Contains(t, active, "SENTENCE_WHITESPACE")
 	require.Contains(t, active, "WHITESPACE_PUNCTUATION")
+	require.Contains(t, active, "WHITESPACE_PARAGRAPH_BEGIN")
 
 	// text-level sentence whitespace (missing space after period)
 	m = lt.Check("This is a text.And there's the next sentence.")

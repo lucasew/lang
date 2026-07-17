@@ -90,6 +90,11 @@ func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang str
 	})
 	lt.AddRuleChecker(wbp.GetID(), AsSentenceCheckerSimple(wbp.Match))
 
+	wpb := NewWhiteSpaceAtBeginOfParagraph(map[string]string{
+		"whitespace_at_begin_parapgraph_msg": "Don't start a paragraph with whitespace",
+	})
+	lt.AddRuleChecker(wpb.GetID(), AsSentenceCheckerSimple(wpb.Match))
+
 	up := NewUppercaseSentenceStartRule(nil, uppercaseLang)
 	lt.AddRuleChecker(up.GetID(), AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
 		return up.MatchList([]*languagetool.AnalyzedSentence{s})
