@@ -627,3 +627,6 @@ Phonolite Mesa RegionNNP
 Komatiite Mesa RegionNNP
 Latite Mesa RegionNNP
 Tephrite Mesa RegionNNP
+Basanite Mesa RegionNNP
+Nephelinite Mesa RegionNNP
+Foidite Mesa RegionNNP

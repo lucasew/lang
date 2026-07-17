@@ -14057,6 +14057,76 @@
       <message>Did you mean "consolelogexporter"?</message>
       <short>consolelogexporterr</short>
     </rule>
+    <rule id="EN_SOFT_LOGRECORDLIMITS_MISS" name="logrecordlimitss soft">
+      <pattern>
+        <token>logrecordlimitss</token>
+      </pattern>
+      <message>Did you mean "logrecordlimits"?</message>
+      <short>logrecordlimitss</short>
+    </rule>
+    <rule id="EN_SOFT_TRACEFLAGS_MISS" name="traceflagss soft">
+      <pattern>
+        <token>traceflagss</token>
+      </pattern>
+      <message>Did you mean "traceflags"?</message>
+      <short>traceflagss</short>
+    </rule>
+    <rule id="EN_SOFT_ISREMOTE_MISS" name="isremotee soft">
+      <pattern>
+        <token>isremotee</token>
+      </pattern>
+      <message>Did you mean "isremote"?</message>
+      <short>isremotee</short>
+    </rule>
+    <rule id="EN_SOFT_TRACESTATEKEY_MISS" name="tracestatekeyy soft">
+      <pattern>
+        <token>tracestatekeyy</token>
+      </pattern>
+      <message>Did you mean "tracestatekey"?</message>
+      <short>tracestatekeyy</short>
+    </rule>
+    <rule id="EN_SOFT_BAGGAGEENTRY_MISS" name="baggageentryy soft">
+      <pattern>
+        <token>baggageentryy</token>
+      </pattern>
+      <message>Did you mean "baggageentry"?</message>
+      <short>baggageentryy</short>
+    </rule>
+    <rule id="EN_SOFT_BAGGAGEHEADER_MISS" name="baggageheaderr soft">
+      <pattern>
+        <token>baggageheaderr</token>
+      </pattern>
+      <message>Did you mean "baggageheader"?</message>
+      <short>baggageheaderr</short>
+    </rule>
+    <rule id="EN_SOFT_CONTEXTKEY_MISS" name="contextkeyy soft">
+      <pattern>
+        <token>contextkeyy</token>
+      </pattern>
+      <message>Did you mean "contextkey"?</message>
+      <short>contextkeyy</short>
+    </rule>
+    <rule id="EN_SOFT_CONTEXTVALUE_MISS" name="contextvaluee soft">
+      <pattern>
+        <token>contextvaluee</token>
+      </pattern>
+      <message>Did you mean "contextvalue"?</message>
+      <short>contextvaluee</short>
+    </rule>
+    <rule id="EN_SOFT_SPANNAME_MISS" name="spannamee soft">
+      <pattern>
+        <token>spannamee</token>
+      </pattern>
+      <message>Did you mean "spanname"?</message>
+      <short>spannamee</short>
+    </rule>
+    <rule id="EN_SOFT_RECORDEXCEPTION_MISS" name="recordexceptionn soft">
+      <pattern>
+        <token>recordexceptionn</token>
+      </pattern>
+      <message>Did you mean "recordexception"?</message>
+      <short>recordexceptionn</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

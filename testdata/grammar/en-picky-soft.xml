@@ -4108,5 +4108,29 @@
       <message>Jargon; name annual recurring revenue at period close instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TOTAL_ARR" name="total arr soft picky">
+      <pattern>
+        <token>total</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name total annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INCREMENTAL_ARR" name="incremental arr soft picky">
+      <pattern>
+        <token>incremental</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name incremental annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ORGANIC_ARR" name="organic arr soft picky">
+      <pattern>
+        <token>organic</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name organically acquired annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

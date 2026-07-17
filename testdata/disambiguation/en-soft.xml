@@ -6399,4 +6399,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CSSPROP" name="immunize cssprop">
+    <pattern>
+      <token>cssprop</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSPROP_CAPS" name="immunize CSSProp">
+    <pattern>
+      <token>CSSProp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THEMEUI" name="immunize themeui">
+    <pattern>
+      <token>themeui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THEMEUI_CAPS" name="immunize ThemeUI">
+    <pattern>
+      <token>ThemeUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REBASS" name="immunize rebass">
+    <pattern>
+      <token>rebass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REBASS_CAPS" name="immunize Rebass">
+    <pattern>
+      <token>Rebass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
