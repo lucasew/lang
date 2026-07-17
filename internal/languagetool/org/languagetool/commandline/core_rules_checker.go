@@ -446,9 +446,12 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	_, _ = fmt.Fprintf(w, "corepack languages: %d\n", len(corepack.Supported))
 	gdir := DiscoverGrammarDir(opts)
 	if gdir == "" {
-		gdir = "(unset)"
+		_, _ = fmt.Fprintf(w, "grammar dir: (unset)\n")
+	} else {
+		softN := countSoftGrammarFiles(gdir)
+		_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
+		_, _ = fmt.Fprintf(w, "soft grammar files: %d\n", softN)
 	}
-	_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
 	ff := DiscoverFalseFriendsFile(opts)
 	if ff == "" {
 		ff = "(unset)"
@@ -477,6 +480,33 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	}
 	_, _ = fmt.Fprintf(w, "status: ok\n")
 	return nil
+}
+
+// countSoftGrammarFiles counts *-soft.xml (and grammar-soft.xml) under dir.
+func countSoftGrammarFiles(dir string) int {
+	if dir == "" || dir == "(unset)" {
+		return 0
+	}
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		return 0
+	}
+	n := 0
+	for _, e := range ents {
+		if e.IsDir() {
+			// {lang}/grammar-soft.xml layout
+			p := filepath.Join(dir, e.Name(), "grammar-soft.xml")
+			if st, err := os.Stat(p); err == nil && !st.IsDir() {
+				n++
+			}
+			continue
+		}
+		name := e.Name()
+		if strings.HasSuffix(name, "-soft.xml") || name == "grammar-soft.xml" {
+			n++
+		}
+	}
+	return n
 }
 
 func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize int, lang string) string {

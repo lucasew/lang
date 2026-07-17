@@ -5,6 +5,7 @@ import (
 	"io"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -18,6 +19,12 @@ func TestCoreDoctor(t *testing.T) {
 	require.Contains(t, out, "EN_A_VS_AN ok")
 	require.Contains(t, out, "status: ok")
 	require.Contains(t, out, "corepack languages:")
+	// walk-up usually finds testdata/grammar with many *-soft.xml packs
+	if strings.Contains(out, "grammar dir: (unset)") {
+		t.Log("grammar dir unset in this environment")
+	} else {
+		require.Contains(t, out, "soft grammar files:")
+	}
 }
 
 func TestRunWithIO_Doctor(t *testing.T) {

@@ -17,6 +17,16 @@ func TestGolden_MultiLangSoftGrammar(t *testing.T) {
 		{"pt", "Vou a o mercado.", "PT_SOFT_A_O"},
 		{"it", "Vado a il negozio.", "IT_SOFT_A_IL"},
 		{"nl", "Hij is als of dit.", "NL_SOFT_ALS_OF"},
+		{"ru", "Я иду в в магазин.", "RU_SOFT_V_V"},
+		{"sv", "Dom är här.", "SV_SOFT_DE_DOM"},
+		{"da", "Det er af af interesse.", "DA_SOFT_AF_AF"},
+		{"pl", "Idę w w domu.", "PL_SOFT_W_W"},
+		{"uk", "Іду в в магазин.", "UK_SOFT_V_V"},
+		{"ca", "Vaig a a casa.", "CA_SOFT_A_A"},
+		{"gl", "Vou de de casa.", "GL_SOFT_DE_DE"},
+		{"sk", "Idem a a domov.", "SK_SOFT_A_A"},
+		{"ro", "Eu de de acasă.", "RO_SOFT_DE_DE"},
+		{"el", "Εγώ και και.", "EL_SOFT_KAI_KAI"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

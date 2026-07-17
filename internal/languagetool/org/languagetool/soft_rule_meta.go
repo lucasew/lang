@@ -96,9 +96,13 @@ func SeverityFromIssueType(issueType string) string {
 }
 
 // SoftRuleURL returns a community rule page URL for a rule ID (soft documentation link).
+// When lang is empty, SoftRuleLangHint is used (e.g. DE_SOFT_* → de), then "en".
 func SoftRuleURL(ruleID, lang string) string {
 	if ruleID == "" {
 		return ""
+	}
+	if lang == "" {
+		lang = SoftRuleLangHint(ruleID)
 	}
 	if lang == "" {
 		lang = "en"
@@ -108,4 +112,22 @@ func SoftRuleURL(ruleID, lang string) string {
 		lang = lang[:i]
 	}
 	return "https://community.languagetool.org/rule/show/" + ruleID + "?lang=" + lang
+}
+
+// SoftRuleLangHint infers a language code from a rule ID prefix (soft fallback).
+func SoftRuleLangHint(ruleID string) string {
+	up := strings.ToUpper(strings.TrimSpace(ruleID))
+	i := strings.IndexByte(up, '_')
+	if i < 2 || i > 3 {
+		return ""
+	}
+	p := strings.ToLower(up[:i])
+	switch p {
+	case "en", "de", "fr", "es", "pt", "it", "nl", "pl", "ru", "uk", "sv", "da",
+		"ca", "gl", "sk", "ro", "el", "ar", "fa", "ga", "br", "eo", "sl", "sr",
+		"be", "is", "ja", "km", "lt", "ml", "ta", "tl", "zh", "ast", "crh":
+		return p
+	default:
+		return ""
+	}
 }

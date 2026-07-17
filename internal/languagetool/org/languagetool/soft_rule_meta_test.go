@@ -28,4 +28,12 @@ func TestSoftRuleMeta(t *testing.T) {
 	require.Equal(t, "error", SeverityFromIssueType("misspelling"))
 	require.Equal(t, "note", SeverityFromIssueType("style"))
 	require.Equal(t, "warning", SeverityFromIssueType("whitespace"))
+
+	require.Equal(t, "de", SoftRuleLangHint("DE_SOFT_DAS_DASS"))
+	require.Equal(t, "fr", SoftRuleLangHint("FR_SOFT_A_LA"))
+	require.Equal(t, "", SoftRuleLangHint("WHITESPACE_RULE"))
+	require.Equal(t, "", SoftRuleLangHint("MORFOLOGIK_RULE_EN_US"))
+	// empty lang → hint from rule id
+	require.Contains(t, SoftRuleURL("DE_SOFT_DAS_DASS", ""), "lang=de")
+	require.Contains(t, SoftRuleURL("EN_A_VS_AN", ""), "lang=en")
 }
