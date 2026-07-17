@@ -666,6 +666,65 @@ func TestGolden_SoftUSVariantsNotOnPlainEN(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftGBVariantHints(t *testing.T) {
+	// Loaded from testdata/grammar/en-GB-soft.xml when language is en-GB.
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Walk toward the door.", "EN_SOFT_TOWARD_GB", "towards"},
+		{"A gray sky.", "EN_SOFT_GRAY_GB", "grey"},
+		{"Pick a color.", "EN_SOFT_COLOR_GB", "colour"},
+		{"My favorite book.", "EN_SOFT_FAVORITE_GB", "favourite"},
+		{"City center is busy.", "EN_SOFT_CENTER_GB", "centre"},
+		{"Please organize files.", "EN_SOFT_ORGANIZE_GB", "organise"},
+		{"I realize now.", "EN_SOFT_REALIZE_GB", "realise"},
+		{"Good behavior matters.", "EN_SOFT_BEHAVIOR_GB", "behaviour"},
+		{"We traveled far.", "EN_SOFT_TRAVELED_GB", "travelled"},
+		{"The flight was canceled.", "EN_SOFT_CANCELED_GB", "cancelled"},
+		{"The data was modeled.", "EN_SOFT_MODELED_GB", "modelled"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en-GB"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type, "%+v", f)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftGBVariantsNotOnUS(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Pick a color.", &CommandLineOptions{Language: "en-US"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "EN_SOFT_COLOR_GB", f.Rule, "%+v", findings)
+	}
+}
+
+func TestGolden_ApplySoftGBColour(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en-GB", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Pick a color please.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "colour")
+	require.NotContains(t, out.String(), "color")
+}
+
 func TestGolden_SoftAnywaysOnPlainEN(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "Anyways, we left.", &CommandLineOptions{Language: "en"})

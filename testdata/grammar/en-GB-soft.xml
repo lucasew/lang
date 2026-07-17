@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="en-GB">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="EN_SOFT_TOWARD_GB" name="toward soft">
+      <pattern>
+        <token>toward</token>
+      </pattern>
+      <message>In British English, "towards" is often preferred.</message>
+      <short>toward</short>
+    </rule>
+    <rule id="EN_SOFT_GRAY_GB" name="gray soft">
+      <pattern>
+        <token>gray</token>
+      </pattern>
+      <message>In British English, "grey" is preferred.</message>
+      <short>gray</short>
+    </rule>
+    <rule id="EN_SOFT_COLOR_GB" name="color soft">
+      <pattern>
+        <token>color</token>
+      </pattern>
+      <message>In British English, "colour" is preferred.</message>
+      <short>color</short>
+    </rule>
+    <rule id="EN_SOFT_FAVORITE_GB" name="favorite soft">
+      <pattern>
+        <token>favorite</token>
+      </pattern>
+      <message>In British English, "favourite" is preferred.</message>
+      <short>favorite</short>
+    </rule>
+    <rule id="EN_SOFT_CENTER_GB" name="center soft">
+      <pattern>
+        <token>center</token>
+      </pattern>
+      <message>In British English, "centre" is preferred.</message>
+      <short>center</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZE_GB" name="organize soft">
+      <pattern>
+        <token>organize</token>
+      </pattern>
+      <message>In British English, "organise" is often preferred.</message>
+      <short>organize</short>
+    </rule>
+    <rule id="EN_SOFT_REALIZE_GB" name="realize soft">
+      <pattern>
+        <token>realize</token>
+      </pattern>
+      <message>In British English, "realise" is often preferred.</message>
+      <short>realize</short>
+    </rule>
+    <rule id="EN_SOFT_BEHAVIOR_GB" name="behavior soft">
+      <pattern>
+        <token>behavior</token>
+      </pattern>
+      <message>In British English, "behaviour" is preferred.</message>
+      <short>behavior</short>
+    </rule>
+    <rule id="EN_SOFT_TRAVELED_GB" name="traveled soft">
+      <pattern>
+        <token>traveled</token>
+      </pattern>
+      <message>In British English, "travelled" is preferred.</message>
+      <short>traveled</short>
+    </rule>
+    <rule id="EN_SOFT_CANCELED_GB" name="canceled soft">
+      <pattern>
+        <token>canceled</token>
+      </pattern>
+      <message>In British English, "cancelled" is preferred.</message>
+      <short>canceled</short>
+    </rule>
+    <rule id="EN_SOFT_MODELED_GB" name="modeled soft">
+      <pattern>
+        <token>modeled</token>
+      </pattern>
+      <message>In British English, "modelled" is preferred.</message>
+      <short>modeled</short>
+    </rule>
+  </category>
+</rules>

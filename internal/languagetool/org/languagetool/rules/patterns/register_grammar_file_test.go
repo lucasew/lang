@@ -47,6 +47,24 @@ func TestRegisterSoftGrammarDir_EnUSLoadsVariantPack(t *testing.T) {
 	require.True(t, found, "%+v", m)
 }
 
+func TestRegisterSoftGrammarDir_EnGBLoadsVariantPack(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../.."))
+	dir := filepath.Join(root, "testdata/grammar")
+	lt := languagetool.NewJLanguageTool("en-GB")
+	n, err := patterns.RegisterSoftGrammarDir(lt, dir, "en-GB")
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, n, 1)
+	m := lt.Check("Pick a color.")
+	found := false
+	for _, x := range m {
+		if x.RuleID == "EN_SOFT_COLOR_GB" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+}
+
 func TestRegisterGrammarFile_SoftEN(t *testing.T) {
 	_, file, _, _ := runtime.Caller(0)
 	// patterns → rules → languagetool → org → languagetool → internal → module root (6)

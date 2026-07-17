@@ -64,7 +64,7 @@ go run ./cmd/lang-server -port 8081 -public
 | Pattern XML + POS/inflected match | done (filters/unify/AI incomplete skipped) |
 | `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
 | Layout (sentence/punct/paragraph whitespace, unpaired, uppercase) | done |
-| Soft grammar packs (`testdata/grammar/*-soft.xml`) | 35+ packs; en-US-soft.xml for US spelling variants; CoreGoldenHook matrix |
+| Soft grammar packs (`testdata/grammar/*-soft.xml`) | 35+ packs; en-US / en-GB soft spelling variants; CoreGoldenHook matrix |
 | Soft false friends (`-m` + false-friends-soft.xml) | CoreGoldenHook |
 | EN speller (`en_US.dict` CFSA2 when present) | MORFOLOGIK_RULE_EN_US |
 | EN POS tagger (`english.dict` CFSA2 when present) | TagWord / `--taggeronly` |
