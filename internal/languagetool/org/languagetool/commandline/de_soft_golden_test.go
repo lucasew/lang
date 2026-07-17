@@ -39,6 +39,9 @@ func TestGolden_DESoftExtra(t *testing.T) {
 		{"Wegen dem Wetter bleiben wir.", "DE_SOFT_WEGEN_DEM"},
 		{"Trotz dem Regen gehen wir.", "DE_SOFT_TROTZ_DEM"},
 		{"Das selbe Problem erneut.", "DE_SOFT_DAS_SELBE"},
+		{"Das gleiche Problem erneut.", "DE_SOFT_DAS_GLEICHE"},
+		{"Das ist der Standart.", "DE_SOFT_STANDART"},
+		{"Für den selben Preis.", "DE_SOFT_DENSELBEN"},
 		{"Hallo!!", "DE_SOFT_DOUBLE_BANG"},
 	}
 	for _, tc := range cases {

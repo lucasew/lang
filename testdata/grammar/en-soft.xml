@@ -668,5 +668,77 @@
       <message>Consider simply "to" if shorter is better.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_DUE_TO_THE_FACT" name="due to the fact that">
+      <pattern>
+        <token>due</token>
+        <token>to</token>
+        <token>the</token>
+        <token>fact</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider "because" for concision.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_AT_THIS_POINT_IN_TIME" name="at this point in time">
+      <pattern>
+        <token>at</token>
+        <token>this</token>
+        <token>point</token>
+        <token>in</token>
+        <token>time</token>
+      </pattern>
+      <message>Consider "now" or "at this point".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_IN_THE_EVENT_THAT" name="in the event that">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>event</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider "if".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_END_RESULT" name="end result">
+      <pattern>
+        <token>end</token>
+        <token>result</token>
+      </pattern>
+      <message>"End result" is often redundant; consider "result".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PAST_HISTORY" name="past history">
+      <pattern>
+        <token>past</token>
+        <token>history</token>
+      </pattern>
+      <message>"Past history" is often redundant; consider "history".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_FREE_GIFT" name="free gift">
+      <pattern>
+        <token>free</token>
+        <token>gift</token>
+      </pattern>
+      <message>"Free gift" is often redundant; consider "gift".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_COMPLETELY_ELIMINATE" name="completely eliminate">
+      <pattern>
+        <token>completely</token>
+        <token>eliminate</token>
+      </pattern>
+      <message>Consider "eliminate" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFERENT_THAN" name="different than">
+      <pattern>
+        <token>different</token>
+        <token>than</token>
+      </pattern>
+      <message>In many style guides, prefer "different from".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

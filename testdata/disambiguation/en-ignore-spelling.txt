@@ -67,3 +67,8 @@ Turborepo
 Playwright
 Cypress
 Storybook
+LlamaIndex
+Groq
+TogetherAI
+Fireworks
+Replicate

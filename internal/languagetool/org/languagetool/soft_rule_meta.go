@@ -39,6 +39,10 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 		}
 		if strings.Contains(id, "KIND_OF") || strings.Contains(id, "LITERALLY") ||
 			strings.Contains(id, "VERY_UNIQUE") || strings.Contains(id, "IN_ORDER_TO") ||
+			strings.Contains(id, "DUE_TO_THE_FACT") || strings.Contains(id, "POINT_IN_TIME") ||
+			strings.Contains(id, "IN_THE_EVENT") || strings.Contains(id, "END_RESULT") ||
+			strings.Contains(id, "PAST_HISTORY") || strings.Contains(id, "FREE_GIFT") ||
+			strings.Contains(id, "COMPLETELY_ELIMINATE") || strings.Contains(id, "DIFFERENT_THAN") ||
 			strings.Contains(id, "_STYLE") {
 			return "STYLE", "Style", "style", SoftRuleDescription(ruleID)
 		}

@@ -75,6 +75,29 @@
       <message>Meinten Sie "dasselbe"?</message>
       <short>dasselbe</short>
     </rule>
+    <rule id="DE_SOFT_DAS_GLEICHE" name="das gleiche">
+      <pattern>
+        <token>das</token>
+        <token>gleiche</token>
+      </pattern>
+      <message>Meinten Sie "dasselbe" (Identität) oder "das Gleiche" (Gleichheit)?</message>
+      <short>dasselbe</short>
+    </rule>
+    <rule id="DE_SOFT_STANDART" name="Standart">
+      <pattern>
+        <token>Standart</token>
+      </pattern>
+      <message>Meinten Sie "Standard"?</message>
+      <short>Standart</short>
+    </rule>
+    <rule id="DE_SOFT_DENSELBEN" name="den selben">
+      <pattern>
+        <token>den</token>
+        <token>selben</token>
+      </pattern>
+      <message>Meinten Sie "denselben"?</message>
+      <short>denselben</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografie">
     <rule id="DE_SOFT_DOUBLE_BANG" name="doppeltes Ausrufezeichen">
@@ -82,7 +105,7 @@
         <token>!</token>
         <token>!</token>
       </pattern>
-      <message>Ein Ausrufezeichen genügt oft.</message>
+      <message>Ein Ausrufezeichen genügt oft: "!"</message>
       <short>Zeichensetzung</short>
     </rule>
   </category>

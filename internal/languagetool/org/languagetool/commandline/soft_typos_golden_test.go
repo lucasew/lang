@@ -448,6 +448,14 @@ func TestGolden_SoftStyleCategory(t *testing.T) {
 		{"This is very unique work.", "EN_SOFT_VERY_UNIQUE"},
 		{"He literally died laughing.", "EN_SOFT_LITERALLY_FIG"},
 		{"She is kind of a genius.", "EN_SOFT_KIND_OF_A"},
+		{"We left due to the fact that it rained.", "EN_SOFT_DUE_TO_THE_FACT"},
+		{"At this point in time we wait.", "EN_SOFT_AT_THIS_POINT_IN_TIME"},
+		{"In the event that it fails, retry.", "EN_SOFT_IN_THE_EVENT_THAT"},
+		{"The end result is clear.", "EN_SOFT_END_RESULT"},
+		{"His past history is known.", "EN_SOFT_PAST_HISTORY"},
+		{"Get a free gift today.", "EN_SOFT_FREE_GIFT"},
+		{"We must completely eliminate waste.", "EN_SOFT_COMPLETELY_ELIMINATE"},
+		{"This is different than that.", "EN_SOFT_DIFFERENT_THAN"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -467,6 +475,17 @@ func TestGolden_SoftStyleCategory(t *testing.T) {
 			require.True(t, found, "%+v", findings)
 		})
 	}
+}
+
+func TestGolden_ApplySoftWouldve(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "I wouldve gone earlier.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "would've")
+	require.NotContains(t, out.String(), "wouldve")
 }
 
 func TestGolden_SoftSupposeTo(t *testing.T) {
