@@ -13987,6 +13987,76 @@
       <message>Did you mean "logrecord"?</message>
       <short>logrecordd</short>
     </rule>
+    <rule id="EN_SOFT_SEVERITYNUMBER_MISS" name="severitynumberr soft">
+      <pattern>
+        <token>severitynumberr</token>
+      </pattern>
+      <message>Did you mean "severitynumber"?</message>
+      <short>severitynumberr</short>
+    </rule>
+    <rule id="EN_SOFT_SEVERITYTEXT_MISS" name="severitytextt soft">
+      <pattern>
+        <token>severitytextt</token>
+      </pattern>
+      <message>Did you mean "severitytext"?</message>
+      <short>severitytextt</short>
+    </rule>
+    <rule id="EN_SOFT_BODYFIELD_MISS" name="bodyfieldd soft">
+      <pattern>
+        <token>bodyfieldd</token>
+      </pattern>
+      <message>Did you mean "bodyfield"?</message>
+      <short>bodyfieldd</short>
+    </rule>
+    <rule id="EN_SOFT_OBSERVEDTIMESTAMP_MISS" name="observedtimestampp soft">
+      <pattern>
+        <token>observedtimestampp</token>
+      </pattern>
+      <message>Did you mean "observedtimestamp"?</message>
+      <short>observedtimestampp</short>
+    </rule>
+    <rule id="EN_SOFT_LOGATTRIBUTES_MISS" name="logattributess soft">
+      <pattern>
+        <token>logattributess</token>
+      </pattern>
+      <message>Did you mean "logattributes"?</message>
+      <short>logattributess</short>
+    </rule>
+    <rule id="EN_SOFT_SCOPEATTRIBUTES_MISS" name="scopeattributess soft">
+      <pattern>
+        <token>scopeattributess</token>
+      </pattern>
+      <message>Did you mean "scopeattributes"?</message>
+      <short>scopeattributess</short>
+    </rule>
+    <rule id="EN_SOFT_BATCHLOGPROCESSOR_MISS" name="batchlogprocessorr soft">
+      <pattern>
+        <token>batchlogprocessorr</token>
+      </pattern>
+      <message>Did you mean "batchlogprocessor"?</message>
+      <short>batchlogprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_SIMPLELOGPROCESSOR_MISS" name="simplelogprocessorr soft">
+      <pattern>
+        <token>simplelogprocessorr</token>
+      </pattern>
+      <message>Did you mean "simplelogprocessor"?</message>
+      <short>simplelogprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_OTLPLOGEXPORTER_MISS" name="otlplogexporterr soft">
+      <pattern>
+        <token>otlplogexporterr</token>
+      </pattern>
+      <message>Did you mean "otlplogexporter"?</message>
+      <short>otlplogexporterr</short>
+    </rule>
+    <rule id="EN_SOFT_CONSOLELOGEXPORTER_MISS" name="consolelogexporterr soft">
+      <pattern>
+        <token>consolelogexporterr</token>
+      </pattern>
+      <message>Did you mean "consolelogexporter"?</message>
+      <short>consolelogexporterr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

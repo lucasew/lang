@@ -6363,4 +6363,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_EMOTIONCSS" name="immunize emotioncss">
+    <pattern>
+      <token>emotioncss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EMOTIONCSS_CAPS" name="immunize EmotionCSS">
+    <pattern>
+      <token>EmotionCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TREATCSS" name="immunize treatcss">
+    <pattern>
+      <token>treatcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TREATCSS_CAPS" name="immunize TreatCSS">
+    <pattern>
+      <token>TreatCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTYLE" name="immunize restyle">
+    <pattern>
+      <token>restyle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTYLE_CAPS" name="immunize Restyle">
+    <pattern>
+      <token>Restyle</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

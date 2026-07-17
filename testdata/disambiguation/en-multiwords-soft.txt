@@ -624,3 +624,6 @@ Tuff Mesa RegionNNP
 Dacite Mesa RegionNNP
 Trachyte Mesa RegionNNP
 Phonolite Mesa RegionNNP
+Komatiite Mesa RegionNNP
+Latite Mesa RegionNNP
+Tephrite Mesa RegionNNP

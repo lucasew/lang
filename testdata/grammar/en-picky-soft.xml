@@ -4084,5 +4084,29 @@
       <message>Jargon; name annual recurring revenue lost in the period instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ACTIVE_ARR" name="active arr soft picky">
+      <pattern>
+        <token>active</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name currently active annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STARTING_ARR" name="starting arr soft picky">
+      <pattern>
+        <token>starting</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period start instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLOSING_ARR" name="closing arr soft picky">
+      <pattern>
+        <token>closing</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period close instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
