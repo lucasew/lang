@@ -230,7 +230,7 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 		return langs[i] < langs[j]
 	})
 	// Keep CI default bounded unless full matrix requested.
-	maxLangs := 25
+	maxLangs := 28
 	if os.Getenv("LANG_UPSTREAM_GOLDEN_ALL") != "" {
 		maxLangs = len(langs)
 	}
