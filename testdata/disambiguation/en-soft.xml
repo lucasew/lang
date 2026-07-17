@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <!-- Soft disambiguation: mark product names ignore-spelling -->
+  <rule id="SOFT_IGNORE_IPHONE" name="ignore iPhone">
+    <pattern>
+      <token>iPhone</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SOFT_IGNORE_GITHUB" name="ignore GitHub">
+    <pattern>
+      <token>GitHub</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SOFT_IGNORE_OPENAI" name="ignore OpenAI">
+    <pattern>
+      <token>OpenAI</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+</rules>

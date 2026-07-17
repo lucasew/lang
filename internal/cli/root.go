@@ -18,8 +18,8 @@ func Execute() int {
 	var (
 		lang, format, dataDir, failOn, mother, level string
 		disable, enable, ruleValues                  string
-		disableCats, enableCats                      string
-		enabledOnly, recursive                       bool
+		disableCats, enableCats, ignoreWords         string
+		enabledOnly, recursive, applySugs            bool
 	)
 
 	root := &cobra.Command{
@@ -30,7 +30,11 @@ func Execute() int {
 		Args: cobra.ArbitraryArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			// default product: lint
-			runEngine(buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats, enabledOnly, recursive, args))
+			runEngine(buildLintArgs(lintArgs{
+				lang: lang, format: format, dataDir: dataDir, failOn: failOn, mother: mother, level: level,
+				disable: disable, enable: enable, ruleValues: ruleValues, disableCats: disableCats, enableCats: enableCats,
+				ignoreWords: ignoreWords, enabledOnly: enabledOnly, recursive: recursive, apply: applySugs, files: args,
+			}))
 		},
 	}
 	root.PersistentFlags().StringVar(&dataDir, "data-dir", "", "soft data root (grammar + false-friends)")
@@ -51,6 +55,8 @@ func Execute() int {
 		c.Flags().StringVar(&ruleValues, "ruleValues", "", "RULE_ID:value pairs")
 		c.Flags().StringVar(&disableCats, "disablecategories", "", "comma-separated disabled categories")
 		c.Flags().StringVar(&enableCats, "enablecategories", "", "comma-separated enabled categories")
+		c.Flags().StringVar(&ignoreWords, "ignore-words", "", "CSV surfaces to suppress spelling matches")
+		c.Flags().BoolVarP(&applySugs, "apply", "a", false, "apply first suggestions and print corrected text")
 		c.Flags().BoolVar(&enabledOnly, "only", false, "only run rules listed in --enable")
 		c.Flags().BoolVarP(&recursive, "recursive", "r", false, "recurse into directories")
 	}
@@ -67,7 +73,11 @@ func Execute() int {
 			if lang == "" {
 				lang = viper.GetString("lang")
 			}
-			runEngine(buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats, enabledOnly, recursive, args))
+			runEngine(buildLintArgs(lintArgs{
+				lang: lang, format: format, dataDir: dataDir, failOn: failOn, mother: mother, level: level,
+				disable: disable, enable: enable, ruleValues: ruleValues, disableCats: disableCats, enableCats: enableCats,
+				ignoreWords: ignoreWords, enabledOnly: enabledOnly, recursive: recursive, apply: applySugs, files: args,
+			}))
 		},
 	}
 	addLintFlags(lintCmd)
@@ -172,48 +182,62 @@ func fileArgs(args []string) []string {
 	return args
 }
 
-func buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats string, enabledOnly, recursive bool, files []string) []string {
+// lintArgs bundles product lint flags for the LT-shaped engine argv.
+type lintArgs struct {
+	lang, format, dataDir, failOn, mother, level string
+	disable, enable, ruleValues                  string
+	disableCats, enableCats, ignoreWords         string
+	enabledOnly, recursive, apply                bool
+	files                                        []string
+}
+
+func buildLintArgs(p lintArgs) []string {
 	a := []string{"--lint"}
-	if format != "" && format != "text" && format != "lint" {
-		a = []string{"--format", format}
+	if p.apply {
+		a = []string{"--apply"}
+	} else if p.format != "" && p.format != "text" && p.format != "lint" {
+		a = []string{"--format", p.format}
 	}
-	if lang != "" {
-		a = append(a, "-l", lang)
+	if p.lang != "" {
+		a = append(a, "-l", p.lang)
 	}
 	// empty lang → product lint auto-detect via commandline
-	if dataDir != "" {
-		a = append(a, "--data-dir", dataDir)
+	if p.dataDir != "" {
+		a = append(a, "--data-dir", p.dataDir)
 	}
-	if failOn != "" && failOn != "error" {
-		a = append(a, "--fail-on", failOn)
+	if !p.apply && p.failOn != "" && p.failOn != "error" {
+		a = append(a, "--fail-on", p.failOn)
 	}
-	if mother != "" {
-		a = append(a, "-m", mother)
+	if p.mother != "" {
+		a = append(a, "-m", p.mother)
 	}
-	if level != "" {
-		a = append(a, "--level", level)
+	if p.level != "" {
+		a = append(a, "--level", p.level)
 	}
-	if disable != "" {
-		a = append(a, "-d", disable)
+	if p.disable != "" {
+		a = append(a, "-d", p.disable)
 	}
-	if enable != "" {
-		a = append(a, "-e", enable)
+	if p.enable != "" {
+		a = append(a, "-e", p.enable)
 	}
-	if enabledOnly {
+	if p.enabledOnly {
 		a = append(a, "--enabledonly")
 	}
-	if recursive {
+	if p.recursive {
 		a = append(a, "--recursive")
 	}
-	if ruleValues != "" {
-		a = append(a, "--ruleValues", ruleValues)
+	if p.ruleValues != "" {
+		a = append(a, "--ruleValues", p.ruleValues)
 	}
-	if disableCats != "" {
-		a = append(a, "--disablecategories", disableCats)
+	if p.disableCats != "" {
+		a = append(a, "--disablecategories", p.disableCats)
 	}
-	if enableCats != "" {
-		a = append(a, "--enablecategories", enableCats)
+	if p.enableCats != "" {
+		a = append(a, "--enablecategories", p.enableCats)
 	}
-	a = append(a, fileArgs(files)...)
+	if p.ignoreWords != "" {
+		a = append(a, "--ignore-words", p.ignoreWords)
+	}
+	a = append(a, fileArgs(p.files)...)
 	return a
 }

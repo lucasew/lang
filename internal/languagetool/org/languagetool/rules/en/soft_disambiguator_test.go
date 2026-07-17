@@ -1,6 +1,8 @@
 package en
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -13,7 +15,7 @@ func TestRegisterSoftEnglishDisambiguator_Multiword(t *testing.T) {
 	if p := findEnglishPOSDict(t); p != "" {
 		require.True(t, RegisterBinaryEnglishTagger(lt, p))
 	}
-	RegisterSoftEnglishDisambiguator(lt, "")
+	RegisterSoftEnglishDisambiguator(lt, "", "")
 	require.NotNil(t, lt.Disambiguator)
 	sents := lt.Analyze("I live in New York.")
 	require.NotEmpty(t, sents)
@@ -86,4 +88,39 @@ func dumpSents(sents []*languagetool.AnalyzedSentence) string {
 		}
 	}
 	return b
+}
+
+func TestRegisterSoftEnglishDisambiguator_SoftXMLIgnoreSpelling(t *testing.T) {
+	// locate testdata/disambiguation/en-soft.xml
+	wd, _ := os.Getwd()
+	path := ""
+	dir := wd
+	for i := 0; i < 12; i++ {
+		cand := filepath.Join(dir, "testdata", "disambiguation", "en-soft.xml")
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			path = cand
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	if path == "" {
+		t.Skip("en-soft.xml not found")
+	}
+	lt := languagetool.NewJLanguageTool("en")
+	// mark everything unknown for spelling
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
+		"MORFOLOGIK_RULE_EN_US",
+		func(w string) bool { return w != "iPhone" && w != "GitHub" },
+		nil, nil,
+	))
+	RegisterSoftEnglishDisambiguator(lt, "", path)
+	// without soft XML, iPhone would flag; with ignore_spelling rule it should not
+	m := lt.Check("I use an iPhone.")
+	for _, x := range m {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID, "%+v", m)
+	}
 }

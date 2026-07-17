@@ -94,6 +94,27 @@ func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
 	return ""
 }
 
+// DiscoverEnglishSoftDisambiguationXML finds soft EN disambiguation XML
+// (testdata/disambiguation/en-soft.xml or LANG_DISAMBIGUATION_FILE).
+func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "disambiguation", "en-soft.xml"),
+			filepath.Join(opts.GetDataDir(), "en-soft-disambiguation.xml"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	return WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-soft.xml"))
+}
+
 // DiscoverEnglishMultiwords finds en/multiwords.txt for soft multiword disambiguation.
 func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 	if p := os.Getenv("LANG_EN_MULTIWORDS"); p != "" {

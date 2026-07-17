@@ -7,6 +7,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
 )
 
@@ -25,8 +26,9 @@ var softEnglishMultiwords = []string{
 }
 
 // RegisterSoftEnglishDisambiguator installs an EnglishHybridDisambiguator with a
-// MultiWordChunker (soft built-in lines + optional tab-separated multiwords file).
-func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwordsPath string) {
+// MultiWordChunker (soft built-in lines + optional tab-separated multiwords file)
+// and optional soft XML disambiguation rules (e.g. ignore_spelling for product names).
+func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwordsPath, softDisambigXMLPath string) {
 	if lt == nil {
 		return
 	}
@@ -48,6 +50,13 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 	chunker.SetIgnoreSpelling(true)
 	hyb := entag.NewEnglishHybridDisambiguator()
 	hyb.Chunker = chunker
+	if softDisambigXMLPath != "" {
+		if data, err := os.ReadFile(softDisambigXMLPath); err == nil {
+			if rules, err := disambigrules.NewDisambiguationRuleLoader().GetRulesFromString(string(data), "en", softDisambigXMLPath); err == nil && len(rules) > 0 {
+				hyb.RulesDisambiguator = disambigrules.NewXmlRuleDisambiguator(rules)
+			}
+		}
+	}
 	lt.Disambiguator = hyb
 }
 

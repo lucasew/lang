@@ -69,6 +69,7 @@ go run ./cmd/lang-server -port 8081 -public
 | EN speller (`en_US.dict` CFSA2 when present) | MORFOLOGIK_RULE_EN_US |
 | EN POS tagger (`english.dict` CFSA2 when present) | TagWord / `--taggeronly` |
 | EN soft multiword disambiguator | MultiWordChunker on Analyze |
+| Soft EN XML disambiguation | `testdata/disambiguation/en-soft.xml` |
 | Demo EN speller (`LANG_DEMO_SPELLER=1` fallback) | map + edit-distance suggestions |
 | `--apply` suggestion rewrite | a/an, false friends, soft patterns |
 | `--ignore-words` CSV | suppress spelling matches |

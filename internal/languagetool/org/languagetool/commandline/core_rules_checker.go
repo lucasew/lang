@@ -174,8 +174,8 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
-			// Soft multiword chunker disambiguator (built-in + optional multiwords.txt tabs).
-			en.RegisterSoftEnglishDisambiguator(lt, DiscoverEnglishMultiwords(opts))
+			// Soft multiword chunker + optional soft XML disambiguation.
+			en.RegisterSoftEnglishDisambiguator(lt, DiscoverEnglishMultiwords(opts), DiscoverEnglishSoftDisambiguationXML(opts))
 		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
