@@ -41,6 +41,13 @@ func TestSoftInflectedAndSurfacePOS(t *testing.T) {
 	sentEnd.Pos = &PosToken{PosTag: "SENT_END"}
 	sm := NewPatternTokenMatcher(sentEnd)
 	require.True(t, sm.IsMatched(languagetool.NewAnalyzedToken(".", nil, nil)))
+
+	// Surface RE + word POS without tagger (TL ADJECTIVE-V_COMMON_NOUN)
+	adj := NewPatternToken(".*[aeiou]", false, true, false)
+	adj.Pos = &PosToken{PosTag: "(ADMO|ADCO).*", Regexp: true}
+	am := NewPatternTokenMatcher(adj)
+	require.True(t, am.IsMatched(languagetool.NewAnalyzedToken("mababa", nil, nil)))
+	require.False(t, am.IsMatched(languagetool.NewAnalyzedToken("madasalin", nil, nil)))
 }
 
 func TestSoftRegexpAlternatives(t *testing.T) {

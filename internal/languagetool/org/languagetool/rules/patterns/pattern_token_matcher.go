@@ -98,6 +98,8 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			// when the postag pattern looks like sentence-end / punct.
 			// Surface+punct-tag (e.g. token="." postag="SENT_END") also soft-accepts
 			// when the surface already matched and looks like punctuation.
+			// Surface+word POS (e.g. TL ADJECTIVE-V with RE+postag): when the
+			// surface already matched, accept non-negated POS without a tagger.
 			tag := strings.ToUpper(pt.Pos.PosTag)
 			if tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN") {
 				posOK = true
@@ -109,6 +111,9 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 					posOK = true
 				}
 			} else if softLooksLikePunct(token.GetToken()) && softPostagLooksLikePunct(tag) {
+				posOK = true
+			} else if matched && !pt.Pos.Negate {
+				// Dual surface+POS constraint: surface is the only soft signal.
 				posOK = true
 			}
 		}
