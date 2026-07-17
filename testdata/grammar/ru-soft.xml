@@ -33,5 +33,39 @@
       <message>Возможный повтор "не".</message>
       <short>не не</short>
     </rule>
+    <rule id="RU_SOFT_S_S" name="с с">
+      <pattern>
+        <token>с</token>
+        <token>с</token>
+      </pattern>
+      <message>Возможный повтор "с".</message>
+      <short>с с</short>
+    </rule>
+    <rule id="RU_SOFT_PO_PO" name="по по">
+      <pattern>
+        <token>по</token>
+        <token>по</token>
+      </pattern>
+      <message>Возможный повтор "по".</message>
+      <short>по по</short>
+    </rule>
+    <rule id="RU_SOFT_ETO_ETO" name="это это">
+      <pattern>
+        <token>это</token>
+        <token>это</token>
+      </pattern>
+      <message>Возможный повтор "это".</message>
+      <short>это это</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Типографика">
+    <rule id="RU_SOFT_DOUBLE_BANG" name="двойной восклицательный">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Часто достаточно одного знака: "!"</message>
+      <short>пунктуация</short>
+    </rule>
   </category>
 </rules>

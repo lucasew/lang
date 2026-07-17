@@ -24,3 +24,9 @@ by the way	RB
 at all	RB
 in general	RB
 on the other hand	RB
+Silicon Valley	NNP
+Wall Street	NNP
+Middle East	NNP
+Far East	NNP
+as soon as	RB
+in addition	RB

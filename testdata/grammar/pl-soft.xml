@@ -33,5 +33,39 @@
       <message>Możliwe powtórzenie "że".</message>
       <short>że że</short>
     </rule>
+    <rule id="PL_SOFT_WE_WE" name="we we">
+      <pattern>
+        <token>we</token>
+        <token>we</token>
+      </pattern>
+      <message>Możliwe powtórzenie "we".</message>
+      <short>we we</short>
+    </rule>
+    <rule id="PL_SOFT_Z_Z" name="z z">
+      <pattern>
+        <token>z</token>
+        <token>z</token>
+      </pattern>
+      <message>Możliwe powtórzenie "z".</message>
+      <short>z z</short>
+    </rule>
+    <rule id="PL_SOFT_NIE_NIE" name="nie nie">
+      <pattern>
+        <token>nie</token>
+        <token>nie</token>
+      </pattern>
+      <message>Możliwe powtórzenie "nie".</message>
+      <short>nie nie</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografia">
+    <rule id="PL_SOFT_DOUBLE_BANG" name="podwójny wykrzyknik">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Często wystarczy jeden wykrzyknik: "!"</message>
+      <short>interpunkcja</short>
+    </rule>
   </category>
 </rules>

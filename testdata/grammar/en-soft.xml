@@ -490,6 +490,27 @@
       <message>Did you mean "give in to"?</message>
       <short>into</short>
     </rule>
+    <rule id="EN_SOFT_EACHOTHER" name="eachother soft xml">
+      <pattern>
+        <token regexp="yes">eachother|Eachother</token>
+      </pattern>
+      <message>Did you mean "each other"?</message>
+      <short>eachother</short>
+    </rule>
+    <rule id="EN_SOFT_INSPITE" name="inspite">
+      <pattern>
+        <token regexp="yes">inspite|Inspite</token>
+      </pattern>
+      <message>Did you mean "in spite"?</message>
+      <short>inspite</short>
+    </rule>
+    <rule id="EN_SOFT_ATLEAST" name="atleast">
+      <pattern>
+        <token regexp="yes">atleast|Atleast</token>
+      </pattern>
+      <message>Did you mean "at least"?</message>
+      <short>atleast</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

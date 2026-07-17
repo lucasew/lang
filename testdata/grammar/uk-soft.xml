@@ -33,5 +33,39 @@
       <message>Можливе повторення "не".</message>
       <short>не не</short>
     </rule>
+    <rule id="UK_SOFT_Z_Z" name="з з">
+      <pattern>
+        <token>з</token>
+        <token>з</token>
+      </pattern>
+      <message>Можливе повторення "з".</message>
+      <short>з з</short>
+    </rule>
+    <rule id="UK_SOFT_TA_TA" name="та та">
+      <pattern>
+        <token>та</token>
+        <token>та</token>
+      </pattern>
+      <message>Можливе повторення "та".</message>
+      <short>та та</short>
+    </rule>
+    <rule id="UK_SOFT_TSE_TSE" name="це це">
+      <pattern>
+        <token>це</token>
+        <token>це</token>
+      </pattern>
+      <message>Можливе повторення "це".</message>
+      <short>це це</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Типографіка">
+    <rule id="UK_SOFT_DOUBLE_BANG" name="подвійний знак оклику">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Часто достатньо одного знака: "!"</message>
+      <short>пунктуація</short>
+    </rule>
   </category>
 </rules>

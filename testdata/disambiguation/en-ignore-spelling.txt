@@ -60,3 +60,10 @@ Vue
 Nuxt
 Remix
 Prisma
+Webpack
+Vite
+esbuild
+Turborepo
+Playwright
+Cypress
+Storybook
