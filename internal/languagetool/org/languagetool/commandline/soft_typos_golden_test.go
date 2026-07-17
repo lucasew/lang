@@ -19266,9 +19266,11 @@ func TestGolden_SoftFailOnNoteStyle(t *testing.T) {
 	// fail-on=note should exit non-zero when only style soft hits
 	text := "This is very unique work."
 	var out, errb bytes.Buffer
+	// Keep only the soft note-style EN_SOFT_VERY_UNIQUE hit for fail-on checks
+	// (disable grammar/spelling neighbors that also match this short sentence).
 	code := RunWithIO([]string{
 		"-l", "en", "--lint", "--fail-on", "error",
-		"-d", "UPPERCASE_SENTENCE_START",
+		"-d", "UPPERCASE_SENTENCE_START,VERY_UNIQUE,EN_SOFT_I_IS",
 		"-",
 	}, RunHooks{
 		ReadStdin: func() (string, error) { return text, nil },
@@ -19280,7 +19282,7 @@ func TestGolden_SoftFailOnNoteStyle(t *testing.T) {
 	var out2, errb2 bytes.Buffer
 	code2 := RunWithIO([]string{
 		"-l", "en", "--lint", "--fail-on", "note",
-		"-d", "UPPERCASE_SENTENCE_START",
+		"-d", "UPPERCASE_SENTENCE_START,VERY_UNIQUE,EN_SOFT_I_IS",
 		"-",
 	}, RunHooks{
 		ReadStdin: func() (string, error) { return text, nil },

@@ -269,12 +269,13 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 		parts = []string{text}
 	}
 	out := make([]*AnalyzedSentence, 0, len(parts))
+	wt := WordTokenizerForLanguage(lt.LanguageCode)
 	for _, p := range parts {
 		var s *AnalyzedSentence
 		if lt.TagWord != nil {
-			s = AnalyzeWithTagger(p, lt.TagWord)
+			s = AnalyzeWithTaggerAndTokenizer(p, lt.TagWord, wt)
 		} else {
-			s = AnalyzePlain(p)
+			s = AnalyzeWithTokenizer(p, wt)
 		}
 		if lt.Disambiguator != nil && s != nil {
 			if d := lt.Disambiguator.Disambiguate(s); d != nil {

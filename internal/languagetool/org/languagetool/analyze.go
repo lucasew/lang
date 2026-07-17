@@ -4,13 +4,21 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
 )
 
 // AnalyzePlain ports a minimal getAnalyzedSentence for demo/rule unit tests:
 // SENT_START + WordTokenizer tokens as untagged AnalyzedTokenReadings with start positions.
 // Sets whitespaceBefore from the previous raw token (JLanguageTool analysis loop).
 func AnalyzePlain(text string) *AnalyzedSentence {
-	wt := tokenizers.NewWordTokenizer()
+	return AnalyzeWithTokenizer(text, tokenizers.NewWordTokenizer())
+}
+
+// AnalyzeWithTokenizer is AnalyzePlain with an explicit word tokenizer (e.g. FrenchWordTokenizer).
+func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentence {
+	if wt == nil {
+		wt = tokenizers.NewWordTokenizer()
+	}
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)
 	// tokens: SENT_START at 0, then each raw token
@@ -31,6 +39,21 @@ func AnalyzePlain(text string) *AnalyzedSentence {
 		prev = tok
 	}
 	return NewAnalyzedSentence(readings)
+}
+
+// WordTokenizerForLanguage returns the language-specific soft word tokenizer.
+// Falls back to the generic WordTokenizer.
+func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
+	base := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		base = lang[:i]
+	}
+	switch strings.ToLower(base) {
+	case "fr":
+		return frtok.NewFrenchWordTokenizer()
+	default:
+		return tokenizers.NewWordTokenizer()
+	}
 }
 
 // AnalyzePlainStripSoftHyphen is AnalyzePlain after removing U+00AD (LT ignored chars).
@@ -213,10 +236,17 @@ type TokenTag struct {
 // AnalyzeWithTagger is AnalyzePlain plus optional POS/lemma tags from tagWord.
 // tagWord may return multiple readings; empty/nil falls back to untagged tokens.
 func AnalyzeWithTagger(text string, tagWord func(token string) []TokenTag) *AnalyzedSentence {
+	return AnalyzeWithTaggerAndTokenizer(text, tagWord, tokenizers.NewWordTokenizer())
+}
+
+// AnalyzeWithTaggerAndTokenizer tags tokens produced by wt.
+func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []TokenTag, wt tokenizers.Tokenizer) *AnalyzedSentence {
 	if tagWord == nil {
-		return AnalyzePlain(text)
+		return AnalyzeWithTokenizer(text, wt)
 	}
-	wt := tokenizers.NewWordTokenizer()
+	if wt == nil {
+		wt = tokenizers.NewWordTokenizer()
+	}
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)
 	readings := make([]*AnalyzedTokenReadings, 0, len(raw)+1)

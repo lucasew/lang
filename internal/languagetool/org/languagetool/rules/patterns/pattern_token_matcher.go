@@ -143,14 +143,33 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	if pt.Token == "" {
 		return true
 	}
+	// Soft: treat ASCII and typographic apostrophes as equivalent so
+	// French soft packs (often ASCII d'/l') match FrenchWordTokenizer (often ’).
+	surface = normalizeApostrophes(surface)
+	want := normalizeApostrophes(pt.Token)
 	if pt.Regexp {
 		if m.tokenRE != nil {
-			return m.tokenRE.MatchString(surface)
+			// tokenRE compiled from original pattern; also try normalized surface.
+			if m.tokenRE.MatchString(surface) {
+				return true
+			}
+			return m.tokenRE.MatchString(want) // no-op if same
 		}
 		return false
 	}
 	if pt.CaseSensitive {
-		return surface == pt.Token
+		return surface == want
 	}
-	return strings.EqualFold(surface, pt.Token)
+	return strings.EqualFold(surface, want)
+}
+
+func normalizeApostrophes(s string) string {
+	if s == "" {
+		return s
+	}
+	// U+2019 right single quotation mark, U+02BC modifier letter apostrophe, U+2018 left.
+	s = strings.ReplaceAll(s, "\u2019", "'")
+	s = strings.ReplaceAll(s, "\u02BC", "'")
+	s = strings.ReplaceAll(s, "\u2018", "'")
+	return s
 }

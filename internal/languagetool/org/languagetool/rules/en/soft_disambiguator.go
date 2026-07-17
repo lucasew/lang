@@ -70,12 +70,23 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 	chunker.SetIgnoreSpelling(true)
 	hyb := entag.NewEnglishHybridDisambiguator()
 	hyb.Chunker = chunker
-	if softDisambigXMLPath != "" {
-		if data, err := os.ReadFile(softDisambigXMLPath); err == nil {
-			if rules, err := disambigrules.NewDisambiguationRuleLoader().GetRulesFromString(string(data), "en", softDisambigXMLPath); err == nil && len(rules) > 0 {
-				hyb.RulesDisambiguator = disambigrules.NewXmlRuleDisambiguator(rules)
-			}
+	// Load upstream soft disambig first, then legacy en-soft.xml (hand soft immunize
+	// abbreviations). Prefer both so ignore_spelling vs immunize stay distinct.
+	var allDisambigRules []*disambigrules.DisambiguationPatternRule
+	loader := disambigrules.NewDisambiguationRuleLoader()
+	for _, p := range softDisambiguationXMLPaths(softDisambigXMLPath) {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			continue
 		}
+		rules, err := loader.GetRulesFromString(string(data), "en", p)
+		if err != nil || len(rules) == 0 {
+			continue
+		}
+		allDisambigRules = append(allDisambigRules, rules...)
+	}
+	if len(allDisambigRules) > 0 {
+		hyb.RulesDisambiguator = disambigrules.NewXmlRuleDisambiguator(allDisambigRules)
 	}
 	var steps []languagetool.SentenceDisambiguator
 	steps = append(steps, hyb)
@@ -139,6 +150,56 @@ func (w *ignoreSpellingWordList) Disambiguate(input *languagetool.AnalyzedSenten
 		}
 	}
 	return input
+}
+
+// softDisambiguationXMLPaths returns the primary soft/upstream disambig XML plus
+// companion en-soft.xml in the same directory (soft immunize abbreviations).
+func softDisambiguationXMLPaths(primary string) []string {
+	var out []string
+	seen := map[string]struct{}{}
+	add := func(p string) {
+		if p == "" {
+			return
+		}
+		if _, ok := seen[p]; ok {
+			return
+		}
+		if st, err := os.Stat(p); err != nil || !st.Mode().IsRegular() {
+			return
+		}
+		seen[p] = struct{}{}
+		out = append(out, p)
+	}
+	add(primary)
+	if primary != "" {
+		dir := filepath.Dir(primary)
+		base := filepath.Base(primary)
+		// When primary is upstream extract, also load hand soft immunize pack.
+		if strings.Contains(base, "upstream") || base == "en-disambiguation-from-upstream-soft.xml" {
+			add(filepath.Join(dir, "en-soft.xml"))
+		}
+		// When primary is en-soft, also try upstream if present.
+		if base == "en-soft.xml" || base == "en-soft-disambiguation.xml" {
+			add(filepath.Join(dir, "en-disambiguation-upstream-soft.xml"))
+		}
+	}
+	// walk-up fallbacks if primary empty
+	if len(out) == 0 {
+		wd, err := os.Getwd()
+		if err == nil {
+			dir := wd
+			for {
+				add(filepath.Join(dir, "testdata", "disambiguation", "en-disambiguation-upstream-soft.xml"))
+				add(filepath.Join(dir, "testdata", "disambiguation", "en-soft.xml"))
+				parent := filepath.Dir(dir)
+				if parent == dir {
+					break
+				}
+				dir = parent
+			}
+		}
+	}
+	return out
 }
 
 // ignoreSpellingPaths returns soft list first (if set), then vendored upstream spelling.txt.
