@@ -3111,4 +3111,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GLUE" name="immunize glue">
+    <pattern>
+      <token>glue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLUE_CAPS" name="immunize Glue">
+    <pattern>
+      <token>Glue</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEDROCK" name="immunize bedrock">
+    <pattern>
+      <token>bedrock</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BEDROCK_CAPS" name="immunize Bedrock">
+    <pattern>
+      <token>Bedrock</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SAGEMAKER" name="immunize sagemaker">
+    <pattern>
+      <token>sagemaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SAGEMAKER_CAPS" name="immunize SageMaker">
+    <pattern>
+      <token>SageMaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

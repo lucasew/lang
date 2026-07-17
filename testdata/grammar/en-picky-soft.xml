@@ -1975,5 +1975,29 @@
       <message>Jargon; name the unreliable-link consensus problem instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BYZANTINE_FAULT" name="byzantine fault soft picky">
+      <pattern>
+        <token>byzantine</token>
+        <token>fault</token>
+      </pattern>
+      <message>Jargon; name arbitrary-failure consensus risk instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FLAKY_TEST" name="flaky test soft picky">
+      <pattern>
+        <token>flaky</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a nondeterministic failing test instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GOLDEN_MASTER" name="golden master soft picky">
+      <pattern>
+        <token>golden</token>
+        <token>master</token>
+      </pattern>
+      <message>Jargon; name characterization snapshot testing instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

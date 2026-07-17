@@ -354,3 +354,6 @@ Willamette Valley RegionNNP
 Napa Valley RegionNNP
 Yakima Valley RegionNNP
 Coachella Valley RegionNNP
+Salinas Valley RegionNNP
+Antelope Valley RegionNNP
+Pajaro Valley RegionNNP

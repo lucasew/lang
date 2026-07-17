@@ -7687,6 +7687,76 @@
       <message>Did you mean "fulfill"?</message>
       <short>fullfill</short>
     </rule>
+    <rule id="EN_SOFT_DOCUMENTS_MISS" name="docuements soft">
+      <pattern>
+        <token>docuements</token>
+      </pattern>
+      <message>Did you mean "documents"?</message>
+      <short>docuements</short>
+    </rule>
+    <rule id="EN_SOFT_DOUBTS_MISS" name="doupts soft">
+      <pattern>
+        <token>doupts</token>
+      </pattern>
+      <message>Did you mean "doubts"?</message>
+      <short>doupts</short>
+    </rule>
+    <rule id="EN_SOFT_INCORPORATING_MISS" name="encorporating soft">
+      <pattern>
+        <token>encorporating</token>
+      </pattern>
+      <message>Did you mean "incorporating"?</message>
+      <short>encorporating</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIRONMENTALLY_MISS" name="enviromentally soft">
+      <pattern>
+        <token>enviromentally</token>
+      </pattern>
+      <message>Did you mean "environmentally"?</message>
+      <short>enviromentally</short>
+    </rule>
+    <rule id="EN_SOFT_EQUIVALENT_MISS3" name="equivilent soft">
+      <pattern>
+        <token>equivilent</token>
+      </pattern>
+      <message>Did you mean "equivalent"?</message>
+      <short>equivilent</short>
+    </rule>
+    <rule id="EN_SOFT_EXPLANATIONS_MISS" name="explinations soft">
+      <pattern>
+        <token>explinations</token>
+      </pattern>
+      <message>Did you mean "explanations"?</message>
+      <short>explinations</short>
+    </rule>
+    <rule id="EN_SOFT_FACILITATE_MISS" name="facilatate soft">
+      <pattern>
+        <token>facilatate</token>
+      </pattern>
+      <message>Did you mean "facilitate"?</message>
+      <short>facilatate</short>
+    </rule>
+    <rule id="EN_SOFT_FORESEE_MISS" name="forsee soft">
+      <pattern>
+        <token>forsee</token>
+      </pattern>
+      <message>Did you mean "foresee"?</message>
+      <short>forsee</short>
+    </rule>
+    <rule id="EN_SOFT_FULFILLED_MISS" name="fullfilled soft">
+      <pattern>
+        <token>fullfilled</token>
+      </pattern>
+      <message>Did you mean "fulfilled"?</message>
+      <short>fullfilled</short>
+    </rule>
+    <rule id="EN_SOFT_GUIDELINES_MISS" name="guidlines soft">
+      <pattern>
+        <token>guidlines</token>
+      </pattern>
+      <message>Did you mean "guidelines"?</message>
+      <short>guidlines</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
