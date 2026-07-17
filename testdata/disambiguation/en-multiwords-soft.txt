@@ -447,3 +447,6 @@ Lahar Corridor RegionNNP
 Tuff Ridge RegionNNP
 Ash Ridge RegionNNP
 Scoria Ridge RegionNNP
+Cinder Ridge RegionNNP
+Pumice Peak RegionNNP
+Ash Peak RegionNNP

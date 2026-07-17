@@ -9857,6 +9857,76 @@
       <message>Did you mean "appreciate"?</message>
       <short>appreaciate</short>
     </rule>
+    <rule id="EN_SOFT_APPEARANCES_MISS" name="appearences soft">
+      <pattern>
+        <token>appearences</token>
+      </pattern>
+      <message>Did you mean "appearances"?</message>
+      <short>appearences</short>
+    </rule>
+    <rule id="EN_SOFT_APPRECIATED_MISS" name="appreaciated soft">
+      <pattern>
+        <token>appreaciated</token>
+      </pattern>
+      <message>Did you mean "appreciated"?</message>
+      <short>appreaciated</short>
+    </rule>
+    <rule id="EN_SOFT_APPRECIATION_MISS" name="appreaciation soft">
+      <pattern>
+        <token>appreaciation</token>
+      </pattern>
+      <message>Did you mean "appreciation"?</message>
+      <short>appreaciation</short>
+    </rule>
+    <rule id="EN_SOFT_APPROACH_MISS" name="approch soft">
+      <pattern>
+        <token>approch</token>
+      </pattern>
+      <message>Did you mean "approach"?</message>
+      <short>approch</short>
+    </rule>
+    <rule id="EN_SOFT_APPROACHED_MISS" name="approched soft">
+      <pattern>
+        <token>approched</token>
+      </pattern>
+      <message>Did you mean "approached"?</message>
+      <short>approched</short>
+    </rule>
+    <rule id="EN_SOFT_APPROACHING_MISS" name="approching soft">
+      <pattern>
+        <token>approching</token>
+      </pattern>
+      <message>Did you mean "approaching"?</message>
+      <short>approching</short>
+    </rule>
+    <rule id="EN_SOFT_APPROXIMATE_MISS" name="aproximate soft">
+      <pattern>
+        <token>aproximate</token>
+      </pattern>
+      <message>Did you mean "approximate"?</message>
+      <short>aproximate</short>
+    </rule>
+    <rule id="EN_SOFT_APPROXIMATELY_MISS" name="aproximately soft">
+      <pattern>
+        <token>aproximately</token>
+      </pattern>
+      <message>Did you mean "approximately"?</message>
+      <short>aproximately</short>
+    </rule>
+    <rule id="EN_SOFT_APPROXIMATION_MISS" name="aproximation soft">
+      <pattern>
+        <token>aproximation</token>
+      </pattern>
+      <message>Did you mean "approximation"?</message>
+      <short>aproximation</short>
+    </rule>
+    <rule id="EN_SOFT_ARRIVAL_MISS" name="arival soft">
+      <pattern>
+        <token>arival</token>
+      </pattern>
+      <message>Did you mean "arrival"?</message>
+      <short>arival</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

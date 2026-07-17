@@ -2729,5 +2729,31 @@
       <message>Jargon; name a simple benefit-cost priority plot instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BUY_A_FEATURE" name="buy a feature soft picky">
+      <pattern>
+        <token>buy</token>
+        <token>a</token>
+        <token>feature</token>
+      </pattern>
+      <message>Jargon; name a budget-based prioritization exercise instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HUNDRED_DOLLAR_TEST" name="hundred dollar test soft picky">
+      <pattern>
+        <token>hundred</token>
+        <token>dollar</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a fixed-budget preference allocation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OPPORTUNITY_SCORING" name="opportunity scoring soft picky">
+      <pattern>
+        <token>opportunity</token>
+        <token>scoring</token>
+      </pattern>
+      <message>Jargon; name importance-satisfaction gap ranking instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

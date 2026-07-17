@@ -4227,4 +4227,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTAPP" name="immunize pinpointapp">
+    <pattern>
+      <token>pinpointapp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTAPP_CAPS" name="immunize PinpointApp">
+    <pattern>
+      <token>PinpointApp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILETARGETING" name="immunize mobiletargeting">
+    <pattern>
+      <token>mobiletargeting</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILETARGETING_CAPS" name="immunize MobileTargeting">
+    <pattern>
+      <token>MobileTargeting</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILEANALYTICS" name="immunize mobileanalytics">
+    <pattern>
+      <token>mobileanalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOBILEANALYTICS_CAPS" name="immunize MobileAnalytics">
+    <pattern>
+      <token>MobileAnalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
