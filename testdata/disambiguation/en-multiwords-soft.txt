@@ -351,3 +351,6 @@ Death Valley RegionNNP
 Tennessee Valley RegionNNP
 Shenandoah Valley RegionNNP
 Willamette Valley RegionNNP
+Napa Valley RegionNNP
+Yakima Valley RegionNNP
+Coachella Valley RegionNNP

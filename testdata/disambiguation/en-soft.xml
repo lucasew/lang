@@ -3075,4 +3075,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_EMR" name="immunize emr">
+    <pattern>
+      <token>emr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EMR_CAPS" name="immunize EMR">
+    <pattern>
+      <token>EMR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COGNITO" name="immunize cognito">
+    <pattern>
+      <token>cognito</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COGNITO_CAPS" name="immunize Cognito">
+    <pattern>
+      <token>Cognito</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KMS" name="immunize kms">
+    <pattern>
+      <token>kms</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KMS_CAPS" name="immunize KMS">
+    <pattern>
+      <token>KMS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

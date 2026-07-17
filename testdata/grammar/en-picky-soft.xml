@@ -1951,5 +1951,29 @@
       <message>Jargon; name wait-for-three-examples before abstracting.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_EVENTUAL_CONSISTENCY" name="eventual consistency soft picky">
+      <pattern>
+        <token>eventual</token>
+        <token>consistency</token>
+      </pattern>
+      <message>Jargon; name delayed-convergence data model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACID_PROPERTIES" name="acid properties soft picky">
+      <pattern>
+        <token>acid</token>
+        <token>properties</token>
+      </pattern>
+      <message>Jargon; name atomic durable transaction guarantees instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TWO_GENERALS" name="two generals soft picky">
+      <pattern>
+        <token>two</token>
+        <token>generals</token>
+      </pattern>
+      <message>Jargon; name the unreliable-link consensus problem instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

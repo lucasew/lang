@@ -7617,6 +7617,76 @@
       <message>Did you mean "explain"?</message>
       <short>expalin</short>
     </rule>
+    <rule id="EN_SOFT_DISTURBED_MISS" name="distrubed soft">
+      <pattern>
+        <token>distrubed</token>
+      </pattern>
+      <message>Did you mean "disturbed"?</message>
+      <short>distrubed</short>
+    </rule>
+    <rule id="EN_SOFT_DISTURBING_MISS" name="distrubing soft">
+      <pattern>
+        <token>distrubing</token>
+      </pattern>
+      <message>Did you mean "disturbing"?</message>
+      <short>distrubing</short>
+    </rule>
+    <rule id="EN_SOFT_DIVISIONS_MISS" name="divsions soft">
+      <pattern>
+        <token>divsions</token>
+      </pattern>
+      <message>Did you mean "divisions"?</message>
+      <short>divsions</short>
+    </rule>
+    <rule id="EN_SOFT_DOCUMENT_MISS2" name="docuement soft">
+      <pattern>
+        <token>docuement</token>
+      </pattern>
+      <message>Did you mean "document"?</message>
+      <short>docuement</short>
+    </rule>
+    <rule id="EN_SOFT_DOUBTFUL_MISS" name="douptful soft">
+      <pattern>
+        <token>douptful</token>
+      </pattern>
+      <message>Did you mean "doubtful"?</message>
+      <short>douptful</short>
+    </rule>
+    <rule id="EN_SOFT_EFFICIENTLY_MISS" name="efficently soft">
+      <pattern>
+        <token>efficently</token>
+      </pattern>
+      <message>Did you mean "efficiently"?</message>
+      <short>efficently</short>
+    </rule>
+    <rule id="EN_SOFT_INCORPORATED_MISS" name="encorporated soft">
+      <pattern>
+        <token>encorporated</token>
+      </pattern>
+      <message>Did you mean "incorporated"?</message>
+      <short>encorporated</short>
+    </rule>
+    <rule id="EN_SOFT_EQUIVALENT_MISS2" name="equivilant soft">
+      <pattern>
+        <token>equivilant</token>
+      </pattern>
+      <message>Did you mean "equivalent"?</message>
+      <short>equivilant</short>
+    </rule>
+    <rule id="EN_SOFT_EXPLAINED_MISS" name="expalined soft">
+      <pattern>
+        <token>expalined</token>
+      </pattern>
+      <message>Did you mean "explained"?</message>
+      <short>expalined</short>
+    </rule>
+    <rule id="EN_SOFT_FULFILL_MISS" name="fullfill soft">
+      <pattern>
+        <token>fullfill</token>
+      </pattern>
+      <message>Did you mean "fulfill"?</message>
+      <short>fullfill</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
