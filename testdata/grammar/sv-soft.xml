@@ -33,5 +33,38 @@
       <message>Menade du "en vara"?</message>
       <short>varan</short>
     </rule>
+    <rule id="SV_SOFT_DOM_HAR" name="dom har">
+      <pattern>
+        <token>dom</token>
+        <token>har</token>
+      </pattern>
+      <message>Menade du "de har"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_STORRE_AN" name="större än">
+      <pattern>
+        <token>större</token>
+        <token>som</token>
+      </pattern>
+      <message>Menade du "större än"?</message>
+      <short>än/som</short>
+    </rule>
+    <rule id="SV_SOFT_MEDANS" name="medans">
+      <pattern>
+        <token>medans</token>
+      </pattern>
+      <message>Menade du "medan"?</message>
+      <short>medans</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografi">
+    <rule id="SV_SOFT_DOUBLE_BANG" name="dubbelt utropstecken">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ett utropstecken räcker ofta: "!"</message>
+      <short>interpunktion</short>
+    </rule>
   </category>
 </rules>

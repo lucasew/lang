@@ -31,8 +31,17 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 		return "STYLE", "Style", "style", "Long paragraph"
 	case strings.Contains(id, "FALSE_FRIEND") || isSoftFalseFriendGroupID(id):
 		return "FALSEFRIENDS", "False Friends", "misspelling", "False friend"
-	// Soft grammar XML slices (e.g. EN_SOFT_*) are grammar, not false friends.
+	// Soft grammar XML slices (e.g. EN_SOFT_*) — refine issue type from ID shape.
 	case strings.Contains(id, "_SOFT_"):
+		if strings.Contains(id, "DOUBLE_BANG") || strings.Contains(id, "DOUBLE_Q") ||
+			strings.Contains(id, "TYPOGRAPHY") || strings.Contains(id, "SPACE_BEFORE") {
+			return "TYPOGRAPHY", "Typography", "typographical", SoftRuleDescription(ruleID)
+		}
+		if strings.Contains(id, "KIND_OF") || strings.Contains(id, "LITERALLY") ||
+			strings.Contains(id, "VERY_UNIQUE") || strings.Contains(id, "IN_ORDER_TO") ||
+			strings.Contains(id, "_STYLE") {
+			return "STYLE", "Style", "style", SoftRuleDescription(ruleID)
+		}
 		return "GRAMMAR", "Grammar", "grammar", SoftRuleDescription(ruleID)
 	case strings.HasPrefix(id, "EN_") && (strings.Contains(id, "_OF") || strings.Contains(id, "A_LOT") || strings.Contains(id, "IRREGARDLESS")):
 		return "GRAMMAR", "Grammar", "grammar", "Possible grammar error"

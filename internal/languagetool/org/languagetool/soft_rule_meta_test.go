@@ -16,6 +16,12 @@ func TestSoftRuleMeta(t *testing.T) {
 	id, _, issue, _ = SoftRuleMeta("EN_SOFT_YOUR_YOU_RE")
 	require.Equal(t, "GRAMMAR", id)
 	require.Equal(t, "grammar", issue)
+	id, _, issue, _ = SoftRuleMeta("EN_SOFT_DOUBLE_BANG")
+	require.Equal(t, "TYPOGRAPHY", id)
+	require.Equal(t, "typographical", issue)
+	id, _, issue, _ = SoftRuleMeta("EN_SOFT_VERY_UNIQUE")
+	require.Equal(t, "STYLE", id)
+	require.Equal(t, "style", issue)
 
 	id, name, issue, short = SoftRuleMeta("EMPTY_LINE")
 	require.Equal(t, "STYLE", id)

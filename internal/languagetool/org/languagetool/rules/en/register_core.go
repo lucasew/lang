@@ -62,6 +62,12 @@ func SoftEnglishPhraseReplacements() map[string]string {
 		"slight of hand":               "sleight of hand",
 		"tow the line":                 "toe the line",
 		"wait with baited breath":      "wait with bated breath",
+		"piece of mind":                "peace of mind",
+		"make due":                     "make do",
+		"pass mustard":                 "pass muster",
+		"extract revenge":              "exact revenge",
+		"hone in on":                   "home in on",
+		"fall by the waste side":       "fall by the wayside",
 	}
 }
 

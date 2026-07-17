@@ -25,5 +25,39 @@
       <message>Ofte er "fordi" nok (uden "at").</message>
       <short>fordi at</short>
     </rule>
+    <rule id="DA_SOFT_STORRE_END" name="større end">
+      <pattern>
+        <token>større</token>
+        <token>som</token>
+      </pattern>
+      <message>Mente du "større end"?</message>
+      <short>end/som</short>
+    </rule>
+    <rule id="DA_SOFT_HUN_HAR" name="dem har">
+      <pattern>
+        <token>dem</token>
+        <token>har</token>
+      </pattern>
+      <message>Mente du "de har"?</message>
+      <short>dem/de</short>
+    </rule>
+    <rule id="DA_SOFT_IKKE_IKKE" name="ikke ikke">
+      <pattern>
+        <token>ikke</token>
+        <token>ikke</token>
+      </pattern>
+      <message>Mulig gentagelse af "ikke".</message>
+      <short>ikke ikke</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografi">
+    <rule id="DA_SOFT_DOUBLE_BANG" name="dobbelt udråbstegn">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ét udråbstegn er ofte nok: "!"</message>
+      <short>tegnsætning</short>
+    </rule>
   </category>
 </rules>

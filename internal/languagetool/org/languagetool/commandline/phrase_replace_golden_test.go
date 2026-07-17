@@ -44,6 +44,10 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"Please tow the line.", "toe the line"},
 		{"It happened all of the sudden.", "all of a sudden"},
 		{"By in large, we agree.", "By and large"}, // sentence-initial capital
+		{"That gave me piece of mind.", "peace of mind"},
+		{"We must make due with less.", "make do"},
+		{"He will pass mustard.", "pass muster"},
+		{"They hone in on the target.", "home in on"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {
