@@ -6847,6 +6847,76 @@
       <message>Did you mean "acquiring"?</message>
       <short>aquiring</short>
     </rule>
+    <rule id="EN_SOFT_ACCEPTABLE_MISS" name="acceptible soft">
+      <pattern>
+        <token>acceptible</token>
+      </pattern>
+      <message>Did you mean "acceptable"?</message>
+      <short>acceptible</short>
+    </rule>
+    <rule id="EN_SOFT_ACCIDENTALLY_MISS" name="accidentaly soft">
+      <pattern>
+        <token>accidentaly</token>
+      </pattern>
+      <message>Did you mean "accidentally"?</message>
+      <short>accidentaly</short>
+    </rule>
+    <rule id="EN_SOFT_ACCIDENTALLY_MISS2" name="accidently soft">
+      <pattern>
+        <token>accidently</token>
+      </pattern>
+      <message>Did you mean "accidentally"?</message>
+      <short>accidently</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMMODATING_MISS" name="accomodating soft">
+      <pattern>
+        <token>accomodating</token>
+      </pattern>
+      <message>Did you mean "accommodating"?</message>
+      <short>accomodating</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMMODATE_MISS2" name="acomodate soft">
+      <pattern>
+        <token>acomodate</token>
+      </pattern>
+      <message>Did you mean "accommodate"?</message>
+      <short>acomodate</short>
+    </rule>
+    <rule id="EN_SOFT_ADEQUATE_MISS" name="adiquate soft">
+      <pattern>
+        <token>adiquate</token>
+      </pattern>
+      <message>Did you mean "adequate"?</message>
+      <short>adiquate</short>
+    </rule>
+    <rule id="EN_SOFT_ADDRESS_MISS3" name="adresss soft">
+      <pattern>
+        <token>adresss</token>
+      </pattern>
+      <message>Did you mean "address"?</message>
+      <short>adresss</short>
+    </rule>
+    <rule id="EN_SOFT_AGGRESSIVELY_MISS" name="agressively soft">
+      <pattern>
+        <token>agressively</token>
+      </pattern>
+      <message>Did you mean "aggressively"?</message>
+      <short>agressively</short>
+    </rule>
+    <rule id="EN_SOFT_ALCOHOL_MISS" name="alchohol soft">
+      <pattern>
+        <token>alchohol</token>
+      </pattern>
+      <message>Did you mean "alcohol"?</message>
+      <short>alchohol</short>
+    </rule>
+    <rule id="EN_SOFT_ALREADY_MISS" name="allready soft">
+      <pattern>
+        <token>allready</token>
+      </pattern>
+      <message>Did you mean "already"?</message>
+      <short>allready</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -2679,4 +2679,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_VHOST" name="immunize vhost">
+    <pattern>
+      <token>vhost</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOST_CAPS" name="immunize Vhost">
+    <pattern>
+      <token>Vhost</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VFIO" name="immunize vfio">
+    <pattern>
+      <token>vfio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VFIO_CAPS" name="immunize VFIO">
+    <pattern>
+      <token>VFIO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UIO" name="immunize uio">
+    <pattern>
+      <token>uio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UIO_CAPS" name="immunize UIO">
+    <pattern>
+      <token>UIO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

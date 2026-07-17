@@ -1679,5 +1679,30 @@
       <message>Jargon; name the split read/write model instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_STRANGLER_FIG" name="strangler fig soft picky">
+      <pattern>
+        <token>strangler</token>
+        <token>fig</token>
+      </pattern>
+      <message>Jargon; name the incremental replacement approach instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ANTI_CORRUPTION_LAYER" name="anti corruption layer soft picky">
+      <pattern>
+        <token>anti</token>
+        <token>corruption</token>
+        <token>layer</token>
+      </pattern>
+      <message>Jargon; name the integration translation boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOUNDED_CONTEXT" name="bounded context soft picky">
+      <pattern>
+        <token>bounded</token>
+        <token>context</token>
+      </pattern>
+      <message>Jargon; name the domain model boundary instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

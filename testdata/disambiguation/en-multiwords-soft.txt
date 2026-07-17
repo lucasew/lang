@@ -318,3 +318,6 @@ decade by decade	RB
 Chicago Metro	NNP
 New York City Metro	NNP
 century by century	RB
+Bay Area Metro	NNP
+Silicon Valley Region	NNP
+Pacific Northwest Region	NNP
