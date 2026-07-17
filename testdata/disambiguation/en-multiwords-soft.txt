@@ -423,3 +423,6 @@ Flint Corridor RegionNNP
 Shale Corridor RegionNNP
 Gneiss Corridor RegionNNP
 Schist Corridor RegionNNP
+Quartzite Corridor RegionNNP
+Dolomite Corridor RegionNNP
+Travertine Corridor RegionNNP

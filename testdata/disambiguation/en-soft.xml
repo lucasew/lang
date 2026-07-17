@@ -3939,4 +3939,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWCONE" name="immunize snowcone">
+    <pattern>
+      <token>snowcone</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWCONE_CAPS" name="immunize Snowcone">
+    <pattern>
+      <token>Snowcone</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWMOBILE" name="immunize snowmobile">
+    <pattern>
+      <token>snowmobile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWMOBILE_CAPS" name="immunize Snowmobile">
+    <pattern>
+      <token>Snowmobile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIASTORE" name="immunize mediastore">
+    <pattern>
+      <token>mediastore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIASTORE_CAPS" name="immunize MediaStore">
+    <pattern>
+      <token>MediaStore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

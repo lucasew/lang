@@ -9297,6 +9297,76 @@
       <message>Did you mean "parallelly"?</message>
       <short>parallely</short>
     </rule>
+    <rule id="EN_SOFT_RECOMMENDATIONS_MISS" name="reccomendations soft">
+      <pattern>
+        <token>reccomendations</token>
+      </pattern>
+      <message>Did you mean "recommendations"?</message>
+      <short>reccomendations</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSIVELY_MISS" name="sucessively soft">
+      <pattern>
+        <token>sucessively</token>
+      </pattern>
+      <message>Did you mean "successively"?</message>
+      <short>sucessively</short>
+    </rule>
+    <rule id="EN_SOFT_PROPAGATED_MISS" name="propogated soft">
+      <pattern>
+        <token>propogated</token>
+      </pattern>
+      <message>Did you mean "propagated"?</message>
+      <short>propogated</short>
+    </rule>
+    <rule id="EN_SOFT_PROPAGATES_MISS" name="propogates soft">
+      <pattern>
+        <token>propogates</token>
+      </pattern>
+      <message>Did you mean "propagates"?</message>
+      <short>propogates</short>
+    </rule>
+    <rule id="EN_SOFT_PROPAGATING_MISS" name="propogating soft">
+      <pattern>
+        <token>propogating</token>
+      </pattern>
+      <message>Did you mean "propagating"?</message>
+      <short>propogating</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGES_MISS2" name="priveleges soft">
+      <pattern>
+        <token>priveleges</token>
+      </pattern>
+      <message>Did you mean "privileges"?</message>
+      <short>priveleges</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSION_MISS2" name="proffesion soft">
+      <pattern>
+        <token>proffesion</token>
+      </pattern>
+      <message>Did you mean "profession"?</message>
+      <short>proffesion</short>
+    </rule>
+    <rule id="EN_SOFT_ABSENCES_MISS" name="absenses soft">
+      <pattern>
+        <token>absenses</token>
+      </pattern>
+      <message>Did you mean "absences"?</message>
+      <short>absenses</short>
+    </rule>
+    <rule id="EN_SOFT_ABANDON_MISS" name="abondon soft">
+      <pattern>
+        <token>abondon</token>
+      </pattern>
+      <message>Did you mean "abandon"?</message>
+      <short>abondon</short>
+    </rule>
+    <rule id="EN_SOFT_ACCEPTANCE_MISS" name="acceptence soft">
+      <pattern>
+        <token>acceptence</token>
+      </pattern>
+      <message>Did you mean "acceptance"?</message>
+      <short>acceptence</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

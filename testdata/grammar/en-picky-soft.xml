@@ -2531,5 +2531,28 @@
       <message>Jargon; name necessary but non-differentiating work instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GENERIC_SUBDOMAIN" name="generic subdomain soft picky">
+      <pattern>
+        <token>generic</token>
+        <token>subdomain</token>
+      </pattern>
+      <message>Jargon; name commodity supporting capability instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DISTILLATION" name="distillation soft picky">
+      <pattern>
+        <token>distillation</token>
+      </pattern>
+      <message>Jargon; name extracting the pure domain model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EVENT_STORMING" name="event storming soft picky">
+      <pattern>
+        <token>event</token>
+        <token>storming</token>
+      </pattern>
+      <message>Jargon; name collaborative domain discovery workshop instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
