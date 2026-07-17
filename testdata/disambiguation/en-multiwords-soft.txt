@@ -483,3 +483,6 @@ Marble Summit RegionNNP
 Slate Summit RegionNNP
 Limestone Summit RegionNNP
 Sandstone Summit RegionNNP
+Chalk Summit RegionNNP
+Clay Summit RegionNNP
+Flint Summit RegionNNP

@@ -4659,4 +4659,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_JAEGER" name="immunize jaeger">
+    <pattern>
+      <token>jaeger</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JAEGER_CAPS" name="immunize Jaeger">
+    <pattern>
+      <token>Jaeger</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEMPO" name="immunize tempo">
+    <pattern>
+      <token>tempo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEMPO_CAPS" name="immunize Tempo">
+    <pattern>
+      <token>Tempo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOKI" name="immunize loki">
+    <pattern>
+      <token>loki</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOKI_CAPS" name="immunize Loki">
+    <pattern>
+      <token>Loki</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

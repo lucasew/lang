@@ -3019,5 +3019,27 @@
       <message>Jargon; name ranked frequency contribution chart instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_A3_REPORT" name="a3 report soft picky">
+      <pattern>
+        <token>a3</token>
+        <token>report</token>
+      </pattern>
+      <message>Jargon; name a one-page problem-solving brief instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PDCA" name="pdca soft picky">
+      <pattern>
+        <token>pdca</token>
+      </pattern>
+      <message>Jargon; name plan-do-check-act improvement cycle instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KAIZEN" name="kaizen soft picky">
+      <pattern>
+        <token>kaizen</token>
+      </pattern>
+      <message>Jargon; name continuous incremental improvement practice instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

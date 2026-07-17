@@ -10697,6 +10697,76 @@
       <message>Did you mean "understand"?</message>
       <short>understnad</short>
     </rule>
+    <rule id="EN_SOFT_TONIGHT_MISS" name="tonite soft">
+      <pattern>
+        <token>tonite</token>
+      </pattern>
+      <message>Did you mean "tonight"?</message>
+      <short>tonite</short>
+    </rule>
+    <rule id="EN_SOFT_USUALLY_MISS2" name="usally soft">
+      <pattern>
+        <token>usally</token>
+      </pattern>
+      <message>Did you mean "usually"?</message>
+      <short>usally</short>
+    </rule>
+    <rule id="EN_SOFT_VERSION_MISS" name="verison soft">
+      <pattern>
+        <token>verison</token>
+      </pattern>
+      <message>Did you mean "version"?</message>
+      <short>verison</short>
+    </rule>
+    <rule id="EN_SOFT_WITHOUT_MISS" name="withot soft">
+      <pattern>
+        <token>withot</token>
+      </pattern>
+      <message>Did you mean "without"?</message>
+      <short>withot</short>
+    </rule>
+    <rule id="EN_SOFT_WORKING_MISS" name="workign soft">
+      <pattern>
+        <token>workign</token>
+      </pattern>
+      <message>Did you mean "working"?</message>
+      <short>workign</short>
+    </rule>
+    <rule id="EN_SOFT_REASON_MISS" name="reasen soft">
+      <pattern>
+        <token>reasen</token>
+      </pattern>
+      <message>Did you mean "reason"?</message>
+      <short>reasen</short>
+    </rule>
+    <rule id="EN_SOFT_SOMETIMES_MISS" name="sometiems soft">
+      <pattern>
+        <token>sometiems</token>
+      </pattern>
+      <message>Did you mean "sometimes"?</message>
+      <short>sometiems</short>
+    </rule>
+    <rule id="EN_SOFT_SPECIAL_MISS" name="specail soft">
+      <pattern>
+        <token>specail</token>
+      </pattern>
+      <message>Did you mean "special"?</message>
+      <short>specail</short>
+    </rule>
+    <rule id="EN_SOFT_PROCESS_MISS2" name="procces soft">
+      <pattern>
+        <token>procces</token>
+      </pattern>
+      <message>Did you mean "process"?</message>
+      <short>procces</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTION_MISS3" name="qustion soft">
+      <pattern>
+        <token>qustion</token>
+      </pattern>
+      <message>Did you mean "question"?</message>
+      <short>qustion</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
