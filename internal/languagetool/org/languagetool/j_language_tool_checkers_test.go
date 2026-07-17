@@ -123,3 +123,40 @@ func TestNearestKnownWords(t *testing.T) {
 	require.Contains(t, sugs, "receive")
 	require.Empty(t, nearestKnownWords("receive", known, 2, 5)) // exact known not returned (d>0)
 }
+
+func TestSimpleAvsAnChecker_PhoneticExceptions(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())
+
+	// silent h → an
+	require.Empty(t, lt.Check("This is an hour."))
+	m := lt.Check("This is a hour.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "an", m[0].Suggestions[0])
+
+	// university /juː/ → a
+	require.Empty(t, lt.Check("This is a university."))
+	m = lt.Check("This is an university.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "a", m[0].Suggestions[0])
+
+	// european
+	require.Empty(t, lt.Check("This is a European car."))
+	m = lt.Check("This is an European car.")
+	require.NotEmpty(t, m)
+
+	// one-time
+	require.Empty(t, lt.Check("This is a one-time offer."))
+	m = lt.Check("This is an one-time offer.")
+	require.NotEmpty(t, m)
+
+	// honest
+	require.Empty(t, lt.Check("He is an honest man."))
+	m = lt.Check("He is a honest man.")
+	require.NotEmpty(t, m)
+
+	// still catch classic errors
+	m = lt.Check("This is an test.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "a", m[0].Suggestions[0])
+}

@@ -598,8 +598,8 @@ func absInt(n int) int {
 	return n
 }
 
-// SimpleAvsAnChecker flags "a" before vowel-initial words and "an" before consonant-initial.
-// Soft stand-in for EN_A_VS_AN (no phonetics).
+// SimpleAvsAnChecker flags "a" before vowel-sound words and "an" before consonant-sound words.
+// Soft stand-in for EN_A_VS_AN with a small exception lexicon (not full phonetics).
 func SimpleAvsAnChecker() SentenceChecker {
 	return func(sentence *AnalyzedSentence) []LocalMatch {
 		if sentence == nil {
@@ -617,8 +617,7 @@ func SimpleAvsAnChecker() SentenceChecker {
 			if n == "" || !hasLetterLocal(n) {
 				continue
 			}
-			first, _ := utf8DecodeFirst(n)
-			vowel := isVowelLetter(first)
+			vowel := startsWithVowelSound(n)
 			switch a {
 			case "a":
 				if vowel {
@@ -646,6 +645,75 @@ func SimpleAvsAnChecker() SentenceChecker {
 		}
 		return out
 	}
+}
+
+// startsWithVowelSound reports whether article "an" is preferred before word.
+func startsWithVowelSound(word string) bool {
+	w := articleWordKey(word)
+	if w == "" {
+		return false
+	}
+	// silent-h / vowel sound despite consonant letter → "an"
+	if _, ok := anDespiteConsonantLetter[w]; ok {
+		return true
+	}
+	// consonant sound despite vowel letter → "a"
+	if _, ok := aDespiteVowelLetter[w]; ok {
+		return false
+	}
+	// prefix families (university, unique, european, one-…)
+	for _, p := range aDespiteVowelPrefixes {
+		if strings.HasPrefix(w, p) {
+			return false
+		}
+	}
+	first, _ := utf8DecodeFirst(w)
+	return isVowelLetter(first)
+}
+
+// articleWordKey lowercases and keeps the alphabetic prefix (one-time → one).
+func articleWordKey(word string) string {
+	low := strings.ToLower(strings.TrimSpace(word))
+	if low == "" {
+		return ""
+	}
+	var b strings.Builder
+	for _, r := range low {
+		if unicode.IsLetter(r) {
+			b.WriteRune(r)
+			continue
+		}
+		// stop at hyphen/digit/punct after some letters
+		if b.Len() > 0 {
+			break
+		}
+	}
+	return b.String()
+}
+
+// soft EN_A_VS_AN lexicon: silent h / historic vowel sound → take "an"
+var anDespiteConsonantLetter = map[string]struct{}{
+	"hour": {}, "hours": {}, "hourly": {},
+	"honest": {}, "honestly": {}, "honesty": {},
+	"honor": {}, "honors": {}, "honour": {}, "honours": {}, "honorable": {}, "honourable": {},
+	"heir": {}, "heirs": {}, "heiress": {},
+	"herb": {}, "herbs": {}, // US pronunciation
+}
+
+// soft: initial /juː/ or /w/ despite orthographic vowel → take "a"
+var aDespiteVowelLetter = map[string]struct{}{
+	"one": {}, "once": {}, "ones": {},
+	"european": {}, "europeans": {},
+	"ewe": {}, "ewes": {},
+	"u": {}, // "a U-turn" handled by prefix "u" + more letters via prefixes
+}
+
+// prefixes for university/unique/euro/user/… families
+// (avoid short prefixes like "one" that hit onerous, onerous-like words)
+var aDespiteVowelPrefixes = []string{
+	"uni",  // university, unique, united, uniform, union…
+	"euro", // european, eurozone
+	"user", "used", "useful", "usual", "usurp", "usurper",
 }
 
 func isVowelLetter(r rune) bool {
