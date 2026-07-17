@@ -14267,6 +14267,76 @@
       <message>Did you mean "spanbuilder"?</message>
       <short>spanbuilderr</short>
     </rule>
+    <rule id="EN_SOFT_TRACERBUILDER_MISS" name="tracerbuilderr soft">
+      <pattern>
+        <token>tracerbuilderr</token>
+      </pattern>
+      <message>Did you mean "tracerbuilder"?</message>
+      <short>tracerbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_METERBUILDER_MISS" name="meterbuilderr soft">
+      <pattern>
+        <token>meterbuilderr</token>
+      </pattern>
+      <message>Did you mean "meterbuilder"?</message>
+      <short>meterbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_LOGGERBUILDER_MISS" name="loggerbuilderr soft">
+      <pattern>
+        <token>loggerbuilderr</token>
+      </pattern>
+      <message>Did you mean "loggerbuilder"?</message>
+      <short>loggerbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_PROVIDERBUILDER_MISS" name="providerbuilderr soft">
+      <pattern>
+        <token>providerbuilderr</token>
+      </pattern>
+      <message>Did you mean "providerbuilder"?</message>
+      <short>providerbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_SAMPLERBUILDER_MISS" name="samplerbuilderr soft">
+      <pattern>
+        <token>samplerbuilderr</token>
+      </pattern>
+      <message>Did you mean "samplerbuilder"?</message>
+      <short>samplerbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_EXPORTERBUILDER_MISS" name="exporterbuilderr soft">
+      <pattern>
+        <token>exporterbuilderr</token>
+      </pattern>
+      <message>Did you mean "exporterbuilder"?</message>
+      <short>exporterbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_PROCESSORBUILDER_MISS" name="processorbuilderr soft">
+      <pattern>
+        <token>processorbuilderr</token>
+      </pattern>
+      <message>Did you mean "processorbuilder"?</message>
+      <short>processorbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_READERBUILDER_MISS" name="readerbuilderr soft">
+      <pattern>
+        <token>readerbuilderr</token>
+      </pattern>
+      <message>Did you mean "readerbuilder"?</message>
+      <short>readerbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_VIEWBUILDER_MISS" name="viewbuilderr soft">
+      <pattern>
+        <token>viewbuilderr</token>
+      </pattern>
+      <message>Did you mean "viewbuilder"?</message>
+      <short>viewbuilderr</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTBUILDER_MISS" name="instrumentbuilderr soft">
+      <pattern>
+        <token>instrumentbuilderr</token>
+      </pattern>
+      <message>Did you mean "instrumentbuilder"?</message>
+      <short>instrumentbuilderr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

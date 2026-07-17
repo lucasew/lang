@@ -4180,5 +4180,29 @@
       <message>Jargon; name partner-sourced annual recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CHANNEL_ARR" name="channel arr soft picky">
+      <pattern>
+        <token>channel</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name channel-sourced annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RENEWED_ARR" name="renewed arr soft picky">
+      <pattern>
+        <token>renewed</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name renewed annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CANCELED_ARR" name="canceled arr soft picky">
+      <pattern>
+        <token>canceled</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to cancellations instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

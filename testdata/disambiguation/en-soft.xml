@@ -6507,4 +6507,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MANTINE" name="immunize mantine">
+    <pattern>
+      <token>mantine</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANTINE_CAPS" name="immunize Mantine">
+    <pattern>
+      <token>Mantine</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANTD" name="immunize antd">
+    <pattern>
+      <token>antd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANTD_CAPS" name="immunize AntD">
+    <pattern>
+      <token>AntD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEADLESSUI" name="immunize headlessui">
+    <pattern>
+      <token>headlessui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HEADLESSUI_CAPS" name="immunize HeadlessUI">
+    <pattern>
+      <token>HeadlessUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

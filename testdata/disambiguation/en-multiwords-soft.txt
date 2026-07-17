@@ -636,3 +636,6 @@ Lherzolite Mesa RegionNNP
 Dunite Mesa RegionNNP
 Wehrlite Mesa RegionNNP
 Pyroxenite Mesa RegionNNP
+Peridotite Mesa RegionNNP
+Kimberlite Mesa RegionNNP
+Lamproite Mesa RegionNNP
