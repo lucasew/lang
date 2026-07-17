@@ -648,3 +648,6 @@ Diabase Mesa RegionNNP
 Dolerite Mesa RegionNNP
 Basanite Ridge RegionNNP
 Picrite Ridge RegionNNP
+Diabase Ridge RegionNNP
+Dolerite Ridge RegionNNP
+Lamproite Ridge RegionNNP

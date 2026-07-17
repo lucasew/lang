@@ -6651,4 +6651,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CAPSIZE" name="immunize capsize">
+    <pattern>
+      <token>capsize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPSIZE_CAPS" name="immunize Capsize">
+    <pattern>
+      <token>Capsize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXTUI" name="immunize nuxtui">
+    <pattern>
+      <token>nuxtui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NUXTUI_CAPS" name="immunize NuxtUI">
+    <pattern>
+      <token>NuxtUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUASAR" name="immunize quasar">
+    <pattern>
+      <token>quasar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUASAR_CAPS" name="immunize Quasar">
+    <pattern>
+      <token>Quasar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

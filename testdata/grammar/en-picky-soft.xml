@@ -4276,5 +4276,29 @@
       <message>Jargon; name regional annual recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_VERTICAL_ARR" name="vertical arr soft picky">
+      <pattern>
+        <token>vertical</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name vertical-market annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLATFORM_ARR" name="platform arr soft picky">
+      <pattern>
+        <token>platform</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name platform annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TERRITORY_ARR" name="territory arr soft picky">
+      <pattern>
+        <token>territory</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name territory annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

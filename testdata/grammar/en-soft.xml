@@ -14547,6 +14547,76 @@
       <message>Did you mean "instrumentdescriptor"?</message>
       <short>instrumentdescriptorr</short>
     </rule>
+    <rule id="EN_SOFT_VIEWMATCHER_MISS" name="viewmatcherr soft">
+      <pattern>
+        <token>viewmatcherr</token>
+      </pattern>
+      <message>Did you mean "viewmatcher"?</message>
+      <short>viewmatcherr</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTSELECTOR_MISS" name="instrumentselectorr soft">
+      <pattern>
+        <token>instrumentselectorr</token>
+      </pattern>
+      <message>Did you mean "instrumentselector"?</message>
+      <short>instrumentselectorr</short>
+    </rule>
+    <rule id="EN_SOFT_METERSELECTOR_MISS" name="meterselectorr soft">
+      <pattern>
+        <token>meterselectorr</token>
+      </pattern>
+      <message>Did you mean "meterselector"?</message>
+      <short>meterselectorr</short>
+    </rule>
+    <rule id="EN_SOFT_ATTRIBUTESELECTOR_MISS" name="attributeselectorr soft">
+      <pattern>
+        <token>attributeselectorr</token>
+      </pattern>
+      <message>Did you mean "attributeselector"?</message>
+      <short>attributeselectorr</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTNAME_MISS" name="instrumentnamee soft">
+      <pattern>
+        <token>instrumentnamee</token>
+      </pattern>
+      <message>Did you mean "instrumentname"?</message>
+      <short>instrumentnamee</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTUNIT_MISS" name="instrumentunitt soft">
+      <pattern>
+        <token>instrumentunitt</token>
+      </pattern>
+      <message>Did you mean "instrumentunit"?</message>
+      <short>instrumentunitt</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTDESCRIPTION_MISS" name="instrumentdescriptionn soft">
+      <pattern>
+        <token>instrumentdescriptionn</token>
+      </pattern>
+      <message>Did you mean "instrumentdescription"?</message>
+      <short>instrumentdescriptionn</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTKIND_MISS" name="instrumentkindd soft">
+      <pattern>
+        <token>instrumentkindd</token>
+      </pattern>
+      <message>Did you mean "instrumentkind"?</message>
+      <short>instrumentkindd</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTTYPE_MISS" name="instrumenttypee soft">
+      <pattern>
+        <token>instrumenttypee</token>
+      </pattern>
+      <message>Did you mean "instrumenttype"?</message>
+      <short>instrumenttypee</short>
+    </rule>
+    <rule id="EN_SOFT_VALUETYPE_MISS" name="valuetypee soft">
+      <pattern>
+        <token>valuetypee</token>
+      </pattern>
+      <message>Did you mean "valuetype"?</message>
+      <short>valuetypee</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
