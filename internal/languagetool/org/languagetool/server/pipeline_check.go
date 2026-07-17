@@ -56,6 +56,7 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		if !taggerOK && demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
 		}
+		en.RegisterSoftEnglishDisambiguator(lt, softEnglishMultiwordsPath())
 	}
 
 	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
@@ -123,6 +124,19 @@ func softEnglishUSDictPath() string {
 		return p
 	}
 	return walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/en_US.dict")
+}
+
+// softEnglishMultiwordsPath resolves LANG_EN_MULTIWORDS or walk-up multiwords.txt.
+func softEnglishMultiwordsPath() string {
+	if p := os.Getenv("LANG_EN_MULTIWORDS"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	if p := walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/multiwords.txt"); p != "" {
+		return p
+	}
+	return walkUpFind("third_party/english-pos-dict/org/languagetool/resource/en/multiwords.txt")
 }
 
 // softEnglishPOSDictPath resolves LANG_ENGLISH_DICT or walk-up third_party english.dict.

@@ -94,11 +94,18 @@ type JLanguageTool struct {
 	IsKnownWord func(token string) bool
 	// TagWord optional POS/lemma inject used by Analyze (MapWordTagger-friendly).
 	TagWord func(token string) []TokenTag
+	// Disambiguator optional post-tag sentence filter (multiword chunker / XML rules).
+	Disambiguator SentenceDisambiguator
 	// IgnoreWords soft user-dictionary / spell-ignore set (surface forms).
 	IgnoreWords map[string]struct{}
 	// UserConfig optional user preferences (accepted phrases, speller words).
 	UserConfig *UserConfig
 	unknown    map[string]struct{}
+}
+
+// SentenceDisambiguator filters/augments POS on an analyzed sentence (soft LT disambiguator hook).
+type SentenceDisambiguator interface {
+	Disambiguate(input *AnalyzedSentence) *AnalyzedSentence
 }
 
 func NewJLanguageTool(languageCode string) *JLanguageTool {
@@ -236,11 +243,18 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 	}
 	out := make([]*AnalyzedSentence, 0, len(parts))
 	for _, p := range parts {
+		var s *AnalyzedSentence
 		if lt.TagWord != nil {
-			out = append(out, AnalyzeWithTagger(p, lt.TagWord))
+			s = AnalyzeWithTagger(p, lt.TagWord)
 		} else {
-			out = append(out, AnalyzePlain(p))
+			s = AnalyzePlain(p)
 		}
+		if lt.Disambiguator != nil && s != nil {
+			if d := lt.Disambiguator.Disambiguate(s); d != nil {
+				s = d
+			}
+		}
+		out = append(out, s)
 	}
 	return out
 }
