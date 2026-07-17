@@ -7,6 +7,105 @@
     </pattern>
     <disambig action="filter" postag="[DP].*"/>
   </rule>
+  <rule id="AQUELAR" name="aquelar/aquela">
+    <pattern>
+      <token inflected="yes" postag="DD.*" postag_regexp="yes">aquelar</token>
+    </pattern>
+    <disambig action="filter" postag="DD.*"/>
+  </rule>
+  <rule id="SPS_SI" name="Preposição + Si">
+    <pattern>
+      <token postag="SP.+" postag_regexp="yes"></token>
+      <token>si</token>
+    </pattern>
+    <disambig action="filter" postag="PP.+"/>
+  </rule>
+  <rule id="A_SPS" name="a (preposition)">
+    <pattern>
+      <token postag="SPS00">a</token>
+      <token regexp="yes">eu|tu</token>
+    </pattern>
+    <disambig action="filter" postag="SPS00"/>
+  </rule>
+  <rule id="NAO_ADVERB" name="Não como advérbio">
+    <pattern>
+      <token>não</token>
+      <token postag="(R|V).+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="R.+"/>
+  </rule>
+  <rule id="ALVO" name="alvo como adjetivo impessoal">
+    <pattern>
+      <token postag="V....P.+|NCFP.+" postag_regexp="yes"></token>
+      <token>alvo</token>
+    </pattern>
+    <disambig action="replace" postag="NCCN000"/>
+  </rule>
+  <rule id="CERTO" name="Estar + Certo">
+    <pattern>
+      <token inflected="yes">estar</token>
+      <token regexp="yes">cert[ao]s?</token>
+    </pattern>
+    <disambig action="filter" postag="A.+"/>
+  </rule>
+  <rule id="CITAR" name="CITAR + Fontes">
+    <pattern>
+      <token inflected="yes">citar</token>
+      <token regexp="yes">(?:artigos|documento|fonte|livro|revista)s?|jorna(?:l|is)</token>
+    </pattern>
+    <disambig action="filter" postag="V.+"/>
+  </rule>
+  <rule id="CONSEGUIR" name="conseguir + inf">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">conseguir</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="AMIGO" name="amigo (noun, not adjective">
+    <pattern>
+      <token postag="A.*|V.P.*" postag_regexp="yes"></token>
+      <token inflected="yes" postag="N.*" postag_regexp="yes">amigo</token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="INFINITIVE_NOUN" name="saber, comer (infinitive / noun)">
+    <pattern>
+      <token regexp="yes">para|de</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V.N.*"/>
+  </rule>
+  <rule id="DEVE_SER" name="Deve + Infinitivo">
+    <pattern>
+      <token inflected="yes">dever</token>
+      <token postag="VMN0000"></token>
+    </pattern>
+    <disambig action="filter" postag="V.+"/>
+  </rule>
+  <rule id="VEIAR_VIR" name="Veio a + Infinitive">
+    <pattern>
+      <token>veio</token>
+      <token>a</token>
+      <token postag="VMN0000"></token>
+    </pattern>
+    <disambig action="filter" postag="VMIS3S0"/>
+  </rule>
+  <rule id="SER_TODOS" name="Ser + Todos">
+    <pattern>
+      <token inflected="yes">ser</token>
+      <token regexp="yes">todos?</token>
+    </pattern>
+    <disambig action="filter" postag="P.+"/>
+  </rule>
+  <rule id="A_RANGE" name="Range">
+    <pattern>
+      <token postag="Z.+" postag_regexp="yes"></token>
+      <token>a</token>
+      <token postag="Z.+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="SP000"/>
+  </rule>
   <rule id="UNIVERSITY_OF" name="University of">
     <pattern>
       <token>University</token>
@@ -16,15 +115,15 @@
   </rule>
   <rule id="FIFTH_AVENUE" name="Fifth Avenue">
     <pattern>
-      <token regexp="yes">Park|Amsterdam|First|Second|Third|\p{Lu}.+th|\d+(st|nd|rd|th)</token>
-      <token regexp="yes">Avenue|Street</token>
+      <token regexp="yes" case_sensitive="yes">Park|Amsterdam|First|Second|Third|\p{Lu}.+th|\d+(st|nd|rd|th)</token>
+      <token regexp="yes" case_sensitive="yes">Avenue|Street</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="SIZES" name="Tamanhos de roupa">
     <pattern>
       <token regexp="yes">tamanhos?</token>
-      <token regexp="yes">X{0,2}[SLM]|GG?|PP?</token>
+      <token regexp="yes" case_sensitive="yes">X{0,2}[SLM]|GG?|PP?</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -60,13 +159,13 @@
   </rule>
   <rule id="HEXADECIMAL_NOTATION" name="HEXADECIMAL_NOTATION">
     <pattern>
-      <token regexp="yes">0x[0-9A-Fa-f]+</token>
+      <token regexp="yes" case_sensitive="yes">0x[0-9A-Fa-f]+</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="OCTAL_NOTATION" name="OCTAL_NOTATION">
     <pattern>
-      <token regexp="yes">0o[0-7]+</token>
+      <token regexp="yes" case_sensitive="yes">0o[0-7]+</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -118,11 +217,32 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOBRE_VERB_20251111" name="In this case SOBRE is SPS00">
+    <pattern>
+      <token postag="V.+|NC.+|AQ.+" postag_regexp="yes"></token>
+      <token postag="SPS00">sobre</token>
+    </pattern>
+    <disambig action="filter" postag="SPS00"/>
+  </rule>
+  <rule id="PRAZER_VERB_20251116" name="In this case PRAZER is NCMS000">
+    <pattern>
+      <token postag="V.+|NC.+|AQ.+" postag_regexp="yes"></token>
+      <token postag="NCMS000">prazer</token>
+    </pattern>
+    <disambig action="filter" postag="NCMS000"/>
+  </rule>
   <rule id="NÓS_PROFESSORES_NCMP000" name="professores aparecia como verbo">
     <pattern>
       <token>nós</token>
       <token>professores</token>
     </pattern>
     <disambig action="replace" postag="NCMP000"/>
+  </rule>
+  <rule id="HÁ_VERB_20260116" name="In this case HÁ is VMIP3S0">
+    <pattern>
+      <token postag="VMIP3S0|VMM02S0" postag_regexp="yes">há</token>
+      <token postag="Z0.+|NC.+|AQ.+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="VMIP3S0"/>
   </rule>
 </rules>

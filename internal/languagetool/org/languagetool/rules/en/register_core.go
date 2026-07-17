@@ -71,6 +71,9 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	// New Zealand regional replace table (en-NZ/replace.txt).
 	nz := NewNewZealandReplaceRule(nil)
 	lt.AddRuleChecker(nz.GetID(), rules.AsSentenceCheckerSimple(nz.Match))
+	// Repeated words with synonym suggestions (official synonyms.txt; text-level).
+	rw := NewEnglishRepeatedWordsRule(nil)
+	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).
@@ -158,6 +161,9 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 		{ID: "EN_ORIENTATE", Tokens: []string{"orientate"}, Message: "Prefer 'orient' in American English.", Suggestion: "orient"},
 		{ID: "EN_PREVENTATIVE", Tokens: []string{"preventative"}, Message: "Prefer 'preventive' in many style guides.", Suggestion: "preventive"},
 	})
+	// Official profanity list (Tag.picky in Java English.getRelevantRules).
+	pf := NewSimpleReplaceProfanityRule(nil)
+	lt.AddRuleChecker(pf.GetID(), rules.AsSentenceCheckerSimple(pf.Match))
 }
 
 // RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject.

@@ -15,19 +15,19 @@
   </rule>
   <rule id="RANGES2" name="Ignore ranges">
     <pattern>
-      <token regexp="yes">[0-9]+(ste|e)[-][0-9]+(ste|e)</token>
+      <token regexp="yes" case_sensitive="yes">[0-9]+(ste|e)[-][0-9]+(ste|e)</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="PLANES" name="Ignore plane numbers">
     <pattern>
-      <token regexp="yes">PH-[A-Z]{3}</token>
+      <token regexp="yes" case_sensitive="yes">PH-[A-Z]{3}</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="NUMBER_UNITS" name="Ignore spelling of glued units, te be warned for by rule">
     <pattern>
-      <token regexp="yes">[1-9][0-9]+(m2|m3|v|V|kV|A|W|g|l|ml|cc|km|mm|cm|km2|cm3|cm2)</token>
+      <token regexp="yes" case_sensitive="yes">[1-9][0-9]+(m2|m3|v|V|kV|A|W|g|l|ml|cc|km|mm|cm|km2|cm3|cm2)</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -39,7 +39,7 @@
   </rule>
   <rule id="IBAN" name="Ignore spelling of IBANs">
     <pattern>
-      <token regexp="yes">^([A-Z]{2}[0-9]{2})(?=(?:[A-Z0-9]){9,30}$)((?:[A-Z0-9]{3,5}){2,7})([A-Z0-9]{1,3})?$</token>
+      <token regexp="yes" case_sensitive="yes">^([A-Z]{2}[0-9]{2})(?=(?:[A-Z0-9]){9,30}$)((?:[A-Z0-9]{3,5}){2,7})([A-Z0-9]{1,3})?$</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -87,7 +87,14 @@
   </rule>
   <rule id="SPELLER_ER" name="ignore noun-abbrevs">
     <pattern>
-      <token regexp="yes">[A-Z]{2,5}'(er|ers|ertje|ertjes)</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z]{2,5}'(er|ers|ertje|ertjes)</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SPELLER_NAME_VAN" name="ignore female names">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*-[Vv]an</token>
+      <token postag="ENM:PER:LST.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -99,7 +106,7 @@
   </rule>
   <rule id="SHORT_UPPER" name="ignore short upper">
     <pattern>
-      <token regexp="yes">[A-Z0-9]{2,5}</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z0-9]{2,5}</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -111,20 +118,20 @@
   </rule>
   <rule id="SPELLER_STREETS" name="ignore adresses">
     <pattern>
-      <token regexp="yes">[A-Z][a-z].*(straat|plein|steeg|allee|boulevard|weg|wijk)</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z][a-z].*(straat|plein|steeg|allee|boulevard|weg|wijk)</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="SPELLER_FC_CLUB" name="ignore clubs">
     <pattern>
       <token>FC</token>
-      <token regexp="yes">[A-Z][a-z].*</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z][a-z].*</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="SPELLER_ROAD_NUMBERS" name="ignore numbers of roads">
     <pattern>
-      <token regexp="yes">A[0-9]{1,3}|N[0-9]{1,3}|s[0-9]{3}|R[0-9]|B[0-9]{3}</token>
+      <token regexp="yes" case_sensitive="yes">A[0-9]{1,3}|N[0-9]{1,3}|s[0-9]{3}|R[0-9]|B[0-9]{3}</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -139,13 +146,20 @@
   <rule id="SPELLER_NEDERLANDSCHE" name="ignore parts of proper names">
     <pattern>
       <token>Nederlandsche</token>
-      <token>Bank</token>
+      <token case_sensitive="yes">Bank</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="SPELLER_NUMBER_IG" name="getal-ig">
     <pattern>
       <token regexp="yes">[0-9]{1,3}[-](jarig|jarige|tal|tallen)</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="AFKO_SAMENSTELLING" name="AFKO_SAMENSTELLING">
+    <pattern>
+      <token postag="DVS"></token>
+      <token regexp="yes">en|of</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -1035,20 +1049,20 @@
   <rule id="IGNORE_BEI" name="IGNORE_BEI">
     <pattern>
       <token>bei</token>
-      <token regexp="yes">[A-Z].*</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="X_TIMES" name="IGNORE_TIMES">
     <pattern>
-      <token regexp="yes">[0-9]+x</token>
+      <token regexp="yes" case_sensitive="yes">[0-9]+x</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="WILLEM_II" name="WILLEM_II">
     <pattern>
-      <token>Willem</token>
-      <token regexp="yes">II-(spits|spelers?|verdedigers?|supporters?)</token>
+      <token case_sensitive="yes">Willem</token>
+      <token regexp="yes" case_sensitive="yes">II-(spits|spelers?|verdedigers?|supporters?)</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -1067,35 +1081,54 @@
   </rule>
   <rule id="ENGELS1" name="ENGELS1">
     <pattern>
-      <token regexp="yes">World|Champions</token>
-      <token regexp="yes">[A-Z].*</token>
+      <token regexp="yes" case_sensitive="yes">World|Champions</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="ENGELS2" name="ENGELS2">
     <pattern>
-      <token regexp="yes">[A-Z].*</token>
-      <token>World</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+      <token case_sensitive="yes">World</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="ENGELS3" name="A_AND_B">
     <pattern>
-      <token regexp="yes">[A-Z].*</token>
-      <token>and</token>
-      <token regexp="yes">[A-Z].*</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+      <token case_sensitive="yes">and</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="VIERKANTE_METER" name="VIERKANTE_METER">
     <pattern>
-      <token regexp="yes">[0-9]+(m|km|cm|mm|dm)([²³])?</token>
+      <token regexp="yes" case_sensitive="yes">[0-9]+(m|km|cm|mm|dm)([²³])?</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="EENHEDEN" name="EENHEDEN">
     <pattern>
-      <token regexp="yes">[0-9]*([MkG])(Hz)</token>
+      <token regexp="yes" case_sensitive="yes">[0-9]*([MkG])(Hz)</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="MR_X" name="MR_X">
+    <pattern>
+      <token regexp="yes">meneer|mevrouw|heer|jongeheer|juffrouw|mejuffrouw</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z][a-z].*</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="X-VOUDIG" name="X-VOUDIG">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[0-9]+[-]voudige?</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="PARA_NUM" name="PARA_NUM">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[1-9][0-9]?[a-zA-Z]</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -1133,13 +1166,13 @@
   </rule>
   <rule id="A1" name="A1">
     <pattern>
-      <token regexp="yes">[A-Z][0-9]</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z][0-9]</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="_9x9" name="_9x9">
     <pattern>
-      <token regexp="yes">.*[0-9]+x[0-9]+.*</token>
+      <token regexp="yes" case_sensitive="yes">.*[0-9]+x[0-9]+.*</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>

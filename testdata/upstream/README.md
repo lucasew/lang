@@ -10,8 +10,8 @@ python3 scripts/vendor-lt-testdata.py
 
 | Path | Meaning |
 |------|---------|
-| `testdata/upstream/<lang>/rules/` | Copies of upstream `grammar.xml` / `style.xml` / regional packs |
-| `testdata/upstream/<lang>/resource/` | Copies of `disambiguation.xml`, `multiwords.txt` |
+| `testdata/upstream/<lang>/rules/` | Copies of upstream `grammar.xml` / `style.xml` / regional packs + all rule `*.txt` tables |
+| `testdata/upstream/<lang>/resource/` | Copies of `disambiguation.xml`, `multiwords.txt`, and other resource `*.txt` (≤2 MiB) |
 | `testdata/upstream/goldens/<lang>-examples.json` | Official `<example correction>` cases only |
 | `testdata/grammar/<lang>-upstream-soft.xml` | Soft-loader subset: plain surface token patterns extracted from upstream |
 

@@ -620,30 +620,37 @@ def vendor_lang(lang: str) -> dict:
             copy_file(src, OUT / lang / "resource" / rel)
             stats["copied"] += 1
 
-    # Rule-data tables under rules/<lang>/ (replace, diacritics, compounds, …)
+    # All rule-data tables under rules/<lang>/ (txt only; no invented content).
+    # Covers replace*, diacritics, coherency, synonyms, regional packs, etc.
     rules_data = LT / "languagetool-language-modules" / lang / "src/main/resources/org/languagetool/rules" / lang
-    for name in (
-        "replace.txt",
-        "replace_custom.txt",
-        "replace_profanity.txt",
-        "diacritics.txt",
-        "contractions.txt",
-        "compounds.txt",
-        "specific_case.txt",
-        "coherency.txt",
-        "wordiness.txt",
-        "redundancies.txt",
-        "wrongWordInContext.txt",
-    ):
-        src = rules_data / name
-        if src.is_file():
-            copy_file(src, OUT / lang / "rules" / name)
-            stats["copied"] += 1
-    # regional replace tables
     if rules_data.is_dir():
-        for reg in sorted(rules_data.glob("*/replace.txt")):
-            copy_file(reg, OUT / lang / "rules" / reg.parent.name / "replace.txt")
+        for src in sorted(rules_data.rglob("*.txt")):
+            if not src.is_file():
+                continue
+            rel = src.relative_to(rules_data)
+            copy_file(src, OUT / lang / "rules" / rel)
             stats["copied"] += 1
+
+    # Extra resource tables not covered by the fixed list above (common_words,
+    # ignore/prohibit, multitoken lists, …) — still plain upstream copies only.
+    if res_base.is_dir():
+        skip_names = {
+            # already handled or binary/large dicts not useful as testdata text
+        }
+        for src in sorted(res_base.rglob("*.txt")):
+            if not src.is_file():
+                continue
+            rel = src.relative_to(res_base)
+            # skip huge flat wordlists that are dictionary dumps (>2 MiB)
+            if src.stat().st_size > 2 * 1024 * 1024:
+                print(f"  skip large {rel} ({src.stat().st_size}b)")
+                continue
+            dst = OUT / lang / "resource" / rel
+            if dst.is_file() and dst.stat().st_size == src.stat().st_size:
+                continue  # already copied via fixed list
+            copy_file(src, dst)
+            stats["copied"] += 1
+        del skip_names
 
     # derive soft pack + goldens from main grammar (+ style) and regional packs
     all_rules: list[dict] = []
@@ -801,8 +808,8 @@ python3 scripts/vendor-lt-testdata.py
 
 | Path | Meaning |
 |------|---------|
-| `testdata/upstream/<lang>/rules/` | Copies of upstream `grammar.xml` / `style.xml` / regional packs |
-| `testdata/upstream/<lang>/resource/` | Copies of `disambiguation.xml`, `multiwords.txt` |
+| `testdata/upstream/<lang>/rules/` | Copies of upstream `grammar.xml` / `style.xml` / regional packs + all rule `*.txt` tables |
+| `testdata/upstream/<lang>/resource/` | Copies of `disambiguation.xml`, `multiwords.txt`, and other resource `*.txt` (≤2 MiB) |
 | `testdata/upstream/goldens/<lang>-examples.json` | Official `<example correction>` cases only |
 | `testdata/grammar/<lang>-upstream-soft.xml` | Soft-loader subset: plain surface token patterns extracted from upstream |
 

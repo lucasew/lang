@@ -8,6 +8,34 @@
     </pattern>
     <disambig action="replace" postag="Part:Pat"/>
   </rule>
+  <rule id="leath_uair" name="leath uair">
+    <pattern>
+      <token>leath</token>
+      <token postag="Noun:.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="Det:Qty"/>
+  </rule>
+  <rule id="NI_RAIBH" name="ní raibh - raibh is a verb">
+    <pattern>
+      <token postag="(?:C[MUC]:)?Part:Vb.*" postag_regexp="yes"></token>
+      <token postag="(?:C[MUC]:)?Verb:.*" postag_regexp="yes">raibh</token>
+    </pattern>
+    <disambig action="filter" postag="(?:C[MUC]:)?Verb:.*"/>
+  </rule>
+  <rule id="I_BHFUIL" name="i bhfuil">
+    <pattern>
+      <token postag="Prep:Simp">i</token>
+      <token postag="Noun:Fem:Com:Sg:Ecl">bhfuil</token>
+    </pattern>
+    <disambig action="filter" postag="Noun:Fem:Com:Sg:Ecl"/>
+  </rule>
+  <rule id="START_BHI" name="Bhí">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token>bhí</token>
+    </pattern>
+    <disambig action="filter" postag="Verb:VI:PastInd:Len"/>
+  </rule>
   <rule id="AR_AR" name="ar ar">
     <pattern>
       <token>ar</token>

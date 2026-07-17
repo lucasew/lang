@@ -22,11 +22,144 @@
     </pattern>
     <disambig action="filter" postag="PD.*"/>
   </rule>
+  <rule id="en_base" name="en base + numeral">
+    <pattern>
+      <token regexp="yes">en|de</token>
+      <token>base</token>
+      <token postag="DN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="annual" name="desastre de Annual">
+    <pattern>
+      <token regexp="yes" inflected="yes">desastre|batalla|ocupación|victoria|derrota</token>
+      <token regexp="yes">de|en</token>
+      <token case_sensitive="yes">Annual</token>
+    </pattern>
+    <disambig action="replace" postag="NPCSG00"/>
+  </rule>
   <rule id="PERO" name="pero">
     <pattern>
       <token>pero</token>
     </pattern>
     <disambig action="filter" postag="CC"/>
+  </rule>
+  <rule id="SENOR" name="señor">
+    <pattern>
+      <token inflected="yes">señor</token>
+      <token regexp="yes" case_sensitive="yes">[A-ZÀÈÌÒÙÁÉÍÓÚ].*</token>
+    </pattern>
+    <disambig action="filter" postag="NC.*"/>
+  </rule>
+  <rule id="amigo_n" name="amigo not adj">
+    <pattern>
+      <token regexp="yes" inflected="yes">bueno|malo|mal</token>
+      <token inflected="yes" postag="N.*" postag_regexp="yes">amigo</token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="EL" name="el (det)">
+    <pattern>
+      <token postag="DA.*" postag_regexp="yes"></token>
+      <token regexp="yes">de|del|que</token>
+    </pattern>
+    <disambig action="filter" postag="DA.*"/>
+  </rule>
+  <rule id="mas_adj" name="más + adj no adv">
+    <pattern>
+      <token postag="RG"></token>
+      <token regexp="yes">largo|seguro</token>
+    </pattern>
+    <disambig action="filter" postag="AQ.*"/>
+  </rule>
+  <rule id="TRATAR" name="tratar de">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">tratar</token>
+      <token>de</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="diputado" name="diputado">
+    <pattern>
+      <token inflected="yes">ser</token>
+      <token regexp="yes" inflected="yes">diputado|soldado</token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="aa1" name="aa1">
+    <pattern>
+      <token>más</token>
+      <token>bien</token>
+      <token postag="AQ.*|NC.*|SPS.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="R.*"/>
+  </rule>
+  <rule id="aa8" name="aa1">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag=".*LOC_ADV.*|RG.*" postag_regexp="yes"></token>
+      <token postag=".*LOC_ADV.*|RG.*" postag_regexp="yes"></token>
+      <token postag="AQ.*|V.P.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="A.*|V.P.*|_GN_.*"/>
+  </rule>
+  <rule id="FUERA_DE_JUEGO" name="fuera de juego">
+    <pattern>
+      <token postag="D..MP." postag_regexp="yes"></token>
+      <token>fuera</token>
+      <token>de</token>
+      <token>juego</token>
+    </pattern>
+    <disambig action="replace" postag="NCMP000"/>
+  </rule>
+  <rule id="haber_error" name="haber (sin hache) + participio">
+    <pattern>
+      <token regexp="yes">abría|abríais|abríamos|abrían|abrías|as|ayas|aya|an|a|e</token>
+      <token regexp="yes" postag="VMP00SM">dicho|pasado</token>
+    </pattern>
+    <disambig action="filter" postag="VMP00SM"/>
+  </rule>
+  <rule id="pequeno" name="pequeño: adjectivo, no nombre, ante nombre">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="AQ.*" postag_regexp="yes">pequeño|grande</token>
+      <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="AQ.*"/>
+  </rule>
+  <rule id="mas_bajo" name="más + adj no adv">
+    <pattern>
+      <token postag="RG"></token>
+      <token>bajo</token>
+    </pattern>
+    <disambig action="filter" postag="AQ.*"/>
+  </rule>
+  <rule id="presta" name="presta: verb/adj">
+    <pattern>
+      <token regexp="yes" postag="V.*" postag_regexp="yes">presta|prestas|presto</token>
+      <token postag="NC.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="LO_MAL_QUE" name="lo + adj + que">
+    <pattern>
+      <token>lo</token>
+      <token postag="A.*|V.P,*" postag_regexp="yes"></token>
+      <token>que</token>
+    </pattern>
+    <disambig action="filter" postag="A.*|V.P.*"/>
+  </rule>
+  <rule id="no_verbo2" name="not verb">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="N.*" postag_regexp="yes">disparate|cosa|misión|grado|desgracia|pena</token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="no_verbo3" name="not verb">
+    <pattern>
+      <token inflected="yes" postag="A.*" postag_regexp="yes">lindo</token>
+    </pattern>
+    <disambig action="filter" postag="A.*"/>
   </rule>
   <rule id="aloe_vera" name="aloe vera">
     <pattern>
@@ -46,7 +179,7 @@
   <rule id="pm_am" name="Ignore spelling pm/am">
     <pattern>
       <token regexp="yes">([012][0-9][\.,])?[0-6]?[0-9]</token>
-      <token regexp="yes">pm|am|PM|AM|GMT|CEST|UTC|EST</token>
+      <token regexp="yes" case_sensitive="yes">pm|am|PM|AM|GMT|CEST|UTC|EST</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -60,25 +193,25 @@
     <pattern>
       <token>made</token>
       <token>in</token>
-      <token regexp="yes">USA|China|Europe|Taiwan|Spain|France|Germany|Italy</token>
+      <token regexp="yes" case_sensitive="yes">USA|China|Europe|Taiwan|Spain|France|Germany|Italy</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="HEXADECIMAL_NOTATION" name="notación hexadecimal">
     <pattern>
-      <token regexp="yes">0x[0-9A-Fa-f]+</token>
+      <token regexp="yes" case_sensitive="yes">0x[0-9A-Fa-f]+</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="OCTAL_NOTATION" name="notación octal">
     <pattern>
-      <token regexp="yes">0o[0-7]+</token>
+      <token regexp="yes" case_sensitive="yes">0o[0-7]+</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="ignora_algunas_siglas" name="algunas siglas">
     <pattern>
-      <token regexp="yes">NY|NGC|IgG|Tass|TASS</token>
+      <token regexp="yes" case_sensitive="yes">NY|NGC|IgG|Tass|TASS</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
