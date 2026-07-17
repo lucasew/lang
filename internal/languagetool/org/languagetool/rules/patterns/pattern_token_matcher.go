@@ -61,6 +61,15 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		if !matched {
 			matched = softInflectedSurfaceMatch(token.GetToken(), pt.Token, pt.CaseSensitive)
 		}
+		// RE patterns with | alternatives (программный|аппаратный): try each alt.
+		if !matched && pt.Regexp && strings.Contains(pt.Token, "|") {
+			for _, alt := range softRegexpAlternatives(pt.Token) {
+				if softInflectedSurfaceMatch(token.GetToken(), alt, pt.CaseSensitive) {
+					matched = true
+					break
+				}
+			}
+		}
 		// Esperanto: try x-system/diacritic fold and common -o/-oj/-ojn stems.
 		if !matched {
 			for _, cand := range softEsperantoLemmaCandidates(token.GetToken()) {
@@ -87,6 +96,8 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			// Soft path without a tagger: untagged tokens act as UNKNOWN.
 			// Postag-only empty surface tokens accept letter words or punctuation
 			// when the postag pattern looks like sentence-end / punct.
+			// Surface+punct-tag (e.g. token="." postag="SENT_END") also soft-accepts
+			// when the surface already matched and looks like punctuation.
 			tag := strings.ToUpper(pt.Pos.PosTag)
 			if tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN") {
 				posOK = true
@@ -97,6 +108,8 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
 					posOK = true
 				}
+			} else if softLooksLikePunct(token.GetToken()) && softPostagLooksLikePunct(tag) {
+				posOK = true
 			}
 		}
 		if pt.Pos.Negate {
@@ -338,17 +351,23 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 
 // softSharedStemMatch is true when surface and base share a long letter stem
 // and differ only by short inflectional endings (говорить/говорите, храбрый/храбрая).
+// Min stem is 4 for longer words; 3 is allowed for short bases (яйцо/яйца).
 func softSharedStemMatch(a, b string) bool {
 	ar, br := []rune(a), []rune(b)
 	n := 0
 	for n < len(ar) && n < len(br) && ar[n] == br[n] {
 		n++
 	}
-	if n < 4 {
+	minStem := 4
+	if len(ar) <= 5 || len(br) <= 5 {
+		minStem = 3
+	}
+	if n < minStem {
 		return false
 	}
 	sa, sb := string(ar[n:]), string(br[n:])
-	if len([]rune(sa)) > 5 || len([]rune(sb)) > 5 {
+	ra, rb := []rune(sa), []rune(sb)
+	if len(ra) > 5 || len(rb) > 5 {
 		return false
 	}
 	// residual must be letters only (inflection), not a different stem
@@ -363,6 +382,50 @@ func softSharedStemMatch(a, b string) bool {
 		}
 	}
 	return true
+}
+
+// softRegexpAlternatives splits a simple top-level a|b|c pattern into alts.
+// Nested groups/character classes are not fully parsed — only plain | splits
+// used by upstream soft packs (программный|аппаратный).
+func softRegexpAlternatives(pat string) []string {
+	if pat == "" || !strings.Contains(pat, "|") {
+		if pat == "" {
+			return nil
+		}
+		return []string{pat}
+	}
+	// Strip outer non-capturing group if present.
+	p := strings.TrimSpace(pat)
+	if strings.HasPrefix(p, "(?:") && strings.HasSuffix(p, ")") {
+		p = p[3 : len(p)-1]
+	}
+	depth := 0
+	start := 0
+	var alts []string
+	for i, r := range p {
+		switch r {
+		case '(':
+			depth++
+		case ')':
+			if depth > 0 {
+				depth--
+			}
+		case '|':
+			if depth == 0 {
+				alts = append(alts, p[start:i])
+				start = i + 1
+			}
+		}
+	}
+	alts = append(alts, p[start:])
+	out := make([]string, 0, len(alts))
+	for _, a := range alts {
+		a = strings.TrimSpace(a)
+		if a != "" {
+			out = append(out, a)
+		}
+	}
+	return out
 }
 
 // softEsperantoUnicode converts x-system digraphs to Unicode diacritics (cx→ĉ).

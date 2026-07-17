@@ -24,3 +24,26 @@ func TestPatternTokenMatcher(t *testing.T) {
 	pm := NewPatternTokenMatcher(Pos("NN"))
 	require.True(t, pm.IsMatched(languagetool.NewAnalyzedToken("dog", &pos, nil)))
 }
+
+// Soft path: upstream goldens only (RU kurica, RU software adj, TA polum).
+func TestSoftInflectedAndSurfacePOS(t *testing.T) {
+	// яйцо / яйца — short shared stem (min 3)
+	require.True(t, softSharedStemMatch("яйца", "яйцо"))
+	require.True(t, softInflectedSurfaceMatch("высиживает", "высиживать", false))
+
+	// RE alternatives with inflected="yes" (Adj_NN_number_Software)
+	pt := NewPatternToken("программный|аппаратный", false, true, true)
+	m := NewPatternTokenMatcher(pt)
+	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("программных", nil, nil)))
+
+	// Surface "." with postag SENT_END (TA polum second token)
+	sentEnd := NewPatternToken(".", false, false, false)
+	sentEnd.Pos = &PosToken{PosTag: "SENT_END"}
+	sm := NewPatternTokenMatcher(sentEnd)
+	require.True(t, sm.IsMatched(languagetool.NewAnalyzedToken(".", nil, nil)))
+}
+
+func TestSoftRegexpAlternatives(t *testing.T) {
+	require.Equal(t, []string{"a", "b", "c"}, softRegexpAlternatives("a|b|c"))
+	require.Equal(t, []string{"foo", "bar"}, softRegexpAlternatives("(?:foo|bar)"))
+}
