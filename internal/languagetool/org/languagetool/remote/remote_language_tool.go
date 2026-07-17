@@ -18,6 +18,7 @@ const (
 	v2WordsAdd      = "/v2/words/add"
 	v2WordsDelete   = "/v2/words/delete"
 	v2Info          = "/v2/info"
+	v2Metrics       = "/v2/metrics"
 )
 
 // HTTPDoer abstracts http.Client for tests.
@@ -378,6 +379,39 @@ func (r *RemoteLanguageTool) GetSoftwareInfo() (map[string]any, error) {
 	}
 	if sw, ok := raw["software"].(map[string]any); ok {
 		return sw, nil
+	}
+	return raw, nil
+}
+
+// GetMetrics fetches /v2/metrics process-local counters.
+func (r *RemoteLanguageTool) GetMetrics() (map[string]any, error) {
+	if r == nil {
+		return nil, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	endpoint := r.ServerBaseURL + v2Metrics
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("metrics HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
+	}
+	var raw map[string]any
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, err
 	}
 	return raw, nil
 }
