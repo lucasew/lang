@@ -7547,6 +7547,76 @@
       <message>Did you mean "dramatic"?</message>
       <short>dramtic</short>
     </rule>
+    <rule id="EN_SOFT_DRAMATICALLY_MISS" name="dramtically soft">
+      <pattern>
+        <token>dramtically</token>
+      </pattern>
+      <message>Did you mean "dramatically"?</message>
+      <short>dramtically</short>
+    </rule>
+    <rule id="EN_SOFT_DISCIPLINED_MISS" name="disiplined soft">
+      <pattern>
+        <token>disiplined</token>
+      </pattern>
+      <message>Did you mean "disciplined"?</message>
+      <short>disiplined</short>
+    </rule>
+    <rule id="EN_SOFT_DISSOLVING_MISS" name="disolving soft">
+      <pattern>
+        <token>disolving</token>
+      </pattern>
+      <message>Did you mean "dissolving"?</message>
+      <short>disolving</short>
+    </rule>
+    <rule id="EN_SOFT_DISTURB_MISS" name="distrub soft">
+      <pattern>
+        <token>distrub</token>
+      </pattern>
+      <message>Did you mean "disturb"?</message>
+      <short>distrub</short>
+    </rule>
+    <rule id="EN_SOFT_DIVISION_MISS2" name="divsion soft">
+      <pattern>
+        <token>divsion</token>
+      </pattern>
+      <message>Did you mean "division"?</message>
+      <short>divsion</short>
+    </rule>
+    <rule id="EN_SOFT_DOCUMENTATION_MISS2" name="documantation soft">
+      <pattern>
+        <token>documantation</token>
+      </pattern>
+      <message>Did you mean "documentation"?</message>
+      <short>documantation</short>
+    </rule>
+    <rule id="EN_SOFT_DOUBT_MISS" name="doupt soft">
+      <pattern>
+        <token>doupt</token>
+      </pattern>
+      <message>Did you mean "doubt"?</message>
+      <short>doupt</short>
+    </rule>
+    <rule id="EN_SOFT_EFFICIENCY_MISS" name="efficency soft">
+      <pattern>
+        <token>efficency</token>
+      </pattern>
+      <message>Did you mean "efficiency"?</message>
+      <short>efficency</short>
+    </rule>
+    <rule id="EN_SOFT_EFFICIENT_MISS" name="efficent soft">
+      <pattern>
+        <token>efficent</token>
+      </pattern>
+      <message>Did you mean "efficient"?</message>
+      <short>efficent</short>
+    </rule>
+    <rule id="EN_SOFT_EXPLAIN_MISS" name="expalin soft">
+      <pattern>
+        <token>expalin</token>
+      </pattern>
+      <message>Did you mean "explain"?</message>
+      <short>expalin</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

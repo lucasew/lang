@@ -1926,5 +1926,30 @@
       <message>Jargon; name leave-the-code-cleaner instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BROKEN_WINDOWS" name="broken windows soft picky">
+      <pattern>
+        <token>broken</token>
+        <token>windows</token>
+      </pattern>
+      <message>Jargon; name fix small defects early instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CAP_THEOREM" name="cap theorem soft picky">
+      <pattern>
+        <token>cap</token>
+        <token>theorem</token>
+      </pattern>
+      <message>Jargon; name the consistency-availability tradeoff instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RULE_OF_THREE" name="rule of three soft picky">
+      <pattern>
+        <token>rule</token>
+        <token>of</token>
+        <token>three</token>
+      </pattern>
+      <message>Jargon; name wait-for-three-examples before abstracting.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

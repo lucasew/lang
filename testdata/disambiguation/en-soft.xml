@@ -3039,4 +3039,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICACHE" name="immunize elasticache">
+    <pattern>
+      <token>elasticache</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICACHE_CAPS" name="immunize ElastiCache">
+    <pattern>
+      <token>ElastiCache</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEPTUNE" name="immunize neptune">
+    <pattern>
+      <token>neptune</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEPTUNE_CAPS" name="immunize Neptune">
+    <pattern>
+      <token>Neptune</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCUMENTDB" name="immunize documentdb">
+    <pattern>
+      <token>documentdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCUMENTDB_CAPS" name="immunize DocumentDB">
+    <pattern>
+      <token>DocumentDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
