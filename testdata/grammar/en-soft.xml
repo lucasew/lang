@@ -13357,6 +13357,76 @@
       <message>Did you mean "retryattempts"?</message>
       <short>retryattempss</short>
     </rule>
+    <rule id="EN_SOFT_CIRCUITOPEN_MISS" name="circuitopenerr soft">
+      <pattern>
+        <token>circuitopenerr</token>
+      </pattern>
+      <message>Did you mean "circuitopen"?</message>
+      <short>circuitopenerr</short>
+    </rule>
+    <rule id="EN_SOFT_BREAKERSTATE_MISS" name="breakerstatee soft">
+      <pattern>
+        <token>breakerstatee</token>
+      </pattern>
+      <message>Did you mean "breakerstate"?</message>
+      <short>breakerstatee</short>
+    </rule>
+    <rule id="EN_SOFT_SLEEPWINDOW_MISS" name="sleepwindoww soft">
+      <pattern>
+        <token>sleepwindoww</token>
+      </pattern>
+      <message>Did you mean "sleepwindow"?</message>
+      <short>sleepwindoww</short>
+    </rule>
+    <rule id="EN_SOFT_HYSTRIX_MISS" name="hystrixx soft">
+      <pattern>
+        <token>hystrixx</token>
+      </pattern>
+      <message>Did you mean "hystrix"?</message>
+      <short>hystrixx</short>
+    </rule>
+    <rule id="EN_SOFT_RESILIENCY_MISS" name="resiliencyy soft">
+      <pattern>
+        <token>resiliencyy</token>
+      </pattern>
+      <message>Did you mean "resiliency"?</message>
+      <short>resiliencyy</short>
+    </rule>
+    <rule id="EN_SOFT_RESILIENCE_MISS" name="resiliencee soft">
+      <pattern>
+        <token>resiliencee</token>
+      </pattern>
+      <message>Did you mean "resilience"?</message>
+      <short>resiliencee</short>
+    </rule>
+    <rule id="EN_SOFT_FAULTTOLERANCE_MISS" name="faulttoleranc soft">
+      <pattern>
+        <token>faulttoleranc</token>
+      </pattern>
+      <message>Did you mean "faulttolerance"?</message>
+      <short>faulttoleranc</short>
+    </rule>
+    <rule id="EN_SOFT_SELFHEALING_MISS" name="selfhealling soft">
+      <pattern>
+        <token>selfhealling</token>
+      </pattern>
+      <message>Did you mean "selfhealing"?</message>
+      <short>selfhealling</short>
+    </rule>
+    <rule id="EN_SOFT_AUTOHEALING_MISS" name="autohealng soft">
+      <pattern>
+        <token>autohealng</token>
+      </pattern>
+      <message>Did you mean "autohealing"?</message>
+      <short>autohealng</short>
+    </rule>
+    <rule id="EN_SOFT_HEALTHENDPOINT_MISS" name="healthendpont soft">
+      <pattern>
+        <token>healthendpont</token>
+      </pattern>
+      <message>Did you mean "healthendpoint"?</message>
+      <short>healthendpont</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

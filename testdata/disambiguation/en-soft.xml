@@ -6027,4 +6027,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PARCEL" name="immunize parcel">
+    <pattern>
+      <token>parcel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARCEL_CAPS" name="immunize Parcel">
+    <pattern>
+      <token>Parcel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWC" name="immunize swc">
+    <pattern>
+      <token>swc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWC_CAPS" name="immunize SWC">
+    <pattern>
+      <token>SWC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIOME" name="immunize biome">
+    <pattern>
+      <token>biome</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIOME_CAPS" name="immunize Biome">
+    <pattern>
+      <token>Biome</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

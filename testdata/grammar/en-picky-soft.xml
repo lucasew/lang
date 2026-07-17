@@ -3867,5 +3867,27 @@
       <message>Jargon; name average selling price instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BOOKINGS" name="bookings soft picky">
+      <pattern>
+        <token>bookings</token>
+      </pattern>
+      <message>Jargon; name contracted sales value in a period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BILLINGS" name="billings soft picky">
+      <pattern>
+        <token>billings</token>
+      </pattern>
+      <message>Jargon; name invoiced amounts in a period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUOTA_ATTAINMENT" name="quota attainment soft picky">
+      <pattern>
+        <token>quota</token>
+        <token>attainment</token>
+      </pattern>
+      <message>Jargon; name share of sales target achieved instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
