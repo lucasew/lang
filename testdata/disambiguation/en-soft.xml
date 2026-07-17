@@ -1275,4 +1275,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CMAKE" name="immunize cmake">
+    <pattern>
+      <token>cmake</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CMAKE_CAPS" name="immunize CMake">
+    <pattern>
+      <token>CMake</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKAFFOLD" name="immunize skaffold">
+    <pattern>
+      <token>skaffold</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKAFFOLD_CAPS" name="immunize Skaffold">
+    <pattern>
+      <token>Skaffold</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZE" name="immunize kustomize">
+    <pattern>
+      <token>kustomize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZE_CAPS" name="immunize Kustomize">
+    <pattern>
+      <token>Kustomize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

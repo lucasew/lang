@@ -4117,6 +4117,76 @@
       <message>Did you mean "argument"?</message>
       <short>arguemnt</short>
     </rule>
+    <rule id="EN_SOFT_ASSESS_MISS" name="asess soft">
+      <pattern>
+        <token>asess</token>
+      </pattern>
+      <message>Did you mean "assess"?</message>
+      <short>asess</short>
+    </rule>
+    <rule id="EN_SOFT_ASSESSMENT_MISS" name="asessment soft">
+      <pattern>
+        <token>asessment</token>
+      </pattern>
+      <message>Did you mean "assessment"?</message>
+      <short>asessment</short>
+    </rule>
+    <rule id="EN_SOFT_ATTORNEY_MISS" name="attorny soft">
+      <pattern>
+        <token>attorny</token>
+      </pattern>
+      <message>Did you mean "attorney"?</message>
+      <short>attorny</short>
+    </rule>
+    <rule id="EN_SOFT_BEGINNINGS_MISS" name="beginings soft">
+      <pattern>
+        <token>beginings</token>
+      </pattern>
+      <message>Did you mean "beginnings"?</message>
+      <short>beginings</short>
+    </rule>
+    <rule id="EN_SOFT_BUSINESSES_MISS" name="buisnesses soft">
+      <pattern>
+        <token>buisnesses</token>
+      </pattern>
+      <message>Did you mean "businesses"?</message>
+      <short>buisnesses</short>
+    </rule>
+    <rule id="EN_SOFT_CAREERIST_MISS" name="carreerist soft">
+      <pattern>
+        <token>carreerist</token>
+      </pattern>
+      <message>Did you mean "careerist"?</message>
+      <short>carreerist</short>
+    </rule>
+    <rule id="EN_SOFT_CEMETERIES_MISS" name="cemetarys soft">
+      <pattern>
+        <token>cemetarys</token>
+      </pattern>
+      <message>Did you mean "cemeteries"?</message>
+      <short>cemetarys</short>
+    </rule>
+    <rule id="EN_SOFT_COLLEAGUES_MISS" name="collaegues soft">
+      <pattern>
+        <token>collaegues</token>
+      </pattern>
+      <message>Did you mean "colleagues"?</message>
+      <short>collaegues</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITMENT_MISS" name="comitment soft">
+      <pattern>
+        <token>comitment</token>
+      </pattern>
+      <message>Did you mean "commitment"?</message>
+      <short>comitment</short>
+    </rule>
+    <rule id="EN_SOFT_DECEIVED_MISS" name="decieved soft">
+      <pattern>
+        <token>decieved</token>
+      </pattern>
+      <message>Did you mean "deceived"?</message>
+      <short>decieved</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

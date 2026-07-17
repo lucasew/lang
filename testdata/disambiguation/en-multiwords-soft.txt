@@ -201,3 +201,6 @@ time and again	RB
 Providence Rhode Island	NNP
 Richmond Virginia	NNP
 sooner or later	RB
+Hartford Connecticut	NNP
+Albany New York	NNP
+day after day	RB

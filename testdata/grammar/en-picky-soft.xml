@@ -699,5 +699,30 @@
       <message>Jargon; consider "bottom line" or state the outcome.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CORE_COMPETENCY" name="core competency soft picky">
+      <pattern>
+        <token>core</token>
+        <token>competency</token>
+      </pattern>
+      <message>Jargon; consider "strength" or name the skill.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_PROPOSITION" name="value proposition soft picky">
+      <pattern>
+        <token>value</token>
+        <token>proposition</token>
+      </pattern>
+      <message>Jargon; consider "benefit" or name the offer.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TAKE_THIS_OFFLINE" name="take this offline soft picky">
+      <pattern>
+        <token>take</token>
+        <token>this</token>
+        <token>offline</token>
+      </pattern>
+      <message>Jargon; consider "discuss later" or "handle separately".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
