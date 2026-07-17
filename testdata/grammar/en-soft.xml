@@ -8527,6 +8527,76 @@
       <message>Did you mean "receiver"?</message>
       <short>reciever</short>
     </rule>
+    <rule id="EN_SOFT_PROPORTIONAL_MISS" name="propotional soft">
+      <pattern>
+        <token>propotional</token>
+      </pattern>
+      <message>Did you mean "proportional"?</message>
+      <short>propotional</short>
+    </rule>
+    <rule id="EN_SOFT_PROPORTIONS_MISS" name="propotions soft">
+      <pattern>
+        <token>propotions</token>
+      </pattern>
+      <message>Did you mean "proportions"?</message>
+      <short>propotions</short>
+    </rule>
+    <rule id="EN_SOFT_PROSPEROUS_MISS" name="prosporous soft">
+      <pattern>
+        <token>prosporous</token>
+      </pattern>
+      <message>Did you mean "prosperous"?</message>
+      <short>prosporous</short>
+    </rule>
+    <rule id="EN_SOFT_PUBLICLY_MISS2" name="publicaly soft">
+      <pattern>
+        <token>publicaly</token>
+      </pattern>
+      <message>Did you mean "publicly"?</message>
+      <short>publicaly</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTION_MISS" name="quesion soft">
+      <pattern>
+        <token>quesion</token>
+      </pattern>
+      <message>Did you mean "question"?</message>
+      <short>quesion</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTIONS_MISS" name="quesions soft">
+      <pattern>
+        <token>quesions</token>
+      </pattern>
+      <message>Did you mean "questions"?</message>
+      <short>quesions</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTIONNAIRES_MISS" name="questionaires soft">
+      <pattern>
+        <token>questionaires</token>
+      </pattern>
+      <message>Did you mean "questionnaires"?</message>
+      <short>questionaires</short>
+    </rule>
+    <rule id="EN_SOFT_RECOMMENDED_MISS" name="reccomended soft">
+      <pattern>
+        <token>reccomended</token>
+      </pattern>
+      <message>Did you mean "recommended"?</message>
+      <short>reccomended</short>
+    </rule>
+    <rule id="EN_SOFT_REHEARSAL_MISS" name="rehersal soft">
+      <pattern>
+        <token>rehersal</token>
+      </pattern>
+      <message>Did you mean "rehearsal"?</message>
+      <short>rehersal</short>
+    </rule>
+    <rule id="EN_SOFT_RELIGIOUSLY_MISS" name="religously soft">
+      <pattern>
+        <token>religously</token>
+      </pattern>
+      <message>Did you mean "religiously"?</message>
+      <short>religously</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

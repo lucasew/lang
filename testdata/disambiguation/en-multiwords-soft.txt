@@ -390,3 +390,6 @@ Gold Corridor RegionNNP
 Timber Corridor RegionNNP
 Grain Corridor RegionNNP
 Silk Corridor RegionNNP
+Wine Corridor RegionNNP
+Tea Corridor RegionNNP
+Spice Corridor RegionNNP

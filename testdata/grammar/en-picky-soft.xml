@@ -2264,5 +2264,29 @@
       <message>Jargon; name a test fixture factory instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_NULL_OBJECT" name="null object soft picky">
+      <pattern>
+        <token>null</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a no-op default collaborator instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ABSTRACT_FACTORY" name="abstract factory soft picky">
+      <pattern>
+        <token>abstract</token>
+        <token>factory</token>
+      </pattern>
+      <message>Jargon; name a family of related creators instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STRATEGY_PATTERN" name="strategy pattern soft picky">
+      <pattern>
+        <token>strategy</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name interchangeable algorithm objects instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

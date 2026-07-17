@@ -3543,4 +3543,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSLATE" name="immunize translate">
+    <pattern>
+      <token>translate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSLATE_CAPS" name="immunize Translate">
+    <pattern>
+      <token>Translate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPREHEND" name="immunize comprehend">
+    <pattern>
+      <token>comprehend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPREHEND_CAPS" name="immunize Comprehend">
+    <pattern>
+      <token>Comprehend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FORECAST" name="immunize forecast">
+    <pattern>
+      <token>forecast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FORECAST_CAPS" name="immunize Forecast">
+    <pattern>
+      <token>Forecast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
