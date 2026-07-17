@@ -171,6 +171,7 @@ func TestSimplePredicateSpellerChecker_IgnoresSpellerFlag(t *testing.T) {
 		},
 		nil,
 		nil,
+		nil,
 	))
 	// without ignore: flags Xyzzy
 	m := lt.Check("Xyzzy is here.")

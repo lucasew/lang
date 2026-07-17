@@ -472,12 +472,13 @@ func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestio
 		_, ok := known[strings.ToLower(w)]
 		return ok
 	}
-	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, known)
+	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, known, nil)
 }
 
 // SimplePredicateSpellerChecker flags letter tokens rejected by isKnown.
 // nearestKnown is optional (edit-distance peers when non-nil and small).
-func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, suggestions map[string][]string, nearestKnown map[string]struct{}) SentenceChecker {
+// suggestFn is optional (e.g. CFSA2 edit-candidate Contains); tried after the map.
+func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, suggestions map[string][]string, nearestKnown map[string]struct{}, suggestFn func(string) []string) SentenceChecker {
 	if ruleID == "" {
 		ruleID = "MORFOLOGIK_RULE"
 	}
@@ -517,6 +518,9 @@ func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, sug
 				} else if s, ok := suggestions[strings.ToLower(w)]; ok {
 					m.Suggestions = append([]string(nil), s...)
 				}
+			}
+			if len(m.Suggestions) == 0 && suggestFn != nil {
+				m.Suggestions = suggestFn(w)
 			}
 			if len(m.Suggestions) == 0 && nearestKnown != nil {
 				m.Suggestions = nearestKnownWords(w, nearestKnown, 2, 5)

@@ -47,9 +47,12 @@ func RegisterBinaryEnglishSpeller(lt *languagetool.JLanguageTool, dictPath strin
 	if suggestions == nil {
 		suggestions = CommonDemoSpellerSuggestions
 	}
-	// nearestKnown only (full CFSA2 dict is too large for edit-distance scan)
+	// CFSA2 edit-1 candidates via Contains (no full dict scan); then soft nearest set.
+	suggestFn := func(w string) []string {
+		return d.SuggestEdits(w, 8)
+	}
 	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
-		"MORFOLOGIK_RULE_EN_US", isKnown, suggestions, nearestKnown,
+		"MORFOLOGIK_RULE_EN_US", isKnown, suggestions, nearestKnown, suggestFn,
 	))
 	return true
 }

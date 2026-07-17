@@ -115,7 +115,7 @@ func TestRegisterSoftEnglishDisambiguator_SoftXMLIgnoreSpelling(t *testing.T) {
 	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
 		"MORFOLOGIK_RULE_EN_US",
 		func(w string) bool { return w != "iPhone" && w != "GitHub" },
-		nil, nil,
+		nil, nil, nil,
 	))
 	// pass ignore list too when present
 	ignPath := ""
@@ -162,7 +162,7 @@ func TestSoftIgnoreSpellingList_TechNames(t *testing.T) {
 				return true
 			}
 		},
-		nil, nil,
+		nil, nil, nil,
 	))
 	RegisterSoftEnglishDisambiguator(lt, "", "", path)
 	for _, text := range []string{
