@@ -1752,5 +1752,30 @@
       <message>Jargon; name the CRUD-centric service risk instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_HEXAGONAL_ARCHITECTURE" name="hexagonal architecture soft picky">
+      <pattern>
+        <token>hexagonal</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name the ports-and-adapters structure instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PORTS_AND_ADAPTERS" name="ports and adapters soft picky">
+      <pattern>
+        <token>ports</token>
+        <token>and</token>
+        <token>adapters</token>
+      </pattern>
+      <message>Jargon; name the boundary interfaces and drivers instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHARED_KERNEL" name="shared kernel soft picky">
+      <pattern>
+        <token>shared</token>
+        <token>kernel</token>
+      </pattern>
+      <message>Jargon; name the shared model and ownership rules instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

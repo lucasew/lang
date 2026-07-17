@@ -2787,4 +2787,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_OVA" name="immunize ova">
+    <pattern>
+      <token>ova</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVA_CAPS" name="immunize OVA">
+    <pattern>
+      <token>OVA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVF" name="immunize ovf">
+    <pattern>
+      <token>ovf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OVF_CAPS" name="immunize OVF">
+    <pattern>
+      <token>OVF</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QED" name="immunize qed">
+    <pattern>
+      <token>qed</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QED_CAPS" name="immunize QED">
+    <pattern>
+      <token>QED</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

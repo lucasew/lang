@@ -7057,6 +7057,76 @@
       <message>Did you mean "advisable"?</message>
       <short>adviseable</short>
     </rule>
+    <rule id="EN_SOFT_ADVISORY_MISS" name="advisery soft">
+      <pattern>
+        <token>advisery</token>
+      </pattern>
+      <message>Did you mean "advisory"?</message>
+      <short>advisery</short>
+    </rule>
+    <rule id="EN_SOFT_ALCOHOLIC_MISS" name="alchoholic soft">
+      <pattern>
+        <token>alchoholic</token>
+      </pattern>
+      <message>Did you mean "alcoholic"?</message>
+      <short>alchoholic</short>
+    </rule>
+    <rule id="EN_SOFT_ALOTOF_MISS" name="alotof soft">
+      <pattern>
+        <token>alotof</token>
+      </pattern>
+      <message>Did you mean "a lot of"?</message>
+      <short>alotof</short>
+    </rule>
+    <rule id="EN_SOFT_AMONGST_MISS" name="amoungst soft">
+      <pattern>
+        <token>amoungst</token>
+      </pattern>
+      <message>Did you mean "amongst"?</message>
+      <short>amoungst</short>
+    </rule>
+    <rule id="EN_SOFT_APPARENTLY_MISS4" name="aparenttly soft">
+      <pattern>
+        <token>aparenttly</token>
+      </pattern>
+      <message>Did you mean "apparently"?</message>
+      <short>aparenttly</short>
+    </rule>
+    <rule id="EN_SOFT_APOLOGIES_MISS" name="appologies soft">
+      <pattern>
+        <token>appologies</token>
+      </pattern>
+      <message>Did you mean "apologies"?</message>
+      <short>appologies</short>
+    </rule>
+    <rule id="EN_SOFT_PROCLAIMED_MISS" name="procliamed soft">
+      <pattern>
+        <token>procliamed</token>
+      </pattern>
+      <message>Did you mean "proclaimed"?</message>
+      <short>procliamed</short>
+    </rule>
+    <rule id="EN_SOFT_ADVERSELY_MISS" name="adversly soft">
+      <pattern>
+        <token>adversly</token>
+      </pattern>
+      <message>Did you mean "adversely"?</message>
+      <short>adversly</short>
+    </rule>
+    <rule id="EN_SOFT_ADVERTISE_MISS" name="adversize soft">
+      <pattern>
+        <token>adversize</token>
+      </pattern>
+      <message>Did you mean "advertise"?</message>
+      <short>adversize</short>
+    </rule>
+    <rule id="EN_SOFT_ABSENCE_MISS3" name="absensee soft">
+      <pattern>
+        <token>absensee</token>
+      </pattern>
+      <message>Did you mean "absence"?</message>
+      <short>absensee</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

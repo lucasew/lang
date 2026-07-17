@@ -327,3 +327,6 @@ Sun Belt Region	NNP
 Rust Belt Region	NNP
 Bible Belt Region	NNP
 Corn Belt Region	NNP
+Snow Belt Region	NNP
+Cotton Belt Region	NNP
+Black Belt Region	NNP
