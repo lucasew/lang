@@ -108,3 +108,43 @@ func TestGolden_SoftItsIts(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_TooLongParagraph(t *testing.T) {
+	// enough sentences/words to trip TOO_LONG_PARAGRAPH
+	var sents []string
+	for i := 0; i < 20; i++ {
+		sents = append(sents, "This is sentence number and filler words enough.")
+	}
+	text := strings.Join(sents, " ")
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "TOO_LONG_PARAGRAPH" {
+			found = true
+			require.Equal(t, "style", f.Type)
+			require.Equal(t, "note", f.Severity)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_EnglishWordRepeatBeginning(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I went home. I ate dinner. I slept well.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "ENGLISH_WORD_REPEAT_BEGINNING_RULE" {
+			found = true
+			require.Equal(t, "duplication", f.Type)
+			require.Equal(t, "warning", f.Severity)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}

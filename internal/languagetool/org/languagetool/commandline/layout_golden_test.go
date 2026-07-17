@@ -129,3 +129,35 @@ func TestGolden_WhitespaceParagraphEnd(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_WhitespacePunctuation_Semicolon(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Wait ; now", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "WHITESPACE_PUNCTUATION" {
+			found = true
+			require.Equal(t, "whitespace", f.Type)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_WhitespacePunctuation_Percent(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "It is 50 % done.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "WHITESPACE_PUNCTUATION" {
+			found = true
+			require.Equal(t, "whitespace", f.Type)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
