@@ -534,3 +534,6 @@ Andesite Ridge RegionNNP
 Ignimbrite Summit RegionNNP
 Felsite Summit RegionNNP
 Tephra Summit RegionNNP
+Lapilli Summit RegionNNP
+Breccia Ridge RegionNNP
+Conglomerate Ridge RegionNNP

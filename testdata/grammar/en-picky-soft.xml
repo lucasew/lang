@@ -3385,5 +3385,26 @@
       <message>Jargon; name service level indicator instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MTTR" name="mttr soft picky">
+      <pattern>
+        <token>mttr</token>
+      </pattern>
+      <message>Jargon; name mean time to recover instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MTBF" name="mtbf soft picky">
+      <pattern>
+        <token>mtbf</token>
+      </pattern>
+      <message>Jargon; name mean time between failures instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RTO" name="rto soft picky">
+      <pattern>
+        <token>rto</token>
+      </pattern>
+      <message>Jargon; name recovery time objective instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

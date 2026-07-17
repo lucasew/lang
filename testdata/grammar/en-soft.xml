@@ -11887,6 +11887,76 @@
       <message>Did you mean "taking"?</message>
       <short>takeing</short>
     </rule>
+    <rule id="EN_SOFT_HAVING_MISS" name="haveing soft">
+      <pattern>
+        <token>haveing</token>
+      </pattern>
+      <message>Did you mean "having"?</message>
+      <short>haveing</short>
+    </rule>
+    <rule id="EN_SOFT_GIVING_MISS" name="giveing soft">
+      <pattern>
+        <token>giveing</token>
+      </pattern>
+      <message>Did you mean "giving"?</message>
+      <short>giveing</short>
+    </rule>
+    <rule id="EN_SOFT_GOING_MISS" name="goeing soft">
+      <pattern>
+        <token>goeing</token>
+      </pattern>
+      <message>Did you mean "going"?</message>
+      <short>goeing</short>
+    </rule>
+    <rule id="EN_SOFT_DOING_MISS" name="doeing soft">
+      <pattern>
+        <token>doeing</token>
+      </pattern>
+      <message>Did you mean "doing"?</message>
+      <short>doeing</short>
+    </rule>
+    <rule id="EN_SOFT_KNOWING_MISS" name="knoweing soft">
+      <pattern>
+        <token>knoweing</token>
+      </pattern>
+      <message>Did you mean "knowing"?</message>
+      <short>knoweing</short>
+    </rule>
+    <rule id="EN_SOFT_THINKING_MISS" name="thinkeing soft">
+      <pattern>
+        <token>thinkeing</token>
+      </pattern>
+      <message>Did you mean "thinking"?</message>
+      <short>thinkeing</short>
+    </rule>
+    <rule id="EN_SOFT_SAYING_MISS" name="sayeing soft">
+      <pattern>
+        <token>sayeing</token>
+      </pattern>
+      <message>Did you mean "saying"?</message>
+      <short>sayeing</short>
+    </rule>
+    <rule id="EN_SOFT_SEEING_MISS" name="seeeing soft">
+      <pattern>
+        <token>seeeing</token>
+      </pattern>
+      <message>Did you mean "seeing"?</message>
+      <short>seeeing</short>
+    </rule>
+    <rule id="EN_SOFT_COMING_MISS2" name="comeing soft">
+      <pattern>
+        <token>comeing</token>
+      </pattern>
+      <message>Did you mean "coming"?</message>
+      <short>comeing</short>
+    </rule>
+    <rule id="EN_SOFT_LEAVING_MISS" name="leaveing soft">
+      <pattern>
+        <token>leaveing</token>
+      </pattern>
+      <message>Did you mean "leaving"?</message>
+      <short>leaveing</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

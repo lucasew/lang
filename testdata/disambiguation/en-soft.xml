@@ -5271,4 +5271,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SOLR" name="immunize solr">
+    <pattern>
+      <token>solr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLR_CAPS" name="immunize Solr">
+    <pattern>
+      <token>Solr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSMOSDB" name="immunize cosmosdb">
+    <pattern>
+      <token>cosmosdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSMOSDB_CAPS" name="immunize CosmosDB">
+    <pattern>
+      <token>CosmosDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIRESTORE" name="immunize firestore">
+    <pattern>
+      <token>firestore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIRESTORE_CAPS" name="immunize Firestore">
+    <pattern>
+      <token>Firestore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
