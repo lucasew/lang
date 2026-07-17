@@ -1,6 +1,6 @@
 package ro
 
-// Twin of RomanianTaggerTest — MapWordTagger smokes
+// Twin of RomanianTaggerTest — MapWordTagger smokes + merge/user dict
 import (
 	"testing"
 
@@ -20,19 +20,35 @@ func TestRomanianTagger_Tagger(t *testing.T) {
 }
 
 func TestRomanianTagger_TaggerMerge(t *testing.T) {
-	t.Skip("unimplemented: merge readings need full dict")
+	merged := MergeTaggedWords(
+		[]tagging.TaggedWord{tagging.NewTaggedWord("merge", "V1")},
+		[]tagging.TaggedWord{tagging.NewTaggedWord("merge", "V2"), tagging.NewTaggedWord("merge", "V1")},
+	)
+	require.Len(t, merged, 2)
+	wt := tagging.MapWordTagger{"x": merged}
+	got := NewRomanianTagger(wt).Tag([]string{"x"})
+	require.Len(t, got[0].GetReadings(), 2)
 }
+
 func TestRomanianTagger_TaggerMerseseram(t *testing.T) {
-	// surface smoke for form
 	wt := tagging.MapWordTagger{"merseseram": {tagging.NewTaggedWord("merge", "V")}}
 	got := NewRomanianTagger(wt).Tag([]string{"merseseram"})
 	require.Len(t, got, 1)
 	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
 }
+
 func TestRomanianTagger_Tagger_Fi(t *testing.T) {
 	wt := tagging.MapWordTagger{"fi": {tagging.NewTaggedWord("fi", "V")}}
 	require.NotEmpty(t, NewRomanianTagger(wt).TagWord("fi"))
 }
+
 func TestRomanianTagger_TaggerUserDict(t *testing.T) {
-	t.Skip("unimplemented: user dict overlay")
+	base := tagging.MapWordTagger{"a": {tagging.NewTaggedWord("a", "X")}}
+	user := map[string][]tagging.TaggedWord{
+		"neologism": {tagging.NewTaggedWord("neologism", "S")},
+	}
+	wt := WithUserDict(base, user)
+	tg := NewRomanianTagger(wt)
+	require.NotEmpty(t, tg.TagWord("neologism"))
+	require.NotEmpty(t, tg.TagWord("a"))
 }

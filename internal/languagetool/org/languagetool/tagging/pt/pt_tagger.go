@@ -34,6 +34,12 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 		for _, tw := range t.TagWord(w) {
 			readings = append(readings, tagged(word, tw))
 		}
+		if len(readings) == 0 {
+			for _, cr := range ContractionReadings(w) {
+				pos, lemma := cr.POS, cr.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &pos, &lemma))
+			}
+		}
 		lower := strings.ToLower(w)
 		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
 			for _, tw := range t.TagWord(lower) {

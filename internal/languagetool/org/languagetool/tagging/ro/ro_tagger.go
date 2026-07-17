@@ -1,22 +1,24 @@
 package ro
 
 import (
-	"strings"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"strings"
 )
 
 const RomanianDictPath = "/ro/ro.dict"
 
-type RomanianTagger struct { *tagging.BaseTagger }
+type RomanianTagger struct{ *tagging.BaseTagger }
 
 func NewRomanianTagger(wt tagging.WordTagger) *RomanianTagger {
 	return &RomanianTagger{BaseTagger: tagging.NewBaseTagger(wt, RomanianDictPath, "ro", false)}
 }
 
 func (t *RomanianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
-	if t == nil { return nil }
+	if t == nil {
+		return nil
+	}
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
@@ -42,7 +44,13 @@ func (t *RomanianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTo
 
 func toTok(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
 	var pos, lemma *string
-	if tw.PosTag != "" { p := tw.PosTag; pos = &p }
-	if tw.Lemma != "" { l := tw.Lemma; lemma = &l }
+	if tw.PosTag != "" {
+		p := tw.PosTag
+		pos = &p
+	}
+	if tw.Lemma != "" {
+		l := tw.Lemma
+		lemma = &l
+	}
 	return languagetool.NewAnalyzedToken(surface, pos, lemma)
 }

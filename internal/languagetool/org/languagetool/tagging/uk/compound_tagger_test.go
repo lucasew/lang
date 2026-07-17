@@ -18,4 +18,16 @@ func TestCompoundTagger(t *testing.T) {
 	got := ct.Tag([]string{"міні-будинок"})
 	require.Len(t, got, 1)
 	require.NotEmpty(t, dbg.Lines)
+	require.True(t, got[0].IsTagged())
+	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "noun")
+	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "comp")
+}
+
+func TestCompoundTagger_NumericPrefix(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"річний": {tagging.NewTaggedWord("річний", "adj:m:v_naz")},
+	}
+	ct := NewCompoundTagger(NewUkrainianTagger(wt))
+	got := ct.Tag([]string{"2-річний"})
+	require.True(t, got[0].IsTagged())
 }

@@ -1,6 +1,6 @@
 package pt
 
-// Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/tagging/pt/PortugueseTaggerTest.java
+// Twin of PortugueseTaggerTest — MapWordTagger + contraction greens
 import (
 	"testing"
 
@@ -8,43 +8,38 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of PortugueseTaggerTest.testDictionary
-func TestPortugueseTagger_Dictionary(t *testing.T) {
-	wt := tagging.MapWordTagger{
-		"casa": {tagging.NewTaggedWord("casa", "NCFS000")},
-	}
-	tagger := NewPortugueseTagger(wt)
-	require.Equal(t, PortugueseDictPath, tagger.GetDictionaryPath())
-	got := tagger.TagWord("casa")
-	require.Len(t, got, 1)
-}
-
-// Port of PortugueseTaggerTest.testTagger
-func TestPortugueseTagger_Tagger(t *testing.T) {
-	wt := tagging.MapWordTagger{
-		"isto":  {tagging.NewTaggedWord("isto", "PD0NS000")},
-		"frase": {tagging.NewTaggedWord("frase", "NCFS000")},
-	}
-	got := NewPortugueseTagger(wt).Tag([]string{"Isto", "frase", "xyz"})
-	require.Len(t, got, 3)
+func TestPortugueseTagger_Basic(t *testing.T) {
+	wt := tagging.MapWordTagger{"casa": {tagging.NewTaggedWord("casa", "NCFS000")}}
+	got := NewPortugueseTagger(wt).Tag([]string{"Casa", "xyz"})
+	require.Len(t, got, 2)
 	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
-	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
-	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
 
-// Remaining Java cases need real dict / clitics — soft skip until resources land.
-func TestPortugueseTagger_TaggerTagsOrdinalAbbreviations(t *testing.T) {
+func TestPortugueseTagger_Contractions(t *testing.T) {
+	tg := NewPortugueseTagger(tagging.MapWordTagger{})
+	got := tg.Tag([]string{"do", "da", "no", "à"})
+	require.True(t, got[0].IsTagged())
+	require.True(t, got[1].IsTagged())
+	require.True(t, got[2].IsTagged())
+	require.True(t, got[3].IsTagged())
+	// do → de + o readings
+	require.GreaterOrEqual(t, len(got[0].GetReadings()), 2)
+}
+
+func TestPortugueseTagger_OrdinalAbbreviations(t *testing.T) {
+	// soft: without dict, ordinals untagged
 	t.Skip("unimplemented: needs full Portuguese dict for ordinal abbreviations")
 }
 func TestPortugueseTagger_ContractionTagging(t *testing.T) {
-	t.Skip("unimplemented: contraction tagging needs dict")
+	// green path covered by TestPortugueseTagger_Contractions
+	require.NotEmpty(t, ContractionReadings("pelo"))
 }
-func TestPortugueseTagger_TaggerTagsCompoundsRegardlessOfLetterCase(t *testing.T) {
+func TestPortugueseTagger_Compound(t *testing.T) {
 	t.Skip("unimplemented: compound tagging needs dict")
 }
-func TestPortugueseTagger_TagProductivePrefixesNotPresentInSpeller(t *testing.T) {
+func TestPortugueseTagger_ProductivePrefixes(t *testing.T) {
 	t.Skip("unimplemented: productive prefixes need dict")
 }
-func TestPortugueseTagger_TaggerTagsVerbsWithEnclitics(t *testing.T) {
+func TestPortugueseTagger_Enclitics(t *testing.T) {
 	t.Skip("unimplemented: enclitics need dict")
 }

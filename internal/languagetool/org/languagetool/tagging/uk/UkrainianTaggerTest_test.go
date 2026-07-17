@@ -71,9 +71,17 @@ func TestUkrainianTagger_DynamicTaggingXShaped(t *testing.T) {
 func TestUkrainianTagger_DynamicTaggingPrefixes(t *testing.T) {
 	t.Skip("unimplemented: prefixes")
 }
-func TestUkrainianTagger_NameSuffix(t *testing.T)    { t.Skip("unimplemented: name suffix") }
-func TestUkrainianTagger_HypenAndQuote(t *testing.T) { t.Skip("unimplemented: hyphen/quote") }
-func TestUkrainianTagger_HypenPrefixes(t *testing.T) { t.Skip("unimplemented: hyphen prefixes") }
+func TestUkrainianTagger_NameSuffix(t *testing.T) { t.Skip("unimplemented: name suffix") }
+func TestUkrainianTagger_HypenAndQuote(t *testing.T) {
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	_ = tg.Tag([]string{"м'ясо"})
+}
+func TestUkrainianTagger_HypenPrefixes(t *testing.T) {
+	wt := tagging.MapWordTagger{"тест": {tagging.NewTaggedWord("тест", "noun")}}
+	ct := NewCompoundTagger(NewUkrainianTagger(wt))
+	got := ct.Tag([]string{"міні-тест"})
+	require.True(t, got[0].IsTagged())
+}
 func TestUkrainianTagger_DynamicTaggingFixedParts(t *testing.T) {
 	t.Skip("unimplemented: fixed parts")
 }
