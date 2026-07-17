@@ -2607,4 +2607,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_DPDK" name="immunize dpdk">
+    <pattern>
+      <token>dpdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DPDK_CAPS" name="immunize DPDK">
+    <pattern>
+      <token>DPDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBAIO" name="immunize libaio">
+    <pattern>
+      <token>libaio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBAIO_CAPS" name="immunize Libaio">
+    <pattern>
+      <token>Libaio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING2" name="immunize uring2">
+    <pattern>
+      <token>uring2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING2_CAPS" name="immunize Uring2">
+    <pattern>
+      <token>Uring2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

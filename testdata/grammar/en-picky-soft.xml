@@ -1630,5 +1630,30 @@
       <message>Jargon; name the delivery guarantee and retry policy instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DEAD_LETTER_QUEUE" name="dead letter queue soft picky">
+      <pattern>
+        <token>dead</token>
+        <token>letter</token>
+        <token>queue</token>
+      </pattern>
+      <message>Jargon; name the failed-message holding queue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_POISON_PILL" name="poison pill soft picky">
+      <pattern>
+        <token>poison</token>
+        <token>pill</token>
+      </pattern>
+      <message>Jargon; name the terminal/bad message pattern instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUTBOX_PATTERN" name="outbox pattern soft picky">
+      <pattern>
+        <token>outbox</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the transactional publish design instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

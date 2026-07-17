@@ -312,3 +312,6 @@ year by year	RB
 Los Angeles County	NNP
 San Francisco Bay Area	NNP
 quarter by quarter	RB
+New York Metro	NNP
+Los Angeles Basin	NNP
+decade by decade	RB

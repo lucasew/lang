@@ -6707,6 +6707,76 @@
       <message>Did you mean "successful"?</message>
       <short>sucessful</short>
     </rule>
+    <rule id="EN_SOFT_UNNECESSARY_MISS2" name="unecessary soft">
+      <pattern>
+        <token>unecessary</token>
+      </pattern>
+      <message>Did you mean "unnecessary"?</message>
+      <short>unecessary</short>
+    </rule>
+    <rule id="EN_SOFT_UNNECESSARILY_MISS" name="unecessarily soft">
+      <pattern>
+        <token>unecessarily</token>
+      </pattern>
+      <message>Did you mean "unnecessarily"?</message>
+      <short>unecessarily</short>
+    </rule>
+    <rule id="EN_SOFT_UNFORESEEABLE_MISS" name="unforseeable soft">
+      <pattern>
+        <token>unforseeable</token>
+      </pattern>
+      <message>Did you mean "unforeseeable"?</message>
+      <short>unforseeable</short>
+    </rule>
+    <rule id="EN_SOFT_UNINTERRUPTED_MISS" name="uninterupted soft">
+      <pattern>
+        <token>uninterupted</token>
+      </pattern>
+      <message>Did you mean "uninterrupted"?</message>
+      <short>uninterupted</short>
+    </rule>
+    <rule id="EN_SOFT_DEACTIVATE_MISS" name="deactive soft">
+      <pattern>
+        <token>deactive</token>
+      </pattern>
+      <message>Did you mean "deactivate"?</message>
+      <short>deactive</short>
+    </rule>
+    <rule id="EN_SOFT_DEPENDS_MISS" name="dependends soft">
+      <pattern>
+        <token>dependends</token>
+      </pattern>
+      <message>Did you mean "depends"?</message>
+      <short>dependends</short>
+    </rule>
+    <rule id="EN_SOFT_DISSATISFIED_MISS" name="disatisfied soft">
+      <pattern>
+        <token>disatisfied</token>
+      </pattern>
+      <message>Did you mean "dissatisfied"?</message>
+      <short>disatisfied</short>
+    </rule>
+    <rule id="EN_SOFT_EMBARRASS_MISS2" name="embaras soft">
+      <pattern>
+        <token>embaras</token>
+      </pattern>
+      <message>Did you mean "embarrass"?</message>
+      <short>embaras</short>
+    </rule>
+    <rule id="EN_SOFT_EMITTED_MISS" name="emited soft">
+      <pattern>
+        <token>emited</token>
+      </pattern>
+      <message>Did you mean "emitted"?</message>
+      <short>emited</short>
+    </rule>
+    <rule id="EN_SOFT_ENDEAVOURS_MISS" name="endevours soft">
+      <pattern>
+        <token>endevours</token>
+      </pattern>
+      <message>Did you mean "endeavours"?</message>
+      <short>endevours</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
