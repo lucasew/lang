@@ -29,15 +29,55 @@ func DetectLanguageHeuristic(text string) string {
 	if hasCyr {
 		return "ru"
 	}
+	// Greek
+	for _, r := range text {
+		if r >= 0x0370 && r <= 0x03FF {
+			return "el"
+		}
+	}
+	// Arabic / Persian script
+	for _, r := range text {
+		if r >= 0x0600 && r <= 0x06FF {
+			if strings.ContainsAny(text, "پچژگ") {
+				return "fa"
+			}
+			return "ar"
+		}
+	}
+	// CJK
+	for _, r := range text {
+		if r >= 0x3040 && r <= 0x30FF {
+			return "ja"
+		}
+		if r >= 0x4E00 && r <= 0x9FFF {
+			return "zh"
+		}
+	}
 	// German umlauts / ß
 	if strings.ContainsAny(text, "äöüÄÖÜß") {
 		return "de"
 	}
+	// Spanish soft markers
+	if strings.ContainsAny(text, "ñ¿¡") ||
+		(strings.Contains(lower, " que ") && (strings.Contains(lower, " el ") || strings.Contains(lower, " la "))) {
+		return "es"
+	}
+	// Portuguese soft markers
+	if strings.ContainsAny(text, "ãõ") || strings.Contains(lower, " não ") || strings.Contains(lower, " uma ") {
+		return "pt"
+	}
+	// Italian soft markers
+	if strings.Contains(lower, " che ") && (strings.Contains(lower, " non ") || strings.Contains(lower, " per ")) {
+		return "it"
+	}
+	// Polish soft markers
+	if strings.ContainsAny(text, "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ") {
+		return "pl"
+	}
 	// French accents common words
-	if strings.Contains(lower, " le ") || strings.Contains(lower, " la ") ||
-		strings.Contains(lower, "est ") || strings.ContainsAny(text, "éèàùç") {
-		// weak FR signal
-		if countLetters(text) > 10 {
+	if strings.ContainsAny(text, "éèàùç") ||
+		(strings.Contains(lower, " le ") && strings.Contains(lower, " est ")) {
+		if countLetters(text) > 8 {
 			return "fr"
 		}
 	}

@@ -39,6 +39,7 @@ Options:
   --list                   list languages
   --list-rules             list registered rule IDs for -l language
   --data-dir DIR           soft data root (grammar + false-friends soft files)
+  --fail-on LEVEL          lint/sarif fail threshold: error|warning|note (default error)
   --doctor                 environment / self-check diagnostics
   --version                print version
   -h, --help               this help

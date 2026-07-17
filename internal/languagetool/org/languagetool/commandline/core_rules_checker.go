@@ -144,8 +144,8 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 				en.RegisterPickyEnglishRules(lt)
 			}
 		}
-		// optional soft grammar directory (e.g. testdata/grammar)
-		if dir := resolveGrammarDir(opts); dir != "" {
+		// optional soft grammar directory (e.g. testdata/grammar) with walk-up discovery
+		if dir := DiscoverGrammarDir(opts); dir != "" {
 			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
 		}
 		if os.Getenv("LANG_DEMO_SPELLER") == "1" {
@@ -167,7 +167,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		}
 		ffFile := opts.FalseFriendsFile
 		if ffFile == "" && opts.MotherTongue != "" {
-			ffFile = resolveFalseFriendsFile(opts)
+			ffFile = DiscoverFalseFriendsFile(opts)
 		}
 		if ffFile != "" && opts.MotherTongue != "" {
 			if err := RegisterFalseFriends(lt, ffFile, lang, opts.MotherTongue); err != nil {
@@ -274,30 +274,21 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		lt.SetListUnknownWords(true)
 	}
 	// Soft ruleValues (e.g. TOO_LONG_SENTENCE:10) applied after the core pack check.
+	var checkerRun TextChecker = checker
 	if opts != nil && len(opts.GetRuleValues()) > 0 {
-		wrapped := &ruleValuesChecker{
+		checkerRun = &ruleValuesChecker{
 			inner:  checker,
 			lang:   lang,
 			values: opts.GetRuleValues(),
 		}
-		n, err := CheckTextOpts(w, text, wrapped, cto)
-		if err != nil {
-			return n, err
-		}
-		if opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF {
-			// return error-severity count for SPEC exit codes
-			ms, _ := wrapped.Check(text)
-			return countErrorSeverityMatches(ms), nil
-		}
-		return n, nil
 	}
-	n, err := CheckTextOpts(w, text, checker, cto)
+	n, err := CheckTextOpts(w, text, checkerRun, cto)
 	if err != nil {
 		return n, err
 	}
 	if opts != nil && (opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF) {
-		ms, _ := checker.Check(text)
-		return countErrorSeverityMatches(ms), nil
+		ms, _ := checkerRun.Check(text)
+		return countFailOnMatches(ms, opts.GetFailOn()), nil
 	}
 	return n, nil
 }
@@ -452,12 +443,12 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	_, _ = fmt.Fprintf(w, "version: %s\n", VersionString)
 	_, _ = fmt.Fprintf(w, "go: %s %s/%s\n", runtime.Version(), runtime.GOOS, runtime.GOARCH)
 	_, _ = fmt.Fprintf(w, "corepack languages: %d\n", len(corepack.Supported))
-	gdir := resolveGrammarDir(opts)
+	gdir := DiscoverGrammarDir(opts)
 	if gdir == "" {
 		gdir = "(unset)"
 	}
 	_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
-	ff := resolveFalseFriendsFile(opts)
+	ff := DiscoverFalseFriendsFile(opts)
 	if ff == "" {
 		ff = "(unset)"
 	}

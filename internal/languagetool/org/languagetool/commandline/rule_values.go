@@ -77,8 +77,27 @@ func applyCLIRuleValues(lang, text string, existing []*rules.RuleMatch, raw []st
 	return append(out, extra...)
 }
 
-// countErrorSeverityMatches counts matches whose SoftRuleMeta issue type maps to SARIF error.
-func countErrorSeverityMatches(matches []*rules.RuleMatch) int {
+// severityRank maps SARIF levels for --fail-on comparisons (higher = worse).
+func severityRank(sev string) int {
+	switch strings.ToLower(strings.TrimSpace(sev)) {
+	case "error":
+		return 3
+	case "warning":
+		return 2
+	case "note":
+		return 1
+	default:
+		return 0
+	}
+}
+
+// countFailOnMatches counts matches at or above the fail-on severity threshold.
+// failOn is error|warning|note (default error).
+func countFailOnMatches(matches []*rules.RuleMatch, failOn string) int {
+	threshold := severityRank(failOn)
+	if threshold == 0 {
+		threshold = severityRank("error")
+	}
 	n := 0
 	for _, m := range matches {
 		if m == nil {
@@ -86,9 +105,15 @@ func countErrorSeverityMatches(matches []*rules.RuleMatch) int {
 		}
 		id := ruleIDOfMatch(m)
 		_, _, issue, _ := languagetool.SoftRuleMeta(id)
-		if languagetool.SeverityFromIssueType(issue) == "error" {
+		sev := languagetool.SeverityFromIssueType(issue)
+		if severityRank(sev) >= threshold {
 			n++
 		}
 	}
 	return n
+}
+
+// countErrorSeverityMatches counts matches whose SoftRuleMeta issue type maps to SARIF error.
+func countErrorSeverityMatches(matches []*rules.RuleMatch) int {
+	return countFailOnMatches(matches, "error")
 }

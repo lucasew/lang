@@ -54,6 +54,8 @@ type CommandLineOptions struct {
 	FalseFriendsFile              string
 	// DataDir soft data root (grammar soft XML, false-friends soft file).
 	DataDir                       string
+	// FailOn is soft severity threshold for lint/sarif exit: error|warning|note (SPEC §2.2 optional).
+	FailOn                        string
 }
 
 func NewCommandLineOptions() *CommandLineOptions {
@@ -69,11 +71,18 @@ func (o *CommandLineOptions) SetPrintLanguages(v bool) { o.PrintLanguages = v }
 func (o *CommandLineOptions) SetPrintRules(v bool)     { o.PrintRules = v }
 func (o *CommandLineOptions) SetPrintDoctor(v bool)    { o.PrintDoctor = v }
 func (o *CommandLineOptions) SetDataDir(p string)      { o.DataDir = p }
+func (o *CommandLineOptions) SetFailOn(s string)       { o.FailOn = s }
 func (o *CommandLineOptions) GetDataDir() string {
 	if o == nil {
 		return ""
 	}
 	return o.DataDir
+}
+func (o *CommandLineOptions) GetFailOn() string {
+	if o == nil || o.FailOn == "" {
+		return "error"
+	}
+	return o.FailOn
 }
 func (o *CommandLineOptions) SetVerbose(v bool)        { o.Verbose = v }
 func (o *CommandLineOptions) SetRecursive(v bool)      { o.Recursive = v }

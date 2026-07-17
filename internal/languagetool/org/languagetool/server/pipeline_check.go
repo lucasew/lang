@@ -22,10 +22,8 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	}
 	lt := languagetool.NewJLanguageTool(lang)
 	corepack.Register(lt, lang)
-	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
+	if dir := softGrammarDirFromEnv(); dir != "" {
 		_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
-	} else if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		_, _ = patterns.RegisterSoftGrammarDir(lt, dir+"/grammar", lang)
 	}
 	// soft false friends when mother tongue is set
 	if mt := strings.TrimSpace(p.settings.MotherTongueCode); mt != "" {
@@ -80,6 +78,17 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	return lt
 }
 
+// softGrammarDirFromEnv resolves LANG_GRAMMAR_DIR, LANG_DATA_DIR/grammar, or walk-up testdata/grammar.
+func softGrammarDirFromEnv() string {
+	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
+		return dir
+	}
+	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		return dir + "/grammar"
+	}
+	return walkUpFind("testdata/grammar")
+}
+
 // softFalseFriendsPath resolves LANG_FALSEFRIENDS_FILE or a well-known testdata path.
 func softFalseFriendsPath() string {
 	if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
@@ -87,19 +96,40 @@ func softFalseFriendsPath() string {
 			return p
 		}
 	}
-	// walk up from cwd for testdata/false-friends-soft.xml (tests/dev)
-	candidates := []string{
-		"testdata/false-friends-soft.xml",
-		"../testdata/false-friends-soft.xml",
-		"../../testdata/false-friends-soft.xml",
-		"../../../testdata/false-friends-soft.xml",
-		"../../../../testdata/false-friends-soft.xml",
-		"../../../../../testdata/false-friends-soft.xml",
-	}
-	for _, c := range candidates {
-		if _, err := os.Stat(c); err == nil {
-			return c
+	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		p := dir + "/false-friends-soft.xml"
+		if _, err := os.Stat(p); err == nil {
+			return p
 		}
+	}
+	return walkUpFind("testdata/false-friends-soft.xml")
+}
+
+func walkUpFind(rel string) string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	for i := 0; i < 12; i++ {
+		cand := dir + "/" + rel
+		if _, err := os.Stat(cand); err == nil {
+			return cand
+		}
+		parent := dir
+		// trim last segment
+		for j := len(dir) - 1; j >= 0; j-- {
+			if dir[j] == '/' {
+				parent = dir[:j]
+				if parent == "" {
+					parent = "/"
+				}
+				break
+			}
+		}
+		if parent == dir {
+			break
+		}
+		dir = parent
 	}
 	return ""
 }

@@ -33,6 +33,12 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			}
 			i++
 			opts.SetDataDir(args[i])
+		case "--fail-on", "--failon":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetFailOn(args[i])
 		case "-h", "-help", "--help", "--?":
 			opts.SetPrintUsage(true)
 		case "-adl", "--autoDetect":
