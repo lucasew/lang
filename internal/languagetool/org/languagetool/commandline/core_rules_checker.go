@@ -9,6 +9,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -169,6 +170,16 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 	checker := NewCoreRulesChecker(lang)
 	lt := checker.lt
 	if opts != nil {
+		// soft picky level for English
+		if strings.EqualFold(opts.Level, "PICKY") {
+			base := lang
+			if i := strings.IndexByte(lang, '-'); i > 0 {
+				base = lang[:i]
+			}
+			if strings.EqualFold(base, "en") {
+				en.RegisterPickyEnglishRules(lt)
+			}
+		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
 				return nil, err

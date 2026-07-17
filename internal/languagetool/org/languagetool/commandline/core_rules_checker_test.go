@@ -165,3 +165,13 @@ func TestCoreRulesChecker_CleanOverlaps(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, ms)
 }
+
+func TestCoreCheckHook_PickyLevel(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--level", "picky", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "I have alot of work.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.Equal(t, 2, code, errb.String())
+	require.Contains(t, out.String(), "EN_A_LOT")
+}
