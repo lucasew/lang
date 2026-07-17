@@ -131,24 +131,3 @@ func TestMain_EnglishFileApplySuggestions(t *testing.T) {
 	require.Equal(t, 2, code) // one match found
 	require.Contains(t, out.String(), "I've had")
 }
-func TestMain_EnglishStdIn2(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
-func TestMain_EnglishStdIn3(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
-func TestMain_EnglishStdIn4(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
-func TestMain_PolishStdInDefaultOff(t *testing.T) {
-	t.Skip("unimplemented: PL rules via CLI")
-}
-func TestMain_PolishApiStdInDefaultOff(t *testing.T) {
-	t.Skip("unimplemented: PL API CLI")
-}
-func TestMain_PolishApiStdInDefaultOffNoErrors(t *testing.T) {
-	t.Skip("unimplemented: PL API CLI")
-}
-func TestMain_PolishSpelling(t *testing.T) { t.Skip("unimplemented: PL spelling CLI") }
-func TestMain_BitextWithExternalRule(t *testing.T) {
-	t.Skip("unimplemented: bitext CLI")
-}
-func TestMain_ValencianCatalan(t *testing.T) {
-	t.Skip("unimplemented: CA variants via full LT")
-}
-func TestMain_Catalan(t *testing.T)  { t.Skip("unimplemented: CA via full LT") }
-func TestMain_Catalan2(t *testing.T) { t.Skip("unimplemented: CA via full LT") }

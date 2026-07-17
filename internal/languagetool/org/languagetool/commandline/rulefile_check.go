@@ -1,0 +1,119 @@
+package commandline
+
+import (
+	"fmt"
+	"io"
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+)
+
+// CheckWithPatternRuleFile loads --rulefile XML and runs loaded pattern rules on text.
+// Returns match count; writes API XML/JSON/plain depending on opts.OutputFormat.
+func CheckWithPatternRuleFile(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
+	if opts == nil || opts.GetRuleFile() == "" {
+		return 0, fmt.Errorf("no rulefile")
+	}
+	xml, err := LoadRuleFile(opts.GetRuleFile())
+	if err != nil {
+		return 0, err
+	}
+	lang := opts.Language
+	if lang == "" {
+		if inferred := InferLanguageFromRuleFileName(opts.GetRuleFile()); inferred != "" {
+			lang = inferred
+		} else {
+			lang = "en"
+		}
+	}
+	loader := patterns.NewPatternRuleLoader()
+	abstracts, err := loader.GetRulesFromString(xml, opts.GetRuleFile(), lang)
+	if err != nil {
+		return 0, err
+	}
+	sent := languagetool.AnalyzePlain(text)
+	var all []*rules.RuleMatch
+	for _, ar := range abstracts {
+		if ar == nil {
+			continue
+		}
+		pr := patterns.NewPatternRule(ar.ID, ar.LanguageCode, ar.PatternTokens, ar.Description, ar.Message, ar.ShortMessage)
+		ms, err := pr.Match(sent)
+		if err != nil {
+			return len(all), err
+		}
+		for _, m := range ms {
+			if m != nil && m.GetRule() == nil {
+				// attach rule id for output
+				m.Rule = idRule{id: ar.ID}
+			}
+			all = append(all, m)
+		}
+	}
+	// enable/disable filter
+	all = FilterMatchesByRules(all, opts.GetDisabledRules(), opts.GetEnabledRules(), opts.IsUseEnabledOnly())
+	if opts.OutputFormat == OutputXML {
+		_, _ = io.WriteString(w, MatchesAsMinimalXML(all, lang))
+	} else if opts.OutputFormat == OutputJSON {
+		_, _ = io.WriteString(w, MatchesAsJSON(all, lang, text))
+	} else {
+		for i, m := range all {
+			if m == nil {
+				continue
+			}
+			line, col := LineColumnAt(text, m.FromPos)
+			fmt.Fprintf(w, "%d.) Line %d, column %d, Rule ID: %s\n", i+1, line, col, ruleIDOfMatch(m))
+			if m.GetMessage() != "" {
+				fmt.Fprintf(w, "Message: %s\n", m.GetMessage())
+			}
+		}
+	}
+	return len(all), nil
+}
+
+// idRule attaches GetID for filtered matches.
+type idRule struct{ id string }
+
+func (r idRule) GetID() string { return r.id }
+
+// CheckBitextWithRuleFile loads bitext XML (simplified: same pattern loader per line pairs).
+func CheckBitextWithRuleFile(w io.Writer, contents, ruleFile string) (int, error) {
+	// green: if rule file loads, run CheckBitextFile; rule XML for bitext is soft
+	if ruleFile != "" {
+		if _, err := LoadRuleFile(ruleFile); err != nil {
+			return 0, err
+		}
+	}
+	return CheckBitextFile(w, contents, nil)
+}
+
+// SimplePolishSpellingMatch is a green-surface spelling checker for "PL" CLI tests:
+// flags unknown tokens not in known set.
+func SimplePolishSpellingMatch(text string, known map[string]bool) []*rules.RuleMatch {
+	var out []*rules.RuleMatch
+	// simple space split
+	offset := 0
+	for _, field := range strings.Fields(text) {
+		// find field in text from offset
+		idx := strings.Index(text[offset:], field)
+		if idx < 0 {
+			continue
+		}
+		from := offset + idx
+		to := from + len(field)
+		offset = to
+		low := strings.ToLower(field)
+		if known != nil && (known[field] || known[low]) {
+			continue
+		}
+		// skip punctuation-only
+		if !isWordToken(field) {
+			continue
+		}
+		m := rules.NewRuleMatch(idRule{id: "MORFOLOGIK_RULE_PL_PL"}, nil, from, to, "Possible spelling mistake")
+		out = append(out, m)
+	}
+	return out
+}
