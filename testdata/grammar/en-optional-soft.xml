@@ -209,5 +209,26 @@
       <message>Consider "because".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_AT_THE_END_OF_THE_DAY_OPT" name="at the end of the day soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>the</token>
+        <token>end</token>
+        <token>of</token>
+        <token>the</token>
+        <token>day</token>
+      </pattern>
+      <message>Consider "ultimately" or "in the end".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_NEEDLESS_TO_SAY" name="needless to say soft optional" default="off">
+      <pattern>
+        <token>needless</token>
+        <token>to</token>
+        <token>say</token>
+      </pattern>
+      <message>Often filler; omit or state the point directly.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

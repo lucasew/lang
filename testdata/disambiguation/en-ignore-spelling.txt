@@ -134,3 +134,12 @@ Workers
 Vercel
 Netlify
 Supabase
+Playwright
+Cypress
+Jest
+Vitest
+pytest
+golangci
+goreleaser
+mise
+direnv

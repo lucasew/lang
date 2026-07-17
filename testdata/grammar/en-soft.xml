@@ -2507,6 +2507,76 @@
       <message>Did you mean "possession"?</message>
       <short>posession</short>
     </rule>
+    <rule id="EN_SOFT_RECEIVED_MISS" name="recieved soft">
+      <pattern>
+        <token>recieved</token>
+      </pattern>
+      <message>Did you mean "received"?</message>
+      <short>recieved</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATELY_MISS" name="seperately soft">
+      <pattern>
+        <token>seperately</token>
+      </pattern>
+      <message>Did you mean "separately"?</message>
+      <short>seperately</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSFUL_MISS" name="successfull soft">
+      <pattern>
+        <token>successfull</token>
+      </pattern>
+      <message>Did you mean "successful"?</message>
+      <short>successfull</short>
+    </rule>
+    <rule id="EN_SOFT_TOMORROW_MISS" name="tommorow soft">
+      <pattern>
+        <token>tommorow</token>
+      </pattern>
+      <message>Did you mean "tomorrow"?</message>
+      <short>tommorow</short>
+    </rule>
+    <rule id="EN_SOFT_TRANSFERRING_MISS" name="transfering soft">
+      <pattern>
+        <token>transfering</token>
+      </pattern>
+      <message>Did you mean "transferring"?</message>
+      <short>transfering</short>
+    </rule>
+    <rule id="EN_SOFT_WRITTEN_MISS" name="writen soft">
+      <pattern>
+        <token>writen</token>
+      </pattern>
+      <message>Did you mean "written"?</message>
+      <short>writen</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERRED_MISS" name="prefered soft">
+      <pattern>
+        <token>prefered</token>
+      </pattern>
+      <message>Did you mean "preferred"?</message>
+      <short>prefered</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERENCE_MISS" name="preferance soft">
+      <pattern>
+        <token>preferance</token>
+      </pattern>
+      <message>Did you mean "preference"?</message>
+      <short>preferance</short>
+    </rule>
+    <rule id="EN_SOFT_REFERRED_MISS" name="refered soft">
+      <pattern>
+        <token>refered</token>
+      </pattern>
+      <message>Did you mean "referred"?</message>
+      <short>refered</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURRENCE_MISS" name="occurance soft">
+      <pattern>
+        <token>occurance</token>
+      </pattern>
+      <message>Did you mean "occurrence"?</message>
+      <short>occurance</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
