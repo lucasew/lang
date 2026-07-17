@@ -1029,5 +1029,31 @@
       <message>Jargon; consider "investigate thoroughly" or name the topic.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_INSIST_ON_HIGH_STANDARDS" name="insist on high standards soft picky">
+      <pattern>
+        <token>insist</token>
+        <token>on</token>
+        <token>high</token>
+        <token>standards</token>
+      </pattern>
+      <message>Leadership slogan; name the quality bar instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HAVE_BACKBONE" name="have backbone soft picky">
+      <pattern>
+        <token>have</token>
+        <token>backbone</token>
+      </pattern>
+      <message>Slogan; name the hard tradeoff instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DELIVER_RESULTS" name="deliver results soft picky">
+      <pattern>
+        <token>deliver</token>
+        <token>results</token>
+      </pattern>
+      <message>Vague slogan; name the outcome metrics instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

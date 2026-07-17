@@ -240,3 +240,6 @@ side by side	RB
 Frankfort Kentucky	NNP
 Indianapolis Indiana	NNP
 hand in hand	RB
+Charleston South Carolina	NNP
+Columbia Missouri	NNP
+face to face	RB

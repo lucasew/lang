@@ -1743,4 +1743,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_OPA" name="immunize opa">
+    <pattern>
+      <token>opa</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPA_CAPS" name="immunize OPA">
+    <pattern>
+      <token>OPA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSIGN" name="immunize cosign">
+    <pattern>
+      <token>cosign</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COSIGN_CAPS" name="immunize Cosign">
+    <pattern>
+      <token>Cosign</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SYFT" name="immunize syft">
+    <pattern>
+      <token>syft</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SYFT_CAPS" name="immunize Syft">
+    <pattern>
+      <token>Syft</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

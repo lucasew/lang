@@ -5027,6 +5027,76 @@
       <message>Did you mean "acquit"?</message>
       <short>aquit</short>
     </rule>
+    <rule id="EN_SOFT_DEFINITELY_MISS4" name="definetly soft">
+      <pattern>
+        <token>definetly</token>
+      </pattern>
+      <message>Did you mean "definitely"?</message>
+      <short>definetly</short>
+    </rule>
+    <rule id="EN_SOFT_CONSTANT_MISS" name="cosntant soft">
+      <pattern>
+        <token>cosntant</token>
+      </pattern>
+      <message>Did you mean "constant"?</message>
+      <short>cosntant</short>
+    </rule>
+    <rule id="EN_SOFT_CORRESPONDENCE_MISS2" name="correpondence soft">
+      <pattern>
+        <token>correpondence</token>
+      </pattern>
+      <message>Did you mean "correspondence"?</message>
+      <short>correpondence</short>
+    </rule>
+    <rule id="EN_SOFT_CONSTANTLY_MISS" name="cosntantly soft">
+      <pattern>
+        <token>cosntantly</token>
+      </pattern>
+      <message>Did you mean "constantly"?</message>
+      <short>cosntantly</short>
+    </rule>
+    <rule id="EN_SOFT_CONSTANTS_MISS" name="contsants soft">
+      <pattern>
+        <token>contsants</token>
+      </pattern>
+      <message>Did you mean "constants"?</message>
+      <short>contsants</short>
+    </rule>
+    <rule id="EN_SOFT_CANDIDATES_MISS" name="condidates soft">
+      <pattern>
+        <token>condidates</token>
+      </pattern>
+      <message>Did you mean "candidates"?</message>
+      <short>condidates</short>
+    </rule>
+    <rule id="EN_SOFT_COLLABORATION_MISS" name="collaberation soft">
+      <pattern>
+        <token>collaberation</token>
+      </pattern>
+      <message>Did you mean "collaboration"?</message>
+      <short>collaberation</short>
+    </rule>
+    <rule id="EN_SOFT_CONFIDENCE_MISS" name="confidance soft">
+      <pattern>
+        <token>confidance</token>
+      </pattern>
+      <message>Did you mean "confidence"?</message>
+      <short>confidance</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUOUS_MISS3" name="contineous soft">
+      <pattern>
+        <token>contineous</token>
+      </pattern>
+      <message>Did you mean "continuous"?</message>
+      <short>contineous</short>
+    </rule>
+    <rule id="EN_SOFT_CORPORATE_MISS" name="corperate soft">
+      <pattern>
+        <token>corperate</token>
+      </pattern>
+      <message>Did you mean "corporate"?</message>
+      <short>corperate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
