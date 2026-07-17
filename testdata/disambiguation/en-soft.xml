@@ -843,4 +843,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_JWT" name="immunize jwt">
+    <pattern>
+      <token>jwt</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JWT_CAPS" name="immunize JWT">
+    <pattern>
+      <token>JWT</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UUID" name="immunize uuid">
+    <pattern>
+      <token>uuid</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UUID_CAPS" name="immunize UUID">
+    <pattern>
+      <token>UUID</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K8S" name="immunize k8s">
+    <pattern>
+      <token>k8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K8S_CAPS" name="immunize K8s">
+    <pattern>
+      <token>K8s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

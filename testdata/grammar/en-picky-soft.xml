@@ -397,5 +397,30 @@
       <message>Consider "follow up" or "confirm completion".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_FAIL_FAST" name="fail fast soft picky">
+      <pattern>
+        <token>fail</token>
+        <token>fast</token>
+      </pattern>
+      <message>Buzzword; consider "detect errors early" or name the practice.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIFT_LEFT" name="shift left soft picky">
+      <pattern>
+        <token>shift</token>
+        <token>left</token>
+      </pattern>
+      <message>Jargon; consider "test earlier" or "move checks earlier".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUT_OF_POCKET" name="out of pocket soft picky">
+      <pattern>
+        <token>out</token>
+        <token>of</token>
+        <token>pocket</token>
+      </pattern>
+      <message>Ambiguous jargon; consider "unavailable" or "paying myself".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

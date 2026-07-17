@@ -3277,6 +3277,76 @@
       <message>Did you mean "roommate"?</message>
       <short>roomate</short>
     </rule>
+    <rule id="EN_SOFT_PUBLICLY_MISS" name="publically soft">
+      <pattern>
+        <token>publically</token>
+      </pattern>
+      <message>Did you mean "publicly"?</message>
+      <short>publically</short>
+    </rule>
+    <rule id="EN_SOFT_DILEMMA_MISS" name="dilemna soft">
+      <pattern>
+        <token>dilemna</token>
+      </pattern>
+      <message>Did you mean "dilemma"?</message>
+      <short>dilemna</short>
+    </rule>
+    <rule id="EN_SOFT_DESPERATE_MISS" name="desparate soft">
+      <pattern>
+        <token>desparate</token>
+      </pattern>
+      <message>Did you mean "desperate"?</message>
+      <short>desparate</short>
+    </rule>
+    <rule id="EN_SOFT_BELIEVED_MISS" name="beleived soft">
+      <pattern>
+        <token>beleived</token>
+      </pattern>
+      <message>Did you mean "believed"?</message>
+      <short>beleived</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVED_MISS" name="acheived soft">
+      <pattern>
+        <token>acheived</token>
+      </pattern>
+      <message>Did you mean "achieved"?</message>
+      <short>acheived</short>
+    </rule>
+    <rule id="EN_SOFT_MEDICINE_MISS" name="medecine soft">
+      <pattern>
+        <token>medecine</token>
+      </pattern>
+      <message>Did you mean "medicine"?</message>
+      <short>medecine</short>
+    </rule>
+    <rule id="EN_SOFT_NIECE_MISS" name="neice soft">
+      <pattern>
+        <token>neice</token>
+      </pattern>
+      <message>Did you mean "niece"?</message>
+      <short>neice</short>
+    </rule>
+    <rule id="EN_SOFT_OPPORTUNITY_MISS3" name="oppurtunity soft">
+      <pattern>
+        <token>oppurtunity</token>
+      </pattern>
+      <message>Did you mean "opportunity"?</message>
+      <short>oppurtunity</short>
+    </rule>
+    <rule id="EN_SOFT_POTATOES_MISS" name="potatos soft">
+      <pattern>
+        <token>potatos</token>
+      </pattern>
+      <message>Did you mean "potatoes"?</message>
+      <short>potatos</short>
+    </rule>
+    <rule id="EN_SOFT_YIELD_MISS" name="yeild soft">
+      <pattern>
+        <token>yeild</token>
+      </pattern>
+      <message>Did you mean "yield"?</message>
+      <short>yeild</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

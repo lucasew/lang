@@ -165,3 +165,6 @@ Portland Oregon	NNP
 Virginia Beach	NNP
 Colorado Springs	NNP
 in the near term	RB
+Phoenix Arizona	NNP
+Seattle Washington	NNP
+at this juncture	RB
