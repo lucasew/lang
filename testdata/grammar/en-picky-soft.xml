@@ -1357,5 +1357,33 @@
       <message>Jargon; name the knowledge-sharing risk instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CHAOS_ENGINEERING" name="chaos engineering soft picky">
+      <pattern>
+        <token>chaos</token>
+        <token>engineering</token>
+      </pattern>
+      <message>Jargon; name the failure-injection experiment instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEAN_TIME_TO_RECOVER" name="mean time to recover soft picky">
+      <pattern>
+        <token>mean</token>
+        <token>time</token>
+        <token>to</token>
+        <token>recover</token>
+      </pattern>
+      <message>Jargon; name the recovery metric (MTTR) concretely.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEAN_TIME_TO_DETECT" name="mean time to detect soft picky">
+      <pattern>
+        <token>mean</token>
+        <token>time</token>
+        <token>to</token>
+        <token>detect</token>
+      </pattern>
+      <message>Jargon; name the detection metric (MTTD) concretely.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

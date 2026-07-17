@@ -279,3 +279,6 @@ north to south	RB
 Kansas City Missouri	NNP
 east to west	RB
 out of band	RB
+San Antonio Texas	NNP
+New Orleans Louisiana	NNP
+up to date	JJ

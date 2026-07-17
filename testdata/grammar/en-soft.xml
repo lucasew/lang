@@ -5937,6 +5937,76 @@
       <message>Did you mean "imitation"?</message>
       <short>immitation</short>
     </rule>
+    <rule id="EN_SOFT_INITIAL_MISS" name="inital soft">
+      <pattern>
+        <token>inital</token>
+      </pattern>
+      <message>Did you mean "initial"?</message>
+      <short>inital</short>
+    </rule>
+    <rule id="EN_SOFT_INITIALIZE_MISS" name="initalize soft">
+      <pattern>
+        <token>initalize</token>
+      </pattern>
+      <message>Did you mean "initialize"?</message>
+      <short>initalize</short>
+    </rule>
+    <rule id="EN_SOFT_INNOVATION_MISS" name="inovation soft">
+      <pattern>
+        <token>inovation</token>
+      </pattern>
+      <message>Did you mean "innovation"?</message>
+      <short>inovation</short>
+    </rule>
+    <rule id="EN_SOFT_INNOVATIVE_MISS" name="inovative soft">
+      <pattern>
+        <token>inovative</token>
+      </pattern>
+      <message>Did you mean "innovative"?</message>
+      <short>inovative</short>
+    </rule>
+    <rule id="EN_SOFT_INSTALLATION_MISS" name="instalation soft">
+      <pattern>
+        <token>instalation</token>
+      </pattern>
+      <message>Did you mean "installation"?</message>
+      <short>instalation</short>
+    </rule>
+    <rule id="EN_SOFT_INQUIRY_MISS" name="inquiery soft">
+      <pattern>
+        <token>inquiery</token>
+      </pattern>
+      <message>Did you mean "inquiry"?</message>
+      <short>inquiery</short>
+    </rule>
+    <rule id="EN_SOFT_INFORMED_MISS" name="infromed soft">
+      <pattern>
+        <token>infromed</token>
+      </pattern>
+      <message>Did you mean "informed"?</message>
+      <short>infromed</short>
+    </rule>
+    <rule id="EN_SOFT_IMITATED_MISS" name="immitated soft">
+      <pattern>
+        <token>immitated</token>
+      </pattern>
+      <message>Did you mean "imitated"?</message>
+      <short>immitated</short>
+    </rule>
+    <rule id="EN_SOFT_INFLAMMATORY_MISS" name="inflamatory soft">
+      <pattern>
+        <token>inflamatory</token>
+      </pattern>
+      <message>Did you mean "inflammatory"?</message>
+      <short>inflamatory</short>
+    </rule>
+    <rule id="EN_SOFT_FOREIGNERS_MISS" name="foriegners soft">
+      <pattern>
+        <token>foriegners</token>
+      </pattern>
+      <message>Did you mean "foreigners"?</message>
+      <short>foriegners</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

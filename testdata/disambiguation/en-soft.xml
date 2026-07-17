@@ -2211,4 +2211,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CEPH" name="immunize ceph">
+    <pattern>
+      <token>ceph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPH_CAPS" name="immunize Ceph">
+    <pattern>
+      <token>Ceph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINSTOR" name="immunize linstor">
+    <pattern>
+      <token>linstor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINSTOR_CAPS" name="immunize Linstor">
+    <pattern>
+      <token>Linstor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MAYASTOR" name="immunize mayastor">
+    <pattern>
+      <token>mayastor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MAYASTOR_CAPS" name="immunize Mayastor">
+    <pattern>
+      <token>Mayastor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
