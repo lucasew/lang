@@ -1599,4 +1599,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_FLUX" name="immunize flux">
+    <pattern>
+      <token>flux</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUX_CAPS" name="immunize Flux">
+    <pattern>
+      <token>Flux</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARGOCD" name="immunize argocd">
+    <pattern>
+      <token>argocd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARGOCD_CAPS" name="immunize ArgoCD">
+    <pattern>
+      <token>ArgoCD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELMFILE" name="immunize helmfile">
+    <pattern>
+      <token>helmfile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELMFILE_CAPS" name="immunize Helmfile">
+    <pattern>
+      <token>Helmfile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

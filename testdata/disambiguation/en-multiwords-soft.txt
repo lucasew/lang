@@ -228,3 +228,6 @@ now and then	RB
 Des Moines Iowa	NNP
 Jefferson City Missouri	NNP
 here and there	RB
+Little Rock Arkansas	NNP
+Baton Rouge Louisiana	NNP
+up and down	RB

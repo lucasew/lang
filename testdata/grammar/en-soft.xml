@@ -4747,6 +4747,76 @@
       <message>Did you mean "environments"?</message>
       <short>enviroments</short>
     </rule>
+    <rule id="EN_SOFT_BUSINESSLIKE_MISS" name="buisnesslike soft">
+      <pattern>
+        <token>buisnesslike</token>
+      </pattern>
+      <message>Did you mean "businesslike"?</message>
+      <short>buisnesslike</short>
+    </rule>
+    <rule id="EN_SOFT_CALENDARED_MISS" name="calendered soft">
+      <pattern>
+        <token>calendered</token>
+      </pattern>
+      <message>Did you mean "calendared"?</message>
+      <short>calendered</short>
+    </rule>
+    <rule id="EN_SOFT_EQUIPMENT_MISS3" name="equippment soft">
+      <pattern>
+        <token>equippment</token>
+      </pattern>
+      <message>Did you mean "equipment"?</message>
+      <short>equippment</short>
+    </rule>
+    <rule id="EN_SOFT_LENGTHS_MISS" name="lenghts soft">
+      <pattern>
+        <token>lenghts</token>
+      </pattern>
+      <message>Did you mean "lengths"?</message>
+      <short>lenghts</short>
+    </rule>
+    <rule id="EN_SOFT_LIAISONS_MISS" name="liasons soft">
+      <pattern>
+        <token>liasons</token>
+      </pattern>
+      <message>Did you mean "liaisons"?</message>
+      <short>liasons</short>
+    </rule>
+    <rule id="EN_SOFT_LIBRARIES_MISS" name="libaries soft">
+      <pattern>
+        <token>libaries</token>
+      </pattern>
+      <message>Did you mean "libraries"?</message>
+      <short>libaries</short>
+    </rule>
+    <rule id="EN_SOFT_ABSENCE_MISS2" name="absance soft">
+      <pattern>
+        <token>absance</token>
+      </pattern>
+      <message>Did you mean "absence"?</message>
+      <short>absance</short>
+    </rule>
+    <rule id="EN_SOFT_ACCESSIBLE_MISS" name="accesible soft">
+      <pattern>
+        <token>accesible</token>
+      </pattern>
+      <message>Did you mean "accessible"?</message>
+      <short>accesible</short>
+    </rule>
+    <rule id="EN_SOFT_AGGRESSIVE_MISS" name="agressive soft">
+      <pattern>
+        <token>agressive</token>
+      </pattern>
+      <message>Did you mean "aggressive"?</message>
+      <short>agressive</short>
+    </rule>
+    <rule id="EN_SOFT_AMOUNT_MISS" name="ammount soft">
+      <pattern>
+        <token>ammount</token>
+      </pattern>
+      <message>Did you mean "amount"?</message>
+      <short>ammount</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

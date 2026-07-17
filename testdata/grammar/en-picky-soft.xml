@@ -932,5 +932,28 @@
       <message>Buzzword; name the ambitious goal concretely.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BLITZSCALING" name="blitzscaling soft picky">
+      <pattern>
+        <token>blitzscaling</token>
+      </pattern>
+      <message>Buzzword; name the growth strategy and tradeoffs.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TENX_ENGINEER" name="10x engineer soft picky">
+      <pattern>
+        <token>10x</token>
+        <token>engineer</token>
+      </pattern>
+      <message>Myth jargon; describe concrete skills or impact instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FAIL_FORWARD" name="fail forward soft picky">
+      <pattern>
+        <token>fail</token>
+        <token>forward</token>
+      </pattern>
+      <message>Buzzword; name the learning or recovery plan instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
