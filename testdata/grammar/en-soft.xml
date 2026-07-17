@@ -2437,6 +2437,76 @@
       <message>Did you mean "loneliness"?</message>
       <short>lonliness</short>
     </rule>
+    <rule id="EN_SOFT_MANUFACTURE_MISS" name="manufactur soft">
+      <pattern>
+        <token>manufactur</token>
+      </pattern>
+      <message>Did you mean "manufacture"?</message>
+      <short>manufactur</short>
+    </rule>
+    <rule id="EN_SOFT_MEDIEVAL_MISS" name="medevil soft">
+      <pattern>
+        <token>medevil</token>
+      </pattern>
+      <message>Did you mean "medieval"?</message>
+      <short>medevil</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOR_MISS" name="nieghbor soft">
+      <pattern>
+        <token>nieghbor</token>
+      </pattern>
+      <message>Did you mean "neighbor" or "neighbour"?</message>
+      <short>nieghbor</short>
+    </rule>
+    <rule id="EN_SOFT_OPPORTUNITY_MISS2" name="opurtunity soft">
+      <pattern>
+        <token>opurtunity</token>
+      </pattern>
+      <message>Did you mean "opportunity"?</message>
+      <short>opurtunity</short>
+    </rule>
+    <rule id="EN_SOFT_ORIGINAL_MISS" name="orignal soft">
+      <pattern>
+        <token>orignal</token>
+      </pattern>
+      <message>Did you mean "original"?</message>
+      <short>orignal</short>
+    </rule>
+    <rule id="EN_SOFT_PARALLEL_MISS" name="paralel soft">
+      <pattern>
+        <token>paralel</token>
+      </pattern>
+      <message>Did you mean "parallel"?</message>
+      <short>paralel</short>
+    </rule>
+    <rule id="EN_SOFT_PARTICULAR_MISS" name="particuler soft">
+      <pattern>
+        <token>particuler</token>
+      </pattern>
+      <message>Did you mean "particular"?</message>
+      <short>particuler</short>
+    </rule>
+    <rule id="EN_SOFT_PERHAPS_MISS" name="perhpas soft">
+      <pattern>
+        <token>perhpas</token>
+      </pattern>
+      <message>Did you mean "perhaps"?</message>
+      <short>perhpas</short>
+    </rule>
+    <rule id="EN_SOFT_PERSONALLY_MISS" name="personaly soft">
+      <pattern>
+        <token>personaly</token>
+      </pattern>
+      <message>Did you mean "personally"?</message>
+      <short>personaly</short>
+    </rule>
+    <rule id="EN_SOFT_POSSESSION_MISS" name="posession soft">
+      <pattern>
+        <token>posession</token>
+      </pattern>
+      <message>Did you mean "possession"?</message>
+      <short>posession</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

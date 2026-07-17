@@ -178,5 +178,26 @@
       <message>In British English, "storey" is often preferred for floors of a building.</message>
       <short>story</short>
     </rule>
+    <rule id="EN_SOFT_FAVOR_GB" name="favor soft GB">
+      <pattern>
+        <token>favor</token>
+      </pattern>
+      <message>In British English, "favour" is preferred.</message>
+      <short>favor</short>
+    </rule>
+    <rule id="EN_SOFT_HONOR_GB" name="honor soft GB">
+      <pattern>
+        <token>honor</token>
+      </pattern>
+      <message>In British English, "honour" is preferred.</message>
+      <short>honor</short>
+    </rule>
+    <rule id="EN_SOFT_LABOR_VERB_GB" name="labor verb soft GB">
+      <pattern>
+        <token>labored</token>
+      </pattern>
+      <message>In British English, "laboured" is preferred.</message>
+      <short>labored</short>
+    </rule>
   </category>
 </rules>

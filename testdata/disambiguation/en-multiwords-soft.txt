@@ -105,38 +105,29 @@ in the nick of time	RB
 by no means	RB
 to some extent	RB
 Porto Alegre	NNP
-San Diego	NNP
-San Antonio	NNP
-Sao Paulo	NNP
 São Paulo	NNP
-Mexico City	NNP
-Tel Aviv	NNP
 Abu Dhabi	NNP
 Kuala Lumpur	NNP
-in spite of	RB
 on top of	RB
-with regard to	RB
-in accordance with	RB
-as far as	RB
 so far as	RB
 to a large extent	RB
-for the most part	RB
 in the first place	RB
 at face value	RB
-out of the blue	RB
-once in a while	RB
 Cape Cod	NNP
 Long Island	NNP
 Rhode Island	NNP
-Puerto Rico	NNP
 Hong Kong Island	NNP
 in due course	RB
-in any case	RB
-at any rate	RB
-for the time being	RB
-in the long run	RB
 in the short run	RB
 to a certain extent	RB
-as a matter of fact	RB
-by and large	RB
 more or less	RB
+Nova Scotia	NNP
+Prince Edward Island	NNP
+Newfoundland and Labrador	NNP
+for good measure	RB
+on second thought	RB
+at a glance	RB
+in a nutshell	RB
+for what it is worth	RB
+to make a long story short	RB
+as luck would have it	RB
