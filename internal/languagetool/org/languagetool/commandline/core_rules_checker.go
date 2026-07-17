@@ -180,6 +180,10 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 				en.RegisterPickyEnglishRules(lt)
 			}
 		}
+		// optional soft grammar directory (e.g. testdata/grammar)
+		if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
+			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
+		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
 				return nil, err

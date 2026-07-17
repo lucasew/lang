@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"runtime"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -174,4 +176,25 @@ func TestCoreCheckHook_PickyLevel(t *testing.T) {
 	}, &out, &errb)
 	require.Equal(t, 2, code, errb.String())
 	require.Contains(t, out.String(), "EN_A_LOT")
+}
+
+func TestCoreCheckHook_GrammarDir(t *testing.T) {
+	// module-relative testdata path
+	dir := filepath.Join("..", "..", "..", "..", "..", "testdata", "grammar")
+	// resolve from commandline package: internal/languagetool/org/languagetool/commandline = 5 ups
+	t.Setenv("LANG_GRAMMAR_DIR", filepath.Clean(filepath.Join("testdata", "grammar")))
+	// From package dir during test, cwd is package dir — use absolute from runtime
+	_, file, _, _ := runtime.Caller(0)
+	// commandline → languagetool → org → languagetool → internal → module root (5)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../.."))
+	t.Setenv("LANG_GRAMMAR_DIR", filepath.Join(root, "testdata", "grammar"))
+
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Well, your welcome to try.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.Equal(t, 2, code, errb.String()+" cwd grammar: "+os.Getenv("LANG_GRAMMAR_DIR"))
+	require.Contains(t, out.String(), "EN_SOFT_YOUR_YOU_RE")
+	_ = dir
 }

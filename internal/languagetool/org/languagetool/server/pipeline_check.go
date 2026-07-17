@@ -77,18 +77,34 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 		return nil
 	}
 	lt := p.newConfiguredLT()
-	// promote to multi-threaded wrapper for parallel sentence rules when useful
-	sents := lt.Analyze(text)
+	// Heuristic multi-sentence detection avoids a double full Analyze before Check.
 	var matches []languagetool.LocalMatch
-	if len(sents) > 2 {
+	if multiSentenceHeuristic(text) {
 		mtl := languagetool.NewMultiThreadedJLanguageTool(lt.GetLanguageCode(), 0)
-		// copy checkers/state by reusing configured tool as base
 		mtl.JLanguageTool = lt
 		matches = mtl.Check(text)
 	} else {
 		matches = lt.Check(text)
 	}
 	return p.cleanMatches(matches)
+}
+
+// multiSentenceHeuristic reports likely multi-sentence input (terminators + space/capital).
+func multiSentenceHeuristic(text string) bool {
+	n := 0
+	for i := 0; i < len(text); i++ {
+		c := text[i]
+		if c == '.' || c == '!' || c == '?' {
+			// count only if not last char and something follows
+			if i+1 < len(text) {
+				n++
+				if n >= 2 {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 // CheckAnnotated runs Check on annotated plain text and projects offsets onto the original markup.

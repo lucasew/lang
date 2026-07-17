@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="en">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="EN_SOFT_YOUR_YOU_RE" name="your/you're">
+      <pattern>
+        <token>your</token>
+        <token>welcome</token>
+      </pattern>
+      <message>Did you mean "you're welcome"?</message>
+      <short>your/you're</short>
+    </rule>
+    <rule id="EN_SOFT_ITS_IT_S" name="its/it's">
+      <pattern>
+        <token>its</token>
+        <token>a</token>
+      </pattern>
+      <message>Did you mean "it's a"?</message>
+      <short>its/it's</short>
+    </rule>
+  </category>
+</rules>

@@ -1,5 +1,10 @@
 package server
 
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+)
+
 // GRPCServer ports org.languagetool.server.GRPCServer process/analyze surface
 // without generated protobuf stubs (wire deferred).
 type GRPCServer struct {
@@ -22,31 +27,30 @@ func (g *GRPCServer) InitPool(cfg *HTTPServerConfig) {
 
 // ProcessingOptions is a proto-free stand-in for MLServerProto.ProcessingOptions.
 type ProcessingOptions struct {
-	Language     string
-	EnabledRules []string
+	Language      string
+	EnabledRules  []string
 	DisabledRules []string
-	EnabledOnly  bool
-	Premium      bool
-	TempOff      bool
-	Level        string
+	EnabledOnly   bool
+	Premium       bool
+	TempOff       bool
+	Level         string
 }
 
 // BuildSettings maps processing options to a PipelineSettings key.
 func (g *GRPCServer) BuildSettings(opt ProcessingOptions) PipelineSettings {
 	q := QueryParams{
-		EnabledRules:     opt.EnabledRules,
-		DisabledRules:    opt.DisabledRules,
-		UseEnabledOnly:   opt.EnabledOnly,
-		UseQuerySettings: true,
-		Premium:          opt.Premium,
+		EnabledRules:       opt.EnabledRules,
+		DisabledRules:      opt.DisabledRules,
+		UseEnabledOnly:     opt.EnabledOnly,
+		UseQuerySettings:   true,
+		Premium:            opt.Premium,
 		EnableTempOffRules: opt.TempOff,
-		LanguageCode:     opt.Language,
+		LanguageCode:       opt.Language,
 	}
 	return NewPipelineSettingsFull(opt.Language, "", q, g.GlobalKey, g.UserConfig)
 }
 
-// Analyze borrows a pipeline for the language and returns whether it succeeded.
-// Full sentence analysis is deferred to CheckEngine wiring.
+// Analyze borrows a pipeline for the language and runs real Analyze + Check warm path.
 func (g *GRPCServer) Analyze(opt ProcessingOptions, text string) (lang string, tokenCount int, err error) {
 	if g == nil || g.Pool == nil {
 		return "", 0, NewUnavailableError("pool not initialized", nil)
@@ -57,14 +61,28 @@ func (g *GRPCServer) Analyze(opt ProcessingOptions, text string) (lang string, t
 		return "", 0, err
 	}
 	defer g.Pool.Return(settings, pl)
-	// Placeholder: count whitespace-separated tokens
+	lang = opt.Language
+	if lang == "" {
+		lang = "en"
+	}
+	lt := languagetool.NewJLanguageTool(lang)
+	corepack.Register(lt, lang)
+	sents := lt.Analyze(text)
 	n := 0
-	for _, f := range splitFields(text) {
-		if f != "" {
+	for _, s := range sents {
+		if s == nil {
+			continue
+		}
+		for _, tok := range s.GetTokensWithoutWhitespace() {
+			if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+				continue
+			}
 			n++
 		}
 	}
-	return opt.Language, n, nil
+	// soft: also run check engine to warm path (discard matches)
+	_ = pl.Check(text)
+	return lang, n, nil
 }
 
 func splitFields(s string) []string {
