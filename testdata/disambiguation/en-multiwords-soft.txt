@@ -630,3 +630,6 @@ Tephrite Mesa RegionNNP
 Basanite Mesa RegionNNP
 Nephelinite Mesa RegionNNP
 Foidite Mesa RegionNNP
+Picrite Mesa RegionNNP
+Harzburgite Mesa RegionNNP
+Lherzolite Mesa RegionNNP

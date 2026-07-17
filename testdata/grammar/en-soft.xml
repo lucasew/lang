@@ -14127,6 +14127,76 @@
       <message>Did you mean "recordexception"?</message>
       <short>recordexceptionn</short>
     </rule>
+    <rule id="EN_SOFT_ADDLINK_MISS" name="addlinkk soft">
+      <pattern>
+        <token>addlinkk</token>
+      </pattern>
+      <message>Did you mean "addlink"?</message>
+      <short>addlinkk</short>
+    </rule>
+    <rule id="EN_SOFT_ADDEVENT_MISS" name="addeventt soft">
+      <pattern>
+        <token>addeventt</token>
+      </pattern>
+      <message>Did you mean "addevent"?</message>
+      <short>addeventt</short>
+    </rule>
+    <rule id="EN_SOFT_SETSTATUS_MISS" name="setstatuss soft">
+      <pattern>
+        <token>setstatuss</token>
+      </pattern>
+      <message>Did you mean "setstatus"?</message>
+      <short>setstatuss</short>
+    </rule>
+    <rule id="EN_SOFT_SETATTRIBUTE_MISS" name="setattributee soft">
+      <pattern>
+        <token>setattributee</token>
+      </pattern>
+      <message>Did you mean "setattribute"?</message>
+      <short>setattributee</short>
+    </rule>
+    <rule id="EN_SOFT_GETATTRIBUTE_MISS" name="getattributee soft">
+      <pattern>
+        <token>getattributee</token>
+      </pattern>
+      <message>Did you mean "getattribute"?</message>
+      <short>getattributee</short>
+    </rule>
+    <rule id="EN_SOFT_UPDATENAME_MISS" name="updatenamee soft">
+      <pattern>
+        <token>updatenamee</token>
+      </pattern>
+      <message>Did you mean "updatename"?</message>
+      <short>updatenamee</short>
+    </rule>
+    <rule id="EN_SOFT_ISRECORDING_MISS" name="isrecordingg soft">
+      <pattern>
+        <token>isrecordingg</token>
+      </pattern>
+      <message>Did you mean "isrecording"?</message>
+      <short>isrecordingg</short>
+    </rule>
+    <rule id="EN_SOFT_ENDSPAN_MISS" name="endspann soft">
+      <pattern>
+        <token>endspann</token>
+      </pattern>
+      <message>Did you mean "endspan"?</message>
+      <short>endspann</short>
+    </rule>
+    <rule id="EN_SOFT_STARTSPAN_MISS" name="startspann soft">
+      <pattern>
+        <token>startspann</token>
+      </pattern>
+      <message>Did you mean "startspan"?</message>
+      <short>startspann</short>
+    </rule>
+    <rule id="EN_SOFT_WITHSPAN_MISS" name="withspann soft">
+      <pattern>
+        <token>withspann</token>
+      </pattern>
+      <message>Did you mean "withspan"?</message>
+      <short>withspann</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

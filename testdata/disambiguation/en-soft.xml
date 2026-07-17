@@ -6435,4 +6435,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CHAKRA" name="immunize chakra">
+    <pattern>
+      <token>chakra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHAKRA_CAPS" name="immunize Chakra">
+    <pattern>
+      <token>Chakra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDSYSTEM" name="immunize styledsystem">
+    <pattern>
+      <token>styledsystem</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDSYSTEM_CAPS" name="immunize StyledSystem">
+    <pattern>
+      <token>StyledSystem</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARKUI" name="immunize parkui">
+    <pattern>
+      <token>parkui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PARKUI_CAPS" name="immunize ParkUI">
+    <pattern>
+      <token>ParkUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

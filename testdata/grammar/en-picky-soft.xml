@@ -4132,5 +4132,29 @@
       <message>Jargon; name organically acquired annual recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_INBOUND_ARR" name="inbound arr soft picky">
+      <pattern>
+        <token>inbound</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name inbound annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUTBOUND_ARR" name="outbound arr soft picky">
+      <pattern>
+        <token>outbound</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name outbound annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UPSELL_ARR" name="upsell arr soft picky">
+      <pattern>
+        <token>upsell</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from upsells instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
