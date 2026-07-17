@@ -24,3 +24,14 @@ LangChain
 LanguageTool
 xAI
 Grok
+VSCode
+WebAssembly
+Rustc
+npm
+pnpm
+yarn
+Homebrew
+NixOS
+systemd
+prometheus
+Grafana

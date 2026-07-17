@@ -153,6 +153,18 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			}
 			i++
 			opts.SetIgnoreWords(splitCSV(args[i]))
+		case "--ignore-spelling-file", "--ignoreSpellingFile":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetIgnoreSpellingFile(args[i])
+		case "--disambiguation-file", "--disambiguationFile":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetDisambiguationFile(args[i])
 		case "--json":
 			opts.SetOutputFormat(OutputJSON)
 		case "--xml":

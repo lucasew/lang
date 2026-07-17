@@ -3,6 +3,7 @@ package commandline
 import (
 	"bytes"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -44,4 +45,60 @@ func TestGolden_SoftXML_WillRunFilter(t *testing.T) {
 	// run should show VB (possibly only VB after filter)
 	require.Contains(t, s, "run/")
 	require.Contains(t, s, "VB")
+}
+
+func TestGolden_SoftXML_CanCanFilter(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" || DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("need en-soft.xml and english.dict")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "They can can fish.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	// second "can" filtered to VB
+	require.Contains(t, s, "can/")
+	require.Contains(t, s, "VB")
+}
+
+func TestGolden_ImmunizeAsapNoSpell(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft.xml not found")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Please reply asap thanks.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+	}
+}
+
+func TestParseOptions_DisambigPaths(t *testing.T) {
+	p := &CommandLineParser{}
+	opts, err := p.ParseOptions([]string{
+		"-l", "en",
+		"--ignore-spelling-file", "/tmp/ign.txt",
+		"--disambiguation-file", "/tmp/dis.xml",
+		"-",
+	})
+	require.NoError(t, err)
+	require.Equal(t, "/tmp/ign.txt", opts.GetIgnoreSpellingFile())
+	require.Equal(t, "/tmp/dis.xml", opts.GetDisambiguationFile())
+}
+
+func TestGolden_SoftMultiwords_SanFrancisco(t *testing.T) {
+	if DiscoverEnglishMultiwords(nil) == "" {
+		t.Skip("multiwords not found")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "I fly to San Francisco tomorrow.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	require.Contains(t, s, "San")
+	// multiword should attach NNP-family tags
+	require.True(t,
+		strings.Contains(s, "NNP") || strings.Contains(s, "B-N") || strings.Contains(s, "E-N") || strings.Contains(s, "B-NP"),
+		s,
+	)
 }

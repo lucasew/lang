@@ -36,4 +36,12 @@ func TestBuildLintArgs(t *testing.T) {
 	require.Contains(t, a, "-m")
 	require.Contains(t, a, "de")
 	require.NotContains(t, a, "--lint")
+
+	a = buildLintArgs(lintArgs{
+		lang: "en", ignoreSpellingFile: "/tmp/ign.txt", disambiguationFile: "/tmp/d.xml",
+	})
+	require.Contains(t, a, "--ignore-spelling-file")
+	require.Contains(t, a, "/tmp/ign.txt")
+	require.Contains(t, a, "--disambiguation-file")
+	require.Contains(t, a, "/tmp/d.xml")
 }

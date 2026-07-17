@@ -43,7 +43,7 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 		if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
 			continue
 		}
-		if tok.IsIgnoredBySpeller() {
+		if tok.IsIgnoredBySpeller() || tok.IsImmunized() {
 			continue
 		}
 		w := tok.GetToken()

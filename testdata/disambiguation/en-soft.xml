@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules>
-  <!-- Soft POS filter: after "will", keep only VB reading of "run" -->
+  <!-- Soft POS filter: after modal, keep VB on the following verb (last token only) -->
   <rule id="SOFT_WILL_RUN_VB" name="will run → VB">
     <pattern>
       <token>will</token>
@@ -8,17 +8,63 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
-  <!-- Soft replace: force NNP on LanguageTool brand token when capitalized form -->
+  <rule id="SOFT_WOULD_RUN_VB" name="would run → VB">
+    <pattern>
+      <token>would</token>
+      <token>run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_CAN_CAN_VB" name="can can → second VB">
+    <pattern>
+      <token>can</token>
+      <token>can</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_WILL_BOOK_VB" name="will book → VB">
+    <pattern>
+      <token>will</token>
+      <token>book</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MAY_BOOK_VB" name="may book → VB">
+    <pattern>
+      <token>may</token>
+      <token>book</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <!-- Soft replace: force NNP on LanguageTool brand token -->
   <rule id="SOFT_LANGUAGETOOL_NNP" name="LanguageTool → NNP">
     <pattern>
       <token>LanguageTool</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
-  <!-- Soft immunize: protect "as" in "as well" is multiword; immunize single "asap" -->
+  <!-- Soft immunize abbreviations / short forms (speller also skips immunized) -->
   <rule id="SOFT_IMMUNIZE_ASAP" name="immunize asap">
     <pattern>
       <token>asap</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FYI" name="immunize fyi">
+    <pattern>
+      <token>fyi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IMO" name="immunize imo">
+    <pattern>
+      <token>imo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TLDR" name="immunize tldr">
+    <pattern>
+      <token>tldr</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>

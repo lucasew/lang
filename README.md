@@ -71,6 +71,8 @@ go run ./cmd/lang-server -port 8081 -public
 | EN soft multiword disambiguator | MultiWordChunker on Analyze |
 | Soft EN XML disambiguation | `testdata/disambiguation/en-soft.xml` (filter/replace/immunize) |
 | Soft EN ignore-spelling list | `testdata/disambiguation/en-ignore-spelling.txt` |
+| Soft EN multiwords | `testdata/disambiguation/en-multiwords-soft.txt` |
+| CLI disambig data | `--ignore-spelling-file`, `--disambiguation-file` |
 | Demo EN speller (`LANG_DEMO_SPELLER=1` fallback) | map + edit-distance suggestions |
 | `--apply` suggestion rewrite | a/an, false friends, soft patterns |
 | `--ignore-words` CSV | suppress spelling matches |

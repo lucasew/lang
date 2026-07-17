@@ -19,6 +19,7 @@ func Execute() int {
 		lang, format, dataDir, failOn, mother, level string
 		disable, enable, ruleValues                  string
 		disableCats, enableCats, ignoreWords         string
+		ignoreSpellingFile, disambiguationFile       string
 		enabledOnly, recursive, applySugs            bool
 	)
 
@@ -33,7 +34,8 @@ func Execute() int {
 			runEngine(buildLintArgs(lintArgs{
 				lang: lang, format: format, dataDir: dataDir, failOn: failOn, mother: mother, level: level,
 				disable: disable, enable: enable, ruleValues: ruleValues, disableCats: disableCats, enableCats: enableCats,
-				ignoreWords: ignoreWords, enabledOnly: enabledOnly, recursive: recursive, apply: applySugs, files: args,
+				ignoreWords: ignoreWords, ignoreSpellingFile: ignoreSpellingFile, disambiguationFile: disambiguationFile,
+				enabledOnly: enabledOnly, recursive: recursive, apply: applySugs, files: args,
 			}))
 		},
 	}
@@ -56,6 +58,8 @@ func Execute() int {
 		c.Flags().StringVar(&disableCats, "disablecategories", "", "comma-separated disabled categories")
 		c.Flags().StringVar(&enableCats, "enablecategories", "", "comma-separated enabled categories")
 		c.Flags().StringVar(&ignoreWords, "ignore-words", "", "CSV surfaces to suppress spelling matches")
+		c.Flags().StringVar(&ignoreSpellingFile, "ignore-spelling-file", "", "soft EN ignore-spelling word list")
+		c.Flags().StringVar(&disambiguationFile, "disambiguation-file", "", "soft EN disambiguation XML")
 		c.Flags().BoolVarP(&applySugs, "apply", "a", false, "apply first suggestions and print corrected text")
 		c.Flags().BoolVar(&enabledOnly, "only", false, "only run rules listed in --enable")
 		c.Flags().BoolVarP(&recursive, "recursive", "r", false, "recurse into directories")
@@ -76,7 +80,8 @@ func Execute() int {
 			runEngine(buildLintArgs(lintArgs{
 				lang: lang, format: format, dataDir: dataDir, failOn: failOn, mother: mother, level: level,
 				disable: disable, enable: enable, ruleValues: ruleValues, disableCats: disableCats, enableCats: enableCats,
-				ignoreWords: ignoreWords, enabledOnly: enabledOnly, recursive: recursive, apply: applySugs, files: args,
+				ignoreWords: ignoreWords, ignoreSpellingFile: ignoreSpellingFile, disambiguationFile: disambiguationFile,
+				enabledOnly: enabledOnly, recursive: recursive, apply: applySugs, files: args,
 			}))
 		},
 	}
@@ -187,6 +192,7 @@ type lintArgs struct {
 	lang, format, dataDir, failOn, mother, level string
 	disable, enable, ruleValues                  string
 	disableCats, enableCats, ignoreWords         string
+	ignoreSpellingFile, disambiguationFile       string
 	enabledOnly, recursive, apply                bool
 	files                                        []string
 }
@@ -237,6 +243,12 @@ func buildLintArgs(p lintArgs) []string {
 	}
 	if p.ignoreWords != "" {
 		a = append(a, "--ignore-words", p.ignoreWords)
+	}
+	if p.ignoreSpellingFile != "" {
+		a = append(a, "--ignore-spelling-file", p.ignoreSpellingFile)
+	}
+	if p.disambiguationFile != "" {
+		a = append(a, "--disambiguation-file", p.disambiguationFile)
 	}
 	a = append(a, fileArgs(p.files)...)
 	return a

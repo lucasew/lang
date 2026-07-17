@@ -1,0 +1,9 @@
+# Soft EN multiwords (tab-separated phrase\tPOS) for MultiWordChunker
+San Francisco	NNP
+New Jersey	NNP
+South Korea	NNP
+Hong Kong	NNP
+Las Vegas	NNP
+in order	RB
+of course	RB
+at least	RB

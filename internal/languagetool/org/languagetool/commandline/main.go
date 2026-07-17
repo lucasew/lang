@@ -38,6 +38,8 @@ Options:
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML
   --ignore-words LIST      CSV surfaces to suppress spelling matches
+  --ignore-spelling-file F soft EN ignore-spelling word list (one form/line)
+  --disambiguation-file F  soft EN disambiguation XML
   --ruleValues LIST        soft RULE_ID:value pairs (e.g. TOO_LONG_SENTENCE:10)
   --autoDetect, -adl       detect language from text
   --list                   list languages

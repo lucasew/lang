@@ -56,6 +56,10 @@ type CommandLineOptions struct {
 	FalseFriendsFile              string
 	// IgnoreWords soft user-dictionary surfaces (suppress spelling matches).
 	IgnoreWords                   []string
+	// IgnoreSpellingFile soft path to EN ignore-spelling word list (one form per line).
+	IgnoreSpellingFile            string
+	// DisambiguationFile soft path to EN soft disambiguation XML.
+	DisambiguationFile            string
 	// DataDir soft data root (grammar soft XML, false-friends soft file).
 	DataDir                       string
 	// FailOn is soft severity threshold for lint/sarif exit: error|warning|note (SPEC §2.2 optional).
@@ -162,6 +166,28 @@ func (o *CommandLineOptions) GetIgnoreWords() []string {
 		return nil
 	}
 	return o.IgnoreWords
+}
+func (o *CommandLineOptions) SetIgnoreSpellingFile(p string) {
+	if o != nil {
+		o.IgnoreSpellingFile = p
+	}
+}
+func (o *CommandLineOptions) GetIgnoreSpellingFile() string {
+	if o == nil {
+		return ""
+	}
+	return o.IgnoreSpellingFile
+}
+func (o *CommandLineOptions) SetDisambiguationFile(p string) {
+	if o != nil {
+		o.DisambiguationFile = p
+	}
+}
+func (o *CommandLineOptions) GetDisambiguationFile() string {
+	if o == nil {
+		return ""
+	}
+	return o.DisambiguationFile
 }
 func (o *CommandLineOptions) GetRuleFile() string {
 	if o == nil {

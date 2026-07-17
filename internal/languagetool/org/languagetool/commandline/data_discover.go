@@ -95,8 +95,17 @@ func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
 }
 
 // DiscoverEnglishIgnoreSpellingList finds soft EN ignore-spelling word list
-// (testdata/disambiguation/en-ignore-spelling.txt or LANG_IGNORE_SPELLING_FILE).
+// (CLI --ignore-spelling-file, LANG_IGNORE_SPELLING_FILE, data-dir, walk-up).
 func DiscoverEnglishIgnoreSpellingList(opts *CommandLineOptions) string {
+	if opts != nil {
+		if p := opts.GetIgnoreSpellingFile(); p != "" {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+			// still return configured path for diagnostics even if missing
+			return p
+		}
+	}
 	if p := os.Getenv("LANG_IGNORE_SPELLING_FILE"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 			return p
@@ -116,8 +125,16 @@ func DiscoverEnglishIgnoreSpellingList(opts *CommandLineOptions) string {
 }
 
 // DiscoverEnglishSoftDisambiguationXML finds soft EN disambiguation XML
-// (testdata/disambiguation/en-soft.xml or LANG_DISAMBIGUATION_FILE).
+// (CLI --disambiguation-file, LANG_DISAMBIGUATION_FILE, data-dir, walk-up).
 func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
+	if opts != nil {
+		if p := opts.GetDisambiguationFile(); p != "" {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+			return p
+		}
+	}
 	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 			return p
@@ -136,7 +153,8 @@ func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
 	return WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-soft.xml"))
 }
 
-// DiscoverEnglishMultiwords finds en/multiwords.txt for soft multiword disambiguation.
+// DiscoverEnglishMultiwords finds multiword dict for soft multiword disambiguation.
+// Prefers soft tab file (en-multiwords-soft.txt), then LANG_EN_MULTIWORDS, then upstream multiwords.txt.
 func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 	if p := os.Getenv("LANG_EN_MULTIWORDS"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
@@ -145,6 +163,7 @@ func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 	}
 	if opts != nil && opts.GetDataDir() != "" {
 		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "disambiguation", "en-multiwords-soft.txt"),
 			filepath.Join(opts.GetDataDir(), "en", "multiwords.txt"),
 			filepath.Join(opts.GetDataDir(), "multiwords.txt"),
 		} {
@@ -152,6 +171,10 @@ func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 				return rel
 			}
 		}
+	}
+	// Prefer soft tab-safe file over full upstream multiwords.txt (many glued tags).
+	if p := WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-multiwords-soft.txt")); p != "" {
+		return p
 	}
 	relPaths := []string{
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "multiwords.txt"),
