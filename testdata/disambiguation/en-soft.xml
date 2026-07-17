@@ -4479,4 +4479,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETWISE" name="immunize iotfleetwise">
+    <pattern>
+      <token>iotfleetwise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETWISE_CAPS" name="immunize IoTFleetWise">
+    <pattern>
+      <token>IoTFleetWise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTROBORUNNER" name="immunize iotroborunner">
+    <pattern>
+      <token>iotroborunner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTROBORUNNER_CAPS" name="immunize IoTRoboRunner">
+    <pattern>
+      <token>IoTRoboRunner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCOREDEVICEADVISOR" name="immunize iotcoredeviceadvisor">
+    <pattern>
+      <token>iotcoredeviceadvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCOREDEVICEADVISOR_CAPS" name="immunize IoTCoreDeviceAdvisor">
+    <pattern>
+      <token>IoTCoreDeviceAdvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

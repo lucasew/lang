@@ -10347,6 +10347,76 @@
       <message>Did you mean "example"?</message>
       <short>exmaple</short>
     </rule>
+    <rule id="EN_SOFT_IMPORTANT_MISS2" name="improtant soft">
+      <pattern>
+        <token>improtant</token>
+      </pattern>
+      <message>Did you mean "important"?</message>
+      <short>improtant</short>
+    </rule>
+    <rule id="EN_SOFT_POSSIBLE_MISS2" name="possable soft">
+      <pattern>
+        <token>possable</token>
+      </pattern>
+      <message>Did you mean "possible"?</message>
+      <short>possable</short>
+    </rule>
+    <rule id="EN_SOFT_POSSIBLE_MISS3" name="posibble soft">
+      <pattern>
+        <token>posibble</token>
+      </pattern>
+      <message>Did you mean "possible"?</message>
+      <short>posibble</short>
+    </rule>
+    <rule id="EN_SOFT_PROBABLY_MISS3" name="probly soft">
+      <pattern>
+        <token>probly</token>
+      </pattern>
+      <message>Did you mean "probably"?</message>
+      <short>probly</short>
+    </rule>
+    <rule id="EN_SOFT_PROBABLY_MISS4" name="probbaly soft">
+      <pattern>
+        <token>probbaly</token>
+      </pattern>
+      <message>Did you mean "probably"?</message>
+      <short>probbaly</short>
+    </rule>
+    <rule id="EN_SOFT_BEAUTIFUL_MISS3" name="beutiful soft">
+      <pattern>
+        <token>beutiful</token>
+      </pattern>
+      <message>Did you mean "beautiful"?</message>
+      <short>beutiful</short>
+    </rule>
+    <rule id="EN_SOFT_INTERESTING_MISS2" name="intereseting soft">
+      <pattern>
+        <token>intereseting</token>
+      </pattern>
+      <message>Did you mean "interesting"?</message>
+      <short>intereseting</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABLE_MISS4" name="avaliable soft">
+      <pattern>
+        <token>avaliable</token>
+      </pattern>
+      <message>Did you mean "available"?</message>
+      <short>avaliable</short>
+    </rule>
+    <rule id="EN_SOFT_BECAUSE_MISS2" name="becasue soft">
+      <pattern>
+        <token>becasue</token>
+      </pattern>
+      <message>Did you mean "because"?</message>
+      <short>becasue</short>
+    </rule>
+    <rule id="EN_SOFT_BECAUSE_MISS3" name="beacuse soft">
+      <pattern>
+        <token>beacuse</token>
+      </pattern>
+      <message>Did you mean "because"?</message>
+      <short>beacuse</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

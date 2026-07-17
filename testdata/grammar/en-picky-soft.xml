@@ -2899,5 +2899,29 @@
       <message>Jargon; name a delivery reliability target instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TOUCH_TIME" name="touch time soft picky">
+      <pattern>
+        <token>touch</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name active value-adding work duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUEUE_TIME" name="queue time soft picky">
+      <pattern>
+        <token>queue</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name waiting-in-backlog duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROCESS_TIME" name="process time soft picky">
+      <pattern>
+        <token>process</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name hands-on work duration excluding waits.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

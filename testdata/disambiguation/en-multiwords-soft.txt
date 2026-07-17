@@ -468,3 +468,6 @@ Shale Peak RegionNNP
 Gneiss Peak RegionNNP
 Schist Peak RegionNNP
 Quartzite Peak RegionNNP
+Dolomite Peak RegionNNP
+Travertine Peak RegionNNP
+Pumice Summit RegionNNP
