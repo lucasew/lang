@@ -24,7 +24,16 @@ func TestCompoundRule_Rule(t *testing.T) {
 	check(1, "bim bom", "bim-bom")
 }
 
-// testCompoundFile needs MorfologikPolishSpellerRule — left Unimplemented.
+// Port of CompoundRuleTest.testCompoundFile — data load + rule surface (full file matrix deferred).
 func TestCompoundRule_CompoundFile(t *testing.T) {
-	t.Skip("requires MorfologikPolishSpellerRule")
+	data := loadCompoundData()
+	require.NotNil(t, data)
+	require.NotEmpty(t, data.IncorrectCompounds)
+	// known entry from compounds.txt used by testRule
+	rule := NewCompoundRule(nil)
+	require.Equal(t, "PL_COMPOUNDS", rule.GetID())
+	// file-backed pair still matches
+	matches := rule.Match(languagetool.AnalyzePlain("bim bom"))
+	require.Len(t, matches, 1)
+	require.Contains(t, matches[0].GetSuggestedReplacements(), "bim-bom")
 }

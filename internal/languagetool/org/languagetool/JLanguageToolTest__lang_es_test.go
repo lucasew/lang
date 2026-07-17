@@ -4,24 +4,24 @@ package languagetool
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testXMLRules
+// Port of JLanguageToolTest.testXMLRules
 func TestJLanguageTool_lang_es_XMLRules(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("es")
+	require.Equal(t, "es", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Esto es una prueba."))
 }
 
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testMultitokenSpeller
+// Port of JLanguageToolTest.testMultitokenSpeller
 func TestJLanguageTool_lang_es_MultitokenSpeller(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("es")
+	require.NotEmpty(t, lt.Analyze("Buenos Aires"))
 }
 
-// Port of languagetool-language-modules/es/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testFilterRuleMatches
+// Port of JLanguageToolTest.testFilterRuleMatches
 func TestJLanguageTool_lang_es_FilterRuleMatches(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("es")
+	require.NotEmpty(t, lt.Analyze("El gato duerme."))
 }

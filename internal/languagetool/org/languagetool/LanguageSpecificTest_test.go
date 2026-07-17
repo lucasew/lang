@@ -1,17 +1,17 @@
 package languagetool
 
-// Twin of languagetool-core/src/test/java/org/languagetool/LanguageSpecificTest.java
+// Twin of LanguageSpecificTest (Java has no @Test) — language short-code Analyze smoke.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/LanguageSpecificTest.java :: LanguageSpecificTest (no @Test)
+// Port of LanguageSpecificTest (no @Test)
 func TestLanguageSpecific_NoTests(t *testing.T) {
-	t.Log("languagetool-core/src/test/java/org/languagetool/LanguageSpecificTest.java")
+	for _, code := range []string{"en", "de", "fr", "es", "pl", "uk", "nl", "pt"} {
+		lt := NewJLanguageTool(code)
+		require.Equal(t, code, lt.GetLanguageCode())
+		require.NotEmpty(t, lt.Analyze("test"), code)
+	}
 }

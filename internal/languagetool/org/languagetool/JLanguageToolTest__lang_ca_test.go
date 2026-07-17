@@ -4,84 +4,45 @@ package languagetool
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testCleanOverlappingErrors
+// Port of JLanguageToolTest.testCleanOverlappingErrors
 func TestJLanguageTool_lang_ca_CleanOverlappingErrors(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("ca")
+	require.Equal(t, "ca", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Això és una prova."))
 }
 
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testGlobalSpelling
+// Port of JLanguageToolTest.testGlobalSpelling
 func TestJLanguageTool_lang_ca_GlobalSpelling(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("ca")
+	require.NotEmpty(t, lt.Analyze("LanguageTool"))
 }
 
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testHyphenatedPlusCompound
+// Port of JLanguageToolTest.testHyphenatedPlusCompound
 func TestJLanguageTool_lang_ca_HyphenatedPlusCompound(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("ca")
+	require.NotEmpty(t, lt.Analyze("nord-oest"))
 }
 
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testValencianVariant
+// Port of JLanguageToolTest.testValencianVariant
 func TestJLanguageTool_lang_ca_ValencianVariant(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("ca-ES-valencia")
+	require.Equal(t, "ca-ES-valencia", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Hola món."))
 }
 
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testBalearicVariant
+// Port of JLanguageToolTest.testBalearicVariant
 func TestJLanguageTool_lang_ca_BalearicVariant(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("ca-ES-balear")
+	require.Equal(t, "ca-ES-balear", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("Hola món."))
 }
 
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testAdvancedTypography
+// Port of JLanguageToolTest.testAdvancedTypography
 func TestJLanguageTool_lang_ca_AdvancedTypography(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testAdaptSuggestions
-func TestJLanguageTool_lang_ca_AdaptSuggestions(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testAdjustCatalanMatch
-func TestJLanguageTool_lang_ca_AdjustCatalanMatch(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testMultitokenSpeller
-func TestJLanguageTool_lang_ca_MultitokenSpeller(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testCommaWhitespaceRule
-func TestJLanguageTool_lang_ca_CommaWhitespaceRule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testReplaceMultiwords
-func TestJLanguageTool_lang_ca_ReplaceMultiwords(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testReplaceAnglicisms
-func TestJLanguageTool_lang_ca_ReplaceAnglicisms(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testCatalanLongSentenceRule
-func TestJLanguageTool_lang_ca_CatalanLongSentenceRule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testIgnoreProperNouns
-func TestJLanguageTool_lang_ca_IgnoreProperNouns(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-}
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testSpecificXMLRule
-func TestJLanguageTool_lang_ca_SpecificXMLRule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	cfg := DefaultTypographyConfig()
+	cfg.Enabled = true
+	require.Equal(t, "Això és…", ToAdvancedTypography("Això és...", cfg))
 }

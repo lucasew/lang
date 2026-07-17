@@ -4,14 +4,12 @@ package languagetool
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sl/src/test/java/org/languagetool/JLanguageToolTest.java :: JLanguageToolTest.testSlovenian
+// Port of JLanguageToolTest.testSlovenian
 func TestJLanguageTool_lang_sl_Slovenian(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	lt := NewJLanguageTool("sl")
+	require.Equal(t, "sl", lt.GetLanguageCode())
+	require.NotEmpty(t, lt.Analyze("To je preizkus."))
 }

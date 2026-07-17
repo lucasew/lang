@@ -1,17 +1,27 @@
 package de
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SuggestionRegressionTest.java
+// Twin of SuggestionRegressionTest (Java interactive / no unit @Test in CI).
+// Soft AdaptSuggestion surface for DE spelling suggestions.
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/hunspell"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SuggestionRegressionTest.java :: SuggestionRegressionTest (no @Test)
+// Port of SuggestionRegressionTest (no @Test)
 func TestSuggestionRegression_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/SuggestionRegressionTest.java")
+	// inject dict: regression-style misspelling → suggestion
+	dict := hunspell.NewMapHunspellDictionary([]string{"Haus", "Hund", "Straße", "Strasse"})
+	dict.SetSuggestions("Huas", []string{"Haus"})
+	dict.SetSuggestions("Strase", []string{"Straße", "Strasse"})
+	r := hunspell.NewHunspellRule("de-DE", dict)
+
+	m, err := r.Match(languagetool.AnalyzePlain("Huas"))
+	require.NoError(t, err)
+	require.Len(t, m, 1)
+	require.Contains(t, m[0].GetSuggestedReplacements(), "Haus")
+	// adapt suggestion identity soft
+	require.Equal(t, "Haus", languagetool.AdaptSuggestion("Haus", "Huas"))
 }

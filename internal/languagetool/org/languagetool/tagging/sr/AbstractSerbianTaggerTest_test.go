@@ -1,17 +1,30 @@
 package sr
 
-// Twin of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/AbstractSerbianTaggerTest.java
+// Twin of AbstractSerbianTaggerTest (Java has no @Test) — MapWordTagger inject surface.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/AbstractSerbianTaggerTest.java :: AbstractSerbianTaggerTest (no @Test)
+// Port of AbstractSerbianTaggerTest (no @Test)
 func TestAbstractSerbianTagger_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/sr/src/test/java/org/languagetool/tagging/sr/AbstractSerbianTaggerTest.java")
+	wt := tagging.MapWordTagger{
+		"здраво": {tagging.NewTaggedWord("здраво", "interj")},
+		"тест":   {tagging.NewTaggedWord("тест", "noun")},
+	}
+	ek := NewEkavianTagger(wt)
+	require.Equal(t, EkavianDictionaryPath, ek.GetDictionaryPath())
+	// Tag single word via BaseTagger if available
+	if ek.BaseTagger != nil && ek.BaseTagger.WordTagger != nil {
+		tags := ek.BaseTagger.WordTagger.Tag("здраво")
+		require.NotEmpty(t, tags)
+	}
+
+	jk := NewJekavianTagger(wt)
+	require.Equal(t, JekavianDictionaryPath, jk.GetDictionaryPath())
+
+	sr := NewSerbianTagger(wt)
+	require.Equal(t, EkavianDictionaryPath, sr.GetDictionaryPath())
 }
