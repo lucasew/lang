@@ -14407,6 +14407,76 @@
       <message>Did you mean "aggregationtemporality"?</message>
       <short>aggregationtemporalityy</short>
     </rule>
+    <rule id="EN_SOFT_DELTATEMPORALITY_MISS" name="deltatemporalityy soft">
+      <pattern>
+        <token>deltatemporalityy</token>
+      </pattern>
+      <message>Did you mean "deltatemporality"?</message>
+      <short>deltatemporalityy</short>
+    </rule>
+    <rule id="EN_SOFT_CUMULATIVETEMPORALITY_MISS" name="cumulativetemporalityy soft">
+      <pattern>
+        <token>cumulativetemporalityy</token>
+      </pattern>
+      <message>Did you mean "cumulativetemporality"?</message>
+      <short>cumulativetemporalityy</short>
+    </rule>
+    <rule id="EN_SOFT_EXPLICITBUCKETBOUNDARY_MISS" name="explicitbucketboundaryy soft">
+      <pattern>
+        <token>explicitbucketboundaryy</token>
+      </pattern>
+      <message>Did you mean "explicitbucketboundary"?</message>
+      <short>explicitbucketboundaryy</short>
+    </rule>
+    <rule id="EN_SOFT_EXPONENTIALHISTOGRAM_MISS" name="exponentialhistogramm soft">
+      <pattern>
+        <token>exponentialhistogramm</token>
+      </pattern>
+      <message>Did you mean "exponentialhistogram"?</message>
+      <short>exponentialhistogramm</short>
+    </rule>
+    <rule id="EN_SOFT_BASE2EXPONENTIALHISTOGRAM_MISS" name="base2exponentialhistogramm soft">
+      <pattern>
+        <token>base2exponentialhistogramm</token>
+      </pattern>
+      <message>Did you mean "base2exponentialhistogram"?</message>
+      <short>base2exponentialhistogramm</short>
+    </rule>
+    <rule id="EN_SOFT_AGGREGATIONSELECTOR_MISS" name="aggregationselectorr soft">
+      <pattern>
+        <token>aggregationselectorr</token>
+      </pattern>
+      <message>Did you mean "aggregationselector"?</message>
+      <short>aggregationselectorr</short>
+    </rule>
+    <rule id="EN_SOFT_TEMPORALITYSELECTOR_MISS" name="temporalityselectorr soft">
+      <pattern>
+        <token>temporalityselectorr</token>
+      </pattern>
+      <message>Did you mean "temporalityselector"?</message>
+      <short>temporalityselectorr</short>
+    </rule>
+    <rule id="EN_SOFT_DEFAULTAGGREGATION_MISS" name="defaultaggregationg soft">
+      <pattern>
+        <token>defaultaggregationg</token>
+      </pattern>
+      <message>Did you mean "defaultaggregation"?</message>
+      <short>defaultaggregationg</short>
+    </rule>
+    <rule id="EN_SOFT_DROPAGGREGATION_MISS" name="dropaggregationn soft">
+      <pattern>
+        <token>dropaggregationn</token>
+      </pattern>
+      <message>Did you mean "dropaggregation"?</message>
+      <short>dropaggregationn</short>
+    </rule>
+    <rule id="EN_SOFT_SUMAGGREGATION_MISS" name="sumaggregationn soft">
+      <pattern>
+        <token>sumaggregationn</token>
+      </pattern>
+      <message>Did you mean "sumaggregation"?</message>
+      <short>sumaggregationn</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

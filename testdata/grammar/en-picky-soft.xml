@@ -4228,5 +4228,29 @@
       <message>Jargon; name self-serve annual recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_PRODUCT_ARR" name="product arr soft picky">
+      <pattern>
+        <token>product</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name product-level annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEGMENT_ARR" name="segment arr soft picky">
+      <pattern>
+        <token>segment</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name segment-level annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COHORT_ARR" name="cohort arr soft picky">
+      <pattern>
+        <token>cohort</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name cohort annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

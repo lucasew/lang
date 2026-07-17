@@ -6579,4 +6579,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_FLOWBITE" name="immunize flowbite">
+    <pattern>
+      <token>flowbite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLOWBITE_CAPS" name="immunize Flowbite">
+    <pattern>
+      <token>Flowbite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRELINE" name="immunize preline">
+    <pattern>
+      <token>preline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRELINE_CAPS" name="immunize Preline">
+    <pattern>
+      <token>Preline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTUI" name="immunize nextui">
+    <pattern>
+      <token>nextui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTUI_CAPS" name="immunize NextUI">
+    <pattern>
+      <token>NextUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

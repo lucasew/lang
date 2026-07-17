@@ -642,3 +642,6 @@ Lamproite Mesa RegionNNP
 Carbonatite Mesa RegionNNP
 Anorthosite Mesa RegionNNP
 Troctolite Mesa RegionNNP
+Norite Mesa RegionNNP
+Gabbro Mesa RegionNNP
+Diabase Mesa RegionNNP
