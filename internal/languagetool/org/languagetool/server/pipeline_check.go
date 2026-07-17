@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
@@ -23,6 +24,19 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	corepack.Register(lt, lang)
 	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
 		_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
+	}
+	// optional demo EN speller/tagger injects for local smoke servers
+	if os.Getenv("LANG_DEMO_SPELLER") == "1" {
+		base := lang
+		if i := strings.IndexByte(lang, '-'); i > 0 {
+			base = lang[:i]
+		}
+		if strings.EqualFold(base, "en") {
+			en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), map[string][]string{
+				"teh": {"the"}, "recieve": {"receive"},
+			})
+			en.RegisterDemoEnglishTagger(lt)
+		}
 	}
 
 	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)

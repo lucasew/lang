@@ -184,6 +184,18 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
 			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
 		}
+		if os.Getenv("LANG_DEMO_SPELLER") == "1" {
+			base := lang
+			if i := strings.IndexByte(lang, '-'); i > 0 {
+				base = lang[:i]
+			}
+			if strings.EqualFold(base, "en") {
+				en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), map[string][]string{
+					"teh": {"the"}, "recieve": {"receive"},
+				})
+				en.RegisterDemoEnglishTagger(lt)
+			}
+		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
 				return nil, err
