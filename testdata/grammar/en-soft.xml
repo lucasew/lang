@@ -9927,6 +9927,76 @@
       <message>Did you mean "arrival"?</message>
       <short>arival</short>
     </rule>
+    <rule id="EN_SOFT_ARRIVE_MISS" name="arive soft">
+      <pattern>
+        <token>arive</token>
+      </pattern>
+      <message>Did you mean "arrive"?</message>
+      <short>arive</short>
+    </rule>
+    <rule id="EN_SOFT_ARRIVED_MISS" name="arived soft">
+      <pattern>
+        <token>arived</token>
+      </pattern>
+      <message>Did you mean "arrived"?</message>
+      <short>arived</short>
+    </rule>
+    <rule id="EN_SOFT_ARRIVING_MISS" name="ariving soft">
+      <pattern>
+        <token>ariving</token>
+      </pattern>
+      <message>Did you mean "arriving"?</message>
+      <short>ariving</short>
+    </rule>
+    <rule id="EN_SOFT_ASSOCIATION_MISS2" name="assosiation soft">
+      <pattern>
+        <token>assosiation</token>
+      </pattern>
+      <message>Did you mean "association"?</message>
+      <short>assosiation</short>
+    </rule>
+    <rule id="EN_SOFT_ASSUMPTION_MISS" name="assumtion soft">
+      <pattern>
+        <token>assumtion</token>
+      </pattern>
+      <message>Did you mean "assumption"?</message>
+      <short>assumtion</short>
+    </rule>
+    <rule id="EN_SOFT_ASSUMPTIONS_MISS" name="assumtions soft">
+      <pattern>
+        <token>assumtions</token>
+      </pattern>
+      <message>Did you mean "assumptions"?</message>
+      <short>assumtions</short>
+    </rule>
+    <rule id="EN_SOFT_ATTEMPT_MISS2" name="atempt soft">
+      <pattern>
+        <token>atempt</token>
+      </pattern>
+      <message>Did you mean "attempt"?</message>
+      <short>atempt</short>
+    </rule>
+    <rule id="EN_SOFT_ATTEMPTS_MISS2" name="atempts soft">
+      <pattern>
+        <token>atempts</token>
+      </pattern>
+      <message>Did you mean "attempts"?</message>
+      <short>atempts</short>
+    </rule>
+    <rule id="EN_SOFT_ATTACH_MISS" name="attatch soft">
+      <pattern>
+        <token>attatch</token>
+      </pattern>
+      <message>Did you mean "attach"?</message>
+      <short>attatch</short>
+    </rule>
+    <rule id="EN_SOFT_ATTACHING_MISS" name="attatching soft">
+      <pattern>
+        <token>attatching</token>
+      </pattern>
+      <message>Did you mean "attaching"?</message>
+      <short>attatching</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

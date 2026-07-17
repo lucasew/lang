@@ -4263,4 +4263,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_DEVICEFARM" name="immunize devicefarm">
+    <pattern>
+      <token>devicefarm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DEVICEFARM_CAPS" name="immunize DeviceFarm">
+    <pattern>
+      <token>DeviceFarm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYADMIN" name="immunize amplifyadmin">
+    <pattern>
+      <token>amplifyadmin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYADMIN_CAPS" name="immunize AmplifyAdmin">
+    <pattern>
+      <token>AmplifyAdmin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYBACKEND" name="immunize amplifybackend">
+    <pattern>
+      <token>amplifybackend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYBACKEND_CAPS" name="immunize AmplifyBackend">
+    <pattern>
+      <token>AmplifyBackend</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

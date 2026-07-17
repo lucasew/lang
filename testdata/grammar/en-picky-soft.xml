@@ -2755,5 +2755,29 @@
       <message>Jargon; name importance-satisfaction gap ranking instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_PLANNING_POKER" name="planning poker soft picky">
+      <pattern>
+        <token>planning</token>
+        <token>poker</token>
+      </pattern>
+      <message>Jargon; name consensus relative-size estimation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TSHIRT_SIZING" name="tshirt sizing soft picky">
+      <pattern>
+        <token>tshirt</token>
+        <token>sizing</token>
+      </pattern>
+      <message>Jargon; name coarse relative effort buckets instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AFFINITY_ESTIMATION" name="affinity estimation soft picky">
+      <pattern>
+        <token>affinity</token>
+        <token>estimation</token>
+      </pattern>
+      <message>Jargon; name silent group relative sizing instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

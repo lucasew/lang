@@ -450,3 +450,6 @@ Scoria Ridge RegionNNP
 Cinder Ridge RegionNNP
 Pumice Peak RegionNNP
 Ash Peak RegionNNP
+Scoria Peak RegionNNP
+Tuff Peak RegionNNP
+Basalt Peak RegionNNP
