@@ -1,17 +1,31 @@
 package ru
 
-// Twin of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/MorfologikRussianYOSpellerRuleTest.java
+// Twin of MorfologikRussianYOSpellerRuleTest — ё-aware dict path inject.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/MorfologikRussianYOSpellerRuleTest.java :: MorfologikRussianYOSpellerRuleTest.testMorfologikSpeller
+// Port of MorfologikRussianYOSpellerRuleTest.testMorfologikSpeller
 func TestMorfologikRussianYOSpellerRule_MorfologikSpeller(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewMorfologikRussianYOSpellerRule()
+	require.Equal(t, MorfologikRussianYOSpellerRuleID, r.GetID())
+	require.Equal(t, RussianYOSpellerDict, r.GetFileName())
+
+	sp := morfologik.NewMorfologikSpeller(RussianYOSpellerDict, 1)
+	sp.AddWord("ёлка")
+	sp.AddWord("елка") // YO dict often has both forms
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+
+	m, err := r.Match(languagetool.AnalyzePlain("ёлка"))
+	require.NoError(t, err)
+	require.Empty(t, m)
+
+	m, err = r.Match(languagetool.AnalyzePlain("xyzzy"))
+	require.NoError(t, err)
+	require.NotEmpty(t, m)
 }

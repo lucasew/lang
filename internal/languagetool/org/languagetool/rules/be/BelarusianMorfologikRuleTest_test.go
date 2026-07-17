@@ -1,17 +1,33 @@
 package be
 
-// Twin of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianMorfologikRuleTest.java
+// Twin of BelarusianMorfologikRuleTest — map inject.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/be/src/test/java/org/languagetool/rules/be/BelarusianMorfologikRuleTest.java :: BelarusianMorfologikRuleTest.testMorfologikSpeller
+// Port of BelarusianMorfologikRuleTest.testMorfologikSpeller
 func TestBelarusianMorfologikRule_MorfologikSpeller(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewMorfologikBelarusianSpellerRule()
+	require.Equal(t, MorfologikBelarusianSpellerRuleID, r.GetID())
+	require.Equal(t, MorfologikBelarusianSpellerRuleDict, r.GetFileName())
+
+	sp := morfologik.NewMorfologikSpeller(MorfologikBelarusianSpellerRuleDict, 1)
+	for _, w := range []string{"прывітанне", "свет", "мова"} {
+		sp.AddWord(w)
+	}
+	sp.Suggestions["прывiтанне"] = []string{"прывітанне"} // latin i soft
+	r.Speller = sp
+	r.IsMisspelled = sp.IsMisspelled
+
+	m, err := r.Match(languagetool.AnalyzePlain("прывітанне свет"))
+	require.NoError(t, err)
+	require.Empty(t, m)
+
+	m, err = r.Match(languagetool.AnalyzePlain("xyzzy"))
+	require.NoError(t, err)
+	require.NotEmpty(t, m)
 }

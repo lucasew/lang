@@ -56,6 +56,15 @@ func (s *MorfologikSpeller) IsMisspelled(word string) bool {
 	return true
 }
 
+// ConvertsCase reports case-folding acceptance (Java MorfologikSpeller.convertsCase).
+// Map speller always converts case via strings.ToLower probe.
+func (s *MorfologikSpeller) ConvertsCase() bool { return s != nil }
+
+// GetSuggestions is the Java API alias for FindReplacements.
+func (s *MorfologikSpeller) GetSuggestions(word string) []string {
+	return s.FindReplacements(word)
+}
+
 // FindReplacements returns suggestions for word (map first, then trivial edit-distance peers).
 func (s *MorfologikSpeller) FindReplacements(word string) []string {
 	if s == nil {
@@ -70,7 +79,9 @@ func (s *MorfologikSpeller) FindReplacements(word string) []string {
 	}
 	var out []string
 	for w := range s.Words {
-		if editDistance(word, w) <= s.MaxEditDistance {
+		d := editDistance(word, w)
+		// exclude exact dictionary form (Java getSuggestions returns empty for known words)
+		if d > 0 && d <= s.MaxEditDistance {
 			out = append(out, w)
 			if len(out) >= 8 {
 				break
