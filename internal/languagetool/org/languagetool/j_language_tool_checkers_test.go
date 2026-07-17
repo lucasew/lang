@@ -44,13 +44,24 @@ func TestSimplePhraseReplaceChecker_CaseInsensitive(t *testing.T) {
 	}))
 	m := lt.Check("I did it On Accident yesterday.")
 	require.NotEmpty(t, m)
-	require.Equal(t, "by accident", m[0].Suggestions[0])
+	// leading capital preserved on suggestion
+	require.Equal(t, "By accident", m[0].Suggestions[0])
 	fixed := CorrectTextFromLocalMatches("I did it On Accident yesterday.", m)
-	require.Contains(t, fixed, "by accident")
+	require.Contains(t, fixed, "By accident")
 
 	m = lt.Check("In regards to your note.")
 	require.NotEmpty(t, m)
-	require.Equal(t, "with regard to", m[0].Suggestions[0])
+	require.Equal(t, "With regard to", m[0].Suggestions[0])
+
+	m = lt.Check("ON ACCIDENT happened.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "BY ACCIDENT", m[0].Suggestions[0])
+}
+
+func TestSoftPreserveCase(t *testing.T) {
+	require.Equal(t, "by accident", softPreserveCase("on accident", "by accident"))
+	require.Equal(t, "By accident", softPreserveCase("On Accident", "by accident"))
+	require.Equal(t, "BY ACCIDENT", softPreserveCase("ON ACCIDENT", "by accident"))
 }
 
 func TestCheckAnnotatedAndProject(t *testing.T) {

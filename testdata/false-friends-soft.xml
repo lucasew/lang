@@ -85,4 +85,75 @@
       <translation lang="en">get</translation>
     </rule>
   </rulegroup>
+
+  <rulegroup id="EMBARRASSED">
+    <rule>
+      <pattern lang="en">
+        <token>embarrassed</token>
+      </pattern>
+      <translation lang="es">avergonzado</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>embarazada</token>
+      </pattern>
+      <translation lang="en">pregnant</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PARENTS">
+    <rule>
+      <pattern lang="en">
+        <token>parents</token>
+      </pattern>
+      <translation lang="fr">parents (père et mère)</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>parents</token>
+      </pattern>
+      <translation lang="en">relatives</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SYMPATHIC">
+    <rule>
+      <pattern lang="en">
+        <token>sympathetic</token>
+      </pattern>
+      <translation lang="de">mitfühlend</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>sympathisch</token>
+      </pattern>
+      <translation lang="en">likeable</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="FABRIC">
+    <rule>
+      <pattern lang="en">
+        <token>fabric</token>
+      </pattern>
+      <translation lang="fr">tissu</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>fabrique</token>
+      </pattern>
+      <translation lang="en">factory</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ARGUMENT">
+    <rule>
+      <pattern lang="en">
+        <token>argument</token>
+      </pattern>
+      <translation lang="fr">dispute</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>argument</token>
+      </pattern>
+      <translation lang="en">point / reason</translation>
+    </rule>
+  </rulegroup>
 </rules>

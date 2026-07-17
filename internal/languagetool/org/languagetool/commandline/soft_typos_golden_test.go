@@ -299,6 +299,56 @@ func TestGolden_SoftContractionForms(t *testing.T) {
 	}
 }
 
+func TestGolden_ApplySoftContraction(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "I dont know if she cant come.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	s := out.String()
+	require.Contains(t, s, "don't")
+	require.Contains(t, s, "can't")
+}
+
+func TestGolden_ApplySoftPhraseCase(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "On Accident I slipped.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "By accident")
+}
+
+func TestGolden_SoftStyleCategory(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"This is very unique work.", "EN_SOFT_VERY_UNIQUE"},
+		{"He literally died laughing.", "EN_SOFT_LITERALLY_FIG"},
+		{"She is kind of a genius.", "EN_SOFT_KIND_OF_A"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					// STYLE category maps to style issue type via soft loader
+					require.Equal(t, "style", f.Type, "%+v", f)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
 func TestGolden_SoftSupposeTo(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "You suppose to leave now.", &CommandLineOptions{Language: "en"})

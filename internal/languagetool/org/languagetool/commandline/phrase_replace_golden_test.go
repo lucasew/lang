@@ -38,12 +38,12 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"This is based off of data.", "based on"},
 		{"Talk to eachother soon.", "each other"},
 		{"Questions in regards to your letter.", "with regard to"},
-		{"In regards to your letter.", "with regard to"},
-		{"I did it On Accident.", "by accident"},
+		{"In regards to your letter.", "With regard to"}, // sentence-initial capital
+		{"I did it On Accident.", "By accident"},
 		{"That is a mute point.", "moot point"},
 		{"Please tow the line.", "toe the line"},
 		{"It happened all of the sudden.", "all of a sudden"},
-		{"By in large, we agree.", "by and large"},
+		{"By in large, we agree.", "By and large"}, // sentence-initial capital
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

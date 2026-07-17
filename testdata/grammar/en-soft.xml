@@ -342,6 +342,8 @@
       <message>Did you mean "didn't"?</message>
       <short>contraction</short>
     </rule>
+  </category>
+  <category id="STYLE" name="Style">
     <rule id="EN_SOFT_KIND_OF_A" name="kind of a">
       <pattern>
         <token>kind</token>
@@ -357,6 +359,23 @@
         <token>died</token>
       </pattern>
       <message>Figurative "literally" is often marked in picky style guides.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_VERY_UNIQUE" name="very unique">
+      <pattern>
+        <token>very</token>
+        <token>unique</token>
+      </pattern>
+      <message>"Unique" is absolute; consider dropping "very".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_IN_ORDER_TO" name="in order to">
+      <pattern>
+        <token>in</token>
+        <token>order</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider simply "to" if shorter is better.</message>
       <short>style</short>
     </rule>
   </category>

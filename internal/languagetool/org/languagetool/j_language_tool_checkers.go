@@ -87,7 +87,8 @@ func SimpleUnpairedBracketsChecker() SentenceChecker {
 }
 
 // SimplePhraseReplaceChecker flags phrase occurrences (ASCII/space phrases).
-// Matching is case-insensitive; suggestions keep the configured replacement form.
+// Matching is case-insensitive; suggestions inherit ALL-CAPS or leading capital
+// from the matched span (soft case preservation).
 // phrases maps wrong phrase → suggested replacement.
 func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) SentenceChecker {
 	if ruleID == "" {
@@ -142,10 +143,12 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 							used[b] = true
 						}
 					}
+					matched := text[idx : idx+len(wrong)]
+					sug := softPreserveCase(matched, repl)
 					out = append(out, LocalMatch{
 						FromPos: idx, ToPos: idx + len(wrong),
 						Message: "Phrase", RuleID: ruleID,
-						Suggestions: []string{repl},
+						Suggestions: []string{sug},
 					})
 				}
 				start = idx + len(wrong)
@@ -153,6 +156,46 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 		}
 		return out
 	}
+}
+
+// softPreserveCase maps suggestion casing from the matched original span.
+// ALL-CAPS match → ALL-CAPS suggestion; leading capital → capitalize suggestion.
+func softPreserveCase(matched, suggestion string) string {
+	if matched == "" || suggestion == "" {
+		return suggestion
+	}
+	hasLetter := false
+	allUpper := true
+	for _, r := range matched {
+		if r >= 'a' && r <= 'z' {
+			hasLetter = true
+			allUpper = false
+			break
+		}
+		if r >= 'A' && r <= 'Z' {
+			hasLetter = true
+		}
+	}
+	if hasLetter && allUpper {
+		return strings.ToUpper(suggestion)
+	}
+	// leading capital (sentence/title start)
+	for _, r := range matched {
+		if r >= 'A' && r <= 'Z' {
+			rs := []rune(suggestion)
+			if len(rs) == 0 {
+				return suggestion
+			}
+			if rs[0] >= 'a' && rs[0] <= 'z' {
+				rs[0] = rs[0] - ('a' - 'A')
+			}
+			return string(rs)
+		}
+		if r >= 'a' && r <= 'z' {
+			break
+		}
+	}
+	return suggestion
 }
 
 // CheckAnnotated runs Check on plain text extracted from AnnotatedText.
