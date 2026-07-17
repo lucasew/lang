@@ -160,3 +160,41 @@ func TestSimpleAvsAnChecker_PhoneticExceptions(t *testing.T) {
 	require.NotEmpty(t, m)
 	require.Equal(t, "a", m[0].Suggestions[0])
 }
+
+func TestSimplePredicateSpellerChecker_IgnoresSpellerFlag(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimplePredicateSpellerChecker(
+		"MORFOLOGIK_RULE_EN_US",
+		func(w string) bool {
+			// only Xyzzy is "unknown"; rest known so we isolate the ignore flag
+			return w != "Xyzzy" && w != "xyzzy"
+		},
+		nil,
+		nil,
+	))
+	// without ignore: flags Xyzzy
+	m := lt.Check("Xyzzy is here.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "MORFOLOGIK_RULE_EN_US", m[0].RuleID)
+
+	// inject disambiguator that ignores Xyzzy
+	lt.Disambiguator = sentenceDisambiguatorFunc(func(s *AnalyzedSentence) *AnalyzedSentence {
+		if s == nil {
+			return nil
+		}
+		for _, tok := range s.GetTokensWithoutWhitespace() {
+			if tok != nil && tok.GetToken() == "Xyzzy" {
+				tok.IgnoreSpelling()
+			}
+		}
+		return s
+	})
+	m = lt.Check("Xyzzy is here.")
+	for _, x := range m {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID, "%+v", m)
+	}
+}
+
+type sentenceDisambiguatorFunc func(*AnalyzedSentence) *AnalyzedSentence
+
+func (f sentenceDisambiguatorFunc) Disambiguate(s *AnalyzedSentence) *AnalyzedSentence { return f(s) }

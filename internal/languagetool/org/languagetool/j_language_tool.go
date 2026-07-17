@@ -493,6 +493,10 @@ func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, sug
 			if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
 				continue
 			}
+			// multiword chunker / disambiguator IGNORE_SPELLING
+			if tok.IsIgnoredBySpeller() {
+				continue
+			}
 			w := tok.GetToken()
 			if w == "" || !hasLetterLocal(w) {
 				continue

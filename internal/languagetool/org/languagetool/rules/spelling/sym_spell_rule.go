@@ -87,6 +87,9 @@ func (r *SymSpellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 		if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
 			continue
 		}
+		if tok.IsIgnoredBySpeller() {
+			continue
+		}
 		w := tok.GetToken()
 		if w == "" || utf8.RuneCountInString(w) > MaxTokenLength {
 			continue
