@@ -511,6 +511,28 @@
       <message>Did you mean "at least"?</message>
       <short>atleast</short>
     </rule>
+    <rule id="EN_SOFT_INCASE" name="incase">
+      <pattern>
+        <token regexp="yes">incase|Incase</token>
+      </pattern>
+      <message>Did you mean "in case"?</message>
+      <short>incase</short>
+    </rule>
+    <rule id="EN_SOFT_UPTO" name="upto">
+      <pattern>
+        <token regexp="yes">upto|Upto</token>
+      </pattern>
+      <message>Did you mean "up to"?</message>
+      <short>upto</short>
+    </rule>
+    <rule id="EN_SOFT_WORKOUT_VERB" name="workout as verb">
+      <pattern>
+        <token>to</token>
+        <token>workout</token>
+      </pattern>
+      <message>Did you mean "to work out"?</message>
+      <short>workout</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

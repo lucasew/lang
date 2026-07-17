@@ -25,5 +25,39 @@
       <message>Möguleg endurtekning á "í".</message>
       <short>í í</short>
     </rule>
+    <rule id="IS_SOFT_A_AD" name="að að">
+      <pattern>
+        <token>að</token>
+        <token>að</token>
+      </pattern>
+      <message>Möguleg endurtekning á "að".</message>
+      <short>að að</short>
+    </rule>
+    <rule id="IS_SOFT_EKKI" name="ekki ekki">
+      <pattern>
+        <token>ekki</token>
+        <token>ekki</token>
+      </pattern>
+      <message>Möguleg endurtekning á "ekki".</message>
+      <short>ekki ekki</short>
+    </rule>
+    <rule id="IS_SOFT_MED" name="með með">
+      <pattern>
+        <token>með</token>
+        <token>með</token>
+      </pattern>
+      <message>Möguleg endurtekning á "með".</message>
+      <short>með með</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="IS_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Eitt upphrópunarmerki nægir oft: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

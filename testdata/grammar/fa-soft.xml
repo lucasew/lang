@@ -25,5 +25,39 @@
       <message>تکرار احتمالی «از».</message>
       <short>از از</short>
     </rule>
+    <rule id="FA_SOFT_BE_BE" name="به به">
+      <pattern>
+        <token>به</token>
+        <token>به</token>
+      </pattern>
+      <message>تکرار احتمالی «به».</message>
+      <short>به به</short>
+    </rule>
+    <rule id="FA_SOFT_RA_RA" name="را را">
+      <pattern>
+        <token>را</token>
+        <token>را</token>
+      </pattern>
+      <message>تکرار احتمالی «را».</message>
+      <short>را را</short>
+    </rule>
+    <rule id="FA_SOFT_KE_KE" name="که که">
+      <pattern>
+        <token>که</token>
+        <token>که</token>
+      </pattern>
+      <message>تکرار احتمالی «که».</message>
+      <short>که که</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="FA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>اغلب یک علامت تعجب کافی است: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

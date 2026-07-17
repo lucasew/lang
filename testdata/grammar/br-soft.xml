@@ -25,5 +25,39 @@
       <message>Adlavar posubl eus "e".</message>
       <short>e e</short>
     </rule>
+    <rule id="BR_SOFT_HA_DA" name="da da">
+      <pattern>
+        <token>da</token>
+        <token>da</token>
+      </pattern>
+      <message>Adlavar posubl eus "da".</message>
+      <short>da da</short>
+    </rule>
+    <rule id="BR_SOFT_HA_WAR" name="war war">
+      <pattern>
+        <token>war</token>
+        <token>war</token>
+      </pattern>
+      <message>Adlavar posubl eus "war".</message>
+      <short>war war</short>
+    </rule>
+    <rule id="BR_SOFT_HA_GANT" name="gant gant">
+      <pattern>
+        <token>gant</token>
+        <token>gant</token>
+      </pattern>
+      <message>Adlavar posubl eus "gant".</message>
+      <short>gant gant</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="BR_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>A-wechoù trawalc'h eo un unanenn: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

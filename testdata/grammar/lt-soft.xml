@@ -25,5 +25,39 @@
       <message>Galimas "o" pakartojimas.</message>
       <short>o o</short>
     </rule>
+    <rule id="LT_SOFT_IR_SU" name="su su">
+      <pattern>
+        <token>su</token>
+        <token>su</token>
+      </pattern>
+      <message>Galimas "su" pakartojimas.</message>
+      <short>su su</short>
+    </rule>
+    <rule id="LT_SOFT_IR_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Galimas "ne" pakartojimas.</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="LT_SOFT_IR_ANT" name="ant ant">
+      <pattern>
+        <token>ant</token>
+        <token>ant</token>
+      </pattern>
+      <message>Galimas "ant" pakartojimas.</message>
+      <short>ant ant</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="LT_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Dažnai pakanka vieno šauktuko: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

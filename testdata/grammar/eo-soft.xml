@@ -25,5 +25,39 @@
       <message>Ebla ripeto de "de".</message>
       <short>de de</short>
     </rule>
+    <rule id="EO_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Ebla ripeto de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="EO_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Ebla ripeto de "ne".</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="EO_SOFT_POR_POR" name="por por">
+      <pattern>
+        <token>por</token>
+        <token>por</token>
+      </pattern>
+      <message>Ebla ripeto de "por".</message>
+      <short>por por</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="EO_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ofte sufiĉas unu krisigno: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

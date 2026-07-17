@@ -25,5 +25,39 @@
       <message>可能重复了 "是"。</message>
       <short>是 是</short>
     </rule>
+    <rule id="ZH_SOFT_ZAI_ZAI" name="在 在">
+      <pattern>
+        <token>在</token>
+        <token>在</token>
+      </pattern>
+      <message>可能重复了 "在"。</message>
+      <short>在 在</short>
+    </rule>
+    <rule id="ZH_SOFT_HE_HE" name="和 和">
+      <pattern>
+        <token>和</token>
+        <token>和</token>
+      </pattern>
+      <message>可能重复了 "和"。</message>
+      <short>和 和</short>
+    </rule>
+    <rule id="ZH_SOFT_BU_BU" name="不 不">
+      <pattern>
+        <token>不</token>
+        <token>不</token>
+      </pattern>
+      <message>可能重复了 "不"。</message>
+      <short>不 不</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="ZH_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>通常一个感叹号即可："!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

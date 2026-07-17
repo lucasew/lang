@@ -385,6 +385,9 @@ func TestGolden_SoftFusedWords(t *testing.T) {
 		{"Talk to eachother soon.", "EN_SOFT_EACHOTHER", "each other"},
 		{"Inspite of that we stay.", "EN_SOFT_INSPITE", "in spite"},
 		{"Atleast try once.", "EN_SOFT_ATLEAST", "at least"},
+		{"Incase it rains, wait.", "EN_SOFT_INCASE", "in case"},
+		{"Upto ten people may join.", "EN_SOFT_UPTO", "up to"},
+		{"I need to workout daily.", "EN_SOFT_WORKOUT_VERB", "to work out"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

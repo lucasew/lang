@@ -25,5 +25,39 @@
       <message>Možna ponovitev "je".</message>
       <short>je je</short>
     </rule>
+    <rule id="SL_SOFT_ZA_ZA" name="za za">
+      <pattern>
+        <token>za</token>
+        <token>za</token>
+      </pattern>
+      <message>Možna ponovitev "za".</message>
+      <short>za za</short>
+    </rule>
+    <rule id="SL_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Možna ponovitev "ne".</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="SL_SOFT_PO_PO" name="po po">
+      <pattern>
+        <token>po</token>
+        <token>po</token>
+      </pattern>
+      <message>Možna ponovitev "po".</message>
+      <short>po po</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="SL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Pogosto zadošča en klicaj: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

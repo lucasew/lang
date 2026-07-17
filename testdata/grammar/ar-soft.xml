@@ -25,5 +25,39 @@
       <message>تكرار محتمل لـ "و".</message>
       <short>و و</short>
     </rule>
+    <rule id="AR_SOFT_ALA_ALA" name="على على">
+      <pattern>
+        <token>على</token>
+        <token>على</token>
+      </pattern>
+      <message>تكرار محتمل لـ "على".</message>
+      <short>على على</short>
+    </rule>
+    <rule id="AR_SOFT_ILA_ILA" name="إلى إلى">
+      <pattern>
+        <token>إلى</token>
+        <token>إلى</token>
+      </pattern>
+      <message>تكرار محتمل لـ "إلى".</message>
+      <short>إلى إلى</short>
+    </rule>
+    <rule id="AR_SOFT_MA_MA" name="ما ما">
+      <pattern>
+        <token>ما</token>
+        <token>ما</token>
+      </pattern>
+      <message>تكرار محتمل لـ "ما".</message>
+      <short>ما ما</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="AR_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>غالباً يكفي علامة تعجب واحدة: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

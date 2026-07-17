@@ -25,5 +25,39 @@
       <message>Moguće ponavljanje "na".</message>
       <short>na na</short>
     </rule>
+    <rule id="SR_SOFT_JE_JE" name="je je">
+      <pattern>
+        <token>je</token>
+        <token>je</token>
+      </pattern>
+      <message>Moguće ponavljanje "je".</message>
+      <short>je je</short>
+    </rule>
+    <rule id="SR_SOFT_DA_DA" name="da da">
+      <pattern>
+        <token>da</token>
+        <token>da</token>
+      </pattern>
+      <message>Moguće ponavljanje "da".</message>
+      <short>da da</short>
+    </rule>
+    <rule id="SR_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Moguće ponavljanje "ne".</message>
+      <short>ne ne</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="SR_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Često je dovoljan jedan uzvičnik: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

@@ -25,5 +25,39 @@
       <message>Athrá féideartha ar "na".</message>
       <short>na na</short>
     </rule>
+    <rule id="GA_SOFT_AR_AR" name="ar ar">
+      <pattern>
+        <token>ar</token>
+        <token>ar</token>
+      </pattern>
+      <message>Athrá féideartha ar "ar".</message>
+      <short>ar ar</short>
+    </rule>
+    <rule id="GA_SOFT_LE_LE" name="le le">
+      <pattern>
+        <token>le</token>
+        <token>le</token>
+      </pattern>
+      <message>Athrá féideartha ar "le".</message>
+      <short>le le</short>
+    </rule>
+    <rule id="GA_SOFT_GO_GO" name="go go">
+      <pattern>
+        <token>go</token>
+        <token>go</token>
+      </pattern>
+      <message>Athrá féideartha ar "go".</message>
+      <short>go go</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="GA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Is minic leor comhartha amháin: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>
