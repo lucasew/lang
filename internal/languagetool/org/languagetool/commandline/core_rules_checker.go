@@ -518,6 +518,11 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	} else {
 		_, _ = fmt.Fprintf(w, "en-typos.tsv: (unset)\n")
 	}
+	if mw := DiscoverEnglishMultiwords(opts); mw != "" {
+		_, _ = fmt.Fprintf(w, "en multiwords: %s\n", mw)
+	} else {
+		_, _ = fmt.Fprintf(w, "en multiwords: (embedded soft defaults)\n")
+	}
 	// smoke check
 	lt, err := configureCoreLT("en", opts)
 	if err != nil {

@@ -200,4 +200,63 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NVM" name="immunize nvm">
+    <pattern>
+      <token>nvm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SMH" name="immunize smh">
+    <pattern>
+      <token>smh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IDK" name="immunize idk">
+    <pattern>
+      <token>idk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TTYL" name="immunize ttyl">
+    <pattern>
+      <token>ttyl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_LOOK_VB" name="modal look → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>look</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_HELP_VB" name="modal help → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>help</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_SHOW_VB" name="modal show → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>show</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_KEEP_VB" name="modal keep → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>keep</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_LEAVE_VB" name="modal leave → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>leave</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
 </rules>

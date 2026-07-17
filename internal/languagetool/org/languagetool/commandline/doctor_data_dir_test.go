@@ -19,6 +19,8 @@ func TestCoreDoctor(t *testing.T) {
 	require.Contains(t, out, "EN_A_VS_AN ok")
 	require.Contains(t, out, "status: ok")
 	require.Contains(t, out, "corepack languages:")
+	// multiwords path or embedded soft defaults
+	require.True(t, strings.Contains(out, "en multiwords:"), out)
 	// walk-up usually finds testdata/grammar with many *-soft.xml packs
 	if strings.Contains(out, "grammar dir: (unset)") {
 		t.Log("grammar dir unset in this environment")

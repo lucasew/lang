@@ -533,6 +533,38 @@
       <message>Did you mean "to work out"?</message>
       <short>workout</short>
     </rule>
+    <rule id="EN_SOFT_SETUP_VERB" name="setup as verb">
+      <pattern>
+        <token>to</token>
+        <token>setup</token>
+      </pattern>
+      <message>Did you mean "to set up"?</message>
+      <short>setup</short>
+    </rule>
+    <rule id="EN_SOFT_LOGIN_VERB" name="login as verb">
+      <pattern>
+        <token>to</token>
+        <token>login</token>
+      </pattern>
+      <message>Did you mean "to log in"?</message>
+      <short>login</short>
+    </rule>
+    <rule id="EN_SOFT_CHECKOUT_VERB" name="checkout as verb">
+      <pattern>
+        <token>to</token>
+        <token>checkout</token>
+      </pattern>
+      <message>Did you mean "to check out"?</message>
+      <short>checkout</short>
+    </rule>
+    <rule id="EN_SOFT_BACKUP_VERB" name="backup as verb">
+      <pattern>
+        <token>to</token>
+        <token>backup</token>
+      </pattern>
+      <message>Did you mean "to back up"?</message>
+      <short>backup</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">
