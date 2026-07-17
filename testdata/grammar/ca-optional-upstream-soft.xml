@@ -10,7 +10,7 @@
         <token>cosa</token>
         <token>que</token>
       </pattern>
-      <message>Possible error de traductor automàtic.</message>
+      <message>Possible error de traductor automàtic. <suggestion>cosa que</suggestion></message>
       <short>ALGUNA_COSA_QUE</short>
     </rule>
   </category>
@@ -31,7 +31,7 @@
         <token>propi</token>
         <token>peu</token>
       </pattern>
-      <message>Val més usar una altra expressió. "Pel seu propi peu" és vàlida per a emfatitzar la dificultat o l'esforç de qui fa l'acció.</message>
+      <message>Val més usar una altra expressió. "Pel seu propi peu" és vàlida per a emfatitzar la dificultat o l'esforç de qui fa l'acció. <suggestion>caminant</suggestion></message>
       <short>PEL_SEU_PROPI_PEU</short>
     </rule>
     <rule id="SENSE_PREVI_AVIS" name="sense previ avís" default="off">
@@ -40,7 +40,7 @@
         <token>previ</token>
         <token>avís</token>
       </pattern>
-      <message>Val més fer servir una altra expressió.</message>
+      <message>Val més fer servir una altra expressió. <suggestion>sense avisar</suggestion></message>
       <short>SENSE_PREVI_AVIS</short>
     </rule>
     <rule id="ACCENTUACIO_PRINCIPAL" name="Exigeix accentuacions principals: sépia" default="off">
@@ -55,7 +55,7 @@
         <token>donar</token>
         <token>compliment</token>
       </pattern>
-      <message>Expressió preferible.</message>
+      <message>Expressió preferible. <suggestion>complir</suggestion></message>
       <short>DONAR_COMPLIMENT</short>
     </rule>
     <rule id="DON_D" name="Revisa l'abreviatura Don/D." default="off">
@@ -74,7 +74,7 @@
         <token min="0">a</token>
         <token>dalt</token>
       </pattern>
-      <message>Val més usar una altra expressió.</message>
+      <message>Val més usar una altra expressió. <suggestion>\1 a vessar</suggestion></message>
       <short>FINS_A_DALT</short>
     </rule>
     <rule id="TROBAR_SE_RECUPERADA" name="trobar-se recuperada -&gt; estar recuperada" default="off">
@@ -82,7 +82,7 @@
         <token postag="_reflexiu">trobar</token>
         <token postag="V.P.*" postag_regexp="yes">recuperar</token>
       </pattern>
-      <message>Val més usar una altra expressió més natural.</message>
+      <message>Val més usar una altra expressió més natural. <suggestion>estar</suggestion></message>
       <short>TROBAR_SE_RECUPERADA</short>
     </rule>
   </category>
@@ -108,42 +108,42 @@
       <pattern>
         <token>manualitat</token>
       </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
+      <message>Paraula admesa només en alguns diccionaris. <suggestion>treball manual</suggestion></message>
       <short>MANUALITAT</short>
     </rule>
     <rule id="MANUALITATS" name="manualitats" default="off">
       <pattern>
         <token>manualitats</token>
       </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
+      <message>Paraula admesa només en alguns diccionaris. <suggestion>treballs manuals</suggestion></message>
       <short>MANUALITATS</short>
     </rule>
     <rule id="APOLTRONARSE" name="apoltronar-se" default="off">
       <pattern>
         <token postag="V.*" postag_regexp="yes">apoltronar</token>
       </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
+      <message>Paraula admesa només en alguns diccionaris. <suggestion>endropir</suggestion></message>
       <short>APOLTRONARSE</short>
     </rule>
     <rule id="ESTUDIANTAT" name="estudiantat/estudiants" default="off">
       <pattern>
         <token>estudiantat</token>
       </pattern>
-      <message>Paraula no admesa per tots els diccionaris.</message>
+      <message>Paraula no admesa per tots els diccionaris. <suggestion>estudiants</suggestion></message>
       <short>ESTUDIANTAT</short>
     </rule>
     <rule id="EXITOS" name="exitós" default="off">
       <pattern>
         <token postag="AQ.*" postag_regexp="yes">exitós</token>
       </pattern>
-      <message>Paraula no recollida pels diccionaris, acceptable per a alguns.</message>
+      <message>Paraula no recollida pels diccionaris, acceptable per a alguns. <suggestion>d'èxit</suggestion></message>
       <short>EXITOS</short>
     </rule>
     <rule id="FREGONA" name="fregona" default="off">
       <pattern>
         <token postag="N.*" postag_regexp="yes">fregona</token>
       </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
+      <message>Paraula admesa només en alguns diccionaris. <suggestion>pal de fregar</suggestion></message>
       <short>FREGONA</short>
     </rule>
   </category>
@@ -154,7 +154,7 @@
         <token>.</token>
         <token>.</token>
       </pattern>
-      <message>En tipografia acurada, useu el caràcter de punts suspensius.</message>
+      <message>En tipografia acurada, useu el caràcter de punts suspensius. <suggestion>…</suggestion></message>
       <short>Error tipogràfic</short>
     </rule>
     <rule id="APOSTROF_RECTE" name="Exigeix l'apòstrof recte (')" default="off">
@@ -199,7 +199,7 @@
         <token>ençà</token>
         <token regexp="yes">d'|de|que</token>
       </pattern>
-      <message>Construcció incompleta.</message>
+      <message>Construcció incompleta. <suggestion>d'ençà</suggestion></message>
       <short>ENCA_DE</short>
     </rule>
     <rule id="ESDEVENIR_EN" name="esdevenir en" default="off">
@@ -207,7 +207,7 @@
         <token>esdevenir</token>
         <token>en</token>
       </pattern>
-      <message>El verb 'esdevenir' no s'usa amb la preposició 'en'. ¿Volíeu dir "esdevenir-se" o "convertir-se en"?</message>
+      <message>El verb 'esdevenir' no s'usa amb la preposició 'en'. ¿Volíeu dir "esdevenir-se" o "convertir-se en"? <suggestion>\1</suggestion></message>
       <short>ESDEVENIR_EN</short>
     </rule>
   </category>
@@ -216,21 +216,21 @@
       <pattern>
         <token postag="DD.*" postag_regexp="yes">aqueix</token>
       </pattern>
-      <message>Useu demostratius reduïts.</message>
+      <message>Useu demostratius reduïts. <suggestion>eixe</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_AQUEIX</short>
     </rule>
     <rule id="EVITA_DEMOSTRATIUS_AQUEST" name="Evita els demostratius 'aquest'" default="off">
       <pattern>
         <token postag="DD.*" postag_regexp="yes">aquest</token>
       </pattern>
-      <message>Useu demostratius reduïts.</message>
+      <message>Useu demostratius reduïts. <suggestion>este</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_AQUEST</short>
     </rule>
     <rule id="EVITA_DEMOSTRATIUS_EIXE" name="Evita els demostratius 'eixe'" default="off">
       <pattern>
         <token postag="DD.*" postag_regexp="yes">eixe</token>
       </pattern>
-      <message>Useu demostratius reforçats.</message>
+      <message>Useu demostratius reforçats. <suggestion>aquest</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_EIXE</short>
     </rule>
     <rule id="EXIGEIX_POSSESSIUS_U" name="Exigeix els possessius amb u (meua, teua...)" default="off">
@@ -340,7 +340,7 @@
       <pattern>
         <token postag="V.*" postag_regexp="yes">flipar</token>
       </pattern>
-      <message>Llenguatge col·loquial.</message>
+      <message>Llenguatge col·loquial. <suggestion>(passar-s'ho bé)</suggestion></message>
       <short>Llenguatge col·loquial</short>
     </rule>
   </category>
@@ -353,7 +353,7 @@
         <token>tot</token>
         <token postag="_PUNCT.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Hi falta el pronom feble 'ho'. Col·loquialment, "l'hi".</message>
+      <message>Hi falta el pronom feble 'ho'. Col·loquialment, "l'hi". <suggestion>li ho</suggestion></message>
       <short>LI_LIHO</short>
     </rule>
   </category>
@@ -364,7 +364,7 @@
         <token regexp="yes">em|et|me|te|li|ens|us|els</token>
         <token regexp="yes">val|valia|valdria</token>
       </pattern>
-      <message>Expressió no adequada.</message>
+      <message>Expressió no adequada. <suggestion>\3 més</suggestion></message>
       <short>MES_ET_VAL</short>
     </rule>
     <rule id="SI_MAL_NO_RECORDO" name="si mal no recordo" default="off">
@@ -374,7 +374,7 @@
         <token>no</token>
         <token regexp="yes">recordo|record|recorde</token>
       </pattern>
-      <message>Val més usar una altra expressió.</message>
+      <message>Val més usar una altra expressió. <suggestion>si no  malament</suggestion></message>
       <short>SI_MAL_NO_RECORDO</short>
     </rule>
   </category>
@@ -384,7 +384,7 @@
         <token regexp="yes" postag="UNKNOWN">[\p{L}·]+</token>
         <token regexp="yes" postag="UNKNOWN">[\p{L}·]+</token>
       </pattern>
-      <message>S'escriu amb guionet.</message>
+      <message>S'escriu amb guionet. <suggestion>\1-\2</suggestion></message>
       <short>NOMS_AMB_GUIONET</short>
     </rule>
   </category>
@@ -412,7 +412,7 @@
         <token>per</token>
         <token postag="V.N.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Reviseu la construcció 'per + infinitiu'.</message>
+      <message>Reviseu la construcció 'per + infinitiu'. <suggestion>per a \2</suggestion></message>
       <short>PER_INFINITIU</short>
     </rule>
     <rule id="PER_INFINITIU_SEMPRE" name="Exigeix 'per + infinitiu'" default="off">
@@ -432,7 +432,7 @@
         <token min="0" max="2" postag="DI.FS.|AQ.[FC]S." postag_regexp="yes"></token>
         <token>vida</token>
       </pattern>
-      <message>Val més usar una altra expressió.</message>
+      <message>Val més usar una altra expressió. <suggestion>tenir</suggestion></message>
       <short>PORTAR_UNA_VIDA</short>
     </rule>
   </category>
@@ -441,7 +441,7 @@
       <pattern>
         <token postag="N.*" postag_regexp="yes">tema</token>
       </pattern>
-      <message>Did you mean a correction for REP_TEMA?</message>
+      <message><suggestion>qüestió</suggestion></message>
       <short>REP_TEMA</short>
     </rule>
   </category>
@@ -463,7 +463,7 @@
           <exception regexp="yes">anar|parlar</exception>
         </token>
       </pattern>
-      <message>Probablement hi falta una preposició.</message>
+      <message>Probablement hi falta una preposició. <suggestion>va a</suggestion></message>
       <short>VA_A_INFINITIU</short>
     </rule>
   </category>

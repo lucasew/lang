@@ -53,6 +53,50 @@ func loadUpstreamGoldens(t *testing.T, lang string) upstreamGoldenFile {
 	return doc
 }
 
+// loadOptionalUpstreamSoftRuleIDs returns rule IDs from *-optional-upstream-soft.xml
+// (official XML default="off"). Empty if the optional pack is missing.
+func loadOptionalUpstreamSoftRuleIDs(t *testing.T, lang string) map[string]struct{} {
+	t.Helper()
+	root := repoRoot(t)
+	base := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		base = lang[:i]
+	}
+	paths := []string{
+		filepath.Join(root, "testdata", "grammar", base+"-optional-upstream-soft.xml"),
+		filepath.Join(root, "testdata", "grammar", lang+"-optional-upstream-soft.xml"),
+	}
+	out := map[string]struct{}{}
+	for _, p := range paths {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			continue
+		}
+		// Cheap id= extraction; optional packs are generated without nested quotes in ids.
+		s := string(data)
+		for {
+			i := strings.Index(s, `id="`)
+			if i < 0 {
+				break
+			}
+			s = s[i+4:]
+			j := strings.IndexByte(s, '"')
+			if j < 0 {
+				break
+			}
+			id := s[:j]
+			s = s[j+1:]
+			if id != "" && id != lang && id != base {
+				// skip rules lang= attributes by only taking uppercase-ish rule ids
+				if strings.Contains(id, "_") || (len(id) > 2 && id == strings.ToUpper(id)) {
+					out[id] = struct{}{}
+				}
+			}
+		}
+	}
+	return out
+}
+
 func listUpstreamGoldenLangs(t *testing.T) []string {
 	t.Helper()
 	dir := filepath.Join(repoRoot(t), "testdata", "upstream", "goldens")
@@ -87,11 +131,21 @@ func runUpstreamGoldenSample(t *testing.T, lang string) {
 		sampleN = len(doc.Cases)
 	}
 
+	// Rules that only exist in *-optional-upstream-soft.xml (XML default="off")
+	// are not active unless SOFT_OPTIONAL is enabled. Skip those for the default
+	// sample so the pass rate measures soft core + on-by-default packs only.
+	optionalIDs := loadOptionalUpstreamSoftRuleIDs(t, lang)
+
 	type miss struct{ Rule, Text, Why string }
 	var misses []miss
 	passed := 0
-	for i := 0; i < sampleN; i++ {
+	tried := 0
+	for i := 0; i < len(doc.Cases) && tried < sampleN; i++ {
 		tc := doc.Cases[i]
+		if _, off := optionalIDs[tc.Rule]; off {
+			continue
+		}
+		tried++
 		var buf bytes.Buffer
 		_, err := CoreGoldenHook(&buf, tc.Text, &CommandLineOptions{Language: lang})
 		if err != nil {
@@ -123,6 +177,7 @@ func runUpstreamGoldenSample(t *testing.T, lang string) {
 			misses = append(misses, miss{tc.Rule, tc.Text, "rule not in findings"})
 		}
 	}
+	sampleN = tried
 
 	t.Logf("upstream %s goldens: passed=%d missed=%d of %d", lang, passed, len(misses), sampleN)
 	if len(misses) > 0 && len(misses) <= 6 {

@@ -1688,125 +1688,125 @@
     <pattern>
       <token regexp="yes">\d+[°o]C?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="all_inclusive" name="all inclusive">
     <pattern>
       <token>all</token>
       <token>inclusive</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="call_center" name="call center">
     <pattern>
       <token>call</token>
       <token regexp="yes">center|girl</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="chapeau_bas" name="chapeau bas">
     <pattern>
       <token>chapeau</token>
       <token>bas</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="enfant_terrible" name="enfant terrible">
     <pattern>
       <token>enfant</token>
       <token>terrible</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="flat_white" name="flat white">
     <pattern>
       <token>flat</token>
       <token>white</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="girl_power" name="girl power">
     <pattern>
       <token>girl</token>
       <token>power</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="happy_hours" name="happy (birthday, hours, end)">
     <pattern>
       <token>happy</token>
       <token regexp="yes">birthday|hours?|end</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="hard_bop" name="hard (bop, rock)">
     <pattern>
       <token>hard</token>
       <token regexp="yes">bop|core|rock|porno</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="haute_couture" name="haute couture">
     <pattern>
       <token>haute</token>
       <token>couture</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="homo_niewiadomo" name="homo niewiadomo">
     <pattern>
       <token>homo</token>
       <token>niewiadomo</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="must_watch" name="must watch">
     <pattern>
       <token>must</token>
       <token regexp="yes">watch|carry|have</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="science_fiction" name="science fiction">
     <pattern>
       <token>science</token>
       <token>fiction</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="coming_out" name="coming out">
     <pattern>
       <token>coming</token>
       <token>out</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="nazwiska_angielskie" name="Pan Brown">
     <pattern>
       <token regexp="yes" inflected="yes">pani?</token>
       <token regexp="yes">White|Brown</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KONSKI_ZAB" name="końskiego zębu - dobra pisownia">
     <pattern>
       <token>końskiego</token>
       <token>zębu</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LICZBY_RZYMSKIE" name="Pomijaj liczby rzymskie">
     <pattern>
       <token regexp="yes">(?:M*(?:D?C{0,3}|C[DM])(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))(?:-(?:M*(?:D?C{0,3}|C[DM])(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})))?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPOLKA_AKCYJNA_SA" name="SA w nazwach spółek">
     <pattern>
       <token regexp="yes">\p{Lu}.+</token>
       <token>SA</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SZ_PAN" name="Sz. Pan/Pani">
     <pattern>
@@ -1814,26 +1814,26 @@
       <token>.</token>
       <token regexp="yes" case_sensitive="no" inflected="yes">Pani?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SAO_PAULO_SPELLING" name="Sao Paulo to poprawna nazwa">
     <pattern>
       <token>Sao</token>
       <token>Paulo</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MULTIPLE_HYPHENS" name="dywizy - jeden token w naszym układzie">
     <pattern>
       <token regexp="yes">-+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GDZIEZES_SPELLING" name="gdzieżeś łącznie">
     <pattern>
       <token regexp="yes">(?:gdzie|có|czy|ju|skąd|jak|kiedy|bodaj)że(?:ś(?:my|cie)?|m)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KM2" name="metry kwadratowe">
     <pattern>
@@ -1846,7 +1846,7 @@
       <token>Zdrowaś</token>
       <token>Maria</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="koglemmoglem" name="koglem-moglem">
     <pattern>
@@ -1854,25 +1854,25 @@
       <token>-</token>
       <token>moglem</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignore_numbers" name="pomijanie liczb w sprawdzaniu pisowni">
     <pattern>
       <token regexp="yes">\d+%?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignore_unit_labels" name="pomijanie łącznie napisanych liczb, bo jest do tego reguła JEDNOSTKA_LICZBA">
     <pattern>
       <token regexp="yes">\d+([mkc]?m|[Mk]Hz|[MKTd]B|k?Wh?|k?V|[mk]?g|m?l|mA|k?cal|M?bit|euro|EUR|USD|PLN|zł|gr|m[li]n|mld|mpx|tys|pkt|sek|godz|tygodnie|lata?|razy|roku?)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignore_numbers_compounds" name="pomijanie liczb w sprawdzaniu pisowni wyrazów złożonych">
     <pattern>
       <token regexp="yes">\d+-\p{L}+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignore_citation_years" name="pomijanie oznaczeń roku wydania pozycji w bibliografii">
     <pattern>
@@ -1880,13 +1880,13 @@
       <token regexp="yes">\d{4}a</token>
       <token regexp="yes">[;\)]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="number_x_number" name="15x13">
     <pattern>
       <token regexp="yes">\d+x\d+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="misz_masz1" name="misz masz -- nie czasownik">
     <pattern>
@@ -1900,18 +1900,18 @@
       <token>misz</token>
       <token>masz</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="wezej" name="wężej">
     <pattern>
       <token>wężej</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="austryjacki" name="austryjacki">
     <pattern>
       <token regexp="yes">austryjack.*|Austryja.*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
 </rules>

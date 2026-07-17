@@ -387,20 +387,20 @@
       <token regexp="yes">['’`´‘ʻ]</token>
       <token regexp="yes">ing|d|s</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CC_ING_SPELLING2" name="cc'ing spelling">
     <pattern>
       <token>cc</token>
       <token regexp="yes">'(d|s)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CC_ING_SPELLING3" name="cc'ing spelling">
     <pattern>
       <token regexp="yes" case_sensitive="yes">(cc|CC)[’'](d|ing)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LET_GO" name="let as a verb">
     <pattern>
@@ -735,35 +735,35 @@
       <token>aspartic</token>
       <token>acid</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_KETO" name="KETO">
     <pattern>
       <token>keto</token>
       <token regexp="yes">acids?|diets?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KUNG_FU" name="KUNG_FU">
     <pattern>
       <token>kung</token>
       <token>fu</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_CARTE_BLANCHE" name="CARTE_BLANCHE">
     <pattern>
       <token>carte</token>
       <token>blanche</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_IN_VIVO" name="IN_VIVO">
     <pattern>
       <token>in</token>
       <token>vivo</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_CARTE_DE_VISITE" name="CARTE_DE_VISITE">
     <pattern>
@@ -771,40 +771,40 @@
       <token>de</token>
       <token>visite</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PROPER_NOUNS_WITH_TRADEMARK_SYMBOLS" name="NNP with trademark symbols">
     <pattern>
       <token regexp="yes">([a-z]+)[™®]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_SUPERSCRIPTED_UNITS" name="Ignore spelling of superscripted units of measure">
     <pattern>
       <token regexp="yes">(Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|rad|sr|Hz|N|Pa|J|W|C|V|F|Ω|Sv?|Wb|T|H|l[mx]|Bq|Gy|kat|min|h|d|L|t|Np|B|eV|ua?)(⁻)?(¹|²|³)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_CRON_JOB" name="ignore spelling of 'cron job'">
     <pattern>
       <token>cron</token>
       <token regexp="yes">jobs?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_AMAZON_ANT" name="ignore spelling of 'amazon ant'">
     <pattern>
       <token>amazon</token>
       <token regexp="yes">ants?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_GRAND_PRIX" name="ignore spelling of 'Grand Prix'">
     <pattern>
       <token regexp="yes">grands?</token>
       <token>prix</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_VAN_DE" name="Ignore spelling of 'van de'">
     <pattern>
@@ -812,7 +812,7 @@
       <token regexp="yes">de[nr]?</token>
       <token regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_VON" name="Ignore spelling of 'von'">
     <pattern>
@@ -820,7 +820,7 @@
       <token>von</token>
       <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_CIUDAD" name="Ignore spelling of Hispanic names containing 'del'">
     <pattern>
@@ -828,7 +828,7 @@
       <token regexp="yes">[Dd]el</token>
       <token regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_Y_DE" name="Ignore spelling of names containing 'y de'">
     <pattern>
@@ -837,7 +837,7 @@
       <token>de</token>
       <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_DEL" name="Ignore spelling of names containing 'del/du/di'">
     <pattern>
@@ -845,14 +845,14 @@
       <token regexp="yes">[Dd]el|du|di</token>
       <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MODUS" name="Ignore spelling of 'modus'">
     <pattern>
       <token regexp="yes">modus|modi</token>
       <token regexp="yes">operandi|vivendi</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_EAU_DE" name="Ignore spelling of 'eau de'">
     <pattern>
@@ -860,28 +860,28 @@
       <token>de</token>
       <token regexp="yes">toilettes?|parfums?|javel|javelle|nile|colognes?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_NOTRE_DAME" name="Ignore spelling of 'Notre Dame'">
     <pattern>
       <token>Notre</token>
       <token>Dame</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PRO_SPELLING" name="pro + ADJECTIVE">
     <pattern>
       <token>pro</token>
       <token regexp="yes">bono|forma|rata|tem|tempore</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="POR_FAVOR" name="Ignore spelling of 'por favor'">
     <pattern>
       <token>por</token>
       <token>favor</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="POR_LA" name="Ignore spelling of 'por' in NEs">
     <pattern>
@@ -890,7 +890,7 @@
       <token regexp="yes">el|los|las?</token>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AL" name="Abdullah al (ignore spelling) Sharbi">
     <pattern>
@@ -898,7 +898,7 @@
       <token regexp="yes">[ae]l</token>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LATEX_SPELLING" name="Ignore spelling of text in LATEX">
     <pattern>
@@ -906,236 +906,236 @@
       <token>\</token>
       <token regexp="yes">.+\$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="STEAK_TARTARE" name="steak tartare">
     <pattern>
       <token regexp="yes">steak|salmon</token>
       <token>tartare</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TARTARE_SAUCE" name="tartare sauce">
     <pattern>
       <token regexp="yes">tartare?</token>
       <token regexp="yes">sauces?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BOEUF_BOURGUIGNON" name="boeuf bourguignon">
     <pattern>
       <token regexp="yes">boeuf|beef</token>
       <token>bourguignon</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ESCHERICHIA_COLI" name="Escherichia coli">
     <pattern>
       <token>Escherichia</token>
       <token regexp="yes">[Cc]oli</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MEA_CULPA_SPELLING" name="mea culpa">
     <pattern>
       <token>mea</token>
       <token regexp="yes">culpas?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PER_CAPITA" name="Per capita">
     <pattern>
       <token>per</token>
       <token regexp="yes">annum|capita|centum|diem|incuriam|se|accidens</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PIGMENTOSA" name="PIGMENTOSA">
     <pattern>
       <token regexp="yes">retinitis|urticaria|prurigo|dermatopathia|purpura|stratum</token>
       <token>pigmentosa</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HABEAS_CORPUS_SPELLING" name="Habeas Corpus">
     <pattern>
       <token>habeas</token>
       <token>corpus</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_LATIN_AD" name="Ignore Latin phrases with 'ad'">
     <pattern>
       <token>ad</token>
       <token regexp="yes">absurdum|hoc|hominem|infinitum|interim|nauseam</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_DE" name="Ignore phrases with 'de'">
     <pattern>
       <token>de</token>
       <token regexp="yes">facto|[ji]ure|minimis|profundis|rigueur|trop</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_IPSO" name="Ignore phrases with 'ipso'">
     <pattern>
       <token>ipso</token>
       <token>facto</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_NOBLESSE_OBLIGE" name="Ignore 'noblesse oblige'">
     <pattern>
       <token>noblesse</token>
       <token>oblige</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="US_DOLLAR" name="Ignore 'US$'">
     <pattern>
       <token case_sensitive="yes">US$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MACULA_LUTEA" name="macula lutea">
     <pattern>
       <token>macula</token>
       <token regexp="yes">luteae?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CARPE_DIEM_SPELLING" name="carpe diem">
     <pattern>
       <token>carpe</token>
       <token regexp="yes">diems?|noctem</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CLARY_SAGE" name="clary sage">
     <pattern>
       <token>clary</token>
       <token>sage</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AURORA_BOREALIS" name="aurora borealis">
     <pattern>
       <token regexp="yes">aurora|Coronae?</token>
       <token>borealis</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CORPUS_CALLOSUM" name="corpus callosum">
     <pattern>
       <token>corpus</token>
       <token>callosum</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CORPORA_CALLOSA" name="corpora callosa">
     <pattern>
       <token>corpora</token>
       <token>callosa</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ART_DECO" name="art deco">
     <pattern>
       <token>art</token>
       <token>deco</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPONGIFORM" name="spongiform encephalopathy">
     <pattern>
       <token>spongiform</token>
       <token regexp="yes">encephalopath(y|ies)?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CAMINO_REAL" name="camino real">
     <pattern>
       <token>camino</token>
       <token regexp="yes">real(e?s)?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MUMBO_JUMBO" name="mumbo jumbo">
     <pattern>
       <token>mumbo</token>
       <token>jumbo</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DE_NAMES" name="names with 'de'">
     <pattern>
       <token>de</token>
       <token regexp="yes" case_sensitive="yes">Blasio|Maupassant|Niro</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GRUPO_NAMES" name="names with 'Grupo'">
     <pattern>
       <token>Grupo</token>
       <token regexp="yes" postag="UNKNOWN|NN.*" postag_regexp="yes">[A-Z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ACID" name="ribonucleic acid">
     <pattern>
       <token regexp="yes">ribonucleic|glutamic</token>
       <token regexp="yes">acids?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_MULTIPLE_CIRCUMFLEX" name="^^">
     <pattern>
       <token regexp="yes">\^+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_BLASTIC_CRISIS" name="blastic crisis">
     <pattern>
       <token>blastic</token>
       <token regexp="yes">cris[ei]s</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_HAVERSIAN" name="haversian canal">
     <pattern>
       <token>haversian</token>
       <token regexp="yes">(canal|system)s?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FATA_MORGANA_IGNORE_SPELLING" name="fata morgana">
     <pattern>
       <token>fata</token>
       <token regexp="yes">morganas?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="INTER_SE_IGNORE_SPELLING" name="inter se">
     <pattern>
       <token>inter</token>
       <token>se</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_BON_VOYAGE" name="Bon Voyage">
     <pattern>
       <token>bon</token>
       <token regexp="yes">appétit|mots?|vivants?|voyage</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BUENOS_DIAS" name="buenos días">
     <pattern>
       <token>buenos</token>
       <token>días</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="URBI_ET_ORBI" name="urbi et orbi">
     <pattern>
@@ -1143,41 +1143,41 @@
       <token>et</token>
       <token>orbi</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SUPEROXIDE_DISMUTASE" name="superoxide dismutase">
     <pattern>
       <token>superoxide</token>
       <token>dismutase</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GRANDE_ECOLE" name="grande école">
     <pattern>
       <token>grande</token>
       <token regexp="yes">école|champagne|écaille|passion|dame|tenue</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FALLOPIAN_TUBE" name="fallopian tube">
     <pattern>
       <token>fallopian</token>
       <token regexp="yes">tubes?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TILDE_SPELLING" name="Ignore spelling of '~'">
     <pattern>
       <token regexp="yes">[~►◄%]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DÉJÀ_VU_SPELLING" name="Ignore spelling of 'déjà vu'">
     <pattern>
       <token>déjà</token>
       <token>vu</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PERSONA_NON_GRATA_SPELLING" name="Ignore spelling of 'persona non grata'">
     <pattern>
@@ -1185,7 +1185,7 @@
       <token>non</token>
       <token>grata</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PAPUA_NEW_GUINEA" name="Ignore spelling of 'Papua New Guinea'">
     <pattern>
@@ -1193,13 +1193,13 @@
       <token>New</token>
       <token regexp="yes">Guinea|Guineans?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="STOCK_SYMBOLS_SPELLING" name="Ignore spelling of stock symbols">
     <pattern>
       <token regexp="yes" case_sensitive="yes">\$[A-Z]{2,5}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="STOCK_SYMBOLS_NNP" name="NNP for stock symbols">
     <pattern>
@@ -1212,27 +1212,27 @@
       <token>bended</token>
       <token regexp="yes">knees?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SECTION_SIGN_LETTER_SPELLING" name="Ignore spelling of '§ + uppercase letter'">
     <pattern>
       <token regexp="yes">§[A-Z]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AD_HOMINEM_SPELLING" name="Ignore spelling of 'ad hominem'">
     <pattern>
       <token>ad</token>
       <token>hominem</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SALUT_SENT_START_SPELLING" name="Ignore spelling of 'Salut' at SENT_START">
     <pattern>
       <token postag="SENT_START"></token>
       <token>Salut</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TWITTER_USERNAME_NNP" name="NNP for '@realDonalTrump'">
     <pattern>
@@ -1245,28 +1245,28 @@
       <token>in</token>
       <token>perpetuum</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DEPARTEMENT_OF_XXX" name="ignore spelling of 'Département of XXX'">
     <pattern>
       <token case_sensitive="yes">Département</token>
       <token regexp="yes">d[eu]|of</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CD_AU" name="ignore spelling of '5 au'">
     <pattern>
       <token regexp="yes">\d+</token>
       <token>au</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DIFFERENTLY_ABLED" name="ignore spelling of 'differently abled'">
     <pattern>
       <token>differently</token>
       <token>abled</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NEED_MD" name="needn't is MD">
     <pattern>
@@ -1280,46 +1280,46 @@
       <token>a</token>
       <token>priori</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="A_POSTERIORI_SPELLING" name="ignore spelling of 'a posteriori'">
     <pattern>
       <token>a</token>
       <token>posteriori</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DE_FACTO" name="ignore spelling of 'de facto'">
     <pattern>
       <token regexp="yes">[Dd]e|DE</token>
       <token regexp="yes">[Ff]acto|FACTO</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_REAIS_SYMBOL" name="ignore spelling of 'R$'">
     <pattern>
       <token case_sensitive="yes">R$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_SUPERSCRIPT_NUMBERS" name="ignore spelling of 'mc²'">
     <pattern>
       <token regexp="yes">([a-z]|mc|mi|[dkm]m|sp)[²³]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_WORDS_WITH_UNDERSCORE_OR_AT" name="ignore spelling of things like REMOTE_USER and name@company">
     <pattern>
       <token regexp="yes">[\p{L}\p{Nd}_\-.]+[@_][\p{L}\p{Nd}_\-.]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_THOU_WAST" name="ignore spelling of archaic 'thou wast'">
     <pattern>
       <token regexp="yes">[Tt]hou|THOU</token>
       <token regexp="yes">[Ww]ast|WAST</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PLAY_ING" name="ignore spelling of play(ing)">
     <pattern>
@@ -1328,33 +1328,33 @@
       <token regexp="yes" case_sensitive="yes">ing|ed</token>
       <token>)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ON_FLEEK" name="on fleek">
     <pattern>
       <token>on</token>
       <token regexp="yes" case_sensitive="yes">[Ff]leek|FLEEK</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AHHH" name="ignore spelling of long interjections (ahhhhh)">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[AaOo]h{1,20}|[OA]H{1,20}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ING" name="ignore spelling of 'go(ing)'">
     <pattern>
       <token regexp="yes">\(|/</token>
       <token regexp="yes">ing|ed</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HAWAI_I" name="ignore 'Hawaiʻi'">
     <pattern>
       <token regexp="yes" case_sensitive="yes">Hawai['’`´‘ʻ]i</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BUG_NO_VB" name="'bug' no VB">
     <pattern>
@@ -1367,7 +1367,7 @@
     <pattern>
       <token regexp="yes" case_sensitive="yes">CO₂-([Ff]ree|[Bb]ased|[Nn]eutral|[Cc]ompensat(ing|ed)|[Dd]ependent|[Ii]ndependent)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PRAIA_DA" name="ignore spelling of 'Praia da Luz'">
     <pattern>
@@ -1375,14 +1375,14 @@
       <token regexp="yes">d[oa]</token>
       <token regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WHOLE_NOTHER_IGNORE_SPELLING" name="ignore spelling of 'whole nother'">
     <pattern>
       <token>whole</token>
       <token regexp="yes" case_sensitive="yes">[Nn]other|NOTHER</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_ES_SPELLING" name="ignore spelling of '(es)'">
     <pattern>
@@ -1390,7 +1390,7 @@
       <token case_sensitive="yes">es</token>
       <token>)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_WHYS_AND_WHEREFORES" name="ignore 'whys and wherefores'">
     <pattern>
@@ -1398,6 +1398,6 @@
       <token>and</token>
       <token>wherefores</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
 </rules>

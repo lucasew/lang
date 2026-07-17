@@ -8,7 +8,7 @@
         <token>comme</token>
         <token>quoi</token>
       </pattern>
-      <message>Une autre structure semble plus appropriée.</message>
+      <message>Une autre structure semble plus appropriée. <suggestion>ainsi</suggestion></message>
       <short>COMME_QUOI</short>
     </rule>
     <rule id="DE_PARTOUT" name="de partout" default="temp_off">
@@ -16,7 +16,7 @@
         <token>de</token>
         <token>partout</token>
       </pattern>
-      <message>La préposition doit être omise.</message>
+      <message>La préposition doit être omise. <suggestion>partout</suggestion></message>
       <short>DE_PARTOUT</short>
     </rule>
     <rule id="AVOIR_L_HABITUDE_POUR" name="avoir l'habitude pour" default="temp_off">
@@ -27,7 +27,7 @@
         <token>habitude</token>
         <token>pour</token>
       </pattern>
-      <message>Une autre préposition semble plus appropriée.</message>
+      <message>Une autre préposition semble plus appropriée. <suggestion>de</suggestion></message>
       <short>AVOIR_L_HABITUDE_POUR</short>
     </rule>
     <rule id="EN_PLEINE_CAMPAGNE" name="en pleine campagne" default="off">
@@ -37,7 +37,7 @@
         <token>pleine</token>
         <token>campagne</token>
       </pattern>
-      <message>« En pleine campagne » est une expression fautive.</message>
+      <message>« En pleine campagne » est une expression fautive. <suggestion>en plaine campagne</suggestion></message>
       <short>EN_PLEINE_CAMPAGNE</short>
     </rule>
     <rule id="IL_DEVIENT_QUOI" name="il devient quoi" default="temp_off">
@@ -55,42 +55,42 @@
       <pattern>
         <token>maintenant</token>
       </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
+      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>présentement</suggestion></message>
       <short>REP_MAINTENANT</short>
     </rule>
     <rule id="REP_NON" name="non (style)" default="off">
       <pattern>
         <token>non</token>
       </pattern>
-      <message>Un mot est répété, et peut sembler familier dans un contexte formel.</message>
+      <message>Un mot est répété, et peut sembler familier dans un contexte formel. <suggestion>pas du tout</suggestion></message>
       <short>REP_NON</short>
     </rule>
     <rule id="REP_ADRESSER" name="adresser (style)" default="off">
       <pattern>
         <token postag="V.*" postag_regexp="yes">adresser</token>
       </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
+      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>envoyer</suggestion></message>
       <short>REP_ADRESSER</short>
     </rule>
     <rule id="REP_COMMUN" name="commun" default="off">
       <pattern>
         <token case_sensitive="yes" postag="J (.*)" postag_regexp="yes">commun</token>
       </pattern>
-      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
+      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>global</suggestion></message>
       <short>REP_COMMUN</short>
     </rule>
     <rule id="REP_POSSIBLE" name="possible" default="off">
       <pattern>
         <token postag="J.*" postag_regexp="yes">possible</token>
       </pattern>
-      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
+      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>prévisible</suggestion></message>
       <short>REP_POSSIBLE</short>
     </rule>
     <rule id="REP_REMERCIER" name="remercier (style)" default="off">
       <pattern>
         <token postag="V.*" postag_regexp="yes">remercier</token>
       </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
+      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>saluer</suggestion></message>
       <short>REP_REMERCIER</short>
     </rule>
   </category>
@@ -99,42 +99,42 @@
       <pattern>
         <token>search</token>
       </pattern>
-      <message>« \1 » peut être considéré comme un anglicisme.</message>
+      <message>« \1 » peut être considéré comme un anglicisme. <suggestion>recherche</suggestion></message>
       <short>SEARCH</short>
     </rule>
     <rule id="BLIND" name="blind" default="off">
       <pattern>
         <token regexp="yes">blind|blinds</token>
       </pattern>
-      <message>« Blind » peut être considéré comme un anglicisme.</message>
+      <message>« Blind » peut être considéré comme un anglicisme. <suggestion>store</suggestion></message>
       <short>BLIND</short>
     </rule>
     <rule id="CART" name="cart" default="off">
       <pattern>
         <token regexp="yes">carts?</token>
       </pattern>
-      <message>« Cart » peut être considéré comme un anglicisme.</message>
+      <message>« Cart » peut être considéré comme un anglicisme. <suggestion>voiturette</suggestion></message>
       <short>CART</short>
     </rule>
     <rule id="LOCKER" name="locker" default="off">
       <pattern>
         <token regexp="yes">lockers?</token>
       </pattern>
-      <message>« Locker » peut être considéré comme un anglicisme.</message>
+      <message>« Locker » peut être considéré comme un anglicisme. <suggestion>casier</suggestion></message>
       <short>LOCKER</short>
     </rule>
     <rule id="SNAP" name="snap" default="off">
       <pattern>
         <token regexp="yes">snaps?</token>
       </pattern>
-      <message>« Snap » peut être considéré comme un anglicisme.</message>
+      <message>« Snap » peut être considéré comme un anglicisme. <suggestion>bouton-pression</suggestion></message>
       <short>SNAP</short>
     </rule>
     <rule id="WISE" name="wise" default="off">
       <pattern>
         <token regexp="yes">wises?</token>
       </pattern>
-      <message>« Wise » peut être considéré comme un anglicisme.</message>
+      <message>« Wise » peut être considéré comme un anglicisme. <suggestion>habile</suggestion></message>
       <short>WISE</short>
     </rule>
   </category>
@@ -175,7 +175,7 @@
           <exception regexp="yes">asile|attache|confiance|contenance|grâce|place|preneur|sens</exception>
         </token>
       </pattern>
-      <message>Après le verbe 'trouver', ce nom n'est généralement pas utilisé.</message>
+      <message>Après le verbe 'trouver', ce nom n'est généralement pas utilisé. <suggestion>un \2</suggestion></message>
       <short>TROUVER_PLUS_NOM_INCORRECT</short>
     </rule>
   </category>
@@ -194,7 +194,7 @@
         <token skip="1">contrôler</token>
         <token regexp="yes">circulations?</token>
       </pattern>
-      <message>« Contrôler la circulation » peut être considéré comme un anglicisme.</message>
+      <message>« Contrôler la circulation » peut être considéré comme un anglicisme. <suggestion>régler</suggestion></message>
       <short>CONTROLER_LA_CIRCULATION</short>
     </rule>
     <rule id="CONTROLER_LA_SITUATION" name="contrôler la situation" default="temp_off">
@@ -202,7 +202,7 @@
         <token skip="1">contrôler</token>
         <token regexp="yes">situations?</token>
       </pattern>
-      <message>« Contrôler la situation » peut être considéré comme un anglicisme.</message>
+      <message>« Contrôler la situation » peut être considéré comme un anglicisme. <suggestion>avoir la situation en mains</suggestion></message>
       <short>CONTROLER_LA_SITUATION</short>
     </rule>
     <rule id="EN_AUTORITE" name="en autorité" default="temp_off">
@@ -210,7 +210,7 @@
         <token>en</token>
         <token regexp="yes">autorités?</token>
       </pattern>
-      <message>« En autorité » peut être considéré comme un anglicisme.</message>
+      <message>« En autorité » peut être considéré comme un anglicisme. <suggestion>ayant autorité</suggestion></message>
       <short>EN_AUTORITE</short>
     </rule>
     <rule id="ETRE_DU_POUR" name="être dû pour" default="temp_off">
@@ -219,7 +219,7 @@
         <token regexp="yes">dû|dues|dus</token>
         <token>pour</token>
       </pattern>
-      <message>« Être dû pour » peut être considéré comme un anglicisme (to be due for).</message>
+      <message>« Être dû pour » peut être considéré comme un anglicisme (to be due for). <suggestion>avoir besoin de</suggestion></message>
       <short>ETRE_DU_POUR</short>
     </rule>
     <rule id="SECRETAIRE_EXECUTIF" name="secrétaire exécutif" default="off">
@@ -228,7 +228,7 @@
         <token min="0">-</token>
         <token regexp="yes">exécutifs?|exécutives?</token>
       </pattern>
-      <message>« Secrétaire exécutif » peut être considéré comme un anglicisme (executive secretary).</message>
+      <message>« Secrétaire exécutif » peut être considéré comme un anglicisme (executive secretary). <suggestion>secrétaire de direction</suggestion></message>
       <short>SECRETAIRE_EXECUTIF</short>
     </rule>
   </category>
@@ -239,7 +239,7 @@
         <token regexp="yes">mémoires?</token>
         <token>de</token>
       </pattern>
-      <message>« En mémoire de » est un archaïsme. Vous pourriez préférer le français standard.</message>
+      <message>« En mémoire de » est un archaïsme. Vous pourriez préférer le français standard. <suggestion>à la mémoire de</suggestion></message>
       <short>EN_MEMOIRE_DE</short>
     </rule>
   </category>

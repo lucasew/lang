@@ -87,7 +87,7 @@
         <token>a</token>
         <token>la</token>
       </pattern>
-      <message>‘A la’ is a foreign expression which originally has a diacritic.</message>
+      <message>‘A la’ is a foreign expression which originally has a diacritic. <suggestion>à la</suggestion></message>
       <short>A_LA_DIACRITIC</short>
     </rule>
     <rule id="TYPEWRITER_APOSTROPHE" name="require typewriter (straight) apostrophe (')" default="off">
@@ -145,7 +145,7 @@
         <token regexp="yes">we|they</token>
         <token>'s</token>
       </pattern>
-      <message>Typo detected: Did you mean to write '\1'd' (contracted form of '\1 had' or '\1 would')?</message>
+      <message>Typo detected: Did you mean to write '\1'd' (contracted form of '\1 had' or '\1 would')? <suggestion>\1'd</suggestion></message>
       <short>TYPO_THEY_S</short>
     </rule>
   </category>
@@ -155,7 +155,7 @@
         <token>popular</token>
         <token>among</token>
       </pattern>
-      <message>The usual collocation for "popular" is "with", not "among".</message>
+      <message>The usual collocation for "popular" is "with", not "among". <suggestion>popular with</suggestion></message>
       <short>POPULAR_AMONG_WITH</short>
     </rule>
     <rule id="GUARD_FROM_AGAINST" name="Collocation: guard from/against" default="off">
@@ -194,7 +194,7 @@
         <token min="0" postag="DT|PRP\$" postag_regexp="yes"></token>
         <token postag="NN:UN?" postag_regexp="yes"></token>
       </pattern>
-      <message>The usual preposition for "passionate" is "about", not "by".</message>
+      <message>The usual preposition for "passionate" is "about", not "by". <suggestion>\1 passionate about</suggestion></message>
       <short>PASSIONATE_BY_ABOUT_2</short>
     </rule>
     <rule id="WAITING_MY_PATIENT" name="waiting (for) a patient" default="off">
@@ -203,7 +203,7 @@
         <token postag="PRP$|DT" postag_regexp="yes"></token>
         <token postag="NN.*" postag_regexp="yes"></token>
       </pattern>
-      <message>The word "for" is missing between "\1" and "\1 \2".</message>
+      <message>The word "for" is missing between "\1" and "\1 \2". <suggestion>\1 for \2 \3</suggestion></message>
       <short>WAITING_MY_PATIENT</short>
     </rule>
   </category>

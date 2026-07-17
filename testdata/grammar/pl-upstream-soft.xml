@@ -526,7 +526,7 @@
         <token postag="verb:impt:sg:sec.*" postag_regexp="yes"></token>
         <token>że</token>
       </pattern>
-      <message>Te wyrazy należy napisać łącznie (jeśli cząstka „że” funkcjonuje jako wzmocnienie rozkazu) lub z przecinkiem, jeśli wprowadza zdanie podrzędne.</message>
+      <message>Te wyrazy należy napisać łącznie (jeśli cząstka „że” funkcjonuje jako wzmocnienie rozkazu) lub z przecinkiem, jeśli wprowadza zdanie podrzędne. <suggestion>\1\2</suggestion></message>
       <short>Błąd ortograficzny lub brak przecinka</short>
     </rule>
     <rule id="DATA_KROPKA_PO_DNIU" name="Zbędne kropki w liczebniku w dacie">
@@ -2761,7 +2761,7 @@
         <token>,</token>
         <token>wymaluj</token>
       </pattern>
-      <message>W tym stałym związku frazeologicznym zwykle nie stawia się przecinka.</message>
+      <message>W tym stałym związku frazeologicznym zwykle nie stawia się przecinka. <suggestion>\1 \3</suggestion></message>
       <short>Zbędny przecinek</short>
     </rule>
     <rule id="BYLE_GDZIE" name="Zbędny przecinek po „byle”">

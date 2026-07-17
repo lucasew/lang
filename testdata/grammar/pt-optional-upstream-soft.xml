@@ -55,7 +55,7 @@
         <token>tempo</token>
         <token>que</token>
       </pattern>
-      <message>Did you mean a correction for AO_MESMO_TEMPO_QUE_ENQUANTO?</message>
+      <message><suggestion>enquanto</suggestion></message>
       <short>AO_MESMO_TEMPO_QUE_ENQUANTO</short>
     </rule>
     <rule id="POUCO_IMPORTA_NÃO_IMPORTA" name="✂️ 'Pouco' importa → não" default="off">
@@ -64,7 +64,7 @@
         <token>importa</token>
         <token postag="SPS00|(SPS00:)?D[AI].+|PP3CN000" postag_regexp="yes"></token>
       </pattern>
-      <message>Did you mean a correction for POUCO_IMPORTA_NÃO_IMPORTA?</message>
+      <message><suggestion>não</suggestion></message>
       <short>POUCO_IMPORTA_NÃO_IMPORTA</short>
     </rule>
   </category>
@@ -93,7 +93,7 @@
         <token postag="V.*" postag_regexp="yes"></token>
         <token regexp="yes">m[aeo]s?|t[aeo]s?|lh[aeo]s?|vos</token>
       </pattern>
-      <message>Palavra composta. Pretende dizer</message>
+      <message>Palavra composta. Pretende dizer <suggestion>\1‑\2</suggestion></message>
       <short>HIFENIZADOR_VERBOS_2</short>
     </rule>
   </category>
@@ -113,7 +113,7 @@
         <token regexp="yes" min="0" max="1">as?|os?|me|te|lhes?|nos|vos</token>
         <token>chatear</token>
       </pattern>
-      <message>Expressão informal, pondere empregar:</message>
+      <message>Expressão informal, pondere empregar: <suggestion>incomodar</suggestion></message>
       <short>PARAR_DE_CHATEAR</short>
     </rule>
   </category>
@@ -125,7 +125,7 @@
         <token>da</token>
         <token postag="NC.+|AQ.+|NP.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Possível confusão de termos.</message>
+      <message>Possível confusão de termos. <suggestion>fases</suggestion></message>
       <short>CONFUSÃO_FAZES_FASES</short>
     </rule>
   </category>
@@ -166,7 +166,7 @@
         <token min="0">e</token>
         <token>maneira</token>
       </pattern>
-      <message>Did you mean a correction for REDUNDANCY_16_DE?</message>
+      <message><suggestion>de forma alguma</suggestion></message>
       <short>REDUNDANCY_16_DE</short>
     </rule>
     <rule id="REDUNDANCY_MAN_AND_WOMAN" name="Redundâncias não sexistas: Homens e mulheres" default="off">
@@ -196,7 +196,7 @@
         <token regexp="yes">\w+</token>
         <token regexp="yes" postag="SENT_END">”|»|&quot;</token>
       </pattern>
-      <message>As citações devem ser pontuadas.</message>
+      <message>As citações devem ser pontuadas. <suggestion>\1.\2</suggestion></message>
       <short>PUNCTUATE_QUOTATIONS</short>
     </rule>
   </category>
@@ -207,7 +207,7 @@
         <token regexp="yes" case_sensitive="yes" postag="_IS_URL">\p{Ll}.*</token>
         <token max="-1" postag="_IS_URL"></token>
       </pattern>
-      <message>Para evitar uma frase iniciada por letra minúscula, considere não começá-la diretamente com uma referência a um site de internet.</message>
+      <message>Para evitar uma frase iniciada por letra minúscula, considere não começá-la diretamente com uma referência a um site de internet. <suggestion>O site \1\3</suggestion></message>
       <short>URL_INICIAL</short>
     </rule>
   </category>

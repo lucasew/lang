@@ -7,14 +7,14 @@
       <pattern>
         <token>alleine</token>
       </pattern>
-      <message>Das Wort "\1" ist umgangssprachlich.</message>
+      <message>Das Wort "\1" ist umgangssprachlich. <suggestion>allein</suggestion></message>
       <short>ALLEINE</short>
     </rule>
     <rule id="KOMPLETT_STIL" name="komplett (völlig, vollkommen)" default="temp_off">
       <pattern>
         <token case_sensitive="yes">komplett</token>
       </pattern>
-      <message>Möchten Sie den Ausdruck 'komplett' durch eine formalere Formulierung ersetzen?</message>
+      <message>Möchten Sie den Ausdruck 'komplett' durch eine formalere Formulierung ersetzen? <suggestion>vollkommen</suggestion></message>
       <short>KOMPLETT_STIL</short>
     </rule>
     <rule id="EXTRA_STIL" name="extra" default="temp_off">
@@ -23,7 +23,7 @@
         <token min="0">zu</token>
         <token regexp="yes">machen|tun</token>
       </pattern>
-      <message>'Extra' im Sinne von 'vorsätzlich' ist sehr umgangssprachlich und könnte hier durch formellere Alternativen ersetzt werden.</message>
+      <message>'Extra' im Sinne von 'vorsätzlich' ist sehr umgangssprachlich und könnte hier durch formellere Alternativen ersetzt werden. <suggestion>vorsätzlich</suggestion></message>
       <short>EXTRA_STIL</short>
     </rule>
   </category>

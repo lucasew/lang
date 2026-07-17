@@ -12,7 +12,7 @@
     <pattern>
       <token regexp="yes">ha(ha)+|he(he)+|hi(hi)+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="en_base" name="en base + numeral">
     <pattern>
@@ -94,7 +94,7 @@
       <token postag="CC"></token>
       <token regexp="yes">post.*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="RIU_AMUNT" name="riu amunt/avall">
     <pattern>
@@ -826,7 +826,7 @@
       <token regexp="yes">més|\+</token>
       <token>info</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MADE_IN" name="made in">
     <pattern>
@@ -834,13 +834,13 @@
       <token>in</token>
       <token regexp="yes" case_sensitive="yes">USA|China|Europe|Taiwan|Spain|France|Germany|Italy</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_CASTELLS" name="ignorar nomenclatura de castells">
     <pattern>
       <token regexp="yes">\dde?1?\d(1|f|fa|fm|fmp|ps|sf|sm)?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignore_uppercase_letters" name="A a Z">
     <pattern>
@@ -855,43 +855,43 @@
       <token>le</token>
       <token regexp="yes">nozze|jour|courrier|monde|journal</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_PUNCTUATION" name="Ignore spelling of punctuation characters">
     <pattern>
       <token regexp="yes">[_~°]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_APOSTROPHES" name="ignora l'ortografia en algunes apostrofacions">
     <pattern>
       <token regexp="yes">[dlmnst]</token>
       <token regexp="yes">['`´‘’]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HEXADECIMAL_NOTATION" name="notació hexadecimal">
     <pattern>
       <token regexp="yes" case_sensitive="yes">0x[0-9A-Fa-f]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="OCTAL_NOTATION" name="notació octal">
     <pattern>
       <token regexp="yes" case_sensitive="yes">0o[0-7]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IBAN" name="IBAN">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z][A-Z][0-9][0-9].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignora_algunes_sigles" name="algunes sigles">
     <pattern>
       <token regexp="yes" case_sensitive="yes">NY|NGC|IgG|CHX|Tass|TASS|PiS|HDM|ES\d\d+|AUPAC|FTC|DTN|RFC</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
 </rules>

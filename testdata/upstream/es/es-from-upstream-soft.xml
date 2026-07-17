@@ -7,7 +7,7 @@
       <pattern>
         <token>ademas</token>
       </pattern>
-      <message>Se escribe con tilde.</message>
+      <message>Se escribe con tilde. <suggestion>además</suggestion></message>
       <short>ADEMAS</short>
     </rule>
     <rule id="CIRCULO" name="circulo-&gt;círculo">
@@ -35,7 +35,7 @@
       <pattern>
         <token>frio</token>
       </pattern>
-      <message>Si es un nombre, se escribe con tilde. Correcto si es del v. 'freír' en pasado (él frio).</message>
+      <message>Si es un nombre, se escribe con tilde. Correcto si es del v. 'freír' en pasado (él frio). <suggestion>frío</suggestion></message>
       <short>FRIO</short>
     </rule>
     <rule id="INGLES" name="ingles/inglés">
@@ -50,21 +50,21 @@
         <token>la</token>
         <token>matricula</token>
       </pattern>
-      <message>Si es adjetivo o nombre, se escribe con tilde.</message>
+      <message>Si es adjetivo o nombre, se escribe con tilde. <suggestion>matrícula</suggestion></message>
       <short>LA_MATRICULA</short>
     </rule>
     <rule id="LIDERES" name="lideres/líderes">
       <pattern>
         <token>lideres</token>
       </pattern>
-      <message>Si es un nombre y no un verbo, se escribe con tilde.</message>
+      <message>Si es un nombre y no un verbo, se escribe con tilde. <suggestion>líderes</suggestion></message>
       <short>LIDERES</short>
     </rule>
     <rule id="LIO" name="lio/lío">
       <pattern>
         <token>lio</token>
       </pattern>
-      <message>Si es un nombre o una forma del v. 'liar' en presente (yo lío), se escribe con tilde. Correcto si es del v. 'liar' en pasado (él lio).</message>
+      <message>Si es un nombre o una forma del v. 'liar' en presente (yo lío), se escribe con tilde. Correcto si es del v. 'liar' en pasado (él lio). <suggestion>lío</suggestion></message>
       <short>LIO</short>
     </rule>
     <rule id="MARQUES" name="marques/marqués">
@@ -92,7 +92,7 @@
       <pattern>
         <token>serian</token>
       </pattern>
-      <message>Si es del v. 'ser' se escribe con tilde. Correcto sin tilde como forma del v. 'seriar'.</message>
+      <message>Si es del v. 'ser' se escribe con tilde. Correcto sin tilde como forma del v. 'seriar'. <suggestion>serían</suggestion></message>
       <short>SERIAN</short>
     </rule>
     <rule id="SE_A" name="se/sé">
@@ -100,7 +100,7 @@
         <token>se</token>
         <token>a</token>
       </pattern>
-      <message>Si es del v. 'saber' o 'ser' se escribe con tilde.</message>
+      <message>Si es del v. 'saber' o 'ser' se escribe con tilde. <suggestion>sé</suggestion></message>
       <short>SE_A</short>
     </rule>
     <rule id="ULTIMO" name="ultimo/últimos">
@@ -114,7 +114,7 @@
       <pattern>
         <token>varia</token>
       </pattern>
-      <message>Si es del v. 'variar', lleva tilde. Puede ser, más raramente, un adjetivo sin tilde.</message>
+      <message>Si es del v. 'variar', lleva tilde. Puede ser, más raramente, un adjetivo sin tilde. <suggestion>varía</suggestion></message>
       <short>VARIA</short>
     </rule>
     <rule id="VIVIDAMENTE" name="vividamente/vívidamente">
@@ -130,7 +130,7 @@
         <token min="0" max="4" postag="RG|LOC_ADV" postag_regexp="yes"></token>
         <token>animo</token>
       </pattern>
-      <message>Si es un nombre, se escribe con tilde.</message>
+      <message>Si es un nombre, se escribe con tilde. <suggestion>ánimo</suggestion></message>
       <short>ANIMO</short>
     </rule>
     <rule id="COLERA" name="colera/cólera">
@@ -146,7 +146,7 @@
         <token>cómo</token>
         <token postag="DD.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Si es un comparativo, se escribe sin tilde.</message>
+      <message>Si es un comparativo, se escribe sin tilde. <suggestion>como</suggestion></message>
       <short>COMO_COMPARATIVO</short>
     </rule>
     <rule id="GRAFICO" name="grafico/gráfico">
@@ -228,7 +228,7 @@
       <pattern>
         <token regexp="yes">yacio|aliaria|convivio|desplego|heria|prometio|rodo|rogo|pario|pedia|servia</token>
       </pattern>
-      <message>Si es un verbo, se escribe con tilde. Existe como sustantivo o adjetivo sin acento, pero es poco usual.</message>
+      <message>Si es un verbo, se escribe con tilde. Existe como sustantivo o adjetivo sin acento, pero es poco usual. <suggestion>{suggestion}</suggestion></message>
       <short>UNUSUAL_WITHOUT_ACCENT</short>
     </rule>
   </category>
@@ -245,7 +245,7 @@
         <token>a</token>
         <token>alrededor</token>
       </pattern>
-      <message>Expresión preferible sin la preposición 'a'.</message>
+      <message>Expresión preferible sin la preposición 'a'. <suggestion>alrededor</suggestion></message>
       <short>ALREDEDOR</short>
     </rule>
     <rule id="APARTE" name="a parte/aparte">
@@ -267,7 +267,7 @@
       <pattern>
         <token case_sensitive="yes">tv</token>
       </pattern>
-      <message>La abreviación de "televisión" se escribe con mayúscula.</message>
+      <message>La abreviación de "televisión" se escribe con mayúscula. <suggestion>TV</suggestion></message>
       <short>TV</short>
     </rule>
     <rule id="AH_INF" name="ah + infinitivo (a)">
@@ -275,7 +275,7 @@
         <token>ah</token>
         <token postag="V[ASM]N0000" postag_regexp="yes"></token>
       </pattern>
-      <message>La preposición 'a' se escribe sin 'h'.</message>
+      <message>La preposición 'a' se escribe sin 'h'. <suggestion>a \2</suggestion></message>
       <short>AH_INF</short>
     </rule>
     <rule id="APARTES" name="apartes/aparte">
@@ -291,7 +291,7 @@
         <token>bien</token>
         <token regexp="yes">venid[oa]s?</token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>bien</suggestion></message>
       <short>BIEN_VENIDO</short>
     </rule>
     <rule id="CASETE" name="casete">
@@ -306,7 +306,7 @@
         <token regexp="yes">currículums?</token>
         <token>vitae</token>
       </pattern>
-      <message>Utilice la forma latina o la forma adaptada.</message>
+      <message>Utilice la forma latina o la forma adaptada. <suggestion>curriculum vitae</suggestion></message>
       <short>CURRICULUM</short>
     </rule>
     <rule id="DAR_ABASTO" name="dar *a basto/abasto">
@@ -315,7 +315,7 @@
         <token>a</token>
         <token>basto</token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>abasto</suggestion></message>
       <short>DAR_ABASTO</short>
     </rule>
     <rule id="DAR_A_LUGAR" name="dar *(a) lugar" default="on">
@@ -324,7 +324,7 @@
         <token>a</token>
         <token>lugar</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>lugar</suggestion></message>
       <short>DAR_A_LUGAR</short>
     </rule>
     <rule id="EX_ALTO_CARGO" name="exalto cargo (ex alto cargo)">
@@ -340,7 +340,7 @@
         <token>e</token>
         <token postag="V.P00SM" postag_regexp="yes"></token>
       </pattern>
-      <message>El verbo 'haber' se escribe con hache.</message>
+      <message>El verbo 'haber' se escribe con hache. <suggestion>he</suggestion></message>
       <short>E_PARTICIPIO</short>
     </rule>
     <rule id="FITOZOOSANITARIO" name="fitozoosanitario">
@@ -351,7 +351,7 @@
         <token min="0">-</token>
         <token>sanitario</token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>\1\3\5</suggestion></message>
       <short>FITOZOOSANITARIO</short>
     </rule>
     <rule id="INDOCHINA" name="Indoxhina">
@@ -360,7 +360,7 @@
         <token min="0">-</token>
         <token>china</token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>Indochina</suggestion></message>
       <short>INDOCHINA</short>
     </rule>
     <rule id="LLEVAR_ACABO" name="llevar *acabo/a cabo">
@@ -368,7 +368,7 @@
         <token regexp="yes">llevar|echar</token>
         <token>acabo</token>
       </pattern>
-      <message>Se escribe separado.</message>
+      <message>Se escribe separado. <suggestion>a cabo</suggestion></message>
       <short>LLEVAR_ACABO</short>
     </rule>
     <rule id="NUMBERS_IN_WORDS" name="Numbers in words">
@@ -386,7 +386,7 @@
           <exception regexp="yes">\p{Lu}.*|\d+</exception>
         </token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>r</suggestion></message>
       <short>PREFIJOS_JUNTOS_EN_DICCIONARIO</short>
     </rule>
     <rule id="PREFIJO_CUASI" name="cuasi-veraniego -&gt; cuasiveraniego">
@@ -395,7 +395,7 @@
         <token min="0">-</token>
         <token regexp="yes">....+</token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>cuasi\3</suggestion></message>
       <short>PREFIJO_CUASI</short>
     </rule>
     <rule id="PREFIJO_POST" name="pos-operatorio -&gt; posoperatorio, postoperatorio">
@@ -406,7 +406,7 @@
           <exception>antes</exception>
         </token>
       </pattern>
-      <message>Se escribe junto.</message>
+      <message>Se escribe junto. <suggestion>pos\3</suggestion></message>
       <short>PREFIJO_POST</short>
     </rule>
     <rule id="SE_HALLA_SE_HAYA" name="se halla / se haya">
@@ -418,7 +418,7 @@
           <exception regexp="yes">someter|desproteger|proteger|asentar|ancorar|anclar|localizar|afectar|unir|envolver|abandonar|agazapar|agrupado|agrupar|colgar|despoblar|dividir|documentar|edificar|emplazar|enclavar|enterrar|extinguir|formar|habitar|incluir|integrar|registrar|salpicar|sepultar|situar|sumergir|ubicar|zurcido</exception>
         </token>
       </pattern>
-      <message>Correcto si es del v. 'hallarse' (=se encuentra, está). Incorrecto si es del v. 'haber'.</message>
+      <message>Correcto si es del v. 'hallarse' (=se encuentra, está). Incorrecto si es del v. 'haber'. <suggestion>se haya</suggestion></message>
       <short>SE_HALLA_SE_HAYA</short>
     </rule>
     <rule id="SHAMPOO_CHAMPU" name="shampoo -&gt; champú">
@@ -451,7 +451,7 @@
         <token>ha</token>
         <token postag="V[ASM]N0000" postag_regexp="yes"></token>
       </pattern>
-      <message>La preposición 'a' se escribe sin 'h'.</message>
+      <message>La preposición 'a' se escribe sin 'h'. <suggestion>\1 a \3</suggestion></message>
       <short>VOY_HA_INF</short>
     </rule>
     <rule id="VOY_INF" name="ir + infinitivo (a)">
@@ -461,7 +461,7 @@
         </token>
         <token postag="V.N.*" postag_regexp="yes"></token>
       </pattern>
-      <message>La construcción 'ir + infinitivo' exige la preposición 'a'.</message>
+      <message>La construcción 'ir + infinitivo' exige la preposición 'a'. <suggestion>\1 a \2</suggestion></message>
       <short>VOY_INF</short>
     </rule>
     <rule id="YOGURT_YOGUR" name="yogurt -&gt; yogur">
@@ -478,7 +478,7 @@
         <token>alta</token>
         <token>cargo</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>alto cargo</suggestion></message>
       <short>ALTO_CARGO</short>
     </rule>
     <rule id="A_CONTRAPIE" name="*a contra pie/a contrapié">
@@ -487,7 +487,7 @@
         <token>contra</token>
         <token>pie</token>
       </pattern>
-      <message>Grafía incorrecta.</message>
+      <message>Grafía incorrecta. <suggestion>a contrapié</suggestion></message>
       <short>A_CONTRAPIE</short>
     </rule>
     <rule id="CONTRA_MAS" name="Contra más (cuanto más)">
@@ -502,7 +502,7 @@
       <pattern>
         <token>enmedio</token>
       </pattern>
-      <message>Se escribe siempre separado.</message>
+      <message>Se escribe siempre separado. <suggestion>en medio</suggestion></message>
       <short>ENMEDIO</short>
     </rule>
     <rule id="EN_RELACION_A" name="en relación a -&gt; en relación con">
@@ -511,7 +511,7 @@
         <token>relación</token>
         <token>a</token>
       </pattern>
-      <message>Es preferible usar otra expresión.</message>
+      <message>Es preferible usar otra expresión. <suggestion>en relación con</suggestion></message>
       <short>EN_RELACION_A</short>
     </rule>
     <rule id="EN_RELACION_AL" name="en relación al">
@@ -520,7 +520,7 @@
         <token>relación</token>
         <token>al</token>
       </pattern>
-      <message>Es preferible usar otra expresión.</message>
+      <message>Es preferible usar otra expresión. <suggestion>en relación con el</suggestion></message>
       <short>EN_RELACION_AL</short>
     </rule>
     <rule id="EXCESO_DE_AFORO" name="exceso de aforo">
@@ -538,7 +538,7 @@
         <token>de</token>
         <token>vida</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>obediencia debida</suggestion></message>
       <short>OBEDIENCIA_DEBIDA</short>
     </rule>
     <rule id="POR_TAL_DE" name="*por tal de">
@@ -547,7 +547,7 @@
         <token>tal</token>
         <token>de</token>
       </pattern>
-      <message>Expresión arcaica.</message>
+      <message>Expresión arcaica. <suggestion>con tal de</suggestion></message>
       <short>POR_TAL_DE</short>
     </rule>
     <rule id="SAO_PAULO" name="São Paulo">
@@ -563,7 +563,7 @@
         <token skip="1">afrentar</token>
         <token regexp="yes">dificultad|problema|vicisitud</token>
       </pattern>
-      <message>Confusión entre «afrontar» y «afrentar».</message>
+      <message>Confusión entre «afrontar» y «afrentar». <suggestion>afrontar</suggestion></message>
       <short>AFRENTAR_DIFICULTADES</short>
     </rule>
     <rule id="CUOTA_COTA" name="cuota/cota">
@@ -572,7 +572,7 @@
         <token>de</token>
         <token>nieve</token>
       </pattern>
-      <message>En este contexto se usa otra palabra.</message>
+      <message>En este contexto se usa otra palabra. <suggestion>cota</suggestion></message>
       <short>CUOTA_COTA</short>
     </rule>
     <rule id="DEJA_VU" name="déjà-vu">
@@ -581,7 +581,7 @@
         <token min="0">-</token>
         <token regexp="yes">v[uú]</token>
       </pattern>
-      <message>Error ortográfico.</message>
+      <message>Error ortográfico. <suggestion>déjà vu</suggestion></message>
       <short>DEJA_VU</short>
     </rule>
     <rule id="DESTORNILLAR_RISA" name="destornillarse de risa (desternillarse)">
@@ -590,7 +590,7 @@
         <token>de</token>
         <token>risa</token>
       </pattern>
-      <message>El verbo adecuado es «desternillar».</message>
+      <message>El verbo adecuado es «desternillar». <suggestion>desternillar</suggestion></message>
       <short>DESTORNILLAR_RISA</short>
     </rule>
     <rule id="EN_LA_MEDIDA_EN_QUE" name="en la medida *de que/en que">
@@ -601,7 +601,7 @@
         <token regexp="yes" min="0">de|en</token>
         <token>que</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>en la medida en que</suggestion></message>
       <short>EN_LA_MEDIDA_EN_QUE</short>
     </rule>
     <rule id="LITROS_POR_METRO" name="litros por *metros/metro cuadrado">
@@ -631,7 +631,7 @@
         <token min="0">-</token>
         <token regexp="yes">tr[oóòô]is</token>
       </pattern>
-      <message>Error ortográfico.</message>
+      <message>Error ortográfico. <suggestion>ménage à trois</suggestion></message>
       <short>MENAGE_A_TROIS</short>
     </rule>
     <rule id="MOTO_GP" name="MotoGP">
@@ -649,7 +649,7 @@
         <token min="0">-</token>
         <token regexp="yes">harbo?u?rt?</token>
       </pattern>
-      <message>Error ortográfico.</message>
+      <message>Error ortográfico. <suggestion>Pearl Harbor</suggestion></message>
       <short>PEARL_HARBOR</short>
     </rule>
     <rule id="PLASMA_CONVALECIENTE" name="plasma (de) convaleciente">
@@ -657,7 +657,7 @@
         <token regexp="yes">plasma|suero</token>
         <token regexp="yes">convalecientes?</token>
       </pattern>
-      <message>No es correcto eliminar la preposición 'de'.</message>
+      <message>No es correcto eliminar la preposición 'de'. <suggestion>\1 de \2</suggestion></message>
       <short>PLASMA_CONVALECIENTE</short>
     </rule>
     <rule id="PRET_A_PORTER" name="prêt-à-porter">
@@ -668,7 +668,7 @@
         <token min="0">-</token>
         <token regexp="yes">p[oòóô]rt[eèéê]r?</token>
       </pattern>
-      <message>Error ortográfico.</message>
+      <message>Error ortográfico. <suggestion>prêt-à-porter</suggestion></message>
       <short>PRET_A_PORTER</short>
     </rule>
     <rule id="SIN_ECUANIME" name="sin ecuánime (sine qua non)">
@@ -677,7 +677,7 @@
         <token>sin</token>
         <token>ecuánime</token>
       </pattern>
-      <message>Confusión entre «sine qua non» y «sin ecuánime».</message>
+      <message>Confusión entre «sine qua non» y «sin ecuánime». <suggestion>\1 sine qua non</suggestion></message>
       <short>SIN_ECUANIME</short>
     </rule>
     <rule id="TAL_ES_ASI" name="*tal es así/tanto es así">
@@ -688,7 +688,7 @@
         <token min="0">,</token>
         <token>que</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>tanto es así que</suggestion></message>
       <short>TAL_ES_ASI</short>
     </rule>
     <rule id="TIRA_AFLOJA" name="tira y afloja">
@@ -698,7 +698,7 @@
         <token>y</token>
         <token>aflojas</token>
       </pattern>
-      <message>Plural mal formado.</message>
+      <message>Plural mal formado. <suggestion>los tira y afloja</suggestion></message>
       <short>TIRA_AFLOJA</short>
     </rule>
   </category>
@@ -707,7 +707,7 @@
       <pattern>
         <token>apesar</token>
       </pattern>
-      <message>Se escribe separado.</message>
+      <message>Se escribe separado. <suggestion>a pesar</suggestion></message>
       <short>APESAR</short>
     </rule>
     <rule id="A_TRAVES" name="través/a través">
@@ -722,7 +722,7 @@
         <token>desde</token>
         <token>era</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>desde que era</suggestion></message>
       <short>DESDE_ERA</short>
     </rule>
     <rule id="GOOGLE_DOC" name="Google Doc/Docs">
@@ -746,7 +746,7 @@
         <token postag="D..[CF]S." postag_regexp="yes"></token>
         <token>cuidad</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>ciudad</suggestion></message>
       <short>CUIDAD_CIUDAD</short>
     </rule>
     <rule id="HAZMERREIR" name="hazmerreír">
@@ -755,7 +755,7 @@
         <token>hazme</token>
         <token regexp="yes">reir|reír</token>
       </pattern>
-      <message>Como sustantivo se escribe junto.</message>
+      <message>Como sustantivo se escribe junto. <suggestion>hazmerreír</suggestion></message>
       <short>HAZMERREIR</short>
     </rule>
     <rule id="LAS_MILES" name="*las/los miles">
@@ -763,7 +763,7 @@
         <token postag="D..FP." postag_regexp="yes"></token>
         <token regexp="yes">miles|millones|millares</token>
       </pattern>
-      <message>Error de concordancia. "" es un sustantivo masculino independiente del sustantivo posterior (p. ej., unos  de personas).</message>
+      <message>Error de concordancia. "" es un sustantivo masculino independiente del sustantivo posterior (p. ej., unos  de personas). <suggestion>\2</suggestion></message>
       <short>LAS_MILES</short>
     </rule>
     <rule id="LA_A" name="la a -&gt; la">
@@ -842,7 +842,7 @@
         <token>debido</token>
         <token>aun</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>a un</suggestion></message>
       <short>DEBIDO_AUN</short>
     </rule>
     <rule id="DEBIDO_QUE" name="debido (a) que">
@@ -905,7 +905,7 @@
         <token>está</token>
         <token>vamos</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>estábamos</suggestion></message>
       <short>ESTABAMOS</short>
     </rule>
     <rule id="HICO" name="hico/hizo">
@@ -950,7 +950,7 @@
         <token>mi</token>
         <token>era</token>
       </pattern>
-      <message>Si es un pronombre, se escribe con acento. Correcto si es posesivo ("mi era").</message>
+      <message>Si es un pronombre, se escribe con acento. Correcto si es posesivo ("mi era"). <suggestion>mí</suggestion></message>
       <short>PARA_MI_ERA</short>
     </rule>
     <rule id="SIN_EMBRAGO" name="sin *embrago/embargo">
@@ -958,7 +958,7 @@
         <token>sin</token>
         <token>embrago</token>
       </pattern>
-      <message>Confusión.</message>
+      <message>Confusión. <suggestion>sin embargo</suggestion></message>
       <short>SIN_EMBRAGO</short>
     </rule>
     <rule id="U_NO" name="u no -&gt; uno">
@@ -1092,7 +1092,7 @@
         <token>de</token>
         <token regexp="yes">mana|maná</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>\1 de mama</suggestion></message>
       <short>MANA_MAMA</short>
     </rule>
     <rule id="ORIGINAL_ORIGINAR" name="original -&gt; originar">
@@ -1108,7 +1108,7 @@
         <token>porno</token>
         <token postag="V.N.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>por no</suggestion></message>
       <short>POR_NO</short>
     </rule>
     <rule id="PRESA_PRENSA" name="*presa/prensa">
@@ -1117,7 +1117,7 @@
         <token>de</token>
         <token>presa</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>prensa</suggestion></message>
       <short>PRESA_PRENSA</short>
     </rule>
     <rule id="REVERTIR_REVESTIR" name="revertir/revestir">
@@ -1134,7 +1134,7 @@
         <token>cumplir</token>
         <token>son</token>
       </pattern>
-      <message>Posible confusión.</message>
+      <message>Posible confusión. <suggestion>con</suggestion></message>
       <short>SON_CON</short>
     </rule>
     <rule id="VEMOS_HEMOS" name="vemos/hemos">
@@ -1166,7 +1166,7 @@
         <token>a</token>
         <token>que</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>dado que</suggestion></message>
       <short>DADO_A_QUE</short>
     </rule>
     <rule id="DE_GRATIS" name="«de gratis» (gratis)">
@@ -1174,7 +1174,7 @@
         <token>de</token>
         <token>gratis</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>gratis</suggestion></message>
       <short>DE_GRATIS</short>
     </rule>
     <rule id="EN_BASE_AL" name="en base al">
@@ -1183,7 +1183,7 @@
         <token>base</token>
         <token>al</token>
       </pattern>
-      <message>Es preferible usar otra expresión.</message>
+      <message>Es preferible usar otra expresión. <suggestion>basándonos en el</suggestion></message>
       <short>EN_BASE_AL</short>
     </rule>
     <rule id="LAS_PASO" name="las PASOS &gt; las PASO">
@@ -1200,7 +1200,7 @@
         <token>en</token>
         <token>cambio</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>en cambio</suggestion></message>
       <short>SIN_ENCAMBIO</short>
     </rule>
     <rule id="SI_QUIERA" name="si quiera → siquiera">
@@ -1208,7 +1208,7 @@
         <token>si</token>
         <token>quiera</token>
       </pattern>
-      <message>Como adverbio o conjunción se escribe junto.</message>
+      <message>Como adverbio o conjunción se escribe junto. <suggestion>siquiera</suggestion></message>
       <short>SI_QUIERA</short>
     </rule>
     <rule id="GROSSO_MODO" name="a grosso modo → grosso modo">
@@ -1217,7 +1217,7 @@
         <token regexp="yes">gross?o</token>
         <token>modo</token>
       </pattern>
-      <message>Esta expresión latina se usa sin preposición.</message>
+      <message>Esta expresión latina se usa sin preposición. <suggestion>grosso modo</suggestion></message>
       <short>GROSSO_MODO</short>
     </rule>
     <rule id="MALO_AMIGO_MAL_AMIGO" name="«malo» y «bueno» se apocopan delante de sustantivos masculinos en singular">
@@ -1233,7 +1233,7 @@
         <token>muy</token>
         <token regexp="yes" postag="A.*" postag_regexp="yes">.*ísimo</token>
       </pattern>
-      <message>No es posible formar el superlativo con "muy" y "-ísimo" al mismo tiempo.</message>
+      <message>No es posible formar el superlativo con "muy" y "-ísimo" al mismo tiempo. <suggestion>\2</suggestion></message>
       <short>MUY_GRAVISIMO</short>
     </rule>
     <rule id="PP_SE" name="te se, me se">
@@ -1241,7 +1241,7 @@
         <token postag="PP.CS[0D]00" postag_regexp="yes"></token>
         <token>se</token>
       </pattern>
-      <message>El pronombre reflexivo 'se' debe ir primero.</message>
+      <message>El pronombre reflexivo 'se' debe ir primero. <suggestion>\2 \1</suggestion></message>
       <short>PP_SE</short>
     </rule>
     <rule id="SURGIR_EFECTO" name="*surgir/surtir efecto">
@@ -1249,7 +1249,7 @@
         <token>surgir</token>
         <token regexp="yes">efectos?</token>
       </pattern>
-      <message>Expresión incorrecta.</message>
+      <message>Expresión incorrecta. <suggestion>surtir efecto</suggestion></message>
       <short>SURGIR_EFECTO</short>
     </rule>
   </category>
@@ -1337,7 +1337,7 @@
         <token skip="5">aforo</token>
         <token>fue</token>
       </pattern>
-      <message>Uso inadecuado en el sentido de 'cantidad de asistentes a un acto'. Correcto si significa 'número máximo autorizado de personas'.</message>
+      <message>Uso inadecuado en el sentido de 'cantidad de asistentes a un acto'. Correcto si significa 'número máximo autorizado de personas'. <suggestion>afluencia</suggestion></message>
       <short>Uso inadecuado en el sentido de 'cantidad de asistentes a un acto'.</short>
     </rule>
     <rule id="ARANA" name="arana/araña">
@@ -1364,7 +1364,7 @@
         <token>tanto</token>
         <token postag="NCF.*|NC.P.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Con el sentido de 'en calidad de, considerado como' es preferible usar otra expresión.</message>
+      <message>Con el sentido de 'en calidad de, considerado como' es preferible usar otra expresión. <suggestion>en cuanto</suggestion></message>
       <short>EN_TANTO</short>
     </rule>
     <rule id="MONTANA" name="montana/montaña">
@@ -1424,7 +1424,7 @@
       <pattern>
         <token>sólo</token>
       </pattern>
-      <message>La tilde es innecesaria según la norma actual. Con el sentido de "solamente" (adv.), cuando hay riesgo de ambigüedad con el adj. "solo", puede escribirse "sólo" (DRAE).</message>
+      <message>La tilde es innecesaria según la norma actual. Con el sentido de "solamente" (adv.), cuando hay riesgo de ambigüedad con el adj. "solo", puede escribirse "sólo" (DRAE). <suggestion>solo</suggestion></message>
       <short>SOLO</short>
     </rule>
     <rule id="ESTE_ESE_AQUEL_NOTILDE" name="éste, ése, aquél -&gt; este, ese aquel">
@@ -1442,7 +1442,7 @@
         <token>.</token>
         <token>.</token>
       </pattern>
-      <message>En una tipografía cuidada, use el carácter de puntos suspensivos.</message>
+      <message>En una tipografía cuidada, use el carácter de puntos suspensivos. <suggestion>…</suggestion></message>
       <short>PUNTOS_SUSPENSIVOS</short>
     </rule>
   </category>
@@ -1451,21 +1451,21 @@
       <pattern>
         <token>antes</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>previamente</suggestion></message>
       <short>REP_ANTES</short>
     </rule>
     <rule id="REP_DESPUES" name="repetición: después">
       <pattern>
         <token>después</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>posteriormente</suggestion></message>
       <short>REP_DESPUES</short>
     </rule>
     <rule id="REP_USO" name="repetición: uso">
       <pattern>
         <token>uso</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>utilización</suggestion></message>
       <short>REP_USO</short>
     </rule>
     <rule id="REP_YA_QUE" name="repetición: ya que">
@@ -1473,28 +1473,28 @@
         <token>ya</token>
         <token>que</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>porque</suggestion></message>
       <short>REP_YA_QUE</short>
     </rule>
     <rule id="REP_COMPROBAR" name="repetición: comprobar">
       <pattern>
         <token postag="V.*" postag_regexp="yes">comprobar</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>revisar</suggestion></message>
       <short>REP_COMPROBAR</short>
     </rule>
     <rule id="REP_CREAR" name="repetición: crear">
       <pattern>
         <token postag="V.*" postag_regexp="yes">crear</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>generar</suggestion></message>
       <short>REP_CREAR</short>
     </rule>
     <rule id="REP_CREER" name="repetición: creer">
       <pattern>
         <token postag="V.*" postag_regexp="yes">creer</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>pensar</suggestion></message>
       <short>REP_CREER</short>
     </rule>
     <rule id="REP_POR_LO_TANTO" name="repetición: por lo tanto">
@@ -1503,21 +1503,21 @@
         <token min="0">lo</token>
         <token>tanto</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>en consecuencia</suggestion></message>
       <short>REP_POR_LO_TANTO</short>
     </rule>
     <rule id="REP_REVISAR" name="repetición: revisar">
       <pattern>
         <token postag="V.*" postag_regexp="yes">revisar</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>comprobar</suggestion></message>
       <short>REP_REVISAR</short>
     </rule>
     <rule id="REP_VERIFICAR" name="repetición: verificar">
       <pattern>
         <token postag="V.*" postag_regexp="yes">verificar</token>
       </pattern>
-      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto.</message>
+      <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>revisar</suggestion></message>
       <short>REP_VERIFICAR</short>
     </rule>
   </category>
@@ -1548,7 +1548,7 @@
         <token case_sensitive="yes" skip="-1">pero</token>
         <token postag="V.[SI].*" postag_regexp="yes"></token>
       </pattern>
-      <message>En la mayoría de los casos la conjunción 'pero' va precedida de una coma.</message>
+      <message>En la mayoría de los casos la conjunción 'pero' va precedida de una coma. <suggestion>, pero</suggestion></message>
       <short>COMMA_PERO</short>
     </rule>
     <rule id="MUCHO_NF" name="mucho + nombre femenino">
@@ -1556,7 +1556,7 @@
         <token regexp="yes">mucho|muchísimo</token>
         <token regexp="yes">tías?|señoras?|señoritas?|hermanas?|amigas?|queridas?</token>
       </pattern>
-      <message>Probablemente falta una coma o hay un error de concordancia.</message>
+      <message>Probablemente falta una coma o hay un error de concordancia. <suggestion>\1, \2</suggestion></message>
       <short>MUCHO_NF</short>
     </rule>
     <rule id="POR_CIERTO" name="por cierto(,)">
@@ -1565,7 +1565,7 @@
         <token>cierto</token>
         <token postag="N.FS.*|A..FS.|I" postag_regexp="yes"></token>
       </pattern>
-      <message>Probablemente falta una coma.</message>
+      <message>Probablemente falta una coma. <suggestion>\2,</suggestion></message>
       <short>POR_CIERTO</short>
     </rule>
   </category>
@@ -1574,7 +1574,7 @@
       <pattern>
         <token>complejizar</token>
       </pattern>
-      <message>Excepto en usos especializados, es preferible utilizar otro verbo.</message>
+      <message>Excepto en usos especializados, es preferible utilizar otro verbo. <suggestion>complicar</suggestion></message>
       <short>COMPLEJIZAR</short>
     </rule>
     <rule id="MAS_BUENA" name="MAS_BUENA">
@@ -1606,7 +1606,7 @@
       <pattern>
         <token regexp="yes">naide|naiden|nadien|nadies</token>
       </pattern>
-      <message>Forma vulgar.</message>
+      <message>Forma vulgar. <suggestion>nadie</suggestion></message>
       <short>NADIE</short>
     </rule>
     <rule id="PA_PARA" name="pa -&gt; para">
@@ -1626,7 +1626,7 @@
         <token>.</token>
         <token max="3">.</token>
       </pattern>
-      <message>Los puntos suspensivos deben ser solo tres.</message>
+      <message>Los puntos suspensivos deben ser solo tres. <suggestion>...</suggestion></message>
       <short>CUATRO_PUNTOS</short>
     </rule>
     <rule id="ORDINAL_CHAR" name="carácter equivocado en ordinales">
@@ -1644,7 +1644,7 @@
         <token regexp="yes">ej?</token>
         <token>.</token>
       </pattern>
-      <message>Abreviatura de 'por ejemplo'.</message>
+      <message>Abreviatura de 'por ejemplo'. <suggestion>p. ej.</suggestion></message>
       <short>P_EJ</short>
     </rule>
     <rule id="WRONG_DASH" name="Carácter de guion incorrecto (u+2500...)">
@@ -1671,7 +1671,7 @@
         <token min="0" max="4" postag="RG|LOC_ADV|_PUNCT_CONT" postag_regexp="yes"></token>
         <token>ante</token>
       </pattern>
-      <message>Preposición no adecuada.</message>
+      <message>Preposición no adecuada. <suggestion>a</suggestion></message>
       <short>ENFRENTARSE_ANTE</short>
     </rule>
     <rule id="EQUIVALENTE_A" name="equivalente a">
@@ -1689,7 +1689,7 @@
         <token>de</token>
         <token>que</token>
       </pattern>
-      <message>Preposición no adecuada para este verbo.</message>
+      <message>Preposición no adecuada para este verbo. <suggestion>en que</suggestion></message>
       <short>INSISTIR_DE</short>
     </rule>
   </category>
@@ -1699,7 +1699,7 @@
         <token postag="D..M.." postag_regexp="yes"></token>
         <token regexp="yes">a(grav|tenu)ante</token>
       </pattern>
-      <message>En Derecho, «\2» tiene tratamiento femenino, ya que se omite la palabra «circunstancia».</message>
+      <message>En Derecho, «\2» tiene tratamiento femenino, ya que se omite la palabra «circunstancia». <suggestion>\2</suggestion></message>
       <short>EL_AGRAVANTE</short>
     </rule>
     <rule id="LOS_MAPUCHE" name="los mapuche/mapuches">
@@ -1716,7 +1716,7 @@
         <token postag="DN.*" postag_regexp="yes"></token>
         <token postag="NCFP000"></token>
       </pattern>
-      <message>Error de concordancia.</message>
+      <message>Error de concordancia. <suggestion>las</suggestion></message>
       <short>LOS_NUMBER_FEMALE</short>
     </rule>
     <rule id="TODO_LO" name="concordancia: todo lo">
@@ -1727,7 +1727,7 @@
         <token>lo</token>
         <token postag="NC.*|A.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Posible error de concordancia.</message>
+      <message>Posible error de concordancia. <suggestion>todo</suggestion></message>
       <short>TODO_LO</short>
     </rule>
   </category>

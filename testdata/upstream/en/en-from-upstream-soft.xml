@@ -106,7 +106,7 @@
         <token>fact</token>
         <token>that</token>
       </pattern>
-      <message>Remove wordy "\1 \2 \3 \4 \5"</message>
+      <message>Remove wordy "\1 \2 \3 \4 \5" <suggestion>because</suggestion></message>
       <short>Wordy phrase</short>
     </rule>
     <rule id="FOR_ALL_INTENTS_AND_PURPOSES" name="for all intents and purposes (omit)">
@@ -765,7 +765,7 @@
         <token>and</token>
         <token>then</token>
       </pattern>
-      <message>Consider an alternative to strengthen your wording.</message>
+      <message>Consider an alternative to strengthen your wording. <suggestion>sometimes</suggestion></message>
       <short>Possible redundant phrase</short>
     </rule>
     <rule id="FEW_OCCASIONS" name="on a few occasions (occasionally)">
@@ -964,7 +964,7 @@
         <token>the</token>
         <token regexp="yes" negate="yes">sudden|above|many</token>
       </pattern>
-      <message>Consider removing "of" to be more concise</message>
+      <message>Consider removing "of" to be more concise <suggestion>\1 \3</suggestion></message>
       <short>Redundant phrase</short>
     </rule>
     <rule id="APPROXIMATELY_ABOUT" name="approximately about">
@@ -1283,7 +1283,7 @@
         <token>analysis</token>
         <token>about</token>
       </pattern>
-      <message>The usual collocation for "analysis" is "of".</message>
+      <message>The usual collocation for "analysis" is "of". <suggestion>analysis of</suggestion></message>
       <short>ANALYSIS_ABOUT</short>
     </rule>
     <rule id="ANGRY_AGAINST_WITH" name="Collocation: angry against/with">
@@ -1315,7 +1315,7 @@
         <token>damage</token>
         <token>of</token>
       </pattern>
-      <message>The usual collocation for the word "damage" is "to", not "of".</message>
+      <message>The usual collocation for the word "damage" is "to", not "of". <suggestion>\1 to</suggestion></message>
       <short>DAMAGE_OF_TO</short>
     </rule>
     <rule id="DISAPPOINTED_OF" name="Disappointed with, at, or by">
@@ -1331,7 +1331,7 @@
         <token>far</token>
         <token>of</token>
       </pattern>
-      <message>The usual preposition for "far" is "from".</message>
+      <message>The usual preposition for "far" is "from". <suggestion>far from</suggestion></message>
       <short>FAR_OF_FROM</short>
     </rule>
     <rule id="FED_UP_OF_WITH" name="Collocation: fed up of/with">
@@ -1357,7 +1357,7 @@
         <token>a</token>
         <token>party</token>
       </pattern>
-      <message>Unless you mean "in a political party", the usual preposition for a party is "at".</message>
+      <message>Unless you mean "in a political party", the usual preposition for a party is "at". <suggestion>at a party</suggestion></message>
       <short>IN_AT_A_PARTY</short>
     </rule>
     <rule id="IN_NOWADAYS" name="Wrong phrase: 'in nowadays' (nowadays)">
@@ -1365,7 +1365,7 @@
         <token>in</token>
         <token>nowadays</token>
       </pattern>
-      <message>\2 is used without 'in'.</message>
+      <message>\2 is used without 'in'. <suggestion>\2</suggestion></message>
       <short>Wrong phrase</short>
     </rule>
     <rule id="IN_THE_RECENT_YEARS_IN_RECENT_YEARS" name="In the recent years (in recent years)">
@@ -1384,7 +1384,7 @@
         <token>in</token>
         <token>study</token>
       </pattern>
-      <message>Do not use "motivation in \3". Use "to" + infinitive form instead.</message>
+      <message>Do not use "motivation in \3". Use "to" + infinitive form instead. <suggestion>motivation to \3</suggestion></message>
       <short>MOTIVATION_IN_TO</short>
     </rule>
     <rule id="NEAR_FROM_TO" name="Collocation: near from/to">
@@ -1392,7 +1392,7 @@
         <token>near</token>
         <token>from</token>
       </pattern>
-      <message>The usual preposition for "near" is "to".</message>
+      <message>The usual preposition for "near" is "to". <suggestion>near to</suggestion></message>
       <short>NEAR_FROM_TO</short>
     </rule>
     <rule id="PERSPECTIVES_ABOUT_ON" name="Collocation: perspectives about/on">
@@ -1400,7 +1400,7 @@
         <token>perspectives</token>
         <token>about</token>
       </pattern>
-      <message>The usual preposition for "perspectives" is "on", not "about".</message>
+      <message>The usual preposition for "perspectives" is "on", not "about". <suggestion>perspectives on</suggestion></message>
       <short>PERSPECTIVES_ABOUT_ON</short>
     </rule>
     <rule id="TIRED_ABOUT_OF" name="Collocation: tired about/of">
@@ -1424,7 +1424,7 @@
         <token>varieties</token>
         <token>in</token>
       </pattern>
-      <message>The usual preposition for "varieties" is "of", not "in".</message>
+      <message>The usual preposition for "varieties" is "of", not "in". <suggestion>varieties of</suggestion></message>
       <short>VARIETIES_IN_OF</short>
     </rule>
     <rule id="VULNERABLE_FROM_TO" name="Collocation: vulnerable from/to">
@@ -1432,7 +1432,7 @@
         <token>vulnerable</token>
         <token>from</token>
       </pattern>
-      <message>The usual collocation for the word "vulnerable" is "to", not "from", as in "vulnerable to attack".</message>
+      <message>The usual collocation for the word "vulnerable" is "to", not "from", as in "vulnerable to attack". <suggestion>vulnerable to</suggestion></message>
       <short>VULNERABLE_FROM_TO</short>
     </rule>
     <rule id="YESTERDAY_NIGHT" name="Wrong phrase: 'yesterday night' (last night)">
@@ -1456,7 +1456,7 @@
         <token>accompany</token>
         <token>with</token>
       </pattern>
-      <message>The usual collocation for "accompany" is "by", not "with".</message>
+      <message>The usual collocation for "accompany" is "by", not "with". <suggestion>\1 by</suggestion></message>
       <short>ACCOMPANY_WITH</short>
     </rule>
     <rule id="ACCUSE_FOR_OF" name="Collocation: accuse for/of">
@@ -1482,7 +1482,7 @@
         <token regexp="yes">\p{Lu}.+</token>
         <token regexp="yes">University|College|Hospital|Clinic</token>
       </pattern>
-      <message>The usual collocation for "admit" is "to", not "at".</message>
+      <message>The usual collocation for "admit" is "to", not "at". <suggestion>\1 to \3 \4</suggestion></message>
       <short>ADMITTED_AT_TO</short>
     </rule>
     <rule id="ANGRY_WITH_ABOUT" name="Collocation: angry with/about">
@@ -1511,7 +1511,7 @@
         <token postag="PRP\$|DT" postag_regexp="yes"></token>
         <token regexp="yes">company|university|college|school</token>
       </pattern>
-      <message>You can apply "for" a job or welfare, but you apply "to" a \4.</message>
+      <message>You can apply "for" a job or welfare, but you apply "to" a \4. <suggestion>\1 to \3 \4</suggestion></message>
       <short>APPLY_FOR</short>
     </rule>
     <rule id="APPLY_TO" name="Collocation: apply to/for">
@@ -1522,7 +1522,7 @@
         <token min="0">more</token>
         <token regexp="yes">assistance|welfare|funds|membership</token>
       </pattern>
-      <message>You can apply "to" a company or university, but you apply "for" \4.</message>
+      <message>You can apply "to" a company or university, but you apply "for" \4. <suggestion>\1 for   \5</suggestion></message>
       <short>APPLY_TO</short>
     </rule>
     <rule id="ARRIVED_IN" name="Collocation: arrived (in the) downtown">
@@ -1553,7 +1553,7 @@
         <token regexp="yes">morning|afternoon|evening</token>
         <token postag="SENT_END"></token>
       </pattern>
-      <message>The usual collocation for "\3" is "in".</message>
+      <message>The usual collocation for "\3" is "in". <suggestion>in the \3</suggestion></message>
       <short>AT_IN_THE_MORNING</short>
     </rule>
     <rule id="A_MY" name="article + possessive form">
@@ -1575,7 +1575,7 @@
         <token>to</token>
         <token postag="CD"></token>
       </pattern>
-      <message>After "between", use "and", not "to".</message>
+      <message>After "between", use "and", not "to". <suggestion>\1 \2 and \4</suggestion></message>
       <short>BETWEEN_TO_AND</short>
     </rule>
     <rule id="BE_IN_UNDER_PRESSURE" name="Collocation: be in/under pressure">
@@ -1640,7 +1640,7 @@
         <token postag="PRP$"></token>
         <token min="0" postag="JJ"></token>
       </pattern>
-      <message>The words "come in" and "come to" have different meanings. "Come in \3 office" means "have an orgasm in \3 office". "Come to" or "Come into" means "enter".</message>
+      <message>The words "come in" and "come to" have different meanings. "Come in \3 office" means "have an orgasm in \3 office". "Come to" or "Come into" means "enter". <suggestion>come to</suggestion></message>
       <short>COME_IN_TO</short>
     </rule>
     <rule id="COME_TO_PLANE" name="came to/by">
@@ -1650,7 +1650,7 @@
         <token>to</token>
         <token regexp="yes">plane|train|bus|car|metro|subway|airplane|bike|motorcycle</token>
       </pattern>
-      <message>The usual collocation for "\2" is "by".</message>
+      <message>The usual collocation for "\2" is "by". <suggestion>\1 \2 by \4</suggestion></message>
       <short>COME_TO_PLANE</short>
     </rule>
     <rule id="COMPLAIN_FOR_ABOUT" name="Collocation: complain for/about">
@@ -1674,7 +1674,7 @@
         <token>consist</token>
         <token>to</token>
       </pattern>
-      <message>The usual preposition for "\1" is "of", not "to".</message>
+      <message>The usual preposition for "\1" is "of", not "to". <suggestion>\1 of</suggestion></message>
       <short>CONSIST_TO_OF</short>
     </rule>
     <rule id="COVER_BY_IN" name="Collocation: cover by/in">
@@ -1683,7 +1683,7 @@
         <token>by</token>
         <token regexp="yes">snow|leaves|dust</token>
       </pattern>
-      <message>The usual preposition for "cover" is "in", not "by".</message>
+      <message>The usual preposition for "cover" is "in", not "by". <suggestion>covered in \3</suggestion></message>
       <short>COVER_BY_IN</short>
     </rule>
     <rule id="CRAVE_FOR" name="I crave for () chocolate">
@@ -1705,7 +1705,7 @@
           <exception regexp="yes">drug|medicine|narcotic|hallucinogen</exception>
         </token>
       </pattern>
-      <message>The usual preposition for "crazy" is "with", not "on".</message>
+      <message>The usual preposition for "crazy" is "with", not "on". <suggestion>crazy with</suggestion></message>
       <short>CRAZY_ON_WITH</short>
     </rule>
     <rule id="CURE_AGAINST_FOR" name="Collocation: cure against/for">
@@ -1740,7 +1740,7 @@
         <token>to</token>
         <token postag="PRP"></token>
       </pattern>
-      <message>The usual preposition after "difficult" is "for" when followed by a pronoun. "Difficult" and "to" only appear together when "to" is part of an infinitive structure.</message>
+      <message>The usual preposition after "difficult" is "for" when followed by a pronoun. "Difficult" and "to" only appear together when "to" is part of an infinitive structure. <suggestion>\1 for \3</suggestion></message>
       <short>DIFFICULT_TO_ME</short>
     </rule>
     <rule id="DISAPPOINT_FROM" name="Collocation: disappoint from/with">
@@ -1757,7 +1757,7 @@
         <token>a</token>
         <token>meeting</token>
       </pattern>
-      <message>The usual verb for "a meeting" is "have", not "do"</message>
+      <message>The usual verb for "a meeting" is "have", not "do" <suggestion>have a meeting</suggestion></message>
       <short>DO_HAVE_A_MEETING</short>
     </rule>
     <rule id="EAT_ANTIBIOTICS" name="eat (take) antibiotics">
@@ -1785,7 +1785,7 @@
         <token postag="PRP\$|DT" postag_regexp="yes"></token>
         <token regexp="yes">courses|course</token>
       </pattern>
-      <message>The usual verb for "courses" in a school is "take" or "attend", not "follow".</message>
+      <message>The usual verb for "courses" in a school is "take" or "attend", not "follow". <suggestion>take \2 courses</suggestion></message>
       <short>FOLLOW_A_COURSE</short>
     </rule>
     <rule id="GESTURE_OF_GREETING" name="Translation error: a gesture of greeting">
@@ -1809,7 +1809,7 @@
         <token>the</token>
         <token regexp="yes">[A-Z][A-Z]+</token>
       </pattern>
-      <message>The usual preposition for "\1 \2 \3" is "with" for an organization.</message>
+      <message>The usual preposition for "\1 \2 \3" is "with" for an organization. <suggestion>with \5 \6</suggestion></message>
       <short>GET_A_JOB_IN_WITH</short>
     </rule>
     <rule id="GLAD_WITH_ABOUT" name="Collocation: glad with/about">
@@ -1826,7 +1826,7 @@
         <token>to</token>
         <token regexp="yes">vacation|holiday</token>
       </pattern>
-      <message>The usual collocation for "\3" is "on".</message>
+      <message>The usual collocation for "\3" is "on". <suggestion>\1 on \3</suggestion></message>
       <short>GOING_TO_VACATION</short>
     </rule>
     <rule id="GOOD_IN_AT_GERUND" name="Collocation: good in/at">
@@ -1835,7 +1835,7 @@
         <token>in</token>
         <token postag="VBG"></token>
       </pattern>
-      <message>The usual preposition for this expression is "at".</message>
+      <message>The usual preposition for this expression is "at". <suggestion>\1 at \3</suggestion></message>
       <short>GOOD_IN_AT_GERUND</short>
     </rule>
     <rule id="GROWLED_TO_AT" name="Collocation: growled to/at">
@@ -1844,7 +1844,7 @@
         <token>to</token>
         <token postag="PRP\$?|DT" postag_regexp="yes"></token>
       </pattern>
-      <message>The usual preposition for "\1" is "at".</message>
+      <message>The usual preposition for "\1" is "at". <suggestion>\1 at \3</suggestion></message>
       <short>GROWLED_TO_AT</short>
     </rule>
     <rule id="HAVE_CD_YEARS" name="Wrong phrase: have x years old (be x years old)">
@@ -1854,7 +1854,7 @@
         <token>years</token>
         <token>old</token>
       </pattern>
-      <message>This phrase is used with 'be'.</message>
+      <message>This phrase is used with 'be'. <suggestion>be</suggestion></message>
       <short>Wrong phrase</short>
     </rule>
     <rule id="HAVE_CD_YEARS_I" name="Wrong phrase: I have x years old (I am x years old)">
@@ -1865,7 +1865,7 @@
         <token>years</token>
         <token>old</token>
       </pattern>
-      <message>This phrase is used with 'be'.</message>
+      <message>This phrase is used with 'be'. <suggestion>am</suggestion></message>
       <short>Wrong phrase</short>
     </rule>
     <rule id="IMITATION_FROM_OF" name="Collocation: imitation from/of">
@@ -1878,7 +1878,7 @@
         <token postag="NN(:UN?|S)?" postag_regexp="yes"></token>
         <token postag="SENT_END"></token>
       </pattern>
-      <message>The usual collocation for the word "imitate" is "of", not "from", as in "imitate the style of someone".</message>
+      <message>The usual collocation for the word "imitate" is "of", not "from", as in "imitate the style of someone". <suggestion>\1 \2  of \5 \6</suggestion></message>
       <short>IMITATION_FROM_OF</short>
     </rule>
     <rule id="IMPORTANT_WITH_TO" name="Collocation: Important with/to">
@@ -1889,7 +1889,7 @@
           <exception regexp="yes">an?|all|many|some|multiple|most</exception>
         </token>
       </pattern>
-      <message>The usual preposition for "\1" is "to", not "with".</message>
+      <message>The usual preposition for "\1" is "to", not "with". <suggestion>\1 to \3</suggestion></message>
       <short>IMPORTANT_WITH_TO</short>
     </rule>
     <rule id="INSIST_ON_GERUND" name="Collocation: insist on + gerund">
@@ -1906,7 +1906,7 @@
         <token regexp="yes">interest(?:ed)?</token>
         <token>by</token>
       </pattern>
-      <message>The usual collocation for "\1" is "in", not "by".</message>
+      <message>The usual collocation for "\1" is "in", not "by". <suggestion>\1 in</suggestion></message>
       <short>INTERESTED_BY</short>
     </rule>
     <rule id="INTEREST_ABOUT_IN" name="Collocation: interest about/in">
@@ -1915,7 +1915,7 @@
         <token>interest</token>
         <token>about</token>
       </pattern>
-      <message>The usual collocation for the word "interest" is "in", not "about".</message>
+      <message>The usual collocation for the word "interest" is "in", not "about". <suggestion>\1 \2 in</suggestion></message>
       <short>INTEREST_ABOUT_IN</short>
     </rule>
     <rule id="INVOICE_OF_FOR" name="Collocation: invoice of/for">
@@ -1934,7 +1934,7 @@
         <token regexp="yes">morning|afternoon</token>
         <token postag="CC|SENT_END" postag_regexp="yes"></token>
       </pattern>
-      <message>The usual preposition for "\3" is "in", not "at".</message>
+      <message>The usual preposition for "\3" is "in", not "at". <suggestion>in the \3</suggestion></message>
       <short>IN_AT_THE_MORNING</short>
     </rule>
     <rule id="IN_AT_THE_TOP" name="Collocation: in/at the top">
@@ -1965,7 +1965,7 @@
         <token postag="JJ"></token>
         <token>perspective</token>
       </pattern>
-      <message>The usual preposition for "perspective" is "from", not "in".</message>
+      <message>The usual preposition for "perspective" is "from", not "in". <suggestion>from \2 \3 \4</suggestion></message>
       <short>IN_FROM_THE_PERSPECTIVE</short>
     </rule>
     <rule id="IN_ON_A_SECRET_MISSION" name="Collocation: in/on a secret mission">
@@ -1988,7 +1988,7 @@
         <token postag="DT|PRP\$" postag_regexp="yes"></token>
         <token>team</token>
       </pattern>
-      <message>The usual preposition for "team" is "on", not "in".</message>
+      <message>The usual preposition for "team" is "on", not "in". <suggestion>on \5 \6</suggestion></message>
       <short>IN_ON_A_TEAM</short>
     </rule>
     <rule id="IN_ON_A_TRIP" name="Collocation: in/on a trip">
@@ -2019,7 +2019,7 @@
         <token>outside</token>
         <token postag="IN|PCT|," postag_regexp="yes"></token>
       </pattern>
-      <message>The usual preposition for "outside" is "on", not "in".</message>
+      <message>The usual preposition for "outside" is "on", not "in". <suggestion>on the outside</suggestion></message>
       <short>IN_THE_OUTSIDE</short>
     </rule>
     <rule id="IN_THIS_MOMENT" name="Collocation: in/at this moment">
@@ -2047,7 +2047,7 @@
         <token>with</token>
         <token postag="NN[PS]|PRP\$?" postag_regexp="yes"></token>
       </pattern>
-      <message>The usual preposition to use with "\1" is "to".</message>
+      <message>The usual preposition to use with "\1" is "to". <suggestion>\1 to</suggestion></message>
       <short>KIND_WITH_TO</short>
     </rule>
     <rule id="LAUGH_OF_AT" name="Collocation: laugh of/at">
@@ -2066,7 +2066,7 @@
         <token regexp="yes">\p{Lu}\p{Ll}+</token>
         <token regexp="yes">next|tomorrow|soon</token>
       </pattern>
-      <message>The usual preposition for "leave" is "for", not "to".</message>
+      <message>The usual preposition for "leave" is "for", not "to". <suggestion>leaving for \3 \4</suggestion></message>
       <short>LEAVE_TO_FOR</short>
     </rule>
     <rule id="LIVE_IN_ON_PLANET" name="Collocation: live in/on planet">
@@ -2097,7 +2097,7 @@
         <token regexp="yes">a|the</token>
         <token>mirror</token>
       </pattern>
-      <message>The usual preposition for "mirror" is "in", not "at".</message>
+      <message>The usual preposition for "mirror" is "in", not "at". <suggestion>\1 in a mirror</suggestion></message>
       <short>LOOK_AT_TO</short>
     </rule>
     <rule id="LUNCH_TO_FOR" name="Collocation: lunch to/for">
@@ -2119,7 +2119,7 @@
           <exception regexp="yes">however|week|month|year</exception>
         </token>
       </pattern>
-      <message>It appears that a preposition is missing after '\2'.</message>
+      <message>It appears that a preposition is missing after '\2'. <suggestion>\2 to \3</suggestion></message>
       <short>MISSING_PREPOSITION</short>
     </rule>
     <rule id="OBVIOUS_FOR" name="Wrong preposition: 'obvious for' (obvious to)">
@@ -2130,7 +2130,7 @@
           <exception regexp="yes">he|years|decades|months</exception>
         </token>
       </pattern>
-      <message>The adjective '\1' is normally used with 'to'.</message>
+      <message>The adjective '\1' is normally used with 'to'. <suggestion>\1 to \3</suggestion></message>
       <short>OBVIOUS_FOR</short>
     </rule>
     <rule id="OFFERED_IN_AT" name="Collocation: offered in/at">
@@ -2139,7 +2139,7 @@
         <token>in</token>
         <token regexp="yes">college|university|school</token>
       </pattern>
-      <message>The usual preposition for "offered" and "\3" is "at", not "in".</message>
+      <message>The usual preposition for "offered" and "\3" is "at", not "in". <suggestion>offered at \3</suggestion></message>
       <short>OFFERED_IN_AT</short>
     </rule>
     <rule id="ON_FACT" name="Collocation: on/in fact">
@@ -2201,7 +2201,7 @@
         <token>from</token>
         <token postag="DT|NNP|PRP\$?" postag_regexp="yes"></token>
       </pattern>
-      <message>Use "to" with "opposite".</message>
+      <message>Use "to" with "opposite". <suggestion>\1 to \3</suggestion></message>
       <short>OPPOSITE_FROM_TO</short>
     </rule>
     <rule id="PARTICIPATE_TO_IN" name="Collocation: Participate to/in">
@@ -2210,7 +2210,7 @@
         <token>to</token>
         <token postag="DT|PRP\$" postag_regexp="yes"></token>
       </pattern>
-      <message>The usual preposition for "\1" is "in", not "to".</message>
+      <message>The usual preposition for "\1" is "in", not "to". <suggestion>\1 in</suggestion></message>
       <short>PARTICIPATE_TO_IN</short>
     </rule>
     <rule id="PASSIONATE_BY_ABOUT" name="Collocation: Passionate by/about">
@@ -2218,7 +2218,7 @@
         <token regexp="yes">passionated?</token>
         <token>by</token>
       </pattern>
-      <message>The usual preposition for "passionate" is "about", not "by".</message>
+      <message>The usual preposition for "passionate" is "about", not "by". <suggestion>passionate about</suggestion></message>
       <short>PASSIONATE_BY_ABOUT</short>
     </rule>
     <rule id="PLAY_WITH_FOR" name="Collocation: Play with/for">
@@ -2229,7 +2229,7 @@
         <token postag="DT|NNP|PRP\$?" postag_regexp="yes"></token>
         <token>team</token>
       </pattern>
-      <message>Use "for" with "play".</message>
+      <message>Use "for" with "play". <suggestion>\1  for</suggestion></message>
       <short>PLAY_WITH_FOR</short>
     </rule>
     <rule id="PREFER_INSTEAD_OF_TO" name="Collocation: Prefer instead of/to">
@@ -2242,7 +2242,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token postag="NN.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Consider using "to" with "prefer".</message>
+      <message>Consider using "to" with "prefer". <suggestion>\1 \2 \3 to \6 \7</suggestion></message>
       <short>PREFER_INSTEAD_OF_TO</short>
     </rule>
     <rule id="PREFER_OVER_TO" name="Collocation: Prefer over/to">
@@ -2254,7 +2254,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token postag="NN.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Consider using "to" with "prefer".</message>
+      <message>Consider using "to" with "prefer". <suggestion>\1 \2 \3 to \5 \6</suggestion></message>
       <short>PREFER_OVER_TO</short>
     </rule>
     <rule id="REPERCUSSION_WITH_ON" name="Collocation: Repercussion with/on">
@@ -2262,7 +2262,7 @@
         <token>repercussion</token>
         <token>with</token>
       </pattern>
-      <message>The usual preposition for "repercussion" is "on", not "with".</message>
+      <message>The usual preposition for "repercussion" is "on", not "with". <suggestion>\1 on</suggestion></message>
       <short>REPERCUSSION_WITH_ON</short>
     </rule>
     <rule id="RESPECTFUL_AGAINST" name="Respectful against/toward">
@@ -2332,7 +2332,7 @@
         <token>for</token>
         <token>everything</token>
       </pattern>
-      <message>The usual preposition in this context is "over" or "about".</message>
+      <message>The usual preposition in this context is "over" or "about". <suggestion>\1 \2 over \4</suggestion></message>
       <short>STRESS_OUT_FOR_OVER</short>
     </rule>
     <rule id="SUFFER_OF_WITH" name="Collocation: suffer of/with/from">
@@ -2340,7 +2340,7 @@
         <token>suffer</token>
         <token>of</token>
       </pattern>
-      <message>The usual preposition for this expression is "from" or "with".</message>
+      <message>The usual preposition for this expression is "from" or "with". <suggestion>\1 from</suggestion></message>
       <short>SUFFER_OF_WITH</short>
     </rule>
     <rule id="SUMMON_AT_TO" name="Collocation: Summon at/to">
@@ -2366,7 +2366,7 @@
         <token>consideration</token>
         <token>of</token>
       </pattern>
-      <message>You have fused two expressions into one, "in consideration of" and "taking into consideration". Remove the word "of" from the end.</message>
+      <message>You have fused two expressions into one, "in consideration of" and "taking into consideration". Remove the word "of" from the end. <suggestion>\1 \2 \3</suggestion></message>
       <short>TAKING_INTO_CONSIDERATION</short>
     </rule>
     <rule id="TALK_DOWN_ABOUT_TO" name="Collocation: talk down about/to">
@@ -2411,7 +2411,7 @@
         <token>work</token>
         <token>be</token>
       </pattern>
-      <message>The word "for" is missing between "\5" and "\6".</message>
+      <message>The word "for" is missing between "\5" and "\6". <suggestion>\1 \2 that \4 \5 for \6</suggestion></message>
       <short>THAT_I_WORK_FOR</short>
     </rule>
     <rule id="THINK_IN_ABOUT" name="Collocation: think on/about">
@@ -2432,7 +2432,7 @@
         <token>last</token>
         <token>night</token>
       </pattern>
-      <message>The usual preposition in this context is "from".</message>
+      <message>The usual preposition in this context is "from". <suggestion>tired from last night</suggestion></message>
       <short>TIRED_OF_FROM</short>
     </rule>
     <rule id="TODAY_MORNING" name="Wrong phrase: 'today morning' (this morning)">
@@ -2450,7 +2450,7 @@
         <token postag="DT"></token>
         <token regexp="yes">cures?</token>
       </pattern>
-      <message>The verb "to found" means "to establish", whereas "to find" means "to discover".</message>
+      <message>The verb "to found" means "to establish", whereas "to find" means "to discover". <suggestion>to find \3 \4</suggestion></message>
       <short>TO_FOUND_FIND_A_CURE</short>
     </rule>
     <rule id="TO_ON_A_TRIP" name="Collocation: to/on a trip">
@@ -2481,7 +2481,7 @@
         <token postag="CD"></token>
         <token regexp="yes">(?:hour|day|week|month|year|session|semester|term|course)s?</token>
       </pattern>
-      <message>The word "for" is missing between "\2" and "\3".</message>
+      <message>The word "for" is missing between "\2" and "\3". <suggestion>\1 traveled for \3 \4</suggestion></message>
       <short>TRAVELED_FOR</short>
     </rule>
     <rule id="TRAVEL_WITH_BY" name="Collocation: travel with/by">
@@ -2502,7 +2502,7 @@
         <token postag="PRP\$|DT" postag_regexp="yes"></token>
         <token>desk</token>
       </pattern>
-      <message>The usual preposition for activities involving a desk is "at".</message>
+      <message>The usual preposition for activities involving a desk is "at". <suggestion>\1 \2 at \4 \5</suggestion></message>
       <short>VERB_IN_AT</short>
     </rule>
     <rule id="WAITING_MY_PATIENT_FINISH" name="Collocation: waiting (to) finish">
@@ -2512,7 +2512,7 @@
         <token postag="NN.*" postag_regexp="yes"></token>
         <token postag="VB"></token>
       </pattern>
-      <message>The word "to" is missing before the infinitive form "\4".</message>
+      <message>The word "to" is missing before the infinitive form "\4". <suggestion>\1 \2 \3 to \4</suggestion></message>
       <short>WAITING_MY_PATIENT_FINISH</short>
     </rule>
     <rule id="WAIT_AFTER_FOR" name="Collocation: waiting after (for) someone">
@@ -2521,7 +2521,7 @@
         <token>after</token>
         <token postag="PRP"></token>
       </pattern>
-      <message>The usual collocations for "\1" are "\1 on", meaning 'to act as an attendant to someone', or "\1 for" meaning 'to remain patiently inactive'.</message>
+      <message>The usual collocations for "\1" are "\1 on", meaning 'to act as an attendant to someone', or "\1 for" meaning 'to remain patiently inactive'. <suggestion>\1 for \3</suggestion></message>
       <short>WAIT_AFTER_FOR</short>
     </rule>
     <rule id="WELL_IN_ON" name="Collocation: Well in/on">
@@ -2574,7 +2574,7 @@
         <token regexp="yes">on|to</token>
         <token regexp="yes">him|her|us|me|them</token>
       </pattern>
-      <message>The usual preposition for "yell" is "at".</message>
+      <message>The usual preposition for "yell" is "at". <suggestion>\1 at \3</suggestion></message>
       <short>YELL_ON_AT</short>
     </rule>
   </category>
@@ -2696,7 +2696,7 @@
         <token>allusion</token>
         <token>of</token>
       </pattern>
-      <message>In most contexts, you allude "to" something. Did you mean to write "illusion" here?</message>
+      <message>In most contexts, you allude "to" something. Did you mean to write "illusion" here? <suggestion>illusion of</suggestion></message>
       <short>CONFUSION_ALLUSION_ILLUSION</short>
     </rule>
     <rule id="CONFUSION_OF_ANOTHER_IN_OTHER" name="another (in other)">
@@ -2901,7 +2901,7 @@
         <token>marriage</token>
         <token>anniversary</token>
       </pattern>
-      <message>Wedding anniversaries are the proper term to describe the anniversary of the day of a wedding.</message>
+      <message>Wedding anniversaries are the proper term to describe the anniversary of the day of a wedding. <suggestion>wedding</suggestion></message>
       <short>Commonly confused word</short>
     </rule>
     <rule id="ONE_FELL_SWOOP" name="one foul (fell) swoop">
@@ -3107,7 +3107,7 @@
         <token regexp="yes">bl?a(ck|g)</token>
         <token>by</token>
       </pattern>
-      <message>Did you mean 'taken aback' (=surprised or shocked)?</message>
+      <message>Did you mean 'taken aback' (=surprised or shocked)? <suggestion>aback</suggestion></message>
       <short>Commonly confused word</short>
     </rule>
     <rule id="BAR_B_QUE" name="bar-b-queue instead of 'bar-b-que'">
@@ -3967,7 +3967,7 @@
           <exception regexp="yes">based|powered|shaped|sponsored|specific|driven|related|dominated|focuss?ed|friendly|worthy|oriented|connected|protected|operated|resistant|agnostic|generated|centric|compliant|dependent|wide|free|compatible|sized|owned|tolerant|influenced|prohibitive|enabled</exception>
         </token>
       </pattern>
-      <message>Did you mean to write "than" here?</message>
+      <message>Did you mean to write "than" here? <suggestion>than</suggestion></message>
       <short>TAN_THAN</short>
     </rule>
     <rule id="TEEM_TEAM" name="football teem (football team)">
@@ -4195,7 +4195,7 @@
         <token>ah</token>
         <token>ha</token>
       </pattern>
-      <message>This word is usually spelled as one word.</message>
+      <message>This word is usually spelled as one word. <suggestion>aha</suggestion></message>
       <short>Possible typo</short>
     </rule>
     <rule id="ALA_MODE" name="ala mode (a la mode)">
@@ -4270,7 +4270,7 @@
       <pattern>
         <token>Alzheimers</token>
       </pattern>
-      <message>The name of this disease is always capitalized and spelled with a possessive apostrophe.</message>
+      <message>The name of this disease is always capitalized and spelled with a possessive apostrophe. <suggestion>Alzheimer's</suggestion></message>
       <short>ALZHEIMERS</short>
     </rule>
     <rule id="AND_SO_FOURTH" name="and so fourth (forth)">
@@ -4470,7 +4470,7 @@
         <token>Childrens</token>
         <token>Day</token>
       </pattern>
-      <message>It appears that a possessive apostrophe is missing.</message>
+      <message>It appears that a possessive apostrophe is missing. <suggestion>\2</suggestion></message>
       <short>CHILDRENS_DAY_APOSTROPHE</short>
     </rule>
     <rule id="CHOMPING_AT_THE_BIT" name="chomping (champing) at the bit">
@@ -4865,7 +4865,7 @@
         <token>if</token>
         <token>which</token>
       </pattern>
-      <message>One of these words is redundant, or a comma is missing.</message>
+      <message>One of these words is redundant, or a comma is missing. <suggestion>which</suggestion></message>
       <short>IF_WHICH</short>
     </rule>
     <rule id="IMMINENT_DOMAIN" name="imminent (eminent) domain">
@@ -4967,7 +4967,7 @@
       <pattern>
         <token>Ive</token>
       </pattern>
-      <message>Possible spelling mistake found.</message>
+      <message>Possible spelling mistake found. <suggestion>I've</suggestion></message>
       <short>Spelling mistake</short>
     </rule>
     <rule id="JIVE_WITH" name="jive (jibe) with">
@@ -5931,7 +5931,7 @@
         <token regexp="yes">best|worst</token>
         <token postag="NN.*" postag_regexp="yes"></token>
       </pattern>
-      <message>It seems that a possessive apostrophe is missing.</message>
+      <message>It seems that a possessive apostrophe is missing. <suggestion>'s</suggestion></message>
       <short>A_NNS_BEST_NN</short>
     </rule>
     <rule id="BACK_FIRE" name="back fire (backfire)">
@@ -5986,7 +5986,7 @@
         <token regexp="yes">can(not)?|[wc]ould|should|might|must|may|did|to</token>
         <token regexp="yes">check-?out</token>
       </pattern>
-      <message>The verb 'check out' is spelled as two words. The noun 'checkout' is spelled as one.</message>
+      <message>The verb 'check out' is spelled as two words. The noun 'checkout' is spelled as one. <suggestion>\1 check out</suggestion></message>
       <short>CAN_CHECKOUT</short>
     </rule>
     <rule id="CAN_MISSPELLING" name="It cam (can) happen anytime.">
@@ -6131,7 +6131,7 @@
         </token>
         <token>sure</token>
       </pattern>
-      <message>The words '\1 \2' may not fit in this context.</message>
+      <message>The words '\1 \2' may not fit in this context. <suggestion>fairly sure</suggestion></message>
       <short>FAIR_SURE</short>
     </rule>
     <rule id="FIGURE_HEAD" name="figure head (figurehead)">
@@ -6338,7 +6338,7 @@
         <token regexp="yes">britt?any|brittney|brite?ny|britte?ny|briney|brinte?y|britanny|britine?y|britnet|britaney|britnay|brithney|brtiney|birtney|brintney|briteney|bitney|brittaney|brittnay|britey|brittiny|bre?tney|britneys|britne|brytney|breatney|britiany|britnney|britnry</token>
         <token>spears</token>
       </pattern>
-      <message>Are you referring to the musical artist Britney Spears?</message>
+      <message>Are you referring to the musical artist Britney Spears? <suggestion>Britney Spears</suggestion></message>
       <short>IT_S_BRITNEY</short>
     </rule>
     <rule id="I_FEEL" name="I feel good">
@@ -6648,7 +6648,7 @@
         <token regexp="yes">I|you|they|we</token>
         <token>backup</token>
       </pattern>
-      <message>The verb 'back up' is spelled as two words. The noun 'backup' is spelled as one.</message>
+      <message>The verb 'back up' is spelled as two words. The noun 'backup' is spelled as one. <suggestion>back up</suggestion></message>
       <short>PRP_BACKUP</short>
     </rule>
     <rule id="PUT_FOURTH_THEAAN" name="put fourth (forth) the">
@@ -6897,7 +6897,7 @@
         <token postag="PRP$"></token>
         <token>words</token>
       </pattern>
-      <message>Did you mean the idiom 'true to one's word' (=keep one's promise)?</message>
+      <message>Did you mean the idiom 'true to one's word' (=keep one's promise)? <suggestion>word</suggestion></message>
       <short>TRUE_TO_WORD</short>
     </rule>
     <rule id="TYPO_AD_NAUSEAM" name="ad nauseaum (nauseam)">
@@ -7076,7 +7076,7 @@
       <pattern>
         <token>afterwards</token>
       </pattern>
-      <message>In American English, 'afterward' is the preferred variant. 'Afterwards' is more commonly used in British English and other dialects.</message>
+      <message>In American English, 'afterward' is the preferred variant. 'Afterwards' is more commonly used in British English and other dialects. <suggestion>afterward</suggestion></message>
       <short>AFTERWARDS_US</short>
     </rule>
     <rule id="AUBERGINE" name="eggplant/aubergine">
@@ -7117,7 +7117,7 @@
         <token case_sensitive="yes">area</token>
         <token>51</token>
       </pattern>
-      <message>The word '\1 \2' is a proper noun and needs to be capitalized.</message>
+      <message>The word '\1 \2' is a proper noun and needs to be capitalized. <suggestion>Area 51</suggestion></message>
       <short>AREA_51</short>
     </rule>
     <rule id="AS_WILL_AS" name="as will (well) as">
@@ -7164,7 +7164,7 @@
         <token>able</token>
         <token>to</token>
       </pattern>
-      <message>One of these words may be redundant.</message>
+      <message>One of these words may be redundant. <suggestion>\1</suggestion></message>
       <short>CAN_ABLE_TO</short>
     </rule>
     <rule id="CASTED" name="casted (cast)">
@@ -7230,7 +7230,7 @@
       <pattern>
         <token>hardwares</token>
       </pattern>
-      <message>In standard English, the noun "\1" is uncountable. Consider using an alternative.</message>
+      <message>In standard English, the noun "\1" is uncountable. Consider using an alternative. <suggestion>pieces of hardware</suggestion></message>
       <short>Nonstandard word</short>
     </rule>
     <rule id="HARD_WORKING_COMPOUND" name="hard working (hardworking)">
@@ -7238,7 +7238,7 @@
         <token>hard</token>
         <token>working</token>
       </pattern>
-      <message>This adjective is spelled with a hyphen or as one word.</message>
+      <message>This adjective is spelled with a hyphen or as one word. <suggestion>hardworking</suggestion></message>
       <short>HARD_WORKING_COMPOUND</short>
     </rule>
     <rule id="HARLEY_DAVIDSON_HYPHEN" name="Miami-Dade">
@@ -7246,7 +7246,7 @@
         <token>harley</token>
         <token>davidson</token>
       </pattern>
-      <message>The name of this motorcycle maker is spelled with a hyphen.</message>
+      <message>The name of this motorcycle maker is spelled with a hyphen. <suggestion>Harley-Davidson</suggestion></message>
       <short>HARLEY_DAVIDSON_HYPHEN</short>
     </rule>
     <rule id="HAVE_HAVING" name="have having → have been having">
@@ -7296,7 +7296,7 @@
         <token case_sensitive="yes">I</token>
         <token>personal</token>
       </pattern>
-      <message>Did you mean the adverb 'personally'?</message>
+      <message>Did you mean the adverb 'personally'? <suggestion>I personally</suggestion></message>
       <short>I_PERSONAL</short>
     </rule>
     <rule id="MANY_TIME" name="many time (times)">
@@ -7312,7 +7312,7 @@
         <token>miami</token>
         <token>dade</token>
       </pattern>
-      <message>The name of this US county is spelled with a hyphen.</message>
+      <message>The name of this US county is spelled with a hyphen. <suggestion>Miami-Dade</suggestion></message>
       <short>MIAMI_DADE_HYPHEN</short>
     </rule>
     <rule id="OFF_KEY_HYPHEN" name="missing hyphen in 'off key'">
@@ -7338,14 +7338,14 @@
         <token>other</token>
         <token>wise</token>
       </pattern>
-      <message>This has to be spelled as one word.</message>
+      <message>This has to be spelled as one word. <suggestion>otherwise</suggestion></message>
       <short>OTHER_WISE_COMPOUND</short>
     </rule>
     <rule id="PAYED" name="payed (paid)">
       <pattern>
         <token case_sensitive="yes">payed</token>
       </pattern>
-      <message>Only in a nautical context 'payed' is an acceptable past tense form of 'pay'. Please check.</message>
+      <message>Only in a nautical context 'payed' is an acceptable past tense form of 'pay'. Please check. <suggestion>paid</suggestion></message>
       <short>Probable usage error.</short>
     </rule>
     <rule id="REGARDING_TO" name="Regarding to (regard to/regarding)">
@@ -7361,7 +7361,7 @@
         <token>seasons</token>
         <token>greetings</token>
       </pattern>
-      <message>This idiom is spelled with a possessive apostrophe.</message>
+      <message>This idiom is spelled with a possessive apostrophe. <suggestion>\2</suggestion></message>
       <short>Missing possessive apostrophe</short>
     </rule>
     <rule id="SHOE_IN" name="shoe-in (shoo)">
@@ -7375,7 +7375,7 @@
       <pattern>
         <token>softwares</token>
       </pattern>
-      <message>In standard English, the noun "\1" is uncountable. Consider using an alternative.</message>
+      <message>In standard English, the noun "\1" is uncountable. Consider using an alternative. <suggestion>pieces of software</suggestion></message>
       <short>Nonstandard word</short>
     </rule>
     <rule id="SPLITTED" name="splitted (split)">
@@ -7392,7 +7392,7 @@
         <token>the</token>
         <token>union</token>
       </pattern>
-      <message>Consider using the proper capitalization if you mean the president's annual speech.</message>
+      <message>Consider using the proper capitalization if you mean the president's annual speech. <suggestion>State of the Union</suggestion></message>
       <short>STATE_OF_THE_UNION</short>
     </rule>
     <rule id="STRIKED" name="striked (struck)">
@@ -7415,7 +7415,7 @@
         <token>the</token>
         <token>whether</token>
       </pattern>
-      <message>Possible error detected.</message>
+      <message>Possible error detected. <suggestion>whether</suggestion></message>
       <short>THE_WHETHER</short>
     </rule>
     <rule id="TO_WORRIED_ABOUT" name="to worried (worry) about">
@@ -7432,7 +7432,7 @@
         <token>the</token>
         <token>Ukraine</token>
       </pattern>
-      <message>Since becoming an independent nation in 1991, the article 'the' has been dropped from the name of the country of Ukraine.</message>
+      <message>Since becoming an independent nation in 1991, the article 'the' has been dropped from the name of the country of Ukraine. <suggestion>Ukraine</suggestion></message>
       <short>UKRAINE_NO_THE</short>
     </rule>
     <rule id="UNDER_COVER_COMPOUND" name="under cover (undercover)">
@@ -7464,7 +7464,7 @@
         <token>exception</token>
         <token>of</token>
       </pattern>
-      <message>It appears that an article is missing in this idiom.</message>
+      <message>It appears that an article is missing in this idiom. <suggestion>\1 the \2 \3</suggestion></message>
       <short>WITH_EXCEPTION_OF</short>
     </rule>
     <rule id="WOLFS" name="wolfs vs wolves">
@@ -7525,7 +7525,7 @@
         <token>afro</token>
         <token regexp="yes">americans?</token>
       </pattern>
-      <message>This expression is usually spelled with a hyphen.</message>
+      <message>This expression is usually spelled with a hyphen. <suggestion>-</suggestion></message>
       <short>AFRO_AMERICAN_HYPHEN</short>
     </rule>
     <rule id="AFTERMARKET" name="Aftermarket">
@@ -7535,7 +7535,7 @@
         <token>after</token>
         <token regexp="yes">markets?|life|math|parts?|pieces?|shaves?|shocks?|taste|thoughts?|shows?|glows?</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>\3</suggestion></message>
       <short>AFTERMARKET</short>
     </rule>
     <rule id="ALL_OF_SUDDEN" name="all of (a) sudden">
@@ -7545,7 +7545,7 @@
         <token>sudden</token>
         <token postag="P?DT|PRP.*|EX|NNP|PCT" postag_regexp="yes"></token>
       </pattern>
-      <message>It appears that an article is missing.</message>
+      <message>It appears that an article is missing. <suggestion>a sudden</suggestion></message>
       <short>ALL_OF_SUDDEN</short>
     </rule>
     <rule id="AMERICANO" name="speak Americano (American English)">
@@ -7579,7 +7579,7 @@
         <token>anti</token>
         <token regexp="yes">Semitism|Semitic|American|Americanism</token>
       </pattern>
-      <message>This expression is usually spelled with a hyphen.</message>
+      <message>This expression is usually spelled with a hyphen. <suggestion>anti-</suggestion></message>
       <short>ANTI_AMERICAN_HYPHEN</short>
     </rule>
     <rule id="ARN_T" name="arn't → aren't">
@@ -7650,7 +7650,7 @@
         <token regexp="yes">an?|the</token>
         <token regexp="yes">scissors?</token>
       </pattern>
-      <message>The noun "scissors" is mostly used in plural form.</message>
+      <message>The noun "scissors" is mostly used in plural form. <suggestion>scissors</suggestion></message>
       <short>A_SCISSOR</short>
     </rule>
     <rule id="A_THANK_YOU" name="a/the + thank you">
@@ -7661,7 +7661,7 @@
         <token>you</token>
         <token postag="SENT_END|NN(S|:UN?)?|PRP" postag_regexp="yes"></token>
       </pattern>
-      <message>It appears that 'thank you' is missing a hyphen or needs to be quoted.</message>
+      <message>It appears that 'thank you' is missing a hyphen or needs to be quoted. <suggestion>thank-you</suggestion></message>
       <short>A_THANK_YOU</short>
     </rule>
     <rule id="BACK_COMPOUNDS" name="back log (backlog)">
@@ -7669,7 +7669,7 @@
         <token>back</token>
         <token regexp="yes">logs?|ache|lash(es)?|bones?|drops?|packs?|packing|packed|packers?|grounds?|stages?|spaces?|spins?|stabs?|stabbed|stabbing|stabbers?|beats?|flips?|streets?|breakers?|gammon|slash(es)?|hands?|lights?|stretch(es)?|stops?|stopped|stopping|stor(y|ies)|plates?|fills?|filled|flipped|flipping</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>back</suggestion></message>
       <short>BACK_COMPOUNDS</short>
     </rule>
     <rule id="BECAUSE_OF_I" name="because of we (because we)">
@@ -7697,7 +7697,7 @@
         <token>aware</token>
         <token postag="IN|CC" postag_regexp="yes"></token>
       </pattern>
-      <message>It appears that a verb is missing.</message>
+      <message>It appears that a verb is missing. <suggestion>be \2</suggestion></message>
       <short>BE_AWARE_OF</short>
     </rule>
     <rule id="BE_COMPOUNDS" name="be wilder (bewilder)">
@@ -7705,7 +7705,7 @@
         <token>be</token>
         <token regexp="yes">wilder(ed|edly|ing|ingly|s|ment)?</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>be</suggestion></message>
       <short>BE_COMPOUNDS</short>
     </rule>
     <rule id="BE_DONT" name="I am don't (not) sure">
@@ -7757,7 +7757,7 @@
         <token postag="VB">be</token>
         <token postag="IN|JJ" postag_regexp="yes"></token>
       </pattern>
-      <message>It seems that the verb "be" is not needed here.</message>
+      <message>It seems that the verb "be" is not needed here. <suggestion>\4</suggestion></message>
       <short>BE_NOT_BE_JJ</short>
     </rule>
     <rule id="BE_RB_BE" name="be + adverb + be">
@@ -7779,7 +7779,7 @@
           <exception regexp="yes">(tryin|bein|taxin|amazin)[g']</exception>
         </token>
       </pattern>
-      <message>The word 'to' seems to be wrong here. "\3" is a present participle verb.</message>
+      <message>The word 'to' seems to be wrong here. "\3" is a present participle verb. <suggestion>\3</suggestion></message>
       <short>BE_TO_VBG</short>
     </rule>
     <rule id="BE_USE_TO_DO" name="be use (used) to">
@@ -7809,7 +7809,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token regexp="yes">systems?|platforms?|computers?|processors?|tokens?|hand\-?helds?|games?|apple|windows|intel|crc|arm|rsa|ssh|ssl|aes|sha|cpus?|ids?|gpus?|pcs?|monitors?|hash(es)?|music|arts?|floats?|pixels?|wep|decimal|random|keys?|encryption|encrypted|signed|memory|operating|os|data|personal|audio|address|graphics?|colou?rs?|coin|integers?|units?|java|jre|jdk|microprocessors?|microcontrollers?|linux|kernels?|arch(itectures)?s?|check|android|numbers?|intervals?|parallel|serials?|encoding|ascii</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>BIT_HYPHEN</short>
     </rule>
     <rule id="BOX_COMPOUNDS" name="mail box (mailbox)">
@@ -7851,7 +7851,7 @@
         <token regexp="yes">get|receive</token>
         <token postag="CD"></token>
       </pattern>
-      <message>It appears that a comma is missing.</message>
+      <message>It appears that a comma is missing. <suggestion>\1 \2, \3 \4</suggestion></message>
       <short>BUY_TWO_GET_ONE_FREE</short>
     </rule>
     <rule id="BY_EXPIRE" name="Please do this by expire (expiring|the expiration)">
@@ -7860,7 +7860,7 @@
         <token>expire</token>
         <token postag="SENT_END"></token>
       </pattern>
-      <message>The preposition "by" usually has to be followed by a noun phrase or a verb ending in "-ing". Did you mean something else?</message>
+      <message>The preposition "by" usually has to be followed by a noun phrase or a verb ending in "-ing". Did you mean something else? <suggestion>expiring</suggestion></message>
       <short>BY_EXPIRE</short>
     </rule>
     <rule id="CALL_TO_ACTION_HYPHEN" name="missing hyphen in 'call to action'">
@@ -7870,7 +7870,7 @@
         <token>action</token>
         <token regexp="yes">buttons?|links?|strateg(y|ies)|marketing|overlays?|ads?|e?mail</token>
       </pattern>
-      <message>It appears that two hyphens are missing.</message>
+      <message>It appears that two hyphens are missing. <suggestion>\1-\2-\3</suggestion></message>
       <short>CALL_TO_ACTION_HYPHEN</short>
     </rule>
     <rule id="CANN_T" name="cann't → can't">
@@ -7908,7 +7908,7 @@
         <token min="0" postag="JJ.*|NN.*" postag_regexp="yes"></token>
         <token>garage</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>CAR_HYPHEN</short>
     </rule>
     <rule id="CAR_POOL_COMPOUND" name="car pool (carpool)">
@@ -8131,7 +8131,7 @@
         <token>clear</token>
         <token regexp="yes">cut(ting|s)?</token>
       </pattern>
-      <message>This word is normally spelled with a hyphen.</message>
+      <message>This word is normally spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>CLEAR_CUT_HYPHEN</short>
     </rule>
     <rule id="COMPERE" name="Compere (compère or compare)">
@@ -8175,7 +8175,7 @@
         <token>counter</token>
         <token regexp="yes">parts?|party|parties|intuitive|feits?|feiters?|points?|protest(er)?s?|productive|proposals?|acts?|acted|acting|weights?|balances?|clockwise|tenors?|arguments?|factuals?|terroris[tm]s?|movements?|intelligence|espionage|sign(s|ed|ing)?|cyclical|offensives?|measures?|offers?|sanctions?</token>
       </pattern>
-      <message>This word is normally spelled as one word.</message>
+      <message>This word is normally spelled as one word. <suggestion>counter</suggestion></message>
       <short>COUNTER_COMPOUNDS</short>
     </rule>
     <rule id="COUN_T" name="coun't → couldn't, count">
@@ -8202,7 +8202,7 @@
         <token>cylinder</token>
         <token regexp="yes">motor|engines?|cars?|truck|pick\-?up|jeeps?|diesel|suvs?|turbos?|mustangs?|hatchbacks?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>CYLINDER_HYPHEN</short>
     </rule>
     <rule id="DAY_DREAM_COMPOUND" name="day dreaming (daydreaming)">
@@ -8210,7 +8210,7 @@
         <token>day</token>
         <token regexp="yes">dream(s|ed|ing)?|dreamers?</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>day</suggestion></message>
       <short>DAY_DREAM_COMPOUND</short>
     </rule>
     <rule id="DEGREE_HYPHEN" name="missing hyphen in '10 degree angle'">
@@ -8220,7 +8220,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token regexp="yes">angle|rotation|photos?|panoramas?|cameras?|circles?|marketing|evaluation|videos?|assessments?|appraisals?|system|feedback|turn|elbow|surface|drill|corners?|tilt|ovens?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>DEGREE_HYPHEN</short>
     </rule>
     <rule id="DIDINT" name="he didin't (didn't)">
@@ -8239,7 +8239,7 @@
         <token min="0" postag="RB"></token>
         <token regexp="yes" case_sensitive="yes">[Ss]aw</token>
       </pattern>
-      <message>The verb "saw" means "to cut" something using a saw. The past tense of "see" is incorrect in this context.</message>
+      <message>The verb "saw" means "to cut" something using a saw. The past tense of "see" is incorrect in this context. <suggestion>see</suggestion></message>
       <short>DIDN_T_SAW</short>
     </rule>
     <rule id="DIDN_T_SPOKE" name="I didn't spoke (speak)">
@@ -8249,7 +8249,7 @@
         <token min="0" postag="RB"></token>
         <token regexp="yes" case_sensitive="yes">[Ss]poke</token>
       </pattern>
-      <message>The verb "spoke" means "to furnish". The past tense of "speak" is incorrect in this context.</message>
+      <message>The verb "spoke" means "to furnish". The past tense of "speak" is incorrect in this context. <suggestion>speak</suggestion></message>
       <short>DIDN_T_SPOKE</short>
     </rule>
     <rule id="DOB_T" name="dob't">
@@ -8266,7 +8266,7 @@
         <token regexp="yes" case_sensitive="yes">[Dd]octors|[Dd]entists</token>
         <token regexp="yes">appointments?</token>
       </pattern>
-      <message>It appears that a possessive apostrophe is missing.</message>
+      <message>It appears that a possessive apostrophe is missing. <suggestion>'s</suggestion></message>
       <short>DOCTORS_APPOINTMENT</short>
     </rule>
     <rule id="DOESENT" name="dosent (doesn't)">
@@ -8318,7 +8318,7 @@
         <token>door</token>
         <token regexp="yes">coup[eé]s?|cars?|vans?|jeeps?|sports|honda|toyota|sedans?|mustang|porsche|camaro|refrigerators?|convertibles?|suv|hatchbacks?|pickups?|trucks?|wardrobes?|ford|bmw|benz|mercedes|audi|vw|tesla|challenger</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>DOOR_HYPHEN</short>
     </rule>
     <rule id="DOSNT" name="he dosn't (doesn't)">
@@ -8475,7 +8475,7 @@
         <token>factor</token>
         <token regexp="yes">auth|authentications?|authori[sz]ations?|theory|graph|models?|app|pcc|logins?|accounts?|theorem|codes?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>FACTOR_HYPHEN</short>
     </rule>
     <rule id="FIGHTER_COMPOUNDS" name="fire fighter (firefighter)">
@@ -8493,7 +8493,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token regexp="yes">salar(ies|y)|jobs?|business|revenues?|sum|developer|compensation|income|earner|number|profits?|deals?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>FIGURE_HYPHEN</short>
     </rule>
     <rule id="FINE_TUNE_COMPOUNDS" name="fine tune (fine-tune)">
@@ -8520,7 +8520,7 @@
         <token>person</token>
         <token regexp="yes">shooters?|singular|plural|(pro)?nouns?|verbs?|narrators?|narratives?|perspectives?|forms?|pov|analysis|voice|descriptors?|masculine|feminine|subject</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>FIRST_PERSON_SHOOTER</short>
     </rule>
     <rule id="FIRST_SERVED" name="first come, first serve(d)">
@@ -8540,7 +8540,7 @@
         <token regexp="yes">some|whatever</token>
         <token>reasons</token>
       </pattern>
-      <message>This idiom is spelled with the singular form "reason".</message>
+      <message>This idiom is spelled with the singular form "reason". <suggestion>\1 \2</suggestion></message>
       <short>FOR_WHATEVER_REASONS</short>
     </rule>
     <rule id="FREQUENT_ASKED_QUESTIONS" name="Frequently Asked Questions">
@@ -8574,7 +8574,7 @@
         <token>more</token>
         <token postag="PCT|PRP.*|MD|DT|W.*" postag_regexp="yes"></token>
       </pattern>
-      <message>This adverb is normally spelled as one word.</message>
+      <message>This adverb is normally spelled as one word. <suggestion>furthermore</suggestion></message>
       <short>FURTHER_MORE_COMPOUND</short>
     </rule>
     <rule id="GOOD_WELL" name="good (well)">
@@ -8602,7 +8602,7 @@
         <token>hair</token>
         <token regexp="yes">styles?|bands?|brush(es)?|cloths?|balls?</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>hair</suggestion></message>
       <short>HAIR_COMPOUNDS</short>
     </rule>
     <rule id="HAND_CUFF_COMPOUND" name="hand cuff (handcuff)">
@@ -8610,7 +8610,7 @@
         <token>hand</token>
         <token regexp="yes">cuff(ed|s|ing)?</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>hand</suggestion></message>
       <short>HAND_CUFF_COMPOUND</short>
     </rule>
     <rule id="HAVE_FOLLOWING_NN" name="I have following (the following) questions">
@@ -8621,7 +8621,7 @@
           <exception>up</exception>
         </token>
       </pattern>
-      <message>The article 'the' may be missing.</message>
+      <message>The article 'the' may be missing. <suggestion>the following</suggestion></message>
       <short>HAVE_FOLLOWING_NN</short>
     </rule>
     <rule id="HAVE_TWITTER" name="have twitter (have Twitter / have twittered)">
@@ -8629,7 +8629,7 @@
         <token regexp="yes" postag="VB.?" postag_regexp="yes">ha[ds]|(?:ha)?ve|used?</token>
         <token regexp="yes" case_sensitive="yes">twitter|skype|excel|google|zoom|slack|photoshop|sketch|visa|react</token>
       </pattern>
-      <message>Did you mean the proper noun or did you want to use it as a verb?</message>
+      <message>Did you mean the proper noun or did you want to use it as a verb? <suggestion>\1</suggestion></message>
       <short>HAVE_TWITTER</short>
     </rule>
     <rule id="HAVNT" name="they havn't (haven't)">
@@ -8668,7 +8668,7 @@
         <token>need</token>
         <token postag="DT|CC|IN|TO|NN.*|JJ.*|PRP.*|W.*|PCT" postag_regexp="yes"></token>
       </pattern>
-      <message>The pronoun '\1' requires a third-person verb or a past tense.</message>
+      <message>The pronoun '\1' requires a third-person verb or a past tense. <suggestion>needs</suggestion></message>
       <short>Agreement error</short>
     </rule>
     <rule id="HE_SEAS" name="seas vs. sees">
@@ -8685,7 +8685,7 @@
         <token>hitch</token>
         <token regexp="yes">hikes?|hiking|hiked|hikers?</token>
       </pattern>
-      <message>This word is normally spelled with a hyphen (British English) or as one word (American English).</message>
+      <message>This word is normally spelled with a hyphen (British English) or as one word (American English). <suggestion>\1-\2</suggestion></message>
       <short>HITCH_HIKE_COMPOUNDS</short>
     </rule>
     <rule id="HOLDER_COMPOUNDS" name="share holder (shareholder)">
@@ -8701,7 +8701,7 @@
         <token regexp="yes">button|pigeon|cubby|thumb|stoke|chuck|hawse|loop|bore|sink|port|peep|worm|hell|knot|bolt|knee|bung|gunk|anet|key|man|pot|ass|arse|pin|fox|arm|rat|eye|mud|shit</token>
         <token regexp="yes">holes?</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>\1</suggestion></message>
       <short>HOLE_COMPOUNDS</short>
     </rule>
     <rule id="HOME_COMPOUNDS" name="home land (homeland)">
@@ -8774,7 +8774,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Ii]dk</token>
       </pattern>
-      <message>Did you mean the abbreviation for "I don't know"?</message>
+      <message>Did you mean the abbreviation for "I don't know"? <suggestion>IDK</suggestion></message>
       <short>IDK</short>
     </rule>
     <rule id="IF_IT_OK_FOR" name="If it (it is) ok for you">
@@ -8794,7 +8794,7 @@
         <token regexp="yes" min="0">further|more|additional</token>
         <token regexp="yes">questions|concerns|clarification|advice|queries|comments|information|explanation|assistance|help|details</token>
       </pattern>
-      <message>It appears that a verb is missing.</message>
+      <message>It appears that a verb is missing. <suggestion>\2 have</suggestion></message>
       <short>IF_YOU_FURTHER_QUESTIONS</short>
     </rule>
     <rule id="INSPIRED_WITH" name="inspired with (by)">
@@ -8812,7 +8812,7 @@
         <token>ear</token>
         <token regexp="yes">buds?|noise|noise\-?cancel.*|bluetooth|translators?|headsets?|earbuds?|apple|placement|versions?|(head|ear)phones?|monitors?|eegs?|monitoring|wireless|samsung|airpods?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>IN_EAR_HYPHEN</short>
     </rule>
     <rule id="IN_LOVED_WITH" name="In loved (love) with">
@@ -8897,7 +8897,7 @@
         <token min="0" postag="RB"></token>
         <token postag="VB"></token>
       </pattern>
-      <message>It appears that an article is missing.</message>
+      <message>It appears that an article is missing. <suggestion>a \2</suggestion></message>
       <short>IS_PLEASURE_TO</short>
     </rule>
     <rule id="IS_THERE_ANY_NNS" name="Is (are) there any chances">
@@ -8957,7 +8957,7 @@
         <token>time</token>
         <token regexp="yes">to|for</token>
       </pattern>
-      <message>It appears that a verb is missing.</message>
+      <message>It appears that a verb is missing. <suggestion>\1's \2 \3</suggestion></message>
       <short>IT_TIME_TO</short>
     </rule>
     <rule id="JAILBREAKED" name="jailbreaked (jailbroke)">
@@ -9014,7 +9014,7 @@
         <token>law</token>
         <token regexp="yes">suits?|fare|breakers?|givers?|makers?</token>
       </pattern>
-      <message>This noun normally spelled as one word.</message>
+      <message>This noun normally spelled as one word. <suggestion>law</suggestion></message>
       <short>LAW_COMPOUNDS</short>
     </rule>
     <rule id="LEARN_NNNNS_ON_DO" name="wrong preposition: 'learn sth on do' (to do)">
@@ -9049,7 +9049,7 @@
         <token>Let</token>
         <token regexp="yes">I|he|she|we|they</token>
       </pattern>
-      <message>The object form of the pronoun may be required here.</message>
+      <message>The object form of the pronoun may be required here. <suggestion>me</suggestion></message>
       <short>LET_OBJECT</short>
     </rule>
     <rule id="LIFE_CHANGING_HYPHEN" name="missing hyphen in 'life changing moments'">
@@ -9066,7 +9066,7 @@
         <token>life</token>
         <token regexp="yes">styles?|time|boats?|guards?|savers?|blood</token>
       </pattern>
-      <message>This noun is normally spelled as one word.</message>
+      <message>This noun is normally spelled as one word. <suggestion>life</suggestion></message>
       <short>LIFE_COMPOUNDS</short>
     </rule>
     <rule id="LIGHT_COMPOUNDS" name="day light (daylight)">
@@ -9095,7 +9095,7 @@
         <token>limited</token>
         <token>too</token>
       </pattern>
-      <message>Use 'to' in this context.</message>
+      <message>Use 'to' in this context. <suggestion>to</suggestion></message>
       <short>LIMITED_TO</short>
     </rule>
     <rule id="LINE_COMPOUNDS" name="dead line (deadline)">
@@ -9130,7 +9130,7 @@
         <token>in</token>
         <token regexp="yes">voting|ballots?|votes?|surveys?|rebates?|voters?|fraud</token>
       </pattern>
-      <message>This is normally spelled with a hyphen.</message>
+      <message>This is normally spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>MAIL_IN_HYPHEN</short>
     </rule>
     <rule id="MAKER_COMPOUNDS" name="trouble maker (troublemaker)">
@@ -9173,7 +9173,7 @@
         <token min="0">natural</token>
         <token regexp="yes">islands?|fibres?|disasters?|crisis|diamonds?|diseases?|damages?|freshwater|meadows?|earthquakes?|eggs?|elements?|forests?|fruits?|lakes?|beach(es)?|resources?|attractions?|jewels|jewelr(y|ies)|jungle|products?|nature|clouds?|honey?|hybrids?|hazards?|hurricanes?|animals?|galler(y|ies)|granite|greenhouse|materials?|monsters?|mountains?|noise?|objects?|pollution|rivers?|rain|rocks|radiation|risks?|structures?|storms?|snow|satellites?|sources?|tsunamis?|tourist|textiles?|tornados?|vegetables?|virus(es)?|waterfalls?|wood|wonders|water|zoo|events?</token>
       </pattern>
-      <message>It appears that a hyphen is missing in this modifier.</message>
+      <message>It appears that a hyphen is missing in this modifier. <suggestion>-</suggestion></message>
       <short>MAN_MADE</short>
     </rule>
     <rule id="MARK_COMPOUNDS" name="trade mark (trademark)">
@@ -9230,7 +9230,7 @@
         <token>back</token>
         <token regexp="yes">guarantees?|polic(y|ies)|warrant(y|ies)|deals?|offers?</token>
       </pattern>
-      <message>In this phrase "money-back" is an adjective and needs to be spelled with a hyphen.</message>
+      <message>In this phrase "money-back" is an adjective and needs to be spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
       <short>MONEY_BACK_HYPHEN</short>
     </rule>
     <rule id="MONTH_HYPHEN" name="missing hyphen in '2 month cycle'">
@@ -9240,7 +9240,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token regexp="yes">pause|semesters?|routine|periods?|intervals?|cycles?|diets?|notice|plan|project|warranty|median|vacation|holiday|trip|milestone|pandemi[ac]|lockdown|shutdown|term|contract|decline|sentence|calendar|intern(ships?)?|training|traineeships?|loans?|forecasts?|hibernation|delivery|lock-?down|shut-?down|decline|sprints?|average|avg</token>
       </pattern>
-      <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>MONTH_HYPHEN</short>
     </rule>
     <rule id="MOST_SUPERLATIVE" name="No 'more' or 'most' before superlatives">
@@ -9258,7 +9258,7 @@
         <token>motor</token>
         <token regexp="yes">bikes?|bikers?|boats?|cycles?|doms?|trucks?</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>motor</suggestion></message>
       <short>MOTOR_COMPOUNDS</short>
     </rule>
     <rule id="MUCH_NEEDED_HYPHEN" name="missing hyphen in 'much needed'">
@@ -9304,7 +9304,7 @@
         <token>news</token>
         <token regexp="yes">papers?|letters?|readers?|rooms?|agents?|dealers?|groups?|hounds?|makers?|reels?|wom[ea]n|wires?|stands?|casts?|casters?</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>news</suggestion></message>
       <short>NEWS_COMPOUNDS</short>
     </rule>
     <rule id="NNP_BASED" name="windows-based (Windows-based)">
@@ -9357,7 +9357,7 @@
         <token>not</token>
         <token>never</token>
       </pattern>
-      <message>"Not" and "never" have a similar meaning. Please check if one can be removed.</message>
+      <message>"Not" and "never" have a similar meaning. Please check if one can be removed. <suggestion>\1</suggestion></message>
       <short>NOT_NEVER</short>
     </rule>
     <rule id="OBJECTIVE_CASE" name="objective case after with(out)/at/to/...">
@@ -9385,7 +9385,7 @@
         <token>night</token>
         <token regexp="yes">stands?</token>
       </pattern>
-      <message>This noun is normally spelled with a hyphen.</message>
+      <message>This noun is normally spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
       <short>ONE_NIGHT_STAND_HYPHEN</short>
     </rule>
     <rule id="ONE_TERM_PRESIDENT_HYPHEN" name="missing hyphen in 'one term president'">
@@ -9394,7 +9394,7 @@
         <token>term</token>
         <token regexp="yes">presidents?|polynomials?</token>
       </pattern>
-      <message>This noun is normally spelled with a hyphen.</message>
+      <message>This noun is normally spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
       <short>ONE_TERM_PRESIDENT_HYPHEN</short>
     </rule>
     <rule id="ONE_YEARS_OLD" name="one years (year) old">
@@ -9444,7 +9444,7 @@
         <token min="0" postag="JJ"></token>
         <token regexp="yes">surger(y|ies)|operations?|procedures?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>OPEN_HEART_HYPHEN</short>
     </rule>
     <rule id="OPEN_PLAN_HYPHEN" name="missing hyphen in 'open plan'">
@@ -9461,7 +9461,7 @@
         <token>operation</token>
         <token regexp="yes">systems?|income|margins?|cash|profits?|expenses?</token>
       </pattern>
-      <message>The word 'operation' doesn't fit in this context.</message>
+      <message>The word 'operation' doesn't fit in this context. <suggestion>operating</suggestion></message>
       <short>OPERATION_SYSTEM</short>
     </rule>
     <rule id="OUGHT_SAY" name="ought + infinitive (ought to + infinitive)">
@@ -9486,7 +9486,7 @@
         <token>protected</token>
         <token regexp="yes">(area|doc(ument)?|(spread)?sheet|archive|zip|pdf|folder|system|page|(web)?site|file|account|drive|stick|usb|excel|app|cd|dropbox|email|gallery|iphone)s?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>PASSWORD_PROTECTED_HYPHEN</short>
     </rule>
     <rule id="PEDAL_TO_THE_METAL" name="petal to the metal">
@@ -9515,7 +9515,7 @@
         <token min="0" postag="JJ.*|NN.*" postag_regexp="yes"></token>
         <token regexp="yes">puzzles?|jigsaw|wardrobe|canvas|set|outfit|suit|luggage|bands?|quantit(y|ies)|orchestra|units?|kits?|constructions?|systems?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>PIECE_HYPHEN</short>
     </rule>
     <rule id="PLACE_COMPOUNDS" name="market place (marketplace)">
@@ -9539,7 +9539,7 @@
           <exception regexp="yes">ooh|key|chevy|neck|shark|chicken|counsel|suicide|dam|rice|twin|taboo|core|lullaby|ginger|patronage|caravan|buddy|guy|wive|van|green|toenail|pothole|yellow|safari|crap|bulldog|voodoo|minute|radio|fair|squirrel|ape|fox|badger|ferret|beagle|parrot|rat|arbitrage|privilege|deed|wolf|contango|coo|cat|tot|jut|bulletin|purpose|bitter|zinc|yuck|dot|valet|overnight|automobile|toilet|grandfather|mushroom|luck|paragraph|ambition|concept|field|baby|doll|flower|soldier|dude|volume|letter|id|pipeline|blackberry|bin|pretzel|turtle|panel|muscle|silver|warehouse|wood|machine|magic|clown|traffic|page|monkey|version|bundle|fan|till|dog|reason|garage|chapter|company|conference|chance|candy|room|console|margin|rabbit|article|cheese|while|yes|queen|gas|oil|officer|term|people|evidence|max|captain|case|step|minister|fun|water|excel|church|husband|dinner|police|curl|weed|platform|best|better|worst|twitter|prod|summit|calendar|chair|belt|mesh|curry|spam|sauce|lord|section|sheet|weekend|even|breakfast|tent|word|mad|mine|blue|eclipse|diesel|up|down|content|off|pretty|minor|well|physic|knight|dirty|tree|peter|harry|matt|mike|nick|bob|rick|sally|ralph|carol|war|shrimp|table|kit|gang|pen|soup|founder|proverb|jimmy|marcel|roger|wallpaper|primary|coal|tower|noise|cant|card|advantage|background|invalid|wrong|orgasm|babbitt|waitress|ballpark|carp|devil|cop|hot|major|negative|summer|winter|yip|bird|frog|window|web|cringe|beware|splat|bat|skipper|moon|sex|grass|horseplay|crowd|pain|season|wind|champ|friend|duck|institute|bunch|journey|diagram|clerk|photo|cake|wing|breast|course|nose|bread|certificate|cup|interface|cart|lumber|dish|massacre|crater|cement|stake|badge|crew|task|hole|stomach|doodle|weird|roadmap|mother|court|perch|gut|hat|architect|pit|square|bald|headquarter|mar|buffalo|pm|bellow|fret|scheme|cling|spider</exception>
         </token>
       </pattern>
-      <message>"Please to" is not grammatically correct.</message>
+      <message>"Please to" is not grammatically correct. <suggestion>pleased to</suggestion></message>
       <short>PLEASE_TO_INFORM</short>
     </rule>
     <rule id="PLEASE_TO_MEET_YOU" name="Please(d) to meet you">
@@ -9787,14 +9787,14 @@
         <token>light</token>
         <token regexp="yes">districts?|streets?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
       <short>RED_LIGHT_HYPHEN</short>
     </rule>
     <rule id="RELY_ON" name="rely on">
       <pattern>
         <token>rely</token>
       </pattern>
-      <message>The verb 'rely' requires the preposition 'on' (or 'upon').</message>
+      <message>The verb 'rely' requires the preposition 'on' (or 'upon'). <suggestion>\1 on</suggestion></message>
       <short>Missing preposition</short>
     </rule>
     <rule id="ROLL_COMPOUNDS" name="pay roll (payroll)">
@@ -9812,7 +9812,7 @@
         <token min="0">dormer</token>
         <token regexp="yes">apartments?|tents?|bungalows?|flats?|flexis?|houses?|condos?|cabins?|villas?|hotel|suites?|schoolhouse|rental|accommodations?|cottages?|basement|mansions?|hospitals?</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>ROOM_APARTMENT_HYPHEN</short>
     </rule>
     <rule id="ROOM_COMPOUNDS" name="bed room (bedroom)">
@@ -9845,7 +9845,7 @@
         <token>sea</token>
         <token regexp="yes">birds?|bags?|foods?|crafts?|farers?|gulls?|grass|horses?|planes?|ports?|water</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>sea</suggestion></message>
       <short>SEA_COMPOUNDS</short>
     </rule>
     <rule id="SEEMING_SEEMS" name="confusion of is seeming/seems">
@@ -9897,7 +9897,7 @@
         <token>most</token>
         <token regexp="yes">bad|big|black|bland|blue|bold|brave|brief|bright|broad|calm|cheap|chewy|clean|close|coarse|cold|cool|cruel|cute|damp|dark|deep|dense|dry|dull|dumb|early|easy|faint|fair|fa[rt]|fast|few|fierce|fine|firm|fit|flat|fresh|full|good|grand|great|gross|happy|hard|harsh|high|hip|hot|humble|kind|large|late|light|little|long|loud|low|mad|mean|mild|moist|narrow|nea[rt]|new|nice|o[dl]d|off|plain|poor|proud|pure|quick|quiet|rare|raw|rich|ripe|rough|rude|sad|sa[fn]e|shallow|sharp|short|shy|silly|simple|sincere|slim|slow|small|smart|smooth|soft|soon|sore|sour|steep|strange|strict|strong|sweet|tall|tan|thick|thin|tiny|tough|true|ugly|warm|weak|weird|wet|wide|wild|wise|young</token>
       </pattern>
-      <message>This adjective uses the short superlative form.</message>
+      <message>This adjective uses the short superlative form. <suggestion>\2</suggestion></message>
       <short>SHORT_SUPERLATIVES</short>
     </rule>
     <rule id="SIDE_COMPOUNDS" name="country side (countryside)">
@@ -9926,7 +9926,7 @@
         <token>sky</token>
         <token regexp="yes">scrapers?|rocket(s|ed|ing)?|borne|caps?|diving|divers?|dive[ds]?|hooks?|jack(s|ed)?|jackers?|jacking|lines?|larks?|sails?|walks?|ward</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>sky</suggestion></message>
       <short>SKY_COMPOUNDS</short>
     </rule>
     <rule id="SLUT_SHAME_HYPHEN" name="slut-shame">
@@ -9942,7 +9942,7 @@
         <token>smart</token>
         <token regexp="yes">watch(es)?|grass(es)?|weeds?</token>
       </pattern>
-      <message>This is normally spelled as one word.</message>
+      <message>This is normally spelled as one word. <suggestion>smart</suggestion></message>
       <short>SMART_COMPOUNDS</short>
     </rule>
     <rule id="SOON_OR_LATER" name="soon (sooner) or later">
@@ -9983,7 +9983,7 @@
         <token min="0" max="2" postag="JJ.*" postag_regexp="yes"></token>
         <token postag="NN.*" postag_regexp="yes"></token>
       </pattern>
-      <message>The expression '\1-\2' is usually spelled with a hyphen.</message>
+      <message>The expression '\1-\2' is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>SO_CALLED_HYPHEN</short>
     </rule>
     <rule id="SPACE_COMPOUNDS" name="space ship (spaceship)">
@@ -9991,7 +9991,7 @@
         <token>space</token>
         <token regexp="yes">crafts?|suites?|walkers?|ships?|ports?</token>
       </pattern>
-      <message>This noun is normally spelled as one word.</message>
+      <message>This noun is normally spelled as one word. <suggestion>space</suggestion></message>
       <short>SPACE_COMPOUNDS</short>
     </rule>
     <rule id="STAIRS_COMPOUNDS" name="down stairs (downstairs)">
@@ -10027,7 +10027,7 @@
         <token>matter</token>
         <token regexp="yes">experts?</token>
       </pattern>
-      <message>This term is normally spelled with a hyphen.</message>
+      <message>This term is normally spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
       <short>SUBJECT_MATTER_HYPHEN</short>
     </rule>
     <rule id="SUIT_COMPOUNDS" name="swim suit (swimsuit)">
@@ -10043,7 +10043,7 @@
         <token regexp="yes">inferior|superior</token>
         <token>than</token>
       </pattern>
-      <message>The comparative '\1' is usually followed by 'to'.</message>
+      <message>The comparative '\1' is usually followed by 'to'. <suggestion>\1 to</suggestion></message>
       <short>SUPERIOR_THAN_TO</short>
     </rule>
     <rule id="SUPER_COMPOUNDS" name="super market (supermarket)">
@@ -10067,7 +10067,7 @@
         <token>tail</token>
         <token regexp="yes">gate[ds]|gaters?|gating</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>tail</suggestion></message>
       <short>TAIL_GATE_COMPOUND</short>
     </rule>
     <rule id="TAKEAWAY" name="take away (takeaway)">
@@ -10190,7 +10190,7 @@
         <token skip="1">same</token>
         <token regexp="yes">like|than</token>
       </pattern>
-      <message>Comparison is written 'the same ... as'.</message>
+      <message>Comparison is written 'the same ... as'. <suggestion>as</suggestion></message>
       <short>Grammatical problem: use 'as'</short>
     </rule>
     <rule id="THE_WELSH" name="the/a welsh (Welsh)">
@@ -10201,7 +10201,7 @@
         </token>
         <token case_sensitive="yes">welsh</token>
       </pattern>
-      <message>Consider capitalizing this word if you want to describe something related to the country "Wales".</message>
+      <message>Consider capitalizing this word if you want to describe something related to the country "Wales". <suggestion>Welsh</suggestion></message>
       <short>THE_WELSH</short>
     </rule>
     <rule id="THIS_IS_HAVE" name="This is has (has/is)">
@@ -10211,7 +10211,7 @@
         <token regexp="yes">is|was|were|are</token>
         <token regexp="yes">have|has|had|do|did|can|will|would|should</token>
       </pattern>
-      <message>It appears that only one verb is needed.</message>
+      <message>It appears that only one verb is needed. <suggestion>\3</suggestion></message>
       <short>THIS_IS_HAVE</short>
     </rule>
     <rule id="THUNDER_COMPOUNDS" name="thunder storm (thunderstorm)">
@@ -10265,7 +10265,7 @@
         <token regexp="yes" case_sensitive="yes">[Tt]o</token>
         <token postag="VBP?" postag_regexp="yes"></token>
       </pattern>
-      <message>One of these words ('to') is redundant.</message>
+      <message>One of these words ('to') is redundant. <suggestion>\1 \2</suggestion></message>
       <short>TO_RB_TO_VB</short>
     </rule>
     <rule id="TO_WITHDRAWN" name="to/will before withdrawn">
@@ -10315,7 +10315,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token regexp="yes">pause|semesters?|pandemi[ac]|vacation|holiday|notice|diets?|periods?|moving|streak|cycles?|arrangements?|routine|gym|plan|work\-?out|project|pregnancy|fetus|trip|training|program|courses?|highs?|lows?|trial|rotation|intervals?|warranty|delivery|median|lock-?down|shut-?down|decline|sprints?|average|avg</token>
       </pattern>
-      <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>WEEK_HYPHEN</short>
     </rule>
     <rule id="WELL_KNOWN" name="is well know">
@@ -10362,7 +10362,7 @@
         <token>wheel</token>
         <token regexp="yes">chairs?|barrows?|bases?|houses?|wrights?</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>wheel</suggestion></message>
       <short>WHEEL_COMPOUNDS</short>
     </rule>
     <rule id="WHERE_YOU_FROM" name="Where you from?">
@@ -10373,7 +10373,7 @@
         <token regexp="yes">at|from</token>
         <token>?</token>
       </pattern>
-      <message>This question appears to be missing a verb.</message>
+      <message>This question appears to be missing a verb. <suggestion>\2 are \3 \4\5</suggestion></message>
       <short>WHERE_YOU_FROM</short>
     </rule>
     <rule id="WHOLE_COMPOUNDS" name="whole sale (wholesale)">
@@ -10381,7 +10381,7 @@
         <token>whole</token>
         <token regexp="yes">sale|some|hearted</token>
       </pattern>
-      <message>This word is normally spelled as one word.</message>
+      <message>This word is normally spelled as one word. <suggestion>whole</suggestion></message>
       <short>WHOLE_COMPOUNDS</short>
     </rule>
     <rule id="WIDE_ACCEPTED" name="It is wide(ly) accepted that...">
@@ -10389,7 +10389,7 @@
         <token>wide</token>
         <token regexp="yes">accepted|acceptable|used</token>
       </pattern>
-      <message>Did you mean to use the adverb "widely" here?</message>
+      <message>Did you mean to use the adverb "widely" here? <suggestion>widely</suggestion></message>
       <short>WIDE_ACCEPTED</short>
     </rule>
     <rule id="WIDE_COMPOUNDS" name="wide spread (widespread)">
@@ -10442,7 +10442,7 @@
         <token regexp="yes">li[vf]e</token>
         <token regexp="yes">balance|interfaces?|conflict|enrichment</token>
       </pattern>
-      <message>This expression is usually spelled with a hyphen between 'work' and 'life'.</message>
+      <message>This expression is usually spelled with a hyphen between 'work' and 'life'. <suggestion>\1-</suggestion></message>
       <short>WORK_LIFE_BALANCE</short>
     </rule>
     <rule id="WORSE_WORST" name="worse come to worse (worst)">
@@ -10509,7 +10509,7 @@
         <token>yard</token>
         <token regexp="yes">houses?|lines?|challenges?|dumpsters?|shots?|field|fights?|sprints?|recycling|containers?|range|run|shooting|swim|scope|dash</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>YARD_HYPHEN</short>
     </rule>
     <rule id="YEAR_HYPHEN" name="missing hyphen in '2 month cycle'">
@@ -10519,7 +10519,7 @@
         <token min="0" postag="JJ.*" postag_regexp="yes"></token>
         <token regexp="yes">halts?|routine|periods?|intervals?|cycles?|notice|plan|project|warranty|median|reign|span|sentences?|mortgages?|anniversar(y|ies)|refinance|milestones?|loans?|treat(y|ies)|history|battle|lease|hibernation|average|avg</token>
       </pattern>
-      <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>YEAR_HYPHEN</short>
     </rule>
     <rule id="YOUR_LOVES_ONES" name="Your loves (loved) one">
@@ -10568,7 +10568,7 @@
         <token>Air</token>
         <token>Bnb</token>
       </pattern>
-      <message>The name of this online marketplace is spelled as one word.</message>
+      <message>The name of this online marketplace is spelled as one word. <suggestion>Airbnb</suggestion></message>
       <short>AIR_BNB</short>
     </rule>
     <rule id="BOEING_737_MAX" name="737 max (Max)">
@@ -10576,7 +10576,7 @@
         <token>737</token>
         <token case_sensitive="yes">max</token>
       </pattern>
-      <message>Capitalize the word if you mean Boeing's airliner.</message>
+      <message>Capitalize the word if you mean Boeing's airliner. <suggestion>737 Max</suggestion></message>
       <short>BOEING_737_MAX</short>
     </rule>
     <rule id="CALL_OF_DUTY" name="Call of Duty">
@@ -10601,7 +10601,7 @@
         <token>Coca</token>
         <token>Cola</token>
       </pattern>
-      <message>The name of this popular soft drink is capitalized and spelled with a hyphen.</message>
+      <message>The name of this popular soft drink is capitalized and spelled with a hyphen. <suggestion>Coca-Cola</suggestion></message>
       <short>COCA_COLA</short>
     </rule>
     <rule id="COLD_PLAY" name="Coldplay">
@@ -10734,7 +10734,7 @@
       <pattern>
         <token>Pokemon</token>
       </pattern>
-      <message>The name of this game or TV show is spelled with an accent.</message>
+      <message>The name of this game or TV show is spelled with an accent. <suggestion>Pokémon</suggestion></message>
       <short>POKEMON</short>
     </rule>
     <rule id="POWER_SHELL" name="PowerShell">
@@ -10765,7 +10765,7 @@
         <token>Saint</token>
         <token>Tropez</token>
       </pattern>
-      <message>The name of this town on the French Riviera is spelled with a hyphen.</message>
+      <message>The name of this town on the French Riviera is spelled with a hyphen. <suggestion>Saint-Tropez</suggestion></message>
       <short>SAINT_TROPEZ</short>
     </rule>
     <rule id="SAMS_CLUB" name="Sam's Club">
@@ -10837,7 +10837,7 @@
         <token>band</token>
         <token regexp="yes">aids?</token>
       </pattern>
-      <message>The sticky tape used to cover wounds is normally capitalized (trademark) but also spelled with a hyphen.</message>
+      <message>The sticky tape used to cover wounds is normally capitalized (trademark) but also spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>BAND_AID</short>
     </rule>
     <rule id="BARACK_OBAMA" name="Barrack Obama -&gt; Barack Obama">
@@ -10911,7 +10911,7 @@
         <token regexp="yes">All?[ae]n</token>
         <token regexp="yes">Poe?</token>
       </pattern>
-      <message>Did you mean the American writer "Edgar Allan Poe"?</message>
+      <message>Did you mean the American writer "Edgar Allan Poe"? <suggestion>Allan Poe</suggestion></message>
       <short>EDGAR_ALLAN_POE</short>
     </rule>
     <rule id="EMMANUEL_MACRON" name="Emmanuel Macron">
@@ -10934,7 +10934,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">Github|github</token>
       </pattern>
-      <message>The official name of this software platform is spelled with a capital "H".</message>
+      <message>The official name of this software platform is spelled with a capital "H". <suggestion>GitHub</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="GREYS_ANATOMY" name="Grey's Anatomy">
@@ -10951,7 +10951,7 @@
         <token min="0">'s</token>
         <token regexp="yes">baa?zaa?r|magazine</token>
       </pattern>
-      <message>It appears that a possessive apostrophe is missing.</message>
+      <message>It appears that a possessive apostrophe is missing. <suggestion>Harper's</suggestion></message>
       <short>HARPERS_BAZAAR</short>
     </rule>
     <rule id="JENNIFER_ANISTON" name="Jennifer Aniston">
@@ -10975,7 +10975,7 @@
         <token regexp="yes" case_sensitive="yes">Kath?arina</token>
         <token case_sensitive="yes">Reiche</token>
       </pattern>
-      <message>The name of this German politician is written with an "e" in the middle.</message>
+      <message>The name of this German politician is written with an "e" in the middle. <suggestion>Katherina \2</suggestion></message>
       <short>KATHERINA_REICHE</short>
     </rule>
     <rule id="KELLOGGS" name="Kellogg's">
@@ -11013,7 +11013,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">Linkedin|linked[Ii]n</token>
       </pattern>
-      <message>The name of this social business platform is spelled with a capital "I".</message>
+      <message>The name of this social business platform is spelled with a capital "I". <suggestion>LinkedIn</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="LONG_ISLAND_ICED_TEA" name="Long Island iced tea">
@@ -11039,7 +11039,7 @@
         <token regexp="yes">Merr?iam</token>
         <token regexp="yes">Webb?ster</token>
       </pattern>
-      <message>The name of this popular dictionary is spelled with a hyphen.</message>
+      <message>The name of this popular dictionary is spelled with a hyphen. <suggestion>Merriam-Webster</suggestion></message>
       <short>MERRIAM_WEBSTER</short>
     </rule>
     <rule id="MOORES_LAW" name="Moore's Law">
@@ -11062,7 +11062,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">Paypal|paypal|payPal</token>
       </pattern>
-      <message>The official name of this payment provider is spelled with two capital "P".</message>
+      <message>The official name of this payment provider is spelled with two capital "P". <suggestion>PayPal</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="POKEMONS" name="Plural of Pokémon">
@@ -11085,7 +11085,7 @@
         <token>queens</token>
         <token regexp="yes">gambits?|advocates?|university|guards?|awards?|bench(es)?|bount(y|ies)|bishops?</token>
       </pattern>
-      <message>It seems that a possessive apostrophe is missing.</message>
+      <message>It seems that a possessive apostrophe is missing. <suggestion>\2</suggestion></message>
       <short>QUEENS_GAMBIT</short>
     </rule>
     <rule id="RED_NOSED_REINDEER" name="Red-Nosed Reindeer">
@@ -11143,7 +11143,7 @@
         <token min="0">'s</token>
         <token>list</token>
       </pattern>
-      <message>It appears that a possessive apostrophe is missing.</message>
+      <message>It appears that a possessive apostrophe is missing. <suggestion>Schindler's \3</suggestion></message>
       <short>SCHINDLERS_LIST</short>
     </rule>
     <rule id="SCHITTS_CREEK" name="Schitt's Creek">
@@ -11189,7 +11189,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">Wechat|wechat</token>
       </pattern>
-      <message>The official name of this popular chat service is spelled with a capital "C".</message>
+      <message>The official name of this popular chat service is spelled with a capital "C". <suggestion>WeChat</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="WERNHER_VON_BRAUN" name="Werner (Wernher) von Braun">
@@ -11205,14 +11205,14 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">wordpress|Wordpress</token>
       </pattern>
-      <message>The official name of this content management system is spelled with a capital "P".</message>
+      <message>The official name of this content management system is spelled with a capital "P". <suggestion>WordPress</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="YOUTUBE" name="YouTube">
       <pattern>
         <token regexp="yes" case_sensitive="yes">Youtube|you[Tt]ube</token>
       </pattern>
-      <message>The official name of this popular video platform is spelled with a capital "T".</message>
+      <message>The official name of this popular video platform is spelled with a capital "T". <suggestion>YouTube</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="YOU_TUBE" name="YouTube">
@@ -11267,7 +11267,7 @@
       <pattern>
         <token>informations</token>
       </pattern>
-      <message>The word '\1' is a legal term. In standard English, the word 'information' is a non-count noun.</message>
+      <message>The word '\1' is a legal term. In standard English, the word 'information' is a non-count noun. <suggestion>information</suggestion></message>
       <short>Nonstandard word</short>
     </rule>
     <rule id="MONEY_IS_NO_OPTION" name="money is no option (money is no object)">
@@ -11344,7 +11344,7 @@
         <token>regards</token>
         <token regexp="yes">to|of</token>
       </pattern>
-      <message>Although "\1 \2 \3" is sometimes used in casual speech, it is typically considered a nonstandard phrase.</message>
+      <message>Although "\1 \2 \3" is sometimes used in casual speech, it is typically considered a nonstandard phrase. <suggestion>in regard to</suggestion></message>
       <short>Nonstandard phrase</short>
     </rule>
     <rule id="IN_X_ORDER" name="redundant determiner: 'in (an) alphabetical order">
@@ -11354,7 +11354,7 @@
         <token regexp="yes">alphabetical|ascending|descending</token>
         <token>order</token>
       </pattern>
-      <message>Unless there is more than one '\3 \4', leave out the determiner '\2'.</message>
+      <message>Unless there is more than one '\3 \4', leave out the determiner '\2'. <suggestion>\1 \3 \4</suggestion></message>
       <short>IN_X_ORDER</short>
     </rule>
     <rule id="I_NEVER_HAVE_BEEN" name="I never have been (I have never been)">
@@ -11409,7 +11409,7 @@
       <pattern>
         <token>gotten</token>
       </pattern>
-      <message>"Gotten" is commonly used in American English. For varieties outside of North America, "got" is the preferred variant.</message>
+      <message>"Gotten" is commonly used in American English. For varieties outside of North America, "got" is the preferred variant. <suggestion>got</suggestion></message>
       <short>AmE/BrE: gotten/got</short>
     </rule>
     <rule id="GROUND_VS_MINCED" name="ground beef/minced beef">
@@ -11434,7 +11434,7 @@
         <token>'s</token>
         <token regexp="yes">licences?</token>
       </pattern>
-      <message>This term is chiefly North American English. Consider a replacement.</message>
+      <message>This term is chiefly North American English. Consider a replacement. <suggestion>driving \4</suggestion></message>
       <short>DRIVERS_LICENSE</short>
     </rule>
     <rule id="EGGPLANT" name="eggplant/aubergine">
@@ -11488,7 +11488,7 @@
       <pattern>
         <token>bestest</token>
       </pattern>
-      <message>The word "\1" is informal.</message>
+      <message>The word "\1" is informal. <suggestion>best</suggestion></message>
       <short>BESTEST</short>
     </rule>
     <rule id="BORED_OF" name="bored of (with)">
@@ -11512,14 +11512,14 @@
         <token>.</token>
         <token>.</token>
       </pattern>
-      <message>Consider using the typographical ellipsis character here instead.</message>
+      <message>Consider using the typographical ellipsis character here instead. <suggestion>…</suggestion></message>
       <short>ELLIPSIS</short>
     </rule>
     <rule id="FASTLY" name="fastly (quickly)">
       <pattern>
         <token case_sensitive="yes">fastly</token>
       </pattern>
-      <message>The adverb "fastly" is considered archaic. Consider an alternative.</message>
+      <message>The adverb "fastly" is considered archaic. Consider an alternative. <suggestion>quickly</suggestion></message>
       <short>FASTLY</short>
     </rule>
     <rule id="FOR_EVER_GB" name="for ever (forever)">
@@ -11527,7 +11527,7 @@
         <token>for</token>
         <token>ever</token>
       </pattern>
-      <message>It is more common to spell this adverb as one word.</message>
+      <message>It is more common to spell this adverb as one word. <suggestion>forever</suggestion></message>
       <short>FOR_EVER_GB</short>
     </rule>
     <rule id="IRREGARDLESS" name="irregardless (regardless)">
@@ -11541,21 +11541,21 @@
       <pattern>
         <token>lemme</token>
       </pattern>
-      <message>The word '\1' is informal.</message>
+      <message>The word '\1' is informal. <suggestion>let me</suggestion></message>
       <short>LEMME</short>
     </rule>
     <rule id="OURSELF" name="'ourself'">
       <pattern>
         <token>ourself</token>
       </pattern>
-      <message>The term is non-standard and not widely accepted.</message>
+      <message>The term is non-standard and not widely accepted. <suggestion>ourselves</suggestion></message>
       <short>OURSELF</short>
     </rule>
     <rule id="OUTTA" name="outta (out of)">
       <pattern>
         <token>outta</token>
       </pattern>
-      <message>The word '\1' is informal.</message>
+      <message>The word '\1' is informal. <suggestion>out of</suggestion></message>
       <short>OUTTA</short>
     </rule>
     <rule id="THANK_YOU_MUCH" name="Thank you much">
@@ -11564,14 +11564,14 @@
         <token>you</token>
         <token>much</token>
       </pattern>
-      <message>This phrase is non-standard. Consider replacing it.</message>
+      <message>This phrase is non-standard. Consider replacing it. <suggestion>\1 \2 so \3</suggestion></message>
       <short>THANK_YOU_MUCH</short>
     </rule>
     <rule id="THEMSELF" name="'themself'">
       <pattern>
         <token>themself</token>
       </pattern>
-      <message>Generally speaking, "themself" is only acceptable when referring to a singular entity (such as the singular usage of "they", which is the preferred pronoun for many non-binary people). If "themself" refers to a plural entity (such as "everybody", or the standard usage of "they"), you should use "themselves".</message>
+      <message>Generally speaking, "themself" is only acceptable when referring to a singular entity (such as the singular usage of "they", which is the preferred pronoun for many non-binary people). If "themself" refers to a plural entity (such as "everybody", or the standard usage of "they"), you should use "themselves". <suggestion>themselves</suggestion></message>
       <short>THEMSELF</short>
     </rule>
     <rule id="TIFLIS" name="Tiflis">
@@ -11617,7 +11617,7 @@
         <token>different</token>
         <token regexp="yes">th[ae]n</token>
       </pattern>
-      <message>Did you mean 'different from'? 'Different than' is often considered colloquial style.</message>
+      <message>Did you mean 'different from'? 'Different than' is often considered colloquial style. <suggestion>from</suggestion></message>
       <short>DIFFERENT_THAN</short>
     </rule>
     <rule id="DIS" name="dis (this)">
@@ -11632,7 +11632,7 @@
         <token regexp="yes">gimmi?e</token>
         <token regexp="yes">my|y?our|his|her|its|their|the|an?|this|that|th[eo]se|many|much|any|some|more|less|what|back|(any|some)(thing|one)|dat|dis</token>
       </pattern>
-      <message>The word "\1" is informal.</message>
+      <message>The word "\1" is informal. <suggestion>give me</suggestion></message>
       <short>GIMME</short>
     </rule>
     <rule id="GOTCHA" name="gotcha (got you)">
@@ -11641,7 +11641,7 @@
         <token min="0" postag="RB"></token>
         <token>gotcha</token>
       </pattern>
-      <message>The word "\1" is informal.</message>
+      <message>The word "\1" is informal. <suggestion>got you</suggestion></message>
       <short>GOTCHA</short>
     </rule>
     <rule id="LUV" name="luv (love)">
@@ -11689,7 +11689,7 @@
       <pattern>
         <token postag="VB.*" postag_regexp="yes">occasion</token>
       </pattern>
-      <message>The transitive verb "" is a very formal word choice. Consider a more common synonym.</message>
+      <message>The transitive verb "" is a very formal word choice. Consider a more common synonym. <suggestion>cause</suggestion></message>
       <short>OCCASION_TRANSITIVE_VERB_VERY_FORMAL</short>
     </rule>
     <rule id="PPL" name="abbreviation 'ppl'">
@@ -11707,7 +11707,7 @@
         <token regexp="yes">me|him|her|us|them</token>
         <token regexp="yes">by|at|in|[.!?]</token>
       </pattern>
-      <message>In formal / written English, it is recommended that you use a subject pronoun.</message>
+      <message>In formal / written English, it is recommended that you use a subject pronoun. <suggestion>I</suggestion></message>
       <short>THAN_I</short>
     </rule>
     <rule id="THERE_RE_CONTRACTION_UNCOMMON" name="there're → there are">
@@ -11715,7 +11715,7 @@
         <token regexp="yes">[tw]?here</token>
         <token>'re</token>
       </pattern>
-      <message>The contraction '\1\2' is uncommon in written English.</message>
+      <message>The contraction '\1\2' is uncommon in written English. <suggestion>\1 are</suggestion></message>
       <short>THERE_RE_CONTRACTION_UNCOMMON</short>
     </rule>
     <rule id="WANNA_TO" name="I don't wanna to travel (want to travel)">
@@ -11724,7 +11724,7 @@
         <token>to</token>
         <token postag="VB"></token>
       </pattern>
-      <message>The word 'wanna' is informal, consider replacing it.</message>
+      <message>The word 'wanna' is informal, consider replacing it. <suggestion>want \2 \3</suggestion></message>
       <short>WANNA_TO</short>
     </rule>
     <rule id="WEEK_END_HYPHEN" name="week-end (weekend)">
@@ -11741,7 +11741,7 @@
         <token>other</token>
         <token regexp="yes">conversation|discussion|history|issue|matter|setup|situation|story|subject|topic</token>
       </pattern>
-      <message>The expression 'a whole other' can seem colloquial. Consider replacing it with a more formal alternative.</message>
+      <message>The expression 'a whole other' can seem colloquial. Consider replacing it with a more formal alternative. <suggestion>an entirely different</suggestion></message>
       <short>WHOLE_OTHER</short>
     </rule>
   </category>
@@ -11792,7 +11792,7 @@
         <token>god</token>
         <token>send</token>
       </pattern>
-      <message>This noun is normally spelled as one word.</message>
+      <message>This noun is normally spelled as one word. <suggestion>godsend</suggestion></message>
       <short>GOD_SEND_COMPOUND</short>
     </rule>
     <rule id="NOTE_TAKING_HYPHEN" name="note taking (note-taking)">
@@ -11844,7 +11844,7 @@
         <token>hat</token>
         <token regexp="yes">SEOs?|hackers?|hacking|techniques?</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>BLACK_HAT_HYPHEN</short>
     </rule>
     <rule id="CHICKEN_AND_EGG_HYPHEN" name="hyphens in 'chicken-and-egg'">
@@ -11854,7 +11854,7 @@
         <token>egg</token>
         <token regexp="yes">problems?|situations?|challenges?|dilemmas?|syndromes?|questions?|paradox|thing|topics?|tasks?|issues?|errors?</token>
       </pattern>
-      <message>It appears that there are hyphens missing.</message>
+      <message>It appears that there are hyphens missing. <suggestion>\1-\2-\3 \4</suggestion></message>
       <short>CHICKEN_AND_EGG_HYPHEN</short>
     </rule>
     <rule id="CLICK_THROUGH_RATE" name="Hyphen in 'click through rate'">
@@ -11863,7 +11863,7 @@
         <token>through</token>
         <token regexp="yes">conversions?|rates?|optimi[sz]ations?</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2 \3</suggestion></message>
       <short>CLICK_THROUGH_RATE</short>
     </rule>
     <rule id="CUMBER_SOME" name="cumber some (cumbersome)">
@@ -11881,7 +11881,7 @@
         <token case_sensitive="yes">service</token>
         <token regexp="yes">attacks?|attackers?|protections?|vulnerabilit(y|ies)</token>
       </pattern>
-      <message>It appears that hyphens are missing.</message>
+      <message>It appears that hyphens are missing. <suggestion>denial-\2-\3</suggestion></message>
       <short>DENIAL_OF_SERVICE_ATTACK</short>
     </rule>
     <rule id="DIAL_UP_HYPHEN" name="dial up (dial-up) internet">
@@ -11890,7 +11890,7 @@
         <token>up</token>
         <token regexp="yes">internet|telephones?|modems?|connections?|access|sounds?|IP|providers?|cables?</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>DIAL_UP_HYPHEN</short>
     </rule>
     <rule id="EVEN_HANDED_HYPHEN" name="even handed (even-handed)">
@@ -11898,7 +11898,7 @@
         <token>even</token>
         <token regexp="yes">handed(ly)?</token>
       </pattern>
-      <message>This word is normally spelled with a hyphen.</message>
+      <message>This word is normally spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>EVEN_HANDED_HYPHEN</short>
     </rule>
     <rule id="EX_ALWAYS_HYPHENATED" name="ex- (always hyphenated)">
@@ -11908,7 +11908,7 @@
           <exception regexp="yes">post|today</exception>
         </token>
       </pattern>
-      <message>The prefix "ex-" is always hyphenated.</message>
+      <message>The prefix "ex-" is always hyphenated. <suggestion>\1-\2</suggestion></message>
       <short>Missing hyphen</short>
     </rule>
     <rule id="FORCE_FEED_HYPHEN" name="missing hyphen in 'force feed'">
@@ -11944,7 +11944,7 @@
         <token regexp="yes">family|person</token>
         <token regexp="yes">house|mansion|apartment|trailer</token>
       </pattern>
-      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen.</message>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>HOUSE_HYPHEN</short>
     </rule>
     <rule id="MILLION_DOLLAR_HYPHEN" name="Missing hyphen in 'billion dollar'">
@@ -11953,7 +11953,7 @@
         <token regexp="yes">dollar|euro|pound</token>
         <token regexp="yes">houses?|ideas?|apps?|compan(y|ies)|corporates?|start-?ups?|business|corporations?|bills?|cars?|mansions?|enterprises?|questions?|industry|plans?|series|yachts?|ships?|sailboats?|boats?|mistakes?|offer</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>MILLION_DOLLAR_HYPHEN</short>
     </rule>
     <rule id="MISS_SPELLING" name="miss spelling (misspelling)">
@@ -11970,7 +11970,7 @@
         <token>death</token>
         <token regexp="yes">experiences?</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>NEAR_DEATH_HYPHEN</short>
     </rule>
     <rule id="NO_FLY_ZONE_HYPHEN" name="missing hyphen in 'no fly zone'">
@@ -11979,7 +11979,7 @@
         <token regexp="yes">fly|drive</token>
         <token regexp="yes">zones?|lists?|areas?</token>
       </pattern>
-      <message>This expression is usually spelled with a hyphen between '\1' and '\2'.</message>
+      <message>This expression is usually spelled with a hyphen between '\1' and '\2'. <suggestion>\1-\2 \3</suggestion></message>
       <short>NO_FLY_ZONE_HYPHEN</short>
     </rule>
     <rule id="NO_HAGGLE_PRICE_HYPHEN" name="no haggle (no-haggle)">
@@ -11988,7 +11988,7 @@
         <token>haggle</token>
         <token regexp="yes">prices?|pricings?|cars?|dealerships?</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>NO_HAGGLE_PRICE_HYPHEN</short>
     </rule>
     <rule id="OFF_HAND_COMPOUND" name="off hand (offhand)">
@@ -12023,7 +12023,7 @@
         <token>trick</token>
         <token regexp="yes">pon(y|ies)|wonder</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>ONE_TRICK_HYPHEN</short>
     </rule>
     <rule id="ON_OFF_HYPHEN" name="on off (on-off)">
@@ -12073,7 +12073,7 @@
         <token regexp="yes">president|vp</token>
         <token>elect</token>
       </pattern>
-      <message>This word is normally spelled with a hyphen.</message>
+      <message>This word is normally spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>PRESIDENT_ELECT</short>
     </rule>
     <rule id="PRO_RATA" name="prorata -&gt; pro rata">
@@ -12088,7 +12088,7 @@
         <token>quasi</token>
         <token postag="JJ.?|RB.?|NN.*|VB.*" postag_regexp="yes"></token>
       </pattern>
-      <message>The prefix "quasi-" is always hyphenated.</message>
+      <message>The prefix "quasi-" is always hyphenated. <suggestion>\1-\2</suggestion></message>
       <short>Missing hyphen</short>
     </rule>
     <rule id="RESISTANT_HYPHEN" name="water resistant (water-resistant)">
@@ -12114,7 +12114,7 @@
         <token regexp="yes" case_sensitive="yes">[Ss]afe</token>
         <token case_sensitive="yes">guard</token>
       </pattern>
-      <message>This word is normally spelled as one.</message>
+      <message>This word is normally spelled as one. <suggestion>\1\2</suggestion></message>
       <short>SAFE_GUARD_COMPOUND</short>
     </rule>
     <rule id="SAME_DAY_DELIVERY_HYPHEN" name="hyphen in 'same day delivery'">
@@ -12124,7 +12124,7 @@
         <token regexp="yes" min="0">flower|grocery|food</token>
         <token regexp="yes">delivery|service</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2 \3 \4</suggestion></message>
       <short>SAME_DAY_DELIVERY_HYPHEN</short>
     </rule>
     <rule id="SCORE_COMPOUNDS" name="score card (scorecard)">
@@ -12158,7 +12158,7 @@
         <token>street</token>
         <token regexp="yes">lights?|lamps?</token>
       </pattern>
-      <message>In American English this noun is spelled as one word.</message>
+      <message>In American English this noun is spelled as one word. <suggestion>street</suggestion></message>
       <short>STREET_LIGHTS_COMPOUND</short>
     </rule>
     <rule id="THERETO" name="thereto (there to)">
@@ -12187,7 +12187,7 @@
         <token>line</token>
         <token regexp="yes">octaves?|whips?|poems?|stanzas?|verses?|equal</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>THREE_LINE_HYPHEN</short>
     </rule>
     <rule id="TRICKLE_DOWN_HYPHEN" name="missing hyphen in 'trickle down'">
@@ -12196,7 +12196,7 @@
         <token>down</token>
         <token regexp="yes">econom(y|ies)|effects?|economics|spendings?|benefits?|theor(y|ies)|technolog(y|ies)|methods?</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>TRICKLE_DOWN_HYPHEN</short>
     </rule>
     <rule id="TRUE_CRIME_HYPHEN" name="missing hyphen in 'true-crime'">
@@ -12205,7 +12205,7 @@
         <token>crime</token>
         <token regexp="yes">tales?|documentar(y|ies)|movies?|series|tv|shows?|stor(y|ies)|podcasts?|books?|films?|museums?|enthusiasts?|fans?|files?|communit(y|ies)|sitcoms?</token>
       </pattern>
-      <message>Consider adding a hyphen to this noun/adjective.</message>
+      <message>Consider adding a hyphen to this noun/adjective. <suggestion>\1-\2</suggestion></message>
       <short>TRUE_CRIME_HYPHEN</short>
     </rule>
     <rule id="VIDEO_TAPE_COMPOUND" name="video tape (videotape)">
@@ -12230,7 +12230,7 @@
         <token regexp="yes">\d+</token>
         <token>yarder</token>
       </pattern>
-      <message>It appears that a hyphen is missing.</message>
+      <message>It appears that a hyphen is missing. <suggestion>\3-\4</suggestion></message>
       <short>YARDER_HYPHEN</short>
     </rule>
   </category>
@@ -12240,21 +12240,21 @@
         <token>bay</token>
         <token>area</token>
       </pattern>
-      <message>Capitalize this word if you mean the region in California.</message>
+      <message>Capitalize this word if you mean the region in California. <suggestion>Bay Area</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="EUCLIDEAN_CAPITALIZATION" name="euclidean (Euclidean) distance">
       <pattern>
         <token case_sensitive="yes">euclidean</token>
       </pattern>
-      <message>The adjective "Euclidean" is typically capitalized.</message>
+      <message>The adjective "Euclidean" is typically capitalized. <suggestion>Euclidean</suggestion></message>
       <short>EUCLIDEAN_CAPITALIZATION</short>
     </rule>
     <rule id="HALLOWEEN" name="Halloween">
       <pattern>
         <token case_sensitive="yes">halloween</token>
       </pattern>
-      <message>The name of this day needs to be capitalized.</message>
+      <message>The name of this day needs to be capitalized. <suggestion>Halloween</suggestion></message>
       <short>HALLOWEEN</short>
     </rule>
     <rule id="JAPAN" name="proper noun 'Japan'">
@@ -12276,14 +12276,14 @@
       <pattern>
         <token case_sensitive="yes">parmesan</token>
       </pattern>
-      <message>The word for this type of cheese is normally capitalized.</message>
+      <message>The word for this type of cheese is normally capitalized. <suggestion>Parmesan</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="PILATES" name="Pilates">
       <pattern>
         <token case_sensitive="yes">pilates</token>
       </pattern>
-      <message>The name of this physical fitness system is normally capitalized.</message>
+      <message>The name of this physical fitness system is normally capitalized. <suggestion>Pilates</suggestion></message>
       <short>Capitalization</short>
     </rule>
     <rule id="THE_DUTCH" name="the dutch (Dutch)">
@@ -12297,7 +12297,7 @@
       <pattern>
         <token case_sensitive="yes">unicode</token>
       </pattern>
-      <message>The name of this text encoding standard needs to be capitalized.</message>
+      <message>The name of this text encoding standard needs to be capitalized. <suggestion>Unicode</suggestion></message>
       <short>UNICODE_CASING</short>
     </rule>
     <rule id="BLACK_SEA" name="Black Sea">
@@ -12358,7 +12358,7 @@
         <token case_sensitive="yes">oxford</token>
         <token regexp="yes">commas?</token>
       </pattern>
-      <message>The name of this dictionary or university needs to be capitalized.</message>
+      <message>The name of this dictionary or university needs to be capitalized. <suggestion>Oxford</suggestion></message>
       <short>OXFORD_COMMA_CASING</short>
     </rule>
     <rule id="PONZI_SCHEME" name="Ponzi scheme">
@@ -12449,7 +12449,7 @@
         <token>and</token>
         <token>point</token>
       </pattern>
-      <message>Did you mean 'case in point'?</message>
+      <message>Did you mean 'case in point'? <suggestion>case in point</suggestion></message>
       <short>CASE_AND_POINT</short>
     </rule>
     <rule id="PEAS_IN_A_POT" name="two peas in a pot (pod)">
@@ -12460,7 +12460,7 @@
         <token>a</token>
         <token>pot</token>
       </pattern>
-      <message>Did you mean 'pod'?</message>
+      <message>Did you mean 'pod'? <suggestion>pod</suggestion></message>
       <short>PEAS_IN_A_POT</short>
     </rule>
     <rule id="RIGHT_IN_MY_ALLEY" name="right in (up) my alley">
@@ -12470,7 +12470,7 @@
         <token>my</token>
         <token>alley</token>
       </pattern>
-      <message>Did you mean 'up'?</message>
+      <message>Did you mean 'up'? <suggestion>up</suggestion></message>
       <short>RIGHT_IN_MY_ALLEY</short>
     </rule>
     <rule id="TENDER_HOOKS" name="tender hooks (tenterhooks)">
@@ -12479,7 +12479,7 @@
         <token>tender</token>
         <token>hooks</token>
       </pattern>
-      <message>Did you mean 'tenterhooks'?</message>
+      <message>Did you mean 'tenterhooks'? <suggestion>tenter\3</suggestion></message>
       <short>TENDER_HOOKS</short>
     </rule>
     <rule id="UNION_JACK" name="Union Jack">
@@ -12487,7 +12487,7 @@
         <token>union</token>
         <token>jack</token>
       </pattern>
-      <message>Capitalize this word if you mean the national flag of the UK.</message>
+      <message>Capitalize this word if you mean the national flag of the UK. <suggestion>Union Jack</suggestion></message>
       <short>UNION_JACK</short>
     </rule>
     <rule id="SALT_TO_INJURY" name="add salt to injury (insult to injury)">
@@ -12498,7 +12498,7 @@
         <token min="0">the</token>
         <token>injury</token>
       </pattern>
-      <message>Did you mean 'insult to injury'?</message>
+      <message>Did you mean 'insult to injury'? <suggestion>insult \3</suggestion></message>
       <short>SALT_TO_INJURY</short>
     </rule>
     <rule id="YEAR_20001" name="May 20001 (May 2001)">
@@ -12527,7 +12527,7 @@
         <token>first</token>
         <token>served</token>
       </pattern>
-      <message>It seems that a comma is missing.</message>
+      <message>It seems that a comma is missing. <suggestion>\2,</suggestion></message>
       <short>FIRST_COME_FIRST_SERVED_COMMA</short>
     </rule>
     <rule id="BY_DEFAULT_COMMA" name="Comma after by default at the beginning of a sentence.">
@@ -12563,7 +12563,7 @@
         <token regexp="yes" postag="NN.*" postag_regexp="yes">[a-zA-Z]+</token>
         <token>sake</token>
       </pattern>
-      <message>It appears that in this idiom a possessive apostrophe is missing.</message>
+      <message>It appears that in this idiom a possessive apostrophe is missing. <suggestion>\1 ’s sake</suggestion></message>
       <short>FOR_NOUN_SAKE</short>
     </rule>
     <rule id="GOD_COMMA" name="Comma after 'Oh my god'">
@@ -12577,7 +12577,7 @@
           <exception>that</exception>
         </token>
       </pattern>
-      <message>It seems that a comma is missing after this introductory phrase.</message>
+      <message>It seems that a comma is missing after this introductory phrase. <suggestion>\5,</suggestion></message>
       <short>GOD_COMMA</short>
     </rule>
     <rule id="GO_FOR_IT_GIRLS_COMMA" name="Comma after 'go for it'">
@@ -12587,7 +12587,7 @@
         <token>it</token>
         <token regexp="yes">lady|ladies|gentlemen|gents|lads|(girl|gal|boy|guy|dude|friend|folk)s?</token>
       </pattern>
-      <message>It seems that a comma is missing.</message>
+      <message>It seems that a comma is missing. <suggestion>\3, \4</suggestion></message>
       <short>GO_FOR_IT_GIRLS_COMMA</short>
     </rule>
     <rule id="HAPPY_BIRTHDAY_COMMA" name="Happy Birthday (,) Peter">
@@ -12598,7 +12598,7 @@
         <token>birthday</token>
         <token postag="NNP|DT|PRP.*|W.*|EX" postag_regexp="yes"></token>
       </pattern>
-      <message>Consider putting a comma after the exclamatory statement.</message>
+      <message>Consider putting a comma after the exclamatory statement. <suggestion>\2 \3 \4,</suggestion></message>
       <short>HAPPY_BIRTHDAY_COMMA</short>
     </rule>
     <rule id="I_FOR_ONE_VB_COMMA" name="I(,) for one(,) think">
@@ -12609,7 +12609,7 @@
         <token min="0" postag="RB"></token>
         <token postag="VB[DP]|MD" postag_regexp="yes"></token>
       </pattern>
-      <message>Consider adding two commas here.</message>
+      <message>Consider adding two commas here. <suggestion>\1, \2 \3,</suggestion></message>
       <short>I_FOR_ONE_VB_COMMA</short>
     </rule>
     <rule id="MISSING_COMMA_AFTER_WEEKDAY" name="Missing comma after weekday">
@@ -12618,7 +12618,7 @@
         <token regexp="yes">January|February|March|April|May|Ju(ne|ly)|August|September|October|November|December</token>
         <token regexp="yes">[0123]?[0-9](st|nd|rd|th)?</token>
       </pattern>
-      <message>Commas set off the month in a weekday-month-day date.</message>
+      <message>Commas set off the month in a weekday-month-day date. <suggestion>\1,</suggestion></message>
       <short>Missing comma</short>
     </rule>
     <rule id="MISSING_COMMA_BETWEEN_DAY_AND_YEAR" name="Missing comma between day of month and year">
@@ -12627,7 +12627,7 @@
         <token regexp="yes">[0123]?[0-9]</token>
         <token regexp="yes">[0-9]{4}</token>
       </pattern>
-      <message>Commas set off the year in a month-day-year date.</message>
+      <message>Commas set off the year in a month-day-year date. <suggestion>\1 \2,</suggestion></message>
       <short>Missing comma</short>
     </rule>
     <rule id="NN_CD_NN_CD_COMMA" name="Comma in 'act 2 scene 5'">
@@ -12637,7 +12637,7 @@
         <token regexp="yes">scene|episode|paragraph|task|seat|clause|section</token>
         <token postag="CD"></token>
       </pattern>
-      <message>It seems that a comma is missing.</message>
+      <message>It seems that a comma is missing. <suggestion>\1 \2, \3 \4</suggestion></message>
       <short>NN_CD_NN_CD_COMMA</short>
     </rule>
     <rule id="SENT_START_JJ_PLEASE_COMMA" name="Great(,) please ...">
@@ -12649,7 +12649,7 @@
         <token min="0" max="2" postag="RB"></token>
         <token postag="VB"></token>
       </pattern>
-      <message>Consider adding a comma here or splitting the sentence.</message>
+      <message>Consider adding a comma here or splitting the sentence. <suggestion>\3, \4</suggestion></message>
       <short>SENT_START_JJ_PLEASE_COMMA</short>
     </rule>
     <rule id="SENT_START_JJ_THAT_COMMA" name="Great(,) that is ...">
@@ -12661,7 +12661,7 @@
         <token regexp="yes" min="0">['’`´‘ʻ]</token>
         <token regexp="yes">'s|is|was</token>
       </pattern>
-      <message>Consider adding a comma here or splitting the sentence.</message>
+      <message>Consider adding a comma here or splitting the sentence. <suggestion>\3, \4</suggestion></message>
       <short>SENT_START_JJ_THAT_COMMA</short>
     </rule>
     <rule id="UNLIKELY_OPENING_PUNCTUATION" name="Loose punctuation mark">

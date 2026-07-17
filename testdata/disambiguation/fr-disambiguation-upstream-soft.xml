@@ -1295,18 +1295,18 @@
     <pattern>
       <token>xD</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_N" name="Ignore spelling of N°">
     <pattern>
       <token regexp="yes">N°\d?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_PUNCTUATION" name="Ignore spelling of punctuation characters">
     <pattern>
       <token regexp="yes">[_\^]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
 </rules>

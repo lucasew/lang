@@ -93,7 +93,7 @@
         <token>quasi</token>
         <token postag="BNW.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Quasi hoort aan een volgend bijvoeglijk naamwoord vast.</message>
+      <message>Quasi hoort aan een volgend bijvoeglijk naamwoord vast. <suggestion>\1\2</suggestion></message>
       <short>QUASI_LOS</short>
     </rule>
     <rule id="TE_WERKWOORD" name="OCR-fout: re gaan / te gaan">
@@ -101,7 +101,7 @@
         <token>re</token>
         <token postag="WKW:TGW:INF|BNW:STL:(VRB|ONV)" postag_regexp="yes"></token>
       </pattern>
-      <message>Dit is vast een OCR-fout, waarbij de t als r is gezien.</message>
+      <message>Dit is vast een OCR-fout, waarbij de t als r is gezien. <suggestion>te \2</suggestion></message>
       <short>TE_WERKWOORD</short>
     </rule>
   </category>
@@ -138,7 +138,7 @@
         <token>niet</token>
         <token regexp="yes">ondenkbeeldig|ondenkbaar</token>
       </pattern>
-      <message>Met deze woordkeuze is het onduidelijk wat er precies wordt bedoeld. Beter is om 'on' of 'niet' weg te laten.</message>
+      <message>Met deze woordkeuze is het onduidelijk wat er precies wordt bedoeld. Beter is om 'on' of 'niet' weg te laten. <suggestion>\2</suggestion></message>
       <short>NIET_ON</short>
     </rule>
     <rule id="OVERDRIJVING_2" name="vreselijk mooi (mooi)">
@@ -146,7 +146,7 @@
         <token regexp="yes">vreselijk|super|mega</token>
         <token postag="BNW.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Door \1 weg te laten komt dit iets formeler over.</message>
+      <message>Door \1 weg te laten komt dit iets formeler over. <suggestion>\2</suggestion></message>
       <short>OVERDRIJVING_2</short>
     </rule>
   </category>

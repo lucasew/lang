@@ -5,7 +5,7 @@
     <pattern>
       <token regexp="yes">[AENR][0-9]{1,3}+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ROADS_POS" name="Postag for road numbers">
     <pattern>
@@ -17,123 +17,123 @@
     <pattern>
       <token regexp="yes" case_sensitive="yes">[0-9]+(ste|e)[-][0-9]+(ste|e)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PLANES" name="Ignore plane numbers">
     <pattern>
       <token regexp="yes" case_sensitive="yes">PH-[A-Z]{3}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NUMBER_UNITS" name="Ignore spelling of glued units, te be warned for by rule">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[1-9][0-9]+(m2|m3|v|V|kV|A|W|g|l|ml|cc|km|mm|cm|km2|cm3|cm2)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="COMMISSIE_NAAM" name="Ignore spelling of comittees">
     <pattern>
       <token regexp="yes">(regering|commissie|wet|college|zaak)-[A-Z][a-z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IBAN" name="Ignore spelling of IBANs">
     <pattern>
       <token regexp="yes" case_sensitive="yes">^([A-Z]{2}[0-9]{2})(?=(?:[A-Z0-9]){9,30}$)((?:[A-Z0-9]{3,5}){2,7})([A-Z0-9]{1,3})?$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="_IGE" name="Ignore spelling of .*ige?">
     <pattern>
       <token regexp="yes">^[0-9]+[-](jar|ur|del|ass|voud|cijfer|pol|snar|kopp|zijd|lobb|blad|led|waard|lag|ei|rij|hoek|tal|regel|vleugel|wiel|tall|cel|stemm|arm|ader|vinger|spor|motor|kleur|fas|slacht|kant|puntig|pot|ton|hand|hokk|huiz|cell|splet|nerv|ben|tand|mal|lipp)(ig|ige)$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="_VOUD" name="Ignore spelling of .*voud">
     <pattern>
       <token regexp="yes">^[0-9]+[-](voud|maal)$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLER_ROMAN_NUMBERS" name="ignore roman numbers">
     <pattern>
       <token regexp="yes">(?:M*(?:D?C{0,3}|C[DM])(?:L?X{0,3}|X[LC])(?:V?I{0,3}|I[VX]))</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLER_ROMAN_NUMBERS_LC" name="ignore roman numbers">
     <pattern>
       <token regexp="yes">(?:m*(?:d?c{0,3}|c[dm])(?:l?x{0,3}|x[lc])(?:v?i{0,3}|i[vx]))</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_NUMBERS_RANKING" name="ignore -ste">
     <pattern>
       <token regexp="yes">^[0-9]+e$|^([1-9]0)?[2345679]de$|^([1-9]0)?[18]ste$|^([1-9])?[1][0-9]de$|^([0-9]+)?[2-9][0-9]ste$|^000ste$</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_TIMES" name="ignore tijd">
     <pattern>
       <token regexp="yes">[0-9]{1,2}[hu][0-9]{2}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_-EN" name="ignore -en">
     <pattern>
       <token regexp="yes">.*-(en|of)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_ER" name="ignore noun-abbrevs">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z]{2,5}'(er|ers|ertje|ertjes)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_NAME_VAN" name="ignore female names">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z].*-[Vv]an</token>
       <token postag="ENM:PER:LST.*" postag_regexp="yes"></token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_NONWORDS" name="ignore 0-1 etc">
     <pattern>
       <token regexp="yes">[^a-zA-Z-]{1,80}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SHORT_UPPER" name="ignore short upper">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z0-9]{2,5}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_AT" name="ignore @">
     <pattern>
       <token regexp="yes">.*[@].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_STREETS" name="ignore adresses">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z].*(straat|plein|steeg|allee|boulevard|weg|wijk)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_FC_CLUB" name="ignore clubs">
     <pattern>
       <token>FC</token>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_ROAD_NUMBERS" name="ignore numbers of roads">
     <pattern>
       <token regexp="yes" case_sensitive="yes">A[0-9]{1,3}|N[0-9]{1,3}|s[0-9]{3}|R[0-9]|B[0-9]{3}</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IBN" name="ignore Arab name">
     <pattern>
@@ -141,957 +141,957 @@
       <token>ibn</token>
       <token regexp="yes">[A-Z].+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_NEDERLANDSCHE" name="ignore parts of proper names">
     <pattern>
       <token>Nederlandsche</token>
       <token case_sensitive="yes">Bank</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLER_NUMBER_IG" name="getal-ig">
     <pattern>
       <token regexp="yes">[0-9]{1,3}[-](jarig|jarige|tal|tallen)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AFKO_SAMENSTELLING" name="AFKO_SAMENSTELLING">
     <pattern>
       <token postag="DVS"></token>
       <token regexp="yes">en|of</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="_242_omroep" name="_242_omroep">
     <pattern>
       <token>242-omroep</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="_242_omroepen" name="_242_omroepen">
     <pattern>
       <token>242-omroepen</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AB" name="AB">
     <pattern>
       <token>AB</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AD" name="AD">
     <pattern>
       <token>AD</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AOC" name="AOC">
     <pattern>
       <token>AOC</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HKH" name="HKH">
     <pattern>
       <token>HKH</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HKM" name="HKM">
     <pattern>
       <token>HKM</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HM" name="HM">
     <pattern>
       <token>HM</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LS" name="LS">
     <pattern>
       <token>LS</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MAN" name="MAN">
     <pattern>
       <token>MAN</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NB" name="NB">
     <pattern>
       <token>NB</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NN" name="NN">
     <pattern>
       <token>NN</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="OB" name="OB">
     <pattern>
       <token>OB</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="RIP" name="RIP">
     <pattern>
       <token>RIP</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="St_Annaparochie" name="St-Annaparochie">
     <pattern>
       <token>St-Annaparochie</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="St_Jacobiparochie" name="St-Jacobiparochie">
     <pattern>
       <token>St-Jacobiparochie</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ZKH" name="ZKH">
     <pattern>
       <token>ZKH</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ZKM" name="ZKM">
     <pattern>
       <token>ZKM</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="adhv" name="adhv">
     <pattern>
       <token>adhv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ae" name="ae">
     <pattern>
       <token>ae</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="agv" name="agv">
     <pattern>
       <token>agv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ahv" name="ahv">
     <pattern>
       <token>ahv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ahw" name="ahw">
     <pattern>
       <token>ahw</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="am" name="am">
     <pattern>
       <token>am</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="aub" name="aub">
     <pattern>
       <token>aub</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ajb" name="ajb">
     <pattern>
       <token>ajb</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bd" name="bd">
     <pattern>
       <token>bd</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bgg" name="bgg">
     <pattern>
       <token>bgg</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bvd" name="bvd">
     <pattern>
       <token>bvd</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bza" name="bza">
     <pattern>
       <token>bza</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bc" name="bc">
     <pattern>
       <token>bc</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bv" name="bv">
     <pattern>
       <token>bv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="bw" name="bw">
     <pattern>
       <token>bw</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="cod" name="cod">
     <pattern>
       <token>cod</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="cq" name="cq">
     <pattern>
       <token>cq</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="cs" name="cs">
     <pattern>
       <token>cs</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ca" name="ca">
     <pattern>
       <token>ca</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="dmv" name="dmv">
     <pattern>
       <token>dmv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="dwz" name="dwz">
     <pattern>
       <token>dwz</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="dz" name="dz">
     <pattern>
       <token>dz</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="dd" name="dd">
     <pattern>
       <token>dd</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="drs_titel" name="drs-titel">
     <pattern>
       <token>drs-titel</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ds" name="ds">
     <pattern>
       <token>ds</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ea" name="ea">
     <pattern>
       <token>ea</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ed" name="ed">
     <pattern>
       <token>ed</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="edm" name="edm">
     <pattern>
       <token>edm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="eea" name="eea">
     <pattern>
       <token>eea</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="eo" name="eo">
     <pattern>
       <token>eo</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ev" name="ev">
     <pattern>
       <token>ev</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="eva" name="eva">
     <pattern>
       <token>eva</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="gmv" name="gmv">
     <pattern>
       <token>gmv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="hg" name="hg">
     <pattern>
       <token>hg</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ibv" name="ibv">
     <pattern>
       <token>ibv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ic" name="ic">
     <pattern>
       <token>ic</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="icm" name="icm">
     <pattern>
       <token>icm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ie" name="ie">
     <pattern>
       <token>ie</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="igv" name="igv">
     <pattern>
       <token>igv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="iha" name="iha">
     <pattern>
       <token>iha</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ihb" name="ihb">
     <pattern>
       <token>ihb</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ihkv" name="ihkv">
     <pattern>
       <token>ihkv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="iig" name="iig">
     <pattern>
       <token>iig</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="im" name="im">
     <pattern>
       <token>im</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="io" name="io">
     <pattern>
       <token>io</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="iom" name="iom">
     <pattern>
       <token>iom</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="iov" name="iov">
     <pattern>
       <token>iov</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ipv" name="ipv">
     <pattern>
       <token>ipv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="iplv" name="iplv">
     <pattern>
       <token>iplv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ism" name="ism">
     <pattern>
       <token>ism</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="itt" name="itt">
     <pattern>
       <token>itt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="iv" name="iv">
     <pattern>
       <token>iv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ivm" name="ivm">
     <pattern>
       <token>ivm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="izgst" name="izgst">
     <pattern>
       <token>izgst</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="kk" name="kk">
     <pattern>
       <token>kk</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="lc" name="lc">
     <pattern>
       <token>lc</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="lic" name="lic">
     <pattern>
       <token>lic</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="maw" name="maw">
     <pattern>
       <token>maw</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mbt" name="mbt">
     <pattern>
       <token>mbt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mbv" name="mbv">
     <pattern>
       <token>mbv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mbetrt" name="mbetrt">
     <pattern>
       <token>mbetrt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mi" name="mi">
     <pattern>
       <token>mi</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="miv" name="miv">
     <pattern>
       <token>miv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mmv" name="mmv">
     <pattern>
       <token>mmv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mn" name="mn">
     <pattern>
       <token>mn</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="muv" name="muv">
     <pattern>
       <token>muv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mvg" name="mvg">
     <pattern>
       <token>mvg</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="mw" name="mw">
     <pattern>
       <token>mw</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="nav" name="nav">
     <pattern>
       <token>nav</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="notk" name="notk">
     <pattern>
       <token>notk</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="nvt" name="nvt">
     <pattern>
       <token>nvt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="oa" name="oa">
     <pattern>
       <token>oa</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="obv" name="obv">
     <pattern>
       <token>obv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ogv" name="ogv">
     <pattern>
       <token>ogv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="oi" name="oi">
     <pattern>
       <token>oi</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="oid" name="oid">
     <pattern>
       <token>oid</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="olv" name="olv">
     <pattern>
       <token>olv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ovv" name="ovv">
     <pattern>
       <token>ovv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="pm" name="pm">
     <pattern>
       <token>pm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="po" name="po">
     <pattern>
       <token>po</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="pp" name="pp">
     <pattern>
       <token>pp</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="pppn" name="pppn">
     <pattern>
       <token>pppn</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="pw" name="pw">
     <pattern>
       <token>pw</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="plm" name="plm">
     <pattern>
       <token>plm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="plv" name="plv">
     <pattern>
       <token>plv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="qed" name="qed">
     <pattern>
       <token>qed</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="qq" name="qq">
     <pattern>
       <token>qq</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="sj" name="sj">
     <pattern>
       <token>sj</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="sl" name="sl">
     <pattern>
       <token>sl</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="svp" name="svp">
     <pattern>
       <token>svp</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="sr" name="sr">
     <pattern>
       <token>sr</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tav" name="tav">
     <pattern>
       <token>tav</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tbv" name="tbv">
     <pattern>
       <token>tbv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tgv" name="tgv">
     <pattern>
       <token>tgv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tha" name="tha">
     <pattern>
       <token>tha</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tht" name="tht">
     <pattern>
       <token>tht</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="thv" name="thv">
     <pattern>
       <token>thv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tk" name="tk">
     <pattern>
       <token>tk</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tka" name="tka">
     <pattern>
       <token>tka</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tlv" name="tlv">
     <pattern>
       <token>tlv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tnv" name="tnv">
     <pattern>
       <token>tnv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tov" name="tov">
     <pattern>
       <token>tov</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tw" name="tw">
     <pattern>
       <token>tw</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="twv" name="twv">
     <pattern>
       <token>twv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="tzt" name="tzt">
     <pattern>
       <token>tzt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vC" name="vC">
     <pattern>
       <token>vC</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vd" name="vd">
     <pattern>
       <token>vd</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vh" name="vh">
     <pattern>
       <token>vh</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vlnr" name="vlnr">
     <pattern>
       <token>vlnr</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="von" name="von">
     <pattern>
       <token>von</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vtt" name="vtt">
     <pattern>
       <token>vtt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vv" name="vv">
     <pattern>
       <token>vv</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vvt" name="vvt">
     <pattern>
       <token>vvt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vvtt" name="vvtt">
     <pattern>
       <token>vvtt</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="vwb" name="vwb">
     <pattern>
       <token>vwb</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="wb" name="wb">
     <pattern>
       <token>wb</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="wns" name="wns">
     <pattern>
       <token>wns</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="wvttk" name="wvttk">
     <pattern>
       <token>wvttk</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zg" name="zg">
     <pattern>
       <token>zg</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zgan" name="zgan">
     <pattern>
       <token>zgan</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zgoh" name="zgoh">
     <pattern>
       <token>zgoh</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zi" name="zi">
     <pattern>
       <token>zi</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zj" name="zj">
     <pattern>
       <token>zj</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zkm" name="zkm">
     <pattern>
       <token>zkm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zoz" name="zoz">
     <pattern>
       <token>zoz</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zp" name="zp">
     <pattern>
       <token>zp</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zpl" name="zpl">
     <pattern>
       <token>zpl</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="zsm" name="zsm">
     <pattern>
       <token>zsm</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="XX_ROAD" name="XX_ROAD">
     <pattern>
       <token regexp="yes">[A-Z].*</token>
       <token regexp="yes">Road|Street|Avenue|Boulevard|Gardens|Square|Crescent</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_BEI" name="IGNORE_BEI">
     <pattern>
       <token>bei</token>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="X_TIMES" name="IGNORE_TIMES">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[0-9]+x</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WILLEM_II" name="WILLEM_II">
     <pattern>
       <token case_sensitive="yes">Willem</token>
       <token regexp="yes" case_sensitive="yes">II-(spits|spelers?|verdedigers?|supporters?)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="_2-0-ZEGE" name="_2-0-ZEGE">
     <pattern>
       <token regexp="yes">[0-9]+[-][0-9]+[-](uit|thuis)?(zege|winst|verlies|score|voorsprong|gelijkspel|remise|(rust|eind)?stand|(achter|tussen)?stand|overwinning|nederlaag|cijfers)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FORMULE_1-DING" name="FORMULE_1-DING">
     <pattern>
       <token>formule</token>
       <token regexp="yes">[12E3][-](seizoen|coureur|race|coureurs|team|teams|kalender|baas|carrière|auto|piloot|loopbaan|auto's|kampioen|weekend|testdag|record|races|legendes?|directeur|circus|wereld|organisatie|kampioenschap|wereldkampioen|verslaggever|testdagen|stoeltje|renstal|regels|geschiedenis|circuit|ongeval|reglement|reglementen|veld|verslaggevers?)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ENGELS1" name="ENGELS1">
     <pattern>
       <token regexp="yes" case_sensitive="yes">World|Champions</token>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ENGELS2" name="ENGELS2">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
       <token case_sensitive="yes">World</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ENGELS3" name="A_AND_B">
     <pattern>
@@ -1099,87 +1099,87 @@
       <token case_sensitive="yes">and</token>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="VIERKANTE_METER" name="VIERKANTE_METER">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[0-9]+(m|km|cm|mm|dm)([²³])?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="EENHEDEN" name="EENHEDEN">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[0-9]*([MkG])(Hz)</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MR_X" name="MR_X">
     <pattern>
       <token regexp="yes">meneer|mevrouw|heer|jongeheer|juffrouw|mejuffrouw</token>
       <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z][a-z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="X-VOUDIG" name="X-VOUDIG">
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[0-9]+[-]voudige?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PARA_NUM" name="PARA_NUM">
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[1-9][0-9]?[a-zA-Z]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NATIONS_LEAGUE" name="NATIONS_LEAGUE">
     <pattern>
       <token regexp="yes">Nations|Champions</token>
       <token regexp="yes">League.*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="XX_IG" name="XX_IG">
     <pattern>
       <token regexp="yes">[0-9]+[-](voud|blad|jar|kopp|vorm|ur|cijfer|talig|del)ige?</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DU" name="DU">
     <pattern>
       <token regexp="yes">d[uai]</token>
       <token regexp="yes">[A-Z].*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TEMPERATURE" name="TEMPERATURE">
     <pattern>
       <token regexp="yes">[-]?[0-9]+°[CKF]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ATP_NUM" name="ATP_NUM">
     <pattern>
       <token regexp="yes">(ATP|WTA|WS|PDC)[-][0-9]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="A1" name="A1">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z][0-9]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="_9x9" name="_9x9">
     <pattern>
       <token regexp="yes" case_sensitive="yes">.*[0-9]+x[0-9]+.*</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_100K" name="ignore spelling of '100k' and '2022b'">
     <pattern>
       <token regexp="yes">\d+[a-z]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
 </rules>

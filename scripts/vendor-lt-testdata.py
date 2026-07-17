@@ -338,11 +338,13 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         if not ok or not simple_toks:
             continue
         seen.add(rid)
+        # Preserve ignore_spelling vs immunize: ignore_spelling only affects
+        # the speller (Java), while immunize skips pattern matching entirely.
         out.append({
             "id": rid,
             "name": el.get("name") or rid,
             "tokens": simple_toks,
-            "action": "immunize" if action == "ignore_spelling" else action,
+            "action": action,
             "postag": postag,
             "source": source,
         })
@@ -428,6 +430,15 @@ def extract_simple_rules(root: ET.Element, source: str) -> tuple[list[dict], lis
             msg_xml = "".join(chunks).strip()
         else:
             msg_xml = message
+        # Upstream often puts <suggestion> as sibling of <message>, not nested.
+        # Soft loader only reads suggestions inside the message text.
+        if "<suggestion>" not in msg_xml:
+            for c in el:
+                if local(c.tag) == "suggestion":
+                    body = "".join(c.itertext()).strip()
+                    if body:
+                        msg_xml = (msg_xml + " <suggestion>" + body + "</suggestion>").strip()
+                        break
 
         examples = []
         for c in el:

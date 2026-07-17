@@ -174,20 +174,20 @@
       <token>la</token>
       <token regexp="yes">[a-z]</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="pm_am" name="Ignore spelling pm/am">
     <pattern>
       <token regexp="yes">([012][0-9][\.,])?[0-6]?[0-9]</token>
       <token regexp="yes" case_sensitive="yes">pm|am|PM|AM|GMT|CEST|UTC|EST</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_PUNCTUATION" name="Ignore spelling of punctuation characters">
     <pattern>
       <token regexp="yes">[_~°]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MADE_IN" name="made in">
     <pattern>
@@ -195,25 +195,25 @@
       <token>in</token>
       <token regexp="yes" case_sensitive="yes">USA|China|Europe|Taiwan|Spain|France|Germany|Italy</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HEXADECIMAL_NOTATION" name="notación hexadecimal">
     <pattern>
       <token regexp="yes" case_sensitive="yes">0x[0-9A-Fa-f]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="OCTAL_NOTATION" name="notación octal">
     <pattern>
       <token regexp="yes" case_sensitive="yes">0o[0-7]+</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignora_algunas_siglas" name="algunas siglas">
     <pattern>
       <token regexp="yes" case_sensitive="yes">NY|NGC|IgG|Tass|TASS</token>
     </pattern>
-    <disambig action="immunize"/>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ignore_uppercase_letters" name="A a Z">
     <pattern>
