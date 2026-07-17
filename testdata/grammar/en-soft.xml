@@ -12377,6 +12377,76 @@
       <message>Did you mean "release"?</message>
       <short>relese</short>
     </rule>
+    <rule id="EN_SOFT_VERSION_MISS3" name="versin soft">
+      <pattern>
+        <token>versin</token>
+      </pattern>
+      <message>Did you mean "version"?</message>
+      <short>versin</short>
+    </rule>
+    <rule id="EN_SOFT_HEADER_MISS" name="headeer soft">
+      <pattern>
+        <token>headeer</token>
+      </pattern>
+      <message>Did you mean "header"?</message>
+      <short>headeer</short>
+    </rule>
+    <rule id="EN_SOFT_FOOTER_MISS" name="footre soft">
+      <pattern>
+        <token>footre</token>
+      </pattern>
+      <message>Did you mean "footer"?</message>
+      <short>footre</short>
+    </rule>
+    <rule id="EN_SOFT_SIDEBAR_MISS" name="sidebaar soft">
+      <pattern>
+        <token>sidebaar</token>
+      </pattern>
+      <message>Did you mean "sidebar"?</message>
+      <short>sidebaar</short>
+    </rule>
+    <rule id="EN_SOFT_TOOLBAR_MISS" name="toolbaar soft">
+      <pattern>
+        <token>toolbaar</token>
+      </pattern>
+      <message>Did you mean "toolbar"?</message>
+      <short>toolbaar</short>
+    </rule>
+    <rule id="EN_SOFT_NAVBAR_MISS" name="navbaar soft">
+      <pattern>
+        <token>navbaar</token>
+      </pattern>
+      <message>Did you mean "navbar"?</message>
+      <short>navbaar</short>
+    </rule>
+    <rule id="EN_SOFT_TOOLTIP_MISS" name="toolitp soft">
+      <pattern>
+        <token>toolitp</token>
+      </pattern>
+      <message>Did you mean "tooltip"?</message>
+      <short>toolitp</short>
+    </rule>
+    <rule id="EN_SOFT_TOOLTIP_MISS2" name="toottip soft">
+      <pattern>
+        <token>toottip</token>
+      </pattern>
+      <message>Did you mean "tooltip"?</message>
+      <short>toottip</short>
+    </rule>
+    <rule id="EN_SOFT_TEXTAREA_MISS" name="textaree soft">
+      <pattern>
+        <token>textaree</token>
+      </pattern>
+      <message>Did you mean "textarea"?</message>
+      <short>textaree</short>
+    </rule>
+    <rule id="EN_SOFT_TEXTAREA_MISS2" name="textaera soft">
+      <pattern>
+        <token>textaera</token>
+      </pattern>
+      <message>Did you mean "textarea"?</message>
+      <short>textaera</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
