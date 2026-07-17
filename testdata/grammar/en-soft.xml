@@ -10137,6 +10137,76 @@
       <message>Did you mean "occasionally"?</message>
       <short>ocassionally</short>
     </rule>
+    <rule id="EN_SOFT_SUCCESSFUL_MISS4" name="succesfull soft">
+      <pattern>
+        <token>succesfull</token>
+      </pattern>
+      <message>Did you mean "successful"?</message>
+      <short>succesfull</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSFULLY_MISS4" name="succesfuly soft">
+      <pattern>
+        <token>succesfuly</token>
+      </pattern>
+      <message>Did you mean "successfully"?</message>
+      <short>succesfuly</short>
+    </rule>
+    <rule id="EN_SOFT_APPARENTLY_MISS4" name="aparentely soft">
+      <pattern>
+        <token>aparentely</token>
+      </pattern>
+      <message>Did you mean "apparently"?</message>
+      <short>aparentely</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIVE_MISS2" name="receieve soft">
+      <pattern>
+        <token>receieve</token>
+      </pattern>
+      <message>Did you mean "receive"?</message>
+      <short>receieve</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIPTS_MISS" name="reciepts soft">
+      <pattern>
+        <token>reciepts</token>
+      </pattern>
+      <message>Did you mean "receipts"?</message>
+      <short>reciepts</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATELY_MISS3" name="seperateley soft">
+      <pattern>
+        <token>seperateley</token>
+      </pattern>
+      <message>Did you mean "separately"?</message>
+      <short>seperateley</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATELY_MISS4" name="seperatley soft">
+      <pattern>
+        <token>seperatley</token>
+      </pattern>
+      <message>Did you mean "separately"?</message>
+      <short>seperatley</short>
+    </rule>
+    <rule id="EN_SOFT_ADDRESSES_MISS" name="adresses soft">
+      <pattern>
+        <token>adresses</token>
+      </pattern>
+      <message>Did you mean "addresses"?</message>
+      <short>adresses</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVES_MISS" name="acheives soft">
+      <pattern>
+        <token>acheives</token>
+      </pattern>
+      <message>Did you mean "achieves"?</message>
+      <short>acheives</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVING_MISS" name="acheiveing soft">
+      <pattern>
+        <token>acheiveing</token>
+      </pattern>
+      <message>Did you mean "achieving"?</message>
+      <short>acheiveing</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

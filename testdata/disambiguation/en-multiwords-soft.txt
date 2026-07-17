@@ -459,3 +459,6 @@ Obsidian Peak RegionNNP
 Granite Peak RegionNNP
 Marble Peak RegionNNP
 Slate Peak RegionNNP
+Limestone Peak RegionNNP
+Sandstone Peak RegionNNP
+Chalk Peak RegionNNP

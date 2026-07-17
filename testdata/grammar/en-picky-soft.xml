@@ -2827,5 +2827,29 @@
       <message>Jargon; name nonlinear relative estimate scale instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BURNDOWN_CHART" name="burndown chart soft picky">
+      <pattern>
+        <token>burndown</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name remaining-work trend tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BURNUP_CHART" name="burnup chart soft picky">
+      <pattern>
+        <token>burnup</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name completed-work cumulative trend instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUMULATIVE_FLOW" name="cumulative flow soft picky">
+      <pattern>
+        <token>cumulative</token>
+        <token>flow</token>
+      </pattern>
+      <message>Jargon; name work-in-state stacked trend tracking instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

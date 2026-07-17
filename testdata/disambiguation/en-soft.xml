@@ -4371,4 +4371,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_IOTANALYTICS" name="immunize iotanalytics">
+    <pattern>
+      <token>iotanalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTANALYTICS_CAPS" name="immunize IoTAnalytics">
+    <pattern>
+      <token>IoTAnalytics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSITEWISE" name="immunize iotsitewise">
+    <pattern>
+      <token>iotsitewise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTSITEWISE_CAPS" name="immunize IoTSiteWise">
+    <pattern>
+      <token>IoTSiteWise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTHINGSGRAPH" name="immunize iotthingsgraph">
+    <pattern>
+      <token>iotthingsgraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTHINGSGRAPH_CAPS" name="immunize IoTThingsGraph">
+    <pattern>
+      <token>IoTThingsGraph</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
