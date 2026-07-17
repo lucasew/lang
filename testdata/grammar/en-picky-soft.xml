@@ -2629,5 +2629,30 @@
       <message>Jargon; name narrative backlog layout for releases instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GIVEN_WHEN_THEN" name="given when then soft picky">
+      <pattern>
+        <token>given</token>
+        <token>when</token>
+        <token>then</token>
+      </pattern>
+      <message>Jargon; name a structured scenario outline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THREE_AMIGOS" name="three amigos soft picky">
+      <pattern>
+        <token>three</token>
+        <token>amigos</token>
+      </pattern>
+      <message>Jargon; name a three-role refinement conversation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACCEPTANCE_CRITERIA" name="acceptance criteria soft picky">
+      <pattern>
+        <token>acceptance</token>
+        <token>criteria</token>
+      </pattern>
+      <message>Jargon; name explicit done conditions for a story instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

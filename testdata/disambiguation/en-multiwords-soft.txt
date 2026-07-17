@@ -435,3 +435,6 @@ Basalt Ridge RegionNNP
 Pumice Ridge RegionNNP
 Scoria Corridor RegionNNP
 Tephra Corridor RegionNNP
+Lava Corridor RegionNNP
+Ash Corridor RegionNNP
+Cinder Corridor RegionNNP

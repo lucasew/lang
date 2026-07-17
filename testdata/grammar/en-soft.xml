@@ -9577,6 +9577,76 @@
       <message>Did you mean "nineteenth"?</message>
       <short>ninteenth</short>
     </rule>
+    <rule id="EN_SOFT_OMISSIONS_MISS2" name="ommisions soft">
+      <pattern>
+        <token>ommisions</token>
+      </pattern>
+      <message>Did you mean "omissions"?</message>
+      <short>ommisions</short>
+    </rule>
+    <rule id="EN_SOFT_OMITTED_MISS" name="ommited soft">
+      <pattern>
+        <token>ommited</token>
+      </pattern>
+      <message>Did you mean "omitted"?</message>
+      <short>ommited</short>
+    </rule>
+    <rule id="EN_SOFT_OMITTING_MISS" name="ommitting soft">
+      <pattern>
+        <token>ommitting</token>
+      </pattern>
+      <message>Did you mean "omitting"?</message>
+      <short>ommitting</short>
+    </rule>
+    <rule id="EN_SOFT_ORPHAN_MISS" name="orphant soft">
+      <pattern>
+        <token>orphant</token>
+      </pattern>
+      <message>Did you mean "orphan"?</message>
+      <short>orphant</short>
+    </rule>
+    <rule id="EN_SOFT_ORPHANS_MISS" name="orphants soft">
+      <pattern>
+        <token>orphants</token>
+      </pattern>
+      <message>Did you mean "orphans"?</message>
+      <short>orphants</short>
+    </rule>
+    <rule id="EN_SOFT_PARTICULARLY_MISS4" name="paticularly soft">
+      <pattern>
+        <token>paticularly</token>
+      </pattern>
+      <message>Did you mean "particularly"?</message>
+      <short>paticularly</short>
+    </rule>
+    <rule id="EN_SOFT_PIERCED_MISS" name="peirced soft">
+      <pattern>
+        <token>peirced</token>
+      </pattern>
+      <message>Did you mean "pierced"?</message>
+      <short>peirced</short>
+    </rule>
+    <rule id="EN_SOFT_PERSISTENTLY_MISS" name="persistantly soft">
+      <pattern>
+        <token>persistantly</token>
+      </pattern>
+      <message>Did you mean "persistently"?</message>
+      <short>persistantly</short>
+    </rule>
+    <rule id="EN_SOFT_PURSUING_MISS2" name="persuing soft">
+      <pattern>
+        <token>persuing</token>
+      </pattern>
+      <message>Did you mean "pursuing"?</message>
+      <short>persuing</short>
+    </rule>
+    <rule id="EN_SOFT_PHARAOH_MISS" name="pharoah soft">
+      <pattern>
+        <token>pharoah</token>
+      </pattern>
+      <message>Did you mean "pharaoh"?</message>
+      <short>pharoah</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

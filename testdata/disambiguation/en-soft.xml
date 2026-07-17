@@ -4083,4 +4083,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTVOICE" name="immunize connectvoice">
+    <pattern>
+      <token>connectvoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTVOICE_CAPS" name="immunize ConnectVoice">
+    <pattern>
+      <token>ConnectVoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPINTEGRATIONS" name="immunize appintegrations">
+    <pattern>
+      <token>appintegrations</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPINTEGRATIONS_CAPS" name="immunize AppIntegrations">
+    <pattern>
+      <token>AppIntegrations</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCUSTOMERPROFILES" name="immunize connectcustomerprofiles">
+    <pattern>
+      <token>connectcustomerprofiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCUSTOMERPROFILES_CAPS" name="immunize ConnectCustomerProfiles">
+    <pattern>
+      <token>ConnectCustomerProfiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
