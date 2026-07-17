@@ -146,3 +146,8 @@ at the present time	RB
 Las Cruces	NNP
 El Paso	NNP
 Baton Rouge	NNP
+as a whole	RB
+in the aggregate	RB
+on the whole	RB
+Corpus Christi	NNP
+Santa Fe	NNP

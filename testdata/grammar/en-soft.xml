@@ -2857,6 +2857,76 @@
       <message>Did you mean "governmental"?</message>
       <short>govermental</short>
     </rule>
+    <rule id="EN_SOFT_KNOWLEDGEABLE_MISS" name="knowledgable soft">
+      <pattern>
+        <token>knowledgable</token>
+      </pattern>
+      <message>Did you mean "knowledgeable"?</message>
+      <short>knowledgable</short>
+    </rule>
+    <rule id="EN_SOFT_LIAISE_MISS" name="liase soft">
+      <pattern>
+        <token>liase</token>
+      </pattern>
+      <message>Did you mean "liaise"?</message>
+      <short>liase</short>
+    </rule>
+    <rule id="EN_SOFT_MAINTENANCE_MISS2" name="maintainence soft">
+      <pattern>
+        <token>maintainence</token>
+      </pattern>
+      <message>Did you mean "maintenance"?</message>
+      <short>maintainence</short>
+    </rule>
+    <rule id="EN_SOFT_MISSPELL_MISS" name="mispell soft">
+      <pattern>
+        <token>mispell</token>
+      </pattern>
+      <message>Did you mean "misspell"?</message>
+      <short>mispell</short>
+    </rule>
+    <rule id="EN_SOFT_MISSPELLED_MISS" name="mispelled soft">
+      <pattern>
+        <token>mispelled</token>
+      </pattern>
+      <message>Did you mean "misspelled"?</message>
+      <short>mispelled</short>
+    </rule>
+    <rule id="EN_SOFT_NECESSARILY_MISS" name="neccessarily soft">
+      <pattern>
+        <token>neccessarily</token>
+      </pattern>
+      <message>Did you mean "necessarily"?</message>
+      <short>neccessarily</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASIONALLY_MISS" name="occassionally soft">
+      <pattern>
+        <token>occassionally</token>
+      </pattern>
+      <message>Did you mean "occasionally"?</message>
+      <short>occassionally</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURRED_MISS" name="ocurred soft">
+      <pattern>
+        <token>ocurred</token>
+      </pattern>
+      <message>Did you mean "occurred"?</message>
+      <short>ocurred</short>
+    </rule>
+    <rule id="EN_SOFT_PROPAGANDA_MISS" name="propoganda soft">
+      <pattern>
+        <token>propoganda</token>
+      </pattern>
+      <message>Did you mean "propaganda"?</message>
+      <short>propoganda</short>
+    </rule>
+    <rule id="EN_SOFT_PROPAGATE_MISS" name="propogate soft">
+      <pattern>
+        <token>propogate</token>
+      </pattern>
+      <message>Did you mean "propagate"?</message>
+      <short>propogate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

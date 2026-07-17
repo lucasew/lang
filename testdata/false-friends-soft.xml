@@ -650,4 +650,32 @@
       <translation lang="en">endure / put up with</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="ATTEND">
+    <rule>
+      <pattern lang="en">
+        <token>attend</token>
+      </pattern>
+      <translation lang="es">asistir / ir a</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>atender</token>
+      </pattern>
+      <translation lang="en">serve / take care of / answer</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SUCCESS">
+    <rule>
+      <pattern lang="en">
+        <token>success</token>
+      </pattern>
+      <translation lang="es">éxito</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>suceso</token>
+      </pattern>
+      <translation lang="en">event / occurrence</translation>
+    </rule>
+  </rulegroup>
 </rules>
