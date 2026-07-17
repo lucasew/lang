@@ -513,3 +513,6 @@ Gabbro Summit RegionNNP
 Tonalite Summit RegionNNP
 Anorthosite Summit RegionNNP
 Peridotite Summit RegionNNP
+Kimberlite Summit RegionNNP
+Lamprophyre Summit RegionNNP
+Carbonatite Summit RegionNNP

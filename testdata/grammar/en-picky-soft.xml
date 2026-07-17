@@ -3238,5 +3238,26 @@
       <message>Jargon; name critical-to-quality requirement instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BANT" name="bant soft picky">
+      <pattern>
+        <token>bant</token>
+      </pattern>
+      <message>Jargon; name budget-authority-need-timeline qualification instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEDDIC" name="meddic soft picky">
+      <pattern>
+        <token>meddic</token>
+      </pattern>
+      <message>Jargon; name metrics-economic buyer-decision criteria sales process instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NPS" name="nps soft picky">
+      <pattern>
+        <token>nps</token>
+      </pattern>
+      <message>Jargon; name net promoter score instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

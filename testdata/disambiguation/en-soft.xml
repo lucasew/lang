@@ -5019,4 +5019,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TRINO" name="immunize trino">
+    <pattern>
+      <token>trino</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRINO_CAPS" name="immunize Trino">
+    <pattern>
+      <token>Trino</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRESTO" name="immunize presto">
+    <pattern>
+      <token>presto</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRESTO_CAPS" name="immunize Presto">
+    <pattern>
+      <token>Presto</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIFI" name="immunize nifi">
+    <pattern>
+      <token>nifi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIFI_CAPS" name="immunize NiFi">
+    <pattern>
+      <token>NiFi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

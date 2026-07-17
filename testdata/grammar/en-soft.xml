@@ -11397,6 +11397,76 @@
       <message>Did you mean "level"?</message>
       <short>levle</short>
     </rule>
+    <rule id="EN_SOFT_LIKE_MISS" name="liek soft">
+      <pattern>
+        <token>liek</token>
+      </pattern>
+      <message>Did you mean "like"?</message>
+      <short>liek</short>
+    </rule>
+    <rule id="EN_SOFT_LOCATION_MISS" name="locaiton soft">
+      <pattern>
+        <token>locaiton</token>
+      </pattern>
+      <message>Did you mean "location"?</message>
+      <short>locaiton</short>
+    </rule>
+    <rule id="EN_SOFT_MODULE_MISS" name="moduel soft">
+      <pattern>
+        <token>moduel</token>
+      </pattern>
+      <message>Did you mean "module"?</message>
+      <short>moduel</short>
+    </rule>
+    <rule id="EN_SOFT_MORE_MISS" name="mroe soft">
+      <pattern>
+        <token>mroe</token>
+      </pattern>
+      <message>Did you mean "more"?</message>
+      <short>mroe</short>
+    </rule>
+    <rule id="EN_SOFT_NUMBER_MISS4" name="nubmer soft">
+      <pattern>
+        <token>nubmer</token>
+      </pattern>
+      <message>Did you mean "number"?</message>
+      <short>nubmer</short>
+    </rule>
+    <rule id="EN_SOFT_OBJECT_MISS" name="obejct soft">
+      <pattern>
+        <token>obejct</token>
+      </pattern>
+      <message>Did you mean "object"?</message>
+      <short>obejct</short>
+    </rule>
+    <rule id="EN_SOFT_OPEN_MISS" name="oepn soft">
+      <pattern>
+        <token>oepn</token>
+      </pattern>
+      <message>Did you mean "open"?</message>
+      <short>oepn</short>
+    </rule>
+    <rule id="EN_SOFT_ONLY_MISS" name="onyl soft">
+      <pattern>
+        <token>onyl</token>
+      </pattern>
+      <message>Did you mean "only"?</message>
+      <short>onyl</short>
+    </rule>
+    <rule id="EN_SOFT_OPTION_MISS" name="optino soft">
+      <pattern>
+        <token>optino</token>
+      </pattern>
+      <message>Did you mean "option"?</message>
+      <short>optino</short>
+    </rule>
+    <rule id="EN_SOFT_ORDER_MISS" name="oredr soft">
+      <pattern>
+        <token>oredr</token>
+      </pattern>
+      <message>Did you mean "order"?</message>
+      <short>oredr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
