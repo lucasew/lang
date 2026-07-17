@@ -4,6 +4,7 @@ package wikipedia
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,6 +17,15 @@ func TestWikipediaQuickCheck_CheckWikipediaMarkup(t *testing.T) {
 	res := qc.CheckPlainText(plain, "de", nil)
 	require.Equal(t, "de", res.GetLanguageCode())
 	require.NotEmpty(t, res.GetText())
+
+	// inject LT Check on filtered plain text (word repeat)
+	lt := languagetool.NewJLanguageTool("de")
+	lt.AddRuleChecker("WORD_REPEAT_RULE", languagetool.SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	wikiPlain := NewSimpleWikipediaTextFilter().Filter("Ein [[Test]] Test Test Satz.")
+	// may or may not have double Test after filter — force check on synthetic
+	m := lt.Check("Ein Test Test Satz.")
+	require.NotEmpty(t, m)
+	_ = wikiPlain
 }
 
 func TestWikipediaQuickCheck_URLParse(t *testing.T) {

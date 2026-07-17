@@ -1,0 +1,84 @@
+package languagetool
+
+import (
+	"testing"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
+	"github.com/stretchr/testify/require"
+)
+
+func TestSimpleMultipleWhitespaceChecker(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("WHITESPACE_RULE", SimpleMultipleWhitespaceChecker())
+	m := lt.Check("hello  world")
+	require.NotEmpty(t, m)
+	require.Equal(t, "WHITESPACE_RULE", m[0].RuleID)
+	require.Equal(t, "hello world", CorrectTextFromLocalMatches("hello  world", m))
+	require.Empty(t, lt.Check("hello world"))
+}
+
+func TestSimpleUnpairedBracketsChecker(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("UNPAIRED_BRACKETS", SimpleUnpairedBracketsChecker())
+	require.Empty(t, lt.Check("ok (yes) [x] {y}"))
+	require.NotEmpty(t, lt.Check("broken (yes"))
+	require.NotEmpty(t, lt.Check("broken yes)"))
+}
+
+func TestSimplePhraseReplaceChecker(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("PHRASE_REPLACE", SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
+		"tot he": "to the",
+	}))
+	src := "Guide tot he Galaxy"
+	m := lt.Check(src)
+	require.NotEmpty(t, m)
+	require.Equal(t, "Guide to the Galaxy", CorrectTextFromLocalMatches(src, m))
+}
+
+func TestCheckAnnotatedAndProject(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())
+	at := markup.NewAnnotatedTextBuilder().
+		AddText("This is an ").
+		AddMarkupInterpretAs("&eacute;", "e").
+		AddText(" test.").
+		Build()
+	// plain: "This is an e test." → an before e → maybe flag an→a? e is vowel → ok for "an e"
+	// use "a error" in text parts
+	at2 := markup.NewAnnotatedTextBuilder().
+		AddText("See a ").
+		AddMarkupInterpretAs("<b>", "").
+		AddText("error").
+		AddMarkupInterpretAs("</b>", "").
+		AddText(" here.").
+		Build()
+	plain := at2.GetPlainText()
+	require.Equal(t, "See a error here.", plain)
+	matches := lt.CheckAnnotated(at2)
+	require.NotEmpty(t, matches)
+	// project to original (with markup)
+	proj := ProjectMatchesToOriginal(at2, matches)
+	require.Len(t, proj, len(matches))
+	require.GreaterOrEqual(t, proj[0].FromPos, 0)
+	_ = at
+}
+
+func TestRegisterDemoEnglishCheckers(t *testing.T) {
+	lt := NewJLanguageTool("en-US")
+	known := map[string]struct{}{
+		"A": {}, "sentence": {}, "with": {}, "error": {}, "in": {}, "the": {},
+		"Hitchhiker": {}, "s": {}, "Guide": {}, "to": {}, "Galaxy": {},
+	}
+	// allow apostrophe tokens soft
+	lt.RegisterDemoEnglishCheckers(known, map[string][]string{"speling": {"spelling"}})
+	// a error + tot he
+	src := "A sentence with a error in the Hitchhiker's Guide tot he Galaxy"
+	m := lt.Check(src)
+	require.NotEmpty(t, m)
+	ids := map[string]bool{}
+	for _, x := range m {
+		ids[x.RuleID] = true
+	}
+	require.True(t, ids["EN_A_VS_AN"] || ids["PHRASE_REPLACE"])
+}

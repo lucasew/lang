@@ -9,18 +9,41 @@ import (
 
 func TestJLanguageTool_DemoCodeForHomepage(t *testing.T) {
 	lt := NewJLanguageTool("en-US")
-	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())
-	// soft spelling for "tot" / "he" style is deferred; a/an catches "a error"
-	matches := lt.Check("A sentence with a error in the Hitchhiker's Guide tot he Galaxy")
+	lt.RegisterDemoEnglishCheckers(map[string]struct{}{
+		"A": {}, "sentence": {}, "with": {}, "error": {}, "in": {}, "the": {},
+		"Hitchhiker": {}, "Guide": {}, "Galaxy": {}, "to": {},
+	}, nil)
+	src := "A sentence with a error in the Hitchhiker's Guide tot he Galaxy"
+	matches := lt.Check(src)
 	require.NotEmpty(t, matches)
-	var found bool
+	ids := map[string]bool{}
 	for _, m := range matches {
-		if m.RuleID == "EN_A_VS_AN" {
-			found = true
-			require.Contains(t, m.Suggestions, "an")
+		ids[m.RuleID] = true
+	}
+	require.True(t, ids["EN_A_VS_AN"], "expected a→an for 'a error'")
+	require.True(t, ids["PHRASE_REPLACE"], "expected tot he → to the")
+	// apply all suggestions iteratively
+	fixed := src
+	for {
+		ms := lt.Check(fixed)
+		if len(ms) == 0 {
+			break
+		}
+		// only apply first match with suggestions per pass
+		applied := false
+		for _, m := range ms {
+			if len(m.Suggestions) > 0 {
+				fixed = CorrectTextFromLocalMatches(fixed, []LocalMatch{m})
+				applied = true
+				break
+			}
+		}
+		if !applied {
+			break
 		}
 	}
-	require.True(t, found, "expected a→an for 'a error'")
+	require.Contains(t, fixed, "an error")
+	require.Contains(t, fixed, "to the")
 }
 
 func TestJLanguageTool_SpellCheckerDemoCodeForHomepage(t *testing.T) {
