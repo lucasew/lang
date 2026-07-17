@@ -51,7 +51,18 @@ func TestAdaptSuggestionFilter_AdaptedDet_Twin(t *testing.T) {
 	require.Equal(t, []string{"einem"}, f.AdaptedDet(DetReading{Token: "einer", POS: "ART:IND:DAT:SIN:FEM", Lemma: "ein"}, "Plan"))
 }
 
-// Port of AdaptSuggestionFilterTest.testdAdaptedDetAdj
+// Port of AdaptSuggestionFilterTest.testdAdaptedDetAdj — weak adj ending soft.
 func TestAdaptSuggestionFilter_DAdaptedDetAdj(t *testing.T) {
-	t.Skip("Java @Ignore / needs adjective synthesizer")
+	f := NewAdaptSuggestionFilter()
+	// der + schöne + Mann (already weak -e for MAS NOM)
+	got := f.SuggestWithDetAdj("der", "ART:DEF:NOM:SIN:MAS", "der", "schöne", []string{"Mann"})
+	require.Contains(t, got, "der schöne Mann")
+	// die + schöne + Plan → der schöne Plan
+	got2 := f.SuggestWithDetAdj("die", "ART:DEF:NOM:SIN:FEM", "der", "schöne", []string{"Plan"})
+	require.Contains(t, got2, "der schöne Plan")
+	// den + guten (AKK MAS) + Plan
+	got3 := f.SuggestWithDetAdj("die", "ART:DEF:AKK:SIN:FEM", "der", "gute", []string{"Plan"})
+	require.NotEmpty(t, got3)
+	// should prefer -en for AKK MAS
+	require.Contains(t, got3[0], "Plan")
 }

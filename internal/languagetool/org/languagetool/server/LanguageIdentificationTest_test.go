@@ -1,17 +1,17 @@
 package server
 
 // Twin of languagetool-server/src/test/java/org/languagetool/server/LanguageIdentificationTest.java
+// Full FastText deferred; green inject via DetectLanguageOfString.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-server/src/test/java/org/languagetool/server/LanguageIdentificationTest.java :: LanguageIdentificationTest (no @Test)
+// Port of LanguageIdentificationTest — heuristic + preferred variants surface.
 func TestLanguageIdentification_NoTests(t *testing.T) {
-	t.Log("languagetool-server/src/test/java/org/languagetool/server/LanguageIdentificationTest.java")
+	require.Equal(t, "de", DetectLanguageOfString("Die Größe des Hauses.", nil, nil))
+	require.Equal(t, "uk", DetectLanguageOfString("Це українська мова з ї.", nil, nil))
+	require.Equal(t, "en-GB", DetectLanguageOfString("Hello world sample.", []string{"en-GB"}, func(string) string { return "en" }))
+	require.Equal(t, "en-US", DetectLanguageOfString("", []string{"en-US"}, func(string) string { return "" }))
 }
