@@ -10067,6 +10067,76 @@
       <message>Did you mean "beliefs"?</message>
       <short>beleifs</short>
     </rule>
+    <rule id="EN_SOFT_BETWEEN_MISS2" name="bettween soft">
+      <pattern>
+        <token>bettween</token>
+      </pattern>
+      <message>Did you mean "between"?</message>
+      <short>bettween</short>
+    </rule>
+    <rule id="EN_SOFT_CALENDAR_MISS2" name="calandar soft">
+      <pattern>
+        <token>calandar</token>
+      </pattern>
+      <message>Did you mean "calendar"?</message>
+      <short>calandar</short>
+    </rule>
+    <rule id="EN_SOFT_CALENDARS_MISS3" name="calandars soft">
+      <pattern>
+        <token>calandars</token>
+      </pattern>
+      <message>Did you mean "calendars"?</message>
+      <short>calandars</short>
+    </rule>
+    <rule id="EN_SOFT_CHOSEN_MISS" name="choosen soft">
+      <pattern>
+        <token>choosen</token>
+      </pattern>
+      <message>Did you mean "chosen"?</message>
+      <short>choosen</short>
+    </rule>
+    <rule id="EN_SOFT_CHOICE_MISS" name="choise soft">
+      <pattern>
+        <token>choise</token>
+      </pattern>
+      <message>Did you mean "choice"?</message>
+      <short>choise</short>
+    </rule>
+    <rule id="EN_SOFT_CHOICES_MISS" name="choises soft">
+      <pattern>
+        <token>choises</token>
+      </pattern>
+      <message>Did you mean "choices"?</message>
+      <short>choises</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASION_MISS2" name="ocassion soft">
+      <pattern>
+        <token>ocassion</token>
+      </pattern>
+      <message>Did you mean "occasion"?</message>
+      <short>ocassion</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASIONS_MISS2" name="ocassions soft">
+      <pattern>
+        <token>ocassions</token>
+      </pattern>
+      <message>Did you mean "occasions"?</message>
+      <short>ocassions</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASIONAL_MISS2" name="ocassional soft">
+      <pattern>
+        <token>ocassional</token>
+      </pattern>
+      <message>Did you mean "occasional"?</message>
+      <short>ocassional</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASIONALLY_MISS2" name="ocassionally soft">
+      <pattern>
+        <token>ocassionally</token>
+      </pattern>
+      <message>Did you mean "occasionally"?</message>
+      <short>ocassionally</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

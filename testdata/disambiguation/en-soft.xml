@@ -4335,4 +4335,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCORE" name="immunize iotcore">
+    <pattern>
+      <token>iotcore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTCORE_CAPS" name="immunize IoTCore">
+    <pattern>
+      <token>IoTCore</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEVENTS" name="immunize iotevents">
+    <pattern>
+      <token>iotevents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEVENTS_CAPS" name="immunize IoTEvents">
+    <pattern>
+      <token>IoTEvents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GREENGRASS" name="immunize greengrass">
+    <pattern>
+      <token>greengrass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GREENGRASS_CAPS" name="immunize Greengrass">
+    <pattern>
+      <token>Greengrass</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

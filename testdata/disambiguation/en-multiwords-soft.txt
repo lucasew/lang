@@ -456,3 +456,6 @@ Basalt Peak RegionNNP
 Andesite Peak RegionNNP
 Rhyolite Peak RegionNNP
 Obsidian Peak RegionNNP
+Granite Peak RegionNNP
+Marble Peak RegionNNP
+Slate Peak RegionNNP

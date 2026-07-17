@@ -2803,5 +2803,29 @@
       <message>Jargon; name comparative bulk estimation instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_STORY_POINTS" name="story points soft picky">
+      <pattern>
+        <token>story</token>
+        <token>points</token>
+      </pattern>
+      <message>Jargon; name relative effort units instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VELOCITY_CHART" name="velocity chart soft picky">
+      <pattern>
+        <token>velocity</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name completed-points trend tracking instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FIBONACCI_SIZING" name="fibonacci sizing soft picky">
+      <pattern>
+        <token>fibonacci</token>
+        <token>sizing</token>
+      </pattern>
+      <message>Jargon; name nonlinear relative estimate scale instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
