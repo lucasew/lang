@@ -2360,5 +2360,29 @@
       <message>Jargon; name an encapsulate-the-request object instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_STATE_PATTERN" name="state pattern soft picky">
+      <pattern>
+        <token>state</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name behavior-by-current-mode objects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEMPLATE_METHOD" name="template method soft picky">
+      <pattern>
+        <token>template</token>
+        <token>method</token>
+      </pattern>
+      <message>Jargon; name a fixed-steps overridable skeleton instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FLYWEIGHT_PATTERN" name="flyweight pattern soft picky">
+      <pattern>
+        <token>flyweight</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name shared fine-grained immutable data instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

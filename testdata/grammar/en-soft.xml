@@ -8807,6 +8807,76 @@
       <message>Did you mean "vegetable"?</message>
       <short>vegatable</short>
     </rule>
+    <rule id="EN_SOFT_SURPRISED_MISS2" name="suprised soft">
+      <pattern>
+        <token>suprised</token>
+      </pattern>
+      <message>Did you mean "surprised"?</message>
+      <short>suprised</short>
+    </rule>
+    <rule id="EN_SOFT_SURPRISING_MISS" name="suprising soft">
+      <pattern>
+        <token>suprising</token>
+      </pattern>
+      <message>Did you mean "surprising"?</message>
+      <short>suprising</short>
+    </rule>
+    <rule id="EN_SOFT_SUPPRESSED_MISS" name="surpressed soft">
+      <pattern>
+        <token>surpressed</token>
+      </pattern>
+      <message>Did you mean "suppressed"?</message>
+      <short>surpressed</short>
+    </rule>
+    <rule id="EN_SOFT_UNNECESSARILY_MISS2" name="unneccessarily soft">
+      <pattern>
+        <token>unneccessarily</token>
+      </pattern>
+      <message>Did you mean "unnecessarily"?</message>
+      <short>unneccessarily</short>
+    </rule>
+    <rule id="EN_SOFT_VACUUM_MISS3" name="vaccume soft">
+      <pattern>
+        <token>vaccume</token>
+      </pattern>
+      <message>Did you mean "vacuum"?</message>
+      <short>vaccume</short>
+    </rule>
+    <rule id="EN_SOFT_VEGETABLES_MISS" name="vegatables soft">
+      <pattern>
+        <token>vegatables</token>
+      </pattern>
+      <message>Did you mean "vegetables"?</message>
+      <short>vegatables</short>
+    </rule>
+    <rule id="EN_SOFT_VICIOUS_MISS" name="visious soft">
+      <pattern>
+        <token>visious</token>
+      </pattern>
+      <message>Did you mean "vicious"?</message>
+      <short>visious</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMMODATE_MISS3" name="acommodate soft">
+      <pattern>
+        <token>acommodate</token>
+      </pattern>
+      <message>Did you mean "accommodate"?</message>
+      <short>acommodate</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMPLISH_MISS" name="acomplish soft">
+      <pattern>
+        <token>acomplish</token>
+      </pattern>
+      <message>Did you mean "accomplish"?</message>
+      <short>acomplish</short>
+    </rule>
+    <rule id="EN_SOFT_ACROSS_MISS" name="accross soft">
+      <pattern>
+        <token>accross</token>
+      </pattern>
+      <message>Did you mean "across"?</message>
+      <short>accross</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

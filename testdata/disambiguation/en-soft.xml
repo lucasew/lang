@@ -3687,4 +3687,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CODEARTIFACT" name="immunize codeartifact">
+    <pattern>
+      <token>codeartifact</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEARTIFACT_CAPS" name="immunize CodeArtifact">
+    <pattern>
+      <token>CodeArtifact</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEGURU" name="immunize codeguru">
+    <pattern>
+      <token>codeguru</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEGURU_CAPS" name="immunize CodeGuru">
+    <pattern>
+      <token>CodeGuru</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEWHISPERER" name="immunize codewhisperer">
+    <pattern>
+      <token>codewhisperer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEWHISPERER_CAPS" name="immunize CodeWhisperer">
+    <pattern>
+      <token>CodeWhisperer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -402,3 +402,6 @@ Ivory Corridor RegionNNP
 Jade Corridor RegionNNP
 Pearl Corridor RegionNNP
 Ruby Corridor RegionNNP
+Diamond Corridor RegionNNP
+Emerald Corridor RegionNNP
+Opal Corridor RegionNNP
