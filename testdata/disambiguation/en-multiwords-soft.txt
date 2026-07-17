@@ -474,3 +474,6 @@ Pumice Summit RegionNNP
 Ash Summit RegionNNP
 Scoria Summit RegionNNP
 Tuff Summit RegionNNP
+Basalt Summit RegionNNP
+Andesite Summit RegionNNP
+Rhyolite Summit RegionNNP

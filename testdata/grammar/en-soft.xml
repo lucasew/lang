@@ -10487,6 +10487,76 @@
       <message>Did you mean "enough"?</message>
       <short>enuf</short>
     </rule>
+    <rule id="EN_SOFT_ENOUGH_MISS2" name="enogh soft">
+      <pattern>
+        <token>enogh</token>
+      </pattern>
+      <message>Did you mean "enough"?</message>
+      <short>enogh</short>
+    </rule>
+    <rule id="EN_SOFT_ENOUGH_MISS3" name="enoug soft">
+      <pattern>
+        <token>enoug</token>
+      </pattern>
+      <message>Did you mean "enough"?</message>
+      <short>enoug</short>
+    </rule>
+    <rule id="EN_SOFT_EXAMPLE_MISS2" name="exampe soft">
+      <pattern>
+        <token>exampe</token>
+      </pattern>
+      <message>Did you mean "example"?</message>
+      <short>exampe</short>
+    </rule>
+    <rule id="EN_SOFT_EXAMPLE_MISS3" name="exaple soft">
+      <pattern>
+        <token>exaple</token>
+      </pattern>
+      <message>Did you mean "example"?</message>
+      <short>exaple</short>
+    </rule>
+    <rule id="EN_SOFT_FRIEND_MISS3" name="frend soft">
+      <pattern>
+        <token>frend</token>
+      </pattern>
+      <message>Did you mean "friend"?</message>
+      <short>frend</short>
+    </rule>
+    <rule id="EN_SOFT_HOWEVER_MISS" name="howver soft">
+      <pattern>
+        <token>howver</token>
+      </pattern>
+      <message>Did you mean "however"?</message>
+      <short>howver</short>
+    </rule>
+    <rule id="EN_SOFT_INCLUDE_MISS" name="inculde soft">
+      <pattern>
+        <token>inculde</token>
+      </pattern>
+      <message>Did you mean "include"?</message>
+      <short>inculde</short>
+    </rule>
+    <rule id="EN_SOFT_INFORMATION_MISS2" name="informtion soft">
+      <pattern>
+        <token>informtion</token>
+      </pattern>
+      <message>Did you mean "information"?</message>
+      <short>informtion</short>
+    </rule>
+    <rule id="EN_SOFT_INSTEAD_MISS3" name="instaed soft">
+      <pattern>
+        <token>instaed</token>
+      </pattern>
+      <message>Did you mean "instead"?</message>
+      <short>instaed</short>
+    </rule>
+    <rule id="EN_SOFT_MAYBE_MISS" name="mabye soft">
+      <pattern>
+        <token>mabye</token>
+      </pattern>
+      <message>Did you mean "maybe"?</message>
+      <short>mabye</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

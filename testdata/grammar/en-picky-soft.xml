@@ -2947,5 +2947,29 @@
       <message>Jargon; name end-to-end delivery flow mapping instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_REACTION_TIME" name="reaction time soft picky">
+      <pattern>
+        <token>reaction</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name delay before work starts after a signal.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IDLE_TIME" name="idle time soft picky">
+      <pattern>
+        <token>idle</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name unused capacity waiting duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SETUP_TIME" name="setup time soft picky">
+      <pattern>
+        <token>setup</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name changeover preparation duration instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

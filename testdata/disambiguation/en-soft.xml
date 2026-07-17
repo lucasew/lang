@@ -4551,4 +4551,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMQUERY" name="immunize timestreamquery">
+    <pattern>
+      <token>timestreamquery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMQUERY_CAPS" name="immunize TimestreamQuery">
+    <pattern>
+      <token>TimestreamQuery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMWRITE" name="immunize timestreamwrite">
+    <pattern>
+      <token>timestreamwrite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAMWRITE_CAPS" name="immunize TimestreamWrite">
+    <pattern>
+      <token>TimestreamWrite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAIN" name="immunize managedblockchain">
+    <pattern>
+      <token>managedblockchain</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAIN_CAPS" name="immunize ManagedBlockchain">
+    <pattern>
+      <token>ManagedBlockchain</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
