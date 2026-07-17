@@ -43,6 +43,7 @@ Options:
   --list-rules             list registered rule IDs for -l language
   --data-dir DIR           soft data root (grammar + false-friends soft files)
   --fail-on LEVEL          lint/sarif fail threshold: error|warning|note (default error)
+  -r, --recursive          recurse into directories when linting paths
   --doctor                 environment / self-check diagnostics
   --version                print version
   -h, --help               this help
@@ -156,6 +157,13 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 	files := opts.GetFilenames()
 	if len(files) == 0 {
 		files = []string{""} // stdin
+	} else {
+		expanded, err := ExpandInputPaths(files, opts.Recursive)
+		if err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
+		files = expanded
 	}
 
 	// Multi-file: process each path; aggregate exit severity.

@@ -65,6 +65,9 @@ func (h *LanguageToolHttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		ct = "text/plain; charset=utf-8"
 	}
 	w.Header().Set("Content-Type", ct)
+	// Soft discovery headers for clients/proxies.
+	w.Header().Set("X-LanguageTool-Software", "LanguageTool-Go")
+	w.Header().Set("X-LanguageTool-API-Version", "1")
 	w.WriteHeader(status)
 	_, _ = io.WriteString(w, res.Body)
 }
