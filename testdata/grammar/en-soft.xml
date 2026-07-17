@@ -1025,6 +1025,53 @@
       <short>anyways</short>
     </rule>
   </category>
+  <category id="CASING" name="Capitalization">
+    <rule id="EN_SOFT_LOWERCASE_I" name="lowercase i pronoun">
+      <pattern>
+        <token>i</token>
+      </pattern>
+      <message>Did you mean "I"?</message>
+      <short>casing</short>
+    </rule>
+    <rule id="EN_SOFT_LOWERCASE_IM" name="lowercase im">
+      <pattern>
+        <token>im</token>
+      </pattern>
+      <message>Did you mean "I'm"?</message>
+      <short>casing</short>
+    </rule>
+    <rule id="EN_SOFT_LOWERCASE_IVE" name="lowercase ive">
+      <pattern>
+        <token>ive</token>
+      </pattern>
+      <message>Did you mean "I've"?</message>
+      <short>casing</short>
+    </rule>
+    <rule id="EN_SOFT_LOWERCASE_ID_LIKE" name="lowercase id like">
+      <pattern>
+        <token>id</token>
+        <token>like</token>
+      </pattern>
+      <message>Did you mean "I'd like"?</message>
+      <short>casing</short>
+    </rule>
+    <rule id="EN_SOFT_LOWERCASE_ILL_GO" name="lowercase ill go">
+      <pattern>
+        <token>ill</token>
+        <token>go</token>
+      </pattern>
+      <message>Did you mean "I'll go"?</message>
+      <short>casing</short>
+    </rule>
+    <rule id="EN_SOFT_LOWERCASE_ID_LOVE" name="lowercase id love">
+      <pattern>
+        <token>id</token>
+        <token>love</token>
+      </pattern>
+      <message>Did you mean "I'd love"?</message>
+      <short>casing</short>
+    </rule>
+  </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">
       <pattern>

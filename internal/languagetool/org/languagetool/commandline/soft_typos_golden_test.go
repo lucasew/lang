@@ -1302,6 +1302,60 @@ func TestGolden_ApplySoftEsMXOrdenador(t *testing.T) {
 	require.NotContains(t, out.String(), "ordenador")
 }
 
+func TestGolden_SoftCasingLowercaseI(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"i think so.", "EN_SOFT_LOWERCASE_I", "I"},
+		{"im ready now.", "EN_SOFT_LOWERCASE_IM", "I'm"},
+		{"ive finished work.", "EN_SOFT_LOWERCASE_IVE", "I've"},
+		{"id like coffee.", "EN_SOFT_LOWERCASE_ID_LIKE", "I'd like"},
+		{"ill go later.", "EN_SOFT_LOWERCASE_ILL_GO", "I'll go"},
+		{"id love to join.", "EN_SOFT_LOWERCASE_ID_LOVE", "I'd love"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "typographical", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftLowercaseI(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "i think this works.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "I think")
+	require.NotContains(t, out.String(), "i think")
+}
+
+func TestGolden_SoftStyleMetaViaListRules(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "en"))
+	out := buf.String()
+	// SoftRuleMeta classifies these for list-rules columns
+	require.Contains(t, out, "EN_SOFT_LOWERCASE_I\tCASING\t")
+	require.Contains(t, out, "EN_SOFT_THE_THE\tSTYLE\t")
+	var us bytes.Buffer
+	require.NoError(t, CoreListRules(&us, "en-US"))
+	require.Contains(t, us.String(), "EN_SOFT_COLOUR_US\tTYPOS\t")
+}
+
 func TestGolden_SoftInformalForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string

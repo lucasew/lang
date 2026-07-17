@@ -326,4 +326,89 @@
       <translation lang="en">loss / damage</translation>
     </rule>
   </rulegroup>
+
+  <rulegroup id="COLLEGE">
+    <rule>
+      <pattern lang="en">
+        <token>college</token>
+      </pattern>
+      <translation lang="fr">université / faculté</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>collège</token>
+      </pattern>
+      <translation lang="en">middle school / secondary school</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="LOCATION">
+    <rule>
+      <pattern lang="en">
+        <token>location</token>
+      </pattern>
+      <translation lang="fr">emplacement / lieu</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>location</token>
+      </pattern>
+      <translation lang="en">rental / hire</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="LECTURE">
+    <rule>
+      <pattern lang="en">
+        <token>lecture</token>
+      </pattern>
+      <translation lang="fr">cours magistral</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>lecture</token>
+      </pattern>
+      <translation lang="en">reading</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="FIGURE">
+    <rule>
+      <pattern lang="en">
+        <token>figure</token>
+      </pattern>
+      <translation lang="fr">chiffre / personnage</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>figure</token>
+      </pattern>
+      <translation lang="en">face</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="EXIT">
+    <rule>
+      <pattern lang="en">
+        <token>exit</token>
+      </pattern>
+      <translation lang="es">salida</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>éxito</token>
+      </pattern>
+      <translation lang="en">success</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CONSTIPATION">
+    <rule>
+      <pattern lang="en">
+        <token>constipated</token>
+      </pattern>
+      <translation lang="pt">com prisão de ventre</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>constipado</token>
+      </pattern>
+      <translation lang="en">having a cold</translation>
+    </rule>
+  </rulegroup>
 </rules>

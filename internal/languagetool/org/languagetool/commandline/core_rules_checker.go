@@ -496,17 +496,23 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
 		_, _ = fmt.Fprintf(w, "soft grammar files: %d\n", softN)
 		// Regional soft spelling packs (loaded only for matching lang codes).
-		for _, name := range []string{
+		regional := []string{
 			"en-US-soft.xml", "en-GB-soft.xml",
 			"pt-BR-soft.xml", "pt-PT-soft.xml",
 			"es-MX-soft.xml", "es-ES-soft.xml",
 			"de-CH-soft.xml", "de-AT-soft.xml",
 			"fr-CA-soft.xml",
-		} {
+		}
+		regionalN := 0
+		for _, name := range regional {
 			p := filepath.Join(gdir, name)
 			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				regionalN++
 				_, _ = fmt.Fprintf(w, "soft spelling pack: %s\n", p)
 			}
+		}
+		if regionalN > 0 {
+			_, _ = fmt.Fprintf(w, "regional soft packs: %d\n", regionalN)
 		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)

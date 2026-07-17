@@ -37,24 +37,16 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 			strings.Contains(id, "TYPOGRAPHY") || strings.Contains(id, "SPACE_BEFORE") {
 			return "TYPOGRAPHY", "Typography", "typographical", SoftRuleDescription(ruleID)
 		}
-		if strings.Contains(id, "KIND_OF") || strings.Contains(id, "LITERALLY") ||
-			strings.Contains(id, "VERY_UNIQUE") || strings.Contains(id, "IN_ORDER_TO") ||
-			strings.Contains(id, "DUE_TO_THE_FACT") || strings.Contains(id, "POINT_IN_TIME") ||
-			strings.Contains(id, "IN_THE_EVENT") || strings.Contains(id, "END_RESULT") ||
-			strings.Contains(id, "PAST_HISTORY") || strings.Contains(id, "FREE_GIFT") ||
-			strings.Contains(id, "COMPLETELY_ELIMINATE") || strings.Contains(id, "DIFFERENT_THAN") ||
-			strings.Contains(id, "EACH_AND_EVERY") || strings.Contains(id, "FIRST_AND_FOREMOST") ||
-			strings.Contains(id, "BASIC_FUNDAMENTALS") || strings.Contains(id, "GOES_WITHOUT_SAYING") ||
-			strings.Contains(id, "THESE_ONES") || strings.Contains(id, "REASON_IS_BECAUSE") ||
-			strings.Contains(id, "WHETHER_OR_NOT") || strings.Contains(id, "ACTUAL_FACT") ||
-			strings.Contains(id, "TRUE_FACT") || strings.Contains(id, "ADVANCE_PLANNING") ||
-			strings.Contains(id, "CLOSE_PROXIMITY") || strings.Contains(id, "FUTURE_PLANS") ||
-			strings.Contains(id, "UNEXPECTED_SURPRISE") || strings.Contains(id, "REVERT_BACK") ||
-			strings.Contains(id, "REPEAT_AGAIN") || strings.Contains(id, "FINAL_OUTCOME") ||
-			strings.Contains(id, "GENERAL_CONSENSUS") || strings.Contains(id, "PERSONAL_OPINION") ||
-			strings.Contains(id, "COMPLETE_STOP") || strings.Contains(id, "ABSOLUTELY_ESSENTIAL") ||
-			strings.Contains(id, "EXACTLY_THE_SAME") || strings.Contains(id, "CURRENTLY_IN_PROGRESS") ||
-			strings.Contains(id, "_STYLE") {
+		// Regional soft packs: …_US / …_GB / …_BR / …_MX / …
+		if softRegionalTypoID(id) {
+			return "TYPOS", "Possible Typo", "misspelling", SoftRuleDescription(ruleID)
+		}
+		if strings.Contains(id, "CASING") || strings.Contains(id, "LOWERCASE_I") ||
+			strings.Contains(id, "UPPERCASE") || strings.HasSuffix(id, "_LOWER_I") ||
+			strings.Contains(id, "SENTENCE_START") {
+			return "CASING", "Capitalization", "typographical", SoftRuleDescription(ruleID)
+		}
+		if softStyleID(id) {
 			return "STYLE", "Style", "style", SoftRuleDescription(ruleID)
 		}
 		return "GRAMMAR", "Grammar", "grammar", SoftRuleDescription(ruleID)
@@ -143,11 +135,64 @@ func isSoftFalseFriendGroupID(id string) bool {
 	switch id {
 	case "ABILITY", "GIFT", "ACTUAL", "LIBRARY", "EVENTUAL", "BECOME",
 		"EMBARRASSED", "PARENTS", "SYMPATHIC", "FABRIC", "ARGUMENT",
-		"SENSIBLE", "CONSTIPATED", "PRESERVATIVE", "EVENTUALLY":
+		"SENSIBLE", "CONSTIPATED", "PRESERVATIVE", "EVENTUALLY",
+		"ROMAN", "CARPET", "ASSIST", "DECEPTION", "BRAVE", "MIST",
+		"CHEMIST", "PREFIX", "COLLEGE", "LOCATION", "LECTURE", "FIGURE",
+		"EXIT", "CONSTIPATION":
 		return true
 	default:
 		return false
 	}
+}
+
+// softRegionalTypoID is true for regional soft pack rules (…_US, …_GB, …_BR, …).
+func softRegionalTypoID(id string) bool {
+	for _, suf := range []string{"_US", "_GB", "_BR", "_PT", "_MX", "_ES", "_CH", "_AT", "_CA"} {
+		if strings.HasSuffix(id, suf) {
+			return true
+		}
+	}
+	return false
+}
+
+// softStyleID classifies soft redundancy / informal-style rule IDs.
+func softStyleID(id string) bool {
+	if strings.Contains(id, "_STYLE") || strings.Contains(id, "KIND_OF") ||
+		strings.Contains(id, "LITERALLY") || strings.Contains(id, "VERY_UNIQUE") ||
+		strings.Contains(id, "IN_ORDER_TO") || strings.Contains(id, "DUE_TO_THE_FACT") ||
+		strings.Contains(id, "POINT_IN_TIME") || strings.Contains(id, "IN_THE_EVENT") ||
+		strings.Contains(id, "END_RESULT") || strings.Contains(id, "PAST_HISTORY") ||
+		strings.Contains(id, "FREE_GIFT") || strings.Contains(id, "COMPLETELY_ELIMINATE") ||
+		strings.Contains(id, "DIFFERENT_THAN") || strings.Contains(id, "EACH_AND_EVERY") ||
+		strings.Contains(id, "FIRST_AND_FOREMOST") || strings.Contains(id, "BASIC_FUNDAMENTALS") ||
+		strings.Contains(id, "GOES_WITHOUT_SAYING") || strings.Contains(id, "THESE_ONES") ||
+		strings.Contains(id, "REASON_IS_BECAUSE") || strings.Contains(id, "WHETHER_OR_NOT") ||
+		strings.Contains(id, "ACTUAL_FACT") || strings.Contains(id, "TRUE_FACT") ||
+		strings.Contains(id, "ADVANCE_PLANNING") || strings.Contains(id, "CLOSE_PROXIMITY") ||
+		strings.Contains(id, "FUTURE_PLANS") || strings.Contains(id, "UNEXPECTED_SURPRISE") ||
+		strings.Contains(id, "REVERT_BACK") || strings.Contains(id, "REPEAT_AGAIN") ||
+		strings.Contains(id, "FINAL_OUTCOME") || strings.Contains(id, "GENERAL_CONSENSUS") ||
+		strings.Contains(id, "PERSONAL_OPINION") || strings.Contains(id, "COMPLETE_STOP") ||
+		strings.Contains(id, "ABSOLUTELY_ESSENTIAL") || strings.Contains(id, "EXACTLY_THE_SAME") ||
+		strings.Contains(id, "CURRENTLY_IN_PROGRESS") || strings.Contains(id, "ADDED_BONUS") ||
+		strings.Contains(id, "BRIEF_MOMENT") || strings.Contains(id, "JOIN_TOGETHER") ||
+		strings.Contains(id, "PLAN_AHEAD") || strings.Contains(id, "STILL_REMAINS") ||
+		strings.Contains(id, "CIRCLE_AROUND") || strings.Contains(id, "RETURN_BACK") ||
+		strings.Contains(id, "GOTTA") || strings.Contains(id, "WANNA") ||
+		strings.Contains(id, "GONNA") || strings.Contains(id, "PROLLY") ||
+		strings.Contains(id, "DEFFO") || strings.Contains(id, "BASICALLY") ||
+		strings.Contains(id, "ACTUALLY_ACTUALLY") || strings.Contains(id, "HONESTLY_HONESTLY") ||
+		strings.Contains(id, "REALLY_REALLY") || strings.Contains(id, "VERY_VERY") ||
+		strings.Contains(id, "JUST_JUST") || strings.Contains(id, "THE_THE") ||
+		strings.Contains(id, "AND_AND") || strings.Contains(id, "OF_OF") ||
+		strings.Contains(id, "TO_TO") || strings.Contains(id, "IN_IN") ||
+		strings.Contains(id, "ON_ON") || strings.Contains(id, "FOR_FOR") ||
+		strings.Contains(id, "WITH_WITH") || strings.Contains(id, "A_A") ||
+		strings.Contains(id, "SO_SO") || strings.Contains(id, "IRREGARDLESS") ||
+		strings.Contains(id, "SUPPOSABLY") || strings.Contains(id, "ANYWAYS") {
+		return true
+	}
+	return false
 }
 
 // SoftRuleLangHint infers a language code from a rule ID prefix (soft fallback).

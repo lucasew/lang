@@ -62,6 +62,16 @@ func TestGolden_FalseFriends(t *testing.T) {
 		{"de", "en", "Das ist Mist.", "MIST", "manure / nonsense"},
 		{"en", "pt", "Prejudice hurts all.", "PREFIX", "preconceito"},
 		{"pt", "en", "Há prejuízo financeiro.", "PREFIX", "loss / damage"},
+		{"en", "fr", "I attend college.", "COLLEGE", "université / faculté"},
+		{"fr", "en", "Le collège est grand.", "COLLEGE", "middle school / secondary school"},
+		{"en", "fr", "A good location.", "LOCATION", "emplacement / lieu"},
+		{"fr", "en", "La location est chère.", "LOCATION", "rental / hire"},
+		{"en", "fr", "A long lecture.", "LECTURE", "cours magistral"},
+		{"fr", "en", "La lecture est utile.", "LECTURE", "reading"},
+		{"en", "es", "Take the exit now.", "EXIT", "salida"},
+		{"es", "en", "Fue un gran éxito.", "EXIT", "success"},
+		{"en", "pt", "He is constipated.", "CONSTIPATION", "com prisão de ventre"},
+		{"pt", "en", "Estou constipado hoje.", "CONSTIPATION", "having a cold"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule+"_"+tc.lang+"_"+tc.mother, func(t *testing.T) {

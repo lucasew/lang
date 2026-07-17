@@ -57,6 +57,9 @@ func TestCoreDoctor(t *testing.T) {
 		if strings.Contains(out, "fr-CA-soft.xml") {
 			require.Contains(t, out, "fr-CA soft smoke:")
 		}
+		if strings.Contains(out, "soft spelling pack:") {
+			require.Contains(t, out, "regional soft packs:")
+		}
 	}
 }
 
