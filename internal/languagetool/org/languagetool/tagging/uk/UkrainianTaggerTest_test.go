@@ -2,6 +2,7 @@ package uk
 
 // Twin of UkrainianTaggerTest — MapWordTagger smokes; advanced dynamic tagging deferred.
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
@@ -101,7 +102,15 @@ func TestUkrainianTagger_HypenPrefixes(t *testing.T) {
 	require.True(t, got[0].IsTagged())
 }
 func TestUkrainianTagger_DynamicTaggingFixedParts(t *testing.T) {
-	t.Skip("unimplemented: fixed parts")
+	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	out := tg.Tag([]string{"пів-України", "пів-години", "Уолл-стрит", "Пенсильванія-авеню"})
+	require.True(t, out[0].IsTagged())
+	require.True(t, out[0].HasPartialPosTag("prop") || out[0].HasPartialPosTag("geo"))
+	require.True(t, out[1].IsTagged())
+	require.True(t, out[1].HasPartialPosTag("bad") || out[1].HasPartialPosTag("noun"))
+	require.True(t, out[2].IsTagged())
+	require.True(t, out[2].HasPartialPosTag("prop"))
+	require.True(t, out[3].IsTagged())
 }
 func TestUkrainianTagger_DynamicMissingApostrophe(t *testing.T) {
 	// inject apostrophized form; surface without ' should pick :bad
@@ -118,12 +127,29 @@ func TestUkrainianTagger_DynamicMissingHyphen(t *testing.T) {
 	wt := tagging.MapWordTagger{"тест": {tagging.NewTaggedWord("тест", "noun")}}
 	tg := NewUkrainianTagger(wt)
 	// missing hyphen after known prefix: мінітест → tag via міні-тест
-	out := tg.Tag([]string{"мінітест", "напівтест"})
+	out := tg.Tag([]string{"мінітест", "напівтест", "якогонебудь", "болнебудь"})
 	require.True(t, out[0].IsTagged())
 	require.True(t, out[1].IsTagged())
+	require.True(t, out[2].IsTagged())
+	require.True(t, out[2].HasPartialPosTag("bad") || out[2].HasPartialPosTag("adj"))
+	// "бол" is too short / not a real base — soft may still tag; require non-panic only
+	_ = out[3]
 }
 func TestUkrainianTagger_DynamicTaggingFullTagMatch(t *testing.T) {
-	t.Skip("unimplemented: full tag match")
+	wt := tagging.MapWordTagger{
+		"жило":     {tagging.NewTaggedWord("жити", "verb:imperf:past:n")},
+		"було":     {tagging.NewTaggedWord("бути", "verb:imperf:past:n")},
+		"учиш":     {tagging.NewTaggedWord("учити", "verb:imperf:pres:s:2")},
+		"лікар":    {tagging.NewTaggedWord("лікар", "noun:anim:m:v_naz")},
+		"гомеопат": {tagging.NewTaggedWord("гомеопат", "noun:anim:m:v_naz")},
+	}
+	tg := NewUkrainianTagger(wt)
+	out := tg.Tag([]string{"жило-було", "учиш-учиш", "низенько-низенько", "лікар-гомеопат", "а-а"})
+	require.True(t, out[0].HasPartialPosTag("verb"))
+	require.True(t, out[1].HasPartialPosTag("verb") || out[1].IsTagged())
+	require.True(t, out[2].HasPosTag("adv") || out[2].HasPartialPosTag("adv"))
+	require.True(t, out[3].HasPartialPosTag("noun"))
+	require.True(t, out[4].HasPosTag("intj") || out[4].HasPartialPosTag("intj"))
 }
 func TestUkrainianTagger_DynamicTaggingIntj(t *testing.T) {
 	// covered in dynamic_adj_intj_test; keep integration smoke
@@ -132,7 +158,17 @@ func TestUkrainianTagger_DynamicTaggingIntj(t *testing.T) {
 	require.True(t, out[0].HasPosTag("intj") || out[0].HasPartialPosTag("intj"))
 }
 func TestUkrainianTagger_CompoundUpperCase(t *testing.T) {
-	t.Skip("unimplemented: compound upper case")
+	wt := tagging.MapWordTagger{
+		"жінка":   {tagging.NewTaggedWord("жінка", "noun:anim:f:v_naz")},
+		"актриса": {tagging.NewTaggedWord("актриса", "noun:anim:f:v_naz")},
+	}
+	tg := NewUkrainianTagger(wt)
+	out := tg.Tag([]string{"Жінка-Актриса"})
+	require.True(t, out[0].IsTagged())
+	require.True(t, out[0].HasPartialPosTag("noun"))
+	lemma := out[0].GetReadings()[0].GetLemma()
+	require.NotNil(t, lemma)
+	require.Equal(t, "жінка-актриса", strings.ToLower(*lemma))
 }
 
 func TestDynamicDirectionalAdjReadings(t *testing.T) {

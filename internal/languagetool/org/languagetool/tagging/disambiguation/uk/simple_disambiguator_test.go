@@ -64,3 +64,22 @@ func TestRemoveVmisReadings(t *testing.T) {
 }
 
 func strPtr(s string) *string { return &s }
+
+func TestRemoveDuplicateLemmas(t *testing.T) {
+	dups := map[string][]string{
+		"весь": {"ввесь"},
+	}
+	start := languagetool.NewAnalyzedTokenReadingsList(
+		[]*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil)}, 0)
+	a := atr("весь", [][2]string{
+		{"весь", "adj:m:v_naz:pron:gen"},
+		{"ввесь", "adj:m:v_naz:pron:gen"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, a})
+	d := NewSimpleDisambiguatorFull(nil, dups)
+	out := d.Disambiguate(sent)
+	tok := out.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasAnyLemma("весь"))
+	// ввесь removed
+	require.False(t, tok.HasAnyLemma("ввесь"))
+}

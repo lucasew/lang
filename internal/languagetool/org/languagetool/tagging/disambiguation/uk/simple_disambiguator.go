@@ -47,14 +47,16 @@ func (m *TokenMatcher) Matches(tok *languagetool.AnalyzedToken) bool {
 }
 
 // SimpleDisambiguator ports tagging.disambiguation.uk.SimpleDisambiguator.
-// RemoveMap is inject-friendly (full disambig_remove.txt deferred).
+// RemoveMap / DupsMap are inject-friendly (full resource files deferred).
 type SimpleDisambiguator struct {
 	disambiguation.AbstractDisambiguator
 	RemoveMap map[string]*TokenMatcher
+	// DupsMap: if key lemma is present, remove readings whose lemma is in the value list.
+	DupsMap map[string][]string
 }
 
 func NewSimpleDisambiguator() *SimpleDisambiguator {
-	return &SimpleDisambiguator{RemoveMap: map[string]*TokenMatcher{}}
+	return &SimpleDisambiguator{RemoveMap: map[string]*TokenMatcher{}, DupsMap: map[string][]string{}}
 }
 
 // NewSimpleDisambiguatorWith starts with an explicit remove map.
@@ -62,7 +64,18 @@ func NewSimpleDisambiguatorWith(m map[string]*TokenMatcher) *SimpleDisambiguator
 	if m == nil {
 		m = map[string]*TokenMatcher{}
 	}
-	return &SimpleDisambiguator{RemoveMap: m}
+	return &SimpleDisambiguator{RemoveMap: m, DupsMap: map[string][]string{}}
+}
+
+// NewSimpleDisambiguatorFull sets remove + dups maps.
+func NewSimpleDisambiguatorFull(remove map[string]*TokenMatcher, dups map[string][]string) *SimpleDisambiguator {
+	if remove == nil {
+		remove = map[string]*TokenMatcher{}
+	}
+	if dups == nil {
+		dups = map[string][]string{}
+	}
+	return &SimpleDisambiguator{RemoveMap: remove, DupsMap: dups}
 }
 
 func (d *SimpleDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
@@ -70,7 +83,52 @@ func (d *SimpleDisambiguator) Disambiguate(input *languagetool.AnalyzedSentence)
 		return nil
 	}
 	RemoveRareForms(input, d.RemoveMap)
+	if d != nil {
+		RemoveDuplicateLemmas(input, d.DupsMap)
+	}
 	return input
+}
+
+// RemoveDuplicateLemmas drops secondary lemmas when a preferred lemma is present.
+func RemoveDuplicateLemmas(input *languagetool.AnalyzedSentence, dups map[string][]string) {
+	if input == nil || len(dups) == 0 {
+		return
+	}
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 1; i < len(tokens); i++ {
+		if tokens[i] == nil {
+			continue
+		}
+		readings := tokens[i].GetReadings()
+		present := map[string]struct{}{}
+		for _, r := range readings {
+			if r != nil && r.GetLemma() != nil {
+				present[*r.GetLemma()] = struct{}{}
+			}
+		}
+		toRemove := map[string]struct{}{}
+		for preferred, seconds := range dups {
+			if _, ok := present[preferred]; !ok {
+				continue
+			}
+			for _, s := range seconds {
+				toRemove[s] = struct{}{}
+			}
+		}
+		if len(toRemove) == 0 {
+			continue
+		}
+		copyR := append([]*languagetool.AnalyzedToken(nil), readings...)
+		for j := len(copyR) - 1; j >= 0; j-- {
+			r := copyR[j]
+			if r == nil || r.GetLemma() == nil {
+				continue
+			}
+			if _, ok := toRemove[*r.GetLemma()]; ok {
+				tokens[i].RemoveReading(r, "dis_remove_dups")
+			}
+		}
+	}
 }
 
 // RemoveRareForms strips readings matching RemoveMap (in-place).

@@ -25,4 +25,3 @@ func TestUkrainianTagger_DynamicTaggingPrefixes(t *testing.T) {
 	got := tg.Tag([]string{"супертест"})
 	require.True(t, got[0].IsTagged())
 }
-

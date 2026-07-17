@@ -44,16 +44,15 @@ func DynamicDirectionalAdjReadings(token string) []struct{ Lemma, POS string } {
 }
 
 // MissingHyphenCandidates returns alternate surfaces to try when word is untagged
-// (e.g. insert hyphen after known prefix).
+// (e.g. insert hyphen after known prefix, or before -небудь).
 func MissingHyphenCandidates(token string) []string {
+	if strings.Contains(token, "-") {
+		return nil
+	}
 	lower := strings.ToLower(token)
 	var out []string
 	for _, prefix := range []string{"напів", "пів", "анти", "псевдо", "міні", "віце", "екс"} {
 		if !strings.HasPrefix(lower, prefix) || len(lower) <= len(prefix)+1 {
-			continue
-		}
-		// already hyphenated?
-		if strings.Contains(token, "-") {
 			continue
 		}
 		// insert hyphen after prefix
@@ -69,6 +68,13 @@ func MissingHyphenCandidates(token string) []string {
 		}
 		cand := string(rs[:len(pr)]) + "-" + string(rs[len(pr):])
 		out = append(out, cand)
+	}
+	// indefinite -небудь compounds: якогонебудь → якого-небудь
+	if strings.HasSuffix(lower, "небудь") && len([]rune(lower)) > len([]rune("небудь"))+2 {
+		rs := []rune(token)
+		suf := []rune("небудь")
+		stem := string(rs[:len(rs)-len(suf)])
+		out = append(out, stem+"-небудь")
 	}
 	return out
 }

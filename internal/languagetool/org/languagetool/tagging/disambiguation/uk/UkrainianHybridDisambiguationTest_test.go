@@ -19,7 +19,21 @@ func TestUkrainianHybridDisambiguation_Disambiguator(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorDups
 func TestUkrainianHybridDisambiguation_DisambiguatorDups(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorDups")
+	// inject dups map (full disambig_dups.txt deferred)
+	dups := map[string][]string{"весь": {"ввесь"}}
+	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorFull(nil, dups))
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	p1, l1 := "adj:m:v_naz:pron:gen", "весь"
+	p2, l2 := "adj:m:v_naz:pron:gen", "ввесь"
+	tok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("весь", &p1, &l1),
+		languagetool.NewAnalyzedToken("весь", &p2, &l2),
+	}, 0)
+	out := d.Disambiguate(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok}))
+	require.True(t, out.GetTokensWithoutWhitespace()[1].HasAnyLemma("весь"))
+	require.False(t, out.GetTokensWithoutWhitespace()[1].HasAnyLemma("ввесь"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRetagFemNames

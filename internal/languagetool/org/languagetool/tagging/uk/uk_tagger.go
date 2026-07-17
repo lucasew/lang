@@ -66,6 +66,15 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		if dyn := FixedPartReadings(w); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		for _, tw := range t.TagWord(w) {
 			readings = append(readings, toTok(word, tw))
 		}
@@ -127,6 +136,13 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 					readings = pref
 					break
 				}
+				// -небудь indefinite pronouns (якогонебудь → adj:…:bad)
+				if strings.HasSuffix(strings.ToLower(cand), "-небудь") {
+					if soft := NebudSoftReadings(word, cand); len(soft) > 0 {
+						readings = soft
+						break
+					}
+				}
 				// direct right-of-hyphen dict lookup (мінітест → міні-тест → тест)
 				if i := strings.Index(cand, "-"); i > 0 {
 					right := cand[i+1:]
@@ -148,6 +164,11 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			if np := CompoundNumrPOS(w); np != "" {
 				p, l := np, w
 				readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
+			}
+		}
+		if len(readings) == 0 && strings.Contains(w, "-") {
+			if ft := FullTagMatchReadings(w, t.TagWord); len(ft) > 0 {
+				readings = ft
 			}
 		}
 		if len(readings) == 0 {
