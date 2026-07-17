@@ -11537,6 +11537,76 @@
       <message>Did you mean "protocol"?</message>
       <short>protcol</short>
     </rule>
+    <rule id="EN_SOFT_QUERY_MISS" name="queyr soft">
+      <pattern>
+        <token>queyr</token>
+      </pattern>
+      <message>Did you mean "query"?</message>
+      <short>queyr</short>
+    </rule>
+    <rule id="EN_SOFT_RESPONSE_MISS2" name="reponse soft">
+      <pattern>
+        <token>reponse</token>
+      </pattern>
+      <message>Did you mean "response"?</message>
+      <short>reponse</short>
+    </rule>
+    <rule id="EN_SOFT_REQUEST_MISS" name="requset soft">
+      <pattern>
+        <token>requset</token>
+      </pattern>
+      <message>Did you mean "request"?</message>
+      <short>requset</short>
+    </rule>
+    <rule id="EN_SOFT_RESULT_MISS" name="reuslt soft">
+      <pattern>
+        <token>reuslt</token>
+      </pattern>
+      <message>Did you mean "result"?</message>
+      <short>reuslt</short>
+    </rule>
+    <rule id="EN_SOFT_RETURN_MISS" name="reutrn soft">
+      <pattern>
+        <token>reutrn</token>
+      </pattern>
+      <message>Did you mean "return"?</message>
+      <short>reutrn</short>
+    </rule>
+    <rule id="EN_SOFT_SCRIPT_MISS" name="scirpt soft">
+      <pattern>
+        <token>scirpt</token>
+      </pattern>
+      <message>Did you mean "script"?</message>
+      <short>scirpt</short>
+    </rule>
+    <rule id="EN_SOFT_SELECT_MISS" name="seelct soft">
+      <pattern>
+        <token>seelct</token>
+      </pattern>
+      <message>Did you mean "select"?</message>
+      <short>seelct</short>
+    </rule>
+    <rule id="EN_SOFT_SEARCH_MISS" name="serach soft">
+      <pattern>
+        <token>serach</token>
+      </pattern>
+      <message>Did you mean "search"?</message>
+      <short>serach</short>
+    </rule>
+    <rule id="EN_SOFT_SERVICE_MISS" name="serivce soft">
+      <pattern>
+        <token>serivce</token>
+      </pattern>
+      <message>Did you mean "service"?</message>
+      <short>serivce</short>
+    </rule>
+    <rule id="EN_SOFT_SERVER_MISS" name="sevrer soft">
+      <pattern>
+        <token>sevrer</token>
+      </pattern>
+      <message>Did you mean "server"?</message>
+      <short>sevrer</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

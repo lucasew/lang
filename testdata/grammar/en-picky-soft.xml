@@ -3280,5 +3280,26 @@
       <message>Jargon; name annual recurring revenue instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TAM" name="tam soft picky">
+      <pattern>
+        <token>tam</token>
+      </pattern>
+      <message>Jargon; name total addressable market instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LTV" name="ltv soft picky">
+      <pattern>
+        <token>ltv</token>
+      </pattern>
+      <message>Jargon; name customer lifetime value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CAC" name="cac soft picky">
+      <pattern>
+        <token>cac</token>
+      </pattern>
+      <message>Jargon; name customer acquisition cost instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

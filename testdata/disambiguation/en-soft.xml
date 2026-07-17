@@ -5091,4 +5091,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_HAZELCAST" name="immunize hazelcast">
+    <pattern>
+      <token>hazelcast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAZELCAST_CAPS" name="immunize Hazelcast">
+    <pattern>
+      <token>Hazelcast</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SCYLLA" name="immunize scylla">
+    <pattern>
+      <token>scylla</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SCYLLA_CAPS" name="immunize Scylla">
+    <pattern>
+      <token>Scylla</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COCKROACHDB" name="immunize cockroachdb">
+    <pattern>
+      <token>cockroachdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COCKROACHDB_CAPS" name="immunize CockroachDB">
+    <pattern>
+      <token>CockroachDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

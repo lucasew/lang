@@ -519,3 +519,6 @@ Carbonatite Summit RegionNNP
 Komatiite Summit RegionNNP
 Harzburgite Summit RegionNNP
 Lherzolite Summit RegionNNP
+Dunite Summit RegionNNP
+Websterite Summit RegionNNP
+Pyroxenite Summit RegionNNP
