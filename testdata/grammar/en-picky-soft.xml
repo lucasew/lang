@@ -2192,5 +2192,29 @@
       <message>Jargon; name a policy and regulation evidence check instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TEST_PYRAMID" name="test pyramid soft picky">
+      <pattern>
+        <token>test</token>
+        <token>pyramid</token>
+      </pattern>
+      <message>Jargon; name a many-unit few-e2e test mix instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEST_DOUBLE" name="test double soft picky">
+      <pattern>
+        <token>test</token>
+        <token>double</token>
+      </pattern>
+      <message>Jargon; name a stand-in collaborator in tests instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOCK_OBJECT" name="mock object soft picky">
+      <pattern>
+        <token>mock</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a behavior-verifying test stand-in instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

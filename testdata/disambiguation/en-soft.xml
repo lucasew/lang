@@ -3435,4 +3435,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SECURITYHUB" name="immunize securityhub">
+    <pattern>
+      <token>securityhub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SECURITYHUB_CAPS" name="immunize SecurityHub">
+    <pattern>
+      <token>SecurityHub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHIELD" name="immunize shield">
+    <pattern>
+      <token>shield</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SHIELD_CAPS" name="immunize Shield">
+    <pattern>
+      <token>Shield</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAFV2" name="immunize wafv2">
+    <pattern>
+      <token>wafv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAFV2_CAPS" name="immunize WAFv2">
+    <pattern>
+      <token>WAFv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

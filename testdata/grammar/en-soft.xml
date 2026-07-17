@@ -8317,6 +8317,76 @@
       <message>Did you mean "opposites"?</message>
       <short>oposites</short>
     </rule>
+    <rule id="EN_SOFT_INFLUENTIAL_MISS2" name="influancial soft">
+      <pattern>
+        <token>influancial</token>
+      </pattern>
+      <message>Did you mean "influential"?</message>
+      <short>influancial</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_MISS3" name="liscense soft">
+      <pattern>
+        <token>liscense</token>
+      </pattern>
+      <message>Did you mean "license"?</message>
+      <short>liscense</short>
+    </rule>
+    <rule id="EN_SOFT_MANUFACTURED_MISS" name="manufatured soft">
+      <pattern>
+        <token>manufatured</token>
+      </pattern>
+      <message>Did you mean "manufactured"?</message>
+      <short>manufatured</short>
+    </rule>
+    <rule id="EN_SOFT_MANUFACTURING_MISS" name="manufaturing soft">
+      <pattern>
+        <token>manufaturing</token>
+      </pattern>
+      <message>Did you mean "manufacturing"?</message>
+      <short>manufaturing</short>
+    </rule>
+    <rule id="EN_SOFT_NECESSARILY_MISS2" name="necesarily soft">
+      <pattern>
+        <token>necesarily</token>
+      </pattern>
+      <message>Did you mean "necessarily"?</message>
+      <short>necesarily</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZED_MISS" name="orginized soft">
+      <pattern>
+        <token>orginized</token>
+      </pattern>
+      <message>Did you mean "organized"?</message>
+      <short>orginized</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZATIONS_MISS" name="orginizations soft">
+      <pattern>
+        <token>orginizations</token>
+      </pattern>
+      <message>Did you mean "organizations"?</message>
+      <short>orginizations</short>
+    </rule>
+    <rule id="EN_SOFT_ORIGINALLY_MISS" name="orignally soft">
+      <pattern>
+        <token>orignally</token>
+      </pattern>
+      <message>Did you mean "originally"?</message>
+      <short>orignally</short>
+    </rule>
+    <rule id="EN_SOFT_PARTICULAR_MISS2" name="paticular soft">
+      <pattern>
+        <token>paticular</token>
+      </pattern>
+      <message>Did you mean "particular"?</message>
+      <short>paticular</short>
+    </rule>
+    <rule id="EN_SOFT_PIERCE_MISS" name="peirce soft">
+      <pattern>
+        <token>peirce</token>
+      </pattern>
+      <message>Did you mean "pierce"?</message>
+      <short>peirce</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

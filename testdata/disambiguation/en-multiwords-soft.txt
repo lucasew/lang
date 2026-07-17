@@ -381,3 +381,6 @@ Culture Corridor RegionNNP
 Green Corridor RegionNNP
 Blue Corridor RegionNNP
 Coastal Corridor RegionNNP
+Silver Corridor RegionNNP
+Industrial Corridor RegionNNP
+River Corridor RegionNNP
