@@ -13917,6 +13917,76 @@
       <message>Did you mean "droppedlinks"?</message>
       <short>droppedlinkss</short>
     </rule>
+    <rule id="EN_SOFT_STARTTIMESTAMP_MISS" name="starttimestampp soft">
+      <pattern>
+        <token>starttimestampp</token>
+      </pattern>
+      <message>Did you mean "starttimestamp"?</message>
+      <short>starttimestampp</short>
+    </rule>
+    <rule id="EN_SOFT_ENDTIMESTAMP_MISS" name="endtimestampp soft">
+      <pattern>
+        <token>endtimestampp</token>
+      </pattern>
+      <message>Did you mean "endtimestamp"?</message>
+      <short>endtimestampp</short>
+    </rule>
+    <rule id="EN_SOFT_SPANCONTEXT_MISS" name="spancontextt soft">
+      <pattern>
+        <token>spancontextt</token>
+      </pattern>
+      <message>Did you mean "spancontext"?</message>
+      <short>spancontextt</short>
+    </rule>
+    <rule id="EN_SOFT_TRACESTATEHEADER_MISS" name="tracestateheaderr soft">
+      <pattern>
+        <token>tracestateheaderr</token>
+      </pattern>
+      <message>Did you mean "tracestateheader"?</message>
+      <short>tracestateheaderr</short>
+    </rule>
+    <rule id="EN_SOFT_TRACEPARENTHEADER_MISS" name="traceparentheaderr soft">
+      <pattern>
+        <token>traceparentheaderr</token>
+      </pattern>
+      <message>Did you mean "traceparentheader"?</message>
+      <short>traceparentheaderr</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTATIONLIBRARY_MISS" name="instrumentationlibraryy soft">
+      <pattern>
+        <token>instrumentationlibraryy</token>
+      </pattern>
+      <message>Did you mean "instrumentationlibrary"?</message>
+      <short>instrumentationlibraryy</short>
+    </rule>
+    <rule id="EN_SOFT_METERPROVIDER_MISS" name="meterproviderr soft">
+      <pattern>
+        <token>meterproviderr</token>
+      </pattern>
+      <message>Did you mean "meterprovider"?</message>
+      <short>meterproviderr</short>
+    </rule>
+    <rule id="EN_SOFT_TRACERPROVIDER_MISS" name="tracerproviderr soft">
+      <pattern>
+        <token>tracerproviderr</token>
+      </pattern>
+      <message>Did you mean "tracerprovider"?</message>
+      <short>tracerproviderr</short>
+    </rule>
+    <rule id="EN_SOFT_LOGGERPROVIDER_MISS" name="loggerproviderr soft">
+      <pattern>
+        <token>loggerproviderr</token>
+      </pattern>
+      <message>Did you mean "loggerprovider"?</message>
+      <short>loggerproviderr</short>
+    </rule>
+    <rule id="EN_SOFT_LOGRECORD_MISS" name="logrecordd soft">
+      <pattern>
+        <token>logrecordd</token>
+      </pattern>
+      <message>Did you mean "logrecord"?</message>
+      <short>logrecordd</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

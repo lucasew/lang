@@ -4060,5 +4060,29 @@
       <message>Jargon; name annual recurring revenue retained over the period instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_PIPELINE_ARR" name="pipeline arr soft picky">
+      <pattern>
+        <token>pipeline</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue in the sales pipeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_QUOTA_ARR" name="quota arr soft picky">
+      <pattern>
+        <token>quota</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue quota instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOST_ARR" name="lost arr soft picky">
+      <pattern>
+        <token>lost</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost in the period instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

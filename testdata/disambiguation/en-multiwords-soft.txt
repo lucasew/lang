@@ -621,3 +621,6 @@ Rhyolite Mesa RegionNNP
 Obsidian Mesa RegionNNP
 Pumice Mesa RegionNNP
 Tuff Mesa RegionNNP
+Dacite Mesa RegionNNP
+Trachyte Mesa RegionNNP
+Phonolite Mesa RegionNNP

@@ -6327,4 +6327,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_COMPILEDCSS" name="immunize compiledcss">
+    <pattern>
+      <token>compiledcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COMPILEDCSS_CAPS" name="immunize CompiledCSS">
+    <pattern>
+      <token>CompiledCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLE9" name="immunize style9">
+    <pattern>
+      <token>style9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLE9_CAPS" name="immunize Style9">
+    <pattern>
+      <token>Style9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XSTYLED" name="immunize xstyled">
+    <pattern>
+      <token>xstyled</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XSTYLED_CAPS" name="immunize XStyled">
+    <pattern>
+      <token>XStyled</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
