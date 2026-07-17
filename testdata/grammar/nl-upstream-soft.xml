@@ -43,6 +43,14 @@
       <message>Wanneer u precies wilt zijn, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
       <short>INSPECIFIEK_5</short>
     </rule>
+    <rule id="INSPECIFIEK_7" name="kunnen gebeuren">
+      <pattern>
+        <token>kunnen</token>
+        <token>gebeuren</token>
+      </pattern>
+      <message>Wanneer u precies wilt zijn, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
+      <short>INSPECIFIEK_7</short>
+    </rule>
   </category>
   <category id="DYSLEXIE" name="Speciale regels m.b.t. dyslexie">
     <rule id="IN_HET_CONTINENT" name="in/op het continent">
@@ -76,6 +84,13 @@
       </pattern>
       <message>'Nou' is spreektaal, in schrijftaal is <suggestion>nu</suggestion> beter.</message>
       <short>NOU</short>
+    </rule>
+    <rule id="DOUWEN" name="Douwen/duwen">
+      <pattern>
+        <token>douwen</token>
+      </pattern>
+      <message>'Douwen' is spreektaal, in schrijftaal is <suggestion>duwen</suggestion> beter.</message>
+      <short>DOUWEN</short>
     </rule>
   </category>
   <category id="GRAMMAR" name="Grammaticaregels">
@@ -129,6 +144,15 @@
       <message>Mogelijke tikfout.</message>
       <short>CIJFERS_IN_WOORD</short>
     </rule>
+    <rule id="OH_O" name="Oh/O">
+      <pattern>
+        <token>oh
+          <exception case_sensitive="yes">OH</exception>
+        </token>
+      </pattern>
+      <message>Meestal wordt dit als 'scherpe, ronde o' uitgesproken, en dan is de correcte spelling <suggestion>o</suggestion>.</message>
+      <short>OH_O</short>
+    </rule>
     <rule id="QUASI_LOS" name="Quasi aan woord vast">
       <pattern>
         <token>quasi</token>
@@ -144,6 +168,33 @@
       </pattern>
       <message>Dit is vast een OCR-fout, waarbij de t als r is gezien.</message>
       <short>TE_WERKWOORD</short>
+    </rule>
+  </category>
+  <category id="OUDERWETS_TO_IMPROVE" name="Regels die verbeterd moeten worden">
+    <rule id="CONDITIE" name="conditie">
+      <pattern>
+        <token>conditie</token>
+      </pattern>
+      <message>Als u een voorwaarde bedoelt kunt u ook beter <suggestion>voorwaarde</suggestion> schrijven.</message>
+      <short>CONDITIE</short>
+    </rule>
+  </category>
+  <category id="FULL_SENTENCES" name="volledige zinnen met fout">
+    <rule id="FULL_SENTENCE_001" name="verkeerde werkwoordvorm">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token postag="BNW:STL:ONV|BYW.*" postag_regexp="yes"></token>
+        <token postag="WKW:TGW:3EP|WKW:VLT:1EP" postag_regexp="yes"></token>
+        <token>de</token>
+        <token min="0" max="2" postag="BNW.*" postag_regexp="yes"></token>
+        <token postag=".*MRV.*" postag_regexp="yes">
+          <exception regexp="yes">[0-9]</exception>
+        </token>
+        <token postag="BNW:STL:ONV|BYW.*" postag_regexp="yes"></token>
+        <token regexp="yes" postag="SENT_END">[.!]</token>
+      </pattern>
+      <message>Dit is vast de verkeerde vorm van het werkwoord.</message>
+      <short>FULL_SENTENCE_001</short>
     </rule>
   </category>
   <category id="OVERIG" name="Diverse regels">

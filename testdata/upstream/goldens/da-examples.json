@@ -58,6 +58,12 @@
       "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
     },
     {
+      "rule": "adj-ube-sin-utr-pos",
+      "text": "Det er et oval køkkenbord.",
+      "suggestion": "ovalt",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
       "rule": "bindestreg_og",
       "text": "De er hus-og haveejere.",
       "suggestion": "hus- og",

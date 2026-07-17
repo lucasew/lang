@@ -2938,9 +2938,33 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "ABIRERU",
+      "text": "浴びれる。",
+      "suggestion": "浴びられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "AIKOTOBA",
       "text": "相言葉",
       "suggestion": "合い言葉",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "AIKURUSII",
+      "text": "愛苦しい。",
+      "suggestion": "愛くるしい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "AINOTE",
+      "text": "合いの手を打つ",
+      "suggestion": "合いの手を入れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "AJIAWASERU",
+      "text": "スリルを味あわせるジェットコースター。",
+      "suggestion": "味わわせる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2950,9 +2974,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "AKARUMI",
+      "text": "真実が明るみになる。",
+      "suggestion": "明るみに出る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ARUKASASERU",
+      "text": "歩かさせる。",
+      "suggestion": "歩かせる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "ASAZUKE",
       "text": "毎朝浅漬けを食べる。",
       "suggestion": "朝漬け",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ASIMOTO",
+      "text": "敵の足元をすくう",
+      "suggestion": "足をすくう",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2968,6 +3010,12 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "BAKYAKUWODASU",
+      "text": "馬脚を出す。",
+      "suggestion": "馬脚を露わす",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "DARASINAI",
       "text": "だらしない。",
       "suggestion": "しだらない",
@@ -2977,6 +3025,18 @@
       "rule": "DEKUNOBOU",
       "text": "木偶の棒。",
       "suggestion": "木偶の坊",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "DERERU",
+      "text": "迷路から出れる。",
+      "suggestion": "出られる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "DOJIWOSURU",
+      "text": "取引でどじをする。",
+      "suggestion": "どじを踏む",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2992,6 +3052,12 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "DOUSI_KOTOGADEKIRU",
+      "text": "暮らすことができる",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "ENAI",
       "text": "会社を辞めざるお得ない",
       "suggestion": "ざるを得ない",
@@ -3001,6 +3067,18 @@
       "rule": "ENHAKINAMONO",
       "text": "縁は奇なもの味なもの。",
       "suggestion": "縁は異",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ERIMOTOWOTADASU",
+      "text": "きちんと襟元を正す",
+      "suggestion": "襟を正す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ESAWOAGERU",
+      "text": "のらねこに餌をあげる。",
+      "suggestion": "餌をやる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3016,9 +3094,51 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "GISINANKIWOIDAKU",
+      "text": "深い疑心暗鬼を抱くこともあった。",
+      "suggestion": "疑心暗鬼を生ず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HANAMIGASAKU",
+      "text": "花見が咲く。",
+      "suggestion": "花実が咲く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "HANANIKAKENAI",
       "text": "鼻にも掛けない。",
       "suggestion": "鼻に掛けない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HANNZAIWOOKASU",
+      "text": "魔が差して犯罪を犯す。",
+      "suggestion": "罪を犯す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HARAGANIEKURIKAERU",
+      "text": "彼の態度には腹が煮え繰り返る。",
+      "suggestion": "腸が煮え繰り返る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HARAWATAGAYOJIRERU",
+      "text": "腸が捩れる。",
+      "suggestion": "腹の皮が捩れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HARAWOKUKURU",
+      "text": "腹を括る。",
+      "suggestion": "腹を据える",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HASIRARERU",
+      "text": "忍者は水の上を走られる。",
+      "suggestion": "走れる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3034,9 +3154,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "HERIKUDARU",
+      "text": "へり下る。",
+      "suggestion": "遜る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "HETENAKANNGAEYASUMUNINITARI",
       "text": "下手な考え休むに似たり。",
       "suggestion": "下手の考え休むに似たり",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HIBUTAWOKITTEOTOSU",
+      "text": "火蓋を切って落とす。",
+      "suggestion": "火蓋を切る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HIGAIWOKOUMURU",
+      "text": "地震で被害を被る。",
+      "suggestion": "被害を受ける",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3046,9 +3184,33 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "HIMAWOMOTEASOBU",
+      "text": "暇をもてあそぶ。",
+      "suggestion": "暇を持て余す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HIONOMITINIMOOTORU",
+      "text": "人の道にも劣る。",
+      "suggestion": "人の道にもとる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "HISSINOKAKUGO",
       "text": "必死の覚悟で飛び込んだ。",
       "suggestion": "決死の覚悟",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HYOUJUNNWOAWASERU",
+      "text": "標準を合わせる。",
+      "suggestion": "照準を合わせる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HYOUTANNKARAKOMAGADERU",
+      "text": "瓢箪から独楽が出る。",
+      "suggestion": "瓢箪から駒が出る",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3058,9 +3220,33 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "IGO",
+      "text": "友人と囲碁を指す。",
+      "suggestion": "囲碁を打つ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "IHATUWOTUGU",
       "text": "遺髪を継ぐ",
       "suggestion": "衣鉢を継ぐ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKARISINTOUNITASSURU",
+      "text": "彼のあやまちに怒り心頭に達することもあった。",
+      "suggestion": "怒り心頭に発する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKERERU",
+      "text": "最短距離で行けれる。",
+      "suggestion": "行ける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKIIWOGU",
+      "text": "生き急ぐ。",
+      "suggestion": "死に急ぐ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3076,9 +3262,21 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "INROUWOWATASU",
+      "text": "後輩に印籠を渡す。",
+      "suggestion": "引導を渡す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "IROGAHENNSYOKUSURU",
       "text": "色が変色する。",
       "suggestion": "変色する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSI",
+      "text": "実力が上の相手に一矢を返す。",
+      "suggestion": "一矢を報いる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3112,9 +3310,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "JINNRYOKUWOTUKUSU",
+      "text": "尽力を尽くす。",
+      "suggestion": "尽力する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "JISINNKAJOU",
       "text": "自身過剰。",
       "suggestion": "自信過剰",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KAHOUHANETEMATE",
+      "text": "家宝は寝て待て。",
+      "suggestion": "果報は寝て待て",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KAIMAKIKU",
+      "text": "晴間に垣間聞く富士山。",
+      "suggestion": "垣間見る",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3124,9 +3340,21 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KAKERERU",
+      "text": "書けれる。",
+      "suggestion": "書ける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KAKIIREDOKI",
       "text": "掻き入れ時。",
       "suggestion": "書き入れ時",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KANNSINNSURU",
+      "text": "彼の話には関心する。",
+      "suggestion": "感心する",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3142,6 +3370,60 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KAOWOUKAGAU",
+      "text": "相手の顔を窺う。",
+      "suggestion": "顔色を窺う",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KASANIKAKARU",
+      "text": "嵩に懸かる。",
+      "suggestion": "傘に懸かる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KASERERU",
+      "text": "小学生でも貸せれる。",
+      "suggestion": "貸せる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KASSAIWOSAKEBU",
+      "text": "いたずらに喝采を叫ぶ。",
+      "suggestion": "快哉を叫ぶ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KATAHIJIHARU",
+      "text": "片肘張って暮らす。",
+      "suggestion": "肩肘張る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KATAKURUSII",
+      "text": "堅苦しい世の中。",
+      "suggestion": "肩苦しい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KATARARERU",
+      "text": "伝説だと語られる。",
+      "suggestion": "語れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KATUWOIRERU",
+      "text": "後輩に喝を入れる。",
+      "suggestion": "活を入れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KAWARARERU",
+      "text": "変わられる。",
+      "suggestion": "変われる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KAZENOUWASA",
       "text": "風の噂で聞いた。",
       "suggestion": "風の便り",
@@ -3154,9 +3436,57 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KERIWOTUKERU",
+      "text": "蹴りをつける。",
+      "suggestion": "けりをつける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KESERERU",
+      "text": "小学生でも消せれる。",
+      "suggestion": "消せる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIGAHURERU",
+      "text": "気が狂れる。",
+      "suggestion": "気が触れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIKERERU",
+      "text": "聞けれる。",
+      "suggestion": "聞ける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KIMARIGAWARUI",
       "text": "気まりが良い。",
       "suggestion": "決まりが良い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIMERERU",
+      "text": "決めれる。",
+      "suggestion": "決められる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIMONIMEIJIRU",
+      "text": "よく肝に命じる。",
+      "suggestion": "肝に銘じる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIRARERU",
+      "text": "ナイフで切られる。",
+      "suggestion": "切れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIRERU",
+      "text": "まだこの服は着れる。",
+      "suggestion": "着られる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3172,15 +3502,39 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KIZUNAGAHUKAI",
+      "text": "私と彼は絆が深いと思う。",
+      "suggestion": "絆が強い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KOBURAGAERI",
       "text": "コブラ返り。",
       "suggestion": "腓返り",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KOKEOROSU",
+      "text": "相手をこけおろす発言。",
+      "suggestion": "扱き下ろす",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KOKOTIYOI",
       "text": "心地良い",
       "suggestion": "心地好い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KONGARAGARU",
+      "text": "頭がこんがらがる。",
+      "suggestion": "こんがらかる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KONNSENNTOWONUKU",
+      "text": "コンセントを抜く。",
+      "suggestion": "プラグを抜く",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3202,9 +3556,21 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KOUBEWOKAIGERU",
+      "text": "よく分からずに頭を傾げる",
+      "suggestion": "首を傾げる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KOUTUUDOME",
       "text": "この道路は交通止めだ。",
       "suggestion": "通行止め",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUJYUUWOAJIWAU",
+      "text": "敗北の苦汁を味わう。",
+      "suggestion": "苦汁を嘗める",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3214,15 +3580,45 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KURERU",
+      "text": "来れる。",
+      "suggestion": "来られる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KUSINOHAGANUKETAYOU",
       "text": "会場は櫛の歯が抜ける。",
       "suggestion": "櫛の歯が欠ける",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "KUTIGURUMAWOAWASERU",
+      "text": "あいつの口車を合わせる。",
+      "suggestion": "口車に乗る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUTIWONIGOSU",
+      "text": "彼を気遣って口を濁す。",
+      "suggestion": "言葉を濁す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "KUTUNUGI",
       "text": "靴脱ぎ。",
       "suggestion": "沓脱ぎ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYOSIKIWOAGERU",
+      "text": "挙式を挙げる",
+      "suggestion": "挙式する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAGASASU",
+      "text": "魔が刺す。",
+      "suggestion": "魔が差す",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3244,9 +3640,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "MATOWOIRU",
+      "text": "彼の意見は的を得る。",
+      "suggestion": "的を射る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAZERERU",
+      "text": "混ぜれる。",
+      "suggestion": "混ぜられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "MAZUSAISYONI",
       "text": "まず最初に卵を割る。",
       "suggestion": "最初",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEHASIGAKIKU",
+      "text": "目鼻が利く。",
+      "suggestion": "目端が利く",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3280,9 +3694,75 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "MEKERERU",
+      "text": "負けれる。",
+      "suggestion": "負けられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIKIWAMERU",
+      "text": "見究める。",
+      "suggestion": "見極める",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIRERU",
+      "text": "見れる。",
+      "suggestion": "見られる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MISERU",
+      "text": "魅せる。",
+      "suggestion": "見せる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MITORERU",
+      "text": "見取れる。",
+      "suggestion": "見蕩れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MORITATERU",
+      "text": "盛り立てる。",
+      "suggestion": "守り立てる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOTOMERERU",
+      "text": "求めれる。",
+      "suggestion": "求められる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOTOZUKU",
+      "text": "事実に基ずく話。",
+      "suggestion": "基づく",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOZUKUTONARUTRANSPO",
+      "text": "海のもずくとなる。",
+      "suggestion": "もくずとなる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "MUSHI",
       "text": "虫の予感が起きた。",
       "suggestion": "虫の知らせ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NAGERERU",
+      "text": "投げれる。",
+      "suggestion": "投げられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NAITEIGAKIMARU",
+      "text": "ようやく内定が決まる。",
+      "suggestion": "内定する",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3292,9 +3772,39 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "NASEBANARU",
+      "text": "成せば成る。",
+      "suggestion": "為せば成る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "NASINOTUBUTE",
       "text": "無しの礫。",
       "suggestion": "梨の礫",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NENNTOUNIIRERU",
+      "text": "安全を念頭に入れる。",
+      "suggestion": "念頭に置く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NERERU",
+      "text": "ぐっすり寝れる。",
+      "suggestion": "寝られる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NETUNIUNASARERU",
+      "text": "熱に魘される。",
+      "suggestion": "熱に浮かされる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NIGERERU",
+      "text": "逃げれる。",
+      "suggestion": "逃げられる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3310,9 +3820,45 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "NINOTETUWOHUMU",
+      "text": "同じ二の轍を踏む。",
+      "suggestion": "轍を踏む",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NIRERU",
+      "text": "煮れる。",
+      "suggestion": "煮られる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NODOGAKAWAKU",
+      "text": "夏は喉が乾く。",
+      "suggestion": "喉が渇く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NOMERERU",
+      "text": "飲めれる。",
+      "suggestion": "飲める",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "NORUKASORUKA",
       "text": "乗るか反るか。",
       "suggestion": "伸るか反る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NOUARUTAKAHATUMEWOkAKUSU",
+      "text": "脳ある鷹は爪を隠す。",
+      "suggestion": "能ある鷹はめを隠す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NO_SURU",
+      "text": "詳細の表示する",
+      "suggestion": "を",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3322,9 +3868,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "OBOERERU",
+      "text": "覚えれる範囲。",
+      "suggestion": "覚えられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "OIKANEMASENN",
       "text": "負いかねません",
       "suggestion": "負いかねます",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OKASASERU",
+      "text": "ここに置かさせる。",
+      "suggestion": "置かせる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OKERERU",
+      "text": "小学生でも置けれる。",
+      "suggestion": "置ける",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3358,6 +3922,12 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "ONWOKISERU",
+      "text": "決して恩を着せる訳ではない",
+      "suggestion": "恩に着せる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "OOBANNHURUMAI",
       "text": "大番振る舞い",
       "suggestion": "椀飯振る舞い",
@@ -3376,6 +3946,12 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "ORIRERU",
+      "text": "降りれる。",
+      "suggestion": "降りられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "OSIKISE",
       "text": "押し着せ",
       "suggestion": "御仕着せ",
@@ -3388,9 +3964,39 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "RIKANIKANNMURIWOTADASU",
+      "text": "李下に冠を正す。",
+      "suggestion": "李下に冠をたたさず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ROUTAINIMUTIUTU",
+      "text": "老体に鞭打つ。",
+      "suggestion": "老骨に鞭打つ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RUINHARUIWOYOBU",
+      "text": "類は類を呼ぶ。",
+      "suggestion": "類は友を呼ぶ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "SAIDAIMORASAZU",
       "text": "最大漏らさず。",
       "suggestion": "細大漏らさず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAIHAIWOHURUU",
+      "text": "会長自ら采配を揮う。",
+      "suggestion": "采配を振る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAKIDORU",
+      "text": "相手の言おうとすることを先取る。",
+      "suggestion": "先取りする",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3430,9 +4036,39 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "SIBUTOI",
+      "text": "渋太い敵だ。",
+      "suggestion": "しぶとい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIITEHAKOTOWOSISONNZURU",
+      "text": "強しては事を仕損ずる。",
+      "suggestion": "急いては事を仕損じる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "SINIMONOGURUI",
       "text": "死に者狂いで勉強する。",
       "suggestion": "死に物狂い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINOGIWOKEZURU",
+      "text": "凌ぎを削る。",
+      "suggestion": "鎬を削る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIRAHANOYAWOATERU",
+      "text": "白羽の矢を当てる。",
+      "suggestion": "白羽の矢が立つ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIROKUROWOTUKERU",
+      "text": "次の戦いで白黒をつける予定だ。",
+      "suggestion": "黒白をつける",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3448,9 +4084,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "SITYUUNIKATUWOERU",
+      "text": "死中に活を得る。",
+      "suggestion": "死中に活を求める",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUBERARERU",
+      "text": "滑られる。",
+      "suggestion": "滑れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "SUBETEITIINN",
       "text": "全て一任する。",
       "suggestion": "一任",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUERERU",
+      "text": "小学生でも吸えれる。",
+      "suggestion": "吸える",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3460,15 +4114,39 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "SUTERERU",
+      "text": "捨てれる。",
+      "suggestion": "捨てられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "SUZAMASII",
       "text": "すざましい勢い。",
       "suggestion": "凄まじい",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "SYABERARERU",
+      "text": "喋られる。",
+      "suggestion": "喋れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOKUSYUGAUGOKU",
+      "text": "触手が動くタイミング。",
+      "suggestion": "食指が動く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "SYOSINNWASURURUBEKARAZU",
       "text": "初心忘るるべからず。",
       "suggestion": "初心忘るべからず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOUGI",
+      "text": "友人と将棋を打つ。",
+      "suggestion": "将棋を指す",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3484,9 +4162,21 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "TABERERU",
+      "text": "高い食品を食べれる。",
+      "suggestion": "食べられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "TADEKUUMUSIMOSUKIZUKI",
       "text": "田で食う虫も好き好き。",
       "suggestion": "蓼食う虫も好き好き",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAITYOUWOKOWASU",
+      "text": "病気になって体調を壊す。",
+      "suggestion": "体調を崩す",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3502,9 +4192,57 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "TIDETIWOARASOU",
+      "text": "血で血を争う縄張り争い。",
+      "suggestion": "血で血を洗う",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TINAMAGUSAI",
+      "text": "血生臭い戦い。",
+      "suggestion": "血腥い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TIRIBAMERU",
+      "text": "散りばめる。",
+      "suggestion": "鏤める",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "TOBUTORIATOWONIGOSAZU",
       "text": "飛ぶ鳥跡を濁さず。",
       "suggestion": "立つ鳥跡を濁さず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOITADASU",
+      "text": "問い正す。",
+      "suggestion": "問い質す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOJIRERU",
+      "text": "閉じれる。",
+      "suggestion": "閉じられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOOZAKERU",
+      "text": "遠避ける。",
+      "suggestion": "遠ざける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TORASASERU",
+      "text": "取らさせる。",
+      "suggestion": "取らせる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TORERERU",
+      "text": "小学生でも取れれる。",
+      "suggestion": "取れる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3520,9 +4258,39 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "TUGERERU",
+      "text": "告げれる。",
+      "suggestion": "告げられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TURERERU",
+      "text": "この場所は釣れれる。",
+      "suggestion": "釣れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UKERERU",
+      "text": "受けれる。",
+      "suggestion": "受けられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "UKIME",
       "text": "浮き目",
       "suggestion": "憂き目",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UNTIKUWOTARERU",
+      "text": "えらそうに薀蓄を垂れる。",
+      "suggestion": "薀蓄を傾ける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "URERERU",
+      "text": "小学生でも売れれる。",
+      "suggestion": "売れる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -3550,15 +4318,69 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "YAKEBOKKURINIHIGATUKU",
+      "text": "焼けぼっくりに火が付く。",
+      "suggestion": "焼けぼっくいに火が付く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YAKIMAWASI",
+      "text": "昔の映画の焼き回し。",
+      "suggestion": "焼き増し",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "YAMAAI",
       "text": "山合い。",
       "suggestion": "山間",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
+      "rule": "YASUMASASERU",
+      "text": "休まさせる。",
+      "suggestion": "休ませる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YAWARAGU",
+      "text": "柔らぐ。",
+      "suggestion": "和らぐ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YOBERERU",
+      "text": "小学生でも呼べれる。",
+      "suggestion": "呼べる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
       "rule": "YOIKOTODARAKE",
       "text": "良い事だらけ",
       "suggestion": "良い事尽くめ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YOKERARERU",
+      "text": "この攻撃は避けれる。",
+      "suggestion": "避けられる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YOMERERU",
+      "text": "小学生でも読めれる。",
+      "suggestion": "読める",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YOMIGAERU",
+      "text": "黄泉返る。",
+      "suggestion": "蘇る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YUDERERU",
+      "text": "茹でれる。",
+      "suggestion": "茹でられる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {

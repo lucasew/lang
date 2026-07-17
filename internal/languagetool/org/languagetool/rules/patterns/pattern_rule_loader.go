@@ -69,15 +69,23 @@ type xmlPattern struct {
 }
 
 type xmlToken struct {
-	Regexp        string `xml:"regexp,attr"`
-	CaseSensitive string `xml:"case_sensitive,attr"`
-	Negate        string `xml:"negate,attr"`
-	Min           string `xml:"min,attr"`
-	Max           string `xml:"max,attr"`
-	Skip          string `xml:"skip,attr"`
-	Postag        string `xml:"postag,attr"`
-	PostagRegexp  string `xml:"postag_regexp,attr"`
-	Content       string `xml:",chardata"`
+	Regexp        string         `xml:"regexp,attr"`
+	CaseSensitive string         `xml:"case_sensitive,attr"`
+	Negate        string         `xml:"negate,attr"`
+	Inflected     string         `xml:"inflected,attr"`
+	Min           string         `xml:"min,attr"`
+	Max           string         `xml:"max,attr"`
+	Skip          string         `xml:"skip,attr"`
+	Postag        string         `xml:"postag,attr"`
+	PostagRegexp  string         `xml:"postag_regexp,attr"`
+	Content       string         `xml:",chardata"`
+	Exceptions    []xmlException `xml:"exception"`
+}
+
+type xmlException struct {
+	Regexp  string `xml:"regexp,attr"`
+	Negate  string `xml:"negate,attr"`
+	Content string `xml:",chardata"`
 }
 
 func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*AbstractPatternRule, error) {
@@ -156,7 +164,8 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 	content := strings.TrimSpace(xt.Content)
 	cs := strings.EqualFold(xt.CaseSensitive, "yes")
 	re := strings.EqualFold(xt.Regexp, "yes")
-	pt := NewPatternToken(content, cs, re, false)
+	inflected := strings.EqualFold(xt.Inflected, "yes")
+	pt := NewPatternToken(content, cs, re, inflected)
 	if strings.EqualFold(xt.Negate, "yes") {
 		pt.SetNegation(true)
 	}
@@ -180,6 +189,20 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 			PosTag: xt.Postag,
 			Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
 		})
+	}
+	// Soft subset: first simple string exception only (full and-groups later).
+	for _, ex := range xt.Exceptions {
+		exc := strings.TrimSpace(ex.Content)
+		if exc == "" {
+			continue
+		}
+		// LT negate="yes" on exception means "exception that must match" is inverted;
+		// soft path only implements positive exceptions (surface must not match).
+		if strings.EqualFold(ex.Negate, "yes") {
+			continue
+		}
+		pt.SetStringPosException(exc, strings.EqualFold(ex.Regexp, "yes"))
+		break
 	}
 	return pt
 }

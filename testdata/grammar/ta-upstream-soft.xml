@@ -19,6 +19,15 @@
       <message>'செய்த' போன்ற பெயரெச்சம்பின் சேர்த்தே எழுதலாம்: <suggestion>\1\2</suggestion></message>
       <short>சேர்த்து எழுதலாம்</short>
     </rule>
+    <rule id="ERRa" name="பெயர்ச்சொல் + 'கு' உருபு + ஏற்ற">
+      <pattern>
+        <token regexp="yes">(([ஃ-ஹ][ா-்]?)*)[கற]்கேற்ற
+          <exception regexp="yes">(([ஃ-ஹ][ா-்]?)*)[க-வ]க்கேற்ற</exception>
+        </token>
+      </pattern>
+      <message>'தகுந்த' என்னும் பொருளில் இடம்விட்டு எழுதப்படுகிறது: <suggestion> ஏற்ற</suggestion></message>
+      <short>பிரித்து எழுதுவது சிறப்பு</short>
+    </rule>
     <rule id="illai2" name="வினையெச்சம் + இல்லை">
       <pattern>
         <token postag="VAN"></token>
@@ -26,6 +35,15 @@
       </pattern>
       <message>'செ(ய்)ய' போன்ற வினையெச்சத்தின் பின் 'இல்லை' வந்தால் சேர்த்து எழுத வேண்டும்: <suggestion>\1</suggestion></message>
       <short>சேர்த்து எழுத வேண்டும்</short>
+    </rule>
+    <rule id="kaattilum" name="சொல் + காட்டிலும்">
+      <pattern>
+        <token regexp="yes">(([ஃ-ஹ][ா-்]?)*)க்காட்டிலும்
+          <exception>பாலக்காட்டிலும்</exception>
+        </token>
+      </pattern>
+      <message>ஒப்புப் பொருளைக் குறிக்கும் இச்சொல் தனித்தே எழுதப்படுகிறது: <suggestion> காட்டிலும்</suggestion></message>
+      <short>பிரித்து எழுதுவது சிறப்பு</short>
     </rule>
     <rule id="kuudaadhu" name="சொல் + கூடாது">
       <pattern>
@@ -163,6 +181,15 @@
       <message>'செ(ய்)ய' போன்ற வினையெச்சத்தின் பின் 'தகுந்த' பிரித்து எழுதப்படுகிறது: <suggestion> தகுந்த</suggestion></message>
       <short>பிரித்து எழுத வேண்டும்</short>
     </rule>
+    <rule id="thakka" name="வினையெச்சம் + தக்க">
+      <pattern>
+        <token regexp="yes">(([ஃ-ஹ][ா-்]?)*)த்தக்க
+          <exception>திருத்தக்க</exception>
+        </token>
+      </pattern>
+      <message>'செ(ய்)ய' போன்ற வினையெச்சத்தின் பின் 'தக்க' பிரித்து எழுதப்படுகிறது: <suggestion> தக்க</suggestion></message>
+      <short>பிரித்து எழுத வேண்டும்</short>
+    </rule>
     <rule id="udan" name="பெயரெச்சம் + உடன்">
       <pattern>
         <token postag="RP"></token>
@@ -234,6 +261,24 @@
         <token regexp="yes">(([ஃ-ஹ][ா-்]?)*)ின்கீழ்</token>
       </pattern>
       <message>வேற்றுமை உருபு ஏற்ற சொல்பின் 'கீழ்'  வந்தால் இடம்விட வேண்டும்: <suggestion> கீழ்</suggestion></message>
+      <short>பிரித்து எழுத வேண்டும்</short>
+    </rule>
+    <rule id="noun_suffix_1B" name="பெயர் + ஐ + குறித்த">
+      <pattern>
+        <token regexp="yes">(([ஃ-ஹ][ா-்]?)*)ைக்குறித்த
+          <exception>நிலைக்குறித்த</exception>
+        </token>
+      </pattern>
+      <message>வேற்றுமை உருபு ஏற்ற சொல்பின் 'குறித்த'  வந்தால் இடம்விட வேண்டும்: <suggestion> குறித்த</suggestion></message>
+      <short>பிரித்து எழுத வேண்டும்</short>
+    </rule>
+    <rule id="noun_suffix_1C" name="பெயர் + ஐ + குறித்து">
+      <pattern>
+        <token regexp="yes">(([ஃ-ஹ][ா-்]?)*)ைக்குறித்து
+          <exception>நிலைக்குறித்து</exception>
+        </token>
+      </pattern>
+      <message>வேற்றுமை உருபு ஏற்ற சொல்பின் 'குறித்து'  வந்தால் இடம்விட வேண்டும்: <suggestion> குறித்து</suggestion></message>
       <short>பிரித்து எழுத வேண்டும்</short>
     </rule>
     <rule id="noun_suffix_1E" name="பெயர் + இன் + பேரில்">

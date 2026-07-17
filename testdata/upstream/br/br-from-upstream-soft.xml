@@ -116,6 +116,15 @@
       <message>Ha fellout a rae deoc’h skrivañ <suggestion>Aber-Ildud</suggestion>?</message>
       <short>ABER_ILDUD</short>
     </rule>
+    <rule id="ALL" name="en tu-all → en tu all (hag all)">
+      <pattern>
+        <token regexp="yes">.*-(all|bennak(et)?)
+          <exception regexp="yes">([kg]emend|c’hemend|a-hend|hend|mod)-all</exception>
+        </token>
+      </pattern>
+      <message>Implijit <suggestion></suggestion>.</message>
+      <short>ALL</short>
+    </rule>
     <rule id="ANV_BIHAN" name="anv bihan → anv-bihan (hag all)">
       <pattern>
         <token regexp="yes">anv(ioù)?</token>
@@ -177,6 +186,15 @@
       </pattern>
       <message>Implijit <suggestion>\1-\2</suggestion>.</message>
       <short>BOUED_MOR</short>
+    </rule>
+    <rule id="CHOM_A_SAV" name="chom a sav → chom a-sav">
+      <pattern>
+        <token skip="3">chom</token>
+        <token>a</token>
+        <token>sav</token>
+      </pattern>
+      <message>Implijit <suggestion>\2-\3</suggestion>.</message>
+      <short>CHOM_A_SAV</short>
     </rule>
     <rule id="DIBENN_SIZHUN" name="dibenn sizhun → dibenn-sizhun">
       <pattern>
@@ -282,6 +300,16 @@
       </pattern>
       <message>Implijit <suggestion>\1-\2</suggestion>.</message>
       <short>HOCH_GOUEZ</short>
+    </rule>
+    <rule id="J_TRE" name="fentus tre → fentus-tre (hag all)">
+      <pattern>
+        <token postag="J.*" postag_regexp="yes">
+          <exception>pe</exception>
+        </token>
+        <token regexp="yes">kenañ|mat|meurbet|tre</token>
+      </pattern>
+      <message>Implijit <suggestion>\1-\2</suggestion>.</message>
+      <short>J_TRE</short>
     </rule>
     <rule id="KABELL_TOUSEG" name="kabell touseg → kabell-touseg">
       <pattern>
@@ -670,6 +698,14 @@
       <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1\2</suggestion>?</message>
       <short>DAOUGEMENTIN</short>
     </rule>
+    <rule id="DIWALL" name="ober diwall → diwall">
+      <pattern>
+        <token>ober</token>
+        <token>diwall</token>
+      </pattern>
+      <message>Ne vez ket implijet ar ger «\2» gant ar verb «\1».</message>
+      <short>DIWALL</short>
+    </rule>
     <rule id="EL_EN_ER" name="en + al = el (hag all)">
       <pattern>
         <token regexp="yes">en?</token>
@@ -693,6 +729,15 @@
       </pattern>
       <message>«\1» a zo ur verb diasur. Ha fellout a rae deoc’h skrivañ <suggestion></suggestion> kentoc’h? (CHALM Sb4)</message>
       <short>KOZHOCH</short>
+    </rule>
+    <rule id="LECH_LERCH" name="lec’h → lerc’h">
+      <pattern>
+        <token regexp="yes">war-lec’h|ler?c’h-ouzh-ler?c’h
+          <exception>lerc’h-ouzh-lerc’h</exception>
+        </token>
+      </pattern>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion></suggestion>?</message>
+      <short>LECH_LERCH</short>
     </rule>
     <rule id="MAZ_EO" name="maz eo → ma’z eo">
       <pattern>
@@ -726,6 +771,14 @@
       </pattern>
       <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1 a</suggestion>?</message>
       <short>MEUR_AL</short>
+    </rule>
+    <rule id="PENLIZH_MIZ" name="Pennlizherennoù evit ar mizioù">
+      <pattern>
+        <token>miz</token>
+        <token regexp="yes">genver|c’hwevrer|meurzh|ebrel|mae|even|mezheven|gouere|gouhere|eost|gwengolo|here|du|kerdu|kerzu</token>
+      </pattern>
+      <message>Lakaet e vez ur bennlizherenn da anvioù ar mizioù. (CHALM A17)</message>
+      <short>PENLIZH_MIZ</short>
     </rule>
     <rule id="RENK_RANK" name="a renk bezañ → a rank bezañ">
       <pattern>
@@ -860,6 +913,65 @@
       <short>N_EO_KET_PPA_UR</short>
     </rule>
   </category>
+  <category id="RUMM_KEMMADUR" name="Kemmadur">
+    <rule id="AR_K" name="ar + k-word">
+      <pattern>
+        <token regexp="yes">[aeu]r</token>
+        <token regexp="yes" postag="UNKNOWN">k.*
+          <exception regexp="yes">k[gm]|kPa|kHz</exception>
+        </token>
+      </pattern>
+      <message>Ne c’hall ket bezañ un anv a grog gant «k» goude ar ger-mell «\1».</message>
+      <short>AR_K</short>
+    </rule>
+    <rule id="BERR_GOMZOU" name="e berr komzoù → e berr gomzoù">
+      <pattern>
+        <token>e</token>
+        <token>berr</token>
+        <token regexp="yes">(k|c’h)omzoù</token>
+      </pattern>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>gomzoù</suggestion>? (CHALM S1.1)</message>
+      <short>BERR_GOMZOU</short>
+    </rule>
+    <rule id="DISTER_DRA" name="Un dister tra → un dister dra">
+      <pattern>
+        <token postag="D .*" postag_regexp="yes"></token>
+        <token>dister</token>
+        <token regexp="yes">[tz]ra</token>
+      </pattern>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>dra</suggestion>? (CHALM S1.1)</message>
+      <short>DISTER_DRA</short>
+    </rule>
+    <rule id="GWIR_ANV" name="Gwir Bretoned → Gwir Vretoned">
+      <pattern>
+        <token postag="[CD].*|SENT_START" postag_regexp="yes"></token>
+        <token>gwir</token>
+        <token regexp="yes" postag="N.*" postag_regexp="yes">[ktpgdbm].*
+          <exception regexp="yes">[ktpgdbm].*</exception>
+        </token>
+      </pattern>
+      <message>Ur c’hemmadur klok dre vlotaat a zlefe bezañ goude an anv-gwan «\2». (CHALM S1.1)</message>
+      <short>GWIR_ANV</short>
+    </rule>
+    <rule id="TI_BIV" name="ti piv → ti biv">
+      <pattern>
+        <token>ti</token>
+        <token regexp="yes">[pf]iv</token>
+      </pattern>
+      <message>Goude ar ger «\1» e tro «\2» da <suggestion>biv</suggestion>. (CHALM B3.5)</message>
+      <short>TI_BIV</short>
+    </rule>
+  </category>
+  <category id="RUMM_GER_MELL" name="Ger-mell">
+    <rule id="AR_TSAR" name="ar + tsar, tsunami, etc.">
+      <pattern>
+        <token regexp="yes">[au]l</token>
+        <token regexp="yes">tsunami|tsar|jazz|jean|joniged</token>
+      </pattern>
+      <message>Ar ger-mell <suggestion></suggestion> pe <suggestion></suggestion> a vez implijet gant ar ger estren «\2». (CHALM L3)</message>
+      <short>AR_TSAR</short>
+    </rule>
+  </category>
   <category id="RUMM_ARAOGENN" name="Araogenn">
     <rule id="A_RAOK_DA" name="Digarezit din → Digarezit ac’hanon">
       <pattern>
@@ -886,34 +998,6 @@
       </pattern>
       <message>Ha fellout a rae deoc’h skrivañ <suggestion>gant</suggestion>?</message>
       <short>LEVR_EUS</short>
-    </rule>
-  </category>
-  <category id="RUMM_KEMMADUR" name="Kemmadur">
-    <rule id="BERR_GOMZOU" name="e berr komzoù → e berr gomzoù">
-      <pattern>
-        <token>e</token>
-        <token>berr</token>
-        <token regexp="yes">(k|c’h)omzoù</token>
-      </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion>gomzoù</suggestion>? (CHALM S1.1)</message>
-      <short>BERR_GOMZOU</short>
-    </rule>
-    <rule id="DISTER_DRA" name="Un dister tra → un dister dra">
-      <pattern>
-        <token postag="D .*" postag_regexp="yes"></token>
-        <token>dister</token>
-        <token regexp="yes">[tz]ra</token>
-      </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion>dra</suggestion>? (CHALM S1.1)</message>
-      <short>DISTER_DRA</short>
-    </rule>
-    <rule id="TI_BIV" name="ti piv → ti biv">
-      <pattern>
-        <token>ti</token>
-        <token regexp="yes">[pf]iv</token>
-      </pattern>
-      <message>Goude ar ger «\1» e tro «\2» da <suggestion>biv</suggestion>. (CHALM B3.5)</message>
-      <short>TI_BIV</short>
     </rule>
   </category>
   <category id="RUMM_DOUARONIEZH" name="Douaroniezh">

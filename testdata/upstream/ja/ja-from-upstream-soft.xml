@@ -2695,6 +2695,14 @@
       <message>誤変換です。<suggestion>合い言葉</suggestion>の間違いです</message>
       <short>AIKOTOBA</short>
     </rule>
+    <rule id="AIKURUSII" name="愛苦しい">
+      <pattern>
+        <token>愛</token>
+        <token>苦しい</token>
+      </pattern>
+      <message>誤変換です。<suggestion>愛くるしい</suggestion>の間違いです。</message>
+      <short>AIKURUSII</short>
+    </rule>
     <rule id="ASAZUKE" name="浅漬け">
       <pattern>
         <token>浅</token>
@@ -2733,6 +2741,14 @@
       <message>誤変換です。<suggestion>崖っ縁</suggestion>の間違いです。</message>
       <short>GAKEPPUTI</short>
     </rule>
+    <rule id="HERIKUDARU" name="へり下る">
+      <pattern>
+        <token>へり</token>
+        <token regexp="yes">下る|くだる</token>
+      </pattern>
+      <message>誤変換です。<suggestion>遜る</suggestion>の間違いです。</message>
+      <short>HERIKUDARU</short>
+    </rule>
     <rule id="IHATUWOTUGU" name="遺髪を継ぐ">
       <pattern>
         <token>遺髪</token>
@@ -2768,6 +2784,14 @@
       <message>誤変換です。<suggestion>書き入れ時</suggestion>の間違いです。</message>
       <short>KAKIIREDOKI</short>
     </rule>
+    <rule id="KANNSINNSURU" name="関心する">
+      <pattern>
+        <token>関心</token>
+        <token>する</token>
+      </pattern>
+      <message>誤変換です<suggestion>感心する</suggestion>の間違いです。</message>
+      <short>KANNSINNSURU</short>
+    </rule>
     <rule id="KANNTIGAI" name="感違い">
       <pattern>
         <token>感</token>
@@ -2775,6 +2799,22 @@
       </pattern>
       <message>誤変換です。<suggestion>勘違い</suggestion>の間違いです。</message>
       <short>KANNTIGAI</short>
+    </rule>
+    <rule id="KATAHIJIHARU" name="片肘張る">
+      <pattern>
+        <token>片</token>
+        <token regexp="yes">肘|ひじ</token>
+        <token regexp="yes">張る|がえ</token>
+      </pattern>
+      <message>誤変換です。<suggestion>肩肘張る</suggestion>の間違いです。</message>
+      <short>KATAHIJIHARU</short>
+    </rule>
+    <rule id="KATAKURUSII" name="堅苦しい">
+      <pattern>
+        <token>堅苦しい</token>
+      </pattern>
+      <message>誤変換です。<suggestion>肩苦しい</suggestion>の間違いです。</message>
+      <short>KATAKURUSII</short>
     </rule>
     <rule id="KENNTOUTIGAI" name="検討違い">
       <pattern>
@@ -2843,6 +2883,46 @@
       <message>誤変換です。<suggestion>沓脱ぎ</suggestion>の間違いです。</message>
       <short>KUTUNUGI</short>
     </rule>
+    <rule id="MAGASASU" name="魔が刺す">
+      <pattern>
+        <token>魔</token>
+        <token>が</token>
+        <token>刺す</token>
+      </pattern>
+      <message>誤変換です。<suggestion>魔が差す</suggestion>の間違いです。</message>
+      <short>MAGASASU</short>
+    </rule>
+    <rule id="MIKIWAMERU" name="見究める">
+      <pattern>
+        <token>見</token>
+        <token>究める</token>
+      </pattern>
+      <message>誤変換です。<suggestion>見極める</suggestion>の間違いです。</message>
+      <short>MIKIWAMERU</short>
+    </rule>
+    <rule id="MISERU" name="魅せる">
+      <pattern>
+        <token>魅せる</token>
+      </pattern>
+      <message>誤変換です。<suggestion>見せる</suggestion>の間違いです。</message>
+      <short>MISERU</short>
+    </rule>
+    <rule id="MITORERU" name="見取れる">
+      <pattern>
+        <token>見</token>
+        <token>取れる</token>
+      </pattern>
+      <message>誤変換です。<suggestion>見蕩れる</suggestion>の間違いです。</message>
+      <short>MITORERU</short>
+    </rule>
+    <rule id="MORITATERU" name="盛り立てる">
+      <pattern>
+        <token>盛り</token>
+        <token regexp="yes">立てる|たてる</token>
+      </pattern>
+      <message>誤変換です。<suggestion>守り立てる</suggestion>の間違いです。</message>
+      <short>MORITATERU</short>
+    </rule>
     <rule id="NARENARESII" name="慣れ慣れしい">
       <pattern>
         <token>慣れ</token>
@@ -2851,6 +2931,15 @@
       </pattern>
       <message>誤変換です。<suggestion>馴れ馴れしい</suggestion>の間違いです。</message>
       <short>NARENARESII</short>
+    </rule>
+    <rule id="NASEBANARU" name="成せば成る">
+      <pattern>
+        <token>成せ</token>
+        <token>ば</token>
+        <token>成る</token>
+      </pattern>
+      <message>誤変換です。<suggestion>為せば成る</suggestion>の間違いです。</message>
+      <short>NASEBANARU</short>
     </rule>
     <rule id="NASINOTUBUTE" name="無しの礫">
       <pattern>
@@ -2938,6 +3027,14 @@
       <message>誤変換です。<suggestion>節を曲げる</suggestion>の間違いです。</message>
       <short>SETUWOMAGERU</short>
     </rule>
+    <rule id="SIBUTOI" name="渋太い">
+      <pattern>
+        <token>渋</token>
+        <token>太い</token>
+      </pattern>
+      <message>誤変換です。<suggestion>しぶとい</suggestion>の間違いです。</message>
+      <short>SIBUTOI</short>
+    </rule>
     <rule id="SINIMONOGURUI" name="死に者狂い">
       <pattern>
         <token regexp="yes">死に|しに</token>
@@ -2976,6 +3073,37 @@
       <message>誤変換です。<suggestion>佇む</suggestion>の間違いです。</message>
       <short>TATAZUMU</short>
     </rule>
+    <rule id="TINAMAGUSAI" name="血生臭い">
+      <pattern>
+        <token>血</token>
+        <token>生臭い</token>
+      </pattern>
+      <message>誤変換です。<suggestion>血腥い</suggestion>の間違いです。</message>
+      <short>TINAMAGUSAI</short>
+    </rule>
+    <rule id="TIRIBAMERU" name="散りばめる">
+      <pattern>
+        <token>散りばめる</token>
+      </pattern>
+      <message>誤変換です。<suggestion>鏤める</suggestion>の間違いです。</message>
+      <short>TIRIBAMERU</short>
+    </rule>
+    <rule id="TOITADASU" name="問い正す">
+      <pattern>
+        <token>問い</token>
+        <token>正す</token>
+      </pattern>
+      <message>誤変換です。<suggestion>問い質す</suggestion>の間違いです。</message>
+      <short>TOITADASU</short>
+    </rule>
+    <rule id="TOOZAKERU" name="遠避ける">
+      <pattern>
+        <token>遠</token>
+        <token>避ける</token>
+      </pattern>
+      <message>誤変換です。<suggestion>遠ざける</suggestion>の間違いです。</message>
+      <short>TOOZAKERU</short>
+    </rule>
     <rule id="TORIDADASARERU" name="取り出される">
       <pattern>
         <token regexp="yes">取り出さ|とり出さ</token>
@@ -2999,6 +3127,22 @@
       </pattern>
       <message>誤変換です。<suggestion>嘯く</suggestion>の間違いです。</message>
       <short>USOHUKU</short>
+    </rule>
+    <rule id="YAWARAGU" name="柔らぐ">
+      <pattern>
+        <token>柔ら</token>
+        <token>ぐ</token>
+      </pattern>
+      <message>誤変換です。<suggestion>和らぐ</suggestion>の間違いです。</message>
+      <short>YAWARAGU</short>
+    </rule>
+    <rule id="YOMIGAERU" name="黄泉返る">
+      <pattern>
+        <token>黄泉</token>
+        <token regexp="yes">返る|がえる</token>
+      </pattern>
+      <message>誤変換です。<suggestion>蘇る</suggestion>の間違いです。</message>
+      <short>YOMIGAERU</short>
     </rule>
     <rule id="ZUNINORU" name="頭に乗る">
       <pattern>
@@ -3550,6 +3694,14 @@
       <message>誤字があります。<suggestion>雪やこんこあられやこんこ</suggestion>の間違いです。</message>
       <short>YUKIYAKONNKONNARAREYAKONNKONN</short>
     </rule>
+    <rule id="AJIAWASERU" name="味あわせる">
+      <pattern>
+        <token regexp="yes">味|あじ</token>
+        <token>あわせる</token>
+      </pattern>
+      <message>誤字があります。<suggestion>味わわせる</suggestion>の間違いです。</message>
+      <short>AJIAWASERU</short>
+    </rule>
     <rule id="ATOHEMOSAKINIMOHIKENU" name="後へも先へも引けぬ">
       <pattern>
         <token>後</token>
@@ -3581,6 +3733,18 @@
       <message>誤字があります。<suggestion>働き詰め</suggestion>の間違いです。</message>
       <short>HATARAKIZUKUME</short>
     </rule>
+    <rule id="HIONOMITINIMOOTORU" name="人の道にも劣る">
+      <pattern>
+        <token>人</token>
+        <token>の</token>
+        <token>道</token>
+        <token>に</token>
+        <token>も</token>
+        <token>劣る</token>
+      </pattern>
+      <message>誤字があります。<suggestion>人の道にもとる</suggestion>の間違いです。</message>
+      <short>HIONOMITINIMOOTORU</short>
+    </rule>
     <rule id="IAWNUGAHOTOKE" name="言わぬが仏">
       <pattern>
         <token regexp="yes">言わ|いわ</token>
@@ -3591,6 +3755,14 @@
       <message>誤字があります。<suggestion>知らぬが仏</suggestion>の間違いです。</message>
       <short>IAWNUGAHOTOKE</short>
     </rule>
+    <rule id="IKIIWOGU" name="生き急ぐ">
+      <pattern>
+        <token regexp="yes">生き|いき</token>
+        <token regexp="yes">急ぐ|いそぐ</token>
+      </pattern>
+      <message>誤字があります。<suggestion>死に急ぐ</suggestion>の間違いです。</message>
+      <short>IKIIWOGU</short>
+    </rule>
     <rule id="IZASIRAZU" name="いざ知らず">
       <pattern>
         <token>いざ</token>
@@ -3599,6 +3771,15 @@
       </pattern>
       <message>誤字があります。<suggestion>いさ知らず</suggestion>の間違いです。</message>
       <short>IZASIRAZU</short>
+    </rule>
+    <rule id="KAIMAKIKU" name="垣間聞く">
+      <pattern>
+        <token>垣</token>
+        <token>間</token>
+        <token regexp="yes">聞く|ぎく|きく</token>
+      </pattern>
+      <message>誤字があります。<suggestion>垣間見る</suggestion>の間違いです。</message>
+      <short>KAIMAKIKU</short>
     </rule>
     <rule id="KAKEGAI" name="掛け甲斐">
       <pattern>
@@ -3624,6 +3805,21 @@
       <message>誤字があります<suggestion>極め付き</suggestion>の間違いです。</message>
       <short>KIWAMETUKE</short>
     </rule>
+    <rule id="KOKEOROSU" name="こけおろす">
+      <pattern>
+        <token>こけ</token>
+        <token>おろす</token>
+      </pattern>
+      <message>誤字があります。<suggestion>扱き下ろす</suggestion>の間違いです。</message>
+      <short>KOKEOROSU</short>
+    </rule>
+    <rule id="KONGARAGARU" name="こんがらがる">
+      <pattern>
+        <token>こんがらがる</token>
+      </pattern>
+      <message>誤字があります。<suggestion>こんがらかる</suggestion>の間違いです。</message>
+      <short>KONGARAGARU</short>
+    </rule>
     <rule id="KOUTUUDOME" name="交通止め">
       <pattern>
         <token>交通</token>
@@ -3642,6 +3838,28 @@
       </pattern>
       <message>誤字があります。<suggestion>勝るとも劣らない</suggestion>の間違いです。</message>
       <short>MAKERUTOMOOTORANAI</short>
+    </rule>
+    <rule id="MOZUKUTONARUTRANSPO" name="もずくとなる">
+      <pattern>
+        <token>もずく</token>
+        <token>と</token>
+        <token>なる</token>
+      </pattern>
+      <message>誤字があります。<suggestion>もくずとなる</suggestion>の間違いです。</message>
+      <short>MOZUKUTONARUTRANSPO</short>
+    </rule>
+    <rule id="NOUARUTAKAHATUMEWOkAKUSU" name="脳ある鷹は爪を隠す">
+      <pattern>
+        <token>脳</token>
+        <token>ある</token>
+        <token>鷹</token>
+        <token>は</token>
+        <token>爪</token>
+        <token>を</token>
+        <token>隠す</token>
+      </pattern>
+      <message>誤字があります。<suggestion>能ある鷹はめを隠す</suggestion>の間違いです。</message>
+      <short>NOUARUTAKAHATUMEWOkAKUSU</short>
     </rule>
     <rule id="OIKANEMASENN" name="負いかねません">
       <pattern>
@@ -3680,6 +3898,14 @@
       </pattern>
       <message>誤字があります。<suggestion>お求めに成り易い</suggestion>の間違いです。</message>
       <short>OMOTOMEYASUI</short>
+    </rule>
+    <rule id="SAKIDORU" name="先取る">
+      <pattern>
+        <token>先</token>
+        <token>取る</token>
+      </pattern>
+      <message>誤字があります。<suggestion>先取りする</suggestion>の間違いです。</message>
+      <short>SAKIDORU</short>
     </rule>
     <rule id="SETIGANAI" name="せちがない">
       <pattern>
@@ -3750,6 +3976,14 @@
       </pattern>
       <message>誤字があります。<suggestion>うろ覚え</suggestion>の間違いです</message>
       <short>URUOBOE</short>
+    </rule>
+    <rule id="YAKIMAWASI" name="焼き回し">
+      <pattern>
+        <token regexp="yes">焼き|やき</token>
+        <token regexp="yes">回し|まわし</token>
+      </pattern>
+      <message>誤字があります。<suggestion>焼き増し</suggestion>の間違いです。</message>
+      <short>YAKIMAWASI</short>
     </rule>
     <rule id="YAMAAI" name="山合い">
       <pattern>
@@ -4292,6 +4526,16 @@
       <message>文法ミスがあります。<suggestion>暮らしが長く</suggestion>なるの間違いです。</message>
       <short>DOUSI_GANAGAKUNARU</short>
     </rule>
+    <rule id="DOUSI_KOTOGADEKIRU" name="動詞+ことができる">
+      <pattern>
+        <token postag="動詞.*" postag_regexp="yes"></token>
+        <token>こと</token>
+        <token>が</token>
+        <token regexp="yes">できる|出来る</token>
+      </pattern>
+      <message>「ことができる」という表現は冗長な可能性があります。</message>
+      <short>DOUSI_KOTOGADEKIRU</short>
+    </rule>
     <rule id="ENAI" name="得ない">
       <pattern>
         <token>ざる</token>
@@ -4421,6 +4665,24 @@
       <message>文法ミスがあります。<suggestion>を読む</suggestion>の間違いです。</message>
       <short>MEISI_YOMU</short>
     </rule>
+    <rule id="MOTOZUKU" name="基ずく">
+      <pattern>
+        <token regexp="yes">基|もと</token>
+        <token>ずく</token>
+      </pattern>
+      <message>文法ミスがあります。<suggestion>基づく</suggestion>の間違いです。</message>
+      <short>MOTOZUKU</short>
+    </rule>
+    <rule id="NO_SURU" name="助詞「の」→「を」">
+      <pattern>
+        <token postag="名詞.*" postag_regexp="yes"></token>
+        <token postag="助詞-連体化">の</token>
+        <token postag="名詞-サ変接続">表示</token>
+        <token postag="動詞-自立">する</token>
+      </pattern>
+      <message>目的語を表すには<suggestion>を</suggestion>を使用します。</message>
+      <short>NO_SURU</short>
+    </rule>
     <rule id="O" name="お">
       <pattern>
         <token postag="名詞.*" postag_regexp="yes"></token>
@@ -4446,6 +4708,20 @@
       </pattern>
       <message>文法ミスがあります。<suggestion>大きい部屋</suggestion>の間違いです。</message>
       <short>OOKINA_MEISI</short>
+    </rule>
+    <rule id="SIITEHAKOTOWOSISONNZURU" name="強しては事を仕損ずる">
+      <pattern>
+        <token>強</token>
+        <token>し</token>
+        <token>て</token>
+        <token>は</token>
+        <token regexp="yes">事|こと</token>
+        <token>を</token>
+        <token>仕</token>
+        <token>損ずる</token>
+      </pattern>
+      <message>文法ミスがあります。<suggestion>急いては事を仕損じる</suggestion>の間違いです。</message>
+      <short>SIITEHAKOTOWOSISONNZURU</short>
     </rule>
     <rule id="SITAGATTE_END" name="したがって_END">
       <pattern>
@@ -4800,6 +5076,15 @@
       <message>重複しています。<suggestion>元旦</suggestion>の間違いです。</message>
       <short>GANNNTANNNOASA</short>
     </rule>
+    <rule id="HANNZAIWOOKASU" name="犯罪を犯す">
+      <pattern>
+        <token>犯罪</token>
+        <token skip="10">を</token>
+        <token regexp="yes">犯す|おかす</token>
+      </pattern>
+      <message>重複しています。<suggestion>罪を犯す</suggestion>の間違いです。</message>
+      <short>HANNZAIWOOKASU</short>
+    </rule>
     <rule id="HATUDEBYU-" name="初デビュー">
       <pattern>
         <token skip="10">初</token>
@@ -4807,6 +5092,15 @@
       </pattern>
       <message>重複しています。<suggestion>デビュー</suggestion>の間違いです。</message>
       <short>HATUDEBYU-</short>
+    </rule>
+    <rule id="HIGAIWOKOUMURU" name="被害を被る">
+      <pattern>
+        <token>被害</token>
+        <token skip="10">を</token>
+        <token regexp="yes">被る|こうむる</token>
+      </pattern>
+      <message>重複しています。<suggestion>被害を受ける</suggestion>の間違いです。</message>
+      <short>HIGAIWOKOUMURU</short>
     </rule>
     <rule id="INISIENOMUKASI" name="古の昔">
       <pattern>
@@ -4834,6 +5128,24 @@
       <message>重複しています。<suggestion>最後</suggestion>の間違いです。</message>
       <short>ITIBANNSAIGO</short>
     </rule>
+    <rule id="JINNRYOKUWOTUKUSU" name="尽力を尽くす">
+      <pattern>
+        <token>尽力</token>
+        <token skip="10">を</token>
+        <token regexp="yes">尽くす|つくす</token>
+      </pattern>
+      <message>重複しています。<suggestion>尽力する</suggestion>の間違いです。</message>
+      <short>JINNRYOKUWOTUKUSU</short>
+    </rule>
+    <rule id="KYOSIKIWOAGERU" name="挙式を挙げる">
+      <pattern>
+        <token>挙式</token>
+        <token skip="10">を</token>
+        <token regexp="yes">挙げる|あげる</token>
+      </pattern>
+      <message>重複しています。<suggestion>挙式する</suggestion>の間違いです。</message>
+      <short>KYOSIKIWOAGERU</short>
+    </rule>
     <rule id="MAZUSAISYONI" name="まず最初に">
       <pattern>
         <token skip="10">まず</token>
@@ -4841,6 +5153,15 @@
       </pattern>
       <message>重複しています。<suggestion>最初</suggestion>の間違いです。</message>
       <short>MAZUSAISYONI</short>
+    </rule>
+    <rule id="NAITEIGAKIMARU" name="内定が決まる">
+      <pattern>
+        <token>内定</token>
+        <token skip="10">が</token>
+        <token regexp="yes">決まる|きまる</token>
+      </pattern>
+      <message>重複しています。<suggestion>内定する</suggestion>の間違いです。</message>
+      <short>NAITEIGAKIMARU</short>
     </rule>
     <rule id="NIHONNNIRAINITISURU" name="日本に来日する">
       <pattern>
@@ -4958,6 +5279,15 @@
       <message>連合関係がおかしいです。<suggestion>上を下への大騒ぎ</suggestion>の間違いです。</message>
       <short>UEHESITAHENOOOSAWAGI</short>
     </rule>
+    <rule id="AINOTE" name="合いの手">
+      <pattern>
+        <token>合いの手</token>
+        <token skip="10">を</token>
+        <token regexp="yes">打つ|うつ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>合いの手を入れる</suggestion>の間違いです。</message>
+      <short>AINOTE</short>
+    </rule>
     <rule id="AKANOTANINN" name="垢の他人">
       <pattern>
         <token>垢</token>
@@ -4966,6 +5296,42 @@
       </pattern>
       <message>連合関係がおかしいです。<suggestion>赤の他人</suggestion>の間違いです。</message>
       <short>AKANOTANINN</short>
+    </rule>
+    <rule id="AKARUMI" name="明るみ">
+      <pattern>
+        <token>明るみ</token>
+        <token skip="10">に</token>
+        <token>なる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>明るみに出る</suggestion>の間違いです。</message>
+      <short>AKARUMI</short>
+    </rule>
+    <rule id="ASIMOTO" name="足元">
+      <pattern>
+        <token>足元</token>
+        <token skip="10">を</token>
+        <token>すくう</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>足をすくう</suggestion>の間違いです。</message>
+      <short>ASIMOTO</short>
+    </rule>
+    <rule id="BAKYAKUWODASU" name="馬脚を出す">
+      <pattern>
+        <token>馬脚</token>
+        <token skip="10">を</token>
+        <token regexp="yes">出す|だす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>馬脚を露わす</suggestion>の間違いです。</message>
+      <short>BAKYAKUWODASU</short>
+    </rule>
+    <rule id="DOJIWOSURU" name="どじをする">
+      <pattern>
+        <token>どじ</token>
+        <token skip="10">を</token>
+        <token>する</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>どじを踏む</suggestion>の間違いです。</message>
+      <short>DOJIWOSURU</short>
     </rule>
     <rule id="ENHAKINAMONO" name="縁は奇なもの">
       <pattern>
@@ -4976,6 +5342,80 @@
       <message>連合関係がおかしいです。<suggestion>縁は異</suggestion>なものの間違いです。</message>
       <short>ENHAKINAMONO</short>
     </rule>
+    <rule id="ERIMOTOWOTADASU" name="襟元を正す">
+      <pattern>
+        <token>襟元</token>
+        <token skip="10">を</token>
+        <token regexp="yes">正す|ただす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>襟を正す</suggestion>の間違いです。</message>
+      <short>ERIMOTOWOTADASU</short>
+    </rule>
+    <rule id="ESAWOAGERU" name="餌をあげる">
+      <pattern>
+        <token regexp="yes">餌|えさ</token>
+        <token skip="10">を</token>
+        <token>あげる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>餌をやる</suggestion>の間違いです。</message>
+      <short>ESAWOAGERU</short>
+    </rule>
+    <rule id="GISINANKIWOIDAKU" name="疑心暗鬼を抱く">
+      <pattern>
+        <token>疑心暗鬼</token>
+        <token skip="10">を</token>
+        <token regexp="yes">抱く|いだく</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>疑心暗鬼を生ず</suggestion>の間違いです。</message>
+      <short>GISINANKIWOIDAKU</short>
+    </rule>
+    <rule id="HANAMIGASAKU" name="花見が咲く">
+      <pattern>
+        <token>花見</token>
+        <token skip="10">が</token>
+        <token regexp="yes">咲く|さく</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>花実が咲く</suggestion>の間違いです。</message>
+      <short>HANAMIGASAKU</short>
+    </rule>
+    <rule id="HARAGANIEKURIKAERU" name="腹が煮え繰り返る">
+      <pattern>
+        <token>腹</token>
+        <token skip="10">が</token>
+        <token>煮え繰り返る</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>腸が煮え繰り返る</suggestion>の間違いです。</message>
+      <short>HARAGANIEKURIKAERU</short>
+    </rule>
+    <rule id="HARAWATAGAYOJIRERU" name="腸が捩れる">
+      <pattern>
+        <token>腸</token>
+        <token skip="10">が</token>
+        <token regexp="yes">捩れる|よじれる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>腹の皮が捩れる</suggestion>の間違いです。</message>
+      <short>HARAWATAGAYOJIRERU</short>
+    </rule>
+    <rule id="HARAWOKUKURU" name="腹を括る">
+      <pattern>
+        <token>腹</token>
+        <token skip="10">を</token>
+        <token regexp="yes">括る|くくる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>腹を据える</suggestion>の間違いです。</message>
+      <short>HARAWOKUKURU</short>
+    </rule>
+    <rule id="HIBUTAWOKITTEOTOSU" name="火蓋を切って落とす">
+      <pattern>
+        <token>火蓋</token>
+        <token skip="10">を</token>
+        <token>切っ</token>
+        <token skip="10">て</token>
+        <token regexp="yes">落とす|おとす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>火蓋を切る</suggestion>の間違いです。</message>
+      <short>HIBUTAWOKITTEOTOSU</short>
+    </rule>
     <rule id="HIKKENNOKATIARI" name="必見の価値有り">
       <pattern>
         <token>必見</token>
@@ -4985,6 +5425,15 @@
       <message>連合関係がおかしいです。<suggestion>一見の価値</suggestion>有りの間違いです。</message>
       <short>HIKKENNOKATIARI</short>
     </rule>
+    <rule id="HIMAWOMOTEASOBU" name="暇をもてあそぶ">
+      <pattern>
+        <token>暇</token>
+        <token skip="10">を</token>
+        <token>もてあそぶ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>暇を持て余す</suggestion>の間違いです。</message>
+      <short>HIMAWOMOTEASOBU</short>
+    </rule>
     <rule id="HISSINOKAKUGO" name="必死の覚悟">
       <pattern>
         <token>必死</token>
@@ -4993,6 +5442,63 @@
       </pattern>
       <message>連合関係がおかしいです。<suggestion>決死の覚悟</suggestion>の間違いです。</message>
       <short>HISSINOKAKUGO</short>
+    </rule>
+    <rule id="HYOUJUNNWOAWASERU" name="標準を合わせる">
+      <pattern>
+        <token>標準</token>
+        <token skip="10">を</token>
+        <token regexp="yes">合わせる|あわせる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>照準を合わせる</suggestion>の間違いです。</message>
+      <short>HYOUJUNNWOAWASERU</short>
+    </rule>
+    <rule id="HYOUTANNKARAKOMAGADERU" name="瓢箪から独楽が出る">
+      <pattern>
+        <token>瓢箪</token>
+        <token skip="10">から</token>
+        <token>独楽</token>
+        <token skip="10">が</token>
+        <token regexp="yes">出る|でる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>瓢箪から駒が出る</suggestion>の間違いです。</message>
+      <short>HYOUTANNKARAKOMAGADERU</short>
+    </rule>
+    <rule id="IGO" name="囲碁">
+      <pattern>
+        <token>囲碁</token>
+        <token skip="10">を</token>
+        <token regexp="yes">指す|さす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>囲碁を打つ</suggestion>の間違いです。</message>
+      <short>IGO</short>
+    </rule>
+    <rule id="IKARISINTOUNITASSURU" name="怒り心頭に達する">
+      <pattern>
+        <token>怒り</token>
+        <token>心頭</token>
+        <token skip="10">に</token>
+        <token regexp="yes">達する|たっする</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>怒り心頭に発する</suggestion>の間違いです。</message>
+      <short>IKARISINTOUNITASSURU</short>
+    </rule>
+    <rule id="INROUWOWATASU" name="印籠を渡す">
+      <pattern>
+        <token>印籠</token>
+        <token skip="10">を</token>
+        <token regexp="yes">渡す|わたす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>引導を渡す</suggestion>の間違いです。</message>
+      <short>INROUWOWATASU</short>
+    </rule>
+    <rule id="ISSI" name="一矢">
+      <pattern>
+        <token>一矢</token>
+        <token skip="10">を</token>
+        <token regexp="yes">返す|かえす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>一矢を報いる</suggestion>の間違いです。</message>
+      <short>ISSI</short>
     </rule>
     <rule id="ISSYUNSAKIHAYAMI" name="一瞬先は闇">
       <pattern>
@@ -5013,6 +5519,80 @@
       <message>連合関係がおかしいです。<suggestion>一堂に会</suggestion>するの間違いです。</message>
       <short>ITIDOU</short>
     </rule>
+    <rule id="KAHOUHANETEMATE" name="家宝は寝て待て">
+      <pattern>
+        <token>家宝</token>
+        <token skip="10">は</token>
+        <token regexp="yes">寝|ねて</token>
+        <token>て</token>
+        <token>待つ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>果報は寝て待て</suggestion>の間違いです。</message>
+      <short>KAHOUHANETEMATE</short>
+    </rule>
+    <rule id="KAOWOUKAGAU" name="顔を窺う">
+      <pattern>
+        <token>顔</token>
+        <token skip="10">を</token>
+        <token regexp="yes">窺う|うかがう</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>顔色を窺う</suggestion>の間違いです。</message>
+      <short>KAOWOUKAGAU</short>
+    </rule>
+    <rule id="KASANIKAKARU" name="嵩に懸かる">
+      <pattern>
+        <token>嵩</token>
+        <token skip="10">に</token>
+        <token regexp="yes">懸かる|かかる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>傘に懸かる</suggestion>の間違いです。</message>
+      <short>KASANIKAKARU</short>
+    </rule>
+    <rule id="KASSAIWOSAKEBU" name="喝采を叫ぶ">
+      <pattern>
+        <token>喝采</token>
+        <token skip="10">を</token>
+        <token regexp="yes">叫ぶ|さけぶ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>快哉を叫ぶ</suggestion>の間違いです。</message>
+      <short>KASSAIWOSAKEBU</short>
+    </rule>
+    <rule id="KATUWOIRERU" name="喝を入れる">
+      <pattern>
+        <token>喝</token>
+        <token skip="10">を</token>
+        <token regexp="yes">入れる|いれる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>活を入れる</suggestion>の間違いです。</message>
+      <short>KATUWOIRERU</short>
+    </rule>
+    <rule id="KERIWOTUKERU" name="蹴りをつける">
+      <pattern>
+        <token>蹴り</token>
+        <token skip="10">を</token>
+        <token>つける</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>けりをつける</suggestion>の間違いで</message>
+      <short>KERIWOTUKERU</short>
+    </rule>
+    <rule id="KIGAHURERU" name="気が狂れる">
+      <pattern>
+        <token>気</token>
+        <token skip="10">が</token>
+        <token>狂れる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>気が触れる</suggestion>の間違いです。</message>
+      <short>KIGAHURERU</short>
+    </rule>
+    <rule id="KIMONIMEIJIRU" name="肝に命じる">
+      <pattern>
+        <token regexp="yes">肝|きも</token>
+        <token skip="10">に</token>
+        <token>命じる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>肝に銘じる</suggestion>の間違いです。</message>
+      <short>KIMONIMEIJIRU</short>
+    </rule>
     <rule id="KIRYOUGAOOKII" name="器量が大きい">
       <pattern>
         <token>器量</token>
@@ -5021,6 +5601,42 @@
       </pattern>
       <message>連合関係がおかしいです。<suggestion>度量が大きい</suggestion>の間違いです。</message>
       <short>KIRYOUGAOOKII</short>
+    </rule>
+    <rule id="KIZUNAGAHUKAI" name="絆が深い">
+      <pattern>
+        <token regexp="yes">絆|きずな</token>
+        <token skip="10">が</token>
+        <token>深い</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>絆が強い</suggestion>の間違いです。</message>
+      <short>KIZUNAGAHUKAI</short>
+    </rule>
+    <rule id="KONNSENNTOWONUKU" name="コンセントを抜く">
+      <pattern>
+        <token>コンセント</token>
+        <token skip="10">を</token>
+        <token regexp="yes">抜く|ぬく</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>プラグを抜く</suggestion>の間違いです。</message>
+      <short>KONNSENNTOWONUKU</short>
+    </rule>
+    <rule id="KOUBEWOKAIGERU" name="頭を傾げる">
+      <pattern>
+        <token>頭</token>
+        <token skip="10">を</token>
+        <token regexp="yes">傾げる|かしげる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>首を傾げる</suggestion>の間違いです。</message>
+      <short>KOUBEWOKAIGERU</short>
+    </rule>
+    <rule id="KUJYUUWOAJIWAU" name="苦汁を味わう">
+      <pattern>
+        <token>苦汁</token>
+        <token skip="10">を</token>
+        <token regexp="yes">味わう|あじわう</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>苦汁を嘗める</suggestion>の間違いです。</message>
+      <short>KUJYUUWOAJIWAU</short>
     </rule>
     <rule id="KUSINOHAGANUKETAYOU" name="櫛の歯が抜けたよう">
       <pattern>
@@ -5033,6 +5649,42 @@
       <message>連合関係がおかしいです。<suggestion>櫛の歯が欠ける</suggestion>の間違いです</message>
       <short>KUSINOHAGANUKETAYOU</short>
     </rule>
+    <rule id="KUTIGURUMAWOAWASERU" name="口車を合わせる">
+      <pattern>
+        <token>口車</token>
+        <token skip="10">を</token>
+        <token regexp="yes">合わせる|あわせる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>口車に乗る</suggestion>の間違いです。</message>
+      <short>KUTIGURUMAWOAWASERU</short>
+    </rule>
+    <rule id="KUTIWONIGOSU" name="口を濁す">
+      <pattern>
+        <token>口</token>
+        <token skip="10">を</token>
+        <token regexp="yes">濁す|にごす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>言葉を濁す</suggestion>の間違いです。</message>
+      <short>KUTIWONIGOSU</short>
+    </rule>
+    <rule id="MATOWOIRU" name="的を得る">
+      <pattern>
+        <token>的</token>
+        <token skip="10">を</token>
+        <token regexp="yes">得る|える</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>的を射る</suggestion>の間違いです。</message>
+      <short>MATOWOIRU</short>
+    </rule>
+    <rule id="MEHASIGAKIKU" name="目鼻が利く">
+      <pattern>
+        <token>目鼻</token>
+        <token skip="10">が</token>
+        <token regexp="yes">利く|きく</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>目端が利く</suggestion>の間違いです。</message>
+      <short>MEHASIGAKIKU</short>
+    </rule>
     <rule id="MUSHI" name="虫">
       <pattern>
         <token>虫</token>
@@ -5041,6 +5693,24 @@
       </pattern>
       <message>連合関係がおかしいです。<suggestion>虫の知らせ</suggestion>の間違いです。</message>
       <short>MUSHI</short>
+    </rule>
+    <rule id="NENNTOUNIIRERU" name="念頭に入れる">
+      <pattern>
+        <token>念頭</token>
+        <token skip="10">に</token>
+        <token regexp="yes">入れる|いれる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>念頭に置く</suggestion>の間違いです。</message>
+      <short>NENNTOUNIIRERU</short>
+    </rule>
+    <rule id="NETUNIUNASARERU" name="熱に魘される">
+      <pattern>
+        <token>熱</token>
+        <token skip="10">に</token>
+        <token>魘される</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>熱に浮かされる</suggestion>の間違いです。</message>
+      <short>NETUNIUNASARERU</short>
     </rule>
     <rule id="NINOKUGADENAI" name="二の句が出ない">
       <pattern>
@@ -5051,6 +5721,26 @@
       <message>連合関係がおかしいです。<suggestion>二の句が継げない</suggestion>の間違いです。</message>
       <short>NINOKUGADENAI</short>
     </rule>
+    <rule id="NINOTETUWOHUMU" name="二の轍を踏む">
+      <pattern>
+        <token>二</token>
+        <token skip="10">の</token>
+        <token>轍</token>
+        <token skip="10">を</token>
+        <token>踏む</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>轍を踏む</suggestion>の間違いです。</message>
+      <short>NINOTETUWOHUMU</short>
+    </rule>
+    <rule id="NODOGAKAWAKU" name="喉が乾く">
+      <pattern>
+        <token>喉</token>
+        <token skip="10">が</token>
+        <token>乾く</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>喉が渇く</suggestion>の間違いです。</message>
+      <short>NODOGAKAWAKU</short>
+    </rule>
     <rule id="NORUKASORUKA" name="乗るか反るか">
       <pattern>
         <token>乗る</token>
@@ -5060,6 +5750,55 @@
       <message>連合関係がおかしいです。<suggestion>伸るか反る</suggestion>かの間違いです。</message>
       <short>NORUKASORUKA</short>
     </rule>
+    <rule id="ONWOKISERU" name="恩を着せる">
+      <pattern>
+        <token>恩</token>
+        <token skip="10">を</token>
+        <token regexp="yes">着せる|きせる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>恩に着せる</suggestion>の間違いです。</message>
+      <short>ONWOKISERU</short>
+    </rule>
+    <rule id="RIKANIKANNMURIWOTADASU" name="李下に冠を正す">
+      <pattern>
+        <token>李下</token>
+        <token skip="10">に</token>
+        <token>冠</token>
+        <token skip="10">を</token>
+        <token regexp="yes">正す|ただす</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>李下に冠をたたさず</suggestion>の間違いです。</message>
+      <short>RIKANIKANNMURIWOTADASU</short>
+    </rule>
+    <rule id="ROUTAINIMUTIUTU" name="老体に鞭打つ">
+      <pattern>
+        <token>老体</token>
+        <token skip="10">に</token>
+        <token>鞭打つ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>老骨に鞭打つ</suggestion>の間違いです。</message>
+      <short>ROUTAINIMUTIUTU</short>
+    </rule>
+    <rule id="RUINHARUIWOYOBU" name="類は類を呼ぶ">
+      <pattern>
+        <token>類</token>
+        <token skip="10">は</token>
+        <token>類</token>
+        <token skip="10">を</token>
+        <token>呼ぶ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>類は友を呼ぶ</suggestion>の間違いです。</message>
+      <short>RUINHARUIWOYOBU</short>
+    </rule>
+    <rule id="SAIHAIWOHURUU" name="采配を揮う">
+      <pattern>
+        <token>采配</token>
+        <token skip="10">を</token>
+        <token regexp="yes">ふるう|揮う</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>采配を振る</suggestion>の間違いです。</message>
+      <short>SAIHAIWOHURUU</short>
+    </rule>
     <rule id="SENNKENNNOME" name="先見の目">
       <pattern>
         <token>先見</token>
@@ -5068,6 +5807,64 @@
       </pattern>
       <message>連合関係がおかしいです。<suggestion>先見の明</suggestion>の間違いです。</message>
       <short>SENNKENNNOME</short>
+    </rule>
+    <rule id="SINOGIWOKEZURU" name="凌ぎを削る">
+      <pattern>
+        <token>凌ぎ</token>
+        <token skip="10">を</token>
+        <token>削る</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>鎬を削る</suggestion>の間違いです。</message>
+      <short>SINOGIWOKEZURU</short>
+    </rule>
+    <rule id="SIRAHANOYAWOATERU" name="白羽の矢を当てる">
+      <pattern>
+        <token>白羽</token>
+        <token skip="10">の</token>
+        <token>矢</token>
+        <token skip="10">を</token>
+        <token regexp="yes">当てる|あてる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>白羽の矢が立つ</suggestion>の間違いです。</message>
+      <short>SIRAHANOYAWOATERU</short>
+    </rule>
+    <rule id="SIROKUROWOTUKERU" name="白黒をつける">
+      <pattern>
+        <token>白黒</token>
+        <token skip="10">を</token>
+        <token>つける</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>黒白をつける</suggestion>の間違いです。</message>
+      <short>SIROKUROWOTUKERU</short>
+    </rule>
+    <rule id="SITYUUNIKATUWOERU" name="死中に活を得る">
+      <pattern>
+        <token>死中</token>
+        <token skip="10">に</token>
+        <token>活</token>
+        <token skip="10">を</token>
+        <token regexp="yes">得る|える</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>死中に活を求める</suggestion>の間違いです。</message>
+      <short>SITYUUNIKATUWOERU</short>
+    </rule>
+    <rule id="SYOKUSYUGAUGOKU" name="触手が動く">
+      <pattern>
+        <token>触手</token>
+        <token skip="10">が</token>
+        <token regexp="yes">動く|うごく</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>食指が動く</suggestion>の間違いです。</message>
+      <short>SYOKUSYUGAUGOKU</short>
+    </rule>
+    <rule id="SYOUGI" name="将棋">
+      <pattern>
+        <token>将棋</token>
+        <token skip="10">を</token>
+        <token regexp="yes">打つ|うつ</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>将棋を指す</suggestion>の間違いです。</message>
+      <short>SYOUGI</short>
     </rule>
     <rule id="TADEKUUMUSIMOSUKIZUKI" name="田で食う虫も好き好き">
       <pattern>
@@ -5081,6 +5878,15 @@
       <message>連合関係がおかしいです。<suggestion>蓼食う虫も好き好き</suggestion>の間違いです。</message>
       <short>TADEKUUMUSIMOSUKIZUKI</short>
     </rule>
+    <rule id="TAITYOUWOKOWASU" name="体調を壊す">
+      <pattern>
+        <token>体調</token>
+        <token skip="10">を</token>
+        <token>壊す</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>体調を崩す</suggestion>の間違いです。</message>
+      <short>TAITYOUWOKOWASU</short>
+    </rule>
     <rule id="TENNKANOHOUTOU" name="天下の宝刀">
       <pattern>
         <token>天下</token>
@@ -5089,6 +5895,27 @@
       </pattern>
       <message>連合関係がおかしいです。<suggestion>伝家の宝刀</suggestion>の間違いです。</message>
       <short>TENNKANOHOUTOU</short>
+    </rule>
+    <rule id="TIDETIWOARASOU" name="血で血を争う">
+      <pattern>
+        <token>血</token>
+        <token skip="10">で</token>
+        <token>血</token>
+        <token skip="10">を</token>
+        <token regexp="yes">争う|あらそう</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>血で血を洗う</suggestion>の間違いです。</message>
+      <short>TIDETIWOARASOU</short>
+    </rule>
+    <rule id="UNTIKUWOTARERU" name="薀蓄を垂れる">
+      <pattern>
+        <token>薀</token>
+        <token>蓄</token>
+        <token skip="10">を</token>
+        <token regexp="yes">垂れる|たれる</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>薀蓄を傾ける</suggestion>の間違いです。</message>
+      <short>UNTIKUWOTARERU</short>
     </rule>
     <rule id="WARUTAKURAMI" name="渡る世間は鬼ばかり">
       <pattern>
@@ -5101,8 +5928,132 @@
       <message>連合関係がおかしいです。<suggestion>渡る世間は鬼はない</suggestion>の間違いです。</message>
       <short>WARUTAKURAMI</short>
     </rule>
+    <rule id="YAKEBOKKURINIHIGATUKU" name="焼けぼっくりに火が付く">
+      <pattern>
+        <token regexp="yes">焼け|やけ</token>
+        <token>ぼっ</token>
+        <token>くり</token>
+        <token skip="10">に</token>
+        <token>火</token>
+        <token skip="10">が</token>
+        <token regexp="yes">付く|つく</token>
+      </pattern>
+      <message>連合関係がおかしいです。<suggestion>焼けぼっくいに火が付く</suggestion>の間違いです。</message>
+      <short>YAKEBOKKURINIHIGATUKU</short>
+    </rule>
   </category>
   <category id="CAT6" name="ら抜き言葉">
+    <rule id="ABIRERU" name="浴びれる">
+      <pattern>
+        <token regexp="yes">浴び|あび</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>浴びられる</suggestion>の間違いです。</message>
+      <short>ABIRERU</short>
+    </rule>
+    <rule id="DERERU" name="出れる">
+      <pattern>
+        <token regexp="yes">出|で</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>出られる</suggestion>の間違いです。</message>
+      <short>DERERU</short>
+    </rule>
+    <rule id="KIMERERU" name="決めれる">
+      <pattern>
+        <token regexp="yes">決め|きめ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>決められる</suggestion>の間違いです。</message>
+      <short>KIMERERU</short>
+    </rule>
+    <rule id="KIRERU" name="着れる">
+      <pattern>
+        <token regexp="yes">着|き</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>着られる</suggestion>の間違いです。</message>
+      <short>KIRERU</short>
+    </rule>
+    <rule id="KURERU" name="来れる">
+      <pattern>
+        <token regexp="yes">来|こ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>来られる</suggestion>の間違いです。</message>
+      <short>KURERU</short>
+    </rule>
+    <rule id="MAZERERU" name="混ぜれる">
+      <pattern>
+        <token regexp="yes">混ぜ|まぜ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>混ぜられる</suggestion>の間違いです。</message>
+      <short>MAZERERU</short>
+    </rule>
+    <rule id="MEKERERU" name="負けれる">
+      <pattern>
+        <token regexp="yes">負け|まけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>負けられる</suggestion>の間違いです。</message>
+      <short>MEKERERU</short>
+    </rule>
+    <rule id="MIRERU" name="見れる">
+      <pattern>
+        <token regexp="yes">見れる|みれる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>見られる</suggestion>の間違いです。</message>
+      <short>MIRERU</short>
+    </rule>
+    <rule id="MOTOMERERU" name="求めれる">
+      <pattern>
+        <token regexp="yes">求め|もとめ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>求められる</suggestion>の間違いです。</message>
+      <short>MOTOMERERU</short>
+    </rule>
+    <rule id="NAGERERU" name="投げれる">
+      <pattern>
+        <token regexp="yes">投げ|なげ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>投げられる</suggestion>の間違いです。</message>
+      <short>NAGERERU</short>
+    </rule>
+    <rule id="NERERU" name="寝れる">
+      <pattern>
+        <token regexp="yes">寝|ね</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>寝られる</suggestion>の間違いです。</message>
+      <short>NERERU</short>
+    </rule>
+    <rule id="NIGERERU" name="逃げれる">
+      <pattern>
+        <token regexp="yes">逃げ|にげ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>逃げられる</suggestion>の間違いです。</message>
+      <short>NIGERERU</short>
+    </rule>
+    <rule id="NIRERU" name="煮れる">
+      <pattern>
+        <token regexp="yes">煮|に</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>煮られる</suggestion>の間違いです。</message>
+      <short>NIRERU</short>
+    </rule>
+    <rule id="OBOERERU" name="覚えれる">
+      <pattern>
+        <token regexp="yes">覚え|おぼえ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>覚えられる</suggestion>の間違いです。</message>
+      <short>OBOERERU</short>
+    </rule>
     <rule id="OMONEZU" name="阿ず">
       <pattern>
         <token regexp="yes">阿|おもね</token>
@@ -5111,8 +6062,99 @@
       <message>ら抜き言葉があります。<suggestion>阿らず</suggestion>の間違いです。</message>
       <short>OMONEZU</short>
     </rule>
+    <rule id="ORIRERU" name="降りれる">
+      <pattern>
+        <token regexp="yes">降り|おり</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>降りられる</suggestion>の間違いです。</message>
+      <short>ORIRERU</short>
+    </rule>
+    <rule id="SUTERERU" name="捨てれる">
+      <pattern>
+        <token regexp="yes">捨て|すて</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>捨てられる</suggestion>の間違いです。</message>
+      <short>SUTERERU</short>
+    </rule>
+    <rule id="TABERERU" name="食べれる">
+      <pattern>
+        <token regexp="yes">食べ|たべ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>食べられる</suggestion>の間違いです。</message>
+      <short>TABERERU</short>
+    </rule>
+    <rule id="TOJIRERU" name="閉じれる">
+      <pattern>
+        <token regexp="yes">閉じ|とじ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>閉じられる</suggestion>の間違いです。</message>
+      <short>TOJIRERU</short>
+    </rule>
+    <rule id="TUGERERU" name="告げれる">
+      <pattern>
+        <token regexp="yes">告げ|つげ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>告げられる</suggestion>の間違いです。</message>
+      <short>TUGERERU</short>
+    </rule>
+    <rule id="UKERERU" name="受けれる">
+      <pattern>
+        <token regexp="yes">受け|うけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>受けられる</suggestion>の間違いです。</message>
+      <short>UKERERU</short>
+    </rule>
+    <rule id="YOKERARERU" name="避けれる">
+      <pattern>
+        <token regexp="yes">避け|よけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>避けられる</suggestion>の間違いです。</message>
+      <short>YOKERARERU</short>
+    </rule>
+    <rule id="YUDERERU" name="茹でれる">
+      <pattern>
+        <token regexp="yes">茹で|ゆで</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら抜き言葉があります。<suggestion>茹でられる</suggestion>の間違いです。</message>
+      <short>YUDERERU</short>
+    </rule>
   </category>
   <category id="CAT8" name="さ入れ言葉">
+    <rule id="ARUKASASERU" name="歩かさせる">
+      <pattern>
+        <token regexp="yes">歩か|あるか</token>
+        <token>さ</token>
+        <token>せる</token>
+      </pattern>
+      <message>さ入れ言葉があります。<suggestion>歩かせる</suggestion>の間違いです。</message>
+      <short>ARUKASASERU</short>
+    </rule>
+    <rule id="OKASASERU" name="置かさせる">
+      <pattern>
+        <token regexp="yes">置か|おか</token>
+        <token>さ</token>
+        <token>せる</token>
+      </pattern>
+      <message>さ入れ言葉があります。<suggestion>置かせる</suggestion>の間違いです。</message>
+      <short>OKASASERU</short>
+    </rule>
+    <rule id="TORASASERU" name="取らさせる">
+      <pattern>
+        <token regexp="yes">取ら|とら</token>
+        <token>さ</token>
+        <token>せる</token>
+      </pattern>
+      <message>さ入れ言葉があります。<suggestion>取らせる</suggestion>の間違いです。</message>
+      <short>TORASASERU</short>
+    </rule>
     <rule id="UTAWASETE" name="歌わせて">
       <pattern>
         <token regexp="yes">歌わ|うたわ</token>
@@ -5121,6 +6163,171 @@
       </pattern>
       <message>文法ミスがあります。<suggestion>歌わさせて</suggestion>の間違いです。</message>
       <short>UTAWASETE</short>
+    </rule>
+    <rule id="YASUMASASERU" name="休まさせる">
+      <pattern>
+        <token regexp="yes">休ま|やすま</token>
+        <token>さ</token>
+        <token>せる</token>
+      </pattern>
+      <message>さ入れ言葉があります。<suggestion>休ませる</suggestion>の間違いです。</message>
+      <short>YASUMASASERU</short>
+    </rule>
+  </category>
+  <category id="CAT9" name="ら入れ言葉">
+    <rule id="HASIRARERU" name="走られる">
+      <pattern>
+        <token regexp="yes">走ら|はしら</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら入れ言葉があります。<suggestion>走れる</suggestion>の間違いです。</message>
+      <short>HASIRARERU</short>
+    </rule>
+    <rule id="KATARARERU" name="語られる">
+      <pattern>
+        <token regexp="yes">語ら|かたら</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら入れ言葉があります。<suggestion>語れる</suggestion>の間違いです。</message>
+      <short>KATARARERU</short>
+    </rule>
+    <rule id="KAWARARERU" name="変わられる">
+      <pattern>
+        <token regexp="yes">変わら|かわら</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら入れ言葉があります。<suggestion>変われる</suggestion>の間違いです。</message>
+      <short>KAWARARERU</short>
+    </rule>
+    <rule id="KIRARERU" name="切られる">
+      <pattern>
+        <token regexp="yes">切ら|きら</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら入れ言葉があります。<suggestion>切れる</suggestion>の間違いです。</message>
+      <short>KIRARERU</short>
+    </rule>
+    <rule id="SUBERARERU" name="滑られる">
+      <pattern>
+        <token regexp="yes">滑ら|すべら</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら入れ言葉があります。<suggestion>滑れる</suggestion>の間違いです。</message>
+      <short>SUBERARERU</short>
+    </rule>
+    <rule id="SYABERARERU" name="喋られる">
+      <pattern>
+        <token regexp="yes">喋ら|しゃべら</token>
+        <token>れる</token>
+      </pattern>
+      <message>ら入れ言葉があります。<suggestion>喋れる</suggestion>の間違いです。</message>
+      <short>SYABERARERU</short>
+    </rule>
+  </category>
+  <category id="CAT7" name="レタス言葉">
+    <rule id="IKERERU" name="行けれる">
+      <pattern>
+        <token regexp="yes">行け|いけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>行ける</suggestion>の間違いです。</message>
+      <short>IKERERU</short>
+    </rule>
+    <rule id="KAKERERU" name="書けれる">
+      <pattern>
+        <token regexp="yes">書け|かけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>書ける</suggestion>の間違いです。</message>
+      <short>KAKERERU</short>
+    </rule>
+    <rule id="KASERERU" name="貸せれる">
+      <pattern>
+        <token regexp="yes">貸せ|かせ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>貸せる</suggestion>の間違いです。</message>
+      <short>KASERERU</short>
+    </rule>
+    <rule id="KESERERU" name="消せれる">
+      <pattern>
+        <token regexp="yes">消せ|けせ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>消せる</suggestion>の間違いです。</message>
+      <short>KESERERU</short>
+    </rule>
+    <rule id="KIKERERU" name="聞けれる">
+      <pattern>
+        <token regexp="yes">聞け|きけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>聞ける</suggestion>の間違いです。</message>
+      <short>KIKERERU</short>
+    </rule>
+    <rule id="NOMERERU" name="飲めれる">
+      <pattern>
+        <token regexp="yes">飲め|のめ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>飲める</suggestion>の間違いです。</message>
+      <short>NOMERERU</short>
+    </rule>
+    <rule id="OKERERU" name="置けれる">
+      <pattern>
+        <token regexp="yes">置け|おけ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>置ける</suggestion>の間違いです。</message>
+      <short>OKERERU</short>
+    </rule>
+    <rule id="SUERERU" name="吸えれる">
+      <pattern>
+        <token regexp="yes">吸え|すえ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>吸える</suggestion>の間違いです。</message>
+      <short>SUERERU</short>
+    </rule>
+    <rule id="TORERERU" name="取れれる">
+      <pattern>
+        <token regexp="yes">取れ|とれ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>取れる</suggestion>の間違いです。</message>
+      <short>TORERERU</short>
+    </rule>
+    <rule id="TURERERU" name="釣れれる">
+      <pattern>
+        <token regexp="yes">釣れ|つれ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>釣れる</suggestion>の間違いです。</message>
+      <short>TURERERU</short>
+    </rule>
+    <rule id="URERERU" name="売れれる">
+      <pattern>
+        <token regexp="yes">売れ|うれ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>売れる</suggestion>の間違いです。</message>
+      <short>URERERU</short>
+    </rule>
+    <rule id="YOBERERU" name="呼べれる">
+      <pattern>
+        <token regexp="yes">呼べ|よべ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>呼べる</suggestion>の間違いです。</message>
+      <short>YOBERERU</short>
+    </rule>
+    <rule id="YOMERERU" name="読めれる">
+      <pattern>
+        <token regexp="yes">読め|よめ</token>
+        <token>れる</token>
+      </pattern>
+      <message>レタス言葉があります。<suggestion>読める</suggestion>の間違いです。</message>
+      <short>YOMERERU</short>
     </rule>
   </category>
 </rules>

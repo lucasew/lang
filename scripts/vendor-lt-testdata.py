@@ -101,6 +101,7 @@ SOFT_TOKEN_ATTRS = {
     "regexp",
     "case_sensitive",
     "negate",
+    "inflected",
     "min",
     "max",
     "skip",
@@ -110,17 +111,28 @@ SOFT_TOKEN_ATTRS = {
 
 
 def token_is_soft(tok: ET.Element) -> bool:
-    """True if token is loadable by the soft Go pattern loader (no nested XML)."""
+    """True if token is loadable by the soft Go pattern loader."""
     if local(tok.tag) != "token":
         return False
-    if list(tok):
-        return False  # exceptions / and / or / unify not soft-loaded yet
+    # Allow simple <exception> children only (no and/or/unify/phraseref).
+    for child in list(tok):
+        if local(child.tag) != "exception":
+            return False
+        if list(child):
+            return False
+        for k in child.attrib:
+            if k not in ("regexp", "negate", "case_sensitive", "inflected", "postag", "postag_regexp"):
+                return False
+        if (child.get("negate") or "").lower() == "yes":
+            return False  # soft loader skips negate exceptions
+        ex = (child.text or "").strip()
+        if not ex or "&" in ex:
+            return False
     for k in tok.attrib:
         if k not in SOFT_TOKEN_ATTRS:
             return False
     text = (tok.text or "").strip()
     has_postag = bool((tok.get("postag") or "").strip())
-    # surface string and/or postag required
     if not text and not has_postag:
         return False
     if "&" in text:
@@ -134,6 +146,20 @@ def serialize_token(tok: ET.Element) -> dict:
         v = tok.get(k)
         if v is not None and str(v).strip() != "":
             d[k] = v
+    excs = []
+    for child in tok:
+        if local(child.tag) != "exception":
+            continue
+        e = {"text": (child.text or "").strip()}
+        for k in ("regexp", "case_sensitive"):
+            v = child.get(k)
+            if v is not None and str(v).strip() != "":
+                e[k] = v
+        if e["text"]:
+            excs.append(e)
+            break  # soft loader keeps first exception only
+    if excs:
+        d["exceptions"] = excs
     return d
 
 
@@ -330,7 +356,19 @@ def write_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
                         attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
                 attr_s = (" " + " ".join(attrs)) if attrs else ""
                 body = xml_esc(t.get("text") or "")
-                lines.append(f"        <token{attr_s}>{body}</token>")
+                excs = t.get("exceptions") or []
+                if not excs:
+                    lines.append(f"        <token{attr_s}>{body}</token>")
+                else:
+                    lines.append(f"        <token{attr_s}>{body}")
+                    for e in excs:
+                        ea = []
+                        for k in ("regexp", "case_sensitive"):
+                            if k in e and e[k]:
+                                ea.append(f'{k}="{xml_esc(str(e[k]))}"')
+                        eas = (" " + " ".join(ea)) if ea else ""
+                        lines.append(f"          <exception{eas}>{xml_esc(e.get('text') or '')}</exception>")
+                    lines.append("        </token>")
             lines.append("      </pattern>")
             lines.append(f"      <message>{r['message']}</message>")  # may contain <suggestion>
             lines.append(f"      <short>{xml_esc(r['short'])}</short>")
@@ -425,7 +463,7 @@ def vendor_lang(lang: str) -> dict:
         for t in r["tokens"]:
             if isinstance(t, str):
                 continue
-            if any(k in t for k in ("regexp", "postag", "postag_regexp", "negate", "min", "max", "skip")):
+            if any(k in t for k in ("regexp", "postag", "postag_regexp", "negate", "inflected", "min", "max", "skip", "exceptions")):
                 return False
         return True
 

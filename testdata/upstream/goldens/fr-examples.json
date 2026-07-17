@@ -958,6 +958,30 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "ABOLIR_ENTIEREMENT",
+      "text": "abolir entièrement",
+      "suggestion": "abolir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ABONDER_EN_SENS",
+      "text": "Ils abondent en ce sens.",
+      "suggestion": "dans",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ABONDER_EN_SENS",
+      "text": "Ils abondent en le même sens.",
+      "suggestion": "dans",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ACCORDER_PRIORITE",
+      "text": "Il accorde la priorité.",
+      "suggestion": "donne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "ACCORD_ETRE_LEGION",
       "text": "Les idées sont légions.",
       "suggestion": "légion",
@@ -970,9 +994,33 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "ACCULER_AU_PIED_DU_MUR",
+      "text": "acculer au pied du mur",
+      "suggestion": "mettre au pied du mur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ACHAT_PAR_MISE_DE_COTE",
       "text": "achat par mise de côté",
       "suggestion": "achat par anticipation",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ACHETER_UNE_IDEE",
+      "text": "acheter une idée",
+      "suggestion": "adopter une idée",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ACHETER_UNE_SUGGESTION",
+      "text": "acheter une suggestion",
+      "suggestion": "adopter une suggestion",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ACHEVER_COMPLETEMENT",
+      "text": "achever complètement",
+      "suggestion": "achever",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1000,6 +1048,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ADRESSER_UN_SUJET",
+      "text": "adresser un sujet",
+      "suggestion": "traiter un sujet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ADRESSE_DE_RETOUR",
       "text": "adresse de retour",
       "suggestion": "adresse de l'expéditeur",
@@ -1018,9 +1072,27 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "AFFECTER_UN_RESULTAT",
+      "text": "affecter un résultat.",
+      "suggestion": "nuire à un résultat",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "AFFILE-CRAYON",
       "text": "affile-crayon",
       "suggestion": "taille-crayon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AFFILEE_AFFILE",
+      "text": "Il a gagné trois partie d’affilé.",
+      "suggestion": "affilée",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AFFILER_UN_CRAYON",
+      "text": "affiler un crayon",
+      "suggestion": "tailler un crayon",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1030,15 +1102,51 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "AIGUISER_UN_CRAYON",
+      "text": "aiguiser un crayon",
+      "suggestion": "tailler un crayon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "AIGUISOIR",
       "text": "aiguisoir",
       "suggestion": "taille-crayon",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "AJOUTER_EN_PLUS",
+      "text": "ajouter en plus",
+      "suggestion": "ajouter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AJOUTER_EN_PLUS",
+      "text": "ajoutera en plus",
+      "suggestion": "ajoutera",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AJOUTER_L_INSULTE_A_L_INJURE",
+      "text": "ajouter l’insulte à l’injure",
+      "suggestion": "pour comble d'insulte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "AJUSTEMENT_DE_SALAIRE",
       "text": "ajustement d’un salaire",
       "suggestion": "rajustement d'un salaire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AJUSTEUR_DASSURANCE",
+      "text": "ajusteur d’assurances",
+      "suggestion": "expert en assurances",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALIGNER_AVEC",
+      "text": "aligner avec",
+      "suggestion": "aligner sur",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1051,6 +1159,54 @@
       "rule": "ALLEE_DE_QUILLE",
       "text": "allée de quille.",
       "suggestion": "piste de quille",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLEQUER_QUE",
+      "text": "alléguer que",
+      "suggestion": "prétendre que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_EN_APPEL",
+      "text": "aller en appel.",
+      "suggestion": "en appeler",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_EN_ELECTIONS",
+      "text": "aller en élections.",
+      "suggestion": "fixer la date des élections",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_EN_GREVE",
+      "text": "aller en grève.",
+      "suggestion": "faire la grève",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_EN_ONDES",
+      "text": "aller en ondes.",
+      "suggestion": "passer sur les ondes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_EN_PROLONGATION",
+      "text": "aller en prolongation",
+      "suggestion": "jouer en prolongation",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_EN_REFERENDUM",
+      "text": "aller en référendum.",
+      "suggestion": "organiser un référendum",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ALLER_SOUS_PRESSE",
+      "text": "aller sous presse.",
+      "suggestion": "mettre sous presse",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1088,6 +1244,12 @@
       "text": "L’ammonite tue-mouches est toxique.",
       "suggestion": "amanite",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AMENDER_UNE_LOI",
+      "text": "amender une loi",
+      "suggestion": "modifier une loi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "AMI_DE_FILLE",
@@ -1144,6 +1306,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ANNEE_FISCALE",
+      "text": "année fiscale",
+      "suggestion": "exercice financier",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ANNONCES_CLASSEES",
       "text": "annonces classées.",
       "suggestion": "petites annonces",
@@ -1162,6 +1330,24 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "APOS_QU",
+      "text": "Je pense qu il ment.",
+      "suggestion": "qu'il",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "APPELER_UNE_PENALITE",
+      "text": "appeler une pénalité",
+      "suggestion": "imposer une pénalité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "APPELER_UNE_REUNION",
+      "text": "appeler une réunion",
+      "suggestion": "convoquer une réunion",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "APPEL_CONFERENCE",
       "text": "appels conférence",
       "suggestion": "conférence téléphonique",
@@ -1174,15 +1360,45 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "APPLIQUER_SUR_UN_EMPLOI",
+      "text": "appliquer sur un emploi",
+      "suggestion": "postuler un emploi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "APPLIQUER_SUR_UN_POSTE",
+      "text": "appliquer sur un poste",
+      "suggestion": "poser sa candidature",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "APPRECIER_UN_TEMOIGNAGE",
+      "text": "apprécier un témoignage",
+      "suggestion": "être touché par un témoignage",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "APRES_DES_QUE",
       "text": "Je souhaite l'utiliser après que la situation s'améliorera.",
       "suggestion": "dès que",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "ARCHE_DU_PIED",
+      "text": "arche du pied",
+      "suggestion": "cambrure du pied",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ARENA",
       "text": "aréna",
       "suggestion": "stade de hockey",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ARRETER_UN_CHEQUE",
+      "text": "arrêter un chèque.",
+      "suggestion": "faire opposition à un chèque",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1192,10 +1408,28 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ASSIGNER_A_UNE_TACHE",
+      "text": "Il a été assigné à une tâche.",
+      "suggestion": "affecté",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ASSIGNER_A_UNE_TACHE",
+      "text": "assigner à une tâche",
+      "suggestion": "affecter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ASSIR",
       "text": "assir",
       "suggestion": "asseoir",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ASSUMER_QUE",
+      "text": "assumer que",
+      "suggestion": "présumer que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "ASSURANCE_DE_GROUPE",
@@ -1312,10 +1546,34 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "AVOIR_LES_BLEUS",
+      "text": "avoir les bleus",
+      "suggestion": "broyer du noir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AVOIR_LE_MEILLEUR_SUR",
+      "text": "avoir le meilleur sur",
+      "suggestion": "l'emporter sur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "AVOIR_L_HABITUDE_POUR",
       "text": "Il a l'habitude pour cela.",
       "suggestion": "de",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AVOIR_PU",
+      "text": "J’ai dû mangé cela.",
+      "suggestion": "manger",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AVOIR_UN_BEL_AVENIR_DEVANT_SOI",
+      "text": "Tu as un bel avenir devant toi.",
+      "suggestion": "bel avenir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "A_CAUSE_QUE",
@@ -1346,6 +1604,18 @@
       "text": "à la portée de la main",
       "suggestion": "à portée de main",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_L_INTENTION_DE",
+      "text": "À l’aimable intention de",
+      "suggestion": "À l'attention de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "A_L_INTENTION_DE",
+      "text": "À l’intention de",
+      "suggestion": "À l'attention de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "A_MATIN",
@@ -1468,6 +1738,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "BENEFICIER_A",
+      "text": "Cette ristourne a bénéficié à bon nombre de clients.",
+      "suggestion": "a profité à",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "BENEFICIER_A",
+      "text": "Un décret qui bénéficie aux plus démunis.",
+      "suggestion": "profite aux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "BICYCLETTE_DE_MONTAGNE",
       "text": "bicyclette de montagne",
       "suggestion": "vélo tout terrain",
@@ -1537,6 +1819,12 @@
       "rule": "BLEU_MARIN",
       "text": "bleu marin",
       "suggestion": "bleu marine",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BLE_DINDE",
+      "text": "blé d’inde",
+      "suggestion": "maïs",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1624,6 +1912,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "BONNE_MAIN_D_APPLAUDISSEMENT",
+      "text": "donner une bonne main d’applaudissement",
+      "suggestion": "applaudir chaleureusement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "BON_MARCHE",
       "text": "Des légumes bons marchés.",
       "suggestion": "bon marché",
@@ -1654,6 +1948,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "BOYAU_DARROSAGE",
+      "text": "boyau d’arrosage",
+      "suggestion": "tuyau d'arrosage",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "BRANDING",
       "text": "branding",
       "suggestion": "stratégie de marque",
@@ -1675,6 +1975,12 @@
       "rule": "BRIQUELEUR",
       "text": "briqueleur",
       "suggestion": "poseur de briques",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BRISER_UN_RECORD",
+      "text": "briser un record",
+      "suggestion": "battre un record",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1732,6 +2038,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "BUDGET_DOPERATION",
+      "text": "budget d’opération",
+      "suggestion": "budget d'exploitation",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "BULLYING",
       "text": "bullying",
       "suggestion": "harcèlement",
@@ -1747,6 +2059,12 @@
       "rule": "BUREAU-CHEF",
       "text": "bureau-chef",
       "suggestion": "siège social",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BUREAU_DECHANGE",
+      "text": "bureau d’échange",
+      "suggestion": "bureau de change",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1810,9 +2128,21 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CANISSE",
+      "text": "canisse",
+      "suggestion": "bidon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CANNE_DE_CONSERVE",
       "text": "canne de conserve",
       "suggestion": "boîte de conserve",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CAPITALISER_SUR",
+      "text": "capitaliser sur",
+      "suggestion": "tirer profit de",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1846,9 +2176,27 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CARTE_DAFFAIRES",
+      "text": "carte d’affaires",
+      "suggestion": "carte professionnelle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CARTE_DE_COMPETENCES",
       "text": "carte de compétences",
       "suggestion": "carte de qualification",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CARTE_DIDENTIFICATION",
+      "text": "carte d’identification",
+      "suggestion": "carte d'identité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CAR_EN_EFFET",
+      "text": "car en effet",
+      "suggestion": "car",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1867,6 +2215,30 @@
       "rule": "CASQUE_DE_BAIN",
       "text": "casque de bain",
       "suggestion": "bonnet de bain",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CASSER_EGAL",
+      "text": "casser égal",
+      "suggestion": "atteindre le seuil de rentabilité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CASSER_LE_FRANCAIS",
+      "text": "casser le français",
+      "suggestion": "parler avec un accent",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CA_CE",
+      "text": "Alors, ça sera pour demain.",
+      "suggestion": "ce",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CA_REGARDE_BIEN_MAL",
+      "text": "Ça regarde mal.",
+      "suggestion": "Les choses s'annoncent mal",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1912,6 +2284,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CENTRE_DACHATS",
+      "text": "centre d’achat",
+      "suggestion": "centre commercial",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CENTRE_DES_CONGRES",
       "text": "centre des congrès",
       "suggestion": "palais des congrès",
@@ -1921,6 +2299,12 @@
       "rule": "CENTRE_DE_FOIRES",
       "text": "centre de foires",
       "suggestion": "palais des foires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CENTRE_DINTERPRETATION",
+      "text": "centre d’interprétation",
+      "suggestion": "centre de découverte",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -1966,6 +2350,30 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "CEST_DE_LUI_DONT_JE_PARLE",
+      "text": "c’être de lui dont je parler",
+      "suggestion": "c'est de lui que je parle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CEST_LA_RAISON_POURQUOI",
+      "text": "Telle est la raison pourquoi il faudrait le faire.",
+      "suggestion": "est la raison pour laquelle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CEST_LA_RAISON_POURQUOI",
+      "text": "c'est la raison pourquoi",
+      "suggestion": "c'est la raison pour laquelle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CEST_TYPO",
+      "text": "Tu penses que cest bon ?",
+      "suggestion": "c'est",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "CEST_UNE",
       "text": "Tia Duesa, cette une jardinier.",
       "suggestion": "c'est",
@@ -1975,6 +2383,54 @@
       "rule": "CETTE_CEST",
       "text": "Cet un garçon !",
       "suggestion": "C'est",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce a priori.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce après-midi.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce arbre.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce homme.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce hydrocarbure.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce yttrium.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Ce été.",
+      "suggestion": "Cet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CE_CET",
+      "text": "Suivez ce œuf.",
+      "suggestion": "cet",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -2056,6 +2512,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CHANGEMENT_DHUILE",
+      "text": "changement d’huile",
+      "suggestion": "vidange",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CHANGEMENT_POUR_LE_MIEUX",
       "text": "changement pour le mieux",
       "suggestion": "changement en mieux",
@@ -2068,10 +2530,34 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CHANGER_POUR_LE_MIEUX",
+      "text": "changer pour le mieux",
+      "suggestion": "changer en mieux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CHANGER_UN_CHEQUE",
+      "text": "changer un chèque",
+      "suggestion": "encaisser un chèque",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CHANTER_LA_POMME",
+      "text": "chanter la pomme",
+      "suggestion": "conter fleurette",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CHANTEUR_DE_POMME",
       "text": "chanteur de pomme",
       "suggestion": "séducteur",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CHAQUE_ET_CHAQUE",
+      "text": "Chaque service et chaque application sont unique.",
+      "suggestion": "est",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "CHARGE_ADDITIONNELLE",
@@ -2096,6 +2582,18 @@
       "text": "Je me sens chez moi dans ton chez toi.",
       "suggestion": "chez-toi",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CHIEN-CHAUD",
+      "text": "chien chaud",
+      "suggestion": "hot-dog",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CHIEN-CHAUD",
+      "text": "chien-chaud",
+      "suggestion": "hot-dog",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "CHIFFRE_CONSERVATEUR",
@@ -2125,6 +2623,12 @@
       "rule": "CHIFFRE_D_AFFAIRE",
       "text": "Le chiffre d’affaire de l’entreprise.",
       "suggestion": "chiffre d'affaires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CHIFFRE_SIECLE",
+      "text": "Il aurait vécu durant le 21 siècle.",
+      "suggestion": "21ᵉ siècle",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -2167,6 +2671,12 @@
       "rule": "CINEPLEX",
       "text": "cinéplex",
       "suggestion": "complexe multisalle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CIRER_DES_SKIS",
+      "text": "Il a toujours ciré ses skis avant la reprise de la saison d'hiver.",
+      "suggestion": "farté",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2296,6 +2806,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "COMBLER_UN_POSTE",
+      "text": "combler un poste",
+      "suggestion": "pourvoir à un poste",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "COMITE_AVISEUR",
       "text": "comité aviseur",
       "suggestion": "comité consultatif",
@@ -2374,6 +2890,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "COMPARER_ENTRE_EUX",
+      "text": "comparer entre eux",
+      "suggestion": "comparer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "COMPOSITEURE",
       "text": "compositeure",
       "suggestion": "compositrice",
@@ -2401,6 +2923,12 @@
       "rule": "COMPTE_A_RECEVOIR1",
       "text": "comptes à recevoir",
       "suggestion": "comptes clients",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COMPTE_DELECTRICITE",
+      "text": "compte d’électricité",
+      "suggestion": "facture d'électricité",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2488,6 +3016,24 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "CONFUSION_EMOTIONNER_EMU",
+      "text": "Il était tout émotionné.",
+      "suggestion": "ému",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CONFUSION_LA_PAREILLE_L_APPAREIL",
+      "text": "Il m'a rendu l'appareil.",
+      "suggestion": "la pareille",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_NE_SE",
+      "text": "Je me pouvais sortir.",
+      "suggestion": "ne pouvais sortir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "CONFUSION_OR_HORS",
       "text": "Ce distributeur automatique est or service.",
       "suggestion": "hors",
@@ -2503,6 +3049,18 @@
       "rule": "CONFUSION_OR_HORS",
       "text": "Nous sommes partis en vacances or saison et avons été agréablement surpris par le beau temps et les prix attractifs.",
       "suggestion": "hors",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_OU",
+      "text": "D'ou qu'ils viennent.",
+      "suggestion": "où",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_OU",
+      "text": "Ou qu'elles se trouvent.",
+      "suggestion": "Où",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -2536,6 +3094,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CONTRAINDRE_MALGRE_SOI",
+      "text": "contraindre malgré soi",
+      "suggestion": "contraindre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CONTRAINT_MALGRE_SOI",
       "text": "contraint malgré soi",
       "suggestion": "contraint",
@@ -2558,6 +3122,24 @@
       "text": "Quelles sont les contre parties ?",
       "suggestion": "contreparties",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONTROLER_LA_CIRCULATION",
+      "text": "contrôler la circulation",
+      "suggestion": "régler",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CONTROLER_LA_SITUATION",
+      "text": "contrôler la situation",
+      "suggestion": "avoir la situation en mains",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CONTROLER_UN_INCENDIE",
+      "text": "Les pompiers tentent de contrôler un incendie.",
+      "suggestion": "maîtriser",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "COOLER",
@@ -2599,6 +3181,30 @@
       "rule": "COSTUME_DE_BAIN",
       "text": "costume de bain",
       "suggestion": "maillot de bain",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COULER_DE_LINFORMATION",
+      "text": "couler de l’information",
+      "suggestion": "laisser fuir des renseignements",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COUPER_DES_DEPENSES",
+      "text": "Il faut couper les dépenses publiques.",
+      "suggestion": "réduire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COUPER_DES_POSTES",
+      "text": "L'entreprise coupe des postes en raison de plusieurs coupes budgétaires.",
+      "suggestion": "supprime",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COUPER_DES_PRIX",
+      "text": "couper des prix",
+      "suggestion": "réduire",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2698,6 +3304,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "CRIER_COMME_UN_PERDU",
+      "text": "crier comme un perdu",
+      "suggestion": "crier comme un putois",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "CRIME_MAJEUR",
       "text": "crime majeur",
       "suggestion": "crime grave",
@@ -2764,6 +3376,36 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "DEBOUCHONNER",
+      "text": "Il débouchonnera la bouteille.",
+      "suggestion": "débouchera",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DEBUTER_COMMENCER",
+      "text": "Il a débuté une réunion.",
+      "suggestion": "commencé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DECELER_DESCELLER_DESSELLER",
+      "text": "Il a descellé une anomalie.",
+      "suggestion": "décelé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DECELER_DESCELLER_DESSELLER",
+      "text": "Il a descellé une petite anomalie.",
+      "suggestion": "décelé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DECELER_DESCELLER_DESSELLER",
+      "text": "Il a dessellé une anomalie.",
+      "suggestion": "décelé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "DEDUCTION_A_LA_SOURCE",
       "text": "Les impôts effectuent une déduction à la source sur mon salaire.",
       "suggestion": "retenue",
@@ -2776,9 +3418,33 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "DEFRAYER_LES_DEPENSES_DE_QUELQUUN",
+      "text": "défrayer les dépenses de quelqu’un",
+      "suggestion": "défrayer [quelqu'un] de ses dépenses",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DEGATS_DEAU",
+      "text": "dégât d’eau",
+      "suggestion": "dégât des eaux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "DELTA",
       "text": "Le nouveau variant delta est dangereux.",
       "suggestion": "Delta",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DEMANDER_UNE_QUESTION",
+      "text": "demander une question",
+      "suggestion": "poser",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DEMARRER_LANCER",
+      "text": "Il a démarré une réunion.",
+      "suggestion": "lancé",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -2800,9 +3466,39 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "DESCENDRE_EN_BAS",
+      "text": "descendre en bas",
+      "suggestion": "descendre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DESSINER_UN_DESSIN",
+      "text": "dessiner un dessin",
+      "suggestion": "faire un dessin",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "DESSUS",
       "text": "Il est desus.",
       "suggestion": "dessus",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DEVELOPPER_UN_GOUT_POUR",
+      "text": "développer un goût pour",
+      "suggestion": "acquérir le goût de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DE_DAUTRES",
+      "text": "de d’autres",
+      "suggestion": "d'autres",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DE_PAR_GRACE_A",
+      "text": "Il a réussi de par sa pugnacité.",
+      "suggestion": "grâce à",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2824,6 +3520,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "DE_SORTE_QUE",
+      "text": "En sorte que le chat est là.",
+      "suggestion": "De sorte que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "DE_TOUTE_FACON",
       "text": "De toutes façons",
       "suggestion": "De toute façon",
@@ -2842,6 +3544,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "DICOLLECTE",
+      "text": "Dicollect vise à améliorer les dictionnaires orthographiques français.",
+      "suggestion": "Dicollecte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "DIFFEREND",
       "text": "Ils ne sont pas si différends.",
       "suggestion": "différents",
@@ -2851,6 +3559,18 @@
       "rule": "DIMMER",
       "text": "dimmer",
       "suggestion": "gradateur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DINER_DETAT",
+      "text": "dîner d’État",
+      "suggestion": "dîner officiel",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DIRECTEUR_CREATIF",
+      "text": "directeur créatif",
+      "suggestion": "directeur de la création",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2864,6 +3584,12 @@
       "text": "Donne moi la.",
       "suggestion": "Donne-la-moi",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DOUBLER_UNE_CLASSE",
+      "text": "doubler une classe",
+      "suggestion": "redoubler une année",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "DRAP_CONTOUR",
@@ -2902,6 +3628,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ECHAPPEE_BELLE",
+      "text": "Elle l’a échappée belle.",
+      "suggestion": "échappé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "ECOLE_ALTERNATIVE",
       "text": "école alternative",
       "suggestion": "école innovatrice",
@@ -2911,6 +3643,12 @@
       "rule": "ELISION_AU_MOINS",
       "text": "Vous devez être âgé de au moins 18 ans.",
       "suggestion": "d'au moins",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ELLES_VERBE_TOUTES",
+      "text": "Elles ont toute des poupées.",
+      "suggestion": "toutes",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -2932,9 +3670,45 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "EMETTRE_UN_COMMUNIQUE",
+      "text": "Le ministre de l'agriculture émet son premier communiqué de presse.",
+      "suggestion": "publie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "EMETTRE_UN_COMMUNIQUE1",
       "text": "Le ministre de l'agriculture a émis son premier communiqué de presse.",
       "suggestion": "publié",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EMETTRE_UN_PASSEPORT",
+      "text": "Il faut émettre un grand nombre de passeports avant la fin du mois prochain.",
+      "suggestion": "délivrer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EMETTRE_UN_PASSEPORT",
+      "text": "Il émettra un brevet d'aptitude à tous ceux qui se présenteront à l'examen final.",
+      "suggestion": "délivrera",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EMETTRE_UN_VERDICT",
+      "text": "Le comité de sélection a choisi d'émettre son verdict demain.",
+      "suggestion": "de rendre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EMISSION_DUN_DIPLOME1",
+      "text": "L'émission de diplôme est un acte solemnel.",
+      "suggestion": "La délivrance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EMISSION_DUN_DIPLOME2",
+      "text": "Le lieu d'émission de diplôme est choisi avec beaucoup d'attention.",
+      "suggestion": "de délivrance",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2962,9 +3736,33 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ENDOSSER_UNE_CANDIDATURE",
+      "text": "Il a endossé une candidature hier.",
+      "suggestion": "appuyé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ENDOSSER_UNE_DECISION",
+      "text": "Il a décidé d'endosser une décision.",
+      "suggestion": "appuyer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ENDOSSER_UNE_OPINION",
+      "text": "Il tente de faire endosser son opinion par son organisation.",
+      "suggestion": "accepter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ENSEMBLE_DE_PATIO",
       "text": "ensemble de patio",
       "suggestion": "meubles de jardin",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ENTENDRE_A_RIRE",
+      "text": "entendre à rire",
+      "suggestion": "avoir le sens de l'humour",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -2992,10 +3790,28 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "EN_AUTANT_QUE_JE_PEUX",
+      "text": "en autant que je peux",
+      "suggestion": "dans la mesure du possible",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EN_AUTANT_QUE_JE_SUIS_CONCERNE",
+      "text": "en autant que je être concerné",
+      "suggestion": "en ce qui me concerne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "EN_AUTORITE",
       "text": "en autorité",
       "suggestion": "ayant autorité",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EN_AVOIR_MARE",
+      "text": "J’en avais mare.",
+      "suggestion": "marre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "EN_BAS_DE_ZERO",
@@ -3014,6 +3830,12 @@
       "text": "Je parts tôt en cas où il y a des embouteillages.",
       "suggestion": "au cas où",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "EN_DEDANS_DE_X_MINUTES",
+      "text": "en dedans de 5 minutes",
+      "suggestion": "d'ici",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "EN_GENERALE",
@@ -3038,6 +3860,18 @@
       "text": "en opération.",
       "suggestion": "en service",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EN_PLEINE_CAMPAGNE",
+      "text": "Des maisons perdues en pleine campagne.",
+      "suggestion": "en plaine campagne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "EN_PLEINE_CAMPAGNE",
+      "text": "J’habite en pleine campagne.",
+      "suggestion": "en plaine campagne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "EN_TERME_DE",
@@ -3070,6 +3904,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ESSUYER_DES_REBIFFADES",
+      "text": "essuyer des rebiffades",
+      "suggestion": "essuyer des rebuffades",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "ES_TU",
       "text": "Est-tu là, en réalité ?",
       "suggestion": "Es-tu",
@@ -3082,15 +3922,117 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "ETAIS_ETE",
+      "text": "il a étais contaminé.",
+      "suggestion": "été",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRES_ETRE",
+      "text": "Nous devrions êtres fières de nous-mêmes.",
+      "suggestion": "être",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_ANXIEUX_DE",
+      "text": "être anxieux de",
+      "suggestion": "avoir hâte de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_A_SON_MEILLEUR",
+      "text": "être à mon meilleur",
+      "suggestion": "être au sommet de sa forme",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ETRE_DANS_LE_TROUBLE",
       "text": "être dans le trouble",
       "suggestion": "avoir des ennuis",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "ETRE_DANS_L_EAU_CHAUDE",
+      "text": "être dans l’eau chaude",
+      "suggestion": "être dans le pétrin",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_DE_VERBE",
+      "text": "La solution est de désactivé le moteur",
+      "suggestion": "désactiver",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_DE_VERBE",
+      "text": "La solution est de le désactivé",
+      "suggestion": "désactiver",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_DE_VERBE",
+      "text": "La solution, pour contourner le problème, est de désactivé le moteur.",
+      "suggestion": "désactiver",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_DE_VERBE",
+      "text": "Notre devoir est de nous sollicité dès que vous vivez au quotidien.",
+      "suggestion": "solliciter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_DU_POUR",
+      "text": "être dû pour",
+      "suggestion": "avoir besoin de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_EN_AFFAIRES",
+      "text": "être en affaires",
+      "suggestion": "être dans les affaires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_EN_ALLE",
+      "text": "Elle s’est en allée.",
+      "suggestion": "en est allée",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_EN_AMOUR",
+      "text": "être en amour",
+      "suggestion": "être amoureux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_GRE",
+      "text": "être gré",
+      "suggestion": "savoir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ETRE_IMPUTABLE_DE",
+      "text": "être imputable de",
+      "suggestion": "être responsable de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_RAQUE",
+      "text": "être raqué",
+      "suggestion": "être courbaturé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ETRE_SOUS_L_IMPRESSION_QUE",
       "text": "sous l’impression que",
       "suggestion": "avoir l'impression que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ETRE_SUR_SON_DERNIER_MILLE",
+      "text": "être sur son dernier mille",
+      "suggestion": "être près de la fin",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -3134,6 +4076,90 @@
       "text": "factoring",
       "suggestion": "affacturage",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_AFFAIRES_AVEC",
+      "text": "faire affaires avec",
+      "suggestion": "affaire avec",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "FAIRE_ASSEMBLANT",
+      "text": "faire assemblant",
+      "suggestion": "semblant",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_DES_COUPES_SOMBRES",
+      "text": "faire des coupes sombres",
+      "suggestion": "faire des coupes claires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "FAIRE_DU_PIQUETAGE",
+      "text": "faire du piquetage",
+      "suggestion": "faire partie d'un piquet de grève",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_DU_SENS",
+      "text": "faire du sens",
+      "suggestion": "avoir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_DU_TEMPS",
+      "text": "faire du temps",
+      "suggestion": "passer du temps",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_FACE_A_LA_MUSIQUE",
+      "text": "faire face à la musique.",
+      "suggestion": "prendre le taureau par les cornes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_PARTI",
+      "text": "Ils font eux aussi parti de ma vie.",
+      "suggestion": "partie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "FAIRE_PARTI",
+      "text": "Tu fais toujours réellement parti ma vie.",
+      "suggestion": "partie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "FAIRE_SORTIR_LE_VOTE",
+      "text": "faire sortir le vote",
+      "suggestion": "inciter les gens à voter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_SUR_QUE",
+      "text": "faire sûr que",
+      "suggestion": "s'assurer que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_UNE_PLONGE",
+      "text": "faire une plonge",
+      "suggestion": "faire un plongeon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAIRE_UN_FOU_DE_SOI",
+      "text": "faire un fou de soi",
+      "suggestion": "se rendre ridicule",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FAITS_ACTUELS",
+      "text": "Problématique et faits actuelles.",
+      "suggestion": "actuels",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "FARDOCHE",
@@ -3280,9 +4306,21 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "FORGER_UNE_SIGNATURE",
+      "text": "forger une signature",
+      "suggestion": "contrefaire une signature",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "FORMATION_ACADEMIQUE",
       "text": "formation académique",
       "suggestion": "formation générale",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FORMULE_D_APPLICATION",
+      "text": "formule d’application",
+      "suggestion": "demande d'emploi",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -3307,6 +4345,12 @@
       "rule": "FRANCHISING",
       "text": "franchising",
       "suggestion": "franchisage",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "FRAPPER_UN_NOEUD",
+      "text": "frapper un nœud",
+      "suggestion": "tomber sur un nœud",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -3352,6 +4396,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "FUNERAILLES_DETAT",
+      "text": "funérailles d’État",
+      "suggestion": "funérailles nationales",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "GAGNER_SON_POINT",
+      "text": "Il a gagné son point.",
+      "suggestion": "eu gain de cause",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "GAI_LURON",
       "text": "gai luron",
       "suggestion": "luron",
@@ -3367,6 +4423,30 @@
       "rule": "GARANTIE_COLLATERALE",
       "text": "garantie collatérale",
       "suggestion": "sûreté supplémentaire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "GARANTIR_DE",
+      "text": "Dans le but de garantir de proximité avec ses clients.",
+      "suggestion": "la",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "GARDER_LA_DROITE",
+      "text": "garder la droite",
+      "suggestion": "serrer à droite",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "GARDER_LA_GAUCHE",
+      "text": "garder la gauche",
+      "suggestion": "serrer à gauche",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "GARDER_L_OEIL_SUR",
+      "text": "garder l’œil sur",
+      "suggestion": "surveiller",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -3394,6 +4474,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "GITE",
+      "text": "Le voilier prend du gîte.",
+      "suggestion": "de la gîte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "GITE_TOURISTIQUE",
       "text": "gîte touristique",
       "suggestion": "chambre d'hôte",
@@ -3410,6 +4496,12 @@
       "text": "gomme à mâcher",
       "suggestion": "gomme",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "GRAMMALECTE",
+      "text": "Grammalect est un correcteur grammatical.",
+      "suggestion": "Grammalecte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "GRAND_PUBLIC",
@@ -3466,6 +4558,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "HEURES_D_AFFAIRES",
+      "text": "heures d’affaires",
+      "suggestion": "heures d'ouverture",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "HEURES_PILES",
       "text": "Il est 9 h 00.",
       "suggestion": "9 h",
@@ -3476,6 +4574,12 @@
       "text": "heures régulières",
       "suggestion": "heures normales",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "HEURE_CEST",
+      "text": "La présentation commence à 15:00 cest.",
+      "suggestion": "CEST",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "HEURE_DE_TEMPS",
@@ -3520,6 +4624,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "HORS_DORDRE",
+      "text": "hors d’ordre",
+      "suggestion": "en panne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "HOSE",
       "text": "hose",
       "suggestion": "tuyau d'arrosage",
@@ -3556,9 +4666,81 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "IDENTIFIER_DES_CORRECTIFS",
+      "text": "Il a identifié des correctifs lors de la conférence de presse.",
+      "suggestion": "proposé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "IDENTIFIER_DES_DIFFERENCES",
+      "text": "Le professeur a identifié des différences.",
+      "suggestion": "établi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "IDENTIFIER_DES_OBJECTIFS",
+      "text": "Identifier des priorités dans la vie est très important.",
+      "suggestion": "Déterminer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "IDENTIFIER_DES_OBJECTIFS",
+      "text": "Il a réussi à identifier des objectifs précis.",
+      "suggestion": "déterminer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "IDENTIFIER_DES_OBJECTIFS1",
+      "text": "Son approche permet d'identifier des objectifs précis.",
+      "suggestion": "de déterminer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "IDENTIFIER_DES_OBJECTIFS2",
+      "text": "Il s'est aperçu qu'identifier des objectifs pouvait s'avérer utile.",
+      "suggestion": "que déterminer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ILE_DE_RE",
       "text": "Je pars en vacances à l'ile de ré.",
       "suggestion": "Île de Ré",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ILS_VERBE_TOUS",
+      "text": "Ils ont tout des vestes.",
+      "suggestion": "tous",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "IL_DEVIENT_QUOI",
+      "text": "Il devient de plus en plus.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "IL_ME_FAIT_PLAISIR_PLAISIR",
+      "text": "il me fait plaisir de",
+      "suggestion": "c'est avec plaisir que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "IL_VA_SANS_DIRE",
+      "text": "Cela ira s’en dire !",
+      "suggestion": "sans",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "IL_VA_SANS_DIRE",
+      "text": "Il va s’en dire que le prix est hors taxe.",
+      "suggestion": "sans",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "IL_VA_SANS_DIRE",
+      "text": "Ça va s’en dire !",
+      "suggestion": "sans",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -3580,6 +4762,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "INAUGURER_OFFICIELLEMENT",
+      "text": "inaugurer officiellement",
+      "suggestion": "inaugurer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "INFLUENZA",
       "text": "influenza",
       "suggestion": "grippe",
@@ -3589,6 +4777,12 @@
       "rule": "INFORMATION_PRIVILEGIEE",
       "text": "information privilégiée",
       "suggestion": "renseignement exclusif",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "INSISTER_QUE",
+      "text": "insister que",
+      "suggestion": "insister pour que",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -3658,6 +4852,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "JOUER_LES_SECONDS_VIOLONS",
+      "text": "jouer les seconds violons",
+      "suggestion": "jouer un rôle de second plan",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "JOUJOUTHEQUE",
       "text": "joujouthèque",
       "suggestion": "ludothèque",
@@ -3668,6 +4868,12 @@
       "text": "journalisme jaune",
       "suggestion": "journalisme à sensation",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "JOUR_JOURNEE",
+      "text": "Ne passez pas tous vos jours ici.",
+      "suggestion": "journées",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "JUST_IN_TIME",
@@ -3694,6 +4900,42 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "KOOLHAAS",
+      "text": "\"Rem\" Kolhaas.",
+      "suggestion": "Koolhaas",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "KOOLHAAS",
+      "text": "Rem Kolhaas.",
+      "suggestion": "Koolhaas",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "KOOLHAAS",
+      "text": "Rem Koolhass.",
+      "suggestion": "Koolhaas",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LAINE_D_ACIER",
+      "text": "laine d’acier",
+      "suggestion": "paille de fer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LAISSER_INFINITIF",
+      "text": "Il ne se laisse jamais impressionné.",
+      "suggestion": "impressionner",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LAISSER_SORTIR_LE_CHAT_DU_SAC",
+      "text": "laisser sortir le chat du sac",
+      "suggestion": "laisser découvrir la vérité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "LAISSEZ_PASSER",
       "text": "Le transport ne pouvait se faire qu'avec un laisser passer valable un temps limite.",
       "suggestion": "laissez-passer",
@@ -3709,6 +4951,12 @@
       "rule": "LANGUAGE_TOOL",
       "text": "J'ai installé le Language-tool pour LibreOffice.",
       "suggestion": "LanguageTool",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LANGUE_D_OC",
+      "text": "La langue d’hoc.",
+      "suggestion": "oc",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -3772,6 +5020,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "LA_SANTE",
+      "text": "Et t'as pris soin de la sante ?",
+      "suggestion": "la santé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "LETTRE_DE_REFERENCES",
       "text": "lettre de références",
       "suggestion": "lettre de recommandation",
@@ -3788,6 +5042,24 @@
       "text": "levée de rideau",
       "suggestion": "lever de rideau",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LEVER_DEBOUT",
+      "text": "lever debout",
+      "suggestion": "lever",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LE_CHAT_EST_SORTI_DU_SAC",
+      "text": "le chat est sorti du sac",
+      "suggestion": "on a découvert le pot aux roses",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LE_CHAT_SORT_DU_SAC",
+      "text": "chat sortir du sac",
+      "suggestion": "laisser découvrir la vérité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "LE_COVID",
@@ -3826,6 +5098,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "LIGNE_DASSEMBLAGE",
+      "text": "ligne d’assemblage",
+      "suggestion": "chaîne d'assemblage",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LIGNE_DATTENTE",
+      "text": "ligne d’attente",
+      "suggestion": "file d'attente",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "LIGNE_DE_MONTAGE",
       "text": "ligne de montage",
       "suggestion": "chaîne d'assemblage",
@@ -3848,6 +5132,12 @@
       "text": "liqueur douce",
       "suggestion": "boisson gazeuse",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LIRE_SUR_LE_JOURNAL",
+      "text": "lire sur le journal",
+      "suggestion": "lire dans le journal",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "LISTE_DES_VINS",
@@ -3880,6 +5170,30 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "LOGER_UNE_PLAINTE",
+      "text": "loger une plainte",
+      "suggestion": "déposer une plainte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LOGER_UN_APPEL",
+      "text": "loger un appel",
+      "suggestion": "faire un appel",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LOGER_UN_GRIEF",
+      "text": "loger un grief",
+      "suggestion": "déposer un grief",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LOIN_SEN_FAUT",
+      "text": "loin s’en faut",
+      "suggestion": "tant s'en faut",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "LUN_L_UN",
       "text": "Lun dans l'autre, ce n'est pas plus mal.",
       "suggestion": "L'un",
@@ -3890,6 +5204,12 @@
       "text": "magasin à rayons",
       "suggestion": "grande surface",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "MAIGRE_COMME_UNE_ECHALOTE",
+      "text": "maigre comme une échalote",
+      "suggestion": "maigre comme un échalas",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "MAISON_EN_RANGEE",
@@ -3958,6 +5278,42 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "MA_VOYELLE",
+      "text": "Je veux que ma haleine soit fraîche.",
+      "suggestion": "mon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "MA_VOYELLE",
+      "text": "Voici ma amie.",
+      "suggestion": "mon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "MA_VOYELLE",
+      "text": "Voici sa amie.",
+      "suggestion": "son",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "MA_VOYELLE",
+      "text": "Voici ta amie.",
+      "suggestion": "ton",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "MEDAILLE_FIELDS",
+      "text": "Il a remporté la médaille Field.",
+      "suggestion": "Fields",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "MEDIA_DINFORMATION",
+      "text": "média d’information",
+      "suggestion": "média",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "MEME_A_CA",
       "text": "même à ça",
       "suggestion": "même là",
@@ -3976,10 +5332,64 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "METTRE_A_GENOU",
+      "text": "Ils se sont mis à genou.",
+      "suggestion": "genoux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "METTRE_EN_NOMINATION",
+      "text": "mettre en nomination",
+      "suggestion": "proposer une candidature",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "METTRE_LE_FOCUS_SUR",
+      "text": "mettre le focus sur",
+      "suggestion": "mettre l'accent sur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "METTRE_L_EMPHASE_SUR",
+      "text": "mettre l’emphase sur",
+      "suggestion": "mettre l'accent sur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "METTRE_L_EPAULE_A_LA_ROUE",
+      "text": "mettre l’épaule à la roue",
+      "suggestion": "mettre la main à la pâte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "METTRE_SOUS_ARRET",
+      "text": "mettre sous arrêt.",
+      "suggestion": "arrêter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "METTRE_SUR_LA_CARTE",
+      "text": "mettre sur la carte",
+      "suggestion": "faire connaître",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "MEUBLE_DE_PATIO",
       "text": "meuble de patio",
       "suggestion": "meuble de jardin",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "MIEUX_VAUT_INF",
+      "text": "Il aurait mieux valu resté.",
+      "suggestion": "rester",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "MIEUX_VAUT_INF",
+      "text": "Mieux vaut resté.",
+      "suggestion": "rester",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "MILLE_ET_UNE_NUITS",
@@ -4030,6 +5440,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "MONTER_EN_HAUT",
+      "text": "monter en haut",
+      "suggestion": "monter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "MONTREAL_METROPOLITAIN",
       "text": "Montréal métropolitain",
       "suggestion": "Aire urbaine de Montréal",
@@ -4039,6 +5455,12 @@
       "rule": "MON_DIEU",
       "text": "Mon dieu !",
       "suggestion": "Mon Dieu",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "MORDRE_A_PLEINE_DENT",
+      "text": "mordre à pleine dent",
+      "suggestion": "mordre à pleines dents",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -4058,6 +5480,12 @@
       "text": "moulin à coudre",
       "suggestion": "machine à coudre",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "MOUSSER_UNE_CANDIDATURE",
+      "text": "mousser une candidature",
+      "suggestion": "favoriser",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "MOUVEMENT_ISME_VS_ISTE",
@@ -4093,6 +5521,12 @@
       "rule": "NAGWARE",
       "text": "nagware",
       "suggestion": "logiciel harcelant",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "NAPPE_DHUILE",
+      "text": "nappe d’huile",
+      "suggestion": "marée noire",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4162,6 +5596,30 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "OPERER_UNE_ENTREPRISE",
+      "text": "Le directeur connait les régions dans lesquelles opère l'entreprise.",
+      "suggestion": "dirige",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "OPERER_UNE_ENTREPRISE",
+      "text": "Le paiment en ligne est opéré par une entreprise tierce.",
+      "suggestion": "dirigé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "OPERER_UNE_MACHINE",
+      "text": "opérer une machine",
+      "suggestion": "conduire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "OPERER_UN_COMMERCE",
+      "text": "Ils ont tenu à opérer un commerce de vente directe.",
+      "suggestion": "tenir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "ORAGE_ELECTRIQUE",
       "text": "orages électriques",
       "suggestion": "orages",
@@ -4196,6 +5654,12 @@
       "text": "outarde",
       "suggestion": "bernache",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "OUTREMER",
+      "text": "Je viens d’outremer.",
+      "suggestion": "outre-mer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "OVER_MY_DEAD_BODY",
@@ -4240,6 +5704,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PAIN_PIN",
+      "text": "Des pommes de pain.",
+      "suggestion": "pin",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "PAIRE_DE_PANTALON",
       "text": "paire de pantalons",
       "suggestion": "pantalon",
@@ -4250,6 +5720,12 @@
       "text": "palette de chocolat",
       "suggestion": "barre de chocolat",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PALLIER_A",
+      "text": "pallier à quelque chose",
+      "suggestion": "pallier",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "PANACEE_UNIVERSELLE",
@@ -4273,6 +5749,12 @@
       "rule": "PAPIER_COLLANT",
       "text": "papier collant",
       "suggestion": "ruban adhésif",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PAPIER_ONION",
+      "text": "papier oignon",
+      "suggestion": "papier pelure",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4300,16 +5782,76 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "PARC_D_AMUSEMENT",
+      "text": "parcs d’amusement",
+      "suggestion": "parc d'attractions",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PARE-CHOC_A_PARE-CHOC",
       "text": "pare-chocs à pare-chocs.",
       "suggestion": "pare-chocs contre pare-chocs",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PAREIL_COMME",
+      "text": "pareil comme",
+      "suggestion": "comme",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "PAREIL_QUE",
       "text": "Le nouveau chef est pareil que le précédent",
       "suggestion": "pareil au",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PARLER_A_TRAVERS_SON_CHAPEAU",
+      "text": "parler à travers sont chapeau.",
+      "suggestion": "parler à tort et à travers",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_A_SON_COMPTE",
+      "text": "partir à son compte",
+      "suggestion": "s'établir à son compte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_DANS_LES_AFFAIRES",
+      "text": "partir dans les affaires",
+      "suggestion": "se lancer en affaires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_EN_AFFAIRES",
+      "text": "partir en affaires",
+      "suggestion": "se lancer en affaires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_LE_BAL",
+      "text": "partir le bal",
+      "suggestion": "ouvrir le bal",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_UNE_ENTREPRISE",
+      "text": "partir une entreprise",
+      "suggestion": "créer une entreprise",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_UNE_MODE",
+      "text": "partir une mode",
+      "suggestion": "lancer une mode",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PARTIR_UNE_RUMEUR",
+      "text": "partir une rumeur",
+      "suggestion": "faire courir une rumeur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "PARTNER",
@@ -4348,6 +5890,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PASSER_UNE_LOI",
+      "text": "passer une loi",
+      "suggestion": "voter une loi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PASSER_UN_REGLEMENT",
+      "text": "passer un règlement",
+      "suggestion": "adopter un règlement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PASSE_DATE",
       "text": "passé date.",
       "suggestion": "périmé",
@@ -4357,6 +5911,18 @@
       "rule": "PASSE_DU",
       "text": "passé dû.",
       "suggestion": "en retard",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PAS_DADMISSION",
+      "text": "pas d’admission",
+      "suggestion": "entrée interdite",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PAS_DADMISSION_SANS_AFFAIRES",
+      "text": "pas d’admission sans affaires",
+      "suggestion": "entrée interdite sans autorisation",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4396,6 +5962,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PAVER_LA_VOIE",
+      "text": "Ces lois pavent la voie de la liberté.",
+      "suggestion": "ouvrent la voie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PAYER_RUBIS_SUR_LONGLE",
+      "text": "payer rubis sur l’onde",
+      "suggestion": "payer rubis sur l'ongle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "PAYEUR_DE_TAXES",
       "text": "payeur de taxe",
       "suggestion": "contribuable",
@@ -4405,6 +5983,12 @@
       "rule": "PAYEZ_ET_EMPORTEZ",
       "text": "payez et emportez",
       "suggestion": "libre-service de demis-gros",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PAYEZ_UNE_VISITE",
+      "text": "payer une visite",
+      "suggestion": "rendre visite",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4438,10 +6022,34 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "PENSER_PANSER",
+      "text": "Elle a pensé les blessés.",
+      "suggestion": "pansé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PENSER_PANSER",
+      "text": "Elle a pensé l’épaule.",
+      "suggestion": "pansé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "PEPINE",
       "text": "pépine",
       "suggestion": "excavatrice",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PERCER_UN_MARCHE",
+      "text": "percer un marché",
+      "suggestion": "s'introduire dans un marché",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PERDRE_DES_POINTS_DINAPTITUDE",
+      "text": "perdre des points d’inaptitude",
+      "suggestion": "accumuler des points d'inaptitude",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "PERDRIOLLE",
@@ -4480,6 +6088,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PERSPECTIVE_D_AVENIR",
+      "text": "Ce travail offre des perspectives d’avenir.",
+      "suggestion": "perspectives",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PER_CAPITA",
       "text": "per capita",
       "suggestion": "par personne",
@@ -4490,6 +6104,12 @@
       "text": "per diem",
       "suggestion": "allocation journalière",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PEUT_IMPORTE",
+      "text": "peut importe",
+      "suggestion": "peu importe",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "PHREAKING",
@@ -4522,6 +6142,48 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PILER_SON_ORGUEIL",
+      "text": "piler sur son orgueil",
+      "suggestion": "rabaisser",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PILER_SUR_LES_PIEDS",
+      "text": "piler sur les pieds",
+      "suggestion": "marcher sur les pieds",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PIZZA_MARGARITA",
+      "text": "Une pizza margarita.",
+      "suggestion": "Margherita",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PLACER_UNE_COMMANDE",
+      "text": "placer une commande",
+      "suggestion": "passer une commande",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLACER_UN_APPEL",
+      "text": "placer un appel",
+      "suggestion": "faire un appel",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLACER_UN_GRIEF",
+      "text": "placer un grief",
+      "suggestion": "formuler un grief",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLACE_D_AFFAIRES",
+      "text": "places d’affaires",
+      "suggestion": "établissement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PLACE_POUR_AMELIORATION",
       "text": "place pour amélioration",
       "suggestion": "laisser à désirer",
@@ -4540,6 +6202,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "PLANCHE_DE_BOIS",
+      "text": "une planche de bois",
+      "suggestion": "planche",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLAN_DASSURANCE",
+      "text": "plan d’assurance",
+      "suggestion": "régime d'assurance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PLAN_DE_PENSION",
       "text": "plan de pension",
       "suggestion": "régime de retraite",
@@ -4552,9 +6226,33 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PLEONASME_OPTIMISER_UN_MAXIMUM",
+      "text": "Il optimise un maximum son profit.",
+      "suggestion": "optimise",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PLEONASME_PRECEDENT_PASSE",
       "text": "Il a eu de précédents problèmes par le passé.",
       "suggestion": "problèmes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLEONASME_PROGRESSER_EN_AVANT",
+      "text": "progresser en avant",
+      "suggestion": "progresser",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLEONASME_SUIVRE_DERRIERE",
+      "text": "suivre derrière",
+      "suggestion": "suivre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLEONASME_VERBE_ENSEMBLE",
+      "text": "additionner ensemble",
+      "suggestion": "additionner",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4573,6 +6271,36 @@
       "rule": "PLUPART",
       "text": "La plus-part des gens.",
       "suggestion": "plupart",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PLURIEL_AL2",
+      "text": "Il a des ONG governementals.",
+      "suggestion": "gouvernementale",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PLURIEL_AL2",
+      "text": "Il a des chevals blancs.",
+      "suggestion": "chevaux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PLURIEL_AL2",
+      "text": "Il a des formes verbals blanches.",
+      "suggestion": "verbaux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PLURIEL_AL2",
+      "text": "Il a des professionnals blanches.",
+      "suggestion": "professionnels",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PLURIEL_AL2",
+      "text": "Il a des sandals blanches.",
+      "suggestion": "sandales",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -4606,10 +6334,40 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "POINT_DIALOGUE",
+      "text": "-Oui, répondit-il tout sourire",
+      "suggestion": "sourire.",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "POINT_DOUBLE",
+      "text": "J'aime la cuisine japonaise.?",
+      "suggestion": ".",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "POINT_TOURNANT",
       "text": "point tournant",
       "suggestion": "tournant",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "POLE",
+      "text": "Il a tenté la traversée du pole nord.",
+      "suggestion": "pôle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "POLE",
+      "text": "Ils inaugurent un pole d'excellence.",
+      "suggestion": "pôle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "POLE",
+      "text": "On va au Pole Nord.",
+      "suggestion": "Pôle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "PORTE-POUSSIERE",
@@ -4624,10 +6382,34 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PORTER_FRUIT",
+      "text": "porter fruit",
+      "suggestion": "porter ses fruits",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "POSER_PROBLEME",
+      "text": "Cela pose problème.",
+      "suggestion": "un problème",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "POSER_QUESTION",
+      "text": "Cela pose question.",
+      "suggestion": "soulève une",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "POSSESSION_SIMPLE",
       "text": "possession simple",
       "suggestion": "détention simple",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "POSTULER_A",
+      "text": "Il a postulé à cet emploi.",
+      "suggestion": "postulé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "POTEAU_DE_BARBIER",
@@ -4642,9 +6424,21 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "POURVOIR_POUVOIR",
+      "text": "Il permet aussi à d'autres personnes de pourvoir transmettre des documents",
+      "suggestion": "pouvoir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "POUR_AUCUNE_CONSIDERATION",
       "text": "pour aucune considération",
       "suggestion": "à aucun prix",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "POUR_DIRE_LE_MOINS",
+      "text": "pour dire le moins",
+      "suggestion": "c'est le moins qu'on puisse dire",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4678,6 +6472,48 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "PRENDRE_ACTION",
+      "text": "Et surtout prenons action.",
+      "suggestion": "agissons",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PRENDRE_A_PARTIE",
+      "text": "Il prend à parti son frère.",
+      "suggestion": "partie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PRENDRE_FORCE",
+      "text": "prendre force",
+      "suggestion": "entrer en vigueur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRENDRE_LA_PART_DE",
+      "text": "Mon frère a pris la part de de sa soeur.",
+      "suggestion": "pris la défense de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRENDRE_PERSONNEL",
+      "text": "prendre personnel",
+      "suggestion": "prendre personnellement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRENDRE_UNE_CHANCE",
+      "text": "prendre une chance",
+      "suggestion": "prendre un risque",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRENDRE_UNE_PROMENADE",
+      "text": "prendre une marche",
+      "suggestion": "faire une promenade",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "PRESENTATION_FORMELLE",
       "text": "présentation formelle",
       "suggestion": "exposé didactique",
@@ -4694,6 +6530,18 @@
       "text": "preuve circonstancielle",
       "suggestion": "preuve indirecte",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRIMER_SUR",
+      "text": "Le travail en équipe primait sur les scores individuels.",
+      "suggestion": "primait",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PRIMER_SUR",
+      "text": "Mon bonheur prime sur mon travail.",
+      "suggestion": "prime",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "PRIME_ADDITIONNELLE",
@@ -4741,6 +6589,24 @@
       "rule": "PRIX_COUPE",
       "text": "prix coupé",
       "suggestion": "prix réduit",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRIX_DADMISSION",
+      "text": "prix d’admission",
+      "suggestion": "prix d'entrée",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRIX_DEPARGNE",
+      "text": "prix d’épargne",
+      "suggestion": "prix économique",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRIX_DESCOMPTE",
+      "text": "prix d’escompte",
+      "suggestion": "prix minicharge",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4828,6 +6694,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "QUEST-CE_QUI_ARRIVE_AVEC",
+      "text": "qu’est-ce qui arrive avec Michelle ?",
+      "suggestion": "qu'est-ce qui arrive à",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "QUE_AVOIR_BESOIN",
+      "text": "Les documents que j'ai besoin pour faire mon travail.",
+      "suggestion": "dont",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "QUIZ",
       "text": "Voici de difficiles quizzes sur les inventeuses.",
       "suggestion": "quiz",
@@ -4838,6 +6716,42 @@
       "text": "Voici des quizzes sur les inventeuses.",
       "suggestion": "quiz",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "RABATTRE_LES_OREILLES",
+      "text": "Il doit rabattre les oreilles de son frère à force de lui en parler.",
+      "suggestion": "rebattre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "RANCARD_RANCART",
+      "text": "Le projet est mis au rancard.",
+      "suggestion": "rancart",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "RAPPORT_D_IMPOT",
+      "text": "rapport d’impôt",
+      "suggestion": "déclaration de revenus",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REBOUTER_REBOOTER",
+      "text": "Il faut rebouter l’ordinateur.",
+      "suggestion": "rebooter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "REBOUTER_REBOOTER",
+      "text": "J’ai rebouté mon PC.",
+      "suggestion": "rebooté",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "RECU_DIMPOTS",
+      "text": "reçu d’impôt",
+      "suggestion": "reçu fiscal",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "REFILL",
@@ -4870,6 +6784,72 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "REMERCIER_SALUER_A",
+      "text": "Je vous remercie à tous.",
+      "suggestion": "remercie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "REMPLIR_UNE_COMMANDE",
+      "text": "remplir une commande",
+      "suggestion": "traiter une commande",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REMPLIR_UNE_ORDONNANCE",
+      "text": "remplir une ordonnance",
+      "suggestion": "exécuter une ordonnance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REMPLIR_UNE_PRESCRIPTION",
+      "text": "remplir une prescription",
+      "suggestion": "exécuter une ordonnance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REMPLIR_UN_POSTE",
+      "text": "remplir un poste",
+      "suggestion": "pourvoir un poste",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RENCONTRER_DES_BESOINS",
+      "text": "rencontrer des besoins",
+      "suggestion": "répondre à des besoins",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RENCONTRER_DES_ECHEANCES",
+      "text": "rencontrer des échéances",
+      "suggestion": "respecter des échéances",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RENCONTRER_DES_EXIGENCES",
+      "text": "rencontrer des exigences",
+      "suggestion": "répondre à des exigences",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RENCONTRER_DES_NORMES",
+      "text": "rencontrer des normes",
+      "suggestion": "respecter des normes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RENCONTRER_DES_OBLIGATIONS",
+      "text": "rencontrer des obligations",
+      "suggestion": "faire face à des obligations",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RENCONTRER_UN_OBJECTIF",
+      "text": "rencontrer un objectif",
+      "suggestion": "atteindre un objectif",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "REPAS_INFORMEL",
       "text": "Il participa à un dîner informel.",
       "suggestion": "dîner sans cérémonie",
@@ -4882,9 +6862,27 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "REP_ADRESSER",
+      "text": "Il adresse sa requête au roi.",
+      "suggestion": "envoie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_APPRECIER",
+      "text": "Il faut apprécier les arts.",
+      "suggestion": "estimer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "REP_BREF",
       "text": "Bref, j'ai fini de toute façon.",
       "suggestion": "Sinon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_COMMUN",
+      "text": "C'est un milieu commun.",
+      "suggestion": "global",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4906,6 +6904,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "REP_MAINTENIR",
+      "text": "Ainsi, il maintient la paix.",
+      "suggestion": "conserve",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "REP_MALHEUREUSEMENT",
       "text": "Il m'a malheureusement annoncé une triste nouvelle.",
       "suggestion": "fâcheusement, annoncé",
@@ -4918,9 +6922,27 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "REP_POSSIBLE",
+      "text": "C'est possible.",
+      "suggestion": "prévisible",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_PRECISER",
+      "text": "Je précisais le lieu du rendez-vous.",
+      "suggestion": "mentionnais",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "REP_QUEL_QUE_SOIT",
       "text": "Alors, quel que soit les sondages, ils sont tous frauduleux.",
       "suggestion": "peu importe",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_REMERCIER",
+      "text": "Il remercie le roi.",
+      "suggestion": "salue",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4942,9 +6964,27 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "RESERVER_A_LAVANCE",
+      "text": "réserver à l’avance",
+      "suggestion": "réserver",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RESERVER_DAVANCE",
+      "text": "réserver d’avance",
+      "suggestion": "réserver",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "RESERVE_FAUNIQUE",
       "text": "réserve faunique",
       "suggestion": "réserve de faune",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RESOUDRE_OU_SOLUTIONNER",
+      "text": "Il a réussi à solutionner le problème.",
+      "suggestion": "résoudre",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4954,9 +6994,21 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "RETOURNER_UN_APPEL",
+      "text": "retourner un appel.",
+      "suggestion": "rappeler",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "RETOUR_DE_TAXES",
       "text": "retour de taxes",
       "suggestion": "versement des taxes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "RETOUR_D_IMPOT",
+      "text": "retour d’impôt",
+      "suggestion": "remboursement d'impôt",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -4976,6 +7028,12 @@
       "text": "Quels sont les revenues que vous avez déclarés.",
       "suggestion": "revenus",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "REVER_EN_COULEURS",
+      "text": "rêver en couleurs",
+      "suggestion": "bâtir des châteaux en Espagne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "RIM",
@@ -5014,6 +7072,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "SAJUSTER_A_LA_SITUATION",
+      "text": "s’ajuster à la situation",
+      "suggestion": "s'adapter à la situation",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SALAIRE_REGULIER",
       "text": "salaire régulier",
       "suggestion": "salaire de base",
@@ -5032,6 +7096,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "SAUVE_PAR_LA_CLOCHE",
+      "text": "sauver par la cloche",
+      "suggestion": "sauvé par le gong",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SCAB",
       "text": "scab.",
       "suggestion": "briseur de grève",
@@ -5041,6 +7111,12 @@
       "rule": "SEANCE_REGULIERE",
       "text": "séance régulière",
       "suggestion": "séance ordinaire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SECOUSSE_SISMIQUE",
+      "text": "secousse sismique",
+      "suggestion": "secousse tellurique",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -5068,6 +7144,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "SENCHEVETRER_LES_UNS_DANS_LES_AUTRES",
+      "text": "s’enchevêtrer les uns dans les autres",
+      "suggestion": "enchevêtrer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SENTRAIDER_MUTUELLEMENT",
+      "text": "s’entraider mutuellement",
+      "suggestion": "entraider",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SERIAL_KILLER",
       "text": "serial killer",
       "suggestion": "tueur en série",
@@ -5092,6 +7180,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "SESSION_DENREGISTREMENT",
+      "text": "session d’enregistrement",
+      "suggestion": "séance d'enregistrement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SESSION_DE_FORMATION",
       "text": "session de formation",
       "suggestion": "séance de formation",
@@ -5104,10 +7198,46 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "SE_BAFRER",
+      "text": "Il s'est bâfré au buffet à volonté.",
+      "suggestion": "a bâfré",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SE_BAFRER",
+      "text": "Il se bâfre au buffet à volonté.",
+      "suggestion": "bâfre",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SE_FAIRE_FORT_INF",
+      "text": "Elle se fait forte de réussir.",
+      "suggestion": "fort",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SE_FAIRE_FORT_PPA",
+      "text": "Ils se sont faits fort de gagner.",
+      "suggestion": "fait",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SE_FIER_SUR",
+      "text": "se fier sur",
+      "suggestion": "à",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SE_SUCCEDER",
       "text": "Les catastrophes se sont succédées.",
       "suggestion": "succédé",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SE_TIRER_DANS_LE_PIED",
+      "text": "se tirer dans les pieds",
+      "suggestion": "se faire du tort à soi-même",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "SHAREWARE",
@@ -5158,6 +7288,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "SOBJECTER_A",
+      "text": "Mon père s’objecta à à notre union.",
+      "suggestion": "opposa à",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SOIT_DISAMMENT",
       "text": "Mon soi-disamment ami.",
       "suggestion": "soi-disant",
@@ -5182,6 +7318,42 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "SONT_AUTANT_SING",
+      "text": "Ce sont autant d'implémentation.",
+      "suggestion": "implémentations",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SONT_SOMMES",
+      "text": "Dans ce cas-là eux et moi ne sont pas d'accord.",
+      "suggestion": "sommes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SONT_SOMMES",
+      "text": "Dans ce cas-là eux et moi sont d'accord.",
+      "suggestion": "sommes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SONY_ERICSSON",
+      "text": "Sony Ericson",
+      "suggestion": "Sony Ericsson",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SOUHAITER_DES_VOEUX",
+      "text": "Je vous souhaite mes vœux.",
+      "suggestion": "présente",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SOULEVER_UN_POINT_DORDRE",
+      "text": "soulever un point d’ordre",
+      "suggestion": "invoquer le règlement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "SOUS-CONTRACTEUR",
       "text": "sous-contracteur.",
       "suggestion": "sous-traitant",
@@ -5192,6 +7364,12 @@
       "text": "sous aucune considération",
       "suggestion": "à aucun prix",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SOUS_ENTENDRE",
+      "text": "Elles sous entendent que pour traiter certaines pathologies.",
+      "suggestion": "sous-entendent",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "SPAMMING",
@@ -5248,6 +7426,18 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "SUFFIRE_SIMPLEMENT",
+      "text": "suffire simplement",
+      "suggestion": "suffire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SUJET_INVERSE",
+      "text": "Pour ce problème, s'ajoute les facteurs environnementaux.",
+      "suggestion": "ajoutent",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "SURVIVAL_HORROR",
       "text": "survival horror",
       "suggestion": "jeu d'horreur",
@@ -5258,6 +7448,18 @@
       "text": "swamp.",
       "suggestion": "marais",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "S_EN_RAPPELER",
+      "text": "Je m'en rappelle bien !",
+      "suggestion": "me le rappelle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TACHER_MOYEN",
+      "text": "tâcher moyen que",
+      "suggestion": "tâcher de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "TANT_QU",
@@ -5281,6 +7483,12 @@
       "rule": "TAUX_DE_DIPLOMATION",
       "text": "taux de diplomation",
       "suggestion": "taux de succès scolaire",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TAXE_DAMUSEMENT",
+      "text": "taxe d’amusement.",
+      "suggestion": "taxe sur les loisirs et spectacles",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -5338,6 +7546,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "TENIR_POUR_ACQUIT",
+      "text": "tenir pour acquit",
+      "suggestion": "pour acquis",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "TERMES_ET_CONDITIONS",
       "text": "termes et conditions",
       "suggestion": "conditions générales",
@@ -5356,9 +7570,27 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "TIRER_AU_POIGNET",
+      "text": "tirer au poignet",
+      "suggestion": "jouer au bras de fer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TIRER_PARTI",
+      "text": "Tu tires toujours réellement partie de lui.",
+      "suggestion": "parti",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "TIR_AU_POIGNET",
       "text": "tir au poignet",
       "suggestion": "bras de fer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TOMBER_DANS_LES_POMMES",
+      "text": "tomber dans les pommes",
+      "suggestion": "tomber dans les pâmes",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -5377,6 +7609,12 @@
       "rule": "TOUR_A_FEU",
       "text": "tour à feu",
       "suggestion": "poste de vigie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TOUR_DEAU",
+      "text": "tour d’eau",
+      "suggestion": "château d'eau",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
@@ -5464,10 +7702,22 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
+      "rule": "TROUVER_PLUS_NOM_INCORRECT",
+      "text": "Il trouve trésor.",
+      "suggestion": "un trésor",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "TROU_DEAU",
       "text": "trou d’eau",
       "suggestion": "flaque d'eau",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TROU_DE_VER",
+      "text": "Les trous de vers.",
+      "suggestion": "ver",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
       "rule": "TRUITE_MOUCHETEE",
@@ -5536,6 +7786,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "VENIR_DE_VINF",
+      "text": "Il vient de sauté.",
+      "suggestion": "sauter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "VENTE_DE_FEU",
       "text": "ventes de feu.",
       "suggestion": "solde après incendie",
@@ -5572,10 +7828,22 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "VIDANGE_D_HUILE",
+      "text": "vidange d’huile",
+      "suggestion": "vidange du moteur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
       "rule": "VINGT_ET_UN",
       "text": "J'ai vingt et un ans",
       "suggestion": "vingt-et-un",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "VISITER",
+      "text": "Il visitait sa grand-mère.",
+      "suggestion": "voyait",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
       "rule": "VISOU",
@@ -5623,6 +7891,12 @@
       "rule": "VOUS_LE_PPA_1ER_GROUPE",
       "text": "Comme vous le faite.",
       "suggestion": "faites",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "VU_VUE",
+      "text": "Il partage mon point de vu.",
+      "suggestion": "vue",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {
@@ -5677,6 +7951,36 @@
       "rule": "X_WINDOW",
       "text": "C’est le MIT qui a publié la première version de X-Windows en juin 1984.",
       "suggestion": "X Window",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "Y_A_T_IL",
+      "text": "Combien y-a-t-il de zoos en Australie?",
+      "suggestion": "y a",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "Y_A_T_IL",
+      "text": "Pourquoi n’y-a-t’il pas de fichiers audio pour l’arabe ?",
+      "suggestion": "y a",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "Y_A_T_IL",
+      "text": "Qu'y-a-t-il dans le nid ?",
+      "suggestion": "y a",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "Y_A_T_IL",
+      "text": "Qui y-avait-il cette nuit-là ?",
+      "suggestion": "y avait",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "Y_A_T_IL",
+      "text": "Y-a-t-il un pilote dans l’avion ?",
+      "suggestion": "Y a",
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
     },
     {

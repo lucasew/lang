@@ -3184,6 +3184,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
+      "rule": "ABLE_TO_PASSIVE",
+      "text": "The problem was able to be solved.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "ABOUT_FACE_HYPHEN",
       "text": "The soldier did an about face and marched off.",
       "suggestion": "about-face",
@@ -3202,15 +3208,105 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "ABSORB_AT_IN",
+      "text": "I am absorbed at this book.",
+      "suggestion": "absorbed in",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ACCEDE_TO",
+      "text": "He acceded to our demands.",
+      "suggestion": "allow, agree to or give in to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCELERATE",
+      "text": "The car accelerated from traffic lights",
+      "suggestion": "speed up",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCENTUATE",
+      "text": "The harsh light accentuated the ruggedness of the landscape.",
+      "suggestion": "stress",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCOMMODATION",
+      "text": "Accommodation available.",
+      "suggestion": "Room",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCOMPANY",
+      "text": "You need to accompany him.",
+      "suggestion": "go with",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCOMPANY_WITH",
+      "text": "Land reclamation is always accompany with pollution.",
+      "suggestion": "accompany by",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ACCOMPLISH",
+      "text": "Accomplish your work!",
+      "suggestion": "Do",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCORDING_TO",
+      "text": "According about a recent survey, most smokers suffer from cancer.",
+      "suggestion": "According to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ACCORDING_TO",
+      "text": "He was acquitted, because he was innocent according in the Jury.",
+      "suggestion": "according to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ACCORDING_TO_ME",
       "text": "According to me, this is a great movie.",
       "suggestion": "In my opinion",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "ACCRUE",
+      "text": "The deposit accrued interest.",
+      "suggestion": "add",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ACCUSE_FOR_OF",
+      "text": "He is accused for fraud.",
+      "suggestion": "accused of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ACCUSTOM_WITH_TO",
+      "text": "The mechanic is accustomed with handling those situations.",
+      "suggestion": "accustomed to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ACHE_COMPOUNDS",
       "text": "Tom didn't feel good because of his head ache.",
       "suggestion": "headache",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ACQUIRE",
+      "text": "He acquired all the tools he needed.",
+      "suggestion": "get",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ADDEND_ATTEND",
+      "text": "I will addend your birthday party!",
+      "suggestion": "attend",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3247,6 +3343,12 @@
       "rule": "AFTERMARKET",
       "text": "The after life is something that many religions believe in.",
       "suggestion": "afterlife",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "AIRPLANE_HANGER",
+      "text": "These are airplane hangers.",
+      "suggestion": "hangars",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3316,6 +3418,18 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "AMERICANO",
+      "text": "I don't understand Americano.",
+      "suggestion": "American English",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "AM_LOATHE_TO",
+      "text": "I am loathe to continue this conversation.",
+      "suggestion": "loath",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ANALYSIS_IF",
       "text": "An Analysis if Rock Music",
       "suggestion": "of",
@@ -3337,6 +3451,12 @@
       "rule": "AND_THAN",
       "text": "Since than we've released two new versions.",
       "suggestion": "then",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ANGRY_WITH_ABOUT",
+      "text": "Barbie is angry with the situation.",
+      "suggestion": "angry about the situation",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3394,6 +3514,24 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "APPLY_FOR",
+      "text": "You try and apply for another University!",
+      "suggestion": "apply to another University",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "APPLY_TO",
+      "text": "You can apply to more assistance.",
+      "suggestion": "apply for more assistance",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "APPLY_TO",
+      "text": "You can apply to welfare.",
+      "suggestion": "apply for welfare",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "APPROXIMATELY_ABOUT",
       "text": "Americans feel full of energy and healthy approximately about 19 days per month.",
       "suggestion": "approximately",
@@ -3442,10 +3580,58 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "ARRIVED_IN",
+      "text": "Arrive in the downtown.",
+      "suggestion": "Arrive downtown",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ARRIVE_AT_IN",
+      "text": "They will arrive at the city at 9:00 am.",
+      "suggestion": "arrive in",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ASK_NO_PREPOSITION",
+      "text": "I have to tell to them the truth.",
+      "suggestion": "them",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ASK_NO_PREPOSITION",
+      "text": "She asked to me whether I like cats.",
+      "suggestion": "me",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ASK_NO_PREPOSITION",
+      "text": "She was telling to him about the problems of disambiguation.",
+      "suggestion": "him",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ASK_WETHER",
+      "text": "Don't ask me wether it is already decided!",
+      "suggestion": "whether",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ASSASSINS_CREED",
       "text": "He was playing Assassins Creed at home.",
       "suggestion": "Assassin's Creed",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ASSIST_ASSISTANCE",
+      "text": "Do you need any assistance?",
+      "suggestion": "help",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "ASSIST_ASSISTANCE",
+      "text": "May I assist you?",
+      "suggestion": "help",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "ASS_AS",
@@ -3457,6 +3643,12 @@
       "rule": "AS_FOLLOW_AS_FOLLOWS",
       "text": "We can elaborate this distinction as follow.",
       "suggestion": "as follows",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "AS_US",
+      "text": "For as, this works as expected.",
+      "suggestion": "us",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3562,6 +3754,24 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "A_MY",
+      "text": "The my car is in the garage.",
+      "suggestion": "The",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "A_MY",
+      "text": "These customs differ from those our country.",
+      "suggestion": "those",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "A_MY",
+      "text": "This your answer?",
+      "suggestion": "This",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "A_NNS_BEST_NN",
       "text": "I was a moderators worst enemy on the old espn message boards.",
       "suggestion": "moderator's",
@@ -3592,6 +3802,18 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "BACK_ABACK",
+      "text": "He was totally taken a bag by my response.",
+      "suggestion": "aback",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BACK_ABACK",
+      "text": "He was totally taken back by my response.",
+      "suggestion": "aback",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "BACK_COMPOUNDS",
       "text": "She went to the osteopathic clinic because of a bad back ache.",
       "suggestion": "backache",
@@ -3607,6 +3829,18 @@
       "rule": "BACK_COMPOUNDS",
       "text": "We can move the task to our back log.",
       "suggestion": "backlog",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BACK_FIRE",
+      "text": "He's back firing.",
+      "suggestion": "backfiring",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BACK_FIRE",
+      "text": "His plans always back fire.",
+      "suggestion": "backfire",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3628,6 +3862,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "BEAN_BEEN",
+      "text": "I have not bean happy with the solution.",
+      "suggestion": "been",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "BEAT_REGARDS",
       "text": "Beat Regards, Daniel",
       "suggestion": "Best",
@@ -3643,6 +3883,18 @@
       "rule": "BED_ENGLISH",
       "text": "Sorry for my bed English.",
       "suggestion": "bad",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BEE_BE",
+      "text": "It can bee good.",
+      "suggestion": "be",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BEGONE_BEGUN",
+      "text": "I rushed to get to class on time, but the lesson had already begone.",
+      "suggestion": "begun",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3664,15 +3916,69 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "BEWARE_PREPOSITION",
+      "text": "Beware about malware.",
+      "suggestion": "Beware of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BEWARE_PREPOSITION",
+      "text": "Beware with regard to malicious websites.",
+      "suggestion": "Beware of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_ADVISED",
+      "text": "You are advised look after your belongings.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "BE_ALOUD_TO",
+      "text": "Who is aloud to get information from your mail?",
+      "suggestion": "allowed to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "BE_AWARE_OF",
       "text": "I need to aware of this.",
       "suggestion": "be aware",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "BE_A_X_ONE",
+      "text": "This test is an easy one.",
+      "suggestion": "is easy",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "BE_COMPOUNDS",
       "text": "He saw the be wildered look on my face.",
       "suggestion": "bewildered",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_DONT",
+      "text": "I am don't sure.",
+      "suggestion": "am not",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_FINED_WITH",
+      "text": "I'm fined with that.",
+      "suggestion": "fine",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_FOND_TO",
+      "text": "Children are fond to skipping.",
+      "suggestion": "of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_IN_UNDER_PRESSURE",
+      "text": "Kelly is in pressure.",
+      "suggestion": "under pressure",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3682,10 +3988,70 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "BE_NOT_BE_JJ",
+      "text": "I am not be happy.",
+      "suggestion": "happy",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_NOT_BE_JJ",
+      "text": "If you are not be able to provide this information by next Tuesday, please let me know.",
+      "suggestion": "able",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_ON_IN_SHOCK",
+      "text": "We were on shock when it happened.",
+      "suggestion": "were in shock",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_RB_BE",
+      "text": "It was very is to set up",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_RB_BE",
+      "text": "This is however is my first post.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_TO_VBG",
+      "text": "He was to making America great again.",
+      "suggestion": "making",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_TO_VBG",
+      "text": "This material is to melting.",
+      "suggestion": "melting",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_USE_TO_DO",
+      "text": "He is use to a vegetarian diet.",
+      "suggestion": "used",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BE_WILL",
+      "text": "How is would this approach be useful?",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "BIOGRAPHY_OF_A_LIFE",
       "text": "In this biography of her life, we get to share in the compelling story of a family’s struggles.",
       "suggestion": "biography",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "BIS_BUS",
+      "text": "I will take the bis to the central station.",
+      "suggestion": "bus",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "BIT_COIN",
@@ -3715,6 +4081,18 @@
       "rule": "BLACK_SEA",
       "text": "He was living in a town on the coast of the black sea.",
       "suggestion": "Black Sea",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BLEND_TOGETHER",
+      "text": "Their voices blend together in lovely harmony.",
+      "suggestion": "blend",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "BOAST_FOR_OF",
+      "text": "He boasted for his skills.",
+      "suggestion": "boasted of",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3763,6 +4141,18 @@
       "rule": "BREAST_COMPOUNDS",
       "text": "They were so pretty, with those burnished breast plates.",
       "suggestion": "breastplates",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BRIEF_MOMENT",
+      "text": "A Brief Moment of Compassion",
+      "suggestion": "Moment",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "BRING_AT_TO",
+      "text": "Bring Suzanne at the party.",
+      "suggestion": "Bring Suzanne to",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -3826,6 +4216,30 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "BUY_VBG",
+      "text": "Buy making it our top pick in the sector.",
+      "suggestion": "By",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BUY_VBG",
+      "text": "Get some buy doing treasure maps.",
+      "suggestion": "by",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BUY_VBG",
+      "text": "Several years can go buy waiting for recovery.",
+      "suggestion": "by",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "BUY_VBG",
+      "text": "We exploit these two features buy using Named Entity recognition.",
+      "suggestion": "by",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "BY_DEFAULT_COMMA",
       "text": "By default this setting is enabled.",
       "suggestion": "By default,",
@@ -3871,6 +4285,36 @@
       "rule": "CAN_CHECKOUT",
       "text": "She can checkout tomorrow.",
       "suggestion": "can check out",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CAN_MISSPELLING",
+      "text": "Also here you cam see that the ban is on your side.",
+      "suggestion": "can",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CAN_MISSPELLING",
+      "text": "Cam do.",
+      "suggestion": "Can",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CAN_MISSPELLING",
+      "text": "I need to see the language before I cam advise you.",
+      "suggestion": "can",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CAN_MISSPELLING",
+      "text": "It cam happen.",
+      "suggestion": "can",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CAN_MISSPELLING",
+      "text": "We cam certainly empathize with that.",
+      "suggestion": "can",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4072,6 +4516,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "CD_WEEK_S",
+      "text": "\"he'll be sailing around the world in two week's time.",
+      "suggestion": "two weeks' time",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "CELSIUS",
       "text": "The temperature is less than 20° celsius.",
       "suggestion": "Celsius",
@@ -4126,6 +4576,36 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "COMBINE_TOGETHER",
+      "text": "Each layer combines together for an absolute orchestra of flavors.",
+      "suggestion": "combines",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "COMBINE_TOGETHER",
+      "text": "Two things are combined together in this application.",
+      "suggestion": "combined",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "COME_IN_TO",
+      "text": "Finally, the boss called us all to come in her giant office for a meeting.",
+      "suggestion": "come to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COME_THROUGH",
+      "text": "They came throw the door.",
+      "suggestion": "through",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COME_TO_PLANE",
+      "text": "I came to plane.",
+      "suggestion": "I came by plane",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "COMFORTABLE_WITH_VBG",
       "text": "I am not comfortable with dancing with strangers.",
       "suggestion": "comfortable dancing",
@@ -4156,6 +4636,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "COMMUTE_BACK_AND_FORTH",
+      "text": "She will commute back and forth between New Haven and her home in Southern California before relocating to the Elm City this summer.",
+      "suggestion": "commute",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "COMPARISONS_AS_ADJECTIVE_AS",
       "text": "We must do our job as best as we can.",
       "suggestion": "well",
@@ -4168,9 +4654,45 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "COMPLAINT_COMPLIANT",
+      "text": "Any law that is enacted today must be complaint with the fundamental rights chapter of the Constitution.",
+      "suggestion": "compliant",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COMPLAINT_COMPLIANT",
+      "text": "If the rules are not fully complaint with the specification, post them here.",
+      "suggestion": "compliant",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COMPLAIN_FOR_ABOUT",
+      "text": "The client complained for the service.",
+      "suggestion": "complained about",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COMPOSE_FROM_OF",
+      "text": "It is composed from carbohydrates and proteins.",
+      "suggestion": "composed of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_AWAIT_WAIT",
+      "text": "I can hardly await until \" Evidence \" arrives at my home.",
+      "suggestion": "wait",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "CONFUSION_AWL_ALL",
       "text": "I left awl my things there.",
       "suggestion": "all my things",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_KNOT_NOT",
+      "text": "This should knot have happened.",
+      "suggestion": "should not",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4252,9 +4774,75 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "CONSIST_TO_OF",
+      "text": "There is a program in medicine and this program consists to diagnostic people to know if their body works well.",
+      "suggestion": "consists of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CONTINUE_TO_REMAIN",
+      "text": "We continued to remain optimistic.",
+      "suggestion": "remained",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "CORSE_COURSE",
       "text": "Of Corse, I can take care.",
       "suggestion": "Course",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They coud't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They coudln't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They coudn't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They could't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They couldln't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They couln't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They coundn't come.",
+      "suggestion": "couldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They shoudn't come.",
+      "suggestion": "shouldn't",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "COUD_T",
+      "text": "They woudn't come.",
+      "suggestion": "wouldn't",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4288,9 +4876,39 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "COVER_BY_IN",
+      "text": "The Mountains are covered by snow.",
+      "suggestion": "covered in snow",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CRAVE_FOR",
+      "text": "Whenever I crave for Indochinese food, I go here.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CRAZY_ON_WITH",
+      "text": "What makes me crazy on this dwelling is that some time we are higher than the clouds.",
+      "suggestion": "crazy with",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "CUMBER_SOME",
       "text": "Building an app for Windows is cumber som.",
       "suggestion": "cumbersome",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CURE_AGAINST_FOR",
+      "text": "Researcher have found the cure against that type of cancer.",
+      "suggestion": "cure for",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "CURE_FROM_OF",
+      "text": "This medicine will cure you from the disease.",
+      "suggestion": "cure you of",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4318,6 +4936,30 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "DEFUSE_BOMB",
+      "text": "He diffused several bombs today.",
+      "suggestion": "defused",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DEFUSE_BOMB",
+      "text": "How long did it take you to diffuse the bomb?",
+      "suggestion": "defuse",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_CHANGE",
+      "text": "She made a 360 degree change in her life.",
+      "suggestion": "180",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_CHANGE",
+      "text": "She made a 360-degree change in her life.",
+      "suggestion": "180-degree",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "DEGREE_HYPHEN",
       "text": "He looked at it from a 10 degree angle.",
       "suggestion": "10-degree",
@@ -4334,6 +4976,18 @@
       "text": "Our website got hit by a denial of service attack.",
       "suggestion": "denial-of-service",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DEPRIVE_FROM_OF",
+      "text": "This soil is deprived from nutrients.",
+      "suggestion": "deprived of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DESCEND_DOWN",
+      "text": "The Pentagon aides and journalists descend down the back stairs of the plane as is customary while Rumsfeld comes down the main stairs to meet his welcome party.",
+      "suggestion": "descend",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "DEUS_EX_MACHINA",
@@ -4390,10 +5044,22 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "DIFFUSE_TENSIONS",
+      "text": "They gathered at her police precinct to thank officers for their work and to diffuse tensions.",
+      "suggestion": "defuse",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "DIS",
       "text": "Dis is my favourite food.",
       "suggestion": "This",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "DISAPPOINT_FROM",
+      "text": "She was disappointed from the surprise.",
+      "suggestion": "disappointed with",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "DOB_T",
@@ -4462,6 +5128,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "DOWN_COMPOUNDS",
+      "text": "Please down load the latest version.",
+      "suggestion": "download",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "DOWN_SIDE",
       "text": "The Down Sides aren't easy.",
       "suggestion": "Downsides",
@@ -4486,9 +5158,39 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "DO_HAVE_A_MEETING",
+      "text": "Tom does a meeting the next day.",
+      "suggestion": "has a meeting",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DO_HAVE_A_MEETING",
+      "text": "We decided to did a meeting the next day.",
+      "suggestion": "had a meeting",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DO_HAVE_A_MEETING",
+      "text": "We decided to do a meeting the next day.",
+      "suggestion": "have a meeting",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "DO_TO_THE_LACK_OF",
       "text": "He feels powerless do to the lack of friends.",
       "suggestion": "due to the lack of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DO_VBZ_AMBIGUOUS_VERB",
+      "text": "Do you found the pen?",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DO_YOU_WHAT",
+      "text": "Do you why she left him?",
+      "suggestion": "",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4501,6 +5203,48 @@
       "rule": "DRY_ERASE_HYPHEN",
       "text": "He loves the smell of of dry erase markers.",
       "suggestion": "dry-erase",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_PRP",
+      "text": "I will go to the Us next month.",
+      "suggestion": "the",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_PRP",
+      "text": "If the it em is missing, stop the test.",
+      "suggestion": "the",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_PRP",
+      "text": "If you frequently write incorrectly spelled text an it causes a problem for the readers, use LT.",
+      "suggestion": "an",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_PRP",
+      "text": "Strode past the now frightened man, entered the he house.",
+      "suggestion": "the",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_PRP",
+      "text": "The dots in the my life.",
+      "suggestion": "the",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_PRP",
+      "text": "The my search could return docs.",
+      "suggestion": "The",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "DT_RESPONDS",
+      "text": "Thanks for the responds.",
+      "suggestion": "response",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4540,6 +5284,24 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "EAT_ANTIBIOTICS",
+      "text": "Are you eating medicines for that illness?",
+      "suggestion": "taking",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EAT_ANTIBIOTICS",
+      "text": "I ate medicine for 2 weeks after my operation.",
+      "suggestion": "took",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EAT_ANTIBIOTICS",
+      "text": "You must go to the doctor and eat antibiotics.",
+      "suggestion": "take",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ECONOMICAL_ECONOMIC",
       "text": "This article deals with economical development of the Third World.",
       "suggestion": "economic",
@@ -4564,10 +5326,28 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "EFFORT_AFFORD",
+      "text": "I cannot effort a new car.",
+      "suggestion": "afford",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "EGGPLANT",
       "text": "He loved to eat eggplants for breakfast.",
       "suggestion": "aubergines",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "ELDER_OLDER",
+      "text": "She is elder than her brother.",
+      "suggestion": "older",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ELUDED_TO",
+      "text": "He eluded to engagement at the party.",
+      "suggestion": "alluded to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "EMMANUEL_MACRON",
@@ -4582,9 +5362,21 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "ENROLLED_IN_FOR",
+      "text": "He enrolled at the college.",
+      "suggestion": "He enrolled in",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ENVELOP_ENVELOPE",
       "text": "Please open the envelop.",
       "suggestion": "envelope",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ESSENTIAL_ESSENTIALLY",
+      "text": "This is essential the same work",
+      "suggestion": "essentially",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4600,6 +5392,60 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "EXCEPTION_PREPOSITION_THE_RULE",
+      "text": "Exceptions regarding these general rules are in Table 3.",
+      "suggestion": "Exceptions to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EXCEPTION_PREPOSITION_THE_RULE",
+      "text": "Graphite is an exception of the rule.",
+      "suggestion": "exception to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EXPLAIN_TO",
+      "text": "I explained her the difference between right and wrong.",
+      "suggestion": "to her",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EXPLAIN_TO",
+      "text": "Let me explain you why I like him.",
+      "suggestion": "to you",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EXPLAIN_TO",
+      "text": "She explained me the results in detail.",
+      "suggestion": "to me",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EX_ALWAYS_HYPHENATED",
+      "text": "He is the ex president.",
+      "suggestion": "ex-president",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "EYE_COMPOUNDS",
+      "text": "Calcium deposits on eye lids",
+      "suggestion": "eyelids",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "E_PRIME_LOOSE",
+      "text": "This is right.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "E_PRIME_STRICT",
+      "text": "This is wrong.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "FACTOR_HYPHEN",
       "text": "He enabled 2 factor auth to protect his Facebook account.",
       "suggestion": "2-factor",
@@ -4610,6 +5456,42 @@
       "text": "It was a pity that the Jets faired badly.",
       "suggestion": "fared badly",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FAIR_SURE",
+      "text": "I have had my fair sure of it.",
+      "suggestion": "fairly sure",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FAIR_SURE",
+      "text": "I'm fair sure.",
+      "suggestion": "fairly sure",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FAIR_SURE",
+      "text": "This isn't fair sure but that's just how it is.",
+      "suggestion": "fairly sure",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FAMOUS_CELEBRITY",
+      "text": "I'm told that he's a famous celebrity now.",
+      "suggestion": "celebrity",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "FARE_FAIR",
+      "text": "It's not fare how to treat me!",
+      "suggestion": "fair",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FELLOW_CLASSMATE",
+      "text": "I would enjoy a reunion with my fellow classmates.",
+      "suggestion": "classmates",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "FEMALE_ACTOR",
@@ -4712,6 +5594,24 @@
       "text": "A flee market is a type of street market.",
       "suggestion": "flea market",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FOLLOW_A_COURSE",
+      "text": "There is classes were students can follow their courses.",
+      "suggestion": "take their courses",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FORCE_FEED_HYPHEN",
+      "text": "I will force feed the children with vegetables.",
+      "suggestion": "force-feed",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "FOREIGN_IMPORT",
+      "text": "The rise in foreign imports, the argument goes, is forcing some Americans to accept lower pay to remain competitive with, say, Mexican and Chinese workers.",
+      "suggestion": "imports",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "FORE_FOR",
@@ -4870,6 +5770,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "GATHER_UP",
+      "text": "Please, gather up the documentation and let's go.",
+      "suggestion": "gather",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "GEIGER_COUNTER",
       "text": "A geiger counter can detect radioactivity.",
       "suggestion": "Geiger counter",
@@ -4885,6 +5791,12 @@
       "rule": "GESTURE_OF_GREETING",
       "text": "She made me a gesture of greeting.",
       "suggestion": "waved at me",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "GET_A_JOB_IN_WITH",
+      "text": "The text is also a very important things for the people who want to get a job in the SPVM.",
+      "suggestion": "with the SPVM",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4906,9 +5818,45 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "GOD_COMMA",
+      "text": "Oh my God it's terrible.",
+      "suggestion": "God,",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "GOING_ONE",
+      "text": "She knew what was going one.",
+      "suggestion": "on",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "GOING_TO_VACATION",
+      "text": "She is going to vacation.",
+      "suggestion": "going on vacation",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "GOOD_IN_AT_GERUND",
       "text": "He is good in swimming.",
       "suggestion": "good at swimming",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "GOOD_NEWS",
+      "text": "The bad new is that it doesn't work.",
+      "suggestion": "news",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "GOOD_WELL",
+      "text": "You speak English very good.",
+      "suggestion": "well",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "GOON",
+      "text": "You can't goon like that.",
+      "suggestion": "go on",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4936,6 +5884,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "GRANITE",
+      "text": "Do not take anything for granite.",
+      "suggestion": "granted",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "GREYS_ANATOMY",
       "text": "My favorite TV show is Greys Anatomy.",
       "suggestion": "Grey's Anatomy",
@@ -4960,9 +5914,39 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "GUARD_FROM_AGAINST",
+      "text": "The dog guards from the thieves.",
+      "suggestion": "guards against",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "GUES_GUESS",
       "text": "I gues you are right.",
       "suggestion": "guess",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAD_HARD",
+      "text": "I think it's had to know the truth.",
+      "suggestion": "hard",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAD_HARD",
+      "text": "It was really had to do it.",
+      "suggestion": "hard",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAD_HARD",
+      "text": "My furgulator's had to understand; these instructions are rubbish.",
+      "suggestion": "hard",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAD_HARD",
+      "text": "Seems to me that it wouldn’t be had to add but what do I know.",
+      "suggestion": "hard",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -4987,6 +5971,12 @@
       "rule": "HAD_TOO",
       "text": "They wanted too have more.",
       "suggestion": "to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAIRS",
+      "text": "She cut her hairs yesterday.",
+      "suggestion": "hair",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5032,10 +6022,70 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "HASNT_IRREGULAR_VERB",
+      "text": "The children weren't awake by the storm, were they?",
+      "suggestion": "weren't awaked",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HASNT_IRREGULAR_VERB",
+      "text": "The technicians weren't awake by the emergency alarm.",
+      "suggestion": "weren't awaked",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HASNT_IRREGULAR_VERB",
+      "text": "They haven't bit their tongue.",
+      "suggestion": "haven't bitten",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HASNT_IRREGULAR_VERB",
+      "text": "Tom hasn't send any message yet.",
+      "suggestion": "hasn't sent",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HASNT_IRREGULAR_VERB",
+      "text": "We slept soundly; we know we weren't awake by the storm!",
+      "suggestion": "weren't awaked",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HASNT_IRREGULAR_VERB",
+      "text": "You weren't awake by the alarm clock, were you?",
+      "suggestion": "weren't awaked",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAVE_A_TENDENCY",
+      "text": "This policy has a tendency to isolate some communities.",
+      "suggestion": "tends",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "HAVE_CD_YEARS",
+      "text": "He has 25 years old.",
+      "suggestion": "is 25 years old",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "HAVE_CD_YEARS_I",
       "text": "I have 25 years old.",
       "suggestion": "am 25 years old",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAVE_FOLLOWING_NN",
+      "text": "I have following questions for you:",
+      "suggestion": "the following questions",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HAVE_THE_ABILITY_TO",
+      "text": "The toddle has the ability to walk.",
+      "suggestion": "can",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "HAVE_TWITTER",
@@ -5068,15 +6118,39 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "HEARS_YEARS",
+      "text": "I was only 12 hears old when it happened.",
+      "suggestion": "years",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "HELLOS",
       "text": "Hellos Christian.",
       "suggestion": "Hello",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "HELP_TO_FIND",
+      "text": "Can any guru help me to find the reason?",
+      "suggestion": "help me find",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "HEP",
       "text": "He heps you to save lifes.",
       "suggestion": "helps",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HER_HEAR",
+      "text": "I'd like to her the truth.",
+      "suggestion": "hear",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "HER_S",
+      "text": "Her's our new app.",
+      "suggestion": "Here's",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5230,9 +6304,39 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "IMITATION_FROM_OF",
+      "text": "Children imitate every habit and behavior from their parents.",
+      "suggestion": "imitate every habit and behavior of their parents",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IMPORTANT_WITH_TO",
+      "text": "Family who is closest and important with you.",
+      "suggestion": "important to you",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "IND_KIND",
       "text": "Ind Regards.",
       "suggestion": "Kind",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "INSIST_ON_GERUND",
+      "text": "She insisted to attend the conference.",
+      "suggestion": "insisted on attending",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "INSPIRED_WITH",
+      "text": "The artist was (not unsurprisingly, I think) inspired with the beauty of the mountains.",
+      "suggestion": "inspired by",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "INSPIRED_WITH",
+      "text": "The artist was inspired with the beauty of the mountains.",
+      "suggestion": "inspired by",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5240,6 +6344,18 @@
       "text": "I am not interested by this job.",
       "suggestion": "interested in",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "INTEREST_ABOUT_IN",
+      "text": "They are more interest about the money, like how it's manage.",
+      "suggestion": "more interest in",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "INTRODUCE_FOR_THE_FIRST_TIME",
+      "text": "We were introduced for the first time a week ago.",
+      "suggestion": "introduced",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "INVOICE_OF_FOR",
@@ -5284,10 +6400,22 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "IN_FRONT_OF",
+      "text": "In front to so many decisions, the people are fed up.",
+      "suggestion": "In front of",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "IN_FUTURE",
       "text": "In future, we will do better.",
       "suggestion": "In the future",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-US/grammar.xml"
+    },
+    {
+      "rule": "IN_JANUARY",
+      "text": "In February 21, we ate the poison.",
+      "suggestion": "On February",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "IN_LOVED_WITH",
@@ -5308,6 +6436,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "IN_ON_A_SECRET_MISSION",
+      "text": "Bond is in a secret mission.",
+      "suggestion": "is on a secret mission",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "IN_ON_A_TEAM",
       "text": "I’m the one Frank Catania need in his team.",
       "suggestion": "on his team",
@@ -5323,6 +6457,18 @@
       "rule": "IN_ON_THE_RIGHT_HAND_SIDE",
       "text": "The button is in the left hand side of the screen.",
       "suggestion": "on the left hand side",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IN_ON_VACATION",
+      "text": "He is probably in vacation right now.",
+      "suggestion": "on vacation",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IN_ON_VACATION",
+      "text": "I'm at vacation at the seaside.",
+      "suggestion": "on vacation",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5440,6 +6586,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "IN_YOU_RE_NN",
+      "text": "There are a number of things you can do to reduce the risk to you’re pet.",
+      "suggestion": "your",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ISEN_T",
       "text": "It doesen't come.",
       "suggestion": "doesn't",
@@ -5500,6 +6652,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "IS_PLEASURE_TO",
+      "text": "It's pleasure to meet you.",
+      "suggestion": "a pleasure",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "IS_SHOULD",
       "text": "For $350.00 is should be working.",
       "suggestion": "it",
@@ -5509,6 +6667,24 @@
       "rule": "IS_SHOULD",
       "text": "I definitely think is should be less than four years.",
       "suggestion": "it",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IS_THERE_ANY_NNS",
+      "text": "But is there any Germans that like Baseball?",
+      "suggestion": "are",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IS_THERE_ANY_NNS",
+      "text": "Is there any chances that you will be buying a new car?",
+      "suggestion": "Are",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IS_THERE_ANY_NNS",
+      "text": "Is there some details you can share about your setup?",
+      "suggestion": "Are",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5524,6 +6700,30 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "IT_HAS_WORK_FOR",
+      "text": "This hasn't work for me.",
+      "suggestion": "worked",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IT_IS_JJ_TO_VBG",
+      "text": "If it's necessary to thinking quickly, count me out of the quiz.",
+      "suggestion": "think",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IT_IS_JJ_TO_VBG",
+      "text": "It is not on to eating during a church service.",
+      "suggestion": "eat",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "IT_IS_JJ_TO_VBG",
+      "text": "They think that it is not easy to grasping skills.",
+      "suggestion": "grasp",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "IT_IS_OBVIOUS",
       "text": "I think it's pretty obvious that he likes you.",
       "suggestion": "",
@@ -5534,6 +6734,12 @@
       "text": "It is obvious that this substance is present.",
       "suggestion": "",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "IT_IS_SURE",
+      "text": "It is sure that my English will improve.",
+      "suggestion": "certain",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "IT_SEEMS_OR_APPEARS_THAT",
@@ -5587,6 +6793,24 @@
       "rule": "I_HERD",
       "text": "I herd of a new song by Madonna.",
       "suggestion": "heard",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "I_IF",
+      "text": "I no want do to that.",
+      "suggestion": "If",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "I_IF",
+      "text": "I the data confirm my theory, I will be famous.",
+      "suggestion": "If",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "I_IF",
+      "text": "I the president, will make America great.",
+      "suggestion": "If",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5692,6 +6916,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "LAUGH_OF_AT",
+      "text": "I laughed of him.",
+      "suggestion": "laughed at him",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "LAW_COMPOUNDS",
       "text": "She filed a law suit against the city.",
       "suggestion": "lawsuit",
@@ -5722,9 +6952,21 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "LEARN_NNNNS_ON_DO",
+      "text": "We can learn ways on manage complex relationships with colleagues.",
+      "suggestion": "to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "LEAS_LEAST",
       "text": "At leas nobody was affected by this.",
       "suggestion": "least",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LEAVE_TO_FOR",
+      "text": "They are leaving to England soon.",
+      "suggestion": "leaving for England soon",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5746,6 +6988,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "LESS_COMPARATIVE",
+      "text": "This is less harder.",
+      "suggestion": "less hard",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "LESS_DOLLARSMINUTESHOURS",
       "text": "There were less hours to devote to work that day.",
       "suggestion": "fewer hours",
@@ -5755,6 +7003,12 @@
       "rule": "LET_IS_VB",
       "text": "Let is know if you have time.",
       "suggestion": "us",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LET_ME_TROUGH",
+      "text": "Please let me trough.",
+      "suggestion": "through",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5788,6 +7042,24 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "LIMITED_TO",
+      "text": "There are many activities, including, but not limited too, running, jumping, and swimming.",
+      "suggestion": "to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LIMITED_TO",
+      "text": "They're trying to deal with all the issues, which include but are not limited too updates, bugs, and overloaded servers.",
+      "suggestion": "to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LIMITED_TO",
+      "text": "They're trying to deal with all the issues, which include but are not limited too: updates, bugs, and overloaded servers.",
+      "suggestion": "to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "LINE_COMPOUNDS",
       "text": "We completed the task before it hit the dead line.",
       "suggestion": "deadline",
@@ -5800,9 +7072,45 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "LIVE_IN_ON_PLANET",
+      "text": "Not all creatures that live in the planet Earth use oxygen.",
+      "suggestion": "live on the planet",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LOCATED_ON_AT",
+      "text": "The company's name is Denver Inc. and it's located in 11056 Great Suffolk St.",
+      "suggestion": "located at 11056 Great Suffolk St",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LOCATED_ON_AT",
+      "text": "The company's name is Denver Inc. and it's located on 11056 Henri-Bourassa street.",
+      "suggestion": "located at 11056 Henri-Bourassa Street",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LOCATED_ON_AT",
+      "text": "The company's name is Denver Inc. and it's located on 11056 Main street.",
+      "suggestion": "located at 11056 Main Street",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "LONG_ISLAND_ICED_TEA",
       "text": "She was ordering a long island ice tea.",
       "suggestion": "Long Island iced tea",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LOOK_ATE",
+      "text": "Although I must admit when I look ate the paperback...",
+      "suggestion": "at",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LOOK_AT_TO",
+      "text": "I suppose what makes me unusual is the fact that I can put on make up without looking at a mirror.",
+      "suggestion": "looking in a mirror",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5815,6 +7123,12 @@
       "rule": "LOOT_LOT",
       "text": "I heard a loot of noise.",
       "suggestion": "a lot",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "LOSE_LIVES",
+      "text": "They lost their life in the line of duty.",
+      "suggestion": "lives",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5858,6 +7172,30 @@
       "text": "He's such a trouble maker.",
       "suggestion": "troublemaker",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MAKE_AN_ATTEMPT",
+      "text": "He's making an attempt to win the gold medal.",
+      "suggestion": "trying",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "MAKE_AN_ATTEMPT",
+      "text": "Others at least made a try to get into a good job.",
+      "suggestion": "tried",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "MAKE_AN_ATTEMPT",
+      "text": "We should make an effort to win.",
+      "suggestion": "try",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "MAKE_DECISIONS_ABOUT",
+      "text": "The school board will make decision about the first day of school.",
+      "suggestion": "decide on",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "MANEGE",
@@ -5926,9 +7264,33 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "MASTERS",
+      "text": "His masters degree is excellent.",
+      "suggestion": "master’s",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MASTERS",
+      "text": "I must submit my masters dissertation before 27 June.",
+      "suggestion": "master’s",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MASTERS",
+      "text": "Masters theses and dissertations are not easy to write.",
+      "suggestion": "Master’s",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "MATERIEL",
       "text": "I needed more electronic materiels to build a fully-functional machine.",
       "suggestion": "materials",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MATER_MATTER",
+      "text": "It does not mater to us.",
+      "suggestion": "matter",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -5956,16 +7318,40 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "MEAN_MEANT",
+      "text": "Some texts are not mean to be stored forever.",
+      "suggestion": "meant",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "MEED_MEET",
       "text": "Let's meed tomorrow at our favorite bar!",
       "suggestion": "meet",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "MERCHANDIZE",
+      "text": "He merchandized eighteen years, owning mills and blacksmith shops.",
+      "suggestion": "merchandised",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "MERCHANDIZE",
+      "text": "The merchandize will arrive by truck at midnight.",
+      "suggestion": "merchandise",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "MERRIAM_WEBSTER",
       "text": "Merriam Webster is a popular English dictionary.",
       "suggestion": "Merriam-Webster",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MIGHT_PERHAPS",
+      "text": "We might possibly go fishing.",
+      "suggestion": "might",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "MILLION_DOLLAR_HYPHEN",
@@ -6001,6 +7387,60 @@
       "rule": "MISSING_COMMA_BETWEEN_DAY_AND_YEAR",
       "text": "My birthday is October 18 1983.",
       "suggestion": "October 18,",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_NOUN",
+      "text": "The are the best.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_NOUN",
+      "text": "The is the best day of my life.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "According Angela, they are dating.",
+      "suggestion": "According to Angela",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "According a TV forecast, it will rain tomorrow.",
+      "suggestion": "According to a",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "According him, they are dating.",
+      "suggestion": "According to him",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "According his friend, they are dating.",
+      "suggestion": "According to his",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "According what I heard.",
+      "suggestion": "According to what",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "Due the unique climate in Azerbaijan , the flora is much richer in the number of species.",
+      "suggestion": "Due to the",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MISSING_PREPOSITION",
+      "text": "Prior the storm everything was calm.",
+      "suggestion": "Prior to the",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6046,6 +7486,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "MORE_MOVE",
+      "text": "We will more in on September 1st.",
+      "suggestion": "move",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "MOST_EVERYONE",
       "text": "Most everyone saw him.",
       "suggestion": "Almost everyone",
@@ -6058,15 +7504,45 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
+      "rule": "MOST_OF_OUR_TIMES",
+      "text": "We spend most of our times here.",
+      "suggestion": "most of our time",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "MOST_POPULACE",
       "text": "Chicago was the most populace city.",
       "suggestion": "most populous",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "MOST_SUPERLATIVE",
+      "text": "Kyoto is the most oldest city.",
+      "suggestion": "oldest",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "MOTOR_COMPOUNDS",
       "text": "I love driving my motor bike.",
       "suggestion": "motorbike",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "MOVIE_THEATER_CINEMA",
+      "text": "Let's go to a movie theater.",
+      "suggestion": "cinema",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "MOVIE_THEATER_CINEMA",
+      "text": "Movie theaters are popular, despite the new online movie streaming services.",
+      "suggestion": "Cinemas",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "MUCH_NEEDED_HYPHEN",
+      "text": "The film gave a much needed boost to the country's tourist industry.",
+      "suggestion": "much-needed",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6136,6 +7612,18 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
+      "rule": "NEED_HELPS",
+      "text": "He wants your helps.",
+      "suggestion": "help",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NEED_HELPS",
+      "text": "I need helps.",
+      "suggestion": "help",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "NEWS_COMPOUNDS",
       "text": "Did you read today's news paper?",
       "suggestion": "newspaper",
@@ -6157,6 +7645,12 @@
       "rule": "NIECE_NICE",
       "text": "I wish you a niece holiday.",
       "suggestion": "nice",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NIT_NOT",
+      "text": "I could nit do it.",
+      "suggestion": "not",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6190,6 +7684,84 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Can you ѕee it? (Contains Cyrillic small letter 'dze', Unicode U+0455.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Did you еat the last biscuit? (Contains Cyrillic small letter 'ie', Unicode, U+0435.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Do nοt open the window. (Contains Greek small letter omicron, Unicode U+03BF.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Do you like the souр? (Contains Cyrillic small letter 'er')",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Nοrmal operation. (Unicode U+03BF.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Nо, thank you. (Contains Cyrillic small letter 'o'.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Please оpen the door. (Contains Cyrillic small letter 'o', Unicode U+043E.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Tell mе more! (Contains Cyrillic small letter 'ie'.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "The cat is οn the mat. (Unicode U+03BF.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "The sun is hоt. (Contains Cyrillic small letter 'o'.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "There is nο problem. (Unicode U+03BF.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "This is a рea. (Contains Cyrillic small letter 'er', Unicode U+0440.)",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NON_ENGLISH_CHARACTER_IN_A_WORD",
+      "text": "Thiѕ is not correct. (Contains Cyrillic small letter 'dze')",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "NON_STANDARD_QUESTION_MARK",
       "text": "Is he an average person？",
       "suggestion": "person?",
@@ -6202,9 +7774,33 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "NOTHING_SUCH_AS",
+      "text": "There is nothing such as as a free lunch.",
+      "suggestion": "is no such thing as",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NOT_ACCEPT",
+      "text": "He does not accept the proposal.",
+      "suggestion": "reject",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
       "rule": "NOT_JET",
       "text": "That is not jet decided.",
       "suggestion": "yet",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NOT_LONGER",
+      "text": "I'm not longer available.",
+      "suggestion": "no longer",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NOT_NEVER",
+      "text": "I wiil not never give up.",
+      "suggestion": "not",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6250,6 +7846,36 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
+      "rule": "NUT_NOT",
+      "text": "But surely, this wine is red nut white!",
+      "suggestion": "not",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NUT_NOT",
+      "text": "I'm nut sure.",
+      "suggestion": "not",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NUT_NOT",
+      "text": "Make sure that the template you use is hexagonal nut square.",
+      "suggestion": "not",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NUT_NOT",
+      "text": "This is beef nut lamb, and I am sure that I asked you for lamb.",
+      "suggestion": "not",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "NUT_NOT",
+      "text": "This sandwich is beef and nut cheese as I specifically requested.",
+      "suggestion": "not",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "OBJECTIVE_CASE",
       "text": "Come with I.",
       "suggestion": "with me",
@@ -6259,6 +7885,42 @@
       "rule": "OBJECTIVE_CASE",
       "text": "Give it to I.",
       "suggestion": "to me",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OBTAIN",
+      "text": "We need to obtain visas.",
+      "suggestion": "get",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "OBVIOUS_FOR",
+      "text": "It's obvious for me.",
+      "suggestion": "obvious to me",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OCCASION_TRANSITIVE_VERB_VERY_FORMAL",
+      "text": "It can be used to occasion it.",
+      "suggestion": "cause",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "OCCASION_TRANSITIVE_VERB_VERY_FORMAL",
+      "text": "It was occasioned by it.",
+      "suggestion": "caused",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "OCCASION_TRANSITIVE_VERB_VERY_FORMAL",
+      "text": "The concert occasioned a riot.",
+      "suggestion": "caused",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "OFFERED_IN_AT",
+      "text": "In addition, if people are in favor of women practicing combat sports, it would be beneficial to have combat sport sessions in schools as well as optional courses offered in universities.",
+      "suggestion": "offered at universities",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6346,6 +8008,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "ON_ADDITION",
+      "text": "On addition, ...",
+      "suggestion": "In",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "ON_A_WHOLE_ANOTHER",
       "text": "This is on a whole another level.",
       "suggestion": "whole nother",
@@ -6361,6 +8029,12 @@
       "rule": "ON_FIRST_GLANCE",
       "text": "On first glance it seems to be a good idea.",
       "suggestion": "At",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ON_IN_A_HOSPITAL_BED",
+      "text": "The patient is on a hospital bed waiting for surgery.",
+      "suggestion": "in a hospital bed",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6391,6 +8065,12 @@
       "rule": "ON_PAGE_HYPHEN",
       "text": "He did some on page optimizations to boost his website in Google.",
       "suggestion": "on-page",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "ON_THE_SHELF",
+      "text": "She likes being of the shelf.",
+      "suggestion": "on",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6445,6 +8125,36 @@
       "rule": "OUT_COME",
       "text": "What was the out come?",
       "suggestion": "outcome",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OUT_GROW",
+      "text": "He is out growing his diapers.",
+      "suggestion": "outgrowing",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OUT_GROW",
+      "text": "The little guy would soon out grow his clothes.",
+      "suggestion": "outgrow",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OUT_PERFORM_COMPOUND",
+      "text": "Tesla is out performing other carmakers when it comes to EV.",
+      "suggestion": "outperforming",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OVERDUE_OVERDO",
+      "text": "Please don't overdue it.",
+      "suggestion": "overdo",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "OVERDUE_OVERDO",
+      "text": "They might overdue it.",
+      "suggestion": "overdo",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6508,6 +8218,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "PARTICIPATE_TO_IN",
+      "text": "They participate to many activities, which contains organize laboratory experiments, supervise students research, conducting many lectures and of course, writing textbooks.",
+      "suggestion": "participate in",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "PASSER_BY_COMPOUND",
       "text": "When he tripped and fell in the street, several kind passers by helped him up.",
       "suggestion": "passers-by",
@@ -6530,6 +8246,12 @@
       "text": "I will share the password protected PDF with you.",
       "suggestion": "password-protected",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "PAST_EXPERIENCE_MEMORY",
+      "text": "We know from past experience that weakness breeds contempt.",
+      "suggestion": "experience",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "PAYPAL",
@@ -6604,9 +8326,21 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "PLAY_WITH_FOR",
+      "text": "He plays regularly with that team.",
+      "suggestion": "plays regularly for",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "PLEASE_NOT_THAT",
       "text": "Please not that saying “Open Source” does not mean very much.",
       "suggestion": "note",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "PLEASE_TO_INFORM",
+      "text": "Please to inform you that it is ready.",
+      "suggestion": "Pleased to",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -6646,6 +8380,18 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
+      "rule": "PREFER_INSTEAD_OF_TO",
+      "text": "She much prefers overalls instead of skirts, because she enjoys playing in the mud",
+      "suggestion": "prefers overalls to skirts",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "PREFER_OVER_TO",
+      "text": "She much prefers overalls over skirts, because she enjoys playing in the mud",
+      "suggestion": "prefers overalls to skirts",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "PREFER_TO_VBG",
       "text": "Some other people prefer to changing job.",
       "suggestion": "change",
@@ -6674,6 +8420,12 @@
       "text": "This is our primary private industry.",
       "suggestion": "industry",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "PROSTRATE_PROSTATE",
+      "text": "He was diagnosed with prostrate cancer.",
+      "suggestion": "prostate",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "PRO_RATA",
@@ -6916,6 +8668,36 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
+      "rule": "REGARD_AS_BEING",
+      "text": "What industries do you regard as being highly competitive?",
+      "suggestion": "regard as",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "RELIEVE_RELIEF",
+      "text": "She sighed in relieve.",
+      "suggestion": "relief",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "RELY_ON",
+      "text": "I rely my family to help me out.",
+      "suggestion": "rely on",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "REPEAT_AGAIN",
+      "text": "We made the song repeat again.",
+      "suggestion": "repeat",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "REPERCUSSION_WITH_ON",
+      "text": "This action has repercussions with the entire community.",
+      "suggestion": "repercussions on",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "RESISTANT_HYPHEN",
       "text": "The new iPhones are water resistant.",
       "suggestion": "water-resistant",
@@ -6931,6 +8713,18 @@
       "rule": "RESPONSIBLE_OF_FOR",
       "text": "I am responsable of marketing.",
       "suggestion": "responsible for",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "RETURN_AT_HOME",
+      "text": "Return at home before midnight.",
+      "suggestion": "Return home",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "RID_FROM_OF",
+      "text": "He got rid from the clutter.",
+      "suggestion": "rid of",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7084,6 +8878,18 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "SAFE_GUARD_COMPOUND",
+      "text": "She kept a savings to safe guard against debt and emergencies.",
+      "suggestion": "safeguard",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SALT_TO_INJURY",
+      "text": "Don't be like that and add salt to injury!",
+      "suggestion": "insult to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "SALVADOR_DALI",
       "text": "Salvator Dali was a Spanish surrealist artist.",
       "suggestion": "Salvador Dalí",
@@ -7141,6 +8947,12 @@
       "rule": "SEEKER_COMPOUNDS",
       "text": "I'm a home seeker.",
       "suggestion": "homeseeker",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SEEMING_SEEMS",
+      "text": "It is seeming that I will not be offered a raise.",
+      "suggestion": "seems",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7252,6 +9064,24 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "SHORT_SUPERLATIVES",
+      "text": "This example is the most silly I have read.",
+      "suggestion": "the silliest",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SHOULD_VS_SHOULDER",
+      "text": "He looked over his should.",
+      "suggestion": "shoulder",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SIDE_COMPOUNDS",
+      "text": "He explored the surrounding country side.",
+      "suggestion": "countryside",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "SIDE_KICK",
       "text": "He had a zany side kick.",
       "suggestion": "sidekick",
@@ -7267,6 +9097,12 @@
       "rule": "SINKING_HIP",
       "text": "The idiom 'like rats fleeing a sinking hip is used in reference to people abandoning an enterprise once it seems likely to fail.",
       "suggestion": "ship",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SIT_ON_THE_COURT",
+      "text": "He is 67 year old and he sits on the court since 1998.",
+      "suggestion": "sits on the bench",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7309,6 +9145,18 @@
       "rule": "SOCIETE_GENERALE",
       "text": "The Societé General is a French bank.",
       "suggestion": "Société Générale",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SOLICIT_FOR",
+      "text": "We are soliciting for suggestions.",
+      "suggestion": "asking for",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "SOMETIME_SOMETIMES",
+      "text": "Sometime I go to the supermarket to buy new groceries.",
+      "suggestion": "Sometimes",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7366,6 +9214,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "SPINAL_CHORD",
+      "text": "There was permanent injury to the spinal chord.",
+      "suggestion": "spinal cord",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "SQUARED_SQUARE",
       "text": "What is the definition of a squared mile?",
       "suggestion": "square",
@@ -7390,6 +9244,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "STEPS_TO_DO",
+      "text": "There are some steps to do.",
+      "suggestion": "steps to take",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "STEP_BY_STEP_HYPHEN",
       "text": "The step by step diet plan helped me to lose kilos.",
       "suggestion": "step-by-step",
@@ -7406,6 +9266,12 @@
       "text": "I only go out once the street lights are turned on.",
       "suggestion": "streetlights",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-US/grammar.xml"
+    },
+    {
+      "rule": "STRESS_OUT_FOR_OVER",
+      "text": "I have to stop stressing out for everything.",
+      "suggestion": "stressing out over everything",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "STRIPED_STRIPPED",
@@ -7432,9 +9298,33 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "SUFFER_OF_WITH",
+      "text": "A clinical psychologist deals with people suffering of bipolar disorder.",
+      "suggestion": "suffering from",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "SUIT_COMPOUNDS",
       "text": "She was wearing a nice swim suit at the beach.",
       "suggestion": "swimsuit",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SUMMON_AT_TO",
+      "text": "Without him knowing, Quentin was summoned at a particular examination in order to get his admission to this institution.",
+      "suggestion": "summoned to a particular examination",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SUMMON_AT_TO",
+      "text": "Without him knowing, Quentin was summoned at a very particular examination in order to get his admission to this institution.",
+      "suggestion": "summoned to a very particular examination",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "SUMMON_AT_TO",
+      "text": "Without him knowing, Quentin was summoned at an examination in order to get his admission to this institution.",
+      "suggestion": "summoned to an examination",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7468,6 +9358,72 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "TAKEAWAY",
+      "text": "Those were my biggest take aways from today's event.",
+      "suggestion": "takeaways",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKE_ACTION_TO",
+      "text": "Take action to fight climate change.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "TAKE_IT_PERSONAL",
+      "text": "Don't take it personal.",
+      "suggestion": "personally",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKE_THE_REIGNS",
+      "text": "Before he took over the reigns, he was mild and unassuming...",
+      "suggestion": "reins",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKE_THE_REIGNS",
+      "text": "It's time to take the reigns of leadership.",
+      "suggestion": "reins",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKE_THE_REIGNS",
+      "text": "Take the reigns cried the bandit.",
+      "suggestion": "reins",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKING_CASE_OF_IT",
+      "text": "We need to take case of it.",
+      "suggestion": "care",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKING_CASE_OF_IT",
+      "text": "We took case of it.",
+      "suggestion": "care",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAKING_INTO_CONSIDERATION",
+      "text": "Tom takes into consideration of all the perspectives.",
+      "suggestion": "takes into consideration",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TALK_DOWN_ABOUT_TO",
+      "text": "Don't you ever talk down about my baby boy or Kristy.",
+      "suggestion": "talk down to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TAN_THAN",
+      "text": "I am more tan pleased to know you liked my comments.",
+      "suggestion": "than",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "TEEM_TEAM",
       "text": "This is my favorite football teem.",
       "suggestion": "football team",
@@ -7486,10 +9442,34 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "THANK_NNP_PRP",
+      "text": "Thank Carl we can finally start the project.",
+      "suggestion": "Thanks to Carl",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THANK_THE_NN",
+      "text": "Thank the clarifications.",
+      "suggestion": "Thanks to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THANK_THE_NN",
+      "text": "Thank the meds, I guess.",
+      "suggestion": "Thanks to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "THANK_YOUR",
       "text": "Thank your!",
       "suggestion": "Thank you",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THAN_I",
+      "text": "She is wiser than me!",
+      "suggestion": "I",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
     },
     {
       "rule": "THATS_YOURE",
@@ -7513,6 +9493,30 @@
       "rule": "THAT_BEING_SAID",
       "text": "That being sad ...",
       "suggestion": "That being said",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THAT_I_WORK_FOR",
+      "text": "The company that I work is Cosme Inc...",
+      "suggestion": "The company that I work for is",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THAT_VERY_COOL",
+      "text": "That great.",
+      "suggestion": "That is",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THERETO",
+      "text": "He is hereto help.",
+      "suggestion": "here to",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THERE_FOR",
+      "text": "And there for, we are looking for a new solution.",
+      "suggestion": "therefore",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7594,6 +9598,18 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "THE_NN_AND_THE_NN",
+      "text": "The plane and the train is fast.",
+      "suggestion": "are",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THE_QUESTION_WH",
+      "text": "This thesis addresses the question how to analyze concepts.",
+      "suggestion": "the question of how",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "THE_RE",
       "text": "The re are many options.",
       "suggestion": "There",
@@ -7622,6 +9638,18 @@
       "text": "The truth is, this is annoying.",
       "suggestion": "",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "THE_WELSH",
+      "text": "The castle stands high above a crossing point of the river Wye, an area taken from the welsh by the Normans only in the late C11.",
+      "suggestion": "Welsh",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "THINK_IN_ABOUT",
+      "text": "I'm thinking in finish this text.",
+      "suggestion": "thinking about",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "THINK_OFF",
@@ -7720,6 +9748,36 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "TOO_DETERMINER",
+      "text": "Give the bone too the dog.",
+      "suggestion": "to the",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TOO_DETERMINER",
+      "text": "Please see too that problem immediately.",
+      "suggestion": "to that",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TOO_DETERMINER",
+      "text": "The company expanded from there too all the proposed new locations.",
+      "suggestion": "to all",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TOO_DETERMINER",
+      "text": "We expanded too all proposed new locations.",
+      "suggestion": "to all",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TOO_DETERMINER",
+      "text": "We expanded too all the proposed new locations.",
+      "suggestion": "to all",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "TORCHER_TORTURE",
       "text": "I will torcher him.",
       "suggestion": "torture",
@@ -7735,6 +9793,18 @@
       "rule": "TOSS_UP_HYPHEN",
       "text": "Texas became a toss up state ahead of the election.",
       "suggestion": "toss-up",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TOW_THE_LINE",
+      "text": "Make sure everyone tows the line!",
+      "suggestion": "toes",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TOW_THE_LINE",
+      "text": "We'll tow the line.",
+      "suggestion": "toe",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7777,6 +9847,12 @@
       "rule": "TO_FOUND_FIND_A_CURE",
       "text": "It took a while to found a cure for malaria.",
       "suggestion": "to find a cure",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TO_ON_A_TRIP",
+      "text": "Yes, I went to a trip.",
+      "suggestion": "went on a trip",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7858,6 +9934,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "TRAVEL_WITH_BY",
+      "text": "We are going to travel with a bus.",
+      "suggestion": "travel by bus",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "TRICKLE_DOWN_HYPHEN",
       "text": "Trickle down economics is the economic proposition that taxes on businesses and the wealthy in society should be reduced as a means to stimulate business investment in the short term and benefit society at large in the long term.",
       "suggestion": "Trickle-down",
@@ -7909,6 +9991,24 @@
       "rule": "TYPOGRAPHICAL_APOSTROPHE",
       "text": "An actress's role",
       "suggestion": "’s",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TYPO_AD_NAUSEAM",
+      "text": "Does this rule catch ad nauzeum?",
+      "suggestion": "ad nauseam",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TYPO_AD_NAUSEAM",
+      "text": "Let's not go ad noseum, ok?.",
+      "suggestion": "ad nauseam",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "TYPO_AD_NAUSEAM",
+      "text": "The topic that has been discussed and analyzed ad nauseaum.",
+      "suggestion": "ad nauseam",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -7990,10 +10090,28 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "VERB_IN_AT",
+      "text": "At lunch, I eat with my colleague working or I eat in my desk alone.",
+      "suggestion": "I eat at my desk",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "VERSE",
+      "text": "The tale was written in verses.",
+      "suggestion": "verse",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "VERY_UNIQUE",
       "text": "Walk until you see the very unique building on your right.",
       "suggestion": "unique",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "VIDEO_TAPE_COMPOUND",
+      "text": "He has watched all video tapes.",
+      "suggestion": "videotapes",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
       "rule": "VITAMIN_C",
@@ -8011,6 +10129,24 @@
       "rule": "V_SHAPED",
       "text": "The object was v-shaped.",
       "suggestion": "V-shaped",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WAITING_MY_PATIENT",
+      "text": "Anne is waiting her patient.",
+      "suggestion": "waiting for her patient",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WAITING_MY_PATIENT_FINISH",
+      "text": "I am waiting my patient finish the sample collection.",
+      "suggestion": "waiting my patient to finish",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WAIT_AFTER_FOR",
+      "text": "I am waiting after her.",
+      "suggestion": "waiting for her",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -8092,6 +10228,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "WEATHER_WHETHER",
+      "text": "She asked weather he knew her.",
+      "suggestion": "whether",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "WECHAT",
       "text": "We are using Wechat to communicate.",
       "suggestion": "WeChat",
@@ -8107,6 +10249,18 @@
       "rule": "WEEK_HYPHEN",
       "text": "He's going on a two week vacation.",
       "suggestion": "two-week",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WELL_IN_ON",
+      "text": "I do badly in tests because I'm lazy.",
+      "suggestion": "do badly on tests",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WELL_KNOWN",
+      "text": "The young women of this district are well know for their beauty.",
+      "suggestion": "well-known",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -8197,6 +10351,18 @@
       "rule": "WHAT_IT_THE",
       "text": "What it your project?",
       "suggestion": "is",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WHAT_I_MEAN_TO_SAY_IS_THAT",
+      "text": "What I mean to say is that well intentioned lawmakers sometimes make fools of themselves.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "WHAT_WE_CALL_2",
+      "text": "I'm not what we call perfectly bilingual.",
+      "suggestion": "not what you would call",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -8380,6 +10546,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "WOOD_WOULD",
+      "text": "It wood not mean anything.",
+      "suggestion": "would",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "WORDPRESS",
       "text": "We are using Wordpress as our blogging software.",
       "suggestion": "WordPress",
@@ -8401,6 +10573,18 @@
       "rule": "WORK_LIFE_BALANCE",
       "text": "Work life balance is having enough time for work and enough to have a life.",
       "suggestion": "Work-life",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WORRY_FOR",
+      "text": "Don't worry for.",
+      "suggestion": "worry about",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "WORSE_WORST",
+      "text": "Worse came to worse.",
+      "suggestion": "worst",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
@@ -8470,6 +10654,12 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
+      "rule": "WRIT_WRITE",
+      "text": "I can writ you a message on Slack.",
+      "suggestion": "write",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
       "rule": "WROTE",
       "text": "He writed a book.",
       "suggestion": "wrote",
@@ -8527,6 +10717,18 @@
       "rule": "YEAR_HYPHEN",
       "text": "The two year cycle.",
       "suggestion": "two-year",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "YEAR_OLD_PLURAL",
+      "text": "He turned 25 year old.",
+      "suggestion": "25 years",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
+    },
+    {
+      "rule": "YELL_ON_AT",
+      "text": "Lily yelled on him.",
+      "suggestion": "yelled at him",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {

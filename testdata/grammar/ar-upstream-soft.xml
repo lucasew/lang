@@ -303,6 +303,16 @@
         <suggestion>لا تتأثر بالصدمات</suggestion></message>
       <short>syntax_0509_dhida_sadamat</short>
     </rule>
+    <rule id="collo_0008_uqsim_ban" name="أقسم بأن">
+      <pattern>
+        <token>أَقْسَمَ</token>
+        <token>بأن</token>
+      </pattern>
+      <message>الباء تدخل على المُقْسَم به
+        <suggestion> باللّهِ أنْ</suggestion>
+        <suggestion> أنْ</suggestion></message>
+      <short>collo_0008_uqsim_ban</short>
+    </rule>
     <rule id="collo_0009_illa_wa" name="إلا و">
       <pattern>
         <token>إلا</token>
@@ -385,6 +395,25 @@
         <suggestion>لنفترض </suggestion></message>
       <short>collo_0054_linafridh_an</short>
     </rule>
+    <rule id="collo_0056_mulfitun_llnaZar" name="ملفت للنظر">
+      <pattern>
+        <token>ملفت</token>
+        <token>للنظر</token>
+      </pattern>
+      <message>الفعل هو: (لَفَت)، لا: (ألْفَتَ)
+        <suggestion> للنظر</suggestion></message>
+      <short>collo_0056_mulfitun_llnaZar</short>
+    </rule>
+    <rule id="collo_0057_mimma_da3a" name="مما دعا إلى">
+      <pattern>
+        <token>مما</token>
+        <token>دَعَا</token>
+        <token>إلى</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>وهذا  إلى</suggestion></message>
+      <short>collo_0057_mimma_da3a</short>
+    </rule>
     <rule id="collo_0059_nawaha_ila" name="نوه إلى">
       <pattern>
         <token>نوه</token>
@@ -402,6 +431,16 @@
       <message>(هل) للاستفهام، و(إنّ) للتوكيد، وهما لا يجتمعان
         <suggestion>هل</suggestion></message>
       <short>collo_0064_hal_inna</short>
+    </rule>
+    <rule id="collo_0070_tamahwara_hawla" name="يتمحور حول">
+      <pattern>
+        <token skip="2">تَمَحْوَرَ</token>
+        <token>حول</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>دار</suggestion>
+        <suggestion>يدور</suggestion></message>
+      <short>collo_0070_tamahwara_hawla</short>
     </rule>
     <rule id="collo_0071_yanbaghy_alla" name="ينبغي عليك ألا">
       <pattern>
@@ -421,6 +460,18 @@
       <message>يفضل أن يقال:
         <suggestion>بسوى </suggestion></message>
       <short>collo_0072_sewa_bi</short>
+    </rule>
+    <rule id="collo_0073_Akhla_manzil" name="أخلى السكان من المنزل">
+      <pattern>
+        <token>أَخْلَى</token>
+        <token>السكان</token>
+        <token>من</token>
+        <token>المنزل</token>
+      </pattern>
+      <message>(الإخلاء) يكون للمنزل لا للسكان, و(الإجلاء) يكون للسكان
+        <suggestion> المنزل من السكان</suggestion>
+        <suggestion> السكان من المنزل</suggestion></message>
+      <short>collo_0073_Akhla_manzil</short>
     </rule>
     <rule id="collo_0075_tamathal_lishifaa" name="تماثل للشفاء">
       <pattern>
@@ -454,6 +505,27 @@
         <suggestion>بالرجوع إلى</suggestion></message>
       <short>collo_0076_min_khilal</short>
     </rule>
+    <rule id="collo_0078_tawajaba_3ala" name="توجب على">
+      <pattern>
+        <token>تَوَجَّبَ</token>
+        <token>على</token>
+      </pattern>
+      <message>ويفضل أن يقال:
+        <suggestion>يجب</suggestion>
+        <suggestion>ينبغي ل</suggestion>
+        جاء في (المعجم الوسيط): «تَوَجَّب فلانٌ: أكل في اليوم والليلة أكلةً واحدةً.»</message>
+      <short>collo_0078_tawajaba_3ala</short>
+    </rule>
+    <rule id="collo_0080_money_laundring" name="غسيل الأموال">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">غسيل</token>
+        <token postag="N.*;.*;--.?" postag_regexp="yes">أموال</token>
+      </pattern>
+      <message>ويفضل أن يقال:
+        <suggestion></suggestion> \2.
+        لأنها ترجمة مبتذلة لـ (Money laundering)</message>
+      <short>collo_0080_money_laundring</short>
+    </rule>
     <rule id="collo_0083_3ilawa_3an" name="علاوة_على">
       <pattern>
         <token regexp="yes">علاوة|وعلاوة</token>
@@ -477,6 +549,37 @@
         لأن "أثناء" ليست ظرفًا ولا مضافة إلى ما تكسب منه الظرفية، ولهذا يجب أن تقترن بحرف الجر، أما خلال فهي ظرفية. جاء في القرآن ﴿فجاسوا خلال الديار﴾[17:5].</message>
       <short>collo_0086_fi_athnaa</short>
     </rule>
+    <rule id="collo_0088_baka_min_shidati_ta2athuri" name="بكى من شدة التأثير">
+      <pattern>
+        <token>بَكَى</token>
+        <token>من</token>
+        <token>شدة</token>
+        <token>التأثير</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>التأثُّر</suggestion>
+(أثـّر فيه تأثيراً): ترك فيه أثراً</message>
+      <short>collo_0088_baka_min_shidati_ta2athuri</short>
+    </rule>
+    <rule id="collo_0089_akkada_bianna" name="أكّد بأنّ">
+      <pattern>
+        <token>أَكَّدَ</token>
+        <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+لا حاجة لحرف الجر باء</message>
+      <short>collo_0089_akkada_bianna</short>
+    </rule>
+    <rule id="exp_454_Drbh_bAlArD" name="ضربه بالأرض">
+      <pattern>
+        <token postag="V31.*H" postag_regexp="yes">ضَرَبَ</token>
+        <token>بالأرض</token>
+      </pattern>
+      <message>الأرضُ لا تُحملُ ليُضْرَبَ بها
+        <suggestion>ضَرَبَ ب الأرض</suggestion></message>
+      <short>exp_454_Drbh_bAlArD</short>
+    </rule>
     <rule id="exp_477_mA_Anfk_En" name="ما انفك عن">
       <pattern>
         <token>ما</token>
@@ -489,6 +592,103 @@
         <suggestion>ما انفك (فاعلا)</suggestion></message>
       <short>exp_477_mA_Anfk_En</short>
     </rule>
+    <rule id="exp_507_ASAbh_kll" name="أصابه كلل">
+      <pattern>
+        <token skip="1">أَصَابَ</token>
+        <token postag="N.*;--." postag_regexp="yes">كلل</token>
+      </pattern>
+      <message>(الكَلَل): الحالة. يقال: مات بكَلَلِ سوءٍ
+        <suggestion>كَلال</suggestion>
+        <suggestion>الكَلال</suggestion></message>
+      <short>exp_507_ASAbh_kll</short>
+    </rule>
+    <rule id="exp_512_Alqa_Elyhm_khTAbA__Alqa_khTAbA" name="ألقى عليهم خطابا |ألقى خطابا">
+      <pattern>
+        <token skip="1">أَلْقَى</token>
+        <token regexp="yes" min="0">علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+        <token postag="N.*;--." postag_regexp="yes">خطاب</token>
+      </pattern>
+      <message>(الخِطاب): ما يكلم به الرجلُ صاحِبَهُ
+        <suggestion>خطبة</suggestion>
+        <suggestion>الخطبة</suggestion></message>
+      <short>exp_512_Alqa_Elyhm_khTAbA__Alqa_khTAbA</short>
+    </rule>
+    <rule id="exp_526_rAa_mnAmA" name="رأى مناما">
+      <pattern>
+        <token skip="1">رَأَى</token>
+        <token postag="N.*;--." postag_regexp="yes">منام</token>
+      </pattern>
+      <message>(المنام): النَّوم، وموضِعُ النوم
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>exp_526_rAa_mnAmA</short>
+    </rule>
+    <rule id="exp_527_ytnAsb_wgHruhu" name="يتناسب وغيره">
+      <pattern>
+        <token>تَنَاسَبَ</token>
+        <token postag="N.*;W.." postag_regexp="yes"></token>
+      </pattern>
+      <message>ومِثل يتناسب: يتلاءم ويتنافى...
+نقول يتناسب مع أو يتناسب هو وغيره.
+        <suggestion> هو </suggestion>
+        <suggestion> مع </suggestion></message>
+      <short>exp_527_ytnAsb_wgHruhu</short>
+    </rule>
+    <rule id="exp_527_ytnAsb_wgHruhu_2" name="يتنافى وغيره">
+      <pattern>
+        <token>تَنَافَى</token>
+        <token postag="N.*;W.." postag_regexp="yes"></token>
+      </pattern>
+      <message>ومِثل يتناسب: يتلاءم ويتنافى...
+نقول يتنافى مع أو يتنافى هو وغيره.
+        <suggestion> هو </suggestion>
+        <suggestion> مع </suggestion></message>
+      <short>exp_527_ytnAsb_wgHruhu_2</short>
+    </rule>
+    <rule id="exp_527_ytnAsb_wgHruhu_3" name="يتلاءم وغيره">
+      <pattern>
+        <token>تَلَاءَمَ</token>
+        <token postag="N.*;W.." postag_regexp="yes"></token>
+      </pattern>
+      <message>ومِثل يتناسب: يتنافى ويتلاءم...
+نقول يتلاءم مع أو يتلاءم هو وغيره.
+        <suggestion> هو </suggestion>
+        <suggestion> مع </suggestion></message>
+      <short>exp_527_ytnAsb_wgHruhu_3</short>
+    </rule>
+    <rule id="exp_542_Sdr_AlHkm_bHq" name="صدر الحكم بحق">
+      <pattern>
+        <token>صَدَرَ</token>
+        <token postag="N.*;--." postag_regexp="yes">حكم</token>
+        <token>بحق</token>
+      </pattern>
+      <message>يقال صدر الحكم على(إذا كان في غير مصلحته) . أو له إذا كان لمصلحته
+        <suggestion>على</suggestion>
+        <suggestion>ل</suggestion></message>
+      <short>exp_542_Sdr_AlHkm_bHq</short>
+    </rule>
+    <rule id="exp_542_Sdr_AlHkm_bHq_2" name="صدر الحكم بحق">
+      <pattern>
+        <token>صَدَرَ</token>
+        <token postag="N.*;--." postag_regexp="yes">حكم</token>
+        <token regexp="yes">بحق(|ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)</token>
+      </pattern>
+      <message>يقال صدر الحكم على(إذا كان في غير مصلحته) . أو له إذا كان لمصلحته
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>exp_542_Sdr_AlHkm_bHq_2</short>
+    </rule>
+    <rule id="exp_548_EArD_byn_AlktAb_wASlh_AlmkhTwT" name="عارض بين الكتاب وأصله المخطوط">
+      <pattern>
+        <token skip="1">عَارَضَ</token>
+        <token>بين</token>
+        <token>الكتاب</token>
+        <token>وأصله</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> بأصلِه</suggestion></message>
+      <short>exp_548_EArD_byn_AlktAb_wASlh_AlmkhTwT</short>
+    </rule>
     <rule id="exp_550_Ela_jmyE_AlASEdt" name="على جميع الأصعدة">
       <pattern>
         <token regexp="yes">(و|ف)?على</token>
@@ -498,6 +698,26 @@
       <message>يفضل أن يقال:
         <suggestion>الصُّعُد</suggestion></message>
       <short>exp_550_Ela_jmyE_AlASEdt</short>
+    </rule>
+    <rule id="exp_563_nzhr_2lyh_shdhrA" name="نـظر إليه شذرا">
+      <pattern>
+        <token skip="1">نَظَرَ</token>
+        <token regexp="yes" skip="1">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+        <token>شذرا</token>
+      </pattern>
+      <message>(الشَّذْر): صغار اللؤلؤ، واحدته: شَذْرَة
+        <suggestion>شَزْراً</suggestion></message>
+      <short>exp_563_nzhr_2lyh_shdhrA</short>
+    </rule>
+    <rule id="exp_565_Awkl_AlAmr_2la_mwkl_2lyh" name="أوكل الأمر إلى|موكل إليه">
+      <pattern>
+        <token>موكل</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>يفضل أن يقال: أوْكَلَ الأمرَ على فلان، فهو مُوكَلٌ عليه أو وكل الأمر إليه فهو موكول إليه
+        <suggestion> </suggestion>
+        <suggestion>موكول </suggestion></message>
+      <short>exp_565_Awkl_AlAmr_2la_mwkl_2lyh</short>
     </rule>
     <rule id="expression_2106_hl_s" name="هل س">
       <pattern>
@@ -519,6 +739,25 @@
         <suggestion>تنافي</suggestion></message>
       <short>expression_2270_lA_ytmsha_mE</short>
     </rule>
+    <rule id="syntax_0201_mughashan_3layh" name="مغشى عليه">
+      <pattern>
+        <token postag="V.*" postag_regexp="yes">وَقِعَ</token>
+        <token>مغشى</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>الفعل هو: (غُشِيَ عليه)، لا: (أُغْشِيَ عليه)  <suggestion>مَغْشِيّاً</suggestion></message>
+      <short>syntax_0201_mughashan_3layh</short>
+    </rule>
+    <rule id="syntax_0202_mwshik_3ala" name="موشك على">
+      <pattern>
+        <token>موشك</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion>
+        <suggestion>على وشْك</suggestion></message>
+      <short>syntax_0202_mwshik_3ala</short>
+    </rule>
     <rule id="syntax_0300_3abd_allah" name="الأسماء المبدوءة بعبد">
       <pattern>
         <token regexp="yes">(و|ف|ب|ك|وب|فب|وك|فك)?عبد(الآخر|الحميد|الحفيظ|اللطيف|المحيي|الجامع|الباطن|الولي|المقسط|الغفار|الودود|الوهاب|المانع|الشكور|الحليم|المتكبر|الحسيب|الجليل|النافع|الصبور|النور|المصور|الفتاح|مالك|الحي|الغني|الحق|الواسع|الجبار|المغني|العظيم|الباقي|الوارث|الرزاق|المهيمن|الضار|المقيت|الهادي|المتعالي|الوالي|المقتدر|المعز|الأول|القادر|الصمد|السميع|المذل|الكريم|ذو|البصير|العلي|السلام|المميت|العدل|الرافع|التواب|القهار|القابض|المعيد|المبدئ|الرشيد|المؤخر|المؤمن|الجلال|الظاهر|القيوم|الخبير|الوكيل|العزيز|الرحيم|الواجد|البر|المقدم|البديع|الغفور|الرقيب|الأحد|القدوس|الباسط|الجميل|والإكرام|المجيد|الرحمن|الرؤوف|المجيب|القوي|الخالق|الواحد|المنتقم|الملك|المعطي|المحصي|الكبير|العفو|المتين|الباعث|الماجد|الخافض|الحكم|العليم|البارئ|الشهي)</token>
@@ -535,6 +774,204 @@
       <message>استعمل  <suggestion>الاندماج </suggestion>
         أي يدخل ويستحكم أو التَّعايُش في المحيط، العيش مع الآخرين بألفة. أما الفعل "تأقلم" فلم يرد في المعاجم</message>
       <short>syntax_0401_ta2aqlum_ma3a</short>
+    </rule>
+    <rule id="syntax_05001_istftaa" name="استفتاء على">
+      <pattern>
+        <token>استفتاء</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>الفعل "استَفْتَاه" أي سأله رأيه في مسألة و "أفتى في المسألة": أبان الحكم فيها. وهو لا يتعدى بـ "على".</message>
+      <short>syntax_05001_istftaa</short>
+    </rule>
+    <rule id="syntax_0500_munawwah" name="المنوه عنه|المنوه إليه">
+      <pattern>
+        <token>منوه</token>
+        <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن|إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>المنوّه </suggestion></message>
+      <short>syntax_0500_munawwah</short>
+    </rule>
+    <rule id="syntax_05010_3atl_3an_3amal" name="عاطل عن العمل">
+      <pattern>
+        <token>عاطل</token>
+        <token>عن</token>
+        <token>العمل</token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion>من</suggestion> العمل</message>
+      <short>syntax_05010_3atl_3an_3amal</short>
+    </rule>
+    <rule id="syntax_0502_muta3aref_3alYah" name="متعارف عليها">
+      <pattern>
+        <token postag="N.*;M.*;.*" postag_regexp="yes">متعارف</token>
+        <token>عليها</token>
+      </pattern>
+      <message>ويفضل أن يقال:
+        <suggestion>متعارفة</suggestion></message>
+      <short>syntax_0502_muta3aref_3alYah</short>
+    </rule>
+    <rule id="syntax_0502_muta3aref_3alyh" name="متعارف عليه">
+      <pattern>
+        <token postag="N.*;M.*;.*" postag_regexp="yes">متعارف</token>
+        <token>عليه</token>
+      </pattern>
+      <message>ويفضل أن يقال:
+        <suggestion>متعارف</suggestion></message>
+      <short>syntax_0502_muta3aref_3alyh</short>
+    </rule>
+    <rule id="syntax_0503_hawla" name="حول بدلا من في">
+      <pattern>
+        <token regexp="yes" skip="1">آراء|دراسة</token>
+        <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>syntax_0503_hawla</short>
+    </rule>
+    <rule id="syntax_0504_hawla" name="إرشادات حول">
+      <pattern>
+        <token regexp="yes">إرشاد|تعقيب</token>
+        <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>ذات صلة</suggestion>
+        <suggestion>ذو صلة</suggestion>
+        <suggestion>تتعلق ب</suggestion>
+        <suggestion>يتعلق ب</suggestion></message>
+      <short>syntax_0504_hawla</short>
+    </rule>
+    <rule id="syntax_0505_mushrif_li" name="المشرف له">
+      <pattern>
+        <token skip="1">مشرف</token>
+        <token postag="N.*;-L.?" postag_regexp="yes"></token>
+      </pattern>
+      <message>يفضل أن يقال:  مشرف على.</message>
+      <short>syntax_0505_mushrif_li</short>
+    </rule>
+    <rule id="syntax_0506_ta2min_dhida" name="تأمين، مناعة ضد">
+      <pattern>
+        <token regexp="yes" skip="2">تأمين|مناعة</token>
+        <token regexp="yes">ضد(|ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)?</token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion></suggestion></message>
+      <short>syntax_0506_ta2min_dhida</short>
+    </rule>
+    <rule id="syntax_0507_taqrir_hawla" name="تقرير حول">
+      <pattern>
+        <token skip="2">تقرير</token>
+        <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>syntax_0507_taqrir_hawla</short>
+    </rule>
+    <rule id="syntax_0508_tawdhih_hawla" name="توضيح حول">
+      <pattern>
+        <token>توضيح</token>
+        <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>syntax_0508_tawdhih_hawla</short>
+    </rule>
+    <rule id="syntax_0511_3alaqa_ma3a" name="علاقة مع">
+      <pattern>
+        <token skip="2">علاقة</token>
+        <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion></suggestion></message>
+      <short>syntax_0511_3alaqa_ma3a</short>
+    </rule>
+    <rule id="syntax_0512_lamha_3an" name="لمحة عن">
+      <pattern>
+        <token>لمحة</token>
+        <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن</token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>syntax_0512_lamha_3an</short>
+    </rule>
+    <rule id="syntax_0513_mutadhali3_fi" name="متضلع في">
+      <pattern>
+        <token>متضلع</token>
+        <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion></suggestion></message>
+      <short>syntax_0513_mutadhali3_fi</short>
+    </rule>
+    <rule id="syntax_0514_ma3soum_3an" name="معصوم من">
+      <pattern>
+        <token>معصوم</token>
+        <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن</token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion></suggestion></message>
+      <short>syntax_0514_ma3soum_3an</short>
+    </rule>
+    <rule id="syntax_200_madhhool" name="مذهول">
+      <pattern>
+        <token>وَقَفَ</token>
+        <token regexp="yes">مذهولا|مذهولة</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>ذاهِلاً</suggestion>
+        <suggestion>مدهوشاً</suggestion></message>
+      <short>syntax_200_madhhool</short>
+    </rule>
+    <rule id="syntax_504_mulahadha_hawl" name="ملاحظة حول">
+      <pattern>
+        <token regexp="yes">ملاحظة|استدراك</token>
+        <token regexp="yes">&quot;حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن&quot;</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>syntax_504_mulahadha_hawl</short>
+    </rule>
+    <rule id="syntax_504_mulahadha_hawl_a" name="ملاحظة حول">
+      <pattern>
+        <token regexp="yes">ملاحظة|استدراك</token>
+        <token>حول</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>على</suggestion></message>
+      <short>syntax_504_mulahadha_hawl_a</short>
+    </rule>
+    <rule id="trans_489_yqArb_Eddhm_mn" name="يقارب عددهم من">
+      <pattern>
+        <token postag="V4.*-" postag_regexp="yes">قَارَبَ</token>
+        <token postag="N.*;--." postag_regexp="yes">عدد</token>
+        <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
+      </pattern>
+      <message>يفضل أن يقال: قارب العدد ألفا بدلا من قارب العدد من ألف
+        <suggestion> </suggestion></message>
+      <short>trans_489_yqArb_Eddhm_mn</short>
+    </rule>
+    <rule id="trans_509_AEtdhr_En_AlHDwr" name="اعتذر عن الحضور">
+      <pattern>
+        <token skip="1">اِعْتَذَرَ</token>
+        <token>عن</token>
+        <token regexp="yes">حضور|الحضور</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> عن عدم </suggestion>
+        <suggestion> عن التخلّف</suggestion>
+        <suggestion> عن الغياب</suggestion></message>
+      <short>trans_509_AEtdhr_En_AlHDwr</short>
+    </rule>
+    <rule id="trans_510_Aglq_AlbAb_bAlrtAj" name="أغلق الباب بالرتاج">
+      <pattern>
+        <token skip="2">أَغْلَقَ</token>
+        <token>بالرتاج</token>
+      </pattern>
+      <message>(الرِّتاج): الباب
+        <suggestion> بالمِرْتَاج</suggestion></message>
+      <short>trans_510_Aglq_AlbAb_bAlrtAj</short>
     </rule>
     <rule id="verb_291_ynwf_AlEdd_Ela" name="ينـوف العدد على">
       <pattern>
@@ -558,6 +995,65 @@
         <suggestion>هي الكبرى</suggestion></message>
       <short>gender_00</short>
     </rule>
+    <rule id="gender_0001_hadha" name="تطابق النوع مع هذا">
+      <pattern>
+        <token>هذا</token>
+        <token postag="N.*;F1.*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
+      <short>gender_0001_hadha</short>
+    </rule>
+    <rule id="gender_0003_hadha" name="تطابق هذا مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>هذه</token>
+        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">ذقن|رفات</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
+      <short>gender_0003_hadha</short>
+    </rule>
+    <rule id="gender_0004_hadhihi" name="تطابق هذه مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>هذا</token>
+        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
+        <suggestion> </suggestion></message>
+      <short>gender_0004_hadhihi</short>
+    </rule>
+    <rule id="gender_0006_dhalika" name="تطابق النوع مع ذلك">
+      <pattern>
+        <token>ذلك</token>
+        <token postag="N.*;F1.*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
+      <short>gender_0006_dhalika</short>
+    </rule>
+    <rule id="gender_0007_tilka" name="تطابق النوع مع تلك">
+      <pattern>
+        <token>تلك</token>
+        <token postag="N.*;M1.*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مذكرة، ضع اسم اشارة مذكرًا:
+        <suggestion> \2</suggestion></message>
+      <short>gender_0007_tilka</short>
+    </rule>
+    <rule id="gender_0008_dhalika" name="تطابق ذلك مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>تلك</token>
+        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">ذقن|رفات</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
+      <short>gender_0008_dhalika</short>
+    </rule>
+    <rule id="gender_0009_tilka" name="تطابق تلك مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>ذلك</token>
+        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
+        <suggestion> </suggestion></message>
+      <short>gender_0009_tilka</short>
+    </rule>
     <rule id="gender_0010_alladhi" name="تطابق النوع مع الذي">
       <pattern>
         <token postag="N.*;M1.*" postag_regexp="yes"></token>
@@ -566,6 +1062,14 @@
       <message>هل تقصد <suggestion> الذي</suggestion>?</message>
       <short>gender_0010_alladhi</short>
     </rule>
+    <rule id="gender_0010_hadhani" name="تطابق النوع مع هذان">
+      <pattern>
+        <token>هذان</token>
+        <token postag="N.*;F2U.*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
+      <short>gender_0010_hadhani</short>
+    </rule>
     <rule id="gender_0011_allati" name="تطابق النوع مع التي">
       <pattern>
         <token postag="N.*;F1.*" postag_regexp="yes"></token>
@@ -573,6 +1077,74 @@
       </pattern>
       <message>هل تقصد <suggestion> التي</suggestion>?</message>
       <short>gender_0011_allati</short>
+    </rule>
+    <rule id="gender_0011_hatani" name="تطابق النوع مع هاتان">
+      <pattern>
+        <token>هاتان</token>
+        <token postag="N.*;M2U.*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مذكرة، ضع اسم اشارة مذكرًا:
+        <suggestion> \2</suggestion></message>
+      <short>gender_0011_hatani</short>
+    </rule>
+    <rule id="gender_0012_hadhani" name="تطابق هذان مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>هاتان</token>
+        <token regexp="yes" postag="N.*;.?2U.*;--.*" postag_regexp="yes">ذقن|رفات</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
+      <short>gender_0012_hadhani</short>
+    </rule>
+    <rule id="gender_0013_hatani" name="تطابق هاتان مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>هذان</token>
+        <token regexp="yes" postag="N.*;.?2U.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
+        <suggestion> </suggestion></message>
+      <short>gender_0013_hatani</short>
+    </rule>
+    <rule id="gender_0014_hadhayni" name="تطابق النوع مع هذين">
+      <pattern>
+        <token>هذين</token>
+        <token postag="N.*;F2[IA].*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
+      <short>gender_0014_hadhayni</short>
+    </rule>
+    <rule id="gender_0015_hatayni" name="تطابق النوع مع هاتين">
+      <pattern>
+        <token>هاتين</token>
+        <token postag="N.*;M2[IA].*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2"  مذكرة، ضع اسم اشارة مذكرًا:
+        <suggestion> \2</suggestion></message>
+      <short>gender_0015_hatayni</short>
+    </rule>
+    <rule id="gender_0016_hadhayni" name="تطابق هذين مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>هاتين</token>
+        <token regexp="yes" postag="N.*;.?2[IA].*;--.*" postag_regexp="yes">ذقن|رفات</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
+      <short>gender_0016_hadhayni</short>
+    </rule>
+    <rule id="gender_0017_hatayni" name="تطابق هاتين مع الكلمات ملتبسة النوع">
+      <pattern>
+        <token>هذين</token>
+        <token regexp="yes" postag="N.*;.?2[IA].*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+      </pattern>
+      <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
+        <suggestion> </suggestion></message>
+      <short>gender_0017_hatayni</short>
+    </rule>
+    <rule id="gender_0018_hadhani_case" name="تطابق الإعراب مع هذان">
+      <pattern>
+        <token>هذان</token>
+        <token postag="N.*;M2[IA].*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2" بدل من هذان لذا تتبعه في الإعراب، ربما عليك مراجعة العبارة: <suggestion> </suggestion><suggestion> </suggestion></message>
+      <short>gender_0018_hadhani_case</short>
     </rule>
     <rule id="gender_0019_hadhani_case" name="تطابق الإعراب مع هذين">
       <pattern>
@@ -590,6 +1162,14 @@
       <message>الكلمة "\2" بدل من هذين لذا تتبعه في الإعراب، ربما عليك مراجعة العبارة: <suggestion> </suggestion></message>
       <short>gender_0020_hadhani_case</short>
     </rule>
+    <rule id="gender_0021_hatayni_case" name="تطابق الإعراب مع هاتان">
+      <pattern>
+        <token>هاتان</token>
+        <token postag="N.*;F2[IA].*;--.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>الكلمة "\2" بدل من هاتان لذا تتبعه في الإعراب، ربما عليك مراجعة العبارة: <suggestion> </suggestion><suggestion> </suggestion></message>
+      <short>gender_0021_hatayni_case</short>
+    </rule>
     <rule id="gender_0022_hatayni_case" name="تطابق الإعراب مع هاتين">
       <pattern>
         <token regexp="yes">(و|ف)?هاتين</token>
@@ -605,6 +1185,15 @@
       </pattern>
       <message>الكلمة "\2" بدل من هاتين لذا تتبعه في الإعراب، ربما عليك مراجعة العبارة: <suggestion> </suggestion></message>
       <short>gender_0023_hatayni_case</short>
+    </rule>
+    <rule id="gender_0101" name="شريعة سمحاء">
+      <pattern>
+        <token>شريعة</token>
+        <token postag="N.*;.*;--.?" postag_regexp="yes">سمحاء</token>
+      </pattern>
+      <message>(سمحاء) مؤنث (أَسْمَح)، لم تقلهما العرب
+        <suggestion> </suggestion></message>
+      <short>gender_0101</short>
     </rule>
   </category>
   <category id="REDUNDENCY_PHRASES" name="تعابير مكررة">
@@ -635,6 +1224,22 @@
       <message>يفضل أن يقال:
         <suggestion>عند</suggestion></message>
       <short>redund_0005_ila_3inda</short>
+    </rule>
+    <rule id="redend_0003_haq_lojo2" name="حق_اللجوء">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">حق</token>
+        <token>اللجوء</token>
+      </pattern>
+      <message>قل اللجوء بدلا من حق اللجوء. يفضل أن تحذف كلمة حق  لأن حق هنا لا لزوم لها في التعبير.</message>
+      <short>redend_0003_haq_lojo2</short>
+    </rule>
+    <rule id="redend_0004_tawilat_mofawadhat" name="طاولة_المفاوضات">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">طاولة</token>
+        <token regexp="yes">المفاوضات|المداولات</token>
+      </pattern>
+      <message>ويفضل أن تقول \2 بدلا من طاولة \2 لأن طاولة هنا لا لزوم لها في التعبير.</message>
+      <short>redend_0004_tawilat_mofawadhat</short>
     </rule>
   </category>
   <category id="TO_REVIEW" name="للمراجعة">
@@ -678,6 +1283,380 @@
 (الأَوَد): الاعْوِجاج، (أقام أوَدَه): قَوّم اعوِجاجَه</message>
       <short>verb_0093_qam_biawdih</short>
     </rule>
+    <rule id="trans_383_AHtAr_fy" name="احتار في">
+      <pattern>
+        <token skip="1">اِحْتَارَ</token>
+        <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+    
+
+        <suggestion>حَارَ</suggestion>
+        <suggestion>تَحَيَّرَ </suggestion></message>
+      <short>trans_383_AHtAr_fy</short>
+    </rule>
+    <rule id="use_0001_fashila_fi" name="فشل في">
+      <pattern>
+        <token>فَشِلَ</token>
+        <token>في</token>
+      </pattern>
+      <message>ويفضل أن يقال:
+        <suggestion>أخفق</suggestion>
+        لا تقل: فشلت في حياتها الزوجية، وفشل في دراسته
+        بل قل: أخفقت في حياتها الزوجية، وأخفق في دراسته
+        فَشِل: كَسِلَ وضعُف وتراخَى وجَبُن. جاء في القرآن: ﴿وَلاَ تَنَازَعُواْ فَتَفْشَلُواْ وَتَذْهَبَ رِيحُكُمْ﴾[الأنفال:46]</message>
+      <short>use_0001_fashila_fi</short>
+    </rule>
+    <rule id="use_0081_open_fire" name="فتح الرصاص/النار">
+      <pattern>
+        <token skip="1">فَتَحَ</token>
+        <token regexp="yes">الرصاص|النار</token>
+      </pattern>
+      <message>ويفضل أن يقال:
+        <suggestion>أطلق</suggestion>
+
+        لأنها ترجمة مبتذلة لـ (opened fire).</message>
+      <short>use_0081_open_fire</short>
+    </rule>
+    <rule id="verb_0010_ta2amala" name="تأمل خيرا">
+      <pattern>
+        <token>تَأَمَّلَ</token>
+        <token>خيرا</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+
+(تأمَّل): تدبّر</message>
+      <short>verb_0010_ta2amala</short>
+    </rule>
+    <rule id="verb_0090_takkada_min" name="تأكّد من">
+      <pattern>
+        <token>تَأَكَّدَ</token>
+        <token>من</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_0090_takkada_min</short>
+    </rule>
+    <rule id="verb_200_AHATh_ElmA" name="أحاطه علما">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;--H" postag_regexp="yes">أَحَاطَ</token>
+        <token>علما</token>
+      </pattern>
+      <message>(أحاط) فعلٌ لازم
+        <suggestion></suggestion></message>
+      <short>verb_200_AHATh_ElmA</short>
+    </rule>
+    <rule id="verb_200_AHATh_ElmA_2" name="أحاطه علما">
+      <pattern>
+        <token skip="1" postag="V.*;.*f.?.?;--H" postag_regexp="yes">أَحَاطَ</token>
+        <token>علما</token>
+      </pattern>
+      <message>(أحاط) فعلٌ لازم
+        <suggestion></suggestion></message>
+      <short>verb_200_AHATh_ElmA_2</short>
+    </rule>
+    <rule id="verb_201_AHna_rAs" name="أحنى رأس">
+      <pattern>
+        <token skip="1" postag="VW1;.*p.?.?;.*" postag_regexp="yes">أَحْنَى</token>
+        <token skip="1" postag="N.*;--.?" postag_regexp="yes">رأس</token>
+      </pattern>
+      <message>(أَحْنَى عليه): عطف عليه
+        <suggestion></suggestion></message>
+      <short>verb_201_AHna_rAs</short>
+    </rule>
+    <rule id="verb_204_AstqrD_mAl" name="استقرض مال">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(ا|ي|ت|ن|أ|سي|ست|سن|سأ)ستقرض.*</token>
+        <token postag="N.*;-*-.?" postag_regexp="yes">مال</token>
+      </pattern>
+      <message>(الاستقراض): طلب القرض
+        <suggestion></suggestion></message>
+      <short>verb_204_AstqrD_mAl</short>
+    </rule>
+    <rule id="verb_205_Astql_syArt" name="استقل سيارة">
+      <pattern>
+        <token skip="1">اِسْتَقَلَّ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">سيارة</token>
+      </pattern>
+      <message>(استقلَّ الشيءَ): حَمَلَه ورفعه
+        <suggestion></suggestion></message>
+      <short>verb_205_Astql_syArt</short>
+    </rule>
+    <rule id="verb_206_Astlft_AnzhAr" name="استلفت أنظار">
+      <pattern>
+        <token skip="1">اِسْتَلْفَتَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">أنظار|نظر</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>اسْتَرْعَى</suggestion></message>
+      <short>verb_206_Astlft_AnzhAr</short>
+    </rule>
+    <rule id="verb_207_Astlft_AnzhAr" name="استلفت أنظار">
+      <pattern>
+        <token skip="1">اِسْتَلْفَتَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">أنظار|نظر</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_207_Astlft_AnzhAr</short>
+    </rule>
+    <rule id="verb_208_Astlm_rsAlt" name="استلم رسالة">
+      <pattern>
+        <token skip="1">اِسْتَلَمَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">رسالة</token>
+      </pattern>
+      <message>(الاستلام) خاص بالحجر الأسود
+        <suggestion></suggestion></message>
+      <short>verb_208_Astlm_rsAlt</short>
+    </rule>
+    <rule id="verb_209_Astmzj_rAy" name="استمزج رأي">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(ا|ي|ت|ن|أ|سي|ست|سن|سأ)ستمزج.*</token>
+        <token postag="N.*;--.?" postag_regexp="yes">رأي</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_209_Astmzj_rAy</short>
+    </rule>
+    <rule id="verb_210_Astnsb_shy2" name="استنسب شيء">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(ا|ي|ت|ن|أ|سي|ست|سن|سأ)ستنسب.*</token>
+        <token postag="N.*;--.?" postag_regexp="yes">شيء</token>
+      </pattern>
+      <message>(استنسبَ الرجُلُ): ذَكَرَ نسبَه. (استنسبَ الرجُلَ): سأله أن يذكر نسبه
+        <suggestion></suggestion></message>
+      <short>verb_210_Astnsb_shy2</short>
+    </rule>
+    <rule id="verb_211_AsEf_2la_Almstshfa" name="أسعف إلى المستشفى">
+      <pattern>
+        <token skip="1">أَسْعَفَ</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+        <token postag="N.*;--.?" postag_regexp="yes">مستشفى</token>
+      </pattern>
+      <message>(أسعَفَ فلاناً بحاجته): قضاها له
+        <suggestion></suggestion></message>
+      <short>verb_211_AsEf_2la_Almstshfa</short>
+    </rule>
+    <rule id="verb_212_ATlqfk_srAH" name="أطلق، فك سراح">
+      <pattern>
+        <token skip="1">أَطْلَقَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">سراح</token>
+      </pattern>
+      <message>يفضل أن يقال:
+أُطْلِقَ من أَسْرِهِ/ خٌلِّيَ سبيلُهُ.
+        <suggestion> من </suggestion>
+        <suggestion>خلّى </suggestion></message>
+      <short>verb_212_ATlqfk_srAH</short>
+    </rule>
+    <rule id="verb_212_ATlqfk_srAH_2" name="فك سراح">
+      <pattern>
+        <token skip="1">فَكَّ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">سراح</token>
+      </pattern>
+      <message>يفضل أن يقال:
+أُطْلِقَ من أَسْرِهِ/ خٌلِّيَ سبيلُهُ.
+        <suggestion>أطلق من </suggestion>
+        <suggestion>خلّى </suggestion></message>
+      <short>verb_212_ATlqfk_srAH_2</short>
+    </rule>
+    <rule id="verb_213_Agdq_khyr" name="أغدق خير">
+      <pattern>
+        <token skip="1">أَغْدَقَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">خير</token>
+      </pattern>
+      <message>(أغدق) فعلٌ لازم؛ تقول: (أغدقتِ الأرضُ): أخصبت
+        <suggestion></suggestion>
+        <suggestion>أفاض يفيض</suggestion></message>
+      <short>verb_213_Agdq_khyr</short>
+    </rule>
+    <rule id="verb_214_AfdHh_dyn" name="أفدحه دين">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(أفدح|أفدحت)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">دين|ديون</token>
+      </pattern>
+      <message>الفعل هو: (فَدح)، لا: (أفدح)
+        <suggestion></suggestion></message>
+      <short>verb_214_AfdHh_dyn</short>
+    </rule>
+    <rule id="verb_215_AfsH_lh_fy_Almjls" name="أفسح له في المجلس">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?أفسح.*</token>
+        <token>في</token>
+        <token postag="N.*;--.?" postag_regexp="yes">مجلس</token>
+      </pattern>
+      <message>يفضل أن يقال: فَسَح له في المجلس، بدلا من أَفْسح له.
+        <suggestion></suggestion></message>
+      <short>verb_215_AfsH_lh_fy_Almjls</short>
+    </rule>
+    <rule id="verb_216_AqtSd_mblg" name="اقتصد مبلغ">
+      <pattern>
+        <token skip="1">اِقْتَصَدَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">مبلغ</token>
+      </pattern>
+      <message>(اقتصد في النفقة): لم يسرف ولم يقتِّر
+        <suggestion></suggestion></message>
+      <short>verb_216_AqtSd_mblg</short>
+    </rule>
+    <rule id="verb_217_AqlE_mEml" name="أقلع معمل">
+      <pattern>
+        <token>أَقْلَعَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">معمل</token>
+      </pattern>
+      <message>يفضل أن يقال:
+    
+        <suggestion>انطلق</suggestion></message>
+      <short>verb_217_AqlE_mEml</short>
+    </rule>
+    <rule id="verb_218_Akrb_gm" name="أكرب غم">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?أكرب(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
+        <token postag="N.*;--.?" postag_regexp="yes">غم</token>
+      </pattern>
+      <message>(أَكْرَبَ الرجلُ): عَدَا. (أَكْرَبَ السِّقاءَ): ملأَه
+        <suggestion></suggestion></message>
+      <short>verb_218_Akrb_gm</short>
+    </rule>
+    <rule id="verb_220_AmlA_AlwEA2_bAlmA2" name="أملأ الوعاء بالماء">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(أملأ|أملأت)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
+        <token postag="N.*;--.?" postag_regexp="yes">وعاء</token>
+      </pattern>
+      <message>(أَمْلأهُ): سبّب له الزكام
+        <suggestion></suggestion></message>
+      <short>verb_220_AmlA_AlwEA2_bAlmA2</short>
+    </rule>
+    <rule id="verb_221_AnTla_Elyh_AlHylt" name="انطلت عليه الحيلة">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?انطلت</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حيل|حيلة</token>
+      </pattern>
+      <message>يفضل أن يقال: جازت عليه الحيلة.
+        <suggestion></suggestion></message>
+      <short>verb_221_AnTla_Elyh_AlHylt</short>
+    </rule>
+    <rule id="verb_222_AhAj_AlAmr" name="أهاج الأمر">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">أَهَاجَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">أمر</token>
+      </pattern>
+      <message>(أهاجتِ الريحُ النبتَ): أَيْبَسَتْهُ
+        <suggestion></suggestion></message>
+      <short>verb_222_AhAj_AlAmr</short>
+    </rule>
+    <rule id="verb_224_Awkl_AlAmr_2lamwkl_2lyh" name="أوكل الأمر إلى|موكل إليه">
+      <pattern>
+        <token skip="1">أَوْكَلَ</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>يفضل أن يقال: أوْكَلَ الأمرَ على فلان، فهو مُوكَلٌ عليه
+أو وَكَلَ الأمرَ إلى فلان، فهو مَوْكُولٌ إليه.
+        <suggestion> </suggestion>
+        <suggestion> </suggestion></message>
+      <short>verb_224_Awkl_AlAmr_2lamwkl_2lyh</short>
+    </rule>
+    <rule id="verb_225_brsh_SAbwn" name="برش صابون">
+      <pattern>
+        <token skip="1">بَرِشَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">صابون</token>
+      </pattern>
+      <message>(بَرِشَ الشيءُ): اختلف لونُه
+        <suggestion></suggestion></message>
+      <short>verb_225_brsh_SAbwn</short>
+    </rule>
+    <rule id="verb_228_tHSl_Ela" name="تحصل على">
+      <pattern>
+        <token skip="1">تَحَصَّلَ</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>(تَحَصَّل الشيءُ): تَجَمَّعَ وثبت
+        <suggestion></suggestion></message>
+      <short>verb_228_tHSl_Ela</short>
+    </rule>
+    <rule id="verb_229_trAs" name="ترأس">
+      <pattern>
+        <token>تَرَأَّسَ</token>
+      </pattern>
+      <message>(ترأَّسَ) فعلٌ لازم
+        <suggestion></suggestion></message>
+      <short>verb_229_trAs</short>
+    </rule>
+    <rule id="verb_230_tstr_Ela" name="تستر على">
+      <pattern>
+        <token skip="1">تَسَتَّرَ</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>(تستَّرَ): احتجب
+        <suggestion></suggestion></message>
+      <short>verb_230_tstr_Ela</short>
+    </rule>
+    <rule id="verb_231_tETsh_2la" name="تعطش إلى">
+      <pattern>
+        <token skip="1">تَعَطَّشَ</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>(تعطَّش): تكلّف العطش
+        <suggestion></suggestion></message>
+      <short>verb_231_tETsh_2la</short>
+    </rule>
+    <rule id="verb_233_Aftqd_2la" name="افتقد إلى">
+      <pattern>
+        <token skip="1">اِفْتَقَدَ</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_233_Aftqd_2la</short>
+    </rule>
+    <rule id="verb_234_tqTb_rjl" name="تَقَطَّب الرجل">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?تقطب.*</token>
+        <token skip="1" postag="N.*;--.?" postag_regexp="yes">رجل</token>
+      </pattern>
+      <message>الفعل هو: (قَطَب) أو (قَطَّب)، لا: (تقطَّب)
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_234_tqTb_rjl</short>
+    </rule>
+    <rule id="verb_236_tmAda_Ela" name="تمادى على">
+      <pattern>
+        <token skip="1">تَمَادَى</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_236_tmAda_Ela</short>
+    </rule>
+    <rule id="verb_237_tmEn_fy_Amr" name="تمعن في أمر">
+      <pattern>
+        <token skip="1">تَمَعَّنَ</token>
+        <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
+      </pattern>
+      <message>(تَمَعَّن): تصاغَرَ وتذلَّل, أنعم النظر في الأمر= أطال الفِكرة فيه، أَمْعَنَ النظر في الأمر = بالَغَ في استقصائه
+        <suggestion>أَمْعَنَ النظر</suggestion>
+        <suggestion>أنعم النظر</suggestion></message>
+      <short>verb_237_tmEn_fy_Amr</short>
+    </rule>
+    <rule id="verb_239_tnAzl_En" name="تنازل عن">
+      <pattern>
+        <token skip="1">تَنَازَلَ</token>
+        <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_239_tnAzl_En</short>
+    </rule>
+    <rule id="verb_240_nqS_tjArb" name="نقص تجارب">
+      <pattern>
+        <token skip="1">نَقَصَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حكمة|خبرة|تجربة|تجارب</token>
+      </pattern>
+      <message>يفضل أن يقال: تعوزه التجارب والخبرة بدلا من تنقصه.
+        <suggestion>تُعْوِزُه</suggestion></message>
+      <short>verb_240_nqS_tjArb</short>
+    </rule>
     <rule id="verb_241_twAzE_fymA_bynhm" name="توازع فيما بينهم">
       <pattern>
         <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?توازع.*</token>
@@ -686,6 +1665,82 @@
         <suggestion></suggestion></message>
       <short>verb_241_twAzE_fymA_bynhm</short>
     </rule>
+    <rule id="verb_242_twlj_Amr_bnfsh" name="تولج أمر بنفسه">
+      <pattern>
+        <token skip="1">تَوَلَّجَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">أمر</token>
+      </pattern>
+      <message>(تولّج): دخل
+        <suggestion>تولّى</suggestion>
+    
+        <suggestion></suggestion></message>
+      <short>verb_242_twlj_Amr_bnfsh</short>
+    </rule>
+    <rule id="verb_243_jrd_lwn_AlqmyS" name="جرد لون القميص">
+      <pattern>
+        <token skip="1">جَرَدَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">لون</token>
+      </pattern>
+      <message>(جَرِدَ الثوبُ): أَخْلَق. (جَرَد): قَشَر
+        <suggestion></suggestion></message>
+      <short>verb_243_jrd_lwn_AlqmyS</short>
+    </rule>
+    <rule id="verb_244_HlqAHlq_dhqn" name="حلق¦أحلق ذقن">
+      <pattern>
+        <token skip="1">حَلَقَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">ذقن</token>
+      </pattern>
+      <message>(الذقَن): مجتمع اللَّحْيَيْن من أسفلهما. (اللِّحية): شعر الخدَّين والذقَن
+        <suggestion>لِحية</suggestion></message>
+      <short>verb_244_HlqAHlq_dhqn</short>
+    </rule>
+    <rule id="verb_245_dAhm_Edw" name="داهم عدو">
+      <pattern>
+        <token skip="1">دَاهَمَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">عدو</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_245_dAhm_Edw</short>
+    </rule>
+    <rule id="verb_246_dAwl_fy_Amr" name="داول في أمر">
+      <pattern>
+        <token skip="1">دَاوَلَ</token>
+        <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
+      </pattern>
+      <message>(داوَل الشيءَ بينهم): جعله متداولاً، تارة لهؤلاء وتارة لهؤلاء
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_246_dAwl_fy_Amr</short>
+    </rule>
+    <rule id="verb_247_dlf_sqf" name="دلف سقف">
+      <pattern>
+        <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(دلف|دلفت)</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">سقوف|سقف</token>
+      </pattern>
+      <message>(دَلَفَ الشيخُ): مشى مَشْياً بَطيئاً كمَن يَزحَف
+        <suggestion>وَكَفَ</suggestion></message>
+      <short>verb_247_dlf_sqf</short>
+    </rule>
+    <rule id="verb_248_dhs_syArt" name="دهسته السيارة">
+      <pattern>
+        <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(دهس|دهست)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
+        <token postag="N.*;--.?" postag_regexp="yes">سيارة</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_248_dhs_syArt</short>
+    </rule>
+    <rule id="verb_249_rtA_rthA_thwb" name="رتا|رثا ثوب">
+      <pattern>
+        <token regexp="yes" skip="1">رَتَا|رَثَا</token>
+        <token postag="N.*;--.?" postag_regexp="yes">ثوب</token>
+      </pattern>
+      <message>(رَتا الرجُلُ): خَطَا. (رَثاه): بَكاهُ وعَدَّدَ مَحاسِنَه
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_249_rtA_rthA_thwb</short>
+    </rule>
     <rule id="verb_250_rshyt_flAnA" name="رشيت فلانا">
       <pattern>
         <token regexp="yes">(و|ف)?رشيت(ما|م)?</token>
@@ -693,6 +1748,423 @@
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
       <short>verb_250_rshyt_flAnA</short>
+    </rule>
+    <rule id="verb_252_sHb_shkwa" name="سحب شكوى">
+      <pattern>
+        <token skip="1">سَحَبَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">شكوى</token>
+      </pattern>
+      <message>(سحب الشيءَ): جَرَّهُ على وجه الأرض
+        <suggestion>اسْتَرَدّ</suggestion></message>
+      <short>verb_252_sHb_shkwa</short>
+    </rule>
+    <rule id="verb_253_srE_AlEml" name="سرع العمل">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">سَرُعَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">عمل</token>
+      </pattern>
+      <message>قل أسْرَعَ العمل بدلا من سرّعه.
+        <suggestion></suggestion></message>
+      <short>verb_253_srE_AlEml</short>
+    </rule>
+    <rule id="verb_254_shHn_bDAEt_2la" name="شُحِنَتِ البضاعةُ إلى">
+      <pattern>
+        <token skip="1">شَحَنَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">بضاعة|بضائع</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>(شُحِنت السفينةُ بالبضاعة): مُلِئت بالبضاعة
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_254_shHn_bDAEt_2la</short>
+    </rule>
+    <rule id="verb_255_shE_shms" name="شع شمس">
+      <pattern>
+        <token regexp="yes">(و|ف)?(شع|شعت)</token>
+        <token skip="1" postag="N.*;--.?" postag_regexp="yes">شمس</token>
+      </pattern>
+      <message>(شعَّ): تفرَّق وانتشر
+        <suggestion></suggestion></message>
+      <short>verb_255_shE_shms</short>
+    </rule>
+    <rule id="verb_256_SlH_AkhTA2" name="صلح أخطاء">
+      <pattern>
+        <token skip="1">صَلَّحَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">خطأ|أخطاء|غلط|أغلاط</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_256_SlH_AkhTA2</short>
+    </rule>
+    <rule id="verb_257_SlH_AlsyArt" name="صلح السيارة">
+      <pattern>
+        <token skip="1">صَلَّحَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">سيارة</token>
+      </pattern>
+      <message>يفضل أن يقال: أصلح السيارة بدلا من صلّحها.
+        <suggestion></suggestion></message>
+      <short>verb_257_SlH_AlsyArt</short>
+    </rule>
+    <rule id="verb_258_EdAh_bAlmrD" name="عداه بالمرض">
+      <pattern>
+        <token postag="V.*;.*p.?.?;.*" postag_regexp="yes">عَدَا</token>
+        <token postag="N.*;-B.?" postag_regexp="yes">مرض</token>
+      </pattern>
+      <message>(عدا): جَرَى، وسَرَق، وجَاوَزَ وتَرَك، لذا قل:
+        <suggestion>أعدى*</suggestion>
+        <suggestion>أعداه*</suggestion></message>
+      <short>verb_258_EdAh_bAlmrD</short>
+    </rule>
+    <rule id="verb_260_EfAh_mn_Alwzhyft" name="عفاه من الوظيفة">
+      <pattern>
+        <token skip="1">عَفَا</token>
+        <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
+      </pattern>
+      <message>(عفا عنه): صَفَحَ عنه. (عفا الأثرُ): زال
+        <suggestion>أَعْفَى</suggestion></message>
+      <short>verb_260_EfAh_mn_Alwzhyft</short>
+    </rule>
+    <rule id="verb_261_gAfl_lS" name="غافل لص">
+      <pattern>
+        <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(غافل)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">لص|لصوص</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_261_gAfl_lS</short>
+    </rule>
+    <rule id="verb_262_gTa_mqAl" name="غطى مقال">
+      <pattern>
+        <token>غَطَّى</token>
+        <token postag="N.*;--.?" postag_regexp="yes">مقال</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_262_gTa_mqAl</short>
+    </rule>
+    <rule id="verb_265_fls_AltAjr" name="فلس التاجر">
+      <pattern>
+        <token>فَلَّسَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">تاجر</token>
+      </pattern>
+      <message>(فَلَّسَ القاضي التاجرَ): حَكَمَ بإفلاسه
+        <suggestion>أفلس</suggestion></message>
+      <short>verb_265_fls_AltAjr</short>
+    </rule>
+    <rule id="verb_266_qrf_mn" name="قرف من">
+      <pattern>
+        <token skip="1" postag="V.*;.*(p|i).?.?;.*" postag_regexp="yes">قَرِفَ</token>
+        <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
+      </pattern>
+      <message>(قَرِفَ فلانٌ): دَانَى المرضَ
+        <suggestion></suggestion></message>
+      <short>verb_266_qrf_mn</short>
+    </rule>
+    <rule id="verb_266_qrf_mn_2" name="قرف من">
+      <pattern>
+        <token skip="1" postag="V.*;.*f.?.?;.*" postag_regexp="yes">قَرِفَ</token>
+        <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
+      </pattern>
+      <message>(قَرِفَ فلانٌ): دَانَى المرضَ
+        <suggestion></suggestion></message>
+      <short>verb_266_qrf_mn_2</short>
+    </rule>
+    <rule id="verb_267_qfl_AlbAb" name="قفل الباب">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">قَفَلَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">باب</token>
+      </pattern>
+      <message>(قَفَل): رجع من سَفره. (أقْفَلَ البابَ): أغْلَقَه بالقفل
+        <suggestion></suggestion></message>
+      <short>verb_267_qfl_AlbAb</short>
+    </rule>
+    <rule id="verb_268_kbdh_EnA2_shdydA" name="كبده عناء شديدا">
+      <pattern>
+        <token skip="1">كَبَّدَ</token>
+        <token regexp="yes" postag="N.*;--." postag_regexp="yes">مجهود|خسارة|خسائر|عناء</token>
+      </pattern>
+      <message>(كبَّدَتِ الشمسُ السماءَ): صارت في وَسَطها
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_268_kbdh_EnA2_shdydA</short>
+    </rule>
+    <rule id="verb_269_kra_Albyt" name="كرى البيت">
+      <pattern>
+        <token skip="1" postag="V.*;*.p.?.?;.*" postag_regexp="yes">كَرَى</token>
+        <token postag="N.*;--.?" postag_regexp="yes">بيت</token>
+      </pattern>
+      <message>(كَرَى الأرضَ): حَفَرَهَا. (كَرِيَ الرجلُ): نَعَسَ أو نامَ
+        <suggestion></suggestion></message>
+      <short>verb_269_kra_Albyt</short>
+    </rule>
+    <rule id="verb_270_ksr_AlqAnwn" name="كسر القانون">
+      <pattern>
+        <token skip="1">كَسَرَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">قاعدة|قواعد|قوانين|نظام|أنظمة|قانون</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_270_ksr_AlqAnwn</short>
+    </rule>
+    <rule id="verb_272_ljm_AljwAd" name="لجم الجواد">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">لَجَمَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">جواد|جياد|حصان|أحصنة|فرس</token>
+      </pattern>
+      <message>(لَجَمَ الثوبَ): خاطَه
+        <suggestion></suggestion></message>
+      <short>verb_272_ljm_AljwAd</short>
+    </rule>
+    <rule id="verb_273_lSq_Alwrq_bAlSmg" name="لصق الورق بالصمغ">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">لَصِقَ</token>
+        <token regexp="yes" postag="N.*;-B.?" postag_regexp="yes">غراء|صمغ|لاصق</token>
+      </pattern>
+      <message>(لَصِقَ الشيءُ بغيره): لَزِقَ به. وهو فعلٌ لازم
+        <suggestion></suggestion></message>
+      <short>verb_273_lSq_Alwrq_bAlSmg</short>
+    </rule>
+    <rule id="verb_274_lgA_AlmshrwE" name="لغا المشروع">
+      <pattern>
+        <token regexp="yes" skip="1">لغا|لغى|لغت|لغوا|لغيت</token>
+        <token postag="N.*;--.?" postag_regexp="yes">مشروع</token>
+      </pattern>
+      <message>(لغا الشيءُ): بَطَلَ، وهو فعلٌ لازم.. يقال: (بَطَلَ البيعُ، فالبيع باطلٌ/لاغٍ)
+        <suggestion>أَلْغَى</suggestion></message>
+      <short>verb_274_lgA_AlmshrwE</short>
+    </rule>
+    <rule id="verb_275_lfzh_AnfAsh" name="لفظ أنفاسه">
+      <pattern>
+        <token skip="1">لَفَظَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">أنفاس|نفس</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>انقضت </suggestion>
+        <suggestion>انقطعت </suggestion></message>
+      <short>verb_275_lfzh_AnfAsh</short>
+    </rule>
+    <rule id="verb_276_mzH_mE" name="مزح مع">
+      <pattern>
+        <token>مَزَحَ</token>
+        <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
+      </pattern>
+      <message>(مزح خالدٌ مع سعيد) تعني أنهما مزحا معاً، لا أنّ خالداً هو المازِح. ولو شارك سعيدٌ في المزح لقلنا: تمازَحَا
+        <suggestion></suggestion></message>
+      <short>verb_276_mzH_mE</short>
+    </rule>
+    <rule id="verb_276_mzH_mE_2" name="مزح مع">
+      <pattern>
+        <token>مَزَحَ</token>
+        <token min="0" postag="N.*;--.?" postag_regexp="yes"></token>
+        <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
+      </pattern>
+      <message>(مزح خالدٌ مع سعيد) تعني أنهما مزحا معاً، لا أنّ خالداً هو المازِح. ولو شارك سعيدٌ في المزح لقلنا: تمازَحَا
+        <suggestion> </suggestion></message>
+      <short>verb_276_mzH_mE_2</short>
+    </rule>
+    <rule id="verb_277_ngz_AldAbt" name="نغز الدابة">
+      <pattern>
+        <token skip="1">نَغَزَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">دابة</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_277_ngz_AldAbt</short>
+    </rule>
+    <rule id="verb_278_nfdh_Sbrh" name="نـفذ صبره">
+      <pattern>
+        <token>نَفَذَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">صبر</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_278_nfdh_Sbrh</short>
+    </rule>
+    <rule id="verb_280_hds_fy_AlAmr" name="هدس في الأمر">
+      <pattern>
+        <token regexp="yes" skip="1">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(هدس|هدست)</token>
+        <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
+        <token min="0" postag="N.*;--.?" postag_regexp="yes">أمر</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>  </suggestion></message>
+      <short>verb_280_hds_fy_AlAmr</short>
+    </rule>
+    <rule id="verb_281_wjd_Elyh" name="وجد عليه">
+      <pattern>
+        <token skip="1">وَجَدَ</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>(وجَدَ عليه): غَضِبَ عليه، (وَجَدَ به): أَحَبَّه
+        <suggestion></suggestion></message>
+      <short>verb_281_wjd_Elyh</short>
+    </rule>
+    <rule id="verb_282_wfa_Alkyl" name="وفى الكيل">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">وَفَى</token>
+        <token postag="N.*;--.?" postag_regexp="yes">كيل</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_282_wfa_Alkyl</short>
+    </rule>
+    <rule id="verb_283_wqdt_AlHTb" name="وقدت الحطب">
+      <pattern>
+        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">وَقَّدَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حطب|خشب</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_283_wqdt_AlHTb</short>
+    </rule>
+    <rule id="verb_284_wlE_AlnAr" name="ولع النار">
+      <pattern>
+        <token skip="1" postag="V.*;.*[pi].?.?;.*" postag_regexp="yes">وَلَّعَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">نار</token>
+      </pattern>
+      <message>(وَلَّع فلاناً به): أغراه
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_284_wlE_AlnAr</short>
+    </rule>
+    <rule id="verb_284_wlE_AlnAr_2" name="ولع النار">
+      <pattern>
+        <token skip="1" postag="V.*;.*[^pi].?.?;.*" postag_regexp="yes">وَلَّعَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">نار</token>
+      </pattern>
+      <message>(وَلَّع فلاناً به): أغراه
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_284_wlE_AlnAr_2</short>
+    </rule>
+    <rule id="verb_285_ytmAsha_mE" name="يتماشى مع">
+      <pattern>
+        <token skip="1">تَمَاشَى</token>
+        <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
+      </pattern>
+      <message>فاعل (تماشى) لا يكون إلا مثنى أو جمعاً
+        <suggestion></suggestion>
+        <suggestion></suggestion>
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>verb_285_ytmAsha_mE</short>
+    </rule>
+    <rule id="verb_286_ysry_AlHkm_mn" name="يسري الحكم من">
+      <pattern>
+        <token skip="1">سَرَى</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حكم|قرار|مرسوم</token>
+        <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
+      </pattern>
+      <message>(سرى): سار ليلاً، دبّ تحت الأرض . قل نفُذ الحكم
+        <suggestion></suggestion></message>
+      <short>verb_286_ysry_AlHkm_mn</short>
+    </rule>
+    <rule id="verb_287_yTAlhA_AlqAnwn" name="يطالها القانون">
+      <pattern>
+        <token regexp="yes">(و|ف)?(ي|ت|سي|ست)?(طال)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">قانون|قوانين|نظام|أنظمة</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_287_yTAlhA_AlqAnwn</short>
+    </rule>
+    <rule id="verb_288_yThy_AlTEAm" name="يطهي الطعام">
+      <pattern>
+        <token skip="1">طَهَى</token>
+        <token postag="N.*;--.?" postag_regexp="yes">طعام</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>verb_288_yThy_AlTEAm</short>
+    </rule>
+    <rule id="verb_289_ylEb_dwrA_r2ysyA" name="يلعب دورا رئيسيا">
+      <pattern>
+        <token regexp="yes" skip="1">لَعَبَ|لَعِبَ</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">دور|أدوار</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>أدّى</suggestion>
+        <suggestion>يؤدّي</suggestion>
+        <suggestion>أدّت</suggestion></message>
+      <short>verb_289_ylEb_dwrA_r2ysyA</short>
+    </rule>
+    <rule id="verb_290_ynqSh_shy2" name="ينقصه شيء">
+      <pattern>
+        <token skip="1">نَقَصَ</token>
+        <token skip="1" postag="N.*;--.?" postag_regexp="yes">شيء</token>
+      </pattern>
+      <message>يفضل أن يقال:  يُعْوِزٌه شيء
+        <suggestion>يُعْوِز</suggestion>
+        <suggestion>يعوزه</suggestion></message>
+      <short>verb_290_ynqSh_shy2</short>
+    </rule>
+    <rule id="verb_292_Akhtla_bhA" name="اختلى بها">
+      <pattern>
+        <token skip="1">اِخْتَلَى</token>
+        <token regexp="yes">بي|بنا|بك|بكما|بكم|بكن|به|بها|بهما|بهم|بهن</token>
+      </pattern>
+      <message>(اختلى البقلَ): احتشَّه؛ أي: انتزعه
+        <suggestion>خلا بها</suggestion>
+        <suggestion>خلا إليها</suggestion>
+        <suggestion>خلا معها</suggestion></message>
+      <short>verb_292_Akhtla_bhA</short>
+    </rule>
+    <rule id="verb_294_SAdq_Almjls_Ela_AlqrAr" name="صادق المجلس على القرار">
+      <pattern>
+        <token skip="1">صَادَقَ</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+        <suggestion>أقرّ*</suggestion>
+        <suggestion>أجاز*</suggestion></message>
+      <short>verb_294_SAdq_Almjls_Ela_AlqrAr</short>
+    </rule>
+    <rule id="verb_408_tAjr_b" name="تاجر ب">
+      <pattern>
+        <token skip="1">تَاجَرَ</token>
+        <token postag="N.*;-B.?" postag_regexp="yes"></token>
+      </pattern>
+      <message>(تاجَرَ فلانٌ فلاناً): اتَّجَرَ معه
+        <suggestion>اتَّجر في </suggestion></message>
+      <short>verb_408_tAjr_b</short>
+    </rule>
+    <rule id="verb_408_tAjr_b_2" name="تاجر ب">
+      <pattern>
+        <token skip="1">تَاجَرَ</token>
+        <token regexp="yes">بي|بنا|بك|بكما|بكم|بكن|به|بها|بهما|بهم|بهن</token>
+      </pattern>
+      <message>(تاجَرَ فلانٌ فلاناً): اتَّجَرَ معه
+        <suggestion>اتَّجر </suggestion></message>
+      <short>verb_408_tAjr_b_2</short>
+    </rule>
+    <rule id="verb_561_nkhr_Alsws_Alkhshb" name="نـخر السوس الخشب">
+      <pattern>
+        <token>نَخَرَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes">سوس</token>
+        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">خشب|أخشاب|سن|أسنان</token>
+      </pattern>
+      <message>(نَخِرَ) فعلٌ لازم. (نَخَر): صَوَّتَ بخياشيمه. (نَخَرَ الحالبُ الناقَةَ): دَلَكَ مَنْخِرَها بيدِهِ لِتَدِرّ
+        <suggestion></suggestion></message>
+      <short>verb_561_nkhr_Alsws_Alkhshb</short>
+    </rule>
+    <rule id="verb_562_nzf_flAn" name="نـزف فلان">
+      <pattern>
+        <token>نَزَفَ</token>
+        <token postag="N.*;--.?" postag_regexp="yes"></token>
+      </pattern>
+      <message>(نَزَفَ الشيءُ): نَفِدَ وفَني. (نَزَفَ الدمُ فلاناً): أضعفَهُ بكثرة خروجه منه
+        <suggestion>  دمًا</suggestion></message>
+      <short>verb_562_nzf_flAn</short>
+    </rule>
+    <rule id="verb_564_nEa_wfAt" name="نـعى وفاة">
+      <pattern>
+        <token skip="1">نَعَى</token>
+        <token postag="N.*;--.?" postag_regexp="yes">وفاة</token>
+      </pattern>
+      <message>يفضل أن يقال: نعى فقط بدلا من نعى وفاة
+        <suggestion></suggestion></message>
+      <short>verb_564_nEa_wfAt</short>
     </rule>
   </category>
   <category id="COMMON_ERRORS_ON_ONE_WORD_USE" name="أخطاء شائعة في كلمة واحدة">
@@ -888,6 +2360,16 @@
         <suggestion>مُشْتَبَه فيه</suggestion></message>
       <short>oneword_0559_mshbwh_mshbwh_fyh_2</short>
     </rule>
+    <rule id="word_use_0005_muta2akid" name="متأكد">
+      <pattern>
+        <token>متأكد</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+        <suggestion></suggestion>
+متيقن أو متحقق بدلا من متأكد</message>
+      <short>word_use_0005_muta2akid</short>
+    </rule>
     <rule id="worduse_0001" name="العشرينيات إلى التسعينيات">
       <pattern>
         <token regexp="yes">(و|ف)?(كال|لل|بال|ال)(عشر|ثلاث|أربع|خمس|ست|سبع|ثمان|تسع)ينات</token>
@@ -895,6 +2377,42 @@
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
       <short>worduse_0001</short>
+    </rule>
+    <rule id="worduse_0007_khatir" name="خطير">
+      <pattern>
+        <token>خطير</token>
+      </pattern>
+      <message>(الخطير): الرفيعُ المقام. (الخطورة): عِظَمُ الشَّأْن والمنزلة
+        <suggestion>شديد الْخَطَر</suggestion>
+        <suggestion>يُنذِرُ بالخطر</suggestion>
+        <suggestion>محفوف بالخطر</suggestion></message>
+      <short>worduse_0007_khatir</short>
+    </rule>
+    <rule id="worduse_0009_khammara" name="الخمارة">
+      <pattern>
+        <token>خمارة</token>
+      </pattern>
+      <message>(الخمّارة): بائعةُ الخمر
+        <suggestion>مَخْمَرَة</suggestion>
+        <suggestion>حانة</suggestion></message>
+      <short>worduse_0009_khammara</short>
+    </rule>
+    <rule id="worduse_0013_indhahala" name="انذهل">
+      <pattern>
+        <token>اِنْذَهَلَ</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>worduse_0013_indhahala</short>
+    </rule>
+    <rule id="worduse_0014_in3ikas" name="انعكاس">
+      <pattern>
+        <token skip="2">انعكاس</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion></message>
+      <short>worduse_0014_in3ikas</short>
     </rule>
     <rule id="worduse_0016_biAkmalihi" name="بأكمله">
       <pattern>
@@ -906,6 +2424,21 @@
         <suggestion></suggestion></message>
       <short>worduse_0016_biAkmalihi</short>
     </rule>
+    <rule id="worduse_0017_tahammama" name="تحمم">
+      <pattern>
+        <token>تَحَمَّمَ</token>
+      </pattern>
+      <message>(تَحَمَّمَ): اسودَّ
+        <suggestion>استَحَمَّ</suggestion></message>
+      <short>worduse_0017_tahammama</short>
+    </rule>
+    <rule id="worduse_0018_tushakkilu" name="تشكل">
+      <pattern>
+        <token postag="V.*;.*" postag_regexp="yes">شَكَّلَ</token>
+      </pattern>
+      <message>يستحسن الاستغناء عن كلمة "تُشّكّلُ", أو استبدالها بـ"هي".</message>
+      <short>worduse_0018_tushakkilu</short>
+    </rule>
     <rule id="worduse_0020_tatmin" name="تطمين">
       <pattern>
         <token regexp="yes">(و|ف|ال|وال|فال|ب|بال|وبال|ك|كال|وكال|فكال|ل|لل|ولل|فلل)?تطمين</token>
@@ -913,6 +2446,23 @@
       <message>الفعل هو: (طمأن)، لا: (طَمَّنَ)
         <suggestion></suggestion></message>
       <short>worduse_0020_tatmin</short>
+    </rule>
+    <rule id="worduse_0021_ta3kisu" name="تعكس">
+      <pattern>
+        <token>عَكَسَ</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>worduse_0021_ta3kisu</short>
+    </rule>
+    <rule id="worduse_0025_khalooq" name="خلوق">
+      <pattern>
+        <token>خلوق</token>
+      </pattern>
+      <message>(الخَلُوق): الطِّيب
+        <suggestion>حَسَنُ الخُلُق</suggestion></message>
+      <short>worduse_0025_khalooq</short>
     </rule>
     <rule id="worduse_0028_rafah" name="رفاة">
       <pattern>
@@ -955,6 +2505,14 @@
         <suggestion>ناشطٌ</suggestion></message>
       <short>worduse_0038_nashet</short>
     </rule>
+    <rule id="worduse_0042_yushakilu" name="يشكل">
+      <pattern>
+        <token>شَكَّلَ</token>
+      </pattern>
+      <message>(شَكَّل): صَوَّرَ، وألَّفَ، وقَيَّدَ
+        <suggestion></suggestion></message>
+      <short>worduse_0042_yushakilu</short>
+    </rule>
     <rule id="worduse_0043_ittila3" name="الإطلاع">
       <pattern>
         <token regexp="yes">(و|ف|ال|وال|فال|ب|بال|وبال|ك|كال|وكال|فكال|ل|لل|ولل|فلل)?إطلاع</token>
@@ -962,6 +2520,15 @@
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
       <short>worduse_0043_ittila3</short>
+    </rule>
+    <rule id="worduse_0047_mumtan_mamnoun" name="ممتن|ممنون">
+      <pattern>
+        <token regexp="yes">ممتن|ممنون</token>
+        <token regexp="yes">لي|لنا|لك|لكما|لكم|لكن|له|لها|لهما|لهم|لهن</token>
+      </pattern>
+      <message>(الممنون): المقطوع.(امْتنَّ عليه): ذكّره بنعمته عليه وآذاه بمَنِّهِ
+        <suggestion></suggestion></message>
+      <short>worduse_0047_mumtan_mamnoun</short>
     </rule>
     <rule id="worduse_0050_mujbat" name="مجباة">
       <pattern>
@@ -996,6 +2563,30 @@
         <suggestion></suggestion></message>
       <short>worduse_0055_misaghat</short>
     </rule>
+    <rule id="worduse_0056_muAshirat" name="مؤشرات">
+      <pattern>
+        <token postag="NA.*;F3.*;.*" postag_regexp="yes">مؤشر</token>
+      </pattern>
+      <message>إذ أن "المُؤّشَّر" تعني: كل شيء مرقق.
+        <suggestion></suggestion>
+        <suggestion></suggestion>
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>worduse_0056_muAshirat</short>
+    </rule>
+    <rule id="worduse_0057_mishwar" name="مشوار">
+      <pattern>
+        <token>مشوار</token>
+      </pattern>
+      <message>كلمة مشوار لم ترد بهذا المعنى،
+        من الشائع التلفظ: بكلمة مشوار
+        وينبغي أن يحل محلها: طريق، أو مسار، أو نزهة، أو ما يقوم مقامها
+        كلمة مشوار لأنها لم ترد عن العرب بهذا المعنى.
+        <suggestion></suggestion>
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>worduse_0057_mishwar</short>
+    </rule>
     <rule id="worduse_0058_machine" name="ماكينة">
       <pattern>
         <token regexp="yes">(و|ف|ال|وال|فال|ب|بال|وبال|ك|كال|وكال|فكال|ل|لل|ولل|فلل)?ماكينة</token>
@@ -1003,6 +2594,25 @@
       <message>المكنة: جهاز تديره اليد أو الرِّجل أو قوة خارجية كالكهرباء، وجمعها "مَكِنات"
         <suggestion></suggestion></message>
       <short>worduse_0058_machine</short>
+    </rule>
+    <rule id="worduse_0059_Imkaniyat" name="إمكانيات">
+      <pattern>
+        <token postag="N.*;F3.*;.*" postag_regexp="yes">إمكانية</token>
+      </pattern>
+      <message>ويفضل أن يقال إمكانات بدلا عن إمكانيات.
+
+        <suggestion></suggestion></message>
+      <short>worduse_0059_Imkaniyat</short>
+    </rule>
+    <rule id="worduse_0060_twajd" name="تواجد">
+      <pattern>
+        <token>تَوَاجَدَ</token>
+      </pattern>
+      <message>ويفضل أن يقال: وجد يوجد،
+        لأن تَواجَدَ فلانٌ: أي تظاهر بالوجْد. والوجْد: هو الحُب الشديد أو الحزن. (مصدر)
+
+        <suggestion></suggestion></message>
+      <short>worduse_0060_twajd</short>
     </rule>
     <rule id="worduse_0064_istbyan" name="استبانة">
       <pattern>
@@ -1022,6 +2632,14 @@
       <message>ويفضل أن يقال اختصاصي.
         <suggestion></suggestion></message>
       <short>worduse_0065_akhiSaI</short>
+    </rule>
+    <rule id="worduse_0066_toqos" name="طقوس">
+      <pattern>
+        <token>طقوس</token>
+      </pattern>
+      <message>ويفضل أن يقال: شعائر فلا وجود لطقوس في اللغة العربية.
+        <suggestion></suggestion></message>
+      <short>worduse_0066_toqos</short>
     </rule>
     <rule id="worduse_0068_lisalihi" name="لصالح">
       <pattern>
@@ -1043,6 +2661,54 @@
         <suggestion></suggestion></message>
       <short>worduse_0068_lisalihika</short>
     </rule>
+    <rule id="worduse_0069_i3tabar" name="اعتبر">
+      <pattern>
+        <token>اِعْتَبَرَ</token>
+      </pattern>
+      <message>ويفضل أن يقال: عدّ.  لأن "اعتبرت" تعني اتخذته عبرة وعظة والصواب عددته. جاء في القرآن: ﴿وَقَالُواْ مَا لَنَا لاَ نَرَىٰ رِجَالاً كُنَّا نَعُدُّهُمْ مِّنَ ٱلأَشْرَارِ﴾[ص:62]. ولم يقل نعتبرهم.
+        <suggestion>عدّ</suggestion></message>
+      <short>worduse_0069_i3tabar</short>
+    </rule>
+    <rule id="worduse_0070_burha" name="برهة">
+      <pattern>
+        <token>برهة</token>
+      </pattern>
+      <message>ويفضل أن يقال: هنيهة.
+        جاء في (لسان العرب): «البرهة: الحِينُ الطويل من الدهر، وقيل: الزمانُ. يقال: أَقمت عنده بُرْهَةً من الدهر كقولك أَقمت عنده سنة من الدهر.»
+        <suggestion></suggestion></message>
+      <short>worduse_0070_burha</short>
+    </rule>
+    <rule id="worduse_0071_َAwina" name="آونة">
+      <pattern>
+        <token>آونة</token>
+      </pattern>
+      <message>ويفضل أن يقال:  أوان         لأن الآونة جمع أوان، مثل أزمنة وزمان.
+
+        <suggestion></suggestion></message>
+      <short>worduse_0071_َAwina</short>
+    </rule>
+    <rule id="worduse_0072_َbawasil" name="بواسل">
+      <pattern>
+        <token>بواسل</token>
+      </pattern>
+      <message>ويفضل أن يقال: بسلاء وبواسل
+
+        لأن البواسل جمع باسلة للمرأة، وباسل للحيوان كالأسد.
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>worduse_0072_َbawasil</short>
+    </rule>
+    <rule id="worduse_0073_mustahtir" name="مستهتر">
+      <pattern>
+        <token>مستهتر</token>
+        <token regexp="yes">بالقانون|بالدين|بالأعراف|بالعادات</token>
+      </pattern>
+      <message>ويفضل أن يقال:  مستهين أو مستخفّ بالقانون أو بالعادات،
+        لأن الاستهتار غاية الولع بالشيء فيقال فلان مستهتر بالقراءة إذا أولع بها بلا حد.
+        <suggestion></suggestion>
+        <suggestion></suggestion></message>
+      <short>worduse_0073_mustahtir</short>
+    </rule>
     <rule id="worduse_0074_suwah" name="سواح">
       <pattern>
         <token regexp="yes" skip="1">(و|ف|ال|وال|فال|ب|بال|وبال|ك|كال|وكال|فكال|ل|لل|ولل|فلل)?سواح</token>
@@ -1050,6 +2716,18 @@
       <message>ويفضل أن يقال:  سياح.
         <suggestion></suggestion></message>
       <short>worduse_0074_suwah</short>
+    </rule>
+    <rule id="worduse_0076_saifia" name="الصيفية">
+      <pattern>
+        <token>قَضَى</token>
+        <token regexp="yes">صيفية|الصيفية</token>
+      </pattern>
+      <message>ويفضل أن يقال
+        <suggestion>الصيفة</suggestion>
+        <suggestion>الصيف</suggestion>
+
+        وذلك لأن الصيفية منسوبة إلى الصيف</message>
+      <short>worduse_0076_saifia</short>
     </rule>
   </category>
   <category id="SEMANTICS" name="inconsistency">
@@ -1096,6 +2774,19 @@
       </pattern>
       <message>شهر شباط/فبراير به 28 يومًا أو 29 يوما في السنوات الكبيسة.</message>
       <short>DATE_MONTH_FAB_2</short>
+    </rule>
+    <rule id="DATE_MONTH_FAB_29" name="تطابق فبراير مع طوله في السنوات الكبيسة">
+      <pattern>
+        <token>29</token>
+        <token regexp="yes" min="0">-|/</token>
+        <token regexp="yes">فبراير|فيفري|شباط|0?2</token>
+        <token regexp="yes" min="0">-|/</token>
+        <token regexp="yes">\d\d(00|\d[13579]|[02468][26]|[13579][048])
+          <exception regexp="yes">[13579][26]00|[2468][048]00</exception>
+        </token>
+      </pattern>
+      <message>شهر شباط/فبراير  \5 به 28 يومًا فقط لأن \5 ليست سنة كبيسة.</message>
+      <short>DATE_MONTH_FAB_29</short>
     </rule>
     <rule id="DATE_MONTH_LAST_DAY" name="تطابق الأشهر مع طولها">
       <pattern>
@@ -1163,6 +2854,79 @@
       <short>semantic_0000</short>
     </rule>
   </category>
+  <category id="COMMON_ERRORS_ON_ADJECTIVES" name="أخطاء شائعة - النعوت">
+    <rule id="adj_00012_maa_maghli" name="ماء مغلي">
+      <pattern>
+        <token>ماء</token>
+        <token regexp="yes">(ال)?مغلي</token>
+      </pattern>
+      <message>قل    ماء <suggestion></suggestion></message>
+      <short>adj_00012_maa_maghli</short>
+    </rule>
+    <rule id="adj_0001_Amr_Ham" name="أمر هام">
+      <pattern>
+        <token>أمر</token>
+        <token regexp="yes">الهام|هام</token>
+      </pattern>
+      <message>قل
+        <suggestion> </suggestion> لأن "هامٌّ" هو اسم الفاعل من الفعل "هَمَّ" فنقول هَمَّهُ الأمرُ أي أَقْلَقَهُ وأَحْزَنَهُ.</message>
+      <short>adj_0001_Amr_Ham</short>
+    </rule>
+    <rule id="unsorted5148" name="الأعظم_5148">
+      <pattern>
+        <token regexp="yes">(و|ف)?الدولتان</token>
+        <token>الأعظم</token>
+      </pattern>
+      <message>الصفة تتبع موصوفها في الإفراد والتثنية والجمع
+                <suggestion></suggestion></message>
+      <short>unsorted5148</short>
+    </rule>
+    <rule id="unsorted5162" name="المعشر_5162">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">حسن</token>
+        <token>المعشر</token>
+      </pattern>
+      <message>(المَعْشَر): كلُّ جماعةٍ أمرُهم واحد
+<suggestion>العِشْرَة</suggestion></message>
+      <short>unsorted5162</short>
+    </rule>
+    <rule id="unsorted5176" name="غاو|غاوي_5176">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">غاوي</token>
+        <token>للموسيقى</token>
+      </pattern>
+      <message>(الغاوي): الضال
+        <suggestion>هَاوٍ</suggestion></message>
+      <short>unsorted5176</short>
+    </rule>
+    <rule id="unsorted5179" name="الشراهة_5179">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">كثير</token>
+        <token>الشراهة</token>
+      </pattern>
+      <message>يفضل أن يقال:
+                  <suggestion>الشَّرَه</suggestion></message>
+      <short>unsorted5179</short>
+    </rule>
+    <rule id="unsorted5180" name="المخاطر_5180">
+      <pattern>
+        <token postag="N.*;.*;.?.?-" postag_regexp="yes">كثير</token>
+        <token>المخاطر</token>
+      </pattern>
+      <message>يفضل أن يقال:
+                    <suggestion>الأخْطار</suggestion></message>
+      <short>unsorted5180</short>
+    </rule>
+    <rule id="unsorted5187" name="مقاس_5187">
+      <pattern>
+        <token>مقاس</token>
+        <token>بالمتر</token>
+      </pattern>
+      <message>الفعل هو: (قاسَ)، لا: (أقاسَ)
+        <suggestion></suggestion></message>
+      <short>unsorted5187</short>
+    </rule>
+  </category>
   <category id="TEST_NEW_FEATURES" name="grammar">
     <rule id="exp_1343_kullama_kullama" name="فأما ، وأما">
       <pattern>
@@ -1212,6 +2976,14 @@
 
         <suggestion> </suggestion></message>
       <short>grammar_0002_nawasikh_plural</short>
+    </rule>
+    <rule id="syntax_0000_Qam_bi_test" name="قام بعمل">
+      <pattern>
+        <token>قَامَ</token>
+        <token postag="NM.*;.*;-B.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>تعبير "القيام بـالأمر" ركيك يستحسن تجنبه إلى تصريف المصدر الموالي، قل ضربت بدلا من القيام بالضرب.</message>
+      <short>syntax_0000_Qam_bi_test</short>
     </rule>
     <rule id="syntax_0002_as_ka_1" name="يعمل كمدير">
       <pattern>
@@ -1356,6 +3128,16 @@
             : <suggestion> </suggestion></message>
       <short>syntax_1492_L_modda_2</short>
     </rule>
+    <rule id="syntax_1528_byna_wa_bayna_1" name="بين وبين">
+      <pattern>
+        <token skip="3" postag="NM-;M1..;--[H-]" postag_regexp="yes">بين</token>
+        <token postag="NM-;M1..;W-[H-]" postag_regexp="yes">بين</token>
+      </pattern>
+      <message>لا داعي لتكرار "بين" لأن تكرارها لا يعطي معنى جديدًا
+
+: <suggestion> و</suggestion></message>
+      <short>syntax_1528_byna_wa_bayna_1</short>
+    </rule>
     <rule id="syntax_1528_byna_wa_bayna_2" name="بيني وبينه">
       <pattern>
         <token regexp="yes">بيني|بيننا</token>
@@ -1438,6 +3220,16 @@
 
 : <suggestion>مّا </suggestion></message>
       <short>syntax_158_3n_maa</short>
+    </rule>
+    <rule id="syntax_206_ikhtar_1" name="اختار بين">
+      <pattern>
+        <token postag="V51;.*;--." postag_regexp="yes">اِخْتَارَ</token>
+        <token postag="NJ-;.*;--." postag_regexp="yes">بين</token>
+      </pattern>
+      <message>لا تستعمل "بين " مع الاختيار، هذا غير معروف"
+        <suggestion> أحد</suggestion>
+        <suggestion> إحدى</suggestion></message>
+      <short>syntax_206_ikhtar_1</short>
     </rule>
     <rule id="syntax_456_bynama_sent_start_2" name="بينما في أول الكلام">
       <pattern>
@@ -1695,7 +3487,70 @@
       <short>number_under_10_masculine</short>
     </rule>
   </category>
+  <category id="COMMON_ERRORS_SYNTAX" name="أخطاء تركيبية">
+    <rule id="syntax_0000_Qam_bi" name="القيام_ب">
+      <pattern>
+        <token>قيام</token>
+        <token postag="NM.*;.*;-B.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>تعبير "القيام بـ" ركيك يستحسن تجنبه إلى تصريف المصدر الموالي، قل ضربت بدلا من القيام بالضرب.
+
+
+        <suggestion>الفعل من ()</suggestion>
+        <suggestion></suggestion></message>
+      <short>syntax_0000_Qam_bi</short>
+    </rule>
+  </category>
   <category id="COMMON_VERBS_ERRORS" name="أخطاء الأفعال">
+    <rule id="syntax_0515_raghba_li" name="رغبة ل">
+      <pattern>
+        <token skip="1">رغبة</token>
+        <token postag="NM.*;-L.?" postag_regexp="yes"></token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion>في </suggestion>
+        <suggestion></suggestion></message>
+      <short>syntax_0515_raghba_li</short>
+    </rule>
+    <rule id="syntax_0515_raghba_li_2" name="رغبة ل">
+      <pattern>
+        <token skip="1">رغبة</token>
+        <token postag="NM.*;-LL" postag_regexp="yes"></token>
+      </pattern>
+      <message>يفضل أن يقال: \1
+        <suggestion>في </suggestion>
+        <suggestion></suggestion></message>
+      <short>syntax_0515_raghba_li_2</short>
+    </rule>
+    <rule id="trans_395_ASHb_b" name="أصحب ب">
+      <pattern>
+        <token skip="1" postag="V4.*" postag_regexp="yes">أَصْحَبَ</token>
+        <token regexp="yes">بي|بنا|بك|بكما|بكم|بكن|به|بها|بهما|بهم|بهن</token>
+      </pattern>
+      <message>(أصحب) يتعدّى بنفسه إلى مفعولين
+    
+        <suggestion> </suggestion></message>
+      <short>trans_395_ASHb_b</short>
+    </rule>
+    <rule id="trans_395_ASHb_b_2" name="أصحب ب">
+      <pattern>
+        <token skip="1" postag="V4.*" postag_regexp="yes">أَصْحَبَ</token>
+        <token postag="N.*;.*;-B.?" postag_regexp="yes"></token>
+      </pattern>
+      <message>(أصحب) يتعدّى بنفسه إلى مفعولين
+    
+        <suggestion> </suggestion></message>
+      <short>trans_395_ASHb_b_2</short>
+    </rule>
+    <rule id="trans_401_AETa_2la_AETa_l_2" name="أعطى إلى|أعطى ل">
+      <pattern>
+        <token skip="1" postag="V.*" postag_regexp="yes">أَعْطَى</token>
+        <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
+      </pattern>
+      <message>(أعطى) يتعدّى بنفسه إلى مفعولين
+        <suggestion> </suggestion></message>
+      <short>trans_401_AETa_2la_AETa_l_2</short>
+    </rule>
     <rule id="trans_417_tEAlwA_EndnA" name="تعالوا عندنا">
       <pattern>
         <token regexp="yes">تعالي|تعاليا|تعال|تعالوا</token>
@@ -1704,6 +3559,115 @@
       <message>يفضل أن يقال:
         <suggestion>إلى</suggestion></message>
       <short>trans_417_tEAlwA_EndnA</short>
+    </rule>
+    <rule id="trans_420_tESb_Dd" name="تعصب ضد">
+      <pattern>
+        <token skip="1">تَعَصَّبَ</token>
+        <token regexp="yes">ضد(|ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)</token>
+      </pattern>
+      <message>(تعصَّب لفلان وتعصّب معه): نَصَرَه. (تعصّب على عدُوِّه): قاومَه وكان مع عصبته ضدّه
+        <suggestion></suggestion></message>
+      <short>trans_420_tESb_Dd</short>
+    </rule>
+    <rule id="trans_420_tESb_Dd_2" name="تعصب ضد">
+      <pattern>
+        <token skip="1">تَعَصَّبَ</token>
+        <token>ضد</token>
+      </pattern>
+      <message>(تعصَّب لفلان وتعصّب معه): نَصَرَه. (تعصّب على عدُوِّه): قاومَه وكان مع عصبته ضدّه
+        <suggestion>على</suggestion></message>
+      <short>trans_420_tESb_Dd_2</short>
+    </rule>
+    <rule id="trans_429_twsl" name="توسل">
+      <pattern>
+        <token skip="1">تَوَسَّلَ</token>
+      </pattern>
+      <message>(توسَّل) لا يتعدى بنفسه, وإنما يتوصل إلى ما يستعين به بالباء
+    
+        <suggestion> ب</suggestion></message>
+      <short>trans_429_twsl</short>
+    </rule>
+    <rule id="trans_438_3alima_Inna" name="علم إن">
+      <pattern>
+        <token skip="1">عَلِمَ</token>
+        <token regexp="yes">إني|إننا|إنك|إنكما|إنكم|إنكن|إنه|إنها|إنهما|إنهم|إنهن</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion></message>
+      <short>trans_438_3alima_Inna</short>
+    </rule>
+    <rule id="trans_438_3alima_bAn" name="علم بأن">
+      <pattern>
+        <token skip="1">عَلِمَ</token>
+        <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion></message>
+      <short>trans_438_3alima_bAn</short>
+    </rule>
+    <rule id="trans_438_Qal_bAn" name="قال بأن">
+      <pattern>
+        <token skip="1">قَالَ</token>
+        <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion></message>
+      <short>trans_438_Qal_bAn</short>
+    </rule>
+    <rule id="trans_438_dhkr_bAn" name="ذكر بأن">
+      <pattern>
+        <token skip="1">ذَكَرَ</token>
+        <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion></message>
+      <short>trans_438_dhkr_bAn</short>
+    </rule>
+    <rule id="trans_444_zEm_bAn" name="زعم بأن">
+      <pattern>
+        <token skip="1">زَعِمَ</token>
+        <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion></message>
+      <short>trans_444_zEm_bAn</short>
+    </rule>
+    <rule id="trans_453_Sdq_Almjls_Ela_AlqrAr" name="صدق المجلس على القرار">
+      <pattern>
+        <token skip="1">صَدَّقَ</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>الفعل صدّق يتعدى بنفسه إلى مفعولين
+    
+        <suggestion></suggestion></message>
+      <short>trans_453_Sdq_Almjls_Ela_AlqrAr</short>
+    </rule>
+    <rule id="trans_457_zhhr_bAn" name="ظهر بأن">
+      <pattern>
+        <token skip="1">ظَهَرَ</token>
+        <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion> </suggestion></message>
+      <short>trans_457_zhhr_bAn</short>
+    </rule>
+    <rule id="trans_461_Ewdh_Ela" name="عوده على">
+      <pattern>
+        <token skip="1">عَوَّدَ</token>
+        <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
+      </pattern>
+      <message>الفعل عوّد يتعدى بنفسه إلى مفعولين
+    
+        <suggestion></suggestion></message>
+      <short>trans_461_Ewdh_Ela</short>
+    </rule>
+    <rule id="trans_469_qdhf_AlHjArt_Ela" name="قذف الحجارة على">
+      <pattern>
+        <token postag="V.*" postag_regexp="yes">قَذَفَ</token>
+      </pattern>
+      <message>يفضل أن يقال:
+        <suggestion>قَذَفَ ب</suggestion></message>
+      <short>trans_469_qdhf_AlHjArt_Ela</short>
     </rule>
     <rule id="trans_473_lA_ynbgy_Elyk" name="لا ينبغي عليك">
       <pattern>
@@ -1714,6 +3678,26 @@
         <suggestion>ل</suggestion></message>
       <short>trans_473_lA_ynbgy_Elyk</short>
     </rule>
+    <rule id="unsorted_0073_ayqana_min" name="أيقن من">
+      <pattern>
+        <token>أَيْقَنَ</token>
+        <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
+      </pattern>
+      <message>(أيقن) يتعدى بنفسه أو بالباء
+        <suggestion>كان من الأمر على يقين</suggestion></message>
+      <short>unsorted_0073_ayqana_min</short>
+    </rule>
+    <rule id="نتج_عن" name="نتج_عن">
+      <pattern>
+        <token>نَتَجَ</token>
+        <token>عن</token>
+      </pattern>
+      <message>ويفضل أن يحذف عن
+        <suggestion></suggestion>
+
+        لأن نتج فعل متعدٍ، فلا حاجة لوجود حرف الجر.</message>
+      <short>نتج_عن</short>
+    </rule>
   </category>
   <category id="WRITING_STYLE" name="مطبعية">
     <rule id="typo_000_tanwin_nasb" name="تنوين النصب">
@@ -1723,17 +3707,6 @@
       <message>لأنه من الأخطاء الشائعة كتابة التنوين على الألف، والصحيح أن تُكتب على الحرف الذي قبل الألف؛ لأن التنوين نون ساكنة والألف ساكنة، فلا يجتمع ساكنان
 : <suggestion></suggestion></message>
       <short>typo_000_tanwin_nasb</short>
-    </rule>
-  </category>
-  <category id="COMMON_ERRORS_ON_ADJECTIVES" name="أخطاء شائعة - النعوت">
-    <rule id="unsorted5148" name="الأعظم_5148">
-      <pattern>
-        <token regexp="yes">(و|ف)?الدولتان</token>
-        <token>الأعظم</token>
-      </pattern>
-      <message>الصفة تتبع موصوفها في الإفراد والتثنية والجمع
-                <suggestion></suggestion></message>
-      <short>unsorted5148</short>
     </rule>
   </category>
 </rules>

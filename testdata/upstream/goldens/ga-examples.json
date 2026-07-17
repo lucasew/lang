@@ -3886,6 +3886,12 @@
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
+      "rule": "BLAGADOIR",
+      "text": "blagadóirí",
+      "suggestion": "blagálaithe",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
       "rule": "BOILEAGAR",
       "text": "bóiléagar",
       "suggestion": "ar bóiléagar",
@@ -4348,6 +4354,18 @@
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
+      "rule": "CODAIL_SABH",
+      "text": "codail sábh",
+      "suggestion": "sámh",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
+      "rule": "CODLADH_SABH",
+      "text": "codladh sábh",
+      "suggestion": "sámh",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
       "rule": "COLAINN_BHAID",
       "text": "colainn bháid",
       "suggestion": "báid",
@@ -4786,6 +4804,18 @@
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
+      "rule": "DILEAS_DOWORD",
+      "text": "díleas don",
+      "suggestion": "dílis",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
+      "rule": "DIRIU_ISTEACH_AR",
+      "text": "díriú isteach orm",
+      "suggestion": "díriú orm",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
       "rule": "DOCHA",
       "text": "dócha",
       "suggestion": "is dócha",
@@ -5218,6 +5248,12 @@
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
+      "rule": "FATA",
+      "text": "fata",
+      "suggestion": "práta",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
       "rule": "FATHACH",
       "text": "fáthach",
       "suggestion": "fathach",
@@ -5350,6 +5386,12 @@
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
+      "rule": "GAIRE_REACHTUIL",
+      "text": "gáire reachtúil",
+      "suggestion": "rachtúil",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
       "rule": "GAN_AN_ECLTAG",
       "text": "gan an mbaile",
       "suggestion": "bhaile",
@@ -5437,6 +5479,12 @@
       "rule": "GO_MBA_PRON",
       "text": "go mba iad",
       "suggestion": "gurbh",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
+      "rule": "GO_REACHTUIL",
+      "text": "go reachtúil",
+      "suggestion": "rachtúil",
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
@@ -5749,6 +5797,18 @@
       "rule": "I_EISEAN_ANNSAN",
       "text": "i eisean",
       "suggestion": "annsan",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
+      "rule": "I_GCIONN_AR",
+      "text": "Chuaigh sé i gcionn orm.",
+      "suggestion": "i gcion",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
+      "rule": "I_GCOIR_LE",
+      "text": "i gcóir liom",
+      "suggestion": "i gcomhair",
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
@@ -6445,6 +6505,12 @@
       "rule": "ONA_VPAST",
       "text": "óna bhris",
       "suggestion": "ónar",
+      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
+    },
+    {
+      "rule": "ORDU_RACHTUIL",
+      "text": "ordú rachtúil",
+      "suggestion": "reachtúil",
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {

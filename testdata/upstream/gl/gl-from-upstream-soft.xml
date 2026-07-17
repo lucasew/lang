@@ -416,6 +416,15 @@
       <message>A expresión «\1 de recibo» non é correcta en galego. Empregue mellor <suggestion>xustificante de recepción</suggestion>.</message>
       <short>Locución incorrecta</short>
     </rule>
+    <rule id="BALANZA_DE_PAGOS" name="balanza de pagos (balanza de pagamentos)">
+      <pattern>
+        <token>balanza</token>
+        <token>de</token>
+        <token>pagos</token>
+      </pattern>
+      <message>A expresión «\1 de pagos» non é aconsellábel en galego. Empregue mellor <suggestion>\1 de pagamentos</suggestion>.</message>
+      <short>Locución incorrecta</short>
+    </rule>
     <rule id="BUZON_DE_SUXERENCIAS" name="buzón de suxerencias (caixa de suxestións)">
       <pattern>
         <token regexp="yes">buzóns?</token>
@@ -432,6 +441,24 @@
         <token regexp="yes">p(re|er)xu[íi](ci|z)os</token>
       </pattern>
       <message>A expresión «danos e \3» non é correcta en galego. Empregue mellor <suggestion>danos e perdas</suggestion>.</message>
+      <short>Locución incorrecta</short>
+    </rule>
+    <rule id="ESTIMAR_UNHA_DEMANDA" name="estimar unha demanda (admitir unha demanda)">
+      <pattern>
+        <token>estimar</token>
+        <token regexp="yes">a|unha</token>
+        <token>demanda</token>
+      </pattern>
+      <message>A expresión «\1 \2 demanda» non é aconsellábel en galego. Empregue mellor <suggestion>admitir \2 demanda</suggestion>.</message>
+      <short>Locución incorrecta</short>
+    </rule>
+    <rule id="PASAR_POLO_ARO" name="pasar polo aro (vir ao rego)">
+      <pattern>
+        <token>pasar</token>
+        <token>polo</token>
+        <token>aro</token>
+      </pattern>
+      <message>A expresión «\1 polo aro» non é correcta en galego. Empregue mellor <suggestion>vir ao rego</suggestion>.</message>
       <short>Locución incorrecta</short>
     </rule>
   </category>
@@ -528,6 +555,87 @@
       <short>SENON_QUE</short>
     </rule>
   </category>
+  <category id="CAT4" name="Léxico: Falsos homónimos">
+    <rule id="ABONO" name="abono (fertilizante, pagamento)">
+      <pattern>
+        <token>abono</token>
+      </pattern>
+      <message>Posíbel castelanismo: «abono» significa «subscrición».  Se vostede alude ás substancias químicas ou orgánicas que aumentan a fertilidade do solo, debe empregar <suggestion>fertilizante</suggestion>; pola contra, se falaba da acción de pagar por un obxecto ou servizo, use <suggestion>pagamento</suggestion> ou <suggestion>pago</suggestion>.</message>
+      <short>Posíbel castelanismo</short>
+    </rule>
+    <rule id="APORTAR" name="aportar (achegar)">
+      <pattern>
+        <token>aportar</token>
+      </pattern>
+      <message>O verbo «aportar» significa «chegar a porto».  A forma correcta para o sentido de «proporcionar» ou «presentar» é <suggestion>achegar</suggestion> ou <suggestion>facer unha achega</suggestion>.</message>
+      <short>Posíbel castelanismo</short>
+    </rule>
+    <rule id="ASCO" name="asco (noxo)">
+      <pattern>
+        <token>asco</token>
+      </pattern>
+      <message>Posíbel castelanismo: «asco» é unha estrutura utricular propia dun tipo de fungo. A forma correcta para indicar repugnancia é <suggestion>noxo</suggestion>.</message>
+      <short>Posíbel forma incorrecta</short>
+    </rule>
+    <rule id="BECA" name="beca (bolsa)">
+      <pattern>
+        <token>beca</token>
+      </pattern>
+      <message>A palabra «beca» significa «vestidura talar de cor negra».  A forma correcta para o sentido de «axuda económica á formación» é <suggestion>bolsa</suggestion>.</message>
+      <short>Posíbel castelanismo</short>
+    </rule>
+    <rule id="FECHA" name="fecha (data)">
+      <pattern>
+        <token>fecha</token>
+      </pattern>
+      <message>Posíbel castelanismo: o substantivo «fecha» significa «grolo», «sorbo».  A forma correcta para a indicación de tempo é <suggestion>data</suggestion>.</message>
+      <short>Posíbel forma incorrecta</short>
+    </rule>
+    <rule id="GRUA" name="grúa (guindastre)">
+      <pattern>
+        <token>grúa</token>
+      </pattern>
+      <message>Posíbel castelanismo: o substantivo «grúa» fai referencia a un paxaro. Para denominar ao aparato empregado para mover ou remolcar grandes pesos emprégase preferibelmente <suggestion>guindastre</suggestion> (masculino).</message>
+      <short>Posíbel forma incorrecta</short>
+    </rule>
+    <rule id="LORO" name="loro (papagaio)">
+      <pattern>
+        <token regexp="yes">loros?</token>
+      </pattern>
+      <message>Un loro é unha peza do carro. A forma correcta para facer referencia ao paxaro é <suggestion>papagaio</suggestion>.</message>
+      <short>Posíbel castelanismo</short>
+    </rule>
+    <rule id="PILDORA" name="píldora (pílula)">
+      <pattern>
+        <token>píldora</token>
+      </pattern>
+      <message>Unha píldora é unha ave tamén coñecida como «píllara».  A forma correcta para facer referencia ao medicamento é <suggestion>pílula</suggestion>.</message>
+      <short>Posíbel castelanismo</short>
+    </rule>
+    <rule id="RACHA" name="racha (refacho)">
+      <pattern>
+        <token regexp="yes">rachas?</token>
+      </pattern>
+      <message>Unha racha é unha fenda ou ben un anaco de pedra ou madeira. A forma correcta para facer referencia a un golpe forte de vento é <suggestion>refacho</suggestion> (masculino).</message>
+      <short>Posíbel confusión con homónima</short>
+    </rule>
+    <rule id="RAPE" name="rape (peixe sapo)">
+      <pattern>
+        <token>rape</token>
+      </pattern>
+      <message>Posíbel castelanismo: o substantivo «\1» significa «acción ou efecto de rapar».  A forma correcta para o peixe é <suggestion>rabada</suggestion> (feminino) ou <suggestion>peixe sapo</suggestion>.</message>
+      <short>RAPE</short>
+    </rule>
+  </category>
+  <category id="CAT6" name="Léxico: Barbarismos">
+    <rule id="ADICAR" name="adicar (dedicar)">
+      <pattern>
+        <token>adicar</token>
+      </pattern>
+      <message>A palabra «\1» non é aconsellábel en galego. Empregue mellor <suggestion>dedicar</suggestion>.</message>
+      <short>Barbarismo</short>
+    </rule>
+  </category>
   <category id="CASING" name="Maiúsculas e minúsculas">
     <rule id="BINOMIAL_GENRE_LOWER" name="BINOMIAL_GENRE_LOWER">
       <pattern>
@@ -544,6 +652,32 @@
       </pattern>
       <message>Na nomenclatura binomial, que se escribe en cursiva, o xénero vai en maiúscula e a especie e a subespecie en minúscula.</message>
       <short>Nomenclatura binomial</short>
+    </rule>
+  </category>
+  <category id="CAT1" name="Gramática: Verbo">
+    <rule id="CLITICS_02A" name="Cliticos en interrogativas e exclamativas - ditransitivas">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes" postag="PR.*" postag_regexp="yes">cando|canto|como|onde|quen</token>
+        <token regexp="yes" skip="-1" postag="VM.*:PP...[AD].*" postag_regexp="yes">.*(mo|ma|mos|mas|cho|cha|chos|chas|llo|lla|llos|llas|nolo|nola|nolos|nolas|volo|vola|volos|volas|llelo|llela|llelos|llelas)
+          <exception regexp="yes">lema|estamos|poderíamos|faríamos</exception>
+        </token>
+        <token regexp="yes">\!|\?</token>
+      </pattern>
+      <message>Nas preguntas e exclamacións os pronomes átonos van antes do verbo.</message>
+      <short>Colocación do pronome</short>
+    </rule>
+    <rule id="CLITICS_02B" name="Cliticos en interrogativas e exclamativas - monotransitivas">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes" postag="PR.*" postag_regexp="yes">cando|canto|como|onde|quen</token>
+        <token regexp="yes" skip="-1" postag="VM.*:PP...[AD].*" postag_regexp="yes">.*(me|te|che|lle|nos|vos|lles|o|a|os|as|lo|la|los|las)
+          <exception regexp="yes">creo|falas|lema|estamos|poderíamos|faríamos</exception>
+        </token>
+        <token regexp="yes">\!|\?</token>
+      </pattern>
+      <message>Nas preguntas e exclamacións os pronomes átonos van antes do verbo.</message>
+      <short>Colocación do pronome</short>
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografía">
@@ -580,22 +714,6 @@
       </pattern>
       <message>As formas «de» e «» forman en galego unha locución que se escribe unida. Quería vostede dicir <suggestion>\1\2</suggestion>?</message>
       <short>DE_SEGUIDO_CONTADO_CONTINO</short>
-    </rule>
-  </category>
-  <category id="CAT4" name="Léxico: Falsos homónimos">
-    <rule id="LORO" name="loro (papagaio)">
-      <pattern>
-        <token regexp="yes">loros?</token>
-      </pattern>
-      <message>Un loro é unha peza do carro. A forma correcta para facer referencia ao paxaro é <suggestion>papagaio</suggestion>.</message>
-      <short>Posíbel castelanismo</short>
-    </rule>
-    <rule id="RACHA" name="racha (refacho)">
-      <pattern>
-        <token regexp="yes">rachas?</token>
-      </pattern>
-      <message>Unha racha é unha fenda ou ben un anaco de pedra ou madeira. A forma correcta para facer referencia a un golpe forte de vento é <suggestion>refacho</suggestion> (masculino).</message>
-      <short>Posíbel confusión con homónima</short>
     </rule>
   </category>
 </rules>

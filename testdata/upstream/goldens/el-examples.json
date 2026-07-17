@@ -290,6 +290,12 @@
       "text": "Που πας;",
       "suggestion": "Πού",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "HAVE_INF",
+      "text": "Είχα πάω.",
+      "suggestion": "πάει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     }
   ]
 }

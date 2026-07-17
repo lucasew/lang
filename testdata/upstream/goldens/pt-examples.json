@@ -580,6 +580,24 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "ABANDONAR_O_LEITO",
+      "text": "Vou abandonar o leito.",
+      "suggestion": "deixar a cama",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ABANDONAR_O_LEITO",
+      "text": "Vou abandonei o leito.",
+      "suggestion": "deixei a cama",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ABDICAR_DIREITOS_PRIVILÉGIOS",
+      "text": "Por vezes é necessário abdicar direitos.",
+      "suggestion": "abdicar de direitos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "ABORDO_DA",
       "text": "Vai uma pessoa importante abordo da fragata.",
       "suggestion": "a bordo da",
@@ -590,6 +608,30 @@
       "text": "Vai uma pessoa importante abordo do avião.",
       "suggestion": "a bordo do",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ACABAR_COM_O_NAMORO",
+      "text": "O Paulo acabou com o namoro.",
+      "suggestion": "o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ACEITO_ACEITE",
+      "text": "A China foi aceita na Organização Mundial do Comércio.",
+      "suggestion": "foi aceite",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "ACEITO_ACEITE",
+      "text": "O projeto foi aceito.",
+      "suggestion": "foi aceite",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "ACEITO_ACEITE",
+      "text": "Que ser de um certo tamanho e qualidade antes de serem aceitas pelos praticantes da MTC e consumidores.",
+      "suggestion": "serem aceites",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
       "rule": "ACENTUAÇÃO_VOGAL_ÊNCLISE",
@@ -622,15 +664,75 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "ADIVINHA_DISSO_QUE",
+      "text": "A mensagem adivinha disso que ele revelou.",
+      "suggestion": "adivinha que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "ADJETIVO_SEM_GRAU",
       "text": "Isto é o mais principal a ter em conta.",
       "suggestion": "o principal",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "ADJ_DE_VERB",
+      "text": "Tais textos são oportunos de citar.",
+      "suggestion": "oportunos citar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AFEAR",
+      "text": "É preciso afear a faca.",
+      "suggestion": "afiar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AFEAR",
+      "text": "É preciso afear as facas.",
+      "suggestion": "afiar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AFEAR",
+      "text": "É preciso afear as suas facas.",
+      "suggestion": "afiar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AGORA_ATUAL",
+      "text": "Nessa altura não tinha os conhecimentos que tenho agora.",
+      "suggestion": "atuais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "AGORA_ATUAL",
+      "text": "Os computadores aprenderam a jogar xadrez há muitos anos, mas nem sempre tiveram a força que têm hoje.",
+      "suggestion": "atual",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "AJUDAR_QUE_SE_FAÇA",
+      "text": "Devemos ajudar que se faça justiça.",
+      "suggestion": "ajudar a que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ALERTAR_PARA_COM",
+      "text": "Obrigado por me alertar para com o perigo.",
+      "suggestion": "alertar para",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "ALÉM_AQUÉM_RECÉM",
       "text": "O conflito ocorre além mar.",
       "suggestion": "além-mar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AMBICIONAR_A_QUE_SEJA",
+      "text": "Vamos ambicionar a que seja uma vitória.",
+      "suggestion": "que",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -650,6 +752,12 @@
       "text": "Não é possível dizer de ante mão.",
       "suggestion": "antemão",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ANTES_PREFIRO",
+      "text": "Eu antes prefiro a outra solução.",
+      "suggestion": "prefiro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "ANY20016_2016",
@@ -676,6 +784,66 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "22 set - início do Outono.",
+      "suggestion": "Set",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "22 set - início do Outono.",
+      "suggestion": "Set",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "22 set - início do Outono.",
+      "suggestion": "Set",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "Este inverno está a ser muito seco.",
+      "suggestion": "Inverno",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "Este inverno está a ser muito seco.",
+      "suggestion": "Inverno",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "Este inverno está a ser muito seco.",
+      "suggestion": "Inverno",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "O ano novo chinês é a 28 de janeiro.",
+      "suggestion": "Janeiro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "O ano novo chinês é a 28 de janeiro.",
+      "suggestion": "Janeiro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
+    },
+    {
+      "rule": "AO45_MONTHS_CASING",
+      "text": "O ano novo chinês é a 28 de janeiro.",
+      "suggestion": "Janeiro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AO45_PELO_PÊLO",
+      "text": "Para quem tem animais com muito pelo é bom.",
+      "suggestion": "muito pêlo é",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
       "rule": "AO90_POLO_CAPITALIZATION",
       "text": "O polo Sul é no Antártico.",
       "suggestion": "Polo Sul",
@@ -686,6 +854,24 @@
       "text": "O polo norte é no Ártico.",
       "suggestion": "Polo Norte",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AONDE_VERB_ESTAR",
+      "text": "Diga-me aonde está o livro.",
+      "suggestion": "onde",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AO_LONGO_DO_TEMPO",
+      "text": "É assim que o sistema evolui ao longo do tempo.",
+      "suggestion": "gradualmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "APELAR_À_LUTA-FÉ",
+      "text": "Vamos apelar à fé.",
+      "suggestion": "apelar para a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "APENAS_SOMENTE",
@@ -700,6 +886,24 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "APOSTAR_EM_COMO",
+      "text": "Vou apostar em como irei ganhar.",
+      "suggestion": "apostar que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "APRESENTAR_OS_MELHORES_CUMPRIMENTOS",
+      "text": "Aproveito a oportunidade para apresentar os melhores cumprimentos.",
+      "suggestion": "apresentar cumprimentos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ARREAR_ARRIAR",
+      "text": "Vamos arrear a vela.",
+      "suggestion": "arriar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "ASSUNTO_ASSUNTOS_A_ESCLARECER",
       "text": "Temos vários assuntos a esclarecer.",
       "suggestion": "assuntos para",
@@ -709,6 +913,18 @@
       "rule": "AS_COISAS_NÃO_VÃO_VERBO_INF",
       "text": "Em princípio as coisas não vão melhorar.",
       "suggestion": "nada vai",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "AS_OS_QUE_QUAIS",
+      "text": "E determinar as que obtiveram melhores resultados.",
+      "suggestion": "quais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "AS_OS_QUE_QUAIS",
+      "text": "É preciso identificar os que falharam.",
+      "suggestion": "quais",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -722,6 +938,18 @@
       "text": "As duas da tarde.",
       "suggestion": "Às",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "ATENÇÃO_QUE_VERB_MERECER_atenção_devida",
+      "text": "Não vos posso dar a atenção que merecem.",
+      "suggestion": "devida",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ATURAR_SUPORTAR_TOLERAR",
+      "text": "Os meus pais aturam-me há décadas.",
+      "suggestion": "suportam-me",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "AULAS-ENSINO_A_DISTÂNCIA",
@@ -784,6 +1012,24 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
+      "rule": "A_VOLTA_DE_EM_TORNO_DE",
+      "text": "A discussão decorre em volta do projeto.",
+      "suggestion": "em torno",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "A_VOLTA_DE_EM_TORNO_DE",
+      "text": "O debate centra-se à volta do projeto.",
+      "suggestion": "em torno",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "BASEIA-SE_EM",
+      "text": "O estudo baseia-se em dados estatísticos.",
+      "suggestion": "tem por base",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "BEM_DITO_DEUS-SATANÁS",
       "text": "És a vida, bem dito Deus.",
       "suggestion": "bendito",
@@ -814,6 +1060,18 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
+      "rule": "BRASILEIRISMO_ESTAR_DE_SACO_CHEIO",
+      "text": "Estamos de saco cheio.",
+      "suggestion": "fartos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_ESTAR_DE_SACO_CHEIO",
+      "text": "Estou de saco cheio.",
+      "suggestion": "farto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
       "rule": "BRASILEIRISMO_EXPERIMENTO",
       "text": "Vai começar o experimento.",
       "suggestion": "experiência",
@@ -826,6 +1084,12 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
+      "rule": "BRASILEIRISMO_MACHUCAR",
+      "text": "Vais machucar o Rui.",
+      "suggestion": "magoar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
       "rule": "BRASILEIRISMO_PRIVADA",
       "text": "privada sanitária.",
       "suggestion": "retrete",
@@ -835,6 +1099,12 @@
       "rule": "BRASILEIRISMO_PRIVADA",
       "text": "vaso sanitário.",
       "suggestion": "retrete",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_REVISAR",
+      "text": "Revisaste o texto antes de enviar.",
+      "suggestion": "Reviste",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
@@ -862,9 +1132,27 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "CAUSAR_DIFICULDADE_DIFICULTAR",
+      "text": "A equação vai causar dificuldades a criar o algoritmo.",
+      "suggestion": "dificultar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CAUSAR_DIFICULDADE_DIFICULTAR",
+      "text": "A equação vai causar dificuldades na criação do algoritmo.",
+      "suggestion": "dificultar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "CEREJAL_DE_CEREJEIRAS",
       "text": "Que grande cerejal de cerejeiras.",
       "suggestion": "cerejal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CERTA_CERTO_DADA_DADO",
+      "text": "Isto aconteceu a certa altura do projeto.",
+      "suggestion": "dada",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -874,10 +1162,22 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "CHATEAR_INCOMODAR_IMPORTUNAR",
+      "text": "Não chateie mais os visitantes.",
+      "suggestion": "incomode",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "CHEGAMOS_EM_BR",
       "text": "Nós chegamos em São Paulo.",
       "suggestion": "chegamos a",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "CHEGARAM_A_SABEREM",
+      "text": "Eles chegaram a saberem os resultados?",
+      "suggestion": "chegaram a saber",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "CHEGARAM_EM_BR",
@@ -892,6 +1192,1686 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "CIENTÍFICO_EMPREGAR_TERMO",
+      "text": "Na nossa pesquisa usa-se o termo “dualismo”.",
+      "suggestion": "emprega-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CIENTÍFICO_EMPREGAR_TERMO",
+      "text": "Na nossa pesquisa usamos o termo “dualismo”.",
+      "suggestion": "empregamos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CIENTÍFICO_EMPREGAR_TERMO",
+      "text": "Na nossa pesquisa utiliza-se termos caros.",
+      "suggestion": "emprega-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CIENTÍFICO_EMPREGAR_TERMO",
+      "text": "Na nossa pesquisa utilizamos termos caros.",
+      "suggestion": "empregamos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_10_ESTAR",
+      "text": "estar no vermelho.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_10_INSPIRAR",
+      "text": "inspirar cuidado.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_110_METER",
+      "text": "meter o rabo entre as pernas.",
+      "suggestion": "submeter-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_111_PENDURAR",
+      "text": "pendurar as botas.",
+      "suggestion": "aposentar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_113_PENSAR",
+      "text": "pensar com os seus botões.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_114_PENSAR",
+      "text": "pensar na morte da bezerra.",
+      "suggestion": "distrair-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_115_PENSAR",
+      "text": "pensas na morte da bezerra.",
+      "suggestion": "estás distraído",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_117_POR",
+      "text": "pôr a barba de molho.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_118_POR",
+      "text": "pôr a cabeça em água.",
+      "suggestion": "cansar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_119_POR",
+      "text": "pôr a casa em ordem.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_11_ESTAR",
+      "text": "estar dorido.",
+      "suggestion": "estar ressacado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_11_FAZER",
+      "text": "fazer de olhos fechados.",
+      "suggestion": "fazer sem dificuldade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_11_FAZER",
+      "text": "fez de olhos fechados.",
+      "suggestion": "fez sem dificuldade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_120_POR",
+      "text": "pôr a mão na massa.",
+      "suggestion": "fazer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_121_POR",
+      "text": "pôr a pata na poça.",
+      "suggestion": "fazer asneira",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_122_POR",
+      "text": "pôr as barbas de molho.",
+      "suggestion": "precaver-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_123_POR",
+      "text": "pôr as cartas na mesa.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_124_LANCAR",
+      "text": "lança os dados.",
+      "suggestion": "expõe os factos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_124_POR",
+      "text": "põe as cartas na mesa.",
+      "suggestion": "expõe os factos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_125_POR",
+      "text": "por força das circunstâncias.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_126_POR",
+      "text": "por incrível que pareça.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_127_POR",
+      "text": "pôr mãos à obra.",
+      "suggestion": "trabalhar com afinco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_128_POR",
+      "text": "pôr minhoca na cabeça.",
+      "suggestion": "criar problemas onde não existem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_129_POR",
+      "text": "pôr os pontos nos is.",
+      "suggestion": "esclarecer a situação",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_12_ESTAR",
+      "text": "estar paiado.",
+      "suggestion": "estar metido em problemas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_12_FICAR",
+      "text": "ficar à sombra da bananeira.",
+      "suggestion": "ficar despreocupado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_13_FICAR",
+      "text": "ficar a ver navios.",
+      "suggestion": "ficar sem nada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_14_FICAR",
+      "text": "ficar para tia.",
+      "suggestion": "ficar solteira",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_15_INUNDAR",
+      "text": "inundar o coração.",
+      "suggestion": "emocionar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_16_LAVAR",
+      "text": "lavar roupa suja.",
+      "suggestion": "discutir assuntos particulares em público",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_17_LEVANTAR",
+      "text": "levantar acampamento.",
+      "suggestion": "sair",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_18_LEVANTAR",
+      "text": "levantou-se com o pé esquerdo.",
+      "suggestion": "teve um dia ruim",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_19_METER",
+      "text": "meter o dedo na ferida.",
+      "suggestion": "insistir em situação problemática",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_1_ESTAR",
+      "text": "estar com a bola murcha.",
+      "suggestion": "estar sem ânimo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_1_FAZER",
+      "text": "fazer boca de siri.",
+      "suggestion": "manter segredo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_1_FAZER",
+      "text": "fazes boca de siri.",
+      "suggestion": "manténs segredo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_210_ABRIR",
+      "text": "abrir o jogo.",
+      "suggestion": "denunciar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_211_ABRIR",
+      "text": "abrir os olhos a alguém.",
+      "suggestion": "convencer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_212_ACABAR",
+      "text": "acabar em pizza.",
+      "suggestion": "ficar por resolver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_213_ACERTAR",
+      "text": "acertar agulhas.",
+      "suggestion": "combinar algo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_214_ACERTAR",
+      "text": "acertar em cheio.",
+      "suggestion": "acertar precisamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_214_ACERTAR",
+      "text": "acertar na lata.",
+      "suggestion": "acertar precisamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_214_ACERTAR",
+      "text": "acertar na mosca.",
+      "suggestion": "acertar precisamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_218_ACHAR",
+      "text": "achar chifre em cabeça de cavalo.",
+      "suggestion": "procurar problemas onde não existem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_219_ACHAR",
+      "text": "achar pêlo em ovo.",
+      "suggestion": "procurar o impossível",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_21_ABALAR",
+      "text": "abalar os alicerces.",
+      "suggestion": "afectar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_220_ACOLHER",
+      "text": "acolher de braços abertos.",
+      "suggestion": "acolher bem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_221_ACORDAR",
+      "text": "acordou com os pés de fora.",
+      "suggestion": "está mal disposto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_222_ADOÇAR",
+      "text": "adoçar a boca.",
+      "suggestion": "procurar atrair favores",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_223_AFIRMAR",
+      "text": "afirmar com bastante precisão.",
+      "suggestion": "afirmar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_224_AFOGAR",
+      "text": "afogar as mágoas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_225_AGARRAR",
+      "text": "agarrar com unhas e dentes.",
+      "suggestion": "não desistir facilmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_226_AMARRAR",
+      "text": "amarrar o burro.",
+      "suggestion": "ficar em descanso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_227_ANDAR",
+      "text": "andas feito barata tonta.",
+      "suggestion": "estás distraído",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_228_ANDAR",
+      "text": "andas na linha.",
+      "suggestion": "estás elegante",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_229_ANDAR",
+      "text": "andas nas nuvens.",
+      "suggestion": "estás desatento",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_22_ABANDONAR",
+      "text": "abandonar o barco.",
+      "suggestion": "desistir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_230_APANHAR",
+      "text": "apanhou a pata.",
+      "suggestion": "teve controlo sobre",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_231_APANHAR",
+      "text": "apanhar de surpresa.",
+      "suggestion": "surpreender",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_232_APARAR",
+      "text": "aparar as arestas.",
+      "suggestion": "aprimorar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_233_APROVEITAR",
+      "text": "aproveito a boleia.",
+      "suggestion": "vou junto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_234_AQUECER",
+      "text": "aquecer as turbinas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_235_AQUENTAR",
+      "text": "aquecer água para o mate dos outros.",
+      "suggestion": "trabalhar para proveito alheio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_236_ARMAR",
+      "text": "armar um barraco.",
+      "suggestion": "criar confusão em público",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_237_ARRANCAR",
+      "text": "arrancar cabelos.",
+      "suggestion": "entrar em desespero",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_237_ARRANCAR",
+      "text": "arrancar os cabelos.",
+      "suggestion": "entrar em desespero",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_239_ARRASTAR",
+      "text": "arrastar as asas.",
+      "suggestion": "enamorar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_23_ABOTOAR",
+      "text": "abotoar o paletó.",
+      "suggestion": "morrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_240_ARMAR-SE",
+      "text": "armado até aos dentes.",
+      "suggestion": "armado exageradamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_240_ARMAR-SE",
+      "text": "armar-se até aos dentes.",
+      "suggestion": "armar-se exageradamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_242_ARREBENTAR",
+      "text": "arrebentar a boca do balão.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_243_ARREGAÇAR",
+      "text": "arregaçar as mangas.",
+      "suggestion": "trabalhar com afinco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_243_ARREGAÇAR",
+      "text": "arregaçar as mangas.",
+      "suggestion": "trabalhar com afinco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_245_ARRUMAR",
+      "text": "arrumar sarna para se coçar.",
+      "suggestion": "procurar por problemas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_248_VER",
+      "text": "ver fumo.",
+      "suggestion": "ter dificuldade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_249_VER",
+      "text": "ver a avó pela greta.",
+      "suggestion": "estar quase a morrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_24_ABRAÇAR",
+      "text": "abraçar uma causa.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_25_ABRIR",
+      "text": "abrir com chave de ouro.",
+      "suggestion": "começar bem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_26_ABRIR",
+      "text": "abrir espaço na agenda.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_27_ABRIR",
+      "text": "abrir mão de.",
+      "suggestion": "renunciar a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_29_ABRIR",
+      "text": "abrir o coração.",
+      "suggestion": "desabafar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_2_ESTAR",
+      "text": "estar com a cabeça nas nuvens.",
+      "suggestion": "estar distraído",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_2_FAZER",
+      "text": "fazer com uma perna às costas.",
+      "suggestion": "fazer facilmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3100_ESTAR",
+      "text": "estar giro.",
+      "suggestion": "estar bonito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3101_ESTAR",
+      "text": "estar na aba de alguém.",
+      "suggestion": "utilizar emprestado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3102_FAZER",
+      "text": "fiz vista grossa.",
+      "suggestion": "fingi que não vi",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3103_FINCAR",
+      "text": "fincar o pé.",
+      "suggestion": "insistir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3104_GERAR",
+      "text": "gerar polémica.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3105_GRITAR",
+      "text": "gritar a plenos pulmões.",
+      "suggestion": "gritar com toda a força",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3106_LEVAR",
+      "text": "levar à barra dos tribunais.",
+      "suggestion": "levar a tribunal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3107_LEVAR",
+      "text": "levar a peito.",
+      "suggestion": "tomar para si",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3108_LEVAR",
+      "text": "levar chumbo.",
+      "suggestion": "fracassar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3109_LEVAR",
+      "text": "levar de vencida.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_310_BATER",
+      "text": "bater de frente com.",
+      "suggestion": "entrar em conflito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3110_LEVAR",
+      "text": "levou toco.",
+      "suggestion": "foi deixado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3111_LEVAR",
+      "text": "levar tudo por trás.",
+      "suggestion": "entender tudo de maneira pejorativa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3112_LEVAR",
+      "text": "levou um fora.",
+      "suggestion": "foi descartado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3113_LEVAR",
+      "text": "levou um mambo militar.",
+      "suggestion": "foi submetido a uma reação extrema",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3114_METER",
+      "text": "meter os pés pelas mãos.",
+      "suggestion": "agir desajeitadamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3115_MEXER",
+      "text": "mexer num vespeiro.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3117_MORRER",
+      "text": "morrer de amores.",
+      "suggestion": "gostar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3118_PASSAR",
+      "text": "passar a pente fino.",
+      "suggestion": "analisar minuciosamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3119_PASSAR",
+      "text": "passar em branco.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_311_BATER",
+      "text": "bater em retirada.",
+      "suggestion": "fugir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3120_PEGAR",
+      "text": "pegar no tranco.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3121_PEGAR",
+      "text": "pegar o bonde andando.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3122_PERDER",
+      "text": "perder a linha.",
+      "suggestion": "perder a educação",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3123_PERDER",
+      "text": "perder as estribeiras.",
+      "suggestion": "desnortear-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3124_PERDER",
+      "text": "perder o fio à meada.",
+      "suggestion": "desnortear-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_312_BATER",
+      "text": "bater na mesma tecla.",
+      "suggestion": "repetir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_313_BATER",
+      "text": "bater papo.",
+      "suggestion": "conversar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_314_BEBER",
+      "text": "beber água nas orelhas dos outros.",
+      "suggestion": "viver sempre a cochichar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_316_BOTAR",
+      "text": "botar a boca no trombone.",
+      "suggestion": "revelar um segredo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_317_BOTAR",
+      "text": "botar banca.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_318_BOTAR",
+      "text": "botar o carro na frente dos bois.",
+      "suggestion": "saltar etapas de forma inapropriada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_319_BOTAR",
+      "text": "botas para quebrar.",
+      "suggestion": "fazes algo com extrema intensidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_319_BOTAR_2",
+      "text": "mandei ver.",
+      "suggestion": "fiz algo com extrema intensidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_31_AGRADAR",
+      "text": "agradar gregos e troianos.",
+      "suggestion": "agradar a todos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_320_BRINCAR",
+      "text": "brincar com fogo.",
+      "suggestion": "arriscar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_321_CAIR",
+      "text": "cair pelas tabelas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_322_CAIR",
+      "text": "cair a ficha.",
+      "suggestion": "entender tardiamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_323_CAIR",
+      "text": "cair como uma luva.",
+      "suggestion": "ficar bem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_324_CAIR",
+      "text": "cair das nuvens.",
+      "suggestion": "voltar à realidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_325_CAIR",
+      "text": "cair de maduro.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_326_CAIR",
+      "text": "cair por terra.",
+      "suggestion": "perder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_327_CANTAR",
+      "text": "cantar vitória.",
+      "suggestion": "festejar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_328_CARREGAR",
+      "text": "carregar nas tintas.",
+      "suggestion": "exagerar na descrição",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_329_CAUSAR",
+      "text": "causei espécie.",
+      "suggestion": "fiz confusão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_32_ATINGIR",
+      "text": "atingir em cheio.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_330_CHEGAR",
+      "text": "chegar a um denominador comum.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_331_CHORAR",
+      "text": "chorar sobre o leite derramado.",
+      "suggestion": "lamentar-se por algo que não tem solução",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_332_CHOVER",
+      "text": "chover no molhado.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_333_CHUTAR",
+      "text": "chutar alto.",
+      "suggestion": "vangloriar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_334_CHUTAR",
+      "text": "chutar o balde.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_335_CHUTAR",
+      "text": "chutar o balde.",
+      "suggestion": "agir irresponsavelmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_336_CHUTAR",
+      "text": "chutar o pau da barraca.",
+      "suggestion": "agir irresponsavelmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_337_COLOCAR",
+      "text": "colocou melancia na cabeça.",
+      "suggestion": "quis aparecer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_338_COLOCAR",
+      "text": "colocar um ponto final.",
+      "suggestion": "terminar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_339_COMER",
+      "text": "comer água.",
+      "suggestion": "sair para beber",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_33_ATIRAR",
+      "text": "atirar farpas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_340_COMER",
+      "text": "comer como um abade.",
+      "suggestion": "comer muito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_341_COMER",
+      "text": "comi cru e quente.",
+      "suggestion": "fui apressado e pouco perfeccionista",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_342_COMPRAR",
+      "text": "comprou gato por lebre.",
+      "suggestion": "foi enganado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_343_CONFUNDIR",
+      "text": "confundir alhos com bugalhos.",
+      "suggestion": "confundir conceitos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_344_CONJUGAR",
+      "text": "conjugar esforços.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_345_CONSULTAR",
+      "text": "consultar o travesseiro.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_347_CORRER",
+      "text": "correr por fora.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_348_CORTAR",
+      "text": "cortar as vazas.",
+      "suggestion": "impedir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_349_COSTURAR",
+      "text": "costurar um acordo.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_34_BABAR",
+      "text": "babar ovo.",
+      "suggestion": "puxar o saco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_350_CRIVAR",
+      "text": "crivar de balas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_351_CRUZAR",
+      "text": "cruzar os braços.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_352_CUTUCAR",
+      "text": "cutucar a onça com vara curta.",
+      "suggestion": "arrumar problema",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_353_DAR",
+      "text": "dar a devida atenção.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_354_DAR",
+      "text": "dá a volta ao bilhar grande.",
+      "suggestion": "vai chatear outro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_355_DAR",
+      "text": "dar a volta por cima.",
+      "suggestion": "recuperar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_356_DAR",
+      "text": "dar bilingue.",
+      "suggestion": "mentir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_357_DAR",
+      "text": "dar bola.",
+      "suggestion": "insinuar-se romanticamente para alguém",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_358_DAR",
+      "text": "dar com a cara na porta.",
+      "suggestion": "decepcionar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_359_DAR",
+      "text": "dar com a língua nos dentes.",
+      "suggestion": "contar um segredo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_35_BAIXAR",
+      "text": "baixou a bola.",
+      "suggestion": "acalmou-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_360_DAR",
+      "text": "dar com o nariz na porta.",
+      "suggestion": "decepcionar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_361_DAR",
+      "text": "dar com os burros na água.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_362_DAR",
+      "text": "dar galho.",
+      "suggestion": "causar dificuldades",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_363_DAR",
+      "text": "dar gasosa.",
+      "suggestion": "entregar gorjeta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_364_DAR",
+      "text": "dar jajão.",
+      "suggestion": "simular",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_365_DAR",
+      "text": "dar mancada.",
+      "suggestion": "não cumprir promessa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_366_DAR",
+      "text": "dar na telha.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_367_DAR",
+      "text": "dar nome aos bois.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_368_DAR",
+      "text": "dar o ar de sua graça.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_369_DAR",
+      "text": "dar o braço a torcer.",
+      "suggestion": "voltar atrás na decisão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_36_BAIXAR",
+      "text": "baixar a guarda.",
+      "suggestion": "descontrair",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_370_DAR",
+      "text": "dar o braço a torcer.",
+      "suggestion": "voltar atrás numa decisão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_371_DAR",
+      "text": "dar o último adeus.",
+      "suggestion": "despedir-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_372_DAR",
+      "text": "dar pau na máquina.",
+      "suggestion": "dar urgência",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_373_DAR",
+      "text": "dar troco.",
+      "suggestion": "dar conversa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_374_DAR",
+      "text": "dei uma de joão sem braço.",
+      "suggestion": "(fazer-se) de desentendido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_375_DAR",
+      "text": "dar uma mãozinha.",
+      "suggestion": "ajudar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_376_DAR",
+      "text": "dar uma mãozinha.",
+      "suggestion": "dar uma pequena ajuda",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_377_DEBELAR",
+      "text": "debelar as chamas.",
+      "suggestion": "dissipar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_378_DEITAR",
+      "text": "deitar o cabelo.",
+      "suggestion": "correr muito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_379_DEITAR",
+      "text": "deitar raízes.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_37_BATER",
+      "text": "bater as botas.",
+      "suggestion": "morrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_380_DEIXAR",
+      "text": "deixar a desejar.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_381_DEIXAR",
+      "text": "deixar na mão.",
+      "suggestion": "não colaborar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_382_DEIXAR",
+      "text": "Ele não deixa a desejar.",
+      "suggestion": "decepciona",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_383_DETONAR",
+      "text": "detonar um processo.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_384_DISPENSAR",
+      "text": "dispensa apresentações.",
+      "suggestion": "é famoso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_385_DISSIPAR",
+      "text": "dissipar dúvidas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_386_ESTAR",
+      "text": "estar com a corda ao pescoço.",
+      "suggestion": "estar sob pressão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_387_ESTAR",
+      "text": "estar com a corda toda.",
+      "suggestion": "estar animado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_388_ESTAR",
+      "text": "estar com a faca e o queijo na mão.",
+      "suggestion": "ter o poder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_389_ESTAR",
+      "text": "estar com o pé atrás da porta.",
+      "suggestion": "estar desconfiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_389_ESTAR_2",
+      "text": "estar de pé atrás.",
+      "suggestion": "estar desconfiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_38_BATER",
+      "text": "bater com a cabeça na parede.",
+      "suggestion": "aprender com os erros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_390_ESTAR",
+      "text": "estar com os azeites.",
+      "suggestion": "estar aborrecido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_391_ESTAR",
+      "text": "estar com os pés para a cova.",
+      "suggestion": "estar para morrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_392_ESTAR",
+      "text": "estar com uma mão na vela e outra no soro.",
+      "suggestion": "estar em estado grave",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_393_ESTAR",
+      "text": "estive com uma pedra no sapato.",
+      "suggestion": "tive um problema por resolver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_394_ESTAR",
+      "text": "estar dando sopa.",
+      "suggestion": "estar inadvertidamente vulnerável",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_395_ESTAR",
+      "text": "estar de gesso.",
+      "suggestion": "não dar resposta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_396_ESTAR",
+      "text": "estar de mãos a abanar.",
+      "suggestion": "não conseguir o que pretendia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_397_ESTAR",
+      "text": "estar de mãos a abanar.",
+      "suggestion": "não conseguir o que pretendia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_398_ESTAR",
+      "text": "estar de mãos atadas.",
+      "suggestion": "não poder fazer nada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_399_ESTAR",
+      "text": "estar de trombas.",
+      "suggestion": "estar aborrecido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_39_BATER",
+      "text": "bater com as dez.",
+      "suggestion": "morrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3_ESTAR",
+      "text": "estar com a cabeça quente.",
+      "suggestion": "estar irritado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_3_FAZER",
+      "text": "fazer de olhos fechados.",
+      "suggestion": "fazer facilmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_410_NÃO",
+      "text": "não saiu do papel.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_411_OUVIR",
+      "text": "ouvir o recado na escada.",
+      "suggestion": "não prestar correta atenção ao assunto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_412_PAGAR",
+      "text": "pagar o pato.",
+      "suggestion": "for responsabilizado por algo que não cometeu",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_413_PIRAR",
+      "text": "pirar na batatinha.",
+      "suggestion": "pensar no improvável",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_414_PISAR",
+      "text": "pisar na bola.",
+      "suggestion": "cometer um deslize",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_415_PROCURAR",
+      "text": "procurar chifre em cabeça de cavalo.",
+      "suggestion": "exagerar problemas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_416_PROCURAR",
+      "text": "procurar pelo em ovo.",
+      "suggestion": "exagerar problemas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_417_PROCURAR",
+      "text": "procurar sarna para se coçar.",
+      "suggestion": "envolver-se em problemas sem necessidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_418_PROCURAR",
+      "text": "procurar uma agulha num palheiro.",
+      "suggestion": "tentar algo quase impossível",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_419_PLANTAR",
+      "text": "plantar bananeira.",
+      "suggestion": "colocar-se de cabeça para baixo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_41_CRIANÇAS",
+      "text": "crianças ser o futuro.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_420_QUEBRAR",
+      "text": "quebrar o galho.",
+      "suggestion": "improvisar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_421_QUEBRAR",
+      "text": "quebrar o protocolo.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_422_RECARREGAR",
+      "text": "recarregar as baterias.",
+      "suggestion": "recuperar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_423_RECEBER",
+      "text": "receber um balde de água fria.",
+      "suggestion": "tiver entusiasmo transformado em desilusão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_424_RESOLVER",
+      "text": "resolver um pepino.",
+      "suggestion": "resolver um problema",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_425_RESPIRAR",
+      "text": "respirar aliviado.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_426_SEGURAR",
+      "text": "segurar vela.",
+      "suggestion": "atrapalhar namoro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_427_SENTIR",
+      "text": "sentir dor de corno.",
+      "suggestion": "sentir despeito amoroso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_428_SENTIR",
+      "text": "sentir dor de cotovelo.",
+      "suggestion": "sentir inveja",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_429_SER",
+      "text": "ser de bom comer.",
+      "suggestion": "ter boa boca",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_42_MULHER",
+      "text": "mulher ser na cozinha.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_431_SER",
+      "text": "ser um chato de galocha.",
+      "suggestion": "ser desagradável",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_433_SER",
+      "text": "ser um troca-tintas.",
+      "suggestion": "mudar de ideias facilmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_434_SER",
+      "text": "ser um maria-vai-com-as-outras.",
+      "suggestion": "não ter personalidade própria",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_435_SER",
+      "text": "ser uma mala sem alça.",
+      "suggestion": "ser chato",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_436_SER",
+      "text": "ser uma mão na roda.",
+      "suggestion": "ajudar muito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_437_SER",
+      "text": "É uma pedra no sapato.",
+      "suggestion": "É um estorvo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_438_TER",
+      "text": "ter a barriga a dar horas.",
+      "suggestion": "ter fome",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_439_TER",
+      "text": "ter bicho carpinteiro.",
+      "suggestion": "estar irrequieto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_43_MUNDO",
+      "text": "mundo ser dos espertos.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_440_TER",
+      "text": "ter lata.",
+      "suggestion": "ser descarado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_441_TER",
+      "text": "ter macacos no sótão.",
+      "suggestion": "ter ilusões",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_442_TIRAR",
+      "text": "tirar a barriga da miséria.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_443_TIRAR",
+      "text": "tirar água do joelho.",
+      "suggestion": "urinar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_444_TIRAR",
+      "text": "tirar de letra.",
+      "suggestion": "fizer algo com facilidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_445_TIRAR",
+      "text": "tirar o cavalo da chuva.",
+      "suggestion": "desistir de algo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_446_TIRAR",
+      "text": "tirar onda.",
+      "suggestion": "brincar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_447_TOMAR",
+      "text": "tomar um banho de loja.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_448_TOMAR",
+      "text": "tomar um chega para lá.",
+      "suggestion": "for descartado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_449_TRAIR-SE",
+      "text": "trair-se pela emoção.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_44_NÃO",
+      "text": "não bate bem da bola.",
+      "suggestion": "é maluco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_450_TRAZER",
+      "text": "traz à tona.",
+      "suggestion": "revisita",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_451_TREPAR",
+      "text": "trepar paredes.",
+      "suggestion": "estiver desesperado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_452_TROCAR",
+      "text": "trocar alhos por bugalhos.",
+      "suggestion": "confundir factos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_453_TROCAR",
+      "text": "trocar as bolas.",
+      "suggestion": "atrapalhar-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_454_TROCAR",
+      "text": "trocar farpas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_455_TROCAR",
+      "text": "trocar figurinhas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_456_TROCAR",
+      "text": "trocar os pés pelas mãos.",
+      "suggestion": "agir desajeitadamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_457_TROCAR",
+      "text": "trocar seis por meia dúzia.",
+      "suggestion": "trocar sem fazer qualquer diferença",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_45_NÃO",
+      "text": "não deixou margem a dúvidas.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_46_NÃO",
+      "text": "Ele não está nem aí para nada.",
+      "suggestion": "ignora",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_46_NÃO",
+      "text": "Não estou nem aí.",
+      "suggestion": "Ignoro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_47_NÃO",
+      "text": "não fazer bom cabelo.",
+      "suggestion": "não ouvir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_48_NÃO",
+      "text": "não fugir ao seu destino.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_49_NÃO",
+      "text": "não precisas de apresentação.",
+      "suggestion": "és famoso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_4_ESTAR",
+      "text": "estar com aperto no coração.",
+      "suggestion": "estar angustiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_4_FAZER",
+      "text": "fazer das tripas corações.",
+      "suggestion": "fazer todos os possíveis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_5_ESTAR",
+      "text": "estar com dor de cotovelo.",
+      "suggestion": "estar despeitado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_5_FAZER",
+      "text": "fazer nas coxas.",
+      "suggestion": "fazer sem cuidado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_6_ESTAR",
+      "text": "estar com a pulga atrás da orelha.",
+      "suggestion": "estar desconfiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_6_FAZER",
+      "text": "fazer por merecer.",
+      "suggestion": "merecer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_7_ESTAR",
+      "text": "estar feito ao bife.",
+      "suggestion": "estar em risco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_7_FAZER",
+      "text": "Fez tempestade em copo de água.",
+      "suggestion": "Transformou banalidades em tragédia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_8_ESTAR",
+      "text": "estar fixe.",
+      "suggestion": "estar bom",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_8_FAZER",
+      "text": "fazer um negócio da china.",
+      "suggestion": "aproveitar uma grande oportunidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_9_ESTAR",
+      "text": "estar no bico do corvo.",
+      "suggestion": "estar para morrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLICHE_9_INSERIR",
+      "text": "inserir no contexto.",
+      "suggestion": "enquadrar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "CLITIC_AS_SUBJECT_ME_SER",
       "text": "Me sou responsável por este projeto.",
       "suggestion": "Eu",
@@ -902,6 +2882,18 @@
       "text": "Te és muito inteligente.",
       "suggestion": "Tu",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "COISAS_FUNCIONALIDADES",
+      "text": "Vamos implementar coisas novas no software.",
+      "suggestion": "funcionalidades",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COISAS_FUNCIONALIDADES",
+      "text": "Vamos implementar uma coisa nova no software.",
+      "suggestion": "funcionalidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "COLETE-S_À_PROVA_DE_BALA",
@@ -1006,10 +2998,70 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "COMO_SEGUNDO_CONFORME",
+      "text": "Aqui está o relatório segundo combinado.",
+      "suggestion": "conforme",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "COMO_SER_O_CASO_DO",
       "text": "Temos novidades matemáticas como é o caso da nossa equação.",
       "suggestion": "como a nossa",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMPARADA_COMPARÁVEL",
+      "text": "Tais capacidades são comparadas às possibilidades de vencer.",
+      "suggestion": "comparáveis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMPARADA_COMPARÁVEL",
+      "text": "Tal capacidade é comparada à possibilidade de vencer.",
+      "suggestion": "comparável",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMUNICADO_DIRIGIDO_A",
+      "text": "Vou elaborar um ofício à Ana.",
+      "suggestion": "dirigido à",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMUNICADO_DIRIGIDO_A",
+      "text": "Vou fazer um comunicado aos seus utilizadores.",
+      "suggestion": "dirigido aos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMUNICADO_DIRIGIDO_A",
+      "text": "Vou fazer um comunicado aos utilizadores do software.",
+      "suggestion": "dirigido aos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMUNICADO_DIRIGIDO_A",
+      "text": "Vou fazer um comunicado oficial ao país.",
+      "suggestion": "dirigido ao",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMUNICADO_DIRIGIDO_A",
+      "text": "Vou lançar uma nota oficial à comunidade.",
+      "suggestion": "dirigida à",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMUNICADO_DIRIGIDO_A",
+      "text": "Vou lançar uma nota oficial às pessoas envolvidas.",
+      "suggestion": "dirigida às",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CONDICIONAR_EM_MUITO",
+      "text": "A dor condiciona em muito o trabalho.",
+      "suggestion": "condiciona muito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "CONFUSAO_MAIS_MAS_VIRGULA",
@@ -1042,6 +3094,12 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "CONFUSÃO_BEBER_COMER_TOMAR_FÁRMACOS",
+      "text": "Vou comer os medicamentos.",
+      "suggestion": "tomar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "CONFUSÃO_DINHEIRO_VALOR",
       "text": "A diferença no dinheiro é mínima.",
       "suggestion": "valor",
@@ -1066,6 +3124,18 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "CONFUSÃO_NADA_HAVER",
+      "text": "Não tem haver com isso.",
+      "suggestion": "tem a ver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_NADA_HAVER",
+      "text": "Não tem nada haver com isso.",
+      "suggestion": "nada a ver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "CONFUSÃO_REALIDADE_REALISMO",
       "text": "A equação dá mais realidade aos modelos.",
       "suggestion": "realismo",
@@ -1084,9 +3154,39 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "CONFUSÃO_TANTO_TÃO_",
+      "text": "O que aconteceu para andares tanto carregado?",
+      "suggestion": "tão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_TEM_TÊM",
+      "text": "Uns não tem sorte no jogo.",
+      "suggestion": "têm",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_TEM_TÊM",
+      "text": "Uns tem sorte no jogo.",
+      "suggestion": "têm",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "CONFUSÃO_TERA_TERÁ",
       "text": "Ele tera problemas com isso.",
       "suggestion": "terá",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_TER_CHEGO",
+      "text": "Ele ainda não tinha chego a casa, quando se lembrou do aniversiário.",
+      "suggestion": "tinha chegado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_TIVE_ESTIVE",
+      "text": "Em janeiro tive de férias.",
+      "suggestion": "estive",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -1124,6 +3224,18 @@
       "text": "Pai, não vez que ele está errado?",
       "suggestion": "vês",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONSISTE_DE_BR",
+      "text": "A seleção consiste de cinco etapas.",
+      "suggestion": "em",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "CONSISTE_DE_BR",
+      "text": "O time consistirá primariamente de seis jogadores.",
+      "suggestion": "em",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
       "rule": "CONTRACAO_ADIANTE",
@@ -2050,10 +4162,64 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
+      "rule": "DA",
+      "text": "Não da para acreditar.",
+      "suggestion": "dá",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DAQUI_BR",
+      "text": "Farei o pagamento daqui 5 dias.",
+      "suggestion": "daqui a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "DAR_NA_VISTA",
+      "text": "Procura não dar na vista.",
+      "suggestion": "nas vistas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "DAR_OS_BONS_DIAS",
+      "text": "Vou dar os bons dias ao Miguel.",
+      "suggestion": "dar os bons-dias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DAR_VALOR_VALORIZAR",
+      "text": "Ele dá valor ao trabalho do Rui.",
+      "suggestion": "valoriza o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DAR_VALOR_VALORIZAR",
+      "text": "Ele não dá valor à mulher.",
+      "suggestion": "valoriza a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DAR_À_LUZ",
+      "text": "Quando deu a luz a bebé, ele ficou radiante.",
+      "suggestion": "deu à luz",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "DAÍ",
       "text": "A partir daí deduzir o que fazer.",
       "suggestion": "partir de aí",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "DECIDIR_DELIBERAR",
+      "text": "A Comissão Científica decidiu sobre a decisão.",
+      "suggestion": "deliberou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DECIDIR_DELIBERAR",
+      "text": "O júri decidiu sobre o recurso.",
+      "suggestion": "deliberou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "DEGREE_SYMBOL_COORDINATES_EXPLICIT",
@@ -2104,10 +4270,40 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "DEMASIADO_INVARIAVEL",
+      "text": "Esta dor é demasiada real.",
+      "suggestion": "demasiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEMASIADO_INVARIAVEL",
+      "text": "Estas dores são demasiada reais.",
+      "suggestion": "demasiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEMASIADO_INVARIAVEL",
+      "text": "Estes problemas são demasiados complexos.",
+      "suggestion": "demasiado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DENOMINADA",
+      "text": "Por isso é denominada como sendo a resiliência.",
+      "suggestion": "é denominada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "DERIVADO_AO",
       "text": "Tudo isto é derivado ao calor.",
       "suggestion": "devido",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DESCULPAR_DESABAFO",
+      "text": "Desculpem este desabafo.",
+      "suggestion": "o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "DESDE_A_ALTURA_DESDE_ENTÃO",
@@ -2158,6 +4354,24 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "DEVE_DE",
+      "text": "Ele deve de vir mais tarde.",
+      "suggestion": "deve vir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEVE_DE",
+      "text": "Eles devem de vir mais tarde.",
+      "suggestion": "devem vir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_BAIXO_CIMA_DE",
+      "text": "O carro passou de cima de uma bola.",
+      "suggestion": "por",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "DE_CIMA-ALTO_ABAIXO",
       "text": "Ela observou o Rui de alto abaixo.",
       "suggestion": "a baixo",
@@ -2168,6 +4382,12 @@
       "text": "Gosto da sobre mesa.",
       "suggestion": "sobremesa",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_FORMA-MODO_ADJ",
+      "text": "A Ana foi banida de forma permanente por violar as regras.",
+      "suggestion": "permanentemente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "DE_IMPACTO_ECOLÓGICA",
@@ -2218,6 +4438,30 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "DIFERENTES_DISTINTOS",
+      "text": "São critérios claramente muito diferentes.",
+      "suggestion": "distintos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DIFERENTES_DISTINTOS",
+      "text": "São hipóteses diferentes.",
+      "suggestion": "distintas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DIFERENTES_DISTINTOS",
+      "text": "São pressupostos diferentes.",
+      "suggestion": "distintos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DORMIU_NO_BR",
+      "text": "O motorista dormiu no volante.",
+      "suggestion": "dormiu ao",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
       "rule": "DURANTE_ESTE_O_PRESENTE",
       "text": "Vou tratar disso durante esta semana.",
       "suggestion": "a presente",
@@ -2260,6 +4504,24 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "EMERGIR_EM",
+      "text": "Ele emergiu o saquinho de chá em água durante cerca 30 minutos.",
+      "suggestion": "imergiu",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EMERGIR_EM",
+      "text": "Para uma limpeza adequada dos intrumentos, deve emergir em água durante cerca 30 minutos.",
+      "suggestion": "imergir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EMIGRAR_DE",
+      "text": "Muitos emigraram para a França nos anos 60.",
+      "suggestion": "imigraram para",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "EM_CASO_CASO",
       "text": "Para nos ajudar em caso tenhamos dúvidas.",
       "suggestion": "caso",
@@ -2269,6 +4531,18 @@
       "rule": "EM_CURTO_MÉDIO_LONGO_PRAZO_TERMO",
       "text": "É um investimento em longo prazo.",
       "suggestion": "a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_PREVISTO_IMPREVISTO",
+      "text": "Surgiram vários em previstos na última hora.",
+      "suggestion": "imprevistos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_PREVISTO_IMPREVISTO",
+      "text": "Tive um em previsto de última hora.",
+      "suggestion": "imprevisto",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -2314,6 +4588,48 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
+      "rule": "ERRO_TRADUÇÃO_CAMINHAR_CAMINHOS",
+      "text": "Deve caminhar caminhos descobertos por tentativa e erro.",
+      "suggestion": "percorrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_COBRIR_ABRANGER",
+      "text": "Em relação a temas não cobertos por este documento.",
+      "suggestion": "abrangidos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_COBRIR_ABRANGER",
+      "text": "Este tema está coberto por este documento.",
+      "suggestion": "abrangido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_COBRIR_ABRANGER",
+      "text": "Este tema não é coberto por este documento.",
+      "suggestion": "abrangido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_COBRIR_ABRANGER",
+      "text": "Temos assuntos cobertos pelo documento.",
+      "suggestion": "abrangidos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_ESTIMAÇÃO_MÁXIMA_SEMELHANÇA_PT_PT",
+      "text": "A estimativa de máxima semelhança é usada em Estatística.",
+      "suggestion": "verosimilhança",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_FURTO_ROUBO_IDENTIDADE",
+      "text": "Alguém roubou a identidade do dono da empresa.",
+      "suggestion": "usurpou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
       "rule": "ERRO_TRADUÇÃO_TRAZEDORES_DA_JUSTIÇA",
       "text": "O terrorista julga ser trazedor da justiça.",
       "suggestion": "justiceiro",
@@ -2326,10 +4642,100 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "ERRO_TRADUÇÃO_UM_TAMANHO_SERVE_DÁ_PARA_TODOS",
+      "text": "As meias são um tamanho serve para todos.",
+      "suggestion": "tamanho único",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ESQUECEU-SE_QUE",
+      "text": "O Rui esqueceu-se que tinha um exame.",
+      "suggestion": "de que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ESTAR_BOM_NA_VIDA",
+      "text": "O Rui está bom na vida.",
+      "suggestion": "está bem na vida",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ESTAR_CLARO_DE_QUE",
+      "text": "É fácil de que voltemos a encontrarmo-nos",
+      "suggestion": "É fácil que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ESTAR_CONSTAR",
+      "text": "O conteúdo que está na tese é relevante.",
+      "suggestion": "consta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ESTAR_DE_ACORDO",
+      "text": "Os resultados estão de acordo com o estipulado.",
+      "suggestion": "concordam",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ESTAR_LIXADO_ZANGADO_COM_PROBLEMAS",
+      "text": "Estou lixado com o meu chefe.",
+      "suggestion": "zangado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ESTAR_NO_ECRA",
+      "text": "Veja tudo aquilo que está no ecrã.",
+      "suggestion": "no",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ESTAR_NO_ECRA",
+      "text": "Veja tudo aquilo que está no seu ecrã.",
+      "suggestion": "no",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ESTAR_SOBRE_O_EFEITO_DE",
+      "text": "Ele estava sobre o efeito de drogas.",
+      "suggestion": "sob",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ESTAR_SOBRE_O_EFEITO_DE",
+      "text": "Ele estava sobre o efeito dessa droga.",
+      "suggestion": "sob",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ESTAR_TER_CONFUSAO",
+      "text": "Por isso estivemos de sair.",
+      "suggestion": "tivemos de sair",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EVIDENCIAR_COMPROVAR_DEMONSTRAR",
+      "text": "A pesquisa mostra que os resultados são os esperados.",
+      "suggestion": "evidencia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "EXISTE_VARIOS_BR",
       "text": "Existe muitos problemas nesta empresa.",
       "suggestion": "Existem",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "EXPORTAR_PARA_FORA",
+      "text": "O país exportou para fora menos este ano.",
+      "suggestion": "exportou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "E_PRIME_STRIT",
+      "text": "Isto é errado…",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO",
@@ -2344,6 +4750,12 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "FALARAM-SE_DE",
+      "text": "Hoje falaram-se de vários problemas.",
+      "suggestion": "falara-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "FALTA_DE_DISTRACAO",
       "text": "Este programa é o que é preciso para evitar faltas de distração.",
       "suggestion": "faltas de atenção",
@@ -2354,6 +4766,84 @@
       "text": "Eu fasso os serviços domésticos.",
       "suggestion": "faço",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZEM_TEMPO",
+      "text": "Achei que fizessem algumas décadas!",
+      "suggestion": "fizesse",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZEM_TEMPO",
+      "text": "Em janeiro fizeram três meses do começo do seu relacionamento.",
+      "suggestion": "fez",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZEM_TEMPO",
+      "text": "Fazem dez anos que não vemos tantas mudanças.",
+      "suggestion": "Faz",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZEM_TEMPO",
+      "text": "Faziam muitos anos que ele não via seu pai.",
+      "suggestion": "Fazia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZEM_TEMPO",
+      "text": "Já fazem algumas semanas...",
+      "suggestion": "faz",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZEM_TEMPO",
+      "text": "Semana que vem farão já 8 meses desde o seu nascimento.",
+      "suggestion": "fará",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FAZER_AS_COISAS_DIREITAS",
+      "text": "Preciso fazer as coisas direitas.",
+      "suggestion": "fazer as coisas direito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "FAZER_TRAÇAR_DELINEAR_ELABORAR_V3",
+      "text": "Vamos fazer um plano.",
+      "suggestion": "delinear",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "FAZER_TRAÇAR_DELINEAR_ELABORAR_V3",
+      "text": "Vamos traçar o objetivo a alcançar.",
+      "suggestion": "delinear",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "FEEDBACK",
+      "text": "para fornecer o feedback necessário.",
+      "suggestion": "dar o feedback",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "FICAR_PARADO_TEMPO_ESTAGNAR",
+      "text": "A Ana ficou parada no tempo.",
+      "suggestion": "estagnou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "FICAR_PARADO_TEMPO_ESTAGNAR",
+      "text": "Eles ficaram parados no tempo.",
+      "suggestion": "estagnaram",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "FOI_SOU_UM-UMA",
+      "text": "Na realidade foi sou um esquecimento.",
+      "suggestion": "foi só um",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "FORMAS_INOVADORES",
@@ -2372,6 +4862,18 @@
       "text": "O sol tem a temperatura de 15,7 milhões de graus kelvin.",
       "suggestion": "kelvins",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "HIFENIZADOR_VERBOS_1",
+      "text": "dar nos á.",
+      "suggestion": "dar‑nos‑á",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
+    },
+    {
+      "rule": "HIFENIZADOR_VERBOS_1",
+      "text": "dar nos á.",
+      "suggestion": "dar‑nos‑á",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
     },
     {
       "rule": "HIFENIZADOR_VERBOS_2",
@@ -2464,6 +4966,12 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "HONRAR_COMPROMISSOS",
+      "text": "Vou cumprir os compromissos.",
+      "suggestion": "honrar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "HÁ-DIRECTION",
       "text": "Algumas pessoas e ideias parecem fora do lugar ou há frente do seu tempo.",
       "suggestion": "à frente",
@@ -2486,6 +4994,36 @@
       "text": "imagens satélite.",
       "suggestion": "imagens de satélite",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "IMERGIR_DE",
+      "text": "…assim, ela imergiu à superfície sem qualquer esforço.",
+      "suggestion": "emergiu à",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "IMIGRAR_PARA",
+      "text": "Muitos imigraram da França nos anos 60.",
+      "suggestion": "emigraram da",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "INF_PP_QUE",
+      "text": "Está bem alegrar-se que haja dinheiro para todos.",
+      "suggestion": "de que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "INF_PP_QUE",
+      "text": "Informar-se que ocorreu alterações ao código.",
+      "suggestion": "de que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "INSISTIR_DE_QUE",
+      "text": "Não insistas de que vamos ao cinema.",
+      "suggestion": "insistas em que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "INVARIABLE_NOUNS_ÀS_CUSTAS_DA_DAS_DO_DOS",
@@ -2512,6 +5050,42 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "LEVAR_A_CABO",
+      "text": "Esta foi a pesquisa levada a cabo pela Ana.",
+      "suggestion": "efetuada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "LINHA_RETA_RETA_V2",
+      "text": "Vou traçar uma linha reta entre os pontos.",
+      "suggestion": "reta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "LINHA_RETA_RETA_V2",
+      "text": "Vou traçar várias linhas retas no quadro.",
+      "suggestion": "retas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MADRUGADA_MATINAL",
+      "text": "Eu sempre tomo o banho da manhã.",
+      "suggestion": "matinal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MADRUGADA_MATINAL",
+      "text": "Eu tinha o costume de dar o passeio da manhã.",
+      "suggestion": "matinal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MADRUGADA_MATINAL",
+      "text": "Vamos fazer o exercício da madrugada.",
+      "suggestion": "matinal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "MAIOR",
       "text": "São maior as hipóteses.",
       "suggestion": "maiores as",
@@ -2534,6 +5108,30 @@
       "text": "Quanto mas eu falo, pior fica.",
       "suggestion": "mais",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "MAS_EMBORA_CONTUDO_SEM",
+      "text": "Concluirei o doutoramento, embora não terá grande utilidade profissional.",
+      "suggestion": "sem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MAS_EMBORA_CONTUDO_SEM",
+      "text": "Concluirei o doutoramento, embora não terá nenhuma utilidade profissional.",
+      "suggestion": "sem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MAS_EMBORA_CONTUDO_SEM",
+      "text": "Concluirei o doutoramento, embora não terá utilidade profissional.",
+      "suggestion": "sem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MAS_EMBORA_CONTUDO_SEM",
+      "text": "Fizeram estudos importantes, mas estes não tinham objetivos militares.",
+      "suggestion": "sem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "MENAGE_A_TROIS",
@@ -2560,9 +5158,45 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
+      "rule": "MUITO_BASTANTE_EXTENSIVAMENTE",
+      "text": "A fórmula tem sido bastante analisada pelos matemáticos.",
+      "suggestion": "extensivamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MUITO_BASTANTE_EXTENSIVAMENTE",
+      "text": "As equações têm sido enormemente estudadas.",
+      "suggestion": "extensivamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MUITO_BASTANTE_EXTENSIVAMENTE",
+      "text": "As equações têm sido muito estudadas por cientistas.",
+      "suggestion": "extensivamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MUITO_BASTANTE_EXTENSIVAMENTE",
+      "text": "O termo é enormemente aplicado em contextos académicos.",
+      "suggestion": "extensivamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "MUITO_FRIO",
       "text": "Está um frio de rachar.",
       "suggestion": "muito frio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MUITO_POUCOS",
+      "text": "Tem muitos poucos incentivos.",
+      "suggestion": "muito poucos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "NAO_DEIXAR_QUE_PERMITIR",
+      "text": "Não posso deixar que ele faça isso.",
+      "suggestion": "permitir",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -2576,6 +5210,18 @@
       "text": "Não e preciso.",
       "suggestion": "é",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "NAO_MILITARES_CIVIS",
+      "text": "Há empresas não militares a criar simuladores.",
+      "suggestion": "civis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NAO_MILITARES_CIVIS",
+      "text": "Há uma empresa não militar a criar simuladores.",
+      "suggestion": "civil",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "NA_QUELE",
@@ -2617,6 +5263,24 @@
       "rule": "NÃO_SE_PODE_APAGAR_É_INDELÉVEL",
       "text": "Eu queria, mas não se pode apagar os escritos.",
       "suggestion": "os escritos são indeléveis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NÃO_VÁLIDA_INVÁLIDA",
+      "text": "A identificação do Rui não está válida.",
+      "suggestion": "está inválida",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "OBTER_ALCANCAR",
+      "text": "Num conflito o objetivo é obter a vitória.",
+      "suggestion": "alcançar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "OBTER_ALCANCAR",
+      "text": "O Zé vai obter rapidamente o objetivo proposto.",
+      "suggestion": "alcançar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -2692,6 +5356,12 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PARAR_DE_CHATEAR",
+      "text": "Pare de chatear os vizinhos.",
+      "suggestion": "incomodar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "PARASITOS_BR",
       "text": "Há sujeitos que são autênticos parasitas da sociedade.",
       "suggestion": "parasitos",
@@ -2704,9 +5374,39 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
+      "rule": "PARA_DENTRO_INTERIOR",
+      "text": "Os computadores transferem os dados para dentro do telemóvel.",
+      "suggestion": "o interior",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PARA_FICAR_A_OCUPAR",
+      "text": "Fotografa na vertical para ficar a ocupar a imagem toda.",
+      "suggestion": "ocupar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "PARONYM_ARVORE_0c",
       "text": "Paragrafo 5.º:",
       "suggestion": "Parágrafo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_CIENTIFICA_388",
+      "text": "Uma prova cientifica.",
+      "suggestion": "prova científica",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_CIENTIFICA_388",
+      "text": "uma cientifica.",
+      "suggestion": "uma científica",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_CIENTIFICA_388",
+      "text": "umas cientificas.",
+      "suggestion": "umas científicas",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -2770,6 +5470,42 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PARONYM_PREMIO_252_PT2",
+      "text": "E tem premio para todos.",
+      "suggestion": "prêmio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_PREMIO_252_PT2",
+      "text": "E tem premios para todos.",
+      "suggestion": "prêmios",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_2",
+      "text": "Escutamos muitos radios ao mesmo tempo.",
+      "suggestion": "rádios",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_2",
+      "text": "Escuto radias.",
+      "suggestion": "rádios",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_2",
+      "text": "Ouvia radia.",
+      "suggestion": "rádio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_2",
+      "text": "Ouço radio todos os dias.",
+      "suggestion": "rádio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "PARONYM_RADIO_3",
       "text": "Comi radias.",
       "suggestion": "rádias",
@@ -2818,6 +5554,36 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PASSAR_ATRAVES_LUGAR_ATRAVESSAR",
+      "text": "Vou passar através da fronteira.",
+      "suggestion": "atravessar a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PASSAR_ATRAVES_LUGAR_ATRAVESSAR",
+      "text": "Vou passar através das fronteiras.",
+      "suggestion": "atravessar as",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PASSAR_ATRAVES_LUGAR_ATRAVESSAR",
+      "text": "Vou passar através do seu túnel.",
+      "suggestion": "atravessar o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PASSAR_ATRAVES_LUGAR_ATRAVESSAR",
+      "text": "Vou passar através do túnel.",
+      "suggestion": "atravessar o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PASSAR_ATRAVES_LUGAR_ATRAVESSAR",
+      "text": "Vou passar através dos portões.",
+      "suggestion": "atravessar os",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "PAÍSES_DO_TERCEIRO_MUNDO",
       "text": "Ele pertence aos países do terceiro mundo.",
       "suggestion": "ao Terceiro Mundo",
@@ -2828,6 +5594,18 @@
       "text": "Ensine sobre os países do terceiro mundo.",
       "suggestion": "o Terceiro Mundo",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PEDIR_SOLICITAR_V3",
+      "text": "Durante um mês pede aos funcionários para analisarem as vendas.",
+      "suggestion": "solicita",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PEDIR_UM_CONCELHO",
+      "text": "Devemos pedir um concelho ao padre.",
+      "suggestion": "pedir um conselho",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "PELA_QUAL_PELO_QUAL",
@@ -2866,6 +5644,18 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PENSAR_REFLETIR_PONDERAR",
+      "text": "Após pensar melhor, decidi adiar o projeto.",
+      "suggestion": "refletir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PENSAR_REFLETIR_PONDERAR",
+      "text": "Depois de pensar melhor, alterei a proposta.",
+      "suggestion": "refletir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "PERCA_PERDA",
       "text": "Certo tipo de depósitos tem percas de 0,5% ao ano.",
       "suggestion": "perdas de 0,5%",
@@ -2884,10 +5674,136 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PERDER_A_VIDA",
+      "text": "Ele perdeu a vida num acidente.",
+      "suggestion": "morreu",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PERDER_A_VIDA",
+      "text": "Um milhão de pessoas perderam as suas vidas na guerra.",
+      "suggestion": "morreram",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PERFILHAR_DA_DOUTRINA_DE",
+      "text": "O Rui perfilha da doutrina de Buda.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHD_TESE_PARA_AJUDAR_A_VINFINITIVO_PARA_VINFINITIVO",
+      "text": "Estas regras servem para ajudar a melhorar a gramática.",
+      "suggestion": "para melhorar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_PARA_AJUDAR_A_VINFINITIVO_PARA_VINFINITIVO",
+      "text": "Para ajudá-la a planejar o orçamento.",
+      "suggestion": "Para planejar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_PARA_AJUDAR_A_VINFINITIVO_PARA_VINFINITIVO",
+      "text": "para ajudar-nos a alcançar seus objetivos",
+      "suggestion": "para alcançar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS",
+      "text": "Existem algumas críticas ao modelo, que referimos a seguir.",
+      "suggestion": "referidas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS",
+      "text": "Existem algumas críticas ao modelo, que referimos de seguida.",
+      "suggestion": "referidas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS",
+      "text": "Existem algumas críticas ao modelo, que referiremos a seguir.",
+      "suggestion": "referidas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS",
+      "text": "Existem algumas críticas ao modelo, que referiremos de seguida.",
+      "suggestion": "referidas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS",
+      "text": "Existem algumas críticas ao modelo, que refiro a seguir.",
+      "suggestion": "referida",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS",
+      "text": "Existem algumas críticas ao modelo, que refiro de seguida.",
+      "suggestion": "referida",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "PHRASAL_VERB_A_DE",
       "text": "Cada vez se dá mais importância à valorização a recursos humanos altamente qualificados.",
       "suggestion": "valorização de",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_COM",
+      "text": "Ele arrasou com a concorrência.",
+      "suggestion": "arrasou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_COM",
+      "text": "Namorei com a ideia de comprar um carro novo.",
+      "suggestion": "Namorei",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_DE",
+      "text": "Eu evito de comer fritos.",
+      "suggestion": "evito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_EM",
+      "text": "Estas derrapagens no orçamento acarretaram nos valores irrazoáveis que foram apresentados.",
+      "suggestion": "acarretaram",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_EM_POR",
+      "text": "A equipa empatou em 1 a 1.",
+      "suggestion": "empatou por",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_PREFERIR",
+      "text": "Eu prefiro peixe do que carne.",
+      "suggestion": "peixe a carne",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PIZZA_MARGARITA",
+      "text": "Une pizza margarita.",
+      "suggestion": "Margherita",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PLURAL_IN_UNITS_OF_MEASURE",
+      "text": "São 2 kgs de maças.",
+      "suggestion": "kg",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PODER_SER_POSSIVEL",
+      "text": "A vitória pode ser possível.",
+      "suggestion": "deve ser",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "PORQUE_VERBOEUELE_AS_OS_POR_AO_VERBOINF_AS_OS",
@@ -2920,10 +5836,22 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "PREFERIR_ANTES",
+      "text": "A Ana prefere antes a Matemática.",
+      "suggestion": "prefere",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "PRESENTATION",
       "text": "Tenho que fazer um PowerPoint.",
       "suggestion": "uma apresentação de slides",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PRESO_RETIDO_V2",
+      "text": "Estou preso no trânsito.",
+      "suggestion": "retido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "PRETERITO_PERFEITO",
@@ -2938,9 +5866,21 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PROCURA_SE-PROCURAM_SE",
+      "text": "Aqui procura-se pessoas sérias.",
+      "suggestion": "procuram-se",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "PUNCTUATE_QUOTATIONS",
       "text": "Ele disse: “O jardim é bonito”",
       "suggestion": "bonito.”",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PÔR_PERGUNTAS",
+      "text": "Vou pôr uma pergunta pertinente.",
+      "suggestion": "fazer uma pergunta",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -2992,15 +5932,87 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "QUE_VERBO_SER_ADJ_QUE_VERBO_ADJ",
+      "text": "Alguns cientistas que parecem ser muito inteligentes são pessoas normais.",
+      "suggestion": "parecem muito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_VERBO_SER_ADJ_QUE_VERBO_ADJ",
+      "text": "Aquilo que julgávamos ser maior que nós próprios na realidade não o era.",
+      "suggestion": "julgávamos maior",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_VERB_GERUND",
+      "text": "Há organizações que investem em causa a segurança internacional.",
+      "suggestion": "investindo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_VERB_GERUND",
+      "text": "Há organizações que põem em causa a segurança internacional.",
+      "suggestion": "pondo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "RAIS_RAIZ",
       "text": "A rais da árvore está podre.",
       "suggestion": "raiz",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "RECOMENDÁVEL_DE",
+      "text": "É recomendável de fazer um backup mensal.",
+      "suggestion": "recomendável",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "REDUNDANCY_10_AVANÇAR",
+      "text": "avançar para a frente.",
+      "suggestion": "avançar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_10_CERTEZA",
       "text": "certeza absoluta.",
       "suggestion": "certeza",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_12_CONSENSO",
+      "text": "consenso geral.",
+      "suggestion": "consenso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_13_COLABORAR",
+      "text": "colaborar juntos.",
+      "suggestion": "colaborar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_13_CONTINUAR",
+      "text": "continuar a permanecer.",
+      "suggestion": "permanecer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_14_COMBINAR",
+      "text": "combinar juntos.",
+      "suggestion": "combinar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_15_COMPARAR",
+      "text": "comparar e contrastar.",
+      "suggestion": "comparar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_15_CURSAR",
+      "text": "cursar um curso.",
+      "suggestion": "cursar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3010,9 +6022,21 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_17_CONTINUAR",
+      "text": "continuar ainda.",
+      "suggestion": "continuar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_17_DEFICIT",
       "text": "deficit negativo.",
       "suggestion": "deficit",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_18_CRESCER",
+      "text": "crescer em tamanho.",
+      "suggestion": "crescer",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3022,15 +6046,51 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_19_DEPRECIAR",
+      "text": "depreciar em valor.",
+      "suggestion": "depreciar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_1_AINDA_CONTINUAR",
+      "text": "ainda continuar.",
+      "suggestion": "continuar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_20_EMPRÉSTIMO",
       "text": "empréstimo temporário.",
       "suggestion": "empréstimo",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_20_ENCARAR",
+      "text": "encarar a situação de frente.",
+      "suggestion": "encarar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_21_ESCRUTINAR",
+      "text": "escrutinar com cuidado.",
+      "suggestion": "escrutinar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_22_ENFRENTAR",
+      "text": "enfrentar de frente.",
+      "suggestion": "enfrentar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_23_ENXAME",
       "text": "enxame de abelha.",
       "suggestion": "enxame",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_23_FOCAR",
+      "text": "focar principalmente em.",
+      "suggestion": "focar em",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3046,9 +6106,45 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_25_MESCLAR",
+      "text": "mesclar juntos.",
+      "suggestion": "mesclar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_26_ESTRELA",
+      "text": "estrela no céu.",
+      "suggestion": "estrela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_26_MISTURAR",
+      "text": "misturar juntos.",
+      "suggestion": "misturar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_27_OUVIR",
+      "text": "ouvir o som de.",
+      "suggestion": "ouvir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_28_PERMANECER",
+      "text": "permanecer ainda.",
+      "suggestion": "permanecer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_29_FATO",
       "text": "facto real.",
       "suggestion": "facto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_29_PREFERIR",
+      "text": "preferir mais.",
+      "suggestion": "preferir",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3058,9 +6154,33 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_2_ACONTECER",
+      "text": "acontecer anteriormente.",
+      "suggestion": "acontecer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_30_FUGIR",
+      "text": "fugir para outro lugar.",
+      "suggestion": "fugir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_30_PROSSEGIR",
+      "text": "prosseguir em frente.",
+      "suggestion": "prosseguir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_31_GOTEIRAS",
       "text": "goteiras no teto.",
       "suggestion": "goteiras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_31_RECONSIDERAR",
+      "text": "reconsiderar novamente.",
+      "suggestion": "reconsiderar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3070,9 +6190,33 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_33_RECRUTAR",
+      "text": "recrutar novo recrutar.",
+      "suggestion": "recrutar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_34_RECUAR",
+      "text": "recuar para trás.",
+      "suggestion": "recuar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_35_REFAZER",
+      "text": "refazer de novo.",
+      "suggestion": "refazer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_36_METADES",
       "text": "metades iguais.",
       "suggestion": "metades",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_36_REFAZER",
+      "text": "refazer novamente.",
+      "suggestion": "refazer",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3088,6 +6232,42 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_38_RESUMIR",
+      "text": "resumir resumidamente.",
+      "suggestion": "resumir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_39_RETORNAR",
+      "text": "retornar novamente.",
+      "suggestion": "retornar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_3_ABUSAR",
+      "text": "abusar demais.",
+      "suggestion": "abusar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_3_ACRESCENTAR",
+      "text": "acrescentar ainda mais.",
+      "suggestion": "acrescentar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_40_ORGANIZAR",
+      "text": "organizar uma torcida organizada.",
+      "suggestion": "organizar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_40_ROUBAR",
+      "text": "roubar o objeto alheio.",
+      "suggestion": "roubar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_41_PLANEADA",
       "text": "planeada antecipadamente.",
       "suggestion": "planeada",
@@ -3097,6 +6277,78 @@
       "rule": "REDUNDANCY_42_PLANEADA",
       "text": "planeada com antecedência.",
       "suggestion": "planeada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_43_PLANO",
+      "text": "plano para o futuro.",
+      "suggestion": "plano",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_43_TIRAR",
+      "text": "tirar de dentro da.",
+      "suggestion": "tirar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_44_PLEBISCITO",
+      "text": "plebiscito popular.",
+      "suggestion": "plebiscito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_44_VACILAR",
+      "text": "vacilar para frente e para trás.",
+      "suggestion": "vacilar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_45_POSSIVELMENTE",
+      "text": "possivelmente poderá ocorrer.",
+      "suggestion": "poderá ocorrer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_45_POSSIVELMENTE",
+      "text": "possivelmente poderá questionar.",
+      "suggestion": "poderá questionar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_45_VOAR",
+      "text": "voar através do ar.",
+      "suggestion": "voar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_46_PREVER",
+      "text": "prever de antemão.",
+      "suggestion": "prever",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_47_PROJETAR",
+      "text": "projetar para o futuro.",
+      "suggestion": "projetar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_49_RAZÃO",
+      "text": "razão ser porque.",
+      "suggestion": "porque",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_4_ADIAR",
+      "text": "adiar para outro dia.",
+      "suggestion": "adiar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_4_AMANHECER",
+      "text": "amanhecer do dia.",
+      "suggestion": "amanhecer",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3124,9 +6376,57 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_54_SONHAR",
+      "text": "sonhar um sonho.",
+      "suggestion": "sonhar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_55_SORRISO",
+      "text": "sorriso nos lábios.",
+      "suggestion": "sorriso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_56_SUPERAVIT",
       "text": "superavit positivo.",
       "suggestion": "superavit",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_57_SUSSURRAR",
+      "text": "sussurrar baixinho.",
+      "suggestion": "sussurrar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_58_TRILATERAL",
+      "text": "trilateral entre três.",
+      "suggestion": "trilateral",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_59_ÚLTIMA",
+      "text": "última versão definitiva.",
+      "suggestion": "versão definitiva",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_5_AMANHECER",
+      "text": "o dia entardecera.",
+      "suggestion": "entardecera",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_5_AMANHECER",
+      "text": "o dia não entardecera.",
+      "suggestion": "não entardecera",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_5_ANEXAR",
+      "text": "anexar junto.",
+      "suggestion": "anexar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3142,6 +6442,18 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_6_AMPUTAR",
+      "text": "amputar totalmente.",
+      "suggestion": "amputar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_7_ARRANCAR",
+      "text": "arrancar fora.",
+      "suggestion": "arrancar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_7_BILATERAL",
       "text": "bilateral entre os dois.",
       "suggestion": "bilateral entre",
@@ -3154,15 +6466,219 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_9_AVANÇAR",
+      "text": "avançar em direção ao futuro.",
+      "suggestion": "avançar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_9_CARDUME",
       "text": "cardume de peixe.",
       "suggestion": "cardume",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_ACABAMENTO",
+      "text": "acabamento final",
+      "suggestion": "acabamento",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ADIAR",
+      "text": "adiar para depois",
+      "suggestion": "adiar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_AGORA_JA",
+      "text": "agora já",
+      "suggestion": "agora",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ALMIRANTE",
+      "text": "almirante da marinha",
+      "suggestion": "almirante",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ANDAR",
+      "text": "andar os pés",
+      "suggestion": "andar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ARDER",
+      "text": "arder em chamas",
+      "suggestion": "arder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_CEGO",
+      "text": "cego dos olhos",
+      "suggestion": "cego",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_CHEIRAR",
+      "text": "cheirar com o nariz",
+      "suggestion": "cheirar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_CLIMATOLOGIA",
+      "text": "climatologia geográfica",
+      "suggestion": "climatologia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_COMER",
+      "text": "comer com a boca",
+      "suggestion": "comer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_CONCLUSÃO",
+      "text": "conclusão final",
+      "suggestion": "conclusão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_DECAPITAR",
+      "text": "decapitar a cabeça",
+      "suggestion": "decapitar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_DECAPITAR",
+      "text": "degolar a cabeça",
+      "suggestion": "degolar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_DEMENTE",
       "text": "demente mental",
       "suggestion": "demente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_DESCER",
+      "text": "descer para baixo",
+      "suggestion": "descer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_DUPLA",
+      "text": "dupla de dois",
+      "suggestion": "dupla",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ENCARAR_1",
+      "text": "encarar de frente",
+      "suggestion": "encarar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ENCARAR_1",
+      "text": "encararam os perigos de frente",
+      "suggestion": "encararam os perigos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ENCARAR_2",
+      "text": "encarar cara a cara.",
+      "suggestion": "encarar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ENCARAR_2",
+      "text": "encararam a situação cara a cara.",
+      "suggestion": "encararam a situação",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ENTRAR",
+      "text": "entrar para dentro",
+      "suggestion": "entrar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ESTREIA",
+      "text": "estreia pela primeira vez",
+      "suggestion": "estreia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_FACTO",
+      "text": "facto verídico",
+      "suggestion": "facto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_GANHAR_2",
+      "text": "ganhar grátis",
+      "suggestion": "ganhar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_GANHAR_3",
+      "text": "ganhar de graça",
+      "suggestion": "ganhar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_GRITAR",
+      "text": "gritar alto",
+      "suggestion": "gritar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_GRITAR",
+      "text": "gritar muito alto",
+      "suggestion": "gritar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_INAUGURAR_NOVO",
+      "text": "inaugurar novo",
+      "suggestion": "inaugurar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_INTRODUZIR_DENTRO",
+      "text": "introduzir dentro",
+      "suggestion": "introduzir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ISTO",
+      "text": "isto é um facto real",
+      "suggestion": "isto é um facto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_JUNTO_COM",
+      "text": "junto com",
+      "suggestion": "com",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_LAMBER",
+      "text": "lamber com a língua",
+      "suggestion": "lamber",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MAIS",
+      "text": "mais melhor",
+      "suggestion": "mais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MALUCO",
+      "text": "maluco da cabeça",
+      "suggestion": "maluco",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3178,9 +6694,87 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_MAR",
+      "text": "mar salgado",
+      "suggestion": "mar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MONOPOLIO",
+      "text": "monopólio exclusivo",
+      "suggestion": "monopólio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MORDER",
+      "text": "morder com os dentes",
+      "suggestion": "morder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MULTIDÃO",
+      "text": "multidão de pessoas",
+      "suggestion": "multidão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_OLHAR",
+      "text": "olhar com os olhos",
+      "suggestion": "olhar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PANORAMA",
+      "text": "panorama geral",
+      "suggestion": "panorama",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PISAR",
+      "text": "pisar com os pés",
+      "suggestion": "pisar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PREFIRO",
+      "text": "prefiro mais",
+      "suggestion": "prefiro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PREPARAR_ANTES",
+      "text": "prevenir antes",
+      "suggestion": "prevenir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PREPARAR_DE_ANTEMAO",
+      "text": "preparar de antemão",
+      "suggestion": "preparar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_PRÓPRIA",
       "text": "própria autobiografia",
       "suggestion": "autobiografia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PÁSSAROS",
+      "text": "pássaros alados",
+      "suggestion": "pássaros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_SAIR",
+      "text": "sair para fora",
+      "suggestion": "sair",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_SUBIR",
+      "text": "subir para cima",
+      "suggestion": "subir",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3202,9 +6796,45 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
+      "rule": "REDUNDANCY_SUSSURAR",
+      "text": "sussurar baixo",
+      "suggestion": "sussurar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_UNANIMES",
+      "text": "Todos foram unânimes",
+      "suggestion": "Foram unânimes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_UNANIMIDADE",
+      "text": "unanimidade de todos",
+      "suggestion": "unanimidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_VERDADE",
+      "text": "verdade verdadeira",
+      "suggestion": "verdade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "REDUNDANCY_VIUVA",
       "text": "viúva do falecido",
       "suggestion": "viúva",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_VIÚVO",
+      "text": "viúva da falecida",
+      "suggestion": "viúva",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_VOLTAR_ATRAS",
+      "text": "voltar atrás",
+      "suggestion": "voltar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
@@ -3217,6 +6847,24 @@
       "rule": "R_SYMBOL",
       "text": "Windows (R)",
       "suggestion": "®",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SECULO_EM_NUMERAIS_ROMANOS",
+      "text": "A história se passa no século 44.",
+      "suggestion": "XLIV",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SECULO_EM_NUMERAIS_ROMANOS",
+      "text": "Nasceu no século 1.",
+      "suggestion": "I",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SECULO_EM_NUMERAIS_ROMANOS",
+      "text": "No começo do século 20.",
+      "suggestion": "XX",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -3242,6 +6890,18 @@
       "text": "O novo produto é de Escolha Executiva(SM) Plus.",
       "suggestion": "℠",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SERVIR_A_FAZER",
+      "text": "O martelo serviu a fazer o banco.",
+      "suggestion": "para",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SER_CAPAZ_DE_CONSEGUIR",
+      "text": "Apesar de não serem capazes de arrasar a cidade.",
+      "suggestion": "conseguirem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "SER_PARA_SER_PARTPASSADO_VINFINITIVO",
@@ -3322,10 +6982,94 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "SUBST_DE_QUE_TER_DIREITO_A_QUE",
+      "text": "Nem a classificação de que ela tem direito dão.",
+      "suggestion": "a que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SUBST_DE_QUE_TER_DIREITO_A_QUE",
+      "text": "É o apoio de que ela tem direito hoje.",
+      "suggestion": "a que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SUBST_DE_QUE_TER_DIREITO_A_QUE",
+      "text": "É o apoio de que todos têm direito.",
+      "suggestion": "a que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SUBST_DE_QUE_TER_DIREITO_A_QUE",
+      "text": "É o benefício de que ela tem direito legalmente.",
+      "suggestion": "a que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TAO_TÃO",
+      "text": "A Ana estava tao Feliz.",
+      "suggestion": "tão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "TEMOS_TERMOS",
       "text": "Isso é ótimo por temos informação adicional.",
       "suggestion": "termos",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TER_FORMA_DE_TER_COMO",
+      "text": "Após 8 meses de baixa não tinha forma de os contactar.",
+      "suggestion": "como",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TER_FORMA_DE_TER_COMO",
+      "text": "Após acabar o curso já tinha forma de os contactar.",
+      "suggestion": "como",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TER_SIDO_PART_PASSADO_VERBO",
+      "text": "Ao longo dos anos tem sido desenvolvido um modelo.",
+      "suggestion": "é desenvolvido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TER_SIDO_PART_PASSADO_VERBO",
+      "text": "Ao longo dos anos têm sido desenvolvidos modelos.",
+      "suggestion": "são desenvolvidos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TER_SIDO_PART_PASSADO_VERBO",
+      "text": "Ao longo dos anos têm sido desenvolvidos vários modelos.",
+      "suggestion": "são desenvolvidos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TIRAR_FOTOGRAFIA_FOTOGRAFAR",
+      "text": "Vamos tirar uma fotografia ao Rui.",
+      "suggestion": "fotografar o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TIRAR_FOTOGRAFIA_FOTOGRAFAR",
+      "text": "Vamos tirar uma fotografia aos barcos.",
+      "suggestion": "fotografar os",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TIRAR_FOTOGRAFIA_FOTOGRAFAR",
+      "text": "Vamos tirar uma fotografia à Ana.",
+      "suggestion": "fotografar a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TIRAR_FOTOGRAFIA_FOTOGRAFAR",
+      "text": "Vamos tirar uma fotografia às irmãs.",
+      "suggestion": "fotografar as",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "TODOS_FOLLOWED_BY_NOUN_PLURAL",
@@ -3338,6 +7082,48 @@
       "text": "…uma vez que todas adversidades naturais dificultam a implantação…",
       "suggestion": "todas as adversidades",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TOMAR_TER_LUGAR",
+      "text": "O evento tomará lugar em Lisboa.",
+      "suggestion": "terá",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TOTALIZAR",
+      "text": "Isto perfaz um total de 10 equações.",
+      "suggestion": "totaliza",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TRABALHO_PAGO_REMUNERADO",
+      "text": "O Rui desempenha uma função mal paga no emprego.",
+      "suggestion": "remunerada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TRABALHO_PAGO_REMUNERADO",
+      "text": "O Rui faz trabalho não pago de noite.",
+      "suggestion": "remunerado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "TRABALHO_PAGO_REMUNERADO",
+      "text": "O Rui faz trabalhos não pagos de noite.",
+      "suggestion": "remunerados",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ULTRAPASSAR_SUPERAR_VENCER",
+      "text": "A Ana vai ultrapassar a prova.",
+      "suggestion": "superar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ULTRAPASSAR_SUPERAR_VENCER",
+      "text": "Se não conseguir ultrapassar o obstáculo, não tem problema, pode desviar e ir para o próximo.",
+      "suggestion": "superar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "UMA_COISA_ALGO",
@@ -3358,16 +7144,124 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "UNS_ALGUNS_UMAS_ALGUMAS",
+      "text": "Isso aconteceu há umas horas.",
+      "suggestion": "algumas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "UNS_ALGUNS_UMAS_ALGUMAS",
+      "text": "Isso aconteceu há uns minutos.",
+      "suggestion": "alguns",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "URL_INICIAL",
       "text": "google.com.br é um excelente recurso.",
       "suggestion": "O site google.com.br",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "USAR_UTILIZAR",
+      "text": "O Rui usou equações matemáticas.",
+      "suggestion": "utilizou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "USAR_UTILIZAR",
+      "text": "Vamos usar grandes meios.",
+      "suggestion": "utilizar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "V3_DE_QUE",
+      "text": "Alegra-me de que voltemos a encontrar-nos",
+      "suggestion": "que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "VAO_FAZER_TEMPO",
+      "text": "Em janeiro iam fazer seis meses, e ele estivesse vivo...",
+      "suggestion": "ia fazer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "VAO_FAZER_TEMPO",
+      "text": "Já vão fazer 10 minutos que estamos esperando!",
+      "suggestion": "vai fazer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "VAO_FAZER_TEMPO",
+      "text": "Vão fazer muitos anos desde a última vez.",
+      "suggestion": "Vai fazer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
       "rule": "VERBO1_QUE_VERBO2_VERBO3_O_QUE",
       "text": "Falei com o Rui que me disse que ia ver o que se passava com o software.",
       "suggestion": "ir ver",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VERBO_DE_QUE",
+      "text": "Penso de que estamos a melhor muito.",
+      "suggestion": "Penso que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "VERBO_O_USO_DE_X_X",
+      "text": "A equação deve evitar o uso de valores negativos.",
+      "suggestion": "valores",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VER_OBSERVAR_CONSTATAR_V2",
+      "text": "Podemos ver que há correlação.",
+      "suggestion": "observar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VER_OBSERVAR_CONSTATAR_V2",
+      "text": "É fácil como podem ver na figura.",
+      "suggestion": "observar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VIR_A_VERBO_VERBO",
+      "text": "Acho que ele viria a especializar-se nisso.",
+      "suggestion": "especializar-se-ia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VIR_A_VERBO_VERBO",
+      "text": "Ele veio a conhecê-la bem.",
+      "suggestion": "conheceu-a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VIR_A_VERBO_VERBO",
+      "text": "O nosso estudo terá grande aplicabilidade caso esta ameaça se venha a concretizar.",
+      "suggestion": "concretize",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VIR_ESTAR_ESTRAGADO_AVARIADO_DANIFICADO",
+      "text": "A minha UPS nova vinha estragada.",
+      "suggestion": "danificada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VISANDO_A_EM_CONSEGUIR",
+      "text": "Ele assinou um documento visando a conseguir dividendos.",
+      "suggestion": "visando conseguir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "VISANDO_A_EM_CONSEGUIR",
+      "text": "Ele assinou um documento visando em conseguir dividendos.",
+      "suggestion": "visando conseguir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
       "rule": "VOTOS_BRANCOS",

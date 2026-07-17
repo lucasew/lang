@@ -16,9 +16,21 @@
       "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
     },
     {
+      "rule": "ERRa",
+      "text": "உழைப்புக்கேற்ற ஊதியம்.",
+      "suggestion": "உழைப்புக்கு ஏற்ற",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
       "rule": "illai2",
       "text": "அவன் இன்னும் வீட்டுக்கு வர இல்லை.",
       "suggestion": "வரவில்லை",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "kaattilum",
+      "text": "அவர்கள் நம்மைக்காட்டிலும் வசதி படைத்தவர்கள்.",
+      "suggestion": "நம்மைக் காட்டிலும்",
       "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
     },
     {
@@ -61,6 +73,18 @@
       "rule": "noun_suffix_1A",
       "text": "காஸ்ட்ரோ ஆட்சியின்கீழ் கியூபா வந்தது.",
       "suggestion": "ஆட்சியின் கீழ்",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "noun_suffix_1B",
+      "text": "இந்த நாளைக்குறித்த ஒரு புரிதல் அவர்களிடம் இல்லை.",
+      "suggestion": "நாளைக் குறித்த",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "noun_suffix_1C",
+      "text": "அவர்களைக்குறித்து எழுதிய தலைப்பு.",
+      "suggestion": "அவர்களைக் குறித்து",
       "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
     },
     {
@@ -139,6 +163,12 @@
       "rule": "thaguntha",
       "text": "படிக்கத்தகுந்த நூல்.",
       "suggestion": "படிக்கத் தகுந்த",
+      "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
+    },
+    {
+      "rule": "thakka",
+      "text": "போற்றத்தக்க மனிதர்.",
+      "suggestion": "போற்றத் தக்க",
       "source": "languagetool-language-modules/ta/src/main/resources/org/languagetool/rules/ta/grammar.xml"
     },
     {

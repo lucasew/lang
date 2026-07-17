@@ -445,11 +445,37 @@
       <message>Ten wyraz pisze się bez łącznika: <suggestion></suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="AUTO_COS_TAM" name="„auto komis/serwis...” (autokomis)">
+      <pattern>
+        <token>auto</token>
+        <token regexp="yes">alergia|alarm|biografia|bus|cenzura|giełda|hipnoza|komis|myjnia|naprawa|pilot|portret|stop|casco|serwis|sugestia</token>
+      </pattern>
+      <message>Błąd ortograficzny. Wyrazy z cząstką „auto” piszemy razem: <suggestion>\1\2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="BENEFITOWY" name="„benefitowy” (benefisowy)">
       <pattern>
         <token regexp="yes">benefitow.*</token>
       </pattern>
       <message>Ten wyraz jest niepoprawną kalką z angielskiego. Poprawnie: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="BIALY_STOK" name="„Biały Stok” (Białystok)">
+      <pattern>
+        <token postag="adj:sg.*" postag_regexp="yes">biały
+          <exception regexp="yes" case_sensitive="yes">^bi.*</exception>
+        </token>
+        <token postag="subst:sg.*" postag_regexp="yes">stok</token>
+      </pattern>
+      <message>Tę nazwę miasta piszemy łącznie<suggestion></suggestion></message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="BIZNESPLAN" name="„biznes plan” (biznesplan)">
+      <pattern>
+        <token>biznes</token>
+        <token>plan</token>
+      </pattern>
+      <message>Ten wyraz piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="BUL_GLOWY" name="„bul” (ból)">
@@ -460,6 +486,22 @@
         <token negate="yes">bul</token>
       </pattern>
       <message>Prawdopodobny błąd ortograficzny. Czy chodziło o <suggestion>ból</suggestion> (=nieprzyjemne odczucie)?</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="BYC_WSTANIE" name="„być wstanie” (być w stanie)">
+      <pattern>
+        <token skip="1">być</token>
+        <token>wstanie</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Powinno być: <suggestion>w stanie</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="CHART_DUCHA" name="„chart ducha” (hart ducha)">
+      <pattern>
+        <token>chart</token>
+        <token>ducha</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny, powinno być <suggestion></suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="CORAZ" name="„co raz” + stopień wyższy (coraz)">
@@ -494,6 +536,14 @@
         <token regexp="yes">stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia</token>
       </pattern>
       <message>W datach o takim formacie liczebniki zapisujemy bez kropki: <suggestion>\1</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="DO_CZEKAĆ" name="„do czekać” (doczekać)">
+      <pattern>
+        <token>do</token>
+        <token>czekać</token>
+      </pattern>
+      <message>Ten czasownik pisze się łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="DO_POKI" name="„do póki” (dopóki)">
@@ -537,6 +587,24 @@
       <message>Wyraz <suggestion>\1\2</suggestion> piszemy łącznie.</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="DWU_I_POL_PRZYMIOTNIK" name="Błędna pisownia rozłączna przymiotników typu „dwuipółkrotny”">
+      <pattern>
+        <token regexp="yes">(?:.*)(?:jedno|dwu|trzy|cztero|pięcio|sześcio|siedmio|ośmio|dziewięcio|dziesięcio|jedenasto|stu|dwustu)</token>
+        <token>i</token>
+        <token>pół</token>
+        <token regexp="yes">letni|godzinny|krotny|tygodniowy|dniowy|tysięczny|kilometrowy|milimetrowy</token>
+      </pattern>
+      <message>Prawdopodobnie błąd ortograficzny. Ten wyraz piszemy razem: <suggestion>\1\2\3\4</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="GAL_ANONIM" name="„Gal Anonim” (Gall Anonim)">
+      <pattern>
+        <token>Gal</token>
+        <token regexp="yes">Anonim|Anonima|Anonimie|Anonimem|Anonimowi</token>
+      </pattern>
+      <message>Poprawnie piszemy <suggestion></suggestion> Anonim.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="GDZIEZES" name="„gdzie żeś” (gdzieżeś)">
       <pattern>
         <token regexp="yes">gdzie|skąd</token>
@@ -545,12 +613,46 @@
       <message>To wyrażenie piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="GODZINA_KROPKA" name="Zbędne kropki po cyfrach arabskich oznaczających godziny">
+      <pattern>
+        <token>godzina</token>
+        <token regexp="yes">[0-2]?\d</token>
+        <token>.</token>
+        <token regexp="yes">\p{L}+</token>
+      </pattern>
+      <message>Nie stawiamy kropki po cyfrach arabskich, jeśli oznaczają godzinę: <suggestion>\1 \2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="HONG_KONG" name="„Hong Kong” (Hongkong)">
       <pattern>
         <token>Hong</token>
         <token regexp="yes">Kong.*</token>
       </pattern>
       <message>Ten wyraz piszemy łącznie. Powinno być: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="HYPER" name="Przedrostek „hyper” (hiper)">
+      <pattern>
+        <token regexp="yes" postag="UNKNOWN">hyper.*
+          <exception regexp="yes">Hyperion.*</exception>
+        </token>
+      </pattern>
+      <message>Przedrostek „hiper” piszemy przez „i”. Poprawnie: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="INSTRUKTARZ" name="„instruktarz” (instruktaż)">
+      <pattern>
+        <token>instruktarz</token>
+      </pattern>
+      <message>Wyraz „instruktarz” jest przestarzały i oznacza zbiór przepisów lub instrukcji. W znaczeniu „szkolenie” piszemy <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="JASNO_NIEBIESKI" name="„jasno niebieski” (jasnoniebieski) itp.">
+      <pattern>
+        <token regexp="yes">jasno|blado|ciemno</token>
+        <token regexp="yes">niebieski|zielony|czerwony|żółty|żółtawy|siny|złoty|złotawy|złocisty|zielonkawy|różowy|fiołkowy|beżowy|błękitny|brązowy|brunatny|bursztynowy|czekoladowy|fioletowy|granatowy|kasztanowy|oliwkowy|pomarańczowy|popielaty|rudy|siwy|szafirowy|szarawy|szary|szarozielony|wiśniowy|zielonożółty|kawowy|płowy|gniady</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Przymiotniki złożone z członów nierównorzędnych znaczeniowo pisze się razem: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="K" name="„k/” (k.)">
@@ -562,6 +664,32 @@
       <message>Ten skrót zapisujemy: <suggestion>k.</suggestion> (np. „k. Krakowa”).</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="KOD_MORSA_KOD_MORSEA" name="„kod Morsa” (kod Morse’a)">
+      <pattern>
+        <token regexp="yes">kod|alfabet</token>
+        <token>morsa</token>
+      </pattern>
+      <message>Czy chodziło o <suggestion> Morse’a</suggestion>?</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="KRASNY_STAW" name="„Krasny Staw” (Krasnystaw)">
+      <pattern>
+        <token postag="adj:sg.*" postag_regexp="yes">krasny
+          <exception regexp="yes" case_sensitive="yes">^bi.*</exception>
+        </token>
+        <token postag="subst:sg.*" postag_regexp="yes">staw</token>
+      </pattern>
+      <message>Tę nazwę miasta piszemy łącznie<suggestion></suggestion></message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="LEKCE_WAZYC" name="„lekce ważyć” (lekceważyć)">
+      <pattern>
+        <token>lekce</token>
+        <token>ważyć</token>
+      </pattern>
+      <message>Ten czasownik pisze się łącznie: <suggestion>\1\2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="LEPIEJ_NISZ_LEPIEJ_NIZ" name="„Lepiej nisz” (Lepiej niż)">
       <pattern>
         <token postag="ad[vj].*:com.*" postag_regexp="yes"></token>
@@ -570,11 +698,38 @@
       <message>Prawdopodobnie błąd ortograficzny. Powinno być: <suggestion>niż</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="LICZBA_BEZ_DYWIZU_Z_PRZYMIOTNIKIEM" name="Brak dywizu w wyrazie zawierającym liczbę">
+      <pattern>
+        <token regexp="yes">\d+</token>
+        <token regexp="yes">minutowy|letni|godzinny|calowy|watowy|sekundowy|dniowy|centymetrowy|wieczny|procentowy|stopniowy|miesięczny|kilogramowy|(?:kilo)?metrowy|gigabajtowy|bitowy|osobowy|warstwowy|literowy|milionowy|roczek</token>
+      </pattern>
+      <message>Prawdopodobnie brak dywizu w tym wyrazie: <suggestion>\1-\2</suggestion>?</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="MALO_SOLNY" name="„mało solny” (małosolny)">
+      <pattern>
+        <token>mało</token>
+        <token regexp="yes">duszny|dzietny|ekranowy|formatowy|gabarytowy|kalibrowy|krwisty|letni|litrażowy|metrażowy|miasteczkowy|mieszczański|mięsisty|mięsny|mowny|mówny|nakładowy|obrazkowy|obsadowy|odpadowy|płocki|polski|tonażowy|powierzchniowy|skalowy|towarowy|wartościowy|wymiarowy|znaczny|procentowy|solny</token>
+      </pattern>
+      <message>Prawdopodobnie błąd ortograficzny. Ten wyraz pisze się razem: <suggestion>\1\2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="MASSMEDIA" name="„mass-media” (mass media)">
       <pattern>
         <token regexp="yes">mass[–-]medi.*</token>
       </pattern>
       <message>To wyrażenie piszemy rozłącznie: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="N" name="„n/” (n.)">
+      <pattern>
+        <token>n</token>
+        <token>/</token>
+        <token regexp="yes">\p{Lu}.*
+          <exception>A</exception>
+        </token>
+      </pattern>
+      <message>Ten skrót zapisujemy z kropką: <suggestion>n.</suggestion>, np. „Kazimierz n. Wisłą”.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="NAJ_LEPSZY" name="„naj lepszy” (najlepszy)">
@@ -611,6 +766,30 @@
       <message>To słowo piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błędna pisownia rozłączna</short>
     </rule>
+    <rule id="NIEMIA_NIE_MIA" name="„niemiał” (nie miał)">
+      <pattern>
+        <token postag="verb:(?:pot|praet).*" postag_regexp="yes">niemieć</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Czy chodziło o <suggestion></suggestion>? Wyraz „\1” jest formą czasownika „niemieć” (= stawać się niemym).</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="NIENAWIDZIC" name="„nie nawidzić” (nienawidzić)">
+      <pattern>
+        <token>nie</token>
+        <token>nawidzić</token>
+      </pattern>
+      <message>To słowo piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
+      <short>Błędna pisownia rozłączna</short>
+    </rule>
+    <rule id="NIE_KTORY" name="„nie który” (niektóry)">
+      <pattern>
+        <token>nie</token>
+        <token>który</token>
+        <token postag="subst.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Czy chodziło o wyraz <suggestion>\1\2</suggestion>?</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="NIE_OMAL" name="„nie omal” (nieomal)">
       <pattern>
         <token>nie</token>
@@ -625,6 +804,22 @@
         <token regexp="yes">trudno|jasno|mile|drogo</token>
       </pattern>
       <message>Partykułę nie jako wykładnik zaprzeczenia piszemy łącznie z tym przysłówkiem: <suggestion></suggestion></message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="OD_STRESOWAĆ" name="„od stresować” (odstresować)">
+      <pattern>
+        <token>od</token>
+        <token>stresować</token>
+      </pattern>
+      <message>Błąd ortograficzny. Ten wyraz piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="OM_A" name="„sprzedać nabywcą” (nabywcom)">
+      <pattern>
+        <token regexp="yes">(?:od)?sprzedać|(?:od)?sprzedawać|akompaniować|aplikować|asystować|bandażować|bezcześcić|bluzgać|bluźnić|błogosławić|opyl[ia]ć|posprzedqawać|życzyć</token>
+        <token regexp="yes" postag="subst:sg:inst:m1">.*ą</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Czy chodziło o <suggestion></suggestion>?</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="OSOBA_TRZECIM" name="„osobą trzecim” (osobom trzecim)">
@@ -659,6 +854,41 @@
         <token postag=".*gen(\.|:).*" postag_regexp="yes"></token>
       </pattern>
       <message>Prawdopodobnie chodziło o wyrażenie <suggestion>\1 kątem</suggestion>, czyli o narzędnik rzeczownika „kąt”, a nie o „konto”.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="POLNOCNO_AMERYKANSKI" name="„północno amerykański” (północnoamerykański)">
+      <pattern>
+        <token regexp="yes">północno|południowo</token>
+        <token regexp="yes">afrykański|amerykański</token>
+      </pattern>
+      <message>Ten wyraz pisze się łącznie: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="POL_NAGI" name="„pół nagi” (półnagi)">
+      <pattern>
+        <token>pół</token>
+        <token regexp="yes">godzinny|roczny|polski|nagi|przytomny|litrowy|milionowy|metrowy|żywy|minutowy|otwarty|miesięczny|cienisty|długi|kilometrowy|automatyczny|okrągły|profesjonalny|słodki|wytrawny|calowy|dziki|przezroczysty|syntetyczny|centymetrowy|amatorski|procentowy|martwy|tonowy|kilogramowy|sekundowy|kilowy|pusty|surowy|przeźroczysty|hektarowy|suchy|legalny|pełny|oficjalny|czarny|twardy|matowy|leżący|miękki|siedzący|zwierzęcy|zawodowy|goły|świadomy|milimetrowy|ślepy|legendarny|finałowy|płynny|miliardowy|prawdziwy|głuchy|ciężki|tysięczny|zaciskowy</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Ten wyraz piszemy łącznie: <suggestion>\1\2</suggestion> (=jeden i pół).</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="POPULARNO_NAUKOWY" name="„Popularno-naukowy” (popularnonaukowy)">
+      <pattern>
+        <token>popularno</token>
+        <token>-</token>
+        <token>naukowy</token>
+      </pattern>
+      <message>Ten przymiotnik piszemy łącznie: <suggestion>\1\3</suggestion>.</message>
+      <short>Niepotrzebny dywiz</short>
+    </rule>
+    <rule id="POT_WPLYWEM" name="„pot wpływem” (pod wpływem)">
+      <pattern>
+        <token>pot</token>
+        <token regexp="yes" postag="subst.*nom.*|subst.*inst.*" postag_regexp="yes">
+          <exception regexp="yes">to|strugami|kroplami</exception>
+        </token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Czy chodziło o <suggestion>pod \2</suggestion>?</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="PO_MIMO" name="„po mimo, po śród” (pomimo, pośród)">
@@ -701,11 +931,30 @@
       <message>Wyraz <suggestion>poza</suggestion> piszemy łącznie.</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="PRZECIAGNIJ-I-UPUSC" name="Wyrażenia pisane z wieloma łącznikami">
+      <pattern>
+        <token regexp="yes" postag="UNKNOWN">
+          <exception regexp="yes">staro-cerkiewno-słowiańs.*|staro-wysoko-niemiec.*|koh-i-noor.*</exception>
+        </token>
+      </pattern>
+      <message>Prawdopodobnie to wyrażenie jest kalką z języka obcego. W języku polskim zwykle nie łączy się wielu wyrazów łącznikiem w celu uzyskania jednego wyrazu. Poprawnie: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="PRZEDROSTEK_NIBY" name="Przedrostki „niby” i „quasi” błędnie pisane bez łącznika">
       <pattern>
         <token regexp="yes" postag="UNKNOWN">(?:niby|quasi)[^-–].*</token>
       </pattern>
       <message>Tylko utarte terminy fachowe z cząstką „niby” piszemy bez łącznika. Poprawnie: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="PRZED_POKOJ" name="„przed pokój” (przedpokój)">
+      <pattern>
+        <token>przed</token>
+        <token>pokój
+          <exception>pokojem</exception>
+        </token>
+      </pattern>
+      <message>Prawdopodobnie błąd ortograficzny. Ten wyraz piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="ROB_TA_CO_CHCE_TA" name="„rób ta, co chce ta” (róbta, co chceta)">
@@ -718,6 +967,30 @@
         <token>ta</token>
       </pattern>
       <message>To wyrażenie jest gwarowe i powinno się je zapisywać tak: <suggestion>róbta, co chceta</suggestion></message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="RZADNY_CZEGO" name="„rządny czego” (żądny)">
+      <pattern>
+        <token>rządny</token>
+        <token postag=".*[\.:]gen[\.:].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Czy chodziło o <suggestion>żądny</suggestion>?</message>
+      <short>Prawdopodobny błąd ortograficzny</short>
+    </rule>
+    <rule id="SWIETO_KRZYSKI" name="„święto krzyski” (świętokrzyski)">
+      <pattern>
+        <token>święto</token>
+        <token>krzyski</token>
+      </pattern>
+      <message>Ten wyraz piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="TEGO_ROCZNY" name="„tego/pół/cało roczny” (tegoroczny, półroczny, całoroczny)">
+      <pattern>
+        <token regexp="yes">tego|cało|pół|półtora|ćwierć|rok|co|do|drugo|trzecio|średnio|ubiegło|zeszło|przeszło|przyszło|jedno|nowo|pierwszo|dwu</token>
+        <token>roczny</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Ten przymiotnik pisze się łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="TYM_NIE_MNIEJ" name="„tym nie mniej” (niemniej jednak)">
@@ -746,6 +1019,23 @@
       <message>Czy chodziło o <suggestion>wież</suggestion> (dopełniacz l.m. od „wieża”)?</message>
       <short>Błąd ortograficzny</short>
     </rule>
+    <rule id="WNIEBO_WZIETY" name="„w niebo wzięty” (wniebowzięty)">
+      <pattern>
+        <token>w</token>
+        <token>niebo</token>
+        <token>wzięty</token>
+      </pattern>
+      <message>Ten wyraz pisze się zwykle łącznie: <suggestion>\1\2\3</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="WSZECH_OBECNY" name="„wszech obecny” (wszechobecny)">
+      <pattern>
+        <token>wszech</token>
+        <token regexp="yes">obecny|mogący|potężny|mocny|świat|wiedza|moc|władza</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Powinno być: <suggestion>\1\2</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="WYWIESC_Z_POLSKI" name="„wywieść z Polski” (wywieźć z Polski)">
       <pattern>
         <token skip="3">wywieść</token>
@@ -772,6 +1062,16 @@
       </pattern>
       <message>W tym wyrażeniu drugi wyraz zapisujemy łącznie: <suggestion>międzyczasie</suggestion>.</message>
       <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="W_NIEBO_GLOSY" name="„w niebo głosy” (wniebogłosy)">
+      <pattern>
+        <token regexp="yes" skip="2">drzeć|krzyczeć|wyć|wrzeszczeć|ryczeć|wydzierać|wydrzeć</token>
+        <token>w</token>
+        <token>niebo</token>
+        <token>głosy</token>
+      </pattern>
+      <message>Prawdopodobny błąd ortograficzny. Ten wyraz pisze się łącznie: <suggestion>wniebogłosy</suggestion>.</message>
+      <short>Prawdopodobny błąd ortograficzny</short>
     </rule>
     <rule id="W_OKOL" name="„w okół” (wokół)">
       <pattern>
@@ -817,6 +1117,15 @@
       <message>Prawdopodobny błąd ortograficzny. Czy chodziło o <suggestion>w tę i nazad</suggestion>?</message>
       <short>Prawdopodobny błąd ortograficzny</short>
     </rule>
+    <rule id="ZA_MAZ_POJSCIE" name="„za mąż pójście” (zamążpójście)">
+      <pattern>
+        <token>za</token>
+        <token>mąż</token>
+        <token>pójście</token>
+      </pattern>
+      <message>Ten wyraz pisze się zwykle łącznie: <suggestion>\1\2\3</suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
     <rule id="ZA_ROWNO" name="„za równo” (zarówno)">
       <pattern>
         <token>za</token>
@@ -824,6 +1133,14 @@
         <token regexp="yes">jak|jaki</token>
       </pattern>
       <message>Wyraz <suggestion>zarówno</suggestion> piszemy łącznie.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="ZDROWO_ROZSADKOWY" name="„zdrowo rozsądkowy” (zdroworozsądkowy)">
+      <pattern>
+        <token>zdrowo</token>
+        <token regexp="yes">rozsądkow[oy]</token>
+      </pattern>
+      <message>Ten wyraz piszemy łącznie: <suggestion>\1\2</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="ZEBYS_MY_ZEBYSMY" name="„żebyś my” (żebyśmy)">
@@ -949,12 +1266,29 @@
       <message>Błąd odmiany lub niepoprawna liczba gramatyczna. Poprawnie: <suggestion>bez rękawów</suggestion>.</message>
       <short>Błąd odmiany</short>
     </rule>
+    <rule id="DWUTYSIECZNY_PIERWSZY" name="„dwutysięczny pierwszy” (dwa tysiące pierwszy)">
+      <pattern>
+        <token>dwutysięczny</token>
+        <token regexp="yes">pierwszy|drugi|trzeci|czwarty|piąty|szósty|siódmy|ósmy|dziewiąty|dziesiąty|jedenasty|dwunasty|trzynasty|czternasty|piętnasty|szesnasty|siedemnasty|osiemnasty|dziewiętnasty|dwudziesty|trzydziesty|czterdziesty|pięćdziesiąty|sześćdziesiąty|siedemdziesiąty|osiemdziesiąty|dziewięćdziesiąty</token>
+      </pattern>
+      <message>Błędna forma liczebnika porządkowego. Powinno być: <suggestion>dwa tysiące \2</suggestion>.</message>
+      <short>Błąd odmiany</short>
+    </rule>
     <rule id="KONIAMI" name="„koniami” (końmi)">
       <pattern>
         <token negate="yes">starymi</token>
         <token>koniami</token>
       </pattern>
       <message>Forma „koniami” jest używana tylko w znaczeniu „kolega”, „przyjaciel” („stary koń”), natomiast mówiąc o zwierzętach, używamy formy <suggestion>końmi</suggestion>.</message>
+      <short>Błąd odmiany</short>
+    </rule>
+    <rule id="KOSCIAMI" name="„kościami” (kośćmi)">
+      <pattern>
+        <token regexp="yes" negate="yes">poczciwy|uczciwy</token>
+        <token negate="yes">z</token>
+        <token>kościami</token>
+      </pattern>
+      <message>Forma „kościami” jest dopuszczalna tylko w związku frazeologicznym „poczciwy, uczciwy z kościami”. W pozostałych wypadkach używamy formy <suggestion>kośćmi</suggestion>.</message>
       <short>Błąd odmiany</short>
     </rule>
     <rule id="MECZY" name="„meczy” (meczów)">
@@ -970,6 +1304,17 @@
         <token>ludzie</token>
       </pattern>
       <message>Prawdopodobny błąd odmiany. Powinno być: <suggestion>\1 ludzi</suggestion>.</message>
+      <short>Błąd odmiany</short>
+    </rule>
+    <rule id="PERSONA_NON_GRATA" name="Odmienione wyrażenie „persona non grata”">
+      <pattern>
+        <token>persona
+          <exception>persona</exception>
+        </token>
+        <token>non</token>
+        <token>grata</token>
+      </pattern>
+      <message>Pierwszego wyrazu z tego wyrażenia łacińskiego nie odmienia się po polsku (można po łacinie, jeśli ktoś nią włada). Poprawnie: <suggestion>persona \2 \3</suggestion>.</message>
       <short>Błąd odmiany</short>
     </rule>
     <rule id="PEWNEGO_RAZU" name="„pewnego raza” (pewnego razu)">
@@ -994,6 +1339,15 @@
         <token>razy</token>
       </pattern>
       <message>W tym kontekście poprawna jest konstrukcja: <suggestion>\1 raza</suggestion>.</message>
+      <short>Błąd odmiany</short>
+    </rule>
+    <rule id="SKAKAC_PRZEZ_KOZLA" name="„skakać przez kozła” (skakać przez kozioł)">
+      <pattern>
+        <token regexp="yes" skip="2">skok|skakać|skoczyć</token>
+        <token>przez</token>
+        <token>kozła</token>
+      </pattern>
+      <message>Niepoprawna odmiana wyrazu. Biernik wyrazu „kozioł” (rodzaj przyrządu gimnastycznego) brzmi: <suggestion>kozioł</suggestion>.</message>
       <short>Błąd odmiany</short>
     </rule>
     <rule id="SWIATLE_SWIETLE" name="„światle” (świetle)">
@@ -1591,6 +1945,14 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>część</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="DAM_RADE" name="„dam rade” (dam radę)">
+      <pattern>
+        <token>dać</token>
+        <token>rade</token>
+      </pattern>
+      <message>Czy chodziło o <suggestion>radę</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
     <rule id="DOMYSLA_DOMYSLNA" name="„na domyślą” (na domyślną)">
       <pattern>
         <token postag="prep:(acc|inst).*" postag_regexp="yes"></token>
@@ -1598,6 +1960,26 @@
       </pattern>
       <message>Czy chodziło o <suggestion>domyślną</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="DOPIERO_W_LATA_W_LATACH" name="„dopiero w lata” (w latach)">
+      <pattern>
+        <token regexp="yes">dopiero|zbudować|urodzony|wznieść|więziony|powstały</token>
+        <token>w</token>
+        <token>lata</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Powinno być: <suggestion>w latach</suggestion></message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="DO_BADAC" name="„do badać” (do badań)">
+      <pattern>
+        <token>do</token>
+        <token min="0" max="2" postag="adj:pl:gen:.*" postag_regexp="yes">
+          <exception regexp="yes">który|jaki</exception>
+        </token>
+        <token>badać</token>
+      </pattern>
+      <message>Prawdopodobnie literówka. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Literówka</short>
     </rule>
     <rule id="DO_NIECH" name="„z/od/do/na niech” (nich)">
       <pattern>
@@ -1616,6 +1998,27 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>do widzenia</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="DO_ZAJAC" name="„do zająć” (do zajęć)">
+      <pattern>
+        <token>do</token>
+        <token min="0" max="2" postag="adj:pl:gen:.*" postag_regexp="yes">
+          <exception regexp="yes">który|jaki</exception>
+        </token>
+        <token>zająć</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>zajęć</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
+    <rule id="DO_ZROBIENI" name="„do zrobieni” (do zrobienia)">
+      <pattern>
+        <token postag="prep:gen">
+          <exception regexp="yes">obok|wokół</exception>
+        </token>
+        <token postag="ppas:pl:nom.voc:m1.p1:perf:aff"></token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>\2a</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="DUE_ZNACZENIA_MA_DUE_ZNACZENIE_MA" name="„duże znaczenia ma” (duże znaczenie ma)">
       <pattern>
         <token regexp="yes">duże|istotne|kluczowe</token>
@@ -1632,6 +2035,15 @@
         <token regexp="yes">to|tak</token>
       </pattern>
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>działo</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="EUROPA" name="„europa” (Europa)">
+      <pattern>
+        <token regexp="yes">Europa|Rzym
+          <exception regexp="yes">\p{Lu}.+</exception>
+        </token>
+      </pattern>
+      <message>Czy chodziło o <suggestion></suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
     <rule id="JAZDA_KONA" name="„jazda kona” (jazda konna)">
@@ -1749,6 +2161,21 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>lub</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="MASARZ" name="„masarz” (masaż)">
+      <pattern>
+        <token>masarz</token>
+      </pattern>
+      <message>Ten wyraz oznacza osobę wyrabiającą wędliny i jest często mylony z wyrazem „masaż”. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="MAS_MEDIA_MASS_MEDIA" name="„mas media” (mass media)">
+      <pattern>
+        <token>mas</token>
+        <token>media</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>mass </suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="MIEDZY_MIEDZY" name="„miedzy” (między)">
       <pattern>
         <token>miedzy</token>
@@ -1757,6 +2184,25 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>między</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="MIEJSCE_ZAMIESZANIA" name="„miejsce zamieszania” (miejsce zamieszkania)">
+      <pattern>
+        <token>miejsce</token>
+        <token>zamieszania</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>zamieszkania</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="MIMO_ROZNIC" name="„mimo różnić” (mimo różnic)">
+      <pattern>
+        <token>mimo</token>
+        <token min="0" max="2" postag="adj:pl:gen:.*" postag_regexp="yes">
+          <exception regexp="yes">który|jaki</exception>
+        </token>
+        <token>różnić</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>różnic</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
     <rule id="MUSZA_MUSZ" name="musza (muszą)">
       <pattern>
         <token skip="5">musza</token>
@@ -1764,6 +2210,14 @@
       </pattern>
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>muszą</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="NASTAWIAC_KARKU" name="„nastawiać karku” (nadstawiać)">
+      <pattern>
+        <token>nastawiać</token>
+        <token>karku</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>NASTAWIAC_KARKU</short>
     </rule>
     <rule id="NIEDAWANA" name="„do niedawana” (do niedawna)">
       <pattern>
@@ -1799,6 +2253,14 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>oddzielenie  </suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="ODGRYWAC_ROLE" name="„odgrywać role” (rolę)">
+      <pattern>
+        <token regexp="yes">odgrywać|odegrać</token>
+        <token>role</token>
+      </pattern>
+      <message>Prawdopodobna literówka, czy „role” miały być na pewno w liczbie mnogiej? A może chodziło o <suggestion>\1 rolę</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="ODJECIE_UJECIE" name="„ujecie, pojecie” (ujęcie, pojęcie) itp.">
       <pattern>
         <token regexp="yes">odjecie|ujecie|pojecie|przejecie|przyjecie|wyjecie</token>
@@ -1823,12 +2285,36 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>ogromny</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="OPACZNOSC_OPATRZNOSC" name="„Opaczność” (opatrzność)">
+      <pattern>
+        <token>opaczność</token>
+      </pattern>
+      <message>Powinno być <suggestion></suggestion> (=opieka Boga)</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="OPOLE" name="„opole” (Opole)">
+      <pattern>
+        <token>opole
+          <exception regexp="yes">O.*</exception>
+        </token>
+      </pattern>
+      <message>Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="OT_JEST" name="„ot jest” (to jest)">
       <pattern>
         <token regexp="yes">[Oo]t</token>
         <token>jest</token>
       </pattern>
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>to jest</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="OT_TYCH_OD_TYCH" name="„ot tych” (od tych)">
+      <pattern>
+        <token>ot</token>
+        <token regexp="yes" postag="adj:pl:gen:m1.m2.m3.f.n1.n2.p1.p2.p3:pos">ten|tamten</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło <suggestion>od </suggestion> lub <suggestion>o </suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
     <rule id="OZNACZ_TO_ZE" name="„oznacz to, że” (oznacza to, że)">
@@ -1848,12 +2334,31 @@
       <message>Czy chodziło o <suggestion>przyjście</suggestion> lub <suggestion>przyjęcie</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="PALCOWKA_BANKU" name="„palcówka banku” (placówka banku)">
+      <pattern>
+        <token skip="5">palcówka</token>
+        <token regexp="yes">bank|zagraniczny</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>placówka</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="PASTWO" name="„pastwo/pastwie/pastwa” (państwo/państwie/państwa)">
       <pattern>
         <token regexp="yes">pastwo|pastwie|pastwa</token>
       </pattern>
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion></suggestion>?</message>
       <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="PODCZAS_PRZYGOTOWAC" name="„podczas przygotować” (podczas przygotowań)">
+      <pattern>
+        <token>podczas</token>
+        <token min="0" max="2" postag="adj:pl:gen:.*" postag_regexp="yes">
+          <exception regexp="yes">który|jaki</exception>
+        </token>
+        <token regexp="yes">przygotować|spotkać</token>
+      </pattern>
+      <message>Prawdopodobnie literówka. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Literówka</short>
     </rule>
     <rule id="POL_GODZINY" name="„pól godziny” (pół godziny)">
       <pattern>
@@ -1903,6 +2408,55 @@
       <message>Prawdopodobna literówka. Czy chodziło o przyimek <suggestion>przy</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="ROZLICZNIE" name="„rozlicznie z” (rozliczenie z)">
+      <pattern>
+        <token>rozlicznie</token>
+        <token min="0" postag="(subst|ger).*:gen.*" postag_regexp="yes"></token>
+        <token>z</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>rozliczenie</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
+    <rule id="ROZNY" name="„rożnych” (różnych)">
+      <pattern>
+        <token>rożny</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="SADOWA" name="„sadowy” (sądowy)">
+      <pattern>
+        <token>sadowy
+          <exception regexp="yes">S.*</exception>
+        </token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion></suggestion></message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="SADZIC_ZE" name="„sadzić, że” (sądzić, że)">
+      <pattern>
+        <token>sadzić</token>
+        <token>,</token>
+        <token regexp="yes">(?:że|iż)?(?:by.*)?|aby</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>sądzić</suggestion>?</message>
+      <short>SADZIC_ZE</short>
+    </rule>
+    <rule id="SANATOR_SENATOR" name="„sanator” (senator)">
+      <pattern>
+        <token>sanator</token>
+      </pattern>
+      <message>to bardzo rzadki wyraz, oznaczający zwolennika sanacji. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="SCISLE_OKRESLONE" name="„ścisłe określone” (ściśle określone)">
+      <pattern>
+        <token>ścisłe</token>
+        <token>określony</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>ściśle </suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="SKAM_YCZENIA_SKADAM_YCZENIA" name="„Skłam życzenia” (Składam życzenia)">
       <pattern>
         <token skip="-1">Skłam</token>
@@ -1919,6 +2473,29 @@
       <message>Czy chodziło o <suggestion>składka</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="SPOLNY" name="„spólny”, „spólnik” (wspólny, wspólnik)">
+      <pattern>
+        <token regexp="yes">spóln(?:y|ik)|spółcz(?:esny|ynnik)|spółuczestnik</token>
+      </pattern>
+      <message>Wyraz „\1” jest przestarzały i może być literówką. Czy chodziło o <suggestion>w\1</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="SPORT_I_TURYSTKA_SPORT_I_TURYSTYKA" name="„sport i turystka” (sport i turystyka)">
+      <pattern>
+        <token>sport</token>
+        <token>i</token>
+        <token>turystka</token>
+      </pattern>
+      <message>Czy chodziło o <suggestion>  </suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="SPROBOWAC" name="„sprobować” (spróbować)">
+      <pattern>
+        <token>sprobować</token>
+      </pattern>
+      <message>Wyraz „\1” jest przestarzały i może być literówką. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="STAJE_PALIW" name="„staje paliw” (stacje paliw)">
       <pattern>
         <token>staje</token>
@@ -1927,12 +2504,68 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>stacje</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="STATYSTKI_STATYSTYKI" name="„statystki” (statystyki)">
+      <pattern>
+        <token>statystka</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>statystyki</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
+    <rule id="STRATOWAC_STARTOWAC" name="„stratować” (startować)">
+      <pattern>
+        <token>stratować</token>
+        <token>w</token>
+        <token regexp="yes">wyborach|igrzyskach|zawodach</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o czasownik <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="STRYKTURA" name="„stryktura” (struktura)">
+      <pattern>
+        <token>stryktura</token>
+      </pattern>
+      <message>To rzadki wyraz (oznaczający zwężenie kanału lub przetoki w organizmie z powodu bliznowacenia lub nowotworu). Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="STUP_STOP" name="„u stup” (u stóp">
+      <pattern>
+        <token regexp="yes">do|u|rozmiar|zapach|podwyższać|odparzenie</token>
+        <token>stup</token>
+      </pattern>
+      <message>Możliwy błąd ortograficzny. Czy chodziło o <suggestion>stóp</suggestion>?</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="SZKLANI_SZKLANKI" name="„pół szklani” (pół szklanki)">
+      <pattern>
+        <token regexp="yes">połowa|pół|ćwierć|dwa|\d+</token>
+        <token>szklani</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>szklanki</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
+    <rule id="TAKTOWAC_JAKO" name="„taktować jako” (traktować jako)">
+      <pattern>
+        <token skip="2">taktować</token>
+        <token>jako</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion></suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="TLOMACZ" name="„tłomacz” (tłumacz)">
       <pattern>
         <token regexp="yes">tłomacz.*</token>
       </pattern>
       <message>Wyraz „\1” jest przestarzały i może być literówką. Czy chodziło o <suggestion></suggestion>?</message>
       <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="TO_ZE_TO_E" name="„to, ze” (to, że)">
+      <pattern>
+        <token>to</token>
+        <token>,</token>
+        <token>ze</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>że</suggestion>?</message>
+      <short>Literówka</short>
     </rule>
     <rule id="TWIERDZA_ZE" name="„twierdza, że” (twierdzą, że)">
       <pattern>
@@ -1958,6 +2591,40 @@
       </pattern>
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>Ukrainie</suggestion>?</message>
       <short>Literówka</short>
+    </rule>
+    <rule id="UNIWERSYTET_W_HARVARDZIE" name="„Uniwersytet w Harvardzie” (Uniwersytet Harvarda)">
+      <pattern>
+        <token>uniwersytet</token>
+        <token>w</token>
+        <token regexp="yes">Har[wv]ardzie</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Powinno być: <suggestion>Harvarda</suggestion> (to nazwisko, a nie miejscowość).</message>
+      <short>UNIWERSYTET_W_HARVARDZIE</short>
+    </rule>
+    <rule id="WADA_WZORKU" name="„wada wzorku” (wada wzroku)">
+      <pattern>
+        <token>wada</token>
+        <token>wzorku</token>
+      </pattern>
+      <message>Literówka. Czy chodziło o <suggestion>wzroku</suggestion>?</message>
+      <short>Literówka</short>
+    </rule>
+    <rule id="WARZYWA_NA_PATELNIE" name="„warzywa na patelnie” (na patelnię)">
+      <pattern>
+        <token>warzywo</token>
+        <token>na</token>
+        <token>patelnie</token>
+      </pattern>
+      <message>Literówka: <suggestion>patelnię</suggestion>.</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="WYZE" name="„coraz wyże” (wyżej)">
+      <pattern>
+        <token regexp="yes">coraz|wspomnieć|piętro|wymienić|opisać|cytować|omówić|przytoczyć|oczko|przedstawić|przywołać|znacznie|wzmiankować|podać|scharakteryzować|nieco|wyliczyć|szczebel|wspominać|centrymetr|zacytować|podciągnąć|metr|stopień|trochę|omawiać</token>
+        <token>wyże</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Powinno być: <suggestion>wyżej</suggestion>.</message>
+      <short>Prawdopodobna literówka</short>
     </rule>
     <rule id="WYZ_DEMOGRAFICZNY" name="„wyz demograficzny” (wyż demograficzny)">
       <pattern>
@@ -2011,12 +2678,40 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>\1</suggestion> czy o <suggestion>\2</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
+    <rule id="ZA_ZDANIE" name="„mieć za zdanie/zadnie” (za zadanie)">
+      <pattern>
+        <token skip="1">mieć</token>
+        <token>za</token>
+        <token regexp="yes">z[da][da]nie</token>
+      </pattern>
+      <message>Czy chodziło o <suggestion>zadanie</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="ZGODNIE_INST" name="„zgodnie opisem” (zgodnie z opisem)">
+      <pattern>
+        <token>zgodnie</token>
+        <token postag=".*inst.*" postag_regexp="yes">
+          <exception>z</exception>
+        </token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion> z </suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
     <rule id="ZNACZA_SUME" name="„znaczą część” (znaczną część)">
       <pattern>
         <token>znaczą</token>
         <token regexp="yes">część|sumę|przewagę|poprawę|ilość|liczbę|redukcję|obniżkę|rolę|szkodę|większość|autonomię|podwyżkę|grupę|swobodę</token>
       </pattern>
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>znaczną \2</suggestion>?</message>
+      <short>Prawdopodobna literówka</short>
+    </rule>
+    <rule id="Z_GODNIE" name="„z godnie z” (zgodnie z)">
+      <pattern>
+        <token>z</token>
+        <token>godnie</token>
+        <token>z</token>
+      </pattern>
+      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>zgodnie</suggestion>?</message>
       <short>Prawdopodobna literówka</short>
     </rule>
     <rule id="niebyt_niezbyt" name="„niebyt dobrze” (niezbyt dobrze)">
@@ -2076,6 +2771,15 @@
         <token>wymaluj</token>
       </pattern>
       <message>W tym stałym związku frazeologicznym zwykle nie stawia się przecinka.</message>
+      <short>Zbędny przecinek</short>
+    </rule>
+    <rule id="BYLE_GDZIE" name="Zbędny przecinek po „byle”">
+      <pattern>
+        <token>byle</token>
+        <token>,</token>
+        <token regexp="yes">jak|gdzie|jaki|który|co|kto</token>
+      </pattern>
+      <message>Połączeń typu „byle co” nie wolno rozdzielać przecinkiem. Poprawnie: <suggestion>\1 \3</suggestion>.</message>
       <short>Zbędny przecinek</short>
     </rule>
     <rule id="I_TAK" name="Zbędny przecinek po „i tak”">
@@ -2332,6 +3036,33 @@
       <message>Wyrażenie „za wyjątkiem” jest niepoprawne. Poprawne wyrażenie: <suggestion>z wyjątkiem</suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
+    <rule id="ANALOGICZNY_Z" name="„analogiczny z” (do)">
+      <pattern>
+        <token>analogiczny</token>
+        <token regexp="yes">z|ze</token>
+        <token postag=".*inst.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Prawdopodobnie niepoprawny przyimek. Powinno być <suggestion> do </suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="BALSAM_DLA_WLOSOW" name="„szampon dla włosów” (szampon do włosów)">
+      <pattern>
+        <token regexp="yes">szampon|balsam|odżywka|żel|mydło|tonik</token>
+        <token>dla</token>
+        <token regexp="yes">włosów|skóry</token>
+      </pattern>
+      <message>Niepoprawne użycie przyimka „dla”. Mówimy: <suggestion>\1 do włosów</suggestion>.</message>
+      <short>Niepoprawne użycie przyimka „dla”</short>
+    </rule>
+    <rule id="BRAC_NA_MEZA" name="„brać na męża/żonę” (brać za...)">
+      <pattern>
+        <token regexp="yes">brać|wziąć</token>
+        <token>na</token>
+        <token regexp="yes">męża|żonę</token>
+      </pattern>
+      <message>To wyrażenie jest niepoprawne. Poprawnie: <suggestion>\1 za \3</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
     <rule id="CO_I_RAZ" name="„co i raz/rusz” (co chwila)">
       <pattern>
         <token>co</token>
@@ -2350,6 +3081,22 @@
       <message>Prawdopodobnie anglicyzm. Lepiej: <suggestion>Co więcej</suggestion>.</message>
       <short>Anglicyzm</short>
     </rule>
+    <rule id="DOKONAC_BLEDU" name="„dokonać błędu” (popełnić błąd)">
+      <pattern>
+        <token>dokonać</token>
+        <token>błędu</token>
+      </pattern>
+      <message>Błąd leksykalny. Poprawnie: <suggestion>popełnić błąd</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="DOZNAC_ATAKU" name="„doznać ataku” (mieć atak)">
+      <pattern>
+        <token regexp="yes">doznać|doznawać</token>
+        <token>ataku</token>
+      </pattern>
+      <message>Błąd leksykalny. Poprawnie: <suggestion>mieć atak</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
     <rule id="DO_NA_DZIEN_DZISIEJSZY" name="„do na dzień obecny” (do dziś, nadal)">
       <pattern>
         <token>do</token>
@@ -2360,11 +3107,115 @@
       <message>To wyrażenie jest bardzo niezgrabne. Lepiej: <suggestion>nadal</suggestion>, <suggestion>do dziś</suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
+    <rule id="DRAJWER" name="„drajwer” (sterownik)">
+      <pattern>
+        <token>drajwer</token>
+      </pattern>
+      <message>Ten wyraz jest slangowy. Lepiej: <suggestion>sterownik</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
     <rule id="DYGITALNY" name="„dygitalny” (cyfrowy)">
       <pattern>
         <token regexp="yes">d[iy]gitaln.*</token>
       </pattern>
       <message>Ten wyraz jest bardzo rzadki i książkowy. Lepiej: <suggestion></suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="EPATOWAC_CIEPLEM" name="„epatować ciepłem” (emanować ciepłem)">
+      <pattern>
+        <token skip="4">epatować</token>
+        <token>ciepłem</token>
+      </pattern>
+      <message>Prawdopodobnie pomylony czasownik. Czy chodziło o <suggestion>emanować</suggestion>?</message>
+      <short>EPATOWAC_CIEPLEM</short>
+    </rule>
+    <rule id="FORMULA_KREMU" name="„formuła kremu” (skład)">
+      <pattern>
+        <token>formuła</token>
+        <token regexp="yes">kremu|kosmetyku|szamponu|leku|pasty|balsamu|olejku|farby</token>
+      </pattern>
+      <message>Błędne użycie wyrazu „formuła”. Powinno być raczej: <suggestion>skład </suggestion> lub <suggestion>receptura </suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="GORACY_KLAWISZ" name="„gorący klawisz” (klawisz skrótu)">
+      <pattern>
+        <token>gorący</token>
+        <token>klawisz</token>
+      </pattern>
+      <message>To wyrażenie jest kalką z angielskiego. Poprawnie: <suggestion>\2 skrótu</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="GRAC_MECZ" name="„grać mecz” (rozegrać mecz)">
+      <pattern>
+        <token regexp="yes">grać|grywać</token>
+        <token>mecz</token>
+      </pattern>
+      <message>Użyto niewłaściwego czasownika. Powinno być: <suggestion>rozegrać</suggestion> lub <suggestion>rozgrywać</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="JUSTYFIKACJA" name="„justyfikacja” (justowanie)">
+      <pattern>
+        <token>justyfikacja</token>
+      </pattern>
+      <message>Ten wyraz jest kalką z języka angielskiego, utworzoną niezgodnie z polskimi zasadami słowotwórstwa. Poprawnie: <suggestion>justować</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="KULT_DLA" name="„kult, lekceważenie dla czego” (kult czego)">
+      <pattern>
+        <token regexp="yes" postag="subst.*|ger.*" postag_regexp="yes">kult|lekceważyć</token>
+        <token>dla</token>
+      </pattern>
+      <message>W tym miejscu należy prawdopodobnie napisać: <suggestion>\1</suggestion> (wyraz łączy się wprost z dopełniaczem).</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="LEPSZE_ZLO" name="„lepsze zło” (mniejsze zło)">
+      <pattern>
+        <token postag="adj.*n[12].*:com" postag_regexp="yes">dobry</token>
+        <token>zło</token>
+      </pattern>
+      <message>Prawdopodobnie niepoprawne wyrażenie. Czy chodziło o <suggestion>mały </suggestion>?</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="LETNIA_ROCZNICA" name="„iluśletnia rocznica” (któraś)">
+      <pattern>
+        <token regexp="yes">.*letni.*</token>
+        <token>rocznica</token>
+      </pattern>
+      <message>Rocznica jest któraś, a nie iluśletnia, np. „piąta rocznica”.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="LETNIE_URODZINY" name="„iluśletnie urodziny” (któreś)">
+      <pattern>
+        <token regexp="yes">.*letni.*</token>
+        <token>urodziny</token>
+      </pattern>
+      <message>Urodziny są któreś i same nie mają lat, np. „piąte urodziny”.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="LETNI_JUBILEUSZ" name="„iluśletni jubileusz” (któryś)">
+      <pattern>
+        <token regexp="yes">.*letni.*</token>
+        <token>jubileusz</token>
+      </pattern>
+      <message>Jubileusz jest któryś i nie ma sam wielu lat, np. „piąty jubileusz”.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="MIEC_FACH_W_RECE" name="„mieć fach w ręce” (w ręku)">
+      <pattern>
+        <token skip="3">mieć</token>
+        <token>fach</token>
+        <token>w</token>
+        <token>ręce</token>
+      </pattern>
+      <message>Błąd leksykalny. Poprawnie: <suggestion>ręku</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="NAJWIECEJ_LUBIC" name="„najwięcej lubić” (najbardziej lubić)">
+      <pattern>
+        <token>najwięcej</token>
+        <token>lubić</token>
+      </pattern>
+      <message>Niepoprawny związek wyrazów. Poprawnie: <suggestion>najbardziej \2</suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
     <rule id="ODNOSNIE_DO" name="„odnośnie czegoś” (odnośnie do)">
@@ -2373,6 +3224,46 @@
         <token negate="yes">do</token>
       </pattern>
       <message>Poprawną formą jest <suggestion>odnośnie do</suggestion> czegoś.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="OSIAGNAC_POSTEP" name="„osiągnąć postęp” (dokonać postępu)">
+      <pattern>
+        <token>osiągnąć</token>
+        <token>postęp</token>
+      </pattern>
+      <message>Niepoprawny zwrot. Poprawnie: <suggestion>dokonać postępu</suggestion>.</message>
+      <short>Niepoprawny zwrot</short>
+    </rule>
+    <rule id="PODDAWAC_W_WATPLIWOSC" name="„poddawać w wątpliwość” (podawać w wątpliwość)">
+      <pattern>
+        <token regexp="yes" skip="2">poddawać|poddać</token>
+        <token>w</token>
+        <token>wątpliwość</token>
+      </pattern>
+      <message>Poprawną formą jest <suggestion></suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="PONOSIC_NAKLADY" name="„ponosić nakłady” (koszty)">
+      <pattern>
+        <token regexp="yes">ponosić|ponieść</token>
+        <token>nakłady</token>
+      </pattern>
+      <message>Tego czasownika nie używamy z rzeczownikiem „\2”. Powinno być: <suggestion>koszty</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="POSTAWIC_OPOR" name="„postawić opór” (stawić opór)">
+      <pattern>
+        <token>postawić</token>
+        <token>opór</token>
+      </pattern>
+      <message>Niepoprawne wyrażenie. Poprawnie: <suggestion> </suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="POTRAFIACY" name="„potrafiący” (umiejący)">
+      <pattern>
+        <token postag="pact.*" postag_regexp="yes">potrafić</token>
+      </pattern>
+      <message>Czasownik „potrafić” nie ma imiesłowu czynnego. Poprawnie: <suggestion>umieć</suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
     <rule id="PO_NAJMNIEJSZEJ_LINII" name="„po najmniejszej linii oporu” (po linii najmniejszego oporu)">
@@ -2394,12 +3285,144 @@
       <message>Ten zwrot bywa używany żartobliwie. Jeśli tekst jest oficjalny, powinno być: <suggestion>\1 \2</suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
+    <rule id="PRACOWAC_NA_HALI" name="„pracować, trenować na hali” (w hali)">
+      <pattern>
+        <token regexp="yes">pracować|trenować</token>
+        <token>na</token>
+        <token>hali</token>
+      </pattern>
+      <message>Niepoprawny przyimek. Powinno być: <suggestion>w hali</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="PROTOKOL_Z_CZEGO" name="„protokół z czego” (protokół czego)">
+      <pattern>
+        <token>protokół</token>
+        <token>z</token>
+        <token postag=".*gen.*" postag_regexp="yes">
+          <exception>Kioto</exception>
+        </token>
+      </pattern>
+      <message>Prawdopodobnie niepoprawna forma. Poprawnie: <suggestion>\1 \3</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="PRZEDKLADAC_WNIOSEK" name="„przedkładać wniosek” (przedstawiać wniosek)">
+      <pattern>
+        <token regexp="yes" skip="3">przedkładać|przedłożyć</token>
+        <token>wniosek</token>
+      </pattern>
+      <message>Prawdopodobnie użyto niewłaściwego czasownika. Powinno być: <suggestion>przedstawić</suggestion>, <suggestion>zgłaszać</suggestion>, <suggestion>wysuwać</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="PRZEZNACZAC_CZAS" name="„przeznaczać czas dla” (na)">
+      <pattern>
+        <token regexp="yes">przeznaczać|przeznaczyć</token>
+        <token>czas</token>
+        <token>dla</token>
+      </pattern>
+      <message>Prawdopodobnie użyto błędnego przyimka. Powinno być: <suggestion>  na</suggestion> lub <suggestion>poświęcić </suggestion> (z narzędnikiem).</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="PRZYCZYNA_DO" name="„przyczyna do” (przyczyna, powód do)">
+      <pattern>
+        <token>przyczyna</token>
+        <token>do</token>
+        <token postag="(subst|adj|ppron|ppron3|ppas|pact|ger).*gen.*" postag_regexp="yes">
+          <exception>dziś</exception>
+        </token>
+      </pattern>
+      <message>Nie mówi się „\1 do”, wystarczy powiedzieć <suggestion> </suggestion> (lub <suggestion>powód do </suggestion>).</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="PRZYJAZNY_DLA_UZYTKOWNIKA" name="„przyjazny dla użytkownika” (łatwy w obsłudze)">
+      <pattern>
+        <token>przyjazny</token>
+        <token>dla</token>
+        <token>użytkownika</token>
+      </pattern>
+      <message>To wyrażenie jest kalką z języka angielskiego. Lepiej: <suggestion>łatwy w obsłudze</suggestion>, <suggestion>łatwy w użytku</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
     <rule id="RZEWNIE_PODOBA" name="„rzewnie podoba” (żywnie podoba)">
       <pattern>
         <token>rzewnie</token>
         <token regexp="yes">podoba(?:ło|ć)?</token>
       </pattern>
       <message>Błąd leksykalny. Mówi się <suggestion>żywnie \2</suggestion> (=robić tak, jak kto chce). Słowo „rzewnie” znaczy „ckliwie” lub „łzawo”, a raczej rzadko mówi się, żeby coś się ckliwie podobało.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="SPELNIAC_OPIEKE" name="„spełniać opiekę” (sprawować opiekę)">
+      <pattern>
+        <token regexp="yes">spełniać|pełnić</token>
+        <token>opiekę</token>
+      </pattern>
+      <message>Niepoprawny zwrot. Mówi się <suggestion>sprawować </suggestion> lub <suggestion>opiekować się</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="SPRAWOZDAWAC" name="„sprawozdawać” (zdawać sprawę)">
+      <pattern>
+        <token>sprawozdawać</token>
+      </pattern>
+      <message>Ten czasownik jest uważany przez językoznawców za niepoprawny. Lepiej: <suggestion>zdawać sprawę</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="SWIECIC_SUKCESY" name="„święcić sukcesy” (święcić triumfy)">
+      <pattern>
+        <token skip="2">święcić</token>
+        <token>sukcesy</token>
+      </pattern>
+      <message>Niepoprawny dobór wyrazów. Powinno być: <suggestion>triumfy</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="WIECEJ_LUBIC" name="„więcej lubić” (bardziej lubić, woleć)">
+      <pattern>
+        <token>więcej</token>
+        <token>lubić
+          <exception>lub</exception>
+        </token>
+      </pattern>
+      <message>Niepoprawny związek wyrazów. Poprawnie: <suggestion>bardziej </suggestion> lub <suggestion>woleć</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="WPROWADZIC_W_OBIEG" name="„wprowadzić coś w obieg” (puścić w obieg)">
+      <pattern>
+        <token regexp="yes" skip="-1">wprowadzić|wprowadzać</token>
+        <token>w</token>
+        <token>obieg</token>
+      </pattern>
+      <message>Mówi się „<suggestion>puszczać</suggestion> w obieg”, „<suggestion>puścić</suggestion> w obieg”, a nie „wprowadzać w obieg”.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="WYJSC_Z_PROPOZYCJA" name="„wyjść z propozycją” (zaproponować)">
+      <pattern>
+        <token regexp="yes">wyjść|wychodzić</token>
+        <token>z</token>
+        <token>propozycją</token>
+      </pattern>
+      <message>Niepoprawnie zbudowane wyrażenie. Lepiej: <suggestion>zaproponować</suggestion>, <suggestion>uczynić propozycję</suggestion>, <suggestion>wystąpić z propozycją</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="WYRAZIC_POPARCIE" name="„wyrazić poparcie” (udzielić poparcia, poprzeć)">
+      <pattern>
+        <token regexp="yes">wyrazić|wyrażać</token>
+        <token>poparcie</token>
+      </pattern>
+      <message>Niepoprawne wyrażenie. Poprawnie: <suggestion>udzielić poparcia</suggestion>, <suggestion>poprzeć</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="WYRZADZIC_STRATE" name="„wyrządzić stratę” (spowodować stratę)">
+      <pattern>
+        <token regexp="yes" skip="2">wyrządzić|wyrządzać</token>
+        <token regexp="yes">stratę|straty</token>
+      </pattern>
+      <message>Prawdopodobnie użyto niewłaściwego czasownika. Powinno być: <suggestion>spowodować</suggestion> lub <suggestion>powodować</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="WYWIERAC_PIETNO" name="„wywierać piętno” (odciskać piętno)">
+      <pattern>
+        <token regexp="yes" skip="2">wywierać|wywrzeć</token>
+        <token>piętno</token>
+      </pattern>
+      <message>Prawdopodobnie użyto niewłaściwego czasownika. Powinno być: <suggestion>odcisnąć</suggestion> lub <suggestion>wycisnąć</suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
     <rule id="W_POWAZNEJ_MIERZE" name="„w poważnej/wysokiej mierze” (w dużej mierze)">
@@ -2409,6 +3432,48 @@
         <token>mierze</token>
       </pattern>
       <message>Błędna postać wyrażenia. Powinno być: <suggestion>w dużej mierze</suggestion></message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="ZAKRAWAC_O" name="„zakrawać o” (zakrawać na)">
+      <pattern>
+        <token>zakrawać</token>
+        <token>o</token>
+      </pattern>
+      <message>Z tym czasownikiem używa się przyimka <suggestion>na</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="ZA_SWIADKA" name="„być za świadka” (świadkiem)">
+      <pattern>
+        <token>być</token>
+        <token>za</token>
+        <token>świadka</token>
+      </pattern>
+      <message>Prawdopodobnie błędny związek. Powinno być: <suggestion>świadkiem</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="ZDJAC_ZE_STANOWISKA" name="„zdjąć ze stanowiska” (zwolnić ze stanowiska)">
+      <pattern>
+        <token regexp="yes" skip="2">zdjąć|zdejmować</token>
+        <token>ze</token>
+        <token>stanowiska</token>
+      </pattern>
+      <message>Prawdopodobnie użyto niewłaściwego czasownika (wyrażenie jest niepoprawnym rusycyzmem). Powinno być: <suggestion>usunąć</suggestion> lub <suggestion>zwolnić</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="ZESTAWIC_LISTE" name="„zestawić listę” (ułożyć listę)">
+      <pattern>
+        <token regexp="yes" postag="verb.*" postag_regexp="yes">zestawiać|zestawić</token>
+        <token>listę</token>
+      </pattern>
+      <message>Prawdopodobnie użyto niewłaściwego czasownika. Mówimy raczej: <suggestion>ułożyć</suggestion> lub <suggestion>utworzyć</suggestion>.</message>
+      <short>Błąd leksykalny</short>
+    </rule>
+    <rule id="ZORIENTOWANY_OBIEKTOWO" name="„zorientowany obiektowo” (obiektowy)">
+      <pattern>
+        <token postag="ppas.*" postag_regexp="yes">zorientować</token>
+        <token>obiektowo</token>
+      </pattern>
+      <message>To wyrażenie jest kalką z języka angielskiego. Lepiej: <suggestion></suggestion>.</message>
       <short>Błąd leksykalny</short>
     </rule>
     <rule id="zarowno_jak_rowniez" name="zarówno… jak również (jak)">
@@ -2481,6 +3546,14 @@
       <message>Prosty stopień najwyższy przymiotnika nie powinien być używany z wyrazem „bardziej”. Wystarczy powiedzieć: <suggestion>\2</suggestion>.</message>
       <short>Błąd składniowy</short>
     </rule>
+    <rule id="BEDZIE_POTRAFIC" name="„będzie potrafić” (będzie umieć)">
+      <pattern>
+        <token postag="verb:bedzie.*" postag_regexp="yes"></token>
+        <token>potrafić</token>
+      </pattern>
+      <message>Czasownik „potrafić” jest uznawany przez językoznawców za dokonany, dlatego nie ma czasu przyszłego. Lepiej: <suggestion>\1 umieć</suggestion>.</message>
+      <short>Niepoprawne użycie czasownika</short>
+    </rule>
     <rule id="CZYM_TYM" name="„czym... tym” (im... tym)">
       <pattern>
         <token skip="-1">czym</token>
@@ -2491,6 +3564,24 @@
       <message>Mówimy <suggestion>im</suggestion>..., tym...</message>
       <short>Błąd składniowy</short>
     </rule>
+    <rule id="DOFINANSOWANIE_DO_CZEGOS" name="„dofinansowanie do czegoś” (dofinansowanie czegoś)">
+      <pattern>
+        <token>dofinansowanie</token>
+        <token>do</token>
+      </pattern>
+      <message>Nieprawidłowa forma, tego wyrazu używa się bez przyimka „do” (chyba że ten przyimek jest konieczny ze względu na inne wyrazy w zdaniu). Wystarczy: <suggestion>\1</suggestion>.</message>
+      <short>Błąd składniowy</short>
+    </rule>
+    <rule id="DO_CI_DO_CIEBIE" name="Nieakcentowana forma zaimka po przyimku">
+      <pattern>
+        <token postag="prep:([a-z]+).*" postag_regexp="yes">
+          <exception regexp="yes">co|jak</exception>
+        </token>
+        <token postag="ppron.*:nakc.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Tu powinna być forma akcentowana zaimka: <suggestion></suggestion>.</message>
+      <short>Błędna forma gramatyczna</short>
+    </rule>
     <rule id="DWADZIESCIA_DWAJ" name="„dwadzieścia dwaj uczniowie” (dwudziestu dwóch uczniów)">
       <pattern>
         <token postag="num:pl:nom.acc.voc:m2.m3.f.n2:rec"></token>
@@ -2498,6 +3589,23 @@
         <token postag="subst:pl:nom:m1"></token>
       </pattern>
       <message>Niepoprawna składnia liczebników. Poprawnie: <suggestion>  </suggestion>. Należy też ewentualnie dostosować liczbę czasownika!</message>
+      <short>Błąd składniowy</short>
+    </rule>
+    <rule id="INSTRUKCJA_NA" name="„instrukcja na robienie” (instrukcja robienia)">
+      <pattern>
+        <token>instrukcja</token>
+        <token>na</token>
+        <token postag="ger:sg:nom.acc:n2:imperf:aff:refl.nonrefl"></token>
+      </pattern>
+      <message>To błąd składniowy. Poprawnie: <suggestion> </suggestion>.</message>
+      <short>Błąd składniowy</short>
+    </rule>
+    <rule id="KLIKNAC_W_NA" name="„kliknąć na/w” (kliknąć co)">
+      <pattern>
+        <token>kliknąć</token>
+        <token regexp="yes">w|na</token>
+      </pattern>
+      <message>Nie mówi się „kliknąć na co”. Piszemy po prostu <suggestion>\1</suggestion>.</message>
       <short>Błąd składniowy</short>
     </rule>
     <rule id="KTOS_KTOREGO" name="„ktoś, którego” (czyjego, kogo)">
@@ -2551,6 +3659,14 @@
       <message>Mówimy <suggestion>było napisane</suggestion>, a nie „pisze”.</message>
       <short>Błąd składniowy</short>
     </rule>
+    <rule id="REGULOWAC_RUCHEM" name="„regulować ruchem” (kierować ruchem)">
+      <pattern>
+        <token>regulować</token>
+        <token>ruchem</token>
+      </pattern>
+      <message>Czasownik „regulować” nie łączy się z narzędnikiem, więc powinno być: <suggestion> ruch</suggestion> lub <suggestion>kierować ruchem</suggestion>.</message>
+      <short>Błąd składniowy</short>
+    </rule>
     <rule id="STOPIEN_NAJWYZSZY_ADV" name="Opisowa forma stopnia najwyższego przysłówka (zamiast prostej)">
       <pattern>
         <token>najbardziej</token>
@@ -2583,6 +3699,23 @@
         <token regexp="yes">podobnie|optymalnie|pomału|powoli|równolegle|tymczasowo</token>
       </pattern>
       <message>Ten przysłówek nie może być stopniowany. Poprawnie: <suggestion>\3</suggestion>.</message>
+      <short>Błąd składniowy</short>
+    </rule>
+    <rule id="USTAPIC_MIEJSCE" name="„ustąpić miejsce” (ustąpić miejsca)">
+      <pattern>
+        <token regexp="yes" skip="3">ustąpić|ustępować</token>
+        <token>miejsce</token>
+      </pattern>
+      <message>Czasownik „ustępować” łączy się z dopełniaczem. Poprawnie: <suggestion>miejsca</suggestion>.</message>
+      <short>Błąd składniowy</short>
+    </rule>
+    <rule id="ZAINTERESOWANIE_DLA" name="„zainteresowanie dla czego” (czym)">
+      <pattern>
+        <token>zainteresowanie</token>
+        <token>dla</token>
+        <token postag=".*gen.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Nie mówi się „zainteresowanie dla czegoś”, lecz <suggestion>zainteresowanie </suggestion>.</message>
       <short>Błąd składniowy</short>
     </rule>
     <rule id="ZEBY_AGLT" name="Zła forma w zdaniu po „żeby”">
@@ -2627,6 +3760,13 @@
       <message>Wyrażenie „w oparciu o” jest nadużywane i niezalecane przez językoznawców. Zalecane wyrażenie synonimiczne: <suggestion>na podstawie</suggestion>.</message>
       <short>Wyraz modny lub nadużywany</short>
     </rule>
+    <rule id="DESTYNACJA" name="„destynacja” (cel podróży)">
+      <pattern>
+        <token>destynacja</token>
+      </pattern>
+      <message>Pretensjonalna kalka z angielskiego. Lepiej: <suggestion>cel podróży</suggestion>, <suggestion>miejsce</suggestion>.</message>
+      <short>Kalka z angielskiego</short>
+    </rule>
     <rule id="DOKLADNIE" name="„dokładnie” (owszem, właśnie)">
       <pattern>
         <token postag="SENT_START"></token>
@@ -2646,6 +3786,40 @@
       <message>Wyraz „dokładnie” oznacza „w sposób ścisły, skrupulatny” i jest błędnie używane w sensie <suggestion>właśnie</suggestion>, <suggestion>owszem</suggestion>.</message>
       <short>Wyraz modny lub nadużywany</short>
     </rule>
+    <rule id="DUZO_ZDROWSZY" name="„dużo zdrowszy” (znacznie zdrowszy)">
+      <pattern>
+        <token>dużo</token>
+        <token postag=".*:com" postag_regexp="yes">zdrowy</token>
+      </pattern>
+      <message>Nie mówi się \1 \2, tylko <suggestion>znacznie \2</suggestion>.</message>
+      <short>Wyraz modny lub nadużywany</short>
+    </rule>
+    <rule id="KOMUNIKAT_BLEDU" name="„komunikat błędu” (komunikat o błędzie)">
+      <pattern>
+        <token>komunikat</token>
+        <token>błędu</token>
+      </pattern>
+      <message>Niepoprawny termin. Mówi się: <suggestion>\1 o błędzie</suggestion>.</message>
+      <short>Wyraz modny lub nadużywany</short>
+    </rule>
+    <rule id="KONCEPT" name="„koncept” (pojęcie)">
+      <pattern>
+        <token>koncept</token>
+      </pattern>
+      <message>Ten termin jest często nadużywany (kalka z angielskiego). Poprawnie: <suggestion>pojęcie</suggestion> (wyjątkiem jest sytuacja, gdy mowa o konceptach w poezji barokowej).</message>
+      <short>Kalka z angielskiego</short>
+    </rule>
+    <rule id="NA_ODCINKU" name="„na odcinku” (w zakresie)">
+      <pattern>
+        <token>na</token>
+        <token>odcinku</token>
+        <token regexp="yes" postag="subst.*gen.*" postag_regexp="yes">[a-zćśźżł].*
+          <exception>ul</exception>
+        </token>
+      </pattern>
+      <message>To wyrażenie w znaczeniu metaforycznym trąci urzędniczą nowomową. Lepiej: <suggestion>w zakresie</suggestion>, <suggestion>w</suggestion>. Ewentualnie należy przeredagować i uprościć całe zdanie.</message>
+      <short>Wyraz modny lub nadużywany</short>
+    </rule>
     <rule id="POWIEM_TAK" name="„powiem tak”">
       <pattern>
         <token postag="SENT_START"></token>
@@ -2660,6 +3834,15 @@
         <token regexp="yes">przekonywując.*</token>
       </pattern>
       <message>Ten wyraz jest niepoprawny gramatycznie i uważany za rażący; dopuszczają go nieliczne słowniki. Poprawnie: <suggestion></suggestion>, <suggestion></suggestion>.</message>
+      <short>Wyraz modny lub nadużywany</short>
+    </rule>
+    <rule id="WYDAWAC_SIE_BYC" name="„wydaje się być” (wydaje się)">
+      <pattern>
+        <token regexp="yes">wydawać|zdawać|wydać|zdać|okazać|okazywać</token>
+        <token>się</token>
+        <token>być</token>
+      </pattern>
+      <message>Wyrażenie „\1 się być” jest modne i nadużywane, lecz niepoprawne. Poprawna jest forma <suggestion>\1 się</suggestion>.</message>
       <short>Wyraz modny lub nadużywany</short>
     </rule>
     <rule id="W_TERMINACH" name="„w terminach” (w kategoriach)">
@@ -2743,6 +3926,58 @@
       <message>To wyrażenie jest pleonazmem. Mówimy <suggestion>w razie</suggestion> lub <suggestion>w przypadku</suggestion>.</message>
       <short>Pleonazm</short>
     </rule>
+    <rule id="ADRES_ZAMIESZKANIA" name="„adres zamieszkania” (adres, miejsce zamieszkania)">
+      <pattern>
+        <token>adres</token>
+        <token>zamieszkania</token>
+      </pattern>
+      <message>To niepoprawne wyrażenie. Mówimy albo po prostu <suggestion>\1</suggestion>, albo <suggestion>miejsce zamieszkania</suggestion>. Czasem też używa się go w sensie <suggestion>\1 do korespondencji</suggestion> (w odróżnieniu od adresu zameldowania).</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="GENEZA_POWSTANIA" name="„geneza powstania” (geneza)">
+      <pattern>
+        <token>geneza</token>
+        <token>powstania</token>
+        <token regexp="yes" negate="yes">listopadowego|warszawskiego|styczniowego</token>
+      </pattern>
+      <message>To wyrażenie to pleonazm. Wystarczy powiedzieć <suggestion>\1</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="GRAC_FAIR_PLAY" name="„grać fair play” (grać fair)">
+      <pattern>
+        <token regexp="yes" skip="1">grać|zagrać|grywać</token>
+        <token>fair</token>
+        <token>play</token>
+      </pattern>
+      <message>Błędny związek frazeologiczny. Powinno być <suggestion>\2</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="KURS_NAUKI" name="„kurs nauki” (kurs)">
+      <pattern>
+        <token>kurs</token>
+        <token>nauki</token>
+      </pattern>
+      <message>Wyrażenie „kurs nauki” jest pleonazmem (masłem maślanym). Wystarczy powiedzieć <suggestion>kurs</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="OKRES_CZASU" name="„okres czasu”, „godzina czasu” (okres, godzina)">
+      <pattern>
+        <token regexp="yes">okres|minuta|sekunda|godzina|miesiąc|tydzień|rok</token>
+        <token>czasu</token>
+      </pattern>
+      <message>Wyrażenia typu „miesiąc czasu”, „okres czasu” są niepoprawne (pleonazmy). Wystarczy: <suggestion>\1</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="POPRAWIC_SIE_NA_LEPSZE" name="„poprawić się na lepsze” (poprawić się)">
+      <pattern>
+        <token regexp="yes">poprawić|poprawiać</token>
+        <token>się</token>
+        <token>na</token>
+        <token postag=".*:com" postag_regexp="yes">dobry</token>
+      </pattern>
+      <message>To pleonazm (nic nie może poprawić się na gorsze). Mówimy po prostu <suggestion>\1 \2</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
     <rule id="ROK_TEMU_WSTECZ" name="„rok temu wstecz” (rok temu)">
       <pattern>
         <token regexp="yes">okres|minuta|sekunda|godzina|miesiąc|tydzień|rok</token>
@@ -2751,6 +3986,32 @@
       </pattern>
       <message>Niepoprawne wyrażenie. Poprawnie: <suggestion>\1 \2</suggestion>.</message>
       <short>ROK_TEMU_WSTECZ</short>
+    </rule>
+    <rule id="SPADAC_W_DOL" name="„spadać w dół” (spadać)">
+      <pattern>
+        <token regexp="yes">spaść|spadać</token>
+        <token>w</token>
+        <token>dół</token>
+      </pattern>
+      <message>To pleonazm. Wystarczy powiedzieć: <suggestion>\1</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="W_MIESIACU_LIPCU" name="„miesiąc lipiec” itp.">
+      <pattern>
+        <token>miesiąc</token>
+        <token regexp="yes">styczeń|luty|marzec|kwiecień|maj|czerwiec|lipiec|sierpień|wrzesień|październik|listopad|grudzień</token>
+      </pattern>
+      <message>To wyrażenie jest pleonazmem. Wystarczy podać tylko nazwę miesiąca: <suggestion>\2</suggestion>.</message>
+      <short>Pleonazm</short>
+    </rule>
+    <rule id="ZDAZYC_NA_CZAS" name="„zdążyć na czas” (zdążyć)">
+      <pattern>
+        <token>zdążyć</token>
+        <token>na</token>
+        <token>czas</token>
+      </pattern>
+      <message>To pleonazm. Wystarczy: <suggestion>\1</suggestion>.</message>
+      <short>Pleonazm</short>
     </rule>
   </category>
   <category id="CONFUSED_WORDS" name="Błędy frazeologiczne">
@@ -2810,6 +4071,48 @@
       <message>To wyrażenie jest niepoprawne. Poprawnie: <suggestion>Bogiem a prawdą</suggestion>.</message>
       <short>Błąd frazeologiczny</short>
     </rule>
+    <rule id="JEZYCZEK_UWAGI" name="„języczek uwagi” (języczek u wagi)">
+      <pattern>
+        <token>języczek</token>
+        <token>uwagi</token>
+      </pattern>
+      <message>Nieprawidłowa postać związku frazeologicznego. Powinno być: <suggestion>\1 u wagi</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="KONSTRUKCJA_CEPU" name="„konstrukcja cepu” (konstrukcja cepa)">
+      <pattern>
+        <token>konstrukcja</token>
+        <token>cepu</token>
+      </pattern>
+      <message>W tym wyrażeniu wyraz „cep” odmienia się inaczej: <suggestion>cepa</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="KREPACJA_BEZ_BEZ" name="„krępacja” (skrępowanie)">
+      <pattern>
+        <token negate="yes">bez</token>
+        <token>krępacja</token>
+      </pattern>
+      <message>To wyraz niesamodzielny i może wystąpić tylko w zwrocie <suggestion>bez krępacji</suggestion>. W innych kontekstach używa się rzeczownika <suggestion>skrępowanie</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="KROPLA_DZIEGCIU" name="„kropla dziegciu” (łyżka dziegciu)">
+      <pattern>
+        <token>kropla</token>
+        <token>dziegciu</token>
+      </pattern>
+      <message>Błąd frazeologiczny. Mówi się raczej: <suggestion>łyżka dziegciu</suggestion> (w beczce miodu).</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="MOWI_SAMO_PRZEZ_SIE" name="„mówi samo przez się” (mówi samo za siebie)">
+      <pattern>
+        <token regexp="yes">mówi|mówił|mówiła|mówiło</token>
+        <token>sam</token>
+        <token>przez</token>
+        <token>się</token>
+      </pattern>
+      <message>Niepoprawna postać związku frazeologicznego. Poprawnie: <suggestion>\1 \2 za siebie</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
     <rule id="NERWY_NA_POSTRONKU" name="„nerwy na postronku” (nerwy na wodzy)">
       <pattern>
         <token regexp="yes">nerwy|nerwów|nerwami|nerwach|nerwom</token>
@@ -2828,6 +4131,14 @@
       <message>Błąd frazeologiczny. Powinno być: <suggestion>wątpliwości</suggestion> lub <suggestion>wątpliwościom</suggestion>.</message>
       <short>Błąd frazeologiczny</short>
     </rule>
+    <rule id="POLKNAC_BAKCYL" name="„połknąć bakcyl” (bakcyla)">
+      <pattern>
+        <token regexp="yes">połknąć|połykać</token>
+        <token>bakcyl</token>
+      </pattern>
+      <message>Niepoprawne wyrażenie. Poprawnie: <suggestion>\1 bakcyla</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
     <rule id="PO_PRAWO" name="„po prawo” (po prawej)">
       <pattern>
         <token>po</token>
@@ -2835,6 +4146,24 @@
         <token negate="yes">jazdy</token>
       </pattern>
       <message>Mówimy <suggestion>na prawo</suggestion>, <suggestion>po prawej stronie</suggestion>, <suggestion>z prawej strony</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="PRZYPRZEC_DO_SCIANY" name="„przyprzeć do ściany” (przyprzeć do muru)">
+      <pattern>
+        <token skip="4">przyprzeć</token>
+        <token>do</token>
+        <token>ściany</token>
+      </pattern>
+      <message>Prawdopodobnie niepoprawny związek frazeologiczny. Powinno być: <suggestion>muru</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="PUSZKA_Z_PANDORA" name="„puszka z Pandorą” (puszka Pandory)">
+      <pattern>
+        <token>puszka</token>
+        <token>z</token>
+        <token>Pandorą</token>
+      </pattern>
+      <message>Błędna postać tego wyrażenia. Pandora miała puszkę, a nie była w puszce; poprawnie: <suggestion>\1 Pandory</suggestion>.</message>
       <short>Błąd frazeologiczny</short>
     </rule>
     <rule id="SERCE_WALI_JAK_MLOT" name="„serce wali jak młot” (serce wali jak młotem)">
@@ -2845,6 +4174,14 @@
         <token>młot</token>
       </pattern>
       <message>Niepoprawna postać związku frazeologicznego. Poprawnie: <suggestion>\2 \3 młotem</suggestion>.</message>
+      <short>Błąd frazeologiczny</short>
+    </rule>
+    <rule id="STANAC_DEBEM" name="„stanąć dębem” (dęba)">
+      <pattern>
+        <token regexp="yes">stanąć|stawać</token>
+        <token>dębem</token>
+      </pattern>
+      <message>To wyrażenie jest prawdopodobnie niepoprawne, powinno być: <suggestion>dęba</suggestion>.</message>
       <short>Błąd frazeologiczny</short>
     </rule>
     <rule id="TAK_ALBO_INACZEJ" name="„tak albo inaczej” (tak czy inaczej)">
@@ -3025,6 +4362,24 @@
     </rule>
   </category>
   <category id="CASING" name="Pisownia małą i wielką literą">
+    <rule id="FRANKFURT_NAD_MENEM" name="„Frankfurt Nad Menem” (Frankfurt nad Menem)">
+      <pattern>
+        <token regexp="yes">Świecie|Bagna|Belene|Białobrzegi|Bingen|Bolesławiec|Brandenburg|Brodnica|Brok|Brześć|Brzeście|Brzezie|Buczyna|Buk|Bukowiec|Bystrzyca|Chełm|Chełmno|Cisa|Czerwińsk|Dąbie|Dąbrowa|Dębno|Dobrzyń|Droga|Drohiczyn|Dubiecko|Florencja|Frankfurt|Goniądzu|Gorzów|Gród|Gródek|Grądy|Grab|Grabowo|Grodek|Horodło|Hradek|Józefów|Józef|Jachranka|Jadwisin|Janowiec|Jarosław|Kłodne|Kadyny|Kamień|Kamieńczyk|Kazimierz|Kodeń|Kolonia|Komsomolsk|Korczew|Kostomłoty|Kostrzyń|Kostrzyn|Kostrzynia|Krajna|Krościenko|Krosno|Krzeszów|Kuta|Ląd|Landsberg|Lipsk|Marina|Miasto|Mielnik|Mniszek|Nakło|Nieporęt|Nowe|Nowogród|Offenbach|Okuninka|Osiek|Ostróg|Ostrów|Ostrowo|Ostrowy|Piła|Pieczyska|Polańczyk|Polska|Poznań|Puszcza|Różan|Radomyśl|Rostów|Rostow|Rudnik|Rynia|Służew|Samara|Schwedt|Serock|Serpelice|Sielce|Smardzewice|Smolnik|Sokal|Solec|Tczew|Terespol|Torgau|Trzebież|Tyniec|Uście|Ujście|Ulanów|Włodawa|Włodzimierz|Warka|Wieża|Wieleń|Wierch|Wyszków|Zakliczyn|Zuzela</token>
+        <token case_sensitive="yes">Nad</token>
+        <token regexp="yes" case_sensitive="yes">Łabą|Ślężą|Ślęzą|Świdrem|Amurem|Biebrzą|Borami|Brdą|Bugiem|Czarną|Czeremoszem|Czerską|Dolinką|Donem|Drwęcą|Dunajcem|Dunajem|Gwdą|Hawelą|Horyniem|Jaśliskami|Jeziorem|Kamieniem|Klaźmą|Liswartą|Menem|Moszczenicą|Narwią|Nerem|Notecią|Nysą|Odrą|Oką|Okszą|Olzą|Osą|Osławą|Pilicą|Popradem|Prosną|Reglami|Renem|Słupią|Sanem|Soliną|Stążką|Wartą|Wisłą|Wisłokiem|Wołgą|Zalewem</token>
+      </pattern>
+      <message>W nazwach geograficznych ta cząstka jest pisana małą literą: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
+    </rule>
+    <rule id="NIETYPOWA_KOMBINACJA_DUZYCH_I_MALYCH_LITER" name="Nietypowa kombinacja dużych i małych liter">
+      <pattern>
+        <token regexp="yes">\p{L}+
+          <exception regexp="yes">^(\p{Ll}+|\p{Lu}+|\p{Lu}\p{Ll}+)$|\p{Lu}+i\p{Lu}</exception>
+        </token>
+      </pattern>
+      <message>Nietypowa kombinacja małych i dużych liter. Czy nie powinno być: <suggestion></suggestion>?</message>
+      <short>Nietypowe małe i duże litery</short>
+    </rule>
     <rule id="PO_POLSKU" name="„po Polsku” (po polsku)">
       <pattern>
         <token>po</token>
@@ -3032,6 +4387,15 @@
       </pattern>
       <message>Prawdopodobny błąd ortograficzny. Nazwy języków piszemy małą literą. Powinno być: <suggestion></suggestion>.</message>
       <short>Błąd pisowni wielką i małą literą</short>
+    </rule>
+    <rule id="Polak" name="„polak” (Polak)">
+      <pattern>
+        <token case_sensitive="yes">polak
+          <exception case_sensitive="yes">Polak</exception>
+        </token>
+      </pattern>
+      <message>Małą literą piszemy tylko nazwę przedmiotu szkolnego w gwarze uczniowskiej. Nazwy narodowości piszemy dużą: <suggestion></suggestion>.</message>
+      <short>Błąd ortograficzny</short>
     </rule>
     <rule id="SZKOLA_NR" name="„Szkoła Podstawowa/Liceum Ogólnokształcące Nr” (Szkoła Podstawowa nr)">
       <pattern>
@@ -3044,6 +4408,23 @@
     </rule>
   </category>
   <category id="MISC" name="Błędy różne">
+    <rule id="MUZULMAN" name="„muzułman” (muzułmanin)">
+      <pattern>
+        <token>muzułman
+          <exception>muzułmanin</exception>
+        </token>
+      </pattern>
+      <message>Ta forma jest przestarzała. Lepiej: <suggestion>muzułmanin</suggestion></message>
+      <short>MUZULMAN</short>
+    </rule>
+    <rule id="PANTALYK" name="Wyraz niesamodzielny: „pantałyk”">
+      <pattern>
+        <token negate="yes">z</token>
+        <token>pantałyk</token>
+      </pattern>
+      <message>Wyraz „pantałyk” jest niesamodzielny i może występować tylko we frazie <suggestion>zbić z pantałyku</suggestion>.</message>
+      <short>Niesamodzielny wyraz</short>
+    </rule>
     <rule id="Z_WIELKIEJ_LITERY" name="Rusycyzm: „z wielkiej/małej litery” (wielką literą)">
       <pattern>
         <token>z</token>

@@ -59,6 +59,17 @@
       <short>ASGAYA</short>
     </rule>
   </category>
+  <category id="GRAMATICA" name="Gramática">
+    <rule id="DIR_A_INF" name="Dir más infinitivu">
+      <pattern>
+        <token>dir</token>
+        <token>a</token>
+        <token postag="V..00000" postag_regexp="yes"></token>
+      </pattern>
+      <message>Aconséyase construyir la perífrasis ensin preposición: <suggestion>\1 \3</suggestion></message>
+      <short>DIR_A_INF</short>
+    </rule>
+  </category>
   <category id="CONTRAICIONES" name="Contraiciones">
     <rule id="EN_EL_CONTR" name="En + pronome personal">
       <pattern>

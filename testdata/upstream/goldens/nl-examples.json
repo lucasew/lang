@@ -70,6 +70,24 @@
       "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
     },
     {
+      "rule": "CONDITIE",
+      "text": "QQ conditie QQQ.",
+      "suggestion": "voorwaarde",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "DOUWEN",
+      "text": "We douwen elkaar.",
+      "suggestion": "duwen",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "FULL_SENTENCE_001",
+      "text": "Gelukkig paste de fietsen erin.",
+      "suggestion": "passen",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
       "rule": "INSPECIFIEK_2",
       "text": "Dit is bijna zeker onduidelijk.",
       "suggestion": "",
@@ -82,10 +100,22 @@
       "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
     },
     {
+      "rule": "INSPECIFIEK_7",
+      "text": "Dit kan gebeuren.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
       "rule": "NIET_ON",
       "text": "Taaladvies over niet ondenkbeeldig.",
       "suggestion": "ondenkbeeldig",
       "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "OH_O",
+      "text": "Oh, dat is mooi!",
+      "suggestion": "O",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
     },
     {
       "rule": "ONTKEN_3",

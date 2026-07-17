@@ -76,6 +76,18 @@
       "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
     },
     {
+      "rule": "ADJECTIVE-C_COMMON_NOUN",
+      "text": "Baka ang tingin mo ay asul mata ang meron siya.",
+      "suggestion": "asul na mata",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-N_COMMON_NOUN",
+      "text": "Siya ay isang madasalin bata.",
+      "suggestion": "madasaling bata",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
       "rule": "ADJECTIVE-PL_AKO",
       "text": "Magaganda ako.",
       "suggestion": "kami",
@@ -115,6 +127,12 @@
       "rule": "ADJECTIVE-PL_SIYANG",
       "text": "Magaganda siyang bata.",
       "suggestion": "silang",
+      "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
+    },
+    {
+      "rule": "ADJECTIVE-V_COMMON_NOUN",
+      "text": "Siya ay isang mababa bata.",
+      "suggestion": "mababang bata",
       "source": "languagetool-language-modules/tl/src/main/resources/org/languagetool/rules/tl/grammar.xml"
     },
     {

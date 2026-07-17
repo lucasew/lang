@@ -52,9 +52,27 @@
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "ABONO",
+      "text": "O estudo analiza o papel dos abonos na contaminación das augas subterráneas.",
+      "suggestion": "fertilizante",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ABONO",
+      "text": "Xa fixo o abono das taxas de matrícula.",
+      "suggestion": "fertilizante",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "ACUSE_DE_RECIBO",
       "text": "Deberá presentar o acuse de recibo cuberto e selado.",
       "suggestion": "xustificante de recepción",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ADICAR",
+      "text": "Acordaron adicar máis tempo ás tarefas pendentes.",
+      "suggestion": "dedicar",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
@@ -94,9 +112,21 @@
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "APORTAR",
+      "text": "Eu tamén quero aportar algo ao proxecto.",
+      "suggestion": "achegar",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "ARCEN",
       "text": "Na bicicleta procuro sempre circular polo arcén.",
       "suggestion": "beiravía",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ASCO",
+      "text": "Esa actitude da xente dá asco.",
+      "suggestion": "noxo",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
@@ -112,9 +142,21 @@
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "BALANZA_DE_PAGOS",
+      "text": "A situación actual é de déficit na balanza de pagos.",
+      "suggestion": "balanza de pagamentos",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "BASURA",
       "text": "Hoxe teño que sacar eu a basura.",
       "suggestion": "lixo",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BECA",
+      "text": "Obtivo unha beca para o Trinity College.",
+      "suggestion": "bolsa",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
@@ -193,6 +235,18 @@
       "rule": "CHEQUEO",
       "text": "Onte foi facer un chequeo médico.",
       "suggestion": "revisión",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CLITICS_02A",
+      "text": "Cando déchesllelo?",
+      "suggestion": "llelo deches",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CLITICS_02B",
+      "text": "Canto custoulle?",
+      "suggestion": "lle custou",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
@@ -304,15 +358,33 @@
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "ESTIMAR_UNHA_DEMANDA",
+      "text": "O xuíz estimou a demanda das traballadoras.",
+      "suggestion": "admitir a demanda",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "E_MAIS_O",
       "text": "Foron ao cine ela e mais a súa irmá.",
       "suggestion": "e maila",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "FECHA",
+      "text": "Xa publicaron a fecha do exame de Álxebra.",
+      "suggestion": "data",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "GRIFO",
       "text": "Non saía auga do grifo.",
       "suggestion": "billa",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "GRUA",
+      "text": "A grúa levoulle o automóbil.",
+      "suggestion": "guindastre",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
@@ -358,6 +430,12 @@
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "PASAR_POLO_ARO",
+      "text": "O alumnado non pasou polo aro cando o responsable presentou as súas propostas.",
+      "suggestion": "veu ao rego",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "PERCENT_WITH_SPACE",
       "text": "A taxa é do 23,5%.",
       "suggestion": "23,5 %",
@@ -367,6 +445,12 @@
       "rule": "PERCENT_WITH_SPACE",
       "text": "Paga 23,5‰.",
       "suggestion": "23,5 ‰",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "PILDORA",
+      "text": "O médico recetoume unhas píldoras para a acidez estomacal.",
+      "suggestion": "pílula",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
@@ -397,6 +481,12 @@
       "rule": "RACHA",
       "text": "Había rachas de vento na costa.",
       "suggestion": "refacho",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "RAPE",
+      "text": "Merquei un par de rapes na praza.",
+      "suggestion": "rabada",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {

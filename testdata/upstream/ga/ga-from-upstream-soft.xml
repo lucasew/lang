@@ -1520,6 +1520,14 @@
       <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
+    <rule id="DILEAS_DOWORD" name="díleas DOWORD">
+      <pattern>
+        <token>díleas</token>
+        <token>do</token>
+      </pattern>
+      <message>Focal ceart ach tá <suggestion>dílis</suggestion> níos coitianta.</message>
+      <short>Neamhchoitianta</short>
+    </rule>
     <rule id="DRAMA" name="drama">
       <pattern>
         <token regexp="yes">n?dh?rama</token>
@@ -1569,6 +1577,13 @@
         <token regexp="yes">(bh)?fh?alaing</token>
       </pattern>
       <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <short>Neamhchoitianta</short>
+    </rule>
+    <rule id="FATA" name="fata">
+      <pattern>
+        <token>fata</token>
+      </pattern>
+      <message>Focal ceart ach tá <suggestion>práta</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FATHACH" name="fáthach">
@@ -2791,6 +2806,24 @@
         <token regexp="yes">umhai?l</token>
       </pattern>
       <message>Foirm neamhchaighdeánach de <suggestion>in iúl</suggestion></message>
+      <short>Neamhchaighdeánach</short>
+    </rule>
+    <rule id="I_GCIONN_AR" name="i gcionn ar">
+      <pattern>
+        <token>i</token>
+        <token>gcionn</token>
+        <token postag="Prep:Simp|Pron:Prep.*" postag_regexp="yes">ar</token>
+      </pattern>
+      <message>Foirm neamhchaighdeánach de <suggestion>i gcion</suggestion></message>
+      <short>Neamhchaighdeánach</short>
+    </rule>
+    <rule id="I_GCOIR_LE" name="i gcóir le">
+      <pattern>
+        <token>i</token>
+        <token>gcóir</token>
+        <token>le</token>
+      </pattern>
+      <message>Foirm neamhchaighdeánach de <suggestion>i gcomhair</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="I_GCOIR_NG" name="i gcóir NG">
@@ -4876,6 +4909,46 @@
       </pattern>
       <message>An <suggestion>sámh</suggestion> a bhí i gceist agat?</message>
       <short>GO_SABH</short>
+    </rule>
+    <rule id="CODAIL_SABH" name="codail sábh">
+      <pattern>
+        <token postag="(?:C[UMC]:)?Verb:.*" postag_regexp="yes">codail</token>
+        <token>sábh</token>
+      </pattern>
+      <message>An <suggestion>sámh</suggestion> a bhí i gceist agat?</message>
+      <short>CODAIL_SABH</short>
+    </rule>
+    <rule id="CODLADH_SABH" name="codladh sábh">
+      <pattern>
+        <token regexp="yes" postag="Noun:.*" postag_regexp="yes">codladh|saol</token>
+        <token>sábh</token>
+      </pattern>
+      <message>An <suggestion>sámh</suggestion> a bhí i gceist agat?</message>
+      <short>CODLADH_SABH</short>
+    </rule>
+    <rule id="GAIRE_REACHTUIL" name="gáire reachtúil">
+      <pattern>
+        <token postag="Noun:.*" postag_regexp="yes">gáire</token>
+        <token>reachtúil</token>
+      </pattern>
+      <message>An <suggestion>rachtúil</suggestion> a bhí i gceist agat?</message>
+      <short>GAIRE_REACHTUIL</short>
+    </rule>
+    <rule id="GO_REACHTUIL" name="go reachtúil">
+      <pattern>
+        <token>go</token>
+        <token>reachtúil</token>
+      </pattern>
+      <message>An <suggestion>rachtúil</suggestion> a bhí i gceist agat?</message>
+      <short>GO_REACHTUIL</short>
+    </rule>
+    <rule id="ORDU_RACHTUIL" name="ordú rachtúil">
+      <pattern>
+        <token regexp="yes" postag="Noun:.*" postag_regexp="yes">ordú|cruinniú|tomhas|míle|cuideachta|dualgas</token>
+        <token>rachtúil</token>
+      </pattern>
+      <message>An <suggestion>reachtúil</suggestion> a bhí i gceist agat?</message>
+      <short>ORDU_RACHTUIL</short>
     </rule>
   </category>
   <category id="GRAMADOIR_INPHRASE" name="San abairtín">
@@ -8909,6 +8982,15 @@
       <short>MARTIN_LUTHER</short>
     </rule>
   </category>
+  <category id="FOCAL_MICHEART" name="Focal mícheart">
+    <rule id="BLAGADOIR" name="blagadóir">
+      <pattern>
+        <token>blagadóir</token>
+      </pattern>
+      <message>An raibh <suggestion>blagálaí</suggestion> i gceist agat?</message>
+      <short>BLAGADOIR</short>
+    </rule>
+  </category>
   <category id="GRAMADOIR_NEEDART_LOGAINMNEACHA" name="Alt cinnte ar iarraidh">
     <rule id="BREATAIN" name="Breatain">
       <pattern>
@@ -9261,6 +9343,17 @@
       </pattern>
       <message>Ba chóir duit <suggestion>huaire</suggestion> a scríobh.</message>
       <short>TRI_UAIRE</short>
+    </rule>
+  </category>
+  <category id="COLLOCATIONS" name="collocations">
+    <rule id="DIRIU_ISTEACH_AR" name="díriú isteach ar">
+      <pattern>
+        <token>díriú</token>
+        <token>isteach</token>
+        <token>ar</token>
+      </pattern>
+      <message>Ba chóir duit <suggestion>\1 \3</suggestion> a scríobh.</message>
+      <short>DIRIU_ISTEACH_AR</short>
     </rule>
   </category>
   <category id="TYPOS" name="Typos">

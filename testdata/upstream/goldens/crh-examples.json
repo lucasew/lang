@@ -10,6 +10,12 @@
       "source": "languagetool-language-modules/crh/src/main/resources/org/languagetool/rules/crh/grammar.xml"
     },
     {
+      "rule": "NUMERAL_PLURAL_COLLOCATION",
+      "text": "Beş aylar.",
+      "suggestion": "ay",
+      "source": "languagetool-language-modules/crh/src/main/resources/org/languagetool/rules/crh/grammar.xml"
+    },
+    {
       "rule": "REASON_PARTICLE_CASE_COLLOCATION",
       "text": "Şu sebepten içün.",
       "suggestion": "sebepniñ",

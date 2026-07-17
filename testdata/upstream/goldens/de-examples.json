@@ -1198,6 +1198,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "ADDAMS_FAMILY",
+      "text": "Kennst du die Adams Family?",
+      "suggestion": "Addams Family",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "ADJ_SUB_VER_KOMMA_ADJ_SUB",
       "text": "Ein weicher Teppichboden erfordert, harte Stuhlrollen.",
       "suggestion": "",
@@ -1207,6 +1213,18 @@
       "rule": "AEUSSERN_VS_AUSSEREN",
       "text": "... äußern Erscheinung ...",
       "suggestion": "äußeren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ALARM_AUSLOSEN_SPELLING_RULE",
+      "text": "Es wurde sofort Großalarm ausgelost.",
+      "suggestion": "ausgelöst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ALARM_AUSLOSEN_SPELLING_RULE",
+      "text": "Ich habe den Alarm ausgelost.",
+      "suggestion": "ausgelöst",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1264,6 +1282,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "ALS_LETZTER",
+      "text": "Er hat ihn als letzter gesehen.",
+      "suggestion": "Letzter",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "ALS_WIE",
       "text": "Ich bin besser als wie du.",
       "suggestion": "als",
@@ -1288,6 +1312,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "AM_XSTEN",
+      "text": "So geht es am Schnellsten.",
+      "suggestion": "schnellsten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "ANGRIFF_SUBST",
       "text": "Das sollten wir bald in angriff nehmen!",
       "suggestion": "Angriff",
@@ -1297,6 +1327,12 @@
       "rule": "ANGRIFF_SUBST",
       "text": "Zum angriff!",
       "suggestion": "Angriff",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ANSCHIESSEND",
+      "text": "Er ging anschießend ins Büro.",
+      "suggestion": "anschließend",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1336,6 +1372,30 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "ARGUMENT_ANBRINGEN",
+      "text": "Der Artikel brachte ein Argument an.",
+      "suggestion": "führte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "ARGUMENT_ANBRINGEN",
+      "text": "Der Artikel bringt das Argument an, dass...",
+      "suggestion": "führt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "ARGUMENT_ANBRINGEN",
+      "text": "Der Autor bringt geschickt mehrere Argumente zum Thema an.",
+      "suggestion": "führt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "ARGUMENT_ANBRINGEN",
+      "text": "Die Autoren des Artikels bringen geschickt mehrere Argumente zum Thema an.",
+      "suggestion": "führen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
       "rule": "ARRANGIERT_ENGAGIERT",
       "text": "Sie ist sozial arrangiert.",
       "suggestion": "engagiert",
@@ -1348,6 +1408,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "AUFS_TRAPEZ_BRINGEN",
+      "text": "Dieses Thema habe ich auch aufs Trapez gebracht.",
+      "suggestion": "Tapet",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "AUF_DAHEIM",
       "text": "Ich freue mich auf Daheim.",
       "suggestion": "daheim",
@@ -1357,6 +1423,18 @@
       "rule": "AUF_DEM_ERSTEN_BLICK",
       "text": "Auf dem ersten Blick ist kein Unterschied zu erkennen.",
       "suggestion": "den",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_DEN_PLAN_RUFEN",
+      "text": "Ich habe dich auf Plan gerufen.",
+      "suggestion": "auf den Plan",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_DEN_PLAN_RUFEN",
+      "text": "Ich hoffe euch auf Plan zu rufen.",
+      "suggestion": "auf den Plan",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1450,6 +1528,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "AUSEINANDER_GESETZT",
+      "text": "Ich habe mich damit schon länger auseinander gesetzt.",
+      "suggestion": "auseinandergesetzt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "AUSGERUECKT_AUSGEDRUECKT",
       "text": "Anders ausgerückt: Mach es jetzt.",
       "suggestion": "ausgedrückt",
@@ -1465,6 +1549,18 @@
       "rule": "AUSGERUECKT_AUSGEDRUECKT",
       "text": "Da habe ich mich unklar ausgerückt.",
       "suggestion": "ausgedrückt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUSSAGEKRAEFTIG",
+      "text": "Ein Aussage kräftiger Bericht.",
+      "suggestion": "aussagekräftiger",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUSSAGEKRAEFTIG",
+      "text": "Ein aussage kräftiger Bericht.",
+      "suggestion": "aussagekräftiger",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1531,6 +1627,18 @@
       "rule": "BABYPHONE",
       "text": "Wir haben ein Babyphone gekauft.",
       "suggestion": "Babyfon",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BAFF_ERSTAUNT",
+      "text": "Der Mann war baff erstaunt.",
+      "suggestion": "bass",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BAFF_ERSTAUNT",
+      "text": "Ein baff erstaunter Typ.",
+      "suggestion": "bass",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1612,6 +1720,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "BEI_BEHALTEN",
+      "text": "Wir werden uns die gute Laune bei behalten.",
+      "suggestion": "beibehalten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "BEKANNTEST",
       "text": "Das bekanntest Beispiel ist Linux.",
       "suggestion": "bekannteste",
@@ -1636,6 +1750,42 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "BERUHEN_BERUFEN",
+      "text": "Dabei beruhe ich mich auf meine Rechte.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BERUHEN_BERUFEN",
+      "text": "Ich beruhe mich auf meine Rechte.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESCHEIDE_BESCHEID",
+      "text": "Da würde ich auch Bescheide sagen.",
+      "suggestion": "Bescheid",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESCHEIDE_BESCHEID",
+      "text": "Da würde ich auch Bescheids geben.",
+      "suggestion": "Bescheid",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESCHRANKT_BESCHRAENKT",
+      "text": "Sie überquerten einen beschränkten Bahnübergang.",
+      "suggestion": "beschrankten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESCHRANKT_BESCHRAENKT",
+      "text": "Sie überquerten einen unbeschränkten Bahnübergang.",
+      "suggestion": "unbeschrankten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "BESCHWERE_BESCHWERDE",
       "text": "Wir nehmen jede Beschwere ernst.",
       "suggestion": "Beschwerde",
@@ -1645,6 +1795,36 @@
       "rule": "BESTAND_SUBST",
       "text": "Der bestand an Tieren geht ständig zurück.",
       "suggestion": "Bestand",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESTES_GEBEN",
+      "text": "Das beste kommt zum Schluss.",
+      "suggestion": "Beste",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESTES_GEBEN",
+      "text": "Das tat sein übriges.",
+      "suggestion": "Übriges",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESTES_GEBEN",
+      "text": "Er kann sein übriges dazu beitragen.",
+      "suggestion": "Übriges",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESTES_GEBEN",
+      "text": "Sie hat immer ihr bestes getan.",
+      "suggestion": "Bestes",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BESTES_GEBEN",
+      "text": "Wir müssen immer unser bestes geben.",
+      "suggestion": "Bestes",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1732,6 +1912,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "CHRISTI_HIMMELPFAD_SPELLING_RULE",
+      "text": "Christi Himmelpfad ist ein Feiertag.",
+      "suggestion": "Christi Himmelfahrt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "CITROEN",
       "text": "Citroen ist ein französischer Automobilhersteller.",
       "suggestion": "Citroën",
@@ -1786,6 +1972,24 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "DANKBAR",
+      "text": "Ich bin dir unendlich Dankbar.",
+      "suggestion": "dankbar",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DANKE_SCHOEN",
+      "text": "Dankesehr noch einmal für die Einladung.",
+      "suggestion": "Danke schön",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DANKE_SCHOEN",
+      "text": "Nochmals dankeschön dafür, dass du mir heute geholfen hast.",
+      "suggestion": "danke schön",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "DANK_DAN_SPELLING_RULE",
       "text": "Vielen Dan für die Blumen.",
       "suggestion": "Dank",
@@ -1795,6 +1999,12 @@
       "rule": "DAS_ALTER",
       "text": "Das alter ist mir egal.",
       "suggestion": "Alter",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DAS_BESTE_SEIN",
+      "text": "Es ist das beste, wenn du jetzt gehst.",
+      "suggestion": "Beste",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1852,9 +2062,21 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "DAS_FUERCHTEN_LERNEN",
+      "text": "das Fürchten lernen",
+      "suggestion": "lehren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "DAS_GESAGTE",
       "text": "Ich habe mir über das gesagte Gedanken gemacht.",
       "suggestion": "Gesagte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DAS_SCHLAUSTE_WAERE",
+      "text": "Das schlauste wäre, wenn wir einfach Peter fragen.",
+      "suggestion": "Schlauste",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -1891,6 +2113,12 @@
       "rule": "DATUM_VON_BIS",
       "text": "Die Messe findet vom 2. bis 1. Januar statt.",
       "suggestion": "",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DAZU_VERDIENEN",
+      "text": "Ich werde mir etwas dazu verdienen.",
+      "suggestion": "dazuverdienen",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2038,9 +2266,33 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "DEZIDIERTER_SERVER",
+      "text": "Ich habe jetzt einen dezidierten Server.",
+      "suggestion": "dediziert",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DEZIDIERTER_SERVER",
+      "text": "Ich habe jetzt einen dezidierten Spieleserver.",
+      "suggestion": "dediziert",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "DE_FACTO",
       "text": "Der Sieger der Wahl stand de Fakto schon vor der Wahl fest.",
       "suggestion": "de facto",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DICHTMACHEN",
+      "text": "Wir müssen das Fass immer erst dichtmachen, bevor wir es wiederverwenden.",
+      "suggestion": "dicht machen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DICHT_MACHEN",
+      "text": "Wegen der Delta-Variante könnten die Schulen im Herbst wieder dicht machen.",
+      "suggestion": "dichtmachen",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2080,6 +2332,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "DIE_HECHTE",
+      "text": "Ich werde dort hechte angeln gehen.",
+      "suggestion": "Hechte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "DIE_SCHWERE",
       "text": "Festgestellt wurde eine besondere schwere der Schuld.",
       "suggestion": "Schwere",
@@ -2089,6 +2347,12 @@
       "rule": "DIE_SEINESGLEICHEN",
       "text": "Er besitzt eine Formulierkunst, die seinesgleichen sucht.",
       "suggestion": "ihresgleichen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DIFFUSER_DIFFUSOR",
+      "text": "Ein Diffuser ist ein Element zum Zerstreuen von Schall.",
+      "suggestion": "Diffusor",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2146,15 +2410,51 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "DOPPELUNG_MODALVERB",
+      "text": "Das muss kann nicht sein.",
+      "suggestion": "muss, kann",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DOPPELUNG_MODALVERB",
+      "text": "Wer mitfahren möchte sollte sich auf jeden Fall vorher melden, hier auf HFS.",
+      "suggestion": "möchte, sollte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DRAUF_KLICKEN",
+      "text": "Ich habe auf den Link drauf geklickt.",
+      "suggestion": "draufgeklickt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "DREI_METER_BRETT",
       "text": "Er traute sich vom Drei Meter Brett zu springen.",
       "suggestion": "Drei-Meter-Brett",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "DRUCKEN_DRUCKSEN",
+      "text": "Er druckte nur so herum.",
+      "suggestion": "druckste",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DRÜBER_LESEN",
+      "text": "Kannst du bitte schnell drüber lesen?",
+      "suggestion": "drüberlesen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "DUE_DILIGENCE",
       "text": "Das Unternehmen bestand die Due Dilligence.",
       "suggestion": "Due Diligence",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DURCH_SCHAUEN",
+      "text": "Er hat mich durch schaut!",
+      "suggestion": "durchschaut",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2308,6 +2608,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "EIN_LOGGEN",
+      "text": "Wir müssen uns noch ein loggen.",
+      "suggestion": "einloggen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "EIN_NTEL_EINHEIT",
       "text": "Ein Tausendstel Liter Blut genügt, um die DNA zu ermitteln.",
       "suggestion": "tausendstel",
@@ -2452,9 +2758,27 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "EXTRA_STIL",
+      "text": "Ich weiß genau, dass er das extra gemacht hat.",
+      "suggestion": "vorsätzlich",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
       "rule": "E_MAIL_SIGNATUR",
       "text": "In meiner E-Mail Signatur befindet sich meine Umsatzsteuer-ID.",
       "suggestion": "E-Mail-Signatur",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FALSCHER_TRUGSCHLUSS",
+      "text": "Das ist ein falscher Trugschluss.",
+      "suggestion": "Trugschluss",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "FEDERN_LASSEN",
+      "text": "Die CDU siegt, muss aber federn lassen.",
+      "suggestion": "Federn",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2470,9 +2794,27 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
     },
     {
+      "rule": "FERN_ZUENDEN",
+      "text": "Ich werde die Bombe fern zünden!",
+      "suggestion": "fernzünden",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "FEST",
       "text": "Frohes fest!",
       "suggestion": "Fest",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FEST_COMPOUNDS",
+      "text": "Der Dieb wurde auf der Flucht von der Polizei fest genommen.",
+      "suggestion": "festgenommen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FEST_COMPOUNDS",
+      "text": "Es passiert zu einem fest gelegten Zeitpunkt.",
+      "suggestion": "festgelegten",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2485,6 +2827,12 @@
       "rule": "FINANZTIP_SPELLING_RULE",
       "text": "Viele gaben an, schon einmal so einen Finanztip umgesetzt zu haben.",
       "suggestion": "Finanztipp",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FINDER_GEWICKELT_SPELLING_RULE",
+      "text": "Sie hat ihn ganz schön um den Finder gewickelt.",
+      "suggestion": "Finger",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2572,6 +2920,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "FREU_FRAU",
+      "text": "Freu Thies hat morgen keine Zeit.",
+      "suggestion": "Frau",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "FUENF_PROZENT_HUERDE",
       "text": "Die Partei ist an der 5 Prozent Hürde gescheitert.",
       "suggestion": "5-Prozent-Hürde",
@@ -2593,6 +2947,30 @@
       "rule": "FUER_INSBESONDERE",
       "text": "Das ist der Fall für insbesondere schwere Aufgaben.",
       "suggestion": "insbesondere für",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FUGEN_S_ZUSAMMENSCHREIBUNG",
+      "text": "Die Wirtschafts Weisen.",
+      "suggestion": "Wirtschaftsweisen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FUGEN_S_ZUSAMMENSCHREIBUNG",
+      "text": "Er macht Hochleistungs Sport.",
+      "suggestion": "Hochleistungssport",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FUGEN_S_ZUSAMMENSCHREIBUNG",
+      "text": "Ich habe sogar einen liebevoll ausgearbeiteten Regenerierungs Plan erhalten, der sich vielversprechend liest.",
+      "suggestion": "Regenerierungsplan",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FUGEN_S_ZUSAMMENSCHREIBUNG",
+      "text": "Wir richten uns nach den Abfahrts Zeiten.",
+      "suggestion": "Abfahrtszeiten",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2632,6 +3010,24 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "GEGENUEBER",
+      "text": "Ich stehe dem Mann Gegenüber.",
+      "suggestion": "gegenüber",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEGEN_CHECKEN",
+      "text": "Er lässt die gemeldeten Fehler mit sauberen Wikipedia-Texten gegen checken.",
+      "suggestion": "gegenchecken",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEGEN_CHECKEN",
+      "text": "Sie hat die Texten gegen gecheckt.",
+      "suggestion": "gegengecheckt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "GEHT_NICHT_GIBT_ES_NICHT_KOMMA",
       "text": "Geht nicht gibt es nicht.",
       "suggestion": ", gibt",
@@ -2647,6 +3043,60 @@
       "rule": "GEHT_NICHT_GIBT_ES_NICHT_KOMMA",
       "text": "Geht nicht gibts es nicht.",
       "suggestion": ", gibts",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEMACHT_HABE_IST_KOMMA",
+      "text": "Das, was ihr bisher erreicht habt lässt sich jedenfalls sehen!",
+      "suggestion": "habt, lässt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEMACHT_HABE_IST_KOMMA",
+      "text": "Die letzte Feedback-Mail, die ich beantwortet habe ist von 18:32 (Freitag).",
+      "suggestion": "habe, ist",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEMACHT_HABE_IST_KOMMA",
+      "text": "Nachdem ich es nun deaktiviert hatte wird nun auch Firefox mit protokolliert.",
+      "suggestion": "hatte, wird",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEMACHT_HABE_IST_KOMMA",
+      "text": "Sollten wir Ihren Standort hier unerwarteterweise nicht gelistet haben lassen Sie es uns wissen.",
+      "suggestion": "haben, lassen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEMACHT_HABE_IST_KOMMA",
+      "text": "Was er getan hat ist nicht falsch.",
+      "suggestion": "hat, ist",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEROCHEN_GEBROCHEN",
+      "text": "Er antwortete in gerochenem Englisch.",
+      "suggestion": "gebrochenem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEROCHEN_GEBROCHEN",
+      "text": "Sein gerochenes Bein behindert ihn.",
+      "suggestion": "gebrochenes",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GESAGTE_HABEN",
+      "text": "Er vergaß was sie gesagte hatte.",
+      "suggestion": "gesagt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GESAGTE_HABEN",
+      "text": "Nun wusste er, dass es zu spät war, dass er zu lange gewartete hatte; aber worauf denn?",
+      "suggestion": "gewartet",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2716,6 +3166,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "GROSS_FLAECHIG",
+      "text": "Das ist eine groß artige Idee!",
+      "suggestion": "großartige",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GROSS_FLAECHIG",
+      "text": "Mein Vater ist sehr groß zügig zu mir.",
+      "suggestion": "großzügig",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "GRUENE_VS_GRUENDE",
       "text": "Aus bestimmten Grünen gelang mir das nicht.",
       "suggestion": "Gründen",
@@ -2782,6 +3244,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "GUT_TUN_GUTTUN",
+      "text": "Das hat mir gut getan.",
+      "suggestion": "gutgetan",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GUT_TUN_GUTTUN",
+      "text": "Die Kur hat mir wohl getan.",
+      "suggestion": "wohlgetan",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "HALO_HALLO",
       "text": "Halo Jürgen!",
       "suggestion": "Hallo",
@@ -2800,10 +3274,40 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "HARMONISIEREN",
+      "text": "Der Geschmack der Trauben und der Nüsse harmonisiert gut mit den eingelegten Pilzen.",
+      "suggestion": "harmoniert",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HARMONISIEREN",
+      "text": "Die harmonisieren gut mit den eingelegten Pilzen.",
+      "suggestion": "harmonieren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "HAT_DU",
       "text": "Hat du Zeit für mich?",
       "suggestion": "Hast",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HAUPTPROTAGONIST",
+      "text": "Der Hauptprotagonist und seine Freunde kämpfen gegen das Böse.",
+      "suggestion": "Protagonist",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "HAUPTPROTAGONIST",
+      "text": "Der König vereitelte die Pläne des Hauptprotagonisten.",
+      "suggestion": "Protagonisten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "HAUPTPROTAGONIST",
+      "text": "Die Hauptprotagonisten verlieren den Kampf um das goldene Zepter.",
+      "suggestion": "Protagonisten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
     },
     {
       "rule": "HEER_HERR_SPELLING_RULE",
@@ -2839,6 +3343,12 @@
       "rule": "HENRY_MATISSE",
       "text": "Die Poincaré-Vermutung ist nach Henry Poincaré benannt.",
       "suggestion": "Henri",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HEREIN_SPAZIERT",
+      "text": "Herein spaziert!",
+      "suggestion": "Hereinspaziert",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2878,6 +3388,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "HINEIN_FRESSEN_HINEINFRESSEN",
+      "text": "Er hat alles in sich hinein gefressen.",
+      "suggestion": "hineingefressen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HINEIN_FRESSEN_HINEINFRESSEN",
+      "text": "Man kann nicht alles in sich hinein fressen.",
+      "suggestion": "hineinfressen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "HINTERS_ICH",
       "text": "Das ist ans sich eine gute Sache.",
       "suggestion": "an sich",
@@ -2914,9 +3436,33 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "HOCH_SCHALTEN",
+      "text": "Wenn du spät hoch schaltest, kannst du Kraftstoff sparen.",
+      "suggestion": "hochschaltest",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HOCH_ZUSAMMENSCHREIBUNG",
+      "text": "Die Bombe ist hoch gegangen.",
+      "suggestion": "hochgegangen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "HOME_OFFICE",
       "text": "Wegen der Corona-Pandemie mussten alle Mitarbeiter aus dem Home Office arbeiten.",
       "suggestion": "Homeoffice",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HOPS_NEHMEN",
+      "text": "Er hat mich einfach hops genommen.",
+      "suggestion": "hopsgenommen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ICH_BIN_STAND_JETZT_KOMMA",
+      "text": "Ich werde stand jetzt keine weiteren Angebote mehr annehmen.",
+      "suggestion": ", Stand jetzt,",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -2935,6 +3481,12 @@
       "rule": "IHN",
       "text": "Ich möchte Ihn nicht verschrecken.",
       "suggestion": "ihn",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "IHR_ENGLISCH_IST",
+      "text": "Ihr englisch ist hervorragend.",
+      "suggestion": "Englisch",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3034,6 +3586,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "IM_REGEN_STEHEN",
+      "text": "Er ließ mich im regen stehen.",
+      "suggestion": "Regen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "IM_SCHNITT",
       "text": "Er verdient im durchschnitt 200 € pro Abend.",
       "suggestion": "Durchschnitt",
@@ -3106,9 +3664,39 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "INBEGRIFFEN",
+      "text": "Die Nebenkosten sind im Preis in begriffen.",
+      "suggestion": "inbegriffen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "INBEGRIFFEN",
+      "text": "Die Nebenkosten sind nicht in begriffen.",
+      "suggestion": "inbegriffen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "INMITTEN",
       "text": "In mitten einer Krise ist es meist am schwersten.",
       "suggestion": "Inmitten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "INNEN_HOHL",
+      "text": "Der Stamm war innen hohl.",
+      "suggestion": "hohl",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "INNE_HABEN",
+      "text": "Bald wird er das Amt des Bürgermeisters inne haben.",
+      "suggestion": "innehaben",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "INNE_HABEN",
+      "text": "Das Amt, das er inne hat.",
+      "suggestion": "innehat",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3166,6 +3754,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "IN_AUGE",
+      "text": "Das sollten wir in Auge behalten!",
+      "suggestion": "im",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "IN_DER_FRUEH",
       "text": "Wir haben heute in der früh bereits die Kühe gemolken.",
       "suggestion": "Früh",
@@ -3193,6 +3787,12 @@
       "rule": "IN_DIE_ANALEN",
       "text": "Wir können in die Analen des Klubs eingehen",
       "suggestion": "Annalen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "IN_DIE_ENGE_TREIBEN",
+      "text": "Die haben uns ganz schön in die enge getrieben.",
+      "suggestion": "Enge",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3316,6 +3916,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "IST_TEIL",
+      "text": "Ich bin teil davon.",
+      "suggestion": "Teil",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "IT-GIRL",
       "text": "Ein IT-Girl ist nach der modernen Definition eine junge oder jüngere Frau, die durch ihr häufiges öffentliches Auftreten in Gesellschaft prominenter Personen und ihre starke Medienpräsenz einer breiten Öffentlichkeit bekannt ist.",
       "suggestion": "It-Girl",
@@ -3346,6 +3952,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "JE_SCHNELL_DESTO",
+      "text": "Je groß, desto besser.",
+      "suggestion": "größer",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "JE_SCHNELL_DESTO",
+      "text": "Je schnell, desto besser.",
+      "suggestion": "schneller",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "JOE_BIDEN",
       "text": "Joe Beiden ist der 46. Präsident der USA.",
       "suggestion": "Joe Biden",
@@ -3367,6 +3985,24 @@
       "rule": "JUECHEN_JUELICH",
       "text": "Sie arbeitet beim Forschungszentrum Jüchen.",
       "suggestion": "Jülich",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KARIKATIV_VS_KARITATIV",
+      "text": "Karikatives Angebot aufgebaut.",
+      "suggestion": "Karitatives",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KARIKATIV_VS_KARITATIV",
+      "text": "Sie ist bei einer karikativen Einrichtung tätig, die sich für Behinderte einsetzt.",
+      "suggestion": "karitativen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KATHEDER",
+      "text": "Anleitung zum Einführen eines Katheders",
+      "suggestion": "Katheters",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3430,6 +4066,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "KONISCH_KOMISCH",
+      "text": "Er ist schon ein konischer Kauz.",
+      "suggestion": "komischer",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KONISCH_KOMISCH",
+      "text": "Ich habe ein konisches Gefühl bei der Sache.",
+      "suggestion": "komisches",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "KRAFT_AMTES",
       "text": "Er ist Kraft seines Amtes dazu befähigt.",
       "suggestion": "kraft",
@@ -3454,15 +4102,57 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
     },
     {
+      "rule": "KURZFASSEN",
+      "text": "Ich muss mich hier echt kurz fassen.",
+      "suggestion": "kurzfassen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KURZFASSEN",
+      "text": "Ja, so ist das eben, wenn man sich kurz fasst.",
+      "suggestion": "kurzfasst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "LANDING_PAGE",
       "text": "Sie hat, dank Werbung, viele Besucher auf ihrer Landing Page.",
       "suggestion": "Landing-Page",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "LATEINISCHE_TAENZE",
+      "text": "Abends werden Salsa und andere lateinische Tänze um 20 Uhr getanzt.",
+      "suggestion": "lateinamerikanische",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LATEINISCHE_TAENZE",
+      "text": "die Geschichte der lateinischen Tänze",
+      "suggestion": "lateinamerikanischen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LAUT_LAUF",
+      "text": "Lauf Peters Bericht habe es einige Verletzte gegeben.",
+      "suggestion": "Laut",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "LEBZEITEN",
       "text": "Seine Werke waren zu seiner Lebenszeit nicht besonders erfolgreich.",
       "suggestion": "zu seinen Lebzeiten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LEERZEICHEN_UND",
+      "text": "Das ist Haus-bzw. Grundbesitz.",
+      "suggestion": "Haus- bzw",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LEERZEICHEN_UND",
+      "text": "Das ist Haus-und Grundbesitz.",
+      "suggestion": "Haus- und",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3554,6 +4244,12 @@
       "text": "Das ist doch alles lug und trug.",
       "suggestion": "Lug und Trug",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MAEDCHENNAME",
+      "text": "Der Mädchenname meiner Mutter ist Müller.",
+      "suggestion": "Geburtsname",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
     },
     {
       "rule": "MAENNER_VS_LEUTE",
@@ -3652,6 +4348,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "MEISTGELESEN",
+      "text": "Er hat das meist gelesene Buch des Jahres verfasst.",
+      "suggestion": "meistgelesene",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MEISTGELESEN",
+      "text": "Er ist ein viel gelesener Autor.",
+      "suggestion": "vielgelesener",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "MESSERS_SCHNEIDE",
       "text": "Das Spiel steht auf Messers schneide.",
       "suggestion": "auf Messers Schneide",
@@ -3688,6 +4396,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "MIETE_SUBST",
+      "text": "Am Ende ist das doch die halbe miete.",
+      "suggestion": "Miete",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "MINDESTEN_MINDESTENS",
       "text": "Ich würde mindesten mal die Temperatur prüfen.",
       "suggestion": "mindestens",
@@ -3712,6 +4426,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "MITTELSTAENDIGES_UNTERNEHMEN",
+      "text": "Peter ist der Chef eines mittelständigen Unternehmens.",
+      "suggestion": "mittelständischen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "MIT_EIER",
       "text": "Es gab Leberkäse mit leckeren Spiegeleier.",
       "suggestion": "Spiegeleiern",
@@ -3733,6 +4453,12 @@
       "rule": "MIT_OHNE_WISSEN",
       "text": "Das geschah mit wissen der Geschäftsführung!",
       "suggestion": "Wissen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MIT_REISSEN",
+      "text": "Was für ein mit reißender Film!",
+      "suggestion": "mitreißender",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3814,9 +4540,57 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "NACH_7_TAGE",
+      "text": "Das Hochwasser ist in 4 Stunde und 58 Minuten.",
+      "suggestion": "Stunden",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_7_TAGE",
+      "text": "Der Twitter-Konkurrent Threads von gewann in nur 5 Tage 100 Millionen Nutzerinnen und Nutzer.",
+      "suggestion": "Tagen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_7_TAGE",
+      "text": "Die Teilnahme bei PerfectYoga ist auf Personen ab 18 Jahre beschränkt.",
+      "suggestion": "Jahren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_7_TAGE",
+      "text": "Ich werde in 10 Tage 18 Jahre alt.",
+      "suggestion": "Tagen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_7_TAGE",
+      "text": "Nach 9 Monate ist es nun endlich soweit!",
+      "suggestion": "Monaten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "NACH_AUSSAGE",
       "text": "Nach aussage seiner Mutter ist er krank.",
       "suggestion": "Aussage",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_DEM_RECHTEN_SEHEN",
+      "text": "Wir sollten dort mal nach dem rechten sehen.",
+      "suggestion": "Rechten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_GEBEN",
+      "text": "Am Ende hat er dann doch nach gegeben.",
+      "suggestion": "nachgegeben",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NACH_HOLEN",
+      "text": "Wir sollten das bald nach holen.",
+      "suggestion": "nachholen",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3877,6 +4651,12 @@
       "rule": "NEUGEBORENES",
       "text": "Auf diesem Bereich der Station liegen die neugeborenen.",
       "suggestion": "Neugeborenen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NEUN_NEUEN",
+      "text": "Wir haben einen neun Termin vereinbart.",
+      "suggestion": "neuen",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -3952,6 +4732,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "OHMEN",
+      "text": "Das ist doch ein gutes Ohmen.",
+      "suggestion": "Omen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "OHNE_FRAGE",
       "text": "Das ist ohne frage eine große Leistung.",
       "suggestion": "Frage",
@@ -3988,6 +4774,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "OST_ASIATISCH",
+      "text": "In den südost asiatischen Ländern.",
+      "suggestion": "südostasiatischen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "OTTO-NORMALVERBRAUCHER",
       "text": "Otto-Normalverbraucher legt Wert auf günstige Preise.",
       "suggestion": "Otto Normalverbraucher",
@@ -3997,6 +4789,12 @@
       "rule": "PAR_EXCELLENCE",
       "text": "Er machte das par Excellence.",
       "suggestion": "par excellence",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "PASSIONIERTE_PASSIERTE",
+      "text": "Man nehme drei passionierte Tomaten.",
+      "suggestion": "passierte",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4078,6 +4876,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "PREISE",
+      "text": "Steigende Priese belasten den Konsum.",
+      "suggestion": "Preise",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "PREISE",
+      "text": "Steigende Prise belasten den Konsum.",
+      "suggestion": "Preise",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "PRIESE",
       "text": "Eine Priese Salz.",
       "suggestion": "Prise",
@@ -4105,6 +4915,42 @@
       "rule": "PUNKT_UND_KLAMMER",
       "text": "3.) Element der Aufzählung.",
       "suggestion": "3.",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "PUTZFRAU",
+      "text": "Ich hatte bisher immer nur tolle Putzfrauen.",
+      "suggestion": "Reinigungskräfte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "PUTZFRAU",
+      "text": "Morgen kommen unsere Putzfrauen.",
+      "suggestion": "Reinigungskräfte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "PUTZFRAU",
+      "text": "Zahlt den Putzfrauen mehr Geld!",
+      "suggestion": "Reinigungskräften",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "RAUSCH_AUSSCHLAGEN_SPELLING_RULE",
+      "text": "Er muss erst seinen Rausch ausschlagen.",
+      "suggestion": "ausschlafen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "RECHTE_VORBEHALTEN",
+      "text": "Alle rechte vorbehalten.",
+      "suggestion": "Rechte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "RECHT_MACHEN",
+      "text": "Sie will es allen Recht machen.",
+      "suggestion": "recht",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4156,6 +5002,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "RUND_UM",
+      "text": "Rund um zufrieden.",
+      "suggestion": "Rundum",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "RUND_UM_SORGLOS",
       "text": "Er wählte das Rund-um-Sorglos-Paket.",
       "suggestion": "Rundum-Sorglos-Paket",
@@ -4165,6 +5017,24 @@
       "rule": "R_SYMBOL",
       "text": "Windows (R)",
       "suggestion": "®",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SAGT_UND_BESCHEID_SPELLING_RULE",
+      "text": "Sagt und Bescheid, wenn sich etwas ändert.",
+      "suggestion": "uns",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SAGT_UND_BESCHEID_SPELLING_RULE",
+      "text": "Sagt und bitte Bescheid, wenn sich etwas ändert.",
+      "suggestion": "uns",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SAGT_UND_BESCHEID_SPELLING_RULE",
+      "text": "Sagt und doch bitte Bescheid, wenn sich etwas ändert.",
+      "suggestion": "uns",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4204,6 +5074,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "SATT_HABEN",
+      "text": "Kein Wunder, dass die Zuschauer das Fernsehen satt haben.",
+      "suggestion": "satthaben",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SATT_HABEN",
+      "text": "Kein Wunder, dass er das Fernsehen satt hat.",
+      "suggestion": "satthat",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "SAVE_THE_DATE_KARTEN",
       "text": "Wir müssen für unsere Hochzeit noch die Save the Date Karten rausschicken.",
       "suggestion": "Save-the-Date-Karten",
@@ -4228,6 +5110,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
     },
     {
+      "rule": "SCHENKEN_DATIV",
+      "text": "Ich vertraue ihn nicht.",
+      "suggestion": "ihm",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SCHENKEN_DATIV",
+      "text": "Sie schenkt ihn ihre volle Aufmerksamkeit.",
+      "suggestion": "ihm",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "SCHLAF_INS_GESICHT_SPELLING_RULE",
       "text": "Für viele ist das ein Schlaf ins Gesicht.",
       "suggestion": "Schlag",
@@ -4246,6 +5140,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "SCHNELLE_RUND_SPELLING_RULE",
+      "text": "Reinigen Sie Außenflächen schnelle rund müheloser als mit dem Besen.",
+      "suggestion": "schneller und",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "SCHNICK_SCHNACK",
       "text": "Sie kaufte ganz viel Schnick Schnack.",
       "suggestion": "Schnickschnack",
@@ -4255,6 +5155,12 @@
       "rule": "SCHOEN_GUTEN_ABEND",
       "text": "Ich wünsche Ihnen einen schön guten Morgen.",
       "suggestion": "schönen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SCHOEN_REDEN",
+      "text": "Du kannst es dir weiter schön reden, auch wenn die Realität eine andere ist.",
+      "suggestion": "schönreden",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4342,6 +5248,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "SICH_AUSDRUCKEN",
+      "text": "Da habe ich mich nicht klar genug ausgedruckt.",
+      "suggestion": "ausgedrückt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SICH_AUSDRUCKEN",
+      "text": "Da habe ich mich ungeschickt ausgedruckt.",
+      "suggestion": "ausgedrückt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "SICH_WAEHREN_SPELLING_RULE",
       "text": "Der PC schaltet sich währen des Spiels ab.",
       "suggestion": "wehren",
@@ -4358,6 +5276,30 @@
       "text": "Die 7-Tages-Inzidenz ist stark gesunken.",
       "suggestion": "7-Tage-Inzidenz",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "SIE_GROSS",
+      "text": "Aber gibt Sie uns das?",
+      "suggestion": "sie",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SIE_GROSS",
+      "text": "Danach wird Sie mit der Sonne um die Wette strahlen.",
+      "suggestion": "sie",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SIE_GROSS",
+      "text": "Gibt Sie uns das?",
+      "suggestion": "sie",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SIE_GROSS",
+      "text": "Glaubt Sie das wirklich?",
+      "suggestion": "sie",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
       "rule": "SIGMUND_FREUD",
@@ -4468,9 +5410,39 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "STARK_MACHEN",
+      "text": "Ich werde mich dafür stark machen.",
+      "suggestion": "starkmachen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "STATISCHE_BUNDESAMT",
+      "text": "Das Statische Bundesamt hat neue Zahlen veröffentlicht.",
+      "suggestion": "Statistische Bundesamt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "STATISCHE_BUNDESAMT",
+      "text": "Die neuen Zahlen des statischen Bundesamtes liegen vor.",
+      "suggestion": "Statistischen Bundesamtes",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "STATTFINDEN",
+      "text": "Wo das Fest das statt findet, ist noch nicht klar.",
+      "suggestion": "stattfindet",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "STELLINGEN_STELLUNGEN",
       "text": "Wir probieren heute einige Stellingen.",
       "suggestion": "Stellungen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "STELLT_FEST",
+      "text": "Später stellte man Fest, dass er krank war.",
+      "suggestion": "fest",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4510,6 +5482,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "TAEGLICHER_ALLTAG",
+      "text": "Im täglichen Alltag kommt es häufig vor.",
+      "suggestion": "Alltag",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
       "rule": "TAG_EIN_TAG_AUS",
       "text": "Grenzen verschieben das ist es, womit sich Triathleten Tag ein, Tag aus beschäftigen.",
       "suggestion": "tagein, tagaus",
@@ -4540,6 +5518,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "TEIL_NEHMEN",
+      "text": "Ich werde an der Veranstaltung teil nehmen.",
+      "suggestion": "teilnehmen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "TEST_BERECHNET7ERMITTELT_SPELLING_RULE",
       "text": "Das mache ich morgen7übermorgen.",
       "suggestion": "morgen/übermorgen",
@@ -4564,6 +5548,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "TEXT_-_BASIERT",
+      "text": "Das ist eine Text basierte Analyse.",
+      "suggestion": "textbasierte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "TIL_SCHWEIGER",
       "text": "Till Schweiger",
       "suggestion": "Til",
@@ -4573,6 +5563,12 @@
       "rule": "TIPP_TOPP",
       "text": "Der neue Fernseher ist tip top.",
       "suggestion": "tipptopp",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "TOP_IN_FORM",
+      "text": "Sie ist Top in Form.",
+      "suggestion": "top",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4648,6 +5644,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "UM_GROESSERES_ZU",
+      "text": "Er tat dies, um schlimmeres abzuwenden.",
+      "suggestion": "Schlimmeres",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "UM_GROESSERES_ZU",
+      "text": "Er tat dies, um schlimmeres zu vermeiden.",
+      "suggestion": "Schlimmeres",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "UM_LETZTERES",
       "text": "Ich werde mich um letzteres kümmern.",
       "suggestion": "Letzteres",
@@ -4714,6 +5722,30 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "US_ARMEE",
+      "text": "Er fährt einen Elektro Golf.",
+      "suggestion": "Elektrogolf",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "US_ARMEE",
+      "text": "Ich bin ein US Bürger.",
+      "suggestion": "US-Bürger",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "US_ARMEE",
+      "text": "Peter ist ein Krypto Experte.",
+      "suggestion": "Kryptoexperte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "US_ARMEE",
+      "text": "wenn die jetzigen Stärken des Krypto Marktplatzes.",
+      "suggestion": "Kryptomarktplatzes",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "VERBIETE_MIR",
       "text": "Ich verbiete mir Ihre Belehrungen!",
       "suggestion": "verbitte",
@@ -4750,15 +5782,69 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "VEREINBAREN_SPELLING_RULE",
+      "text": "Dies ist nur schwer miteinander zu Vereinbaren.",
+      "suggestion": "vereinbaren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VEREINBAREN_SPELLING_RULE",
+      "text": "Sie erzählte von Wunderbaren Erlebnissen.",
+      "suggestion": "wunderbaren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VEREINIGTE_STATTEN",
+      "text": "Donald Trump war Präsident der Vereinigten Statten.",
+      "suggestion": "Vereinigten Staaten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERFUGEN_VERFUEGEN",
+      "text": "Die Ölplattform verfugt über fünf Schlauchboote.",
+      "suggestion": "verfügt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERFUGEN_VERFUEGEN",
+      "text": "Du verfugst über erstaunliche Fähigkeiten.",
+      "suggestion": "verfügst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "VERGNUEGEN_SUBST",
       "text": "Das ist doch schließlich kein vergnügen hier.",
       "suggestion": "Vergnügen",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "VERIRRT_VERWIRRT",
+      "text": "Sie war sehr verirrt, als man sie auffand.",
+      "suggestion": "verwirrt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERKOESTIGUNG",
+      "text": "Wir haben den Wein bereits verköstigt.",
+      "suggestion": "verkostet",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERKOESTIGUNG",
+      "text": "Wir haben dort Schokolade verköstigt.",
+      "suggestion": "verkostet",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "VERONIKA_POOTH",
       "text": "Veronika Pooth ist eine deutsche Moderatorin, Unternehmerin und ein Werbemodel.",
       "suggestion": "Verona Pooth",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERSCHIEBEN_VERSCHRIEBEN_SPELLING_RULE",
+      "text": "Thomas, der sich der Entwicklung verschieben hat.",
+      "suggestion": "verschrieben",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4813,6 +5899,12 @@
       "rule": "VOM_FEINSTEN",
       "text": "Dieser Genus ist vom feinsten.",
       "suggestion": "Feinsten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VOM_KLEINES_NOMEN",
+      "text": "Damals lebten die Menschen vom sammeln.",
+      "suggestion": "Sammeln",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -4876,6 +5968,24 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "VORBEI_VERB",
+      "text": "Die werden mal wieder aneinander vorbei reden.",
+      "suggestion": "vorbeireden",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VORLIEB_NEHMEN",
+      "text": "Wir müssen damit Vorlieb nehmen.",
+      "suggestion": "vorliebnehmen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VORM_AUSSTERBEN_BEDROHT",
+      "text": "Die Bienen sind vorm aussterben bedroht.",
+      "suggestion": "vom Aussterben",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "VOR_ALLEN_DINGEN",
       "text": "Vor allen dingen brauchen wir Sicherheit.",
       "suggestion": "Dingen",
@@ -4885,6 +5995,12 @@
       "rule": "VOR_ERST",
       "text": "Ich habe vor erst keine weiteren Fragen mehr.",
       "suggestion": "vorerst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WACHEN_WASCHEN",
+      "text": "Ich möchte mir jetzt die Haare wachen.",
+      "suggestion": "waschen",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -5062,9 +6178,39 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "WERDEN_FOLGENDEN_SUB",
+      "text": "Durch das Geld werden schönen Projekte unterstützt.",
+      "suggestion": "schöne",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WERDEN_FOLGENDEN_SUB",
+      "text": "Durch den Rabatt-Code werden folgenden Autos gefördert.",
+      "suggestion": "folgende",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WERDEN_FOLGENDEN_SUB",
+      "text": "Durch den Tracking-Code werden folgenden Informationen gesammelt.",
+      "suggestion": "folgende",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WERDEN_FOLGENDEN_SUB",
+      "text": "Durch die Medien werden folgenden Informationen verbreitet.",
+      "suggestion": "folgende",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "WERNHER_VON_BRAUN",
       "text": "Werner von Braun hat die Rakete erfunden.",
       "suggestion": "Wernher von Braun",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WERT_SCHAETZEN",
+      "text": "Sie hat meine Arbeit nicht wert geschätzt.",
+      "suggestion": "wertgeschätzt",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -5083,6 +6229,18 @@
       "rule": "WIDER_MIT",
       "text": "Aber demnächst geht es ja wider mit dem alten Kunden weiter.",
       "suggestion": "wieder",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WIEN_WEIN_SPELLING_RULE",
+      "text": "Sie trinkt gerne Wien.",
+      "suggestion": "Wein",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WIEN_WEIN_SPELLING_RULE",
+      "text": "Sie trinkt gerne ein Glas Wien am Abend.",
+      "suggestion": "Wein",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -5152,6 +6310,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "WUNDER_PUNKT",
+      "text": "Das ist mein Wunder Punkt.",
+      "suggestion": "wunder",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WUNDER_PUNKT",
+      "text": "Sie hat meinen Wunden Punkt gefunden.",
+      "suggestion": "wunden",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "WURDEN_WORDEN_1",
       "text": "Nachdem du besiegt werden bist, gabst du völlig auf.",
       "suggestion": "worden",
@@ -5206,6 +6376,18 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "ZAHL_LANG_NOMEN",
+      "text": "Die 2 hohe Hürde wurde ihm zum Verhängnis.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZAHL_LANG_NOMEN",
+      "text": "Die 5000 lange Strecke schaffte sie in fünf Wochen.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "ZARAH_LEANDER",
       "text": "Sarah Leander",
       "suggestion": "Zarah",
@@ -5230,6 +6412,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "ZENTRALER_KERNBAUSTEIN",
+      "text": "Das Modul besteht aus drei zentralen Kernbausteinen.",
+      "suggestion": "Kernbausteinen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
       "rule": "ZIEGEN_ZEIGEN_SPELLING_RULE",
       "text": "Ziegen Sie mir den Pass.",
       "suggestion": "Zeigen",
@@ -5245,6 +6433,18 @@
       "rule": "ZUM_ABSCHIED",
       "text": "Zum abschied noch ein Totenhemd.",
       "suggestion": "Abschied",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUM_AEUSSERSTEN_GREIFEN",
+      "text": "Wenn das nicht funktioniert, müssen wir zum äußersten greifen.",
+      "suggestion": "Äußersten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUM_BESSEREN_ÄNDERN",
+      "text": "Es hat sich zum besseren gewendet.",
+      "suggestion": "Besseren",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -5296,6 +6496,12 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
+      "rule": "ZU_ALLEM_ÜBEL",
+      "text": "Zu allem übel hat sie sich auch den Fuß gebrochen.",
+      "suggestion": "Übel",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
       "rule": "ZU_ALLERERST",
       "text": "Zu allererst mal in Ruhe nachdenken.",
       "suggestion": "Zuallererst",
@@ -5335,6 +6541,18 @@
       "rule": "ZU_KOMMA_ALS",
       "text": "Es war zu schrecklich, als man es mit Worten beschreiben könnte.",
       "suggestion": "als dass",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZU_KOMMEN_LASSEN",
+      "text": "Ich werde dir das zu kommen lassen.",
+      "suggestion": "zukommen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZU_LAST_FALLEN",
+      "text": "Ich möchte niemandem zu Last fallen.",
+      "suggestion": "zur",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
@@ -5389,6 +6607,12 @@
       "rule": "ZU_MAL",
       "text": "Unschön, zu mal ich Autoren mag.",
       "suggestion": "zumal",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZU_SCHICKEN_LASSEN",
+      "text": "Ich werde dir das zu senden können.",
+      "suggestion": "zuschicken",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {

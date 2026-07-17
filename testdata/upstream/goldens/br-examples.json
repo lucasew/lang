@@ -160,6 +160,18 @@
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
+      "rule": "ALL",
+      "text": "En tu-all",
+      "suggestion": "tu all",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "ALL",
+      "text": "Un dra-bennak.",
+      "suggestion": "dra bennak",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
       "rule": "AMEZEGEZ",
       "text": "An enezenn amezegez",
       "suggestion": "amezek",
@@ -175,6 +187,18 @@
       "rule": "AN_NIVER_AR",
       "text": "An niver ar c’hentelioù",
       "suggestion": "An niver a",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "AR_K",
+      "text": "Brav eo ar Kab-Sizun.",
+      "suggestion": "C’hab-Sizun",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "AR_TSAR",
+      "text": "Al tsunami",
+      "suggestion": "Ar",
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
@@ -286,6 +310,18 @@
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
+      "rule": "CHOM_A_SAV",
+      "text": "Chom a sav ar bus.",
+      "suggestion": "a-sav",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "CHOM_A_SAV",
+      "text": "Chomet eo an horolaj a sav.",
+      "suggestion": "a-sav",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
       "rule": "C_HASTELL_NEVEZ",
       "text": "E Kastell Nevez emaon o chom.",
       "suggestion": "Kastell-Nevez",
@@ -307,6 +343,12 @@
       "rule": "DISTER_DRA",
       "text": "Un dister tra.",
       "suggestion": "dra",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "DIWALL",
+      "text": "Ret eo ober diwall.",
+      "suggestion": "",
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
@@ -418,6 +460,18 @@
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
+      "rule": "GWIR_ANV",
+      "text": "Gwir Bretoned",
+      "suggestion": "",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "GWIR_ANV",
+      "text": "Ur gwir plijadur",
+      "suggestion": "",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
       "rule": "HAG_HA",
       "text": "Hag ha zo",
       "suggestion": "a",
@@ -457,6 +511,18 @@
       "rule": "HUNTERKANTVET",
       "text": "Tri-ugentvet.",
       "suggestion": "Triugentvet",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "J_TRE",
+      "text": "Brudet mat eo.",
+      "suggestion": "Brudet-mat",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "J_TRE",
+      "text": "Fentus tre eo.",
+      "suggestion": "Fentus-tre",
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
@@ -523,6 +589,18 @@
       "rule": "LAMM_DOUR",
       "text": "Ul lamm dour",
       "suggestion": "lamm-dour",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "LECH_LERCH",
+      "text": "Treuzennoù lec’h-ouzh-lec’h.",
+      "suggestion": "lerc’h-ouzh-lerc’h",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "LECH_LERCH",
+      "text": "War-lec’h ar brezel.",
+      "suggestion": "War-lerc’h",
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {
@@ -619,6 +697,12 @@
       "rule": "PA_E",
       "text": "Pa e oan yaouankoc’h",
       "suggestion": "Pa oan",
+      "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
+    },
+    {
+      "rule": "PENLIZH_MIZ",
+      "text": "E miz du, teñval ha du.",
+      "suggestion": "Du",
       "source": "languagetool-language-modules/br/src/main/resources/org/languagetool/rules/br/grammar.xml"
     },
     {

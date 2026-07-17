@@ -175,7 +175,7 @@ func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
 }
 
 // DiscoverEnglishMultiwords finds multiword dict for soft multiword disambiguation.
-// Prefers soft tab file (en-multiwords-soft.txt), then LANG_EN_MULTIWORDS, then upstream multiwords.txt.
+// Prefers LANG_EN_MULTIWORDS, data-dir, vendored upstream multiwords, then legacy soft list.
 func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 	if p := os.Getenv("LANG_EN_MULTIWORDS"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
@@ -193,11 +193,11 @@ func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 			}
 		}
 	}
-	// Prefer soft tab-safe file over full upstream multiwords.txt (many glued tags).
-	if p := WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-multiwords-soft.txt")); p != "" {
-		return p
-	}
+	// Prefer vendored upstream multiwords, then legacy soft list, then submodule/third_party.
 	relPaths := []string{
+		filepath.Join("testdata", "disambiguation", "en-multiwords-upstream.txt"),
+		filepath.Join("testdata", "upstream", "en", "resource", "multiwords.txt"),
+		filepath.Join("testdata", "disambiguation", "en-multiwords-soft.txt"),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "multiwords.txt"),
 		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "multiwords.txt"),
 	}

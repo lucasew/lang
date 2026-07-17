@@ -52,6 +52,12 @@
       "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
     },
     {
+      "rule": "DIR_A_INF",
+      "text": "Xuan va a garrar l’autobús.",
+      "suggestion": "va garrar",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
       "rule": "EN_EL_CONTR",
       "text": "Enfotóse en él.",
       "suggestion": "nél",

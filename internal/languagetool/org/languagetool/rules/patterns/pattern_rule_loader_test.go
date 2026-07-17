@@ -3,6 +3,7 @@ package patterns
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,4 +43,33 @@ func TestPatternRuleLoaderRelaxed(t *testing.T) {
 	rules, err := l.GetRulesFromString(xml, "t.xml", "en")
 	require.NoError(t, err)
 	require.Len(t, rules, 1)
+}
+
+func TestPatternRuleLoader_ExceptionAndInflected(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="EX1" name="with exception">
+      <pattern>
+        <token inflected="yes">run<exception>running</exception></token>
+        <token>fast</token>
+      </pattern>
+      <message>x</message>
+    </rule>
+  </category>
+</rules>`
+	rules, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	pt := rules[0].PatternTokens[0]
+	require.True(t, pt.MatchInflected)
+	require.Equal(t, "running", pt.TokenException)
+	require.False(t, pt.TokenExceptionRE)
+
+	m := NewPatternTokenMatcher(pt)
+	runTok := languagetool.NewAnalyzedToken("run", nil, strPtr("run"))
+	runningTok := languagetool.NewAnalyzedToken("running", nil, strPtr("run"))
+	require.True(t, m.IsMatched(runTok))
+	// surface exception "running" blocks even if lemma is run
+	require.False(t, m.IsMatched(runningTok))
 }

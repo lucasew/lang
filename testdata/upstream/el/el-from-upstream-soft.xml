@@ -19,6 +19,14 @@
       <message>Το ουσιαστικό μέθοδος είναι γένους Θηλυκού. Χρησιμοποιήστε την αντωνυμία <suggestion>αυτές</suggestion></message>
       <short>Πρόβλημα συμφωνίας</short>
     </rule>
+    <rule id="HAVE_INF" name="έχω_απαρέμφατο">
+      <pattern>
+        <token>έχω</token>
+        <token postag="V"></token>
+      </pattern>
+      <message>Πιθανόν να χρειάζεται να χρησιμοποιήσετε τον απαρεμφατικό τύπο <suggestion></suggestion></message>
+      <short>Πρόβλημα συμφωνίας</short>
+    </rule>
   </category>
   <category id="ORTHOGRAPHY" name="Orthography">
     <rule id="GREEK_COMMON_ERRORS_1" name="πώς και πώς">
