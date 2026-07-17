@@ -408,3 +408,6 @@ Opal Corridor RegionNNP
 Sapphire Corridor RegionNNP
 Topaz Corridor RegionNNP
 Quartz Corridor RegionNNP
+Garnet Corridor RegionNNP
+Onyx Corridor RegionNNP
+Obsidian Corridor RegionNNP

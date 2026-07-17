@@ -8947,6 +8947,76 @@
       <message>Did you mean "average"?</message>
       <short>avrage</short>
     </rule>
+    <rule id="EN_SOFT_ACCOMPLISHMENTS_MISS" name="acomplishments soft">
+      <pattern>
+        <token>acomplishments</token>
+      </pattern>
+      <message>Did you mean "accomplishments"?</message>
+      <short>acomplishments</short>
+    </rule>
+    <rule id="EN_SOFT_ATHEISTS_MISS" name="athiests soft">
+      <pattern>
+        <token>athiests</token>
+      </pattern>
+      <message>Did you mean "atheists"?</message>
+      <short>athiests</short>
+    </rule>
+    <rule id="EN_SOFT_ATTEMPTS_MISS" name="attemps soft">
+      <pattern>
+        <token>attemps</token>
+      </pattern>
+      <message>Did you mean "attempts"?</message>
+      <short>attemps</short>
+    </rule>
+    <rule id="EN_SOFT_AVERAGES_MISS" name="avrages soft">
+      <pattern>
+        <token>avrages</token>
+      </pattern>
+      <message>Did you mean "averages"?</message>
+      <short>avrages</short>
+    </rule>
+    <rule id="EN_SOFT_AWESOME_MISS" name="awsome soft">
+      <pattern>
+        <token>awsome</token>
+      </pattern>
+      <message>Did you mean "awesome"?</message>
+      <short>awsome</short>
+    </rule>
+    <rule id="EN_SOFT_SUPERSEDING_MISS" name="superceding soft">
+      <pattern>
+        <token>superceding</token>
+      </pattern>
+      <message>Did you mean "superseding"?</message>
+      <short>superceding</short>
+    </rule>
+    <rule id="EN_SOFT_RHYTHMICALLY_MISS" name="rythmically soft">
+      <pattern>
+        <token>rythmically</token>
+      </pattern>
+      <message>Did you mean "rhythmically"?</message>
+      <short>rythmically</short>
+    </rule>
+    <rule id="EN_SOFT_RESEMBLANCE_MISS2" name="resembelance soft">
+      <pattern>
+        <token>resembelance</token>
+      </pattern>
+      <message>Did you mean "resemblance"?</message>
+      <short>resembelance</short>
+    </rule>
+    <rule id="EN_SOFT_RELEVANTLY_MISS" name="relevently soft">
+      <pattern>
+        <token>relevently</token>
+      </pattern>
+      <message>Did you mean "relevantly"?</message>
+      <short>relevently</short>
+    </rule>
+    <rule id="EN_SOFT_CANDIDATE_MISS" name="candadate soft">
+      <pattern>
+        <token>candadate</token>
+      </pattern>
+      <message>Did you mean "candidate"?</message>
+      <short>candadate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

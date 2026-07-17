@@ -2409,5 +2409,29 @@
       <message>Jargon; name an external double-dispatch operation instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MEDIATOR_PATTERN" name="mediator pattern soft picky">
+      <pattern>
+        <token>mediator</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a central coordination object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ITERATOR_PATTERN" name="iterator pattern soft picky">
+      <pattern>
+        <token>iterator</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a sequential access cursor instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROTOTYPE_PATTERN" name="prototype pattern soft picky">
+      <pattern>
+        <token>prototype</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name clone-based object creation instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

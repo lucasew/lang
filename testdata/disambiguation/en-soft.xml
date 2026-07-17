@@ -3759,4 +3759,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_APPMESH" name="immunize appmesh">
+    <pattern>
+      <token>appmesh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPMESH_CAPS" name="immunize AppMesh">
+    <pattern>
+      <token>AppMesh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MSK" name="immunize msk">
+    <pattern>
+      <token>msk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MSK_CAPS" name="immunize MSK">
+    <pattern>
+      <token>MSK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MQ" name="immunize mq">
+    <pattern>
+      <token>mq</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MQ_CAPS" name="immunize MQ">
+    <pattern>
+      <token>MQ</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
