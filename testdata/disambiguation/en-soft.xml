@@ -4155,4 +4155,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SESV2" name="immunize sesv2">
+    <pattern>
+      <token>sesv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SESV2_CAPS" name="immunize SESv2">
+    <pattern>
+      <token>SESv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICE" name="immunize pinpointsmsvoice">
+    <pattern>
+      <token>pinpointsmsvoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINTSMSVOICE_CAPS" name="immunize PinpointSMSVoice">
+    <pattern>
+      <token>PinpointSMSVoice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTACTLENS" name="immunize contactlens">
+    <pattern>
+      <token>contactlens</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTACTLENS_CAPS" name="immunize ContactLens">
+    <pattern>
+      <token>ContactLens</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

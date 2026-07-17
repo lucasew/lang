@@ -2680,5 +2680,28 @@
       <message>Jargon; name specific measurable objective framing instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MOSCOW_METHOD" name="moscow method soft picky">
+      <pattern>
+        <token>moscow</token>
+        <token>method</token>
+      </pattern>
+      <message>Jargon; name must-should-could-wont prioritization instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RICE_SCORE" name="rice score soft picky">
+      <pattern>
+        <token>rice</token>
+        <token>score</token>
+      </pattern>
+      <message>Jargon; name reach-impact-confidence-effort scoring instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WSJF" name="wsjf soft picky">
+      <pattern>
+        <token>wsjf</token>
+      </pattern>
+      <message>Jargon; name weighted shortest job first ranking instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

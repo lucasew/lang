@@ -441,3 +441,6 @@ Cinder Corridor RegionNNP
 Magma Corridor RegionNNP
 Crater Corridor RegionNNP
 Vent Corridor RegionNNP
+Caldera Corridor RegionNNP
+Fumarole Corridor RegionNNP
+Lahar Corridor RegionNNP

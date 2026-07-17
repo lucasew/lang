@@ -9717,6 +9717,76 @@
       <message>Did you mean "installing"?</message>
       <short>isntalling</short>
     </rule>
+    <rule id="EN_SOFT_KNOWLEDGEABLY_MISS" name="knowlegeably soft">
+      <pattern>
+        <token>knowlegeably</token>
+      </pattern>
+      <message>Did you mean "knowledgeably"?</message>
+      <short>knowlegeably</short>
+    </rule>
+    <rule id="EN_SOFT_LIAISONS_MISS2" name="laisons soft">
+      <pattern>
+        <token>laisons</token>
+      </pattern>
+      <message>Did you mean "liaisons"?</message>
+      <short>laisons</short>
+    </rule>
+    <rule id="EN_SOFT_LICENCES_MISS" name="liscences soft">
+      <pattern>
+        <token>liscences</token>
+      </pattern>
+      <message>Did you mean "licenses"?</message>
+      <short>liscences</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSED_MISS2" name="liscensed soft">
+      <pattern>
+        <token>liscensed</token>
+      </pattern>
+      <message>Did you mean "licensed"?</message>
+      <short>liscensed</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSES_MISS" name="liscenses soft">
+      <pattern>
+        <token>liscenses</token>
+      </pattern>
+      <message>Did you mean "licenses"?</message>
+      <short>liscenses</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSIONALLY_MISS2" name="proffesionally soft">
+      <pattern>
+        <token>proffesionally</token>
+      </pattern>
+      <message>Did you mean "professionally"?</message>
+      <short>proffesionally</short>
+    </rule>
+    <rule id="EN_SOFT_PROHIBITION_MISS" name="prohabition soft">
+      <pattern>
+        <token>prohabition</token>
+      </pattern>
+      <message>Did you mean "prohibition"?</message>
+      <short>prohabition</short>
+    </rule>
+    <rule id="EN_SOFT_ANNOUNCE_MISS2" name="annouce soft">
+      <pattern>
+        <token>annouce</token>
+      </pattern>
+      <message>Did you mean "announce"?</message>
+      <short>annouce</short>
+    </rule>
+    <rule id="EN_SOFT_ADJACENT_MISS" name="ajacent soft">
+      <pattern>
+        <token>ajacent</token>
+      </pattern>
+      <message>Did you mean "adjacent"?</message>
+      <short>ajacent</short>
+    </rule>
+    <rule id="EN_SOFT_AMONG_MISS2" name="amung soft">
+      <pattern>
+        <token>amung</token>
+      </pattern>
+      <message>Did you mean "among"?</message>
+      <short>amung</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
