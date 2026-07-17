@@ -5595,4 +5595,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_KYSELY" name="immunize kysely">
+    <pattern>
+      <token>kysely</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYSELY_CAPS" name="immunize Kysely">
+    <pattern>
+      <token>Kysely</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLONIK" name="immunize slonik">
+    <pattern>
+      <token>slonik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLONIK_CAPS" name="immunize Slonik">
+    <pattern>
+      <token>Slonik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAPATOS" name="immunize zapatos">
+    <pattern>
+      <token>zapatos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAPATOS_CAPS" name="immunize Zapatos">
+    <pattern>
+      <token>Zapatos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

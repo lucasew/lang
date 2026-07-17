@@ -561,3 +561,6 @@ Amphibolite Ridge RegionNNP
 Eclogite Ridge RegionNNP
 Serpentinite Ridge RegionNNP
 Soapstone Ridge RegionNNP
+Feldspar Ridge RegionNNP
+Pegmatite Ridge RegionNNP
+Syenite Ridge RegionNNP

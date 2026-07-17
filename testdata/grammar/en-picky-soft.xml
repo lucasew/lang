@@ -3582,5 +3582,26 @@
       <message>Jargon; name cloud cost operations practice instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RIGHTSIZING" name="rightsizing soft picky">
+      <pattern>
+        <token>rightsizing</token>
+      </pattern>
+      <message>Jargon; name matching capacity to actual demand instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHOWBACK" name="showback soft picky">
+      <pattern>
+        <token>showback</token>
+      </pattern>
+      <message>Jargon; name reporting shared cloud costs to teams without charging instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHARGEBACK" name="chargeback soft picky">
+      <pattern>
+        <token>chargeback</token>
+      </pattern>
+      <message>Jargon; name allocating shared cloud costs back to teams instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

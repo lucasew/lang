@@ -12517,6 +12517,76 @@
       <message>Did you mean "entity"?</message>
       <short>enttiy</short>
     </rule>
+    <rule id="EN_SOFT_ENTITY_MISS2" name="entiy soft">
+      <pattern>
+        <token>entiy</token>
+      </pattern>
+      <message>Did you mean "entity"?</message>
+      <short>entiy</short>
+    </rule>
+    <rule id="EN_SOFT_FIXTURE_MISS" name="fixtre soft">
+      <pattern>
+        <token>fixtre</token>
+      </pattern>
+      <message>Did you mean "fixture"?</message>
+      <short>fixtre</short>
+    </rule>
+    <rule id="EN_SOFT_ASSERTION_MISS" name="asserion soft">
+      <pattern>
+        <token>asserion</token>
+      </pattern>
+      <message>Did you mean "assertion"?</message>
+      <short>asserion</short>
+    </rule>
+    <rule id="EN_SOFT_ASSERTION_MISS2" name="asserton soft">
+      <pattern>
+        <token>asserton</token>
+      </pattern>
+      <message>Did you mean "assertion"?</message>
+      <short>asserton</short>
+    </rule>
+    <rule id="EN_SOFT_SCENARIO_MISS" name="scneario soft">
+      <pattern>
+        <token>scneario</token>
+      </pattern>
+      <message>Did you mean "scenario"?</message>
+      <short>scneario</short>
+    </rule>
+    <rule id="EN_SOFT_SCENARIO_MISS2" name="scenaro soft">
+      <pattern>
+        <token>scenaro</token>
+      </pattern>
+      <message>Did you mean "scenario"?</message>
+      <short>scenaro</short>
+    </rule>
+    <rule id="EN_SOFT_BUGFIX_MISS" name="bugifx soft">
+      <pattern>
+        <token>bugifx</token>
+      </pattern>
+      <message>Did you mean "bugfix"?</message>
+      <short>bugifx</short>
+    </rule>
+    <rule id="EN_SOFT_HOTFIX_MISS" name="hotifx soft">
+      <pattern>
+        <token>hotifx</token>
+      </pattern>
+      <message>Did you mean "hotfix"?</message>
+      <short>hotifx</short>
+    </rule>
+    <rule id="EN_SOFT_HOTFIX_MISS2" name="hotfx soft">
+      <pattern>
+        <token>hotfx</token>
+      </pattern>
+      <message>Did you mean "hotfix"?</message>
+      <short>hotfx</short>
+    </rule>
+    <rule id="EN_SOFT_RELEASE_MISS2" name="relaese soft">
+      <pattern>
+        <token>relaese</token>
+      </pattern>
+      <message>Did you mean "release"?</message>
+      <short>relaese</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
