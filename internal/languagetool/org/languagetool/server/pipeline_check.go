@@ -1,11 +1,13 @@
 package server
 
 import (
+	"os"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // newConfiguredLT builds a language tool with core packs and pipeline filters applied.
@@ -19,6 +21,9 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	}
 	lt := languagetool.NewJLanguageTool(lang)
 	corepack.Register(lt, lang)
+	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
+		_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
+	}
 
 	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
 	switch strings.ToUpper(p.settings.Query.LanguageCode) {
