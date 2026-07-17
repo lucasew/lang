@@ -77,3 +77,33 @@ func DemoEnglishKnownWords() map[string]struct{} {
 	}
 	return m
 }
+
+// DemoEnglishTagWord returns a tiny closed-class POS inject for smoke tests.
+func DemoEnglishTagWord() func(token string) []languagetool.TokenTag {
+	m := map[string]languagetool.TokenTag{
+		"the": {POS: "DT", Lemma: "the"}, "a": {POS: "DT", Lemma: "a"}, "an": {POS: "DT", Lemma: "an"},
+		"is": {POS: "VBZ", Lemma: "be"}, "are": {POS: "VBP", Lemma: "be"}, "was": {POS: "VBD", Lemma: "be"},
+		"and": {POS: "CC", Lemma: "and"}, "of": {POS: "IN", Lemma: "of"}, "to": {POS: "TO", Lemma: "to"},
+		"I": {POS: "PRP", Lemma: "I"}, "you": {POS: "PRP", Lemma: "you"}, "he": {POS: "PRP", Lemma: "he"},
+		"she": {POS: "PRP", Lemma: "she"}, "it": {POS: "PRP", Lemma: "it"}, "we": {POS: "PRP", Lemma: "we"},
+		"they": {POS: "PRP", Lemma: "they"},
+	}
+	return func(token string) []languagetool.TokenTag {
+		if tg, ok := m[token]; ok {
+			return []languagetool.TokenTag{tg}
+		}
+		low := strings.ToLower(token)
+		if tg, ok := m[low]; ok {
+			return []languagetool.TokenTag{tg}
+		}
+		return nil
+	}
+}
+
+// RegisterDemoEnglishTagger installs DemoEnglishTagWord on lt.TagWord.
+func RegisterDemoEnglishTagger(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	lt.TagWord = DemoEnglishTagWord()
+}

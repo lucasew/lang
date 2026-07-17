@@ -123,6 +123,8 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			Disabled:       a.TextChecker.GetDisabledRuleIDs(parameters),
 			Enabled:        a.TextChecker.GetEnabledRuleIDs(parameters),
 			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true"),
+			// soft: undocumented ignoreWords CSV for user-dictionary style suppression
+			IgnoreWords: commaSeparated(parameters["ignoreWords"]),
 		}
 		if v := parameters["mode"]; v != "" {
 			opts.Mode = CheckMode(strings.ToUpper(v))

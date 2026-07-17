@@ -131,3 +131,17 @@ func TestLanguageNameForCode(t *testing.T) {
 	require.Equal(t, "English", LanguageNameForCode("en-US"))
 	require.Equal(t, "German", LanguageNameForCode("de"))
 }
+
+func TestApiV2_IgnoreWords(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	// Register demo speller via grammar won't help; inject through check with ignore
+	// When only core rules, ignoreWords is no-op for a/an. Smoke: request accepted.
+	r, err := api.Handle("check", map[string]string{
+		"language":    "en",
+		"text":        "This is an test.",
+		"ignoreWords": "xyzzy,foobar",
+	})
+	require.NoError(t, err)
+	require.Equal(t, 200, r.Status)
+	require.Contains(t, r.Body, "EN_A_VS_AN")
+}

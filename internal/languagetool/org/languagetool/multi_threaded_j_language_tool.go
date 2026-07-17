@@ -202,5 +202,5 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			}
 		}
 	}
-	return out
+	return lt.filterMatchesByIgnore(text, out)
 }

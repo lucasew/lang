@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="es">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="ES_SOFT_HAYA_ALLA" name="haya/allá">
+      <pattern>
+        <token>voy</token>
+        <token>haya</token>
+      </pattern>
+      <message>¿Quiso decir "voy allá"?</message>
+      <short>haya/allá</short>
+    </rule>
+  </category>
+</rules>

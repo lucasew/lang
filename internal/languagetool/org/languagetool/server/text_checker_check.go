@@ -15,6 +15,8 @@ type CheckOptions struct {
 	UseEnabledOnly bool
 	Mode           CheckMode
 	Level          CheckLevel
+	// IgnoreWords soft user-dictionary surfaces (suppresses spelling matches).
+	IgnoreWords []string
 }
 
 // Check runs core rules for language on text and returns RemoteRuleMatch results.
@@ -94,6 +96,7 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	defer t.releasePipeline(settings, p, fromPool)
 	locals := p.Check(text)
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, text)
+	locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
 	ctxSize := DefaultContextSize
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
@@ -111,6 +114,7 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	locals := p.CheckAnnotated(at)
 	plain := at.GetPlainText()
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, plain)
+	locals = filterLocalsByIgnoreWords(plain, locals, opts.IgnoreWords)
 	// Context uses original markup string so projected offsets align.
 	orig := at.GetTextWithMarkup()
 	ctxSize := DefaultContextSize
@@ -118,6 +122,10 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 		ctxSize = t.ContextSize
 	}
 	return LocalMatchesToRemote(orig, locals, ctxSize)
+}
+
+func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore []string) []languagetool.LocalMatch {
+	return languagetool.FilterMatchesByIgnoreWords(text, ms, ignore)
 }
 
 // applyLevelPickyBoost runs extra EN picky patterns when level is PICKY (soft).

@@ -83,3 +83,29 @@ func TestRegisterDemoEnglishSpeller(t *testing.T) {
 		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID)
 	}
 }
+
+func TestRegisterDemoEnglishTagger(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterDemoEnglishTagger(lt)
+	sents := lt.Analyze("The cat is here")
+	require.NotEmpty(t, sents)
+	foundDT := false
+	for _, tok := range sents[0].GetTokensWithoutWhitespace() {
+		if tok.GetToken() == "The" || tok.GetToken() == "the" {
+			// TagWord lowercases The → the
+		}
+		if strings.EqualFold(tok.GetToken(), "the") {
+			rd := tok.GetReadings()
+			if len(rd) > 0 && rd[0].GetPOSTag() != nil && *rd[0].GetPOSTag() == "DT" {
+				foundDT = true
+			}
+		}
+		if strings.EqualFold(tok.GetToken(), "is") {
+			rd := tok.GetReadings()
+			require.NotEmpty(t, rd)
+			require.NotNil(t, rd[0].GetPOSTag())
+			require.Equal(t, "VBZ", *rd[0].GetPOSTag())
+		}
+	}
+	require.True(t, foundDT)
+}

@@ -88,7 +88,11 @@ type JLanguageTool struct {
 	IsKnownWord func(token string) bool
 	// TagWord optional POS/lemma inject used by Analyze (MapWordTagger-friendly).
 	TagWord func(token string) []TokenTag
-	unknown map[string]struct{}
+	// IgnoreWords soft user-dictionary / spell-ignore set (surface forms).
+	IgnoreWords map[string]struct{}
+	// UserConfig optional user preferences (accepted phrases, speller words).
+	UserConfig *UserConfig
+	unknown    map[string]struct{}
 }
 
 func NewJLanguageTool(languageCode string) *JLanguageTool {
@@ -295,7 +299,7 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 			}
 		}
 	}
-	return out
+	return lt.filterMatchesByIgnore(text, out)
 }
 
 func (lt *JLanguageTool) collectUnknown(s *AnalyzedSentence) {
