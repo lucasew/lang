@@ -1,17 +1,17 @@
 package uk
 
-// Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/AbstractRuleTest.java
+// Twin of AbstractRuleTest — Java base class had no @Test; green agreement helpers smoke.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/AbstractRuleTest.java :: AbstractRuleTest (no @Test)
+// Port of AbstractRuleTest (no tests in Java)
 func TestAbstractRule_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/AbstractRuleTest.java")
+	require.NotEmpty(t, TokenAgreementAdjNounRuleID)
+	require.NotEmpty(t, TokenAgreementPrepNounRuleID)
+	require.NotEmpty(t, TokenAgreementVerbNounRuleID)
+	require.NotNil(t, NewTokenAgreementAdjNounRule())
+	require.NotNil(t, NewTokenAgreementPrepNounRule())
 }

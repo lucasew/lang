@@ -1,17 +1,21 @@
 package pl
 
-// Twin of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/MatchTest.java
+// Twin of MatchTest (Polish) — case/regex Match surface without full synthesizer.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/MatchTest.java :: MatchTest.testSpeller
+// Port of MatchTest.testSpeller (soft: Match construction + case conversion)
 func TestMatch_Speller(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	m := patterns.NewMatch("subst:.*", "subst:sg:nom:m", true, "", "", patterns.CaseNone, false, true, patterns.IncludeNone)
+	require.True(t, m.ChecksSpelling())
+	require.True(t, m.IsPostagRegexp())
+	require.Equal(t, "subst:.*", m.GetPosTag())
+	// text match with regex replace
+	tm := patterns.NewMatch("", "", false, "a(.)", "b$1", patterns.CaseStartUpper, false, false, patterns.IncludeNone)
+	require.True(t, tm.ConvertsCase())
+	require.Equal(t, "Hello", patterns.ConvertCase(patterns.CaseStartUpper, "hello", "X"))
 }

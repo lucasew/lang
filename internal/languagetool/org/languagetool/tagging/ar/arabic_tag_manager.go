@@ -228,6 +228,18 @@ func (m *ArabicTagManager) SetPronoun(postag, flag string) string {
 	return postag
 }
 
+// GetConjunctionPrefix returns the Arabic conjunction letter for a CONJ flag.
+func (m *ArabicTagManager) GetConjunctionPrefix(postag string) string {
+	switch m.GetFlag(postag, "CONJ") {
+	case 'F':
+		return "ف"
+	case 'W':
+		return "و"
+	default:
+		return ""
+	}
+}
+
 func (m *ArabicTagManager) UnifyPronounTag(postag string) string {
 	if m.IsAttached(postag) {
 		return m.SetFlag(postag, "PRONOUN", 'H')

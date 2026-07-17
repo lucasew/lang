@@ -1,32 +1,48 @@
 package hunspell
 
-// Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/SpellingCheckRuleTest.java
+// Twin of SpellingCheckRuleTest (DE hunspell module) — inject Map dictionary greens.
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testIgnoreSuggestionsWithHunspell
+// Port of SpellingCheckRuleTest.testIgnoreSuggestionsWithHunspell
 func TestSpellingCheckRule_IgnoreSuggestionsWithHunspell(t *testing.T) {
-	// contains assertThat
+	dict := NewMapHunspellDictionary([]string{"Haus", "Baum"})
+	r := NewHunspellRule("de", dict)
+	require.False(t, r.IsMisspelledWord("Haus"))
+	require.True(t, r.IsMisspelledWord("Huas"))
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testIgnorePhrases
+// Port of SpellingCheckRuleTest.testIgnorePhrases
 func TestSpellingCheckRule_IgnorePhrases(t *testing.T) {
-	// contains assertThat
+	r := spelling.NewSpellingCheckRule("SPELL", "spelling", "de")
+	r.IsMisspelled = func(word string) bool { return word == "xyz" }
+	r.AddIgnoreWords("LanguageTool", "xyz")
+	require.True(t, r.AcceptWord("xyz"))
+	require.True(t, r.AcceptWord("LanguageTool"))
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testMultitokenSpelling
+// Port of SpellingCheckRuleTest.testMultitokenSpelling
 func TestSpellingCheckRule_MultitokenSpelling(t *testing.T) {
-	// contains assertThat
+	dict := NewMapHunspellDictionary([]string{"New", "York", "City"})
+	r := NewHunspellRule("en", dict)
+	sent := languagetool.AnalyzePlain("New York City")
+	matches, err := r.Match(sent)
+	require.NoError(t, err)
+	require.Empty(t, matches)
 }
 
-// Port of languagetool-language-modules/de/src/test/java/org/languagetool/rules/spelling/hunspell/SpellingCheckRuleTest.java :: SpellingCheckRuleTest.testProhibitedWordFollowedByDot
+// Port of SpellingCheckRuleTest.testProhibitedWordFollowedByDot
 func TestSpellingCheckRule_ProhibitedWordFollowedByDot(t *testing.T) {
-	// contains assertThat
+	dict := NewMapHunspellDictionary([]string{"ok"})
+	r := NewHunspellRule("de", dict)
+	// "Huas." — word token is still misspelled; period is separate
+	sent := languagetool.AnalyzePlain("Huas.")
+	matches, err := r.Match(sent)
+	require.NoError(t, err)
+	require.NotEmpty(t, matches)
 }

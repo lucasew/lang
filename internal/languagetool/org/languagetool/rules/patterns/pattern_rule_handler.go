@@ -33,7 +33,41 @@ const (
 	MarkerTag     = "<marker>"
 	PleaseSpellMe = "<pleasespellme/>"
 	RawTag        = "raw_pos"
+	// spaceInRegex is the Java replacement for a bare space outside character classes.
+	// Java: "(?:[\\s\u00A0\u202F]+)"
+	spaceInRegex = "(?:[\\s\u00A0\u202F]+)"
 )
+
+// ReplaceSpacesInRegex ports PatternRuleHandler.replaceSpacesInRegex:
+// spaces outside [] become a flexible whitespace class (incl. NBSP / NNBSP).
+func ReplaceSpacesInRegex(s string) string {
+	var b strings.Builder
+	inBracket := false
+	for _, c := range s {
+		switch c {
+		case '[':
+			inBracket = true
+			b.WriteRune(c)
+		case ']':
+			inBracket = false
+			b.WriteRune(c)
+		case ' ':
+			if !inBracket {
+				b.WriteString(spaceInRegex)
+			} else {
+				b.WriteRune(c)
+			}
+		default:
+			b.WriteRune(c)
+		}
+	}
+	return b.String()
+}
+
+// ReplaceSpacesInRegex method form for Java twin callers.
+func (h *PatternRuleHandler) ReplaceSpacesInRegex(s string) string {
+	return ReplaceSpacesInRegex(s)
+}
 
 func NewPatternRuleHandler(sourceFile, languageCode string) *PatternRuleHandler {
 	return &PatternRuleHandler{

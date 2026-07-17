@@ -1,17 +1,18 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleHandlerTest.java
+// Twin of PatternRuleHandlerTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleHandlerTest.java :: PatternRuleHandlerTest.testReplaceSpacesInRegex
+// Port of PatternRuleHandlerTest.testReplaceSpacesInRegex
 func TestPatternRuleHandler_ReplaceSpacesInRegex(t *testing.T) {
-	// contains assertThat
+	s := "(?:[\\s\u00A0\u202F]+)"
+	h := NewPatternRuleHandler("x", "en")
+	require.Equal(t, "foo"+s+"bar", h.ReplaceSpacesInRegex("foo bar"))
+	require.Equal(t, "foo"+s+"bar"+s+"x", h.ReplaceSpacesInRegex("foo bar x"))
+	require.Equal(t, "foo"+s+s+"bar", h.ReplaceSpacesInRegex("foo  bar"))
+	require.Equal(t, "fo[xy ]"+s+"bar", h.ReplaceSpacesInRegex("fo[xy ] bar"))
 }
