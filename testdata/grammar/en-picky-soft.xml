@@ -3196,5 +3196,26 @@
       <message>Jargon; name mistake-proofing safeguards instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_SMED" name="smed soft picky">
+      <pattern>
+        <token>smed</token>
+      </pattern>
+      <message>Jargon; name single-minute exchange of die changeover instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OEE" name="oee soft picky">
+      <pattern>
+        <token>oee</token>
+      </pattern>
+      <message>Jargon; name overall equipment effectiveness instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TPM" name="tpm soft picky">
+      <pattern>
+        <token>tpm</token>
+      </pattern>
+      <message>Jargon; name total productive maintenance instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

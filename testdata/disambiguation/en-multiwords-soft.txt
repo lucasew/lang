@@ -507,3 +507,6 @@ Soapstone Summit RegionNNP
 Feldspar Summit RegionNNP
 Quartz Summit RegionNNP
 Pegmatite Summit RegionNNP
+Syenite Summit RegionNNP
+Diorite Summit RegionNNP
+Gabbro Summit RegionNNP

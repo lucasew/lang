@@ -4947,4 +4947,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_KANIKO" name="immunize kaniko">
+    <pattern>
+      <token>kaniko</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KANIKO_CAPS" name="immunize Kaniko">
+    <pattern>
+      <token>Kaniko</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CALICO" name="immunize calico">
+    <pattern>
+      <token>calico</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CALICO_CAPS" name="immunize Calico">
+    <pattern>
+      <token>Calico</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLANNEL" name="immunize flannel">
+    <pattern>
+      <token>flannel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLANNEL_CAPS" name="immunize Flannel">
+    <pattern>
+      <token>Flannel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

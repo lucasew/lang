@@ -11257,6 +11257,76 @@
       <message>Did you mean "enable"?</message>
       <short>enabel</short>
     </rule>
+    <rule id="EN_SOFT_ENDPOINT_MISS" name="endpiont soft">
+      <pattern>
+        <token>endpiont</token>
+      </pattern>
+      <message>Did you mean "endpoint"?</message>
+      <short>endpiont</short>
+    </rule>
+    <rule id="EN_SOFT_ENOUGH_MISS4" name="enoguh soft">
+      <pattern>
+        <token>enoguh</token>
+      </pattern>
+      <message>Did you mean "enough"?</message>
+      <short>enoguh</short>
+    </rule>
+    <rule id="EN_SOFT_ERROR_MISS2" name="erorr soft">
+      <pattern>
+        <token>erorr</token>
+      </pattern>
+      <message>Did you mean "error"?</message>
+      <short>erorr</short>
+    </rule>
+    <rule id="EN_SOFT_EXECUTE_MISS" name="exectue soft">
+      <pattern>
+        <token>exectue</token>
+      </pattern>
+      <message>Did you mean "execute"?</message>
+      <short>exectue</short>
+    </rule>
+    <rule id="EN_SOFT_FEATURE_MISS" name="faeture soft">
+      <pattern>
+        <token>faeture</token>
+      </pattern>
+      <message>Did you mean "feature"?</message>
+      <short>faeture</short>
+    </rule>
+    <rule id="EN_SOFT_FOLLOW_MISS" name="follwo soft">
+      <pattern>
+        <token>follwo</token>
+      </pattern>
+      <message>Did you mean "follow"?</message>
+      <short>follwo</short>
+    </rule>
+    <rule id="EN_SOFT_GENERATE_MISS" name="gernerate soft">
+      <pattern>
+        <token>gernerate</token>
+      </pattern>
+      <message>Did you mean "generate"?</message>
+      <short>gernerate</short>
+    </rule>
+    <rule id="EN_SOFT_GROUP_MISS" name="gorup soft">
+      <pattern>
+        <token>gorup</token>
+      </pattern>
+      <message>Did you mean "group"?</message>
+      <short>gorup</short>
+    </rule>
+    <rule id="EN_SOFT_HELP_MISS" name="hlep soft">
+      <pattern>
+        <token>hlep</token>
+      </pattern>
+      <message>Did you mean "help"?</message>
+      <short>hlep</short>
+    </rule>
+    <rule id="EN_SOFT_IDENTIFIER_MISS" name="identifer soft">
+      <pattern>
+        <token>identifer</token>
+      </pattern>
+      <message>Did you mean "identifier"?</message>
+      <short>identifer</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
