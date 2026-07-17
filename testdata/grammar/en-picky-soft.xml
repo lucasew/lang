@@ -1605,5 +1605,30 @@
       <message>Jargon; name which features reduce under failure.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_IDEMPOTENCY_KEY" name="idempotency key soft picky">
+      <pattern>
+        <token>idempotency</token>
+        <token>key</token>
+      </pattern>
+      <message>Jargon; name the dedupe token and scope instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EXACTLY_ONCE" name="exactly once soft picky">
+      <pattern>
+        <token>exactly</token>
+        <token>once</token>
+      </pattern>
+      <message>Jargon; name the delivery guarantee and limits instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AT_LEAST_ONCE" name="at least once soft picky">
+      <pattern>
+        <token>at</token>
+        <token>least</token>
+        <token>once</token>
+      </pattern>
+      <message>Jargon; name the delivery guarantee and retry policy instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

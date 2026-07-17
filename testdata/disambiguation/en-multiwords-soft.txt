@@ -309,3 +309,6 @@ week by week	RB
 San Francisco Bay	NNP
 month by month	RB
 year by year	RB
+Los Angeles County	NNP
+San Francisco Bay Area	NNP
+quarter by quarter	RB

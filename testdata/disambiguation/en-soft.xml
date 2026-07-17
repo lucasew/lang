@@ -2571,4 +2571,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SPDK" name="immunize spdk">
+    <pattern>
+      <token>spdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPDK_CAPS" name="immunize SPDK">
+    <pattern>
+      <token>SPDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOURING" name="immunize iouring">
+    <pattern>
+      <token>iouring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOURING_MIXED" name="immunize io_uring">
+    <pattern>
+      <token>io_uring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING" name="immunize uring">
+    <pattern>
+      <token>uring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URING_CAPS" name="immunize Uring">
+    <pattern>
+      <token>Uring</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

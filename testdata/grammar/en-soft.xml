@@ -6637,6 +6637,76 @@
       <message>Did you mean "recommendation"?</message>
       <short>reccomendation</short>
     </rule>
+    <rule id="EN_SOFT_REFERRING_MISS" name="reffering soft">
+      <pattern>
+        <token>reffering</token>
+      </pattern>
+      <message>Did you mean "referring"?</message>
+      <short>reffering</short>
+    </rule>
+    <rule id="EN_SOFT_REMEMBERING_MISS" name="remebering soft">
+      <pattern>
+        <token>remebering</token>
+      </pattern>
+      <message>Did you mean "remembering"?</message>
+      <short>remebering</short>
+    </rule>
+    <rule id="EN_SOFT_REPETITIONS_MISS" name="repititions soft">
+      <pattern>
+        <token>repititions</token>
+      </pattern>
+      <message>Did you mean "repetitions"?</message>
+      <short>repititions</short>
+    </rule>
+    <rule id="EN_SOFT_SACRIFICES_MISS" name="sacrafices soft">
+      <pattern>
+        <token>sacrafices</token>
+      </pattern>
+      <message>Did you mean "sacrifices"?</message>
+      <short>sacrafices</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSIONALLY_MISS" name="proffesionaly soft">
+      <pattern>
+        <token>proffesionaly</token>
+      </pattern>
+      <message>Did you mean "professionally"?</message>
+      <short>proffesionaly</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGED_MISS2" name="priveleged soft">
+      <pattern>
+        <token>priveleged</token>
+      </pattern>
+      <message>Did you mean "privileged"?</message>
+      <short>priveleged</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATING_MISS" name="seperating soft">
+      <pattern>
+        <token>seperating</token>
+      </pattern>
+      <message>Did you mean "separating"?</message>
+      <short>seperating</short>
+    </rule>
+    <rule id="EN_SOFT_SEIZED_MISS" name="siezed soft">
+      <pattern>
+        <token>siezed</token>
+      </pattern>
+      <message>Did you mean "seized"?</message>
+      <short>siezed</short>
+    </rule>
+    <rule id="EN_SOFT_SIMILARLY_MISS" name="similiarly soft">
+      <pattern>
+        <token>similiarly</token>
+      </pattern>
+      <message>Did you mean "similarly"?</message>
+      <short>similiarly</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSFUL_MISS3" name="sucessful soft">
+      <pattern>
+        <token>sucessful</token>
+      </pattern>
+      <message>Did you mean "successful"?</message>
+      <short>sucessful</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
