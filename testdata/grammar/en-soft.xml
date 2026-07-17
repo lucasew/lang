@@ -1181,6 +1181,44 @@
       <message>Did you mean "shoo-in"?</message>
       <short>shoe/shoo</short>
     </rule>
+    <rule id="EN_SOFT_VAIN_OF" name="in the vain of soft">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>vain</token>
+        <token>of</token>
+      </pattern>
+      <message>Did you mean "in the vein of"?</message>
+      <short>vain/vein</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFUSE_THE_SITUATION" name="diffuse the situation soft">
+      <pattern>
+        <token>diffuse</token>
+        <token>the</token>
+        <token>situation</token>
+      </pattern>
+      <message>Did you mean "defuse the situation"?</message>
+      <short>diffuse/defuse</short>
+    </rule>
+    <rule id="EN_SOFT_FLAUNT_THE_RULES" name="flaunt the rules soft">
+      <pattern>
+        <token>flaunt</token>
+        <token>the</token>
+        <token>rules</token>
+      </pattern>
+      <message>Did you mean "flout the rules"?</message>
+      <short>flaunt/flout</short>
+    </rule>
+    <rule id="EN_SOFT_PORE_OVER_BOOK" name="pour over book soft">
+      <pattern>
+        <token>pour</token>
+        <token>over</token>
+        <token>the</token>
+        <token>book</token>
+      </pattern>
+      <message>Did you mean "pore over the book"?</message>
+      <short>pour/pore</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

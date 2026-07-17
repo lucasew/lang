@@ -2029,6 +2029,125 @@ func TestGolden_ApplySoftOptionalPriorTo(t *testing.T) {
 	require.NotContains(t, out.String(), "Prior to")
 }
 
+func TestGolden_SoftOptionalBulkEnable(t *testing.T) {
+	// -e SOFT_OPTIONAL enables all default-off SOFT_OPT_* rules
+	text := "Prior to leaving, with regard to fees, subsequent to review."
+	var off bytes.Buffer
+	_, err := CoreGoldenHook(&off, text, &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var offF []Finding
+	require.NoError(t, json.Unmarshal(off.Bytes(), &offF))
+	for _, f := range offF {
+		require.False(t, strings.Contains(f.Rule, "SOFT_OPT_"), "%+v", offF)
+	}
+
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	s := out.String()
+	require.Contains(t, s, "EN_SOFT_OPT_PRIOR_TO")
+	require.Contains(t, s, "EN_SOFT_OPT_WITH_REGARD_TO")
+	require.Contains(t, s, "EN_SOFT_OPT_SUBSEQUENT_TO")
+}
+
+func TestGolden_SoftOptionalBulkEnableAlias(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-e", "SOFT_OPT_ALL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "At this juncture we wait.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "EN_SOFT_OPT_AT_THIS_JUNCTURE")
+}
+
+func TestExpandSoftEnableAliases(t *testing.T) {
+	lt, err := configureCoreLT("en", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	exp := expandSoftEnableAliases(lt, []string{"SOFT_OPTIONAL", "EN_A_VS_AN"})
+	require.Contains(t, exp, "EN_A_VS_AN")
+	var optN int
+	for _, id := range exp {
+		if strings.Contains(id, "SOFT_OPT_") {
+			optN++
+		}
+	}
+	require.GreaterOrEqual(t, optN, 6)
+	// non-alias passthrough
+	require.Equal(t, []string{"EN_SOFT_OPT_PRIOR_TO"}, expandSoftEnableAliases(lt, []string{"EN_SOFT_OPT_PRIOR_TO"}))
+}
+
+func TestGolden_SoftPickyPL(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Mamy meeting jutro.", "PL_SOFT_PICKY_MEETING", "spotkanie"},
+		{"Chcę feedback szybko.", "PL_SOFT_PICKY_FEEDBACK", "opinię"},
+		{"To jest bardzo bardzo ważne.", "PL_SOFT_PICKY_BARDZO_BARDZO", ""},
+		{"Jest wiele rzeczy do zrobienia.", "PL_SOFT_PICKY_RZECZY", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "pl", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftOptionalNL(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "nl", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "In het kader van dit plan wachten we.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "NL_SOFT_OPT_IN_HET_KADER")
+}
+
+func TestGolden_SoftIdiomConfusablesWave3(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"A movie in the vain of noir.", "EN_SOFT_VAIN_OF", "in the vein of"},
+		{"We must diffuse the situation now.", "EN_SOFT_DIFFUSE_THE_SITUATION", "defuse the situation"},
+		{"They flaunt the rules daily.", "EN_SOFT_FLAUNT_THE_RULES", "flout the rules"},
+		{"She will pour over the book tonight.", "EN_SOFT_PORE_OVER_BOOK", "pore over the book"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
 func TestGolden_SoftListRulesOptionalOff(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, CoreListRules(&buf, "en"))

@@ -76,9 +76,10 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	for _, id := range opts.GetDisabledRules() {
 		lt.DisableRule(id)
 	}
+	enabledIDs := expandSoftEnableAliases(lt, opts.GetEnabledRules())
 	if opts.IsUseEnabledOnly() {
 		enabled := map[string]struct{}{}
-		for _, id := range opts.GetEnabledRules() {
+		for _, id := range enabledIDs {
 			if id != "" {
 				enabled[id] = struct{}{}
 			}
@@ -88,12 +89,50 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 				lt.DisableRule(id)
 			}
 		}
+		// soft: ensure expanded optional IDs are active under enabled-only
+		for id := range enabled {
+			lt.EnableRule(id)
+		}
 		return
 	}
 	// soft: --enable only re-enables previously disabled (Java also restricts category defaults)
-	for _, id := range opts.GetEnabledRules() {
+	for _, id := range enabledIDs {
 		lt.EnableRule(id)
 	}
+}
+
+// expandSoftEnableAliases expands soft bulk-enable tokens.
+// SOFT_OPTIONAL / SOFT_OPT_ALL → all registered rule IDs containing SOFT_OPT_
+// (optional soft packs that start default="off").
+func expandSoftEnableAliases(lt *languagetool.JLanguageTool, ids []string) []string {
+	if lt == nil || len(ids) == 0 {
+		return ids
+	}
+	var out []string
+	seen := map[string]struct{}{}
+	add := func(id string) {
+		if id == "" {
+			return
+		}
+		if _, ok := seen[id]; ok {
+			return
+		}
+		seen[id] = struct{}{}
+		out = append(out, id)
+	}
+	for _, id := range ids {
+		up := strings.ToUpper(strings.TrimSpace(id))
+		if up == "SOFT_OPTIONAL" || up == "SOFT_OPT_ALL" {
+			for _, rid := range lt.GetAllRegisteredRuleIDs() {
+				if strings.Contains(rid, "SOFT_OPT_") {
+					add(rid)
+				}
+			}
+			continue
+		}
+		add(id)
+	}
+	return out
 }
 
 // RegisterSoftPickyGrammar loads {base}-picky-soft.xml from grammar dir when present.
@@ -614,7 +653,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		for _, name := range []string{
 			"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml",
 			"es-picky-soft.xml", "pt-picky-soft.xml", "it-picky-soft.xml",
-			"nl-picky-soft.xml", "sv-picky-soft.xml",
+			"nl-picky-soft.xml", "sv-picky-soft.xml", "pl-picky-soft.xml",
 		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
@@ -629,15 +668,17 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		for _, name := range []string{
 			"en-optional-soft.xml", "de-optional-soft.xml", "fr-optional-soft.xml",
 			"es-optional-soft.xml", "pt-optional-soft.xml", "it-optional-soft.xml",
+			"nl-optional-soft.xml",
 		} {
 			optPath := filepath.Join(gdir, name)
 			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {
 				optN++
-				_, _ = fmt.Fprintf(w, "optional soft pack: %s (default off; enable with -e)\n", optPath)
+				_, _ = fmt.Fprintf(w, "optional soft pack: %s (default off; enable with -e SOFT_OPTIONAL)\n", optPath)
 			}
 		}
 		if optN > 0 {
 			_, _ = fmt.Fprintf(w, "optional soft packs: %d\n", optN)
+			_, _ = fmt.Fprintf(w, "soft optional enable: -e SOFT_OPTIONAL (or SOFT_OPT_ALL)\n")
 		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)
