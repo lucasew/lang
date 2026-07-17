@@ -74,9 +74,10 @@ func (l *ConfusionSetLoader) LoadConfusionPairs(r io.Reader) (map[string][]*Conf
 			confusionStrings = append(confusionStrings, NewConfusionString(word, description))
 			loadedForSet[word] = struct{}{}
 		}
-		factor, err := strconv.ParseInt(parts[2], 10, 64)
+		factorStr := strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(parts[2]), ";"))
+		factor, err := strconv.ParseInt(factorStr, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("line %d: bad factor %q: %w", lineNo, parts[2], err)
+			return nil, fmt.Errorf("line %d: bad factor %q: %w", lineNo, factorStr, err)
 		}
 		if bidirectional {
 			p1 := NewConfusionPair(confusionStrings[0], confusionStrings[1], factor, false)

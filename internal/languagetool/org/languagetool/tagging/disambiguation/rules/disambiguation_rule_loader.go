@@ -50,8 +50,13 @@ type disambigPattern struct {
 }
 
 type disambigToken struct {
-	Regexp  string `xml:"regexp,attr"`
-	Content string `xml:",chardata"`
+	Regexp        string `xml:"regexp,attr"`
+	CaseSensitive string `xml:"case_sensitive,attr"`
+	Inflected     string `xml:"inflected,attr"`
+	Negate        string `xml:"negate,attr"`
+	Postag        string `xml:"postag,attr"`
+	PostagRegexp  string `xml:"postag_regexp,attr"`
+	Content       string `xml:",chardata"`
 }
 
 type disambigElem struct {
@@ -68,9 +73,7 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 	for _, xr := range root.Rules {
 		var tokens []*patterns.PatternToken
 		for _, xt := range xr.Pattern.Tokens {
-			content := strings.TrimSpace(xt.Content)
-			re := strings.EqualFold(xt.Regexp, "yes")
-			tokens = append(tokens, patterns.NewPatternToken(content, false, re, false))
+			tokens = append(tokens, disambigTokenFromXML(xt))
 		}
 		action := ActionReplace
 		if xr.Disambig.Action != "" {
@@ -81,4 +84,22 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 		out = append(out, rule)
 	}
 	return out, nil
+}
+
+func disambigTokenFromXML(xt disambigToken) *patterns.PatternToken {
+	content := strings.TrimSpace(xt.Content)
+	cs := strings.EqualFold(xt.CaseSensitive, "yes")
+	re := strings.EqualFold(xt.Regexp, "yes")
+	inflected := strings.EqualFold(xt.Inflected, "yes")
+	pt := patterns.NewPatternToken(content, cs, re, inflected)
+	if strings.EqualFold(xt.Negate, "yes") {
+		pt.SetNegation(true)
+	}
+	if xt.Postag != "" {
+		pt.SetPosToken(patterns.PosToken{
+			PosTag: xt.Postag,
+			Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
+		})
+	}
+	return pt
 }

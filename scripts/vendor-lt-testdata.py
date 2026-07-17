@@ -317,20 +317,21 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         toks = pattern_is_simple(pat)
         if not toks:
             continue
-        # disambig soft loader only honors regexp + surface on tokens
+        # soft disambig loader supports surface/regexp/postag/inflected/negate
         simple_toks = []
         ok = True
         for t in toks:
             if isinstance(t, str):
                 simple_toks.append({"text": t})
                 continue
-            if any(k in t for k in ("postag", "postag_regexp", "negate", "min", "max", "skip", "exceptions", "inflected")):
+            if any(k in t for k in ("min", "max", "skip", "exceptions")):
                 ok = False
                 break
             st = {"text": t.get("text") or ""}
-            if t.get("regexp"):
-                st["regexp"] = t["regexp"]
-            if not st["text"] and not st.get("regexp"):
+            for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp"):
+                if t.get(k):
+                    st[k] = t[k]
+            if not st["text"] and not st.get("postag") and not st.get("regexp"):
                 ok = False
                 break
             simple_toks.append(st)
@@ -359,8 +360,10 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
         lines.append("    <pattern>")
         for t in r["tokens"]:
             attrs = []
-            if isinstance(t, dict) and t.get("regexp"):
-                attrs.append(f'regexp="{xml_esc(str(t["regexp"]))}"')
+            if isinstance(t, dict):
+                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp"):
+                    if t.get(k):
+                        attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
             attr_s = (" " + " ".join(attrs)) if attrs else ""
             body = xml_esc(t.get("text") if isinstance(t, dict) else t)
             lines.append(f"      <token{attr_s}>{body}</token>")
@@ -600,7 +603,7 @@ def vendor_lang(lang: str) -> dict:
             copy_file(p, OUT / lang / "rules" / p.parent.name / "grammar.xml")
             stats["copied"] += 1
 
-    for rel in ["disambiguation.xml", "multiwords.txt"]:
+    for rel in ["disambiguation.xml", "multiwords.txt", "confusion_sets.txt", "confusion_sets_extended.txt"]:
         src = res_base / rel
         if src.is_file():
             copy_file(src, OUT / lang / "resource" / rel)
