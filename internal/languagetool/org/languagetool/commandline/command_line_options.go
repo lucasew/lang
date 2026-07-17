@@ -42,6 +42,8 @@ type CommandLineOptions struct {
 	DisabledCategories            []string
 	UseEnabledOnlyFlag            bool
 	RuleValues                    []string
+	RuleFile                      string
+	FalseFriendsFile              string
 }
 
 func NewCommandLineOptions() *CommandLineOptions {
@@ -76,6 +78,17 @@ func (o *CommandLineOptions) SetMotherTongue(code string)    { o.MotherTongue = 
 func (o *CommandLineOptions) SetLanguageModelPath(p string)  { o.LanguageModelPath = p }
 func (o *CommandLineOptions) SetEncoding(e string)           { o.Encoding = e }
 func (o *CommandLineOptions) SetFilename(f string)           { o.Filename = f }
+func (o *CommandLineOptions) SetRuleFile(f string)           { o.RuleFile = f }
+func (o *CommandLineOptions) SetFalseFriendsFile(f string)   { o.FalseFriendsFile = f }
+func (o *CommandLineOptions) GetRuleFile() string {
+	if o == nil {
+		return ""
+	}
+	return o.RuleFile
+}
+func (o *CommandLineOptions) IsAutoDetect() bool {
+	return o != nil && o.AutoDetect
+}
 func (o *CommandLineOptions) SetDisabledRules(ids []string) {
 	o.DisabledRules = append([]string(nil), ids...)
 }

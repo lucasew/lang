@@ -114,18 +114,6 @@ func TestMain_LangWithCountryVariant(t *testing.T) {
 }
 
 // Remaining Java CLI integration cases need full language modules / bitext / XML filter pipeline.
-func TestMain_FileWithExternalRule(t *testing.T) {
-	t.Skip("unimplemented: external rule XML load for CLI")
-}
-func TestMain_EnglishFileAutoDetect(t *testing.T) {
-	t.Skip("unimplemented: language autodetection")
-}
-func TestMain_EnglishStdInAutoDetect(t *testing.T) {
-	t.Skip("unimplemented: language autodetection")
-}
-func TestMain_EnglishFileVerbose(t *testing.T) {
-	t.Skip("unimplemented: full EN grammar file verbose")
-}
 func TestMain_EnglishFileApplySuggestions(t *testing.T) {
 	var out, errb bytes.Buffer
 	code := RunWithIO([]string{"-l", "en", "--apply", "sample.txt"}, RunHooks{
@@ -156,12 +144,6 @@ func TestMain_PolishApiStdInDefaultOffNoErrors(t *testing.T) {
 	t.Skip("unimplemented: PL API CLI")
 }
 func TestMain_PolishSpelling(t *testing.T) { t.Skip("unimplemented: PL spelling CLI") }
-func TestMain_EnglishFileAPI(t *testing.T) { t.Skip("unimplemented: API XML output") }
-func TestMain_GermanFileWithURL(t *testing.T) {
-	t.Skip("unimplemented: DE file with URL")
-}
-func TestMain_PolishFileAPI(t *testing.T)     { t.Skip("unimplemented: PL file API") }
-func TestMain_PolishLineNumbers(t *testing.T) { t.Skip("unimplemented: PL line numbers") }
 func TestMain_BitextWithExternalRule(t *testing.T) {
 	t.Skip("unimplemented: bitext CLI")
 }

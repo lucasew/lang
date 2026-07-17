@@ -19,6 +19,9 @@ const UsageText = `Usage: languagetool [OPTION]... [FILE]
   --json                   JSON output
   --xml                    XML output
   --xmlfilter              remove XML/HTML tags from input before check
+  --rulefile FILE          additional grammar/rule file
+  --falsefriends FILE      external false-friends XML
+  --autoDetect, -adl       detect language from text
   --list                   list languages
   --version                print version
   -h, --help               this help

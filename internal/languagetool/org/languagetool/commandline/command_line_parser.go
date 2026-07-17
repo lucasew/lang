@@ -110,6 +110,18 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetEncoding(args[i])
 		case "--xmlfilter":
 			opts.SetXMLFiltering(true)
+		case "--rulefile":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetRuleFile(args[i])
+		case "--falsefriends":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetFalseFriendsFile(args[i])
 		case "--json":
 			opts.SetOutputFormat(OutputJSON)
 		case "--xml":
