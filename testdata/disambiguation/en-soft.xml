@@ -4911,4 +4911,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_FLUXCD" name="immunize fluxcd">
+    <pattern>
+      <token>fluxcd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUXCD_CAPS" name="immunize FluxCD">
+    <pattern>
+      <token>FluxCD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COREDNS" name="immunize coredns">
+    <pattern>
+      <token>coredns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COREDNS_CAPS" name="immunize CoreDNS">
+    <pattern>
+      <token>CoreDNS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETCD" name="immunize etcd">
+    <pattern>
+      <token>etcd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETCD_CAPS" name="immunize Etcd">
+    <pattern>
+      <token>Etcd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

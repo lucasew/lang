@@ -3174,5 +3174,27 @@
       <message>Jargon; name overburden of people or equipment instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_JIDOKA" name="jidoka soft picky">
+      <pattern>
+        <token>jidoka</token>
+      </pattern>
+      <message>Jargon; name automation with human oversight to stop defects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HEIJUNKA" name="heijunka soft picky">
+      <pattern>
+        <token>heijunka</token>
+      </pattern>
+      <message>Jargon; name production leveling for steady flow instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_POKA_YOKE" name="poka yoke soft picky">
+      <pattern>
+        <token>poka</token>
+        <token>yoke</token>
+      </pattern>
+      <message>Jargon; name mistake-proofing safeguards instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

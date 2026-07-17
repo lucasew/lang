@@ -504,3 +504,6 @@ Amphibolite Summit RegionNNP
 Eclogite Summit RegionNNP
 Serpentinite Summit RegionNNP
 Soapstone Summit RegionNNP
+Feldspar Summit RegionNNP
+Quartz Summit RegionNNP
+Pegmatite Summit RegionNNP

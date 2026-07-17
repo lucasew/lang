@@ -11187,6 +11187,76 @@
       <message>Did you mean "check"?</message>
       <short>chekc</short>
     </rule>
+    <rule id="EN_SOFT_COMPANY_MISS" name="comapny soft">
+      <pattern>
+        <token>comapny</token>
+      </pattern>
+      <message>Did you mean "company"?</message>
+      <short>comapny</short>
+    </rule>
+    <rule id="EN_SOFT_CONFIRM_MISS" name="confrim soft">
+      <pattern>
+        <token>confrim</token>
+      </pattern>
+      <message>Did you mean "confirm"?</message>
+      <short>confrim</short>
+    </rule>
+    <rule id="EN_SOFT_CREATE_MISS" name="creaet soft">
+      <pattern>
+        <token>creaet</token>
+      </pattern>
+      <message>Did you mean "create"?</message>
+      <short>creaet</short>
+    </rule>
+    <rule id="EN_SOFT_DATABASE_MISS" name="databse soft">
+      <pattern>
+        <token>databse</token>
+      </pattern>
+      <message>Did you mean "database"?</message>
+      <short>databse</short>
+    </rule>
+    <rule id="EN_SOFT_DEFAULT_MISS" name="defualt soft">
+      <pattern>
+        <token>defualt</token>
+      </pattern>
+      <message>Did you mean "default"?</message>
+      <short>defualt</short>
+    </rule>
+    <rule id="EN_SOFT_DELETE_MISS" name="delte soft">
+      <pattern>
+        <token>delte</token>
+      </pattern>
+      <message>Did you mean "delete"?</message>
+      <short>delte</short>
+    </rule>
+    <rule id="EN_SOFT_DESIGN_MISS" name="desing soft">
+      <pattern>
+        <token>desing</token>
+      </pattern>
+      <message>Did you mean "design"?</message>
+      <short>desing</short>
+    </rule>
+    <rule id="EN_SOFT_DOWNLOAD_MISS2" name="donwload soft">
+      <pattern>
+        <token>donwload</token>
+      </pattern>
+      <message>Did you mean "download"?</message>
+      <short>donwload</short>
+    </rule>
+    <rule id="EN_SOFT_EMAIL_MISS" name="eamil soft">
+      <pattern>
+        <token>eamil</token>
+      </pattern>
+      <message>Did you mean "email"?</message>
+      <short>eamil</short>
+    </rule>
+    <rule id="EN_SOFT_ENABLE_MISS" name="enabel soft">
+      <pattern>
+        <token>enabel</token>
+      </pattern>
+      <message>Did you mean "enable"?</message>
+      <short>enabel</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
