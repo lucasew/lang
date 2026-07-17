@@ -25,5 +25,39 @@
       <message>Магчымае паўтарэнне "у".</message>
       <short>у у</short>
     </rule>
+    <rule id="BE_SOFT_Z_Z" name="з з">
+      <pattern>
+        <token>з</token>
+        <token>з</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "з".</message>
+      <short>з з</short>
+    </rule>
+    <rule id="BE_SOFT_NE_NE" name="не не">
+      <pattern>
+        <token>не</token>
+        <token>не</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "не".</message>
+      <short>не не</short>
+    </rule>
+    <rule id="BE_SOFT_PA_PA" name="па па">
+      <pattern>
+        <token>па</token>
+        <token>па</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "па".</message>
+      <short>па па</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="BE_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Часта хапае аднаго клічніка: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

@@ -25,5 +25,39 @@
       <message>Posible repetición de "a".</message>
       <short>a a</short>
     </rule>
+    <rule id="AST_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Posible repetición de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="AST_SOFT_CON_CON" name="con con">
+      <pattern>
+        <token>con</token>
+        <token>con</token>
+      </pattern>
+      <message>Posible repetición de "con".</message>
+      <short>con con</short>
+    </rule>
+    <rule id="AST_SOFT_POR_POR" name="por por">
+      <pattern>
+        <token>por</token>
+        <token>por</token>
+      </pattern>
+      <message>Posible repetición de "por".</message>
+      <short>por por</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="AST_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>A menudo basta un signo d'esclamación: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

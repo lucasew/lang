@@ -25,5 +25,39 @@
       <message>Possible repeated "of".</message>
       <short>of of</short>
     </rule>
+    <rule id="KM_SOFT_TO_TO" name="to to">
+      <pattern>
+        <token>to</token>
+        <token>to</token>
+      </pattern>
+      <message>Possible repeated "to".</message>
+      <short>to to</short>
+    </rule>
+    <rule id="KM_SOFT_IN_IN" name="in in">
+      <pattern>
+        <token>in</token>
+        <token>in</token>
+      </pattern>
+      <message>Possible repeated "in".</message>
+      <short>in in</short>
+    </rule>
+    <rule id="KM_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Possible repeated "a".</message>
+      <short>a a</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="KM_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Often one exclamation mark is enough: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

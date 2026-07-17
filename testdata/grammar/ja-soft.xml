@@ -25,5 +25,39 @@
       <message>Possible repeated "wa".</message>
       <short>wa wa</short>
     </rule>
+    <rule id="JA_SOFT_GA_GA" name="ga ga">
+      <pattern>
+        <token>ga</token>
+        <token>ga</token>
+      </pattern>
+      <message>Possible repeated "ga".</message>
+      <short>ga ga</short>
+    </rule>
+    <rule id="JA_SOFT_NI_NI" name="ni ni">
+      <pattern>
+        <token>ni</token>
+        <token>ni</token>
+      </pattern>
+      <message>Possible repeated "ni".</message>
+      <short>ni ni</short>
+    </rule>
+    <rule id="JA_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible repeated "de".</message>
+      <short>de de</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="JA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Often one exclamation mark is enough: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

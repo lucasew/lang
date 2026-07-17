@@ -48,6 +48,11 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"We must make due with less.", "make do"},
 		{"He will pass mustard.", "pass muster"},
 		{"They hone in on the target.", "home in on"},
+		{"That will wet your appetite.", "whet your appetite"},
+		{"In the same vane as before.", "In the same vein"}, // sentence-initial capital
+		{"The statue of limitations expired.", "statute of limitations"},
+		{"He was the escape goat.", "scapegoat"},
+		{"Opportunities are few and far in between.", "few and far between"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

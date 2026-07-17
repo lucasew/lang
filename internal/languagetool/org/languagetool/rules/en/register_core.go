@@ -68,6 +68,12 @@ func SoftEnglishPhraseReplacements() map[string]string {
 		"extract revenge":              "exact revenge",
 		"hone in on":                   "home in on",
 		"fall by the waste side":       "fall by the wayside",
+		"wet your appetite":            "whet your appetite",
+		"for all intensive purpose":    "for all intents and purposes",
+		"in the same vane":             "in the same vein",
+		"statue of limitations":        "statute of limitations",
+		"escape goat":                  "scapegoat",
+		"few and far in between":       "few and far between",
 	}
 }
 

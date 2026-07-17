@@ -25,5 +25,39 @@
       <message>Possible repeated "da".</message>
       <short>da da</short>
     </rule>
+    <rule id="CRH_SOFT_VE_BIR" name="bir bir">
+      <pattern>
+        <token>bir</token>
+        <token>bir</token>
+      </pattern>
+      <message>Possible repeated "bir".</message>
+      <short>bir bir</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_ICUN" name="içün içün">
+      <pattern>
+        <token>içün</token>
+        <token>içün</token>
+      </pattern>
+      <message>Possible repeated "içün".</message>
+      <short>içün içün</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_VE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Possible repeated "ne".</message>
+      <short>ne ne</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="CRH_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Often one exclamation mark is enough: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

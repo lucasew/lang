@@ -25,5 +25,39 @@
       <message>Posibleng ulit ng "sa".</message>
       <short>sa sa</short>
     </rule>
+    <rule id="TL_SOFT_ANG_ANG" name="ang ang">
+      <pattern>
+        <token>ang</token>
+        <token>ang</token>
+      </pattern>
+      <message>Posibleng ulit ng "ang".</message>
+      <short>ang ang</short>
+    </rule>
+    <rule id="TL_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Posibleng ulit ng "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="TL_SOFT_AY_AY" name="ay ay">
+      <pattern>
+        <token>ay</token>
+        <token>ay</token>
+      </pattern>
+      <message>Posibleng ulit ng "ay".</message>
+      <short>ay ay</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="TL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Madalas sapat ang isang tandang padamdam: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>
