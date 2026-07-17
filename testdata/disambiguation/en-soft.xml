@@ -259,4 +259,46 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
+  <rule id="SOFT_MODAL_FIND_VB" name="modal find → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>find</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_GIVE_VB" name="modal give → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>give</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_GET_VB" name="modal get → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>get</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_COME_VB" name="modal come → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>come</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_RUN" name="to run → VB">
+    <pattern>
+      <token>to</token>
+      <token>run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_MAKE" name="to make → VB">
+    <pattern>
+      <token>to</token>
+      <token>make</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
 </rules>

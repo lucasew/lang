@@ -588,6 +588,40 @@ func TestGolden_ApplySoftAmountOfPeople(t *testing.T) {
 	require.Contains(t, out.String(), "number of people")
 }
 
+func TestGolden_SoftUSVariantHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Anyways, we left.", "EN_SOFT_ANYWAYS", "anyway"},
+		{"Walk towards the door.", "EN_SOFT_TOWARDS_US", "toward"},
+		{"Sit amongst friends.", "EN_SOFT_AMONGST_US", "among"},
+		{"Wait whilst I check.", "EN_SOFT_WHILST_US", "while"},
+		{"A grey sky.", "EN_SOFT_GREY_US", "gray"},
+		{"Pick a colour.", "EN_SOFT_COLOUR_US", "color"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+					// TYPOS category → misspelling issue type
+					require.Equal(t, "misspelling", f.Type, "%+v", f)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
 func TestGolden_SoftSupposeTo(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "You suppose to leave now.", &CommandLineOptions{Language: "en"})

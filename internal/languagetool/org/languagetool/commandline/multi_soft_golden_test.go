@@ -124,6 +124,8 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"sv", "Dom var här igår.", "SV_SOFT_DOM_VAR", "de var"},
 		{"sv", "Te och och kaffe.", "SV_SOFT_OCH_OCH", ""},
 		{"sv", "Dom har en bil.", "SV_SOFT_DOM_HAR", "de har"},
+		{"sv", "Dom ska komma.", "SV_SOFT_DOM_SKA", "de ska"},
+		{"sv", "Dom kan springa.", "SV_SOFT_DOM_KAN", "de kan"},
 		{"sv", "Han är större som mig.", "SV_SOFT_STORRE_AN", "större än"},
 		{"sv", "Medans vi väntar.", "SV_SOFT_MEDANS", "medan"},
 		{"sv", "Hej!!", "SV_SOFT_DOUBLE_BANG", "!"},

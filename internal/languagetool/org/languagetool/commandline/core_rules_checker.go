@@ -529,7 +529,14 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		return err
 	}
 	ids := lt.GetAllRegisteredRuleIDs()
+	softEN := 0
+	for _, id := range ids {
+		if strings.Contains(id, "_SOFT_") {
+			softEN++
+		}
+	}
 	_, _ = fmt.Fprintf(w, "en registered rules: %d\n", len(ids))
+	_, _ = fmt.Fprintf(w, "en soft rules: %d\n", softEN)
 	ms := lt.Check("This is an test.")
 	_, _ = fmt.Fprintf(w, "en smoke matches: %d\n", len(ms))
 	found := false
@@ -543,6 +550,20 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		_, _ = fmt.Fprintf(w, "en smoke: EN_A_VS_AN ok\n")
 	} else {
 		_, _ = fmt.Fprintf(w, "en smoke: EN_A_VS_AN missing\n")
+	}
+	// soft grammar smoke: fused contraction
+	msSoft := lt.Check("I wouldve gone.")
+	softHit := false
+	for _, m := range msSoft {
+		if m.RuleID == "EN_SOFT_WOULDVE" {
+			softHit = true
+			break
+		}
+	}
+	if softHit {
+		_, _ = fmt.Fprintf(w, "en soft smoke: EN_SOFT_WOULDVE ok\n")
+	} else {
+		_, _ = fmt.Fprintf(w, "en soft smoke: EN_SOFT_WOULDVE missing\n")
 	}
 	_, _ = fmt.Fprintf(w, "status: ok\n")
 	return nil

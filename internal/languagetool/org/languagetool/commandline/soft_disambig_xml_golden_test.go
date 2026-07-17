@@ -110,6 +110,18 @@ func TestGolden_SoftXML_ModalLookFilter(t *testing.T) {
 	require.Contains(t, s, "VB")
 }
 
+func TestGolden_SoftXML_ToMakeFilter(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" || DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("need en-soft.xml and english.dict")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "I want to make dinner.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	require.Contains(t, s, "make/")
+	require.Contains(t, s, "VB")
+}
+
 func TestGolden_ImmunizeBtwIrlNoSpell(t *testing.T) {
 	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
 		t.Skip("en-soft.xml not found")

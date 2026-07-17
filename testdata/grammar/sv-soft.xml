@@ -56,6 +56,22 @@
       <message>Menade du "medan"?</message>
       <short>medans</short>
     </rule>
+    <rule id="SV_SOFT_DOM_SKA" name="dom ska">
+      <pattern>
+        <token>dom</token>
+        <token>ska</token>
+      </pattern>
+      <message>Menade du "de ska"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_DOM_KAN" name="dom kan">
+      <pattern>
+        <token>dom</token>
+        <token>kan</token>
+      </pattern>
+      <message>Menade du "de kan"?</message>
+      <short>de/dom</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografi">
     <rule id="SV_SOFT_DOUBLE_BANG" name="dubbelt utropstecken">
