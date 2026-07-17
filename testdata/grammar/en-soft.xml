@@ -3487,6 +3487,76 @@
       <message>Did you mean "column"?</message>
       <short>colum</short>
     </rule>
+    <rule id="EN_SOFT_COMING_MISS" name="comming soft">
+      <pattern>
+        <token>comming</token>
+      </pattern>
+      <message>Did you mean "coming"?</message>
+      <short>comming</short>
+    </rule>
+    <rule id="EN_SOFT_CURIOSITY_MISS" name="curiousity soft">
+      <pattern>
+        <token>curiousity</token>
+      </pattern>
+      <message>Did you mean "curiosity"?</message>
+      <short>curiousity</short>
+    </rule>
+    <rule id="EN_SOFT_DECIDEDLY_MISS" name="decidely soft">
+      <pattern>
+        <token>decidely</token>
+      </pattern>
+      <message>Did you mean "decidedly"?</message>
+      <short>decidely</short>
+    </rule>
+    <rule id="EN_SOFT_DESPERATELY_MISS" name="desparately soft">
+      <pattern>
+        <token>desparately</token>
+      </pattern>
+      <message>Did you mean "desperately"?</message>
+      <short>desparately</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPOINT_MISS2" name="disapoint soft">
+      <pattern>
+        <token>disapoint</token>
+      </pattern>
+      <message>Did you mean "disappoint"?</message>
+      <short>disapoint</short>
+    </rule>
+    <rule id="EN_SOFT_EFFORT_MISS" name="efort soft">
+      <pattern>
+        <token>efort</token>
+      </pattern>
+      <message>Did you mean "effort"?</message>
+      <short>efort</short>
+    </rule>
+    <rule id="EN_SOFT_EIGHTH_MISS" name="eigth soft">
+      <pattern>
+        <token>eigth</token>
+      </pattern>
+      <message>Did you mean "eighth"?</message>
+      <short>eigth</short>
+    </rule>
+    <rule id="EN_SOFT_ELEMENT_MISS" name="eliment soft">
+      <pattern>
+        <token>eliment</token>
+      </pattern>
+      <message>Did you mean "element"?</message>
+      <short>eliment</short>
+    </rule>
+    <rule id="EN_SOFT_EMBARRASSING_MISS" name="embarassing soft">
+      <pattern>
+        <token>embarassing</token>
+      </pattern>
+      <message>Did you mean "embarrassing"?</message>
+      <short>embarassing</short>
+    </rule>
+    <rule id="EN_SOFT_ENDEAVOR_MISS" name="endevor soft">
+      <pattern>
+        <token>endevor</token>
+      </pattern>
+      <message>Did you mean "endeavor"?</message>
+      <short>endevor</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

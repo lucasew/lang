@@ -174,3 +174,6 @@ in the interim	RB
 Chicago Illinois	NNP
 Boston Massachusetts	NNP
 for the foreseeable future	RB
+Atlanta Georgia	NNP
+Detroit Michigan	NNP
+in large part	RB

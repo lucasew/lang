@@ -467,5 +467,30 @@
       <message>Corporate jargon; consider "share" or "discuss with".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BIAS_FOR_ACTION" name="bias for action soft picky">
+      <pattern>
+        <token>bias</token>
+        <token>for</token>
+        <token>action</token>
+      </pattern>
+      <message>Buzzword; consider "act promptly" or name the decision habit.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FUTURE_PROOF" name="future proof soft picky">
+      <pattern>
+        <token>future</token>
+        <token>proof</token>
+      </pattern>
+      <message>Vague claim; say how it stays maintainable.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BAKE_IN" name="bake in soft picky">
+      <pattern>
+        <token>bake</token>
+        <token>in</token>
+      </pattern>
+      <message>Jargon; consider "include" or "build in".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

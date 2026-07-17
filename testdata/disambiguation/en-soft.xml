@@ -951,4 +951,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAFORM" name="immunize terraform">
+    <pattern>
+      <token>terraform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRAFORM_CAPS" name="immunize Terraform">
+    <pattern>
+      <token>Terraform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NGINX" name="immunize nginx">
+    <pattern>
+      <token>nginx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NGINX_CAPS" name="immunize Nginx">
+    <pattern>
+      <token>Nginx</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRES" name="immunize postgres">
+    <pattern>
+      <token>postgres</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRES_CAPS" name="immunize Postgres">
+    <pattern>
+      <token>Postgres</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
