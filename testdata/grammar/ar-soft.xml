@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ar">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="AR_SOFT_FI_FI" name="في في">
+      <pattern>
+        <token>في</token>
+        <token>في</token>
+      </pattern>
+      <message>تكرار محتمل لـ "في".</message>
+      <short>في في</short>
+    </rule>
+  </category>
+</rules>

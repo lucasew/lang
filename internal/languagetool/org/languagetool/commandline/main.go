@@ -18,6 +18,7 @@ const UsageText = `Usage: languagetool [OPTION]... [FILE]
   -v, --verbose            verbose output
   --json                   JSON output
   --xml                    XML output
+  --sarif                  SARIF 2.1 output
   --xmlfilter              remove XML/HTML tags from input before check
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML

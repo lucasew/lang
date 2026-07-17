@@ -101,6 +101,13 @@ func WriteMatchesOutput(w io.Writer, matches []*rules.RuleMatch, opts *CommandLi
 	case OutputXML:
 		_, err := io.WriteString(w, MatchesAsMinimalXML(matches, lang))
 		return err
+	case OutputSARIF:
+		fn := ""
+		if opts != nil {
+			fn = opts.Filename
+		}
+		_, err := io.WriteString(w, MatchesAsSARIF(matches, "", fn))
+		return err
 	default:
 		// plaintext handled by PrintMatches elsewhere
 		return nil

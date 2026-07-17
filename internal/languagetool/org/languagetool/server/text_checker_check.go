@@ -141,47 +141,7 @@ func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore
 
 // filterLocalsByCategories applies disabledCategories / enabledCategories (with enabledOnly).
 func filterLocalsByCategories(ms []languagetool.LocalMatch, opts CheckOptions) []languagetool.LocalMatch {
-	if len(ms) == 0 {
-		return ms
-	}
-	dis := stringSetFold(opts.DisabledCategories)
-	en := stringSetFold(opts.EnabledCategories)
-	if len(dis) == 0 && !(opts.UseEnabledOnly && len(en) > 0) {
-		return ms
-	}
-	out := make([]languagetool.LocalMatch, 0, len(ms))
-	for _, m := range ms {
-		catID := m.CategoryID
-		if catID == "" {
-			catID, _, _, _ = SoftRuleMeta(m.RuleID)
-		}
-		catKey := strings.ToUpper(catID)
-		if _, drop := dis[catKey]; drop {
-			continue
-		}
-		if opts.UseEnabledOnly && len(en) > 0 {
-			if _, ok := en[catKey]; !ok {
-				continue
-			}
-		}
-		out = append(out, m)
-	}
-	return out
-}
-
-func stringSetFold(items []string) map[string]struct{} {
-	if len(items) == 0 {
-		return nil
-	}
-	m := make(map[string]struct{}, len(items))
-	for _, s := range items {
-		s = strings.TrimSpace(s)
-		if s == "" {
-			continue
-		}
-		m[strings.ToUpper(s)] = struct{}{}
-	}
-	return m
+	return languagetool.FilterMatchesByCategories(ms, opts.DisabledCategories, opts.EnabledCategories, opts.UseEnabledOnly)
 }
 
 // applyLevelPickyBoost runs extra EN picky patterns when level is PICKY (soft).

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ro">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="RO_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posibilă repetare a "de".</message>
+      <short>de de</short>
+    </rule>
+  </category>
+</rules>

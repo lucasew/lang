@@ -16,9 +16,12 @@ import (
 
 // CoreRulesChecker implements TextChecker using RegisterCore* packs.
 type CoreRulesChecker struct {
-	Lang          string
-	lt            *languagetool.JLanguageTool
-	CleanOverlaps bool
+	Lang               string
+	lt                 *languagetool.JLanguageTool
+	CleanOverlaps      bool
+	DisabledCategories []string
+	EnabledCategories  []string
+	UseEnabledOnly     bool
 }
 
 // NewCoreRulesChecker builds a checker for lang (e.g. "en", "en-US", "de-DE").
@@ -48,6 +51,7 @@ func (c *CoreRulesChecker) Check(text string) ([]*rules.RuleMatch, error) {
 		}
 		ms = languagetool.CleanOverlappingLocalMatches(ms)
 	}
+	ms = languagetool.FilterMatchesByCategories(ms, c.DisabledCategories, c.EnabledCategories, c.UseEnabledOnly)
 	// Attach full-text analysis for print context (soft single blob)
 	sent := languagetool.AnalyzePlain(text)
 	return rules.FromLocalMatches(ms, sent), nil
@@ -243,15 +247,31 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		})
 	}
 
-	checker := &CoreRulesChecker{Lang: lang, lt: lt, CleanOverlaps: opts != nil && opts.CleanOverlapping}
+	checker := &CoreRulesChecker{
+		Lang:          lang,
+		lt:            lt,
+		CleanOverlaps: opts != nil && opts.CleanOverlapping,
+	}
+	if opts != nil {
+		checker.DisabledCategories = append([]string(nil), opts.DisabledCategories...)
+		checker.EnabledCategories = append([]string(nil), opts.EnabledCategories...)
+		checker.UseEnabledOnly = opts.IsUseEnabledOnly()
+	}
 	cto := CheckTextOptions{
-		JSON:        opts != nil && opts.OutputFormat == OutputJSON,
+		JSON:        opts != nil && (opts.OutputFormat == OutputJSON || opts.OutputFormat == OutputSARIF),
 		Verbose:     opts != nil && opts.Verbose,
 		ListUnknown: opts != nil && opts.IsListUnknown(),
 	}
 	if cto.JSON {
-		cto.JSONSerializer = func(matches []*rules.RuleMatch, contents string, contextSize int) string {
-			return ruleMatchesToJSON(matches, contents, contextSize, lang)
+		if opts != nil && opts.OutputFormat == OutputSARIF {
+			fn := opts.Filename
+			cto.JSONSerializer = func(matches []*rules.RuleMatch, contents string, contextSize int) string {
+				return MatchesAsSARIF(matches, contents, fn)
+			}
+		} else {
+			cto.JSONSerializer = func(matches []*rules.RuleMatch, contents string, contextSize int) string {
+				return ruleMatchesToJSON(matches, contents, contextSize, lang)
+			}
 		}
 	}
 	if cto.ListUnknown {

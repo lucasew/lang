@@ -7,6 +7,8 @@ const (
 	OutputPlaintext OutputFormat = "PLAINTEXT"
 	OutputJSON      OutputFormat = "JSON"
 	OutputXML       OutputFormat = "XML"
+	// OutputSARIF is a soft SARIF 2.1 report (SPEC §2.2).
+	OutputSARIF OutputFormat = "SARIF"
 )
 
 // CommandLineOptions ports org.languagetool.commandline.CommandLineOptions.

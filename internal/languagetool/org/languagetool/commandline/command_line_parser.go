@@ -126,6 +126,8 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetOutputFormat(OutputJSON)
 		case "--xml":
 			opts.SetOutputFormat(OutputXML)
+		case "--sarif":
+			opts.SetOutputFormat(OutputSARIF)
 		case "-u", "--list-unknown":
 			if opts.TaggerOnly {
 				return nil, fmt.Errorf("You cannot list unknown words when tagging only")
