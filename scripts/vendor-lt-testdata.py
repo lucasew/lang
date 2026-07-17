@@ -163,6 +163,50 @@ def serialize_token(tok: ET.Element) -> dict:
     return d
 
 
+def collapse_and(and_el: ET.Element) -> dict | None:
+    """Collapse simple <and> of one surface token + optional postag into one soft token.
+
+    LT <and> requires all children to match the same token position. Soft loader
+    has a single PatternToken with surface + POS, so we only accept:
+      - one surface-bearing token (optional regexp/case/exception)
+      - zero or one postag-only token
+    """
+    surface = None
+    postag = None
+    for t in and_el:
+        if local(t.tag) != "token":
+            return None
+        if not token_is_soft(t):
+            return None
+        st = serialize_token(t)
+        has_surface = bool(st.get("text"))
+        has_pos = bool(st.get("postag"))
+        if has_surface and has_pos:
+            # already combined — only allow one such
+            if surface is not None:
+                return None
+            surface = st
+            continue
+        if has_surface and not has_pos:
+            if surface is not None:
+                return None
+            surface = st
+            continue
+        if has_pos and not has_surface:
+            if postag is not None:
+                return None
+            postag = st
+            continue
+        return None
+    if surface is None:
+        return None
+    if postag is not None:
+        surface["postag"] = postag["postag"]
+        if postag.get("postag_regexp"):
+            surface["postag_regexp"] = postag["postag_regexp"]
+    return surface
+
+
 def collapse_or(or_el: ET.Element) -> dict | None:
     """Collapse a simple <or> of plain surface tokens into one soft regexp token."""
     alts: list[str] = []
@@ -195,6 +239,12 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
             return True
         if tag == "or":
             collapsed = collapse_or(child)
+            if collapsed is None:
+                return False
+            toks.append(collapsed)
+            return True
+        if tag == "and":
+            collapsed = collapse_and(child)
             if collapsed is None:
                 return False
             toks.append(collapsed)

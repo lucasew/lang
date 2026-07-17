@@ -4339,6 +4339,17 @@
       <message>Did you mean a correction for POUCO_IMPORTA_NÃO_IMPORTA?</message>
       <short>POUCO_IMPORTA_NÃO_IMPORTA</short>
     </rule>
+    <rule id="QUANDO_TER_DE_QUE_VINF_AO_VINF" name="✂️ 'Quando V.Ter de/que V.Inf.' com → 'Ao V.Inf.'">
+      <pattern>
+        <token>quando</token>
+        <token postag="VMIP.+" postag_regexp="yes">ter</token>
+        <token regexp="yes">de|que</token>
+        <token postag="VMN0000" postag_regexp="no"></token>
+        <token>com</token>
+      </pattern>
+      <message>Did you mean a correction for QUANDO_TER_DE_QUE_VINF_AO_VINF?</message>
+      <short>QUANDO_TER_DE_QUE_VINF_AO_VINF</short>
+    </rule>
     <rule id="QUE_ESTAR_ADVERB_ADVERB" name="✂️ Que + V.Estar + Adv → Adv">
       <pattern>
         <token postag="NC.+|AQ.+|DD.+|_PUNCT" postag_regexp="yes"></token>
@@ -7626,6 +7637,15 @@
       </pattern>
       <message>Num contexto formal/científico, prefira "alcançar" a "obter" quando se refere a metas, objetivos, ou vitória.</message>
       <short>OBTER_ALCANCAR</short>
+    </rule>
+    <rule id="PHD_TESE_FICOU_DEMONSTRADO_QUE_DEMONSTRÁMOS_QUE" name="🎓 Expressões do tipo 'ficou demonstrado que' → ‘demonstrámos que'">
+      <pattern>
+        <token postag="VMI[SP]3S0" postag_regexp="yes">ficar</token>
+        <token postag="VMP00S.+" postag_regexp="yes"></token>
+        <token>que</token>
+      </pattern>
+      <message>Did you mean a correction for PHD_TESE_FICOU_DEMONSTRADO_QUE_DEMONSTRÁMOS_QUE?</message>
+      <short>PHD_TESE_FICOU_DEMONSTRADO_QUE_DEMONSTRÁMOS_QUE</short>
     </rule>
     <rule id="PHD_TESE_PARA_AJUDAR_A_VINFINITIVO_PARA_VINFINITIVO" name="🎓 Para Ajudar a + V.Inf. → Para V.Inf.">
       <pattern>

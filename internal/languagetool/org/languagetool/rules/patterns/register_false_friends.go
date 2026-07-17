@@ -1,7 +1,6 @@
 package patterns
 
 import (
-	"os"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -14,7 +13,7 @@ func RegisterFalseFriendsFile(lt *languagetool.JLanguageTool, path, textLang, mo
 	if lt == nil || path == "" || motherLang == "" {
 		return 0, nil
 	}
-	data, err := os.ReadFile(path)
+	data, err := ReadExpandedGrammarFile(path)
 	if err != nil {
 		return 0, err
 	}

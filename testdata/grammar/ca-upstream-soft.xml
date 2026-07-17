@@ -2730,6 +2730,14 @@
       <message>Hi falta un "que", però és preferible dir <suggestion></suggestion>.</message>
       <short>PREGUEM_DISCULPIN</short>
     </rule>
+    <rule id="PREGUI_PRENGUI" name="pregui/prengui">
+      <pattern>
+        <token regexp="yes" skip="20">que|què|qual|quals</token>
+        <token regexp="yes" postag="_reflexiu">prega|pregu[ei][sn]?</token>
+      </pattern>
+      <message>Possible confusió. ¿Volíeu dir <suggestion></suggestion>?</message>
+      <short>PREGUI_PRENGUI</short>
+    </rule>
     <rule id="PRESSUPOST_PRESSUPOSIT" name="pressupost -&gt; pressupòsit">
       <pattern>
         <token skip="2">concórrer</token>
@@ -4229,6 +4237,13 @@
       </pattern>
       <message>Expressió incorrecta.</message>
       <short>ACUS_DE_REBUT</short>
+    </rule>
+    <rule id="AGENCIARSE" name="agenciar-se -&gt; procurar-se, arreplegar, obtenir">
+      <pattern>
+        <token postag="_reflexiu">agenciar</token>
+      </pattern>
+      <message>Expressió incorrecta amb el sentit de 'procurar-se, arreplegar'.</message>
+      <short>AGENCIARSE</short>
     </rule>
     <rule id="AIXECAR_CAP" name="*aixecar cap/ aixecar el cap">
       <pattern>
@@ -6639,6 +6654,13 @@
       <message>Val més usar una altra expressió.</message>
       <short>SI_MAL_NO_RECORDO</short>
     </rule>
+    <rule id="SONARSE" name="sonar-se &gt; mocar-se">
+      <pattern>
+        <token postag="_reflexiu">sonar</token>
+      </pattern>
+      <message>Expressió incorrecta en el sentit de "mocar-se".</message>
+      <short>SONARSE</short>
+    </rule>
     <rule id="SONT_SANTJOAN" name="Son Santjoan">
       <pattern>
         <token regexp="yes">son|són|sont</token>
@@ -8586,6 +8608,13 @@
       <message>Val més fer servir un altre verb. "Revaloritzar" té usos especialitzats.</message>
       <short>REVALORITZAR</short>
     </rule>
+    <rule id="REVELARSE_REBELLARSE" name="*revelar-se -&gt; rebel·lar-se">
+      <pattern>
+        <token postag="_reflexiu">revelar</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>rebel·lar</suggestion> (refusar l'obediència)? "Revelar" és correcte amb el sentit de 'mostrar, fer conèixer'.</message>
+      <short>REVELARSE_REBELLARSE</short>
+    </rule>
     <rule id="REVELAR_REBELLAR" name="*revelar/rebel·lar">
       <pattern>
         <token>revelar</token>
@@ -9287,6 +9316,14 @@
       </pattern>
       <message>Possible calc del castellà.</message>
       <short>ENCARA_I_AIXI</short>
+    </rule>
+    <rule id="ENCEBARSE_ACARNISSARSE" name="encebar-se amb -&gt; acarnissar-se amb">
+      <pattern>
+        <token postag="_reflexiu">encebar</token>
+        <token>amb</token>
+      </pattern>
+      <message>Possible error de traducció automàtica. ¿Volíeu dir "acarnissar-se"?</message>
+      <short>ENCEBARSE_ACARNISSARSE</short>
     </rule>
     <rule id="ENTRE_UNS_ALTRES" name="entre *uns altres">
       <pattern>
@@ -10345,6 +10382,16 @@
       <message>Val més dir <suggestion> guàrdia</suggestion>.</message>
       <short>Expressió preferible</short>
     </rule>
+    <rule id="FER_SE_EL" name="fer-se el -&gt; fer el">
+      <pattern>
+        <token postag="_reflexiu">fer</token>
+        <token min="0" max="4" postag="RG|LOC_ADV" postag_regexp="yes"></token>
+        <token>el</token>
+        <token regexp="yes" postag="[AN].*|V.P.*" postag_regexp="yes">mort|pobre|ric|generós|desinteressat|savi|boig|desentendre|tifa|sord|mut|interessat|interessant|valent|orni|pagès|distret|desmenjat|longuis|angelot</token>
+      </pattern>
+      <message>En aquesta expressió, el verb 'fer' és preferiblement no pronominal.</message>
+      <short>FER_SE_EL</short>
+    </rule>
     <rule id="FINS_A_DALT" name="ple fins a dalt &gt; ple a vessar">
       <pattern>
         <token>ple</token>
@@ -10906,6 +10953,15 @@
       <message>Val més usar un altre verb.</message>
       <short>TRENCAR_A</short>
     </rule>
+    <rule id="TROBAR_SE_ESTAR_EN_VENDA" name="TROBAR_SE_ESTAR_EN_VENDA">
+      <pattern>
+        <token postag="_reflexiu">trobar</token>
+        <token>en</token>
+        <token>venda</token>
+      </pattern>
+      <message>Val més usar el verb 'estar'.</message>
+      <short>TROBAR_SE_ESTAR_EN_VENDA</short>
+    </rule>
     <rule id="TROBAR_SE_ESTAR_SITUAT" name="TROBAR_SE_ESTAR_SITUAT">
       <pattern>
         <token>es</token>
@@ -10914,6 +10970,22 @@
       </pattern>
       <message>Probablement val més usar el verb 'estar'.</message>
       <short>TROBAR_SE_ESTAR_SITUAT</short>
+    </rule>
+    <rule id="TROBAR_SE_RECUPERADA" name="trobar-se recuperada -&gt; estar recuperada">
+      <pattern>
+        <token postag="_reflexiu">trobar</token>
+        <token postag="V.P.*" postag_regexp="yes">recuperar</token>
+      </pattern>
+      <message>Val més usar una altra expressió més natural.</message>
+      <short>TROBAR_SE_RECUPERADA</short>
+    </rule>
+    <rule id="TROBAR_SE_SER_QUESTIONAT" name="TROBAR_SE_SER_QUESTIONAT">
+      <pattern>
+        <token postag="_reflexiu">trobar</token>
+        <token regexp="yes" postag="V.P.*" postag_regexp="yes">qüestionar|definir|determinar</token>
+      </pattern>
+      <message>Val més usar el verb 'ser' o 'estar'.</message>
+      <short>TROBAR_SE_SER_QUESTIONAT</short>
     </rule>
     <rule id="UN_ALTRE_MON_ES_POSSIBLE" name="un altre món és possible">
       <pattern>
@@ -11272,6 +11344,15 @@
       </pattern>
       <message>El verb 'esdevenir' no s'usa amb la preposició 'en'. ¿Volíeu dir "esdevenir-se" o "convertir-se en"?</message>
       <short>ESDEVENIR_EN</short>
+    </rule>
+    <rule id="ES_COMPLAU_A" name="es complau informar-vos -&gt; es complau a informar-vos">
+      <pattern>
+        <token postag="_reflexiu">complaure</token>
+        <token regexp="yes" min="0">de|d'</token>
+        <token postag="V.N.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Hi manca la preposició 'a'.</message>
+      <short>ES_COMPLAU_A</short>
     </rule>
     <rule id="FINS_A_ARA" name="fins a ara -&gt; fins ara">
       <pattern>
@@ -14726,6 +14807,15 @@
       <message>Forma verbal incorrecta (del v. 'soldre').</message>
       <short>Forma verbal incorrecta</short>
     </rule>
+    <rule id="TROBAR_SE_A_PUNT" name="trobar-se a punt -&gt; estar a punt">
+      <pattern>
+        <token postag="_reflexiu">trobar</token>
+        <token>a</token>
+        <token regexp="yes">punt|disposició|règim|dieta</token>
+      </pattern>
+      <message>Val més usar el verb 'estar'.</message>
+      <short>Construcció preferible</short>
+    </rule>
     <rule id="TUSTAR_A_LA_PORTA" name="tustar la porta -&gt; tustar a la porta">
       <pattern>
         <token regexp="yes">tustar|tocar|trucar</token>
@@ -15365,6 +15455,33 @@
       <short>EXIGEIX_VERBS_IX</short>
     </rule>
   </category>
+  <category id="REFLEXIVE_VERBS" name="verbs reflexius">
+    <rule id="OBLIDARSE_DE" name="oblidar-se -&gt; oblidar-se de">
+      <pattern>
+        <token regexp="yes" postag="_reflexiu">oblidar|descuidar</token>
+        <token postag="V.N.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Falta la preposició 'de'.</message>
+      <short>OBLIDARSE_DE</short>
+    </rule>
+    <rule id="POSTULARSE" name="postular-se -&gt; proposar-se">
+      <pattern>
+        <token postag="_reflexiu">postular</token>
+      </pattern>
+      <message>"Postular-se" no és en els diccionaris en el sentit de "proposar-se (per a un càrrec)".</message>
+      <short>POSTULARSE</short>
+    </rule>
+    <rule id="SELS_EN_VA" name="se'ls va -&gt; se'ls en va">
+      <pattern>
+        <token>se</token>
+        <token regexp="yes">'ls|'ns</token>
+        <token postag="V...3..." postag_regexp="yes">estar</token>
+        <token>anant</token>
+      </pattern>
+      <message>Falta el pronom 'en' en "anar-se'n".</message>
+      <short>SELS_EN_VA</short>
+    </rule>
+  </category>
   <category id="OPTIONAL_CHECKINGS" name="Revisions opcionals">
     <rule id="PERA_INFINITIU" name="Revisa 'per a + infinitiu'">
       <pattern>
@@ -15407,18 +15524,6 @@
       </pattern>
       <message>Normativament (IEC, AVL), s'escriu amb dues s, però l'ortografia és discutida.</message>
       <short>Ortografia discutida</short>
-    </rule>
-  </category>
-  <category id="REFLEXIVE_VERBS" name="verbs reflexius">
-    <rule id="SELS_EN_VA" name="se'ls va -&gt; se'ls en va">
-      <pattern>
-        <token>se</token>
-        <token regexp="yes">'ls|'ns</token>
-        <token postag="V...3..." postag_regexp="yes">estar</token>
-        <token>anant</token>
-      </pattern>
-      <message>Falta el pronom 'en' en "anar-se'n".</message>
-      <short>SELS_EN_VA</short>
     </rule>
   </category>
 </rules>

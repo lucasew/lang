@@ -5573,6 +5573,15 @@
       <message>Les vœux s'offrent, s'échangent ou se présentent, mais ne se souhaitent pas.</message>
       <short>SOUHAITER_DES_VOEUX</short>
     </rule>
+    <rule id="S_EN_SUIVRE" name="s’en suivre au lieu de s’ensuivre">
+      <pattern>
+        <token>s'</token>
+        <token>en</token>
+        <token postag="V .*" postag_regexp="yes">suivre</token>
+      </pattern>
+      <message>« \1\2 \3 » est incorrecte.</message>
+      <short>S_EN_SUIVRE</short>
+    </rule>
     <rule id="TACHER_MOYEN" name="tâcher moyen de/que">
       <pattern>
         <token regexp="yes" skip="1">t[aâ]cher</token>

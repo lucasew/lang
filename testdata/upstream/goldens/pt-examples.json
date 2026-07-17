@@ -5692,6 +5692,12 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "PHD_TESE_FICOU_DEMONSTRADO_QUE_DEMONSTRÁMOS_QUE",
+      "text": "Ficou demonstrado que alterações nas baixas em combate degradaram a capacidade ofensiva.",
+      "suggestion": "Demonstramos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
       "rule": "PHD_TESE_PARA_AJUDAR_A_VINFINITIVO_PARA_VINFINITIVO",
       "text": "Estas regras servem para ajudar a melhorar a gramática.",
       "suggestion": "para melhorar",
@@ -5882,6 +5888,18 @@
       "text": "Vou pôr uma pergunta pertinente.",
       "suggestion": "fazer uma pergunta",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUANDO_TER_DE_QUE_VINF_AO_VINF",
+      "text": "Quando temos de lidar com muitos elementos.",
+      "suggestion": "Ao lidarmos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUANDO_TER_DE_QUE_VINF_AO_VINF",
+      "text": "Quando tenho de lidar com muitos elementos.",
+      "suggestion": "Ao lidar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "QUE_ESTAR_ADVERB_ADVERB",

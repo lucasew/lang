@@ -2896,6 +2896,12 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "AGENCIARSE",
+      "text": "S'agencià el pis de la Finca Roja.",
+      "suggestion": "Es procurà",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "AGUARDAR",
       "text": "Vés-hi i aguarda'm.",
       "suggestion": "espera",
@@ -6514,6 +6520,12 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "ENCEBARSE_ACARNISSARSE",
+      "text": "La multireincidència s'enceba amb la ciutat.",
+      "suggestion": "acarnissa",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "ENCERTAR_AMB",
       "text": "Vam encertar amb el regal.",
       "suggestion": "",
@@ -7288,6 +7300,30 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "ES_COMPLAU_A",
+      "text": "El president es complau convidar-vos a la presa de possessió.",
+      "suggestion": "a convidar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_COMPLAU_A",
+      "text": "El president es complau de convidar-vos a la presa de possessió.",
+      "suggestion": "a convidar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_COMPLAU_A",
+      "text": "Els diputats es complauen d'invitar-vos a la presentació del llibre.",
+      "suggestion": "a invitar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "ES_COMPLAU_A",
+      "text": "M'he complagut convidar-vos.",
+      "suggestion": "a convidar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "ES_COMPOSTA",
       "text": "Es composta per tres membres electes.",
       "suggestion": "És",
@@ -7951,6 +7987,30 @@
       "rule": "FER_SERVIT",
       "text": "Sempre fent servit les eines adequades.",
       "suggestion": "fent servir",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FER_SE_EL",
+      "text": "Es feia de tant en tant l'interessant.",
+      "suggestion": "Feia",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FER_SE_EL",
+      "text": "Es feien a vegades els sords.",
+      "suggestion": "Feien",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FER_SE_EL",
+      "text": "No et facis el boig.",
+      "suggestion": "facis",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "FER_SE_EL",
+      "text": "No et facis la desinteressada.",
+      "suggestion": "facis",
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
@@ -10288,6 +10348,18 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "OBLIDARSE_DE",
+      "text": "Em vaig oblidar escriure't.",
+      "suggestion": "oblidar de",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "OBLIDARSE_DE",
+      "text": "M'he descuidat trucar-li.",
+      "suggestion": "descuidat de",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "OBLIDA_T_OBLIDAT",
       "text": "Està crema't.",
       "suggestion": "Està cremat",
@@ -11140,6 +11212,12 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "POSTULARSE",
+      "text": "Es postulava com a secretari del partit.",
+      "suggestion": "proposava",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "POST_DE_LA_LLUM",
       "text": "Mira els postes de la llum",
       "suggestion": "pals",
@@ -11245,6 +11323,12 @@
       "rule": "PREGUEM_DISCULPIN",
       "text": "Preguem respectin el descans dels veïns.",
       "suggestion": "Respecteu",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "PREGUI_PRENGUI",
+      "text": "Com voleu que m'ho pregui?",
+      "suggestion": "prengui",
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
@@ -11944,6 +12028,12 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "REVELARSE_REBELLARSE",
+      "text": "Revelem-nos.",
+      "suggestion": "Rebel·lem",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "REVELAR_REBELLAR",
       "text": "Es revelà contra el rei",
       "suggestion": "rebel·là",
@@ -12619,6 +12709,30 @@
       "rule": "SOLO_SOLC",
       "text": "Jo la solo reservar per a més endavant.",
       "suggestion": "solc",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SONARSE",
+      "text": "No et sonis amb la mànega.",
+      "suggestion": "moquis",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SONARSE",
+      "text": "No t'has de sonar amb la mànega.",
+      "suggestion": "mocar",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SONARSE",
+      "text": "Sona't",
+      "suggestion": "Moca",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "SONARSE",
+      "text": "Soneu-vos",
+      "suggestion": "Moqueu",
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
@@ -13390,6 +13504,24 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
+      "rule": "TROBAR_SE_A_PUNT",
+      "text": "Es trobaven a punt d'anar-se'n.",
+      "suggestion": "Estaven",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAR_SE_ESTAR_EN_VENDA",
+      "text": "Es trobava en venda.",
+      "suggestion": "Estava",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAR_SE_ESTAR_EN_VENDA",
+      "text": "S'ha trobat en venda.",
+      "suggestion": "Ha estat",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
       "rule": "TROBAR_SE_ESTAR_SITUAT",
       "text": "Es troba situada dalt d'un penyal.",
       "suggestion": "Està situada",
@@ -13405,6 +13537,30 @@
       "rule": "TROBAR_SE_ESTAR_SITUAT",
       "text": "Es trobaven situats dalt d'un penyal.",
       "suggestion": "Estaven situats",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAR_SE_RECUPERADA",
+      "text": "Es trobava recuperada.",
+      "suggestion": "Estava",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAR_SE_SER_QUESTIONAT",
+      "text": "Es troba qüestionat pels seus superiors.",
+      "suggestion": "És",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAR_SE_SER_QUESTIONAT",
+      "text": "Es trobava definit en la part final del llibre.",
+      "suggestion": "Era",
+      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
+    },
+    {
+      "rule": "TROBAR_SE_SER_QUESTIONAT",
+      "text": "S'havia trobat qüestionat pels seus superiors.",
+      "suggestion": "Havia sigut",
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {

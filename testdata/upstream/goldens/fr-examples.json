@@ -7456,6 +7456,12 @@
       "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
     },
     {
+      "rule": "S_EN_SUIVRE",
+      "text": "La défaite s’en suivit.",
+      "suggestion": "s'ensuivit",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
       "rule": "TACHER_MOYEN",
       "text": "tâcher moyen que",
       "suggestion": "tâcher de",

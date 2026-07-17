@@ -2,6 +2,7 @@ package patterns
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -15,7 +16,7 @@ func RegisterGrammarFile(lt *languagetool.JLanguageTool, path, languageCode stri
 	if lt == nil || path == "" {
 		return 0, nil
 	}
-	data, err := os.ReadFile(path)
+	data, err := ReadExpandedGrammarFile(path)
 	if err != nil {
 		return 0, err
 	}
@@ -164,8 +165,11 @@ func extractSuggestions(msg string) (clean string, suggs []string) {
 	return strings.TrimSpace(clean), suggs
 }
 
-// RegisterSoftGrammarDir loads {dir}/{lang}-soft.xml or {dir}/{lang}/grammar-soft.xml if present.
+// RegisterSoftGrammarDir loads soft and vendored upstream-extract grammar packs for lang.
 // Paths are de-duplicated so en and en-US do not register the same en-soft.xml twice.
+//
+// Full entity-expanded upstream grammar.xml is opt-in via LANG_USE_UPSTREAM_GRAMMAR=1
+// (slow: thousands of rules). Default uses filtered *-upstream-soft.xml extracts.
 func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode string) (int, error) {
 	if lt == nil || dir == "" {
 		return 0, nil
@@ -174,6 +178,21 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 	if i := strings.IndexByte(languageCode, '-'); i > 0 {
 		base = languageCode[:i]
 	}
+	total := 0
+	upstreamFull := 0
+	if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
+		for _, p := range upstreamGrammarCandidates(dir, base, languageCode) {
+			n, err := RegisterGrammarFile(lt, p, languageCode)
+			if err != nil {
+				if os.IsNotExist(err) {
+					continue
+				}
+				return total, err
+			}
+			total += n
+			upstreamFull += n
+		}
+	}
 	raw := []string{
 		dir + "/" + base + "-soft.xml",
 		dir + "/" + languageCode + "-soft.xml",
@@ -181,21 +200,20 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 		// soft optional packs (rules often default="off", enable with -e)
 		dir + "/" + base + "-optional-soft.xml",
 		dir + "/" + languageCode + "-optional-soft.xml",
-		// vendored from upstream LanguageTool (scripts/vendor-lt-testdata.py)
-		dir + "/" + base + "-upstream-soft.xml",
-		dir + "/" + languageCode + "-upstream-soft.xml",
+	}
+	// Skip filtered extract when full upstream grammar already registered (same IDs).
+	if upstreamFull == 0 {
+		raw = append(raw,
+			dir+"/"+base+"-upstream-soft.xml",
+			dir+"/"+languageCode+"-upstream-soft.xml",
+		)
 	}
 	seen := map[string]struct{}{}
-	var candidates []string
 	for _, c := range raw {
 		if _, ok := seen[c]; ok {
 			continue
 		}
 		seen[c] = struct{}{}
-		candidates = append(candidates, c)
-	}
-	total := 0
-	for _, c := range candidates {
 		n, err := RegisterGrammarFile(lt, c, languageCode)
 		if err != nil {
 			if os.IsNotExist(err) {
@@ -206,4 +224,19 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 		total += n
 	}
 	return total, nil
+}
+
+// upstreamGrammarCandidates lists vendored full LT rule files for a language base.
+// grammarDir is typically …/testdata/grammar; upstream sits at …/testdata/upstream/<base>/rules/.
+func upstreamGrammarCandidates(grammarDir, base, languageCode string) []string {
+	parent := filepath.Dir(grammarDir)
+	upRoot := filepath.Join(parent, "upstream", base, "rules")
+	out := []string{
+		filepath.Join(upRoot, "grammar.xml"),
+		filepath.Join(upRoot, "style.xml"),
+	}
+	if languageCode != base {
+		out = append(out, filepath.Join(upRoot, languageCode, "grammar.xml"))
+	}
+	return out
 }
