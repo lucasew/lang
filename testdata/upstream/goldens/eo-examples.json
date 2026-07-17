@@ -586,6 +586,12 @@
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
+      "rule": "LA_VORTO",
+      "text": "La manĝi ne bonas",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
       "rule": "LEGUMENO",
       "text": "Nekuiritaj legumenoj povas kaŭzi gravajn digestajn problemojn.",
       "suggestion": "guŝoj",

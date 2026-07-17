@@ -130,28 +130,6 @@
                 <suggestion>ពីរ</suggestion> instead.</message>
       <short>Incorrect usage of ពី</short>
     </rule>
-    <rule id="Gender_spec" name="Possible incorrect position of gender word">
-      <pattern>
-        <token postag="GEN"></token>
-        <token postag="NN">
-          <exception regexp="yes">ក្មេង|ចំណាស់</exception>
-        </token>
-      </pattern>
-      <message>In Khmer the gender normally follows the noun. Write
-                <suggestion>\2​\1</suggestion> instead.</message>
-      <short>Grammatical problem or typo</short>
-    </rule>
-    <rule id="NEG_PART_POS" name="Possible incorrect position of negative particle">
-      <pattern>
-        <token postag="JJ">
-          <exception regexp="yes">ក្មេង|ចំណាស់|នោះ</exception>
-        </token>
-        <token regexp="yes">មិន|អត់</token>
-      </pattern>
-      <message>In Khmer the negative particle never precedes an adjective. Write
-                <suggestion>\2​\1</suggestion> instead.</message>
-      <short>Grammatical problem or typo</short>
-    </rule>
     <rule id="TonakeatWithNoun" name="Do not use ការ​ ឬ ភាព with ទណ្ឌឃាត">
       <pattern>
         <token regexp="yes">សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ</token>

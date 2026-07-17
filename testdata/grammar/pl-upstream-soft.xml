@@ -931,15 +931,6 @@
       <message>Wyraz <suggestion>poza</suggestion> piszemy łącznie.</message>
       <short>Błąd ortograficzny</short>
     </rule>
-    <rule id="PRZECIAGNIJ-I-UPUSC" name="Wyrażenia pisane z wieloma łącznikami">
-      <pattern>
-        <token regexp="yes" postag="UNKNOWN">
-          <exception regexp="yes">staro-cerkiewno-słowiańs.*|staro-wysoko-niemiec.*|koh-i-noor.*</exception>
-        </token>
-      </pattern>
-      <message>Prawdopodobnie to wyrażenie jest kalką z języka obcego. W języku polskim zwykle nie łączy się wielu wyrazów łącznikiem w celu uzyskania jednego wyrazu. Poprawnie: <suggestion></suggestion>.</message>
-      <short>Błąd ortograficzny</short>
-    </rule>
     <rule id="PRZEDROSTEK_NIBY" name="Przedrostki „niby” i „quasi” błędnie pisane bez łącznika">
       <pattern>
         <token regexp="yes" postag="UNKNOWN">(?:niby|quasi)[^-–].*</token>
@@ -3496,16 +3487,6 @@
       <message>Mówi się <suggestion>dlaczego</suggestion>.</message>
       <short>Błąd składniowy</short>
     </rule>
-    <rule id="NIE_ULEGA_WATPLIWOSCI" name="„nie ulega najmniejszych wątpliwości”">
-      <pattern>
-        <token>nie</token>
-        <token>ulega</token>
-        <token>najmniejszych</token>
-        <token>wątpliwości</token>
-      </pattern>
-      <message>Błędny przypadek gramatyczny. Poprawnie <suggestion>\1 \2 najmniejszym wątpliwościom</suggestion> lub <suggestion>\1 ma \3 \4</suggestion>.</message>
-      <short>Błąd składniowy</short>
-    </rule>
     <rule id="W_LATO" name="„w lato” (w lecie, latem)">
       <pattern>
         <token>w</token>
@@ -3854,15 +3835,6 @@
       <message>Kalka z angielskiego. Lepiej: <suggestion>w kategoriach \3</suggestion>.</message>
       <short>Kalka z angielskiego</short>
     </rule>
-    <rule id="W_WYPADKU" name="„w wypadku” (w razie)">
-      <pattern>
-        <token>w</token>
-        <token>wypadku</token>
-        <token postag=".*gen.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>To wyrażenie jest nadużywane. Językoznawcy zalecają: <suggestion>\1 razie</suggestion>.</message>
-      <short>Wyraz modny lub nadużywany</short>
-    </rule>
   </category>
   <category id="GENDER" name="Błędy rodzaju gramatycznego">
     <rule id="GOLONKO" name="„golonko” (golonka)">
@@ -4024,15 +3996,6 @@
         <token>słowie</token>
       </pattern>
       <message>Błędna postać związku frazeologicznego. Poprawnie: <suggestion>\1 \2 \3 dwie słowie</suggestion>.</message>
-      <short>Błąd frazeologiczny</short>
-    </rule>
-    <rule id="NA_CALE_SZCZESCIE" name="„na całe szczęście” (całe szczęście)">
-      <pattern>
-        <token>na</token>
-        <token>całe</token>
-        <token>szczęście</token>
-      </pattern>
-      <message>To wyrażenie bywa potępiane przez językoznawców jako kontaminacja poprawnych zwrotów <suggestion>całe szczęście, że</suggestion> lub <suggestion>na szczęście</suggestion>.</message>
       <short>Błąd frazeologiczny</short>
     </rule>
     <rule id="NA_SZCZERYM_POLU" name="„na szczerym polu” (w szczerym polu)">

@@ -318,7 +318,7 @@
       <message>Se escribe junto.</message>
       <short>DAR_ABASTO</short>
     </rule>
-    <rule id="DAR_A_LUGAR" name="dar *(a) lugar">
+    <rule id="DAR_A_LUGAR" name="dar *(a) lugar" default="on">
       <pattern>
         <token>dar</token>
         <token>a</token>
@@ -473,7 +473,7 @@
     </rule>
   </category>
   <category id="INCORRECT_EXPRESSIONS" name="Expresiones incorrectas">
-    <rule id="ALTO_CARGO" name="*alta cargo/alto cargo">
+    <rule id="ALTO_CARGO" name="*alta cargo/alto cargo" default="on">
       <pattern>
         <token>alta</token>
         <token>cargo</token>
@@ -741,7 +741,7 @@
       <message>¿Quería decir <suggestion>ceño</suggestion> (entrecejo)? "Seño" es una apócope de "señora" o "señorita".</message>
       <short>CENYO</short>
     </rule>
-    <rule id="CUIDAD_CIUDAD" name="*cuidad/ciudad">
+    <rule id="CUIDAD_CIUDAD" name="*cuidad/ciudad" default="on">
       <pattern>
         <token postag="D..[CF]S." postag_regexp="yes"></token>
         <token>cuidad</token>
@@ -1070,7 +1070,7 @@
       <message>¿Quería decir <suggestion>hemos</suggestion> (del verbo 'haber')?</message>
       <short>HEMO_HEMOS</short>
     </rule>
-    <rule id="HE_HA" name="*he ha">
+    <rule id="HE_HA" name="*he ha" default="on">
       <pattern>
         <token>he</token>
         <token>haber</token>
@@ -1593,7 +1593,7 @@
       <message>Es preferible usar <suggestion>peor</suggestion>, excepto cuando se alude a la maldad de una persona o a un sabor.</message>
       <short>MAS_MALA</short>
     </rule>
-    <rule id="MEXICO" name="México/Méjico">
+    <rule id="MEXICO" name="México/Méjico" default="on">
       <pattern>
         <token regexp="yes">.*mejic.*|Méjico|Tejas
           <exception>tejas</exception>
@@ -1637,7 +1637,7 @@
       <message>Carácter incorrecto para indicar un número ordinal. Correcto si son grados.</message>
       <short>ORDINAL_CHAR</short>
     </rule>
-    <rule id="P_EJ" name="Puntuación en: p. ej.">
+    <rule id="P_EJ" name="Puntuación en: p. ej." default="on">
       <pattern>
         <token>p</token>
         <token min="0">.</token>
@@ -1665,7 +1665,7 @@
       <message>La preposición adecuada es <suggestion>de</suggestion>.</message>
       <short>DEPENDER_DE</short>
     </rule>
-    <rule id="ENFRENTARSE_ANTE" name="enfrentarse *ante/con">
+    <rule id="ENFRENTARSE_ANTE" name="enfrentarse *ante/con" default="on">
       <pattern>
         <token>enfrentar</token>
         <token min="0" max="4" postag="RG|LOC_ADV|_PUNCT_CONT" postag_regexp="yes"></token>

@@ -125,18 +125,6 @@
       <short>Muligvis manglende appostrof.</short>
     </rule>
   </category>
-  <category id="GRAMMAR" name="Grammatik">
-    <rule id="adj-ube-sin-utr-pos" name="(fejlbehæftet regel) Tillægsord ental ubestemt i forkert bøjningsform">
-      <pattern>
-        <token regexp="yes">et|det</token>
-        <token regexp="yes" postag="adj:ube:sin:utr:pos">.*[a-s,u-å]
-          <exception>før</exception>
-        </token>
-      </pattern>
-      <message>Ved at der står "\1" skal tilægsord <suggestion>\2t</suggestion> være intetkøn</message>
-      <short>Muligvis tillægsord i forker form</short>
-    </rule>
-  </category>
   <category id="CAT1" name="Mulige slåfejl">
     <rule id="bindestreg_og" name="Manglende mellemrum efter bindestreg">
       <pattern>

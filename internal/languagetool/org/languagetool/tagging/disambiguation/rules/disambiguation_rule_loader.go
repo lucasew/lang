@@ -24,6 +24,8 @@ func (l *DisambiguationRuleLoader) GetRulesFromReader(r io.Reader, languageCode,
 	if err != nil {
 		return nil, err
 	}
+	// Official LT disambiguation.xml uses custom DTD entities.
+	data = patterns.ExpandLTXMLEntities(data)
 	return l.parse(data, languageCode, xmlPath)
 }
 

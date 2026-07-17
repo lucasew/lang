@@ -2939,14 +2939,6 @@
       <message>¿Volíeu dir <suggestion>serveix</suggestion> (del verb 'servir')?</message>
       <short>SERVEIS_SERVEIX</short>
     </rule>
-    <rule id="SER_RETRATAR" name="ser retratar -&gt; retratat">
-      <pattern>
-        <token regexp="yes" postag="V.[NG].*" postag_regexp="yes">ser|estar</token>
-        <token regexp="yes" postag="V.N.*" postag_regexp="yes">\p{Ll}.*r</token>
-      </pattern>
-      <message>Possible confusió. ¿Volíeu dir <suggestion></suggestion>?</message>
-      <short>SER_RETRATAR</short>
-    </rule>
     <rule id="SEU_SER" name="seu -&gt; ser">
       <pattern>
         <token regexp="yes">poder|deure|voler</token>
@@ -3242,18 +3234,6 @@
       </pattern>
       <message>Possible confusió.</message>
       <short>VANS_SER</short>
-    </rule>
-    <rule id="VA_A_INFINITIU" name="se'n va (a) lluitar">
-      <pattern>
-        <token>se</token>
-        <token>'n</token>
-        <token>va</token>
-        <token postag="V.N.*" postag_regexp="yes">
-          <exception regexp="yes">anar|parlar</exception>
-        </token>
-      </pattern>
-      <message>Probablement hi falta una preposició.</message>
-      <short>VA_A_INFINITIU</short>
     </rule>
     <rule id="VA_SA_VAS_A" name="va sa -&gt; vas a">
       <pattern>
@@ -5968,15 +5948,6 @@
       <message>Expressió incorrecta.</message>
       <short>MEREIXER_LA_PENA</short>
     </rule>
-    <rule id="MES_ET_VAL" name="*més et val/val més">
-      <pattern>
-        <token>més</token>
-        <token regexp="yes">em|et|me|te|li|ens|us|els</token>
-        <token regexp="yes">val|valia|valdria</token>
-      </pattern>
-      <message>Expressió no adequada.</message>
-      <short>MES_ET_VAL</short>
-    </rule>
     <rule id="MICA_EN_MICA" name="*mica en mica / de mica en mica">
       <pattern>
         <token negate="yes">de</token>
@@ -6643,16 +6614,6 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>si us plau</suggestion>?</message>
       <short>SI_ES_PLAU</short>
-    </rule>
-    <rule id="SI_MAL_NO_RECORDO" name="si mal no recordo">
-      <pattern>
-        <token>si</token>
-        <token>mal</token>
-        <token>no</token>
-        <token regexp="yes">recordo|record|recorde</token>
-      </pattern>
-      <message>Val més usar una altra expressió.</message>
-      <short>SI_MAL_NO_RECORDO</short>
     </rule>
     <rule id="SONARSE" name="sonar-se &gt; mocar-se">
       <pattern>
@@ -7971,14 +7932,6 @@
       <message>¿Volíeu dir <suggestion>ciment</suggestion> (terme general) en lloc de "cement" (terme de metal·lúrgia i d'anatomia animal)?</message>
       <short>CIMENT_CEMENT</short>
     </rule>
-    <rule id="CLIMATOLOGIC_METEOROLOGIC" name="condició climatològica -&gt; meteorològica">
-      <pattern>
-        <token>condició</token>
-        <token regexp="yes" postag="A.*" postag_regexp="yes">climatològic|climàtic</token>
-      </pattern>
-      <message>L'adjectiu apropiat és probablement <suggestion>meteorològic</suggestion>. La meteorologia fa referència al curt termini, i el clima, al llarg termini (vint anys).</message>
-      <short>CLIMATOLOGIC_METEOROLOGIC</short>
-    </rule>
     <rule id="COBRO" name="cobro/cobrament">
       <pattern>
         <token regexp="yes" postag="_GN_.*" postag_regexp="yes">cobros?</token>
@@ -9134,373 +9087,6 @@
       <short>TORNAR_A_REFER</short>
     </rule>
   </category>
-  <category id="AUTOMATIC_TRANSLATION" name="Errors de traductor automàtic">
-    <rule id="ALGUNA_COSA_QUE" name="*alguna cosa que/cosa que">
-      <pattern>
-        <token>,</token>
-        <token>alguna</token>
-        <token>cosa</token>
-        <token>que</token>
-      </pattern>
-      <message>Possible error de traductor automàtic.</message>
-      <short>ALGUNA_COSA_QUE</short>
-    </rule>
-    <rule id="CADA_QUI" name="*cada qui">
-      <pattern>
-        <token>cada</token>
-        <token>qui</token>
-      </pattern>
-      <message>¿Volíeu dir <suggestion>cadascú</suggestion>?</message>
-      <short>CADA_QUI</short>
-    </rule>
-    <rule id="DEL_COM" name="del com/del qual">
-      <pattern>
-        <token>de</token>
-        <token>l</token>
-        <token>com</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>DEL_COM</short>
-    </rule>
-    <rule id="DOBLE_BAIX" name="doble baix/contrabaix">
-      <pattern>
-        <token>doble</token>
-        <token>baix</token>
-      </pattern>
-      <message>¿Volíeu dir <suggestion>contrabaix</suggestion>?</message>
-      <short>Error de traducció automàtica</short>
-    </rule>
-    <rule id="EN_CONTRARI" name="*en contrari/en contra">
-      <pattern>
-        <token>en</token>
-        <token>contrari</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>EN_CONTRARI</short>
-    </rule>
-    <rule id="GENS_EN_COMU" name="*gens en comú">
-      <pattern>
-        <token>gens</token>
-        <token>en</token>
-        <token>comú</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>GENS_EN_COMU</short>
-    </rule>
-    <rule id="MOLTS_UNS_ALTRES" name="molts *uns altres">
-      <pattern>
-        <token>molts</token>
-        <token>uns</token>
-        <token>altres</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>MOLTS_UNS_ALTRES</short>
-    </rule>
-    <rule id="PARA_QUE" name="para/per a què">
-      <pattern>
-        <token>para</token>
-        <token>què</token>
-      </pattern>
-      <message>Possible error de traductor automàtic.</message>
-      <short>PARA_QUE</short>
-    </rule>
-    <rule id="ANYS_I_MITJA" name="anys i *mitjà/mig">
-      <pattern>
-        <token regexp="yes">|temporada|curs|vegada|cop|volta</token>
-        <token>i</token>
-        <token regexp="yes">mitjà|mitjana</token>
-      </pattern>
-      <message>¿Volíeu dir <suggestion>mig</suggestion>?</message>
-      <short>ANYS_I_MITJA</short>
-    </rule>
-    <rule id="AQUESTS_AQUESTES" name="*aquests/aquestes són les">
-      <pattern>
-        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
-        <token postag="DD0MP0"></token>
-        <token max="2" postag="V.*" postag_regexp="yes"></token>
-        <token>ser</token>
-        <token>les</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>AQUESTS_AQUESTES</short>
-    </rule>
-    <rule id="A_DOS_VELAS" name="*a dos velas">
-      <pattern>
-        <token>a</token>
-        <token regexp="yes">dos|dues</token>
-        <token regexp="yes">velas|veles</token>
-      </pattern>
-      <message>Possible calc del castellà.</message>
-      <short>A_DOS_VELAS</short>
-    </rule>
-    <rule id="A_LA_MEVA_ENTENDRE" name="a la meva entendre -&gt; al meu entendre">
-      <pattern>
-        <token>a</token>
-        <token>la</token>
-        <token postag="PX.FS.*" postag_regexp="yes"></token>
-        <token>entendre</token>
-      </pattern>
-      <message>Error de concordança.</message>
-      <short>A_LA_MEVA_ENTENDRE</short>
-    </rule>
-    <rule id="A_RAIGS" name="*a raigs">
-      <pattern>
-        <token regexp="yes" skip="10">sonar|saber|gust</token>
-        <token>a</token>
-        <token regexp="yes">raigs|rajos</token>
-      </pattern>
-      <message>Possible calc del castellà.</message>
-      <short>A_RAIGS</short>
-    </rule>
-    <rule id="CADIRAT" name="*cadirat/carreu">
-      <pattern>
-        <token postag="SPS00"></token>
-        <token regexp="yes">cadirats?</token>
-      </pattern>
-      <message>Incorrecte en el sentit de <suggestion>carreus</suggestion> (pedra tallada). Correcte en el sentit de conjunt de cadires.</message>
-      <short>Error de traducció automàtica</short>
-    </rule>
-    <rule id="CAMBRA_QUART" name="*cambra/quart d'hora">
-      <pattern>
-        <token>cambra</token>
-        <token>d'</token>
-        <token>hora</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>CAMBRA_QUART</short>
-    </rule>
-    <rule id="CAPCALERA" name="*capçalera/cap de municipi">
-      <pattern>
-        <token>capçalera</token>
-        <token min="0">de</token>
-        <token min="0" postag="D.*" postag_regexp="yes"></token>
-        <token regexp="yes">municipal|districte|municipi|regió|demarcació|departament|comarca</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>CAPCALERA</short>
-    </rule>
-    <rule id="COM_EL_QUAL" name="com el *qual/que">
-      <pattern>
-        <token>com</token>
-        <token regexp="yes">el|la|els|les</token>
-        <token regexp="yes">quals?</token>
-      </pattern>
-      <message>¿Volíeu dir <suggestion>\1 \2 que</suggestion>?</message>
-      <short>Error de traducció automàtica</short>
-    </rule>
-    <rule id="DES_D_ENRERE" name="*des d'enrere/des de darrere">
-      <pattern>
-        <token>des</token>
-        <token>d'</token>
-        <token regexp="yes">arrere|enrere|endarrere</token>
-      </pattern>
-      <message>Possible error de traductor automàtic.</message>
-      <short>DES_D_ENRERE</short>
-    </rule>
-    <rule id="D_OIDES" name="d'oïdes">
-      <pattern>
-        <token regexp="yes" skip="4">conèixer|saber|assabentar|informar</token>
-        <token>de</token>
-        <token regexp="yes">oïda|oïdes</token>
-      </pattern>
-      <message>Possible calc del castellà. Feu servir una altra expressió.</message>
-      <short>D_OIDES</short>
-    </rule>
-    <rule id="ENCARA_I_AIXI" name="*encara i així">
-      <pattern>
-        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
-        <token>encara</token>
-        <token min="0">i</token>
-        <token>així</token>
-        <token postag="_PUNCT.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Possible calc del castellà.</message>
-      <short>ENCARA_I_AIXI</short>
-    </rule>
-    <rule id="ENCEBARSE_ACARNISSARSE" name="encebar-se amb -&gt; acarnissar-se amb">
-      <pattern>
-        <token postag="_reflexiu">encebar</token>
-        <token>amb</token>
-      </pattern>
-      <message>Possible error de traducció automàtica. ¿Volíeu dir "acarnissar-se"?</message>
-      <short>ENCEBARSE_ACARNISSARSE</short>
-    </rule>
-    <rule id="ENTRE_UNS_ALTRES" name="entre *uns altres">
-      <pattern>
-        <token>entre</token>
-        <token regexp="yes">uns|unes</token>
-        <token>altres</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>ENTRE_UNS_ALTRES</short>
-    </rule>
-    <rule id="EN_TEMPS_I_FORMA" name="*en temps i forma">
-      <pattern>
-        <token regexp="yes">en|amb</token>
-        <token>temps</token>
-        <token>i</token>
-        <token>forma</token>
-      </pattern>
-      <message>Fórmula de llenguatge jurídic. Calc del castellà que cal evitar.</message>
-      <short>EN_TEMPS_I_FORMA</short>
-    </rule>
-    <rule id="ESTAVELLA_ESTRELLA" name="estavella estrella">
-      <pattern>
-        <token postag="N.*" postag_regexp="yes"></token>
-        <token>estavella</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>ESTAVELLA_ESTRELLA</short>
-    </rule>
-    <rule id="EST_AQUEST" name="est (punt cardinal) / aquest">
-      <pattern>
-        <token postag="SPS00|.*LOC_PREP.*|SENT_START" postag_regexp="yes"></token>
-        <token>est</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>EST_AQUEST</short>
-    </rule>
-    <rule id="FER_LES_VEGADES" name="fer les vegades">
-      <pattern>
-        <token>fer</token>
-        <token>les</token>
-        <token regexp="yes">vegades|voltes</token>
-        <token regexp="yes">de|d'</token>
-      </pattern>
-      <message>Calc del castellà.</message>
-      <short>FER_LES_VEGADES</short>
-    </rule>
-    <rule id="FER_LES_VEGADES_DE" name="*fer les vegades de/fer de">
-      <pattern>
-        <token>fer</token>
-        <token>les</token>
-        <token>vegades</token>
-        <token>de</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>FER_LES_VEGADES_DE</short>
-    </rule>
-    <rule id="FINALITATS_FI" name="*finalitats/la fi/finals">
-      <pattern>
-        <token>finalitats</token>
-        <token>de</token>
-        <token min="0" postag="DA.*" postag_regexp="yes"></token>
-        <token regexp="yes" min="0">mateixa?</token>
-        <token regexp="yes">|[XIV]+|s|||\d+||dictadura|guerra|primera|segona</token>
-      </pattern>
-      <message>Possible error de traductor automàtic.</message>
-      <short>FINALITATS_FI</short>
-    </rule>
-    <rule id="MATI_DEMA" name="*matí/demà">
-      <pattern>
-        <token postag="V.[^P].*|_GV_" postag_regexp="yes">
-          <exception>el</exception>
-        </token>
-        <token>matí</token>
-      </pattern>
-      <message>Possible error de traductor automàtic.</message>
-      <short>MATI_DEMA</short>
-    </rule>
-    <rule id="PARTEIX_INTENGRANT" name="*parteix/part integrant">
-      <pattern>
-        <token regexp="yes">parteix|partix</token>
-        <token>integrant</token>
-      </pattern>
-      <message>Possible error de traductor automàtic.</message>
-      <short>PARTEIX_INTENGRANT</short>
-    </rule>
-    <rule id="PASSO_PAS" name="passo -&gt; pas">
-      <pattern>
-        <token regexp="yes">deixar|donar</token>
-        <token>passo</token>
-      </pattern>
-      <message>Possible error de traducció automàtica. ¿Volíeu dir <suggestion>pas</suggestion>?</message>
-      <short>PASSO_PAS</short>
-    </rule>
-    <rule id="PODEN_QUE" name="poden que -&gt; pot ser que">
-      <pattern>
-        <token postag="V.IP3..." postag_regexp="yes">poder</token>
-        <token>que</token>
-        <token min="0" max="3" postag="|R.*" postag_regexp="yes"></token>
-        <token postag="V.S.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Aquesta expressió és probablement un calc del castellà.</message>
-      <short>PODEN_QUE</short>
-    </rule>
-    <rule id="PUDENT" name="pudent/benestant">
-      <pattern>
-        <token regexp="yes">classe|senyor|home|dona|empresari|propietarri|terratinent</token>
-        <token>pudent</token>
-      </pattern>
-      <message>En el sentit de <suggestion>benestant</suggestion> és un calc del castellà.</message>
-      <short>PUDENT</short>
-    </rule>
-    <rule id="QUALSEVOL_UN_ALTRE" name="qualsevol *(un) altre">
-      <pattern>
-        <token regexp="yes">qualsevol|tal</token>
-        <token regexp="yes">una?</token>
-        <token regexp="yes">altr[ea]</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>QUALSEVOL_UN_ALTRE</short>
-    </rule>
-    <rule id="QUART_DE_BANY" name="*quart/cambra de bany">
-      <pattern>
-        <token regexp="yes">quarts?</token>
-        <token>de</token>
-        <token>bany</token>
-      </pattern>
-      <message>Error de traducció automàtica.</message>
-      <short>QUART_DE_BANY</short>
-    </rule>
-    <rule id="SIGUI_CONTINUI" name="sigui -&gt; continuï / segueixi">
-      <pattern>
-        <token regexp="yes">se|es</token>
-        <token regexp="yes">siga|sigui</token>
-        <token postag="V.G.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>"" és una forma del verb 'ser'. ¿Volíeu dir "continuar" o "seguir"?</message>
-      <short>SIGUI_CONTINUI</short>
-    </rule>
-    <rule id="SOLO" name="solo/sol">
-      <pattern>
-        <token regexp="yes">un|el</token>
-        <token>solo</token>
-        <token postag="AQ.[MC]S.|NC[MC]S.*|V.P..SM." postag_regexp="yes">
-          <exception regexp="yes">fabulós|fantàstic|aclaparador|imaginatiu</exception>
-        </token>
-      </pattern>
-      <message>¿Volíeu dir <suggestion>sol</suggestion>? Correcte com a terme musical.</message>
-      <short>SOLO</short>
-    </rule>
-    <rule id="TAN_COM_A" name="tan... *com a/com">
-      <pattern>
-        <token>tan</token>
-        <token postag="AQ.*|V.P.*" postag_regexp="yes"></token>
-        <token>com</token>
-        <token>a</token>
-        <token postag="AQ.*|V.P.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Possible error de traducció automàtica. Correcte si "com a" equival a "en qualitat de, en concepte de".</message>
-      <short>TAN_COM_A</short>
-    </rule>
-    <rule id="TARDA_TARD" name="més *tarda/tard">
-      <pattern>
-        <token>més</token>
-        <token regexp="yes">tarda|vesprada</token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>TARDA_TARD</short>
-    </rule>
-    <rule id="VOLGUES_VOLDRIA" name="*Volgués/Voldria dir">
-      <pattern>
-        <token regexp="yes">volgués|volguera</token>
-        <token postag="V.N.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Possible error de traducció automàtica.</message>
-      <short>VOLGUES_VOLDRIA</short>
-    </rule>
-  </category>
   <category id="PREFERABLE_EXPRESSIONS" name="Expressions preferibles">
     <rule id="AL_MATI_SEGUENT" name="al matí següent">
       <pattern>
@@ -9553,14 +9139,6 @@
       </pattern>
       <message>Diem preferiblement <suggestion>bon Nadal</suggestion> (si és per Nadal) o <suggestion>bona Pasqua</suggestion>.</message>
       <short>BONES_PASQUES</short>
-    </rule>
-    <rule id="CATALUNYA_DEL_NORD" name="Catalunya Nord/Catalunya del Nord">
-      <pattern>
-        <token>Catalunya</token>
-        <token>Nord</token>
-      </pattern>
-      <message>Alguns llibres d'estil recomanen <suggestion>Catalunya del Nord</suggestion> com a forma preferible.</message>
-      <short>CATALUNYA_DEL_NORD</short>
     </rule>
     <rule id="COLQUE" name="colque &gt; qualque">
       <pattern>
@@ -9718,17 +9296,6 @@
       <message>El nom apropiat és <suggestion>Palma</suggestion>.</message>
       <short>PALMA</short>
     </rule>
-    <rule id="PEL_SEU_PROPI_PEU" name="pel seu propi peu -&gt; a peu, caminant">
-      <pattern>
-        <token>pe</token>
-        <token>l</token>
-        <token>seu</token>
-        <token>propi</token>
-        <token>peu</token>
-      </pattern>
-      <message>Val més usar una altra expressió. "Pel seu propi peu" és vàlida per a emfatitzar la dificultat o l'esforç de qui fa l'acció.</message>
-      <short>PEL_SEU_PROPI_PEU</short>
-    </rule>
     <rule id="PER_TOTES_PARTS" name="per totes parts&gt; pertot arreu">
       <pattern>
         <token>per</token>
@@ -9764,15 +9331,6 @@
       </pattern>
       <message>Molts llibres d'estil recomanen usar una altra expressió.</message>
       <short>SEMPRE_I_QUAN</short>
-    </rule>
-    <rule id="SENSE_PREVI_AVIS" name="sense previ avís">
-      <pattern>
-        <token>sense</token>
-        <token>previ</token>
-        <token>avís</token>
-      </pattern>
-      <message>Val més fer servir una altra expressió.</message>
-      <short>SENSE_PREVI_AVIS</short>
     </rule>
     <rule id="SI_O_SI" name="sí o sí/tant sí com no">
       <pattern>
@@ -9827,13 +9385,6 @@
       </pattern>
       <message>En aquest context, val més usar un altre verb.</message>
       <short>ABANDERAR_ENCAPCALAR</short>
-    </rule>
-    <rule id="ACCENTUACIO_PRINCIPAL" name="Exigeix accentuacions principals: sépia">
-      <pattern>
-        <token regexp="yes">sèpi(a|es)</token>
-      </pattern>
-      <message>La forma principal és <suggestion></suggestion>.</message>
-      <short>Forma preferible</short>
     </rule>
     <rule id="AIXO_ES_EL_QUE_HI_HA" name="això és el que hi ha">
       <pattern>
@@ -10075,14 +9626,6 @@
       <message>Val més usar una altra expressió.</message>
       <short>Expressió preferible</short>
     </rule>
-    <rule id="DONAR_COMPLIMENT" name="donar compliment/complir">
-      <pattern>
-        <token>donar</token>
-        <token>compliment</token>
-      </pattern>
-      <message>Expressió preferible.</message>
-      <short>DONAR_COMPLIMENT</short>
-    </rule>
     <rule id="DONAR_CONSTANCIA" name="donar constància">
       <pattern>
         <token>donar</token>
@@ -10090,15 +9633,6 @@
       </pattern>
       <message>Val més usar una altra expressió.</message>
       <short>Expressió preferible</short>
-    </rule>
-    <rule id="DON_D" name="Revisa l'abreviatura Don/D.">
-      <pattern>
-        <token case_sensitive="yes">D</token>
-        <token>.</token>
-        <token regexp="yes">\p{Lu}.+</token>
-      </pattern>
-      <message>Incorrecte si equival a <suggestion>Sr.</suggestion>.</message>
-      <short>DON_D</short>
     </rule>
     <rule id="DRET_DE_PODER" name="dret de poder dir -&gt; dret de dir">
       <pattern>
@@ -10391,16 +9925,6 @@
       </pattern>
       <message>En aquesta expressió, el verb 'fer' és preferiblement no pronominal.</message>
       <short>FER_SE_EL</short>
-    </rule>
-    <rule id="FINS_A_DALT" name="ple fins a dalt &gt; ple a vessar">
-      <pattern>
-        <token>ple</token>
-        <token>fins</token>
-        <token min="0">a</token>
-        <token>dalt</token>
-      </pattern>
-      <message>Val més usar una altra expressió.</message>
-      <short>FINS_A_DALT</short>
     </rule>
     <rule id="FINS_MEITAT_DE" name="a meitat de/a mitjan">
       <pattern>
@@ -10971,14 +10495,6 @@
       <message>Probablement val més usar el verb 'estar'.</message>
       <short>TROBAR_SE_ESTAR_SITUAT</short>
     </rule>
-    <rule id="TROBAR_SE_RECUPERADA" name="trobar-se recuperada -&gt; estar recuperada">
-      <pattern>
-        <token postag="_reflexiu">trobar</token>
-        <token postag="V.P.*" postag_regexp="yes">recuperar</token>
-      </pattern>
-      <message>Val més usar una altra expressió més natural.</message>
-      <short>TROBAR_SE_RECUPERADA</short>
-    </rule>
     <rule id="TROBAR_SE_SER_QUESTIONAT" name="TROBAR_SE_SER_QUESTIONAT">
       <pattern>
         <token postag="_reflexiu">trobar</token>
@@ -11283,14 +10799,6 @@
       <message>Construcció incorrecta.</message>
       <short>D_ENCA</short>
     </rule>
-    <rule id="ENCA_DE" name="ençà de -&gt; d'ençà de">
-      <pattern>
-        <token>ençà</token>
-        <token regexp="yes">d'|de|que</token>
-      </pattern>
-      <message>Construcció incompleta.</message>
-      <short>ENCA_DE</short>
-    </rule>
     <rule id="ENCERTAR_AMB" name="encertar *(amb)">
       <pattern>
         <token>encertar</token>
@@ -11336,14 +10844,6 @@
       </pattern>
       <message>La preposició adequada en aquesta expressió és <suggestion>en</suggestion>.</message>
       <short>EN_VIGOR</short>
-    </rule>
-    <rule id="ESDEVENIR_EN" name="esdevenir en">
-      <pattern>
-        <token>esdevenir</token>
-        <token>en</token>
-      </pattern>
-      <message>El verb 'esdevenir' no s'usa amb la preposició 'en'. ¿Volíeu dir "esdevenir-se" o "convertir-se en"?</message>
-      <short>ESDEVENIR_EN</short>
     </rule>
     <rule id="ES_COMPLAU_A" name="es complau informar-vos -&gt; es complau a informar-vos">
       <pattern>
@@ -11819,13 +11319,6 @@
       <message>Paraula col·loquial només admesa per alguns diccionaris.</message>
       <short>Llenguatge col·loquial</short>
     </rule>
-    <rule id="FLIPAR" name="flipar">
-      <pattern>
-        <token postag="V.*" postag_regexp="yes">flipar</token>
-      </pattern>
-      <message>Llenguatge col·loquial.</message>
-      <short>Llenguatge col·loquial</short>
-    </rule>
     <rule id="PASSOTA" name="passota">
       <pattern>
         <token postag="AQ.*" postag_regexp="yes">passota</token>
@@ -12128,20 +11621,6 @@
       <message>És preferible usar la forma <suggestion>aquests</suggestion>.</message>
       <short>AQUESTOS</short>
     </rule>
-    <rule id="EXIGEIX_PLURALS_NS" name="Exigeix plurals en -ns: hòmens, jóvens...">
-      <pattern>
-        <token regexp="yes">ases|coves|freixes|(super)?homes|joves|(salta)?marges|orfes|(bleda-|col)?raves|termes|verges|(clavi)?orgues|.*ordes|.*imatges</token>
-      </pattern>
-      <message>Useu les formes de plural acabades en -ns.</message>
-      <short>EXIGEIX_PLURALS_NS</short>
-    </rule>
-    <rule id="EXIGEIX_PLURALS_S" name="Exigeix plurals en -s: homes, joves...">
-      <pattern>
-        <token regexp="yes">àsens|còvens|fréixens|(super)?hòmens|(super)?jóvens|(salta)?màrgens|òrfens|(bleda-|col)?ràvens|térmens|vèrgens|(clavi)?òrguens|.*órdens|.*imàtgens</token>
-      </pattern>
-      <message>Useu les formes de plural acabades en -s.</message>
-      <short>EXIGEIX_PLURALS_S</short>
-    </rule>
   </category>
   <category id="DNV_PRIMARY_FORM" name="Paraules admeses pel DNV (AVL), però no per altres diccionaris">
     <rule id="ARRASTRONS" name="a arrastrons">
@@ -12185,20 +11664,6 @@
       </pattern>
       <message>Locució admesa només pel DNV, no per altres diccionaris.</message>
       <short>DE_REFILO</short>
-    </rule>
-    <rule id="MANUALITAT" name="manualitat">
-      <pattern>
-        <token>manualitat</token>
-      </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
-      <short>MANUALITAT</short>
-    </rule>
-    <rule id="MANUALITATS" name="manualitats">
-      <pattern>
-        <token>manualitats</token>
-      </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
-      <short>MANUALITATS</short>
     </rule>
     <rule id="PEGAMENT" name="pegament">
       <pattern>
@@ -12258,13 +11723,6 @@
       </pattern>
       <message>Paraula admesa només en alguns diccionaris.</message>
       <short>APENAR</short>
-    </rule>
-    <rule id="APOLTRONARSE" name="apoltronar-se">
-      <pattern>
-        <token postag="V.*" postag_regexp="yes">apoltronar</token>
-      </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
-      <short>APOLTRONARSE</short>
     </rule>
     <rule id="APRECI" name="apreci">
       <pattern>
@@ -12405,27 +11863,6 @@
       </pattern>
       <message>Paraula admesa només en alguns diccionaris.</message>
       <short>ESCARBAR</short>
-    </rule>
-    <rule id="ESTUDIANTAT" name="estudiantat/estudiants">
-      <pattern>
-        <token>estudiantat</token>
-      </pattern>
-      <message>Paraula no admesa per tots els diccionaris.</message>
-      <short>ESTUDIANTAT</short>
-    </rule>
-    <rule id="EXITOS" name="exitós">
-      <pattern>
-        <token postag="AQ.*" postag_regexp="yes">exitós</token>
-      </pattern>
-      <message>Paraula no recollida pels diccionaris, acceptable per a alguns.</message>
-      <short>EXITOS</short>
-    </rule>
-    <rule id="FREGONA" name="fregona">
-      <pattern>
-        <token postag="N.*" postag_regexp="yes">fregona</token>
-      </pattern>
-      <message>Paraula admesa només en alguns diccionaris.</message>
-      <short>FREGONA</short>
     </rule>
     <rule id="GALLETA" name="galleta/galeta">
       <pattern>
@@ -12689,15 +12126,6 @@
       </pattern>
       <message>Expressió preferible.</message>
       <short>PORTAR_LA_CONTRARIA</short>
-    </rule>
-    <rule id="PORTAR_UNA_VIDA" name="*portar/*dur/tenir/fer una vida">
-      <pattern>
-        <token regexp="yes">portar|dur</token>
-        <token min="0" max="2" postag="DI.FS.|AQ.[FC]S." postag_regexp="yes"></token>
-        <token>vida</token>
-      </pattern>
-      <message>Val més usar una altra expressió.</message>
-      <short>PORTAR_UNA_VIDA</short>
     </rule>
   </category>
   <category id="NOMS_PROPIS_MULTI" name="noms de persones i llocs">
@@ -13070,6 +12498,363 @@
       </pattern>
       <message>Normalment s'escriu en minúscula.</message>
       <short>WIFI</short>
+    </rule>
+  </category>
+  <category id="AUTOMATIC_TRANSLATION" name="Errors de traductor automàtic">
+    <rule id="CADA_QUI" name="*cada qui">
+      <pattern>
+        <token>cada</token>
+        <token>qui</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>cadascú</suggestion>?</message>
+      <short>CADA_QUI</short>
+    </rule>
+    <rule id="DEL_COM" name="del com/del qual">
+      <pattern>
+        <token>de</token>
+        <token>l</token>
+        <token>com</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>DEL_COM</short>
+    </rule>
+    <rule id="DOBLE_BAIX" name="doble baix/contrabaix">
+      <pattern>
+        <token>doble</token>
+        <token>baix</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>contrabaix</suggestion>?</message>
+      <short>Error de traducció automàtica</short>
+    </rule>
+    <rule id="EN_CONTRARI" name="*en contrari/en contra">
+      <pattern>
+        <token>en</token>
+        <token>contrari</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>EN_CONTRARI</short>
+    </rule>
+    <rule id="GENS_EN_COMU" name="*gens en comú">
+      <pattern>
+        <token>gens</token>
+        <token>en</token>
+        <token>comú</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>GENS_EN_COMU</short>
+    </rule>
+    <rule id="MOLTS_UNS_ALTRES" name="molts *uns altres">
+      <pattern>
+        <token>molts</token>
+        <token>uns</token>
+        <token>altres</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>MOLTS_UNS_ALTRES</short>
+    </rule>
+    <rule id="PARA_QUE" name="para/per a què">
+      <pattern>
+        <token>para</token>
+        <token>què</token>
+      </pattern>
+      <message>Possible error de traductor automàtic.</message>
+      <short>PARA_QUE</short>
+    </rule>
+    <rule id="ANYS_I_MITJA" name="anys i *mitjà/mig">
+      <pattern>
+        <token regexp="yes">|temporada|curs|vegada|cop|volta</token>
+        <token>i</token>
+        <token regexp="yes">mitjà|mitjana</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>mig</suggestion>?</message>
+      <short>ANYS_I_MITJA</short>
+    </rule>
+    <rule id="AQUESTS_AQUESTES" name="*aquests/aquestes són les">
+      <pattern>
+        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
+        <token postag="DD0MP0"></token>
+        <token max="2" postag="V.*" postag_regexp="yes"></token>
+        <token>ser</token>
+        <token>les</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>AQUESTS_AQUESTES</short>
+    </rule>
+    <rule id="A_DOS_VELAS" name="*a dos velas">
+      <pattern>
+        <token>a</token>
+        <token regexp="yes">dos|dues</token>
+        <token regexp="yes">velas|veles</token>
+      </pattern>
+      <message>Possible calc del castellà.</message>
+      <short>A_DOS_VELAS</short>
+    </rule>
+    <rule id="A_LA_MEVA_ENTENDRE" name="a la meva entendre -&gt; al meu entendre">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+        <token postag="PX.FS.*" postag_regexp="yes"></token>
+        <token>entendre</token>
+      </pattern>
+      <message>Error de concordança.</message>
+      <short>A_LA_MEVA_ENTENDRE</short>
+    </rule>
+    <rule id="A_RAIGS" name="*a raigs">
+      <pattern>
+        <token regexp="yes" skip="10">sonar|saber|gust</token>
+        <token>a</token>
+        <token regexp="yes">raigs|rajos</token>
+      </pattern>
+      <message>Possible calc del castellà.</message>
+      <short>A_RAIGS</short>
+    </rule>
+    <rule id="CADIRAT" name="*cadirat/carreu">
+      <pattern>
+        <token postag="SPS00"></token>
+        <token regexp="yes">cadirats?</token>
+      </pattern>
+      <message>Incorrecte en el sentit de <suggestion>carreus</suggestion> (pedra tallada). Correcte en el sentit de conjunt de cadires.</message>
+      <short>Error de traducció automàtica</short>
+    </rule>
+    <rule id="CAMBRA_QUART" name="*cambra/quart d'hora">
+      <pattern>
+        <token>cambra</token>
+        <token>d'</token>
+        <token>hora</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>CAMBRA_QUART</short>
+    </rule>
+    <rule id="CAPCALERA" name="*capçalera/cap de municipi">
+      <pattern>
+        <token>capçalera</token>
+        <token min="0">de</token>
+        <token min="0" postag="D.*" postag_regexp="yes"></token>
+        <token regexp="yes">municipal|districte|municipi|regió|demarcació|departament|comarca</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>CAPCALERA</short>
+    </rule>
+    <rule id="COM_EL_QUAL" name="com el *qual/que">
+      <pattern>
+        <token>com</token>
+        <token regexp="yes">el|la|els|les</token>
+        <token regexp="yes">quals?</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>\1 \2 que</suggestion>?</message>
+      <short>Error de traducció automàtica</short>
+    </rule>
+    <rule id="DES_D_ENRERE" name="*des d'enrere/des de darrere">
+      <pattern>
+        <token>des</token>
+        <token>d'</token>
+        <token regexp="yes">arrere|enrere|endarrere</token>
+      </pattern>
+      <message>Possible error de traductor automàtic.</message>
+      <short>DES_D_ENRERE</short>
+    </rule>
+    <rule id="D_OIDES" name="d'oïdes">
+      <pattern>
+        <token regexp="yes" skip="4">conèixer|saber|assabentar|informar</token>
+        <token>de</token>
+        <token regexp="yes">oïda|oïdes</token>
+      </pattern>
+      <message>Possible calc del castellà. Feu servir una altra expressió.</message>
+      <short>D_OIDES</short>
+    </rule>
+    <rule id="ENCARA_I_AIXI" name="*encara i així">
+      <pattern>
+        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
+        <token>encara</token>
+        <token min="0">i</token>
+        <token>així</token>
+        <token postag="_PUNCT.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Possible calc del castellà.</message>
+      <short>ENCARA_I_AIXI</short>
+    </rule>
+    <rule id="ENCEBARSE_ACARNISSARSE" name="encebar-se amb -&gt; acarnissar-se amb">
+      <pattern>
+        <token postag="_reflexiu">encebar</token>
+        <token>amb</token>
+      </pattern>
+      <message>Possible error de traducció automàtica. ¿Volíeu dir "acarnissar-se"?</message>
+      <short>ENCEBARSE_ACARNISSARSE</short>
+    </rule>
+    <rule id="ENTRE_UNS_ALTRES" name="entre *uns altres">
+      <pattern>
+        <token>entre</token>
+        <token regexp="yes">uns|unes</token>
+        <token>altres</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>ENTRE_UNS_ALTRES</short>
+    </rule>
+    <rule id="EN_TEMPS_I_FORMA" name="*en temps i forma">
+      <pattern>
+        <token regexp="yes">en|amb</token>
+        <token>temps</token>
+        <token>i</token>
+        <token>forma</token>
+      </pattern>
+      <message>Fórmula de llenguatge jurídic. Calc del castellà que cal evitar.</message>
+      <short>EN_TEMPS_I_FORMA</short>
+    </rule>
+    <rule id="ESTAVELLA_ESTRELLA" name="estavella estrella">
+      <pattern>
+        <token postag="N.*" postag_regexp="yes"></token>
+        <token>estavella</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>ESTAVELLA_ESTRELLA</short>
+    </rule>
+    <rule id="EST_AQUEST" name="est (punt cardinal) / aquest">
+      <pattern>
+        <token postag="SPS00|.*LOC_PREP.*|SENT_START" postag_regexp="yes"></token>
+        <token>est</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>EST_AQUEST</short>
+    </rule>
+    <rule id="FER_LES_VEGADES" name="fer les vegades">
+      <pattern>
+        <token>fer</token>
+        <token>les</token>
+        <token regexp="yes">vegades|voltes</token>
+        <token regexp="yes">de|d'</token>
+      </pattern>
+      <message>Calc del castellà.</message>
+      <short>FER_LES_VEGADES</short>
+    </rule>
+    <rule id="FER_LES_VEGADES_DE" name="*fer les vegades de/fer de">
+      <pattern>
+        <token>fer</token>
+        <token>les</token>
+        <token>vegades</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>FER_LES_VEGADES_DE</short>
+    </rule>
+    <rule id="FINALITATS_FI" name="*finalitats/la fi/finals">
+      <pattern>
+        <token>finalitats</token>
+        <token>de</token>
+        <token min="0" postag="DA.*" postag_regexp="yes"></token>
+        <token regexp="yes" min="0">mateixa?</token>
+        <token regexp="yes">|[XIV]+|s|||\d+||dictadura|guerra|primera|segona</token>
+      </pattern>
+      <message>Possible error de traductor automàtic.</message>
+      <short>FINALITATS_FI</short>
+    </rule>
+    <rule id="MATI_DEMA" name="*matí/demà">
+      <pattern>
+        <token postag="V.[^P].*|_GV_" postag_regexp="yes">
+          <exception>el</exception>
+        </token>
+        <token>matí</token>
+      </pattern>
+      <message>Possible error de traductor automàtic.</message>
+      <short>MATI_DEMA</short>
+    </rule>
+    <rule id="PARTEIX_INTENGRANT" name="*parteix/part integrant">
+      <pattern>
+        <token regexp="yes">parteix|partix</token>
+        <token>integrant</token>
+      </pattern>
+      <message>Possible error de traductor automàtic.</message>
+      <short>PARTEIX_INTENGRANT</short>
+    </rule>
+    <rule id="PASSO_PAS" name="passo -&gt; pas">
+      <pattern>
+        <token regexp="yes">deixar|donar</token>
+        <token>passo</token>
+      </pattern>
+      <message>Possible error de traducció automàtica. ¿Volíeu dir <suggestion>pas</suggestion>?</message>
+      <short>PASSO_PAS</short>
+    </rule>
+    <rule id="PODEN_QUE" name="poden que -&gt; pot ser que">
+      <pattern>
+        <token postag="V.IP3..." postag_regexp="yes">poder</token>
+        <token>que</token>
+        <token min="0" max="3" postag="|R.*" postag_regexp="yes"></token>
+        <token postag="V.S.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Aquesta expressió és probablement un calc del castellà.</message>
+      <short>PODEN_QUE</short>
+    </rule>
+    <rule id="PUDENT" name="pudent/benestant">
+      <pattern>
+        <token regexp="yes">classe|senyor|home|dona|empresari|propietarri|terratinent</token>
+        <token>pudent</token>
+      </pattern>
+      <message>En el sentit de <suggestion>benestant</suggestion> és un calc del castellà.</message>
+      <short>PUDENT</short>
+    </rule>
+    <rule id="QUALSEVOL_UN_ALTRE" name="qualsevol *(un) altre">
+      <pattern>
+        <token regexp="yes">qualsevol|tal</token>
+        <token regexp="yes">una?</token>
+        <token regexp="yes">altr[ea]</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>QUALSEVOL_UN_ALTRE</short>
+    </rule>
+    <rule id="QUART_DE_BANY" name="*quart/cambra de bany">
+      <pattern>
+        <token regexp="yes">quarts?</token>
+        <token>de</token>
+        <token>bany</token>
+      </pattern>
+      <message>Error de traducció automàtica.</message>
+      <short>QUART_DE_BANY</short>
+    </rule>
+    <rule id="SIGUI_CONTINUI" name="sigui -&gt; continuï / segueixi">
+      <pattern>
+        <token regexp="yes">se|es</token>
+        <token regexp="yes">siga|sigui</token>
+        <token postag="V.G.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>"" és una forma del verb 'ser'. ¿Volíeu dir "continuar" o "seguir"?</message>
+      <short>SIGUI_CONTINUI</short>
+    </rule>
+    <rule id="SOLO" name="solo/sol">
+      <pattern>
+        <token regexp="yes">un|el</token>
+        <token>solo</token>
+        <token postag="AQ.[MC]S.|NC[MC]S.*|V.P..SM." postag_regexp="yes">
+          <exception regexp="yes">fabulós|fantàstic|aclaparador|imaginatiu</exception>
+        </token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>sol</suggestion>? Correcte com a terme musical.</message>
+      <short>SOLO</short>
+    </rule>
+    <rule id="TAN_COM_A" name="tan... *com a/com">
+      <pattern>
+        <token>tan</token>
+        <token postag="AQ.*|V.P.*" postag_regexp="yes"></token>
+        <token>com</token>
+        <token>a</token>
+        <token postag="AQ.*|V.P.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Possible error de traducció automàtica. Correcte si "com a" equival a "en qualitat de, en concepte de".</message>
+      <short>TAN_COM_A</short>
+    </rule>
+    <rule id="TARDA_TARD" name="més *tarda/tard">
+      <pattern>
+        <token>més</token>
+        <token regexp="yes">tarda|vesprada</token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>TARDA_TARD</short>
+    </rule>
+    <rule id="VOLGUES_VOLDRIA" name="*Volgués/Voldria dir">
+      <pattern>
+        <token regexp="yes">volgués|volguera</token>
+        <token postag="V.N.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Possible error de traducció automàtica.</message>
+      <short>VOLGUES_VOLDRIA</short>
     </rule>
   </category>
   <category id="TYPOGRAPHY" name="Errors de tipografia i puntuació">
@@ -13630,14 +13415,6 @@
       <message>¿Volíeu dir <suggestion>\1 anat</suggestion> (del v. 'anar')?</message>
       <short>NAT_ANAT</short>
     </rule>
-    <rule id="NOMS_AMB_GUIONET" name="Noms que s'escriuen amb guionet">
-      <pattern>
-        <token regexp="yes" postag="UNKNOWN">[\p{L}·]+</token>
-        <token regexp="yes" postag="UNKNOWN">[\p{L}·]+</token>
-      </pattern>
-      <message>S'escriu amb guionet.</message>
-      <short>NOMS_AMB_GUIONET</short>
-    </rule>
     <rule id="NO_NO_NO_HO" name="no no -&gt; no ho">
       <pattern>
         <token>no</token>
@@ -13775,17 +13552,6 @@
       <message>¿Volíeu dir <suggestion>hi  hagut</suggestion>?</message>
       <short>HA_HAGUT_CAP</short>
     </rule>
-    <rule id="LI_LIHO" name="li va dir tot -&gt; li ho va dir tot">
-      <pattern>
-        <token>li</token>
-        <token postag="V.[IS].*" postag_regexp="yes"></token>
-        <token min="0" max="2" postag="V.[NGP].*|SPS00" postag_regexp="yes"></token>
-        <token>tot</token>
-        <token postag="_PUNCT.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Hi falta el pronom feble 'ho'. Col·loquialment, "l'hi".</message>
-      <short>LI_LIHO</short>
-    </rule>
     <rule id="NO_HI_SON" name="no *i/hi són, no *o/ho són">
       <pattern>
         <token>no</token>
@@ -13828,30 +13594,6 @@
       </pattern>
       <message>Sembla que el verb hauria de ser en plural.</message>
       <short>SOC_DELS_QUE_PENSO</short>
-    </rule>
-  </category>
-  <category id="CRITERIS_ADMINISTRACIO_VALENCIANA" name="Criteris de l'Administració Valenciana">
-    <rule id="ICC_ICCUB" name="ICC -&gt; ICCUB">
-      <pattern>
-        <token>ICC</token>
-      </pattern>
-      <message>Si us referiu a l'Institut de Ciències del Cosmos de la Universitat de Barcelona, cal escriure <suggestion>ICCUB</suggestion>.</message>
-      <short>ICC_ICCUB</short>
-    </rule>
-    <rule id="EVITA_AQUEIX_EIXE" name="Evita els demostratius 'aqueix/eixe'">
-      <pattern>
-        <token regexp="yes" postag="DD.*" postag_regexp="yes">aqueix|eixe</token>
-      </pattern>
-      <message>Usem preferentment la forma <suggestion>aquest</suggestion>.</message>
-      <short>EVITA_AQUEIX_EIXE</short>
-    </rule>
-    <rule id="VAREM_VAM" name="vàrem -&gt; vam">
-      <pattern>
-        <token regexp="yes">vares|vàrem|vàreu|varen</token>
-        <token postag="V.N.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Usem preferentment la forma <suggestion></suggestion>.</message>
-      <short>VAREM_VAM</short>
     </rule>
   </category>
   <category id="STYLE_OPTIONAL" name="Qüestions estilístiques opcionals">
@@ -13901,51 +13643,6 @@
       </pattern>
       <message>Val més usar una expressió alternativa.</message>
       <short>EL_CERT_ES_QUE</short>
-    </rule>
-    <rule id="EVITA_INFINITIUS_VALDRE" name="Evita infinitius en -valdre">
-      <pattern>
-        <token regexp="yes" postag="V.N.*" postag_regexp="yes">(preva|va|ca|do)ldre</token>
-      </pattern>
-      <message>Variant informal.</message>
-      <short>EVITA_INFINITIUS_VALDRE</short>
-    </rule>
-    <rule id="EXIGEIX_INFINITIUS_ALDRE" name="Usa infinitius caldre, valdre, doldre">
-      <pattern>
-        <token regexp="yes" postag="V.N.*" postag_regexp="yes">(preva|va|ca|do)ler</token>
-      </pattern>
-      <message>Usem preferentment la terminació -ldre.</message>
-      <short>EXIGEIX_INFINITIUS_ALDRE</short>
-    </rule>
-    <rule id="EXIGEIX_INFINITIUS_INDRE" name="Usa infinitius i noms en -vindre, -tindre">
-      <pattern>
-        <token regexp="yes">.*[tv]enirs?</token>
-      </pattern>
-      <message>Usem preferentment la terminació -indre.</message>
-      <short>EXIGEIX_INFINITIUS_INDRE</short>
-    </rule>
-    <rule id="EXIGEIX_TENIR_VENIR" name="Exigeix infinitius venir i tenir">
-      <pattern>
-        <token regexp="yes">[tv]indres?</token>
-      </pattern>
-      <message>Variant informal.</message>
-      <short>EXIGEIX_TENIR_VENIR</short>
-    </rule>
-    <rule id="FINS_CAP_A_DEMOSTRATIU" name="Exigeix 'fins a/cap a' davant de demostratiu">
-      <pattern>
-        <token regexp="yes">fins|cap</token>
-        <token postag="DD.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Escrivim <suggestion> a</suggestion> davant de demostratiu.</message>
-      <short>FINS_CAP_A_DEMOSTRATIU</short>
-    </rule>
-    <rule id="FINS_CAP_DEMOSTRATIU" name="Exigeix 'fins/cap' davant de demostratiu">
-      <pattern>
-        <token regexp="yes">fins|cap</token>
-        <token>a</token>
-        <token postag="DD.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Escrivim <suggestion></suggestion> davant de demostratiu.</message>
-      <short>FINS_CAP_DEMOSTRATIU</short>
     </rule>
     <rule id="PERJUDICANT_AIXI" name="perjudicant així -&gt; cosa que perjudica">
       <pattern>
@@ -14017,70 +13714,6 @@
       </pattern>
       <message>Si us referiu a l'any actual ({currentYear}), aquesta data no és un {day} sinó un {realDay}.</message>
       <short>CA_DATE_WEEKDAY_CURRENTYEAR</short>
-    </rule>
-  </category>
-  <category id="TYPOGRAPHY_OPTIONS" name="Opcions de tipografia">
-    <rule id="PUNTS_SUSPENSIUS" name="Exigeix el caràcter de punts suspensius">
-      <pattern>
-        <token>.</token>
-        <token>.</token>
-        <token>.</token>
-      </pattern>
-      <message>En tipografia acurada, useu el caràcter de punts suspensius.</message>
-      <short>Error tipogràfic</short>
-    </rule>
-    <rule id="APOSTROF_RECTE" name="Exigeix l'apòstrof recte (')">
-      <pattern>
-        <token regexp="yes">(.*)'(.*)
-          <exception>'</exception>
-        </token>
-      </pattern>
-      <message>Useu l'apòstrof recte.</message>
-      <short>Opció de tipografia</short>
-    </rule>
-    <rule id="APOSTROF_TIPOGRAFIC" name="Exigeix l'apòstrof tipogràfic (’)">
-      <pattern>
-        <token regexp="yes">(.*)'(.*)
-          <exception>'</exception>
-        </token>
-      </pattern>
-      <message>En tipografia acurada, useu l'apòstrof tipogràfic.</message>
-      <short>Opció de tipografia</short>
-    </rule>
-    <rule id="NUM_200K" name="200k -&gt; dos-cents-mil">
-      <pattern>
-        <token regexp="yes">\d+k
-          <exception>4k</exception>
-        </token>
-      </pattern>
-      <message>En un text formal, eviteu aquesta grafia numèrica informal.</message>
-      <short>NUM_200K</short>
-    </rule>
-    <rule id="PERCENT_AMB_ESPAI" name="tant per cent amb espai fi abans (3 %)">
-      <pattern>
-        <token regexp="yes">[\d.,]+[%‰‱]</token>
-      </pattern>
-      <message>Hi falta un espai fi.</message>
-      <short>Opció de tipografia</short>
-    </rule>
-    <rule id="QUATRE_PUNTS" name=" més de tres punts suspensius">
-      <pattern>
-        <token>.</token>
-        <token>.</token>
-        <token>.</token>
-        <token max="3">.</token>
-      </pattern>
-      <message>N'hi ha prou amb tres punts suspensius.</message>
-      <short>Recomanació de tipografia</short>
-    </rule>
-    <rule id="XIFRES_PERCENT" name="per cent -&gt; %">
-      <pattern>
-        <token regexp="yes">[\d\., ]+</token>
-        <token>per</token>
-        <token>cent</token>
-      </pattern>
-      <message>Els percentatges amb xifres s'escriuen preferiblement amb el símbol "%".</message>
-      <short>Opció de tipografia</short>
     </rule>
   </category>
   <category id="SYNTAX" name="Sintaxi">
@@ -14244,13 +13877,6 @@
       </pattern>
       <message>Did you mean a correction for REP_SEGUIR?</message>
       <short>REP_SEGUIR</short>
-    </rule>
-    <rule id="REP_TEMA" name="repetició: tema">
-      <pattern>
-        <token postag="N.*" postag_regexp="yes">tema</token>
-      </pattern>
-      <message>Did you mean a correction for REP_TEMA?</message>
-      <short>REP_TEMA</short>
     </rule>
   </category>
   <category id="SECONDARY_FORMS" name="Formes secundàries">
@@ -14982,13 +14608,6 @@
       <message>¿Volíeu dir <suggestion>Miquel</suggestion>? "Miguel" és correcte si és un nom en castellà.</message>
       <short>MIGUEL_MIQUEL</short>
     </rule>
-    <rule id="NO_POSTAG" name="Mots que no apareixen en el diccionari">
-      <pattern>
-        <token regexp="yes" postag="UNKNOWN">..+</token>
-      </pattern>
-      <message>No apareix en el diccionari.</message>
-      <short>NO_POSTAG</short>
-    </rule>
     <rule id="NUMBERS_IN_WORDS" name="Dígits en paraules">
       <pattern>
         <token regexp="yes" case_sensitive="yes">[\p{Ll}\p{Lu}][\p{Ll}·]*[0-9][\p{Ll}·]+</token>
@@ -15319,15 +14938,6 @@
       <message>¿Volíeu dir <suggestion>mentrestant</suggestion>?</message>
       <short>ENTRE_TANT_MENTRESTANT</short>
     </rule>
-    <rule id="FER_MAL_FER_MALAMENT" name="fer mal / fer malament">
-      <pattern>
-        <token>fer</token>
-        <token regexp="yes" min="0">molt|gens|gaire</token>
-        <token>mal</token>
-      </pattern>
-      <message>Probablement cal dir <suggestion>malament</suggestion>.</message>
-      <short>FER_MAL_FER_MALAMENT</short>
-    </rule>
     <rule id="FORCES" name="força (adjectiu i adverbi invariable)">
       <pattern>
         <token>forces</token>
@@ -15389,41 +14999,13 @@
       <short>DIACRITICS_IEC_01</short>
     </rule>
   </category>
-  <category id="REGIONAL_NON_VERBS" name="Variants regionals: accentuació, possessius, demostratius, pronoms">
-    <rule id="EVITA_DEMOSTRATIUS_AQUEIX" name="Evita els demostratius 'aqueix'">
+  <category id="CRITERIS_ADMINISTRACIO_VALENCIANA" name="Criteris de l'Administració Valenciana">
+    <rule id="EVITA_AQUEIX_EIXE" name="Evita els demostratius 'aqueix/eixe'">
       <pattern>
-        <token postag="DD.*" postag_regexp="yes">aqueix</token>
+        <token regexp="yes" postag="DD.*" postag_regexp="yes">aqueix|eixe</token>
       </pattern>
-      <message>Useu demostratius reduïts.</message>
-      <short>EVITA_DEMOSTRATIUS_AQUEIX</short>
-    </rule>
-    <rule id="EVITA_DEMOSTRATIUS_AQUEST" name="Evita els demostratius 'aquest'">
-      <pattern>
-        <token postag="DD.*" postag_regexp="yes">aquest</token>
-      </pattern>
-      <message>Useu demostratius reduïts.</message>
-      <short>EVITA_DEMOSTRATIUS_AQUEST</short>
-    </rule>
-    <rule id="EVITA_DEMOSTRATIUS_EIXE" name="Evita els demostratius 'eixe'">
-      <pattern>
-        <token postag="DD.*" postag_regexp="yes">eixe</token>
-      </pattern>
-      <message>Useu demostratius reforçats.</message>
-      <short>EVITA_DEMOSTRATIUS_EIXE</short>
-    </rule>
-    <rule id="EXIGEIX_POSSESSIUS_U" name="Exigeix els possessius amb u (meua, teua...)">
-      <pattern>
-        <token regexp="yes">(me|te|se)v(a|es)</token>
-      </pattern>
-      <message>Esteu usant possessius amb 'u'.</message>
-      <short>EXIGEIX_POSSESSIUS_U</short>
-    </rule>
-    <rule id="EXIGEIX_POSSESSIUS_V" name="Exigeix els possessius amb v (meva, teva...)">
-      <pattern>
-        <token regexp="yes">(me|te|se)u(a|es)</token>
-      </pattern>
-      <message>Esteu usant possessius amb 'v'.</message>
-      <short>EXIGEIX_POSSESSIUS_V</short>
+      <message>Usem preferentment la forma <suggestion>aquest</suggestion>.</message>
+      <short>EVITA_AQUEIX_EIXE</short>
     </rule>
   </category>
   <category id="ADMINISTRATIVE_LANGUAGE" name="Llenguatge administratiu">
@@ -15435,24 +15017,43 @@
       <short>EVITA_FUTUR_OBLIGACIO</short>
     </rule>
   </category>
-  <category id="REGIONAL_VERBS" name="Variants regionals: verbs">
-    <rule id="EXIGEIX_VERBS_EIX" name="Exigeix terminacions verbals en -eix">
+  <category id="REGIONAL_NON_VERBS" name="Variants regionals: accentuació, possessius, demostratius, pronoms">
+    <rule id="EXIGEIX_POSSESSIUS_V" name="Exigeix els possessius amb v (meva, teva...)" default="on">
       <pattern>
-        <token regexp="yes" postag="(V.IP...|VMM02S0).?" postag_regexp="yes">.+([^e]i|ï)(x|xes|xen)
-          <exception regexp="yes">.+ix[ae]r|eixir|(re|sobre|des)eixir|.*cruixir</exception>
-        </token>
+        <token regexp="yes">(me|te|se)u(a|es)</token>
       </pattern>
-      <message>Esteu usant terminacions verbals en -eix.</message>
-      <short>EXIGEIX_VERBS_EIX</short>
+      <message>Esteu usant possessius amb 'v'.</message>
+      <short>EXIGEIX_POSSESSIUS_V</short>
     </rule>
-    <rule id="EXIGEIX_VERBS_IX" name="Exigeix terminacions verbals en -ix">
+  </category>
+  <category id="TYPOGRAPHY_OPTIONS" name="Opcions de tipografia">
+    <rule id="NUM_200K" name="200k -&gt; dos-cents-mil">
       <pattern>
-        <token regexp="yes" postag="(V.IP...|VMM02S0).?" postag_regexp="yes">.+(ei)(x|xes|xen)
-          <exception regexp="yes">.+[eèé]ixer|.+eixar</exception>
+        <token regexp="yes">\d+k
+          <exception>4k</exception>
         </token>
       </pattern>
-      <message>Esteu usant terminacions verbals en -ix.</message>
-      <short>EXIGEIX_VERBS_IX</short>
+      <message>En un text formal, eviteu aquesta grafia numèrica informal.</message>
+      <short>NUM_200K</short>
+    </rule>
+    <rule id="QUATRE_PUNTS" name=" més de tres punts suspensius">
+      <pattern>
+        <token>.</token>
+        <token>.</token>
+        <token>.</token>
+        <token max="3">.</token>
+      </pattern>
+      <message>N'hi ha prou amb tres punts suspensius.</message>
+      <short>Recomanació de tipografia</short>
+    </rule>
+    <rule id="XIFRES_PERCENT" name="per cent -&gt; %">
+      <pattern>
+        <token regexp="yes">[\d\., ]+</token>
+        <token>per</token>
+        <token>cent</token>
+      </pattern>
+      <message>Els percentatges amb xifres s'escriuen preferiblement amb el símbol "%".</message>
+      <short>Opció de tipografia</short>
     </rule>
   </category>
   <category id="REFLEXIVE_VERBS" name="verbs reflexius">
@@ -15480,34 +15081,6 @@
       </pattern>
       <message>Falta el pronom 'en' en "anar-se'n".</message>
       <short>SELS_EN_VA</short>
-    </rule>
-  </category>
-  <category id="OPTIONAL_CHECKINGS" name="Revisions opcionals">
-    <rule id="PERA_INFINITIU" name="Revisa 'per a + infinitiu'">
-      <pattern>
-        <token>per</token>
-        <token>a</token>
-        <token postag="V.N.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Podria ser: <suggestion>per</suggestion>.</message>
-      <short>Reviseu 'per a + infinitiu'</short>
-    </rule>
-    <rule id="PER_INFINITIU" name="Revisa 'per + infinitiu'">
-      <pattern>
-        <token>per</token>
-        <token postag="V.N.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Reviseu la construcció 'per + infinitiu'.</message>
-      <short>PER_INFINITIU</short>
-    </rule>
-    <rule id="PER_INFINITIU_SEMPRE" name="Exigeix 'per + infinitiu'">
-      <pattern>
-        <token>per</token>
-        <token>a</token>
-        <token postag="V.N.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Davant d'infinitiu fem servir sempre <suggestion>per</suggestion>.</message>
-      <short>'Per' davant d'infinitiu</short>
     </rule>
   </category>
   <category id="DISPUTED_FORMS" name="Formes normatives discutides: ressituar">

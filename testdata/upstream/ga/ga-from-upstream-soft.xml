@@ -235,16 +235,6 @@
       <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
-    <rule id="GO_DTI_AN_ECLREGEX" name="go dtí an ECL">
-      <pattern>
-        <token>go</token>
-        <token>dtí</token>
-        <token>an</token>
-        <token regexp="yes" postag="UNKNOWN">(?:bhf|mb|gc|nd|ng|bp|dt).*</token>
-      </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
-      <short>Séimhiú ar iarraidh</short>
-    </rule>
     <rule id="GO_DTI_AN_ECLTAG" name="go dtí an ECL">
       <pattern>
         <token>go</token>
@@ -557,13 +547,6 @@
       <message>Focal ceart ach tá <suggestion>aoir</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
-    <rule id="AOS" name="aos">
-      <pattern>
-        <token>aos</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>aois</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
     <rule id="ARANN" name="Arann">
       <pattern>
         <token>Arann</token>
@@ -652,14 +635,6 @@
       <message>Focal ceart ach tá <suggestion>ghabháil</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
-    <rule id="A_THUILLE" name="a thuille">
-      <pattern>
-        <token>a</token>
-        <token>thuille</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>thuilleadh</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
     <rule id="BEICEACH" name="béiceach">
       <pattern>
         <token>béiceach</token>
@@ -717,13 +692,6 @@
         <token>chuile</token>
       </pattern>
       <message>Focal ceart ach tá <suggestion>gach uile</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
-    <rule id="CHUM" name="chum">
-      <pattern>
-        <token>chum</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>chun</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CIBE_AIT" name="cibé áit">
@@ -1073,14 +1041,6 @@
       <message>Focal ceart ach tá <suggestion>boicht</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
-    <rule id="NA_DTEORANN" name="na dteorann">
-      <pattern>
-        <token>na</token>
-        <token>dteorann</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>dteorainneacha</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
     <rule id="NA_LUAITHE" name="na luaithe">
       <pattern>
         <token>na</token>
@@ -1231,14 +1191,6 @@
         <token>smaointigh</token>
       </pattern>
       <message>Focal ceart ach tá <suggestion>smaoinigh</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
-    <rule id="SMEAR_MULLAIGH" name="mullaigh smear">
-      <pattern>
-        <token>smear</token>
-        <token>mullaigh</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>sméar</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="SOCAIR" name="Socair">
@@ -1518,14 +1470,6 @@
         <token regexp="yes">dh?íleas</token>
       </pattern>
       <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
-    <rule id="DILEAS_DOWORD" name="díleas DOWORD">
-      <pattern>
-        <token>díleas</token>
-        <token>do</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>dílis</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DRAMA" name="drama">
@@ -1897,32 +1841,6 @@
         <token regexp="yes">th?ríthe</token>
       </pattern>
       <message>Focal ceart ach tá <suggestion>tríthi</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
-    <rule id="VERB_AN_NADUIR" name="VERB an nádúir">
-      <pattern>
-        <token postag=".*Verb.*" postag_regexp="yes"></token>
-        <token>an</token>
-        <token>nádúir</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>nádúr</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
-    <rule id="VERB_NA_CODA" name="VERB na coda">
-      <pattern>
-        <token postag=".*Verb.*" postag_regexp="yes"></token>
-        <token>na</token>
-        <token regexp="yes">ch?oda</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>codanna</suggestion> níos coitianta.</message>
-      <short>Neamhchoitianta</short>
-    </rule>
-    <rule id="VERB_RASA" name="VERB rása">
-      <pattern>
-        <token postag=".*Verb.*" postag_regexp="yes"></token>
-        <token>rása</token>
-      </pattern>
-      <message>Focal ceart ach tá <suggestion>rás</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
   </category>
@@ -7530,14 +7448,6 @@
       </pattern>
       <message>Ba chóir duit <suggestion>a\2</suggestion> a scríobh.</message>
       <short>A_TA</short>
-    </rule>
-    <rule id="A_VPAST" name="a bhris">
-      <pattern>
-        <token>a</token>
-        <token postag=".*Verb.*Past.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Ba chóir duit <suggestion>ar</suggestion> a scríobh.</message>
-      <short>A_VPAST</short>
     </rule>
     <rule id="BA_INITIALVOWELORF" name="ba álainn">
       <pattern>

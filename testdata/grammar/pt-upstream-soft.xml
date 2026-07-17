@@ -19,14 +19,6 @@
       <message>Substitua "não se ádequa" por <suggestion>não é adequado</suggestion>.</message>
       <short>ADEQUA_BR</short>
     </rule>
-    <rule id="AONDE_BR" name="🇧🇷 Onde">
-      <pattern>
-        <token>aonde</token>
-        <token>você</token>
-      </pattern>
-      <message>Aonde só é utilizado com verbos de movimento. Substitua "aonde você" por <suggestion>onde você</suggestion>.</message>
-      <short>AONDE_BR</short>
-    </rule>
     <rule id="AO_MEU_VER_BR" name="🇧🇷 A meu ver">
       <pattern>
         <token>Ao</token>
@@ -147,14 +139,6 @@
       <message>Substitua "quero mas de você" por <suggestion>quero mais de você</suggestion>.</message>
       <short>QUERO_MAS_BR</short>
     </rule>
-    <rule id="QUER_SE_BR" name="🇧🇷 Quer">
-      <pattern>
-        <token>quer</token>
-        <token>se</token>
-      </pattern>
-      <message>Substitua "quer se" por <suggestion>quer</suggestion>.</message>
-      <short>QUER_SE_BR</short>
-    </rule>
     <rule id="QUITE_P_BR" name="🇧🇷 está quite">
       <pattern>
         <token>está</token>
@@ -188,16 +172,6 @@
       <message>Substitua "as" por <suggestion>a</suggestion>.</message>
       <short>AS_PARAGRAFOS_BR</short>
     </rule>
-    <rule id="AS_PONTUAL_BR" name="🇧🇷 Usar 'às' com horas pontuais">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token>As</token>
-        <token regexp="yes">uma|duas|três|quatro|cinco|seis|sete|oito|nove|dez|onze|doze</token>
-        <token regexp="yes">,|horas|da|em</token>
-      </pattern>
-      <message>Substitua "as" por <suggestion>às</suggestion> se estiver fazendo indicação pontual de hora.</message>
-      <short>AS_PONTUAL_BR</short>
-    </rule>
     <rule id="A_RUA_BR" name="🇧🇷 Na rua">
       <pattern>
         <token regexp="yes">residente|vive|estabelecido</token>
@@ -206,15 +180,6 @@
       </pattern>
       <message>Substitua "à rua" por <suggestion>na rua</suggestion>.</message>
       <short>A_RUA_BR</short>
-    </rule>
-    <rule id="A_TERRA_FIRME_BR" name="🇧🇷 Usar à terra firme">
-      <pattern>
-        <token postag="VMI.[21].+|VMI.3P.+" postag_regexp="yes"></token>
-        <token>a</token>
-        <token regexp="yes">terra?</token>
-      </pattern>
-      <message>Substitua "a" por <suggestion>à</suggestion> se estiver usando a palavra terra no sentido chão firme.</message>
-      <short>A_TERRA_FIRME_BR</short>
     </rule>
     <rule id="CHEGAMOS_EM_BR" name="🇧🇷 Chegamos a">
       <pattern>
@@ -303,14 +268,6 @@
       </pattern>
       <message>Substitua "mas" por <suggestion>mais</suggestion>.</message>
       <short>MAS_BR</short>
-    </rule>
-    <rule id="MIM_BR" name="🇧🇷 me">
-      <pattern>
-        <token>mim</token>
-        <token regexp="yes">faça|fazer|ajuda|ajudar|lembra|lembrar|vou|irei|irá|digo|direi|dizer|beijar</token>
-      </pattern>
-      <message>O pronome "mim" não deve ser usado antes de um verbo, use <suggestion>me</suggestion>.</message>
-      <short>MIM_BR</short>
     </rule>
     <rule id="NAO_E_ADJ" name="🇧🇷 Não e + adjetivo, falta de acento">
       <pattern>
@@ -456,14 +413,6 @@
       </pattern>
       <message>Em contexto abstrato e em registo formal, pode preferir "em torno de".</message>
       <short>A_VOLTA_DE_EM_TORNO_DE</short>
-    </rule>
-    <rule id="BASEIA-SE_EM" name="Tem por base">
-      <pattern>
-        <token postag="V.+:PP3CNO00" postag_regexp="yes">basear</token>
-        <token>em</token>
-      </pattern>
-      <message>Substitua por <suggestion>ter por base</suggestion>.</message>
-      <short>BASEIA-SE_EM</short>
     </rule>
     <rule id="BEM_DITO_DEUS-SATANÁS" name="Bem dito Deus-Satanás">
       <pattern>
@@ -3269,16 +3218,6 @@
       <message>A expressão "permitir" é mais formal e direta do que "deixar que".</message>
       <short>NAO_DEIXAR_QUE_PERMITIR</short>
     </rule>
-    <rule id="PARAR_DE_CHATEAR" name="Parar de incomodar/importunar">
-      <pattern>
-        <token>parar</token>
-        <token>de</token>
-        <token regexp="yes" min="0" max="1">as?|os?|me|te|lhes?|nos|vos</token>
-        <token>chatear</token>
-      </pattern>
-      <message>Expressão informal, pondere empregar:</message>
-      <short>PARAR_DE_CHATEAR</short>
-    </rule>
     <rule id="PARA_DENTRO_INTERIOR" name="Para 'dentro' → Para 'o interior'">
       <pattern>
         <token>para</token>
@@ -3827,16 +3766,6 @@
       <message>Substitua por <suggestion>contra\2</suggestion>.</message>
       <short>CONTRA_CAPA</short>
     </rule>
-    <rule id="DA" name="Dá">
-      <pattern>
-        <token>da</token>
-        <token postag="SPS00">
-          <exception regexp="yes">de|contra</exception>
-        </token>
-      </pattern>
-      <message>Substitua por <suggestion>dá</suggestion>.</message>
-      <short>DA</short>
-    </rule>
     <rule id="DAR_OS_BONS_DIAS" name="Dar os bons-dias">
       <pattern>
         <token>dar</token>
@@ -4099,434 +4028,6 @@
       <short>À_MEDIDA_EM_QUE</short>
     </rule>
   </category>
-  <category id="SHORTEN_IT" name="✂️ Linguagem concisa">
-    <rule id="AO_MESMO_TEMPO_QUE_ENQUANTO" name="✂️ Ao mesmo tempo que → enquanto">
-      <pattern>
-        <token>ao</token>
-        <token>mesmo</token>
-        <token>tempo</token>
-        <token>que</token>
-      </pattern>
-      <message>Did you mean a correction for AO_MESMO_TEMPO_QUE_ENQUANTO?</message>
-      <short>AO_MESMO_TEMPO_QUE_ENQUANTO</short>
-    </rule>
-    <rule id="AS_COISAS_NÃO_VÃO_VERBO_INF" name="✂️ Nada vai + verb_inf">
-      <pattern>
-        <token>as</token>
-        <token>coisas</token>
-        <token>não</token>
-        <token>vão</token>
-        <token postag="VMN0000"></token>
-      </pattern>
-      <message>Substitua por <suggestion>nada vai</suggestion>.</message>
-      <short>AS_COISAS_NÃO_VÃO_VERBO_INF</short>
-    </rule>
-    <rule id="AS_OS_QUE_QUAIS" name="✂️ 'as/os que' → quais">
-      <pattern>
-        <token regexp="yes">determinar|identificar|indicar|selecionar|seleccionar|escolher|definir|decidir|verificar|apurar|saber|descobrir</token>
-        <token regexp="yes">[ao]s</token>
-        <token>que</token>
-        <token postag="VMI.3P.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for AS_OS_QUE_QUAIS?</message>
-      <short>AS_OS_QUE_QUAIS</short>
-    </rule>
-    <rule id="CERTA_CERTO_DADA_DADO" name="🤵 'Certa' altura → dada">
-      <pattern>
-        <token>a</token>
-        <token regexp="yes">cert[ao]s?</token>
-        <token regexp="yes">altura|momento|ponto|fase|etapa|instante|ocasião</token>
-      </pattern>
-      <message>Em contexto formal, prefere-se "a dado/a dada" em vez de "a certo/a certa".</message>
-      <short>CERTA_CERTO_DADA_DADO</short>
-    </rule>
-    <rule id="COMO_SER_O_CASO_DO" name="✂️ Como é/são o caso do → Como o">
-      <pattern>
-        <token>como</token>
-        <token regexp="yes">é|são</token>
-        <token regexp="yes">[ao]s?</token>
-        <token regexp="yes">casos?</token>
-        <token regexp="yes">d[ao]s?</token>
-        <token postag="DP.+|SPS00:PP.+|NC.+|AQ.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for COMO_SER_O_CASO_DO?</message>
-      <short>COMO_SER_O_CASO_DO</short>
-    </rule>
-    <rule id="DAR_VALOR_VALORIZAR" name="✂️ Verbo 'dar' + valor → valorizar">
-      <pattern>
-        <token>dar</token>
-        <token>valor</token>
-        <token regexp="yes">às?|aos?</token>
-      </pattern>
-      <message>Did you mean a correction for DAR_VALOR_VALORIZAR?</message>
-      <short>DAR_VALOR_VALORIZAR</short>
-    </rule>
-    <rule id="DELIMITADA_COM-DE-POR_FRONTEIRAS_FISICAS" name="Delimitada(o)(s) fisicamente">
-      <pattern>
-        <token regexp="yes">delimitadas?|delimitados?</token>
-        <token regexp="yes">com|de|por</token>
-        <token min="0" max="1">uma</token>
-        <token regexp="yes">fronteiras?</token>
-        <token regexp="yes">físicas?</token>
-      </pattern>
-      <message>Substitua por <suggestion>fisicamente</suggestion>.</message>
-      <short>DELIMITADA_COM-DE-POR_FRONTEIRAS_FISICAS</short>
-    </rule>
-    <rule id="DESDE_A_ALTURA_DESDE_ENTÃO" name="✂️ Desde a altura → desde então">
-      <pattern>
-        <token postag="VMI[IP].+|CC" postag_regexp="yes"></token>
-        <token min="0" max="1" postag="NC.+|AQ.+" postag_regexp="yes"></token>
-        <token>desde</token>
-        <token>a</token>
-        <token>altura</token>
-        <token postag="_PUNCT|PP.+|CS" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for DESDE_A_ALTURA_DESDE_ENTÃO?</message>
-      <short>DESDE_A_ALTURA_DESDE_ENTÃO</short>
-    </rule>
-    <rule id="DE_FORMA-MODO_ADJ" name="✂️ De + forma/modo + Adj → Adv">
-      <pattern>
-        <token>de</token>
-        <token regexp="yes">forma|modo</token>
-        <token postag="AQ0[CFM]S0" postag_regexp="yes">
-          <exception regexp="yes">.*[áéíóúâêôãõàèìòù].*|inclusiv[oa]|geral|pulverizada|transparente|especial|diferente|independente</exception>
-        </token>
-      </pattern>
-      <message>Substitua por</message>
-      <short>DE_FORMA-MODO_ADJ</short>
-    </rule>
-    <rule id="EM_QUE_NAO_HA_PRONOME-INDEFINIDO" name="✂️ Em que não há + Pron.Indef. → Sem Pron.Indef.">
-      <pattern>
-        <token>em</token>
-        <token>que</token>
-        <token>não</token>
-        <token>há</token>
-        <token postag="DI.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for EM_QUE_NAO_HA_PRONOME-INDEFINIDO?</message>
-      <short>EM_QUE_NAO_HA_PRONOME-INDEFINIDO</short>
-    </rule>
-    <rule id="ERRO_TRADUÇÃO_UM_TAMANHO_SERVE_DÁ_PARA_TODOS" name="[Erro tradução] 'um tamanho dá para todos' → 'tamanho único'">
-      <pattern>
-        <token>um</token>
-        <token>tamanho</token>
-        <token regexp="yes">servir|dar</token>
-        <token regexp="yes">pa?ra</token>
-        <token regexp="yes">tod[ao]s</token>
-      </pattern>
-      <message>Expressão não pode ser traduzida literalmente.</message>
-      <short>ERRO_TRADUÇÃO_UM_TAMANHO_SERVE_DÁ_PARA_TODOS</short>
-    </rule>
-    <rule id="ESTAR_NO_ECRA" name="✂️ Estar no ecrã">
-      <pattern>
-        <token postag="(SPS00:)?PD.+" postag_regexp="yes"></token>
-        <token>que</token>
-        <token regexp="yes">aparecer|estar|exibir|mostrar|observar|ver</token>
-        <token regexp="yes">n[ao]s?</token>
-        <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
-        <token regexp="yes">ecrã|écran|LCD|LED|monitor|OLED|plasma|tela|televisão|televisor|TV|visor</token>
-      </pattern>
-      <message>Did you mean a correction for ESTAR_NO_ECRA?</message>
-      <short>ESTAR_NO_ECRA</short>
-    </rule>
-    <rule id="E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO" name="✂️ e/ou + que + Adv/Verbo + nada → e/ou + nada + Adv/Verbo">
-      <pattern>
-        <token regexp="yes">e|ou</token>
-        <token>que</token>
-        <token postag="V.+|RG" postag_regexp="yes"></token>
-        <token>nada</token>
-      </pattern>
-      <message>Did you mean a correction for E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO?</message>
-      <short>E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO</short>
-    </rule>
-    <rule id="LEVAR_A_CABO" name="Levar a cabo → efetuar/realizar/conduzir/concretizar/elaborar">
-      <pattern>
-        <token>levar</token>
-        <token>a</token>
-        <token>cabo</token>
-      </pattern>
-      <message>Num contexto formal, é preferível escrever "efetuar", "realizar", "conduzir", "concretizar" ou "elaborar".</message>
-      <short>LEVAR_A_CABO</short>
-    </rule>
-    <rule id="MADRUGADA_MATINAL" name="✂️ da madrugada/manhã → matinal">
-      <pattern>
-        <token postag="V.+" postag_regexp="yes"></token>
-        <token regexp="yes">[ao]s?</token>
-        <token regexp="yes">banho|chá|exercício|leite|névoa|orvalho|passeio|sexo|sol</token>
-        <token regexp="yes">das?</token>
-        <token regexp="yes">madrugadas?|manhãs?</token>
-      </pattern>
-      <message>Did you mean a correction for MADRUGADA_MATINAL?</message>
-      <short>MADRUGADA_MATINAL</short>
-    </rule>
-    <rule id="MAS_EMBORA_CONTUDO_SEM" name="✂️ Expressões do tipo: 'não ter utilidade' → 'sem utilidade'">
-      <pattern>
-        <token regexp="yes">mas|embora|contudo</token>
-        <token min="0" max="1" postag="DD.+|PD.+" postag_regexp="yes"></token>
-        <token>não</token>
-        <token regexp="yes">tinha|tinham|tenha|tenham|tem|têm|terá|terão</token>
-        <token min="0" max="1" postag="AQ.+|(SPS00:)?D[AI].+" postag_regexp="yes">
-          <exception regexp="yes">aplicabilidade|empregabilidade|fiabilidade|fim|finalidade|intenção|intento|interesse|juízo|meta|mira|objetivo|precisão|propósito|prudência|seriedade|tino|uso|utilidade|utilização</exception>
-        </token>
-        <token regexp="yes">aplicabilidade|empregabilidade|fiabilidade|fim|finalidade|intenção|intento|interesse|juízo|meta|mira|objetivo|precisão|propósito|prudência|seriedade|tino|uso|utilidade|utilização</token>
-      </pattern>
-      <message>Did you mean a correction for MAS_EMBORA_CONTUDO_SEM?</message>
-      <short>MAS_EMBORA_CONTUDO_SEM</short>
-    </rule>
-    <rule id="NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL" name="✂️ 'que não dá para voltar atrás' → 'irreversível'">
-      <pattern>
-        <token postag="DA.+|DI.+|V.+" postag_regexp="yes"></token>
-        <token postag="NC.+" postag_regexp="yes"></token>
-        <token min="0" max="1">em</token>
-        <token>que</token>
-        <token>não</token>
-        <token>dá</token>
-        <token>para</token>
-        <token>voltar</token>
-        <token>atrás</token>
-      </pattern>
-      <message>Did you mean a correction for NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL?</message>
-      <short>NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL</short>
-    </rule>
-    <rule id="NÃO_VÁLIDA_INVÁLIDA" name="Não válid[ao](s) → inválid[ao](s)">
-      <pattern>
-        <token>não</token>
-        <token regexp="yes">estar|ser</token>
-        <token regexp="yes">válid[ao]s?</token>
-      </pattern>
-      <message>Melhore a redação podendo usar a negação em alguns casos.</message>
-      <short>NÃO_VÁLIDA_INVÁLIDA</short>
-    </rule>
-    <rule id="O_QUE_TEM_DE_MAL_QUE_MAL_TEM" name="✂️ 'o que tem de mal' → 'que mal tem'">
-      <pattern>
-        <token>o</token>
-        <token>que</token>
-        <token>tem</token>
-        <token>de</token>
-        <token>mal</token>
-        <token postag="V.+|(SPS00:)?D[AI].+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for O_QUE_TEM_DE_MAL_QUE_MAL_TEM?</message>
-      <short>O_QUE_TEM_DE_MAL_QUE_MAL_TEM</short>
-    </rule>
-    <rule id="PASSAR_ATRAVES_LUGAR_ATRAVESSAR" name="✂️ 'passar através de' → 'atravessar'">
-      <pattern>
-        <token>passar</token>
-        <token>através</token>
-        <token regexp="yes">d[ao]s?</token>
-        <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
-        <token regexp="yes">fronteira|porta|portão|entrada|saída|passagem|túnel|galeria|corredor|passadiço|ponte|viaduto|passarela|estrada|rua|avenida|travessa|autoestrada|caminho|atalho|trilho|vereda|obstáculo|barreira|muralha|vedação|cerca|grade|barricada|bloqueio|multidão</token>
-      </pattern>
-      <message>Did you mean a correction for PASSAR_ATRAVES_LUGAR_ATRAVESSAR?</message>
-      <short>PASSAR_ATRAVES_LUGAR_ATRAVESSAR</short>
-    </rule>
-    <rule id="PERDER_A_VIDA" name="Perder a vida → morrer/falecer/perecer">
-      <pattern>
-        <token>perder</token>
-        <token regexp="yes">as?</token>
-        <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
-        <token regexp="yes">vidas?</token>
-      </pattern>
-      <message>Melhore a redação.</message>
-      <short>PERDER_A_VIDA</short>
-    </rule>
-    <rule id="POUCO_IMPORTA_NÃO_IMPORTA" name="✂️ 'Pouco' importa → não">
-      <pattern>
-        <token>pouco</token>
-        <token>importa</token>
-        <token postag="SPS00|(SPS00:)?D[AI].+|PP3CN000" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for POUCO_IMPORTA_NÃO_IMPORTA?</message>
-      <short>POUCO_IMPORTA_NÃO_IMPORTA</short>
-    </rule>
-    <rule id="QUANDO_TER_DE_QUE_VINF_AO_VINF" name="✂️ 'Quando V.Ter de/que V.Inf.' com → 'Ao V.Inf.'">
-      <pattern>
-        <token>quando</token>
-        <token postag="VMIP.+" postag_regexp="yes">ter</token>
-        <token regexp="yes">de|que</token>
-        <token postag="VMN0000" postag_regexp="no"></token>
-        <token>com</token>
-      </pattern>
-      <message>Did you mean a correction for QUANDO_TER_DE_QUE_VINF_AO_VINF?</message>
-      <short>QUANDO_TER_DE_QUE_VINF_AO_VINF</short>
-    </rule>
-    <rule id="QUE_ESTAR_ADVERB_ADVERB" name="✂️ Que + V.Estar + Adv → Adv">
-      <pattern>
-        <token postag="NC.+|AQ.+|DD.+|_PUNCT" postag_regexp="yes"></token>
-        <token>que</token>
-        <token regexp="yes">está|estão|estava|estavam</token>
-        <token postag="RM" postag_regexp="no"></token>
-      </pattern>
-      <message>Did you mean a correction for QUE_ESTAR_ADVERB_ADVERB?</message>
-      <short>QUE_ESTAR_ADVERB_ADVERB</short>
-    </rule>
-    <rule id="QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS" name="✂️ Que já + V.Estar + V.Part.Pass → Já + V.Part.Pass">
-      <pattern>
-        <token>que</token>
-        <token>já</token>
-        <token regexp="yes">está|estão|estava|estavam</token>
-        <token postag="VMP00.+" postag_regexp="yes"></token>
-        <token postag="SPS00|SPS00:DA.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS?</message>
-      <short>QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS</short>
-    </rule>
-    <rule id="QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE" name="✂️ que se encontr[ae](m) n[ao](s)/nest[ae](s) → n[ao](s)/nest[ae](s)">
-      <pattern>
-        <token postag="DD.+|SPS00:DD.+|NC.+|AQ.+|NP.+|_PUNCT" postag_regexp="yes"></token>
-        <token>que</token>
-        <token>se</token>
-        <token regexp="yes">encontr[ae]m?</token>
-        <token postag="SPS00:D[AI].+" postag_regexp="yes"></token>
-        <token postag="NC.+|AQ.+|NP.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE?</message>
-      <short>QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE</short>
-    </rule>
-    <rule id="QUE_VERBO_SER_ADJ_QUE_VERBO_ADJ" name="✂️ Que + Verbo + ser + Adj (remover 'ser')">
-      <pattern>
-        <token postag="RG|[DP][ADIPR].+|SPS00:[DP][ADIPR].+|NC.+|AQ.+" postag_regexp="yes"></token>
-        <token>que</token>
-        <token regexp="yes">parecer|julgar</token>
-        <token>ser</token>
-        <token postag="AQ.+|RG" postag_regexp="yes"></token>
-      </pattern>
-      <message>O verbo "ser" pode ser omitido nesta perífrase.</message>
-      <short>QUE_VERBO_SER_ADJ_QUE_VERBO_ADJ</short>
-    </rule>
-    <rule id="QUE_VERB_GERUND" name="✂️ Que + verbo + em → Gerúndio + em">
-      <pattern>
-        <token postag="NC.+|AQ.+" postag_regexp="yes"></token>
-        <token>que</token>
-        <token postag="VMIP3.+|VMM02S0" postag_regexp="yes">
-          <exception regexp="yes">acreditar|ser|estar|ficar|haver|suar|possuir|receber|aparecer|caminhar|existir</exception>
-        </token>
-        <token>em</token>
-        <token postag="RG|NC.+|AQ0.+|NP.+" postag_regexp="yes"></token>
-        <token min="0" max="1" postag="NP.+" postag_regexp="yes"></token>
-        <token regexp="yes" negate="yes">[.]</token>
-      </pattern>
-      <message>Did you mean a correction for QUE_VERB_GERUND?</message>
-      <short>QUE_VERB_GERUND</short>
-    </rule>
-    <rule id="SER_CAPAZ_DE_CONSEGUIR" name="✂️ Ser capaz de → Conseguir">
-      <pattern>
-        <token>ser</token>
-        <token regexp="yes">capaz|capazes</token>
-        <token>de</token>
-        <token postag="V.+|DI.+|PI.+|RG" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for SER_CAPAZ_DE_CONSEGUIR?</message>
-      <short>SER_CAPAZ_DE_CONSEGUIR</short>
-    </rule>
-    <rule id="SER_PARA_SER_PARTPASSADO_VINFINITIVO" name="✂️ Ser + para + 'ser(em) + Part.Pass' → Infinitivo">
-      <pattern>
-        <token regexp="yes">é|são|fossem?</token>
-        <token>para</token>
-        <token regexp="yes">ser(em)?</token>
-        <token postag="VMP00.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Construção passiva frequentemente simplificável com infinitivo.</message>
-      <short>SER_PARA_SER_PARTPASSADO_VINFINITIVO</short>
-    </rule>
-    <rule id="SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO" name="🎓 Não + V. + nada → nada + V.">
-      <pattern>
-        <token>não</token>
-        <token postag="VMI[ISM].+" postag_regexp="yes"></token>
-        <token>nada</token>
-        <token>do</token>
-      </pattern>
-      <message>Did you mean a correction for SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO?</message>
-      <short>SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO</short>
-    </rule>
-    <rule id="SIMPLIFICAR_REMOVER_É_QUE_PARTICÍPIO" name="✂️ Part. Passado + é + que → Part. Passado">
-      <pattern>
-        <token postag="VMP00.+" postag_regexp="yes"></token>
-        <token>é</token>
-        <token>que</token>
-        <token postag="VMIP3.+|VMM03.+|VMSP3.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Remova a partícula de realce "é que" para tornar o texto mais fluído.</message>
-      <short>SIMPLIFICAR_REMOVER_É_QUE_PARTICÍPIO</short>
-    </rule>
-    <rule id="TER_FORMA_DE_TER_COMO" name="✂️ Ter/haver 'forma de' → 'como'">
-      <pattern>
-        <token regexp="yes">ter|haver</token>
-        <token>forma</token>
-        <token>de</token>
-        <token postag="DA.+|PP.+|V.+|RM" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for TER_FORMA_DE_TER_COMO?</message>
-      <short>TER_FORMA_DE_TER_COMO</short>
-    </rule>
-    <rule id="TER_SIDO_PART_PASSADO_VERBO" name="✂️ V.Ter + sido + V.Part.Pass. → V.">
-      <pattern>
-        <token regexp="yes">t[eê]m</token>
-        <token>sido</token>
-        <token postag="VMP00.+" postag_regexp="yes"></token>
-        <token postag="(SPS00:)?D[AI].+|NC.+|AQ.+|SPS00|CS|CC" postag_regexp="yes">
-          <exception regexp="yes">como|pel[ao]s?|por</exception>
-        </token>
-      </pattern>
-      <message>Did you mean a correction for TER_SIDO_PART_PASSADO_VERBO?</message>
-      <short>TER_SIDO_PART_PASSADO_VERBO</short>
-    </rule>
-    <rule id="TIRAR_FOTOGRAFIA_FOTOGRAFAR" name="✂️ Tirar fotografia/foto → fotografar">
-      <pattern>
-        <token>tirar</token>
-        <token regexp="yes" min="0" max="1">umas?</token>
-        <token regexp="yes">fotografias?|fotos?</token>
-        <token postag="SPS00:DA.+" postag_regexp="yes">
-          <exception regexp="yes">[dn][ao]s?</exception>
-        </token>
-      </pattern>
-      <message>Did you mean a correction for TIRAR_FOTOGRAFIA_FOTOGRAFAR?</message>
-      <short>TIRAR_FOTOGRAFIA_FOTOGRAFAR</short>
-    </rule>
-    <rule id="TOTALIZAR" name="✂️ 'perfazer um total de' → totalizar">
-      <pattern>
-        <token regexp="yes">alcançar|contabilizar|perfazer|somar|totalizar</token>
-        <token>um</token>
-        <token>total</token>
-        <token>de</token>
-        <token postag="Z0.+|NC.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for TOTALIZAR?</message>
-      <short>TOTALIZAR</short>
-    </rule>
-    <rule id="VERBO1_QUE_VERBO2_VERBO3_O_QUE" name="✂️ verbo2 + verbo3_infinitivo">
-      <pattern>
-        <token postag="V.+" postag_regexp="yes"></token>
-        <token>que</token>
-        <token postag="V.+" postag_regexp="yes"></token>
-        <token postag="V.+" postag_regexp="yes"></token>
-        <token>o</token>
-        <token>que</token>
-      </pattern>
-      <message>Did you mean a correction for VERBO1_QUE_VERBO2_VERBO3_O_QUE?</message>
-      <short>VERBO1_QUE_VERBO2_VERBO3_O_QUE</short>
-    </rule>
-    <rule id="VER_OBSERVAR_CONSTATAR_V2" name="🎓 Ver → observar/constatar">
-      <pattern>
-        <token skip="1">ver</token>
-        <token regexp="yes" skip="1">que|n[ao]s?|em</token>
-        <token regexp="yes" postag="NC.+|AQ.+" postag_regexp="yes">dado|resultado|figura|tabela|gráfico|estudo|análise|evidência|amostra|variável|modelo|experiência|ensaio|distribuição|correlação</token>
-      </pattern>
-      <message>Em contexto formal/científico, prefira "observar" ou "constatar".</message>
-      <short>VER_OBSERVAR_CONSTATAR_V2</short>
-    </rule>
-    <rule id="VIR_A_VERBO_VERBO" name="✂️ Vir + a + Verbo → Verbo">
-      <pattern>
-        <token>vir
-          <exception>vi</exception>
-        </token>
-        <token>a</token>
-        <token postag="VMN.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Did you mean a correction for VIR_A_VERBO_VERBO?</message>
-      <short>VIR_A_VERBO_VERBO</short>
-    </rule>
-  </category>
   <category id="CONFUSED_WORDS" name="❓ Confusão de Palavras">
     <rule id="A_QUANDO" name="❓ 'a quando'/aquando">
       <pattern>
@@ -4750,16 +4251,6 @@
       </pattern>
       <message>Se estiver a referir-se a fármacos ou afins, empregue o termo 'tomar'.</message>
       <short>CONFUSÃO_BEBER_COMER_TOMAR_FÁRMACOS</short>
-    </rule>
-    <rule id="CONFUSÃO_FAZES_FASES" name="❓ fazes/fases">
-      <pattern>
-        <token>as</token>
-        <token>fazes</token>
-        <token>da</token>
-        <token postag="NC.+|AQ.+|NP.+" postag_regexp="yes"></token>
-      </pattern>
-      <message>Possível confusão de termos.</message>
-      <short>CONFUSÃO_FAZES_FASES</short>
     </rule>
     <rule id="CONFUSÃO_MA_NA" name="❓ ma/na">
       <pattern>
@@ -5350,13 +4841,6 @@
       <message>Os travessões são desnecessários em enumerações.</message>
       <short>ENUMERATION_AND_DASHES</short>
     </rule>
-    <rule id="PERCENT_WITH_SPACE" name="Matemático: Acrescentar espaço em percentagens (3 %)">
-      <pattern>
-        <token regexp="yes">[\d.,]+[%‰‱]</token>
-      </pattern>
-      <message>Escolheu a opção de inserção de espaço.</message>
-      <short>PERCENT_WITH_SPACE</short>
-    </rule>
     <rule id="PLURAL_IN_UNITS_OF_MEASURE" name="Matemático: Abreviaturas de unidades de medida">
       <pattern>
         <token regexp="yes">\d+</token>
@@ -5367,7 +4851,7 @@
       <message>As abreviaturas de unidades de medida padrão não tem plural.</message>
       <short>PLURAL_IN_UNITS_OF_MEASURE</short>
     </rule>
-    <rule id="POSICAO_DO_PONTO_EM_ORDINAL_ABREVIADO" name="Pôr o ponto entre o número e o indicador de ordinal, e não depois deste.">
+    <rule id="POSICAO_DO_PONTO_EM_ORDINAL_ABREVIADO" name="Pôr o ponto entre o número e o indicador de ordinal, e não depois deste." default="on">
       <pattern>
         <token regexp="yes" case_sensitive="yes">\d+\.?</token>
         <token>.</token>
@@ -5404,7 +4888,7 @@
       <message>Pretende dizer: <suggestion>℠</suggestion>?</message>
       <short>Anotação não padronizada de ℠</short>
     </rule>
-    <rule id="SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM" name="SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM">
+    <rule id="SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM" name="SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM" default="on">
       <pattern>
         <token regexp="yes" case_sensitive="yes">(?:)</token>
       </pattern>
@@ -5466,7 +4950,7 @@
       <message>A palavra <suggestion>\2-\3</suggestion> é hifenizada.</message>
       <short>CORTA_PAPEL</short>
     </rule>
-    <rule id="NA_QUELE" name="Correção de escrita">
+    <rule id="NA_QUELE" name="Correção de escrita" default="on">
       <pattern>
         <token>na</token>
         <token regexp="yes">quel[ea]s?</token>
@@ -5474,7 +4958,7 @@
       <message>Verifique se este espaço é necessário.</message>
       <short>NA_QUELE</short>
     </rule>
-    <rule id="PRE_POS" name="Correção de escrita">
+    <rule id="PRE_POS" name="Correção de escrita" default="on">
       <pattern>
         <token regexp="yes">pré|pós</token>
         <token postag="N.+|A.+|VMN.+|VMP.+" postag_regexp="yes"></token>
@@ -5528,7 +5012,7 @@
       <message>Did you mean a correction for COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO?</message>
       <short>COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO</short>
     </rule>
-    <rule id="CONFUSAO_MAIS_MAS_VIRGULA" name="Confusão de mais e mas após a vírgula">
+    <rule id="CONFUSAO_MAIS_MAS_VIRGULA" name="Confusão de mais e mas após a vírgula" default="on">
       <pattern>
         <token>,</token>
         <token>mais</token>
@@ -5714,7 +5198,7 @@
       <message>A expressão é "ter direito a"; neste contexto, a forma esperada é:</message>
       <short>SUBST_DE_QUE_TER_DIREITO_A_QUE</short>
     </rule>
-    <rule id="TODOS_FOLLOWED_BY_NOUN_PLURAL" name="Expressão: Todos + 'nome sem artigo'">
+    <rule id="TODOS_FOLLOWED_BY_NOUN_PLURAL" name="Expressão: Todos + 'nome sem artigo'" default="on">
       <pattern>
         <token postag="SENT_START|_PUNCT|VMG.+|SPS00|CS|CC|PR0CN000|DA.+" postag_regexp="yes"></token>
         <token regexp="yes">tod[ao]s</token>
@@ -5996,21 +5480,12 @@
     </rule>
   </category>
   <category id="CASING" name="Capitalização">
-    <rule id="IRAO_IRA" name="🇧🇷 Irão vs Irã">
+    <rule id="IRAO_IRA" name="🇧🇷 Irão vs Irã" default="on">
       <pattern>
         <token case_sensitive="yes">Irão</token>
       </pattern>
       <message>"Irão" é como se escreve o nome do país em Portugal. No Brasil utiliza-se <suggestion>Irã</suggestion>.</message>
       <short>IRAO_IRA</short>
-    </rule>
-    <rule id="URL_INICIAL" name="Evitar URLs to começo de frase por causa de problemas com maiúsculas">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token regexp="yes" case_sensitive="yes" postag="_IS_URL">\p{Ll}.*</token>
-        <token max="-1" postag="_IS_URL"></token>
-      </pattern>
-      <message>Para evitar uma frase iniciada por letra minúscula, considere não começá-la diretamente com uma referência a um site de internet.</message>
-      <short>URL_INICIAL</short>
     </rule>
   </category>
   <category id="REGISTERED_BRANDS" name="Regras de Marcas e Termos Registados">
@@ -6164,13 +5639,6 @@
       <message>Did you mean a correction for EXPORTAR_PARA_FORA?</message>
       <short>EXPORTAR_PARA_FORA</short>
     </rule>
-    <rule id="E_PRIME_STRIT" name="Escrita Criativa: E-Prime: todas as formas do verbo 'ser' e 'estar'">
-      <pattern>
-        <token regexp="yes">ser|estar</token>
-      </pattern>
-      <message>De acordo com a versão inglesa do E-Prime, evitar formas verbais do verbo "ser" e "estar" torna a comunicação mais clara, precisa, e menos dogmática. Tente utilizar um verbo alternativo ou refazer a frase.</message>
-      <short>De acordo com a lógica do E-Prime, deve evitar os verbos 'ser' e 'estar'</short>
-    </rule>
     <rule id="HONRAR_COMPROMISSOS" name="'Cumprir' compromissos → honrar">
       <pattern>
         <token skip="2">cumprir</token>
@@ -6264,16 +5732,6 @@
       </pattern>
       <message>Did you mean a correction for REDUNDANCY_15_CURSAR?</message>
       <short>REDUNDANCY_15_CURSAR</short>
-    </rule>
-    <rule id="REDUNDANCY_16_DE" name="Pleonasmo: De jeito maneira">
-      <pattern>
-        <token>de</token>
-        <token>jeito</token>
-        <token min="0">e</token>
-        <token>maneira</token>
-      </pattern>
-      <message>Did you mean a correction for REDUNDANCY_16_DE?</message>
-      <short>REDUNDANCY_16_DE</short>
     </rule>
     <rule id="REDUNDANCY_17_CONTINUAR" name="Pleonasmo: continuar ainda">
       <pattern>
@@ -7196,17 +6654,6 @@
       <message>Did you mean a correction for REDUNDANCY_MALUCO?</message>
       <short>REDUNDANCY_MALUCO</short>
     </rule>
-    <rule id="REDUNDANCY_MAN_AND_WOMAN" name="Redundâncias não sexistas: Homens e mulheres">
-      <pattern>
-        <token regexp="yes" min="0">[ao]s?</token>
-        <token regexp="yes">(?:home(?:m|ns)|mulher(?:es)?)</token>
-        <token>e</token>
-        <token regexp="yes" min="0">[ao]s?</token>
-        <token regexp="yes">(?:home(?:m|ns)|mulher(?:es)?)</token>
-      </pattern>
-      <message>Possível redundância. Se não pretende realçar diferenças, é suficiente utilizar <suggestion> pessoa</suggestion>.</message>
-      <short>REDUNDANCY_MAN_AND_WOMAN</short>
-    </rule>
     <rule id="REDUNDANCY_MAR" name="Pleonasmo: Mar salgado">
       <pattern>
         <token>mar</token>
@@ -7499,15 +6946,6 @@
       <message>Segundo o Acordo Ortográfico de 45, esta forma é hifenizada.</message>
       <short>AO45_HAVER_DE</short>
     </rule>
-    <rule id="AO45_PELO_PÊLO" name="🇵🇹[AO45] pelo/pêlo">
-      <pattern>
-        <token>muito</token>
-        <token>pelo</token>
-        <token>ser</token>
-      </pattern>
-      <message>Substitua por <suggestion>muito pêlo \3</suggestion>.</message>
-      <short>AO45_PELO_PÊLO</short>
-    </rule>
   </category>
   <category id="AO90_RULES_PT_PT" name="🇵🇹 Regras do Acordo Ortográfico de 90 (pós-AO90)">
     <rule id="AO90_POLO_CAPITALIZATION" name="🇵🇹[AO90] Polo Norte/Sul">
@@ -7679,33 +7117,413 @@
       <short>VERBO_O_USO_DE_X_X</short>
     </rule>
   </category>
-  <category id="ANGOLA_PORTUGUESE" name="Português de Angola (pré-AO90)">
-    <rule id="A_NIVEL" name="A nível">
+  <category id="SHORTEN_IT" name="✂️ Linguagem concisa">
+    <rule id="AS_COISAS_NÃO_VÃO_VERBO_INF" name="✂️ Nada vai + verb_inf">
       <pattern>
-        <token regexp="yes">a|em</token>
-        <token>nível</token>
+        <token>as</token>
+        <token>coisas</token>
+        <token>não</token>
+        <token>vão</token>
+        <token postag="VMN0000"></token>
       </pattern>
-      <message>Substitua por <suggestion>ao \2</suggestion>.</message>
-      <short>Construção gramatical incorreta.</short>
+      <message>Substitua por <suggestion>nada vai</suggestion>.</message>
+      <short>AS_COISAS_NÃO_VÃO_VERBO_INF</short>
     </rule>
-    <rule id="HIFENIZADOR_VERBOS_1" name="Colocações pronominais três termos">
+    <rule id="AS_OS_QUE_QUAIS" name="✂️ 'as/os que' → quais">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">
-          <exception regexp="yes">como|para|casa</exception>
+        <token regexp="yes">determinar|identificar|indicar|selecionar|seleccionar|escolher|definir|decidir|verificar|apurar|saber|descobrir</token>
+        <token regexp="yes">[ao]s</token>
+        <token>que</token>
+        <token postag="VMI.3P.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for AS_OS_QUE_QUAIS?</message>
+      <short>AS_OS_QUE_QUAIS</short>
+    </rule>
+    <rule id="CERTA_CERTO_DADA_DADO" name="🤵 'Certa' altura → dada">
+      <pattern>
+        <token>a</token>
+        <token regexp="yes">cert[ao]s?</token>
+        <token regexp="yes">altura|momento|ponto|fase|etapa|instante|ocasião</token>
+      </pattern>
+      <message>Em contexto formal, prefere-se "a dado/a dada" em vez de "a certo/a certa".</message>
+      <short>CERTA_CERTO_DADA_DADO</short>
+    </rule>
+    <rule id="COMO_SER_O_CASO_DO" name="✂️ Como é/são o caso do → Como o">
+      <pattern>
+        <token>como</token>
+        <token regexp="yes">é|são</token>
+        <token regexp="yes">[ao]s?</token>
+        <token regexp="yes">casos?</token>
+        <token regexp="yes">d[ao]s?</token>
+        <token postag="DP.+|SPS00:PP.+|NC.+|AQ.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for COMO_SER_O_CASO_DO?</message>
+      <short>COMO_SER_O_CASO_DO</short>
+    </rule>
+    <rule id="DAR_VALOR_VALORIZAR" name="✂️ Verbo 'dar' + valor → valorizar">
+      <pattern>
+        <token>dar</token>
+        <token>valor</token>
+        <token regexp="yes">às?|aos?</token>
+      </pattern>
+      <message>Did you mean a correction for DAR_VALOR_VALORIZAR?</message>
+      <short>DAR_VALOR_VALORIZAR</short>
+    </rule>
+    <rule id="DELIMITADA_COM-DE-POR_FRONTEIRAS_FISICAS" name="Delimitada(o)(s) fisicamente">
+      <pattern>
+        <token regexp="yes">delimitadas?|delimitados?</token>
+        <token regexp="yes">com|de|por</token>
+        <token min="0" max="1">uma</token>
+        <token regexp="yes">fronteiras?</token>
+        <token regexp="yes">físicas?</token>
+      </pattern>
+      <message>Substitua por <suggestion>fisicamente</suggestion>.</message>
+      <short>DELIMITADA_COM-DE-POR_FRONTEIRAS_FISICAS</short>
+    </rule>
+    <rule id="DESDE_A_ALTURA_DESDE_ENTÃO" name="✂️ Desde a altura → desde então">
+      <pattern>
+        <token postag="VMI[IP].+|CC" postag_regexp="yes"></token>
+        <token min="0" max="1" postag="NC.+|AQ.+" postag_regexp="yes"></token>
+        <token>desde</token>
+        <token>a</token>
+        <token>altura</token>
+        <token postag="_PUNCT|PP.+|CS" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for DESDE_A_ALTURA_DESDE_ENTÃO?</message>
+      <short>DESDE_A_ALTURA_DESDE_ENTÃO</short>
+    </rule>
+    <rule id="DE_FORMA-MODO_ADJ" name="✂️ De + forma/modo + Adj → Adv">
+      <pattern>
+        <token>de</token>
+        <token regexp="yes">forma|modo</token>
+        <token postag="AQ0[CFM]S0" postag_regexp="yes">
+          <exception regexp="yes">.*[áéíóúâêôãõàèìòù].*|inclusiv[oa]|geral|pulverizada|transparente|especial|diferente|independente</exception>
         </token>
-        <token regexp="yes">m[aeo]s?|t[aeo]s?|s[aeo]|lh[aeo]s?|n[ao]s|vos</token>
-        <token regexp="yes">á|ão|ás|ei|eis|emos|ia|iam|íamos|ias|íeis</token>
       </pattern>
-      <message>Palavra composta. Pretende dizer</message>
-      <short>HIFENIZADOR_VERBOS_1</short>
+      <message>Substitua por</message>
+      <short>DE_FORMA-MODO_ADJ</short>
     </rule>
-    <rule id="HIFENIZADOR_VERBOS_2" name="Colocações pronominais dois termos">
+    <rule id="EM_QUE_NAO_HA_PRONOME-INDEFINIDO" name="✂️ Em que não há + Pron.Indef. → Sem Pron.Indef.">
       <pattern>
-        <token postag="V.*" postag_regexp="yes"></token>
-        <token regexp="yes">m[aeo]s?|t[aeo]s?|lh[aeo]s?|vos</token>
+        <token>em</token>
+        <token>que</token>
+        <token>não</token>
+        <token>há</token>
+        <token postag="DI.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Palavra composta. Pretende dizer</message>
-      <short>HIFENIZADOR_VERBOS_2</short>
+      <message>Did you mean a correction for EM_QUE_NAO_HA_PRONOME-INDEFINIDO?</message>
+      <short>EM_QUE_NAO_HA_PRONOME-INDEFINIDO</short>
+    </rule>
+    <rule id="ERRO_TRADUÇÃO_UM_TAMANHO_SERVE_DÁ_PARA_TODOS" name="[Erro tradução] 'um tamanho dá para todos' → 'tamanho único'">
+      <pattern>
+        <token>um</token>
+        <token>tamanho</token>
+        <token regexp="yes">servir|dar</token>
+        <token regexp="yes">pa?ra</token>
+        <token regexp="yes">tod[ao]s</token>
+      </pattern>
+      <message>Expressão não pode ser traduzida literalmente.</message>
+      <short>ERRO_TRADUÇÃO_UM_TAMANHO_SERVE_DÁ_PARA_TODOS</short>
+    </rule>
+    <rule id="ESTAR_NO_ECRA" name="✂️ Estar no ecrã">
+      <pattern>
+        <token postag="(SPS00:)?PD.+" postag_regexp="yes"></token>
+        <token>que</token>
+        <token regexp="yes">aparecer|estar|exibir|mostrar|observar|ver</token>
+        <token regexp="yes">n[ao]s?</token>
+        <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
+        <token regexp="yes">ecrã|écran|LCD|LED|monitor|OLED|plasma|tela|televisão|televisor|TV|visor</token>
+      </pattern>
+      <message>Did you mean a correction for ESTAR_NO_ECRA?</message>
+      <short>ESTAR_NO_ECRA</short>
+    </rule>
+    <rule id="E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO" name="✂️ e/ou + que + Adv/Verbo + nada → e/ou + nada + Adv/Verbo">
+      <pattern>
+        <token regexp="yes">e|ou</token>
+        <token>que</token>
+        <token postag="V.+|RG" postag_regexp="yes"></token>
+        <token>nada</token>
+      </pattern>
+      <message>Did you mean a correction for E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO?</message>
+      <short>E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO</short>
+    </rule>
+    <rule id="LEVAR_A_CABO" name="Levar a cabo → efetuar/realizar/conduzir/concretizar/elaborar">
+      <pattern>
+        <token>levar</token>
+        <token>a</token>
+        <token>cabo</token>
+      </pattern>
+      <message>Num contexto formal, é preferível escrever "efetuar", "realizar", "conduzir", "concretizar" ou "elaborar".</message>
+      <short>LEVAR_A_CABO</short>
+    </rule>
+    <rule id="MADRUGADA_MATINAL" name="✂️ da madrugada/manhã → matinal">
+      <pattern>
+        <token postag="V.+" postag_regexp="yes"></token>
+        <token regexp="yes">[ao]s?</token>
+        <token regexp="yes">banho|chá|exercício|leite|névoa|orvalho|passeio|sexo|sol</token>
+        <token regexp="yes">das?</token>
+        <token regexp="yes">madrugadas?|manhãs?</token>
+      </pattern>
+      <message>Did you mean a correction for MADRUGADA_MATINAL?</message>
+      <short>MADRUGADA_MATINAL</short>
+    </rule>
+    <rule id="MAS_EMBORA_CONTUDO_SEM" name="✂️ Expressões do tipo: 'não ter utilidade' → 'sem utilidade'">
+      <pattern>
+        <token regexp="yes">mas|embora|contudo</token>
+        <token min="0" max="1" postag="DD.+|PD.+" postag_regexp="yes"></token>
+        <token>não</token>
+        <token regexp="yes">tinha|tinham|tenha|tenham|tem|têm|terá|terão</token>
+        <token min="0" max="1" postag="AQ.+|(SPS00:)?D[AI].+" postag_regexp="yes">
+          <exception regexp="yes">aplicabilidade|empregabilidade|fiabilidade|fim|finalidade|intenção|intento|interesse|juízo|meta|mira|objetivo|precisão|propósito|prudência|seriedade|tino|uso|utilidade|utilização</exception>
+        </token>
+        <token regexp="yes">aplicabilidade|empregabilidade|fiabilidade|fim|finalidade|intenção|intento|interesse|juízo|meta|mira|objetivo|precisão|propósito|prudência|seriedade|tino|uso|utilidade|utilização</token>
+      </pattern>
+      <message>Did you mean a correction for MAS_EMBORA_CONTUDO_SEM?</message>
+      <short>MAS_EMBORA_CONTUDO_SEM</short>
+    </rule>
+    <rule id="NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL" name="✂️ 'que não dá para voltar atrás' → 'irreversível'">
+      <pattern>
+        <token postag="DA.+|DI.+|V.+" postag_regexp="yes"></token>
+        <token postag="NC.+" postag_regexp="yes"></token>
+        <token min="0" max="1">em</token>
+        <token>que</token>
+        <token>não</token>
+        <token>dá</token>
+        <token>para</token>
+        <token>voltar</token>
+        <token>atrás</token>
+      </pattern>
+      <message>Did you mean a correction for NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL?</message>
+      <short>NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL</short>
+    </rule>
+    <rule id="NÃO_VÁLIDA_INVÁLIDA" name="Não válid[ao](s) → inválid[ao](s)">
+      <pattern>
+        <token>não</token>
+        <token regexp="yes">estar|ser</token>
+        <token regexp="yes">válid[ao]s?</token>
+      </pattern>
+      <message>Melhore a redação podendo usar a negação em alguns casos.</message>
+      <short>NÃO_VÁLIDA_INVÁLIDA</short>
+    </rule>
+    <rule id="O_QUE_TEM_DE_MAL_QUE_MAL_TEM" name="✂️ 'o que tem de mal' → 'que mal tem'">
+      <pattern>
+        <token>o</token>
+        <token>que</token>
+        <token>tem</token>
+        <token>de</token>
+        <token>mal</token>
+        <token postag="V.+|(SPS00:)?D[AI].+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for O_QUE_TEM_DE_MAL_QUE_MAL_TEM?</message>
+      <short>O_QUE_TEM_DE_MAL_QUE_MAL_TEM</short>
+    </rule>
+    <rule id="PASSAR_ATRAVES_LUGAR_ATRAVESSAR" name="✂️ 'passar através de' → 'atravessar'">
+      <pattern>
+        <token>passar</token>
+        <token>através</token>
+        <token regexp="yes">d[ao]s?</token>
+        <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
+        <token regexp="yes">fronteira|porta|portão|entrada|saída|passagem|túnel|galeria|corredor|passadiço|ponte|viaduto|passarela|estrada|rua|avenida|travessa|autoestrada|caminho|atalho|trilho|vereda|obstáculo|barreira|muralha|vedação|cerca|grade|barricada|bloqueio|multidão</token>
+      </pattern>
+      <message>Did you mean a correction for PASSAR_ATRAVES_LUGAR_ATRAVESSAR?</message>
+      <short>PASSAR_ATRAVES_LUGAR_ATRAVESSAR</short>
+    </rule>
+    <rule id="PERDER_A_VIDA" name="Perder a vida → morrer/falecer/perecer">
+      <pattern>
+        <token>perder</token>
+        <token regexp="yes">as?</token>
+        <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
+        <token regexp="yes">vidas?</token>
+      </pattern>
+      <message>Melhore a redação.</message>
+      <short>PERDER_A_VIDA</short>
+    </rule>
+    <rule id="QUANDO_TER_DE_QUE_VINF_AO_VINF" name="✂️ 'Quando V.Ter de/que V.Inf.' com → 'Ao V.Inf.'">
+      <pattern>
+        <token>quando</token>
+        <token postag="VMIP.+" postag_regexp="yes">ter</token>
+        <token regexp="yes">de|que</token>
+        <token postag="VMN0000" postag_regexp="no"></token>
+        <token>com</token>
+      </pattern>
+      <message>Did you mean a correction for QUANDO_TER_DE_QUE_VINF_AO_VINF?</message>
+      <short>QUANDO_TER_DE_QUE_VINF_AO_VINF</short>
+    </rule>
+    <rule id="QUE_ESTAR_ADVERB_ADVERB" name="✂️ Que + V.Estar + Adv → Adv">
+      <pattern>
+        <token postag="NC.+|AQ.+|DD.+|_PUNCT" postag_regexp="yes"></token>
+        <token>que</token>
+        <token regexp="yes">está|estão|estava|estavam</token>
+        <token postag="RM" postag_regexp="no"></token>
+      </pattern>
+      <message>Did you mean a correction for QUE_ESTAR_ADVERB_ADVERB?</message>
+      <short>QUE_ESTAR_ADVERB_ADVERB</short>
+    </rule>
+    <rule id="QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS" name="✂️ Que já + V.Estar + V.Part.Pass → Já + V.Part.Pass">
+      <pattern>
+        <token>que</token>
+        <token>já</token>
+        <token regexp="yes">está|estão|estava|estavam</token>
+        <token postag="VMP00.+" postag_regexp="yes"></token>
+        <token postag="SPS00|SPS00:DA.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS?</message>
+      <short>QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS</short>
+    </rule>
+    <rule id="QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE" name="✂️ que se encontr[ae](m) n[ao](s)/nest[ae](s) → n[ao](s)/nest[ae](s)">
+      <pattern>
+        <token postag="DD.+|SPS00:DD.+|NC.+|AQ.+|NP.+|_PUNCT" postag_regexp="yes"></token>
+        <token>que</token>
+        <token>se</token>
+        <token regexp="yes">encontr[ae]m?</token>
+        <token postag="SPS00:D[AI].+" postag_regexp="yes"></token>
+        <token postag="NC.+|AQ.+|NP.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE?</message>
+      <short>QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE</short>
+    </rule>
+    <rule id="QUE_VERBO_SER_ADJ_QUE_VERBO_ADJ" name="✂️ Que + Verbo + ser + Adj (remover 'ser')">
+      <pattern>
+        <token postag="RG|[DP][ADIPR].+|SPS00:[DP][ADIPR].+|NC.+|AQ.+" postag_regexp="yes"></token>
+        <token>que</token>
+        <token regexp="yes">parecer|julgar</token>
+        <token>ser</token>
+        <token postag="AQ.+|RG" postag_regexp="yes"></token>
+      </pattern>
+      <message>O verbo "ser" pode ser omitido nesta perífrase.</message>
+      <short>QUE_VERBO_SER_ADJ_QUE_VERBO_ADJ</short>
+    </rule>
+    <rule id="QUE_VERB_GERUND" name="✂️ Que + verbo + em → Gerúndio + em">
+      <pattern>
+        <token postag="NC.+|AQ.+" postag_regexp="yes"></token>
+        <token>que</token>
+        <token postag="VMIP3.+|VMM02S0" postag_regexp="yes">
+          <exception regexp="yes">acreditar|ser|estar|ficar|haver|suar|possuir|receber|aparecer|caminhar|existir</exception>
+        </token>
+        <token>em</token>
+        <token postag="RG|NC.+|AQ0.+|NP.+" postag_regexp="yes"></token>
+        <token min="0" max="1" postag="NP.+" postag_regexp="yes"></token>
+        <token regexp="yes" negate="yes">[.]</token>
+      </pattern>
+      <message>Did you mean a correction for QUE_VERB_GERUND?</message>
+      <short>QUE_VERB_GERUND</short>
+    </rule>
+    <rule id="SER_CAPAZ_DE_CONSEGUIR" name="✂️ Ser capaz de → Conseguir">
+      <pattern>
+        <token>ser</token>
+        <token regexp="yes">capaz|capazes</token>
+        <token>de</token>
+        <token postag="V.+|DI.+|PI.+|RG" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for SER_CAPAZ_DE_CONSEGUIR?</message>
+      <short>SER_CAPAZ_DE_CONSEGUIR</short>
+    </rule>
+    <rule id="SER_PARA_SER_PARTPASSADO_VINFINITIVO" name="✂️ Ser + para + 'ser(em) + Part.Pass' → Infinitivo">
+      <pattern>
+        <token regexp="yes">é|são|fossem?</token>
+        <token>para</token>
+        <token regexp="yes">ser(em)?</token>
+        <token postag="VMP00.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Construção passiva frequentemente simplificável com infinitivo.</message>
+      <short>SER_PARA_SER_PARTPASSADO_VINFINITIVO</short>
+    </rule>
+    <rule id="SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO" name="🎓 Não + V. + nada → nada + V.">
+      <pattern>
+        <token>não</token>
+        <token postag="VMI[ISM].+" postag_regexp="yes"></token>
+        <token>nada</token>
+        <token>do</token>
+      </pattern>
+      <message>Did you mean a correction for SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO?</message>
+      <short>SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO</short>
+    </rule>
+    <rule id="SIMPLIFICAR_REMOVER_É_QUE_PARTICÍPIO" name="✂️ Part. Passado + é + que → Part. Passado">
+      <pattern>
+        <token postag="VMP00.+" postag_regexp="yes"></token>
+        <token>é</token>
+        <token>que</token>
+        <token postag="VMIP3.+|VMM03.+|VMSP3.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Remova a partícula de realce "é que" para tornar o texto mais fluído.</message>
+      <short>SIMPLIFICAR_REMOVER_É_QUE_PARTICÍPIO</short>
+    </rule>
+    <rule id="TER_FORMA_DE_TER_COMO" name="✂️ Ter/haver 'forma de' → 'como'">
+      <pattern>
+        <token regexp="yes">ter|haver</token>
+        <token>forma</token>
+        <token>de</token>
+        <token postag="DA.+|PP.+|V.+|RM" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for TER_FORMA_DE_TER_COMO?</message>
+      <short>TER_FORMA_DE_TER_COMO</short>
+    </rule>
+    <rule id="TER_SIDO_PART_PASSADO_VERBO" name="✂️ V.Ter + sido + V.Part.Pass. → V.">
+      <pattern>
+        <token regexp="yes">t[eê]m</token>
+        <token>sido</token>
+        <token postag="VMP00.+" postag_regexp="yes"></token>
+        <token postag="(SPS00:)?D[AI].+|NC.+|AQ.+|SPS00|CS|CC" postag_regexp="yes">
+          <exception regexp="yes">como|pel[ao]s?|por</exception>
+        </token>
+      </pattern>
+      <message>Did you mean a correction for TER_SIDO_PART_PASSADO_VERBO?</message>
+      <short>TER_SIDO_PART_PASSADO_VERBO</short>
+    </rule>
+    <rule id="TIRAR_FOTOGRAFIA_FOTOGRAFAR" name="✂️ Tirar fotografia/foto → fotografar">
+      <pattern>
+        <token>tirar</token>
+        <token regexp="yes" min="0" max="1">umas?</token>
+        <token regexp="yes">fotografias?|fotos?</token>
+        <token postag="SPS00:DA.+" postag_regexp="yes">
+          <exception regexp="yes">[dn][ao]s?</exception>
+        </token>
+      </pattern>
+      <message>Did you mean a correction for TIRAR_FOTOGRAFIA_FOTOGRAFAR?</message>
+      <short>TIRAR_FOTOGRAFIA_FOTOGRAFAR</short>
+    </rule>
+    <rule id="TOTALIZAR" name="✂️ 'perfazer um total de' → totalizar">
+      <pattern>
+        <token regexp="yes">alcançar|contabilizar|perfazer|somar|totalizar</token>
+        <token>um</token>
+        <token>total</token>
+        <token>de</token>
+        <token postag="Z0.+|NC.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for TOTALIZAR?</message>
+      <short>TOTALIZAR</short>
+    </rule>
+    <rule id="VERBO1_QUE_VERBO2_VERBO3_O_QUE" name="✂️ verbo2 + verbo3_infinitivo">
+      <pattern>
+        <token postag="V.+" postag_regexp="yes"></token>
+        <token>que</token>
+        <token postag="V.+" postag_regexp="yes"></token>
+        <token postag="V.+" postag_regexp="yes"></token>
+        <token>o</token>
+        <token>que</token>
+      </pattern>
+      <message>Did you mean a correction for VERBO1_QUE_VERBO2_VERBO3_O_QUE?</message>
+      <short>VERBO1_QUE_VERBO2_VERBO3_O_QUE</short>
+    </rule>
+    <rule id="VER_OBSERVAR_CONSTATAR_V2" name="🎓 Ver → observar/constatar">
+      <pattern>
+        <token skip="1">ver</token>
+        <token regexp="yes" skip="1">que|n[ao]s?|em</token>
+        <token regexp="yes" postag="NC.+|AQ.+" postag_regexp="yes">dado|resultado|figura|tabela|gráfico|estudo|análise|evidência|amostra|variável|modelo|experiência|ensaio|distribuição|correlação</token>
+      </pattern>
+      <message>Em contexto formal/científico, prefira "observar" ou "constatar".</message>
+      <short>VER_OBSERVAR_CONSTATAR_V2</short>
+    </rule>
+    <rule id="VIR_A_VERBO_VERBO" name="✂️ Vir + a + Verbo → Verbo">
+      <pattern>
+        <token>vir
+          <exception>vi</exception>
+        </token>
+        <token>a</token>
+        <token postag="VMN.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean a correction for VIR_A_VERBO_VERBO?</message>
+      <short>VIR_A_VERBO_VERBO</short>
     </rule>
   </category>
   <category id="CONTRACTIONS" name="Contrações">
@@ -7910,16 +7728,6 @@
       <short>CONTRACAO_À</short>
     </rule>
   </category>
-  <category id="CONTRACTIONS_PT_PT" name="🇵🇹 Contrações">
-    <rule id="CONTRAÇÃO_DOUTREM_PT_PT" name="🇵🇹[Contração] De outro/outrem → doutro/doutrem">
-      <pattern>
-        <token>de</token>
-        <token regexp="yes" case_sensitive="yes">outrem|outr[ao]s?</token>
-      </pattern>
-      <message>Pode também dizer <suggestion>d\2</suggestion>.</message>
-      <short>CONTRAÇÃO_DOUTREM_PT_PT</short>
-    </rule>
-  </category>
   <category id="TYPOGRAPHY" name="🇵🇹 Tipografia">
     <rule id="CURRENCY_PLACEMENT_EUR" name="🇵🇹 Posição do símbolo do euro: '€100 (100 €)">
       <pattern>
@@ -8042,6 +7850,19 @@
       <short>NUMERO_DE_AVOGADRO</short>
     </rule>
   </category>
+  <category id="ANGOLA_PORTUGUESE" name="Português de Angola (pré-AO90)">
+    <rule id="HIFENIZADOR_VERBOS_1" name="Colocações pronominais três termos">
+      <pattern>
+        <token postag="V.*" postag_regexp="yes">
+          <exception regexp="yes">como|para|casa</exception>
+        </token>
+        <token regexp="yes">m[aeo]s?|t[aeo]s?|s[aeo]|lh[aeo]s?|n[ao]s|vos</token>
+        <token regexp="yes">á|ão|ás|ei|eis|emos|ia|iam|íamos|ias|íeis</token>
+      </pattern>
+      <message>Palavra composta. Pretende dizer</message>
+      <short>HIFENIZADOR_VERBOS_1</short>
+    </rule>
+  </category>
   <category id="POSITIVE" name="🎯 Linguagem positiva">
     <rule id="NAO_MILITARES_CIVIS" name="🎯 Entidade não militar → civil">
       <pattern>
@@ -8062,30 +7883,12 @@
       <message>Esta palavra é um verbo. Se pretende referir-se a um nome ou adjetivo, deve utilizar a forma acentuada.</message>
       <short>PARONYM_PREMIO_252_PT2</short>
     </rule>
-    <rule id="PRETERITO_PERFEITO" name="🇧🇷 Pretérito perfeito: provámos -&gt; provamos">
+    <rule id="PRETERITO_PERFEITO" name="🇧🇷 Pretérito perfeito: provámos -&gt; provamos" default="on">
       <pattern>
         <token regexp="yes" postag="VMIS1P0P">.*ámos</token>
       </pattern>
       <message>No português do Brasil, escreve-se sem acento.</message>
       <short>PRETERITO_PERFEITO</short>
-    </rule>
-  </category>
-  <category id="PUNCTUATION" name="Pontuação">
-    <rule id="PUNCTUATE_QUOTATIONS" name="Pontuação final em citações">
-      <pattern>
-        <token regexp="yes">\w+</token>
-        <token regexp="yes" postag="SENT_END">”|»|&quot;</token>
-      </pattern>
-      <message>As citações devem ser pontuadas.</message>
-      <short>PUNCTUATE_QUOTATIONS</short>
-    </rule>
-    <rule id="UNLIKELY_OPENING_PUNCTUATION" name="Sinal de pontuação perdidos">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token regexp="yes">[,;\:\)\]\}]</token>
-      </pattern>
-      <message>Sinal de pontuação isolado.</message>
-      <short>UNLIKELY_OPENING_PUNCTUATION</short>
     </rule>
   </category>
   <category id="DEVELOPMENT" name="Desenvolvimento">
@@ -8095,6 +7898,16 @@
       </pattern>
       <message>Palavra não identificada.</message>
       <short>UNKNOWN_WORD</short>
+    </rule>
+  </category>
+  <category id="PUNCTUATION" name="Pontuação">
+    <rule id="UNLIKELY_OPENING_PUNCTUATION" name="Sinal de pontuação perdidos">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes">[,;\:\)\]\}]</token>
+      </pattern>
+      <message>Sinal de pontuação isolado.</message>
+      <short>UNLIKELY_OPENING_PUNCTUATION</short>
     </rule>
   </category>
 </rules>

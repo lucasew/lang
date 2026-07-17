@@ -91,21 +91,6 @@
       <message>Denna förkortning skrivs i regel med punkter: <suggestion>m.fl.</suggestion>.</message>
       <short>M_FL</short>
     </rule>
-    <rule id="TEX" name="Förkortningen skrivs normalt med punkter (t.ex.)">
-      <pattern>
-        <token>tex</token>
-      </pattern>
-      <message>Denna förkortning skrivs i regel med punkter: <suggestion>t.ex.</suggestion>.</message>
-      <short>TEX</short>
-    </rule>
-    <rule id="T_EX" name="Förkortningen skrivs normalt med punkter (t.ex.)">
-      <pattern>
-        <token>t</token>
-        <token>ex</token>
-      </pattern>
-      <message>Denna förkortning skrivs i regel med punkter: <suggestion>t.ex.</suggestion>.</message>
-      <short>T_EX</short>
-    </rule>
   </category>
   <category id="CAT1" name="Särskrivning rekommenderas">
     <rule id="efter-hand" name="Särskrivning 'efterhand (efter hand)'">

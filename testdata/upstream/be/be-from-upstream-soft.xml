@@ -89,7 +89,7 @@
     </rule>
   </category>
   <category id="CAT2" name="Граматыка">
-    <rule id="pa_fakcie" name="Словазлучэнне: «па факце»">
+    <rule id="pa_fakcie" name="Словазлучэнне: «па факце»" default="on">
       <pattern>
         <token>па</token>
         <token>факту</token>
@@ -97,7 +97,7 @@
       <message>Тут імаверна патрабуецца месны склон: <suggestion>\1 факце</suggestion></message>
       <short>«Па факце», а не «па факту»</short>
     </rule>
-    <rule id="dvukossi" name="Словазлучэнне: «у двукоссі»">
+    <rule id="dvukossi" name="Словазлучэнне: «у двукоссі»" default="on">
       <pattern>
         <token regexp="yes">[уў]</token>
         <token>двукоссях</token>

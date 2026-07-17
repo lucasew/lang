@@ -11,14 +11,6 @@
       <message>Als u overtuigend over wilt komen, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
       <short>INSPECIFIEK_3</short>
     </rule>
-    <rule id="INSPECIFIEK_4" name="heel vaak">
-      <pattern>
-        <token>heel</token>
-        <token>vaak</token>
-      </pattern>
-      <message>Wanneer u precies wilt zijn, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
-      <short>INSPECIFIEK_4</short>
-    </rule>
     <rule id="INSPECIFIEK_6" name="te verwachten">
       <pattern>
         <token>te</token>
@@ -26,30 +18,6 @@
       </pattern>
       <message>Als u overtuigend over wilt komen, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
       <short>INSPECIFIEK_6</short>
-    </rule>
-    <rule id="INSPECIFIEK_2" name="bijna zeker/altijd">
-      <pattern>
-        <token>bijna</token>
-        <token regexp="yes">zeker|altijd</token>
-      </pattern>
-      <message>Wanneer u precies wilt zijn, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' sterk verschillend wordt geïnterpreteerd.</message>
-      <short>INSPECIFIEK_2</short>
-    </rule>
-    <rule id="INSPECIFIEK_5" name="grote/kleine kans">
-      <pattern>
-        <token regexp="yes">grote|kleine</token>
-        <token>kans</token>
-      </pattern>
-      <message>Wanneer u precies wilt zijn, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
-      <short>INSPECIFIEK_5</short>
-    </rule>
-    <rule id="INSPECIFIEK_7" name="kunnen gebeuren">
-      <pattern>
-        <token>kunnen</token>
-        <token>gebeuren</token>
-      </pattern>
-      <message>Wanneer u precies wilt zijn, kunt u beter een percentage geven; uit onderzoek blijkt dat '\1 \2' heel verschillend wordt geïnterpreteerd.</message>
-      <short>INSPECIFIEK_7</short>
     </rule>
   </category>
   <category id="DYSLEXIE" name="Speciale regels m.b.t. dyslexie">
@@ -101,39 +69,6 @@
       </pattern>
       <message>Misschien bedoelt u <suggestion>m'n</suggestion> of <suggestion>mijn</suggestion>.</message>
       <short>MEN_MIJN</short>
-    </rule>
-  </category>
-  <category id="STYLE" name="Stijl">
-    <rule id="OVERDRIJVING_3" name="heel erg saai (erg saai)">
-      <pattern>
-        <token>heel</token>
-        <token>erg</token>
-      </pattern>
-      <message>Misschien kan dit ook gezegd worden met alleen <suggestion>\1</suggestion> of <suggestion>\2</suggestion>.</message>
-      <short>OVERDRIJVING_3</short>
-    </rule>
-    <rule id="VAAG_2" name="men is niemand">
-      <pattern>
-        <token>men</token>
-      </pattern>
-      <message>Pas op met vage taal. Misschien kan het iets preciezer.</message>
-      <short>VAAG_2</short>
-    </rule>
-    <rule id="NIET_ON" name="Niet ondenkbeeldig">
-      <pattern>
-        <token>niet</token>
-        <token regexp="yes">ondenkbeeldig|ondenkbaar</token>
-      </pattern>
-      <message>Met deze woordkeuze is het onduidelijk wat er precies wordt bedoeld. Beter is om 'on' of 'niet' weg te laten.</message>
-      <short>NIET_ON</short>
-    </rule>
-    <rule id="OVERDRIJVING_2" name="vreselijk mooi (mooi)">
-      <pattern>
-        <token regexp="yes">vreselijk|super|mega</token>
-        <token postag="BNW.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Door \1 weg te laten komt dit iets formeler over.</message>
-      <short>OVERDRIJVING_2</short>
     </rule>
   </category>
   <category id="TYPOS" name="Spellingcontrole">
@@ -195,6 +130,24 @@
       </pattern>
       <message>Dit is vast de verkeerde vorm van het werkwoord.</message>
       <short>FULL_SENTENCE_001</short>
+    </rule>
+  </category>
+  <category id="STYLE" name="Stijl">
+    <rule id="NIET_ON" name="Niet ondenkbeeldig">
+      <pattern>
+        <token>niet</token>
+        <token regexp="yes">ondenkbeeldig|ondenkbaar</token>
+      </pattern>
+      <message>Met deze woordkeuze is het onduidelijk wat er precies wordt bedoeld. Beter is om 'on' of 'niet' weg te laten.</message>
+      <short>NIET_ON</short>
+    </rule>
+    <rule id="OVERDRIJVING_2" name="vreselijk mooi (mooi)">
+      <pattern>
+        <token regexp="yes">vreselijk|super|mega</token>
+        <token postag="BNW.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Door \1 weg te laten komt dit iets formeler over.</message>
+      <short>OVERDRIJVING_2</short>
     </rule>
   </category>
   <category id="OVERIG" name="Diverse regels">

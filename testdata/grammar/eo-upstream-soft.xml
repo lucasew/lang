@@ -278,6 +278,14 @@
       <message>Ne uzu «de» antaŭ identiga priskribo. Ĉu vi intencis <suggestion>\2 \4</suggestion>?</message>
       <short>LA_URBO_DE</short>
     </rule>
+    <rule id="LA_VORTO" name="Netaŭga vorto post «la»">
+      <pattern>
+        <token>la</token>
+        <token regexp="yes" postag="K|[PRV] .*" postag_regexp="yes">(?-i)[a-zĉĝĵĥŝ].*</token>
+      </pattern>
+      <message>La vorto «\1» ne povas esti antaŭ la vorto «\2».</message>
+      <short>LA_VORTO</short>
+    </rule>
     <rule id="MAJ_FESTOJ" name="Nomoj de festoj estas skribitaj majuskle">
       <pattern>
         <token regexp="yes">advento|epifanio|kristnasko|pentekosto|pasko</token>
