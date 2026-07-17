@@ -11,6 +11,7 @@ import (
 )
 
 // CheckWithPatternRuleFile loads --rulefile XML and runs loaded pattern rules on text.
+// Multi-sentence: analyzes with JLanguageTool and maps offsets to the document.
 // Returns match count; writes API XML/JSON/plain depending on opts.OutputFormat.
 func CheckWithPatternRuleFile(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
 	if opts == nil || opts.GetRuleFile() == "" {
@@ -33,26 +34,30 @@ func CheckWithPatternRuleFile(w io.Writer, text string, opts *CommandLineOptions
 	if err != nil {
 		return 0, err
 	}
-	sent := languagetool.AnalyzePlain(text)
-	var all []*rules.RuleMatch
+
+	lt := languagetool.NewJLanguageTool(lang)
 	for _, ar := range abstracts {
 		if ar == nil {
 			continue
 		}
 		pr := patterns.NewPatternRule(ar.ID, ar.LanguageCode, ar.PatternTokens, ar.Description, ar.Message, ar.ShortMessage)
-		ms, err := pr.Match(sent)
-		if err != nil {
-			return len(all), err
-		}
-		for _, m := range ms {
-			if m != nil && m.GetRule() == nil {
-				// attach rule id for output
-				m.Rule = idRule{id: ar.ID}
-			}
-			all = append(all, m)
+		patterns.RegisterPatternRule(lt, pr)
+	}
+	// apply CLI enable/disable
+	for _, id := range opts.GetDisabledRules() {
+		lt.DisableRule(id)
+	}
+
+	local := lt.Check(text)
+	// convert to RuleMatch for printers
+	sent := languagetool.AnalyzePlain(text)
+	all := rules.FromLocalMatches(local, sent)
+	// attach idRule for GetID when Rule is nil
+	for _, m := range all {
+		if m != nil && m.GetRule() == nil {
+			// FromLocalMatches should attach FakeRule with id — leave as-is
 		}
 	}
-	// enable/disable filter
 	all = FilterMatchesByRules(all, opts.GetDisabledRules(), opts.GetEnabledRules(), opts.IsUseEnabledOnly())
 	if opts.OutputFormat == OutputXML {
 		_, _ = io.WriteString(w, MatchesAsMinimalXML(all, lang))

@@ -49,6 +49,7 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	require.Contains(t, active, "WHITESPACE_RULE")
 	require.Contains(t, active, "EN_A_VS_AN")
 	require.Contains(t, active, "SENTENCE_WHITESPACE")
+	require.Contains(t, active, "WHITESPACE_PUNCTUATION")
 
 	// text-level sentence whitespace (missing space after period)
 	m = lt.Check("This is a text.And there's the next sentence.")
@@ -59,6 +60,16 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 		}
 	}
 	require.True(t, hasSW, "matches: %+v", m)
+
+	// space before colon
+	m = lt.Check("Wait : now")
+	var hasWBP bool
+	for _, x := range m {
+		if x.RuleID == "WHITESPACE_PUNCTUATION" {
+			hasWBP = true
+		}
+	}
+	require.True(t, hasWBP, "matches: %+v", m)
 }
 
 func TestToLocalMatches(t *testing.T) {

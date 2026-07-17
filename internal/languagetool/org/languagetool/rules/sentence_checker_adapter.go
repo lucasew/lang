@@ -84,6 +84,12 @@ func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang str
 	dp := NewDoublePunctuationRule(nil)
 	lt.AddRuleChecker(dp.GetID(), AsSentenceCheckerSimple(dp.Match))
 
+	wbp := NewWhitespaceBeforePunctuationRule(map[string]string{
+		"no_space_before_colon":     "Don't put a space before the colon",
+		"no_space_before_semicolon": "Don't put a space before the semicolon",
+	})
+	lt.AddRuleChecker(wbp.GetID(), AsSentenceCheckerSimple(wbp.Match))
+
 	up := NewUppercaseSentenceStartRule(nil, uppercaseLang)
 	lt.AddRuleChecker(up.GetID(), AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
 		return up.MatchList([]*languagetool.AnalyzedSentence{s})

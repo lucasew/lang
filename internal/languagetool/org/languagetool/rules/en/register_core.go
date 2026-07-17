@@ -3,6 +3,7 @@ package en
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreEnglishLanguageRules installs shared layout + EN-specific word-repeat + a/an + phrases.
@@ -29,4 +30,12 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
 	}, 40)
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
+
+	// Soft grammar patterns (token sequences) until full grammar.xml load is wired.
+	patterns.RegisterTokenSequences(lt, "en", []patterns.TokenSequenceSpec{
+		{ID: "EN_COULD_OF", Tokens: []string{"could", "of"}, Message: "Did you mean 'could have'?", Suggestion: "could have"},
+		{ID: "EN_SHOULD_OF", Tokens: []string{"should", "of"}, Message: "Did you mean 'should have'?", Suggestion: "should have"},
+		{ID: "EN_WOULD_OF", Tokens: []string{"would", "of"}, Message: "Did you mean 'would have'?", Suggestion: "would have"},
+		{ID: "EN_MUST_OF", Tokens: []string{"must", "of"}, Message: "Did you mean 'must have'?", Suggestion: "must have"},
+	})
 }

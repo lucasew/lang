@@ -45,4 +45,15 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 		}
 	}
 	require.True(t, hasLong, "%+v", m)
+
+	// pattern token sequence
+	m = lt.Check("I could of done better.")
+	var hasCould bool
+	for _, x := range m {
+		if x.RuleID == "EN_COULD_OF" {
+			hasCould = true
+			require.Contains(t, x.Suggestions, "could have")
+		}
+	}
+	require.True(t, hasCould, "%+v", m)
 }
