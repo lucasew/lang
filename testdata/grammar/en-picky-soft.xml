@@ -371,5 +371,31 @@
       <message>Consider "align" or "agree on the facts".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_IN_THE_WEEDS" name="in the weeds soft picky">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>weeds</token>
+      </pattern>
+      <message>Cliché; consider "in the details" or "bogged down".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HERDING_CATS" name="herding cats soft picky">
+      <pattern>
+        <token>herding</token>
+        <token>cats</token>
+      </pattern>
+      <message>Cliché; consider "coordinating" or name the difficulty.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLOSE_THE_LOOP" name="close the loop soft picky">
+      <pattern>
+        <token>close</token>
+        <token>the</token>
+        <token>loop</token>
+      </pattern>
+      <message>Consider "follow up" or "confirm completion".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

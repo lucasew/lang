@@ -3207,6 +3207,76 @@
       <message>Did you mean "successful"?</message>
       <short>sucessfull</short>
     </rule>
+    <rule id="EN_SOFT_LOSING_MISS" name="loosing soft">
+      <pattern>
+        <token>loosing</token>
+      </pattern>
+      <message>Did you mean "losing"?</message>
+      <short>loosing</short>
+    </rule>
+    <rule id="EN_SOFT_MANAGEMENT_MISS" name="managment soft">
+      <pattern>
+        <token>managment</token>
+      </pattern>
+      <message>Did you mean "management"?</message>
+      <short>managment</short>
+    </rule>
+    <rule id="EN_SOFT_PIECE_MISS" name="peice soft">
+      <pattern>
+        <token>peice</token>
+      </pattern>
+      <message>Did you mean "piece"?</message>
+      <short>peice</short>
+    </rule>
+    <rule id="EN_SOFT_RESTAURANT_MISS3" name="restaraunt soft">
+      <pattern>
+        <token>restaraunt</token>
+      </pattern>
+      <message>Did you mean "restaurant"?</message>
+      <short>restaraunt</short>
+    </rule>
+    <rule id="EN_SOFT_SCHEDULE_MISS" name="scedule soft">
+      <pattern>
+        <token>scedule</token>
+      </pattern>
+      <message>Did you mean "schedule"?</message>
+      <short>scedule</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATED_MISS" name="seperated soft">
+      <pattern>
+        <token>seperated</token>
+      </pattern>
+      <message>Did you mean "separated"?</message>
+      <short>seperated</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIRONMENTAL_MISS" name="enviromental soft">
+      <pattern>
+        <token>enviromental</token>
+      </pattern>
+      <message>Did you mean "environmental"?</message>
+      <short>enviromental</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURRING_MISS" name="occuring soft">
+      <pattern>
+        <token>occuring</token>
+      </pattern>
+      <message>Did you mean "occurring"?</message>
+      <short>occuring</short>
+    </rule>
+    <rule id="EN_SOFT_COMPLETELY_MISS" name="completly soft">
+      <pattern>
+        <token>completly</token>
+      </pattern>
+      <message>Did you mean "completely"?</message>
+      <short>completly</short>
+    </rule>
+    <rule id="EN_SOFT_ROOMMATE_MISS" name="roomate soft">
+      <pattern>
+        <token>roomate</token>
+      </pattern>
+      <message>Did you mean "roommate"?</message>
+      <short>roomate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

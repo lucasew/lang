@@ -807,4 +807,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NFR" name="immunize nfr">
+    <pattern>
+      <token>nfr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NFR_CAPS" name="immunize NFR">
+    <pattern>
+      <token>NFR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SRE" name="immunize sre">
+    <pattern>
+      <token>sre</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SRE_CAPS" name="immunize SRE">
+    <pattern>
+      <token>SRE</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLO" name="immunize slo">
+    <pattern>
+      <token>slo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLO_CAPS" name="immunize SLO">
+    <pattern>
+      <token>SLO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

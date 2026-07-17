@@ -162,3 +162,6 @@ to date	RB
 over the long haul	RB
 Austin Texas	NNP
 Portland Oregon	NNP
+Virginia Beach	NNP
+Colorado Springs	NNP
+in the near term	RB
