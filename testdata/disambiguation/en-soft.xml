@@ -1455,4 +1455,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NERDCTL" name="immunize nerdctl">
+    <pattern>
+      <token>nerdctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NERDCTL_CAPS" name="immunize Nerdctl">
+    <pattern>
+      <token>Nerdctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTAINERD" name="immunize containerd">
+    <pattern>
+      <token>containerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTAINERD_CAPS" name="immunize Containerd">
+    <pattern>
+      <token>Containerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNC" name="immunize runc">
+    <pattern>
+      <token>runc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUNC_CAPS" name="immunize Runc">
+    <pattern>
+      <token>Runc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

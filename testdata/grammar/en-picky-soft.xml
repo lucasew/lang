@@ -827,5 +827,32 @@
       <message>Jargon; name the launch timeline instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MINIMUM_VIABLE_PRODUCT" name="minimum viable product soft picky">
+      <pattern>
+        <token>minimum</token>
+        <token>viable</token>
+        <token>product</token>
+      </pattern>
+      <message>Jargon; name the smallest useful release instead of "MVP".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROOF_OF_CONCEPT" name="proof of concept soft picky">
+      <pattern>
+        <token>proof</token>
+        <token>of</token>
+        <token>concept</token>
+      </pattern>
+      <message>Jargon; name what is being validated instead of "PoC".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RETURN_ON_INVESTMENT" name="return on investment soft picky">
+      <pattern>
+        <token>return</token>
+        <token>on</token>
+        <token>investment</token>
+      </pattern>
+      <message>Jargon; name the benefit or payback instead of "ROI".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

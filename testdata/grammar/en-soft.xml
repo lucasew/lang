@@ -4467,6 +4467,76 @@
       <message>Did you mean "families"?</message>
       <short>familes</short>
     </rule>
+    <rule id="EN_SOFT_FORTUNATELY_MISS" name="fortunatly soft">
+      <pattern>
+        <token>fortunatly</token>
+      </pattern>
+      <message>Did you mean "fortunately"?</message>
+      <short>fortunatly</short>
+    </rule>
+    <rule id="EN_SOFT_FRIENDSHIPS_MISS" name="freindships soft">
+      <pattern>
+        <token>freindships</token>
+      </pattern>
+      <message>Did you mean "friendships"?</message>
+      <short>freindships</short>
+    </rule>
+    <rule id="EN_SOFT_FUNCTION_MISS" name="funtion soft">
+      <pattern>
+        <token>funtion</token>
+      </pattern>
+      <message>Did you mean "function"?</message>
+      <short>funtion</short>
+    </rule>
+    <rule id="EN_SOFT_GUARANTEED_MISS" name="gauranteed soft">
+      <pattern>
+        <token>gauranteed</token>
+      </pattern>
+      <message>Did you mean "guaranteed"?</message>
+      <short>gauranteed</short>
+    </rule>
+    <rule id="EN_SOFT_GUARDS_MISS" name="gaurds soft">
+      <pattern>
+        <token>gaurds</token>
+      </pattern>
+      <message>Did you mean "guards"?</message>
+      <short>gaurds</short>
+    </rule>
+    <rule id="EN_SOFT_GOVERNMENTS_MISS" name="goverments soft">
+      <pattern>
+        <token>goverments</token>
+      </pattern>
+      <message>Did you mean "governments"?</message>
+      <short>goverments</short>
+    </rule>
+    <rule id="EN_SOFT_GRATEFULLY_MISS" name="greatfully soft">
+      <pattern>
+        <token>greatfully</token>
+      </pattern>
+      <message>Did you mean "gratefully"?</message>
+      <short>greatfully</short>
+    </rule>
+    <rule id="EN_SOFT_HIERARCHY_MISS2" name="hierachy soft">
+      <pattern>
+        <token>hierachy</token>
+      </pattern>
+      <message>Did you mean "hierarchy"?</message>
+      <short>hierachy</short>
+    </rule>
+    <rule id="EN_SOFT_HIGHLIGHT_MISS" name="hightlight soft">
+      <pattern>
+        <token>hightlight</token>
+      </pattern>
+      <message>Did you mean "highlight"?</message>
+      <short>hightlight</short>
+    </rule>
+    <rule id="EN_SOFT_INITIALLY_MISS" name="initally soft">
+      <pattern>
+        <token>initally</token>
+      </pattern>
+      <message>Did you mean "initially"?</message>
+      <short>initally</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
