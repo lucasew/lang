@@ -1023,4 +1023,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ESLINT" name="immunize eslint">
+    <pattern>
+      <token>eslint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESLINT_CAPS" name="immunize ESLint">
+    <pattern>
+      <token>ESLint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRISMA" name="immunize prisma">
+    <pattern>
+      <token>prisma</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRISMA_CAPS" name="immunize Prisma">
+    <pattern>
+      <token>Prisma</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCKER" name="immunize docker">
+    <pattern>
+      <token>docker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DOCKER_CAPS" name="immunize Docker">
+    <pattern>
+      <token>Docker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

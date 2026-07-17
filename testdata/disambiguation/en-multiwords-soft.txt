@@ -180,3 +180,6 @@ in large part	RB
 Nashville Tennessee	NNP
 Minneapolis Minnesota	NNP
 all things considered	RB
+Cleveland Ohio	NNP
+Pittsburgh Pennsylvania	NNP
+in due season	RB

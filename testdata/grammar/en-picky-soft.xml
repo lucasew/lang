@@ -517,5 +517,29 @@
       <message>Cliché; consider "raise standards" or name the higher bar.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_THINK_OUTSIDE" name="think outside soft picky">
+      <pattern>
+        <token>think</token>
+        <token>outside</token>
+      </pattern>
+      <message>Cliché; consider "think creatively" or name the constraint.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIP_IT" name="ship it soft picky">
+      <pattern>
+        <token>ship</token>
+        <token>it</token>
+      </pattern>
+      <message>Vague slogan; name the release criteria.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OWN_IT" name="own it soft picky">
+      <pattern>
+        <token>own</token>
+        <token>it</token>
+      </pattern>
+      <message>Vague; consider "take responsibility" or name the owner.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

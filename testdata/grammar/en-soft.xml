@@ -3627,6 +3627,76 @@
       <message>Did you mean "occasional"?</message>
       <short>occassional</short>
     </rule>
+    <rule id="EN_SOFT_OMISSION_MISS" name="omision soft">
+      <pattern>
+        <token>omision</token>
+      </pattern>
+      <message>Did you mean "omission"?</message>
+      <short>omision</short>
+    </rule>
+    <rule id="EN_SOFT_PRECEDE_MISS" name="preceed soft">
+      <pattern>
+        <token>preceed</token>
+      </pattern>
+      <message>Did you mean "precede"?</message>
+      <short>preceed</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERABLY_MISS" name="preferrably soft">
+      <pattern>
+        <token>preferrably</token>
+      </pattern>
+      <message>Did you mean "preferably"?</message>
+      <short>preferrably</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGE_MISS" name="privilage soft">
+      <pattern>
+        <token>privilage</token>
+      </pattern>
+      <message>Did you mean "privilege"?</message>
+      <short>privilage</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGED_MISS" name="priviledged soft">
+      <pattern>
+        <token>priviledged</token>
+      </pattern>
+      <message>Did you mean "privileged"?</message>
+      <short>priviledged</short>
+    </rule>
+    <rule id="EN_SOFT_PROBABLY_MISS" name="probaly soft">
+      <pattern>
+        <token>probaly</token>
+      </pattern>
+      <message>Did you mean "probably"?</message>
+      <short>probaly</short>
+    </rule>
+    <rule id="EN_SOFT_PROMINENT_MISS" name="prominant soft">
+      <pattern>
+        <token>prominant</token>
+      </pattern>
+      <message>Did you mean "prominent"?</message>
+      <short>prominant</short>
+    </rule>
+    <rule id="EN_SOFT_PSYCHOLOGY_MISS" name="psycology soft">
+      <pattern>
+        <token>psycology</token>
+      </pattern>
+      <message>Did you mean "psychology"?</message>
+      <short>psycology</short>
+    </rule>
+    <rule id="EN_SOFT_RESEARCHER_MISS" name="reasearcher soft">
+      <pattern>
+        <token>reasearcher</token>
+      </pattern>
+      <message>Did you mean "researcher"?</message>
+      <short>reasearcher</short>
+    </rule>
+    <rule id="EN_SOFT_RELIGIOUS_MISS" name="religous soft">
+      <pattern>
+        <token>religous</token>
+      </pattern>
+      <message>Did you mean "religious"?</message>
+      <short>religous</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
