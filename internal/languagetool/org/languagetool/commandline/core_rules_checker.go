@@ -632,6 +632,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			"el-picky-soft.xml", "ro-picky-soft.xml", "gl-picky-soft.xml",
 			"sk-picky-soft.xml", "sl-picky-soft.xml",
 			"be-picky-soft.xml", "sr-picky-soft.xml", "lt-picky-soft.xml",
+			"is-picky-soft.xml", "ga-picky-soft.xml", "eo-picky-soft.xml",
 		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
@@ -650,6 +651,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			"da-optional-soft.xml", "ru-optional-soft.xml", "uk-optional-soft.xml",
 			"ca-optional-soft.xml", "el-optional-soft.xml", "ro-optional-soft.xml",
 			"gl-optional-soft.xml", "sk-optional-soft.xml", "sl-optional-soft.xml",
+			"be-optional-soft.xml", "sr-optional-soft.xml", "lt-optional-soft.xml",
 		} {
 			optPath := filepath.Join(gdir, name)
 			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {

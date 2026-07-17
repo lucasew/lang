@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SR optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="sr">
+  <category id="STYLE" name="Style">
+    <rule id="SR_SOFT_OPT_U_OKVIRU" name="u okviru soft optional" default="off">
+      <pattern>
+        <token>u</token>
+        <token>okviru</token>
+      </pattern>
+      <message>Razmotrite "pri" ili "tokom".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SR_SOFT_OPT_U_CILJU" name="u cilju soft optional" default="off">
+      <pattern>
+        <token>u</token>
+        <token>cilju</token>
+      </pattern>
+      <message>Razmotrite "da bi" ili "radi".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SR_SOFT_OPT_U_VEZI" name="u vezi sa soft optional" default="off">
+      <pattern>
+        <token>u</token>
+        <token>vezi</token>
+        <token>sa</token>
+      </pattern>
+      <message>Razmotrite "o" ili "povodom".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

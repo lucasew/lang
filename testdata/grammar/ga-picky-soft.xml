@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft GA pack loaded only when level is picky. -->
+<rules lang="ga">
+  <category id="STYLE" name="Style">
+    <rule id="GA_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Fearr "cruinniú" nó "comhdháil".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GA_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Fearr "aiseolas" nó "tuairimí".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GA_SOFT_PICKY_AN_BHFUIL" name="an- an- soft picky">
+      <pattern>
+        <token>an-mhaith</token>
+      </pattern>
+      <message>Breathnaigh ar fhrásaí níos nádúrtha.</message>
+      <short>style</short>
+    </rule>
+    <rule id="GA_SOFT_PICKY_RUDAI" name="a lán rudaí soft picky">
+      <pattern>
+        <token>a</token>
+        <token>lán</token>
+        <token>rudaí</token>
+      </pattern>
+      <message>Fearr ainmfhocal níos sonraithe ná "rudaí".</message>
+      <short>style</short>
+    </rule>
+    <rule id="GA_SOFT_PICKY_AG_DEIREADH" name="ag deireadh an lae soft picky">
+      <pattern>
+        <token>ag</token>
+        <token>deireadh</token>
+        <token>an</token>
+        <token>lae</token>
+      </pattern>
+      <message>Fearr "sa deireadh" nó "ar deireadh".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

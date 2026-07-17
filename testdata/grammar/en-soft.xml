@@ -1503,6 +1503,100 @@
       <message>Did you mean "first of all"?</message>
       <short>firstable</short>
     </rule>
+    <rule id="EN_SOFT_WETHER" name="wether soft">
+      <pattern>
+        <token>wether</token>
+        <token>or</token>
+        <token>not</token>
+      </pattern>
+      <message>Did you mean "whether or not"?</message>
+      <short>wether/whether</short>
+    </rule>
+    <rule id="EN_SOFT_LIGHTENING_STRIKE" name="lightening strike soft">
+      <pattern>
+        <token>lightening</token>
+        <token>strike</token>
+      </pattern>
+      <message>Did you mean "lightning strike"?</message>
+      <short>lightening/lightning</short>
+    </rule>
+    <rule id="EN_SOFT_THRU" name="thru soft">
+      <pattern>
+        <token>thru</token>
+      </pattern>
+      <message>Did you mean "through"?</message>
+      <short>thru</short>
+    </rule>
+    <rule id="EN_SOFT_THO" name="tho soft">
+      <pattern>
+        <token>tho</token>
+      </pattern>
+      <message>Did you mean "though"?</message>
+      <short>tho</short>
+    </rule>
+    <rule id="EN_SOFT_EMBARASS" name="embarass soft">
+      <pattern>
+        <token>embarass</token>
+      </pattern>
+      <message>Did you mean "embarrass"?</message>
+      <short>embarass</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASSION" name="occassion soft">
+      <pattern>
+        <token>occassion</token>
+      </pattern>
+      <message>Did you mean "occasion"?</message>
+      <short>occassion</short>
+    </rule>
+    <rule id="EN_SOFT_FOURTY" name="fourty soft">
+      <pattern>
+        <token>fourty</token>
+      </pattern>
+      <message>Did you mean "forty"?</message>
+      <short>fourty</short>
+    </rule>
+    <rule id="EN_SOFT_NINETH" name="nineth soft">
+      <pattern>
+        <token>nineth</token>
+      </pattern>
+      <message>Did you mean "ninth"?</message>
+      <short>nineth</short>
+    </rule>
+    <rule id="EN_SOFT_ARGUEMENT" name="arguement soft">
+      <pattern>
+        <token>arguement</token>
+      </pattern>
+      <message>Did you mean "argument"?</message>
+      <short>arguement</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIROMENT" name="enviroment soft">
+      <pattern>
+        <token>enviroment</token>
+      </pattern>
+      <message>Did you mean "environment"?</message>
+      <short>enviroment</short>
+    </rule>
+    <rule id="EN_SOFT_GOVERMENT" name="goverment soft">
+      <pattern>
+        <token>goverment</token>
+      </pattern>
+      <message>Did you mean "government"?</message>
+      <short>goverment</short>
+    </rule>
+    <rule id="EN_SOFT_RECIEVE" name="recieve soft">
+      <pattern>
+        <token>recieve</token>
+      </pattern>
+      <message>Did you mean "receive"?</message>
+      <short>recieve</short>
+    </rule>
+    <rule id="EN_SOFT_BELEIVE" name="beleive soft">
+      <pattern>
+        <token>beleive</token>
+      </pattern>
+      <message>Did you mean "believe"?</message>
+      <short>beleive</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

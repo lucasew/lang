@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft BE optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="be">
+  <category id="STYLE" name="Style">
+    <rule id="BE_SOFT_OPT_U_RAMKAH" name="у рамках soft optional" default="off">
+      <pattern>
+        <token>у</token>
+        <token>рамках</token>
+      </pattern>
+      <message>Разгледзьце "у" або "падчас".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BE_SOFT_OPT_Z_METAI" name="з мэтай soft optional" default="off">
+      <pattern>
+        <token>з</token>
+        <token>мэтай</token>
+      </pattern>
+      <message>Разгледзьце "каб".</message>
+      <short>style</short>
+    </rule>
+    <rule id="BE_SOFT_OPT_U_SUVIAZI" name="у сувязі з soft optional" default="off">
+      <pattern>
+        <token>у</token>
+        <token>сувязі</token>
+        <token>з</token>
+      </pattern>
+      <message>Разгледзьце "з-за" або "таму што".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>
