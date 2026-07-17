@@ -96,6 +96,35 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	}
 }
 
+// RegisterSoftPickyGrammar loads {base}-picky-soft.xml from grammar dir when present.
+// Used only for --level picky (or server picky boost). Prefer base language code
+// (en, de, fr) so en-US still gets en-picky-soft.xml.
+func RegisterSoftPickyGrammar(lt *languagetool.JLanguageTool, grammarDir, languageCode string) int {
+	if lt == nil || grammarDir == "" {
+		return 0
+	}
+	base := languageCode
+	if i := strings.IndexByte(languageCode, '-'); i > 0 {
+		base = languageCode[:i]
+	}
+	total := 0
+	for _, name := range []string{
+		base + "-picky-soft.xml",
+		languageCode + "-picky-soft.xml",
+	} {
+		p := filepath.Join(grammarDir, name)
+		if st, err := os.Stat(p); err != nil || !st.Mode().IsRegular() {
+			continue
+		}
+		n, err := patterns.RegisterGrammarFile(lt, p, languageCode)
+		if err != nil {
+			continue
+		}
+		total += n
+	}
+	return total
+}
+
 // RegisterRuleFilePatterns loads --rulefile XML pattern rules onto lt.
 func RegisterRuleFilePatterns(lt *languagetool.JLanguageTool, ruleFile, lang string) error {
 	if lt == nil || ruleFile == "" {
@@ -135,27 +164,21 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 	checker := NewCoreRulesChecker(lang)
 	lt := checker.lt
 	if opts != nil {
-		pickyEN := false
-		if strings.EqualFold(opts.Level, "PICKY") {
-			base := lang
-			if i := strings.IndexByte(lang, '-'); i > 0 {
-				base = lang[:i]
-			}
-			pickyEN = strings.EqualFold(base, "en")
-			// soft picky level for English (core inject + optional soft XML pack)
-			if pickyEN {
-				en.RegisterPickyEnglishRules(lt)
-			}
+		picky := strings.EqualFold(opts.Level, "PICKY")
+		baseLang := lang
+		if i := strings.IndexByte(lang, '-'); i > 0 {
+			baseLang = lang[:i]
+		}
+		if picky && strings.EqualFold(baseLang, "en") {
+			// soft picky level for English (core inject + soft XML pack below)
+			en.RegisterPickyEnglishRules(lt)
 		}
 		// optional soft grammar directory (e.g. testdata/grammar) with walk-up discovery
 		if dir := DiscoverGrammarDir(opts); dir != "" {
 			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
-			if pickyEN {
-				// en-picky-soft.xml: pedantic style rules only when --level picky
-				pickyPath := filepath.Join(dir, "en-picky-soft.xml")
-				if st, err := os.Stat(pickyPath); err == nil && st.Mode().IsRegular() {
-					_, _ = patterns.RegisterGrammarFile(lt, pickyPath, lang)
-				}
+			if picky {
+				// {base}-picky-soft.xml: pedantic style rules only when --level picky
+				RegisterSoftPickyGrammar(lt, dir, lang)
 			}
 		}
 		base := lang
@@ -548,9 +571,16 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			_, _ = fmt.Fprintf(w, "regional soft packs: %d\n", regionalN)
 		}
 		_, _ = fmt.Fprintf(w, "soft category filters: --disablecategories / --enablecategories\n")
-		pickySoft := filepath.Join(gdir, "en-picky-soft.xml")
-		if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
-			_, _ = fmt.Fprintf(w, "en picky soft pack: %s (load with --level picky)\n", pickySoft)
+		pickyN := 0
+		for _, name := range []string{"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml"} {
+			pickySoft := filepath.Join(gdir, name)
+			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
+				pickyN++
+				_, _ = fmt.Fprintf(w, "picky soft pack: %s (load with --level picky)\n", pickySoft)
+			}
+		}
+		if pickyN > 0 {
+			_, _ = fmt.Fprintf(w, "picky soft packs: %d\n", pickyN)
 		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)

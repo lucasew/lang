@@ -120,5 +120,47 @@
       <message>Prefer "preventive" in many style guides.</message>
       <short>style</short>
     </rule>
+
+    <rule id="EN_SOFT_PICKY_BANDWIDTH" name="bandwidth soft picky">
+      <pattern>
+        <token>bandwidth</token>
+      </pattern>
+      <message>Corporate jargon for capacity; consider "time" or "capacity".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOW_HANGING" name="low hanging fruit soft picky">
+      <pattern>
+        <token>low</token>
+        <token>hanging</token>
+        <token>fruit</token>
+      </pattern>
+      <message>Cliché; consider "easy wins" or name the tasks.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOVE_THE_NEEDLE" name="move the needle soft picky">
+      <pattern>
+        <token>move</token>
+        <token>the</token>
+        <token>needle</token>
+      </pattern>
+      <message>Cliché; consider "make a difference" or "improve results".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEEP_DIVE" name="deep dive soft picky">
+      <pattern>
+        <token>deep</token>
+        <token>dive</token>
+      </pattern>
+      <message>Consider "detailed look" or "thorough review".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TAKEAWAY" name="key takeaway soft picky">
+      <pattern>
+        <token>key</token>
+        <token>takeaway</token>
+      </pattern>
+      <message>Consider "main point" or "conclusion".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

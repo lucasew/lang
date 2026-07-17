@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft FR pack loaded only when level is picky. -->
+<rules lang="fr">
+  <category id="STYLE" name="Style">
+    <rule id="FR_SOFT_PICKY_UTILISER_AFIN" name="afin de pouvoir soft picky">
+      <pattern>
+        <token>afin</token>
+        <token>de</token>
+        <token>pouvoir</token>
+      </pattern>
+      <message>Préférez souvent "pour" + infinitif.</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_AU_NIVEAU_DE" name="au niveau de soft picky">
+      <pattern>
+        <token>au</token>
+        <token>niveau</token>
+        <token>de</token>
+      </pattern>
+      <message>Tour vague; préférez "pour", "quant à" ou "en matière de".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_SUITE_A" name="suite a soft picky">
+      <pattern>
+        <token>suite</token>
+        <token>a</token>
+      </pattern>
+      <message>Préférez "à la suite de" ou "après".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_EN_TERMES_DE" name="en termes de soft picky">
+      <pattern>
+        <token>en</token>
+        <token>termes</token>
+        <token>de</token>
+      </pattern>
+      <message>Anglicisme fréquent; préférez "en matière de" ou "pour".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_CHALLENGE" name="challenge soft picky">
+      <pattern>
+        <token>challenge</token>
+      </pattern>
+      <message>Préférez "défi" ou "enjeu".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Préférez "réunion".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_TRES_TRES" name="très très soft picky">
+      <pattern>
+        <token>très</token>
+        <token>très</token>
+      </pattern>
+      <message>Intensification faible; préférez un adjectif plus fort.</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_CHOSES" name="choses soft picky">
+      <pattern>
+        <token>plein</token>
+        <token>de</token>
+        <token>choses</token>
+      </pattern>
+      <message>Préférez un nom plus précis que "choses".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_AU_FINAL" name="au final soft picky">
+      <pattern>
+        <token>au</token>
+        <token>final</token>
+      </pattern>
+      <message>Préférez "finalement" ou "en fin de compte".</message>
+      <short>style</short>
+    </rule>
+    <rule id="FR_SOFT_PICKY_GLOBALEMENT" name="globalement soft picky">
+      <pattern>
+        <token>globalement</token>
+        <token>parlant</token>
+      </pattern>
+      <message>Redondant; "globalement" suffit souvent.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

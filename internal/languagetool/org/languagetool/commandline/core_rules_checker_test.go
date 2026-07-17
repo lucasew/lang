@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"runtime"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -201,4 +202,32 @@ func TestCoreCheckHook_GrammarDir(t *testing.T) {
 	require.Equal(t, 2, code, errb.String()+" cwd grammar: "+os.Getenv("LANG_GRAMMAR_DIR"))
 	require.Contains(t, out.String(), "EN_SOFT_YOUR_YOU_RE")
 	_ = dir
+}
+
+func TestRegisterSoftPickyGrammar(t *testing.T) {
+	dir := DiscoverGrammarDir(nil)
+	require.NotEmpty(t, dir)
+	lt := languagetool.NewJLanguageTool("de")
+	n := RegisterSoftPickyGrammar(lt, dir, "de")
+	require.Greater(t, n, 0)
+	ms := lt.Check("Es ist sehr sehr wichtig.")
+	found := false
+	for _, m := range ms {
+		if m.RuleID == "DE_SOFT_PICKY_SEHR_SEHR" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", ms)
+
+	ltFR := languagetool.NewJLanguageTool("fr")
+	nFR := RegisterSoftPickyGrammar(ltFR, dir, "fr")
+	require.Greater(t, nFR, 0)
+	msFR := ltFR.Check("Le meeting est demain.")
+	foundFR := false
+	for _, m := range msFR {
+		if m.RuleID == "FR_SOFT_PICKY_MEETING" {
+			foundFR = true
+		}
+	}
+	require.True(t, foundFR, "%+v", msFR)
 }

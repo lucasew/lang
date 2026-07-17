@@ -246,7 +246,8 @@ func applyRuleValues(lang, text string, existing []languagetool.LocalMatch, raw 
 	return out
 }
 
-// applyLevelPickyBoost runs extra EN picky patterns when level is PICKY (soft).
+// applyLevelPickyBoost runs extra picky patterns when level is PICKY (soft).
+// English: core picky inject + en-picky-soft.xml. de/fr: {lang}-picky-soft.xml only.
 func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool.LocalMatch, text string) []languagetool.LocalMatch {
 	if !strings.EqualFold(string(level), string(CheckLevelPicky)) {
 		return existing
@@ -255,18 +256,21 @@ func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
 	}
-	if !strings.EqualFold(base, "en") {
-		return existing
-	}
 	lt := languagetool.NewJLanguageTool(lang)
-	en.RegisterCoreEnglishLanguageRules(lt)
-	en.RegisterPickyEnglishRules(lt)
-	// soft picky XML pack (walk-up testdata/grammar/en-picky-soft.xml)
+	if strings.EqualFold(base, "en") {
+		en.RegisterCoreEnglishLanguageRules(lt)
+		en.RegisterPickyEnglishRules(lt)
+	}
+	// soft picky XML packs (en/de/fr-picky-soft.xml)
 	if dir := softGrammarDirFromEnv(); dir != "" {
-		pickyPath := dir + "/en-picky-soft.xml"
-		if st, err := os.Stat(pickyPath); err == nil && st.Mode().IsRegular() {
-			_, _ = patterns.RegisterGrammarFile(lt, pickyPath, lang)
+		for _, name := range []string{base + "-picky-soft.xml", lang + "-picky-soft.xml"} {
+			pickyPath := dir + "/" + name
+			if st, err := os.Stat(pickyPath); err == nil && st.Mode().IsRegular() {
+				_, _ = patterns.RegisterGrammarFile(lt, pickyPath, lang)
+			}
 		}
+	} else if !strings.EqualFold(base, "en") {
+		return existing
 	}
 	// only keep picky-only rule ids from this pass (core inject + soft picky pack)
 	picky := map[string]struct{}{
@@ -280,7 +284,7 @@ func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool
 			existing = append(existing, m)
 			continue
 		}
-		// soft picky pack: EN_SOFT_PICKY_*
+		// soft picky pack: *_SOFT_PICKY_*
 		if strings.Contains(m.RuleID, "SOFT_PICKY") {
 			existing = append(existing, m)
 		}

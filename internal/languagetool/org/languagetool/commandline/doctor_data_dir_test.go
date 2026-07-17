@@ -61,9 +61,10 @@ func TestCoreDoctor(t *testing.T) {
 			require.Contains(t, out, "regional soft packs:")
 			require.Contains(t, out, "soft category filters:")
 		}
-		if strings.Contains(out, "en-picky-soft.xml") {
-			require.Contains(t, out, "en picky soft pack:")
+		if strings.Contains(out, "en-picky-soft.xml") || strings.Contains(out, "picky soft pack:") {
+			require.Contains(t, out, "picky soft pack:")
 			require.Contains(t, out, "--level picky")
+			require.Contains(t, out, "picky soft packs:")
 		}
 	}
 }

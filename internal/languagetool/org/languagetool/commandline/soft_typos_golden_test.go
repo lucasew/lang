@@ -1666,6 +1666,115 @@ func TestGolden_ApplySoftPickyUtilize(t *testing.T) {
 	require.NotContains(t, strings.ToLower(out.String()), "utilize")
 }
 
+func TestGolden_SoftPickyDE(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"Im Hinblick auf den Plan warte ich.", "DE_SOFT_PICKY_NUTZEN_VON"},
+		{"Last but not least danke ich allen.", "DE_SOFT_PICKY_LAST_BUT_NOT"},
+		{"Am Ende des Tages entscheiden wir.", "DE_SOFT_PICKY_AM_ENDE_DES_TAGES"},
+		{"Es ist sehr sehr wichtig.", "DE_SOFT_PICKY_SEHR_SEHR"},
+		{"Wir müssen viele Dinge klären.", "DE_SOFT_PICKY_DINGE"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var def bytes.Buffer
+			_, err := CoreGoldenHook(&def, tc.text, &CommandLineOptions{Language: "de"})
+			require.NoError(t, err)
+			var defF []Finding
+			require.NoError(t, json.Unmarshal(def.Bytes(), &defF))
+			for _, f := range defF {
+				require.NotEqual(t, tc.rule, f.Rule)
+			}
+			var buf bytes.Buffer
+			_, err = CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "de", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyFR(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"C'est un challenge important.", "FR_SOFT_PICKY_CHALLENGE", "défi"},
+		{"Le meeting est demain.", "FR_SOFT_PICKY_MEETING", "réunion"},
+		{"Au final, on part.", "FR_SOFT_PICKY_AU_FINAL", "finalement"},
+		{"C'est très très bon.", "FR_SOFT_PICKY_TRES_TRES", ""},
+		{"En termes de budget, ok.", "FR_SOFT_PICKY_EN_TERMES_DE", ""},
+		{"Au niveau de la qualité, oui.", "FR_SOFT_PICKY_AU_NIVEAU_DE", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var def bytes.Buffer
+			_, err := CoreGoldenHook(&def, tc.text, &CommandLineOptions{Language: "fr"})
+			require.NoError(t, err)
+			var defF []Finding
+			require.NoError(t, json.Unmarshal(def.Bytes(), &defF))
+			for _, f := range defF {
+				require.NotEqual(t, tc.rule, f.Rule)
+			}
+			var buf bytes.Buffer
+			_, err = CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "fr", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyENExtra(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"We need more bandwidth this week.", "EN_SOFT_PICKY_BANDWIDTH"},
+		{"Focus on low hanging fruit first.", "EN_SOFT_PICKY_LOW_HANGING"},
+		{"This will move the needle soon.", "EN_SOFT_PICKY_MOVE_THE_NEEDLE"},
+		{"Let's do a deep dive tomorrow.", "EN_SOFT_PICKY_DEEP_DIVE"},
+		{"The key takeaway is clear.", "EN_SOFT_PICKY_TAKEAWAY"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+
+
 func TestGolden_SoftInformalForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string
