@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft TA pack loaded only when level is picky. Space-tokenized. -->
+<rules lang="ta">
+  <category id="STYLE" name="Style">
+    <rule id="TA_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>«கூட்டம்» அல்லது «சந்திப்பு» பரிந்துரைக்கப்படுகிறது.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TA_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>«கருத்து» அல்லது «பின்னூட்டம்» பரிந்துரைக்கப்படுகிறது.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TA_SOFT_PICKY_ROMBA_ROMBA" name="ரொம்ப ரொம்ப soft picky">
+      <pattern>
+        <token>ரொம்ப</token>
+        <token>ரொம்ப</token>
+      </pattern>
+      <message>வலுவற்ற வலியுறுத்தல்; வலுவான சொல்லைக் கருதுங்கள்.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TA_SOFT_PICKY_VISHAYANGAL" name="பல விஷயங்கள் soft picky">
+      <pattern>
+        <token>பல</token>
+        <token>விஷயங்கள்</token>
+      </pattern>
+      <message>«விஷயங்கள்» ஐ விட துல்லியமான பெயர்ச்சொல்லைக் கருதுங்கள்.</message>
+      <short>style</short>
+    </rule>
+    <rule id="TA_SOFT_PICKY_MUDIVIL" name="முடிவில் soft picky">
+      <pattern>
+        <token>முடிவில்</token>
+      </pattern>
+      <message>«இறுதியாக» போன்றவற்றைக் கருதுங்கள்.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

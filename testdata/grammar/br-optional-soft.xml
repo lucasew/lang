@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft BR optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="br">
+  <category id="STYLE" name="Style">
+    <rule id="BR_SOFT_OPT_DIWAR_BENN" name="diwar-benn soft optional" default="off">
+      <pattern>
+        <token>diwar-benn</token>
+      </pattern>
+      <message>Sellit ouzh "diwar" pe "a-zivout" ma c'haller.</message>
+      <short>style</short>
+    </rule>
+    <rule id="BR_SOFT_OPT_EVIT_MA" name="evit ma soft optional" default="off">
+      <pattern>
+        <token>evit</token>
+        <token>ma</token>
+      </pattern>
+      <message>Sellit ouzh stummoù berroc'h pa c'haller.</message>
+      <short>style</short>
+    </rule>
+    <rule id="BR_SOFT_OPT_E_KEÑVER" name="e keñver soft optional" default="off">
+      <pattern>
+        <token>e</token>
+        <token>keñver</token>
+      </pattern>
+      <message>Sellit ouzh "diwar" pe "a-zivout".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

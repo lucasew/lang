@@ -1737,6 +1737,76 @@
       <message>Did you mean "harass"?</message>
       <short>harrass</short>
     </rule>
+    <rule id="EN_SOFT_IMEDIATELY" name="imediately soft">
+      <pattern>
+        <token>imediately</token>
+      </pattern>
+      <message>Did you mean "immediately"?</message>
+      <short>imediately</short>
+    </rule>
+    <rule id="EN_SOFT_JELOUS" name="jelous soft">
+      <pattern>
+        <token>jelous</token>
+      </pattern>
+      <message>Did you mean "jealous"?</message>
+      <short>jelous</short>
+    </rule>
+    <rule id="EN_SOFT_KNOWLEGE" name="knowlege soft">
+      <pattern>
+        <token>knowlege</token>
+      </pattern>
+      <message>Did you mean "knowledge"?</message>
+      <short>knowlege</short>
+    </rule>
+    <rule id="EN_SOFT_LIASON" name="liason soft">
+      <pattern>
+        <token>liason</token>
+      </pattern>
+      <message>Did you mean "liaison"?</message>
+      <short>liason</short>
+    </rule>
+    <rule id="EN_SOFT_MAINTAINANCE" name="maintainance soft">
+      <pattern>
+        <token>maintainance</token>
+      </pattern>
+      <message>Did you mean "maintenance"?</message>
+      <short>maintainance</short>
+    </rule>
+    <rule id="EN_SOFT_MILLENIUM" name="millenium soft">
+      <pattern>
+        <token>millenium</token>
+      </pattern>
+      <message>Did you mean "millennium"?</message>
+      <short>millenium</short>
+    </rule>
+    <rule id="EN_SOFT_NOTICABLE" name="noticable soft">
+      <pattern>
+        <token>noticable</token>
+      </pattern>
+      <message>Did you mean "noticeable"?</message>
+      <short>noticable</short>
+    </rule>
+    <rule id="EN_SOFT_OPPORTUNITY_MISS" name="oppertunity soft">
+      <pattern>
+        <token>oppertunity</token>
+      </pattern>
+      <message>Did you mean "opportunity"?</message>
+      <short>oppertunity</short>
+    </rule>
+    <rule id="EN_SOFT_PERSENT" name="persent soft">
+      <pattern>
+        <token>persent</token>
+      </pattern>
+      <message>Did you mean "percent" or "present"?</message>
+      <short>persent</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEDGE" name="priviledge soft">
+      <pattern>
+        <token>priviledge</token>
+      </pattern>
+      <message>Did you mean "privilege"?</message>
+      <short>priviledge</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
