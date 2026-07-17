@@ -2505,5 +2505,31 @@
       <message>Jargon; name abandoning shared model integration instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BIG_BALL_OF_MUD" name="big ball of mud soft picky">
+      <pattern>
+        <token>big</token>
+        <token>ball</token>
+        <token>of</token>
+        <token>mud</token>
+      </pattern>
+      <message>Jargon; name an unstructured tangled codebase instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CORE_DOMAIN" name="core domain soft picky">
+      <pattern>
+        <token>core</token>
+        <token>domain</token>
+      </pattern>
+      <message>Jargon; name the differentiating business problem instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SUPPORTING_DOMAIN" name="supporting domain soft picky">
+      <pattern>
+        <token>supporting</token>
+        <token>domain</token>
+      </pattern>
+      <message>Jargon; name necessary but non-differentiating work instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

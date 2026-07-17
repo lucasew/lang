@@ -420,3 +420,6 @@ Slate Corridor RegionNNP
 Chalk Corridor RegionNNP
 Clay Corridor RegionNNP
 Flint Corridor RegionNNP
+Shale Corridor RegionNNP
+Gneiss Corridor RegionNNP
+Schist Corridor RegionNNP

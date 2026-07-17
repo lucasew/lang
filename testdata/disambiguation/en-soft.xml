@@ -3903,4 +3903,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_BACKUP" name="immunize backup">
+    <pattern>
+      <token>backup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BACKUP_CAPS" name="immunize Backup">
+    <pattern>
+      <token>Backup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DATASYNC" name="immunize datasync">
+    <pattern>
+      <token>datasync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DATASYNC_CAPS" name="immunize DataSync">
+    <pattern>
+      <token>DataSync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWBALL" name="immunize snowball">
+    <pattern>
+      <token>snowball</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNOWBALL_CAPS" name="immunize Snowball">
+    <pattern>
+      <token>Snowball</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

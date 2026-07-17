@@ -9227,6 +9227,76 @@
       <message>Did you mean "mischievously"?</message>
       <short>mischieviously</short>
     </rule>
+    <rule id="EN_SOFT_DISAPPOINTMENTS_MISS" name="disapointments soft">
+      <pattern>
+        <token>disapointments</token>
+      </pattern>
+      <message>Did you mean "disappointments"?</message>
+      <short>disapointments</short>
+    </rule>
+    <rule id="EN_SOFT_LIAISING_MISS" name="liasing soft">
+      <pattern>
+        <token>liasing</token>
+      </pattern>
+      <message>Did you mean "liaising"?</message>
+      <short>liasing</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURRENCES_MISS2" name="occurences soft">
+      <pattern>
+        <token>occurences</token>
+      </pattern>
+      <message>Did you mean "occurrences"?</message>
+      <short>occurences</short>
+    </rule>
+    <rule id="EN_SOFT_PARALLEL_MISS4" name="paralell soft">
+      <pattern>
+        <token>paralell</token>
+      </pattern>
+      <message>Did you mean "parallel"?</message>
+      <short>paralell</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERABLE_MISS2" name="preferrable soft">
+      <pattern>
+        <token>preferrable</token>
+      </pattern>
+      <message>Did you mean "preferable"?</message>
+      <short>preferrable</short>
+    </rule>
+    <rule id="EN_SOFT_PREPARATION_MISS" name="preperation soft">
+      <pattern>
+        <token>preperation</token>
+      </pattern>
+      <message>Did you mean "preparation"?</message>
+      <short>preperation</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGE_MISS3" name="privledge soft">
+      <pattern>
+        <token>privledge</token>
+      </pattern>
+      <message>Did you mean "privilege"?</message>
+      <short>privledge</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSORS_MISS" name="proffesors soft">
+      <pattern>
+        <token>proffesors</token>
+      </pattern>
+      <message>Did you mean "professors"?</message>
+      <short>proffesors</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESS_MISS3" name="sucesss soft">
+      <pattern>
+        <token>sucesss</token>
+      </pattern>
+      <message>Did you mean "success"?</message>
+      <short>sucesss</short>
+    </rule>
+    <rule id="EN_SOFT_PARALLELLY_MISS" name="parallely soft">
+      <pattern>
+        <token>parallely</token>
+      </pattern>
+      <message>Did you mean "parallelly"?</message>
+      <short>parallely</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
