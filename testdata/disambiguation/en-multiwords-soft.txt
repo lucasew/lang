@@ -297,3 +297,6 @@ second to second	RB
 Dallas Texas	NNP
 Houston Texas	NNP
 in band	RB
+San Jose California	NNP
+Dallas Fort Worth	NNP
+hour by hour	RB

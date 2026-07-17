@@ -1509,5 +1509,29 @@
       <message>Jargon; name the staged release controls instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TRAFFIC_SPLITTING" name="traffic splitting soft picky">
+      <pattern>
+        <token>traffic</token>
+        <token>splitting</token>
+      </pattern>
+      <message>Jargon; name the routing percentages instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HOLDOUT_GROUP" name="holdout group soft picky">
+      <pattern>
+        <token>holdout</token>
+        <token>group</token>
+      </pattern>
+      <message>Jargon; name the control cohort and purpose instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FEATURE_FREEZE" name="feature freeze soft picky">
+      <pattern>
+        <token>feature</token>
+        <token>freeze</token>
+      </pattern>
+      <message>Jargon; name the change-control window instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

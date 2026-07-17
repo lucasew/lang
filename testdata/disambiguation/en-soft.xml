@@ -2427,4 +2427,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ZFS" name="immunize zfs">
+    <pattern>
+      <token>zfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZFS_CAPS" name="immunize ZFS">
+    <pattern>
+      <token>ZFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BTRFS" name="immunize btrfs">
+    <pattern>
+      <token>btrfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BTRFS_CAPS" name="immunize Btrfs">
+    <pattern>
+      <token>Btrfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XFS" name="immunize xfs">
+    <pattern>
+      <token>xfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_XFS_CAPS" name="immunize XFS">
+    <pattern>
+      <token>XFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

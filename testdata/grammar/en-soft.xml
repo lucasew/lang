@@ -6357,6 +6357,76 @@
       <message>Did you mean "inform"?</message>
       <short>infrom</short>
     </rule>
+    <rule id="EN_SOFT_MANEUVERED_MISS" name="manouvered soft">
+      <pattern>
+        <token>manouvered</token>
+      </pattern>
+      <message>Did you mean "maneuvered"?</message>
+      <short>manouvered</short>
+    </rule>
+    <rule id="EN_SOFT_MATERIALS_MISS" name="materails soft">
+      <pattern>
+        <token>materails</token>
+      </pattern>
+      <message>Did you mean "materials"?</message>
+      <short>materails</short>
+    </rule>
+    <rule id="EN_SOFT_MATHEMATICAL_MISS" name="mathmatical soft">
+      <pattern>
+        <token>mathmatical</token>
+      </pattern>
+      <message>Did you mean "mathematical"?</message>
+      <short>mathmatical</short>
+    </rule>
+    <rule id="EN_SOFT_MECHANICAL_MISS" name="mecanical soft">
+      <pattern>
+        <token>mecanical</token>
+      </pattern>
+      <message>Did you mean "mechanical"?</message>
+      <short>mecanical</short>
+    </rule>
+    <rule id="EN_SOFT_MEDIEVAL_MISS2" name="medeval soft">
+      <pattern>
+        <token>medeval</token>
+      </pattern>
+      <message>Did you mean "medieval"?</message>
+      <short>medeval</short>
+    </rule>
+    <rule id="EN_SOFT_MINIATURE_MISS" name="miniture soft">
+      <pattern>
+        <token>miniture</token>
+      </pattern>
+      <message>Did you mean "miniature"?</message>
+      <short>miniture</short>
+    </rule>
+    <rule id="EN_SOFT_MISSPELLING_MISS" name="mispelling soft">
+      <pattern>
+        <token>mispelling</token>
+      </pattern>
+      <message>Did you mean "misspelling"?</message>
+      <short>mispelling</short>
+    </rule>
+    <rule id="EN_SOFT_MORTGAGES_MISS" name="morgages soft">
+      <pattern>
+        <token>morgages</token>
+      </pattern>
+      <message>Did you mean "mortgages"?</message>
+      <short>morgages</short>
+    </rule>
+    <rule id="EN_SOFT_MOISTURE_MISS" name="mositure soft">
+      <pattern>
+        <token>mositure</token>
+      </pattern>
+      <message>Did you mean "moisture"?</message>
+      <short>mositure</short>
+    </rule>
+    <rule id="EN_SOFT_MONTH_MISS" name="mounth soft">
+      <pattern>
+        <token>mounth</token>
+      </pattern>
+      <message>Did you mean "month"?</message>
+      <short>mounth</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
