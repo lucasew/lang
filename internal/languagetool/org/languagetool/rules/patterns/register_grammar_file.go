@@ -181,6 +181,9 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 		// soft optional packs (rules often default="off", enable with -e)
 		dir + "/" + base + "-optional-soft.xml",
 		dir + "/" + languageCode + "-optional-soft.xml",
+		// vendored from upstream LanguageTool (scripts/vendor-lt-testdata.py)
+		dir + "/" + base + "-upstream-soft.xml",
+		dir + "/" + languageCode + "-upstream-soft.xml",
 	}
 	seen := map[string]struct{}{}
 	var candidates []string

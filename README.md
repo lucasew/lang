@@ -85,3 +85,16 @@ go run ./cmd/lang-server -port 8081 -public
 This project’s own code: see repository license when published.
 
 **LanguageTool** under `inspiration/languagetool` remains under its upstream licenses (LGPL). Official rule/data files are not re-licensed by this port.
+
+## Vendoring upstream testdata
+
+Do **not** invent soft rules or golden strings. Official LT data is the source of truth:
+
+```bash
+python3 scripts/vendor-lt-testdata.py --langs en
+```
+
+This copies grammar/style/disambiguation/multiwords into `testdata/upstream/`,
+extracts soft-loader-compatible surface patterns to `testdata/grammar/*-upstream-soft.xml`,
+and writes example goldens to `testdata/upstream/goldens/`. Run
+`TestGolden_UpstreamENExamples` (set `LANG_UPSTREAM_GOLDEN_ALL=1` for the full matrix).
