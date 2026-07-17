@@ -2971,5 +2971,30 @@
       <message>Jargon; name changeover preparation duration instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TAKT_TIME" name="takt time soft picky">
+      <pattern>
+        <token>takt</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name customer-demand pace duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LITTLE_LAW" name="little law soft picky">
+      <pattern>
+        <token>little</token>
+        <token>law</token>
+      </pattern>
+      <message>Jargon; name WIP equals throughput times cycle time.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THEORY_OF_CONSTRAINTS" name="theory of constraints soft picky">
+      <pattern>
+        <token>theory</token>
+        <token>of</token>
+        <token>constraints</token>
+      </pattern>
+      <message>Jargon; name bottleneck-focused system improvement instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

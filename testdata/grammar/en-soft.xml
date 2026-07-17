@@ -10557,6 +10557,76 @@
       <message>Did you mean "maybe"?</message>
       <short>mabye</short>
     </rule>
+    <rule id="EN_SOFT_HOWEVER_MISS2" name="howeever soft">
+      <pattern>
+        <token>howeever</token>
+      </pattern>
+      <message>Did you mean "however"?</message>
+      <short>howeever</short>
+    </rule>
+    <rule id="EN_SOFT_INCLUDE_MISS2" name="inclued soft">
+      <pattern>
+        <token>inclued</token>
+      </pattern>
+      <message>Did you mean "include"?</message>
+      <short>inclued</short>
+    </rule>
+    <rule id="EN_SOFT_INTEREST_MISS2" name="interes soft">
+      <pattern>
+        <token>interes</token>
+      </pattern>
+      <message>Did you mean "interest"?</message>
+      <short>interes</short>
+    </rule>
+    <rule id="EN_SOFT_KNOWLEDGE_MISS2" name="knowldge soft">
+      <pattern>
+        <token>knowldge</token>
+      </pattern>
+      <message>Did you mean "knowledge"?</message>
+      <short>knowldge</short>
+    </rule>
+    <rule id="EN_SOFT_LANGUAGE_MISS2" name="languag soft">
+      <pattern>
+        <token>languag</token>
+      </pattern>
+      <message>Did you mean "language"?</message>
+      <short>languag</short>
+    </rule>
+    <rule id="EN_SOFT_MAYBE_MISS2" name="mayb soft">
+      <pattern>
+        <token>mayb</token>
+      </pattern>
+      <message>Did you mean "maybe"?</message>
+      <short>mayb</short>
+    </rule>
+    <rule id="EN_SOFT_MAYBE_MISS3" name="maybee soft">
+      <pattern>
+        <token>maybee</token>
+      </pattern>
+      <message>Did you mean "maybe"?</message>
+      <short>maybee</short>
+    </rule>
+    <rule id="EN_SOFT_NUMBER_MISS" name="numbre soft">
+      <pattern>
+        <token>numbre</token>
+      </pattern>
+      <message>Did you mean "number"?</message>
+      <short>numbre</short>
+    </rule>
+    <rule id="EN_SOFT_PERHAPS_MISS2" name="prehaps soft">
+      <pattern>
+        <token>prehaps</token>
+      </pattern>
+      <message>Did you mean "perhaps"?</message>
+      <short>prehaps</short>
+    </rule>
+    <rule id="EN_SOFT_PROBLEM_MISS" name="porblem soft">
+      <pattern>
+        <token>porblem</token>
+      </pattern>
+      <message>Did you mean "problem"?</message>
+      <short>porblem</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

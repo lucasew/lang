@@ -4587,4 +4587,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_QLDBSESSION" name="immunize qldbsession">
+    <pattern>
+      <token>qldbsession</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QLDBSESSION_CAPS" name="immunize QLDBSession">
+    <pattern>
+      <token>QLDBSession</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAINQUERY" name="immunize managedblockchainquery">
+    <pattern>
+      <token>managedblockchainquery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MANAGEDBLOCKCHAINQUERY_CAPS" name="immunize ManagedBlockchainQuery">
+    <pattern>
+      <token>ManagedBlockchainQuery</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMETHEUS" name="immunize prometheus">
+    <pattern>
+      <token>prometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PROMETHEUS_CAPS" name="immunize Prometheus">
+    <pattern>
+      <token>Prometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

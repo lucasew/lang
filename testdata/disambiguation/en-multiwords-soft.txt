@@ -477,3 +477,6 @@ Tuff Summit RegionNNP
 Basalt Summit RegionNNP
 Andesite Summit RegionNNP
 Rhyolite Summit RegionNNP
+Obsidian Summit RegionNNP
+Granite Summit RegionNNP
+Marble Summit RegionNNP
