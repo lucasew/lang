@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="it">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="IT_SOFT_A_IL" name="a il">
+      <pattern>
+        <token>a</token>
+        <token>il</token>
+      </pattern>
+      <message>Forse "al"?</message>
+      <short>a/al</short>
+    </rule>
+  </category>
+</rules>

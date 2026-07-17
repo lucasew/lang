@@ -15,13 +15,21 @@ type CheckParams struct {
 
 // CheckResponse is a minimal /v2/check JSON shape.
 type CheckResponse struct {
-	Software          SoftwareInfo  `json:"software"`
-	Language          LanguageInfo  `json:"language"`
-	Matches           []MatchInfo   `json:"matches"`
+	Software         SoftwareInfo        `json:"software"`
+	Language         LanguageInfo        `json:"language"`
+	Matches          []MatchInfo         `json:"matches"`
 	// DetectedLanguage is set when language=auto (soft; same as Language when fixed).
-	DetectedLanguage  *LanguageInfo `json:"detectedLanguage,omitempty"`
+	DetectedLanguage *LanguageInfo       `json:"detectedLanguage,omitempty"`
+	// SentenceRanges lists plain-text sentence spans (offset/length).
+	SentenceRanges   []SentenceRangeInfo `json:"sentenceRanges,omitempty"`
 	// Warnings is a soft list of non-fatal notices.
-	Warnings          []string      `json:"warnings,omitempty"`
+	Warnings         []string            `json:"warnings,omitempty"`
+}
+
+// SentenceRangeInfo is one sentence span in the public API.
+type SentenceRangeInfo struct {
+	Offset int `json:"offset"`
+	Length int `json:"length"`
 }
 
 // SoftwareInfo identifies the server.

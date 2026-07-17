@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="pt">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="PT_SOFT_A_O" name="a o">
+      <pattern>
+        <token>a</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "ao"?</message>
+      <short>a/ao</short>
+    </rule>
+  </category>
+</rules>

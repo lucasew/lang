@@ -3,6 +3,8 @@ package server
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // V2TextChecker ports org.languagetool.server.V2TextChecker (JSON API).
@@ -58,6 +60,16 @@ func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches
 	}
 	if resp.Matches == nil {
 		resp.Matches = []MatchInfo{}
+	}
+	// soft sentence ranges for clients that want sentence boundaries
+	for _, sr := range languagetool.PlainSentenceRanges(text, langCode) {
+		if sr.ToPos < sr.FromPos {
+			continue
+		}
+		resp.SentenceRanges = append(resp.SentenceRanges, SentenceRangeInfo{
+			Offset: sr.FromPos,
+			Length: sr.ToPos - sr.FromPos,
+		})
 	}
 	b, err := json.Marshal(resp)
 	if err != nil {

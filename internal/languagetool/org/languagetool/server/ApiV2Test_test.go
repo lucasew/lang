@@ -145,3 +145,14 @@ func TestApiV2_IgnoreWords(t *testing.T) {
 	require.Equal(t, 200, r.Status)
 	require.Contains(t, r.Body, "EN_A_VS_AN")
 }
+
+func TestApiV2_SentenceRanges(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "Hello world. Second sentence here.",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r.Body, "sentenceRanges")
+	require.Contains(t, r.Body, `"offset"`)
+}
