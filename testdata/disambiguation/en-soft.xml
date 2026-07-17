@@ -2967,4 +2967,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_LAMBDA" name="immunize lambda">
+    <pattern>
+      <token>lambda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LAMBDA_CAPS" name="immunize Lambda">
+    <pattern>
+      <token>Lambda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FARGATE" name="immunize fargate">
+    <pattern>
+      <token>fargate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FARGATE_CAPS" name="immunize Fargate">
+    <pattern>
+      <token>Fargate</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECR" name="immunize ecr">
+    <pattern>
+      <token>ecr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECR_CAPS" name="immunize ECR">
+    <pattern>
+      <token>ECR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

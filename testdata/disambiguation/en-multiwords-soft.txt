@@ -342,3 +342,6 @@ Iron Belt Region	NNP
 Copper Belt RegionNNP
 Mining Belt RegionNNP
 Steel Belt RegionNNP
+Frost Belt RegionNNP
+Central Valley RegionNNP
+Hudson Valley RegionNNP

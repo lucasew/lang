@@ -7407,6 +7407,76 @@
       <message>Did you mean "deliberate"?</message>
       <short>delibrate</short>
     </rule>
+    <rule id="EN_SOFT_CONTRIBUTED_MISS" name="contibuted soft">
+      <pattern>
+        <token>contibuted</token>
+      </pattern>
+      <message>Did you mean "contributed"?</message>
+      <short>contibuted</short>
+    </rule>
+    <rule id="EN_SOFT_CONTRIBUTING_MISS" name="contibuting soft">
+      <pattern>
+        <token>contibuting</token>
+      </pattern>
+      <message>Did you mean "contributing"?</message>
+      <short>contibuting</short>
+    </rule>
+    <rule id="EN_SOFT_CONTRIBUTOR_MISS" name="contibutor soft">
+      <pattern>
+        <token>contibutor</token>
+      </pattern>
+      <message>Did you mean "contributor"?</message>
+      <short>contibutor</short>
+    </rule>
+    <rule id="EN_SOFT_CONTRIBUTORS_MISS" name="contibutors soft">
+      <pattern>
+        <token>contibutors</token>
+      </pattern>
+      <message>Did you mean "contributors"?</message>
+      <short>contibutors</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUOUSLY_MISS3" name="continously soft">
+      <pattern>
+        <token>continously</token>
+      </pattern>
+      <message>Did you mean "continuously"?</message>
+      <short>continously</short>
+    </rule>
+    <rule id="EN_SOFT_CONTRARY_MISS" name="contary soft">
+      <pattern>
+        <token>contary</token>
+      </pattern>
+      <message>Did you mean "contrary"?</message>
+      <short>contary</short>
+    </rule>
+    <rule id="EN_SOFT_CORRUPTION_MISS2" name="curruption soft">
+      <pattern>
+        <token>curruption</token>
+      </pattern>
+      <message>Did you mean "corruption"?</message>
+      <short>curruption</short>
+    </rule>
+    <rule id="EN_SOFT_DEPOSIT_MISS" name="deposite soft">
+      <pattern>
+        <token>deposite</token>
+      </pattern>
+      <message>Did you mean "deposit"?</message>
+      <short>deposite</short>
+    </rule>
+    <rule id="EN_SOFT_DESCRIBE_MISS" name="descibe soft">
+      <pattern>
+        <token>descibe</token>
+      </pattern>
+      <message>Did you mean "describe"?</message>
+      <short>descibe</short>
+    </rule>
+    <rule id="EN_SOFT_DETRIMENTAL_MISS" name="detremental soft">
+      <pattern>
+        <token>detremental</token>
+      </pattern>
+      <message>Did you mean "detrimental"?</message>
+      <short>detremental</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

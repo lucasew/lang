@@ -1878,5 +1878,28 @@
       <message>Jargon; name distinct responsibility boundaries instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_INFORMATION_HIDING" name="information hiding soft picky">
+      <pattern>
+        <token>information</token>
+        <token>hiding</token>
+      </pattern>
+      <message>Jargon; name encapsulating internal details instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_YAGNI" name="yagni soft picky">
+      <pattern>
+        <token>yagni</token>
+      </pattern>
+      <message>Jargon; name the avoid-unused-features rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HOLLYWOOD_PRINCIPLE" name="hollywood principle soft picky">
+      <pattern>
+        <token>hollywood</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the dont-call-us inversion instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
