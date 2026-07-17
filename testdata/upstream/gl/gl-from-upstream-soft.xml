@@ -418,7 +418,7 @@
     </rule>
     <rule id="BALANZA_DE_PAGOS" name="balanza de pagos (balanza de pagamentos)">
       <pattern>
-        <token>balanza</token>
+        <token inflected="yes">balanza</token>
         <token>de</token>
         <token>pagos</token>
       </pattern>
@@ -445,7 +445,7 @@
     </rule>
     <rule id="ESTIMAR_UNHA_DEMANDA" name="estimar unha demanda (admitir unha demanda)">
       <pattern>
-        <token>estimar</token>
+        <token inflected="yes">estimar</token>
         <token regexp="yes">a|unha</token>
         <token>demanda</token>
       </pattern>
@@ -454,7 +454,7 @@
     </rule>
     <rule id="PASAR_POLO_ARO" name="pasar polo aro (vir ao rego)">
       <pattern>
-        <token>pasar</token>
+        <token inflected="yes">pasar</token>
         <token>polo</token>
         <token>aro</token>
       </pattern>
@@ -558,42 +558,42 @@
   <category id="CAT4" name="Léxico: Falsos homónimos">
     <rule id="ABONO" name="abono (fertilizante, pagamento)">
       <pattern>
-        <token>abono</token>
+        <token inflected="yes">abono</token>
       </pattern>
       <message>Posíbel castelanismo: «abono» significa «subscrición».  Se vostede alude ás substancias químicas ou orgánicas que aumentan a fertilidade do solo, debe empregar <suggestion>fertilizante</suggestion>; pola contra, se falaba da acción de pagar por un obxecto ou servizo, use <suggestion>pagamento</suggestion> ou <suggestion>pago</suggestion>.</message>
       <short>Posíbel castelanismo</short>
     </rule>
     <rule id="APORTAR" name="aportar (achegar)">
       <pattern>
-        <token>aportar</token>
+        <token inflected="yes">aportar</token>
       </pattern>
       <message>O verbo «aportar» significa «chegar a porto».  A forma correcta para o sentido de «proporcionar» ou «presentar» é <suggestion>achegar</suggestion> ou <suggestion>facer unha achega</suggestion>.</message>
       <short>Posíbel castelanismo</short>
     </rule>
     <rule id="ASCO" name="asco (noxo)">
       <pattern>
-        <token>asco</token>
+        <token inflected="yes">asco</token>
       </pattern>
       <message>Posíbel castelanismo: «asco» é unha estrutura utricular propia dun tipo de fungo. A forma correcta para indicar repugnancia é <suggestion>noxo</suggestion>.</message>
       <short>Posíbel forma incorrecta</short>
     </rule>
     <rule id="BECA" name="beca (bolsa)">
       <pattern>
-        <token>beca</token>
+        <token inflected="yes">beca</token>
       </pattern>
       <message>A palabra «beca» significa «vestidura talar de cor negra».  A forma correcta para o sentido de «axuda económica á formación» é <suggestion>bolsa</suggestion>.</message>
       <short>Posíbel castelanismo</short>
     </rule>
     <rule id="FECHA" name="fecha (data)">
       <pattern>
-        <token>fecha</token>
+        <token inflected="yes">fecha</token>
       </pattern>
       <message>Posíbel castelanismo: o substantivo «fecha» significa «grolo», «sorbo».  A forma correcta para a indicación de tempo é <suggestion>data</suggestion>.</message>
       <short>Posíbel forma incorrecta</short>
     </rule>
     <rule id="GRUA" name="grúa (guindastre)">
       <pattern>
-        <token>grúa</token>
+        <token inflected="yes">grúa</token>
       </pattern>
       <message>Posíbel castelanismo: o substantivo «grúa» fai referencia a un paxaro. Para denominar ao aparato empregado para mover ou remolcar grandes pesos emprégase preferibelmente <suggestion>guindastre</suggestion> (masculino).</message>
       <short>Posíbel forma incorrecta</short>
@@ -607,7 +607,7 @@
     </rule>
     <rule id="PILDORA" name="píldora (pílula)">
       <pattern>
-        <token>píldora</token>
+        <token inflected="yes">píldora</token>
       </pattern>
       <message>Unha píldora é unha ave tamén coñecida como «píllara».  A forma correcta para facer referencia ao medicamento é <suggestion>pílula</suggestion>.</message>
       <short>Posíbel castelanismo</short>
@@ -621,7 +621,7 @@
     </rule>
     <rule id="RAPE" name="rape (peixe sapo)">
       <pattern>
-        <token>rape</token>
+        <token inflected="yes">rape</token>
       </pattern>
       <message>Posíbel castelanismo: o substantivo «\1» significa «acción ou efecto de rapar».  A forma correcta para o peixe é <suggestion>rabada</suggestion> (feminino) ou <suggestion>peixe sapo</suggestion>.</message>
       <short>RAPE</short>
@@ -630,7 +630,7 @@
   <category id="CAT6" name="Léxico: Barbarismos">
     <rule id="ADICAR" name="adicar (dedicar)">
       <pattern>
-        <token>adicar</token>
+        <token inflected="yes">adicar</token>
       </pattern>
       <message>A palabra «\1» non é aconsellábel en galego. Empregue mellor <suggestion>dedicar</suggestion>.</message>
       <short>Barbarismo</short>

@@ -211,7 +211,10 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 		"zh": "Chinese needs character/token segmentation",
 	}
 	// Primary langs first for faster signal; remaining still run.
-	priority := map[string]int{"en": 0, "de": 1, "fr": 2, "es": 3, "pt": 4, "pl": 5, "ca": 6, "ga": 7, "ar": 8, "ro": 9}
+	priority := map[string]int{
+		"en": 0, "de": 1, "fr": 2, "es": 3, "pt": 4, "pl": 5, "ca": 6, "ga": 7, "ar": 8, "ro": 9,
+		"nl": 10, "it": 11, "gl": 12, "sv": 13, "da": 14, "el": 15, "sk": 16, "sl": 17, "be": 18, "ast": 19,
+	}
 	sort.SliceStable(langs, func(i, j int) bool {
 		pi, oki := priority[langs[i]]
 		pj, okj := priority[langs[j]]
@@ -227,7 +230,7 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 		return langs[i] < langs[j]
 	})
 	// Keep CI default bounded unless full matrix requested.
-	maxLangs := 12
+	maxLangs := 20
 	if os.Getenv("LANG_UPSTREAM_GOLDEN_ALL") != "" {
 		maxLangs = len(langs)
 	}

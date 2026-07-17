@@ -56,6 +56,11 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		if lem := token.GetLemma(); lem != nil && *lem != "" {
 			matched = m.matchSurface(*lem)
 		}
+		// Soft path without a tagger: accept simple morphological extensions
+		// of the base form (abono→abonos) so inflected soft rules still fire.
+		if !matched {
+			matched = softInflectedSurfaceMatch(token.GetToken(), pt.Token, pt.CaseSensitive)
+		}
 	}
 	if pt.Pos != nil && pt.Pos.PosTag != "" {
 		pos := token.GetPOSTag()
@@ -69,10 +74,15 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			} else {
 				posOK = *pos == pt.Pos.PosTag
 			}
-		} else if pt.Token == "" {
-			// Soft path without a tagger: accept a surface word for postag-only
-			// tokens so patterns like AST DIR_A_INF can still fire partially.
-			posOK = softLooksLikeWord(token.GetToken())
+		} else {
+			// Soft path without a tagger: untagged tokens act as UNKNOWN.
+			// Postag-only empty surface tokens also accept any letter word.
+			tag := strings.ToUpper(pt.Pos.PosTag)
+			if tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN") {
+				posOK = true
+			} else if pt.Token == "" {
+				posOK = softLooksLikeWord(token.GetToken())
+			}
 		}
 		if pt.Pos.Negate {
 			posOK = !posOK
@@ -195,4 +205,39 @@ func softLooksLikeWord(s string) bool {
 		letters++
 	}
 	return letters > 0
+}
+
+// softInflectedSurfaceMatch approximates lemma matching without a tagger:
+// surface equals base, or base is a prefix of surface with a short suffix (s, es, n, en, …).
+func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
+	if surface == "" || base == "" {
+		return false
+	}
+	if !caseSensitive {
+		surface = strings.ToLower(surface)
+		base = strings.ToLower(base)
+	}
+	if surface == base {
+		return true
+	}
+	if !strings.HasPrefix(surface, base) {
+		return false
+	}
+	suf := surface[len(base):]
+	if len(suf) == 0 || len(suf) > 4 {
+		return false
+	}
+	// Common short inflection suffixes across LT languages (not full morphology).
+	switch suf {
+	case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "aren", "eren":
+		return true
+	default:
+		// all-letter short suffix only
+		for _, r := range suf {
+			if !unicode.IsLetter(r) {
+				return false
+			}
+		}
+		return len(suf) <= 2
+	}
 }

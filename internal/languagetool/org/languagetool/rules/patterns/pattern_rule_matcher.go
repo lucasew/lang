@@ -109,9 +109,15 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 			minOcc = 0
 		}
 		// search window: current pos .. pos+prevSkip
-		windowEnd := pos + prevSkip
-		if windowEnd >= len(tokens) {
+		// SkipNext -1 means unlimited (LT PatternToken.skip = -1).
+		windowEnd := pos
+		if prevSkip < 0 {
 			windowEnd = len(tokens) - 1
+		} else {
+			windowEnd = pos + prevSkip
+			if windowEnd >= len(tokens) {
+				windowEnd = len(tokens) - 1
+			}
 		}
 		matchedCount := 0
 		foundAt := -1
