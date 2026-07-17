@@ -195,3 +195,6 @@ more often than not	RB
 Honolulu Hawaii	NNP
 Boise Idaho	NNP
 in no time	RB
+Tucson Arizona	NNP
+Raleigh North Carolina	NNP
+time and again	RB

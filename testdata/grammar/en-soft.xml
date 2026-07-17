@@ -3977,6 +3977,76 @@
       <message>Did you mean "necessary"?</message>
       <short>neccesary</short>
     </rule>
+    <rule id="EN_SOFT_OPPORTUNITIES_MISS" name="oppurtunities soft">
+      <pattern>
+        <token>oppurtunities</token>
+      </pattern>
+      <message>Did you mean "opportunities"?</message>
+      <short>oppurtunities</short>
+    </rule>
+    <rule id="EN_SOFT_ORIGINAL_MISS3" name="orginial soft">
+      <pattern>
+        <token>orginial</token>
+      </pattern>
+      <message>Did you mean "original"?</message>
+      <short>orginial</short>
+    </rule>
+    <rule id="EN_SOFT_PARALLEL_MISS3" name="parallell soft">
+      <pattern>
+        <token>parallell</token>
+      </pattern>
+      <message>Did you mean "parallel"?</message>
+      <short>parallell</short>
+    </rule>
+    <rule id="EN_SOFT_PASTIME_MISS" name="passtime soft">
+      <pattern>
+        <token>passtime</token>
+      </pattern>
+      <message>Did you mean "pastime"?</message>
+      <short>passtime</short>
+    </rule>
+    <rule id="EN_SOFT_PHENOMENA_MISS" name="phenomina soft">
+      <pattern>
+        <token>phenomina</token>
+      </pattern>
+      <message>Did you mean "phenomena"?</message>
+      <short>phenomina</short>
+    </rule>
+    <rule id="EN_SOFT_POSSESS_MISS" name="posess soft">
+      <pattern>
+        <token>posess</token>
+      </pattern>
+      <message>Did you mean "possess"?</message>
+      <short>posess</short>
+    </rule>
+    <rule id="EN_SOFT_PRECEDES_MISS" name="preceeds soft">
+      <pattern>
+        <token>preceeds</token>
+      </pattern>
+      <message>Did you mean "precedes"?</message>
+      <short>preceeds</short>
+    </rule>
+    <rule id="EN_SOFT_PROMINENTLY_MISS" name="prominantely soft">
+      <pattern>
+        <token>prominantely</token>
+      </pattern>
+      <message>Did you mean "prominently"?</message>
+      <short>prominantely</short>
+    </rule>
+    <rule id="EN_SOFT_REMEMBERED_MISS" name="remebered soft">
+      <pattern>
+        <token>remebered</token>
+      </pattern>
+      <message>Did you mean "remembered"?</message>
+      <short>remebered</short>
+    </rule>
+    <rule id="EN_SOFT_ROOMMATES_MISS" name="roomates soft">
+      <pattern>
+        <token>roomates</token>
+      </pattern>
+      <message>Did you mean "roommates"?</message>
+      <short>roomates</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

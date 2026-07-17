@@ -649,5 +649,32 @@
       <message>Cliché; consider "aligned" or name the shared goal.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DRINK_THE_KOOL_AID" name="drink the kool-aid soft picky">
+      <pattern>
+        <token>drink</token>
+        <token>the</token>
+        <token>kool-aid</token>
+      </pattern>
+      <message>Cliché; consider "accept uncritically" or name the belief.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WIN_WIN_SITUATION" name="win-win situation soft picky">
+      <pattern>
+        <token>win-win</token>
+        <token>situation</token>
+      </pattern>
+      <message>Cliché; name the mutual benefit instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINK_OUTSIDE_THE_BOX" name="think outside the box soft picky">
+      <pattern>
+        <token>think</token>
+        <token>outside</token>
+        <token>the</token>
+        <token>box</token>
+      </pattern>
+      <message>Cliché; consider "think creatively" or name the constraint.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -1203,4 +1203,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_RUSTC" name="immunize rustc">
+    <pattern>
+      <token>rustc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RUSTC_CAPS" name="immunize Rustc">
+    <pattern>
+      <token>Rustc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MISE" name="immunize mise">
+    <pattern>
+      <token>mise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MISE_CAPS" name="immunize Mise">
+    <pattern>
+      <token>Mise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOLANG" name="immunize golang">
+    <pattern>
+      <token>golang</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOLANG_CAPS" name="immunize Golang">
+    <pattern>
+      <token>Golang</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
