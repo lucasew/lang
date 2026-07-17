@@ -155,5 +155,47 @@
       <message>Did you mean "an effect"?</message>
       <short>affect/effect</short>
     </rule>
+    <rule id="EN_SOFT_TAKE_AFFECT" name="take affect">
+      <pattern>
+        <token>take</token>
+        <token>affect</token>
+      </pattern>
+      <message>Did you mean "take effect"?</message>
+      <short>affect/effect</short>
+    </rule>
+    <rule id="EN_SOFT_QUITE_QUIET" name="quite/quiet">
+      <pattern>
+        <token>be</token>
+        <token>quite</token>
+      </pattern>
+      <message>Did you mean "be quiet"?</message>
+      <short>quite/quiet</short>
+    </rule>
+    <rule id="EN_SOFT_YOUR_WELCOME" name="your welcome (variant)">
+      <pattern>
+        <token regexp="yes">Your|YOUR</token>
+        <token regexp="yes">Welcome|WELCOME</token>
+      </pattern>
+      <message>Did you mean "You're welcome"?</message>
+      <short>your/you're</short>
+    </rule>
+    <rule id="EN_SOFT_PEAKED_INTEREST" name="peaked my interest">
+      <pattern>
+        <token>peaked</token>
+        <token>my</token>
+        <token>interest</token>
+      </pattern>
+      <message>Did you mean "piqued my interest"?</message>
+      <short>peak/pique</short>
+    </rule>
+    <rule id="EN_SOFT_COULD_CARE_LESS" name="could care less">
+      <pattern>
+        <token>could</token>
+        <token>care</token>
+        <token>less</token>
+      </pattern>
+      <message>Did you mean "couldn't care less"?</message>
+      <short>idiom</short>
+    </rule>
   </category>
 </rules>

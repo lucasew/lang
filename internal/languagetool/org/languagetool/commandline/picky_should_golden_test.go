@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGolden_ShouldOf(t *testing.T) {
+func TestGolden_PickyShouldOf(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "You should of known better.", &CommandLineOptions{Language: "en"})
 	require.NoError(t, err)
@@ -25,18 +25,33 @@ func TestGolden_ShouldOf(t *testing.T) {
 	require.True(t, found, "%+v", findings)
 }
 
-func TestGolden_PickyAlot(t *testing.T) {
-	var buf bytes.Buffer
-	_, err := CoreGoldenHook(&buf, "I have alot of work.", &CommandLineOptions{Language: "en", Level: "PICKY"})
-	require.NoError(t, err)
-	var findings []Finding
-	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
-	found := false
-	for _, f := range findings {
-		if f.Rule == "EN_A_LOT" {
-			found = true
-			require.Equal(t, "a lot", f.Suggestion)
-		}
+func TestGolden_PickyLevelExtras(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"I have alot of work.", "EN_A_LOT", "a lot"},
+		{"Irregardless of that, we proceed.", "EN_IRREGARDLESS", "regardless"},
+		{"Supposably that is true.", "EN_SUPPOSABLY", "supposedly"},
+		{"I ordered an expresso.", "EN_EXPRESSO", "espresso"},
+		{"They tried to excape.", "EN_EXCAPE", "escape"},
 	}
-	require.True(t, found, "%+v", findings)
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
 }

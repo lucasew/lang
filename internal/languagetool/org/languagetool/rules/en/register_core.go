@@ -17,9 +17,7 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	wr := NewEnglishWordRepeatRule(map[string]string{"repetition": "Word repetition"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 	lt.AddRuleChecker("EN_A_VS_AN", languagetool.SimpleAvsAnChecker())
-	lt.AddRuleChecker("PHRASE_REPLACE", languagetool.SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
-		"tot he": "to the",
-	}))
+	lt.AddRuleChecker("PHRASE_REPLACE", languagetool.SimplePhraseReplaceChecker("PHRASE_REPLACE", SoftEnglishPhraseReplacements()))
 	// Multi-sentence: three successive sentences starting with the same word/adverb.
 	wrb := NewEnglishWordRepeatBeginningRule(map[string]string{
 		"desc_repetition_beginning_adv":       "Three successive sentences begin with the same adverb.",
@@ -34,12 +32,35 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 
 	// Soft grammar patterns (token sequences) until full grammar.xml load is wired.
-	patterns.RegisterTokenSequences(lt, "en", []patterns.TokenSequenceSpec{
+	patterns.RegisterTokenSequences(lt, "en", SoftEnglishTokenSequences())
+}
+
+// SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).
+func SoftEnglishPhraseReplacements() map[string]string {
+	return map[string]string{
+		"tot he":                       "to the",
+		"for all intensive purposes":   "for all intents and purposes",
+		"nip it in the butt":           "nip it in the bud",
+		"on accident":                  "by accident",
+		"could care less":              "couldn't care less",
+		"one in the same":              "one and the same",
+		"case and point":               "case in point",
+		"deep-seeded":                  "deep-seated",
+		"baited breath":                "bated breath",
+		"free reign":                   "free rein",
+	}
+}
+
+// SoftEnglishTokenSequences is the soft modal-of / fixed phrase token pack.
+func SoftEnglishTokenSequences() []patterns.TokenSequenceSpec {
+	return []patterns.TokenSequenceSpec{
 		{ID: "EN_COULD_OF", Tokens: []string{"could", "of"}, Message: "Did you mean 'could have'?", Suggestion: "could have"},
 		{ID: "EN_SHOULD_OF", Tokens: []string{"should", "of"}, Message: "Did you mean 'should have'?", Suggestion: "should have"},
 		{ID: "EN_WOULD_OF", Tokens: []string{"would", "of"}, Message: "Did you mean 'would have'?", Suggestion: "would have"},
 		{ID: "EN_MUST_OF", Tokens: []string{"must", "of"}, Message: "Did you mean 'must have'?", Suggestion: "must have"},
-	})
+		{ID: "EN_MIGHT_OF", Tokens: []string{"might", "of"}, Message: "Did you mean 'might have'?", Suggestion: "might have"},
+		{ID: "EN_TRY_AND", Tokens: []string{"try", "and"}, Message: "Did you mean 'try to'?", Suggestion: "try to"},
+	}
 }
 
 // RegisterPickyEnglishRules installs extra style/grammar patterns for Level PICKY.
@@ -50,6 +71,9 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "en", []patterns.TokenSequenceSpec{
 		{ID: "EN_A_LOT", Tokens: []string{"alot"}, Message: "Did you mean 'a lot'?", Suggestion: "a lot"},
 		{ID: "EN_IRREGARDLESS", Tokens: []string{"irregardless"}, Message: "Prefer 'regardless'.", Suggestion: "regardless"},
+		{ID: "EN_SUPPOSABLY", Tokens: []string{"supposably"}, Message: "Did you mean 'supposedly'?", Suggestion: "supposedly"},
+		{ID: "EN_EXPRESSO", Tokens: []string{"expresso"}, Message: "Did you mean 'espresso'?", Suggestion: "espresso"},
+		{ID: "EN_EXCAPE", Tokens: []string{"excape"}, Message: "Did you mean 'escape'?", Suggestion: "escape"},
 	})
 }
 
