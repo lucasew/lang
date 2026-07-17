@@ -13007,6 +13007,76 @@
       <message>Did you mean "workqueue"?</message>
       <short>workqueuee</short>
     </rule>
+    <rule id="EN_SOFT_EVENTBUS_MISS" name="eventbuss soft">
+      <pattern>
+        <token>eventbuss</token>
+      </pattern>
+      <message>Did you mean "eventbus"?</message>
+      <short>eventbuss</short>
+    </rule>
+    <rule id="EN_SOFT_MESSAGEBUS_MISS" name="messagebuss soft">
+      <pattern>
+        <token>messagebuss</token>
+      </pattern>
+      <message>Did you mean "messagebus"?</message>
+      <short>messagebuss</short>
+    </rule>
+    <rule id="EN_SOFT_TOPICPARTITION_MISS" name="topicpartiton soft">
+      <pattern>
+        <token>topicpartiton</token>
+      </pattern>
+      <message>Did you mean "topicpartition"?</message>
+      <short>topicpartiton</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUMERGROUP_MISS" name="consumergrop soft">
+      <pattern>
+        <token>consumergrop</token>
+      </pattern>
+      <message>Did you mean "consumergroup"?</message>
+      <short>consumergrop</short>
+    </rule>
+    <rule id="EN_SOFT_PRODUCERGROUP_MISS" name="producergrop soft">
+      <pattern>
+        <token>producergrop</token>
+      </pattern>
+      <message>Did you mean "producergroup"?</message>
+      <short>producergrop</short>
+    </rule>
+    <rule id="EN_SOFT_CIRCUITBREAKER_MISS" name="circuitbraker soft">
+      <pattern>
+        <token>circuitbraker</token>
+      </pattern>
+      <message>Did you mean "circuitbreaker"?</message>
+      <short>circuitbraker</short>
+    </rule>
+    <rule id="EN_SOFT_BULKHEAD_MISS" name="bulkheadd soft">
+      <pattern>
+        <token>bulkheadd</token>
+      </pattern>
+      <message>Did you mean "bulkhead"?</message>
+      <short>bulkheadd</short>
+    </rule>
+    <rule id="EN_SOFT_RETRYPOLICY_MISS" name="retrypolic soft">
+      <pattern>
+        <token>retrypolic</token>
+      </pattern>
+      <message>Did you mean "retrypolicy"?</message>
+      <short>retrypolic</short>
+    </rule>
+    <rule id="EN_SOFT_TIMEOUTPOLICY_MISS" name="timeoutpolic soft">
+      <pattern>
+        <token>timeoutpolic</token>
+      </pattern>
+      <message>Did you mean "timeoutpolicy"?</message>
+      <short>timeoutpolic</short>
+    </rule>
+    <rule id="EN_SOFT_RETRYBACKOFF_MISS" name="retrybackof soft">
+      <pattern>
+        <token>retrybackof</token>
+      </pattern>
+      <message>Did you mean "retrybackoff"?</message>
+      <short>retrybackof</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

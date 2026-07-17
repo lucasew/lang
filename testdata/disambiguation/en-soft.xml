@@ -5847,4 +5847,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NESTJS" name="immunize nestjs">
+    <pattern>
+      <token>nestjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NESTJS_CAPS" name="immunize NestJS">
+    <pattern>
+      <token>NestJS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FASTIFY" name="immunize fastify">
+    <pattern>
+      <token>fastify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FASTIFY_CAPS" name="immunize Fastify">
+    <pattern>
+      <token>Fastify</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HONO" name="immunize hono">
+    <pattern>
+      <token>hono</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HONO_CAPS" name="immunize Hono">
+    <pattern>
+      <token>Hono</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

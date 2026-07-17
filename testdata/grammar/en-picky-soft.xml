@@ -3749,5 +3749,29 @@
       <message>Jargon; name expansion-adjusted recurring revenue retention instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_LOGO_CHURN" name="logo churn soft picky">
+      <pattern>
+        <token>logo</token>
+        <token>churn</token>
+      </pattern>
+      <message>Jargon; name the share of customer accounts lost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REVENUE_CHURN" name="revenue churn soft picky">
+      <pattern>
+        <token>revenue</token>
+        <token>churn</token>
+      </pattern>
+      <message>Jargon; name the share of recurring revenue lost instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEAT_EXPANSION" name="seat expansion soft picky">
+      <pattern>
+        <token>seat</token>
+        <token>expansion</token>
+      </pattern>
+      <message>Jargon; name growth from more seats on existing accounts instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

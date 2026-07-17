@@ -582,3 +582,6 @@ Komatiite Ridge RegionNNP
 Harzburgite Ridge RegionNNP
 Lherzolite Ridge RegionNNP
 Dunite Peak RegionNNP
+Norite Peak RegionNNP
+Troctolite Peak RegionNNP
+Anorthosite Peak RegionNNP
