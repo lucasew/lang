@@ -9997,6 +9997,76 @@
       <message>Did you mean "attaching"?</message>
       <short>attatching</short>
     </rule>
+    <rule id="EN_SOFT_ATTACHMENT_MISS" name="attatchment soft">
+      <pattern>
+        <token>attatchment</token>
+      </pattern>
+      <message>Did you mean "attachment"?</message>
+      <short>attatchment</short>
+    </rule>
+    <rule id="EN_SOFT_ATTACHMENTS_MISS" name="attatchments soft">
+      <pattern>
+        <token>attatchments</token>
+      </pattern>
+      <message>Did you mean "attachments"?</message>
+      <short>attatchments</short>
+    </rule>
+    <rule id="EN_SOFT_AUDIENCE_MISS" name="audiance soft">
+      <pattern>
+        <token>audiance</token>
+      </pattern>
+      <message>Did you mean "audience"?</message>
+      <short>audiance</short>
+    </rule>
+    <rule id="EN_SOFT_AUDIENCES_MISS" name="audiances soft">
+      <pattern>
+        <token>audiances</token>
+      </pattern>
+      <message>Did you mean "audiences"?</message>
+      <short>audiances</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABLE_MISS3" name="avialable soft">
+      <pattern>
+        <token>avialable</token>
+      </pattern>
+      <message>Did you mean "available"?</message>
+      <short>avialable</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABILITY_MISS2" name="avialability soft">
+      <pattern>
+        <token>avialability</token>
+      </pattern>
+      <message>Did you mean "availability"?</message>
+      <short>avialability</short>
+    </rule>
+    <rule id="EN_SOFT_AWFUL_MISS2" name="aweful soft">
+      <pattern>
+        <token>aweful</token>
+      </pattern>
+      <message>Did you mean "awful"?</message>
+      <short>aweful</short>
+    </rule>
+    <rule id="EN_SOFT_BEGINNER_MISS" name="begginer soft">
+      <pattern>
+        <token>begginer</token>
+      </pattern>
+      <message>Did you mean "beginner"?</message>
+      <short>begginer</short>
+    </rule>
+    <rule id="EN_SOFT_BEGINNERS_MISS" name="begginers soft">
+      <pattern>
+        <token>begginers</token>
+      </pattern>
+      <message>Did you mean "beginners"?</message>
+      <short>begginers</short>
+    </rule>
+    <rule id="EN_SOFT_BELIEFS_MISS" name="beleifs soft">
+      <pattern>
+        <token>beleifs</token>
+      </pattern>
+      <message>Did you mean "beliefs"?</message>
+      <short>beleifs</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

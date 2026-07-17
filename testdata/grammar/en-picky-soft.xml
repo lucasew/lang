@@ -2779,5 +2779,29 @@
       <message>Jargon; name silent group relative sizing instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BUCKET_SYSTEM" name="bucket system soft picky">
+      <pattern>
+        <token>bucket</token>
+        <token>system</token>
+      </pattern>
+      <message>Jargon; name size-bucket estimation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOT_VOTING" name="dot voting soft picky">
+      <pattern>
+        <token>dot</token>
+        <token>voting</token>
+      </pattern>
+      <message>Jargon; name sticker-based multi-vote prioritization instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RELATIVE_MASS" name="relative mass soft picky">
+      <pattern>
+        <token>relative</token>
+        <token>mass</token>
+      </pattern>
+      <message>Jargon; name comparative bulk estimation instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -4299,4 +4299,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYUIBUILDER" name="immunize amplifyuibuilder">
+    <pattern>
+      <token>amplifyuibuilder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMPLIFYUIBUILDER_CAPS" name="immunize AmplifyUIBuilder">
+    <pattern>
+      <token>AmplifyUIBuilder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GEOFENCE" name="immunize geofence">
+    <pattern>
+      <token>geofence</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GEOFENCE_CAPS" name="immunize Geofence">
+    <pattern>
+      <token>Geofence</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOCATIONSERVICE" name="immunize locationservice">
+    <pattern>
+      <token>locationservice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOCATIONSERVICE_CAPS" name="immunize LocationService">
+    <pattern>
+      <token>LocationService</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

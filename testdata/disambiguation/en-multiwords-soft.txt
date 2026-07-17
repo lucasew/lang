@@ -453,3 +453,6 @@ Ash Peak RegionNNP
 Scoria Peak RegionNNP
 Tuff Peak RegionNNP
 Basalt Peak RegionNNP
+Andesite Peak RegionNNP
+Rhyolite Peak RegionNNP
+Obsidian Peak RegionNNP
