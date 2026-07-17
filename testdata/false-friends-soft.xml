@@ -538,4 +538,46 @@
       <translation lang="en">liking / affinity</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="GENIAL">
+    <rule>
+      <pattern lang="en">
+        <token>genial</token>
+      </pattern>
+      <translation lang="de">freundlich / angenehm</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>genial</token>
+      </pattern>
+      <translation lang="en">brilliant / ingenious</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="OVERTAKE">
+    <rule>
+      <pattern lang="en">
+        <token>overtake</token>
+      </pattern>
+      <translation lang="de">überholen</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>übernehmen</token>
+      </pattern>
+      <translation lang="en">take over / assume</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="FABRICATE">
+    <rule>
+      <pattern lang="en">
+        <token>fabricate</token>
+      </pattern>
+      <translation lang="pt">fabricar / inventar</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>fabricar</token>
+      </pattern>
+      <translation lang="en">manufacture / make</translation>
+    </rule>
+  </rulegroup>
 </rules>

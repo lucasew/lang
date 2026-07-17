@@ -148,5 +148,35 @@
       <message>Consider "can".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_IN_A_TIMELY_MANNER" name="in a timely manner soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>a</token>
+        <token>timely</token>
+        <token>manner</token>
+      </pattern>
+      <message>Consider "promptly" or "on time".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IT_IS_IMPORTANT_TO_NOTE" name="it is important to note soft optional" default="off">
+      <pattern>
+        <token>it</token>
+        <token>is</token>
+        <token>important</token>
+        <token>to</token>
+        <token>note</token>
+      </pattern>
+      <message>Consider stating the point directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_PLEASE_BE_ADVISED" name="please be advised soft optional" default="off">
+      <pattern>
+        <token>please</token>
+        <token>be</token>
+        <token>advised</token>
+      </pattern>
+      <message>Consider "note that" or state the fact directly.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

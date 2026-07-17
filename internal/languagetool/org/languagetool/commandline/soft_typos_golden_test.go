@@ -3875,6 +3875,100 @@ func TestGolden_SoftGBExtraVariants(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave16(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Please acknowlege receipt.", "EN_SOFT_ACKNOWLEDGE_MISS", "acknowledge"},
+		{"It is aparent to everyone.", "EN_SOFT_APPARENT_MISS", "apparent"},
+		{"Mind your appearence today.", "EN_SOFT_APPEARANCE_MISS", "appearance"},
+		{"That is argubly better.", "EN_SOFT_ARGUABLY_MISS", "arguably"},
+		{"It is basicly finished.", "EN_SOFT_BASICALLY_MISS", "basically"},
+		{"A beatiful garden grew.", "EN_SOFT_BEAUTIFUL_MISS", "beautiful"},
+		{"There is a clear benifit.", "EN_SOFT_BENEFIT_MISS", "benefit"},
+		{"Pick a catagory carefully.", "EN_SOFT_CATEGORY_MISS", "category"},
+		{"Visit the cemetary gates.", "EN_SOFT_CEMETERY_MISS", "cemetery"},
+		{"The plan is changable still.", "EN_SOFT_CHANGEABLE_MISS", "changeable"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftOptionalENTimelyManner(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Respond in a timely manner please.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "EN_SOFT_OPT_IN_A_TIMELY_MANNER")
+}
+
+func TestGolden_FalseFriendsGenial(t *testing.T) {
+	ff := softFalseFriendsPath(t)
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Das war genial gelöst.", &CommandLineOptions{
+		Language:         "de",
+		MotherTongue:     "en",
+		FalseFriendsFile: ff,
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "GENIAL" {
+			found = true
+			require.Equal(t, "brilliant / ingenious", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_IgnoreSpellingGrok(t *testing.T) {
+	if DiscoverEnglishIgnoreSpellingList(nil) == "" {
+		t.Skip("ignore-spelling list missing")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Grok and xAI shipped Claude alternatives.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+	}
+}
+
+func TestGolden_MultiwordSanDiego(t *testing.T) {
+	if DiscoverEnglishMultiwords(nil) == "" {
+		t.Skip("multiwords missing")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "We flew to San Diego yesterday.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		// multiword place names should not be flagged as spelling errors
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+	}
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer
@@ -3928,7 +4022,8 @@ func TestGolden_SoftListRulesSoftOptCount(t *testing.T) {
 	require.True(t, strings.Contains(out, "soft_opt=9") || strings.Contains(out, "soft_opt=1") ||
 		strings.Contains(out, "soft_opt=8") || strings.Contains(out, "soft_opt=7") ||
 		strings.Contains(out, "soft_opt=10") || strings.Contains(out, "soft_opt=12") ||
-		strings.Contains(out, "soft_opt=15") || strings.Contains(out, "soft_opt=6"), out)
+		strings.Contains(out, "soft_opt=15") || strings.Contains(out, "soft_opt=18") ||
+		strings.Contains(out, "soft_opt=6"), out)
 }
 
 func TestGolden_SoftListRulesOptionalOff(t *testing.T) {

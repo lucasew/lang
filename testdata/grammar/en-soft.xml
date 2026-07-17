@@ -2087,6 +2087,76 @@
       <message>Did you mean "achieve"?</message>
       <short>acheive</short>
     </rule>
+    <rule id="EN_SOFT_ACKNOWLEDGE_MISS" name="acknowlege soft">
+      <pattern>
+        <token>acknowlege</token>
+      </pattern>
+      <message>Did you mean "acknowledge"?</message>
+      <short>acknowlege</short>
+    </rule>
+    <rule id="EN_SOFT_APPARENT_MISS" name="aparent soft">
+      <pattern>
+        <token>aparent</token>
+      </pattern>
+      <message>Did you mean "apparent"?</message>
+      <short>aparent</short>
+    </rule>
+    <rule id="EN_SOFT_APPEARANCE_MISS" name="appearence soft">
+      <pattern>
+        <token>appearence</token>
+      </pattern>
+      <message>Did you mean "appearance"?</message>
+      <short>appearence</short>
+    </rule>
+    <rule id="EN_SOFT_ARGUABLY_MISS" name="argubly soft">
+      <pattern>
+        <token>argubly</token>
+      </pattern>
+      <message>Did you mean "arguably"?</message>
+      <short>argubly</short>
+    </rule>
+    <rule id="EN_SOFT_BASICALLY_MISS" name="basicly soft">
+      <pattern>
+        <token>basicly</token>
+      </pattern>
+      <message>Did you mean "basically"?</message>
+      <short>basicly</short>
+    </rule>
+    <rule id="EN_SOFT_BEAUTIFUL_MISS" name="beatiful soft">
+      <pattern>
+        <token>beatiful</token>
+      </pattern>
+      <message>Did you mean "beautiful"?</message>
+      <short>beatiful</short>
+    </rule>
+    <rule id="EN_SOFT_BENEFIT_MISS" name="benifit soft">
+      <pattern>
+        <token>benifit</token>
+      </pattern>
+      <message>Did you mean "benefit"?</message>
+      <short>benifit</short>
+    </rule>
+    <rule id="EN_SOFT_CHANGEABLE_MISS" name="changable soft">
+      <pattern>
+        <token>changable</token>
+      </pattern>
+      <message>Did you mean "changeable"?</message>
+      <short>changable</short>
+    </rule>
+    <rule id="EN_SOFT_CATEGORY_MISS" name="catagory soft">
+      <pattern>
+        <token>catagory</token>
+      </pattern>
+      <message>Did you mean "category"?</message>
+      <short>catagory</short>
+    </rule>
+    <rule id="EN_SOFT_CEMETERY_MISS" name="cemetary soft">
+      <pattern>
+        <token>cemetary</token>
+      </pattern>
+      <message>Did you mean "cemetery"?</message>
+      <short>cemetary</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
