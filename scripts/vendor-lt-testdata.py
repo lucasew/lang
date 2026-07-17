@@ -609,6 +609,25 @@ def vendor_lang(lang: str) -> dict:
             copy_file(src, OUT / lang / "resource" / rel)
             stats["copied"] += 1
 
+    # Rule-data tables under rules/<lang>/ (replace, diacritics, compounds, …)
+    rules_data = LT / "languagetool-language-modules" / lang / "src/main/resources/org/languagetool/rules" / lang
+    for name in (
+        "replace.txt",
+        "replace_custom.txt",
+        "replace_profanity.txt",
+        "diacritics.txt",
+        "compounds.txt",
+        "specific_case.txt",
+        "coherency.txt",
+        "wordiness.txt",
+        "redundancies.txt",
+        "wrongWordInContext.txt",
+    ):
+        src = rules_data / name
+        if src.is_file():
+            copy_file(src, OUT / lang / "rules" / name)
+            stats["copied"] += 1
+
     # derive soft pack + goldens from main grammar (+ style) and regional packs
     all_rules: list[dict] = []
     all_goldens: list[dict] = []

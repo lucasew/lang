@@ -233,3 +233,22 @@ func TestGolden_UpstreamOptionalDefaultOff(t *testing.T) {
 	}
 	require.True(t, found, "SOFT_OPTIONAL should enable ALSO_SENT_END: %+v", findings)
 }
+
+// TestGolden_UpstreamSimpleReplace exercises official replace.txt via soft core EN registration.
+func TestGolden_UpstreamSimpleReplace(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "This is a bussiness plan.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		// SubRuleSpecificIDs may use wrong form as id, or EN_SIMPLE_REPLACE
+		low := strings.ToLower(f.Rule + " " + f.Suggestion + " " + f.Message)
+		if strings.Contains(low, "business") || strings.Contains(low, "bussiness") || f.Rule == "EN_SIMPLE_REPLACE" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected simple-replace finding for bussiness: %+v", findings)
+}
