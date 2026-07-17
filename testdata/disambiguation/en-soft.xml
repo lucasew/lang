@@ -2643,4 +2643,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_RDMA" name="immunize rdma">
+    <pattern>
+      <token>rdma</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDMA_CAPS" name="immunize RDMA">
+    <pattern>
+      <token>RDMA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROCE" name="immunize roce">
+    <pattern>
+      <token>roce</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROCE_MIXED" name="immunize RoCE">
+    <pattern>
+      <token>RoCE</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IBVERBS" name="immunize ibverbs">
+    <pattern>
+      <token>ibverbs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IBVERBS_CAPS" name="immunize Ibverbs">
+    <pattern>
+      <token>Ibverbs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

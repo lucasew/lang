@@ -1655,5 +1655,29 @@
       <message>Jargon; name the transactional publish design instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_SAGA_PATTERN" name="saga pattern soft picky">
+      <pattern>
+        <token>saga</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the multi-step compensation workflow instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_EVENT_SOURCING" name="event sourcing soft picky">
+      <pattern>
+        <token>event</token>
+        <token>sourcing</token>
+      </pattern>
+      <message>Jargon; name the append-only state model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CQRS_PATTERN" name="cqrs pattern soft picky">
+      <pattern>
+        <token>cqrs</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the split read/write model instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

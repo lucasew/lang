@@ -6777,6 +6777,76 @@
       <message>Did you mean "endeavours"?</message>
       <short>endevours</short>
     </rule>
+    <rule id="EN_SOFT_EMBARRASSED_MISS2" name="embarased soft">
+      <pattern>
+        <token>embarased</token>
+      </pattern>
+      <message>Did you mean "embarrassed"?</message>
+      <short>embarased</short>
+    </rule>
+    <rule id="EN_SOFT_EXAMINED_MISS" name="examinated soft">
+      <pattern>
+        <token>examinated</token>
+      </pattern>
+      <message>Did you mean "examined"?</message>
+      <short>examinated</short>
+    </rule>
+    <rule id="EN_SOFT_EXPERIENCED_MISS2" name="experianceed soft">
+      <pattern>
+        <token>experianceed</token>
+      </pattern>
+      <message>Did you mean "experienced"?</message>
+      <short>experianceed</short>
+    </rule>
+    <rule id="EN_SOFT_FASCINATING_MISS2" name="fasinating soft">
+      <pattern>
+        <token>fasinating</token>
+      </pattern>
+      <message>Did you mean "fascinating"?</message>
+      <short>fasinating</short>
+    </rule>
+    <rule id="EN_SOFT_FINANCIALLY_MISS2" name="finacialy soft">
+      <pattern>
+        <token>finacialy</token>
+      </pattern>
+      <message>Did you mean "financially"?</message>
+      <short>finacialy</short>
+    </rule>
+    <rule id="EN_SOFT_USEFULNESS_MISS" name="usefullness soft">
+      <pattern>
+        <token>usefullness</token>
+      </pattern>
+      <message>Did you mean "usefulness"?</message>
+      <short>usefullness</short>
+    </rule>
+    <rule id="EN_SOFT_USEFULLY_MISS" name="usefuly soft">
+      <pattern>
+        <token>usefuly</token>
+      </pattern>
+      <message>Did you mean "usefully"?</message>
+      <short>usefuly</short>
+    </rule>
+    <rule id="EN_SOFT_VEHICLES_MISS" name="vehicals soft">
+      <pattern>
+        <token>vehicals</token>
+      </pattern>
+      <message>Did you mean "vehicles"?</message>
+      <short>vehicals</short>
+    </rule>
+    <rule id="EN_SOFT_VISIBLY_MISS" name="visably soft">
+      <pattern>
+        <token>visably</token>
+      </pattern>
+      <message>Did you mean "visibly"?</message>
+      <short>visably</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUIRING_MISS2" name="aquiring soft">
+      <pattern>
+        <token>aquiring</token>
+      </pattern>
+      <message>Did you mean "acquiring"?</message>
+      <short>aquiring</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

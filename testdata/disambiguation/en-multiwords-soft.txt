@@ -315,3 +315,6 @@ quarter by quarter	RB
 New York Metro	NNP
 Los Angeles Basin	NNP
 decade by decade	RB
+Chicago Metro	NNP
+New York City Metro	NNP
+century by century	RB
