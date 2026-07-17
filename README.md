@@ -71,6 +71,7 @@ go run ./cmd/lang-server -port 8081 -public
 | EN soft multiword disambiguator | MultiWordChunker on Analyze |
 | Demo EN speller (`LANG_DEMO_SPELLER=1` fallback) | map + edit-distance suggestions |
 | `--apply` suggestion rewrite | a/an, false friends, soft patterns |
+| `--ignore-words` CSV | suppress spelling matches |
 | Disambiguator | not yet |
 | Full 1:1 goldens | growing |
 

@@ -54,6 +54,8 @@ type CommandLineOptions struct {
 	RuleValues                    []string
 	RuleFile                      string
 	FalseFriendsFile              string
+	// IgnoreWords soft user-dictionary surfaces (suppress spelling matches).
+	IgnoreWords                   []string
 	// DataDir soft data root (grammar soft XML, false-friends soft file).
 	DataDir                       string
 	// FailOn is soft severity threshold for lint/sarif exit: error|warning|note (SPEC §2.2 optional).
@@ -149,6 +151,18 @@ func (o *CommandLineOptions) GetFilenames() []string {
 }
 func (o *CommandLineOptions) SetRuleFile(f string)           { o.RuleFile = f }
 func (o *CommandLineOptions) SetFalseFriendsFile(f string)   { o.FalseFriendsFile = f }
+func (o *CommandLineOptions) SetIgnoreWords(words []string) {
+	if o == nil {
+		return
+	}
+	o.IgnoreWords = append([]string(nil), words...)
+}
+func (o *CommandLineOptions) GetIgnoreWords() []string {
+	if o == nil {
+		return nil
+	}
+	return o.IgnoreWords
+}
 func (o *CommandLineOptions) GetRuleFile() string {
 	if o == nil {
 		return ""

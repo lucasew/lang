@@ -191,6 +191,9 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 				return nil, err
 			}
 		}
+		if words := opts.GetIgnoreWords(); len(words) > 0 {
+			lt.AddIgnoreWords(words...)
+		}
 		ApplyCLIRuleFilters(lt, opts)
 	}
 	return lt, nil

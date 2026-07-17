@@ -147,6 +147,12 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			}
 			i++
 			opts.SetFalseFriendsFile(args[i])
+		case "--ignore-words", "--ignoreWords":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetIgnoreWords(splitCSV(args[i]))
 		case "--json":
 			opts.SetOutputFormat(OutputJSON)
 		case "--xml":

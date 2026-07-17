@@ -37,6 +37,7 @@ Options:
   --xmlfilter              remove XML/HTML tags from input before check
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML
+  --ignore-words LIST      CSV surfaces to suppress spelling matches
   --ruleValues LIST        soft RULE_ID:value pairs (e.g. TOO_LONG_SENTENCE:10)
   --autoDetect, -adl       detect language from text
   --list                   list languages
