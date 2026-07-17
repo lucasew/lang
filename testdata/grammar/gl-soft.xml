@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="gl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="GL_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posible repetición de "de".</message>
+      <short>de de</short>
+    </rule>
+  </category>
+</rules>

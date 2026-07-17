@@ -17,6 +17,9 @@ type CheckOptions struct {
 	Level          CheckLevel
 	// IgnoreWords soft user-dictionary surfaces (suppresses spelling matches).
 	IgnoreWords []string
+	// Category filters (SoftRuleMeta / LocalMatch category IDs).
+	DisabledCategories []string
+	EnabledCategories  []string
 }
 
 // Check runs core rules for language on text and returns RemoteRuleMatch results.
@@ -52,6 +55,12 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	}
 	if len(opts.Disabled) > 0 {
 		keyParts = append(keyParts, "dis:"+strings.Join(opts.Disabled, ","))
+	}
+	if len(opts.DisabledCategories) > 0 {
+		keyParts = append(keyParts, "dcat:"+strings.Join(opts.DisabledCategories, ","))
+	}
+	if len(opts.EnabledCategories) > 0 {
+		keyParts = append(keyParts, "ecat:"+strings.Join(opts.EnabledCategories, ","))
 	}
 	settings.GlobalConfigKey = strings.Join(keyParts, "|")
 	return settings
@@ -97,6 +106,7 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	locals := p.Check(text)
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, text)
 	locals = filterLocalsByIgnoreWords(text, locals, opts.IgnoreWords)
+	locals = filterLocalsByCategories(locals, opts)
 	ctxSize := DefaultContextSize
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
@@ -115,6 +125,7 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	plain := at.GetPlainText()
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, plain)
 	locals = filterLocalsByIgnoreWords(plain, locals, opts.IgnoreWords)
+	locals = filterLocalsByCategories(locals, opts)
 	// Context uses original markup string so projected offsets align.
 	orig := at.GetTextWithMarkup()
 	ctxSize := DefaultContextSize
@@ -126,6 +137,51 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 
 func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore []string) []languagetool.LocalMatch {
 	return languagetool.FilterMatchesByIgnoreWords(text, ms, ignore)
+}
+
+// filterLocalsByCategories applies disabledCategories / enabledCategories (with enabledOnly).
+func filterLocalsByCategories(ms []languagetool.LocalMatch, opts CheckOptions) []languagetool.LocalMatch {
+	if len(ms) == 0 {
+		return ms
+	}
+	dis := stringSetFold(opts.DisabledCategories)
+	en := stringSetFold(opts.EnabledCategories)
+	if len(dis) == 0 && !(opts.UseEnabledOnly && len(en) > 0) {
+		return ms
+	}
+	out := make([]languagetool.LocalMatch, 0, len(ms))
+	for _, m := range ms {
+		catID := m.CategoryID
+		if catID == "" {
+			catID, _, _, _ = SoftRuleMeta(m.RuleID)
+		}
+		catKey := strings.ToUpper(catID)
+		if _, drop := dis[catKey]; drop {
+			continue
+		}
+		if opts.UseEnabledOnly && len(en) > 0 {
+			if _, ok := en[catKey]; !ok {
+				continue
+			}
+		}
+		out = append(out, m)
+	}
+	return out
+}
+
+func stringSetFold(items []string) map[string]struct{} {
+	if len(items) == 0 {
+		return nil
+	}
+	m := make(map[string]struct{}, len(items))
+	for _, s := range items {
+		s = strings.TrimSpace(s)
+		if s == "" {
+			continue
+		}
+		m[strings.ToUpper(s)] = struct{}{}
+	}
+	return m
 }
 
 // applyLevelPickyBoost runs extra EN picky patterns when level is PICKY (soft).

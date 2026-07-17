@@ -22,6 +22,8 @@ type CheckResponse struct {
 	DetectedLanguage *LanguageInfo       `json:"detectedLanguage,omitempty"`
 	// SentenceRanges lists plain-text sentence spans (offset/length).
 	SentenceRanges   []SentenceRangeInfo `json:"sentenceRanges,omitempty"`
+	// IgnoreRanges is multi-language foreign-span output (soft; often empty array).
+	IgnoreRanges     []IgnoreRangeInfo   `json:"ignoreRanges"`
 	// Warnings is a soft list of non-fatal notices.
 	Warnings         []string            `json:"warnings,omitempty"`
 }
@@ -30,6 +32,13 @@ type CheckResponse struct {
 type SentenceRangeInfo struct {
 	Offset int `json:"offset"`
 	Length int `json:"length"`
+}
+
+// IgnoreRangeInfo ports RemoteIgnoreRange for /v2/check (multi-language).
+type IgnoreRangeInfo struct {
+	From int    `json:"from"`
+	To   int    `json:"to"`
+	Lang string `json:"language,omitempty"`
 }
 
 // SoftwareInfo identifies the server.

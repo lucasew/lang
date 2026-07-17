@@ -71,6 +71,11 @@ func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches
 			Length: sr.ToPos - sr.FromPos,
 		})
 	}
+	// Multi-language ignore ranges are empty until foreign-span detection is wired;
+	// emit an empty array so clients expecting the field can rely on a stable shape.
+	if resp.IgnoreRanges == nil {
+		resp.IgnoreRanges = []IgnoreRangeInfo{}
+	}
 	b, err := json.Marshal(resp)
 	if err != nil {
 		return "", err

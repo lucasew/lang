@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="el">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="EL_SOFT_KAI_KAI" name="και και">
+      <pattern>
+        <token>και</token>
+        <token>και</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "και".</message>
+      <short>και και</short>
+    </rule>
+  </category>
+</rules>

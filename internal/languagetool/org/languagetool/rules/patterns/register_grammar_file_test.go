@@ -74,6 +74,9 @@ func TestRegisterSoftGrammarDir_RU_SV_DA(t *testing.T) {
 		{"da", "en del af af det", "DA_SOFT_AF_AF"},
 		{"uk", "пішов в в магазин", "UK_SOFT_V_V"},
 		{"ca", "va anar a a casa", "CA_SOFT_A_A"},
+		{"gl", "casa de de pedra", "GL_SOFT_DE_DE"},
+		{"sk", "a a b", "SK_SOFT_A_A"},
+		{"el", "και και άλλο", "EL_SOFT_KAI_KAI"},
 	} {
 		t.Run(tc.lang, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(tc.lang)

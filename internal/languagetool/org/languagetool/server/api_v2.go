@@ -78,15 +78,12 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			Metrics().LogRequestError(RequestErrorInvalidRequest)
 			return HandleResult{}, err
 		}
-		// validate callback early (JSONP)
-		callback := parameters["callback"]
-		if callback != "" {
-			qp, err := ParseCheckQueryParams(parameters)
-			if err != nil {
-				return HandleResult{}, err
-			}
-			_ = qp
+		// Parse query knobs (JSONP callback, category filters, …)
+		qp, err := ParseCheckQueryParams(parameters)
+		if err != nil {
+			return HandleResult{}, err
 		}
+		callback := parameters["callback"]
 		text := parameters["text"]
 		dataJSON := parameters["data"]
 		var annotated *markup.AnnotatedText
@@ -122,9 +119,12 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		opts := CheckOptions{
 			Disabled:       a.TextChecker.GetDisabledRuleIDs(parameters),
 			Enabled:        a.TextChecker.GetEnabledRuleIDs(parameters),
-			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true"),
+			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true") || qp.UseEnabledOnly,
 			// soft: undocumented ignoreWords CSV for user-dictionary style suppression
 			IgnoreWords: commaSeparated(parameters["ignoreWords"]),
+			// category filters from disabledCategories / enabledCategories
+			DisabledCategories: qp.DisabledCategories,
+			EnabledCategories:  qp.EnabledCategories,
 		}
 		if v := parameters["mode"]; v != "" {
 			opts.Mode = CheckMode(strings.ToUpper(v))
@@ -134,7 +134,6 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		}
 		langName := LanguageNameForCode(lang)
 		var body string
-		var err error
 		if annotated != nil {
 			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
 			body, err = a.TextChecker.BuildResponseEx(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected)
