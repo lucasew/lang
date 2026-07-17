@@ -20,6 +20,8 @@ type CommandLineOptions struct {
 	PrintLanguages                bool
 	// PrintRules soft-lists registered rule IDs for the selected language.
 	PrintRules                    bool
+	// PrintDoctor soft-runs environment/self-check diagnostics.
+	PrintDoctor                   bool
 	Verbose                       bool
 	Recursive                     bool
 	TaggerOnly                    bool
@@ -50,6 +52,8 @@ type CommandLineOptions struct {
 	RuleValues                    []string
 	RuleFile                      string
 	FalseFriendsFile              string
+	// DataDir soft data root (grammar soft XML, false-friends soft file).
+	DataDir                       string
 }
 
 func NewCommandLineOptions() *CommandLineOptions {
@@ -63,6 +67,14 @@ func (o *CommandLineOptions) SetPrintUsage(v bool)     { o.PrintUsage = v }
 func (o *CommandLineOptions) SetPrintVersion(v bool)   { o.PrintVersion = v }
 func (o *CommandLineOptions) SetPrintLanguages(v bool) { o.PrintLanguages = v }
 func (o *CommandLineOptions) SetPrintRules(v bool)     { o.PrintRules = v }
+func (o *CommandLineOptions) SetPrintDoctor(v bool)    { o.PrintDoctor = v }
+func (o *CommandLineOptions) SetDataDir(p string)      { o.DataDir = p }
+func (o *CommandLineOptions) GetDataDir() string {
+	if o == nil {
+		return ""
+	}
+	return o.DataDir
+}
 func (o *CommandLineOptions) SetVerbose(v bool)        { o.Verbose = v }
 func (o *CommandLineOptions) SetRecursive(v bool)      { o.Recursive = v }
 func (o *CommandLineOptions) SetTaggerOnly(v bool)     { o.TaggerOnly = v }

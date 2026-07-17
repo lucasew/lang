@@ -15,6 +15,7 @@ Soft product subcommands (SPEC §2):
   lint                     check text with linter columns (same as --lint)
   languages                list languages (same as --list)
   rules                    list registered rule IDs for -l language
+  doctor                   environment / self-check diagnostics
   version                  print version
   help                     this help
 
@@ -37,6 +38,8 @@ Options:
   --autoDetect, -adl       detect language from text
   --list                   list languages
   --list-rules             list registered rule IDs for -l language
+  --data-dir DIR           soft data root (grammar + false-friends soft files)
+  --doctor                 environment / self-check diagnostics
   --version                print version
   -h, --help               this help
 `
@@ -77,6 +80,8 @@ func NormalizeProductArgs(args []string) []string {
 	case "rules":
 		// keep -l / --language and other flags; force --list-rules
 		return append([]string{"--list-rules"}, args[1:]...)
+	case "doctor":
+		return []string{"--doctor"}
 	case "version":
 		return []string{"--version"}
 	case "help":
@@ -125,6 +130,18 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 			return 1
 		}
 		return 0
+	}
+	if opts.PrintDoctor {
+		if err := CoreDoctor(stdout, opts); err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
+		return 0
+	}
+
+	// SPEC §2.2: product lint defaults language to auto when unset.
+	if opts.OutputFormat == OutputLint && opts.Language == "" && !opts.AutoDetect {
+		opts.SetAutoDetect(true)
 	}
 
 	text, err := loadInput(opts.Filename, hooks)

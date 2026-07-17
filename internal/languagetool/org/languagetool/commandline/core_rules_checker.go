@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -143,7 +145,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			}
 		}
 		// optional soft grammar directory (e.g. testdata/grammar)
-		if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
+		if dir := resolveGrammarDir(opts); dir != "" {
 			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
 		}
 		if os.Getenv("LANG_DEMO_SPELLER") == "1" {
@@ -165,9 +167,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		}
 		ffFile := opts.FalseFriendsFile
 		if ffFile == "" && opts.MotherTongue != "" {
-			if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
-				ffFile = p
-			}
+			ffFile = resolveFalseFriendsFile(opts)
 		}
 		if ffFile != "" && opts.MotherTongue != "" {
 			if err := RegisterFalseFriends(lt, ffFile, lang, opts.MotherTongue); err != nil {
@@ -177,6 +177,34 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		ApplyCLIRuleFilters(lt, opts)
 	}
 	return lt, nil
+}
+
+// resolveGrammarDir prefers --data-dir/grammar, then LANG_GRAMMAR_DIR, then LANG_DATA_DIR/grammar.
+func resolveGrammarDir(opts *CommandLineOptions) string {
+	if opts != nil && opts.GetDataDir() != "" {
+		return filepath.Join(opts.GetDataDir(), "grammar")
+	}
+	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
+		return dir
+	}
+	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		return filepath.Join(dir, "grammar")
+	}
+	return ""
+}
+
+// resolveFalseFriendsFile prefers LANG_FALSEFRIENDS_FILE, then --data-dir/false-friends-soft.xml.
+func resolveFalseFriendsFile(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
+		return p
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		return filepath.Join(opts.GetDataDir(), "false-friends-soft.xml")
+	}
+	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		return filepath.Join(dir, "false-friends-soft.xml")
+	}
+	return ""
 }
 
 // CoreCheckHook is a RunHooks.Check that uses CoreRulesChecker + CheckTextOpts.
@@ -413,6 +441,50 @@ func DefaultCoreHooks() RunHooks {
 		Tag:           CoreTagHook,
 		ListLanguages: CoreListLanguages,
 	}
+}
+
+// CoreDoctor writes soft environment diagnostics (SPEC §2.3 doctor).
+func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
+	if w == nil {
+		return nil
+	}
+	_, _ = fmt.Fprintf(w, "lang doctor\n")
+	_, _ = fmt.Fprintf(w, "version: %s\n", VersionString)
+	_, _ = fmt.Fprintf(w, "go: %s %s/%s\n", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	_, _ = fmt.Fprintf(w, "corepack languages: %d\n", len(corepack.Supported))
+	gdir := resolveGrammarDir(opts)
+	if gdir == "" {
+		gdir = "(unset)"
+	}
+	_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
+	ff := resolveFalseFriendsFile(opts)
+	if ff == "" {
+		ff = "(unset)"
+	}
+	_, _ = fmt.Fprintf(w, "false-friends: %s\n", ff)
+	// smoke check
+	lt, err := configureCoreLT("en", opts)
+	if err != nil {
+		return err
+	}
+	ids := lt.GetAllRegisteredRuleIDs()
+	_, _ = fmt.Fprintf(w, "en registered rules: %d\n", len(ids))
+	ms := lt.Check("This is an test.")
+	_, _ = fmt.Fprintf(w, "en smoke matches: %d\n", len(ms))
+	found := false
+	for _, m := range ms {
+		if m.RuleID == "EN_A_VS_AN" {
+			found = true
+			break
+		}
+	}
+	if found {
+		_, _ = fmt.Fprintf(w, "en smoke: EN_A_VS_AN ok\n")
+	} else {
+		_, _ = fmt.Fprintf(w, "en smoke: EN_A_VS_AN missing\n")
+	}
+	_, _ = fmt.Fprintf(w, "status: ok\n")
+	return nil
 }
 
 func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize int, lang string) string {

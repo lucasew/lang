@@ -24,6 +24,8 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	corepack.Register(lt, lang)
 	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
 		_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
+	} else if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		_, _ = patterns.RegisterSoftGrammarDir(lt, dir+"/grammar", lang)
 	}
 	// soft false friends when mother tongue is set
 	if mt := strings.TrimSpace(p.settings.MotherTongueCode); mt != "" {

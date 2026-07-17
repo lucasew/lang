@@ -14,6 +14,9 @@ const (
 	v2MaxTextLength = "/v2/maxtextlength"
 	v2ConfigInfo    = "/v2/configinfo"
 	v2Languages     = "/v2/languages"
+	v2Words         = "/v2/words"
+	v2WordsAdd      = "/v2/words/add"
+	v2WordsDelete   = "/v2/words/delete"
 )
 
 // HTTPDoer abstracts http.Client for tests.
@@ -373,4 +376,99 @@ func (r *RemoteLanguageTool) GetMaxTextLength() (int, error) {
 		return 0, err
 	}
 	return n, nil
+}
+
+// GetWords fetches /v2/words for optional username.
+func (r *RemoteLanguageTool) GetWords(username string) ([]string, error) {
+	if r == nil {
+		return nil, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	endpoint := r.ServerBaseURL + v2Words
+	if username != "" {
+		endpoint += "?username=" + url.QueryEscape(username)
+	}
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("words HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
+	}
+	var raw struct {
+		Words []string `json:"words"`
+	}
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, err
+	}
+	return raw.Words, nil
+}
+
+// AddWord posts /v2/words/add.
+func (r *RemoteLanguageTool) AddWord(username, word string) (bool, error) {
+	if r == nil {
+		return false, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	form := url.Values{}
+	form.Set("word", word)
+	if username != "" {
+		form.Set("username", username)
+	}
+	return r.postWordsBool(v2WordsAdd, form, "added")
+}
+
+// DeleteWord posts /v2/words/delete.
+func (r *RemoteLanguageTool) DeleteWord(username, word string) (bool, error) {
+	if r == nil {
+		return false, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	form := url.Values{}
+	form.Set("word", word)
+	if username != "" {
+		form.Set("username", username)
+	}
+	return r.postWordsBool(v2WordsDelete, form, "deleted")
+}
+
+func (r *RemoteLanguageTool) postWordsBool(path string, form url.Values, key string) (bool, error) {
+	endpoint := r.ServerBaseURL + path
+	req, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(form.Encode()))
+	if err != nil {
+		return false, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return false, fmt.Errorf("%s HTTP %d: %s", path, resp.StatusCode, truncate(string(body), 200))
+	}
+	var raw map[string]any
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return false, err
+	}
+	v, _ := raw[key].(bool)
+	return v, nil
 }

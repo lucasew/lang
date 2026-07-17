@@ -25,6 +25,14 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetPrintLanguages(true)
 		case "--list-rules", "--listrules":
 			opts.SetPrintRules(true)
+		case "--doctor":
+			opts.SetPrintDoctor(true)
+		case "--data-dir", "--datadir":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetDataDir(args[i])
 		case "-h", "-help", "--help", "--?":
 			opts.SetPrintUsage(true)
 		case "-adl", "--autoDetect":
