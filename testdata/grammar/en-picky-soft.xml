@@ -162,5 +162,67 @@
       <message>Consider "main point" or "conclusion".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_IDEATE" name="ideate soft picky">
+      <pattern>
+        <token>ideate</token>
+      </pattern>
+      <message>Consider "brainstorm" or "think of ideas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNERGIZE" name="synergize soft picky">
+      <pattern>
+        <token>synergize</token>
+      </pattern>
+      <message>Consider "work together" or "combine efforts".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARADIGM_SHIFT" name="paradigm shift soft picky">
+      <pattern>
+        <token>paradigm</token>
+        <token>shift</token>
+      </pattern>
+      <message>Cliché; consider "major change" or name the change.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BEST_OF_BREED" name="best of breed soft picky">
+      <pattern>
+        <token>best</token>
+        <token>of</token>
+        <token>breed</token>
+      </pattern>
+      <message>Jargon; consider "best" or "leading".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_ADD" name="value-add soft picky">
+      <pattern>
+        <token>value-add</token>
+      </pattern>
+      <message>Consider "benefit" or "extra value".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WIN_WIN" name="win-win soft picky">
+      <pattern>
+        <token>win-win</token>
+      </pattern>
+      <message>Cliché; consider "mutually beneficial".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOIL_THE_OCEAN" name="boil the ocean soft picky">
+      <pattern>
+        <token>boil</token>
+        <token>the</token>
+        <token>ocean</token>
+      </pattern>
+      <message>Cliché; consider "overly ambitious" or name the scope problem.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_REACH_OUT" name="reach out soft picky">
+      <pattern>
+        <token>reach</token>
+        <token>out</token>
+      </pattern>
+      <message>Consider "contact" or "email" when more specific.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

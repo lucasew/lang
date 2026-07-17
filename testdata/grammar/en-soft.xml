@@ -1947,6 +1947,76 @@
       <message>Did you mean "pursue"?</message>
       <short>persue</short>
     </rule>
+    <rule id="EN_SOFT_ACCOMODATION" name="accomodation soft">
+      <pattern>
+        <token>accomodation</token>
+      </pattern>
+      <message>Did you mean "accommodation"?</message>
+      <short>accomodation</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITED" name="commited soft">
+      <pattern>
+        <token>commited</token>
+      </pattern>
+      <message>Did you mean "committed"?</message>
+      <short>commited</short>
+    </rule>
+    <rule id="EN_SOFT_EXHILERATE" name="exhilerate soft">
+      <pattern>
+        <token>exhilerate</token>
+      </pattern>
+      <message>Did you mean "exhilarate"?</message>
+      <short>exhilerate</short>
+    </rule>
+    <rule id="EN_SOFT_HARRASMENT" name="harrasment soft">
+      <pattern>
+        <token>harrasment</token>
+      </pattern>
+      <message>Did you mean "harassment"?</message>
+      <short>harrasment</short>
+    </rule>
+    <rule id="EN_SOFT_GARDNER" name="gardner soft">
+      <pattern>
+        <token>gardner</token>
+      </pattern>
+      <message>Did you mean "gardener"?</message>
+      <short>gardner</short>
+    </rule>
+    <rule id="EN_SOFT_POSSESION" name="possesion soft">
+      <pattern>
+        <token>possesion</token>
+      </pattern>
+      <message>Did you mean "possession"?</message>
+      <short>possesion</short>
+    </rule>
+    <rule id="EN_SOFT_PROFFESIONAL" name="proffesional soft">
+      <pattern>
+        <token>proffesional</token>
+      </pattern>
+      <message>Did you mean "professional"?</message>
+      <short>proffesional</short>
+    </rule>
+    <rule id="EN_SOFT_REFERANCE" name="referance soft">
+      <pattern>
+        <token>referance</token>
+      </pattern>
+      <message>Did you mean "reference"?</message>
+      <short>referance</short>
+    </rule>
+    <rule id="EN_SOFT_TEMPERARY" name="temperary soft">
+      <pattern>
+        <token>temperary</token>
+      </pattern>
+      <message>Did you mean "temporary"?</message>
+      <short>temperary</short>
+    </rule>
+    <rule id="EN_SOFT_VACCUM" name="vaccum soft">
+      <pattern>
+        <token>vaccum</token>
+      </pattern>
+      <message>Did you mean "vacuum"?</message>
+      <short>vaccum</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

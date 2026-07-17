@@ -148,7 +148,7 @@ func isSoftFalseFriendGroupID(id string) bool {
 
 // softRegionalTypoID is true for regional soft pack rules (…_US, …_GB, …_BR, …).
 func softRegionalTypoID(id string) bool {
-	for _, suf := range []string{"_US", "_GB", "_BR", "_PT", "_MX", "_ES", "_CH", "_AT", "_CA"} {
+	for _, suf := range []string{"_US", "_GB", "_BR", "_PT", "_MX", "_ES", "_CH", "_AT", "_CA", "_AU"} {
 		if strings.HasSuffix(id, suf) {
 			return true
 		}

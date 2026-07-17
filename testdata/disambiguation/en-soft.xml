@@ -633,4 +633,40 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_LGTM" name="immunize lgtm">
+    <pattern>
+      <token>lgtm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SGTM" name="immunize sgtm">
+    <pattern>
+      <token>sgtm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WFH" name="immunize wfh">
+    <pattern>
+      <token>wfh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EOD" name="immunize eod">
+    <pattern>
+      <token>eod</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WIP" name="immunize wip">
+    <pattern>
+      <token>wip</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRN" name="immunize prn">
+    <pattern>
+      <token>prn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
