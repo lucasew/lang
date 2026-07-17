@@ -549,3 +549,6 @@ Shale Ridge RegionNNP
 Gneiss Ridge RegionNNP
 Schist Ridge RegionNNP
 Quartzite Ridge RegionNNP
+Dolomite Ridge RegionNNP
+Travertine Ridge RegionNNP
+Phyllite Ridge RegionNNP

@@ -3491,5 +3491,27 @@
       <message>Jargon; name the rotation for incident response duty instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CANARY" name="canary soft picky">
+      <pattern>
+        <token>canary</token>
+      </pattern>
+      <message>Jargon; name a small progressive production rollout instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROLLBACK" name="rollback soft picky">
+      <pattern>
+        <token>rollback</token>
+      </pattern>
+      <message>Jargon; name reverting to a prior known-good release instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLUE_GREEN" name="blue green soft picky">
+      <pattern>
+        <token>blue</token>
+        <token>green</token>
+      </pattern>
+      <message>Jargon; name dual-environment cutover deployment instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

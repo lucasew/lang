@@ -5451,4 +5451,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_EDGEDB" name="immunize edgedb">
+    <pattern>
+      <token>edgedb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EDGEDB_CAPS" name="immunize EdgeDB">
+    <pattern>
+      <token>EdgeDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBSQL" name="immunize libsql">
+    <pattern>
+      <token>libsql</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIBSQL_CAPS" name="immunize LibSQL">
+    <pattern>
+      <token>LibSQL</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALE" name="immunize timescale">
+    <pattern>
+      <token>timescale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESCALE_CAPS" name="immunize Timescale">
+    <pattern>
+      <token>Timescale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
