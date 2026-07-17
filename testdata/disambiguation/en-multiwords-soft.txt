@@ -480,3 +480,6 @@ Rhyolite Summit RegionNNP
 Obsidian Summit RegionNNP
 Granite Summit RegionNNP
 Marble Summit RegionNNP
+Slate Summit RegionNNP
+Limestone Summit RegionNNP
+Sandstone Summit RegionNNP

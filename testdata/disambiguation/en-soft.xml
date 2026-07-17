@@ -4623,4 +4623,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFANA" name="immunize grafana">
+    <pattern>
+      <token>grafana</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFANA_CAPS" name="immunize Grafana">
+    <pattern>
+      <token>Grafana</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCHSERVERLESS" name="immunize opensearchserverless">
+    <pattern>
+      <token>opensearchserverless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCHSERVERLESS_CAPS" name="immunize OpenSearchServerless">
+    <pattern>
+      <token>OpenSearchServerless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMAZONMANAGEDPROMETHEUS" name="immunize amazonmanagedprometheus">
+    <pattern>
+      <token>amazonmanagedprometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMAZONMANAGEDPROMETHEUS_CAPS" name="immunize AmazonManagedPrometheus">
+    <pattern>
+      <token>AmazonManagedPrometheus</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

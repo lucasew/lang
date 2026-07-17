@@ -2996,5 +2996,28 @@
       <message>Jargon; name bottleneck-focused system improvement instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_FIVE_WHYS" name="five whys soft picky">
+      <pattern>
+        <token>five</token>
+        <token>whys</token>
+      </pattern>
+      <message>Jargon; name iterative root-cause questioning instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FISHBONE" name="fishbone soft picky">
+      <pattern>
+        <token>fishbone</token>
+      </pattern>
+      <message>Jargon; name cause-and-effect diagramming instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARETO_CHART" name="pareto chart soft picky">
+      <pattern>
+        <token>pareto</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name ranked frequency contribution chart instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

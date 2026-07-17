@@ -10627,6 +10627,76 @@
       <message>Did you mean "problem"?</message>
       <short>porblem</short>
     </rule>
+    <rule id="EN_SOFT_NUMBER_MISS2" name="numbr soft">
+      <pattern>
+        <token>numbr</token>
+      </pattern>
+      <message>Did you mean "number"?</message>
+      <short>numbr</short>
+    </rule>
+    <rule id="EN_SOFT_NUMBER_MISS3" name="numbeer soft">
+      <pattern>
+        <token>numbeer</token>
+      </pattern>
+      <message>Did you mean "number"?</message>
+      <short>numbeer</short>
+    </rule>
+    <rule id="EN_SOFT_COUNTRY_MISS2" name="countrey soft">
+      <pattern>
+        <token>countrey</token>
+      </pattern>
+      <message>Did you mean "country"?</message>
+      <short>countrey</short>
+    </rule>
+    <rule id="EN_SOFT_PLEASE_MISS" name="plese soft">
+      <pattern>
+        <token>plese</token>
+      </pattern>
+      <message>Did you mean "please"?</message>
+      <short>plese</short>
+    </rule>
+    <rule id="EN_SOFT_PROBLEM_MISS2" name="problm soft">
+      <pattern>
+        <token>problm</token>
+      </pattern>
+      <message>Did you mean "problem"?</message>
+      <short>problm</short>
+    </rule>
+    <rule id="EN_SOFT_PROCESS_MISS" name="proces soft">
+      <pattern>
+        <token>proces</token>
+      </pattern>
+      <message>Did you mean "process"?</message>
+      <short>proces</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTION_MISS2" name="quetion soft">
+      <pattern>
+        <token>quetion</token>
+      </pattern>
+      <message>Did you mean "question"?</message>
+      <short>quetion</short>
+    </rule>
+    <rule id="EN_SOFT_SOMETHING_MISS" name="somthing soft">
+      <pattern>
+        <token>somthing</token>
+      </pattern>
+      <message>Did you mean "something"?</message>
+      <short>somthing</short>
+    </rule>
+    <rule id="EN_SOFT_TOGETHER_MISS" name="togather soft">
+      <pattern>
+        <token>togather</token>
+      </pattern>
+      <message>Did you mean "together"?</message>
+      <short>togather</short>
+    </rule>
+    <rule id="EN_SOFT_UNDERSTAND_MISS" name="understnad soft">
+      <pattern>
+        <token>understnad</token>
+      </pattern>
+      <message>Did you mean "understand"?</message>
+      <short>understnad</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
