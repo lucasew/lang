@@ -301,4 +301,50 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
+  <rule id="SOFT_TO_VB_FIND" name="to find → VB">
+    <pattern>
+      <token>to</token>
+      <token>find</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_GET" name="to get → VB">
+    <pattern>
+      <token>to</token>
+      <token>get</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_GIVE" name="to give → VB">
+    <pattern>
+      <token>to</token>
+      <token>give</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_KEEP" name="to keep → VB">
+    <pattern>
+      <token>to</token>
+      <token>keep</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FOMO" name="immunize fomo">
+    <pattern>
+      <token>fomo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YOLO" name="immunize yolo">
+    <pattern>
+      <token>yolo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIL" name="immunize til">
+    <pattern>
+      <token>til</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

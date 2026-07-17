@@ -552,6 +552,9 @@ func TestGolden_SoftMoreStyleAndTryAnd(t *testing.T) {
 		{"There is a general consensus.", "EN_SOFT_GENERAL_CONSENSUS", ""},
 		{"In my personal opinion, wait.", "EN_SOFT_PERSONAL_OPINION", ""},
 		{"The train came to a complete stop.", "EN_SOFT_COMPLETE_STOP", ""},
+		{"This is absolutely essential.", "EN_SOFT_ABSOLUTELY_ESSENTIAL", ""},
+		{"They are exactly the same.", "EN_SOFT_EXACTLY_THE_SAME", ""},
+		{"Work is currently in progress.", "EN_SOFT_CURRENTLY_IN_PROGRESS", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

@@ -15,6 +15,19 @@ func TestCoreListRules(t *testing.T) {
 	require.Contains(t, out, "GRAMMAR")
 	require.Contains(t, out, "EMPTY_LINE\tSTYLE\tstyle\t")
 	require.Contains(t, out, "community.languagetool.org/rule/show/EMPTY_LINE?lang=en")
+	require.Contains(t, out, "\tcore\n")
+	require.Contains(t, out, "\tsoft\n")
+	require.Contains(t, out, "EN_SOFT_")
+	require.Contains(t, out, "# total=")
+	require.Contains(t, out, "soft=")
+}
+
+func TestCoreListRules_EnUSHasSoftUSSpelling(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "en-US"))
+	out := buf.String()
+	require.Contains(t, out, "EN_SOFT_COLOUR_US")
+	require.Contains(t, out, "\tsoft\n")
 }
 
 func TestRunWithIO_RulesSubcommand(t *testing.T) {

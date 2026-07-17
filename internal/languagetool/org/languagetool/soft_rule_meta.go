@@ -52,7 +52,8 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 			strings.Contains(id, "UNEXPECTED_SURPRISE") || strings.Contains(id, "REVERT_BACK") ||
 			strings.Contains(id, "REPEAT_AGAIN") || strings.Contains(id, "FINAL_OUTCOME") ||
 			strings.Contains(id, "GENERAL_CONSENSUS") || strings.Contains(id, "PERSONAL_OPINION") ||
-			strings.Contains(id, "COMPLETE_STOP") ||
+			strings.Contains(id, "COMPLETE_STOP") || strings.Contains(id, "ABSOLUTELY_ESSENTIAL") ||
+			strings.Contains(id, "EXACTLY_THE_SAME") || strings.Contains(id, "CURRENTLY_IN_PROGRESS") ||
 			strings.Contains(id, "_STYLE") {
 			return "STYLE", "Style", "style", SoftRuleDescription(ruleID)
 		}

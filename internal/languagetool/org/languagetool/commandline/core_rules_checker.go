@@ -434,6 +434,7 @@ func CoreListLanguages(w io.Writer) error {
 }
 
 // CoreListRules writes registered rule IDs for lang (one per line), with soft category.
+// Soft rules (ID contains _SOFT_) append a fifth column "soft" for easy filtering.
 func CoreListRules(w io.Writer, lang string) error {
 	if w == nil {
 		return nil
@@ -446,6 +447,7 @@ func CoreListRules(w io.Writer, lang string) error {
 		return err
 	}
 	ids := lt.GetAllRegisteredRuleIDs()
+	softN := 0
 	for _, id := range ids {
 		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
 		if cat == "" {
@@ -455,11 +457,17 @@ func CoreListRules(w io.Writer, lang string) error {
 			issue = "uncategorized"
 		}
 		url := languagetool.SoftRuleURL(id, lang)
-		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", id, cat, issue, url); err != nil {
+		kind := "core"
+		if strings.Contains(id, "_SOFT_") {
+			kind = "soft"
+			softN++
+		}
+		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", id, cat, issue, url, kind); err != nil {
 			return err
 		}
 	}
-	return nil
+	_, err = fmt.Fprintf(w, "# total=%d soft=%d\n", len(ids), softN)
+	return err
 }
 
 // DefaultCoreHooks returns RunHooks wired to the pure-Go core packs.

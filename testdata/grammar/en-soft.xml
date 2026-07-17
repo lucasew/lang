@@ -841,6 +841,32 @@
       <message>Consider "came to a stop" or "stopped".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_ABSOLUTELY_ESSENTIAL" name="absolutely essential">
+      <pattern>
+        <token>absolutely</token>
+        <token>essential</token>
+      </pattern>
+      <message>Consider "essential" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_EXACTLY_THE_SAME" name="exactly the same">
+      <pattern>
+        <token>exactly</token>
+        <token>the</token>
+        <token>same</token>
+      </pattern>
+      <message>Consider "the same" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_CURRENTLY_IN_PROGRESS" name="currently in progress">
+      <pattern>
+        <token>currently</token>
+        <token>in</token>
+        <token>progress</token>
+      </pattern>
+      <message>Consider "in progress" alone.</message>
+      <short>style</short>
+    </rule>
   </category>
   <category id="TYPOS" name="Possible Typo">
     <rule id="EN_SOFT_ANYWAYS" name="anyways">
