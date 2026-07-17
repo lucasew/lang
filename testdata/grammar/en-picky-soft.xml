@@ -3427,5 +3427,26 @@
       <message>Jargon; name transactions per second instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ANDON" name="andon soft picky">
+      <pattern>
+        <token>andon</token>
+      </pattern>
+      <message>Jargon; name a stop-the-line visual alert system instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_APDEX" name="apdex soft picky">
+      <pattern>
+        <token>apdex</token>
+      </pattern>
+      <message>Jargon; name application performance index instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOIL" name="toil soft picky">
+      <pattern>
+        <token>toil</token>
+      </pattern>
+      <message>Jargon; name manual repetitive operational work instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

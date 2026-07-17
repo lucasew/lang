@@ -12027,6 +12027,76 @@
       <message>Did you mean "forcing"?</message>
       <short>forceing</short>
     </rule>
+    <rule id="EN_SOFT_CHANGING_MISS" name="changeing soft">
+      <pattern>
+        <token>changeing</token>
+      </pattern>
+      <message>Did you mean "changing"?</message>
+      <short>changeing</short>
+    </rule>
+    <rule id="EN_SOFT_MANAGING_MISS" name="manageing soft">
+      <pattern>
+        <token>manageing</token>
+      </pattern>
+      <message>Did you mean "managing"?</message>
+      <short>manageing</short>
+    </rule>
+    <rule id="EN_SOFT_ENGAGING_MISS" name="engageing soft">
+      <pattern>
+        <token>engageing</token>
+      </pattern>
+      <message>Did you mean "engaging"?</message>
+      <short>engageing</short>
+    </rule>
+    <rule id="EN_SOFT_ARRANGING_MISS" name="arrangeing soft">
+      <pattern>
+        <token>arrangeing</token>
+      </pattern>
+      <message>Did you mean "arranging"?</message>
+      <short>arrangeing</short>
+    </rule>
+    <rule id="EN_SOFT_PERFORMANCE_MISS" name="performace soft">
+      <pattern>
+        <token>performace</token>
+      </pattern>
+      <message>Did you mean "performance"?</message>
+      <short>performace</short>
+    </rule>
+    <rule id="EN_SOFT_PERFORMANCE_MISS2" name="perfromance soft">
+      <pattern>
+        <token>perfromance</token>
+      </pattern>
+      <message>Did you mean "performance"?</message>
+      <short>perfromance</short>
+    </rule>
+    <rule id="EN_SOFT_REQUIREMENT_MISS" name="requriement soft">
+      <pattern>
+        <token>requriement</token>
+      </pattern>
+      <message>Did you mean "requirement"?</message>
+      <short>requriement</short>
+    </rule>
+    <rule id="EN_SOFT_REQUIREMENT_MISS2" name="requirment soft">
+      <pattern>
+        <token>requirment</token>
+      </pattern>
+      <message>Did you mean "requirement"?</message>
+      <short>requirment</short>
+    </rule>
+    <rule id="EN_SOFT_SPECIFICATION_MISS" name="specifcation soft">
+      <pattern>
+        <token>specifcation</token>
+      </pattern>
+      <message>Did you mean "specification"?</message>
+      <short>specifcation</short>
+    </rule>
+    <rule id="EN_SOFT_ARCHITECTURE_MISS" name="architecure soft">
+      <pattern>
+        <token>architecure</token>
+      </pattern>
+      <message>Did you mean "architecture"?</message>
+      <short>architecure</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

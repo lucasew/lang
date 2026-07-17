@@ -540,3 +540,6 @@ Conglomerate Ridge RegionNNP
 Sandstone Ridge RegionNNP
 Limestone Ridge RegionNNP
 Marble Ridge RegionNNP
+Slate Ridge RegionNNP
+Granite Ridge RegionNNP
+Chalk Ridge RegionNNP

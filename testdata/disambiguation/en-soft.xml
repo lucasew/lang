@@ -5343,4 +5343,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_OPENTELEMETRY" name="immunize opentelemetry">
+    <pattern>
+      <token>opentelemetry</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENTELEMETRY_CAPS" name="immunize OpenTelemetry">
+    <pattern>
+      <token>OpenTelemetry</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHDB" name="immunize couchdb">
+    <pattern>
+      <token>couchdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHDB_CAPS" name="immunize CouchDB">
+    <pattern>
+      <token>CouchDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RETHINKDB" name="immunize rethinkdb">
+    <pattern>
+      <token>rethinkdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RETHINKDB_CAPS" name="immunize RethinkDB">
+    <pattern>
+      <token>RethinkDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
