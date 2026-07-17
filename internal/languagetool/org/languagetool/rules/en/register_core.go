@@ -57,6 +57,14 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(us.GetID(), rules.AsSentenceCheckerSimple(us.Match))
 	gb := NewBritishReplaceRule(nil)
 	lt.AddRuleChecker(gb.GetID(), rules.AsSentenceCheckerSimple(gb.Match))
+	// Style tables: redundancies + plain-English/wordiness (official data).
+	rd := NewEnglishRedundancyRule(nil)
+	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
+	pe := NewEnglishPlainEnglishRule(nil)
+	lt.AddRuleChecker(pe.GetID(), rules.AsSentenceCheckerSimple(pe.Match))
+	// Mixed apostrophe styles across the document (text-level).
+	ap := NewConsistentApostrophesRule(nil)
+	lt.AddTextLevelRuleChecker(ap.GetID(), rules.AsTextLevelChecker(ap.MatchList))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).

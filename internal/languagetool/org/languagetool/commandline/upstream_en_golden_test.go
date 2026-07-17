@@ -356,3 +356,73 @@ func TestGolden_UpstreamAmericanReplace(t *testing.T) {
 	}
 	require.True(t, found, "expected American replace finding: %+v", findings)
 }
+
+// TestGolden_UpstreamRedundancy exercises official redundancies.txt.
+func TestGolden_UpstreamRedundancy(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I ate tuna fish yesterday.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_REDUNDANCY_REPLACE" || f.Suggestion == "tuna" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected redundancy finding: %+v", findings)
+}
+
+// TestGolden_UpstreamPlainEnglish exercises official wordiness.txt.
+func TestGolden_UpstreamPlainEnglish(t *testing.T) {
+	// Use a known pair from wordiness if possible — smoke that rule fires on some phrase.
+	// "in the event that" is a classic plain-English target.
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Call me in the event that you need help.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_PLAIN_ENGLISH_REPLACE" || strings.Contains(strings.ToLower(f.Message+f.Suggestion), "if") {
+			// may also match soft style rules; accept any plain-english id
+			if f.Rule == "EN_PLAIN_ENGLISH_REPLACE" || strings.Contains(f.Rule, "PLAIN") {
+				found = true
+				break
+			}
+		}
+	}
+	if !found {
+		// softer: rule registered and fires on added bonus path already covered by redundancy
+		// try another classic: "at this point in time"
+		var buf2 bytes.Buffer
+		_, err = CoreGoldenHook(&buf2, "At this point in time we should leave.", &CommandLineOptions{Language: "en"})
+		require.NoError(t, err)
+		require.NoError(t, json.Unmarshal(buf2.Bytes(), &findings))
+		for _, f := range findings {
+			if f.Rule == "EN_PLAIN_ENGLISH_REPLACE" {
+				found = true
+				break
+			}
+		}
+	}
+	require.True(t, found, "expected plain-english finding: %+v", findings)
+}
+
+// TestGolden_UpstreamConsistentApostrophes exercises mixed ' vs ’ apostrophes.
+func TestGolden_UpstreamConsistentApostrophes(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "It's a nice idea. But it doesn’t work.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_CONSISTENT_APOS" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected consistent apostrophe finding: %+v", findings)
+}
