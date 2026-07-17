@@ -11747,6 +11747,76 @@
       <message>Did you mean "variable"?</message>
       <short>varaible</short>
     </rule>
+    <rule id="EN_SOFT_VIEW_MISS" name="veiw soft">
+      <pattern>
+        <token>veiw</token>
+      </pattern>
+      <message>Did you mean "view"?</message>
+      <short>veiw</short>
+    </rule>
+    <rule id="EN_SOFT_VALUE_MISS" name="vlaue soft">
+      <pattern>
+        <token>vlaue</token>
+      </pattern>
+      <message>Did you mean "value"?</message>
+      <short>vlaue</short>
+    </rule>
+    <rule id="EN_SOFT_WHERE_MISS" name="wehre soft">
+      <pattern>
+        <token>wehre</token>
+      </pattern>
+      <message>Did you mean "where"?</message>
+      <short>wehre</short>
+    </rule>
+    <rule id="EN_SOFT_WHICH_MISS" name="whcih soft">
+      <pattern>
+        <token>whcih</token>
+      </pattern>
+      <message>Did you mean "which"?</message>
+      <short>whcih</short>
+    </rule>
+    <rule id="EN_SOFT_WAIT_MISS" name="wiat soft">
+      <pattern>
+        <token>wiat</token>
+      </pattern>
+      <message>Did you mean "wait"?</message>
+      <short>wiat</short>
+    </rule>
+    <rule id="EN_SOFT_WORK_MISS" name="wokr soft">
+      <pattern>
+        <token>wokr</token>
+      </pattern>
+      <message>Did you mean "work"?</message>
+      <short>wokr</short>
+    </rule>
+    <rule id="EN_SOFT_YOU_MISS" name="yuo soft">
+      <pattern>
+        <token>yuo</token>
+      </pattern>
+      <message>Did you mean "you"?</message>
+      <short>yuo</short>
+    </rule>
+    <rule id="EN_SOFT_YOUR_MISS" name="yuor soft">
+      <pattern>
+        <token>yuor</token>
+      </pattern>
+      <message>Did you mean "your"?</message>
+      <short>yuor</short>
+    </rule>
+    <rule id="EN_SOFT_AND_MISS" name="adn soft">
+      <pattern>
+        <token>adn</token>
+      </pattern>
+      <message>Did you mean "and"?</message>
+      <short>adn</short>
+    </rule>
+    <rule id="EN_SOFT_AND_MISS2" name="nad soft">
+      <pattern>
+        <token>nad</token>
+      </pattern>
+      <message>Did you mean "and"?</message>
+      <short>nad</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

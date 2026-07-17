@@ -5199,4 +5199,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CASSANDRA" name="immunize cassandra">
+    <pattern>
+      <token>cassandra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CASSANDRA_CAPS" name="immunize Cassandra">
+    <pattern>
+      <token>Cassandra</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGODB" name="immunize mongodb">
+    <pattern>
+      <token>mongodb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGODB_CAPS" name="immunize MongoDB">
+    <pattern>
+      <token>MongoDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICSEARCH" name="immunize elasticsearch">
+    <pattern>
+      <token>elasticsearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICSEARCH_CAPS" name="immunize Elasticsearch">
+    <pattern>
+      <token>Elasticsearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

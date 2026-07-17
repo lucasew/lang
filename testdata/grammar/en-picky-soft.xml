@@ -3343,5 +3343,26 @@
       <message>Jargon; name average revenue per user instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_WAU" name="wau soft picky">
+      <pattern>
+        <token>wau</token>
+      </pattern>
+      <message>Jargon; name weekly active users instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NRR" name="nrr soft picky">
+      <pattern>
+        <token>nrr</token>
+      </pattern>
+      <message>Jargon; name net revenue retention instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GRR" name="grr soft picky">
+      <pattern>
+        <token>grr</token>
+      </pattern>
+      <message>Jargon; name gross revenue retention instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

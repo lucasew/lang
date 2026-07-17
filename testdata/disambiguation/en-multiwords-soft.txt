@@ -528,3 +528,6 @@ Anorthosite Ridge RegionNNP
 Dacite Summit RegionNNP
 Phonolite Summit RegionNNP
 Latite Summit RegionNNP
+Phonolite Ridge RegionNNP
+Trachyte Summit RegionNNP
+Andesite Ridge RegionNNP
