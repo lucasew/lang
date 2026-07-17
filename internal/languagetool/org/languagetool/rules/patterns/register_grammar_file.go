@@ -200,6 +200,8 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 		// soft optional packs (rules often default="off", enable with -e)
 		dir + "/" + base + "-optional-soft.xml",
 		dir + "/" + languageCode + "-optional-soft.xml",
+		dir + "/" + base + "-optional-upstream-soft.xml",
+		dir + "/" + languageCode + "-optional-upstream-soft.xml",
 	}
 	// Skip filtered extract when full upstream grammar already registered (same IDs).
 	if upstreamFull == 0 {

@@ -1324,221 +1324,6 @@
       <short>Möglicherweise falsch geschriebener Eigenname.</short>
     </rule>
   </category>
-  <category id="COLLOQUIALISMS" name="Umgangssprache">
-    <rule id="ALLEINE" name="alleine (allein)">
-      <pattern>
-        <token>alleine</token>
-      </pattern>
-      <message>Das Wort "\1" ist umgangssprachlich.</message>
-      <short>ALLEINE</short>
-    </rule>
-    <rule id="DADRAN" name="dadran">
-      <pattern>
-        <token>dadran</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRAN</short>
-    </rule>
-    <rule id="DADRAUF" name="dadrauf">
-      <pattern>
-        <token>dadrauf</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRAUF</short>
-    </rule>
-    <rule id="DADRAUS" name="dadraus">
-      <pattern>
-        <token>dadraus</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRAUS</short>
-    </rule>
-    <rule id="DADRIN" name="dadrin">
-      <pattern>
-        <token>dadrin</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRIN</short>
-    </rule>
-    <rule id="DADRINNEN" name="dadrinnen">
-      <pattern>
-        <token>dadrinnen</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRINNEN</short>
-    </rule>
-    <rule id="DADRUEBER" name="dadrüber">
-      <pattern>
-        <token>dadrüber</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRUEBER</short>
-    </rule>
-    <rule id="DADRUM" name="dadrum">
-      <pattern>
-        <token>dadrum</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRUM</short>
-    </rule>
-    <rule id="DADRUNTER" name="dadrunter">
-      <pattern>
-        <token>dadrunter</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DADRUNTER</short>
-    </rule>
-    <rule id="DIESEN_JAHRES" name="diesen (dieses) Jahres">
-      <pattern>
-        <token>diesen</token>
-        <token>Jahres</token>
-      </pattern>
-      <message>Diese häufig benutzte Formulierung lautet standardsprachlich korrekt <suggestion>dieses Jahres</suggestion>.</message>
-      <short>DIESEN_JAHRES</short>
-    </rule>
-    <rule id="DRUEBER" name="drüber (darüber)">
-      <pattern>
-        <token>drüber</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DRUEBER</short>
-    </rule>
-    <rule id="DRUNTER" name="drunter (darunter)">
-      <pattern>
-        <token>drunter</token>
-      </pattern>
-      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
-      <short>DRUNTER</short>
-    </rule>
-    <rule id="FUER_UMSONST" name="'für umsonst'">
-      <pattern>
-        <token>für</token>
-        <token>umsonst</token>
-      </pattern>
-      <message>Die Wendung 'für umsonst' ist umgangssprachlich. Möchten Sie die Präposition löschen oder eine Alternative verwenden?</message>
-      <short>FUER_UMSONST</short>
-    </rule>
-    <rule id="I_BIMS_JUGENDSPRACHE" name="Hallo, I bims (ich bin's)">
-      <pattern>
-        <token>I</token>
-        <token>bims</token>
-      </pattern>
-      <message>„I bims“ war das Jugendwort des Jahres 2017. Es handelt sich dabei um eine absichtlich falsch geschriebene Form von <suggestion>ich bin's</suggestion>.</message>
-      <short>I_BIMS_JUGENDSPRACHE</short>
-    </rule>
-    <rule id="KOMPLETT_STIL" name="komplett (völlig, vollkommen)">
-      <pattern>
-        <token case_sensitive="yes">komplett</token>
-      </pattern>
-      <message>Möchten Sie den Ausdruck 'komplett' durch eine formalere Formulierung ersetzen?</message>
-      <short>KOMPLETT_STIL</short>
-    </rule>
-    <rule id="NICHTSDESTOTROTZ_II" name="nichtsdestotrotz (nichtsdestoweniger)">
-      <pattern>
-        <token>nichtsdestotrotz</token>
-      </pattern>
-      <message>'\1' ist umgangssprachlich. Möchten Sie stattdessen das standardsprachliche <suggestion></suggestion>, <suggestion>dennoch</suggestion> oder <suggestion>trotzdem</suggestion> verwenden?</message>
-      <short>NICHTSDESTOTROTZ_II</short>
-    </rule>
-    <rule id="PER_DEFINITION" name="'per Definition (definitionem)'">
-      <pattern>
-        <token>per</token>
-        <token>Definition</token>
-      </pattern>
-      <message>'\1 \2' ist umgangssprachlich: Die lateinische Wendung <suggestion>\1 </suggestion> heißt übersetzt <suggestion>definitionsgemäß</suggestion> oder <suggestion>erklärtermaßen</suggestion>.</message>
-      <short>PER_DEFINITION</short>
-    </rule>
-    <rule id="TSCHULDIGUNG" name="Tschuldigung (Entschuldigung)">
-      <pattern>
-        <token>Tschuldigung</token>
-      </pattern>
-      <message>'\1' ist umgangssprachlich. Möchten Sie die standardsprachliche Schreibweise <suggestion>Entschuldigung</suggestion> verwenden?</message>
-      <short>TSCHULDIGUNG</short>
-    </rule>
-    <rule id="VERSEHENTLICHERWEISE" name="versehentlicherweise (versehentlich)">
-      <pattern>
-        <token>versehentlicherweise</token>
-      </pattern>
-      <message>Dieses Wort wird selten verwendet und kann als umgangssprachlich empfunden werden. Ziehen Sie eine Alternative in Betracht.</message>
-      <short>VERSEHENTLICHERWEISE</short>
-    </rule>
-    <rule id="ALS_WIE" name="'als wie (wie)'">
-      <pattern>
-        <token postag=".*ADJ.*KOM.*" postag_regexp="yes"></token>
-        <token>als</token>
-        <token>wie</token>
-      </pattern>
-      <message>'als wie' ist umgangssprachlich. Verwenden Sie zum Ausdrücken von Ungleichheit <suggestion>als</suggestion>.</message>
-      <short>ALS_WIE</short>
-    </rule>
-    <rule id="EUERM_EUERN" name="eurem/euerem und euren/eueren statt euerm und euern">
-      <pattern>
-        <token regexp="yes">euern|euerm</token>
-      </pattern>
-      <message>Die Schreibweise '' gilt als umgangssprachlich. Möchten Sie stattdessen die Schreibweise <suggestion></suggestion> oder <suggestion></suggestion> verwenden?</message>
-      <short>EUERM_EUERN</short>
-    </rule>
-    <rule id="EXTRA_STIL" name="extra">
-      <pattern>
-        <token case_sensitive="yes">extra</token>
-        <token min="0">zu</token>
-        <token regexp="yes">machen|tun</token>
-      </pattern>
-      <message>'Extra' im Sinne von 'vorsätzlich' ist sehr umgangssprachlich und könnte hier durch formellere Alternativen ersetzt werden.</message>
-      <short>EXTRA_STIL</short>
-    </rule>
-    <rule id="INS_FITNESS" name="ins Fitness (Fitnessstudio)">
-      <pattern>
-        <token regexp="yes">ins|zum</token>
-        <token case_sensitive="yes">Fitness</token>
-      </pattern>
-      <message>Diese Redewendung ist umgangssprachlich. Meinten Sie <suggestion>ins Fitnessstudio</suggestion>?</message>
-      <short>INS_FITNESS</short>
-    </rule>
-    <rule id="KUDAMM" name="Ku'damm">
-      <pattern>
-        <token regexp="yes" case_sensitive="yes">Kudamms?</token>
-      </pattern>
-      <message>Die umgangssprachliche Bezeichnung des Kurfürstendamms wird mit einem Apostroph geschrieben.</message>
-      <short>KUDAMM</short>
-    </rule>
-    <rule id="MODALPARTIKELN" name="Häufung von Modalpartikeln (z.B. 'dann doch eigentlich auch')">
-      <pattern>
-        <token regexp="yes" skip="1">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
-        <token regexp="yes" skip="1">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
-        <token regexp="yes" skip="1">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
-        <token regexp="yes">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
-      </pattern>
-      <message>Diese Formulierung enthält eine ungewöhnliche Häufung von Modalpartikeln. Das kann stilistisch gewollt sein, möglicherweise möchten Sie aber auf eine andere Formulierung ausweichen.</message>
-      <short>Ungewöhnliche Häufung von Modalpartikeln.</short>
-    </rule>
-    <rule id="NIX" name="nix (nichts)">
-      <pattern>
-        <token regexp="yes" case_sensitive="yes">[Nn]ix</token>
-      </pattern>
-      <message>Das Wort "\1" ist umgangssprachlich.</message>
-      <short>Umgangssprache</short>
-    </rule>
-    <rule id="SCHEISS_HAMMER_RIESEN" name="'riesen' etc. als Adjektiv">
-      <pattern>
-        <token postag="ART:.*" postag_regexp="yes"></token>
-        <token regexp="yes">Wahnsinns|scheiß|scheiss|hammer|super|riesen|mega</token>
-        <token postag="SUB:.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Dies ist eine sehr umgangssprachliche Ausdrucksweise. Möglicherweise möchten Sie je nach Anlass eine andere Formulierung in Betracht ziehen.</message>
-      <short>Mögliche Umgangssprache</short>
-    </rule>
-    <rule id="SUCHEN_HELFEN" name="suchen helfen -&gt; beim Suchen helfen">
-      <pattern>
-        <token postag="VER:MOD:.*" postag_regexp="yes"></token>
-        <token min="0" postag="PRO:PER.*|EIG:.*" postag_regexp="yes"></token>
-        <token>suchen</token>
-        <token>helfen</token>
-      </pattern>
-      <message>Standardsprachlich wird hier <suggestion>beim Suchen</suggestion> empfohlen.</message>
-      <short>SUCHEN_HELFEN</short>
-    </rule>
-  </category>
   <category id="CASING" name="Groß-/Kleinschreibung">
     <rule id="ALLEN_ERNSTES" name="allen ernstes (Ernstes)">
       <pattern>
@@ -3221,16 +3006,6 @@
       </pattern>
       <message>Bitte prüfen Sie, ob <suggestion></suggestion> hier großgeschrieben werden muss.</message>
       <short>UM_GROESSERES_ZU</short>
-    </rule>
-    <rule id="UM_LETZTERES" name="um letzteres (Letzteres) kümmern">
-      <pattern>
-        <token>um</token>
-        <token regexp="yes" case_sensitive="yes">ersteres|letzteres|folgendes|neues|altes</token>
-        <token min="0">zu</token>
-        <token postag="VER.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Nominalisierte Adjektive sollten in der Regel großgeschrieben werden.</message>
-      <short>UM_LETZTERES</short>
     </rule>
     <rule id="UND_DAS_BESTE_IST" name="das wichtigste (Wichtigste) ist, dass">
       <pattern>
@@ -5811,13 +5586,6 @@
       <message>Meinten Sie <suggestion>sich</suggestion>?</message>
       <short>SUCH_SICH_SPELLING_RULE</short>
     </rule>
-    <rule id="TEST_BERECHNET7ERMITTELT_SPELLING_RULE" name="Der Wert wird berechnet7ermittelt (berechnet/ermittelt)">
-      <pattern>
-        <token regexp="yes">[A-ZÄÖÜß]{3,30}.+7[A-ZÄÖÜß]{3,30}.+</token>
-      </pattern>
-      <message>Vertippt? Meinten Sie den Schrägstrich '/' statt der '7'?</message>
-      <short>TEST_BERECHNET7ERMITTELT_SPELLING_RULE</short>
-    </rule>
     <rule id="VEREINBAREN_SPELLING_RULE" name="zu Vereinbaren (vereinbaren)">
       <pattern>
         <token regexp="yes">an|auf|bei|hinter|in|mit|nach|vo[nr]|zu|Termin</token>
@@ -6696,31 +6464,6 @@
       <message>In dieser Redewendung wird "Aussterben" großgeschrieben und die Präposition "vom" verwendet.</message>
       <short>VORM_AUSSTERBEN_BEDROHT</short>
     </rule>
-    <rule id="WELCHE_SUBMAS_IST" name="Welche der ... ist (sind)">
-      <pattern>
-        <token>welche</token>
-        <token>der</token>
-        <token min="0" skip="1" postag="ADJ.*|PA2.*" postag_regexp="yes"></token>
-        <token postag="SUB.*PLU:(MAS|NEU)" postag_regexp="yes"></token>
-        <token postag="VER:3:SIN.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Hier scheint die Übereinstimmung von Subjekt und Verb nicht zu stimmen.</message>
-      <short>WELCHE_SUBMAS_IST</short>
-    </rule>
-    <rule id="WERDEN_FOLGENDEN_SUB" name="werden folgenden (folgende) Dinge">
-      <pattern>
-        <token postag="VER:AUX:INF">
-          <exception>sein</exception>
-        </token>
-        <token postag="ADJ:(DAT|GEN):PLU:.*:GRU:SOL|ADJ:(DAT|GEN|NOM|AKK):PLU:.*:GRU:(DEF|IND)" postag_regexp="yes">
-          <exception regexp="yes">weniger|weiter|lieber|früher|später|super</exception>
-        </token>
-        <token postag="SUB:.*" postag_regexp="yes"></token>
-        <token postag="PA2:.*" postag_regexp="yes"></token>
-      </pattern>
-      <message><suggestion></suggestion>?</message>
-      <short>WERDEN_FOLGENDEN_SUB</short>
-    </rule>
     <rule id="WIEVIEL_MAL" name="wieviel Mal (wievielmal)">
       <pattern>
         <token regexp="yes">wieviele?</token>
@@ -7049,6 +6792,198 @@
       </pattern>
       <message>Hier scheint ein Punkt nach der Abkürzung für "Stunden" zu fehlen.</message>
       <short>ZEHN_STD</short>
+    </rule>
+  </category>
+  <category id="COLLOQUIALISMS" name="Umgangssprache">
+    <rule id="DADRAN" name="dadran">
+      <pattern>
+        <token>dadran</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRAN</short>
+    </rule>
+    <rule id="DADRAUF" name="dadrauf">
+      <pattern>
+        <token>dadrauf</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRAUF</short>
+    </rule>
+    <rule id="DADRAUS" name="dadraus">
+      <pattern>
+        <token>dadraus</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRAUS</short>
+    </rule>
+    <rule id="DADRIN" name="dadrin">
+      <pattern>
+        <token>dadrin</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRIN</short>
+    </rule>
+    <rule id="DADRINNEN" name="dadrinnen">
+      <pattern>
+        <token>dadrinnen</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRINNEN</short>
+    </rule>
+    <rule id="DADRUEBER" name="dadrüber">
+      <pattern>
+        <token>dadrüber</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRUEBER</short>
+    </rule>
+    <rule id="DADRUM" name="dadrum">
+      <pattern>
+        <token>dadrum</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRUM</short>
+    </rule>
+    <rule id="DADRUNTER" name="dadrunter">
+      <pattern>
+        <token>dadrunter</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DADRUNTER</short>
+    </rule>
+    <rule id="DIESEN_JAHRES" name="diesen (dieses) Jahres">
+      <pattern>
+        <token>diesen</token>
+        <token>Jahres</token>
+      </pattern>
+      <message>Diese häufig benutzte Formulierung lautet standardsprachlich korrekt <suggestion>dieses Jahres</suggestion>.</message>
+      <short>DIESEN_JAHRES</short>
+    </rule>
+    <rule id="DRUEBER" name="drüber (darüber)">
+      <pattern>
+        <token>drüber</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DRUEBER</short>
+    </rule>
+    <rule id="DRUNTER" name="drunter (darunter)">
+      <pattern>
+        <token>drunter</token>
+      </pattern>
+      <message>Möchten Sie ein weniger umgangssprachliches Wort verwenden, um Ihren Schreibstil zu verbessern?</message>
+      <short>DRUNTER</short>
+    </rule>
+    <rule id="FUER_UMSONST" name="'für umsonst'">
+      <pattern>
+        <token>für</token>
+        <token>umsonst</token>
+      </pattern>
+      <message>Die Wendung 'für umsonst' ist umgangssprachlich. Möchten Sie die Präposition löschen oder eine Alternative verwenden?</message>
+      <short>FUER_UMSONST</short>
+    </rule>
+    <rule id="I_BIMS_JUGENDSPRACHE" name="Hallo, I bims (ich bin's)">
+      <pattern>
+        <token>I</token>
+        <token>bims</token>
+      </pattern>
+      <message>„I bims“ war das Jugendwort des Jahres 2017. Es handelt sich dabei um eine absichtlich falsch geschriebene Form von <suggestion>ich bin's</suggestion>.</message>
+      <short>I_BIMS_JUGENDSPRACHE</short>
+    </rule>
+    <rule id="NICHTSDESTOTROTZ_II" name="nichtsdestotrotz (nichtsdestoweniger)">
+      <pattern>
+        <token>nichtsdestotrotz</token>
+      </pattern>
+      <message>'\1' ist umgangssprachlich. Möchten Sie stattdessen das standardsprachliche <suggestion></suggestion>, <suggestion>dennoch</suggestion> oder <suggestion>trotzdem</suggestion> verwenden?</message>
+      <short>NICHTSDESTOTROTZ_II</short>
+    </rule>
+    <rule id="PER_DEFINITION" name="'per Definition (definitionem)'">
+      <pattern>
+        <token>per</token>
+        <token>Definition</token>
+      </pattern>
+      <message>'\1 \2' ist umgangssprachlich: Die lateinische Wendung <suggestion>\1 </suggestion> heißt übersetzt <suggestion>definitionsgemäß</suggestion> oder <suggestion>erklärtermaßen</suggestion>.</message>
+      <short>PER_DEFINITION</short>
+    </rule>
+    <rule id="TSCHULDIGUNG" name="Tschuldigung (Entschuldigung)">
+      <pattern>
+        <token>Tschuldigung</token>
+      </pattern>
+      <message>'\1' ist umgangssprachlich. Möchten Sie die standardsprachliche Schreibweise <suggestion>Entschuldigung</suggestion> verwenden?</message>
+      <short>TSCHULDIGUNG</short>
+    </rule>
+    <rule id="VERSEHENTLICHERWEISE" name="versehentlicherweise (versehentlich)">
+      <pattern>
+        <token>versehentlicherweise</token>
+      </pattern>
+      <message>Dieses Wort wird selten verwendet und kann als umgangssprachlich empfunden werden. Ziehen Sie eine Alternative in Betracht.</message>
+      <short>VERSEHENTLICHERWEISE</short>
+    </rule>
+    <rule id="ALS_WIE" name="'als wie (wie)'">
+      <pattern>
+        <token postag=".*ADJ.*KOM.*" postag_regexp="yes"></token>
+        <token>als</token>
+        <token>wie</token>
+      </pattern>
+      <message>'als wie' ist umgangssprachlich. Verwenden Sie zum Ausdrücken von Ungleichheit <suggestion>als</suggestion>.</message>
+      <short>ALS_WIE</short>
+    </rule>
+    <rule id="EUERM_EUERN" name="eurem/euerem und euren/eueren statt euerm und euern">
+      <pattern>
+        <token regexp="yes">euern|euerm</token>
+      </pattern>
+      <message>Die Schreibweise '' gilt als umgangssprachlich. Möchten Sie stattdessen die Schreibweise <suggestion></suggestion> oder <suggestion></suggestion> verwenden?</message>
+      <short>EUERM_EUERN</short>
+    </rule>
+    <rule id="INS_FITNESS" name="ins Fitness (Fitnessstudio)">
+      <pattern>
+        <token regexp="yes">ins|zum</token>
+        <token case_sensitive="yes">Fitness</token>
+      </pattern>
+      <message>Diese Redewendung ist umgangssprachlich. Meinten Sie <suggestion>ins Fitnessstudio</suggestion>?</message>
+      <short>INS_FITNESS</short>
+    </rule>
+    <rule id="KUDAMM" name="Ku'damm">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes">Kudamms?</token>
+      </pattern>
+      <message>Die umgangssprachliche Bezeichnung des Kurfürstendamms wird mit einem Apostroph geschrieben.</message>
+      <short>KUDAMM</short>
+    </rule>
+    <rule id="MODALPARTIKELN" name="Häufung von Modalpartikeln (z.B. 'dann doch eigentlich auch')">
+      <pattern>
+        <token regexp="yes" skip="1">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
+        <token regexp="yes" skip="1">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
+        <token regexp="yes" skip="1">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
+        <token regexp="yes">halt|eben|doch|wohl|eigentlich|auch|schon|aber|recht|ziemlich</token>
+      </pattern>
+      <message>Diese Formulierung enthält eine ungewöhnliche Häufung von Modalpartikeln. Das kann stilistisch gewollt sein, möglicherweise möchten Sie aber auf eine andere Formulierung ausweichen.</message>
+      <short>Ungewöhnliche Häufung von Modalpartikeln.</short>
+    </rule>
+    <rule id="NIX" name="nix (nichts)">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes">[Nn]ix</token>
+      </pattern>
+      <message>Das Wort "\1" ist umgangssprachlich.</message>
+      <short>Umgangssprache</short>
+    </rule>
+    <rule id="SCHEISS_HAMMER_RIESEN" name="'riesen' etc. als Adjektiv">
+      <pattern>
+        <token postag="ART:.*" postag_regexp="yes"></token>
+        <token regexp="yes">Wahnsinns|scheiß|scheiss|hammer|super|riesen|mega</token>
+        <token postag="SUB:.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Dies ist eine sehr umgangssprachliche Ausdrucksweise. Möglicherweise möchten Sie je nach Anlass eine andere Formulierung in Betracht ziehen.</message>
+      <short>Mögliche Umgangssprache</short>
+    </rule>
+    <rule id="SUCHEN_HELFEN" name="suchen helfen -&gt; beim Suchen helfen">
+      <pattern>
+        <token postag="VER:MOD:.*" postag_regexp="yes"></token>
+        <token min="0" postag="PRO:PER.*|EIG:.*" postag_regexp="yes"></token>
+        <token>suchen</token>
+        <token>helfen</token>
+      </pattern>
+      <message>Standardsprachlich wird hier <suggestion>beim Suchen</suggestion> empfohlen.</message>
+      <short>SUCHEN_HELFEN</short>
     </rule>
   </category>
   <category id="GENDER_NEUTRALITY" name="Geschlechtergerechte Sprache">
@@ -7480,41 +7415,7 @@
       <short>ZENTRALER_KERNBAUSTEIN</short>
     </rule>
   </category>
-  <category id="EMPFOHLENE_RECHTSCHREIBUNG" name="Empfohlene/Modernere Rechtschreibung">
-    <rule id="EMPFOHLEN_LANGGEHEGT" name=" lang gehegt (langgehegt)">
-      <pattern>
-        <token>lang</token>
-        <token regexp="yes">gehegt(e[mnrs]?)?|anhaltend(e[mnrs]?)?|andauernd(e[mnrs]?)?|gestreckt(e[mnrs]?)?|laufend(e[mnrs]?)?</token>
-      </pattern>
-      <message>Möchten Sie die empfohlene Schreibweise <suggestion></suggestion> verwenden?</message>
-      <short>EMPFOHLEN_LANGGEHEGT</short>
-    </rule>
-    <rule id="EMPFOHLEN_TIEFGREIFEND" name="tief greifend (tiefgreifend)">
-      <pattern>
-        <token>tief</token>
-        <token regexp="yes">greifend(e[mnrs]?)?|gehend(e[mnrs]?)?|schürfend(e[mnrs]?)?</token>
-      </pattern>
-      <message>Möchten Sie die empfohlene Schreibweise <suggestion></suggestion> verwenden?</message>
-      <short>EMPFOHLEN_TIEFGREIFEND</short>
-    </rule>
-    <rule id="EMPFOHLEN_WEITREICHEND" name="weit reichend (weitreichend)">
-      <pattern>
-        <token>weit</token>
-        <token regexp="yes">reichend(e[mnrs]?)?|blickend(e[mnrs]?)?|gehend(e[mnrs]?)?|greifend(e[mnrs]?)?</token>
-      </pattern>
-      <message>Möchten Sie die empfohlene Schreibweise <suggestion></suggestion> verwenden?</message>
-      <short>EMPFOHLEN_WEITREICHEND</short>
-    </rule>
-  </category>
   <category id="CORRESPONDENCE" name="Briefe und E-Mails">
-    <rule id="LG" name="'LG (Liebe Grüße)' (abgekürzte Schlussformeln)">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token>LG</token>
-      </pattern>
-      <message>Das Abkürzen von Schlussformeln kann als unhöflich empfunden werden.</message>
-      <short>Schlussformeln sollten nicht abgekürzt werden</short>
-    </rule>
     <rule id="SIE_GROSS" name="Möglicherweise fälschlich großgeschriebenes 'Sie'">
       <pattern>
         <token postag="SENT_START"></token>

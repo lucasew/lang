@@ -1931,22 +1931,6 @@
       <message>« Contrat collectif » peut être considéré comme un anglicisme (collective contract).</message>
       <short>CONTRAT_COLLECTIF</short>
     </rule>
-    <rule id="CONTROLER_LA_CIRCULATION" name="contrôler la circulation">
-      <pattern>
-        <token skip="1">contrôler</token>
-        <token regexp="yes">circulations?</token>
-      </pattern>
-      <message>« Contrôler la circulation » peut être considéré comme un anglicisme.</message>
-      <short>CONTROLER_LA_CIRCULATION</short>
-    </rule>
-    <rule id="CONTROLER_LA_SITUATION" name="contrôler la situation">
-      <pattern>
-        <token skip="1">contrôler</token>
-        <token regexp="yes">situations?</token>
-      </pattern>
-      <message>« Contrôler la situation » peut être considéré comme un anglicisme.</message>
-      <short>CONTROLER_LA_SITUATION</short>
-    </rule>
     <rule id="CONTROLER_UN_INCENDIE" name="contrôler un incendie">
       <pattern>
         <token skip="1">contrôler</token>
@@ -2310,14 +2294,6 @@
       <message>« En autant que je suis concernée » peut être considéré comme un anglicisme (as far as I am concerned, insofar as I am concerned).</message>
       <short>EN_AUTANT_QUE_JE_SUIS_CONCERNE</short>
     </rule>
-    <rule id="EN_AUTORITE" name="en autorité">
-      <pattern>
-        <token>en</token>
-        <token regexp="yes">autorités?</token>
-      </pattern>
-      <message>« En autorité » peut être considéré comme un anglicisme.</message>
-      <short>EN_AUTORITE</short>
-    </rule>
     <rule id="EN_BON_ORDRE" name="en bon ordre">
       <pattern>
         <token>en</token>
@@ -2400,15 +2376,6 @@
       </pattern>
       <message>« Être dans l’eau chaude/bouillante » (au figuré) peut être considéré comme un anglicisme (to be in hot water). Employez <suggestion>être dans le pétrin</suggestion>, <suggestion>être dans de beaux draps</suggestion> « Hot water » se traduit par « eau bouillante » et « warm water » se traduit par « eau chaude ». Les aliments se cuisent à l’eau bouillante; l’être humain prend son bain à l’eau chaude.</message>
       <short>ETRE_DANS_L_EAU_CHAUDE</short>
-    </rule>
-    <rule id="ETRE_DU_POUR" name="être dû pour">
-      <pattern>
-        <token skip="2">être</token>
-        <token regexp="yes">dû|dues|dus</token>
-        <token>pour</token>
-      </pattern>
-      <message>« Être dû pour » peut être considéré comme un anglicisme (to be due for).</message>
-      <short>ETRE_DU_POUR</short>
     </rule>
     <rule id="ETRE_EN_AFFAIRES" name="être en affaires">
       <pattern>
@@ -4186,15 +4153,6 @@
       <message>« Séance régulière » peut être considéré comme un anglicisme.</message>
       <short>SEANCE_REGULIERE</short>
     </rule>
-    <rule id="SECRETAIRE_EXECUTIF" name="secrétaire exécutif">
-      <pattern>
-        <token regexp="yes">secrétaires?</token>
-        <token min="0">-</token>
-        <token regexp="yes">exécutifs?|exécutives?</token>
-      </pattern>
-      <message>« Secrétaire exécutif » peut être considéré comme un anglicisme (executive secretary).</message>
-      <short>SECRETAIRE_EXECUTIF</short>
-    </rule>
     <rule id="SECRETAIRE_PRIVEE" name="secrétaire privée">
       <pattern>
         <token regexp="yes">secrétaires?</token>
@@ -4634,14 +4592,6 @@
       <message>Une autre expression semble plus appropriée.</message>
       <short>A_DEFAUT_DE_QUOI</short>
     </rule>
-    <rule id="COMME_QUOI" name="comme quoi">
-      <pattern>
-        <token>comme</token>
-        <token>quoi</token>
-      </pattern>
-      <message>Une autre structure semble plus appropriée.</message>
-      <short>COMME_QUOI</short>
-    </rule>
     <rule id="DE_MAL_EN_PIRE" name="de mal en pire">
       <pattern>
         <token>de</token>
@@ -4651,14 +4601,6 @@
       </pattern>
       <message>« de mal en pire » est une expression fautive.</message>
       <short>DE_MAL_EN_PIRE</short>
-    </rule>
-    <rule id="DE_PARTOUT" name="de partout">
-      <pattern>
-        <token>de</token>
-        <token>partout</token>
-      </pattern>
-      <message>La préposition doit être omise.</message>
-      <short>DE_PARTOUT</short>
     </rule>
     <rule id="DONT_ACTE" name="donc-dont acte">
       <pattern>
@@ -4827,17 +4769,6 @@
       </pattern>
       <message>« Au diable vert/au diable au vert » est une expression fautive.</message>
       <short>AU_DIABLE_VERT</short>
-    </rule>
-    <rule id="AVOIR_L_HABITUDE_POUR" name="avoir l'habitude pour">
-      <pattern>
-        <token postag="V avoir.*" postag_regexp="yes"></token>
-        <token min="0" max="3" postag="A"></token>
-        <token>l'</token>
-        <token>habitude</token>
-        <token>pour</token>
-      </pattern>
-      <message>Une autre préposition semble plus appropriée.</message>
-      <short>AVOIR_L_HABITUDE_POUR</short>
     </rule>
     <rule id="A_LA_BONNE_FLANQUETTE" name="à la bonne flanquette">
       <pattern>
@@ -5114,16 +5045,6 @@
       <message>« En moto(cyclette) » est une expression fautive.</message>
       <short>EN_MOTO</short>
     </rule>
-    <rule id="EN_PLEINE_CAMPAGNE" name="en pleine campagne">
-      <pattern>
-        <token regexp="yes">habiter|demeurer|résider|vivre|loger|perdre|isoler|situer|cacher|nicher|écraser|maison|pavillon|gîte|propriété|villa|ferme|château|location|camping|lieu|hectare</token>
-        <token>en</token>
-        <token>pleine</token>
-        <token>campagne</token>
-      </pattern>
-      <message>« En pleine campagne » est une expression fautive.</message>
-      <short>EN_PLEINE_CAMPAGNE</short>
-    </rule>
     <rule id="ESSUYER_DES_REBIFFADES" name="essuyer des rebiffades">
       <pattern>
         <token skip="2">essuyer</token>
@@ -5208,15 +5129,6 @@
       </pattern>
       <message>Une erreur d'orthographe semble être détectée.</message>
       <short>HYGROMETRIE</short>
-    </rule>
-    <rule id="IL_DEVIENT_QUOI" name="il devient quoi">
-      <pattern>
-        <token regexp="yes" postag="V.* 3 .*" postag_regexp="yes">demeurer|devenir|être|para[îi]tre|rester|sembler</token>
-        <token min="0" max="4" postag="A"></token>
-        <token postag="SENT_END"></token>
-      </pattern>
-      <message>Un complément est requis.</message>
-      <short>IL_DEVIENT_QUOI</short>
     </rule>
     <rule id="IL_ME_FAIT_PLAISIR_PLAISIR" name="il me fait plaisir de">
       <pattern>
@@ -6251,16 +6163,6 @@
       <message>Une autre préposition semble plus appropriée.</message>
       <short>ABONDER_EN_SENS</short>
     </rule>
-    <rule id="ACCORD_QUI_VERBE_PLURIEL" name="antécédent pluriel + qui + verbe au singulier">
-      <pattern>
-        <token regexp="yes">plusieurs|certains|certaines|quelques|nombreux|nombreuses|les|ces|mes|tes|ses|leurs|nos|vos</token>
-        <token postag="N . p" postag_regexp="yes"></token>
-        <token>qui</token>
-        <token postag="V (ind|sub) pres 3 s" postag_regexp="yes"></token>
-      </pattern>
-      <message>L'antécédent au pluriel « \2 » appelle un verbe au pluriel après « qui ».</message>
-      <short>ACCORD_QUI_VERBE_PLURIEL</short>
-    </rule>
     <rule id="AVOIR_PU" name="Avoir pu suivi d’un verbe conjugué">
       <pattern>
         <token postag="V avoir .*" postag_regexp="yes"></token>
@@ -6517,17 +6419,6 @@
       <message>Cette expression est formée avec la préposition "par".</message>
       <short>FOIS_AU_SEMAINE</short>
     </rule>
-    <rule id="GARANTIR_DE" name="garantir de">
-      <pattern>
-        <token postag="V.* inf" postag_regexp="yes">
-          <exception>manager</exception>
-        </token>
-        <token>de</token>
-        <token>proximité</token>
-      </pattern>
-      <message>Vouliez-vous dire <suggestion>la</suggestion> ?</message>
-      <short>GARANTIR_DE</short>
-    </rule>
     <rule id="GRAND_PUBLIC" name="grand public invariable">
       <pattern>
         <token postag="N.*" postag_regexp="yes"></token>
@@ -6688,14 +6579,6 @@
       </pattern>
       <message>Employez <suggestion>mis</suggestion>, <suggestion>mise</suggestion> ou <suggestion>mises</suggestion> selon le contexte.</message>
       <short>MI_EN</short>
-    </rule>
-    <rule id="MOUVEMENT_ISME_VS_ISTE" name="nom de courant + mot en -isme (adjectif en -iste attendu)">
-      <pattern>
-        <token regexp="yes">mouvements?|courants?|partis?|régimes?|doctrines?|idéologies?|tendances?|mouvances?</token>
-        <token regexp="yes" postag="N.*" postag_regexp="yes">.*isme</token>
-      </pattern>
-      <message>Après « \1 », un adjectif est attendu : « \2 » est un nom. Vouliez-vous l'adjectif en -iste ?</message>
-      <short>MOUVEMENT_ISME_VS_ISTE</short>
     </rule>
     <rule id="NE_INF_PAS_ADV" name="ne infinitif pas adverbe">
       <pattern>
@@ -6880,16 +6763,6 @@
       </pattern>
       <message>Il est maladroit d’employer « \1 » avant un adjectif ou adverbe tel que « \2 » exprimant un superlatif.</message>
       <short>TRES_BEAUCOUP</short>
-    </rule>
-    <rule id="TROUVER_PLUS_NOM_INCORRECT" name="trouver suivi d'un nom incorrect">
-      <pattern>
-        <token postag="V.*" postag_regexp="yes">trouver</token>
-        <token postag="N.*" postag_regexp="yes">
-          <exception regexp="yes">asile|attache|confiance|contenance|grâce|place|preneur|sens</exception>
-        </token>
-      </pattern>
-      <message>Après le verbe 'trouver', ce nom n'est généralement pas utilisé.</message>
-      <short>TROUVER_PLUS_NOM_INCORRECT</short>
     </rule>
     <rule id="VENIR_DE_VINF" name="venir de V inf">
       <pattern>
@@ -7265,13 +7138,6 @@
       </pattern>
       <message>« Camion de vidanges » est un régionalisme (Québec).</message>
       <short>CAMION_DE_VIDANGES</short>
-    </rule>
-    <rule id="CARIBOU" name="caribou">
-      <pattern>
-        <token regexp="yes">caribou[sx]?</token>
-      </pattern>
-      <message>« Caribou » est un régionalisme (Québec). Employez <suggestion>renne</suggestion> (animal), <suggestion>renne d'Amérique</suggestion> (animal). Au sens de boisson alcoolisée, ce terme n’a aucun équivalent en français standard.</message>
-      <short>CARIBOU</short>
     </rule>
     <rule id="CARREAUTE" name="carreauté">
       <pattern>
@@ -8167,13 +8033,6 @@
       <message>« Phishing » peut être considéré comme un anglicisme.</message>
       <short>PHISHING</short>
     </rule>
-    <rule id="SEARCH" name="search">
-      <pattern>
-        <token>search</token>
-      </pattern>
-      <message>« \1 » peut être considéré comme un anglicisme.</message>
-      <short>SEARCH</short>
-    </rule>
     <rule id="SPAMDEXING" name="spamdexing">
       <pattern>
         <token>spamdexing</token>
@@ -8233,13 +8092,6 @@
       <message>« Black hat » peut être considéré comme un anglicisme.</message>
       <short>BLACK_HAT</short>
     </rule>
-    <rule id="BLIND" name="blind">
-      <pattern>
-        <token regexp="yes">blind|blinds</token>
-      </pattern>
-      <message>« Blind » peut être considéré comme un anglicisme.</message>
-      <short>BLIND</short>
-    </rule>
     <rule id="BLOOPER" name="blooper">
       <pattern>
         <token regexp="yes">bloopers?</token>
@@ -8295,13 +8147,6 @@
       </pattern>
       <message>« Cancellation » peut être considéré comme un anglicisme.</message>
       <short>CANCELLATION</short>
-    </rule>
-    <rule id="CART" name="cart">
-      <pattern>
-        <token regexp="yes">carts?</token>
-      </pattern>
-      <message>« Cart » peut être considéré comme un anglicisme.</message>
-      <short>CART</short>
     </rule>
     <rule id="CASHEW" name="cashew">
       <pattern>
@@ -8587,13 +8432,6 @@
       <message>« Lighter » peut être considéré comme un anglicisme. Employez <suggestion>briquet</suggestion> (en général), <suggestion>allume-cigare</suggestion> (dans une voiture).</message>
       <short>LIGHTER</short>
     </rule>
-    <rule id="LOCKER" name="locker">
-      <pattern>
-        <token regexp="yes">lockers?</token>
-      </pattern>
-      <message>« Locker » peut être considéré comme un anglicisme.</message>
-      <short>LOCKER</short>
-    </rule>
     <rule id="MALWARE" name="malware">
       <pattern>
         <token regexp="yes">malwares?</token>
@@ -8784,13 +8622,6 @@
       <message>« Smooth » peut être considéré comme un anglicisme. Employez <suggestion>doux</suggestion>, <suggestion>calme</suggestion>, <suggestion>pénard</suggestion> (familier).</message>
       <short>SMOOTH</short>
     </rule>
-    <rule id="SNAP" name="snap">
-      <pattern>
-        <token regexp="yes">snaps?</token>
-      </pattern>
-      <message>« Snap » peut être considéré comme un anglicisme.</message>
-      <short>SNAP</short>
-    </rule>
     <rule id="SPAMMING" name="spamming">
       <pattern>
         <token regexp="yes">spamm?ing</token>
@@ -8894,13 +8725,6 @@
       </pattern>
       <message>« Wiper » peut être considéré comme un anglicisme.</message>
       <short>WIPER</short>
-    </rule>
-    <rule id="WISE" name="wise">
-      <pattern>
-        <token regexp="yes">wises?</token>
-      </pattern>
-      <message>« Wise » peut être considéré comme un anglicisme.</message>
-      <short>WISE</short>
     </rule>
     <rule id="ZIPPER" name="zipper">
       <pattern>
@@ -9673,14 +9497,6 @@
       <message>Vouliez-vous dire <suggestion>pouvoir</suggestion>.</message>
       <short>POURVOIR_POUVOIR</short>
     </rule>
-    <rule id="QUANT_QUAND" name="Quant au lieu de quand">
-      <pattern>
-        <token>quant</token>
-        <token regexp="yes" negate="yes">a|à|aux?</token>
-      </pattern>
-      <message>Voulez-vous écrire <suggestion>quand</suggestion> ?</message>
-      <short>QUANT_QUAND</short>
-    </rule>
     <rule id="QUELQUE_PART" name="quelle que part → quelque part">
       <pattern>
         <token regexp="yes">quelles?|quels?</token>
@@ -10113,20 +9929,6 @@
       <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
       <short>REP_EN_VRAI</short>
     </rule>
-    <rule id="REP_MAINTENANT" name="maintenant">
-      <pattern>
-        <token>maintenant</token>
-      </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
-      <short>REP_MAINTENANT</short>
-    </rule>
-    <rule id="REP_NON" name="non (style)">
-      <pattern>
-        <token>non</token>
-      </pattern>
-      <message>Un mot est répété, et peut sembler familier dans un contexte formel.</message>
-      <short>REP_NON</short>
-    </rule>
     <rule id="REP_OUI" name="oui (style)">
       <pattern>
         <token>oui</token>
@@ -10200,13 +10002,6 @@
       <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
       <short>REP_TOUT_DE_SUITE</short>
     </rule>
-    <rule id="REP_ADRESSER" name="adresser (style)">
-      <pattern>
-        <token postag="V.*" postag_regexp="yes">adresser</token>
-      </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
-      <short>REP_ADRESSER</short>
-    </rule>
     <rule id="REP_APPRECIER" name="apprécier (style)">
       <pattern>
         <token postag="V.*" postag_regexp="yes">apprécier</token>
@@ -10221,13 +10016,6 @@
       </pattern>
       <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
       <short>REP_BREF</short>
-    </rule>
-    <rule id="REP_COMMUN" name="commun">
-      <pattern>
-        <token case_sensitive="yes" postag="J (.*)" postag_regexp="yes">commun</token>
-      </pattern>
-      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
-      <short>REP_COMMUN</short>
     </rule>
     <rule id="REP_D_APRES" name="d'après (style)">
       <pattern>
@@ -10280,13 +10068,6 @@
       <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
       <short>REP_OR</short>
     </rule>
-    <rule id="REP_POSSIBLE" name="possible">
-      <pattern>
-        <token postag="J.*" postag_regexp="yes">possible</token>
-      </pattern>
-      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
-      <short>REP_POSSIBLE</short>
-    </rule>
     <rule id="REP_PRECISER" name="préciser (style)">
       <pattern>
         <token postag="V.*" postag_regexp="yes">préciser</token>
@@ -10302,13 +10083,6 @@
       </pattern>
       <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style.</message>
       <short>REP_QUEL_QUE_SOIT</short>
-    </rule>
-    <rule id="REP_REMERCIER" name="remercier (style)">
-      <pattern>
-        <token postag="V.*" postag_regexp="yes">remercier</token>
-      </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style.</message>
-      <short>REP_REMERCIER</short>
     </rule>
     <rule id="REP_SANS_DOUTE" name="sans doute">
       <pattern>
@@ -10389,15 +10163,6 @@
       </pattern>
       <message>« Doubler une classe » est un archaïsme et un régionalisme. Vous pourriez préférer le français standard.</message>
       <short>DOUBLER_UNE_CLASSE</short>
-    </rule>
-    <rule id="EN_MEMOIRE_DE" name="en mémoire de">
-      <pattern>
-        <token>en</token>
-        <token regexp="yes">mémoires?</token>
-        <token>de</token>
-      </pattern>
-      <message>« En mémoire de » est un archaïsme. Vous pourriez préférer le français standard.</message>
-      <short>EN_MEMOIRE_DE</short>
     </rule>
     <rule id="FETE_DE_DOLLARD" name="fête de Dollard">
       <pattern>

@@ -609,13 +609,6 @@
       <message>Remove. Just say what the truth or fact is.</message>
       <short>THE_TRUTH_OR_FACT_IS</short>
     </rule>
-    <rule id="TIRED_INTENSIFIERS" name="really, very, quite, extremely, severely (use sparingly)">
-      <pattern>
-        <token regexp="yes">really|very|quite|extremely|severely</token>
-      </pattern>
-      <message>Usually, the word "\1" is not necessary. Remove it unless it is necessary.</message>
-      <short>TIRED_INTENSIFIERS</short>
-    </rule>
     <rule id="WHAT_I_MEAN_TO_SAY_IS_THAT" name="what I mean to say is that (omit)">
       <pattern>
         <token>what</token>
@@ -676,23 +669,6 @@
       <message>Consider using <suggestion>there are other</suggestion> or <suggestion>there are also</suggestion></message>
       <short>Redundant phrase</short>
     </rule>
-    <rule id="AND_ALSO" name="and also (and/also)">
-      <pattern>
-        <token>and</token>
-        <token>also</token>
-      </pattern>
-      <message>Consider using <suggestion>and</suggestion> or <suggestion>also</suggestion>.</message>
-      <short>Redundant phrase</short>
-    </rule>
-    <rule id="ARE_ABLE_TO" name="are able to (can)">
-      <pattern>
-        <token>are</token>
-        <token>able</token>
-        <token>to</token>
-      </pattern>
-      <message>This expression is wordy. Consider using <suggestion>can</suggestion>.</message>
-      <short>ARE_ABLE_TO</short>
-    </rule>
     <rule id="AS_OF_YET" name="as of yet (yet)">
       <pattern>
         <token>as</token>
@@ -728,14 +704,6 @@
         <token>that</token>
       </pattern>
       <message>This phrase is redundant. Consider using <suggestion>because</suggestion>.</message>
-      <short>Redundant phrase</short>
-    </rule>
-    <rule id="BEST_EVER" name="best ever (best)">
-      <pattern>
-        <token>best</token>
-        <token>ever</token>
-      </pattern>
-      <message>This phrase might be redundant. Consider using <suggestion>\1</suggestion>.</message>
       <short>Redundant phrase</short>
     </rule>
     <rule id="BITTER_IN_TASTE" name="bitter in taste (bitter)">
@@ -816,15 +784,6 @@
         <token>truth</token>
       </pattern>
       <message>Consider using <suggestion>\2</suggestion>.</message>
-      <short>Redundant phrase</short>
-    </rule>
-    <rule id="IN_ORDER_TO" name="in order to (to)">
-      <pattern>
-        <token>in</token>
-        <token>order</token>
-        <token>to</token>
-      </pattern>
-      <message>This phrase might be considered redundant. Consider using <suggestion>\3</suggestion>.</message>
       <short>Redundant phrase</short>
     </rule>
     <rule id="MOUNT_FUJIYAMA" name="Mount Fuji">
@@ -1025,22 +984,6 @@
         <token>life</token>
       </pattern>
       <message>Consider using <suggestion>\1</suggestion> or <suggestion>story \2 \3 \4</suggestion> instead.</message>
-      <short>Redundant phrase</short>
-    </rule>
-    <rule id="BLEND_TOGETHER" name="blend together (blend)">
-      <pattern>
-        <token regexp="yes">attach|assemble|blend|co(mbine|llaborate|nfer|ngregate)|join|me(rge|sh)|mix</token>
-        <token>together</token>
-      </pattern>
-      <message>This phrase might be redundant. Consider using <suggestion>\1</suggestion>.</message>
-      <short>Redundant phrase</short>
-    </rule>
-    <rule id="BRIEF_MOMENT" name="brief moment/summary (moment/summary)">
-      <pattern>
-        <token>brief</token>
-        <token regexp="yes">moment|summary|cameo</token>
-      </pattern>
-      <message>Consider using <suggestion>\2</suggestion>.</message>
       <short>Redundant phrase</short>
     </rule>
     <rule id="CDROM" name="CDROM (CD-ROM)">
@@ -1459,14 +1402,6 @@
       </pattern>
       <message>The usual preposition for "perspectives" is "on", not "about".</message>
       <short>PERSPECTIVES_ABOUT_ON</short>
-    </rule>
-    <rule id="POPULAR_AMONG_WITH" name="Collocation: Popular among/with">
-      <pattern>
-        <token>popular</token>
-        <token>among</token>
-      </pattern>
-      <message>The usual collocation for "popular" is "with", not "among".</message>
-      <short>POPULAR_AMONG_WITH</short>
     </rule>
     <rule id="TIRED_ABOUT_OF" name="Collocation: tired about/of">
       <pattern>
@@ -1912,14 +1847,6 @@
       <message>The usual preposition for "\1" is "at".</message>
       <short>GROWLED_TO_AT</short>
     </rule>
-    <rule id="GUARD_FROM_AGAINST" name="Collocation: guard from/against">
-      <pattern>
-        <token regexp="yes">(?:safe)?guard</token>
-        <token>from</token>
-      </pattern>
-      <message>The usual collocation for "\1" is "against", not "\2". Did you mean <suggestion>\1 against</suggestion>?</message>
-      <short>GUARD_FROM_AGAINST</short>
-    </rule>
     <rule id="HAVE_CD_YEARS" name="Wrong phrase: have x years old (be x years old)">
       <pattern>
         <token>have</token>
@@ -2040,26 +1967,6 @@
       </pattern>
       <message>The usual preposition for "perspective" is "from", not "in".</message>
       <short>IN_FROM_THE_PERSPECTIVE</short>
-    </rule>
-    <rule id="IN_FRONT_OF" name="Collocation: in front of">
-      <pattern>
-        <token>in</token>
-        <token>front</token>
-        <token postag="IN">
-          <exception>of</exception>
-        </token>
-      </pattern>
-      <message>The usual preposition for "in front" is "of". Did you mean <suggestion>in front of</suggestion>?</message>
-      <short>IN_FRONT_OF</short>
-    </rule>
-    <rule id="IN_ON_AN_ALBUM" name="Collocation: in/on an album">
-      <pattern>
-        <token>in</token>
-        <token postag="DT"></token>
-        <token>album</token>
-      </pattern>
-      <message>The usual collocation for "\3" is "on", not "in" when "album" refers to a collection of recorded music. If by "album" you mean a collection of photos, "in an album" is correct. Did you mean <suggestion>on \2 \3</suggestion>?</message>
-      <short>IN_ON_AN_ALBUM</short>
     </rule>
     <rule id="IN_ON_A_SECRET_MISSION" name="Collocation: in/on a secret mission">
       <pattern>
@@ -2313,17 +2220,6 @@
       </pattern>
       <message>The usual preposition for "passionate" is "about", not "by".</message>
       <short>PASSIONATE_BY_ABOUT</short>
-    </rule>
-    <rule id="PASSIONATE_BY_ABOUT_2" name="Collocation: passionate by/about (stricter)">
-      <pattern>
-        <token postag="VB[PZD]|R[BP]" postag_regexp="yes"></token>
-        <token>passionate</token>
-        <token>by</token>
-        <token min="0" postag="DT|PRP\$" postag_regexp="yes"></token>
-        <token postag="NN:UN?" postag_regexp="yes"></token>
-      </pattern>
-      <message>The usual preposition for "passionate" is "about", not "by".</message>
-      <short>PASSIONATE_BY_ABOUT_2</short>
     </rule>
     <rule id="PLAY_WITH_FOR" name="Collocation: Play with/for">
       <pattern>
@@ -2608,15 +2504,6 @@
       </pattern>
       <message>The usual preposition for activities involving a desk is "at".</message>
       <short>VERB_IN_AT</short>
-    </rule>
-    <rule id="WAITING_MY_PATIENT" name="waiting (for) a patient">
-      <pattern>
-        <token>wait</token>
-        <token postag="PRP$|DT" postag_regexp="yes"></token>
-        <token postag="NN.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>The word "for" is missing between "\1" and "\1 \2".</message>
-      <short>WAITING_MY_PATIENT</short>
     </rule>
     <rule id="WAITING_MY_PATIENT_FINISH" name="Collocation: waiting (to) finish">
       <pattern>
@@ -4578,14 +4465,6 @@
       <message>Did you mean <suggestion>can black out</suggestion>?</message>
       <short>CAN_BLACKOUT</short>
     </rule>
-    <rule id="CAN_NOT" name="can not (cannot)">
-      <pattern>
-        <token>can</token>
-        <token>not</token>
-      </pattern>
-      <message>Did you mean <suggestion>cannot</suggestion>?</message>
-      <short>Possible typo</short>
-    </rule>
     <rule id="CHILDRENS_DAY_APOSTROPHE" name="missing apostrophe in 'Childrens Day'">
       <pattern>
         <token>Childrens</token>
@@ -4799,13 +4678,6 @@
       </pattern>
       <message>Did you mean <suggestion>free</suggestion>?</message>
       <short>Possible typo</short>
-    </rule>
-    <rule id="FLASHPOINT" name="flashpoint (flash point)">
-      <pattern>
-        <token>flashpoint</token>
-      </pattern>
-      <message>Did you mean <suggestion>flash point</suggestion>?</message>
-      <short>FLASHPOINT</short>
     </rule>
     <rule id="FORTH_PLACE" name="forth (fourth) place">
       <pattern>
@@ -6157,15 +6029,6 @@
       <message>Did you mean <suggestion>through</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
-    <rule id="COMPARISONS_AS_ADJECTIVE_AS" name="comparison 'as ... as' (no comparative/superlative)">
-      <pattern>
-        <token>as</token>
-        <token postag="JJ." postag_regexp="yes"></token>
-        <token>as</token>
-      </pattern>
-      <message>Did you mean <suggestion></suggestion>?</message>
-      <short>COMPARISONS_AS_ADJECTIVE_AS</short>
-    </rule>
     <rule id="COMPLAINT_COMPLIANT" name="complaint (compliant) with">
       <pattern>
         <token regexp="yes">be|not</token>
@@ -7451,14 +7314,6 @@
       </pattern>
       <message>The name of this US county is spelled with a hyphen.</message>
       <short>MIAMI_DADE_HYPHEN</short>
-    </rule>
-    <rule id="MUCH_MONEY" name="He has much (a lot of) money">
-      <pattern>
-        <token>much</token>
-        <token>money</token>
-      </pattern>
-      <message>In this context, <suggestion>a lot of</suggestion> or <suggestion>so much</suggestion> is more likely.</message>
-      <short>MUCH_MONEY</short>
     </rule>
     <rule id="OFF_KEY_HYPHEN" name="missing hyphen in 'off key'">
       <pattern>
@@ -10421,14 +10276,6 @@
       <message>Did you mean <suggestion>withdraw</suggestion>?</message>
       <short>TO_WITHDRAWN</short>
     </rule>
-    <rule id="TYPO_THEY_S" name="They's (They'd) already read his biography">
-      <pattern>
-        <token regexp="yes">we|they</token>
-        <token>'s</token>
-      </pattern>
-      <message>Typo detected: Did you mean to write '\1'd' (contracted form of '\1 had' or '\1 would')?</message>
-      <short>TYPO_THEY_S</short>
-    </rule>
     <rule id="WARE_COMPOUNDS" name="soft ware (software)">
       <pattern>
         <token regexp="yes">ransom|free|kitchen|earthen|lacquer|granite|crackle|course|silver|dinner|hollow|wooden|enamel|yellow|willow|luster|jasper|sponge|hypera|share|group|table|glass|stone|vapou?r|china|brass|metal|cream|bloat|delft|hollo|treen|agate|soft|hard|firm|gift|cook|bake|flat|stem|iron|dish|oven|slip|outs|clay|cane|bar|wet|red|tin|sea|tea</token>
@@ -10723,13 +10570,6 @@
       </pattern>
       <message>The name of this online marketplace is spelled as one word.</message>
       <short>AIR_BNB</short>
-    </rule>
-    <rule id="APPSTORE" name="AppStore (App Store, Amazon Appstore)">
-      <pattern>
-        <token>appstore</token>
-      </pattern>
-      <message>If you mean the Apple digital distribution platform, use <suggestion>App Store</suggestion>. For Amazon, use <suggestion>Amazon Appstore</suggestion>.</message>
-      <short>Possible typo</short>
     </rule>
     <rule id="BOEING_737_MAX" name="737 max (Max)">
       <pattern>
@@ -11557,15 +11397,78 @@
       <short>Nonstandard phrase</short>
     </rule>
   </category>
-  <category id="STYLE" name="Style">
-    <rule id="ALSO_SENT_END" name="'also' at the end of the sentence">
+  <category id="AMERICAN_ENGLISH" name="American English phrases">
+    <rule id="ANYMORE" name="anymore (any more)">
       <pattern>
-        <token>also</token>
-        <token>.</token>
+        <token>anymore</token>
       </pattern>
-      <message>'Also' is not used at the end of the sentence. Use <suggestion>as well</suggestion> or <suggestion>too</suggestion> instead.</message>
-      <short>'Also' at the end of sentence</short>
+      <message>In British English, the spelling '\1' is sometimes considered incorrect. Did you mean <suggestion>any more</suggestion>?</message>
+      <short>AmE/BrE: anymore/any more</short>
     </rule>
+    <rule id="GOT_GOTTEN" name="gotten/got">
+      <pattern>
+        <token>gotten</token>
+      </pattern>
+      <message>"Gotten" is commonly used in American English. For varieties outside of North America, "got" is the preferred variant.</message>
+      <short>AmE/BrE: gotten/got</short>
+    </rule>
+    <rule id="GROUND_VS_MINCED" name="ground beef/minced beef">
+      <pattern>
+        <token>ground</token>
+        <token>beef</token>
+      </pattern>
+      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>minced \2</suggestion>?</message>
+      <short>AmE/BrE: ground beef/minced beef</short>
+    </rule>
+    <rule id="AIR_PLANE_AEROPLANE" name="air plane/aeroplane">
+      <pattern>
+        <token>air</token>
+        <token regexp="yes" postag="NN|NNS" postag_regexp="yes">planes?</token>
+      </pattern>
+      <message>The term '\1 \2' is common for American English. For British English use <suggestion>aeroplane</suggestion>.</message>
+      <short>AmE/BrE: air plane/aeroplane</short>
+    </rule>
+    <rule id="DRIVERS_LICENSE" name="driver's licence/driving licence">
+      <pattern>
+        <token>driver</token>
+        <token>'s</token>
+        <token regexp="yes">licences?</token>
+      </pattern>
+      <message>This term is chiefly North American English. Consider a replacement.</message>
+      <short>DRIVERS_LICENSE</short>
+    </rule>
+    <rule id="EGGPLANT" name="eggplant/aubergine">
+      <pattern>
+        <token regexp="yes">eggplants?</token>
+      </pattern>
+      <message>This term is chiefly North American English. Consider a replacement.</message>
+      <short>EGGPLANT</short>
+    </rule>
+    <rule id="MOVIE_THEATER_CINEMA" name="movie theater/cinema">
+      <pattern>
+        <token>movie</token>
+        <token>theater</token>
+      </pattern>
+      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>cinema</suggestion>?</message>
+      <short>AmE/BrE: movie theater/cinema</short>
+    </rule>
+    <rule id="OK" name="ok (OK)">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes">[Oo]k</token>
+      </pattern>
+      <message>Lower-case '\1' is American English. For British English use <suggestion>OK</suggestion>.</message>
+      <short>AmE/BrE: ok/OK</short>
+    </rule>
+    <rule id="ZIP_CODE_POSTCODE" name="zip code/postcode">
+      <pattern>
+        <token>zip</token>
+        <token regexp="yes" postag="NN:UN|NNS" postag_regexp="yes">codes?</token>
+      </pattern>
+      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>postcode</suggestion>?</message>
+      <short>AmE/BrE: zip code/postcode</short>
+    </rule>
+  </category>
+  <category id="STYLE" name="Style">
     <rule id="ANYWAYS" name="anyways (anyway)">
       <pattern>
         <token>anyways</token>
@@ -11741,14 +11644,6 @@
       <message>The word "\1" is informal.</message>
       <short>GOTCHA</short>
     </rule>
-    <rule id="HOPEFULLY" name="Word order: 'Hopefully' starting a sentence">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token>hopefully</token>
-      </pattern>
-      <message>Starting a sentence with 'hopefully' may be considered bad style.</message>
-      <short>Bad style</short>
-    </rule>
     <rule id="LUV" name="luv (love)">
       <pattern>
         <token regexp="yes">luvs?</token>
@@ -11848,77 +11743,6 @@
       </pattern>
       <message>The expression 'a whole other' can seem colloquial. Consider replacing it with a more formal alternative.</message>
       <short>WHOLE_OTHER</short>
-    </rule>
-  </category>
-  <category id="AMERICAN_ENGLISH" name="American English phrases">
-    <rule id="ANYMORE" name="anymore (any more)">
-      <pattern>
-        <token>anymore</token>
-      </pattern>
-      <message>In British English, the spelling '\1' is sometimes considered incorrect. Did you mean <suggestion>any more</suggestion>?</message>
-      <short>AmE/BrE: anymore/any more</short>
-    </rule>
-    <rule id="GOT_GOTTEN" name="gotten/got">
-      <pattern>
-        <token>gotten</token>
-      </pattern>
-      <message>"Gotten" is commonly used in American English. For varieties outside of North America, "got" is the preferred variant.</message>
-      <short>AmE/BrE: gotten/got</short>
-    </rule>
-    <rule id="GROUND_VS_MINCED" name="ground beef/minced beef">
-      <pattern>
-        <token>ground</token>
-        <token>beef</token>
-      </pattern>
-      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>minced \2</suggestion>?</message>
-      <short>AmE/BrE: ground beef/minced beef</short>
-    </rule>
-    <rule id="AIR_PLANE_AEROPLANE" name="air plane/aeroplane">
-      <pattern>
-        <token>air</token>
-        <token regexp="yes" postag="NN|NNS" postag_regexp="yes">planes?</token>
-      </pattern>
-      <message>The term '\1 \2' is common for American English. For British English use <suggestion>aeroplane</suggestion>.</message>
-      <short>AmE/BrE: air plane/aeroplane</short>
-    </rule>
-    <rule id="DRIVERS_LICENSE" name="driver's licence/driving licence">
-      <pattern>
-        <token>driver</token>
-        <token>'s</token>
-        <token regexp="yes">licences?</token>
-      </pattern>
-      <message>This term is chiefly North American English. Consider a replacement.</message>
-      <short>DRIVERS_LICENSE</short>
-    </rule>
-    <rule id="EGGPLANT" name="eggplant/aubergine">
-      <pattern>
-        <token regexp="yes">eggplants?</token>
-      </pattern>
-      <message>This term is chiefly North American English. Consider a replacement.</message>
-      <short>EGGPLANT</short>
-    </rule>
-    <rule id="MOVIE_THEATER_CINEMA" name="movie theater/cinema">
-      <pattern>
-        <token>movie</token>
-        <token>theater</token>
-      </pattern>
-      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>cinema</suggestion>?</message>
-      <short>AmE/BrE: movie theater/cinema</short>
-    </rule>
-    <rule id="OK" name="ok (OK)">
-      <pattern>
-        <token regexp="yes" case_sensitive="yes">[Oo]k</token>
-      </pattern>
-      <message>Lower-case '\1' is American English. For British English use <suggestion>OK</suggestion>.</message>
-      <short>AmE/BrE: ok/OK</short>
-    </rule>
-    <rule id="ZIP_CODE_POSTCODE" name="zip code/postcode">
-      <pattern>
-        <token>zip</token>
-        <token regexp="yes" postag="NN:UN|NNS" postag_regexp="yes">codes?</token>
-      </pattern>
-      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>postcode</suggestion>?</message>
-      <short>AmE/BrE: zip code/postcode</short>
     </rule>
   </category>
   <category id="COMPOUNDING" name="Compounding">
@@ -12410,91 +12234,6 @@
       <short>YARDER_HYPHEN</short>
     </rule>
   </category>
-  <category id="TYPOGRAPHY" name="Typography">
-    <rule id="A_LA_DIACRITIC" name="a la (à la)">
-      <pattern>
-        <token>a</token>
-        <token>la</token>
-      </pattern>
-      <message>‘A la’ is a foreign expression which originally has a diacritic.</message>
-      <short>A_LA_DIACRITIC</short>
-    </rule>
-    <rule id="CD_TH" name="number + (th, nd, st, rd)">
-      <pattern>
-        <token regexp="yes">\d{1,2}</token>
-        <token regexp="yes" case_sensitive="yes">th|nd|st|rd</token>
-      </pattern>
-      <message>Did you mean <suggestion>\1\2</suggestion>?</message>
-      <short>CD_TH</short>
-    </rule>
-    <rule id="NON_ENGLISH_CHARACTER_IN_A_WORD" name="Non-standard character in a word">
-      <pattern>
-        <token regexp="yes" postag="UNKNOWN">[a-z]*(\u043E|\u0455|\u0435|\u0440|\u03BF)[a-z]*
-          <exception regexp="yes">.</exception>
-        </token>
-      </pattern>
-      <message>The character '' in '\1' is not an English character, although it can look like an English character. This character can cause spelling and disambiguation errors. Try typing the word again.</message>
-      <short>NON_ENGLISH_CHARACTER_IN_A_WORD</short>
-    </rule>
-    <rule id="NON_STANDARD_QUESTION_MARK" name="Non-standard question mark">
-      <pattern>
-        <token regexp="yes" postag="UNKNOWN">.*[a-z].*\uFF1F</token>
-      </pattern>
-      <message>The character '？' is not a standard question mark, although it can look like a question mark.</message>
-      <short>Non-standard question mark</short>
-    </rule>
-    <rule id="O_CONNOR" name="O Connor (O'Connor)">
-      <pattern>
-        <token>O</token>
-        <token regexp="yes">Conor|Connor|Neill?|Brien|Brian|[DC]onnell|Casey|Carroll|Doherty|Donovan|Keeff?e|Kelly|Leary|Reilly|Shea|Kennedy|Rourke|Toole|Flaherty|Hanlon</token>
-      </pattern>
-      <message>Did you mean the surname <suggestion>O'</suggestion> or the interjection <suggestion>\1h, </suggestion>?</message>
-      <short>O_CONNOR</short>
-    </rule>
-    <rule id="R_SYMBOL" name="(R) instead of ®">
-      <pattern>
-        <token regexp="yes">\p{Lu}.*</token>
-        <token>(</token>
-        <token>R</token>
-        <token>)</token>
-      </pattern>
-      <message>Did you mean <suggestion>®</suggestion>?</message>
-      <short>Nonstandard notation of ®</short>
-    </rule>
-    <rule id="TL_DR" name="TL DR (TL;DR)">
-      <pattern>
-        <token regexp="yes">tl|TL</token>
-        <token regexp="yes" min="0">[/:]</token>
-        <token regexp="yes">dr|DR</token>
-      </pattern>
-      <message>Did you mean the internet acronym <suggestion>TL;DR</suggestion> or <suggestion>TLDR</suggestion> (short for "Too Long; Didn't Read")?</message>
-      <short>TL_DR</short>
-    </rule>
-    <rule id="TRADEMARK" name="(TM) instead of ™">
-      <pattern>
-        <token regexp="yes">\p{Lu}.*</token>
-        <token>(</token>
-        <token>TM</token>
-        <token>)</token>
-      </pattern>
-      <message>Would you like to use the symbol <suggestion>™</suggestion> instead?</message>
-      <short>Nonstandard notation of ™</short>
-    </rule>
-    <rule id="TYPEWRITER_APOSTROPHE" name="require typewriter (straight) apostrophe (')">
-      <pattern>
-        <token regexp="yes">'.+</token>
-      </pattern>
-      <message>Consider using the typewriter apostrophe.</message>
-      <short>TYPEWRITER_APOSTROPHE</short>
-    </rule>
-    <rule id="TYPOGRAPHICAL_APOSTROPHE" name="require typographical (curly) apostrophe (’)">
-      <pattern>
-        <token regexp="yes">'.+</token>
-      </pattern>
-      <message>Consider using the typographical apostrophe.</message>
-      <short>TYPOGRAPHICAL_APOSTROPHE</short>
-    </rule>
-  </category>
   <category id="CASING" name="Upper/Lowercase">
     <rule id="BAY_AREA" name="bay area (Bay Area)">
       <pattern>
@@ -12978,33 +12717,67 @@
       <short>WIKIPEDIA_CURRENTLY</short>
     </rule>
   </category>
-  <category id="CREATIVE_WRITING" name="Creative Writing">
-    <rule id="E_PRIME_LOOSE" name="Creative Writing: E-Prime: 'to be' as the main verb">
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="CD_TH" name="number + (th, nd, st, rd)">
       <pattern>
-        <token>be
-          <exception>art</exception>
+        <token regexp="yes">\d{1,2}</token>
+        <token regexp="yes" case_sensitive="yes">th|nd|st|rd</token>
+      </pattern>
+      <message>Did you mean <suggestion>\1\2</suggestion>?</message>
+      <short>CD_TH</short>
+    </rule>
+    <rule id="NON_ENGLISH_CHARACTER_IN_A_WORD" name="Non-standard character in a word">
+      <pattern>
+        <token regexp="yes" postag="UNKNOWN">[a-z]*(\u043E|\u0455|\u0435|\u0440|\u03BF)[a-z]*
+          <exception regexp="yes">.</exception>
         </token>
       </pattern>
-      <message>According to E-Prime, avoiding the use of the stative verb 'to be' makes the communication clearer, more accurate, and less dogmatic. Use an alternative verb.</message>
-      <short>Using E-Prime, you should avoid the verb 'to be'.</short>
+      <message>The character '' in '\1' is not an English character, although it can look like an English character. This character can cause spelling and disambiguation errors. Try typing the word again.</message>
+      <short>NON_ENGLISH_CHARACTER_IN_A_WORD</short>
     </rule>
-    <rule id="E_PRIME_STRICT" name="Creative Writing: E-Prime: all 'to be' forms">
+    <rule id="NON_STANDARD_QUESTION_MARK" name="Non-standard question mark">
       <pattern>
-        <token>be</token>
+        <token regexp="yes" postag="UNKNOWN">.*[a-z].*\uFF1F</token>
       </pattern>
-      <message>According to E-Prime, avoiding the use of the stative verb 'to be' makes the communication clearer, more accurate, and less dogmatic. Use an alternative verb.</message>
-      <short>Using E-Prime, you should avoid the verb 'to be'.</short>
+      <message>The character '？' is not a standard question mark, although it can look like a question mark.</message>
+      <short>Non-standard question mark</short>
     </rule>
-  </category>
-  <category id="TON_ACADEMIC" name="Academic Writing">
-    <rule id="IT_IS_OBVIOUS" name="It is obvious (unscientific)">
+    <rule id="O_CONNOR" name="O Connor (O'Connor)">
       <pattern>
-        <token>it</token>
-        <token regexp="yes" skip="1">['i]s</token>
-        <token>obvious</token>
+        <token>O</token>
+        <token regexp="yes">Conor|Connor|Neill?|Brien|Brian|[DC]onnell|Casey|Carroll|Doherty|Donovan|Keeff?e|Kelly|Leary|Reilly|Shea|Kennedy|Rourke|Toole|Flaherty|Hanlon</token>
       </pattern>
-      <message>If possible, be specific about why that is obvious.</message>
-      <short>IT_IS_OBVIOUS</short>
+      <message>Did you mean the surname <suggestion>O'</suggestion> or the interjection <suggestion>\1h, </suggestion>?</message>
+      <short>O_CONNOR</short>
+    </rule>
+    <rule id="R_SYMBOL" name="(R) instead of ®">
+      <pattern>
+        <token regexp="yes">\p{Lu}.*</token>
+        <token>(</token>
+        <token>R</token>
+        <token>)</token>
+      </pattern>
+      <message>Did you mean <suggestion>®</suggestion>?</message>
+      <short>Nonstandard notation of ®</short>
+    </rule>
+    <rule id="TL_DR" name="TL DR (TL;DR)">
+      <pattern>
+        <token regexp="yes">tl|TL</token>
+        <token regexp="yes" min="0">[/:]</token>
+        <token regexp="yes">dr|DR</token>
+      </pattern>
+      <message>Did you mean the internet acronym <suggestion>TL;DR</suggestion> or <suggestion>TLDR</suggestion> (short for "Too Long; Didn't Read")?</message>
+      <short>TL_DR</short>
+    </rule>
+    <rule id="TRADEMARK" name="(TM) instead of ™">
+      <pattern>
+        <token regexp="yes">\p{Lu}.*</token>
+        <token>(</token>
+        <token>TM</token>
+        <token>)</token>
+      </pattern>
+      <message>Would you like to use the symbol <suggestion>™</suggestion> instead?</message>
+      <short>Nonstandard notation of ™</short>
     </rule>
   </category>
 </rules>

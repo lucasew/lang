@@ -158,6 +158,7 @@ func DiscoverEnglishIgnoreSpellingList(opts *CommandLineOptions) string {
 
 // DiscoverEnglishSoftDisambiguationXML finds soft EN disambiguation XML
 // (CLI --disambiguation-file, LANG_DISAMBIGUATION_FILE, data-dir, walk-up).
+// Prefers vendored upstream extract over the legacy hand-written soft file.
 func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
 	if opts != nil {
 		if p := opts.GetDisambiguationFile(); p != "" {
@@ -174,6 +175,7 @@ func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
 	}
 	if opts != nil && opts.GetDataDir() != "" {
 		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "disambiguation", "en-disambiguation-upstream-soft.xml"),
 			filepath.Join(opts.GetDataDir(), "disambiguation", "en-soft.xml"),
 			filepath.Join(opts.GetDataDir(), "en-soft-disambiguation.xml"),
 		} {
@@ -182,7 +184,16 @@ func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
 			}
 		}
 	}
-	return WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-soft.xml"))
+	for _, rel := range []string{
+		filepath.Join("testdata", "disambiguation", "en-disambiguation-upstream-soft.xml"),
+		filepath.Join("testdata", "upstream", "en", "en-disambiguation-from-upstream-soft.xml"),
+		filepath.Join("testdata", "disambiguation", "en-soft.xml"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
 }
 
 // DiscoverEnglishMultiwords finds multiword dict for soft multiword disambiguation.
