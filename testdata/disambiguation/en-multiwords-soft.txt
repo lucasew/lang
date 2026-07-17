@@ -246,3 +246,6 @@ face to face	RB
 Springfield Illinois	NNP
 Madison Wisconsin	NNP
 neck and neck	RB
+Saint Paul Minnesota	NNP
+Lansing Michigan	NNP
+head to head	RB

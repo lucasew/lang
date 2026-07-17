@@ -1815,4 +1815,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_STEAMPIPE" name="immunize steampipe">
+    <pattern>
+      <token>steampipe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STEAMPIPE_CAPS" name="immunize Steampipe">
+    <pattern>
+      <token>Steampipe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GITLEAKS" name="immunize gitleaks">
+    <pattern>
+      <token>gitleaks</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GITLEAKS_CAPS" name="immunize Gitleaks">
+    <pattern>
+      <token>Gitleaks</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEMGREP" name="immunize semgrep">
+    <pattern>
+      <token>semgrep</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SEMGREP_CAPS" name="immunize Semgrep">
+    <pattern>
+      <token>Semgrep</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

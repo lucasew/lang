@@ -1079,5 +1079,29 @@
       <message>Slogan; name the incremental action instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_FIRST" name="customer first soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>first</token>
+      </pattern>
+      <message>Slogan; name the customer outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DATA_DRIVEN" name="data driven soft picky">
+      <pattern>
+        <token>data</token>
+        <token>driven</token>
+      </pattern>
+      <message>Jargon; name the metric or evidence instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FULL_STACK" name="full stack soft picky">
+      <pattern>
+        <token>full</token>
+        <token>stack</token>
+      </pattern>
+      <message>Vague label; name the concrete skills or layers.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

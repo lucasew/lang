@@ -5167,6 +5167,76 @@
       <message>Did you mean "details"?</message>
       <short>detials</short>
     </rule>
+    <rule id="EN_SOFT_DEFINITION_MISS" name="defintion soft">
+      <pattern>
+        <token>defintion</token>
+      </pattern>
+      <message>Did you mean "definition"?</message>
+      <short>defintion</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINED_MISS" name="deffined soft">
+      <pattern>
+        <token>deffined</token>
+      </pattern>
+      <message>Did you mean "defined"?</message>
+      <short>deffined</short>
+    </rule>
+    <rule id="EN_SOFT_DANGEROUS_MISS" name="danagerous soft">
+      <pattern>
+        <token>danagerous</token>
+      </pattern>
+      <message>Did you mean "dangerous"?</message>
+      <short>danagerous</short>
+    </rule>
+    <rule id="EN_SOFT_CUSTOMER_MISS" name="custmer soft">
+      <pattern>
+        <token>custmer</token>
+      </pattern>
+      <message>Did you mean "customer"?</message>
+      <short>custmer</short>
+    </rule>
+    <rule id="EN_SOFT_CURRENTLY_MISS" name="currenlty soft">
+      <pattern>
+        <token>currenlty</token>
+      </pattern>
+      <message>Did you mean "currently"?</message>
+      <short>currenlty</short>
+    </rule>
+    <rule id="EN_SOFT_CURRENT_MISS" name="curent soft">
+      <pattern>
+        <token>curent</token>
+      </pattern>
+      <message>Did you mean "current"?</message>
+      <short>curent</short>
+    </rule>
+    <rule id="EN_SOFT_DETERMINED_MISS" name="detirmined soft">
+      <pattern>
+        <token>detirmined</token>
+      </pattern>
+      <message>Did you mean "determined"?</message>
+      <short>detirmined</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFICULT_MISS" name="dificult soft">
+      <pattern>
+        <token>dificult</token>
+      </pattern>
+      <message>Did you mean "difficult"?</message>
+      <short>dificult</short>
+    </rule>
+    <rule id="EN_SOFT_DILEMMA_MISS2" name="dilema soft">
+      <pattern>
+        <token>dilema</token>
+      </pattern>
+      <message>Did you mean "dilemma"?</message>
+      <short>dilema</short>
+    </rule>
+    <rule id="EN_SOFT_DYNAMIC_MISS" name="dinamic soft">
+      <pattern>
+        <token>dinamic</token>
+      </pattern>
+      <message>Did you mean "dynamic"?</message>
+      <short>dinamic</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
