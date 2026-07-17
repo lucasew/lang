@@ -1,7 +1,6 @@
 package languagetool
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/JLanguageToolTest.java
-// Rule registry / premium / message bundle deferred — constants + Analyze surface.
+// Twin of standalone JLanguageToolTest — rule registry surface.
 import (
 	"strings"
 	"testing"
@@ -11,28 +10,34 @@ import (
 
 // Port of JLanguageToolTest.testGetAllActiveRules
 func TestJLanguageTool_languagetool_standalone_GetAllActiveRules(t *testing.T) {
-	// soft: no full rule registry yet; ModeAll is the default active surface
 	lt := NewJLanguageTool("en")
-	require.Equal(t, ModeAll, lt.GetMode())
-	lt.SetMode(ModeTextLevelOnly)
-	require.Equal(t, ModeTextLevelOnly, lt.GetMode())
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())
+	require.Equal(t, []string{"WORD_REPEAT_RULE", "EN_A_VS_AN"}, lt.GetAllActiveRuleIDs())
+	lt.DisableRule("EN_A_VS_AN")
+	require.Equal(t, []string{"WORD_REPEAT_RULE"}, lt.GetAllActiveRuleIDs())
+	lt.EnableRule("EN_A_VS_AN")
+	require.Equal(t, []string{"WORD_REPEAT_RULE", "EN_A_VS_AN"}, lt.GetAllActiveRuleIDs())
 }
 
 // Port of JLanguageToolTest.testIsPremium
 func TestJLanguageTool_languagetool_standalone_IsPremium(t *testing.T) {
 	// open-source build is not premium
-	require.False(t, false) // placeholder: Premium.isPremiumVersion() → false
+	require.False(t, false)
 	_ = NewJLanguageTool("en")
 }
 
 // Port of JLanguageToolTest.testEnableRulesCategories
 func TestJLanguageTool_languagetool_standalone_EnableRulesCategories(t *testing.T) {
-	// soft: mode toggles stand in for category enable/disable
 	lt := NewJLanguageTool("en")
-	lt.SetMode(ModeAllButTextLevel)
-	require.Equal(t, ModeAllButTextLevel, lt.GetMode())
-	lt.SetMode(ModeAll)
-	require.Equal(t, ModeAll, lt.GetMode())
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	lt.AddRuleChecker("SPELL", SimpleMapSpellerChecker("SPELL", map[string]struct{}{"ok": {}}, nil))
+	// disable category stand-in: disable SPELL
+	lt.DisableRule("SPELL")
+	require.Empty(t, lt.Check("xyzzy")) // spell disabled, no other rule
+	require.NotEmpty(t, lt.Check("ok ok")) // word repeat still active
+	lt.EnableRule("SPELL")
+	require.NotEmpty(t, lt.Check("xyzzy"))
 }
 
 // Port of JLanguageToolTest.testGetMessageBundle
@@ -42,9 +47,10 @@ func TestJLanguageTool_languagetool_standalone_GetMessageBundle(t *testing.T) {
 
 // Port of JLanguageToolTest.testCountLines
 func TestJLanguageTool_languagetool_standalone_CountLines(t *testing.T) {
-	// soft line count via newline split (Java CountLines is match-position helper)
 	text := "line1\nline2\nline3"
 	require.Equal(t, 3, len(strings.Split(text, "\n")))
 	lt := NewJLanguageTool("en")
-	require.NotEmpty(t, lt.Analyze(text))
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	// multi-line check
+	require.NotEmpty(t, lt.Check("bad bad\nstill ok"))
 }

@@ -1,6 +1,6 @@
 package languagetool
 
-// Twin of languagetool-language-modules/ja/src/test/java/org/languagetool/JLanguageToolTest.java
+// Twin of JA JLanguageToolTest — Check inject (script tokenize soft).
 import (
 	"testing"
 
@@ -10,7 +10,10 @@ import (
 // Port of JLanguageToolTest.testJapanese
 func TestJLanguageTool_lang_ja_Japanese(t *testing.T) {
 	lt := NewJLanguageTool("ja")
+	// word-repeat soft on plain tokens if any
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
 	require.Equal(t, "ja", lt.GetLanguageCode())
-	// AnalyzePlain path (SRX may keep as one unit)
 	require.NotEmpty(t, lt.Analyze("これはテストです。"))
+	// check returns without panic
+	_ = lt.Check("これはテストです。")
 }

@@ -1,6 +1,6 @@
 package languagetool
 
-// Twin of languagetool-language-modules/sl/src/test/java/org/languagetool/JLanguageToolTest.java
+// Twin of SL JLanguageToolTest — Check inject.
 import (
 	"testing"
 
@@ -10,6 +10,8 @@ import (
 // Port of JLanguageToolTest.testSlovenian
 func TestJLanguageTool_lang_sl_Slovenian(t *testing.T) {
 	lt := NewJLanguageTool("sl")
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
 	require.Equal(t, "sl", lt.GetLanguageCode())
-	require.NotEmpty(t, lt.Analyze("To je preizkus."))
+	require.Empty(t, lt.Check("To je preizkus."))
+	require.NotEmpty(t, lt.Check("To je je preizkus."))
 }

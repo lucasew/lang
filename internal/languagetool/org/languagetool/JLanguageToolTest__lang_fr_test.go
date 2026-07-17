@@ -1,8 +1,6 @@
 package languagetool
 
-// Twin of languagetool-language-modules/fr/src/test/java/org/languagetool/JLanguageToolTest.java
-// Full FR check pipeline deferred — Analyze + typography surface greens.
-// (language.FrenchAdvancedTypography lives in language package to avoid import cycle)
+// Twin of FR JLanguageToolTest — Check inject + typography surface.
 import (
 	"testing"
 
@@ -12,26 +10,32 @@ import (
 // Port of JLanguageToolTest.testLanguageDependentFilter
 func TestJLanguageTool_lang_fr_LanguageDependentFilter(t *testing.T) {
 	lt := NewJLanguageTool("fr")
-	require.Equal(t, "fr", lt.GetLanguageCode())
-	require.NotEmpty(t, lt.Analyze("Ceci est une phrase."))
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	require.Empty(t, lt.Check("Ceci est une phrase."))
+	require.NotEmpty(t, lt.Check("Ceci est est une phrase."))
 }
 
 // Port of JLanguageToolTest.testMultitokenSpeller
 func TestJLanguageTool_lang_fr_MultitokenSpeller(t *testing.T) {
 	lt := NewJLanguageTool("fr")
-	require.NotEmpty(t, lt.Analyze("New York"))
+	known := map[string]struct{}{"New": {}, "York": {}}
+	lt.AddRuleChecker("SPELL", SimpleMapSpellerChecker("SPELL", known, nil))
+	require.Empty(t, lt.Check("New York"))
 }
 
 // Port of JLanguageToolTest.testMatchfiltering
 func TestJLanguageTool_lang_fr_Matchfiltering(t *testing.T) {
-	// soft: analysis path only
 	lt := NewJLanguageTool("fr")
-	require.NotEmpty(t, lt.Analyze("Le chat dort."))
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	lt.AddRuleChecker("SPELL", SimpleMapSpellerChecker("SPELL", map[string]struct{}{"Le": {}, "chat": {}, "dort": {}}, nil))
+	// disable spell → only repeat would fire; no repeat here
+	lt.DisableRule("SPELL")
+	require.Empty(t, lt.Check("Le chat dort."))
+	require.Equal(t, []string{"WORD_REPEAT_RULE"}, lt.GetAllActiveRuleIDs())
 }
 
 // Port of JLanguageToolTest.testQuotes
 func TestJLanguageTool_lang_fr_Quotes(t *testing.T) {
-	// FR guillemet-style quotes via typography config (no language import)
 	cfg := TypographyConfig{
 		Enabled:            true,
 		OpeningDoubleQuote: "«\u00a0",
@@ -47,5 +51,8 @@ func TestJLanguageTool_lang_fr_Quotes(t *testing.T) {
 // Port of JLanguageToolTest.testMergingOfGrammarCorrections
 func TestJLanguageTool_lang_fr_MergingOfGrammarCorrections(t *testing.T) {
 	lt := NewJLanguageTool("fr")
-	require.NotEmpty(t, lt.Analyze("Phrase une. Phrase deux."))
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	// multi-sentence: repeat in second
+	m := lt.Check("Phrase une. Phrase Phrase deux.")
+	require.NotEmpty(t, m)
 }

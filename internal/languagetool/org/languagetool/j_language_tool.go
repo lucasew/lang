@@ -68,6 +68,10 @@ type JLanguageTool struct {
 	sentenceMatchers []func(sentence *AnalyzedSentence) error
 	// checkers are pluggable sentence rules for Check.
 	checkers []SentenceChecker
+	// activeRuleIDs tracks rule IDs registered via AddRuleChecker (order preserved).
+	activeRuleIDs []string
+	// DisabledRuleIDs soft-disable matches / registration filtering.
+	DisabledRuleIDs map[string]struct{}
 	// Cancelled optional early exit for Check.
 	Cancelled CheckCancelledCallback
 	// ListUnknownWords enables GetUnknownWords population during Check/AnalyzeUnknown.
@@ -79,9 +83,10 @@ type JLanguageTool struct {
 
 func NewJLanguageTool(languageCode string) *JLanguageTool {
 	return &JLanguageTool{
-		LanguageCode: languageCode,
-		Mode:         ModeAll,
-		Level:        LevelDefault,
+		LanguageCode:    languageCode,
+		Mode:            ModeAll,
+		Level:           LevelDefault,
+		DisabledRuleIDs: map[string]struct{}{},
 	}
 }
 
@@ -97,6 +102,64 @@ func (lt *JLanguageTool) AddChecker(c SentenceChecker) {
 		return
 	}
 	lt.checkers = append(lt.checkers, c)
+}
+
+// AddRuleChecker registers a checker and records its rule ID for enable/disable.
+func (lt *JLanguageTool) AddRuleChecker(ruleID string, c SentenceChecker) {
+	if lt == nil || c == nil {
+		return
+	}
+	if ruleID != "" {
+		lt.activeRuleIDs = append(lt.activeRuleIDs, ruleID)
+	}
+	id := ruleID
+	lt.checkers = append(lt.checkers, func(s *AnalyzedSentence) []LocalMatch {
+		if id != "" && lt.isRuleDisabled(id) {
+			return nil
+		}
+		return c(s)
+	})
+}
+
+// DisableRule ports disableRule.
+func (lt *JLanguageTool) DisableRule(ruleID string) {
+	if lt == nil || ruleID == "" {
+		return
+	}
+	if lt.DisabledRuleIDs == nil {
+		lt.DisabledRuleIDs = map[string]struct{}{}
+	}
+	lt.DisabledRuleIDs[ruleID] = struct{}{}
+}
+
+// EnableRule ports enableRule (re-enables a previously disabled rule).
+func (lt *JLanguageTool) EnableRule(ruleID string) {
+	if lt == nil || lt.DisabledRuleIDs == nil {
+		return
+	}
+	delete(lt.DisabledRuleIDs, ruleID)
+}
+
+// GetAllActiveRuleIDs returns registered rule IDs that are not disabled.
+func (lt *JLanguageTool) GetAllActiveRuleIDs() []string {
+	if lt == nil {
+		return nil
+	}
+	var out []string
+	for _, id := range lt.activeRuleIDs {
+		if !lt.isRuleDisabled(id) {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+func (lt *JLanguageTool) isRuleDisabled(id string) bool {
+	if lt == nil || lt.DisabledRuleIDs == nil {
+		return false
+	}
+	_, ok := lt.DisabledRuleIDs[id]
+	return ok
 }
 
 // SetListUnknownWords ports setListUnknownWords.
@@ -315,4 +378,138 @@ func KnownWordSet(words ...string) func(string) bool {
 		_, ok := m[strings.ToLower(tok)]
 		return ok
 	}
+}
+
+// SimpleMapSpellerChecker flags letter tokens not in known; optional suggestion map.
+func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestions map[string][]string) SentenceChecker {
+	if ruleID == "" {
+		ruleID = "MORFOLOGIK_RULE"
+	}
+	isKnown := func(w string) bool {
+		if _, ok := known[w]; ok {
+			return true
+		}
+		_, ok := known[strings.ToLower(w)]
+		return ok
+	}
+	return func(sentence *AnalyzedSentence) []LocalMatch {
+		if sentence == nil {
+			return nil
+		}
+		var out []LocalMatch
+		for _, tok := range sentence.GetTokensWithoutWhitespace() {
+			if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+				continue
+			}
+			w := tok.GetToken()
+			if w == "" || !hasLetterLocal(w) {
+				continue
+			}
+			if isKnown(w) {
+				continue
+			}
+			m := LocalMatch{
+				FromPos: tok.GetStartPos(),
+				ToPos:   tok.GetEndPos(),
+				Message: "Possible spelling mistake",
+				RuleID:  ruleID,
+			}
+			if suggestions != nil {
+				if s, ok := suggestions[w]; ok {
+					m.Suggestions = append([]string(nil), s...)
+				} else if s, ok := suggestions[strings.ToLower(w)]; ok {
+					m.Suggestions = append([]string(nil), s...)
+				}
+			}
+			out = append(out, m)
+		}
+		return out
+	}
+}
+
+// SimpleAvsAnChecker flags "a" before vowel-initial words and "an" before consonant-initial.
+// Soft stand-in for EN_A_VS_AN (no phonetics).
+func SimpleAvsAnChecker() SentenceChecker {
+	return func(sentence *AnalyzedSentence) []LocalMatch {
+		if sentence == nil {
+			return nil
+		}
+		toks := sentence.GetTokensWithoutWhitespace()
+		var out []LocalMatch
+		for i := 0; i < len(toks)-1; i++ {
+			cur, next := toks[i], toks[i+1]
+			if cur == nil || next == nil {
+				continue
+			}
+			a := strings.ToLower(cur.GetToken())
+			n := next.GetToken()
+			if n == "" || !hasLetterLocal(n) {
+				continue
+			}
+			first, _ := utf8DecodeFirst(n)
+			vowel := isVowelLetter(first)
+			switch a {
+			case "a":
+				if vowel {
+					out = append(out, LocalMatch{
+						FromPos: cur.GetStartPos(), ToPos: cur.GetEndPos(),
+						Message: "Use \"an\" before a vowel sound", RuleID: "EN_A_VS_AN",
+						Suggestions: []string{"an"},
+					})
+				}
+			case "an":
+				if !vowel {
+					out = append(out, LocalMatch{
+						FromPos: cur.GetStartPos(), ToPos: cur.GetEndPos(),
+						Message: "Use \"a\" before a consonant sound", RuleID: "EN_A_VS_AN",
+						Suggestions: []string{"a"},
+					})
+				}
+			}
+		}
+		return out
+	}
+}
+
+func isVowelLetter(r rune) bool {
+	switch unicode.ToLower(r) {
+	case 'a', 'e', 'i', 'o', 'u':
+		return true
+	default:
+		return false
+	}
+}
+
+func utf8DecodeFirst(s string) (rune, int) {
+	for _, r := range s {
+		return r, 1
+	}
+	return 0, 0
+}
+
+// CorrectTextFromLocalMatches applies first suggestion of each match (byte offsets; ASCII-safe).
+// Ports Tools.correctTextFromMatches without importing tools package.
+func CorrectTextFromLocalMatches(contents string, matches []LocalMatch) string {
+	if len(matches) == 0 {
+		return contents
+	}
+	sb := []byte(contents)
+	// sort by FromPos ascending so offset adjustments work left-to-right
+	sorted := append([]LocalMatch(nil), matches...)
+	sort.SliceStable(sorted, func(i, j int) bool { return sorted[i].FromPos < sorted[j].FromPos })
+	offset := 0
+	for _, rm := range sorted {
+		if len(rm.Suggestions) == 0 {
+			continue
+		}
+		repl := rm.Suggestions[0]
+		from := rm.FromPos - offset
+		to := rm.ToPos - offset
+		if from < 0 || to < from || to > len(sb) {
+			continue
+		}
+		sb = append(sb[:from], append([]byte(repl), sb[to:]...)...)
+		offset += (to - from) - len(repl)
+	}
+	return string(sb)
 }

@@ -1,6 +1,6 @@
 package languagetool
 
-// Twin of languagetool-language-modules/nl/src/test/java/org/languagetool/JLanguageToolTest.java
+// Twin of NL JLanguageToolTest — Check inject + typography.
 import (
 	"testing"
 
@@ -10,13 +10,13 @@ import (
 // Port of JLanguageToolTest.testDutch
 func TestJLanguageTool_lang_nl_Dutch(t *testing.T) {
 	lt := NewJLanguageTool("nl")
-	require.Equal(t, "nl", lt.GetLanguageCode())
-	require.NotEmpty(t, lt.Analyze("Dit is een zin zonder fouten."))
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	require.Empty(t, lt.Check("Dit is een zin zonder fouten."))
+	require.NotEmpty(t, lt.Check("Dit is is een zin."))
 }
 
 // Port of JLanguageToolTest.testAdvancedTypography
 func TestJLanguageTool_lang_nl_AdvancedTypography(t *testing.T) {
-	// NL uses common advanced typography (ellipsis / nbsp abbreviations)
 	cfg := DefaultTypographyConfig()
 	cfg.Enabled = true
 	require.Equal(t, "Dit is…", ToAdvancedTypography("Dit is...", cfg))

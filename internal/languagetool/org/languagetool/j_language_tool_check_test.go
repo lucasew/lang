@@ -45,3 +45,21 @@ func TestCleanOverlappingLocalMatches(t *testing.T) {
 	require.Len(t, got, 1)
 	require.Equal(t, "b", got[0].RuleID)
 }
+
+func TestJLanguageTool_AvsAnAndCorrect(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())
+	src := "This is an test."
+	m := lt.Check(src)
+	require.NotEmpty(t, m)
+	require.Equal(t, "This is a test.", CorrectTextFromLocalMatches(src, m))
+}
+
+func TestJLanguageTool_DisableRule(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
+	lt.DisableRule("WORD_REPEAT_RULE")
+	require.Empty(t, lt.Check("is is"))
+	lt.EnableRule("WORD_REPEAT_RULE")
+	require.NotEmpty(t, lt.Check("is is"))
+}
