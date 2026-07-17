@@ -78,10 +78,19 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	for _, id := range p.settings.Query.DisabledRules {
 		lt.DisableRule(id)
 	}
+	// soft: expand SOFT_OPTIONAL / SOFT_OPT_ALL → all SOFT_OPT_* rules
+	enabledExpanded := languagetool.ExpandSoftEnableRuleIDs(lt.GetAllRegisteredRuleIDs(), p.settings.Query.EnabledRules)
+	// soft: re-enable optional packs when listed (not only under enabled-only)
+	for _, id := range enabledExpanded {
+		// skip aliases already expanded out of the slice
+		if id != "" {
+			lt.EnableRule(id)
+		}
+	}
 	// query enabled-only: disable every registered rule not listed
 	if p.settings.Query.UseEnabledOnly {
 		enabled := map[string]struct{}{}
-		for _, id := range p.settings.Query.EnabledRules {
+		for _, id := range enabledExpanded {
 			if id != "" {
 				enabled[id] = struct{}{}
 			}
@@ -90,6 +99,9 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 			if _, ok := enabled[id]; !ok {
 				lt.DisableRule(id)
 			}
+		}
+		for id := range enabled {
+			lt.EnableRule(id)
 		}
 	}
 	return lt

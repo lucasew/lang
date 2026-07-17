@@ -76,7 +76,7 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	for _, id := range opts.GetDisabledRules() {
 		lt.DisableRule(id)
 	}
-	enabledIDs := expandSoftEnableAliases(lt, opts.GetEnabledRules())
+	enabledIDs := languagetool.ExpandSoftEnableRuleIDs(lt.GetAllRegisteredRuleIDs(), opts.GetEnabledRules())
 	if opts.IsUseEnabledOnly() {
 		enabled := map[string]struct{}{}
 		for _, id := range enabledIDs {
@@ -99,40 +99,6 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	for _, id := range enabledIDs {
 		lt.EnableRule(id)
 	}
-}
-
-// expandSoftEnableAliases expands soft bulk-enable tokens.
-// SOFT_OPTIONAL / SOFT_OPT_ALL → all registered rule IDs containing SOFT_OPT_
-// (optional soft packs that start default="off").
-func expandSoftEnableAliases(lt *languagetool.JLanguageTool, ids []string) []string {
-	if lt == nil || len(ids) == 0 {
-		return ids
-	}
-	var out []string
-	seen := map[string]struct{}{}
-	add := func(id string) {
-		if id == "" {
-			return
-		}
-		if _, ok := seen[id]; ok {
-			return
-		}
-		seen[id] = struct{}{}
-		out = append(out, id)
-	}
-	for _, id := range ids {
-		up := strings.ToUpper(strings.TrimSpace(id))
-		if up == "SOFT_OPTIONAL" || up == "SOFT_OPT_ALL" {
-			for _, rid := range lt.GetAllRegisteredRuleIDs() {
-				if strings.Contains(rid, "SOFT_OPT_") {
-					add(rid)
-				}
-			}
-			continue
-		}
-		add(id)
-	}
-	return out
 }
 
 // RegisterSoftPickyGrammar loads {base}-picky-soft.xml from grammar dir when present.
@@ -654,6 +620,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml",
 			"es-picky-soft.xml", "pt-picky-soft.xml", "it-picky-soft.xml",
 			"nl-picky-soft.xml", "sv-picky-soft.xml", "pl-picky-soft.xml",
+			"da-picky-soft.xml", "ru-picky-soft.xml",
 		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {

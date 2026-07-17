@@ -26,6 +26,10 @@ Options:
   -m, --mothertongue CODE  mother tongue for false friends
   -d, --disable RULES      comma-separated disabled rule ids
   -e, --enable RULES       comma-separated enabled rule ids
+                           soft aliases: SOFT_OPTIONAL / SOFT_OPT_ALL enable all SOFT_OPT_* rules
+  --level LEVEL            DEFAULT or PICKY (loads {lang}-picky-soft.xml style packs)
+  --enablecategories CATS  only report matches in these soft/core categories
+  --disablecategories CATS suppress matches in these categories (e.g. STYLE)
   -t, --taggeronly         only tag the text
   -a, --apply              apply first suggestions to text, print result
   -v, --verbose            verbose output
@@ -44,6 +48,7 @@ Options:
   --autoDetect, -adl       detect language from text
   --list                   list languages
   --list-rules             list registered rule IDs for -l language
+                           (with --level picky: includes picky soft packs; column: on|off)
   --data-dir DIR           soft data root (grammar + false-friends soft files)
   --fail-on LEVEL          lint/sarif fail threshold: error|warning|note (default error)
   -r, --recursive          recurse into directories when linting paths

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft DA pack loaded only when level is picky. -->
+<rules lang="da">
+  <category id="STYLE" name="Style">
+    <rule id="DA_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Overvej "møde".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DA_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Overvej "tilbagemelding" eller "kommentarer".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DA_SOFT_PICKY_MEGET_MEGET" name="meget meget soft picky">
+      <pattern>
+        <token>meget</token>
+        <token>meget</token>
+      </pattern>
+      <message>Svag forstærkning; overvej et stærkere adjektiv.</message>
+      <short>style</short>
+    </rule>
+    <rule id="DA_SOFT_PICKY_TING" name="ting soft picky">
+      <pattern>
+        <token>mange</token>
+        <token>ting</token>
+      </pattern>
+      <message>Overvej et mere konkret substantiv end "ting".</message>
+      <short>style</short>
+    </rule>
+    <rule id="DA_SOFT_PICKY_I_SIDSTE_ENDE" name="i sidste ende soft picky">
+      <pattern>
+        <token>i</token>
+        <token>sidste</token>
+        <token>ende</token>
+      </pattern>
+      <message>Overvej "til sidst" eller "endelig".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>
