@@ -569,5 +569,30 @@
       <message>Cliché; consider "dig deeper" or "layer by layer".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_PARK_THAT" name="park that soft picky">
+      <pattern>
+        <token>park</token>
+        <token>that</token>
+      </pattern>
+      <message>Jargon; consider "defer" or "revisit later".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TABLE_THAT" name="table that soft picky">
+      <pattern>
+        <token>table</token>
+        <token>that</token>
+      </pattern>
+      <message>Ambiguous jargon; consider "postpone" or "put forward".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CLOSE_OF_PLAY" name="close of play soft picky">
+      <pattern>
+        <token>close</token>
+        <token>of</token>
+        <token>play</token>
+      </pattern>
+      <message>Jargon; consider "end of day" or name the deadline.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

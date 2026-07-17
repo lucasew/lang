@@ -1095,4 +1095,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_DENO" name="immunize deno">
+    <pattern>
+      <token>deno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DENO_CAPS" name="immunize Deno">
+    <pattern>
+      <token>Deno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLAYWRIGHT" name="immunize playwright">
+    <pattern>
+      <token>playwright</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLAYWRIGHT_CAPS" name="immunize Playwright">
+    <pattern>
+      <token>Playwright</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CYPRESS" name="immunize cypress">
+    <pattern>
+      <token>cypress</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CYPRESS_CAPS" name="immunize Cypress">
+    <pattern>
+      <token>Cypress</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

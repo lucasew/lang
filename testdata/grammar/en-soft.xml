@@ -3767,6 +3767,76 @@
       <message>Did you mean "commission"?</message>
       <short>comission</short>
     </rule>
+    <rule id="EN_SOFT_CRITICIZE_MISS" name="critisize soft">
+      <pattern>
+        <token>critisize</token>
+      </pattern>
+      <message>Did you mean "criticize"?</message>
+      <short>critisize</short>
+    </rule>
+    <rule id="EN_SOFT_DECEIVE_MISS" name="decieve soft">
+      <pattern>
+        <token>decieve</token>
+      </pattern>
+      <message>Did you mean "deceive"?</message>
+      <short>decieve</short>
+    </rule>
+    <rule id="EN_SOFT_DECISION_MISS2" name="desicion soft">
+      <pattern>
+        <token>desicion</token>
+      </pattern>
+      <message>Did you mean "decision"?</message>
+      <short>desicion</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFERENCE_MISS" name="differance soft">
+      <pattern>
+        <token>differance</token>
+      </pattern>
+      <message>Did you mean "difference"?</message>
+      <short>differance</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIRONMENT_MISS" name="enviromment soft">
+      <pattern>
+        <token>enviromment</token>
+      </pattern>
+      <message>Did you mean "environment"?</message>
+      <short>enviromment</short>
+    </rule>
+    <rule id="EN_SOFT_EQUIPMENT_MISS2" name="equipement soft">
+      <pattern>
+        <token>equipement</token>
+      </pattern>
+      <message>Did you mean "equipment"?</message>
+      <short>equipement</short>
+    </rule>
+    <rule id="EN_SOFT_HEROES_MISS" name="heros soft">
+      <pattern>
+        <token>heros</token>
+      </pattern>
+      <message>Did you mean "heroes"?</message>
+      <short>heros</short>
+    </rule>
+    <rule id="EN_SOFT_MYSTERIOUS_MISS" name="misterious soft">
+      <pattern>
+        <token>misterious</token>
+      </pattern>
+      <message>Did you mean "mysterious"?</message>
+      <short>misterious</short>
+    </rule>
+    <rule id="EN_SOFT_NECESSITY_MISS" name="neccessity soft">
+      <pattern>
+        <token>neccessity</token>
+      </pattern>
+      <message>Did you mean "necessity"?</message>
+      <short>neccessity</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZE_MISS" name="orginize soft">
+      <pattern>
+        <token>orginize</token>
+      </pattern>
+      <message>Did you mean "organize"?</message>
+      <short>orginize</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

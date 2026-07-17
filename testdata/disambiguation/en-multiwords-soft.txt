@@ -186,3 +186,6 @@ in due season	RB
 Baltimore Maryland	NNP
 Louisville Kentucky	NNP
 as a rule	RB
+Memphis Tennessee	NNP
+Milwaukee Wisconsin	NNP
+in short order	RB
