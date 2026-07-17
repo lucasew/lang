@@ -18,6 +18,7 @@ const UsageText = `Usage: languagetool [OPTION]... [FILE]
   -v, --verbose            verbose output
   --json                   JSON output
   --xml                    XML output
+  --xmlfilter              remove XML/HTML tags from input before check
   --list                   list languages
   --version                print version
   -h, --help               this help

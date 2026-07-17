@@ -108,6 +108,8 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			}
 			i++
 			opts.SetEncoding(args[i])
+		case "--xmlfilter":
+			opts.SetXMLFiltering(true)
 		case "--json":
 			opts.SetOutputFormat(OutputJSON)
 		case "--xml":

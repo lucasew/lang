@@ -123,9 +123,6 @@ func TestMain_EnglishFileAutoDetect(t *testing.T) {
 func TestMain_EnglishStdInAutoDetect(t *testing.T) {
 	t.Skip("unimplemented: language autodetection")
 }
-func TestMain_StdInWithExternalFalseFriends(t *testing.T) {
-	t.Skip("unimplemented: false-friends CLI path")
-}
 func TestMain_EnglishFileVerbose(t *testing.T) {
 	t.Skip("unimplemented: full EN grammar file verbose")
 }
@@ -188,7 +185,3 @@ func TestMain_ValencianCatalan(t *testing.T) {
 }
 func TestMain_Catalan(t *testing.T)  { t.Skip("unimplemented: CA via full LT") }
 func TestMain_Catalan2(t *testing.T) { t.Skip("unimplemented: CA via full LT") }
-func TestMain_NoXmlFilteringByDefault(t *testing.T) {
-	t.Skip("unimplemented: XML filter pipeline")
-}
-func TestMain_XmlFiltering(t *testing.T) { t.Skip("unimplemented: XML filter pipeline") }
