@@ -14197,6 +14197,76 @@
       <message>Did you mean "withspan"?</message>
       <short>withspann</short>
     </rule>
+    <rule id="EN_SOFT_NONRECORDING_MISS" name="nonrecordingg soft">
+      <pattern>
+        <token>nonrecordingg</token>
+      </pattern>
+      <message>Did you mean "nonrecording"?</message>
+      <short>nonrecordingg</short>
+    </rule>
+    <rule id="EN_SOFT_RECORDINGSPAN_MISS" name="recordingspann soft">
+      <pattern>
+        <token>recordingspann</token>
+      </pattern>
+      <message>Did you mean "recordingspan"?</message>
+      <short>recordingspann</short>
+    </rule>
+    <rule id="EN_SOFT_NOOPSPAN_MISS" name="noopspann soft">
+      <pattern>
+        <token>noopspann</token>
+      </pattern>
+      <message>Did you mean "noopspan"?</message>
+      <short>noopspann</short>
+    </rule>
+    <rule id="EN_SOFT_PROXYSPAN_MISS" name="proxyspann soft">
+      <pattern>
+        <token>proxyspann</token>
+      </pattern>
+      <message>Did you mean "proxyspan"?</message>
+      <short>proxyspann</short>
+    </rule>
+    <rule id="EN_SOFT_SERVERSPAN_MISS" name="serverspann soft">
+      <pattern>
+        <token>serverspann</token>
+      </pattern>
+      <message>Did you mean "serverspan"?</message>
+      <short>serverspann</short>
+    </rule>
+    <rule id="EN_SOFT_CLIENTSPAN_MISS" name="clientspann soft">
+      <pattern>
+        <token>clientspann</token>
+      </pattern>
+      <message>Did you mean "clientspan"?</message>
+      <short>clientspann</short>
+    </rule>
+    <rule id="EN_SOFT_INTERNALSPAN_MISS" name="internalspann soft">
+      <pattern>
+        <token>internalspann</token>
+      </pattern>
+      <message>Did you mean "internalspan"?</message>
+      <short>internalspann</short>
+    </rule>
+    <rule id="EN_SOFT_PRODUCERSPAN_MISS" name="producerspann soft">
+      <pattern>
+        <token>producerspann</token>
+      </pattern>
+      <message>Did you mean "producerspan"?</message>
+      <short>producerspann</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUMERSPAN_MISS" name="consumerspann soft">
+      <pattern>
+        <token>consumerspann</token>
+      </pattern>
+      <message>Did you mean "consumerspan"?</message>
+      <short>consumerspann</short>
+    </rule>
+    <rule id="EN_SOFT_SPANBUILDER_MISS" name="spanbuilderr soft">
+      <pattern>
+        <token>spanbuilderr</token>
+      </pattern>
+      <message>Did you mean "spanbuilder"?</message>
+      <short>spanbuilderr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

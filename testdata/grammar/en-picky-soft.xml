@@ -4156,5 +4156,29 @@
       <message>Jargon; name annual recurring revenue from upsells instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CROSSSELL_ARR" name="crosssell arr soft picky">
+      <pattern>
+        <token>crosssell</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from cross-sells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOWNSELL_ARR" name="downsell arr soft picky">
+      <pattern>
+        <token>downsell</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to downsells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PARTNER_ARR" name="partner arr soft picky">
+      <pattern>
+        <token>partner</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name partner-sourced annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

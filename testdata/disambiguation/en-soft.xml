@@ -6471,4 +6471,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ZAGJS" name="immunize zagjs">
+    <pattern>
+      <token>zagjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ZAGJS_CAPS" name="immunize ZagJS">
+    <pattern>
+      <token>ZagJS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKUI" name="immunize arkui">
+    <pattern>
+      <token>arkui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ARKUI_CAPS" name="immunize ArkUI">
+    <pattern>
+      <token>ArkUI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDACSS" name="immunize pandacss">
+    <pattern>
+      <token>pandacss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDACSS_CAPS" name="immunize PandaCSS">
+    <pattern>
+      <token>PandaCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -633,3 +633,6 @@ Foidite Mesa RegionNNP
 Picrite Mesa RegionNNP
 Harzburgite Mesa RegionNNP
 Lherzolite Mesa RegionNNP
+Dunite Mesa RegionNNP
+Wehrlite Mesa RegionNNP
+Pyroxenite Mesa RegionNNP
