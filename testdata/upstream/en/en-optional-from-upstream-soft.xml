@@ -57,7 +57,7 @@
     </rule>
     <rule id="BLEND_TOGETHER" name="blend together (blend)" default="off">
       <pattern>
-        <token regexp="yes">attach|assemble|blend|co(mbine|llaborate|nfer|ngregate)|join|me(rge|sh)|mix</token>
+        <token regexp="yes" inflected="yes">attach|assemble|blend|co(mbine|llaborate|nfer|ngregate)|join|me(rge|sh)|mix</token>
         <token>together</token>
       </pattern>
       <message>This phrase might be redundant. Consider using <suggestion>\1</suggestion>.</message>
@@ -66,7 +66,7 @@
     <rule id="BRIEF_MOMENT" name="brief moment/summary (moment/summary)" default="off">
       <pattern>
         <token>brief</token>
-        <token regexp="yes">moment|summary|cameo</token>
+        <token regexp="yes" inflected="yes">moment|summary|cameo</token>
       </pattern>
       <message>Consider using <suggestion>\2</suggestion>.</message>
       <short>Redundant phrase</short>
@@ -160,7 +160,7 @@
     </rule>
     <rule id="GUARD_FROM_AGAINST" name="Collocation: guard from/against" default="off">
       <pattern>
-        <token regexp="yes">(?:safe)?guard</token>
+        <token regexp="yes" inflected="yes">(?:safe)?guard</token>
         <token>from</token>
       </pattern>
       <message>The usual collocation for "\1" is "against", not "\2". Did you mean <suggestion>\1 against</suggestion>?</message>
@@ -199,7 +199,7 @@
     </rule>
     <rule id="WAITING_MY_PATIENT" name="waiting (for) a patient" default="off">
       <pattern>
-        <token>wait</token>
+        <token inflected="yes">wait</token>
         <token postag="PRP$|DT" postag_regexp="yes"></token>
         <token postag="NN.*" postag_regexp="yes"></token>
       </pattern>
@@ -210,7 +210,7 @@
   <category id="CREATIVE_WRITING" name="Creative Writing">
     <rule id="E_PRIME_LOOSE" name="Creative Writing: E-Prime: 'to be' as the main verb" default="off">
       <pattern>
-        <token>be
+        <token inflected="yes">be
           <exception>art</exception>
         </token>
       </pattern>
@@ -219,7 +219,7 @@
     </rule>
     <rule id="E_PRIME_STRICT" name="Creative Writing: E-Prime: all 'to be' forms" default="off">
       <pattern>
-        <token>be</token>
+        <token inflected="yes">be</token>
       </pattern>
       <message>According to E-Prime, avoiding the use of the stative verb 'to be' makes the communication clearer, more accurate, and less dogmatic. Use an alternative verb.</message>
       <short>Using E-Prime, you should avoid the verb 'to be'.</short>

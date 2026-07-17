@@ -1,7 +1,9 @@
 package patterns
 
 import (
+	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -23,12 +25,53 @@ func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
 		if !pt.CaseSensitive {
 			flags = "(?i)"
 		}
-		re, err := regexp.Compile(flags + "^(?:" + pt.Token + ")$")
+		re, err := regexp.Compile(flags + "^(?:" + softNormalizeJavaRegexp(pt.Token) + ")$")
 		if err == nil {
 			m.tokenRE = re
 		}
 	}
 	return m
+}
+
+// softNormalizeJavaRegexp maps Java/PCRE unicode escapes used in LT XML
+// (\uXXXX, \UXXXXXXXX) to Go RE2 \x{...} form. Leaves other escapes alone.
+func softNormalizeJavaRegexp(pat string) string {
+	if pat == "" || !strings.Contains(pat, `\u`) && !strings.Contains(pat, `\U`) {
+		return pat
+	}
+	var b strings.Builder
+	b.Grow(len(pat) + 8)
+	for i := 0; i < len(pat); {
+		if pat[i] == '\\' && i+1 < len(pat) {
+			switch pat[i+1] {
+			case 'u':
+				// \uXXXX
+				if i+6 <= len(pat) {
+					hex := pat[i+2 : i+6]
+					if _, err := strconv.ParseUint(hex, 16, 32); err == nil {
+						fmt.Fprintf(&b, `\x{%s}`, strings.ToLower(hex))
+						i += 6
+						continue
+					}
+				}
+			case 'U':
+				// \UXXXXXXXX
+				if i+10 <= len(pat) {
+					hex := pat[i+2 : i+10]
+					if _, err := strconv.ParseUint(hex, 16, 32); err == nil {
+						// strip leading zeros for \x{}
+						n, _ := strconv.ParseUint(hex, 16, 32)
+						fmt.Fprintf(&b, `\x{%x}`, n)
+						i += 10
+						continue
+					}
+				}
+			}
+		}
+		b.WriteByte(pat[i])
+		i++
+	}
+	return b.String()
 }
 
 func (m *PatternTokenMatcher) GetPatternToken() *PatternToken {
@@ -85,7 +128,7 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		posOK := false
 		if pos != nil {
 			if pt.Pos.Regexp {
-				re, err := regexp.Compile("^(?:" + pt.Pos.PosTag + ")$")
+				re, err := regexp.Compile("^(?:" + softNormalizeJavaRegexp(pt.Pos.PosTag) + ")$")
 				if err == nil {
 					posOK = re.MatchString(*pos)
 				}
@@ -146,7 +189,7 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 		if !excCS {
 			flags = "(?i)"
 		}
-		re, err := regexp.Compile(flags + "^(?:" + pt.TokenException + ")$")
+		re, err := regexp.Compile(flags + "^(?:" + softNormalizeJavaRegexp(pt.TokenException) + ")$")
 		if err != nil {
 			return false
 		}
@@ -280,13 +323,22 @@ func softLooksLikePunct(s string) bool {
 }
 
 func softPostagLooksLikePunct(tag string) bool {
-	// SENT_END, PSN*, PUNCT*, SENTENCE_END, etc.
+	// SENT_END, PSN*, PUNCT*, PCT (EN), SENTENCE_END, etc.
 	u := strings.ToUpper(tag)
 	return strings.Contains(u, "SENT_END") ||
 		strings.Contains(u, "SENTENCE_END") ||
 		strings.Contains(u, "PSN") ||
 		strings.Contains(u, "PUNC") ||
+		strings.Contains(u, "PCT") ||
 		strings.Contains(u, "SENT_START")
+}
+
+// softEnglishLemma maps common irregular EN surfaces to dictionary lemmas
+// (be/have/do). Used only for soft MatchInflected without a tagger.
+var softEnglishLemma = map[string]string{
+	"am": "be", "is": "be", "are": "be", "was": "be", "were": "be", "been": "be", "being": "be",
+	"has": "have", "had": "have", "having": "have",
+	"does": "do", "did": "do", "done": "do", "doing": "do",
 }
 
 // softInflectedSurfaceMatch approximates lemma matching without a tagger:
@@ -305,6 +357,10 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 		return true
 	}
 	if surface == base {
+		return true
+	}
+	// English irregular auxiliaries (was→be, has→have, …).
+	if lem, ok := softEnglishLemma[surface]; ok && lem == base {
 		return true
 	}
 	// Prefix check on folded forms (ambaŭ / Ambaux).

@@ -54,3 +54,15 @@ func TestSoftRegexpAlternatives(t *testing.T) {
 	require.Equal(t, []string{"a", "b", "c"}, softRegexpAlternatives("a|b|c"))
 	require.Equal(t, []string{"foo", "bar"}, softRegexpAlternatives("(?:foo|bar)"))
 }
+
+// Upstream EN NON_ENGLISH_CHARACTER_IN_A_WORD uses Java \uXXXX escapes.
+func TestSoftNormalizeJavaRegexpUnicode(t *testing.T) {
+	pat := `[a-z]*(\u043E|\u0455|\u0435|\u0440|\u03BF)[a-z]*`
+	got := softNormalizeJavaRegexp(pat)
+	require.Contains(t, got, `\x{043e}`)
+	require.Contains(t, got, `\x{0455}`)
+	m := NewPatternTokenMatcher(NewPatternToken(pat, false, true, false))
+	// U+0455 CYRILLIC SMALL LETTER DZE looks like Latin s
+	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("ѕee", nil, nil)))
+	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("see", nil, nil)))
+}
