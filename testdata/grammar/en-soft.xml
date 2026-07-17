@@ -9507,6 +9507,76 @@
       <message>Did you mean "literally"?</message>
       <short>litearally</short>
     </rule>
+    <rule id="EN_SOFT_MAINTENANCE_MISS5" name="maintanence soft">
+      <pattern>
+        <token>maintanence</token>
+      </pattern>
+      <message>Did you mean "maintenance"?</message>
+      <short>maintanence</short>
+    </rule>
+    <rule id="EN_SOFT_MANEUVER_MISS3" name="manouever soft">
+      <pattern>
+        <token>manouever</token>
+      </pattern>
+      <message>Did you mean "maneuver"?</message>
+      <short>manouever</short>
+    </rule>
+    <rule id="EN_SOFT_MANEUVERS_MISS" name="manouvers soft">
+      <pattern>
+        <token>manouvers</token>
+      </pattern>
+      <message>Did you mean "maneuvers"?</message>
+      <short>manouvers</short>
+    </rule>
+    <rule id="EN_SOFT_MATHEMATICIAN_MISS" name="mathamatician soft">
+      <pattern>
+        <token>mathamatician</token>
+      </pattern>
+      <message>Did you mean "mathematician"?</message>
+      <short>mathamatician</short>
+    </rule>
+    <rule id="EN_SOFT_MISCHIEVOUSLY_MISS2" name="mischeviously soft">
+      <pattern>
+        <token>mischeviously</token>
+      </pattern>
+      <message>Did you mean "mischievously"?</message>
+      <short>mischeviously</short>
+    </rule>
+    <rule id="EN_SOFT_MISSPELLINGS_MISS" name="mispellings soft">
+      <pattern>
+        <token>mispellings</token>
+      </pattern>
+      <message>Did you mean "misspellings"?</message>
+      <short>mispellings</short>
+    </rule>
+    <rule id="EN_SOFT_MISMATCHED_MISS" name="missmatched soft">
+      <pattern>
+        <token>missmatched</token>
+      </pattern>
+      <message>Did you mean "mismatched"?</message>
+      <short>missmatched</short>
+    </rule>
+    <rule id="EN_SOFT_MYSTERIOUSLY_MISS" name="misteriously soft">
+      <pattern>
+        <token>misteriously</token>
+      </pattern>
+      <message>Did you mean "mysteriously"?</message>
+      <short>misteriously</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOUR_MISS" name="neigbour soft">
+      <pattern>
+        <token>neigbour</token>
+      </pattern>
+      <message>Did you mean "neighbor"?</message>
+      <short>neigbour</short>
+    </rule>
+    <rule id="EN_SOFT_NINETEENTH_MISS" name="ninteenth soft">
+      <pattern>
+        <token>ninteenth</token>
+      </pattern>
+      <message>Did you mean "nineteenth"?</message>
+      <short>ninteenth</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

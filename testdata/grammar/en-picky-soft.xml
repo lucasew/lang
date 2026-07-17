@@ -2603,5 +2603,31 @@
       <message>Jargon; name backbone-and-walking-skeleton backlog layout instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_IMPACT_MAPPING" name="impact mapping soft picky">
+      <pattern>
+        <token>impact</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name goal-actor-impact-deliverable planning instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPECIFICATION_BY_EXAMPLE" name="specification by example soft picky">
+      <pattern>
+        <token>specification</token>
+        <token>by</token>
+        <token>example</token>
+      </pattern>
+      <message>Jargon; name living documentation from concrete examples instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_USER_STORY_MAPPING" name="user story mapping soft picky">
+      <pattern>
+        <token>user</token>
+        <token>story</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name narrative backlog layout for releases instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

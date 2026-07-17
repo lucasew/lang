@@ -432,3 +432,6 @@ Obsidian Ridge RegionNNP
 Andesite Corridor RegionNNP
 Rhyolite Corridor RegionNNP
 Basalt Ridge RegionNNP
+Pumice Ridge RegionNNP
+Scoria Corridor RegionNNP
+Tephra Corridor RegionNNP

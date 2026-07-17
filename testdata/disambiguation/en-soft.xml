@@ -4047,4 +4047,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CHIMESDK" name="immunize chimesdk">
+    <pattern>
+      <token>chimesdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHIMESDK_CAPS" name="immunize ChimeSDK">
+    <pattern>
+      <token>ChimeSDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCASES" name="immunize connectcases">
+    <pattern>
+      <token>connectcases</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCASES_CAPS" name="immunize ConnectCases">
+    <pattern>
+      <token>ConnectCases</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WISDOM" name="immunize wisdom">
+    <pattern>
+      <token>wisdom</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WISDOM_CAPS" name="immunize Wisdom">
+    <pattern>
+      <token>Wisdom</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
