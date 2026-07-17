@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft AST pack loaded only when level is picky. -->
+<rules lang="ast">
+  <category id="STYLE" name="Style">
+    <rule id="AST_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Preferí "xunta" o "alcuentru".</message>
+      <short>style</short>
+    </rule>
+    <rule id="AST_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Preferí "comentarios" o "retroalimentación".</message>
+      <short>style</short>
+    </rule>
+    <rule id="AST_SOFT_PICKY_MUI_MUI" name="mui mui soft picky">
+      <pattern>
+        <token>mui</token>
+        <token>mui</token>
+      </pattern>
+      <message>Intensificación floxa; preferí un axetivu más fuerte.</message>
+      <short>style</short>
+    </rule>
+    <rule id="AST_SOFT_PICKY_COSES" name="munches coses soft picky">
+      <pattern>
+        <token>munches</token>
+        <token>coses</token>
+      </pattern>
+      <message>Preferí un sustantivu más concretu que "coses".</message>
+      <short>style</short>
+    </rule>
+    <rule id="AST_SOFT_PICKY_AL_FINAL_DEL_DIA" name="al final del día soft picky">
+      <pattern>
+        <token>al</token>
+        <token>final</token>
+        <token>del</token>
+        <token>día</token>
+      </pattern>
+      <message>Preferí "finalmente" o "en definitiva".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1667,6 +1667,76 @@
       <message>Did you mean "address"?</message>
       <short>adress</short>
     </rule>
+    <rule id="EN_SOFT_BUISNESS" name="buisness soft">
+      <pattern>
+        <token>buisness</token>
+      </pattern>
+      <message>Did you mean "business"?</message>
+      <short>buisness</short>
+    </rule>
+    <rule id="EN_SOFT_CALENDER" name="calender soft">
+      <pattern>
+        <token>calender</token>
+      </pattern>
+      <message>Did you mean "calendar"?</message>
+      <short>calender</short>
+    </rule>
+    <rule id="EN_SOFT_COLLEAGUE_MISS" name="collegue soft">
+      <pattern>
+        <token>collegue</token>
+      </pattern>
+      <message>Did you mean "colleague"?</message>
+      <short>collegue</short>
+    </rule>
+    <rule id="EN_SOFT_CONCIOUS" name="concious soft">
+      <pattern>
+        <token>concious</token>
+      </pattern>
+      <message>Did you mean "conscious"?</message>
+      <short>concious</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINITLY" name="definitly soft">
+      <pattern>
+        <token>definitly</token>
+      </pattern>
+      <message>Did you mean "definitely"?</message>
+      <short>definitly</short>
+    </rule>
+    <rule id="EN_SOFT_EXAGERATE" name="exagerate soft">
+      <pattern>
+        <token>exagerate</token>
+      </pattern>
+      <message>Did you mean "exaggerate"?</message>
+      <short>exagerate</short>
+    </rule>
+    <rule id="EN_SOFT_FAMILIAR_MISS" name="familier soft">
+      <pattern>
+        <token>familier</token>
+      </pattern>
+      <message>Did you mean "familiar"?</message>
+      <short>familier</short>
+    </rule>
+    <rule id="EN_SOFT_FORIEGN" name="foriegn soft">
+      <pattern>
+        <token>foriegn</token>
+      </pattern>
+      <message>Did you mean "foreign"?</message>
+      <short>foriegn</short>
+    </rule>
+    <rule id="EN_SOFT_GAURD" name="gaurd soft">
+      <pattern>
+        <token>gaurd</token>
+      </pattern>
+      <message>Did you mean "guard"?</message>
+      <short>gaurd</short>
+    </rule>
+    <rule id="EN_SOFT_HARRASS" name="harrass soft">
+      <pattern>
+        <token>harrass</token>
+      </pattern>
+      <message>Did you mean "harass"?</message>
+      <short>harrass</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

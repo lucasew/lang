@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft AR optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="ar">
+  <category id="STYLE" name="Style">
+    <rule id="AR_SOFT_OPT_FI_ITAR" name="في إطار soft optional" default="off">
+      <pattern>
+        <token>في</token>
+        <token>إطار</token>
+      </pattern>
+      <message>فضّل «في» أو «خلال» إن أمكن.</message>
+      <short>style</short>
+    </rule>
+    <rule id="AR_SOFT_OPT_MIN_AJL" name="من أجل soft optional" default="off">
+      <pattern>
+        <token>من</token>
+        <token>أجل</token>
+      </pattern>
+      <message>فضّل «لـ» أو «كي» إن أمكن.</message>
+      <short>style</short>
+    </rule>
+    <rule id="AR_SOFT_OPT_FIMA_YATAALLAQ" name="فيما يتعلق ب soft optional" default="off">
+      <pattern>
+        <token>فيما</token>
+        <token>يتعلق</token>
+        <token>ب</token>
+      </pattern>
+      <message>فضّل «عن» أو «بخصوص» إن أمكن.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>
