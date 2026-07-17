@@ -27,6 +27,25 @@ func TestGolden_MultiLangSoftGrammar(t *testing.T) {
 		{"sk", "Idem a a domov.", "SK_SOFT_A_A"},
 		{"ro", "Eu de de acasă.", "RO_SOFT_DE_DE"},
 		{"el", "Εγώ και και.", "EL_SOFT_KAI_KAI"},
+		// remaining soft packs (token-repeat style)
+		{"ar", "في في", "AR_SOFT_FI_FI"},
+		{"be", "і і", "BE_SOFT_I_I"},
+		{"br", "ha ha", "BR_SOFT_HA_HA"},
+		{"eo", "kaj kaj", "EO_SOFT_KAJ_KAJ"},
+		{"fa", "و و", "FA_SOFT_VA_VA"},
+		{"ga", "agus agus", "GA_SOFT_AGUS_AGUS"},
+		{"is", "og og", "IS_SOFT_OG_OG"},
+		{"ja", "to to", "JA_SOFT_TO_TO"},
+		{"km", "and and", "KM_SOFT_AND_AND"},
+		{"lt", "ir ir", "LT_SOFT_IR_IR"},
+		{"ml", "um um", "ML_SOFT_UM_UM"},
+		{"sl", "in in", "SL_SOFT_IN_IN"},
+		{"sr", "i i", "SR_SOFT_I_I"},
+		{"ta", "um um", "TA_SOFT_UM_UM"},
+		{"tl", "at at", "TL_SOFT_AT_AT"},
+		{"zh", "的 的", "ZH_SOFT_DE_DE"},
+		{"ast", "y y", "AST_SOFT_Y_Y"},
+		{"crh", "ve ve", "CRH_SOFT_VE_VE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

@@ -64,7 +64,7 @@ go run ./cmd/lang-server -port 8081 -public
 | Pattern XML + POS/inflected match | done (filters/unify/AI incomplete skipped) |
 | `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
 | Layout (sentence/punct/paragraph whitespace, unpaired, uppercase) | done |
-| Soft EN patterns + style (long sentence/paragraph) | growing goldens |
+| Soft grammar packs (`testdata/grammar/*-soft.xml`) | 35 packs; CoreGoldenHook matrix |
 | Disambiguator | not yet |
 | Full 1:1 goldens | growing |
 
