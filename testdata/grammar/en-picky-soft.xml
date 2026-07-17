@@ -3406,5 +3406,26 @@
       <message>Jargon; name recovery time objective instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RPO" name="rpo soft picky">
+      <pattern>
+        <token>rpo</token>
+      </pattern>
+      <message>Jargon; name recovery point objective instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TTL" name="ttl soft picky">
+      <pattern>
+        <token>ttl</token>
+      </pattern>
+      <message>Jargon; name time to live instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TPS" name="tps soft picky">
+      <pattern>
+        <token>tps</token>
+      </pattern>
+      <message>Jargon; name transactions per second instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

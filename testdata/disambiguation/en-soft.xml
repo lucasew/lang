@@ -5307,4 +5307,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_BIGTABLE" name="immunize bigtable">
+    <pattern>
+      <token>bigtable</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BIGTABLE_CAPS" name="immunize Bigtable">
+    <pattern>
+      <token>Bigtable</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPANNER" name="immunize spanner">
+    <pattern>
+      <token>spanner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SPANNER_CAPS" name="immunize Spanner">
+    <pattern>
+      <token>Spanner</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHBASE" name="immunize couchbase">
+    <pattern>
+      <token>couchbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COUCHBASE_CAPS" name="immunize Couchbase">
+    <pattern>
+      <token>Couchbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

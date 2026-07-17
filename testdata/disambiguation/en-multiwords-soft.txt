@@ -537,3 +537,6 @@ Tephra Summit RegionNNP
 Lapilli Summit RegionNNP
 Breccia Ridge RegionNNP
 Conglomerate Ridge RegionNNP
+Sandstone Ridge RegionNNP
+Limestone Ridge RegionNNP
+Marble Ridge RegionNNP

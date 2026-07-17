@@ -11957,6 +11957,76 @@
       <message>Did you mean "leaving"?</message>
       <short>leaveing</short>
     </rule>
+    <rule id="EN_SOFT_MOVING_MISS" name="moveing soft">
+      <pattern>
+        <token>moveing</token>
+      </pattern>
+      <message>Did you mean "moving"?</message>
+      <short>moveing</short>
+    </rule>
+    <rule id="EN_SOFT_PROVING_MISS" name="proveing soft">
+      <pattern>
+        <token>proveing</token>
+      </pattern>
+      <message>Did you mean "proving"?</message>
+      <short>proveing</short>
+    </rule>
+    <rule id="EN_SOFT_DRIVING_MISS" name="driveing soft">
+      <pattern>
+        <token>driveing</token>
+      </pattern>
+      <message>Did you mean "driving"?</message>
+      <short>driveing</short>
+    </rule>
+    <rule id="EN_SOFT_TYPING_MISS" name="typeing soft">
+      <pattern>
+        <token>typeing</token>
+      </pattern>
+      <message>Did you mean "typing"?</message>
+      <short>typeing</short>
+    </rule>
+    <rule id="EN_SOFT_HOPING_MISS" name="hopeing soft">
+      <pattern>
+        <token>hopeing</token>
+      </pattern>
+      <message>Did you mean "hoping"?</message>
+      <short>hopeing</short>
+    </rule>
+    <rule id="EN_SOFT_CARING_MISS" name="careing soft">
+      <pattern>
+        <token>careing</token>
+      </pattern>
+      <message>Did you mean "caring"?</message>
+      <short>careing</short>
+    </rule>
+    <rule id="EN_SOFT_SHARING_MISS" name="shareing soft">
+      <pattern>
+        <token>shareing</token>
+      </pattern>
+      <message>Did you mean "sharing"?</message>
+      <short>shareing</short>
+    </rule>
+    <rule id="EN_SOFT_STORING_MISS" name="storeing soft">
+      <pattern>
+        <token>storeing</token>
+      </pattern>
+      <message>Did you mean "storing"?</message>
+      <short>storeing</short>
+    </rule>
+    <rule id="EN_SOFT_SCORING_MISS" name="scoreing soft">
+      <pattern>
+        <token>scoreing</token>
+      </pattern>
+      <message>Did you mean "scoring"?</message>
+      <short>scoreing</short>
+    </rule>
+    <rule id="EN_SOFT_FORCING_MISS" name="forceing soft">
+      <pattern>
+        <token>forceing</token>
+      </pattern>
+      <message>Did you mean "forcing"?</message>
+      <short>forceing</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
