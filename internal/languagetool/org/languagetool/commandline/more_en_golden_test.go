@@ -3,6 +3,7 @@ package commandline
 import (
 	"bytes"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -45,6 +46,64 @@ func TestGolden_IrregardlessPicky(t *testing.T) {
 		if f.Rule == "EN_IRREGARDLESS" {
 			found = true
 			require.Equal(t, "regardless", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_TooLongSentence(t *testing.T) {
+	words := make([]string, 45)
+	for i := range words {
+		words[i] = "word"
+	}
+	words[0] = "Word"
+	text := strings.Join(words, " ") + "."
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "TOO_LONG_SENTENCE" {
+			found = true
+			require.Equal(t, "style", f.Type)
+			require.Equal(t, "note", f.Severity)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_SoftYourYoure(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Your welcome here.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_YOUR_YOU_RE" {
+			found = true
+			require.Equal(t, "grammar", f.Type)
+			require.Equal(t, "error", f.Severity)
+			require.Equal(t, "you're welcome", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_SoftItsIts(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Its a test.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_ITS_IT_S" {
+			found = true
+			require.Equal(t, "grammar", f.Type)
+			require.Equal(t, "error", f.Severity)
 		}
 	}
 	require.True(t, found, "%+v", findings)
