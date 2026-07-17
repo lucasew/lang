@@ -4,8 +4,9 @@ package uk
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -28,7 +29,21 @@ func TestUkrainianHybridDisambiguation_DisambiguatorRetagFemNames(t *testing.T) 
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRemoveVmis
 func TestUkrainianHybridDisambiguation_DisambiguatorRemoveVmis(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorRemoveVmis")
+	// unit green without full UK dict: hybrid applies RemoveVmisReadings
+	p, l1, l2 := "noun:inanim:m:v_mis", "зв'язок", "зв'язок"
+	p2 := "noun:inanim:m:v_rod"
+	atr := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Зв'язку", &p, &l1),
+		languagetool.NewAnalyzedToken("Зв'язку", &p2, &l2),
+	}, 0)
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, atr})
+	out := NewUkrainianHybridDisambiguator().Disambiguate(sent)
+	toks := out.GetTokensWithoutWhitespace()
+	require.False(t, toks[1].HasPartialPosTag("v_mis"))
+	require.True(t, toks[1].HasPartialPosTag("v_rod"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForInanimVKly
@@ -79,7 +94,23 @@ func TestUkrainianHybridDisambiguation_Yih(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testSimpleRemove
 func TestUkrainianHybridDisambiguation_SimpleRemove(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testSimpleRemove")
+	// inject remove map (full disambig_remove.txt deferred)
+	rm := map[string]*TokenMatcher{
+		"була": {Entries: []MatcherEntry{{Lemma: "була", POS: "noun"}}},
+	}
+	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorWith(rm))
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pv, pl := "verb:imperf:past:f", "бути"
+	nv, nl := "noun:inanim:f:v_naz", "була"
+	bula := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("була", &pv, &pl),
+		languagetool.NewAnalyzedToken("була", &nv, &nl),
+	}, 0)
+	out := d.Disambiguate(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, bula}))
+	require.True(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("verb"))
+	require.False(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("noun"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRemovePresentInDictionary

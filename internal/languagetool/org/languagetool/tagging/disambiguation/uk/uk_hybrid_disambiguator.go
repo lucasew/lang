@@ -35,6 +35,12 @@ func (d *UkrainianHybridDisambiguator) Disambiguate(in *languagetool.AnalyzedSen
 	if d != nil && d.Inner != nil {
 		out = d.Inner.Disambiguate(out)
 	}
+	// soft: strip v_mis when other cases remain (prep context deferred)
+	if out != nil {
+		for _, tok := range out.GetTokensWithoutWhitespace() {
+			RemoveVmisReadings(tok)
+		}
+	}
 	return out
 }
 
