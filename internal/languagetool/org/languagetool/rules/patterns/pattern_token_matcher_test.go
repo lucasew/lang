@@ -55,6 +55,16 @@ func TestSoftRegexpAlternatives(t *testing.T) {
 	require.Equal(t, []string{"foo", "bar"}, softRegexpAlternatives("(?:foo|bar)"))
 }
 
+func TestSoftIrregularLemma(t *testing.T) {
+	require.True(t, softInflectedSurfaceMatch("was", "be", false))
+	require.True(t, softInflectedSurfaceMatch("est", "être", false))
+	require.True(t, softInflectedSurfaceMatch("va", "dir", false)) // AST
+	require.True(t, softInflectedSurfaceMatch("va", "ir", false))  // ES
+	require.True(t, softInflectedSurfaceMatch("va", "aller", false))
+	require.True(t, softInflectedSurfaceMatch("ist", "sein", false))
+	require.False(t, softInflectedSurfaceMatch("va", "be", false))
+}
+
 // Upstream EN NON_ENGLISH_CHARACTER_IN_A_WORD uses Java \uXXXX escapes.
 func TestSoftNormalizeJavaRegexpUnicode(t *testing.T) {
 	pat := `[a-z]*(\u043E|\u0455|\u0435|\u0440|\u03BF)[a-z]*`

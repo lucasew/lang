@@ -333,12 +333,52 @@ func softPostagLooksLikePunct(tag string) bool {
 		strings.Contains(u, "SENT_START")
 }
 
-// softEnglishLemma maps common irregular EN surfaces to dictionary lemmas
-// (be/have/do). Used only for soft MatchInflected without a tagger.
-var softEnglishLemma = map[string]string{
-	"am": "be", "is": "be", "are": "be", "was": "be", "were": "be", "been": "be", "being": "be",
-	"has": "have", "had": "have", "having": "have",
-	"does": "do", "did": "do", "done": "do", "doing": "do",
+// softIrregularLemma maps common irregular surfaces → possible dictionary lemmas
+// for soft MatchInflected without a tagger. Values are multi-lemma because the
+// same surface can map to different lemmas across languages (va→aller|ir|dir).
+var softIrregularLemma = map[string][]string{
+	// English
+	"am": {"be"}, "is": {"be"}, "are": {"be"}, "was": {"be"}, "were": {"be"}, "been": {"be"}, "being": {"be"},
+	"has": {"have"}, "had": {"have"}, "having": {"have"},
+	"does": {"do"}, "did": {"do"}, "done": {"do"}, "doing": {"do"},
+	// French être / avoir / aller / faire
+	"suis": {"être"}, "es": {"être"}, "est": {"être"}, "sommes": {"être"}, "êtes": {"être"}, "sont": {"être"},
+	"étais": {"être"}, "était": {"être"}, "étions": {"être"}, "étiez": {"être"}, "étaient": {"être"},
+	"été": {"être"}, "étant": {"être"}, "sera": {"être"}, "serai": {"être"}, "seras": {"être"}, "seront": {"être"},
+	"ai": {"avoir"}, "as": {"avoir"}, "avons": {"avoir"}, "avez": {"avoir"}, "ont": {"avoir"},
+	"avais": {"avoir"}, "avait": {"avoir"}, "avaient": {"avoir"}, "eu": {"avoir"}, "ayant": {"avoir"},
+	"allons": {"aller"}, "allez": {"aller"}, "vont": {"aller"},
+	"allait": {"aller"}, "allaient": {"aller"}, "allé": {"aller"}, "allée": {"aller"}, "allés": {"aller"},
+	"fais": {"faire"}, "fait": {"faire"}, "faisons": {"faire"}, "faites": {"faire"}, "font": {"faire"},
+	"faisait": {"faire"}, "faisaient": {"faire"},
+	// German sein / haben
+	"bin": {"sein"}, "bist": {"sein"}, "ist": {"sein"}, "sind": {"sein"}, "seid": {"sein"},
+	"war": {"sein"}, "warst": {"sein"}, "waren": {"sein"}, "wart": {"sein"}, "gewesen": {"sein"}, "sei": {"sein"},
+	"habe": {"haben"}, "hast": {"haben"}, "hat": {"haben"}, "habt": {"haben"},
+	"hatte": {"haben"}, "hattest": {"haben"}, "hatten": {"haben"}, "gehabt": {"haben"},
+	// Portuguese ser / estar / ter / fazer / dar
+	"sou": {"ser"}, "és": {"ser"}, "é": {"ser"}, "somos": {"ser"}, "são": {"ser"},
+	"era": {"ser"}, "eram": {"ser"}, "foi": {"ser", "dir"}, "foram": {"ser"}, "sido": {"ser"},
+	"estou": {"estar"}, "está": {"estar"}, "estamos": {"estar"}, "estão": {"estar"},
+	"estava": {"estar"}, "estavam": {"estar"}, "estado": {"estar"},
+	"tenho": {"ter"}, "tens": {"ter"}, "tem": {"ter"}, "temos": {"ter"}, "têm": {"ter"},
+	"tinha": {"ter"}, "tinham": {"ter"}, "tido": {"ter"},
+	"faço": {"fazer"}, "fazes": {"fazer"}, "faz": {"fazer"}, "fazemos": {"fazer"}, "fazem": {"fazer"},
+	"fez": {"fazer"}, "fizeram": {"fazer"}, "feito": {"fazer"},
+	"dou": {"dar"}, "dás": {"dar"}, "dá": {"dar"}, "damos": {"dar"}, "dão": {"dar"},
+	"deu": {"dar"}, "deram": {"dar"}, "dado": {"dar"},
+	// Shared Romance "go" present (FR aller / ES ir / AST dir)
+	"vais": {"aller", "ir", "dir"},
+	"vas": {"aller", "ir", "dir"},
+	"va": {"aller", "ir", "dir"},
+	"vamos": {"ir", "dir"},
+	"van": {"ir", "dir"},
+	// Spanish ir / dar
+	"voy": {"ir"}, "iba": {"ir"}, "iban": {"ir"}, "fue": {"ir"}, "fueron": {"ir"}, "ido": {"ir"},
+	"doy": {"dar"}, "das": {"dar"}, "da": {"dar"}, "dais": {"dar"}, "dan": {"dar"},
+	"dio": {"dar"}, "dieron": {"dar"},
+	// Asturian dir
+	"voi": {"dir"}, "foron": {"dir"},
 }
 
 // softInflectedSurfaceMatch approximates lemma matching without a tagger:
@@ -359,9 +399,13 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	if surface == base {
 		return true
 	}
-	// English irregular auxiliaries (was→be, has→have, …).
-	if lem, ok := softEnglishLemma[surface]; ok && lem == base {
-		return true
+	// Irregular auxiliaries / go-verbs (was→be, est→être, va→dir, …).
+	if lems, ok := softIrregularLemma[surface]; ok {
+		for _, lem := range lems {
+			if lem == base {
+				return true
+			}
+		}
 	}
 	// Prefix check on folded forms (ambaŭ / Ambaux).
 	sf, bf := softEsperantoFold(surface), softEsperantoFold(base)
