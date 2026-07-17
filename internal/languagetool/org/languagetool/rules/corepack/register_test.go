@@ -47,3 +47,16 @@ func TestRegister_MultiLang(t *testing.T) {
 		})
 	}
 }
+
+func TestRegister_WordRepeatBeginning(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("fr")
+	corepack.Register(lt, "fr")
+	m := lt.Check("Bonjour le monde. Bonjour la terre. Bonjour le ciel.")
+	found := false
+	for _, x := range m {
+		if x.RuleID == "FR_WORD_REPEAT_BEGINNING_RULE" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+}
