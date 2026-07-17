@@ -2288,5 +2288,29 @@
       <message>Jargon; name interchangeable algorithm objects instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_OBSERVER_PATTERN" name="observer pattern soft picky">
+      <pattern>
+        <token>observer</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name publish-subscribe event listeners instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ADAPTER_PATTERN" name="adapter pattern soft picky">
+      <pattern>
+        <token>adapter</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name an interface-translation wrapper instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DECORATOR_PATTERN" name="decorator pattern soft picky">
+      <pattern>
+        <token>decorator</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name layered behavior wrapping instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

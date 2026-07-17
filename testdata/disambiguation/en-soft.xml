@@ -3579,4 +3579,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PERSONALIZE" name="immunize personalize">
+    <pattern>
+      <token>personalize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PERSONALIZE_CAPS" name="immunize Personalize">
+    <pattern>
+      <token>Personalize</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINT" name="immunize pinpoint">
+    <pattern>
+      <token>pinpoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PINPOINT_CAPS" name="immunize Pinpoint">
+    <pattern>
+      <token>Pinpoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LEX" name="immunize lex">
+    <pattern>
+      <token>lex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LEX_CAPS" name="immunize Lex">
+    <pattern>
+      <token>Lex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

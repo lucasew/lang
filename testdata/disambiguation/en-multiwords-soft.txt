@@ -393,3 +393,6 @@ Silk Corridor RegionNNP
 Wine Corridor RegionNNP
 Tea Corridor RegionNNP
 Spice Corridor RegionNNP
+Coffee Corridor RegionNNP
+Cotton Corridor RegionNNP
+Copper Corridor RegionNNP
