@@ -10977,6 +10977,76 @@
       <message>Did you mean "relevant"?</message>
       <short>relavent</short>
     </rule>
+    <rule id="EN_SOFT_RESPONSIBILITY_MISS" name="responsability soft">
+      <pattern>
+        <token>responsability</token>
+      </pattern>
+      <message>Did you mean "responsibility"?</message>
+      <short>responsability</short>
+    </rule>
+    <rule id="EN_SOFT_WARRANTY_MISS" name="warrenty soft">
+      <pattern>
+        <token>warrenty</token>
+      </pattern>
+      <message>Did you mean "warranty"?</message>
+      <short>warrenty</short>
+    </rule>
+    <rule id="EN_SOFT_ASSISTANT_MISS2" name="assistent soft">
+      <pattern>
+        <token>assistent</token>
+      </pattern>
+      <message>Did you mean "assistant"?</message>
+      <short>assistent</short>
+    </rule>
+    <rule id="EN_SOFT_BRIEF_MISS" name="breif soft">
+      <pattern>
+        <token>breif</token>
+      </pattern>
+      <message>Did you mean "brief"?</message>
+      <short>breif</short>
+    </rule>
+    <rule id="EN_SOFT_CAREFUL_MISS" name="carefull soft">
+      <pattern>
+        <token>carefull</token>
+      </pattern>
+      <message>Did you mean "careful"?</message>
+      <short>carefull</short>
+    </rule>
+    <rule id="EN_SOFT_COMPARISON_MISS" name="comparision soft">
+      <pattern>
+        <token>comparision</token>
+      </pattern>
+      <message>Did you mean "comparison"?</message>
+      <short>comparision</short>
+    </rule>
+    <rule id="EN_SOFT_DESIRABLE_MISS" name="desireable soft">
+      <pattern>
+        <token>desireable</token>
+      </pattern>
+      <message>Did you mean "desirable"?</message>
+      <short>desireable</short>
+    </rule>
+    <rule id="EN_SOFT_DOCUMENTATION_MISS3" name="documentaion soft">
+      <pattern>
+        <token>documentaion</token>
+      </pattern>
+      <message>Did you mean "documentation"?</message>
+      <short>documentaion</short>
+    </rule>
+    <rule id="EN_SOFT_EFFICIENT_MISS2" name="effecient soft">
+      <pattern>
+        <token>effecient</token>
+      </pattern>
+      <message>Did you mean "efficient"?</message>
+      <short>effecient</short>
+    </rule>
+    <rule id="EN_SOFT_EXERCISE_MISS2" name="excercise soft">
+      <pattern>
+        <token>excercise</token>
+      </pattern>
+      <message>Did you mean "exercise"?</message>
+      <short>excercise</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

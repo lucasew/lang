@@ -4803,4 +4803,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTBIT" name="immunize fluentbit">
+    <pattern>
+      <token>fluentbit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTBIT_CAPS" name="immunize FluentBit">
+    <pattern>
+      <token>FluentBit</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTD" name="immunize fluentd">
+    <pattern>
+      <token>fluentd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FLUENTD_CAPS" name="immunize Fluentd">
+    <pattern>
+      <token>Fluentd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TELEGRAF" name="immunize telegraf">
+    <pattern>
+      <token>telegraf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TELEGRAF_CAPS" name="immunize Telegraf">
+    <pattern>
+      <token>Telegraf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

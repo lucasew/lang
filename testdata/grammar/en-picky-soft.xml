@@ -3109,5 +3109,26 @@
       <message>Jargon; name a quartile distribution chart instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_FMEA" name="fmea soft picky">
+      <pattern>
+        <token>fmea</token>
+      </pattern>
+      <message>Jargon; name failure mode and effects analysis instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPC" name="spc soft picky">
+      <pattern>
+        <token>spc</token>
+      </pattern>
+      <message>Jargon; name statistical process control instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CPK" name="cpk soft picky">
+      <pattern>
+        <token>cpk</token>
+      </pattern>
+      <message>Jargon; name process capability index instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
