@@ -4,14 +4,14 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 )
 
-// Check runs a language-aware core rule pack on text (full XML grammar deferred).
-// Honors pipeline disabled-rule IDs and optional overlap cleaning.
-func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
+// newConfiguredLT builds a language tool with core packs and pipeline filters applied.
+func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	if p == nil {
-		return nil
+		return languagetool.NewJLanguageTool("en")
 	}
 	lang := p.settings.LangCode
 	if lang == "" {
@@ -50,22 +50,44 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 			}
 		}
 	}
+	return lt
+}
 
-	matches := lt.Check(text)
-	if p.cleanOverlaps {
-		// assign soft priorities by rule family so layout doesn't stomp grammar injects
-		for i := range matches {
-			id := matches[i].RuleID
-			if id == "EN_A_VS_AN" || strings.Contains(id, "WORD_REPEAT") ||
-				strings.HasPrefix(id, "EN_") && strings.Contains(id, "_OF") {
-				matches[i].Priority = 5
-			} else if matches[i].Priority == 0 {
-				matches[i].Priority = 1
-			}
-		}
-		matches = languagetool.CleanOverlappingLocalMatches(matches)
+func (p *Pipeline) cleanMatches(matches []languagetool.LocalMatch) []languagetool.LocalMatch {
+	if p == nil || !p.cleanOverlaps {
+		return matches
 	}
-	return matches
+	for i := range matches {
+		id := matches[i].RuleID
+		if id == "EN_A_VS_AN" || strings.Contains(id, "WORD_REPEAT") ||
+			strings.HasPrefix(id, "EN_") && strings.Contains(id, "_OF") {
+			matches[i].Priority = 5
+		} else if matches[i].Priority == 0 {
+			matches[i].Priority = 1
+		}
+	}
+	return languagetool.CleanOverlappingLocalMatches(matches)
+}
+
+// Check runs a language-aware core rule pack on text (full XML grammar deferred).
+// Honors pipeline disabled-rule IDs and optional overlap cleaning.
+func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
+	if p == nil {
+		return nil
+	}
+	matches := p.newConfiguredLT().Check(text)
+	return p.cleanMatches(matches)
+}
+
+// CheckAnnotated runs Check on annotated plain text and projects offsets onto the original markup.
+func (p *Pipeline) CheckAnnotated(at *markup.AnnotatedText) []languagetool.LocalMatch {
+	if p == nil || at == nil {
+		return nil
+	}
+	lt := p.newConfiguredLT()
+	matches := lt.CheckAnnotated(at)
+	matches = languagetool.ProjectMatchesToOriginal(at, matches)
+	return p.cleanMatches(matches)
 }
 
 // DisableRuleID records a rule to skip (before SetupFinished).

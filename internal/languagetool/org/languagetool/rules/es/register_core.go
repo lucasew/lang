@@ -3,6 +3,7 @@ package es
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreSpanishRules installs shared layout + Spanish word-repeat + beginning.
@@ -18,4 +19,9 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_adv":  "Tres oraciones sucesivas comienzan con el mismo adverbio.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	patterns.RegisterTokenSequences(lt, "es", []patterns.TokenSequenceSpec{
+		{ID: "ES_A_EL", Tokens: []string{"a", "el"}, Message: "¿Quiso decir 'al'?", Suggestion: "al"},
+		{ID: "ES_DE_EL", Tokens: []string{"de", "el"}, Message: "¿Quiso decir 'del'?", Suggestion: "del"},
+	})
 }

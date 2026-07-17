@@ -3,6 +3,7 @@ package pt
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCorePortugueseRules installs shared layout + Portuguese word-repeat + beginning.
@@ -18,4 +19,9 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_adv":  "Três frases sucessivas começam com o mesmo advérbio.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	patterns.RegisterTokenSequences(lt, "pt", []patterns.TokenSequenceSpec{
+		{ID: "PT_A_O", Tokens: []string{"a", "o"}, Message: "Talvez 'ao'?", Suggestion: "ao"},
+		{ID: "PT_DE_O", Tokens: []string{"de", "o"}, Message: "Talvez 'do'?", Suggestion: "do"},
+	})
 }

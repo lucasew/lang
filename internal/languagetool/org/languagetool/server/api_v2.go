@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 )
 
 const (
@@ -86,8 +88,15 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			_ = qp
 		}
 		text := parameters["text"]
-		if text == "" {
-			text = parameters["data"]
+		dataJSON := parameters["data"]
+		var annotated *markup.AnnotatedText
+		if text == "" && dataJSON != "" {
+			at, err := ParseDataAnnotation(dataJSON)
+			if err != nil {
+				return HandleResult{}, err
+			}
+			annotated = at
+			text = at.GetPlainText()
 		}
 		limits := DefaultUserLimits(a.Config)
 		if err := a.TextChecker.ValidateTextLength(text, limits); err != nil {
@@ -119,7 +128,14 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if v := parameters["level"]; v != "" {
 			opts.Level = CheckLevel(strings.ToUpper(v))
 		}
-		body, err := a.TextChecker.CheckAndBuildJSONWithOptions(text, lang, lang, opts)
+		var body string
+		var err error
+		if annotated != nil {
+			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
+			body, err = a.TextChecker.BuildResponse(annotated.GetTextWithMarkup(), lang, lang, matches)
+		} else {
+			body, err = a.TextChecker.CheckAndBuildJSONWithOptions(text, lang, lang, opts)
+		}
 		if err != nil {
 			return HandleResult{}, err
 		}

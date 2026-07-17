@@ -95,3 +95,15 @@ func TestApiV2_AutoPreferredVariants(t *testing.T) {
 	require.NoError(t, err)
 	require.Contains(t, r.Body, `"code":"en-GB"`)
 }
+
+func TestApiV2_CheckDataAnnotation(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	data := `{"annotation":[{"text":"See "},{"markup":"<b>"},{"text":"a error"},{"markup":"</b>"},{"text":" here."}]}`
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"data":     data,
+	})
+	require.NoError(t, err)
+	require.Equal(t, 200, r.Status)
+	require.Contains(t, r.Body, "EN_A_VS_AN")
+}

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 )
 
@@ -22,8 +23,8 @@ func (t *TextChecker) Check(text, lang string, disabled []string) []RemoteRuleMa
 	return t.CheckWithOptions(text, lang, CheckOptions{Disabled: disabled})
 }
 
-// CheckWithOptions is Check with enabled-only, mode, and level support.
-func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []RemoteRuleMatch {
+// preparePipeline builds a frozen pipeline for check options.
+func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) *Pipeline {
 	if lang == "" {
 		lang = "en"
 	}
@@ -31,6 +32,13 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	settings.Query.DisabledRules = append([]string(nil), opts.Disabled...)
 	settings.Query.EnabledRules = append([]string(nil), opts.Enabled...)
 	settings.Query.UseEnabledOnly = opts.UseEnabledOnly
+	if opts.Level != "" {
+		settings.GlobalConfigKey = "level:" + string(opts.Level)
+	}
+	if opts.Mode != "" {
+		// soft: Query.LanguageCode carries check mode for Pipeline.Check
+		settings.Query.LanguageCode = string(opts.Mode)
+	}
 	p := NewPipeline(settings)
 	for _, id := range opts.Disabled {
 		id = strings.TrimSpace(id)
@@ -39,31 +47,38 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 		}
 	}
 	_ = p.SetCleanOverlappingMatches(true)
-
-	// soft: apply level before freeze via post-register picky inject on pipeline Check
-	// Pipeline.Check builds a fresh JLT; pass level through settings.Query language field abuse avoided —
-	// store on PipelineSettings via MotherTongueCode unused field is wrong.
-	// Instead: set level on pipeline settings GlobalConfigKey soft tag.
-	if opts.Level != "" {
-		settings.GlobalConfigKey = "level:" + string(opts.Level)
-	}
-	if opts.Mode != "" {
-		// soft: Query.LanguageCode carries check mode for Pipeline.Check
-		settings.Query.LanguageCode = string(opts.Mode)
-	}
-	p.settings = settings
-
 	p.SetupFinished()
+	return p
+}
+
+// CheckWithOptions is Check with enabled-only, mode, and level support.
+func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []RemoteRuleMatch {
+	p := t.preparePipeline(lang, opts)
 	locals := p.Check(text)
-
-	// post-filter mode soft: already handled if pipeline honors mode; else filter here
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, text)
-
 	ctxSize := DefaultContextSize
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
 	return LocalMatchesToRemote(text, locals, ctxSize)
+}
+
+// CheckAnnotatedWithOptions checks annotated markup text; match offsets are in original markup space.
+func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang string, opts CheckOptions) []RemoteRuleMatch {
+	if at == nil {
+		return nil
+	}
+	p := t.preparePipeline(lang, opts)
+	locals := p.CheckAnnotated(at)
+	plain := at.GetPlainText()
+	locals = applyLevelPickyBoost(lang, opts.Level, locals, plain)
+	// Context uses original markup string so projected offsets align.
+	orig := at.GetTextWithMarkup()
+	ctxSize := DefaultContextSize
+	if t != nil && t.ContextSize > 0 {
+		ctxSize = t.ContextSize
+	}
+	return LocalMatchesToRemote(orig, locals, ctxSize)
 }
 
 // applyLevelPickyBoost runs extra EN picky patterns when level is PICKY (soft).
