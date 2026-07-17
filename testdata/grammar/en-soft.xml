@@ -2577,6 +2577,76 @@
       <message>Did you mean "occurrence"?</message>
       <short>occurance</short>
     </rule>
+    <rule id="EN_SOFT_INDEPENDENCE_MISS" name="independance soft">
+      <pattern>
+        <token>independance</token>
+      </pattern>
+      <message>Did you mean "independence"?</message>
+      <short>independance</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSOR_MISS" name="proffesor soft">
+      <pattern>
+        <token>proffesor</token>
+      </pattern>
+      <message>Did you mean "professor"?</message>
+      <short>proffesor</short>
+    </rule>
+    <rule id="EN_SOFT_RECOMMEND_MISS" name="reccomend soft">
+      <pattern>
+        <token>reccomend</token>
+      </pattern>
+      <message>Did you mean "recommend"?</message>
+      <short>reccomend</short>
+    </rule>
+    <rule id="EN_SOFT_RECOMMENDATION_MISS" name="recomendation soft">
+      <pattern>
+        <token>recomendation</token>
+      </pattern>
+      <message>Did you mean "recommendation"?</message>
+      <short>recomendation</short>
+    </rule>
+    <rule id="EN_SOFT_REFERENCE_MISS" name="refference soft">
+      <pattern>
+        <token>refference</token>
+      </pattern>
+      <message>Did you mean "reference"?</message>
+      <short>refference</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATION_MISS" name="seperation soft">
+      <pattern>
+        <token>seperation</token>
+      </pattern>
+      <message>Did you mean "separation"?</message>
+      <short>seperation</short>
+    </rule>
+    <rule id="EN_SOFT_THEREFORE_MISS" name="therfore soft">
+      <pattern>
+        <token>therfore</token>
+      </pattern>
+      <message>Did you mean "therefore"?</message>
+      <short>therfore</short>
+    </rule>
+    <rule id="EN_SOFT_THROUGHOUT_MISS" name="thruout soft">
+      <pattern>
+        <token>thruout</token>
+      </pattern>
+      <message>Did you mean "throughout"?</message>
+      <short>thruout</short>
+    </rule>
+    <rule id="EN_SOFT_TRULY_MISS" name="truely soft">
+      <pattern>
+        <token>truely</token>
+      </pattern>
+      <message>Did you mean "truly"?</message>
+      <short>truely</short>
+    </rule>
+    <rule id="EN_SOFT_UNFORTUNATELY_MISS" name="unfortunatly soft">
+      <pattern>
+        <token>unfortunatly</token>
+      </pattern>
+      <message>Did you mean "unfortunately"?</message>
+      <short>unfortunatly</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

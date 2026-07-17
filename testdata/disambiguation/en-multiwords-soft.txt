@@ -131,3 +131,12 @@ in a nutshell	RB
 for what it is worth	RB
 to make a long story short	RB
 as luck would have it	RB
+in a sense	RB
+in any event	RB
+for that matter	RB
+as it were	RB
+to say the least	RB
+without a doubt	RB
+beyond doubt	RB
+Kansas City	NNP
+Oklahoma City	NNP

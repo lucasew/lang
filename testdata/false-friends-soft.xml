@@ -622,4 +622,32 @@
       <translation lang="en">informal / chance</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="PRETEND">
+    <rule>
+      <pattern lang="en">
+        <token>pretend</token>
+      </pattern>
+      <translation lang="es">fingir / simular</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>pretender</token>
+      </pattern>
+      <translation lang="en">intend / aim / claim</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SUPPORT">
+    <rule>
+      <pattern lang="en">
+        <token>support</token>
+      </pattern>
+      <translation lang="es">apoyar / soporte</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>soportar</token>
+      </pattern>
+      <translation lang="en">endure / put up with</translation>
+    </rule>
+  </rulegroup>
 </rules>
