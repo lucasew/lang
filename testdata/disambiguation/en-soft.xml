@@ -3795,4 +3795,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_STEPFUNCTIONS" name="immunize stepfunctions">
+    <pattern>
+      <token>stepfunctions</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STEPFUNCTIONS_CAPS" name="immunize StepFunctions">
+    <pattern>
+      <token>StepFunctions</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DMS" name="immunize dms">
+    <pattern>
+      <token>dms</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DMS_CAPS" name="immunize DMS">
+    <pattern>
+      <token>DMS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMORYDB" name="immunize memorydb">
+    <pattern>
+      <token>memorydb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMORYDB_CAPS" name="immunize MemoryDB">
+    <pattern>
+      <token>MemoryDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

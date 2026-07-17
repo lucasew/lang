@@ -411,3 +411,6 @@ Quartz Corridor RegionNNP
 Garnet Corridor RegionNNP
 Onyx Corridor RegionNNP
 Obsidian Corridor RegionNNP
+Basalt Corridor RegionNNP
+Granite Corridor RegionNNP
+Marble Corridor RegionNNP

@@ -2433,5 +2433,30 @@
       <message>Jargon; name clone-based object creation instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_REPOSITORY_PATTERN" name="repository pattern soft picky">
+      <pattern>
+        <token>repository</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a collection-like data access boundary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UNIT_OF_WORK" name="unit of work soft picky">
+      <pattern>
+        <token>unit</token>
+        <token>of</token>
+        <token>work</token>
+      </pattern>
+      <message>Jargon; name a tracked transactional change set instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPECIFICATION_PATTERN" name="specification pattern soft picky">
+      <pattern>
+        <token>specification</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name composable business predicate objects instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
