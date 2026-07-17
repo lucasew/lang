@@ -723,6 +723,41 @@
       <message>"Basic fundamentals" is often redundant; consider "fundamentals".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_REASON_IS_BECAUSE" name="reason is because">
+      <pattern>
+        <token>reason</token>
+        <token>is</token>
+        <token>because</token>
+      </pattern>
+      <message>Prefer "reason is that" or drop "reason is".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_WHETHER_OR_NOT" name="whether or not soft">
+      <pattern>
+        <token>whether</token>
+        <token>or</token>
+        <token>not</token>
+        <token>to</token>
+      </pattern>
+      <message>Often "whether to" is enough without "or not".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_ACTUAL_FACT" name="actual fact">
+      <pattern>
+        <token>actual</token>
+        <token>fact</token>
+      </pattern>
+      <message>"Actual fact" is often redundant; consider "fact".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_TRUE_FACT" name="true fact">
+      <pattern>
+        <token>true</token>
+        <token>fact</token>
+      </pattern>
+      <message>"True fact" is often redundant; consider "fact".</message>
+      <short>style</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

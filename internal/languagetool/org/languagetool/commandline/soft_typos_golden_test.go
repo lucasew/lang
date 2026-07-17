@@ -536,6 +536,10 @@ func TestGolden_SoftMoreStyleAndTryAnd(t *testing.T) {
 		{"Each and every student passed.", "EN_SOFT_EACH_AND_EVERY", ""},
 		{"First and foremost, plan carefully.", "EN_SOFT_FIRST_AND_FOREMOST", ""},
 		{"Learn the basic fundamentals first.", "EN_SOFT_BASIC_FUNDAMENTALS", ""},
+		{"The reason is because it rained.", "EN_SOFT_REASON_IS_BECAUSE", ""},
+		{"Decide whether or not to go.", "EN_SOFT_WHETHER_OR_NOT", ""},
+		{"That is an actual fact.", "EN_SOFT_ACTUAL_FACT", ""},
+		{"A true fact remains.", "EN_SOFT_TRUE_FACT", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

@@ -57,6 +57,47 @@
       <message>Possível repetição de "a".</message>
       <short>a a</short>
     </rule>
+    <rule id="PT_SOFT_POR_A" name="por a">
+      <pattern>
+        <token>por</token>
+        <token>a</token>
+      </pattern>
+      <message>Talvez "pela"?</message>
+      <short>por/pela</short>
+    </rule>
+    <rule id="PT_SOFT_COM_O" name="com o">
+      <pattern>
+        <token>com</token>
+        <token>o</token>
+      </pattern>
+      <message>Talvez "com o" esteja correto; verifique contração se aplicável.</message>
+      <short>com o</short>
+    </rule>
+    <rule id="PT_SOFT_MAS_MAS" name="mas mas">
+      <pattern>
+        <token>mas</token>
+        <token>mas</token>
+      </pattern>
+      <message>Possível repetição de "mas".</message>
+      <short>mas mas</short>
+    </rule>
+    <rule id="PT_SOFT_NAO_NAO" name="não não">
+      <pattern>
+        <token>não</token>
+        <token>não</token>
+      </pattern>
+      <message>Possível repetição de "não".</message>
+      <short>não não</short>
+    </rule>
+    <rule id="PT_SOFT_HA_A" name="há/a">
+      <pattern>
+        <token>a</token>
+        <token>muito</token>
+        <token>tempo</token>
+      </pattern>
+      <message>Talvez "há muito tempo"?</message>
+      <short>há/a</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografia">
     <rule id="PT_SOFT_DOUBLE_BANG" name="dupla exclamação">
