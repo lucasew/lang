@@ -83,7 +83,7 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetRecursive(true)
 		case "-b2", "--bitext":
 			opts.SetBitext(true)
-		case "-eo", "--enabledonly":
+		case "-eo", "--enabledonly", "--only":
 			if len(opts.GetDisabledRules()) > 0 {
 				return nil, fmt.Errorf("You cannot specify both disabled rules and enabledonly")
 			}
@@ -182,18 +182,14 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 		default:
 			// "-" means stdin (not an unknown flag)
 			if a == "-" {
-				opts.SetFilename("-")
+				opts.AddFilename("-")
 				continue
 			}
 			if strings.HasPrefix(a, "-") {
 				return nil, UnknownParameterException{Param: a}
 			}
-			// positional filename
-			if opts.Filename == "" {
-				opts.SetFilename(a)
-			} else {
-				return nil, UnknownParameterException{Param: a}
-			}
+			// positional filename(s) — multi-file soft product support
+			opts.AddFilename(a)
 		}
 	}
 	return opts, nil

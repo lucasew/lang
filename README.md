@@ -27,18 +27,21 @@ mise exec -- go run ./cmd/lang doctor
 ## Usage
 
 ```bash
-# lint a file
-mise exec -- go run ./cmd/lang lint --lang en-US path/to/file.txt
+# product CLI (Cobra)
+go run ./cmd/lang doctor
+go run ./cmd/lang languages
+go run ./cmd/lang rules --lang en
+go run ./cmd/lang lint --lang en path/to/file.txt other.txt
+echo 'This is an test.' | go run ./cmd/lang lint --lang en --format text
+go run ./cmd/lang lint --format sarif --lang en file.txt
+go run ./cmd/lang golden --lang en - > findings.json
+go run ./cmd/lang compare findings.json --lang en -
 
-# stdin
-echo 'This  is a test.' | mise exec -- go run ./cmd/lang lint --lang en
+# legacy LT-style flags still work
+go run ./cmd/lang -l en --lint -
 
-# formats
-mise exec -- go run ./cmd/lang lint --format json --lang en file.txt
-mise exec -- go run ./cmd/lang lint --format sarif --lang en file.txt
-
-# list languages from official tree
-mise exec -- go run ./cmd/lang languages
+# HTTP API
+go run ./cmd/lang-server -port 8081 -public
 ```
 
 ### Data path

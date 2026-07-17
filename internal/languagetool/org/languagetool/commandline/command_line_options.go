@@ -44,6 +44,8 @@ type CommandLineOptions struct {
 	FasttextBinaryPath            string
 	Encoding                      string
 	Filename                      string
+	// Filenames soft multi-file lint (SPEC paths). Filename is Filenames[0] when set.
+	Filenames                     []string
 	DisabledRules                 []string
 	EnabledRules                  []string
 	EnabledCategories             []string
@@ -112,7 +114,39 @@ func (o *CommandLineOptions) SetLanguage(code string)        { o.Language = code
 func (o *CommandLineOptions) SetMotherTongue(code string)    { o.MotherTongue = code }
 func (o *CommandLineOptions) SetLanguageModelPath(p string)  { o.LanguageModelPath = p }
 func (o *CommandLineOptions) SetEncoding(e string)           { o.Encoding = e }
-func (o *CommandLineOptions) SetFilename(f string)           { o.Filename = f }
+func (o *CommandLineOptions) SetFilename(f string) {
+	o.Filename = f
+	if f == "" {
+		return
+	}
+	// keep Filenames in sync for multi-file
+	if len(o.Filenames) == 0 {
+		o.Filenames = []string{f}
+	} else if o.Filenames[0] != f && f != "" {
+		// first file already set; AddFilename handles extras
+	}
+}
+func (o *CommandLineOptions) AddFilename(f string) {
+	if f == "" {
+		return
+	}
+	o.Filenames = append(o.Filenames, f)
+	if o.Filename == "" {
+		o.Filename = f
+	}
+}
+func (o *CommandLineOptions) GetFilenames() []string {
+	if o == nil {
+		return nil
+	}
+	if len(o.Filenames) > 0 {
+		return append([]string(nil), o.Filenames...)
+	}
+	if o.Filename != "" {
+		return []string{o.Filename}
+	}
+	return nil
+}
 func (o *CommandLineOptions) SetRuleFile(f string)           { o.RuleFile = f }
 func (o *CommandLineOptions) SetFalseFriendsFile(f string)   { o.FalseFriendsFile = f }
 func (o *CommandLineOptions) GetRuleFile() string {

@@ -153,59 +153,68 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 		opts.SetAutoDetect(true)
 	}
 
-	text, err := loadInput(opts.Filename, hooks)
-	if err != nil {
-		_, _ = fmt.Fprintln(stderr, err.Error())
-		return 1
-	}
-	if opts.TaggerOnly {
-		if hooks.Tag == nil {
-			_, _ = fmt.Fprintln(stderr, "tagger hook not configured")
-			return 1
-		}
-		if err := hooks.Tag(stdout, text, opts); err != nil {
-			_, _ = fmt.Fprintln(stderr, err.Error())
-			return 1
-		}
-		return 0
-	}
-	if hooks.Check == nil {
-		_, _ = fmt.Fprintln(stderr, "check hook not configured")
-		return 1
-	}
-	// Soft golden / compare product modes use dedicated hooks.
-	if opts.GoldenMode {
-		n, err := CoreGoldenHook(stdout, text, opts)
-		if err != nil {
-			_, _ = fmt.Fprintln(stderr, err.Error())
-			return 1
-		}
-		if n > 0 {
-			return 1
-		}
-		return 0
-	}
-	if opts.CompareMode {
-		n, err := CoreCompareHook(stdout, text, opts)
-		if err != nil {
-			_, _ = fmt.Fprintln(stderr, err.Error())
-			return 1
-		}
-		if n > 0 {
-			return 1
-		}
-		return 0
+	files := opts.GetFilenames()
+	if len(files) == 0 {
+		files = []string{""} // stdin
 	}
 
-	n, err := hooks.Check(stdout, text, opts)
-	if err != nil {
-		_, _ = fmt.Fprintln(stderr, err.Error())
-		return 1
+	// Multi-file: process each path; aggregate exit severity.
+	totalN := 0
+	for _, fn := range files {
+		opts.Filename = fn
+		text, err := loadInput(fn, hooks)
+		if err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
+		if opts.TaggerOnly {
+			if hooks.Tag == nil {
+				_, _ = fmt.Fprintln(stderr, "tagger hook not configured")
+				return 1
+			}
+			if err := hooks.Tag(stdout, text, opts); err != nil {
+				_, _ = fmt.Fprintln(stderr, err.Error())
+				return 1
+			}
+			continue
+		}
+		if hooks.Check == nil {
+			_, _ = fmt.Fprintln(stderr, "check hook not configured")
+			return 1
+		}
+		// Soft golden / compare product modes use dedicated hooks (single-file).
+		if opts.GoldenMode {
+			n, err := CoreGoldenHook(stdout, text, opts)
+			if err != nil {
+				_, _ = fmt.Fprintln(stderr, err.Error())
+				return 1
+			}
+			totalN += n
+			continue
+		}
+		if opts.CompareMode {
+			n, err := CoreCompareHook(stdout, text, opts)
+			if err != nil {
+				_, _ = fmt.Fprintln(stderr, err.Error())
+				return 1
+			}
+			totalN += n
+			continue
+		}
+
+		n, err := hooks.Check(stdout, text, opts)
+		if err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
+		totalN += n
 	}
-	if n > 0 {
+	if opts.TaggerOnly {
+		return 0
+	}
+	if totalN > 0 {
 		// SPEC §2.2: --lint / --sarif use exit 1 for error-severity findings.
-		// CoreCheckHook returns the error-severity count for those formats.
-		if opts != nil && (opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF) {
+		if opts != nil && (opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF || opts.GoldenMode || opts.CompareMode) {
 			return 1
 		}
 		return 2 // matches found — LT-style CLI convention

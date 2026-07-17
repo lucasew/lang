@@ -19,6 +19,7 @@ func Execute() int {
 		lang, format, dataDir, failOn, mother, level string
 		disable, enable, ruleValues                  string
 		disableCats, enableCats                      string
+		enabledOnly                                  bool
 	)
 
 	root := &cobra.Command{
@@ -29,7 +30,7 @@ func Execute() int {
 		Args: cobra.ArbitraryArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			// default product: lint
-			runEngine(buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats, args))
+			runEngine(buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats, enabledOnly, args))
 		},
 	}
 	root.PersistentFlags().StringVar(&dataDir, "data-dir", "", "soft data root (grammar + false-friends)")
@@ -50,6 +51,7 @@ func Execute() int {
 		c.Flags().StringVar(&ruleValues, "ruleValues", "", "RULE_ID:value pairs")
 		c.Flags().StringVar(&disableCats, "disablecategories", "", "comma-separated disabled categories")
 		c.Flags().StringVar(&enableCats, "enablecategories", "", "comma-separated enabled categories")
+		c.Flags().BoolVar(&enabledOnly, "only", false, "only run rules listed in --enable")
 	}
 
 	lintCmd := &cobra.Command{
@@ -64,7 +66,7 @@ func Execute() int {
 			if lang == "" {
 				lang = viper.GetString("lang")
 			}
-			runEngine(buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats, args))
+			runEngine(buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats, enabledOnly, args))
 		},
 	}
 	addLintFlags(lintCmd)
@@ -169,7 +171,7 @@ func fileArgs(args []string) []string {
 	return args
 }
 
-func buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats string, files []string) []string {
+func buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable, ruleValues, disableCats, enableCats string, enabledOnly bool, files []string) []string {
 	a := []string{"--lint"}
 	if format != "" && format != "text" && format != "lint" {
 		a = []string{"--format", format}
@@ -195,6 +197,9 @@ func buildLintArgs(lang, format, dataDir, failOn, mother, level, disable, enable
 	}
 	if enable != "" {
 		a = append(a, "-e", enable)
+	}
+	if enabledOnly {
+		a = append(a, "--enabledonly")
 	}
 	if ruleValues != "" {
 		a = append(a, "--ruleValues", ruleValues)

@@ -15,6 +15,9 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 		return "MISC", "Miscellaneous", "duplication", "Word repetition"
 	case id == "EN_A_VS_AN" || strings.Contains(id, "A_VS_AN"):
 		return "GRAMMAR", "Grammar", "grammar", "Wrong article"
+	case id == "PHRASE_REPLACE" || strings.Contains(id, "PHRASE_REPLACE") || strings.HasSuffix(id, "_OF"):
+		// EN_COULD_OF family + phrase injects
+		return "GRAMMAR", "Grammar", "grammar", "Possible grammar error"
 	case strings.Contains(id, "UNPAIRED") || strings.Contains(id, "BRACKET"):
 		return "TYPOGRAPHY", "Typography", "typographical", "Unpaired symbol"
 	case strings.Contains(id, "UPPERCASE") || strings.Contains(id, "SENTENCE_START"):
