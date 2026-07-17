@@ -4397,6 +4397,76 @@
       <message>Did you mean "governor"?</message>
       <short>governer</short>
     </rule>
+    <rule id="EN_SOFT_EXPERIENCED_MISS" name="experianced soft">
+      <pattern>
+        <token>experianced</token>
+      </pattern>
+      <message>Did you mean "experienced"?</message>
+      <short>experianced</short>
+    </rule>
+    <rule id="EN_SOFT_EXERCISE_MISS" name="exersize soft">
+      <pattern>
+        <token>exersize</token>
+      </pattern>
+      <message>Did you mean "exercise"?</message>
+      <short>exersize</short>
+    </rule>
+    <rule id="EN_SOFT_BEGINNING_MISS2" name="beging soft">
+      <pattern>
+        <token>beging</token>
+      </pattern>
+      <message>Did you mean "beginning"?</message>
+      <short>beging</short>
+    </rule>
+    <rule id="EN_SOFT_DIVISION_MISS" name="divison soft">
+      <pattern>
+        <token>divison</token>
+      </pattern>
+      <message>Did you mean "division"?</message>
+      <short>divison</short>
+    </rule>
+    <rule id="EN_SOFT_DOCUMENTATION_MISS" name="documention soft">
+      <pattern>
+        <token>documention</token>
+      </pattern>
+      <message>Did you mean "documentation"?</message>
+      <short>documention</short>
+    </rule>
+    <rule id="EN_SOFT_ENORMOUS_MISS" name="enourmous soft">
+      <pattern>
+        <token>enourmous</token>
+      </pattern>
+      <message>Did you mean "enormous"?</message>
+      <short>enourmous</short>
+    </rule>
+    <rule id="EN_SOFT_EVERYTHING_MISS" name="everthing soft">
+      <pattern>
+        <token>everthing</token>
+      </pattern>
+      <message>Did you mean "everything"?</message>
+      <short>everthing</short>
+    </rule>
+    <rule id="EN_SOFT_EXPLANATION_MISS" name="explination soft">
+      <pattern>
+        <token>explination</token>
+      </pattern>
+      <message>Did you mean "explanation"?</message>
+      <short>explination</short>
+    </rule>
+    <rule id="EN_SOFT_EXTREMELY_MISS" name="extremly soft">
+      <pattern>
+        <token>extremly</token>
+      </pattern>
+      <message>Did you mean "extremely"?</message>
+      <short>extremly</short>
+    </rule>
+    <rule id="EN_SOFT_FAMILIES_MISS" name="familes soft">
+      <pattern>
+        <token>familes</token>
+      </pattern>
+      <message>Did you mean "families"?</message>
+      <short>familes</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

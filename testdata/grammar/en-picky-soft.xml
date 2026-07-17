@@ -800,5 +800,32 @@
       <message>Jargon; consider "short on time" or "at capacity".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GO_TO_MARKET" name="go to market soft picky">
+      <pattern>
+        <token>go</token>
+        <token>to</token>
+        <token>market</token>
+      </pattern>
+      <message>Jargon; name the launch plan instead of "GTM".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PRODUCT_MARKET_FIT" name="product market fit soft picky">
+      <pattern>
+        <token>product</token>
+        <token>market</token>
+        <token>fit</token>
+      </pattern>
+      <message>Jargon; name the evidence of demand instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TIME_TO_MARKET" name="time to market soft picky">
+      <pattern>
+        <token>time</token>
+        <token>to</token>
+        <token>market</token>
+      </pattern>
+      <message>Jargon; name the launch timeline instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

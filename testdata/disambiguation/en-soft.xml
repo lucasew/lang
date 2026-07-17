@@ -1419,4 +1419,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SKOPEO" name="immunize skopeo">
+    <pattern>
+      <token>skopeo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SKOPEO_CAPS" name="immunize Skopeo">
+    <pattern>
+      <token>Skopeo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUILDAH" name="immunize buildah">
+    <pattern>
+      <token>buildah</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BUILDAH_CAPS" name="immunize Buildah">
+    <pattern>
+      <token>Buildah</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRIO" name="immunize crio">
+    <pattern>
+      <token>crio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRIO_CAPS" name="immunize CriO">
+    <pattern>
+      <token>CriO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

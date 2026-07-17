@@ -213,3 +213,6 @@ step by step	RB
 Charleston West Virginia	NNP
 Olympia Washington	NNP
 bit by bit	RB
+Salem Oregon	NNP
+Juneau Alaska	NNP
+one by one	RB
