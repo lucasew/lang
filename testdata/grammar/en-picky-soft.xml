@@ -3603,5 +3603,29 @@
       <message>Jargon; name allocating shared cloud costs back to teams instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_SPOT_INSTANCES" name="spot instances soft picky">
+      <pattern>
+        <token>spot</token>
+        <token>instances</token>
+      </pattern>
+      <message>Jargon; name interruptible discounted cloud capacity instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RESERVED_INSTANCES" name="reserved instances soft picky">
+      <pattern>
+        <token>reserved</token>
+        <token>instances</token>
+      </pattern>
+      <message>Jargon; name prepaid long-term cloud capacity discounts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SAVINGS_PLAN" name="savings plan soft picky">
+      <pattern>
+        <token>savings</token>
+        <token>plan</token>
+      </pattern>
+      <message>Jargon; name a commit-based cloud spend discount plan instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

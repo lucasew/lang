@@ -564,3 +564,6 @@ Soapstone Ridge RegionNNP
 Feldspar Ridge RegionNNP
 Pegmatite Ridge RegionNNP
 Syenite Ridge RegionNNP
+Diorite Ridge RegionNNP
+Gabbro Ridge RegionNNP
+Norite Ridge RegionNNP

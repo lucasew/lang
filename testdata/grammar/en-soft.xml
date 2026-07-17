@@ -12587,6 +12587,76 @@
       <message>Did you mean "release"?</message>
       <short>relaese</short>
     </rule>
+    <rule id="EN_SOFT_VERSION_MISS4" name="vesion soft">
+      <pattern>
+        <token>vesion</token>
+      </pattern>
+      <message>Did you mean "version"?</message>
+      <short>vesion</short>
+    </rule>
+    <rule id="EN_SOFT_CHANGELOG_MISS" name="changlog soft">
+      <pattern>
+        <token>changlog</token>
+      </pattern>
+      <message>Did you mean "changelog"?</message>
+      <short>changlog</short>
+    </rule>
+    <rule id="EN_SOFT_CHANGELOG_MISS2" name="changelg soft">
+      <pattern>
+        <token>changelg</token>
+      </pattern>
+      <message>Did you mean "changelog"?</message>
+      <short>changelg</short>
+    </rule>
+    <rule id="EN_SOFT_README_MISS" name="reademe soft">
+      <pattern>
+        <token>reademe</token>
+      </pattern>
+      <message>Did you mean "readme"?</message>
+      <short>reademe</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_MISS4" name="licene soft">
+      <pattern>
+        <token>licene</token>
+      </pattern>
+      <message>Did you mean "license"?</message>
+      <short>licene</short>
+    </rule>
+    <rule id="EN_SOFT_COPYRIGHT_MISS2" name="copyrght soft">
+      <pattern>
+        <token>copyrght</token>
+      </pattern>
+      <message>Did you mean "copyright"?</message>
+      <short>copyrght</short>
+    </rule>
+    <rule id="EN_SOFT_COPYRIGHT_MISS3" name="copyrigth soft">
+      <pattern>
+        <token>copyrigth</token>
+      </pattern>
+      <message>Did you mean "copyright"?</message>
+      <short>copyrigth</short>
+    </rule>
+    <rule id="EN_SOFT_TRADEMARK_MISS" name="tradeark soft">
+      <pattern>
+        <token>tradeark</token>
+      </pattern>
+      <message>Did you mean "trademark"?</message>
+      <short>tradeark</short>
+    </rule>
+    <rule id="EN_SOFT_TRADEMARK_MISS2" name="trademak soft">
+      <pattern>
+        <token>trademak</token>
+      </pattern>
+      <message>Did you mean "trademark"?</message>
+      <short>trademak</short>
+    </rule>
+    <rule id="EN_SOFT_COMPATIBILITY_MISS" name="compatability soft">
+      <pattern>
+        <token>compatability</token>
+      </pattern>
+      <message>Did you mean "compatibility"?</message>
+      <short>compatability</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

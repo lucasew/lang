@@ -5631,4 +5631,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MONGOOSE" name="immunize mongoose">
+    <pattern>
+      <token>mongoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGOOSE_CAPS" name="immunize Mongoose">
+    <pattern>
+      <token>Mongoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRAPHILE" name="immunize postgraphile">
+    <pattern>
+      <token>postgraphile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTGRAPHILE_CAPS" name="immunize PostGraphile">
+    <pattern>
+      <token>PostGraphile</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFBASE" name="immunize grafbase">
+    <pattern>
+      <token>grafbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAFBASE_CAPS" name="immunize Grafbase">
+    <pattern>
+      <token>Grafbase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
