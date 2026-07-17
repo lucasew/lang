@@ -213,4 +213,117 @@
       <translation lang="en">possibly / if necessary</translation>
     </rule>
   </rulegroup>
+
+  <rulegroup id="ROMAN">
+    <rule>
+      <pattern lang="en">
+        <token>novel</token>
+      </pattern>
+      <translation lang="es">novela</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>novela</token>
+      </pattern>
+      <translation lang="en">novel (book)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CARPET">
+    <rule>
+      <pattern lang="en">
+        <token>carpet</token>
+      </pattern>
+      <translation lang="es">alfombra</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>carpeta</token>
+      </pattern>
+      <translation lang="en">folder / binder</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ASSIST">
+    <rule>
+      <pattern lang="en">
+        <token>assist</token>
+      </pattern>
+      <translation lang="fr">aider</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>assister</token>
+      </pattern>
+      <translation lang="en">attend / be present at</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="DECEPTION">
+    <rule>
+      <pattern lang="en">
+        <token>deception</token>
+      </pattern>
+      <translation lang="fr">tromperie</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>déception</token>
+      </pattern>
+      <translation lang="en">disappointment</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="BRAVE">
+    <rule>
+      <pattern lang="en">
+        <token>brave</token>
+      </pattern>
+      <translation lang="fr">courageux</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>brave</token>
+      </pattern>
+      <translation lang="en">good / decent (person)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MIST">
+    <rule>
+      <pattern lang="en">
+        <token>mist</token>
+      </pattern>
+      <translation lang="de">Nebel</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Mist</token>
+      </pattern>
+      <translation lang="en">manure / nonsense</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CHEMIST">
+    <rule>
+      <pattern lang="en">
+        <token>chemist</token>
+      </pattern>
+      <translation lang="de">Chemiker</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Chemiker</token>
+      </pattern>
+      <translation lang="en">chemist (scientist)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="PREFIX">
+    <rule>
+      <pattern lang="en">
+        <token>prejudice</token>
+      </pattern>
+      <translation lang="pt">preconceito</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>prejuízo</token>
+      </pattern>
+      <translation lang="en">loss / damage</translation>
+    </rule>
+  </rulegroup>
 </rules>

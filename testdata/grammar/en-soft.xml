@@ -867,6 +867,154 @@
       <message>Consider "in progress" alone.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PRINCIPAL_REASON" name="principal/principle">
+      <pattern>
+        <token>principal</token>
+        <token>of</token>
+        <token>the</token>
+        <token>matter</token>
+      </pattern>
+      <message>Did you mean "principle of the matter"?</message>
+      <short>principal/principle</short>
+    </rule>
+    <rule id="EN_SOFT_PRINCIPLE_OFFICER" name="principle officer">
+      <pattern>
+        <token>principle</token>
+        <token>officer</token>
+      </pattern>
+      <message>Did you mean "principal officer"?</message>
+      <short>principal/principle</short>
+    </rule>
+    <rule id="EN_SOFT_COMPLIMENT_COLORS" name="compliment colors">
+      <pattern>
+        <token>compliment</token>
+        <token>each</token>
+        <token>other</token>
+      </pattern>
+      <message>Did you mean "complement each other"?</message>
+      <short>compliment/complement</short>
+    </rule>
+    <rule id="EN_SOFT_PEEK_INTEREST" name="peek my interest">
+      <pattern>
+        <token>peek</token>
+        <token>my</token>
+        <token>interest</token>
+      </pattern>
+      <message>Did you mean "pique my interest"?</message>
+      <short>peek/pique</short>
+    </rule>
+    <rule id="EN_SOFT_PEAK_INTEREST" name="peak my interest">
+      <pattern>
+        <token>peak</token>
+        <token>my</token>
+        <token>interest</token>
+      </pattern>
+      <message>Did you mean "pique my interest"?</message>
+      <short>peak/pique</short>
+    </rule>
+    <rule id="EN_SOFT_ENSURE_INSURE" name="ensure/insure">
+      <pattern>
+        <token>insure</token>
+        <token>that</token>
+      </pattern>
+      <message>Did you mean "ensure that" (make certain)?</message>
+      <short>ensure/insure</short>
+    </rule>
+    <rule id="EN_SOFT_FARTHER_ABSTRACT" name="farther abstract">
+      <pattern>
+        <token>farther</token>
+        <token>discussion</token>
+      </pattern>
+      <message>Did you mean "further discussion"?</message>
+      <short>farther/further</short>
+    </rule>
+    <rule id="EN_SOFT_LAY_DOWN_REST" name="lay down rest">
+      <pattern>
+        <token>lay</token>
+        <token>down</token>
+        <token>and</token>
+        <token>rest</token>
+      </pattern>
+      <message>Did you mean "lie down and rest"?</message>
+      <short>lay/lie</short>
+    </rule>
+    <rule id="EN_SOFT_CITE_SEE" name="cite/site/sight">
+      <pattern>
+        <token>sight</token>
+        <token>the</token>
+        <token>source</token>
+      </pattern>
+      <message>Did you mean "cite the source"?</message>
+      <short>cite/sight</short>
+    </rule>
+    <rule id="EN_SOFT_BARE_WITH" name="bare with me">
+      <pattern>
+        <token>bare</token>
+        <token>with</token>
+        <token>me</token>
+      </pattern>
+      <message>Did you mean "bear with me"?</message>
+      <short>bare/bear</short>
+    </rule>
+    <rule id="EN_SOFT_DEEP_SEEDED" name="deep-seeded">
+      <pattern>
+        <token>deep</token>
+        <token>seeded</token>
+      </pattern>
+      <message>Did you mean "deep-seated"?</message>
+      <short>seeded/seated</short>
+    </rule>
+    <rule id="EN_SOFT_NIP_IN_THE_BUTT" name="nip in the butt">
+      <pattern>
+        <token>nip</token>
+        <token>it</token>
+        <token>in</token>
+        <token>the</token>
+        <token>butt</token>
+      </pattern>
+      <message>Did you mean "nip it in the bud"?</message>
+      <short>butt/bud</short>
+    </rule>
+    <rule id="EN_SOFT_CASE_AND_POINT" name="case and point">
+      <pattern>
+        <token>case</token>
+        <token>and</token>
+        <token>point</token>
+      </pattern>
+      <message>Did you mean "case in point"?</message>
+      <short>case in point</short>
+    </rule>
+    <rule id="EN_SOFT_ONE_IN_THE_SAME" name="one in the same">
+      <pattern>
+        <token>one</token>
+        <token>in</token>
+        <token>the</token>
+        <token>same</token>
+      </pattern>
+      <message>Did you mean "one and the same"?</message>
+      <short>one and the same</short>
+    </rule>
+    <rule id="EN_SOFT_EXPRESSO" name="expresso">
+      <pattern>
+        <token>expresso</token>
+      </pattern>
+      <message>Did you mean "espresso"?</message>
+      <short>expresso</short>
+    </rule>
+    <rule id="EN_SOFT_EXCAPE" name="excape">
+      <pattern>
+        <token>excape</token>
+      </pattern>
+      <message>Did you mean "escape"?</message>
+      <short>excape</short>
+    </rule>
+    <rule id="EN_SOFT_EXSPECIALLY" name="exspecially">
+      <pattern>
+        <token>exspecially</token>
+      </pattern>
+      <message>Did you mean "especially"?</message>
+      <short>exspecially</short>
+    </rule>
   </category>
   <category id="TYPOS" name="Possible Typo">
     <rule id="EN_SOFT_ANYWAYS" name="anyways">

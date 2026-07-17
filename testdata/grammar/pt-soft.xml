@@ -98,6 +98,40 @@
       <message>Talvez "há muito tempo"?</message>
       <short>há/a</short>
     </rule>
+    <rule id="PT_SOFT_MAIS_MAS" name="mais/mas">
+      <pattern>
+        <token>mais</token>
+        <token>eu</token>
+        <token>não</token>
+      </pattern>
+      <message>Talvez "mas eu não"?</message>
+      <short>mais/mas</short>
+    </rule>
+    <rule id="PT_SOFT_ONDE_AONDE" name="onde/aonde">
+      <pattern>
+        <token>aonde</token>
+        <token>você</token>
+        <token>está</token>
+      </pattern>
+      <message>Com "estar", prefira "onde você está".</message>
+      <short>onde/aonde</short>
+    </rule>
+    <rule id="PT_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possível repetição de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="PT_SOFT_EM_EM" name="em em">
+      <pattern>
+        <token>em</token>
+        <token>em</token>
+      </pattern>
+      <message>Possível repetição de "em".</message>
+      <short>em em</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografia">
     <rule id="PT_SOFT_DOUBLE_BANG" name="dupla exclamação">

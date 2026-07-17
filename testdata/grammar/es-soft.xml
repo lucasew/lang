@@ -99,6 +99,54 @@
       <message>¿Quiso decir "haya visto"?</message>
       <short>aya/haya</short>
     </rule>
+    <rule id="ES_SOFT_AHI_HAY" name="ahi/hay">
+      <pattern>
+        <token>ahi</token>
+        <token>que</token>
+      </pattern>
+      <message>¿Quiso decir "hay que" o "ahí"?</message>
+      <short>ahi/hay</short>
+    </rule>
+    <rule id="ES_SOFT_MAS_MAS" name="mas mas">
+      <pattern>
+        <token>mas</token>
+        <token>mas</token>
+      </pattern>
+      <message>Posible repetición de "mas"/"más".</message>
+      <short>mas mas</short>
+    </rule>
+    <rule id="ES_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Posible repetición de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="ES_SOFT_HA_ECHO" name="ha echo">
+      <pattern>
+        <token>ha</token>
+        <token>echo</token>
+      </pattern>
+      <message>¿Quiso decir "ha hecho"?</message>
+      <short>echo/hecho</short>
+    </rule>
+    <rule id="ES_SOFT_TUVO_TUBO" name="tubo/tuvo">
+      <pattern>
+        <token>tubo</token>
+        <token>que</token>
+      </pattern>
+      <message>¿Quiso decir "tuvo que"?</message>
+      <short>tubo/tuvo</short>
+    </rule>
+    <rule id="ES_SOFT_HALLA_HAYA" name="halla/haya">
+      <pattern>
+        <token>halla</token>
+        <token>visto</token>
+      </pattern>
+      <message>¿Quiso decir "haya visto"?</message>
+      <short>halla/haya</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografía">
     <rule id="ES_SOFT_DOUBLE_BANG" name="doble exclamación">

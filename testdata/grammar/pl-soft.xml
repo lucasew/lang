@@ -57,6 +57,30 @@
       <message>Możliwe powtórzenie "nie".</message>
       <short>nie nie</short>
     </rule>
+    <rule id="PL_SOFT_ZEBY_ZEBY" name="żeby żeby">
+      <pattern>
+        <token>żeby</token>
+        <token>żeby</token>
+      </pattern>
+      <message>Możliwe powtórzenie "żeby".</message>
+      <short>żeby żeby</short>
+    </rule>
+    <rule id="PL_SOFT_JUZ_JUZ" name="już już">
+      <pattern>
+        <token>już</token>
+        <token>już</token>
+      </pattern>
+      <message>Możliwe powtórzenie "już".</message>
+      <short>już już</short>
+    </rule>
+    <rule id="PL_SOFT_SIE_SIE" name="się się">
+      <pattern>
+        <token>się</token>
+        <token>się</token>
+      </pattern>
+      <message>Możliwe powtórzenie "się".</message>
+      <short>się się</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografia">
     <rule id="PL_SOFT_DOUBLE_BANG" name="podwójny wykrzyknik">

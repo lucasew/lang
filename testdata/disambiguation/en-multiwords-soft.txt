@@ -53,3 +53,20 @@ by and large	RB
 in any case	RB
 at any rate	RB
 from time to time	RB
+as a matter of fact	RB
+in other words	RB
+on the contrary	RB
+for the time being	RB
+in the long run	RB
+all of a sudden	RB
+once in a while	RB
+out of the blue	RB
+Puerto Rico	NNP
+Sri Lanka	NNP
+Saudi Arabia	NNP
+North Korea	NNP
+New Orleans	NNP
+San Antonio	NNP
+by means of	RB
+in spite of	RB
+in light of	RB

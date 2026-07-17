@@ -458,4 +458,76 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_RN" name="immunize rn">
+    <pattern>
+      <token>rn</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FR" name="immunize fr">
+    <pattern>
+      <token>fr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NGL" name="immunize ngl">
+    <pattern>
+      <token>ngl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISTG" name="immunize istg">
+    <pattern>
+      <token>istg</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IDGAF" name="immunize idgaf">
+    <pattern>
+      <token>idgaf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_TRY_VB" name="modal try → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>try</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_NEED_VB" name="modal need → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>need</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_TRY" name="to try → VB">
+    <pattern>
+      <token>to</token>
+      <token>try</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_NEED" name="to need → VB">
+    <pattern>
+      <token>to</token>
+      <token>need</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_USE" name="to use → VB">
+    <pattern>
+      <token>to</token>
+      <token>use</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_USE_VB" name="modal use → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>use</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
 </rules>

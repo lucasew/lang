@@ -96,6 +96,53 @@
       <message>Possibile ripetizione di "se".</message>
       <short>se se</short>
     </rule>
+    <rule id="IT_SOFT_A_LA" name="a la">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+      </pattern>
+      <message>Forse "alla"?</message>
+      <short>a/alla</short>
+    </rule>
+    <rule id="IT_SOFT_DI_LA" name="di la">
+      <pattern>
+        <token>di</token>
+        <token>la</token>
+      </pattern>
+      <message>Forse "della"?</message>
+      <short>di/della</short>
+    </rule>
+    <rule id="IT_SOFT_IN_LA" name="in la">
+      <pattern>
+        <token>in</token>
+        <token>la</token>
+      </pattern>
+      <message>Forse "nella"?</message>
+      <short>in/nella</short>
+    </rule>
+    <rule id="IT_SOFT_POICHE" name="poiche">
+      <pattern>
+        <token>poiche</token>
+      </pattern>
+      <message>Forse "poiché"?</message>
+      <short>poiché</short>
+    </rule>
+    <rule id="IT_SOFT_QUALCHE_COSA" name="qualche cosa">
+      <pattern>
+        <token>qualche</token>
+        <token>cosa</token>
+      </pattern>
+      <message>Forse "qualcosa"?</message>
+      <short>qualcosa</short>
+    </rule>
+    <rule id="IT_SOFT_NON_NON" name="non non">
+      <pattern>
+        <token>non</token>
+        <token>non</token>
+      </pattern>
+      <message>Possibile ripetizione di "non".</message>
+      <short>non non</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografia">
     <rule id="IT_SOFT_DOUBLE_BANG" name="doppio esclamativo">

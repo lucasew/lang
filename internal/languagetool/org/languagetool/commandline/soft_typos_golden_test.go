@@ -965,3 +965,57 @@ func TestGolden_ApplySoftIrregardless(t *testing.T) {
 	require.Contains(t, out.String(), "Regardless")
 	require.NotContains(t, strings.ToLower(out.String()), "irregardless")
 }
+
+func TestGolden_SoftIdiomConfusables(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"The principal of the matter is clear.", "EN_SOFT_PRINCIPAL_REASON", "principle of the matter"},
+		{"The principle officer spoke.", "EN_SOFT_PRINCIPLE_OFFICER", "principal officer"},
+		{"Colors compliment each other well.", "EN_SOFT_COMPLIMENT_COLORS", "complement each other"},
+		{"That will peek my interest soon.", "EN_SOFT_PEEK_INTEREST", "pique my interest"},
+		{"That will peak my interest soon.", "EN_SOFT_PEAK_INTEREST", "pique my interest"},
+		{"Please insure that the door is locked.", "EN_SOFT_ENSURE_INSURE", "ensure that"},
+		{"We need farther discussion tomorrow.", "EN_SOFT_FARTHER_ABSTRACT", "further discussion"},
+		{"I will lay down and rest now.", "EN_SOFT_LAY_DOWN_REST", "lie down and rest"},
+		{"Please sight the source carefully.", "EN_SOFT_CITE_SEE", "cite the source"},
+		{"Bare with me for a moment.", "EN_SOFT_BARE_WITH", "Bear with me"},
+		{"A deep seeded fear remains.", "EN_SOFT_DEEP_SEEDED", "deep-seated"},
+		{"Nip it in the butt early.", "EN_SOFT_NIP_IN_THE_BUTT", "Nip it in the bud"},
+		{"Case and point: it failed.", "EN_SOFT_CASE_AND_POINT", "Case in point"},
+		{"They are one in the same.", "EN_SOFT_ONE_IN_THE_SAME", "one and the same"},
+		{"I ordered an expresso please.", "EN_SOFT_EXPRESSO", "espresso"},
+		{"They tried to excape the room.", "EN_SOFT_EXCAPE", "escape"},
+		{"I like it exspecially today.", "EN_SOFT_EXSPECIALLY", "especially"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftBareWithMe(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Bare with me for a second.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "Bear with me")
+	require.NotContains(t, out.String(), "Bare with me")
+}

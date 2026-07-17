@@ -97,6 +97,39 @@
       <message>Bedoelde u "meer dan"?</message>
       <short>als/dan</short>
     </rule>
+    <rule id="NL_SOFT_HUN_ZIJN" name="hun zijn">
+      <pattern>
+        <token>hun</token>
+        <token>zijn</token>
+      </pattern>
+      <message>Bedoelde u "zij zijn" (onderwerp) of "hun" als bezittelijk?</message>
+      <short>hun/zij</short>
+    </rule>
+    <rule id="NL_SOFT_ALS_DAT" name="als dat">
+      <pattern>
+        <token>groter</token>
+        <token>als</token>
+        <token>dat</token>
+      </pattern>
+      <message>Bedoelde u "groter dan dat"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_WORD_WORDT" name="word/wordt">
+      <pattern>
+        <token>hij</token>
+        <token>word</token>
+      </pattern>
+      <message>Bedoelde u "hij wordt"?</message>
+      <short>word/wordt</short>
+    </rule>
+    <rule id="NL_SOFT_NIET_NIET" name="niet niet">
+      <pattern>
+        <token>niet</token>
+        <token>niet</token>
+      </pattern>
+      <message>Mogelijke herhaling van "niet".</message>
+      <short>niet niet</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografie">
     <rule id="NL_SOFT_DOUBLE_BANG" name="dubbel uitroepteken">

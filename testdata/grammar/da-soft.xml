@@ -49,6 +49,38 @@
       <message>Mulig gentagelse af "ikke".</message>
       <short>ikke ikke</short>
     </rule>
+    <rule id="DA_SOFT_DEM_ER" name="dem er">
+      <pattern>
+        <token>dem</token>
+        <token>er</token>
+      </pattern>
+      <message>Mente du "de er"?</message>
+      <short>dem/de</short>
+    </rule>
+    <rule id="DA_SOFT_MINDRE_SOM" name="mindre som">
+      <pattern>
+        <token>mindre</token>
+        <token>som</token>
+      </pattern>
+      <message>Mente du "mindre end"?</message>
+      <short>end/som</short>
+    </rule>
+    <rule id="DA_SOFT_FORDI_FORDI" name="fordi fordi">
+      <pattern>
+        <token>fordi</token>
+        <token>fordi</token>
+      </pattern>
+      <message>Mulig gentagelse af "fordi".</message>
+      <short>fordi fordi</short>
+    </rule>
+    <rule id="DA_SOFT_AT_AT" name="at at">
+      <pattern>
+        <token>at</token>
+        <token>at</token>
+      </pattern>
+      <message>Mulig gentagelse af "at".</message>
+      <short>at at</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografi">
     <rule id="DA_SOFT_DOUBLE_BANG" name="dobbelt udråbstegn">
