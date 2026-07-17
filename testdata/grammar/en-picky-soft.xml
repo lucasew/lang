@@ -3938,5 +3938,30 @@
       <message>Jargon; name net change in annual recurring revenue for the period instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_REACTIVATED_ARR" name="reactivated arr soft picky">
+      <pattern>
+        <token>reactivated</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue recovered from churned customers instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACTION_ARR" name="contraction arr soft picky">
+      <pattern>
+        <token>contraction</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to downgrades instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_NEW_ARR" name="gross new arr soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>new</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name total new annual recurring revenue before churn instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

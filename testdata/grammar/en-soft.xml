@@ -13567,6 +13567,76 @@
       <message>Did you mean "counter"?</message>
       <short>counterr</short>
     </rule>
+    <rule id="EN_SOFT_GAUGGE_MISS" name="gaugge soft">
+      <pattern>
+        <token>gaugge</token>
+      </pattern>
+      <message>Did you mean "gauge"?</message>
+      <short>gaugge</short>
+    </rule>
+    <rule id="EN_SOFT_UPDOWNCOUNTER_MISS" name="updowncounterr soft">
+      <pattern>
+        <token>updowncounterr</token>
+      </pattern>
+      <message>Did you mean "updowncounter"?</message>
+      <short>updowncounterr</short>
+    </rule>
+    <rule id="EN_SOFT_BATCHPROCESSOR_MISS" name="batchprocessorr soft">
+      <pattern>
+        <token>batchprocessorr</token>
+      </pattern>
+      <message>Did you mean "batchprocessor"?</message>
+      <short>batchprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_SIMPLEPROCESSOR_MISS" name="simpleprocessorr soft">
+      <pattern>
+        <token>simpleprocessorr</token>
+      </pattern>
+      <message>Did you mean "simpleprocessor"?</message>
+      <short>simpleprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_EXPORTTIMEOUT_MISS" name="exporttimeoutt soft">
+      <pattern>
+        <token>exporttimeoutt</token>
+      </pattern>
+      <message>Did you mean "exporttimeout"?</message>
+      <short>exporttimeoutt</short>
+    </rule>
+    <rule id="EN_SOFT_OTLPENDPOINT_MISS" name="otlpendpont soft">
+      <pattern>
+        <token>otlpendpont</token>
+      </pattern>
+      <message>Did you mean "otlpendpoint"?</message>
+      <short>otlpendpont</short>
+    </rule>
+    <rule id="EN_SOFT_JAEGERENDPOINT_MISS" name="jaegerendpont soft">
+      <pattern>
+        <token>jaegerendpont</token>
+      </pattern>
+      <message>Did you mean "jaegerendpoint"?</message>
+      <short>jaegerendpont</short>
+    </rule>
+    <rule id="EN_SOFT_ZIPKINENDPOINT_MISS" name="zipkinendpont soft">
+      <pattern>
+        <token>zipkinendpont</token>
+      </pattern>
+      <message>Did you mean "zipkinendpoint"?</message>
+      <short>zipkinendpont</short>
+    </rule>
+    <rule id="EN_SOFT_OBSERVABLEGAUGE_MISS" name="observablegaugge soft">
+      <pattern>
+        <token>observablegaugge</token>
+      </pattern>
+      <message>Did you mean "observablegauge"?</message>
+      <short>observablegaugge</short>
+    </rule>
+    <rule id="EN_SOFT_EXPORTINTERVAL_MISS" name="exportintervall soft">
+      <pattern>
+        <token>exportintervall</token>
+      </pattern>
+      <message>Did you mean "exportinterval"?</message>
+      <short>exportintervall</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

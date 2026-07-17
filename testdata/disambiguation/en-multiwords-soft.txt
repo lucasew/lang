@@ -606,3 +606,6 @@ Soapstone Peak RegionNNP
 Feldspar Mesa RegionNNP
 Gypsum Mesa RegionNNP
 Shale Mesa RegionNNP
+Chalk Mesa RegionNNP
+Limestone Mesa RegionNNP
+Sandstone Mesa RegionNNP

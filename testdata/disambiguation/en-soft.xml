@@ -6135,4 +6135,52 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_VANILLAEXTRACT" name="immunize vanillaextract">
+    <pattern>
+      <token>vanillaextract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VANILLAEXTRACT_CAPS" name="immunize VanillaExtract">
+    <pattern>
+      <token>VanillaExtract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINARIA" name="immunize linaria">
+    <pattern>
+      <token>linaria</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINARIA_CAPS" name="immunize Linaria">
+    <pattern>
+      <token>Linaria</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDA" name="immunize panda">
+    <pattern>
+      <token>panda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PANDA_CAPS" name="immunize Panda">
+    <pattern>
+      <token>Panda</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRIFFEL" name="immunize griffel">
+    <pattern>
+      <token>griffel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRIFFEL_CAPS" name="immunize Griffel">
+    <pattern>
+      <token>Griffel</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
