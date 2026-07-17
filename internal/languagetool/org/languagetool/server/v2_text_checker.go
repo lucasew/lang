@@ -38,17 +38,22 @@ func (v *V2TextChecker) BuildResponse(text, langCode, langName string, matches [
 
 // BuildResponseEx builds a check response; when autoDetected is true, sets detectedLanguage.
 func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool) (string, error) {
-	return v.BuildResponseExWarnings(text, langCode, langName, matches, autoDetected, nil)
+	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, nil, nil)
 }
 
 // BuildResponseExWarnings is BuildResponseEx with optional non-fatal warnings.
 func (v *V2TextChecker) BuildResponseExWarnings(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, warnings []string) (string, error) {
+	return v.BuildResponseExFull(text, langCode, langName, matches, autoDetected, warnings, nil)
+}
+
+// BuildResponseExFull is the full check response builder (warnings + ignore ranges).
+func (v *V2TextChecker) BuildResponseExFull(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool, warnings []string, ignore []IgnoreRangeInfo) (string, error) {
 	if langName == "" || langName == langCode {
 		if n := LanguageNameForCode(langCode); n != "" {
 			langName = n
 		}
 	}
-	lang := LanguageInfo{Name: langName, Code: langCode}
+	lang := LanguageInfo{Name: langName, Code: langCode, LongCode: langCode}
 	if autoDetected {
 		lang.Confidence = 0.5 // soft heuristic confidence
 	}
@@ -79,9 +84,9 @@ func (v *V2TextChecker) BuildResponseExWarnings(text, langCode, langName string,
 			Length: sr.ToPos - sr.FromPos,
 		})
 	}
-	// Multi-language ignore ranges are empty until foreign-span detection is wired;
-	// emit an empty array so clients expecting the field can rely on a stable shape.
-	if resp.IgnoreRanges == nil {
+	if len(ignore) > 0 {
+		resp.IgnoreRanges = append([]IgnoreRangeInfo(nil), ignore...)
+	} else {
 		resp.IgnoreRanges = []IgnoreRangeInfo{}
 	}
 	b, err := json.Marshal(resp)

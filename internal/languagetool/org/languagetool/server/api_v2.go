@@ -150,10 +150,10 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 				lang = "en"
 			}
 		}
-		ignore := commaSeparated(parameters["ignoreWords"])
+		ignoreWords := commaSeparated(parameters["ignoreWords"])
 		// soft: merge in-memory user dictionary for username (or anon)
 		if a.UserDict != nil {
-			ignore = append(ignore, a.UserDict.All(parameters["username"])...)
+			ignoreWords = append(ignoreWords, a.UserDict.All(parameters["username"])...)
 		}
 		opts := CheckOptions{
 			Disabled:       a.TextChecker.GetDisabledRuleIDs(parameters),
@@ -161,7 +161,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true") || qp.UseEnabledOnly,
 			MotherTongue:   parameters["motherTongue"],
 			// soft: undocumented ignoreWords CSV for user-dictionary style suppression
-			IgnoreWords: ignore,
+			IgnoreWords: ignoreWords,
 			// category filters from disabledCategories / enabledCategories
 			DisabledCategories: qp.DisabledCategories,
 			EnabledCategories:  qp.EnabledCategories,
@@ -181,13 +181,31 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 				warnings = append(warnings, "language=auto without preferredVariants; detected variant may be imprecise")
 			}
 		}
+		// soft multi-language: validate and soft-map foreign script spans to ignoreRanges
+		altCSV := parameters["altLanguages"]
+		if altCSV != "" {
+			if err := ValidateAltLanguages(altCSV); err != nil {
+				return HandleResult{}, err
+			}
+		}
+		alts := commaSeparated(altCSV)
+		var ignoreRanges []IgnoreRangeInfo
+		if len(alts) > 0 {
+			plainForRanges := text
+			if annotated != nil {
+				plainForRanges = annotated.GetPlainText()
+			}
+			ignoreRanges = SoftForeignIgnoreRanges(plainForRanges, lang, alts)
+		}
 		var body string
 		if annotated != nil {
 			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
-			body, err = a.TextChecker.BuildResponseExWarnings(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings)
+			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
+			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings, ignoreRanges)
 		} else {
 			matches := a.TextChecker.CheckWithOptions(text, lang, opts)
-			body, err = a.TextChecker.BuildResponseExWarnings(text, lang, langName, matches, autoDetected, warnings)
+			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
+			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, warnings, ignoreRanges)
 		}
 		if err != nil {
 			return HandleResult{}, err

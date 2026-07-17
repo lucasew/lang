@@ -51,9 +51,11 @@ type SoftwareInfo struct {
 
 // LanguageInfo describes detected/used language.
 type LanguageInfo struct {
-	Name                 string `json:"name"`
-	Code                 string `json:"code"`
-	DetectedLanguage     string `json:"detectedLanguage,omitempty"`
+	Name                 string  `json:"name"`
+	Code                 string  `json:"code"`
+	// LongCode is the language+country/variant code (e.g. en-US) when known.
+	LongCode             string  `json:"longCode,omitempty"`
+	DetectedLanguage     string  `json:"detectedLanguage,omitempty"`
 	Confidence           float64 `json:"confidence,omitempty"`
 }
 
@@ -105,7 +107,8 @@ func NewSoftwareInfo(version string) SoftwareInfo {
 	return SoftwareInfo{Name: "LanguageTool-Go", Version: version, APIVersion: 1}
 }
 
-// LanguageNameForCode maps short/variant codes to display names via DefaultCoreLanguages.
+// LanguageNameForCode maps short/variant codes to the simple display name
+// (e.g. en / en-US → "English") via corepack-supported languages.
 func LanguageNameForCode(code string) string {
 	if code == "" {
 		return ""
@@ -116,7 +119,15 @@ func LanguageNameForCode(code string) string {
 		base = code[:i]
 	}
 	for _, li := range DefaultCoreLanguages() {
-		if equalFoldASCII(li.Code, code) || equalFoldASCII(li.Code, base) {
+		if equalFoldASCII(li.Code, base) {
+			// strip soft variant suffix "English (US)" → "English"
+			name := li.Name
+			if j := indexByte(name, '('); j > 0 {
+				name = trimSpace(name[:j])
+			}
+			if name != "" {
+				return name
+			}
 			return li.Name
 		}
 	}
@@ -125,6 +136,25 @@ func LanguageNameForCode(code string) string {
 		return base
 	}
 	return low
+}
+
+func indexByte(s string, c byte) int {
+	for i := 0; i < len(s); i++ {
+		if s[i] == c {
+			return i
+		}
+	}
+	return -1
+}
+
+func trimSpace(s string) string {
+	for len(s) > 0 && (s[0] == ' ' || s[0] == '\t') {
+		s = s[1:]
+	}
+	for len(s) > 0 && (s[len(s)-1] == ' ' || s[len(s)-1] == '\t') {
+		s = s[:len(s)-1]
+	}
+	return s
 }
 
 func indexDash(s string) int {
