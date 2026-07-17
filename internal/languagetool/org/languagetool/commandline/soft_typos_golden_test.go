@@ -1583,6 +1583,89 @@ func TestGolden_SoftMultiLangDoubleQ(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftPickyPackOnlyWhenPicky(t *testing.T) {
+	text := "Please utilize synergy going forward."
+	var def bytes.Buffer
+	_, err := CoreGoldenHook(&def, text, &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var defF []Finding
+	require.NoError(t, json.Unmarshal(def.Bytes(), &defF))
+	for _, f := range defF {
+		require.False(t, strings.Contains(f.Rule, "SOFT_PICKY"), "%+v", defF)
+	}
+
+	var picky bytes.Buffer
+	_, err = CoreGoldenHook(&picky, text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+	require.NoError(t, err)
+	var pf []Finding
+	require.NoError(t, json.Unmarshal(picky.Bytes(), &pf))
+	want := map[string]string{
+		"EN_SOFT_PICKY_UTILIZE":       "use",
+		"EN_SOFT_PICKY_SYNERGY":       "",
+		"EN_SOFT_PICKY_GOING_FORWARD": "",
+	}
+	for rule, sug := range want {
+		found := false
+		for _, f := range pf {
+			if f.Rule == rule {
+				found = true
+				require.Equal(t, "style", f.Type)
+				if sug != "" {
+					require.Equal(t, sug, f.Suggestion)
+				}
+			}
+		}
+		require.True(t, found, "missing %s in %+v", rule, pf)
+	}
+}
+
+func TestGolden_SoftPickyMore(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"We will leverage the API.", "EN_SOFT_PICKY_LEVERAGE", "use"},
+		{"An impactful change.", "EN_SOFT_PICKY_IMPACTFUL", "effective"},
+		{"Actionable feedback helps.", "EN_SOFT_PICKY_ACTIONABLE", "Practical"},
+		{"Let's circle back tomorrow.", "EN_SOFT_PICKY_CIRCLE_BACK", ""},
+		{"Touch base later today.", "EN_SOFT_PICKY_TOUCH_BASE", "talk"},
+		{"At the end of the day, ship it.", "EN_SOFT_PICKY_AT_THE_END_OF_THE_DAY", "ultimately"},
+		{"Preventative care matters.", "EN_SOFT_PICKY_PREVENTATIVE", "Preventive"},
+		{"And stuff like that.", "EN_SOFT_PICKY_STUFF", ""},
+		{"A lot of things changed.", "EN_SOFT_PICKY_THINGS", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftPickyUtilize(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--level", "picky", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Please utilize the tool now.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "use")
+	require.NotContains(t, strings.ToLower(out.String()), "utilize")
+}
+
 func TestGolden_SoftInformalForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string

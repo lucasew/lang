@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EN pack loaded only when level is picky (CLI or server). -->
+<rules lang="en">
+  <category id="STYLE" name="Style">
+    <rule id="EN_SOFT_PICKY_UTILIZE" name="utilize soft picky">
+      <pattern>
+        <token>utilize</token>
+      </pattern>
+      <message>Prefer "use" in plain style.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UTILISE" name="utilise soft picky">
+      <pattern>
+        <token>utilise</token>
+      </pattern>
+      <message>Prefer "use" in plain style.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FACILITATE" name="facilitate soft picky">
+      <pattern>
+        <token>facilitate</token>
+      </pattern>
+      <message>Consider "help" or "make easier".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEVERAGE" name="leverage soft picky">
+      <pattern>
+        <token>leverage</token>
+      </pattern>
+      <message>Consider "use" instead of corporate "leverage".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_IMPACTFUL" name="impactful soft picky">
+      <pattern>
+        <token>impactful</token>
+      </pattern>
+      <message>Consider "effective" or "powerful".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACTIONABLE" name="actionable soft picky">
+      <pattern>
+        <token>actionable</token>
+      </pattern>
+      <message>Consider "practical" or "usable".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNERGY" name="synergy soft picky">
+      <pattern>
+        <token>synergy</token>
+      </pattern>
+      <message>Corporate jargon; consider plain wording.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_BACK" name="circle back soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>back</token>
+      </pattern>
+      <message>Consider "follow up" or "return to".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TOUCH_BASE" name="touch base soft picky">
+      <pattern>
+        <token>touch</token>
+        <token>base</token>
+      </pattern>
+      <message>Consider "talk" or "check in".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AT_THE_END_OF_THE_DAY" name="at the end of the day soft picky">
+      <pattern>
+        <token>at</token>
+        <token>the</token>
+        <token>end</token>
+        <token>of</token>
+        <token>the</token>
+        <token>day</token>
+      </pattern>
+      <message>Consider "ultimately" or "finally".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GOING_FORWARD" name="going forward soft picky">
+      <pattern>
+        <token>going</token>
+        <token>forward</token>
+      </pattern>
+      <message>Consider "in the future" or "from now on".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VERY_VERY" name="very very picky">
+      <pattern>
+        <token>very</token>
+        <token>very</token>
+      </pattern>
+      <message>Possible weak intensification; consider a stronger word.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINGS" name="things soft picky">
+      <pattern>
+        <token>a</token>
+        <token>lot</token>
+        <token>of</token>
+        <token>things</token>
+      </pattern>
+      <message>Consider a more specific noun than "things".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STUFF" name="stuff soft picky">
+      <pattern>
+        <token>and</token>
+        <token>stuff</token>
+      </pattern>
+      <message>Vague "and stuff"; consider a clearer ending.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PREVENTATIVE" name="preventative soft picky">
+      <pattern>
+        <token>preventative</token>
+      </pattern>
+      <message>Prefer "preventive" in many style guides.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

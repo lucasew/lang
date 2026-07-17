@@ -2,6 +2,7 @@ package commandline
 
 import (
 	"bytes"
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -77,6 +78,31 @@ func TestCoreListRules_FrCAHasRegionalSoft(t *testing.T) {
 	out := buf.String()
 	require.Contains(t, out, "FR_SOFT_WEEKEND_CA")
 	require.Contains(t, out, "FR_SOFT_A_LA")
+}
+
+func TestCoreListRules_PickySoftOnlyWhenPicky(t *testing.T) {
+	var def bytes.Buffer
+	require.NoError(t, CoreListRules(&def, "en"))
+	require.NotContains(t, def.String(), "EN_SOFT_PICKY_UTILIZE")
+
+	// list-rules uses configureCoreLT without picky; verify picky path via golden hook registration
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Please utilize the tool.", &CommandLineOptions{
+		Language: "en",
+		Level:    "PICKY",
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_PICKY_UTILIZE" {
+			found = true
+			require.Equal(t, "style", f.Type)
+			require.Equal(t, "use", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
 }
 
 func TestRunWithIO_RulesSubcommand(t *testing.T) {

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"os"
 	"strconv"
 	"strings"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // CheckOptions carries optional check-query knobs beyond language/disabled rules.
@@ -259,12 +261,27 @@ func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool
 	lt := languagetool.NewJLanguageTool(lang)
 	en.RegisterCoreEnglishLanguageRules(lt)
 	en.RegisterPickyEnglishRules(lt)
-	// only keep picky-only rule ids from this pass
+	// soft picky XML pack (walk-up testdata/grammar/en-picky-soft.xml)
+	if dir := softGrammarDirFromEnv(); dir != "" {
+		pickyPath := dir + "/en-picky-soft.xml"
+		if st, err := os.Stat(pickyPath); err == nil && st.Mode().IsRegular() {
+			_, _ = patterns.RegisterGrammarFile(lt, pickyPath, lang)
+		}
+	}
+	// only keep picky-only rule ids from this pass (core inject + soft picky pack)
 	picky := map[string]struct{}{
-		"EN_A_LOT": {}, "EN_IRREGARDLESS": {},
+		"EN_A_LOT": {}, "EN_IRREGARDLESS": {}, "EN_SUPPOSABLY": {},
+		"EN_EXPRESSO": {}, "EN_EXCAPE": {}, "EN_NUKEULAR": {},
+		"EN_LIBARY": {}, "EN_MISCHIEVOUS": {}, "EN_ORIENTATE": {},
+		"EN_PREVENTATIVE": {},
 	}
 	for _, m := range lt.Check(text) {
 		if _, ok := picky[m.RuleID]; ok {
+			existing = append(existing, m)
+			continue
+		}
+		// soft picky pack: EN_SOFT_PICKY_*
+		if strings.Contains(m.RuleID, "SOFT_PICKY") {
 			existing = append(existing, m)
 		}
 	}

@@ -135,19 +135,28 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 	checker := NewCoreRulesChecker(lang)
 	lt := checker.lt
 	if opts != nil {
-		// soft picky level for English
+		pickyEN := false
 		if strings.EqualFold(opts.Level, "PICKY") {
 			base := lang
 			if i := strings.IndexByte(lang, '-'); i > 0 {
 				base = lang[:i]
 			}
-			if strings.EqualFold(base, "en") {
+			pickyEN = strings.EqualFold(base, "en")
+			// soft picky level for English (core inject + optional soft XML pack)
+			if pickyEN {
 				en.RegisterPickyEnglishRules(lt)
 			}
 		}
 		// optional soft grammar directory (e.g. testdata/grammar) with walk-up discovery
 		if dir := DiscoverGrammarDir(opts); dir != "" {
 			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
+			if pickyEN {
+				// en-picky-soft.xml: pedantic style rules only when --level picky
+				pickyPath := filepath.Join(dir, "en-picky-soft.xml")
+				if st, err := os.Stat(pickyPath); err == nil && st.Mode().IsRegular() {
+					_, _ = patterns.RegisterGrammarFile(lt, pickyPath, lang)
+				}
+			}
 		}
 		base := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
@@ -539,6 +548,10 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			_, _ = fmt.Fprintf(w, "regional soft packs: %d\n", regionalN)
 		}
 		_, _ = fmt.Fprintf(w, "soft category filters: --disablecategories / --enablecategories\n")
+		pickySoft := filepath.Join(gdir, "en-picky-soft.xml")
+		if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
+			_, _ = fmt.Fprintf(w, "en picky soft pack: %s (load with --level picky)\n", pickySoft)
+		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)
 	if ff == "" {
