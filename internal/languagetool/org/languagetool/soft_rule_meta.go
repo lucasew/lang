@@ -9,7 +9,7 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 	case strings.Contains(id, "MORFOLOGIK") || strings.Contains(id, "HUNSPELL") || strings.Contains(id, "SPELL"):
 		return "TYPOS", "Possible Typo", "misspelling", "Spelling mistake"
 	case strings.Contains(id, "WHITESPACE") || strings.Contains(id, "PUNCT") || id == "COMMA_WHITESPACE" ||
-		id == "DOUBLE_PUNCTUATION" || id == "SENTENCE_WHITESPACE":
+		id == "DOUBLE_PUNCTUATION" || id == "SENTENCE_WHITESPACE" || id == "EMPTY_LINE":
 		return "TYPOGRAPHY", "Typography", "whitespace", "Typography"
 	case strings.Contains(id, "WORD_REPEAT"):
 		return "MISC", "Miscellaneous", "duplication", "Word repetition"
@@ -51,7 +51,7 @@ func SoftRuleDescription(ruleID string) string {
 		return "Word repetition"
 	case strings.Contains(id, "MORFOLOGIK") || strings.Contains(id, "HUNSPELL") || strings.Contains(id, "SPELL"):
 		return "Possible spelling mistake"
-	case strings.Contains(id, "WHITESPACE") || id == "COMMA_WHITESPACE" || id == "SENTENCE_WHITESPACE":
+	case strings.Contains(id, "WHITESPACE") || id == "COMMA_WHITESPACE" || id == "SENTENCE_WHITESPACE" || id == "EMPTY_LINE":
 		return "Whitespace"
 	case strings.Contains(id, "UNPAIRED") || strings.Contains(id, "BRACKET"):
 		return "Unpaired brackets"

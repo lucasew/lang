@@ -177,3 +177,21 @@ func TestGolden_FindingIncludesRuleURL(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_PunctuationParagraphEnd(t *testing.T) {
+	var buf bytes.Buffer
+	// multi-sentence paragraph missing final punctuation
+	_, err := CoreGoldenHook(&buf, "This is a test sentence. And this is a second test sentence", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "PUNCTUATION_PARAGRAPH_END" {
+			found = true
+			require.Equal(t, "whitespace", f.Type)
+			require.Equal(t, "warning", f.Severity)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}

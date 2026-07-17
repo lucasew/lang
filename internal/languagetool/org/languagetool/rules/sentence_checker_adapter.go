@@ -127,6 +127,18 @@ func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang str
 		"whitespace_before_parapgraph_end_msg": "Don't end a paragraph with whitespace",
 	})
 	lt.AddTextLevelRuleChecker(wpe.GetID(), AsTextLevelChecker(wpe.MatchList))
+
+	// text-level: empty line (extra blank line between paragraphs)
+	el := NewEmptyLineRule(map[string]string{
+		"empty_line_rule_msg": "Empty line",
+	})
+	lt.AddTextLevelRuleChecker(el.GetID(), AsTextLevelChecker(el.MatchList))
+
+	// text-level: missing punctuation at paragraph end
+	ppe := NewPunctuationMarkAtParagraphEnd(map[string]string{
+		"punctuation_mark_paragraph_end_msg": "Add a punctuation mark at paragraph end",
+	})
+	lt.AddTextLevelRuleChecker(ppe.GetID(), AsTextLevelChecker(ppe.MatchList))
 }
 
 // RegisterCoreEnglishRules installs shared layout + EN a/an + word-repeat (real rule).
