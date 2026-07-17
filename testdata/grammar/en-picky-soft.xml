@@ -2240,5 +2240,29 @@
       <message>Jargon; name a partial real-object test wrapper instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_FACTORY_METHOD" name="factory method soft picky">
+      <pattern>
+        <token>factory</token>
+        <token>method</token>
+      </pattern>
+      <message>Jargon; name a creation-via-function pattern instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUILDER_PATTERN" name="builder pattern soft picky">
+      <pattern>
+        <token>builder</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a stepwise construction API instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OBJECT_MOTHER" name="object mother soft picky">
+      <pattern>
+        <token>object</token>
+        <token>mother</token>
+      </pattern>
+      <message>Jargon; name a test fixture factory instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

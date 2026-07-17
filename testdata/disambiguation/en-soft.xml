@@ -3507,4 +3507,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_REKOGNITION" name="immunize rekognition">
+    <pattern>
+      <token>rekognition</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REKOGNITION_CAPS" name="immunize Rekognition">
+    <pattern>
+      <token>Rekognition</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEXTRACT" name="immunize textract">
+    <pattern>
+      <token>textract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TEXTRACT_CAPS" name="immunize Textract">
+    <pattern>
+      <token>Textract</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLLY" name="immunize polly">
+    <pattern>
+      <token>polly</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLLY_CAPS" name="immunize Polly">
+    <pattern>
+      <token>Polly</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

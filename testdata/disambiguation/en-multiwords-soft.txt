@@ -387,3 +387,6 @@ River Corridor RegionNNP
 Maritime Corridor RegionNNP
 Mining Corridor RegionNNP
 Gold Corridor RegionNNP
+Timber Corridor RegionNNP
+Grain Corridor RegionNNP
+Silk Corridor RegionNNP

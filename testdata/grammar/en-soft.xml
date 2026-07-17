@@ -8457,6 +8457,76 @@
       <message>Did you mean "organizing"?</message>
       <short>orginizing</short>
     </rule>
+    <rule id="EN_SOFT_PLEASANTLY_MISS" name="plesantly soft">
+      <pattern>
+        <token>plesantly</token>
+      </pattern>
+      <message>Did you mean "pleasantly"?</message>
+      <short>plesantly</short>
+    </rule>
+    <rule id="EN_SOFT_POSSESSING_MISS" name="posessing soft">
+      <pattern>
+        <token>posessing</token>
+      </pattern>
+      <message>Did you mean "possessing"?</message>
+      <short>posessing</short>
+    </rule>
+    <rule id="EN_SOFT_POSSIBILITIES_MISS" name="posibilities soft">
+      <pattern>
+        <token>posibilities</token>
+      </pattern>
+      <message>Did you mean "possibilities"?</message>
+      <short>posibilities</short>
+    </rule>
+    <rule id="EN_SOFT_PRACTICALLY_MISS" name="practially soft">
+      <pattern>
+        <token>practially</token>
+      </pattern>
+      <message>Did you mean "practically"?</message>
+      <short>practially</short>
+    </rule>
+    <rule id="EN_SOFT_PREPARED_MISS" name="prepaired soft">
+      <pattern>
+        <token>prepaired</token>
+      </pattern>
+      <message>Did you mean "prepared"?</message>
+      <short>prepaired</short>
+    </rule>
+    <rule id="EN_SOFT_PREPARING_MISS" name="prepairing soft">
+      <pattern>
+        <token>prepairing</token>
+      </pattern>
+      <message>Did you mean "preparing"?</message>
+      <short>prepairing</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGES_MISS" name="priviledges soft">
+      <pattern>
+        <token>priviledges</token>
+      </pattern>
+      <message>Did you mean "privileges"?</message>
+      <short>priviledges</short>
+    </rule>
+    <rule id="EN_SOFT_PROPORTION_MISS" name="propotion soft">
+      <pattern>
+        <token>propotion</token>
+      </pattern>
+      <message>Did you mean "proportion"?</message>
+      <short>propotion</short>
+    </rule>
+    <rule id="EN_SOFT_PROBABLY_MISS2" name="proably soft">
+      <pattern>
+        <token>proably</token>
+      </pattern>
+      <message>Did you mean "probably"?</message>
+      <short>proably</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIVER_MISS" name="reciever soft">
+      <pattern>
+        <token>reciever</token>
+      </pattern>
+      <message>Did you mean "receiver"?</message>
+      <short>reciever</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
