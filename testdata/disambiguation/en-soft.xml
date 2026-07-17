@@ -6063,4 +6063,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_OXC" name="immunize oxc">
+    <pattern>
+      <token>oxc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OXC_CAPS" name="immunize Oxc">
+    <pattern>
+      <token>Oxc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UNOCSS" name="immunize unocss">
+    <pattern>
+      <token>unocss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_UNOCSS_CAPS" name="immunize UnoCSS">
+    <pattern>
+      <token>UnoCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTCSS" name="immunize postcss">
+    <pattern>
+      <token>postcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POSTCSS_CAPS" name="immunize PostCSS">
+    <pattern>
+      <token>PostCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

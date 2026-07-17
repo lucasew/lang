@@ -600,3 +600,6 @@ Halite Peak RegionNNP
 Chert Peak RegionNNP
 Hornfels Peak RegionNNP
 Amphibolite Peak RegionNNP
+Eclogite Peak RegionNNP
+Serpentinite Peak RegionNNP
+Soapstone Peak RegionNNP

@@ -13427,6 +13427,76 @@
       <message>Did you mean "healthendpoint"?</message>
       <short>healthendpont</short>
     </rule>
+    <rule id="EN_SOFT_METRICSENDPOINT_MISS" name="metricsendpont soft">
+      <pattern>
+        <token>metricsendpont</token>
+      </pattern>
+      <message>Did you mean "metricsendpoint"?</message>
+      <short>metricsendpont</short>
+    </rule>
+    <rule id="EN_SOFT_READYZENDPOINT_MISS" name="readyzendpont soft">
+      <pattern>
+        <token>readyzendpont</token>
+      </pattern>
+      <message>Did you mean "readyzendpoint"?</message>
+      <short>readyzendpont</short>
+    </rule>
+    <rule id="EN_SOFT_LIVEZENDPOINT_MISS" name="livezendpont soft">
+      <pattern>
+        <token>livezendpont</token>
+      </pattern>
+      <message>Did you mean "livezendpoint"?</message>
+      <short>livezendpont</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSTHRESHOLD_MISS" name="successThreshhold soft">
+      <pattern>
+        <token>successThreshhold</token>
+      </pattern>
+      <message>Did you mean "successthreshold"?</message>
+      <short>successThreshhold</short>
+    </rule>
+    <rule id="EN_SOFT_FAILURETHRESHOLD_MISS" name="failThreshhold soft">
+      <pattern>
+        <token>failThreshhold</token>
+      </pattern>
+      <message>Did you mean "failurethreshold"?</message>
+      <short>failThreshhold</short>
+    </rule>
+    <rule id="EN_SOFT_REQUESTVOLUMETHRESHOLD_MISS" name="requestvolumethresh soft">
+      <pattern>
+        <token>requestvolumethresh</token>
+      </pattern>
+      <message>Did you mean "requestvolumethreshold"?</message>
+      <short>requestvolumethresh</short>
+    </rule>
+    <rule id="EN_SOFT_ERRORPERCENTAGETHRESHOLD_MISS" name="errorpercentthresh soft">
+      <pattern>
+        <token>errorpercentthresh</token>
+      </pattern>
+      <message>Did you mean "errorpercentagethreshold"?</message>
+      <short>errorpercentthresh</short>
+    </rule>
+    <rule id="EN_SOFT_COMMANDKEY_MISS" name="commandkeyy soft">
+      <pattern>
+        <token>commandkeyy</token>
+      </pattern>
+      <message>Did you mean "commandkey"?</message>
+      <short>commandkeyy</short>
+    </rule>
+    <rule id="EN_SOFT_THREADPOOLKEY_MISS" name="threadpoolkeyy soft">
+      <pattern>
+        <token>threadpoolkeyy</token>
+      </pattern>
+      <message>Did you mean "threadpoolkey"?</message>
+      <short>threadpoolkeyy</short>
+    </rule>
+    <rule id="EN_SOFT_COLLAPSERKEY_MISS" name="collapserkeyy soft">
+      <pattern>
+        <token>collapserkeyy</token>
+      </pattern>
+      <message>Did you mean "collapserkey"?</message>
+      <short>collapserkeyy</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

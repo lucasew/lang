@@ -3889,5 +3889,29 @@
       <message>Jargon; name share of sales target achieved instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_COMMITTED_ARR" name="committed arr soft picky">
+      <pattern>
+        <token>committed</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name contracted annual recurring revenue not yet live instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENDING_ARR" name="ending arr soft picky">
+      <pattern>
+        <token>ending</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period end instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BEGINNING_ARR" name="beginning arr soft picky">
+      <pattern>
+        <token>beginning</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue at period start instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
