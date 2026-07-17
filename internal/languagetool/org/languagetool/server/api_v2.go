@@ -106,8 +106,10 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if lang == "" {
 			lang = "auto"
 		}
+		autoDetected := false
 		// Soft language-id: heuristic when auto; otherwise use requested code.
 		if strings.EqualFold(lang, "auto") {
+			autoDetected = true
 			preferred := commaSeparated(parameters["preferredVariants"])
 			if err := ValidatePreferredVariants(preferred, nil); err != nil {
 				return HandleResult{}, err
@@ -128,13 +130,15 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if v := parameters["level"]; v != "" {
 			opts.Level = CheckLevel(strings.ToUpper(v))
 		}
+		langName := LanguageNameForCode(lang)
 		var body string
 		var err error
 		if annotated != nil {
 			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
-			body, err = a.TextChecker.BuildResponse(annotated.GetTextWithMarkup(), lang, lang, matches)
+			body, err = a.TextChecker.BuildResponseEx(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected)
 		} else {
-			body, err = a.TextChecker.CheckAndBuildJSONWithOptions(text, lang, lang, opts)
+			matches := a.TextChecker.CheckWithOptions(text, lang, opts)
+			body, err = a.TextChecker.BuildResponseEx(text, lang, langName, matches, autoDetected)
 		}
 		if err != nil {
 			return HandleResult{}, err

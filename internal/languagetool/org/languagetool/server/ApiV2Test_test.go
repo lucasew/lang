@@ -107,3 +107,27 @@ func TestApiV2_CheckDataAnnotation(t *testing.T) {
 	require.Equal(t, 200, r.Status)
 	require.Contains(t, r.Body, "EN_A_VS_AN")
 }
+
+func TestApiV2_LanguageNameAndDetected(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "Hello world.",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r.Body, `"name":"English"`)
+
+	r2, err := api.Handle("check", map[string]string{
+		"language": "auto",
+		"text":     "This is an English sample for detection.",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r2.Body, "detectedLanguage")
+	require.Contains(t, r2.Body, "English")
+}
+
+func TestLanguageNameForCode(t *testing.T) {
+	require.Equal(t, "English", LanguageNameForCode("en"))
+	require.Equal(t, "English", LanguageNameForCode("en-US"))
+	require.Equal(t, "German", LanguageNameForCode("de"))
+}

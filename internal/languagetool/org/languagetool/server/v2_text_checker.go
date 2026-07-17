@@ -31,9 +31,27 @@ func (v *V2TextChecker) GetLanguageAutoDetect(parameters map[string]string) bool
 
 // BuildResponse builds a minimal JSON /v2/check response from matches.
 func (v *V2TextChecker) BuildResponse(text, langCode, langName string, matches []RemoteRuleMatch) (string, error) {
+	return v.BuildResponseEx(text, langCode, langName, matches, false)
+}
+
+// BuildResponseEx builds a check response; when autoDetected is true, sets detectedLanguage.
+func (v *V2TextChecker) BuildResponseEx(text, langCode, langName string, matches []RemoteRuleMatch, autoDetected bool) (string, error) {
+	if langName == "" || langName == langCode {
+		if n := LanguageNameForCode(langCode); n != "" {
+			langName = n
+		}
+	}
+	lang := LanguageInfo{Name: langName, Code: langCode}
+	if autoDetected {
+		lang.Confidence = 0.5 // soft heuristic confidence
+	}
 	resp := CheckResponse{
 		Software: NewSoftwareInfo("dev"),
-		Language: LanguageInfo{Name: langName, Code: langCode},
+		Language: lang,
+	}
+	if autoDetected {
+		dl := lang
+		resp.DetectedLanguage = &dl
 	}
 	for i := range matches {
 		resp.Matches = append(resp.Matches, matches[i].ToMatchInfo())
