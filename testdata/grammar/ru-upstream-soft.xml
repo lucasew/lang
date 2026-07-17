@@ -88,7 +88,7 @@
     </rule>
     <rule id="Linguistics_hrabry" name="Лингвистические ошибки: «храбрая (или смелая) мысль, решение, идея»">
       <pattern>
-        <token>храбрый</token>
+        <token inflected="yes">храбрый</token>
         <token regexp="yes">мысль|решение|идея</token>
       </pattern>
       <message>Лингвистическая ошибка: <suggestion> </suggestion>?</message>
@@ -96,32 +96,32 @@
     </rule>
     <rule id="Logical_biographia_gizni" name="Логические ошибки: «биография жизни»">
       <pattern>
-        <token>биография</token>
-        <token>жизнь</token>
+        <token inflected="yes">биография</token>
+        <token inflected="yes">жизнь</token>
       </pattern>
       <message>Логическая ошибка: <suggestion>\1</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Logical_govorite_vopros" name="Логические ошибки: «говорите вопрос»">
       <pattern>
-        <token>говорить</token>
-        <token>вопрос</token>
+        <token inflected="yes">говорить</token>
+        <token inflected="yes">вопрос</token>
       </pattern>
       <message>Логическая ошибка. Вопрос можно только задать, поставить или поднять.</message>
       <short>Логическая ошибка</short>
     </rule>
     <rule id="Logical_kurica_nasijivaet_jajca" name="Логические ошибки: «курица насиживает яйца»">
       <pattern>
-        <token>курица</token>
-        <token>высиживать</token>
-        <token>яйцо</token>
+        <token inflected="yes">курица</token>
+        <token inflected="yes">высиживать</token>
+        <token inflected="yes">яйцо</token>
       </pattern>
       <message>Логическая ошибка: <suggestion>  </suggestion>.</message>
       <short>Логическая ошибка</short>
     </rule>
     <rule id="Logical_prignul_s_parashuta" name="Логические ошибки: «прыгать с парашюта»">
       <pattern>
-        <token>прыгнуть</token>
+        <token inflected="yes">прыгнуть</token>
         <token>с</token>
         <token>парашюта</token>
       </pattern>
@@ -130,7 +130,7 @@
     </rule>
     <rule id="Logical_sobiratsya_vmeste" name="Логические ошибки: «собираться вместе»">
       <pattern>
-        <token>собираться</token>
+        <token inflected="yes">собираться</token>
         <token>вместе</token>
       </pattern>
       <message>Логическая ошибка: <suggestion>\1</suggestion>?</message>
@@ -138,7 +138,7 @@
     </rule>
     <rule id="Logical_sochetatsja_vmeste" name="Логические ошибки: «сочетаться вместе»">
       <pattern>
-        <token>сочетаться</token>
+        <token inflected="yes">сочетаться</token>
         <token>вместе</token>
       </pattern>
       <message>Логическая ошибка: <suggestion>\1</suggestion>?</message>
@@ -146,7 +146,7 @@
     </rule>
     <rule id="Logical_sosedstvovat_drug_s_drugom" name="Логические ошибки: «соседствовать друг с другом»">
       <pattern>
-        <token>соседствовать</token>
+        <token inflected="yes">соседствовать</token>
         <token>друг</token>
         <token>с</token>
         <token>другом</token>
@@ -156,16 +156,16 @@
     </rule>
     <rule id="Logical_svoja_avtobiographija" name="Логические ошибки: «своя автобиография»">
       <pattern>
-        <token>свой</token>
-        <token>автобиография</token>
+        <token inflected="yes">свой</token>
+        <token inflected="yes">автобиография</token>
       </pattern>
       <message>Логическая ошибка: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Logical_vidajuschijsja_as" name="Логические ошибки: «выдающийся ас»">
       <pattern>
-        <token regexp="yes">выдающийся|лучший</token>
-        <token>ас</token>
+        <token regexp="yes" inflected="yes">выдающийся|лучший</token>
+        <token inflected="yes">ас</token>
       </pattern>
       <message>Логическая ошибка: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
@@ -189,23 +189,23 @@
     </rule>
     <rule id="Tavtology_adres_mestojitelstva" name="Тавтология: «адрес местожительства»">
       <pattern>
-        <token>адрес</token>
-        <token>местожительство</token>
+        <token inflected="yes">адрес</token>
+        <token inflected="yes">местожительство</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_bespolezno_propadajut" name="Тавтология: «бесполезно пропадают»">
       <pattern>
-        <token>бесполезно</token>
-        <token>пропадать</token>
+        <token inflected="yes">бесполезно</token>
+        <token inflected="yes">пропадать</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_demobilizovatsja_iz_armii" name="Тавтология: «демобилизоваться из армии»">
       <pattern>
-        <token>демобилизоваться</token>
+        <token inflected="yes">демобилизоваться</token>
         <token>из</token>
         <token>армии</token>
       </pattern>
@@ -214,23 +214,23 @@
     </rule>
     <rule id="Tavtology_glavnij_lejtmotiv" name="Тавтология: «главный лейтмотив»">
       <pattern>
-        <token>главный</token>
-        <token>лейтмотив</token>
+        <token inflected="yes">главный</token>
+        <token inflected="yes">лейтмотив</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_kivnul_golovoj" name="Тавтология: «кивнуть головой»">
       <pattern>
-        <token>кивнуть</token>
-        <token>голова</token>
+        <token inflected="yes">кивнуть</token>
+        <token inflected="yes">голова</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\1</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_kollega_po_professii" name="Тавтология: «коллега по профессии»">
       <pattern>
-        <token>коллега</token>
+        <token inflected="yes">коллега</token>
         <token>по</token>
         <token>профессии</token>
       </pattern>
@@ -239,23 +239,23 @@
     </rule>
     <rule id="Tavtology_landshaft_mestnosti" name="Тавтология: «ландшафт местности»">
       <pattern>
-        <token>ландшафт</token>
-        <token>местность</token>
+        <token inflected="yes">ландшафт</token>
+        <token inflected="yes">местность</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\1</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_mahina" name="Тавтология: «огромная махина»">
       <pattern>
-        <token regexp="yes">большой|огромный|гигантский</token>
-        <token>махина</token>
+        <token regexp="yes" inflected="yes">большой|огромный|гигантский</token>
+        <token inflected="yes">махина</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_marshrut_sledovanija" name="Тавтология: «маршрут следования»">
       <pattern>
-        <token>маршрут</token>
+        <token inflected="yes">маршрут</token>
         <token>следования</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\1</suggestion>?</message>
@@ -263,23 +263,23 @@
     </rule>
     <rule id="Tavtology_mestnij_aborigen" name="Тавтология: «местный абориген»">
       <pattern>
-        <token>местный</token>
-        <token>абориген</token>
+        <token inflected="yes">местный</token>
+        <token inflected="yes">абориген</token>
       </pattern>
       <message>Языковая избыточность: <suggestion></suggestion>.</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_nebolshaja_gorstka" name="Тавтология: «небольшая горстка»">
       <pattern>
-        <token>небольшой</token>
-        <token>горстка</token>
+        <token inflected="yes">небольшой</token>
+        <token inflected="yes">горстка</token>
       </pattern>
       <message><suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_plani_na_budushee" name="Тавтология: «планы на будущее»">
       <pattern>
-        <token>план</token>
+        <token inflected="yes">план</token>
         <token>на</token>
         <token>будущее</token>
       </pattern>
@@ -288,23 +288,23 @@
     </rule>
     <rule id="Tavtology_polnostju_zavershil" name="Тавтология: «полностью завершил»">
       <pattern>
-        <token regexp="yes">полностью|окончательно</token>
-        <token>завершить</token>
+        <token regexp="yes" inflected="yes">полностью|окончательно</token>
+        <token inflected="yes">завершить</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_prejskurant_cen" name="Тавтология: «прейскурант цен»">
       <pattern>
-        <token>прейскурант</token>
-        <token>цена</token>
+        <token inflected="yes">прейскурант</token>
+        <token inflected="yes">цена</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\1</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_prostaivat_bez_dela" name="Тавтология: «простаивать без дела»">
       <pattern>
-        <token>простаивать</token>
+        <token inflected="yes">простаивать</token>
         <token>без</token>
         <token>дела</token>
       </pattern>
@@ -313,24 +313,24 @@
     </rule>
     <rule id="Tavtology_samij_edinstvennij" name="Тавтология: «самый единственный»">
       <pattern>
-        <token regexp="yes">несколько|два|самый</token>
-        <token>единственный</token>
+        <token regexp="yes" inflected="yes">несколько|два|самый</token>
+        <token inflected="yes">единственный</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_tyomnij_mrak" name="Тавтология: «тёмный мрак»">
       <pattern>
-        <token regexp="yes">тёмный|темный</token>
-        <token>мрак</token>
+        <token regexp="yes" inflected="yes">тёмный|темный</token>
+        <token inflected="yes">мрак</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_upal_vniz" name="Тавтология: «упал вниз»">
       <pattern>
-        <token>упасть</token>
-        <token>вниз</token>
+        <token inflected="yes">упасть</token>
+        <token inflected="yes">вниз</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\1</suggestion>?</message>
       <short>Тавтология</short>
@@ -346,7 +346,7 @@
     </rule>
     <rule id="Tavtology_vernutsja_obratno" name="Тавтология: «вернуться обратно»">
       <pattern>
-        <token>вернуться</token>
+        <token inflected="yes">вернуться</token>
         <token>обратно</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\1</suggestion>?</message>
@@ -354,8 +354,8 @@
     </rule>
     <rule id="Tavtology_vremenno_priostanovlen" name="Тавтология: «временно приостановить»">
       <pattern>
-        <token>временно</token>
-        <token>приостановить</token>
+        <token inflected="yes">временно</token>
+        <token inflected="yes">приостановить</token>
       </pattern>
       <message>Языковая избыточность: <suggestion>\2</suggestion>?</message>
       <short>Тавтология</short>
@@ -388,15 +388,15 @@
     </rule>
     <rule id="ZASEDANIJE_ZAJEDANIJE" name="Логические ошибки: «заседание» или «заедание»">
       <pattern>
-        <token>заедание</token>
-        <token>суда</token>
+        <token inflected="yes">заедание</token>
+        <token inflected="no">суда</token>
       </pattern>
       <message>Имелось в виду: <suggestion> </suggestion>?</message>
       <short>Логическая ошибка</short>
     </rule>
     <rule id="razvevatsja_razvivatsja" name="Опечатка: «развеваться» или «развиваться»">
       <pattern>
-        <token regexp="yes" skip="2">развеваться|развестись</token>
+        <token regexp="yes" inflected="yes" skip="2">развеваться|развестись</token>
         <token regexp="yes">болезнь|недуг|заболевание|опухоль</token>
       </pattern>
       <message>Опечатка: <suggestion> </suggestion></message>
@@ -404,23 +404,23 @@
     </rule>
     <rule id="sovestnij_sovmestnij" name="Опечатка: «совестный» или «совместный»">
       <pattern>
-        <token>совестный</token>
-        <token regexp="yes">бизнес|предприятие</token>
+        <token inflected="yes">совестный</token>
+        <token regexp="yes" inflected="yes">бизнес|предприятие</token>
       </pattern>
       <message>Опечатка: <suggestion> </suggestion></message>
       <short>Опечатка</short>
     </rule>
     <rule id="translate_carreer_diplomat" name="Ошибки перевода «карьерный дипломат»">
       <pattern>
-        <token>карьерный</token>
-        <token>дипломат</token>
+        <token inflected="yes">карьерный</token>
+        <token inflected="yes">дипломат</token>
       </pattern>
       <message>Ошибка перевода: <suggestion> </suggestion>?</message>
       <short>Ошибка перевода</short>
     </rule>
     <rule id="zakonchit_shkolu" name="Опечатка: «закончить или окончить»">
       <pattern>
-        <token>закончить</token>
+        <token inflected="yes">закончить</token>
         <token regexp="yes">школу|институт|университет|вуз|курсы|техникум|пту|училище|академию</token>
       </pattern>
       <message>Опечатка: <suggestion> </suggestion></message>
@@ -572,7 +572,7 @@
     </rule>
     <rule id="Style_gipoteza_ssno_kotoroj" name="Стиль: «гипотеза, что для создания»">
       <pattern>
-        <token>гипотеза</token>
+        <token inflected="yes">гипотеза</token>
         <token>,</token>
         <token>что</token>
         <token>для</token>
@@ -623,7 +623,7 @@
     </rule>
     <rule id="Adj_NN_number_Software" name="«Программное обеспечение»">
       <pattern>
-        <token regexp="yes">программный|аппаратный
+        <token regexp="yes" inflected="yes">программный|аппаратный
           <exception regexp="yes">программного|программные|аппаратного|аппаратные</exception>
         </token>
         <token>обеспечения</token>
@@ -684,7 +684,7 @@
     </rule>
     <rule id="plit_lodkoj" name="Словосочетание: «плыть лодкой» ► «плыть на лодке»" default="on">
       <pattern>
-        <token regexp="yes">летать|плыть</token>
+        <token regexp="yes" inflected="yes">летать|плыть</token>
         <token regexp="yes">лодкой|вертолётом|кораблём|самолётом</token>
       </pattern>
       <message>Существительное «\1» предполагает употребление зависимого слова в предложном падеже: <suggestion> на </suggestion></message>
@@ -692,7 +692,7 @@
     </rule>
     <rule id="prosit_proshenija" name="Выражение «просить прощения»">
       <pattern>
-        <token>просить</token>
+        <token inflected="yes">просить</token>
         <token>прощение</token>
       </pattern>
       <message>Правильно: <suggestion>\1 прощения</suggestion>.</message>
@@ -700,7 +700,7 @@
     </rule>
     <rule id="skuchat_za" name="Грамматические ошибки: «скучать за ... »">
       <pattern>
-        <token>скучать</token>
+        <token inflected="yes">скучать</token>
         <token>за</token>
       </pattern>
       <message>Скорей всего требуется предлог «о» или «по».</message>

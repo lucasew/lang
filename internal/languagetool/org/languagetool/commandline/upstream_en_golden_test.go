@@ -213,6 +213,7 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 		"en": 0, "de": 1, "fr": 2, "es": 3, "pt": 4, "pl": 5, "ca": 6, "ga": 7, "ar": 8, "ro": 9,
 		"nl": 10, "it": 11, "gl": 12, "sv": 13, "da": 14, "el": 15, "sk": 16, "sl": 17, "be": 18, "ast": 19,
 		"br": 20, "eo": 21, "fa": 22, "is": 23, "tl": 24,
+		"ml": 25, "km": 26, "ru": 27, "ta": 28,
 	}
 	sort.SliceStable(langs, func(i, j int) bool {
 		pi, oki := priority[langs[i]]

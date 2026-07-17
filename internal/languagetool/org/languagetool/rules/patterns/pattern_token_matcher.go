@@ -85,12 +85,18 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			}
 		} else {
 			// Soft path without a tagger: untagged tokens act as UNKNOWN.
-			// Postag-only empty surface tokens also accept any letter word.
+			// Postag-only empty surface tokens accept letter words or punctuation
+			// when the postag pattern looks like sentence-end / punct.
 			tag := strings.ToUpper(pt.Pos.PosTag)
 			if tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN") {
 				posOK = true
 			} else if pt.Token == "" {
-				posOK = softLooksLikeWord(token.GetToken())
+				tok := token.GetToken()
+				if softLooksLikeWord(tok) {
+					posOK = true
+				} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
+					posOK = true
+				}
 			}
 		}
 		if pt.Pos.Negate {
@@ -229,16 +235,45 @@ func softLooksLikeWord(s string) bool {
 		if r == '-' || r == '\'' || r == '’' {
 			continue
 		}
-		if !unicode.IsLetter(r) {
-			return false
+		// Allow combining marks (Khmer coeng/vowels, Indic matras, etc.).
+		if unicode.IsLetter(r) {
+			letters++
+			continue
 		}
-		letters++
+		if unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Mc, r) || unicode.Is(unicode.Me, r) {
+			continue
+		}
+		return false
 	}
 	return letters > 0
 }
 
+func softLooksLikePunct(s string) bool {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return false
+	}
+	for _, r := range s {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func softPostagLooksLikePunct(tag string) bool {
+	// SENT_END, PSN*, PUNCT*, SENTENCE_END, etc.
+	u := strings.ToUpper(tag)
+	return strings.Contains(u, "SENT_END") ||
+		strings.Contains(u, "SENTENCE_END") ||
+		strings.Contains(u, "PSN") ||
+		strings.Contains(u, "PUNC") ||
+		strings.Contains(u, "SENT_START")
+}
+
 // softInflectedSurfaceMatch approximates lemma matching without a tagger:
 // surface equals base, or base is a prefix of surface with a short suffix (s, es, n, en, …).
+// Also allows a shared stem of length ≥4 with short residual suffixes (говорить/говорите).
 func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	if surface == "" || base == "" {
 		return false
@@ -276,6 +311,9 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 			}
 		}
 	}
+	if softSharedStemMatch(surface, base) {
+		return true
+	}
 	if !strings.HasPrefix(surface, base) {
 		return false
 	}
@@ -296,6 +334,35 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 		}
 		return len(suf) <= 2
 	}
+}
+
+// softSharedStemMatch is true when surface and base share a long letter stem
+// and differ only by short inflectional endings (говорить/говорите, храбрый/храбрая).
+func softSharedStemMatch(a, b string) bool {
+	ar, br := []rune(a), []rune(b)
+	n := 0
+	for n < len(ar) && n < len(br) && ar[n] == br[n] {
+		n++
+	}
+	if n < 4 {
+		return false
+	}
+	sa, sb := string(ar[n:]), string(br[n:])
+	if len([]rune(sa)) > 5 || len([]rune(sb)) > 5 {
+		return false
+	}
+	// residual must be letters only (inflection), not a different stem
+	for _, r := range sa {
+		if !unicode.IsLetter(r) {
+			return false
+		}
+	}
+	for _, r := range sb {
+		if !unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
 }
 
 // softEsperantoUnicode converts x-system digraphs to Unicode diacritics (cx→ĉ).

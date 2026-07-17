@@ -16,6 +16,7 @@ import (
 	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
 	gltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/gl"
 	kmtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/km"
+	mltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ml"
 	nltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/nl"
 	pltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pl"
 	pttok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/pt"
@@ -97,6 +98,8 @@ func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 		return gltok.NewGalicianWordTokenizer()
 	case "km":
 		return kmtok.NewKhmerWordTokenizer()
+	case "ml":
+		return mltok.NewMalayalamWordTokenizer()
 	case "nl":
 		return nltok.NewDutchWordTokenizer()
 	case "pl":
