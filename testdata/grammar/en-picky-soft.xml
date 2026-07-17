@@ -3651,5 +3651,30 @@
       <message>Jargon; name revenue left after direct costs instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_COGS" name="cogs soft picky">
+      <pattern>
+        <token>cogs</token>
+      </pattern>
+      <message>Jargon; name cost of goods sold instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RULE_OF_40" name="rule of 40 soft picky">
+      <pattern>
+        <token>rule</token>
+        <token>of</token>
+        <token>40</token>
+      </pattern>
+      <message>Jargon; name growth-rate-plus-profitability SaaS benchmark instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_DOLLAR_RETENTION" name="net dollar retention soft picky">
+      <pattern>
+        <token>net</token>
+        <token>dollar</token>
+        <token>retention</token>
+      </pattern>
+      <message>Jargon; name expansion-adjusted recurring revenue retention instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

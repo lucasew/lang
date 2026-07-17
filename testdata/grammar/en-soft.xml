@@ -12727,6 +12727,76 @@
       <message>Did you mean "deserialization"?</message>
       <short>deserializaton</short>
     </rule>
+    <rule id="EN_SOFT_DECOMPRESSION_MISS" name="decompresion soft">
+      <pattern>
+        <token>decompresion</token>
+      </pattern>
+      <message>Did you mean "decompression"?</message>
+      <short>decompresion</short>
+    </rule>
+    <rule id="EN_SOFT_AUTHENTICATION_MISS2" name="authenticaiton soft">
+      <pattern>
+        <token>authenticaiton</token>
+      </pattern>
+      <message>Did you mean "authentication"?</message>
+      <short>authenticaiton</short>
+    </rule>
+    <rule id="EN_SOFT_AUTHORIZATION_MISS" name="authorizaion soft">
+      <pattern>
+        <token>authorizaion</token>
+      </pattern>
+      <message>Did you mean "authorization"?</message>
+      <short>authorizaion</short>
+    </rule>
+    <rule id="EN_SOFT_PERMISSION_MISS" name="permisson soft">
+      <pattern>
+        <token>permisson</token>
+      </pattern>
+      <message>Did you mean "permission"?</message>
+      <short>permisson</short>
+    </rule>
+    <rule id="EN_SOFT_REPOSITORY_MISS" name="repositoriy soft">
+      <pattern>
+        <token>repositoriy</token>
+      </pattern>
+      <message>Did you mean "repository"?</message>
+      <short>repositoriy</short>
+    </rule>
+    <rule id="EN_SOFT_REPOSITORY_MISS2" name="reposotory soft">
+      <pattern>
+        <token>reposotory</token>
+      </pattern>
+      <message>Did you mean "repository"?</message>
+      <short>reposotory</short>
+    </rule>
+    <rule id="EN_SOFT_MICROSERVICE_MISS" name="microservicee soft">
+      <pattern>
+        <token>microservicee</token>
+      </pattern>
+      <message>Did you mean "microservice"?</message>
+      <short>microservicee</short>
+    </rule>
+    <rule id="EN_SOFT_MICROSERVICE_MISS2" name="microservce soft">
+      <pattern>
+        <token>microservce</token>
+      </pattern>
+      <message>Did you mean "microservice"?</message>
+      <short>microservce</short>
+    </rule>
+    <rule id="EN_SOFT_KUBERNETES_MISS" name="kubernets soft">
+      <pattern>
+        <token>kubernets</token>
+      </pattern>
+      <message>Did you mean "kubernetes"?</message>
+      <short>kubernets</short>
+    </rule>
+    <rule id="EN_SOFT_KUBERNETES_MISS2" name="kuberentes soft">
+      <pattern>
+        <token>kuberentes</token>
+      </pattern>
+      <message>Did you mean "kubernetes"?</message>
+      <short>kuberentes</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

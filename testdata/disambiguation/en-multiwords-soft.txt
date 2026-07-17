@@ -570,3 +570,6 @@ Norite Ridge RegionNNP
 Troctolite Ridge RegionNNP
 Dunite Ridge RegionNNP
 Websterite Ridge RegionNNP
+Pyroxenite Ridge RegionNNP
+Kimberlite Ridge RegionNNP
+Ignimbrite Ridge RegionNNP

@@ -5703,4 +5703,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_URQL" name="immunize urql">
+    <pattern>
+      <token>urql</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_URQL_CAPS" name="immunize URQL">
+    <pattern>
+      <token>URQL</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWR" name="immunize swr">
+    <pattern>
+      <token>swr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SWR_CAPS" name="immunize SWR">
+    <pattern>
+      <token>SWR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TANSTACK" name="immunize tanstack">
+    <pattern>
+      <token>tanstack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TANSTACK_CAPS" name="immunize TanStack">
+    <pattern>
+      <token>TanStack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
