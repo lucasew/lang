@@ -11677,6 +11677,76 @@
       <message>Did you mean "system"?</message>
       <short>sytem</short>
     </rule>
+    <rule id="EN_SOFT_TABLE_MISS" name="tabel soft">
+      <pattern>
+        <token>tabel</token>
+      </pattern>
+      <message>Did you mean "table"?</message>
+      <short>tabel</short>
+    </rule>
+    <rule id="EN_SOFT_TEMPLATE_MISS" name="tempalte soft">
+      <pattern>
+        <token>tempalte</token>
+      </pattern>
+      <message>Did you mean "template"?</message>
+      <short>tempalte</short>
+    </rule>
+    <rule id="EN_SOFT_THIS_MISS" name="thsi soft">
+      <pattern>
+        <token>thsi</token>
+      </pattern>
+      <message>Did you mean "this"?</message>
+      <short>thsi</short>
+    </rule>
+    <rule id="EN_SOFT_TIME_MISS" name="tiem soft">
+      <pattern>
+        <token>tiem</token>
+      </pattern>
+      <message>Did you mean "time"?</message>
+      <short>tiem</short>
+    </rule>
+    <rule id="EN_SOFT_TYPE_MISS" name="tpye soft">
+      <pattern>
+        <token>tpye</token>
+      </pattern>
+      <message>Did you mean "type"?</message>
+      <short>tpye</short>
+    </rule>
+    <rule id="EN_SOFT_UPDATE_MISS" name="udpate soft">
+      <pattern>
+        <token>udpate</token>
+      </pattern>
+      <message>Did you mean "update"?</message>
+      <short>udpate</short>
+    </rule>
+    <rule id="EN_SOFT_USER_MISS" name="uesr soft">
+      <pattern>
+        <token>uesr</token>
+      </pattern>
+      <message>Did you mean "user"?</message>
+      <short>uesr</short>
+    </rule>
+    <rule id="EN_SOFT_UNIQUE_MISS" name="unqiue soft">
+      <pattern>
+        <token>unqiue</token>
+      </pattern>
+      <message>Did you mean "unique"?</message>
+      <short>unqiue</short>
+    </rule>
+    <rule id="EN_SOFT_VALID_MISS" name="vaild soft">
+      <pattern>
+        <token>vaild</token>
+      </pattern>
+      <message>Did you mean "valid"?</message>
+      <short>vaild</short>
+    </rule>
+    <rule id="EN_SOFT_VARIABLE_MISS" name="varaible soft">
+      <pattern>
+        <token>varaible</token>
+      </pattern>
+      <message>Did you mean "variable"?</message>
+      <short>varaible</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

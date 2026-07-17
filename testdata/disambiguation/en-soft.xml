@@ -5163,4 +5163,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NATS" name="immunize nats">
+    <pattern>
+      <token>nats</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATS_CAPS" name="immunize NATS">
+    <pattern>
+      <token>NATS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEILISEARCH" name="immunize meilisearch">
+    <pattern>
+      <token>meilisearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEILISEARCH_CAPS" name="immunize Meilisearch">
+    <pattern>
+      <token>Meilisearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPESENSE" name="immunize typesense">
+    <pattern>
+      <token>typesense</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPESENSE_CAPS" name="immunize Typesense">
+    <pattern>
+      <token>Typesense</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

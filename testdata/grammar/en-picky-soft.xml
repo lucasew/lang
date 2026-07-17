@@ -3322,5 +3322,26 @@
       <message>Jargon; name return on ad spend instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MAU" name="mau soft picky">
+      <pattern>
+        <token>mau</token>
+      </pattern>
+      <message>Jargon; name monthly active users instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DAU" name="dau soft picky">
+      <pattern>
+        <token>dau</token>
+      </pattern>
+      <message>Jargon; name daily active users instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ARPU" name="arpu soft picky">
+      <pattern>
+        <token>arpu</token>
+      </pattern>
+      <message>Jargon; name average revenue per user instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

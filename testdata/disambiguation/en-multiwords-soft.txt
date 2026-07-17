@@ -525,3 +525,6 @@ Pyroxenite Summit RegionNNP
 Norite Summit RegionNNP
 Troctolite Summit RegionNNP
 Anorthosite Ridge RegionNNP
+Dacite Summit RegionNNP
+Phonolite Summit RegionNNP
+Latite Summit RegionNNP
