@@ -2384,5 +2384,30 @@
       <message>Jargon; name shared fine-grained immutable data instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CHAIN_OF_RESPONSIBILITY" name="chain of responsibility soft picky">
+      <pattern>
+        <token>chain</token>
+        <token>of</token>
+        <token>responsibility</token>
+      </pattern>
+      <message>Jargon; name a pass-along handler pipeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MEMENTO_PATTERN" name="memento pattern soft picky">
+      <pattern>
+        <token>memento</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a capture-and-restore snapshot instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VISITOR_PATTERN" name="visitor pattern soft picky">
+      <pattern>
+        <token>visitor</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name an external double-dispatch operation instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

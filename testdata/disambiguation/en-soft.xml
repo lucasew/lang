@@ -3723,4 +3723,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUD9" name="immunize cloud9">
+    <pattern>
+      <token>cloud9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUD9_CAPS" name="immunize Cloud9">
+    <pattern>
+      <token>Cloud9</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDSHELL" name="immunize cloudshell">
+    <pattern>
+      <token>cloudshell</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDSHELL_CAPS" name="immunize CloudShell">
+    <pattern>
+      <token>CloudShell</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPFLOW" name="immunize appflow">
+    <pattern>
+      <token>appflow</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPFLOW_CAPS" name="immunize AppFlow">
+    <pattern>
+      <token>AppFlow</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

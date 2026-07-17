@@ -8877,6 +8877,76 @@
       <message>Did you mean "across"?</message>
       <short>accross</short>
     </rule>
+    <rule id="EN_SOFT_SURPRISES_MISS" name="suprises soft">
+      <pattern>
+        <token>suprises</token>
+      </pattern>
+      <message>Did you mean "surprises"?</message>
+      <short>suprises</short>
+    </rule>
+    <rule id="EN_SOFT_SURPRISINGLY_MISS" name="suprisingly soft">
+      <pattern>
+        <token>suprisingly</token>
+      </pattern>
+      <message>Did you mean "surprisingly"?</message>
+      <short>suprisingly</short>
+    </rule>
+    <rule id="EN_SOFT_SUPPRESSING_MISS" name="surpressing soft">
+      <pattern>
+        <token>surpressing</token>
+      </pattern>
+      <message>Did you mean "suppressing"?</message>
+      <short>surpressing</short>
+    </rule>
+    <rule id="EN_SOFT_UNNECESSARY_MISS3" name="unneccesary soft">
+      <pattern>
+        <token>unneccesary</token>
+      </pattern>
+      <message>Did you mean "unnecessary"?</message>
+      <short>unneccesary</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMMODATION_MISS" name="acommodation soft">
+      <pattern>
+        <token>acommodation</token>
+      </pattern>
+      <message>Did you mean "accommodation"?</message>
+      <short>acommodation</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMPLISHED_MISS" name="acomplished soft">
+      <pattern>
+        <token>acomplished</token>
+      </pattern>
+      <message>Did you mean "accomplished"?</message>
+      <short>acomplished</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMPLISHMENT_MISS" name="acomplishment soft">
+      <pattern>
+        <token>acomplishment</token>
+      </pattern>
+      <message>Did you mean "accomplishment"?</message>
+      <short>acomplishment</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUAINTED_MISS" name="aquainted soft">
+      <pattern>
+        <token>aquainted</token>
+      </pattern>
+      <message>Did you mean "acquainted"?</message>
+      <short>aquainted</short>
+    </rule>
+    <rule id="EN_SOFT_ATTEMPT_MISS" name="attemp soft">
+      <pattern>
+        <token>attemp</token>
+      </pattern>
+      <message>Did you mean "attempt"?</message>
+      <short>attemp</short>
+    </rule>
+    <rule id="EN_SOFT_AVERAGE_MISS" name="avrage soft">
+      <pattern>
+        <token>avrage</token>
+      </pattern>
+      <message>Did you mean "average"?</message>
+      <short>avrage</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

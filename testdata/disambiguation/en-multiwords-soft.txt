@@ -405,3 +405,6 @@ Ruby Corridor RegionNNP
 Diamond Corridor RegionNNP
 Emerald Corridor RegionNNP
 Opal Corridor RegionNNP
+Sapphire Corridor RegionNNP
+Topaz Corridor RegionNNP
+Quartz Corridor RegionNNP
