@@ -5307,6 +5307,76 @@
       <message>Did you mean "discipline"?</message>
       <short>disipline</short>
     </rule>
+    <rule id="EN_SOFT_DISSOLVE_MISS" name="disolve soft">
+      <pattern>
+        <token>disolve</token>
+      </pattern>
+      <message>Did you mean "dissolve"?</message>
+      <short>disolve</short>
+    </rule>
+    <rule id="EN_SOFT_DESTROY_MISS" name="distroy soft">
+      <pattern>
+        <token>distroy</token>
+      </pattern>
+      <message>Did you mean "destroy"?</message>
+      <short>distroy</short>
+    </rule>
+    <rule id="EN_SOFT_DISCOVER_MISS" name="discouver soft">
+      <pattern>
+        <token>discouver</token>
+      </pattern>
+      <message>Did you mean "discover"?</message>
+      <short>discouver</short>
+    </rule>
+    <rule id="EN_SOFT_DISCUSSED_MISS" name="discused soft">
+      <pattern>
+        <token>discused</token>
+      </pattern>
+      <message>Did you mean "discussed"?</message>
+      <short>discused</short>
+    </rule>
+    <rule id="EN_SOFT_DOCUMENT_MISS" name="documnet soft">
+      <pattern>
+        <token>documnet</token>
+      </pattern>
+      <message>Did you mean "document"?</message>
+      <short>documnet</short>
+    </rule>
+    <rule id="EN_SOFT_DOWNLOAD_MISS" name="dowload soft">
+      <pattern>
+        <token>dowload</token>
+      </pattern>
+      <message>Did you mean "download"?</message>
+      <short>dowload</short>
+    </rule>
+    <rule id="EN_SOFT_EAGER_MISS" name="eagar soft">
+      <pattern>
+        <token>eagar</token>
+      </pattern>
+      <message>Did you mean "eager"?</message>
+      <short>eagar</short>
+    </rule>
+    <rule id="EN_SOFT_EARLY_MISS" name="ealry soft">
+      <pattern>
+        <token>ealry</token>
+      </pattern>
+      <message>Did you mean "early"?</message>
+      <short>ealry</short>
+    </rule>
+    <rule id="EN_SOFT_ELIMINATE_MISS" name="eleminate soft">
+      <pattern>
+        <token>eleminate</token>
+      </pattern>
+      <message>Did you mean "eliminate"?</message>
+      <short>eleminate</short>
+    </rule>
+    <rule id="EN_SOFT_ELIGIBLE_MISS" name="eligable soft">
+      <pattern>
+        <token>eligable</token>
+      </pattern>
+      <message>Did you mean "eligible"?</message>
+      <short>eligable</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

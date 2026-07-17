@@ -1887,4 +1887,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_KUBEVAL" name="immunize kubeval">
+    <pattern>
+      <token>kubeval</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBEVAL_CAPS" name="immunize Kubeval">
+    <pattern>
+      <token>Kubeval</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBECONFORM" name="immunize kubeconform">
+    <pattern>
+      <token>kubeconform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUBECONFORM_CAPS" name="immunize Kubeconform">
+    <pattern>
+      <token>Kubeconform</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLARIS" name="immunize polaris">
+    <pattern>
+      <token>polaris</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POLARIS_CAPS" name="immunize Polaris">
+    <pattern>
+      <token>Polaris</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

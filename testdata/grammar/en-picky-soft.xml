@@ -1127,5 +1127,29 @@
       <message>Jargon; name the measurable outcome instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DEVELOPER_EXPERIENCE" name="developer experience soft picky">
+      <pattern>
+        <token>developer</token>
+        <token>experience</token>
+      </pattern>
+      <message>Jargon; name the concrete developer friction or fix.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAVED_ROAD" name="paved road soft picky">
+      <pattern>
+        <token>paved</token>
+        <token>road</token>
+      </pattern>
+      <message>Jargon; name the standard path or defaults instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GOLDEN_PATH" name="golden path soft picky">
+      <pattern>
+        <token>golden</token>
+        <token>path</token>
+      </pattern>
+      <message>Jargon; name the recommended workflow instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

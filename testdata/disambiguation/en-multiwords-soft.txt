@@ -252,3 +252,6 @@ head to head	RB
 Columbus Ohio	NNP
 Augusta Maine	NNP
 eye to eye	RB
+Concord New Hampshire	NNP
+Montpelier Vermont	NNP
+toe to toe	RB
