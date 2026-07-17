@@ -176,6 +176,7 @@ func ProjectMatchesToOriginal(at *markup.AnnotatedText, matches []LocalMatch) []
 
 // RegisterDemoEnglishCheckers installs a/an, word-repeat, multi-space, unpaired brackets,
 // common phrase fixes, and optional map speller for homepage-style demos.
+// Tiny demo lexicons do not use nearestKnownWords (that fights a/an and loops forever).
 func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, spellSuggestions map[string][]string) {
 	if lt == nil {
 		return
@@ -188,7 +189,16 @@ func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, 
 		"tot he": "to the",
 	}))
 	if known != nil {
-		lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimpleMapSpellerChecker("MORFOLOGIK_RULE_EN_US", known, spellSuggestions))
+		isKnown := func(w string) bool {
+			if _, ok := known[w]; ok {
+				return true
+			}
+			_, ok := known[strings.ToLower(w)]
+			return ok
+		}
+		lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimplePredicateSpellerChecker(
+			"MORFOLOGIK_RULE_EN_US", isKnown, spellSuggestions, nil, nil,
+		))
 	}
 }
 

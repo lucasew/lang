@@ -9,9 +9,10 @@ import (
 
 func TestJLanguageTool_DemoCodeForHomepage(t *testing.T) {
 	lt := NewJLanguageTool("en-US")
+	// Include corrected forms so the speller does not reverse a/an after fix.
 	lt.RegisterDemoEnglishCheckers(map[string]struct{}{
-		"A": {}, "sentence": {}, "with": {}, "error": {}, "in": {}, "the": {},
-		"Hitchhiker": {}, "Guide": {}, "Galaxy": {}, "to": {},
+		"A": {}, "a": {}, "an": {}, "sentence": {}, "with": {}, "error": {}, "in": {}, "the": {},
+		"Hitchhiker": {}, "Guide": {}, "Galaxy": {}, "to": {}, "he": {}, "s": {},
 	}, nil)
 	src := "A sentence with a error in the Hitchhiker's Guide tot he Galaxy"
 	matches := lt.Check(src)
@@ -22,25 +23,35 @@ func TestJLanguageTool_DemoCodeForHomepage(t *testing.T) {
 	}
 	require.True(t, ids["EN_A_VS_AN"], "expected a→an for 'a error'")
 	require.True(t, ids["PHRASE_REPLACE"], "expected tot he → to the")
-	// apply all suggestions iteratively
+	// Prefer grammar/phrase fixes; cap passes so incomplete spellers cannot loop.
 	fixed := src
-	for {
+	for pass := 0; pass < 16; pass++ {
 		ms := lt.Check(fixed)
 		if len(ms) == 0 {
 			break
 		}
-		// only apply first match with suggestions per pass
-		applied := false
-		for _, m := range ms {
-			if len(m.Suggestions) > 0 {
-				fixed = CorrectTextFromLocalMatches(fixed, []LocalMatch{m})
-				applied = true
+		var pick *LocalMatch
+		for i := range ms {
+			m := &ms[i]
+			if len(m.Suggestions) == 0 {
+				continue
+			}
+			if m.RuleID == "EN_A_VS_AN" || m.RuleID == "PHRASE_REPLACE" {
+				pick = m
 				break
 			}
+			if pick == nil {
+				pick = m
+			}
 		}
-		if !applied {
+		if pick == nil {
 			break
 		}
+		next := CorrectTextFromLocalMatches(fixed, []LocalMatch{*pick})
+		if next == fixed {
+			break
+		}
+		fixed = next
 	}
 	require.Contains(t, fixed, "an error")
 	require.Contains(t, fixed, "to the")

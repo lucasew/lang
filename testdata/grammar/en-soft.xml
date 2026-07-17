@@ -98,5 +98,62 @@
       <message>The article "a" usually does not precede a plural noun.</message>
       <short>a + plural</short>
     </rule>
+    <!-- Soft 3sg: subject pronoun + bare present (common learner errors) -->
+    <rule id="EN_SOFT_HE_GO" name="he/she/it go">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>go</token>
+      </pattern>
+      <message>Did you mean "goes"?</message>
+      <short>3sg agreement</short>
+    </rule>
+    <rule id="EN_SOFT_HE_WALK" name="he/she/it walk">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>walk</token>
+      </pattern>
+      <message>Did you mean "walks"?</message>
+      <short>3sg agreement</short>
+    </rule>
+    <rule id="EN_SOFT_HE_LIKE" name="he/she/it like">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>like</token>
+      </pattern>
+      <message>Did you mean "likes"?</message>
+      <short>3sg agreement</short>
+    </rule>
+    <rule id="EN_SOFT_HE_WANT" name="he/she/it want">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>want</token>
+      </pattern>
+      <message>Did you mean "wants"?</message>
+      <short>3sg agreement</short>
+    </rule>
+    <rule id="EN_SOFT_HE_NEED" name="he/she/it need">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>need</token>
+      </pattern>
+      <message>Did you mean "needs"?</message>
+      <short>3sg agreement</short>
+    </rule>
+    <rule id="EN_SOFT_LOOSE_LOSE" name="loose/lose">
+      <pattern>
+        <token>loose</token>
+        <token>weight</token>
+      </pattern>
+      <message>Did you mean "lose weight"?</message>
+      <short>loose/lose</short>
+    </rule>
+    <rule id="EN_SOFT_AFFECT_EFFECT" name="affect/effect">
+      <pattern>
+        <token>an</token>
+        <token>affect</token>
+      </pattern>
+      <message>Did you mean "an effect"?</message>
+      <short>affect/effect</short>
+    </rule>
   </category>
 </rules>

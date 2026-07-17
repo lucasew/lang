@@ -138,3 +138,48 @@ func TestGolden_SoftAPlural(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_Soft3sgBareVerb(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"He go home.", "EN_SOFT_HE_GO", "goes"},
+		{"She walk fast.", "EN_SOFT_HE_WALK", "walks"},
+		{"It like rain.", "EN_SOFT_HE_LIKE", "likes"},
+		{"He want more.", "EN_SOFT_HE_WANT", "wants"},
+		{"She need help.", "EN_SOFT_HE_NEED", "needs"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftLooseLose(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I want to loose weight.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_LOOSE_LOSE" {
+			found = true
+			require.Equal(t, "lose weight", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
