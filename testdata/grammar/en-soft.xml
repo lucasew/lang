@@ -8177,6 +8177,76 @@
       <message>Did you mean "mismatch"?</message>
       <short>missmatch</short>
     </rule>
+    <rule id="EN_SOFT_INSPIRED_MISS" name="inpsired soft">
+      <pattern>
+        <token>inpsired</token>
+      </pattern>
+      <message>Did you mean "inspired"?</message>
+      <short>inpsired</short>
+    </rule>
+    <rule id="EN_SOFT_INTERMITTENTLY_MISS" name="intermitently soft">
+      <pattern>
+        <token>intermitently</token>
+      </pattern>
+      <message>Did you mean "intermittently"?</message>
+      <short>intermitently</short>
+    </rule>
+    <rule id="EN_SOFT_INTERPRETED_MISS" name="interpeted soft">
+      <pattern>
+        <token>interpeted</token>
+      </pattern>
+      <message>Did you mean "interpreted"?</message>
+      <short>interpeted</short>
+    </rule>
+    <rule id="EN_SOFT_INTERRUPTS_MISS" name="interupts soft">
+      <pattern>
+        <token>interupts</token>
+      </pattern>
+      <message>Did you mean "interrupts"?</message>
+      <short>interupts</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIRONMENTAL_MISS2" name="inviromental soft">
+      <pattern>
+        <token>inviromental</token>
+      </pattern>
+      <message>Did you mean "environmental"?</message>
+      <short>inviromental</short>
+    </rule>
+    <rule id="EN_SOFT_LITERATURE_MISS" name="liteature soft">
+      <pattern>
+        <token>liteature</token>
+      </pattern>
+      <message>Did you mean "literature"?</message>
+      <short>liteature</short>
+    </rule>
+    <rule id="EN_SOFT_MARRIAGES_MISS" name="marraiges soft">
+      <pattern>
+        <token>marraiges</token>
+      </pattern>
+      <message>Did you mean "marriages"?</message>
+      <short>marraiges</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOR_MISS2" name="neigbor soft">
+      <pattern>
+        <token>neigbor</token>
+      </pattern>
+      <message>Did you mean "neighbor"?</message>
+      <short>neigbor</short>
+    </rule>
+    <rule id="EN_SOFT_NINETY_MISS" name="ninty soft">
+      <pattern>
+        <token>ninty</token>
+      </pattern>
+      <message>Did you mean "ninety"?</message>
+      <short>ninty</short>
+    </rule>
+    <rule id="EN_SOFT_OPPOSITION_MISS" name="oposition soft">
+      <pattern>
+        <token>oposition</token>
+      </pattern>
+      <message>Did you mean "opposition"?</message>
+      <short>oposition</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

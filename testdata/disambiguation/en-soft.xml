@@ -3363,4 +3363,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_QUICKSIGHT" name="immunize quicksight">
+    <pattern>
+      <token>quicksight</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUICKSIGHT_CAPS" name="immunize QuickSight">
+    <pattern>
+      <token>QuickSight</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKMAIL" name="immunize workmail">
+    <pattern>
+      <token>workmail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKMAIL_CAPS" name="immunize WorkMail">
+    <pattern>
+      <token>WorkMail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GUARDDUTY" name="immunize guardduty">
+    <pattern>
+      <token>guardduty</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GUARDDUTY_CAPS" name="immunize GuardDuty">
+    <pattern>
+      <token>GuardDuty</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -375,3 +375,6 @@ Logistics Corridor RegionNNP
 Trade Corridor RegionNNP
 Transit Corridor RegionNNP
 Innovation Corridor RegionNNP
+Data Corridor RegionNNP
+Port Corridor RegionNNP
+Culture Corridor RegionNNP

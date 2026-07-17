@@ -2144,5 +2144,29 @@
       <message>Jargon; name a real-user task success study instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_COMPATIBILITY_TEST" name="compatibility test soft picky">
+      <pattern>
+        <token>compatibility</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a cross-version interop check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACCESSIBILITY_TEST" name="accessibility test soft picky">
+      <pattern>
+        <token>accessibility</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name an assistive-tech usability check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SECURITY_TEST" name="security test soft picky">
+      <pattern>
+        <token>security</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name an adversarial control validation instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
