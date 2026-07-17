@@ -38,16 +38,19 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	}
 	if strings.EqualFold(base, "en") {
 		demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
-		var nearest map[string]struct{}
-		if demoSpell {
-			nearest = en.DemoEnglishKnownWords()
+		nearest := en.DemoEnglishKnownWords()
+		sugs := en.CommonDemoSpellerSuggestions
+		if typoPath := softEnglishTyposPath(); typoPath != "" {
+			if extra, err := en.LoadSoftTyposFile(typoPath); err == nil && len(extra) > 0 {
+				sugs = en.MergeSpellerSuggestions(sugs, extra)
+			}
 		}
 		spellOK := false
 		if dictPath := softEnglishUSDictPath(); dictPath != "" {
-			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest)
+			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
 		}
 		if !spellOK && demoSpell {
-			en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), en.CommonDemoSpellerSuggestions)
+			en.RegisterDemoEnglishSpeller(lt, nearest, sugs)
 		}
 		taggerOK := false
 		if posPath := softEnglishPOSDictPath(); posPath != "" {
@@ -144,6 +147,16 @@ func softEnglishIgnoreSpellingPath() string {
 		}
 	}
 	return walkUpFind("testdata/disambiguation/en-ignore-spelling.txt")
+}
+
+// softEnglishTyposPath resolves LANG_EN_TYPOS_FILE or walk-up en-typos.tsv.
+func softEnglishTyposPath() string {
+	if p := os.Getenv("LANG_EN_TYPOS_FILE"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	return walkUpFind("testdata/spelling/en-typos.tsv")
 }
 
 // softEnglishMultiwordsPath resolves LANG_EN_MULTIWORDS or walk-up multiwords.txt.

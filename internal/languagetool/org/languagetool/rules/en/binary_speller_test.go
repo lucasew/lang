@@ -31,7 +31,7 @@ func findEnUSDict(t *testing.T) string {
 func TestRegisterBinaryEnglishSpeller(t *testing.T) {
 	p := findEnUSDict(t)
 	lt := languagetool.NewJLanguageTool("en")
-	require.True(t, RegisterBinaryEnglishSpeller(lt, p, DemoEnglishKnownWords()))
+	require.True(t, RegisterBinaryEnglishSpeller(lt, p, DemoEnglishKnownWords(), CommonDemoSpellerSuggestions))
 	m := lt.Check("I recieve teh book.")
 	require.NotEmpty(t, m)
 	var hasSpell bool

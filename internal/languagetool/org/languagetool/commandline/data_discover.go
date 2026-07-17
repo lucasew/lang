@@ -94,6 +94,27 @@ func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
 	return ""
 }
 
+// DiscoverEnglishTyposFile finds soft EN typo→suggestion TSV
+// (LANG_EN_TYPOS_FILE, data-dir/spelling/en-typos.tsv, walk-up testdata).
+func DiscoverEnglishTyposFile(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_EN_TYPOS_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "spelling", "en-typos.tsv"),
+			filepath.Join(opts.GetDataDir(), "en-typos.tsv"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	return WalkUpFind("", filepath.Join("testdata", "spelling", "en-typos.tsv"))
+}
+
 // DiscoverEnglishIgnoreSpellingList finds soft EN ignore-spelling word list
 // (CLI --ignore-spelling-file, LANG_IGNORE_SPELLING_FILE, data-dir, walk-up).
 func DiscoverEnglishIgnoreSpellingList(opts *CommandLineOptions) string {

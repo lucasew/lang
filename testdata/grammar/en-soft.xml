@@ -33,5 +33,29 @@
       <message>Did you mean "better than"?</message>
       <short>then/than</short>
     </rule>
+    <rule id="EN_SOFT_CAN_CAN" name="can can">
+      <pattern>
+        <token>can</token>
+        <token>can</token>
+      </pattern>
+      <message>Possible accidental repetition of "can".</message>
+      <short>can can</short>
+    </rule>
+    <rule id="EN_SOFT_THAT_THAT" name="that that">
+      <pattern>
+        <token>that</token>
+        <token>that</token>
+      </pattern>
+      <message>Possible accidental repetition of "that".</message>
+      <short>that that</short>
+    </rule>
+    <rule id="EN_SOFT_HAD_OF" name="had of">
+      <pattern>
+        <token>had</token>
+        <token>of</token>
+      </pattern>
+      <message>Did you mean "had"?</message>
+      <short>had of</short>
+    </rule>
   </category>
 </rules>

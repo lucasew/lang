@@ -25,7 +25,8 @@ var CommonDemoSpellerSuggestions = map[string][]string{
 // RegisterBinaryEnglishSpeller installs MORFOLOGIK_RULE_EN_US backed by a CFSA2
 // en_US.dict (attic morfologik loader). Returns false if the dictionary cannot be opened.
 // nearestKnown is an optional small word set for edit-distance suggestions (not the full dict).
-func RegisterBinaryEnglishSpeller(lt *languagetool.JLanguageTool, dictPath string, nearestKnown map[string]struct{}) bool {
+// suggestions may be nil (uses CommonDemoSpellerSuggestions).
+func RegisterBinaryEnglishSpeller(lt *languagetool.JLanguageTool, dictPath string, nearestKnown map[string]struct{}, suggestions map[string][]string) bool {
 	if lt == nil || dictPath == "" {
 		return false
 	}
@@ -43,9 +44,12 @@ func RegisterBinaryEnglishSpeller(lt *languagetool.JLanguageTool, dictPath strin
 		}
 		return false
 	}
+	if suggestions == nil {
+		suggestions = CommonDemoSpellerSuggestions
+	}
 	// nearestKnown only (full CFSA2 dict is too large for edit-distance scan)
 	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
-		"MORFOLOGIK_RULE_EN_US", isKnown, CommonDemoSpellerSuggestions, nearestKnown,
+		"MORFOLOGIK_RULE_EN_US", isKnown, suggestions, nearestKnown,
 	))
 	return true
 }

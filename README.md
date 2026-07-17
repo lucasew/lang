@@ -74,6 +74,7 @@ go run ./cmd/lang-server -port 8081 -public
 | Soft EN multiwords | `testdata/disambiguation/en-multiwords-soft.txt` |
 | CLI disambig data | `--ignore-spelling-file`, `--disambiguation-file` |
 | Demo EN speller (`LANG_DEMO_SPELLER=1` fallback) | map + edit-distance suggestions |
+| Soft EN typos TSV | `testdata/spelling/en-typos.tsv` suggestions |
 | `--apply` suggestion rewrite | a/an, false friends, soft patterns |
 | `--ignore-words` CSV | suppress spelling matches |
 | Disambiguator | not yet |

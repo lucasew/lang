@@ -155,16 +155,20 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		if strings.EqualFold(base, "en") {
 			// Prefer CFSA2 en_US.dict when present; else optional map demo speller.
 			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
-			var nearest map[string]struct{}
-			if demoSpell {
-				nearest = en.DemoEnglishKnownWords()
+			// Always provide a small nearest set for edit-distance soft suggestions.
+			nearest := en.DemoEnglishKnownWords()
+			sugs := en.CommonDemoSpellerSuggestions
+			if typoPath := DiscoverEnglishTyposFile(opts); typoPath != "" {
+				if extra, err := en.LoadSoftTyposFile(typoPath); err == nil && len(extra) > 0 {
+					sugs = en.MergeSpellerSuggestions(sugs, extra)
+				}
 			}
 			spellRegistered := false
 			if dictPath := DiscoverEnglishUSDict(opts); dictPath != "" {
-				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest)
+				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
 			}
 			if !spellRegistered && demoSpell {
-				en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), en.CommonDemoSpellerSuggestions)
+				en.RegisterDemoEnglishSpeller(lt, nearest, sugs)
 			}
 			// Prefer CFSA2 english.dict POS tagger; else demo closed-class map under LANG_DEMO_SPELLER.
 			taggerOK := false
@@ -505,6 +509,11 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		_, _ = fmt.Fprintf(w, "soft disambiguation XML: %s\n", dx)
 	} else {
 		_, _ = fmt.Fprintf(w, "soft disambiguation XML: (unset)\n")
+	}
+	if ty := DiscoverEnglishTyposFile(opts); ty != "" {
+		_, _ = fmt.Fprintf(w, "en-typos.tsv: %s\n", ty)
+	} else {
+		_, _ = fmt.Fprintf(w, "en-typos.tsv: (unset)\n")
 	}
 	// smoke check
 	lt, err := configureCoreLT("en", opts)
