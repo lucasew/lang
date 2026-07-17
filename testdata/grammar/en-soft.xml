@@ -12237,6 +12237,76 @@
       <message>Did you mean "middleware"?</message>
       <short>middelware</short>
     </rule>
+    <rule id="EN_SOFT_PAYLOAD_MISS" name="paylod soft">
+      <pattern>
+        <token>paylod</token>
+      </pattern>
+      <message>Did you mean "payload"?</message>
+      <short>paylod</short>
+    </rule>
+    <rule id="EN_SOFT_BUTTON_MISS" name="buton soft">
+      <pattern>
+        <token>buton</token>
+      </pattern>
+      <message>Did you mean "button"?</message>
+      <short>buton</short>
+    </rule>
+    <rule id="EN_SOFT_LABEL_MISS" name="lable soft">
+      <pattern>
+        <token>lable</token>
+      </pattern>
+      <message>Did you mean "label"?</message>
+      <short>lable</short>
+    </rule>
+    <rule id="EN_SOFT_PLACEHOLDER_MISS" name="placehlder soft">
+      <pattern>
+        <token>placehlder</token>
+      </pattern>
+      <message>Did you mean "placeholder"?</message>
+      <short>placehlder</short>
+    </rule>
+    <rule id="EN_SOFT_DROPDOWN_MISS" name="dropdwn soft">
+      <pattern>
+        <token>dropdwn</token>
+      </pattern>
+      <message>Did you mean "dropdown"?</message>
+      <short>dropdwn</short>
+    </rule>
+    <rule id="EN_SOFT_CHECKBOX_MISS" name="chekbox soft">
+      <pattern>
+        <token>chekbox</token>
+      </pattern>
+      <message>Did you mean "checkbox"?</message>
+      <short>chekbox</short>
+    </rule>
+    <rule id="EN_SOFT_NAVIGATION_MISS" name="navigaton soft">
+      <pattern>
+        <token>navigaton</token>
+      </pattern>
+      <message>Did you mean "navigation"?</message>
+      <short>navigaton</short>
+    </rule>
+    <rule id="EN_SOFT_DIRECTORY_MISS" name="direcoty soft">
+      <pattern>
+        <token>direcoty</token>
+      </pattern>
+      <message>Did you mean "directory"?</message>
+      <short>direcoty</short>
+    </rule>
+    <rule id="EN_SOFT_FILENAME_MISS" name="filenme soft">
+      <pattern>
+        <token>filenme</token>
+      </pattern>
+      <message>Did you mean "filename"?</message>
+      <short>filenme</short>
+    </rule>
+    <rule id="EN_SOFT_FRAMEWORK_MISS" name="framwork soft">
+      <pattern>
+        <token>framwork</token>
+      </pattern>
+      <message>Did you mean "framework"?</message>
+      <short>framwork</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
