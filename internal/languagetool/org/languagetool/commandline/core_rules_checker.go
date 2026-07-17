@@ -157,7 +157,6 @@ func RegisterRuleFilePatterns(lt *languagetool.JLanguageTool, ruleFile, lang str
 	return nil
 }
 
-
 // RegisterFalseFriends loads --falsefriends XML pattern rules for mother-tongue pairs.
 func RegisterFalseFriends(lt *languagetool.JLanguageTool, falseFriendsFile, textLang, motherLang string) error {
 	_, err := patterns.RegisterFalseFriendsFile(lt, falseFriendsFile, textLang, motherLang)
@@ -602,6 +601,12 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		softN := countSoftGrammarFiles(gdir)
 		_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
 		_, _ = fmt.Fprintf(w, "soft grammar files: %d\n", softN)
+		// Vendored upstream extracts (scripts/vendor-lt-testdata.py)
+		upN, upOptN := countUpstreamSoftPacks(gdir)
+		if upN > 0 || upOptN > 0 {
+			_, _ = fmt.Fprintf(w, "upstream soft packs: %d\n", upN)
+			_, _ = fmt.Fprintf(w, "upstream optional packs: %d\n", upOptN)
+		}
 		// Regional soft spelling packs (loaded only for matching lang codes).
 		regional := []string{
 			"en-US-soft.xml", "en-GB-soft.xml", "en-AU-soft.xml", "en-CA-soft.xml",
@@ -820,6 +825,31 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 }
 
 // countSoftGrammarFiles counts *-soft.xml (and grammar-soft.xml) under dir.
+
+func countUpstreamSoftPacks(dir string) (upstream, optional int) {
+	if dir == "" {
+		return 0, 0
+	}
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		return 0, 0
+	}
+	for _, e := range ents {
+		if e.IsDir() {
+			continue
+		}
+		name := e.Name()
+		if strings.HasSuffix(name, "-optional-upstream-soft.xml") {
+			optional++
+			continue
+		}
+		if strings.HasSuffix(name, "-upstream-soft.xml") {
+			upstream++
+		}
+	}
+	return upstream, optional
+}
+
 func countSoftGrammarFiles(dir string) int {
 	if dir == "" || dir == "(unset)" {
 		return 0

@@ -328,3 +328,30 @@ func findRepoRoot(t *testing.T) string {
 		dir = p
 	}
 }
+
+func TestIgnoreSpellingPaths_MergesUpstreamSpelling(t *testing.T) {
+	root := findRepoRoot(t)
+	up := filepath.Join(root, "testdata", "disambiguation", "en-spelling-upstream.txt")
+	if _, err := os.Stat(up); err != nil {
+		t.Skip("en-spelling-upstream.txt missing; run vendor script")
+	}
+	// primary soft list + auto walk-up upstream
+	soft := filepath.Join(root, "testdata", "disambiguation", "en-ignore-spelling.txt")
+	paths := ignoreSpellingPaths(soft)
+	require.GreaterOrEqual(t, len(paths), 2)
+	words := map[string]struct{}{}
+	for _, p := range paths {
+		loaded, err := loadIgnoreSpellingWords(p)
+		require.NoError(t, err)
+		for k := range loaded {
+			words[k] = struct{}{}
+		}
+	}
+	// soft tech name
+	_, okChat := words["ChatGPT"]
+	_, okChatLow := words["chatgpt"]
+	require.True(t, okChat || okChatLow, "soft list should include ChatGPT")
+	// upstream spelling.txt sample
+	_, okBash := words["Bash"]
+	require.True(t, okBash, "upstream spelling should include Bash")
+}

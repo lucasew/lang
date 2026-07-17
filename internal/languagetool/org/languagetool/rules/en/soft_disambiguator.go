@@ -3,6 +3,7 @@ package en
 import (
 	"bufio"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -78,10 +79,17 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 	}
 	var steps []languagetool.SentenceDisambiguator
 	steps = append(steps, hyb)
-	if ignoreSpellingPath != "" {
-		if words, err := loadIgnoreSpellingWords(ignoreSpellingPath); err == nil && len(words) > 0 {
-			steps = append(steps, &ignoreSpellingWordList{words: words})
+	words := map[string]struct{}{}
+	// Prefer soft tech list when provided, then merge official spelling.txt extensions.
+	for _, p := range ignoreSpellingPaths(ignoreSpellingPath) {
+		if loaded, err := loadIgnoreSpellingWords(p); err == nil {
+			for k := range loaded {
+				words[k] = struct{}{}
+			}
 		}
+	}
+	if len(words) > 0 {
+		steps = append(steps, &ignoreSpellingWordList{words: words})
 	}
 	if len(steps) == 1 {
 		lt.Disambiguator = steps[0]
@@ -131,6 +139,46 @@ func (w *ignoreSpellingWordList) Disambiguate(input *languagetool.AnalyzedSenten
 		}
 	}
 	return input
+}
+
+// ignoreSpellingPaths returns soft list first (if set), then vendored upstream spelling.txt.
+func ignoreSpellingPaths(primary string) []string {
+	var out []string
+	seen := map[string]struct{}{}
+	add := func(p string) {
+		if p == "" {
+			return
+		}
+		if _, ok := seen[p]; ok {
+			return
+		}
+		seen[p] = struct{}{}
+		out = append(out, p)
+	}
+	add(primary)
+	// walk-up from cwd for vendored official spelling extensions
+	wd, err := os.Getwd()
+	if err != nil {
+		return out
+	}
+	dir := wd
+	for {
+		for _, rel := range []string{
+			filepath.Join("testdata", "disambiguation", "en-spelling-upstream.txt"),
+			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "spelling.txt"),
+		} {
+			cand := filepath.Join(dir, rel)
+			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+				add(cand)
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return out
 }
 
 func loadIgnoreSpellingWords(path string) (map[string]struct{}, error) {

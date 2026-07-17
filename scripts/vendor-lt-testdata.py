@@ -696,6 +696,14 @@ def vendor_lang(lang: str) -> dict:
     if mw.is_file():
         copy_file(mw, DIS_OUT / f"{lang}-multiwords-upstream.txt")
 
+    # hunspell spelling extensions → soft ignore-spelling word list
+    for spell_name in ("spelling.txt",):
+        sp = res_base / "hunspell" / spell_name
+        if sp.is_file():
+            copy_file(sp, OUT / lang / "resource" / "hunspell" / spell_name)
+            # install as one-token-per-line ignore list (strip comments already in load)
+            copy_file(sp, DIS_OUT / f"{lang}-spelling-upstream.txt")
+
     # soft-compatible disambiguation extract
     dis_src = res_base / "disambiguation.xml"
     if dis_src.is_file():
