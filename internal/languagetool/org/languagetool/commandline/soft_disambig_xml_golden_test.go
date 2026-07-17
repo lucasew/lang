@@ -105,6 +105,9 @@ func TestGolden_ImmunizeBtwIrlNoSpell(t *testing.T) {
 	for _, text := range []string{
 		"Send that btw.",
 		"We met irl yesterday.",
+		"That was funny lol.",
+		"Omg that works.",
+		"Tbh I agree.",
 	} {
 		t.Run(text, func(t *testing.T) {
 			var buf bytes.Buffer

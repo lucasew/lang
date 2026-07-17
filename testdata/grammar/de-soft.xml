@@ -18,6 +18,14 @@
       <message>Meinten Sie "glaube, dass"?</message>
       <short>das/dass</short>
     </rule>
+    <rule id="DE_SOFT_WEISS_DAS" name="weiß das">
+      <pattern>
+        <token>weiß</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "weiß, dass"?</message>
+      <short>das/dass</short>
+    </rule>
     <rule id="DE_SOFT_SEIT_SEID" name="seit/seid">
       <pattern>
         <token>seit</token>
@@ -42,6 +50,40 @@
       </pattern>
       <message>Meinten Sie "größer als"?</message>
       <short>als/wie</short>
+    </rule>
+    <rule id="DE_SOFT_WEGEN_DEM" name="wegen dem">
+      <pattern>
+        <token>wegen</token>
+        <token>dem</token>
+      </pattern>
+      <message>Standardsprachlich oft "wegen des" (Genitiv).</message>
+      <short>wegen</short>
+    </rule>
+    <rule id="DE_SOFT_TROTZ_DEM" name="trotz dem">
+      <pattern>
+        <token>trotz</token>
+        <token>dem</token>
+      </pattern>
+      <message>Standardsprachlich oft "trotz des" (Genitiv).</message>
+      <short>trotz</short>
+    </rule>
+    <rule id="DE_SOFT_DAS_SELBE" name="das selbe">
+      <pattern>
+        <token>das</token>
+        <token>selbe</token>
+      </pattern>
+      <message>Meinten Sie "dasselbe"?</message>
+      <short>dasselbe</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografie">
+    <rule id="DE_SOFT_DOUBLE_BANG" name="doppeltes Ausrufezeichen">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Ein Ausrufezeichen genügt oft.</message>
+      <short>Zeichensetzung</short>
     </rule>
   </category>
 </rules>

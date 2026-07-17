@@ -35,6 +35,11 @@ func TestGolden_DESoftExtra(t *testing.T) {
 		{"Seit ihr bereit?", "DE_SOFT_SEIT_SEID"},
 		{"Wir wollen uns wider sehen.", "DE_SOFT_WIDER_WIEDER"},
 		{"Er ist größer als wie sie.", "DE_SOFT_ALS_WIE"},
+		{"Ich weiß das es geht.", "DE_SOFT_WEISS_DAS"},
+		{"Wegen dem Wetter bleiben wir.", "DE_SOFT_WEGEN_DEM"},
+		{"Trotz dem Regen gehen wir.", "DE_SOFT_TROTZ_DEM"},
+		{"Das selbe Problem erneut.", "DE_SOFT_DAS_SELBE"},
+		{"Hallo!!", "DE_SOFT_DOUBLE_BANG"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -47,7 +52,11 @@ func TestGolden_DESoftExtra(t *testing.T) {
 			for _, f := range findings {
 				if f.Rule == tc.rule {
 					found = true
-					require.Equal(t, "grammar", f.Type)
+					if tc.rule == "DE_SOFT_DOUBLE_BANG" {
+						require.Equal(t, "typographical", f.Type)
+					} else {
+						require.Equal(t, "grammar", f.Type)
+					}
 					require.Contains(t, f.URL, "lang=de")
 				}
 			}

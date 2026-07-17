@@ -342,6 +342,110 @@
       <message>Did you mean "didn't"?</message>
       <short>contraction</short>
     </rule>
+    <rule id="EN_SOFT_ISNT" name="isnt → isn't">
+      <pattern>
+        <token regexp="yes">isnt|Isnt</token>
+      </pattern>
+      <message>Did you mean "isn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_ARENT" name="arent → aren't">
+      <pattern>
+        <token regexp="yes">arent|Arent</token>
+      </pattern>
+      <message>Did you mean "aren't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_WASNT" name="wasnt → wasn't">
+      <pattern>
+        <token regexp="yes">wasnt|Wasnt</token>
+      </pattern>
+      <message>Did you mean "wasn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_WERENT" name="werent → weren't">
+      <pattern>
+        <token regexp="yes">werent|Werent</token>
+      </pattern>
+      <message>Did you mean "weren't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_HASNT" name="hasnt → hasn't">
+      <pattern>
+        <token regexp="yes">hasnt|Hasnt</token>
+      </pattern>
+      <message>Did you mean "hasn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_HAVENT" name="havent → haven't">
+      <pattern>
+        <token regexp="yes">havent|Havent</token>
+      </pattern>
+      <message>Did you mean "haven't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_WOULDNT" name="wouldnt → wouldn't">
+      <pattern>
+        <token regexp="yes">wouldnt|Wouldnt</token>
+      </pattern>
+      <message>Did you mean "wouldn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_SHOULDNT" name="shouldnt → shouldn't">
+      <pattern>
+        <token regexp="yes">shouldnt|Shouldnt</token>
+      </pattern>
+      <message>Did you mean "shouldn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_COULDNT" name="couldnt → couldn't">
+      <pattern>
+        <token regexp="yes">couldnt|Couldnt</token>
+      </pattern>
+      <message>Did you mean "couldn't"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_YOURE" name="youre → you're">
+      <pattern>
+        <token regexp="yes">youre|Youre</token>
+      </pattern>
+      <message>Did you mean "you're"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_THEYRE" name="theyre → they're">
+      <pattern>
+        <token regexp="yes">theyre|Theyre</token>
+      </pattern>
+      <message>Did you mean "they're"?</message>
+      <short>contraction</short>
+    </rule>
+    <rule id="EN_SOFT_WERE_WE_RE" name="were → we're (soft context)">
+      <pattern>
+        <token regexp="yes">Were|were</token>
+        <token>going</token>
+        <token>to</token>
+      </pattern>
+      <message>Did you mean "we're going to"?</message>
+      <short>were/we're</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Consider a single exclamation mark.</message>
+      <short>punctuation</short>
+    </rule>
+    <rule id="EN_SOFT_DOUBLE_Q" name="double question">
+      <pattern>
+        <token>?</token>
+        <token>?</token>
+      </pattern>
+      <message>Consider a single question mark.</message>
+      <short>punctuation</short>
+    </rule>
   </category>
   <category id="STYLE" name="Style">
     <rule id="EN_SOFT_KIND_OF_A" name="kind of a">

@@ -271,6 +271,13 @@ func TestGolden_SoftContractionForms(t *testing.T) {
 		{"She cant come.", "EN_SOFT_CANT", "can't"},
 		{"They wont mind.", "EN_SOFT_WONT", "won't"},
 		{"He didnt call.", "EN_SOFT_DIDNT", "didn't"},
+		{"It isnt ready.", "EN_SOFT_ISNT", "isn't"},
+		{"They arent here.", "EN_SOFT_ARENT", "aren't"},
+		{"He wasnt late.", "EN_SOFT_WASNT", "wasn't"},
+		{"You shouldnt go.", "EN_SOFT_SHOULDNT", "shouldn't"},
+		{"I wouldnt care.", "EN_SOFT_WOULDNT", "wouldn't"},
+		{"Youre welcome.", "EN_SOFT_YOURE", "you're"},
+		{"Theyre leaving.", "EN_SOFT_THEYRE", "they're"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -319,6 +326,48 @@ func TestGolden_ApplySoftPhraseCase(t *testing.T) {
 	}, &out, &errb)
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	require.Contains(t, out.String(), "By accident")
+}
+
+func TestGolden_SoftTypography(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"Hello!!", "EN_SOFT_DOUBLE_BANG"},
+		{"What??", "EN_SOFT_DOUBLE_Q"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "typographical", f.Type, "%+v", f)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftWereGoingTo(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Were going to leave soon.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_WERE_WE_RE" {
+			found = true
+			require.Equal(t, "we're going to", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
 }
 
 func TestGolden_SoftStyleCategory(t *testing.T) {

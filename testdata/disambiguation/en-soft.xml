@@ -115,6 +115,7 @@
     <disambig action="filter" postag="VB"/>
   </rule>
   <!-- Soft replace: force NNP on LanguageTool brand token -->
+  <rule id="SOFT_LANGUAGETOOL_NNP" name="LanguageTool → NNP">
     <pattern>
       <token>LanguageTool</token>
     </pattern>
@@ -166,6 +167,36 @@
   <rule id="SOFT_IMMUNIZE_IRL" name="immunize irl">
     <pattern>
       <token>irl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OMG" name="immunize omg">
+    <pattern>
+      <token>omg</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBH" name="immunize tbh">
+    <pattern>
+      <token>tbh</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IMO_CAPS" name="immunize IMO">
+    <pattern>
+      <token>IMO</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LOL" name="immunize lol">
+    <pattern>
+      <token>lol</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BRB" name="immunize brb">
+    <pattern>
+      <token>brb</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
