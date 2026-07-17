@@ -2,6 +2,7 @@ package uk
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -49,6 +50,19 @@ func HasAdjReading(tok *languagetool.AnalyzedTokenReadings) bool {
 func HasNounReading(tok *languagetool.AnalyzedTokenReadings) bool {
 	for _, p := range CollectPOSTags(tok) {
 		if taguk.IPOSNoun.Match(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// HasNounOrPronSubjectReading treats personal pronouns as subjects for noun–verb agreement.
+func HasNounOrPronSubjectReading(tok *languagetool.AnalyzedTokenReadings) bool {
+	if HasNounReading(tok) {
+		return true
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.Contains(p, "pron:pers") {
 			return true
 		}
 	}
@@ -112,7 +126,11 @@ func (r *tokenAgreementMatch) Match(sentence *languagetool.AnalyzedSentence) []*
 			continue
 		}
 		if r.isRightToken != nil && !r.isRightToken(tok) {
-			// non-matching intermediate — reset unless whitespace already stripped
+			// skip ignorable intermediates (не, і, commas soft)
+			if isIgnorableAgreementIntervening(tok) {
+				continue
+			}
+			// non-matching intermediate — reset
 			leftIdx = -1
 			continue
 		}
@@ -131,6 +149,24 @@ func (r *tokenAgreementMatch) Match(sentence *languagetool.AnalyzedSentence) []*
 		leftIdx = -1
 	}
 	return out
+}
+
+// isIgnorableAgreementIntervening allows particle/conj glue between master and slave.
+func isIgnorableAgreementIntervening(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	// surface fast path
+	switch strings.ToLower(tok.GetToken()) {
+	case "не", "й", "і", "та", "чи", "то", "ж", "би", "б":
+		return true
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.HasPrefix(p, "part") || strings.HasPrefix(p, "conj") {
+			return true
+		}
+	}
+	return false
 }
 
 // --- Exception helper stubs (full tables deferred) ---

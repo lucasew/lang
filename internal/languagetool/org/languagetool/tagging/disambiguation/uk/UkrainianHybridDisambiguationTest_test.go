@@ -72,8 +72,21 @@ func TestUkrainianHybridDisambiguation_DisambiguatorForPluralNames(t *testing.T)
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForInitials
 func TestUkrainianHybridDisambiguation_DisambiguatorForInitials(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
-	// contains assertTrue
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	init := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Є.", nil, nil),
+	}, 0)
+	pName, lName := "noun:anim:f:v_naz:prop:lname", "Бакуліна"
+	name := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Бакуліна", &pName, &lName),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, init, name}))
+	tok := out.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasPartialPosTag("fname"))
+	require.True(t, tok.HasPartialPosTag("abbr"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRemove
@@ -83,7 +96,23 @@ func TestUkrainianHybridDisambiguation_DisambiguatorRemove(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForSt
 func TestUkrainianHybridDisambiguation_DisambiguatorForSt(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorForSt")
+	// covered by TestDisambiguateSt; hybrid wires DisambiguateSt
+	pVerb, pNoun := "verb:imperf:inf", "noun:inanim:f:v_naz:nv:abbr:xp1"
+	l := "ст."
+	st := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("ст.", &pVerb, &l),
+		languagetool.NewAnalyzedToken("ст.", &pNoun, &l),
+	}, 0)
+	numP := "number"
+	num := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("208", &numP, nil),
+	}, 0)
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, st, num}))
+	require.False(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("verb"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testTaggerUppgerGoodAndLowerBad
@@ -98,12 +127,31 @@ func TestUkrainianHybridDisambiguation_TaggingForUpperCaseAbbreviations(t *testi
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testPronPos
 func TestUkrainianHybridDisambiguation_PronPos(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testPronPos")
+	// covered by TestDisambiguatePronPos
+	require.NotNil(t, NewUkrainianHybridDisambiguator())
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testYih
 func TestUkrainianHybridDisambiguation_Yih(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testYih")
+	// їх + verb → pers only
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pPers, pPos := "noun:unanim:p:v_zna:pron:pers:3", "adj:p:v_naz:nv:pron:pos"
+	lPers, lPos := "вони", "їх"
+	yih := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("їх", &pPers, &lPers),
+		languagetool.NewAnalyzedToken("їх", &pPos, &lPos),
+	}, 0)
+	vPos, vLem := "verb:perf:past:p", "забути"
+	verb := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("забули", &vPos, &vLem),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, yih, verb}))
+	tok := out.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasPartialPosTag("pron:pers"))
+	require.False(t, tok.HasPartialPosTag("pron:pos"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testSimpleRemove

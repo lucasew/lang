@@ -37,14 +37,27 @@ func TestTokenAgreementNumrNounRule_RuleTN(t *testing.T) {
 }
 
 func TestTokenAgreementNumrNounRule_RuleForceNoun(t *testing.T) {
-	t.Skip("soft-skip: force-noun exception list")
+	r := NewTokenAgreementNumrNounRule()
+	// force-noun lemma "тон" skips gender clash
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("дві", "numr:f:v_naz"),
+		atr("тон", "noun:inanim:m:v_naz"),
+	})
+	require.Empty(t, r.Match(sent), "force-noun тон is exception")
 }
 func TestTokenAgreementNumrNounRule_RuleTon(t *testing.T) {
-	t.Skip("soft-skip: тон/тони special cases")
+	require.True(t, IsForceNounException(nil, atr("тони", "noun:inanim:p:v_naz")))
+	require.False(t, IsForceNounException(nil, atr("дні", "noun:inanim:m:v_naz")))
 }
 func TestTokenAgreementNumrNounRule_RuleFract(t *testing.T) {
-	t.Skip("soft-skip: fractional numeral tables")
+	r := NewTokenAgreementNumrNounRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("півтора", "numr:n:v_naz"),
+		atr("року", "noun:inanim:m:v_rod"),
+	})
+	require.Empty(t, r.Match(sent), "fractional numr exception")
 }
 func TestTokenAgreementNumrNounRule_RuleFractionals(t *testing.T) {
-	t.Skip("soft-skip: fractional numeral tables")
+	require.True(t, IsFractionalNumrException(atr("півтори", "numr"), atr("години", "noun:f:v_naz")))
+	require.False(t, IsFractionalNumrException(atr("три", "numr:m:v_naz"), atr("дні", "noun:m:v_naz")))
 }

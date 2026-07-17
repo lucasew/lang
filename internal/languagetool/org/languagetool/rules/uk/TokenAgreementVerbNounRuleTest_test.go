@@ -77,12 +77,30 @@ func TestTokenAgreementVerbNounRule_RuleTN(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTnVdav
 func TestTokenAgreementVerbNounRule_RuleTnVdav(t *testing.T) {
-	t.Skip("unimplemented: TokenAgreementVerbNounRuleTest.testRuleTnVdav")
+	// dative-governed verb with wrong case object
+	r := NewTokenAgreementVerbNounRule()
+	// вірити v_dav/v_oru — wrong v_naz
+	v := "вірити"
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("вірить", &v, "verb:imperf:pres:s:3"),
+		atr("друг", "noun:anim:m:v_naz"),
+	})))
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("вірить", &v, "verb:imperf:pres:s:3"),
+		atr("другу", "noun:anim:m:v_dav"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTn_V_N_Vinf
 func TestTokenAgreementVerbNounRule_RuleTn_V_N_Vinf(t *testing.T) {
-	t.Skip("unimplemented: TokenAgreementVerbNounRuleTest.testRuleTn_V_N_Vinf")
+	// particle between verb and noun still checked
+	r := NewTokenAgreementVerbNounRule()
+	v := "боятися"
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("боятися", &v, "verb:imperf:inf"),
+		atr("не", "part"),
+		atr("закордоном", "noun:inanim:m:v_oru"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTn_V_Vinf_N

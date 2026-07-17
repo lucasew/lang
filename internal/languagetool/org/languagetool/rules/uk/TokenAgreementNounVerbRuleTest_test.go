@@ -26,25 +26,63 @@ func TestTokenAgreementNounVerbRule_Rule(t *testing.T) {
 }
 
 func TestTokenAgreementNounVerbRule_RuleNe(t *testing.T) {
-	// intermediate "не" resets pair in simplified matcher (non-verb after noun)
+	// intermediate "не" is ignorable; agreeing pair still passes
 	r := NewTokenAgreementNounVerbRule()
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("хлопець", "noun:anim:m:v_naz"),
 		atr("не", "part"),
 		atr("читає", "verb:imperf:pres:s:3"),
 	})
-	// simplified: non-verb intermediate clears left → no match
-	require.Empty(t, r.Match(sent))
+	require.Empty(t, r.Match(sent), "не between agreeing noun-verb should pass")
+
+	// disagree through particle
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("хлопці", "noun:anim:p:v_naz"),
+		atr("не", "part"),
+		atr("читає", "verb:imperf:pres:s:3"),
+	})
+	require.NotEmpty(t, r.Match(sentBad), "не should not hide number mismatch")
 }
 
 func TestTokenAgreementNounVerbRule_ProperNames(t *testing.T) {
-	t.Skip("soft-skip: proper-name exception tables")
+	// prop-only without extractable gender → soft pass
+	r := NewTokenAgreementNounVerbRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("Київ", "noun:inanim:m:v_naz:prop:geo"),
+		atr("стоїть", "verb:imperf:pres:s:3"),
+	})
+	// has gender m — may still check; either empty or match is green if consistent
+	_ = r.Match(sent)
+	// pure prop tag without gender pattern → pass
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("ООН", "noun:prop:org"),
+		atr("рішила", "verb:perf:past:f"),
+	})
+	require.Empty(t, r.Match(sent2))
 }
 func TestTokenAgreementNounVerbRule_NounAsAdv(t *testing.T) {
-	t.Skip("soft-skip: noun-as-adv exceptions")
+	// noun that is also adv-tagged: still has noun reading → agreement path
+	r := NewTokenAgreementNounVerbRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("ранок", "noun:inanim:m:v_naz", "adv"),
+		atr("настав", "verb:perf:past:m"),
+	})
+	require.Empty(t, r.Match(sent))
 }
 func TestTokenAgreementNounVerbRule_Pron(t *testing.T) {
-	t.Skip("soft-skip: pronoun subject matrix")
+	r := NewTokenAgreementNounVerbRule()
+	// ми + 1pl
+	sentGood := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("ми", "noun:anim:p:v_naz:pron:pers:1"),
+		atr("читаємо", "verb:imperf:pres:p:1"),
+	})
+	require.Empty(t, r.Match(sentGood))
+	// ми + 3sg mismatch
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("ми", "noun:anim:p:v_naz:pron:pers:1"),
+		atr("читає", "verb:imperf:pres:s:3"),
+	})
+	require.NotEmpty(t, r.Match(sentBad))
 }
 func TestTokenAgreementNounVerbRule_VerbInf(t *testing.T) {
 	// infinitive verb → i gender; may not flag with normal noun
