@@ -97,6 +97,10 @@ type RuleInfo struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"category"`
+	// Urls soft documentation links (community rule pages).
+	Urls []struct {
+		Value string `json:"value"`
+	} `json:"urls,omitempty"`
 }
 
 // NewSoftwareInfo returns default open-source identity.

@@ -356,6 +356,9 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		if rm.ShortMessage == "" {
 			rm.ShortMessage = short
 		}
+		if rm.URL == "" {
+			rm.URL = languagetool.SoftRuleURL(ruleID, "")
+		}
 		rm.Replacements = append([]string(nil), m.Suggestions...)
 		out = append(out, *rm)
 	}

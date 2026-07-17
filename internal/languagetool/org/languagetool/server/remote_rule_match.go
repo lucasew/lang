@@ -1,6 +1,10 @@
 package server
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+)
 
 // Span is a minimal stand-in for a RuleMatch span used by overlap checks.
 type Span struct {
@@ -103,6 +107,15 @@ func (m *RemoteRuleMatch) ToMatchInfo() MatchInfo {
 	}
 	info.Rule.Category.ID = m.CategoryID
 	info.Rule.Category.Name = m.Category
+	url := m.URL
+	if url == "" {
+		url = languagetool.SoftRuleURL(m.RuleID, "")
+	}
+	if url != "" {
+		info.Rule.Urls = append(info.Rule.Urls, struct {
+			Value string `json:"value"`
+		}{Value: url})
+	}
 	for _, r := range m.Replacements {
 		info.Replacements = append(info.Replacements, ReplacementInfo{Value: r})
 	}

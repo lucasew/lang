@@ -1,0 +1,14 @@
+[
+  {
+    "rule": "EN_A_VS_AN",
+    "type": "grammar",
+    "severity": "error",
+    "message": "Use \"a\" before a consonant sound",
+    "location": "stdin:1:9",
+    "suggestion": "a",
+    "offset": 8,
+    "length": 2,
+    "file": "stdin",
+    "suggestions": ["a"]
+  }
+]

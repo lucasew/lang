@@ -15,6 +15,8 @@ Soft product subcommands (SPEC §2):
   lint                     check text with linter columns (same as --lint)
   languages                list languages (same as --list)
   rules                    list registered rule IDs for -l language
+  golden                   dump SPEC findings JSON (goldens)
+  compare GOLDEN.json      compare live findings to a golden file
   doctor                   environment / self-check diagnostics
   version                  print version
   help                     this help
@@ -84,6 +86,11 @@ func NormalizeProductArgs(args []string) []string {
 		return append([]string{"--list-rules"}, args[1:]...)
 	case "doctor":
 		return []string{"--doctor"}
+	case "golden":
+		return append([]string{"--golden"}, args[1:]...)
+	case "compare":
+		// compare GOLDEN [opts...] FILE  →  --compare GOLDEN [opts...] FILE
+		return append([]string{"--compare"}, args[1:]...)
 	case "version":
 		return []string{"--version"}
 	case "help":
@@ -166,6 +173,30 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 		_, _ = fmt.Fprintln(stderr, "check hook not configured")
 		return 1
 	}
+	// Soft golden / compare product modes use dedicated hooks.
+	if opts.GoldenMode {
+		n, err := CoreGoldenHook(stdout, text, opts)
+		if err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
+		if n > 0 {
+			return 1
+		}
+		return 0
+	}
+	if opts.CompareMode {
+		n, err := CoreCompareHook(stdout, text, opts)
+		if err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
+		if n > 0 {
+			return 1
+		}
+		return 0
+	}
+
 	n, err := hooks.Check(stdout, text, opts)
 	if err != nil {
 		_, _ = fmt.Fprintln(stderr, err.Error())

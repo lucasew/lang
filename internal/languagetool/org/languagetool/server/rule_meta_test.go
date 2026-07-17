@@ -111,3 +111,13 @@ func TestApiV2_MatchTypeAndContextForSure(t *testing.T) {
 	require.NoError(t, err)
 	require.Contains(t, r2.Body, "contextForSureMatch")
 }
+
+func TestApiV2_MatchRuleURL(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "This is an test.",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r.Body, "community.languagetool.org/rule/show/EN_A_VS_AN")
+}

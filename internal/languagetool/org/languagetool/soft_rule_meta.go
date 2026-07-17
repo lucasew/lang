@@ -86,3 +86,18 @@ func SeverityFromIssueType(issueType string) string {
 		return "warning"
 	}
 }
+
+// SoftRuleURL returns a community rule page URL for a rule ID (soft documentation link).
+func SoftRuleURL(ruleID, lang string) string {
+	if ruleID == "" {
+		return ""
+	}
+	if lang == "" {
+		lang = "en"
+	}
+	// strip variant
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		lang = lang[:i]
+	}
+	return "https://community.languagetool.org/rule/show/" + ruleID + "?lang=" + lang
+}

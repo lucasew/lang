@@ -27,6 +27,15 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetPrintRules(true)
 		case "--doctor":
 			opts.SetPrintDoctor(true)
+		case "--golden":
+			opts.SetGoldenMode(true)
+		case "--compare":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.SetCompareMode(true)
+			opts.SetCompareGoldenPath(args[i])
 		case "--data-dir", "--datadir":
 			if err := needArg(a, i, args); err != nil {
 				return nil, err

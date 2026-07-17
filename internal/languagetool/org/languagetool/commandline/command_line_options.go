@@ -56,6 +56,10 @@ type CommandLineOptions struct {
 	DataDir                       string
 	// FailOn is soft severity threshold for lint/sarif exit: error|warning|note (SPEC §2.2 optional).
 	FailOn                        string
+	// Soft product modes for golden dump / compare.
+	GoldenMode        bool
+	CompareMode       bool
+	CompareGoldenPath string
 }
 
 func NewCommandLineOptions() *CommandLineOptions {
@@ -72,6 +76,9 @@ func (o *CommandLineOptions) SetPrintRules(v bool)     { o.PrintRules = v }
 func (o *CommandLineOptions) SetPrintDoctor(v bool)    { o.PrintDoctor = v }
 func (o *CommandLineOptions) SetDataDir(p string)      { o.DataDir = p }
 func (o *CommandLineOptions) SetFailOn(s string)       { o.FailOn = s }
+func (o *CommandLineOptions) SetGoldenMode(v bool)     { o.GoldenMode = v }
+func (o *CommandLineOptions) SetCompareMode(v bool)    { o.CompareMode = v }
+func (o *CommandLineOptions) SetCompareGoldenPath(p string) { o.CompareGoldenPath = p }
 func (o *CommandLineOptions) GetDataDir() string {
 	if o == nil {
 		return ""
