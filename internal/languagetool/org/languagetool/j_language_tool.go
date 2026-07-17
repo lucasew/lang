@@ -49,6 +49,7 @@ type CheckCancelledCallback func() bool
 type LocalMatch struct {
 	FromPos, ToPos int
 	Message        string
+	ShortMessage   string
 	RuleID         string
 	Suggestions    []string
 	// Priority used by CleanOverlappingLocalMatches (higher wins).

@@ -18,6 +18,7 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 			FromPos:     m.GetFromPos(),
 			ToPos:       m.GetToPos(),
 			Message:     m.GetMessage(),
+			ShortMessage: m.GetShortMessage(),
 			Suggestions: append([]string(nil), m.GetSuggestedReplacements()...),
 		}
 		if g, ok := m.Rule.(interface{ GetID() string }); ok {

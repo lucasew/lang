@@ -34,6 +34,12 @@ func (m *RuleMatch) GetSuggestedReplacements() []string { return m.SuggestedRepl
 
 func (m *RuleMatch) GetRule() any      { return m.Rule }
 func (m *RuleMatch) GetMessage() string { return m.Message }
+func (m *RuleMatch) GetShortMessage() string {
+	if m == nil {
+		return ""
+	}
+	return m.ShortMessage
+}
 
 func (m *RuleMatch) SetOffsetPosition(from, to int) {
 	m.FromPos = from
