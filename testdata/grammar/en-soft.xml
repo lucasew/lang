@@ -3067,6 +3067,76 @@
       <message>Did you mean "strengthen"?</message>
       <short>strenghten</short>
     </rule>
+    <rule id="EN_SOFT_ADDRESSING_MISS" name="adressing soft">
+      <pattern>
+        <token>adressing</token>
+      </pattern>
+      <message>Did you mean "addressing"?</message>
+      <short>adressing</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIVABLE_MISS" name="recieveable soft">
+      <pattern>
+        <token>recieveable</token>
+      </pattern>
+      <message>Did you mean "receivable"?</message>
+      <short>recieveable</short>
+    </rule>
+    <rule id="EN_SOFT_SURPRISED_MISS" name="surprized soft">
+      <pattern>
+        <token>surprized</token>
+      </pattern>
+      <message>Did you mean "surprised"?</message>
+      <short>surprized</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTIONNAIRE_MISS" name="questionnair soft">
+      <pattern>
+        <token>questionnair</token>
+      </pattern>
+      <message>Did you mean "questionnaire"?</message>
+      <short>questionnair</short>
+    </rule>
+    <rule id="EN_SOFT_PROPAGATION_MISS" name="propogation soft">
+      <pattern>
+        <token>propogation</token>
+      </pattern>
+      <message>Did you mean "propagation"?</message>
+      <short>propogation</short>
+    </rule>
+    <rule id="EN_SOFT_PURSUING_MISS" name="persueing soft">
+      <pattern>
+        <token>persueing</token>
+      </pattern>
+      <message>Did you mean "pursuing"?</message>
+      <short>persueing</short>
+    </rule>
+    <rule id="EN_SOFT_MILLENNIA_MISS" name="millenia soft">
+      <pattern>
+        <token>millenia</token>
+      </pattern>
+      <message>Did you mean "millennia"?</message>
+      <short>millenia</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITTED_MISS" name="comitted soft">
+      <pattern>
+        <token>comitted</token>
+      </pattern>
+      <message>Did you mean "committed"?</message>
+      <short>comitted</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINITELY_MISS2" name="definatly soft">
+      <pattern>
+        <token>definatly</token>
+      </pattern>
+      <message>Did you mean "definitely"?</message>
+      <short>definatly</short>
+    </rule>
+    <rule id="EN_SOFT_GRATEFUL_MISS2" name="greatfull soft">
+      <pattern>
+        <token>greatfull</token>
+      </pattern>
+      <message>Did you mean "grateful"?</message>
+      <short>greatfull</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

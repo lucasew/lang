@@ -678,4 +678,32 @@
       <translation lang="en">event / occurrence</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="LARGE">
+    <rule>
+      <pattern lang="en">
+        <token>large</token>
+      </pattern>
+      <translation lang="es">grande</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>largo</token>
+      </pattern>
+      <translation lang="en">long (not large)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SANE">
+    <rule>
+      <pattern lang="en">
+        <token>sane</token>
+      </pattern>
+      <translation lang="fr">sain d'esprit</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>sain</token>
+      </pattern>
+      <translation lang="en">healthy / sound</translation>
+    </rule>
+  </rulegroup>
 </rules>

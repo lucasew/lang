@@ -155,3 +155,7 @@ in due time	RB
 at long last	RB
 San Jose	NNP
 San Juan	NNP
+as of yet	RB
+at present	RB
+in short	RB
+to date	RB
