@@ -3153,5 +3153,26 @@
       <message>Jargon; name structured experimental factor testing instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MUDA" name="muda soft picky">
+      <pattern>
+        <token>muda</token>
+      </pattern>
+      <message>Jargon; name wasteful non-value-adding work instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MURA" name="mura soft picky">
+      <pattern>
+        <token>mura</token>
+      </pattern>
+      <message>Jargon; name unevenness or irregular workload instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MURI" name="muri soft picky">
+      <pattern>
+        <token>muri</token>
+      </pattern>
+      <message>Jargon; name overburden of people or equipment instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

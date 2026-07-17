@@ -501,3 +501,6 @@ Halite Summit RegionNNP
 Chert Summit RegionNNP
 Hornfels Summit RegionNNP
 Amphibolite Summit RegionNNP
+Eclogite Summit RegionNNP
+Serpentinite Summit RegionNNP
+Soapstone Summit RegionNNP

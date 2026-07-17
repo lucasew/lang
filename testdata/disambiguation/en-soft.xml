@@ -4875,4 +4875,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_QUESTDB" name="immunize questdb">
+    <pattern>
+      <token>questdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QUESTDB_CAPS" name="immunize QuestDB">
+    <pattern>
+      <token>QuestDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COLLECTD" name="immunize collectd">
+    <pattern>
+      <token>collectd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_COLLECTD_CAPS" name="immunize Collectd">
+    <pattern>
+      <token>Collectd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STATSD" name="immunize statsd">
+    <pattern>
+      <token>statsd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STATSD_CAPS" name="immunize StatsD">
+    <pattern>
+      <token>StatsD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

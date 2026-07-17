@@ -11117,6 +11117,76 @@
       <message>Did you mean "pseudo"?</message>
       <short>psuedo</short>
     </rule>
+    <rule id="EN_SOFT_RIDICULOUS_MISS2" name="rediculous soft">
+      <pattern>
+        <token>rediculous</token>
+      </pattern>
+      <message>Did you mean "ridiculous"?</message>
+      <short>rediculous</short>
+    </rule>
+    <rule id="EN_SOFT_RESOURCE_MISS" name="resourse soft">
+      <pattern>
+        <token>resourse</token>
+      </pattern>
+      <message>Did you mean "resource"?</message>
+      <short>resourse</short>
+    </rule>
+    <rule id="EN_SOFT_STATEMENT_MISS" name="statment soft">
+      <pattern>
+        <token>statment</token>
+      </pattern>
+      <message>Did you mean "statement"?</message>
+      <short>statment</short>
+    </rule>
+    <rule id="EN_SOFT_STOPPED_MISS" name="stoped soft">
+      <pattern>
+        <token>stoped</token>
+      </pattern>
+      <message>Did you mean "stopped"?</message>
+      <short>stoped</short>
+    </rule>
+    <rule id="EN_SOFT_ABOUT_MISS" name="abotu soft">
+      <pattern>
+        <token>abotu</token>
+      </pattern>
+      <message>Did you mean "about"?</message>
+      <short>abotu</short>
+    </rule>
+    <rule id="EN_SOFT_AGAIN_MISS" name="agian soft">
+      <pattern>
+        <token>agian</token>
+      </pattern>
+      <message>Did you mean "again"?</message>
+      <short>agian</short>
+    </rule>
+    <rule id="EN_SOFT_ANOTHER_MISS3" name="anotehr soft">
+      <pattern>
+        <token>anotehr</token>
+      </pattern>
+      <message>Did you mean "another"?</message>
+      <short>anotehr</short>
+    </rule>
+    <rule id="EN_SOFT_ALSO_MISS" name="aslo soft">
+      <pattern>
+        <token>aslo</token>
+      </pattern>
+      <message>Did you mean "also"?</message>
+      <short>aslo</short>
+    </rule>
+    <rule id="EN_SOFT_BEFORE_MISS3" name="befroe soft">
+      <pattern>
+        <token>befroe</token>
+      </pattern>
+      <message>Did you mean "before"?</message>
+      <short>befroe</short>
+    </rule>
+    <rule id="EN_SOFT_CHECK_MISS" name="chekc soft">
+      <pattern>
+        <token>chekc</token>
+      </pattern>
+      <message>Did you mean "check"?</message>
+      <short>chekc</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
