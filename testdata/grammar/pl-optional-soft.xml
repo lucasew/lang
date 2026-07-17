@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft PL optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="pl">
+  <category id="STYLE" name="Style">
+    <rule id="PL_SOFT_OPT_W_RAMACH" name="w ramach soft optional" default="off">
+      <pattern>
+        <token>w</token>
+        <token>ramach</token>
+      </pattern>
+      <message>Rozważ krótsze "podczas" lub "w".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PL_SOFT_OPT_W_CELU" name="w celu soft optional" default="off">
+      <pattern>
+        <token>w</token>
+        <token>celu</token>
+      </pattern>
+      <message>Rozważ "aby" lub "żeby".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PL_SOFT_OPT_NA_PODSTAWIE" name="na podstawie soft optional" default="off">
+      <pattern>
+        <token>na</token>
+        <token>podstawie</token>
+      </pattern>
+      <message>Rozważ "według" lub "zgodnie z".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

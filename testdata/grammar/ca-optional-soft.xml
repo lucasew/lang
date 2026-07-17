@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft CA optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="ca">
+  <category id="STYLE" name="Style">
+    <rule id="CA_SOFT_OPT_AMB_LA_FINALITAT" name="amb la finalitat soft optional" default="off">
+      <pattern>
+        <token>amb</token>
+        <token>la</token>
+        <token>finalitat</token>
+        <token>de</token>
+      </pattern>
+      <message>Considereu "per" o "per a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="CA_SOFT_OPT_EN_RELACIO" name="en relació amb soft optional" default="off">
+      <pattern>
+        <token>en</token>
+        <token>relació</token>
+        <token>amb</token>
+      </pattern>
+      <message>Considereu "sobre" o "quant a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="CA_SOFT_OPT_A_NIVELL_DE" name="a nivell de soft optional" default="off">
+      <pattern>
+        <token>a</token>
+        <token>nivell</token>
+        <token>de</token>
+      </pattern>
+      <message>Considereu "en" o un substantiu més precís.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

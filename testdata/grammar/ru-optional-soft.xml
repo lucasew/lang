@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft RU optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="ru">
+  <category id="STYLE" name="Style">
+    <rule id="RU_SOFT_OPT_V_RAMKAH" name="в рамках soft optional" default="off">
+      <pattern>
+        <token>в</token>
+        <token>рамках</token>
+      </pattern>
+      <message>Рассмотрите «в» или «при».</message>
+      <short>style</short>
+    </rule>
+    <rule id="RU_SOFT_OPT_S_TSELYU" name="с целью soft optional" default="off">
+      <pattern>
+        <token>с</token>
+        <token>целью</token>
+      </pattern>
+      <message>Рассмотрите «чтобы».</message>
+      <short>style</short>
+    </rule>
+    <rule id="RU_SOFT_OPT_V_SVYAZI" name="в связи с soft optional" default="off">
+      <pattern>
+        <token>в</token>
+        <token>связи</token>
+        <token>с</token>
+      </pattern>
+      <message>Рассмотрите «из-за» или «потому что».</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

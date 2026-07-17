@@ -643,7 +643,9 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		for _, name := range []string{
 			"en-optional-soft.xml", "de-optional-soft.xml", "fr-optional-soft.xml",
 			"es-optional-soft.xml", "pt-optional-soft.xml", "it-optional-soft.xml",
-			"nl-optional-soft.xml",
+			"nl-optional-soft.xml", "pl-optional-soft.xml", "sv-optional-soft.xml",
+			"da-optional-soft.xml", "ru-optional-soft.xml", "uk-optional-soft.xml",
+			"ca-optional-soft.xml",
 		} {
 			optPath := filepath.Join(gdir, name)
 			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {

@@ -2122,6 +2122,77 @@ func TestGolden_SoftOptionalNL(t *testing.T) {
 	require.Contains(t, out.String(), "NL_SOFT_OPT_IN_HET_KADER")
 }
 
+func TestGolden_SoftOptionalPL(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "pl", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "W ramach projektu czekamy.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "PL_SOFT_OPT_W_RAMACH")
+}
+
+func TestGolden_SoftOptionalSV(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "sv", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "I syfte att förbättra väntar vi.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "SV_SOFT_OPT_I_SYFTE")
+}
+
+func TestGolden_SoftOptionalDA(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "da", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "I forbindelse med planen venter vi.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "DA_SOFT_OPT_I_FORBINDELSE")
+}
+
+func TestGolden_SoftOptionalRU(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "ru", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "В рамках проекта ждём.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "RU_SOFT_OPT_V_RAMKAH")
+}
+
+func TestGolden_SoftOptionalUK(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "uk", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "В рамках проєкту чекаємо.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "UK_SOFT_OPT_V_RAMKAH")
+}
+
+func TestGolden_SoftOptionalCA(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "ca", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "A nivell de producte, esperem.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "CA_SOFT_OPT_A_NIVELL_DE")
+}
+
+func TestGolden_SoftOptionalDefaultOffPL(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "W ramach projektu czekamy.", &CommandLineOptions{Language: "pl"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.False(t, strings.Contains(f.Rule, "SOFT_OPT_"), "%+v", findings)
+	}
+}
+
 func TestGolden_SoftIdiomConfusablesWave3(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string
