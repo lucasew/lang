@@ -618,3 +618,6 @@ Basalt Mesa RegionNNP
 Granite Mesa RegionNNP
 Andesite Mesa RegionNNP
 Rhyolite Mesa RegionNNP
+Obsidian Mesa RegionNNP
+Pumice Mesa RegionNNP
+Tuff Mesa RegionNNP

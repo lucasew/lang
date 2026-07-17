@@ -13847,6 +13847,76 @@
       <message>Did you mean "parentbased"?</message>
       <short>parentbasedd</short>
     </rule>
+    <rule id="EN_SOFT_ALWAYSON_MISS" name="alwaysonn soft">
+      <pattern>
+        <token>alwaysonn</token>
+      </pattern>
+      <message>Did you mean "alwayson"?</message>
+      <short>alwaysonn</short>
+    </rule>
+    <rule id="EN_SOFT_ALWAYSOFF_MISS" name="alwaysofff soft">
+      <pattern>
+        <token>alwaysofff</token>
+      </pattern>
+      <message>Did you mean "alwaysoff"?</message>
+      <short>alwaysofff</short>
+    </rule>
+    <rule id="EN_SOFT_TRACEIDRATIO_MISS" name="traceidratioo soft">
+      <pattern>
+        <token>traceidratioo</token>
+      </pattern>
+      <message>Did you mean "traceidratio"?</message>
+      <short>traceidratioo</short>
+    </rule>
+    <rule id="EN_SOFT_SAMPLERATIO_MISS" name="sampleratioo soft">
+      <pattern>
+        <token>sampleratioo</token>
+      </pattern>
+      <message>Did you mean "sampleratio"?</message>
+      <short>sampleratioo</short>
+    </rule>
+    <rule id="EN_SOFT_LINKCONTEXT_MISS" name="linkcontextt soft">
+      <pattern>
+        <token>linkcontextt</token>
+      </pattern>
+      <message>Did you mean "linkcontext"?</message>
+      <short>linkcontextt</short>
+    </rule>
+    <rule id="EN_SOFT_STATUSDESCRIPTION_MISS" name="statusdescriptionn soft">
+      <pattern>
+        <token>statusdescriptionn</token>
+      </pattern>
+      <message>Did you mean "statusdescription"?</message>
+      <short>statusdescriptionn</short>
+    </rule>
+    <rule id="EN_SOFT_EXCEPTIONEVENT_MISS" name="exceptioneventt soft">
+      <pattern>
+        <token>exceptioneventt</token>
+      </pattern>
+      <message>Did you mean "exceptionevent"?</message>
+      <short>exceptioneventt</short>
+    </rule>
+    <rule id="EN_SOFT_DROPPEDATTRIBUTES_MISS" name="droppedattributess soft">
+      <pattern>
+        <token>droppedattributess</token>
+      </pattern>
+      <message>Did you mean "droppedattributes"?</message>
+      <short>droppedattributess</short>
+    </rule>
+    <rule id="EN_SOFT_DROPPEDEVENTS_MISS" name="droppedeventss soft">
+      <pattern>
+        <token>droppedeventss</token>
+      </pattern>
+      <message>Did you mean "droppedevents"?</message>
+      <short>droppedeventss</short>
+    </rule>
+    <rule id="EN_SOFT_DROPPEDLINKS_MISS" name="droppedlinkss soft">
+      <pattern>
+        <token>droppedlinkss</token>
+      </pattern>
+      <message>Did you mean "droppedlinks"?</message>
+      <short>droppedlinkss</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

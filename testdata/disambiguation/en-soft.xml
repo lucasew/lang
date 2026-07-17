@@ -6291,4 +6291,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GLAMOR" name="immunize glamor">
+    <pattern>
+      <token>glamor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLAMOR_CAPS" name="immunize Glamor">
+    <pattern>
+      <token>Glamor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDCOMPONENTS" name="immunize styledcomponents">
+    <pattern>
+      <token>styledcomponents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEDCOMPONENTS_CAPS" name="immunize StyledComponents">
+    <pattern>
+      <token>StyledComponents</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TWINMACRO" name="immunize twinmacro">
+    <pattern>
+      <token>twinmacro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TWINMACRO_CAPS" name="immunize TwinMacro">
+    <pattern>
+      <token>TwinMacro</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

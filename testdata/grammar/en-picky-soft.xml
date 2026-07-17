@@ -4036,5 +4036,29 @@
       <message>Jargon; name total annual recurring revenue footprint instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BACKLOG_ARR" name="backlog arr soft picky">
+      <pattern>
+        <token>backlog</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue still in backlog instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACTED_ARR" name="contracted arr soft picky">
+      <pattern>
+        <token>contracted</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue under signed contracts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RETAINED_ARR" name="retained arr soft picky">
+      <pattern>
+        <token>retained</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue retained over the period instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
