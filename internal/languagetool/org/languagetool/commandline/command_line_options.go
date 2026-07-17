@@ -18,6 +18,8 @@ type CommandLineOptions struct {
 	PrintUsage                    bool
 	PrintVersion                  bool
 	PrintLanguages                bool
+	// PrintRules soft-lists registered rule IDs for the selected language.
+	PrintRules                    bool
 	Verbose                       bool
 	Recursive                     bool
 	TaggerOnly                    bool
@@ -60,6 +62,7 @@ func NewCommandLineOptions() *CommandLineOptions {
 func (o *CommandLineOptions) SetPrintUsage(v bool)     { o.PrintUsage = v }
 func (o *CommandLineOptions) SetPrintVersion(v bool)   { o.PrintVersion = v }
 func (o *CommandLineOptions) SetPrintLanguages(v bool) { o.PrintLanguages = v }
+func (o *CommandLineOptions) SetPrintRules(v bool)     { o.PrintRules = v }
 func (o *CommandLineOptions) SetVerbose(v bool)        { o.Verbose = v }
 func (o *CommandLineOptions) SetRecursive(v bool)      { o.Recursive = v }
 func (o *CommandLineOptions) SetTaggerOnly(v bool)     { o.TaggerOnly = v }

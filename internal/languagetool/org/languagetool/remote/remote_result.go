@@ -3,6 +3,12 @@ package remote
 import "fmt"
 
 // RemoteResult ports org.languagetool.remote.RemoteResult.
+// RemoteSentenceRange is one sentence span from /v2/check sentenceRanges.
+type RemoteSentenceRange struct {
+	Offset int
+	Length int
+}
+
 type RemoteResult struct {
 	Language             string
 	LanguageCode         string
@@ -10,6 +16,7 @@ type RemoteResult struct {
 	LanguageDetectedName string
 	Matches              []*RemoteRuleMatch
 	IgnoreRanges         []RemoteIgnoreRange
+	SentenceRanges       []RemoteSentenceRange
 	Server               RemoteServer
 }
 
@@ -48,6 +55,12 @@ func (r *RemoteResult) GetLanguageDetectedCode() string { return r.LanguageDetec
 func (r *RemoteResult) GetLanguageDetectedName() string { return r.LanguageDetectedName }
 func (r *RemoteResult) GetIgnoreRanges() []RemoteIgnoreRange {
 	return append([]RemoteIgnoreRange(nil), r.IgnoreRanges...)
+}
+func (r *RemoteResult) GetSentenceRanges() []RemoteSentenceRange {
+	if r == nil {
+		return nil
+	}
+	return append([]RemoteSentenceRange(nil), r.SentenceRanges...)
 }
 func (r *RemoteResult) String() string {
 	if r == nil {

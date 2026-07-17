@@ -378,6 +378,34 @@ func CoreListLanguages(w io.Writer) error {
 	return nil
 }
 
+// CoreListRules writes registered rule IDs for lang (one per line), with soft category.
+func CoreListRules(w io.Writer, lang string) error {
+	if w == nil {
+		return nil
+	}
+	if lang == "" {
+		lang = "en"
+	}
+	lt, err := configureCoreLT(lang, &CommandLineOptions{Language: lang})
+	if err != nil {
+		return err
+	}
+	ids := lt.GetAllRegisteredRuleIDs()
+	for _, id := range ids {
+		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
+		if cat == "" {
+			cat = "MISC"
+		}
+		if issue == "" {
+			issue = "uncategorized"
+		}
+		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\n", id, cat, issue); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // DefaultCoreHooks returns RunHooks wired to the pure-Go core packs.
 func DefaultCoreHooks() RunHooks {
 	return RunHooks{

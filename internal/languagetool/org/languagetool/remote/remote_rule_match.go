@@ -18,6 +18,10 @@ type RemoteRuleMatch struct {
 	Category            string
 	CategoryID          string
 	LocQualityIssueType string
+	// ContextForSureMatch soft-ports API contextForSureMatch.
+	ContextForSureMatch int
+	// TypeName soft-ports matches[].type.typeName.
+	TypeName string
 }
 
 func NewRemoteRuleMatch(ruleID, ruleDescription, msg, context string, contextOffset, offset, errorLength int) *RemoteRuleMatch {
@@ -65,6 +69,20 @@ func (m *RemoteRuleMatch) SetShortMessage(s string)  { m.ShortMessage = s }
 func (m *RemoteRuleMatch) SetURL(u string)           { m.URL = u }
 func (m *RemoteRuleMatch) SetCategory(c, id string)  { m.Category, m.CategoryID = c, id }
 func (m *RemoteRuleMatch) SetLocQualityIssueType(t string) { m.LocQualityIssueType = t }
+func (m *RemoteRuleMatch) SetContextForSureMatch(n int)    { m.ContextForSureMatch = n }
+func (m *RemoteRuleMatch) SetTypeName(t string)            { m.TypeName = t }
+func (m *RemoteRuleMatch) GetContextForSureMatch() int {
+	if m == nil {
+		return 0
+	}
+	return m.ContextForSureMatch
+}
+func (m *RemoteRuleMatch) GetTypeName() string {
+	if m == nil {
+		return ""
+	}
+	return m.TypeName
+}
 
 // String ports RemoteRuleMatch.toString → "ruleId@offset-(offset+len)".
 func (m *RemoteRuleMatch) String() string {

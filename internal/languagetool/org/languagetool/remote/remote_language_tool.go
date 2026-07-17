@@ -171,6 +171,10 @@ type apiJSON struct {
 		To   int    `json:"to"`
 		Lang string `json:"language"`
 	} `json:"ignoreRanges"`
+	SentenceRanges []struct {
+		Offset int `json:"offset"`
+		Length int `json:"length"`
+	} `json:"sentenceRanges"`
 }
 
 type apiMatch struct {
@@ -178,7 +182,12 @@ type apiMatch struct {
 	ShortMessage string `json:"shortMessage"`
 	Offset       int    `json:"offset"`
 	Length       int    `json:"length"`
-	Context      struct {
+	// ContextForSureMatch soft-ports the API field.
+	ContextForSureMatch int `json:"contextForSureMatch"`
+	Type                *struct {
+		TypeName string `json:"typeName"`
+	} `json:"type"`
+	Context struct {
 		Text   string `json:"text"`
 		Offset int    `json:"offset"`
 		Length int    `json:"length"`
@@ -222,6 +231,12 @@ func ParseCheckJSON(data []byte) (*RemoteResult, error) {
 		}
 		rm.SetCategory(m.Rule.Category.Name, m.Rule.Category.ID)
 		rm.SetLocQualityIssueType(m.Rule.IssueType)
+		rm.SetContextForSureMatch(m.ContextForSureMatch)
+		if m.Type != nil && m.Type.TypeName != "" {
+			rm.SetTypeName(m.Type.TypeName)
+		} else if m.Rule.IssueType != "" {
+			rm.SetTypeName(m.Rule.IssueType)
+		}
 		reps := make([]string, 0, len(m.Replacements))
 		for _, r := range m.Replacements {
 			reps = append(reps, r.Value)
@@ -247,6 +262,9 @@ func ParseCheckJSON(data []byte) (*RemoteResult, error) {
 	}
 	for _, ir := range raw.IgnoreRanges {
 		res.IgnoreRanges = append(res.IgnoreRanges, NewRemoteIgnoreRange(ir.From, ir.To, ir.Lang))
+	}
+	for _, sr := range raw.SentenceRanges {
+		res.SentenceRanges = append(res.SentenceRanges, RemoteSentenceRange{Offset: sr.Offset, Length: sr.Length})
 	}
 	return res, nil
 }

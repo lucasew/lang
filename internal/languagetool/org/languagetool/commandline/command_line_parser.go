@@ -23,6 +23,8 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetPrintVersion(true)
 		case "--list":
 			opts.SetPrintLanguages(true)
+		case "--list-rules", "--listrules":
+			opts.SetPrintRules(true)
 		case "-h", "-help", "--help", "--?":
 			opts.SetPrintUsage(true)
 		case "-adl", "--autoDetect":

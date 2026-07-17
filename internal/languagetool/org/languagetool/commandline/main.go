@@ -14,6 +14,7 @@ const UsageText = `Usage: lang [lint|languages|version|help] [OPTION]... [FILE]
 Soft product subcommands (SPEC §2):
   lint                     check text with linter columns (same as --lint)
   languages                list languages (same as --list)
+  rules                    list registered rule IDs for -l language
   version                  print version
   help                     this help
 
@@ -35,6 +36,7 @@ Options:
   --ruleValues LIST        soft RULE_ID:value pairs (e.g. TOO_LONG_SENTENCE:10)
   --autoDetect, -adl       detect language from text
   --list                   list languages
+  --list-rules             list registered rule IDs for -l language
   --version                print version
   -h, --help               this help
 `
@@ -72,6 +74,9 @@ func NormalizeProductArgs(args []string) []string {
 		return append([]string{"--lint"}, args[1:]...)
 	case "languages", "list":
 		return []string{"--list"}
+	case "rules":
+		// keep -l / --language and other flags; force --list-rules
+		return append([]string{"--list-rules"}, args[1:]...)
 	case "version":
 		return []string{"--version"}
 	case "help":
@@ -108,6 +113,17 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 			return 0
 		}
 		_, _ = fmt.Fprintln(stdout, "en")
+		return 0
+	}
+	if opts.PrintRules {
+		lang := opts.Language
+		if lang == "" {
+			lang = "en"
+		}
+		if err := CoreListRules(stdout, lang); err != nil {
+			_, _ = fmt.Fprintln(stderr, err.Error())
+			return 1
+		}
 		return 0
 	}
 
