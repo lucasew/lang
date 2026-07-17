@@ -627,6 +627,7 @@ def vendor_lang(lang: str) -> dict:
         "replace_custom.txt",
         "replace_profanity.txt",
         "diacritics.txt",
+        "contractions.txt",
         "compounds.txt",
         "specific_case.txt",
         "coherency.txt",

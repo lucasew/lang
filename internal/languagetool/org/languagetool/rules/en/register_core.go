@@ -44,6 +44,11 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 	sc := NewEnglishSpecificCaseRule(nil)
 	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
+	// Contractions spelling + wrong word in context (official data files).
+	cs := NewContractionSpellingRule(nil)
+	lt.AddRuleChecker(cs.GetID(), rules.AsSentenceCheckerSimple(cs.Match))
+	ww := NewEnglishWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).

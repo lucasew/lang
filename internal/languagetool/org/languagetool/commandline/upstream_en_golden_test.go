@@ -288,3 +288,37 @@ func TestGolden_UpstreamSpecificCase(t *testing.T) {
 	}
 	require.True(t, found, "expected specific-case finding: %+v", findings)
 }
+
+// TestGolden_UpstreamContractionSpelling exercises official contractions.txt.
+func TestGolden_UpstreamContractionSpelling(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Dont do this at home.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_CONTRACTION_SPELLING" || strings.Contains(f.Suggestion, "Don't") || strings.Contains(f.Suggestion, "don't") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected contraction spelling finding: %+v", findings)
+}
+
+// TestGolden_UpstreamWrongWordInContext exercises official wrongWordInContext.txt.
+func TestGolden_UpstreamWrongWordInContext(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I have proscribed you a course of antibiotics.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "ENGLISH_WRONG_WORD_IN_CONTEXT" || strings.Contains(strings.ToLower(f.Suggestion), "prescribed") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected wrong-word-in-context finding: %+v", findings)
+}
