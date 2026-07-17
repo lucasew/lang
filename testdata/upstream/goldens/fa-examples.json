@@ -40,12 +40,6 @@
       "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
     },
     {
-      "rule": "RemoveAdditionMarks",
-      "text": "۱۹٬",
-      "suggestion": "۱۹",
-      "source": "languagetool-language-modules/fa/src/main/resources/org/languagetool/rules/fa/grammar.xml"
-    },
-    {
       "rule": "Tar_Tarin_Fix",
       "text": "سرشناس تر",
       "suggestion": "سرشناس‌تر",

@@ -171,20 +171,23 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	}
 	// Soft: treat ASCII and typographic apostrophes as equivalent so
 	// French soft packs (often ASCII d'/l') match FrenchWordTokenizer (often ’).
+	// Keep the raw surface for regexp matching against REs compiled with either form.
+	rawSurface := surface
 	surface = normalizeApostrophes(surface)
 	want := normalizeApostrophes(pt.Token)
 	if pt.Regexp {
 		if m.tokenRE != nil {
-			if m.tokenRE.MatchString(surface) {
+			// Try raw and apostrophe-normalized surfaces (pattern may use ’ or ').
+			if m.tokenRE.MatchString(rawSurface) || m.tokenRE.MatchString(surface) {
 				return true
 			}
 			// Soft EO x-system (Ambaux) — only when digraphs are present, never lowercasing alone.
-			if folded := softEsperantoUnicode(surface); folded != surface && m.tokenRE.MatchString(folded) {
+			if folded := softEsperantoUnicode(rawSurface); folded != rawSurface && m.tokenRE.MatchString(folded) {
 				return true
 			}
 			// Inflected EO/regexp (biliardoj vs biliardo|…): try lemma-like candidates.
 			if pt.MatchInflected {
-				for _, cand := range softEsperantoLemmaCandidates(surface) {
+				for _, cand := range softEsperantoLemmaCandidates(rawSurface) {
 					if m.tokenRE.MatchString(cand) {
 						return true
 					}
@@ -196,13 +199,13 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	}
 	if pt.CaseSensitive {
 		// Exact only — do not EO-fold (would ignore case via ToLower).
-		return surface == want
+		return rawSurface == pt.Token || surface == want
 	}
-	if strings.EqualFold(surface, want) {
+	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, pt.Token) {
 		return true
 	}
 	// Soft Esperanto: Ambaux/Ambau ↔ ambaŭ after x-system + diacritic fold.
-	return softEsperantoFold(surface) == softEsperantoFold(want)
+	return softEsperantoFold(rawSurface) == softEsperantoFold(pt.Token)
 }
 
 func normalizeApostrophes(s string) string {

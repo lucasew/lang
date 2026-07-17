@@ -137,6 +137,10 @@ def token_is_soft(tok: ET.Element) -> bool:
         return False
     if "&" in text:
         return False
+    # Go RE2 (regexp package) does not support lookaround; skip such soft tokens.
+    if "regexp" in {k.lower() for k in tok.attrib} or (tok.get("regexp") or "").lower() == "yes":
+        if "(?" in text and any(x in text for x in ("?!", "?=", "?<", "?>")):
+            return False
     return True
 
 

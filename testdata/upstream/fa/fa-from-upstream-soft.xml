@@ -36,13 +36,4 @@
       <short>فاصلهٔ «تر و ترین» با واژه پیشین را حذف کنید</short>
     </rule>
   </category>
-  <category id="CAT3" name="تمیزکاری و حذف نشانه‌های اضافی">
-    <rule id="RemoveAdditionMarks" name="نشانه‌های اضافی بین اعداد">
-      <pattern>
-        <token regexp="yes">([۰-۹]+)[٫٬](?![۰-۹])</token>
-      </pattern>
-      <message>آیا منظور شما «<suggestion></suggestion>» است؟</message>
-      <short>نشانه اضافی را حذف کنید</short>
-    </rule>
-  </category>
 </rules>
