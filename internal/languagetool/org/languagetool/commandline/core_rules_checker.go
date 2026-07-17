@@ -626,7 +626,10 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			_, _ = fmt.Fprintf(w, "picky soft packs: %d\n", pickyN)
 		}
 		optN := 0
-		for _, name := range []string{"en-optional-soft.xml", "de-optional-soft.xml", "fr-optional-soft.xml"} {
+		for _, name := range []string{
+			"en-optional-soft.xml", "de-optional-soft.xml", "fr-optional-soft.xml",
+			"es-optional-soft.xml", "pt-optional-soft.xml", "it-optional-soft.xml",
+		} {
 			optPath := filepath.Join(gdir, name)
 			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {
 				optN++

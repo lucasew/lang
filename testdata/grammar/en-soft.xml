@@ -1140,6 +1140,56 @@
       <message>Did you mean "exact revenge"?</message>
       <short>extract/exact</short>
     </rule>
+    <rule id="EN_SOFT_PEAKED_INTEREST_ALT" name="piqued interest alt soft">
+      <pattern>
+        <token>peaked</token>
+        <token>my</token>
+        <token>interest</token>
+      </pattern>
+      <message>Did you mean "piqued my interest"?</message>
+      <short>peaked/piqued</short>
+    </rule>
+    <rule id="EN_SOFT_PHASE_OF_THE_MOON" name="faze soft">
+      <pattern>
+        <token>phase</token>
+        <token>me</token>
+      </pattern>
+      <message>Did you mean "faze me"?</message>
+      <short>phase/faze</short>
+    </rule>
+    <rule id="EN_SOFT_REIGN_IN" name="reign in soft">
+      <pattern>
+        <token>reign</token>
+        <token>in</token>
+      </pattern>
+      <message>Did you mean "rein in"?</message>
+      <short>reign/rein</short>
+    </rule>
+    <rule id="EN_SOFT_PALATE_CLEANSER" name="pallet cleanser soft">
+      <pattern>
+        <token>pallet</token>
+        <token>cleanser</token>
+      </pattern>
+      <message>Did you mean "palate cleanser"?</message>
+      <short>pallet/palate</short>
+    </rule>
+    <rule id="EN_SOFT_SHOE_IN" name="shoe-in soft">
+      <pattern>
+        <token>shoe</token>
+        <token>in</token>
+      </pattern>
+      <message>Did you mean "shoo-in"?</message>
+      <short>shoe/shoo</short>
+    </rule>
+    <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
+      <pattern>
+        <token>deep</token>
+        <token>-</token>
+        <token>seeded</token>
+      </pattern>
+      <message>Did you mean "deep-seated"?</message>
+      <short>seeded/seated</short>
+    </rule>
   </category>
   <category id="TYPOS" name="Possible Typo">
     <rule id="EN_SOFT_ANYWAYS" name="anyways">

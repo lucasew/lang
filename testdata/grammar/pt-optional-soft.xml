@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft PT optional rules: default off until -e. -->
+<rules lang="pt">
+  <category id="STYLE" name="Style">
+    <rule id="PT_SOFT_OPT_NO_QUE_CONCERNE" name="no que concerne soft optional" default="off">
+      <pattern>
+        <token>no</token>
+        <token>que</token>
+        <token>concerne</token>
+        <token>a</token>
+      </pattern>
+      <message>Prefira "quanto a" ou "sobre".</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_OPT_COM_VISTAS_A" name="com vistas a soft optional" default="off">
+      <pattern>
+        <token>com</token>
+        <token>vistas</token>
+        <token>a</token>
+      </pattern>
+      <message>Prefira "para" + infinitivo.</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_OPT_POR_MEIO_DE" name="por meio de soft optional" default="off">
+      <pattern>
+        <token>por</token>
+        <token>meio</token>
+        <token>de</token>
+      </pattern>
+      <message>Prefira "com" ou "usando" se mais claro.</message>
+      <short>style</short>
+    </rule>
+    <rule id="PT_SOFT_OPT_ANTES_DE_QUE" name="antes de que soft optional" default="off">
+      <pattern>
+        <token>antes</token>
+        <token>de</token>
+        <token>que</token>
+      </pattern>
+      <message>Prefira "antes que" ou "antes de" + infinitivo.</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

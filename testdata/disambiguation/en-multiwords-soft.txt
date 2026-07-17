@@ -1,4 +1,4 @@
-# Soft EN multiwords (tab-separated phrase\tPOS) for MultiWordChunker
+# Soft EN multiwords (tab-separated phrase	POS) for MultiWordChunker
 San Francisco	NNP
 New Jersey	NNP
 South Korea	NNP
@@ -97,3 +97,11 @@ New South Wales	NNP
 Western Australia	NNP
 British Columbia	NNP
 Quebec City	NNP
+beyond a shadow of a doubt	RB
+for better or for worse	RB
+in no uncertain terms	RB
+as a last resort	RB
+in the nick of time	RB
+by no means	RB
+to some extent	RB
+Porto Alegre	NNP

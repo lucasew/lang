@@ -1533,6 +1533,11 @@ func TestGolden_SoftIdiomConfusablesWave2(t *testing.T) {
 		{"The event was a damp squid.", "EN_SOFT_DAMP_SQUID", "damp squib"},
 		{"Take a sneak peak at this.", "EN_SOFT_SNEAK_PEAK", "sneak peek"},
 		{"They will extract revenge soon.", "EN_SOFT_EXTRACT_REVENGE", "exact revenge"},
+		{"That will peaked my interest soon.", "EN_SOFT_PEAKED_INTEREST_ALT", "piqued my interest"},
+		{"Nothing will phase me today.", "EN_SOFT_PHASE_OF_THE_MOON", "faze me"},
+		{"Please reign in spending.", "EN_SOFT_REIGN_IN", "rein in"},
+		{"A pallet cleanser follows.", "EN_SOFT_PALATE_CLEANSER", "palate cleanser"},
+		{"He is a shoe in for the job.", "EN_SOFT_SHOE_IN", "shoo-in"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -1977,6 +1982,51 @@ func TestGolden_SoftOptionalFR(t *testing.T) {
 	}, &out, &errb)
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	require.Contains(t, out.String(), "FR_SOFT_OPT_DANS_LE_CADRE")
+}
+
+func TestGolden_SoftOptionalES(t *testing.T) {
+	text := "Con el fin de mejorar, estudia."
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "es", "-e", "ES_SOFT_OPT_CON_EL_FIN_DE", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "ES_SOFT_OPT_CON_EL_FIN_DE")
+}
+
+func TestGolden_SoftOptionalPT(t *testing.T) {
+	text := "Com vistas a melhorar, estude."
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "pt", "-e", "PT_SOFT_OPT_COM_VISTAS_A", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "PT_SOFT_OPT_COM_VISTAS_A")
+}
+
+func TestGolden_SoftOptionalIT(t *testing.T) {
+	text := "Al fine di migliorare, studia."
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "it", "-e", "IT_SOFT_OPT_AL_FINE_DI", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "IT_SOFT_OPT_AL_FINE_DI")
+}
+
+func TestGolden_ApplySoftOptionalPriorTo(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-e", "EN_SOFT_OPT_PRIOR_TO", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Prior to leaving, call.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	// multi-token match → shorter suggestion keeps lowercase ("before")
+	require.Contains(t, out.String(), "before")
+	require.NotContains(t, out.String(), "Prior to")
 }
 
 func TestGolden_SoftListRulesOptionalOff(t *testing.T) {
