@@ -2535,4 +2535,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NBD" name="immunize nbd">
+    <pattern>
+      <token>nbd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NBD_CAPS" name="immunize NBD">
+    <pattern>
+      <token>NBD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVME" name="immunize nvme">
+    <pattern>
+      <token>nvme</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVME_CAPS" name="immunize NVMe">
+    <pattern>
+      <token>NVMe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVMF" name="immunize nvmf">
+    <pattern>
+      <token>nvmf</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NVMF_CAPS" name="immunize NVMeF">
+    <pattern>
+      <token>NVMeF</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -1581,5 +1581,29 @@
       <message>Jargon; name the retry delay policy instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RATE_LIMITING" name="rate limiting soft picky">
+      <pattern>
+        <token>rate</token>
+        <token>limiting</token>
+      </pattern>
+      <message>Jargon; name the throughput cap and policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOAD_SHEDDING" name="load shedding soft picky">
+      <pattern>
+        <token>load</token>
+        <token>shedding</token>
+      </pattern>
+      <message>Jargon; name which work is dropped under pressure.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GRACEFUL_DEGRADATION" name="graceful degradation soft picky">
+      <pattern>
+        <token>graceful</token>
+        <token>degradation</token>
+      </pattern>
+      <message>Jargon; name which features reduce under failure.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

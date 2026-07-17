@@ -6567,6 +6567,76 @@
       <message>Did you mean "omissions"?</message>
       <short>omisions</short>
     </rule>
+    <rule id="EN_SOFT_PARTICULARLY_MISS3" name="particullary soft">
+      <pattern>
+        <token>particullary</token>
+      </pattern>
+      <message>Did you mean "particularly"?</message>
+      <short>particullary</short>
+    </rule>
+    <rule id="EN_SOFT_PEOPLES_MISS" name="peopels soft">
+      <pattern>
+        <token>peopels</token>
+      </pattern>
+      <message>Did you mean "peoples"?</message>
+      <short>peopels</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERABLE_MISS" name="prefereable soft">
+      <pattern>
+        <token>prefereable</token>
+      </pattern>
+      <message>Did you mean "preferable"?</message>
+      <short>prefereable</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERRING_MISS" name="prefering soft">
+      <pattern>
+        <token>prefering</token>
+      </pattern>
+      <message>Did you mean "preferring"?</message>
+      <short>prefering</short>
+    </rule>
+    <rule id="EN_SOFT_PRECEDING_MISS" name="preceeding soft">
+      <pattern>
+        <token>preceeding</token>
+      </pattern>
+      <message>Did you mean "preceding"?</message>
+      <short>preceeding</short>
+    </rule>
+    <rule id="EN_SOFT_PRECEDED_MISS" name="preceeded soft">
+      <pattern>
+        <token>preceeded</token>
+      </pattern>
+      <message>Did you mean "preceded"?</message>
+      <short>preceeded</short>
+    </rule>
+    <rule id="EN_SOFT_PROCLAIM_MISS" name="procliam soft">
+      <pattern>
+        <token>procliam</token>
+      </pattern>
+      <message>Did you mean "proclaim"?</message>
+      <short>procliam</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSIONAL_MISS" name="proffessional soft">
+      <pattern>
+        <token>proffessional</token>
+      </pattern>
+      <message>Did you mean "professional"?</message>
+      <short>proffessional</short>
+    </rule>
+    <rule id="EN_SOFT_PRIVILEGE_MISS2" name="privelege soft">
+      <pattern>
+        <token>privelege</token>
+      </pattern>
+      <message>Did you mean "privilege"?</message>
+      <short>privelege</short>
+    </rule>
+    <rule id="EN_SOFT_RECOMMENDATION_MISS2" name="reccomendation soft">
+      <pattern>
+        <token>reccomendation</token>
+      </pattern>
+      <message>Did you mean "recommendation"?</message>
+      <short>reccomendation</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

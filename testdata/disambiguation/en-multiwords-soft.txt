@@ -306,3 +306,6 @@ day by day	RB
 San Jose California Metro	NNP
 night by night	RB
 week by week	RB
+San Francisco Bay	NNP
+month by month	RB
+year by year	RB
