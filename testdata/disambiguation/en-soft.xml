@@ -2355,4 +2355,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MOOSEFS" name="immunize moosefs">
+    <pattern>
+      <token>moosefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MOOSEFS_CAPS" name="immunize MooseFS">
+    <pattern>
+      <token>MooseFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORANGEFS" name="immunize orangefs">
+    <pattern>
+      <token>orangefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORANGEFS_CAPS" name="immunize OrangeFS">
+    <pattern>
+      <token>OrangeFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPHFS" name="immunize cephfs">
+    <pattern>
+      <token>cephfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CEPHFS_CAPS" name="immunize CephFS">
+    <pattern>
+      <token>CephFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

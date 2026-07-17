@@ -1460,5 +1460,30 @@
       <message>Jargon; name the offline reserve capacity instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BLUE_GREEN_DEPLOYMENT" name="blue green deployment soft picky">
+      <pattern>
+        <token>blue</token>
+        <token>green</token>
+        <token>deployment</token>
+      </pattern>
+      <message>Jargon; name the dual-environment cutover plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROLLING_UPDATE" name="rolling update soft picky">
+      <pattern>
+        <token>rolling</token>
+        <token>update</token>
+      </pattern>
+      <message>Jargon; name the phased rollout strategy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FEATURE_FLAG" name="feature flag soft picky">
+      <pattern>
+        <token>feature</token>
+        <token>flag</token>
+      </pattern>
+      <message>Jargon; name the toggle and rollout criteria instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -291,3 +291,6 @@ week to week	RB
 Fort Worth Texas	NNP
 hour to hour	RB
 minute to minute	RB
+El Paso Texas	NNP
+San Diego California	NNP
+second to second	RB

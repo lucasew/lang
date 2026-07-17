@@ -6217,6 +6217,76 @@
       <message>Did you mean "international"?</message>
       <short>interational</short>
     </rule>
+    <rule id="EN_SOFT_INSTALLED_MISS" name="isntalled soft">
+      <pattern>
+        <token>isntalled</token>
+      </pattern>
+      <message>Did you mean "installed"?</message>
+      <short>isntalled</short>
+    </rule>
+    <rule id="EN_SOFT_ISSUES_MISS" name="isues soft">
+      <pattern>
+        <token>isues</token>
+      </pattern>
+      <message>Did you mean "issues"?</message>
+      <short>isues</short>
+    </rule>
+    <rule id="EN_SOFT_JOURNEYS_MISS" name="jounries soft">
+      <pattern>
+        <token>jounries</token>
+      </pattern>
+      <message>Did you mean "journeys"?</message>
+      <short>jounries</short>
+    </rule>
+    <rule id="EN_SOFT_JUDGMENT_MISS" name="judgemnt soft">
+      <pattern>
+        <token>judgemnt</token>
+      </pattern>
+      <message>Did you mean "judgment"?</message>
+      <short>judgemnt</short>
+    </rule>
+    <rule id="EN_SOFT_JUDICIAL_MISS" name="judical soft">
+      <pattern>
+        <token>judical</token>
+      </pattern>
+      <message>Did you mean "judicial"?</message>
+      <short>judical</short>
+    </rule>
+    <rule id="EN_SOFT_LABORATORIES_MISS" name="labratories soft">
+      <pattern>
+        <token>labratories</token>
+      </pattern>
+      <message>Did you mean "laboratories"?</message>
+      <short>labratories</short>
+    </rule>
+    <rule id="EN_SOFT_LANGUAGES_MISS" name="langauges soft">
+      <pattern>
+        <token>langauges</token>
+      </pattern>
+      <message>Did you mean "languages"?</message>
+      <short>langauges</short>
+    </rule>
+    <rule id="EN_SOFT_LATERALLY_MISS" name="lateraly soft">
+      <pattern>
+        <token>lateraly</token>
+      </pattern>
+      <message>Did you mean "laterally"?</message>
+      <short>lateraly</short>
+    </rule>
+    <rule id="EN_SOFT_LEISURE_MISS2" name="leasure soft">
+      <pattern>
+        <token>leasure</token>
+      </pattern>
+      <message>Did you mean "leisure"?</message>
+      <short>leasure</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSED_MISS" name="lisenced soft">
+      <pattern>
+        <token>lisenced</token>
+      </pattern>
+      <message>Did you mean "licensed"?</message>
+      <short>lisenced</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
