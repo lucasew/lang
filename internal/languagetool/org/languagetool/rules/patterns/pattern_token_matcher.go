@@ -61,6 +61,15 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		if !matched {
 			matched = softInflectedSurfaceMatch(token.GetToken(), pt.Token, pt.CaseSensitive)
 		}
+		// Esperanto: try x-system/diacritic fold and common -o/-oj/-ojn stems.
+		if !matched {
+			for _, cand := range softEsperantoLemmaCandidates(token.GetToken()) {
+				if m.matchSurface(cand) {
+					matched = true
+					break
+				}
+			}
+		}
 	}
 	if pt.Pos != nil && pt.Pos.PosTag != "" {
 		pos := token.GetPOSTag()
@@ -166,18 +175,34 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	want := normalizeApostrophes(pt.Token)
 	if pt.Regexp {
 		if m.tokenRE != nil {
-			// tokenRE compiled from original pattern; also try normalized surface.
 			if m.tokenRE.MatchString(surface) {
 				return true
 			}
-			return m.tokenRE.MatchString(want) // no-op if same
+			// Soft EO x-system (Ambaux) — only when digraphs are present, never lowercasing alone.
+			if folded := softEsperantoUnicode(surface); folded != surface && m.tokenRE.MatchString(folded) {
+				return true
+			}
+			// Inflected EO/regexp (biliardoj vs biliardo|…): try lemma-like candidates.
+			if pt.MatchInflected {
+				for _, cand := range softEsperantoLemmaCandidates(surface) {
+					if m.tokenRE.MatchString(cand) {
+						return true
+					}
+				}
+			}
+			return false
 		}
 		return false
 	}
 	if pt.CaseSensitive {
+		// Exact only — do not EO-fold (would ignore case via ToLower).
 		return surface == want
 	}
-	return strings.EqualFold(surface, want)
+	if strings.EqualFold(surface, want) {
+		return true
+	}
+	// Soft Esperanto: Ambaux/Ambau ↔ ambaŭ after x-system + diacritic fold.
+	return softEsperantoFold(surface) == softEsperantoFold(want)
 }
 
 func normalizeApostrophes(s string) string {
@@ -219,8 +244,34 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 		surface = strings.ToLower(surface)
 		base = strings.ToLower(base)
 	}
+	// EO x-system / diacritic fold before prefix checks.
+	if softEsperantoFold(surface) == softEsperantoFold(base) {
+		return true
+	}
 	if surface == base {
 		return true
+	}
+	// Prefix check on folded forms (ambaŭ / Ambaux).
+	sf, bf := softEsperantoFold(surface), softEsperantoFold(base)
+	if strings.HasPrefix(sf, bf) {
+		suf := sf[len(bf):]
+		if len(suf) > 0 && len(suf) <= 4 {
+			switch suf {
+			case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "j", "jn", "oj", "ojn", "an", "on":
+				return true
+			default:
+				ok := true
+				for _, r := range suf {
+					if !unicode.IsLetter(r) {
+						ok = false
+						break
+					}
+				}
+				if ok && len(suf) <= 2 {
+					return true
+				}
+			}
+		}
 	}
 	if !strings.HasPrefix(surface, base) {
 		return false
@@ -231,7 +282,7 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	}
 	// Common short inflection suffixes across LT languages (not full morphology).
 	switch suf {
-	case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "aren", "eren":
+	case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "aren", "eren", "j", "jn", "oj", "ojn":
 		return true
 	default:
 		// all-letter short suffix only
@@ -242,4 +293,52 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 		}
 		return len(suf) <= 2
 	}
+}
+
+// softEsperantoUnicode converts x-system digraphs to Unicode diacritics (cx→ĉ).
+func softEsperantoUnicode(s string) string {
+	if s == "" || !strings.ContainsAny(strings.ToLower(s), "x") {
+		return s
+	}
+	// Process lowercase digraphs in a case-preserving way via lower map then restore is hard;
+	// apply case-insensitive sequential replaces on a lowered copy for matching only.
+	low := strings.ToLower(s)
+	repl := []struct{ from, to string }{
+		{"cx", "ĉ"}, {"gx", "ĝ"}, {"hx", "ĥ"}, {"jx", "ĵ"}, {"sx", "ŝ"}, {"ux", "ŭ"},
+	}
+	for _, r := range repl {
+		low = strings.ReplaceAll(low, r.from, r.to)
+	}
+	return low
+}
+
+// softEsperantoFold maps x-system and EO diacritics to plain ASCII letters for soft compare.
+func softEsperantoFold(s string) string {
+	s = softEsperantoUnicode(strings.ToLower(s))
+	return strings.NewReplacer(
+		"ĉ", "c", "ĝ", "g", "ĥ", "h", "ĵ", "j", "ŝ", "s", "ŭ", "u",
+	).Replace(s)
+}
+
+// softEsperantoLemmaCandidates yields likely dictionary forms for EO surfaces (biliardoj→biliardo).
+func softEsperantoLemmaCandidates(surface string) []string {
+	if surface == "" {
+		return nil
+	}
+	u := softEsperantoUnicode(strings.ToLower(surface))
+	out := []string{u}
+	// Strip accusative/plural endings common in EO.
+	type strip struct{ suf, base string }
+	for _, st := range []strip{
+		{"ojn", "o"}, {"oj", "o"}, {"on", "o"}, {"an", "a"}, {"en", "e"},
+		{"ajn", "a"}, {"ojn", "o"}, {"n", ""}, {"j", ""},
+	} {
+		if strings.HasSuffix(u, st.suf) {
+			stem := u[:len(u)-len(st.suf)] + st.base
+			if stem != u && stem != "" {
+				out = append(out, stem)
+			}
+		}
+	}
+	return out
 }
