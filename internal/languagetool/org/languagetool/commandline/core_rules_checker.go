@@ -598,6 +598,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		for _, name := range []string{
 			"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml",
 			"es-picky-soft.xml", "pt-picky-soft.xml", "it-picky-soft.xml",
+			"nl-picky-soft.xml", "sv-picky-soft.xml",
 		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
@@ -607,6 +608,10 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		}
 		if pickyN > 0 {
 			_, _ = fmt.Fprintf(w, "picky soft packs: %d\n", pickyN)
+		}
+		optPath := filepath.Join(gdir, "en-optional-soft.xml")
+		if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {
+			_, _ = fmt.Fprintf(w, "en optional soft pack: %s (rules default off; enable with -e)\n", optPath)
 		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)

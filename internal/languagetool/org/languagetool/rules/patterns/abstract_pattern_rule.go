@@ -28,6 +28,8 @@ type AbstractPatternRule struct {
 	LineNumber              int
 	DistanceTokens          int
 	Premium                 bool
+	// DefaultOff is true when XML default="off" or default="temp_off" (soft grammar).
+	DefaultOff bool
 }
 
 func NewAbstractPatternRule(id, description, languageCode string, patternTokens []*PatternToken, getUnified bool) *AbstractPatternRule {

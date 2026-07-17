@@ -58,6 +58,7 @@ type xmlRuleGroup struct {
 type xmlRule struct {
 	ID      string     `xml:"id,attr"`
 	Name    string     `xml:"name,attr"`
+	Default string     `xml:"default,attr"`
 	Pattern xmlPattern `xml:"pattern"`
 	Message string     `xml:"message"`
 	Short   string     `xml:"short"`
@@ -110,6 +111,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		r.ShortMessage = strings.TrimSpace(xr.Short)
 		r.CategoryID = catID
 		r.CategoryName = catName
+		// soft: default="off" / default="temp_off" registers but starts disabled
+		def := strings.ToLower(strings.TrimSpace(xr.Default))
+		if def == "off" || def == "temp_off" {
+			r.DefaultOff = true
+		}
 		out = append(out, r)
 		return nil
 	}

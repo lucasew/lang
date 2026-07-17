@@ -171,3 +171,33 @@ func TestRegisterSoftGrammarDir_RU_SV_DA(t *testing.T) {
 		})
 	}
 }
+
+func TestRegisterGrammarXML_DefaultOff(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules lang="en">
+  <category id="STYLE" name="Style">
+    <rule id="EN_SOFT_OPT_TEST" name="opt" default="off">
+      <pattern><token>prior</token><token>to</token></pattern>
+      <message>Did you mean "before"?</message>
+    </rule>
+  </category>
+</rules>`
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := patterns.RegisterGrammarXML(lt, xml, "test.xml", "en")
+	require.NoError(t, err)
+	require.Equal(t, 1, n)
+	// disabled by default
+	ms := lt.Check("Prior to leaving, call.")
+	for _, m := range ms {
+		require.NotEqual(t, "EN_SOFT_OPT_TEST", m.RuleID)
+	}
+	lt.EnableRule("EN_SOFT_OPT_TEST")
+	ms = lt.Check("Prior to leaving, call.")
+	found := false
+	for _, m := range ms {
+		if m.RuleID == "EN_SOFT_OPT_TEST" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", ms)
+}

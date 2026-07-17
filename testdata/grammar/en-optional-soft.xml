@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EN optional rules: registered by soft dir load but default off until -e. -->
+<rules lang="en">
+  <category id="STYLE" name="Style">
+    <rule id="EN_SOFT_OPT_GET_GO" name="get-go soft optional" default="off">
+      <pattern>
+        <token>from</token>
+        <token>the</token>
+        <token>get</token>
+        <token>go</token>
+      </pattern>
+      <message>Consider "from the start" or "from the beginning".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AT_THIS_JUNCTURE" name="at this juncture soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>this</token>
+        <token>juncture</token>
+      </pattern>
+      <message>Consider "now" or "at this point".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_WITH_REGARD_TO" name="with regard to soft optional" default="off">
+      <pattern>
+        <token>with</token>
+        <token>regard</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "about" or "regarding".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_THE_EVENT" name="in the event of soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>event</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "if" when shorter is clearer.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_PRIOR_TO" name="prior to soft optional" default="off">
+      <pattern>
+        <token>prior</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "before".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_SUBSEQUENT_TO" name="subsequent to soft optional" default="off">
+      <pattern>
+        <token>subsequent</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "after".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

@@ -1909,6 +1909,142 @@ func TestGolden_SoftPickyListRulesCLI(t *testing.T) {
 	require.Contains(t, out.String(), "level=picky")
 }
 
+func TestGolden_SoftOptionalDefaultOff(t *testing.T) {
+	text := "Prior to leaving, call home."
+	// default: optional soft rule is registered but off
+	var def bytes.Buffer
+	_, err := CoreGoldenHook(&def, text, &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var defF []Finding
+	require.NoError(t, json.Unmarshal(def.Bytes(), &defF))
+	for _, f := range defF {
+		require.NotEqual(t, "EN_SOFT_OPT_PRIOR_TO", f.Rule)
+	}
+
+	// enable with -e
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-e", "EN_SOFT_OPT_PRIOR_TO", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "EN_SOFT_OPT_PRIOR_TO")
+}
+
+func TestGolden_SoftOptionalMore(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"From the get go we knew.", "EN_SOFT_OPT_GET_GO"},
+		{"At this juncture we wait.", "EN_SOFT_OPT_AT_THIS_JUNCTURE"},
+		{"With regard to fees, wait.", "EN_SOFT_OPT_WITH_REGARD_TO"},
+		{"In the event of rain, cancel.", "EN_SOFT_OPT_IN_THE_EVENT"},
+		{"Subsequent to review, ship.", "EN_SOFT_OPT_SUBSEQUENT_TO"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var out, errb bytes.Buffer
+			code := RunWithIO([]string{"-l", "en", "-e", tc.rule, "--json", "-"}, RunHooks{
+				ReadStdin: func() (string, error) { return tc.text, nil },
+				Check:     CoreCheckHook,
+			}, &out, &errb)
+			require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+			require.Contains(t, out.String(), tc.rule)
+		})
+	}
+}
+
+func TestGolden_SoftPickyNL(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"De meeting is morgen.", "NL_SOFT_PICKY_MEETING", "vergadering"},
+		{"Ik wil feedback vandaag.", "NL_SOFT_PICKY_FEEDBACK", "terugkoppeling"},
+		{"Het is heel heel belangrijk.", "NL_SOFT_PICKY_HEEL_HEEL", ""},
+		{"Er zijn veel dingen te doen.", "NL_SOFT_PICKY_DINGEN", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "nl", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickySV(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Vi har en meeting imorgon.", "SV_SOFT_PICKY_MEETING", "möte"},
+		{"Jag vill ha feedback snart.", "SV_SOFT_PICKY_FEEDBACK", "återkoppling"},
+		{"Det är väldigt väldigt bra.", "SV_SOFT_PICKY_VALDIGT_VALDIGT", ""},
+		{"Det finns många saker kvar.", "SV_SOFT_PICKY_SAKER", ""},
+		{"I slutändan bestämmer vi.", "SV_SOFT_PICKY_I_SLUTANDAN", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "sv", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftFailOnNoteStyle(t *testing.T) {
+	// soft style rules have severity note; fail-on=error should exit 0
+	// fail-on=note should exit non-zero when only style soft hits
+	text := "This is very unique work."
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{
+		"-l", "en", "--lint", "--fail-on", "error",
+		"-d", "UPPERCASE_SENTENCE_START",
+		"-",
+	}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	// style soft is note severity → fail-on error exits 0
+	require.Equal(t, 0, code, "err=%s out=%s", errb.String(), out.String())
+
+	var out2, errb2 bytes.Buffer
+	code2 := RunWithIO([]string{
+		"-l", "en", "--lint", "--fail-on", "note",
+		"-d", "UPPERCASE_SENTENCE_START",
+		"-",
+	}, RunHooks{
+		ReadStdin: func() (string, error) { return text, nil },
+		Check:     CoreCheckHook,
+	}, &out2, &errb2)
+	require.NotEqual(t, 0, code2, "expected fail-on note to fail on style soft; out=%s", out2.String())
+}
+
 
 
 func TestGolden_SoftInformalForms(t *testing.T) {

@@ -112,6 +112,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 			}
 			return out
 		})
+		// soft: XML default="off" → registered but disabled until -e RULE_ID
+		if ar.DefaultOff {
+			lt.DisableRule(id)
+		}
 		n++
 	}
 	return n, nil
@@ -174,6 +178,9 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 		dir + "/" + base + "-soft.xml",
 		dir + "/" + languageCode + "-soft.xml",
 		dir + "/" + base + "/grammar-soft.xml",
+		// soft optional packs (rules often default="off", enable with -e)
+		dir + "/" + base + "-optional-soft.xml",
+		dir + "/" + languageCode + "-optional-soft.xml",
 	}
 	seen := map[string]struct{}{}
 	var candidates []string
