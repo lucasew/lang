@@ -117,7 +117,7 @@ func SoftRuleURL(ruleID, lang string) string {
 // isSoftFalseFriendGroupID matches soft false-friends-soft.xml rulegroup ids.
 func isSoftFalseFriendGroupID(id string) bool {
 	switch id {
-	case "ABILITY", "GIFT", "ACTUAL", "LIBRARY", "EVENTUAL":
+	case "ABILITY", "GIFT", "ACTUAL", "LIBRARY", "EVENTUAL", "BECOME":
 		return true
 	default:
 		return false

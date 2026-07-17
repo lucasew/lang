@@ -31,6 +31,8 @@ func TestGolden_FalseFriends(t *testing.T) {
 		{"en", "es", "Go to the library.", "LIBRARY", "biblioteca"},
 		{"en", "es", "Eventual success.", "EVENTUAL", "final"},
 		{"de", "en", "Gift ist giftig.", "GIFT", "poison"},
+		{"en", "de", "I want to become a doctor.", "BECOME", "werden"},
+		{"de", "en", "Ich will das Buch bekommen.", "BECOME", "get"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule+"_"+tc.lang+"_"+tc.mother, func(t *testing.T) {

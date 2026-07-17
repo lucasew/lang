@@ -85,6 +85,9 @@ func MatchesAsSARIF(matches []*rules.RuleMatch, text, filename, lang string) str
 		}
 		id := ruleIDOfMatch(m)
 		_, _, issue, short := languagetool.SoftRuleMeta(id)
+		if m.IssueType != "" {
+			issue = m.IssueType
+		}
 		sev := languagetool.SeverityFromIssueType(issue)
 		desc := languagetool.SoftRuleDescription(id)
 		if desc == "" {

@@ -71,4 +71,18 @@
       <translation lang="en">temporary</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="BECOME">
+    <rule>
+      <pattern lang="en">
+        <token>become</token>
+      </pattern>
+      <translation lang="de">werden</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>bekommen</token>
+      </pattern>
+      <translation lang="en">get</translation>
+    </rule>
+  </rulegroup>
 </rules>
