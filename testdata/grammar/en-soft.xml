@@ -4257,6 +4257,76 @@
       <message>Did you mean "beneficial"?</message>
       <short>benificial</short>
     </rule>
+    <rule id="EN_SOFT_CAMOUFLAGE_MISS" name="camoflage soft">
+      <pattern>
+        <token>camoflage</token>
+      </pattern>
+      <message>Did you mean "camouflage"?</message>
+      <short>camoflage</short>
+    </rule>
+    <rule id="EN_SOFT_CHALLENGE_MISS" name="challange soft">
+      <pattern>
+        <token>challange</token>
+      </pattern>
+      <message>Did you mean "challenge"?</message>
+      <short>challange</short>
+    </rule>
+    <rule id="EN_SOFT_CHARACTER_MISS" name="charactor soft">
+      <pattern>
+        <token>charactor</token>
+      </pattern>
+      <message>Did you mean "character"?</message>
+      <short>charactor</short>
+    </rule>
+    <rule id="EN_SOFT_COLLABORATE_MISS" name="collaberate soft">
+      <pattern>
+        <token>collaberate</token>
+      </pattern>
+      <message>Did you mean "collaborate"?</message>
+      <short>collaberate</short>
+    </rule>
+    <rule id="EN_SOFT_COMMEMORATE_MISS" name="comemorate soft">
+      <pattern>
+        <token>comemorate</token>
+      </pattern>
+      <message>Did you mean "commemorate"?</message>
+      <short>comemorate</short>
+    </rule>
+    <rule id="EN_SOFT_COMPLETENESS_MISS" name="completness soft">
+      <pattern>
+        <token>completness</token>
+      </pattern>
+      <message>Did you mean "completeness"?</message>
+      <short>completness</short>
+    </rule>
+    <rule id="EN_SOFT_CONNECTION_MISS" name="conection soft">
+      <pattern>
+        <token>conection</token>
+      </pattern>
+      <message>Did you mean "connection"?</message>
+      <short>conection</short>
+    </rule>
+    <rule id="EN_SOFT_CONCENTRATED_MISS" name="consentrated soft">
+      <pattern>
+        <token>consentrated</token>
+      </pattern>
+      <message>Did you mean "concentrated"?</message>
+      <short>consentrated</short>
+    </rule>
+    <rule id="EN_SOFT_CONSTRUCTION_MISS" name="contruction soft">
+      <pattern>
+        <token>contruction</token>
+      </pattern>
+      <message>Did you mean "construction"?</message>
+      <short>contruction</short>
+    </rule>
+    <rule id="EN_SOFT_CORRUPT_MISS" name="corupt soft">
+      <pattern>
+        <token>corupt</token>
+      </pattern>
+      <message>Did you mean "corrupt"?</message>
+      <short>corupt</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

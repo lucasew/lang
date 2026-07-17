@@ -207,3 +207,6 @@ day after day	RB
 Trenton New Jersey	NNP
 Harrisburg Pennsylvania	NNP
 little by little	RB
+Dover Delaware	NNP
+Annapolis Maryland	NNP
+step by step	RB

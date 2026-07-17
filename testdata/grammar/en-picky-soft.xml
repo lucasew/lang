@@ -751,5 +751,28 @@
       <message>Jargon; name the primary metric instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_BEST_PRACTICE" name="best practice soft picky">
+      <pattern>
+        <token>best</token>
+        <token>practice</token>
+      </pattern>
+      <message>Vague; name the concrete practice or standard.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PAIN_POINT" name="pain point soft picky">
+      <pattern>
+        <token>pain</token>
+        <token>point</token>
+      </pattern>
+      <message>Jargon; name the problem directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEARNINGS" name="learnings soft picky">
+      <pattern>
+        <token>learnings</token>
+      </pattern>
+      <message>Consider "lessons" or "what we learned".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

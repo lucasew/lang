@@ -1347,4 +1347,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PACKER" name="immunize packer">
+    <pattern>
+      <token>packer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PACKER_CAPS" name="immunize Packer">
+    <pattern>
+      <token>Packer</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NOMAD" name="immunize nomad">
+    <pattern>
+      <token>nomad</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NOMAD_CAPS" name="immunize Nomad">
+    <pattern>
+      <token>Nomad</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAULT" name="immunize vault">
+    <pattern>
+      <token>vault</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAULT_CAPS" name="immunize Vault">
+    <pattern>
+      <token>Vault</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
