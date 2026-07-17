@@ -295,5 +295,30 @@
       <message>Consider "meet" or "catch up".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_BACK_ON" name="circle back on soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>back</token>
+        <token>on</token>
+      </pattern>
+      <message>Consider "revisit" or "follow up on".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOOP_IN" name="loop in soft picky">
+      <pattern>
+        <token>loop</token>
+        <token>in</token>
+      </pattern>
+      <message>Consider "include" or "inform".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TABLE_THIS" name="table this soft picky">
+      <pattern>
+        <token>table</token>
+        <token>this</token>
+      </pattern>
+      <message>Ambiguous US/UK; prefer "postpone" or "put on the agenda".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -190,5 +190,26 @@
       <message>In American English, "story" is often preferred for building floors.</message>
       <short>storey</short>
     </rule>
+    <rule id="EN_SOFT_HONOUR_US" name="honour soft">
+      <pattern>
+        <token>honour</token>
+      </pattern>
+      <message>In American English, "honor" is often preferred.</message>
+      <short>honour</short>
+    </rule>
+    <rule id="EN_SOFT_FAVOUR_US" name="favour soft">
+      <pattern>
+        <token>favour</token>
+      </pattern>
+      <message>In American English, "favor" is often preferred.</message>
+      <short>favour</short>
+    </rule>
+    <rule id="EN_SOFT_LABOURED_US" name="laboured soft">
+      <pattern>
+        <token>laboured</token>
+      </pattern>
+      <message>In American English, "labored" is often preferred.</message>
+      <short>laboured</short>
+    </rule>
   </category>
 </rules>

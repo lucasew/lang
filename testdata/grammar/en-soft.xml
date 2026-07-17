@@ -2647,6 +2647,76 @@
       <message>Did you mean "unfortunately"?</message>
       <short>unfortunatly</short>
     </rule>
+    <rule id="EN_SOFT_USEFUL_MISS" name="usefull soft">
+      <pattern>
+        <token>usefull</token>
+      </pattern>
+      <message>Did you mean "useful"?</message>
+      <short>usefull</short>
+    </rule>
+    <rule id="EN_SOFT_USABLE_MISS" name="useable soft">
+      <pattern>
+        <token>useable</token>
+      </pattern>
+      <message>Did you mean "usable"?</message>
+      <short>useable</short>
+    </rule>
+    <rule id="EN_SOFT_EXISTENT_MISS" name="existant soft">
+      <pattern>
+        <token>existant</token>
+      </pattern>
+      <message>Did you mean "existent"?</message>
+      <short>existant</short>
+    </rule>
+    <rule id="EN_SOFT_PROFESSION_MISS" name="proffession soft">
+      <pattern>
+        <token>proffession</token>
+      </pattern>
+      <message>Did you mean "profession"?</message>
+      <short>proffession</short>
+    </rule>
+    <rule id="EN_SOFT_REFERRED_MISS2" name="reffered soft">
+      <pattern>
+        <token>reffered</token>
+      </pattern>
+      <message>Did you mean "referred"?</message>
+      <short>reffered</short>
+    </rule>
+    <rule id="EN_SOFT_THOROUGH_MISS" name="throrough soft">
+      <pattern>
+        <token>throrough</token>
+      </pattern>
+      <message>Did you mean "thorough"?</message>
+      <short>throrough</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSFULLY_MISS" name="sucessfuly soft">
+      <pattern>
+        <token>sucessfuly</token>
+      </pattern>
+      <message>Did you mean "successfully"?</message>
+      <short>sucessfuly</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATELY_MISS2" name="seperatly soft">
+      <pattern>
+        <token>seperatly</token>
+      </pattern>
+      <message>Did you mean "separately"?</message>
+      <short>seperatly</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUAINT_MISS" name="aquaint soft">
+      <pattern>
+        <token>aquaint</token>
+      </pattern>
+      <message>Did you mean "acquaint"?</message>
+      <short>aquaint</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUAINTANCE_MISS" name="aquaintance soft">
+      <pattern>
+        <token>aquaintance</token>
+      </pattern>
+      <message>Did you mean "acquaintance"?</message>
+      <short>aquaintance</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
