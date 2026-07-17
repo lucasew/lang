@@ -47,7 +47,10 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 			strings.Contains(id, "BASIC_FUNDAMENTALS") || strings.Contains(id, "GOES_WITHOUT_SAYING") ||
 			strings.Contains(id, "THESE_ONES") || strings.Contains(id, "REASON_IS_BECAUSE") ||
 			strings.Contains(id, "WHETHER_OR_NOT") || strings.Contains(id, "ACTUAL_FACT") ||
-			strings.Contains(id, "TRUE_FACT") ||
+			strings.Contains(id, "TRUE_FACT") || strings.Contains(id, "ADVANCE_PLANNING") ||
+			strings.Contains(id, "CLOSE_PROXIMITY") || strings.Contains(id, "FUTURE_PLANS") ||
+			strings.Contains(id, "UNEXPECTED_SURPRISE") || strings.Contains(id, "REVERT_BACK") ||
+			strings.Contains(id, "REPEAT_AGAIN") ||
 			strings.Contains(id, "_STYLE") {
 			return "STYLE", "Style", "style", SoftRuleDescription(ruleID)
 		}

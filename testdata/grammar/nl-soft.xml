@@ -49,6 +49,54 @@
       <message>Mogelijke herhaling van "en".</message>
       <short>en en</short>
     </rule>
+    <rule id="NL_SOFT_KLEINER_ALS" name="kleiner als">
+      <pattern>
+        <token>kleiner</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "kleiner dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_ANDERS_ALS" name="anders als">
+      <pattern>
+        <token>anders</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "anders dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_DAT_DAT" name="dat dat">
+      <pattern>
+        <token>dat</token>
+        <token>dat</token>
+      </pattern>
+      <message>Mogelijke herhaling van "dat".</message>
+      <short>dat dat</short>
+    </rule>
+    <rule id="NL_SOFT_OF_OF" name="of of">
+      <pattern>
+        <token>of</token>
+        <token>of</token>
+      </pattern>
+      <message>Mogelijke herhaling van "of".</message>
+      <short>of of</short>
+    </rule>
+    <rule id="NL_SOFT_ZOU_VAN" name="zou van">
+      <pattern>
+        <token>zou</token>
+        <token>van</token>
+      </pattern>
+      <message>Bedoelde u "zou hebben" of "zou" + infinitief?</message>
+      <short>zou van</short>
+    </rule>
+    <rule id="NL_SOFT_MEERDERE_DAN" name="meerdere dan soft">
+      <pattern>
+        <token>meerdere</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "meer dan"?</message>
+      <short>als/dan</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografie">
     <rule id="NL_SOFT_DOUBLE_BANG" name="dubbel uitroepteken">

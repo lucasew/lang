@@ -540,6 +540,12 @@ func TestGolden_SoftMoreStyleAndTryAnd(t *testing.T) {
 		{"Decide whether or not to go.", "EN_SOFT_WHETHER_OR_NOT", ""},
 		{"That is an actual fact.", "EN_SOFT_ACTUAL_FACT", ""},
 		{"A true fact remains.", "EN_SOFT_TRUE_FACT", ""},
+		{"Do advance planning early.", "EN_SOFT_ADVANCE_PLANNING", ""},
+		{"Stay in close proximity.", "EN_SOFT_CLOSE_PROXIMITY", ""},
+		{"Share your future plans.", "EN_SOFT_FUTURE_PLANS", ""},
+		{"What an unexpected surprise.", "EN_SOFT_UNEXPECTED_SURPRISE", ""},
+		{"Please revert back soon.", "EN_SOFT_REVERT_BACK", ""},
+		{"Do not repeat again.", "EN_SOFT_REPEAT_AGAIN", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -570,6 +576,16 @@ func TestGolden_ApplySoftLessPeople(t *testing.T) {
 	}, &out, &errb)
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	require.Contains(t, out.String(), "fewer people")
+}
+
+func TestGolden_ApplySoftAmountOfPeople(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "The amount of people grew.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "number of people")
 }
 
 func TestGolden_SoftSupposeTo(t *testing.T) {

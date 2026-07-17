@@ -758,6 +758,54 @@
       <message>"True fact" is often redundant; consider "fact".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_ADVANCE_PLANNING" name="advance planning">
+      <pattern>
+        <token>advance</token>
+        <token>planning</token>
+      </pattern>
+      <message>"Advance planning" is often redundant; consider "planning".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_CLOSE_PROXIMITY" name="close proximity">
+      <pattern>
+        <token>close</token>
+        <token>proximity</token>
+      </pattern>
+      <message>Consider "near" or "close".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_FUTURE_PLANS" name="future plans">
+      <pattern>
+        <token>future</token>
+        <token>plans</token>
+      </pattern>
+      <message>"Future plans" is often redundant; consider "plans".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_UNEXPECTED_SURPRISE" name="unexpected surprise">
+      <pattern>
+        <token>unexpected</token>
+        <token>surprise</token>
+      </pattern>
+      <message>"Unexpected surprise" is often redundant; consider "surprise".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_REVERT_BACK" name="revert back">
+      <pattern>
+        <token>revert</token>
+        <token>back</token>
+      </pattern>
+      <message>Consider "revert" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_REPEAT_AGAIN" name="repeat again">
+      <pattern>
+        <token>repeat</token>
+        <token>again</token>
+      </pattern>
+      <message>Consider "repeat" alone.</message>
+      <short>style</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

@@ -115,6 +115,10 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"nl", "Hij is groter als mij.", "NL_SOFT_GROTER_ALS", "groter dan"},
 		{"nl", "Brood en en kaas.", "NL_SOFT_EN_EN", ""},
 		{"nl", "Hun hebben gelijk.", "NL_SOFT_HUN_HEBBEN", ""},
+		{"nl", "Zij is kleiner als hij.", "NL_SOFT_KLEINER_ALS", "kleiner dan"},
+		{"nl", "Dit is anders als gisteren.", "NL_SOFT_ANDERS_ALS", "anders dan"},
+		{"nl", "Ik weet dat dat klopt.", "NL_SOFT_DAT_DAT", ""},
+		{"nl", "Koffie of of thee.", "NL_SOFT_OF_OF", ""},
 		{"nl", "Goed!!", "NL_SOFT_DOUBLE_BANG", "!"},
 		// second-wave packs
 		{"sv", "Dom var här igår.", "SV_SOFT_DOM_VAR", "de var"},
