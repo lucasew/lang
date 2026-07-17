@@ -61,6 +61,29 @@ var Supported = []struct {
 	{"br", "Breton"},
 	{"fa", "Persian"},
 	{"ga", "Irish"},
+	// generic layout + word-repeat packs (no language-specific rule twins yet)
+	{"be", "Belarusian"},
+	{"eo", "Esperanto"},
+	{"is", "Icelandic"},
+	{"ja", "Japanese"},
+	{"lt", "Lithuanian"},
+	{"ml", "Malayalam"},
+	{"sr", "Serbian"},
+	{"ta", "Tamil"},
+	{"tl", "Tagalog"},
+	{"zh", "Chinese"},
+	{"ast", "Asturian"},
+	{"crh", "Crimean Tatar"},
+}
+
+// registerGeneric installs shared layout + base word-repeat with a language-scoped rule id.
+func registerGeneric(lt *languagetool.JLanguageTool, lang, wordRepeatID string) {
+	rules.RegisterSharedLayoutRules(lt, lang)
+	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
+	if wordRepeatID != "" {
+		wr.IDOverride = wordRepeatID
+	}
+	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 }
 
 // Register installs the best available core rule pack for lang (e.g. "en-US", "de").
@@ -119,6 +142,30 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 		fa.RegisterCorePersianRules(lt)
 	case "ga":
 		ga.RegisterCoreIrishRules(lt)
+	case "be":
+		registerGeneric(lt, "be", "BE_WORD_REPEAT_RULE")
+	case "eo":
+		registerGeneric(lt, "eo", "EO_WORD_REPEAT_RULE")
+	case "is":
+		registerGeneric(lt, "is", "IS_WORD_REPEAT_RULE")
+	case "ja":
+		registerGeneric(lt, "ja", "JA_WORD_REPEAT_RULE")
+	case "lt":
+		registerGeneric(lt, "lt", "LT_WORD_REPEAT_RULE")
+	case "ml":
+		registerGeneric(lt, "ml", "ML_WORD_REPEAT_RULE")
+	case "sr":
+		registerGeneric(lt, "sr", "SR_WORD_REPEAT_RULE")
+	case "ta":
+		registerGeneric(lt, "ta", "TA_WORD_REPEAT_RULE")
+	case "tl":
+		registerGeneric(lt, "tl", "TL_WORD_REPEAT_RULE")
+	case "zh":
+		registerGeneric(lt, "zh", "ZH_WORD_REPEAT_RULE")
+	case "ast":
+		registerGeneric(lt, "ast", "AST_WORD_REPEAT_RULE")
+	case "crh":
+		registerGeneric(lt, "crh", "CRH_WORD_REPEAT_RULE")
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

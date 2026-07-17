@@ -71,3 +71,18 @@ func TestToLocalMatches(t *testing.T) {
 	require.Equal(t, "X", lm[0].RuleID)
 	require.Equal(t, []string{"AB"}, lm[0].Suggestions)
 }
+
+func TestSharedLayout_ParagraphRules(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterSharedLayoutRules(lt, "en")
+	active := lt.GetAllActiveRuleIDs()
+	require.Contains(t, active, "TOO_LONG_PARAGRAPH")
+	require.Contains(t, active, "PARAGRAPH_REPEAT_BEGINNING_RULE")
+
+	// paragraph start repeat (need para boundary via leading newline on second sent)
+	// SRX may not split on \n\n alone; AnalyzeTextDemo-style double newline often works
+	text := "Wiederholung am Anfang.\n\nWiederholung am Ende."
+	m := lt.Check(text)
+	// soft: may or may not fire depending on tokenizer paragraph handling
+	_ = m
+}

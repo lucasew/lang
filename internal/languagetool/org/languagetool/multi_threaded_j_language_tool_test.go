@@ -46,3 +46,42 @@ func TestMultiThreadedJLanguageTool_ParallelCheck(t *testing.T) {
 	lt.Shutdown()
 	require.True(t, lt.IsShutdown())
 }
+
+func TestMultiThreadedJLanguageTool_TextLevel(t *testing.T) {
+	lt := NewMultiThreadedJLanguageTool("en", 4)
+	// text-level only: successive sentence starts
+	lt.AddTextLevelRuleChecker("WORD_REPEAT_BEGINNING_RULE", func(sents []*AnalyzedSentence) []LocalMatch {
+		if len(sents) < 3 {
+			return nil
+		}
+		// soft inject: flag if three sentences start with same surface token
+		var starts []string
+		for _, s := range sents {
+			toks := s.GetTokensWithoutWhitespace()
+			if len(toks) > 1 {
+				starts = append(starts, toks[1].GetToken())
+			}
+		}
+		if len(starts) >= 3 && starts[0] == starts[1] && starts[1] == starts[2] {
+			return []LocalMatch{{
+				FromPos: 0, ToPos: 1, RuleID: "WORD_REPEAT_BEGINNING_RULE",
+				Message: "repeated beginning",
+			}}
+		}
+		return nil
+	})
+	m := lt.Check("Also one. Also two. Also three.")
+	found := false
+	for _, x := range m {
+		if x.RuleID == "WORD_REPEAT_BEGINNING_RULE" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+
+	lt.SetMode(ModeAllButTextLevel)
+	m2 := lt.Check("Also one. Also two. Also three.")
+	for _, x := range m2 {
+		require.NotEqual(t, "WORD_REPEAT_BEGINNING_RULE", x.RuleID)
+	}
+}

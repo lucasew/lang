@@ -60,3 +60,24 @@ func TestRegister_WordRepeatBeginning(t *testing.T) {
 	}
 	require.True(t, found, "%+v", m)
 }
+
+func TestRegister_GenericPacks(t *testing.T) {
+	for _, code := range []string{"be", "zh", "ja", "eo", "sr"} {
+		t.Run(code, func(t *testing.T) {
+			lt := languagetool.NewJLanguageTool(code)
+			corepack.Register(lt, code)
+			require.NotEmpty(t, lt.Check("a  b"))
+			m := lt.Check("test test")
+			require.NotEmpty(t, m)
+		})
+	}
+}
+
+func TestRegister_SupportedList(t *testing.T) {
+	require.GreaterOrEqual(t, len(corepack.Supported), 30)
+	codes := map[string]bool{}
+	for _, s := range corepack.Supported {
+		codes[s.Code] = true
+	}
+	require.True(t, codes["en"] && codes["zh"] && codes["be"])
+}

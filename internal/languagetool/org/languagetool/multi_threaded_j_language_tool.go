@@ -105,6 +105,7 @@ func (lt *MultiThreadedJLanguageTool) IsShutdown() bool {
 }
 
 // Check runs sentence checkers in parallel across sentences, then merges document-offset matches.
+// Text-level rules run sequentially after the parallel sentence pass (document-relative offsets).
 // Falls back to sequential JLanguageTool.Check when pool size is 1 or a single sentence.
 func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 	if lt == nil || lt.shutdown {
@@ -122,59 +123,84 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 		return lt.JLanguageTool.Check(text)
 	}
 
+	runSentence := lt.Mode != ModeTextLevelOnly
+	runTextLevel := lt.Mode != ModeAllButTextLevel
+	lt.unknown = map[string]struct{}{}
+
 	type sentResult struct {
 		idx     int
 		matches []LocalMatch
 	}
 	results := make([]sentResult, len(sents))
-	jobs := make(chan int, len(sents))
-	var wg sync.WaitGroup
-	workers := lt.poolSize
-	if workers > len(sents) {
-		workers = len(sents)
-	}
-	for w := 0; w < workers; w++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for i := range jobs {
-				s := sents[i]
-				var local []LocalMatch
-				for _, c := range lt.checkers {
-					if c == nil {
-						continue
-					}
-					local = append(local, c(s)...)
-				}
-				results[i] = sentResult{idx: i, matches: local}
-			}
-		}()
-	}
-	for i := range sents {
-		jobs <- i
-	}
-	close(jobs)
-	wg.Wait()
-
-	// map to document offsets
-	srcRunes := []rune(text)
-	searchFrom := 0
 	var out []LocalMatch
-	for i, s := range sents {
-		if s == nil {
-			continue
+
+	if runSentence {
+		jobs := make(chan int, len(sents))
+		var wg sync.WaitGroup
+		workers := lt.poolSize
+		if workers > len(sents) {
+			workers = len(sents)
 		}
-		stext := s.GetText()
-		docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
-		if docBase < 0 {
-			docBase = searchFrom
+		for w := 0; w < workers; w++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for i := range jobs {
+					s := sents[i]
+					var local []LocalMatch
+					for _, c := range lt.checkers {
+						if c == nil {
+							continue
+						}
+						local = append(local, c(s)...)
+					}
+					results[i] = sentResult{idx: i, matches: local}
+				}
+			}()
 		}
-		for _, m := range results[i].matches {
-			m.FromPos += docBase
-			m.ToPos += docBase
-			out = append(out, m)
+		for i := range sents {
+			jobs <- i
 		}
-		searchFrom = docBase + len([]rune(stext))
+		close(jobs)
+		wg.Wait()
+
+		// map to document offsets
+		srcRunes := []rune(text)
+		searchFrom := 0
+		for i, s := range sents {
+			if s == nil {
+				continue
+			}
+			if lt.ListUnknownWords {
+				lt.collectUnknown(s)
+			}
+			stext := s.GetText()
+			docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
+			if docBase < 0 {
+				docBase = searchFrom
+			}
+			for _, m := range results[i].matches {
+				m.FromPos += docBase
+				m.ToPos += docBase
+				out = append(out, m)
+			}
+			searchFrom = docBase + len([]rune(stext))
+		}
+	} else if lt.ListUnknownWords {
+		for _, s := range sents {
+			lt.collectUnknown(s)
+		}
+	}
+
+	if runTextLevel && len(lt.textLevelCheckers) > 0 {
+		if lt.Cancelled == nil || !lt.Cancelled() {
+			for _, tc := range lt.textLevelCheckers {
+				if tc.id != "" && lt.isRuleDisabled(tc.id) {
+					continue
+				}
+				out = append(out, tc.fn(sents)...)
+			}
+		}
 	}
 	return out
 }

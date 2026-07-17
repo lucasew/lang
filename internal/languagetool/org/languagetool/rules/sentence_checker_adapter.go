@@ -97,6 +97,18 @@ func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang str
 		"addSpaceBetweenSentences": "Add a space between sentences",
 	})
 	lt.AddTextLevelRuleChecker(sw.GetID(), AsTextLevelChecker(sw.MatchList))
+
+	// text-level: long paragraph (default 150 words, Java-ish)
+	lp := NewLongParagraphRule(map[string]string{
+		"long_paragraph_rule_msg": "This paragraph is too long (%d words)",
+	}, 150)
+	lt.AddTextLevelRuleChecker(lp.GetID(), AsTextLevelChecker(lp.MatchList))
+
+	// text-level: successive paragraphs starting with the same word
+	prb := NewParagraphRepeatBeginningRule(map[string]string{
+		"repetition_paragraph_beginning_last_msg": "Paragraphs should not begin with the same words",
+	})
+	lt.AddTextLevelRuleChecker(prb.GetID(), AsTextLevelChecker(prb.MatchList))
 }
 
 // RegisterCoreEnglishRules installs shared layout + EN a/an + word-repeat (real rule).
