@@ -168,3 +168,6 @@ in the near term	RB
 Phoenix Arizona	NNP
 Seattle Washington	NNP
 at this juncture	RB
+Denver Colorado	NNP
+Miami Florida	NNP
+in the interim	RB

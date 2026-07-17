@@ -422,5 +422,28 @@
       <message>Ambiguous jargon; consider "unavailable" or "paying myself".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DOUBLE_DOWN" name="double down soft picky">
+      <pattern>
+        <token>double</token>
+        <token>down</token>
+      </pattern>
+      <message>Cliché; consider "commit further" or name the bet.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEAN_IN" name="lean in soft picky">
+      <pattern>
+        <token>lean</token>
+        <token>in</token>
+      </pattern>
+      <message>Buzzword; consider "engage" or "focus more".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WHEELHOUSE" name="wheelhouse soft picky">
+      <pattern>
+        <token>wheelhouse</token>
+      </pattern>
+      <message>Jargon; consider "expertise" or "strengths".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

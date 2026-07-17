@@ -3347,6 +3347,76 @@
       <message>Did you mean "yield"?</message>
       <short>yeild</short>
     </rule>
+    <rule id="EN_SOFT_SIMILAR_MISS" name="similiar soft">
+      <pattern>
+        <token>similiar</token>
+      </pattern>
+      <message>Did you mean "similar"?</message>
+      <short>similiar</short>
+    </rule>
+    <rule id="EN_SOFT_GUARANTEE_MISS" name="gaurantee soft">
+      <pattern>
+        <token>gaurantee</token>
+      </pattern>
+      <message>Did you mean "guarantee"?</message>
+      <short>gaurantee</short>
+    </rule>
+    <rule id="EN_SOFT_INTERRUPT_MISS" name="interupt soft">
+      <pattern>
+        <token>interupt</token>
+      </pattern>
+      <message>Did you mean "interrupt"?</message>
+      <short>interupt</short>
+    </rule>
+    <rule id="EN_SOFT_IRRELEVANT_MISS" name="irrelevent soft">
+      <pattern>
+        <token>irrelevent</token>
+      </pattern>
+      <message>Did you mean "irrelevant"?</message>
+      <short>irrelevent</short>
+    </rule>
+    <rule id="EN_SOFT_CORRESPONDENCE_MISS" name="correspondance soft">
+      <pattern>
+        <token>correspondance</token>
+      </pattern>
+      <message>Did you mean "correspondence"?</message>
+      <short>correspondance</short>
+    </rule>
+    <rule id="EN_SOFT_APPARENTLY_MISS" name="aparently soft">
+      <pattern>
+        <token>aparently</token>
+      </pattern>
+      <message>Did you mean "apparently"?</message>
+      <short>aparently</short>
+    </rule>
+    <rule id="EN_SOFT_BEGINNING_MISS" name="beggining soft">
+      <pattern>
+        <token>beggining</token>
+      </pattern>
+      <message>Did you mean "beginning"?</message>
+      <short>beggining</short>
+    </rule>
+    <rule id="EN_SOFT_EXCELLENT_MISS2" name="excelent soft">
+      <pattern>
+        <token>excelent</token>
+      </pattern>
+      <message>Did you mean "excellent"?</message>
+      <short>excelent</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPEAR_MISS2" name="disapear soft">
+      <pattern>
+        <token>disapear</token>
+      </pattern>
+      <message>Did you mean "disappear"?</message>
+      <short>disapear</short>
+    </rule>
+    <rule id="EN_SOFT_RESEARCH_MISS" name="reasearch soft">
+      <pattern>
+        <token>reasearch</token>
+      </pattern>
+      <message>Did you mean "research"?</message>
+      <short>reasearch</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

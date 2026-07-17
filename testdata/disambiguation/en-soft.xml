@@ -879,4 +879,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_OAUTH" name="immunize oauth">
+    <pattern>
+      <token>oauth</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OAUTH_MIXED" name="immunize OAuth">
+    <pattern>
+      <token>OAuth</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRD" name="immunize prd">
+    <pattern>
+      <token>prd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PRD_CAPS" name="immunize PRD">
+    <pattern>
+      <token>PRD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRPC" name="immunize grpc">
+    <pattern>
+      <token>grpc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRPC_MIXED" name="immunize gRPC">
+    <pattern>
+      <token>gRPC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
