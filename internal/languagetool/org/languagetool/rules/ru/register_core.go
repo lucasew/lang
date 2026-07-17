@@ -27,4 +27,10 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 		{ID: "RU_В_В", Tokens: []string{"в", "в"}, Message: "Возможный повтор предлога «в».", Suggestion: "в"},
 		{ID: "RU_И_И", Tokens: []string{"и", "и"}, Message: "Возможный повтор союза «и».", Suggestion: "и"},
 	})
+
+	// Official replace + coherency tables (embedded from upstream).
+	sr := NewRussianSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewRussianWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

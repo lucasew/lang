@@ -22,4 +22,8 @@ func RegisterCoreSwedishRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "sv", []patterns.TokenSequenceSpec{
 		{ID: "SV_I_I", Tokens: []string{"i", "i"}, Message: "Möjlig upprepning av 'i'.", Suggestion: "i"},
 	})
+
+	// Official coherency.txt (embedded from upstream).
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

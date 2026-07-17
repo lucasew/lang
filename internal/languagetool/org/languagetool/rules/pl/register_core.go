@@ -23,4 +23,10 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 		{ID: "PL_W_W", Tokens: []string{"w", "w"}, Message: "Możliwe powtórzenie przyimka 'w'.", Suggestion: "w"},
 		{ID: "PL_Z_Z", Tokens: []string{"z", "z"}, Message: "Możliwe powtórzenie przyimka 'z'.", Suggestion: "z"},
 	})
+
+	// Official replace + coherency tables (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

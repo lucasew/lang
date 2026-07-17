@@ -23,4 +23,10 @@ func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 		{ID: "CA_A_EL", Tokens: []string{"a", "el"}, Message: "Volíeu dir 'al'?", Suggestion: "al"},
 		{ID: "CA_DE_EL", Tokens: []string{"de", "el"}, Message: "Volíeu dir 'del'?", Suggestion: "del"},
 	})
+
+	// Official replace + coherency tables (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

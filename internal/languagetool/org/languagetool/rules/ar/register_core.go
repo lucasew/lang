@@ -21,4 +21,10 @@ func RegisterCoreArabicRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "ar", []patterns.TokenSequenceSpec{
 		{ID: "AR_FI_FI", Tokens: []string{"في", "في"}, Message: "تكرار محتمل لحرف الجر «في».", Suggestion: "في"},
 	})
+
+	// Official replace + coherency tables (embedded from upstream).
+	sr := NewArabicSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewArabicWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

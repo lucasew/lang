@@ -23,4 +23,10 @@ func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "nl", []patterns.TokenSequenceSpec{
 		{ID: "NL_ALS_OF", Tokens: []string{"als", "of"}, Message: "Bedoelde u 'alsof'?", Suggestion: "alsof"},
 	})
+
+	// Official replace + coherency tables (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }
