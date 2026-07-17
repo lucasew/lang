@@ -181,6 +181,10 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 				warnings = append(warnings, "language=auto without preferredVariants; detected variant may be imprecise")
 			}
 		}
+		// Soft incomplete-results notice for very large texts when client opts in.
+		if qp.AllowIncompleteResults && len(text) > 100_000 {
+			warnings = append(warnings, "allowIncompleteResults: text exceeds soft size threshold; results may be incomplete")
+		}
 		// soft multi-language: validate and soft-map foreign script spans to ignoreRanges
 		altCSV := parameters["altLanguages"]
 		if altCSV != "" {

@@ -1,11 +1,15 @@
 package server
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"io"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // ServeHTTP implements http.Handler for LanguageToolHttpHandler.
@@ -23,12 +27,19 @@ func (h *LanguageToolHttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 	if h.Config != nil && h.Config.AllowOriginURL != "" {
 		w.Header().Set("Access-Control-Allow-Origin", h.Config.AllowOriginURL)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Request-ID")
 	}
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+
+	start := time.Now()
+	reqID := r.Header.Get("X-Request-ID")
+	if reqID == "" {
+		reqID = newRequestID()
+	}
+	w.Header().Set("X-Request-ID", reqID)
 
 	remoteIP := clientIP(r)
 	referer := r.Header.Get("Referer")
@@ -68,8 +79,17 @@ func (h *LanguageToolHttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 	// Soft discovery headers for clients/proxies.
 	w.Header().Set("X-LanguageTool-Software", "LanguageTool-Go")
 	w.Header().Set("X-LanguageTool-API-Version", "1")
+	w.Header().Set("X-LanguageTool-Time-ms", strconv.FormatInt(time.Since(start).Milliseconds(), 10))
 	w.WriteHeader(status)
 	_, _ = io.WriteString(w, res.Body)
+}
+
+func newRequestID() string {
+	var b [8]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		return strconv.FormatInt(time.Now().UnixNano(), 36)
+	}
+	return hex.EncodeToString(b[:])
 }
 
 func clientIP(r *http.Request) string {

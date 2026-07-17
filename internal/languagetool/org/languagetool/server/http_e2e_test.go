@@ -24,13 +24,17 @@ func TestHTTP_E2E_CheckAndLanguages(t *testing.T) {
 	require.Contains(t, w.Body.String(), "/v2/check")
 	require.Equal(t, "LanguageTool-Go", w.Header().Get("X-LanguageTool-Software"))
 	require.Equal(t, "1", w.Header().Get("X-LanguageTool-API-Version"))
+	require.NotEmpty(t, w.Header().Get("X-Request-ID"))
+	require.NotEmpty(t, w.Header().Get("X-LanguageTool-Time-ms"))
 
 	// languages
 	req = httptest.NewRequest(http.MethodGet, "/v2/languages", nil)
+	req.Header.Set("X-Request-ID", "client-req-1")
 	w = httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 	require.Equal(t, 200, w.Code)
 	require.Contains(t, w.Body.String(), "en-US")
+	require.Equal(t, "client-req-1", w.Header().Get("X-Request-ID"))
 
 	// check via POST form
 	form := url.Values{}
