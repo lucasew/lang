@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="is">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="IS_SOFT_OG_OG" name="og og">
+      <pattern>
+        <token>og</token>
+        <token>og</token>
+      </pattern>
+      <message>Möguleg endurtekning á "og".</message>
+      <short>og og</short>
+    </rule>
+  </category>
+</rules>

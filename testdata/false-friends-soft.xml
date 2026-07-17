@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <rulegroup id="ABILITY">
+    <rule>
+      <pattern lang="en">
+        <token>ability</token>
+      </pattern>
+      <translation lang="fr">aptitude</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>habileté</token>
+      </pattern>
+      <translation lang="en">skill</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="GIFT">
+    <rule>
+      <pattern lang="en">
+        <token>gift</token>
+      </pattern>
+      <translation lang="de">Geschenk</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Gift</token>
+      </pattern>
+      <translation lang="en">poison</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="ACTUAL">
+    <rule>
+      <pattern lang="en">
+        <token>actual</token>
+      </pattern>
+      <translation lang="es">real</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>actual</token>
+      </pattern>
+      <translation lang="en">current</translation>
+    </rule>
+  </rulegroup>
+</rules>

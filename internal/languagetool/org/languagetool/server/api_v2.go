@@ -159,6 +159,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			Disabled:       a.TextChecker.GetDisabledRuleIDs(parameters),
 			Enabled:        a.TextChecker.GetEnabledRuleIDs(parameters),
 			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true") || qp.UseEnabledOnly,
+			MotherTongue:   parameters["motherTongue"],
 			// soft: undocumented ignoreWords CSV for user-dictionary style suppression
 			IgnoreWords: ignore,
 			// category filters from disabledCategories / enabledCategories

@@ -25,6 +25,12 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
 		_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
 	}
+	// soft false friends when mother tongue is set
+	if mt := strings.TrimSpace(p.settings.MotherTongueCode); mt != "" {
+		if path := softFalseFriendsPath(); path != "" {
+			_, _ = patterns.RegisterFalseFriendsFile(lt, path, lang, mt)
+		}
+	}
 	// optional demo EN speller/tagger injects for local smoke servers
 	if os.Getenv("LANG_DEMO_SPELLER") == "1" {
 		base := lang
@@ -70,6 +76,30 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		}
 	}
 	return lt
+}
+
+// softFalseFriendsPath resolves LANG_FALSEFRIENDS_FILE or a well-known testdata path.
+func softFalseFriendsPath() string {
+	if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	// walk up from cwd for testdata/false-friends-soft.xml (tests/dev)
+	candidates := []string{
+		"testdata/false-friends-soft.xml",
+		"../testdata/false-friends-soft.xml",
+		"../../testdata/false-friends-soft.xml",
+		"../../../testdata/false-friends-soft.xml",
+		"../../../../testdata/false-friends-soft.xml",
+		"../../../../../testdata/false-friends-soft.xml",
+	}
+	for _, c := range candidates {
+		if _, err := os.Stat(c); err == nil {
+			return c
+		}
+	}
+	return ""
 }
 
 func (p *Pipeline) cleanMatches(matches []languagetool.LocalMatch) []languagetool.LocalMatch {

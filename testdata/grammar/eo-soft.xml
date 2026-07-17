@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="eo">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="EO_SOFT_KAJ_KAJ" name="kaj kaj">
+      <pattern>
+        <token>kaj</token>
+        <token>kaj</token>
+      </pattern>
+      <message>Ebla ripeto de "kaj".</message>
+      <short>kaj kaj</short>
+    </rule>
+  </category>
+</rules>

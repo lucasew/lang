@@ -123,50 +123,8 @@ func RegisterRuleFilePatterns(lt *languagetool.JLanguageTool, ruleFile, lang str
 
 // RegisterFalseFriends loads --falsefriends XML pattern rules for mother-tongue pairs.
 func RegisterFalseFriends(lt *languagetool.JLanguageTool, falseFriendsFile, textLang, motherLang string) error {
-	if lt == nil || falseFriendsFile == "" || motherLang == "" {
-		return nil
-	}
-	data, err := os.ReadFile(falseFriendsFile)
-	if err != nil {
-		return err
-	}
-	if textLang == "" {
-		textLang = "en"
-	}
-	loader := patterns.NewFalseFriendRuleLoader("", "")
-	ffRules, err := loader.GetRulesFromString(string(data), textLang, motherLang)
-	if err != nil {
-		return err
-	}
-	for _, fr := range ffRules {
-		if fr == nil || fr.PatternRule == nil {
-			continue
-		}
-		pr := fr.PatternRule
-		id := pr.GetID()
-		if id == "" {
-			id = "FALSE_FRIEND"
-		}
-		suggs := append([]string(nil), loader.SuggestionMap[id]...)
-		// capture for closure
-		rule := pr
-		suggestions := suggs
-		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
-			ms, err := rule.Match(s)
-			if err != nil || len(ms) == 0 {
-				return nil
-			}
-			if len(suggestions) > 0 {
-				for _, m := range ms {
-					if m != nil && len(m.GetSuggestedReplacements()) == 0 {
-						m.SetSuggestedReplacements(suggestions)
-					}
-				}
-			}
-			return rules.ToLocalMatches(ms)
-		})
-	}
-	return nil
+	_, err := patterns.RegisterFalseFriendsFile(lt, falseFriendsFile, textLang, motherLang)
+	return err
 }
 
 // configureCoreLT builds a language tool with core pack + optional rulefile/false friends + CLI filters.
@@ -205,8 +163,14 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 				return nil, err
 			}
 		}
-		if opts.FalseFriendsFile != "" && opts.MotherTongue != "" {
-			if err := RegisterFalseFriends(lt, opts.FalseFriendsFile, lang, opts.MotherTongue); err != nil {
+		ffFile := opts.FalseFriendsFile
+		if ffFile == "" && opts.MotherTongue != "" {
+			if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
+				ffFile = p
+			}
+		}
+		if ffFile != "" && opts.MotherTongue != "" {
+			if err := RegisterFalseFriends(lt, ffFile, lang, opts.MotherTongue); err != nil {
 				return nil, err
 			}
 		}

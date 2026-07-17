@@ -15,6 +15,8 @@ type CheckOptions struct {
 	UseEnabledOnly bool
 	Mode           CheckMode
 	Level          CheckLevel
+	// MotherTongue enables soft false-friend rules when a false-friends file is available.
+	MotherTongue string
 	// IgnoreWords soft user-dictionary surfaces (suppresses spelling matches).
 	IgnoreWords []string
 	// Category filters (SoftRuleMeta / LocalMatch category IDs).
@@ -34,6 +36,9 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 		lang = "en"
 	}
 	settings := NewPipelineSettings(lang, "check")
+	if opts.MotherTongue != "" {
+		settings.MotherTongueCode = opts.MotherTongue
+	}
 	settings.Query.DisabledRules = append([]string(nil), opts.Disabled...)
 	settings.Query.EnabledRules = append([]string(nil), opts.Enabled...)
 	settings.Query.UseEnabledOnly = opts.UseEnabledOnly
@@ -47,6 +52,9 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 		// soft: Query.LanguageCode carries check mode for Pipeline.Check
 		settings.Query.LanguageCode = string(opts.Mode)
 		keyParts = append(keyParts, "mode:"+string(opts.Mode))
+	}
+	if opts.MotherTongue != "" {
+		keyParts = append(keyParts, "mt:"+opts.MotherTongue)
 	}
 	if opts.UseEnabledOnly {
 		keyParts = append(keyParts, "eo:"+strings.Join(opts.Enabled, ","))
