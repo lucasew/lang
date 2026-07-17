@@ -62,6 +62,11 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 			}
 		}
 		if len(readings) == 0 {
+			if pref := PrefixedVerbReadings(w, t.TagWord); len(pref) > 0 {
+				readings = pref
+			}
+		}
+		if len(readings) == 0 {
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))

@@ -37,10 +37,28 @@ func TestPortugueseTagger_ContractionTagging(t *testing.T) {
 	require.NotEmpty(t, ContractionReadings("pelo"))
 }
 func TestPortugueseTagger_Compound(t *testing.T) {
-	t.Skip("unimplemented: compound tagging needs dict")
+	// compound case variants: inject jiu-jitsu
+	wt := tagging.MapWordTagger{
+		"jiu-jitsu": {tagging.NewTaggedWord("jiu-jitsu", "NCMS000")},
+	}
+	tg := NewPortugueseTagger(wt)
+	for _, w := range []string{"jiu-jitsu", "Jiu-jitsu", "JIU-JITSU"} {
+		got := tg.Tag([]string{w})
+		require.True(t, got[0].IsTagged(), w)
+	}
 }
 func TestPortugueseTagger_ProductivePrefixes(t *testing.T) {
-	t.Skip("unimplemented: productive prefixes need dict")
+	// soto-trepei: bare verb trepei in inject dict
+	wt := tagging.MapWordTagger{
+		"trepei": {tagging.NewTaggedWord("trepar", "VMIS1S0")},
+	}
+	tg := NewPortugueseTagger(wt)
+	got := tg.Tag([]string{"soto-trepei", "xoxotrepei"})
+	require.True(t, got[0].IsTagged())
+	require.False(t, got[1].IsTagged()) // not a real prefix
+	lemma := got[0].GetReadings()[0].GetLemma()
+	require.NotNil(t, lemma)
+	require.Equal(t, "soto-trepar", *lemma)
 }
 func TestPortugueseTagger_Enclitics(t *testing.T) {
 	wt := tagging.MapWordTagger{"diz": {tagging.NewTaggedWord("dizer", "VMIP3S0")}}

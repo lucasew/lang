@@ -50,6 +50,15 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		if dyn := DynamicNumericReadings(w); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		if lemma, ipos, ok := IntjReading(w); ok {
 			p, l := ipos, lemma
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
@@ -81,6 +90,21 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				return rs
 			}); len(pref) > 0 {
 				readings = pref
+			}
+		}
+		if len(readings) == 0 {
+			for _, cand := range MissingApostropheCandidates(w) {
+				for _, tw := range t.TagWord(cand) {
+					// mark :bad like Java dynamic missing apostrophe
+					tw2 := tw
+					if tw2.PosTag != "" && !strings.Contains(tw2.PosTag, ":bad") {
+						tw2.PosTag = tw2.PosTag + ":bad"
+					}
+					readings = append(readings, toTok(word, tw2))
+				}
+				if len(readings) > 0 {
+					break
+				}
 			}
 		}
 		if len(readings) == 0 {
