@@ -82,3 +82,44 @@ func TestRegisterDemoEnglishCheckers(t *testing.T) {
 	}
 	require.True(t, ids["EN_A_VS_AN"] || ids["PHRASE_REPLACE"])
 }
+
+func TestSimpleMapSpellerChecker_EditDistanceSuggestions(t *testing.T) {
+	known := map[string]struct{}{
+		"test": {}, "the": {}, "book": {}, "hello": {},
+	}
+	// no explicit suggestion map → edit-distance fallback
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimpleMapSpellerChecker("MORFOLOGIK_RULE_EN_US", known, nil))
+	m := lt.Check("tset the bok")
+	require.NotEmpty(t, m)
+	// tset → test, bok → book
+	got := map[string][]string{}
+	for _, x := range m {
+		got[x.RuleID] = x.Suggestions // last wins; collect by covered word via suggestions
+		if len(x.Suggestions) > 0 {
+			// keep first suggestion for each match
+			_ = x
+		}
+	}
+	var hasTest, hasBook bool
+	for _, x := range m {
+		for _, s := range x.Suggestions {
+			if s == "test" {
+				hasTest = true
+			}
+			if s == "book" {
+				hasBook = true
+			}
+		}
+	}
+	require.True(t, hasTest, "matches=%+v", m)
+	require.True(t, hasBook, "matches=%+v", m)
+	_ = got
+}
+
+func TestNearestKnownWords(t *testing.T) {
+	known := map[string]struct{}{"receive": {}, "the": {}, "separate": {}, "xyzzy": {}}
+	sugs := nearestKnownWords("recieve", known, 2, 5)
+	require.Contains(t, sugs, "receive")
+	require.Empty(t, nearestKnownWords("receive", known, 2, 5)) // exact known not returned (d>0)
+}

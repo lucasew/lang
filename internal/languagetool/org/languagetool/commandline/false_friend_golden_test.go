@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -57,4 +58,36 @@ func TestGolden_FalseFriends(t *testing.T) {
 			require.True(t, found, "%+v", findings)
 		})
 	}
+}
+
+func TestGolden_FalseFriends_WalkUpDiscover(t *testing.T) {
+	// MotherTongue alone discovers testdata/false-friends-soft.xml via walk-up.
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "A gift for you.", &CommandLineOptions{
+		Language:     "en",
+		MotherTongue: "de",
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "GIFT" {
+			found = true
+			require.Equal(t, "Geschenk", f.Suggestion)
+			require.Equal(t, "misspelling", f.Type)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_ApplySuggestions_FalseFriend(t *testing.T) {
+	ff := softFalseFriendsPath(t)
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-m", "de", "--falsefriends", ff, "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "A gift for you.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Equal(t, "A Geschenk for you.", strings.TrimSpace(out.String()))
 }

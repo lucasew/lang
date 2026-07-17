@@ -448,6 +448,8 @@ func KnownWordSet(words ...string) func(string) bool {
 }
 
 // SimpleMapSpellerChecker flags letter tokens not in known; optional suggestion map.
+// When no map entry exists, soft edit-distance suggestions are taken from known
+// (capped dictionary size so demo packs stay cheap).
 func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestions map[string][]string) SentenceChecker {
 	if ruleID == "" {
 		ruleID = "MORFOLOGIK_RULE"
@@ -489,10 +491,102 @@ func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestio
 					m.Suggestions = append([]string(nil), s...)
 				}
 			}
+			if len(m.Suggestions) == 0 {
+				m.Suggestions = nearestKnownWords(w, known, 2, 5)
+			}
 			out = append(out, m)
 		}
 		return out
 	}
+}
+
+// nearestKnownWords returns up to maxN dictionary words within maxDist edit distance.
+func nearestKnownWords(word string, known map[string]struct{}, maxDist, maxN int) []string {
+	if word == "" || known == nil || len(known) == 0 || len(known) > 10000 || maxN <= 0 {
+		return nil
+	}
+	type cand struct {
+		w    string
+		dist int
+	}
+	var cands []cand
+	low := strings.ToLower(word)
+	seen := map[string]struct{}{}
+	for k := range known {
+		kl := strings.ToLower(k)
+		if _, ok := seen[kl]; ok {
+			continue
+		}
+		d := runeLevenshtein(low, kl)
+		if d > 0 && d <= maxDist {
+			seen[kl] = struct{}{}
+			cands = append(cands, cand{w: kl, dist: d})
+		}
+	}
+	// sort by distance then alphabetically (stable, no import sort for tiny N)
+	for i := 0; i < len(cands); i++ {
+		for j := i + 1; j < len(cands); j++ {
+			if cands[j].dist < cands[i].dist || (cands[j].dist == cands[i].dist && cands[j].w < cands[i].w) {
+				cands[i], cands[j] = cands[j], cands[i]
+			}
+		}
+	}
+	if len(cands) > maxN {
+		cands = cands[:maxN]
+	}
+	out := make([]string, 0, len(cands))
+	for _, c := range cands {
+		out = append(out, c.w)
+	}
+	return out
+}
+
+func runeLevenshtein(a, b string) int {
+	ar, br := []rune(a), []rune(b)
+	if len(ar) == 0 {
+		return len(br)
+	}
+	if len(br) == 0 {
+		return len(ar)
+	}
+	// band optimization for short words
+	if absInt(len(ar)-len(br)) > 4 {
+		return absInt(len(ar) - len(br))
+	}
+	prev := make([]int, len(br)+1)
+	cur := make([]int, len(br)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ar); i++ {
+		cur[0] = i
+		for j := 1; j <= len(br); j++ {
+			cost := 1
+			if ar[i-1] == br[j-1] {
+				cost = 0
+			}
+			del := prev[j] + 1
+			ins := cur[j-1] + 1
+			sub := prev[j-1] + cost
+			m := del
+			if ins < m {
+				m = ins
+			}
+			if sub < m {
+				m = sub
+			}
+			cur[j] = m
+		}
+		prev, cur = cur, prev
+	}
+	return prev[len(br)]
+}
+
+func absInt(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
 }
 
 // SimpleAvsAnChecker flags "a" before vowel-initial words and "an" before consonant-initial.

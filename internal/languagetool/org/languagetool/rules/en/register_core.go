@@ -69,6 +69,9 @@ func DemoEnglishKnownWords() map[string]struct{} {
 		"to", "of", "and", "in", "on", "for", "with", "this", "that", "have", "has", "had",
 		"could", "should", "would", "must", "done", "better", "test", "hello", "world",
 		"LanguageTool", "English", "sentence", "word", "Galaxy", "Guide", "like", "so",
+		// common correction targets for demo edit-distance suggestions
+		"receive", "separate", "book", "message", "doctor", "great", "ability", "gift",
+		"actual", "library", "eventual", "become", "known", "before", "after", "because",
 	}
 	m := make(map[string]struct{}, len(words)*2)
 	for _, w := range words {
