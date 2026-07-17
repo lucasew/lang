@@ -2367,6 +2367,76 @@
       <message>Did you mean "height"?</message>
       <short>hieght</short>
     </rule>
+    <rule id="EN_SOFT_IMMEDIATE_MISS" name="imediate soft">
+      <pattern>
+        <token>imediate</token>
+      </pattern>
+      <message>Did you mean "immediate"?</message>
+      <short>imediate</short>
+    </rule>
+    <rule id="EN_SOFT_IMPORTANT_MISS" name="importent soft">
+      <pattern>
+        <token>importent</token>
+      </pattern>
+      <message>Did you mean "important"?</message>
+      <short>importent</short>
+    </rule>
+    <rule id="EN_SOFT_INTELLIGENCE_MISS" name="inteligence soft">
+      <pattern>
+        <token>inteligence</token>
+      </pattern>
+      <message>Did you mean "intelligence"?</message>
+      <short>inteligence</short>
+    </rule>
+    <rule id="EN_SOFT_INTERESTING_MISS" name="intresting soft">
+      <pattern>
+        <token>intresting</token>
+      </pattern>
+      <message>Did you mean "interesting"?</message>
+      <short>intresting</short>
+    </rule>
+    <rule id="EN_SOFT_JEWELRY_MISS" name="jewelery soft">
+      <pattern>
+        <token>jewelery</token>
+      </pattern>
+      <message>Did you mean "jewelry" or "jewellery"?</message>
+      <short>jewelery</short>
+    </rule>
+    <rule id="EN_SOFT_LANGUAGE_MISS" name="langauge soft">
+      <pattern>
+        <token>langauge</token>
+      </pattern>
+      <message>Did you mean "language"?</message>
+      <short>langauge</short>
+    </rule>
+    <rule id="EN_SOFT_LEISURE_MISS" name="liesure soft">
+      <pattern>
+        <token>liesure</token>
+      </pattern>
+      <message>Did you mean "leisure"?</message>
+      <short>liesure</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_MISS" name="lisence soft">
+      <pattern>
+        <token>lisence</token>
+      </pattern>
+      <message>Did you mean "license" or "licence"?</message>
+      <short>lisence</short>
+    </rule>
+    <rule id="EN_SOFT_LIGHTNING_MISS" name="lightening alone soft">
+      <pattern>
+        <token>lightening</token>
+      </pattern>
+      <message>Did you mean "lightning" (electric) or "lightening" (making lighter)?</message>
+      <short>lightening</short>
+    </rule>
+    <rule id="EN_SOFT_LONELINESS_MISS" name="lonliness soft">
+      <pattern>
+        <token>lonliness</token>
+      </pattern>
+      <message>Did you mean "loneliness"?</message>
+      <short>lonliness</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -669,4 +669,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ETA" name="immunize eta">
+    <pattern>
+      <token>eta</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ETC_CAPS" name="immunize ETA">
+    <pattern>
+      <token>ETA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_POC" name="immunize poc">
+    <pattern>
+      <token>poc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MVP" name="immunize mvp">
+    <pattern>
+      <token>mvp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OKR" name="immunize okr">
+    <pattern>
+      <token>okr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KPI" name="immunize kpi">
+    <pattern>
+      <token>kpi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

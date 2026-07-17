@@ -264,5 +264,36 @@
       <message>Consider "discuss separately" or "follow up later".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RUNWAY" name="runway soft picky">
+      <pattern>
+        <token>runway</token>
+      </pattern>
+      <message>Corporate "runway" for cash; consider "cash runway" or "months of funding" if unclear.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NORTH_STAR" name="north star soft picky">
+      <pattern>
+        <token>north</token>
+        <token>star</token>
+        <token>metric</token>
+      </pattern>
+      <message>Jargon; consider "primary metric" or name the measure.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOUBLE_CLICK" name="double-click soft picky">
+      <pattern>
+        <token>double-click</token>
+      </pattern>
+      <message>Consider "examine" or "look closely" outside UI contexts.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SYNC_UP" name="sync up soft picky">
+      <pattern>
+        <token>sync</token>
+        <token>up</token>
+      </pattern>
+      <message>Consider "meet" or "catch up".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
