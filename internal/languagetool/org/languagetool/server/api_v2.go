@@ -95,8 +95,18 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 				lang = "en"
 			}
 		}
-		disabled := a.TextChecker.GetDisabledRuleIDs(parameters)
-		body, err := a.TextChecker.CheckAndBuildJSON(text, lang, lang, disabled)
+		opts := CheckOptions{
+			Disabled:       a.TextChecker.GetDisabledRuleIDs(parameters),
+			Enabled:        a.TextChecker.GetEnabledRuleIDs(parameters),
+			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true"),
+		}
+		if v := parameters["mode"]; v != "" {
+			opts.Mode = CheckMode(strings.ToUpper(v))
+		}
+		if v := parameters["level"]; v != "" {
+			opts.Level = CheckLevel(strings.ToUpper(v))
+		}
+		body, err := a.TextChecker.CheckAndBuildJSONWithOptions(text, lang, lang, opts)
 		if err != nil {
 			return HandleResult{}, err
 		}

@@ -20,6 +20,14 @@ func (p *Pipeline) Check(text string) []languagetool.LocalMatch {
 	lt := languagetool.NewJLanguageTool(lang)
 	corepack.Register(lt, lang)
 
+	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
+	switch strings.ToUpper(p.settings.Query.LanguageCode) {
+	case "TEXTLEVEL_ONLY", "TEXTLEVELONLY":
+		lt.SetMode(languagetool.ModeTextLevelOnly)
+	case "ALL_BUT_TEXTLEVEL_ONLY", "ALLBUTTEXTLEVELONLY":
+		lt.SetMode(languagetool.ModeAllButTextLevel)
+	}
+
 	// apply pipeline disabled rules
 	for id := range p.disabledRules {
 		lt.DisableRule(id)

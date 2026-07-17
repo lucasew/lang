@@ -42,6 +42,17 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	})
 }
 
+// RegisterPickyEnglishRules installs extra style/grammar patterns for Level PICKY.
+func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	patterns.RegisterTokenSequences(lt, "en", []patterns.TokenSequenceSpec{
+		{ID: "EN_A_LOT", Tokens: []string{"alot"}, Message: "Did you mean 'a lot'?", Suggestion: "a lot"},
+		{ID: "EN_IRREGARDLESS", Tokens: []string{"irregardless"}, Message: "Prefer 'regardless'.", Suggestion: "regardless"},
+	})
+}
+
 // RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject.
 // known may be nil (no-op). Soft stand-in until binary dictionaries are ported.
 func RegisterDemoEnglishSpeller(lt *languagetool.JLanguageTool, known map[string]struct{}, suggestions map[string][]string) {
