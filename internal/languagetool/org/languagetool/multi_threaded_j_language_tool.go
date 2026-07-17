@@ -103,3 +103,78 @@ func (lt *MultiThreadedJLanguageTool) Shutdown() {
 func (lt *MultiThreadedJLanguageTool) IsShutdown() bool {
 	return lt != nil && lt.shutdown
 }
+
+// Check runs sentence checkers in parallel across sentences, then merges document-offset matches.
+// Falls back to sequential JLanguageTool.Check when pool size is 1 or a single sentence.
+func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
+	if lt == nil || lt.shutdown {
+		return nil
+	}
+	if lt.Cancelled != nil && lt.Cancelled() {
+		return nil
+	}
+	// sequential path is fine for small inputs
+	if lt.poolSize <= 1 {
+		return lt.JLanguageTool.Check(text)
+	}
+	sents := lt.Analyze(text)
+	if len(sents) <= 1 {
+		return lt.JLanguageTool.Check(text)
+	}
+
+	type sentResult struct {
+		idx     int
+		matches []LocalMatch
+	}
+	results := make([]sentResult, len(sents))
+	jobs := make(chan int, len(sents))
+	var wg sync.WaitGroup
+	workers := lt.poolSize
+	if workers > len(sents) {
+		workers = len(sents)
+	}
+	for w := 0; w < workers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := range jobs {
+				s := sents[i]
+				var local []LocalMatch
+				for _, c := range lt.checkers {
+					if c == nil {
+						continue
+					}
+					local = append(local, c(s)...)
+				}
+				results[i] = sentResult{idx: i, matches: local}
+			}
+		}()
+	}
+	for i := range sents {
+		jobs <- i
+	}
+	close(jobs)
+	wg.Wait()
+
+	// map to document offsets
+	srcRunes := []rune(text)
+	searchFrom := 0
+	var out []LocalMatch
+	for i, s := range sents {
+		if s == nil {
+			continue
+		}
+		stext := s.GetText()
+		docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
+		if docBase < 0 {
+			docBase = searchFrom
+		}
+		for _, m := range results[i].matches {
+			m.FromPos += docBase
+			m.ToPos += docBase
+			out = append(out, m)
+		}
+		searchFrom = docBase + len([]rune(stext))
+	}
+	return out
+}
