@@ -516,3 +516,6 @@ Peridotite Summit RegionNNP
 Kimberlite Summit RegionNNP
 Lamprophyre Summit RegionNNP
 Carbonatite Summit RegionNNP
+Komatiite Summit RegionNNP
+Harzburgite Summit RegionNNP
+Lherzolite Summit RegionNNP

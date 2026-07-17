@@ -5055,4 +5055,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PULSAR" name="immunize pulsar">
+    <pattern>
+      <token>pulsar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PULSAR_CAPS" name="immunize Pulsar">
+    <pattern>
+      <token>Pulsar</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RABBITMQ" name="immunize rabbitmq">
+    <pattern>
+      <token>rabbitmq</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RABBITMQ_CAPS" name="immunize RabbitMQ">
+    <pattern>
+      <token>RabbitMQ</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMCACHED" name="immunize memcached">
+    <pattern>
+      <token>memcached</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEMCACHED_CAPS" name="immunize Memcached">
+    <pattern>
+      <token>Memcached</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -11467,6 +11467,76 @@
       <message>Did you mean "order"?</message>
       <short>oredr</short>
     </rule>
+    <rule id="EN_SOFT_OUTPUT_MISS" name="otuput soft">
+      <pattern>
+        <token>otuput</token>
+      </pattern>
+      <message>Did you mean "output"?</message>
+      <short>otuput</short>
+    </rule>
+    <rule id="EN_SOFT_PACKAGE_MISS" name="packge soft">
+      <pattern>
+        <token>packge</token>
+      </pattern>
+      <message>Did you mean "package"?</message>
+      <short>packge</short>
+    </rule>
+    <rule id="EN_SOFT_PARAMETER_MISS" name="paramter soft">
+      <pattern>
+        <token>paramter</token>
+      </pattern>
+      <message>Did you mean "parameter"?</message>
+      <short>paramter</short>
+    </rule>
+    <rule id="EN_SOFT_PASSWORD_MISS" name="passwrod soft">
+      <pattern>
+        <token>passwrod</token>
+      </pattern>
+      <message>Did you mean "password"?</message>
+      <short>passwrod</short>
+    </rule>
+    <rule id="EN_SOFT_PERFORM_MISS" name="perfrom soft">
+      <pattern>
+        <token>perfrom</token>
+      </pattern>
+      <message>Did you mean "perform"?</message>
+      <short>perfrom</short>
+    </rule>
+    <rule id="EN_SOFT_PLEASE_MISS2" name="pleae soft">
+      <pattern>
+        <token>pleae</token>
+      </pattern>
+      <message>Did you mean "please"?</message>
+      <short>pleae</short>
+    </rule>
+    <rule id="EN_SOFT_PROJECT_MISS" name="porject soft">
+      <pattern>
+        <token>porject</token>
+      </pattern>
+      <message>Did you mean "project"?</message>
+      <short>porject</short>
+    </rule>
+    <rule id="EN_SOFT_PREVIOUS_MISS" name="previuos soft">
+      <pattern>
+        <token>previuos</token>
+      </pattern>
+      <message>Did you mean "previous"?</message>
+      <short>previuos</short>
+    </rule>
+    <rule id="EN_SOFT_PROPERTY_MISS" name="proprety soft">
+      <pattern>
+        <token>proprety</token>
+      </pattern>
+      <message>Did you mean "property"?</message>
+      <short>proprety</short>
+    </rule>
+    <rule id="EN_SOFT_PROTOCOL_MISS" name="protcol soft">
+      <pattern>
+        <token>protcol</token>
+      </pattern>
+      <message>Did you mean "protocol"?</message>
+      <short>protcol</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

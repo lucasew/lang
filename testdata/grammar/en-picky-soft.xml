@@ -3259,5 +3259,26 @@
       <message>Jargon; name net promoter score instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CSAT" name="csat soft picky">
+      <pattern>
+        <token>csat</token>
+      </pattern>
+      <message>Jargon; name customer satisfaction score instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MRR" name="mrr soft picky">
+      <pattern>
+        <token>mrr</token>
+      </pattern>
+      <message>Jargon; name monthly recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ARR" name="arr soft picky">
+      <pattern>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
