@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft EN-CA pack: Canadian often prefers -our/-re with -ize. -->
+<rules lang="en-CA">
+  <category id="TYPOS" name="Possible Typo">
+    <rule id="EN_SOFT_COLOR_CA" name="color soft CA">
+      <pattern>
+        <token>color</token>
+      </pattern>
+      <message>In Canadian English, "colour" is often preferred.</message>
+      <short>color</short>
+    </rule>
+    <rule id="EN_SOFT_FAVORITE_CA" name="favorite soft CA">
+      <pattern>
+        <token>favorite</token>
+      </pattern>
+      <message>In Canadian English, "favourite" is often preferred.</message>
+      <short>favorite</short>
+    </rule>
+    <rule id="EN_SOFT_CENTER_CA" name="center soft CA">
+      <pattern>
+        <token>center</token>
+      </pattern>
+      <message>In Canadian English, "centre" is often preferred.</message>
+      <short>center</short>
+    </rule>
+    <rule id="EN_SOFT_BEHAVIOR_CA" name="behavior soft CA">
+      <pattern>
+        <token>behavior</token>
+      </pattern>
+      <message>In Canadian English, "behaviour" is often preferred.</message>
+      <short>behavior</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANISE_CA" name="organise soft CA">
+      <pattern>
+        <token>organise</token>
+      </pattern>
+      <message>In Canadian English, "organize" is often preferred.</message>
+      <short>organise</short>
+    </rule>
+    <rule id="EN_SOFT_REALISE_CA" name="realise soft CA">
+      <pattern>
+        <token>realise</token>
+      </pattern>
+      <message>In Canadian English, "realize" is often preferred.</message>
+      <short>realise</short>
+    </rule>
+    <rule id="EN_SOFT_DEFENCE_SPELL_CA" name="defense soft CA">
+      <pattern>
+        <token>defense</token>
+      </pattern>
+      <message>In Canadian English, "defence" is often preferred.</message>
+      <short>defense</short>
+    </rule>
+    <rule id="EN_SOFT_ANALYSE_CA" name="analyse soft CA">
+      <pattern>
+        <token>analyse</token>
+      </pattern>
+      <message>In Canadian English, "analyze" is often preferred.</message>
+      <short>analyse</short>
+    </rule>
+  </category>
+</rules>

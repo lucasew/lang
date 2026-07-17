@@ -162,5 +162,33 @@
       <message>In American English, "neighbor" is often preferred.</message>
       <short>neighbour</short>
     </rule>
+    <rule id="EN_SOFT_CHEQUE_US" name="cheque soft">
+      <pattern>
+        <token>cheque</token>
+      </pattern>
+      <message>In American English, "check" is often preferred for bank drafts.</message>
+      <short>cheque</short>
+    </rule>
+    <rule id="EN_SOFT_TYRE_US" name="tyre soft">
+      <pattern>
+        <token>tyre</token>
+      </pattern>
+      <message>In American English, "tire" is often preferred.</message>
+      <short>tyre</short>
+    </rule>
+    <rule id="EN_SOFT_ALUMINIUM_US" name="aluminium soft">
+      <pattern>
+        <token>aluminium</token>
+      </pattern>
+      <message>In American English, "aluminum" is preferred.</message>
+      <short>aluminium</short>
+    </rule>
+    <rule id="EN_SOFT_STOREY_US" name="storey soft">
+      <pattern>
+        <token>storey</token>
+      </pattern>
+      <message>In American English, "story" is often preferred for building floors.</message>
+      <short>storey</short>
+    </rule>
   </category>
 </rules>

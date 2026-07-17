@@ -2017,6 +2017,76 @@
       <message>Did you mean "vacuum"?</message>
       <short>vaccum</short>
     </rule>
+    <rule id="EN_SOFT_LIBARY" name="libary soft">
+      <pattern>
+        <token>libary</token>
+      </pattern>
+      <message>Did you mean "library"?</message>
+      <short>libary</short>
+    </rule>
+    <rule id="EN_SOFT_HEIGTH" name="heigth soft">
+      <pattern>
+        <token>heigth</token>
+      </pattern>
+      <message>Did you mean "height"?</message>
+      <short>heigth</short>
+    </rule>
+    <rule id="EN_SOFT_PARRALEL" name="parralel soft">
+      <pattern>
+        <token>parralel</token>
+      </pattern>
+      <message>Did you mean "parallel"?</message>
+      <short>parralel</short>
+    </rule>
+    <rule id="EN_SOFT_FOWARD" name="foward soft">
+      <pattern>
+        <token>foward</token>
+      </pattern>
+      <message>Did you mean "forward"?</message>
+      <short>foward</short>
+    </rule>
+    <rule id="EN_SOFT_LENGHT" name="lenght soft">
+      <pattern>
+        <token>lenght</token>
+      </pattern>
+      <message>Did you mean "length"?</message>
+      <short>lenght</short>
+    </rule>
+    <rule id="EN_SOFT_WIDHT" name="widht soft">
+      <pattern>
+        <token>widht</token>
+      </pattern>
+      <message>Did you mean "width"?</message>
+      <short>widht</short>
+    </rule>
+    <rule id="EN_SOFT_WEIGTH" name="weigth soft">
+      <pattern>
+        <token>weigth</token>
+      </pattern>
+      <message>Did you mean "weight"?</message>
+      <short>weigth</short>
+    </rule>
+    <rule id="EN_SOFT_STONG" name="stong soft">
+      <pattern>
+        <token>stong</token>
+      </pattern>
+      <message>Did you mean "strong"?</message>
+      <short>stong</short>
+    </rule>
+    <rule id="EN_SOFT_BELEIF" name="beleif soft">
+      <pattern>
+        <token>beleif</token>
+      </pattern>
+      <message>Did you mean "belief"?</message>
+      <short>beleif</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVE_MISS" name="acheive soft">
+      <pattern>
+        <token>acheive</token>
+      </pattern>
+      <message>Did you mean "achieve"?</message>
+      <short>acheive</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -148,5 +148,35 @@
       <message>In British English, "neighbour" is preferred.</message>
       <short>neighbor</short>
     </rule>
+    <rule id="EN_SOFT_CHECK_GB" name="check soft GB bank">
+      <pattern>
+        <token>check</token>
+        <token>book</token>
+      </pattern>
+      <message>In British English, "cheque book" is often preferred.</message>
+      <short>check book</short>
+    </rule>
+    <rule id="EN_SOFT_TIRE_GB" name="tire soft GB">
+      <pattern>
+        <token>tire</token>
+      </pattern>
+      <message>In British English, "tyre" is preferred for vehicle wheels.</message>
+      <short>tire</short>
+    </rule>
+    <rule id="EN_SOFT_ALUMINUM_GB" name="aluminum soft GB">
+      <pattern>
+        <token>aluminum</token>
+      </pattern>
+      <message>In British English, "aluminium" is preferred.</message>
+      <short>aluminum</short>
+    </rule>
+    <rule id="EN_SOFT_STORY_FLOOR_GB" name="story floor soft GB">
+      <pattern>
+        <token>story</token>
+        <token>building</token>
+      </pattern>
+      <message>In British English, "storey" is often preferred for floors of a building.</message>
+      <short>story</short>
+    </rule>
   </category>
 </rules>
