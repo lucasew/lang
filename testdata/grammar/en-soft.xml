@@ -1807,6 +1807,76 @@
       <message>Did you mean "privilege"?</message>
       <short>priviledge</short>
     </rule>
+    <rule id="EN_SOFT_QUESTIONAIRE" name="questionaire soft">
+      <pattern>
+        <token>questionaire</token>
+      </pattern>
+      <message>Did you mean "questionnaire"?</message>
+      <short>questionaire</short>
+    </rule>
+    <rule id="EN_SOFT_RECOMEND" name="recomend soft">
+      <pattern>
+        <token>recomend</token>
+      </pattern>
+      <message>Did you mean "recommend"?</message>
+      <short>recomend</short>
+    </rule>
+    <rule id="EN_SOFT_RELEVENT" name="relevent soft">
+      <pattern>
+        <token>relevent</token>
+      </pattern>
+      <message>Did you mean "relevant"?</message>
+      <short>relevent</short>
+    </rule>
+    <rule id="EN_SOFT_RESISTENCE" name="resistence soft">
+      <pattern>
+        <token>resistence</token>
+      </pattern>
+      <message>Did you mean "resistance"?</message>
+      <short>resistence</short>
+    </rule>
+    <rule id="EN_SOFT_RHYTHM_MISS" name="rythm soft">
+      <pattern>
+        <token>rythm</token>
+      </pattern>
+      <message>Did you mean "rhythm"?</message>
+      <short>rythm</short>
+    </rule>
+    <rule id="EN_SOFT_SIEZE" name="sieze soft">
+      <pattern>
+        <token>sieze</token>
+      </pattern>
+      <message>Did you mean "seize"?</message>
+      <short>sieze</short>
+    </rule>
+    <rule id="EN_SOFT_SPEACH" name="speach soft">
+      <pattern>
+        <token>speach</token>
+      </pattern>
+      <message>Did you mean "speech"?</message>
+      <short>speach</short>
+    </rule>
+    <rule id="EN_SOFT_STRENGHT" name="strenght soft">
+      <pattern>
+        <token>strenght</token>
+      </pattern>
+      <message>Did you mean "strength"?</message>
+      <short>strenght</short>
+    </rule>
+    <rule id="EN_SOFT_THRESHHOLD" name="threshhold soft">
+      <pattern>
+        <token>threshhold</token>
+      </pattern>
+      <message>Did you mean "threshold"?</message>
+      <short>threshhold</short>
+    </rule>
+    <rule id="EN_SOFT_TOMOROW" name="tomorow soft">
+      <pattern>
+        <token>tomorow</token>
+      </pattern>
+      <message>Did you mean "tomorrow"?</message>
+      <short>tomorow</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

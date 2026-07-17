@@ -3410,6 +3410,128 @@ func TestGolden_SoftPickyTL(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave12(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Fill the questionaire carefully.", "EN_SOFT_QUESTIONAIRE", "questionnaire"},
+		{"I recomend this approach.", "EN_SOFT_RECOMEND", "recommend"},
+		{"Keep only relevent details.", "EN_SOFT_RELEVENT", "relevant"},
+		{"Lower the resistence carefully.", "EN_SOFT_RESISTENCE", "resistance"},
+		{"Keep the rythm steady.", "EN_SOFT_RHYTHM_MISS", "rhythm"},
+		{"Do not sieze the assets.", "EN_SOFT_SIEZE", "seize"},
+		{"Prepare a short speach.", "EN_SOFT_SPEACH", "speech"},
+		{"Build strenght gradually.", "EN_SOFT_STRENGHT", "strength"},
+		{"Raise the threshhold slightly.", "EN_SOFT_THRESHHOLD", "threshold"},
+		{"See you tomorow morning.", "EN_SOFT_TOMOROW", "tomorrow"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftOptionalKM(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "km", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "ទាក់ទង នឹង គម្រោង យើង រង់ចាំ។", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "KM_SOFT_OPT_TEANG_NUNG")
+}
+
+func TestGolden_SoftOptionalTA(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "ta", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "திட்டம் பற்றி காத்திருக்கிறோம்.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "TA_SOFT_OPT_PATRI")
+}
+
+func TestGolden_SoftOptionalTL(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "tl", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Kaugnay sa proyekto ay maghintay tayo.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "TL_SOFT_OPT_KAUGNAY_SA")
+}
+
+func TestGolden_SoftPickyCRH(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"Yarın meeting bar.", "CRH_SOFT_PICKY_MEETING"},
+		{"Bugün feedback kerek.", "CRH_SOFT_PICKY_FEEDBACK"},
+		{"Bu çok çok mühim.", "CRH_SOFT_PICKY_ÇOK_ÇOK"},
+		{"Çoq şey qaldı.", "CRH_SOFT_PICKY_ŞEYLER"},
+		{"Soñunda qarar beremiz.", "CRH_SOFT_PICKY_SOÑUNDA"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "crh", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyML(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"നാളെ meeting ഉണ്ട്.", "ML_SOFT_PICKY_MEETING"},
+		{"ഇന്ന് feedback വേണം.", "ML_SOFT_PICKY_FEEDBACK"},
+		{"വളരെ വളരെ പ്രധാനമാണ്.", "ML_SOFT_PICKY_VALARE_VALARE"},
+		{"പല കാര്യങ്ങൾ ഉണ്ട്.", "ML_SOFT_PICKY_KARYANGAL"},
+		{"അവസാനം തീരുമാനിക്കാം.", "ML_SOFT_PICKY_AVASANAM"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "ml", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer
