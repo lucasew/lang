@@ -1995,4 +1995,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_K3D" name="immunize k3d">
+    <pattern>
+      <token>k3d</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K3D_CAPS" name="immunize K3d">
+    <pattern>
+      <token>K3d</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIKUBE" name="immunize minikube">
+    <pattern>
+      <token>minikube</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MINIKUBE_CAPS" name="immunize Minikube">
+    <pattern>
+      <token>Minikube</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K0S" name="immunize k0s">
+    <pattern>
+      <token>k0s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K0S_CAPS" name="immunize K0s">
+    <pattern>
+      <token>K0s</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

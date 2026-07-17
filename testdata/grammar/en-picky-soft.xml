@@ -1204,5 +1204,30 @@
       <message>Jargon; name the isolation boundary instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_STREAM_ALIGNED" name="stream aligned soft picky">
+      <pattern>
+        <token>stream</token>
+        <token>aligned</token>
+      </pattern>
+      <message>Jargon; name the value-stream ownership instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENABLING_TEAM" name="enabling team soft picky">
+      <pattern>
+        <token>enabling</token>
+        <token>team</token>
+      </pattern>
+      <message>Jargon; name how the team unblocks others instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINNEST_VIABLE_PLATFORM" name="thinnest viable platform soft picky">
+      <pattern>
+        <token>thinnest</token>
+        <token>viable</token>
+        <token>platform</token>
+      </pattern>
+      <message>Jargon; name the minimal platform capabilities instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

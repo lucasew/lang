@@ -5517,6 +5517,76 @@
       <message>Did you mean "effortless"?</message>
       <short>efortless</short>
     </rule>
+    <rule id="EN_SOFT_DESTROYED_MISS" name="distroyed soft">
+      <pattern>
+        <token>distroyed</token>
+      </pattern>
+      <message>Did you mean "destroyed"?</message>
+      <short>distroyed</short>
+    </rule>
+    <rule id="EN_SOFT_DISSOLVED_MISS" name="disolved soft">
+      <pattern>
+        <token>disolved</token>
+      </pattern>
+      <message>Did you mean "dissolved"?</message>
+      <short>disolved</short>
+    </rule>
+    <rule id="EN_SOFT_DISCOVERED_MISS" name="discouvered soft">
+      <pattern>
+        <token>discouvered</token>
+      </pattern>
+      <message>Did you mean "discovered"?</message>
+      <short>discouvered</short>
+    </rule>
+    <rule id="EN_SOFT_EMISSION_MISS" name="emmision soft">
+      <pattern>
+        <token>emmision</token>
+      </pattern>
+      <message>Did you mean "emission"?</message>
+      <short>emmision</short>
+    </rule>
+    <rule id="EN_SOFT_EMPHASIS_MISS" name="emphesis soft">
+      <pattern>
+        <token>emphesis</token>
+      </pattern>
+      <message>Did you mean "emphasis"?</message>
+      <short>emphesis</short>
+    </rule>
+    <rule id="EN_SOFT_ENCOURAGED_MISS" name="encoraged soft">
+      <pattern>
+        <token>encoraged</token>
+      </pattern>
+      <message>Did you mean "encouraged"?</message>
+      <short>encoraged</short>
+    </rule>
+    <rule id="EN_SOFT_ENGINEER_MISS2" name="enginneer soft">
+      <pattern>
+        <token>enginneer</token>
+      </pattern>
+      <message>Did you mean "engineer"?</message>
+      <short>enginneer</short>
+    </rule>
+    <rule id="EN_SOFT_ESSENTIAL_MISS" name="essencial soft">
+      <pattern>
+        <token>essencial</token>
+      </pattern>
+      <message>Did you mean "essential"?</message>
+      <short>essencial</short>
+    </rule>
+    <rule id="EN_SOFT_ESTABLISH_MISS" name="estabilish soft">
+      <pattern>
+        <token>estabilish</token>
+      </pattern>
+      <message>Did you mean "establish"?</message>
+      <short>estabilish</short>
+    </rule>
+    <rule id="EN_SOFT_ESTIMATE_MISS" name="estamate soft">
+      <pattern>
+        <token>estamate</token>
+      </pattern>
+      <message>Did you mean "estimate"?</message>
+      <short>estamate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
