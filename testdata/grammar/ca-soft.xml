@@ -25,13 +25,47 @@
       <message>Possible repetició de "i".</message>
       <short>i i</short>
     </rule>
-    <rule id="CA_SOFT_A_EL" name="a el">
+    <rule id="CA_SOFT_A_EL" name="a/al">
       <pattern>
         <token>a</token>
         <token>el</token>
       </pattern>
       <message>Potser "al"?</message>
       <short>a/al</short>
+    </rule>
+    <rule id="CA_SOFT_DE_EL" name="de/del">
+      <pattern>
+        <token>de</token>
+        <token>el</token>
+      </pattern>
+      <message>Potser "del"?</message>
+      <short>de/del</short>
+    </rule>
+    <rule id="CA_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Possible repetició de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="CA_SOFT_PER_PER" name="per per">
+      <pattern>
+        <token>per</token>
+        <token>per</token>
+      </pattern>
+      <message>Possible repetició de "per".</message>
+      <short>per per</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="CA_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Sovint n'hi ha prou amb un signe d'exclamació: "!"</message>
+      <short>!!</short>
     </rule>
   </category>
 </rules>

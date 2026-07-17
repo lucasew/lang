@@ -83,6 +83,8 @@ func SoftEnglishTokenSequences() []patterns.TokenSequenceSpec {
 		{ID: "EN_SUPPOSE_TO", Tokens: []string{"suppose", "to"}, Message: "Did you mean 'supposed to'?", Suggestion: "supposed to"},
 		{ID: "EN_USED_TO_GO", Tokens: []string{"use", "to", "go"}, Message: "Did you mean 'used to go'?", Suggestion: "used to go"},
 		{ID: "EN_INTENTS_PURPOSE", Tokens: []string{"intensive", "purposes"}, Message: "Did you mean 'intents and purposes'?", Suggestion: "intents and purposes"},
+		{ID: "EN_COULD_CARE", Tokens: []string{"could", "care", "less"}, Message: "Did you mean 'couldn't care less'?", Suggestion: "couldn't care less"},
+		{ID: "EN_FOR_ALL_INTENSIVE", Tokens: []string{"for", "all", "intensive", "purposes"}, Message: "Did you mean 'for all intents and purposes'?", Suggestion: "for all intents and purposes"},
 	}
 }
 

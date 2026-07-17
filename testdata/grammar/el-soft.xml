@@ -33,5 +33,39 @@
       <message>Πιθανή επανάληψη του "σε".</message>
       <short>σε σε</short>
     </rule>
+    <rule id="EL_SOFT_ME_ME" name="με με">
+      <pattern>
+        <token>με</token>
+        <token>με</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "με".</message>
+      <short>με με</short>
+    </rule>
+    <rule id="EL_SOFT_GIA_GIA" name="για για">
+      <pattern>
+        <token>για</token>
+        <token>για</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "για".</message>
+      <short>για για</short>
+    </rule>
+    <rule id="EL_SOFT_DEN_DEN" name="δεν δεν">
+      <pattern>
+        <token>δεν</token>
+        <token>δεν</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "δεν".</message>
+      <short>δεν δεν</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="EL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Συχνά αρκεί ένα θαυμαστικό: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

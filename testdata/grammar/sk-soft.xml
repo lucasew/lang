@@ -33,5 +33,39 @@
       <message>Možné opakovanie "že".</message>
       <short>že že</short>
     </rule>
+    <rule id="SK_SOFT_V_V" name="v v">
+      <pattern>
+        <token>v</token>
+        <token>v</token>
+      </pattern>
+      <message>Možné opakovanie "v".</message>
+      <short>v v</short>
+    </rule>
+    <rule id="SK_SOFT_S_S" name="s s">
+      <pattern>
+        <token>s</token>
+        <token>s</token>
+      </pattern>
+      <message>Možné opakovanie "s".</message>
+      <short>s s</short>
+    </rule>
+    <rule id="SK_SOFT_NIE_NIE" name="nie nie">
+      <pattern>
+        <token>nie</token>
+        <token>nie</token>
+      </pattern>
+      <message>Možné opakovanie "nie".</message>
+      <short>nie nie</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="SK_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Často stačí jeden výkričník: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

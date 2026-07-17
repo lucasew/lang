@@ -25,13 +25,47 @@
       <message>Posible repetición de "e".</message>
       <short>e e</short>
     </rule>
-    <rule id="GL_SOFT_A_O" name="a o">
+    <rule id="GL_SOFT_A_O" name="a/ao">
       <pattern>
         <token>a</token>
         <token>o</token>
       </pattern>
       <message>Quizais "ao"?</message>
       <short>a/ao</short>
+    </rule>
+    <rule id="GL_SOFT_DE_O" name="de/do">
+      <pattern>
+        <token>de</token>
+        <token>o</token>
+      </pattern>
+      <message>Quizais "do"?</message>
+      <short>de/do</short>
+    </rule>
+    <rule id="GL_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Posible repetición de "en".</message>
+      <short>en en</short>
+    </rule>
+    <rule id="GL_SOFT_POR_POR" name="por por">
+      <pattern>
+        <token>por</token>
+        <token>por</token>
+      </pattern>
+      <message>Posible repetición de "por".</message>
+      <short>por por</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="GL_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>A miúdo abonda un signo de exclamación: "!"</message>
+      <short>!!</short>
     </rule>
   </category>
 </rules>

@@ -33,5 +33,39 @@
       <message>Posibilă repetare a "a".</message>
       <short>a a</short>
     </rule>
+    <rule id="RO_SOFT_PE_PE" name="pe pe">
+      <pattern>
+        <token>pe</token>
+        <token>pe</token>
+      </pattern>
+      <message>Posibilă repetare a "pe".</message>
+      <short>pe pe</short>
+    </rule>
+    <rule id="RO_SOFT_CU_CU" name="cu cu">
+      <pattern>
+        <token>cu</token>
+        <token>cu</token>
+      </pattern>
+      <message>Posibilă repetare a "cu".</message>
+      <short>cu cu</short>
+    </rule>
+    <rule id="RO_SOFT_LA_LA" name="la la">
+      <pattern>
+        <token>la</token>
+        <token>la</token>
+      </pattern>
+      <message>Posibilă repetare a "la".</message>
+      <short>la la</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typography">
+    <rule id="RO_SOFT_DOUBLE_BANG" name="double bang">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Adesea este suficient un semn de exclamare: "!"</message>
+      <short>!!</short>
+    </rule>
   </category>
 </rules>

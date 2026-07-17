@@ -471,6 +471,32 @@ func TestGolden_SoftSupposeTo(t *testing.T) {
 	require.True(t, found, "%+v", findings)
 }
 
+func TestGolden_SoftTokenSequenceExtras(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"I use to go there often.", "EN_USED_TO_GO", "used to go"},
+		{"For all intensive purposes it works.", "EN_FOR_ALL_INTENSIVE", "for all intents and purposes"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
 func TestGolden_SoftDialectForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string
