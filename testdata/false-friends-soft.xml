@@ -580,4 +580,46 @@
       <translation lang="en">manufacture / make</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="GENEROUS">
+    <rule>
+      <pattern lang="en">
+        <token>generous</token>
+      </pattern>
+      <translation lang="es">generoso</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>generoso</token>
+      </pattern>
+      <translation lang="en">generous / plentiful</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="NORMAL">
+    <rule>
+      <pattern lang="en">
+        <token>normal</token>
+      </pattern>
+      <translation lang="es">normal / usual</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>normal</token>
+      </pattern>
+      <translation lang="en">usual / ordinary (not "OK")</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="CASUAL">
+    <rule>
+      <pattern lang="en">
+        <token>casual</token>
+      </pattern>
+      <translation lang="es">informal / ocasional</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>casual</token>
+      </pattern>
+      <translation lang="en">informal / chance</translation>
+    </rule>
+  </rulegroup>
 </rules>

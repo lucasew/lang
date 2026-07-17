@@ -2297,6 +2297,76 @@
       <message>Did you mean "frequently"?</message>
       <short>frequenly</short>
     </rule>
+    <rule id="EN_SOFT_FRIENDLY_MISS" name="freindly soft">
+      <pattern>
+        <token>freindly</token>
+      </pattern>
+      <message>Did you mean "friendly"?</message>
+      <short>freindly</short>
+    </rule>
+    <rule id="EN_SOFT_FURTHER_MISS" name="futher soft">
+      <pattern>
+        <token>futher</token>
+      </pattern>
+      <message>Did you mean "further"?</message>
+      <short>futher</short>
+    </rule>
+    <rule id="EN_SOFT_GAUGE_MISS" name="guage soft">
+      <pattern>
+        <token>guage</token>
+      </pattern>
+      <message>Did you mean "gauge"?</message>
+      <short>guage</short>
+    </rule>
+    <rule id="EN_SOFT_HIERARCHY_MISS" name="heirarchy soft">
+      <pattern>
+        <token>heirarchy</token>
+      </pattern>
+      <message>Did you mean "hierarchy"?</message>
+      <short>heirarchy</short>
+    </rule>
+    <rule id="EN_SOFT_GRAMMAR_MISS" name="grammer soft">
+      <pattern>
+        <token>grammer</token>
+      </pattern>
+      <message>Did you mean "grammar"?</message>
+      <short>grammer</short>
+    </rule>
+    <rule id="EN_SOFT_GRATEFUL_MISS" name="greatful soft">
+      <pattern>
+        <token>greatful</token>
+      </pattern>
+      <message>Did you mean "grateful"?</message>
+      <short>greatful</short>
+    </rule>
+    <rule id="EN_SOFT_GUIDANCE_MISS" name="guidence soft">
+      <pattern>
+        <token>guidence</token>
+      </pattern>
+      <message>Did you mean "guidance"?</message>
+      <short>guidence</short>
+    </rule>
+    <rule id="EN_SOFT_HAPPENED_MISS" name="happend soft">
+      <pattern>
+        <token>happend</token>
+      </pattern>
+      <message>Did you mean "happened"?</message>
+      <short>happend</short>
+    </rule>
+    <rule id="EN_SOFT_HARRASS_MISS" name="haras soft">
+      <pattern>
+        <token>haras</token>
+      </pattern>
+      <message>Did you mean "harass"?</message>
+      <short>haras</short>
+    </rule>
+    <rule id="EN_SOFT_HEIGHT_MISS" name="hieght soft">
+      <pattern>
+        <token>hieght</token>
+      </pattern>
+      <message>Did you mean "height"?</message>
+      <short>hieght</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

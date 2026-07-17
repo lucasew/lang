@@ -4137,6 +4137,88 @@ func TestGolden_MultiwordCapeCod(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave19(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Be freindly to guests.", "EN_SOFT_FRIENDLY_MISS", "friendly"},
+		{"Discuss this futher later.", "EN_SOFT_FURTHER_MISS", "further"},
+		{"Check the pressure guage.", "EN_SOFT_GAUGE_MISS", "gauge"},
+		{"Fix the heirarchy soon.", "EN_SOFT_HIERARCHY_MISS", "hierarchy"},
+		{"Study English grammer daily.", "EN_SOFT_GRAMMAR_MISS", "grammar"},
+		{"I am greatful for help.", "EN_SOFT_GRATEFUL_MISS", "grateful"},
+		{"Need guidence on setup.", "EN_SOFT_GUIDANCE_MISS", "guidance"},
+		{"It happend last night.", "EN_SOFT_HAPPENED_MISS", "happened"},
+		{"Do not haras the staff.", "EN_SOFT_HARRASS_MISS", "harass"},
+		{"Measure the hieght carefully.", "EN_SOFT_HEIGHT_MISS", "height"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftAUExtraVariants(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Replace the tire soon.", "EN_SOFT_TIRE_AU", "tyre"},
+		{"Use aluminum foil carefully.", "EN_SOFT_ALUMINUM_AU", "aluminium"},
+		{"I favor this approach.", "EN_SOFT_COLOR_VERB_AU", "favour"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en-AU"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_FalseFriendsNormal(t *testing.T) {
+	ff := softFalseFriendsPath(t)
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Todo está normal hoy.", &CommandLineOptions{
+		Language:         "es",
+		MotherTongue:     "en",
+		FalseFriendsFile: ff,
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "NORMAL" {
+			found = true
+			require.Equal(t, "usual / ordinary (not \"OK\")", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer

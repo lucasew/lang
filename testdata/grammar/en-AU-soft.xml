@@ -58,5 +58,26 @@
       <message>In Australian English, "licence" is often preferred for the noun.</message>
       <short>license</short>
     </rule>
+    <rule id="EN_SOFT_TIRE_AU" name="tire soft AU">
+      <pattern>
+        <token>tire</token>
+      </pattern>
+      <message>In Australian English, "tyre" is preferred for vehicle wheels.</message>
+      <short>tire</short>
+    </rule>
+    <rule id="EN_SOFT_ALUMINUM_AU" name="aluminum soft AU">
+      <pattern>
+        <token>aluminum</token>
+      </pattern>
+      <message>In Australian English, "aluminium" is preferred.</message>
+      <short>aluminum</short>
+    </rule>
+    <rule id="EN_SOFT_COLOR_VERB_AU" name="favor soft AU">
+      <pattern>
+        <token>favor</token>
+      </pattern>
+      <message>In Australian English, "favour" is often preferred.</message>
+      <short>favor</short>
+    </rule>
   </category>
 </rules>
