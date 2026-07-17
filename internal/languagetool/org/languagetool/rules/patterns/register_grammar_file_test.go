@@ -42,3 +42,21 @@ func TestRegisterGrammarXML_Inline(t *testing.T) {
 	m := lt.Check("say foo bar now")
 	require.NotEmpty(t, m)
 }
+
+func TestRegisterGrammarFile_SoftDE(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../.."))
+	path := filepath.Join(root, "testdata/grammar/de-soft.xml")
+	lt := languagetool.NewJLanguageTool("de")
+	n, err := patterns.RegisterGrammarFile(lt, path, "de")
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, n, 1)
+	m := lt.Check("Ich denke das es stimmt.")
+	found := false
+	for _, x := range m {
+		if x.RuleID == "DE_SOFT_DAS_DASS" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+}

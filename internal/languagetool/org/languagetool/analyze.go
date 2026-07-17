@@ -202,3 +202,67 @@ func AnalyzeTextLocal(text string) []*AnalyzedSentence {
 	}
 	return out
 }
+
+
+// TokenTag is a soft POS/lemma inject for AnalyzeWithTagger.
+type TokenTag struct {
+	POS   string
+	Lemma string
+}
+
+// AnalyzeWithTagger is AnalyzePlain plus optional POS/lemma tags from tagWord.
+// tagWord may return multiple readings; empty/nil falls back to untagged tokens.
+func AnalyzeWithTagger(text string, tagWord func(token string) []TokenTag) *AnalyzedSentence {
+	if tagWord == nil {
+		return AnalyzePlain(text)
+	}
+	wt := tokenizers.NewWordTokenizer()
+	raw := wt.Tokenize(text)
+	positions := tokenizers.BuildPositions(raw)
+	readings := make([]*AnalyzedTokenReadings, 0, len(raw)+1)
+	ss := SentenceStartTagName
+	startTok := NewAnalyzedToken("", &ss, nil)
+	startR := NewAnalyzedTokenReadings(startTok)
+	startR.SetStartPos(0)
+	readings = append(readings, startR)
+	prev := ""
+	for i, tok := range raw {
+		tags := tagWord(tok)
+		var ar *AnalyzedTokenReadings
+		if len(tags) == 0 {
+			at := NewAnalyzedToken(tok, nil, nil)
+			ar = NewAnalyzedTokenReadingsAt(at, positions[i])
+		} else {
+			// first reading primary
+			var posPtr, lemmaPtr *string
+			if tags[0].POS != "" {
+				p := tags[0].POS
+				posPtr = &p
+			}
+			if tags[0].Lemma != "" {
+				l := tags[0].Lemma
+				lemmaPtr = &l
+			}
+			at := NewAnalyzedToken(tok, posPtr, lemmaPtr)
+			ar = NewAnalyzedTokenReadingsAt(at, positions[i])
+			for _, tg := range tags[1:] {
+				var pp, lp *string
+				if tg.POS != "" {
+					p := tg.POS
+					pp = &p
+				}
+				if tg.Lemma != "" {
+					l := tg.Lemma
+					lp = &l
+				}
+				ar.AddReading(NewAnalyzedToken(tok, pp, lp), "")
+			}
+		}
+		if prev != "" {
+			ar.SetWhitespaceBeforeToken(prev)
+		}
+		readings = append(readings, ar)
+		prev = tok
+	}
+	return NewAnalyzedSentence(readings)
+}

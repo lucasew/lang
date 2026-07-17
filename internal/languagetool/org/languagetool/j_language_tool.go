@@ -86,7 +86,9 @@ type JLanguageTool struct {
 	ListUnknownWords bool
 	// IsKnownWord optional dictionary probe for unknown-word listing.
 	IsKnownWord func(token string) bool
-	unknown     map[string]struct{}
+	// TagWord optional POS/lemma inject used by Analyze (MapWordTagger-friendly).
+	TagWord func(token string) []TokenTag
+	unknown map[string]struct{}
 }
 
 func NewJLanguageTool(languageCode string) *JLanguageTool {
@@ -224,7 +226,11 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 	}
 	out := make([]*AnalyzedSentence, 0, len(parts))
 	for _, p := range parts {
-		out = append(out, AnalyzePlain(p))
+		if lt.TagWord != nil {
+			out = append(out, AnalyzeWithTagger(p, lt.TagWord))
+		} else {
+			out = append(out, AnalyzePlain(p))
+		}
 	}
 	return out
 }

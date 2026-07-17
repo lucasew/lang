@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="de">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="DE_SOFT_DAS_DASS" name="das/dass">
+      <pattern>
+        <token>Ich</token>
+        <token>denke</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "Ich denke, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+  </category>
+</rules>

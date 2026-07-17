@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="fr">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="FR_SOFT_A_LA" name="à la">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+      </pattern>
+      <message>Peut-être "à la"?</message>
+      <short>a/à</short>
+    </rule>
+  </category>
+</rules>
