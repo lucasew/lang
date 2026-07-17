@@ -270,3 +270,6 @@ point to point	RB
 Las Vegas Nevada	NNP
 Charlotte North Carolina	NNP
 end to end testing	NN
+Tampa Florida	NNP
+Orlando Florida	NNP
+client server	NN

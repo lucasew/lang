@@ -5727,6 +5727,76 @@
       <message>Did you mean "disconnect"?</message>
       <short>discconect</short>
     </rule>
+    <rule id="EN_SOFT_FAMOUS_MISS" name="famouse soft">
+      <pattern>
+        <token>famouse</token>
+      </pattern>
+      <message>Did you mean "famous"?</message>
+      <short>famouse</short>
+    </rule>
+    <rule id="EN_SOFT_FASCINATE_MISS2" name="fasinate soft">
+      <pattern>
+        <token>fasinate</token>
+      </pattern>
+      <message>Did you mean "fascinate"?</message>
+      <short>fasinate</short>
+    </rule>
+    <rule id="EN_SOFT_FEASIBILITY_MISS" name="feasability soft">
+      <pattern>
+        <token>feasability</token>
+      </pattern>
+      <message>Did you mean "feasibility"?</message>
+      <short>feasability</short>
+    </rule>
+    <rule id="EN_SOFT_FIELDS_MISS" name="feilds soft">
+      <pattern>
+        <token>feilds</token>
+      </pattern>
+      <message>Did you mean "fields"?</message>
+      <short>feilds</short>
+    </rule>
+    <rule id="EN_SOFT_FINANCIALLY_MISS" name="finacially soft">
+      <pattern>
+        <token>finacially</token>
+      </pattern>
+      <message>Did you mean "financially"?</message>
+      <short>finacially</short>
+    </rule>
+    <rule id="EN_SOFT_FORECASTED_MISS" name="forcasted soft">
+      <pattern>
+        <token>forcasted</token>
+      </pattern>
+      <message>Did you mean "forecasted"?</message>
+      <short>forcasted</short>
+    </rule>
+    <rule id="EN_SOFT_FORESEEN_MISS" name="forseen soft">
+      <pattern>
+        <token>forseen</token>
+      </pattern>
+      <message>Did you mean "foreseen"?</message>
+      <short>forseen</short>
+    </rule>
+    <rule id="EN_SOFT_FREQUENT_MISS" name="frquent soft">
+      <pattern>
+        <token>frquent</token>
+      </pattern>
+      <message>Did you mean "frequent"?</message>
+      <short>frquent</short>
+    </rule>
+    <rule id="EN_SOFT_FREQUENTLY_MISS2" name="frquently soft">
+      <pattern>
+        <token>frquently</token>
+      </pattern>
+      <message>Did you mean "frequently"?</message>
+      <short>frquently</short>
+    </rule>
+    <rule id="EN_SOFT_FUNCTIONALITY_MISS" name="funtionality soft">
+      <pattern>
+        <token>funtionality</token>
+      </pattern>
+      <message>Did you mean "functionality"?</message>
+      <short>funtionality</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

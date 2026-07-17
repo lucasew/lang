@@ -1279,5 +1279,29 @@
       <message>Jargon; name the objective and burn-rate policy instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TOIL_REDUCTION" name="toil reduction soft picky">
+      <pattern>
+        <token>toil</token>
+        <token>reduction</token>
+      </pattern>
+      <message>Jargon; name the manual work being automated instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLAMELESS_POSTMORTEM" name="blameless postmortem soft picky">
+      <pattern>
+        <token>blameless</token>
+        <token>postmortem</token>
+      </pattern>
+      <message>Jargon; name the learning goals of the review instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INCIDENT_COMMANDER" name="incident commander soft picky">
+      <pattern>
+        <token>incident</token>
+        <token>commander</token>
+      </pattern>
+      <message>Jargon; name the response role and duties instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

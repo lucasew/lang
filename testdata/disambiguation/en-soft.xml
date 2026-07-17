@@ -2103,4 +2103,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERCTL" name="immunize clusterctl">
+    <pattern>
+      <token>clusterctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERCTL_CAPS" name="immunize Clusterctl">
+    <pattern>
+      <token>Clusterctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERAWSADM" name="immunize clusterawsadm">
+    <pattern>
+      <token>clusterawsadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLUSTERAWSADM_CAPS" name="immunize Clusterawsadm">
+    <pattern>
+      <token>Clusterawsadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPI" name="immunize capi">
+    <pattern>
+      <token>capi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CAPI_CAPS" name="immunize CAPI">
+    <pattern>
+      <token>CAPI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
