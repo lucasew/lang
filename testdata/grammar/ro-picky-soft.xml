@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft RO pack loaded only when level is picky. -->
+<rules lang="ro">
+  <category id="STYLE" name="Style">
+    <rule id="RO_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Preferă "întâlnire" sau "ședință".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RO_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Preferă "comentarii" sau "feedback" (adaptat) / "reacții".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RO_SOFT_PICKY_FOARTE_FOARTE" name="foarte foarte soft picky">
+      <pattern>
+        <token>foarte</token>
+        <token>foarte</token>
+      </pattern>
+      <message>Intensificare slabă; preferă un adjectiv mai puternic.</message>
+      <short>style</short>
+    </rule>
+    <rule id="RO_SOFT_PICKY_LUCRURI" name="multe lucruri soft picky">
+      <pattern>
+        <token>multe</token>
+        <token>lucruri</token>
+      </pattern>
+      <message>Preferă un substantiv mai concret decât "lucruri".</message>
+      <short>style</short>
+    </rule>
+    <rule id="RO_SOFT_PICKY_LA_SFARSITUL_ZILEI" name="la sfârșitul zilei soft picky">
+      <pattern>
+        <token>la</token>
+        <token>sfârșitul</token>
+        <token>zilei</token>
+      </pattern>
+      <message>Preferă "în cele din urmă" sau "finalmente".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

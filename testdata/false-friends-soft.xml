@@ -454,4 +454,46 @@
       <translation lang="en">record (sports / achievement)</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="BALCONY">
+    <rule>
+      <pattern lang="en">
+        <token>balcony</token>
+      </pattern>
+      <translation lang="de">Balkon</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Balkon</token>
+      </pattern>
+      <translation lang="en">balcony</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MAP">
+    <rule>
+      <pattern lang="en">
+        <token>map</token>
+      </pattern>
+      <translation lang="de">Karte / Landkarte</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Mappe</token>
+      </pattern>
+      <translation lang="en">folder / briefcase</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MENU">
+    <rule>
+      <pattern lang="en">
+        <token>menu</token>
+      </pattern>
+      <translation lang="fr">carte (restaurant)</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>menu</token>
+      </pattern>
+      <translation lang="en">set meal / fixed-price meal</translation>
+    </rule>
+  </rulegroup>
 </rules>

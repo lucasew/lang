@@ -629,6 +629,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			"nl-picky-soft.xml", "sv-picky-soft.xml", "pl-picky-soft.xml",
 			"da-picky-soft.xml", "ru-picky-soft.xml",
 			"uk-picky-soft.xml", "ca-picky-soft.xml",
+			"el-picky-soft.xml", "ro-picky-soft.xml", "gl-picky-soft.xml",
 		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {

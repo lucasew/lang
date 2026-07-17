@@ -1262,6 +1262,97 @@
       <message>Did you mean "for all intents and purposes"?</message>
       <short>intensive/intents</short>
     </rule>
+    <rule id="EN_SOFT_PIECE_OF_MIND" name="piece of mind soft">
+      <pattern>
+        <token>piece</token>
+        <token>of</token>
+        <token>mind</token>
+      </pattern>
+      <message>Did you mean "peace of mind"?</message>
+      <short>piece/peace</short>
+    </rule>
+    <rule id="EN_SOFT_JUST_DESSERTS" name="just desserts soft">
+      <pattern>
+        <token>just</token>
+        <token>desserts</token>
+      </pattern>
+      <message>Did you mean "just deserts"?</message>
+      <short>desserts/deserts</short>
+    </rule>
+    <rule id="EN_SOFT_WET_YOUR_APPETITE" name="wet your appetite soft">
+      <pattern>
+        <token>wet</token>
+        <token>your</token>
+        <token>appetite</token>
+      </pattern>
+      <message>Did you mean "whet your appetite"?</message>
+      <short>wet/whet</short>
+    </rule>
+    <rule id="EN_SOFT_CHALK_FULL" name="chalk full soft">
+      <pattern>
+        <token>chalk</token>
+        <token>full</token>
+      </pattern>
+      <message>Did you mean "chock-full"?</message>
+      <short>chalk/chock</short>
+    </rule>
+    <rule id="EN_SOFT_TONGUE_AND_CHEEK" name="tongue and cheek soft">
+      <pattern>
+        <token>tongue</token>
+        <token>and</token>
+        <token>cheek</token>
+      </pattern>
+      <message>Did you mean "tongue-in-cheek"?</message>
+      <short>tongue-in-cheek</short>
+    </rule>
+    <rule id="EN_SOFT_STRAIGHT_LACED" name="straight laced soft">
+      <pattern>
+        <token>straight</token>
+        <token>laced</token>
+      </pattern>
+      <message>Did you mean "strait-laced"?</message>
+      <short>straight/strait</short>
+    </rule>
+    <rule id="EN_SOFT_BOLD_FACED_LIE" name="bold-faced lie soft">
+      <pattern>
+        <token>bold-faced</token>
+        <token>lie</token>
+      </pattern>
+      <message>Did you mean "bald-faced lie"?</message>
+      <short>bold/bald</short>
+    </rule>
+    <rule id="EN_SOFT_BOLD_FACED_LIE_SP" name="bold faced lie soft spaced">
+      <pattern>
+        <token>bold</token>
+        <token>faced</token>
+        <token>lie</token>
+      </pattern>
+      <message>Did you mean "bald-faced lie"?</message>
+      <short>bold/bald</short>
+    </rule>
+    <rule id="EN_SOFT_PROSTRATE_CANCER" name="prostrate cancer soft">
+      <pattern>
+        <token>prostrate</token>
+        <token>cancer</token>
+      </pattern>
+      <message>Did you mean "prostate cancer"?</message>
+      <short>prostrate/prostate</short>
+    </rule>
+    <rule id="EN_SOFT_ON_ACCIDENT" name="on accident soft">
+      <pattern>
+        <token>on</token>
+        <token>accident</token>
+      </pattern>
+      <message>Did you mean "by accident"?</message>
+      <short>on/by accident</short>
+    </rule>
+    <rule id="EN_SOFT_UNTHAW" name="unthaw soft">
+      <pattern>
+        <token>unthaw</token>
+      </pattern>
+      <message>Did you mean "thaw"?</message>
+      <short>unthaw</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
