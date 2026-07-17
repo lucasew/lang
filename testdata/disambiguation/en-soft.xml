@@ -4731,4 +4731,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_VICTORIAMETRICS" name="immunize victoriametrics">
+    <pattern>
+      <token>victoriametrics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VICTORIAMETRICS_CAPS" name="immunize VictoriaMetrics">
+    <pattern>
+      <token>VictoriaMetrics</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALERTMANAGER" name="immunize alertmanager">
+    <pattern>
+      <token>alertmanager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALERTMANAGER_CAPS" name="immunize Alertmanager">
+    <pattern>
+      <token>Alertmanager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PUSHGATEWAY" name="immunize pushgateway">
+    <pattern>
+      <token>pushgateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PUSHGATEWAY_CAPS" name="immunize Pushgateway">
+    <pattern>
+      <token>Pushgateway</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

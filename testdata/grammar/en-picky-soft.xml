@@ -3062,5 +3062,29 @@
       <message>Jargon; name go-and-see the real place of work instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ROOT_CAUSE" name="root cause soft picky">
+      <pattern>
+        <token>root</token>
+        <token>cause</token>
+      </pattern>
+      <message>Jargon; name the underlying reason a problem happens instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTROL_CHART" name="control chart soft picky">
+      <pattern>
+        <token>control</token>
+        <token>chart</token>
+      </pattern>
+      <message>Jargon; name a process variation monitoring chart instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SCATTER_PLOT" name="scatter plot soft picky">
+      <pattern>
+        <token>scatter</token>
+        <token>plot</token>
+      </pattern>
+      <message>Jargon; name a two-variable relationship chart instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

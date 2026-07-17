@@ -10837,6 +10837,76 @@
       <message>Did you mean "sometimes"?</message>
       <short>sometmes</short>
     </rule>
+    <rule id="EN_SOFT_SOMETHING_MISS2" name="somehting soft">
+      <pattern>
+        <token>somehting</token>
+      </pattern>
+      <message>Did you mean "something"?</message>
+      <short>somehting</short>
+    </rule>
+    <rule id="EN_SOFT_REASON_MISS2" name="reoson soft">
+      <pattern>
+        <token>reoson</token>
+      </pattern>
+      <message>Did you mean "reason"?</message>
+      <short>reoson</short>
+    </rule>
+    <rule id="EN_SOFT_PROBLEM_MISS3" name="prolem soft">
+      <pattern>
+        <token>prolem</token>
+      </pattern>
+      <message>Did you mean "problem"?</message>
+      <short>prolem</short>
+    </rule>
+    <rule id="EN_SOFT_SOMETIMES_MISS3" name="somtimes soft">
+      <pattern>
+        <token>somtimes</token>
+      </pattern>
+      <message>Did you mean "sometimes"?</message>
+      <short>somtimes</short>
+    </rule>
+    <rule id="EN_SOFT_UNDERSTAND_MISS2" name="undrestand soft">
+      <pattern>
+        <token>undrestand</token>
+      </pattern>
+      <message>Did you mean "understand"?</message>
+      <short>undrestand</short>
+    </rule>
+    <rule id="EN_SOFT_WHETHER_MISS" name="whther soft">
+      <pattern>
+        <token>whther</token>
+      </pattern>
+      <message>Did you mean "whether"?</message>
+      <short>whther</short>
+    </rule>
+    <rule id="EN_SOFT_PROCESSING_MISS" name="procesing soft">
+      <pattern>
+        <token>procesing</token>
+      </pattern>
+      <message>Did you mean "processing"?</message>
+      <short>procesing</short>
+    </rule>
+    <rule id="EN_SOFT_QUESTION_MISS4" name="quesiton soft">
+      <pattern>
+        <token>quesiton</token>
+      </pattern>
+      <message>Did you mean "question"?</message>
+      <short>quesiton</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIVING_MISS2" name="recieveing soft">
+      <pattern>
+        <token>recieveing</token>
+      </pattern>
+      <message>Did you mean "receiving"?</message>
+      <short>recieveing</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFICULT_MISS2" name="diffcult soft">
+      <pattern>
+        <token>diffcult</token>
+      </pattern>
+      <message>Did you mean "difficult"?</message>
+      <short>diffcult</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
