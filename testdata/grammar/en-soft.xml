@@ -13777,6 +13777,76 @@
       <message>Did you mean "scheduledelay"?</message>
       <short>scheduledelayy</short>
     </rule>
+    <rule id="EN_SOFT_TRACECONTEXT_MISS" name="tracecontextt soft">
+      <pattern>
+        <token>tracecontextt</token>
+      </pattern>
+      <message>Did you mean "tracecontext"?</message>
+      <short>tracecontextt</short>
+    </rule>
+    <rule id="EN_SOFT_VIEWCONFIG_MISS" name="viewconfigg soft">
+      <pattern>
+        <token>viewconfigg</token>
+      </pattern>
+      <message>Did you mean "viewconfig"?</message>
+      <short>viewconfigg</short>
+    </rule>
+    <rule id="EN_SOFT_SPANLINKS_MISS" name="spanlinkss soft">
+      <pattern>
+        <token>spanlinkss</token>
+      </pattern>
+      <message>Did you mean "spanlinks"?</message>
+      <short>spanlinkss</short>
+    </rule>
+    <rule id="EN_SOFT_SPANKIND_MISS" name="spankindd soft">
+      <pattern>
+        <token>spankindd</token>
+      </pattern>
+      <message>Did you mean "spankind"?</message>
+      <short>spankindd</short>
+    </rule>
+    <rule id="EN_SOFT_SPANSTATUS_MISS" name="spanstatuss soft">
+      <pattern>
+        <token>spanstatuss</token>
+      </pattern>
+      <message>Did you mean "spanstatus"?</message>
+      <short>spanstatuss</short>
+    </rule>
+    <rule id="EN_SOFT_EVENTNAMES_MISS" name="eventnamess soft">
+      <pattern>
+        <token>eventnamess</token>
+      </pattern>
+      <message>Did you mean "eventnames"?</message>
+      <short>eventnamess</short>
+    </rule>
+    <rule id="EN_SOFT_ATTRIBUTEKEYS_MISS" name="attributekeyss soft">
+      <pattern>
+        <token>attributekeyss</token>
+      </pattern>
+      <message>Did you mean "attributekeys"?</message>
+      <short>attributekeyss</short>
+    </rule>
+    <rule id="EN_SOFT_RESOURCEATTRIBUTES_MISS" name="resourceattributess soft">
+      <pattern>
+        <token>resourceattributess</token>
+      </pattern>
+      <message>Did you mean "resourceattributes"?</message>
+      <short>resourceattributess</short>
+    </rule>
+    <rule id="EN_SOFT_SAMPLERRESULT_MISS" name="samplerresultt soft">
+      <pattern>
+        <token>samplerresultt</token>
+      </pattern>
+      <message>Did you mean "samplerresult"?</message>
+      <short>samplerresultt</short>
+    </rule>
+    <rule id="EN_SOFT_PARENTBASED_MISS" name="parentbasedd soft">
+      <pattern>
+        <token>parentbasedd</token>
+      </pattern>
+      <message>Did you mean "parentbased"?</message>
+      <short>parentbasedd</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

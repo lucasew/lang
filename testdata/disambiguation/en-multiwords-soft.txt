@@ -615,3 +615,6 @@ Slate Mesa RegionNNP
 Gneiss Mesa RegionNNP
 Schist Mesa RegionNNP
 Basalt Mesa RegionNNP
+Granite Mesa RegionNNP
+Andesite Mesa RegionNNP
+Rhyolite Mesa RegionNNP

@@ -4012,5 +4012,29 @@
       <message>Jargon; name annual recurring revenue from closed deals instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RECOGNIZED_ARR" name="recognized arr soft picky">
+      <pattern>
+        <token>recognized</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue recognized in the period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PIPELINED_ARR" name="pipelined arr soft picky">
+      <pattern>
+        <token>pipelined</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue still in the sales pipeline instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FOOTPRINT_ARR" name="footprint arr soft picky">
+      <pattern>
+        <token>footprint</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name total annual recurring revenue footprint instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

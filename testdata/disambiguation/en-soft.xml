@@ -6255,4 +6255,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_APHRODITE" name="immunize aphrodite">
+    <pattern>
+      <token>aphrodite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APHRODITE_CAPS" name="immunize Aphrodite">
+    <pattern>
+      <token>Aphrodite</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FELA" name="immunize fela">
+    <pattern>
+      <token>fela</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FELA_CAPS" name="immunize Fela">
+    <pattern>
+      <token>Fela</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSMODULES" name="immunize cssmodules">
+    <pattern>
+      <token>cssmodules</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CSSMODULES_CAPS" name="immunize CSSModules">
+    <pattern>
+      <token>CSSModules</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
