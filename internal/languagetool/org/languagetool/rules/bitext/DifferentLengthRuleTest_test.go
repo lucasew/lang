@@ -4,14 +4,15 @@ package bitext
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
 // Port of languagetool-core/src/test/java/org/languagetool/rules/bitext/DifferentLengthRuleTest.java :: DifferentLengthRuleTest.testRule
 func TestDifferentLengthRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewDifferentLengthRule()
+	require.Equal(t, "TRANSLATION_LENGTH", r.GetID())
+	// very short target vs long source
+	require.NotEmpty(t, r.MatchBitext(sentence("this is a longer source sentence"), sentence("x")))
+	// similar lengths
+	require.Empty(t, r.MatchBitext(sentence("hello world"), sentence("hola mundo!")))
 }

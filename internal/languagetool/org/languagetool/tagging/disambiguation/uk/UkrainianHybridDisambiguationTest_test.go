@@ -104,7 +104,23 @@ func TestUkrainianHybridDisambiguation_DisambiguatorForInitials(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorRemove
 func TestUkrainianHybridDisambiguation_DisambiguatorRemove(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguatorRemove")
+	// inject remove map: drop adj reading for "кривій" surface when lemma "кривий"
+	rm := map[string]*TokenMatcher{
+		"кривій": {Entries: []MatcherEntry{{Lemma: "кривий", POS: "adj"}}},
+	}
+	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorWith(rm))
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pN, pA := "noun:inanim:f:v_dav", "adj:f:v_dav:compb"
+	lN, lA := "крива", "кривий"
+	tok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("кривій", &pN, &lN),
+		languagetool.NewAnalyzedToken("кривій", &pA, &lA),
+	}, 0)
+	out := d.Disambiguate(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok}))
+	require.True(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("noun"))
+	require.False(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("adj"))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorForSt

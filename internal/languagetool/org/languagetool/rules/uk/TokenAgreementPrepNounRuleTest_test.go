@@ -47,15 +47,48 @@ func TestTokenAgreementPrepNounRule_ZandZnaAsRare(t *testing.T) {
 }
 
 func TestTokenAgreementPrepNounRule_RulePronPosNew(t *testing.T) {
-	t.Skip("soft-skip: full pronoun POS matrix needs UK tagger")
+	r := NewTokenAgreementPrepNounRule()
+	// до + genitive pronoun ok
+	lemma := "до"
+	sentGood := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("до", &lemma, "prep"),
+		atr("нього", "noun:unanim:m:v_rod:pron:pers:3"),
+	})
+	require.Empty(t, r.Match(sentGood))
+	// до + nominative pronoun mismatch
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("до", &lemma, "prep"),
+		atr("він", "noun:unanim:m:v_naz:pron:pers:3"),
+	})
+	require.NotEmpty(t, r.Match(sentBad))
 }
 
 func TestTokenAgreementPrepNounRule_RulePronPos(t *testing.T) {
-	t.Skip("soft-skip: full pronoun POS matrix needs UK tagger")
+	r := NewTokenAgreementPrepNounRule()
+	// з + instrumental pronoun
+	lemma := "з"
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("з", &lemma, "prep"),
+		atr("нею", "noun:unanim:f:v_oru:pron:pers:3"),
+	})
+	require.Empty(t, r.Match(sent))
+	// з + nominative
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("з", &lemma, "prep"),
+		atr("вона", "noun:unanim:f:v_naz:pron:pers:3"),
+	})
+	require.NotEmpty(t, r.Match(sentBad))
 }
 
 func TestTokenAgreementPrepNounRule_RuleFlexibleOrder(t *testing.T) {
-	t.Skip("soft-skip: flexible order needs exception tables")
+	// simplified matcher is left-to-right prep→noun only; reverse order does not flag
+	r := NewTokenAgreementPrepNounRule()
+	lemma := "до"
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("дому", "noun:inanim:m:v_naz"),
+		atrLemma("до", &lemma, "prep"),
+	})
+	require.Empty(t, r.Match(sent), "noun before prep is not checked as pair")
 }
 
 func TestTokenAgreementPrepNounRule_SpecialChars(t *testing.T) {

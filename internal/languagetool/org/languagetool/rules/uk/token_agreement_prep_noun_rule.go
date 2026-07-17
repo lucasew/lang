@@ -1,6 +1,8 @@
 package uk
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
@@ -23,6 +25,19 @@ func hasPrepReading(tok *languagetool.AnalyzedTokenReadings) bool {
 	return false
 }
 
+// HasNounOrPronObjectReading treats personal/possessive pronouns as objects for prep government.
+func HasNounOrPronObjectReading(tok *languagetool.AnalyzedTokenReadings) bool {
+	if HasNounReading(tok) {
+		return true
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.Contains(p, "pron") && strings.Contains(p, "v_") {
+			return true
+		}
+	}
+	return false
+}
+
 func NewTokenAgreementPrepNounRule() *TokenAgreementPrepNounRule {
 	cg := LoadCaseGovernmentHelper()
 	r := &TokenAgreementPrepNounRule{CaseGov: cg}
@@ -31,7 +46,7 @@ func NewTokenAgreementPrepNounRule() *TokenAgreementPrepNounRule {
 		description:  "Узгодження прийменника та іменника (керування відмінком)",
 		shortMsg:     "Узгодження прийменника та іменника",
 		isLeftToken:  hasPrepReading,
-		isRightToken: HasNounReading,
+		isRightToken: HasNounOrPronObjectReading,
 		pairChecker: func(left, right *languagetool.AnalyzedTokenReadings) bool {
 			return prepNounAgree(cg, left, right)
 		},
@@ -46,9 +61,11 @@ func prepNounAgree(cg *CaseGovernmentHelper, prep, noun *languagetool.AnalyzedTo
 	}
 	// lemma from prep token surface / lemma
 	lemma := prep.GetToken()
+	// strip soft hyphen / combining marks from surface lemma
+	lemma = CleanIgnoreChars(lemma)
 	for _, r := range prep.GetReadings() {
 		if r != nil && r.GetLemma() != nil && *r.GetLemma() != "" {
-			lemma = *r.GetLemma()
+			lemma = CleanIgnoreChars(*r.GetLemma())
 			break
 		}
 	}
@@ -58,7 +75,15 @@ func prepNounAgree(cg *CaseGovernmentHelper, prep, noun *languagetool.AnalyzedTo
 	}
 	nounInfs := GetNounCaseInflections(CollectPOSTags(noun))
 	if len(nounInfs) == 0 {
-		return true
+		// try free case scan for pron tags
+		for _, p := range CollectPOSTags(noun) {
+			for _, c := range []string{"v_naz", "v_rod", "v_dav", "v_zna", "v_oru", "v_mis", "v_kly"} {
+				if strings.Contains(p, c) && cg.HasCaseGovernment(lemma, c) {
+					return true
+				}
+			}
+		}
+		return true // insufficient
 	}
 	for _, inf := range nounInfs {
 		if cg.HasCaseGovernment(lemma, inf.Case) {

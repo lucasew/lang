@@ -4,14 +4,15 @@ package bitext
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
 // Port of languagetool-core/src/test/java/org/languagetool/rules/bitext/DifferentPunctuationRuleTest.java :: DifferentPunctuationRuleTest.testRule
 func TestDifferentPunctuationRule_Rule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewDifferentPunctuationRule()
+	require.Equal(t, "DIFFERENT_PUNCTUATION", r.GetID())
+	require.NotEmpty(t, r.MatchBitext(multiWordSentence("Hi", "."), multiWordSentence("Hi", "!")))
+	require.Empty(t, r.MatchBitext(multiWordSentence("Hi", "."), multiWordSentence("Hola", ".")))
+	// non-punctuation last token → no flag
+	require.Empty(t, r.MatchBitext(multiWordSentence("Hi"), multiWordSentence("Hi")))
 }

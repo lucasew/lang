@@ -32,8 +32,8 @@ func (r *GermanWordRepeatRule) germanIgnore(tokens []*languagetool.AnalyzedToken
 	prev := tokens[position-1].GetToken()
 	cur := tokens[position].GetToken()
 
-	// "Warum fragen Sie sie nicht selbst?"
-	if (prev == "Sie" && cur == "sie") || (prev == "sie" && cur == "Sie") {
+	// "Warum fragen Sie sie nicht selbst?" — not sentence-initial "Sie sie …"
+	if ((prev == "Sie" && cur == "sie") || (prev == "sie" && cur == "Sie")) && position > 2 {
 		return true
 	}
 	// "Waren waren"
@@ -67,11 +67,12 @@ func (r *GermanWordRepeatRule) germanIgnore(tokens []*languagetool.AnalyzedToken
 			return true
 		}
 	}
-	// das das after ist/war/wäre/für/dass or "als/wenn PRO das das"
+	// das das after ist/war/wäre/für/dass or prep (auf das das Mädchen) or "als/wenn PRO das das"
 	if strings.EqualFold(prev, "das") && strings.EqualFold(cur, "das") && position >= 2 {
 		p2 := strings.ToLower(tokens[position-2].GetToken())
 		switch p2 {
-		case "ist", "war", "wäre", "ware", "für", "fur", "dass", "daß", "als", "wenn", "falls", "ob":
+		case "ist", "war", "wäre", "ware", "für", "fur", "dass", "daß", "als", "wenn", "falls", "ob",
+			"auf", "in", "an", "mit", "von", "zu", "über", "unter", "nach", "vor", "bei":
 			return true
 		}
 		// Als ich das das erste Mal …
