@@ -49,6 +49,38 @@
       <message>تکرار احتمالی «که».</message>
       <short>که که</short>
     </rule>
+    <rule id="FA_SOFT_IN_IN" name="این این">
+      <pattern>
+        <token>این</token>
+        <token>این</token>
+      </pattern>
+      <message>تکرار احتمالی «این».</message>
+      <short>این این</short>
+    </rule>
+    <rule id="FA_SOFT_AN_AN" name="آن آن">
+      <pattern>
+        <token>آن</token>
+        <token>آن</token>
+      </pattern>
+      <message>تکرار احتمالی «آن».</message>
+      <short>آن آن</short>
+    </rule>
+    <rule id="FA_SOFT_BA_BA" name="با با">
+      <pattern>
+        <token>با</token>
+        <token>با</token>
+      </pattern>
+      <message>تکرار احتمالی «با».</message>
+      <short>با با</short>
+    </rule>
+    <rule id="FA_SOFT_NA_NA" name="نه نه">
+      <pattern>
+        <token>نه</token>
+        <token>نه</token>
+      </pattern>
+      <message>تکرار احتمالی «نه».</message>
+      <short>نه نه</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="FA_SOFT_DOUBLE_BANG" name="double bang">

@@ -49,6 +49,38 @@
       <message>Möguleg endurtekning á "með".</message>
       <short>með með</short>
     </rule>
+    <rule id="IS_SOFT_EG_EG" name="ég ég">
+      <pattern>
+        <token>ég</token>
+        <token>ég</token>
+      </pattern>
+      <message>Möguleg endurtekning á "ég".</message>
+      <short>ég ég</short>
+    </rule>
+    <rule id="IS_SOFT_THAD_THAD" name="það það">
+      <pattern>
+        <token>það</token>
+        <token>það</token>
+      </pattern>
+      <message>Möguleg endurtekning á "það".</message>
+      <short>það það</short>
+    </rule>
+    <rule id="IS_SOFT_SEM_SEM" name="sem sem">
+      <pattern>
+        <token>sem</token>
+        <token>sem</token>
+      </pattern>
+      <message>Möguleg endurtekning á "sem".</message>
+      <short>sem sem</short>
+    </rule>
+    <rule id="IS_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Möguleg endurtekning á "en".</message>
+      <short>en en</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="IS_SOFT_DOUBLE_BANG" name="double bang">

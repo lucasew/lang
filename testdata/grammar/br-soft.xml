@@ -49,6 +49,38 @@
       <message>Adlavar posubl eus "gant".</message>
       <short>gant gant</short>
     </rule>
+    <rule id="BR_SOFT_HA_HA_HA" name="hag hag">
+      <pattern>
+        <token>hag</token>
+        <token>hag</token>
+      </pattern>
+      <message>Adkrog posubl eus "hag".</message>
+      <short>hag hag</short>
+    </rule>
+    <rule id="BR_SOFT_NE_NE" name="ne ne">
+      <pattern>
+        <token>ne</token>
+        <token>ne</token>
+      </pattern>
+      <message>Adkrog posubl eus "ne".</message>
+      <short>ne ne</short>
+    </rule>
+    <rule id="BR_SOFT_EVIT_EVIT" name="evit evit">
+      <pattern>
+        <token>evit</token>
+        <token>evit</token>
+      </pattern>
+      <message>Adkrog posubl eus "evit".</message>
+      <short>evit evit</short>
+    </rule>
+    <rule id="BR_SOFT_UR_UR" name="ur ur">
+      <pattern>
+        <token>ur</token>
+        <token>ur</token>
+      </pattern>
+      <message>Adkrog posubl eus "ur".</message>
+      <short>ur ur</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="BR_SOFT_DOUBLE_BANG" name="double bang">

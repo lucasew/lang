@@ -70,3 +70,18 @@ San Antonio	NNP
 by means of	RB
 in spite of	RB
 in light of	RB
+in terms of	RB
+with regard to	RB
+with respect to	RB
+as far as	RB
+in accordance with	RB
+on behalf of	RB
+in favor of	RB
+in favour of	RB
+by virtue of	RB
+for the sake of	RB
+Great Britain	NNP
+Northern Ireland	NNP
+Czech Republic	NNP
+United Arab Emirates	NNP
+Saint Petersburg	NNP

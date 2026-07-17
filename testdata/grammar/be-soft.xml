@@ -49,6 +49,38 @@
       <message>Магчымае паўтарэнне "па".</message>
       <short>па па</short>
     </rule>
+    <rule id="BE_SOFT_SHTO_SHTO" name="што што">
+      <pattern>
+        <token>што</token>
+        <token>што</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "што".</message>
+      <short>што што</short>
+    </rule>
+    <rule id="BE_SOFT_YAK_YAK" name="як як">
+      <pattern>
+        <token>як</token>
+        <token>як</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "як".</message>
+      <short>як як</short>
+    </rule>
+    <rule id="BE_SOFT_DA_DA" name="да да">
+      <pattern>
+        <token>да</token>
+        <token>да</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "да".</message>
+      <short>да да</short>
+    </rule>
+    <rule id="BE_SOFT_ABO_ABO" name="або або">
+      <pattern>
+        <token>або</token>
+        <token>або</token>
+      </pattern>
+      <message>Магчымае паўтарэнне "або".</message>
+      <short>або або</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="BE_SOFT_DOUBLE_BANG" name="double bang">

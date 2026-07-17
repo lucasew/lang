@@ -49,6 +49,38 @@
       <message>Possible repeated "ne".</message>
       <short>ne ne</short>
     </rule>
+    <rule id="CRH_SOFT_VE_BU" name="bu bu">
+      <pattern>
+        <token>bu</token>
+        <token>bu</token>
+      </pattern>
+      <message>«bu» tekrarlanğan ola bilir.</message>
+      <short>bu bu</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_O" name="o o">
+      <pattern>
+        <token>o</token>
+        <token>o</token>
+      </pattern>
+      <message>«o» tekrarlanğan ola bilir.</message>
+      <short>o o</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_ICIN" name="için için">
+      <pattern>
+        <token>için</token>
+        <token>için</token>
+      </pattern>
+      <message>«için» tekrarlanğan ola bilir.</message>
+      <short>için için</short>
+    </rule>
+    <rule id="CRH_SOFT_VE_ILE" name="ile ile">
+      <pattern>
+        <token>ile</token>
+        <token>ile</token>
+      </pattern>
+      <message>«ile» tekrarlanğan ola bilir.</message>
+      <short>ile ile</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="CRH_SOFT_DOUBLE_BANG" name="double bang">

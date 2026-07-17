@@ -49,6 +49,38 @@
       <message>Galimas "ant" pakartojimas.</message>
       <short>ant ant</short>
     </rule>
+    <rule id="LT_SOFT_IR_KAD" name="kad kad">
+      <pattern>
+        <token>kad</token>
+        <token>kad</token>
+      </pattern>
+      <message>Galimas "kad" pakartojimas.</message>
+      <short>kad kad</short>
+    </rule>
+    <rule id="LT_SOFT_IR_AR" name="ar ar">
+      <pattern>
+        <token>ar</token>
+        <token>ar</token>
+      </pattern>
+      <message>Galimas "ar" pakartojimas.</message>
+      <short>ar ar</short>
+    </rule>
+    <rule id="LT_SOFT_IR_BET" name="bet bet">
+      <pattern>
+        <token>bet</token>
+        <token>bet</token>
+      </pattern>
+      <message>Galimas "bet" pakartojimas.</message>
+      <short>bet bet</short>
+    </rule>
+    <rule id="LT_SOFT_IR_TAI" name="tai tai">
+      <pattern>
+        <token>tai</token>
+        <token>tai</token>
+      </pattern>
+      <message>Galimas "tai" pakartojimas.</message>
+      <short>tai tai</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="LT_SOFT_DOUBLE_BANG" name="double bang">

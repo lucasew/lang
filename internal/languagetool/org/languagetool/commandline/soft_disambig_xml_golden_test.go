@@ -146,6 +146,10 @@ func TestGolden_ImmunizeBtwIrlNoSpell(t *testing.T) {
 		"Ngl that is funny.",
 		"Istg I saw it.",
 		"Talk later rn.",
+		"Lmao that was good.",
+		"Rofl at the joke.",
+		"Omw to the store.",
+		"Gg well played.",
 	} {
 		t.Run(text, func(t *testing.T) {
 			var buf bytes.Buffer

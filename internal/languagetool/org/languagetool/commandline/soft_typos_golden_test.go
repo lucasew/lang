@@ -1038,6 +1038,21 @@ func TestGolden_SoftInformalForms(t *testing.T) {
 		{"Deffo a good idea.", "EN_SOFT_DEFFO", "Definitely"},
 		{"Basically basically it works.", "EN_SOFT_BASICALLY_BASIC", ""},
 		{"Actually actually I agree.", "EN_SOFT_ACTUALLY_ACTUALLY", ""},
+		{"Honestly honestly I tried.", "EN_SOFT_HONESTLY_HONESTLY", ""},
+		{"Literally literally amazing.", "EN_SOFT_LITERALLY_LITERALLY", ""},
+		{"Just just wait here.", "EN_SOFT_JUST_JUST", ""},
+		{"Really really good work.", "EN_SOFT_REALLY_REALLY", ""},
+		{"Very very cold outside.", "EN_SOFT_VERY_VERY", ""},
+		{"I like so so much cake.", "EN_SOFT_SO_SO", "so much"},
+		{"Cats and and dogs.", "EN_SOFT_AND_AND", ""},
+		{"See the the problem.", "EN_SOFT_THE_THE", ""},
+		{"I need a a break.", "EN_SOFT_A_A", ""},
+		{"I want to to leave.", "EN_SOFT_TO_TO", ""},
+		{"Kind of of work.", "EN_SOFT_OF_OF", ""},
+		{"Put it in in the box.", "EN_SOFT_IN_IN", ""},
+		{"Put it on on the table.", "EN_SOFT_ON_ON", ""},
+		{"This is for for you.", "EN_SOFT_FOR_FOR", ""},
+		{"Come with with me.", "EN_SOFT_WITH_WITH", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

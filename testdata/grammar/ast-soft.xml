@@ -49,6 +49,38 @@
       <message>Posible repetición de "por".</message>
       <short>por por</short>
     </rule>
+    <rule id="AST_SOFT_NON_NON" name="non non">
+      <pattern>
+        <token>non</token>
+        <token>non</token>
+      </pattern>
+      <message>Posible repetición de "non".</message>
+      <short>non non</short>
+    </rule>
+    <rule id="AST_SOFT_QUE_QUE" name="que que">
+      <pattern>
+        <token>que</token>
+        <token>que</token>
+      </pattern>
+      <message>Posible repetición de "que".</message>
+      <short>que que</short>
+    </rule>
+    <rule id="AST_SOFT_PA_PA" name="pa pa">
+      <pattern>
+        <token>pa</token>
+        <token>pa</token>
+      </pattern>
+      <message>Posible repetición de "pa".</message>
+      <short>pa pa</short>
+    </rule>
+    <rule id="AST_SOFT_A_EL" name="a el">
+      <pattern>
+        <token>a</token>
+        <token>el</token>
+      </pattern>
+      <message>Quiciabes "al"?</message>
+      <short>a/al</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="AST_SOFT_DOUBLE_BANG" name="double bang">

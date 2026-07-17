@@ -49,6 +49,38 @@
       <message>Posibleng ulit ng "ay".</message>
       <short>ay ay</short>
     </rule>
+    <rule id="TL_SOFT_MGA_MGA" name="mga mga">
+      <pattern>
+        <token>mga</token>
+        <token>mga</token>
+      </pattern>
+      <message>Posibleng ulit ng "mga".</message>
+      <short>mga mga</short>
+    </rule>
+    <rule id="TL_SOFT_HINDI_HINDI" name="hindi hindi">
+      <pattern>
+        <token>hindi</token>
+        <token>hindi</token>
+      </pattern>
+      <message>Posibleng ulit ng "hindi".</message>
+      <short>hindi hindi</short>
+    </rule>
+    <rule id="TL_SOFT_PARA_PARA" name="para para">
+      <pattern>
+        <token>para</token>
+        <token>para</token>
+      </pattern>
+      <message>Posibleng ulit ng "para".</message>
+      <short>para para</short>
+    </rule>
+    <rule id="TL_SOFT_KUNG_KUNG" name="kung kung">
+      <pattern>
+        <token>kung</token>
+        <token>kung</token>
+      </pattern>
+      <message>Posibleng ulit ng "kung".</message>
+      <short>kung kung</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="TL_SOFT_DOUBLE_BANG" name="double bang">

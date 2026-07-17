@@ -49,6 +49,38 @@
       <message>تكرار محتمل لـ "ما".</message>
       <short>ما ما</short>
     </rule>
+    <rule id="AR_SOFT_AN_AN" name="أن أن">
+      <pattern>
+        <token>أن</token>
+        <token>أن</token>
+      </pattern>
+      <message>تكرار محتمل لـ "أن".</message>
+      <short>أن أن</short>
+    </rule>
+    <rule id="AR_SOFT_LA_LA" name="لا لا">
+      <pattern>
+        <token>لا</token>
+        <token>لا</token>
+      </pattern>
+      <message>تكرار محتمل لـ "لا".</message>
+      <short>لا لا</short>
+    </rule>
+    <rule id="AR_SOFT_HADHA_HADHA" name="هذا هذا">
+      <pattern>
+        <token>هذا</token>
+        <token>هذا</token>
+      </pattern>
+      <message>تكرار محتمل لـ "هذا".</message>
+      <short>هذا هذا</short>
+    </rule>
+    <rule id="AR_SOFT_BI_BI" name="ب ب">
+      <pattern>
+        <token>ب</token>
+        <token>ب</token>
+      </pattern>
+      <message>تكرار محتمل لـ "ب".</message>
+      <short>ب ب</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="AR_SOFT_DOUBLE_BANG" name="double bang">

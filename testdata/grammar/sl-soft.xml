@@ -49,6 +49,38 @@
       <message>Možna ponovitev "po".</message>
       <short>po po</short>
     </rule>
+    <rule id="SL_SOFT_DA_DA" name="da da">
+      <pattern>
+        <token>da</token>
+        <token>da</token>
+      </pattern>
+      <message>Možna ponovitev "da".</message>
+      <short>da da</short>
+    </rule>
+    <rule id="SL_SOFT_KI_KI" name="ki ki">
+      <pattern>
+        <token>ki</token>
+        <token>ki</token>
+      </pattern>
+      <message>Možna ponovitev "ki".</message>
+      <short>ki ki</short>
+    </rule>
+    <rule id="SL_SOFT_ALI_ALI" name="ali ali">
+      <pattern>
+        <token>ali</token>
+        <token>ali</token>
+      </pattern>
+      <message>Možna ponovitev "ali".</message>
+      <short>ali ali</short>
+    </rule>
+    <rule id="SL_SOFT_SE_SE" name="se se">
+      <pattern>
+        <token>se</token>
+        <token>se</token>
+      </pattern>
+      <message>Možna ponovitev "se".</message>
+      <short>se se</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="SL_SOFT_DOUBLE_BANG" name="double bang">

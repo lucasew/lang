@@ -1406,5 +1406,126 @@
       <message>Possible accidental repetition of "actually".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_HONESTLY_HONESTLY" name="honestly honestly">
+      <pattern>
+        <token>honestly</token>
+        <token>honestly</token>
+      </pattern>
+      <message>Possible accidental repetition of "honestly".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_LITERALLY_LITERALLY" name="literally literally">
+      <pattern>
+        <token>literally</token>
+        <token>literally</token>
+      </pattern>
+      <message>Possible accidental repetition of "literally".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_JUST_JUST" name="just just">
+      <pattern>
+        <token>just</token>
+        <token>just</token>
+      </pattern>
+      <message>Possible accidental repetition of "just".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_REALLY_REALLY" name="really really">
+      <pattern>
+        <token>really</token>
+        <token>really</token>
+      </pattern>
+      <message>Possible accidental repetition of "really"; consider stronger wording or one "really".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_VERY_VERY" name="very very">
+      <pattern>
+        <token>very</token>
+        <token>very</token>
+      </pattern>
+      <message>Possible accidental repetition of "very".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_SO_SO" name="so so soft">
+      <pattern>
+        <token>so</token>
+        <token>so</token>
+        <token>much</token>
+      </pattern>
+      <message>Did you mean "so much"?</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_AND_AND" name="and and soft">
+      <pattern>
+        <token>and</token>
+        <token>and</token>
+      </pattern>
+      <message>Possible accidental repetition of "and".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_THE_THE" name="the the soft">
+      <pattern>
+        <token>the</token>
+        <token>the</token>
+      </pattern>
+      <message>Possible accidental repetition of "the".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_A_A" name="a a soft">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Possible accidental repetition of "a".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_TO_TO" name="to to soft">
+      <pattern>
+        <token>to</token>
+        <token>to</token>
+      </pattern>
+      <message>Possible accidental repetition of "to".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OF_OF" name="of of soft">
+      <pattern>
+        <token>of</token>
+        <token>of</token>
+      </pattern>
+      <message>Possible accidental repetition of "of".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_IN_IN" name="in in soft">
+      <pattern>
+        <token>in</token>
+        <token>in</token>
+      </pattern>
+      <message>Possible accidental repetition of "in".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_ON_ON" name="on on soft">
+      <pattern>
+        <token>on</token>
+        <token>on</token>
+      </pattern>
+      <message>Possible accidental repetition of "on".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_FOR_FOR" name="for for soft">
+      <pattern>
+        <token>for</token>
+        <token>for</token>
+      </pattern>
+      <message>Possible accidental repetition of "for".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_WITH_WITH" name="with with soft">
+      <pattern>
+        <token>with</token>
+        <token>with</token>
+      </pattern>
+      <message>Possible accidental repetition of "with".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

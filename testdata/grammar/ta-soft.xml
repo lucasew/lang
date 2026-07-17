@@ -49,6 +49,38 @@
       <message>Possible repeated "of".</message>
       <short>of of</short>
     </rule>
+    <rule id="TA_SOFT_IS_IS" name="is is">
+      <pattern>
+        <token>is</token>
+        <token>is</token>
+      </pattern>
+      <message>Possible repeated "is".</message>
+      <short>is is</short>
+    </rule>
+    <rule id="TA_SOFT_FOR_FOR" name="for for">
+      <pattern>
+        <token>for</token>
+        <token>for</token>
+      </pattern>
+      <message>Possible repeated "for".</message>
+      <short>for for</short>
+    </rule>
+    <rule id="TA_SOFT_ON_ON" name="on on">
+      <pattern>
+        <token>on</token>
+        <token>on</token>
+      </pattern>
+      <message>Possible repeated "on".</message>
+      <short>on on</short>
+    </rule>
+    <rule id="TA_SOFT_IT_IT" name="it it">
+      <pattern>
+        <token>it</token>
+        <token>it</token>
+      </pattern>
+      <message>Possible repeated "it".</message>
+      <short>it it</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="TA_SOFT_DOUBLE_BANG" name="double bang">

@@ -49,6 +49,38 @@
       <message>可能重复了 "不"。</message>
       <short>不 不</short>
     </rule>
+    <rule id="ZH_SOFT_WO_WO" name="我 我">
+      <pattern>
+        <token>我</token>
+        <token>我</token>
+      </pattern>
+      <message>可能重复了 "我"。</message>
+      <short>我 我</short>
+    </rule>
+    <rule id="ZH_SOFT_NI_NI" name="你 你">
+      <pattern>
+        <token>你</token>
+        <token>你</token>
+      </pattern>
+      <message>可能重复了 "你"。</message>
+      <short>你 你</short>
+    </rule>
+    <rule id="ZH_SOFT_TA_TA" name="他 他">
+      <pattern>
+        <token>他</token>
+        <token>他</token>
+      </pattern>
+      <message>可能重复了 "他"。</message>
+      <short>他 他</short>
+    </rule>
+    <rule id="ZH_SOFT_YOU_YOU" name="有 有">
+      <pattern>
+        <token>有</token>
+        <token>有</token>
+      </pattern>
+      <message>可能重复了 "有"。</message>
+      <short>有 有</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="ZH_SOFT_DOUBLE_BANG" name="double bang">

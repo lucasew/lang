@@ -49,6 +49,38 @@
       <message>Possible repeated "de".</message>
       <short>de de</short>
     </rule>
+    <rule id="JA_SOFT_WO_WO" name="wo wo">
+      <pattern>
+        <token>wo</token>
+        <token>wo</token>
+      </pattern>
+      <message>Possible repeated "wo".</message>
+      <short>wo wo</short>
+    </rule>
+    <rule id="JA_SOFT_MO_MO" name="mo mo">
+      <pattern>
+        <token>mo</token>
+        <token>mo</token>
+      </pattern>
+      <message>Possible repeated "mo".</message>
+      <short>mo mo</short>
+    </rule>
+    <rule id="JA_SOFT_KA_KA" name="ka ka">
+      <pattern>
+        <token>ka</token>
+        <token>ka</token>
+      </pattern>
+      <message>Possible repeated "ka".</message>
+      <short>ka ka</short>
+    </rule>
+    <rule id="JA_SOFT_YO_YO" name="yo yo">
+      <pattern>
+        <token>yo</token>
+        <token>yo</token>
+      </pattern>
+      <message>Possible repeated "yo".</message>
+      <short>yo yo</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="JA_SOFT_DOUBLE_BANG" name="double bang">

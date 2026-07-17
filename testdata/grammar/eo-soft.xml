@@ -49,6 +49,38 @@
       <message>Ebla ripeto de "por".</message>
       <short>por por</short>
     </rule>
+    <rule id="EO_SOFT_AL_AL" name="al al">
+      <pattern>
+        <token>al</token>
+        <token>al</token>
+      </pattern>
+      <message>Ebla ripeto de "al".</message>
+      <short>al al</short>
+    </rule>
+    <rule id="EO_SOFT_KE_KE" name="ke ke">
+      <pattern>
+        <token>ke</token>
+        <token>ke</token>
+      </pattern>
+      <message>Ebla ripeto de "ke".</message>
+      <short>ke ke</short>
+    </rule>
+    <rule id="EO_SOFT_KIU_KIU" name="kiu kiu">
+      <pattern>
+        <token>kiu</token>
+        <token>kiu</token>
+      </pattern>
+      <message>Ebla ripeto de "kiu".</message>
+      <short>kiu kiu</short>
+    </rule>
+    <rule id="EO_SOFT_JAM_JAM" name="jam jam">
+      <pattern>
+        <token>jam</token>
+        <token>jam</token>
+      </pattern>
+      <message>Ebla ripeto de "jam".</message>
+      <short>jam jam</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EO_SOFT_DOUBLE_BANG" name="double bang">

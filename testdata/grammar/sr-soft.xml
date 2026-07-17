@@ -49,6 +49,38 @@
       <message>Moguće ponavljanje "ne".</message>
       <short>ne ne</short>
     </rule>
+    <rule id="SR_SOFT_I_TO" name="to to">
+      <pattern>
+        <token>to</token>
+        <token>to</token>
+      </pattern>
+      <message>Moguće ponavljanje "to".</message>
+      <short>to to</short>
+    </rule>
+    <rule id="SR_SOFT_I_SE" name="se se">
+      <pattern>
+        <token>se</token>
+        <token>se</token>
+      </pattern>
+      <message>Moguće ponavljanje "se".</message>
+      <short>se se</short>
+    </rule>
+    <rule id="SR_SOFT_I_OD" name="od od">
+      <pattern>
+        <token>od</token>
+        <token>od</token>
+      </pattern>
+      <message>Moguće ponavljanje "od".</message>
+      <short>od od</short>
+    </rule>
+    <rule id="SR_SOFT_I_ZA" name="za za">
+      <pattern>
+        <token>za</token>
+        <token>za</token>
+      </pattern>
+      <message>Moguće ponavljanje "za".</message>
+      <short>za za</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="SR_SOFT_DOUBLE_BANG" name="double bang">

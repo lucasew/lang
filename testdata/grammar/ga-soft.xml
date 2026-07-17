@@ -49,6 +49,38 @@
       <message>Athrá féideartha ar "go".</message>
       <short>go go</short>
     </rule>
+    <rule id="GA_SOFT_IS_IS" name="is is">
+      <pattern>
+        <token>is</token>
+        <token>is</token>
+      </pattern>
+      <message>Athrá féideartha de "is".</message>
+      <short>is is</short>
+    </rule>
+    <rule id="GA_SOFT_DO_DO" name="do do">
+      <pattern>
+        <token>do</token>
+        <token>do</token>
+      </pattern>
+      <message>Athrá féideartha de "do".</message>
+      <short>do do</short>
+    </rule>
+    <rule id="GA_SOFT_NI_NI" name="ní ní">
+      <pattern>
+        <token>ní</token>
+        <token>ní</token>
+      </pattern>
+      <message>Athrá féideartha de "ní".</message>
+      <short>ní ní</short>
+    </rule>
+    <rule id="GA_SOFT_NO_NO" name="nó nó">
+      <pattern>
+        <token>nó</token>
+        <token>nó</token>
+      </pattern>
+      <message>Athrá féideartha de "nó".</message>
+      <short>nó nó</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="GA_SOFT_DOUBLE_BANG" name="double bang">

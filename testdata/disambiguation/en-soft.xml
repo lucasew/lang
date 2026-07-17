@@ -530,4 +530,69 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
+  <rule id="SOFT_MODAL_WANT_VB" name="modal want → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>want</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_SEEM_VB" name="modal seem → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>seem</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_WANT" name="to want → VB">
+    <pattern>
+      <token>to</token>
+      <token>want</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_SEEM" name="to seem → VB">
+    <pattern>
+      <token>to</token>
+      <token>seem</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_WORK" name="to work → VB">
+    <pattern>
+      <token>to</token>
+      <token>work</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GG" name="immunize gg">
+    <pattern>
+      <token>gg</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WP" name="immunize wp">
+    <pattern>
+      <token>wp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LMAO" name="immunize lmao">
+    <pattern>
+      <token>lmao</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROFL" name="immunize rofl">
+    <pattern>
+      <token>rofl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OMW" name="immunize omw">
+    <pattern>
+      <token>omw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
