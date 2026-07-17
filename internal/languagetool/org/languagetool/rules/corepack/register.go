@@ -76,7 +76,7 @@ var Supported = []struct {
 	{"crh", "Crimean Tatar"},
 }
 
-// registerGeneric installs shared layout + base word-repeat with a language-scoped rule id.
+// registerGeneric installs shared layout + base word-repeat + word-repeat-beginning.
 func registerGeneric(lt *languagetool.JLanguageTool, lang, wordRepeatID string) {
 	rules.RegisterSharedLayoutRules(lt, lang)
 	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
@@ -84,6 +84,19 @@ func registerGeneric(lt *languagetool.JLanguageTool, lang, wordRepeatID string) 
 		wr.IDOverride = wordRepeatID
 	}
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
+	// soft text-level beginning rule for languages without a dedicated pack
+	wrb := rules.NewWordRepeatBeginningRule(map[string]string{
+		"desc_repetition_beginning_word": "Three successive sentences begin with the same word.",
+	})
+	if wordRepeatID != "" {
+		// e.g. BE_WORD_REPEAT_RULE → BE_WORD_REPEAT_BEGINNING_RULE
+		base := wordRepeatID
+		if len(base) > 5 && base[len(base)-5:] == "_RULE" {
+			base = base[:len(base)-5]
+		}
+		wrb.IDOverride = base + "_BEGINNING_RULE"
+	}
+	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 }
 
 // Register installs the best available core rule pack for lang (e.g. "en-US", "de").

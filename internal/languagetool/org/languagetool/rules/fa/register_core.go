@@ -3,9 +3,10 @@ package fa
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
-// RegisterCorePersianRules installs shared layout + word-repeat (base rule with language id).
+// RegisterCorePersianRules installs shared layout + word-repeat + beginning.
 func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -14,4 +15,11 @@ func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "تکرار"})
 	wr.IDOverride = "FA_WORD_REPEAT_RULE"
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
+	wrb := NewPersianWordRepeatBeginningRule(map[string]string{
+		"desc_repetition_beginning_word": "سه جمله پیاپی با یک کلمه آغاز می‌شوند.",
+	})
+	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+	patterns.RegisterTokenSequences(lt, "fa", []patterns.TokenSequenceSpec{
+		{ID: "FA_در_در", Tokens: []string{"در", "در"}, Message: "تکرار احتمالی «در».", Suggestion: "در"},
+	})
 }

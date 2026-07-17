@@ -81,3 +81,25 @@ func TestRegister_SupportedList(t *testing.T) {
 	}
 	require.True(t, codes["en"] && codes["zh"] && codes["be"])
 }
+
+func TestRegister_GenericBeginning(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("be")
+	corepack.Register(lt, "be")
+	ids := lt.GetAllRegisteredRuleIDs()
+	found := false
+	for _, id := range ids {
+		if id == "BE_WORD_REPEAT_BEGINNING_RULE" {
+			found = true
+		}
+	}
+	require.True(t, found, "%v", ids)
+	// three successive same starts
+	m := lt.Check("Test one. Test two. Test three.")
+	foundMatch := false
+	for _, x := range m {
+		if x.RuleID == "BE_WORD_REPEAT_BEGINNING_RULE" {
+			foundMatch = true
+		}
+	}
+	require.True(t, foundMatch, "%+v", m)
+}
