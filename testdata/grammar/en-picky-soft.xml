@@ -1557,5 +1557,29 @@
       <message>Jargon; name the resource isolation boundary instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RETRY_STORM" name="retry storm soft picky">
+      <pattern>
+        <token>retry</token>
+        <token>storm</token>
+      </pattern>
+      <message>Jargon; name the cascading retry overload instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THUNDERING_HERD" name="thundering herd soft picky">
+      <pattern>
+        <token>thundering</token>
+        <token>herd</token>
+      </pattern>
+      <message>Jargon; name the synchronized wake/retry pileup instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BACKOFF_STRATEGY" name="backoff strategy soft picky">
+      <pattern>
+        <token>backoff</token>
+        <token>strategy</token>
+      </pattern>
+      <message>Jargon; name the retry delay policy instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

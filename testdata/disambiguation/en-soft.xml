@@ -2499,4 +2499,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ISCSI" name="immunize iscsi">
+    <pattern>
+      <token>iscsi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISCSI_MIXED" name="immunize iSCSI">
+    <pattern>
+      <token>iSCSI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SMB" name="immunize smb">
+    <pattern>
+      <token>smb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SMB_CAPS" name="immunize SMB">
+    <pattern>
+      <token>SMB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AFP" name="immunize afp">
+    <pattern>
+      <token>afp</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AFP_CAPS" name="immunize AFP">
+    <pattern>
+      <token>AFP</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

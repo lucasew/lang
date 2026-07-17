@@ -6497,6 +6497,76 @@
       <message>Did you mean "omission"?</message>
       <short>ommision</short>
     </rule>
+    <rule id="EN_SOFT_PARTICULARLY_MISS2" name="particulary soft">
+      <pattern>
+        <token>particulary</token>
+      </pattern>
+      <message>Did you mean "particularly"?</message>
+      <short>particulary</short>
+    </rule>
+    <rule id="EN_SOFT_PEOPLE_MISS" name="peopel soft">
+      <pattern>
+        <token>peopel</token>
+      </pattern>
+      <message>Did you mean "people"?</message>
+      <short>peopel</short>
+    </rule>
+    <rule id="EN_SOFT_PERCEIVE_MISS" name="percieve soft">
+      <pattern>
+        <token>percieve</token>
+      </pattern>
+      <message>Did you mean "perceive"?</message>
+      <short>percieve</short>
+    </rule>
+    <rule id="EN_SOFT_PERCEIVED_MISS" name="percieved soft">
+      <pattern>
+        <token>percieved</token>
+      </pattern>
+      <message>Did you mean "perceived"?</message>
+      <short>percieved</short>
+    </rule>
+    <rule id="EN_SOFT_PERMANENT_MISS" name="permenant soft">
+      <pattern>
+        <token>permenant</token>
+      </pattern>
+      <message>Did you mean "permanent"?</message>
+      <short>permenant</short>
+    </rule>
+    <rule id="EN_SOFT_PERMANENTLY_MISS" name="permenantly soft">
+      <pattern>
+        <token>permenantly</token>
+      </pattern>
+      <message>Did you mean "permanently"?</message>
+      <short>permenantly</short>
+    </rule>
+    <rule id="EN_SOFT_PERSISTENCE_MISS" name="persistance soft">
+      <pattern>
+        <token>persistance</token>
+      </pattern>
+      <message>Did you mean "persistence"?</message>
+      <short>persistance</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOURS_MISS" name="neigbours soft">
+      <pattern>
+        <token>neigbours</token>
+      </pattern>
+      <message>Did you mean "neighbours"?</message>
+      <short>neigbours</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURRENCES_MISS" name="occurances soft">
+      <pattern>
+        <token>occurances</token>
+      </pattern>
+      <message>Did you mean "occurrences"?</message>
+      <short>occurances</short>
+    </rule>
+    <rule id="EN_SOFT_OMISSIONS_MISS" name="omisions soft">
+      <pattern>
+        <token>omisions</token>
+      </pattern>
+      <message>Did you mean "omissions"?</message>
+      <short>omisions</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

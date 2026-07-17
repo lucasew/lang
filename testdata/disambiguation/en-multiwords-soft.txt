@@ -303,3 +303,6 @@ hour by hour	RB
 San Francisco California	NNP
 Los Angeles California	NNP
 day by day	RB
+San Jose California Metro	NNP
+night by night	RB
+week by week	RB
