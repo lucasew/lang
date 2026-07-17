@@ -8,6 +8,11 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -32,11 +37,21 @@ func registerCoreForLang(lt *languagetool.JLanguageTool, lang string) {
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
 	}
-	switch base {
+	switch strings.ToLower(base) {
 	case "en":
 		en.RegisterCoreEnglishLanguageRules(lt)
 	case "de":
 		de.RegisterCoreGermanRules(lt)
+	case "fr":
+		fr.RegisterCoreFrenchRules(lt)
+	case "es":
+		es.RegisterCoreSpanishRules(lt)
+	case "nl":
+		nl.RegisterCoreDutchRules(lt)
+	case "pl":
+		pl.RegisterCorePolishRules(lt)
+	case "uk":
+		uk.RegisterCoreUkrainianRules(lt)
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

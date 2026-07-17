@@ -25,8 +25,64 @@ func TestPipeline_Check(t *testing.T) {
 }
 
 func TestPipeline_CheckGerman(t *testing.T) {
-	// RegisterCoreRules for de uses shared + base word-repeat (not DE-specific pack)
 	p := NewPipeline(NewPipelineSettings("de", "u"))
 	require.NotEmpty(t, p.Check("Hallo  Welt"))
-	require.NotEmpty(t, p.Check("Ein Test Test."))
+	m := p.Check("Ein Test Test.")
+	require.NotEmpty(t, m)
+	found := false
+	for _, x := range m {
+		if x.RuleID == "GERMAN_WORD_REPEAT_RULE" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "want GERMAN_WORD_REPEAT_RULE in %+v", m)
+}
+
+func TestPipeline_CheckMultiLang(t *testing.T) {
+	cases := []struct {
+		lang string
+		text string
+		id   string
+	}{
+		{"fr", "bonjour bonjour", "FR_WORD_REPEAT_RULE"},
+		{"es", "hola hola", "SPANISH_WORD_REPEAT_RULE"},
+		{"nl", "hallo hallo", "NL_WORD_REPEAT_RULE"},
+		{"pl", "test test", "PL_WORD_REPEAT"},
+		{"uk", "без без", "UKRAINIAN_WORD_REPEAT_RULE"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.lang, func(t *testing.T) {
+			p := NewPipeline(NewPipelineSettings(tc.lang, "u"))
+			m := p.Check(tc.text)
+			require.NotEmpty(t, m)
+			found := false
+			for _, x := range m {
+				if x.RuleID == tc.id {
+					found = true
+					break
+				}
+			}
+			require.True(t, found, "want %s in %+v", tc.id, m)
+		})
+	}
+}
+
+func TestTextChecker_CheckRemote(t *testing.T) {
+	tc := NewV2TextChecker(nil, false, nil)
+	ms := tc.Check("This is an test.", "en", nil)
+	require.NotEmpty(t, ms)
+	found := false
+	for _, m := range ms {
+		if m.RuleID == "EN_A_VS_AN" {
+			found = true
+			require.NotEmpty(t, m.Context)
+			require.NotEmpty(t, m.Message)
+		}
+	}
+	require.True(t, found)
+
+	json, err := tc.CheckAndBuildJSON("hello  world", "en", "English", nil)
+	require.NoError(t, err)
+	require.Contains(t, json, "WHITESPACE_RULE")
 }
