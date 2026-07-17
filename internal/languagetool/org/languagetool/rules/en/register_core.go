@@ -74,6 +74,11 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	// Repeated words with synonym suggestions (official synonyms.txt; text-level).
 	rw := NewEnglishRepeatedWordsRule(nil)
 	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
+	// EN-specific unpaired brackets/quotes (Java English.getRelevantRules; text-level).
+	ub := NewEnglishUnpairedBracketsRule(nil)
+	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
+	uq := NewEnglishUnpairedQuotesRule(nil)
+	lt.AddTextLevelRuleChecker(uq.GetID(), rules.AsTextLevelChecker(uq.MatchList))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).

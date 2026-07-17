@@ -24,4 +24,8 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 		{ID: "ES_A_EL", Tokens: []string{"a", "el"}, Message: "¿Quiso decir 'al'?", Suggestion: "al"},
 		{ID: "ES_DE_EL", Tokens: []string{"de", "el"}, Message: "¿Quiso decir 'del'?", Suggestion: "del"},
 	})
+
+	// Official replace.txt / replace_custom.txt (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 }

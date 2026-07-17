@@ -25,4 +25,8 @@ func RegisterCoreFrenchRules(lt *languagetool.JLanguageTool) {
 		{ID: "FR_MALGRE_QUE", Tokens: []string{"malgré", "que"}, Message: "Préférez 'bien que' ou 'quoique'.", Suggestion: "bien que"},
 		{ID: "FR_AU_JOURD_HUI", Tokens: []string{"au", "jour", "d", "hui"}, Message: "Écrivez 'aujourd'hui' en un mot.", Suggestion: "aujourd'hui"},
 	})
+
+	// Official replace.txt / replace_custom.txt (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 }

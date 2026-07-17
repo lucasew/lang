@@ -32,4 +32,10 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 		{ID: "DE_WEGEN_DEM", Tokens: []string{"wegen", "dem"}, Message: "Meinten Sie 'wegen des'?", Suggestion: "wegen des"},
 		{ID: "DE_TROTZ_DEM", Tokens: []string{"trotz", "dem"}, Message: "Meinten Sie 'trotz des'?", Suggestion: "trotz des"},
 	})
+
+	// Official replace.txt / replace_custom.txt + coherency.txt (vendored/embedded).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

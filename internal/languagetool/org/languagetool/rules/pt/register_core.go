@@ -24,4 +24,10 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 		{ID: "PT_A_O", Tokens: []string{"a", "o"}, Message: "Talvez 'ao'?", Suggestion: "ao"},
 		{ID: "PT_DE_O", Tokens: []string{"de", "o"}, Message: "Talvez 'do'?", Suggestion: "do"},
 	})
+
+	// Official replace.txt + coherency (embedded from upstream).
+	sr := NewPortugueseReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewPortugueseWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }
