@@ -294,3 +294,6 @@ minute to minute	RB
 El Paso Texas	NNP
 San Diego California	NNP
 second to second	RB
+Dallas Texas	NNP
+Houston Texas	NNP
+in band	RB

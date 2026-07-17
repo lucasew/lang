@@ -2391,4 +2391,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_LVM" name="immunize lvm">
+    <pattern>
+      <token>lvm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LVM_CAPS" name="immunize LVM">
+    <pattern>
+      <token>LVM</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDADM" name="immunize mdadm">
+    <pattern>
+      <token>mdadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDADM_CAPS" name="immunize Mdadm">
+    <pattern>
+      <token>Mdadm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEKA" name="immunize weka">
+    <pattern>
+      <token>weka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEKA_CAPS" name="immunize Weka">
+    <pattern>
+      <token>Weka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

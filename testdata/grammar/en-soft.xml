@@ -6287,6 +6287,76 @@
       <message>Did you mean "licensed"?</message>
       <short>lisenced</short>
     </rule>
+    <rule id="EN_SOFT_LIAISON_MISS" name="liasion soft">
+      <pattern>
+        <token>liasion</token>
+      </pattern>
+      <message>Did you mean "liaison"?</message>
+      <short>liasion</short>
+    </rule>
+    <rule id="EN_SOFT_LEISURELY_MISS" name="leasurely soft">
+      <pattern>
+        <token>leasurely</token>
+      </pattern>
+      <message>Did you mean "leisurely"?</message>
+      <short>leasurely</short>
+    </rule>
+    <rule id="EN_SOFT_MAINTENANCE_MISS4" name="maintenence soft">
+      <pattern>
+        <token>maintenence</token>
+      </pattern>
+      <message>Did you mean "maintenance"?</message>
+      <short>maintenence</short>
+    </rule>
+    <rule id="EN_SOFT_MANEUVER_MISS2" name="manouver soft">
+      <pattern>
+        <token>manouver</token>
+      </pattern>
+      <message>Did you mean "maneuver"?</message>
+      <short>manouver</short>
+    </rule>
+    <rule id="EN_SOFT_MATERIAL_MISS" name="materail soft">
+      <pattern>
+        <token>materail</token>
+      </pattern>
+      <message>Did you mean "material"?</message>
+      <short>materail</short>
+    </rule>
+    <rule id="EN_SOFT_MATHEMATICS_MISS" name="mathamatics soft">
+      <pattern>
+        <token>mathamatics</token>
+      </pattern>
+      <message>Did you mean "mathematics"?</message>
+      <short>mathamatics</short>
+    </rule>
+    <rule id="EN_SOFT_MECHANIC_MISS" name="mecanic soft">
+      <pattern>
+        <token>mecanic</token>
+      </pattern>
+      <message>Did you mean "mechanic"?</message>
+      <short>mecanic</short>
+    </rule>
+    <rule id="EN_SOFT_MEDICINE_MISS2" name="medcine soft">
+      <pattern>
+        <token>medcine</token>
+      </pattern>
+      <message>Did you mean "medicine"?</message>
+      <short>medcine</short>
+    </rule>
+    <rule id="EN_SOFT_HEIGHTS_MISS2" name="hieghts soft">
+      <pattern>
+        <token>hieghts</token>
+      </pattern>
+      <message>Did you mean "heights"?</message>
+      <short>hieghts</short>
+    </rule>
+    <rule id="EN_SOFT_INFORM_MISS" name="infrom soft">
+      <pattern>
+        <token>infrom</token>
+      </pattern>
+      <message>Did you mean "inform"?</message>
+      <short>infrom</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

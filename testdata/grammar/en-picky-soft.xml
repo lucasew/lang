@@ -1485,5 +1485,29 @@
       <message>Jargon; name the toggle and rollout criteria instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DARK_LAUNCH" name="dark launch soft picky">
+      <pattern>
+        <token>dark</token>
+        <token>launch</token>
+      </pattern>
+      <message>Jargon; name the hidden production exposure plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHADOW_TRAFFIC" name="shadow traffic soft picky">
+      <pattern>
+        <token>shadow</token>
+        <token>traffic</token>
+      </pattern>
+      <message>Jargon; name the mirrored production load plan instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROGRESSIVE_DELIVERY" name="progressive delivery soft picky">
+      <pattern>
+        <token>progressive</token>
+        <token>delivery</token>
+      </pattern>
+      <message>Jargon; name the staged release controls instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
