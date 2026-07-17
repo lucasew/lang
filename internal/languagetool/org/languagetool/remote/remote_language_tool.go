@@ -13,6 +13,7 @@ const (
 	v2Check         = "/v2/check"
 	v2MaxTextLength = "/v2/maxtextlength"
 	v2ConfigInfo    = "/v2/configinfo"
+	v2Languages     = "/v2/languages"
 )
 
 // HTTPDoer abstracts http.Client for tests.
@@ -281,6 +282,46 @@ func (r *RemoteLanguageTool) GetConfigurationInfo() (*RemoteConfigurationInfo, e
 		return nil, fmt.Errorf("configinfo HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
 	}
 	return ParseRemoteConfigurationInfo(resp.Body)
+}
+
+// RemoteLanguage is one entry from /v2/languages.
+type RemoteLanguage struct {
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	LongCode string `json:"longCode,omitempty"`
+}
+
+// GetLanguages fetches /v2/languages.
+func (r *RemoteLanguageTool) GetLanguages() ([]RemoteLanguage, error) {
+	if r == nil {
+		return nil, fmt.Errorf("nil RemoteLanguageTool")
+	}
+	endpoint := r.ServerBaseURL + v2Languages
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := r.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("languages HTTP %d: %s", resp.StatusCode, truncate(string(body), 200))
+	}
+	var langs []RemoteLanguage
+	if err := json.Unmarshal(body, &langs); err != nil {
+		return nil, err
+	}
+	return langs, nil
 }
 
 // GetMaxTextLength fetches /v2/maxtextlength (plain integer body).

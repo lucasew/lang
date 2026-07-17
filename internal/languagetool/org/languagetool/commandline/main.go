@@ -8,7 +8,16 @@ import (
 )
 
 // UsageText is the CLI help banner (ports Main usage surface).
-const UsageText = `Usage: languagetool [OPTION]... [FILE]
+const UsageText = `Usage: lang [lint|languages|version|help] [OPTION]... [FILE]
+       languagetool [OPTION]... [FILE]
+
+Soft product subcommands (SPEC §2):
+  lint                     check text with linter columns (same as --lint)
+  languages                list languages (same as --list)
+  version                  print version
+  help                     this help
+
+Options:
   -l, --language CODE      language code (e.g. en-US)
   -m, --mothertongue CODE  mother tongue for false friends
   -d, --disable RULES      comma-separated disabled rule ids
@@ -52,8 +61,29 @@ func Run(args []string, hooks RunHooks) int {
 	return RunWithIO(args, hooks, os.Stdout, os.Stderr)
 }
 
+// NormalizeProductArgs maps soft product subcommands onto LT-style flags (SPEC §2).
+// Examples: "lint -l en -" → "--lint -l en -"; "languages" → "--list".
+func NormalizeProductArgs(args []string) []string {
+	if len(args) == 0 {
+		return args
+	}
+	switch args[0] {
+	case "lint":
+		return append([]string{"--lint"}, args[1:]...)
+	case "languages", "list":
+		return []string{"--list"}
+	case "version":
+		return []string{"--version"}
+	case "help":
+		return []string{"--help"}
+	default:
+		return args
+	}
+}
+
 // RunWithIO is Run with explicit streams (tests).
 func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
+	args = NormalizeProductArgs(args)
 	p := &CommandLineParser{}
 	opts, err := p.ParseOptions(args)
 	if err != nil {
