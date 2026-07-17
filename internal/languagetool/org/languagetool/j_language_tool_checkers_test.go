@@ -59,9 +59,10 @@ func TestSimplePhraseReplaceChecker_CaseInsensitive(t *testing.T) {
 }
 
 func TestSoftPreserveCase(t *testing.T) {
-	require.Equal(t, "by accident", softPreserveCase("on accident", "by accident"))
-	require.Equal(t, "By accident", softPreserveCase("On Accident", "by accident"))
-	require.Equal(t, "BY ACCIDENT", softPreserveCase("ON ACCIDENT", "by accident"))
+	require.Equal(t, "by accident", SoftPreserveCase("on accident", "by accident"))
+	require.Equal(t, "By accident", SoftPreserveCase("On Accident", "by accident"))
+	require.Equal(t, "BY ACCIDENT", SoftPreserveCase("ON ACCIDENT", "by accident"))
+	require.Equal(t, "Anyway", SoftPreserveCase("Anyways", "anyway"))
 }
 
 func TestCheckAnnotatedAndProject(t *testing.T) {

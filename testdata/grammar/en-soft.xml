@@ -885,6 +885,27 @@
       <message>In American English, "behavior" is often preferred.</message>
       <short>behaviour</short>
     </rule>
+    <rule id="EN_SOFT_TRAVELLED_US" name="travelled soft">
+      <pattern>
+        <token>travelled</token>
+      </pattern>
+      <message>In American English, "traveled" is often preferred.</message>
+      <short>travelled</short>
+    </rule>
+    <rule id="EN_SOFT_CANCELLED_US" name="cancelled soft">
+      <pattern>
+        <token>cancelled</token>
+      </pattern>
+      <message>In American English, "canceled" is often preferred.</message>
+      <short>cancelled</short>
+    </rule>
+    <rule id="EN_SOFT_MODELLED_US" name="modelled soft">
+      <pattern>
+        <token>modelled</token>
+      </pattern>
+      <message>In American English, "modeled" is often preferred.</message>
+      <short>modelled</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

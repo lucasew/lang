@@ -66,6 +66,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				}
 			}
 			out := rules.ToLocalMatches(ms)
+			text := ""
+			if s != nil {
+				text = s.GetText()
+			}
 			for i := range out {
 				if out[i].Description == "" {
 					out[i].Description = desc
@@ -94,6 +98,16 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				// Soft pattern rules beat map/CFSA2 speller on the same span for --apply.
 				if out[i].Priority == 0 {
 					out[i].Priority = 3
+				}
+				// Preserve sentence-case / ALL-CAPS from the matched surface on suggestions.
+				if text != "" && len(out[i].Suggestions) > 0 {
+					from, to := out[i].FromPos, out[i].ToPos
+					if from >= 0 && to <= len(text) && from < to {
+						matched := text[from:to]
+						for j, sug := range out[i].Suggestions {
+							out[i].Suggestions[j] = languagetool.SoftPreserveCase(matched, sug)
+						}
+					}
 				}
 			}
 			return out

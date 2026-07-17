@@ -277,15 +277,17 @@ func TestGolden_SoftContractionForms(t *testing.T) {
 		{"He wasnt late.", "EN_SOFT_WASNT", "wasn't"},
 		{"You shouldnt go.", "EN_SOFT_SHOULDNT", "shouldn't"},
 		{"I wouldnt care.", "EN_SOFT_WOULDNT", "wouldn't"},
-		{"Youre welcome.", "EN_SOFT_YOURE", "you're"},
-		{"Theyre leaving.", "EN_SOFT_THEYRE", "they're"},
+		{"Youre welcome.", "EN_SOFT_YOURE", "You're"},
+		{"Theyre leaving.", "EN_SOFT_THEYRE", "They're"},
 		{"I wouldve gone.", "EN_SOFT_WOULDVE", "would've"},
 		{"She couldve won.", "EN_SOFT_COULDVE", "could've"},
 		{"You shouldve called.", "EN_SOFT_SHOULDVE", "should've"},
 		{"He mustve left.", "EN_SOFT_MUSTVE", "must've"},
 		{"It mightve worked.", "EN_SOFT_MIGHTVE", "might've"},
-		{"Thatll do.", "EN_SOFT_THATLL", "that'll"},
-		{"Itll rain soon.", "EN_SOFT_ITLL", "it'll"},
+		{"Thatll do.", "EN_SOFT_THATLL", "That'll"},
+		{"Itll rain soon.", "EN_SOFT_ITLL", "It'll"},
+		{"I know thatll work.", "EN_SOFT_THATLL", "that'll"},
+		{"Say youre ready.", "EN_SOFT_YOURE", "you're"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -496,7 +498,7 @@ func TestGolden_SoftCaseAndCount(t *testing.T) {
 		{"It is for you and I.", "EN_SOFT_FOR_YOU_AND_I", "for you and me"},
 		{"Come with you and I.", "EN_SOFT_WITH_YOU_AND_I", "with you and me"},
 		{"Give it to who asks.", "EN_SOFT_TO_WHO", "to whom"},
-		{"Less people came today.", "EN_SOFT_LESS_PEOPLE", "fewer people"},
+		{"Less people came today.", "EN_SOFT_LESS_PEOPLE", "Fewer people"},
 		{"The amount of people grew.", "EN_SOFT_AMOUNT_OF_PEOPLE", "number of people"},
 	}
 	for _, tc := range cases {
@@ -575,7 +577,7 @@ func TestGolden_ApplySoftLessPeople(t *testing.T) {
 		Check:     CoreApplySuggestionsHook,
 	}, &out, &errb)
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
-	require.Contains(t, out.String(), "fewer people")
+	require.Contains(t, out.String(), "Fewer people")
 }
 
 func TestGolden_ApplySoftAmountOfPeople(t *testing.T) {
@@ -588,6 +590,16 @@ func TestGolden_ApplySoftAmountOfPeople(t *testing.T) {
 	require.Contains(t, out.String(), "number of people")
 }
 
+func TestGolden_ApplySoftDontCase(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Dont forget keys.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "Don't")
+}
+
 func TestGolden_ApplySoftAnyways(t *testing.T) {
 	var out, errb bytes.Buffer
 	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
@@ -595,8 +607,8 @@ func TestGolden_ApplySoftAnyways(t *testing.T) {
 		Check:     CoreApplySuggestionsHook,
 	}, &out, &errb)
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
-	// soft grammar suggestions are lowercase; apply still rewrites the token
-	require.Contains(t, strings.ToLower(out.String()), "anyway")
+	// SoftPreserveCase capitalizes suggestion when match is sentence-initial.
+	require.Contains(t, out.String(), "Anyway")
 	require.NotContains(t, strings.ToLower(out.String()), "anyways")
 }
 
@@ -604,7 +616,7 @@ func TestGolden_SoftUSVariantHints(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string
 	}{
-		{"Anyways, we left.", "EN_SOFT_ANYWAYS", "anyway"},
+		{"Anyways, we left.", "EN_SOFT_ANYWAYS", "Anyway"}, // sentence-initial SoftPreserveCase
 		{"Walk towards the door.", "EN_SOFT_TOWARDS_US", "toward"},
 		{"Sit amongst friends.", "EN_SOFT_AMONGST_US", "among"},
 		{"Wait whilst I check.", "EN_SOFT_WHILST_US", "while"},
@@ -615,6 +627,9 @@ func TestGolden_SoftUSVariantHints(t *testing.T) {
 		{"Please organise files.", "EN_SOFT_ORGANISE_US", "organize"},
 		{"I realise now.", "EN_SOFT_REALISE_US", "realize"},
 		{"Good behaviour matters.", "EN_SOFT_BEHAVIOUR_US", "behavior"},
+		{"We travelled far.", "EN_SOFT_TRAVELLED_US", "traveled"},
+		{"The flight was cancelled.", "EN_SOFT_CANCELLED_US", "canceled"},
+		{"The data was modelled.", "EN_SOFT_MODELLED_US", "modeled"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

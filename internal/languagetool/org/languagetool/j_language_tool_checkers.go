@@ -144,7 +144,7 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 						}
 					}
 					matched := text[idx : idx+len(wrong)]
-					sug := softPreserveCase(matched, repl)
+					sug := SoftPreserveCase(matched, repl)
 					out = append(out, LocalMatch{
 						FromPos: idx, ToPos: idx + len(wrong),
 						Message: "Phrase", RuleID: ruleID,
@@ -158,9 +158,9 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 	}
 }
 
-// softPreserveCase maps suggestion casing from the matched original span.
+// SoftPreserveCase maps suggestion casing from the matched original span.
 // ALL-CAPS match → ALL-CAPS suggestion; leading capital → capitalize suggestion.
-func softPreserveCase(matched, suggestion string) string {
+func SoftPreserveCase(matched, suggestion string) string {
 	if matched == "" || suggestion == "" {
 		return suggestion
 	}
