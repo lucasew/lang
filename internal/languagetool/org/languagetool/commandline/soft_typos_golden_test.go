@@ -488,6 +488,46 @@ func TestGolden_ApplySoftWouldve(t *testing.T) {
 	require.NotContains(t, out.String(), "wouldve")
 }
 
+func TestGolden_SoftCaseAndCount(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"This is between you and I.", "EN_SOFT_BETWEEN_YOU_AND_I", "between you and me"},
+		{"It is for you and I.", "EN_SOFT_FOR_YOU_AND_I", "for you and me"},
+		{"Come with you and I.", "EN_SOFT_WITH_YOU_AND_I", "with you and me"},
+		{"Give it to who asks.", "EN_SOFT_TO_WHO", "to whom"},
+		{"Less people came today.", "EN_SOFT_LESS_PEOPLE", "fewer people"},
+		{"The amount of people grew.", "EN_SOFT_AMOUNT_OF_PEOPLE", "number of people"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftBetweenYouAndI(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Keep this between you and I.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "between you and me")
+}
+
 func TestGolden_SoftSupposeTo(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "You suppose to leave now.", &CommandLineOptions{Language: "en"})

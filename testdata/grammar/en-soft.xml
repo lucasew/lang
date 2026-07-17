@@ -614,6 +614,69 @@
       <message>Did you mean "it'll"?</message>
       <short>contraction</short>
     </rule>
+    <rule id="EN_SOFT_BETWEEN_YOU_AND_I" name="between you and I">
+      <pattern>
+        <token>between</token>
+        <token>you</token>
+        <token>and</token>
+        <token>I</token>
+      </pattern>
+      <message>Did you mean "between you and me"?</message>
+      <short>case</short>
+    </rule>
+    <rule id="EN_SOFT_FOR_YOU_AND_I" name="for you and I">
+      <pattern>
+        <token>for</token>
+        <token>you</token>
+        <token>and</token>
+        <token>I</token>
+      </pattern>
+      <message>Did you mean "for you and me"?</message>
+      <short>case</short>
+    </rule>
+    <rule id="EN_SOFT_WITH_YOU_AND_I" name="with you and I">
+      <pattern>
+        <token>with</token>
+        <token>you</token>
+        <token>and</token>
+        <token>I</token>
+      </pattern>
+      <message>Did you mean "with you and me"?</message>
+      <short>case</short>
+    </rule>
+    <rule id="EN_SOFT_TO_WHO" name="to who">
+      <pattern>
+        <token>to</token>
+        <token>who</token>
+      </pattern>
+      <message>Did you mean "to whom"?</message>
+      <short>who/whom</short>
+    </rule>
+    <rule id="EN_SOFT_LESS_PEOPLE" name="less people">
+      <pattern>
+        <token>less</token>
+        <token>people</token>
+      </pattern>
+      <message>Did you mean "fewer people"?</message>
+      <short>less/fewer</short>
+    </rule>
+    <rule id="EN_SOFT_AMOUNT_OF_PEOPLE" name="amount of people">
+      <pattern>
+        <token>amount</token>
+        <token>of</token>
+        <token>people</token>
+      </pattern>
+      <message>Did you mean "number of people"?</message>
+      <short>amount/number</short>
+    </rule>
+    <rule id="EN_SOFT_THESE_ONES" name="these ones">
+      <pattern>
+        <token>these</token>
+        <token>ones</token>
+      </pattern>
+      <message>Consider "these" alone.</message>
+      <short>style</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">

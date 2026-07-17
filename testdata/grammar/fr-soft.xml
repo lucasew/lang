@@ -65,6 +65,41 @@
       <message>Peut-être "parce que"?</message>
       <short>parce que</short>
     </rule>
+    <rule id="FR_SOFT_ON_A" name="on a">
+      <pattern>
+        <token>on</token>
+        <token>a</token>
+        <token>eu</token>
+      </pattern>
+      <message>Peut-être "on a eu" est correct; vérifiez "on a" vs "on n'a".</message>
+      <short>on a</short>
+    </rule>
+    <rule id="FR_SOFT_MALGRE_QUE" name="malgré que">
+      <pattern>
+        <token>malgré</token>
+        <token>que</token>
+      </pattern>
+      <message>Préférez souvent "bien que" ou "malgré" + nom.</message>
+      <short>malgré que</short>
+    </rule>
+    <rule id="FR_SOFT_AU_JOURD" name="au jour d aujourd hui">
+      <pattern>
+        <token>au</token>
+        <token>jour</token>
+        <token>d</token>
+        <token>aujourd</token>
+      </pattern>
+      <message>Préférez "aujourd'hui".</message>
+      <short>pléonasme</short>
+    </rule>
+    <rule id="FR_SOFT_COMME_MEME" name="comme même">
+      <pattern>
+        <token>comme</token>
+        <token>même</token>
+      </pattern>
+      <message>Peut-être "quand même"?</message>
+      <short>comme même</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typographie">
     <rule id="FR_SOFT_DOUBLE_BANG" name="double point d'exclamation">
@@ -72,7 +107,7 @@
         <token>!</token>
         <token>!</token>
       </pattern>
-      <message>Un seul point d'exclamation suffit souvent.</message>
+      <message>Un seul point d'exclamation suffit souvent: "!"</message>
       <short>ponctuation</short>
     </rule>
   </category>
