@@ -21,7 +21,7 @@
       <pattern>
         <token case_sensitive="yes">extra</token>
         <token min="0">zu</token>
-        <token regexp="yes">machen|tun</token>
+        <token regexp="yes" inflected="yes">machen|tun</token>
       </pattern>
       <message>'Extra' im Sinne von 'vorsätzlich' ist sehr umgangssprachlich und könnte hier durch formellere Alternativen ersetzt werden. <suggestion>vorsätzlich</suggestion></message>
       <short>EXTRA_STIL</short>

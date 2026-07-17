@@ -107,7 +107,7 @@
   <category id="LIGATURE_USAGE" name="Ligature Usage">
     <rule id="ADJECTIVE-C_COMMON_NOUN" name="adjective-c (adjective-c na)">
       <pattern>
-        <token regexp="yes" postag="(ADMO|ADCO|ADSU|ADNU|ADUN|ADOT).*" postag_regexp="yes">.*[bcdfghjklmpqrstvwxyz]</token>
+        <token regexp="yes" inflected="yes" postag="(ADMO|ADCO|ADSU|ADNU|ADUN|ADOT).*" postag_regexp="yes">.*[bcdfghjklmpqrstvwxyz]</token>
         <token postag="(NCOM).*" postag_regexp="yes"></token>
       </pattern>
       <message>Do you mean <suggestion>\1 na \2</suggestion>? If the adjective ends with a consonant, except the letter N, the ligature "na" should be added.</message>
@@ -115,7 +115,7 @@
     </rule>
     <rule id="ADJECTIVE-N_COMMON_NOUN" name="adjective-n (adjective-ng)">
       <pattern>
-        <token regexp="yes" postag="(ADMO|ADCO|ADSU|ADNU|ADUN|ADOT).*" postag_regexp="yes">.*[n]</token>
+        <token regexp="yes" inflected="no" postag="(ADMO|ADCO|ADSU|ADNU|ADUN|ADOT).*" postag_regexp="yes">.*[n]</token>
         <token postag="(NCOM).*" postag_regexp="yes"></token>
       </pattern>
       <message>Do you mean <suggestion>\1g \2</suggestion>? If the adjective ends with the letter N, the ligature "-g" should be added.</message>
@@ -123,7 +123,7 @@
     </rule>
     <rule id="ADJECTIVE-V_COMMON_NOUN" name="adjective-v (adjective-v-ng)">
       <pattern>
-        <token regexp="yes" postag="(ADMO|ADCO|ADSU|ADNU|ADUN|ADOT).*" postag_regexp="yes">.*[aeiou]</token>
+        <token regexp="yes" inflected="no" postag="(ADMO|ADCO|ADSU|ADNU|ADUN|ADOT).*" postag_regexp="yes">.*[aeiou]</token>
         <token postag="(NCOM).*" postag_regexp="yes"></token>
       </pattern>
       <message>Do you mean <suggestion>\1ng \2</suggestion>? If the adjective ends with a vowel, the ligature "-ng" should be added.</message>

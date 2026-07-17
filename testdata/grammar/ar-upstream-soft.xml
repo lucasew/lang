@@ -305,7 +305,7 @@
     </rule>
     <rule id="collo_0008_uqsim_ban" name="أقسم بأن">
       <pattern>
-        <token>أَقْسَمَ</token>
+        <token inflected="yes">أَقْسَمَ</token>
         <token>بأن</token>
       </pattern>
       <message>الباء تدخل على المُقْسَم به
@@ -397,7 +397,7 @@
     </rule>
     <rule id="collo_0056_mulfitun_llnaZar" name="ملفت للنظر">
       <pattern>
-        <token>ملفت</token>
+        <token inflected="yes">ملفت</token>
         <token>للنظر</token>
       </pattern>
       <message>الفعل هو: (لَفَت)، لا: (ألْفَتَ)
@@ -407,7 +407,7 @@
     <rule id="collo_0057_mimma_da3a" name="مما دعا إلى">
       <pattern>
         <token>مما</token>
-        <token>دَعَا</token>
+        <token inflected="yes">دَعَا</token>
         <token>إلى</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -434,7 +434,7 @@
     </rule>
     <rule id="collo_0070_tamahwara_hawla" name="يتمحور حول">
       <pattern>
-        <token skip="2">تَمَحْوَرَ</token>
+        <token inflected="yes" skip="2">تَمَحْوَرَ</token>
         <token>حول</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -463,7 +463,7 @@
     </rule>
     <rule id="collo_0073_Akhla_manzil" name="أخلى السكان من المنزل">
       <pattern>
-        <token>أَخْلَى</token>
+        <token inflected="yes">أَخْلَى</token>
         <token>السكان</token>
         <token>من</token>
         <token>المنزل</token>
@@ -507,8 +507,8 @@
     </rule>
     <rule id="collo_0078_tawajaba_3ala" name="توجب على">
       <pattern>
-        <token>تَوَجَّبَ</token>
-        <token>على</token>
+        <token inflected="yes">تَوَجَّبَ</token>
+        <token inflected="yes">على</token>
       </pattern>
       <message>ويفضل أن يقال:
         <suggestion>يجب</suggestion>
@@ -518,8 +518,8 @@
     </rule>
     <rule id="collo_0080_money_laundring" name="غسيل الأموال">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">غسيل</token>
-        <token postag="N.*;.*;--.?" postag_regexp="yes">أموال</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">غسيل</token>
+        <token inflected="yes" postag="N.*;.*;--.?" postag_regexp="yes">أموال</token>
       </pattern>
       <message>ويفضل أن يقال:
         <suggestion></suggestion> \2.
@@ -551,7 +551,7 @@
     </rule>
     <rule id="collo_0088_baka_min_shidati_ta2athuri" name="بكى من شدة التأثير">
       <pattern>
-        <token>بَكَى</token>
+        <token inflected="yes">بَكَى</token>
         <token>من</token>
         <token>شدة</token>
         <token>التأثير</token>
@@ -563,7 +563,7 @@
     </rule>
     <rule id="collo_0089_akkada_bianna" name="أكّد بأنّ">
       <pattern>
-        <token>أَكَّدَ</token>
+        <token inflected="yes">أَكَّدَ</token>
         <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -573,7 +573,7 @@
     </rule>
     <rule id="exp_454_Drbh_bAlArD" name="ضربه بالأرض">
       <pattern>
-        <token postag="V31.*H" postag_regexp="yes">ضَرَبَ</token>
+        <token inflected="yes" postag="V31.*H" postag_regexp="yes">ضَرَبَ</token>
         <token>بالأرض</token>
       </pattern>
       <message>الأرضُ لا تُحملُ ليُضْرَبَ بها
@@ -594,8 +594,8 @@
     </rule>
     <rule id="exp_507_ASAbh_kll" name="أصابه كلل">
       <pattern>
-        <token skip="1">أَصَابَ</token>
-        <token postag="N.*;--." postag_regexp="yes">كلل</token>
+        <token inflected="yes" skip="1">أَصَابَ</token>
+        <token inflected="yes" postag="N.*;--." postag_regexp="yes">كلل</token>
       </pattern>
       <message>(الكَلَل): الحالة. يقال: مات بكَلَلِ سوءٍ
         <suggestion>كَلال</suggestion>
@@ -604,9 +604,9 @@
     </rule>
     <rule id="exp_512_Alqa_Elyhm_khTAbA__Alqa_khTAbA" name="ألقى عليهم خطابا |ألقى خطابا">
       <pattern>
-        <token skip="1">أَلْقَى</token>
+        <token inflected="yes" skip="1">أَلْقَى</token>
         <token regexp="yes" min="0">علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
-        <token postag="N.*;--." postag_regexp="yes">خطاب</token>
+        <token inflected="yes" postag="N.*;--." postag_regexp="yes">خطاب</token>
       </pattern>
       <message>(الخِطاب): ما يكلم به الرجلُ صاحِبَهُ
         <suggestion>خطبة</suggestion>
@@ -615,8 +615,8 @@
     </rule>
     <rule id="exp_526_rAa_mnAmA" name="رأى مناما">
       <pattern>
-        <token skip="1">رَأَى</token>
-        <token postag="N.*;--." postag_regexp="yes">منام</token>
+        <token inflected="yes" skip="1">رَأَى</token>
+        <token inflected="yes" postag="N.*;--." postag_regexp="yes">منام</token>
       </pattern>
       <message>(المنام): النَّوم، وموضِعُ النوم
         <suggestion></suggestion>
@@ -625,7 +625,7 @@
     </rule>
     <rule id="exp_527_ytnAsb_wgHruhu" name="يتناسب وغيره">
       <pattern>
-        <token>تَنَاسَبَ</token>
+        <token inflected="yes">تَنَاسَبَ</token>
         <token postag="N.*;W.." postag_regexp="yes"></token>
       </pattern>
       <message>ومِثل يتناسب: يتلاءم ويتنافى...
@@ -636,7 +636,7 @@
     </rule>
     <rule id="exp_527_ytnAsb_wgHruhu_2" name="يتنافى وغيره">
       <pattern>
-        <token>تَنَافَى</token>
+        <token inflected="yes">تَنَافَى</token>
         <token postag="N.*;W.." postag_regexp="yes"></token>
       </pattern>
       <message>ومِثل يتناسب: يتلاءم ويتنافى...
@@ -647,7 +647,7 @@
     </rule>
     <rule id="exp_527_ytnAsb_wgHruhu_3" name="يتلاءم وغيره">
       <pattern>
-        <token>تَلَاءَمَ</token>
+        <token inflected="yes">تَلَاءَمَ</token>
         <token postag="N.*;W.." postag_regexp="yes"></token>
       </pattern>
       <message>ومِثل يتناسب: يتنافى ويتلاءم...
@@ -658,8 +658,8 @@
     </rule>
     <rule id="exp_542_Sdr_AlHkm_bHq" name="صدر الحكم بحق">
       <pattern>
-        <token>صَدَرَ</token>
-        <token postag="N.*;--." postag_regexp="yes">حكم</token>
+        <token inflected="yes">صَدَرَ</token>
+        <token inflected="yes" postag="N.*;--." postag_regexp="yes">حكم</token>
         <token>بحق</token>
       </pattern>
       <message>يقال صدر الحكم على(إذا كان في غير مصلحته) . أو له إذا كان لمصلحته
@@ -669,8 +669,8 @@
     </rule>
     <rule id="exp_542_Sdr_AlHkm_bHq_2" name="صدر الحكم بحق">
       <pattern>
-        <token>صَدَرَ</token>
-        <token postag="N.*;--." postag_regexp="yes">حكم</token>
+        <token inflected="yes">صَدَرَ</token>
+        <token inflected="yes" postag="N.*;--." postag_regexp="yes">حكم</token>
         <token regexp="yes">بحق(|ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)</token>
       </pattern>
       <message>يقال صدر الحكم على(إذا كان في غير مصلحته) . أو له إذا كان لمصلحته
@@ -680,7 +680,7 @@
     </rule>
     <rule id="exp_548_EArD_byn_AlktAb_wASlh_AlmkhTwT" name="عارض بين الكتاب وأصله المخطوط">
       <pattern>
-        <token skip="1">عَارَضَ</token>
+        <token inflected="yes" skip="1">عَارَضَ</token>
         <token>بين</token>
         <token>الكتاب</token>
         <token>وأصله</token>
@@ -701,7 +701,7 @@
     </rule>
     <rule id="exp_563_nzhr_2lyh_shdhrA" name="نـظر إليه شذرا">
       <pattern>
-        <token skip="1">نَظَرَ</token>
+        <token inflected="yes" skip="1">نَظَرَ</token>
         <token regexp="yes" skip="1">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
         <token>شذرا</token>
       </pattern>
@@ -711,7 +711,7 @@
     </rule>
     <rule id="exp_565_Awkl_AlAmr_2la_mwkl_2lyh" name="أوكل الأمر إلى|موكل إليه">
       <pattern>
-        <token>موكل</token>
+        <token inflected="yes">موكل</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>يفضل أن يقال: أوْكَلَ الأمرَ على فلان، فهو مُوكَلٌ عليه أو وكل الأمر إليه فهو موكول إليه
@@ -741,7 +741,7 @@
     </rule>
     <rule id="syntax_0201_mughashan_3layh" name="مغشى عليه">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">وَقِعَ</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">وَقِعَ</token>
         <token>مغشى</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
@@ -750,7 +750,7 @@
     </rule>
     <rule id="syntax_0202_mwshik_3ala" name="موشك على">
       <pattern>
-        <token>موشك</token>
+        <token inflected="yes">موشك</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -777,7 +777,7 @@
     </rule>
     <rule id="syntax_05001_istftaa" name="استفتاء على">
       <pattern>
-        <token>استفتاء</token>
+        <token inflected="yes">استفتاء</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>الفعل "استَفْتَاه" أي سأله رأيه في مسألة و "أفتى في المسألة": أبان الحكم فيها. وهو لا يتعدى بـ "على".</message>
@@ -785,7 +785,7 @@
     </rule>
     <rule id="syntax_0500_munawwah" name="المنوه عنه|المنوه إليه">
       <pattern>
-        <token>منوه</token>
+        <token inflected="yes">منوه</token>
         <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن|إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -794,7 +794,7 @@
     </rule>
     <rule id="syntax_05010_3atl_3an_3amal" name="عاطل عن العمل">
       <pattern>
-        <token>عاطل</token>
+        <token inflected="yes">عاطل</token>
         <token>عن</token>
         <token>العمل</token>
       </pattern>
@@ -804,7 +804,7 @@
     </rule>
     <rule id="syntax_0502_muta3aref_3alYah" name="متعارف عليها">
       <pattern>
-        <token postag="N.*;M.*;.*" postag_regexp="yes">متعارف</token>
+        <token inflected="yes" postag="N.*;M.*;.*" postag_regexp="yes">متعارف</token>
         <token>عليها</token>
       </pattern>
       <message>ويفضل أن يقال:
@@ -813,7 +813,7 @@
     </rule>
     <rule id="syntax_0502_muta3aref_3alyh" name="متعارف عليه">
       <pattern>
-        <token postag="N.*;M.*;.*" postag_regexp="yes">متعارف</token>
+        <token inflected="yes" postag="N.*;M.*;.*" postag_regexp="yes">متعارف</token>
         <token>عليه</token>
       </pattern>
       <message>ويفضل أن يقال:
@@ -822,7 +822,7 @@
     </rule>
     <rule id="syntax_0503_hawla" name="حول بدلا من في">
       <pattern>
-        <token regexp="yes" skip="1">آراء|دراسة</token>
+        <token regexp="yes" inflected="yes" skip="1">آراء|دراسة</token>
         <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -831,7 +831,7 @@
     </rule>
     <rule id="syntax_0504_hawla" name="إرشادات حول">
       <pattern>
-        <token regexp="yes">إرشاد|تعقيب</token>
+        <token regexp="yes" inflected="yes">إرشاد|تعقيب</token>
         <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -843,15 +843,15 @@
     </rule>
     <rule id="syntax_0505_mushrif_li" name="المشرف له">
       <pattern>
-        <token skip="1">مشرف</token>
+        <token inflected="yes" skip="1">مشرف</token>
         <token postag="N.*;-L.?" postag_regexp="yes"></token>
       </pattern>
-      <message>يفضل أن يقال:  مشرف على.</message>
+      <message>يفضل أن يقال:  مشرف على. <suggestion>على</suggestion></message>
       <short>syntax_0505_mushrif_li</short>
     </rule>
     <rule id="syntax_0506_ta2min_dhida" name="تأمين، مناعة ضد">
       <pattern>
-        <token regexp="yes" skip="2">تأمين|مناعة</token>
+        <token regexp="yes" inflected="yes" skip="2">تأمين|مناعة</token>
         <token regexp="yes">ضد(|ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)?</token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -860,7 +860,7 @@
     </rule>
     <rule id="syntax_0507_taqrir_hawla" name="تقرير حول">
       <pattern>
-        <token skip="2">تقرير</token>
+        <token inflected="yes" skip="2">تقرير</token>
         <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -869,7 +869,7 @@
     </rule>
     <rule id="syntax_0508_tawdhih_hawla" name="توضيح حول">
       <pattern>
-        <token>توضيح</token>
+        <token inflected="yes">توضيح</token>
         <token regexp="yes">حول|حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -879,7 +879,7 @@
     </rule>
     <rule id="syntax_0511_3alaqa_ma3a" name="علاقة مع">
       <pattern>
-        <token skip="2">علاقة</token>
+        <token inflected="yes" skip="2">علاقة</token>
         <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -888,7 +888,7 @@
     </rule>
     <rule id="syntax_0512_lamha_3an" name="لمحة عن">
       <pattern>
-        <token>لمحة</token>
+        <token inflected="yes">لمحة</token>
         <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن</token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -898,7 +898,7 @@
     </rule>
     <rule id="syntax_0513_mutadhali3_fi" name="متضلع في">
       <pattern>
-        <token>متضلع</token>
+        <token inflected="yes">متضلع</token>
         <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -907,7 +907,7 @@
     </rule>
     <rule id="syntax_0514_ma3soum_3an" name="معصوم من">
       <pattern>
-        <token>معصوم</token>
+        <token inflected="yes">معصوم</token>
         <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن</token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -916,7 +916,7 @@
     </rule>
     <rule id="syntax_200_madhhool" name="مذهول">
       <pattern>
-        <token>وَقَفَ</token>
+        <token inflected="yes">وَقَفَ</token>
         <token regexp="yes">مذهولا|مذهولة</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -926,7 +926,7 @@
     </rule>
     <rule id="syntax_504_mulahadha_hawl" name="ملاحظة حول">
       <pattern>
-        <token regexp="yes">ملاحظة|استدراك</token>
+        <token regexp="yes" inflected="yes">ملاحظة|استدراك</token>
         <token regexp="yes">&quot;حولنا|حولك|حولكما|حولكم|حولكن|حوله|حولها|حولهما|حولهم|حولهن&quot;</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -935,7 +935,7 @@
     </rule>
     <rule id="syntax_504_mulahadha_hawl_a" name="ملاحظة حول">
       <pattern>
-        <token regexp="yes">ملاحظة|استدراك</token>
+        <token regexp="yes" inflected="yes">ملاحظة|استدراك</token>
         <token>حول</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -944,8 +944,8 @@
     </rule>
     <rule id="trans_489_yqArb_Eddhm_mn" name="يقارب عددهم من">
       <pattern>
-        <token postag="V4.*-" postag_regexp="yes">قَارَبَ</token>
-        <token postag="N.*;--." postag_regexp="yes">عدد</token>
+        <token inflected="yes" postag="V4.*-" postag_regexp="yes">قَارَبَ</token>
+        <token inflected="yes" postag="N.*;--." postag_regexp="yes">عدد</token>
         <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
       </pattern>
       <message>يفضل أن يقال: قارب العدد ألفا بدلا من قارب العدد من ألف
@@ -954,7 +954,7 @@
     </rule>
     <rule id="trans_509_AEtdhr_En_AlHDwr" name="اعتذر عن الحضور">
       <pattern>
-        <token skip="1">اِعْتَذَرَ</token>
+        <token inflected="yes" skip="1">اِعْتَذَرَ</token>
         <token>عن</token>
         <token regexp="yes">حضور|الحضور</token>
       </pattern>
@@ -966,7 +966,7 @@
     </rule>
     <rule id="trans_510_Aglq_AlbAb_bAlrtAj" name="أغلق الباب بالرتاج">
       <pattern>
-        <token skip="2">أَغْلَقَ</token>
+        <token inflected="yes" skip="2">أَغْلَقَ</token>
         <token>بالرتاج</token>
       </pattern>
       <message>(الرِّتاج): الباب
@@ -997,7 +997,7 @@
     </rule>
     <rule id="gender_0001_hadha" name="تطابق النوع مع هذا">
       <pattern>
-        <token>هذا</token>
+        <token inflected="yes">هذا</token>
         <token postag="N.*;F1.*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
@@ -1006,15 +1006,15 @@
     <rule id="gender_0003_hadha" name="تطابق هذا مع الكلمات ملتبسة النوع">
       <pattern>
         <token>هذه</token>
-        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">ذقن|رفات</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">ذقن|رفات</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
       <short>gender_0003_hadha</short>
     </rule>
     <rule id="gender_0004_hadhihi" name="تطابق هذه مع الكلمات ملتبسة النوع">
       <pattern>
-        <token>هذا</token>
-        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+        <token inflected="yes">هذا</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
         <suggestion> </suggestion></message>
@@ -1022,7 +1022,7 @@
     </rule>
     <rule id="gender_0006_dhalika" name="تطابق النوع مع ذلك">
       <pattern>
-        <token>ذلك</token>
+        <token inflected="yes">ذلك</token>
         <token postag="N.*;F1.*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
@@ -1030,7 +1030,7 @@
     </rule>
     <rule id="gender_0007_tilka" name="تطابق النوع مع تلك">
       <pattern>
-        <token>تلك</token>
+        <token inflected="yes">تلك</token>
         <token postag="N.*;M1.*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مذكرة، ضع اسم اشارة مذكرًا:
@@ -1040,15 +1040,15 @@
     <rule id="gender_0008_dhalika" name="تطابق ذلك مع الكلمات ملتبسة النوع">
       <pattern>
         <token>تلك</token>
-        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">ذقن|رفات</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">ذقن|رفات</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
       <short>gender_0008_dhalika</short>
     </rule>
     <rule id="gender_0009_tilka" name="تطابق تلك مع الكلمات ملتبسة النوع">
       <pattern>
-        <token>ذلك</token>
-        <token regexp="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+        <token inflected="yes">ذلك</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?1.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
         <suggestion> </suggestion></message>
@@ -1064,7 +1064,7 @@
     </rule>
     <rule id="gender_0010_hadhani" name="تطابق النوع مع هذان">
       <pattern>
-        <token>هذان</token>
+        <token inflected="yes">هذان</token>
         <token postag="N.*;F2U.*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
@@ -1080,7 +1080,7 @@
     </rule>
     <rule id="gender_0011_hatani" name="تطابق النوع مع هاتان">
       <pattern>
-        <token>هاتان</token>
+        <token inflected="yes">هاتان</token>
         <token postag="N.*;M2U.*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مذكرة، ضع اسم اشارة مذكرًا:
@@ -1090,15 +1090,15 @@
     <rule id="gender_0012_hadhani" name="تطابق هذان مع الكلمات ملتبسة النوع">
       <pattern>
         <token>هاتان</token>
-        <token regexp="yes" postag="N.*;.?2U.*;--.*" postag_regexp="yes">ذقن|رفات</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?2U.*;--.*" postag_regexp="yes">ذقن|رفات</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
       <short>gender_0012_hadhani</short>
     </rule>
     <rule id="gender_0013_hatani" name="تطابق هاتان مع الكلمات ملتبسة النوع">
       <pattern>
-        <token>هذان</token>
-        <token regexp="yes" postag="N.*;.?2U.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+        <token inflected="yes">هذان</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?2U.*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
         <suggestion> </suggestion></message>
@@ -1106,7 +1106,7 @@
     </rule>
     <rule id="gender_0014_hadhayni" name="تطابق النوع مع هذين">
       <pattern>
-        <token>هذين</token>
+        <token inflected="yes">هذين</token>
         <token postag="N.*;F2[IA].*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ربما عليك وضع اسم اشارة مؤنث: <suggestion> </suggestion></message>
@@ -1114,7 +1114,7 @@
     </rule>
     <rule id="gender_0015_hatayni" name="تطابق النوع مع هاتين">
       <pattern>
-        <token>هاتين</token>
+        <token inflected="yes">هاتين</token>
         <token postag="N.*;M2[IA].*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2"  مذكرة، ضع اسم اشارة مذكرًا:
@@ -1124,15 +1124,15 @@
     <rule id="gender_0016_hadhayni" name="تطابق هذين مع الكلمات ملتبسة النوع">
       <pattern>
         <token>هاتين</token>
-        <token regexp="yes" postag="N.*;.?2[IA].*;--.*" postag_regexp="yes">ذقن|رفات</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?2[IA].*;--.*" postag_regexp="yes">ذقن|رفات</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:  <suggestion> </suggestion></message>
       <short>gender_0016_hadhayni</short>
     </rule>
     <rule id="gender_0017_hatayni" name="تطابق هاتين مع الكلمات ملتبسة النوع">
       <pattern>
-        <token>هذين</token>
-        <token regexp="yes" postag="N.*;.?2[IA].*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
+        <token inflected="yes">هذين</token>
+        <token regexp="yes" inflected="yes" postag="N.*;.?2[IA].*;--.*" postag_regexp="yes">كتف|فخذ|ساق|ريح|بئر|يمين|ضبع|سن</token>
       </pattern>
       <message>الكلمة "\2"  مؤنثة، ضع اسم اشارة مؤنثة:
         <suggestion> </suggestion></message>
@@ -1140,7 +1140,7 @@
     </rule>
     <rule id="gender_0018_hadhani_case" name="تطابق الإعراب مع هذان">
       <pattern>
-        <token>هذان</token>
+        <token inflected="yes">هذان</token>
         <token postag="N.*;M2[IA].*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2" بدل من هذان لذا تتبعه في الإعراب، ربما عليك مراجعة العبارة: <suggestion> </suggestion><suggestion> </suggestion></message>
@@ -1164,7 +1164,7 @@
     </rule>
     <rule id="gender_0021_hatayni_case" name="تطابق الإعراب مع هاتان">
       <pattern>
-        <token>هاتان</token>
+        <token inflected="yes">هاتان</token>
         <token postag="N.*;F2[IA].*;--.*" postag_regexp="yes"></token>
       </pattern>
       <message>الكلمة "\2" بدل من هاتان لذا تتبعه في الإعراب، ربما عليك مراجعة العبارة: <suggestion> </suggestion><suggestion> </suggestion></message>
@@ -1188,8 +1188,8 @@
     </rule>
     <rule id="gender_0101" name="شريعة سمحاء">
       <pattern>
-        <token>شريعة</token>
-        <token postag="N.*;.*;--.?" postag_regexp="yes">سمحاء</token>
+        <token inflected="yes">شريعة</token>
+        <token inflected="yes" postag="N.*;.*;--.?" postag_regexp="yes">سمحاء</token>
       </pattern>
       <message>(سمحاء) مؤنث (أَسْمَح)، لم تقلهما العرب
         <suggestion> </suggestion></message>
@@ -1227,7 +1227,7 @@
     </rule>
     <rule id="redend_0003_haq_lojo2" name="حق_اللجوء">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">حق</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">حق</token>
         <token>اللجوء</token>
       </pattern>
       <message>قل اللجوء بدلا من حق اللجوء. يفضل أن تحذف كلمة حق  لأن حق هنا لا لزوم لها في التعبير.</message>
@@ -1235,7 +1235,7 @@
     </rule>
     <rule id="redend_0004_tawilat_mofawadhat" name="طاولة_المفاوضات">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">طاولة</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">طاولة</token>
         <token regexp="yes">المفاوضات|المداولات</token>
       </pattern>
       <message>ويفضل أن تقول \2 بدلا من طاولة \2 لأن طاولة هنا لا لزوم لها في التعبير.</message>
@@ -1285,7 +1285,7 @@
     </rule>
     <rule id="trans_383_AHtAr_fy" name="احتار في">
       <pattern>
-        <token skip="1">اِحْتَارَ</token>
+        <token inflected="yes" skip="1">اِحْتَارَ</token>
         <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -1297,8 +1297,8 @@
     </rule>
     <rule id="use_0001_fashila_fi" name="فشل في">
       <pattern>
-        <token>فَشِلَ</token>
-        <token>في</token>
+        <token inflected="yes">فَشِلَ</token>
+        <token inflected="yes">في</token>
       </pattern>
       <message>ويفضل أن يقال:
         <suggestion>أخفق</suggestion>
@@ -1309,7 +1309,7 @@
     </rule>
     <rule id="use_0081_open_fire" name="فتح الرصاص/النار">
       <pattern>
-        <token skip="1">فَتَحَ</token>
+        <token inflected="yes" skip="1">فَتَحَ</token>
         <token regexp="yes">الرصاص|النار</token>
       </pattern>
       <message>ويفضل أن يقال:
@@ -1320,7 +1320,7 @@
     </rule>
     <rule id="verb_0010_ta2amala" name="تأمل خيرا">
       <pattern>
-        <token>تَأَمَّلَ</token>
+        <token inflected="yes">تَأَمَّلَ</token>
         <token>خيرا</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -1331,7 +1331,7 @@
     </rule>
     <rule id="verb_0090_takkada_min" name="تأكّد من">
       <pattern>
-        <token>تَأَكَّدَ</token>
+        <token inflected="yes">تَأَكَّدَ</token>
         <token>من</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -1341,7 +1341,7 @@
     </rule>
     <rule id="verb_200_AHATh_ElmA" name="أحاطه علما">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;--H" postag_regexp="yes">أَحَاطَ</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;--H" postag_regexp="yes">أَحَاطَ</token>
         <token>علما</token>
       </pattern>
       <message>(أحاط) فعلٌ لازم
@@ -1350,7 +1350,7 @@
     </rule>
     <rule id="verb_200_AHATh_ElmA_2" name="أحاطه علما">
       <pattern>
-        <token skip="1" postag="V.*;.*f.?.?;--H" postag_regexp="yes">أَحَاطَ</token>
+        <token inflected="yes" skip="1" postag="V.*;.*f.?.?;--H" postag_regexp="yes">أَحَاطَ</token>
         <token>علما</token>
       </pattern>
       <message>(أحاط) فعلٌ لازم
@@ -1359,8 +1359,8 @@
     </rule>
     <rule id="verb_201_AHna_rAs" name="أحنى رأس">
       <pattern>
-        <token skip="1" postag="VW1;.*p.?.?;.*" postag_regexp="yes">أَحْنَى</token>
-        <token skip="1" postag="N.*;--.?" postag_regexp="yes">رأس</token>
+        <token inflected="yes" skip="1" postag="VW1;.*p.?.?;.*" postag_regexp="yes">أَحْنَى</token>
+        <token inflected="yes" skip="1" postag="N.*;--.?" postag_regexp="yes">رأس</token>
       </pattern>
       <message>(أَحْنَى عليه): عطف عليه
         <suggestion></suggestion></message>
@@ -1369,7 +1369,7 @@
     <rule id="verb_204_AstqrD_mAl" name="استقرض مال">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(ا|ي|ت|ن|أ|سي|ست|سن|سأ)ستقرض.*</token>
-        <token postag="N.*;-*-.?" postag_regexp="yes">مال</token>
+        <token inflected="yes" postag="N.*;-*-.?" postag_regexp="yes">مال</token>
       </pattern>
       <message>(الاستقراض): طلب القرض
         <suggestion></suggestion></message>
@@ -1377,8 +1377,8 @@
     </rule>
     <rule id="verb_205_Astql_syArt" name="استقل سيارة">
       <pattern>
-        <token skip="1">اِسْتَقَلَّ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">سيارة</token>
+        <token inflected="yes" skip="1">اِسْتَقَلَّ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">سيارة</token>
       </pattern>
       <message>(استقلَّ الشيءَ): حَمَلَه ورفعه
         <suggestion></suggestion></message>
@@ -1386,8 +1386,8 @@
     </rule>
     <rule id="verb_206_Astlft_AnzhAr" name="استلفت أنظار">
       <pattern>
-        <token skip="1">اِسْتَلْفَتَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">أنظار|نظر</token>
+        <token inflected="yes" skip="1">اِسْتَلْفَتَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">أنظار|نظر</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion>اسْتَرْعَى</suggestion></message>
@@ -1395,8 +1395,8 @@
     </rule>
     <rule id="verb_207_Astlft_AnzhAr" name="استلفت أنظار">
       <pattern>
-        <token skip="1">اِسْتَلْفَتَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">أنظار|نظر</token>
+        <token inflected="yes" skip="1">اِسْتَلْفَتَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">أنظار|نظر</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1404,8 +1404,8 @@
     </rule>
     <rule id="verb_208_Astlm_rsAlt" name="استلم رسالة">
       <pattern>
-        <token skip="1">اِسْتَلَمَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">رسالة</token>
+        <token inflected="yes" skip="1">اِسْتَلَمَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">رسالة</token>
       </pattern>
       <message>(الاستلام) خاص بالحجر الأسود
         <suggestion></suggestion></message>
@@ -1414,7 +1414,7 @@
     <rule id="verb_209_Astmzj_rAy" name="استمزج رأي">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(ا|ي|ت|ن|أ|سي|ست|سن|سأ)ستمزج.*</token>
-        <token postag="N.*;--.?" postag_regexp="yes">رأي</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">رأي</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion>
@@ -1424,7 +1424,7 @@
     <rule id="verb_210_Astnsb_shy2" name="استنسب شيء">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(ا|ي|ت|ن|أ|سي|ست|سن|سأ)ستنسب.*</token>
-        <token postag="N.*;--.?" postag_regexp="yes">شيء</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">شيء</token>
       </pattern>
       <message>(استنسبَ الرجُلُ): ذَكَرَ نسبَه. (استنسبَ الرجُلَ): سأله أن يذكر نسبه
         <suggestion></suggestion></message>
@@ -1432,9 +1432,9 @@
     </rule>
     <rule id="verb_211_AsEf_2la_Almstshfa" name="أسعف إلى المستشفى">
       <pattern>
-        <token skip="1">أَسْعَفَ</token>
+        <token inflected="yes" skip="1">أَسْعَفَ</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
-        <token postag="N.*;--.?" postag_regexp="yes">مستشفى</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">مستشفى</token>
       </pattern>
       <message>(أسعَفَ فلاناً بحاجته): قضاها له
         <suggestion></suggestion></message>
@@ -1442,8 +1442,8 @@
     </rule>
     <rule id="verb_212_ATlqfk_srAH" name="أطلق، فك سراح">
       <pattern>
-        <token skip="1">أَطْلَقَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">سراح</token>
+        <token inflected="yes" skip="1">أَطْلَقَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">سراح</token>
       </pattern>
       <message>يفضل أن يقال:
 أُطْلِقَ من أَسْرِهِ/ خٌلِّيَ سبيلُهُ.
@@ -1453,8 +1453,8 @@
     </rule>
     <rule id="verb_212_ATlqfk_srAH_2" name="فك سراح">
       <pattern>
-        <token skip="1">فَكَّ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">سراح</token>
+        <token inflected="yes" skip="1">فَكَّ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">سراح</token>
       </pattern>
       <message>يفضل أن يقال:
 أُطْلِقَ من أَسْرِهِ/ خٌلِّيَ سبيلُهُ.
@@ -1464,8 +1464,8 @@
     </rule>
     <rule id="verb_213_Agdq_khyr" name="أغدق خير">
       <pattern>
-        <token skip="1">أَغْدَقَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">خير</token>
+        <token inflected="yes" skip="1">أَغْدَقَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">خير</token>
       </pattern>
       <message>(أغدق) فعلٌ لازم؛ تقول: (أغدقتِ الأرضُ): أخصبت
         <suggestion></suggestion>
@@ -1475,7 +1475,7 @@
     <rule id="verb_214_AfdHh_dyn" name="أفدحه دين">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(أفدح|أفدحت)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">دين|ديون</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">دين|ديون</token>
       </pattern>
       <message>الفعل هو: (فَدح)، لا: (أفدح)
         <suggestion></suggestion></message>
@@ -1485,7 +1485,7 @@
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?أفسح.*</token>
         <token>في</token>
-        <token postag="N.*;--.?" postag_regexp="yes">مجلس</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">مجلس</token>
       </pattern>
       <message>يفضل أن يقال: فَسَح له في المجلس، بدلا من أَفْسح له.
         <suggestion></suggestion></message>
@@ -1493,8 +1493,8 @@
     </rule>
     <rule id="verb_216_AqtSd_mblg" name="اقتصد مبلغ">
       <pattern>
-        <token skip="1">اِقْتَصَدَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">مبلغ</token>
+        <token inflected="yes" skip="1">اِقْتَصَدَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">مبلغ</token>
       </pattern>
       <message>(اقتصد في النفقة): لم يسرف ولم يقتِّر
         <suggestion></suggestion></message>
@@ -1502,8 +1502,8 @@
     </rule>
     <rule id="verb_217_AqlE_mEml" name="أقلع معمل">
       <pattern>
-        <token>أَقْلَعَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">معمل</token>
+        <token inflected="yes">أَقْلَعَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">معمل</token>
       </pattern>
       <message>يفضل أن يقال:
     
@@ -1513,7 +1513,7 @@
     <rule id="verb_218_Akrb_gm" name="أكرب غم">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?أكرب(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
-        <token postag="N.*;--.?" postag_regexp="yes">غم</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">غم</token>
       </pattern>
       <message>(أَكْرَبَ الرجلُ): عَدَا. (أَكْرَبَ السِّقاءَ): ملأَه
         <suggestion></suggestion></message>
@@ -1522,7 +1522,7 @@
     <rule id="verb_220_AmlA_AlwEA2_bAlmA2" name="أملأ الوعاء بالماء">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(أملأ|أملأت)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
-        <token postag="N.*;--.?" postag_regexp="yes">وعاء</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">وعاء</token>
       </pattern>
       <message>(أَمْلأهُ): سبّب له الزكام
         <suggestion></suggestion></message>
@@ -1531,7 +1531,7 @@
     <rule id="verb_221_AnTla_Elyh_AlHylt" name="انطلت عليه الحيلة">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?انطلت</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حيل|حيلة</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">حيل|حيلة</token>
       </pattern>
       <message>يفضل أن يقال: جازت عليه الحيلة.
         <suggestion></suggestion></message>
@@ -1539,8 +1539,8 @@
     </rule>
     <rule id="verb_222_AhAj_AlAmr" name="أهاج الأمر">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">أَهَاجَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">أمر</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">أَهَاجَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">أمر</token>
       </pattern>
       <message>(أهاجتِ الريحُ النبتَ): أَيْبَسَتْهُ
         <suggestion></suggestion></message>
@@ -1548,7 +1548,7 @@
     </rule>
     <rule id="verb_224_Awkl_AlAmr_2lamwkl_2lyh" name="أوكل الأمر إلى|موكل إليه">
       <pattern>
-        <token skip="1">أَوْكَلَ</token>
+        <token inflected="yes" skip="1">أَوْكَلَ</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>يفضل أن يقال: أوْكَلَ الأمرَ على فلان، فهو مُوكَلٌ عليه
@@ -1559,8 +1559,8 @@
     </rule>
     <rule id="verb_225_brsh_SAbwn" name="برش صابون">
       <pattern>
-        <token skip="1">بَرِشَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">صابون</token>
+        <token inflected="yes" skip="1">بَرِشَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">صابون</token>
       </pattern>
       <message>(بَرِشَ الشيءُ): اختلف لونُه
         <suggestion></suggestion></message>
@@ -1568,7 +1568,7 @@
     </rule>
     <rule id="verb_228_tHSl_Ela" name="تحصل على">
       <pattern>
-        <token skip="1">تَحَصَّلَ</token>
+        <token inflected="yes" skip="1">تَحَصَّلَ</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>(تَحَصَّل الشيءُ): تَجَمَّعَ وثبت
@@ -1577,7 +1577,7 @@
     </rule>
     <rule id="verb_229_trAs" name="ترأس">
       <pattern>
-        <token>تَرَأَّسَ</token>
+        <token inflected="yes">تَرَأَّسَ</token>
       </pattern>
       <message>(ترأَّسَ) فعلٌ لازم
         <suggestion></suggestion></message>
@@ -1585,7 +1585,7 @@
     </rule>
     <rule id="verb_230_tstr_Ela" name="تستر على">
       <pattern>
-        <token skip="1">تَسَتَّرَ</token>
+        <token inflected="yes" skip="1">تَسَتَّرَ</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>(تستَّرَ): احتجب
@@ -1594,7 +1594,7 @@
     </rule>
     <rule id="verb_231_tETsh_2la" name="تعطش إلى">
       <pattern>
-        <token skip="1">تَعَطَّشَ</token>
+        <token inflected="yes" skip="1">تَعَطَّشَ</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>(تعطَّش): تكلّف العطش
@@ -1603,7 +1603,7 @@
     </rule>
     <rule id="verb_233_Aftqd_2la" name="افتقد إلى">
       <pattern>
-        <token skip="1">اِفْتَقَدَ</token>
+        <token inflected="yes" skip="1">اِفْتَقَدَ</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -1613,7 +1613,7 @@
     <rule id="verb_234_tqTb_rjl" name="تَقَطَّب الرجل">
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?تقطب.*</token>
-        <token skip="1" postag="N.*;--.?" postag_regexp="yes">رجل</token>
+        <token inflected="yes" skip="1" postag="N.*;--.?" postag_regexp="yes">رجل</token>
       </pattern>
       <message>الفعل هو: (قَطَب) أو (قَطَّب)، لا: (تقطَّب)
         <suggestion></suggestion>
@@ -1622,7 +1622,7 @@
     </rule>
     <rule id="verb_236_tmAda_Ela" name="تمادى على">
       <pattern>
-        <token skip="1">تَمَادَى</token>
+        <token inflected="yes" skip="1">تَمَادَى</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -1631,7 +1631,7 @@
     </rule>
     <rule id="verb_237_tmEn_fy_Amr" name="تمعن في أمر">
       <pattern>
-        <token skip="1">تَمَعَّنَ</token>
+        <token inflected="yes" skip="1">تَمَعَّنَ</token>
         <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
       </pattern>
       <message>(تَمَعَّن): تصاغَرَ وتذلَّل, أنعم النظر في الأمر= أطال الفِكرة فيه، أَمْعَنَ النظر في الأمر = بالَغَ في استقصائه
@@ -1641,7 +1641,7 @@
     </rule>
     <rule id="verb_239_tnAzl_En" name="تنازل عن">
       <pattern>
-        <token skip="1">تَنَازَلَ</token>
+        <token inflected="yes" skip="1">تَنَازَلَ</token>
         <token regexp="yes">عن|عني|عنا|عنك|عنكما|عنكم|عنكن|عنه|عنها|عنهما|عنهم|عنهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -1650,8 +1650,8 @@
     </rule>
     <rule id="verb_240_nqS_tjArb" name="نقص تجارب">
       <pattern>
-        <token skip="1">نَقَصَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حكمة|خبرة|تجربة|تجارب</token>
+        <token inflected="yes" skip="1">نَقَصَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">حكمة|خبرة|تجربة|تجارب</token>
       </pattern>
       <message>يفضل أن يقال: تعوزه التجارب والخبرة بدلا من تنقصه.
         <suggestion>تُعْوِزُه</suggestion></message>
@@ -1667,8 +1667,8 @@
     </rule>
     <rule id="verb_242_twlj_Amr_bnfsh" name="تولج أمر بنفسه">
       <pattern>
-        <token skip="1">تَوَلَّجَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">أمر</token>
+        <token inflected="yes" skip="1">تَوَلَّجَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">أمر</token>
       </pattern>
       <message>(تولّج): دخل
         <suggestion>تولّى</suggestion>
@@ -1678,8 +1678,8 @@
     </rule>
     <rule id="verb_243_jrd_lwn_AlqmyS" name="جرد لون القميص">
       <pattern>
-        <token skip="1">جَرَدَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">لون</token>
+        <token inflected="yes" skip="1">جَرَدَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">لون</token>
       </pattern>
       <message>(جَرِدَ الثوبُ): أَخْلَق. (جَرَد): قَشَر
         <suggestion></suggestion></message>
@@ -1687,8 +1687,8 @@
     </rule>
     <rule id="verb_244_HlqAHlq_dhqn" name="حلق¦أحلق ذقن">
       <pattern>
-        <token skip="1">حَلَقَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">ذقن</token>
+        <token inflected="yes" skip="1">حَلَقَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">ذقن</token>
       </pattern>
       <message>(الذقَن): مجتمع اللَّحْيَيْن من أسفلهما. (اللِّحية): شعر الخدَّين والذقَن
         <suggestion>لِحية</suggestion></message>
@@ -1696,8 +1696,8 @@
     </rule>
     <rule id="verb_245_dAhm_Edw" name="داهم عدو">
       <pattern>
-        <token skip="1">دَاهَمَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">عدو</token>
+        <token inflected="yes" skip="1">دَاهَمَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">عدو</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1705,7 +1705,7 @@
     </rule>
     <rule id="verb_246_dAwl_fy_Amr" name="داول في أمر">
       <pattern>
-        <token skip="1">دَاوَلَ</token>
+        <token inflected="yes" skip="1">دَاوَلَ</token>
         <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
       </pattern>
       <message>(داوَل الشيءَ بينهم): جعله متداولاً، تارة لهؤلاء وتارة لهؤلاء
@@ -1716,7 +1716,7 @@
     <rule id="verb_247_dlf_sqf" name="دلف سقف">
       <pattern>
         <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(دلف|دلفت)</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">سقوف|سقف</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">سقوف|سقف</token>
       </pattern>
       <message>(دَلَفَ الشيخُ): مشى مَشْياً بَطيئاً كمَن يَزحَف
         <suggestion>وَكَفَ</suggestion></message>
@@ -1725,7 +1725,7 @@
     <rule id="verb_248_dhs_syArt" name="دهسته السيارة">
       <pattern>
         <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(دهس|دهست)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
-        <token postag="N.*;--.?" postag_regexp="yes">سيارة</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">سيارة</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1733,8 +1733,8 @@
     </rule>
     <rule id="verb_249_rtA_rthA_thwb" name="رتا|رثا ثوب">
       <pattern>
-        <token regexp="yes" skip="1">رَتَا|رَثَا</token>
-        <token postag="N.*;--.?" postag_regexp="yes">ثوب</token>
+        <token regexp="yes" inflected="yes" skip="1">رَتَا|رَثَا</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">ثوب</token>
       </pattern>
       <message>(رَتا الرجُلُ): خَطَا. (رَثاه): بَكاهُ وعَدَّدَ مَحاسِنَه
         <suggestion></suggestion>
@@ -1751,8 +1751,8 @@
     </rule>
     <rule id="verb_252_sHb_shkwa" name="سحب شكوى">
       <pattern>
-        <token skip="1">سَحَبَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">شكوى</token>
+        <token inflected="yes" skip="1">سَحَبَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">شكوى</token>
       </pattern>
       <message>(سحب الشيءَ): جَرَّهُ على وجه الأرض
         <suggestion>اسْتَرَدّ</suggestion></message>
@@ -1760,8 +1760,8 @@
     </rule>
     <rule id="verb_253_srE_AlEml" name="سرع العمل">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">سَرُعَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">عمل</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">سَرُعَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">عمل</token>
       </pattern>
       <message>قل أسْرَعَ العمل بدلا من سرّعه.
         <suggestion></suggestion></message>
@@ -1769,8 +1769,8 @@
     </rule>
     <rule id="verb_254_shHn_bDAEt_2la" name="شُحِنَتِ البضاعةُ إلى">
       <pattern>
-        <token skip="1">شَحَنَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">بضاعة|بضائع</token>
+        <token inflected="yes" skip="1">شَحَنَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">بضاعة|بضائع</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>(شُحِنت السفينةُ بالبضاعة): مُلِئت بالبضاعة
@@ -1781,7 +1781,7 @@
     <rule id="verb_255_shE_shms" name="شع شمس">
       <pattern>
         <token regexp="yes">(و|ف)?(شع|شعت)</token>
-        <token skip="1" postag="N.*;--.?" postag_regexp="yes">شمس</token>
+        <token inflected="yes" skip="1" postag="N.*;--.?" postag_regexp="yes">شمس</token>
       </pattern>
       <message>(شعَّ): تفرَّق وانتشر
         <suggestion></suggestion></message>
@@ -1789,8 +1789,8 @@
     </rule>
     <rule id="verb_256_SlH_AkhTA2" name="صلح أخطاء">
       <pattern>
-        <token skip="1">صَلَّحَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">خطأ|أخطاء|غلط|أغلاط</token>
+        <token inflected="yes" skip="1">صَلَّحَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">خطأ|أخطاء|غلط|أغلاط</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1798,8 +1798,8 @@
     </rule>
     <rule id="verb_257_SlH_AlsyArt" name="صلح السيارة">
       <pattern>
-        <token skip="1">صَلَّحَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">سيارة</token>
+        <token inflected="yes" skip="1">صَلَّحَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">سيارة</token>
       </pattern>
       <message>يفضل أن يقال: أصلح السيارة بدلا من صلّحها.
         <suggestion></suggestion></message>
@@ -1807,8 +1807,8 @@
     </rule>
     <rule id="verb_258_EdAh_bAlmrD" name="عداه بالمرض">
       <pattern>
-        <token postag="V.*;.*p.?.?;.*" postag_regexp="yes">عَدَا</token>
-        <token postag="N.*;-B.?" postag_regexp="yes">مرض</token>
+        <token inflected="yes" postag="V.*;.*p.?.?;.*" postag_regexp="yes">عَدَا</token>
+        <token inflected="yes" postag="N.*;-B.?" postag_regexp="yes">مرض</token>
       </pattern>
       <message>(عدا): جَرَى، وسَرَق، وجَاوَزَ وتَرَك، لذا قل:
         <suggestion>أعدى*</suggestion>
@@ -1817,7 +1817,7 @@
     </rule>
     <rule id="verb_260_EfAh_mn_Alwzhyft" name="عفاه من الوظيفة">
       <pattern>
-        <token skip="1">عَفَا</token>
+        <token inflected="yes" skip="1">عَفَا</token>
         <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
       </pattern>
       <message>(عفا عنه): صَفَحَ عنه. (عفا الأثرُ): زال
@@ -1827,7 +1827,7 @@
     <rule id="verb_261_gAfl_lS" name="غافل لص">
       <pattern>
         <token regexp="yes">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(غافل)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">لص|لصوص</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">لص|لصوص</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1835,8 +1835,8 @@
     </rule>
     <rule id="verb_262_gTa_mqAl" name="غطى مقال">
       <pattern>
-        <token>غَطَّى</token>
-        <token postag="N.*;--.?" postag_regexp="yes">مقال</token>
+        <token inflected="yes">غَطَّى</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">مقال</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1844,8 +1844,8 @@
     </rule>
     <rule id="verb_265_fls_AltAjr" name="فلس التاجر">
       <pattern>
-        <token>فَلَّسَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">تاجر</token>
+        <token inflected="yes">فَلَّسَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">تاجر</token>
       </pattern>
       <message>(فَلَّسَ القاضي التاجرَ): حَكَمَ بإفلاسه
         <suggestion>أفلس</suggestion></message>
@@ -1853,7 +1853,7 @@
     </rule>
     <rule id="verb_266_qrf_mn" name="قرف من">
       <pattern>
-        <token skip="1" postag="V.*;.*(p|i).?.?;.*" postag_regexp="yes">قَرِفَ</token>
+        <token inflected="yes" skip="1" postag="V.*;.*(p|i).?.?;.*" postag_regexp="yes">قَرِفَ</token>
         <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
       </pattern>
       <message>(قَرِفَ فلانٌ): دَانَى المرضَ
@@ -1862,7 +1862,7 @@
     </rule>
     <rule id="verb_266_qrf_mn_2" name="قرف من">
       <pattern>
-        <token skip="1" postag="V.*;.*f.?.?;.*" postag_regexp="yes">قَرِفَ</token>
+        <token inflected="yes" skip="1" postag="V.*;.*f.?.?;.*" postag_regexp="yes">قَرِفَ</token>
         <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
       </pattern>
       <message>(قَرِفَ فلانٌ): دَانَى المرضَ
@@ -1871,8 +1871,8 @@
     </rule>
     <rule id="verb_267_qfl_AlbAb" name="قفل الباب">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">قَفَلَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">باب</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">قَفَلَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">باب</token>
       </pattern>
       <message>(قَفَل): رجع من سَفره. (أقْفَلَ البابَ): أغْلَقَه بالقفل
         <suggestion></suggestion></message>
@@ -1880,8 +1880,8 @@
     </rule>
     <rule id="verb_268_kbdh_EnA2_shdydA" name="كبده عناء شديدا">
       <pattern>
-        <token skip="1">كَبَّدَ</token>
-        <token regexp="yes" postag="N.*;--." postag_regexp="yes">مجهود|خسارة|خسائر|عناء</token>
+        <token inflected="yes" skip="1">كَبَّدَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--." postag_regexp="yes">مجهود|خسارة|خسائر|عناء</token>
       </pattern>
       <message>(كبَّدَتِ الشمسُ السماءَ): صارت في وَسَطها
         <suggestion></suggestion>
@@ -1890,8 +1890,8 @@
     </rule>
     <rule id="verb_269_kra_Albyt" name="كرى البيت">
       <pattern>
-        <token skip="1" postag="V.*;*.p.?.?;.*" postag_regexp="yes">كَرَى</token>
-        <token postag="N.*;--.?" postag_regexp="yes">بيت</token>
+        <token inflected="yes" skip="1" postag="V.*;*.p.?.?;.*" postag_regexp="yes">كَرَى</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">بيت</token>
       </pattern>
       <message>(كَرَى الأرضَ): حَفَرَهَا. (كَرِيَ الرجلُ): نَعَسَ أو نامَ
         <suggestion></suggestion></message>
@@ -1899,8 +1899,8 @@
     </rule>
     <rule id="verb_270_ksr_AlqAnwn" name="كسر القانون">
       <pattern>
-        <token skip="1">كَسَرَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">قاعدة|قواعد|قوانين|نظام|أنظمة|قانون</token>
+        <token inflected="yes" skip="1">كَسَرَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">قاعدة|قواعد|قوانين|نظام|أنظمة|قانون</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1908,8 +1908,8 @@
     </rule>
     <rule id="verb_272_ljm_AljwAd" name="لجم الجواد">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">لَجَمَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">جواد|جياد|حصان|أحصنة|فرس</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">لَجَمَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">جواد|جياد|حصان|أحصنة|فرس</token>
       </pattern>
       <message>(لَجَمَ الثوبَ): خاطَه
         <suggestion></suggestion></message>
@@ -1917,8 +1917,8 @@
     </rule>
     <rule id="verb_273_lSq_Alwrq_bAlSmg" name="لصق الورق بالصمغ">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">لَصِقَ</token>
-        <token regexp="yes" postag="N.*;-B.?" postag_regexp="yes">غراء|صمغ|لاصق</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">لَصِقَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;-B.?" postag_regexp="yes">غراء|صمغ|لاصق</token>
       </pattern>
       <message>(لَصِقَ الشيءُ بغيره): لَزِقَ به. وهو فعلٌ لازم
         <suggestion></suggestion></message>
@@ -1927,7 +1927,7 @@
     <rule id="verb_274_lgA_AlmshrwE" name="لغا المشروع">
       <pattern>
         <token regexp="yes" skip="1">لغا|لغى|لغت|لغوا|لغيت</token>
-        <token postag="N.*;--.?" postag_regexp="yes">مشروع</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">مشروع</token>
       </pattern>
       <message>(لغا الشيءُ): بَطَلَ، وهو فعلٌ لازم.. يقال: (بَطَلَ البيعُ، فالبيع باطلٌ/لاغٍ)
         <suggestion>أَلْغَى</suggestion></message>
@@ -1935,8 +1935,8 @@
     </rule>
     <rule id="verb_275_lfzh_AnfAsh" name="لفظ أنفاسه">
       <pattern>
-        <token skip="1">لَفَظَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">أنفاس|نفس</token>
+        <token inflected="yes" skip="1">لَفَظَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">أنفاس|نفس</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion>انقضت </suggestion>
@@ -1945,7 +1945,7 @@
     </rule>
     <rule id="verb_276_mzH_mE" name="مزح مع">
       <pattern>
-        <token>مَزَحَ</token>
+        <token inflected="yes">مَزَحَ</token>
         <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
       </pattern>
       <message>(مزح خالدٌ مع سعيد) تعني أنهما مزحا معاً، لا أنّ خالداً هو المازِح. ولو شارك سعيدٌ في المزح لقلنا: تمازَحَا
@@ -1954,7 +1954,7 @@
     </rule>
     <rule id="verb_276_mzH_mE_2" name="مزح مع">
       <pattern>
-        <token>مَزَحَ</token>
+        <token inflected="yes">مَزَحَ</token>
         <token min="0" postag="N.*;--.?" postag_regexp="yes"></token>
         <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
       </pattern>
@@ -1964,8 +1964,8 @@
     </rule>
     <rule id="verb_277_ngz_AldAbt" name="نغز الدابة">
       <pattern>
-        <token skip="1">نَغَزَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">دابة</token>
+        <token inflected="yes" skip="1">نَغَزَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">دابة</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1973,8 +1973,8 @@
     </rule>
     <rule id="verb_278_nfdh_Sbrh" name="نـفذ صبره">
       <pattern>
-        <token>نَفَذَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">صبر</token>
+        <token inflected="yes">نَفَذَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">صبر</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -1984,7 +1984,7 @@
       <pattern>
         <token regexp="yes" skip="1">(و|ف)?(ي|ت|ن|أ|سي|ست|سن|سأ)?(هدس|هدست)</token>
         <token regexp="yes">في|فينا|فيك|فيكما|فيكم|فيكن|فيه|فيها|فيهما|فيهم|فيهن</token>
-        <token min="0" postag="N.*;--.?" postag_regexp="yes">أمر</token>
+        <token inflected="yes" min="0" postag="N.*;--.?" postag_regexp="yes">أمر</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion>  </suggestion></message>
@@ -1992,7 +1992,7 @@
     </rule>
     <rule id="verb_281_wjd_Elyh" name="وجد عليه">
       <pattern>
-        <token skip="1">وَجَدَ</token>
+        <token inflected="yes" skip="1">وَجَدَ</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>(وجَدَ عليه): غَضِبَ عليه، (وَجَدَ به): أَحَبَّه
@@ -2001,8 +2001,8 @@
     </rule>
     <rule id="verb_282_wfa_Alkyl" name="وفى الكيل">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">وَفَى</token>
-        <token postag="N.*;--.?" postag_regexp="yes">كيل</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">وَفَى</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">كيل</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -2010,8 +2010,8 @@
     </rule>
     <rule id="verb_283_wqdt_AlHTb" name="وقدت الحطب">
       <pattern>
-        <token skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">وَقَّدَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حطب|خشب</token>
+        <token inflected="yes" skip="1" postag="V.*;.*p.?.?;.*" postag_regexp="yes">وَقَّدَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">حطب|خشب</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -2019,8 +2019,8 @@
     </rule>
     <rule id="verb_284_wlE_AlnAr" name="ولع النار">
       <pattern>
-        <token skip="1" postag="V.*;.*[pi].?.?;.*" postag_regexp="yes">وَلَّعَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">نار</token>
+        <token inflected="yes" skip="1" postag="V.*;.*[pi].?.?;.*" postag_regexp="yes">وَلَّعَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">نار</token>
       </pattern>
       <message>(وَلَّع فلاناً به): أغراه
         <suggestion></suggestion>
@@ -2029,8 +2029,8 @@
     </rule>
     <rule id="verb_284_wlE_AlnAr_2" name="ولع النار">
       <pattern>
-        <token skip="1" postag="V.*;.*[^pi].?.?;.*" postag_regexp="yes">وَلَّعَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">نار</token>
+        <token inflected="yes" skip="1" postag="V.*;.*[^pi].?.?;.*" postag_regexp="yes">وَلَّعَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">نار</token>
       </pattern>
       <message>(وَلَّع فلاناً به): أغراه
         <suggestion></suggestion>
@@ -2039,7 +2039,7 @@
     </rule>
     <rule id="verb_285_ytmAsha_mE" name="يتماشى مع">
       <pattern>
-        <token skip="1">تَمَاشَى</token>
+        <token inflected="yes" skip="1">تَمَاشَى</token>
         <token regexp="yes">مع|معنا|معك|معكما|معكم|معكن|معه|معها|معهما|معهم|معهن</token>
       </pattern>
       <message>فاعل (تماشى) لا يكون إلا مثنى أو جمعاً
@@ -2051,8 +2051,8 @@
     </rule>
     <rule id="verb_286_ysry_AlHkm_mn" name="يسري الحكم من">
       <pattern>
-        <token skip="1">سَرَى</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">حكم|قرار|مرسوم</token>
+        <token inflected="yes" skip="1">سَرَى</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">حكم|قرار|مرسوم</token>
         <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
       </pattern>
       <message>(سرى): سار ليلاً، دبّ تحت الأرض . قل نفُذ الحكم
@@ -2062,7 +2062,7 @@
     <rule id="verb_287_yTAlhA_AlqAnwn" name="يطالها القانون">
       <pattern>
         <token regexp="yes">(و|ف)?(ي|ت|سي|ست)?(طال)(ه|ها|هما|هم|هن|ك|كما|كم|كن|ني|نا)?</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">قانون|قوانين|نظام|أنظمة</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">قانون|قوانين|نظام|أنظمة</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -2070,8 +2070,8 @@
     </rule>
     <rule id="verb_288_yThy_AlTEAm" name="يطهي الطعام">
       <pattern>
-        <token skip="1">طَهَى</token>
-        <token postag="N.*;--.?" postag_regexp="yes">طعام</token>
+        <token inflected="yes" skip="1">طَهَى</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">طعام</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -2079,8 +2079,8 @@
     </rule>
     <rule id="verb_289_ylEb_dwrA_r2ysyA" name="يلعب دورا رئيسيا">
       <pattern>
-        <token regexp="yes" skip="1">لَعَبَ|لَعِبَ</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">دور|أدوار</token>
+        <token regexp="yes" inflected="yes" skip="1">لَعَبَ|لَعِبَ</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">دور|أدوار</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion>أدّى</suggestion>
@@ -2090,8 +2090,8 @@
     </rule>
     <rule id="verb_290_ynqSh_shy2" name="ينقصه شيء">
       <pattern>
-        <token skip="1">نَقَصَ</token>
-        <token skip="1" postag="N.*;--.?" postag_regexp="yes">شيء</token>
+        <token inflected="yes" skip="1">نَقَصَ</token>
+        <token inflected="yes" skip="1" postag="N.*;--.?" postag_regexp="yes">شيء</token>
       </pattern>
       <message>يفضل أن يقال:  يُعْوِزٌه شيء
         <suggestion>يُعْوِز</suggestion>
@@ -2100,7 +2100,7 @@
     </rule>
     <rule id="verb_292_Akhtla_bhA" name="اختلى بها">
       <pattern>
-        <token skip="1">اِخْتَلَى</token>
+        <token inflected="yes" skip="1">اِخْتَلَى</token>
         <token regexp="yes">بي|بنا|بك|بكما|بكم|بكن|به|بها|بهما|بهم|بهن</token>
       </pattern>
       <message>(اختلى البقلَ): احتشَّه؛ أي: انتزعه
@@ -2111,7 +2111,7 @@
     </rule>
     <rule id="verb_294_SAdq_Almjls_Ela_AlqrAr" name="صادق المجلس على القرار">
       <pattern>
-        <token skip="1">صَادَقَ</token>
+        <token inflected="yes" skip="1">صَادَقَ</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -2122,7 +2122,7 @@
     </rule>
     <rule id="verb_408_tAjr_b" name="تاجر ب">
       <pattern>
-        <token skip="1">تَاجَرَ</token>
+        <token inflected="yes" skip="1">تَاجَرَ</token>
         <token postag="N.*;-B.?" postag_regexp="yes"></token>
       </pattern>
       <message>(تاجَرَ فلانٌ فلاناً): اتَّجَرَ معه
@@ -2131,7 +2131,7 @@
     </rule>
     <rule id="verb_408_tAjr_b_2" name="تاجر ب">
       <pattern>
-        <token skip="1">تَاجَرَ</token>
+        <token inflected="yes" skip="1">تَاجَرَ</token>
         <token regexp="yes">بي|بنا|بك|بكما|بكم|بكن|به|بها|بهما|بهم|بهن</token>
       </pattern>
       <message>(تاجَرَ فلانٌ فلاناً): اتَّجَرَ معه
@@ -2140,9 +2140,9 @@
     </rule>
     <rule id="verb_561_nkhr_Alsws_Alkhshb" name="نـخر السوس الخشب">
       <pattern>
-        <token>نَخَرَ</token>
-        <token postag="N.*;--.?" postag_regexp="yes">سوس</token>
-        <token regexp="yes" postag="N.*;--.?" postag_regexp="yes">خشب|أخشاب|سن|أسنان</token>
+        <token inflected="yes">نَخَرَ</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">سوس</token>
+        <token regexp="yes" inflected="yes" postag="N.*;--.?" postag_regexp="yes">خشب|أخشاب|سن|أسنان</token>
       </pattern>
       <message>(نَخِرَ) فعلٌ لازم. (نَخَر): صَوَّتَ بخياشيمه. (نَخَرَ الحالبُ الناقَةَ): دَلَكَ مَنْخِرَها بيدِهِ لِتَدِرّ
         <suggestion></suggestion></message>
@@ -2150,7 +2150,7 @@
     </rule>
     <rule id="verb_562_nzf_flAn" name="نـزف فلان">
       <pattern>
-        <token>نَزَفَ</token>
+        <token inflected="yes">نَزَفَ</token>
         <token postag="N.*;--.?" postag_regexp="yes"></token>
       </pattern>
       <message>(نَزَفَ الشيءُ): نَفِدَ وفَني. (نَزَفَ الدمُ فلاناً): أضعفَهُ بكثرة خروجه منه
@@ -2159,8 +2159,8 @@
     </rule>
     <rule id="verb_564_nEa_wfAt" name="نـعى وفاة">
       <pattern>
-        <token skip="1">نَعَى</token>
-        <token postag="N.*;--.?" postag_regexp="yes">وفاة</token>
+        <token inflected="yes" skip="1">نَعَى</token>
+        <token inflected="yes" postag="N.*;--.?" postag_regexp="yes">وفاة</token>
       </pattern>
       <message>يفضل أن يقال: نعى فقط بدلا من نعى وفاة
         <suggestion></suggestion></message>
@@ -2362,7 +2362,7 @@
     </rule>
     <rule id="word_use_0005_muta2akid" name="متأكد">
       <pattern>
-        <token>متأكد</token>
+        <token inflected="yes">متأكد</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion>
@@ -2380,7 +2380,7 @@
     </rule>
     <rule id="worduse_0007_khatir" name="خطير">
       <pattern>
-        <token>خطير</token>
+        <token inflected="yes">خطير</token>
       </pattern>
       <message>(الخطير): الرفيعُ المقام. (الخطورة): عِظَمُ الشَّأْن والمنزلة
         <suggestion>شديد الْخَطَر</suggestion>
@@ -2390,7 +2390,7 @@
     </rule>
     <rule id="worduse_0009_khammara" name="الخمارة">
       <pattern>
-        <token>خمارة</token>
+        <token inflected="yes">خمارة</token>
       </pattern>
       <message>(الخمّارة): بائعةُ الخمر
         <suggestion>مَخْمَرَة</suggestion>
@@ -2399,7 +2399,7 @@
     </rule>
     <rule id="worduse_0013_indhahala" name="انذهل">
       <pattern>
-        <token>اِنْذَهَلَ</token>
+        <token inflected="yes">اِنْذَهَلَ</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion></message>
@@ -2407,7 +2407,7 @@
     </rule>
     <rule id="worduse_0014_in3ikas" name="انعكاس">
       <pattern>
-        <token skip="2">انعكاس</token>
+        <token inflected="yes" skip="2">انعكاس</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -2426,7 +2426,7 @@
     </rule>
     <rule id="worduse_0017_tahammama" name="تحمم">
       <pattern>
-        <token>تَحَمَّمَ</token>
+        <token inflected="yes">تَحَمَّمَ</token>
       </pattern>
       <message>(تَحَمَّمَ): اسودَّ
         <suggestion>استَحَمَّ</suggestion></message>
@@ -2434,9 +2434,9 @@
     </rule>
     <rule id="worduse_0018_tushakkilu" name="تشكل">
       <pattern>
-        <token postag="V.*;.*" postag_regexp="yes">شَكَّلَ</token>
+        <token inflected="yes" postag="V.*;.*" postag_regexp="yes">شَكَّلَ</token>
       </pattern>
-      <message>يستحسن الاستغناء عن كلمة "تُشّكّلُ", أو استبدالها بـ"هي".</message>
+      <message>يستحسن الاستغناء عن كلمة "تُشّكّلُ", أو استبدالها بـ"هي". <suggestion>هي</suggestion></message>
       <short>worduse_0018_tushakkilu</short>
     </rule>
     <rule id="worduse_0020_tatmin" name="تطمين">
@@ -2449,7 +2449,7 @@
     </rule>
     <rule id="worduse_0021_ta3kisu" name="تعكس">
       <pattern>
-        <token>عَكَسَ</token>
+        <token inflected="yes">عَكَسَ</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion></suggestion>
@@ -2458,7 +2458,7 @@
     </rule>
     <rule id="worduse_0025_khalooq" name="خلوق">
       <pattern>
-        <token>خلوق</token>
+        <token inflected="yes">خلوق</token>
       </pattern>
       <message>(الخَلُوق): الطِّيب
         <suggestion>حَسَنُ الخُلُق</suggestion></message>
@@ -2507,7 +2507,7 @@
     </rule>
     <rule id="worduse_0042_yushakilu" name="يشكل">
       <pattern>
-        <token>شَكَّلَ</token>
+        <token inflected="yes">شَكَّلَ</token>
       </pattern>
       <message>(شَكَّل): صَوَّرَ، وألَّفَ، وقَيَّدَ
         <suggestion></suggestion></message>
@@ -2523,7 +2523,7 @@
     </rule>
     <rule id="worduse_0047_mumtan_mamnoun" name="ممتن|ممنون">
       <pattern>
-        <token regexp="yes">ممتن|ممنون</token>
+        <token regexp="yes" inflected="yes">ممتن|ممنون</token>
         <token regexp="yes">لي|لنا|لك|لكما|لكم|لكن|له|لها|لهما|لهم|لهن</token>
       </pattern>
       <message>(الممنون): المقطوع.(امْتنَّ عليه): ذكّره بنعمته عليه وآذاه بمَنِّهِ
@@ -2565,7 +2565,7 @@
     </rule>
     <rule id="worduse_0056_muAshirat" name="مؤشرات">
       <pattern>
-        <token postag="NA.*;F3.*;.*" postag_regexp="yes">مؤشر</token>
+        <token inflected="yes" postag="NA.*;F3.*;.*" postag_regexp="yes">مؤشر</token>
       </pattern>
       <message>إذ أن "المُؤّشَّر" تعني: كل شيء مرقق.
         <suggestion></suggestion>
@@ -2576,7 +2576,7 @@
     </rule>
     <rule id="worduse_0057_mishwar" name="مشوار">
       <pattern>
-        <token>مشوار</token>
+        <token inflected="yes">مشوار</token>
       </pattern>
       <message>كلمة مشوار لم ترد بهذا المعنى،
         من الشائع التلفظ: بكلمة مشوار
@@ -2597,7 +2597,7 @@
     </rule>
     <rule id="worduse_0059_Imkaniyat" name="إمكانيات">
       <pattern>
-        <token postag="N.*;F3.*;.*" postag_regexp="yes">إمكانية</token>
+        <token inflected="yes" postag="N.*;F3.*;.*" postag_regexp="yes">إمكانية</token>
       </pattern>
       <message>ويفضل أن يقال إمكانات بدلا عن إمكانيات.
 
@@ -2606,7 +2606,7 @@
     </rule>
     <rule id="worduse_0060_twajd" name="تواجد">
       <pattern>
-        <token>تَوَاجَدَ</token>
+        <token inflected="yes">تَوَاجَدَ</token>
       </pattern>
       <message>ويفضل أن يقال: وجد يوجد،
         لأن تَواجَدَ فلانٌ: أي تظاهر بالوجْد. والوجْد: هو الحُب الشديد أو الحزن. (مصدر)
@@ -2635,7 +2635,7 @@
     </rule>
     <rule id="worduse_0066_toqos" name="طقوس">
       <pattern>
-        <token>طقوس</token>
+        <token inflected="yes">طقوس</token>
       </pattern>
       <message>ويفضل أن يقال: شعائر فلا وجود لطقوس في اللغة العربية.
         <suggestion></suggestion></message>
@@ -2663,7 +2663,7 @@
     </rule>
     <rule id="worduse_0069_i3tabar" name="اعتبر">
       <pattern>
-        <token>اِعْتَبَرَ</token>
+        <token inflected="yes">اِعْتَبَرَ</token>
       </pattern>
       <message>ويفضل أن يقال: عدّ.  لأن "اعتبرت" تعني اتخذته عبرة وعظة والصواب عددته. جاء في القرآن: ﴿وَقَالُواْ مَا لَنَا لاَ نَرَىٰ رِجَالاً كُنَّا نَعُدُّهُمْ مِّنَ ٱلأَشْرَارِ﴾[ص:62]. ولم يقل نعتبرهم.
         <suggestion>عدّ</suggestion></message>
@@ -2671,7 +2671,7 @@
     </rule>
     <rule id="worduse_0070_burha" name="برهة">
       <pattern>
-        <token>برهة</token>
+        <token inflected="yes">برهة</token>
       </pattern>
       <message>ويفضل أن يقال: هنيهة.
         جاء في (لسان العرب): «البرهة: الحِينُ الطويل من الدهر، وقيل: الزمانُ. يقال: أَقمت عنده بُرْهَةً من الدهر كقولك أَقمت عنده سنة من الدهر.»
@@ -2680,7 +2680,7 @@
     </rule>
     <rule id="worduse_0071_َAwina" name="آونة">
       <pattern>
-        <token>آونة</token>
+        <token inflected="yes">آونة</token>
       </pattern>
       <message>ويفضل أن يقال:  أوان         لأن الآونة جمع أوان، مثل أزمنة وزمان.
 
@@ -2689,7 +2689,7 @@
     </rule>
     <rule id="worduse_0072_َbawasil" name="بواسل">
       <pattern>
-        <token>بواسل</token>
+        <token inflected="yes">بواسل</token>
       </pattern>
       <message>ويفضل أن يقال: بسلاء وبواسل
 
@@ -2700,7 +2700,7 @@
     </rule>
     <rule id="worduse_0073_mustahtir" name="مستهتر">
       <pattern>
-        <token>مستهتر</token>
+        <token inflected="yes">مستهتر</token>
         <token regexp="yes">بالقانون|بالدين|بالأعراف|بالعادات</token>
       </pattern>
       <message>ويفضل أن يقال:  مستهين أو مستخفّ بالقانون أو بالعادات،
@@ -2719,7 +2719,7 @@
     </rule>
     <rule id="worduse_0076_saifia" name="الصيفية">
       <pattern>
-        <token>قَضَى</token>
+        <token inflected="yes">قَضَى</token>
         <token regexp="yes">صيفية|الصيفية</token>
       </pattern>
       <message>ويفضل أن يقال
@@ -2822,7 +2822,7 @@
         <token regexp="yes">كانون الثاني|شباط|آذار|نيسان|أيار|حزيران|تموز|آب|أيلول|تشرين الأول|تشرين الثاني|كانون الأول|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|جانفي|فيفري|أفريل|ماي|جوان|جويلية|أوت|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر</token>
         <token regexp="yes">\d\d|\d</token>
       </pattern>
-      <message>عليك ترتيب  أقسام التاريخ.</message>
+      <message>عليك ترتيب  أقسام التاريخ. <suggestion>\3 \2 \1</suggestion></message>
       <short>DATE_WORD_ORDER</short>
     </rule>
     <rule id="DATE_WORD_ORDER_3" name="ترتيب الكلمات في عبارة التاريخ">
@@ -2831,7 +2831,7 @@
         <token regexp="yes">\d\d|\d</token>
         <token regexp="yes">السبت|الأحد|الإثنين|الاثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|سبت|أحد|اثنين|ثلاثاء|أربعاء|خميس|جمعة</token>
       </pattern>
-      <message>عليك ترتيب  أقسام التاريخ</message>
+      <message>عليك ترتيب  أقسام التاريخ <suggestion>\3 \2 \1</suggestion></message>
       <short>DATE_WORD_ORDER_3</short>
     </rule>
     <rule id="DATE_WORD_ORDER_4" name="ترتيب الكلمات في عبارة التاريخ">
@@ -2842,7 +2842,7 @@
         <token min="0" max="1">,</token>
         <token regexp="yes">[12]\d\d\d</token>
       </pattern>
-      <message>عليك ترتيب  أقسام التاريخ.</message>
+      <message>عليك ترتيب  أقسام التاريخ. <suggestion>\3 \1 \5</suggestion></message>
       <short>DATE_WORD_ORDER_4</short>
     </rule>
     <rule id="semantic_0000" name="موسم 20222">
@@ -2857,7 +2857,7 @@
   <category id="COMMON_ERRORS_ON_ADJECTIVES" name="أخطاء شائعة - النعوت">
     <rule id="adj_00012_maa_maghli" name="ماء مغلي">
       <pattern>
-        <token>ماء</token>
+        <token inflected="yes">ماء</token>
         <token regexp="yes">(ال)?مغلي</token>
       </pattern>
       <message>قل    ماء <suggestion></suggestion></message>
@@ -2865,7 +2865,7 @@
     </rule>
     <rule id="adj_0001_Amr_Ham" name="أمر هام">
       <pattern>
-        <token>أمر</token>
+        <token inflected="yes">أمر</token>
         <token regexp="yes">الهام|هام</token>
       </pattern>
       <message>قل
@@ -2883,7 +2883,7 @@
     </rule>
     <rule id="unsorted5162" name="المعشر_5162">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">حسن</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">حسن</token>
         <token>المعشر</token>
       </pattern>
       <message>(المَعْشَر): كلُّ جماعةٍ أمرُهم واحد
@@ -2892,7 +2892,7 @@
     </rule>
     <rule id="unsorted5176" name="غاو|غاوي_5176">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">غاوي</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">غاوي</token>
         <token>للموسيقى</token>
       </pattern>
       <message>(الغاوي): الضال
@@ -2901,7 +2901,7 @@
     </rule>
     <rule id="unsorted5179" name="الشراهة_5179">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">كثير</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">كثير</token>
         <token>الشراهة</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -2910,7 +2910,7 @@
     </rule>
     <rule id="unsorted5180" name="المخاطر_5180">
       <pattern>
-        <token postag="N.*;.*;.?.?-" postag_regexp="yes">كثير</token>
+        <token inflected="yes" postag="N.*;.*;.?.?-" postag_regexp="yes">كثير</token>
         <token>المخاطر</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -2919,7 +2919,7 @@
     </rule>
     <rule id="unsorted5187" name="مقاس_5187">
       <pattern>
-        <token>مقاس</token>
+        <token inflected="yes">مقاس</token>
         <token>بالمتر</token>
       </pattern>
       <message>الفعل هو: (قاسَ)، لا: (أقاسَ)
@@ -2979,7 +2979,7 @@
     </rule>
     <rule id="syntax_0000_Qam_bi_test" name="قام بعمل">
       <pattern>
-        <token>قَامَ</token>
+        <token inflected="yes">قَامَ</token>
         <token postag="NM.*;.*;-B.*" postag_regexp="yes"></token>
       </pattern>
       <message>تعبير "القيام بـالأمر" ركيك يستحسن تجنبه إلى تصريف المصدر الموالي، قل ضربت بدلا من القيام بالضرب.</message>
@@ -3130,8 +3130,8 @@
     </rule>
     <rule id="syntax_1528_byna_wa_bayna_1" name="بين وبين">
       <pattern>
-        <token skip="3" postag="NM-;M1..;--[H-]" postag_regexp="yes">بين</token>
-        <token postag="NM-;M1..;W-[H-]" postag_regexp="yes">بين</token>
+        <token inflected="yes" skip="3" postag="NM-;M1..;--[H-]" postag_regexp="yes">بين</token>
+        <token inflected="yes" postag="NM-;M1..;W-[H-]" postag_regexp="yes">بين</token>
       </pattern>
       <message>لا داعي لتكرار "بين" لأن تكرارها لا يعطي معنى جديدًا
 
@@ -3223,8 +3223,8 @@
     </rule>
     <rule id="syntax_206_ikhtar_1" name="اختار بين">
       <pattern>
-        <token postag="V51;.*;--." postag_regexp="yes">اِخْتَارَ</token>
-        <token postag="NJ-;.*;--." postag_regexp="yes">بين</token>
+        <token inflected="yes" postag="V51;.*;--." postag_regexp="yes">اِخْتَارَ</token>
+        <token inflected="yes" postag="NJ-;.*;--." postag_regexp="yes">بين</token>
       </pattern>
       <message>لا تستعمل "بين " مع الاختيار، هذا غير معروف"
         <suggestion> أحد</suggestion>
@@ -3490,7 +3490,7 @@
   <category id="COMMON_ERRORS_SYNTAX" name="أخطاء تركيبية">
     <rule id="syntax_0000_Qam_bi" name="القيام_ب">
       <pattern>
-        <token>قيام</token>
+        <token inflected="yes">قيام</token>
         <token postag="NM.*;.*;-B.*" postag_regexp="yes"></token>
       </pattern>
       <message>تعبير "القيام بـ" ركيك يستحسن تجنبه إلى تصريف المصدر الموالي، قل ضربت بدلا من القيام بالضرب.
@@ -3504,7 +3504,7 @@
   <category id="COMMON_VERBS_ERRORS" name="أخطاء الأفعال">
     <rule id="syntax_0515_raghba_li" name="رغبة ل">
       <pattern>
-        <token skip="1">رغبة</token>
+        <token inflected="yes" skip="1">رغبة</token>
         <token postag="NM.*;-L.?" postag_regexp="yes"></token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -3514,7 +3514,7 @@
     </rule>
     <rule id="syntax_0515_raghba_li_2" name="رغبة ل">
       <pattern>
-        <token skip="1">رغبة</token>
+        <token inflected="yes" skip="1">رغبة</token>
         <token postag="NM.*;-LL" postag_regexp="yes"></token>
       </pattern>
       <message>يفضل أن يقال: \1
@@ -3524,7 +3524,7 @@
     </rule>
     <rule id="trans_395_ASHb_b" name="أصحب ب">
       <pattern>
-        <token skip="1" postag="V4.*" postag_regexp="yes">أَصْحَبَ</token>
+        <token inflected="yes" skip="1" postag="V4.*" postag_regexp="yes">أَصْحَبَ</token>
         <token regexp="yes">بي|بنا|بك|بكما|بكم|بكن|به|بها|بهما|بهم|بهن</token>
       </pattern>
       <message>(أصحب) يتعدّى بنفسه إلى مفعولين
@@ -3534,7 +3534,7 @@
     </rule>
     <rule id="trans_395_ASHb_b_2" name="أصحب ب">
       <pattern>
-        <token skip="1" postag="V4.*" postag_regexp="yes">أَصْحَبَ</token>
+        <token inflected="yes" skip="1" postag="V4.*" postag_regexp="yes">أَصْحَبَ</token>
         <token postag="N.*;.*;-B.?" postag_regexp="yes"></token>
       </pattern>
       <message>(أصحب) يتعدّى بنفسه إلى مفعولين
@@ -3544,7 +3544,7 @@
     </rule>
     <rule id="trans_401_AETa_2la_AETa_l_2" name="أعطى إلى|أعطى ل">
       <pattern>
-        <token skip="1" postag="V.*" postag_regexp="yes">أَعْطَى</token>
+        <token inflected="yes" skip="1" postag="V.*" postag_regexp="yes">أَعْطَى</token>
         <token regexp="yes">إلى|إلي|إلينا|إليك|إليكما|إليكم|إليكن|إليه|إليها|إليهما|إليهم|إليهن</token>
       </pattern>
       <message>(أعطى) يتعدّى بنفسه إلى مفعولين
@@ -3562,7 +3562,7 @@
     </rule>
     <rule id="trans_420_tESb_Dd" name="تعصب ضد">
       <pattern>
-        <token skip="1">تَعَصَّبَ</token>
+        <token inflected="yes" skip="1">تَعَصَّبَ</token>
         <token regexp="yes">ضد(|ه|ها|هما|هم|هن|ك|كما|كم|كن|ي|نا)</token>
       </pattern>
       <message>(تعصَّب لفلان وتعصّب معه): نَصَرَه. (تعصّب على عدُوِّه): قاومَه وكان مع عصبته ضدّه
@@ -3571,7 +3571,7 @@
     </rule>
     <rule id="trans_420_tESb_Dd_2" name="تعصب ضد">
       <pattern>
-        <token skip="1">تَعَصَّبَ</token>
+        <token inflected="yes" skip="1">تَعَصَّبَ</token>
         <token>ضد</token>
       </pattern>
       <message>(تعصَّب لفلان وتعصّب معه): نَصَرَه. (تعصّب على عدُوِّه): قاومَه وكان مع عصبته ضدّه
@@ -3580,7 +3580,7 @@
     </rule>
     <rule id="trans_429_twsl" name="توسل">
       <pattern>
-        <token skip="1">تَوَسَّلَ</token>
+        <token inflected="yes" skip="1">تَوَسَّلَ</token>
       </pattern>
       <message>(توسَّل) لا يتعدى بنفسه, وإنما يتوصل إلى ما يستعين به بالباء
     
@@ -3589,7 +3589,7 @@
     </rule>
     <rule id="trans_438_3alima_Inna" name="علم إن">
       <pattern>
-        <token skip="1">عَلِمَ</token>
+        <token inflected="yes" skip="1">عَلِمَ</token>
         <token regexp="yes">إني|إننا|إنك|إنكما|إنكم|إنكن|إنه|إنها|إنهما|إنهم|إنهن</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -3598,7 +3598,7 @@
     </rule>
     <rule id="trans_438_3alima_bAn" name="علم بأن">
       <pattern>
-        <token skip="1">عَلِمَ</token>
+        <token inflected="yes" skip="1">عَلِمَ</token>
         <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -3607,7 +3607,7 @@
     </rule>
     <rule id="trans_438_Qal_bAn" name="قال بأن">
       <pattern>
-        <token skip="1">قَالَ</token>
+        <token inflected="yes" skip="1">قَالَ</token>
         <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -3616,7 +3616,7 @@
     </rule>
     <rule id="trans_438_dhkr_bAn" name="ذكر بأن">
       <pattern>
-        <token skip="1">ذَكَرَ</token>
+        <token inflected="yes" skip="1">ذَكَرَ</token>
         <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -3625,7 +3625,7 @@
     </rule>
     <rule id="trans_444_zEm_bAn" name="زعم بأن">
       <pattern>
-        <token skip="1">زَعِمَ</token>
+        <token inflected="yes" skip="1">زَعِمَ</token>
         <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -3634,7 +3634,7 @@
     </rule>
     <rule id="trans_453_Sdq_Almjls_Ela_AlqrAr" name="صدق المجلس على القرار">
       <pattern>
-        <token skip="1">صَدَّقَ</token>
+        <token inflected="yes" skip="1">صَدَّقَ</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>الفعل صدّق يتعدى بنفسه إلى مفعولين
@@ -3644,7 +3644,7 @@
     </rule>
     <rule id="trans_457_zhhr_bAn" name="ظهر بأن">
       <pattern>
-        <token skip="1">ظَهَرَ</token>
+        <token inflected="yes" skip="1">ظَهَرَ</token>
         <token regexp="yes">ب(أني|أننا|أنك|أنكما|أنكم|أنكن|أنه|أنها|أنهما|أنهم|أنهن)</token>
       </pattern>
       <message>يفضل أن يقال:
@@ -3653,7 +3653,7 @@
     </rule>
     <rule id="trans_461_Ewdh_Ela" name="عوده على">
       <pattern>
-        <token skip="1">عَوَّدَ</token>
+        <token inflected="yes" skip="1">عَوَّدَ</token>
         <token regexp="yes">على|علي|علينا|عليك|عليكما|عليكم|عليكن|عليه|عليها|عليهما|عليهم|عليهن</token>
       </pattern>
       <message>الفعل عوّد يتعدى بنفسه إلى مفعولين
@@ -3663,7 +3663,7 @@
     </rule>
     <rule id="trans_469_qdhf_AlHjArt_Ela" name="قذف الحجارة على">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">قَذَفَ</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">قَذَفَ</token>
       </pattern>
       <message>يفضل أن يقال:
         <suggestion>قَذَفَ ب</suggestion></message>
@@ -3680,7 +3680,7 @@
     </rule>
     <rule id="unsorted_0073_ayqana_min" name="أيقن من">
       <pattern>
-        <token>أَيْقَنَ</token>
+        <token inflected="yes">أَيْقَنَ</token>
         <token regexp="yes">مني|من|مننا|منك|منكما|منكم|منكن|منه|منها|منهما|منهم|منهن</token>
       </pattern>
       <message>(أيقن) يتعدى بنفسه أو بالباء
@@ -3689,7 +3689,7 @@
     </rule>
     <rule id="نتج_عن" name="نتج_عن">
       <pattern>
-        <token>نَتَجَ</token>
+        <token inflected="yes">نَتَجَ</token>
         <token>عن</token>
       </pattern>
       <message>ويفضل أن يحذف عن

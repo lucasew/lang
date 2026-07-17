@@ -44,7 +44,7 @@
     <rule id="DILEAS_DOWORD" name="díleas DOWORD" default="off">
       <pattern>
         <token>díleas</token>
-        <token>do</token>
+        <token inflected="yes">do</token>
       </pattern>
       <message>Focal ceart ach tá <suggestion>dílis</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>

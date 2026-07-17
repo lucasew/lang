@@ -32,7 +32,7 @@
     </rule>
     <rule id="EN_PLEINE_CAMPAGNE" name="en pleine campagne" default="off">
       <pattern>
-        <token regexp="yes">habiter|demeurer|résider|vivre|loger|perdre|isoler|situer|cacher|nicher|écraser|maison|pavillon|gîte|propriété|villa|ferme|château|location|camping|lieu|hectare</token>
+        <token regexp="yes" inflected="yes">habiter|demeurer|résider|vivre|loger|perdre|isoler|situer|cacher|nicher|écraser|maison|pavillon|gîte|propriété|villa|ferme|château|location|camping|lieu|hectare</token>
         <token>en</token>
         <token>pleine</token>
         <token>campagne</token>
@@ -42,7 +42,7 @@
     </rule>
     <rule id="IL_DEVIENT_QUOI" name="il devient quoi" default="temp_off">
       <pattern>
-        <token regexp="yes" postag="V.* 3 .*" postag_regexp="yes">demeurer|devenir|être|para[îi]tre|rester|sembler</token>
+        <token regexp="yes" inflected="yes" postag="V.* 3 .*" postag_regexp="yes">demeurer|devenir|être|para[îi]tre|rester|sembler</token>
         <token min="0" max="4" postag="A"></token>
         <token postag="SENT_END"></token>
       </pattern>
@@ -67,28 +67,28 @@
     </rule>
     <rule id="REP_ADRESSER" name="adresser (style)" default="off">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">adresser</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">adresser</token>
       </pattern>
       <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>envoyer</suggestion></message>
       <short>REP_ADRESSER</short>
     </rule>
     <rule id="REP_COMMUN" name="commun" default="off">
       <pattern>
-        <token case_sensitive="yes" postag="J (.*)" postag_regexp="yes">commun</token>
+        <token case_sensitive="yes" inflected="yes" postag="J (.*)" postag_regexp="yes">commun</token>
       </pattern>
       <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>global</suggestion></message>
       <short>REP_COMMUN</short>
     </rule>
     <rule id="REP_POSSIBLE" name="possible" default="off">
       <pattern>
-        <token postag="J.*" postag_regexp="yes">possible</token>
+        <token inflected="yes" postag="J.*" postag_regexp="yes">possible</token>
       </pattern>
       <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>prévisible</suggestion></message>
       <short>REP_POSSIBLE</short>
     </rule>
     <rule id="REP_REMERCIER" name="remercier (style)" default="off">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">remercier</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">remercier</token>
       </pattern>
       <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>saluer</suggestion></message>
       <short>REP_REMERCIER</short>
@@ -170,7 +170,7 @@
     </rule>
     <rule id="TROUVER_PLUS_NOM_INCORRECT" name="trouver suivi d'un nom incorrect" default="temp_off">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">trouver</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">trouver</token>
         <token postag="N.*" postag_regexp="yes">
           <exception regexp="yes">asile|attache|confiance|contenance|grâce|place|preneur|sens</exception>
         </token>
@@ -191,7 +191,7 @@
   <category id="CAT_CALQUES" name="Calques (anglicismes, emprunts directs, etc.)">
     <rule id="CONTROLER_LA_CIRCULATION" name="contrôler la circulation" default="temp_off">
       <pattern>
-        <token skip="1">contrôler</token>
+        <token inflected="yes" skip="1">contrôler</token>
         <token regexp="yes">circulations?</token>
       </pattern>
       <message>« Contrôler la circulation » peut être considéré comme un anglicisme. <suggestion>régler</suggestion></message>
@@ -199,7 +199,7 @@
     </rule>
     <rule id="CONTROLER_LA_SITUATION" name="contrôler la situation" default="temp_off">
       <pattern>
-        <token skip="1">contrôler</token>
+        <token inflected="yes" skip="1">contrôler</token>
         <token regexp="yes">situations?</token>
       </pattern>
       <message>« Contrôler la situation » peut être considéré comme un anglicisme. <suggestion>avoir la situation en mains</suggestion></message>
@@ -215,7 +215,7 @@
     </rule>
     <rule id="ETRE_DU_POUR" name="être dû pour" default="temp_off">
       <pattern>
-        <token skip="2">être</token>
+        <token inflected="yes" skip="2">être</token>
         <token regexp="yes">dû|dues|dus</token>
         <token>pour</token>
       </pattern>

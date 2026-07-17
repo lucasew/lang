@@ -73,7 +73,7 @@
       <pattern>
         <token>muito</token>
         <token>pelo</token>
-        <token>ser</token>
+        <token inflected="yes">ser</token>
       </pattern>
       <message>Substitua por <suggestion>muito pêlo \3</suggestion>.</message>
       <short>AO45_PELO_PÊLO</short>
@@ -100,7 +100,7 @@
   <category id="FORMAL" name="🤵 Linguagem formal">
     <rule id="BASEIA-SE_EM" name="Tem por base" default="off">
       <pattern>
-        <token postag="V.+:PP3CNO00" postag_regexp="yes">basear</token>
+        <token inflected="yes" postag="V.+:PP3CNO00" postag_regexp="yes">basear</token>
         <token>em</token>
       </pattern>
       <message>Substitua por <suggestion>ter por base</suggestion>.</message>
@@ -108,10 +108,10 @@
     </rule>
     <rule id="PARAR_DE_CHATEAR" name="Parar de incomodar/importunar" default="off">
       <pattern>
-        <token>parar</token>
+        <token inflected="yes">parar</token>
         <token>de</token>
         <token regexp="yes" min="0" max="1">as?|os?|me|te|lhes?|nos|vos</token>
-        <token>chatear</token>
+        <token inflected="yes">chatear</token>
       </pattern>
       <message>Expressão informal, pondere empregar: <suggestion>incomodar</suggestion></message>
       <short>PARAR_DE_CHATEAR</short>
@@ -154,7 +154,7 @@
   <category id="CLARITY" name="Clareza">
     <rule id="E_PRIME_STRIT" name="Escrita Criativa: E-Prime: todas as formas do verbo 'ser' e 'estar'" default="off">
       <pattern>
-        <token regexp="yes">ser|estar</token>
+        <token regexp="yes" inflected="yes">ser|estar</token>
       </pattern>
       <message>De acordo com a versão inglesa do E-Prime, evitar formas verbais do verbo "ser" e "estar" torna a comunicação mais clara, precisa, e menos dogmática. Tente utilizar um verbo alternativo ou refazer a frase.</message>
       <short>De acordo com a lógica do E-Prime, deve evitar os verbos 'ser' e 'estar'</short>

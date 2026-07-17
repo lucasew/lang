@@ -52,7 +52,7 @@
     </rule>
     <rule id="DONAR_COMPLIMENT" name="donar compliment/complir" default="off">
       <pattern>
-        <token>donar</token>
+        <token inflected="yes">donar</token>
         <token>compliment</token>
       </pattern>
       <message>Expressió preferible. <suggestion>complir</suggestion></message>
@@ -69,7 +69,7 @@
     </rule>
     <rule id="FINS_A_DALT" name="ple fins a dalt &gt; ple a vessar" default="off">
       <pattern>
-        <token>ple</token>
+        <token inflected="yes">ple</token>
         <token>fins</token>
         <token min="0">a</token>
         <token>dalt</token>
@@ -79,8 +79,8 @@
     </rule>
     <rule id="TROBAR_SE_RECUPERADA" name="trobar-se recuperada -&gt; estar recuperada" default="off">
       <pattern>
-        <token postag="_reflexiu">trobar</token>
-        <token postag="V.P.*" postag_regexp="yes">recuperar</token>
+        <token inflected="yes" postag="_reflexiu">trobar</token>
+        <token inflected="yes" postag="V.P.*" postag_regexp="yes">recuperar</token>
       </pattern>
       <message>Val més usar una altra expressió més natural. <suggestion>estar</suggestion></message>
       <short>TROBAR_SE_RECUPERADA</short>
@@ -120,28 +120,28 @@
     </rule>
     <rule id="APOLTRONARSE" name="apoltronar-se" default="off">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">apoltronar</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">apoltronar</token>
       </pattern>
       <message>Paraula admesa només en alguns diccionaris. <suggestion>endropir</suggestion></message>
       <short>APOLTRONARSE</short>
     </rule>
     <rule id="ESTUDIANTAT" name="estudiantat/estudiants" default="off">
       <pattern>
-        <token>estudiantat</token>
+        <token inflected="yes">estudiantat</token>
       </pattern>
       <message>Paraula no admesa per tots els diccionaris. <suggestion>estudiants</suggestion></message>
       <short>ESTUDIANTAT</short>
     </rule>
     <rule id="EXITOS" name="exitós" default="off">
       <pattern>
-        <token postag="AQ.*" postag_regexp="yes">exitós</token>
+        <token inflected="yes" postag="AQ.*" postag_regexp="yes">exitós</token>
       </pattern>
       <message>Paraula no recollida pels diccionaris, acceptable per a alguns. <suggestion>d'èxit</suggestion></message>
       <short>EXITOS</short>
     </rule>
     <rule id="FREGONA" name="fregona" default="off">
       <pattern>
-        <token postag="N.*" postag_regexp="yes">fregona</token>
+        <token inflected="yes" postag="N.*" postag_regexp="yes">fregona</token>
       </pattern>
       <message>Paraula admesa només en alguns diccionaris. <suggestion>pal de fregar</suggestion></message>
       <short>FREGONA</short>
@@ -186,8 +186,8 @@
   <category id="INCORRECT_WORDS_IN_CONTEXT" name="Paraules incorrectes segons el context">
     <rule id="CLIMATOLOGIC_METEOROLOGIC" name="condició climatològica -&gt; meteorològica" default="off">
       <pattern>
-        <token>condició</token>
-        <token regexp="yes" postag="A.*" postag_regexp="yes">climatològic|climàtic</token>
+        <token inflected="yes">condició</token>
+        <token regexp="yes" inflected="yes" postag="A.*" postag_regexp="yes">climatològic|climàtic</token>
       </pattern>
       <message>L'adjectiu apropiat és probablement <suggestion>meteorològic</suggestion>. La meteorologia fa referència al curt termini, i el clima, al llarg termini (vint anys).</message>
       <short>CLIMATOLOGIC_METEOROLOGIC</short>
@@ -204,7 +204,7 @@
     </rule>
     <rule id="ESDEVENIR_EN" name="esdevenir en" default="off">
       <pattern>
-        <token>esdevenir</token>
+        <token inflected="yes">esdevenir</token>
         <token>en</token>
       </pattern>
       <message>El verb 'esdevenir' no s'usa amb la preposició 'en'. ¿Volíeu dir "esdevenir-se" o "convertir-se en"? <suggestion>\1</suggestion></message>
@@ -214,21 +214,21 @@
   <category id="REGIONAL_NON_VERBS" name="Variants regionals: accentuació, possessius, demostratius, pronoms">
     <rule id="EVITA_DEMOSTRATIUS_AQUEIX" name="Evita els demostratius 'aqueix'" default="off">
       <pattern>
-        <token postag="DD.*" postag_regexp="yes">aqueix</token>
+        <token inflected="yes" postag="DD.*" postag_regexp="yes">aqueix</token>
       </pattern>
       <message>Useu demostratius reduïts. <suggestion>eixe</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_AQUEIX</short>
     </rule>
     <rule id="EVITA_DEMOSTRATIUS_AQUEST" name="Evita els demostratius 'aquest'" default="off">
       <pattern>
-        <token postag="DD.*" postag_regexp="yes">aquest</token>
+        <token inflected="yes" postag="DD.*" postag_regexp="yes">aquest</token>
       </pattern>
       <message>Useu demostratius reduïts. <suggestion>este</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_AQUEST</short>
     </rule>
     <rule id="EVITA_DEMOSTRATIUS_EIXE" name="Evita els demostratius 'eixe'" default="off">
       <pattern>
-        <token postag="DD.*" postag_regexp="yes">eixe</token>
+        <token inflected="yes" postag="DD.*" postag_regexp="yes">eixe</token>
       </pattern>
       <message>Useu demostratius reforçats. <suggestion>aquest</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_EIXE</short>
@@ -327,7 +327,7 @@
   <category id="ADVERBS" name="Adverbis">
     <rule id="FER_MAL_FER_MALAMENT" name="fer mal / fer malament" default="off">
       <pattern>
-        <token>fer</token>
+        <token inflected="yes">fer</token>
         <token regexp="yes" min="0">molt|gens|gaire</token>
         <token>mal</token>
       </pattern>
@@ -338,7 +338,7 @@
   <category id="DNV_COLLOQUIAL" name="paraules col·loquials segons el DNV">
     <rule id="FLIPAR" name="flipar" default="off">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">flipar</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">flipar</token>
       </pattern>
       <message>Llenguatge col·loquial. <suggestion>(passar-s'ho bé)</suggestion></message>
       <short>Llenguatge col·loquial</short>
@@ -428,7 +428,7 @@
   <category id="CONDEMNED_BY_SOME" name="Construccions desaconsellades per alguns manuals d'estil">
     <rule id="PORTAR_UNA_VIDA" name="*portar/*dur/tenir/fer una vida" default="off">
       <pattern>
-        <token regexp="yes">portar|dur</token>
+        <token regexp="yes" inflected="yes">portar|dur</token>
         <token min="0" max="2" postag="DI.FS.|AQ.[FC]S." postag_regexp="yes"></token>
         <token>vida</token>
       </pattern>
@@ -439,7 +439,7 @@
   <category id="REPETITIONS_STYLE" name="Repeticions (estil)">
     <rule id="REP_TEMA" name="repetició: tema" default="off">
       <pattern>
-        <token postag="N.*" postag_regexp="yes">tema</token>
+        <token inflected="yes" postag="N.*" postag_regexp="yes">tema</token>
       </pattern>
       <message><suggestion>qüestió</suggestion></message>
       <short>REP_TEMA</short>

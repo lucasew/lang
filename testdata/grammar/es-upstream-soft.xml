@@ -126,7 +126,7 @@
     </rule>
     <rule id="ANIMO" name="animo -&gt; ánimo">
       <pattern>
-        <token regexp="yes">dar|poner|meter|insuflar|tran?smitir|enviar</token>
+        <token regexp="yes" inflected="yes">dar|poner|meter|insuflar|tran?smitir|enviar</token>
         <token min="0" max="4" postag="RG|LOC_ADV" postag_regexp="yes"></token>
         <token>animo</token>
       </pattern>
@@ -311,7 +311,7 @@
     </rule>
     <rule id="DAR_ABASTO" name="dar *a basto/abasto">
       <pattern>
-        <token skip="2">dar</token>
+        <token inflected="yes" skip="2">dar</token>
         <token>a</token>
         <token>basto</token>
       </pattern>
@@ -320,7 +320,7 @@
     </rule>
     <rule id="DAR_A_LUGAR" name="dar *(a) lugar" default="on">
       <pattern>
-        <token>dar</token>
+        <token inflected="yes">dar</token>
         <token>a</token>
         <token>lugar</token>
       </pattern>
@@ -349,7 +349,7 @@
         <token min="0">-</token>
         <token regexp="yes">fito|zoo</token>
         <token min="0">-</token>
-        <token>sanitario</token>
+        <token inflected="yes">sanitario</token>
       </pattern>
       <message>Se escribe junto. <suggestion>\1\3\5</suggestion></message>
       <short>FITOZOOSANITARIO</short>
@@ -365,7 +365,7 @@
     </rule>
     <rule id="LLEVAR_ACABO" name="llevar *acabo/a cabo">
       <pattern>
-        <token regexp="yes">llevar|echar</token>
+        <token regexp="yes" inflected="yes">llevar|echar</token>
         <token>acabo</token>
       </pattern>
       <message>Se escribe separado. <suggestion>a cabo</suggestion></message>
@@ -439,15 +439,15 @@
     </rule>
     <rule id="USO_HUSO" name="uso/huso horario">
       <pattern>
-        <token>uso</token>
-        <token regexp="yes">horario|esférico</token>
+        <token inflected="yes">uso</token>
+        <token regexp="yes" inflected="yes">horario|esférico</token>
       </pattern>
       <message>En el sentido de 'parte en que se divide la superficie terrestre', se escribe con hache.</message>
       <short>USO_HUSO</short>
     </rule>
     <rule id="VOY_HA_INF" name="ir ha + infinitivo (a)">
       <pattern>
-        <token>ir</token>
+        <token inflected="yes">ir</token>
         <token>ha</token>
         <token postag="V[ASM]N0000" postag_regexp="yes"></token>
       </pattern>
@@ -456,7 +456,7 @@
     </rule>
     <rule id="VOY_INF" name="ir + infinitivo (a)">
       <pattern>
-        <token>ir
+        <token inflected="yes">ir
           <exception regexp="yes">ver|ser</exception>
         </token>
         <token postag="V.N.*" postag_regexp="yes"></token>
@@ -560,15 +560,15 @@
     </rule>
     <rule id="AFRENTAR_DIFICULTADES" name="afrentar dificultades o problemas (afrontar)">
       <pattern>
-        <token skip="1">afrentar</token>
-        <token regexp="yes">dificultad|problema|vicisitud</token>
+        <token inflected="yes" skip="1">afrentar</token>
+        <token regexp="yes" inflected="yes">dificultad|problema|vicisitud</token>
       </pattern>
       <message>Confusión entre «afrontar» y «afrentar». <suggestion>afrontar</suggestion></message>
       <short>AFRENTAR_DIFICULTADES</short>
     </rule>
     <rule id="CUOTA_COTA" name="cuota/cota">
       <pattern>
-        <token>cuota</token>
+        <token inflected="yes">cuota</token>
         <token>de</token>
         <token>nieve</token>
       </pattern>
@@ -586,7 +586,7 @@
     </rule>
     <rule id="DESTORNILLAR_RISA" name="destornillarse de risa (desternillarse)">
       <pattern>
-        <token skip="1">destornillar</token>
+        <token inflected="yes" skip="1">destornillar</token>
         <token>de</token>
         <token>risa</token>
       </pattern>
@@ -654,7 +654,7 @@
     </rule>
     <rule id="PLASMA_CONVALECIENTE" name="plasma (de) convaleciente">
       <pattern>
-        <token regexp="yes">plasma|suero</token>
+        <token regexp="yes" inflected="yes">plasma|suero</token>
         <token regexp="yes">convalecientes?</token>
       </pattern>
       <message>No es correcto eliminar la preposición 'de'. <suggestion>\1 de \2</suggestion></message>
@@ -673,7 +673,7 @@
     </rule>
     <rule id="SIN_ECUANIME" name="sin ecuánime (sine qua non)">
       <pattern>
-        <token regexp="yes">condición|requisito</token>
+        <token regexp="yes" inflected="yes">condición|requisito</token>
         <token>sin</token>
         <token>ecuánime</token>
       </pattern>
@@ -988,7 +988,7 @@
     </rule>
     <rule id="ASIENDO_HACIENDO" name="asiendo -&gt; haciendo">
       <pattern>
-        <token postag="V.G.*" postag_regexp="yes">asir</token>
+        <token inflected="yes" postag="V.G.*" postag_regexp="yes">asir</token>
       </pattern>
       <message>¿Quería decir <suggestion>hacer</suggestion> (del verbo 'hacer')? "" es una forma del verbo 'asir'.</message>
       <short>ASIENDO_HACIENDO</short>
@@ -1073,7 +1073,7 @@
     <rule id="HE_HA" name="*he ha" default="on">
       <pattern>
         <token>he</token>
-        <token>haber</token>
+        <token inflected="yes">haber</token>
       </pattern>
       <message>¿Quería decir <suggestion>me</suggestion>?</message>
       <short>HE_HA</short>
@@ -1088,7 +1088,7 @@
     </rule>
     <rule id="MANA_MAMA" name="cáncer de *mana/mama">
       <pattern>
-        <token>cáncer</token>
+        <token inflected="yes">cáncer</token>
         <token>de</token>
         <token regexp="yes">mana|maná</token>
       </pattern>
@@ -1097,7 +1097,7 @@
     </rule>
     <rule id="ORIGINAL_ORIGINAR" name="original -&gt; originar">
       <pattern>
-        <token regexp="yes">poder|deber|querer</token>
+        <token regexp="yes" inflected="yes">poder|deber|querer</token>
         <token>original</token>
       </pattern>
       <message>Posible confusión. ¿Quería decir <suggestion>originar</suggestion>?</message>
@@ -1113,7 +1113,7 @@
     </rule>
     <rule id="PRESA_PRENSA" name="*presa/prensa">
       <pattern>
-        <token>departamento</token>
+        <token inflected="yes">departamento</token>
         <token>de</token>
         <token>presa</token>
       </pattern>
@@ -1122,16 +1122,16 @@
     </rule>
     <rule id="REVERTIR_REVESTIR" name="revertir/revestir">
       <pattern>
-        <token>revertir</token>
+        <token inflected="yes">revertir</token>
         <token min="0" max="2" postag="AQ.*|DI.*" postag_regexp="yes"></token>
-        <token regexp="yes">importancia|gravedad|peligro|riesgo|relevancia</token>
+        <token regexp="yes" inflected="yes">importancia|gravedad|peligro|riesgo|relevancia</token>
       </pattern>
       <message>¿Quería decir <suggestion>revestir</suggestion> (=presentar un carácter)?</message>
       <short>Posible confusión</short>
     </rule>
     <rule id="SON_CON" name="confusión son/con">
       <pattern>
-        <token>cumplir</token>
+        <token inflected="yes">cumplir</token>
         <token>son</token>
       </pattern>
       <message>Posible confusión. <suggestion>con</suggestion></message>
@@ -1231,7 +1231,7 @@
     <rule id="MUY_GRAVISIMO" name="*muy gravísimo">
       <pattern>
         <token>muy</token>
-        <token regexp="yes" postag="A.*" postag_regexp="yes">.*ísimo</token>
+        <token regexp="yes" inflected="yes" postag="A.*" postag_regexp="yes">.*ísimo</token>
       </pattern>
       <message>No es posible formar el superlativo con "muy" y "-ísimo" al mismo tiempo. <suggestion>\2</suggestion></message>
       <short>MUY_GRAVISIMO</short>
@@ -1246,7 +1246,7 @@
     </rule>
     <rule id="SURGIR_EFECTO" name="*surgir/surtir efecto">
       <pattern>
-        <token>surgir</token>
+        <token inflected="yes">surgir</token>
         <token regexp="yes">efectos?</token>
       </pattern>
       <message>Expresión incorrecta. <suggestion>surtir efecto</suggestion></message>
@@ -1324,10 +1324,10 @@
     </rule>
     <rule id="ADOLECER_CARECER" name="*adolecer/carecer">
       <pattern>
-        <token>adolecer</token>
+        <token inflected="yes">adolecer</token>
         <token regexp="yes">de|del</token>
         <token min="0" postag="D.*" postag_regexp="yes"></token>
-        <token regexp="yes">medio|afecto|agua|armonía|asidero|barba|barrera|belleza|boca|bondad|brillo|cautela|claridad|coherencia|color|confirmación|conocimiento|diafanidad|dimensión|donaire|empatía|entrenamiento|escrúpulo|explicación|fecha|financiación|firma|fuerza|fundamento|garbo|gracia|honestidad|honor|honra|humanidad|humedad|humildad|identidad|importancia|independencia|información|instrucción|inteligencia|interés|jugo|legislación|legitimación|lenguaje|libertad|luz|lógica|materialidad|moral|motivación|movilidad|movimiento|nacionalidad|necesidad|nutriente|objeto|olor|oreja|personalidad|privilegio|recurso|relevancia|respeto|rigor|rima|sentido|significado|sustancia|tacto|talento|traducción|utilidad|validez|valor|veracidad|vida|virtualidad|virtud|ánimo</token>
+        <token regexp="yes" inflected="yes">medio|afecto|agua|armonía|asidero|barba|barrera|belleza|boca|bondad|brillo|cautela|claridad|coherencia|color|confirmación|conocimiento|diafanidad|dimensión|donaire|empatía|entrenamiento|escrúpulo|explicación|fecha|financiación|firma|fuerza|fundamento|garbo|gracia|honestidad|honor|honra|humanidad|humedad|humildad|identidad|importancia|independencia|información|instrucción|inteligencia|interés|jugo|legislación|legitimación|lenguaje|libertad|luz|lógica|materialidad|moral|motivación|movilidad|movimiento|nacionalidad|necesidad|nutriente|objeto|olor|oreja|personalidad|privilegio|recurso|relevancia|respeto|rigor|rima|sentido|significado|sustancia|tacto|talento|traducción|utilidad|validez|valor|veracidad|vida|virtualidad|virtud|ánimo</token>
       </pattern>
       <message>Uso impropio si equivale a <suggestion>carecer</suggestion>.</message>
       <short>ADOLECER_CARECER</short>
@@ -1351,7 +1351,7 @@
     </rule>
     <rule id="ENSENAR" name="ensenar/enseñar">
       <pattern>
-        <token>ensenar
+        <token inflected="yes">ensenar
           <exception regexp="yes">ensenadas?</exception>
         </token>
       </pattern>
@@ -1478,21 +1478,21 @@
     </rule>
     <rule id="REP_COMPROBAR" name="repetición: comprobar">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">comprobar</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">comprobar</token>
       </pattern>
       <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>revisar</suggestion></message>
       <short>REP_COMPROBAR</short>
     </rule>
     <rule id="REP_CREAR" name="repetición: crear">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">crear</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">crear</token>
       </pattern>
       <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>generar</suggestion></message>
       <short>REP_CREAR</short>
     </rule>
     <rule id="REP_CREER" name="repetición: creer">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">creer</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">creer</token>
       </pattern>
       <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>pensar</suggestion></message>
       <short>REP_CREER</short>
@@ -1508,14 +1508,14 @@
     </rule>
     <rule id="REP_REVISAR" name="repetición: revisar">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">revisar</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">revisar</token>
       </pattern>
       <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>comprobar</suggestion></message>
       <short>REP_REVISAR</short>
     </rule>
     <rule id="REP_VERIFICAR" name="repetición: verificar">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">verificar</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">verificar</token>
       </pattern>
       <message>Esta expresión ya ha aparecido antes. Puede sustituirla por otra para hacer más variado el texto. <suggestion>revisar</suggestion></message>
       <short>REP_VERIFICAR</short>
@@ -1572,7 +1572,7 @@
   <category id="PREFERABLE_EXPRESSIONS" name="expresiones preferibles">
     <rule id="COMPLEJIZAR" name="complejizar/complicar">
       <pattern>
-        <token>complejizar</token>
+        <token inflected="yes">complejizar</token>
       </pattern>
       <message>Excepto en usos especializados, es preferible utilizar otro verbo. <suggestion>complicar</suggestion></message>
       <short>COMPLEJIZAR</short>
@@ -1580,7 +1580,7 @@
     <rule id="MAS_BUENA" name="MAS_BUENA">
       <pattern>
         <token>más</token>
-        <token postag="AQ.*" postag_regexp="yes">bueno</token>
+        <token inflected="yes" postag="AQ.*" postag_regexp="yes">bueno</token>
       </pattern>
       <message>Es preferible usar <suggestion>mejor</suggestion>, excepto cuando se alude a la bondad de una persona o a un sabor.</message>
       <short>MAS_BUENA</short>
@@ -1588,7 +1588,7 @@
     <rule id="MAS_MALA" name="MAS_MALA">
       <pattern>
         <token>más</token>
-        <token postag="AQ.*" postag_regexp="yes">malo</token>
+        <token inflected="yes" postag="AQ.*" postag_regexp="yes">malo</token>
       </pattern>
       <message>Es preferible usar <suggestion>peor</suggestion>, excepto cuando se alude a la maldad de una persona o a un sabor.</message>
       <short>MAS_MALA</short>
@@ -1658,7 +1658,7 @@
   <category id="PREPOSITIONS" name="Preposiciones">
     <rule id="DEPENDER_DE" name="depender *en/de">
       <pattern>
-        <token regexp="yes">depender|dudar</token>
+        <token regexp="yes" inflected="yes">depender|dudar</token>
         <token>en</token>
         <token regexp="yes">si|que</token>
       </pattern>
@@ -1667,7 +1667,7 @@
     </rule>
     <rule id="ENFRENTARSE_ANTE" name="enfrentarse *ante/con" default="on">
       <pattern>
-        <token>enfrentar</token>
+        <token inflected="yes">enfrentar</token>
         <token min="0" max="4" postag="RG|LOC_ADV|_PUNCT_CONT" postag_regexp="yes"></token>
         <token>ante</token>
       </pattern>
@@ -1684,7 +1684,7 @@
     </rule>
     <rule id="INSISTIR_DE" name="insistir *de/en">
       <pattern>
-        <token regexp="yes">insistir|fijar</token>
+        <token regexp="yes" inflected="yes">insistir|fijar</token>
         <token min="0" postag="RG"></token>
         <token>de</token>
         <token>que</token>
@@ -1697,7 +1697,7 @@
     <rule id="EL_AGRAVANTE" name="El agravante y el atenuante">
       <pattern>
         <token postag="D..M.." postag_regexp="yes"></token>
-        <token regexp="yes">a(grav|tenu)ante</token>
+        <token regexp="yes" inflected="yes">a(grav|tenu)ante</token>
       </pattern>
       <message>En Derecho, «\2» tiene tratamiento femenino, ya que se omite la palabra «circunstancia». <suggestion>\2</suggestion></message>
       <short>EL_AGRAVANTE</short>

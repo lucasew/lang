@@ -71,7 +71,7 @@
     </rule>
     <rule id="NEVASTA_DE_AL_DOILEA" name="nevastă de-a doua - nevastă de-al doilea">
       <pattern>
-        <token regexp="yes">nevastă|soție</token>
+        <token regexp="yes" inflected="yes">nevastă|soție</token>
         <token>de</token>
         <token>-</token>
         <token>a</token>
@@ -334,7 +334,7 @@
     </rule>
     <rule id="ACORD_COMUN" name="acord comun">
       <pattern>
-        <token>acord</token>
+        <token inflected="yes">acord</token>
         <token>comun</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -342,7 +342,7 @@
     </rule>
     <rule id="ADAUGA_UN_SPOR" name="a adăuga un spor">
       <pattern>
-        <token>adăuga</token>
+        <token inflected="yes">adăuga</token>
         <token>un</token>
         <token>spor</token>
       </pattern>
@@ -351,15 +351,15 @@
     </rule>
     <rule id="ALCOOLIC_CRONIC" name="alcoolic cronic">
       <pattern>
-        <token>alcoolic</token>
-        <token>cronic</token>
+        <token inflected="yes">alcoolic</token>
+        <token inflected="yes">cronic</token>
       </pattern>
       <message>Pleonasm. Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="ALEGERI_ELECTORALE" name="alegeri electorale">
       <pattern>
-        <token>alegere</token>
+        <token inflected="yes">alegere</token>
         <token regexp="yes">electoral|electorale</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -376,8 +376,8 @@
     </rule>
     <rule id="AMBELE_DOUA" name="ambele două">
       <pattern>
-        <token>ambii</token>
-        <token regexp="yes">doi|amândoi|amândouă</token>
+        <token inflected="yes">ambii</token>
+        <token regexp="yes" inflected="yes">doi|amândoi|amândouă</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
@@ -401,8 +401,8 @@
     </rule>
     <rule id="AUTORITATE_COMPETENTA" name="autoritate competentă">
       <pattern>
-        <token regexp="yes">autoritate|autorități</token>
-        <token regexp="yes">oficial|competent|competentă</token>
+        <token regexp="yes" inflected="yes">autoritate|autorități</token>
+        <token regexp="yes" inflected="yes">oficial|competent|competentă</token>
       </pattern>
       <message>Pleonasm. Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
@@ -418,16 +418,16 @@
     </rule>
     <rule id="A_ADAUGA_O_COMPLETARE" name="a adăuga o completare">
       <pattern>
-        <token>adăuga</token>
+        <token inflected="yes">adăuga</token>
         <token regexp="yes">o|câteva|niște|unele</token>
-        <token>completare</token>
+        <token inflected="yes">completare</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>completa</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_ANEXA_ALATURI" name="a anexa alături">
       <pattern>
-        <token>anexa</token>
+        <token inflected="yes">anexa</token>
         <token>alături</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>alătura</suggestion>?</message>
@@ -435,15 +435,15 @@
     </rule>
     <rule id="A_AVANSA_INAINTE" name="a avansa înainte">
       <pattern>
-        <token>avansa</token>
-        <token>înainte</token>
+        <token inflected="yes">avansa</token>
+        <token inflected="yes">înainte</token>
       </pattern>
       <message>"A avansa" implică noţiunea de înaintare. Ați vrut să scrieți <suggestion></suggestion> sau <suggestion>înainta</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_COEXISTA_IMPREUNA" name="a coexista împreună">
       <pattern>
-        <token>coexista</token>
+        <token inflected="yes">coexista</token>
         <token>împreună</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -451,7 +451,7 @@
     </rule>
     <rule id="A_COLABORA_IMPREUNA" name="a colabora împreună">
       <pattern>
-        <token regexp="yes">colabora|colaborare</token>
+        <token regexp="yes" inflected="yes">colabora|colaborare</token>
         <token>împreună</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -459,7 +459,7 @@
     </rule>
     <rule id="A_CONLOCUI_LAOLALTA" name="a conlocui laolaltă/împreună">
       <pattern>
-        <token>conlocui</token>
+        <token inflected="yes">conlocui</token>
         <token regexp="yes">împreună|laolaltă</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>locui </suggestion>?</message>
@@ -467,7 +467,7 @@
     </rule>
     <rule id="A_CONLUCRA_IMPREUNA" name="a conlucra împreună">
       <pattern>
-        <token>conlucra</token>
+        <token inflected="yes">conlucra</token>
         <token>împreună</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>lucra </suggestion>?</message>
@@ -475,7 +475,7 @@
     </rule>
     <rule id="A_CONTINE_IN_CUPRINS" name="a conţine în cuprins">
       <pattern>
-        <token>conține</token>
+        <token inflected="yes">conține</token>
         <token>în</token>
         <token>cuprins</token>
       </pattern>
@@ -484,7 +484,7 @@
     </rule>
     <rule id="A_CONVIETUI_LAOLALTA" name="a conviețui laolaltă">
       <pattern>
-        <token>conviețui</token>
+        <token inflected="yes">conviețui</token>
         <token>laolaltă</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -492,8 +492,8 @@
     </rule>
     <rule id="A_EPILA_PARUL" name="a epila părul">
       <pattern>
-        <token regexp="yes">epila|epilare</token>
-        <token>păr</token>
+        <token regexp="yes" inflected="yes">epila|epilare</token>
+        <token inflected="yes">păr</token>
       </pattern>
       <message>Pleonasm. Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
@@ -509,7 +509,7 @@
     </rule>
     <rule id="A_INDOI_IN_DOUA" name="a îndoi în două">
       <pattern>
-        <token>îndoi</token>
+        <token inflected="yes">îndoi</token>
         <token>în</token>
         <token>două</token>
       </pattern>
@@ -518,7 +518,7 @@
     </rule>
     <rule id="A_INGHETA_DE_FRIG" name="a îngheța de frig">
       <pattern>
-        <token regexp="yes">îngheța|înghețat</token>
+        <token regexp="yes" inflected="yes">îngheța|înghețat</token>
         <token>de</token>
         <token>frig</token>
       </pattern>
@@ -527,7 +527,7 @@
     </rule>
     <rule id="A_INTRA_INAUNTRU" name="a intra înăuntru">
       <pattern>
-        <token regexp="yes">introduce|intra</token>
+        <token regexp="yes" inflected="yes">introduce|intra</token>
         <token>înăuntru</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -535,7 +535,7 @@
     </rule>
     <rule id="A_POPOSI_PENTRU_ODIHNA" name="poposi pentru odihnă">
       <pattern>
-        <token>poposi</token>
+        <token inflected="yes">poposi</token>
         <token>pentru</token>
         <token>odihnă</token>
       </pattern>
@@ -544,7 +544,7 @@
     </rule>
     <rule id="A_PRECIZA_CU_EXACTITATE" name="a preciza cu exactitate">
       <pattern>
-        <token>preciza</token>
+        <token inflected="yes">preciza</token>
         <token>cu</token>
         <token>exactitate</token>
       </pattern>
@@ -553,7 +553,7 @@
     </rule>
     <rule id="A_PRILEJUIT_OCAZIA" name="a prilejuit ocazia">
       <pattern>
-        <token>prilejui</token>
+        <token inflected="yes">prilejui</token>
         <token>ocazia</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>oferi </suggestion>?</message>
@@ -561,7 +561,7 @@
     </rule>
     <rule id="A_RAMANE_IN_CONTINUARE" name="a rămâne în continuare">
       <pattern>
-        <token>rămâne</token>
+        <token inflected="yes">rămâne</token>
         <token>în</token>
         <token>continuare</token>
       </pattern>
@@ -570,7 +570,7 @@
     </rule>
     <rule id="A_RELUA_DIN_NOU" name="a relua din nou">
       <pattern>
-        <token>relua</token>
+        <token inflected="yes">relua</token>
         <token>din</token>
         <token>nou</token>
       </pattern>
@@ -579,7 +579,7 @@
     </rule>
     <rule id="A_RETURNA_INAPOI" name="a returna înapoi">
       <pattern>
-        <token>returna</token>
+        <token inflected="yes">returna</token>
         <token>înapoi</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -587,7 +587,7 @@
     </rule>
     <rule id="A_REVENI_DIN_NOU" name="a reveni din nou">
       <pattern>
-        <token>reveni</token>
+        <token inflected="yes">reveni</token>
         <token>din</token>
         <token>nou</token>
       </pattern>
@@ -596,7 +596,7 @@
     </rule>
     <rule id="A_REVENI_IAR" name="a reveni iar">
       <pattern>
-        <token>reveni</token>
+        <token inflected="yes">reveni</token>
         <token regexp="yes">iar|iarăși|înapoi</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -604,7 +604,7 @@
     </rule>
     <rule id="A_SOPTI_INCET" name="a șopti încet">
       <pattern>
-        <token>șopti</token>
+        <token inflected="yes">șopti</token>
         <token>încet</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -612,7 +612,7 @@
     </rule>
     <rule id="A_URMA_IN_CONTINUARE" name="a urma în continuare">
       <pattern>
-        <token>urma</token>
+        <token inflected="yes">urma</token>
         <token>în</token>
         <token>continuare</token>
       </pattern>
@@ -621,15 +621,15 @@
     </rule>
     <rule id="BABA_BATRANA" name="babă bătrână">
       <pattern>
-        <token>babă</token>
-        <token>bătrână</token>
+        <token inflected="yes">babă</token>
+        <token inflected="yes">bătrână</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="BICICLETA_CU_DOUA_ROTI" name="bicicletă cu două roți">
       <pattern>
-        <token>bicicletă</token>
+        <token inflected="yes">bicicletă</token>
         <token>cu</token>
         <token>două</token>
         <token>roți</token>
@@ -639,7 +639,7 @@
     </rule>
     <rule id="BIFURCA_IN_DOUA" name="bifurcă în două">
       <pattern>
-        <token>bifurca</token>
+        <token inflected="yes">bifurca</token>
         <token>în</token>
         <token>două</token>
       </pattern>
@@ -648,7 +648,7 @@
     </rule>
     <rule id="BLAZON_DE_NOBLETE" name="blazon de noblețe">
       <pattern>
-        <token>blazon</token>
+        <token inflected="yes">blazon</token>
         <token>de</token>
         <token>noblețe</token>
       </pattern>
@@ -657,7 +657,7 @@
     </rule>
     <rule id="CERE_O_SOLICITARE" name="a cere o solicitare">
       <pattern>
-        <token>cere</token>
+        <token inflected="yes">cere</token>
         <token>o</token>
         <token>solicitare</token>
       </pattern>
@@ -675,23 +675,23 @@
     </rule>
     <rule id="CINSTE_SI_ONOARE" name="cinste și onoare">
       <pattern>
-        <token>cinste</token>
+        <token inflected="yes">cinste</token>
         <token>și</token>
-        <token>onoare</token>
+        <token inflected="yes">onoare</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="COASOCIAT" name="coasociat">
       <pattern>
-        <token>coasociat</token>
+        <token inflected="yes">coasociat</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>asociat</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="COBAI_DE_EXPERIENTA" name="cobai de experiență">
       <pattern>
-        <token>cobai</token>
+        <token inflected="yes">cobai</token>
         <token>de</token>
         <token regexp="yes">experiență|experiențe</token>
       </pattern>
@@ -700,9 +700,9 @@
     </rule>
     <rule id="COLABORARE_SI_COOPERARE" name="colaborare și cooperare">
       <pattern>
-        <token>colaborare</token>
+        <token inflected="yes">colaborare</token>
         <token>și</token>
-        <token>cooperare</token>
+        <token inflected="yes">cooperare</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
@@ -718,7 +718,7 @@
     </rule>
     <rule id="CONTINUITATE_NEINTRERUPTA" name="continuitate neîntreruptă">
       <pattern>
-        <token>continuitate</token>
+        <token inflected="yes">continuitate</token>
         <token>neîntreruptă</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -726,7 +726,7 @@
     </rule>
     <rule id="COPARTAS" name="copărtaș">
       <pattern>
-        <token>copărtaș</token>
+        <token inflected="yes">copărtaș</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>părtaș</suggestion>?</message>
       <short>Pleonasm</short>
@@ -740,7 +740,7 @@
     </rule>
     <rule id="COROBORA_COMPARATIV" name="corobora comparativ">
       <pattern>
-        <token>corobora</token>
+        <token inflected="yes">corobora</token>
         <token>comparativ</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -748,7 +748,7 @@
     </rule>
     <rule id="COTIDIANA_DE_ZI_CU_ZI" name="cotidiană de zi cu zi">
       <pattern>
-        <token>cotidian</token>
+        <token inflected="yes">cotidian</token>
         <token>de</token>
         <token>zi</token>
         <token regexp="yes">cu|de</token>
@@ -759,15 +759,15 @@
     </rule>
     <rule id="COTIDIAN_ZILNIC" name="cotidian zilnic">
       <pattern>
-        <token>cotidian</token>
-        <token>zilnic</token>
+        <token inflected="yes">cotidian</token>
+        <token inflected="yes">zilnic</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion> sau <suggestion>\2</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="CREDE_IN_SINEA_LUI" name="crede în sinea lui">
       <pattern>
-        <token>crede</token>
+        <token inflected="yes">crede</token>
         <token>în</token>
         <token>sinea</token>
         <token regexp="yes">mea|ei|lor|lui|noastră|voastră</token>
@@ -777,7 +777,7 @@
     </rule>
     <rule id="DAINUI_PERMANENT" name="a dăinui permanent">
       <pattern>
-        <token>dăinui</token>
+        <token inflected="yes">dăinui</token>
         <token>permanent</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -785,16 +785,16 @@
     </rule>
     <rule id="DEMOCRATIE_POPULARA" name="democrație populară">
       <pattern>
-        <token>democrație</token>
-        <token>popular</token>
+        <token inflected="yes">democrație</token>
+        <token inflected="yes">popular</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="DESCHIDEREA_VERNISAJULUI" name="deschiderea vernisajului">
       <pattern>
-        <token>deschidere</token>
-        <token>vernisaj</token>
+        <token inflected="yes">deschidere</token>
+        <token inflected="yes">vernisaj</token>
       </pattern>
       <message>vernisaj = este ceremonia de deschiderea a unei expoziţii. Ați dorit să scrieți <suggestion>vernisaj</suggestion>?</message>
       <short>Pleonasm</short>
@@ -821,16 +821,16 @@
     </rule>
     <rule id="DIRECT_SI_NEMIJLOCIT" name="direct și nemijlocit">
       <pattern>
-        <token>direct</token>
+        <token inflected="yes">direct</token>
         <token>și</token>
-        <token>nemijlocit</token>
+        <token inflected="yes">nemijlocit</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="ECHIDISTANTA_EGALA" name="echidistanță egală">
       <pattern>
-        <token regexp="yes">echidistant|echidistanță</token>
+        <token regexp="yes" inflected="yes">echidistant|echidistanță</token>
         <token regexp="yes">egală|egal|egale|egali</token>
       </pattern>
       <message>Pleonasm sau exprimare greșită. Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -857,9 +857,9 @@
     </rule>
     <rule id="ETICA_SI_MORALA" name="etica și morala">
       <pattern>
-        <token regexp="yes">etic|etică</token>
+        <token regexp="yes" inflected="yes">etic|etică</token>
         <token>și</token>
-        <token regexp="yes">moral|morală</token>
+        <token regexp="yes" inflected="yes">moral|morală</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
@@ -874,40 +874,40 @@
     </rule>
     <rule id="EXEMPLE_ILUSTRATIVE" name="exemple ilustrative">
       <pattern>
-        <token>exemplu</token>
-        <token>ilustrativ</token>
+        <token inflected="yes">exemplu</token>
+        <token inflected="yes">ilustrativ</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="EXPERIENTA_TRECUTA" name="experiență trecută/anterioară">
       <pattern>
-        <token>experiență</token>
-        <token regexp="yes">trecut|anterior</token>
+        <token inflected="yes">experiență</token>
+        <token regexp="yes" inflected="yes">trecut|anterior</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>experință</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="FAPTA_FACUTA" name="fapta făcută">
       <pattern>
-        <token>faptă</token>
-        <token postag="(.*)p.." postag_regexp="yes">face</token>
+        <token inflected="yes">faptă</token>
+        <token inflected="yes" postag="(.*)p.." postag_regexp="yes">face</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="FIRESC_SI_NATURAL" name="firesc și natural">
       <pattern>
-        <token>firesc</token>
+        <token inflected="yes">firesc</token>
         <token>și</token>
-        <token>natural</token>
+        <token inflected="yes">natural</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="GEAM_DE_STICLA" name="geam de sticlă">
       <pattern>
-        <token>geam</token>
+        <token inflected="yes">geam</token>
         <token>de</token>
         <token>sticlă</token>
       </pattern>
@@ -925,7 +925,7 @@
     </rule>
     <rule id="GOALE_SI_FARA_SENS" name="goale și fără sens">
       <pattern>
-        <token>gol</token>
+        <token inflected="yes">gol</token>
         <token>și</token>
         <token>fără</token>
         <token>sens</token>
@@ -935,34 +935,34 @@
     </rule>
     <rule id="GREU_SI_DIFICIL" name="greu și dificil">
       <pattern>
-        <token>greu</token>
+        <token inflected="yes">greu</token>
         <token>și</token>
-        <token>dificil</token>
+        <token inflected="yes">dificil</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="HEMOGLOBINA_DIN_SANGE" name="hemoglobina din sânge">
       <pattern>
-        <token>hemoglobină</token>
+        <token inflected="yes">hemoglobină</token>
         <token regexp="yes">în|din|a</token>
-        <token>sânge</token>
+        <token inflected="yes">sânge</token>
       </pattern>
       <message>Pleonasm. Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="ILUSTRAT_CU_EXEMPLE" name="ilustrat cu exemple">
       <pattern>
-        <token>ilustra</token>
+        <token inflected="yes">ilustra</token>
         <token regexp="yes">cu|prin</token>
-        <token>exemplu</token>
+        <token inflected="yes">exemplu</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>exemplifica</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="IMPARTIT_IN_DOUA_SEMESTRE" name="împărțit în două semestre">
       <pattern>
-        <token>împărți</token>
+        <token inflected="yes">împărți</token>
         <token>în</token>
         <token>două</token>
         <token>semestre</token>
@@ -972,7 +972,7 @@
     </rule>
     <rule id="IMPARTIT_IN_TREI_TRIMESTERE" name="împărțit în trei trimestre">
       <pattern>
-        <token>împărți</token>
+        <token inflected="yes">împărți</token>
         <token>în</token>
         <token>trei</token>
         <token>trimestre</token>
@@ -982,7 +982,7 @@
     </rule>
     <rule id="INCORSETARE_RIGIDA" name="încorsetare rigidă">
       <pattern>
-        <token regexp="yes">încorseta|încorsetare</token>
+        <token regexp="yes" inflected="yes">încorseta|încorsetare</token>
         <token regexp="yes">rigid|rigidă|rigide</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -990,7 +990,7 @@
     </rule>
     <rule id="INFATISARE_CU_ASPECT" name="înfățișare cu aspect">
       <pattern>
-        <token>înfățișare</token>
+        <token inflected="yes">înfățișare</token>
         <token>cu</token>
         <token>aspect</token>
       </pattern>
@@ -999,7 +999,7 @@
     </rule>
     <rule id="INTOARCE_TE_INAPOI" name="întoarce-te înapoi">
       <pattern>
-        <token postag="V.*m.." postag_regexp="yes">întoarce</token>
+        <token inflected="yes" postag="V.*m.." postag_regexp="yes">întoarce</token>
         <token>-</token>
         <token postag="N.*" postag_regexp="yes"></token>
         <token>înapoi</token>
@@ -1009,7 +1009,7 @@
     </rule>
     <rule id="IN_PRIMA_AUDITIE" name="a asculta în primă audiție">
       <pattern>
-        <token>asculta</token>
+        <token inflected="yes">asculta</token>
         <token>în</token>
         <token>primă</token>
         <token>audiție</token>
@@ -1019,7 +1019,7 @@
     </rule>
     <rule id="LIMITA_NUMAI_LA" name="a se limita numai la">
       <pattern>
-        <token>limita</token>
+        <token inflected="yes">limita</token>
         <token regexp="yes">numai|doar</token>
         <token>la</token>
       </pattern>
@@ -1028,7 +1028,7 @@
     </rule>
     <rule id="MENTINE_IN_CONTINUARE" name="a menține în continuare">
       <pattern>
-        <token>menține</token>
+        <token inflected="yes">menține</token>
         <token>în</token>
         <token>continuare</token>
       </pattern>
@@ -1037,7 +1037,7 @@
     </rule>
     <rule id="MIGRENA_DE_CAP" name="migrenă de cap">
       <pattern>
-        <token>migrenă</token>
+        <token inflected="yes">migrenă</token>
         <token>de</token>
         <token>cap</token>
       </pattern>
@@ -1046,7 +1046,7 @@
     </rule>
     <rule id="MIJLOACE_MASS-MEDIA" name="mijloace mass-media">
       <pattern>
-        <token>mijloc</token>
+        <token inflected="yes">mijloc</token>
         <token>mass</token>
         <token>-</token>
         <token regexp="yes">media|MÉDIA</token>
@@ -1056,17 +1056,17 @@
     </rule>
     <rule id="MOS_BATRAN" name="moș bătrân">
       <pattern>
-        <token regexp="yes">moș|moșneag</token>
-        <token>bătrân</token>
+        <token regexp="yes" inflected="yes">moș|moșneag</token>
+        <token inflected="yes">bătrân</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="MUTUAL_SI_RECIPROC" name="mutual și reciproc">
       <pattern>
-        <token>mutual</token>
+        <token inflected="yes">mutual</token>
         <token>și</token>
-        <token>reciproc</token>
+        <token inflected="yes">reciproc</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
@@ -1083,9 +1083,9 @@
     </rule>
     <rule id="NUL_SI_NEAVENIT" name="nul și neavenit">
       <pattern>
-        <token>nul</token>
+        <token inflected="yes">nul</token>
         <token>și</token>
-        <token>neavenit</token>
+        <token inflected="yes">neavenit</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
@@ -1108,7 +1108,7 @@
     </rule>
     <rule id="ORTOGRAFIE_CORECTA" name="ortografie corectă">
       <pattern>
-        <token>ortografie</token>
+        <token inflected="yes">ortografie</token>
         <token>corectă</token>
       </pattern>
       <message>Pleonasm. Ar fi bine să reformulați, ortografia se referă la scrierea corectă a unui limbi.</message>
@@ -1126,7 +1126,7 @@
     </rule>
     <rule id="PANACEU_UNIVERSAL" name="Panaceu universal">
       <pattern>
-        <token>panaceu</token>
+        <token inflected="yes">panaceu</token>
         <token>universal</token>
       </pattern>
       <message>Panaceu înseamnă remediu universal. Ați vrut să scrieți <suggestion></suggestion> sau <suggestion>remediu </suggestion>?</message>
@@ -1134,7 +1134,7 @@
     </rule>
     <rule id="PAUZA_TEMPORARA" name="pauză temporară">
       <pattern>
-        <token>pauză</token>
+        <token inflected="yes">pauză</token>
         <token>temporară</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -1142,7 +1142,7 @@
     </rule>
     <rule id="PERSPECTIVE_DE_VIITOR" name="perspective de viitor">
       <pattern>
-        <token>perspectivă</token>
+        <token inflected="yes">perspectivă</token>
         <token regexp="yes">de|pentru|în</token>
         <token>viitor</token>
       </pattern>
@@ -1153,7 +1153,7 @@
       <pattern>
         <token>poate</token>
         <token>fi</token>
-        <token>admisibil</token>
+        <token inflected="yes">admisibil</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>este </suggestion> sau <suggestion>poate fi admis</suggestion>?</message>
       <short>Pleonasm</short>
@@ -1162,7 +1162,7 @@
       <pattern>
         <token>poate</token>
         <token>fi</token>
-        <token>posibil</token>
+        <token inflected="yes">posibil</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>este </suggestion> sau <suggestion>poate fi realizat</suggestion>?</message>
       <short>Pleonasm</short>
@@ -1171,14 +1171,14 @@
       <pattern>
         <token regexp="yes">pot|poate</token>
         <token>fi</token>
-        <token>utilizabil</token>
+        <token inflected="yes">utilizabil</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>  utilizat</suggestion> sau <suggestion>fi </suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="PREFERA_MAI_BINE" name="a prefera mai bine">
       <pattern>
-        <token>prefera</token>
+        <token inflected="yes">prefera</token>
         <token>mai</token>
         <token>bine</token>
       </pattern>
@@ -1187,7 +1187,7 @@
     </rule>
     <rule id="PREVAZUT_IN_VEDEREA" name="prevăzut în vederea">
       <pattern>
-        <token>prevăzut</token>
+        <token inflected="yes">prevăzut</token>
         <token>în</token>
         <token>vederea</token>
       </pattern>
@@ -1196,24 +1196,24 @@
     </rule>
     <rule id="PUBELE_DE_GUNOI" name="pubele de gunoi">
       <pattern>
-        <token>pubelă</token>
+        <token inflected="yes">pubelă</token>
         <token>de</token>
-        <token>gunoi</token>
+        <token inflected="yes">gunoi</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="SALVAMONTISTI_MONTANI" name="salvamontiști montani">
       <pattern>
-        <token>salvamontist</token>
-        <token>montan</token>
+        <token inflected="yes">salvamontist</token>
+        <token inflected="yes">montan</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="SANTIER_IN_LUCRU" name="șantier în lucru">
       <pattern>
-        <token>șantier</token>
+        <token inflected="yes">șantier</token>
         <token>în</token>
         <token>lucru</token>
       </pattern>
@@ -1222,7 +1222,7 @@
     </rule>
     <rule id="SCHIMB_RECIPROC" name="schimb reciproc">
       <pattern>
-        <token>schimb</token>
+        <token inflected="yes">schimb</token>
         <token>reciproc</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -1230,24 +1230,24 @@
     </rule>
     <rule id="SCURTA_ALOCUTIUNE" name="scurtă alocuțiune">
       <pattern>
-        <token>scurtă</token>
-        <token>alocuțiune</token>
+        <token inflected="yes">scurtă</token>
+        <token inflected="yes">alocuțiune</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\2</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="SEDUS_SI_PACALIT" name="sedus și păcălit">
       <pattern>
-        <token>sedus</token>
+        <token inflected="yes">sedus</token>
         <token>și</token>
-        <token>păcălit</token>
+        <token inflected="yes">păcălit</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="SERVOLEAZA_PESTE" name="survolează peste...">
       <pattern>
-        <token>survola</token>
+        <token inflected="yes">survola</token>
         <token>peste</token>
         <token postag="S(.*)" postag_regexp="yes"></token>
       </pattern>
@@ -1256,7 +1256,7 @@
     </rule>
     <rule id="SERVOLEAZA_PRIN_AER" name="survolează prin aer">
       <pattern>
-        <token>survola</token>
+        <token inflected="yes">survola</token>
         <token>prin</token>
         <token>aer</token>
       </pattern>
@@ -1265,9 +1265,9 @@
     </rule>
     <rule id="SIMPLA_SI_NESOFISTICATA" name="simplă și nesofisticată">
       <pattern>
-        <token>simplu</token>
+        <token inflected="yes">simplu</token>
         <token>și</token>
-        <token>nesofisticat</token>
+        <token inflected="yes">nesofisticat</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
@@ -1282,7 +1282,7 @@
     </rule>
     <rule id="SINUCIS_SINGUR" name="sinucis singur">
       <pattern>
-        <token>sinucide</token>
+        <token inflected="yes">sinucide</token>
         <token regexp="yes">singur|singură|singuri|singure</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -1290,7 +1290,7 @@
     </rule>
     <rule id="SPECTACOL_ARTISTIC" name="spectacol artistic">
       <pattern>
-        <token regexp="yes">spectacol|reprezentație</token>
+        <token regexp="yes" inflected="yes">spectacol|reprezentație</token>
         <token regexp="yes">artistic|artistică</token>
       </pattern>
       <message>Pleonasm. Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
@@ -1298,7 +1298,7 @@
     </rule>
     <rule id="SUBSTITUIT_IN_LOCUL" name="substituit în locul">
       <pattern>
-        <token>substitui</token>
+        <token inflected="yes">substitui</token>
         <token>în</token>
         <token>locul</token>
       </pattern>
@@ -1307,16 +1307,16 @@
     </rule>
     <rule id="TENTATIVA_DE_INCERCARE" name="tentativă de încercare">
       <pattern>
-        <token>tentativă</token>
+        <token inflected="yes">tentativă</token>
         <token>de</token>
-        <token>încercare</token>
+        <token inflected="yes">încercare</token>
       </pattern>
       <message>Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="TRICICLETA_CU_TREI_ROTI" name="tricicletă cu trei roți">
       <pattern>
-        <token>tricicletă</token>
+        <token inflected="yes">tricicletă</token>
         <token>cu</token>
         <token>trei</token>
         <token>roți</token>
@@ -1326,7 +1326,7 @@
     </rule>
     <rule id="TRIUMVIRAT_TREI" name="triumvirat în trei">
       <pattern>
-        <token>triumvirat</token>
+        <token inflected="yes">triumvirat</token>
         <token regexp="yes">de|în|din|cu|a|al</token>
         <token>trei</token>
       </pattern>
@@ -1502,7 +1502,7 @@
     </rule>
     <rule id="A_IESI_AFARA" name="a ieși afară">
       <pattern>
-        <token>ieși</token>
+        <token inflected="yes">ieși</token>
         <token>afară</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
@@ -1517,8 +1517,8 @@
     </rule>
     <rule id="INTRODUCERE_PRELIMINARA" name="introducere preliminară">
       <pattern>
-        <token>introducere</token>
-        <token>preliminar</token>
+        <token inflected="yes">introducere</token>
+        <token inflected="yes">preliminar</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Greșeală de scriere</short>
@@ -1546,7 +1546,7 @@
     </rule>
     <rule id="STARE_CIVILA" name="stare civila -&gt; stare civilă">
       <pattern>
-        <token>stare</token>
+        <token inflected="yes">stare</token>
         <token>civila</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion> </suggestion>?</message>
@@ -1554,7 +1554,7 @@
     </rule>
     <rule id="TRECUT_IN_NEFIINTA" name="a trece în neființă">
       <pattern>
-        <token>trece</token>
+        <token inflected="yes">trece</token>
         <token>în</token>
         <token>neființă</token>
       </pattern>
@@ -1651,7 +1651,7 @@
       <pattern>
         <token regexp="yes">e|este|era</token>
         <token>cu</token>
-        <token>siguranță</token>
+        <token inflected="yes">siguranță</token>
         <token>că</token>
       </pattern>
       <message>Ați dorit să scrieți <suggestion>\1 sigur că</suggestion> sau <suggestion>cu siguranță că</suggestion>?</message>

@@ -154,7 +154,7 @@
     </rule>
     <rule id="ANSCHIESSEND" name="anschießend / anschließend">
       <pattern>
-        <token regexp="yes">anschießend|anschiessend</token>
+        <token regexp="yes" inflected="yes">anschießend|anschiessend</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
       <short>ANSCHIESSEND</short>
@@ -171,7 +171,7 @@
       <pattern>
         <token>aufs</token>
         <token>Trapez</token>
-        <token>bringen</token>
+        <token inflected="yes">bringen</token>
       </pattern>
       <message>Mögliche Wortverwechslung: Meinten Sie <suggestion>Tapet</suggestion>?</message>
       <short>AUFS_TRAPEZ_BRINGEN</short>
@@ -225,14 +225,14 @@
       <pattern>
         <token>das</token>
         <token>Fürchten</token>
-        <token>lernen</token>
+        <token inflected="yes">lernen</token>
       </pattern>
       <message>Meinten Sie die Wendung 'das Fürchten lehren'? <suggestion>lehren</suggestion></message>
       <short>Mögliche Wortverwechslung:</short>
     </rule>
     <rule id="DEZIDIERTER_SERVER" name="'dezidierter (dedizierter) Server'">
       <pattern>
-        <token>dezidiert</token>
+        <token inflected="yes">dezidiert</token>
         <token regexp="yes">.*server[ns]?|Server[ns]?|Rechner[ns]?|Computer[ns]?</token>
       </pattern>
       <message>Meinten Sie <suggestion>dediziert</suggestion>? 'dezidiert' bedeutet 'entschieden, energisch'.</message>
@@ -259,7 +259,7 @@
     </rule>
     <rule id="DRUCKEN_DRUCKSEN" name="druck(s)en">
       <pattern>
-        <token skip="2">drucken</token>
+        <token inflected="yes" skip="2">drucken</token>
         <token regexp="yes">(he)?rum</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
@@ -336,7 +336,7 @@
     </rule>
     <rule id="HARMONISIEREN" name="harmonisieren/harmonieren">
       <pattern>
-        <token>harmonisieren</token>
+        <token inflected="yes">harmonisieren</token>
         <token postag="ADJ:.+" postag_regexp="yes"></token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion> (übereinstimmen) statt 'harmonisieren' (in Übereinstimmung bringen)?</message>
@@ -367,14 +367,14 @@
     <rule id="KARIKATIV_VS_KARITATIV" name="karikativ/karitativ">
       <pattern>
         <token regexp="yes">karikative[rns]?</token>
-        <token regexp="yes">Ader|Akt(ivität)?|Angebot|Anstalt|Arbeit|Aufgabe|Ausrichtung|Bemühung|Bereich|Betätigung|Charakter|Dienst|Einrichtung|Engagement|Events|Fürsorge|Geste|Hilfe|Hilfsorganisation|Hilfswerk|Institutionen|Jobs|Mission|Organisation|Projekt|Sammler|Sammlung|Sektor|Spende|Stiftung|Tätigkeit|Träger|Unternehmung|Veranstaltung|Verband|Verein|Vereinigung|Wirken|Wohnheim|Zahlung|Zweck</token>
+        <token regexp="yes" inflected="yes">Ader|Akt(ivität)?|Angebot|Anstalt|Arbeit|Aufgabe|Ausrichtung|Bemühung|Bereich|Betätigung|Charakter|Dienst|Einrichtung|Engagement|Events|Fürsorge|Geste|Hilfe|Hilfsorganisation|Hilfswerk|Institutionen|Jobs|Mission|Organisation|Projekt|Sammler|Sammlung|Sektor|Spende|Stiftung|Tätigkeit|Träger|Unternehmung|Veranstaltung|Verband|Verein|Vereinigung|Wirken|Wohnheim|Zahlung|Zweck</token>
       </pattern>
       <message>Mögliche Wortverwechslung: Meinten Sie <suggestion></suggestion> (wohltätig, humanitär)? 'Karikativ' bedeutet 'nach Art einer Karikatur'.</message>
       <short>KARIKATIV_VS_KARITATIV</short>
     </rule>
     <rule id="KATHEDER" name="Katheder/Katheter">
       <pattern>
-        <token>Katheder</token>
+        <token inflected="yes">Katheder</token>
       </pattern>
       <message>'Katheder' ist ein veraltetes Wort für ein Pult. Meinten Sie <suggestion></suggestion> (medizinischer Schlauch)?</message>
       <short>Mögliche Wortverwechslung:</short>
@@ -389,8 +389,8 @@
     </rule>
     <rule id="KONISCH_KOMISCH" name="konisch/komisch">
       <pattern>
-        <token>konisch</token>
-        <token regexp="yes" case_sensitive="yes">Ding|Effekt|Ein(fall|lage)|Episode|Figur|Frisur|Ge(dicht|danke|fühl|räusch|schichte)|He(iliger|ld)|Hut|Kauz|Kerl|Kontrast|Moment|Name|Nummer|Oper|Roman|Sache|Seite|Situation|Szene|Typ|Verzweiflung|Vogel|Wirkung|Zufall|Zug</token>
+        <token inflected="yes">konisch</token>
+        <token regexp="yes" case_sensitive="yes" inflected="yes">Ding|Effekt|Ein(fall|lage)|Episode|Figur|Frisur|Ge(dicht|danke|fühl|räusch|schichte)|He(iliger|ld)|Hut|Kauz|Kerl|Kontrast|Moment|Name|Nummer|Oper|Roman|Sache|Seite|Situation|Szene|Typ|Verzweiflung|Vogel|Wirkung|Zufall|Zug</token>
       </pattern>
       <message>Mögliche Wortverwechslung: Meinten Sie <suggestion></suggestion> (lustig, seltsam) statt konisch (kegelförmig, spitz zulaufend)?</message>
       <short>Mögliche Wortverwechslung:</short>
@@ -450,8 +450,8 @@
     </rule>
     <rule id="MITTELSTAENDIGES_UNTERNEHMEN" name="mittelständig vs. mittelständisch">
       <pattern>
-        <token skip="1">mittelständig</token>
-        <token regexp="yes">.*Unternehmen|.*Unternehmer(in)?|.*Kunde|.*Kanzlei|.*Gesellschaft|.*Firma|.*Betrieb|.*Familie|Haushalt|.*Wirtschaft|.*Gewerbe|.*Geschäft|.*Zulieferer|.*Brauerei</token>
+        <token inflected="yes" skip="1">mittelständig</token>
+        <token regexp="yes" inflected="yes">.*Unternehmen|.*Unternehmer(in)?|.*Kunde|.*Kanzlei|.*Gesellschaft|.*Firma|.*Betrieb|.*Familie|Haushalt|.*Wirtschaft|.*Gewerbe|.*Geschäft|.*Zulieferer|.*Brauerei</token>
       </pattern>
       <message>Das Wort "mittelständig" kommt aus der Botanik. Wenn Sie sich auf den "Mittelstand" beziehen wollen, ist <suggestion></suggestion> korrekt.</message>
       <short>Wortverwechslung</short>
@@ -469,7 +469,7 @@
     </rule>
     <rule id="OHMEN" name="Ohmen (Omen)">
       <pattern>
-        <token regexp="yes">böse|gut|schlecht|düster|schlimm|ungut</token>
+        <token regexp="yes" inflected="yes">böse|gut|schlecht|düster|schlimm|ungut</token>
         <token>Ohmen</token>
       </pattern>
       <message>Meinten Sie <suggestion>Omen</suggestion> (aus dem Sprichwort "ein gutes Omen")?</message>
@@ -501,7 +501,7 @@
     </rule>
     <rule id="PASSIONIERTE_PASSIERTE" name="passionierte/passierte">
       <pattern>
-        <token>passioniert</token>
+        <token inflected="yes">passioniert</token>
         <token regexp="yes" case_sensitive="yes">(?:Toma|Früch)ten?</token>
       </pattern>
       <message>Mögliche Wortverwechslung: Meinten Sie <suggestion></suggestion> (ohne grobe Teile) statt passionierte (leidenschaftlich)?</message>
@@ -519,7 +519,7 @@
         <token postag="PRO:REF:AKK.*" postag_regexp="yes"></token>
         <token min="0">nicht</token>
         <token max="2" postag="(ADV:|ADJ:PRD:GRU).*" postag_regexp="yes"></token>
-        <token>ausdrucken</token>
+        <token inflected="yes">ausdrucken</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
       <short>SICH_AUSDRUCKEN</short>
@@ -626,7 +626,7 @@
     </rule>
     <rule id="VEREINIGTE_STATTEN" name="Vereinigte Statten (Staaten)">
       <pattern>
-        <token>Vereinigte</token>
+        <token inflected="yes">Vereinigte</token>
         <token>Statten</token>
       </pattern>
       <message>Meinten Sie <suggestion>\1 Staaten</suggestion>?</message>
@@ -634,7 +634,7 @@
     </rule>
     <rule id="VERFUGEN_VERFUEGEN" name="verfugen vs. verfügen">
       <pattern>
-        <token>verfugen</token>
+        <token inflected="yes">verfugen</token>
         <token>über</token>
       </pattern>
       <message>Mögliche Wortverwechslung: Meinten Sie <suggestion>verfügen</suggestion>?</message>
@@ -644,7 +644,7 @@
       <pattern>
         <token regexp="yes">Weine?|Tees?|Kaffee|Schokoladen?</token>
         <token min="0" postag="ADV:.+" postag_regexp="yes"></token>
-        <token>verköstigen</token>
+        <token inflected="yes">verköstigen</token>
       </pattern>
       <message>Mögliche Wortverwechslung: Meinten Sie <suggestion>verkosten</suggestion> (= <suggestion>probieren</suggestion>)?</message>
       <short>VERKOESTIGUNG</short>
@@ -661,7 +661,7 @@
     </rule>
     <rule id="WACHEN_WASCHEN" name="wachen vs. waschen">
       <pattern>
-        <token regexp="yes">Bart|Fu(ß|ss)|Geschirr|Haar|Hand|Hemd|Hose|Wäsche</token>
+        <token regexp="yes" inflected="yes">Bart|Fu(ß|ss)|Geschirr|Haar|Hand|Hemd|Hose|Wäsche</token>
         <token min="0">zu</token>
         <token>wachen</token>
       </pattern>
@@ -1253,7 +1253,7 @@
     <rule id="STATISCHE_BUNDESAMT" name="Statisches (Statistisches) Bundesamt">
       <pattern>
         <token regexp="yes">statische[snm]?</token>
-        <token regexp="yes">Bundesamt|Landesamt</token>
+        <token regexp="yes" inflected="yes">Bundesamt|Landesamt</token>
       </pattern>
       <message>Meinten Sie 'statistisch' (auf Statistik bezogen) statt 'statisch' (unverändert) ? <suggestion>\2</suggestion></message>
       <short>STATISCHE_BUNDESAMT</short>
@@ -1635,7 +1635,7 @@
         <token>als</token>
         <token regexp="yes" case_sensitive="yes">letzte[sr]?</token>
         <token min="0" postag="ADV.*" postag_regexp="yes"></token>
-        <token regexp="yes">sehen|treffen</token>
+        <token regexp="yes" inflected="yes">sehen|treffen</token>
       </pattern>
       <message>Nominalisierte Adjektive werden in der Regel großgeschrieben.</message>
       <short>ALS_LETZTER</short>
@@ -1912,7 +1912,7 @@
     </rule>
     <rule id="DAS_BESTE_SEIN" name="'das beste (Beste) sein'">
       <pattern>
-        <token>sein</token>
+        <token inflected="yes">sein</token>
         <token min="0" postag="ADJ:PRD:GRU"></token>
         <token>das</token>
         <token case_sensitive="yes">beste</token>
@@ -2054,7 +2054,7 @@
       <pattern>
         <token regexp="yes">barsche|hechte|fische|schlangen</token>
         <token min="0" postag="ZUS"></token>
-        <token regexp="yes">fangen|angeln|fischen</token>
+        <token regexp="yes" inflected="yes">fangen|angeln|fischen</token>
       </pattern>
       <message>Bitte prüfen Sie, ob <suggestion></suggestion> hier als Nomen gebraucht wird und daher großgeschrieben werden muss.</message>
       <short>Bitte überprüfen Sie die Groß-/Kleinschreibung.</short>
@@ -2192,7 +2192,7 @@
       <pattern>
         <token case_sensitive="yes">federn</token>
         <token min="0">zu</token>
-        <token>lassen</token>
+        <token inflected="yes">lassen</token>
       </pattern>
       <message>In der Redewendung "Federn lassen" wird <suggestion></suggestion> großgeschrieben.</message>
       <short>FEDERN_LASSEN</short>
@@ -2310,7 +2310,7 @@
       <pattern>
         <token>ihr</token>
         <token regexp="yes" case_sensitive="yes">afrikanisch|alt(arabisch|chinesisch|griechisch|persisch)|amerikanisch|arabisch|chinesisch|dänisch|deutsch|plattdeutsch|englisch|finnisch|französisch|frühneuhochdeutsch|germanisch|griechisch|hocharabisch|hochchinesisch|hochdeutsch|holländisch|italienisch|japanisch|jiddisch|jugoslawisch|koreanisch|kroatisch|lateinisch|luxemburgisch|mittelhochdeutsch|neuhochdeutsch|niederländisch|norwegisch|persisch|polnisch|portugiesisch|russisch|schwedisch|schweizerisch|semitisch|serbisch|serbokroatisch|slawisch|spanisch|tschechisch|türkisch|ukrainisch|ungarisch|weißrussisch|weissrussisch|hebräisch|katalanisch</token>
-        <token>sein</token>
+        <token inflected="yes">sein</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
       <short>IHR_ENGLISCH_IST</short>
@@ -2360,7 +2360,7 @@
       <pattern>
         <token regexp="yes">[Ii]m</token>
         <token>regen</token>
-        <token>stehen</token>
+        <token inflected="yes">stehen</token>
       </pattern>
       <message>Bitte prüfen Sie, ob <suggestion>Regen</suggestion> hier als Nomen gebraucht wird und daher großgeschrieben werden muss.</message>
       <short>Bitte überprüfen Sie die Groß-/Kleinschreibung.</short>
@@ -2476,7 +2476,7 @@
         <token regexp="yes">[iI]n</token>
         <token>die</token>
         <token>enge</token>
-        <token>treiben</token>
+        <token inflected="yes">treiben</token>
       </pattern>
       <message>In der Wendung 'jemanden in die Enge treiben' wird <suggestion></suggestion> in aller Regel großgeschrieben.</message>
       <short>Bitte überprüfen Sie die Groß-/Kleinschreibung.</short>
@@ -2543,8 +2543,8 @@
     </rule>
     <rule id="IST_TEIL" name="ist teil (Teil) von">
       <pattern>
-        <token>sein</token>
-        <token min="0">ein</token>
+        <token inflected="yes">sein</token>
+        <token inflected="yes" min="0">ein</token>
         <token regexp="yes" case_sensitive="yes" min="0" postag="(ADJ|PA[12]):.+" postag_regexp="yes">[a-zäöü].*</token>
         <token case_sensitive="yes">teil</token>
       </pattern>
@@ -2650,7 +2650,7 @@
     </rule>
     <rule id="MIETE_SUBST" name="halbe miete (Miete)">
       <pattern>
-        <token skip="3">sein</token>
+        <token inflected="yes" skip="3">sein</token>
         <token>halbe</token>
         <token case_sensitive="yes">miete</token>
       </pattern>
@@ -2713,7 +2713,7 @@
         <token regexp="yes">[nN]ach</token>
         <token>dem</token>
         <token>rechten</token>
-        <token>sehen</token>
+        <token inflected="yes">sehen</token>
       </pattern>
       <message>In der Wendung 'nach dem Rechten sehen' wird <suggestion></suggestion> in aller Regel großgeschrieben.</message>
       <short>Bitte überprüfen Sie die Groß-/Kleinschreibung.</short>
@@ -2806,7 +2806,7 @@
       <pattern>
         <token regexp="yes">[aA]lle</token>
         <token>rechte</token>
-        <token>vorbehalten</token>
+        <token inflected="yes">vorbehalten</token>
       </pattern>
       <message>In der Wendung 'Alle Rechte vorbehalten' wird <suggestion></suggestion> großgeschrieben.</message>
       <short>Bitte überprüfen Sie die Groß-/Kleinschreibung.</short>
@@ -2815,7 +2815,7 @@
       <pattern>
         <token case_sensitive="yes">Recht</token>
         <token min="0">zu</token>
-        <token>machen</token>
+        <token inflected="yes">machen</token>
       </pattern>
       <message>Wenn die Wendung 'recht machen' (= jemandes Wunsch nachkommen) gemeint ist, wird 'recht' kleingeschrieben.</message>
       <short>Bitte überprüfen Sie die Groß-/Kleinschreibung.</short>
@@ -2895,7 +2895,7 @@
     </rule>
     <rule id="STELLT_FEST" name="stellen Fest (fest)">
       <pattern>
-        <token regexp="yes" skip="1">legen|setzen|stellen</token>
+        <token regexp="yes" inflected="yes" skip="1">legen|setzen|stellen</token>
         <token>Fest</token>
         <token postag="PKT"></token>
       </pattern>
@@ -3198,7 +3198,7 @@
     </rule>
     <rule id="WUNDER_PUNKT" name="'Wunde (wunde) Punkt'">
       <pattern>
-        <token regexp="yes">Wunder?</token>
+        <token regexp="yes" inflected="yes">Wunder?</token>
         <token>Punkt</token>
       </pattern>
       <message>In der Wendung 'Wunder Punkt' wird <suggestion></suggestion> kleingeschrieben.</message>
@@ -3226,7 +3226,7 @@
         <token regexp="yes">zum|dem</token>
         <token regexp="yes" case_sensitive="yes">äu(ß|ss)ersten</token>
         <token min="0">zu</token>
-        <token>greifen</token>
+        <token inflected="yes">greifen</token>
       </pattern>
       <message>Hier wird <suggestion></suggestion> nominalisiert und sollte daher großgeschrieben werden.</message>
       <short>ZUM_AEUSSERSTEN_GREIFEN</short>
@@ -3236,7 +3236,7 @@
         <token>zum</token>
         <token regexp="yes" case_sensitive="yes">besseren|schlechteren</token>
         <token min="0" postag="ZUS"></token>
-        <token regexp="yes">(ver)?ändern|wenden|entwickeln</token>
+        <token regexp="yes" inflected="yes">(ver)?ändern|wenden|entwickeln</token>
       </pattern>
       <message>Wenn dieses Wort als Nomen verwendet wird, sollte es großgeschrieben werden.</message>
       <short>ZUM_BESSEREN_ÄNDERN</short>
@@ -3291,7 +3291,7 @@
     </rule>
     <rule id="ZU_ALLEM_ÜBEL" name="zu allem übel (Übel)">
       <pattern>
-        <token>zu</token>
+        <token inflected="yes">zu</token>
         <token>allem</token>
         <token>übel</token>
       </pattern>
@@ -3613,7 +3613,7 @@
     <rule id="AUSEINANDER_GESETZT" name="auseinander setzen (auseinandersetzen)">
       <pattern>
         <token>auseinander</token>
-        <token>setzen</token>
+        <token inflected="yes">setzen</token>
       </pattern>
       <message><suggestion>\1\2</suggestion> wird zusammengeschrieben.</message>
       <short>Bitte prüfen Sie die Getrenntschreibung.</short>
@@ -3681,7 +3681,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Bb]ei</token>
         <token case_sensitive="yes" min="0">zu</token>
-        <token regexp="yes">behalten|legen|pflichten|bringen|geben|setzen|springen|steuern|tragen|treten|wohnen
+        <token regexp="yes" inflected="yes">behalten|legen|pflichten|bringen|geben|setzen|springen|steuern|tragen|treten|wohnen
           <exception regexp="yes" case_sensitive="yes">[A-Z].*</exception>
         </token>
       </pattern>
@@ -3752,7 +3752,7 @@
       <pattern>
         <token regexp="yes" skip="3">(irgend)?(et)?was|viel|nichts|nix|cent|euro|dollar|€</token>
         <token>dazu</token>
-        <token>verdienen</token>
+        <token inflected="yes">verdienen</token>
       </pattern>
       <message>Das Verb <suggestion>dazu</suggestion> wird zusammengeschrieben.</message>
       <short>DAZU_VERDIENEN</short>
@@ -3783,7 +3783,7 @@
     <rule id="DICHTMACHEN" name="dichtmachen (dicht machen)">
       <pattern>
         <token regexp="yes" skip="-1">.*(F(ä|a)ss(er)?|D(ä|a)ch(er)?|Tür(en)?|Fenster|Verdecke?|L(o|ö)ch(er)?|Risse?|Schotten?|Fugen?|Ritzen?|Lecks?)</token>
-        <token>dichtmachen</token>
+        <token inflected="yes">dichtmachen</token>
       </pattern>
       <message>Im Sinne von 'abdichten'/'reparieren' wird 'dicht machen' getrennt geschrieben. <suggestion>dicht</suggestion></message>
       <short>DICHTMACHEN</short>
@@ -3792,7 +3792,7 @@
       <pattern>
         <token regexp="yes" skip="-1">.*(Schulen?|Kinderg(a|ä)rten|L(a|ä)den|Firm(a|en)|Unternehmen|Filialen?|Geschäftsstellen?|Geschäfte?|Grenzen?|Werkst(a|ä)tt(en)?|Studios?|Zentr(um|en))</token>
         <token>dicht</token>
-        <token>machen</token>
+        <token inflected="yes">machen</token>
       </pattern>
       <message>Im Sinne von 'schließen'/'zumachen'/'aufgeben' wird 'dichtmachen' zusammengeschrieben.</message>
       <short>DICHT_MACHEN</short>
@@ -3835,7 +3835,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Dd]rauf</token>
         <token min="0">zu</token>
-        <token regexp="yes">gehen|klicken|knallen|schauen|hauen|schlagen|gucken|stehen|halten|schreiben|kritzeln|malen|packen|schrauben|satteln|legen|springen|hämmern|zahlen
+        <token regexp="yes" inflected="yes">gehen|klicken|knallen|schauen|hauen|schlagen|gucken|stehen|halten|schreiben|kritzeln|malen|packen|schrauben|satteln|legen|springen|hämmern|zahlen
           <exception>schau</exception>
         </token>
       </pattern>
@@ -3857,7 +3857,7 @@
       <pattern>
         <token>drüber</token>
         <token case_sensitive="yes" min="0">zu</token>
-        <token regexp="yes">lesen|fahren|streuen|schauen|steigen
+        <token regexp="yes" inflected="yes">lesen|fahren|streuen|schauen|steigen
           <exception regexp="yes">gelesen|führen</exception>
         </token>
       </pattern>
@@ -3867,7 +3867,7 @@
     <rule id="DURCH_SCHAUEN" name="durch + Verb">
       <pattern>
         <token>durch</token>
-        <token regexp="yes" case_sensitive="yes">boxen|schauen|starten|kreuzen|steigen|stehen|spielen|sprechen|stöbern|se?uchen|graben|atmen|beißen|beissen|bekommen|checken|denken|drehen|fahren|fallen|fegen|feiern|gehen|laufen|halten|impfen|jagen|kauen|kämpfen|kitzeln|klettern|lassen|leben|machen|mischen|nehmen|nummerieren|nässen|pauken|planen|rauschen|rechnen|testen|tasten|vögeln|setzen|fluten|flie(ß|ss)en|bohren|winken|schleudern|sickern|wühlen|leuchten|düsen|lesen|stöbern|ziehen|probieren|blicken|ficken|greifen|schneiden|brechen|forsten</token>
+        <token regexp="yes" case_sensitive="yes" inflected="yes">boxen|schauen|starten|kreuzen|steigen|stehen|spielen|sprechen|stöbern|se?uchen|graben|atmen|beißen|beissen|bekommen|checken|denken|drehen|fahren|fallen|fegen|feiern|gehen|laufen|halten|impfen|jagen|kauen|kämpfen|kitzeln|klettern|lassen|leben|machen|mischen|nehmen|nummerieren|nässen|pauken|planen|rauschen|rechnen|testen|tasten|vögeln|setzen|fluten|flie(ß|ss)en|bohren|winken|schleudern|sickern|wühlen|leuchten|düsen|lesen|stöbern|ziehen|probieren|blicken|ficken|greifen|schneiden|brechen|forsten</token>
       </pattern>
       <message>Das Verb <suggestion>durch</suggestion> wird als ein Wort geschrieben.</message>
       <short>DURCH_SCHAUEN</short>
@@ -3903,7 +3903,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Ee]in|[Aa]us</token>
         <token min="0">zu</token>
-        <token>loggen
+        <token inflected="yes">loggen
           <exception case_sensitive="yes">Loggen</exception>
         </token>
       </pattern>
@@ -3930,7 +3930,7 @@
       <pattern>
         <token>fern</token>
         <token case_sensitive="yes" min="0">zu</token>
-        <token regexp="yes">zünden|bedienen|bleiben</token>
+        <token regexp="yes" inflected="yes">zünden|bedienen|bleiben</token>
       </pattern>
       <message>Dieses Verb wird in der Regel zusammengeschrieben. <suggestion>\1\2\3</suggestion></message>
       <short>FERN_ZUENDEN</short>
@@ -3939,7 +3939,7 @@
       <pattern>
         <token>fest</token>
         <token min="0">zu</token>
-        <token regexp="yes">nehmen|halten|stellen|legen|gelegt|gehalten|gestellt</token>
+        <token regexp="yes" inflected="yes">nehmen|halten|stellen|legen|gelegt|gehalten|gestellt</token>
       </pattern>
       <message>Das Verb <suggestion>fest</suggestion> wird zusammengeschrieben.</message>
       <short>Zusammenschreibung</short>
@@ -4001,7 +4001,7 @@
     <rule id="GEGEN_CHECKEN" name="gegen checken (gegenchecken)">
       <pattern>
         <token>gegen</token>
-        <token regexp="yes">checken|prüfen</token>
+        <token regexp="yes" inflected="yes">checken|prüfen</token>
       </pattern>
       <message><suggestion>\1\2</suggestion> (überprüfen) wird zusammengeschrieben.</message>
       <short>Bitte prüfen Sie die Getrenntschreibung.</short>
@@ -4025,7 +4025,7 @@
     <rule id="GROSS_FLAECHIG" name="groß zügig (großzügig)">
       <pattern>
         <token regexp="yes">gro(ß|ss)</token>
-        <token regexp="yes">flächig|mütig|räumig|zügig|denkend|herzig|kotzig|mächtig|maschig|mäulig|spurig|städtisch|wüchsig|artig|jährig</token>
+        <token regexp="yes" inflected="yes">flächig|mütig|räumig|zügig|denkend|herzig|kotzig|mächtig|maschig|mäulig|spurig|städtisch|wüchsig|artig|jährig</token>
       </pattern>
       <message>Das Adjektiv <suggestion>\1</suggestion> wird in der Regel zusammengeschrieben.</message>
       <short>Zusammenschreibung</short>
@@ -4034,7 +4034,7 @@
       <pattern>
         <token skip="-1" postag=".*:DAT:.*" postag_regexp="yes"></token>
         <token regexp="yes" case_sensitive="yes">gut|wohl</token>
-        <token>tun</token>
+        <token inflected="yes">tun</token>
       </pattern>
       <message>Meinten Sie <suggestion>\2\3</suggestion> (eine Form des unregelmäßigen Verbs '\2tun' mit der Bedeutung 'helfen')?</message>
       <short>Bitte prüfen Sie die Getrenntschreibung.</short>
@@ -4043,7 +4043,7 @@
       <pattern>
         <token>herein</token>
         <token min="0">zu</token>
-        <token>spazieren</token>
+        <token inflected="yes">spazieren</token>
       </pattern>
       <message>Dieses Verb wird in der Regel zusammengeschrieben. <suggestion>\1\2</suggestion></message>
       <short>HEREIN_SPAZIERT</short>
@@ -4060,7 +4060,7 @@
     <rule id="HINEIN_FRESSEN_HINEINFRESSEN" name="hinein fressen (hineinfressen)">
       <pattern>
         <token>hinein</token>
-        <token>fressen</token>
+        <token inflected="yes">fressen</token>
       </pattern>
       <message><suggestion></suggestion> wird zusammengeschrieben.</message>
       <short>Zusammenschreibung</short>
@@ -4085,7 +4085,7 @@
     <rule id="HOCH_SCHALTEN" name="'hoch schalten (hochschalten)' etc.">
       <pattern>
         <token regexp="yes">hoch|(he)?runter</token>
-        <token>schalten</token>
+        <token inflected="yes">schalten</token>
       </pattern>
       <message>Bitte prüfen Sie die Getrenntschreibung: <suggestion>\1\2</suggestion> (den Gang wechseln) wird zusammengeschrieben.</message>
       <short>Bitte prüfen Sie die Getrenntschreibung.</short>
@@ -4094,7 +4094,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="no" negate="yes">so|zu|sehr|echt|total|extrem|wirklich|dementsprechend|richtig</token>
         <token>hoch</token>
-        <token regexp="yes">ge(schlossen|schlitzt|stochen)|prozentig|biegen|blicken|bringen|dekoriert|drehen|gehen|gesteckt|gewachsen|gucken|halten|heben|kurbeln|steigen|werfen|ziehen|bekommen|binden|dienen|erfreut|fahren|fliegen|gebildet|glänzend|gradig|hackig|herzig|hieven|holen|hopsen|jagen|jubeln|karätig|klappbar|kommen|kraxeln|langen|leben|mütig|näsig|nehmen|ohmig|päpplen|peitschen|ragen|rangig|rappeln|rechnen|reißen|reissen|schalten|schaukeln|scheuchen|schicken|schieben|schnellen|schrauben|schrecken|sehen|spielen|sprachlich|springen|stapeln|stecken|stemmen|trabend|tragen|treiben|verdient|verehrt|wertig|willkommen|wölben|wüchsig|wuchten|zeiten|achtungsvoll|arbeiten|beinig|busig|geboren|gelehrt|gemut|gezüchtet|kant|klettern|krempeln|ländisch|mögend|notpeinlich|preisen|preisig|räderig|rädrig|schulterig|schultrig|stehen|stellen|stilisieren|tönend|tonig|tourig|winden|wirbeln|wohlgeboren|wohllöblich|würdig|auflösend|achtend|bocken|branden|brechen|drücken|dürfen|hüpfen|kämmen|klappen|kochen|können|kriechen|kriegen|schauen|schichten|schießen|schiessen|schlagen|schleichen|schleudern|schürzen|schwingen|scrollen|sollen|spülen|streben|strecken|streifen|stülpen|türmen|altrig|lagern|befähigt|befriedigt|bejahrt|beladen|bepackt|deckend|differenziert|energetisch|erhoben|feudal|florig|geschürzt|gesinnt|gestimmt|glanzpoliert|kultiviert|mechanisiert|wischen|kämpfen|schleppen|senden|pusc?hen</token>
+        <token regexp="yes" inflected="yes">ge(schlossen|schlitzt|stochen)|prozentig|biegen|blicken|bringen|dekoriert|drehen|gehen|gesteckt|gewachsen|gucken|halten|heben|kurbeln|steigen|werfen|ziehen|bekommen|binden|dienen|erfreut|fahren|fliegen|gebildet|glänzend|gradig|hackig|herzig|hieven|holen|hopsen|jagen|jubeln|karätig|klappbar|kommen|kraxeln|langen|leben|mütig|näsig|nehmen|ohmig|päpplen|peitschen|ragen|rangig|rappeln|rechnen|reißen|reissen|schalten|schaukeln|scheuchen|schicken|schieben|schnellen|schrauben|schrecken|sehen|spielen|sprachlich|springen|stapeln|stecken|stemmen|trabend|tragen|treiben|verdient|verehrt|wertig|willkommen|wölben|wüchsig|wuchten|zeiten|achtungsvoll|arbeiten|beinig|busig|geboren|gelehrt|gemut|gezüchtet|kant|klettern|krempeln|ländisch|mögend|notpeinlich|preisen|preisig|räderig|rädrig|schulterig|schultrig|stehen|stellen|stilisieren|tönend|tonig|tourig|winden|wirbeln|wohlgeboren|wohllöblich|würdig|auflösend|achtend|bocken|branden|brechen|drücken|dürfen|hüpfen|kämmen|klappen|kochen|können|kriechen|kriegen|schauen|schichten|schießen|schiessen|schlagen|schleichen|schleudern|schürzen|schwingen|scrollen|sollen|spülen|streben|strecken|streifen|stülpen|türmen|altrig|lagern|befähigt|befriedigt|bejahrt|beladen|bepackt|deckend|differenziert|energetisch|erhoben|feudal|florig|geschürzt|gesinnt|gestimmt|glanzpoliert|kultiviert|mechanisiert|wischen|kämpfen|schleppen|senden|pusc?hen</token>
       </pattern>
       <message>Prüfen Sie, ob <suggestion></suggestion> zusammengeschrieben werden soll - das ist der Fall, wenn die Betonung auf 'hoch' liegt.</message>
       <short>HOCH_ZUSAMMENSCHREIBUNG</short>
@@ -4111,7 +4111,7 @@
       <pattern>
         <token>hops</token>
         <token case_sensitive="yes" min="0">zu</token>
-        <token>nehmen</token>
+        <token inflected="yes">nehmen</token>
       </pattern>
       <message>Das Verb <suggestion></suggestion> sollte zusammengeschrieben werden.</message>
       <short>HOPS_NEHMEN</short>
@@ -4127,7 +4127,7 @@
     </rule>
     <rule id="INBEGRIFFEN" name="in begriffen (inbegriffen)">
       <pattern>
-        <token regexp="yes">sein|im</token>
+        <token regexp="yes" inflected="yes">sein|im</token>
         <token regexp="yes" min="0">nicht|darin|Preis</token>
         <token>in</token>
         <token regexp="yes">[bB]egriffen</token>
@@ -4146,7 +4146,7 @@
     <rule id="INNE_HABEN" name="inne haben (innehaben)">
       <pattern>
         <token>inne</token>
-        <token regexp="yes">haben|halten|wohnen|werden</token>
+        <token regexp="yes" inflected="yes">haben|halten|wohnen|werden</token>
       </pattern>
       <message>Die Verben 'innehaben', 'innewohnen', 'innehalten' und 'innewerden' werden zusammengeschrieben. <suggestion>\1\2</suggestion></message>
       <short>INNE_HABEN</short>
@@ -4204,7 +4204,7 @@
     <rule id="MEISTGELESEN" name="meist gelesen (meistgelesen)">
       <pattern>
         <token regexp="yes">meist|viel</token>
-        <token>gelesen</token>
+        <token inflected="yes">gelesen</token>
         <token postag="SUB:.+" postag_regexp="yes"></token>
       </pattern>
       <message><suggestion>\1\2</suggestion> wird zusammengeschrieben.</message>
@@ -4221,7 +4221,7 @@
     <rule id="MIT_REISSEN" name="mit reißend (mitreißend)">
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Mm]it</token>
-        <token regexp="yes" case_sensitive="yes">rei(ß|ss)end?|teilen|schleifen|(be)?kommen|geben|halten|laufen|machen|bringen|gestalten|fiebern
+        <token regexp="yes" case_sensitive="yes" inflected="yes">rei(ß|ss)end?|teilen|schleifen|(be)?kommen|geben|halten|laufen|machen|bringen|gestalten|fiebern
           <exception regexp="yes">.+em</exception>
         </token>
       </pattern>
@@ -4256,7 +4256,7 @@
       <pattern>
         <token case_sensitive="yes">nach</token>
         <token case_sensitive="yes" min="0">zu</token>
-        <token>geben
+        <token inflected="yes">geben
           <exception regexp="yes" case_sensitive="yes">Geben|GEBEN</exception>
         </token>
       </pattern>
@@ -4266,7 +4266,7 @@
     <rule id="NACH_HOLEN" name="nach holen (nachholen)">
       <pattern>
         <token>nach</token>
-        <token regexp="yes">holen|fassen</token>
+        <token regexp="yes" inflected="yes">holen|fassen</token>
       </pattern>
       <message><suggestion>\1\2</suggestion> wird zusammengeschrieben.</message>
       <short>NACH_HOLEN</short>
@@ -4361,7 +4361,7 @@
     <rule id="OST_ASIATISCH" name="'ost asiatisch (ostasiatisch)' etc.">
       <pattern>
         <token regexp="yes">(nord|süd)?(west|ost)|nord|süd</token>
-        <token regexp="yes" postag="ADJ:.+" postag_regexp="yes">adriatisch|afghanisch|afrikanisch|ägäisch|ägyptisch|albanisch|alemannisch|algerisch|amerikanisch|anatolisch|andorranisch|angolanisch|antarktisch|arabisch|argentinisch|arktisch|asiatisch|atlantisch|australisch|badisch|baltisch|bayerisch|belgisch|böhmisch|bolivianisch|bosnisch|botsuanisch|brandenburgisch|brasilianisch|britannisch|britisch|bulgarisch|chinesisch|dänisch|deutsch|ecuadorianisch|elbisch|englisch|eritreisch|estnisch|eurasisch|europäisch|finnisch|fränkisch|französisch|friesisch|gälisch|galizisch|gallisch|georgisch|germanisch|gotisch|griechisch|grönländisch|havelländisch|hessisch|holländisch|holsteinisch|honduranisch|indisch|indogermanisch|indonesisch|ira[kn]isch|irisch|isländisch|israelisch|italienisch|japanisch|jemenitisch|jiddisch|jordanisch|jugoslawisch|kalifornisch|kambodschanisch|kamerunisch|kanadisch|karelisch|karibisch|kasachisch|kaukasisch|keltisch|kenianisch|kirgisisch|kleinasiatisch|kolumbianisch|kongolesisch|koreanisch|korsisch|kroatisch|kubanisch|laotisch|lateinisch|lettisch|libanesisch|libysch|litauisch|luxemburgisch|mährisch|malaysisch|märkisch|mazedonisch|mediterran|mexikanisch|moldauisch|mongolisch|mosambikisch|moselfränkisch|namibisch|niederdeutsch|niederfränkisch|niederländisch|nigerianisch|norwegisch|österreichisch|pakistanisch|panamesisch|pazifisch|persisch|peruanisch|pfälzisch|phönizisch|polnisch|polynesisch|portugiesisch|preußisch|preussisch|rheinisch|römisch|rumänisch|russisch|saudisch|schottisch|schwäbisch|schwedisch|schweizerisch|semitisch|senegalesisch|serbisch|serbokroatisch|sibirisch|slawisch|slowakisch|slowenisch|spanisch|sudanesisch|syrisch|taiwanisch|tasmanisch|thailändisch|thüringisch|tibetisch|timorisch|tirolisch|transsylvanisch|tschechisch|tunesisch|türkisch|turkmenisch|ugandisch|ukrainisch|ungarisch|venezolanisch|vietnamesisch|walisisch|weißrussisch|weissrussisch|zairisch|zyprisch</token>
+        <token regexp="yes" inflected="yes" postag="ADJ:.+" postag_regexp="yes">adriatisch|afghanisch|afrikanisch|ägäisch|ägyptisch|albanisch|alemannisch|algerisch|amerikanisch|anatolisch|andorranisch|angolanisch|antarktisch|arabisch|argentinisch|arktisch|asiatisch|atlantisch|australisch|badisch|baltisch|bayerisch|belgisch|böhmisch|bolivianisch|bosnisch|botsuanisch|brandenburgisch|brasilianisch|britannisch|britisch|bulgarisch|chinesisch|dänisch|deutsch|ecuadorianisch|elbisch|englisch|eritreisch|estnisch|eurasisch|europäisch|finnisch|fränkisch|französisch|friesisch|gälisch|galizisch|gallisch|georgisch|germanisch|gotisch|griechisch|grönländisch|havelländisch|hessisch|holländisch|holsteinisch|honduranisch|indisch|indogermanisch|indonesisch|ira[kn]isch|irisch|isländisch|israelisch|italienisch|japanisch|jemenitisch|jiddisch|jordanisch|jugoslawisch|kalifornisch|kambodschanisch|kamerunisch|kanadisch|karelisch|karibisch|kasachisch|kaukasisch|keltisch|kenianisch|kirgisisch|kleinasiatisch|kolumbianisch|kongolesisch|koreanisch|korsisch|kroatisch|kubanisch|laotisch|lateinisch|lettisch|libanesisch|libysch|litauisch|luxemburgisch|mährisch|malaysisch|märkisch|mazedonisch|mediterran|mexikanisch|moldauisch|mongolisch|mosambikisch|moselfränkisch|namibisch|niederdeutsch|niederfränkisch|niederländisch|nigerianisch|norwegisch|österreichisch|pakistanisch|panamesisch|pazifisch|persisch|peruanisch|pfälzisch|phönizisch|polnisch|polynesisch|portugiesisch|preußisch|preussisch|rheinisch|römisch|rumänisch|russisch|saudisch|schottisch|schwäbisch|schwedisch|schweizerisch|semitisch|senegalesisch|serbisch|serbokroatisch|sibirisch|slawisch|slowakisch|slowenisch|spanisch|sudanesisch|syrisch|taiwanisch|tasmanisch|thailändisch|thüringisch|tibetisch|timorisch|tirolisch|transsylvanisch|tschechisch|tunesisch|türkisch|turkmenisch|ugandisch|ukrainisch|ungarisch|venezolanisch|vietnamesisch|walisisch|weißrussisch|weissrussisch|zairisch|zyprisch</token>
       </pattern>
       <message>Meinten Sie <suggestion>\1\2</suggestion>?</message>
       <short>Bitte prüfen Sie die Getrenntschreibung.</short>
@@ -4430,7 +4430,7 @@
     <rule id="SATT_HABEN" name="'satt haben (satthaben)'">
       <pattern>
         <token>satt</token>
-        <token>haben</token>
+        <token inflected="yes">haben</token>
       </pattern>
       <message><suggestion>\1\2</suggestion> wird zusammengeschrieben.</message>
       <short>SATT_HABEN</short>
@@ -4465,7 +4465,7 @@
       <pattern>
         <token>schön</token>
         <token min="0">zu</token>
-        <token>reden</token>
+        <token inflected="yes">reden</token>
       </pattern>
       <message>Das Verb "schönreden" wird in der Regel zusammengeschrieben. <suggestion>\1</suggestion></message>
       <short>SCHOEN_REDEN</short>
@@ -4513,7 +4513,7 @@
         <token regexp="yes" skip="8">(da)?für</token>
         <token case_sensitive="yes">stark</token>
         <token min="0">zu</token>
-        <token>machen</token>
+        <token inflected="yes">machen</token>
       </pattern>
       <message>Das Verb <suggestion>stark</suggestion> (= für etw. einsetzen) wird zusammengeschrieben.</message>
       <short>STARK_MACHEN</short>
@@ -4521,7 +4521,7 @@
     <rule id="STATTFINDEN" name="'statt finden (stattfinden)'">
       <pattern>
         <token>statt</token>
-        <token regexp="yes">finden|geben</token>
+        <token regexp="yes" inflected="yes">finden|geben</token>
       </pattern>
       <message>Bitte prüfen Sie die Getrenntschreibung: Meinten Sie <suggestion>statt</suggestion>?</message>
       <short>STATTFINDEN</short>
@@ -4538,7 +4538,7 @@
       <pattern>
         <token case_sensitive="yes">teil</token>
         <token min="0">zu</token>
-        <token>nehmen</token>
+        <token inflected="yes">nehmen</token>
       </pattern>
       <message>Das Verb <suggestion>teil</suggestion> wird zusammengeschrieben.</message>
       <short>TEIL_NEHMEN</short>
@@ -4549,7 +4549,7 @@
         <token postag="SUB:.+" postag_regexp="yes">
           <exception regexp="yes" case_sensitive="yes">[A-ZÖÄÜ][A-ZÖÄÜ](.+)?</exception>
         </token>
-        <token>basiert</token>
+        <token inflected="yes">basiert</token>
         <token postag="SUB:.+" postag_regexp="yes"></token>
       </pattern>
       <message>Meinten Sie möglicherweise das Adjektiv <suggestion>\3</suggestion>, das zusammengeschrieben wird?</message>
@@ -4612,7 +4612,7 @@
       <pattern>
         <token>vorlieb</token>
         <token min="0">zu</token>
-        <token>nehmen</token>
+        <token inflected="yes">nehmen</token>
       </pattern>
       <message>Das Verb "vorliebnehmen" wird als ein Wort geschrieben.</message>
       <short>VORLIEB_NEHMEN</short>
@@ -4649,7 +4649,7 @@
       <pattern>
         <token case_sensitive="yes">wert</token>
         <token min="0">zu</token>
-        <token>schätzen</token>
+        <token inflected="yes">schätzen</token>
       </pattern>
       <message>Das Verb <suggestion>wert</suggestion> wird zusammengeschrieben.</message>
       <short>WERT_SCHAETZEN</short>
@@ -4728,7 +4728,7 @@
       <pattern>
         <token>zu</token>
         <token>kommen</token>
-        <token>lassen</token>
+        <token inflected="yes">lassen</token>
         <token regexp="yes" min="0">wird|werden|würden|könnt?en?</token>
         <token min="0" postag="ADV.*" postag_regexp="yes"></token>
         <token postag="PKT|KON.*" postag_regexp="yes"></token>
@@ -4776,7 +4776,7 @@
       <pattern>
         <token>zu</token>
         <token regexp="yes">schicken|senden</token>
-        <token regexp="yes">werden|lassen|können</token>
+        <token regexp="yes" inflected="yes">werden|lassen|können</token>
         <token min="0" postag="ADV.*" postag_regexp="yes"></token>
         <token postag="PKT|KON.*" postag_regexp="yes"></token>
       </pattern>
@@ -5118,7 +5118,7 @@
     <rule id="ALARM_AUSLOSEN_SPELLING_RULE" name="Alarm auslosen (auslösen)">
       <pattern>
         <token regexp="yes">.*alarm</token>
-        <token>auslosen</token>
+        <token inflected="yes">auslosen</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
       <short>ALARM_AUSLOSEN_SPELLING_RULE</short>
@@ -5171,7 +5171,7 @@
     <rule id="BAFF_ERSTAUNT" name="'baff (bass) erstaunt'">
       <pattern>
         <token>baff</token>
-        <token>erstaunt</token>
+        <token inflected="yes">erstaunt</token>
       </pattern>
       <message>Meinten Sie <suggestion>bass</suggestion>? 'bass erstaunt' ist eine feste Wendung.</message>
       <short>BAFF_ERSTAUNT</short>
@@ -5187,7 +5187,7 @@
     </rule>
     <rule id="BERUHEN_BERUFEN" name="beruhen/berufen">
       <pattern>
-        <token>beruhen</token>
+        <token inflected="yes">beruhen</token>
         <token min="0" postag="PRO:PER:NOM:.*" postag_regexp="yes"></token>
         <token postag="PRO:REF:AKK:.*" postag_regexp="yes"></token>
       </pattern>
@@ -5197,7 +5197,7 @@
     <rule id="BESCHEIDE_BESCHEID" name="'Bescheide/Bescheid'">
       <pattern>
         <token regexp="yes">Bescheid[es]</token>
-        <token regexp="yes">sagen|wissen|geben</token>
+        <token regexp="yes" inflected="yes">sagen|wissen|geben</token>
       </pattern>
       <message>Meinten Sie <suggestion>Bescheid</suggestion>?</message>
       <short>BESCHEIDE_BESCHEID</short>
@@ -5205,7 +5205,7 @@
     <rule id="BESCHRANKT_BESCHRAENKT" name="'beschränkt (beschrankt)'">
       <pattern>
         <token regexp="yes">(un)?beschränkt(e?[nmr])?</token>
-        <token regexp="yes">Bahnübergang|Übergang</token>
+        <token regexp="yes" inflected="yes">Bahnübergang|Übergang</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
       <short>Möglicher Tippfehler</short>
@@ -5220,7 +5220,7 @@
     <rule id="CHRISTI_HIMMELPFAD_SPELLING_RULE" name="Christi Himmelpfad (Himmelfahrt)">
       <pattern>
         <token>Christi</token>
-        <token>Himmelpfad</token>
+        <token inflected="yes">Himmelpfad</token>
       </pattern>
       <message>Meinten Sie den Feiertag <suggestion>Christi Himmelfahrt</suggestion>?</message>
       <short>CHRISTI_HIMMELPFAD_SPELLING_RULE</short>
@@ -5272,7 +5272,7 @@
         <token>um</token>
         <token>den</token>
         <token>Finder</token>
-        <token>wickeln</token>
+        <token inflected="yes">wickeln</token>
       </pattern>
       <message>Meinten Sie <suggestion>Finger</suggestion>?</message>
       <short>FINDER_GEWICKELT_SPELLING_RULE</short>
@@ -5298,7 +5298,7 @@
     </rule>
     <rule id="GEROCHEN_GEBROCHEN" name="gerochen (gebrochen)">
       <pattern>
-        <token case_sensitive="yes">gerochen</token>
+        <token case_sensitive="yes" inflected="yes">gerochen</token>
         <token regexp="yes">afrikanisch|alt(arabisch|chinesisch|griechisch|persisch)|amerikanisch|arabisch|chinesisch|dänisch|deutsch|plattdeutsch|englisch|finnisch|französisch|frühneuhochdeutsch|germanisch|griechisch|hocharabisch|hochchinesisch|hochdeutsch|holländisch|italienisch|japanisch|jiddisch|jugoslawisch|koreanisch|kroatisch|lateinisch|luxemburgisch|mittelhochdeutsch|neuhochdeutsch|niederländisch|norwegisch|persisch|polnisch|portugiesisch|russisch|schwedisch|schweizerisch|semitisch|serbisch|serbokroatisch|slawisch|spanisch|tschechisch|türkisch|ukrainisch|ungarisch|weißrussisch|weissrussisch|hebräisch|katalanisch|Arm|Bein|Finger|Zeh</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
@@ -5474,7 +5474,7 @@
     </rule>
     <rule id="PREISE" name="'Priese (Preise)'">
       <pattern>
-        <token regexp="yes">steigend?|fallend?|hoch|niedrig|moderat</token>
+        <token regexp="yes" inflected="yes">steigend?|fallend?|hoch|niedrig|moderat</token>
         <token regexp="yes">Prie?se</token>
       </pattern>
       <message>Meinten Sie eine <suggestion>Preise</suggestion>?</message>
@@ -5493,14 +5493,14 @@
     <rule id="RAUSCH_AUSSCHLAGEN_SPELLING_RULE" name="Rausch ausschlagen (ausschlafen)">
       <pattern>
         <token regexp="yes">Rausch|Kater|gestern|heute|morgen</token>
-        <token>ausschlagen</token>
+        <token inflected="yes">ausschlagen</token>
       </pattern>
       <message>Meinten Sie <suggestion>ausschlafen</suggestion>?</message>
       <short>RAUSCH_AUSSCHLAGEN_SPELLING_RULE</short>
     </rule>
     <rule id="SAGT_UND_BESCHEID_SPELLING_RULE" name="sagt und (uns) Bescheid">
       <pattern>
-        <token regexp="yes">sagen|geben</token>
+        <token regexp="yes" inflected="yes">sagen|geben</token>
         <token>und</token>
         <token min="0">doch</token>
         <token min="0">bitte</token>
@@ -5598,7 +5598,7 @@
     </rule>
     <rule id="VERIRRT_VERWIRRT" name="verirrt (verwirrt)">
       <pattern>
-        <token skip="1">sein</token>
+        <token inflected="yes" skip="1">sein</token>
         <token>verirrt</token>
       </pattern>
       <message>Meinten Sie <suggestion>verwirrt</suggestion>?</message>
@@ -5608,7 +5608,7 @@
       <pattern>
         <token negate="yes">zu</token>
         <token>verschieben</token>
-        <token>haben</token>
+        <token inflected="yes">haben</token>
       </pattern>
       <message>Meinten Sie <suggestion>verschrieben</suggestion>?</message>
       <short>VERSCHIEBEN_VERSCHRIEBEN_SPELLING_RULE</short>
@@ -5713,7 +5713,7 @@
     </rule>
     <rule id="WIEN_WEIN_SPELLING_RULE" name="Wien (Wein)">
       <pattern>
-        <token regexp="yes">trinken|Glas|Flasche|Schoppen|wei(ß|ss)|rot|sü(ß|ss)|lieblich|trocken|herb|spritzig|süffig|schwer</token>
+        <token regexp="yes" inflected="yes">trinken|Glas|Flasche|Schoppen|wei(ß|ss)|rot|sü(ß|ss)|lieblich|trocken|herb|spritzig|süffig|schwer</token>
         <token min="0" max="2" postag="ADV:MOD"></token>
         <token>Wien</token>
       </pattern>
@@ -5982,7 +5982,7 @@
     <rule id="AUSSAGEKRAEFTIG" name="aussage kräftig (aussagekräftig)">
       <pattern>
         <token regexp="yes">aussage|tat</token>
-        <token>kräftig</token>
+        <token inflected="yes">kräftig</token>
       </pattern>
       <message>Meinten Sie <suggestion>\2</suggestion>?</message>
       <short>AUSSAGEKRAEFTIG</short>
@@ -6113,7 +6113,7 @@
         <token regexp="yes" case_sensitive="yes" postag="PA2.*" postag_regexp="yes">[a-zäöüß]+e
           <exception regexp="yes">bekannte|verbündete</exception>
         </token>
-        <token>haben</token>
+        <token inflected="yes">haben</token>
         <token postag="KON.*|PKT" postag_regexp="yes"></token>
       </pattern>
       <message>Hier scheint ein "e" zu viel zu sein.</message>
@@ -6211,7 +6211,7 @@
       <pattern>
         <token>in</token>
         <token>Auge</token>
-        <token>behalten</token>
+        <token inflected="yes">behalten</token>
       </pattern>
       <message>Grammatik: Meinten Sie <suggestion>im</suggestion>?</message>
       <short>Möglicher Grammatikfehler</short>
@@ -6256,7 +6256,7 @@
       <pattern>
         <token skip="3" postag="PRO:REF.*" postag_regexp="yes"></token>
         <token>kurz</token>
-        <token>fassen</token>
+        <token inflected="yes">fassen</token>
       </pattern>
       <message>In Kombination mit einem Reflexivpronomen wird dieses Wort zusammengeschrieben. <suggestion>\2\3</suggestion></message>
       <short>KURZFASSEN</short>
@@ -6364,7 +6364,7 @@
     </rule>
     <rule id="SCHENKEN_DATIV" name="'Dativ nach 'schenken'">
       <pattern>
-        <token regexp="yes">helfen|geben|schenken|vertrauen|folgen</token>
+        <token regexp="yes" inflected="yes">helfen|geben|schenken|vertrauen|folgen</token>
         <token>ihn</token>
         <token min="0">nicht</token>
         <token postag="PRO:(POS|DEM):AKK:.+|PKT" postag_regexp="yes"></token>
@@ -6459,7 +6459,7 @@
         <token regexp="yes">[Vv]or?m</token>
         <token regexp="yes">[Aa]ussterben</token>
         <token min="0">zu</token>
-        <token>bedrohen</token>
+        <token inflected="yes">bedrohen</token>
       </pattern>
       <message>In dieser Redewendung wird "Aussterben" großgeschrieben und die Präposition "vom" verwendet. <suggestion>vom Aussterben</suggestion></message>
       <short>VORM_AUSSTERBEN_BEDROHT</short>
@@ -6525,7 +6525,7 @@
         <token>zu</token>
         <token>Last</token>
         <token min="0">zu</token>
-        <token>fallen</token>
+        <token inflected="yes">fallen</token>
       </pattern>
       <message>Meinten Sie <suggestion>zur</suggestion>?</message>
       <short>ZU_LAST_FALLEN</short>
@@ -6668,7 +6668,7 @@
     <rule id="GEMACHT_HABE_IST_KOMMA" name="… gemacht habe(,) ist …">
       <pattern>
         <token postag="PA2:PRD:GRU:VER"></token>
-        <token>haben</token>
+        <token inflected="yes">haben</token>
         <token regexp="yes" case_sensitive="yes">ist|wart?|wird|sind|waren|wären?|werden?|lassen?|lässt|lie(ß|ss)en?|lie(ß|ss)</token>
         <token regexp="yes">.*[a-z].*</token>
       </pattern>
@@ -7008,7 +7008,7 @@
     </rule>
     <rule id="MAEDCHENNAME" name="'Mädchenname' statt 'Geburtsname'">
       <pattern>
-        <token>Mädchenname</token>
+        <token inflected="yes">Mädchenname</token>
       </pattern>
       <message>Evtl. passt der geschlechtsneutrale Begriff <suggestion></suggestion> besser.</message>
       <short>MAEDCHENNAME</short>
@@ -7029,7 +7029,7 @@
     </rule>
     <rule id="PUTZFRAU" name="'Reinigungskraft' statt 'Putzfrau'">
       <pattern>
-        <token>Putzfrau</token>
+        <token inflected="yes">Putzfrau</token>
       </pattern>
       <message>Evtl. passt der geschlechtsneutrale Begriff <suggestion>Reinigungskraft</suggestion> besser.</message>
       <short>PUTZFRAU</short>
@@ -7075,7 +7075,7 @@
         <token>auf</token>
         <token>Plan</token>
         <token min="0">zu</token>
-        <token>rufen</token>
+        <token inflected="yes">rufen</token>
       </pattern>
       <message>Hier wurde womöglich der Artikel vergessen. Möchten Sie "den" einfügen? <suggestion>\1 den \2</suggestion></message>
       <short>AUF_DEN_PLAN_RUFEN</short>
@@ -7195,8 +7195,8 @@
     </rule>
     <rule id="ARGUMENT_ANBRINGEN" name="ein Argument anbringen">
       <pattern>
-        <token skip="-1">bringen</token>
-        <token skip="-1">Argument</token>
+        <token inflected="yes" skip="-1">bringen</token>
+        <token inflected="yes" skip="-1">Argument</token>
         <token>an</token>
       </pattern>
       <message>Meinten Sie <suggestion>führen</suggestion> ein Argument an?</message>
@@ -7336,8 +7336,8 @@
     </rule>
     <rule id="LATEINISCHE_TAENZE" name="lateinische (lateinamerikanische) Tänze">
       <pattern>
-        <token>lateinisch</token>
-        <token>Tanz</token>
+        <token inflected="yes">lateinisch</token>
+        <token inflected="yes">Tanz</token>
       </pattern>
       <message>Meinten Sie <suggestion></suggestion>?</message>
       <short>LATEINISCHE_TAENZE</short>
@@ -7359,7 +7359,7 @@
     <rule id="ZAHL_LANG_NOMEN" name="Zahl + 'lang/breit' etc. (fehlende Einheit)">
       <pattern>
         <token regexp="yes">\d+</token>
-        <token regexp="yes">lang|hoch|breit</token>
+        <token regexp="yes" inflected="yes">lang|hoch|breit</token>
         <token postag="SUB.*" postag_regexp="yes"></token>
       </pattern>
       <message>Fehlt nach der Zahl möglicherweise eine Einheit?</message>
@@ -7377,15 +7377,15 @@
     </rule>
     <rule id="FALSCHER_TRUGSCHLUSS" name="'falscher Trugschluss'">
       <pattern>
-        <token>falsch</token>
-        <token>Trugschluss</token>
+        <token inflected="yes">falsch</token>
+        <token inflected="yes">Trugschluss</token>
       </pattern>
       <message>Ein Trugschluss ist eine falsche Annahme. Meinten Sie nur <suggestion>\2</suggestion>?</message>
       <short>FALSCHER_TRUGSCHLUSS</short>
     </rule>
     <rule id="HAUPTPROTAGONIST" name="Hauptprotagonist (Protagonist)">
       <pattern>
-        <token>Hauptprotagonist</token>
+        <token inflected="yes">Hauptprotagonist</token>
       </pattern>
       <message>Da Protagonisten bereits Hauptfiguren sind, kann das Wort gedoppelt wirken. <suggestion>Protagonist</suggestion></message>
       <short>HAUPTPROTAGONIST</short>
@@ -7393,14 +7393,14 @@
     <rule id="INNEN_HOHL" name="'innen hohl'">
       <pattern>
         <token>innen</token>
-        <token>hohl</token>
+        <token inflected="yes">hohl</token>
       </pattern>
       <message>Diese Formulierung ist möglicherweise redundant. Ein Körper kann ausschließlich auf der Innenseite hohl sein. Meinten Sie nur <suggestion>\2</suggestion>?</message>
       <short>INNEN_HOHL</short>
     </rule>
     <rule id="TAEGLICHER_ALLTAG" name="täglicher Alltag">
       <pattern>
-        <token regexp="yes">(all)?täglich</token>
+        <token regexp="yes" inflected="yes">(all)?täglich</token>
         <token>Alltag</token>
       </pattern>
       <message>Mögliche Doppelung: "\1" und "\2". <suggestion>\2</suggestion></message>
@@ -7408,8 +7408,8 @@
     </rule>
     <rule id="ZENTRALER_KERNBAUSTEIN" name="zentraler Kernbaustein">
       <pattern>
-        <token>zentral</token>
-        <token>Kernbaustein</token>
+        <token inflected="yes">zentral</token>
+        <token inflected="yes">Kernbaustein</token>
       </pattern>
       <message>Die Wendung '\1 \2' ist redundant. <suggestion>\2</suggestion></message>
       <short>ZENTRALER_KERNBAUSTEIN</short>

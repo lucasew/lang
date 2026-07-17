@@ -21,7 +21,7 @@
     </rule>
     <rule id="HAVE_INF" name="έχω_απαρέμφατο">
       <pattern>
-        <token>έχω</token>
+        <token inflected="yes">έχω</token>
         <token postag="V"></token>
       </pattern>
       <message>Πιθανόν να χρειάζεται να χρησιμοποιήσετε τον απαρεμφατικό τύπο <suggestion></suggestion></message>

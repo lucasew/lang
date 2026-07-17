@@ -438,7 +438,7 @@
     </rule>
     <rule id="ACHETER_UNE_IDEE" name="acheter une idée">
       <pattern>
-        <token skip="5">acheter</token>
+        <token inflected="yes" skip="5">acheter</token>
         <token regexp="yes">idées?</token>
       </pattern>
       <message>« Acheter une idée » peut être considéré comme un anglicisme. <suggestion>adopter une idée</suggestion></message>
@@ -446,7 +446,7 @@
     </rule>
     <rule id="ACHETER_UNE_SUGGESTION" name="acheter une suggestion">
       <pattern>
-        <token skip="5">acheter</token>
+        <token inflected="yes" skip="5">acheter</token>
         <token regexp="yes">suggestions?</token>
       </pattern>
       <message>« Acheter une suggestion » peut être considéré comme un anglicisme. <suggestion>adopter une suggestion</suggestion></message>
@@ -478,7 +478,7 @@
     </rule>
     <rule id="ADRESSER_UN_SUJET" name="adresser un sujet">
       <pattern>
-        <token skip="3">adresser</token>
+        <token inflected="yes" skip="3">adresser</token>
         <token regexp="yes">sujets?</token>
       </pattern>
       <message>« Adresser un sujet » peut être considéré comme un anglicisme. <suggestion>traiter un sujet</suggestion></message>
@@ -503,7 +503,7 @@
     </rule>
     <rule id="AFFECTER_UN_RESULTAT" name="affecter un résultat">
       <pattern>
-        <token skip="4">affecter</token>
+        <token inflected="yes" skip="4">affecter</token>
         <token regexp="yes">résultats?</token>
       </pattern>
       <message>« Affecter un résultat » peut être considéré comme un anglicisme. <suggestion>nuire à un résultat</suggestion></message>
@@ -511,7 +511,7 @@
     </rule>
     <rule id="AJOUTER_L_INSULTE_A_L_INJURE" name="ajouter l’insulte à l’injure">
       <pattern>
-        <token>ajouter</token>
+        <token inflected="yes">ajouter</token>
         <token>l'</token>
         <token>insulte</token>
         <token>à</token>
@@ -532,7 +532,7 @@
     <rule id="AJUSTEUR_DASSURANCE" name="ajusteur d’assurance">
       <pattern>
         <token regexp="yes">ajusteurs?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">assurances?</token>
       </pattern>
       <message>« Ajusteur d’assurances » peut être considéré comme un anglicisme (ajustor). <suggestion>expert en assurances</suggestion></message>
@@ -540,7 +540,7 @@
     </rule>
     <rule id="ALIGNER_AVEC" name="aligner avec">
       <pattern>
-        <token skip="5">aligner</token>
+        <token inflected="yes" skip="5">aligner</token>
         <token>avec</token>
       </pattern>
       <message>« Aligner avec » peut être considéré comme un anglicisme. <suggestion>\1 sur</suggestion></message>
@@ -566,7 +566,7 @@
     </rule>
     <rule id="ALLEQUER_QUE" name="alléguer que">
       <pattern>
-        <token skip="4">alléguer</token>
+        <token inflected="yes" skip="4">alléguer</token>
         <token>que</token>
       </pattern>
       <message>« Alléguer que » peut être considéré comme un anglicisme (to allege that). <suggestion>prétendre que</suggestion></message>
@@ -574,7 +574,7 @@
     </rule>
     <rule id="ALLER_EN_APPEL" name="aller en appel">
       <pattern>
-        <token skip="4">aller</token>
+        <token inflected="yes" skip="4">aller</token>
         <token>en</token>
         <token regexp="yes">appels?</token>
       </pattern>
@@ -583,7 +583,7 @@
     </rule>
     <rule id="ALLER_EN_ELECTIONS" name="aller en élections">
       <pattern>
-        <token skip="2">aller</token>
+        <token inflected="yes" skip="2">aller</token>
         <token>en</token>
         <token regexp="yes">élections?</token>
       </pattern>
@@ -592,7 +592,7 @@
     </rule>
     <rule id="ALLER_EN_GREVE" name="aller en grève">
       <pattern>
-        <token skip="2">aller</token>
+        <token inflected="yes" skip="2">aller</token>
         <token>en</token>
         <token regexp="yes">grèves?</token>
       </pattern>
@@ -601,7 +601,7 @@
     </rule>
     <rule id="ALLER_EN_ONDES" name="aller en ondes">
       <pattern>
-        <token skip="5">aller</token>
+        <token inflected="yes" skip="5">aller</token>
         <token>en</token>
         <token regexp="yes">ondes?</token>
       </pattern>
@@ -610,7 +610,7 @@
     </rule>
     <rule id="ALLER_EN_PROLONGATION" name="aller en prolongation">
       <pattern>
-        <token skip="3">aller</token>
+        <token inflected="yes" skip="3">aller</token>
         <token>en</token>
         <token regexp="yes">prolongations?</token>
       </pattern>
@@ -619,7 +619,7 @@
     </rule>
     <rule id="ALLER_EN_REFERENDUM" name="aller en référendum">
       <pattern>
-        <token skip="2">aller</token>
+        <token inflected="yes" skip="2">aller</token>
         <token>en</token>
         <token regexp="yes">référendums?</token>
       </pattern>
@@ -628,7 +628,7 @@
     </rule>
     <rule id="ALLER_SOUS_PRESSE" name="aller sous presse">
       <pattern>
-        <token skip="2">aller</token>
+        <token inflected="yes" skip="2">aller</token>
         <token>sous</token>
         <token regexp="yes">presses?</token>
       </pattern>
@@ -646,7 +646,7 @@
     </rule>
     <rule id="AMENDER_UNE_LOI" name="amender une loi">
       <pattern>
-        <token skip="4">amender</token>
+        <token inflected="yes" skip="4">amender</token>
         <token regexp="yes">loi[sx]?</token>
       </pattern>
       <message>« Amender une loi » peut être considéré comme un anglicisme. <suggestion>une loi</suggestion></message>
@@ -724,8 +724,8 @@
     </rule>
     <rule id="ANNEE_FISCALE" name="année fiscale">
       <pattern>
-        <token>année</token>
-        <token>fiscal</token>
+        <token inflected="yes">année</token>
+        <token inflected="yes">fiscal</token>
       </pattern>
       <message>« Année fiscale » peut être considéré comme un anglicisme (fiscal year). <suggestion>exercice financier</suggestion></message>
       <short>ANNEE_FISCALE</short>
@@ -740,7 +740,7 @@
     </rule>
     <rule id="APPELER_UNE_PENALITE" name="appeler une pénalité">
       <pattern>
-        <token skip="5">appeler</token>
+        <token inflected="yes" skip="5">appeler</token>
         <token regexp="yes">pénalités?</token>
       </pattern>
       <message>« Appeler une pénalité » peut être considéré comme un anglicisme. <suggestion>imposer une pénalité</suggestion></message>
@@ -748,7 +748,7 @@
     </rule>
     <rule id="APPELER_UNE_REUNION" name="appeler une réunion">
       <pattern>
-        <token>appeler</token>
+        <token inflected="yes">appeler</token>
         <token min="0" max="4" postag="A"></token>
         <token postag="[PD].*" postag_regexp="yes"></token>
         <token regexp="yes">réunions?</token>
@@ -775,7 +775,7 @@
     </rule>
     <rule id="APPLIQUER_SUR_UN_EMPLOI" name="appliquer sur/à un emploi">
       <pattern>
-        <token skip="3">appliquer</token>
+        <token inflected="yes" skip="3">appliquer</token>
         <token regexp="yes">emplois?</token>
       </pattern>
       <message>« Appliquer sur/à un emploi » peut être considéré comme un anglicisme, voici une alternative. <suggestion>postuler un emploi</suggestion></message>
@@ -783,7 +783,7 @@
     </rule>
     <rule id="APPLIQUER_SUR_UN_POSTE" name="appliquer sur/à un poste">
       <pattern>
-        <token skip="3">appliquer</token>
+        <token inflected="yes" skip="3">appliquer</token>
         <token regexp="yes">postes?</token>
       </pattern>
       <message>« Appliquer sur/à un poste » peut être considéré comme un anglicisme, voici une alternative. <suggestion>poser sa candidature</suggestion></message>
@@ -791,7 +791,7 @@
     </rule>
     <rule id="APPRECIER_UN_TEMOIGNAGE" name="apprécier un témoignage">
       <pattern>
-        <token skip="3">apprécier</token>
+        <token inflected="yes" skip="3">apprécier</token>
         <token regexp="yes">témoignages?</token>
       </pattern>
       <message>« Apprécier un témoignage » peut être considéré comme un anglicisme, voici une alternative. <suggestion>être touché par un témoignage</suggestion></message>
@@ -799,16 +799,16 @@
     </rule>
     <rule id="ARCHE_DU_PIED" name="arche du pied">
       <pattern>
-        <token>arche</token>
+        <token inflected="yes">arche</token>
         <token regexp="yes">du|des</token>
-        <token>pied</token>
+        <token inflected="yes">pied</token>
       </pattern>
       <message>« Arche du pied » peut être considéré comme un anglicisme (arch of the foot). Pour éviter la critique, employez plutôt <suggestion>cambrure du pied</suggestion>.</message>
       <short>ARCHE_DU_PIED</short>
     </rule>
     <rule id="ARRETER_UN_CHEQUE" name="arrêter un chèque">
       <pattern>
-        <token skip="5">arrêter</token>
+        <token inflected="yes" skip="5">arrêter</token>
         <token regexp="yes">chèques?</token>
       </pattern>
       <message>« Arrêter un chèque » peut être considéré comme un anglicisme. <suggestion>faire opposition à un chèque</suggestion></message>
@@ -824,7 +824,7 @@
     </rule>
     <rule id="ASSIGNER_A_UNE_TACHE" name="assigner à une tâche">
       <pattern>
-        <token skip="5">assigner</token>
+        <token inflected="yes" skip="5">assigner</token>
         <token regexp="yes" skip="1">[aà]</token>
         <token regexp="yes">tâches?</token>
       </pattern>
@@ -833,7 +833,7 @@
     </rule>
     <rule id="ASSUMER_QUE" name="assumer que">
       <pattern>
-        <token skip="2">assumer</token>
+        <token inflected="yes" skip="2">assumer</token>
         <token>que</token>
       </pattern>
       <message>« Assumer que » peut être considéré comme un anglicisme. <suggestion>présumer que</suggestion></message>
@@ -911,7 +911,7 @@
     </rule>
     <rule id="AVOIR_LES_BLEUS" name="avoir les bleus">
       <pattern>
-        <token skip="2">avoir</token>
+        <token inflected="yes" skip="2">avoir</token>
         <token>les</token>
         <token>bleus</token>
       </pattern>
@@ -920,7 +920,7 @@
     </rule>
     <rule id="AVOIR_LE_MEILLEUR_SUR" name="avoir le meilleur sur">
       <pattern>
-        <token skip="2">avoir</token>
+        <token inflected="yes" skip="2">avoir</token>
         <token>le</token>
         <token>meilleur</token>
         <token>sur</token>
@@ -1136,7 +1136,7 @@
       <pattern>
         <token>bonne</token>
         <token>main</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>applaudissement</token>
       </pattern>
       <message>« Bonne main d’applaudissement » peut être considéré comme un anglicisme (a big hand). <suggestion>applaudir chaleureusement</suggestion></message>
@@ -1153,7 +1153,7 @@
     </rule>
     <rule id="BRISER_UN_RECORD" name="briser un record">
       <pattern>
-        <token skip="4">briser</token>
+        <token inflected="yes" skip="4">briser</token>
         <token regexp="yes">records?</token>
       </pattern>
       <message>« Briser une record » peut être considéré comme un anglicisme. <suggestion>battre un record</suggestion></message>
@@ -1195,8 +1195,8 @@
     </rule>
     <rule id="BUDGET_DOPERATION" name="budget d’opération">
       <pattern>
-        <token>budget</token>
-        <token>de</token>
+        <token inflected="yes">budget</token>
+        <token inflected="yes">de</token>
         <token>opération</token>
       </pattern>
       <message>« Budget d’opération » peut être considéré comme un anglicisme. <suggestion>budget d'exploitation</suggestion></message>
@@ -1214,7 +1214,7 @@
     <rule id="BUREAU_DECHANGE" name="bureau d’échange">
       <pattern>
         <token regexp="yes">bureau[xs]?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">échanges?</token>
       </pattern>
       <message>« Bureau d’échange » peut être considéré comme un anglicisme (exchange). <suggestion>bureau de change</suggestion></message>
@@ -1258,7 +1258,7 @@
     </rule>
     <rule id="CANISSE" name="canisse">
       <pattern>
-        <token regexp="yes">cann?isses?</token>
+        <token regexp="yes" inflected="yes">cann?isses?</token>
       </pattern>
       <message>« Canisse » peut être considéré comme un anglicisme (canister). Employez <suggestion>bidon</suggestion> (peinture).</message>
       <short>CANISSE</short>
@@ -1274,7 +1274,7 @@
     </rule>
     <rule id="CAPITALISER_SUR" name="capitaliser sur">
       <pattern>
-        <token>capitaliser</token>
+        <token inflected="yes">capitaliser</token>
         <token>sur</token>
       </pattern>
       <message>« Capitaliser sur » peut être considéré comme un anglicisme (to capitalize on). <suggestion>tirer profit de</suggestion></message>
@@ -1292,7 +1292,7 @@
     <rule id="CARTE_DAFFAIRES" name="carte d’affaires">
       <pattern>
         <token regexp="yes">cartes?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">affaires?</token>
       </pattern>
       <message>« Carte d’affaires » peut être considéré comme un anglicisme (business card). <suggestion>carte professionnelle</suggestion></message>
@@ -1310,7 +1310,7 @@
     <rule id="CARTE_DIDENTIFICATION" name="carte d’identification">
       <pattern>
         <token regexp="yes">cartes?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">identifications?</token>
       </pattern>
       <message>« Carte d’identification » peut être considéré comme un anglicisme. <suggestion>carte d'identité</suggestion></message>
@@ -1318,7 +1318,7 @@
     </rule>
     <rule id="CASSER_EGAL" name="casser égal">
       <pattern>
-        <token skip="2">casser</token>
+        <token inflected="yes" skip="2">casser</token>
         <token>égal</token>
       </pattern>
       <message>« Casser égal » peut être considéré comme un anglicisme (to break even). <suggestion>atteindre le seuil de rentabilité</suggestion></message>
@@ -1326,7 +1326,7 @@
     </rule>
     <rule id="CASSER_LE_FRANCAIS" name="casser le français">
       <pattern>
-        <token skip="3">casser</token>
+        <token inflected="yes" skip="3">casser</token>
         <token regexp="yes">français|espagnol|anglais</token>
       </pattern>
       <message>« Casser le [nom de langue] » peut être considéré comme un anglicisme. Employez <suggestion>parler avec un accent</suggestion> (anglais, etc.), <suggestion>écorcher une langue</suggestion>.</message>
@@ -1335,7 +1335,7 @@
     <rule id="CA_REGARDE_BIEN_MAL" name="ça regarde bien/mal">
       <pattern>
         <token regexp="yes">ça|cela</token>
-        <token skip="2">regarder</token>
+        <token inflected="yes" skip="2">regarder</token>
         <token regexp="yes">bien|mal</token>
       </pattern>
       <message>« Ça regarde bien/mal » peut être considéré comme un anglicisme (it looks good/bad). <suggestion>les choses s'annoncent \3</suggestion></message>
@@ -1344,7 +1344,7 @@
     <rule id="CENTRE_DACHATS" name="centre d’achats">
       <pattern>
         <token regexp="yes">centres?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">achats?</token>
       </pattern>
       <message>« Centre d’achats » peut être considéré comme un anglicisme. <suggestion>centre commercial</suggestion></message>
@@ -1371,7 +1371,7 @@
     <rule id="CENTRE_DINTERPRETATION" name="centre d’interprétation">
       <pattern>
         <token regexp="yes">centres?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">interprétations?</token>
       </pattern>
       <message>« Centre d’interprétation » peut être considéré comme un anglicisme (interpretation center). <suggestion>centre de découverte</suggestion></message>
@@ -1397,7 +1397,7 @@
     <rule id="CEST_LA_RAISON_POURQUOI" name="c’est la raison pourquoi">
       <pattern>
         <token regexp="yes" min="0">c['’]</token>
-        <token skip="3">être</token>
+        <token inflected="yes" skip="3">être</token>
         <token>la</token>
         <token>raison</token>
         <token>pourquoi</token>
@@ -1485,7 +1485,7 @@
     <rule id="CHANGEMENT_DHUILE" name="changement d’huile">
       <pattern>
         <token regexp="yes">changements?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">huiles?</token>
       </pattern>
       <message>« Changement d’huile » peut être considéré comme un anglicisme (oil change). <suggestion>vidange</suggestion></message>
@@ -1513,7 +1513,7 @@
     </rule>
     <rule id="CHANGER_POUR_LE_MIEUX" name="changer pour le mieux">
       <pattern>
-        <token skip="2">changer</token>
+        <token inflected="yes" skip="2">changer</token>
         <token>pour</token>
         <token>le</token>
         <token>mieux</token>
@@ -1523,7 +1523,7 @@
     </rule>
     <rule id="CHANGER_UN_CHEQUE" name="changer un chèque">
       <pattern>
-        <token skip="4">changer</token>
+        <token inflected="yes" skip="4">changer</token>
         <token regexp="yes">chèques?</token>
       </pattern>
       <message>« Changer un chèque » peut être considéré comme un anglicisme. <suggestion>encaisser un chèque</suggestion></message>
@@ -1628,7 +1628,7 @@
     </rule>
     <rule id="CIRER_DES_SKIS" name="cirer des skis">
       <pattern>
-        <token skip="5">cirer</token>
+        <token inflected="yes" skip="5">cirer</token>
         <token regexp="yes">skis?</token>
       </pattern>
       <message>« Cirer des skis » peut être considéré comme un anglicisme. <suggestion>farter</suggestion></message>
@@ -1748,7 +1748,7 @@
     </rule>
     <rule id="COMBLER_UN_POSTE" name="combler un poste">
       <pattern>
-        <token skip="1">combler</token>
+        <token inflected="yes" skip="1">combler</token>
         <token regexp="yes">postes?</token>
       </pattern>
       <message>« Combler un poste » peut être considéré comme un anglicisme (to fill a post/vacancy). <suggestion>pourvoir à un poste</suggestion></message>
@@ -1858,7 +1858,7 @@
     <rule id="COMPTE_DELECTRICITE" name="compte d’électricité">
       <pattern>
         <token regexp="yes">comptes?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>électricité</token>
       </pattern>
       <message>« Compte d’électricité » peut être considéré comme un anglicisme (electricity account). <suggestion>facture d'électricité</suggestion></message>
@@ -1933,7 +1933,7 @@
     </rule>
     <rule id="CONTROLER_UN_INCENDIE" name="contrôler un incendie">
       <pattern>
-        <token skip="1">contrôler</token>
+        <token inflected="yes" skip="1">contrôler</token>
         <token regexp="yes">incendies?</token>
       </pattern>
       <message>« Contrôler un incendie » peut être considéré comme un anglicisme. <suggestion>maîtriser</suggestion></message>
@@ -1941,7 +1941,7 @@
     </rule>
     <rule id="COULER_DE_LINFORMATION" name="couler de l’information/des renseignements">
       <pattern>
-        <token skip="3">couler</token>
+        <token inflected="yes" skip="3">couler</token>
         <token regexp="yes">informations?|renseignement?</token>
       </pattern>
       <message>« Couler de information/des renseignements » peut être considéré comme un anglicisme (to leak information). <suggestion>laisser fuir des renseignements</suggestion></message>
@@ -1949,7 +1949,7 @@
     </rule>
     <rule id="COUPER_DES_DEPENSES" name="couper des dépenses">
       <pattern>
-        <token skip="4">couper</token>
+        <token inflected="yes" skip="4">couper</token>
         <token min="0" max="1">dans</token>
         <token regexp="yes">dépenses?</token>
       </pattern>
@@ -1958,7 +1958,7 @@
     </rule>
     <rule id="COUPER_DES_POSTES" name="couper des postes">
       <pattern>
-        <token skip="1">couper</token>
+        <token inflected="yes" skip="1">couper</token>
         <token regexp="yes">postes?</token>
       </pattern>
       <message>« Couper des postes » peut être considéré comme un anglicisme. <suggestion>supprimer</suggestion></message>
@@ -1966,7 +1966,7 @@
     </rule>
     <rule id="COUPER_DES_PRIX" name="couper des prix">
       <pattern>
-        <token skip="2">couper
+        <token inflected="yes" skip="2">couper
           <exception regexp="yes">coupée?s?|(?-i)Coupes?</exception>
         </token>
         <token>prix</token>
@@ -2092,7 +2092,7 @@
     </rule>
     <rule id="DEFRAYER_LES_DEPENSES_DE_QUELQUUN" name="défrayer les dépenses de [quelqu’un]">
       <pattern>
-        <token skip="6">défrayer</token>
+        <token inflected="yes" skip="6">défrayer</token>
         <token>dépenses</token>
         <token>de</token>
       </pattern>
@@ -2110,7 +2110,7 @@
     </rule>
     <rule id="DEVELOPPER_UN_GOUT_POUR" name="développer un goût pour">
       <pattern>
-        <token skip="1">développer</token>
+        <token inflected="yes" skip="1">développer</token>
         <token>goût</token>
         <token>pour</token>
       </pattern>
@@ -2120,7 +2120,7 @@
     <rule id="DINER_DETAT" name="dîner d’État">
       <pattern>
         <token regexp="yes">dîners?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>État</token>
       </pattern>
       <message>« Dîner d’État » peut être considéré comme un anglicisme (state dinner). <suggestion>dîner officiel</suggestion></message>
@@ -2129,7 +2129,7 @@
     <rule id="DIRECTEUR_CREATIF" name="directeur créatif">
       <pattern>
         <token regexp="yes">directeure?s?|directrices?</token>
-        <token>créatif</token>
+        <token inflected="yes">créatif</token>
       </pattern>
       <message>« Directeur de la création » peut être considéré comme un anglicisme (creative director). Pour éviter la critique, employez plutôt <suggestion>directeur de la création</suggestion>.</message>
       <short>DIRECTEUR_CREATIF</short>
@@ -2169,7 +2169,7 @@
     </rule>
     <rule id="EMETTRE_UN_COMMUNIQUE" name="émettre un communiqué">
       <pattern>
-        <token skip="3">émettre</token>
+        <token inflected="yes" skip="3">émettre</token>
         <token regexp="yes">communiqués?</token>
       </pattern>
       <message>« Émettre un communiqué » peut être considéré comme un anglicisme (to issue a communique). <suggestion>publier</suggestion></message>
@@ -2185,7 +2185,7 @@
     </rule>
     <rule id="EMETTRE_UN_PASSEPORT" name="émettre un passeport">
       <pattern>
-        <token skip="4">émettre
+        <token inflected="yes" skip="4">émettre
           <exception regexp="yes">émise?s?</exception>
         </token>
         <token regexp="yes">passeports?|certificats?|brevets?</token>
@@ -2195,8 +2195,8 @@
     </rule>
     <rule id="EMETTRE_UN_VERDICT" name="émettre un verdict">
       <pattern>
-        <token>de</token>
-        <token skip="4">émettre
+        <token inflected="yes">de</token>
+        <token inflected="yes" skip="4">émettre
           <exception regexp="yes">émise?s?</exception>
         </token>
         <token regexp="yes">verdicts?</token>
@@ -2206,7 +2206,7 @@
     </rule>
     <rule id="EMISSION_DUN_DIPLOME1" name="émission d’un diplôme">
       <pattern>
-        <token>le</token>
+        <token inflected="yes">le</token>
         <token regexp="yes" skip="3">émissions?</token>
         <token regexp="yes">diplômes?</token>
       </pattern>
@@ -2215,7 +2215,7 @@
     </rule>
     <rule id="EMISSION_DUN_DIPLOME2" name="émission d’un diplôme">
       <pattern>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes" skip="3">émissions?</token>
         <token regexp="yes">diplômes?</token>
       </pattern>
@@ -2232,7 +2232,7 @@
     </rule>
     <rule id="ENDOSSER_UNE_CANDIDATURE" name="endosser une candidature">
       <pattern>
-        <token skip="3">endosser</token>
+        <token inflected="yes" skip="3">endosser</token>
         <token regexp="yes">candidatures?</token>
       </pattern>
       <message>« Endosser une candidature » peut être considéré comme un anglicisme. <suggestion>appuyer</suggestion></message>
@@ -2240,7 +2240,7 @@
     </rule>
     <rule id="ENDOSSER_UNE_DECISION" name="endosser une décision">
       <pattern>
-        <token skip="4">endosser</token>
+        <token inflected="yes" skip="4">endosser</token>
         <token regexp="yes">décisions?</token>
       </pattern>
       <message>« Endosser une décision » peut être considéré comme un anglicisme. <suggestion>appuyer</suggestion></message>
@@ -2248,7 +2248,7 @@
     </rule>
     <rule id="ENDOSSER_UNE_OPINION" name="endosser une opinion">
       <pattern>
-        <token skip="3">endosser</token>
+        <token inflected="yes" skip="3">endosser</token>
         <token regexp="yes">opinions?</token>
       </pattern>
       <message>« Endosser une opinion » peut être considéré comme un anglicisme. <suggestion>accepter</suggestion></message>
@@ -2277,7 +2277,7 @@
         <token>autant</token>
         <token>que</token>
         <token>je</token>
-        <token>pouvoir</token>
+        <token inflected="yes">pouvoir</token>
       </pattern>
       <message>« En autant que je peux » peut être considéré comme un anglicisme (as far as I can). <suggestion>dans la mesure du possible</suggestion></message>
       <short>EN_AUTANT_QUE_JE_PEUX</short>
@@ -2288,7 +2288,7 @@
         <token>autant</token>
         <token>que</token>
         <token>je</token>
-        <token>être</token>
+        <token inflected="yes">être</token>
         <token regexp="yes">concernée?s?</token>
       </pattern>
       <message>« En autant que je suis concernée » peut être considéré comme un anglicisme (as far as I am concerned, insofar as I am concerned). <suggestion>en ce qui me concerne</suggestion></message>
@@ -2308,7 +2308,7 @@
         <token>en</token>
         <token>dedans</token>
         <token skip="5">de</token>
-        <token regexp="yes">minutes?|semaines?|mois|heures?|secondes?|jours?|journées?|années?|ans?</token>
+        <token regexp="yes" inflected="yes">minutes?|semaines?|mois|heures?|secondes?|jours?|journées?|années?|ans?</token>
       </pattern>
       <message>« En dedans de [x] minutes » peut être considéré comme un anglicisme (within). <suggestion>d'ici</suggestion></message>
       <short>EN_DEDANS_DE_X_MINUTES</short>
@@ -2339,7 +2339,7 @@
     </rule>
     <rule id="ETRE_ANXIEUX_DE" name="être anxieux de">
       <pattern>
-        <token skip="4">être</token>
+        <token inflected="yes" skip="4">être</token>
         <token regexp="yes">anxieux|anxieuses?</token>
         <token>de</token>
       </pattern>
@@ -2348,7 +2348,7 @@
     </rule>
     <rule id="ETRE_A_SON_MEILLEUR" name="être à son meilleur">
       <pattern>
-        <token skip="2">être</token>
+        <token inflected="yes" skip="2">être</token>
         <token>à</token>
         <token regexp="yes">mon|ton|son|leur|votre</token>
         <token>meilleur</token>
@@ -2368,7 +2368,7 @@
     </rule>
     <rule id="ETRE_DANS_L_EAU_CHAUDE" name="être dans l’eau chaude/bouillante">
       <pattern>
-        <token>être</token>
+        <token inflected="yes">être</token>
         <token>dans</token>
         <token>l'</token>
         <token>eau</token>
@@ -2379,7 +2379,7 @@
     </rule>
     <rule id="ETRE_EN_AFFAIRES" name="être en affaires">
       <pattern>
-        <token skip="2">être</token>
+        <token inflected="yes" skip="2">être</token>
         <token>en</token>
         <token regexp="yes">affaires|affaire</token>
       </pattern>
@@ -2388,7 +2388,7 @@
     </rule>
     <rule id="ETRE_EN_AMOUR" name="être en amour">
       <pattern>
-        <token>être</token>
+        <token inflected="yes">être</token>
         <token min="0" max="3" postag="A"></token>
         <token regexp="yes" min="0" max="1">tomber|tombée?s?</token>
         <token>en</token>
@@ -2399,7 +2399,7 @@
     </rule>
     <rule id="ETRE_IMPUTABLE_DE" name="être imputable de">
       <pattern>
-        <token skip="1">être</token>
+        <token inflected="yes" skip="1">être</token>
         <token regexp="yes">imputables?</token>
         <token>de</token>
       </pattern>
@@ -2408,7 +2408,7 @@
     </rule>
     <rule id="ETRE_RAQUE" name="être raqué">
       <pattern>
-        <token skip="4">être</token>
+        <token inflected="yes" skip="4">être</token>
         <token regexp="yes">raquée?s?|rackée?s?</token>
       </pattern>
       <message>« Être raqué » peut être considéré comme un anglicisme (wrecked). <suggestion>être courbaturé</suggestion></message>
@@ -2426,7 +2426,7 @@
     </rule>
     <rule id="ETRE_SUR_SON_DERNIER_MILLE" name="être sur son dernier mille">
       <pattern>
-        <token skip="2">être</token>
+        <token inflected="yes" skip="2">être</token>
         <token>sur</token>
         <token>son</token>
         <token>dernier</token>
@@ -2445,7 +2445,7 @@
     </rule>
     <rule id="FAIRE_DU_PIQUETAGE" name="faire du piquetage">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token>du</token>
         <token regexp="yes">piquetages?</token>
       </pattern>
@@ -2454,7 +2454,7 @@
     </rule>
     <rule id="FAIRE_DU_SENS" name="faire du sens">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token regexp="yes">de|du</token>
         <token>sens</token>
       </pattern>
@@ -2463,7 +2463,7 @@
     </rule>
     <rule id="FAIRE_DU_TEMPS" name="faire du temps">
       <pattern>
-        <token>faire</token>
+        <token inflected="yes">faire</token>
         <token>du</token>
         <token>temps</token>
       </pattern>
@@ -2472,7 +2472,7 @@
     </rule>
     <rule id="FAIRE_FACE_A_LA_MUSIQUE" name="faire face à la musique">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token regexp="yes">[aà]</token>
         <token>la</token>
         <token>musique</token>
@@ -2482,7 +2482,7 @@
     </rule>
     <rule id="FAIRE_SORTIR_LE_VOTE" name="faire sortir le vote">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token>sortir</token>
         <token>le</token>
         <token>vote</token>
@@ -2492,7 +2492,7 @@
     </rule>
     <rule id="FAIRE_SUR_QUE" name="faire sûr que">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token regexp="yes">sûr|sur</token>
         <token>que</token>
       </pattern>
@@ -2501,7 +2501,7 @@
     </rule>
     <rule id="FAIRE_UN_FOU_DE_SOI" name="faire un fou de soi">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token regexp="yes">un|des</token>
         <token regexp="yes" skip="3">fous?</token>
         <token regexp="yes">soi|lui|moi|eux|nous|vous</token>
@@ -2552,7 +2552,7 @@
     </rule>
     <rule id="FORGER_UNE_SIGNATURE" name="forger une signature">
       <pattern>
-        <token skip="2">forger</token>
+        <token inflected="yes" skip="2">forger</token>
         <token regexp="yes">signatures?</token>
       </pattern>
       <message>« Forger une signature » peut être considéré comme un anglicisme (to forge a signature). <suggestion>contrefaire une signature</suggestion></message>
@@ -2569,7 +2569,7 @@
     <rule id="FORMULE_D_APPLICATION" name="formule d’application">
       <pattern>
         <token regexp="yes">formules?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>application</token>
       </pattern>
       <message>« Formule d’application » peut être considéré comme un anglicisme (application form). <suggestion>demande d'emploi</suggestion></message>
@@ -2586,7 +2586,7 @@
     </rule>
     <rule id="FRAPPER_UN_NOEUD" name="frapper un nœud">
       <pattern>
-        <token>frapper</token>
+        <token inflected="yes">frapper</token>
         <token>un</token>
         <token regexp="yes">noeuds?|nœuds?</token>
       </pattern>
@@ -2637,7 +2637,7 @@
     <rule id="FUNERAILLES_DETAT" name="funérailles d’État">
       <pattern>
         <token regexp="yes">funérailles?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>État</token>
       </pattern>
       <message>« Funérailles d’État » peut être considéré comme un anglicisme (state funeral). <suggestion>funérailles nationales</suggestion></message>
@@ -2645,7 +2645,7 @@
     </rule>
     <rule id="GAGNER_SON_POINT" name="gagner son point">
       <pattern>
-        <token>gagner</token>
+        <token inflected="yes">gagner</token>
         <token regexp="yes">mon|ton|son|leur|nos|vos|leurs</token>
         <token regexp="yes">points?</token>
       </pattern>
@@ -2662,7 +2662,7 @@
     </rule>
     <rule id="GARDER_LA_DROITE" name="garder la droite">
       <pattern>
-        <token skip="2">garder</token>
+        <token inflected="yes" skip="2">garder</token>
         <token>la</token>
         <token>droite</token>
       </pattern>
@@ -2671,7 +2671,7 @@
     </rule>
     <rule id="GARDER_LA_GAUCHE" name="garder la gauche">
       <pattern>
-        <token skip="2">garder</token>
+        <token inflected="yes" skip="2">garder</token>
         <token>la</token>
         <token>gauche</token>
       </pattern>
@@ -2680,7 +2680,7 @@
     </rule>
     <rule id="GARDER_L_OEIL_SUR" name="garder l’œil sur">
       <pattern>
-        <token skip="2">garder</token>
+        <token inflected="yes" skip="2">garder</token>
         <token>l'</token>
         <token regexp="yes">oeil|œil</token>
         <token>sur</token>
@@ -2707,7 +2707,7 @@
     <rule id="HEURES_D_AFFAIRES" name="heures d’affaires">
       <pattern>
         <token regexp="yes">heures?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">affaires?</token>
       </pattern>
       <message>« Heures d’affaires » peut être considéré comme un anglicisme (business hours). <suggestion>heures d'ouverture</suggestion></message>
@@ -2724,7 +2724,7 @@
     <rule id="HORS_DORDRE" name="hors d’ordre">
       <pattern>
         <token>hors</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">ordres?</token>
       </pattern>
       <message>« Hors d’ordre » peut être considéré comme un anglicisme (out of order/out-of-order). <suggestion>en panne</suggestion></message>
@@ -2758,7 +2758,7 @@
     </rule>
     <rule id="IDENTIFIER_DES_CORRECTIFS" name="identifier des correctifs">
       <pattern>
-        <token skip="1">identifier</token>
+        <token inflected="yes" skip="1">identifier</token>
         <token regexp="yes">correctifs?</token>
       </pattern>
       <message>« Identifier des correctifs » peut être considéré comme un anglicisme. <suggestion>proposer</suggestion></message>
@@ -2766,7 +2766,7 @@
     </rule>
     <rule id="IDENTIFIER_DES_DIFFERENCES" name="identifier des différences">
       <pattern>
-        <token skip="1">identifier</token>
+        <token inflected="yes" skip="1">identifier</token>
         <token regexp="yes">différences?</token>
       </pattern>
       <message>« Identifier des différences » peut être considéré comme un anglicisme. <suggestion>établir</suggestion></message>
@@ -2774,7 +2774,7 @@
     </rule>
     <rule id="IDENTIFIER_DES_OBJECTIFS" name="identifier des objectifs">
       <pattern>
-        <token skip="2">identifier</token>
+        <token inflected="yes" skip="2">identifier</token>
         <token regexp="yes">objectifs?|priorités?</token>
       </pattern>
       <message>« Identifier des priorités » peut être considéré comme un anglicisme. <suggestion>déterminer</suggestion></message>
@@ -2782,8 +2782,8 @@
     </rule>
     <rule id="IDENTIFIER_DES_OBJECTIFS1" name="identifier des objectifs">
       <pattern>
-        <token>de</token>
-        <token skip="2">identifier</token>
+        <token inflected="yes">de</token>
+        <token inflected="yes" skip="2">identifier</token>
         <token regexp="yes">objectifs?|priorités?</token>
       </pattern>
       <message>« Identifier des priorités » peut être considéré comme un anglicisme. <suggestion>de déterminer</suggestion></message>
@@ -2791,8 +2791,8 @@
     </rule>
     <rule id="IDENTIFIER_DES_OBJECTIFS2" name="identifier des objectifs">
       <pattern>
-        <token>que</token>
-        <token skip="2">identifier</token>
+        <token inflected="yes">que</token>
+        <token inflected="yes" skip="2">identifier</token>
         <token regexp="yes">objectifs?|priorités?</token>
       </pattern>
       <message>« Identifier des priorités » peut être considéré comme un anglicisme. <suggestion>que déterminer</suggestion></message>
@@ -2825,7 +2825,7 @@
     </rule>
     <rule id="INSISTER_QUE" name="insister que">
       <pattern>
-        <token>insister</token>
+        <token inflected="yes">insister</token>
         <token>que</token>
       </pattern>
       <message>« Insister que » peut être considéré comme un anglicisme (to insist that). <suggestion>insister pour que</suggestion></message>
@@ -2849,7 +2849,7 @@
     </rule>
     <rule id="JOUER_LES_SECONDS_VIOLONS" name="jouer les seconds violons">
       <pattern>
-        <token skip="2">jouer</token>
+        <token inflected="yes" skip="2">jouer</token>
         <token>les</token>
         <token>seconds</token>
         <token>violons</token>
@@ -2867,7 +2867,7 @@
     </rule>
     <rule id="LAISSER_SORTIR_LE_CHAT_DU_SAC" name="laisser sortir le chat du sac">
       <pattern>
-        <token>laisser</token>
+        <token inflected="yes">laisser</token>
         <token>sortir</token>
         <token>le</token>
         <token>chat</token>
@@ -2890,7 +2890,7 @@
       <pattern>
         <token>le</token>
         <token>chat</token>
-        <token skip="2">être</token>
+        <token inflected="yes" skip="2">être</token>
         <token>sorti</token>
         <token>du</token>
         <token>sac</token>
@@ -2901,7 +2901,7 @@
     <rule id="LE_CHAT_SORT_DU_SAC" name="le chat sort du sac">
       <pattern>
         <token>chat</token>
-        <token>sortir</token>
+        <token inflected="yes">sortir</token>
         <token>du</token>
         <token>sac</token>
       </pattern>
@@ -2911,7 +2911,7 @@
     <rule id="LIGNE_DASSEMBLAGE" name="ligne d’assemblage">
       <pattern>
         <token regexp="yes">lignes?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">assemblages?</token>
       </pattern>
       <message>« Livre d’assemblage » peut être considéré comme un anglicisme (assembly line). <suggestion>chaîne d'assemblage</suggestion></message>
@@ -2920,7 +2920,7 @@
     <rule id="LIGNE_DATTENTE" name="ligne d’attente">
       <pattern>
         <token regexp="yes">lignes?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">attentes?</token>
       </pattern>
       <message>« Ligne d’attente » peut être considéré comme un anglicisme (waiting line). <suggestion>file d'attente</suggestion></message>
@@ -2990,7 +2990,7 @@
     </rule>
     <rule id="LOGER_UNE_PLAINTE" name="loger une plainte">
       <pattern>
-        <token skip="5">loger</token>
+        <token inflected="yes" skip="5">loger</token>
         <token regexp="yes">plaintes?</token>
       </pattern>
       <message>« Loger une plainte » peut être considéré comme un anglicisme (to lodge). <suggestion>déposer une plainte</suggestion></message>
@@ -2998,7 +2998,7 @@
     </rule>
     <rule id="LOGER_UN_APPEL" name="loger un appel">
       <pattern>
-        <token skip="5">loger</token>
+        <token inflected="yes" skip="5">loger</token>
         <token regexp="yes">appels?</token>
       </pattern>
       <message>« Loger un appel » peut être considéré comme un anglicisme (to lodge). Employez <suggestion>faire un appel</suggestion> (téléphone), <suggestion>interjeter appel</suggestion> (droit), <suggestion>en appeler</suggestion> (jugement).</message>
@@ -3006,7 +3006,7 @@
     </rule>
     <rule id="LOGER_UN_GRIEF" name="loger un grief">
       <pattern>
-        <token skip="5">loger</token>
+        <token inflected="yes" skip="5">loger</token>
         <token regexp="yes">griefs?</token>
       </pattern>
       <message>« Loger un grief » peut être considéré comme un anglicisme (to lodge). <suggestion>déposer un grief</suggestion></message>
@@ -3066,7 +3066,7 @@
     </rule>
     <rule id="METTRE_EN_NOMINATION" name="mettre en nomination">
       <pattern>
-        <token skip="7">mettre</token>
+        <token inflected="yes" skip="7">mettre</token>
         <token>en</token>
         <token regexp="yes">nominations?</token>
       </pattern>
@@ -3075,7 +3075,7 @@
     </rule>
     <rule id="METTRE_LE_FOCUS_SUR" name="mettre le focus sur">
       <pattern>
-        <token skip="7">mettre</token>
+        <token inflected="yes" skip="7">mettre</token>
         <token>focus</token>
         <token>sur</token>
       </pattern>
@@ -3084,7 +3084,7 @@
     </rule>
     <rule id="METTRE_L_EMPHASE_SUR" name="mettre l’emphase sur">
       <pattern>
-        <token skip="2">mettre</token>
+        <token inflected="yes" skip="2">mettre</token>
         <token>l'</token>
         <token>emphase</token>
         <token>sur</token>
@@ -3094,7 +3094,7 @@
     </rule>
     <rule id="METTRE_L_EPAULE_A_LA_ROUE" name="mettre l’épaule à la roue">
       <pattern>
-        <token>mettre</token>
+        <token inflected="yes">mettre</token>
         <token min="0" max="3" postag="A"></token>
         <token>l'</token>
         <token>épaule</token>
@@ -3107,7 +3107,7 @@
     </rule>
     <rule id="METTRE_SOUS_ARRET" name="mettre sous arrêt">
       <pattern>
-        <token skip="5">mettre</token>
+        <token inflected="yes" skip="5">mettre</token>
         <token>sous</token>
         <token regexp="yes">arrêts?</token>
       </pattern>
@@ -3116,7 +3116,7 @@
     </rule>
     <rule id="METTRE_SUR_LA_CARTE" name="mettre sur la carte/map(pe)">
       <pattern>
-        <token skip="4">mettre</token>
+        <token inflected="yes" skip="4">mettre</token>
         <token>sur</token>
         <token>la</token>
         <token regexp="yes">carte|map|mappe</token>
@@ -3161,7 +3161,7 @@
     <rule id="NAPPE_DHUILE" name="nappe d’huile">
       <pattern>
         <token>nappe</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>huile</token>
       </pattern>
       <message>« Nappe d’huile » peut être considéré comme un anglicisme (oil slick). <suggestion>marée noire</suggestion></message>
@@ -3202,7 +3202,7 @@
     </rule>
     <rule id="OPERER_UNE_ENTREPRISE" name="opérer une entreprise">
       <pattern>
-        <token skip="3">opérer</token>
+        <token inflected="yes" skip="3">opérer</token>
         <token regexp="yes">entreprises?</token>
       </pattern>
       <message>« Opérer une entreprise » peut être considéré comme un anglicisme (to operate). <suggestion>diriger</suggestion></message>
@@ -3210,7 +3210,7 @@
     </rule>
     <rule id="OPERER_UNE_MACHINE" name="opérer une machine">
       <pattern>
-        <token skip="3">opérer</token>
+        <token inflected="yes" skip="3">opérer</token>
         <token regexp="yes">machines?</token>
       </pattern>
       <message>« Opérer une machine » peut être considéré comme un anglicisme (to operate). <suggestion>conduire</suggestion></message>
@@ -3218,7 +3218,7 @@
     </rule>
     <rule id="OPERER_UN_COMMERCE" name="opérer un commerce">
       <pattern>
-        <token skip="3">opérer</token>
+        <token inflected="yes" skip="3">opérer</token>
         <token regexp="yes">commerces?</token>
       </pattern>
       <message>« Opérer un commerce » peut être considéré comme un anglicisme (to operate). <suggestion>tenir</suggestion></message>
@@ -3284,7 +3284,7 @@
     </rule>
     <rule id="PAPIER_ONION" name="papier oignon">
       <pattern>
-        <token>papier</token>
+        <token inflected="yes">papier</token>
         <token regexp="yes">oi?gnons?</token>
       </pattern>
       <message>« Papier brun » peut être considéré comme un anglicisme (onion skin paper). <suggestion>\1 pelure</suggestion></message>
@@ -3310,7 +3310,7 @@
     <rule id="PARC_D_AMUSEMENT" name="parc d’amusement">
       <pattern>
         <token regexp="yes">parcs?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">amusements?</token>
       </pattern>
       <message>« Parc d’amusement » peut être considéré comme un anglicisme (amusement park). <suggestion>parc d'attractions</suggestion></message>
@@ -3327,7 +3327,7 @@
     </rule>
     <rule id="PARLER_A_TRAVERS_SON_CHAPEAU" name="parler à travers son chapeau">
       <pattern>
-        <token skip="2">parler</token>
+        <token inflected="yes" skip="2">parler</token>
         <token regexp="yes">[aà]</token>
         <token regexp="yes">travers?</token>
         <token regexp="yes">sont?|mon|ton|leurs?|nos|vos</token>
@@ -3338,7 +3338,7 @@
     </rule>
     <rule id="PARTIR_A_SON_COMPTE" name="partir à son compte">
       <pattern>
-        <token skip="3">partir</token>
+        <token inflected="yes" skip="3">partir</token>
         <token>à</token>
         <token>son</token>
         <token>compte</token>
@@ -3348,7 +3348,7 @@
     </rule>
     <rule id="PARTIR_DANS_LES_AFFAIRES" name="partir dans les affaires">
       <pattern>
-        <token skip="3">partir</token>
+        <token inflected="yes" skip="3">partir</token>
         <token>dans</token>
         <token>les</token>
         <token regexp="yes">affaires?</token>
@@ -3358,7 +3358,7 @@
     </rule>
     <rule id="PARTIR_EN_AFFAIRES" name="partir en affaires">
       <pattern>
-        <token skip="3">partir</token>
+        <token inflected="yes" skip="3">partir</token>
         <token>en</token>
         <token regexp="yes">affaires?</token>
       </pattern>
@@ -3367,7 +3367,7 @@
     </rule>
     <rule id="PARTIR_LE_BAL" name="partir le bal">
       <pattern>
-        <token skip="3">partir</token>
+        <token inflected="yes" skip="3">partir</token>
         <token>le</token>
         <token>bal</token>
       </pattern>
@@ -3376,7 +3376,7 @@
     </rule>
     <rule id="PARTIR_UNE_ENTREPRISE" name="partir une entreprise">
       <pattern>
-        <token skip="1">partir</token>
+        <token inflected="yes" skip="1">partir</token>
         <token regexp="yes">entreprises?</token>
       </pattern>
       <message>« Partir une entreprise » peut être considéré comme un anglicisme, voici des alternatives. <suggestion>créer une entreprise</suggestion></message>
@@ -3384,7 +3384,7 @@
     </rule>
     <rule id="PARTIR_UNE_MODE" name="partir une mode">
       <pattern>
-        <token skip="3">partir</token>
+        <token inflected="yes" skip="3">partir</token>
         <token regexp="yes">modes?</token>
       </pattern>
       <message>« Partir une mode » peut être considéré comme un anglicisme, voici une alternative. <suggestion>lancer une mode</suggestion></message>
@@ -3392,7 +3392,7 @@
     </rule>
     <rule id="PARTIR_UNE_RUMEUR" name="partir une rumeur">
       <pattern>
-        <token skip="3">partir</token>
+        <token inflected="yes" skip="3">partir</token>
         <token regexp="yes">rumeurs?</token>
       </pattern>
       <message>« Partir une rumeur » peut être considéré comme un anglicisme, voici une alternative. <suggestion>faire courir une rumeur</suggestion></message>
@@ -3409,7 +3409,7 @@
     </rule>
     <rule id="PASSER_UNE_LOI" name="passer une loi">
       <pattern>
-        <token skip="5">passer</token>
+        <token inflected="yes" skip="5">passer</token>
         <token regexp="yes">lois?</token>
       </pattern>
       <message>« Passer une loi » peut être considéré comme un anglicisme (to pass a law). <suggestion>voter une loi</suggestion></message>
@@ -3417,7 +3417,7 @@
     </rule>
     <rule id="PASSER_UN_REGLEMENT" name="passer un règlement">
       <pattern>
-        <token>passer</token>
+        <token inflected="yes">passer</token>
         <token min="0" max="3" postag="A|D.*" postag_regexp="yes"></token>
         <token regexp="yes">règlements?</token>
       </pattern>
@@ -3443,7 +3443,7 @@
     <rule id="PAS_DADMISSION" name="pas d’admission">
       <pattern>
         <token>pas</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">admissions?</token>
       </pattern>
       <message>« Pas d’admission » peut être considéré comme un anglicisme. <suggestion>entrée interdite</suggestion></message>
@@ -3452,7 +3452,7 @@
     <rule id="PAS_DADMISSION_SANS_AFFAIRES" name="pas d’admission sans affaires">
       <pattern>
         <token>pas</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">admissions?</token>
         <token>sans</token>
         <token regexp="yes">affaires?</token>
@@ -3496,7 +3496,7 @@
     </rule>
     <rule id="PAVER_LA_VOIE" name="paver la voie">
       <pattern>
-        <token>paver</token>
+        <token inflected="yes">paver</token>
         <token>la</token>
         <token regexp="yes">voies?</token>
       </pattern>
@@ -3523,7 +3523,7 @@
     </rule>
     <rule id="PAYEZ_UNE_VISITE" name="payer une visite">
       <pattern>
-        <token>payer</token>
+        <token inflected="yes">payer</token>
         <token>une</token>
         <token regexp="yes">visites?</token>
       </pattern>
@@ -3557,7 +3557,7 @@
     </rule>
     <rule id="PERCER_UN_MARCHE" name="percer un marché">
       <pattern>
-        <token skip="4">percer</token>
+        <token inflected="yes" skip="4">percer</token>
         <token regexp="yes">marchés?</token>
       </pattern>
       <message>« Percer un marché » peut être considéré comme un anglicisme. <suggestion>s'introduire dans un marché</suggestion></message>
@@ -3573,7 +3573,7 @@
     </rule>
     <rule id="PLACER_UNE_COMMANDE" name="placer une commande">
       <pattern>
-        <token skip="5">placer</token>
+        <token inflected="yes" skip="5">placer</token>
         <token regexp="yes">commandes?</token>
       </pattern>
       <message>« Placer une commande » peut être considéré comme un anglicisme (to place an order). <suggestion>passer une commande</suggestion></message>
@@ -3581,7 +3581,7 @@
     </rule>
     <rule id="PLACER_UN_APPEL" name="placer un appel">
       <pattern>
-        <token skip="5">placer</token>
+        <token inflected="yes" skip="5">placer</token>
         <token regexp="yes">appels?</token>
       </pattern>
       <message>« Placer un appel » peut être considéré comme un anglicisme (to place a telephone call). Employez <suggestion>faire un appel</suggestion> (téléphone), <suggestion>passer un appel</suggestion> (téléphone).</message>
@@ -3589,7 +3589,7 @@
     </rule>
     <rule id="PLACER_UN_GRIEF" name="placer un grief">
       <pattern>
-        <token skip="5">placer</token>
+        <token inflected="yes" skip="5">placer</token>
         <token regexp="yes">griefs?</token>
       </pattern>
       <message>« Placer un grief » peut être considéré comme un anglicisme (to place a complaint). <suggestion>formuler un grief</suggestion></message>
@@ -3598,7 +3598,7 @@
     <rule id="PLACE_D_AFFAIRES" name="place d’affaires">
       <pattern>
         <token regexp="yes">places?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">affaires?</token>
       </pattern>
       <message>« Places d’affaires » peut être considéré comme un anglicisme (business place). <suggestion>établissement</suggestion></message>
@@ -3616,7 +3616,7 @@
     <rule id="PLAN_DASSURANCE" name="plan d’assurance">
       <pattern>
         <token regexp="yes">plans?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">assurances?</token>
       </pattern>
       <message>« Plan d’assurance » peut être considéré comme un anglicisme (insurance plan). <suggestion>régime d'assurance</suggestion></message>
@@ -3650,7 +3650,7 @@
     </rule>
     <rule id="PORTER_FRUIT" name="porter fruit">
       <pattern>
-        <token>porter</token>
+        <token inflected="yes">porter</token>
         <token regexp="yes">fruits?</token>
       </pattern>
       <message>« Porter fruit » peut être considéré comme un anglicisme (to bear fruit). <suggestion>porter ses fruits</suggestion></message>
@@ -3693,7 +3693,7 @@
     <rule id="POUR_DIRE_LE_MOINS" name="pour dire le moins">
       <pattern>
         <token>pour</token>
-        <token>dire</token>
+        <token inflected="yes">dire</token>
         <token>le</token>
         <token regexp="yes">moins?</token>
       </pattern>
@@ -3722,7 +3722,7 @@
     </rule>
     <rule id="PRENDRE_FORCE" name="prendre force">
       <pattern>
-        <token>prendre</token>
+        <token inflected="yes">prendre</token>
         <token>force</token>
       </pattern>
       <message>« Prendre force » peut être considéré comme un anglicisme (to take force). Utilisez peut-être une alternative. <suggestion>entrer en vigueur</suggestion></message>
@@ -3730,7 +3730,7 @@
     </rule>
     <rule id="PRENDRE_LA_PART_DE" name="prendre la part de">
       <pattern>
-        <token>prendre</token>
+        <token inflected="yes">prendre</token>
         <token>la</token>
         <token>part</token>
         <token>de</token>
@@ -3740,7 +3740,7 @@
     </rule>
     <rule id="PRENDRE_PERSONNEL" name="prendre personnel">
       <pattern>
-        <token skip="2">prendre</token>
+        <token inflected="yes" skip="2">prendre</token>
         <token regexp="yes">personnels?|personnelles?</token>
       </pattern>
       <message>« Prendre personnel » peut être considéré comme un anglicisme (to take it personal). <suggestion>prendre personnellement</suggestion></message>
@@ -3748,7 +3748,7 @@
     </rule>
     <rule id="PRENDRE_UNE_CHANCE" name="prendre une chance">
       <pattern>
-        <token skip="5">prendre</token>
+        <token inflected="yes" skip="5">prendre</token>
         <token regexp="yes">chances?</token>
       </pattern>
       <message>« Prendre une chance » peut être considéré comme un anglicisme (to take a chance). Employez <suggestion>prendre un risque</suggestion>, <suggestion>tenter sa chance</suggestion>, selon le contexte.</message>
@@ -3756,7 +3756,7 @@
     </rule>
     <rule id="PRENDRE_UNE_PROMENADE" name="prendre une marche/promenade">
       <pattern>
-        <token skip="2">prendre</token>
+        <token inflected="yes" skip="2">prendre</token>
         <token regexp="yes">une|la|sa|ma|ta|leur|[nv]otre|des</token>
         <token regexp="yes">marche|promenade</token>
       </pattern>
@@ -3835,7 +3835,7 @@
     <rule id="PRIX_DADMISSION" name="prix d’admission">
       <pattern>
         <token>prix</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">admissions?</token>
       </pattern>
       <message>« Prix d’admission » peut être considéré comme un anglicisme (price of admission). <suggestion>prix d'entrée</suggestion></message>
@@ -3844,7 +3844,7 @@
     <rule id="PRIX_DEPARGNE" name="prix d’épargne">
       <pattern>
         <token>prix</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">épargnes?</token>
       </pattern>
       <message>« Prix d’épargne » peut être considéré comme un anglicisme (at savings price). <suggestion>prix économique</suggestion></message>
@@ -3853,7 +3853,7 @@
     <rule id="PRIX_DESCOMPTE" name="prix d’escompte">
       <pattern>
         <token>prix</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">escomptes?</token>
       </pattern>
       <message>« Prix d’escompte » peut être considéré comme un anglicisme (discount price). <suggestion>prix minicharge</suggestion></message>
@@ -3899,7 +3899,7 @@
         <token>est</token>
         <token>-ce</token>
         <token>qui</token>
-        <token skip="5">arriver</token>
+        <token inflected="yes" skip="5">arriver</token>
         <token>avec</token>
       </pattern>
       <message>"Qu’est-ce qui arrive avec [quelqu’un]" peut être considéré comme un anglicisme. Employez <suggestion>\1\2\3 \4 \5 à</suggestion> ou <suggestion>comment va</suggestion> [nom de personne].</message>
@@ -3908,7 +3908,7 @@
     <rule id="RAPPORT_D_IMPOT" name="rapport d’impôt">
       <pattern>
         <token regexp="yes">rapports?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">impôts?</token>
       </pattern>
       <message>« Rapport d’impôt » peut être considéré comme un anglicisme (income tax report). <suggestion>déclaration de revenus</suggestion></message>
@@ -3917,7 +3917,7 @@
     <rule id="RECU_DIMPOTS" name="reçu (pour fins) d’impôt">
       <pattern>
         <token regexp="yes" skip="2">reçus?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">impôts?</token>
       </pattern>
       <message>« Reçu (pour fins) d’impôts » peut être considéré comme un anglicisme. <suggestion>reçu fiscal</suggestion></message>
@@ -3957,7 +3957,7 @@
     </rule>
     <rule id="REMPLIR_UNE_COMMANDE" name="remplir une commande">
       <pattern>
-        <token skip="3">remplir</token>
+        <token inflected="yes" skip="3">remplir</token>
         <token regexp="yes">commandes?</token>
       </pattern>
       <message>« Remplir une commande » peut être considéré comme un anglicisme (to [ful]fill an order). <suggestion>traiter une commande</suggestion></message>
@@ -3965,7 +3965,7 @@
     </rule>
     <rule id="REMPLIR_UNE_ORDONNANCE" name="remplir une ordonnance">
       <pattern>
-        <token skip="3">remplir</token>
+        <token inflected="yes" skip="3">remplir</token>
         <token regexp="yes">ordonnances?</token>
       </pattern>
       <message>« Remplir une ordonnance » peut être considéré comme un anglicisme (to fill a prescription). <suggestion>exécuter une ordonnance</suggestion></message>
@@ -3973,7 +3973,7 @@
     </rule>
     <rule id="REMPLIR_UNE_PRESCRIPTION" name="remplir une prescription">
       <pattern>
-        <token skip="3">remplir</token>
+        <token inflected="yes" skip="3">remplir</token>
         <token regexp="yes">prescriptions?</token>
       </pattern>
       <message>« Remplir une prescription » peut être considéré comme un anglicisme (to fill a prescription). <suggestion>exécuter une ordonnance</suggestion></message>
@@ -3981,7 +3981,7 @@
     </rule>
     <rule id="REMPLIR_UN_POSTE" name="remplir un poste">
       <pattern>
-        <token skip="3">remplir</token>
+        <token inflected="yes" skip="3">remplir</token>
         <token regexp="yes">postes?</token>
       </pattern>
       <message>« Remplir un poste » peut être considéré comme un anglicisme (to fill a post). <suggestion>pourvoir un poste</suggestion></message>
@@ -3989,7 +3989,7 @@
     </rule>
     <rule id="RENCONTRER_DES_BESOINS" name="rencontrer des besoins">
       <pattern>
-        <token skip="1">rencontrer</token>
+        <token inflected="yes" skip="1">rencontrer</token>
         <token regexp="yes">besoins?</token>
       </pattern>
       <message>« Rencontrer des besoins » peut être considéré comme un anglicisme. <suggestion>répondre à des besoins</suggestion></message>
@@ -3997,7 +3997,7 @@
     </rule>
     <rule id="RENCONTRER_DES_ECHEANCES" name="rencontrer des échéances">
       <pattern>
-        <token skip="4">rencontrer</token>
+        <token inflected="yes" skip="4">rencontrer</token>
         <token regexp="yes">échéances?</token>
       </pattern>
       <message>« Rencontrer des échéances » peut être considéré comme un anglicisme. <suggestion>respecter des échéances</suggestion></message>
@@ -4005,7 +4005,7 @@
     </rule>
     <rule id="RENCONTRER_DES_EXIGENCES" name="rencontrer des exigences">
       <pattern>
-        <token skip="4">rencontrer</token>
+        <token inflected="yes" skip="4">rencontrer</token>
         <token regexp="yes">exigences?</token>
       </pattern>
       <message>« Rencontrer des exigences » peut être considéré comme un anglicisme. <suggestion>répondre à des exigences</suggestion></message>
@@ -4013,7 +4013,7 @@
     </rule>
     <rule id="RENCONTRER_DES_NORMES" name="rencontrer des normes">
       <pattern>
-        <token skip="4">rencontrer</token>
+        <token inflected="yes" skip="4">rencontrer</token>
         <token regexp="yes">normes?</token>
       </pattern>
       <message>« Rencontrer des normes » peut être considéré comme un anglicisme. <suggestion>respecter des normes</suggestion></message>
@@ -4021,7 +4021,7 @@
     </rule>
     <rule id="RENCONTRER_DES_OBLIGATIONS" name="rencontrer des obligations">
       <pattern>
-        <token skip="4">rencontrer</token>
+        <token inflected="yes" skip="4">rencontrer</token>
         <token regexp="yes">obligations?</token>
       </pattern>
       <message>« Rencontrer des obligations » peut être considéré comme un anglicisme. <suggestion>faire face à des obligations</suggestion></message>
@@ -4029,7 +4029,7 @@
     </rule>
     <rule id="RENCONTRER_UN_OBJECTIF" name="rencontrer un objectif">
       <pattern>
-        <token skip="4">rencontrer</token>
+        <token inflected="yes" skip="4">rencontrer</token>
         <token regexp="yes">objectifs?</token>
       </pattern>
       <message>« Rencontrer un objectif » peut être considéré comme un anglicisme. <suggestion>atteindre un objectif</suggestion></message>
@@ -4052,7 +4052,7 @@
     </rule>
     <rule id="RETOURNER_UN_APPEL" name="retourner un appel">
       <pattern>
-        <token skip="2">retourner</token>
+        <token inflected="yes" skip="2">retourner</token>
         <token regexp="yes">appels?</token>
       </pattern>
       <message>« Retourner un appel » peut être considéré comme un anglicisme (to call back). <suggestion>rappeler</suggestion></message>
@@ -4070,7 +4070,7 @@
     <rule id="RETOUR_D_IMPOT" name="retour d’impôt">
       <pattern>
         <token regexp="yes">retours?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">impôts?</token>
       </pattern>
       <message>« Retour d’impôt » peut être considéré comme un anglicisme (tax return). <suggestion>remboursement d'impôt</suggestion></message>
@@ -4113,7 +4113,7 @@
     </rule>
     <rule id="SAJUSTER_A_LA_SITUATION" name="s’ajuster à la situation">
       <pattern>
-        <token skip="5">ajuster</token>
+        <token inflected="yes" skip="5">ajuster</token>
         <token regexp="yes">situations?</token>
       </pattern>
       <message>« S’ajuster à la situation » peut être considéré comme un anglicisme (to adjust to a new situation). <suggestion>s'adapter à la situation</suggestion></message>
@@ -4188,7 +4188,7 @@
     <rule id="SESSION_DENREGISTREMENT" name="session d’enregistrement">
       <pattern>
         <token regexp="yes">sessions?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">enregistrements?</token>
       </pattern>
       <message>« Session d’enregistrement » peut être considéré comme un anglicisme (recording session). Employez <suggestion>séance d'enregistrement</suggestion> (employez le pluriel si l’activité s’étale sur plusieurs périodes).</message>
@@ -4215,7 +4215,7 @@
     <rule id="SE_TIRER_DANS_LE_PIED" name="se tirer dans le(s) pied(s)">
       <pattern>
         <token regexp="yes" skip="3">se|t'|te|s'|nous|vous|me|m</token>
-        <token>tirer</token>
+        <token inflected="yes">tirer</token>
         <token>dans</token>
         <token regexp="yes">les?</token>
         <token regexp="yes">pieds?</token>
@@ -4234,7 +4234,7 @@
     <rule id="SOBJECTER_A" name="s’objecter à">
       <pattern>
         <token regexp="yes" skip="2">se|t'|te|s'|nous|vous|me|m'</token>
-        <token>objecter</token>
+        <token inflected="yes">objecter</token>
         <token>à</token>
       </pattern>
       <message>« Objecter à » peut être considéré comme un anglicisme (to object). <suggestion>opposer à</suggestion></message>
@@ -4242,9 +4242,9 @@
     </rule>
     <rule id="SOULEVER_UN_POINT_DORDRE" name="soulever un point d’ordre">
       <pattern>
-        <token skip="7">soulever</token>
+        <token inflected="yes" skip="7">soulever</token>
         <token regexp="yes">points?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">ordres?</token>
       </pattern>
       <message>« Soulever un point d’ordre » peut être considéré comme un anglicisme (to raise a point of order). <suggestion>invoquer le règlement</suggestion></message>
@@ -4277,7 +4277,7 @@
     <rule id="TAXE_DAMUSEMENT" name="taxe d’amusement">
       <pattern>
         <token regexp="yes">taxes?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">amusements?</token>
       </pattern>
       <message>« Taxe d’amusement » peut être considéré comme un anglicisme (amusement tax). <suggestion>taxe sur les loisirs et spectacles</suggestion></message>
@@ -4387,7 +4387,7 @@
     <rule id="TOUR_DEAU" name="tour d’eau">
       <pattern>
         <token regexp="yes">tours?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">eaux?</token>
       </pattern>
       <message>« Tour d’eau » peut être considéré comme un anglicisme (water tower). <suggestion>château d'eau</suggestion></message>
@@ -4712,7 +4712,7 @@
     </rule>
     <rule id="ACCORDER_PRIORITE" name="accorder-donner la priorité">
       <pattern>
-        <token>accorder</token>
+        <token inflected="yes">accorder</token>
         <token min="0" max="3" postag="A"></token>
         <token postag="D.*" postag_regexp="yes"></token>
         <token>priorité</token>
@@ -4787,7 +4787,7 @@
         <token>l'</token>
         <token min="0">aimable</token>
         <token>intention</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
       </pattern>
       <message>« à l’intention de » est une expression fautive (impropriété). <suggestion>à l'attention de</suggestion></message>
       <short>A_L_INTENTION_DE</short>
@@ -4832,7 +4832,7 @@
     <rule id="BENEFICIER_A" name="bénéficier-&gt;profiter à">
       <pattern>
         <token min="0" postag="V avoir.*" postag_regexp="yes"></token>
-        <token postag="V.*" postag_regexp="yes">bénéficier</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">bénéficier</token>
         <token regexp="yes">à|aux?</token>
       </pattern>
       <message>On ne peut utiliser le verbe "bénéficier" avec un sujet un inanimé et un complément de nom introduit par la préposition "à". <suggestion>\1 profiter \3</suggestion></message>
@@ -4880,12 +4880,12 @@
     </rule>
     <rule id="CEST_DE_LUI_DONT_JE_PARLE" name="c’est de lui dont je parle">
       <pattern>
-        <token>être</token>
+        <token inflected="yes">être</token>
         <token>de</token>
         <token regexp="yes">moi|lui|eux|nous|vous|toi</token>
         <token>dont</token>
         <token regexp="yes" skip="3">je|j|tu|il|nous|vous|ils</token>
-        <token>parler</token>
+        <token inflected="yes">parler</token>
       </pattern>
       <message>« C’est de lui dont je parle » est une expression fautive. <suggestion>c'est de lui que je parle</suggestion></message>
       <short>CEST_DE_LUI_DONT_JE_PARLE</short>
@@ -4980,7 +4980,7 @@
     </rule>
     <rule id="DEBUTER_COMMENCER" name="débuter/commencer">
       <pattern>
-        <token postag="(V) (.*)" postag_regexp="yes">débuter</token>
+        <token inflected="yes" postag="(V) (.*)" postag_regexp="yes">débuter</token>
         <token postag="D.*" postag_regexp="yes">
           <exception regexp="yes">toutes?|tous|tout</exception>
         </token>
@@ -4990,7 +4990,7 @@
     </rule>
     <rule id="DEMARRER_LANCER" name="démarrer/lancer">
       <pattern>
-        <token postag="(V) (.*)" postag_regexp="yes">démarrer</token>
+        <token inflected="yes" postag="(V) (.*)" postag_regexp="yes">démarrer</token>
         <token postag="D.*" postag_regexp="yes">
           <exception regexp="yes">toutes?|tous|tout</exception>
         </token>
@@ -5013,14 +5013,14 @@
       <pattern>
         <token>en</token>
         <token>sorte</token>
-        <token>que</token>
+        <token inflected="yes">que</token>
       </pattern>
       <message>Une autre préposition semble plus appropriée. <suggestion>de sorte \3</suggestion></message>
       <short>DE_SORTE_QUE</short>
     </rule>
     <rule id="ECHAPPEE_BELLE" name="échappée belle → échappé belle">
       <pattern>
-        <token>avoir</token>
+        <token inflected="yes">avoir</token>
         <token regexp="yes">échapp?ée?s?
           <exception>échappé</exception>
         </token>
@@ -5047,7 +5047,7 @@
     </rule>
     <rule id="ESSUYER_DES_REBIFFADES" name="essuyer des rebiffades">
       <pattern>
-        <token skip="2">essuyer</token>
+        <token inflected="yes" skip="2">essuyer</token>
         <token regexp="yes">des|une</token>
         <token regexp="yes">rebiffades?</token>
       </pattern>
@@ -5059,7 +5059,7 @@
         <token postag="V etre.*" postag_regexp="yes"></token>
         <token postag="P">de</token>
         <token regexp="yes" min="0">me|te|le|la|vous|nous|les</token>
-        <token regexp="yes" postag="V ppa.*" postag_regexp="yes">.*er
+        <token regexp="yes" inflected="yes" postag="V ppa.*" postag_regexp="yes">.*er
           <exception regexp="yes">rayés?|fait|mise|sortie|pointe</exception>
         </token>
       </pattern>
@@ -5068,7 +5068,7 @@
     </rule>
     <rule id="ETRE_GRE" name="être gré">
       <pattern>
-        <token postag="V etre.*" postag_regexp="yes">être</token>
+        <token inflected="yes" postag="V etre.*" postag_regexp="yes">être</token>
         <token>gré</token>
       </pattern>
       <message>« Être gré » est une expression fautive. <suggestion>savoir</suggestion></message>
@@ -5076,7 +5076,7 @@
     </rule>
     <rule id="FAIRE_AFFAIRES_AVEC" name="faire affaires avec">
       <pattern>
-        <token skip="4">faire</token>
+        <token inflected="yes" skip="4">faire</token>
         <token>affaires</token>
         <token>avec</token>
       </pattern>
@@ -5085,7 +5085,7 @@
     </rule>
     <rule id="FAIRE_DES_COUPES_SOMBRES" name="faire des coupes sombres">
       <pattern>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token regexp="yes">des?</token>
         <token regexp="yes">coupes?</token>
         <token regexp="yes">sombres?</token>
@@ -5095,7 +5095,7 @@
     </rule>
     <rule id="FAIRE_PARTI" name="faire/tirer parti">
       <pattern>
-        <token>faire</token>
+        <token inflected="yes">faire</token>
         <token min="0" max="2" postag="A|M nonfin" postag_regexp="yes"></token>
         <token min="0" max="3" postag="R.*" postag_regexp="yes"></token>
         <token min="0" max="2" postag="A|M nonfin" postag_regexp="yes"></token>
@@ -5134,7 +5134,7 @@
       <pattern>
         <token>il</token>
         <token>me</token>
-        <token skip="2">faire</token>
+        <token inflected="yes" skip="2">faire</token>
         <token>plaisir</token>
         <token>de</token>
       </pattern>
@@ -5162,7 +5162,7 @@
     </rule>
     <rule id="JOUR_JOURNEE" name="jour/journée">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">passer</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">passer</token>
         <token min="0" max="3" postag="A"></token>
         <token min="0" max="1">tous</token>
         <token regexp="yes">[mts]es|[nv]os|leur</token>
@@ -5198,10 +5198,10 @@
     </rule>
     <rule id="LIRE_SUR_LE_JOURNAL" name="lire sur le journal">
       <pattern>
-        <token skip="2">lire</token>
+        <token inflected="yes" skip="2">lire</token>
         <token>sur</token>
         <token regexp="yes">les?</token>
-        <token>journal</token>
+        <token inflected="yes">journal</token>
       </pattern>
       <message>« Lire sur le journal » est une expression fautive. <suggestion>lire dans le journal</suggestion></message>
       <short>LIRE_SUR_LE_JOURNAL</short>
@@ -5211,14 +5211,14 @@
         <token>loin</token>
         <token>s'</token>
         <token>en</token>
-        <token>falloir</token>
+        <token inflected="yes">falloir</token>
       </pattern>
       <message>« Loin s’en faut » est une expression fautive. <suggestion>tant s'en faut</suggestion></message>
       <short>LOIN_SEN_FAUT</short>
     </rule>
     <rule id="MAIGRE_COMME_UNE_ECHALOTE" name="maigre comme une échalote">
       <pattern>
-        <token>maigre</token>
+        <token inflected="yes">maigre</token>
         <token>comme</token>
         <token regexp="yes">une|des</token>
         <token regexp="yes">échalott?es?</token>
@@ -5236,7 +5236,7 @@
     </rule>
     <rule id="MORDRE_A_PLEINE_DENT" name="mort à pleine dent">
       <pattern>
-        <token>mordre</token>
+        <token inflected="yes">mordre</token>
         <token>à</token>
         <token>pleine</token>
         <token>dent</token>
@@ -5246,7 +5246,7 @@
     </rule>
     <rule id="MOUSSER_UNE_CANDIDATURE" name="mousser une candidature">
       <pattern>
-        <token skip="1">mousser</token>
+        <token inflected="yes" skip="1">mousser</token>
         <token regexp="yes">candidatures?</token>
       </pattern>
       <message>« Mousser une candidature » est une expression fautive. Employez <suggestion>favoriser</suggestion> une candidature.</message>
@@ -5274,7 +5274,7 @@
     </rule>
     <rule id="PALLIER_A" name="pallier à">
       <pattern>
-        <token>pallier</token>
+        <token inflected="yes">pallier</token>
         <token regexp="yes">à|aux?</token>
       </pattern>
       <message>« Pallier à quelque chose » est une expression fautive. Employez <suggestion>\1</suggestion> (sans « à »).</message>
@@ -5282,7 +5282,7 @@
     </rule>
     <rule id="PAREIL_COMME" name="pareil comme">
       <pattern>
-        <token>pareil</token>
+        <token inflected="yes">pareil</token>
         <token>comme</token>
       </pattern>
       <message>« \1 \2 » est une expression fautive. <suggestion>comme</suggestion></message>
@@ -5319,7 +5319,7 @@
     </rule>
     <rule id="PAYER_RUBIS_SUR_LONGLE" name="payer rubis sur l’ongle">
       <pattern>
-        <token skip="1">payer</token>
+        <token inflected="yes" skip="1">payer</token>
         <token>rubis</token>
         <token>sur</token>
         <token regexp="yes">l['´‘′]</token>
@@ -5337,9 +5337,9 @@
     </rule>
     <rule id="PERDRE_DES_POINTS_DINAPTITUDE" name="perdre des points d’inaptitude">
       <pattern>
-        <token skip="2">perdre</token>
+        <token inflected="yes" skip="2">perdre</token>
         <token regexp="yes">points?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">inaptitudes?</token>
       </pattern>
       <message>« Perdre des points d’inaptitude » est une expression fautive. <suggestion>accumuler des points d'inaptitude</suggestion></message>
@@ -5348,14 +5348,14 @@
     <rule id="PEUT_IMPORTE" name="peut importe">
       <pattern>
         <token skip="1">peut</token>
-        <token>importer</token>
+        <token inflected="yes">importer</token>
       </pattern>
       <message>« Peut importe » est une expression fautive (impropriété). <suggestion>peu importe</suggestion></message>
       <short>PEUT_IMPORTE</short>
     </rule>
     <rule id="POSER_PROBLEME" name="poser problème">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">poser</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">poser</token>
         <token min="0" max="4" postag="A"></token>
         <token>problème</token>
       </pattern>
@@ -5364,7 +5364,7 @@
     </rule>
     <rule id="POSER_QUESTION" name="poser question">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">poser</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">poser</token>
         <token min="0" max="4" postag="A"></token>
         <token>question</token>
       </pattern>
@@ -5373,7 +5373,7 @@
     </rule>
     <rule id="POSTULER_A" name="postuler à">
       <pattern>
-        <token>postuler</token>
+        <token inflected="yes">postuler</token>
         <token regexp="yes">à</token>
       </pattern>
       <message>« postuler \2 » est une expression fautive, bien que fréquente. <suggestion>\1</suggestion></message>
@@ -5381,7 +5381,7 @@
     </rule>
     <rule id="PRENDRE_ACTION" name="prendre action-agir">
       <pattern>
-        <token>prendre</token>
+        <token inflected="yes">prendre</token>
         <token>action</token>
       </pattern>
       <message>Une autre expression semble plus appropriée. <suggestion>agir</suggestion></message>
@@ -5389,7 +5389,7 @@
     </rule>
     <rule id="PRENDRE_A_PARTIE" name="prendre partie">
       <pattern>
-        <token skip="-1">prendre</token>
+        <token inflected="yes" skip="-1">prendre</token>
         <token>à</token>
         <token>parti</token>
       </pattern>
@@ -5398,7 +5398,7 @@
     </rule>
     <rule id="PRIMER_SUR" name="Primer sur">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">primer</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">primer</token>
         <token>sur</token>
       </pattern>
       <message>L'usage de la préposition « sur » après le verbe « primer » est déconseillé, vous pouvez aussi choisir la forme « l'emporter sur ». <suggestion>\1</suggestion></message>
@@ -5406,7 +5406,7 @@
     </rule>
     <rule id="RABATTRE_LES_OREILLES" name="rabattre les oreilles">
       <pattern>
-        <token skip="2">rabattre</token>
+        <token inflected="yes" skip="2">rabattre</token>
         <token>les</token>
         <token>oreilles</token>
       </pattern>
@@ -5415,7 +5415,7 @@
     </rule>
     <rule id="REMERCIER_SALUER_A" name="remercier/saluer à">
       <pattern>
-        <token regexp="yes" postag="V.*" postag_regexp="yes">remercier|saluer</token>
+        <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes">remercier|saluer</token>
         <token>à</token>
         <token postag="Z|R .*" postag_regexp="yes">
           <exception regexp="yes">l'|ce(ttes?|s)?|avance|nouveau|jamais|occasions?|arrivées?|départs?|fois|mi-|moment</exception>
@@ -5436,7 +5436,7 @@
       <pattern>
         <token postag="R pers obj .*" postag_regexp="yes"></token>
         <token min="0" skip="1" postag="V etre .*" postag_regexp="yes"></token>
-        <token postag="V .*" postag_regexp="yes">bâfrer</token>
+        <token inflected="yes" postag="V .*" postag_regexp="yes">bâfrer</token>
       </pattern>
       <message>"Bâfrer" ne prend pas de forme pronominale. <suggestion>avoir \3</suggestion></message>
       <short>SE_BAFRER</short>
@@ -5444,9 +5444,9 @@
     <rule id="SE_FAIRE_FORT_INF" name="se faire fort + inf">
       <pattern>
         <token skip="2" postag="R pers obj.*" postag_regexp="yes"></token>
-        <token postag="V.*" postag_regexp="yes">faire</token>
-        <token regexp="yes">fort(e|s|es)</token>
-        <token regexp="yes">de|d'</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">faire</token>
+        <token regexp="yes" inflected="yes">fort(e|s|es)</token>
+        <token regexp="yes" inflected="yes">de|d'</token>
         <token postag="V inf|V etre inf|V avoir inf" postag_regexp="yes"></token>
       </pattern>
       <message>Devant un infinitif, "se faire fort de" ne se met jamais au féminin ni au pluriel : "fort" reste invariable. <suggestion>fort</suggestion></message>
@@ -5456,11 +5456,11 @@
       <pattern>
         <token skip="2" postag="R pers obj.*" postag_regexp="yes"></token>
         <token postag="V etre.*" postag_regexp="yes"></token>
-        <token postag="V ppa.*" postag_regexp="yes">faire
+        <token inflected="yes" postag="V ppa.*" postag_regexp="yes">faire
           <exception>fait</exception>
         </token>
-        <token regexp="yes">forte?s?</token>
-        <token regexp="yes">de|d'</token>
+        <token regexp="yes" inflected="yes">forte?s?</token>
+        <token regexp="yes" inflected="yes">de|d'</token>
         <token postag="V inf|V etre inf|V avoir inf" postag_regexp="yes"></token>
       </pattern>
       <message>"Se faire fort de" est une expression figée. Devant un infinitif, le participe passé "fait" reste invariable. <suggestion>fait</suggestion></message>
@@ -5478,7 +5478,7 @@
     <rule id="SOUHAITER_DES_VOEUX" name="souhaiter des vœux">
       <pattern>
         <token postag="R pers obj.*" postag_regexp="yes"></token>
-        <token postag="V ind pres.*" postag_regexp="yes">souhaiter</token>
+        <token inflected="yes" postag="V ind pres.*" postag_regexp="yes">souhaiter</token>
         <token regexp="yes">des|mes|nos</token>
         <token regexp="yes">voeux|vœux</token>
       </pattern>
@@ -5489,14 +5489,14 @@
       <pattern>
         <token>s'</token>
         <token>en</token>
-        <token postag="V .*" postag_regexp="yes">suivre</token>
+        <token inflected="yes" postag="V .*" postag_regexp="yes">suivre</token>
       </pattern>
       <message>« \1\2 \3 » est incorrecte. <suggestion>\1\2\3</suggestion></message>
       <short>S_EN_SUIVRE</short>
     </rule>
     <rule id="TACHER_MOYEN" name="tâcher moyen de/que">
       <pattern>
-        <token regexp="yes" skip="1">t[aâ]cher</token>
+        <token regexp="yes" inflected="yes" skip="1">t[aâ]cher</token>
         <token regexp="yes">moyens?</token>
         <token regexp="yes">de|d'|que|qu'</token>
       </pattern>
@@ -5505,7 +5505,7 @@
     </rule>
     <rule id="TENIR_POUR_ACQUIT" name="tenir pour acquit">
       <pattern>
-        <token skip="2">tenir</token>
+        <token inflected="yes" skip="2">tenir</token>
         <token>pour</token>
         <token>acquit</token>
       </pattern>
@@ -5514,7 +5514,7 @@
     </rule>
     <rule id="TIRER_PARTI" name="faire/tirer parti">
       <pattern>
-        <token>tirer</token>
+        <token inflected="yes">tirer</token>
         <token min="0" max="2" postag="A|M nonfin" postag_regexp="yes"></token>
         <token min="0" max="3" postag="R.*" postag_regexp="yes"></token>
         <token min="0" max="2" postag="A|M nonfin" postag_regexp="yes"></token>
@@ -5589,7 +5589,7 @@
     </rule>
     <rule id="ABOLIR_ENTIEREMENT" name="abolir entièrement">
       <pattern>
-        <token skip="4">abolir</token>
+        <token inflected="yes" skip="4">abolir</token>
         <token>entièrement</token>
       </pattern>
       <message>« Abolir entièrement » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -5597,7 +5597,7 @@
     </rule>
     <rule id="ACCULER_AU_PIED_DU_MUR" name="acculer au pied du mur">
       <pattern>
-        <token skip="5">acculer</token>
+        <token inflected="yes" skip="5">acculer</token>
         <token>au</token>
         <token regexp="yes">pieds?</token>
         <token>du</token>
@@ -5608,7 +5608,7 @@
     </rule>
     <rule id="ACHEVER_COMPLETEMENT" name="achever complètement">
       <pattern>
-        <token skip="2">achever</token>
+        <token inflected="yes" skip="2">achever</token>
         <token>complètement</token>
       </pattern>
       <message>« Achever complètement » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -5616,7 +5616,7 @@
     </rule>
     <rule id="AJOUTER_EN_PLUS" name="ajouter en plus">
       <pattern>
-        <token skip="2">ajouter</token>
+        <token inflected="yes" skip="2">ajouter</token>
         <token>en</token>
         <token>plus</token>
       </pattern>
@@ -5633,7 +5633,7 @@
     </rule>
     <rule id="AVOIR_UN_BEL_AVENIR_DEVANT_SOI" name="avoir un bel avenir devant soi">
       <pattern>
-        <token skip="6">avoir</token>
+        <token inflected="yes" skip="6">avoir</token>
         <token>bel</token>
         <token>avenir</token>
         <token>devant</token>
@@ -5669,7 +5669,7 @@
     </rule>
     <rule id="CAR_EN_EFFET" name="car en effet">
       <pattern>
-        <token skip="1">car</token>
+        <token inflected="yes" skip="1">car</token>
         <token>en</token>
         <token>effet</token>
       </pattern>
@@ -5695,7 +5695,7 @@
     </rule>
     <rule id="COMPARER_ENTRE_EUX" name="comparer entre eux">
       <pattern>
-        <token skip="2">comparer</token>
+        <token inflected="yes" skip="2">comparer</token>
         <token>entre</token>
         <token>eux</token>
       </pattern>
@@ -5704,7 +5704,7 @@
     </rule>
     <rule id="CONTRAINDRE_MALGRE_SOI" name="contraindre malgré soi">
       <pattern>
-        <token skip="2">contraindre</token>
+        <token inflected="yes" skip="2">contraindre</token>
         <token>malgré</token>
         <token regexp="yes">eux|lui|[mts]oi|elles?|[nv]ous</token>
       </pattern>
@@ -5730,7 +5730,7 @@
     </rule>
     <rule id="DESCENDRE_EN_BAS" name="descendre en bas">
       <pattern>
-        <token skip="2">descendre</token>
+        <token inflected="yes" skip="2">descendre</token>
         <token>en</token>
         <token>bas</token>
       </pattern>
@@ -5739,7 +5739,7 @@
     </rule>
     <rule id="DESSINER_UN_DESSIN" name="dessiner un dessin">
       <pattern>
-        <token skip="2">dessiner</token>
+        <token inflected="yes" skip="2">dessiner</token>
         <token regexp="yes">dessins?</token>
       </pattern>
       <message>« Dessiner un dessin » est un pléonasme. <suggestion>faire un dessin</suggestion></message>
@@ -5747,8 +5747,8 @@
     </rule>
     <rule id="DE_DAUTRES" name="de d’autres">
       <pattern>
-        <token>de</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">autres?</token>
       </pattern>
       <message>« De d’autres » est un pléonasme. <suggestion>d'autres</suggestion></message>
@@ -5805,7 +5805,7 @@
     </rule>
     <rule id="INAUGURER_OFFICIELLEMENT" name="inaugurer officiellement">
       <pattern>
-        <token skip="2">inaugurer</token>
+        <token inflected="yes" skip="2">inaugurer</token>
         <token>officiellement</token>
       </pattern>
       <message>« Inaugurer officiellement » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -5813,7 +5813,7 @@
     </rule>
     <rule id="LEVER_DEBOUT" name="lever debout">
       <pattern>
-        <token skip="1">lever</token>
+        <token inflected="yes" skip="1">lever</token>
         <token>debout</token>
       </pattern>
       <message>« Lever debout » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -5830,7 +5830,7 @@
     <rule id="MEDIA_DINFORMATION" name="média d’information">
       <pattern>
         <token regexp="yes">m[ée]dias?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">informations?</token>
       </pattern>
       <message>« Média d’information » est un pléonasme. <suggestion>média</suggestion></message>
@@ -5846,7 +5846,7 @@
     </rule>
     <rule id="MONTER_EN_HAUT" name="monter en haut">
       <pattern>
-        <token skip="2">monter</token>
+        <token inflected="yes" skip="2">monter</token>
         <token>en</token>
         <token>haut</token>
       </pattern>
@@ -5872,7 +5872,7 @@
     <rule id="PERSPECTIVE_D_AVENIR" name="perspective d’avenir">
       <pattern>
         <token regexp="yes">perspectives?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>avenir</token>
       </pattern>
       <message>« \1 d’avenir » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -5880,7 +5880,7 @@
     </rule>
     <rule id="PLANCHE_DE_BOIS" name="planche de bois">
       <pattern>
-        <token>planche</token>
+        <token inflected="yes">planche</token>
         <token>de</token>
         <token>bois</token>
       </pattern>
@@ -5889,7 +5889,7 @@
     </rule>
     <rule id="PLEONASME_OPTIMISER_UN_MAXIMUM" name="optimiser un maximum">
       <pattern>
-        <token>optimiser</token>
+        <token inflected="yes">optimiser</token>
         <token min="0" max="3" postag="A"></token>
         <token regexp="yes">un|au</token>
         <token>maximum</token>
@@ -5910,7 +5910,7 @@
     </rule>
     <rule id="PLEONASME_PROGRESSER_EN_AVANT" name="progresser en avant">
       <pattern>
-        <token>progresser</token>
+        <token inflected="yes">progresser</token>
         <token min="0" max="3" postag="A"></token>
         <token>en</token>
         <token>avant</token>
@@ -5920,7 +5920,7 @@
     </rule>
     <rule id="PLEONASME_SUIVRE_DERRIERE" name="suivre derrière">
       <pattern>
-        <token>suivre</token>
+        <token inflected="yes">suivre</token>
         <token min="0" max="3" postag="A"></token>
         <token>derrière</token>
       </pattern>
@@ -5929,7 +5929,7 @@
     </rule>
     <rule id="PLEONASME_VERBE_ENSEMBLE" name="additionner ensemble">
       <pattern>
-        <token regexp="yes">discussion|discuter|parler|rire|coopérer|coopération|communiquer|communication|connecter|connection|partager|partage|intégrer|intégration|rencontrer|rencontre|additionner|comparer|comparaison|joindre|réunir|réunion|collaborer|collaboration</token>
+        <token regexp="yes" inflected="yes">discussion|discuter|parler|rire|coopérer|coopération|communiquer|communication|connecter|connection|partager|partage|intégrer|intégration|rencontrer|rencontre|additionner|comparer|comparaison|joindre|réunir|réunion|collaborer|collaboration</token>
         <token min="0" max="3" postag="A|R m ." postag_regexp="yes"></token>
         <token regexp="yes">ensemble|mutuellement|mutuelles?|mutuels?|conjointe?s?|conjointement</token>
       </pattern>
@@ -5962,7 +5962,7 @@
     </rule>
     <rule id="RESERVER_A_LAVANCE" name="réserver à l’avance">
       <pattern>
-        <token>réserver</token>
+        <token inflected="yes">réserver</token>
         <token>à</token>
         <token>l'</token>
         <token>avance</token>
@@ -5972,8 +5972,8 @@
     </rule>
     <rule id="RESERVER_DAVANCE" name="réserver d’avance">
       <pattern>
-        <token>réserver</token>
-        <token>de</token>
+        <token inflected="yes">réserver</token>
+        <token inflected="yes">de</token>
         <token>avance</token>
       </pattern>
       <message>« Réserver d’avance » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -5989,15 +5989,15 @@
     </rule>
     <rule id="SECOUSSE_SISMIQUE" name="secousse sismique">
       <pattern>
-        <token>secousse</token>
-        <token>sismique</token>
+        <token inflected="yes">secousse</token>
+        <token inflected="yes">sismique</token>
       </pattern>
       <message>« Secousse sismique » est un pléonasme. <suggestion>\1 tellurique</suggestion></message>
       <short>SECOUSSE_SISMIQUE</short>
     </rule>
     <rule id="SENCHEVETRER_LES_UNS_DANS_LES_AUTRES" name="s’enchevêtrer les uns dans les autres">
       <pattern>
-        <token skip="2">enchevêtrer</token>
+        <token inflected="yes" skip="2">enchevêtrer</token>
         <token>les</token>
         <token>uns</token>
         <token>dans</token>
@@ -6009,7 +6009,7 @@
     </rule>
     <rule id="SENTRAIDER_MUTUELLEMENT" name="s’entraider mutuellement">
       <pattern>
-        <token skip="2">entraider</token>
+        <token inflected="yes" skip="2">entraider</token>
         <token>mutuellement</token>
       </pattern>
       <message>« S’entraider mutuellement » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -6017,7 +6017,7 @@
     </rule>
     <rule id="SUFFIRE_SIMPLEMENT" name="suffire simplement">
       <pattern>
-        <token skip="1">suffire</token>
+        <token inflected="yes" skip="1">suffire</token>
         <token>simplement</token>
       </pattern>
       <message>« Suffire simplement » est un pléonasme. <suggestion>\1</suggestion></message>
@@ -6154,7 +6154,7 @@
     </rule>
     <rule id="ABONDER_EN_SENS" name="abonder en-dans ce sens">
       <pattern>
-        <token>abonder</token>
+        <token inflected="yes">abonder</token>
         <token>en</token>
         <token regexp="yes">ce|le</token>
         <token min="0">même</token>
@@ -6310,7 +6310,7 @@
         <token>qu'</token>
         <token regexp="yes">ils?|elles?</token>
         <token min="0">se</token>
-        <token regexp="yes">trouver|aller|venir</token>
+        <token regexp="yes" inflected="yes">trouver|aller|venir</token>
       </pattern>
       <message>Pour l’expression d’un lieu, employez <suggestion>où</suggestion>.</message>
       <short>CONFUSION_OU</short>
@@ -6375,7 +6375,7 @@
     </rule>
     <rule id="ETRES_ETRE" name="êtres/être">
       <pattern>
-        <token regexp="yes" postag="V.*" postag_regexp="yes">pouvoir|vouloir|devoir|faire|oser|désirer|laisser</token>
+        <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes">pouvoir|vouloir|devoir|faire|oser|désirer|laisser</token>
         <token>êtres</token>
       </pattern>
       <message>Le verbe "être" ne peut pas comporter de "s". <suggestion>être</suggestion></message>
@@ -6383,7 +6383,7 @@
     </rule>
     <rule id="ETRE_EN_ALLE" name="être en allé → en être allé">
       <pattern>
-        <token>être</token>
+        <token inflected="yes">être</token>
         <token>en</token>
         <token regexp="yes">allée?s?</token>
       </pattern>
@@ -6402,7 +6402,7 @@
     <rule id="FAITS_ACTUELS" name="accord: faits actuels">
       <pattern>
         <token>faits</token>
-        <token>actuel
+        <token inflected="yes">actuel
           <exception>actuels</exception>
         </token>
       </pattern>
@@ -6465,7 +6465,7 @@
         <token postag="R pers obj.*" postag_regexp="yes">
           <exception regexp="yes">les?|l'|la|[nv]ous</exception>
         </token>
-        <token postag="V.*" postag_regexp="yes">laisser</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">laisser</token>
         <token min="0" max="3" postag="A"></token>
         <token regexp="yes" postag="V ppa.*" postag_regexp="yes">.*ée?s?$</token>
       </pattern>
@@ -6532,7 +6532,7 @@
     </rule>
     <rule id="METTRE_A_GENOU" name="mettre à genou-x">
       <pattern>
-        <token>mettre</token>
+        <token inflected="yes">mettre</token>
         <token min="0" max="3" postag="A"></token>
         <token>à</token>
         <token>genou</token>
@@ -6543,7 +6543,7 @@
     <rule id="MIEUX_VAUT_INF" name="mieux vaut + verbe inf">
       <pattern>
         <token>mieux</token>
-        <token postag="V.*" postag_regexp="yes">valoir</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">valoir</token>
         <token regexp="yes" postag="V.*" postag_regexp="yes">.*(?:ée?s?|ez)</token>
       </pattern>
       <message>Le verbe « \3 » devrait être à l’infinitif après le « \1 \2 ».</message>
@@ -6658,7 +6658,7 @@
         <token postag="N.*" postag_regexp="yes"></token>
         <token>que</token>
         <token postag="R pers suj.*" postag_regexp="yes"></token>
-        <token>avoir</token>
+        <token inflected="yes">avoir</token>
         <token>besoin</token>
         <token postag="P">
           <exception>de</exception>
@@ -6697,7 +6697,7 @@
       <pattern>
         <token>sont</token>
         <token>autant</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token min="0">'</token>
         <token postag="N [mfe] s" postag_regexp="yes"></token>
       </pattern>
@@ -6722,7 +6722,7 @@
         <token postag="SENT_START"></token>
         <token skip="-1" postag="P"></token>
         <token>,</token>
-        <token>se</token>
+        <token inflected="yes">se</token>
         <token postag="V.* 3 s" postag_regexp="yes">
           <exception>fait</exception>
         </token>
@@ -6766,10 +6766,10 @@
     </rule>
     <rule id="VENIR_DE_VINF" name="venir de V inf">
       <pattern>
-        <token>venir</token>
+        <token inflected="yes">venir</token>
         <token min="0" max="3" postag="R pers.*" postag_regexp="yes"></token>
         <token min="0" max="3" postag="A"></token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes" postag="V.*" postag_regexp="yes">.*ée?s?
           <exception regexp="yes">(?-i)[A-Z].*|contrées</exception>
         </token>
@@ -6810,7 +6810,7 @@
       <pattern>
         <token>y</token>
         <token>-</token>
-        <token>avoir</token>
+        <token inflected="yes">avoir</token>
       </pattern>
       <message>Voulez-vous écrire <suggestion>y \3</suggestion> ?</message>
       <short>Y_A_T_IL</short>
@@ -6913,7 +6913,7 @@
     </rule>
     <rule id="AFFILER_UN_CRAYON" name="affiler un crayon">
       <pattern>
-        <token skip="4">affiler</token>
+        <token inflected="yes" skip="4">affiler</token>
         <token regexp="yes">crayons?</token>
       </pattern>
       <message>« Affiler un crayon » est un régionalisme (Québec). <suggestion>tailler un crayon</suggestion></message>
@@ -6930,7 +6930,7 @@
     </rule>
     <rule id="AIGUISER_UN_CRAYON" name="aiguiser un crayon">
       <pattern>
-        <token skip="2">aiguiser</token>
+        <token inflected="yes" skip="2">aiguiser</token>
         <token regexp="yes">crayons?</token>
       </pattern>
       <message>« Aiguiser un crayon » est un régionalisme (Québec). <suggestion>tailler un crayon</suggestion></message>
@@ -7053,7 +7053,7 @@
     <rule id="BLE_DINDE" name="blé d’Inde">
       <pattern>
         <token regexp="yes">blés?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">indes?</token>
       </pattern>
       <message>« Blé d’Inde » est un régionalisme (Québec). <suggestion>maïs</suggestion></message>
@@ -7087,7 +7087,7 @@
     <rule id="BOYAU_DARROSAGE" name="boyau d’arrosage">
       <pattern>
         <token regexp="yes">boyaux?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">arrosages?</token>
       </pattern>
       <message>« Boyau d’arrosage » est un régionalisme (Québec). <suggestion>tuyau d'arrosage</suggestion></message>
@@ -7193,7 +7193,7 @@
     </rule>
     <rule id="CHANTER_LA_POMME" name="chanter la pomme">
       <pattern>
-        <token skip="5">chanter</token>
+        <token inflected="yes" skip="5">chanter</token>
         <token>la</token>
         <token regexp="yes">pommes?</token>
       </pattern>
@@ -7211,9 +7211,9 @@
     </rule>
     <rule id="CHIEN-CHAUD" name="chien-chaud">
       <pattern>
-        <token>chien</token>
+        <token inflected="yes">chien</token>
         <token regexp="yes" min="0">[-‑‐]</token>
-        <token>chaud</token>
+        <token inflected="yes">chaud</token>
       </pattern>
       <message>« Chien-chaud » est un régionalisme (Québec) inusité et critiqué comme précieux. <suggestion>hot-dog</suggestion></message>
       <short>CHIEN-CHAUD</short>
@@ -7339,7 +7339,7 @@
     </rule>
     <rule id="CRIER_COMME_UN_PERDU" name="crier comme un perdu">
       <pattern>
-        <token skip="5">crier</token>
+        <token inflected="yes" skip="5">crier</token>
         <token>comme</token>
         <token regexp="yes">un|une|des|les</token>
         <token regexp="yes">perdue?s?</token>
@@ -7373,7 +7373,7 @@
     <rule id="DEGATS_DEAU" name="dégât d’eau">
       <pattern>
         <token regexp="yes">dégâts?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">eaux?</token>
       </pattern>
       <message>« Dégât d’eau » est un régionalisme (Québec). <suggestion>dégât des eaux</suggestion></message>
@@ -7381,7 +7381,7 @@
     </rule>
     <rule id="DEMANDER_UNE_QUESTION" name="demander une question">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">demander</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">demander</token>
         <token min="0" max="4" postag="A"></token>
         <token postag="D.*" postag_regexp="yes"></token>
         <token regexp="yes">questions?</token>
@@ -7405,7 +7405,7 @@
     </rule>
     <rule id="ENTENDRE_A_RIRE" name="entendre à rire">
       <pattern>
-        <token skip="2">entendre</token>
+        <token inflected="yes" skip="2">entendre</token>
         <token>à</token>
         <token regexp="yes">rires?</token>
       </pattern>
@@ -7434,7 +7434,7 @@
     </rule>
     <rule id="FAIRE_ASSEMBLANT" name="faire assemblant">
       <pattern>
-        <token skip="5">faire</token>
+        <token inflected="yes" skip="5">faire</token>
         <token>assemblant</token>
       </pattern>
       <message>« Faire assemblant » est un régionalisme (Québec). <suggestion>semblant</suggestion></message>
@@ -7442,7 +7442,7 @@
     </rule>
     <rule id="FAIRE_UNE_PLONGE" name="faire un plongeon">
       <pattern>
-        <token regexp="yes" skip="2">faire|piquer|prendre</token>
+        <token regexp="yes" inflected="yes" skip="2">faire|piquer|prendre</token>
         <token>une</token>
         <token regexp="yes">plonges?</token>
       </pattern>
@@ -7564,7 +7564,7 @@
     <rule id="LAINE_D_ACIER" name="laine d’acier">
       <pattern>
         <token>laine</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>acier</token>
       </pattern>
       <message>« Laine d’acier » est un régionalisme (Québec) et un anglicisme (steel wool). <suggestion>paille de fer</suggestion></message>
@@ -7746,7 +7746,7 @@
     </rule>
     <rule id="PILER_SON_ORGUEIL" name="piler sur son orgueil">
       <pattern>
-        <token>piler</token>
+        <token inflected="yes">piler</token>
         <token skip="1">sur</token>
         <token regexp="yes">orgueils?</token>
       </pattern>
@@ -7755,7 +7755,7 @@
     </rule>
     <rule id="PILER_SUR_LES_PIEDS" name="piler sur les pieds">
       <pattern>
-        <token>piler</token>
+        <token inflected="yes">piler</token>
         <token skip="1">sur</token>
         <token regexp="yes">pieds?</token>
       </pattern>
@@ -7796,7 +7796,7 @@
     </rule>
     <rule id="REVER_EN_COULEURS" name="rêver en couleurs">
       <pattern>
-        <token skip="2">rêver</token>
+        <token inflected="yes" skip="2">rêver</token>
         <token>en</token>
         <token regexp="yes">couleurs?</token>
       </pattern>
@@ -7814,7 +7814,7 @@
     </rule>
     <rule id="SAUVE_PAR_LA_CLOCHE" name="sauvé par la cloche">
       <pattern>
-        <token skip="5">sauver</token>
+        <token inflected="yes" skip="5">sauver</token>
         <token>par</token>
         <token>la</token>
         <token regexp="yes">cloches?</token>
@@ -7825,7 +7825,7 @@
     <rule id="SE_FIER_SUR" name="se fier à">
       <pattern>
         <token regexp="yes" skip="3">se|t|te|s|nous|vous|me|m</token>
-        <token>fier</token>
+        <token inflected="yes">fier</token>
         <token>sur</token>
       </pattern>
       <message>« Se fier sur » est un régionalisme (Québec) peut-être influencé par l’anglais (to rely on). <suggestion>à</suggestion></message>
@@ -7858,7 +7858,7 @@
     </rule>
     <rule id="TIRER_AU_POIGNET" name="tirer au poignet">
       <pattern>
-        <token skip="2">tirer</token>
+        <token inflected="yes" skip="2">tirer</token>
         <token regexp="yes">aux?</token>
         <token regexp="yes">poignets?</token>
       </pattern>
@@ -7930,7 +7930,7 @@
     <rule id="VIDANGE_D_HUILE" name="vidange d’huile">
       <pattern>
         <token regexp="yes">vidanges?</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token regexp="yes">huiles?</token>
       </pattern>
       <message>« Vidange d’huile » est un régionalisme (Québec). <suggestion>vidange du moteur</suggestion></message>
@@ -8848,7 +8848,7 @@
     <rule id="SOUS_ENTENDRE" name="sous-entendre">
       <pattern>
         <token>sous</token>
-        <token>entendre</token>
+        <token inflected="yes">entendre</token>
       </pattern>
       <message>« \1 \2 » est une erreur de typographie. <suggestion>\1-\2</suggestion></message>
       <short>SOUS_ENTENDRE</short>
@@ -8909,7 +8909,7 @@
     </rule>
     <rule id="CONFUSION_EMOTIONNER_EMU" name="confusion émotionner/ému">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">émotionner</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">émotionner</token>
       </pattern>
       <message>Ce verbe peut sembler familier. <suggestion>émouvoir</suggestion></message>
       <short>CONFUSION_EMOTIONNER_EMU</short>
@@ -8960,7 +8960,7 @@
     </rule>
     <rule id="TOMBER_DANS_LES_POMMES" name="tomber dans les pommes">
       <pattern>
-        <token skip="2">tomber</token>
+        <token inflected="yes" skip="2">tomber</token>
         <token>dans</token>
         <token>les</token>
         <token>pommes</token>
@@ -9060,7 +9060,7 @@
     </rule>
     <rule id="AFFILEE_AFFILE" name="affilée, affilé">
       <pattern>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>affilé</token>
       </pattern>
       <message>Voulez-vous écrire <suggestion>affilée</suggestion> ?</message>
@@ -9169,7 +9169,7 @@
         <token postag="R pers obj.*" postag_regexp="yes"></token>
         <token postag="V avoir.*" postag_regexp="yes"></token>
         <token min="0" max="4" postag="A"></token>
-        <token postag="V.*" postag_regexp="yes">rendre</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">rendre</token>
         <token min="0" max="4" postag="A"></token>
         <token>l'</token>
         <token>appareil</token>
@@ -9216,7 +9216,7 @@
     </rule>
     <rule id="DECELER_DESCELLER_DESSELLER" name="déceler, desceller et desseller">
       <pattern>
-        <token regexp="yes">des[cs]eller</token>
+        <token regexp="yes" inflected="yes">des[cs]eller</token>
         <token regexp="yes">une?|l[ae]|des?|[mts]on|sa|ses|[nv]os|leurs?|plusieurs|quelques|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze</token>
         <token regexp="yes" min="0" max="1">petite?s?|grande?s?|énorme|dangereuses?|dangereux|formidables?|fortes?|légères?|merveilleuses?|merveilleux|nouvel|nouvelles?|nouveaux|vraie?s?|réels?|réelles?|sévères?|véritables?</token>
         <token regexp="yes">(?:acidité|activité|allergie|anévrisme|anomalie|arnaque|appendicite|atrophie|baisse|bébé|blessure|bug|carie|cause|changement|cancer|complot|comète|concentration|corrélation|croissance|défaut|défaillance|demande|dépression|diabète|différence|diminution|effluve|épilepsie|erreur|existence|(exo)?planète|grossesse|grosseur|faille|fuite|fraude|grippe|handicap|hausse|hémorragie|hostilité|hypertrophie|incompatibilité|incohérence|infection|infraction|indice|infidélité|insuffisance|intrigue|irrégularité|leucémie|lésion|lueur|lumière|malformation|maladie|manœuvre|manoeuvre|manipulation|molécule|mensonge|mutation|once|perturbation|personnalité|piste|perte|présence|prostate|qualité|odeur|opportunité|otite|problème|surdité|talent|tendance|tentative|tumeur|utilisation)s?|hoax|variation|vie|virus</token>
@@ -9243,7 +9243,7 @@
     <rule id="EN_AVOIR_MARE" name="en avoir mare → en avoir marre">
       <pattern>
         <token>en</token>
-        <token>avoir</token>
+        <token inflected="yes">avoir</token>
         <token>mare</token>
       </pattern>
       <message>Confusion entre « mare » et <suggestion>marre</suggestion>.</message>
@@ -9278,7 +9278,7 @@
     </rule>
     <rule id="ETAIS_ETE" name="étais -&gt; été">
       <pattern>
-        <token>avoir</token>
+        <token inflected="yes">avoir</token>
         <token>étais</token>
       </pattern>
       <message>Vouliez-vous dire <suggestion>été</suggestion> (participe passé)?</message>
@@ -9338,7 +9338,7 @@
     </rule>
     <rule id="GITE" name="gîte">
       <pattern>
-        <token regexp="yes">prendre|donner</token>
+        <token regexp="yes" inflected="yes">prendre|donner</token>
         <token>du</token>
         <token regexp="yes">g[îi]te</token>
       </pattern>
@@ -9363,7 +9363,7 @@
     </rule>
     <rule id="IL_VA_SANS_DIRE" name="il va s’en dire → Il va sans dire">
       <pattern>
-        <token>aller</token>
+        <token inflected="yes">aller</token>
         <token>s'</token>
         <token>en</token>
         <token>dire</token>
@@ -9384,7 +9384,7 @@
     <rule id="LANGUE_D_OC" name="langue d’hoc → langue d’oc">
       <pattern>
         <token>langue</token>
-        <token>de</token>
+        <token inflected="yes">de</token>
         <token>hoc</token>
       </pattern>
       <message>Voulez-vous écrire <suggestion>oc</suggestion> ?</message>
@@ -9417,8 +9417,8 @@
     </rule>
     <rule id="OUTREMER" name="outremer (outre-mer)">
       <pattern>
-        <token regexp="yes">administratif|biodiversité|culture|venir|pays|famille|fran[çc]aise?|France|collectivité|département|député|destination|entreprise|jeune|peuple|population|possession|rapatrier|région|ressortissant|retour|société|travailleur|terre|territoire|territorial|touristique</token>
-        <token>de</token>
+        <token regexp="yes" inflected="yes">administratif|biodiversité|culture|venir|pays|famille|fran[çc]aise?|France|collectivité|département|député|destination|entreprise|jeune|peuple|population|possession|rapatrier|région|ressortissant|retour|société|travailleur|terre|territoire|territorial|touristique</token>
+        <token inflected="yes">de</token>
         <token>outremer</token>
       </pattern>
       <message>Voulez-vous écrire <suggestion>outre-mer</suggestion> ?</message>
@@ -9426,7 +9426,7 @@
     </rule>
     <rule id="PAIN_PIN" name="pain et pin">
       <pattern>
-        <token>pomme</token>
+        <token inflected="yes">pomme</token>
         <token>de</token>
         <token>pain</token>
       </pattern>
@@ -9444,17 +9444,17 @@
     </rule>
     <rule id="PENSER_PANSER" name="penser et panser">
       <pattern>
-        <token>penser</token>
+        <token inflected="yes">penser</token>
         <token postag="D.*" postag_regexp="yes"></token>
         <token regexp="yes" min="0" max="1">['´‘’′]</token>
-        <token regexp="yes">animal|blessure|blessé|bras|cheval|cuisse|doigt|épaule|jambe|main|patte|pied|plaie|tête</token>
+        <token regexp="yes" inflected="yes">animal|blessure|blessé|bras|cheval|cuisse|doigt|épaule|jambe|main|patte|pied|plaie|tête</token>
       </pattern>
       <message>Confusion probable entre les verbes « \1 » et <suggestion></suggestion>.</message>
       <short>PENSER_PANSER</short>
     </rule>
     <rule id="PIZZA_MARGARITA" name="pizza margarita → pizza Margherita">
       <pattern>
-        <token>pizza</token>
+        <token inflected="yes">pizza</token>
         <token regexp="yes">margh?[ae]ritas?
           <exception>Margherita</exception>
         </token>
@@ -9483,7 +9483,7 @@
     <rule id="POLE" name="pole -&gt; pôle">
       <pattern>
         <token regexp="yes">poles?</token>
-        <token min="0">de</token>
+        <token inflected="yes" min="0">de</token>
         <token regexp="yes">nord|sud|est|ouest|emploi|hotspitaliers?|santé|administratifs?|magnétiques?|purs?|géographiques?|azurs?|eurasiens?|métropolitains?|urbains?|eulériens?|Aquinetics?|Concessions?|Europe(éen)?s?|images?|compétitivités?|excellences?|territoria(l|aux])|coopérations?|éducati(fs?|ions?)|internationa(l|aux)</token>
       </pattern>
       <message>Une erreur d'orthographe semble être détectée.</message>
@@ -9491,7 +9491,7 @@
     </rule>
     <rule id="POURVOIR_POUVOIR" name="confusion pourvoir -&gt; pouvoir">
       <pattern>
-        <token>pourvoir</token>
+        <token inflected="yes">pourvoir</token>
         <token postag="V inf"></token>
       </pattern>
       <message>Vouliez-vous dire <suggestion>pouvoir</suggestion>.</message>
@@ -9517,7 +9517,7 @@
     </rule>
     <rule id="RANCARD_RANCART" name="rancard et rancart">
       <pattern>
-        <token regexp="yes">jeter|mettre</token>
+        <token regexp="yes" inflected="yes">jeter|mettre</token>
         <token>au</token>
         <token regexp="yes">r[ae]ncard|rencart</token>
       </pattern>
@@ -9526,7 +9526,7 @@
     </rule>
     <rule id="REBOUTER_REBOOTER" name="rebouter et rebooter">
       <pattern>
-        <token skip="2">rebouter</token>
+        <token inflected="yes" skip="2">rebouter</token>
         <token regexp="yes">(?:appareil|imprimante|iPhone|kernel|machine|ordi|mac|modem|ordinateur|(?:mini-?)?PC|portable|programme|routeu?r|serveur|système|tablette|téléphone|terminal)s?|(?:Amiga|Android|Debian|FreeBSD|I?OS|MS-?DOS|NetBSD|OS-?X|QNX|Linux|[klx]?ubuntu|Unix|VxWorks|Windows)[0-9-]*</token>
       </pattern>
       <message>Confusion probable entre les verbes « \1 » et <suggestion></suggestion> (anglicisme pour redémarrer).</message>
@@ -9569,7 +9569,7 @@
     </rule>
     <rule id="TROU_DE_VER" name="trou de ver">
       <pattern>
-        <token>trou</token>
+        <token inflected="yes">trou</token>
         <token>de</token>
         <token>vers</token>
       </pattern>
@@ -9587,7 +9587,7 @@
     </rule>
     <rule id="VU_VUE" name="vu, vue">
       <pattern>
-        <token regexp="yes">point|lunette|perte|perdre|angle|prise|test</token>
+        <token regexp="yes" inflected="yes">point|lunette|perte|perdre|angle|prise|test</token>
         <token>de</token>
         <token regexp="yes">vus?</token>
       </pattern>
@@ -9754,7 +9754,7 @@
     </rule>
     <rule id="MEDAILLE_FIELDS" name="médaille Field → médaille Fields">
       <pattern>
-        <token regexp="yes">médaill(e|ée?)s?</token>
+        <token regexp="yes" inflected="yes">médaill(e|ée?)s?</token>
         <token>Field</token>
       </pattern>
       <message>Voulez-vous écrire <suggestion>Fields</suggestion> s’il s’agit du prix de mathématiques ?</message>
@@ -9779,7 +9779,7 @@
     </rule>
     <rule id="RESOUDRE_OU_SOLUTIONNER" name="résoudre ou solutionner">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">solutionner</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">solutionner</token>
       </pattern>
       <message>Ce terme peut être considéré comme familier. Souhaitez-vous écrire <suggestion>résoudre</suggestion>, plus employé dans le langage formel ?</message>
       <short>RESOUDRE_OU_SOLUTIONNER</short>
@@ -9788,14 +9788,14 @@
       <pattern>
         <token regexp="yes">[mts]'</token>
         <token>en</token>
-        <token>rappeler</token>
+        <token inflected="yes">rappeler</token>
       </pattern>
       <message>Cette structure peut sembler familière dans le langage formel. <suggestion>le \3</suggestion></message>
       <short>S_EN_RAPPELER</short>
     </rule>
     <rule id="VISITER" name="confusion visiter/voir">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">visiter</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">visiter</token>
         <token min="0" max="3" postag="A"></token>
         <token postag="D.*" postag_regexp="yes"></token>
         <token regexp="yes">grand-pères?|grand-mères?|parents|pères?|mères?|frères?|soeurs?|maman|papa|sœurs?|tontons?|familles?|copains?|copines?|filles?|fils?|amie?s?|collègues?|oncles?|tantes?|petit-fils|petites?-filles?|cousins?|cousines?|nièces?|neveux?</token>
@@ -10004,7 +10004,7 @@
     </rule>
     <rule id="REP_APPRECIER" name="apprécier (style)">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">apprécier</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">apprécier</token>
       </pattern>
       <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>estimer</suggestion></message>
       <short>REP_APPRECIER</short>
@@ -10045,7 +10045,7 @@
     </rule>
     <rule id="REP_MAINTENIR" name="maintenir">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">maintenir</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">maintenir</token>
       </pattern>
       <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>conserver</suggestion></message>
       <short>REP_MAINTENIR</short>
@@ -10070,7 +10070,7 @@
     </rule>
     <rule id="REP_PRECISER" name="préciser (style)">
       <pattern>
-        <token postag="V.*" postag_regexp="yes">préciser</token>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">préciser</token>
       </pattern>
       <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>mentionner</suggestion></message>
       <short>REP_PRECISER</short>
@@ -10158,7 +10158,7 @@
     </rule>
     <rule id="DOUBLER_UNE_CLASSE" name="doubler une classe">
       <pattern>
-        <token skip="5">doubler</token>
+        <token inflected="yes" skip="5">doubler</token>
         <token>classe</token>
       </pattern>
       <message>« Doubler une classe » est un archaïsme et un régionalisme. Vous pourriez préférer le français standard. <suggestion>redoubler une année</suggestion></message>
@@ -10300,7 +10300,7 @@
         <token regexp="yes">-|—|–</token>
         <token skip="-1" postag="[DRPA].*" postag_regexp="yes"></token>
         <token>,</token>
-        <token regexp="yes" skip="5" postag="V (ind|con|sub|imp).*" postag_regexp="yes">répondre|demander|affirmer|questionner|craindre|dire|suggérer|murmurer|crier|hurler|chuchotter|expliquer|mentir|espérer|souhaiter|vouloir</token>
+        <token regexp="yes" inflected="yes" skip="5" postag="V (ind|con|sub|imp).*" postag_regexp="yes">répondre|demander|affirmer|questionner|craindre|dire|suggérer|murmurer|crier|hurler|chuchotter|expliquer|mentir|espérer|souhaiter|vouloir</token>
         <token postag="SENT_END">
           <exception regexp="yes">[^a-z].*|http.*|www.*|que|et|ou|comme|une?|les|son|ton|aux?|de|d'|du|pour|je|tu|ils?|[nv]ous|on</exception>
         </token>

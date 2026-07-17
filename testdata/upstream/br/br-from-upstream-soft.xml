@@ -189,7 +189,7 @@
     </rule>
     <rule id="CHOM_A_SAV" name="chom a sav → chom a-sav">
       <pattern>
-        <token skip="3">chom</token>
+        <token inflected="yes" skip="3">chom</token>
         <token>a</token>
         <token>sav</token>
       </pattern>
@@ -612,7 +612,7 @@
         <token>ha</token>
         <token>ket</token>
       </pattern>
-      <message>N’haller ket implijout «ket» hep verb evel e galleg.</message>
+      <message>N’haller ket implijout «ket» hep verb evel e galleg. <suggestion>\1 n’eo ket</suggestion></message>
       <short>KET</short>
     </rule>
     <rule id="MA_EZ_EUS" name="ma ez eus → ma’z eus">
@@ -654,7 +654,7 @@
         <token postag="N f.*" postag_regexp="yes"></token>
         <token>amezegez</token>
       </pattern>
-      <message>N’eus stumm gwregel ebet d’an anv-gwan e brezhoneg.</message>
+      <message>N’eus stumm gwregel ebet d’an anv-gwan e brezhoneg. <suggestion>amezek</suggestion></message>
       <short>AMEZEGEZ</short>
     </rule>
     <rule id="AN_NIVER_AR" name="an niver ar → an niver a">
@@ -700,7 +700,7 @@
     </rule>
     <rule id="DIWALL" name="ober diwall → diwall">
       <pattern>
-        <token>ober</token>
+        <token inflected="yes">ober</token>
         <token>diwall</token>
       </pattern>
       <message>Ne vez ket implijet ar ger «\2» gant ar verb «\1».</message>
@@ -720,7 +720,7 @@
         <token regexp="yes">[mvd]a|e|he|hec’h|ho[nrl]?|o</token>
         <token postag="N . p.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Gallekadur: e brezhoneg e lakaer «\1» etre ar ger-perc’hennañ «\2» hag an dra berc’hennet «\3».</message>
+      <message>Gallekadur: e brezhoneg e lakaer «\1» etre ar ger-perc’hennañ «\2» hag an dra berc’hennet «\3». <suggestion>\2 holl</suggestion></message>
       <short>HOLL_MA</short>
     </rule>
     <rule id="KOZHOCH" name="kozhoc’h → koshoc’h">
@@ -774,7 +774,7 @@
     </rule>
     <rule id="PENLIZH_MIZ" name="Pennlizherennoù evit ar mizioù">
       <pattern>
-        <token>miz</token>
+        <token inflected="yes">miz</token>
         <token regexp="yes">genver|c’hwevrer|meurzh|ebrel|mae|even|mezheven|gouere|gouhere|eost|gwengolo|here|du|kerdu|kerzu</token>
       </pattern>
       <message>Lakaet e vez ur bennlizherenn da anvioù ar mizioù. (CHALM A17)</message>
@@ -897,7 +897,7 @@
         <token>eus</token>
         <token regexp="yes">a[rln]</token>
       </pattern>
-      <message>«ez eus» a vez implijet gant ur rener amstrizh.</message>
+      <message>«ez eus» a vez implijet gant ur rener amstrizh. <suggestion>emañ</suggestion></message>
       <short>EZ_EUS_AR</short>
     </rule>
     <rule id="N_EO_KET_PPA_UR" name="N’eo ket + vppa + ur → N’eus ket + vppa + ur">
@@ -946,7 +946,7 @@
       <pattern>
         <token postag="[CD].*|SENT_START" postag_regexp="yes"></token>
         <token>gwir</token>
-        <token regexp="yes" postag="N.*" postag_regexp="yes">[ktpgdbm].*
+        <token regexp="yes" inflected="yes" postag="N.*" postag_regexp="yes">[ktpgdbm].*
           <exception regexp="yes">[ktpgdbm].*</exception>
         </token>
       </pattern>
@@ -966,7 +966,7 @@
     <rule id="AR_TSAR" name="ar + tsar, tsunami, etc.">
       <pattern>
         <token regexp="yes">[au]l</token>
-        <token regexp="yes">tsunami|tsar|jazz|jean|joniged</token>
+        <token regexp="yes" inflected="yes">tsunami|tsar|jazz|jean|joniged</token>
       </pattern>
       <message>Ar ger-mell <suggestion></suggestion> pe <suggestion></suggestion> a vez implijet gant ar ger estren «\2». (CHALM L3)</message>
       <short>AR_TSAR</short>
@@ -987,7 +987,7 @@
         <token>evit</token>
         <token regexp="yes">dilun|dimeurzh|dimerc’her|diriaou|digwener|disadorn|disul|w?arc’hoazh|pegoulz|pedavare|pavare|peur</token>
       </pattern>
-      <message>Ne vez ket implijet an araogenn «evit» a-raok ar ger «\2».</message>
+      <message>Ne vez ket implijet an araogenn «evit» a-raok ar ger «\2». <suggestion>a-benn</suggestion></message>
       <short>EVIT_DILUN</short>
     </rule>
     <rule id="LEVR_EUS" name="levr eus → levr gant">
@@ -1059,7 +1059,7 @@
         <token>e</token>
         <token postag="V.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Rannig-verb ebet goude «\1».</message>
+      <message>Rannig-verb ebet goude «\1». <suggestion>\1 \3</suggestion></message>
       <short>PA_E</short>
     </rule>
   </category>
