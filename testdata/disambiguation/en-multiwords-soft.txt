@@ -345,3 +345,6 @@ Steel Belt RegionNNP
 Frost Belt RegionNNP
 Central Valley RegionNNP
 Hudson Valley RegionNNP
+Imperial Valley RegionNNP
+Ohio Valley RegionNNP
+Death Valley RegionNNP

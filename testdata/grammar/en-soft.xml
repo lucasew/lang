@@ -7477,6 +7477,76 @@
       <message>Did you mean "detrimental"?</message>
       <short>detremental</short>
     </rule>
+    <rule id="EN_SOFT_CONTIGUOUS_MISS2" name="contiguos soft">
+      <pattern>
+        <token>contiguos</token>
+      </pattern>
+      <message>Did you mean "contiguous"?</message>
+      <short>contiguos</short>
+    </rule>
+    <rule id="EN_SOFT_DEVELOPMENT_MISS" name="develepment soft">
+      <pattern>
+        <token>develepment</token>
+      </pattern>
+      <message>Did you mean "development"?</message>
+      <short>develepment</short>
+    </rule>
+    <rule id="EN_SOFT_DEVELOP_MISS2" name="develope soft">
+      <pattern>
+        <token>develope</token>
+      </pattern>
+      <message>Did you mean "develop"?</message>
+      <short>develope</short>
+    </rule>
+    <rule id="EN_SOFT_DIMENSIONS_MISS" name="dimmensions soft">
+      <pattern>
+        <token>dimmensions</token>
+      </pattern>
+      <message>Did you mean "dimensions"?</message>
+      <short>dimmensions</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPEARED_MISS" name="disapeared soft">
+      <pattern>
+        <token>disapeared</token>
+      </pattern>
+      <message>Did you mean "disappeared"?</message>
+      <short>disapeared</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPOINTING_MISS" name="disapointing soft">
+      <pattern>
+        <token>disapointing</token>
+      </pattern>
+      <message>Did you mean "disappointing"?</message>
+      <short>disapointing</short>
+    </rule>
+    <rule id="EN_SOFT_DISASTROUS_MISS" name="disastorous soft">
+      <pattern>
+        <token>disastorous</token>
+      </pattern>
+      <message>Did you mean "disastrous"?</message>
+      <short>disastorous</short>
+    </rule>
+    <rule id="EN_SOFT_DYSFUNCTIONAL_MISS" name="disfunctional soft">
+      <pattern>
+        <token>disfunctional</token>
+      </pattern>
+      <message>Did you mean "dysfunctional"?</message>
+      <short>disfunctional</short>
+    </rule>
+    <rule id="EN_SOFT_DIVERSITY_MISS" name="diversety soft">
+      <pattern>
+        <token>diversety</token>
+      </pattern>
+      <message>Did you mean "diversity"?</message>
+      <short>diversety</short>
+    </rule>
+    <rule id="EN_SOFT_DRAMATIC_MISS" name="dramtic soft">
+      <pattern>
+        <token>dramtic</token>
+      </pattern>
+      <message>Did you mean "dramatic"?</message>
+      <short>dramtic</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

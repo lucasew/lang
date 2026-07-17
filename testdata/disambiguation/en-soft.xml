@@ -3003,4 +3003,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ECS" name="immunize ecs">
+    <pattern>
+      <token>ecs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ECS_CAPS" name="immunize ECS">
+    <pattern>
+      <token>ECS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFRONT" name="immunize cloudfront">
+    <pattern>
+      <token>cloudfront</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDFRONT_CAPS" name="immunize CloudFront">
+    <pattern>
+      <token>CloudFront</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDWATCH" name="immunize cloudwatch">
+    <pattern>
+      <token>cloudwatch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CLOUDWATCH_CAPS" name="immunize CloudWatch">
+    <pattern>
+      <token>CloudWatch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -1901,5 +1901,30 @@
       <message>Jargon; name the dont-call-us inversion instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DRY_PRINCIPLE" name="dry principle soft picky">
+      <pattern>
+        <token>dry</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the avoid-duplication rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KISS_PRINCIPLE" name="kiss principle soft picky">
+      <pattern>
+        <token>kiss</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the keep-it-simple rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BOY_SCOUT_RULE" name="boy scout rule soft picky">
+      <pattern>
+        <token>boy</token>
+        <token>scout</token>
+        <token>rule</token>
+      </pattern>
+      <message>Jargon; name leave-the-code-cleaner instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
