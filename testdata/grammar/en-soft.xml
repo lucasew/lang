@@ -13637,6 +13637,76 @@
       <message>Did you mean "exportinterval"?</message>
       <short>exportintervall</short>
     </rule>
+    <rule id="EN_SOFT_RESOURCEDETECTOR_MISS" name="resourcedetectorr soft">
+      <pattern>
+        <token>resourcedetectorr</token>
+      </pattern>
+      <message>Did you mean "resourcedetector"?</message>
+      <short>resourcedetectorr</short>
+    </rule>
+    <rule id="EN_SOFT_SPANPROCESSOR_MISS" name="spanprocessorr soft">
+      <pattern>
+        <token>spanprocessorr</token>
+      </pattern>
+      <message>Did you mean "spanprocessor"?</message>
+      <short>spanprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_BATCHSPANPROCESSOR_MISS" name="batchspanprocessorr soft">
+      <pattern>
+        <token>batchspanprocessorr</token>
+      </pattern>
+      <message>Did you mean "batchspanprocessor"?</message>
+      <short>batchspanprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_SIMPLESPANPROCESSOR_MISS" name="simplespanprocessorr soft">
+      <pattern>
+        <token>simplespanprocessorr</token>
+      </pattern>
+      <message>Did you mean "simplespanprocessor"?</message>
+      <short>simplespanprocessorr</short>
+    </rule>
+    <rule id="EN_SOFT_METRICREADER_MISS" name="metricreaderr soft">
+      <pattern>
+        <token>metricreaderr</token>
+      </pattern>
+      <message>Did you mean "metricreader"?</message>
+      <short>metricreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_PERIODICREADER_MISS" name="periodicreaderr soft">
+      <pattern>
+        <token>periodicreaderr</token>
+      </pattern>
+      <message>Did you mean "periodicreader"?</message>
+      <short>periodicreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_MANUALREADER_MISS" name="manualreaderr soft">
+      <pattern>
+        <token>manualreaderr</token>
+      </pattern>
+      <message>Did you mean "manualreader"?</message>
+      <short>manualreaderr</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTATIONSCOPE_MISS" name="instrumentationscopee soft">
+      <pattern>
+        <token>instrumentationscopee</token>
+      </pattern>
+      <message>Did you mean "instrumentationscope"?</message>
+      <short>instrumentationscopee</short>
+    </rule>
+    <rule id="EN_SOFT_SERVICEINSTANCEID_MISS" name="serviceinstanceidd soft">
+      <pattern>
+        <token>serviceinstanceidd</token>
+      </pattern>
+      <message>Did you mean "serviceinstanceid"?</message>
+      <short>serviceinstanceidd</short>
+    </rule>
+    <rule id="EN_SOFT_FORCEFLUSH_MISS" name="forceflushh soft">
+      <pattern>
+        <token>forceflushh</token>
+      </pattern>
+      <message>Did you mean "forceflush"?</message>
+      <short>forceflushh</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

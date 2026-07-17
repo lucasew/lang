@@ -3963,5 +3963,30 @@
       <message>Jargon; name total new annual recurring revenue before churn instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RENEWAL_ARR" name="renewal arr soft picky">
+      <pattern>
+        <token>renewal</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from contract renewals instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFERRED_ARR" name="deferred arr soft picky">
+      <pattern>
+        <token>deferred</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue recognized in a later period instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUN_RATE_ARR" name="run rate arr soft picky">
+      <pattern>
+        <token>run</token>
+        <token>rate</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annualized run-rate of recurring revenue instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

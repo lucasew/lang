@@ -6183,4 +6183,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GOOBER" name="immunize goober">
+    <pattern>
+      <token>goober</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GOOBER_CAPS" name="immunize Goober">
+    <pattern>
+      <token>Goober</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TAMAGUI" name="immunize tamagui">
+    <pattern>
+      <token>tamagui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TAMAGUI_CAPS" name="immunize Tamagui">
+    <pattern>
+      <token>Tamagui</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATIVEWIND" name="immunize nativewind">
+    <pattern>
+      <token>nativewind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NATIVEWIND_CAPS" name="immunize NativeWind">
+    <pattern>
+      <token>NativeWind</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

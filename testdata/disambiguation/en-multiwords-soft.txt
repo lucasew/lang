@@ -609,3 +609,6 @@ Shale Mesa RegionNNP
 Chalk Mesa RegionNNP
 Limestone Mesa RegionNNP
 Sandstone Mesa RegionNNP
+Dolomite Mesa RegionNNP
+Marble Mesa RegionNNP
+Slate Mesa RegionNNP
