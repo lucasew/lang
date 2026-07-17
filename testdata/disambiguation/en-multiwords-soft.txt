@@ -192,3 +192,6 @@ in short order	RB
 Portland Maine	NNP
 Anchorage Alaska	NNP
 more often than not	RB
+Honolulu Hawaii	NNP
+Boise Idaho	NNP
+in no time	RB

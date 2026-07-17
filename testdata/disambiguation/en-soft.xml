@@ -1167,4 +1167,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TURBO" name="immunize turbo">
+    <pattern>
+      <token>turbo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBO_CAPS" name="immunize Turbo">
+    <pattern>
+      <token>Turbo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WASM" name="immunize wasm">
+    <pattern>
+      <token>wasm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WASM_CAPS" name="immunize Wasm">
+    <pattern>
+      <token>Wasm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIX" name="immunize nix">
+    <pattern>
+      <token>nix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NIX_CAPS" name="immunize Nix">
+    <pattern>
+      <token>Nix</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

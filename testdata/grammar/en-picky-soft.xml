@@ -621,5 +621,33 @@
       <message>Cliché; consider "shared risk" or name the stake.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ELEPHANT_IN_THE_ROOM" name="elephant in the room soft picky">
+      <pattern>
+        <token>elephant</token>
+        <token>in</token>
+        <token>the</token>
+        <token>room</token>
+      </pattern>
+      <message>Cliché; name the awkward issue directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BALLPARK_FIGURE" name="ballpark figure soft picky">
+      <pattern>
+        <token>ballpark</token>
+        <token>figure</token>
+      </pattern>
+      <message>Jargon; consider "rough estimate" or give a range.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ON_THE_SAME_PAGE" name="on the same page soft picky">
+      <pattern>
+        <token>on</token>
+        <token>the</token>
+        <token>same</token>
+        <token>page</token>
+      </pattern>
+      <message>Cliché; consider "aligned" or name the shared goal.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -3907,6 +3907,76 @@
       <message>Did you mean "tendency"?</message>
       <short>tendancy</short>
     </rule>
+    <rule id="EN_SOFT_TOMATOES_MISS" name="tomatos soft">
+      <pattern>
+        <token>tomatos</token>
+      </pattern>
+      <message>Did you mean "tomatoes"?</message>
+      <short>tomatos</short>
+    </rule>
+    <rule id="EN_SOFT_USAGE_MISS" name="useage soft">
+      <pattern>
+        <token>useage</token>
+      </pattern>
+      <message>Did you mean "usage"?</message>
+      <short>useage</short>
+    </rule>
+    <rule id="EN_SOFT_WITHHOLD_MISS" name="withold soft">
+      <pattern>
+        <token>withold</token>
+      </pattern>
+      <message>Did you mean "withhold"?</message>
+      <short>withold</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUOUS_MISS2" name="contious soft">
+      <pattern>
+        <token>contious</token>
+      </pattern>
+      <message>Did you mean "continuous"?</message>
+      <short>contious</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVABLE_MISS" name="acheiveable soft">
+      <pattern>
+        <token>acheiveable</token>
+      </pattern>
+      <message>Did you mean "achievable"?</message>
+      <short>acheiveable</short>
+    </rule>
+    <rule id="EN_SOFT_SPEECHLESS_MISS" name="speachless soft">
+      <pattern>
+        <token>speachless</token>
+      </pattern>
+      <message>Did you mean "speechless"?</message>
+      <short>speachless</short>
+    </rule>
+    <rule id="EN_SOFT_SEPARATES_MISS" name="seperates soft">
+      <pattern>
+        <token>seperates</token>
+      </pattern>
+      <message>Did you mean "separates"?</message>
+      <short>seperates</short>
+    </rule>
+    <rule id="EN_SOFT_LENGTHY_MISS" name="lenghty soft">
+      <pattern>
+        <token>lenghty</token>
+      </pattern>
+      <message>Did you mean "lengthy"?</message>
+      <short>lenghty</short>
+    </rule>
+    <rule id="EN_SOFT_MANEUVER_MISS" name="manuever soft">
+      <pattern>
+        <token>manuever</token>
+      </pattern>
+      <message>Did you mean "maneuver"?</message>
+      <short>manuever</short>
+    </rule>
+    <rule id="EN_SOFT_NECESSARY_MISS" name="neccesary soft">
+      <pattern>
+        <token>neccesary</token>
+      </pattern>
+      <message>Did you mean "necessary"?</message>
+      <short>neccesary</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
