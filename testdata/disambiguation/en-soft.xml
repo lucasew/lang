@@ -5955,4 +5955,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_GATSBY" name="immunize gatsby">
+    <pattern>
+      <token>gatsby</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATSBY_CAPS" name="immunize Gatsby">
+    <pattern>
+      <token>Gatsby</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLIDSTART" name="immunize solidstart">
+    <pattern>
+      <token>solidstart</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SOLIDSTART_CAPS" name="immunize SolidStart">
+    <pattern>
+      <token>SolidStart</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBOPACK" name="immunize turbopack">
+    <pattern>
+      <token>turbopack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURBOPACK_CAPS" name="immunize Turbopack">
+    <pattern>
+      <token>Turbopack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

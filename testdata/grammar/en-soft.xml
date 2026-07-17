@@ -13217,6 +13217,76 @@
       <message>Did you mean "tokenbucket"?</message>
       <short>tokenbuket</short>
     </rule>
+    <rule id="EN_SOFT_LEAKYBUCKET_MISS" name="leakybuket soft">
+      <pattern>
+        <token>leakybuket</token>
+      </pattern>
+      <message>Did you mean "leakybucket"?</message>
+      <short>leakybuket</short>
+    </rule>
+    <rule id="EN_SOFT_EXPONENTIALBACKOFF_MISS" name="exponetialbackoff soft">
+      <pattern>
+        <token>exponetialbackoff</token>
+      </pattern>
+      <message>Did you mean "exponentialbackoff"?</message>
+      <short>exponetialbackoff</short>
+    </rule>
+    <rule id="EN_SOFT_FAILFAST_MISS" name="failfastt soft">
+      <pattern>
+        <token>failfastt</token>
+      </pattern>
+      <message>Did you mean "failfast"?</message>
+      <short>failfastt</short>
+    </rule>
+    <rule id="EN_SOFT_FAILSOFT_MISS" name="failsoftt soft">
+      <pattern>
+        <token>failsoftt</token>
+      </pattern>
+      <message>Did you mean "failsoft"?</message>
+      <short>failsoftt</short>
+    </rule>
+    <rule id="EN_SOFT_GRACEFULDEGRADATION_MISS" name="gracefuldegradaton soft">
+      <pattern>
+        <token>gracefuldegradaton</token>
+      </pattern>
+      <message>Did you mean "gracefuldegradation"?</message>
+      <short>gracefuldegradaton</short>
+    </rule>
+    <rule id="EN_SOFT_JITTEREDRETRY_MISS" name="jitteredrettry soft">
+      <pattern>
+        <token>jitteredrettry</token>
+      </pattern>
+      <message>Did you mean "jitteredretry"?</message>
+      <short>jitteredrettry</short>
+    </rule>
+    <rule id="EN_SOFT_FULLJITTER_MISS" name="fulljitterr soft">
+      <pattern>
+        <token>fulljitterr</token>
+      </pattern>
+      <message>Did you mean "fulljitter"?</message>
+      <short>fulljitterr</short>
+    </rule>
+    <rule id="EN_SOFT_HALFOPENSTATE_MISS" name="halfopenstatee soft">
+      <pattern>
+        <token>halfopenstatee</token>
+      </pattern>
+      <message>Did you mean "halfopenstate"?</message>
+      <short>halfopenstatee</short>
+    </rule>
+    <rule id="EN_SOFT_OPENSTATE_MISS" name="openstatee soft">
+      <pattern>
+        <token>openstatee</token>
+      </pattern>
+      <message>Did you mean "openstate"?</message>
+      <short>openstatee</short>
+    </rule>
+    <rule id="EN_SOFT_CLOSEDSTATE_MISS" name="closedstatee soft">
+      <pattern>
+        <token>closedstatee</token>
+      </pattern>
+      <message>Did you mean "closedstate"?</message>
+      <short>closedstatee</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

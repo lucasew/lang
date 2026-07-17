@@ -591,3 +591,6 @@ Syenite Peak RegionNNP
 Pegmatite Peak RegionNNP
 Feldspar Peak RegionNNP
 Quartz Peak RegionNNP
+Chalk Peak RegionNNP
+Flint Peak RegionNNP
+Clay Peak RegionNNP

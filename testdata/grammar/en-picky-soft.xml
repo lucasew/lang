@@ -3822,5 +3822,29 @@
       <message>Jargon; name prepaid revenue not yet recognized instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_PIPELINE_COVERAGE" name="pipeline coverage soft picky">
+      <pattern>
+        <token>pipeline</token>
+        <token>coverage</token>
+      </pattern>
+      <message>Jargon; name open-opportunity value over quota instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_WIN_RATE" name="win rate soft picky">
+      <pattern>
+        <token>win</token>
+        <token>rate</token>
+      </pattern>
+      <message>Jargon; name share of closed-won deals among closed deals instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFERRED_BOOKINGS" name="deferred bookings soft picky">
+      <pattern>
+        <token>deferred</token>
+        <token>bookings</token>
+      </pattern>
+      <message>Jargon; name contracted value not yet billable instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
