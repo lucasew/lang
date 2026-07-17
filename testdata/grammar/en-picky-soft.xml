@@ -1777,5 +1777,29 @@
       <message>Jargon; name the shared model and ownership rules instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CLEAN_ARCHITECTURE" name="clean architecture soft picky">
+      <pattern>
+        <token>clean</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name the dependency-rule layering instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ONION_ARCHITECTURE" name="onion architecture soft picky">
+      <pattern>
+        <token>onion</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name the concentric domain layering instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SCREAMING_ARCHITECTURE" name="screaming architecture soft picky">
+      <pattern>
+        <token>screaming</token>
+        <token>architecture</token>
+      </pattern>
+      <message>Jargon; name package structure that reveals the domain.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

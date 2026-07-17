@@ -7127,6 +7127,76 @@
       <message>Did you mean "absence"?</message>
       <short>absensee</short>
     </rule>
+    <rule id="EN_SOFT_ACCOMMODATED_MISS" name="accomodated soft">
+      <pattern>
+        <token>accomodated</token>
+      </pattern>
+      <message>Did you mean "accommodated"?</message>
+      <short>accomodated</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMMODATES_MISS" name="accomodates soft">
+      <pattern>
+        <token>accomodates</token>
+      </pattern>
+      <message>Did you mean "accommodates"?</message>
+      <short>accomodates</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMMODATIONS_MISS" name="accomodations soft">
+      <pattern>
+        <token>accomodations</token>
+      </pattern>
+      <message>Did you mean "accommodations"?</message>
+      <short>accomodations</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVEDS_MISS" name="acheiveds soft">
+      <pattern>
+        <token>acheiveds</token>
+      </pattern>
+      <message>Did you mean "achieved"?</message>
+      <short>acheiveds</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVEMENTS_MISS" name="acheivments soft">
+      <pattern>
+        <token>acheivments</token>
+      </pattern>
+      <message>Did you mean "achievements"?</message>
+      <short>acheivments</short>
+    </rule>
+    <rule id="EN_SOFT_ACKNOWLEDGEMENTS_MISS" name="acknowlegements soft">
+      <pattern>
+        <token>acknowlegements</token>
+      </pattern>
+      <message>Did you mean "acknowledgements"?</message>
+      <short>acknowlegements</short>
+    </rule>
+    <rule id="EN_SOFT_AGGRESSIVENESS_MISS" name="agressiveness soft">
+      <pattern>
+        <token>agressiveness</token>
+      </pattern>
+      <message>Did you mean "aggressiveness"?</message>
+      <short>agressiveness</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUITTED_MISS" name="aquitted soft">
+      <pattern>
+        <token>aquitted</token>
+      </pattern>
+      <message>Did you mean "acquitted"?</message>
+      <short>aquitted</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABILITY_MISS" name="availibility soft">
+      <pattern>
+        <token>availibility</token>
+      </pattern>
+      <message>Did you mean "availability"?</message>
+      <short>availibility</short>
+    </rule>
+    <rule id="EN_SOFT_BASICALLY_MISS2" name="basicaly soft">
+      <pattern>
+        <token>basicaly</token>
+      </pattern>
+      <message>Did you mean "basically"?</message>
+      <short>basicaly</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

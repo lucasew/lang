@@ -2823,4 +2823,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_AMI" name="immunize ami">
+    <pattern>
+      <token>ami</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_AMI_CAPS" name="immunize AMI">
+    <pattern>
+      <token>AMI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EBS" name="immunize ebs">
+    <pattern>
+      <token>ebs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EBS_CAPS" name="immunize EBS">
+    <pattern>
+      <token>EBS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNAPSHOT" name="immunize snapshot">
+    <pattern>
+      <token>snapshot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNAPSHOT_CAPS" name="immunize Snapshot">
+    <pattern>
+      <token>Snapshot</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

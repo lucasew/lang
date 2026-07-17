@@ -330,3 +330,6 @@ Corn Belt Region	NNP
 Snow Belt Region	NNP
 Cotton Belt Region	NNP
 Black Belt Region	NNP
+Fruit Belt Region	NNP
+Grain Belt Region	NNP
+Wheat Belt Region	NNP
