@@ -127,7 +127,7 @@ func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []R
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
-	return LocalMatchesToRemote(text, locals, ctxSize)
+	return LocalMatchesToRemote(text, locals, ctxSize, lang)
 }
 
 // CheckAnnotatedWithOptions checks annotated markup text; match offsets are in original markup space.
@@ -149,7 +149,7 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	if t != nil && t.ContextSize > 0 {
 		ctxSize = t.ContextSize
 	}
-	return LocalMatchesToRemote(orig, locals, ctxSize)
+	return LocalMatchesToRemote(orig, locals, ctxSize, lang)
 }
 
 func filterLocalsByIgnoreWords(text string, ms []languagetool.LocalMatch, ignore []string) []languagetool.LocalMatch {
@@ -289,7 +289,8 @@ func (v *V2TextChecker) CheckAndBuildJSONWithOptions(text, langCode, langName st
 }
 
 // LocalMatchesToRemote maps cycle-free LocalMatch to API RemoteRuleMatch with context.
-func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contextSize int) []RemoteRuleMatch {
+// langCode drives SoftRuleURL (community rule page language).
+func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contextSize int, langCode string) []RemoteRuleMatch {
 	if len(matches) == 0 {
 		return nil
 	}
@@ -357,7 +358,7 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 			rm.ShortMessage = short
 		}
 		if rm.URL == "" {
-			rm.URL = languagetool.SoftRuleURL(ruleID, "")
+			rm.URL = languagetool.SoftRuleURL(ruleID, langCode)
 		}
 		rm.Replacements = append([]string(nil), m.Suggestions...)
 		out = append(out, *rm)

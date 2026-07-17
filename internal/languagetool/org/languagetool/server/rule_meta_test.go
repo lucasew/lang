@@ -120,4 +120,16 @@ func TestApiV2_MatchRuleURL(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Contains(t, r.Body, "community.languagetool.org/rule/show/EN_A_VS_AN")
+	require.Contains(t, r.Body, "lang=en")
+}
+
+func TestApiV2_MatchRuleURL_DE(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "de",
+		"text":     "Ich denke das es so ist.",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r.Body, "DE_SOFT_DAS_DASS")
+	require.Contains(t, r.Body, "community.languagetool.org/rule/show/DE_SOFT_DAS_DASS?lang=de")
 }
