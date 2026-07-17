@@ -2859,4 +2859,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_S3" name="immunize s3">
+    <pattern>
+      <token>s3</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_S3_CAPS" name="immunize S3">
+    <pattern>
+      <token>S3</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDS" name="immunize rds">
+    <pattern>
+      <token>rds</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RDS_CAPS" name="immunize RDS">
+    <pattern>
+      <token>RDS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLACIER" name="immunize glacier">
+    <pattern>
+      <token>glacier</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GLACIER_CAPS" name="immunize Glacier">
+    <pattern>
+      <token>Glacier</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

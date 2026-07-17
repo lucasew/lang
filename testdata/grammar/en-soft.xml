@@ -7197,6 +7197,76 @@
       <message>Did you mean "basically"?</message>
       <short>basicaly</short>
     </rule>
+    <rule id="EN_SOFT_BUSINESS_MISS" name="bussiness soft">
+      <pattern>
+        <token>bussiness</token>
+      </pattern>
+      <message>Did you mean "business"?</message>
+      <short>bussiness</short>
+    </rule>
+    <rule id="EN_SOFT_BUSINESSES_MISS2" name="bussinesses soft">
+      <pattern>
+        <token>bussinesses</token>
+      </pattern>
+      <message>Did you mean "businesses"?</message>
+      <short>bussinesses</short>
+    </rule>
+    <rule id="EN_SOFT_CALENDARS_MISS" name="calanders soft">
+      <pattern>
+        <token>calanders</token>
+      </pattern>
+      <message>Did you mean "calendars"?</message>
+      <short>calanders</short>
+    </rule>
+    <rule id="EN_SOFT_CATEGORIZE_MISS" name="catagorize soft">
+      <pattern>
+        <token>catagorize</token>
+      </pattern>
+      <message>Did you mean "categorize"?</message>
+      <short>catagorize</short>
+    </rule>
+    <rule id="EN_SOFT_CHALLENGES_MISS" name="challanges soft">
+      <pattern>
+        <token>challanges</token>
+      </pattern>
+      <message>Did you mean "challenges"?</message>
+      <short>challanges</short>
+    </rule>
+    <rule id="EN_SOFT_CHARACTERS_MISS" name="charachters soft">
+      <pattern>
+        <token>charachters</token>
+      </pattern>
+      <message>Did you mean "characters"?</message>
+      <short>charachters</short>
+    </rule>
+    <rule id="EN_SOFT_CHIEFS_MISS" name="cheifs soft">
+      <pattern>
+        <token>cheifs</token>
+      </pattern>
+      <message>Did you mean "chiefs"?</message>
+      <short>cheifs</short>
+    </rule>
+    <rule id="EN_SOFT_COLLABORATIVE_MISS" name="collaberative soft">
+      <pattern>
+        <token>collaberative</token>
+      </pattern>
+      <message>Did you mean "collaborative"?</message>
+      <short>collaberative</short>
+    </rule>
+    <rule id="EN_SOFT_COMMISSIONS_MISS" name="comissions soft">
+      <pattern>
+        <token>comissions</token>
+      </pattern>
+      <message>Did you mean "commissions"?</message>
+      <short>comissions</short>
+    </rule>
+    <rule id="EN_SOFT_CONTROLLERS_MISS" name="contollers soft">
+      <pattern>
+        <token>contollers</token>
+      </pattern>
+      <message>Did you mean "controllers"?</message>
+      <short>contollers</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

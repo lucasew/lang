@@ -10011,6 +10011,92 @@ func TestGolden_ImmunizeAmiEbsSnapshot(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave89(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Start a bussiness carefully.", "EN_SOFT_BUSINESS_MISS", "business"},
+		{"Help small bussinesses carefully.", "EN_SOFT_BUSINESSES_MISS2", "businesses"},
+		{"Check the calanders carefully.", "EN_SOFT_CALENDARS_MISS", "calendars"},
+		{"Please catagorize carefully.", "EN_SOFT_CATEGORIZE_MISS", "categorize"},
+		{"Face hard challanges carefully.", "EN_SOFT_CHALLENGES_MISS", "challenges"},
+		{"Count the charachters carefully.", "EN_SOFT_CHARACTERS_MISS", "characters"},
+		{"Meet the cheifs carefully.", "EN_SOFT_CHIEFS_MISS", "chiefs"},
+		{"Prefer collaberative work carefully.", "EN_SOFT_COLLABORATIVE_MISS", "collaborative"},
+		{"Pay the comissions carefully.", "EN_SOFT_COMMISSIONS_MISS", "commissions"},
+		{"Configure contollers carefully.", "EN_SOFT_CONTROLLERS_MISS", "controllers"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyENJargonWave65(t *testing.T) {
+	cases := []struct {
+		text, rule string
+	}{
+		{"Apply dependency inversion carefully.", "EN_SOFT_PICKY_DEPENDENCY_INVERSION"},
+		{"Apply interface segregation carefully.", "EN_SOFT_PICKY_INTERFACE_SEGREGATION"},
+		{"Apply single responsibility carefully.", "EN_SOFT_PICKY_SINGLE_RESPONSIBILITY"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ImmunizeS3RdsGlacier(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft disambig missing")
+	}
+	for _, text := range []string{
+		"Store in s3 carefully.",
+		"Store in S3 carefully.",
+		"Query rds carefully.",
+		"Query RDS carefully.",
+		"Archive to glacier carefully.",
+		"Archive to Glacier carefully.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer

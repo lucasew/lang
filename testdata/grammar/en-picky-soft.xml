@@ -1801,5 +1801,29 @@
       <message>Jargon; name package structure that reveals the domain.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DEPENDENCY_INVERSION" name="dependency inversion soft picky">
+      <pattern>
+        <token>dependency</token>
+        <token>inversion</token>
+      </pattern>
+      <message>Jargon; name the abstraction-depends-on rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_INTERFACE_SEGREGATION" name="interface segregation soft picky">
+      <pattern>
+        <token>interface</token>
+        <token>segregation</token>
+      </pattern>
+      <message>Jargon; name the narrow interface split instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SINGLE_RESPONSIBILITY" name="single responsibility soft picky">
+      <pattern>
+        <token>single</token>
+        <token>responsibility</token>
+      </pattern>
+      <message>Jargon; name the one-reason-to-change rule instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -333,3 +333,6 @@ Black Belt Region	NNP
 Fruit Belt Region	NNP
 Grain Belt Region	NNP
 Wheat Belt Region	NNP
+Dairy Belt Region	NNP
+Tobacco Belt Region	NNP
+Rice Belt Region	NNP
