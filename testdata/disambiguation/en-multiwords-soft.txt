@@ -243,3 +243,6 @@ hand in hand	RB
 Charleston South Carolina	NNP
 Columbia Missouri	NNP
 face to face	RB
+Springfield Illinois	NNP
+Madison Wisconsin	NNP
+neck and neck	RB

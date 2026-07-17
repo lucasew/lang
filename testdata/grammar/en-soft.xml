@@ -5097,6 +5097,76 @@
       <message>Did you mean "corporate"?</message>
       <short>corperate</short>
     </rule>
+    <rule id="EN_SOFT_CONTROLLED_MISS" name="contolled soft">
+      <pattern>
+        <token>contolled</token>
+      </pattern>
+      <message>Did you mean "controlled"?</message>
+      <short>contolled</short>
+    </rule>
+    <rule id="EN_SOFT_CONTROLLED_MISS2" name="controled soft">
+      <pattern>
+        <token>controled</token>
+      </pattern>
+      <message>Did you mean "controlled"?</message>
+      <short>controled</short>
+    </rule>
+    <rule id="EN_SOFT_CONVENIENCE_MISS" name="convinience soft">
+      <pattern>
+        <token>convinience</token>
+      </pattern>
+      <message>Did you mean "convenience"?</message>
+      <short>convinience</short>
+    </rule>
+    <rule id="EN_SOFT_CORRECTLY_MISS" name="correclty soft">
+      <pattern>
+        <token>correclty</token>
+      </pattern>
+      <message>Did you mean "correctly"?</message>
+      <short>correclty</short>
+    </rule>
+    <rule id="EN_SOFT_CORRUPTION_MISS" name="coruption soft">
+      <pattern>
+        <token>coruption</token>
+      </pattern>
+      <message>Did you mean "corruption"?</message>
+      <short>coruption</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUMER_MISS" name="cosumer soft">
+      <pattern>
+        <token>cosumer</token>
+      </pattern>
+      <message>Did you mean "consumer"?</message>
+      <short>cosumer</short>
+    </rule>
+    <rule id="EN_SOFT_CREATOR_MISS" name="creater soft">
+      <pattern>
+        <token>creater</token>
+      </pattern>
+      <message>Did you mean "creator"?</message>
+      <short>creater</short>
+    </rule>
+    <rule id="EN_SOFT_DELIVER_MISS" name="deliever soft">
+      <pattern>
+        <token>deliever</token>
+      </pattern>
+      <message>Did you mean "deliver"?</message>
+      <short>deliever</short>
+    </rule>
+    <rule id="EN_SOFT_DELIVERY_MISS" name="delievery soft">
+      <pattern>
+        <token>delievery</token>
+      </pattern>
+      <message>Did you mean "delivery"?</message>
+      <short>delievery</short>
+    </rule>
+    <rule id="EN_SOFT_DETAILS_MISS" name="detials soft">
+      <pattern>
+        <token>detials</token>
+      </pattern>
+      <message>Did you mean "details"?</message>
+      <short>detials</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

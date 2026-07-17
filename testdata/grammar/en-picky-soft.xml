@@ -1055,5 +1055,29 @@
       <message>Vague slogan; name the outcome metrics instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_OWNERSHIP_MINDSET" name="ownership mindset soft picky">
+      <pattern>
+        <token>ownership</token>
+        <token>mindset</token>
+      </pattern>
+      <message>Jargon; name who owns the work and how.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_CENTRIC" name="customer centric soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>centric</token>
+      </pattern>
+      <message>Jargon; name the customer outcome instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ACT_SMALL" name="act small soft picky">
+      <pattern>
+        <token>act</token>
+        <token>small</token>
+      </pattern>
+      <message>Slogan; name the incremental action instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

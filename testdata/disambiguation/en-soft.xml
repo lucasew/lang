@@ -1779,4 +1779,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ORAS" name="immunize oras">
+    <pattern>
+      <token>oras</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ORAS_CAPS" name="immunize ORAS">
+    <pattern>
+      <token>ORAS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRANE" name="immunize crane">
+    <pattern>
+      <token>crane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CRANE_CAPS" name="immunize Crane">
+    <pattern>
+      <token>Crane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCTL" name="immunize regctl">
+    <pattern>
+      <token>regctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCTL_CAPS" name="immunize Regctl">
+    <pattern>
+      <token>Regctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
