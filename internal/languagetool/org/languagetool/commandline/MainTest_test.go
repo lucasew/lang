@@ -146,12 +146,6 @@ func TestMain_EnglishFileApplySuggestions(t *testing.T) {
 func TestMain_EnglishStdIn2(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
 func TestMain_EnglishStdIn3(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
 func TestMain_EnglishStdIn4(t *testing.T) { t.Skip("unimplemented: full EN stdin suite") }
-func TestMain_EnglishLineMode(t *testing.T) {
-	t.Skip("unimplemented: line mode pipeline")
-}
-func TestMain_EnglishParaMode(t *testing.T) {
-	t.Skip("unimplemented: paragraph mode pipeline")
-}
 func TestMain_PolishStdInDefaultOff(t *testing.T) {
 	t.Skip("unimplemented: PL rules via CLI")
 }
@@ -162,15 +156,6 @@ func TestMain_PolishApiStdInDefaultOffNoErrors(t *testing.T) {
 	t.Skip("unimplemented: PL API CLI")
 }
 func TestMain_PolishSpelling(t *testing.T) { t.Skip("unimplemented: PL spelling CLI") }
-func TestMain_EnglishFileRuleDisabled(t *testing.T) {
-	t.Skip("unimplemented: enable/disable rule file check")
-}
-func TestMain_EnglishFileRuleEnabled(t *testing.T) {
-	t.Skip("unimplemented: enable/disable rule file check")
-}
-func TestMain_EnglishFileFakeRuleEnabled(t *testing.T) {
-	t.Skip("unimplemented: enable/disable rule file check")
-}
 func TestMain_EnglishFileAPI(t *testing.T) { t.Skip("unimplemented: API XML output") }
 func TestMain_GermanFileWithURL(t *testing.T) {
 	t.Skip("unimplemented: DE file with URL")
