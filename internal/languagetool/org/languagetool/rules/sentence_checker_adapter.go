@@ -91,6 +91,12 @@ func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang str
 
 	// inject unpaired brackets (GenericUnpairedBracketsRule is multi-sentence)
 	lt.AddRuleChecker("UNPAIRED_BRACKETS", languagetool.SimpleUnpairedBracketsChecker())
+
+	// text-level: missing space between sentences ("end.Start")
+	sw := NewSentenceWhitespaceRule(map[string]string{
+		"addSpaceBetweenSentences": "Add a space between sentences",
+	})
+	lt.AddTextLevelRuleChecker(sw.GetID(), AsTextLevelChecker(sw.MatchList))
 }
 
 // RegisterCoreEnglishRules installs shared layout + EN a/an + word-repeat (real rule).

@@ -48,6 +48,17 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	active := lt.GetAllActiveRuleIDs()
 	require.Contains(t, active, "WHITESPACE_RULE")
 	require.Contains(t, active, "EN_A_VS_AN")
+	require.Contains(t, active, "SENTENCE_WHITESPACE")
+
+	// text-level sentence whitespace (missing space after period)
+	m = lt.Check("This is a text.And there's the next sentence.")
+	var hasSW bool
+	for _, x := range m {
+		if x.RuleID == "SENTENCE_WHITESPACE" {
+			hasSW = true
+		}
+	}
+	require.True(t, hasSW, "matches: %+v", m)
 }
 
 func TestToLocalMatches(t *testing.T) {
