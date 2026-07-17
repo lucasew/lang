@@ -77,3 +77,16 @@ func TestApiV2_CheckEnabledOnly(t *testing.T) {
 	require.Contains(t, r.Body, "EN_A_VS_AN")
 	require.NotContains(t, r.Body, "WHITESPACE_RULE")
 }
+
+func TestTextChecker_PipelinePoolReuse(t *testing.T) {
+	cfg := NewHTTPServerConfig()
+	cfg.PipelineCaching = true
+	cfg.MaxPipelinePoolSize = 4
+	tc := NewV2TextChecker(cfg, false, nil)
+	require.NotNil(t, tc.Pool)
+	ms1 := tc.Check("This is an test.", "en", nil)
+	ms2 := tc.Check("This is an test.", "en", nil)
+	require.NotEmpty(t, ms1)
+	require.NotEmpty(t, ms2)
+	require.GreaterOrEqual(t, tc.Pool.IdleCount(pipelineSettingsFor("en", CheckOptions{})), 0)
+}

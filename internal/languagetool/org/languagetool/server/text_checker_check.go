@@ -23,8 +23,8 @@ func (t *TextChecker) Check(text, lang string, disabled []string) []RemoteRuleMa
 	return t.CheckWithOptions(text, lang, CheckOptions{Disabled: disabled})
 }
 
-// preparePipeline builds a frozen pipeline for check options.
-func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) *Pipeline {
+// pipelineSettingsFor builds pool key settings for a check.
+func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 	if lang == "" {
 		lang = "en"
 	}
@@ -32,12 +32,43 @@ func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) *Pipeline 
 	settings.Query.DisabledRules = append([]string(nil), opts.Disabled...)
 	settings.Query.EnabledRules = append([]string(nil), opts.Enabled...)
 	settings.Query.UseEnabledOnly = opts.UseEnabledOnly
+	settings.Query.UseQuerySettings = len(opts.Disabled) > 0 || len(opts.Enabled) > 0 || opts.UseEnabledOnly
+	// include filters in pool key (Key() does not hash full rule lists)
+	var keyParts []string
 	if opts.Level != "" {
-		settings.GlobalConfigKey = "level:" + string(opts.Level)
+		keyParts = append(keyParts, "level:"+string(opts.Level))
 	}
 	if opts.Mode != "" {
 		// soft: Query.LanguageCode carries check mode for Pipeline.Check
 		settings.Query.LanguageCode = string(opts.Mode)
+		keyParts = append(keyParts, "mode:"+string(opts.Mode))
+	}
+	if opts.UseEnabledOnly {
+		keyParts = append(keyParts, "eo:"+strings.Join(opts.Enabled, ","))
+	} else if len(opts.Enabled) > 0 {
+		keyParts = append(keyParts, "en:"+strings.Join(opts.Enabled, ","))
+	}
+	if len(opts.Disabled) > 0 {
+		keyParts = append(keyParts, "dis:"+strings.Join(opts.Disabled, ","))
+	}
+	settings.GlobalConfigKey = strings.Join(keyParts, "|")
+	return settings
+}
+
+// preparePipeline builds a pipeline for check options (from pool when available).
+// Caller must call releasePipeline when done if pool was used.
+func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) (pl *Pipeline, settings PipelineSettings, fromPool bool) {
+	settings = pipelineSettingsFor(lang, opts)
+	if t != nil && t.Pool != nil {
+		borrowed, err := t.Pool.Borrow(settings)
+		if err == nil && borrowed != nil {
+			// Query disabled/enabled filters are reapplied inside Pipeline.Check
+			if !borrowed.IsFrozen() {
+				_ = borrowed.SetCleanOverlappingMatches(true)
+				borrowed.SetupFinished()
+			}
+			return borrowed, settings, true
+		}
 	}
 	p := NewPipeline(settings)
 	for _, id := range opts.Disabled {
@@ -48,12 +79,19 @@ func (t *TextChecker) preparePipeline(lang string, opts CheckOptions) *Pipeline 
 	}
 	_ = p.SetCleanOverlappingMatches(true)
 	p.SetupFinished()
-	return p
+	return p, settings, false
+}
+
+func (t *TextChecker) releasePipeline(settings PipelineSettings, pl *Pipeline, fromPool bool) {
+	if fromPool && t != nil && t.Pool != nil {
+		t.Pool.Return(settings, pl)
+	}
 }
 
 // CheckWithOptions is Check with enabled-only, mode, and level support.
 func (t *TextChecker) CheckWithOptions(text, lang string, opts CheckOptions) []RemoteRuleMatch {
-	p := t.preparePipeline(lang, opts)
+	p, settings, fromPool := t.preparePipeline(lang, opts)
+	defer t.releasePipeline(settings, p, fromPool)
 	locals := p.Check(text)
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, text)
 	ctxSize := DefaultContextSize
@@ -68,7 +106,8 @@ func (t *TextChecker) CheckAnnotatedWithOptions(at *markup.AnnotatedText, lang s
 	if at == nil {
 		return nil
 	}
-	p := t.preparePipeline(lang, opts)
+	p, settings, fromPool := t.preparePipeline(lang, opts)
+	defer t.releasePipeline(settings, p, fromPool)
 	locals := p.CheckAnnotated(at)
 	plain := at.GetPlainText()
 	locals = applyLevelPickyBoost(lang, opts.Level, locals, plain)

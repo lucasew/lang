@@ -83,6 +83,8 @@ type TextChecker struct {
 	ReqCounter     *RequestCounter
 	Metrics        *ServerMetricsCollector
 	ContextSize    int
+	// Pool optional pipeline cache; when nil, pipelines are created per check.
+	Pool *PipelinePool
 }
 
 const DefaultContextSize = 40
@@ -94,13 +96,17 @@ func NewTextChecker(cfg *HTTPServerConfig, internal bool, reqCounter *RequestCou
 	if reqCounter == nil {
 		reqCounter = NewRequestCounter()
 	}
-	return &TextChecker{
+	tc := &TextChecker{
 		Config:         cfg,
 		InternalServer: internal,
 		ReqCounter:     reqCounter,
 		Metrics:        Metrics(),
 		ContextSize:    DefaultContextSize,
 	}
+	if cfg != nil && cfg.IsPipelineCachingEnabled() {
+		tc.Pool = NewPipelinePool(cfg)
+	}
+	return tc
 }
 
 // CheckParams validates required/common query parameters for a check.
