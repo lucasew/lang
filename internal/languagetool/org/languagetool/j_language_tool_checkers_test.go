@@ -36,6 +36,23 @@ func TestSimplePhraseReplaceChecker(t *testing.T) {
 	require.Equal(t, "Guide to the Galaxy", CorrectTextFromLocalMatches(src, m))
 }
 
+func TestSimplePhraseReplaceChecker_CaseInsensitive(t *testing.T) {
+	lt := NewJLanguageTool("en")
+	lt.AddRuleChecker("PHRASE_REPLACE", SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
+		"on accident":   "by accident",
+		"in regards to": "with regard to",
+	}))
+	m := lt.Check("I did it On Accident yesterday.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "by accident", m[0].Suggestions[0])
+	fixed := CorrectTextFromLocalMatches("I did it On Accident yesterday.", m)
+	require.Contains(t, fixed, "by accident")
+
+	m = lt.Check("In regards to your note.")
+	require.NotEmpty(t, m)
+	require.Equal(t, "with regard to", m[0].Suggestions[0])
+}
+
 func TestCheckAnnotatedAndProject(t *testing.T) {
 	lt := NewJLanguageTool("en")
 	lt.AddRuleChecker("EN_A_VS_AN", SimpleAvsAnChecker())

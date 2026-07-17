@@ -9,5 +9,21 @@
       <message>Mulig gentagelse af "af".</message>
       <short>af af</short>
     </rule>
+    <rule id="DA_SOFT_OG_OG" name="og og">
+      <pattern>
+        <token>og</token>
+        <token>og</token>
+      </pattern>
+      <message>Mulig gentagelse af "og".</message>
+      <short>og og</short>
+    </rule>
+    <rule id="DA_SOFT_FORDI_AT" name="fordi at">
+      <pattern>
+        <token>fordi</token>
+        <token>at</token>
+      </pattern>
+      <message>Ofte er "fordi" nok (uden "at").</message>
+      <short>fordi at</short>
+    </rule>
   </category>
 </rules>

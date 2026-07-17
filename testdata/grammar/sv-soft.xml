@@ -9,5 +9,29 @@
       <message>Menade du "de är"?</message>
       <short>de/dom</short>
     </rule>
+    <rule id="SV_SOFT_DOM_VAR" name="dom var">
+      <pattern>
+        <token>dom</token>
+        <token>var</token>
+      </pattern>
+      <message>Menade du "de var"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_OCH_OCH" name="och och">
+      <pattern>
+        <token>och</token>
+        <token>och</token>
+      </pattern>
+      <message>Möjlig upprepning av "och".</message>
+      <short>och och</short>
+    </rule>
+    <rule id="SV_SOFT_VARAN" name="varan">
+      <pattern>
+        <token>en</token>
+        <token>varan</token>
+      </pattern>
+      <message>Menade du "en vara"?</message>
+      <short>varan</short>
+    </rule>
   </category>
 </rules>

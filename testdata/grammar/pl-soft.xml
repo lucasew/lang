@@ -9,5 +9,29 @@
       <message>Możliwe powtórzenie "w".</message>
       <short>w w</short>
     </rule>
+    <rule id="PL_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Możliwe powtórzenie "i".</message>
+      <short>i i</short>
+    </rule>
+    <rule id="PL_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Możliwe powtórzenie "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="PL_SOFT_ZE_ZE" name="że że">
+      <pattern>
+        <token>że</token>
+        <token>że</token>
+      </pattern>
+      <message>Możliwe powtórzenie "że".</message>
+      <short>że że</short>
+    </rule>
   </category>
 </rules>

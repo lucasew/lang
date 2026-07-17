@@ -38,6 +38,8 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"This is based off of data.", "based on"},
 		{"Talk to eachother soon.", "each other"},
 		{"Questions in regards to your letter.", "with regard to"},
+		{"In regards to your letter.", "with regard to"},
+		{"I did it On Accident.", "by accident"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

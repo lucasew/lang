@@ -9,5 +9,29 @@
       <message>Possible repetició de "a".</message>
       <short>a a</short>
     </rule>
+    <rule id="CA_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Possible repetició de "de".</message>
+      <short>de de</short>
+    </rule>
+    <rule id="CA_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Possible repetició de "i".</message>
+      <short>i i</short>
+    </rule>
+    <rule id="CA_SOFT_A_EL" name="a el">
+      <pattern>
+        <token>a</token>
+        <token>el</token>
+      </pattern>
+      <message>Potser "al"?</message>
+      <short>a/al</short>
+    </rule>
   </category>
 </rules>

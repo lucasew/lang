@@ -86,7 +86,8 @@ func SimpleUnpairedBracketsChecker() SentenceChecker {
 	}
 }
 
-// SimplePhraseReplaceChecker flags exact phrase occurrences (ASCII/space phrases).
+// SimplePhraseReplaceChecker flags phrase occurrences (ASCII/space phrases).
+// Matching is case-insensitive; suggestions keep the configured replacement form.
 // phrases maps wrong phrase → suggested replacement.
 func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) SentenceChecker {
 	if ruleID == "" {
@@ -112,14 +113,17 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 			return nil
 		}
 		text := sentence.GetText()
+		// ASCII-oriented case fold (soft EN/phrase pack is Latin-1 friendly).
+		lowText := strings.ToLower(text)
 		var out []LocalMatch
 		// find non-overlapping left-to-right
 		used := make([]bool, len(text))
 		for _, wrong := range keys {
 			repl := phrases[wrong]
+			lowWrong := strings.ToLower(wrong)
 			start := 0
 			for {
-				idx := strings.Index(text[start:], wrong)
+				idx := strings.Index(lowText[start:], lowWrong)
 				if idx < 0 {
 					break
 				}

@@ -9,5 +9,29 @@
       <message>Возможный повтор "в".</message>
       <short>в в</short>
     </rule>
+    <rule id="RU_SOFT_I_I" name="и и">
+      <pattern>
+        <token>и</token>
+        <token>и</token>
+      </pattern>
+      <message>Возможный повтор "и".</message>
+      <short>и и</short>
+    </rule>
+    <rule id="RU_SOFT_NA_NA" name="на на">
+      <pattern>
+        <token>на</token>
+        <token>на</token>
+      </pattern>
+      <message>Возможный повтор "на".</message>
+      <short>на на</short>
+    </rule>
+    <rule id="RU_SOFT_NE_NE" name="не не">
+      <pattern>
+        <token>не</token>
+        <token>не</token>
+      </pattern>
+      <message>Возможный повтор "не".</message>
+      <short>не не</short>
+    </rule>
   </category>
 </rules>
