@@ -51,4 +51,12 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
 	dr := NewDashRule(nil)
 	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
+
+	// Case rule, Swiss compounds, metric unit conversion (official ports).
+	cas := NewCaseRule(nil)
+	lt.AddRuleChecker(cas.GetID(), rules.AsSentenceCheckerSimple(cas.Match))
+	sw := NewSwissCompoundRule(nil)
+	lt.AddRuleChecker(sw.GetID(), rules.AsSentenceCheckerSimple(sw.Match))
+	uc := NewUnitConversionRule(nil)
+	lt.AddRuleChecker(uc.GetID(), rules.AsSentenceCheckerSimple(uc.Match))
 }

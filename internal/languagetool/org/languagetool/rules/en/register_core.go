@@ -169,6 +169,11 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 	// Official profanity list (Tag.picky in Java English.getRelevantRules).
 	pf := NewSimpleReplaceProfanityRule(nil)
 	lt.AddRuleChecker(pf.GetID(), rules.AsSentenceCheckerSimple(pf.Match))
+	// Variant unit conversion (imperial/US messages).
+	usU := NewUnitConversionRuleUS(nil)
+	lt.AddRuleChecker(usU.GetID(), rules.AsSentenceCheckerSimple(usU.Match))
+	imU := NewUnitConversionRuleImperial(nil)
+	lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
 }
 
 // RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject.

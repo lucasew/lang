@@ -21,4 +21,8 @@ func RegisterCoreKhmerRules(lt *languagetool.JLanguageTool) {
 	// Official replace table (embedded from upstream).
 	sr := NewKhmerSimpleReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+
+	// Official space-before rule.
+	sb := NewKhmerSpaceBeforeRule(nil)
+	lt.AddRuleChecker(sb.GetID(), rules.AsSentenceCheckerSimple(sb.Match))
 }

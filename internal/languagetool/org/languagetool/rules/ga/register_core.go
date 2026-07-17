@@ -38,4 +38,14 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
 	pr := NewPrestandardReplaceRule(nil)
 	lt.AddRuleChecker(pr.GetID(), rules.AsSentenceCheckerSimple(pr.Match))
+
+	// Official placenames, people, spaces, English homophones.
+	lg := NewLogainmRule(nil)
+	lt.AddRuleChecker(lg.GetID(), rules.AsSentenceCheckerSimple(lg.Match))
+	pp := NewPeopleRule(nil)
+	lt.AddRuleChecker(pp.GetID(), rules.AsSentenceCheckerSimple(pp.Match))
+	sp := NewSpacesRule(nil)
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceCheckerSimple(sp.Match))
+	eh := NewEnglishHomophoneRule(nil)
+	lt.AddRuleChecker(eh.GetID(), rules.AsSentenceCheckerSimple(eh.Match))
 }

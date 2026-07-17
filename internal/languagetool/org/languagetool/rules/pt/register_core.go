@@ -44,4 +44,22 @@ func RegisterCorePortugueseRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(or.GetID(), rules.AsSentenceCheckerSimple(or.Match))
 	ag := NewPortugueseAgreementReplaceRule(nil)
 	lt.AddRuleChecker(ag.GetID(), rules.AsSentenceCheckerSimple(ag.Match))
+
+	// Regional replace + reform compounds/dash + EN contractions in PT + unit conversion.
+	br := NewBrazilianPortugueseReplaceRule(nil)
+	lt.AddRuleChecker(br.GetID(), rules.AsSentenceCheckerSimple(br.Match))
+	ptR := NewPortugalPortugueseReplaceRule(nil)
+	lt.AddRuleChecker(ptR.GetID(), rules.AsSentenceCheckerSimple(ptR.Match))
+	postC := NewPostReformPortugueseCompoundRule(nil)
+	lt.AddRuleChecker(postC.GetID(), rules.AsSentenceCheckerSimple(postC.Match))
+	preC := NewPreReformPortugueseCompoundRule(nil)
+	lt.AddRuleChecker(preC.GetID(), rules.AsSentenceCheckerSimple(preC.Match))
+	postD := NewPostReformPortugueseDashRule(nil)
+	lt.AddRuleChecker(postD.GetID(), rules.AsSentenceCheckerSimple(postD.Match))
+	preD := NewPreReformPortugueseDashRule(nil)
+	lt.AddRuleChecker(preD.GetID(), rules.AsSentenceCheckerSimple(preD.Match))
+	ec := NewEnglishContractionSpellingRule(nil)
+	lt.AddRuleChecker(ec.GetID(), rules.AsSentenceCheckerSimple(ec.Match))
+	uc := NewPortugueseUnitConversionRule(nil)
+	lt.AddRuleChecker(uc.GetID(), rules.AsSentenceCheckerSimple(uc.Match))
 }

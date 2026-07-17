@@ -28,4 +28,8 @@ func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	wc := NewWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+
+	// Official space-before rule.
+	sb := NewPersianSpaceBeforeRule(nil)
+	lt.AddRuleChecker(sb.GetID(), rules.AsSentenceCheckerSimple(sb.Match))
 }

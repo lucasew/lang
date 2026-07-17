@@ -44,4 +44,25 @@ func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
 	rw := NewCatalanRepeatedWordsRule(nil)
 	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
+
+	// Additional official CA replace packs (DNV, Balearic, verbs, adverbs, ops).
+	dnv := NewSimpleReplaceDNVRule(nil)
+	lt.AddRuleChecker(dnv.GetID(), rules.AsSentenceCheckerSimple(dnv.Match))
+	dnvC := NewSimpleReplaceDNVColloquialRule(nil)
+	lt.AddRuleChecker(dnvC.GetID(), rules.AsSentenceCheckerSimple(dnvC.Match))
+	dnvS := NewSimpleReplaceDNVSecondaryRule(nil)
+	lt.AddRuleChecker(dnvS.GetID(), rules.AsSentenceCheckerSimple(dnvS.Match))
+	bal := NewSimpleReplaceBalearicRule(nil)
+	lt.AddRuleChecker(bal.GetID(), rules.AsSentenceCheckerSimple(bal.Match))
+	vr := NewSimpleReplaceVerbsRule(nil)
+	lt.AddRuleChecker(vr.GetID(), rules.AsSentenceCheckerSimple(vr.Match))
+	adv := NewSimpleReplaceAdverbsMent(nil)
+	lt.AddRuleChecker(adv.GetID(), rules.AsSentenceCheckerSimple(adv.Match))
+	op := NewReplaceOperationNamesRule(nil)
+	lt.AddRuleChecker(op.GetID(), rules.AsSentenceCheckerSimple(op.Match))
+	cc := NewCheckCaseRule(nil)
+	lt.AddRuleChecker(cc.GetID(), rules.AsSentenceCheckerSimple(cc.Match))
+	// Valencian coherency variants (official coherency-valencia.txt).
+	wcv := NewWordCoherencyValencianRule(nil)
+	lt.AddTextLevelRuleChecker(wcv.GetID(), rules.AsTextLevelChecker(wcv.MatchList))
 }
