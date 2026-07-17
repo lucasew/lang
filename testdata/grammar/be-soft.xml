@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="be">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="BE_SOFT_I_I" name="і і">
+      <pattern>
+        <token>і</token>
+        <token>і</token>
+      </pattern>
+      <message>Магчымы паўтор "і".</message>
+      <short>і і</short>
+    </rule>
+  </category>
+</rules>

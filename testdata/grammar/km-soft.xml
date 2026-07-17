@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="km">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="KM_SOFT_AND_AND" name="and and">
+      <pattern>
+        <token>and</token>
+        <token>and</token>
+      </pattern>
+      <message>Possible repeated "and".</message>
+      <short>and and</short>
+    </rule>
+  </category>
+</rules>

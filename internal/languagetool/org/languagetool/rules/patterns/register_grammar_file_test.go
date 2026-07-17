@@ -83,6 +83,8 @@ func TestRegisterSoftGrammarDir_RU_SV_DA(t *testing.T) {
 		{"fa", "کتاب و و دفتر", "FA_SOFT_VA_VA"},
 		{"ga", "agus agus eile", "GA_SOFT_AGUS_AGUS"},
 		{"sl", "in in drugo", "SL_SOFT_IN_IN"},
+		{"km", "and and more", "KM_SOFT_AND_AND"},
+		{"be", "і і слова", "BE_SOFT_I_I"},
 	} {
 		t.Run(tc.lang, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(tc.lang)
