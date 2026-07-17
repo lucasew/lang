@@ -1,6 +1,8 @@
 package morfologik
 
 import (
+	"unicode"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
@@ -42,7 +44,7 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 			continue
 		}
 		w := tok.GetToken()
-		if w == "" {
+		if w == "" || !hasLetter(w) {
 			continue
 		}
 		if r.IgnoreTaggedWords && tok.IsTagged() {
@@ -59,4 +61,13 @@ func (r *MorfologikSpellerRule) Match(sentence *languagetool.AnalyzedSentence) (
 		out = append(out, m)
 	}
 	return out, nil
+}
+
+func hasLetter(s string) bool {
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			return true
+		}
+	}
+	return false
 }
