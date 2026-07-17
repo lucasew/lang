@@ -159,3 +159,6 @@ as of yet	RB
 at present	RB
 in short	RB
 to date	RB
+over the long haul	RB
+Austin Texas	NNP
+Portland Oregon	NNP

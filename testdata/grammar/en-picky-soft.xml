@@ -344,5 +344,32 @@
       <message>Consider "deadline" or "must end by".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_MOVE_THE_GOALPOSTS" name="move the goalposts soft picky">
+      <pattern>
+        <token>move</token>
+        <token>the</token>
+        <token>goalposts</token>
+      </pattern>
+      <message>Cliché; consider "change the criteria" or name the change.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUT_A_PIN" name="put a pin in soft picky">
+      <pattern>
+        <token>put</token>
+        <token>a</token>
+        <token>pin</token>
+        <token>in</token>
+      </pattern>
+      <message>Consider "pause" or "revisit later".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEVEL_SET" name="level set soft picky">
+      <pattern>
+        <token>level</token>
+        <token>set</token>
+      </pattern>
+      <message>Consider "align" or "agree on the facts".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

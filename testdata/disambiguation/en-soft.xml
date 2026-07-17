@@ -777,4 +777,34 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_RFC" name="immunize rfc">
+    <pattern>
+      <token>rfc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RFC_CAPS" name="immunize RFC">
+    <pattern>
+      <token>RFC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ADR" name="immunize adr">
+    <pattern>
+      <token>adr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ADR_CAPS" name="immunize ADR">
+    <pattern>
+      <token>ADR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TLDR2" name="immunize tldr lower">
+    <pattern>
+      <token>tldr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

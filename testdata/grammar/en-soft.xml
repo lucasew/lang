@@ -3137,6 +3137,76 @@
       <message>Did you mean "grateful"?</message>
       <short>greatfull</short>
     </rule>
+    <rule id="EN_SOFT_ACQUIRE_MISS" name="aquire soft">
+      <pattern>
+        <token>aquire</token>
+      </pattern>
+      <message>Did you mean "acquire"?</message>
+      <short>aquire</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUIRED_MISS" name="aquired soft">
+      <pattern>
+        <token>aquired</token>
+      </pattern>
+      <message>Did you mean "acquired"?</message>
+      <short>aquired</short>
+    </rule>
+    <rule id="EN_SOFT_ARGUMENTS_MISS" name="arguements soft">
+      <pattern>
+        <token>arguements</token>
+      </pattern>
+      <message>Did you mean "arguments"?</message>
+      <short>arguements</short>
+    </rule>
+    <rule id="EN_SOFT_BUSINESSMAN_MISS" name="buisnessman soft">
+      <pattern>
+        <token>buisnessman</token>
+      </pattern>
+      <message>Did you mean "businessman"?</message>
+      <short>buisnessman</short>
+    </rule>
+    <rule id="EN_SOFT_CALENDAR_MISS" name="calander soft">
+      <pattern>
+        <token>calander</token>
+      </pattern>
+      <message>Did you mean "calendar"?</message>
+      <short>calander</short>
+    </rule>
+    <rule id="EN_SOFT_CAREER_MISS" name="carreer soft">
+      <pattern>
+        <token>carreer</token>
+      </pattern>
+      <message>Did you mean "career"?</message>
+      <short>carreer</short>
+    </rule>
+    <rule id="EN_SOFT_HAPPENED_MISS2" name="happended soft">
+      <pattern>
+        <token>happended</token>
+      </pattern>
+      <message>Did you mean "happened"?</message>
+      <short>happended</short>
+    </rule>
+    <rule id="EN_SOFT_EXISTENCE_MISS" name="existense soft">
+      <pattern>
+        <token>existense</token>
+      </pattern>
+      <message>Did you mean "existence"?</message>
+      <short>existense</short>
+    </rule>
+    <rule id="EN_SOFT_RECOMMEND_MISS2" name="reccommend soft">
+      <pattern>
+        <token>reccommend</token>
+      </pattern>
+      <message>Did you mean "recommend"?</message>
+      <short>reccommend</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSFUL_MISS2" name="sucessfull soft">
+      <pattern>
+        <token>sucessfull</token>
+      </pattern>
+      <message>Did you mean "successful"?</message>
+      <short>sucessfull</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
