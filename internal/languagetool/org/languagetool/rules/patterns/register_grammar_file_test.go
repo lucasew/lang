@@ -10,6 +10,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestRegisterSoftGrammarDir_NoDoubleRegister(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../.."))
+	dir := filepath.Join(root, "testdata/grammar")
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := patterns.RegisterSoftGrammarDir(lt, dir, "en")
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, n, 1)
+	// same path must not register twice for plain "en"
+	m := lt.Check("Hello!!")
+	var bang int
+	for _, x := range m {
+		if x.RuleID == "EN_SOFT_DOUBLE_BANG" {
+			bang++
+		}
+	}
+	require.Equal(t, 1, bang, "duplicate soft grammar registration: %+v", m)
+}
+
 func TestRegisterGrammarFile_SoftEN(t *testing.T) {
 	_, file, _, _ := runtime.Caller(0)
 	// patterns → rules → languagetool → org → languagetool → internal → module root (6)

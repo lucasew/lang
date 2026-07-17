@@ -428,6 +428,36 @@
       <message>Did you mean "we're going to"?</message>
       <short>were/we're</short>
     </rule>
+    <rule id="EN_SOFT_ALOT" name="alot">
+      <pattern>
+        <token regexp="yes">alot|Alot</token>
+      </pattern>
+      <message>Did you mean "a lot"?</message>
+      <short>alot</short>
+    </rule>
+    <rule id="EN_SOFT_INFACT" name="infact">
+      <pattern>
+        <token regexp="yes">infact|Infact</token>
+      </pattern>
+      <message>Did you mean "in fact"?</message>
+      <short>infact</short>
+    </rule>
+    <rule id="EN_SOFT_ASWELL" name="aswell">
+      <pattern>
+        <token regexp="yes">aswell|Aswell</token>
+      </pattern>
+      <message>Did you mean "as well"?</message>
+      <short>aswell</short>
+    </rule>
+    <rule id="EN_SOFT_NEVERTHELESS_SPLIT" name="never the less already phrase">
+      <pattern>
+        <token>never</token>
+        <token>the</token>
+        <token>less</token>
+      </pattern>
+      <message>Did you mean "nevertheless"?</message>
+      <short>nevertheless</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">
@@ -435,7 +465,7 @@
         <token>!</token>
         <token>!</token>
       </pattern>
-      <message>Consider a single exclamation mark.</message>
+      <message>Consider a single exclamation mark: "!"</message>
       <short>punctuation</short>
     </rule>
     <rule id="EN_SOFT_DOUBLE_Q" name="double question">
@@ -443,7 +473,7 @@
         <token>?</token>
         <token>?</token>
       </pattern>
-      <message>Consider a single question mark.</message>
+      <message>Consider a single question mark: "?"</message>
       <short>punctuation</short>
     </rule>
   </category>

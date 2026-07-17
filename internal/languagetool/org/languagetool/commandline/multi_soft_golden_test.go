@@ -3,6 +3,7 @@ package commandline
 import (
 	"bytes"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -75,9 +76,16 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"fr", "Il va a le marché.", "FR_SOFT_A_LE", "au"},
 		{"fr", "Il et grand.", "FR_SOFT_ET_EST", "il est"},
 		{"fr", "ca va bien.", "FR_SOFT_CA_SA", "ça va"},
+		{"fr", "Ils son partis.", "FR_SOFT_SON_SONT", "ils sont"},
+		{"fr", "Elle et grande.", "FR_SOFT_ELLE_ET", "elle est"},
+		{"fr", "Je reste parceque il pleut.", "FR_SOFT_PARCE_QUE", "parce que"},
+		{"fr", "Bravo!!", "FR_SOFT_DOUBLE_BANG", ""},
 		{"es", "Voy a el parque.", "ES_SOFT_A_EL", "al"},
 		{"es", "Viene de el norte.", "ES_SOFT_DE_EL", "del"},
 		{"es", "Ay que hacerlo.", "ES_SOFT_HAY_AY", "hay que"},
+		{"es", "Él a ido ya.", "ES_SOFT_HA_A", "ha ido"},
+		{"es", "Lo hago por que quiero.", "ES_SOFT_PORQUE", ""},
+		{"es", "Hola!!", "ES_SOFT_DOUBLE_BANG", ""},
 		{"pt", "Estou em o carro.", "PT_SOFT_EM_O", "no"},
 		{"pt", "Livro de o autor.", "PT_SOFT_DE_O", "do"},
 		{"pt", "Passou por o parque.", "PT_SOFT_POR_O", "pelo"},
@@ -134,7 +142,11 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 			for _, f := range findings {
 				if f.Rule == tc.rule {
 					found = true
-					require.Equal(t, "grammar", f.Type)
+					if strings.Contains(tc.rule, "DOUBLE_BANG") || strings.Contains(tc.rule, "DOUBLE_Q") {
+						require.Equal(t, "typographical", f.Type)
+					} else {
+						require.Equal(t, "grammar", f.Type)
+					}
 					if tc.sug != "" {
 						require.Equal(t, tc.sug, f.Suggestion)
 					}

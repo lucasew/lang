@@ -3,6 +3,7 @@ package commandline
 import (
 	"bytes"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -368,6 +369,45 @@ func TestGolden_SoftWereGoingTo(t *testing.T) {
 		}
 	}
 	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_SoftFusedWords(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"I have alot of work.", "EN_SOFT_ALOT", "a lot"},
+		{"Infact it works.", "EN_SOFT_INFACT", "in fact"},
+		{"Come aswell please.", "EN_SOFT_ASWELL", "as well"},
+		{"Never the less we try.", "EN_SOFT_NEVERTHELESS_SPLIT", "nevertheless"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftDoubleBang(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Hello!!", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	// first suggestion "!" replaces the "!!" span
+	require.Equal(t, "Hello!", strings.TrimSpace(out.String()))
 }
 
 func TestGolden_SoftStyleCategory(t *testing.T) {

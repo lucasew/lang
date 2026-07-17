@@ -33,5 +33,40 @@
       <message>¿Quiso decir "hay que"?</message>
       <short>hay/ay</short>
     </rule>
+    <rule id="ES_SOFT_SINO_SI_NO" name="sino/si no">
+      <pattern>
+        <token>si</token>
+        <token>no</token>
+        <token>vienes</token>
+      </pattern>
+      <message>Compruebe si corresponde "si no" o "sino".</message>
+      <short>sino</short>
+    </rule>
+    <rule id="ES_SOFT_HA_A" name="ha/a">
+      <pattern>
+        <token>a</token>
+        <token>ido</token>
+      </pattern>
+      <message>¿Quiso decir "ha ido"?</message>
+      <short>ha/a</short>
+    </rule>
+    <rule id="ES_SOFT_PORQUE" name="por que">
+      <pattern>
+        <token>por</token>
+        <token>que</token>
+      </pattern>
+      <message>¿Quiso decir "porque" o "por qué"?</message>
+      <short>porque</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Tipografía">
+    <rule id="ES_SOFT_DOUBLE_BANG" name="doble exclamación">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Considere un solo signo de exclamación.</message>
+      <short>puntuación</short>
+    </rule>
   </category>
 </rules>

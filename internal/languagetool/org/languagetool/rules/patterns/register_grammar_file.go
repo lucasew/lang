@@ -143,6 +143,7 @@ func extractSuggestions(msg string) (clean string, suggs []string) {
 }
 
 // RegisterSoftGrammarDir loads {dir}/{lang}-soft.xml or {dir}/{lang}/grammar-soft.xml if present.
+// Paths are de-duplicated so en and en-US do not register the same en-soft.xml twice.
 func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode string) (int, error) {
 	if lt == nil || dir == "" {
 		return 0, nil
@@ -151,10 +152,19 @@ func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode st
 	if i := strings.IndexByte(languageCode, '-'); i > 0 {
 		base = languageCode[:i]
 	}
-	candidates := []string{
+	raw := []string{
 		dir + "/" + base + "-soft.xml",
 		dir + "/" + languageCode + "-soft.xml",
 		dir + "/" + base + "/grammar-soft.xml",
+	}
+	seen := map[string]struct{}{}
+	var candidates []string
+	for _, c := range raw {
+		if _, ok := seen[c]; ok {
+			continue
+		}
+		seen[c] = struct{}{}
+		candidates = append(candidates, c)
 	}
 	total := 0
 	for _, c := range candidates {

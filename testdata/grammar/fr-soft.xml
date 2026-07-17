@@ -33,5 +33,47 @@
       <message>Peut-être "ça va"?</message>
       <short>ca/ça</short>
     </rule>
+    <rule id="FR_SOFT_OU_OU" name="ou où">
+      <pattern>
+        <token>ou</token>
+        <token>es</token>
+        <token>tu</token>
+      </pattern>
+      <message>Peut-être "où es-tu"?</message>
+      <short>ou/où</short>
+    </rule>
+    <rule id="FR_SOFT_SON_SONT" name="son/sont">
+      <pattern>
+        <token>ils</token>
+        <token>son</token>
+      </pattern>
+      <message>Peut-être "ils sont"?</message>
+      <short>son/sont</short>
+    </rule>
+    <rule id="FR_SOFT_ELLE_ET" name="elle et">
+      <pattern>
+        <token>elle</token>
+        <token>et</token>
+      </pattern>
+      <message>Peut-être "elle est"?</message>
+      <short>et/est</short>
+    </rule>
+    <rule id="FR_SOFT_PARCE_QUE" name="parceque">
+      <pattern>
+        <token>parceque</token>
+      </pattern>
+      <message>Peut-être "parce que"?</message>
+      <short>parce que</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typographie">
+    <rule id="FR_SOFT_DOUBLE_BANG" name="double point d'exclamation">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Un seul point d'exclamation suffit souvent.</message>
+      <short>ponctuation</short>
+    </rule>
   </category>
 </rules>
