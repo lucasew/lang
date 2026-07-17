@@ -1,6 +1,8 @@
 package en
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
@@ -38,4 +40,29 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 		{ID: "EN_WOULD_OF", Tokens: []string{"would", "of"}, Message: "Did you mean 'would have'?", Suggestion: "would have"},
 		{ID: "EN_MUST_OF", Tokens: []string{"must", "of"}, Message: "Did you mean 'must have'?", Suggestion: "must have"},
 	})
+}
+
+// RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject.
+// known may be nil (no-op). Soft stand-in until binary dictionaries are ported.
+func RegisterDemoEnglishSpeller(lt *languagetool.JLanguageTool, known map[string]struct{}, suggestions map[string][]string) {
+	if lt == nil || known == nil {
+		return
+	}
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimpleMapSpellerChecker("MORFOLOGIK_RULE_EN_US", known, suggestions))
+}
+
+// DemoEnglishKnownWords is a tiny inject dictionary for smoke/demo checks.
+func DemoEnglishKnownWords() map[string]struct{} {
+	words := []string{
+		"I", "you", "he", "she", "it", "we", "they", "a", "an", "the", "is", "are", "was", "were",
+		"to", "of", "and", "in", "on", "for", "with", "this", "that", "have", "has", "had",
+		"could", "should", "would", "must", "done", "better", "test", "hello", "world",
+		"LanguageTool", "English", "sentence", "word", "Galaxy", "Guide", "like", "so",
+	}
+	m := make(map[string]struct{}, len(words)*2)
+	for _, w := range words {
+		m[w] = struct{}{}
+		m[strings.ToLower(w)] = struct{}{}
+	}
+	return m
 }

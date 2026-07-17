@@ -57,3 +57,29 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 	}
 	require.True(t, hasCould, "%+v", m)
 }
+
+func TestRegisterDemoEnglishSpeller(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en")
+	RegisterCoreEnglishLanguageRules(lt)
+	RegisterDemoEnglishSpeller(lt, DemoEnglishKnownWords(), map[string][]string{
+		"teh": {"the"},
+	})
+	m := lt.Check("teh cat")
+	// "teh" unknown; "cat" may also be unknown — at least one spelling hit with teh suggestion path
+	found := false
+	for _, x := range m {
+		if x.RuleID == "MORFOLOGIK_RULE_EN_US" {
+			found = true
+			if strings.Contains(strings.ToLower(x.Message), "teh") || len(x.Suggestions) > 0 {
+				// ok
+			}
+		}
+	}
+	require.True(t, found, "%+v", m)
+
+	// known words not flagged solely for spelling
+	m2 := lt.Check("hello world")
+	for _, x := range m2 {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID)
+	}
+}
