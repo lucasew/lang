@@ -492,5 +492,30 @@
       <message>Jargon; consider "include" or "build in".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RIGHT_SIZE" name="right size soft picky">
+      <pattern>
+        <token>right</token>
+        <token>size</token>
+      </pattern>
+      <message>Jargon; consider "scale" or "adjust to need".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOVE_FORWARD" name="move forward soft picky">
+      <pattern>
+        <token>move</token>
+        <token>forward</token>
+      </pattern>
+      <message>Filler; consider "continue" or name the next step.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RAISE_THE_BAR" name="raise the bar soft picky">
+      <pattern>
+        <token>raise</token>
+        <token>the</token>
+        <token>bar</token>
+      </pattern>
+      <message>Cliché; consider "raise standards" or name the higher bar.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

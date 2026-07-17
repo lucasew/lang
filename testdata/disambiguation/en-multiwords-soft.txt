@@ -177,3 +177,6 @@ for the foreseeable future	RB
 Atlanta Georgia	NNP
 Detroit Michigan	NNP
 in large part	RB
+Nashville Tennessee	NNP
+Minneapolis Minnesota	NNP
+all things considered	RB

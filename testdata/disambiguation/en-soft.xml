@@ -987,4 +987,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MONGO" name="immunize mongo">
+    <pattern>
+      <token>mongo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MONGO_CAPS" name="immunize Mongo">
+    <pattern>
+      <token>Mongo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHQL" name="immunize graphql">
+    <pattern>
+      <token>graphql</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GRAPHQL_CAPS" name="immunize GraphQL">
+    <pattern>
+      <token>GraphQL</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEBPACK" name="immunize webpack">
+    <pattern>
+      <token>webpack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WEBPACK_CAPS" name="immunize Webpack">
+    <pattern>
+      <token>Webpack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

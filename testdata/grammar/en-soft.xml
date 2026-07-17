@@ -3557,6 +3557,76 @@
       <message>Did you mean "endeavor"?</message>
       <short>endevor</short>
     </rule>
+    <rule id="EN_SOFT_EQUIPPED_MISS" name="equiped soft">
+      <pattern>
+        <token>equiped</token>
+      </pattern>
+      <message>Did you mean "equipped"?</message>
+      <short>equiped</short>
+    </rule>
+    <rule id="EN_SOFT_HARASSMENT_MISS" name="harrassment soft">
+      <pattern>
+        <token>harrassment</token>
+      </pattern>
+      <message>Did you mean "harassment"?</message>
+      <short>harrassment</short>
+    </rule>
+    <rule id="EN_SOFT_INFLUENCE_MISS" name="influance soft">
+      <pattern>
+        <token>influance</token>
+      </pattern>
+      <message>Did you mean "influence"?</message>
+      <short>influance</short>
+    </rule>
+    <rule id="EN_SOFT_JEWELRY_MISS2" name="jewlery soft">
+      <pattern>
+        <token>jewlery</token>
+      </pattern>
+      <message>Did you mean "jewelry"?</message>
+      <short>jewlery</short>
+    </rule>
+    <rule id="EN_SOFT_KNOWLEDGEABLE_MISS2" name="knowlegeable soft">
+      <pattern>
+        <token>knowlegeable</token>
+      </pattern>
+      <message>Did you mean "knowledgeable"?</message>
+      <short>knowlegeable</short>
+    </rule>
+    <rule id="EN_SOFT_LASER_MISS" name="lazer soft">
+      <pattern>
+        <token>lazer</token>
+      </pattern>
+      <message>Did you mean "laser"?</message>
+      <short>lazer</short>
+    </rule>
+    <rule id="EN_SOFT_MAINTENANCE_MISS3" name="maintanance soft">
+      <pattern>
+        <token>maintanance</token>
+      </pattern>
+      <message>Did you mean "maintenance"?</message>
+      <short>maintanance</short>
+    </rule>
+    <rule id="EN_SOFT_MISCHIEVOUS_MISS" name="mischevious soft">
+      <pattern>
+        <token>mischevious</token>
+      </pattern>
+      <message>Did you mean "mischievous"?</message>
+      <short>mischevious</short>
+    </rule>
+    <rule id="EN_SOFT_NOTICEABLE_MISS2" name="noticible soft">
+      <pattern>
+        <token>noticible</token>
+      </pattern>
+      <message>Did you mean "noticeable"?</message>
+      <short>noticible</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASIONAL_MISS" name="occassional soft">
+      <pattern>
+        <token>occassional</token>
+      </pattern>
+      <message>Did you mean "occasional"?</message>
+      <short>occassional</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
