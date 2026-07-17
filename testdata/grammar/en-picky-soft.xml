@@ -1704,5 +1704,29 @@
       <message>Jargon; name the domain model boundary instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CONTEXT_MAP" name="context map soft picky">
+      <pattern>
+        <token>context</token>
+        <token>map</token>
+      </pattern>
+      <message>Jargon; name the domain relationship diagram instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_UBIQUITOUS_LANGUAGE" name="ubiquitous language soft picky">
+      <pattern>
+        <token>ubiquitous</token>
+        <token>language</token>
+      </pattern>
+      <message>Jargon; name the shared domain vocabulary instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DOMAIN_EVENT" name="domain event soft picky">
+      <pattern>
+        <token>domain</token>
+        <token>event</token>
+      </pattern>
+      <message>Jargon; name the business fact being recorded instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

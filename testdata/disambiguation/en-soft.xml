@@ -2715,4 +2715,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_VIRTIO" name="immunize virtio">
+    <pattern>
+      <token>virtio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VIRTIO_CAPS" name="immunize Virtio">
+    <pattern>
+      <token>Virtio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOST_USER" name="immunize vhost-user">
+    <pattern>
+      <token>vhost-user</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VHOSTUSER" name="immunize vhostuser">
+    <pattern>
+      <token>vhostuser</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDEV" name="immunize mdev">
+    <pattern>
+      <token>mdev</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MDEV_CAPS" name="immunize Mdev">
+    <pattern>
+      <token>Mdev</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

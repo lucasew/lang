@@ -321,3 +321,6 @@ century by century	RB
 Bay Area Metro	NNP
 Silicon Valley Region	NNP
 Pacific Northwest Region	NNP
+Mid Atlantic Region	NNP
+Great Lakes Region	NNP
+Sun Belt Region	NNP

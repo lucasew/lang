@@ -6917,6 +6917,76 @@
       <message>Did you mean "already"?</message>
       <short>allready</short>
     </rule>
+    <rule id="EN_SOFT_APPARENT_MISS2" name="apparant soft">
+      <pattern>
+        <token>apparant</token>
+      </pattern>
+      <message>Did you mean "apparent"?</message>
+      <short>apparant</short>
+    </rule>
+    <rule id="EN_SOFT_APPARENTLY_MISS3" name="apparantly soft">
+      <pattern>
+        <token>apparantly</token>
+      </pattern>
+      <message>Did you mean "apparently"?</message>
+      <short>apparantly</short>
+    </rule>
+    <rule id="EN_SOFT_APOLOGY_MISS" name="appology soft">
+      <pattern>
+        <token>appology</token>
+      </pattern>
+      <message>Did you mean "apology"?</message>
+      <short>appology</short>
+    </rule>
+    <rule id="EN_SOFT_AROUND_MISS" name="arround soft">
+      <pattern>
+        <token>arround</token>
+      </pattern>
+      <message>Did you mean "around"?</message>
+      <short>arround</short>
+    </rule>
+    <rule id="EN_SOFT_ASSOCIATE_MISS" name="assosiate soft">
+      <pattern>
+        <token>assosiate</token>
+      </pattern>
+      <message>Did you mean "associate"?</message>
+      <short>assosiate</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABLE_MISS2" name="availible soft">
+      <pattern>
+        <token>availible</token>
+      </pattern>
+      <message>Did you mean "available"?</message>
+      <short>availible</short>
+    </rule>
+    <rule id="EN_SOFT_AMONG_MISS" name="amoung soft">
+      <pattern>
+        <token>amoung</token>
+      </pattern>
+      <message>Did you mean "among"?</message>
+      <short>amoung</short>
+    </rule>
+    <rule id="EN_SOFT_ANNUALLY_MISS" name="anually soft">
+      <pattern>
+        <token>anually</token>
+      </pattern>
+      <message>Did you mean "annually"?</message>
+      <short>anually</short>
+    </rule>
+    <rule id="EN_SOFT_AMATEUR_MISS" name="amature soft">
+      <pattern>
+        <token>amature</token>
+      </pattern>
+      <message>Did you mean "amateur"?</message>
+      <short>amature</short>
+    </rule>
+    <rule id="EN_SOFT_ALRIGHT_MISS" name="allright soft">
+      <pattern>
+        <token>allright</token>
+      </pattern>
+      <message>Did you mean "alright"?</message>
+      <short>allright</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
