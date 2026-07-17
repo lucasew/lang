@@ -1383,4 +1383,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_WAYPOINT" name="immunize waypoint">
+    <pattern>
+      <token>waypoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WAYPOINT_CAPS" name="immunize Waypoint">
+    <pattern>
+      <token>Waypoint</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JQ" name="immunize jq">
+    <pattern>
+      <token>jq</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JQ_CAPS" name="immunize JQ">
+    <pattern>
+      <token>JQ</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BOUNDARY" name="immunize boundary">
+    <pattern>
+      <token>boundary</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BOUNDARY_CAPS" name="immunize Boundary">
+    <pattern>
+      <token>Boundary</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

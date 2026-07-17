@@ -210,3 +210,6 @@ little by little	RB
 Dover Delaware	NNP
 Annapolis Maryland	NNP
 step by step	RB
+Charleston West Virginia	NNP
+Olympia Washington	NNP
+bit by bit	RB

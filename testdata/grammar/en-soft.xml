@@ -4327,6 +4327,76 @@
       <message>Did you mean "corrupt"?</message>
       <short>corupt</short>
     </rule>
+    <rule id="EN_SOFT_CORRESPOND_MISS" name="correpond soft">
+      <pattern>
+        <token>correpond</token>
+      </pattern>
+      <message>Did you mean "correspond"?</message>
+      <short>correpond</short>
+    </rule>
+    <rule id="EN_SOFT_CRITICISE_MISS" name="critisise soft">
+      <pattern>
+        <token>critisise</token>
+      </pattern>
+      <message>Did you mean "criticise"?</message>
+      <short>critisise</short>
+    </rule>
+    <rule id="EN_SOFT_DECIDED_MISS" name="decieded soft">
+      <pattern>
+        <token>decieded</token>
+      </pattern>
+      <message>Did you mean "decided"?</message>
+      <short>decieded</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINE_MISS" name="deffine soft">
+      <pattern>
+        <token>deffine</token>
+      </pattern>
+      <message>Did you mean "define"?</message>
+      <short>deffine</short>
+    </rule>
+    <rule id="EN_SOFT_DEPENDENCY_MISS" name="dependancy soft">
+      <pattern>
+        <token>dependancy</token>
+      </pattern>
+      <message>Did you mean "dependency"?</message>
+      <short>dependancy</short>
+    </rule>
+    <rule id="EN_SOFT_DEVELOPMENTAL_MISS" name="developemental soft">
+      <pattern>
+        <token>developemental</token>
+      </pattern>
+      <message>Did you mean "developmental"?</message>
+      <short>developemental</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFERENT_MISS2" name="differant soft">
+      <pattern>
+        <token>differant</token>
+      </pattern>
+      <message>Did you mean "different"?</message>
+      <short>differant</short>
+    </rule>
+    <rule id="EN_SOFT_FRIENDSHIP_MISS" name="freindship soft">
+      <pattern>
+        <token>freindship</token>
+      </pattern>
+      <message>Did you mean "friendship"?</message>
+      <short>freindship</short>
+    </rule>
+    <rule id="EN_SOFT_GUARDING_MISS" name="gaurding soft">
+      <pattern>
+        <token>gaurding</token>
+      </pattern>
+      <message>Did you mean "guarding"?</message>
+      <short>gaurding</short>
+    </rule>
+    <rule id="EN_SOFT_GOVERNOR_MISS" name="governer soft">
+      <pattern>
+        <token>governer</token>
+      </pattern>
+      <message>Did you mean "governor"?</message>
+      <short>governer</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

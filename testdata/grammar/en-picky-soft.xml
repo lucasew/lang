@@ -774,5 +774,31 @@
       <message>Consider "lessons" or "what we learned".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DEEP_DIVE_INTO" name="deep dive into soft picky">
+      <pattern>
+        <token>deep</token>
+        <token>dive</token>
+        <token>into</token>
+      </pattern>
+      <message>Jargon; consider "examine" or "investigate".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCLE_BACK_LATER" name="circle back later soft picky">
+      <pattern>
+        <token>circle</token>
+        <token>back</token>
+        <token>later</token>
+      </pattern>
+      <message>Jargon; consider "revisit later" or name when.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BANDWIDTH_CONSTRAINED" name="bandwidth constrained soft picky">
+      <pattern>
+        <token>bandwidth</token>
+        <token>constrained</token>
+      </pattern>
+      <message>Jargon; consider "short on time" or "at capacity".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
