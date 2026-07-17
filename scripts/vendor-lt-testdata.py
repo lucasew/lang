@@ -603,7 +603,18 @@ def vendor_lang(lang: str) -> dict:
             copy_file(p, OUT / lang / "rules" / p.parent.name / "grammar.xml")
             stats["copied"] += 1
 
-    for rel in ["disambiguation.xml", "multiwords.txt", "confusion_sets.txt", "confusion_sets_extended.txt"]:
+    for rel in [
+        "disambiguation.xml",
+        "multiwords.txt",
+        "confusion_sets.txt",
+        "confusion_sets_extended.txt",
+        "compounds.txt",
+        "specific_case.txt",
+        "uncountable.txt",
+        "partlycountable.txt",
+        "added.txt",
+        "removed.txt",
+    ]:
         src = res_base / rel
         if src.is_file():
             copy_file(src, OUT / lang / "resource" / rel)

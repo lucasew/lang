@@ -252,3 +252,39 @@ func TestGolden_UpstreamSimpleReplace(t *testing.T) {
 	}
 	require.True(t, found, "expected simple-replace finding for bussiness: %+v", findings)
 }
+
+// TestGolden_UpstreamCompoundRule exercises official compounds.txt via soft EN core.
+func TestGolden_UpstreamCompoundRule(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "This is a case sensitive search.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_COMPOUNDS" || strings.Contains(strings.ToLower(f.Suggestion), "case-sensitive") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected compound finding: %+v", findings)
+}
+
+// TestGolden_UpstreamSpecificCase exercises official specific_case.txt via soft EN core.
+func TestGolden_UpstreamSpecificCase(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I like harry potter books.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if strings.Contains(strings.ToLower(f.Suggestion), "harry potter") ||
+			strings.Contains(strings.ToLower(f.Message), "proper noun") ||
+			strings.Contains(f.Rule, "SPECIFIC_CASE") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected specific-case finding: %+v", findings)
+}

@@ -39,6 +39,11 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	di := NewEnglishDiacriticsRule(nil)
 	lt.AddRuleChecker(di.GetID(), rules.AsSentenceCheckerSimple(di.Match))
+	// Compounds + proper-noun casing from official compounds.txt / specific_case.txt.
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	sc := NewEnglishSpecificCaseRule(nil)
+	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).
