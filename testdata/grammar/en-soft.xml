@@ -2717,6 +2717,76 @@
       <message>Did you mean "acquaintance"?</message>
       <short>aquaintance</short>
     </rule>
+    <rule id="EN_SOFT_BELIEVABLE_MISS" name="beleivable soft">
+      <pattern>
+        <token>beleivable</token>
+      </pattern>
+      <message>Did you mean "believable"?</message>
+      <short>beleivable</short>
+    </rule>
+    <rule id="EN_SOFT_CATEGORIES_MISS" name="catagories soft">
+      <pattern>
+        <token>catagories</token>
+      </pattern>
+      <message>Did you mean "categories"?</message>
+      <short>catagories</short>
+    </rule>
+    <rule id="EN_SOFT_CONSENSUS_MISS" name="concensus soft">
+      <pattern>
+        <token>concensus</token>
+      </pattern>
+      <message>Did you mean "consensus"?</message>
+      <short>concensus</short>
+    </rule>
+    <rule id="EN_SOFT_CONCEIVE_MISS" name="concieve soft">
+      <pattern>
+        <token>concieve</token>
+      </pattern>
+      <message>Did you mean "conceive"?</message>
+      <short>concieve</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUOUS_MISS" name="continous soft">
+      <pattern>
+        <token>continous</token>
+      </pattern>
+      <message>Did you mean "continuous"?</message>
+      <short>continous</short>
+    </rule>
+    <rule id="EN_SOFT_DEFINITE_MISS" name="definate soft">
+      <pattern>
+        <token>definate</token>
+      </pattern>
+      <message>Did you mean "definite"?</message>
+      <short>definate</short>
+    </rule>
+    <rule id="EN_SOFT_DEPENDENCE_MISS" name="dependance soft">
+      <pattern>
+        <token>dependance</token>
+      </pattern>
+      <message>Did you mean "dependence"?</message>
+      <short>dependance</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPOINTED_MISS" name="dissapointed soft">
+      <pattern>
+        <token>dissapointed</token>
+      </pattern>
+      <message>Did you mean "disappointed"?</message>
+      <short>dissapointed</short>
+    </rule>
+    <rule id="EN_SOFT_EMBARRASSMENT_MISS" name="embarassment soft">
+      <pattern>
+        <token>embarassment</token>
+      </pattern>
+      <message>Did you mean "embarrassment"?</message>
+      <short>embarassment</short>
+    </rule>
+    <rule id="EN_SOFT_EQUIVALENT_MISS" name="equivelent soft">
+      <pattern>
+        <token>equivelent</token>
+      </pattern>
+      <message>Did you mean "equivalent"?</message>
+      <short>equivelent</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

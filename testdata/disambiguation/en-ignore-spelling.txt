@@ -143,3 +143,10 @@ golangci
 goreleaser
 mise
 direnv
+Biome
+Turborepo
+pnpm
+yarn
+asdf
+nixpkgs
+flakes

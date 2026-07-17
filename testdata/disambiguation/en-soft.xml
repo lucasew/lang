@@ -705,4 +705,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SLA" name="immunize sla">
+    <pattern>
+      <token>sla</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SLA_CAPS" name="immunize SLA">
+    <pattern>
+      <token>SLA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RCA" name="immunize rca">
+    <pattern>
+      <token>rca</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RCA_CAPS" name="immunize RCA">
+    <pattern>
+      <token>RCA</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_P0" name="immunize p0">
+    <pattern>
+      <token>p0</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_P1" name="immunize p1">
+    <pattern>
+      <token>p1</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -4596,6 +4596,80 @@ func TestGolden_SoftPickyENJargonWave5(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave25(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"That is not beleivable today.", "EN_SOFT_BELIEVABLE_MISS", "believable"},
+		{"Sort the catagories carefully.", "EN_SOFT_CATEGORIES_MISS", "categories"},
+		{"We reached a concensus today.", "EN_SOFT_CONSENSUS_MISS", "consensus"},
+		{"I cannot concieve of that.", "EN_SOFT_CONCEIVE_MISS", "conceive"},
+		{"Need continous monitoring now.", "EN_SOFT_CONTINUOUS_MISS", "continuous"},
+		{"Need a definate answer soon.", "EN_SOFT_DEFINITE_MISS", "definite"},
+		{"Avoid dependance on one host.", "EN_SOFT_DEPENDENCE_MISS", "dependence"},
+		{"I am dissapointed with that.", "EN_SOFT_DISAPPOINTED_MISS", "disappointed"},
+		{"Hide your embarassment carefully.", "EN_SOFT_EMBARRASSMENT_MISS", "embarrassment"},
+		{"Use an equivelent approach.", "EN_SOFT_EQUIVALENT_MISS", "equivalent"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ImmunizeSlaRca(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft disambig missing")
+	}
+	for _, text := range []string{
+		"Meet the sla carefully.",
+		"Meet the SLA carefully.",
+		"Write an rca soon.",
+		"Write an RCA soon.",
+		"This is a p0 incident.",
+		"Track the p1 queue.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
+func TestGolden_IgnoreSpellingPnpm(t *testing.T) {
+	if DiscoverEnglishIgnoreSpellingList(nil) == "" {
+		t.Skip("ignore-spelling list missing")
+	}
+	var buf bytes.Buffer
+	// Capitalize sentence start; avoid unknown common nouns in the rest.
+	_, err := CoreGoldenHook(&buf, "Pnpm and Turborepo are tools we use.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+	}
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer
