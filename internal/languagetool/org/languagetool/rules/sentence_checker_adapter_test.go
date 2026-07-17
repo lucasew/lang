@@ -22,9 +22,16 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	}
 	require.True(t, hasWS)
 
+	// comma whitespace (e.g. missing space after comma)
+	// may or may not fire depending on tokenization; double punct is reliable
 	// double punctuation
 	m = lt.Check("Wait.. now")
 	require.NotEmpty(t, m)
+
+	// RegisterCoreRules dispatch
+	lt2 := languagetool.NewJLanguageTool("fr")
+	RegisterCoreRules(lt2, "fr")
+	require.NotEmpty(t, lt2.Check("bonjour  monde"))
 
 	// a vs an
 	m = lt.Check("This is an test.")

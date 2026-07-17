@@ -52,13 +52,14 @@ func AsSentenceCheckerSimple(match func(*languagetool.AnalyzedSentence) []*RuleM
 	}
 }
 
-// RegisterCoreEnglishRules installs whitespace, double punctuation, uppercase start,
-// and word-repeat inject onto lt for integration smokes.
-func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
+// RegisterSharedLayoutRules installs cross-language layout/punctuation rules.
+func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang string) {
 	if lt == nil {
 		return
 	}
-	// Text-level rules accept sentence slices; wrap single sentence for Check path.
+	if uppercaseLang == "" {
+		uppercaseLang = "en"
+	}
 	ws := NewMultipleWhitespaceRule(map[string]string{
 		"whitespace_repetition": "Possible typo: you repeated a whitespace",
 	})
@@ -66,18 +67,64 @@ func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
 		return ws.Match([]*languagetool.AnalyzedSentence{s})
 	}))
 
+	cw := NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), AsSentenceCheckerSimple(cw.Match))
+
 	dp := NewDoublePunctuationRule(nil)
 	lt.AddRuleChecker(dp.GetID(), AsSentenceCheckerSimple(dp.Match))
 
-	up := NewUppercaseSentenceStartRule(nil, "en")
+	up := NewUppercaseSentenceStartRule(nil, uppercaseLang)
 	lt.AddRuleChecker(up.GetID(), AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*RuleMatch {
 		return up.MatchList([]*languagetool.AnalyzedSentence{s})
 	}))
 
-	// soft injects for gaps (no full XML rules)
-	lt.AddRuleChecker("WORD_REPEAT_RULE", languagetool.SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
-	lt.AddRuleChecker("EN_A_VS_AN", languagetool.SimpleAvsAnChecker())
+	// inject unpaired brackets (GenericUnpairedBracketsRule is multi-sentence)
 	lt.AddRuleChecker("UNPAIRED_BRACKETS", languagetool.SimpleUnpairedBracketsChecker())
+}
+
+// RegisterCoreEnglishRules installs shared layout + EN a/an + word-repeat (real rule).
+func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	RegisterSharedLayoutRules(lt, "en")
+
+	wr := NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
+	lt.AddRuleChecker(wr.GetID(), AsSentenceCheckerSimple(wr.Match))
+
+	lt.AddRuleChecker("EN_A_VS_AN", languagetool.SimpleAvsAnChecker())
+	lt.AddRuleChecker("PHRASE_REPLACE", languagetool.SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
+		"tot he": "to the",
+	}))
+}
+
+// RegisterCoreRules picks a language-appropriate core pack (shared layout + base word-repeat).
+// EN also gets a/an and phrase injects.
+func RegisterCoreRules(lt *languagetool.JLanguageTool, langCode string) {
+	if lt == nil {
+		return
+	}
+	base := langCode
+	if i := indexByteLocal(langCode, '-'); i > 0 {
+		base = langCode[:i]
+	}
+	switch base {
+	case "en":
+		RegisterCoreEnglishRules(lt)
+	default:
+		RegisterSharedLayoutRules(lt, base)
+		wr := NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
+		lt.AddRuleChecker(wr.GetID(), AsSentenceCheckerSimple(wr.Match))
+	}
+}
+
+func indexByteLocal(s string, c byte) int {
+	for i := 0; i < len(s); i++ {
+		if s[i] == c {
+			return i
+		}
+	}
+	return -1
 }
 
 // RegisterPatternRule wires a PatternRule into Check (simplified matcher).
