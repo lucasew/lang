@@ -693,8 +693,8 @@ def vendor_lang(lang: str) -> dict:
 
     # multiwords into disambiguation as upstream copy (not invented soft mesa names)
     mw = res_base / "multiwords.txt"
-    if mw.is_file() and lang == "en":
-        copy_file(mw, DIS_OUT / "en-multiwords-upstream.txt")
+    if mw.is_file():
+        copy_file(mw, DIS_OUT / f"{lang}-multiwords-upstream.txt")
 
     # soft-compatible disambiguation extract
     dis_src = res_base / "disambiguation.xml"

@@ -161,6 +161,9 @@ func loadIgnoreSpellingWords(path string) (map[string]struct{}, error) {
 func loadTabSeparatedMultiwords(f *os.File) ([]string, error) {
 	var lines []string
 	sc := bufio.NewScanner(f)
+	// Upstream multiwords files can include long proper-name lines.
+	buf := make([]byte, 0, 64*1024)
+	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
 		line := strings.TrimSpace(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
@@ -169,15 +172,49 @@ func loadTabSeparatedMultiwords(f *os.File) ([]string, error) {
 		if i := strings.IndexByte(line, '#'); i >= 0 {
 			line = strings.TrimSpace(line[:i])
 		}
-		// require a tab so glued "phraseTAG" lines from upstream multiwords.txt are skipped
-		if !strings.Contains(line, "\t") {
+		phrase, tag, ok := splitMultiwordLine(line)
+		if !ok {
 			continue
 		}
-		parts := strings.Split(line, "\t")
-		if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-			continue
-		}
-		lines = append(lines, parts[0]+"\t"+parts[1])
+		lines = append(lines, phrase+"\t"+tag)
 	}
 	return lines, sc.Err()
+}
+
+// splitMultiwordLine accepts tab-separated "phrase\ttag" or LT glued "phraseTAG"
+// (POS stuck to the last character of the phrase, e.g. "status quoNN:UN").
+func splitMultiwordLine(line string) (phrase, tag string, ok bool) {
+	if i := strings.IndexByte(line, '\t'); i >= 0 {
+		phrase = strings.TrimSpace(line[:i])
+		tag = strings.TrimSpace(line[i+1:])
+		return phrase, tag, phrase != "" && tag != ""
+	}
+	// Glued form: trailing uppercase POS token (NN, NNP, NN:UN, NNS, RB, …).
+	if len(line) < 3 {
+		return "", "", false
+	}
+	end := len(line)
+	j := end - 1
+	for j >= 0 {
+		c := line[j]
+		if (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == ':' || c == '+' || c == '_' || c == '-' {
+			j--
+			continue
+		}
+		break
+	}
+	tagStart := j + 1
+	if tagStart <= 0 || tagStart >= end {
+		return "", "", false
+	}
+	tag = line[tagStart:]
+	if len(tag) < 2 || tag[0] < 'A' || tag[0] > 'Z' {
+		return "", "", false
+	}
+	phrase = strings.TrimSpace(line[:tagStart])
+	// multiword requires a space in the phrase
+	if phrase == "" || !strings.Contains(phrase, " ") {
+		return "", "", false
+	}
+	return phrase, tag, true
 }

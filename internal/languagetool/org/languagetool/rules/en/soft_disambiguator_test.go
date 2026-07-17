@@ -3,6 +3,7 @@ package en
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -269,5 +270,61 @@ func TestSoftXML_ImmunizeBTW(t *testing.T) {
 		for _, x := range m {
 			require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID, "text=%q matches=%+v", text, m)
 		}
+	}
+}
+
+func TestSplitMultiwordLine(t *testing.T) {
+	phrase, tag, ok := splitMultiwordLine("New York\tNNP")
+	require.True(t, ok)
+	require.Equal(t, "New York", phrase)
+	require.Equal(t, "NNP", tag)
+
+	phrase, tag, ok = splitMultiwordLine("status quoNN:UN")
+	require.True(t, ok)
+	require.Equal(t, "status quo", phrase)
+	require.Equal(t, "NN:UN", tag)
+
+	_, _, ok = splitMultiwordLine("singletonNNP")
+	require.False(t, ok)
+}
+
+func TestLoadUpstreamEnglishMultiwords(t *testing.T) {
+	// Prefer vendored upstream multiwords when present.
+	root := findRepoRoot(t)
+	path := filepath.Join(root, "testdata", "disambiguation", "en-multiwords-upstream.txt")
+	if _, err := os.Stat(path); err != nil {
+		t.Skip("vendored multiwords missing")
+	}
+	f, err := os.Open(path)
+	require.NoError(t, err)
+	defer f.Close()
+	lines, err := loadTabSeparatedMultiwords(f)
+	require.NoError(t, err)
+	require.Greater(t, len(lines), 1000, "expected thousands of upstream multiwords")
+	// sanity: known entry present
+	found := false
+	for _, l := range lines {
+		if strings.HasPrefix(l, "New York\t") || strings.HasPrefix(l, "status quo\t") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected New York or status quo in loaded multiwords")
+}
+
+func findRepoRoot(t *testing.T) string {
+	t.Helper()
+	wd, err := os.Getwd()
+	require.NoError(t, err)
+	dir := wd
+	for {
+		if st, err := os.Stat(filepath.Join(dir, "testdata", "upstream")); err == nil && st.IsDir() {
+			return dir
+		}
+		p := filepath.Dir(dir)
+		if p == dir {
+			t.Fatal("repo root not found")
+		}
+		dir = p
 	}
 }
