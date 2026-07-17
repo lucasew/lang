@@ -1,17 +1,27 @@
 package uk
 
-// Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/UppercaseSentenceStartRuleTest.java
+// Twin of UppercaseSentenceStartRuleTest (Ukrainian)
 import (
+	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/UppercaseSentenceStartRuleTest.java :: UppercaseSentenceStartRuleTest.testUkrainian
+// Port of UppercaseSentenceStartRuleTest.testUkrainian
 func TestUppercaseSentenceStartRule_Ukrainian(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewUppercaseSentenceStartRule(map[string]string{
+		"incorrect_case": "Речення не починається з великої літери",
+	})
+	analyze := func(s string) []*languagetool.AnalyzedSentence {
+		if strings.Contains(s, ". ") {
+			return languagetool.SplitAndAnalyze(s)
+		}
+		return []*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)}
+	}
+	require.Empty(t, r.MatchList(analyze("Це речення.")))
+	require.Equal(t, 1, len(r.MatchList(analyze("це речення."))))
+	// second sentence
+	require.Equal(t, 1, len(r.MatchList(analyze("Привіт. світ."))))
 }

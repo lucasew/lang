@@ -14,7 +14,26 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguator
 func TestUkrainianHybridDisambiguation_Disambiguator(t *testing.T) {
-	t.Skip("unimplemented: UkrainianHybridDisambiguationTest.testDisambiguator")
+	// pipeline smoke: hybrid runs without panic on multi-token sentence
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pVerb, pAdj := "verb:perf:past:f", "adj:f:v_naz"
+	lVerb, lAdj := "прийти", "любий"
+	// "Прийшла Люба" — soft multi readings
+	tok1 := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Прийшла", &pVerb, &lVerb),
+		languagetool.NewAnalyzedToken("Прийшла", &pAdj, &lAdj),
+	}, 0)
+	pName := "noun:anim:f:v_naz:prop:fname"
+	lName := "Люба"
+	tok2 := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Люба", &pName, &lName),
+	}, 0)
+	out := NewUkrainianHybridDisambiguator().Disambiguate(
+		languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok1, tok2}))
+	require.NotNil(t, out)
+	require.GreaterOrEqual(t, len(out.GetTokensWithoutWhitespace()), 2)
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorDups

@@ -1,6 +1,8 @@
 package patterns
 
 import (
+	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -42,6 +44,33 @@ func (r *PatternRule) HasTag(tag rules.Tag) bool {
 		}
 	}
 	return false
+}
+
+// SupportsLanguage reports whether the rule applies to the given short code (with optional variant).
+// Empty LanguageCode only matches empty code (callers treat unset rules separately).
+func (r *PatternRule) SupportsLanguage(code string) bool {
+	if r == nil {
+		return false
+	}
+	if r.LanguageCode == "" {
+		return code == ""
+	}
+	if code == "" {
+		return false
+	}
+	a, b := strings.ToLower(r.LanguageCode), strings.ToLower(code)
+	if a == b {
+		return true
+	}
+	// en matches en-US / en-GB and vice versa on base
+	abase, bbase := a, b
+	if i := strings.Index(a, "-"); i > 0 {
+		abase = a[:i]
+	}
+	if i := strings.Index(b, "-"); i > 0 {
+		bbase = b[:i]
+	}
+	return abase == bbase
 }
 
 // FalseFriendPatternRule ports org.languagetool.rules.patterns.FalseFriendPatternRule.

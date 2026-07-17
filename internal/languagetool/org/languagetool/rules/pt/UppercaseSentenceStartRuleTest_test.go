@@ -1,17 +1,26 @@
 package pt
 
-// Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/rules/pt/UppercaseSentenceStartRuleTest.java
+// Twin of UppercaseSentenceStartRuleTest (Portuguese)
 import (
+	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pt/src/test/java/org/languagetool/rules/pt/UppercaseSentenceStartRuleTest.java :: UppercaseSentenceStartRuleTest.testUppercaseRule
+// Port of UppercaseSentenceStartRuleTest.testUppercaseRule
 func TestUppercaseSentenceStartRule_UppercaseRule(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewUppercaseSentenceStartRule(map[string]string{
+		"incorrect_case": "A frase não começa com maiúscula",
+	})
+	analyze := func(s string) []*languagetool.AnalyzedSentence {
+		if strings.Contains(s, ". ") {
+			return languagetool.SplitAndAnalyze(s)
+		}
+		return []*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)}
+	}
+	require.Empty(t, r.MatchList(analyze("Isto é uma frase.")))
+	require.Equal(t, 1, len(r.MatchList(analyze("isto é uma frase."))))
+	require.Equal(t, 1, len(r.MatchList(analyze("Olá. mundo é grande."))))
 }

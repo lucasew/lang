@@ -1,22 +1,40 @@
 package ru
 
-// Twin of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/DateCheckFilterTest.java
+// Twin of DateCheckFilterTest (Russian)
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/DateCheckFilterTest.java :: DateCheckFilterTest.testGetDayOfWeek
+// Port of DateCheckFilterTest.testGetDayOfWeek
 func TestDateCheckFilter_GetDayOfWeek(t *testing.T) {
-	// contains assertThat
+	f := NewDateCheckFilter()
+	// Java Calendar: Sunday=1 … Saturday=7
+	d, err := f.GetDayOfWeekJava("понедельник")
+	require.NoError(t, err)
+	require.Equal(t, 2, d)
+	d, err = f.GetDayOfWeekJava("пн")
+	require.NoError(t, err)
+	require.Equal(t, 2, d)
+	d, err = f.GetDayOfWeekJava("суббота")
+	require.NoError(t, err)
+	require.Equal(t, 7, d)
+	d, err = f.GetDayOfWeekJava("воскресенье")
+	require.NoError(t, err)
+	require.Equal(t, 1, d)
 }
 
-// Port of languagetool-language-modules/ru/src/test/java/org/languagetool/rules/ru/DateCheckFilterTest.java :: DateCheckFilterTest.testMonth
+// Port of DateCheckFilterTest.testMonth
 func TestDateCheckFilter_Month(t *testing.T) {
-	// contains assertThat
+	f := NewDateCheckFilter()
+	m, err := f.GetMonth("январь")
+	require.NoError(t, err)
+	require.Equal(t, 1, m)
+	m, err = f.GetMonth("декабрь")
+	require.NoError(t, err)
+	require.Equal(t, 12, m)
+	m, err = f.GetMonth("мая")
+	require.NoError(t, err)
+	require.Equal(t, 5, m)
 }

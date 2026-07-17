@@ -132,8 +132,30 @@ func TestTokenAgreementAdjNounRule_ExceptionsPlural(t *testing.T) {
 	require.NotEmpty(t, r.Match(sentBad))
 }
 func TestTokenAgreementAdjNounRule_ExceptionsPluralConjAdv(t *testing.T) {
-	t.Skip("soft-skip: conj/adv plural exceptions")
+	// conj "і" is ignorable intervening; last adj… actually adj then і then noun
+	r := NewTokenAgreementAdjNounRule()
+	sentGood := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великі", "adj:p:v_naz"),
+		atr("і", "conj"),
+		atr("будинки", "noun:inanim:p:v_naz"),
+	})
+	require.Empty(t, r.Match(sentGood), "conj between agreeing adj-noun passes")
+	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великий", "adj:m:v_naz"),
+		atr("і", "conj"),
+		atr("будинки", "noun:inanim:p:v_naz"),
+	})
+	require.NotEmpty(t, r.Match(sentBad), "conj does not hide number mismatch")
 }
 func TestTokenAgreementAdjNounRule_ExceptionsInsertPhrase(t *testing.T) {
-	t.Skip("soft-skip: insert phrase exception tables")
+	// parenthetical / insert between adj and noun is not ignorable → no pair flag
+	r := NewTokenAgreementAdjNounRule()
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("великий", "adj:m:v_naz"),
+		atr(",", "SENT_END"),
+		atr("звичайно", "adv"),
+		atr(",", "SENT_END"),
+		atr("будинок", "noun:inanim:f:v_naz"), // would disagree if pair formed
+	})
+	require.Empty(t, r.Match(sent), "insert phrase prevents false adj-noun pair")
 }

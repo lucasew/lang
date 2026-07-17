@@ -1,22 +1,33 @@
 package pl
 
-// Twin of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/DateCheckFilterTest.java
+// Twin of DateCheckFilterTest (Polish)
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/DateCheckFilterTest.java :: DateCheckFilterTest.testGetDayOfWeek
+// Port of DateCheckFilterTest.testGetDayOfWeek
 func TestDateCheckFilter_GetDayOfWeek(t *testing.T) {
-	// contains assertThat
+	f := NewDateCheckFilter()
+	d, err := f.GetDayOfWeekJava("poniedziałek")
+	require.NoError(t, err)
+	require.Equal(t, 2, d)
+	d, err = f.GetDayOfWeekJava("niedziela")
+	require.NoError(t, err)
+	require.Equal(t, 1, d)
+	d, err = f.GetDayOfWeekJava("sobota")
+	require.NoError(t, err)
+	require.Equal(t, 7, d)
 }
 
-// Port of languagetool-language-modules/pl/src/test/java/org/languagetool/rules/pl/DateCheckFilterTest.java :: DateCheckFilterTest.testMonth
+// Port of DateCheckFilterTest.testMonth
 func TestDateCheckFilter_Month(t *testing.T) {
-	// contains assertThat
+	f := NewDateCheckFilter()
+	m, err := f.GetMonth("stycznia")
+	require.NoError(t, err)
+	require.Equal(t, 1, m)
+	m, err = f.GetMonth("III")
+	require.NoError(t, err)
+	require.Equal(t, 3, m)
 }

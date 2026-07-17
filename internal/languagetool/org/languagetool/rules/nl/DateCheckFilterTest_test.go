@@ -1,17 +1,20 @@
 package nl
 
-// Twin of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/DateCheckFilterTest.java
+// Twin of DateCheckFilterTest (Dutch) — Java had no @Test; green helper smoke.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/DateCheckFilterTest.java :: DateCheckFilterTest (no @Test)
+// Port of DateCheckFilterTest (surface)
 func TestDateCheckFilter_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/DateCheckFilterTest.java")
+	f := NewDateCheckFilter()
+	d, err := f.GetDayOfWeekJava("maandag")
+	require.NoError(t, err)
+	require.Equal(t, 2, d)
+	m, err := f.GetMonth("mei")
+	require.NoError(t, err)
+	require.Equal(t, 5, m)
+	require.Equal(t, "vrijdag", f.GetDayOfWeekName(2014, 8, 29))
 }

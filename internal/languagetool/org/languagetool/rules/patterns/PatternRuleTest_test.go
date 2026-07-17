@@ -1,18 +1,27 @@
 package patterns
 
-// Twin of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleTest.java
+// Twin of PatternRuleTest
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-core/src/test/java/org/languagetool/rules/patterns/PatternRuleTest.java :: PatternRuleTest.testSupportsLanguage
+// Port of PatternRuleTest.testSupportsLanguage
 func TestPatternRule_SupportsLanguage(t *testing.T) {
-	// contains assertTrue
-	// contains assertFalse
+	r := NewPatternRule("ID", "en", []*PatternToken{Token("foo")}, "d", "m", "s")
+	require.True(t, r.SupportsLanguage("en"))
+	require.True(t, r.SupportsLanguage("en-US"))
+	require.True(t, r.SupportsLanguage("en-GB"))
+	require.False(t, r.SupportsLanguage("de"))
+	require.False(t, r.SupportsLanguage("de-DE"))
+
+	de := NewPatternRule("D", "de-DE", nil, "d", "m", "s")
+	require.True(t, de.SupportsLanguage("de"))
+	require.True(t, de.SupportsLanguage("de-AT"))
+	require.False(t, de.SupportsLanguage("en"))
+
+	any := NewPatternRule("A", "", nil, "d", "m", "s")
+	require.True(t, any.SupportsLanguage(""))
+	require.False(t, any.SupportsLanguage("en")) // empty code only matches empty
 }
