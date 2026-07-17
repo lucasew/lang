@@ -5657,6 +5657,76 @@
       <message>Did you mean "immediately"?</message>
       <short>emmediately</short>
     </rule>
+    <rule id="EN_SOFT_FIELD_MISS" name="feild soft">
+      <pattern>
+        <token>feild</token>
+      </pattern>
+      <message>Did you mean "field"?</message>
+      <short>feild</short>
+    </rule>
+    <rule id="EN_SOFT_FEASIBLE_MISS" name="feasable soft">
+      <pattern>
+        <token>feasable</token>
+      </pattern>
+      <message>Did you mean "feasible"?</message>
+      <short>feasable</short>
+    </rule>
+    <rule id="EN_SOFT_FINANCIAL_MISS" name="finacial soft">
+      <pattern>
+        <token>finacial</token>
+      </pattern>
+      <message>Did you mean "financial"?</message>
+      <short>finacial</short>
+    </rule>
+    <rule id="EN_SOFT_FORECAST_MISS" name="forcast soft">
+      <pattern>
+        <token>forcast</token>
+      </pattern>
+      <message>Did you mean "forecast"?</message>
+      <short>forcast</short>
+    </rule>
+    <rule id="EN_SOFT_FREQUENCY_MISS" name="frquency soft">
+      <pattern>
+        <token>frquency</token>
+      </pattern>
+      <message>Did you mean "frequency"?</message>
+      <short>frquency</short>
+    </rule>
+    <rule id="EN_SOFT_FUNCTIONAL_MISS" name="funtional soft">
+      <pattern>
+        <token>funtional</token>
+      </pattern>
+      <message>Did you mean "functional"?</message>
+      <short>funtional</short>
+    </rule>
+    <rule id="EN_SOFT_FIRST_MISS" name="firts soft">
+      <pattern>
+        <token>firts</token>
+      </pattern>
+      <message>Did you mean "first"?</message>
+      <short>firts</short>
+    </rule>
+    <rule id="EN_SOFT_FIRMLY_MISS" name="firmely soft">
+      <pattern>
+        <token>firmely</token>
+      </pattern>
+      <message>Did you mean "firmly"?</message>
+      <short>firmely</short>
+    </rule>
+    <rule id="EN_SOFT_EMISSION_MISS2" name="emision soft">
+      <pattern>
+        <token>emision</token>
+      </pattern>
+      <message>Did you mean "emission"?</message>
+      <short>emision</short>
+    </rule>
+    <rule id="EN_SOFT_DISCONNECT_MISS" name="discconect soft">
+      <pattern>
+        <token>discconect</token>
+      </pattern>
+      <message>Did you mean "disconnect"?</message>
+      <short>discconect</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -267,3 +267,6 @@ Carson City	NNP
 Sacramento California	NNP
 peer to peer	RB
 point to point	RB
+Las Vegas Nevada	NNP
+Charlotte North Carolina	NNP
+end to end testing	NN

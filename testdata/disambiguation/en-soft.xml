@@ -2067,4 +2067,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TALOS" name="immunize talos">
+    <pattern>
+      <token>talos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TALOS_CAPS" name="immunize Talos">
+    <pattern>
+      <token>Talos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KOPS" name="immunize kops">
+    <pattern>
+      <token>kops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KOPS_CAPS" name="immunize Kops">
+    <pattern>
+      <token>Kops</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EKSCTL" name="immunize eksctl">
+    <pattern>
+      <token>eksctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_EKSCTL_CAPS" name="immunize Eksctl">
+    <pattern>
+      <token>Eksctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

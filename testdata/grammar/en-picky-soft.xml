@@ -1255,5 +1255,29 @@
       <message>Jargon; name the org-structure change and target architecture.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ERROR_BUDGET" name="error budget soft picky">
+      <pattern>
+        <token>error</token>
+        <token>budget</token>
+      </pattern>
+      <message>Jargon; name the reliability allowance and policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SERVICE_OWNERSHIP" name="service ownership soft picky">
+      <pattern>
+        <token>service</token>
+        <token>ownership</token>
+      </pattern>
+      <message>Jargon; name who runs the service and on-call duties.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RELIABILITY_DRIVEN" name="reliability driven soft picky">
+      <pattern>
+        <token>reliability</token>
+        <token>driven</token>
+      </pattern>
+      <message>Jargon; name the objective and burn-rate policy instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
