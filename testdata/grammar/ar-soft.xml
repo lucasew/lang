@@ -9,5 +9,21 @@
       <message>تكرار محتمل لـ "في".</message>
       <short>في في</short>
     </rule>
+    <rule id="AR_SOFT_MIN_MIN" name="من من">
+      <pattern>
+        <token>من</token>
+        <token>من</token>
+      </pattern>
+      <message>تكرار محتمل لـ "من".</message>
+      <short>من من</short>
+    </rule>
+    <rule id="AR_SOFT_WA_WA" name="و و">
+      <pattern>
+        <token>و</token>
+        <token>و</token>
+      </pattern>
+      <message>تكرار محتمل لـ "و".</message>
+      <short>و و</short>
+    </rule>
   </category>
 </rules>

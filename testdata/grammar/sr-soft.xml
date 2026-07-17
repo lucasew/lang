@@ -9,5 +9,21 @@
       <message>Moguće ponavljanje "i".</message>
       <short>i i</short>
     </rule>
+    <rule id="SR_SOFT_U_U" name="u u">
+      <pattern>
+        <token>u</token>
+        <token>u</token>
+      </pattern>
+      <message>Moguće ponavljanje "u".</message>
+      <short>u u</short>
+    </rule>
+    <rule id="SR_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Moguće ponavljanje "na".</message>
+      <short>na na</short>
+    </rule>
   </category>
 </rules>

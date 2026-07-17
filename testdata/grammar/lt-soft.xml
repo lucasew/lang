@@ -9,5 +9,21 @@
       <message>Galimas "ir" pakartojimas.</message>
       <short>ir ir</short>
     </rule>
+    <rule id="LT_SOFT_IR_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Galimas "i" pakartojimas.</message>
+      <short>i i</short>
+    </rule>
+    <rule id="LT_SOFT_IR_O" name="o o">
+      <pattern>
+        <token>o</token>
+        <token>o</token>
+      </pattern>
+      <message>Galimas "o" pakartojimas.</message>
+      <short>o o</short>
+    </rule>
   </category>
 </rules>

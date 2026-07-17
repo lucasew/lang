@@ -9,5 +9,21 @@
       <message>Ebla ripeto de "kaj".</message>
       <short>kaj kaj</short>
     </rule>
+    <rule id="EO_SOFT_LA_LA" name="la la">
+      <pattern>
+        <token>la</token>
+        <token>la</token>
+      </pattern>
+      <message>Ebla ripeto de "la".</message>
+      <short>la la</short>
+    </rule>
+    <rule id="EO_SOFT_DE_DE" name="de de">
+      <pattern>
+        <token>de</token>
+        <token>de</token>
+      </pattern>
+      <message>Ebla ripeto de "de".</message>
+      <short>de de</short>
+    </rule>
   </category>
 </rules>

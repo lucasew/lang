@@ -261,3 +261,35 @@ func TestGolden_SoftConfusablesMore(t *testing.T) {
 		})
 	}
 }
+
+func TestGolden_SoftDialectForms(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"I seen him yesterday.", "EN_SOFT_I_SEEN", "I saw"},
+		{"I done the work already.", "EN_SOFT_I_DONE", "I did"},
+		{"They was late again.", "EN_SOFT_WE_WAS", "were"},
+		{"I is ready now.", "EN_SOFT_I_IS", "am"},
+		{"Me and John went home.", "EN_SOFT_ME_AND", ""},
+		{"She should of been here.", "EN_SOFT_SHOULD_OF_SPACED", "should have been"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}

@@ -9,5 +9,21 @@
       <message>Möguleg endurtekning á "og".</message>
       <short>og og</short>
     </rule>
+    <rule id="IS_SOFT_A_A" name="á á">
+      <pattern>
+        <token>á</token>
+        <token>á</token>
+      </pattern>
+      <message>Möguleg endurtekning á "á".</message>
+      <short>á á</short>
+    </rule>
+    <rule id="IS_SOFT_I_I" name="í í">
+      <pattern>
+        <token>í</token>
+        <token>í</token>
+      </pattern>
+      <message>Möguleg endurtekning á "í".</message>
+      <short>í í</short>
+    </rule>
   </category>
 </rules>

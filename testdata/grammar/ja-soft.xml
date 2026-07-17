@@ -9,5 +9,21 @@
       <message>Possible repeated "to".</message>
       <short>to to</short>
     </rule>
+    <rule id="JA_SOFT_NO_NO" name="no no">
+      <pattern>
+        <token>no</token>
+        <token>no</token>
+      </pattern>
+      <message>Possible repeated "no".</message>
+      <short>no no</short>
+    </rule>
+    <rule id="JA_SOFT_WA_WA" name="wa wa">
+      <pattern>
+        <token>wa</token>
+        <token>wa</token>
+      </pattern>
+      <message>Possible repeated "wa".</message>
+      <short>wa wa</short>
+    </rule>
   </category>
 </rules>

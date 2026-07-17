@@ -6,8 +6,24 @@
         <token>的</token>
         <token>的</token>
       </pattern>
-      <message>可能重复的“的”。</message>
+      <message>可能重复了 "的"。</message>
       <short>的 的</short>
+    </rule>
+    <rule id="ZH_SOFT_LE_LE" name="了 了">
+      <pattern>
+        <token>了</token>
+        <token>了</token>
+      </pattern>
+      <message>可能重复了 "了"。</message>
+      <short>了 了</short>
+    </rule>
+    <rule id="ZH_SOFT_SHI_SHI" name="是 是">
+      <pattern>
+        <token>是</token>
+        <token>是</token>
+      </pattern>
+      <message>可能重复了 "是"。</message>
+      <short>是 是</short>
     </rule>
   </category>
 </rules>

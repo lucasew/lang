@@ -9,5 +9,21 @@
       <message>تکرار احتمالی «و».</message>
       <short>و و</short>
     </rule>
+    <rule id="FA_SOFT_DAR_DAR" name="در در">
+      <pattern>
+        <token>در</token>
+        <token>در</token>
+      </pattern>
+      <message>تکرار احتمالی «در».</message>
+      <short>در در</short>
+    </rule>
+    <rule id="FA_SOFT_AZ_AZ" name="از از">
+      <pattern>
+        <token>از</token>
+        <token>از</token>
+      </pattern>
+      <message>تکرار احتمالی «از».</message>
+      <short>از از</short>
+    </rule>
   </category>
 </rules>

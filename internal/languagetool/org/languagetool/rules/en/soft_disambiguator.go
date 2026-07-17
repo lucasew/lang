@@ -20,6 +20,9 @@ var softEnglishMultiwords = []string{
 	"United Kingdom\tNNP",
 	"San Francisco\tNNP",
 	"Hong Kong\tNNP",
+	"New Zealand\tNNP",
+	"South Africa\tNNP",
+	"Costa Rica\tNNP",
 	"status quo\tNN",
 	"Status Quo\tNN",
 	"as well\tRB",
@@ -27,6 +30,8 @@ var softEnglishMultiwords = []string{
 	"in fact\tRB",
 	"of course\tRB",
 	"at least\tRB",
+	"by the way\tRB",
+	"in general\tRB",
 	"Taj Mahal\tNNP",
 	"Yom Kippur\tNNP",
 }

@@ -255,5 +255,55 @@
       <message>Did you mean "has"?</message>
       <short>3sg agreement</short>
     </rule>
+    <!-- Soft dialect / nonstandard past forms -->
+    <rule id="EN_SOFT_I_SEEN" name="I seen">
+      <pattern>
+        <token regexp="yes">I</token>
+        <token>seen</token>
+      </pattern>
+      <message>Did you mean "I saw" or "I have seen"?</message>
+      <short>past form</short>
+    </rule>
+    <rule id="EN_SOFT_I_DONE" name="I done">
+      <pattern>
+        <token regexp="yes">I</token>
+        <token>done</token>
+      </pattern>
+      <message>Did you mean "I did" or "I have done"?</message>
+      <short>past form</short>
+    </rule>
+    <rule id="EN_SOFT_WE_WAS" name="we/you/they was">
+      <pattern>
+        <token regexp="yes">We|You|They|we|you|they</token>
+        <token>was</token>
+      </pattern>
+      <message>Did you mean "were"?</message>
+      <short>agreement</short>
+    </rule>
+    <rule id="EN_SOFT_I_IS" name="I is">
+      <pattern>
+        <token regexp="yes">I</token>
+        <token>is</token>
+      </pattern>
+      <message>Did you mean "am"?</message>
+      <short>agreement</short>
+    </rule>
+    <rule id="EN_SOFT_ME_AND" name="me and X went">
+      <pattern>
+        <token>Me</token>
+        <token>and</token>
+      </pattern>
+      <message>In subject position, prefer "I and …" or "… and I".</message>
+      <short>case</short>
+    </rule>
+    <rule id="EN_SOFT_SHOULD_OF_SPACED" name="should of (soft XML)">
+      <pattern>
+        <token>should</token>
+        <token>of</token>
+        <token>been</token>
+      </pattern>
+      <message>Did you mean "should have been"?</message>
+      <short>should of</short>
+    </rule>
   </category>
 </rules>

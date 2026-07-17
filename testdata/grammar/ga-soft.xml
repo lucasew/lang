@@ -9,5 +9,21 @@
       <message>Athrá féideartha ar "agus".</message>
       <short>agus agus</short>
     </rule>
+    <rule id="GA_SOFT_AN_AN" name="an an">
+      <pattern>
+        <token>an</token>
+        <token>an</token>
+      </pattern>
+      <message>Athrá féideartha ar "an".</message>
+      <short>an an</short>
+    </rule>
+    <rule id="GA_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Athrá féideartha ar "na".</message>
+      <short>na na</short>
+    </rule>
   </category>
 </rules>

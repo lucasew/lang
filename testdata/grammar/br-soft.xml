@@ -6,8 +6,24 @@
         <token>ha</token>
         <token>ha</token>
       </pattern>
-      <message>Posubl eiladenn eus "ha".</message>
+      <message>Adlavar posubl eus "ha".</message>
       <short>ha ha</short>
+    </rule>
+    <rule id="BR_SOFT_HA_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Adlavar posubl eus "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="BR_SOFT_HA_E" name="e e">
+      <pattern>
+        <token>e</token>
+        <token>e</token>
+      </pattern>
+      <message>Adlavar posubl eus "e".</message>
+      <short>e e</short>
     </rule>
   </category>
 </rules>

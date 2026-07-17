@@ -14,3 +14,13 @@ at least	RB
 as well	RB
 for example	RB
 in fact	RB
+Rio de Janeiro	NNP
+Buenos Aires	NNP
+Cape Town	NNP
+Costa Rica	NNP
+New Zealand	NNP
+South Africa	NNP
+by the way	RB
+at all	RB
+in general	RB
+on the other hand	RB

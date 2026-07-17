@@ -6,8 +6,24 @@
         <token>in</token>
         <token>in</token>
       </pattern>
-      <message>Možno podvajanje "in".</message>
+      <message>Možna ponovitev "in".</message>
       <short>in in</short>
+    </rule>
+    <rule id="SL_SOFT_IN_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Možna ponovitev "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="SL_SOFT_JE_JE" name="je je">
+      <pattern>
+        <token>je</token>
+        <token>je</token>
+      </pattern>
+      <message>Možna ponovitev "je".</message>
+      <short>je je</short>
     </rule>
   </category>
 </rules>

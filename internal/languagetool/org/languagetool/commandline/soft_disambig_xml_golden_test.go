@@ -132,6 +132,16 @@ func TestParseOptions_DisambigPaths(t *testing.T) {
 	require.Equal(t, "/tmp/dis.xml", opts.GetDisambiguationFile())
 }
 
+func TestGolden_SoftMultiwords_NewZealand(t *testing.T) {
+	// default embedded multiwords include New Zealand even without file
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "I fly to New Zealand tomorrow.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	require.Contains(t, s, "New")
+	require.True(t, strings.Contains(s, "NNP") || strings.Contains(s, "NP"), s)
+}
+
 func TestGolden_SoftMultiwords_SanFrancisco(t *testing.T) {
 	if DiscoverEnglishMultiwords(nil) == "" {
 		t.Skip("multiwords not found")

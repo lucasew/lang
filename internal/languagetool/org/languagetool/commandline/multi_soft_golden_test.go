@@ -106,6 +106,15 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"ro", "Merg în în casă.", "RO_SOFT_IN_IN", ""},
 		{"el", "Το το βιβλίο.", "EL_SOFT_TO_TO", ""},
 		{"el", "Θέλω να να φύγω.", "EL_SOFT_NA_NA", ""},
+		{"sl", "On je je tukaj.", "SL_SOFT_JE_JE", ""},
+		{"sr", "Idem u u školu.", "SR_SOFT_U_U", ""},
+		{"lt", "Katė ir ir šuo.", "LT_SOFT_IR_IR", ""},
+		{"is", "Kaffi og og te.", "IS_SOFT_OG_OG", ""},
+		{"eo", "La la libro.", "EO_SOFT_LA_LA", ""},
+		{"br", "Ha ha gant.", "BR_SOFT_HA_HA", ""},
+		{"ga", "An an madra.", "GA_SOFT_AN_AN", ""},
+		{"zh", "是 是 的。", "ZH_SOFT_SHI_SHI", ""},
+		{"ja", "no no desu.", "JA_SOFT_NO_NO", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
