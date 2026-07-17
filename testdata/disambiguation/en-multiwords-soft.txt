@@ -486,3 +486,6 @@ Sandstone Summit RegionNNP
 Chalk Summit RegionNNP
 Clay Summit RegionNNP
 Flint Summit RegionNNP
+Shale Summit RegionNNP
+Gneiss Summit RegionNNP
+Schist Summit RegionNNP

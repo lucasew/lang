@@ -4695,4 +4695,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MIMIR" name="immunize mimir">
+    <pattern>
+      <token>mimir</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MIMIR_CAPS" name="immunize Mimir">
+    <pattern>
+      <token>Mimir</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THANOS" name="immunize thanos">
+    <pattern>
+      <token>thanos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_THANOS_CAPS" name="immunize Thanos">
+    <pattern>
+      <token>Thanos</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CORTEX" name="immunize cortex">
+    <pattern>
+      <token>cortex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CORTEX_CAPS" name="immunize Cortex">
+    <pattern>
+      <token>Cortex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

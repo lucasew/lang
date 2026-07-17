@@ -10767,6 +10767,76 @@
       <message>Did you mean "question"?</message>
       <short>qustion</short>
     </rule>
+    <rule id="EN_SOFT_PERSON_MISS" name="persom soft">
+      <pattern>
+        <token>persom</token>
+      </pattern>
+      <message>Did you mean "person"?</message>
+      <short>persom</short>
+    </rule>
+    <rule id="EN_SOFT_DECIDE_MISS3" name="decied soft">
+      <pattern>
+        <token>decied</token>
+      </pattern>
+      <message>Did you mean "decide"?</message>
+      <short>decied</short>
+    </rule>
+    <rule id="EN_SOFT_COUNTRY_MISS3" name="countrie soft">
+      <pattern>
+        <token>countrie</token>
+      </pattern>
+      <message>Did you mean "country"?</message>
+      <short>countrie</short>
+    </rule>
+    <rule id="EN_SOFT_PERHAPS_MISS3" name="perphas soft">
+      <pattern>
+        <token>perphas</token>
+      </pattern>
+      <message>Did you mean "perhaps"?</message>
+      <short>perphas</short>
+    </rule>
+    <rule id="EN_SOFT_VERSION_MISS2" name="versoin soft">
+      <pattern>
+        <token>versoin</token>
+      </pattern>
+      <message>Did you mean "version"?</message>
+      <short>versoin</short>
+    </rule>
+    <rule id="EN_SOFT_WITHOUT_MISS2" name="wihtout soft">
+      <pattern>
+        <token>wihtout</token>
+      </pattern>
+      <message>Did you mean "without"?</message>
+      <short>wihtout</short>
+    </rule>
+    <rule id="EN_SOFT_WORKING_MISS2" name="wroking soft">
+      <pattern>
+        <token>wroking</token>
+      </pattern>
+      <message>Did you mean "working"?</message>
+      <short>wroking</short>
+    </rule>
+    <rule id="EN_SOFT_TOGETHER_MISS2" name="togehter soft">
+      <pattern>
+        <token>togehter</token>
+      </pattern>
+      <message>Did you mean "together"?</message>
+      <short>togehter</short>
+    </rule>
+    <rule id="EN_SOFT_SPECIAL_MISS2" name="speical soft">
+      <pattern>
+        <token>speical</token>
+      </pattern>
+      <message>Did you mean "special"?</message>
+      <short>speical</short>
+    </rule>
+    <rule id="EN_SOFT_SOMETIMES_MISS2" name="sometmes soft">
+      <pattern>
+        <token>sometmes</token>
+      </pattern>
+      <message>Did you mean "sometimes"?</message>
+      <short>sometmes</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -3041,5 +3041,26 @@
       <message>Jargon; name continuous incremental improvement practice instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DMAIC" name="dmaic soft picky">
+      <pattern>
+        <token>dmaic</token>
+      </pattern>
+      <message>Jargon; name define-measure-analyze-improve-control cycle instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SIPOC" name="sipoc soft picky">
+      <pattern>
+        <token>sipoc</token>
+      </pattern>
+      <message>Jargon; name suppliers-inputs-process-outputs-customers map instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GEMBA" name="gemba soft picky">
+      <pattern>
+        <token>gemba</token>
+      </pattern>
+      <message>Jargon; name go-and-see the real place of work instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
