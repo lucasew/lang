@@ -21,4 +21,8 @@ func RegisterCoreSlovakRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "sk", []patterns.TokenSequenceSpec{
 		{ID: "SK_V_V", Tokens: []string{"v", "v"}, Message: "Možné opakovanie predložky 'v'.", Suggestion: "v"},
 	})
+
+	// Official compounds.txt (embedded from upstream).
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 }

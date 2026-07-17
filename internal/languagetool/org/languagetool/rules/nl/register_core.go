@@ -29,4 +29,9 @@ func RegisterCoreDutchRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	wc := NewWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+	// Official compounds + spaced compound detection.
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	sc := NewSpaceInCompoundRule(nil)
+	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
 }

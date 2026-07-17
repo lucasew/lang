@@ -38,4 +38,11 @@ func RegisterCoreGermanRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	wc := NewWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+	// Compounds + synonym-based repeated words + compound-form coherency (official data).
+	cr := NewGermanCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	rw := NewGermanRepeatedWordsRule(nil)
+	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
+	cc := NewCompoundCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(cc.GetID(), rules.AsTextLevelChecker(cc.MatchList))
 }

@@ -29,4 +29,9 @@ func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	wc := NewWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+	// Additional official replace tables (anglicisms, multiwords).
+	ang := NewSimpleReplaceAnglicism(nil)
+	lt.AddRuleChecker(ang.GetID(), rules.AsSentenceCheckerSimple(ang.Match))
+	mw := NewSimpleReplaceMultiwordsRule(nil)
+	lt.AddRuleChecker(mw.GetID(), rules.AsSentenceCheckerSimple(mw.Match))
 }

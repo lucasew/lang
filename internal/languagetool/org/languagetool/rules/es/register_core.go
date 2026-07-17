@@ -28,4 +28,9 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 	// Official replace.txt / replace_custom.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	// Official compounds + synonym repeated-words (embedded).
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+	rw := NewSpanishRepeatedWordsRule(nil)
+	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
 }
