@@ -4607,6 +4607,76 @@
       <message>Did you mean "prove"?</message>
       <short>proove</short>
     </rule>
+    <rule id="EN_SOFT_ORGANISATION_MISS" name="orginisation soft">
+      <pattern>
+        <token>orginisation</token>
+      </pattern>
+      <message>Did you mean "organisation"?</message>
+      <short>orginisation</short>
+    </rule>
+    <rule id="EN_SOFT_PARTICULARLY_MISS" name="particuarly soft">
+      <pattern>
+        <token>particuarly</token>
+      </pattern>
+      <message>Did you mean "particularly"?</message>
+      <short>particuarly</short>
+    </rule>
+    <rule id="EN_SOFT_PIECES_MISS" name="peices soft">
+      <pattern>
+        <token>peices</token>
+      </pattern>
+      <message>Did you mean "pieces"?</message>
+      <short>peices</short>
+    </rule>
+    <rule id="EN_SOFT_PERSONNEL_MISS2" name="personell soft">
+      <pattern>
+        <token>personell</token>
+      </pattern>
+      <message>Did you mean "personnel"?</message>
+      <short>personell</short>
+    </rule>
+    <rule id="EN_SOFT_PLAGIARIZE_MISS" name="plagarize soft">
+      <pattern>
+        <token>plagarize</token>
+      </pattern>
+      <message>Did you mean "plagiarize"?</message>
+      <short>plagarize</short>
+    </rule>
+    <rule id="EN_SOFT_PREPARATIONS_MISS" name="preperations soft">
+      <pattern>
+        <token>preperations</token>
+      </pattern>
+      <message>Did you mean "preparations"?</message>
+      <short>preperations</short>
+    </rule>
+    <rule id="EN_SOFT_REMEMBER_MISS3" name="remmember soft">
+      <pattern>
+        <token>remmember</token>
+      </pattern>
+      <message>Did you mean "remember"?</message>
+      <short>remmember</short>
+    </rule>
+    <rule id="EN_SOFT_SINCERELY_MISS" name="sincerly soft">
+      <pattern>
+        <token>sincerly</token>
+      </pattern>
+      <message>Did you mean "sincerely"?</message>
+      <short>sincerly</short>
+    </rule>
+    <rule id="EN_SOFT_TEMPERATURE_MISS" name="temperture soft">
+      <pattern>
+        <token>temperture</token>
+      </pattern>
+      <message>Did you mean "temperature"?</message>
+      <short>temperture</short>
+    </rule>
+    <rule id="EN_SOFT_VARIANT_MISS" name="varient soft">
+      <pattern>
+        <token>varient</token>
+      </pattern>
+      <message>Did you mean "variant"?</message>
+      <short>varient</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

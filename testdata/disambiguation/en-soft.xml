@@ -1527,4 +1527,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_LINKERD" name="immunize linkerd">
+    <pattern>
+      <token>linkerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LINKERD_CAPS" name="immunize Linkerd">
+    <pattern>
+      <token>Linkerd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISTIO" name="immunize istio">
+    <pattern>
+      <token>istio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ISTIO_CAPS" name="immunize Istio">
+    <pattern>
+      <token>Istio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CILIUM" name="immunize cilium">
+    <pattern>
+      <token>cilium</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CILIUM_CAPS" name="immunize Cilium">
+    <pattern>
+      <token>Cilium</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -881,5 +881,33 @@
       <message>Jargon; describe the user path or steps instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_USER_PERSONA" name="user persona soft picky">
+      <pattern>
+        <token>user</token>
+        <token>persona</token>
+      </pattern>
+      <message>Jargon; describe the real user segment instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_JOBS_TO_BE_DONE" name="jobs to be done soft picky">
+      <pattern>
+        <token>jobs</token>
+        <token>to</token>
+        <token>be</token>
+        <token>done</token>
+      </pattern>
+      <message>Jargon; name the user job or outcome instead of "JTBD".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VOICE_OF_THE_CUSTOMER" name="voice of the customer soft picky">
+      <pattern>
+        <token>voice</token>
+        <token>of</token>
+        <token>the</token>
+        <token>customer</token>
+      </pattern>
+      <message>Jargon; cite the feedback or source instead of "VoC".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

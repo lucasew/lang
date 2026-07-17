@@ -222,3 +222,6 @@ over and over	RB
 Pierre South Dakota	NNP
 Bismarck North Dakota	NNP
 again and again	RB
+Topeka Kansas	NNP
+Lincoln Nebraska	NNP
+now and then	RB
