@@ -2283,4 +2283,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_JUICEFS" name="immunize juicefs">
+    <pattern>
+      <token>juicefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JUICEFS_CAPS" name="immunize JuiceFS">
+    <pattern>
+      <token>JuiceFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALLUXIO" name="immunize alluxio">
+    <pattern>
+      <token>alluxio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ALLUXIO_CAPS" name="immunize Alluxio">
+    <pattern>
+      <token>Alluxio</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUBEFS" name="immunize cubefs">
+    <pattern>
+      <token>cubefs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUBEFS_CAPS" name="immunize CubeFS">
+    <pattern>
+      <token>CubeFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

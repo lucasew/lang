@@ -285,3 +285,6 @@ up to date	JJ
 Oklahoma City Oklahoma	NNP
 day to day	RB
 month to month	RB
+Virginia Beach Virginia	NNP
+year to year	RB
+week to week	RB

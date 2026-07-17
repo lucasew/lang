@@ -6077,6 +6077,76 @@
       <message>Did you mean "installations"?</message>
       <short>instalations</short>
     </rule>
+    <rule id="EN_SOFT_INTERRUPTED_MISS" name="interupted soft">
+      <pattern>
+        <token>interupted</token>
+      </pattern>
+      <message>Did you mean "interrupted"?</message>
+      <short>interupted</short>
+    </rule>
+    <rule id="EN_SOFT_INTERRUPTION_MISS" name="interuption soft">
+      <pattern>
+        <token>interuption</token>
+      </pattern>
+      <message>Did you mean "interruption"?</message>
+      <short>interuption</short>
+    </rule>
+    <rule id="EN_SOFT_INTERVENE_MISS" name="intervine soft">
+      <pattern>
+        <token>intervine</token>
+      </pattern>
+      <message>Did you mean "intervene"?</message>
+      <short>intervine</short>
+    </rule>
+    <rule id="EN_SOFT_INTEREST_MISS" name="intrest soft">
+      <pattern>
+        <token>intrest</token>
+      </pattern>
+      <message>Did you mean "interest"?</message>
+      <short>intrest</short>
+    </rule>
+    <rule id="EN_SOFT_INTUITIVE_MISS" name="intutive soft">
+      <pattern>
+        <token>intutive</token>
+      </pattern>
+      <message>Did you mean "intuitive"?</message>
+      <short>intutive</short>
+    </rule>
+    <rule id="EN_SOFT_INVENTOR_MISS" name="inventer soft">
+      <pattern>
+        <token>inventer</token>
+      </pattern>
+      <message>Did you mean "inventor"?</message>
+      <short>inventer</short>
+    </rule>
+    <rule id="EN_SOFT_INVOLVE_MISS" name="invovle soft">
+      <pattern>
+        <token>invovle</token>
+      </pattern>
+      <message>Did you mean "involve"?</message>
+      <short>invovle</short>
+    </rule>
+    <rule id="EN_SOFT_INVOLVED_MISS" name="invovled soft">
+      <pattern>
+        <token>invovled</token>
+      </pattern>
+      <message>Did you mean "involved"?</message>
+      <short>invovled</short>
+    </rule>
+    <rule id="EN_SOFT_INTEGRATED_MISS" name="intergrated soft">
+      <pattern>
+        <token>intergrated</token>
+      </pattern>
+      <message>Did you mean "integrated"?</message>
+      <short>intergrated</short>
+    </rule>
+    <rule id="EN_SOFT_INTENTION_MISS" name="intension soft">
+      <pattern>
+        <token>intension</token>
+      </pattern>
+      <message>Did you mean "intention"?</message>
+      <short>intension</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

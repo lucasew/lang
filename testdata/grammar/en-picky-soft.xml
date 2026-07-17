@@ -1410,5 +1410,31 @@
       <message>Jargon; name the recovery test objectives instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_WAR_ROOM" name="war room soft picky">
+      <pattern>
+        <token>war</token>
+        <token>room</token>
+      </pattern>
+      <message>Jargon; name the incident coordination space instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BRIDGE_CALL" name="bridge call soft picky">
+      <pattern>
+        <token>bridge</token>
+        <token>call</token>
+      </pattern>
+      <message>Jargon; name the incident conference call instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUS_FACTOR_OF_THREE" name="bus factor of three soft picky">
+      <pattern>
+        <token>bus</token>
+        <token>factor</token>
+        <token>of</token>
+        <token>three</token>
+      </pattern>
+      <message>Jargon; name the knowledge-sharing coverage instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
