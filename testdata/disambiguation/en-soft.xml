@@ -3975,4 +3975,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICTRANSCODER" name="immunize elastictranscoder">
+    <pattern>
+      <token>elastictranscoder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICTRANSCODER_CAPS" name="immunize ElasticTranscoder">
+    <pattern>
+      <token>ElasticTranscoder</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSFERFAMILY" name="immunize transferfamily">
+    <pattern>
+      <token>transferfamily</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSFERFAMILY_CAPS" name="immunize TransferFamily">
+    <pattern>
+      <token>TransferFamily</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELEMENTAL" name="immunize elemental">
+    <pattern>
+      <token>elemental</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELEMENTAL_CAPS" name="immunize Elemental">
+    <pattern>
+      <token>Elemental</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

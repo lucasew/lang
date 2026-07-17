@@ -9367,6 +9367,76 @@
       <message>Did you mean "acceptance"?</message>
       <short>acceptence</short>
     </rule>
+    <rule id="EN_SOFT_ABANDONED_MISS" name="abondoned soft">
+      <pattern>
+        <token>abondoned</token>
+      </pattern>
+      <message>Did you mean "abandoned"?</message>
+      <short>abondoned</short>
+    </rule>
+    <rule id="EN_SOFT_ABANDONING_MISS" name="abondoning soft">
+      <pattern>
+        <token>abondoning</token>
+      </pattern>
+      <message>Did you mean "abandoning"?</message>
+      <short>abondoning</short>
+    </rule>
+    <rule id="EN_SOFT_ACCEPTANCES_MISS" name="acceptences soft">
+      <pattern>
+        <token>acceptences</token>
+      </pattern>
+      <message>Did you mean "acceptances"?</message>
+      <short>acceptences</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVEMENTS_MISS2" name="acheivements soft">
+      <pattern>
+        <token>acheivements</token>
+      </pattern>
+      <message>Did you mean "achievements"?</message>
+      <short>acheivements</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUAINTANCES_MISS" name="aquaintances soft">
+      <pattern>
+        <token>aquaintances</token>
+      </pattern>
+      <message>Did you mean "acquaintances"?</message>
+      <short>aquaintances</short>
+    </rule>
+    <rule id="EN_SOFT_ASSASSINATIONS_MISS" name="assasinations soft">
+      <pattern>
+        <token>assasinations</token>
+      </pattern>
+      <message>Did you mean "assassinations"?</message>
+      <short>assasinations</short>
+    </rule>
+    <rule id="EN_SOFT_BEAUTIFULLY_MISS" name="beatifully soft">
+      <pattern>
+        <token>beatifully</token>
+      </pattern>
+      <message>Did you mean "beautifully"?</message>
+      <short>beatifully</short>
+    </rule>
+    <rule id="EN_SOFT_DEPENDENCIES_MISS" name="dependancies soft">
+      <pattern>
+        <token>dependancies</token>
+      </pattern>
+      <message>Did you mean "dependencies"?</message>
+      <short>dependancies</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPEARED_MISS2" name="dissapeared soft">
+      <pattern>
+        <token>dissapeared</token>
+      </pattern>
+      <message>Did you mean "disappeared"?</message>
+      <short>dissapeared</short>
+    </rule>
+    <rule id="EN_SOFT_EXPERIENCE_MISS2" name="experance soft">
+      <pattern>
+        <token>experance</token>
+      </pattern>
+      <message>Did you mean "experience"?</message>
+      <short>experance</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

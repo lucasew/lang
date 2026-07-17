@@ -426,3 +426,6 @@ Schist Corridor RegionNNP
 Quartzite Corridor RegionNNP
 Dolomite Corridor RegionNNP
 Travertine Corridor RegionNNP
+Pumice Corridor RegionNNP
+Tuff Corridor RegionNNP
+Obsidian Ridge RegionNNP

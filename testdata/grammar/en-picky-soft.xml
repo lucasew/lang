@@ -2554,5 +2554,30 @@
       <message>Jargon; name collaborative domain discovery workshop instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DOMAIN_STORY" name="domain story soft picky">
+      <pattern>
+        <token>domain</token>
+        <token>story</token>
+      </pattern>
+      <message>Jargon; name pictorial actor-workobject narrative instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CONTEXT_MAPPING" name="context mapping soft picky">
+      <pattern>
+        <token>context</token>
+        <token>mapping</token>
+      </pattern>
+      <message>Jargon; name drawing bounded-context relationships instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MODEL_DRIVEN_DESIGN" name="model driven design soft picky">
+      <pattern>
+        <token>model</token>
+        <token>driven</token>
+        <token>design</token>
+      </pattern>
+      <message>Jargon; name code that reflects an explicit domain model.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
