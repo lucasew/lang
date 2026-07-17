@@ -8,6 +8,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -104,6 +105,14 @@ func PrintMatches(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, 
 			}
 		}
 		_, _ = fmt.Fprintln(w, output)
+		// Soft SPEC-aligned type/severity lines (ITS issue type + SARIF level).
+		_, _, issue, _ := languagetool.SoftRuleMeta(ruleID)
+		if issue == "" {
+			issue = "other"
+		}
+		sev := languagetool.SeverityFromIssueType(issue)
+		_, _ = fmt.Fprintf(w, "Type: %s\n", issue)
+		_, _ = fmt.Fprintf(w, "Severity: %s\n", sev)
 		_, _ = fmt.Fprintf(w, "Message: %s\n", match.GetMessage())
 		reps := match.GetSuggestedReplacements()
 		if len(reps) > 0 {

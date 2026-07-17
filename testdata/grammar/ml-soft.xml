@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ml">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="ML_SOFT_UM_UM" name="um um">
+      <pattern>
+        <token>um</token>
+        <token>um</token>
+      </pattern>
+      <message>Possible repeated "um".</message>
+      <short>um um</short>
+    </rule>
+  </category>
+</rules>

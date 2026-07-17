@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="crh">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="CRH_SOFT_VE_VE" name="ve ve">
+      <pattern>
+        <token>ve</token>
+        <token>ve</token>
+      </pattern>
+      <message>Possible repeated "ve".</message>
+      <short>ve ve</short>
+    </rule>
+  </category>
+</rules>

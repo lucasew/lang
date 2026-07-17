@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ast">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="AST_SOFT_Y_Y" name="y y">
+      <pattern>
+        <token>y</token>
+        <token>y</token>
+      </pattern>
+      <message>Posible repetición de "y".</message>
+      <short>y y</short>
+    </rule>
+  </category>
+</rules>

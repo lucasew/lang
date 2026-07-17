@@ -347,6 +347,7 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		rm.CategoryID = catID
 		rm.Category = catName
 		rm.LocQualityIssueType = issue
+		rm.EstimatedContextForSureMatch = softContextForSureMatch(issue)
 		if m.Description != "" {
 			rm.Description = m.Description
 		} else {
@@ -359,4 +360,15 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		out = append(out, *rm)
 	}
 	return out
+}
+
+// softContextForSureMatch returns a soft estimated context length by ITS type.
+// Style rules get -1 (Java often signals less-sure context); others 0.
+func softContextForSureMatch(issueType string) int {
+	switch strings.ToLower(strings.TrimSpace(issueType)) {
+	case "style", "register":
+		return -1
+	default:
+		return 0
+	}
 }

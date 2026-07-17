@@ -85,6 +85,7 @@ func (m *RemoteRuleMatch) ToMatchInfo() MatchInfo {
 			Offset: m.ContextOffset,
 			Length: m.ErrorLength,
 		},
+		ContextForSureMatch: m.EstimatedContextForSureMatch,
 		Rule: RuleInfo{
 			ID:          m.RuleID,
 			Description: m.Description,
@@ -96,6 +97,9 @@ func (m *RemoteRuleMatch) ToMatchInfo() MatchInfo {
 	}
 	if info.Rule.Description == "" {
 		info.Rule.Description = m.Message
+	}
+	if m.LocQualityIssueType != "" {
+		info.Type = &MatchTypeInfo{TypeName: m.LocQualityIssueType}
 	}
 	info.Rule.Category.ID = m.CategoryID
 	info.Rule.Category.Name = m.Category

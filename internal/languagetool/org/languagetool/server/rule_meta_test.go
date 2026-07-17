@@ -93,3 +93,21 @@ func TestFilterLocalsByCategories(t *testing.T) {
 	require.Len(t, out, 1)
 	require.Equal(t, "EN_A_VS_AN", out[0].RuleID)
 }
+
+func TestApiV2_MatchTypeAndContextForSure(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "This is an test.",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r.Body, `"typeName":"grammar"`)
+	// contextForSureMatch omitted when 0 (omitempty); style path uses -1
+	r2, err := api.Handle("check", map[string]string{
+		"language":   "en",
+		"text":       "word word word word word word word word.",
+		"ruleValues": "TOO_LONG_SENTENCE:3",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r2.Body, "contextForSureMatch")
+}
