@@ -470,13 +470,26 @@ func CoreListLanguages(w io.Writer) error {
 // Soft rules (ID contains _SOFT_) append a fifth column "soft" for easy filtering.
 // Soft rules are listed first (sorted), then core (sorted). Footer counts soft by issue type.
 func CoreListRules(w io.Writer, lang string) error {
+	return CoreListRulesOpts(w, &CommandLineOptions{Language: lang})
+}
+
+// CoreListRulesOpts is like CoreListRules but honors opts (e.g. Level=PICKY for picky soft packs).
+func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	if w == nil {
 		return nil
 	}
+	if opts == nil {
+		opts = &CommandLineOptions{Language: "en"}
+	}
+	lang := opts.Language
 	if lang == "" {
 		lang = "en"
 	}
-	lt, err := configureCoreLT(lang, &CommandLineOptions{Language: lang})
+	// ensure Language is set for configureCoreLT soft discovery
+	if opts.Language == "" {
+		opts.Language = lang
+	}
+	lt, err := configureCoreLT(lang, opts)
 	if err != nil {
 		return err
 	}
@@ -494,6 +507,7 @@ func CoreListRules(w io.Writer, lang string) error {
 	ordered := append(softIDs, coreIDs...)
 	softN := len(softIDs)
 	softByIssue := map[string]int{}
+	pickySoftN := 0
 	for _, id := range ordered {
 		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
 		if cat == "" {
@@ -507,6 +521,9 @@ func CoreListRules(w io.Writer, lang string) error {
 		if strings.Contains(id, "_SOFT_") {
 			kind = "soft"
 			softByIssue[issue]++
+			if strings.Contains(id, "SOFT_PICKY") {
+				pickySoftN++
+			}
 		}
 		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", id, cat, issue, url, kind); err != nil {
 			return err
@@ -521,6 +538,12 @@ func CoreListRules(w io.Writer, lang string) error {
 		if n := softByIssue[k]; n > 0 {
 			parts = append(parts, fmt.Sprintf("soft_%s=%d", k, n))
 		}
+	}
+	if pickySoftN > 0 {
+		parts = append(parts, fmt.Sprintf("soft_picky=%d", pickySoftN))
+	}
+	if strings.EqualFold(opts.Level, "PICKY") {
+		parts = append(parts, "level=picky")
 	}
 	_, err = fmt.Fprintf(w, "# %s\n", strings.Join(parts, " "))
 	return err
@@ -572,7 +595,10 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		}
 		_, _ = fmt.Fprintf(w, "soft category filters: --disablecategories / --enablecategories\n")
 		pickyN := 0
-		for _, name := range []string{"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml"} {
+		for _, name := range []string{
+			"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml",
+			"es-picky-soft.xml", "pt-picky-soft.xml", "it-picky-soft.xml",
+		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
 				pickyN++

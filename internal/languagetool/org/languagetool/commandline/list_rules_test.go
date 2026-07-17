@@ -85,7 +85,15 @@ func TestCoreListRules_PickySoftOnlyWhenPicky(t *testing.T) {
 	require.NoError(t, CoreListRules(&def, "en"))
 	require.NotContains(t, def.String(), "EN_SOFT_PICKY_UTILIZE")
 
-	// list-rules uses configureCoreLT without picky; verify picky path via golden hook registration
+	// list-rules with --level picky includes picky soft packs
+	var pickyList bytes.Buffer
+	require.NoError(t, CoreListRulesOpts(&pickyList, &CommandLineOptions{Language: "en", Level: "PICKY"}))
+	out := pickyList.String()
+	require.Contains(t, out, "EN_SOFT_PICKY_UTILIZE")
+	require.Contains(t, out, "soft_picky=")
+	require.Contains(t, out, "level=picky")
+
+	// check still finds the rule
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "Please utilize the tool.", &CommandLineOptions{
 		Language: "en",

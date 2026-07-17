@@ -134,11 +134,11 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 		return 0
 	}
 	if opts.PrintRules {
-		lang := opts.Language
-		if lang == "" {
-			lang = "en"
+		if opts.Language == "" {
+			opts.Language = "en"
 		}
-		if err := CoreListRules(stdout, lang); err != nil {
+		// soft: honor --level picky so picky soft packs appear in list-rules
+		if err := CoreListRulesOpts(stdout, opts); err != nil {
 			_, _ = fmt.Fprintln(stderr, err.Error())
 			return 1
 		}
