@@ -8667,6 +8667,76 @@
       <message>Did you mean "tongue"?</message>
       <short>tounge</short>
     </rule>
+    <rule id="EN_SOFT_REMEMBERING_MISS2" name="rembering soft">
+      <pattern>
+        <token>rembering</token>
+      </pattern>
+      <message>Did you mean "remembering"?</message>
+      <short>rembering</short>
+    </rule>
+    <rule id="EN_SOFT_RESTAURANTS_MISS2" name="restuarants soft">
+      <pattern>
+        <token>restuarants</token>
+      </pattern>
+      <message>Did you mean "restaurants"?</message>
+      <short>restuarants</short>
+    </rule>
+    <rule id="EN_SOFT_RHYTHMIC_MISS" name="rythmic soft">
+      <pattern>
+        <token>rythmic</token>
+      </pattern>
+      <message>Did you mean "rhythmic"?</message>
+      <short>rythmic</short>
+    </rule>
+    <rule id="EN_SOFT_SENSES_MISS" name="sences soft">
+      <pattern>
+        <token>sences</token>
+      </pattern>
+      <message>Did you mean "senses"?</message>
+      <short>sences</short>
+    </rule>
+    <rule id="EN_SOFT_SEIZING_MISS" name="siezing soft">
+      <pattern>
+        <token>siezing</token>
+      </pattern>
+      <message>Did you mean "seizing"?</message>
+      <short>siezing</short>
+    </rule>
+    <rule id="EN_SOFT_SIMILARLY_MISS2" name="simmilarly soft">
+      <pattern>
+        <token>simmilarly</token>
+      </pattern>
+      <message>Did you mean "similarly"?</message>
+      <short>simmilarly</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSIVE_MISS" name="sucessive soft">
+      <pattern>
+        <token>sucessive</token>
+      </pattern>
+      <message>Did you mean "successive"?</message>
+      <short>sucessive</short>
+    </rule>
+    <rule id="EN_SOFT_SUPERSEDES_MISS" name="supercedes soft">
+      <pattern>
+        <token>supercedes</token>
+      </pattern>
+      <message>Did you mean "supersedes"?</message>
+      <short>supercedes</short>
+    </rule>
+    <rule id="EN_SOFT_SUPPRESS_MISS" name="surpress soft">
+      <pattern>
+        <token>surpress</token>
+      </pattern>
+      <message>Did you mean "suppress"?</message>
+      <short>surpress</short>
+    </rule>
+    <rule id="EN_SOFT_TECHNICALLY_MISS" name="tecnically soft">
+      <pattern>
+        <token>tecnically</token>
+      </pattern>
+      <message>Did you mean "technically"?</message>
+      <short>tecnically</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

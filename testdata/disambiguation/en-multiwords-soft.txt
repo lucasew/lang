@@ -396,3 +396,6 @@ Spice Corridor RegionNNP
 Coffee Corridor RegionNNP
 Cotton Corridor RegionNNP
 Copper Corridor RegionNNP
+Salt Corridor RegionNNP
+Amber Corridor RegionNNP
+Ivory Corridor RegionNNP

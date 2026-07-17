@@ -3615,4 +3615,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIACONVERT" name="immunize mediaconvert">
+    <pattern>
+      <token>mediaconvert</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIACONVERT_CAPS" name="immunize MediaConvert">
+    <pattern>
+      <token>MediaConvert</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIALIVE" name="immunize medialive">
+    <pattern>
+      <token>medialive</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIALIVE_CAPS" name="immunize MediaLive">
+    <pattern>
+      <token>MediaLive</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIAPACKAGE" name="immunize mediapackage">
+    <pattern>
+      <token>mediapackage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MEDIAPACKAGE_CAPS" name="immunize MediaPackage">
+    <pattern>
+      <token>MediaPackage</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

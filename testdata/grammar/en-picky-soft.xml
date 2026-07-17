@@ -2312,5 +2312,29 @@
       <message>Jargon; name layered behavior wrapping instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_FACADE_PATTERN" name="facade pattern soft picky">
+      <pattern>
+        <token>facade</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a simplified subsystem API instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PROXY_PATTERN" name="proxy pattern soft picky">
+      <pattern>
+        <token>proxy</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a stand-in access control object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SINGLETON_PATTERN" name="singleton pattern soft picky">
+      <pattern>
+        <token>singleton</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a single-instance lifetime design instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
