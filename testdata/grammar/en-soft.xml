@@ -10207,6 +10207,76 @@
       <message>Did you mean "achieving"?</message>
       <short>acheiveing</short>
     </rule>
+    <rule id="EN_SOFT_APPEARANCE_MISS3" name="apperance soft">
+      <pattern>
+        <token>apperance</token>
+      </pattern>
+      <message>Did you mean "appearance"?</message>
+      <short>apperance</short>
+    </rule>
+    <rule id="EN_SOFT_APPEARANCES_MISS2" name="apperances soft">
+      <pattern>
+        <token>apperances</token>
+      </pattern>
+      <message>Did you mean "appearances"?</message>
+      <short>apperances</short>
+    </rule>
+    <rule id="EN_SOFT_APPROPRIATE_MISS2" name="appropiate soft">
+      <pattern>
+        <token>appropiate</token>
+      </pattern>
+      <message>Did you mean "appropriate"?</message>
+      <short>appropiate</short>
+    </rule>
+    <rule id="EN_SOFT_APPROPRIATELY_MISS2" name="appropiately soft">
+      <pattern>
+        <token>appropiately</token>
+      </pattern>
+      <message>Did you mean "appropriately"?</message>
+      <short>appropiately</short>
+    </rule>
+    <rule id="EN_SOFT_ARGUMENTS_MISS2" name="arguemnts soft">
+      <pattern>
+        <token>arguemnts</token>
+      </pattern>
+      <message>Did you mean "arguments"?</message>
+      <short>arguemnts</short>
+    </rule>
+    <rule id="EN_SOFT_ASSASSINS_MISS" name="assasins soft">
+      <pattern>
+        <token>assasins</token>
+      </pattern>
+      <message>Did you mean "assassins"?</message>
+      <short>assasins</short>
+    </rule>
+    <rule id="EN_SOFT_BELIEVING_MISS2" name="beliveing soft">
+      <pattern>
+        <token>beliveing</token>
+      </pattern>
+      <message>Did you mean "believing"?</message>
+      <short>beliveing</short>
+    </rule>
+    <rule id="EN_SOFT_BENEFITING_MISS" name="benifiting soft">
+      <pattern>
+        <token>benifiting</token>
+      </pattern>
+      <message>Did you mean "benefiting"?</message>
+      <short>benifiting</short>
+    </rule>
+    <rule id="EN_SOFT_BENEFITTED_MISS" name="benifitted soft">
+      <pattern>
+        <token>benifitted</token>
+      </pattern>
+      <message>Did you mean "benefitted"?</message>
+      <short>benifitted</short>
+    </rule>
+    <rule id="EN_SOFT_BUSINESSMEN_MISS2" name="buisnessmen soft">
+      <pattern>
+        <token>buisnessmen</token>
+      </pattern>
+      <message>Did you mean "businessmen"?</message>
+      <short>buisnessmen</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -462,3 +462,6 @@ Slate Peak RegionNNP
 Limestone Peak RegionNNP
 Sandstone Peak RegionNNP
 Chalk Peak RegionNNP
+Clay Peak RegionNNP
+Flint Peak RegionNNP
+Shale Peak RegionNNP

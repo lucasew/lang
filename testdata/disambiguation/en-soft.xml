@@ -4407,4 +4407,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_IOTDEVICEADVISOR" name="immunize iotdeviceadvisor">
+    <pattern>
+      <token>iotdeviceadvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTDEVICEADVISOR_CAPS" name="immunize IoTDeviceAdvisor">
+    <pattern>
+      <token>IoTDeviceAdvisor</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB" name="immunize iotfleethub">
+    <pattern>
+      <token>iotfleethub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB_CAPS" name="immunize IoTFleetHub">
+    <pattern>
+      <token>IoTFleetHub</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTWIRELESS" name="immunize iotwireless">
+    <pattern>
+      <token>iotwireless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTWIRELESS_CAPS" name="immunize IoTWireless">
+    <pattern>
+      <token>IoTWireless</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

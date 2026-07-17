@@ -2851,5 +2851,29 @@
       <message>Jargon; name work-in-state stacked trend tracking instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CYCLE_TIME" name="cycle time soft picky">
+      <pattern>
+        <token>cycle</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name start-to-finish work duration instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LEAD_TIME" name="lead time soft picky">
+      <pattern>
+        <token>lead</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name request-to-delivery elapsed time instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KANBAN_BOARD" name="kanban board soft picky">
+      <pattern>
+        <token>kanban</token>
+        <token>board</token>
+      </pattern>
+      <message>Jargon; name a visual pull-based work board instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
