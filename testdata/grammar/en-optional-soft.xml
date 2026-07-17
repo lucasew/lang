@@ -230,5 +230,26 @@
       <message>Often filler; omit or state the point directly.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_THE_FACT_OF_THE_MATTER" name="the fact of the matter soft optional" default="off">
+      <pattern>
+        <token>the</token>
+        <token>fact</token>
+        <token>of</token>
+        <token>the</token>
+        <token>matter</token>
+      </pattern>
+      <message>Consider stating the point directly.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IT_SHOULD_BE_NOTED" name="it should be noted soft optional" default="off">
+      <pattern>
+        <token>it</token>
+        <token>should</token>
+        <token>be</token>
+        <token>noted</token>
+      </pattern>
+      <message>Consider stating the note directly.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

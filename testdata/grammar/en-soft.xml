@@ -2787,6 +2787,76 @@
       <message>Did you mean "equivalent"?</message>
       <short>equivelent</short>
     </rule>
+    <rule id="EN_SOFT_EXAGGERATION_MISS" name="exageration soft">
+      <pattern>
+        <token>exageration</token>
+      </pattern>
+      <message>Did you mean "exaggeration"?</message>
+      <short>exageration</short>
+    </rule>
+    <rule id="EN_SOFT_FASCINATE_MISS" name="facinate soft">
+      <pattern>
+        <token>facinate</token>
+      </pattern>
+      <message>Did you mean "fascinate"?</message>
+      <short>facinate</short>
+    </rule>
+    <rule id="EN_SOFT_FASCINATING_MISS" name="facinating soft">
+      <pattern>
+        <token>facinating</token>
+      </pattern>
+      <message>Did you mean "fascinating"?</message>
+      <short>facinating</short>
+    </rule>
+    <rule id="EN_SOFT_FRIEND_MISS" name="freind soft">
+      <pattern>
+        <token>freind</token>
+      </pattern>
+      <message>Did you mean "friend"?</message>
+      <short>freind</short>
+    </rule>
+    <rule id="EN_SOFT_FRIENDS_MISS" name="freinds soft">
+      <pattern>
+        <token>freinds</token>
+      </pattern>
+      <message>Did you mean "friends"?</message>
+      <short>freinds</short>
+    </rule>
+    <rule id="EN_SOFT_HYGIENE_MISS" name="hygene soft">
+      <pattern>
+        <token>hygene</token>
+      </pattern>
+      <message>Did you mean "hygiene"?</message>
+      <short>hygene</short>
+    </rule>
+    <rule id="EN_SOFT_HYGIENE_MISS2" name="hygeine soft">
+      <pattern>
+        <token>hygeine</token>
+      </pattern>
+      <message>Did you mean "hygiene"?</message>
+      <short>hygeine</short>
+    </rule>
+    <rule id="EN_SOFT_IMMEDIATELY_MISS" name="immediatly soft">
+      <pattern>
+        <token>immediatly</token>
+      </pattern>
+      <message>Did you mean "immediately"?</message>
+      <short>immediatly</short>
+    </rule>
+    <rule id="EN_SOFT_HIERARCHICAL_MISS" name="heirarchial soft">
+      <pattern>
+        <token>heirarchial</token>
+      </pattern>
+      <message>Did you mean "hierarchical"?</message>
+      <short>heirarchial</short>
+    </rule>
+    <rule id="EN_SOFT_GOVERNMENTAL_MISS" name="govermental soft">
+      <pattern>
+        <token>govermental</token>
+      </pattern>
+      <message>Did you mean "governmental"?</message>
+      <short>govermental</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

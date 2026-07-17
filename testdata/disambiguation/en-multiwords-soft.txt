@@ -140,3 +140,9 @@ without a doubt	RB
 beyond doubt	RB
 Kansas City	NNP
 Oklahoma City	NNP
+for all intents and purposes	RB
+in the final analysis	RB
+at the present time	RB
+Las Cruces	NNP
+El Paso	NNP
+Baton Rouge	NNP
