@@ -9,7 +9,8 @@ import (
 )
 
 // MatchesAsSARIF builds a minimal SARIF 2.1.0 document for rule matches (SPEC §2.2).
-func MatchesAsSARIF(matches []*rules.RuleMatch, text, filename string) string {
+// lang is used for SoftRuleURL helpUri (defaults to en when empty).
+func MatchesAsSARIF(matches []*rules.RuleMatch, text, filename, lang string) string {
 	if filename == "" {
 		filename = "stdin"
 	}
@@ -91,7 +92,7 @@ func MatchesAsSARIF(matches []*rules.RuleMatch, text, filename string) string {
 		}
 		if _, ok := ruleSeen[id]; !ok && id != "" {
 			ruleSeen[id] = struct{}{}
-			rd := reportingDesc{ID: id, Name: desc, HelpURI: languagetool.SoftRuleURL(id, "")}
+			rd := reportingDesc{ID: id, Name: desc, HelpURI: languagetool.SoftRuleURL(id, lang)}
 			if short != "" {
 				rd.ShortDescription = &msg{Text: short}
 			}

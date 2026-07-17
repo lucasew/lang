@@ -28,7 +28,8 @@ type Finding struct {
 }
 
 // MatchesToFindings converts rule matches to SPEC findings.
-func MatchesToFindings(matches []*rules.RuleMatch, text, filename string) []Finding {
+// lang is the check language code used for SoftRuleURL (defaults to en).
+func MatchesToFindings(matches []*rules.RuleMatch, text, filename, lang string) []Finding {
 	if filename == "" || filename == "-" {
 		filename = "stdin"
 	}
@@ -58,7 +59,7 @@ func MatchesToFindings(matches []*rules.RuleMatch, text, filename string) []Find
 			Message:     m.GetMessage(),
 			Location:    loc,
 			Suggestion:  sug,
-			URL:         languagetool.SoftRuleURL(id, ""),
+			URL:         languagetool.SoftRuleURL(id, lang),
 			Offset:      m.FromPos,
 			Length:      m.ToPos - m.FromPos,
 			File:        filename,

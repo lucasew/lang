@@ -13,7 +13,7 @@ import (
 func TestMatchesAsSARIF(t *testing.T) {
 	m := rules.NewRuleMatch(nil, nil, 8, 10, `Use "a" before a consonant sound`)
 	m.Rule = &rules.BaseRule{ID: "EN_A_VS_AN"}
-	s := MatchesAsSARIF([]*rules.RuleMatch{m}, "This is an test.", "sample.txt")
+	s := MatchesAsSARIF([]*rules.RuleMatch{m}, "This is an test.", "sample.txt", "en")
 	require.Contains(t, s, `"version":"2.1.0"`)
 	require.Contains(t, s, "EN_A_VS_AN")
 	require.Contains(t, s, `"level":"error"`)

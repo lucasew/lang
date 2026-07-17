@@ -46,7 +46,7 @@ func CoreGoldenHook(w io.Writer, text string, opts *CommandLineOptions) (int, er
 	if opts != nil {
 		fn = opts.Filename
 	}
-	findings := MatchesToFindings(ms, text, fn)
+	findings := MatchesToFindings(ms, text, fn, lang)
 	if err := WriteFindingsJSON(w, findings); err != nil {
 		return 0, err
 	}
@@ -113,7 +113,7 @@ func CoreCompareHook(w io.Writer, text string, opts *CommandLineOptions) (int, e
 	if opts != nil {
 		fn = opts.Filename
 	}
-	got := MatchesToFindings(ms, text, fn)
+	got := MatchesToFindings(ms, text, fn, lang)
 	diff := CompareFindings(got, want)
 	if diff == "" {
 		_, _ = fmt.Fprintln(w, "OK: findings match golden")

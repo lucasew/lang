@@ -72,6 +72,7 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 			CategoryID:            catID,
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
+			RuleURL:               languagetool.SoftRuleURL(id, languageCode),
 		})
 	}
 	s, err := ser.RuleMatchesToJSON(mj, text, 45)
@@ -106,7 +107,7 @@ func WriteMatchesOutput(w io.Writer, matches []*rules.RuleMatch, opts *CommandLi
 		if opts != nil {
 			fn = opts.Filename
 		}
-		_, err := io.WriteString(w, MatchesAsSARIF(matches, "", fn))
+		_, err := io.WriteString(w, MatchesAsSARIF(matches, "", fn, lang))
 		return err
 	case OutputLint:
 		fn := ""

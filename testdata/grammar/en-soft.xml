@@ -17,5 +17,21 @@
       <message>Did you mean "it's a"?</message>
       <short>its/it's</short>
     </rule>
+    <rule id="EN_SOFT_THEIR_THEY_RE" name="their/they're">
+      <pattern>
+        <token>their</token>
+        <token>going</token>
+      </pattern>
+      <message>Did you mean "they're going"?</message>
+      <short>their/they're</short>
+    </rule>
+    <rule id="EN_SOFT_THEN_THAN" name="then/than">
+      <pattern>
+        <token>better</token>
+        <token>then</token>
+      </pattern>
+      <message>Did you mean "better than"?</message>
+      <short>then/than</short>
+    </rule>
   </category>
 </rules>

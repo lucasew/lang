@@ -148,3 +148,36 @@ func TestGolden_EnglishWordRepeatBeginning(t *testing.T) {
 	}
 	require.True(t, found, "%+v", findings)
 }
+
+func TestGolden_SoftTheirTheyre(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Their going home now.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_THEIR_THEY_RE" {
+			found = true
+			require.Equal(t, "grammar", f.Type)
+			require.Contains(t, f.URL, "lang=en")
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_SoftThenThan(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "This is better then that.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EN_SOFT_THEN_THAN" {
+			found = true
+			require.Equal(t, "grammar", f.Type)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}

@@ -26,6 +26,8 @@ type MatchForJSON struct {
 	CategoryName          string
 	// Severity is SARIF level (error|warning|note); optional.
 	Severity string
+	// RuleURL is a soft community documentation link (serialized as rule.urls).
+	RuleURL string
 }
 
 // RuleMatchesAsJsonSerializer ports org.languagetool.tools.RuleMatchesAsJsonSerializer
@@ -66,10 +68,17 @@ type ReplacementJSON struct {
 }
 
 type RuleJSON struct {
-	ID          string           `json:"id"`
-	Description string           `json:"description,omitempty"`
-	IssueType   string           `json:"issueType,omitempty"`
-	Category    *CategoryJSON    `json:"category,omitempty"`
+	ID          string        `json:"id"`
+	Description string        `json:"description,omitempty"`
+	IssueType   string        `json:"issueType,omitempty"`
+	Category    *CategoryJSON `json:"category,omitempty"`
+	// Urls soft documentation links (community rule pages).
+	Urls []URLJSON `json:"urls,omitempty"`
+}
+
+// URLJSON is a rule documentation link object (LT API shape).
+type URLJSON struct {
+	Value string `json:"value"`
 }
 
 // CategoryJSON is the rule category surface in JSON.
@@ -153,6 +162,9 @@ func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []Matc
 		}
 		if m.CategoryID != "" || m.CategoryName != "" {
 			mj.Rule.Category = &CategoryJSON{ID: m.CategoryID, Name: m.CategoryName}
+		}
+		if m.RuleURL != "" {
+			mj.Rule.Urls = []URLJSON{{Value: m.RuleURL}}
 		}
 		for _, r := range m.SuggestedReplacements {
 			mj.Replacements = append(mj.Replacements, ReplacementJSON{Value: r})

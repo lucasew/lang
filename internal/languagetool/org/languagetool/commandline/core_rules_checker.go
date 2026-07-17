@@ -262,7 +262,7 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		if opts != nil && opts.OutputFormat == OutputSARIF {
 			fn := opts.Filename
 			cto.JSONSerializer = func(matches []*rules.RuleMatch, contents string, contextSize int) string {
-				return MatchesAsSARIF(matches, contents, fn)
+				return MatchesAsSARIF(matches, contents, fn, lang)
 			}
 		} else {
 			cto.JSONSerializer = func(matches []*rules.RuleMatch, contents string, contextSize int) string {
@@ -509,6 +509,7 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			CategoryID:            catID,
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
+			RuleURL:               languagetool.SoftRuleURL(id, lang),
 		}
 		mj = append(mj, item)
 	}
