@@ -62,7 +62,7 @@
   <category id="GRAMATICA" name="Gramática">
     <rule id="DIR_A_INF" name="Dir más infinitivu">
       <pattern>
-        <token>dir</token>
+        <token inflected="yes">dir</token>
         <token>a</token>
         <token postag="V..00000" postag_regexp="yes"></token>
       </pattern>

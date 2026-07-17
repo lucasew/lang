@@ -539,6 +539,7 @@ def write_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
                     "regexp",
                     "case_sensitive",
                     "negate",
+                    "inflected",
                     "min",
                     "max",
                     "skip",

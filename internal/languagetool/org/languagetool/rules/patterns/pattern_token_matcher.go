@@ -3,6 +3,7 @@ package patterns
 import (
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -68,6 +69,10 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			} else {
 				posOK = *pos == pt.Pos.PosTag
 			}
+		} else if pt.Token == "" {
+			// Soft path without a tagger: accept a surface word for postag-only
+			// tokens so patterns like AST DIR_A_INF can still fire partially.
+			posOK = softLooksLikeWord(token.GetToken())
 		}
 		if pt.Pos.Negate {
 			posOK = !posOK
@@ -172,4 +177,22 @@ func normalizeApostrophes(s string) string {
 	s = strings.ReplaceAll(s, "\u02BC", "'")
 	s = strings.ReplaceAll(s, "\u2018", "'")
 	return s
+}
+
+func softLooksLikeWord(s string) bool {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return false
+	}
+	letters := 0
+	for _, r := range s {
+		if r == '-' || r == '\'' || r == '’' {
+			continue
+		}
+		if !unicode.IsLetter(r) {
+			return false
+		}
+		letters++
+	}
+	return letters > 0
 }

@@ -1,13 +1,27 @@
 package tokenizers
 
-import "unicode"
+import (
+	"strings"
+	"unicode"
+)
 
 // SimpleSentenceTokenizer ports Default rules from segment-simple.srx:
 // break after [.!?…] followed by whitespace, or [.!?…] followed by uppercase.
+// Soft: also applies segment.srx-style no-break after common abbreviations (etc.).
 type SimpleSentenceTokenizer struct{}
 
 func NewSimpleSentenceTokenizer() *SimpleSentenceTokenizer {
 	return &SimpleSentenceTokenizer{}
+}
+
+// Common abbreviations that must not end a sentence when followed by space
+// (subset of LanguageTool segment.srx beforebreak rules, multi-lang soft path).
+var noBreakAbbrevs = map[string]struct{}{
+	"etc": {}, "șamd": {}, "samd": {}, "vs": {}, "cf": {}, "al": {},
+	"mr": {}, "mrs": {}, "ms": {}, "dr": {}, "prof": {}, "sr": {}, "jr": {},
+	"fig": {}, "vol": {}, "pp": {}, "no": {}, "st": {}, "inc": {}, "ltd": {},
+	"corp": {}, "co": {}, "approx": {}, "e.g": {}, "i.e": {}, "ex": {},
+	"art": {}, "cap": {}, "tel": {}, "op": {}, "esp": {},
 }
 
 // Tokenize returns sentence segments that concatenate back to text.
@@ -32,6 +46,11 @@ func (t *SimpleSentenceTokenizer) Tokenize(text string) []string {
 				continue
 			}
 			break
+		}
+		// Soft SRX: do not break after abbreviation periods (etc. etc.).
+		if r == '.' && isAbbrevPeriod(runes, i) {
+			i = j
+			continue
 		}
 		// case 1: punct + whitespace → break after one whitespace
 		if j+1 < len(runes) && unicode.IsSpace(runes[j+1]) {
@@ -58,4 +77,32 @@ func (t *SimpleSentenceTokenizer) Tokenize(text string) []string {
 		out = append(out, string(runes[start:]))
 	}
 	return out
+}
+
+// isAbbrevPeriod reports whether runes[dotIdx] is a period after a known abbreviation.
+func isAbbrevPeriod(runes []rune, dotIdx int) bool {
+	if dotIdx <= 0 || runes[dotIdx] != '.' {
+		return false
+	}
+	// Collect word characters immediately before the period.
+	end := dotIdx
+	start := end
+	for start > 0 {
+		r := runes[start-1]
+		if unicode.IsLetter(r) || r == '\'' || r == '’' {
+			start--
+			continue
+		}
+		// allow internal dots in e.g. / i.e. (period already consumed as end)
+		break
+	}
+	if start == end {
+		return false
+	}
+	word := strings.ToLower(string(runes[start:end]))
+	// multi-dot abbrevs written as e.g. or i.e. — take last segment after last letter run
+	if _, ok := noBreakAbbrevs[word]; ok {
+		return true
+	}
+	return false
 }
