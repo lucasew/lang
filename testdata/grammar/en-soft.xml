@@ -8387,6 +8387,76 @@
       <message>Did you mean "pierce"?</message>
       <short>peirce</short>
     </rule>
+    <rule id="EN_SOFT_PLEASANT_MISS" name="plesant soft">
+      <pattern>
+        <token>plesant</token>
+      </pattern>
+      <message>Did you mean "pleasant"?</message>
+      <short>plesant</short>
+    </rule>
+    <rule id="EN_SOFT_POSSESSIONS_MISS" name="posessions soft">
+      <pattern>
+        <token>posessions</token>
+      </pattern>
+      <message>Did you mean "possessions"?</message>
+      <short>posessions</short>
+    </rule>
+    <rule id="EN_SOFT_POSSESSED_MISS" name="posessed soft">
+      <pattern>
+        <token>posessed</token>
+      </pattern>
+      <message>Did you mean "possessed"?</message>
+      <short>posessed</short>
+    </rule>
+    <rule id="EN_SOFT_POSSIBILITY_MISS" name="posibility soft">
+      <pattern>
+        <token>posibility</token>
+      </pattern>
+      <message>Did you mean "possibility"?</message>
+      <short>posibility</short>
+    </rule>
+    <rule id="EN_SOFT_PRACTICAL_MISS2" name="practial soft">
+      <pattern>
+        <token>practial</token>
+      </pattern>
+      <message>Did you mean "practical"?</message>
+      <short>practial</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERENCE_MISS2" name="prefrence soft">
+      <pattern>
+        <token>prefrence</token>
+      </pattern>
+      <message>Did you mean "preference"?</message>
+      <short>prefrence</short>
+    </rule>
+    <rule id="EN_SOFT_PREFERENCES_MISS" name="prefrences soft">
+      <pattern>
+        <token>prefrences</token>
+      </pattern>
+      <message>Did you mean "preferences"?</message>
+      <short>prefrences</short>
+    </rule>
+    <rule id="EN_SOFT_PREPARE_MISS" name="prepair soft">
+      <pattern>
+        <token>prepair</token>
+      </pattern>
+      <message>Did you mean "prepare"?</message>
+      <short>prepair</short>
+    </rule>
+    <rule id="EN_SOFT_PURSUED_MISS" name="persued soft">
+      <pattern>
+        <token>persued</token>
+      </pattern>
+      <message>Did you mean "pursued"?</message>
+      <short>persued</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZING_MISS" name="orginizing soft">
+      <pattern>
+        <token>orginizing</token>
+      </pattern>
+      <message>Did you mean "organizing"?</message>
+      <short>orginizing</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

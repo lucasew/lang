@@ -384,3 +384,6 @@ Coastal Corridor RegionNNP
 Silver Corridor RegionNNP
 Industrial Corridor RegionNNP
 River Corridor RegionNNP
+Maritime Corridor RegionNNP
+Mining Corridor RegionNNP
+Gold Corridor RegionNNP

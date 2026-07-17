@@ -2216,5 +2216,29 @@
       <message>Jargon; name a behavior-verifying test stand-in instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_STUB_OBJECT" name="stub object soft picky">
+      <pattern>
+        <token>stub</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a canned-response test stand-in instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FAKE_OBJECT" name="fake object soft picky">
+      <pattern>
+        <token>fake</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a working lightweight stand-in instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SPY_OBJECT" name="spy object soft picky">
+      <pattern>
+        <token>spy</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name a partial real-object test wrapper instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

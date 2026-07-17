@@ -3471,4 +3471,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NETWORKFIREWALL" name="immunize networkfirewall">
+    <pattern>
+      <token>networkfirewall</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NETWORKFIREWALL_CAPS" name="immunize NetworkFirewall">
+    <pattern>
+      <token>NetworkFirewall</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIREWALLMANAGER" name="immunize firewallmanager">
+    <pattern>
+      <token>firewallmanager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FIREWALLMANAGER_CAPS" name="immunize FirewallManager">
+    <pattern>
+      <token>FirewallManager</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSCRIBE" name="immunize transcribe">
+    <pattern>
+      <token>transcribe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRANSCRIBE_CAPS" name="immunize Transcribe">
+    <pattern>
+      <token>Transcribe</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
