@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="sv">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="SV_SOFT_DE_DOM" name="de/dom">
+      <pattern>
+        <token>dom</token>
+        <token>är</token>
+      </pattern>
+      <message>Menade du "de är"?</message>
+      <short>de/dom</short>
+    </rule>
+  </category>
+</rules>

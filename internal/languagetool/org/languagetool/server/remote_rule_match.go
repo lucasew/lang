@@ -20,6 +20,8 @@ type RemoteRuleMatch struct {
 
 	SubID               string
 	ShortMessage        string
+	// Description is the stable rule-level description (not the match message).
+	Description         string
 	Replacements        []string
 	URL                 string
 	Category            string
@@ -85,9 +87,15 @@ func (m *RemoteRuleMatch) ToMatchInfo() MatchInfo {
 		},
 		Rule: RuleInfo{
 			ID:          m.RuleID,
-			Description: m.Message,
+			Description: m.Description,
 			IssueType:   m.LocQualityIssueType,
 		},
+	}
+	if info.Rule.Description == "" {
+		info.Rule.Description = SoftRuleDescription(m.RuleID)
+	}
+	if info.Rule.Description == "" {
+		info.Rule.Description = m.Message
 	}
 	info.Rule.Category.ID = m.CategoryID
 	info.Rule.Category.Name = m.Category

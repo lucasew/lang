@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="da">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="DA_SOFT_AF_AF" name="af af">
+      <pattern>
+        <token>af</token>
+        <token>af</token>
+      </pattern>
+      <message>Mulig gentagelse af "af".</message>
+      <short>af af</short>
+    </rule>
+  </category>
+</rules>

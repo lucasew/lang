@@ -60,3 +60,32 @@ func TestRegisterGrammarFile_SoftDE(t *testing.T) {
 	}
 	require.True(t, found, "%+v", m)
 }
+
+func TestRegisterSoftGrammarDir_RU_SV_DA(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../.."))
+	dir := filepath.Join(root, "testdata/grammar")
+
+	for _, tc := range []struct {
+		lang, text, ruleID string
+	}{
+		{"ru", "пошел в в магазин", "RU_SOFT_V_V"},
+		{"sv", "men dom är här", "SV_SOFT_DE_DOM"},
+		{"da", "en del af af det", "DA_SOFT_AF_AF"},
+	} {
+		t.Run(tc.lang, func(t *testing.T) {
+			lt := languagetool.NewJLanguageTool(tc.lang)
+			n, err := patterns.RegisterSoftGrammarDir(lt, dir, tc.lang)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, n, 1)
+			m := lt.Check(tc.text)
+			found := false
+			for _, x := range m {
+				if x.RuleID == tc.ruleID {
+					found = true
+				}
+			}
+			require.True(t, found, "%+v", m)
+		})
+	}
+}

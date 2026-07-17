@@ -221,6 +221,7 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		rm.CategoryID = catID
 		rm.Category = catName
 		rm.LocQualityIssueType = issue
+		rm.Description = SoftRuleDescription(ruleID)
 		if rm.ShortMessage == "" {
 			rm.ShortMessage = short
 		}

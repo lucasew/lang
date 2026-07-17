@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ru">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="RU_SOFT_V_V" name="в в">
+      <pattern>
+        <token>в</token>
+        <token>в</token>
+      </pattern>
+      <message>Возможный повтор "в".</message>
+      <short>в в</short>
+    </rule>
+  </category>
+</rules>
