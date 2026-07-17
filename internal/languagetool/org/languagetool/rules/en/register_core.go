@@ -17,4 +17,11 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker("PHRASE_REPLACE", languagetool.SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
 		"tot he": "to the",
 	}))
+	// Multi-sentence: three successive sentences starting with the same word/adverb.
+	wrb := NewEnglishWordRepeatBeginningRule(map[string]string{
+		"desc_repetition_beginning_adv":       "Three successive sentences begin with the same adverb.",
+		"desc_repetition_beginning_word":      "Three successive sentences begin with the same word.",
+		"desc_repetition_beginning_thesaurus": "Consider using a thesaurus to find synonyms.",
+	})
+	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 }

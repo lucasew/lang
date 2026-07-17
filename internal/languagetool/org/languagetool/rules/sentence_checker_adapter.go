@@ -52,6 +52,17 @@ func AsSentenceCheckerSimple(match func(*languagetool.AnalyzedSentence) []*RuleM
 	}
 }
 
+// AsTextLevelChecker wraps MatchList(sentences) []*RuleMatch as TextLevelChecker.
+// Offsets are already document-relative (rules accumulate GetCorrectedTextLength).
+func AsTextLevelChecker(matchList func([]*languagetool.AnalyzedSentence) []*RuleMatch) languagetool.TextLevelChecker {
+	return func(sents []*languagetool.AnalyzedSentence) []languagetool.LocalMatch {
+		if matchList == nil {
+			return nil
+		}
+		return ToLocalMatches(matchList(sents))
+	}
+}
+
 // RegisterSharedLayoutRules installs cross-language layout/punctuation rules.
 func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang string) {
 	if lt == nil {

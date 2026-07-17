@@ -28,6 +28,15 @@ func TestHTTPServerAndHandler(t *testing.T) {
 	require.Equal(t, 200, r.Status)
 	require.Contains(t, r.Body, "matches")
 
+	// live engine via handler
+	q2 := url.Values{}
+	q2.Set("language", "en")
+	q2.Set("text", "This is an test.")
+	r2, err := h.HandlePath("/v2/check", "127.0.0.1", q2)
+	require.NoError(t, err)
+	require.Equal(t, 200, r2.Status)
+	require.Contains(t, r2.Body, "EN_A_VS_AN")
+
 	r, err = h.HandlePath("/v2/languages", "127.0.0.1", nil)
 	require.NoError(t, err)
 	require.Equal(t, 200, r.Status)

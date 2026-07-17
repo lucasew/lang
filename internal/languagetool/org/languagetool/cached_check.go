@@ -1,7 +1,7 @@
 package languagetool
 
 // CachedCheck runs Check with ResultCache keyed by language + text + disabled rule set.
-// Full InputSentence keying deferred; this is a soft demo cache for inject checkers.
+// Full InputSentence keying deferred; multi-sentence uses a synthetic whole-text sentence key.
 func CachedCheck(cache *ResultCache, lt *JLanguageTool, text string) []LocalMatch {
 	if lt == nil {
 		return nil
@@ -9,22 +9,24 @@ func CachedCheck(cache *ResultCache, lt *JLanguageTool, text string) []LocalMatc
 	if cache == nil {
 		return lt.Check(text)
 	}
-	// build a lightweight key via Analyze + InputSentence
 	sents := lt.Analyze(text)
 	if len(sents) == 0 {
 		return nil
 	}
-	// cache per first sentence surface + lang (soft; multi-sentence uses full Check)
+	var keySent *AnalyzedSentence
 	if len(sents) == 1 {
-		key := NewInputSentence(sents[0], lt.LanguageCode, "", lt.DisabledRuleIDs, nil, nil, nil, nil, nil, string(lt.Mode), lt.Level, nil, nil)
-		if v, ok := cache.GetMatchesIfPresent(key); ok {
-			if ms, ok := v.([]LocalMatch); ok {
-				return ms
-			}
-		}
-		ms := lt.Check(text)
-		cache.PutMatches(key, ms)
-		return ms
+		keySent = sents[0]
+	} else {
+		// soft multi-sentence key: whole text as one analyzed surface
+		keySent = AnalyzePlain(text)
 	}
-	return lt.Check(text)
+	key := NewInputSentence(keySent, lt.LanguageCode, "", lt.DisabledRuleIDs, nil, nil, nil, nil, nil, string(lt.Mode), lt.Level, nil, nil)
+	if v, ok := cache.GetMatchesIfPresent(key); ok {
+		if ms, ok := v.([]LocalMatch); ok {
+			return ms
+		}
+	}
+	ms := lt.Check(text)
+	cache.PutMatches(key, ms)
+	return ms
 }

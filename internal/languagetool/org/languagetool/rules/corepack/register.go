@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ar"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/da"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
@@ -17,12 +18,14 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/gl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/km"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ro"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sk"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sv"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
@@ -71,6 +74,12 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 		el.RegisterCoreGreekRules(lt)
 	case "ro":
 		ro.RegisterCoreRomanianRules(lt)
+	case "ar":
+		ar.RegisterCoreArabicRules(lt)
+	case "km":
+		km.RegisterCoreKhmerRules(lt)
+	case "sl":
+		sl.RegisterCoreSlovenianRules(lt)
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

@@ -23,6 +23,8 @@ func TestRegister_MultiLang(t *testing.T) {
 		{"el", "γεια γεια", "EL_WORD_REPEAT_RULE"},
 		{"ro", "test test", "RO_WORD_REPEAT_RULE"},
 		{"pt-BR", "teste teste", "PORTUGUESE_WORD_REPEAT_RULE"},
+		{"ar", "كلمة كلمة", "ARABIC_WORD_REPEAT_RULE"},
+		{"sl", "test test", "SL_WORD_REPEAT_RULE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.lang, func(t *testing.T) {

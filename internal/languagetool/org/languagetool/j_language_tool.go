@@ -58,6 +58,9 @@ type LocalMatch struct {
 // SentenceChecker returns matches for one analyzed sentence (offsets relative to sentence text).
 type SentenceChecker func(sentence *AnalyzedSentence) []LocalMatch
 
+// TextLevelChecker returns matches across all sentences (document-relative offsets).
+type TextLevelChecker func(sentences []*AnalyzedSentence) []LocalMatch
+
 // JLanguageTool is a minimal façade for pure-Go check orchestration (growing).
 // Full Java parity is not attempted here.
 type JLanguageTool struct {
@@ -68,6 +71,11 @@ type JLanguageTool struct {
 	sentenceMatchers []func(sentence *AnalyzedSentence) error
 	// checkers are pluggable sentence rules for Check.
 	checkers []SentenceChecker
+	// textLevelCheckers are multi-sentence rules (e.g. word-repeat-beginning).
+	textLevelCheckers []struct {
+		id string
+		fn TextLevelChecker
+	}
 	// activeRuleIDs tracks rule IDs registered via AddRuleChecker (order preserved).
 	activeRuleIDs []string
 	// DisabledRuleIDs soft-disable matches / registration filtering.
@@ -119,6 +127,20 @@ func (lt *JLanguageTool) AddRuleChecker(ruleID string, c SentenceChecker) {
 		}
 		return c(s)
 	})
+}
+
+// AddTextLevelRuleChecker registers a multi-sentence rule (document-relative offsets).
+func (lt *JLanguageTool) AddTextLevelRuleChecker(ruleID string, c TextLevelChecker) {
+	if lt == nil || c == nil {
+		return
+	}
+	if ruleID != "" {
+		lt.activeRuleIDs = append(lt.activeRuleIDs, ruleID)
+	}
+	lt.textLevelCheckers = append(lt.textLevelCheckers, struct {
+		id string
+		fn TextLevelChecker
+	}{id: ruleID, fn: c})
 }
 
 // DisableRule ports disableRule.
@@ -210,34 +232,54 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	lt.unknown = map[string]struct{}{}
 	sents := lt.Analyze(text)
 	var out []LocalMatch
+	runSentence := lt.Mode != ModeTextLevelOnly
+	runTextLevel := lt.Mode != ModeAllButTextLevel
+
 	// Map sentence-local offsets to document by searching each sentence text in remaining source.
 	// AnalyzePlain token positions are relative to the sentence string.
-	srcRunes := []rune(text)
-	searchFrom := 0
-	for _, s := range sents {
-		if lt.Cancelled != nil && lt.Cancelled() {
-			break
+	if runSentence {
+		srcRunes := []rune(text)
+		searchFrom := 0
+		for _, s := range sents {
+			if lt.Cancelled != nil && lt.Cancelled() {
+				break
+			}
+			if s == nil {
+				continue
+			}
+			stext := s.GetText()
+			// find sentence start in document
+			docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
+			if docBase < 0 {
+				docBase = searchFrom
+			}
+			if lt.ListUnknownWords {
+				lt.collectUnknown(s)
+			}
+			for _, c := range lt.checkers {
+				for _, m := range c(s) {
+					m.FromPos += docBase
+					m.ToPos += docBase
+					out = append(out, m)
+				}
+			}
+			searchFrom = docBase + len([]rune(stext))
 		}
-		if s == nil {
-			continue
-		}
-		stext := s.GetText()
-		// find sentence start in document
-		docBase := indexRunesFrom(srcRunes, []rune(stext), searchFrom)
-		if docBase < 0 {
-			docBase = searchFrom
-		}
-		if lt.ListUnknownWords {
+	} else if lt.ListUnknownWords {
+		for _, s := range sents {
 			lt.collectUnknown(s)
 		}
-		for _, c := range lt.checkers {
-			for _, m := range c(s) {
-				m.FromPos += docBase
-				m.ToPos += docBase
-				out = append(out, m)
+	}
+
+	if runTextLevel && len(lt.textLevelCheckers) > 0 {
+		if lt.Cancelled == nil || !lt.Cancelled() {
+			for _, tc := range lt.textLevelCheckers {
+				if tc.id != "" && lt.isRuleDisabled(tc.id) {
+					continue
+				}
+				out = append(out, tc.fn(sents)...)
 			}
 		}
-		searchFrom = docBase + len([]rune(stext))
 	}
 	return out
 }
