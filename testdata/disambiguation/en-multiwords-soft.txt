@@ -219,3 +219,6 @@ one by one	RB
 Helena Montana	NNP
 Cheyenne Wyoming	NNP
 over and over	RB
+Pierre South Dakota	NNP
+Bismarck North Dakota	NNP
+again and again	RB

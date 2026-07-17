@@ -854,5 +854,32 @@
       <message>Jargon; name the benefit or payback instead of "ROI".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TOTAL_COST_OF_OWNERSHIP" name="total cost of ownership soft picky">
+      <pattern>
+        <token>total</token>
+        <token>cost</token>
+        <token>of</token>
+        <token>ownership</token>
+      </pattern>
+      <message>Jargon; name the full cost model instead of "TCO".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_KEY_PERFORMANCE_INDICATOR" name="key performance indicator soft picky">
+      <pattern>
+        <token>key</token>
+        <token>performance</token>
+        <token>indicator</token>
+      </pattern>
+      <message>Jargon; name the metric instead of "KPI".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CUSTOMER_JOURNEY" name="customer journey soft picky">
+      <pattern>
+        <token>customer</token>
+        <token>journey</token>
+      </pattern>
+      <message>Jargon; describe the user path or steps instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

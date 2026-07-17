@@ -4537,6 +4537,76 @@
       <message>Did you mean "initially"?</message>
       <short>initally</short>
     </rule>
+    <rule id="EN_SOFT_IGNORANCE_MISS" name="ignorence soft">
+      <pattern>
+        <token>ignorence</token>
+      </pattern>
+      <message>Did you mean "ignorance"?</message>
+      <short>ignorence</short>
+    </rule>
+    <rule id="EN_SOFT_INTELLIGENT_MISS" name="inteligent soft">
+      <pattern>
+        <token>inteligent</token>
+      </pattern>
+      <message>Did you mean "intelligent"?</message>
+      <short>inteligent</short>
+    </rule>
+    <rule id="EN_SOFT_LABORATORY_MISS" name="labratory soft">
+      <pattern>
+        <token>labratory</token>
+      </pattern>
+      <message>Did you mean "laboratory"?</message>
+      <short>labratory</short>
+    </rule>
+    <rule id="EN_SOFT_MONITOR_MISS" name="moniter soft">
+      <pattern>
+        <token>moniter</token>
+      </pattern>
+      <message>Did you mean "monitor"?</message>
+      <short>moniter</short>
+    </rule>
+    <rule id="EN_SOFT_MORTGAGE_MISS" name="morgage soft">
+      <pattern>
+        <token>morgage</token>
+      </pattern>
+      <message>Did you mean "mortgage"?</message>
+      <short>morgage</short>
+    </rule>
+    <rule id="EN_SOFT_NECESSARY_MISS2" name="necesary soft">
+      <pattern>
+        <token>necesary</token>
+      </pattern>
+      <message>Did you mean "necessary"?</message>
+      <short>necesary</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBORHOOD_MISS" name="neigborhood soft">
+      <pattern>
+        <token>neigborhood</token>
+      </pattern>
+      <message>Did you mean "neighborhood"?</message>
+      <short>neigborhood</short>
+    </rule>
+    <rule id="EN_SOFT_OPPORTUNITY_MISS4" name="oportunity soft">
+      <pattern>
+        <token>oportunity</token>
+      </pattern>
+      <message>Did you mean "opportunity"?</message>
+      <short>oportunity</short>
+    </rule>
+    <rule id="EN_SOFT_OPPOSITE_MISS" name="oposite soft">
+      <pattern>
+        <token>oposite</token>
+      </pattern>
+      <message>Did you mean "opposite"?</message>
+      <short>oposite</short>
+    </rule>
+    <rule id="EN_SOFT_PROVE_MISS" name="proove soft">
+      <pattern>
+        <token>proove</token>
+      </pattern>
+      <message>Did you mean "prove"?</message>
+      <short>proove</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

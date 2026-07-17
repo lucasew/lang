@@ -1491,4 +1491,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CADDY" name="immunize caddy">
+    <pattern>
+      <token>caddy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CADDY_CAPS" name="immunize Caddy">
+    <pattern>
+      <token>Caddy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRAEFIK" name="immunize traefik">
+    <pattern>
+      <token>traefik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRAEFIK_CAPS" name="immunize Traefik">
+    <pattern>
+      <token>Traefik</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ENVOY" name="immunize envoy">
+    <pattern>
+      <token>envoy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ENVOY_CAPS" name="immunize Envoy">
+    <pattern>
+      <token>Envoy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
