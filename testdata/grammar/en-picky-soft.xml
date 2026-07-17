@@ -2168,5 +2168,29 @@
       <message>Jargon; name an adversarial control validation instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RELIABILITY_TEST" name="reliability test soft picky">
+      <pattern>
+        <token>reliability</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a sustained uptime failure check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RESILIENCE_TEST" name="resilience test soft picky">
+      <pattern>
+        <token>resilience</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a recovery-under-stress check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPLIANCE_TEST" name="compliance test soft picky">
+      <pattern>
+        <token>compliance</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a policy and regulation evidence check instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -3399,4 +3399,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MACIE" name="immunize macie">
+    <pattern>
+      <token>macie</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MACIE_CAPS" name="immunize Macie">
+    <pattern>
+      <token>Macie</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INSPECTOR" name="immunize inspector">
+    <pattern>
+      <token>inspector</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_INSPECTOR_CAPS" name="immunize Inspector">
+    <pattern>
+      <token>Inspector</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DETECTIVE" name="immunize detective">
+    <pattern>
+      <token>detective</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DETECTIVE_CAPS" name="immunize Detective">
+    <pattern>
+      <token>Detective</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

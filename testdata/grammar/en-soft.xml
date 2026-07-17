@@ -8247,6 +8247,76 @@
       <message>Did you mean "opposition"?</message>
       <short>oposition</short>
     </rule>
+    <rule id="EN_SOFT_INFLUENCED_MISS" name="influanced soft">
+      <pattern>
+        <token>influanced</token>
+      </pattern>
+      <message>Did you mean "influenced"?</message>
+      <short>influanced</short>
+    </rule>
+    <rule id="EN_SOFT_LICENSE_MISS2" name="liscence soft">
+      <pattern>
+        <token>liscence</token>
+      </pattern>
+      <message>Did you mean "license"?</message>
+      <short>liscence</short>
+    </rule>
+    <rule id="EN_SOFT_LITERALLY_MISS" name="literaly soft">
+      <pattern>
+        <token>literaly</token>
+      </pattern>
+      <message>Did you mean "literally"?</message>
+      <short>literaly</short>
+    </rule>
+    <rule id="EN_SOFT_LITERATURE_MISS2" name="literture soft">
+      <pattern>
+        <token>literture</token>
+      </pattern>
+      <message>Did you mean "literature"?</message>
+      <short>literture</short>
+    </rule>
+    <rule id="EN_SOFT_MANUFACTURE_MISS2" name="manufature soft">
+      <pattern>
+        <token>manufature</token>
+      </pattern>
+      <message>Did you mean "manufacture"?</message>
+      <short>manufature</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBORS_MISS" name="neigbors soft">
+      <pattern>
+        <token>neigbors</token>
+      </pattern>
+      <message>Did you mean "neighbors"?</message>
+      <short>neigbors</short>
+    </rule>
+    <rule id="EN_SOFT_ORIGIN_MISS" name="orgin soft">
+      <pattern>
+        <token>orgin</token>
+      </pattern>
+      <message>Did you mean "origin"?</message>
+      <short>orgin</short>
+    </rule>
+    <rule id="EN_SOFT_ORGANIZATION_MISS" name="orginization soft">
+      <pattern>
+        <token>orginization</token>
+      </pattern>
+      <message>Did you mean "organization"?</message>
+      <short>orginization</short>
+    </rule>
+    <rule id="EN_SOFT_OPPORTUNITIES_MISS2" name="oportunities soft">
+      <pattern>
+        <token>oportunities</token>
+      </pattern>
+      <message>Did you mean "opportunities"?</message>
+      <short>oportunities</short>
+    </rule>
+    <rule id="EN_SOFT_OPPOSITES_MISS" name="oposites soft">
+      <pattern>
+        <token>oposites</token>
+      </pattern>
+      <message>Did you mean "opposites"?</message>
+      <short>oposites</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

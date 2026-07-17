@@ -378,3 +378,6 @@ Innovation Corridor RegionNNP
 Data Corridor RegionNNP
 Port Corridor RegionNNP
 Culture Corridor RegionNNP
+Green Corridor RegionNNP
+Blue Corridor RegionNNP
+Coastal Corridor RegionNNP
