@@ -249,3 +249,6 @@ neck and neck	RB
 Saint Paul Minnesota	NNP
 Lansing Michigan	NNP
 head to head	RB
+Columbus Ohio	NNP
+Augusta Maine	NNP
+eye to eye	RB

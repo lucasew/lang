@@ -1103,5 +1103,29 @@
       <message>Vague label; name the concrete skills or layers.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ZERO_TRUST" name="zero trust soft picky">
+      <pattern>
+        <token>zero</token>
+        <token>trust</token>
+      </pattern>
+      <message>Jargon; name the access controls instead of the slogan.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLATFORM_ENGINEERING" name="platform engineering soft picky">
+      <pattern>
+        <token>platform</token>
+        <token>engineering</token>
+      </pattern>
+      <message>Jargon; name the platform capabilities instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OUTCOME_ORIENTED" name="outcome oriented soft picky">
+      <pattern>
+        <token>outcome</token>
+        <token>oriented</token>
+      </pattern>
+      <message>Jargon; name the measurable outcome instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -1851,4 +1851,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CHECKOV" name="immunize checkov">
+    <pattern>
+      <token>checkov</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CHECKOV_CAPS" name="immunize Checkov">
+    <pattern>
+      <token>Checkov</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRASCAN" name="immunize terrascan">
+    <pattern>
+      <token>terrascan</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TERRASCAN_CAPS" name="immunize Terrascan">
+    <pattern>
+      <token>Terrascan</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRUFFLEHOG" name="immunize trufflehog">
+    <pattern>
+      <token>trufflehog</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRUFFLEHOG_CAPS" name="immunize TruffleHog">
+    <pattern>
+      <token>TruffleHog</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

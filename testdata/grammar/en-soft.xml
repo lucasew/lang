@@ -5237,6 +5237,76 @@
       <message>Did you mean "dynamic"?</message>
       <short>dinamic</short>
     </rule>
+    <rule id="EN_SOFT_DIFFERENCE_MISS2" name="diference soft">
+      <pattern>
+        <token>diference</token>
+      </pattern>
+      <message>Did you mean "difference"?</message>
+      <short>diference</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFERENT_MISS3" name="diferent soft">
+      <pattern>
+        <token>diferent</token>
+      </pattern>
+      <message>Did you mean "different"?</message>
+      <short>diferent</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFERENTLY_MISS" name="diferently soft">
+      <pattern>
+        <token>diferently</token>
+      </pattern>
+      <message>Did you mean "differently"?</message>
+      <short>diferently</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFICULTIES_MISS" name="dificulties soft">
+      <pattern>
+        <token>dificulties</token>
+      </pattern>
+      <message>Did you mean "difficulties"?</message>
+      <short>dificulties</short>
+    </rule>
+    <rule id="EN_SOFT_DIMENSION_MISS" name="dimmension soft">
+      <pattern>
+        <token>dimmension</token>
+      </pattern>
+      <message>Did you mean "dimension"?</message>
+      <short>dimmension</short>
+    </rule>
+    <rule id="EN_SOFT_DYNAMICALLY_MISS" name="dinamicly soft">
+      <pattern>
+        <token>dinamicly</token>
+      </pattern>
+      <message>Did you mean "dynamically"?</message>
+      <short>dinamicly</short>
+    </rule>
+    <rule id="EN_SOFT_DIRECTLY_MISS" name="diretly soft">
+      <pattern>
+        <token>diretly</token>
+      </pattern>
+      <message>Did you mean "directly"?</message>
+      <short>diretly</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPOINTED_MISS2" name="disapointed soft">
+      <pattern>
+        <token>disapointed</token>
+      </pattern>
+      <message>Did you mean "disappointed"?</message>
+      <short>disapointed</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPEARING_MISS" name="disapearing soft">
+      <pattern>
+        <token>disapearing</token>
+      </pattern>
+      <message>Did you mean "disappearing"?</message>
+      <short>disapearing</short>
+    </rule>
+    <rule id="EN_SOFT_DISCIPLINE_MISS" name="disipline soft">
+      <pattern>
+        <token>disipline</token>
+      </pattern>
+      <message>Did you mean "discipline"?</message>
+      <short>disipline</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
