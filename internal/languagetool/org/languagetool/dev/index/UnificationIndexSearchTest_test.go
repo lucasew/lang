@@ -1,17 +1,26 @@
 package index
 
-// Twin of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/UnificationIndexSearchTest.java
+// Twin of UnificationIndexSearchTest — soft unify-style multi-token search.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/UnificationIndexSearchTest.java :: UnificationIndexSearchTest (no @Test)
+// Port of UnificationIndexSearchTest (no @Test)
 func TestUnificationIndexSearch_NoTests(t *testing.T) {
-	t.Log("languagetool-wikipedia/src/test/java/org/languagetool/dev/index/UnificationIndexSearchTest.java")
+	ix := NewIndexer()
+	ix.Add("1", "red car")
+	ix.Add("2", "red bike")
+	ix.Add("3", "blue car")
+	// documents matching both "red" and "car" (soft AND via successive filter)
+	red := ix.SearchSubstring("red")
+	var both []string
+	for _, id := range red {
+		text, _ := ix.Get(id)
+		if indexFold(text, "car") >= 0 {
+			both = append(both, id)
+		}
+	}
+	require.Equal(t, []string{"1"}, both)
 }

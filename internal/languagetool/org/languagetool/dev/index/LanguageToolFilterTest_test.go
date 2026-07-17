@@ -1,17 +1,18 @@
 package index
 
-// Twin of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/LanguageToolFilterTest.java
+// Twin of LanguageToolFilterTest — soft tokenize for indexing.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/LanguageToolFilterTest.java :: LanguageToolFilterTest (no @Test)
+// Port of LanguageToolFilterTest (no @Test)
 func TestLanguageToolFilter_NoTests(t *testing.T) {
-	t.Log("languagetool-wikipedia/src/test/java/org/languagetool/dev/index/LanguageToolFilterTest.java")
+	f := NewLanguageToolFilter(true)
+	toks := f.Tokenize("Hello, World! 123")
+	require.Equal(t, []string{"hello", "world", "123"}, toks)
+
+	f2 := NewLanguageToolFilter(false)
+	require.Equal(t, []string{"Hello", "World"}, f2.Tokenize("Hello World"))
 }

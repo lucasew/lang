@@ -1,17 +1,13 @@
 package language
 
-// Twin of languagetool-language-modules/sr/src/test/java/org/languagetool/language/SerbianSerbianConcurrencyTest.java
+// Twin of SerbianSerbianConcurrencyTest — concurrent Analyze via languagetool package.
 import (
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-	"github.com/stretchr/testify/require"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sr/src/test/java/org/languagetool/language/SerbianSerbianConcurrencyTest.java :: SerbianSerbianConcurrencyTest (no @Test)
+// Port of SerbianSerbianConcurrencyTest (Java slow @Ignore spell race deferred)
 func TestSerbianSerbianConcurrency_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/sr/src/test/java/org/languagetool/language/SerbianSerbianConcurrencyTest.java")
+	languagetool.ConcurrencyAnalyzeSmoke(t, "sr-RS", "Тест.")
 }

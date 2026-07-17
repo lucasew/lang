@@ -1,17 +1,26 @@
 package index
 
-// Twin of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/IndexerSearcherTest.java
+// Twin of IndexerSearcherTest — search over in-memory index.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/IndexerSearcherTest.java :: IndexerSearcherTest (no @Test)
+// Port of IndexerSearcherTest (no @Test)
 func TestIndexerSearcher_NoTests(t *testing.T) {
-	t.Log("languagetool-wikipedia/src/test/java/org/languagetool/dev/index/IndexerSearcherTest.java")
+	ix := NewIndexer()
+	ix.Add("a", "the cat sat")
+	ix.Add("b", "the dog ran")
+	ix.Add("c", "birds fly")
+	// filter + search soft
+	f := NewLanguageToolFilter(true)
+	toks := f.Tokenize("the cat")
+	require.Equal(t, []string{"the", "cat"}, toks)
+	hits := ix.SearchSubstring("cat")
+	require.Equal(t, []string{"a"}, hits)
+	// query builder soft
+	q := NewPatternRuleQueryBuilder("f").BuildSimple(toks...)
+	require.Contains(t, q, `f:"the"`)
+	require.Contains(t, q, `f:"cat"`)
 }

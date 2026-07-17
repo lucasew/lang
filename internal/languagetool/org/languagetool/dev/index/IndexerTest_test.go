@@ -1,17 +1,22 @@
 package index
 
-// Twin of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/IndexerTest.java
+// Twin of IndexerTest — in-memory index smoke (Lucene deferred).
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-wikipedia/src/test/java/org/languagetool/dev/index/IndexerTest.java :: IndexerTest (no @Test)
+// Port of IndexerTest (no @Test)
 func TestIndexer_NoTests(t *testing.T) {
-	t.Log("languagetool-wikipedia/src/test/java/org/languagetool/dev/index/IndexerTest.java")
+	ix := NewIndexer()
+	ix.Add("1", "hello world")
+	ix.Add("2", "goodbye moon")
+	require.Equal(t, 2, ix.Size())
+	text, ok := ix.Get("1")
+	require.True(t, ok)
+	require.Equal(t, "hello world", text)
+	hits := ix.SearchSubstring("world")
+	require.Contains(t, hits, "1")
+	require.NotContains(t, hits, "2")
 }
