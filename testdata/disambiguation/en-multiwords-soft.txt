@@ -603,3 +603,6 @@ Amphibolite Peak RegionNNP
 Eclogite Peak RegionNNP
 Serpentinite Peak RegionNNP
 Soapstone Peak RegionNNP
+Feldspar Mesa RegionNNP
+Gypsum Mesa RegionNNP
+Shale Mesa RegionNNP

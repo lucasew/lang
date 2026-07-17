@@ -3913,5 +3913,30 @@
       <message>Jargon; name annual recurring revenue at period start instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_EXPANSION_ARR" name="expansion arr soft picky">
+      <pattern>
+        <token>expansion</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue from upsells and cross-sells instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CHURNED_ARR" name="churned arr soft picky">
+      <pattern>
+        <token>churned</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name annual recurring revenue lost to cancellations instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_NEW_ARR" name="net new arr soft picky">
+      <pattern>
+        <token>net</token>
+        <token>new</token>
+        <token>arr</token>
+      </pattern>
+      <message>Jargon; name net change in annual recurring revenue for the period instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

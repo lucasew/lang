@@ -6099,4 +6099,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEX" name="immunize stylex">
+    <pattern>
+      <token>stylex</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STYLEX_CAPS" name="immunize StyleX">
+    <pattern>
+      <token>StyleX</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STITCHES" name="immunize stitches">
+    <pattern>
+      <token>stitches</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STITCHES_CAPS" name="immunize Stitches">
+    <pattern>
+      <token>Stitches</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTNINGCSS" name="immunize lightningcss">
+    <pattern>
+      <token>lightningcss</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTNINGCSS_CAPS" name="immunize LightningCSS">
+    <pattern>
+      <token>LightningCSS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

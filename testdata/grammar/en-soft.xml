@@ -13497,6 +13497,76 @@
       <message>Did you mean "collapserkey"?</message>
       <short>collapserkeyy</short>
     </rule>
+    <rule id="EN_SOFT_TRACEPARENT_MISS" name="traceparentt soft">
+      <pattern>
+        <token>traceparentt</token>
+      </pattern>
+      <message>Did you mean "traceparent"?</message>
+      <short>traceparentt</short>
+    </rule>
+    <rule id="EN_SOFT_TRACESTATE_MISS" name="tracestatee soft">
+      <pattern>
+        <token>tracestatee</token>
+      </pattern>
+      <message>Did you mean "tracestate"?</message>
+      <short>tracestatee</short>
+    </rule>
+    <rule id="EN_SOFT_SPANID_MISS" name="spanidd soft">
+      <pattern>
+        <token>spanidd</token>
+      </pattern>
+      <message>Did you mean "spanid"?</message>
+      <short>spanidd</short>
+    </rule>
+    <rule id="EN_SOFT_TRACEID_MISS" name="traceidd soft">
+      <pattern>
+        <token>traceidd</token>
+      </pattern>
+      <message>Did you mean "traceid"?</message>
+      <short>traceidd</short>
+    </rule>
+    <rule id="EN_SOFT_BAGGAGE_MISS" name="baggagee soft">
+      <pattern>
+        <token>baggagee</token>
+      </pattern>
+      <message>Did you mean "baggage"?</message>
+      <short>baggagee</short>
+    </rule>
+    <rule id="EN_SOFT_SAMPLERATE_MISS" name="sampleratee soft">
+      <pattern>
+        <token>sampleratee</token>
+      </pattern>
+      <message>Did you mean "samplerate"?</message>
+      <short>sampleratee</short>
+    </rule>
+    <rule id="EN_SOFT_EXEMPLAR_MISS" name="exemplarr soft">
+      <pattern>
+        <token>exemplarr</token>
+      </pattern>
+      <message>Did you mean "exemplar"?</message>
+      <short>exemplarr</short>
+    </rule>
+    <rule id="EN_SOFT_HISTOGRAM_MISS" name="histogramm soft">
+      <pattern>
+        <token>histogramm</token>
+      </pattern>
+      <message>Did you mean "histogram"?</message>
+      <short>histogramm</short>
+    </rule>
+    <rule id="EN_SOFT_SUMMARY_MISS" name="summaryy soft">
+      <pattern>
+        <token>summaryy</token>
+      </pattern>
+      <message>Did you mean "summary"?</message>
+      <short>summaryy</short>
+    </rule>
+    <rule id="EN_SOFT_COUNTER_MISS" name="counterr soft">
+      <pattern>
+        <token>counterr</token>
+      </pattern>
+      <message>Did you mean "counter"?</message>
+      <short>counterr</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
