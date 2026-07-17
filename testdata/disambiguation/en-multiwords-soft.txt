@@ -171,3 +171,6 @@ at this juncture	RB
 Denver Colorado	NNP
 Miami Florida	NNP
 in the interim	RB
+Chicago Illinois	NNP
+Boston Massachusetts	NNP
+for the foreseeable future	RB

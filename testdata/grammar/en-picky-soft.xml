@@ -445,5 +445,27 @@
       <message>Jargon; consider "expertise" or "strengths".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_UNPACK" name="unpack soft picky">
+      <pattern>
+        <token>unpack</token>
+      </pattern>
+      <message>Buzzword; consider "analyze" or "discuss".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SKILL_SET" name="skill set soft picky">
+      <pattern>
+        <token>skill</token>
+        <token>set</token>
+      </pattern>
+      <message>Consider "skills" when "set" adds little.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SOCIALIZE" name="socialize soft picky">
+      <pattern>
+        <token>socialize</token>
+      </pattern>
+      <message>Corporate jargon; consider "share" or "discuss with".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

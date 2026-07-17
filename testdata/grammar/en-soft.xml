@@ -3417,6 +3417,76 @@
       <message>Did you mean "research"?</message>
       <short>reasearch</short>
     </rule>
+    <rule id="EN_SOFT_FLUORESCENT_MISS" name="flourescent soft">
+      <pattern>
+        <token>flourescent</token>
+      </pattern>
+      <message>Did you mean "fluorescent"?</message>
+      <short>flourescent</short>
+    </rule>
+    <rule id="EN_SOFT_INTELLIGENCE_MISS2" name="intellegence soft">
+      <pattern>
+        <token>intellegence</token>
+      </pattern>
+      <message>Did you mean "intelligence"?</message>
+      <short>intellegence</short>
+    </rule>
+    <rule id="EN_SOFT_SUPERSEDE_MISS" name="supercede soft">
+      <pattern>
+        <token>supercede</token>
+      </pattern>
+      <message>Did you mean "supersede"?</message>
+      <short>supercede</short>
+    </rule>
+    <rule id="EN_SOFT_VISIBLE_MISS" name="visable soft">
+      <pattern>
+        <token>visable</token>
+      </pattern>
+      <message>Did you mean "visible"?</message>
+      <short>visable</short>
+    </rule>
+    <rule id="EN_SOFT_WEDNESDAY_MISS" name="wensday soft">
+      <pattern>
+        <token>wensday</token>
+      </pattern>
+      <message>Did you mean "Wednesday"?</message>
+      <short>wensday</short>
+    </rule>
+    <rule id="EN_SOFT_TWELFTH_MISS" name="twelth soft">
+      <pattern>
+        <token>twelth</token>
+      </pattern>
+      <message>Did you mean "twelfth"?</message>
+      <short>twelth</short>
+    </rule>
+    <rule id="EN_SOFT_ORIGINAL_MISS2" name="origional soft">
+      <pattern>
+        <token>origional</token>
+      </pattern>
+      <message>Did you mean "original"?</message>
+      <short>origional</short>
+    </rule>
+    <rule id="EN_SOFT_ASSASSINATION_MISS" name="assasination soft">
+      <pattern>
+        <token>assasination</token>
+      </pattern>
+      <message>Did you mean "assassination"?</message>
+      <short>assasination</short>
+    </rule>
+    <rule id="EN_SOFT_BENEFITS_MISS" name="benifits soft">
+      <pattern>
+        <token>benifits</token>
+      </pattern>
+      <message>Did you mean "benefits"?</message>
+      <short>benifits</short>
+    </rule>
+    <rule id="EN_SOFT_COLUMN_MISS" name="colum soft">
+      <pattern>
+        <token>colum</token>
+      </pattern>
+      <message>Did you mean "column"?</message>
+      <short>colum</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

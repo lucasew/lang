@@ -915,4 +915,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_HELM" name="immunize helm">
+    <pattern>
+      <token>helm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HELM_CAPS" name="immunize Helm">
+    <pattern>
+      <token>Helm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KAFKA" name="immunize kafka">
+    <pattern>
+      <token>kafka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KAFKA_CAPS" name="immunize Kafka">
+    <pattern>
+      <token>Kafka</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDIS" name="immunize redis">
+    <pattern>
+      <token>redis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDIS_CAPS" name="immunize Redis">
+    <pattern>
+      <token>Redis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
