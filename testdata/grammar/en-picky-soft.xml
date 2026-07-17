@@ -1303,5 +1303,31 @@
       <message>Jargon; name the response role and duties instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_RUNBOOK_DRIVEN" name="runbook driven soft picky">
+      <pattern>
+        <token>runbook</token>
+        <token>driven</token>
+      </pattern>
+      <message>Jargon; name the operational procedure instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BUS_FACTOR_OF_ONE" name="bus factor of one soft picky">
+      <pattern>
+        <token>bus</token>
+        <token>factor</token>
+        <token>of</token>
+        <token>one</token>
+      </pattern>
+      <message>Jargon; name the single point of knowledge risk instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEAM_API" name="team api soft picky">
+      <pattern>
+        <token>team</token>
+        <token>api</token>
+      </pattern>
+      <message>Jargon; name the team interface and collaboration contract.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

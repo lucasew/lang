@@ -2139,4 +2139,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_VELERO" name="immunize velero">
+    <pattern>
+      <token>velero</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VELERO_CAPS" name="immunize Velero">
+    <pattern>
+      <token>Velero</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTIC" name="immunize restic">
+    <pattern>
+      <token>restic</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RESTIC_CAPS" name="immunize Restic">
+    <pattern>
+      <token>Restic</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K10" name="immunize k10">
+    <pattern>
+      <token>k10</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_K10_CAPS" name="immunize K10">
+    <pattern>
+      <token>K10</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -5797,6 +5797,76 @@
       <message>Did you mean "functionality"?</message>
       <short>funtionality</short>
     </rule>
+    <rule id="EN_SOFT_HAPPINESS_MISS" name="happyness soft">
+      <pattern>
+        <token>happyness</token>
+      </pattern>
+      <message>Did you mean "happiness"?</message>
+      <short>happyness</short>
+    </rule>
+    <rule id="EN_SOFT_HEIGHTS_MISS" name="heigths soft">
+      <pattern>
+        <token>heigths</token>
+      </pattern>
+      <message>Did you mean "heights"?</message>
+      <short>heigths</short>
+    </rule>
+    <rule id="EN_SOFT_HUMOROUS_MISS" name="humerous soft">
+      <pattern>
+        <token>humerous</token>
+      </pattern>
+      <message>Did you mean "humorous"?</message>
+      <short>humerous</short>
+    </rule>
+    <rule id="EN_SOFT_HYPOCRISY_MISS" name="hypocracy soft">
+      <pattern>
+        <token>hypocracy</token>
+      </pattern>
+      <message>Did you mean "hypocrisy"?</message>
+      <short>hypocracy</short>
+    </rule>
+    <rule id="EN_SOFT_IDEALLY_MISS" name="idealy soft">
+      <pattern>
+        <token>idealy</token>
+      </pattern>
+      <message>Did you mean "ideally"?</message>
+      <short>idealy</short>
+    </rule>
+    <rule id="EN_SOFT_IDENTITY_MISS" name="idenity soft">
+      <pattern>
+        <token>idenity</token>
+      </pattern>
+      <message>Did you mean "identity"?</message>
+      <short>idenity</short>
+    </rule>
+    <rule id="EN_SOFT_IMMINENT_MISS" name="iminent soft">
+      <pattern>
+        <token>iminent</token>
+      </pattern>
+      <message>Did you mean "imminent"?</message>
+      <short>iminent</short>
+    </rule>
+    <rule id="EN_SOFT_IMITATE_MISS" name="immitate soft">
+      <pattern>
+        <token>immitate</token>
+      </pattern>
+      <message>Did you mean "imitate"?</message>
+      <short>immitate</short>
+    </rule>
+    <rule id="EN_SOFT_INCOMING_MISS" name="incomming soft">
+      <pattern>
+        <token>incomming</token>
+      </pattern>
+      <message>Did you mean "incoming"?</message>
+      <short>incomming</short>
+    </rule>
+    <rule id="EN_SOFT_INCOMPLETE_MISS" name="incomplet soft">
+      <pattern>
+        <token>incomplet</token>
+      </pattern>
+      <message>Did you mean "incomplete"?</message>
+      <short>incomplet</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
