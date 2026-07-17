@@ -336,3 +336,6 @@ Wheat Belt Region	NNP
 Dairy Belt Region	NNP
 Tobacco Belt Region	NNP
 Rice Belt Region	NNP
+Oil Belt Region	NNP
+Coal Belt Region	NNP
+Iron Belt Region	NNP

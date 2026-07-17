@@ -2895,4 +2895,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_DYNAMODB" name="immunize dynamodb">
+    <pattern>
+      <token>dynamodb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_DYNAMODB_CAPS" name="immunize DynamoDB">
+    <pattern>
+      <token>DynamoDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDSHIFT" name="immunize redshift">
+    <pattern>
+      <token>redshift</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REDSHIFT_CAPS" name="immunize Redshift">
+    <pattern>
+      <token>Redshift</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ATHENA" name="immunize athena">
+    <pattern>
+      <token>athena</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ATHENA_CAPS" name="immunize Athena">
+    <pattern>
+      <token>Athena</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

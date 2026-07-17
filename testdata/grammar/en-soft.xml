@@ -7267,6 +7267,76 @@
       <message>Did you mean "controllers"?</message>
       <short>contollers</short>
     </rule>
+    <rule id="EN_SOFT_BUSINESSMAN_MISS2" name="bussinessman soft">
+      <pattern>
+        <token>bussinessman</token>
+      </pattern>
+      <message>Did you mean "businessman"?</message>
+      <short>bussinessman</short>
+    </rule>
+    <rule id="EN_SOFT_BUSINESSMEN_MISS" name="bussinessmen soft">
+      <pattern>
+        <token>bussinessmen</token>
+      </pattern>
+      <message>Did you mean "businessmen"?</message>
+      <short>bussinessmen</short>
+    </rule>
+    <rule id="EN_SOFT_CATEGORICAL_MISS" name="catagorical soft">
+      <pattern>
+        <token>catagorical</token>
+      </pattern>
+      <message>Did you mean "categorical"?</message>
+      <short>catagorical</short>
+    </rule>
+    <rule id="EN_SOFT_CATEGORIZED_MISS" name="catagorized soft">
+      <pattern>
+        <token>catagorized</token>
+      </pattern>
+      <message>Did you mean "categorized"?</message>
+      <short>catagorized</short>
+    </rule>
+    <rule id="EN_SOFT_CHALLENGED_MISS" name="challanged soft">
+      <pattern>
+        <token>challanged</token>
+      </pattern>
+      <message>Did you mean "challenged"?</message>
+      <short>challanged</short>
+    </rule>
+    <rule id="EN_SOFT_CHIEFLY_MISS" name="cheifly soft">
+      <pattern>
+        <token>cheifly</token>
+      </pattern>
+      <message>Did you mean "chiefly"?</message>
+      <short>cheifly</short>
+    </rule>
+    <rule id="EN_SOFT_COLLABORATIONS_MISS" name="collaberations soft">
+      <pattern>
+        <token>collaberations</token>
+      </pattern>
+      <message>Did you mean "collaborations"?</message>
+      <short>collaberations</short>
+    </rule>
+    <rule id="EN_SOFT_COMMISSIONED_MISS" name="comissioned soft">
+      <pattern>
+        <token>comissioned</token>
+      </pattern>
+      <message>Did you mean "commissioned"?</message>
+      <short>comissioned</short>
+    </rule>
+    <rule id="EN_SOFT_CONTROLLING_MISS" name="contolling soft">
+      <pattern>
+        <token>contolling</token>
+      </pattern>
+      <message>Did you mean "controlling"?</message>
+      <short>contolling</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUMERS_MISS" name="cosumers soft">
+      <pattern>
+        <token>cosumers</token>
+      </pattern>
+      <message>Did you mean "consumers"?</message>
+      <short>cosumers</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -1825,5 +1825,31 @@
       <message>Jargon; name the one-reason-to-change rule instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_OPEN_CLOSED_PRINCIPLE" name="open closed principle soft picky">
+      <pattern>
+        <token>open</token>
+        <token>closed</token>
+        <token>principle</token>
+      </pattern>
+      <message>Jargon; name the open-for-extension rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LISKOV_SUBSTITUTION" name="liskov substitution soft picky">
+      <pattern>
+        <token>liskov</token>
+        <token>substitution</token>
+      </pattern>
+      <message>Jargon; name the subtype contract rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMPOSITION_OVER_INHERITANCE" name="composition over inheritance soft picky">
+      <pattern>
+        <token>composition</token>
+        <token>over</token>
+        <token>inheritance</token>
+      </pattern>
+      <message>Jargon; name the prefer-has-a design guidance instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
