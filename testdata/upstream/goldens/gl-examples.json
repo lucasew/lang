@@ -4,24 +4,6 @@
   "language": "gl",
   "cases": [
     {
-      "rule": "QUENES",
-      "text": "Non saben quenes son os encargados.",
-      "suggestion": "quen",
-      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
-    },
-    {
-      "rule": "QUENES",
-      "text": "Seguramente quenes máis protestan serán os que máis se beneficien.",
-      "suggestion": "quen",
-      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
-    },
-    {
-      "rule": "SE_BEN",
-      "text": "Se ben os resultados poden parecer similares, non teñen moito que ver os experimentos.",
-      "suggestion": "Aínda que",
-      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
-    },
-    {
       "rule": "ALOMELLOR",
       "text": "Alomellor non é importante.",
       "suggestion": "Se cadra",
@@ -46,9 +28,483 @@
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     },
     {
+      "rule": "QUENES",
+      "text": "Non saben quenes son os encargados.",
+      "suggestion": "quen",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "QUENES",
+      "text": "Seguramente quenes máis protestan serán os que máis se beneficien.",
+      "suggestion": "quen",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "SE_BEN",
+      "text": "Se ben os resultados poden parecer similares, non teñen moito que ver os experimentos.",
+      "suggestion": "Aínda que",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
       "rule": "VISTO_BO",
       "text": "Patrimonio apraza o seu visto bo á recuperación das mámoas de Castiñeiras.",
       "suggestion": "visto e prace",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ACUSE_DE_RECIBO",
+      "text": "Deberá presentar o acuse de recibo cuberto e selado.",
+      "suggestion": "xustificante de recepción",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ADOQUIN",
+      "text": "Usaron adoquíns para pavimentar a rúa.",
+      "suggestion": "lastra",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "AFORO",
+      "text": "No concerto sobrepasouse o aforo do recinto.",
+      "suggestion": "capacidade",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "AMBO_TRA_ENTRAMBO_PO_TODO_LOS",
+      "text": "Tódo-los días vou mercar á praza.",
+      "suggestion": "Tódolos",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ANDAMIO",
+      "text": "Un albanel vai vir montar o andamio mañá.",
+      "suggestion": "estada",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ANDEN",
+      "text": "O tren chegará ao andén número tres.",
+      "suggestion": "plataforma",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "APORTACION",
+      "text": "Fixo importantes aportacións ao proxecto.",
+      "suggestion": "achega",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ARCEN",
+      "text": "Na bicicleta procuro sempre circular polo arcén.",
+      "suggestion": "beiravía",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "ASIGNATURA",
+      "text": "Este ano teño só tres asignaturas.",
+      "suggestion": "materia",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BAFFLE",
+      "text": "O aparato ten os baffles avariados.",
+      "suggestion": "pantalla acústica",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BASURA",
+      "text": "Hoxe teño que sacar eu a basura.",
+      "suggestion": "lixo",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BINOMIAL_GENRE_LOWER",
+      "text": "Nós somos homo Sapiens.",
+      "suggestion": "Homo sapiens",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BINOMIAL_GENRE_LOWER",
+      "text": "O polgar do homo habilis xa era opoñíbel.",
+      "suggestion": "Homo habilis",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BINOMIAL_SPECIES_UPPER",
+      "text": "Nós somos Homo Sapiens.",
+      "suggestion": "Homo sapiens",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BINOMIAL_SPECIES_UPPER",
+      "text": "O polgar do Homo Habilis xa era opoñíbel.",
+      "suggestion": "Homo habilis",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BOTIQUIN",
+      "text": "Hai pílulas para a dor de cabeza no botiquín?",
+      "suggestion": "caixa de urxencias",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BRUXULA",
+      "text": "Unha brúxula sinala sempre ao norte.",
+      "suggestion": "compás",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BUZON",
+      "text": "Tiña dúas cartas no buzón.",
+      "suggestion": "caixa de correos",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "BUZON_DE_SUXERENCIAS",
+      "text": "O cliente ten á súa disposición un buzón de suxerencias.",
+      "suggestion": "caixa de suxestións",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CALAMAR",
+      "text": "Traían uns calamares do mercado.",
+      "suggestion": "luras",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CALLEXON",
+      "text": "A discusión acabou nun calexón sen saída.",
+      "suggestion": "canella",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CARCOMA",
+      "text": "O mastro do barco ten carcoma.",
+      "suggestion": "caruncho",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CHEF",
+      "text": "Van contratar un novo chef no restaurante.",
+      "suggestion": "xefe de cociña",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CHEQUEO",
+      "text": "Onte foi facer un chequeo médico.",
+      "suggestion": "revisión",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CONCELLAL",
+      "text": "Mañá será oficial o seu cesamento no cargo de concellal.",
+      "suggestion": "concelleiro",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CONTAINER",
+      "text": "O container do lixo apareceu queimado.",
+      "suggestion": "colector",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CONTRASEÑA",
+      "text": "Tivo que cambiar a súa contraseña de entrada.",
+      "suggestion": "contrasinal",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CORBATA",
+      "text": "Vai traballar tódolos días vestido de corbata.",
+      "suggestion": "garavata",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CORTEZA_CEREBRAL",
+      "text": "O relator presentou un traballo sobre o comportamento da corteza cerebral.",
+      "suggestion": "córtex cerebral",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CORTEZA_NON_CEREBRAL",
+      "text": "Do pan prefiro comer a corteza.",
+      "suggestion": "codia",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CUPO",
+      "text": "Non chegaron ao cupo de matriculados.",
+      "suggestion": "cota",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "CURRENCY_SPACE_2",
+      "text": "Débese 100€.",
+      "suggestion": "100 €",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DANOS_E_PREXUIZOS",
+      "text": "Tivo que pagarlle danos e perxuízos polo incidente.",
+      "suggestion": "danos e perdas",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DETERIORO",
+      "text": "Denunciamos o deterioro da diversificación na oferta educativa.",
+      "suggestion": "deterioración",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DETRAS_MINHA",
+      "text": "Vén xusto detrás miña.",
+      "suggestion": "detrás de min",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DETRAS_NOSA_VOSA",
+      "text": "Mirade detrás vosa, un mono con tres cabezas!",
+      "suggestion": "detrás de vós",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DETRAS_SUA",
+      "text": "Ese Presidente da Xunta que leva detrás súa a todo o séquito de acólitos coma avésporas chuchonas.",
+      "suggestion": "detrás del",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DETRAS_TUA",
+      "text": "Mira detrás túa, un mono con tres cabezas!",
+      "suggestion": "detrás de ti",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DE_SEGUIDO_CONTADO_CONTINO",
+      "text": "A masa mestúrase e de seguido envásase en recipientes.",
+      "suggestion": "deseguido",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DE_SEGUIDO_CONTADO_CONTINO",
+      "text": "Recoñecera de contado os axentes da Stasi.",
+      "suggestion": "decontado",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "DOPING",
+      "text": "O dóping é un problema grave no deporte profesional.",
+      "suggestion": "dopaxe",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "EQUIPA",
+      "text": "Todos os traballadores dispoñen dunha equipa de protección individual.",
+      "suggestion": "equipo",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "E_MAIS_O",
+      "text": "Foron ao cine ela e mais a súa irmá.",
+      "suggestion": "e maila",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "GRIFO",
+      "text": "Non saía auga do grifo.",
+      "suggestion": "billa",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "GRULLA",
+      "text": "En novembro é cando as grullas inician a súa migración.",
+      "suggestion": "grou",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "LIBRETA",
+      "text": "Andrés foi mercar unha libreta para a escola.",
+      "suggestion": "caderno",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "LORO",
+      "text": "Ten un loro na súa casa.",
+      "suggestion": "papagaio",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "MAILO",
+      "text": "Foron ao cine ela maila súa irmá.",
+      "suggestion": "e maila",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "MARTINPESCADOR",
+      "text": "O martín pescador non é un paxaro fácil de fotografar.",
+      "suggestion": "picapeixe",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "MORDISCO",
+      "text": "Levoulle media orella dun mordisco.",
+      "suggestion": "dentada",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "OFFTHERECORD",
+      "text": "Comunicou a nova off the record aos xornalistas.",
+      "suggestion": "en privado",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "PERCENT_WITH_SPACE",
+      "text": "A taxa é do 23,5%.",
+      "suggestion": "23,5 %",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "PERCENT_WITH_SPACE",
+      "text": "Paga 23,5‰.",
+      "suggestion": "23,5 ‰",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "PLAYBACK",
+      "text": "É un playback.",
+      "suggestion": "son pregravado",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "POR_O",
+      "text": "Por o mar abaixo vai unha troita de pé.",
+      "suggestion": "Polo",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "PREVENIDO",
+      "text": "Home prevenido vale por dous.",
+      "suggestion": "prevido",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "PROMEDIO",
+      "text": "Precisa pescudar o promedio de litros caídos en Santiago durante o ano 2000.",
+      "suggestion": "media",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "RACHA",
+      "text": "Había rachas de vento na costa.",
+      "suggestion": "refacho",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "RASGO",
+      "text": "A ausencia de melanina é un rasgo característico do albinismo.",
+      "suggestion": "trazo",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "RINCON",
+      "text": "Puxo ao neno nun rincón.",
+      "suggestion": "recuncho",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "SABANHON",
+      "text": "Teño un sabañón nunha man.",
+      "suggestion": "frieira",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "SENON_QUE",
+      "text": "O osíxeno non é unha proba de vida, se non que é producido polo xeo de auga da superficie de Ganímedes.",
+      "suggestion": "senón que",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "SERVICEMARK",
+      "text": "O novo produto é de Escolla Executiva(SM) Plus.",
+      "suggestion": "℠",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "SERVILLETA",
+      "text": "Tes que mercar unhas servilletas novas.",
+      "suggestion": "pano de mesa",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "STRESS",
+      "text": "O seu é un traballo de moito stres.",
+      "suggestion": "tensión",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "TIBURON",
+      "text": "Miraron un tiburón dende o barco.",
+      "suggestion": "quenlla",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "TIZA",
+      "text": "Na aula do segundo curso non hai tiza.",
+      "suggestion": "xiz",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "TRAGALUZ",
+      "text": "Puxo un tragaluz na casa.",
+      "suggestion": "bufarda",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "TRINEO",
+      "text": "Rebentaban os renos e atuaban o trineo na nevada co peso dos seus bandullos.",
+      "suggestion": "zorra",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "TURNO_TANDA",
+      "text": "No colexio non hai turno de tarde.",
+      "suggestion": "quenda",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "TURNO_TANDA",
+      "text": "Perdín o meu turno na lista de agarda.",
+      "suggestion": "quenda",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "VELETA",
+      "text": "Ten unha veleta no pincho da casa.",
+      "suggestion": "catavento",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "VENTANILLA",
+      "text": "Abre a ventanilla do coche.",
+      "suggestion": "portelo",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "WATER",
+      "text": "O wáter estaba limpo.",
+      "suggestion": "váter",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "XARRON",
+      "text": "Rompín o xarrón que lle mercara á túa nai.",
+      "suggestion": "floreiro",
+      "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
+    },
+    {
+      "rule": "XOROBA",
+      "text": "O dromedario ten unha única xoroba.",
+      "suggestion": "chepa",
       "source": "languagetool-language-modules/gl/src/main/resources/org/languagetool/rules/gl/grammar.xml"
     }
   ]

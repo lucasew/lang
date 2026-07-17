@@ -4,57 +4,9 @@
   "language": "ml",
   "cases": [
     {
-      "rule": "അവളെ",
-      "text": "ഞാന്‍ അവളെ ഒരു പുസ്തകം നല്‍കി.",
-      "suggestion": "അവള്‍ക്ക്",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "അവനെ",
-      "text": "ഞാന്‍ അവനെ ഒരു പുസ്തകം നല്‍കി.",
-      "suggestion": "അവന്",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "രാജന്",
-      "text": "രാമന്‍ രാജന് സംസാരിക്കുന്നു.",
-      "suggestion": "രാജനോട്",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "rule4",
-      "text": "ഇത് രാധയെ വീട് ആണ്.",
-      "suggestion": "രാധയുടെ",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "rule5",
-      "text": "ഞാന്‍ നൂറ് രൂപ വേണം.",
-      "suggestion": "എനിക്ക്",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "rule7",
-      "text": "ഹീന മീരയോട് കണ്ടു.",
-      "suggestion": "മീരയെ",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "rule8",
-      "text": "മാങ്ങ പുഴയ്ക്ക് വീണു.",
-      "suggestion": "പുഴയില്‍",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
       "rule": "rule10",
       "text": "പാര്‍ട്ടിയുടെ ഓരോ പ്രവര്‍ത്തകരെയും ഞാന്‍ അഭിനന്ദിക്കുന്നു.",
       "suggestion": "പ്രവര്‍ത്തകനേയും",
-      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
-    },
-    {
-      "rule": "rule_11",
-      "text": "ഓരോ കാര്യങ്ങളും ശ്രദ്ധയോടെ ചെയ്യണം.",
-      "suggestion": "കാര്യവും",
       "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
     },
     {
@@ -100,9 +52,57 @@
       "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
     },
     {
+      "rule": "rule4",
+      "text": "ഇത് രാധയെ വീട് ആണ്.",
+      "suggestion": "രാധയുടെ",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "rule5",
+      "text": "ഞാന്‍ നൂറ് രൂപ വേണം.",
+      "suggestion": "എനിക്ക്",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "rule7",
+      "text": "ഹീന മീരയോട് കണ്ടു.",
+      "suggestion": "മീരയെ",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "rule8",
+      "text": "മാങ്ങ പുഴയ്ക്ക് വീണു.",
+      "suggestion": "പുഴയില്‍",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "rule_11",
+      "text": "ഓരോ കാര്യങ്ങളും ശ്രദ്ധയോടെ ചെയ്യണം.",
+      "suggestion": "കാര്യവും",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "അവനെ",
+      "text": "ഞാന്‍ അവനെ ഒരു പുസ്തകം നല്‍കി.",
+      "suggestion": "അവന്",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "അവളെ",
+      "text": "ഞാന്‍ അവളെ ഒരു പുസ്തകം നല്‍കി.",
+      "suggestion": "അവള്‍ക്ക്",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
       "rule": "ഭയങ്കര",
       "text": "അമ്മ്യക്ക് എന്നെ ഭയങ്കര ഇഷ്ടമാണ്.",
       "suggestion": "വളരെ",
+      "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
+    },
+    {
+      "rule": "രാജന്",
+      "text": "രാമന്‍ രാജന് സംസാരിക്കുന്നു.",
+      "suggestion": "രാജനോട്",
       "source": "languagetool-language-modules/ml/src/main/resources/org/languagetool/rules/ml/grammar.xml"
     }
   ]

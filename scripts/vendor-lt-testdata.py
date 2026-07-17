@@ -96,40 +96,62 @@ def parse_rules_xml(path: Path) -> ET.Element:
         raise RuntimeError(f"parse {path}: {e}") from e
 
 
-def token_is_simple(tok: ET.Element) -> bool:
+# Soft PatternRuleLoader supports these token attributes (see pattern_rule_loader.go).
+SOFT_TOKEN_ATTRS = {
+    "regexp",
+    "case_sensitive",
+    "negate",
+    "min",
+    "max",
+    "skip",
+    "postag",
+    "postag_regexp",
+}
+
+
+def token_is_soft(tok: ET.Element) -> bool:
+    """True if token is loadable by the soft Go pattern loader (no nested XML)."""
     if local(tok.tag) != "token":
         return False
-    # any attributes beyond plain text break soft simplicity
-    for k in tok.attrib:
-        if k in ("min", "max", "skip"):  # soft loader may not handle these well
-            return False
-        if k not in ():  # no attrs allowed for simplest subset
-            # allow nothing — surface exact match only
-            return False
     if list(tok):
-        return False
+        return False  # exceptions / and / or / unify not soft-loaded yet
+    for k in tok.attrib:
+        if k not in SOFT_TOKEN_ATTRS:
+            return False
     text = (tok.text or "").strip()
-    if not text or "&" in text:
+    has_postag = bool((tok.get("postag") or "").strip())
+    # surface string and/or postag required
+    if not text and not has_postag:
+        return False
+    if "&" in text:
         return False
     return True
 
 
-def pattern_is_simple(pattern: ET.Element) -> list[str] | None:
-    toks: list[str] = []
+def serialize_token(tok: ET.Element) -> dict:
+    d: dict = {"text": (tok.text or "").strip()}
+    for k in SOFT_TOKEN_ATTRS:
+        v = tok.get(k)
+        if v is not None and str(v).strip() != "":
+            d[k] = v
+    return d
+
+
+def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
+    toks: list[dict] = []
     for child in pattern:
         tag = local(child.tag)
         if tag == "marker":
-            # flatten marker children
             for t in child:
-                if local(t.tag) != "token" or not token_is_simple(t):
+                if not token_is_soft(t):
                     return None
-                toks.append((t.text or "").strip())
+                toks.append(serialize_token(t))
             continue
         if tag != "token":
             return None
-        if not token_is_simple(child):
+        if not token_is_soft(child):
             return None
-        toks.append((child.text or "").strip())
+        toks.append(serialize_token(child))
     if not toks:
         return None
     return toks
@@ -290,7 +312,25 @@ def write_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
             lines.append(f'    <rule id="{xml_esc(r["id"])}" name="{xml_esc(r["name"])}">')
             lines.append("      <pattern>")
             for t in r["tokens"]:
-                lines.append(f"        <token>{xml_esc(t)}</token>")
+                if isinstance(t, str):
+                    lines.append(f"        <token>{xml_esc(t)}</token>")
+                    continue
+                attrs = []
+                for k in (
+                    "regexp",
+                    "case_sensitive",
+                    "negate",
+                    "min",
+                    "max",
+                    "skip",
+                    "postag",
+                    "postag_regexp",
+                ):
+                    if k in t and t[k] is not None and str(t[k]) != "":
+                        attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
+                attr_s = (" " + " ".join(attrs)) if attrs else ""
+                body = xml_esc(t.get("text") or "")
+                lines.append(f"        <token{attr_s}>{body}</token>")
             lines.append("      </pattern>")
             lines.append(f"      <message>{r['message']}</message>")  # may contain <suggestion>
             lines.append(f"      <short>{xml_esc(r['short'])}</short>")
@@ -380,9 +420,23 @@ def vendor_lang(lang: str) -> dict:
         seen.add(r["id"])
         deduped.append(r)
     all_rules = deduped
-    # goldens only for kept rules
+
+    def is_plain(r: dict) -> bool:
+        for t in r["tokens"]:
+            if isinstance(t, str):
+                continue
+            if any(k in t for k in ("regexp", "postag", "postag_regexp", "negate", "min", "max", "skip")):
+                return False
+        return True
+
+    # Prefer plain surface rules first (soft engine is most reliable here).
+    all_rules.sort(key=lambda r: (0 if is_plain(r) else 1, r["id"]))
+    plain_ids = {r["id"] for r in all_rules if is_plain(r)}
+
+    # goldens only for kept rules; plain examples first for sample suites
     keep = {r["id"] for r in all_rules}
     all_goldens = [g for g in all_goldens if g["rule"] in keep]
+    all_goldens.sort(key=lambda g: (0 if g["rule"] in plain_ids else 1, g["rule"], g["text"]))
 
     if all_rules:
         soft_path = OUT / lang / f"{lang}-from-upstream-soft.xml"

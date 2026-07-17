@@ -4,15 +4,21 @@
   "language": "sv",
   "cases": [
     {
-      "rule": "efter-hand",
-      "text": "Det visade sig efterhand att orden borde särskrivas.",
-      "suggestion": "efter hand",
-      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
-    },
-    {
       "rule": "ALLT_MER",
       "text": "Det blir allt mer vanligt att folk särskriver.",
       "suggestion": "alltmer",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "I_STOR_GRAD",
+      "text": "Affärens kunder är i stor grad nöjda med servicen.",
+      "suggestion": "i hög grad",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "MASERA",
+      "text": "Kan du masera mig?",
+      "suggestion": "massera",
       "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
     },
     {
@@ -22,27 +28,9 @@
       "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
     },
     {
-      "rule": "T_EX",
-      "text": "Vi tar t ex fem myror och fyra elefanter.",
-      "suggestion": "t.ex.",
-      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
-    },
-    {
-      "rule": "TEX",
-      "text": "Vi tar tex fem myror och fyra elefanter.",
-      "suggestion": "t.ex.",
-      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
-    },
-    {
-      "rule": "OVERRENS",
-      "text": "Flickorna kom överrens.",
-      "suggestion": "överens",
-      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
-    },
-    {
-      "rule": "MASERA",
-      "text": "Kan du masera mig?",
-      "suggestion": "massera",
+      "rule": "NEG_KLAGOMAL_MOT",
+      "text": "Maria framförde sina klagomål över socialen.",
+      "suggestion": "klagomål mot",
       "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
     },
     {
@@ -58,15 +46,81 @@
       "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
     },
     {
-      "rule": "I_STOR_GRAD",
-      "text": "Affärens kunder är i stor grad nöjda med servicen.",
-      "suggestion": "i hög grad",
+      "rule": "OVERRENS",
+      "text": "Flickorna kom överrens.",
+      "suggestion": "överens",
       "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
     },
     {
-      "rule": "NEG_KLAGOMAL_MOT",
-      "text": "Maria framförde sina klagomål över socialen.",
-      "suggestion": "klagomål mot",
+      "rule": "TEX",
+      "text": "Vi tar tex fem myror och fyra elefanter.",
+      "suggestion": "t.ex.",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "T_EX",
+      "text": "Vi tar t ex fem myror och fyra elefanter.",
+      "suggestion": "t.ex.",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "efter-hand",
+      "text": "Det visade sig efterhand att orden borde särskrivas.",
+      "suggestion": "efter hand",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "EJ_FORE_ATT",
+      "text": "Han brukade att komma sent.",
+      "suggestion": "brukade",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "EnKlubbaTill",
+      "text": "Det är nog bäst att du får en till klubba.",
+      "suggestion": "en klubba till",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "MÅNADERS_NAMN",
+      "text": "Den bästa månaden är September.",
+      "suggestion": "september",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "NEG_ANGRA_PA_ATT",
+      "text": "Hon ångrade på att hon suttit ensam hemma den fredagen.",
+      "suggestion": "ångrade att",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "NEG_MELLAN_SYD_TILL_NORD",
+      "text": "Mellan Stockholm till Skara finns inget intressant.",
+      "suggestion": "Mellan Stockholm och Skara",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "ORDNINGSTAL",
+      "text": "Hon kom på 2a plats",
+      "suggestion": "2:a",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "ORDNINGSTAL2",
+      "text": "Han kom på 5e plats",
+      "suggestion": "5:e",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "VECKODAGARS_NAMN",
+      "text": "idag är det Måndag.",
+      "suggestion": "måndag",
+      "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
+    },
+    {
+      "rule": "mottoVSmatto",
+      "text": "Alla hinder bör i möjligaste motto undanröjas.",
+      "suggestion": "",
       "source": "languagetool-language-modules/sv/src/main/resources/org/languagetool/rules/sv/grammar.xml"
     }
   ]

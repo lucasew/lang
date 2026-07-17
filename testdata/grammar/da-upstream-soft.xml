@@ -3,6 +3,21 @@
 <!-- Source: upstream LanguageTool simple token patterns only. -->
 <rules lang="da">
   <category id="CAT2" name="Mulige ordforveksling">
+    <rule id="alting" name="al ting→alting">
+      <pattern>
+        <token>al</token>
+        <token>ting</token>
+      </pattern>
+      <message>Det skal skrives i et ord: <suggestion>alting</suggestion>.</message>
+      <short>Alting er i et ord</short>
+    </rule>
+    <rule id="ekstra" name="extra-&gt;ekstra">
+      <pattern>
+        <token>extra</token>
+      </pattern>
+      <message>Extra er engelsk, på dansk staves det: <suggestion>ekstra</suggestion>.</message>
+      <short>Staves ekstra</short>
+    </rule>
     <rule id="fuldtud" name="fuldtud→fuldt ud">
       <pattern>
         <token>fuldtud</token>
@@ -31,21 +46,6 @@
       <message>Det skal skrives i to ord <suggestion>til sidst</suggestion>.</message>
       <short>Til sidst er i to ord</short>
     </rule>
-    <rule id="alting" name="al ting→alting">
-      <pattern>
-        <token>al</token>
-        <token>ting</token>
-      </pattern>
-      <message>Det skal skrives i et ord: <suggestion>alting</suggestion>.</message>
-      <short>Alting er i et ord</short>
-    </rule>
-    <rule id="ekstra" name="extra-&gt;ekstra">
-      <pattern>
-        <token>extra</token>
-      </pattern>
-      <message>Extra er engelsk, på dansk staves det: <suggestion>ekstra</suggestion>.</message>
-      <short>Staves ekstra</short>
-    </rule>
   </category>
   <category id="CAT3" name="Mulige ordforveksling med sjældent ord">
     <rule id="overbord" name="overbord→over bord">
@@ -54,6 +54,94 @@
       </pattern>
       <message>Et overbord er et bord der kan skubbes hen over et andet bord, hvor man falder <suggestion>over bord</suggestion> på et skib.</message>
       <short>Mulige ordforveksling</short>
+    </rule>
+    <rule id="egenavn_egennavn" name="egenavn→egennavn">
+      <pattern>
+        <token regexp="yes">(egenavn)(|et|e|ene|s|ets|es|enes)</token>
+      </pattern>
+      <message>Et egenavn er navnet på et specifik egetræ, f.eks. Dun-Eg og Vinter-Eg. Hvor <suggestion></suggestion> er alle navne f.eks. Jens, Sørnsen, Odense, og Vestas.</message>
+      <short>Mulige ordforveksling</short>
+    </rule>
+    <rule id="grube" name="gruppe→grube">
+      <pattern>
+        <token regexp="yes">(guld|fald)(grupp|grup)(e|er|en|erne)</token>
+      </pattern>
+      <message>Mente du <suggestion></suggestion>, altså en mine eller et hul i jorden?</message>
+      <short>Mulig ordforveksling</short>
+    </rule>
+    <rule id="skraldemand" name="skrællemand→skraldemand">
+      <pattern>
+        <token regexp="yes">(skrælle|skrælde)(mand(|en)|mænd(|ene))</token>
+      </pattern>
+      <message>Mente du <suggestion></suggestion>, altså en person der indsamler skrald?</message>
+      <short>Mulig ordforveksling</short>
+    </rule>
+    <rule id="standart_standard" name="standart→standard">
+      <pattern>
+        <token regexp="yes">.*standart.*</token>
+      </pattern>
+      <message>Mente du: <suggestion></suggestion> som standard=niveau, procedure, el. norm eller standart=fane?</message>
+      <short>Mulige ordforveksling</short>
+    </rule>
+    <rule id="undt" name="ondt→undt">
+      <pattern>
+        <token postag="pron:.*" postag_regexp="yes"></token>
+        <token>vel</token>
+        <token>ondt</token>
+      </pattern>
+      <message>Udtrykket bruges normalt som "det er nogen vel <suggestion>undt</suggestion>", altså det er velfortjent.</message>
+      <short>Mulig ordforveksling</short>
+    </rule>
+    <rule id="vartegn" name="varetegn→vartegn">
+      <pattern>
+        <token regexp="yes">varetegn(|et|ene)</token>
+      </pattern>
+      <message>Udtrykket skrives <suggestion></suggestion>.</message>
+      <short>Mulig ordforveksling</short>
+    </rule>
+    <rule id="vel_at_mærke" name="vel og mærke(t)→vel at mærke">
+      <pattern>
+        <token>vel</token>
+        <token>og</token>
+        <token regexp="yes">mærke(|t)</token>
+      </pattern>
+      <message>Udtrykket skrives <suggestion>vel at mærke</suggestion>.</message>
+      <short>Mulig ordforveksling</short>
+    </rule>
+    <rule id="yndlings" name="ynglings→yndlings[noget]">
+      <pattern>
+        <token regexp="yes">ynglings(|.*[a-s,u-å])</token>
+      </pattern>
+      <message>Udtrykket staves <suggestion></suggestion> .</message>
+      <short>Mulig ordforveksling</short>
+    </rule>
+  </category>
+  <category id="MISC" name="Diverse">
+    <rule id="Tal_appostrof" name="Ord, tal og appostrof">
+      <pattern>
+        <token regexp="yes">.*([0-9])(er|erne|eren|s)</token>
+      </pattern>
+      <message>Mangler muligvis appostrof mellem tallet og endelsen: <suggestion></suggestion>.</message>
+      <short>Muligvis manglende appostrof.</short>
+    </rule>
+  </category>
+  <category id="CAT1" name="Mulige slåfejl">
+    <rule id="bindestreg_og" name="Manglende mellemrum efter bindestreg">
+      <pattern>
+        <token regexp="yes">(.*)-(og|eller)</token>
+      </pattern>
+      <message>Mulig slåfejl manglende mellemrum efter bindestreg: <suggestion></suggestion>.</message>
+      <short>Mulig slåfejl</short>
+    </rule>
+  </category>
+  <category id="CAT4" name="Forkortelser med eller uden punktum">
+    <rule id="ca" name="ca→ca.">
+      <pattern>
+        <token>ca</token>
+        <token regexp="yes" negate="yes">\.|\:|\;|\?|\!</token>
+      </pattern>
+      <message>Cirka forkortes <suggestion>ca.</suggestion></message>
+      <short>Muligt manglende punktum</short>
     </rule>
   </category>
 </rules>

@@ -4,21 +4,15 @@
   "language": "sl",
   "cases": [
     {
-      "rule": "TROPIČJEŠTIRI",
-      "text": "Bilo je nekoč ....",
-      "suggestion": "...",
+      "rule": "IZ_KJE",
+      "text": "Iz kje je ta jadrnica?",
+      "suggestion": "Odkod",
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
-      "rule": "STE_REKLA",
-      "text": "Da je umrl, ste rekla.",
-      "suggestion": "rekli",
-      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
-    },
-    {
-      "rule": "REKLA_STE",
-      "text": "Rekla ste, da je živ.",
-      "suggestion": "Rekli",
+      "rule": "NA_RAZPOLAGO",
+      "text": "Njihova služba nam je bila ves čas na razpolago.",
+      "suggestion": "na voljo",
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
@@ -28,9 +22,15 @@
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
-      "rule": "ČIM_PREJ",
-      "text": "Pridi čimprej!",
-      "suggestion": "čim prej",
+      "rule": "POTOM",
+      "text": "Prijave pošljite potom pošte.",
+      "suggestion": "po pošti",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "REKLA_STE",
+      "text": "Rekla ste, da je živ.",
+      "suggestion": "Rekli",
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
@@ -40,21 +40,15 @@
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
-      "rule": "IZ_KJE",
-      "text": "Iz kje je ta jadrnica?",
-      "suggestion": "Odkod",
+      "rule": "STE_REKLA",
+      "text": "Da je umrl, ste rekla.",
+      "suggestion": "rekli",
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
-      "rule": "POTOM",
-      "text": "Prijave pošljite potom pošte.",
-      "suggestion": "po pošti",
-      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
-    },
-    {
-      "rule": "NA_RAZPOLAGO",
-      "text": "Njihova služba nam je bila ves čas na razpolago.",
-      "suggestion": "na voljo",
+      "rule": "TROPIČJEŠTIRI",
+      "text": "Bilo je nekoč ....",
+      "suggestion": "...",
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     },
     {
@@ -67,6 +61,102 @@
       "rule": "Z_OZIROM",
       "text": "Z ozirom na vse težave se je dobro končalo.",
       "suggestion": "Glede",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "ČIM_PREJ",
+      "text": "Pridi čimprej!",
+      "suggestion": "čim prej",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "BLED",
+      "text": "V Bledu sva jedla kremne rezine.",
+      "suggestion": "Na",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "DUNAJ",
+      "text": "Novoletni koncert v Dunaju",
+      "suggestion": "na",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "KATERI",
+      "text": "Kriv je voznik, kateri je prehiteval.",
+      "suggestion": "ki",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "KOMAD",
+      "text": "V škatli je bil en sam komad.",
+      "suggestion": "kos",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "OTROKI",
+      "text": "Njeni otroki so že vsi v pokoju.",
+      "suggestion": "otroci",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_H",
+      "text": "H vsemu temu nimam kaj dodati.",
+      "suggestion": "K",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_H",
+      "text": "Želite h njemu?",
+      "suggestion": "k",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_K",
+      "text": "K klobasam so ponudili kislo zelje.",
+      "suggestion": "H",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_K",
+      "text": "Odšel sem k gospodu Kovaču.",
+      "suggestion": "h",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_S",
+      "text": "S izvijačem je potolkel po motorju.",
+      "suggestion": "Z",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_S",
+      "text": "Šla je s njim.",
+      "suggestion": "z",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_Z",
+      "text": "Predsednik ZDA je odletel z helikopterjem.",
+      "suggestion": "s",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREDLOG_Z",
+      "text": "Z tem nisem bil seznanjen.",
+      "suggestion": "S",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PREK_TELEFONA",
+      "text": "Obvestili smo jih preko telefona.",
+      "suggestion": "po telefonu",
+      "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
+    },
+    {
+      "rule": "PTUJ",
+      "text": "V Ptuju so pogostili pisatelje.",
+      "suggestion": "Na",
       "source": "languagetool-language-modules/sl/src/main/resources/org/languagetool/rules/sl/grammar.xml"
     }
   ]

@@ -4,69 +4,15 @@
   "language": "eo",
   "cases": [
     {
-      "rule": "EK_DE",
-      "text": "Mi lernas Esperanton ek de la jaro 2005.",
-      "suggestion": "ekde",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NE_JAM",
-      "text": "Mi ne jam studis la lecionon.",
-      "suggestion": "ankoraŭ ne",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "TIELMANIERE",
-      "text": "Mi ne ŝatas ŝin tielmaniere.",
-      "suggestion": "tiumaniere",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_ESTIEL",
-      "text": "Mi estiel franco ŝatas fromaĝon.",
-      "suggestion": "estante",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_MEN",
-      "text": "Men vinon, mi petas.",
-      "suggestion": "Malpli",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_FAR",
-      "text": "La libro estis verkita far fama aŭtoro.",
+      "rule": "DA_LA",
+      "text": "Donu al mi glaseton da la vino.",
       "suggestion": "de",
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
-      "rule": "NEOFIC_SOR",
-      "text": "Mi iras sor.",
-      "suggestion": "supren",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_SOB",
-      "text": "Mi iras sob.",
-      "suggestion": "suben",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_NEN",
-      "text": "Li respondis nen.",
-      "suggestion": "ne",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_SIS",
-      "text": "Ŝi havis sis infanojn.",
-      "suggestion": "ses",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "NEOFIC_SEPEN",
-      "text": "Ŝi havis sepen infanojn.",
-      "suggestion": "sep",
+      "rule": "EK_DE",
+      "text": "Mi lernas Esperanton ek de la jaro 2005.",
+      "suggestion": "ekde",
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
@@ -76,21 +22,501 @@
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
-      "rule": "UNUN",
-      "text": "Mi aĉetis unun panon.",
-      "suggestion": "",
+      "rule": "NEOFIC_ESTIEL",
+      "text": "Mi estiel franco ŝatas fromaĝon.",
+      "suggestion": "estante",
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
-      "rule": "DA_LA",
-      "text": "Donu al mi glaseton da la vino.",
+      "rule": "NEOFIC_FAR",
+      "text": "La libro estis verkita far fama aŭtoro.",
       "suggestion": "de",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_MEN",
+      "text": "Men vinon, mi petas.",
+      "suggestion": "Malpli",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_NEN",
+      "text": "Li respondis nen.",
+      "suggestion": "ne",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SEPEN",
+      "text": "Ŝi havis sepen infanojn.",
+      "suggestion": "sep",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SIS",
+      "text": "Ŝi havis sis infanojn.",
+      "suggestion": "ses",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SOB",
+      "text": "Mi iras sob.",
+      "suggestion": "suben",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SOR",
+      "text": "Mi iras sor.",
+      "suggestion": "supren",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NE_JAM",
+      "text": "Mi ne jam studis la lecionon.",
+      "suggestion": "ankoraŭ ne",
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
       "rule": "OKEJ",
       "text": "Okej!",
       "suggestion": "O kej",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TIELMANIERE",
+      "text": "Mi ne ŝatas ŝin tielmaniere.",
+      "suggestion": "tiumaniere",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "UNUN",
+      "text": "Mi aĉetis unun panon.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "AKZ_R_AKZ",
+      "text": "Donu min akvon.",
+      "suggestion": "al mi",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "ALTA_TAJDO",
+      "text": "Estas nun alta tajdo.",
+      "suggestion": "altmaro",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "BERTILO_WENNERGREN",
+      "text": "Bertilo Wenergren estas sveda esperantisto.",
+      "suggestion": "Bertilo Wennergren",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "BERTILO_WENNERGREN",
+      "text": "Bertilow Wennergren estas sveda esperantisto.",
+      "suggestion": "Bertilo Wennergren",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "BONVOLU_U",
+      "text": "Bonvolu fermu la fenestron.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "BONVOLU_U",
+      "text": "Bonvolu fermu la fenestron.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "CI",
+      "text": "Ci tute malpravas!",
+      "suggestion": "Vi",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "CI",
+      "text": "Ciaj libroj aĉas!",
+      "suggestion": "Viaj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "CI",
+      "text": "Kiel ci fartas?",
+      "suggestion": "vi",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "CIFERO_DE",
+      "text": "La cifero de mortoj estas alta.",
+      "suggestion": "nombro de",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "CXAPELO",
+      "text": "Ankaû mi venos.",
+      "suggestion": "Ankaŭ",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "CXAPELO",
+      "text": "Ankaǔ mi venos.",
+      "suggestion": "Ankaŭ",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "DA_PERSONA_PRONOMO",
+      "text": "Ni manĝis iom da ĝi",
+      "suggestion": "de",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "DU_DEK",
+      "text": "Mi havas du dek stelojn.",
+      "suggestion": "dudek",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "FINNLANDO",
+      "text": "Post la rusia revolucio de 1905 la finlandanoj sukcesis havigi al si pliajn rajtojn.",
+      "suggestion": "finnlandanoj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "FLAVIO_REBELO",
+      "text": "Flavio Ribelo funkciigis la retpaĝaron Ĝangalo.",
+      "suggestion": "Flavio Rebelo",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "HODIE",
+      "text": "Li alvenas hodie.",
+      "suggestion": "hodiaŭ",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "HORO",
+      "text": "Je la 8 horo.",
+      "suggestion": "8-a",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "INDO",
+      "text": "Ridindo ne mortigas.",
+      "suggestion": "Ridindeco",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "JARCENTO",
+      "text": "Li naskiĝis en la 19 jarcento.",
+      "suggestion": "19-a",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "JARO",
+      "text": "Tio okazis en la 2015 jaro.",
+      "suggestion": "2015-a",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "JU_SEN_PLI",
+      "text": "Ju facile, des pli bone.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "KELK",
+      "text": "Li scias nur kelk dek anglajn vortojn.",
+      "suggestion": "kelkdek",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "KELKIU",
+      "text": "Kelkiu alvenis.",
+      "suggestion": "Kelkiuj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "KELKIU",
+      "text": "Mi vidis kelkiun.",
+      "suggestion": "kelkiujn",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "KILO_DE",
+      "text": "Mi aĉetis kilogramon de terpomoj.",
+      "suggestion": "kilogramon da",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "LA_MI",
+      "text": "Ĉu la vi estas multekosta?",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "LA_TITOLO",
+      "text": "Esperanto estis kreita de la doktoro Zamenhof.",
+      "suggestion": "doktoro",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "LA_URBO_DE",
+      "text": "Mi loĝas en la ŝtato de Kalifornio.",
+      "suggestion": "ŝtato Kalifornio",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "MAJ_FESTOJ",
+      "text": "vi ricevis donacon por kristnasko?",
+      "suggestion": "Kristnasko",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "MAJ_LANDOJ",
+      "text": "Mi loĝas en nederlando.",
+      "suggestion": "Nederlando",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "MATRO",
+      "text": "Ŝia matro forpasis.",
+      "suggestion": "patrino",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "MULTEKARA",
+      "text": "Tiuj aŭtoj estas multekaraj.",
+      "suggestion": "multekostaj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_MIES",
+      "text": "Tiu aŭto estas mies.",
+      "suggestion": "mia",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_PLUR_PRON",
+      "text": "Iŝi estas miaj fratinoj.",
+      "suggestion": "Ili",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_PLUR_PRON",
+      "text": "Iŝiajn kukojn mi tre ŝatas.",
+      "suggestion": "Iliajn",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_PLUR_PRON",
+      "text": "Mi amis iŝin.",
+      "suggestion": "ilin",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_PREP",
+      "text": "Ili loĝas cis tiuj montoj.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_PREP",
+      "text": "La prezo estas mil dolaroj fri haveno.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_PREP",
+      "text": "Ŝi ŝategas na ambaŭ.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SING_PRON",
+      "text": "Mi amas ŝlin.",
+      "suggestion": "rin",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SING_PRON",
+      "text": "Mi estas gia edzino.",
+      "suggestion": "ria",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_SING_PRON",
+      "text": "Zi estas bela.",
+      "suggestion": "Ri",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NEOFIC_TABELVORTO",
+      "text": "Mi demandos aliun.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NOVA_ZELANDO",
+      "text": "Mi loĝas en Nova-Zelando.",
+      "suggestion": "Nov-Zelando",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "NTR_ATA",
+      "text": "La okazota vesto",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "N_DA_O",
+      "text": "Mi aĉetis dudek da ovoj.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PASI_EKZAMENON",
+      "text": "Li ne pasis la ekzamenon.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PASI_EKZAMENON",
+      "text": "Pasinte la ekzamenon",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PO",
+      "text": "Kostas du eŭroj po persono.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PO",
+      "text": "Mi veturis 100 kilometrojn po horo.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "POR_KE_V",
+      "text": "Mi studas, por ke mi sukcesos.",
+      "suggestion": "por ke mi sukcesu",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "POST_V",
+      "text": "Post diri tiujn vortojn li foriris.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PRI_V",
+      "text": "Pri flugi oni eĉ ne povis pensi.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PRO_VINF",
+      "text": "Mi studas pro ne malsukcesi.",
+      "suggestion": "por",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "PRO_VINF",
+      "text": "Mi studas pro sukcesi.",
+      "suggestion": "por",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "ROMAJ_CIFEROJ",
+      "text": "Li naskiĝis en la XVII-a jarcento.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "ROMAJ_CIFEROJ",
+      "text": "Li naskiĝis en la ⅩⅦ-a jarcento.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "R_AKZ_AKZ",
+      "text": "Donu akvon min.",
+      "suggestion": "al mi",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "SEN_NEK",
+      "text": "Tiu virino ne foriru de ŝi sen konsolo nek helpo.",
+      "suggestion": "sen konsolo kaj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "SI_TRIAPERSONA",
+      "text": "Mi venis kun sia frato.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "SI_UNU",
+      "text": "Ili amas sin unu la alian.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "SUPERFLUA_UL",
+      "text": "Estis multaj kurintuloj ĉe tiu evento.",
+      "suggestion": "kurintoj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "SUPERFLUA_UL",
+      "text": "Ĉu estos konatuloj tie?",
+      "suggestion": "konatoj",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "SUPERFLUA_UL",
+      "text": "Ŝi estas parolantulo de tiu lingvo.",
+      "suggestion": "parolanto",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TIOJ",
+      "text": "Mi ŝatas tiojn.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TIO_KIU",
+      "text": "Estis tio, kiu misfunkciis.",
+      "suggestion": "tio, kio",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TIO_KIU",
+      "text": "Mi manĝis tion, kiun mi trovis.",
+      "suggestion": "tion, kion",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TIO_KIU",
+      "text": "Mi manĝis ĉion, kiun mi trovis.",
+      "suggestion": "ĉion, kion",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "TRO_O",
+      "text": "Tro multo estas ankoraŭ farenda.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
+    },
+    {
+      "rule": "UNU_DE_ILI",
+      "text": "Tri de ili scipovis Esperanton.",
+      "suggestion": "Tri el ili",
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     }
   ]

@@ -10,6 +10,18 @@
       "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
     },
     {
+      "rule": "CONTRA_MAS_CUANTES",
+      "text": "Ye peor contra más anecies.",
+      "suggestion": "cuantes más",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_MAS_CUANTO",
+      "text": "Ye peor contra más anecies.",
+      "suggestion": "cuanto más",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
       "rule": "HAIGA_HAYA",
       "text": "Qu’a lo menos haiga delles opciones.",
       "suggestion": "haya",
@@ -28,15 +40,33 @@
       "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
     },
     {
-      "rule": "CONTRA_MAS_CUANTES",
-      "text": "Ye peor contra más anecies.",
-      "suggestion": "cuantes más",
+      "rule": "ASGAYA",
+      "text": "Tien perres asgaya.",
+      "suggestion": "a esgaya",
       "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
     },
     {
-      "rule": "CONTRA_MAS_CUANTO",
-      "text": "Ye peor contra más anecies.",
-      "suggestion": "cuanto más",
+      "rule": "ASGAYA",
+      "text": "Tien perres esgaya.",
+      "suggestion": "a esgaya",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "EN_EL_CONTR",
+      "text": "Enfotóse en él.",
+      "suggestion": "nél",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "EN_ESTI_CONTR",
+      "text": "Ta metíu en esti chigre.",
+      "suggestion": "nesti",
+      "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
+    },
+    {
+      "rule": "EN_UN_CONTR",
+      "text": "Metióse en un chigre.",
+      "suggestion": "nun",
       "source": "languagetool-language-modules/ast/src/main/resources/org/languagetool/rules/ast/grammar.xml"
     }
   ]

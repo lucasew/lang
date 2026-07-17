@@ -4,6 +4,18 @@
   "language": "da",
   "cases": [
     {
+      "rule": "alting",
+      "text": "Butikken havde al ting.",
+      "suggestion": "alting",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "ekstra",
+      "text": "Kaptajnen gik extra meget ind for fiskeri.",
+      "suggestion": "ekstra",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
       "rule": "fuldtud",
       "text": "Han var fuldtud tilfreds.",
       "suggestion": "fuldt ud",
@@ -22,27 +34,141 @@
       "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
     },
     {
+      "rule": "overbord",
+      "text": "Kaptajnen faldt overbord i den høje sø.",
+      "suggestion": "over bord",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
       "rule": "tilsidst",
       "text": "Tilsidst var der ikke flere tilbage på skibet.",
       "suggestion": "Til sidst",
       "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
     },
     {
-      "rule": "alting",
-      "text": "Butikken havde al ting.",
-      "suggestion": "alting",
+      "rule": "Tal_appostrof",
+      "text": "Han betalte med en 20er.",
+      "suggestion": "20'er",
       "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
     },
     {
-      "rule": "ekstra",
-      "text": "Kaptajnen gik extra meget ind for fiskeri.",
-      "suggestion": "ekstra",
+      "rule": "Tal_appostrof",
+      "text": "I 1970erne opstod metalgenren.",
+      "suggestion": "1970'erne",
       "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
     },
     {
-      "rule": "overbord",
-      "text": "Kaptajnen faldt overbord i den høje sø.",
-      "suggestion": "over bord",
+      "rule": "bindestreg_og",
+      "text": "De er hus-og haveejere.",
+      "suggestion": "hus- og",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "bindestreg_og",
+      "text": "Vi skal på oplevelses-eller badeferie.",
+      "suggestion": "oplevelses- eller",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "ca",
+      "text": "Der er ca to fisk tilbage.",
+      "suggestion": "ca.",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "egenavn_egennavn",
+      "text": "Jens er et egenavn.",
+      "suggestion": "egennavn",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "grube",
+      "text": "Der er mange faldgruper.",
+      "suggestion": "faldgruber",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "grube",
+      "text": "Det var en sand guldgruppe.",
+      "suggestion": "guldgrube",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "grube",
+      "text": "Faldgruppen var stor.",
+      "suggestion": "Faldgruben",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "skraldemand",
+      "text": "Alle skrældemændene samlede skrald.",
+      "suggestion": "skraldemændene",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "skraldemand",
+      "text": "De var skrældemænd.",
+      "suggestion": "skraldemænd",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "skraldemand",
+      "text": "Det var skrællemanden.",
+      "suggestion": "skraldemanden",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "skraldemand",
+      "text": "Han var skrællemand.",
+      "suggestion": "skraldemand",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "skraldemand",
+      "text": "Skrællemanden var hutig.",
+      "suggestion": "Skraldemanden",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "standart_standard",
+      "text": "Den der dokumentstandart følger vi.",
+      "suggestion": "dokumentstandard",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "undt",
+      "text": "Det er ham vel ondt.",
+      "suggestion": "undt",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "vartegn",
+      "text": "Tårnet var et varetegn for byen.",
+      "suggestion": "vartegn",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "vel_at_mærke",
+      "text": "Det var vel og mærke ikke særlig godt.",
+      "suggestion": "vel at mærke",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "vel_at_mærke",
+      "text": "Det var vel og mærket ikke særlig godt.",
+      "suggestion": "vel at mærke",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "yndlings",
+      "text": "Det var mit ynglingshold.",
+      "suggestion": "yndlingshold",
+      "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
+    },
+    {
+      "rule": "yndlings",
+      "text": "Grøn er ming ynglingsfarve.",
+      "suggestion": "yndlingsfarve",
       "source": "languagetool-language-modules/da/src/main/resources/org/languagetool/rules/da/grammar.xml"
     }
   ]

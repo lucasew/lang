@@ -4,15 +4,15 @@
   "language": "be",
   "cases": [
     {
-      "rule": "pa_fakcie",
-      "text": "А па факту атрымалася, што сіл няма.",
-      "suggestion": "па факце",
-      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
-    },
-    {
       "rule": "Pry_vyhliadzie",
       "text": "Я пры выглядзе павука пабяжаў на вуліцу.",
       "suggestion": "як пабачыш",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Tautalohija_niekalki_pachutczej",
+      "text": "некалькі пахутчэй",
+      "suggestion": "пахутчэй",
       "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
     },
     {
@@ -22,9 +22,141 @@
       "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
     },
     {
-      "rule": "Tautalohija_niekalki_pachutczej",
-      "text": "некалькі пахутчэй",
-      "suggestion": "пахутчэй",
+      "rule": "pa_fakcie",
+      "text": "А па факту атрымалася, што сіл няма.",
+      "suggestion": "па факце",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "A што здарылася?",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "I не было тугі.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "O, як я рады!",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Latin_single_letter",
+      "text": "Як y вас справы?",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Naminalnaje",
+      "text": "Гэтае слова стала намінальным імем.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Non-cyrillic",
+      "text": "Hе веру тэлевізару.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Non-cyrillic",
+      "text": "Pаніцай было суха.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Non-cyrillic",
+      "text": "Tак не пойдзе...",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Non-cyrillic",
+      "text": "Дa цябе госці.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "PARTICLE_Za_Z",
+      "text": "Ігнат ж не прыехаў.",
+      "suggestion": "жа",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Tautalohija_u_xx_miesiacy",
+      "text": "у лютым месяцы",
+      "suggestion": "у лютым",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "U_hetaj_suviazi",
+      "text": "у гэтай сувязі",
+      "suggestion": "у сувязі з гэтым",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "U_sartymiencie",
+      "text": "Тавары ў сартыменце.",
+      "suggestion": "ў асартыменце",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "U_sartymiencie",
+      "text": "Тавары ў шырокім сартыменце.",
+      "suggestion": "ў шырокім асартыменце",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Va_usialiakim_vypadku",
+      "text": "Ва ўсялякім выпадку.",
+      "suggestion": "ўсякім",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "Vialikaja_litara",
+      "text": "З загаловачнай літары.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "YEAR_20001",
+      "text": "Маё падарожжа было запланавана на чэрвень 20014 г.",
+      "suggestion": "чэрвень 2014",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "dvukossi",
+      "text": "Таварышы, вы зразумелі гэтага «смяротніка» ў двукоссях?",
+      "suggestion": "ў двукоссі",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "poviad",
+      "text": "Ён напісаў кароценькі апавяд.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "poviad",
+      "text": "А я зараз распавяду адкуль на Беларусь рыхтаваўся напад.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "poviad",
+      "text": "пачну свой расповед з…",
+      "suggestion": "",
+      "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
+    },
+    {
+      "rule": "punkt_hledzannia",
+      "text": "З такой кропкі гледжання.",
+      "suggestion": "",
       "source": "languagetool-language-modules/be/src/main/resources/org/languagetool/rules/be/grammar.xml"
     }
   ]

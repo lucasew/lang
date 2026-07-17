@@ -14,6 +14,36 @@
       "text": "Piero, tu ai un cane?",
       "suggestion": "hai",
       "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ANNO20011_2011",
+      "text": "Del corso 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ANNO20011_2011",
+      "text": "È dal 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "DOPPIO_VERBO_AUSILIARE_TERZA_PERSONA",
+      "text": "non sono vengono preparate con le tecnologie e le infrastrutture adatte",
+      "suggestion": "",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "ER_01_004",
+      "text": "Non o fatto i compiti.",
+      "suggestion": "ho fatto",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
+    },
+    {
+      "rule": "GIRONI_GIORNI",
+      "text": "7 gironi dopo.",
+      "suggestion": "giorni",
+      "source": "languagetool-language-modules/it/src/main/resources/org/languagetool/rules/it/grammar.xml"
     }
   ]
 }

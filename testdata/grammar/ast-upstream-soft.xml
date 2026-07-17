@@ -11,6 +11,22 @@
       <message>Valorar escribir <suggestion>aparte</suggestion>, si se quier dicir «de llau, separtáu».</message>
       <short>APARTE</short>
     </rule>
+    <rule id="CONTRA_MAS_CUANTES" name="Contra más -&gt; cuantes más">
+      <pattern>
+        <token>contra</token>
+        <token>más</token>
+      </pattern>
+      <message>Espresión incorreuta. Ha escribise <suggestion>cuantes más</suggestion>.</message>
+      <short>CONTRA_MAS_CUANTES</short>
+    </rule>
+    <rule id="CONTRA_MAS_CUANTO" name="Contra más -&gt; cuanto más">
+      <pattern>
+        <token>contra</token>
+        <token>más</token>
+      </pattern>
+      <message>Espresión incorreuta. Ha escribise <suggestion>cuanto más</suggestion>.</message>
+      <short>CONTRA_MAS_CUANTO</short>
+    </rule>
     <rule id="HAIGA_HAYA" name="Haiga -&gt; haya">
       <pattern>
         <token>haiga</token>
@@ -34,21 +50,39 @@
       <message>Como alverbiu o conxunción, escríbese <suggestion>nin siquier</suggestion>.</message>
       <short>SI_QUIER</short>
     </rule>
-    <rule id="CONTRA_MAS_CUANTES" name="Contra más -&gt; cuantes más">
+    <rule id="ASGAYA" name="Esgaya -&gt; a esgaya">
       <pattern>
-        <token>contra</token>
-        <token>más</token>
+        <token negate="yes">a</token>
+        <token regexp="yes">[ae]sgaya</token>
       </pattern>
-      <message>Espresión incorreuta. Ha escribise <suggestion>cuantes más</suggestion>.</message>
-      <short>CONTRA_MAS_CUANTES</short>
+      <message>La forma correuta ye <suggestion>a esgaya</suggestion>.</message>
+      <short>ASGAYA</short>
     </rule>
-    <rule id="CONTRA_MAS_CUANTO" name="Contra más -&gt; cuanto más">
+  </category>
+  <category id="CONTRAICIONES" name="Contraiciones">
+    <rule id="EN_EL_CONTR" name="En + pronome personal">
       <pattern>
-        <token>contra</token>
-        <token>más</token>
+        <token>en</token>
+        <token regexp="yes">él|ell[iao]|ell[oe]s</token>
       </pattern>
-      <message>Espresión incorreuta. Ha escribise <suggestion>cuanto más</suggestion>.</message>
-      <short>CONTRA_MAS_CUANTO</short>
+      <message>La preposición «en» contrái col pronome personal: <suggestion>n</suggestion>.</message>
+      <short>Contraición d’«en» con pronome personal.</short>
+    </rule>
+    <rule id="EN_ESTI_CONTR" name="En + demostrativu">
+      <pattern>
+        <token>en</token>
+        <token regexp="yes">est?[iao]|est?[oe]s|aquel|aquell[iao]|aquell[oe]s</token>
+      </pattern>
+      <message>La preposición «en» contrái col demostrativu: <suggestion>n</suggestion>.</message>
+      <short>Contraición d’«en» con demostrativu.</short>
+    </rule>
+    <rule id="EN_UN_CONTR" name="En + artículu indefiníu">
+      <pattern>
+        <token>en</token>
+        <token regexp="yes">[uú]n|un[uao]|un[oe]s</token>
+      </pattern>
+      <message>La preposición «en» contrái col indefiníu: <suggestion>n</suggestion>.</message>
+      <short>Contraición d’«en» con artículu indefiníu.</short>
     </rule>
   </category>
 </rules>

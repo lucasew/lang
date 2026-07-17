@@ -4,27 +4,9 @@
   "language": "km",
   "cases": [
     {
-      "rule": "HARA_PLANT",
-      "text": "របស់​ពួក​​ហោរ៉ា​ម្នាក់",
-      "suggestion": "ហោរា",
-      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
-    },
-    {
       "rule": "A_SABAY",
       "text": "ខ្ញុំ​អសប្បាយ​ខ្លាំង",
       "suggestion": "អរសប្បាយ",
-      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
-    },
-    {
-      "rule": "KHANG_VITNEAN",
-      "text": "​​​ជីវិត​ខាង​វិញ្ញាណ​ដ៏​ល្អ",
-      "suggestion": "ខាងឯវិញ្ញាណ",
-      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
-    },
-    {
-      "rule": "THUA_BAU",
-      "text": "ខ្លួន​ទោះ​បើ​ជា​ប្រឈម",
-      "suggestion": "បី",
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     },
     {
@@ -34,15 +16,15 @@
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     },
     {
-      "rule": "NUNG_PDOAL",
-      "text": "ទឹក​ដែល​​​ស្អាត ហើយ​និង​ថ្កល់។",
-      "suggestion": "នឹង​ថ្កល់",
+      "rule": "DIAL_RU_TE",
+      "text": "តើ​អ្នក​រក​ឃើញ​កំហុស​ដែល​ឬ​ទេ",
+      "suggestion": "ដែរ​ឬ​ទេ",
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     },
     {
-      "rule": "LENG_TOV",
-      "text": "ខ្ញុំ​លើង​ទៅ​លើ​ផ្ទះ។",
-      "suggestion": "ឡើង​ទៅ",
+      "rule": "HARA_PLANT",
+      "text": "របស់​ពួក​​ហោរ៉ា​ម្នាក់",
+      "suggestion": "ហោរា",
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     },
     {
@@ -58,9 +40,63 @@
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     },
     {
-      "rule": "DIAL_RU_TE",
-      "text": "តើ​អ្នក​រក​ឃើញ​កំហុស​ដែល​ឬ​ទេ",
-      "suggestion": "ដែរ​ឬ​ទេ",
+      "rule": "KHANG_VITNEAN",
+      "text": "​​​ជីវិត​ខាង​វិញ្ញាណ​ដ៏​ល្អ",
+      "suggestion": "ខាងឯវិញ្ញាណ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "LENG_TOV",
+      "text": "ខ្ញុំ​លើង​ទៅ​លើ​ផ្ទះ។",
+      "suggestion": "ឡើង​ទៅ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "NUNG_PDOAL",
+      "text": "ទឹក​ដែល​​​ស្អាត ហើយ​និង​ថ្កល់។",
+      "suggestion": "នឹង​ថ្កល់",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "THUA_BAU",
+      "text": "ខ្លួន​ទោះ​បើ​ជា​ប្រឈម",
+      "suggestion": "បី",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "DOUBLE_NOUNS",
+      "text": "ការជំនឿ​ដ៏​ពិត។",
+      "suggestion": "ជំនឿ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "DOUBLE_NOUNS2",
+      "text": "ការ​ជំនឿ​ដ៏​ពិត។",
+      "suggestion": "ជំនឿ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "FROM_Classifier",
+      "text": "ដើមឈើ​ពី​ដើម។",
+      "suggestion": "ពីរ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "PRO_CHOMNAH",
+      "text": "ខ្ញុំ​ចំណាស់​បន្តិច​​ហើយ។",
+      "suggestion": "ខ្ញុំ​រាង​ចំណាស់",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "TonakeatWithNoun",
+      "text": "ការ​អភិវឌ្ឍន៍​សង្គម។",
+      "suggestion": "អភិវឌ្ឍ",
+      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
+    },
+    {
+      "rule": "TonakeatWithNoun2",
+      "text": "ការអភិវឌ្ឍន៍​សង្គម។",
+      "suggestion": "ការអភិវឌ្ឍ",
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     }
   ]

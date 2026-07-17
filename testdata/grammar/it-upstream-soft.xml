@@ -17,5 +17,43 @@
       <message>Forse volevi dire <suggestion>hai</suggestion>?</message>
       <short>ER_01_002a</short>
     </rule>
+    <rule id="ER_01_004" name="scambio di 'o' ed 'ho'">
+      <pattern>
+        <token>o</token>
+        <token postag="VER:part.+past.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Forse volevi dire <suggestion>ho </suggestion>?</message>
+      <short>ER_01_004</short>
+    </rule>
+  </category>
+  <category id="SEMANTICS" name="Semantica">
+    <rule id="ANNO20011_2011" name="*20011/2011">
+      <pattern>
+        <token regexp="yes">da|dal|del|corso|anno|accademico|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre|gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic</token>
+        <token regexp="yes">200[12]\d</token>
+      </pattern>
+      <message>Forse volevi dire <suggestion></suggestion>?</message>
+      <short>ANNO20011_2011</short>
+    </rule>
+  </category>
+  <category id="CAT7" name="Grammatica - Verbi">
+    <rule id="DOPPIO_VERBO_AUSILIARE_TERZA_PERSONA" name="Doppio verbo ausiliare terza persona">
+      <pattern>
+        <token postag="AUX:ind+pres+3+p"></token>
+        <token postag="AUX:ind+pres+3+p"></token>
+      </pattern>
+      <message>La frase contiene un verbo ausiliare ripetuto</message>
+      <short>Verbo ausiliare ripetuto</short>
+    </rule>
+  </category>
+  <category id="CAT13" name="Ulteriori errori comuni - ortografia">
+    <rule id="GIRONI_GIORNI" name="7 gironi -&gt; 7 giorni">
+      <pattern>
+        <token regexp="yes">\d+</token>
+        <token>gironi</token>
+      </pattern>
+      <message>Forse volevi dire <suggestion>giorni</suggestion>?</message>
+      <short>GIRONI_GIORNI</short>
+    </rule>
   </category>
 </rules>

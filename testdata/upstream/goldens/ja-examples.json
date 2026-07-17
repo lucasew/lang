@@ -4,63 +4,69 @@
   "language": "ja",
   "cases": [
     {
-      "rule": "KAIKETUNARU",
-      "text": "解決なる",
-      "suggestion": "解決になる",
+      "rule": "AIMAI",
+      "text": "曖味",
+      "suggestion": "曖昧",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MOTISITE",
-      "text": "用して",
-      "suggestion": "用いて",
+      "rule": "AKUGYAKUHIDOU",
+      "text": "悪逆非道な行い。",
+      "suggestion": "悪逆無道",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DOYATTE",
-      "text": "どやって",
-      "suggestion": "どうやって",
+      "rule": "AKUTAI",
+      "text": "悪体。",
+      "suggestion": "悪態",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "WOAGARU",
-      "text": "を上がる",
-      "suggestion": "を上げる",
+      "rule": "ANNGOU",
+      "text": "暗合が分からなくて困った。",
+      "suggestion": "暗号",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KOREWA",
-      "text": "これわ",
-      "suggestion": "これは",
+      "rule": "ANNNOJOU",
+      "text": "案の条",
+      "suggestion": "案の定",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "WOSANNKASITE",
-      "text": "を参加して",
-      "suggestion": "に参加して",
+      "rule": "ANNZENNHOSYOU",
+      "text": "安全保証",
+      "suggestion": "安全保障",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KINNJOHE",
-      "text": "近所へ",
-      "suggestion": "近所で",
+      "rule": "AOIROTOIKI",
+      "text": "青色吐息",
+      "suggestion": "青息吐息",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DEATA",
-      "text": "であた",
-      "suggestion": "であった",
+      "rule": "AONISAI",
+      "text": "青二歳。",
+      "suggestion": "青二才",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "GAKUSEITATI",
-      "text": "学生たち",
-      "suggestion": "学生",
+      "rule": "ARAKASAMA",
+      "text": "あらかさまに嘘がばれている。",
+      "suggestion": "あからさま",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "WOMITUKATTA",
-      "text": "を見つかった",
-      "suggestion": "を見つけた",
+      "rule": "ARUKUHODOU",
+      "text": "歩く歩道を歩いていく。",
+      "suggestion": "動く歩道",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ARUPUSUITIMANNJYAKU",
+      "text": "アルプス一万弱",
+      "suggestion": "アルプス一万尺",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -70,207 +76,63 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SAKINAKUNATTA",
-      "text": "先亡くなった",
-      "suggestion": "先に亡くなった",
+      "rule": "BAKUDAI",
+      "text": "漠大。",
+      "suggestion": "莫大",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HATOHAIU",
-      "text": "鳩は言う",
-      "suggestion": "鳩は鳴く",
+      "rule": "BAKUSINN",
+      "text": "爆進。",
+      "suggestion": "驀進",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KUMOMOHITOTUNAKU",
-      "text": "雲も一つなく",
-      "suggestion": "雲一つなく",
+      "rule": "BANNJIKYUUSU",
+      "text": "万事窮す。",
+      "suggestion": "万事休す",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KONITIHA",
-      "text": "こにちは",
-      "suggestion": "こんにちは",
+      "rule": "BIMYOU",
+      "text": "徴妙。",
+      "suggestion": "微妙",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HAJIMEMOSITE",
-      "text": "始めもして",
-      "suggestion": "始めまして",
+      "rule": "BOINN",
+      "text": "母印。",
+      "suggestion": "拇印",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MANABETAI",
-      "text": "学べたい",
-      "suggestion": "学びたい",
+      "rule": "BOKINN",
+      "text": "募金",
+      "suggestion": "寄付",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KIKUTOKONIYORUTO",
-      "text": "聞くことによると",
-      "suggestion": "聞くところによると",
+      "rule": "BOUBIROKU",
+      "text": "忘備録。",
+      "suggestion": "備忘録",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SAISYONANIKKI",
-      "text": "最初な日記",
-      "suggestion": "最初の日記",
+      "rule": "BOUBOKUMINN",
+      "text": "放牧民。",
+      "suggestion": "遊牧民",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SENNTAKUWOARAU",
-      "text": "洗濯を洗う",
-      "suggestion": "洗濯をする",
+      "rule": "BUNNMEIKAIKA",
+      "text": "文明開花。",
+      "suggestion": "文明開化",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "GOWOMOTTEIRU",
-      "text": "語を持っている",
-      "suggestion": "語を習得している",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "DAIGAKUJI",
-      "text": "大学時",
-      "suggestion": "大学の時",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIREIMO",
-      "text": "きれいも",
-      "suggestion": "きれいで",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MADENIYOHUKASI",
-      "text": "までに夜更かし",
-      "suggestion": "まで夜更かし",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "HUTTANAI",
-      "text": "降ったない",
-      "suggestion": "降らなかった",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SEIBUNNHAKOMUGI",
-      "text": "成分は小麦",
-      "suggestion": "材料は小麦",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "NAZOKATTE",
-      "text": "なぞ買って",
-      "suggestion": "なにを買って",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SANNKANIIKU",
-      "text": "参加に行く",
-      "suggestion": "参加しに行く",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TIGAUHANANI",
-      "text": "違うはなに",
-      "suggestion": "違いはなに",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TAKUSANNNAHITO",
-      "text": "たくさんな人",
-      "suggestion": "たくさんの人",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YASUMIHI",
-      "text": "休み日",
-      "suggestion": "休みの日",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOMARUDESU",
-      "text": "困るです",
-      "suggestion": "困ります",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OSAEDEKIRU",
-      "text": "抑えできる",
-      "suggestion": "抑えられる",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KATURYOKUNAHITO",
-      "text": "活力な人",
-      "suggestion": "元気な人",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "RIYUUWONAI",
-      "text": "理由をない",
-      "suggestion": "理由はない",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GATUDUKITAI",
-      "text": "が続きたい",
-      "suggestion": "を続けたい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KEKKOSITA",
-      "text": "けっこした",
-      "suggestion": "けっこうした",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SUBEKINOHA",
-      "text": "すべきのは",
-      "suggestion": "すべきなのは",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JOUKIDOORI",
-      "text": "上記通り",
-      "suggestion": "上記の通り",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "NATOTONOTTEITE",
-      "text": "な整っていて",
-      "suggestion": "に整っていて",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GOHENNJI",
-      "text": "ご返事",
-      "suggestion": "お返事",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MUZUKASITO",
-      "text": "むずかしと",
-      "suggestion": "むずかしいと",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KEDO",
-      "text": "正しいげと",
-      "suggestion": "けど",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOTAEGAMATIGAETA",
-      "text": "答えが間違えた",
-      "suggestion": "答えを間違えた",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MOKUTEKINIAKIRAKA",
-      "text": "目的に明らか",
-      "suggestion": "目的を明らか",
+      "rule": "BUSYOUHIGE",
+      "text": "武将髭。",
+      "suggestion": "無精髭",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -286,351 +148,33 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "NEGAWAKUBA",
-      "text": "願わくば。",
-      "suggestion": "願わくは",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "HARADADASII",
-      "text": "腹立だしい。",
-      "suggestion": "腹立たしい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MITIHIKI",
-      "text": "満ち干き。",
-      "suggestion": "満ち干",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MIKKATOAKEZU",
-      "text": "遠距離恋愛の彼氏は三日と空けず電話をしてくる。",
-      "suggestion": "三日に上げず",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YAMONAKU",
-      "text": "やもなく。",
-      "suggestion": "やむなく",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YAMUOEZU",
-      "text": "やむおえず。",
-      "suggestion": "やむをえず",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "WARAWOMOSUGARU",
-      "text": "藁をも縋る。",
-      "suggestion": "藁にも縋る",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TUKUZUKU",
-      "text": "つくずく思案する。",
-      "suggestion": "つくづく",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TUREZURE",
-      "text": "つれずれを慰める",
-      "suggestion": "つれづれ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ARAKASAMA",
-      "text": "あらかさまに嘘がばれている。",
-      "suggestion": "あからさま",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "AKUGYAKUHIDOU",
-      "text": "悪逆非道な行い。",
-      "suggestion": "悪逆無道",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ITINENNHUNKI",
-      "text": "一念奮起しよう。",
-      "suggestion": "一念発起",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSYOKENMEI",
-      "text": "大学の課題一所懸命に行う。",
-      "suggestion": "一生懸命",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSOKUSYOKUHATU",
-      "text": "一即触発の形態にある。",
-      "suggestion": "一触即発",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "INAGAOUNIMO",
-      "text": "否が応にも世界は動く。",
-      "suggestion": "弥が上にも",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSOUNOKOTO",
-      "text": "疲れたしいっそうのことやめようか。",
-      "suggestion": "いっそのこと",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ARUKUHODOU",
-      "text": "歩く歩道を歩いていく。",
-      "suggestion": "動く歩道",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "UYOUKYOKUSETU",
-      "text": "うよう曲折あったがなんとか終わった。",
-      "suggestion": "紆余曲折",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "EIENTO",
-      "text": "永遠と道が続いている。",
-      "suggestion": "延延と",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OYAKUMEGOMEN",
-      "text": "管理職を御役目御免になった。",
-      "suggestion": "御役御免",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "AOIROTOIKI",
-      "text": "青色吐息",
-      "suggestion": "青息吐息",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "UNOMETAKANOME",
-      "text": "魚の目鷹の目",
-      "suggestion": "鵜の目鷹の目",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OBOTUKANU",
-      "text": "おぼつかぬ",
-      "suggestion": "覚束無い",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OMEIBANNKAI",
-      "text": "汚名挽回",
-      "suggestion": "汚名返上",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "BOKINN",
-      "text": "募金",
-      "suggestion": "寄付",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KANPUUMASATU",
-      "text": "寒風摩擦で暖かくなった。",
-      "suggestion": "乾布摩擦",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KATAKUSOUSA",
-      "text": "警察が家宅捜査を強行する。",
-      "suggestion": "家宅捜索",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOJINNMARI",
-      "text": "こじんまり。",
-      "suggestion": "こぢんまり",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KATAHARAITAI",
-      "text": "片腹痛いほどの状況だ。",
-      "suggestion": "傍ら痛し",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KITAIDAORE",
-      "text": "全く期待倒れの実験結果だ。",
-      "suggestion": "期待外れ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYUUTAIZEN",
-      "text": "旧態然した態度。",
-      "suggestion": "旧態依然",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GIRONHAKUTYUU",
-      "text": "議論伯仲。",
-      "suggestion": "議論白熱",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TEIJIBANN",
-      "text": "提示板。",
-      "suggestion": "掲示板",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOTEIGAINEN",
-      "text": "固定概念にとらわれる。",
-      "suggestion": "固定観念",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KENNKENNGAKUGAKU",
-      "text": "喧喧諤諤",
-      "suggestion": "喧喧囂囂",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SONJASOKORA",
-      "text": "こんなガラクタはそんじゃそこらで手に入る。",
-      "suggestion": "そんじょそこら",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JIDENNSYA",
-      "text": "じでん車。",
-      "suggestion": "じてん車",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SIJOUMEIDAI",
-      "text": "至上命題がくだる。",
-      "suggestion": "至上命令",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KISETUGARA",
-      "text": "季節柄。",
-      "suggestion": "時節柄",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MESENN",
-      "text": "目線をそらす。",
-      "suggestion": "視線",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYUKKETUSI",
-      "text": "原因は出血死。",
-      "suggestion": "失血死",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JISSUNNDAI",
-      "text": "実寸大の写真。",
-      "suggestion": "実物大",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYAKAIHOUJINN",
-      "text": "社会法人。",
-      "suggestion": "社団法人",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYANIMUNI",
-      "text": "遮二無突進する。",
-      "suggestion": "遮二無二",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KUTISAKISANNZUNN",
-      "text": "口先三寸。",
-      "suggestion": "舌先三寸",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "HITUKOI",
-      "text": "ひつこい。",
-      "suggestion": "しつこい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JINNSEIITARUTOKOROSEIZANNARI",
-      "text": "人生いたるところ青山あり。",
-      "suggestion": "人間いたるところ青山あり",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KUTUJOKUSENN",
-      "text": "屈辱戦。",
-      "suggestion": "雪辱戦",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JIKISOUSOU",
-      "text": "時期早早",
-      "suggestion": "時期尚早",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYUSIGAE",
-      "text": "趣旨替え",
-      "suggestion": "宗旨変え",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SUTORI-TOKINGU",
-      "text": "ストリートキング",
-      "suggestion": "ストリーキング",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
       "rule": "DAIENNDANN",
       "text": "大円団。",
       "suggestion": "大団円",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAISYORYOUHOU",
-      "text": "対処療法。",
-      "suggestion": "対症療法",
+      "rule": "DAIGAKUJI",
+      "text": "大学時",
+      "suggestion": "大学の時",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TYOSAKUKENNIHANN",
-      "text": "著作権違反。",
-      "suggestion": "著作権法違反",
+      "rule": "DANNTOTUNOITII",
+      "text": "断トツの一位。",
+      "suggestion": "断トツ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TEMOTIBUTASA",
-      "text": "てもちぶたさ。",
-      "suggestion": "てもちぶさた",
+      "rule": "DEATA",
+      "text": "であた",
+      "suggestion": "であった",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TENIOHA",
-      "text": "てにおはがおかしい。",
-      "suggestion": "てにをは",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TENNTITENNMEI",
-      "text": "天地天命に誓う。",
-      "suggestion": "天地神明",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "TORITUKUHIMAMONAI",
-      "text": "取り付く暇もない。",
-      "suggestion": "取り付く島もない",
+      "rule": "DEBUSYOU",
+      "text": "デブ症。",
+      "suggestion": "出不精",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -640,315 +184,45 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "NEMUKEME",
-      "text": "眠気眼をこする。",
-      "suggestion": "寝惚け眼",
+      "rule": "DETTIAGERU",
+      "text": "丁稚上げる。",
+      "suggestion": "捏上げる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "RYOUHU",
-      "text": "領布。",
-      "suggestion": "頒布",
+      "rule": "DOKAESI",
+      "text": "採算を度返しする。",
+      "suggestion": "度外視",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BOUBIROKU",
-      "text": "忘備録。",
-      "suggestion": "備忘録",
+      "rule": "DOKUDANNJOU",
+      "text": "独壇場。",
+      "suggestion": "独擅場",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HITOTUHENNJI",
-      "text": "一つ返事。",
-      "suggestion": "二つ返事",
+      "rule": "DOROJIAI",
+      "text": "この試合は泥試合になりそう。",
+      "suggestion": "泥仕合",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MAKEZUGIRAI",
-      "text": "負けず嫌いな性格。",
-      "suggestion": "負け嫌い",
+      "rule": "DOYATTE",
+      "text": "どやって",
+      "suggestion": "どうやって",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MAGONOTE",
-      "text": "まごの手。",
-      "suggestion": "まこの手",
+      "rule": "DOYOUNOUSINOHI",
+      "text": "今日は土曜の丑の日だ。",
+      "suggestion": "土用の丑の日",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MUNESANZUN",
-      "text": "胸先寸に納める。",
-      "suggestion": "胸三寸",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MOUSIWAKEGOZAIMASENN",
-      "text": "申し訳ございません。",
-      "suggestion": "申し訳ない",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "BOUBOKUMINN",
-      "text": "放牧民。",
-      "suggestion": "遊牧民",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YUKIYAKONNKONNARAREYAKONNKONN",
-      "text": "雪やこんこんあられやこんこん。",
-      "suggestion": "雪やこんこあられやこんこ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "RIRONNSEIZENN",
-      "text": "理論整然。",
-      "suggestion": "理路整然",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "REKKITOSITA",
-      "text": "列記とした。",
-      "suggestion": "歴とした",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "RIHATTYAKU",
-      "text": "離発着",
-      "suggestion": "離着陸",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "WARUDAKUMI",
-      "text": "悪企み",
-      "suggestion": "悪巧み",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ANNGOU",
-      "text": "暗合が分からなくて困った。",
-      "suggestion": "暗号",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "AONISAI",
-      "text": "青二歳。",
-      "suggestion": "青二才",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "AKUTAI",
-      "text": "悪体。",
-      "suggestion": "悪態",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISAI",
-      "text": "異才を放つ存在。",
-      "suggestion": "異彩",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSEIITIDAI",
-      "text": "一生一代の出来事だ。",
-      "suggestion": "一世一代",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IGAITO",
-      "text": "以外と難しい問題だ。",
-      "suggestion": "意外と",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YUUISA",
-      "text": "有意差がある。",
-      "suggestion": "優位差",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "UTYOUTEN",
-      "text": "つい有頂点になってしまう。",
-      "suggestion": "有頂天",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OUGI",
-      "text": "奥技をきわめる。",
-      "suggestion": "奥義",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "AIMAI",
-      "text": "曖味",
-      "suggestion": "曖昧",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ANNZENNHOSYOU",
-      "text": "安全保証",
-      "suggestion": "安全保障",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ANNNOJOU",
-      "text": "案の条",
-      "suggestion": "案の定",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ARUPUSUITIMANNJYAKU",
-      "text": "アルプス一万弱",
-      "suggestion": "アルプス一万尺",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IKUDOUONN",
-      "text": "異句同音",
-      "suggestion": "異口同音",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IKANN",
-      "text": "遺感",
-      "suggestion": "遺憾",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISIHYOUJI",
-      "text": "意志表示",
-      "suggestion": "意思表示",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISOGASII",
-      "text": "急がしい",
-      "suggestion": "忙しい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ITAZURANIJIKANNGASUGIRU",
-      "text": "悪戯に時間が過ぎる",
-      "suggestion": "徒に時間が過ぎる",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ITIHAYAKU",
-      "text": "一早く",
-      "suggestion": "逸早く",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ITIMATUNOHUANN",
-      "text": "一末の不安",
-      "suggestion": "一抹の不安",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ITIRITU",
-      "text": "一率",
-      "suggestion": "一律",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IKKAINOISI",
-      "text": "一界の医師",
-      "suggestion": "一介の医師",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IKKAKUSENNKINN",
-      "text": "一獲千金",
-      "suggestion": "一攫千金",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IKKATU",
-      "text": "一活",
-      "suggestion": "一括",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSINNDOUTAI",
-      "text": "一身同体",
-      "suggestion": "一心同体",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSUINOYUME",
-      "text": "一睡の夢",
-      "suggestion": "一炊の夢",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISSEINI",
-      "text": "一勢に",
-      "suggestion": "一斉に",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IPPENNTOU",
-      "text": "一遍倒",
-      "suggestion": "一辺倒",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IMADANI",
-      "text": "今だに",
-      "suggestion": "未だに",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IMISINNTYOU",
-      "text": "意味慎重",
-      "suggestion": "意味深長",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IMAHANOGIWA",
-      "text": "今はの際",
-      "suggestion": "今際の際",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IMOHORI",
-      "text": "芋堀",
-      "suggestion": "芋掘り",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IWAKANN",
-      "text": "異和感",
-      "suggestion": "違和感",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "USIRODATE",
-      "text": "後ろ立て",
-      "suggestion": "後ろ盾",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "UZUDAKAI",
-      "text": "うず高い",
-      "suggestion": "堆い",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "UMEMUKU",
-      "text": "呷く",
-      "suggestion": "呻く",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "URASABISII",
-      "text": "裏寂しい",
-      "suggestion": "心寂しい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "URUSAGATAE",
-      "text": "うるさ方",
-      "suggestion": "うるさ型",
+      "rule": "EIENTO",
+      "text": "永遠と道が続いている。",
+      "suggestion": "延延と",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -970,351 +244,27 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ENNSYOU",
-      "text": "炎焼",
-      "suggestion": "延焼",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
       "rule": "ENNRYO",
       "text": "遠虜",
       "suggestion": "遠慮",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "OUTAI",
-      "text": "応待",
-      "suggestion": "応対",
+      "rule": "ENNSYOU",
+      "text": "炎焼",
+      "suggestion": "延焼",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "OETU",
-      "text": "鳴咽",
-      "suggestion": "嗚咽",
+      "rule": "ENTENKANOMOTO",
+      "text": "炎天下の下",
+      "suggestion": "炎天下",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "OOINI",
-      "text": "多いに",
-      "suggestion": "大いに",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OKASIRA",
-      "text": "御頭",
-      "suggestion": "尾頭",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OKANN",
-      "text": "悪感",
-      "suggestion": "悪寒",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OKUMENNMONAKU",
-      "text": "憶面もなく",
-      "suggestion": "臆面もなく",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OSIROKO",
-      "text": "お白粉",
-      "suggestion": "白粉",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OSOMAKI",
-      "text": "遅巻き",
-      "suggestion": "遅蒔き",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OTAHUKU",
-      "text": "御多福",
-      "suggestion": "阿多福",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ODORASETE",
-      "text": "踊らせて",
-      "suggestion": "躍せて",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ONINOSAKURANN",
-      "text": "鬼の攪乱",
-      "suggestion": "鬼の霍乱",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OMOKAJIIPPAI",
-      "text": "主舵いっぱい",
-      "suggestion": "面舵いっぱい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OYAHUKOU",
-      "text": "親不幸",
-      "suggestion": "親不孝",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OURI",
-      "text": "御売",
-      "suggestion": "卸売",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ONNNOJI",
-      "text": "恩の字",
-      "suggestion": "御の字",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAWASE",
-      "text": "替為",
-      "suggestion": "為替",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAKURITSUBUNPU",
-      "text": "さまざまな確立分布",
-      "suggestion": "確率分布",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAKUREMINOJYUTU",
-      "text": "隠れ身の術を使う。",
-      "suggestion": "隠れ蓑の術",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAKKOII",
-      "text": "あの人はかっこいい。",
-      "suggestion": "恰好良い",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KADOTEKI",
-      "text": "過度的な措置。",
-      "suggestion": "過渡的",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KANNNINN",
-      "text": "勘忍は一生の宝。",
-      "suggestion": "堪忍",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KANNBENN",
-      "text": "堪弁ならない。",
-      "suggestion": "勘弁",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MOHANNKAITOU",
-      "text": "模範回答。",
-      "suggestion": "模範解答",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAKUU",
-      "text": "仮空請求。",
-      "suggestion": "架空",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAGEHINATA",
-      "text": "影日向に咲く。",
-      "suggestion": "陰日向",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KATIKANN",
-      "text": "価値感。",
-      "suggestion": "価値観",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KANNHEKI",
-      "text": "完壁主義。",
-      "suggestion": "完璧",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KANNREKI",
-      "text": "還歴を迎えた。",
-      "suggestion": "還暦",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIKAIGAKUSYUU",
-      "text": "機会学習をさせる。",
-      "suggestion": "機械学習",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIKKYUU",
-      "text": "喫急の問題が発生した。",
-      "suggestion": "喫緊",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIBUTUSONGAIZAI",
-      "text": "器物損害罪で罰金を払わされる。",
-      "suggestion": "器物損壊罪",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GYOKUSEKIKONGOU",
-      "text": "集まった作品は玉石混合だった。",
-      "suggestion": "玉石混淆",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIKIIPPATU",
-      "text": "危機一発。",
-      "suggestion": "危機一髪",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIGENN",
-      "text": "気嫌が悪い。",
-      "suggestion": "機嫌",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KISYOKUMANNSAI",
-      "text": "気色満面。",
-      "suggestion": "喜色満面",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYUKYO",
-      "text": "急拠。",
-      "suggestion": "急遽",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYUUTEI",
-      "text": "宮庭。",
-      "suggestion": "宮廷",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KUNOU",
-      "text": "苦脳。",
-      "suggestion": "苦悩",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KEKKAOURAI",
-      "text": "結果往来でうまくいった。",
-      "suggestion": "結果オーライ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GEKIYAKU",
-      "text": "激薬。",
-      "suggestion": "劇薬",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOBOREBI",
-      "text": "春の木洩れ日の中で。",
-      "suggestion": "零れ日",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUGANNMUTI",
-      "text": "厚顔無知。",
-      "suggestion": "厚顔無恥",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUGI",
-      "text": "講議。",
-      "suggestion": "講義",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUSEIBUSSITU",
-      "text": "抗性物質。",
-      "suggestion": "抗生物質",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUTYAKU",
-      "text": "硬着。",
-      "suggestion": "膠着",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUTOUBENNRONN",
-      "text": "口答弁論。",
-      "suggestion": "口頭弁論",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUBAI",
-      "text": "購売。",
-      "suggestion": "購買",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUHYOU",
-      "text": "公評。",
-      "suggestion": "公表",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GOKAKU",
-      "text": "互格。",
-      "suggestion": "互角",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOKAISYA",
-      "text": "小会社。",
-      "suggestion": "子会社",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOBETUHOUMONN",
-      "text": "戸別訪問。",
-      "suggestion": "個別訪問",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOYUUMEISI",
-      "text": "個有名詞。",
-      "suggestion": "固有名詞",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KORITUMUENN",
-      "text": "孤立無縁。",
-      "suggestion": "孤立無援",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GORIMUTYUU",
-      "text": "五里夢中。",
-      "suggestion": "五里霧中",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KONNRANN",
-      "text": "困乱。",
-      "suggestion": "混乱",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAIKETU",
-      "text": "快傑。",
-      "suggestion": "怪傑",
+      "rule": "GAISENNKIKOKU",
+      "text": "凱旋帰国",
+      "suggestion": "凱旋",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1324,57 +274,15 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KAETTEYOKUNAI",
-      "text": "返ってよくない。",
-      "suggestion": "却ってよくない",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAKAADENNKA",
-      "text": "かかあ殿下。",
-      "suggestion": "嚊天下",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
       "rule": "GAKAI",
       "text": "瓦壊。",
       "suggestion": "瓦解",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KASITANNPOSEKININN",
-      "text": "貸し担保責任。",
-      "suggestion": "瑕疵担保責任",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAJIYA",
-      "text": "鍛治屋。",
-      "suggestion": "鍛冶屋",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KATATIDORU",
-      "text": "形取る。",
-      "suggestion": "象る",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KATANN",
-      "text": "加担。",
-      "suggestion": "荷担",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KARITATERU",
-      "text": "狩り立てる。",
-      "suggestion": "駆り立てる",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GARYOUTENNSEI",
-      "text": "画竜点晴。",
-      "suggestion": "画竜点睛",
+      "rule": "GAKUSEITATI",
+      "text": "学生たち",
+      "suggestion": "学生",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1384,135 +292,21 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KANNZENNTYOUAKU",
-      "text": "完全懲悪。",
-      "suggestion": "勧善懲悪",
+      "rule": "GARYOUTENNSEI",
+      "text": "画竜点晴。",
+      "suggestion": "画竜点睛",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KANNNISAWARU",
-      "text": "勘に障る。",
-      "suggestion": "癇に障る",
+      "rule": "GATUDUKITAI",
+      "text": "が続きたい",
+      "suggestion": "を続けたい",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KIITAHUU",
-      "text": "聞いた風。",
-      "suggestion": "利いた風",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GISONNKINN",
-      "text": "義損金。",
-      "suggestion": "義捐金",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOKYUUKIKANN",
-      "text": "呼吸器管。",
-      "suggestion": "呼吸器官",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIMAJIME",
-      "text": "気真面目。",
-      "suggestion": "生真面目",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIMI",
-      "text": "黄味。",
-      "suggestion": "黄身",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GIHEI",
-      "text": "偽瞞。",
-      "suggestion": "欺瞞",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYUUKYUU",
-      "text": "急救。",
-      "suggestion": "救急",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYUUYAKUSEISYO",
-      "text": "旧訳聖書。",
-      "suggestion": "旧約聖書",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYOUKIRANNBU",
-      "text": "狂気乱舞。",
-      "suggestion": "狂喜乱舞",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYOUMISINNSINN",
-      "text": "興味深深。",
-      "suggestion": "興味津津",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KYORON",
-      "text": "教論。",
-      "suggestion": "教諭",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KINNKOU",
-      "text": "均衝。",
-      "suggestion": "均衡",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KUSSINN",
-      "text": "屈身。",
-      "suggestion": "屈伸",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KUNIYABURETESANNGAARI",
-      "text": "国敗れて山河あり。",
-      "suggestion": "国破れて山河があり",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KUBIJIKKENN",
-      "text": "首実験。",
-      "suggestion": "首実検",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GUNNKANN",
-      "text": "軍鑑。",
-      "suggestion": "軍艦",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KENNKOUKOTU",
-      "text": "健康骨。",
-      "suggestion": "肩甲骨",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KESINN",
-      "text": "化神。",
-      "suggestion": "化身",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KESSENNTOUHYOU",
-      "text": "決戦投票。",
-      "suggestion": "決選投票",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KETUMAKUENN",
-      "text": "血膜炎。",
-      "suggestion": "結膜炎",
+      "rule": "GEKIYAKU",
+      "text": "激薬。",
+      "suggestion": "劇薬",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1528,63 +322,21 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KENNMOHORORO",
-      "text": "剣もほろろ。",
-      "suggestion": "けんもほろろ",
+      "rule": "GIHEI",
+      "text": "偽瞞。",
+      "suggestion": "欺瞞",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KOII",
-      "text": "濃いい。",
-      "suggestion": "濃い",
+      "rule": "GIRONHAKUTYUU",
+      "text": "議論伯仲。",
+      "suggestion": "議論白熱",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KEIYAKUKOUKAI",
-      "text": "契約公開。",
-      "suggestion": "契約更改",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUGAKUSINN",
-      "text": "好学心。",
-      "suggestion": "向学心",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUKANNSINNKENN",
-      "text": "交換神経。",
-      "suggestion": "交感神経",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUSYAKU",
-      "text": "候爵。",
-      "suggestion": "侯爵",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOUSEIOSORUBESI",
-      "text": "後世おそるべし。",
-      "suggestion": "後生畏る可し",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOSITANNTANN",
-      "text": "虎視耽耽。",
-      "suggestion": "虎視眈眈",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GOJINN",
-      "text": "御人。",
-      "suggestion": "御仁",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOPPAMIJINN",
-      "text": "木っ葉微塵。",
-      "suggestion": "木っ端微塵",
+      "rule": "GISONNKINN",
+      "text": "義損金。",
+      "suggestion": "義捐金",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1594,159 +346,33 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KOREWOKINI",
-      "text": "これを期。",
-      "suggestion": "これを機",
+      "rule": "GOHENNJI",
+      "text": "ご返事",
+      "suggestion": "お返事",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KOEDAKA",
-      "text": "こえだか。",
-      "suggestion": "声高",
+      "rule": "GOJINN",
+      "text": "御人。",
+      "suggestion": "御仁",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KONNNITIWA",
-      "text": "こんにちわ。",
-      "suggestion": "こんにちは",
+      "rule": "GOKAKU",
+      "text": "互格。",
+      "suggestion": "互角",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KONNBANNWA",
-      "text": "こんばんわ。",
-      "suggestion": "こんばんは",
+      "rule": "GORIMUTYUU",
+      "text": "五里夢中。",
+      "suggestion": "五里霧中",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "JIKISOUSOUIMARK",
-      "text": "実行には時期早々だ。",
-      "suggestion": "時期尚早",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SAKUSUI",
-      "text": "グラウンドに散水。",
-      "suggestion": "撒水",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SAIKOUTYOU",
-      "text": "最高調",
-      "suggestion": "最高潮",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SATTOU",
-      "text": "殺倒。",
-      "suggestion": "殺到",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SANNZANN",
-      "text": "散散。",
-      "suggestion": "散々",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SANMIITTAI",
-      "text": "三身一体。",
-      "suggestion": "三位一体",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JINJIIDOU",
-      "text": "人事移動のお知らせがあります。",
-      "suggestion": "人事異動",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JIGAJISANN",
-      "text": "自我自賛。",
-      "suggestion": "自画自賛",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SIKOUSAKUGO",
-      "text": "思考錯誤重ねる。",
-      "suggestion": "試行錯誤",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SITUGIOUTOU",
-      "text": "質議応答が始まった。",
-      "suggestion": "質疑応答",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SIMATU",
-      "text": "仕末。",
-      "suggestion": "始末",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SEKININNTENNKA",
-      "text": "責任転換。",
-      "suggestion": "責任転嫁",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYAKOUJIREI",
-      "text": "社交辞礼で挨拶する。",
-      "suggestion": "社交辞令",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JYUUOUMUJINN",
-      "text": "縦横無人。",
-      "suggestion": "縦横無尽",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SITADUDUMI",
-      "text": "聞えよがしに舌包みなど鳴らして。",
-      "suggestion": "舌鼓",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYUUKAKU",
-      "text": "秋は収獲の時期。",
-      "suggestion": "収穫",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYUUKANNSI",
-      "text": "週間誌。",
-      "suggestion": "週刊誌",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ZUTABUKURO",
-      "text": "ずた袋。",
-      "suggestion": "ずだぶくろ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SEKIZUIDOUBUTU",
-      "text": "脊髄動物。",
-      "suggestion": "脊椎動物",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SAIBAI",
-      "text": "裁培。",
-      "suggestion": "栽培",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SANNHANNKIKANN",
-      "text": "三半器官。",
-      "suggestion": "三半規管",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SANNMANN",
-      "text": "散慢。",
-      "suggestion": "散漫",
+      "rule": "GOWOMOTTEIRU",
+      "text": "語を持っている",
+      "suggestion": "語を習得している",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1756,27 +382,387 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SISIODOSI",
-      "text": "獅子脅し。",
-      "suggestion": "鹿威し",
+      "rule": "GUNNKANN",
+      "text": "軍鑑。",
+      "suggestion": "軍艦",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SISOUKENNKO",
-      "text": "思想堅固。",
-      "suggestion": "志操堅固",
+      "rule": "GYOKUSEKIKONGOU",
+      "text": "集まった作品は玉石混合だった。",
+      "suggestion": "玉石混淆",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SITIMENNDOKUSAI",
-      "text": "七面倒くさい。",
-      "suggestion": "しち面倒臭い",
+      "rule": "HAJIMEMOSITE",
+      "text": "始めもして",
+      "suggestion": "始めまして",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SIMERU",
-      "text": "泌みる。",
-      "suggestion": "沁みる",
+      "rule": "HAKKIRIDANNGENN",
+      "text": "はっきり断言する。",
+      "suggestion": "断言",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HANAMUKE",
+      "text": "花向け。",
+      "suggestion": "餞",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HANASIWOSORASU",
+      "text": "話を反らす。",
+      "suggestion": "話を逸らす",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HANNKOWOOSU",
+      "text": "捺印を押す",
+      "suggestion": "捺印する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HAPPOUSUTIRO-RU",
+      "text": "発砲スチロール。",
+      "suggestion": "発泡スチロール",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HARADADASII",
+      "text": "腹立だしい。",
+      "suggestion": "腹立たしい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HATOHAIU",
+      "text": "鳩は言う",
+      "suggestion": "鳩は鳴く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HATYOU",
+      "text": "波調。",
+      "suggestion": "波長",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HEIKINNABERE-JI",
+      "text": "平均アベレージ",
+      "suggestion": "平均",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HEIKOUKANNKAKU",
+      "text": "平行感覚。",
+      "suggestion": "平衡感覚",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HINNYOKU",
+      "text": "貧欲に知識を吸収する。",
+      "suggestion": "貪欲",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HITOTUHENNJI",
+      "text": "一つ返事。",
+      "suggestion": "二つ返事",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HITUKOI",
+      "text": "ひつこい。",
+      "suggestion": "しつこい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOHUKUZETTOU",
+      "text": "抱腹絶倒。",
+      "suggestion": "捧腹絶倒",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HONNRAIKARA",
+      "text": "本来から。",
+      "suggestion": "本来",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOSYOUKINN",
+      "text": "保障金。",
+      "suggestion": "保証金",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOUBENN",
+      "text": "方弁。",
+      "suggestion": "方便",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOUDOU",
+      "text": "報導。",
+      "suggestion": "報道",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOUKI",
+      "text": "峰起。",
+      "suggestion": "蜂起",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOUMONN",
+      "text": "訪門。",
+      "suggestion": "訪問",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOUTUI",
+      "text": "放遂。",
+      "suggestion": "放逐",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HOUYOURYOKU",
+      "text": "抱擁力。",
+      "suggestion": "包容力",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUJIISU",
+      "text": "藤椅子。",
+      "suggestion": "籐椅子",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUKAKETU",
+      "text": "不可決。",
+      "suggestion": "不可欠",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUKUZOU",
+      "text": "腹臓。",
+      "suggestion": "腹蔵",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUKYOUWAWONN",
+      "text": "不響和音。",
+      "suggestion": "不協和音",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUNNSYOKUKESSAI",
+      "text": "粉飾決済。",
+      "suggestion": "粉飾決算",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HURI-NOKYAKU",
+      "text": "フリーの客。",
+      "suggestion": "振りの客",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HURYOUSAIKENN",
+      "text": "不良債券。",
+      "suggestion": "不良債権",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUTTANAI",
+      "text": "降ったない",
+      "suggestion": "降らなかった",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HUWARAIDOU",
+      "text": "不和雷同。",
+      "suggestion": "附和雷同",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IGAITO",
+      "text": "以外と難しい問題だ。",
+      "suggestion": "意外と",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKANN",
+      "text": "遺感",
+      "suggestion": "遺憾",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKKAINOISI",
+      "text": "一界の医師",
+      "suggestion": "一介の医師",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKKAKUSENNKINN",
+      "text": "一獲千金",
+      "suggestion": "一攫千金",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKKATU",
+      "text": "一活",
+      "suggestion": "一括",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKUDOUONN",
+      "text": "異句同音",
+      "suggestion": "異口同音",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IMADANI",
+      "text": "今だに",
+      "suggestion": "未だに",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IMAHANOGIWA",
+      "text": "今はの際",
+      "suggestion": "今際の際",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IMANOGENNJOU",
+      "text": "今の現状。",
+      "suggestion": "現状",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IMISINNTYOU",
+      "text": "意味慎重",
+      "suggestion": "意味深長",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IMOHORI",
+      "text": "芋堀",
+      "suggestion": "芋掘り",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "INAGAOUNIMO",
+      "text": "否が応にも世界は動く。",
+      "suggestion": "弥が上にも",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IPPENNTOU",
+      "text": "一遍倒",
+      "suggestion": "一辺倒",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISAI",
+      "text": "異才を放つ存在。",
+      "suggestion": "異彩",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISIHYOUJI",
+      "text": "意志表示",
+      "suggestion": "意思表示",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISINOTUBUTE",
+      "text": "石の礫。",
+      "suggestion": "礫",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISOGASII",
+      "text": "急がしい",
+      "suggestion": "忙しい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSEIITIDAI",
+      "text": "一生一代の出来事だ。",
+      "suggestion": "一世一代",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSEINI",
+      "text": "一勢に",
+      "suggestion": "一斉に",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSINNDOUTAI",
+      "text": "一身同体",
+      "suggestion": "一心同体",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSOKUSYOKUHATU",
+      "text": "一即触発の形態にある。",
+      "suggestion": "一触即発",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSOUNOKOTO",
+      "text": "疲れたしいっそうのことやめようか。",
+      "suggestion": "いっそのこと",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSUINOYUME",
+      "text": "一睡の夢",
+      "suggestion": "一炊の夢",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSYOKENMEI",
+      "text": "大学の課題一所懸命に行う。",
+      "suggestion": "一生懸命",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITAZURANIJIKANNGASUGIRU",
+      "text": "悪戯に時間が過ぎる",
+      "suggestion": "徒に時間が過ぎる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITIHAYAKU",
+      "text": "一早く",
+      "suggestion": "逸早く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITIMATUNOHUANN",
+      "text": "一末の不安",
+      "suggestion": "一抹の不安",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITINENNHUNKI",
+      "text": "一念奮起しよう。",
+      "suggestion": "一念発起",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITIRITU",
+      "text": "一率",
+      "suggestion": "一律",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IWAKANN",
+      "text": "異和感",
+      "suggestion": "違和感",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1786,87 +772,57 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SYARE",
-      "text": "酒落。",
-      "suggestion": "洒落",
+      "rule": "JIDENNSYA",
+      "text": "じでん車。",
+      "suggestion": "じてん車",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SYUUSYUUGATUKANAI",
-      "text": "収集がつかない。",
-      "suggestion": "収拾がつかない",
+      "rule": "JIGAJISANN",
+      "text": "自我自賛。",
+      "suggestion": "自画自賛",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SYUUJINNKANNSI",
-      "text": "衆人監視。",
-      "suggestion": "衆人環視",
+      "rule": "JIGAREGOE",
+      "text": "皺枯れ声。",
+      "suggestion": "嗄れ声",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SYUKUSYOU",
-      "text": "縮少。",
-      "suggestion": "縮小",
+      "rule": "JIKISOUSOU",
+      "text": "時期早早",
+      "suggestion": "時期尚早",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SYUKOU",
-      "text": "趣好。",
-      "suggestion": "趣向",
+      "rule": "JIKISOUSOUIMARK",
+      "text": "実行には時期早々だ。",
+      "suggestion": "時期尚早",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "JYUNNSUIMUTI",
-      "text": "純心無垢。",
-      "suggestion": "純真無垢",
+      "rule": "JINJIIDOU",
+      "text": "人事移動のお知らせがあります。",
+      "suggestion": "人事異動",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "JUNNHUDOU",
-      "text": "順不動。",
-      "suggestion": "順不同",
+      "rule": "JINNKOUEISEI",
+      "text": "人口衛星。",
+      "suggestion": "人工衛星",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "JUNNREIDOU",
-      "text": "鐘乳洞。",
-      "suggestion": "鍾乳洞",
+      "rule": "JINNMONN",
+      "text": "専問。",
+      "suggestion": "専門",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SYOGYOUMUJYOU",
-      "text": "諸行無情。",
-      "suggestion": "諸行無常",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYOKUJIRYOUHOU",
-      "text": "食事療法。",
-      "suggestion": "食餌療法",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JOJONI",
-      "text": "除除に。",
-      "suggestion": "徐徐に",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYOSEIJYUTU",
-      "text": "処生術。",
-      "suggestion": "処世術",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JYOMAKUSIKI",
-      "text": "序幕式。",
-      "suggestion": "除幕式",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYOYOUJIKANN",
-      "text": "所用時間。",
-      "suggestion": "所要時間",
+      "rule": "JINNSEIITARUTOKOROSEIZANNARI",
+      "text": "人生いたるところ青山あり。",
+      "suggestion": "人間いたるところ青山あり",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -1882,423 +838,885 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "JIGAREGOE",
-      "text": "皺枯れ声。",
-      "suggestion": "嗄れ声",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNKIITENN",
-      "text": "心気一転。",
-      "suggestion": "心機一転",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JINNKOUEISEI",
-      "text": "人口衛星。",
-      "suggestion": "人工衛星",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNKOKUZAI",
-      "text": "申告罪。",
-      "suggestion": "親告罪",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNJIJITU",
-      "text": "真事実。",
-      "suggestion": "新事実",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNSINNSUIJAKU",
-      "text": "心身耗弱。",
-      "suggestion": "心神耗弱",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNHANNNINN",
-      "text": "新犯人。",
-      "suggestion": "真犯人",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNPYOU",
-      "text": "真憑。",
-      "suggestion": "信憑",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNBOU",
-      "text": "辛棒。",
-      "suggestion": "辛抱",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
       "rule": "JISSENNSURU",
       "text": "実戦する。",
       "suggestion": "実践する",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SUIRENN",
-      "text": "水蓮。",
-      "suggestion": "睡蓮",
+      "rule": "JISSUNNDAI",
+      "text": "実寸大の写真。",
+      "suggestion": "実物大",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SUUDONN",
-      "text": "酢うどん。",
-      "suggestion": "素うどん",
+      "rule": "JOJONI",
+      "text": "除除に。",
+      "suggestion": "徐徐に",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ZUGAITOTU",
-      "text": "頭骸骨。",
-      "suggestion": "頭蓋骨",
+      "rule": "JOUKIDOORI",
+      "text": "上記通り",
+      "suggestion": "上記の通り",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SEITOUHA",
-      "text": "正当派。",
-      "suggestion": "正統派",
+      "rule": "JUNNHUDOU",
+      "text": "順不動。",
+      "suggestion": "順不同",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SEKAISEIHUKU",
-      "text": "世界制服。",
-      "suggestion": "世界征服",
+      "rule": "JUNNREIDOU",
+      "text": "鐘乳洞。",
+      "suggestion": "鍾乳洞",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ZETTAIZETUMEI",
-      "text": "絶対絶命。",
-      "suggestion": "絶体絶命",
+      "rule": "JYOMAKUSIKI",
+      "text": "序幕式。",
+      "suggestion": "除幕式",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ZEHI",
-      "text": "是否。",
-      "suggestion": "是非",
+      "rule": "JYUNNSUIMUTI",
+      "text": "純心無垢。",
+      "suggestion": "純真無垢",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SENNSENNHUKOKU",
-      "text": "戦線布告。",
-      "suggestion": "宣戦布告",
+      "rule": "JYUUOUMUJINN",
+      "text": "縦横無人。",
+      "suggestion": "縦横無尽",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SENNTAKUSI",
-      "text": "選択枝。",
-      "suggestion": "選択肢",
+      "rule": "JYUUSEIONN",
+      "text": "銃声音。",
+      "suggestion": "銃声",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ZENNMENNTEKI",
-      "text": "前面的。",
-      "suggestion": "全面的",
+      "rule": "KADOTEKI",
+      "text": "過度的な措置。",
+      "suggestion": "過渡的",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "JINNMONN",
-      "text": "専問。",
-      "suggestion": "専門",
+      "rule": "KAETTEYOKUNAI",
+      "text": "返ってよくない。",
+      "suggestion": "却ってよくない",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SOUSOUTARUJINNBUTU",
-      "text": "蒼蒼たる人物。",
-      "suggestion": "錚錚たる",
+      "rule": "KAGEHINATA",
+      "text": "影日向に咲く。",
+      "suggestion": "陰日向",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SOSSENNSOKKETU",
-      "text": "速戦速決。",
-      "suggestion": "速戦即決",
+      "rule": "KAHANNSUUWOKOERU",
+      "text": "過半数を超える",
+      "suggestion": "半数を超える",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SOSSENN",
-      "text": "卒先。",
-      "suggestion": "率先",
+      "rule": "KAIKETU",
+      "text": "快傑。",
+      "suggestion": "怪傑",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SODEHURIAUMOTASYOUNOENN",
-      "text": "袖振り合うも多少の縁。",
-      "suggestion": "袖振り合うも多生の縁",
+      "rule": "KAIKETUNARU",
+      "text": "解決なる",
+      "suggestion": "解決になる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HANASIWOSORASU",
-      "text": "話を反らす。",
-      "suggestion": "話を逸らす",
+      "rule": "KAJIYA",
+      "text": "鍛治屋。",
+      "suggestion": "鍛冶屋",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SONNSYOKU",
-      "text": "損色。",
-      "suggestion": "遜色",
+      "rule": "KAKAADENNKA",
+      "text": "かかあ殿下。",
+      "suggestion": "嚊天下",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TYUUDURI",
-      "text": "中吊り。",
-      "suggestion": "宙吊り",
+      "rule": "KAKKOII",
+      "text": "あの人はかっこいい。",
+      "suggestion": "恰好良い",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAIKANN",
-      "text": "載冠式を行う。",
-      "suggestion": "戴冠",
+      "rule": "KAKUISAMA",
+      "text": "各位様",
+      "suggestion": "各位",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAIGIMEIBUNN",
-      "text": "大義名文。",
-      "suggestion": "大義名分",
+      "rule": "KAKUREMINOJYUTU",
+      "text": "隠れ身の術を使う。",
+      "suggestion": "隠れ蓑の術",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAIHUUIKKA",
-      "text": "台風一家。",
-      "suggestion": "台風一過",
+      "rule": "KAKURITSUBUNPU",
+      "text": "さまざまな確立分布",
+      "suggestion": "確率分布",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAKANENOHANA",
-      "text": "高値の花。",
-      "suggestion": "高嶺の花",
+      "rule": "KAKUU",
+      "text": "仮空請求。",
+      "suggestion": "架空",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAKAMINOKENNBUTU",
-      "text": "高見の見物。",
-      "suggestion": "高みの見物",
+      "rule": "KANETEKARANOKENNANN",
+      "text": "予かねてからの懸案。",
+      "suggestion": "懸案",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TATARI",
-      "text": "死んだ人の崇りだ。",
-      "suggestion": "祟り",
+      "rule": "KANNBENN",
+      "text": "堪弁ならない。",
+      "suggestion": "勘弁",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TATOEBANASI",
-      "text": "あくまで例え話だ。",
-      "suggestion": "譬え話",
+      "rule": "KANNHEKI",
+      "text": "完壁主義。",
+      "suggestion": "完璧",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TAMANOKOSI",
-      "text": "玉の腰を狙う。",
-      "suggestion": "玉の輿",
+      "rule": "KANNNINN",
+      "text": "勘忍は一生の宝。",
+      "suggestion": "堪忍",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TANNKA",
-      "text": "担荷で運ぶ。",
-      "suggestion": "担架",
+      "rule": "KANNNISAWARU",
+      "text": "勘に障る。",
+      "suggestion": "癇に障る",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DEBUSYOU",
-      "text": "デブ症。",
-      "suggestion": "出不精",
+      "rule": "KANNREKI",
+      "text": "還歴を迎えた。",
+      "suggestion": "還暦",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TANNSOKINN",
-      "text": "炭素菌。",
-      "suggestion": "炭疽菌",
+      "rule": "KANNZENNTYOUAKU",
+      "text": "完全懲悪。",
+      "suggestion": "勧善懲悪",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TANNTEKINI",
-      "text": "単的に考える。",
-      "suggestion": "端的に",
+      "rule": "KANPUUMASATU",
+      "text": "寒風摩擦で暖かくなった。",
+      "suggestion": "乾布摩擦",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TANNTOUTYOKUNYUU",
-      "text": "短刀直入に話す。",
-      "suggestion": "単刀直入",
+      "rule": "KARITATERU",
+      "text": "狩り立てる。",
+      "suggestion": "駆り立てる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TANNPAKUSITU",
-      "text": "淡白質が足りてない。",
-      "suggestion": "蛋白質",
+      "rule": "KASITANNPOSEKININN",
+      "text": "貸し担保責任。",
+      "suggestion": "瑕疵担保責任",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TYAKUHUKU",
-      "text": "着腹。",
-      "suggestion": "着服",
+      "rule": "KATAHARAITAI",
+      "text": "片腹痛いほどの状況だ。",
+      "suggestion": "傍ら痛し",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TYOUAI",
-      "text": "籠愛。",
-      "suggestion": "寵愛",
+      "rule": "KATAKUSOUSA",
+      "text": "警察が家宅捜査を強行する。",
+      "suggestion": "家宅捜索",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TYOUKANNZU",
-      "text": "鳥観図。",
-      "suggestion": "鳥瞰図",
+      "rule": "KATANN",
+      "text": "加担。",
+      "suggestion": "荷担",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TYOSUITI",
-      "text": "貯水地。",
-      "suggestion": "貯水池",
+      "rule": "KATATIDORU",
+      "text": "形取る。",
+      "suggestion": "象る",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TEMIJIKA",
-      "text": "手短か。",
-      "suggestion": "手短",
+      "rule": "KATIKANN",
+      "text": "価値感。",
+      "suggestion": "価値観",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TERAKOYA",
-      "text": "寺小屋。",
-      "suggestion": "寺子屋",
+      "rule": "KATURYOKUNAHITO",
+      "text": "活力な人",
+      "suggestion": "元気な人",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TENNGAIKODOKU",
-      "text": "天外孤独。",
-      "suggestion": "天涯孤独",
+      "rule": "KAWASE",
+      "text": "替為",
+      "suggestion": "為替",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TENNSYUKAKU",
-      "text": "天主閣。",
-      "suggestion": "天守閣",
+      "rule": "KEDO",
+      "text": "正しいげと",
+      "suggestion": "けど",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DOKAESI",
-      "text": "採算を度返しする。",
-      "suggestion": "度外視",
+      "rule": "KEIYAKUKOUKAI",
+      "text": "契約公開。",
+      "suggestion": "契約更改",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DOKUDANNJOU",
-      "text": "独壇場。",
-      "suggestion": "独擅場",
+      "rule": "KEKKAOURAI",
+      "text": "結果往来でうまくいった。",
+      "suggestion": "結果オーライ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HINNYOKU",
-      "text": "貧欲に知識を吸収する。",
-      "suggestion": "貪欲",
+      "rule": "KEKKOSITA",
+      "text": "けっこした",
+      "suggestion": "けっこうした",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HUJIISU",
-      "text": "藤椅子。",
-      "suggestion": "籐椅子",
+      "rule": "KENNKENNGAKUGAKU",
+      "text": "喧喧諤諤",
+      "suggestion": "喧喧囂囂",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TOUJISYA",
-      "text": "当時者の立場。",
-      "suggestion": "当事者",
+      "rule": "KENNKOUKOTU",
+      "text": "健康骨。",
+      "suggestion": "肩甲骨",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TOORIIPPENN",
-      "text": "通り一辺の言葉。",
-      "suggestion": "通り一遍",
+      "rule": "KENNMOHORORO",
+      "text": "剣もほろろ。",
+      "suggestion": "けんもほろろ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TOTIKANN",
-      "text": "土地感。",
-      "suggestion": "土地鑑",
+      "rule": "KENRYOKUNIOMONETTE",
+      "text": "権力におもねて",
+      "suggestion": "権力におもねって",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DOYOUNOUSINOHI",
-      "text": "今日は土曜の丑の日だ。",
-      "suggestion": "土用の丑の日",
+      "rule": "KESINN",
+      "text": "化神。",
+      "suggestion": "化身",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DOROJIAI",
-      "text": "この試合は泥試合になりそう。",
-      "suggestion": "泥仕合",
+      "rule": "KESSENNTOUHYOU",
+      "text": "決戦投票。",
+      "suggestion": "決選投票",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TONKYOU",
-      "text": "頓狂。",
-      "suggestion": "頓興",
+      "rule": "KETTANNNOATO",
+      "text": "血痕の跡。",
+      "suggestion": "血痕",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TONNBOGAERI",
-      "text": "即座にとんぼ帰りした。",
-      "suggestion": "蜻蛉返り",
+      "rule": "KETUMAKUENN",
+      "text": "血膜炎。",
+      "suggestion": "結膜炎",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TUGI",
-      "text": "次ぎこそは頑張る。",
-      "suggestion": "次",
+      "rule": "KIBUTUSONGAIZAI",
+      "text": "器物損害罪で罰金を払わされる。",
+      "suggestion": "器物損壊罪",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TUMAYOUJI",
-      "text": "妻楊枝。",
-      "suggestion": "爪楊枝",
+      "rule": "KIGENN",
+      "text": "気嫌が悪い。",
+      "suggestion": "機嫌",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TEITARAKU",
-      "text": "低たらく。",
-      "suggestion": "体たらく",
+      "rule": "KIITAHUU",
+      "text": "聞いた風。",
+      "suggestion": "利いた風",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SEKINNNTUIKYUU",
-      "text": "責任追求。",
-      "suggestion": "責任追及",
+      "rule": "KIKAIGAKUSYUU",
+      "text": "機会学習をさせる。",
+      "suggestion": "機械学習",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DETTIAGERU",
-      "text": "丁稚上げる。",
-      "suggestion": "捏上げる",
+      "rule": "KIKIIPPATU",
+      "text": "危機一発。",
+      "suggestion": "危機一髪",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TEBANASIDEHOMERU",
-      "text": "手離しでほめる。",
-      "suggestion": "手放でほめる",
+      "rule": "KIKKYUU",
+      "text": "喫急の問題が発生した。",
+      "suggestion": "喫緊",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TOIEDOMO",
-      "text": "と言えども。",
-      "suggestion": "と雖も",
+      "rule": "KIKUTOKONIYORUTO",
+      "text": "聞くことによると",
+      "suggestion": "聞くところによると",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TOUSENNBANNGOU",
-      "text": "当選番号。",
-      "suggestion": "当籤番号",
+      "rule": "KIMAJIME",
+      "text": "気真面目。",
+      "suggestion": "生真面目",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "NAKAZUTOBAZU",
-      "text": "泣かず跳ばずな芸人。",
-      "suggestion": "鳴かず飛ばず",
+      "rule": "KIMI",
+      "text": "黄味。",
+      "suggestion": "黄身",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KINNJOHE",
+      "text": "近所へ",
+      "suggestion": "近所で",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KINNKOU",
+      "text": "均衝。",
+      "suggestion": "均衡",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIREIMO",
+      "text": "きれいも",
+      "suggestion": "きれいで",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIRISUTOKYOUNOBOKUSI",
+      "text": "キリスト教の牧師",
+      "suggestion": "牧師",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KISETUGARA",
+      "text": "季節柄。",
+      "suggestion": "時節柄",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KISYOKUMANNSAI",
+      "text": "気色満面。",
+      "suggestion": "喜色満面",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KITAIDAORE",
+      "text": "全く期待倒れの実験結果だ。",
+      "suggestion": "期待外れ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOBETUHOUMONN",
+      "text": "戸別訪問。",
+      "suggestion": "個別訪問",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOBOREBI",
+      "text": "春の木洩れ日の中で。",
+      "suggestion": "零れ日",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOEDAKA",
+      "text": "こえだか。",
+      "suggestion": "声高",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOII",
+      "text": "濃いい。",
+      "suggestion": "濃い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOJINNMARI",
+      "text": "こじんまり。",
+      "suggestion": "こぢんまり",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOKAISYA",
+      "text": "小会社。",
+      "suggestion": "子会社",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOKYUUKIKANN",
+      "text": "呼吸器管。",
+      "suggestion": "呼吸器官",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOMARUDESU",
+      "text": "困るです",
+      "suggestion": "困ります",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KONITIHA",
+      "text": "こにちは",
+      "suggestion": "こんにちは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KONNBANNWA",
+      "text": "こんばんわ。",
+      "suggestion": "こんばんは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KONNNITIWA",
+      "text": "こんにちわ。",
+      "suggestion": "こんにちは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KONNRANN",
+      "text": "困乱。",
+      "suggestion": "混乱",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOPPAMIJINN",
+      "text": "木っ葉微塵。",
+      "suggestion": "木っ端微塵",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOREWA",
+      "text": "これわ",
+      "suggestion": "これは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOREWOKINI",
+      "text": "これを期。",
+      "suggestion": "これを機",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KORITUMUENN",
+      "text": "孤立無縁。",
+      "suggestion": "孤立無援",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOSITANNTANN",
+      "text": "虎視耽耽。",
+      "suggestion": "虎視眈眈",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOSYOUTYUU",
+      "text": "故障中。",
+      "suggestion": "故障",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOTAEGAMATIGAETA",
+      "text": "答えが間違えた",
+      "suggestion": "答えを間違えた",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOTEIGAINEN",
+      "text": "固定概念にとらわれる。",
+      "suggestion": "固定観念",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUBAI",
+      "text": "購売。",
+      "suggestion": "購買",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUGAKUSINN",
+      "text": "好学心。",
+      "suggestion": "向学心",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUGANNMUTI",
+      "text": "厚顔無知。",
+      "suggestion": "厚顔無恥",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUGI",
+      "text": "講議。",
+      "suggestion": "講義",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUHYOU",
+      "text": "公評。",
+      "suggestion": "公表",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUKANNSINNKENN",
+      "text": "交換神経。",
+      "suggestion": "交感神経",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUSEIBUSSITU",
+      "text": "抗性物質。",
+      "suggestion": "抗生物質",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUSEIOSORUBESI",
+      "text": "後世おそるべし。",
+      "suggestion": "後生畏る可し",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUSYAKU",
+      "text": "候爵。",
+      "suggestion": "侯爵",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUTOUBENNRONN",
+      "text": "口答弁論。",
+      "suggestion": "口頭弁論",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUTYAKU",
+      "text": "硬着。",
+      "suggestion": "膠着",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOYUUMEISI",
+      "text": "個有名詞。",
+      "suggestion": "固有名詞",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUBIJIKKENN",
+      "text": "首実験。",
+      "suggestion": "首実検",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUMOMOHITOTUNAKU",
+      "text": "雲も一つなく",
+      "suggestion": "雲一つなく",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUNIYABURETESANNGAARI",
+      "text": "国敗れて山河あり。",
+      "suggestion": "国破れて山河があり",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUNOU",
+      "text": "苦脳。",
+      "suggestion": "苦悩",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUSSINN",
+      "text": "屈身。",
+      "suggestion": "屈伸",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUTISAKISANNZUNN",
+      "text": "口先三寸。",
+      "suggestion": "舌先三寸",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUTUJOKUSENN",
+      "text": "屈辱戦。",
+      "suggestion": "雪辱戦",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYAKKOUWOATUMERU",
+      "text": "脚光を集める",
+      "suggestion": "脚光を浴びる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYORON",
+      "text": "教論。",
+      "suggestion": "教諭",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYOUKIRANNBU",
+      "text": "狂気乱舞。",
+      "suggestion": "狂喜乱舞",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYOUMISINNSINN",
+      "text": "興味深深。",
+      "suggestion": "興味津津",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYUKYO",
+      "text": "急拠。",
+      "suggestion": "急遽",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYUUKYUU",
+      "text": "急救。",
+      "suggestion": "救急",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYUUTAIZEN",
+      "text": "旧態然した態度。",
+      "suggestion": "旧態依然",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYUUTEI",
+      "text": "宮庭。",
+      "suggestion": "宮廷",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KYUUYAKUSEISYO",
+      "text": "旧訳聖書。",
+      "suggestion": "旧約聖書",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MADAMIKAIKETU",
+      "text": "まだ未解決",
+      "suggestion": "未解決",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MADENIYOHUKASI",
+      "text": "までに夜更かし",
+      "suggestion": "まで夜更かし",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAGONOTE",
+      "text": "まごの手。",
+      "suggestion": "まこの手",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAHOUJINN",
+      "text": "魔法陣。",
+      "suggestion": "魔方陣",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAKAHUSIGI",
+      "text": "摩可不思議。",
+      "suggestion": "摩訶不思議",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAKEZUGIRAI",
+      "text": "負けず嫌いな性格。",
+      "suggestion": "負け嫌い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MANABETAI",
+      "text": "学べたい",
+      "suggestion": "学びたい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MANNJOUITTI",
+      "text": "万場一致。",
+      "suggestion": "満場一致",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MANNTENNNOHOSIZORA",
+      "text": "満天の星空",
+      "suggestion": "満天の星",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEGURUMEKU",
+      "text": "巡るめく。",
+      "suggestion": "目眩く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEISI",
+      "text": "名剌。",
+      "suggestion": "名刺",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MESENN",
+      "text": "目線をそらす。",
+      "suggestion": "視線",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIGAWARI",
+      "text": "身変わり。",
+      "suggestion": "見代わり",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIKKATOAKEZU",
+      "text": "遠距離恋愛の彼氏は三日と空けず電話をしてくる。",
+      "suggestion": "三日に上げず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MISEINENN",
+      "text": "未青年。",
+      "suggestion": "未成年",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MITIHIKI",
+      "text": "満ち干き。",
+      "suggestion": "満ち干",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MITUMATA",
+      "text": "三つ又。",
+      "suggestion": "三叉",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIWOTAWAWA",
+      "text": "実もたわわ",
+      "suggestion": "枝も撓",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIZOREMAJIRI",
+      "text": "霙交じり",
+      "suggestion": "霙",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MIZUMIZUSII",
+      "text": "水水しい。",
+      "suggestion": "瑞瑞しい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOHANNKAITOU",
+      "text": "模範回答。",
+      "suggestion": "模範解答",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOKUDOKU",
+      "text": "目読。",
+      "suggestion": "黙読",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOKUHIKENN",
+      "text": "黙否権。",
+      "suggestion": "黙秘権",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOKUTEKINIAKIRAKA",
+      "text": "目的に明らか",
+      "suggestion": "目的を明らか",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MONUKENOKARA",
+      "text": "もぬけの空。",
+      "suggestion": "蛻けの殻",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOTISITE",
+      "text": "用して",
+      "suggestion": "用いて",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOUSIWAKEGOZAIMASENN",
+      "text": "申し訳ございません。",
+      "suggestion": "申し訳ない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MOZUKUTONARU",
+      "text": "水雲となる",
+      "suggestion": "藻屑となる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MUGAMUTYUU",
+      "text": "無我無中。",
+      "suggestion": "無我夢中",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MUNESANZUN",
+      "text": "胸先寸に納める。",
+      "suggestion": "胸三寸",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MUZUKASITO",
+      "text": "むずかしと",
+      "suggestion": "むずかしいと",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2308,15 +1726,45 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "NIKUHAKU",
-      "text": "肉迫。",
-      "suggestion": "肉薄",
+      "rule": "NAKAZUTOBAZU",
+      "text": "泣かず跳ばずな芸人。",
+      "suggestion": "鳴かず飛ばず",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
       "rule": "NAMABYOHOU",
       "text": "なまへいほう。",
       "suggestion": "生兵法",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NANAMENIKAMAERU",
+      "text": "斜めに構える",
+      "suggestion": "斜に構える",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NATOTONOTTEITE",
+      "text": "な整っていて",
+      "suggestion": "に整っていて",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NAZOKATTE",
+      "text": "なぞ買って",
+      "suggestion": "なにを買って",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NEGAWAKUBA",
+      "text": "願わくば。",
+      "suggestion": "願わくは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NEMUKEME",
+      "text": "眠気眼をこする。",
+      "suggestion": "寝惚け眼",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2329,6 +1777,12 @@
       "rule": "NENNPOU",
       "text": "年棒。",
       "suggestion": "年俸",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NIKUHAKU",
+      "text": "肉迫。",
+      "suggestion": "肉薄",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2350,267 +1804,159 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BAKUSINN",
-      "text": "爆進。",
-      "suggestion": "驀進",
+      "rule": "OBOTUKANU",
+      "text": "おぼつかぬ",
+      "suggestion": "覚束無い",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BAKUDAI",
-      "text": "漠大。",
-      "suggestion": "莫大",
+      "rule": "ODORASETE",
+      "text": "踊らせて",
+      "suggestion": "躍せて",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HATYOU",
-      "text": "波調。",
-      "suggestion": "波長",
+      "rule": "OETU",
+      "text": "鳴咽",
+      "suggestion": "嗚咽",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HAPPOUSUTIRO-RU",
-      "text": "発砲スチロール。",
-      "suggestion": "発泡スチロール",
+      "rule": "OKANN",
+      "text": "悪感",
+      "suggestion": "悪寒",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HANAMUKE",
-      "text": "花向け。",
-      "suggestion": "餞",
+      "rule": "OKARADAGOJIAIKUDASAI",
+      "text": "お体御自愛下さい。",
+      "suggestion": "御自愛下さい",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BANNJIKYUUSU",
-      "text": "万事窮す。",
-      "suggestion": "万事休す",
+      "rule": "OKASIRA",
+      "text": "御頭",
+      "suggestion": "尾頭",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BIMYOU",
-      "text": "徴妙。",
-      "suggestion": "微妙",
+      "rule": "OKUMENNMONAKU",
+      "text": "憶面もなく",
+      "suggestion": "臆面もなく",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HURI-NOKYAKU",
-      "text": "フリーの客。",
-      "suggestion": "振りの客",
+      "rule": "OMEIBANNKAI",
+      "text": "汚名挽回",
+      "suggestion": "汚名返上",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HUNNSYOKUKESSAI",
-      "text": "粉飾決済。",
-      "suggestion": "粉飾決算",
+      "rule": "OMESIAGARININARU",
+      "text": "お召し上がりになる",
+      "suggestion": "召し上がる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HUKAKETU",
-      "text": "不可決。",
-      "suggestion": "不可欠",
+      "rule": "OMOIGAKENAIHAPUNINNGU",
+      "text": "思いがけないハプニング",
+      "suggestion": "ハプニング",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HUKYOUWAWONN",
-      "text": "不響和音。",
-      "suggestion": "不協和音",
+      "rule": "OMOKAJIIPPAI",
+      "text": "主舵いっぱい",
+      "suggestion": "面舵いっぱい",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HUKUZOU",
-      "text": "腹臓。",
-      "suggestion": "腹蔵",
+      "rule": "ONINOSAKURANN",
+      "text": "鬼の攪乱",
+      "suggestion": "鬼の霍乱",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BUSYOUHIGE",
-      "text": "武将髭。",
-      "suggestion": "無精髭",
+      "rule": "ONNNOJI",
+      "text": "恩の字",
+      "suggestion": "御の字",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HURYOUSAIKENN",
-      "text": "不良債券。",
-      "suggestion": "不良債権",
+      "rule": "OOINI",
+      "text": "多いに",
+      "suggestion": "大いに",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HUWARAIDOU",
-      "text": "不和雷同。",
-      "suggestion": "附和雷同",
+      "rule": "OSAEDEKIRU",
+      "text": "抑えできる",
+      "suggestion": "抑えられる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BUNNMEIKAIKA",
-      "text": "文明開花。",
-      "suggestion": "文明開化",
+      "rule": "OSIMOOSARENU",
+      "text": "押しも押されぬ",
+      "suggestion": "押しも押されもせぬ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HEIKOUKANNKAKU",
-      "text": "平行感覚。",
-      "suggestion": "平衡感覚",
+      "rule": "OSIROKO",
+      "text": "お白粉",
+      "suggestion": "白粉",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "BOINN",
-      "text": "母印。",
-      "suggestion": "拇印",
+      "rule": "OSOMAKI",
+      "text": "遅巻き",
+      "suggestion": "遅蒔き",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOUKI",
-      "text": "峰起。",
-      "suggestion": "蜂起",
+      "rule": "OSSYARARERU",
+      "text": "おっしゃられる",
+      "suggestion": "仰る",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOUTUI",
-      "text": "放遂。",
-      "suggestion": "放逐",
+      "rule": "OTAHUKU",
+      "text": "御多福",
+      "suggestion": "阿多福",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOUDOU",
-      "text": "報導。",
-      "suggestion": "報道",
+      "rule": "OUGI",
+      "text": "奥技をきわめる。",
+      "suggestion": "奥義",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOHUKUZETTOU",
-      "text": "抱腹絶倒。",
-      "suggestion": "捧腹絶倒",
+      "rule": "OURI",
+      "text": "御売",
+      "suggestion": "卸売",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOUBENN",
-      "text": "方弁。",
-      "suggestion": "方便",
+      "rule": "OUTAI",
+      "text": "応待",
+      "suggestion": "応対",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOUMONN",
-      "text": "訪門。",
-      "suggestion": "訪問",
+      "rule": "OYAHUKOU",
+      "text": "親不幸",
+      "suggestion": "親不孝",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOUYOURYOKU",
-      "text": "抱擁力。",
-      "suggestion": "包容力",
+      "rule": "OYAKUMEGOMEN",
+      "text": "管理職を御役目御免になった。",
+      "suggestion": "御役御免",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HOSYOUKINN",
-      "text": "保障金。",
-      "suggestion": "保証金",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MAKAHUSIGI",
-      "text": "摩可不思議。",
-      "suggestion": "摩訶不思議",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MAHOUJINN",
-      "text": "魔法陣。",
-      "suggestion": "魔方陣",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MIGAWARI",
-      "text": "身変わり。",
-      "suggestion": "見代わり",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MIZUMIZUSII",
-      "text": "水水しい。",
-      "suggestion": "瑞瑞しい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MISEINENN",
-      "text": "未青年。",
-      "suggestion": "未成年",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MITUMATA",
-      "text": "三つ又。",
-      "suggestion": "三叉",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MUGAMUTYUU",
-      "text": "無我無中。",
-      "suggestion": "無我夢中",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MEISI",
-      "text": "名剌。",
-      "suggestion": "名刺",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MEGURUMEKU",
-      "text": "巡るめく。",
-      "suggestion": "目眩く",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MOKUDOKU",
-      "text": "目読。",
-      "suggestion": "黙読",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MOKUHIKENN",
-      "text": "黙否権。",
-      "suggestion": "黙秘権",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MONUKENOKARA",
-      "text": "もぬけの空。",
-      "suggestion": "蛻けの殻",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MANNJOUITTI",
-      "text": "万場一致。",
-      "suggestion": "満場一致",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YUUSYUNOBI",
-      "text": "優秀の美。",
-      "suggestion": "有終の美",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YOKOURENNSYUU",
-      "text": "卒業式の予行練習。",
-      "suggestion": "予行演習",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YOYUUSYAKUSYAKU",
-      "text": "余裕釈釈。",
-      "suggestion": "余裕綽綽",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YAKIMOTIYAKI",
-      "text": "焼き餅妬き。",
-      "suggestion": "焼き餅焼き",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "YAKUBYOUGAMI",
-      "text": "厄病神。",
-      "suggestion": "疫病神",
+      "rule": "POTA-JYUSU-PU",
+      "text": "ポタージュスープ",
+      "suggestion": "ポタージュ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2620,15 +1966,15 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "RISOUKYOU",
-      "text": "理想境。",
-      "suggestion": "理想郷",
+      "rule": "REKKITOSITA",
+      "text": "列記とした。",
+      "suggestion": "歴とした",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "RYUUGENNHIGO",
-      "text": "流言非語。",
-      "suggestion": "流言蜚語",
+      "rule": "REKKYOUSYOKOKU",
+      "text": "列強諸国。",
+      "suggestion": "列強",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2638,9 +1984,33 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ROTENSYOU",
-      "text": "露店商。",
-      "suggestion": "露天商",
+      "rule": "RIHATTYAKU",
+      "text": "離発着",
+      "suggestion": "離着陸",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RINKUWOHARU",
+      "text": "リンクを貼る",
+      "suggestion": "リンクを張る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RIRONNSEIZENN",
+      "text": "理論整然。",
+      "suggestion": "理路整然",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RISOUKYOU",
+      "text": "理想境。",
+      "suggestion": "理想郷",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RIYUUWONAI",
+      "text": "理由をない",
+      "suggestion": "理由はない",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2650,9 +2020,759 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "WAZAMONO",
-      "text": "技物。",
-      "suggestion": "業物",
+      "rule": "ROTENSYOU",
+      "text": "露店商。",
+      "suggestion": "露天商",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RYOUHU",
+      "text": "領布。",
+      "suggestion": "頒布",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "RYUUGENNHIGO",
+      "text": "流言非語。",
+      "suggestion": "流言蜚語",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAIBAI",
+      "text": "裁培。",
+      "suggestion": "栽培",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAIKOUTYOU",
+      "text": "最高調",
+      "suggestion": "最高潮",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAISYONANIKKI",
+      "text": "最初な日記",
+      "suggestion": "最初の日記",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAKENOSAKANA",
+      "text": "酒の肴。",
+      "suggestion": "肴",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAKINAKUNATTA",
+      "text": "先亡くなった",
+      "suggestion": "先に亡くなった",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAKUSUI",
+      "text": "グラウンドに散水。",
+      "suggestion": "撒水",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SANMIITTAI",
+      "text": "三身一体。",
+      "suggestion": "三位一体",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SANNHANNKIKANN",
+      "text": "三半器官。",
+      "suggestion": "三半規管",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SANNKANIIKU",
+      "text": "参加に行く",
+      "suggestion": "参加しに行く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SANNMANN",
+      "text": "散慢。",
+      "suggestion": "散漫",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SANNZANN",
+      "text": "散散。",
+      "suggestion": "散々",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SATTOU",
+      "text": "殺倒。",
+      "suggestion": "殺到",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEIBUNNHAKOMUGI",
+      "text": "成分は小麦",
+      "suggestion": "材料は小麦",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEITOUHA",
+      "text": "正当派。",
+      "suggestion": "正統派",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEIZOUME-KA-",
+      "text": "製造メーカー。",
+      "suggestion": "製造業者",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEKAISEIHUKU",
+      "text": "世界制服。",
+      "suggestion": "世界征服",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEKININNTENNKA",
+      "text": "責任転換。",
+      "suggestion": "責任転嫁",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEKINNNTUIKYUU",
+      "text": "責任追求。",
+      "suggestion": "責任追及",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEKIZUIDOUBUTU",
+      "text": "脊髄動物。",
+      "suggestion": "脊椎動物",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SENNSENNHUKOKU",
+      "text": "戦線布告。",
+      "suggestion": "宣戦布告",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SENNTAKUSI",
+      "text": "選択枝。",
+      "suggestion": "選択肢",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SENNTAKUWOARAU",
+      "text": "洗濯を洗う",
+      "suggestion": "洗濯をする",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SETUJOKUWOHARASU",
+      "text": "雪辱を晴らす。",
+      "suggestion": "雪辱する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIJOUMEIDAI",
+      "text": "至上命題がくだる。",
+      "suggestion": "至上命令",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIKOUSAKUGO",
+      "text": "思考錯誤重ねる。",
+      "suggestion": "試行錯誤",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIMATU",
+      "text": "仕末。",
+      "suggestion": "始末",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIMERU",
+      "text": "泌みる。",
+      "suggestion": "沁みる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNBOU",
+      "text": "辛棒。",
+      "suggestion": "辛抱",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNHANNNINN",
+      "text": "新犯人。",
+      "suggestion": "真犯人",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNJIJITU",
+      "text": "真事実。",
+      "suggestion": "新事実",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNKIITENN",
+      "text": "心気一転。",
+      "suggestion": "心機一転",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNKOKUZAI",
+      "text": "申告罪。",
+      "suggestion": "親告罪",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNNENNAKEMASITEOMEDETOUGOZAIMASU",
+      "text": "新年明けましておめでとうございます",
+      "suggestion": "明けましておめでとうございます",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNPYOU",
+      "text": "真憑。",
+      "suggestion": "信憑",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNSINNSUIJAKU",
+      "text": "心身耗弱。",
+      "suggestion": "心神耗弱",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINNTOUNIJYUKURYOSURU",
+      "text": "慎重に熟慮。",
+      "suggestion": "熟慮",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SISIODOSI",
+      "text": "獅子脅し。",
+      "suggestion": "鹿威し",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SISOUKENNKO",
+      "text": "思想堅固。",
+      "suggestion": "志操堅固",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SITADUDUMI",
+      "text": "聞えよがしに舌包みなど鳴らして。",
+      "suggestion": "舌鼓",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SITIMENNDOKUSAI",
+      "text": "七面倒くさい。",
+      "suggestion": "しち面倒臭い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SITUGIOUTOU",
+      "text": "質議応答が始まった。",
+      "suggestion": "質疑応答",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SODEHURIAUMOTASYOUNOENN",
+      "text": "袖振り合うも多少の縁。",
+      "suggestion": "袖振り合うも多生の縁",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SONJASOKORA",
+      "text": "こんなガラクタはそんじゃそこらで手に入る。",
+      "suggestion": "そんじょそこら",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SONNSYOKU",
+      "text": "損色。",
+      "suggestion": "遜色",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SOSSENN",
+      "text": "卒先。",
+      "suggestion": "率先",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SOSSENNSOKKETU",
+      "text": "速戦速決。",
+      "suggestion": "速戦即決",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SOUSOUTARUJINNBUTU",
+      "text": "蒼蒼たる人物。",
+      "suggestion": "錚錚たる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUBEKINOHA",
+      "text": "すべきのは",
+      "suggestion": "すべきなのは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUIRENN",
+      "text": "水蓮。",
+      "suggestion": "睡蓮",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUTORI-TOKINGU",
+      "text": "ストリートキング",
+      "suggestion": "ストリーキング",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUUDONN",
+      "text": "酢うどん。",
+      "suggestion": "素うどん",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYAKAIHOUJINN",
+      "text": "社会法人。",
+      "suggestion": "社団法人",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYAKOUJIREI",
+      "text": "社交辞礼で挨拶する。",
+      "suggestion": "社交辞令",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYANIMUNI",
+      "text": "遮二無突進する。",
+      "suggestion": "遮二無二",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYARE",
+      "text": "酒落。",
+      "suggestion": "洒落",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYATEIKYORI",
+      "text": "射程距離。",
+      "suggestion": "射程",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOGYOUMUJYOU",
+      "text": "諸行無情。",
+      "suggestion": "諸行無常",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOKUJIRYOUHOU",
+      "text": "食事療法。",
+      "suggestion": "食餌療法",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOSEIJYUTU",
+      "text": "処生術。",
+      "suggestion": "処世術",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOYOUJIKANN",
+      "text": "所用時間。",
+      "suggestion": "所要時間",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUKKETUSI",
+      "text": "原因は出血死。",
+      "suggestion": "失血死",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUKOU",
+      "text": "趣好。",
+      "suggestion": "趣向",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUKUSYOU",
+      "text": "縮少。",
+      "suggestion": "縮小",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUSIGAE",
+      "text": "趣旨替え",
+      "suggestion": "宗旨変え",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUUJINNKANNSI",
+      "text": "衆人監視。",
+      "suggestion": "衆人環視",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUUKAKU",
+      "text": "秋は収獲の時期。",
+      "suggestion": "収穫",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUUKANNSI",
+      "text": "週間誌。",
+      "suggestion": "週刊誌",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYUUSYUUGATUKANAI",
+      "text": "収集がつかない。",
+      "suggestion": "収拾がつかない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAIGIMEIBUNN",
+      "text": "大義名文。",
+      "suggestion": "大義名分",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAIHUUIKKA",
+      "text": "台風一家。",
+      "suggestion": "台風一過",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAIKANN",
+      "text": "載冠式を行う。",
+      "suggestion": "戴冠",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAISYORYOUHOU",
+      "text": "対処療法。",
+      "suggestion": "対症療法",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAKAMINOKENNBUTU",
+      "text": "高見の見物。",
+      "suggestion": "高みの見物",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAKANENOHANA",
+      "text": "高値の花。",
+      "suggestion": "高嶺の花",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAKUSANNNAHITO",
+      "text": "たくさんな人",
+      "suggestion": "たくさんの人",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAMANOKOSI",
+      "text": "玉の腰を狙う。",
+      "suggestion": "玉の輿",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TANNKA",
+      "text": "担荷で運ぶ。",
+      "suggestion": "担架",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TANNPAKUSITU",
+      "text": "淡白質が足りてない。",
+      "suggestion": "蛋白質",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TANNSOKINN",
+      "text": "炭素菌。",
+      "suggestion": "炭疽菌",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TANNTEKINI",
+      "text": "単的に考える。",
+      "suggestion": "端的に",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TANNTOUTYOKUNYUU",
+      "text": "短刀直入に話す。",
+      "suggestion": "単刀直入",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TATARI",
+      "text": "死んだ人の崇りだ。",
+      "suggestion": "祟り",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TATOEBANASI",
+      "text": "あくまで例え話だ。",
+      "suggestion": "譬え話",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TEBANASIDEHOMERU",
+      "text": "手離しでほめる。",
+      "suggestion": "手放でほめる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TEIJIBANN",
+      "text": "提示板。",
+      "suggestion": "掲示板",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TEITARAKU",
+      "text": "低たらく。",
+      "suggestion": "体たらく",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TEKIWOSIRIONOREWOSIREBAHYAKUSENNAYAUKARAZU",
+      "text": "敵を知り己を知れば百戦殆からず",
+      "suggestion": "彼を知り己を知れば百戦殆からず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TEMIJIKA",
+      "text": "手短か。",
+      "suggestion": "手短",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TEMOTIBUTASA",
+      "text": "てもちぶたさ。",
+      "suggestion": "てもちぶさた",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TENIOHA",
+      "text": "てにおはがおかしい。",
+      "suggestion": "てにをは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TENNGAIKODOKU",
+      "text": "天外孤独。",
+      "suggestion": "天涯孤独",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TENNSYUKAKU",
+      "text": "天主閣。",
+      "suggestion": "天守閣",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TENNTITENNMEI",
+      "text": "天地天命に誓う。",
+      "suggestion": "天地神明",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TERAKOYA",
+      "text": "寺小屋。",
+      "suggestion": "寺子屋",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TIGAUHANANI",
+      "text": "違うはなに",
+      "suggestion": "違いはなに",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOIEDOMO",
+      "text": "と言えども。",
+      "suggestion": "と雖も",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TONKYOU",
+      "text": "頓狂。",
+      "suggestion": "頓興",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TONNBOGAERI",
+      "text": "即座にとんぼ帰りした。",
+      "suggestion": "蜻蛉返り",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOORIIPPENN",
+      "text": "通り一辺の言葉。",
+      "suggestion": "通り一遍",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TORITUKUHIMAMONAI",
+      "text": "取り付く暇もない。",
+      "suggestion": "取り付く島もない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOTIKANN",
+      "text": "土地感。",
+      "suggestion": "土地鑑",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOUJISYA",
+      "text": "当時者の立場。",
+      "suggestion": "当事者",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOUSENNBANNGOU",
+      "text": "当選番号。",
+      "suggestion": "当籤番号",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TUGI",
+      "text": "次ぎこそは頑張る。",
+      "suggestion": "次",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TUKUZUKU",
+      "text": "つくずく思案する。",
+      "suggestion": "つくづく",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TUMAYOUJI",
+      "text": "妻楊枝。",
+      "suggestion": "爪楊枝",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TUREZURE",
+      "text": "つれずれを慰める",
+      "suggestion": "つれづれ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TYAKUHUKU",
+      "text": "着腹。",
+      "suggestion": "着服",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TYOSAKUKENNIHANN",
+      "text": "著作権違反。",
+      "suggestion": "著作権法違反",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TYOSUITI",
+      "text": "貯水地。",
+      "suggestion": "貯水池",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TYOUAI",
+      "text": "籠愛。",
+      "suggestion": "寵愛",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TYOUKANNZU",
+      "text": "鳥観図。",
+      "suggestion": "鳥瞰図",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TYUUDURI",
+      "text": "中吊り。",
+      "suggestion": "宙吊り",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UEHESITAHENOOOSAWAGI",
+      "text": "上へ下への大騒ぎ",
+      "suggestion": "上を下への大騒ぎ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UMEMUKU",
+      "text": "呷く",
+      "suggestion": "呻く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UNOMETAKANOME",
+      "text": "魚の目鷹の目",
+      "suggestion": "鵜の目鷹の目",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "URASABISII",
+      "text": "裏寂しい",
+      "suggestion": "心寂しい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "URUSAGATAE",
+      "text": "うるさ方",
+      "suggestion": "うるさ型",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "USIRODATE",
+      "text": "後ろ立て",
+      "suggestion": "後ろ盾",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UTYOUTEN",
+      "text": "つい有頂点になってしまう。",
+      "suggestion": "有頂天",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UYOUKYOKUSETU",
+      "text": "うよう曲折あったがなんとか終わった。",
+      "suggestion": "紆余曲折",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UZUDAKAI",
+      "text": "うず高い",
+      "suggestion": "堆い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "WADATINOATO",
+      "text": "轍の跡",
+      "suggestion": "轍",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2674,147 +2794,69 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "UEHESITAHENOOOSAWAGI",
-      "text": "上へ下への大騒ぎ",
-      "suggestion": "上を下への大騒ぎ",
+      "rule": "WARAWOMOSUGARU",
+      "text": "藁をも縋る。",
+      "suggestion": "藁にも縋る",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KENRYOKUNIOMONETTE",
-      "text": "権力におもねて",
-      "suggestion": "権力におもねって",
+      "rule": "WARUDAKUMI",
+      "text": "悪企み",
+      "suggestion": "悪巧み",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MIWOTAWAWA",
-      "text": "実もたわわ",
-      "suggestion": "枝も撓",
+      "rule": "WAZAMONO",
+      "text": "技物。",
+      "suggestion": "業物",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "TEKIWOSIRIONOREWOSIREBAHYAKUSENNAYAUKARAZU",
-      "text": "敵を知り己を知れば百戦殆からず",
-      "suggestion": "彼を知り己を知れば百戦殆からず",
+      "rule": "WOAGARU",
+      "text": "を上がる",
+      "suggestion": "を上げる",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "KYAKKOUWOATUMERU",
-      "text": "脚光を集める",
-      "suggestion": "脚光を浴びる",
+      "rule": "WOMITUKATTA",
+      "text": "を見つかった",
+      "suggestion": "を見つけた",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "NANAMENIKAMAERU",
-      "text": "斜めに構える",
-      "suggestion": "斜に構える",
+      "rule": "WOSANNKASITE",
+      "text": "を参加して",
+      "suggestion": "に参加して",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "OSIMOOSARENU",
-      "text": "押しも押されぬ",
-      "suggestion": "押しも押されもせぬ",
+      "rule": "YAKIMOTIYAKI",
+      "text": "焼き餅妬き。",
+      "suggestion": "焼き餅焼き",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "MOZUKUTONARU",
-      "text": "水雲となる",
-      "suggestion": "藻屑となる",
+      "rule": "YAKUBYOUGAMI",
+      "text": "厄病神。",
+      "suggestion": "疫病神",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "RINKUWOHARU",
-      "text": "リンクを貼る",
-      "suggestion": "リンクを張る",
+      "rule": "YAMONAKU",
+      "text": "やもなく。",
+      "suggestion": "やむなく",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SINNNENNAKEMASITEOMEDETOUGOZAIMASU",
-      "text": "新年明けましておめでとうございます",
-      "suggestion": "明けましておめでとうございます",
+      "rule": "YAMUOEZU",
+      "text": "やむおえず。",
+      "suggestion": "やむをえず",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "ENTENKANOMOTO",
-      "text": "炎天下の下",
-      "suggestion": "炎天下",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OSSYARARERU",
-      "text": "おっしゃられる",
-      "suggestion": "仰る",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAKUISAMA",
-      "text": "各位様",
-      "suggestion": "各位",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "GAISENNKIKOKU",
-      "text": "凱旋帰国",
-      "suggestion": "凱旋",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KETTANNNOATO",
-      "text": "血痕の跡。",
-      "suggestion": "血痕",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KANETEKARANOKENNANN",
-      "text": "予かねてからの懸案。",
-      "suggestion": "懸案",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "IMANOGENNJOU",
-      "text": "今の現状。",
-      "suggestion": "現状",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OKARADAGOJIAIKUDASAI",
-      "text": "お体御自愛下さい。",
-      "suggestion": "御自愛下さい",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KOSYOUTYUU",
-      "text": "故障中。",
-      "suggestion": "故障",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SAKENOSAKANA",
-      "text": "酒の肴。",
-      "suggestion": "肴",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SYATEIKYORI",
-      "text": "射程距離。",
-      "suggestion": "射程",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SINNTOUNIJYUKURYOSURU",
-      "text": "慎重に熟慮。",
-      "suggestion": "熟慮",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "JYUUSEIONN",
-      "text": "銃声音。",
-      "suggestion": "銃声",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "SEIZOUME-KA-",
-      "text": "製造メーカー。",
-      "suggestion": "製造業者",
+      "rule": "YASUMIHI",
+      "text": "休み日",
+      "suggestion": "休みの日",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2824,9 +2866,51 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "SETUJOKUWOHARASU",
-      "text": "雪辱を晴らす。",
-      "suggestion": "雪辱する",
+      "rule": "YOKOURENNSYUU",
+      "text": "卒業式の予行練習。",
+      "suggestion": "予行演習",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YOYUUSYAKUSYAKU",
+      "text": "余裕釈釈。",
+      "suggestion": "余裕綽綽",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YUKIYAKONNKONNARAREYAKONNKONN",
+      "text": "雪やこんこんあられやこんこん。",
+      "suggestion": "雪やこんこあられやこんこ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YUUISA",
+      "text": "有意差がある。",
+      "suggestion": "優位差",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YUUSYUNOBI",
+      "text": "優秀の美。",
+      "suggestion": "有終の美",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ZEHI",
+      "text": "是否。",
+      "suggestion": "是非",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ZENNMENNTEKI",
+      "text": "前面的。",
+      "suggestion": "全面的",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ZETTAIZETUMEI",
+      "text": "絶対絶命。",
+      "suggestion": "絶体絶命",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
@@ -2836,105 +2920,663 @@
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "HAKKIRIDANNGENN",
-      "text": "はっきり断言する。",
-      "suggestion": "断言",
+      "rule": "ZUGAITOTU",
+      "text": "頭骸骨。",
+      "suggestion": "頭蓋骨",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
-      "rule": "DANNTOTUNOITII",
-      "text": "断トツの一位。",
-      "suggestion": "断トツ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "ISINOTUBUTE",
-      "text": "石の礫。",
-      "suggestion": "礫",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "HONNRAIKARA",
-      "text": "本来から。",
-      "suggestion": "本来",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "HANNKOWOOSU",
-      "text": "捺印を押す",
-      "suggestion": "捺印する",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KAHANNSUUWOKOERU",
-      "text": "過半数を超える",
-      "suggestion": "半数を超える",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OMOIGAKENAIHAPUNINNGU",
-      "text": "思いがけないハプニング",
-      "suggestion": "ハプニング",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "HEIKINNABERE-JI",
-      "text": "平均アベレージ",
-      "suggestion": "平均",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "KIRISUTOKYOUNOBOKUSI",
-      "text": "キリスト教の牧師",
-      "suggestion": "牧師",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "POTA-JYUSU-PU",
-      "text": "ポタージュスープ",
-      "suggestion": "ポタージュ",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MANNTENNNOHOSIZORA",
-      "text": "満天の星空",
-      "suggestion": "満天の星",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MADAMIKAIKETU",
-      "text": "まだ未解決",
-      "suggestion": "未解決",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "MIZOREMAJIRI",
-      "text": "霙交じり",
-      "suggestion": "霙",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "OMESIAGARININARU",
-      "text": "お召し上がりになる",
-      "suggestion": "召し上がる",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "REKKYOUSYOKOKU",
-      "text": "列強諸国。",
-      "suggestion": "列強",
-      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
-    },
-    {
-      "rule": "WADATINOATO",
-      "text": "轍の跡",
-      "suggestion": "轍",
+      "rule": "ZUTABUKURO",
+      "text": "ずた袋。",
+      "suggestion": "ずだぶくろ",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     },
     {
       "rule": "ZUTUUGAITAI",
       "text": "頭痛が痛い",
       "suggestion": "頭が痛い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "AIKOTOBA",
+      "text": "相言葉",
+      "suggestion": "合い言葉",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "AKANOTANINN",
+      "text": "垢の他人。",
+      "suggestion": "赤の他人",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ASAZUKE",
+      "text": "毎朝浅漬けを食べる。",
+      "suggestion": "朝漬け",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ATARAZUTOMOTOOKARAZU",
+      "text": "彼の意見は当たらずとも遠からずだ。",
+      "suggestion": "中らずといえども遠からず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ATOHEMOSAKINIMOHIKENU",
+      "text": "後へも先へも引けぬ状況だ。",
+      "suggestion": "後へも先へも行かぬ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "DARASINAI",
+      "text": "だらしない。",
+      "suggestion": "しだらない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "DEKUNOBOU",
+      "text": "木偶の棒。",
+      "suggestion": "木偶の坊",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "DOUSI_DEHA",
+      "text": "描くでは",
+      "suggestion": "のでは",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "DOUSI_GANAGAKUNARU",
+      "text": "暮らすが長くなる",
+      "suggestion": "暮らしが長く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ENAI",
+      "text": "会社を辞めざるお得ない",
+      "suggestion": "ざるを得ない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ENHAKINAMONO",
+      "text": "縁は奇なもの味なもの。",
+      "suggestion": "縁は異",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "GAKEPPUTI",
+      "text": "崖っ淵。",
+      "suggestion": "崖っ縁",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "GANNNTANNNOASA",
+      "text": "元旦の朝",
+      "suggestion": "元旦",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HANANIKAKENAI",
+      "text": "鼻にも掛けない。",
+      "suggestion": "鼻に掛けない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HATARAKIZUKUME",
+      "text": "働き尽くめ。",
+      "suggestion": "働き詰め",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HATUDEBYU-",
+      "text": "初デビューを果たす。",
+      "suggestion": "デビュー",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HETENAKANNGAEYASUMUNINITARI",
+      "text": "下手な考え休むに似たり。",
+      "suggestion": "下手の考え休むに似たり",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HIKKENNOKATIARI",
+      "text": "これは必見の価値有りの商品だ。",
+      "suggestion": "一見の価値",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "HISSINOKAKUGO",
+      "text": "必死の覚悟で飛び込んだ。",
+      "suggestion": "決死の覚悟",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IAWNUGAHOTOKE",
+      "text": "言わぬが仏。",
+      "suggestion": "知らぬが仏",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IHATUWOTUGU",
+      "text": "遺髪を継ぐ",
+      "suggestion": "衣鉢を継ぐ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IKKANNNOOWARI",
+      "text": "一貫の終わり",
+      "suggestion": "一巻の終わり",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "INISIENOMUKASI",
+      "text": "古の昔",
+      "suggestion": "古",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IROGAHENNSYOKUSURU",
+      "text": "色が変色する。",
+      "suggestion": "変色する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ISSYUNSAKIHAYAMI",
+      "text": "一瞬先は闇だから、何が起きるか分からない。",
+      "suggestion": "一寸先は闇",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITIBANNSAIGO",
+      "text": "一番最後にくじを引く。",
+      "suggestion": "最後",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ITIDOU",
+      "text": "一同に会する。",
+      "suggestion": "一堂に会",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IWAZUMOKANA",
+      "text": "この件に関しては言わずもかなだ。",
+      "suggestion": "言わずもがな",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "IZASIRAZU",
+      "text": "いざ知らず冒険にでた。",
+      "suggestion": "いさ知らず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "JISINNKAJOU",
+      "text": "自身過剰。",
+      "suggestion": "自信過剰",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KAKEGAI",
+      "text": "私にとって掛け甲斐のない存在。",
+      "suggestion": "掛け替え",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KAKIIREDOKI",
+      "text": "掻き入れ時。",
+      "suggestion": "書き入れ時",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KANNTIGAI",
+      "text": "感違いが多い人だ。",
+      "suggestion": "勘違い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KANOJOHA_MEISI_GAIRU",
+      "text": "彼女は友達がいる",
+      "suggestion": "彼女には友達がいる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KAZENOUWASA",
+      "text": "風の噂で聞いた。",
+      "suggestion": "風の便り",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KENNTOUTIGAI",
+      "text": "検討違い。",
+      "suggestion": "見当違い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIMARIGAWARUI",
+      "text": "気まりが良い。",
+      "suggestion": "決まりが良い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIRYOUGAOOKII",
+      "text": "器量が大きい。",
+      "suggestion": "度量が大きい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KIWAMETUKE",
+      "text": "極め付けの名選手だ。",
+      "suggestion": "極め付き",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOBURAGAERI",
+      "text": "コブラ返り。",
+      "suggestion": "腓返り",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOKOTIYOI",
+      "text": "心地良い",
+      "suggestion": "心地好い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOTOBADUKAI",
+      "text": "言葉遣い。",
+      "suggestion": "言葉使い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOTONOHOKA",
+      "text": "事の外。",
+      "suggestion": "殊の外",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOTOSIHASAI",
+      "text": "今年は十歳",
+      "suggestion": "今年で_歳",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KOUTUUDOME",
+      "text": "この道路は交通止めだ。",
+      "suggestion": "通行止め",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUMISIYASUI",
+      "text": "組し易い。",
+      "suggestion": "与し易い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUSINOHAGANUKETAYOU",
+      "text": "会場は櫛の歯が抜ける。",
+      "suggestion": "櫛の歯が欠ける",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "KUTUNUGI",
+      "text": "靴脱ぎ。",
+      "suggestion": "沓脱ぎ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAKERUTOMOOTORANAI",
+      "text": "負けるとも劣らない。",
+      "suggestion": "勝るとも劣らない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MARENIMINU",
+      "text": "稀に見ぬ人材だ。",
+      "suggestion": "稀に見る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MATIDOUSII",
+      "text": "デートが待ちどうしい。",
+      "suggestion": "待ちどおしい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MAZUSAISYONI",
+      "text": "まず最初に卵を割る。",
+      "suggestion": "最初",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEISI_DESUMU",
+      "text": "千葉で住む",
+      "suggestion": "に住む",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEISI_WOARI",
+      "text": "コーヒーをあり",
+      "suggestion": "コーヒーがある",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEISI_WOHAJIMATTA",
+      "text": "試験を始まった",
+      "suggestion": "試験が始まった",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEISI_WOOWATTA",
+      "text": "宿題を終わった",
+      "suggestion": "宿題をを終えた",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MEISI_YOMU",
+      "text": "本読む",
+      "suggestion": "を読む",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "MUSHI",
+      "text": "虫の予感が起きた。",
+      "suggestion": "虫の知らせ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NARENARESII",
+      "text": "慣れ慣れしい態度を取る。",
+      "suggestion": "馴れ馴れしい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NASINOTUBUTE",
+      "text": "無しの礫。",
+      "suggestion": "梨の礫",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NIHONNNIRAINITISURU",
+      "text": "日本に来日する。",
+      "suggestion": "来日する",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NINOKUGADENAI",
+      "text": "二の句がでる。",
+      "suggestion": "二の句が継げない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "NORUKASORUKA",
+      "text": "乗るか反るか。",
+      "suggestion": "伸るか反る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "O",
+      "text": "名詞お見る",
+      "suggestion": "名詞を",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OIKANEMASENN",
+      "text": "負いかねません",
+      "suggestion": "負いかねます",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OKYOUJYUKUDASAI",
+      "text": "どうか私に御教授下さい。",
+      "suggestion": "御教示下さい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OMACHIDOU",
+      "text": "はい、お待ちどお様。",
+      "suggestion": "お待ちどう",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OMOIMOTUKANAI",
+      "text": "こんな発想は思いもつかない。",
+      "suggestion": "思いも寄らない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OMONEZU",
+      "text": "法は貴きに阿ず。",
+      "suggestion": "阿らず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OMOTOMEYASUI",
+      "text": "この価格なら誰でもお求め易いだろう。",
+      "suggestion": "お求めに成り易い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OOBANNHURUMAI",
+      "text": "大番振る舞い",
+      "suggestion": "椀飯振る舞い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OOKINA_MEISI",
+      "text": "大きいな部屋",
+      "suggestion": "大きい部屋",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ORIMAZERU",
+      "text": "折り交ぜる",
+      "suggestion": "織り交ぜる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OSIKISE",
+      "text": "押し着せ",
+      "suggestion": "御仕着せ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "OTYAWOIRERU",
+      "text": "御茶を入れる",
+      "suggestion": "御茶を淹れる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAIDAIMORASAZU",
+      "text": "最大漏らさず。",
+      "suggestion": "細大漏らさず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SAMEYAMANU",
+      "text": "眠りから覚め止まぬ。",
+      "suggestion": "覚め遣らぬ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SATOSU",
+      "text": "悟す。",
+      "suggestion": "諭す",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SEIKONNTUKIHATERU",
+      "text": "精魂尽き果てる。",
+      "suggestion": "精根尽き",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SENNKENNNOME",
+      "text": "先見の目。",
+      "suggestion": "先見の明",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SETIGANAI",
+      "text": "せちがない世の中。",
+      "suggestion": "せちがらい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SETUWOMAGERU",
+      "text": "説を曲げる。",
+      "suggestion": "節を曲げる",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SINIMONOGURUI",
+      "text": "死に者狂いで勉強する。",
+      "suggestion": "死に物狂い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SIROUTOHADASI",
+      "text": "素人跣した能力。",
+      "suggestion": "素人離れ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SITAGATTE_END",
+      "text": "したがって。",
+      "suggestion": "したがって",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUBETEITIINN",
+      "text": "全て一任する。",
+      "suggestion": "一任",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUNNDENOTOKORODE",
+      "text": "寸での所で。",
+      "suggestion": "既での所で",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SUZAMASII",
+      "text": "すざましい勢い。",
+      "suggestion": "凄まじい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOSINNWASURURUBEKARAZU",
+      "text": "初心忘るるべからず。",
+      "suggestion": "初心忘るべからず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "SYOUKONIMONAKU",
+      "text": "証拠にも無く繰り返す。",
+      "suggestion": "性懲りも無く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TAAINAI",
+      "text": "他愛ない話。",
+      "suggestion": "たわい無い",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TADEKUUMUSIMOSUKIZUKI",
+      "text": "田で食う虫も好き好き。",
+      "suggestion": "蓼食う虫も好き好き",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TATAZUMU",
+      "text": "独りで立たずむ。",
+      "suggestion": "佇む",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TENNKANOHOUTOU",
+      "text": "天下の宝刀を抜く。",
+      "suggestion": "伝家の宝刀",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TOBUTORIATOWONIGOSAZU",
+      "text": "飛ぶ鳥跡を濁さず。",
+      "suggestion": "立つ鳥跡を濁さず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TORIDADASARERU",
+      "text": "取り出される。",
+      "suggestion": "取り沙汰される",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "TORUMONOMOTORAZU",
+      "text": "取るものも取らず。",
+      "suggestion": "取る物も取り敢えず",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UKIME",
+      "text": "浮き目",
+      "suggestion": "憂き目",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "URUOBOE",
+      "text": "うる覚えで申しわけございません。",
+      "suggestion": "うろ覚え",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "USOHUKU",
+      "text": "嘘吹く",
+      "suggestion": "嘯く",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "UTAWASETE",
+      "text": "歌わせていただきます",
+      "suggestion": "歌わさせて",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "WARUTAKURAMI",
+      "text": "渡る世間は鬼ばかり。",
+      "suggestion": "渡る世間は鬼はない",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YAMAAI",
+      "text": "山合い。",
+      "suggestion": "山間",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "YOIKOTODARAKE",
+      "text": "良い事だらけ",
+      "suggestion": "良い事尽くめ",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ZUNINORU",
+      "text": "頭に乗る。",
+      "suggestion": "図に乗る",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ZURAI",
+      "text": "読みずらい字",
+      "suggestion": "づらい",
+      "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
+    },
+    {
+      "rule": "ZUTTO_DOUSI_TARA",
+      "text": "ずっと開けたら",
+      "suggestion": "ずっと開けていたら",
       "source": "languagetool-language-modules/ja/src/main/resources/org/languagetool/rules/ja/grammar.xml"
     }
   ]

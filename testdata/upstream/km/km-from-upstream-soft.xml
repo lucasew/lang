@@ -3,14 +3,6 @@
 <!-- Source: upstream LanguageTool simple token patterns only. -->
 <rules lang="km">
   <category id="TYPOS" name="Possible Typos">
-    <rule id="HARA_PLANT" name="ហោរ៉ា (ហោរា)">
-      <pattern>
-        <token>ហោរ៉ា</token>
-      </pattern>
-      <message>Did you really mean the plant or a prophet?
-                <suggestion>ហោរា</suggestion>?</message>
-      <short>HARA_PLANT</short>
-    </rule>
     <rule id="A_SABAY" name="អសប្បាយ (អរសប្បាយ)">
       <pattern>
         <token>អសប្បាយ</token>
@@ -18,24 +10,6 @@
       <message>Did you really mean feeling sick?
                 <suggestion>អរសប្បាយ</suggestion>?</message>
       <short>A_SABAY</short>
-    </rule>
-    <rule id="KHANG_VITNEAN" name="ខាងវិញ្ញាណ (ខាងឯវិញ្ញាណ)">
-      <pattern>
-        <token>ខាង</token>
-        <token>វិញ្ញាណ</token>
-      </pattern>
-      <message>Stylistic suggestion. Use:
-                <suggestion>ខាងឯវិញ្ញាណ</suggestion>?</message>
-      <short>KHANG_VITNEAN</short>
-    </rule>
-    <rule id="THUA_BAU" name="ទោះបើ (ទោះបី)">
-      <pattern>
-        <token>ទោះ</token>
-        <token>បើ</token>
-      </pattern>
-      <message>Stylistic suggestion. Use:
-                ទោះ<suggestion>បី</suggestion> instead.</message>
-      <short>THUA_BAU</short>
     </rule>
     <rule id="BANAT_VERB" name="បញ្ញត្ត (បញ្ញត្តិ)">
       <pattern>
@@ -45,23 +19,23 @@
                 <suggestion>បញ្ញត្តិ</suggestion>?</message>
       <short>BANAT_VERB</short>
     </rule>
-    <rule id="NUNG_PDOAL" name="និង​ថ្កល់ (នឹង​ថ្កល់​)">
+    <rule id="DIAL_RU_TE" name="ដែលឬទេ (ដែរឬទេ)">
       <pattern>
-        <token>និង</token>
-        <token>ថ្កល់</token>
+        <token>ដែល</token>
+        <token>ឬ</token>
+        <token>ទេ</token>
       </pattern>
       <message>Did you mean
-                <suggestion>នឹង​ថ្កល់</suggestion>?</message>
-      <short>NUNG_PDOAL</short>
+                <suggestion>ដែរ​ឬ​ទេ</suggestion></message>
+      <short>DIAL_RU_TE</short>
     </rule>
-    <rule id="LENG_TOV" name="ឡើង​ទៅ​ (លើង​ទៅ)">
+    <rule id="HARA_PLANT" name="ហោរ៉ា (ហោរា)">
       <pattern>
-        <token>លើង</token>
-        <token>ទៅ</token>
+        <token>ហោរ៉ា</token>
       </pattern>
-      <message>Did you mean
-                <suggestion>ឡើង​ទៅ</suggestion>?</message>
-      <short>Possible typo</short>
+      <message>Did you really mean the plant or a prophet?
+                <suggestion>ហោរា</suggestion>?</message>
+      <short>HARA_PLANT</short>
     </rule>
     <rule id="JEAMUY_NENG" name="ជាមួយ​នឹង​ (ជាមួយ​និង)">
       <pattern>
@@ -82,15 +56,96 @@
                 ជា​មួយ​<suggestion>នឹង</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
-    <rule id="DIAL_RU_TE" name="ដែលឬទេ (ដែរឬទេ)">
+    <rule id="KHANG_VITNEAN" name="ខាងវិញ្ញាណ (ខាងឯវិញ្ញាណ)">
       <pattern>
-        <token>ដែល</token>
-        <token>ឬ</token>
-        <token>ទេ</token>
+        <token>ខាង</token>
+        <token>វិញ្ញាណ</token>
+      </pattern>
+      <message>Stylistic suggestion. Use:
+                <suggestion>ខាងឯវិញ្ញាណ</suggestion>?</message>
+      <short>KHANG_VITNEAN</short>
+    </rule>
+    <rule id="LENG_TOV" name="ឡើង​ទៅ​ (លើង​ទៅ)">
+      <pattern>
+        <token>លើង</token>
+        <token>ទៅ</token>
       </pattern>
       <message>Did you mean
-                <suggestion>ដែរ​ឬ​ទេ</suggestion></message>
-      <short>DIAL_RU_TE</short>
+                <suggestion>ឡើង​ទៅ</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
+    <rule id="NUNG_PDOAL" name="និង​ថ្កល់ (នឹង​ថ្កល់​)">
+      <pattern>
+        <token>និង</token>
+        <token>ថ្កល់</token>
+      </pattern>
+      <message>Did you mean
+                <suggestion>នឹង​ថ្កល់</suggestion>?</message>
+      <short>NUNG_PDOAL</short>
+    </rule>
+    <rule id="THUA_BAU" name="ទោះបើ (ទោះបី)">
+      <pattern>
+        <token>ទោះ</token>
+        <token>បើ</token>
+      </pattern>
+      <message>Stylistic suggestion. Use:
+                ទោះ<suggestion>បី</suggestion> instead.</message>
+      <short>THUA_BAU</short>
+    </rule>
+    <rule id="PRO_CHOMNAH" name="ខ្ញុំ​រាង​ចំណាស់​">
+      <pattern>
+        <token postag="PRO"></token>
+        <token>ចំណាស់</token>
+      </pattern>
+      <message>Did you mean
+                <suggestion>\1​រាង​ចំណាស់</suggestion>?</message>
+      <short>PRO_CHOMNAH</short>
+    </rule>
+  </category>
+  <category id="GRAMMAR" name="Khmer Grammar">
+    <rule id="DOUBLE_NOUNS" name="Do not double up nouns">
+      <pattern>
+        <token regexp="yes">(សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ)(ជំនឿ|ទំនាក់ទំនង|តម្រូវការ)</token>
+      </pattern>
+      <message>Do not add a noun modifier to a word that is already a noun.
+                <suggestion></suggestion></message>
+      <short>Do not add a noun modifier to a word that is already a noun.</short>
+    </rule>
+    <rule id="DOUBLE_NOUNS2" name="Do not double up nouns 2">
+      <pattern>
+        <token regexp="yes">(សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ)</token>
+        <token regexp="yes">(ជំនឿ|ទំនាក់ទំនង|តម្រូវការ)</token>
+      </pattern>
+      <message>Do not add a noun modifier to a word that is already a noun.
+                <suggestion>\2</suggestion></message>
+      <short>Do not add a noun modifier to a word that is already a noun.</short>
+    </rule>
+    <rule id="FROM_Classifier" name="INCORRECT USE OF FROM WITH CLASSIFIER">
+      <pattern>
+        <token regexp="yes">កាំភ្លើង|ដាវ|ដើមឈើ|អាវុធ</token>
+        <token>ពី</token>
+        <token postag="CLS"></token>
+      </pattern>
+      <message>You should write
+                <suggestion>ពីរ</suggestion> instead.</message>
+      <short>Incorrect usage of ពី</short>
+    </rule>
+    <rule id="TonakeatWithNoun" name="Do not use ការ​ ឬ ភាព with ទណ្ឌឃាត">
+      <pattern>
+        <token regexp="yes">សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ</token>
+        <token regexp="yes">(.*)(ន៍)</token>
+      </pattern>
+      <message>Remove ន៍ because the word is already a modified noun.
+                <suggestion></suggestion></message>
+      <short>Remove ន៍ because the word is already a modified noun.</short>
+    </rule>
+    <rule id="TonakeatWithNoun2" name="Do not use ការ​ ឬ ភាព with ទណ្ឌឃាត 2">
+      <pattern>
+        <token regexp="yes">(សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ)(.*)(ន៍)</token>
+      </pattern>
+      <message>Remove ន៍ because the word is already a modified noun.
+                <suggestion></suggestion></message>
+      <short>Remove ន៍ because the word is already a modified noun.</short>
     </rule>
   </category>
 </rules>

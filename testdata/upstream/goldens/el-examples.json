@@ -34,63 +34,39 @@
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
-      "rule": "GREEK_REDUNDANT_2",
-      "text": "Άρα λοιπόν πρακτικά το πεδίο αυτό περιέχει τον μέγιστο αριθμό κόμβων από τους οποίους πρέπει να περάσει το πακέτο έως ότου τελικά παραδοθεί στον παραλήπτη.",
-      "suggestion": "Άρα",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_REDUNDANT_3",
-      "text": "Στη συνέχεια ακολουθεί η επιτόπια αυτοψία αρχιτέκτονα στο κτίριο",
-      "suggestion": "αυτοψία",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_HOMONYMY_CONJ_PRON",
-      "text": "Το υπερρεαλιστικό κίνημα δεν είχε ποτέ κάποιο αποτέλεσμα σε ότι αφορά τις πολιτικές του τοποθετήσεις και προσπάθειες.",
-      "suggestion": "ό,τι",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_SYNTAX_1",
-      "text": "Περισσότεροι από ένας στους τέσσερις οι άνεργοι.",
-      "suggestion": "από έναν",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_SYNTAX_2",
-      "text": "Γίνονται όλοι δεκτοί ανεξαρτήτου ηλικίας.",
-      "suggestion": "ανεξαρτήτως",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_PUNC_MULTIPLE_EXCLAMATION",
-      "text": "Μην το ξεχάσετε!!",
-      "suggestion": "!",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_PUNC_DOTS_INSTEAD_OF_ELLIPSIS",
-      "text": "Η Επιτροπή κατέβαλε κάθε προσπάθεια για να αποτρέψει την εξέλιξη αυτή, αλλά δυστυχώς...",
-      "suggestion": "…",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_PUNC_DOT_AFTER_ELLIPSIS",
-      "text": "Η Επιτροπή κατέβαλε κάθε προσπάθεια για να αποτρέψει την εξέλιξη αυτή, αλλά δυστυχώς….",
-      "suggestion": "…",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
-      "rule": "GREEK_STYLE_AND",
-      "text": "Για το σκοπό αυτό αποφασίστηκε η δημιουργία κι ενός μπουκαλιού με χαρακτηριστικό σχήμα.",
-      "suggestion": "και",
-      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
-    },
-    {
       "rule": "GREEK_DATIVE_1",
       "text": "Έκδοση πιστωτικής κάρτας εν άγνοια του ενδιαφερόμενου.",
       "suggestion": "αγνοία",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_10",
+      "text": "Με εν μέρη ξάστερο ουρανό αναμένεται η βραδιά.",
+      "suggestion": "μέρει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_11",
+      "text": "Αυξημένα τα μέτρα της Τροχαίας εν όψη του τριημέρου.",
+      "suggestion": "όψει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_12",
+      "text": "Βίντεο ντοκουμέντο από την εν ψυχρό δολοφονία.",
+      "suggestion": "ψυχρώ",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_13",
+      "text": "Εν το μεταξύ ανάμεσα στο πλήθος υπήρχε και μια γριούλα.",
+      "suggestion": "τω",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_14",
+      "text": "Εν την ρύμη του λόγου η φράση για την αριστεία.",
+      "suggestion": "τη",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
@@ -130,33 +106,189 @@
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
-      "rule": "GREEK_DATIVE_10",
-      "text": "Με εν μέρη ξάστερο ουρανό αναμένεται η βραδιά.",
-      "suggestion": "μέρει",
+      "rule": "GREEK_HOMONYMY_CONJ_PRON",
+      "text": "Το υπερρεαλιστικό κίνημα δεν είχε ποτέ κάποιο αποτέλεσμα σε ότι αφορά τις πολιτικές του τοποθετήσεις και προσπάθειες.",
+      "suggestion": "ό,τι",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
-      "rule": "GREEK_DATIVE_11",
-      "text": "Αυξημένα τα μέτρα της Τροχαίας εν όψη του τριημέρου.",
-      "suggestion": "όψει",
+      "rule": "GREEK_PUNC_DOTS_INSTEAD_OF_ELLIPSIS",
+      "text": "Η Επιτροπή κατέβαλε κάθε προσπάθεια για να αποτρέψει την εξέλιξη αυτή, αλλά δυστυχώς...",
+      "suggestion": "…",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
-      "rule": "GREEK_DATIVE_12",
-      "text": "Βίντεο ντοκουμέντο από την εν ψυχρό δολοφονία.",
-      "suggestion": "ψυχρώ",
+      "rule": "GREEK_PUNC_DOT_AFTER_ELLIPSIS",
+      "text": "Η Επιτροπή κατέβαλε κάθε προσπάθεια για να αποτρέψει την εξέλιξη αυτή, αλλά δυστυχώς….",
+      "suggestion": "…",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
-      "rule": "GREEK_DATIVE_13",
-      "text": "Εν το μεταξύ ανάμεσα στο πλήθος υπήρχε και μια γριούλα.",
-      "suggestion": "τω",
+      "rule": "GREEK_PUNC_MULTIPLE_EXCLAMATION",
+      "text": "Μην το ξεχάσετε!!",
+      "suggestion": "!",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     },
     {
-      "rule": "GREEK_DATIVE_14",
-      "text": "Εν την ρύμη του λόγου η φράση για την αριστεία.",
-      "suggestion": "τη",
+      "rule": "GREEK_REDUNDANT_2",
+      "text": "Άρα λοιπόν πρακτικά το πεδίο αυτό περιέχει τον μέγιστο αριθμό κόμβων από τους οποίους πρέπει να περάσει το πακέτο έως ότου τελικά παραδοθεί στον παραλήπτη.",
+      "suggestion": "Άρα",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_REDUNDANT_3",
+      "text": "Στη συνέχεια ακολουθεί η επιτόπια αυτοψία αρχιτέκτονα στο κτίριο",
+      "suggestion": "αυτοψία",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_STYLE_AND",
+      "text": "Για το σκοπό αυτό αποφασίστηκε η δημιουργία κι ενός μπουκαλιού με χαρακτηριστικό σχήμα.",
+      "suggestion": "και",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_SYNTAX_1",
+      "text": "Περισσότεροι από ένας στους τέσσερις οι άνεργοι.",
+      "suggestion": "από έναν",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_SYNTAX_2",
+      "text": "Γίνονται όλοι δεκτοί ανεξαρτήτου ηλικίας.",
+      "suggestion": "ανεξαρτήτως",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_AGREEMENT_1",
+      "text": "Οι βελτιώσεις των προσεγγίσεων είναι εμφανείς και οι μέθοδοι αυτοί είναι κατάλληλοι για την κατανόηση των μεθόδων μεγαλύτερης τάξης.",
+      "suggestion": "αυτές",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_ART_FEM_MISSING_N",
+      "text": "Το Σιν Φέιν ψηφίζει υπέρ της συνεργασίας του με τη αστυνομία για πρώτη φορά στην ιστορία του κόμματος.",
+      "suggestion": "την",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_ART_MASC_MISSING_N",
+      "text": "Πιθανόν να εξαφανίστηκε επειδή δεν άντεξε το ανταγωνισμό με τον ανατομικά ανώτερο σμιλόδοντα.",
+      "suggestion": "τον",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_5",
+      "text": "Πυροβόλησε και σκότωσε την εν διάσταση σύζυγο.",
+      "suggestion": "διαστάσει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_5",
+      "text": "ο εν διαστάση σύζυγος μου συνεχίζει και παίρνει το μερος των δικών του.",
+      "suggestion": "διαστάσει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_7",
+      "text": "Εάν παραμένεις συνέχεια εν κίνηση διάλεξε παπούτσια με την επίπεδη σόλα.",
+      "suggestion": "κινήσει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_DATIVE_7",
+      "text": "Ενημερώστε τους πελάτες εν κινήση!",
+      "suggestion": "κινήσει",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_HOW-",
+      "text": "Πως είσαι;",
+      "suggestion": "Πώς",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_MORE_ADJ_COMP",
+      "text": "Όσο μεγαλύτερη ροπή θέλουμε να μεταφέρουμε τόσο πιο ισχυρότερα και περισσότερα πρέπει να είναι τα ελατήρια.",
+      "suggestion": "ισχυρότερα",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_NUMERAL_ONE_WORD",
+      "text": "Δέκα τρία.",
+      "suggestion": "Δεκατρία",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_ORTHOGRAPHY_AND_BEFORE_CONSONANT",
+      "text": "Το δεν γράφεται κι δε όταν ακολουθεί λέξη που αρχίζει από εξακολουθητικό σύμφωνο.",
+      "suggestion": "και",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PARTICLE_ARTICLE",
+      "text": "Θα κλείσει η θα μεταφερθεί;",
+      "suggestion": "ή",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PARTICLE_ARTICLE",
+      "text": "Να ζει κανείς η να μη ζει;",
+      "suggestion": "ή",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PARTICLE_MISSING_N_1",
+      "text": "Ο Γιάννης δε ξέρει.",
+      "suggestion": "δεν",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PARTICLE_MISSING_N_2",
+      "text": "Ο Γιάννης μπορεί να μη ξέρει.",
+      "suggestion": "μην",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PREP_ART_FEM_MISSING_N",
+      "text": "Ο Πέτρος πήγε στη αντιπροσωπεία και αγόρασε ένα καινούργιο αυτοκίνητο.",
+      "suggestion": "στην",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PREP_ART_MASC_MISSING_N",
+      "text": "Περιορισμοί στο ανταγωνισμό για τους οποίους δεν διατυπώθηκαν συστάσεις.",
+      "suggestion": "στον",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PRONOUN_FEM_MISSING_N",
+      "text": "Γι' αυτή ξενιτεύτηκα.",
+      "suggestion": "αυτήν",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PUNC_1",
+      "text": "Όχι το Κοινοβούλιο δεν μπορεί να εγκρίνει την τροποποίηση.",
+      "suggestion": "Όχι,",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_PUNC_1",
+      "text": "Ναι η Επιτροπή έλαβε υπόψη της το αίτημά σας.",
+      "suggestion": "Ναι,",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_SYNTAX_3",
+      "text": "Καλός ορίσατε στην ιστοσελίδα μας!",
+      "suggestion": "Καλώς",
+      "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
+    },
+    {
+      "rule": "GREEK_WHERE-",
+      "text": "Που πας;",
+      "suggestion": "Πού",
       "source": "languagetool-language-modules/el/src/main/resources/org/languagetool/rules/el/grammar.xml"
     }
   ]

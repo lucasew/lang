@@ -4,9 +4,111 @@
   "language": "ru",
   "cases": [
     {
-      "rule": "zadat_test",
-      "text": "задать тест",
-      "suggestion": "предложить тест",
+      "rule": "KAVITCHKI",
+      "text": "Газета “Правда”.",
+      "suggestion": "„",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_podnjal_tost",
+      "text": "Он поднял тост за встречу.",
+      "suggestion": "произнёс тост",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_samij_gigantskij",
+      "text": "самый гигантский",
+      "suggestion": "самый большой",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_segodnyashnij_den",
+      "text": "Ситуация на сегодняшний день.",
+      "suggestion": "сегодня",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Logical_uluchshenie_otmechennih_nedostatkov",
+      "text": "Сессия приняла решение, направленное на улучшение отмеченных недостатков.",
+      "suggestion": "устранение отмеченных недостатков",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Missing_punct_colon",
+      "text": "Сокрытие сложности во многом основано на более общем принципе согласно ему выполнение сложной задачи (которая не может быть выполнена сразу и целиком) разбивается на несколько подзадач.",
+      "suggestion": "принципе: согласно",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "NEUJTO",
+      "text": "Не уж то ты побрился.",
+      "suggestion": "Неужто",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "NI_CHTO_NE",
+      "text": "Ни что не идеально.",
+      "suggestion": "Ничто не",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Punct_skazano_sdelano",
+      "text": "cказано сделано",
+      "suggestion": "cказано – сделано",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Style_imeet_vid",
+      "text": "Результат вычисления целевой функции получается в виде скаляра.",
+      "suggestion": "имеет вид",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "TAK_JE_KAK",
+      "text": "Мы, так же, как и наши товарищи, любим заниматься спортом.",
+      "suggestion": "так же как",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_neskolko_pobistree",
+      "text": "несколько побыстрее",
+      "suggestion": "побыстрее",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Teper_tak_kak",
+      "text": "Теперь, так как.",
+      "suggestion": "Теперь так как",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Three_dot",
+      "text": "Продолжение следует...",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_etoj_svyazy",
+      "text": "в этой связи",
+      "suggestion": "в связи с этим",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "drug_s_drugom",
+      "text": "Они равноправны друг другу.",
+      "suggestion": "равноправны друг с другом",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "kak_ni_stranno",
+      "text": "как не странно",
+      "suggestion": "как ни странно",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "odin_za_odnim",
+      "text": "один за одним",
+      "suggestion": "один за другим",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
@@ -22,111 +124,213 @@
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "odin_za_odnim",
-      "text": "один за одним",
-      "suggestion": "один за другим",
+      "rule": "zadat_test",
+      "text": "задать тест",
+      "suggestion": "предложить тест",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Logical_segodnyashnij_den",
-      "text": "Ситуация на сегодняшний день.",
-      "suggestion": "сегодня",
+      "rule": "ABREV_DOT",
+      "text": "Стоимость работ составила 10 тыс рублей.",
+      "suggestion": "тыс.",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Tavtology_neskolko_pobistree",
-      "text": "несколько побыстрее",
-      "suggestion": "побыстрее",
+      "rule": "Comma_before_kak",
+      "text": "Извивалась, как верёвка.",
+      "suggestion": "как верёвка.",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Logical_samij_gigantskij",
-      "text": "самый гигантский",
-      "suggestion": "самый большой",
+      "rule": "DEFIS_COMMA",
+      "text": "Здорово живешь, соседка -, поздоровался Иван.",
+      "suggestion": ", -",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Logical_podnjal_tost",
-      "text": "Он поднял тост за встречу.",
-      "suggestion": "произнёс тост",
+      "rule": "Latin_letters",
+      "text": "Bне леса шумно.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Logical_uluchshenie_otmechennih_nedostatkov",
-      "text": "Сессия приняла решение, направленное на улучшение отмеченных недостатков.",
-      "suggestion": "устранение отмеченных недостатков",
+      "rule": "Latin_letters",
+      "text": "Kо мне приехали.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "V_etoj_svyazy",
-      "text": "в этой связи",
-      "suggestion": "в связи с этим",
+      "rule": "Latin_letters",
+      "text": "Буду cо своими шутками.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Missing_punct_colon",
-      "text": "Сокрытие сложности во многом основано на более общем принципе согласно ему выполнение сложной задачи (которая не может быть выполнена сразу и целиком) разбивается на несколько подзадач.",
-      "suggestion": "принципе: согласно",
+      "rule": "Latin_letters",
+      "text": "Книга прo Львов.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Teper_tak_kak",
-      "text": "Теперь, так как.",
-      "suggestion": "Теперь так как",
+      "rule": "Latin_single_letter",
+      "text": "B ee голосе появилась горькая нотка.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "NI_CHTO_NE",
-      "text": "Ни что не идеально.",
-      "suggestion": "Ничто не",
+      "rule": "Latin_single_letter",
+      "text": "B лесу тихо.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "NEUJTO",
-      "text": "Не уж то ты побрился.",
-      "suggestion": "Неужто",
+      "rule": "Latin_single_letter",
+      "text": "K тебе приехали.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Punct_skazano_sdelano",
-      "text": "cказано сделано",
-      "suggestion": "cказано – сделано",
+      "rule": "Latin_single_letter",
+      "text": "Буду c подарками.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "KAVITCHKI",
-      "text": "Газета “Правда”.",
-      "suggestion": "„",
+      "rule": "Latin_single_letter",
+      "text": "Книга o Львове.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Three_dot",
-      "text": "Продолжение следует...",
-      "suggestion": "…",
+      "rule": "NE_VB_NN_NN",
+      "text": "Мы не дождались решение комиссии.",
+      "suggestion": "не дождались решения комиссии",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "kak_ni_stranno",
-      "text": "как не странно",
-      "suggestion": "как ни странно",
+      "rule": "OPREDELENIA",
+      "text": "Они пошли к реке, по которой плавала лодка, которая была окрашена в белый цвет.",
+      "suggestion": "",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "TAK_JE_KAK",
-      "text": "Мы, так же, как и наши товарищи, любим заниматься спортом.",
-      "suggestion": "так же как",
+      "rule": "PARTICLE_JE_J",
+      "text": "Иван ж не приехал.",
+      "suggestion": "Иван же не",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "drug_s_drugom",
-      "text": "Они равноправны друг другу.",
-      "suggestion": "равноправны друг с другом",
+      "rule": "PREP_NA_VS_V",
+      "text": "Он пошёл в концерт.",
+      "suggestion": "на концерт",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     },
     {
-      "rule": "Style_imeet_vid",
-      "text": "Результат вычисления целевой функции получается в виде скаляра.",
-      "suggestion": "имеет вид",
+      "rule": "PREP_V_VS_NA",
+      "text": "Он идёт на кино.",
+      "suggestion": "в кино",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "PT_BI",
+      "text": "Спит ум, может быть получивший бы внезапный родник великих свойств.",
+      "suggestion": "получивший",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Slovosoch_interesnaja_kniga",
+      "text": "купил интересую книгу",
+      "suggestion": "купил интересную книгу",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "TYPO_BOLE",
+      "text": "боле высокие результаты",
+      "suggestion": "более высокие",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tavtology_v_xx_mesjatse",
+      "text": "в феврале месяце",
+      "suggestion": "в феврале",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "Tire_and_two",
+      "text": "А гений и злодейство две вещи несовместные.",
+      "suggestion": "гений и злодейство — две",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_TECHENII",
+      "text": "Там в течение реки много изгибов.",
+      "suggestion": "в течении реки",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_sortimente",
+      "text": "Товары в сортименте.",
+      "suggestion": "в ассортименте.",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "V_sortimente",
+      "text": "Товары в широком сортименте.",
+      "suggestion": "в широком ассортименте.",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "WRONG_INN",
+      "text": "ИНН 123456789025",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "WRONG_INN",
+      "text": "ИНН: 1234567890",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "YEAR_20001",
+      "text": "Моя поездка на море запланирована на май 20014 г.",
+      "suggestion": "май 2014",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "dlya_togo_chtoby_2",
+      "text": "Для того, чтобы желе застыло, нужно его около часа подержать в холодильнике.",
+      "suggestion": "Для того чтобы",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "dlya_togo_chtoby_2",
+      "text": "Для того, чтобы капуста оставалась хрустящей, не стоит слишком сильно перетирать её с солью.",
+      "suggestion": "Для того чтобы",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "grammar_nemnogo_blednovat",
+      "text": "Мальчик немного бледноват.",
+      "suggestion": "бледноват",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "grammar_poshel_k",
+      "text": "Я пошёл речке.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "grammar_s_dnem_rojdenja",
+      "text": "Поздравляю с днём рожденья!",
+      "suggestion": "с днём рождения",
+      "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
+    },
+    {
+      "rule": "takim_obrazom_chto",
+      "text": "Это сделано таким образом что и не найти.",
+      "suggestion": "таким образом, что",
       "source": "languagetool-language-modules/ru/src/main/resources/org/languagetool/rules/ru/grammar.xml"
     }
   ]

@@ -4,16 +4,58 @@
   "language": "pt",
   "cases": [
     {
-      "rule": "EM_CASE_DE",
-      "text": "Em case de incêndio...",
-      "suggestion": "caso",
+      "rule": "ABENCOE_BR",
+      "text": "Deus te abençõe.",
+      "suggestion": "abençoe",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "ADEQUA_BR",
+      "text": "Você não se ádequa a vaga.",
+      "suggestion": "não é adequado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "AFIM_DE",
+      "text": "Isto é feito afim de proteger as testemunhas.",
+      "suggestion": "semelhante a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "AMOR_PELA_LÍNGUA",
+      "text": "Tenho amor pela língua materna.",
+      "suggestion": "amor à língua",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
-      "rule": "DE_QUALQUER_DAS_MANEIRAS_DE_QUALQUER_MANEIRA",
-      "text": "De qualquer das maneiras sugiro isso.",
-      "suggestion": "maneira",
+      "rule": "ANTI_VÍRUS",
+      "text": "Actualiza sempre o anti vírus.",
+      "suggestion": "antivírus",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AONDE_BR",
+      "text": "Ele me disse aonde você está.",
+      "suggestion": "onde você",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "AO_MEIO_DIA",
+      "text": "O encontro é amanhã ao meio dia.",
+      "suggestion": "ao meio-dia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AO_MESMO_TEMPO_QUE_ENQUANTO",
+      "text": "Ao mesmo tempo que tenta entender as situações antes de criticar.",
+      "suggestion": "Enquanto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "AO_MEU_VER_BR",
+      "text": "Ao meu ver, o evento foi um sucesso.",
+      "suggestion": "A meu ver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
       "rule": "AO_PAR_COM",
@@ -22,9 +64,51 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "AO_SEREM_USADO",
+      "text": "Há produtos que ao serem usado fazem-nos sentir bem.",
+      "suggestion": "ao serem usados",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
       "rule": "AS_OSSADAS_DE",
       "text": "A polícia encontrou as ossadas de Pedro.",
       "suggestion": "a ossada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AS_VESES_BR",
+      "text": "Eu as veses não tenho calma.",
+      "suggestion": "às vezes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "AS_VEZES_BR",
+      "text": "Eu as vezes fico triste.",
+      "suggestion": "às vezes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "ATOA_BR",
+      "text": "Fizemos isso tudo atoa?",
+      "suggestion": "à toa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "ATOA_BR",
+      "text": "Você está atoa hoje?",
+      "suggestion": "à toa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "ATREVIMENTO_A",
+      "text": "É muito atrevimento a falar assim.",
+      "suggestion": "atrevimento para",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ATÉ_MANHÃ",
+      "text": "Boa noite e até manhã cedo.",
+      "suggestion": "até amanhã",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
@@ -38,6 +122,432 @@
       "text": "Eles estão a dizer verdade.",
       "suggestion": "a dizer a verdade",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_POUCO_E_POUCO",
+      "text": "Vamos a pouco e pouco construindo o futuro.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "A_QUANDO",
+      "text": "Vamos tratar disso a quando da ida do Rui.",
+      "suggestion": "aquando",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_TRÁS",
+      "text": "Vê a trás da porta.",
+      "suggestion": "atrás",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_UM_CONSERTO",
+      "text": "Vou a um conserto.",
+      "suggestion": "a um concerto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "BICHA_DE_ESPERA",
+      "text": "Estou na bicha de espera.",
+      "suggestion": "fila",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_CONTROLO_CONTROLE_SOB",
+      "text": "Está tudo sob controle.",
+      "suggestion": "sob controlo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "COMCERTEZA_BR",
+      "text": "Eu irei na festa comcerteza.",
+      "suggestion": "com certeza",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "CONCERTEZA_BR",
+      "text": "Eu irei concerteza na sua festa.",
+      "suggestion": "com certeza",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_APROXIMA_A_PRÓXIMA",
+      "text": "O jogo fica para aproxima corações.",
+      "suggestion": "a próxima",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_NADA_DEMAIS",
+      "text": "Não foi nada demais.",
+      "suggestion": "nada de mais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTANTO_CONTANDO",
+      "text": "Isto já contanto com o jantar.",
+      "suggestion": "contando",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COPYRIGHT",
+      "text": "Copyright (C) 2010 O Estado da Gramática",
+      "suggestion": "©",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COPYRIGHT",
+      "text": "Copyright (C) Joanna Bator, 2012",
+      "suggestion": "©",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEREPENTE_BR",
+      "text": "Você derepente apareceu.",
+      "suggestion": "de repente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "DERREPENTE_BR",
+      "text": "E derrepente você apareceu.",
+      "suggestion": "de repente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "DESDE_QUE_HAJAM",
+      "text": "Isso é possível desde que hajam condições.",
+      "suggestion": "desde que haja",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEUS_DARA",
+      "text": "Tudo feito a Deus dará.",
+      "suggestion": "Deus-dará",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_QUALQUER_DAS_MANEIRAS_DE_QUALQUER_MANEIRA",
+      "text": "De qualquer das maneiras sugiro isso.",
+      "suggestion": "maneira",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ELLIPSIS",
+      "text": "Isto é importante... tanto quanto sei.",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ELLIPSIS",
+      "text": "Tenha um bom dia, Srta. ...ele foi a caminho de se rebaixar numa…",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_CASE_DE",
+      "text": "Em case de incêndio...",
+      "suggestion": "caso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_SIM_em_si",
+      "text": "Liberte o escritor que há em sim.",
+      "suggestion": "si",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ENQUANTO_POSSA_SER",
+      "text": "Vou estudar enquanto possa ser possível.",
+      "suggestion": "puder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ENSINOS_SUPERIORES",
+      "text": "Temos instituições de ensinos superiores muito prestigiadas.",
+      "suggestion": "ensino superior",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ENSINO_A_DISTANCIA",
+      "text": "Professores de EAD têm várias dificuldades.",
+      "suggestion": "EaD",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ENXARCA_ENCHARCA",
+      "text": "Enxarca a vida.",
+      "suggestion": "Encharca",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_LOWER_QUOTES",
+      "text": "A palavra „desenvovedor” vem do inglês e traduz-se em programador.",
+      "suggestion": "“",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "FOI_ATRAVÉS_DAS_QUAIS",
+      "text": "Foi através das quais que ele estudou.",
+      "suggestion": "pelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HAVIAM_MUITAS_BR",
+      "text": "Haviam muitas pessoas no local.",
+      "suggestion": "Havia muitas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_VIAGEM_2",
+      "text": "Provavelmente viagem à Argentina",
+      "suggestion": "viajem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HUNSPELL_SUGESTAO",
+      "text": "E estavam acampanhando em Brasília",
+      "suggestion": "acompanhando",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HÁS_VEZES",
+      "text": "É que hás vezes temos de decidir.",
+      "suggestion": "às",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "INVARIABLE_NOUNS_POR_MOMENTO_POR_MOMENTOS",
+      "text": "Por momento a Ana pareceu-me bem.",
+      "suggestion": "Por momentos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "INVARIABLE_NOUNS_POR_MOMENTO_POR_MOMENTOS",
+      "text": "Por momento vi a nossa vida a andar para trás.",
+      "suggestion": "Por momentos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "IRAO_IRA",
+      "text": "A situação também se complica no Irão, onde a disputa permanece.",
+      "suggestion": "Irã",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "KLEENEX",
+      "text": "kleenex",
+      "suggestion": "lenço",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MAS_E_SIM",
+      "text": "Muitos desconfiavam, mas e sim possível.",
+      "suggestion": "mas é sim",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MENAS_BR",
+      "text": "Menas chances de vencer.",
+      "suggestion": "Menos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "MENOR_IDADE_BR",
+      "text": "A polícia não pode prendê-lo porque ele é de menor.",
+      "suggestion": "menor de idade.",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "MUITO_PELO_É",
+      "text": "Para quem tem animais com muito pelo é bom.",
+      "suggestion": "muito pêlo é",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
+    },
+    {
+      "rule": "MUITO_PELO_É",
+      "text": "Para quem tem animais com muito pelo é bom.",
+      "suggestion": "muito pêlo é",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
+    },
+    {
+      "rule": "MULHER_CARTEIRO",
+      "text": "A Ana é mulher carteiro.",
+      "suggestion": "carteira",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MULHER_MÚSICO",
+      "text": "A Ana é uma mulher músico.",
+      "suggestion": "música",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "NADA_HAVER_BR",
+      "text": "Essa história é nada haver.",
+      "suggestion": "nada a ver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "NESTA_CASO",
+      "text": "Quem está errado nesta caso é o Miguel.",
+      "suggestion": "neste caso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "NOTAS_FICAIS",
+      "text": "E as notas ficais de 2020?",
+      "suggestion": "notas fiscais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "NO_FAZ_FALTA",
+      "text": "Isso no faz falta às pessoas.",
+      "suggestion": "não faz falta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "OK_EM_MINUSCULA",
+      "text": "Está tudo ok com ela?",
+      "suggestion": "OK",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "O_AGUARDENTE_BR",
+      "text": "Ele bebeu todo o aguardente que havia na garrafa.",
+      "suggestion": "toda a aguardente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "O_QUANTO_ANTES_BR",
+      "text": "Voltarei ao escritório o quanto antes.",
+      "suggestion": "quanto antes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "PALAVRAS_DE_ORDENS",
+      "text": "Manifestantes gritam palavras de ordens.",
+      "suggestion": "palavras de ordem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_MUSICO_499_bis",
+      "text": "Sou musico.",
+      "suggestion": "músico",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PER_CAPTA",
+      "text": "A renda per capta de Luxemburgo.",
+      "suggestion": "per capita",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHILLIPS",
+      "text": "Comprei uma geladeira phillips.",
+      "suggestion": "Phillips",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PIOR_EDUCADO",
+      "text": "O Jorge é pior educado do que parecia.",
+      "suggestion": "mais mal-educado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PORTO_RICO_PUERTO",
+      "text": "Eles foram a Puerto Rico de férias.",
+      "suggestion": "Porto Rico",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "POR_DINHEIRO_E_PUDER",
+      "text": "Eles fazem tudo por dinheiro e puder.",
+      "suggestion": "por dinheiro e poder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QTAR_CATAR",
+      "text": "Fui ao qtar ver a copa",
+      "suggestion": "Catar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUANDO_MAIS_NÃO_FOSSE",
+      "text": "A Ana devia ir, quando mais não fosse.",
+      "suggestion": "quanto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUANDO_PODER",
+      "text": "Irei lanchar quando poder.",
+      "suggestion": "quando puder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUANDO_POSSA_SER",
+      "text": "Avise quando possa ser a melhor altura.",
+      "suggestion": "puder",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUANTO_MUITO",
+      "text": "Não posso ir, quanto muito vou noutro dia.",
+      "suggestion": "quando muito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUERO_MAS_BR",
+      "text": "Eu quero mas de você.",
+      "suggestion": "quero mais de você",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "QUER_SE_BR",
+      "text": "Ela quer se aparecer para todos.",
+      "suggestion": "quer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "QUITE_P_BR",
+      "text": "O contribuente está quites com a receita federal.",
+      "suggestion": "está quite",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "REDUNDANCY_1_AO",
+      "text": "ao seu critério pessoal.",
+      "suggestion": "ao seu critério",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "RIU-ME",
+      "text": "Eu riu-me das tuas piadas.",
+      "suggestion": "rio-me",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TAL_VEZ",
+      "text": "Amanhã tal vez seja possível.",
+      "suggestion": "talvez",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "UM_MIL_BR",
+      "text": "Ganho apenas um mil reais por mês.",
+      "suggestion": "mil",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "X_WINDOW",
+      "text": "Foi o MIT que publicou a primeira versão do X Windows em junho de 1984.",
+      "suggestion": "X Window",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "À_BOCADO",
+      "text": "Cheguei à bocado do Algarve.",
+      "suggestion": "há bocado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
       "rule": "À_MAIS_EM",
@@ -64,478 +574,2860 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
-      "rule": "ATREVIMENTO_A",
-      "text": "É muito atrevimento a falar assim.",
-      "suggestion": "atrevimento para",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "AMOR_PELA_LÍNGUA",
-      "text": "Tenho amor pela língua materna.",
-      "suggestion": "amor à língua",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "AO_MEIO_DIA",
-      "text": "O encontro é amanhã ao meio dia.",
-      "suggestion": "ao meio-dia",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "AO_SEREM_USADO",
-      "text": "Há produtos que ao serem usado fazem-nos sentir bem.",
-      "suggestion": "ao serem usados",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "ANTI_VÍRUS",
-      "text": "Actualiza sempre o anti vírus.",
-      "suggestion": "antivírus",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "ATÉ_MANHÃ",
-      "text": "Boa noite e até manhã cedo.",
-      "suggestion": "até amanhã",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "DESDE_QUE_HAJAM",
-      "text": "Isso é possível desde que hajam condições.",
-      "suggestion": "desde que haja",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "FOI_ATRAVÉS_DAS_QUAIS",
-      "text": "Foi através das quais que ele estudou.",
-      "suggestion": "pelas",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "MAS_E_SIM",
-      "text": "Muitos desconfiavam, mas e sim possível.",
-      "suggestion": "mas é sim",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "MULHER_CARTEIRO",
-      "text": "A Ana é mulher carteiro.",
-      "suggestion": "carteira",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "MULHER_MÚSICO",
-      "text": "A Ana é uma mulher músico.",
-      "suggestion": "música",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "NESTA_CASO",
-      "text": "Quem está errado nesta caso é o Miguel.",
-      "suggestion": "neste caso",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "NO_FAZ_FALTA",
-      "text": "Isso no faz falta às pessoas.",
-      "suggestion": "não faz falta",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "PALAVRAS_DE_ORDENS",
-      "text": "Manifestantes gritam palavras de ordens.",
-      "suggestion": "palavras de ordem",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "PIOR_EDUCADO",
-      "text": "O Jorge é pior educado do que parecia.",
-      "suggestion": "mais mal-educado",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "QUANDO_MAIS_NÃO_FOSSE",
-      "text": "A Ana devia ir, quando mais não fosse.",
-      "suggestion": "quanto",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "QUANDO_POSSA_SER",
-      "text": "Avise quando possa ser a melhor altura.",
-      "suggestion": "puder",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "NOTAS_FICAIS",
-      "text": "E as notas ficais de 2020?",
-      "suggestion": "notas fiscais",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "PER_CAPTA",
-      "text": "A renda per capta de Luxemburgo.",
-      "suggestion": "per capita",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "PARONYM_MUSICO_499_bis",
-      "text": "Sou musico.",
-      "suggestion": "músico",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "ENXARCA_ENCHARCA",
-      "text": "Enxarca a vida.",
-      "suggestion": "Encharca",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "HÁS_VEZES",
-      "text": "É que hás vezes temos de decidir.",
-      "suggestion": "às",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "A_QUANDO",
-      "text": "Vamos tratar disso a quando da ida do Rui.",
-      "suggestion": "aquando",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "CONFUSÃO_APROXIMA_A_PRÓXIMA",
-      "text": "O jogo fica para aproxima corações.",
-      "suggestion": "a próxima",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "A_UM_CONSERTO",
-      "text": "Vou a um conserto.",
-      "suggestion": "a um concerto",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "CONTANTO_CONTANDO",
-      "text": "Isto já contanto com o jantar.",
-      "suggestion": "contando",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "CONFUSÃO_NADA_DEMAIS",
-      "text": "Não foi nada demais.",
-      "suggestion": "nada de mais",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "QUANDO_PODER",
-      "text": "Irei lanchar quando poder.",
-      "suggestion": "quando puder",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "POR_DINHEIRO_E_PUDER",
-      "text": "Eles fazem tudo por dinheiro e puder.",
-      "suggestion": "por dinheiro e poder",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "QUANTO_MUITO",
-      "text": "Não posso ir, quanto muito vou noutro dia.",
-      "suggestion": "quando muito",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "RIU-ME",
-      "text": "Eu riu-me das tuas piadas.",
-      "suggestion": "rio-me",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "EM_SIM_em_si",
-      "text": "Liberte o escritor que há em sim.",
-      "suggestion": "si",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "TAL_VEZ",
-      "text": "Amanhã tal vez seja possível.",
-      "suggestion": "talvez",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "KLEENEX",
-      "text": "kleenex",
-      "suggestion": "lenço",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "ERRO_TRADUÇÃO_LOWER_QUOTES",
-      "text": "A palavra „desenvovedor” vem do inglês e traduz-se em programador.",
-      "suggestion": "“",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "QTAR_CATAR",
-      "text": "Fui ao qtar ver a copa",
-      "suggestion": "Catar",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "PORTO_RICO_PUERTO",
-      "text": "Eles foram a Puerto Rico de férias.",
-      "suggestion": "Porto Rico",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "HUNSPELL_SUGESTAO",
-      "text": "E estavam acampanhando em Brasília",
-      "suggestion": "acompanhando",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "DEUS_DARA",
-      "text": "Tudo feito a Deus dará.",
-      "suggestion": "Deus-dará",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "COPYRIGHT",
-      "text": "Copyright (C) Joanna Bator, 2012",
-      "suggestion": "©",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "COPYRIGHT",
-      "text": "Copyright (C) 2010 O Estado da Gramática",
-      "suggestion": "©",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "ELLIPSIS",
-      "text": "Isto é importante... tanto quanto sei.",
-      "suggestion": "…",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "ELLIPSIS",
-      "text": "Tenha um bom dia, Srta. ...ele foi a caminho de se rebaixar numa…",
-      "suggestion": "…",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
-      "rule": "REDUNDANCY_1_AO",
-      "text": "ao seu critério pessoal.",
-      "suggestion": "ao seu critério",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
-    },
-    {
-      "rule": "ENQUANTO_POSSA_SER",
-      "text": "Vou estudar enquanto possa ser possível.",
-      "suggestion": "puder",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
-    },
-    {
       "rule": "É_SUPOSTO_QUE",
       "text": "Assim, é suposto que aconteça.",
       "suggestion": "supõe-se que",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
-      "rule": "À_BOCADO",
-      "text": "Cheguei à bocado do Algarve.",
-      "suggestion": "há bocado",
+      "rule": "ABORDO_DA",
+      "text": "Vai uma pessoa importante abordo da fragata.",
+      "suggestion": "a bordo da",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ABORDO_DA",
+      "text": "Vai uma pessoa importante abordo do avião.",
+      "suggestion": "a bordo do",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ACENTUAÇÃO_VOGAL_ÊNCLISE",
+      "text": "Ele vai escreve-lo amanhã.",
+      "suggestion": "escrevê-lo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ACENTUAÇÃO_VOGAL_ÊNCLISE",
+      "text": "Não quero distrai-los.",
+      "suggestion": "distraí-los",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ACENTUAÇÃO_VOGAL_ÊNCLISE",
+      "text": "O ímpeto de puxa-las.",
+      "suggestion": "puxá-las",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ACENTUAÇÃO_VOGAL_ÊNCLISE",
+      "text": "Quero abraça-la.",
+      "suggestion": "abraçá-la",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ADESÃO",
+      "text": "A adesão do pneu é boa.",
+      "suggestion": "aderência",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ADJETIVO_SEM_GRAU",
+      "text": "Isto é o mais principal a ter em conta.",
+      "suggestion": "o principal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ALÉM_AQUÉM_RECÉM",
+      "text": "O conflito ocorre além mar.",
+      "suggestion": "além-mar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ANALISE",
+      "text": "Quero uma analise do problema.",
+      "suggestion": "análise",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ANEXO_P_BR",
+      "text": "Segue anexo os documentos solicitados.",
+      "suggestion": "anexos os",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "ANTEMAO",
+      "text": "Não é possível dizer de ante mão.",
+      "suggestion": "antemão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ANY20016_2016",
+      "text": "É o ano 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ANY20016_2016",
+      "text": "És do ano 20014.",
+      "suggestion": "2014",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AO45_HAVER_DE",
+      "text": "Hei de ir ao Congo.",
+      "suggestion": "Hei-de",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AO45_HAVER_DE",
+      "text": "Hás de comprar uma casa.",
+      "suggestion": "Hás-de",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AO90_POLO_CAPITALIZATION",
+      "text": "O polo Sul é no Antártico.",
+      "suggestion": "Polo Sul",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AO90_POLO_CAPITALIZATION",
+      "text": "O polo norte é no Ártico.",
+      "suggestion": "Polo Norte",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "APENAS_SOMENTE",
+      "text": "A Ana apenas escreveu a carta",
+      "suggestion": "somente",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
-      "rule": "AFIM_DE",
-      "text": "Isto é feito afim de proteger as testemunhas.",
-      "suggestion": "semelhante a",
+      "rule": "APENAS_SOMENTE",
+      "text": "Apenas o Rui sabe a resposta.",
+      "suggestion": "Somente",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
-      "rule": "A_POUCO_E_POUCO",
-      "text": "Vamos a pouco e pouco construindo o futuro.",
-      "suggestion": "",
+      "rule": "ASSUNTO_ASSUNTOS_A_ESCLARECER",
+      "text": "Temos vários assuntos a esclarecer.",
+      "suggestion": "assuntos para",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "AS_COISAS_NÃO_VÃO_VERBO_INF",
+      "text": "Em princípio as coisas não vão melhorar.",
+      "suggestion": "nada vai",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
-      "rule": "BICHA_DE_ESPERA",
-      "text": "Estou na bicha de espera.",
-      "suggestion": "fila",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+      "rule": "AS_PARAGRAFOS_BR",
+      "text": "Este cartório serve as 2ª e 3ª varas de família.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
-      "rule": "ENSINOS_SUPERIORES",
-      "text": "Temos instituições de ensinos superiores muito prestigiadas.",
-      "suggestion": "ensino superior",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+      "rule": "AS_PONTUAL_BR",
+      "text": "As duas da tarde.",
+      "suggestion": "Às",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
-      "rule": "AO_MESMO_TEMPO_QUE_ENQUANTO",
-      "text": "Ao mesmo tempo que tenta entender as situações antes de criticar.",
-      "suggestion": "Enquanto",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+      "rule": "AULAS-ENSINO_A_DISTÂNCIA",
+      "text": "O ensino a distância é muito útil.",
+      "suggestion": "à",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
-      "rule": "MUITO_PELO_É",
-      "text": "Para quem tem animais com muito pelo é bom.",
-      "suggestion": "muito pêlo é",
+      "rule": "A_CERCA_ACERCA",
+      "text": "Nunca fui avisado a cerca desses alarmes.",
+      "suggestion": "acerca",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_COMO_É_AS_OS",
+      "text": "A como é os tomates?",
+      "suggestion": "A como são os",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_GENTE-SINGULAR_PLURAL-VERB",
+      "text": "A gente vamos à praia.",
+      "suggestion": "A gente vai",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_NIVEL",
+      "text": "A nível de português está muito mau.",
+      "suggestion": "Ao nível",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
     },
     {
-      "rule": "ATOA_BR",
-      "text": "Você está atoa hoje?",
-      "suggestion": "à toa",
+      "rule": "A_NIVEL",
+      "text": "A nível de português está muito mau.",
+      "suggestion": "Ao nível",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
     },
     {
-      "rule": "ATOA_BR",
-      "text": "Fizemos isso tudo atoa?",
-      "suggestion": "à toa",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "QUERO_MAS_BR",
-      "text": "Eu quero mas de você.",
-      "suggestion": "quero mais de você",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "ABENCOE_BR",
-      "text": "Deus te abençõe.",
-      "suggestion": "abençoe",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "COMCERTEZA_BR",
-      "text": "Eu irei na festa comcerteza.",
-      "suggestion": "com certeza",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "CONCERTEZA_BR",
-      "text": "Eu irei concerteza na sua festa.",
-      "suggestion": "com certeza",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "MENAS_BR",
-      "text": "Menas chances de vencer.",
-      "suggestion": "Menos",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "AS_VEZES_BR",
-      "text": "Eu as vezes fico triste.",
-      "suggestion": "às vezes",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "AS_VESES_BR",
-      "text": "Eu as veses não tenho calma.",
-      "suggestion": "às vezes",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "NADA_HAVER_BR",
-      "text": "Essa história é nada haver.",
-      "suggestion": "nada a ver",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "DERREPENTE_BR",
-      "text": "E derrepente você apareceu.",
-      "suggestion": "de repente",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "DEREPENTE_BR",
-      "text": "Você derepente apareceu.",
-      "suggestion": "de repente",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "QUER_SE_BR",
-      "text": "Ela quer se aparecer para todos.",
-      "suggestion": "quer",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "MENOR_IDADE_BR",
-      "text": "A polícia não pode prendê-lo porque ele é de menor.",
-      "suggestion": "menor de idade.",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "UM_MIL_BR",
-      "text": "Ganho apenas um mil reais por mês.",
-      "suggestion": "mil",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "O_AGUARDENTE_BR",
-      "text": "Ele bebeu todo o aguardente que havia na garrafa.",
-      "suggestion": "toda a aguardente",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "ADEQUA_BR",
-      "text": "Você não se ádequa a vaga.",
-      "suggestion": "não é adequado",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "AONDE_BR",
-      "text": "Ele me disse aonde você está.",
-      "suggestion": "onde você",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "QUITE_P_BR",
-      "text": "O contribuente está quites com a receita federal.",
-      "suggestion": "está quite",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "AO_MEU_VER_BR",
-      "text": "Ao meu ver, o evento foi um sucesso.",
-      "suggestion": "A meu ver",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "HAVIAM_MUITAS_BR",
-      "text": "Haviam muitas pessoas no local.",
-      "suggestion": "Havia muitas",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "O_QUANTO_ANTES_BR",
-      "text": "Voltarei ao escritório o quanto antes.",
-      "suggestion": "quanto antes",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
-    },
-    {
-      "rule": "MUITO_PELO_É",
-      "text": "Para quem tem animais com muito pelo é bom.",
-      "suggestion": "muito pêlo é",
+      "rule": "A_NIVEL",
+      "text": "A nível de português está muito mau.",
+      "suggestion": "Ao nível",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
     },
     {
-      "rule": "INVARIABLE_NOUNS_POR_MOMENTO_POR_MOMENTOS",
-      "text": "Por momento vi a nossa vida a andar para trás.",
-      "suggestion": "Por momentos",
+      "rule": "A_QUE_SERVE_ISTO_ISSO",
+      "text": "A que serve isto?",
+      "suggestion": "Para que serve isto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "A_RUA_BR",
+      "text": "José, residente à rua Estados Unidos.",
+      "suggestion": "na rua",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "A_TERRA_FIRME_BR",
+      "text": "Já chegaram a terra.",
+      "suggestion": "à",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "BEM_DITO_DEUS-SATANÁS",
+      "text": "És a vida, bem dito Deus.",
+      "suggestion": "bendito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "BOTA_FORA",
+      "text": "Organizamos um bota fora.",
+      "suggestion": "bota-fora",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_ATERRISAR",
+      "text": "O avião vai aterrizar dentro de momentos.",
+      "suggestion": "aterrar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
-      "rule": "INVARIABLE_NOUNS_POR_MOMENTO_POR_MOMENTOS",
-      "text": "Por momento a Ana pareceu-me bem.",
-      "suggestion": "Por momentos",
+      "rule": "BRASILEIRISMO_CONTROLO_CONTROLE",
+      "text": "Perdeu o controle da situação.",
+      "suggestion": "controlo",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {
-      "rule": "BRASILEIRISMO_CONTROLO_CONTROLE_SOB",
-      "text": "Está tudo sob controle.",
-      "suggestion": "sob controlo",
+      "rule": "BRASILEIRISMO_DECOLAR",
+      "text": "O avião vai decolar dentro de momentos.",
+      "suggestion": "descolar",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_EXPERIMENTO",
+      "text": "Vai começar o experimento.",
+      "suggestion": "experiência",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_EXPERIMENTO",
+      "text": "Vão começar os experimentos.",
+      "suggestion": "experiências",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_PRIVADA",
+      "text": "privada sanitária.",
+      "suggestion": "retrete",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_PRIVADA",
+      "text": "vaso sanitário.",
+      "suggestion": "retrete",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_TIMES",
+      "text": "Nossos times vão jogar hoje.",
+      "suggestion": "equipas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "BRASILEIRISMO_XINGAR",
+      "text": "Ela o xingou por não cortar o gramado.",
+      "suggestion": "gozou",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CAIXA_COM_FÓSFOROS",
+      "text": "Vou comprar uma caixa com fósforos.",
+      "suggestion": "de",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CARRO_AUTOMOVEL_VEICULO",
+      "text": "A rua tem imensos carros.",
+      "suggestion": "automóveis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CEREJAL_DE_CEREJEIRAS",
+      "text": "Que grande cerejal de cerejeiras.",
+      "suggestion": "cerejal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CERTO_INDICADO_PARA",
+      "text": "O Rui é o professor mais certo para dar as aulas.",
+      "suggestion": "indicado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CHEGAMOS_EM_BR",
+      "text": "Nós chegamos em São Paulo.",
+      "suggestion": "chegamos a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "CHEGARAM_EM_BR",
+      "text": "Os atletas chegaram em Curitiba na noite passada.",
+      "suggestion": "chegaram a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "CIENTÍFICO_CONTRÁRIO_OPOSTO",
+      "text": "A Ana percebeu exatamente o contrário.",
+      "suggestion": "oposto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CLITIC_AS_SUBJECT_ME_SER",
+      "text": "Me sou responsável por este projeto.",
+      "suggestion": "Eu",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CLITIC_AS_SUBJECT_TE_SER",
+      "text": "Te és muito inteligente.",
+      "suggestion": "Tu",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "COLETE-S_À_PROVA_DE_BALA",
+      "text": "Usa o colete à prova de bala.",
+      "suggestion": "balas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De forma alguma amá-la-ei enquanto usar aquele chapéu.",
+      "suggestion": "a amarei",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De forma alguma diga-me isso.",
+      "suggestion": "me diga",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De forma alguma puseram-nos em primeiro lugar.",
+      "suggestion": "os puseram",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De jeito algum bebemo-lo.",
+      "suggestion": "o bebemos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De jeito algum dir-lhe-ei nada.",
+      "suggestion": "lhe direi",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De jeito nenhum chamar-te-ia a essa hora!",
+      "suggestion": "te chamaria",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De jeito nenhum qui-lo.",
+      "suggestion": "o quis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De maneira alguma contar-lhe-ei nada.",
+      "suggestion": "lhe contarei",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De maneira nenhuma bebi-o.",
+      "suggestion": "o bebi",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De maneira nenhuma entendê-los-ia melhor se os tentasse conhecer.",
+      "suggestion": "os entenderia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De maneira nenhuma far-nos-iam um enorme favor...",
+      "suggestion": "nos fariam",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De maneira nenhuma trá-las-emos no sábado.",
+      "suggestion": "as traremos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De modo algum dão-no a mim.",
+      "suggestion": "o dão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De modo algum fá-lo-íamos se pudéssemos...",
+      "suggestion": "o faríamos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO",
+      "text": "De modo algum trar-me-ão muita alegria.",
+      "suggestion": "me trarão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "COMO_LHES_VERB_A_VOCÊS",
+      "text": "Façam como lhes disse a vocês.",
+      "suggestion": "como lhes disse",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "COMO_SER_O_CASO_DO",
+      "text": "Temos novidades matemáticas como é o caso da nossa equação.",
+      "suggestion": "como a nossa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CONFUSAO_MAIS_MAS_VIRGULA",
+      "text": "Os resultados mostraram progresso, mais não o suficiente.",
+      "suggestion": "mas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_ASSERTO_ACERTO_DE_CONTAS",
+      "text": "Vamos fazer um asserto de contas.",
+      "suggestion": "acerto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_A_FORA",
+      "text": "Pegou na mochila e foi pela estrada a fora.",
+      "suggestion": "afora",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_A_PREÇO_APREÇO",
+      "text": "Tenho muito a preço pelo DVD.",
+      "suggestion": "apreço",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_A_PREÇO_APREÇO",
+      "text": "Tenho muito a preço por ele.",
+      "suggestion": "apreço",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_DINHEIRO_VALOR",
+      "text": "A diferença no dinheiro é mínima.",
+      "suggestion": "valor",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CONFUSÃO_DINHEIRO_VALOR",
+      "text": "Qual é a diferença no dinheiro?",
+      "suggestion": "valor",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "CONFUSÃO_FAZES_FASES",
+      "text": "Todas as fazes da vida têm que ser desfrutadas.",
+      "suggestion": "fases",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_MA_NA",
+      "text": "Isto é encontrado na topologia, ma geometria, e noutras.",
+      "suggestion": "na",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_REALIDADE_REALISMO",
+      "text": "A equação dá mais realidade aos modelos.",
+      "suggestion": "realismo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_REALIDADE_REALISMO",
+      "text": "A equação para maior realidade é esta.",
+      "suggestion": "realismo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_REALIDADE_REALISMO",
+      "text": "A equação para mais realidade é esta.",
+      "suggestion": "realismo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_TERA_TERÁ",
+      "text": "Ele tera problemas com isso.",
+      "suggestion": "terá",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_VARIAS_VÁRIAS",
+      "text": "Vi varias queixas do jornal.",
+      "suggestion": "várias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_VEZ_VÊS",
+      "text": "Assim vez o Rui?",
+      "suggestion": "vês",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_VEZ_VÊS",
+      "text": "Descreve o que vez.",
+      "suggestion": "vês",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_VEZ_VÊS",
+      "text": "Mas vez que isso é errado?",
+      "suggestion": "vês",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_VEZ_VÊS",
+      "text": "Nunca vez o Rui?",
+      "suggestion": "vês",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONFUSÃO_VEZ_VÊS",
+      "text": "Pai, não vez que ele está errado?",
+      "suggestion": "vês",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ADIANTE",
+      "text": "a diante.",
+      "suggestion": "adiante",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ADIANTE",
+      "text": "a o.",
+      "suggestion": "ao",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ADIANTE",
+      "text": "a os.",
+      "suggestion": "aos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "aquela outra.",
+      "suggestion": "aqueloutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "aquelas outras.",
+      "suggestion": "aqueloutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "aquele outro.",
+      "suggestion": "aqueloutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "aqueles outros.",
+      "suggestion": "aqueloutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "daquela outra.",
+      "suggestion": "daqueloutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "daquelas outras.",
+      "suggestion": "daqueloutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "daquele outro.",
+      "suggestion": "daqueloutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "daqueles outros.",
+      "suggestion": "daqueloutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "àquela outra.",
+      "suggestion": "àqueloutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "àquelas outras.",
+      "suggestion": "àqueloutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "àquele outro.",
+      "suggestion": "àqueloutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_AQUELOUTRA",
+      "text": "àqueles outros.",
+      "suggestion": "àqueloutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de a.",
+      "suggestion": "da",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de as.",
+      "suggestion": "das",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de o.",
+      "suggestion": "do",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de os.",
+      "suggestion": "dos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de outra.",
+      "suggestion": "doutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de outras.",
+      "suggestion": "doutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de outrem.",
+      "suggestion": "doutrem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de outro.",
+      "suggestion": "doutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DA",
+      "text": "de outros.",
+      "suggestion": "doutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de acolá.",
+      "suggestion": "dacolá",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aquela.",
+      "suggestion": "daquela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aquelas.",
+      "suggestion": "daquelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aquele.",
+      "suggestion": "daquele",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aqueles.",
+      "suggestion": "daqueles",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aqui.",
+      "suggestion": "daqui",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aquilo.",
+      "suggestion": "daquilo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de aí.",
+      "suggestion": "daí",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de entre.",
+      "suggestion": "dentre",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de essa.",
+      "suggestion": "dessa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de essas.",
+      "suggestion": "dessas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de esse.",
+      "suggestion": "desse",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de esses.",
+      "suggestion": "desses",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de esta.",
+      "suggestion": "desta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de estas.",
+      "suggestion": "destas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de este.",
+      "suggestion": "deste",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de estes.",
+      "suggestion": "destes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de isso.",
+      "suggestion": "disso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DACOLÁ",
+      "text": "de isto.",
+      "suggestion": "disto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DALGUM",
+      "text": "de algum.",
+      "suggestion": "dalgum",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DALGUM",
+      "text": "de alguma.",
+      "suggestion": "dalguma",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DALGUM",
+      "text": "de algumas.",
+      "suggestion": "dalgumas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DALGUM",
+      "text": "de alguns.",
+      "suggestion": "dalguns",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DELA",
+      "text": "de ela.",
+      "suggestion": "dela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DELA",
+      "text": "de elas.",
+      "suggestion": "delas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DELA",
+      "text": "de ele.",
+      "suggestion": "dele",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DELA",
+      "text": "de eles.",
+      "suggestion": "deles",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESSOUTRA",
+      "text": "dessa outra.",
+      "suggestion": "dessoutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESSOUTRA",
+      "text": "dessas outras.",
+      "suggestion": "dessoutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESSOUTRA",
+      "text": "desse outro.",
+      "suggestion": "dessoutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESSOUTRA",
+      "text": "desses outros.",
+      "suggestion": "dessoutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESTOUTRA",
+      "text": "desta outra.",
+      "suggestion": "destoutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESTOUTRA",
+      "text": "destas outras.",
+      "suggestion": "destoutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESTOUTRA",
+      "text": "deste outro.",
+      "suggestion": "destoutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_DESTOUTRA",
+      "text": "destes outros.",
+      "suggestion": "destoutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESSOUTRA",
+      "text": "essa outra.",
+      "suggestion": "essoutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESSOUTRA",
+      "text": "essas outras.",
+      "suggestion": "essoutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESSOUTRA",
+      "text": "esse outro.",
+      "suggestion": "essoutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESSOUTRA",
+      "text": "esses outros.",
+      "suggestion": "essoutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESTOUTRA",
+      "text": "esta outra.",
+      "suggestion": "estoutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESTOUTRA",
+      "text": "estas outras.",
+      "suggestion": "estoutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESTOUTRA",
+      "text": "este outro.",
+      "suggestion": "estoutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_ESTOUTRA",
+      "text": "estes outros.",
+      "suggestion": "estoutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_LHA",
+      "text": "lhe a.",
+      "suggestion": "lha",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_LHA",
+      "text": "lhe o.",
+      "suggestion": "lho",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_LHAS",
+      "text": "lhes a.",
+      "suggestion": "lhas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_LHAS",
+      "text": "lhes o.",
+      "suggestion": "lhos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_MA",
+      "text": "me a.",
+      "suggestion": "ma",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_MA",
+      "text": "me as.",
+      "suggestion": "mas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_MA",
+      "text": "me o.",
+      "suggestion": "mo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_MA",
+      "text": "me os.",
+      "suggestion": "mos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em a.",
+      "suggestion": "na",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em aquela.",
+      "suggestion": "naquela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em aquelas.",
+      "suggestion": "naquelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em aquele.",
+      "suggestion": "naquele",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em aqueles.",
+      "suggestion": "naqueles",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em aquilo.",
+      "suggestion": "naquilo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em as.",
+      "suggestion": "nas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em essa.",
+      "suggestion": "nessa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em essas.",
+      "suggestion": "nessas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em esse.",
+      "suggestion": "nesse",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em esses.",
+      "suggestion": "nesses",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em esta.",
+      "suggestion": "nesta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em estas.",
+      "suggestion": "nestas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em este.",
+      "suggestion": "neste",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em estes.",
+      "suggestion": "nestes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em isso.",
+      "suggestion": "nisso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em isto.",
+      "suggestion": "nisto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em o.",
+      "suggestion": "no",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NA",
+      "text": "em os.",
+      "suggestion": "nos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NALGUM",
+      "text": "em algum.",
+      "suggestion": "nalgum",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NALGUM",
+      "text": "em alguma.",
+      "suggestion": "nalguma",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NALGUM",
+      "text": "em algumas.",
+      "suggestion": "nalgumas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NALGUM",
+      "text": "em alguns.",
+      "suggestion": "nalguns",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NAQUELOUTRA",
+      "text": "naquela outra.",
+      "suggestion": "naqueloutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NAQUELOUTRA",
+      "text": "naquelas outras.",
+      "suggestion": "naqueloutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NAQUELOUTRA",
+      "text": "naquele outro.",
+      "suggestion": "naqueloutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NAQUELOUTRA",
+      "text": "naqueles outros.",
+      "suggestion": "naqueloutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NELE",
+      "text": "em ela.",
+      "suggestion": "nela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NELE",
+      "text": "em elas.",
+      "suggestion": "nelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NELE",
+      "text": "em ele.",
+      "suggestion": "nele",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NELE",
+      "text": "em eles.",
+      "suggestion": "neles",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESSOUTRA",
+      "text": "nessa outra.",
+      "suggestion": "nessoutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESSOUTRA",
+      "text": "nessas outras.",
+      "suggestion": "nessoutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESSOUTRA",
+      "text": "nesse outro.",
+      "suggestion": "nessoutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESSOUTRA",
+      "text": "nesses outros.",
+      "suggestion": "nessoutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESTOUTRA",
+      "text": "nesta outra.",
+      "suggestion": "nestoutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESTOUTRA",
+      "text": "nestas outras.",
+      "suggestion": "nestoutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESTOUTRA",
+      "text": "neste outro.",
+      "suggestion": "nestoutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NESTOUTRA",
+      "text": "nestes outros.",
+      "suggestion": "nestoutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NO-LA",
+      "text": "nos a.",
+      "suggestion": "no-la",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NO-LA",
+      "text": "nos as.",
+      "suggestion": "no-las",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NO-LA",
+      "text": "nos o.",
+      "suggestion": "no-lo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NO-LA",
+      "text": "nos os.",
+      "suggestion": "no-los",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NOUTRO",
+      "text": "em outra.",
+      "suggestion": "noutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NOUTRO",
+      "text": "em outras.",
+      "suggestion": "noutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NOUTRO",
+      "text": "em outrem.",
+      "suggestion": "noutrem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NOUTRO",
+      "text": "em outro.",
+      "suggestion": "noutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_NOUTRO",
+      "text": "em outros.",
+      "suggestion": "noutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_PELA",
+      "text": "por a.",
+      "suggestion": "pela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_PELA",
+      "text": "por as.",
+      "suggestion": "pelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_PELA",
+      "text": "por o.",
+      "suggestion": "pelo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_PELA",
+      "text": "por os.",
+      "suggestion": "pelos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_TA",
+      "text": "te a.",
+      "suggestion": "ta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_TA",
+      "text": "te as.",
+      "suggestion": "tas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_TA",
+      "text": "te o.",
+      "suggestion": "to",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_TA",
+      "text": "te os.",
+      "suggestion": "tos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_VO-LA",
+      "text": "vos a.",
+      "suggestion": "vo-la",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_VO-LA",
+      "text": "vos as.",
+      "suggestion": "vo-las",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_VO-LA",
+      "text": "vos o.",
+      "suggestion": "vo-lo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_VO-LA",
+      "text": "vos os.",
+      "suggestion": "vo-los",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a a.",
+      "suggestion": "à",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a aquela.",
+      "suggestion": "àquela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a aquelas.",
+      "suggestion": "àquelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a aquele.",
+      "suggestion": "àquele",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a aqueles.",
+      "suggestion": "àqueles",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a aquilo.",
+      "suggestion": "àquilo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRACAO_À",
+      "text": "a as.",
+      "suggestion": "às",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_ATAQUE",
+      "text": "Contra ataques, sua especialidade.",
+      "suggestion": "Contra-ataques",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_ATAQUE",
+      "text": "Lançou um contra ataque.",
+      "suggestion": "contra-ataque",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_CAPA",
+      "text": "A contra partida é grande.",
+      "suggestion": "contrapartida",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRA_CAPA",
+      "text": "O livro é composto por: capa, contra capa e lombada.",
+      "suggestion": "contracapa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CONTRAÇÃO_DOUTREM_PT_PT",
+      "text": "de outra.",
+      "suggestion": "doutra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CONTRAÇÃO_DOUTREM_PT_PT",
+      "text": "de outras.",
+      "suggestion": "doutras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CONTRAÇÃO_DOUTREM_PT_PT",
+      "text": "de outrem.",
+      "suggestion": "doutrem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CONTRAÇÃO_DOUTREM_PT_PT",
+      "text": "de outro.",
+      "suggestion": "doutro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CONTRAÇÃO_DOUTREM_PT_PT",
+      "text": "de outros.",
+      "suggestion": "doutros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CORTA_PAPEL",
+      "text": "Compre um corta papel para isso.",
+      "suggestion": "corta-papel",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CP_AI_AÍ",
+      "text": "Vou por ai fora a cantar.",
+      "suggestion": "aí",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "CURRENCY_PLACEMENT_EUR",
+      "text": "Deve €100.",
+      "suggestion": "100€",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "DAÍ",
+      "text": "A partir daí deduzir o que fazer.",
+      "suggestion": "partir de aí",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_SYMBOL_COORDINATES_EXPLICIT",
+      "text": "Fica 17o ao leste daqui.",
+      "suggestion": "17",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_SYMBOL_COORDINATES_EXPLICIT",
+      "text": "Fica 18 norte de lá.",
+      "suggestion": "18",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_SYMBOL_COORDINATES_EXPLICIT",
+      "text": "o \"Star of the Seine\" rumara 059o para o leste",
+      "suggestion": "059",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_SYMBOL_COORDINATES_EXPLICIT",
+      "text": "o meridiano 103o Oeste tem os seguintes cruzamentos:",
+      "suggestion": "103",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_SYMBOL_COORDINATES_SINGLE_TOKEN",
+      "text": "Coordenadas: 9045",
+      "suggestion": "9045",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DEGREE_SYMBOL_NEGATIVE",
+      "text": "Em Chicago chegou a 30,1.",
+      "suggestion": "30,1",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DELIMITADA_COM-DE-POR_FRONTEIRAS_FISICAS",
+      "text": "A área é delimitada por fronteiras físicas.",
+      "suggestion": "fisicamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DEMAIS_DE_MAIS",
+      "text": "Os de mais intervenientes na conversa, tiveram que ficar calados.",
+      "suggestion": "Os demais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DERIVADO_AO",
+      "text": "Tudo isto é derivado ao calor.",
+      "suggestion": "devido",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DESDE_A_ALTURA_DESDE_ENTÃO",
+      "text": "E desde a altura ele está protegido.",
+      "suggestion": "desde então",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DESDE_A_ALTURA_DESDE_ENTÃO",
+      "text": "Isso acontece desde a altura.",
+      "suggestion": "desde então",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DESDE_A_ALTURA_DESDE_ENTÃO",
+      "text": "O Rui come peixe desde a altura.",
+      "suggestion": "desde então",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DESDE_A_ALTURA_DESDE_ENTÃO",
+      "text": "O Rui comia peixe desde a altura.",
+      "suggestion": "desde então",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DES_DOS",
+      "text": "Isso acontece des da época em que fumava.",
+      "suggestion": "desde a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DES_DOS",
+      "text": "Isso acontece des dessa época.",
+      "suggestion": "desde essa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DES_DOS",
+      "text": "Vou ao teatro des daquela época.",
+      "suggestion": "desde aquela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DES_DOS",
+      "text": "Vou ao teatro des dos 10 anos.",
+      "suggestion": "desde os",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_CIMA-ALTO_ABAIXO",
+      "text": "Ela observou o Rui de alto abaixo.",
+      "suggestion": "a baixo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_DA_A_SOBRE_MESA",
+      "text": "Gosto da sobre mesa.",
+      "suggestion": "sobremesa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_IMPACTO_ECOLÓGICA",
+      "text": "Temos riscos de impacto ecológica.",
+      "suggestion": "de impacto ecológico",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_MANEIRA_A_QUE",
+      "text": "Isto é feito de maneira a que os cidadãos possam ser livres.",
+      "suggestion": "de maneira que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_MANEIRA_A_QUE",
+      "text": "Isto é feito de modo a que os cidadãos possam ser livres.",
+      "suggestion": "de modo que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_PRESSA",
+      "text": "Ele lê muito de pressa.",
+      "suggestion": "depressa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_PRESSA",
+      "text": "Ele lê muito de vagar.",
+      "suggestion": "devagar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DE_VÊS_EM_QUANDO",
+      "text": "Ela aparece de vês em quando.",
+      "suggestion": "de vez em quando",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DIAGNÓSTICO_RESERVADO",
+      "text": "A Ana mantém-se com diagnóstico reservado.",
+      "suggestion": "prognóstico reservado",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DIAGNÓSTICO_RESERVADO",
+      "text": "Temos diagnósticos reservados.",
+      "suggestion": "prognósticos reservados",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "DURANTE_ESTE_O_PRESENTE",
+      "text": "Vou tratar disso durante esta semana.",
+      "suggestion": "a presente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DURANTE_ESTE_O_PRESENTE",
+      "text": "Vou tratar disso durante este mês.",
+      "suggestion": "o presente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "DUZENTAS_GRAMAS_NUMERAL",
+      "text": "Comprei duzentas gramas de carne.",
+      "suggestion": "duzentos gramas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "DUZENTAS_GRAMAS_NUMERAL",
+      "text": "Oitocentas gramas de alfalfa, por favor.",
+      "suggestion": "Oitocentos gramas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "EMAIL_SEM_HIFEN",
+      "text": "Ele me enviou outro email.",
+      "suggestion": "e-mail",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EMAIL_SEM_HIFEN",
+      "text": "Email: foo@bar.com",
+      "suggestion": "E-mail",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EMAIL_SEM_HIFEN",
+      "text": "Não vejo emails novos.",
+      "suggestion": "e-mails",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_CASO_CASO",
+      "text": "Para nos ajudar em caso tenhamos dúvidas.",
+      "suggestion": "caso",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_CURTO_MÉDIO_LONGO_PRAZO_TERMO",
+      "text": "É um investimento em longo prazo.",
+      "suggestion": "a",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EM_QUE_NAO_HA_PRONOME-INDEFINIDO",
+      "text": "Temos um período em que não há qualquer registo histórico.",
+      "suggestion": "sem qualquer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "EM_VÊS_DE_DA_DAS_DO_DOS",
+      "text": "Ele falou em vês de escrever.",
+      "suggestion": "em vez de",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ENUMERATION_AND_DASHES",
+      "text": "1.- Introdução",
+      "suggestion": "1.",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ENUMERATION_AND_DASHES",
+      "text": "1.-- Introdução",
+      "suggestion": "1.",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ENUMERATION_AND_DASHES",
+      "text": "1.3.— Introdução",
+      "suggestion": "1.3.",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "EQUIPES",
+      "text": "A nossa equipe é a melhor.",
+      "suggestion": "equipa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "EQUIPES",
+      "text": "As nossas equipes são boas.",
+      "suggestion": "equipas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_TRAZEDORES_DA_JUSTIÇA",
+      "text": "O terrorista julga ser trazedor da justiça.",
+      "suggestion": "justiceiro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ERRO_TRADUÇÃO_TRAZEDORES_DA_JUSTIÇA",
+      "text": "Os terroristas julgam ser trazedores da justiça.",
+      "suggestion": "justiceiros",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "EXISTE_VARIOS_BR",
+      "text": "Existe muitos problemas nesta empresa.",
+      "suggestion": "Existem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO",
+      "text": "Ele disse estar pronto a entregar e que mais nada era necessário.",
+      "suggestion": "e nada mais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "E_QUE_ADV_VERBO_NADA_E_NADA_ADV_VERBO",
+      "text": "Ele disse já ter jantado, e que quer nada para comer.",
+      "suggestion": "e nada quer",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "FALTA_DE_DISTRACAO",
+      "text": "Este programa é o que é preciso para evitar faltas de distração.",
+      "suggestion": "faltas de atenção",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "FASSO_BR",
+      "text": "Eu fasso os serviços domésticos.",
+      "suggestion": "faço",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "FORMAS_INOVADORES",
+      "text": "Tudo são formas inovadores.",
+      "suggestion": "formas inovadoras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "GRAU_CENTIGRADO",
+      "text": "Medimos quarenta graus centígrados.",
+      "suggestion": "Celsius",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "GRAU_KELVIN",
+      "text": "O sol tem a temperatura de 15,7 milhões de graus kelvin.",
+      "suggestion": "kelvins",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "HIFENIZADOR_VERBOS_2",
+      "text": "dar me.",
+      "suggestion": "dar‑me",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-AO/grammar.xml"
+    },
+    {
+      "rule": "HIFENIZADOR_VERBOS_2",
+      "text": "dar me.",
+      "suggestion": "dar‑me",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-MZ/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_ACO_9",
+      "text": "Os assos produzidos aqui têm características especiais.",
+      "suggestion": "Os aços",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_ACO_9",
+      "text": "Uma porta de asso.",
+      "suggestion": "de aço",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_CUMPRIMENTOS_COMPRIMENTOS",
+      "text": "Com os melhores comprimentos,",
+      "suggestion": "cumprimentos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_ESTIRPE_5",
+      "text": "A extirpe do H1N1 tem grande capacidade de propagação.",
+      "suggestion": "A estirpe",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_ESTIRPE_5",
+      "text": "As extirpes destas raças de cães são adequadas à sua personalidade.",
+      "suggestion": "As estirpes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_PROFETISA_3",
+      "text": "A profetiza tinha muitos devotos.",
+      "suggestion": "A profetisa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_PROFETISA_3",
+      "text": "Naquela época, as profetizas eram populares.",
+      "suggestion": "as profetisas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_SERRA_11",
+      "text": "As cerras produzidas aqui têm características especiais.",
+      "suggestion": "As serras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_SERRA_11",
+      "text": "de cerra.",
+      "suggestion": "de serra",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_SERRA_11_2",
+      "text": "Cerra da Estrela",
+      "suggestion": "Serra da Estrela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_VIAGEM_3",
+      "text": "Viagem tanto quanto possam.",
+      "suggestion": "Viajem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_VIAJEM_1",
+      "text": "A viajem com 1 500 regras, parece que ainda agora começou.",
+      "suggestion": "A viagem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HOMONYM_VIAJEM_1",
+      "text": "As viajens foram longas, mas foram merecidas.",
+      "suggestion": "As viagens",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HÁ-DIRECTION",
+      "text": "Algumas pessoas e ideias parecem fora do lugar ou há frente do seu tempo.",
+      "suggestion": "à frente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HÁ_SUA",
+      "text": "Dá uma mãozinha há tua família.",
+      "suggestion": "à tua",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "HÁ_SUA",
+      "text": "Ele deu uma mãozinha há sua família.",
+      "suggestion": "à sua",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "IMAGEM_DE_SATELITE",
+      "text": "imagens satélite.",
+      "suggestion": "imagens de satélite",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "INVARIABLE_NOUNS_ÀS_CUSTAS_DA_DAS_DO_DOS",
+      "text": "Ele fê-lo às custas do filho.",
+      "suggestion": "à custa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "LANGUAGETOOL",
+      "text": "Eu sempre uso Language-tool.",
+      "suggestion": "LanguageTool",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "LANGUAGETOOL",
+      "text": "Eu sempre uso language tool.",
+      "suggestion": "LanguageTool",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "LANGUAGETOOL",
+      "text": "Eu sempre uso language-tool.",
+      "suggestion": "LanguageTool",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MAIOR",
+      "text": "São maior as hipóteses.",
+      "suggestion": "maiores as",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MAIORES_PRINCIPAIS",
+      "text": "O Marco é um dos maiores contribuidores lexicográficos.",
+      "suggestion": "principais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "MASSAJEM",
+      "text": "Quero uma massajem relaxante.",
+      "suggestion": "massagem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MAS_BR",
+      "text": "Quanto mas eu falo, pior fica.",
+      "suggestion": "mais",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "MENAGE_A_TROIS",
+      "text": "menage a trois.",
+      "suggestion": "ménage à trois",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MENAGE_A_TROIS",
+      "text": "ménage a tróis.",
+      "suggestion": "ménage à trois",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MENAGE_A_TROIS",
+      "text": "ménagé-â-trois.",
+      "suggestion": "ménage à trois",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "MIM_BR",
+      "text": "Você consegue mim ajudar.",
+      "suggestion": "me",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "MUITO_FRIO",
+      "text": "Está um frio de rachar.",
+      "suggestion": "muito frio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NAO_E_ADJ",
+      "text": "Não e absolutamente necessário.",
+      "suggestion": "é",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "NAO_E_ADJ",
+      "text": "Não e preciso.",
+      "suggestion": "é",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "NA_QUELE",
+      "text": "Isso foi na quela época.",
+      "suggestion": "naquela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "NUMERO_DE_AVOGADRO",
+      "text": "Calculamos com o número de Avogadro.",
+      "suggestion": "a constante de Avogadro",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL",
+      "text": "São situações que não dá para voltar atrás.",
+      "suggestion": "irreversíveis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL",
+      "text": "É uma situação em que não dá para voltar atrás.",
+      "suggestion": "irreversível",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL",
+      "text": "É uma situação que não dá para voltar atrás.",
+      "suggestion": "irreversível",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NÃO_SE_PODE_APAGAR_É_INDELÉVEL",
+      "text": "Eu queria, mas não se pode apagar o passado.",
+      "suggestion": "o passado é indelével",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "NÃO_SE_PODE_APAGAR_É_INDELÉVEL",
+      "text": "Eu queria, mas não se pode apagar os escritos.",
+      "suggestion": "os escritos são indeléveis",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "ORA_DE_REFEIÇÃO",
+      "text": "Está na minha ora de refeição.",
+      "suggestion": "hora",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "OS_PARAGRAFOS_BR",
+      "text": "O juiz leu os 3º, 4º e 5º parágrafos.",
+      "suggestion": "o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "OVELHA_RANHOSA",
+      "text": "Ele é a ovelha ranhosa da família.",
+      "suggestion": "ovelha ronhosa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_ANOS-ONUS-ÂNUS_DA_PROVA",
+      "text": "O anos da prova é nosso.",
+      "suggestion": "ónus da prova",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_AO",
+      "text": "Aproveitámos o máximo a oportunidade.",
+      "suggestion": "ao",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_MAIS-MENOS_ADJ-SUBST-PLURAL_POSSÍVEIS",
+      "text": "Faz perguntas o mais abrangentes possíveis.",
+      "suggestion": "possível",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_MAS",
+      "text": "Quero resultados o mas rapidamente possível",
+      "suggestion": "o mais rapidamente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_QUE_OUVE",
+      "text": "O que ouve com ela?",
+      "suggestion": "houve",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_QUE_OUVE",
+      "text": "O que ouve?",
+      "suggestion": "houve",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "O_QUE_TEM_DE_MAL_QUE_MAL_TEM",
+      "text": "O que tem de mal a abordagem holística?",
+      "suggestion": "Que mal tem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "O_QUE_TEM_DE_MAL_QUE_MAL_TEM",
+      "text": "O que tem de mal partir o spaghetti antes de cozer?",
+      "suggestion": "Que mal tem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PAIS_COUNTRY_OR_PARENTS",
+      "text": "É o orgulho do pais.",
+      "suggestion": "do país",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARASITOS_BR",
+      "text": "Há sujeitos que são autênticos parasitas da sociedade.",
+      "suggestion": "parasitos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "PARASITO_BR",
+      "text": "Raquel age como um parasita da mãe.",
+      "suggestion": "parasito",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_ARVORE_0c",
+      "text": "Paragrafo 5.º:",
+      "suggestion": "Parágrafo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_CIENTIFICO_389",
+      "text": "no cientifico.",
+      "suggestion": "no científico",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_CIENTIFICO_389",
+      "text": "nos cientificos.",
+      "suggestion": "nos científicos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_ESPIA_614",
+      "text": "uma espia.",
+      "suggestion": "uma espiã",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_ESPIA_614",
+      "text": "umas espias.",
+      "suggestion": "umas espiãs",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_HISTORIA_MARCOAGPINTO",
+      "text": "da historia.",
+      "suggestion": "da história",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_HISTORIA_MARCOAGPINTO",
+      "text": "das historias.",
+      "suggestion": "das histórias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_MUSICA_498_bis",
+      "text": "Vídeo, musica.",
+      "suggestion": "música",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_MUSICA_498_bis",
+      "text": "mas tem musicas evangelicas",
+      "suggestion": "músicas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_PRATICO_247",
+      "text": "do pratico.",
+      "suggestion": "do prático",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_PRATICO_247",
+      "text": "dos praticos.",
+      "suggestion": "dos práticos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_3",
+      "text": "Comi radias.",
+      "suggestion": "rádias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_3",
+      "text": "Tenho um belo radio em casa.",
+      "suggestion": "rádio",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_3",
+      "text": "Tive radia.",
+      "suggestion": "rádia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_RADIO_3",
+      "text": "Vendi vários radios.",
+      "suggestion": "rádios",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_VARIA_340",
+      "text": "da varia.",
+      "suggestion": "da vária",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_VARIA_340",
+      "text": "das varias.",
+      "suggestion": "das várias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_VARIA_340",
+      "text": "um vario.",
+      "suggestion": "um vário",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PARONYM_VARIA_340",
+      "text": "uns varios.",
+      "suggestion": "uns vários",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PAÍSES_DO_TERCEIRO_MUNDO",
+      "text": "Ele pertence aos países do terceiro mundo.",
+      "suggestion": "ao Terceiro Mundo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PAÍSES_DO_TERCEIRO_MUNDO",
+      "text": "Ensine sobre os países do terceiro mundo.",
+      "suggestion": "o Terceiro Mundo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PELA_QUAL_PELO_QUAL",
+      "text": "Este foi o motivo pela qual ele concebeu a equação.",
+      "suggestion": "pelo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PELA_QUAL_PELO_QUAL",
+      "text": "Este foi um dos motivos pelas quais ele concebeu a equação.",
+      "suggestion": "pelos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PELA_QUAL_PELO_QUAL",
+      "text": "Estes foram os motivos pelas quais ele concebeu a equação.",
+      "suggestion": "pelos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PELO_QUAL_PELA_QUAL",
+      "text": "Esta foi a razão pelo qual ele concebeu a equação.",
+      "suggestion": "pela",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PELO_QUAL_PELA_QUAL",
+      "text": "Esta foi uma das razões pelos quais ele concebeu a equação.",
+      "suggestion": "pelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PELO_QUAL_PELA_QUAL",
+      "text": "Estas foram as razões pelos quais ele concebeu a equação.",
+      "suggestion": "pelas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PERCA_PERDA",
+      "text": "Certo tipo de depósitos tem percas de 0,5% ao ano.",
+      "suggestion": "perdas de 0,5%",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PERCENT_WITH_SPACE",
+      "text": "A taxa é de 23,5%.",
+      "suggestion": "23,5 %",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PERCENT_WITH_SPACE",
+      "text": "Paga 23,5‰.",
+      "suggestion": "23,5 ‰",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PHRASAL_VERB_A_DE",
+      "text": "Cada vez se dá mais importância à valorização a recursos humanos altamente qualificados.",
+      "suggestion": "valorização de",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PORQUE_VERBOEUELE_AS_OS_POR_AO_VERBOINF_AS_OS",
+      "text": "Comentei o sucedido porque senti os efeitos rapidamente.",
+      "suggestion": "ao sentir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "POR_FAVOR_FACAM_INFINITIVO_FORMAL",
+      "text": "Por favor faça chegar esta carta ao Rui.",
+      "suggestion": "Peço, por favor, que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "POR_FAVOR_FACAM_INFINITIVO_FORMAL",
+      "text": "Por favor façam chegar esta carta ao Rui.",
+      "suggestion": "Peço, por favor, que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "POSICAO_DO_PONTO_EM_ORDINAL_ABREVIADO",
+      "text": "O premiado é o 12o. da lista.",
+      "suggestion": "12o",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "POUCO_IMPORTA_NÃO_IMPORTA",
+      "text": "Pouco importa a distância, a amizade é eterna.",
+      "suggestion": "Não",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "PRESENTATION",
+      "text": "Tenho que fazer um PowerPoint.",
+      "suggestion": "uma apresentação de slides",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PRETERITO_PERFEITO",
+      "text": "provámos",
+      "suggestion": "provamos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-BR/grammar.xml"
+    },
+    {
+      "rule": "PRE_POS",
+      "text": "Isso foi pré pandemia.",
+      "suggestion": "pré-pandemia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "PUNCTUATE_QUOTATIONS",
+      "text": "Ele disse: “O jardim é bonito”",
+      "suggestion": "bonito.”",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUE_ESTAR_ADVERB_ADVERB",
+      "text": "Isto não afeta a equação que está atualmente no quadro.",
+      "suggestion": "equação atualmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_ESTAR_ADVERB_ADVERB",
+      "text": "Isto não afeta as equações que estão atualmente no quadro.",
+      "suggestion": "equações atualmente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS",
+      "text": "Mova os elementos para a localização que já está ocupada com outros elementos.",
+      "suggestion": "já ocupada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_JÁ_ESTAR_PARTPASS_JÁ_PARTPASS",
+      "text": "Mova os elementos para as localizações que já estão ocupadas com outros elementos.",
+      "suggestion": "já ocupadas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_QUÊ",
+      "text": "Mas o que?",
+      "suggestion": "quê",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "QUE_SE_ENCONTRAR_NA_NO_NESTA_NESTE",
+      "text": "Vamos resolver o problema que se encontra nesta equação.",
+      "suggestion": "nesta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_VEM_PROXIMA",
+      "text": "A licença acaba na noite do natal que vem.",
+      "suggestion": "próximo natal",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "QUE_VEM_PROXIMA",
+      "text": "A licença acaba na sexta-feira da semana que vem.",
+      "suggestion": "próxima semana",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "RAIS_RAIZ",
+      "text": "A rais da árvore está podre.",
+      "suggestion": "raiz",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "REDUNDANCY_10_CERTEZA",
+      "text": "certeza absoluta.",
+      "suggestion": "certeza",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_16_DE",
+      "text": "de jeito maneira.",
+      "suggestion": "de forma alguma",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_17_DEFICIT",
+      "text": "deficit negativo.",
+      "suggestion": "deficit",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_18_DEFUNTO",
+      "text": "defunto morto.",
+      "suggestion": "defunto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_20_EMPRÉSTIMO",
+      "text": "empréstimo temporário.",
+      "suggestion": "empréstimo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_23_ENXAME",
+      "text": "enxame de abelha.",
+      "suggestion": "enxame",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_24_ERÁRIO",
+      "text": "erário público.",
+      "suggestion": "erário",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_25_ESCOLHA",
+      "text": "escolha opcional.",
+      "suggestion": "escolha",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_29_FATO",
+      "text": "facto real.",
+      "suggestion": "facto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_2_ABERTURA",
+      "text": "abertura inaugural.",
+      "suggestion": "abertura",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_31_GOTEIRAS",
+      "text": "goteiras no teto.",
+      "suggestion": "goteiras",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_33_INDIVIDUALIDADE",
+      "text": "individualidade de cada um.",
+      "suggestion": "individualidade",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_36_METADES",
+      "text": "metades iguais.",
+      "suggestion": "metades",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_37_MONOCULTURA",
+      "text": "monocultura exclusiva.",
+      "suggestion": "monocultura",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_38_MULTIDÃO",
+      "text": "multidão de pessoa.",
+      "suggestion": "multidão",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_41_PLANEADA",
+      "text": "planeada antecipadamente.",
+      "suggestion": "planeada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_42_PLANEADA",
+      "text": "planeada com antecedência.",
+      "suggestion": "planeada",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_51_RETORNAR",
+      "text": "repetir de novo.",
+      "suggestion": "repetir",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_51_RETORNAR",
+      "text": "retornar de novo.",
+      "suggestion": "retornar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_52_SEGREDO",
+      "text": "segredo secreto.",
+      "suggestion": "segredo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_53_SINTOMAS",
+      "text": "sintomas indicativos.",
+      "suggestion": "sintomas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_56_SUPERAVIT",
+      "text": "superavit positivo.",
+      "suggestion": "superavit",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_60_UNÂNIME",
+      "text": "unânime de todos.",
+      "suggestion": "unânime",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_61_VEREADOR",
+      "text": "vereador municipal.",
+      "suggestion": "vereador",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_7_BILATERAL",
+      "text": "bilateral entre os dois.",
+      "suggestion": "bilateral entre",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_8_CANJA",
+      "text": "canja de galinha.",
+      "suggestion": "canja",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_9_CARDUME",
+      "text": "cardume de peixe.",
+      "suggestion": "cardume",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_DEMENTE",
+      "text": "demente mental",
+      "suggestion": "demente",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MAN_AND_WOMAN",
+      "text": "Homens e mulheres saíram à rua.",
+      "suggestion": "Pessoas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_MAN_AND_WOMAN",
+      "text": "Os homens e mulheres saíram à rua.",
+      "suggestion": "As pessoas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_PRÓPRIA",
+      "text": "própria autobiografia",
+      "suggestion": "autobiografia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_SURDO",
+      "text": "surdo do ouvido",
+      "suggestion": "surdo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_SURPRESA",
+      "text": "surpresa inesperada",
+      "suggestion": "surpresa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_SURPRESA_2",
+      "text": "inesperada surpresa",
+      "suggestion": "surpresa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_VIUVA",
+      "text": "viúva do falecido",
+      "suggestion": "viúva",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "REDUNDANCY_ÁGUA",
+      "text": "água molhada",
+      "suggestion": "água",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "R_SYMBOL",
+      "text": "Windows (R)",
+      "suggestion": "®",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SEM_ABRIGO",
+      "text": "O capitalismo nacional se resume a uma colecção de sem abrigo que não têm onde cair mortos!",
+      "suggestion": "sem-abrigo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SEM_ABRIGO",
+      "text": "Os sem abrigo precisam de nossa atenção.",
+      "suggestion": "sem-abrigo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SEM_FIM",
+      "text": "Temos livros que nunca mais acabam.",
+      "suggestion": "sem fim",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SERVICEMARK",
+      "text": "O novo produto é de Escolha Executiva(SM) Plus.",
+      "suggestion": "℠",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SER_PARA_SER_PARTPASSADO_VINFINITIVO",
+      "text": "O anel é para ser usado de manhã.",
+      "suggestion": "usar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SER_PARA_SER_PARTPASSADO_VINFINITIVO",
+      "text": "Os anéis são para serem usados de manhã.",
+      "suggestion": "usar",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SEXTA_DE_VIME",
+      "text": "Ela tem uma sexta de vime.",
+      "suggestion": "cesta",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SEXTA_DE_VIME",
+      "text": "Elas têm umas sextas de vime.",
+      "suggestion": "cestas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM",
+      "text": "Faz 22C à sombra.",
+      "suggestion": "22C",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM",
+      "text": "Faz 22Rø à sombra.",
+      "suggestion": "22Rø",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO",
+      "text": "O Rui não sabia nada do assunto.",
+      "suggestion": "nada sabia",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO",
+      "text": "Os amigos não sabiam nada do assunto.",
+      "suggestion": "nada sabiam",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO",
+      "text": "Tu não sabias nada do assunto.",
+      "suggestion": "nada sabias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SIMPLIFICAR_REMOVER_É_QUE_PARTICÍPIO",
+      "text": "Os dados só após serem organizados é que podem ser usados.",
+      "suggestion": "organizados podem",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SOBRE_MESA",
+      "text": "Vai comer a sobre mesa.",
+      "suggestion": "sobremesa",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "SOB_O_PONTO_DE_VISTA",
+      "text": "Está tudo bem sob o ponto de vista da Ana.",
+      "suggestion": "do",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "SPACE_AFTER_ARCAIC_CONTRACTION",
+      "text": "“Este fim de semana vou comer n' A Casa del Rei.",
+      "suggestion": "n'A",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TEMOS_TERMOS",
+      "text": "Isso é ótimo por temos informação adicional.",
+      "suggestion": "termos",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TODOS_FOLLOWED_BY_NOUN_PLURAL",
+      "text": "Todas chávenas estão partidas.",
+      "suggestion": "Todas as chávenas",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "TODOS_FOLLOWED_BY_NOUN_PLURAL",
+      "text": "…uma vez que todas adversidades naturais dificultam a implantação…",
+      "suggestion": "todas as adversidades",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "UMA_COISA_ALGO",
+      "text": "Tudo isto para uma coisa que aconteceu.",
+      "suggestion": "algo",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "UNKNOWN_WORD",
+      "text": "De acordo com o teorema central do limite, a distribuição normal aborda o comportamento assentótico de várias distribuições de probabilidade.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "UNLIKELY_OPENING_PUNCTUATION",
+      "text": "; Como estás?",
+      "suggestion": "",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "URL_INICIAL",
+      "text": "google.com.br é um excelente recurso.",
+      "suggestion": "O site google.com.br",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "VERBO1_QUE_VERBO2_VERBO3_O_QUE",
+      "text": "Falei com o Rui que me disse que ia ver o que se passava com o software.",
+      "suggestion": "ir ver",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
+    },
+    {
+      "rule": "VOTOS_BRANCOS",
+      "text": "Houve muitos votos brancos na eleição.",
+      "suggestion": "votos em branco",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "WEEKDAY_TO_WEEKDAY",
+      "text": "Podem visitar o museu de segunda-feira a sexta-feira.",
+      "suggestion": "segunda a sexta-feira",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "WINDOWS",
+      "text": "Window Vista bloqueia o tempo todo.",
+      "suggestion": "Windows",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "X86",
+      "text": "Necessita do conjunto de instruções X86.",
+      "suggestion": "x86",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "X86",
+      "text": "Processador X86_64.",
+      "suggestion": "x86_64",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "X_ACTO",
+      "text": "x-acto",
+      "suggestion": "decapador",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "ZERO_IN_DAYS_OF_THE_MONTH",
+      "text": "A peça estreia na sexta-feira, 03 de agosto.",
+      "suggestion": "3 de agosto",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "À_MEDIDA_EM_QUE",
+      "text": "Faz a revisão à medida em que lês.",
+      "suggestion": "à medida que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "À_MEDIDA_EM_QUE",
+      "text": "Ficamos mais sábios à medida com que o tempo passa.",
+      "suggestion": "à medida que",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
+    },
+    {
+      "rule": "É_PLURAL",
+      "text": "Os correctores gramaticais é funcionais.",
+      "suggestion": "são",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     }
   ]
 }

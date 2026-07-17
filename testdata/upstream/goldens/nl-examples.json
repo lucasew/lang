@@ -4,36 +4,6 @@
   "language": "nl",
   "cases": [
     {
-      "rule": "MEN_MIJN",
-      "text": "Dit zijn men grootste prestaties.",
-      "suggestion": "m'n",
-      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
-    },
-    {
-      "rule": "MEN_MIJN",
-      "text": "Zij zijn men beste vrienden.",
-      "suggestion": "m'n",
-      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
-    },
-    {
-      "rule": "IN_HET_CONTINENT",
-      "text": "Taaladvies over in het continent.",
-      "suggestion": "op het continent",
-      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
-    },
-    {
-      "rule": "VAAG_2",
-      "text": "Men is niemand.",
-      "suggestion": "",
-      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
-    },
-    {
-      "rule": "OVERDRIJVING_3",
-      "text": "Wij vonden het heel erg saai.",
-      "suggestion": "heel",
-      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
-    },
-    {
       "rule": "INSPECIFIEK_3",
       "text": "Dit is zeer waarschijnlijk onduidelijk.",
       "suggestion": "",
@@ -52,16 +22,118 @@
       "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
     },
     {
-      "rule": "NOU",
-      "text": "We geven nou een hand.",
-      "suggestion": "nu",
-      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+      "rule": "IN_HET_CONTINENT",
+      "text": "Taaladvies over in het continent.",
+      "suggestion": "op het continent",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
     },
     {
       "rule": "MEKAAR",
       "text": "We geven mekaar een hand.",
       "suggestion": "elkaar",
       "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "MEN_MIJN",
+      "text": "Dit zijn men grootste prestaties.",
+      "suggestion": "m'n",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "MEN_MIJN",
+      "text": "Zij zijn men beste vrienden.",
+      "suggestion": "m'n",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "NOU",
+      "text": "We geven nou een hand.",
+      "suggestion": "nu",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "OVERDRIJVING_3",
+      "text": "Wij vonden het heel erg saai.",
+      "suggestion": "heel",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "VAAG_2",
+      "text": "Men is niemand.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "CIJFERS_IN_WOORD",
+      "text": "Een g0ede morgen!",
+      "suggestion": "goede",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "INSPECIFIEK_2",
+      "text": "Dit is bijna zeker onduidelijk.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "INSPECIFIEK_5",
+      "text": "Dit is grote kans onduidelijk.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "NIET_ON",
+      "text": "Taaladvies over niet ondenkbeeldig.",
+      "suggestion": "ondenkbeeldig",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "ONTKEN_3",
+      "text": "Daar heb ik evenmin niet van gehoord.",
+      "suggestion": "evenmin",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "ONTKEN_3",
+      "text": "En nooit geen vakantie.",
+      "suggestion": "nooit",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "ONTKEN_3",
+      "text": "Ik bel nooit geen klanten op.",
+      "suggestion": "nooit",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "OUDGRIEKS",
+      "text": "De naam afte is afkomstig uit het Oudgrieks en betekent branden.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "OVERDRIJVING_2",
+      "text": "Vreselijk mooi.\"",
+      "suggestion": "Mooi",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "QUASI_LOS",
+      "text": "Deze regel is quasi irritant.",
+      "suggestion": "quasi-irritant",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "QUASI_LOS",
+      "text": "Deze regel is quasi nauwkeurig.",
+      "suggestion": "quasinauwkeurig",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "TE_WERKWOORD",
+      "text": "Hij heeft iets re corrigeren.",
+      "suggestion": "te corrigeren",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
     }
   ]
 }
