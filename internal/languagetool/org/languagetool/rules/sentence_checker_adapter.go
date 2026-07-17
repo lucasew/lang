@@ -120,6 +120,12 @@ func RegisterSharedLayoutRules(lt *languagetool.JLanguageTool, uppercaseLang str
 		"repetition_paragraph_beginning_last_msg": "Paragraphs should not begin with the same words",
 	})
 	lt.AddTextLevelRuleChecker(prb.GetID(), AsTextLevelChecker(prb.MatchList))
+
+	// text-level: trailing whitespace before paragraph end
+	wpe := NewWhiteSpaceBeforeParagraphEnd(map[string]string{
+		"whitespace_before_parapgraph_end_msg": "Don't end a paragraph with whitespace",
+	})
+	lt.AddTextLevelRuleChecker(wpe.GetID(), AsTextLevelChecker(wpe.MatchList))
 }
 
 // RegisterCoreEnglishRules installs shared layout + EN a/an + word-repeat (real rule).
