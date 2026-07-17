@@ -141,3 +141,73 @@ func (m *ServerMetricsCollector) ErrorCount(t RequestErrorType) int64 {
 	defer m.mu.Unlock()
 	return m.errorsByReason[string(t)]
 }
+
+// MetricsSnapshot is a JSON-friendly view of process-local counters.
+type MetricsSnapshot struct {
+	Checks           int64            `json:"checks"`
+	Matches          int64            `json:"matches"`
+	Characters       int64            `json:"characters"`
+	HTTPRequests     int64            `json:"httpRequests"`
+	FailedHealth     int64            `json:"failedHealthchecks"`
+	ComputationMs    int64            `json:"computationMs"`
+	ResponsesByCode  map[string]int64 `json:"responsesByCode"`
+	ErrorsByReason   map[string]int64 `json:"errorsByReason"`
+	ChecksByLanguage map[string]int64 `json:"checksByLanguage"`
+}
+
+// Snapshot returns a copy of current metrics (soft /v2/metrics surface).
+func (m *ServerMetricsCollector) Snapshot() MetricsSnapshot {
+	if m == nil {
+		return MetricsSnapshot{
+			ResponsesByCode:  map[string]int64{},
+			ErrorsByReason:   map[string]int64{},
+			ChecksByLanguage: map[string]int64{},
+		}
+	}
+	snap := MetricsSnapshot{
+		Checks:           m.checks.Load(),
+		Matches:          m.matches.Load(),
+		Characters:       m.characters.Load(),
+		HTTPRequests:     m.httpRequests.Load(),
+		FailedHealth:     m.failedHealth.Load(),
+		ComputationMs:    m.computationNanos.Load() / 1_000_000,
+		ResponsesByCode:  map[string]int64{},
+		ErrorsByReason:   map[string]int64{},
+		ChecksByLanguage: map[string]int64{},
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for code, n := range m.responsesByCode {
+		snap.ResponsesByCode[itoaCode(code)] = n
+	}
+	for k, n := range m.errorsByReason {
+		snap.ErrorsByReason[k] = n
+	}
+	for k, n := range m.checksByLang {
+		snap.ChecksByLanguage[k] = n
+	}
+	return snap
+}
+
+func itoaCode(code int) string {
+	// small int to decimal without strconv import cycle concerns
+	if code == 0 {
+		return "0"
+	}
+	neg := code < 0
+	if neg {
+		code = -code
+	}
+	var b [12]byte
+	i := len(b)
+	for code > 0 {
+		i--
+		b[i] = byte('0' + code%10)
+		code /= 10
+	}
+	if neg {
+		i--
+		b[i] = '-'
+	}
+	return string(b[i:])
+}

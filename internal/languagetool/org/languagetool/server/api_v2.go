@@ -79,6 +79,13 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		}
 		Metrics().LogResponse(200)
 		return HandleResult{Status: 200, ContentType: JSONContentType, Body: body}, nil
+	case "metrics":
+		body, err := a.GetMetricsJSON()
+		if err != nil {
+			return HandleResult{}, err
+		}
+		Metrics().LogResponse(200)
+		return HandleResult{Status: 200, ContentType: JSONContentType, Body: body}, nil
 	case "configinfo":
 		body, err := a.GetConfigurationInfoJSON(parameters["language"])
 		if err != nil {
@@ -241,6 +248,13 @@ func (a *ApiV2) GetSoftwareInfoJSON() (string, error) {
 		"software": NewSoftwareInfo("dev"),
 	}
 	b, err := json.Marshal(info)
+	return string(b), err
+}
+
+// GetMetricsJSON returns process-local ServerMetricsCollector snapshot.
+func (a *ApiV2) GetMetricsJSON() (string, error) {
+	snap := Metrics().Snapshot()
+	b, err := json.Marshal(snap)
 	return string(b), err
 }
 

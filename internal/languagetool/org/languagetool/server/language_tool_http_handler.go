@@ -90,7 +90,7 @@ func (h *LanguageToolHttpHandler) HandlePathWithReferrer(path, remoteIP, referer
 	p := strings.TrimPrefix(path, "/")
 	// soft API index for discovery (root and bare /v2)
 	if p == "" || p == "v2" || p == "v2/" {
-		body := `{"name":"LanguageTool-Go","apiVersion":1,"endpoints":["/v2/check","/v2/languages","/v2/info","/v2/configinfo","/v2/maxtextlength","/v2/words","/v2/words/add","/v2/words/delete"]}`
+		body := `{"name":"LanguageTool-Go","apiVersion":1,"endpoints":["/v2/check","/v2/languages","/v2/info","/v2/configinfo","/v2/maxtextlength","/v2/metrics","/v2/words","/v2/words/add","/v2/words/delete"]}`
 		return HandleResult{Status: 200, ContentType: "application/json", Body: body}, nil
 	}
 	if strings.HasPrefix(p, "v2/") {
