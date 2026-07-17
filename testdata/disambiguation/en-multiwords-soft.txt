@@ -372,3 +372,6 @@ Defense Corridor RegionNNP
 Health Corridor RegionNNP
 Education Corridor RegionNNP
 Logistics Corridor RegionNNP
+Trade Corridor RegionNNP
+Transit Corridor RegionNNP
+Innovation Corridor RegionNNP

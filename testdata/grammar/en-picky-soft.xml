@@ -2120,5 +2120,29 @@
       <message>Jargon; name an authorized security attack drill instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_SANITY_TEST" name="sanity test soft picky">
+      <pattern>
+        <token>sanity</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a basic post-change smoke check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BENCHMARK_TEST" name="benchmark test soft picky">
+      <pattern>
+        <token>benchmark</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a timed comparative performance run instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_USABILITY_TEST" name="usability test soft picky">
+      <pattern>
+        <token>usability</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a real-user task success study instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

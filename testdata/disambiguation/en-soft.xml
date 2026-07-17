@@ -3327,4 +3327,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_WORKSPACES" name="immunize workspaces">
+    <pattern>
+      <token>workspaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKSPACES_CAPS" name="immunize WorkSpaces">
+    <pattern>
+      <token>WorkSpaces</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKDOCS" name="immunize workdocs">
+    <pattern>
+      <token>workdocs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WORKDOCS_CAPS" name="immunize WorkDocs">
+    <pattern>
+      <token>WorkDocs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFIGSERVICE" name="immunize configservice">
+    <pattern>
+      <token>configservice</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFIGSERVICE_CAPS" name="immunize ConfigService">
+    <pattern>
+      <token>ConfigService</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

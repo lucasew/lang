@@ -8107,6 +8107,76 @@
       <message>Did you mean "irrelevant"?</message>
       <short>irrelavent</short>
     </rule>
+    <rule id="EN_SOFT_INNOCENT_MISS" name="inocent soft">
+      <pattern>
+        <token>inocent</token>
+      </pattern>
+      <message>Did you mean "innocent"?</message>
+      <short>inocent</short>
+    </rule>
+    <rule id="EN_SOFT_INSPIRE_MISS" name="inpsire soft">
+      <pattern>
+        <token>inpsire</token>
+      </pattern>
+      <message>Did you mean "inspire"?</message>
+      <short>inpsire</short>
+    </rule>
+    <rule id="EN_SOFT_INTERPRETATION_MISS" name="interpetation soft">
+      <pattern>
+        <token>interpetation</token>
+      </pattern>
+      <message>Did you mean "interpretation"?</message>
+      <short>interpetation</short>
+    </rule>
+    <rule id="EN_SOFT_INTERRUPTING_MISS" name="interupting soft">
+      <pattern>
+        <token>interupting</token>
+      </pattern>
+      <message>Did you mean "interrupting"?</message>
+      <short>interupting</short>
+    </rule>
+    <rule id="EN_SOFT_INTERESTINGLY_MISS" name="intrestingly soft">
+      <pattern>
+        <token>intrestingly</token>
+      </pattern>
+      <message>Did you mean "interestingly"?</message>
+      <short>intrestingly</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIRONMENT_MISS2" name="inviroment soft">
+      <pattern>
+        <token>inviroment</token>
+      </pattern>
+      <message>Did you mean "environment"?</message>
+      <short>inviroment</short>
+    </rule>
+    <rule id="EN_SOFT_IRRESISTIBLE_MISS" name="irrisistible soft">
+      <pattern>
+        <token>irrisistible</token>
+      </pattern>
+      <message>Did you mean "irresistible"?</message>
+      <short>irrisistible</short>
+    </rule>
+    <rule id="EN_SOFT_LIAISON_MISS2" name="laison soft">
+      <pattern>
+        <token>laison</token>
+      </pattern>
+      <message>Did you mean "liaison"?</message>
+      <short>laison</short>
+    </rule>
+    <rule id="EN_SOFT_MARRIAGE_MISS" name="marraige soft">
+      <pattern>
+        <token>marraige</token>
+      </pattern>
+      <message>Did you mean "marriage"?</message>
+      <short>marraige</short>
+    </rule>
+    <rule id="EN_SOFT_MISMATCH_MISS" name="missmatch soft">
+      <pattern>
+        <token>missmatch</token>
+      </pattern>
+      <message>Did you mean "mismatch"?</message>
+      <short>missmatch</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
