@@ -42,6 +42,23 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			}
 		}
 		if len(readings) == 0 {
+			if pref := TryNoDashPrefixTags(w, func(right string) []*languagetool.AnalyzedToken {
+				var rs []*languagetool.AnalyzedToken
+				for _, tw := range t.TagWord(right) {
+					rs = append(rs, toTok(right, tw))
+				}
+				low := strings.ToLower(right)
+				if len(rs) == 0 && right != low {
+					for _, tw := range t.TagWord(low) {
+						rs = append(rs, toTok(right, tw))
+					}
+				}
+				return rs
+			}); len(pref) > 0 {
+				readings = pref
+			}
+		}
+		if len(readings) == 0 {
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
 		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))

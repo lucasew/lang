@@ -27,8 +27,10 @@ func TestPortugueseTagger_Contractions(t *testing.T) {
 }
 
 func TestPortugueseTagger_OrdinalAbbreviations(t *testing.T) {
-	// soft: without dict, ordinals untagged
-	t.Skip("unimplemented: needs full Portuguese dict for ordinal abbreviations")
+	tg := NewPortugueseTagger(tagging.MapWordTagger{})
+	got := tg.Tag([]string{"1.º", "2.ª"})
+	require.True(t, got[0].IsTagged())
+	require.True(t, got[1].IsTagged())
 }
 func TestPortugueseTagger_ContractionTagging(t *testing.T) {
 	// green path covered by TestPortugueseTagger_Contractions
@@ -41,5 +43,12 @@ func TestPortugueseTagger_ProductivePrefixes(t *testing.T) {
 	t.Skip("unimplemented: productive prefixes need dict")
 }
 func TestPortugueseTagger_Enclitics(t *testing.T) {
-	t.Skip("unimplemented: enclitics need dict")
+	wt := tagging.MapWordTagger{"diz": {tagging.NewTaggedWord("dizer", "VMIP3S0")}}
+	tg := NewPortugueseTagger(wt)
+	got := tg.Tag([]string{"diz-me"})
+	require.True(t, got[0].IsTagged())
+	verb, clit, ok := EncliticSplit("diz-me")
+	require.True(t, ok)
+	require.Equal(t, "diz", verb)
+	require.Equal(t, "me", clit)
 }

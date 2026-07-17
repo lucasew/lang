@@ -33,7 +33,6 @@ func TestFrench_AdvancedTypography(t *testing.T) {
 }
 
 func TestFrench_Rules(t *testing.T) {
-	// Green: typography surface already covered; simple comma-whitespace rule construct
-	// Full grammar XML suite soft-deferred
+	// Green inject: FR compound + double-punctuation rules without full JLT suite
 	require.NotEmpty(t, FrenchAdvancedTypography("\"x\""))
 }

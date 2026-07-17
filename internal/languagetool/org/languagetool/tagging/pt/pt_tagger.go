@@ -36,14 +36,29 @@ func (t *PortugueseTagger) Tag(sentenceTokens []string) []*languagetool.Analyzed
 		}
 		if len(readings) == 0 {
 			for _, cr := range ContractionReadings(w) {
-				pos, lemma := cr.POS, cr.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &pos, &lemma))
+				p, lemma := cr.POS, cr.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &lemma))
 			}
 		}
 		lower := strings.ToLower(w)
 		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
 			for _, tw := range t.TagWord(lower) {
 				readings = append(readings, tagged(word, tw))
+			}
+		}
+		if len(readings) == 0 {
+			if op := OrdinalAbbrevPOS(w); op != "" {
+				p, l := op, w
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+		}
+		if len(readings) == 0 {
+			if verb, clit, ok := EncliticSplit(w); ok {
+				for _, tw := range t.TagWord(verb) {
+					readings = append(readings, tagged(word, tw))
+				}
+				p, l := "PP"+clit, clit
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 			}
 		}
 		if len(readings) == 0 {

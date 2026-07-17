@@ -68,10 +68,6 @@ func TestUkrainianTagger_DynamicTaggingVmisny(t *testing.T) {
 func TestUkrainianTagger_DynamicTaggingXShaped(t *testing.T) {
 	t.Skip("unimplemented: x-shaped")
 }
-func TestUkrainianTagger_DynamicTaggingPrefixes(t *testing.T) {
-	t.Skip("unimplemented: prefixes")
-}
-func TestUkrainianTagger_NameSuffix(t *testing.T) { t.Skip("unimplemented: name suffix") }
 func TestUkrainianTagger_HypenAndQuote(t *testing.T) {
 	tg := NewUkrainianTagger(tagging.MapWordTagger{})
 	_ = tg.Tag([]string{"м'ясо"})
@@ -90,9 +86,6 @@ func TestUkrainianTagger_DynamicMissingApostrophe(t *testing.T) {
 }
 func TestUkrainianTagger_DynamicMissingHyphen(t *testing.T) {
 	t.Skip("unimplemented: missing hyphen")
-}
-func TestUkrainianTagger_DynamicTaggingPiv(t *testing.T) {
-	t.Skip("unimplemented: piv")
 }
 func TestUkrainianTagger_DynamicTaggingFullTagMatch(t *testing.T) {
 	t.Skip("unimplemented: full tag match")
