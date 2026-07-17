@@ -5377,6 +5377,76 @@
       <message>Did you mean "eligible"?</message>
       <short>eligable</short>
     </rule>
+    <rule id="EN_SOFT_EMBED_MISS" name="embbed soft">
+      <pattern>
+        <token>embbed</token>
+      </pattern>
+      <message>Did you mean "embed"?</message>
+      <short>embbed</short>
+    </rule>
+    <rule id="EN_SOFT_EMBEDDED_MISS" name="embeded soft">
+      <pattern>
+        <token>embeded</token>
+      </pattern>
+      <message>Did you mean "embedded"?</message>
+      <short>embeded</short>
+    </rule>
+    <rule id="EN_SOFT_EMERGENCY_MISS" name="emergancy soft">
+      <pattern>
+        <token>emergancy</token>
+      </pattern>
+      <message>Did you mean "emergency"?</message>
+      <short>emergancy</short>
+    </rule>
+    <rule id="EN_SOFT_EMPLOYEE_MISS" name="empoyee soft">
+      <pattern>
+        <token>empoyee</token>
+      </pattern>
+      <message>Did you mean "employee"?</message>
+      <short>empoyee</short>
+    </rule>
+    <rule id="EN_SOFT_ENCOURAGE_MISS" name="encorage soft">
+      <pattern>
+        <token>encorage</token>
+      </pattern>
+      <message>Did you mean "encourage"?</message>
+      <short>encorage</short>
+    </rule>
+    <rule id="EN_SOFT_ENGINEER_MISS" name="engeneer soft">
+      <pattern>
+        <token>engeneer</token>
+      </pattern>
+      <message>Did you mean "engineer"?</message>
+      <short>engeneer</short>
+    </rule>
+    <rule id="EN_SOFT_ENDEAVOUR_MISS" name="endevour soft">
+      <pattern>
+        <token>endevour</token>
+      </pattern>
+      <message>Did you mean "endeavour"?</message>
+      <short>endevour</short>
+    </rule>
+    <rule id="EN_SOFT_IMMEDIATELY_MISS2" name="emediately soft">
+      <pattern>
+        <token>emediately</token>
+      </pattern>
+      <message>Did you mean "immediately"?</message>
+      <short>emediately</short>
+    </rule>
+    <rule id="EN_SOFT_ELECTRIC_MISS" name="electirc soft">
+      <pattern>
+        <token>electirc</token>
+      </pattern>
+      <message>Did you mean "electric"?</message>
+      <short>electirc</short>
+    </rule>
+    <rule id="EN_SOFT_IGNORE_MISS" name="egnore soft">
+      <pattern>
+        <token>egnore</token>
+      </pattern>
+      <message>Did you mean "ignore"?</message>
+      <short>egnore</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

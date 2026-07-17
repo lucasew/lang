@@ -1151,5 +1151,34 @@
       <message>Jargon; name the recommended workflow instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_INNER_SOURCE" name="inner source soft picky">
+      <pattern>
+        <token>inner</token>
+        <token>source</token>
+      </pattern>
+      <message>Jargon; describe the internal open collaboration model.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHIFT_LEFT_TESTING" name="shift left testing soft picky">
+      <pattern>
+        <token>shift</token>
+        <token>left</token>
+        <token>testing</token>
+      </pattern>
+      <message>Jargon; name earlier test gates instead of the slogan.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_YOU_BUILD_IT_YOU_RUN_IT" name="you build it you run it soft picky">
+      <pattern>
+        <token>you</token>
+        <token>build</token>
+        <token>it</token>
+        <token>you</token>
+        <token>run</token>
+        <token>it</token>
+      </pattern>
+      <message>Slogan; name ownership of build and operations explicitly.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

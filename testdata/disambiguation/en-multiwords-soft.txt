@@ -255,3 +255,6 @@ eye to eye	RB
 Concord New Hampshire	NNP
 Montpelier Vermont	NNP
 toe to toe	RB
+Carson City Nevada	NNP
+Santa Fe New Mexico	NNP
+arm in arm	RB

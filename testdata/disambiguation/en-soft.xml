@@ -1923,4 +1923,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CONFTEST" name="immunize conftest">
+    <pattern>
+      <token>conftest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONFTEST_CAPS" name="immunize Conftest">
+    <pattern>
+      <token>Conftest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STARLARK" name="immunize starlark">
+    <pattern>
+      <token>starlark</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_STARLARK_CAPS" name="immunize Starlark">
+    <pattern>
+      <token>Starlark</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNOCTL" name="immunize kyvernoctl">
+    <pattern>
+      <token>kyvernoctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNOCTL_CAPS" name="immunize Kyvernoctl">
+    <pattern>
+      <token>Kyvernoctl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
