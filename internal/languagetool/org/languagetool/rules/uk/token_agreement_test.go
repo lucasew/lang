@@ -101,3 +101,13 @@ func TestNounVerbOverlap(t *testing.T) {
 		[]string{"noun:anim:m:v_naz"},
 	))
 }
+
+func TestVerbNounCaseAgreeHelper(t *testing.T) {
+	cg := LoadCaseGovernmentHelper()
+	vLemma := "боятися"
+	verb := atrLemma("боятися", &vLemma, "verb:imperf:inf")
+	noun := atr("закордоном", "noun:inanim:m:v_oru")
+	require.False(t, VerbNounCaseAgree(cg, verb, noun))
+	noun2 := atr("закордону", "noun:inanim:m:v_rod")
+	require.True(t, VerbNounCaseAgree(cg, verb, noun2))
+}

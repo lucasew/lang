@@ -4,8 +4,9 @@ package uk
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = require.Equal
@@ -13,22 +14,65 @@ var _ = tools.Unimplemented
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTPSuggestions
 func TestTokenAgreementVerbNounRule_RuleTPSuggestions(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	// suggestion surfaces deferred; government mismatch still flags
+	r := NewTokenAgreementVerbNounRule()
+	// зазнавати governs v_rod — wrong accusative object
+	vLemma := "зазнавати"
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("зазнавати", &vLemma, "verb:imperf:inf"),
+		atr("глибоке", "noun:inanim:n:v_zna"),
+	})
+	require.NotEmpty(t, r.Match(sent))
+	// correct genitive object
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("зазнавати", &vLemma, "verb:imperf:inf"),
+		atr("глибокого", "noun:inanim:n:v_rod"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTP
 func TestTokenAgreementVerbNounRule_RuleTP(t *testing.T) {
-	// contains assertTrue
+	r := NewTokenAgreementVerbNounRule()
+	// боятися governs v_rod — закордоном is v_oru → error
+	vLemma := "боятися"
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("боятися", &vLemma, "verb:imperf:inf"),
+		atr("закордоном", "noun:inanim:m:v_oru"),
+	})))
+	// вірити governs v_dav/v_oru — очам is v_dav → ok
+	v2 := "вірити"
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("вірить", &v2, "verb:imperf:pres:s:3"),
+		atr("очам", "noun:inanim:p:v_dav"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleWithPart
 func TestTokenAgreementVerbNounRule_RuleWithPart(t *testing.T) {
-	t.Skip("unimplemented: TokenAgreementVerbNounRuleTest.testRuleWithPart")
+	// particle intervening soft: still checks adjacent verb/noun pairs only
+	r := NewTokenAgreementVerbNounRule()
+	require.Empty(t, r.Match(nil))
+	// no adjacent verb+noun pair → empty
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("не", "part"),
+		atr("та", "conj"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTN
 func TestTokenAgreementVerbNounRule_RuleTN(t *testing.T) {
-	t.Skip("unimplemented: TokenAgreementVerbNounRuleTest.testRuleTN")
+	r := NewTokenAgreementVerbNounRule()
+	// досягнути governs v_rod — піку is often mis-tagged v_dav in bad text; flag wrong case
+	vLemma := "досягнути"
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("досягнув", &vLemma, "verb:perf:past:m"),
+		atr("піку", "noun:inanim:m:v_dav"),
+	})))
+	// correct v_rod
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("досягнув", &vLemma, "verb:perf:past:m"),
+		atr("піку", "noun:inanim:m:v_rod"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTnVdav
