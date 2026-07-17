@@ -28,6 +28,8 @@ func CheckText(w io.Writer, contents string, checker TextChecker) (int, error) {
 // CheckTextOptions controls formatting for CheckTextOpts.
 type CheckTextOptions struct {
 	JSON         bool
+	Lint         bool // SPEC tabwriter columns
+	Filename     string
 	ContextSize  int // -1 or 0 → default
 	LineOffset   int
 	PrevMatches  int
@@ -61,6 +63,10 @@ func CheckTextOpts(w io.Writer, contents string, checker TextChecker, opts Check
 		} else {
 			_, _ = io.WriteString(w, matchesToMinimalJSON(matches))
 		}
+		return len(matches), nil
+	}
+	if opts.Lint {
+		_ = WriteLintMatches(w, matches, contents, opts.Filename)
 		return len(matches), nil
 	}
 	PrintMatches(w, matches, opts.PrevMatches, contents, ctx, opts.LineOffset, opts.Verbose)

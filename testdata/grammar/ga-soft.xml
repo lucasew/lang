@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ga">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="GA_SOFT_AGUS_AGUS" name="agus agus">
+      <pattern>
+        <token>agus</token>
+        <token>agus</token>
+      </pattern>
+      <message>Athrá féideartha ar "agus".</message>
+      <short>agus agus</short>
+    </rule>
+  </category>
+</rules>

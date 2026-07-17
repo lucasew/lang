@@ -19,6 +19,7 @@ const UsageText = `Usage: languagetool [OPTION]... [FILE]
   --json                   JSON output
   --xml                    XML output
   --sarif                  SARIF 2.1 output
+  --lint                   linter columns (location severity type rule message suggestion)
   --xmlfilter              remove XML/HTML tags from input before check
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML

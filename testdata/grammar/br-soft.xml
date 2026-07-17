@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="br">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="BR_SOFT_HA_HA" name="ha ha">
+      <pattern>
+        <token>ha</token>
+        <token>ha</token>
+      </pattern>
+      <message>Posubl eiladenn eus "ha".</message>
+      <short>ha ha</short>
+    </rule>
+  </category>
+</rules>

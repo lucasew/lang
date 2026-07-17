@@ -108,6 +108,12 @@ func WriteMatchesOutput(w io.Writer, matches []*rules.RuleMatch, opts *CommandLi
 		}
 		_, err := io.WriteString(w, MatchesAsSARIF(matches, "", fn))
 		return err
+	case OutputLint:
+		fn := ""
+		if opts != nil {
+			fn = opts.Filename
+		}
+		return WriteLintMatches(w, matches, "", fn)
 	default:
 		// plaintext handled by PrintMatches elsewhere
 		return nil

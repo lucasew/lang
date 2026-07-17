@@ -259,8 +259,12 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 	}
 	cto := CheckTextOptions{
 		JSON:        opts != nil && (opts.OutputFormat == OutputJSON || opts.OutputFormat == OutputSARIF),
+		Lint:        opts != nil && opts.OutputFormat == OutputLint,
 		Verbose:     opts != nil && opts.Verbose,
 		ListUnknown: opts != nil && opts.IsListUnknown(),
+	}
+	if opts != nil {
+		cto.Filename = opts.Filename
 	}
 	if cto.JSON {
 		if opts != nil && opts.OutputFormat == OutputSARIF {

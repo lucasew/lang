@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="fa">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="FA_SOFT_VA_VA" name="و و">
+      <pattern>
+        <token>و</token>
+        <token>و</token>
+      </pattern>
+      <message>تکرار احتمالی «و».</message>
+      <short>و و</short>
+    </rule>
+  </category>
+</rules>

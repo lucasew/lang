@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="sl">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="SL_SOFT_IN_IN" name="in in">
+      <pattern>
+        <token>in</token>
+        <token>in</token>
+      </pattern>
+      <message>Možno podvajanje "in".</message>
+      <short>in in</short>
+    </rule>
+  </category>
+</rules>
