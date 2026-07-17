@@ -79,6 +79,10 @@ func SoftEnglishPhraseReplacements() map[string]string {
 		"peak my interest":             "pique my interest",
 		"reign in":                     "rein in",
 		"shoe in":                      "shoo-in",
+		"nerve wracking":               "nerve-racking",
+		"wait listed":                  "wait-listed",
+		"second hand smoke":            "secondhand smoke",
+		"day to day basis":             "day-to-day basis",
 	}
 }
 

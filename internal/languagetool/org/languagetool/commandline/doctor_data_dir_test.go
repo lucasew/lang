@@ -28,6 +28,13 @@ func TestCoreDoctor(t *testing.T) {
 		t.Log("grammar dir unset in this environment")
 	} else {
 		require.Contains(t, out, "soft grammar files:")
+		// regional soft spelling packs when grammar dir has them
+		if strings.Contains(out, "en-US-soft.xml") {
+			require.Contains(t, out, "en-US soft smoke:")
+		}
+		if strings.Contains(out, "en-GB-soft.xml") {
+			require.Contains(t, out, "en-GB soft smoke:")
+		}
 	}
 }
 

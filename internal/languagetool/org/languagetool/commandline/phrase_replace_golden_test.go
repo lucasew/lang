@@ -57,6 +57,8 @@ func TestGolden_SoftPhrasePack(t *testing.T) {
 		{"Please reign in spending.", "rein in"},
 		{"He is a shoe in for the job.", "shoo-in"},
 		{"That will peak my interest.", "pique my interest"},
+		{"It was nerve wracking.", "nerve-racking"},
+		{"On a day to day basis we ship.", "day-to-day basis"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.sug, func(t *testing.T) {

@@ -548,6 +548,10 @@ func TestGolden_SoftMoreStyleAndTryAnd(t *testing.T) {
 		{"What an unexpected surprise.", "EN_SOFT_UNEXPECTED_SURPRISE", ""},
 		{"Please revert back soon.", "EN_SOFT_REVERT_BACK", ""},
 		{"Do not repeat again.", "EN_SOFT_REPEAT_AGAIN", ""},
+		{"The final outcome is known.", "EN_SOFT_FINAL_OUTCOME", ""},
+		{"There is a general consensus.", "EN_SOFT_GENERAL_CONSENSUS", ""},
+		{"In my personal opinion, wait.", "EN_SOFT_PERSONAL_OPINION", ""},
+		{"The train came to a complete stop.", "EN_SOFT_COMPLETE_STOP", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

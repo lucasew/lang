@@ -487,6 +487,13 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		softN := countSoftGrammarFiles(gdir)
 		_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
 		_, _ = fmt.Fprintf(w, "soft grammar files: %d\n", softN)
+		// English regional soft spelling packs (loaded only for en-US / en-GB).
+		for _, name := range []string{"en-US-soft.xml", "en-GB-soft.xml"} {
+			p := filepath.Join(gdir, name)
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				_, _ = fmt.Fprintf(w, "soft spelling pack: %s\n", p)
+			}
+		}
 	}
 	ff := DiscoverFalseFriendsFile(opts)
 	if ff == "" {
@@ -564,6 +571,37 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		_, _ = fmt.Fprintf(w, "en soft smoke: EN_SOFT_WOULDVE ok\n")
 	} else {
 		_, _ = fmt.Fprintf(w, "en soft smoke: EN_SOFT_WOULDVE missing\n")
+	}
+	// regional soft spelling smoke (only if packs load via grammar dir)
+	if gdir != "" {
+		if ltUS, err := configureCoreLT("en-US", opts); err == nil {
+			hit := false
+			for _, m := range ltUS.Check("Pick a colour.") {
+				if m.RuleID == "EN_SOFT_COLOUR_US" {
+					hit = true
+					break
+				}
+			}
+			if hit {
+				_, _ = fmt.Fprintf(w, "en-US soft smoke: EN_SOFT_COLOUR_US ok\n")
+			} else {
+				_, _ = fmt.Fprintf(w, "en-US soft smoke: EN_SOFT_COLOUR_US missing\n")
+			}
+		}
+		if ltGB, err := configureCoreLT("en-GB", opts); err == nil {
+			hit := false
+			for _, m := range ltGB.Check("Pick a color.") {
+				if m.RuleID == "EN_SOFT_COLOR_GB" {
+					hit = true
+					break
+				}
+			}
+			if hit {
+				_, _ = fmt.Fprintf(w, "en-GB soft smoke: EN_SOFT_COLOR_GB ok\n")
+			} else {
+				_, _ = fmt.Fprintf(w, "en-GB soft smoke: EN_SOFT_COLOR_GB missing\n")
+			}
+		}
 	}
 	_, _ = fmt.Fprintf(w, "status: ok\n")
 	return nil

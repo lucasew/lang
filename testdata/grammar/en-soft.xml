@@ -806,6 +806,41 @@
       <message>Consider "repeat" alone.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_FINAL_OUTCOME" name="final outcome">
+      <pattern>
+        <token>final</token>
+        <token>outcome</token>
+      </pattern>
+      <message>"Final outcome" is often redundant; consider "outcome".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_GENERAL_CONSENSUS" name="general consensus">
+      <pattern>
+        <token>general</token>
+        <token>consensus</token>
+      </pattern>
+      <message>"General consensus" is often redundant; consider "consensus".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PERSONAL_OPINION" name="personal opinion">
+      <pattern>
+        <token>personal</token>
+        <token>opinion</token>
+      </pattern>
+      <message>"Personal opinion" is often redundant; consider "opinion".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_COMPLETE_STOP" name="complete stop">
+      <pattern>
+        <token>came</token>
+        <token>to</token>
+        <token>a</token>
+        <token>complete</token>
+        <token>stop</token>
+      </pattern>
+      <message>Consider "came to a stop" or "stopped".</message>
+      <short>style</short>
+    </rule>
   </category>
   <category id="TYPOS" name="Possible Typo">
     <rule id="EN_SOFT_ANYWAYS" name="anyways">
