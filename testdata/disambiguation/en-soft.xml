@@ -1671,4 +1671,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CROSSPLANE" name="immunize crossplane">
+    <pattern>
+      <token>crossplane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CROSSPLANE_CAPS" name="immunize Crossplane">
+    <pattern>
+      <token>Crossplane</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNO" name="immunize kyverno">
+    <pattern>
+      <token>kyverno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KYVERNO_CAPS" name="immunize Kyverno">
+    <pattern>
+      <token>Kyverno</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATEKEEPER" name="immunize gatekeeper">
+    <pattern>
+      <token>gatekeeper</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_GATEKEEPER_CAPS" name="immunize Gatekeeper">
+    <pattern>
+      <token>Gatekeeper</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

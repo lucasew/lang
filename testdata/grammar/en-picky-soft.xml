@@ -979,5 +979,30 @@
       <message>Vague slogan; name the release criteria instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TWO_PIZZA_TEAM" name="two pizza team soft picky">
+      <pattern>
+        <token>two</token>
+        <token>pizza</token>
+        <token>team</token>
+      </pattern>
+      <message>Jargon; name the team size limit instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_THINK_BIG" name="think big soft picky">
+      <pattern>
+        <token>think</token>
+        <token>big</token>
+      </pattern>
+      <message>Slogan; name the ambitious scope instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DAY_ONE" name="day one soft picky">
+      <pattern>
+        <token>day</token>
+        <token>one</token>
+      </pattern>
+      <message>Slogan; describe the startup mindset concretely.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

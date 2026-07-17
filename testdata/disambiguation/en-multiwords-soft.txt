@@ -234,3 +234,6 @@ up and down	RB
 Jackson Mississippi	NNP
 Montgomery Alabama	NNP
 back and forth	RB
+Tallahassee Florida	NNP
+Columbia South Carolina	NNP
+side by side	RB

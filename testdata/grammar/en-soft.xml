@@ -4887,6 +4887,76 @@
       <message>Did you mean "background"?</message>
       <short>backround</short>
     </rule>
+    <rule id="EN_SOFT_BECOMING_MISS" name="becomming soft">
+      <pattern>
+        <token>becomming</token>
+      </pattern>
+      <message>Did you mean "becoming"?</message>
+      <short>becomming</short>
+    </rule>
+    <rule id="EN_SOFT_BEFOREHAND_MISS" name="beforhand soft">
+      <pattern>
+        <token>beforhand</token>
+      </pattern>
+      <message>Did you mean "beforehand"?</message>
+      <short>beforhand</short>
+    </rule>
+    <rule id="EN_SOFT_BENEFITED_MISS" name="benifited soft">
+      <pattern>
+        <token>benifited</token>
+      </pattern>
+      <message>Did you mean "benefited"?</message>
+      <short>benifited</short>
+    </rule>
+    <rule id="EN_SOFT_BETWEEN_MISS" name="betwen soft">
+      <pattern>
+        <token>betwen</token>
+      </pattern>
+      <message>Did you mean "between"?</message>
+      <short>betwen</short>
+    </rule>
+    <rule id="EN_SOFT_BOUNDARY_MISS" name="boundry soft">
+      <pattern>
+        <token>boundry</token>
+      </pattern>
+      <message>Did you mean "boundary"?</message>
+      <short>boundry</short>
+    </rule>
+    <rule id="EN_SOFT_CAMOUFLAGE_MISS2" name="camoflague soft">
+      <pattern>
+        <token>camoflague</token>
+      </pattern>
+      <message>Did you mean "camouflage"?</message>
+      <short>camoflague</short>
+    </rule>
+    <rule id="EN_SOFT_CHALLENGING_MISS" name="challanging soft">
+      <pattern>
+        <token>challanging</token>
+      </pattern>
+      <message>Did you mean "challenging"?</message>
+      <short>challanging</short>
+    </rule>
+    <rule id="EN_SOFT_CHARACTER_MISS2" name="charachter soft">
+      <pattern>
+        <token>charachter</token>
+      </pattern>
+      <message>Did you mean "character"?</message>
+      <short>charachter</short>
+    </rule>
+    <rule id="EN_SOFT_CHIEF_MISS" name="cheif soft">
+      <pattern>
+        <token>cheif</token>
+      </pattern>
+      <message>Did you mean "chief"?</message>
+      <short>cheif</short>
+    </rule>
+    <rule id="EN_SOFT_CONTAIN_MISS" name="contian soft">
+      <pattern>
+        <token>contian</token>
+      </pattern>
+      <message>Did you mean "contain"?</message>
+      <short>contian</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
