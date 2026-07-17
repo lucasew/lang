@@ -567,3 +567,6 @@ Syenite Ridge RegionNNP
 Diorite Ridge RegionNNP
 Gabbro Ridge RegionNNP
 Norite Ridge RegionNNP
+Troctolite Ridge RegionNNP
+Dunite Ridge RegionNNP
+Websterite Ridge RegionNNP

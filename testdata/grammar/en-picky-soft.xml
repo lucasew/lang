@@ -3627,5 +3627,29 @@
       <message>Jargon; name a commit-based cloud spend discount plan instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_UNIT_ECONOMICS" name="unit economics soft picky">
+      <pattern>
+        <token>unit</token>
+        <token>economics</token>
+      </pattern>
+      <message>Jargon; name per-customer contribution margins instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BURN_RATE" name="burn rate soft picky">
+      <pattern>
+        <token>burn</token>
+        <token>rate</token>
+      </pattern>
+      <message>Jargon; name how fast cash is spent each month instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROSS_MARGIN" name="gross margin soft picky">
+      <pattern>
+        <token>gross</token>
+        <token>margin</token>
+      </pattern>
+      <message>Jargon; name revenue left after direct costs instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

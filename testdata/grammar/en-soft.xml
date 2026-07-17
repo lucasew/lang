@@ -12657,6 +12657,76 @@
       <message>Did you mean "compatibility"?</message>
       <short>compatability</short>
     </rule>
+    <rule id="EN_SOFT_SCALABILITY_MISS" name="scalabilty soft">
+      <pattern>
+        <token>scalabilty</token>
+      </pattern>
+      <message>Did you mean "scalability"?</message>
+      <short>scalabilty</short>
+    </rule>
+    <rule id="EN_SOFT_RELIABILITY_MISS" name="reliabilty soft">
+      <pattern>
+        <token>reliabilty</token>
+      </pattern>
+      <message>Did you mean "reliability"?</message>
+      <short>reliabilty</short>
+    </rule>
+    <rule id="EN_SOFT_AVAILABILITY_MISS3" name="availabilty soft">
+      <pattern>
+        <token>availabilty</token>
+      </pattern>
+      <message>Did you mean "availability"?</message>
+      <short>availabilty</short>
+    </rule>
+    <rule id="EN_SOFT_OBSERVABILITY_MISS" name="observabilty soft">
+      <pattern>
+        <token>observabilty</token>
+      </pattern>
+      <message>Did you mean "observability"?</message>
+      <short>observabilty</short>
+    </rule>
+    <rule id="EN_SOFT_DEPLOYMENT_MISS" name="deployement soft">
+      <pattern>
+        <token>deployement</token>
+      </pattern>
+      <message>Did you mean "deployment"?</message>
+      <short>deployement</short>
+    </rule>
+    <rule id="EN_SOFT_CONFIGURATION_MISS2" name="configuraiton soft">
+      <pattern>
+        <token>configuraiton</token>
+      </pattern>
+      <message>Did you mean "configuration"?</message>
+      <short>configuraiton</short>
+    </rule>
+    <rule id="EN_SOFT_ORCHESTRATION_MISS" name="orchestraton soft">
+      <pattern>
+        <token>orchestraton</token>
+      </pattern>
+      <message>Did you mean "orchestration"?</message>
+      <short>orchestraton</short>
+    </rule>
+    <rule id="EN_SOFT_INSTRUMENTATION_MISS" name="instrumentaton soft">
+      <pattern>
+        <token>instrumentaton</token>
+      </pattern>
+      <message>Did you mean "instrumentation"?</message>
+      <short>instrumentaton</short>
+    </rule>
+    <rule id="EN_SOFT_SERIALIZATION_MISS" name="serializaton soft">
+      <pattern>
+        <token>serializaton</token>
+      </pattern>
+      <message>Did you mean "serialization"?</message>
+      <short>serializaton</short>
+    </rule>
+    <rule id="EN_SOFT_DESERIALIZATION_MISS" name="deserializaton soft">
+      <pattern>
+        <token>deserializaton</token>
+      </pattern>
+      <message>Did you mean "deserialization"?</message>
+      <short>deserializaton</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

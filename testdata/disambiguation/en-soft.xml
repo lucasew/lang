@@ -5667,4 +5667,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_PGTYPED" name="immunize pgtyped">
+    <pattern>
+      <token>pgtyped</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGTYPED_CAPS" name="immunize PgTyped">
+    <pattern>
+      <token>PgTyped</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGPROMISE" name="immunize pgpromise">
+    <pattern>
+      <token>pgpromise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PGPROMISE_CAPS" name="immunize pg-promise">
+    <pattern>
+      <token>pg-promise</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRPC" name="immunize trpc">
+    <pattern>
+      <token>trpc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TRPC_CAPS" name="immunize tRPC">
+    <pattern>
+      <token>tRPC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
