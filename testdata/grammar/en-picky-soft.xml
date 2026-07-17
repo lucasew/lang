@@ -3448,5 +3448,26 @@
       <message>Jargon; name manual repetitive operational work instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_POSTMORTEM" name="postmortem soft picky">
+      <pattern>
+        <token>postmortem</token>
+      </pattern>
+      <message>Jargon; name an incident learning review instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_RUNBOOK" name="runbook soft picky">
+      <pattern>
+        <token>runbook</token>
+      </pattern>
+      <message>Jargon; name a step-by-step operational procedure guide instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PLAYBOOK" name="playbook soft picky">
+      <pattern>
+        <token>playbook</token>
+      </pattern>
+      <message>Jargon; name a standard response procedure guide instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

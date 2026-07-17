@@ -5379,4 +5379,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_SUPABASE" name="immunize supabase">
+    <pattern>
+      <token>supabase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SUPABASE_CAPS" name="immunize Supabase">
+    <pattern>
+      <token>Supabase</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLANETSCALE" name="immunize planetscale">
+    <pattern>
+      <token>planetscale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_PLANETSCALE_CAPS" name="immunize PlanetScale">
+    <pattern>
+      <token>PlanetScale</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FAUNA" name="immunize fauna">
+    <pattern>
+      <token>fauna</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FAUNA_CAPS" name="immunize Fauna">
+    <pattern>
+      <token>Fauna</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

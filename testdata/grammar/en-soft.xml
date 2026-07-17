@@ -12097,6 +12097,76 @@
       <message>Did you mean "architecture"?</message>
       <short>architecure</short>
     </rule>
+    <rule id="EN_SOFT_INFRASTRUCTURE_MISS" name="infrastrucure soft">
+      <pattern>
+        <token>infrastrucure</token>
+      </pattern>
+      <message>Did you mean "infrastructure"?</message>
+      <short>infrastrucure</short>
+    </rule>
+    <rule id="EN_SOFT_DASHBOARD_MISS" name="dashbord soft">
+      <pattern>
+        <token>dashbord</token>
+      </pattern>
+      <message>Did you mean "dashboard"?</message>
+      <short>dashbord</short>
+    </rule>
+    <rule id="EN_SOFT_DASHBOARD_MISS2" name="dashbaord soft">
+      <pattern>
+        <token>dashbaord</token>
+      </pattern>
+      <message>Did you mean "dashboard"?</message>
+      <short>dashbaord</short>
+    </rule>
+    <rule id="EN_SOFT_NOTIFICATION_MISS" name="notificaion soft">
+      <pattern>
+        <token>notificaion</token>
+      </pattern>
+      <message>Did you mean "notification"?</message>
+      <short>notificaion</short>
+    </rule>
+    <rule id="EN_SOFT_SUBSCRIPTION_MISS" name="subscrition soft">
+      <pattern>
+        <token>subscrition</token>
+      </pattern>
+      <message>Did you mean "subscription"?</message>
+      <short>subscrition</short>
+    </rule>
+    <rule id="EN_SOFT_SUBSCRIPTION_MISS2" name="subcription soft">
+      <pattern>
+        <token>subcription</token>
+      </pattern>
+      <message>Did you mean "subscription"?</message>
+      <short>subcription</short>
+    </rule>
+    <rule id="EN_SOFT_VALIDATION_MISS" name="validaton soft">
+      <pattern>
+        <token>validaton</token>
+      </pattern>
+      <message>Did you mean "validation"?</message>
+      <short>validaton</short>
+    </rule>
+    <rule id="EN_SOFT_ENCRYPTION_MISS" name="encription soft">
+      <pattern>
+        <token>encription</token>
+      </pattern>
+      <message>Did you mean "encryption"?</message>
+      <short>encription</short>
+    </rule>
+    <rule id="EN_SOFT_COMPRESSION_MISS" name="compresion soft">
+      <pattern>
+        <token>compresion</token>
+      </pattern>
+      <message>Did you mean "compression"?</message>
+      <short>compresion</short>
+    </rule>
+    <rule id="EN_SOFT_REPLICATION_MISS" name="replicaton soft">
+      <pattern>
+        <token>replicaton</token>
+      </pattern>
+      <message>Did you mean "replication"?</message>
+      <short>replicaton</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

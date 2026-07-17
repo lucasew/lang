@@ -543,3 +543,6 @@ Marble Ridge RegionNNP
 Slate Ridge RegionNNP
 Granite Ridge RegionNNP
 Chalk Ridge RegionNNP
+Flint Ridge RegionNNP
+Clay Ridge RegionNNP
+Shale Ridge RegionNNP
