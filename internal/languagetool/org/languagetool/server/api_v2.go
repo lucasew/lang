@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
@@ -209,14 +210,15 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			ignoreRanges = SoftForeignIgnoreRanges(plainForRanges, lang, alts)
 		}
 		var body string
+		checkStart := time.Now()
 		if annotated != nil {
 			matches := a.TextChecker.CheckAnnotatedWithOptions(annotated, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
-			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings, ignoreRanges)
+			body, err = a.TextChecker.BuildResponseExFull(annotated.GetTextWithMarkup(), lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
 		} else {
 			matches := a.TextChecker.CheckWithOptions(text, lang, opts)
 			matches = filterRemoteByIgnoreRanges(matches, ignoreRanges)
-			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, warnings, ignoreRanges)
+			body, err = a.TextChecker.BuildResponseExFull(text, lang, langName, matches, autoDetected, warnings, ignoreRanges, time.Since(checkStart).Milliseconds())
 		}
 		if err != nil {
 			return HandleResult{}, err

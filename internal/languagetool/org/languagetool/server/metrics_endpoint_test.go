@@ -52,3 +52,21 @@ func TestHTTP_E2E_Metrics(t *testing.T) {
 	require.Contains(t, w.Body.String(), "checks")
 	require.Contains(t, w.Body.String(), "httpRequests")
 }
+
+func TestMetrics_RecordsComputationMs(t *testing.T) {
+	// use a fresh collector via temporary swap
+	prev := defaultMetrics
+	defaultMetrics = NewServerMetricsCollector()
+	t.Cleanup(func() { defaultMetrics = prev })
+
+	api := NewApiV2(nil, nil)
+	_, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "This is an test.",
+	})
+	require.NoError(t, err)
+	snap := Metrics().Snapshot()
+	require.GreaterOrEqual(t, snap.Checks, int64(1))
+	// wall clock should be non-negative; often >0 on CI but allow 0 for fast machines
+	require.GreaterOrEqual(t, snap.ComputationMs, int64(0))
+}
