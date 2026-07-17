@@ -76,6 +76,15 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			Metrics().LogRequestError(RequestErrorInvalidRequest)
 			return HandleResult{}, err
 		}
+		// validate callback early (JSONP)
+		callback := parameters["callback"]
+		if callback != "" {
+			qp, err := ParseCheckQueryParams(parameters)
+			if err != nil {
+				return HandleResult{}, err
+			}
+			_ = qp
+		}
 		text := parameters["text"]
 		if text == "" {
 			text = parameters["data"]
@@ -90,7 +99,11 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		}
 		// Soft language-id: heuristic when auto; otherwise use requested code.
 		if strings.EqualFold(lang, "auto") {
-			lang = DetectLanguageOfString(text, nil, nil)
+			preferred := commaSeparated(parameters["preferredVariants"])
+			if err := ValidatePreferredVariants(preferred, nil); err != nil {
+				return HandleResult{}, err
+			}
+			lang = DetectLanguageOfString(text, preferred, nil)
 			if lang == "" {
 				lang = "en"
 			}
@@ -110,8 +123,14 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if err != nil {
 			return HandleResult{}, err
 		}
+		ct := JSONContentType
+		if callback != "" {
+			// JSONP: callbackName({...});
+			body = callback + "(" + body + ");"
+			ct = "application/javascript"
+		}
 		Metrics().LogResponse(200)
-		return HandleResult{Status: 200, ContentType: JSONContentType, Body: body}, nil
+		return HandleResult{Status: 200, ContentType: ct, Body: body}, nil
 	default:
 		return HandleResult{}, NewPathNotFoundError("Unsupported action: '" + path + "'. Please see " + APIV2DocURL)
 	}

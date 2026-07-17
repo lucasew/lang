@@ -2,6 +2,7 @@ package server
 
 // Twin of ApiV2Test
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -58,4 +59,39 @@ func TestApiV2_CheckEngine(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Contains(t, r2.Body, "FR_WORD_REPEAT_RULE")
+}
+
+func TestApiV2_CheckJSONP(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "ok",
+		"callback": "myCb",
+	})
+	require.NoError(t, err)
+	require.Equal(t, 200, r.Status)
+	require.True(t, strings.HasPrefix(r.Body, "myCb("))
+	require.True(t, strings.HasSuffix(r.Body, ");"))
+	require.Contains(t, r.ContentType, "javascript")
+}
+
+func TestApiV2_CheckJSONP_InvalidCallback(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	_, err := api.Handle("check", map[string]string{
+		"language": "en",
+		"text":     "ok",
+		"callback": "bad-1",
+	})
+	require.Error(t, err)
+}
+
+func TestApiV2_AutoPreferredVariants(t *testing.T) {
+	api := NewApiV2(nil, nil)
+	r, err := api.Handle("check", map[string]string{
+		"language":           "auto",
+		"text":               "This is an English sample for detection.",
+		"preferredVariants":  "en-GB",
+	})
+	require.NoError(t, err)
+	require.Contains(t, r.Body, `"code":"en-GB"`)
 }

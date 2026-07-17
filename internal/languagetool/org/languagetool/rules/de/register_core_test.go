@@ -62,3 +62,16 @@ func TestRegisterCoreGermanRules_TextLevel(t *testing.T) {
 	}
 	require.True(t, foundLS, "%+v", m2)
 }
+
+func TestRegisterCoreGermanRules_Patterns(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("de")
+	RegisterCoreGermanRules(lt)
+	m := lt.Check("Das war wegen dem Wetter.")
+	found := false
+	for _, x := range m {
+		if x.RuleID == "DE_WEGEN_DEM" {
+			found = true
+		}
+	}
+	require.True(t, found, "%+v", m)
+}
