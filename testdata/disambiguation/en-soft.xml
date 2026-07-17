@@ -5991,4 +5991,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ROLLUP" name="immunize rollup">
+    <pattern>
+      <token>rollup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ROLLUP_CAPS" name="immunize Rollup">
+    <pattern>
+      <token>Rollup</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESBUILD" name="immunize esbuild">
+    <pattern>
+      <token>esbuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ESBUILD_CAPS" name="immunize esbuild tool">
+    <pattern>
+      <token>Esbuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RSPACK" name="immunize rspack">
+    <pattern>
+      <token>rspack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_RSPACK_CAPS" name="immunize Rspack">
+    <pattern>
+      <token>Rspack</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

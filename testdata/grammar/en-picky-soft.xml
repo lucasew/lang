@@ -3846,5 +3846,26 @@
       <message>Jargon; name contracted value not yet billable instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ACV" name="acv soft picky">
+      <pattern>
+        <token>acv</token>
+      </pattern>
+      <message>Jargon; name average contract value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TCV" name="tcv soft picky">
+      <pattern>
+        <token>tcv</token>
+      </pattern>
+      <message>Jargon; name total contract value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ASP" name="asp soft picky">
+      <pattern>
+        <token>asp</token>
+      </pattern>
+      <message>Jargon; name average selling price instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

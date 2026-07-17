@@ -594,3 +594,6 @@ Quartz Peak RegionNNP
 Conglomerate Peak RegionNNP
 Breccia Peak RegionNNP
 Phyllite Peak RegionNNP
+Gypsum Peak RegionNNP
+Anhydrite Peak RegionNNP
+Halite Peak RegionNNP

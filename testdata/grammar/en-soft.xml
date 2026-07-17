@@ -13287,6 +13287,76 @@
       <message>Did you mean "closedstate"?</message>
       <short>closedstatee</short>
     </rule>
+    <rule id="EN_SOFT_CONNECTIONTIMEOUT_MISS" name="connecttimeoutt soft">
+      <pattern>
+        <token>connecttimeoutt</token>
+      </pattern>
+      <message>Did you mean "connectiontimeout"?</message>
+      <short>connecttimeoutt</short>
+    </rule>
+    <rule id="EN_SOFT_READTIMEOUT_MISS" name="readtimeoutt soft">
+      <pattern>
+        <token>readtimeoutt</token>
+      </pattern>
+      <message>Did you mean "readtimeout"?</message>
+      <short>readtimeoutt</short>
+    </rule>
+    <rule id="EN_SOFT_WRITETIMEOUT_MISS" name="writetimeoutt soft">
+      <pattern>
+        <token>writetimeoutt</token>
+      </pattern>
+      <message>Did you mean "writetimeout"?</message>
+      <short>writetimeoutt</short>
+    </rule>
+    <rule id="EN_SOFT_IDLETIMEOUT_MISS" name="idletimeoutt soft">
+      <pattern>
+        <token>idletimeoutt</token>
+      </pattern>
+      <message>Did you mean "idletimeout"?</message>
+      <short>idletimeoutt</short>
+    </rule>
+    <rule id="EN_SOFT_KEEPALIVETIMEOUT_MISS" name="keepalivetimeoutt soft">
+      <pattern>
+        <token>keepalivetimeoutt</token>
+      </pattern>
+      <message>Did you mean "keepalivetimeout"?</message>
+      <short>keepalivetimeoutt</short>
+    </rule>
+    <rule id="EN_SOFT_MAXCONNECTIONS_MISS" name="maxconnectionss soft">
+      <pattern>
+        <token>maxconnectionss</token>
+      </pattern>
+      <message>Did you mean "maxconnections"?</message>
+      <short>maxconnectionss</short>
+    </rule>
+    <rule id="EN_SOFT_MAXRETRIES_MISS" name="maxretriess soft">
+      <pattern>
+        <token>maxretriess</token>
+      </pattern>
+      <message>Did you mean "maxretries"?</message>
+      <short>maxretriess</short>
+    </rule>
+    <rule id="EN_SOFT_MINBACKOFF_MISS" name="minbackoffk soft">
+      <pattern>
+        <token>minbackoffk</token>
+      </pattern>
+      <message>Did you mean "minbackoff"?</message>
+      <short>minbackoffk</short>
+    </rule>
+    <rule id="EN_SOFT_MAXBACKOFF_MISS" name="maxbackoffk soft">
+      <pattern>
+        <token>maxbackoffk</token>
+      </pattern>
+      <message>Did you mean "maxbackoff"?</message>
+      <short>maxbackoffk</short>
+    </rule>
+    <rule id="EN_SOFT_RETRYATTEMPTS_MISS" name="retryattempss soft">
+      <pattern>
+        <token>retryattempss</token>
+      </pattern>
+      <message>Did you mean "retryattempts"?</message>
+      <short>retryattempss</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
