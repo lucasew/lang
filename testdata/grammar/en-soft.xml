@@ -12167,6 +12167,76 @@
       <message>Did you mean "replication"?</message>
       <short>replicaton</short>
     </rule>
+    <rule id="EN_SOFT_PARTITION_MISS" name="partiton soft">
+      <pattern>
+        <token>partiton</token>
+      </pattern>
+      <message>Did you mean "partition"?</message>
+      <short>partiton</short>
+    </rule>
+    <rule id="EN_SOFT_THROTTLING_MISS" name="throtling soft">
+      <pattern>
+        <token>throtling</token>
+      </pattern>
+      <message>Did you mean "throttling"?</message>
+      <short>throtling</short>
+    </rule>
+    <rule id="EN_SOFT_CACHING_MISS" name="cacheing soft">
+      <pattern>
+        <token>cacheing</token>
+      </pattern>
+      <message>Did you mean "caching"?</message>
+      <short>cacheing</short>
+    </rule>
+    <rule id="EN_SOFT_BROKER_MISS" name="brokker soft">
+      <pattern>
+        <token>brokker</token>
+      </pattern>
+      <message>Did you mean "broker"?</message>
+      <short>brokker</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUMER_MISS2" name="consumr soft">
+      <pattern>
+        <token>consumr</token>
+      </pattern>
+      <message>Did you mean "consumer"?</message>
+      <short>consumr</short>
+    </rule>
+    <rule id="EN_SOFT_PRODUCER_MISS" name="producr soft">
+      <pattern>
+        <token>producr</token>
+      </pattern>
+      <message>Did you mean "producer"?</message>
+      <short>producr</short>
+    </rule>
+    <rule id="EN_SOFT_HANDLER_MISS" name="handlre soft">
+      <pattern>
+        <token>handlre</token>
+      </pattern>
+      <message>Did you mean "handler"?</message>
+      <short>handlre</short>
+    </rule>
+    <rule id="EN_SOFT_CONTROLLER_MISS" name="controler soft">
+      <pattern>
+        <token>controler</token>
+      </pattern>
+      <message>Did you mean "controller"?</message>
+      <short>controler</short>
+    </rule>
+    <rule id="EN_SOFT_MIDDLEWARE_MISS" name="midleware soft">
+      <pattern>
+        <token>midleware</token>
+      </pattern>
+      <message>Did you mean "middleware"?</message>
+      <short>midleware</short>
+    </rule>
+    <rule id="EN_SOFT_MIDDLEWARE_MISS2" name="middelware soft">
+      <pattern>
+        <token>middelware</token>
+      </pattern>
+      <message>Did you mean "middleware"?</message>
+      <short>middelware</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

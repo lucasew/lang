@@ -3469,5 +3469,27 @@
       <message>Jargon; name a standard response procedure guide instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_PROCESS_CAPABILITY" name="process capability soft picky">
+      <pattern>
+        <token>process</token>
+        <token>capability</token>
+      </pattern>
+      <message>Jargon; name how well a process meets specification limits instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLAMELESS" name="blameless soft picky">
+      <pattern>
+        <token>blameless</token>
+      </pattern>
+      <message>Jargon; name a learning-focused non-punitive review instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ONCALL" name="oncall soft picky">
+      <pattern>
+        <token>oncall</token>
+      </pattern>
+      <message>Jargon; name the rotation for incident response duty instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

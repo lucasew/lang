@@ -5415,4 +5415,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NEON" name="immunize neon">
+    <pattern>
+      <token>neon</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEON_CAPS" name="immunize Neon">
+    <pattern>
+      <token>Neon</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURSO" name="immunize turso">
+    <pattern>
+      <token>turso</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TURSO_CAPS" name="immunize Turso">
+    <pattern>
+      <token>Turso</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SURREALDB" name="immunize surrealdb">
+    <pattern>
+      <token>surrealdb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SURREALDB_CAPS" name="immunize SurrealDB">
+    <pattern>
+      <token>SurrealDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

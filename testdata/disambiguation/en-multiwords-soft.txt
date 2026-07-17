@@ -546,3 +546,6 @@ Chalk Ridge RegionNNP
 Flint Ridge RegionNNP
 Clay Ridge RegionNNP
 Shale Ridge RegionNNP
+Gneiss Ridge RegionNNP
+Schist Ridge RegionNNP
+Quartzite Ridge RegionNNP
