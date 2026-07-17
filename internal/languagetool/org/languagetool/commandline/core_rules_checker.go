@@ -605,6 +605,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		// Regional soft spelling packs (loaded only for matching lang codes).
 		regional := []string{
 			"en-US-soft.xml", "en-GB-soft.xml", "en-AU-soft.xml", "en-CA-soft.xml",
+			"en-NZ-soft.xml",
 			"pt-BR-soft.xml", "pt-PT-soft.xml",
 			"es-MX-soft.xml", "es-ES-soft.xml",
 			"de-CH-soft.xml", "de-AT-soft.xml",

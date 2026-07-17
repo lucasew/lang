@@ -224,5 +224,45 @@
       <message>Consider "contact" or "email" when more specific.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_THOUGHT_LEADERSHIP" name="thought leadership soft picky">
+      <pattern>
+        <token>thought</token>
+        <token>leadership</token>
+      </pattern>
+      <message>Jargon; consider "expertise" or "ideas".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DRILL_DOWN" name="drill down soft picky">
+      <pattern>
+        <token>drill</token>
+        <token>down</token>
+      </pattern>
+      <message>Consider "examine" or "look into".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ALIGN_ON" name="align on soft picky">
+      <pattern>
+        <token>align</token>
+        <token>on</token>
+      </pattern>
+      <message>Consider "agree on" or "decide".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUSHBACK" name="pushback soft picky">
+      <pattern>
+        <token>pushback</token>
+      </pattern>
+      <message>Consider "resistance" or "objections".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_OFFLINE" name="take offline soft picky">
+      <pattern>
+        <token>take</token>
+        <token>this</token>
+        <token>offline</token>
+      </pattern>
+      <message>Consider "discuss separately" or "follow up later".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

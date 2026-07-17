@@ -2136,13 +2136,6 @@
       <message>Did you mean "benefit"?</message>
       <short>benifit</short>
     </rule>
-    <rule id="EN_SOFT_CHANGEABLE_MISS" name="changable soft">
-      <pattern>
-        <token>changable</token>
-      </pattern>
-      <message>Did you mean "changeable"?</message>
-      <short>changable</short>
-    </rule>
     <rule id="EN_SOFT_CATEGORY_MISS" name="catagory soft">
       <pattern>
         <token>catagory</token>
@@ -2156,6 +2149,83 @@
       </pattern>
       <message>Did you mean "cemetery"?</message>
       <short>cemetary</short>
+    </rule>
+    <rule id="EN_SOFT_CHANGEABLE_MISS" name="changable soft">
+      <pattern>
+        <token>changable</token>
+      </pattern>
+      <message>Did you mean "changeable"?</message>
+      <short>changable</short>
+    </rule>
+    <rule id="EN_SOFT_COLLEGE_MISS" name="colledge soft">
+      <pattern>
+        <token>colledge</token>
+      </pattern>
+      <message>Did you mean "college"?</message>
+      <short>colledge</short>
+    </rule>
+    <rule id="EN_SOFT_COMMITTEE_MISS" name="commitee soft">
+      <pattern>
+        <token>commitee</token>
+      </pattern>
+      <message>Did you mean "committee"?</message>
+      <short>commitee</short>
+    </rule>
+    <rule id="EN_SOFT_CONSCIOUS_MISS" name="consious soft">
+      <pattern>
+        <token>consious</token>
+      </pattern>
+      <message>Did you mean "conscious"?</message>
+      <short>consious</short>
+    </rule>
+    <rule id="EN_SOFT_CONVENIENT_MISS" name="conveniant soft">
+      <pattern>
+        <token>conveniant</token>
+      </pattern>
+      <message>Did you mean "convenient"?</message>
+      <short>conveniant</short>
+    </rule>
+    <rule id="EN_SOFT_CRITICISM_MISS" name="critisism soft">
+      <pattern>
+        <token>critisism</token>
+      </pattern>
+      <message>Did you mean "criticism"?</message>
+      <short>critisism</short>
+    </rule>
+    <rule id="EN_SOFT_DECISION_MISS" name="decison soft">
+      <pattern>
+        <token>decison</token>
+      </pattern>
+      <message>Did you mean "decision"?</message>
+      <short>decison</short>
+    </rule>
+    <rule id="EN_SOFT_DESCRIPTION_MISS" name="discription soft">
+      <pattern>
+        <token>discription</token>
+      </pattern>
+      <message>Did you mean "description"?</message>
+      <short>discription</short>
+    </rule>
+    <rule id="EN_SOFT_DEVELOP_MISS" name="developement soft">
+      <pattern>
+        <token>developement</token>
+      </pattern>
+      <message>Did you mean "development"?</message>
+      <short>developement</short>
+    </rule>
+    <rule id="EN_SOFT_DIFFERENT_MISS" name="diffrent soft">
+      <pattern>
+        <token>diffrent</token>
+      </pattern>
+      <message>Did you mean "different"?</message>
+      <short>diffrent</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPEAR_MISS" name="dissapear soft">
+      <pattern>
+        <token>dissapear</token>
+      </pattern>
+      <message>Did you mean "disappear"?</message>
+      <short>dissapear</short>
     </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
