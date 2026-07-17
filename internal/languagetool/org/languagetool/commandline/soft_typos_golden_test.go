@@ -528,6 +528,46 @@ func TestGolden_ApplySoftBetweenYouAndI(t *testing.T) {
 	require.Contains(t, out.String(), "between you and me")
 }
 
+func TestGolden_SoftMoreStyleAndTryAnd(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Please try and see the difference.", "EN_SOFT_TRY_AND", "try to see"},
+		{"Each and every student passed.", "EN_SOFT_EACH_AND_EVERY", ""},
+		{"First and foremost, plan carefully.", "EN_SOFT_FIRST_AND_FOREMOST", ""},
+		{"Learn the basic fundamentals first.", "EN_SOFT_BASIC_FUNDAMENTALS", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftLessPeople(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Less people attended.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "fewer people")
+}
+
 func TestGolden_SoftSupposeTo(t *testing.T) {
 	var buf bytes.Buffer
 	_, err := CoreGoldenHook(&buf, "You suppose to leave now.", &CommandLineOptions{Language: "en"})

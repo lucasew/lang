@@ -58,6 +58,47 @@
       <message>¿Quiso decir "porque" o "por qué"?</message>
       <short>porque</short>
     </rule>
+    <rule id="ES_SOFT_EN_EL" name="en el ok">
+      <pattern>
+        <token>en</token>
+        <token>el</token>
+        <token>el</token>
+      </pattern>
+      <message>Posible repetición de "el".</message>
+      <short>el el</short>
+    </rule>
+    <rule id="ES_SOFT_HAZ_HAS" name="haz/has">
+      <pattern>
+        <token>tu</token>
+        <token>haz</token>
+      </pattern>
+      <message>¿Quiso decir "tú has"?</message>
+      <short>haz/has</short>
+    </rule>
+    <rule id="ES_SOFT_VALLA_VAYA" name="valla/vaya">
+      <pattern>
+        <token>valla</token>
+        <token>usted</token>
+      </pattern>
+      <message>¿Quiso decir "vaya usted"?</message>
+      <short>valla/vaya</short>
+    </rule>
+    <rule id="ES_SOFT_ECHO_HECHO" name="echo/hecho">
+      <pattern>
+        <token>he</token>
+        <token>echo</token>
+      </pattern>
+      <message>¿Quiso decir "he hecho"?</message>
+      <short>echo/hecho</short>
+    </rule>
+    <rule id="ES_SOFT_AYA_HAYA" name="aya/haya">
+      <pattern>
+        <token>aya</token>
+        <token>visto</token>
+      </pattern>
+      <message>¿Quiso decir "haya visto"?</message>
+      <short>aya/haya</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Tipografía">
     <rule id="ES_SOFT_DOUBLE_BANG" name="doble exclamación">
@@ -65,7 +106,7 @@
         <token>!</token>
         <token>!</token>
       </pattern>
-      <message>Considere un solo signo de exclamación.</message>
+      <message>Considere un solo signo de exclamación: "!"</message>
       <short>puntuación</short>
     </rule>
   </category>

@@ -677,6 +677,52 @@
       <message>Consider "these" alone.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_TRY_AND" name="try and soft xml">
+      <pattern>
+        <token>try</token>
+        <token>and</token>
+        <token>see</token>
+      </pattern>
+      <message>Did you mean "try to see"?</message>
+      <short>try and</short>
+    </rule>
+    <rule id="EN_SOFT_GOES_WITHOUT_SAYING" name="goes without saying soft">
+      <pattern>
+        <token>it</token>
+        <token>goes</token>
+        <token>without</token>
+        <token>saying</token>
+        <token>that</token>
+      </pattern>
+      <message>Consider stating the point directly without the filler phrase.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_EACH_AND_EVERY" name="each and every">
+      <pattern>
+        <token>each</token>
+        <token>and</token>
+        <token>every</token>
+      </pattern>
+      <message>Consider "each" or "every" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_FIRST_AND_FOREMOST" name="first and foremost">
+      <pattern>
+        <token>first</token>
+        <token>and</token>
+        <token>foremost</token>
+      </pattern>
+      <message>Consider "first" alone.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_BASIC_FUNDAMENTALS" name="basic fundamentals">
+      <pattern>
+        <token>basic</token>
+        <token>fundamentals</token>
+      </pattern>
+      <message>"Basic fundamentals" is often redundant; consider "fundamentals".</message>
+      <short>style</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">
