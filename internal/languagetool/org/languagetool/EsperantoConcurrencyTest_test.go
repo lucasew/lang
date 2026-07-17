@@ -1,17 +1,9 @@
 package languagetool
 
-// Twin of languagetool-language-modules/eo/src/test/java/org/languagetool/EsperantoConcurrencyTest.java
-import (
-	"testing"
+// Twin of EsperantoConcurrencyTest — concurrent Analyze smoke (full spell race deferred).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/eo/src/test/java/org/languagetool/EsperantoConcurrencyTest.java :: EsperantoConcurrencyTest (no @Test)
+// Port of EsperantoConcurrencyTest (Java @Ignore slow spell race)
 func TestEsperantoConcurrency_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/eo/src/test/java/org/languagetool/EsperantoConcurrencyTest.java")
+	ConcurrencyAnalyzeSmoke(t, "eo", "Testo.")
 }

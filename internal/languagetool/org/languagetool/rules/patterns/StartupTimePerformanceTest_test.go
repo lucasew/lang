@@ -1,17 +1,16 @@
 package patterns
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/rules/patterns/StartupTimePerformanceTest.java
+// Twin of StartupTimePerformanceTest — pattern builder startup smoke.
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/rules/patterns/StartupTimePerformanceTest.java :: StartupTimePerformanceTest (no @Test)
+// Port of StartupTimePerformanceTest (no @Test)
 func TestStartupTimePerformance_NoTests(t *testing.T) {
-	t.Log("languagetool-standalone/src/test/java/org/languagetool/rules/patterns/StartupTimePerformanceTest.java")
+	start := time.Now()
+	_ = NewPatternTokenBuilder().Token("x").Negate().Min(0).Max(2).Build()
+	require.Less(t, time.Since(start), time.Second)
 }

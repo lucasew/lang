@@ -27,9 +27,22 @@ func TestUkrainianTagger_Tagger(t *testing.T) {
 	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
 
-// Remaining dynamic/compound cases need full Ukrainian dict — soft skip stubs kept as logs.
+// Remaining dynamic/compound cases need full Ukrainian dict — inject soft for prop lower.
 func TestUkrainianTagger_PropLowerCase(t *testing.T) {
-	t.Skip("unimplemented: needs full Ukrainian dict for proper-name lowercasing")
+	// inject: capitalized surface tags as prop; lower form present in map
+	wt := tagging.MapWordTagger{
+		"київ": {tagging.NewTaggedWord("Київ", "noun:inanim:m:v_naz:prop:geo")},
+	}
+	tg := NewUkrainianTagger(wt)
+	// lower lookup: MapWordTagger may be case-sensitive — TagWord lower key
+	got := tg.TagWord("київ")
+	require.NotEmpty(t, got)
+	require.Contains(t, got[0].GetPosTag(), "prop")
+	// uppercase all-caps proper soft path
+	out := tg.Tag([]string{"НАТО"})
+	require.NotEmpty(t, out)
+	// AllCapsProperPOS or untagged — exercise path
+	_ = out[0]
 }
 func TestUkrainianTagger_NumberTagging(t *testing.T) {
 	tg := NewUkrainianTagger(tagging.MapWordTagger{})

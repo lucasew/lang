@@ -1,17 +1,9 @@
 package languagetool
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/ValencianCatalanConcurrencyTest.java
-import (
-	"testing"
+// Twin of ValencianCatalanConcurrencyTest — concurrent Analyze smoke (full spell race deferred).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/ca/src/test/java/org/languagetool/ValencianCatalanConcurrencyTest.java :: ValencianCatalanConcurrencyTest (no @Test)
+// Port of ValencianCatalanConcurrencyTest (Java @Ignore slow spell race)
 func TestValencianCatalanConcurrency_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/ca/src/test/java/org/languagetool/ValencianCatalanConcurrencyTest.java")
+	ConcurrencyAnalyzeSmoke(t, "ca-ES-valencia", "Una prova.")
 }

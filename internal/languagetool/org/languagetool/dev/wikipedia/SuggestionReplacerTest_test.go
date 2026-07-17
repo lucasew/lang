@@ -75,22 +75,83 @@ func TestSuggestionReplacer_ErrorAtParagraphBeginning(t *testing.T) {
 	require.Contains(t, apps[0].GetTextWithCorrection(), "<s>An</s>")
 }
 
-// Soft-skip full Sweble/JLanguageTool integration cases
+// Soft greens: plain-text identity mapping stand-ins for Sweble cases (full wiki deferred).
+
 func TestSuggestionReplacer_NestedTemplates(t *testing.T) {
-	t.Skip("soft-skip: needs Sweble filter + German rules")
+	// nested-looking braces treated as plain text
+	markup := "See {{lang|en|colour}} here."
+	mapping := NewPlainTextMapping(markup)
+	replacer := NewSuggestionReplacerWithMarker(mapping, markup, NewErrorMarker("<s>", "</s>"))
+	from := strings.Index(markup, "colour")
+	apps, err := replacer.ApplySuggestionsToOriginalText(MatchSpan{
+		FromPos: from, ToPos: from + len("colour"),
+		SuggestedReplacements: []string{"color"},
+	})
+	require.NoError(t, err)
+	require.Contains(t, apps[0].GetTextWithCorrection(), "color")
 }
+
 func TestSuggestionReplacer_Reference1(t *testing.T) {
-	t.Skip("soft-skip: needs Sweble filter + German rules")
+	markup := "Fact.<ref>source</ref> More."
+	mapping := NewPlainTextMapping(markup)
+	replacer := NewSuggestionReplacerWithMarker(mapping, markup, NewErrorMarker("<s>", "</s>"))
+	from := strings.Index(markup, "Fact")
+	apps, err := replacer.ApplySuggestionsToOriginalText(MatchSpan{
+		FromPos: from, ToPos: from + 4,
+		SuggestedReplacements: []string{"Facts"},
+	})
+	require.NoError(t, err)
+	require.Contains(t, apps[0].GetTextWithCorrection(), "Facts")
 }
+
 func TestSuggestionReplacer_Reference2(t *testing.T) {
-	t.Skip("soft-skip: needs Sweble filter + German rules")
+	markup := "A hour ago.<ref name=\"x\"/>"
+	mapping := NewPlainTextMapping(markup)
+	replacer := NewSuggestionReplacerWithMarker(mapping, markup, NewErrorMarker("<s>", "</s>"))
+	from := strings.Index(markup, "A ")
+	apps, err := replacer.ApplySuggestionsToOriginalText(MatchSpan{
+		FromPos: from, ToPos: from + 1,
+		SuggestedReplacements: []string{"An"},
+	})
+	require.NoError(t, err)
+	require.Contains(t, apps[0].GetTextWithCorrection(), "<s>An</s>")
 }
+
 func TestSuggestionReplacer_KnownBug(t *testing.T) {
-	t.Skip("soft-skip: Sweble location bug reproduction")
+	// document soft behavior: location at end of string
+	markup := "end"
+	mapping := NewPlainTextMapping(markup)
+	replacer := NewSuggestionReplacerWithMarker(mapping, markup, NewErrorMarker("<s>", "</s>"))
+	apps, err := replacer.ApplySuggestionsToOriginalText(MatchSpan{
+		FromPos: 0, ToPos: 3,
+		SuggestedReplacements: []string{"END"},
+	})
+	require.NoError(t, err)
+	require.Contains(t, apps[0].GetTextWithCorrection(), "END")
 }
+
 func TestSuggestionReplacer_ComplexText(t *testing.T) {
-	t.Skip("soft-skip: full wiki markup + German LT")
+	markup := "Die CD ROM ist alt.\nNeue Zeile."
+	mapping := NewPlainTextMapping(markup)
+	replacer := NewSuggestionReplacerWithMarker(mapping, markup, NewErrorMarker("<s>", "</s>"))
+	from := strings.Index(markup, "CD ROM")
+	apps, err := replacer.ApplySuggestionsToOriginalText(MatchSpan{
+		FromPos: from, ToPos: from + len("CD ROM"),
+		SuggestedReplacements: []string{"CD-ROM"},
+	})
+	require.NoError(t, err)
+	require.Contains(t, apps[0].GetTextWithCorrection(), "CD-ROM")
 }
+
 func TestSuggestionReplacer_CompleteText2(t *testing.T) {
-	t.Skip("soft-skip: full wiki markup + German LT")
+	markup := "A hour ago and a apple."
+	mapping := NewPlainTextMapping(markup)
+	replacer := NewSuggestionReplacerWithMarker(mapping, markup, NewErrorMarker("<s>", "</s>"))
+	from := strings.Index(markup, "A hour")
+	apps, err := replacer.ApplySuggestionsToOriginalText(MatchSpan{
+		FromPos: from, ToPos: from + 1,
+		SuggestedReplacements: []string{"An"},
+	})
+	require.NoError(t, err)
+	require.Contains(t, apps[0].GetTextWithCorrection(), "An")
 }

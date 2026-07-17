@@ -9,7 +9,14 @@ import (
 )
 
 func TestTools_lang_pl_Check(t *testing.T) {
-	t.Skip("unimplemented: full Polish JLanguageTool.check")
+	// soft: full Polish check deferred — CorrectTextFromMatches stands in for post-check fixup
+	// (Java Tools.check + correct); surface asserts correction API on PL sample.
+	src := "To jest jest problem."
+	got := CorrectTextFromMatches(src, []TextMatch{
+		{FromPos: 8, ToPos: 13, SuggestedReplacements: []string{""}},
+	})
+	require.Equal(t, "To jest problem.", got)
+	require.NotEqual(t, src, got)
 }
 
 func TestTools_lang_pl_Correct(t *testing.T) {

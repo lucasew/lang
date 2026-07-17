@@ -82,6 +82,82 @@ func CleanTranslationForReplace(s, prevWord string) string {
 	return clean
 }
 
+// BeoLingusTranslator is an inject-friendly dictionary surface
+// (full Beolingus file deferred).
+type BeoLingusTranslator struct {
+	// Dict maps German source lemma → English translation entries (raw strings).
+	Dict map[string][]string
+	// Inflected maps surface form → base lemma used for lookup.
+	Inflected map[string]string
+}
+
+// NewBeoLingusTranslator builds an empty inject translator.
+func NewBeoLingusTranslator() *BeoLingusTranslator {
+	return &BeoLingusTranslator{
+		Dict:      map[string][]string{},
+		Inflected: map[string]string{},
+	}
+}
+
+// Translate looks up German word (or lemma) and returns cleaned English variants.
+func (t *BeoLingusTranslator) Translate(german, prevWord string) []string {
+	if t == nil || german == "" {
+		return nil
+	}
+	key := german
+	if t.Inflected != nil {
+		if base, ok := t.Inflected[german]; ok {
+			key = base
+		}
+	}
+	raw, ok := t.Dict[key]
+	if !ok {
+		// case fold soft
+		for k, v := range t.Dict {
+			if strings.EqualFold(k, key) {
+				raw = v
+				ok = true
+				break
+			}
+		}
+	}
+	if !ok {
+		return nil
+	}
+	var out []string
+	for _, r := range raw {
+		for _, part := range Split(r) {
+			c := CleanTranslationForReplace(part, prevWord)
+			if c != "" {
+				out = append(out, c)
+			}
+		}
+	}
+	return out
+}
+
+// TranslateInflectedForm ports translate of an inflected DE form via Inflected map.
+func (t *BeoLingusTranslator) TranslateInflectedForm(surface, prevWord string) []string {
+	return t.Translate(surface, prevWord)
+}
+
+// AmericanToBritish soft maps common AE→BE spelling in translations.
+func AmericanToBritish(s string) string {
+	repl := map[string]string{
+		"color": "colour", "favor": "favour", "center": "centre",
+		"theater": "theatre", "organize": "organise",
+	}
+	low := strings.ToLower(s)
+	if b, ok := repl[low]; ok {
+		// preserve simple casing of first letter
+		if s != "" && s[0] >= 'A' && s[0] <= 'Z' {
+			return strings.ToUpper(b[:1]) + b[1:]
+		}
+		return b
+	}
+	return s
+}
+
 // GetTranslationSuffix ports BeoLingusTranslator.getTranslationSuffix.
 func GetTranslationSuffix(s string) string {
 	var sb strings.Builder

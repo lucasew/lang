@@ -1,17 +1,9 @@
 package languagetool
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/NewZealandEnglishConcurrencyTest.java
-import (
-	"testing"
+// Twin of NewZealandEnglishConcurrencyTest — concurrent Analyze smoke (full spell race deferred).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/en/src/test/java/org/languagetool/NewZealandEnglishConcurrencyTest.java :: NewZealandEnglishConcurrencyTest (no @Test)
+// Port of NewZealandEnglishConcurrencyTest (Java @Ignore slow spell race)
 func TestNewZealandEnglishConcurrency_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/en/src/test/java/org/languagetool/NewZealandEnglishConcurrencyTest.java")
+	ConcurrencyAnalyzeSmoke(t, "en-NZ", "A test.")
 }

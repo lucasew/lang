@@ -1,17 +1,9 @@
 package languagetool
 
-// Twin of languagetool-language-modules/sk/src/test/java/org/languagetool/SlovakConcurrencyTest.java
-import (
-	"testing"
+// Twin of SlovakConcurrencyTest — concurrent Analyze smoke (full spell race deferred).
+import "testing"
 
-	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
-)
-
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/sk/src/test/java/org/languagetool/SlovakConcurrencyTest.java :: SlovakConcurrencyTest (no @Test)
+// Port of SlovakConcurrencyTest (Java @Ignore slow spell race)
 func TestSlovakConcurrency_NoTests(t *testing.T) {
-	t.Log("languagetool-language-modules/sk/src/test/java/org/languagetool/SlovakConcurrencyTest.java")
+	ConcurrencyAnalyzeSmoke(t, "sk", "Test.")
 }

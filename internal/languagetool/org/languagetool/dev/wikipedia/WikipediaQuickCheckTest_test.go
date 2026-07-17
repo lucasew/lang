@@ -8,7 +8,14 @@ import (
 )
 
 func TestWikipediaQuickCheck_CheckWikipediaMarkup(t *testing.T) {
-	t.Skip("soft-skip: full LT check over wiki markup (GermanyGerman rules)")
+	// soft: plain-text check path without GermanyGerman rule stack
+	qc := NewWikipediaQuickCheck()
+	// strip markup first, then check plain
+	plain := NewSimpleWikipediaTextFilter().Filter("Ein [[Test]] Satz.")
+	require.Contains(t, plain, "Test")
+	res := qc.CheckPlainText(plain, "de", nil)
+	require.Equal(t, "de", res.GetLanguageCode())
+	require.NotEmpty(t, res.GetText())
 }
 
 func TestWikipediaQuickCheck_URLParse(t *testing.T) {

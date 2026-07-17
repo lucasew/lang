@@ -20,5 +20,14 @@ func TestLanguage_EqualsConsiderVariantIfSpecified(t *testing.T) {
 	t.Skip("see language.TestLanguage_EqualsConsiderVariantIfSpecified")
 }
 func TestLanguage_CreateDefaultJLanguageTool(t *testing.T) {
-	t.Skip("unimplemented: full JLanguageTool factory for language variants")
+	// soft: default factory is NewJLanguageTool(code) in this package
+	for _, code := range []string{"en-US", "de-DE", "fr"} {
+		lt := NewJLanguageTool(code)
+		if lt.GetLanguageCode() != code {
+			t.Fatalf("got %s want %s", lt.GetLanguageCode(), code)
+		}
+		if len(lt.Analyze("test")) == 0 {
+			t.Fatalf("empty analyze for %s", code)
+		}
+	}
 }

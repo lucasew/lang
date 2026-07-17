@@ -4,6 +4,7 @@ package language
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -41,5 +42,14 @@ func TestLanguage_GetTranslatedName(t *testing.T) {
 }
 
 func TestLanguage_CreateDefaultJLanguageTool(t *testing.T) {
-	t.Skip("unimplemented: full JLanguageTool factory for language variants")
+	// soft factory: NewJLanguageTool with variant short codes (full rule stack deferred)
+	for _, code := range []string{
+		AmericanEnglish.GetShortCodeWithCountryAndVariant(),
+		BritishEnglish.GetShortCodeWithCountryAndVariant(),
+		GermanyGerman.GetShortCodeWithCountryAndVariant(),
+	} {
+		lt := languagetool.NewJLanguageTool(code)
+		require.Equal(t, code, lt.GetLanguageCode())
+		require.NotEmpty(t, lt.Analyze("test"))
+	}
 }

@@ -1,17 +1,20 @@
 package patterns
 
-// Twin of languagetool-standalone/src/test/java/org/languagetool/rules/patterns/RuleNumberScalabilityTest.java
+// Twin of RuleNumberScalabilityTest — soft scale of PatternToken construction.
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-standalone/src/test/java/org/languagetool/rules/patterns/RuleNumberScalabilityTest.java :: RuleNumberScalabilityTest (no @Test)
+// Port of RuleNumberScalabilityTest (no @Test)
 func TestRuleNumberScalability_NoTests(t *testing.T) {
-	t.Log("languagetool-standalone/src/test/java/org/languagetool/rules/patterns/RuleNumberScalabilityTest.java")
+	const n = 100
+	tokens := make([]*PatternToken, 0, n)
+	for i := 0; i < n; i++ {
+		tokens = append(tokens, NewPatternTokenBuilder().Token("w").Build())
+	}
+	require.Len(t, tokens, n)
+	require.NotNil(t, tokens[0])
+	require.NotNil(t, tokens[n-1])
 }
