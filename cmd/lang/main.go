@@ -1,15 +1,14 @@
-// Command lang — LanguageTool 1:1 Go port (WIP).
+// Command lang — LanguageTool pure-Go port (WIP).
 // Production code lives under internal/languagetool (LT-shaped).
-// Prior product-shaped code is in internal/attic until 1:1 salvage.
 package main
 
 import (
-	"fmt"
 	"os"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/commandline"
 )
 
 func main() {
-	fmt.Fprintln(os.Stderr, "lang: rebuild in progress — LT-shaped port under internal/languagetool (see SPEC / twin audit)")
-	fmt.Fprintln(os.Stderr, "prior implementation archived at internal/attic")
-	os.Exit(2)
+	commandline.VersionString = "languagetool-go (dev)"
+	os.Exit(commandline.Run(os.Args[1:], commandline.DefaultCoreHooks()))
 }

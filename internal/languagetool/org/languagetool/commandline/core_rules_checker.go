@@ -3,6 +3,7 @@ package commandline
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -102,8 +103,77 @@ func RegisterRuleFilePatterns(lt *languagetool.JLanguageTool, ruleFile, lang str
 	return nil
 }
 
+
+// RegisterFalseFriends loads --falsefriends XML pattern rules for mother-tongue pairs.
+func RegisterFalseFriends(lt *languagetool.JLanguageTool, falseFriendsFile, textLang, motherLang string) error {
+	if lt == nil || falseFriendsFile == "" || motherLang == "" {
+		return nil
+	}
+	data, err := os.ReadFile(falseFriendsFile)
+	if err != nil {
+		return err
+	}
+	if textLang == "" {
+		textLang = "en"
+	}
+	loader := patterns.NewFalseFriendRuleLoader("", "")
+	ffRules, err := loader.GetRulesFromString(string(data), textLang, motherLang)
+	if err != nil {
+		return err
+	}
+	for _, fr := range ffRules {
+		if fr == nil || fr.PatternRule == nil {
+			continue
+		}
+		pr := fr.PatternRule
+		id := pr.GetID()
+		if id == "" {
+			id = "FALSE_FRIEND"
+		}
+		suggs := append([]string(nil), loader.SuggestionMap[id]...)
+		// capture for closure
+		rule := pr
+		suggestions := suggs
+		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
+			ms, err := rule.Match(s)
+			if err != nil || len(ms) == 0 {
+				return nil
+			}
+			if len(suggestions) > 0 {
+				for _, m := range ms {
+					if m != nil && len(m.GetSuggestedReplacements()) == 0 {
+						m.SetSuggestedReplacements(suggestions)
+					}
+				}
+			}
+			return rules.ToLocalMatches(ms)
+		})
+	}
+	return nil
+}
+
+// configureCoreLT builds a language tool with core pack + optional rulefile/false friends + CLI filters.
+func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLanguageTool, error) {
+	checker := NewCoreRulesChecker(lang)
+	lt := checker.lt
+	if opts != nil {
+		if opts.GetRuleFile() != "" {
+			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
+				return nil, err
+			}
+		}
+		if opts.FalseFriendsFile != "" && opts.MotherTongue != "" {
+			if err := RegisterFalseFriends(lt, opts.FalseFriendsFile, lang, opts.MotherTongue); err != nil {
+				return nil, err
+			}
+		}
+		ApplyCLIRuleFilters(lt, opts)
+	}
+	return lt, nil
+}
+
 // CoreCheckHook is a RunHooks.Check that uses CoreRulesChecker + CheckTextOpts.
-// Honors XML filter, auto-detect language, disable/enable, --rulefile merge, and --apply.
+// Honors XML filter, auto-detect language, disable/enable, --rulefile, --falsefriends, line mode, and --apply.
 func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, error) {
 	if opts != nil && opts.XMLFiltering {
 		text = MaybeFilterXML(text, true)
@@ -121,14 +191,20 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		return CoreApplySuggestionsHook(w, text, opts)
 	}
 
-	checker := NewCoreRulesChecker(lang)
-	if opts != nil && opts.GetRuleFile() != "" {
-		if err := RegisterRuleFilePatterns(checker.lt, opts.GetRuleFile(), lang); err != nil {
-			return 0, err
-		}
+	lt, err := configureCoreLT(lang, opts)
+	if err != nil {
+		return 0, err
 	}
-	ApplyCLIRuleFilters(checker.lt, opts)
 
+	if opts != nil && opts.LineByLine {
+		return CheckLineByLine(w, text, func(seg string) ([]*rules.RuleMatch, error) {
+			ms := lt.Check(seg)
+			sent := languagetool.AnalyzePlain(seg)
+			return rules.FromLocalMatches(ms, sent), nil
+		})
+	}
+
+	checker := &CoreRulesChecker{Lang: lang, lt: lt}
 	cto := CheckTextOptions{
 		JSON:        opts != nil && opts.OutputFormat == OutputJSON,
 		Verbose:     opts != nil && opts.Verbose,
@@ -140,8 +216,7 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 		}
 	}
 	if cto.ListUnknown {
-		checker.lt.SetListUnknownWords(true)
-		// soft: without dict, leave empty
+		lt.SetListUnknownWords(true)
 	}
 	return CheckTextOpts(w, text, checker, cto)
 }
@@ -160,12 +235,11 @@ func CoreApplySuggestionsHook(w io.Writer, text string, opts *CommandLineOptions
 			lang = ResolveLanguage(text, opts, DetectLanguageHeuristic)
 		}
 	}
-	checker := NewCoreRulesChecker(lang)
-	if opts != nil && opts.GetRuleFile() != "" {
-		_ = RegisterRuleFilePatterns(checker.lt, opts.GetRuleFile(), lang)
+	lt, err := configureCoreLT(lang, opts)
+	if err != nil {
+		return 0, err
 	}
-	ApplyCLIRuleFilters(checker.lt, opts)
-	ms := checker.lt.Check(text)
+	ms := lt.Check(text)
 	// apply all with suggestions in document order
 	var withSug []languagetool.LocalMatch
 	for _, m := range ms {

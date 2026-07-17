@@ -3,6 +3,7 @@ package commandline
 import (
 	"bytes"
 	"io"
+	"os"
 	"strings"
 	"testing"
 
@@ -119,4 +120,39 @@ func TestApplyCLIRuleFilters(t *testing.T) {
 			require.NotEqual(t, "EN_A_VS_AN", g.GetID())
 		}
 	}
+}
+
+func TestCoreCheckHook_FalseFriends(t *testing.T) {
+	dir := t.TempDir()
+	ff := dir + "/ff.xml"
+	require.NoError(t, os.WriteFile(ff, []byte(`<?xml version="1.0"?>
+<rules>
+  <rulegroup id="ABILITY">
+    <rule>
+      <pattern lang="en">
+        <token>ability</token>
+      </pattern>
+      <translation lang="fr">aptitude</translation>
+    </rule>
+  </rulegroup>
+</rules>`), 0o644))
+
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-m", "fr", "--falsefriends", ff, "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "My ability is great.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.Equal(t, 2, code, errb.String())
+	require.Contains(t, out.String(), "ABILITY")
+	require.Contains(t, out.String(), "aptitude")
+}
+
+func TestCoreCheckHook_LineByLine(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--line-by-line", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "All good.\nThis is an test.\n", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.Equal(t, 2, code)
+	require.Contains(t, out.String(), "EN_A_VS_AN")
 }
