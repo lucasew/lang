@@ -1311,4 +1311,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_ANSIBLE" name="immunize ansible">
+    <pattern>
+      <token>ansible</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ANSIBLE_CAPS" name="immunize Ansible">
+    <pattern>
+      <token>Ansible</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAGRANT" name="immunize vagrant">
+    <pattern>
+      <token>vagrant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VAGRANT_CAPS" name="immunize Vagrant">
+    <pattern>
+      <token>Vagrant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONSUL" name="immunize consul">
+    <pattern>
+      <token>consul</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONSUL_CAPS" name="immunize Consul">
+    <pattern>
+      <token>Consul</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

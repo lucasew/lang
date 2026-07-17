@@ -724,5 +724,32 @@
       <message>Jargon; consider "discuss later" or "handle separately".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_STAKEHOLDER_MANAGEMENT" name="stakeholder management soft picky">
+      <pattern>
+        <token>stakeholder</token>
+        <token>management</token>
+      </pattern>
+      <message>Jargon; consider "working with stakeholders" or name the work.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SINGLE_SOURCE_OF_TRUTH" name="single source of truth soft picky">
+      <pattern>
+        <token>single</token>
+        <token>source</token>
+        <token>of</token>
+        <token>truth</token>
+      </pattern>
+      <message>Jargon; name the canonical system instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NORTH_STAR_METRIC" name="north star metric soft picky">
+      <pattern>
+        <token>north</token>
+        <token>star</token>
+        <token>metric</token>
+      </pattern>
+      <message>Jargon; name the primary metric instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -4187,6 +4187,76 @@
       <message>Did you mean "deceived"?</message>
       <short>decieved</short>
     </rule>
+    <rule id="EN_SOFT_ABSENCE_MISS" name="absense soft">
+      <pattern>
+        <token>absense</token>
+      </pattern>
+      <message>Did you mean "absence"?</message>
+      <short>absense</short>
+    </rule>
+    <rule id="EN_SOFT_ACHIEVEMENT_MISS2" name="acheivment soft">
+      <pattern>
+        <token>acheivment</token>
+      </pattern>
+      <message>Did you mean "achievement"?</message>
+      <short>acheivment</short>
+    </rule>
+    <rule id="EN_SOFT_ACQUIRING_MISS" name="aquireing soft">
+      <pattern>
+        <token>aquireing</token>
+      </pattern>
+      <message>Did you mean "acquiring"?</message>
+      <short>aquireing</short>
+    </rule>
+    <rule id="EN_SOFT_ARTICLE_MISS" name="articel soft">
+      <pattern>
+        <token>articel</token>
+      </pattern>
+      <message>Did you mean "article"?</message>
+      <short>articel</short>
+    </rule>
+    <rule id="EN_SOFT_ASSUME_MISS" name="asume soft">
+      <pattern>
+        <token>asume</token>
+      </pattern>
+      <message>Did you mean "assume"?</message>
+      <short>asume</short>
+    </rule>
+    <rule id="EN_SOFT_ATHEIST_MISS" name="athiest soft">
+      <pattern>
+        <token>athiest</token>
+      </pattern>
+      <message>Did you mean "atheist"?</message>
+      <short>athiest</short>
+    </rule>
+    <rule id="EN_SOFT_BEAUTIFUL_MISS2" name="beautifull soft">
+      <pattern>
+        <token>beautifull</token>
+      </pattern>
+      <message>Did you mean "beautiful"?</message>
+      <short>beautifull</short>
+    </rule>
+    <rule id="EN_SOFT_BEFORE_MISS" name="befor soft">
+      <pattern>
+        <token>befor</token>
+      </pattern>
+      <message>Did you mean "before"?</message>
+      <short>befor</short>
+    </rule>
+    <rule id="EN_SOFT_BELIEVE_MISS" name="belive soft">
+      <pattern>
+        <token>belive</token>
+      </pattern>
+      <message>Did you mean "believe"?</message>
+      <short>belive</short>
+    </rule>
+    <rule id="EN_SOFT_BENEFICIAL_MISS" name="benificial soft">
+      <pattern>
+        <token>benificial</token>
+      </pattern>
+      <message>Did you mean "beneficial"?</message>
+      <short>benificial</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

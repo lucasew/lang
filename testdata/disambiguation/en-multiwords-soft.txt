@@ -204,3 +204,6 @@ sooner or later	RB
 Hartford Connecticut	NNP
 Albany New York	NNP
 day after day	RB
+Trenton New Jersey	NNP
+Harrisburg Pennsylvania	NNP
+little by little	RB
