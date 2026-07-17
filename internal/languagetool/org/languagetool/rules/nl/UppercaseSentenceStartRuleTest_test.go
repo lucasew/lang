@@ -1,17 +1,25 @@
 package nl
 
-// Twin of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/UppercaseSentenceStartRuleTest.java
+// Twin of UppercaseSentenceStartRuleTest (Dutch)
 import (
+	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-var _ = require.Equal
-var _ = tools.Unimplemented
-
-// Port of languagetool-language-modules/nl/src/test/java/org/languagetool/rules/nl/UppercaseSentenceStartRuleTest.java :: UppercaseSentenceStartRuleTest.testDutchSpecialCases
+// Port of UppercaseSentenceStartRuleTest.testDutchSpecialCases (subset)
 func TestUppercaseSentenceStartRule_DutchSpecialCases(t *testing.T) {
-	// contains assertEquals — full values in Java twin source
+	r := NewUppercaseSentenceStartRule(map[string]string{
+		"incorrect_case": "Zin begint niet met hoofdletter",
+	})
+	analyze := func(s string) []*languagetool.AnalyzedSentence {
+		if strings.Contains(s, ". ") {
+			return languagetool.SplitAndAnalyze(s)
+		}
+		return []*languagetool.AnalyzedSentence{languagetool.AnalyzePlain(s)}
+	}
+	require.Empty(t, r.MatchList(analyze("Dit is een zin.")))
+	require.Equal(t, 1, len(r.MatchList(analyze("dit is een zin."))))
 }
