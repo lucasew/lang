@@ -68,6 +68,15 @@ func SpecialPOSTag(token string) string {
 	if reNumber.MatchString(token) {
 		return "number"
 	}
+	if p := NumberedEntityPOS(token); p != "" {
+		return p
+	}
+	if p := NameSuffixPOS(token); p != "" {
+		return p
+	}
+	if p := AllCapsProperPOS(token); p != "" {
+		return p
+	}
 	return ""
 }
 

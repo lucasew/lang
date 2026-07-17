@@ -30,7 +30,13 @@ func TestAdaptSuggestionFilter_AcceptRuleMatchWithDet(t *testing.T) {
 
 // Port of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDetAdj
 func TestAdaptSuggestionFilter_AcceptRuleMatchWithDetAdj(t *testing.T) {
-	t.Skip("Java @Ignore / needs adjective synthesizer")
+	f := NewAdaptSuggestionFilter()
+	// die + schöne + Plan → der schöne Plan (masc)
+	got := f.SuggestWithDetAdj("die", "ART:DEF:NOM:SIN:FEM", "der", "schöne", []string{"Plan"})
+	require.Contains(t, got, "der schöne Plan")
+	// meine + gute + Idee
+	got2 := f.SuggestWithDetAdj("meine", "PRO:POS:NOM:SIN:FEM", "mein", "gute", []string{"Idee"})
+	require.Contains(t, got2, "meine gute Idee")
 }
 
 // Port of AdaptSuggestionFilterTest.testAdaptedDet

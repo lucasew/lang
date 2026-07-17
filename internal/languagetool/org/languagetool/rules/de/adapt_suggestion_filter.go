@@ -237,3 +237,72 @@ func uniqueStrings(in []string) []string {
 	}
 	return out
 }
+
+// SuggestWithDetAdj rewrites "det + adj + noun" suggestions (synthesizer soft-deferred).
+// Adjective is weakly inflected after a definite/indefinite determiner using a small ending table.
+func (f *AdaptSuggestionFilter) SuggestWithDetAdj(prevDet, prevDetPOS, prevDetLemma, prevAdj string, replacements []string) []string {
+	var out []string
+	for _, repl := range replacements {
+		dets := f.AdaptedDet(DetReading{Token: prevDet, POS: prevDetPOS, Lemma: prevDetLemma}, repl)
+		gender := f.gender(repl)
+		caseNum := parseCaseNumber(prevDetPOS)
+		adjForms := weakAdjForms(prevAdj, caseNum, gender)
+		if len(dets) == 0 {
+			dets = []string{prevDet}
+		}
+		if len(adjForms) == 0 {
+			adjForms = []string{prevAdj}
+		}
+		for _, d := range dets {
+			for _, a := range adjForms {
+				out = append(out, d+" "+a+" "+repl)
+			}
+		}
+	}
+	return uniqueStrings(out)
+}
+
+// weakAdjForms approximates weak adjective endings after a determiner.
+func weakAdjForms(adj, caseNum, gender string) []string {
+	stem := adjStem(adj)
+	if stem == "" || caseNum == "" || gender == "" {
+		return nil
+	}
+	end := weakAdjEnding(caseNum, gender)
+	if end == "" {
+		return nil
+	}
+	return []string{stem + end}
+}
+
+func adjStem(adj string) string {
+	// strip common strong/weak endings to get stem
+	for _, suf := range []string{"en", "em", "er", "es", "e"} {
+		if strings.HasSuffix(adj, suf) && len(adj) > len(suf)+2 {
+			return adj[:len(adj)-len(suf)]
+		}
+	}
+	return adj
+}
+
+func weakAdjEnding(caseNum, gender string) string {
+	// weak: after der/die/das/ein… typically -e or -en
+	switch caseNum {
+	case "NOM:SIN":
+		if gender == "MAS" || gender == "NEU" || gender == "FEM" {
+			return "e"
+		}
+	case "AKK:SIN":
+		if gender == "MAS" {
+			return "en"
+		}
+		return "e"
+	case "DAT:SIN", "GEN:SIN":
+		return "en"
+	case "NOM:PLU", "AKK:PLU":
+		return "en"
+	case "DAT:PLU", "GEN:PLU":
+		return "en"
+	}
+	return "e"
+}

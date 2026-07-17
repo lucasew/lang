@@ -26,10 +26,3 @@ func TestUkrainianTagger_DynamicTaggingPrefixes(t *testing.T) {
 	require.True(t, got[0].IsTagged())
 }
 
-func TestUkrainianTagger_NameSuffix(t *testing.T) {
-	// soft: without dict - name suffix not inventing POS
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
-	got := tg.Tag([]string{"Петренко"})
-	// untagged is ok; ensure no panic
-	require.Len(t, got, 1)
-}

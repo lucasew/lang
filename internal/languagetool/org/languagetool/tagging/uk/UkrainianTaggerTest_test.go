@@ -50,15 +50,13 @@ func TestUkrainianTagger_TaggingWithDots(t *testing.T) {
 	out := tg.Tag([]string{"300"})
 	require.True(t, out[0].HasPosTag("number"))
 }
-func TestUkrainianTagger_ProperNameAllCaps(t *testing.T) { t.Skip("unimplemented: all-caps names") }
-func TestUkrainianTagger_CompoundNumr(t *testing.T)      { t.Skip("unimplemented: compound numr") }
+func TestUkrainianTagger_CompoundNumr(t *testing.T) { t.Skip("unimplemented: compound numr") }
 func TestUkrainianTagger_DynamicTaggingNumericPair(t *testing.T) {
 	t.Skip("unimplemented: dynamic numeric pair")
 }
 func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 	t.Skip("unimplemented: dynamic numbers")
 }
-func TestUkrainianTagger_NumberedEntities(t *testing.T) { t.Skip("unimplemented: numbered entities") }
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
 	t.Skip("unimplemented: dynamic parts")
 }
