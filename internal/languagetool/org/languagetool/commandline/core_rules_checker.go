@@ -6,17 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ru"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -32,41 +22,8 @@ func NewCoreRulesChecker(lang string) *CoreRulesChecker {
 		lang = "en"
 	}
 	lt := languagetool.NewJLanguageTool(lang)
-	registerCoreForLang(lt, lang)
+	corepack.Register(lt, lang)
 	return &CoreRulesChecker{Lang: lang, lt: lt}
-}
-
-func registerCoreForLang(lt *languagetool.JLanguageTool, lang string) {
-	base := lang
-	if i := strings.IndexByte(lang, '-'); i > 0 {
-		base = lang[:i]
-	}
-	switch strings.ToLower(base) {
-	case "en":
-		en.RegisterCoreEnglishLanguageRules(lt)
-	case "de":
-		de.RegisterCoreGermanRules(lt)
-	case "fr":
-		fr.RegisterCoreFrenchRules(lt)
-	case "es":
-		es.RegisterCoreSpanishRules(lt)
-	case "nl":
-		nl.RegisterCoreDutchRules(lt)
-	case "pl":
-		pl.RegisterCorePolishRules(lt)
-	case "uk":
-		uk.RegisterCoreUkrainianRules(lt)
-	case "it":
-		it.RegisterCoreItalianRules(lt)
-	case "pt":
-		pt.RegisterCorePortugueseRules(lt)
-	case "ru":
-		ru.RegisterCoreRussianRules(lt)
-	case "ca":
-		ca.RegisterCoreCatalanRules(lt)
-	default:
-		rules.RegisterCoreRules(lt, lang)
-	}
 }
 
 // Check runs the core rule pack and returns rules.RuleMatch for CLI printing.
