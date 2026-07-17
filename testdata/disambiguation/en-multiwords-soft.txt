@@ -4,6 +4,13 @@ New Jersey	NNP
 South Korea	NNP
 Hong Kong	NNP
 Las Vegas	NNP
+Los Angeles	NNP
+New York	NNP
+United Kingdom	NNP
+United States	NNP
 in order	RB
 of course	RB
 at least	RB
+as well	RB
+for example	RB
+in fact	RB

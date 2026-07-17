@@ -177,20 +177,14 @@ func TestSoftIgnoreSpellingList_TechNames(t *testing.T) {
 	}
 }
 
-func TestSoftXML_FilterWillRun(t *testing.T) {
-	// Soft FILTER keeps only VB reading on "run" after "will"
-	p := findEnglishPOSDict(t)
-	lt := languagetool.NewJLanguageTool("en")
-	require.True(t, RegisterBinaryEnglishTagger(lt, p))
-	// locate en-soft.xml
+func findSoftDisambigXML(t *testing.T) string {
+	t.Helper()
 	wd, _ := os.Getwd()
-	xmlPath := ""
 	dir := wd
 	for i := 0; i < 12; i++ {
 		cand := filepath.Join(dir, "testdata", "disambiguation", "en-soft.xml")
 		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
-			xmlPath = cand
-			break
+			return cand
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
@@ -198,9 +192,16 @@ func TestSoftXML_FilterWillRun(t *testing.T) {
 		}
 		dir = parent
 	}
-	if xmlPath == "" {
-		t.Skip("en-soft.xml not found")
-	}
+	t.Skip("en-soft.xml not found")
+	return ""
+}
+
+func TestSoftXML_FilterWillRun(t *testing.T) {
+	// Soft FILTER keeps only VB reading on "run" after "will"
+	p := findEnglishPOSDict(t)
+	lt := languagetool.NewJLanguageTool("en")
+	require.True(t, RegisterBinaryEnglishTagger(lt, p))
+	xmlPath := findSoftDisambigXML(t)
 	RegisterSoftEnglishDisambiguator(lt, "", xmlPath, "")
 	sents := lt.Analyze("I will run tomorrow.")
 	require.NotEmpty(t, sents)
@@ -223,5 +224,50 @@ func TestSoftXML_FilterWillRun(t *testing.T) {
 	// FILTER keeps VB; other readings (NN/VBN/…) should be gone when filter applies
 	for _, p := range runPOS {
 		require.Equal(t, "VB", p, "runPOS=%v", runPOS)
+	}
+}
+
+func TestSoftXML_FilterShouldRun(t *testing.T) {
+	p := findEnglishPOSDict(t)
+	lt := languagetool.NewJLanguageTool("en")
+	require.True(t, RegisterBinaryEnglishTagger(lt, p))
+	RegisterSoftEnglishDisambiguator(lt, "", findSoftDisambigXML(t), "")
+	sents := lt.Analyze("You should run more.")
+	var runPOS []string
+	for _, s := range sents {
+		for _, tok := range s.GetTokensWithoutWhitespace() {
+			if tok == nil || tok.GetToken() != "run" {
+				continue
+			}
+			for i := 0; i < tok.GetReadingsLength(); i++ {
+				at := tok.GetAnalyzedToken(i)
+				if at != nil && at.GetPOSTag() != nil {
+					runPOS = append(runPOS, *at.GetPOSTag())
+				}
+			}
+		}
+	}
+	require.NotEmpty(t, runPOS)
+	for _, tag := range runPOS {
+		require.Equal(t, "VB", tag, "runPOS=%v", runPOS)
+	}
+}
+
+func TestSoftXML_ImmunizeBTW(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en")
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
+		"MORFOLOGIK_RULE_EN_US",
+		func(w string) bool { return w != "btw" && w != "irl" },
+		nil, nil, nil,
+	))
+	RegisterSoftEnglishDisambiguator(lt, "", findSoftDisambigXML(t), "")
+	for _, text := range []string{
+		"Send that btw.",
+		"We met irl yesterday.",
+	} {
+		m := lt.Check(text)
+		for _, x := range m {
+			require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID, "text=%q matches=%+v", text, m)
+		}
 	}
 }

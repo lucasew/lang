@@ -74,6 +74,39 @@ func TestGolden_ImmunizeAsapNoSpell(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftXML_ShouldRunFilter(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" || DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("need en-soft.xml and english.dict")
+	}
+	var out bytes.Buffer
+	err := CoreTagHook(&out, "You should run more.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	s := out.String()
+	require.Contains(t, s, "run/")
+	require.Contains(t, s, "VB")
+}
+
+func TestGolden_ImmunizeBtwIrlNoSpell(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft.xml not found")
+	}
+	for _, text := range []string{
+		"Send that btw.",
+		"We met irl yesterday.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
 func TestParseOptions_DisambigPaths(t *testing.T) {
 	p := &CommandLineParser{}
 	opts, err := p.ParseOptions([]string{

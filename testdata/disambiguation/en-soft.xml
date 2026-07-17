@@ -36,10 +36,58 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
+  <rule id="SOFT_SHOULD_RUN_VB" name="should run → VB">
+    <pattern>
+      <token>should</token>
+      <token>run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_COULD_RUN_VB" name="could run → VB">
+    <pattern>
+      <token>could</token>
+      <token>run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MIGHT_RUN_VB" name="might run → VB">
+    <pattern>
+      <token>might</token>
+      <token>run</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MUST_BOOK_VB" name="must book → VB">
+    <pattern>
+      <token>must</token>
+      <token>book</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_WILL_READ_VB" name="will read → VB">
+    <pattern>
+      <token>will</token>
+      <token>read</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_CAN_READ_VB" name="can read → VB">
+    <pattern>
+      <token>can</token>
+      <token>read</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
   <!-- Soft replace: force NNP on LanguageTool brand token -->
   <rule id="SOFT_LANGUAGETOOL_NNP" name="LanguageTool → NNP">
     <pattern>
       <token>LanguageTool</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="SOFT_OPENAI_NNP" name="OpenAI → NNP">
+    <pattern>
+      <token>OpenAI</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
@@ -65,6 +113,24 @@
   <rule id="SOFT_IMMUNIZE_TLDR" name="immunize tldr">
     <pattern>
       <token>tldr</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_BTW" name="immunize btw">
+    <pattern>
+      <token>btw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IDC" name="immunize idc">
+    <pattern>
+      <token>idc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IRL" name="immunize irl">
+    <pattern>
+      <token>irl</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>

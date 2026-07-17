@@ -35,3 +35,13 @@ NixOS
 systemd
 prometheus
 Grafana
+SQLite
+ClickHouse
+Terraform
+Ansible
+Podman
+Deno
+Bun
+FastAPI
+NextJS
+Tailwind
