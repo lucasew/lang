@@ -300,3 +300,6 @@ in band	RB
 San Jose California	NNP
 Dallas Fort Worth	NNP
 hour by hour	RB
+San Francisco California	NNP
+Los Angeles California	NNP
+day by day	RB

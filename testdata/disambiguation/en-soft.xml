@@ -2463,4 +2463,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NFS" name="immunize nfs">
+    <pattern>
+      <token>nfs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NFS_CAPS" name="immunize NFS">
+    <pattern>
+      <token>NFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CIFS" name="immunize cifs">
+    <pattern>
+      <token>cifs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CIFS_CAPS" name="immunize CIFS">
+    <pattern>
+      <token>CIFS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FUSE" name="immunize fuse">
+    <pattern>
+      <token>fuse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FUSE_CAPS" name="immunize Fuse">
+    <pattern>
+      <token>Fuse</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

@@ -1533,5 +1533,29 @@
       <message>Jargon; name the change-control window instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_KILL_SWITCH" name="kill switch soft picky">
+      <pattern>
+        <token>kill</token>
+        <token>switch</token>
+      </pattern>
+      <message>Jargon; name the emergency disable control instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_CIRCUIT_BREAKER" name="circuit breaker soft picky">
+      <pattern>
+        <token>circuit</token>
+        <token>breaker</token>
+      </pattern>
+      <message>Jargon; name the failure isolation policy instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BULKHEAD_PATTERN" name="bulkhead pattern soft picky">
+      <pattern>
+        <token>bulkhead</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name the resource isolation boundary instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

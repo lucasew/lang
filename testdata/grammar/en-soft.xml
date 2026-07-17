@@ -6427,6 +6427,76 @@
       <message>Did you mean "month"?</message>
       <short>mounth</short>
     </rule>
+    <rule id="EN_SOFT_MANEUVERING_MISS" name="manouvering soft">
+      <pattern>
+        <token>manouvering</token>
+      </pattern>
+      <message>Did you mean "maneuvering"?</message>
+      <short>manouvering</short>
+    </rule>
+    <rule id="EN_SOFT_MATHEMATICALLY_MISS" name="mathmatically soft">
+      <pattern>
+        <token>mathmatically</token>
+      </pattern>
+      <message>Did you mean "mathematically"?</message>
+      <short>mathmatically</short>
+    </rule>
+    <rule id="EN_SOFT_MECHANICALLY_MISS" name="mecanically soft">
+      <pattern>
+        <token>mecanically</token>
+      </pattern>
+      <message>Did you mean "mechanically"?</message>
+      <short>mecanically</short>
+    </rule>
+    <rule id="EN_SOFT_MONTHS_MISS" name="mounths soft">
+      <pattern>
+        <token>mounths</token>
+      </pattern>
+      <message>Did you mean "months"?</message>
+      <short>mounths</short>
+    </rule>
+    <rule id="EN_SOFT_NATURALLY_MISS" name="naturly soft">
+      <pattern>
+        <token>naturly</token>
+      </pattern>
+      <message>Did you mean "naturally"?</message>
+      <short>naturly</short>
+    </rule>
+    <rule id="EN_SOFT_NECESSITY_MISS2" name="neccesity soft">
+      <pattern>
+        <token>neccesity</token>
+      </pattern>
+      <message>Did you mean "necessity"?</message>
+      <short>neccesity</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBORHOODS_MISS" name="neigborhoods soft">
+      <pattern>
+        <token>neigborhoods</token>
+      </pattern>
+      <message>Did you mean "neighborhoods"?</message>
+      <short>neigborhoods</short>
+    </rule>
+    <rule id="EN_SOFT_NOTICEABLY_MISS" name="noticably soft">
+      <pattern>
+        <token>noticably</token>
+      </pattern>
+      <message>Did you mean "noticeably"?</message>
+      <short>noticably</short>
+    </rule>
+    <rule id="EN_SOFT_OCCASIONS_MISS" name="occassions soft">
+      <pattern>
+        <token>occassions</token>
+      </pattern>
+      <message>Did you mean "occasions"?</message>
+      <short>occassions</short>
+    </rule>
+    <rule id="EN_SOFT_OMISSION_MISS2" name="ommision soft">
+      <pattern>
+        <token>ommision</token>
+      </pattern>
+      <message>Did you mean "omission"?</message>
+      <short>ommision</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
