@@ -7337,6 +7337,76 @@
       <message>Did you mean "consumers"?</message>
       <short>cosumers</short>
     </rule>
+    <rule id="EN_SOFT_CONTRIBUTE_MISS" name="contibute soft">
+      <pattern>
+        <token>contibute</token>
+      </pattern>
+      <message>Did you mean "contribute"?</message>
+      <short>contibute</short>
+    </rule>
+    <rule id="EN_SOFT_CONTRIBUTION_MISS" name="contibution soft">
+      <pattern>
+        <token>contibution</token>
+      </pattern>
+      <message>Did you mean "contribution"?</message>
+      <short>contibution</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINGENT_MISS" name="contigent soft">
+      <pattern>
+        <token>contigent</token>
+      </pattern>
+      <message>Did you mean "contingent"?</message>
+      <short>contigent</short>
+    </rule>
+    <rule id="EN_SOFT_CONTIGUOUS_MISS" name="contigious soft">
+      <pattern>
+        <token>contigious</token>
+      </pattern>
+      <message>Did you mean "contiguous"?</message>
+      <short>contigious</short>
+    </rule>
+    <rule id="EN_SOFT_CONTINUOUSLY_MISS2" name="contineously soft">
+      <pattern>
+        <token>contineously</token>
+      </pattern>
+      <message>Did you mean "continuously"?</message>
+      <short>contineously</short>
+    </rule>
+    <rule id="EN_SOFT_CONTROVERSIAL_MISS" name="contriversial soft">
+      <pattern>
+        <token>contriversial</token>
+      </pattern>
+      <message>Did you mean "controversial"?</message>
+      <short>contriversial</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUME_MISS" name="cosume soft">
+      <pattern>
+        <token>cosume</token>
+      </pattern>
+      <message>Did you mean "consume"?</message>
+      <short>cosume</short>
+    </rule>
+    <rule id="EN_SOFT_CONSUMPTION_MISS" name="cosumption soft">
+      <pattern>
+        <token>cosumption</token>
+      </pattern>
+      <message>Did you mean "consumption"?</message>
+      <short>cosumption</short>
+    </rule>
+    <rule id="EN_SOFT_CRITICAL_MISS" name="critcal soft">
+      <pattern>
+        <token>critcal</token>
+      </pattern>
+      <message>Did you mean "critical"?</message>
+      <short>critcal</short>
+    </rule>
+    <rule id="EN_SOFT_DELIBERATE_MISS" name="delibrate soft">
+      <pattern>
+        <token>delibrate</token>
+      </pattern>
+      <message>Did you mean "deliberate"?</message>
+      <short>delibrate</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -1851,5 +1851,32 @@
       <message>Jargon; name the prefer-has-a design guidance instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_LAW_OF_DEMETER" name="law of demeter soft picky">
+      <pattern>
+        <token>law</token>
+        <token>of</token>
+        <token>demeter</token>
+      </pattern>
+      <message>Jargon; name the only-talk-to-friends rule instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TELL_DONT_ASK" name="tell dont ask soft picky">
+      <pattern>
+        <token>tell</token>
+        <token>dont</token>
+        <token>ask</token>
+      </pattern>
+      <message>Jargon; name command-over-query object design instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SEPARATION_OF_CONCERNS" name="separation of concerns soft picky">
+      <pattern>
+        <token>separation</token>
+        <token>of</token>
+        <token>concerns</token>
+      </pattern>
+      <message>Jargon; name distinct responsibility boundaries instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

@@ -339,3 +339,6 @@ Rice Belt Region	NNP
 Oil Belt Region	NNP
 Coal Belt Region	NNP
 Iron Belt Region	NNP
+Copper Belt RegionNNP
+Mining Belt RegionNNP
+Steel Belt RegionNNP

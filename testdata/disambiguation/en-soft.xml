@@ -2931,4 +2931,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_KINESIS" name="immunize kinesis">
+    <pattern>
+      <token>kinesis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KINESIS_CAPS" name="immunize Kinesis">
+    <pattern>
+      <token>Kinesis</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SQS" name="immunize sqs">
+    <pattern>
+      <token>sqs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SQS_CAPS" name="immunize SQS">
+    <pattern>
+      <token>SQS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNS" name="immunize sns">
+    <pattern>
+      <token>sns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_SNS_CAPS" name="immunize SNS">
+    <pattern>
+      <token>SNS</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
