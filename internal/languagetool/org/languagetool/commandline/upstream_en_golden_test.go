@@ -72,25 +72,23 @@ func loadOptionalUpstreamSoftRuleIDs(t *testing.T, lang string) map[string]struc
 		if err != nil {
 			continue
 		}
-		// Cheap id= extraction; optional packs are generated without nested quotes in ids.
+		// Extract only <rule id="..."> (not category/lang attributes).
+		// Optional packs include hyphenated lowercase IDs (e.g. DA adj-ube-sin-utr-pos).
 		s := string(data)
 		for {
-			i := strings.Index(s, `id="`)
+			i := strings.Index(s, `<rule id="`)
 			if i < 0 {
 				break
 			}
-			s = s[i+4:]
+			s = s[i+len(`<rule id="`):]
 			j := strings.IndexByte(s, '"')
 			if j < 0 {
 				break
 			}
 			id := s[:j]
 			s = s[j+1:]
-			if id != "" && id != lang && id != base {
-				// skip rules lang= attributes by only taking uppercase-ish rule ids
-				if strings.Contains(id, "_") || (len(id) > 2 && id == strings.ToUpper(id)) {
-					out[id] = struct{}{}
-				}
+			if id != "" {
+				out[id] = struct{}{}
 			}
 		}
 	}
@@ -214,6 +212,7 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 	priority := map[string]int{
 		"en": 0, "de": 1, "fr": 2, "es": 3, "pt": 4, "pl": 5, "ca": 6, "ga": 7, "ar": 8, "ro": 9,
 		"nl": 10, "it": 11, "gl": 12, "sv": 13, "da": 14, "el": 15, "sk": 16, "sl": 17, "be": 18, "ast": 19,
+		"br": 20, "eo": 21, "fa": 22, "is": 23, "tl": 24,
 	}
 	sort.SliceStable(langs, func(i, j int) bool {
 		pi, oki := priority[langs[i]]
@@ -230,7 +229,7 @@ func TestGolden_UpstreamExamplesMatrix(t *testing.T) {
 		return langs[i] < langs[j]
 	})
 	// Keep CI default bounded unless full matrix requested.
-	maxLangs := 20
+	maxLangs := 25
 	if os.Getenv("LANG_UPSTREAM_GOLDEN_ALL") != "" {
 		maxLangs = len(langs)
 	}
