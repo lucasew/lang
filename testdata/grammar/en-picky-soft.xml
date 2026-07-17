@@ -2923,5 +2923,29 @@
       <message>Jargon; name hands-on work duration excluding waits.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_WAIT_TIME" name="wait time soft picky">
+      <pattern>
+        <token>wait</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name idle delay between work steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BLOCKED_TIME" name="blocked time soft picky">
+      <pattern>
+        <token>blocked</token>
+        <token>time</token>
+      </pattern>
+      <message>Jargon; name duration stuck on external dependencies.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_STREAM" name="value stream soft picky">
+      <pattern>
+        <token>value</token>
+        <token>stream</token>
+      </pattern>
+      <message>Jargon; name end-to-end delivery flow mapping instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

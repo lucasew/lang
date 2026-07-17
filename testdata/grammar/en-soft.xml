@@ -10417,6 +10417,76 @@
       <message>Did you mean "because"?</message>
       <short>beacuse</short>
     </rule>
+    <rule id="EN_SOFT_BEFORE_MISS2" name="beofre soft">
+      <pattern>
+        <token>beofre</token>
+      </pattern>
+      <message>Did you mean "before"?</message>
+      <short>beofre</short>
+    </rule>
+    <rule id="EN_SOFT_BUSINESS_MISS2" name="busines soft">
+      <pattern>
+        <token>busines</token>
+      </pattern>
+      <message>Did you mean "business"?</message>
+      <short>busines</short>
+    </rule>
+    <rule id="EN_SOFT_CHILDREN_MISS" name="childern soft">
+      <pattern>
+        <token>childern</token>
+      </pattern>
+      <message>Did you mean "children"?</message>
+      <short>childern</short>
+    </rule>
+    <rule id="EN_SOFT_CHILDREN_MISS2" name="childrun soft">
+      <pattern>
+        <token>childrun</token>
+      </pattern>
+      <message>Did you mean "children"?</message>
+      <short>childrun</short>
+    </rule>
+    <rule id="EN_SOFT_COUNTRY_MISS" name="contry soft">
+      <pattern>
+        <token>contry</token>
+      </pattern>
+      <message>Did you mean "country"?</message>
+      <short>contry</short>
+    </rule>
+    <rule id="EN_SOFT_DECIDE_MISS" name="decice soft">
+      <pattern>
+        <token>decice</token>
+      </pattern>
+      <message>Did you mean "decide"?</message>
+      <short>decice</short>
+    </rule>
+    <rule id="EN_SOFT_DECIDE_MISS2" name="deside soft">
+      <pattern>
+        <token>deside</token>
+      </pattern>
+      <message>Did you mean "decide"?</message>
+      <short>deside</short>
+    </rule>
+    <rule id="EN_SOFT_DESCRIBE_MISS2" name="discribe soft">
+      <pattern>
+        <token>discribe</token>
+      </pattern>
+      <message>Did you mean "describe"?</message>
+      <short>discribe</short>
+    </rule>
+    <rule id="EN_SOFT_DEVELOP_MISS3" name="develp soft">
+      <pattern>
+        <token>develp</token>
+      </pattern>
+      <message>Did you mean "develop"?</message>
+      <short>develp</short>
+    </rule>
+    <rule id="EN_SOFT_ENOUGH_MISS" name="enuf soft">
+      <pattern>
+        <token>enuf</token>
+      </pattern>
+      <message>Did you mean "enough"?</message>
+      <short>enuf</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

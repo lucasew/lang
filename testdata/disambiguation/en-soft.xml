@@ -4515,4 +4515,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEXPRESSLINK" name="immunize iotexpresslink">
+    <pattern>
+      <token>iotexpresslink</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTEXPRESSLINK_CAPS" name="immunize IoTExpressLink">
+    <pattern>
+      <token>IoTExpressLink</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTWINMAKER" name="immunize iottwinmaker">
+    <pattern>
+      <token>iottwinmaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTTWINMAKER_CAPS" name="immunize IoTTwinMaker">
+    <pattern>
+      <token>IoTTwinMaker</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB_V2" name="immunize iotfleethubv2">
+    <pattern>
+      <token>iotfleethubv2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IOTFLEETHUB_V2_CAPS" name="immunize IoTFleetHubV2">
+    <pattern>
+      <token>IoTFleetHubV2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
