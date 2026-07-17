@@ -1131,4 +1131,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTJS" name="immunize nextjs">
+    <pattern>
+      <token>nextjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NEXTJS_CAPS" name="immunize Nextjs">
+    <pattern>
+      <token>Nextjs</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JEST" name="immunize jest">
+    <pattern>
+      <token>jest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_JEST_CAPS" name="immunize Jest">
+    <pattern>
+      <token>Jest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITEST" name="immunize vitest">
+    <pattern>
+      <token>vitest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITEST_CAPS" name="immunize Vitest">
+    <pattern>
+      <token>Vitest</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

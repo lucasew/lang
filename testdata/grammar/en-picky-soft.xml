@@ -594,5 +594,32 @@
       <message>Jargon; consider "end of day" or name the deadline.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GAME_CHANGER" name="game changer soft picky">
+      <pattern>
+        <token>game</token>
+        <token>changer</token>
+      </pattern>
+      <message>Cliché; name the concrete impact instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_PUSH_THE_ENVELOPE" name="push the envelope soft picky">
+      <pattern>
+        <token>push</token>
+        <token>the</token>
+        <token>envelope</token>
+      </pattern>
+      <message>Cliché; consider "stretch limits" or name the risk.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SKIN_IN_THE_GAME" name="skin in the game soft picky">
+      <pattern>
+        <token>skin</token>
+        <token>in</token>
+        <token>the</token>
+        <token>game</token>
+      </pattern>
+      <message>Cliché; consider "shared risk" or name the stake.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

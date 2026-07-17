@@ -3837,6 +3837,76 @@
       <message>Did you mean "organize"?</message>
       <short>orginize</short>
     </rule>
+    <rule id="EN_SOFT_PARALLEL_MISS2" name="parrallel soft">
+      <pattern>
+        <token>parrallel</token>
+      </pattern>
+      <message>Did you mean "parallel"?</message>
+      <short>parrallel</short>
+    </rule>
+    <rule id="EN_SOFT_PERSISTENT_MISS" name="persistant soft">
+      <pattern>
+        <token>persistant</token>
+      </pattern>
+      <message>Did you mean "persistent"?</message>
+      <short>persistant</short>
+    </rule>
+    <rule id="EN_SOFT_PERSONNEL_MISS" name="personel soft">
+      <pattern>
+        <token>personel</token>
+      </pattern>
+      <message>Did you mean "personnel"?</message>
+      <short>personel</short>
+    </rule>
+    <rule id="EN_SOFT_PLAGIARISM_MISS" name="plagarism soft">
+      <pattern>
+        <token>plagarism</token>
+      </pattern>
+      <message>Did you mean "plagiarism"?</message>
+      <short>plagarism</short>
+    </rule>
+    <rule id="EN_SOFT_PRACTICAL_MISS" name="practicle soft">
+      <pattern>
+        <token>practicle</token>
+      </pattern>
+      <message>Did you mean "practical"?</message>
+      <short>practicle</short>
+    </rule>
+    <rule id="EN_SOFT_REPETITION_MISS" name="repitition soft">
+      <pattern>
+        <token>repitition</token>
+      </pattern>
+      <message>Did you mean "repetition"?</message>
+      <short>repitition</short>
+    </rule>
+    <rule id="EN_SOFT_RESISTANT_MISS" name="resistent soft">
+      <pattern>
+        <token>resistent</token>
+      </pattern>
+      <message>Did you mean "resistant"?</message>
+      <short>resistent</short>
+    </rule>
+    <rule id="EN_SOFT_SERGEANT_MISS" name="sargent soft">
+      <pattern>
+        <token>sargent</token>
+      </pattern>
+      <message>Did you mean "sergeant"?</message>
+      <short>sargent</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESS_MISS" name="succes soft">
+      <pattern>
+        <token>succes</token>
+      </pattern>
+      <message>Did you mean "success"?</message>
+      <short>succes</short>
+    </rule>
+    <rule id="EN_SOFT_TENDENCY_MISS" name="tendancy soft">
+      <pattern>
+        <token>tendancy</token>
+      </pattern>
+      <message>Did you mean "tendency"?</message>
+      <short>tendancy</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

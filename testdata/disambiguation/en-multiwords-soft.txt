@@ -189,3 +189,6 @@ as a rule	RB
 Memphis Tennessee	NNP
 Milwaukee Wisconsin	NNP
 in short order	RB
+Portland Maine	NNP
+Anchorage Alaska	NNP
+more often than not	RB
