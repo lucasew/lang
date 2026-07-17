@@ -2224,6 +2224,154 @@ func TestGolden_SoftHelpMentionsOptional(t *testing.T) {
 	require.Contains(t, s, "enablecategories")
 }
 
+func TestGolden_SoftPickyUK(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Маємо meeting завтра.", "UK_SOFT_PICKY_MEETING", "зустріч"},
+		{"Потрібен feedback сьогодні.", "UK_SOFT_PICKY_FEEDBACK", "відгук"},
+		{"Це дуже дуже важливо.", "UK_SOFT_PICKY_DUZHE_DUZHE", ""},
+		{"Багато речей залишилось.", "UK_SOFT_PICKY_RECHI", ""},
+		{"В кінці кінців вирішимо.", "UK_SOFT_PICKY_V_RECHTI_RECHT", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "uk", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPickyCA(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Tenim un meeting demà.", "CA_SOFT_PICKY_MEETING", "reunió"},
+		{"Vull feedback avui.", "CA_SOFT_PICKY_FEEDBACK", "comentaris"},
+		{"És molt molt important.", "CA_SOFT_PICKY_MOLT_MOLT", ""},
+		{"Hi ha moltes coses a fer.", "CA_SOFT_PICKY_COSES", ""},
+		{"Al final del dia, enviem.", "CA_SOFT_PICKY_AL_FINAL_DEL_DIA", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "ca", Level: "PICKY"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, "style", f.Type)
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftIdiomConfusablesWave4(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Please appraise of the delay.", "EN_SOFT_APPRAISE_OF", "apprise of"},
+		{"I study discreet math daily.", "EN_SOFT_DISCREET_MATH", "discrete math"},
+		{"Imminent domain law applies.", "EN_SOFT_EMINENT_DOMAIN_OK", "Eminent domain"},
+		{"For all intensive purposes it works.", "EN_SOFT_FOR_ALL_INTENSIVE_ALT", "For all intents and purposes"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_FalseFriendsActuality(t *testing.T) {
+	ff := softFalseFriendsPath(t)
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Actualmente vivo aquí.", &CommandLineOptions{
+		Language:         "es",
+		MotherTongue:     "en",
+		FalseFriendsFile: ff,
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "ACTUALITY" {
+			found = true
+			require.Equal(t, "currently / at present", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
+func TestGolden_ImmunizeAfairIirc(t *testing.T) {
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("en-soft disambig missing")
+	}
+	for _, text := range []string{
+		"Afair that shipped last week.",
+		"Iirc the API changed.",
+		"Fwiw I agree.",
+		"TLDR the patch works.",
+	} {
+		t.Run(text, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			for _, f := range findings {
+				require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+			}
+		})
+	}
+}
+
+func TestGolden_SoftListRulesSoftOptCount(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, CoreListRules(&buf, "en"))
+	out := buf.String()
+	require.Contains(t, out, "soft_opt=")
+	// soft_opt should be > 0 when en-optional-soft is loaded
+	require.True(t, strings.Contains(out, "soft_opt=9") || strings.Contains(out, "soft_opt=1") ||
+		strings.Contains(out, "soft_opt=8") || strings.Contains(out, "soft_opt=7") ||
+		strings.Contains(out, "soft_opt=10") || strings.Contains(out, "soft_opt=12") ||
+		strings.Contains(out, "soft_opt=6"), out)
+}
+
 func TestGolden_SoftListRulesOptionalOff(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, CoreListRules(&buf, "en"))

@@ -517,6 +517,7 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	softN := len(softIDs)
 	softByIssue := map[string]int{}
 	pickySoftN := 0
+	optSoftN := 0
 	softOffN := 0
 	for _, id := range ordered {
 		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
@@ -533,6 +534,9 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 			softByIssue[issue]++
 			if strings.Contains(id, "SOFT_PICKY") {
 				pickySoftN++
+			}
+			if strings.Contains(id, "SOFT_OPT_") {
+				optSoftN++
 			}
 		}
 		// soft: sixth column on|off (default="off" soft rules start off)
@@ -559,6 +563,9 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	}
 	if pickySoftN > 0 {
 		parts = append(parts, fmt.Sprintf("soft_picky=%d", pickySoftN))
+	}
+	if optSoftN > 0 {
+		parts = append(parts, fmt.Sprintf("soft_opt=%d", optSoftN))
 	}
 	if softOffN > 0 {
 		parts = append(parts, fmt.Sprintf("soft_off=%d", softOffN))
@@ -621,6 +628,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			"es-picky-soft.xml", "pt-picky-soft.xml", "it-picky-soft.xml",
 			"nl-picky-soft.xml", "sv-picky-soft.xml", "pl-picky-soft.xml",
 			"da-picky-soft.xml", "ru-picky-soft.xml",
+			"uk-picky-soft.xml", "ca-picky-soft.xml",
 		} {
 			pickySoft := filepath.Join(gdir, name)
 			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {

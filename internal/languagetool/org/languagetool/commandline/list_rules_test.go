@@ -30,6 +30,7 @@ func TestCoreListRules(t *testing.T) {
 	require.Contains(t, out, "soft_style=")
 	require.Contains(t, out, "soft_typographical=")
 	require.Contains(t, out, "soft_off=")
+	require.Contains(t, out, "soft_opt=")
 	require.Contains(t, out, "EN_SOFT_OPT_PRIOR_TO\tSTYLE\tstyle\t")
 	require.Contains(t, out, "\tsoft\toff\n")
 }

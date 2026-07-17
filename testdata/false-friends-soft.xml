@@ -411,4 +411,47 @@
       <translation lang="en">having a cold</translation>
     </rule>
   </rulegroup>
+
+  <rulegroup id="ACTUALITY">
+    <rule>
+      <pattern lang="en">
+        <token>actually</token>
+      </pattern>
+      <translation lang="es">en realidad</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>actualmente</token>
+      </pattern>
+      <translation lang="en">currently / at present</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="REALIZE">
+    <rule>
+      <pattern lang="en">
+        <token>realize</token>
+      </pattern>
+      <translation lang="pt">perceber / dar-se conta</translation>
+    </rule>
+    <rule>
+      <pattern lang="pt">
+        <token>realizar</token>
+      </pattern>
+      <translation lang="en">carry out / accomplish</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="RECORD">
+    <rule>
+      <pattern lang="en">
+        <token>record</token>
+      </pattern>
+      <translation lang="fr">enregistrement / dossier</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token>record</token>
+      </pattern>
+      <translation lang="en">record (sports / achievement)</translation>
+    </rule>
+  </rulegroup>
 </rules>

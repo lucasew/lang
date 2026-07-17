@@ -1219,6 +1219,49 @@
       <message>Did you mean "pore over the book"?</message>
       <short>pour/pore</short>
     </rule>
+    <rule id="EN_SOFT_APPRAISE_OF" name="appraise of soft">
+      <pattern>
+        <token>appraise</token>
+        <token>of</token>
+      </pattern>
+      <message>Did you mean "apprise of"?</message>
+      <short>appraise/apprise</short>
+    </rule>
+    <rule id="EN_SOFT_DISCREET_MATH" name="discreet math soft">
+      <pattern>
+        <token>discreet</token>
+        <token>math</token>
+      </pattern>
+      <message>Did you mean "discrete math"?</message>
+      <short>discreet/discrete</short>
+    </rule>
+    <rule id="EN_SOFT_EMINENT_DOMAIN_OK" name="imminent domain soft">
+      <pattern>
+        <token>imminent</token>
+        <token>domain</token>
+      </pattern>
+      <message>Did you mean "eminent domain"?</message>
+      <short>imminent/eminent</short>
+    </rule>
+    <rule id="EN_SOFT_ALL_INTENSIVE" name="all intensive purposes soft xml">
+      <pattern>
+        <token>all</token>
+        <token>intensive</token>
+        <token>purposes</token>
+      </pattern>
+      <message>Did you mean "all intents and purposes"?</message>
+      <short>intensive/intents</short>
+    </rule>
+    <rule id="EN_SOFT_FOR_ALL_INTENSIVE_ALT" name="for all intensive alt soft">
+      <pattern>
+        <token>for</token>
+        <token>all</token>
+        <token>intensive</token>
+        <token>purposes</token>
+      </pattern>
+      <message>Did you mean "for all intents and purposes"?</message>
+      <short>intensive/intents</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

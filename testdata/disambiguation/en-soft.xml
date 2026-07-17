@@ -595,4 +595,42 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_AFAIR" name="immunize afair">
+    <pattern>
+      <token>afair</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_IIRC" name="immunize iirc">
+    <pattern>
+      <token>iirc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_FWIW" name="immunize fwiw">
+    <pattern>
+      <token>fwiw</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TLDR_CAPS" name="immunize TLDR">
+    <pattern>
+      <token>TLDR</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_MODAL_ASK_VB" name="modal ask → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>ask</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_TO_VB_ASK" name="to ask → VB">
+    <pattern>
+      <token>to</token>
+      <token>ask</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
 </rules>
