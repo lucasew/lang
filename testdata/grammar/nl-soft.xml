@@ -25,5 +25,39 @@
       <message>Bedoelde u "meer dan"?</message>
       <short>als/dan</short>
     </rule>
+    <rule id="NL_SOFT_HUN_HEBBEN" name="hun hebben">
+      <pattern>
+        <token>hun</token>
+        <token>hebben</token>
+      </pattern>
+      <message>Bedoelde u "zij hebben" of "hun" als bezittelijk?</message>
+      <short>hun/zij</short>
+    </rule>
+    <rule id="NL_SOFT_GROTER_ALS" name="groter als">
+      <pattern>
+        <token>groter</token>
+        <token>als</token>
+      </pattern>
+      <message>Bedoelde u "groter dan"?</message>
+      <short>als/dan</short>
+    </rule>
+    <rule id="NL_SOFT_EN_EN" name="en en">
+      <pattern>
+        <token>en</token>
+        <token>en</token>
+      </pattern>
+      <message>Mogelijke herhaling van "en".</message>
+      <short>en en</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Typografie">
+    <rule id="NL_SOFT_DOUBLE_BANG" name="dubbel uitroepteken">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Eén uitroepteken volstaat vaak: "!"</message>
+      <short>interpunctie</short>
+    </rule>
   </category>
 </rules>

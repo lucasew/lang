@@ -91,6 +91,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 						out[i].IssueType = "grammar"
 					}
 				}
+				// Soft pattern rules beat map/CFSA2 speller on the same span for --apply.
+				if out[i].Priority == 0 {
+					out[i].Priority = 3
+				}
 			}
 			return out
 		})

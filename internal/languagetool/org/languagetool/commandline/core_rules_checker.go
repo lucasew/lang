@@ -358,7 +358,10 @@ func CoreApplySuggestionsHook(w io.Writer, text string, opts *CommandLineOptions
 		return 0, err
 	}
 	ms := lt.Check(text)
-	// apply all with suggestions in document order
+	// Prefer higher-priority / non-overlapping spans so soft+speller on the same
+	// token do not undo each other (e.g. EN_SOFT_ALOT "a lot" vs MORFOLOGIK "lot").
+	ms = languagetool.CleanOverlappingLocalMatches(ms)
+	// apply non-overlapping suggestions in document order
 	var withSug []languagetool.LocalMatch
 	for _, m := range ms {
 		if len(m.Suggestions) > 0 {

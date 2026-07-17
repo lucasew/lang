@@ -379,6 +379,9 @@ func TestGolden_SoftFusedWords(t *testing.T) {
 		{"Infact it works.", "EN_SOFT_INFACT", "in fact"},
 		{"Come aswell please.", "EN_SOFT_ASWELL", "as well"},
 		{"Never the less we try.", "EN_SOFT_NEVERTHELESS_SPLIT", "nevertheless"},
+		{"Everytime I try it fails.", "EN_SOFT_EVERYTIME", "every time"},
+		{"Noone knows the answer.", "EN_SOFT_NOONE", "no one"},
+		{"Don't give into pressure.", "EN_SOFT_INTO_IN_TO", "give in to"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -408,6 +411,17 @@ func TestGolden_ApplySoftDoubleBang(t *testing.T) {
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	// first suggestion "!" replaces the "!!" span
 	require.Equal(t, "Hello!", strings.TrimSpace(out.String()))
+}
+
+func TestGolden_ApplySoftAlot(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "I have alot of work.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "a lot")
+	require.NotContains(t, out.String(), "alot")
 }
 
 func TestGolden_SoftStyleCategory(t *testing.T) {

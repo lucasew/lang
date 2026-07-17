@@ -33,5 +33,39 @@
       <message>Talvez "pelo"?</message>
       <short>por/pelo</short>
     </rule>
+    <rule id="PT_SOFT_EM_A" name="em a">
+      <pattern>
+        <token>em</token>
+        <token>a</token>
+      </pattern>
+      <message>Talvez "na"?</message>
+      <short>em/na</short>
+    </rule>
+    <rule id="PT_SOFT_DE_A" name="de a">
+      <pattern>
+        <token>de</token>
+        <token>a</token>
+      </pattern>
+      <message>Talvez "da"?</message>
+      <short>de/da</short>
+    </rule>
+    <rule id="PT_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Possível repetição de "a".</message>
+      <short>a a</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Tipografia">
+    <rule id="PT_SOFT_DOUBLE_BANG" name="dupla exclamação">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Considere um único ponto de exclamação: "!"</message>
+      <short>pontuação</short>
+    </rule>
   </category>
 </rules>

@@ -33,5 +33,38 @@
       <message>Possibile ripetizione di "e".</message>
       <short>e e</short>
     </rule>
+    <rule id="IT_SOFT_A_LO" name="a lo">
+      <pattern>
+        <token>a</token>
+        <token>lo</token>
+      </pattern>
+      <message>Forse "allo"?</message>
+      <short>a/allo</short>
+    </rule>
+    <rule id="IT_SOFT_DI_LO" name="di lo">
+      <pattern>
+        <token>di</token>
+        <token>lo</token>
+      </pattern>
+      <message>Forse "dello"?</message>
+      <short>di/dello</short>
+    </rule>
+    <rule id="IT_SOFT_PERCHE" name="perche">
+      <pattern>
+        <token>perche</token>
+      </pattern>
+      <message>Forse "perché"?</message>
+      <short>perché</short>
+    </rule>
+  </category>
+  <category id="TYPOGRAPHY" name="Tipografia">
+    <rule id="IT_SOFT_DOUBLE_BANG" name="doppio esclamativo">
+      <pattern>
+        <token>!</token>
+        <token>!</token>
+      </pattern>
+      <message>Spesso basta un solo punto esclamativo: "!"</message>
+      <short>punteggiatura</short>
+    </rule>
   </category>
 </rules>

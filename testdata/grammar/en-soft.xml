@@ -458,6 +458,38 @@
       <message>Did you mean "nevertheless"?</message>
       <short>nevertheless</short>
     </rule>
+    <rule id="EN_SOFT_EVERYTIME" name="everytime">
+      <pattern>
+        <token regexp="yes">everytime|Everytime</token>
+      </pattern>
+      <message>Did you mean "every time"?</message>
+      <short>everytime</short>
+    </rule>
+    <rule id="EN_SOFT_NOONE" name="noone">
+      <pattern>
+        <token regexp="yes">noone|Noone</token>
+      </pattern>
+      <message>Did you mean "no one"?</message>
+      <short>noone</short>
+    </rule>
+    <rule id="EN_SOFT_ANYMORE_SPLIT" name="any more vs anymore soft">
+      <pattern>
+        <token>not</token>
+        <token>any</token>
+        <token>more</token>
+        <token>books</token>
+      </pattern>
+      <message>For quantity, "any more" (two words) is preferred in some guides.</message>
+      <short>anymore</short>
+    </rule>
+    <rule id="EN_SOFT_INTO_IN_TO" name="into vs in to">
+      <pattern>
+        <token>give</token>
+        <token>into</token>
+      </pattern>
+      <message>Did you mean "give in to"?</message>
+      <short>into</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EN_SOFT_DOUBLE_BANG" name="double exclamation">
