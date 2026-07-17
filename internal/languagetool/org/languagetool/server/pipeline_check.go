@@ -31,16 +31,25 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 			_, _ = patterns.RegisterFalseFriendsFile(lt, path, lang, mt)
 		}
 	}
-	// optional demo EN speller/tagger injects for local smoke servers
-	if os.Getenv("LANG_DEMO_SPELLER") == "1" {
-		base := lang
-		if i := strings.IndexByte(lang, '-'); i > 0 {
-			base = lang[:i]
+	// EN speller: prefer CFSA2 en_US.dict; optional map demo fallback
+	base := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		base = lang[:i]
+	}
+	if strings.EqualFold(base, "en") {
+		demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
+		var nearest map[string]struct{}
+		if demoSpell {
+			nearest = en.DemoEnglishKnownWords()
 		}
-		if strings.EqualFold(base, "en") {
-			en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), map[string][]string{
-				"teh": {"the"}, "recieve": {"receive"},
-			})
+		spellOK := false
+		if dictPath := softEnglishUSDictPath(); dictPath != "" {
+			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest)
+		}
+		if !spellOK && demoSpell {
+			en.RegisterDemoEnglishSpeller(lt, en.DemoEnglishKnownWords(), en.CommonDemoSpellerSuggestions)
+		}
+		if demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
 		}
 	}
@@ -87,6 +96,29 @@ func softGrammarDirFromEnv() string {
 		return dir + "/grammar"
 	}
 	return walkUpFind("testdata/grammar")
+}
+
+// softEnglishUSDictPath resolves LANG_EN_US_DICT or walk-up third_party en_US.dict.
+func softEnglishUSDictPath() string {
+	if p := os.Getenv("LANG_EN_US_DICT"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
+		for _, rel := range []string{
+			dir + "/en/hunspell/en_US.dict",
+			dir + "/en_US.dict",
+		} {
+			if _, err := os.Stat(rel); err == nil {
+				return rel
+			}
+		}
+	}
+	if p := walkUpFind("third_party/english-pos-dict/org/languagetool/resource/en/hunspell/en_US.dict"); p != "" {
+		return p
+	}
+	return walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/en_US.dict")
 }
 
 // softFalseFriendsPath resolves LANG_FALSEFRIENDS_FILE or a well-known testdata path.
