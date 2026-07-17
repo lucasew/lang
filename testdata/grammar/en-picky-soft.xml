@@ -3301,5 +3301,26 @@
       <message>Jargon; name customer acquisition cost instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_GMV" name="gmv soft picky">
+      <pattern>
+        <token>gmv</token>
+      </pattern>
+      <message>Jargon; name gross merchandise value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AOV" name="aov soft picky">
+      <pattern>
+        <token>aov</token>
+      </pattern>
+      <message>Jargon; name average order value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ROAS" name="roas soft picky">
+      <pattern>
+        <token>roas</token>
+      </pattern>
+      <message>Jargon; name return on ad spend instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

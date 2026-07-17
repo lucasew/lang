@@ -5127,4 +5127,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_YUGABYTE" name="immunize yugabyte">
+    <pattern>
+      <token>yugabyte</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_YUGABYTE_CAPS" name="immunize Yugabyte">
+    <pattern>
+      <token>Yugabyte</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIDB" name="immunize tidb">
+    <pattern>
+      <token>tidb</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIDB_CAPS" name="immunize TiDB">
+    <pattern>
+      <token>TiDB</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITESS" name="immunize vitess">
+    <pattern>
+      <token>vitess</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VITESS_CAPS" name="immunize Vitess">
+    <pattern>
+      <token>Vitess</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

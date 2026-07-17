@@ -522,3 +522,6 @@ Lherzolite Summit RegionNNP
 Dunite Summit RegionNNP
 Websterite Summit RegionNNP
 Pyroxenite Summit RegionNNP
+Norite Summit RegionNNP
+Troctolite Summit RegionNNP
+Anorthosite Ridge RegionNNP

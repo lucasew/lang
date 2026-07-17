@@ -11607,6 +11607,76 @@
       <message>Did you mean "server"?</message>
       <short>sevrer</short>
     </rule>
+    <rule id="EN_SOFT_SHOULD_MISS" name="shoudl soft">
+      <pattern>
+        <token>shoudl</token>
+      </pattern>
+      <message>Did you mean "should"?</message>
+      <short>shoudl</short>
+    </rule>
+    <rule id="EN_SOFT_SIMPLE_MISS" name="simpel soft">
+      <pattern>
+        <token>simpel</token>
+      </pattern>
+      <message>Did you mean "simple"?</message>
+      <short>simpel</short>
+    </rule>
+    <rule id="EN_SOFT_SOME_MISS" name="soem soft">
+      <pattern>
+        <token>soem</token>
+      </pattern>
+      <message>Did you mean "some"?</message>
+      <short>soem</short>
+    </rule>
+    <rule id="EN_SOFT_SOMETHING_MISS3" name="soemthing soft">
+      <pattern>
+        <token>soemthing</token>
+      </pattern>
+      <message>Did you mean "something"?</message>
+      <short>soemthing</short>
+    </rule>
+    <rule id="EN_SOFT_SOURCE_MISS" name="soruce soft">
+      <pattern>
+        <token>soruce</token>
+      </pattern>
+      <message>Did you mean "source"?</message>
+      <short>soruce</short>
+    </rule>
+    <rule id="EN_SOFT_SPECIFIC_MISS" name="specifc soft">
+      <pattern>
+        <token>specifc</token>
+      </pattern>
+      <message>Did you mean "specific"?</message>
+      <short>specifc</short>
+    </rule>
+    <rule id="EN_SOFT_STATUS_MISS" name="stauts soft">
+      <pattern>
+        <token>stauts</token>
+      </pattern>
+      <message>Did you mean "status"?</message>
+      <short>stauts</short>
+    </rule>
+    <rule id="EN_SOFT_STRING_MISS" name="stirng soft">
+      <pattern>
+        <token>stirng</token>
+      </pattern>
+      <message>Did you mean "string"?</message>
+      <short>stirng</short>
+    </rule>
+    <rule id="EN_SOFT_SUPPORT_MISS" name="suport soft">
+      <pattern>
+        <token>suport</token>
+      </pattern>
+      <message>Did you mean "support"?</message>
+      <short>suport</short>
+    </rule>
+    <rule id="EN_SOFT_SYSTEM_MISS" name="sytem soft">
+      <pattern>
+        <token>sytem</token>
+      </pattern>
+      <message>Did you mean "system"?</message>
+      <short>sytem</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
