@@ -1597,6 +1597,76 @@
       <message>Did you mean "believe"?</message>
       <short>beleive</short>
     </rule>
+    <rule id="EN_SOFT_INDEPENDANT" name="independant soft">
+      <pattern>
+        <token>independant</token>
+      </pattern>
+      <message>Did you mean "independent"?</message>
+      <short>independant</short>
+    </rule>
+    <rule id="EN_SOFT_EXISTANCE" name="existance soft">
+      <pattern>
+        <token>existance</token>
+      </pattern>
+      <message>Did you mean "existence"?</message>
+      <short>existance</short>
+    </rule>
+    <rule id="EN_SOFT_REFERING" name="refering soft">
+      <pattern>
+        <token>refering</token>
+      </pattern>
+      <message>Did you mean "referring"?</message>
+      <short>refering</short>
+    </rule>
+    <rule id="EN_SOFT_TRANSFERED" name="transfered soft">
+      <pattern>
+        <token>transfered</token>
+      </pattern>
+      <message>Did you mean "transferred"?</message>
+      <short>transfered</short>
+    </rule>
+    <rule id="EN_SOFT_BEGINING" name="begining soft">
+      <pattern>
+        <token>begining</token>
+      </pattern>
+      <message>Did you mean "beginning"?</message>
+      <short>begining</short>
+    </rule>
+    <rule id="EN_SOFT_COMITTMENT" name="comittment soft">
+      <pattern>
+        <token>comittment</token>
+      </pattern>
+      <message>Did you mean "commitment"?</message>
+      <short>comittment</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESFUL" name="succesful soft">
+      <pattern>
+        <token>succesful</token>
+      </pattern>
+      <message>Did you mean "successful"?</message>
+      <short>succesful</short>
+    </rule>
+    <rule id="EN_SOFT_UNTILL" name="untill soft">
+      <pattern>
+        <token>untill</token>
+      </pattern>
+      <message>Did you mean "until"?</message>
+      <short>untill</short>
+    </rule>
+    <rule id="EN_SOFT_WRITTING" name="writting soft">
+      <pattern>
+        <token>writting</token>
+      </pattern>
+      <message>Did you mean "writing"?</message>
+      <short>writting</short>
+    </rule>
+    <rule id="EN_SOFT_ADRESS" name="adress soft">
+      <pattern>
+        <token>adress</token>
+      </pattern>
+      <message>Did you mean "address"?</message>
+      <short>adress</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
