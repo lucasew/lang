@@ -87,5 +87,35 @@
       <message>Consider "to" + verb.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_AT_THE_PRESENT_TIME" name="at the present time soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>the</token>
+        <token>present</token>
+        <token>time</token>
+      </pattern>
+      <message>Consider "now" or "currently".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_IN_LIGHT_OF_THE_FACT" name="in light of the fact soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>light</token>
+        <token>of</token>
+        <token>the</token>
+        <token>fact</token>
+      </pattern>
+      <message>Consider "because" or "since".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_BY_MEANS_OF" name="by means of soft optional" default="off">
+      <pattern>
+        <token>by</token>
+        <token>means</token>
+        <token>of</token>
+      </pattern>
+      <message>Consider "by" or "using".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

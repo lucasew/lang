@@ -1433,6 +1433,76 @@
       <message>Did you mean "HIV" (virus is redundant)?</message>
       <short>HIV virus</short>
     </rule>
+    <rule id="EN_SOFT_DEFINATELY" name="definately soft">
+      <pattern>
+        <token>definately</token>
+      </pattern>
+      <message>Did you mean "definitely"?</message>
+      <short>definately</short>
+    </rule>
+    <rule id="EN_SOFT_SEPERATE" name="seperate soft">
+      <pattern>
+        <token>seperate</token>
+      </pattern>
+      <message>Did you mean "separate"?</message>
+      <short>seperate</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURED" name="occured soft">
+      <pattern>
+        <token>occured</token>
+      </pattern>
+      <message>Did you mean "occurred"?</message>
+      <short>occured</short>
+    </rule>
+    <rule id="EN_SOFT_ACCOMODATE" name="accomodate soft">
+      <pattern>
+        <token>accomodate</token>
+      </pattern>
+      <message>Did you mean "accommodate"?</message>
+      <short>accomodate</short>
+    </rule>
+    <rule id="EN_SOFT_NECCESSARY" name="neccessary soft">
+      <pattern>
+        <token>neccessary</token>
+      </pattern>
+      <message>Did you mean "necessary"?</message>
+      <short>neccessary</short>
+    </rule>
+    <rule id="EN_SOFT_TOMMORROW" name="tommorrow soft">
+      <pattern>
+        <token>tommorrow</token>
+      </pattern>
+      <message>Did you mean "tomorrow"?</message>
+      <short>tommorrow</short>
+    </rule>
+    <rule id="EN_SOFT_FOILAGE" name="foilage soft">
+      <pattern>
+        <token>foilage</token>
+      </pattern>
+      <message>Did you mean "foliage"?</message>
+      <short>foilage</short>
+    </rule>
+    <rule id="EN_SOFT_MISCHIEVIOUS" name="mischievious soft">
+      <pattern>
+        <token>mischievious</token>
+      </pattern>
+      <message>Did you mean "mischievous"?</message>
+      <short>mischievious</short>
+    </rule>
+    <rule id="EN_SOFT_NUCULAR" name="nucular soft">
+      <pattern>
+        <token>nucular</token>
+      </pattern>
+      <message>Did you mean "nuclear"?</message>
+      <short>nucular</short>
+    </rule>
+    <rule id="EN_SOFT_FIRSTABLE" name="firstable soft">
+      <pattern>
+        <token>firstable</token>
+      </pattern>
+      <message>Did you mean "first of all"?</message>
+      <short>firstable</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

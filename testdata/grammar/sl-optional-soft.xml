@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SL optional rules: default off until -e or SOFT_OPTIONAL. -->
+<rules lang="sl">
+  <category id="STYLE" name="Style">
+    <rule id="SL_SOFT_OPT_V_OKVIRU" name="v okviru soft optional" default="off">
+      <pattern>
+        <token>v</token>
+        <token>okviru</token>
+      </pattern>
+      <message>Razmislite o "pri" ali "med".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SL_SOFT_OPT_Z_NAMENOM" name="z namenom soft optional" default="off">
+      <pattern>
+        <token>z</token>
+        <token>namenom</token>
+      </pattern>
+      <message>Razmislite o "da bi" ali "za".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SL_SOFT_OPT_V_ZVEZI" name="v zvezi z soft optional" default="off">
+      <pattern>
+        <token>v</token>
+        <token>zvezi</token>
+        <token>z</token>
+      </pattern>
+      <message>Razmislite o "o" ali "glede".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>
