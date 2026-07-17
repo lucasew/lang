@@ -57,6 +57,46 @@
       <message>Возможный повтор "это".</message>
       <short>это это</short>
     </rule>
+    <rule id="RU_SOFT_CHTO_CHTO" name="что что">
+      <pattern>
+        <token>что</token>
+        <token>что</token>
+      </pattern>
+      <message>Возможный повтор "что".</message>
+      <short>что что</short>
+    </rule>
+    <rule id="RU_SOFT_KAK_KAK" name="как как">
+      <pattern>
+        <token>как</token>
+        <token>как</token>
+      </pattern>
+      <message>Возможный повтор "как".</message>
+      <short>как как</short>
+    </rule>
+    <rule id="RU_SOFT_IZA_IZ" name="из за">
+      <pattern>
+        <token>из</token>
+        <token>за</token>
+      </pattern>
+      <message>Возможно "из-за" (через дефис).</message>
+      <short>из-за</short>
+    </rule>
+    <rule id="RU_SOFT_TAK_JE" name="так же vs также">
+      <pattern>
+        <token>так</token>
+        <token>же</token>
+        <token>как</token>
+      </pattern>
+      <message>Проверьте "так же" (сравнение) vs "также" (тоже).</message>
+      <short>также</short>
+    </rule>
+    <rule id="RU_SOFT_VOOBSHE" name="вообще">
+      <pattern>
+        <token>вообщем</token>
+      </pattern>
+      <message>Возможно "в общем" или "вообще"?</message>
+      <short>вообщем</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Типографика">
     <rule id="RU_SOFT_DOUBLE_BANG" name="двойной восклицательный">

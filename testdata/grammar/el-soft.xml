@@ -57,6 +57,38 @@
       <message>Πιθανή επανάληψη του "δεν".</message>
       <short>δεν δεν</short>
     </rule>
+    <rule id="EL_SOFT_POU_POU" name="που που">
+      <pattern>
+        <token>που</token>
+        <token>που</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "που".</message>
+      <short>που που</short>
+    </rule>
+    <rule id="EL_SOFT_THA_THA" name="θα θα">
+      <pattern>
+        <token>θα</token>
+        <token>θα</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "θα".</message>
+      <short>θα θα</short>
+    </rule>
+    <rule id="EL_SOFT_OXI_OXI" name="όχι όχι">
+      <pattern>
+        <token>όχι</token>
+        <token>όχι</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "όχι".</message>
+      <short>όχι όχι</short>
+    </rule>
+    <rule id="EL_SOFT_APO_APO" name="από από">
+      <pattern>
+        <token>από</token>
+        <token>από</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "από".</message>
+      <short>από από</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="EL_SOFT_DOUBLE_BANG" name="double bang">

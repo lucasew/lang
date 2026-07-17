@@ -57,6 +57,46 @@
       <message>Posibilă repetare a "la".</message>
       <short>la la</short>
     </rule>
+    <rule id="RO_SOFT_NU_NU" name="nu nu">
+      <pattern>
+        <token>nu</token>
+        <token>nu</token>
+      </pattern>
+      <message>Posibilă repetare a "nu".</message>
+      <short>nu nu</short>
+    </rule>
+    <rule id="RO_SOFT_CA_CA" name="că că">
+      <pattern>
+        <token>că</token>
+        <token>că</token>
+      </pattern>
+      <message>Posibilă repetare a "că".</message>
+      <short>că că</short>
+    </rule>
+    <rule id="RO_SOFT_SAU_SAU" name="sau sau">
+      <pattern>
+        <token>sau</token>
+        <token>sau</token>
+      </pattern>
+      <message>Posibilă repetare a "sau".</message>
+      <short>sau sau</short>
+    </rule>
+    <rule id="RO_SOFT_DINTR_O" name="dintr o">
+      <pattern>
+        <token>dintr</token>
+        <token>o</token>
+      </pattern>
+      <message>Poate "dintr-o" (cu cratimă)?</message>
+      <short>dintr-o</short>
+    </rule>
+    <rule id="RO_SOFT_INTR_UN" name="într un">
+      <pattern>
+        <token>într</token>
+        <token>un</token>
+      </pattern>
+      <message>Poate "într-un" (cu cratimă)?</message>
+      <short>într-un</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="RO_SOFT_DOUBLE_BANG" name="double bang">

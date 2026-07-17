@@ -35,6 +35,13 @@ func TestCoreDoctor(t *testing.T) {
 		if strings.Contains(out, "en-GB-soft.xml") {
 			require.Contains(t, out, "en-GB soft smoke:")
 		}
+		// multi-lang soft pack smoke when grammar packs are discoverable
+		if strings.Contains(out, "de-soft.xml") || strings.Contains(out, "soft grammar files:") {
+			require.Contains(t, out, "de soft smoke:")
+			require.Contains(t, out, "fr soft smoke:")
+			require.Contains(t, out, "es soft smoke:")
+			require.Contains(t, out, "pt soft smoke:")
+		}
 	}
 }
 

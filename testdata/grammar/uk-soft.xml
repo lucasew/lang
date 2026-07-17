@@ -57,6 +57,46 @@
       <message>Можливе повторення "це".</message>
       <short>це це</short>
     </rule>
+    <rule id="UK_SOFT_SHCHO_SHCHO" name="що що">
+      <pattern>
+        <token>що</token>
+        <token>що</token>
+      </pattern>
+      <message>Можливе повторення "що".</message>
+      <short>що що</short>
+    </rule>
+    <rule id="UK_SOFT_YAK_YAK" name="як як">
+      <pattern>
+        <token>як</token>
+        <token>як</token>
+      </pattern>
+      <message>Можливе повторення "як".</message>
+      <short>як як</short>
+    </rule>
+    <rule id="UK_SOFT_CHEREZ_TE" name="через те що">
+      <pattern>
+        <token>із</token>
+        <token>за</token>
+      </pattern>
+      <message>Можливо "через" або "із-за"?</message>
+      <short>із-за</short>
+    </rule>
+    <rule id="UK_SOFT_VZAGALI" name="взагалі">
+      <pattern>
+        <token>вобщем</token>
+      </pattern>
+      <message>Можливо "взагалі" або "загалом"?</message>
+      <short>вобщем</short>
+    </rule>
+    <rule id="UK_SOFT_TAK_SAMO" name="так само">
+      <pattern>
+        <token>так</token>
+        <token>само</token>
+        <token>як</token>
+      </pattern>
+      <message>Перевірте "так само" (порівняння) vs "також".</message>
+      <short>також</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Типографіка">
     <rule id="UK_SOFT_DOUBLE_BANG" name="подвійний знак оклику">

@@ -72,6 +72,46 @@
       <message>Menade du "de kan"?</message>
       <short>de/dom</short>
     </rule>
+    <rule id="SV_SOFT_DOM_VILL" name="dom vill">
+      <pattern>
+        <token>dom</token>
+        <token>vill</token>
+      </pattern>
+      <message>Menade du "de vill"?</message>
+      <short>de/dom</short>
+    </rule>
+    <rule id="SV_SOFT_MINDRE_SOM" name="mindre som">
+      <pattern>
+        <token>mindre</token>
+        <token>som</token>
+      </pattern>
+      <message>Menade du "mindre än"?</message>
+      <short>än/som</short>
+    </rule>
+    <rule id="SV_SOFT_INTE_INTE" name="inte inte">
+      <pattern>
+        <token>inte</token>
+        <token>inte</token>
+      </pattern>
+      <message>Möjlig upprepning av "inte".</message>
+      <short>inte inte</short>
+    </rule>
+    <rule id="SV_SOFT_ATT_ATT" name="att att">
+      <pattern>
+        <token>att</token>
+        <token>att</token>
+      </pattern>
+      <message>Möjlig upprepning av "att".</message>
+      <short>att att</short>
+    </rule>
+    <rule id="SV_SOFT_EFTERSOM_ATT" name="eftersom att">
+      <pattern>
+        <token>eftersom</token>
+        <token>att</token>
+      </pattern>
+      <message>Ofta räcker "eftersom" utan "att".</message>
+      <short>eftersom att</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografi">
     <rule id="SV_SOFT_DOUBLE_BANG" name="dubbelt utropstecken">

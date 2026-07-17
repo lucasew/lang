@@ -57,6 +57,46 @@
       <message>Posible repetición de "por".</message>
       <short>por por</short>
     </rule>
+    <rule id="GL_SOFT_EM_A" name="em a">
+      <pattern>
+        <token>en</token>
+        <token>a</token>
+      </pattern>
+      <message>Quizais "na"?</message>
+      <short>en/na</short>
+    </rule>
+    <rule id="GL_SOFT_EM_O" name="em o">
+      <pattern>
+        <token>en</token>
+        <token>o</token>
+      </pattern>
+      <message>Quizais "no"?</message>
+      <short>en/no</short>
+    </rule>
+    <rule id="GL_SOFT_POR_A" name="por a">
+      <pattern>
+        <token>por</token>
+        <token>a</token>
+      </pattern>
+      <message>Quizais "pola"?</message>
+      <short>por/pola</short>
+    </rule>
+    <rule id="GL_SOFT_NON_NON" name="non non">
+      <pattern>
+        <token>non</token>
+        <token>non</token>
+      </pattern>
+      <message>Posible repetición de "non".</message>
+      <short>non non</short>
+    </rule>
+    <rule id="GL_SOFT_MAIS_MAIS" name="mais mais">
+      <pattern>
+        <token>mais</token>
+        <token>mais</token>
+      </pattern>
+      <message>Posible repetición de "mais".</message>
+      <short>mais mais</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="GL_SOFT_DOUBLE_BANG" name="double bang">

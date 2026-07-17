@@ -1305,5 +1305,106 @@
       <message>Did you mean "continue with"?</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_SHUD_OF" name="shud of">
+      <pattern>
+        <token>shud</token>
+        <token>of</token>
+      </pattern>
+      <message>Did you mean "should have"?</message>
+      <short>shud of</short>
+    </rule>
+    <rule id="EN_SOFT_WOULDA" name="woulda">
+      <pattern>
+        <token>woulda</token>
+      </pattern>
+      <message>Did you mean "would have" or "would've"?</message>
+      <short>woulda</short>
+    </rule>
+    <rule id="EN_SOFT_COULDA" name="coulda">
+      <pattern>
+        <token>coulda</token>
+      </pattern>
+      <message>Did you mean "could have" or "could've"?</message>
+      <short>coulda</short>
+    </rule>
+    <rule id="EN_SOFT_SHOULDA" name="shoulda">
+      <pattern>
+        <token>shoulda</token>
+      </pattern>
+      <message>Did you mean "should have" or "should've"?</message>
+      <short>shoulda</short>
+    </rule>
+    <rule id="EN_SOFT_GOTTA" name="gotta soft style">
+      <pattern>
+        <token>gotta</token>
+      </pattern>
+      <message>In formal writing, prefer "have to" or "got to".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_WANNA" name="wanna soft style">
+      <pattern>
+        <token>wanna</token>
+      </pattern>
+      <message>In formal writing, prefer "want to".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_GONNA" name="gonna soft style">
+      <pattern>
+        <token>gonna</token>
+      </pattern>
+      <message>In formal writing, prefer "going to".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_AIN_T" name="aint soft">
+      <pattern>
+        <token>aint</token>
+      </pattern>
+      <message>Did you mean "isn't", "aren't", or "am not"?</message>
+      <short>aint</short>
+    </rule>
+    <rule id="EN_SOFT_YALL" name="yall">
+      <pattern>
+        <token>yall</token>
+      </pattern>
+      <message>Did you mean "y'all"?</message>
+      <short>yall</short>
+    </rule>
+    <rule id="EN_SOFT_IMMA" name="imma">
+      <pattern>
+        <token>imma</token>
+      </pattern>
+      <message>Did you mean "I'm going to" or "I'm a"?</message>
+      <short>imma</short>
+    </rule>
+    <rule id="EN_SOFT_PROLLY" name="prolly">
+      <pattern>
+        <token>prolly</token>
+      </pattern>
+      <message>Did you mean "probably"?</message>
+      <short>prolly</short>
+    </rule>
+    <rule id="EN_SOFT_DEFFO" name="deffo">
+      <pattern>
+        <token>deffo</token>
+      </pattern>
+      <message>Did you mean "definitely"?</message>
+      <short>deffo</short>
+    </rule>
+    <rule id="EN_SOFT_BASICALLY_BASIC" name="basically basically">
+      <pattern>
+        <token>basically</token>
+        <token>basically</token>
+      </pattern>
+      <message>Possible accidental repetition of "basically".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_ACTUALLY_ACTUALLY" name="actually actually">
+      <pattern>
+        <token>actually</token>
+        <token>actually</token>
+      </pattern>
+      <message>Possible accidental repetition of "actually".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

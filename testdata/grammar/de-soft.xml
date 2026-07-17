@@ -162,6 +162,53 @@
       <message>Meinten Sie "zufrieden"?</message>
       <short>Tippfehler</short>
     </rule>
+    <rule id="DE_SOFT_BESSER_WIE" name="besser wie">
+      <pattern>
+        <token>besser</token>
+        <token>wie</token>
+      </pattern>
+      <message>Meinten Sie "besser als"?</message>
+      <short>wie/als</short>
+    </rule>
+    <rule id="DE_SOFT_KLEINER_WIE" name="kleiner wie">
+      <pattern>
+        <token>kleiner</token>
+        <token>wie</token>
+      </pattern>
+      <message>Meinten Sie "kleiner als"?</message>
+      <short>wie/als</short>
+    </rule>
+    <rule id="DE_SOFT_DENN_DANN" name="denn/dann">
+      <pattern>
+        <token>und</token>
+        <token>denn</token>
+      </pattern>
+      <message>Prüfen Sie "denn" (denn/weil) vs "dann" (zeitlich).</message>
+      <short>denn/dann</short>
+    </rule>
+    <rule id="DE_SOFT_DAS_DASS_DENKE" name="denke das">
+      <pattern>
+        <token>denke</token>
+        <token>das</token>
+      </pattern>
+      <message>Meinten Sie "denke, dass"?</message>
+      <short>das/dass</short>
+    </rule>
+    <rule id="DE_SOFT_WEGEN_DEN" name="wegen den">
+      <pattern>
+        <token>wegen</token>
+        <token>den</token>
+      </pattern>
+      <message>Standardsprachlich oft "wegen der/des" (Genitiv).</message>
+      <short>wegen</short>
+    </rule>
+    <rule id="DE_SOFT_ZUFRIDEN" name="zufriden">
+      <pattern>
+        <token>zufriden</token>
+      </pattern>
+      <message>Meinten Sie "zufrieden"?</message>
+      <short>Tippfehler</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typografie">
     <rule id="DE_SOFT_DOUBLE_BANG" name="doppeltes Ausrufezeichen">

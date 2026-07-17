@@ -610,6 +610,32 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 				_, _ = fmt.Fprintf(w, "en-GB soft smoke: EN_SOFT_COLOR_GB missing\n")
 			}
 		}
+		// multi-lang soft pack smoke (walk-up / data-dir soft grammar)
+		for _, sm := range []struct {
+			lang, text, rule, label string
+		}{
+			{"de", "Ich denke das es so ist.", "DE_SOFT_DAS_DASS", "de soft smoke"},
+			{"fr", "Je vais a la maison.", "FR_SOFT_A_LA", "fr soft smoke"},
+			{"es", "Voy a el parque.", "ES_SOFT_A_EL", "es soft smoke"},
+			{"pt", "Vou a o mercado.", "PT_SOFT_A_O", "pt soft smoke"},
+		} {
+			ltL, err := configureCoreLT(sm.lang, opts)
+			if err != nil {
+				continue
+			}
+			hit := false
+			for _, m := range ltL.Check(sm.text) {
+				if m.RuleID == sm.rule {
+					hit = true
+					break
+				}
+			}
+			if hit {
+				_, _ = fmt.Fprintf(w, "%s: %s ok\n", sm.label, sm.rule)
+			} else {
+				_, _ = fmt.Fprintf(w, "%s: %s missing\n", sm.label, sm.rule)
+			}
+		}
 	}
 	_, _ = fmt.Fprintf(w, "status: ok\n")
 	return nil

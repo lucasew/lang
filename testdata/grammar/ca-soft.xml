@@ -57,6 +57,45 @@
       <message>Possible repetició de "per".</message>
       <short>per per</short>
     </rule>
+    <rule id="CA_SOFT_A_LA" name="a la ok">
+      <pattern>
+        <token>a</token>
+        <token>la</token>
+        <token>la</token>
+      </pattern>
+      <message>Possible repetició de "la".</message>
+      <short>la la</short>
+    </rule>
+    <rule id="CA_SOFT_PERQUE" name="perque">
+      <pattern>
+        <token>perque</token>
+      </pattern>
+      <message>Potser "perquè"?</message>
+      <short>perquè</short>
+    </rule>
+    <rule id="CA_SOFT_TAMBE" name="tambe">
+      <pattern>
+        <token>tambe</token>
+      </pattern>
+      <message>Potser "també"?</message>
+      <short>també</short>
+    </rule>
+    <rule id="CA_SOFT_MES_MES" name="més més">
+      <pattern>
+        <token>més</token>
+        <token>més</token>
+      </pattern>
+      <message>Possible repetició de "més".</message>
+      <short>més més</short>
+    </rule>
+    <rule id="CA_SOFT_NO_NO" name="no no">
+      <pattern>
+        <token>no</token>
+        <token>no</token>
+      </pattern>
+      <message>Possible repetició de "no".</message>
+      <short>no no</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="CA_SOFT_DOUBLE_BANG" name="double bang">

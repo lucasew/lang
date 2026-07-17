@@ -1019,3 +1019,43 @@ func TestGolden_ApplySoftBareWithMe(t *testing.T) {
 	require.Contains(t, out.String(), "Bear with me")
 	require.NotContains(t, out.String(), "Bare with me")
 }
+
+func TestGolden_SoftInformalForms(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"I shud of known better.", "EN_SOFT_SHUD_OF", "should have"},
+		{"I woulda gone earlier.", "EN_SOFT_WOULDA", "would have"},
+		{"I coulda helped you.", "EN_SOFT_COULDA", "could have"},
+		{"I shoulda called first.", "EN_SOFT_SHOULDA", "should have"},
+		{"I gotta leave now.", "EN_SOFT_GOTTA", ""},
+		{"I wanna go home.", "EN_SOFT_WANNA", ""},
+		{"I'm gonna try that.", "EN_SOFT_GONNA", ""},
+		{"That aint right.", "EN_SOFT_AIN_T", ""},
+		{"Yall should come over.", "EN_SOFT_YALL", "Y'all"},
+		{"Imma finish this later.", "EN_SOFT_IMMA", "I'm going to"},
+		{"Prolly tomorrow works.", "EN_SOFT_PROLLY", "Probably"},
+		{"Deffo a good idea.", "EN_SOFT_DEFFO", "Definitely"},
+		{"Basically basically it works.", "EN_SOFT_BASICALLY_BASIC", ""},
+		{"Actually actually I agree.", "EN_SOFT_ACTUALLY_ACTUALLY", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}

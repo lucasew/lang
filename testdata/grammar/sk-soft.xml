@@ -57,6 +57,38 @@
       <message>Možné opakovanie "nie".</message>
       <short>nie nie</short>
     </rule>
+    <rule id="SK_SOFT_ABY_ABY" name="aby aby">
+      <pattern>
+        <token>aby</token>
+        <token>aby</token>
+      </pattern>
+      <message>Možné opakovanie "aby".</message>
+      <short>aby aby</short>
+    </rule>
+    <rule id="SK_SOFT_UZ_UZ" name="už už">
+      <pattern>
+        <token>už</token>
+        <token>už</token>
+      </pattern>
+      <message>Možné opakovanie "už".</message>
+      <short>už už</short>
+    </rule>
+    <rule id="SK_SOFT_SA_SA" name="sa sa">
+      <pattern>
+        <token>sa</token>
+        <token>sa</token>
+      </pattern>
+      <message>Možné opakovanie "sa".</message>
+      <short>sa sa</short>
+    </rule>
+    <rule id="SK_SOFT_AJ_AJ" name="aj aj">
+      <pattern>
+        <token>aj</token>
+        <token>aj</token>
+      </pattern>
+      <message>Možné opakovanie "aj".</message>
+      <short>aj aj</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="SK_SOFT_DOUBLE_BANG" name="double bang">
