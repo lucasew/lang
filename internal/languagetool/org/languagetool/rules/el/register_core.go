@@ -21,4 +21,8 @@ func RegisterCoreGreekRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "el", []patterns.TokenSequenceSpec{
 		{ID: "EL_ΚΑΙ_ΚΑΙ", Tokens: []string{"και", "και"}, Message: "Πιθανή επανάληψη του «και».", Suggestion: "και"},
 	})
+
+	// Official homonyms replace table (embedded from upstream).
+	hr := NewReplaceHomonymsRule(nil)
+	lt.AddRuleChecker(hr.GetID(), rules.AsSentenceCheckerSimple(hr.Match))
 }

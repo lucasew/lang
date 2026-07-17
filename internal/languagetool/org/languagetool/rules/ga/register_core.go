@@ -22,4 +22,12 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "ga", []patterns.TokenSequenceSpec{
 		{ID: "GA_AGUS_AGUS", Tokens: []string{"agus", "agus"}, Message: "Athrá indéanta ar 'agus'.", Suggestion: "agus"},
 	})
+
+	// Official replace tables (embedded from upstream).
+	ir := NewIrishReplaceRule(nil)
+	lt.AddRuleChecker(ir.GetID(), rules.AsSentenceCheckerSimple(ir.Match))
+	fgb := NewIrishFGBEqReplaceRule(nil)
+	lt.AddRuleChecker(fgb.GetID(), rules.AsSentenceCheckerSimple(fgb.Match))
+	dp := NewDativePluralStandardReplaceRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
 }

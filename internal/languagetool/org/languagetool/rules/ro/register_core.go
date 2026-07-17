@@ -21,4 +21,8 @@ func RegisterCoreRomanianRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "ro", []patterns.TokenSequenceSpec{
 		{ID: "RO_DE_DE", Tokens: []string{"de", "de"}, Message: "Posibilă repetiție a prepoziției 'de'.", Suggestion: "de"},
 	})
+
+	// Official replace.txt (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 }

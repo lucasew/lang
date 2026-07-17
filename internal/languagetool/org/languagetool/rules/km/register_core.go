@@ -17,4 +17,8 @@ func RegisterCoreKhmerRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "ប្រយោគបីជាប់គ្នាចាប់ផ្តើមដោយពាក្យដូចគ្នា។",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	// Official replace table (embedded from upstream).
+	sr := NewKhmerSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 }

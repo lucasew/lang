@@ -22,4 +22,8 @@ func RegisterCoreBretonRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "br", []patterns.TokenSequenceSpec{
 		{ID: "BR_HA_HA", Tokens: []string{"ha", "ha"}, Message: "Adlask posubl eus 'ha'.", Suggestion: "ha"},
 	})
+
+	// Official topo.txt place-name replace (embedded from upstream).
+	tr := NewTopoReplaceRule(nil)
+	lt.AddRuleChecker(tr.GetID(), rules.AsSentenceCheckerSimple(tr.Match))
 }

@@ -22,4 +22,8 @@ func RegisterCoreGalicianRules(lt *languagetool.JLanguageTool) {
 		{ID: "GL_A_O", Tokens: []string{"a", "o"}, Message: "Quizais 'ao'?", Suggestion: "ao"},
 		{ID: "GL_DE_O", Tokens: []string{"de", "o"}, Message: "Quizais 'do'?", Suggestion: "do"},
 	})
+
+	// Official replace.txt (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 }

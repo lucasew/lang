@@ -22,4 +22,10 @@ func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 	patterns.RegisterTokenSequences(lt, "fa", []patterns.TokenSequenceSpec{
 		{ID: "FA_در_در", Tokens: []string{"در", "در"}, Message: "تکرار احتمالی «در».", Suggestion: "در"},
 	})
+
+	// Official replace + coherency tables (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
 }

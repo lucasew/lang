@@ -23,4 +23,12 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 		{ID: "UK_В_В", Tokens: []string{"в", "в"}, Message: "Можливий повтор прийменника «в».", Suggestion: "в"},
 		{ID: "UK_З_З", Tokens: []string{"з", "з"}, Message: "Можливий повтор прийменника «з».", Suggestion: "з"},
 	})
+
+	// Official replace tables (embedded from upstream).
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+	ss := NewSimpleReplaceSoftRule(nil)
+	lt.AddRuleChecker(ss.GetID(), rules.AsSentenceCheckerSimple(ss.Match))
+	rn := NewSimpleReplaceRenamedRule(nil)
+	lt.AddRuleChecker(rn.GetID(), rules.AsSentenceCheckerSimple(rn.Match))
 }
