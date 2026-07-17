@@ -907,6 +907,11 @@ func TestGolden_SoftUSGBExtraVariants(t *testing.T) {
 		{"Self defence class.", "EN_SOFT_DEFENCE_US", "defense"},
 		{"A driving licence.", "EN_SOFT_LICENCE_US", "license"},
 		{"Please analyse data.", "EN_SOFT_ANALYSE_US", "analyze"},
+		{"A large theatre hall.", "EN_SOFT_THEATRE_US", "theater"},
+		{"Browse the catalogue.", "EN_SOFT_CATALOGUE_US", "catalog"},
+		{"Open a dialogue box.", "EN_SOFT_DIALOGUE_US", "dialog"},
+		{"TV programme tonight.", "EN_SOFT_PROGRAMME_US", "program"},
+		{"My neighbour is kind.", "EN_SOFT_NEIGHBOUR_US", "neighbor"},
 	}
 	for _, tc := range us {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -934,6 +939,11 @@ func TestGolden_SoftUSGBExtraVariants(t *testing.T) {
 		{"Self defense class.", "EN_SOFT_DEFENSE_GB", "defence"},
 		{"A driving license.", "EN_SOFT_LICENSE_GB", "licence"},
 		{"Please analyze data.", "EN_SOFT_ANALYZE_GB", "analyse"},
+		{"A large theater hall.", "EN_SOFT_THEATER_GB", "theatre"},
+		{"Browse the catalog.", "EN_SOFT_CATALOG_GB", "catalogue"},
+		{"Open a dialog box.", "EN_SOFT_DIALOG_GB", "dialogue"},
+		{"TV program tonight.", "EN_SOFT_PROGRAM_GB", "programme"},
+		{"My neighbor is kind.", "EN_SOFT_NEIGHBOR_GB", "neighbour"},
 	}
 	for _, tc := range gb {
 		t.Run(tc.rule, func(t *testing.T) {
@@ -1018,6 +1028,97 @@ func TestGolden_ApplySoftBareWithMe(t *testing.T) {
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	require.Contains(t, out.String(), "Bear with me")
 	require.NotContains(t, out.String(), "Bare with me")
+}
+
+func TestGolden_SoftPtBRRegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Peguei o autocarro cedo.", "PT_SOFT_AUTOCARRO_BR", "ônibus"},
+		{"Ligue no telemóvel agora.", "PT_SOFT_TELEMOVEL_BR", "celular"},
+		{"O ecrã está sujo.", "PT_SOFT_ECRA_BR", "tela"},
+		{"Esse facto importa.", "PT_SOFT_FACTO_BR", "fato"},
+		{"Sem contacto visual.", "PT_SOFT_CONTACTO_BR", "contato"},
+		{"Um objecto antigo.", "PT_SOFT_OBJECTO_BR", "objeto"},
+		{"Resultado óptimo.", "PT_SOFT_OPTIMO_BR", "ótimo"},
+		{"A acção principal.", "PT_SOFT_ACCAO_BR", "ação"},
+		{"O comboio partiu.", "PT_SOFT_COMBOIO_BR", "trem"},
+		{"A equipa ganhou.", "PT_SOFT_EQUIPA_BR", "equipe"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "pt-BR"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPtPTRegionalHints(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Peguei o ônibus cedo.", "PT_SOFT_ONIBUS_PT", "autocarro"},
+		{"Ligue no celular agora.", "PT_SOFT_CELULAR_PT", "telemóvel"},
+		{"Esse fato importa.", "PT_SOFT_FATO_PT", "facto"},
+		{"Sem contato visual.", "PT_SOFT_CONTATO_PT", "contacto"},
+		{"Um objeto antigo.", "PT_SOFT_OBJETO_PT", "objecto"},
+		{"Resultado ótimo.", "PT_SOFT_OTIMO_PT", "óptimo"},
+		{"O trem partiu.", "PT_SOFT_TREM_PT", "comboio"},
+		{"A equipe ganhou.", "PT_SOFT_EQUIPE_PT", "equipa"},
+		{"Café da manhã cedo.", "PT_SOFT_CAFE_MANHA_PT", "pequeno-almoço"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "pt-PT"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+					require.Equal(t, "misspelling", f.Type)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftPtBRNotOnPtPT(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Peguei o autocarro cedo.", &CommandLineOptions{Language: "pt-PT"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "PT_SOFT_AUTOCARRO_BR", f.Rule, "%+v", findings)
+	}
+}
+
+func TestGolden_ApplySoftPtBRAutocarro(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "pt-BR", "--apply", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Peguei o autocarro cedo.", nil },
+		Check:     CoreApplySuggestionsHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "ônibus")
+	require.NotContains(t, out.String(), "autocarro")
 }
 
 func TestGolden_SoftInformalForms(t *testing.T) {

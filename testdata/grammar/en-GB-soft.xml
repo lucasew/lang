@@ -113,5 +113,40 @@
       <message>In British English, "analyse" is preferred.</message>
       <short>analyze</short>
     </rule>
+    <rule id="EN_SOFT_THEATER_GB" name="theater soft">
+      <pattern>
+        <token>theater</token>
+      </pattern>
+      <message>In British English, "theatre" is preferred.</message>
+      <short>theater</short>
+    </rule>
+    <rule id="EN_SOFT_CATALOG_GB" name="catalog soft">
+      <pattern>
+        <token>catalog</token>
+      </pattern>
+      <message>In British English, "catalogue" is preferred.</message>
+      <short>catalog</short>
+    </rule>
+    <rule id="EN_SOFT_DIALOG_GB" name="dialog soft">
+      <pattern>
+        <token>dialog</token>
+      </pattern>
+      <message>In British English, "dialogue" is preferred.</message>
+      <short>dialog</short>
+    </rule>
+    <rule id="EN_SOFT_PROGRAM_GB" name="program soft">
+      <pattern>
+        <token>program</token>
+      </pattern>
+      <message>In British English, "programme" is preferred (except computer programs).</message>
+      <short>program</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOR_GB" name="neighbor soft">
+      <pattern>
+        <token>neighbor</token>
+      </pattern>
+      <message>In British English, "neighbour" is preferred.</message>
+      <short>neighbor</short>
+    </rule>
   </category>
 </rules>

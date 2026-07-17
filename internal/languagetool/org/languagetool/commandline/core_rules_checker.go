@@ -495,8 +495,11 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 		softN := countSoftGrammarFiles(gdir)
 		_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
 		_, _ = fmt.Fprintf(w, "soft grammar files: %d\n", softN)
-		// English regional soft spelling packs (loaded only for en-US / en-GB).
-		for _, name := range []string{"en-US-soft.xml", "en-GB-soft.xml"} {
+		// Regional soft spelling packs (loaded only for matching lang codes).
+		for _, name := range []string{
+			"en-US-soft.xml", "en-GB-soft.xml",
+			"pt-BR-soft.xml", "pt-PT-soft.xml",
+		} {
 			p := filepath.Join(gdir, name)
 			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 				_, _ = fmt.Fprintf(w, "soft spelling pack: %s\n", p)
@@ -618,6 +621,8 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			{"fr", "Je vais a la maison.", "FR_SOFT_A_LA", "fr soft smoke"},
 			{"es", "Voy a el parque.", "ES_SOFT_A_EL", "es soft smoke"},
 			{"pt", "Vou a o mercado.", "PT_SOFT_A_O", "pt soft smoke"},
+			{"pt-BR", "Peguei o autocarro cedo.", "PT_SOFT_AUTOCARRO_BR", "pt-BR soft smoke"},
+			{"pt-PT", "Peguei o ônibus cedo.", "PT_SOFT_ONIBUS_PT", "pt-PT soft smoke"},
 		} {
 			ltL, err := configureCoreLT(sm.lang, opts)
 			if err != nil {

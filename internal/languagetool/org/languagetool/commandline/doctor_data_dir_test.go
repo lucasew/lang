@@ -42,6 +42,12 @@ func TestCoreDoctor(t *testing.T) {
 			require.Contains(t, out, "es soft smoke:")
 			require.Contains(t, out, "pt soft smoke:")
 		}
+		if strings.Contains(out, "pt-BR-soft.xml") {
+			require.Contains(t, out, "pt-BR soft smoke:")
+		}
+		if strings.Contains(out, "pt-PT-soft.xml") {
+			require.Contains(t, out, "pt-PT soft smoke:")
+		}
 	}
 }
 

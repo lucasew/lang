@@ -127,5 +127,40 @@
       <message>In American English, "analyze" is often preferred.</message>
       <short>analyse</short>
     </rule>
+    <rule id="EN_SOFT_THEATRE_US" name="theatre soft">
+      <pattern>
+        <token>theatre</token>
+      </pattern>
+      <message>In American English, "theater" is often preferred.</message>
+      <short>theatre</short>
+    </rule>
+    <rule id="EN_SOFT_CATALOGUE_US" name="catalogue soft">
+      <pattern>
+        <token>catalogue</token>
+      </pattern>
+      <message>In American English, "catalog" is often preferred.</message>
+      <short>catalogue</short>
+    </rule>
+    <rule id="EN_SOFT_DIALOGUE_US" name="dialogue soft">
+      <pattern>
+        <token>dialogue</token>
+      </pattern>
+      <message>In American English, "dialog" is often preferred (UI/software contexts).</message>
+      <short>dialogue</short>
+    </rule>
+    <rule id="EN_SOFT_PROGRAMME_US" name="programme soft">
+      <pattern>
+        <token>programme</token>
+      </pattern>
+      <message>In American English, "program" is often preferred.</message>
+      <short>programme</short>
+    </rule>
+    <rule id="EN_SOFT_NEIGHBOUR_US" name="neighbour soft">
+      <pattern>
+        <token>neighbour</token>
+      </pattern>
+      <message>In American English, "neighbor" is often preferred.</message>
+      <short>neighbour</short>
+    </rule>
   </category>
 </rules>
