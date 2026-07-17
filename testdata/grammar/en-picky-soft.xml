@@ -909,5 +909,28 @@
       <message>Jargon; cite the feedback or source instead of "VoC".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DESIGN_THINKING" name="design thinking soft picky">
+      <pattern>
+        <token>design</token>
+        <token>thinking</token>
+      </pattern>
+      <message>Jargon; name the design method or steps instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_GROWTH_HACKING" name="growth hacking soft picky">
+      <pattern>
+        <token>growth</token>
+        <token>hacking</token>
+      </pattern>
+      <message>Jargon; name the growth tactic instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_MOONSHOT" name="moonshot soft picky">
+      <pattern>
+        <token>moonshot</token>
+      </pattern>
+      <message>Buzzword; name the ambitious goal concretely.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

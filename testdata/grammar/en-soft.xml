@@ -4677,6 +4677,76 @@
       <message>Did you mean "variant"?</message>
       <short>varient</short>
     </rule>
+    <rule id="EN_SOFT_PSYCHOLOGICAL_MISS" name="psycological soft">
+      <pattern>
+        <token>psycological</token>
+      </pattern>
+      <message>Did you mean "psychological"?</message>
+      <short>psycological</short>
+    </rule>
+    <rule id="EN_SOFT_RESTAURANTS_MISS" name="restaraunts soft">
+      <pattern>
+        <token>restaraunts</token>
+      </pattern>
+      <message>Did you mean "restaurants"?</message>
+      <short>restaraunts</short>
+    </rule>
+    <rule id="EN_SOFT_SCHEDULES_MISS" name="scedules soft">
+      <pattern>
+        <token>scedules</token>
+      </pattern>
+      <message>Did you mean "schedules"?</message>
+      <short>scedules</short>
+    </rule>
+    <rule id="EN_SOFT_SPEECHES_MISS" name="speaches soft">
+      <pattern>
+        <token>speaches</token>
+      </pattern>
+      <message>Did you mean "speeches"?</message>
+      <short>speaches</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESSFULLY_MISS2" name="succesfully soft">
+      <pattern>
+        <token>succesfully</token>
+      </pattern>
+      <message>Did you mean "successfully"?</message>
+      <short>succesfully</short>
+    </rule>
+    <rule id="EN_SOFT_SURPRISE_MISS2" name="suprise soft">
+      <pattern>
+        <token>suprise</token>
+      </pattern>
+      <message>Did you mean "surprise"?</message>
+      <short>suprise</short>
+    </rule>
+    <rule id="EN_SOFT_TENDENCIES_MISS" name="tendancies soft">
+      <pattern>
+        <token>tendancies</token>
+      </pattern>
+      <message>Did you mean "tendencies"?</message>
+      <short>tendancies</short>
+    </rule>
+    <rule id="EN_SOFT_WEIRDLY_MISS" name="wierdly soft">
+      <pattern>
+        <token>wierdly</token>
+      </pattern>
+      <message>Did you mean "weirdly"?</message>
+      <short>wierdly</short>
+    </rule>
+    <rule id="EN_SOFT_WITHHOLDING_MISS" name="witholding soft">
+      <pattern>
+        <token>witholding</token>
+      </pattern>
+      <message>Did you mean "withholding"?</message>
+      <short>witholding</short>
+    </rule>
+    <rule id="EN_SOFT_ENVIRONMENTS_MISS" name="enviroments soft">
+      <pattern>
+        <token>enviroments</token>
+      </pattern>
+      <message>Did you mean "environments"?</message>
+      <short>enviroments</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

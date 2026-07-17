@@ -225,3 +225,6 @@ again and again	RB
 Topeka Kansas	NNP
 Lincoln Nebraska	NNP
 now and then	RB
+Des Moines Iowa	NNP
+Jefferson City Missouri	NNP
+here and there	RB

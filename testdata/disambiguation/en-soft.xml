@@ -1563,4 +1563,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CONTOUR" name="immunize contour">
+    <pattern>
+      <token>contour</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONTOUR_CAPS" name="immunize Contour">
+    <pattern>
+      <token>Contour</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KONG" name="immunize kong">
+    <pattern>
+      <token>kong</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KONG_CAPS" name="immunize Kong">
+    <pattern>
+      <token>Kong</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAPROXY" name="immunize haproxy">
+    <pattern>
+      <token>haproxy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_HAPROXY_CAPS" name="immunize HAProxy">
+    <pattern>
+      <token>HAProxy</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
