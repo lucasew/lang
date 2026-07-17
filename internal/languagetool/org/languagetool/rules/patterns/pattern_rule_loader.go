@@ -83,9 +83,10 @@ type xmlToken struct {
 }
 
 type xmlException struct {
-	Regexp  string `xml:"regexp,attr"`
-	Negate  string `xml:"negate,attr"`
-	Content string `xml:",chardata"`
+	Regexp        string `xml:"regexp,attr"`
+	Negate        string `xml:"negate,attr"`
+	CaseSensitive string `xml:"case_sensitive,attr"`
+	Content       string `xml:",chardata"`
 }
 
 func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*AbstractPatternRule, error) {
@@ -201,7 +202,7 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		if strings.EqualFold(ex.Negate, "yes") {
 			continue
 		}
-		pt.SetStringPosException(exc, strings.EqualFold(ex.Regexp, "yes"))
+		pt.SetStringPosExceptionCS(exc, strings.EqualFold(ex.Regexp, "yes"), strings.EqualFold(ex.CaseSensitive, "yes"))
 		break
 	}
 	return pt

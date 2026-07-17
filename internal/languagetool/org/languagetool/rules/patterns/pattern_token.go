@@ -23,8 +23,9 @@ type PatternToken struct {
 	SkipNext         int
 	InsideMarker     bool
 	WhitespaceBefore *bool // nil = unset
-	TokenException   string
-	TokenExceptionRE bool
+	TokenException             string
+	TokenExceptionRE           bool
+	TokenExceptionCaseSensitive bool // when true, exception compares with exact case (LT case_sensitive on <exception>)
 }
 
 func NewPatternToken(token string, caseSensitive, regexp, matchInflected bool) *PatternToken {
@@ -54,8 +55,14 @@ func (p *PatternToken) SetSkipNext(n int)      { p.SkipNext = n }
 func (p *PatternToken) SetInsideMarker(v bool) { p.InsideMarker = v }
 
 func (p *PatternToken) SetStringPosException(tokenException string, regexp bool) {
+	p.SetStringPosExceptionCS(tokenException, regexp, false)
+}
+
+// SetStringPosExceptionCS sets a surface exception with optional regexp and case sensitivity.
+func (p *PatternToken) SetStringPosExceptionCS(tokenException string, regexp, caseSensitive bool) {
 	p.TokenException = tokenException
 	p.TokenExceptionRE = regexp
+	p.TokenExceptionCaseSensitive = caseSensitive
 }
 
 // IsMatched ports PatternToken.isMatched for a single AnalyzedToken reading.

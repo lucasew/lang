@@ -151,7 +151,7 @@ def serialize_token(tok: ET.Element) -> dict:
         if local(child.tag) != "exception":
             continue
         e = {"text": (child.text or "").strip()}
-        for k in ("regexp", "case_sensitive"):
+        for k in ("regexp", "case_sensitive", "negate"):
             v = child.get(k)
             if v is not None and str(v).strip() != "":
                 e[k] = v
@@ -557,7 +557,7 @@ def write_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
                     lines.append(f"        <token{attr_s}>{body}")
                     for e in excs:
                         ea = []
-                        for k in ("regexp", "case_sensitive"):
+                        for k in ("regexp", "case_sensitive", "negate"):
                             if k in e and e[k]:
                                 ea.append(f'{k}="{xml_esc(str(e[k]))}"')
                         eas = (" " + " ".join(ea)) if ea else ""

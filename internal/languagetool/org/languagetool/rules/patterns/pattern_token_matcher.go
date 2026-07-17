@@ -106,9 +106,11 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 		return false
 	}
 	surface := token.GetToken()
+	// Exception case sensitivity is independent of the pattern token (LT).
+	excCS := pt.TokenExceptionCaseSensitive
 	if pt.TokenExceptionRE {
 		flags := ""
-		if !pt.CaseSensitive {
+		if !excCS {
 			flags = "(?i)"
 		}
 		re, err := regexp.Compile(flags + "^(?:" + pt.TokenException + ")$")
@@ -123,7 +125,7 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 		}
 		return false
 	}
-	if pt.CaseSensitive {
+	if excCS {
 		if surface == pt.TokenException {
 			return true
 		}
@@ -131,7 +133,7 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 		return true
 	}
 	if lem := token.GetLemma(); lem != nil {
-		if pt.CaseSensitive {
+		if excCS {
 			return *lem == pt.TokenException
 		}
 		return strings.EqualFold(*lem, pt.TokenException)

@@ -55,7 +55,7 @@
     </rule>
     <rule id="DOUWEN" name="Douwen/duwen">
       <pattern>
-        <token>douwen</token>
+        <token inflected="yes">douwen</token>
       </pattern>
       <message>'Douwen' is spreektaal, in schrijftaal is <suggestion>duwen</suggestion> beter.</message>
       <short>DOUWEN</short>
@@ -108,7 +108,7 @@
   <category id="OUDERWETS_TO_IMPROVE" name="Regels die verbeterd moeten worden">
     <rule id="CONDITIE" name="conditie">
       <pattern>
-        <token>conditie</token>
+        <token inflected="yes">conditie</token>
       </pattern>
       <message>Als u een voorwaarde bedoelt kunt u ook beter <suggestion>voorwaarde</suggestion> schrijven.</message>
       <short>CONDITIE</short>
