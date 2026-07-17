@@ -3560,5 +3560,27 @@
       <message>Jargon; name staged rollout rings of increasing exposure instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_TRAFFIC_SHIFTING" name="traffic shifting soft picky">
+      <pattern>
+        <token>traffic</token>
+        <token>shifting</token>
+      </pattern>
+      <message>Jargon; name gradual request redistribution between versions instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_AUTOSCALING" name="autoscaling soft picky">
+      <pattern>
+        <token>autoscaling</token>
+      </pattern>
+      <message>Jargon; name automatic capacity adjustment based on load instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FINOPS" name="finops soft picky">
+      <pattern>
+        <token>finops</token>
+      </pattern>
+      <message>Jargon; name cloud cost operations practice instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

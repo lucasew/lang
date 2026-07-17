@@ -558,3 +558,6 @@ Halite Ridge RegionNNP
 Chert Ridge RegionNNP
 Hornfels Ridge RegionNNP
 Amphibolite Ridge RegionNNP
+Eclogite Ridge RegionNNP
+Serpentinite Ridge RegionNNP
+Soapstone Ridge RegionNNP

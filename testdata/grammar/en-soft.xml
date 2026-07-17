@@ -12447,6 +12447,76 @@
       <message>Did you mean "textarea"?</message>
       <short>textaera</short>
     </rule>
+    <rule id="EN_SOFT_SCROLLBAR_MISS" name="scrolbar soft">
+      <pattern>
+        <token>scrolbar</token>
+      </pattern>
+      <message>Did you mean "scrollbar"?</message>
+      <short>scrolbar</short>
+    </rule>
+    <rule id="EN_SOFT_PAGINATION_MISS" name="paginaton soft">
+      <pattern>
+        <token>paginaton</token>
+      </pattern>
+      <message>Did you mean "pagination"?</message>
+      <short>paginaton</short>
+    </rule>
+    <rule id="EN_SOFT_PAGINATION_MISS2" name="pagiantion soft">
+      <pattern>
+        <token>pagiantion</token>
+      </pattern>
+      <message>Did you mean "pagination"?</message>
+      <short>pagiantion</short>
+    </rule>
+    <rule id="EN_SOFT_NAMESPACE_MISS" name="namespc soft">
+      <pattern>
+        <token>namespc</token>
+      </pattern>
+      <message>Did you mean "namespace"?</message>
+      <short>namespc</short>
+    </rule>
+    <rule id="EN_SOFT_NAMESPACE_MISS2" name="namesace soft">
+      <pattern>
+        <token>namesace</token>
+      </pattern>
+      <message>Did you mean "namespace"?</message>
+      <short>namesace</short>
+    </rule>
+    <rule id="EN_SOFT_PLUGIN_MISS" name="plugn soft">
+      <pattern>
+        <token>plugn</token>
+      </pattern>
+      <message>Did you mean "plugin"?</message>
+      <short>plugn</short>
+    </rule>
+    <rule id="EN_SOFT_PLUGIN_MISS2" name="plugni soft">
+      <pattern>
+        <token>plugni</token>
+      </pattern>
+      <message>Did you mean "plugin"?</message>
+      <short>plugni</short>
+    </rule>
+    <rule id="EN_SOFT_EXTENSION_MISS2" name="extensoin soft">
+      <pattern>
+        <token>extensoin</token>
+      </pattern>
+      <message>Did you mean "extension"?</message>
+      <short>extensoin</short>
+    </rule>
+    <rule id="EN_SOFT_HELPER_MISS" name="helpr soft">
+      <pattern>
+        <token>helpr</token>
+      </pattern>
+      <message>Did you mean "helper"?</message>
+      <short>helpr</short>
+    </rule>
+    <rule id="EN_SOFT_ENTITY_MISS" name="enttiy soft">
+      <pattern>
+        <token>enttiy</token>
+      </pattern>
+      <message>Did you mean "entity"?</message>
+      <short>enttiy</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

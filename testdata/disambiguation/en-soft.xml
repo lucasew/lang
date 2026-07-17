@@ -5559,4 +5559,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_MIKROORM" name="immunize mikroorm">
+    <pattern>
+      <token>mikroorm</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_MIKROORM_CAPS" name="immunize MikroORM">
+    <pattern>
+      <token>MikroORM</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WATERLINE" name="immunize waterline">
+    <pattern>
+      <token>waterline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WATERLINE_CAPS" name="immunize Waterline">
+    <pattern>
+      <token>Waterline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEGOOSE" name="immunize typegoose">
+    <pattern>
+      <token>typegoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TYPEGOOSE_CAPS" name="immunize Typegoose">
+    <pattern>
+      <token>Typegoose</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
