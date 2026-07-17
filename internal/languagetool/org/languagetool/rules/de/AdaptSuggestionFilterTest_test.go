@@ -7,9 +7,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchDevTest
+// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchDevTest (Java @Ignore interactive).
+// Soft: AcceptRuleMatch-style rewrite of det+noun suggestions without full JLT pipeline.
 func TestAdaptSuggestionFilter_AcceptRuleMatchDevTest(t *testing.T) {
-	t.Skip("Java @Ignore")
+	f := NewAdaptSuggestionFilter()
+	// simulate rule match suggestions that need det adaptation
+	// prev det "die" FEM + replacement "Plan" MAS → "der Plan"
+	got := f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Plan", "Idee"})
+	require.Contains(t, got, "der Plan")
+	require.Contains(t, got, "die Idee")
+	// empty replacements → empty
+	require.Empty(t, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", nil))
 }
 
 // Port of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDet

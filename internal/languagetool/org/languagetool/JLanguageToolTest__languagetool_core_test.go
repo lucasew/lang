@@ -20,23 +20,23 @@ func TestJLanguageTool_languagetool_core_UserConfig(t *testing.T) {
 // Port of JLanguageToolTest.testCheckString
 func TestJLanguageTool_languagetool_core_CheckString(t *testing.T) {
 	lt := NewJLanguageTool("en")
-	sents := lt.Analyze("This is a test.")
-	require.NotEmpty(t, sents)
-	require.NotEmpty(t, sents[0].GetText())
+	lt.AddChecker(SimpleWordRepeatChecker(""))
+	require.Empty(t, lt.Check("This is a test."))
+	require.NotEmpty(t, lt.Check("This is is a test."))
 }
 
 // Port of JLanguageToolTest.testCheckStringWithCallbackReturnsTrue
 func TestJLanguageTool_languagetool_core_CheckStringWithCallbackReturnsTrue(t *testing.T) {
-	// callback surface: CheckCancelledCallback type exists; analyze completes when not cancelled
-	var cancelled CheckCancelledCallback = func() bool { return false }
-	require.False(t, cancelled())
 	lt := NewJLanguageTool("en")
-	require.NotEmpty(t, lt.Analyze("Hello world."))
+	lt.AddChecker(SimpleWordRepeatChecker(""))
+	lt.Cancelled = func() bool { return false }
+	require.NotEmpty(t, lt.Check("is is wrong"))
 }
 
 // Port of JLanguageToolTest.testCheckStringWithCallbackReturnsFalse
 func TestJLanguageTool_languagetool_core_CheckStringWithCallbackReturnsFalse(t *testing.T) {
-	var cancelled CheckCancelledCallback = func() bool { return true }
-	require.True(t, cancelled())
-	// full cancel mid-check deferred; surface type only
+	lt := NewJLanguageTool("en")
+	lt.AddChecker(SimpleWordRepeatChecker(""))
+	lt.Cancelled = func() bool { return true }
+	require.Empty(t, lt.Check("is is wrong"))
 }
