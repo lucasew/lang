@@ -324,3 +324,6 @@ Pacific Northwest Region	NNP
 Mid Atlantic Region	NNP
 Great Lakes Region	NNP
 Sun Belt Region	NNP
+Rust Belt Region	NNP
+Bible Belt Region	NNP
+Corn Belt Region	NNP

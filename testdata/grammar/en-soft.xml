@@ -6987,6 +6987,76 @@
       <message>Did you mean "alright"?</message>
       <short>allright</short>
     </rule>
+    <rule id="EN_SOFT_ASSASSIN_MISS" name="assasin soft">
+      <pattern>
+        <token>assasin</token>
+      </pattern>
+      <message>Did you mean "assassin"?</message>
+      <short>assasin</short>
+    </rule>
+    <rule id="EN_SOFT_ASSASSINATE_MISS" name="assasinate soft">
+      <pattern>
+        <token>assasinate</token>
+      </pattern>
+      <message>Did you mean "assassinate"?</message>
+      <short>assasinate</short>
+    </rule>
+    <rule id="EN_SOFT_ASSOCIATED_MISS" name="assosiated soft">
+      <pattern>
+        <token>assosiated</token>
+      </pattern>
+      <message>Did you mean "associated"?</message>
+      <short>assosiated</short>
+    </rule>
+    <rule id="EN_SOFT_ASSOCIATION_MISS" name="assotiation soft">
+      <pattern>
+        <token>assotiation</token>
+      </pattern>
+      <message>Did you mean "association"?</message>
+      <short>assotiation</short>
+    </rule>
+    <rule id="EN_SOFT_BELIEVES_MISS" name="beleives soft">
+      <pattern>
+        <token>beleives</token>
+      </pattern>
+      <message>Did you mean "believes"?</message>
+      <short>beleives</short>
+    </rule>
+    <rule id="EN_SOFT_BELIEVING_MISS" name="beleiving soft">
+      <pattern>
+        <token>beleiving</token>
+      </pattern>
+      <message>Did you mean "believing"?</message>
+      <short>beleiving</short>
+    </rule>
+    <rule id="EN_SOFT_COPYRIGHT_MISS" name="copywrite soft">
+      <pattern>
+        <token>copywrite</token>
+      </pattern>
+      <message>Did you mean "copyright"?</message>
+      <short>copywrite</short>
+    </rule>
+    <rule id="EN_SOFT_ACKNOWLEDGEMENT_MISS" name="acknowlegement soft">
+      <pattern>
+        <token>acknowlegement</token>
+      </pattern>
+      <message>Did you mean "acknowledgement"?</message>
+      <short>acknowlegement</short>
+    </rule>
+    <rule id="EN_SOFT_ADDRESSABLE_MISS" name="adressable soft">
+      <pattern>
+        <token>adressable</token>
+      </pattern>
+      <message>Did you mean "addressable"?</message>
+      <short>adressable</short>
+    </rule>
+    <rule id="EN_SOFT_ADVISABLE_MISS" name="adviseable soft">
+      <pattern>
+        <token>adviseable</token>
+      </pattern>
+      <message>Did you mean "advisable"?</message>
+      <short>adviseable</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

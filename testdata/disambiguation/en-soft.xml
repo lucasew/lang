@@ -2751,4 +2751,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_QCOW2" name="immunize qcow2">
+    <pattern>
+      <token>qcow2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_QCOW2_CAPS" name="immunize QCOW2">
+    <pattern>
+      <token>QCOW2</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VMDK" name="immunize vmdk">
+    <pattern>
+      <token>vmdk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VMDK_CAPS" name="immunize VMDK">
+    <pattern>
+      <token>VMDK</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VDI" name="immunize vdi">
+    <pattern>
+      <token>vdi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_VDI_CAPS" name="immunize VDI">
+    <pattern>
+      <token>VDI</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

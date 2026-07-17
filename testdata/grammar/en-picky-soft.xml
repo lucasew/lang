@@ -1728,5 +1728,29 @@
       <message>Jargon; name the business fact being recorded instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_AGGREGATE_ROOT" name="aggregate root soft picky">
+      <pattern>
+        <token>aggregate</token>
+        <token>root</token>
+      </pattern>
+      <message>Jargon; name the consistency boundary object instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_VALUE_OBJECT" name="value object soft picky">
+      <pattern>
+        <token>value</token>
+        <token>object</token>
+      </pattern>
+      <message>Jargon; name the immutable domain value instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_ENTITY_SERVICE" name="entity service soft picky">
+      <pattern>
+        <token>entity</token>
+        <token>service</token>
+      </pattern>
+      <message>Jargon; name the CRUD-centric service risk instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
