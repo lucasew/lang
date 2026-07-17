@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SK pack loaded only when level is picky. -->
+<rules lang="sk">
+  <category id="STYLE" name="Style">
+    <rule id="SK_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Preferujte "stretnutie" alebo "poradu".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SK_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Preferujte "spätnú väzbu" alebo "komentáre".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SK_SOFT_PICKY_VELMI_VELMI" name="veľmi veľmi soft picky">
+      <pattern>
+        <token>veľmi</token>
+        <token>veľmi</token>
+      </pattern>
+      <message>Slabé zosilnenie; preferujte silnejšie prídavné meno.</message>
+      <short>style</short>
+    </rule>
+    <rule id="SK_SOFT_PICKY_VECI" name="veľa vecí soft picky">
+      <pattern>
+        <token>veľa</token>
+        <token>vecí</token>
+      </pattern>
+      <message>Preferujte konkrétnejšie podstatné meno než "vecí".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SK_SOFT_PICKY_NAKONIEC" name="na konci dňa soft picky">
+      <pattern>
+        <token>na</token>
+        <token>konci</token>
+        <token>dňa</token>
+      </pattern>
+      <message>Preferujte "nakoniec" alebo "v konečnom dôsledku".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>

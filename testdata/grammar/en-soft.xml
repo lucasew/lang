@@ -1353,6 +1353,86 @@
       <message>Did you mean "thaw"?</message>
       <short>unthaw</short>
     </rule>
+    <rule id="EN_SOFT_IN_REGARDS_TO" name="in regards to soft">
+      <pattern>
+        <token>in</token>
+        <token>regards</token>
+        <token>to</token>
+      </pattern>
+      <message>Did you mean "in regard to" or "regarding"?</message>
+      <short>in regards to</short>
+    </rule>
+    <rule id="EN_SOFT_WITH_REGARDS_TO" name="with regards to soft">
+      <pattern>
+        <token>with</token>
+        <token>regards</token>
+        <token>to</token>
+      </pattern>
+      <message>Did you mean "with regard to" or "regarding"?</message>
+      <short>with regards to</short>
+    </rule>
+    <rule id="EN_SOFT_ALL_OF_THE_SUDDEN" name="all of the sudden soft">
+      <pattern>
+        <token>all</token>
+        <token>of</token>
+        <token>the</token>
+        <token>sudden</token>
+      </pattern>
+      <message>Did you mean "all of a sudden"?</message>
+      <short>the/a sudden</short>
+    </rule>
+    <rule id="EN_SOFT_CONVERSATE" name="conversate soft">
+      <pattern>
+        <token>conversate</token>
+      </pattern>
+      <message>Did you mean "converse"?</message>
+      <short>conversate</short>
+    </rule>
+    <rule id="EN_SOFT_ORIENTATE" name="orientate soft">
+      <pattern>
+        <token>orientate</token>
+      </pattern>
+      <message>Did you mean "orient"?</message>
+      <short>orientate</short>
+    </rule>
+    <rule id="EN_SOFT_UNDOUBTABLY" name="undoubtably soft">
+      <pattern>
+        <token>undoubtably</token>
+      </pattern>
+      <message>Did you mean "undoubtedly"?</message>
+      <short>undoubtably</short>
+    </rule>
+    <rule id="EN_SOFT_MINISCULE" name="miniscule soft">
+      <pattern>
+        <token>miniscule</token>
+      </pattern>
+      <message>Did you mean "minuscule"?</message>
+      <short>miniscule</short>
+    </rule>
+    <rule id="EN_SOFT_ATM_MACHINE" name="ATM machine soft">
+      <pattern>
+        <token>ATM</token>
+        <token>machine</token>
+      </pattern>
+      <message>Did you mean "ATM" (machine is redundant)?</message>
+      <short>ATM machine</short>
+    </rule>
+    <rule id="EN_SOFT_PIN_NUMBER" name="PIN number soft">
+      <pattern>
+        <token>PIN</token>
+        <token>number</token>
+      </pattern>
+      <message>Did you mean "PIN" (number is redundant)?</message>
+      <short>PIN number</short>
+    </rule>
+    <rule id="EN_SOFT_HIV_VIRUS" name="HIV virus soft">
+      <pattern>
+        <token>HIV</token>
+        <token>virus</token>
+      </pattern>
+      <message>Did you mean "HIV" (virus is redundant)?</message>
+      <short>HIV virus</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

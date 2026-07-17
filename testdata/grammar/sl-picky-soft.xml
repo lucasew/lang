@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Soft SL pack loaded only when level is picky. -->
+<rules lang="sl">
+  <category id="STYLE" name="Style">
+    <rule id="SL_SOFT_PICKY_MEETING" name="meeting soft picky">
+      <pattern>
+        <token>meeting</token>
+      </pattern>
+      <message>Raje "sestanek" ali "posvet".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SL_SOFT_PICKY_FEEDBACK" name="feedback soft picky">
+      <pattern>
+        <token>feedback</token>
+      </pattern>
+      <message>Raje "odgovor" ali "mnenje".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SL_SOFT_PICKY_ZELO_ZELO" name="zelo zelo soft picky">
+      <pattern>
+        <token>zelo</token>
+        <token>zelo</token>
+      </pattern>
+      <message>Šibka okrepitev; raje močnejši pridevnik.</message>
+      <short>style</short>
+    </rule>
+    <rule id="SL_SOFT_PICKY_STVARI" name="veliko stvari soft picky">
+      <pattern>
+        <token>veliko</token>
+        <token>stvari</token>
+      </pattern>
+      <message>Raje bolj konkreten samostalnik kot "stvari".</message>
+      <short>style</short>
+    </rule>
+    <rule id="SL_SOFT_PICKY_NA_KONCU_DNEVA" name="na koncu dneva soft picky">
+      <pattern>
+        <token>na</token>
+        <token>koncu</token>
+        <token>dneva</token>
+      </pattern>
+      <message>Raje "navsezadnje" ali "končno".</message>
+      <short>style</short>
+    </rule>
+  </category>
+</rules>
