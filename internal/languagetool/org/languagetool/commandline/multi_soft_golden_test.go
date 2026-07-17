@@ -98,6 +98,14 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"uk", "Я на на роботі.", "UK_SOFT_NA_NA", ""},
 		{"ca", "Vaig de de casa.", "CA_SOFT_DE_DE", ""},
 		{"ca", "Vaig a el parc.", "CA_SOFT_A_EL", "al"},
+		{"gl", "Vou a a casa.", "GL_SOFT_A_A", ""},
+		{"gl", "Vou a o mercado.", "GL_SOFT_A_O", "ao"},
+		{"sk", "Pes i i mačka.", "SK_SOFT_I_I", ""},
+		{"sk", "Idem na na dvor.", "SK_SOFT_NA_NA", ""},
+		{"ro", "Pisică și și câine.", "RO_SOFT_SI_SI", ""},
+		{"ro", "Merg în în casă.", "RO_SOFT_IN_IN", ""},
+		{"el", "Το το βιβλίο.", "EL_SOFT_TO_TO", ""},
+		{"el", "Θέλω να να φύγω.", "EL_SOFT_NA_NA", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.rule, func(t *testing.T) {

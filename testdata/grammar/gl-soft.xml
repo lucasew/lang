@@ -9,5 +9,29 @@
       <message>Posible repetición de "de".</message>
       <short>de de</short>
     </rule>
+    <rule id="GL_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Posible repetición de "a".</message>
+      <short>a a</short>
+    </rule>
+    <rule id="GL_SOFT_E_E" name="e e">
+      <pattern>
+        <token>e</token>
+        <token>e</token>
+      </pattern>
+      <message>Posible repetición de "e".</message>
+      <short>e e</short>
+    </rule>
+    <rule id="GL_SOFT_A_O" name="a o">
+      <pattern>
+        <token>a</token>
+        <token>o</token>
+      </pattern>
+      <message>Quizais "ao"?</message>
+      <short>a/ao</short>
+    </rule>
   </category>
 </rules>

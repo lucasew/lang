@@ -9,5 +9,29 @@
       <message>Možné opakovanie "a".</message>
       <short>a a</short>
     </rule>
+    <rule id="SK_SOFT_I_I" name="i i">
+      <pattern>
+        <token>i</token>
+        <token>i</token>
+      </pattern>
+      <message>Možné opakovanie "i".</message>
+      <short>i i</short>
+    </rule>
+    <rule id="SK_SOFT_NA_NA" name="na na">
+      <pattern>
+        <token>na</token>
+        <token>na</token>
+      </pattern>
+      <message>Možné opakovanie "na".</message>
+      <short>na na</short>
+    </rule>
+    <rule id="SK_SOFT_ZE_ZE" name="že že">
+      <pattern>
+        <token>že</token>
+        <token>že</token>
+      </pattern>
+      <message>Možné opakovanie "že".</message>
+      <short>že že</short>
+    </rule>
   </category>
 </rules>

@@ -197,5 +197,63 @@
       <message>Did you mean "couldn't care less"?</message>
       <short>idiom</short>
     </rule>
+    <rule id="EN_SOFT_WHOSE_WHO_S" name="whose/who's">
+      <pattern>
+        <token>whose</token>
+        <token>going</token>
+      </pattern>
+      <message>Did you mean "who's going"?</message>
+      <short>whose/who's</short>
+    </rule>
+    <rule id="EN_SOFT_WHO_S_BOOK" name="who's book">
+      <pattern>
+        <token regexp="yes">Who|who</token>
+        <token>'</token>
+        <token>s</token>
+        <token>book</token>
+      </pattern>
+      <message>Did you mean "whose book"?</message>
+      <short>whose/who's</short>
+    </rule>
+    <rule id="EN_SOFT_BREATH_BREATHE" name="breath/breathe">
+      <pattern>
+        <token>breath</token>
+        <token>deeply</token>
+      </pattern>
+      <message>Did you mean "breathe deeply"?</message>
+      <short>breath/breathe</short>
+    </rule>
+    <rule id="EN_SOFT_ADVICE_ADVISE" name="advice/advise">
+      <pattern>
+        <token>to</token>
+        <token>advice</token>
+      </pattern>
+      <message>Did you mean "to advise"?</message>
+      <short>advice/advise</short>
+    </rule>
+    <rule id="EN_SOFT_PRACTICE_PRACTISE" name="practice verb (US soft)">
+      <pattern>
+        <token>to</token>
+        <token>practise</token>
+      </pattern>
+      <message>In American English, prefer "to practice".</message>
+      <short>practise/practice</short>
+    </rule>
+    <rule id="EN_SOFT_HE_DO" name="he/she/it do">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>do</token>
+      </pattern>
+      <message>Did you mean "does"?</message>
+      <short>3sg agreement</short>
+    </rule>
+    <rule id="EN_SOFT_HE_HAVE" name="he/she/it have">
+      <pattern>
+        <token regexp="yes">He|She|It|he|she|it</token>
+        <token>have</token>
+      </pattern>
+      <message>Did you mean "has"?</message>
+      <short>3sg agreement</short>
+    </rule>
   </category>
 </rules>

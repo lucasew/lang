@@ -9,5 +9,29 @@
       <message>Posibilă repetare a "de".</message>
       <short>de de</short>
     </rule>
+    <rule id="RO_SOFT_SI_SI" name="și și">
+      <pattern>
+        <token>și</token>
+        <token>și</token>
+      </pattern>
+      <message>Posibilă repetare a "și".</message>
+      <short>și și</short>
+    </rule>
+    <rule id="RO_SOFT_IN_IN" name="în în">
+      <pattern>
+        <token>în</token>
+        <token>în</token>
+      </pattern>
+      <message>Posibilă repetare a "în".</message>
+      <short>în în</short>
+    </rule>
+    <rule id="RO_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Posibilă repetare a "a".</message>
+      <short>a a</short>
+    </rule>
   </category>
 </rules>

@@ -9,5 +9,29 @@
       <message>Πιθανή επανάληψη του "και".</message>
       <short>και και</short>
     </rule>
+    <rule id="EL_SOFT_TO_TO" name="το το">
+      <pattern>
+        <token>το</token>
+        <token>το</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "το".</message>
+      <short>το το</short>
+    </rule>
+    <rule id="EL_SOFT_NA_NA" name="να να">
+      <pattern>
+        <token>να</token>
+        <token>να</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "να".</message>
+      <short>να να</short>
+    </rule>
+    <rule id="EL_SOFT_SE_SE" name="σε σε">
+      <pattern>
+        <token>σε</token>
+        <token>σε</token>
+      </pattern>
+      <message>Πιθανή επανάληψη του "σε".</message>
+      <short>σε σε</short>
+    </rule>
   </category>
 </rules>

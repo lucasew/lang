@@ -231,3 +231,33 @@ func TestGolden_ApplySoftPhrase(t *testing.T) {
 	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
 	require.Contains(t, out.String(), "by accident")
 }
+
+func TestGolden_SoftConfusablesMore(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Whose going to the party?", "EN_SOFT_WHOSE_WHO_S", "who's going"},
+		{"Who's book is this?", "EN_SOFT_WHO_S_BOOK", "whose book"},
+		{"Please breath deeply now.", "EN_SOFT_BREATH_BREATHE", "breathe deeply"},
+		{"I want to advice you.", "EN_SOFT_ADVICE_ADVISE", "to advise"},
+		{"He do the work.", "EN_SOFT_HE_DO", "does"},
+		{"She have a car.", "EN_SOFT_HE_HAVE", "has"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}

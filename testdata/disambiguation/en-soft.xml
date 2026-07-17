@@ -78,8 +78,43 @@
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
+  <!-- Soft general: modal + common ambiguous verbs → VB on last token -->
+  <rule id="SOFT_MODAL_MAKE_VB" name="modal make → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>make</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_TAKE_VB" name="modal take → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>take</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_SET_VB" name="modal set → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>set</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_PLAY_VB" name="modal play → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>play</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+  <rule id="SOFT_MODAL_WORK_VB" name="modal work → VB">
+    <pattern>
+      <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
+      <token>work</token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
   <!-- Soft replace: force NNP on LanguageTool brand token -->
-  <rule id="SOFT_LANGUAGETOOL_NNP" name="LanguageTool → NNP">
     <pattern>
       <token>LanguageTool</token>
     </pattern>
