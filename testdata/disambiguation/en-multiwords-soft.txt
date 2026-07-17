@@ -85,3 +85,15 @@ Northern Ireland	NNP
 Czech Republic	NNP
 United Arab Emirates	NNP
 Saint Petersburg	NNP
+in lieu of	RB
+by way of	RB
+in the long term	RB
+in the short term	RB
+as opposed to	RB
+with a view to	RB
+for better or worse	RB
+once and for all	RB
+New South Wales	NNP
+Western Australia	NNP
+British Columbia	NNP
+Quebec City	NNP

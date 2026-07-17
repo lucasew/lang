@@ -2,6 +2,7 @@ package commandline
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -20,6 +21,13 @@ func TestCoreListRules(t *testing.T) {
 	require.Contains(t, out, "EN_SOFT_")
 	require.Contains(t, out, "# total=")
 	require.Contains(t, out, "soft=")
+	// soft listed before core; footer soft breakdown
+	softIdx := strings.Index(out, "\tsoft\n")
+	coreIdx := strings.Index(out, "\tcore\n")
+	require.True(t, softIdx >= 0 && coreIdx >= 0 && softIdx < coreIdx, "soft should precede core")
+	require.Contains(t, out, "soft_grammar=")
+	require.Contains(t, out, "soft_style=")
+	require.Contains(t, out, "soft_typographical=")
 }
 
 func TestCoreListRules_EnUSHasSoftUSSpelling(t *testing.T) {

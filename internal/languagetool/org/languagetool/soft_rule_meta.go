@@ -43,7 +43,7 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 		}
 		if strings.Contains(id, "CASING") || strings.Contains(id, "LOWERCASE_I") ||
 			strings.Contains(id, "UPPERCASE") || strings.HasSuffix(id, "_LOWER_I") ||
-			strings.Contains(id, "SENTENCE_START") {
+			strings.Contains(id, "SENTENCE_START") || strings.Contains(id, "CASE_SENSITIVE") {
 			return "CASING", "Capitalization", "typographical", SoftRuleDescription(ruleID)
 		}
 		if softStyleID(id) {
@@ -189,7 +189,8 @@ func softStyleID(id string) bool {
 		strings.Contains(id, "ON_ON") || strings.Contains(id, "FOR_FOR") ||
 		strings.Contains(id, "WITH_WITH") || strings.Contains(id, "A_A") ||
 		strings.Contains(id, "SO_SO") || strings.Contains(id, "IRREGARDLESS") ||
-		strings.Contains(id, "SUPPOSABLY") || strings.Contains(id, "ANYWAYS") {
+		strings.Contains(id, "SUPPOSABLY") || strings.Contains(id, "ANYWAYS") ||
+		strings.Contains(id, "BEGS_THE_QUESTION") {
 		return true
 	}
 	return false

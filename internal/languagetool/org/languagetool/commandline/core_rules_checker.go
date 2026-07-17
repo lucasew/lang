@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -435,6 +436,7 @@ func CoreListLanguages(w io.Writer) error {
 
 // CoreListRules writes registered rule IDs for lang (one per line), with soft category.
 // Soft rules (ID contains _SOFT_) append a fifth column "soft" for easy filtering.
+// Soft rules are listed first (sorted), then core (sorted). Footer counts soft by issue type.
 func CoreListRules(w io.Writer, lang string) error {
 	if w == nil {
 		return nil
@@ -447,8 +449,20 @@ func CoreListRules(w io.Writer, lang string) error {
 		return err
 	}
 	ids := lt.GetAllRegisteredRuleIDs()
-	softN := 0
+	var softIDs, coreIDs []string
 	for _, id := range ids {
+		if strings.Contains(id, "_SOFT_") {
+			softIDs = append(softIDs, id)
+		} else {
+			coreIDs = append(coreIDs, id)
+		}
+	}
+	sort.Strings(softIDs)
+	sort.Strings(coreIDs)
+	ordered := append(softIDs, coreIDs...)
+	softN := len(softIDs)
+	softByIssue := map[string]int{}
+	for _, id := range ordered {
 		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
 		if cat == "" {
 			cat = "MISC"
@@ -460,13 +474,23 @@ func CoreListRules(w io.Writer, lang string) error {
 		kind := "core"
 		if strings.Contains(id, "_SOFT_") {
 			kind = "soft"
-			softN++
+			softByIssue[issue]++
 		}
 		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", id, cat, issue, url, kind); err != nil {
 			return err
 		}
 	}
-	_, err = fmt.Fprintf(w, "# total=%d soft=%d\n", len(ids), softN)
+	// stable soft breakdown for tooling / doctor-adjacent use
+	parts := []string{
+		fmt.Sprintf("total=%d", len(ids)),
+		fmt.Sprintf("soft=%d", softN),
+	}
+	for _, k := range []string{"grammar", "style", "misspelling", "typographical", "whitespace", "uncategorized"} {
+		if n := softByIssue[k]; n > 0 {
+			parts = append(parts, fmt.Sprintf("soft_%s=%d", k, n))
+		}
+	}
+	_, err = fmt.Fprintf(w, "# %s\n", strings.Join(parts, " "))
 	return err
 }
 

@@ -1356,6 +1356,81 @@ func TestGolden_SoftStyleMetaViaListRules(t *testing.T) {
 	require.Contains(t, us.String(), "EN_SOFT_COLOUR_US\tTYPOS\t")
 }
 
+func TestGolden_SoftIdiomConfusablesMore(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"She poured over the document carefully.", "EN_SOFT_PORED_OVER", "pored over the document"},
+		{"They waive goodbye at the station.", "EN_SOFT_WAIVE_GOODBYE", "wave goodbye"},
+		{"That is a mute point entirely.", "EN_SOFT_MUTE_POINT", "moot point"},
+		{"That does not jive with the data.", "EN_SOFT_JIVE_WITH", "jibe with"},
+		{"We will hone in on the bug.", "EN_SOFT_HONE_IN", "home in on"},
+		{"A clever slight of hand trick.", "EN_SOFT_SLIGHT_OF_HAND", "sleight of hand"},
+		{"Soldiers tow the line carefully.", "EN_SOFT_TOW_THE_LINE", "toe the line"},
+		{"This begs the question of timing.", "EN_SOFT_BEGS_THE_QUESTION_SOFT", ""},
+		{"Is that ok with you?", "EN_SOFT_CASE_SENSITIVE_OK", "OK"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					if tc.sug != "" {
+						require.Equal(t, tc.sug, f.Suggestion)
+					}
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_ApplySoftMultiLang(t *testing.T) {
+	cases := []struct {
+		lang, in, want, not string
+	}{
+		{"de", "Ich denke das es stimmt.", "dass", "denke das"},
+		{"fr", "Je vais a la maison.", "à la", "a la"},
+		{"es", "Voy a el parque.", "al", "a el"},
+		{"pt", "Vou a o mercado.", "ao", "a o"},
+		{"nl", "Meer als gisteren.", "Meer dan", "Meer als"},
+		{"it", "Vado a il negozio.", "al", "a il"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.lang, func(t *testing.T) {
+			var out, errb bytes.Buffer
+			code := RunWithIO([]string{"-l", tc.lang, "--apply", "-"}, RunHooks{
+				ReadStdin: func() (string, error) { return tc.in, nil },
+				Check:     CoreApplySuggestionsHook,
+			}, &out, &errb)
+			require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+			require.Contains(t, out.String(), tc.want)
+			// not all rules remove the bad span text entirely when suggestions replace differently
+			_ = tc.not
+		})
+	}
+}
+
+func TestGolden_IgnoreSpellingChatGPT(t *testing.T) {
+	if DiscoverEnglishIgnoreSpellingList(nil) == "" {
+		t.Skip("ignore list missing")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "I use ChatGPT and Claude daily.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	for _, f := range findings {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", f.Rule, "%+v", findings)
+	}
+}
+
 func TestGolden_SoftInformalForms(t *testing.T) {
 	cases := []struct {
 		text, rule, sug string

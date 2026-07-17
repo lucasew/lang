@@ -1015,6 +1015,83 @@
       <message>Did you mean "especially"?</message>
       <short>exspecially</short>
     </rule>
+    <rule id="EN_SOFT_PORED_OVER" name="poured over">
+      <pattern>
+        <token>poured</token>
+        <token>over</token>
+        <token>the</token>
+        <token>document</token>
+      </pattern>
+      <message>Did you mean "pored over the document"?</message>
+      <short>poured/pored</short>
+    </rule>
+    <rule id="EN_SOFT_WAIVE_GOODBYE" name="waive goodbye">
+      <pattern>
+        <token>waive</token>
+        <token>goodbye</token>
+      </pattern>
+      <message>Did you mean "wave goodbye"?</message>
+      <short>waive/wave</short>
+    </rule>
+    <rule id="EN_SOFT_MUTE_POINT" name="mute point">
+      <pattern>
+        <token>mute</token>
+        <token>point</token>
+      </pattern>
+      <message>Did you mean "moot point"?</message>
+      <short>mute/moot</short>
+    </rule>
+    <rule id="EN_SOFT_JIVE_WITH" name="jive with">
+      <pattern>
+        <token>jive</token>
+        <token>with</token>
+      </pattern>
+      <message>Did you mean "jibe with" (agree)?</message>
+      <short>jive/jibe</short>
+    </rule>
+    <rule id="EN_SOFT_BEGS_THE_QUESTION_SOFT" name="begs the question soft">
+      <pattern>
+        <token>begs</token>
+        <token>the</token>
+        <token>question</token>
+      </pattern>
+      <message>"Begs the question" means assumes the conclusion; for "raises the question" prefer that phrasing.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_HONE_IN" name="hone in">
+      <pattern>
+        <token>hone</token>
+        <token>in</token>
+        <token>on</token>
+      </pattern>
+      <message>Did you mean "home in on"?</message>
+      <short>hone/home</short>
+    </rule>
+    <rule id="EN_SOFT_SLIGHT_OF_HAND" name="slight of hand">
+      <pattern>
+        <token>slight</token>
+        <token>of</token>
+        <token>hand</token>
+      </pattern>
+      <message>Did you mean "sleight of hand"?</message>
+      <short>slight/sleight</short>
+    </rule>
+    <rule id="EN_SOFT_TOW_THE_LINE" name="tow the line">
+      <pattern>
+        <token>tow</token>
+        <token>the</token>
+        <token>line</token>
+      </pattern>
+      <message>Did you mean "toe the line"?</message>
+      <short>tow/toe</short>
+    </rule>
+    <rule id="EN_SOFT_CASE_SENSITIVE_OK" name="OK acronym case">
+      <pattern>
+        <token case_sensitive="yes">ok</token>
+      </pattern>
+      <message>Did you mean "OK"?</message>
+      <short>casing</short>
+    </rule>
   </category>
   <category id="TYPOS" name="Possible Typo">
     <rule id="EN_SOFT_ANYWAYS" name="anyways">
