@@ -23,6 +23,7 @@ const UsageText = `Usage: languagetool [OPTION]... [FILE]
   --xmlfilter              remove XML/HTML tags from input before check
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML
+  --ruleValues LIST        soft RULE_ID:value pairs (e.g. TOO_LONG_SENTENCE:10)
   --autoDetect, -adl       detect language from text
   --list                   list languages
   --version                print version
@@ -106,7 +107,12 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 		return 1
 	}
 	if n > 0 {
-		return 2 // matches found — common CLI convention
+		// SPEC §2.2: --lint / --sarif use exit 1 for error-severity findings.
+		// CoreCheckHook returns the error-severity count for those formats.
+		if opts != nil && (opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF) {
+			return 1
+		}
+		return 2 // matches found — LT-style CLI convention
 	}
 	return 0
 }

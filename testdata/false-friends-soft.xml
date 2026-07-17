@@ -42,4 +42,33 @@
       <translation lang="en">current</translation>
     </rule>
   </rulegroup>
+
+  <rulegroup id="LIBRARY">
+    <rule>
+      <pattern lang="en">
+        <token>library</token>
+      </pattern>
+      <translation lang="es">biblioteca</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>librería</token>
+      </pattern>
+      <translation lang="en">bookshop</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="EVENTUAL">
+    <rule>
+      <pattern lang="en">
+        <token>eventual</token>
+      </pattern>
+      <translation lang="es">final</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>eventual</token>
+      </pattern>
+      <translation lang="en">temporary</translation>
+    </rule>
+  </rulegroup>
 </rules>

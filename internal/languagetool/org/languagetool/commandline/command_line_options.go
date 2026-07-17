@@ -127,3 +127,9 @@ func (o *CommandLineOptions) GetEnabledRules() []string {
 	}
 	return append([]string(nil), o.EnabledRules...)
 }
+func (o *CommandLineOptions) GetRuleValues() []string {
+	if o == nil {
+		return nil
+	}
+	return append([]string(nil), o.RuleValues...)
+}

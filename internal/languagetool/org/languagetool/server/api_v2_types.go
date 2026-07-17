@@ -104,7 +104,12 @@ func NewSoftwareInfo(version string) SoftwareInfo {
 	if version == "" {
 		version = "dev"
 	}
-	return SoftwareInfo{Name: "LanguageTool-Go", Version: version, APIVersion: 1}
+	return SoftwareInfo{
+		Name:       "LanguageTool-Go",
+		Version:    version,
+		BuildDate:  "dev",
+		APIVersion: 1,
+	}
 }
 
 // LanguageNameForCode maps short/variant codes to the simple display name

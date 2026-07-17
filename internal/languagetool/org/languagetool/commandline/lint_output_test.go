@@ -32,7 +32,7 @@ func TestCoreCheckHook_Lint(t *testing.T) {
 		ReadStdin: func() (string, error) { return "This is an test.", nil },
 		Check:     CoreCheckHook,
 	}, &out, &errb)
-	require.Equal(t, 2, code)
+	require.Equal(t, 1, code) // SPEC: error-severity findings
 	body := out.String()
 	require.True(t, strings.Contains(body, "EN_A_VS_AN"), body)
 	require.True(t, strings.Contains(body, "error"), body)

@@ -245,7 +245,51 @@ func CoreCheckHook(w io.Writer, text string, opts *CommandLineOptions) (int, err
 	if cto.ListUnknown {
 		lt.SetListUnknownWords(true)
 	}
-	return CheckTextOpts(w, text, checker, cto)
+	// Soft ruleValues (e.g. TOO_LONG_SENTENCE:10) applied after the core pack check.
+	if opts != nil && len(opts.GetRuleValues()) > 0 {
+		wrapped := &ruleValuesChecker{
+			inner:  checker,
+			lang:   lang,
+			values: opts.GetRuleValues(),
+		}
+		n, err := CheckTextOpts(w, text, wrapped, cto)
+		if err != nil {
+			return n, err
+		}
+		if opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF {
+			// return error-severity count for SPEC exit codes
+			ms, _ := wrapped.Check(text)
+			return countErrorSeverityMatches(ms), nil
+		}
+		return n, nil
+	}
+	n, err := CheckTextOpts(w, text, checker, cto)
+	if err != nil {
+		return n, err
+	}
+	if opts != nil && (opts.OutputFormat == OutputLint || opts.OutputFormat == OutputSARIF) {
+		ms, _ := checker.Check(text)
+		return countErrorSeverityMatches(ms), nil
+	}
+	return n, nil
+}
+
+// ruleValuesChecker wraps a TextChecker and applies soft ruleValues post-processing.
+type ruleValuesChecker struct {
+	inner  TextChecker
+	lang   string
+	values []string
+}
+
+func (c *ruleValuesChecker) Check(text string) ([]*rules.RuleMatch, error) {
+	if c == nil || c.inner == nil {
+		return nil, nil
+	}
+	ms, err := c.inner.Check(text)
+	if err != nil {
+		return ms, err
+	}
+	return applyCLIRuleValues(c.lang, text, ms, c.values), nil
 }
 
 // CoreApplySuggestionsHook writes text with first suggestions applied.

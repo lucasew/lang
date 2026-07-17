@@ -28,7 +28,7 @@ func TestCoreCheckHook_SARIF(t *testing.T) {
 		ReadStdin: func() (string, error) { return "This is an test.", nil },
 		Check:     CoreCheckHook,
 	}, &out, &errb)
-	require.Equal(t, 2, code)
+	require.Equal(t, 1, code) // SPEC: error-severity findings
 	body := out.String()
 	require.Contains(t, body, `"version":"2.1.0"`)
 	require.Contains(t, body, "EN_A_VS_AN")

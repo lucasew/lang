@@ -130,6 +130,12 @@ func (p *CommandLineParser) ParseOptions(args []string) (*CommandLineOptions, er
 			opts.SetOutputFormat(OutputSARIF)
 		case "--lint":
 			opts.SetOutputFormat(OutputLint)
+		case "--ruleValues", "--rulevalues":
+			if err := needArg(a, i, args); err != nil {
+				return nil, err
+			}
+			i++
+			opts.RuleValues = splitCSV(args[i])
 		case "-u", "--list-unknown":
 			if opts.TaggerOnly {
 				return nil, fmt.Errorf("You cannot list unknown words when tagging only")
