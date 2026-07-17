@@ -218,10 +218,24 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		rm := NewRemoteRuleMatch(ruleID, msg, ctx, from-start, from, to-from)
 		rm.ShortMessage = m.ShortMessage
 		catID, catName, issue, short := SoftRuleMeta(ruleID)
+		// Prefer metadata carried on LocalMatch (soft grammar XML categories).
+		if m.CategoryID != "" {
+			catID = m.CategoryID
+		}
+		if m.CategoryName != "" {
+			catName = m.CategoryName
+		}
+		if m.IssueType != "" {
+			issue = m.IssueType
+		}
 		rm.CategoryID = catID
 		rm.Category = catName
 		rm.LocQualityIssueType = issue
-		rm.Description = SoftRuleDescription(ruleID)
+		if m.Description != "" {
+			rm.Description = m.Description
+		} else {
+			rm.Description = SoftRuleDescription(ruleID)
+		}
 		if rm.ShortMessage == "" {
 			rm.ShortMessage = short
 		}

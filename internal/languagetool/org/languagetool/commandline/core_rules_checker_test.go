@@ -37,8 +37,12 @@ func TestCoreCheckHook_JSON(t *testing.T) {
 		Check:     CoreCheckHook,
 	}, &out, &errb)
 	require.Equal(t, 2, code)
-	require.Contains(t, out.String(), "EN_A_VS_AN")
-	require.Contains(t, out.String(), "matches")
+	body := out.String()
+	require.Contains(t, body, "EN_A_VS_AN")
+	require.Contains(t, body, "matches")
+	require.Contains(t, body, `"issueType":"grammar"`)
+	require.Contains(t, body, `"severity":"error"`)
+	require.Contains(t, body, `"id":"GRAMMAR"`)
 }
 
 func TestCoreApplySuggestionsHook(t *testing.T) {

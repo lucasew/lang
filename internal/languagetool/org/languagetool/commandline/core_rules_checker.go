@@ -364,14 +364,27 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 		if m == nil {
 			continue
 		}
+		id := ""
+		if g, ok := m.Rule.(interface{ GetID() string }); ok {
+			id = g.GetID()
+		}
+		catID, catName, issue, short := languagetool.SoftRuleMeta(id)
+		sm := m.GetShortMessage()
+		if sm == "" {
+			sm = short
+		}
 		item := tools.MatchForJSON{
 			Message:               m.GetMessage(),
+			ShortMessage:          sm,
 			FromPos:               m.GetFromPos(),
 			ToPos:                 m.GetToPos(),
 			SuggestedReplacements: m.GetSuggestedReplacements(),
-		}
-		if g, ok := m.Rule.(interface{ GetID() string }); ok {
-			item.RuleID = g.GetID()
+			RuleID:                id,
+			RuleDescription:       languagetool.SoftRuleDescription(id),
+			IssueType:             issue,
+			CategoryID:            catID,
+			CategoryName:          catName,
+			Severity:              languagetool.SeverityFromIssueType(issue),
 		}
 		mj = append(mj, item)
 	}

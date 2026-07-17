@@ -21,6 +21,11 @@ type MatchForJSON struct {
 	SuggestedReplacements []string
 	RuleID                string
 	RuleDescription       string
+	IssueType             string
+	CategoryID            string
+	CategoryName          string
+	// Severity is SARIF level (error|warning|note); optional.
+	Severity string
 }
 
 // RuleMatchesAsJsonSerializer ports org.languagetool.tools.RuleMatchesAsJsonSerializer
@@ -52,6 +57,8 @@ type MatchJSON struct {
 	Replacements []ReplacementJSON `json:"replacements"`
 	Rule         RuleJSON          `json:"rule"`
 	Context      *ContextJSON      `json:"context,omitempty"`
+	// Severity is a soft SARIF-style level for CLI consumers (SPEC §2.2).
+	Severity string `json:"severity,omitempty"`
 }
 
 type ReplacementJSON struct {
@@ -59,8 +66,16 @@ type ReplacementJSON struct {
 }
 
 type RuleJSON struct {
-	ID          string `json:"id"`
-	Description string `json:"description,omitempty"`
+	ID          string           `json:"id"`
+	Description string           `json:"description,omitempty"`
+	IssueType   string           `json:"issueType,omitempty"`
+	Category    *CategoryJSON    `json:"category,omitempty"`
+}
+
+// CategoryJSON is the rule category surface in JSON.
+type CategoryJSON struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type ContextJSON struct {
@@ -129,7 +144,15 @@ func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []Matc
 			ShortMessage: cleanSuggestion(m.ShortMessage),
 			Offset:       m.FromPos,
 			Length:       m.ToPos - m.FromPos,
-			Rule:         RuleJSON{ID: m.RuleID, Description: m.RuleDescription},
+			Rule: RuleJSON{
+				ID:          m.RuleID,
+				Description: m.RuleDescription,
+				IssueType:   m.IssueType,
+			},
+			Severity: m.Severity,
+		}
+		if m.CategoryID != "" || m.CategoryName != "" {
+			mj.Rule.Category = &CategoryJSON{ID: m.CategoryID, Name: m.CategoryName}
 		}
 		for _, r := range m.SuggestedReplacements {
 			mj.Replacements = append(mj.Replacements, ReplacementJSON{Value: r})

@@ -51,6 +51,8 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		}
 		rule := pr
 		suggestions := suggs
+		catID, catName := ar.CategoryID, ar.CategoryName
+		desc := ar.Description
 		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 			ms, err := rule.Match(s)
 			if err != nil || len(ms) == 0 {
@@ -63,7 +65,34 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 					}
 				}
 			}
-			return rules.ToLocalMatches(ms)
+			out := rules.ToLocalMatches(ms)
+			for i := range out {
+				if out[i].Description == "" {
+					out[i].Description = desc
+				}
+				if out[i].CategoryID == "" {
+					out[i].CategoryID = catID
+				}
+				if out[i].CategoryName == "" {
+					out[i].CategoryName = catName
+				}
+				if out[i].IssueType == "" && catID != "" {
+					// soft default: grammar categories map to grammar ITS type
+					switch strings.ToUpper(catID) {
+					case "TYPOS":
+						out[i].IssueType = "misspelling"
+					case "STYLE":
+						out[i].IssueType = "style"
+					case "TYPOGRAPHY":
+						out[i].IssueType = "typographical"
+					case "CASING":
+						out[i].IssueType = "typographical"
+					default:
+						out[i].IssueType = "grammar"
+					}
+				}
+			}
+			return out
 		})
 		n++
 	}

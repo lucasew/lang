@@ -72,6 +72,8 @@ func TestRegisterSoftGrammarDir_RU_SV_DA(t *testing.T) {
 		{"ru", "пошел в в магазин", "RU_SOFT_V_V"},
 		{"sv", "men dom är här", "SV_SOFT_DE_DOM"},
 		{"da", "en del af af det", "DA_SOFT_AF_AF"},
+		{"uk", "пішов в в магазин", "UK_SOFT_V_V"},
+		{"ca", "va anar a a casa", "CA_SOFT_A_A"},
 	} {
 		t.Run(tc.lang, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(tc.lang)
@@ -83,6 +85,9 @@ func TestRegisterSoftGrammarDir_RU_SV_DA(t *testing.T) {
 			for _, x := range m {
 				if x.RuleID == tc.ruleID {
 					found = true
+					require.Equal(t, "GRAMMAR", x.CategoryID)
+					require.Equal(t, "Grammar", x.CategoryName)
+					require.Equal(t, "grammar", x.IssueType)
 				}
 			}
 			require.True(t, found, "%+v", m)

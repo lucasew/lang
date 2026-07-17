@@ -52,6 +52,11 @@ type LocalMatch struct {
 	ShortMessage   string
 	RuleID         string
 	Suggestions    []string
+	// Optional rule metadata (from soft grammar XML or SoftRuleMeta).
+	Description  string
+	CategoryID   string
+	CategoryName string
+	IssueType    string
 	// Priority used by CleanOverlappingLocalMatches (higher wins).
 	Priority int
 }

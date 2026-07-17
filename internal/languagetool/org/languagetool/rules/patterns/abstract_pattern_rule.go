@@ -9,6 +9,9 @@ type AbstractPatternRule struct {
 	PatternTokens           []*PatternToken
 	Message                 string
 	ShortMessage            string
+	// CategoryID / CategoryName from surrounding <category> in soft grammar XML.
+	CategoryID              string
+	CategoryName            string
 	SuggestionsOutMsg       string
 	SourceFile              string
 	Filter                  RuleFilter

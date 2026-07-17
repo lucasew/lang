@@ -43,6 +43,8 @@ type xmlRulesRoot struct {
 }
 
 type xmlCategory struct {
+	ID         string         `xml:"id,attr"`
+	Name       string         `xml:"name,attr"`
 	Rules      []xmlRule      `xml:"rule"`
 	RuleGroups []xmlRuleGroup `xml:"rulegroup"`
 }
@@ -83,7 +85,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		return nil, err
 	}
 	var out []*AbstractPatternRule
-	add := func(xr xmlRule, defaultID string) error {
+	add := func(xr xmlRule, defaultID, catID, catName string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
@@ -106,12 +108,14 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		r := NewAbstractPatternRule(id, name, languageCode, tokens, false)
 		r.Message = strings.TrimSpace(xr.Message)
 		r.ShortMessage = strings.TrimSpace(xr.Short)
+		r.CategoryID = catID
+		r.CategoryName = catName
 		out = append(out, r)
 		return nil
 	}
 	for _, cat := range root.Categories {
 		for _, xr := range cat.Rules {
-			if err := add(xr, ""); err != nil {
+			if err := add(xr, "", cat.ID, cat.Name); err != nil {
 				return nil, err
 			}
 		}
@@ -121,7 +125,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				if id == "" {
 					id = g.ID
 				}
-				if err := add(xr, id); err != nil {
+				if err := add(xr, id, cat.ID, cat.Name); err != nil {
 					return nil, err
 				}
 				// sub id 1-based
@@ -135,7 +139,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 	}
 	for _, xr := range root.Rules {
-		if err := add(xr, ""); err != nil {
+		if err := add(xr, "", "", ""); err != nil {
 			return nil, err
 		}
 	}

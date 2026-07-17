@@ -6,6 +6,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -52,12 +53,25 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 		if m == nil {
 			continue
 		}
+		id := ruleIDOfMatch(m)
+		catID, catName, issue, short := languagetool.SoftRuleMeta(id)
+		desc := languagetool.SoftRuleDescription(id)
+		sm := m.GetShortMessage()
+		if sm == "" {
+			sm = short
+		}
 		mj = append(mj, tools.MatchForJSON{
 			Message:               m.GetMessage(),
+			ShortMessage:          sm,
 			FromPos:               m.FromPos,
 			ToPos:                 m.ToPos,
 			SuggestedReplacements: m.GetSuggestedReplacements(),
-			RuleID:                ruleIDOfMatch(m),
+			RuleID:                id,
+			RuleDescription:       desc,
+			IssueType:             issue,
+			CategoryID:            catID,
+			CategoryName:          catName,
+			Severity:              languagetool.SeverityFromIssueType(issue),
 		})
 	}
 	s, err := ser.RuleMatchesToJSON(mj, text, 45)

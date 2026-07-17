@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules lang="ca">
+  <category id="GRAMMAR" name="Grammar">
+    <rule id="CA_SOFT_A_A" name="a a">
+      <pattern>
+        <token>a</token>
+        <token>a</token>
+      </pattern>
+      <message>Possible repetició de "a".</message>
+      <short>a a</short>
+    </rule>
+  </category>
+</rules>
