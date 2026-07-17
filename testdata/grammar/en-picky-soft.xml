@@ -2047,5 +2047,29 @@
       <message>Jargon; name random-input robustness testing instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_REGRESSION_TEST" name="regression test soft picky">
+      <pattern>
+        <token>regression</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a check that old bugs stay fixed instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_LOAD_TEST" name="load test soft picky">
+      <pattern>
+        <token>load</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a capacity under expected traffic check instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_STRESS_TEST" name="stress test soft picky">
+      <pattern>
+        <token>stress</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a beyond-capacity resilience check instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

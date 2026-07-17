@@ -363,3 +363,6 @@ Medical Alley RegionNNP
 Technology Corridor RegionNNP
 Aerospace Valley RegionNNP
 Energy Corridor RegionNNP
+Bio Corridor RegionNNP
+Cyber Corridor RegionNNP
+Optics Valley RegionNNP

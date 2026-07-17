@@ -7897,6 +7897,76 @@
       <message>Did you mean "incredible"?</message>
       <short>increadible</short>
     </rule>
+    <rule id="EN_SOFT_FACILITATING_MISS" name="facilatating soft">
+      <pattern>
+        <token>facilatating</token>
+      </pattern>
+      <message>Did you mean "facilitating"?</message>
+      <short>facilatating</short>
+    </rule>
+    <rule id="EN_SOFT_FAMILIARIZE_MISS" name="familarize soft">
+      <pattern>
+        <token>familarize</token>
+      </pattern>
+      <message>Did you mean "familiarize"?</message>
+      <short>familarize</short>
+    </rule>
+    <rule id="EN_SOFT_HARASSING_MISS" name="harrassing soft">
+      <pattern>
+        <token>harrassing</token>
+      </pattern>
+      <message>Did you mean "harassing"?</message>
+      <short>harrassing</short>
+    </rule>
+    <rule id="EN_SOFT_INCREDIBLY_MISS" name="increadibly soft">
+      <pattern>
+        <token>increadibly</token>
+      </pattern>
+      <message>Did you mean "incredibly"?</message>
+      <short>increadibly</short>
+    </rule>
+    <rule id="EN_SOFT_INDEPENDENTLY_MISS" name="independantly soft">
+      <pattern>
+        <token>independantly</token>
+      </pattern>
+      <message>Did you mean "independently"?</message>
+      <short>independantly</short>
+    </rule>
+    <rule id="EN_SOFT_INDISPENSABLE_MISS" name="indispensible soft">
+      <pattern>
+        <token>indispensible</token>
+      </pattern>
+      <message>Did you mean "indispensable"?</message>
+      <short>indispensible</short>
+    </rule>
+    <rule id="EN_SOFT_INDIVIDUAL_MISS" name="indivdual soft">
+      <pattern>
+        <token>indivdual</token>
+      </pattern>
+      <message>Did you mean "individual"?</message>
+      <short>indivdual</short>
+    </rule>
+    <rule id="EN_SOFT_INEFFICIENCY_MISS" name="inefficency soft">
+      <pattern>
+        <token>inefficency</token>
+      </pattern>
+      <message>Did you mean "inefficiency"?</message>
+      <short>inefficency</short>
+    </rule>
+    <rule id="EN_SOFT_INEVITABLY_MISS" name="inevitibly soft">
+      <pattern>
+        <token>inevitibly</token>
+      </pattern>
+      <message>Did you mean "inevitably"?</message>
+      <short>inevitibly</short>
+    </rule>
+    <rule id="EN_SOFT_INTELLIGENTLY_MISS" name="inteligently soft">
+      <pattern>
+        <token>inteligently</token>
+      </pattern>
+      <message>Did you mean "intelligently"?</message>
+      <short>inteligently</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

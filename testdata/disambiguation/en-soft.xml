@@ -3219,4 +3219,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCH" name="immunize opensearch">
+    <pattern>
+      <token>opensearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_OPENSEARCH_CAPS" name="immunize OpenSearch">
+    <pattern>
+      <token>OpenSearch</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEBUILD" name="immunize codebuild">
+    <pattern>
+      <token>codebuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEBUILD_CAPS" name="immunize CodeBuild">
+    <pattern>
+      <token>CodeBuild</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEPIPELINE" name="immunize codepipeline">
+    <pattern>
+      <token>codepipeline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CODEPIPELINE_CAPS" name="immunize CodePipeline">
+    <pattern>
+      <token>CodePipeline</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
