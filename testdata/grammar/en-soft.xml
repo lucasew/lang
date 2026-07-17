@@ -2927,6 +2927,76 @@
       <message>Did you mean "propagate"?</message>
       <short>propogate</short>
     </rule>
+    <rule id="EN_SOFT_PURSUIT_MISS" name="persuit soft">
+      <pattern>
+        <token>persuit</token>
+      </pattern>
+      <message>Did you mean "pursuit"?</message>
+      <short>persuit</short>
+    </rule>
+    <rule id="EN_SOFT_REALLY_MISS" name="realy soft">
+      <pattern>
+        <token>realy</token>
+      </pattern>
+      <message>Did you mean "really"?</message>
+      <short>realy</short>
+    </rule>
+    <rule id="EN_SOFT_RECEIVING_MISS" name="recieving soft">
+      <pattern>
+        <token>recieving</token>
+      </pattern>
+      <message>Did you mean "receiving"?</message>
+      <short>recieving</short>
+    </rule>
+    <rule id="EN_SOFT_REFERRAL_MISS" name="refferal soft">
+      <pattern>
+        <token>refferal</token>
+      </pattern>
+      <message>Did you mean "referral"?</message>
+      <short>refferal</short>
+    </rule>
+    <rule id="EN_SOFT_RELEVANCE_MISS" name="relevence soft">
+      <pattern>
+        <token>relevence</token>
+      </pattern>
+      <message>Did you mean "relevance"?</message>
+      <short>relevence</short>
+    </rule>
+    <rule id="EN_SOFT_REMEMBER_MISS" name="remeber soft">
+      <pattern>
+        <token>remeber</token>
+      </pattern>
+      <message>Did you mean "remember"?</message>
+      <short>remeber</short>
+    </rule>
+    <rule id="EN_SOFT_RESTAURANT_MISS" name="resturant soft">
+      <pattern>
+        <token>resturant</token>
+      </pattern>
+      <message>Did you mean "restaurant"?</message>
+      <short>resturant</short>
+    </rule>
+    <rule id="EN_SOFT_SIEGE_MISS" name="seige soft">
+      <pattern>
+        <token>seige</token>
+      </pattern>
+      <message>Did you mean "siege"?</message>
+      <short>seige</short>
+    </rule>
+    <rule id="EN_SOFT_SURPRISE_MISS" name="surprize soft">
+      <pattern>
+        <token>surprize</token>
+      </pattern>
+      <message>Did you mean "surprise"?</message>
+      <short>surprize</short>
+    </rule>
+    <rule id="EN_SOFT_SUCCESS_MISS" name="sucess soft">
+      <pattern>
+        <token>sucess</token>
+      </pattern>
+      <message>Did you mean "success"?</message>
+      <short>sucess</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

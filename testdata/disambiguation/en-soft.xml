@@ -741,4 +741,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_TBD" name="immunize tbd">
+    <pattern>
+      <token>tbd</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBD_CAPS" name="immunize TBD">
+    <pattern>
+      <token>TBD</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBC" name="immunize tbc">
+    <pattern>
+      <token>tbc</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TBC_CAPS" name="immunize TBC">
+    <pattern>
+      <token>TBC</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_NYI" name="immunize nyi">
+    <pattern>
+      <token>nyi</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_WIP_CAPS" name="immunize WIP">
+    <pattern>
+      <token>WIP</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

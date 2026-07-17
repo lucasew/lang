@@ -320,5 +320,29 @@
       <message>Ambiguous US/UK; prefer "postpone" or "put on the agenda".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_ACTION_ITEMS" name="action items soft picky">
+      <pattern>
+        <token>action</token>
+        <token>items</token>
+      </pattern>
+      <message>Consider "tasks" or "next steps".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_NET_NEW" name="net new soft picky">
+      <pattern>
+        <token>net</token>
+        <token>new</token>
+      </pattern>
+      <message>Consider "new" or "additional".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_HARD_STOP" name="hard stop soft picky">
+      <pattern>
+        <token>hard</token>
+        <token>stop</token>
+      </pattern>
+      <message>Consider "deadline" or "must end by".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
