@@ -258,3 +258,6 @@ toe to toe	RB
 Carson City Nevada	NNP
 Santa Fe New Mexico	NNP
 arm in arm	RB
+Salt Lake City Utah	NNP
+back to back	RB
+hand over hand	RB

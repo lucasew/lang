@@ -1180,5 +1180,29 @@
       <message>Slogan; name ownership of build and operations explicitly.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_COGNITIVE_LOAD" name="cognitive load soft picky">
+      <pattern>
+        <token>cognitive</token>
+        <token>load</token>
+      </pattern>
+      <message>Jargon; name what is hard to keep in mind instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_TEAM_TOPOLOGIES" name="team topologies soft picky">
+      <pattern>
+        <token>team</token>
+        <token>topologies</token>
+      </pattern>
+      <message>Jargon; name the team interaction model instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SHARED_NOTHING" name="shared nothing soft picky">
+      <pattern>
+        <token>shared</token>
+        <token>nothing</token>
+      </pattern>
+      <message>Jargon; name the isolation boundary instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

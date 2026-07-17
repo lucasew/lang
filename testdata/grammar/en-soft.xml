@@ -5447,6 +5447,76 @@
       <message>Did you mean "ignore"?</message>
       <short>egnore</short>
     </rule>
+    <rule id="EN_SOFT_DEVELOPED_MISS" name="developped soft">
+      <pattern>
+        <token>developped</token>
+      </pattern>
+      <message>Did you mean "developed"?</message>
+      <short>developped</short>
+    </rule>
+    <rule id="EN_SOFT_DISAPPEARANCE_MISS" name="disapearance soft">
+      <pattern>
+        <token>disapearance</token>
+      </pattern>
+      <message>Did you mean "disappearance"?</message>
+      <short>disapearance</short>
+    </rule>
+    <rule id="EN_SOFT_DISCUSSION_MISS" name="discusion soft">
+      <pattern>
+        <token>discusion</token>
+      </pattern>
+      <message>Did you mean "discussion"?</message>
+      <short>discusion</short>
+    </rule>
+    <rule id="EN_SOFT_CREATORS_MISS" name="creaters soft">
+      <pattern>
+        <token>creaters</token>
+      </pattern>
+      <message>Did you mean "creators"?</message>
+      <short>creaters</short>
+    </rule>
+    <rule id="EN_SOFT_EAGERLY_MISS" name="eagarly soft">
+      <pattern>
+        <token>eagarly</token>
+      </pattern>
+      <message>Did you mean "eagerly"?</message>
+      <short>eagarly</short>
+    </rule>
+    <rule id="EN_SOFT_EMPLOYEES_MISS" name="empoyees soft">
+      <pattern>
+        <token>empoyees</token>
+      </pattern>
+      <message>Did you mean "employees"?</message>
+      <short>empoyees</short>
+    </rule>
+    <rule id="EN_SOFT_EMPHASIZE_MISS" name="emphesize soft">
+      <pattern>
+        <token>emphesize</token>
+      </pattern>
+      <message>Did you mean "emphasize"?</message>
+      <short>emphesize</short>
+    </rule>
+    <rule id="EN_SOFT_ENGINEERING_MISS" name="engeneering soft">
+      <pattern>
+        <token>engeneering</token>
+      </pattern>
+      <message>Did you mean "engineering"?</message>
+      <short>engeneering</short>
+    </rule>
+    <rule id="EN_SOFT_ENFORCEMENT_MISS" name="enforcment soft">
+      <pattern>
+        <token>enforcment</token>
+      </pattern>
+      <message>Did you mean "enforcement"?</message>
+      <short>enforcment</short>
+    </rule>
+    <rule id="EN_SOFT_EFFORTLESS_MISS" name="efortless soft">
+      <pattern>
+        <token>efortless</token>
+      </pattern>
+      <message>Did you mean "effortless"?</message>
+      <short>efortless</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

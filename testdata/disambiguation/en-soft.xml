@@ -1959,4 +1959,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CUECTL" name="immunize cuectl">
+    <pattern>
+      <token>cuectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUECTL_CAPS" name="immunize Cuectl">
+    <pattern>
+      <token>Cuectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCLIENT" name="immunize regclient">
+    <pattern>
+      <token>regclient</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_REGCLIENT_CAPS" name="immunize Regclient">
+    <pattern>
+      <token>Regclient</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZECTL" name="immunize kustomizectl">
+    <pattern>
+      <token>kustomizectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KUSTOMIZECTL_CAPS" name="immunize Kustomizectl">
+    <pattern>
+      <token>Kustomizectl</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
