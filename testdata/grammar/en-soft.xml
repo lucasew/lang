@@ -7827,6 +7827,76 @@
       <message>Did you mean "improvements"?</message>
       <short>improvments</short>
     </rule>
+    <rule id="EN_SOFT_FACILITATES_MISS" name="facilatates soft">
+      <pattern>
+        <token>facilatates</token>
+      </pattern>
+      <message>Did you mean "facilitates"?</message>
+      <short>facilatates</short>
+    </rule>
+    <rule id="EN_SOFT_FAMILIARITY_MISS" name="familarity soft">
+      <pattern>
+        <token>familarity</token>
+      </pattern>
+      <message>Did you mean "familiarity"?</message>
+      <short>familarity</short>
+    </rule>
+    <rule id="EN_SOFT_FORESEEABLE_MISS" name="forseeable soft">
+      <pattern>
+        <token>forseeable</token>
+      </pattern>
+      <message>Did you mean "foreseeable"?</message>
+      <short>forseeable</short>
+    </rule>
+    <rule id="EN_SOFT_FORESIGHT_MISS" name="forsight soft">
+      <pattern>
+        <token>forsight</token>
+      </pattern>
+      <message>Did you mean "foresight"?</message>
+      <short>forsight</short>
+    </rule>
+    <rule id="EN_SOFT_GUARDED_MISS" name="gaurded soft">
+      <pattern>
+        <token>gaurded</token>
+      </pattern>
+      <message>Did you mean "guarded"?</message>
+      <short>gaurded</short>
+    </rule>
+    <rule id="EN_SOFT_HUNDREDS_MISS" name="hundereds soft">
+      <pattern>
+        <token>hundereds</token>
+      </pattern>
+      <message>Did you mean "hundreds"?</message>
+      <short>hundereds</short>
+    </rule>
+    <rule id="EN_SOFT_IMMENSELY_MISS" name="imensely soft">
+      <pattern>
+        <token>imensely</token>
+      </pattern>
+      <message>Did you mean "immensely"?</message>
+      <short>imensely</short>
+    </rule>
+    <rule id="EN_SOFT_IMMIGRANTS_MISS" name="imigrants soft">
+      <pattern>
+        <token>imigrants</token>
+      </pattern>
+      <message>Did you mean "immigrants"?</message>
+      <short>imigrants</short>
+    </rule>
+    <rule id="EN_SOFT_IMPROVEMENT_MISS" name="improvemnt soft">
+      <pattern>
+        <token>improvemnt</token>
+      </pattern>
+      <message>Did you mean "improvement"?</message>
+      <short>improvemnt</short>
+    </rule>
+    <rule id="EN_SOFT_INCREDIBLE_MISS" name="increadible soft">
+      <pattern>
+        <token>increadible</token>
+      </pattern>
+      <message>Did you mean "incredible"?</message>
+      <short>increadible</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

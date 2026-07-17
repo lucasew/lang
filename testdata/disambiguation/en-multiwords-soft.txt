@@ -360,3 +360,6 @@ Pajaro Valley RegionNNP
 Silicon Forest RegionNNP
 Research Triangle RegionNNP
 Medical Alley RegionNNP
+Technology Corridor RegionNNP
+Aerospace Valley RegionNNP
+Energy Corridor RegionNNP

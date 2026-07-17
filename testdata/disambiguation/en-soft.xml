@@ -3183,4 +3183,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_APPSYNC" name="immunize appsync">
+    <pattern>
+      <token>appsync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSYNC_CAPS" name="immunize AppSync">
+    <pattern>
+      <token>AppSync</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAM" name="immunize timestream">
+    <pattern>
+      <token>timestream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_TIMESTREAM_CAPS" name="immunize Timestream">
+    <pattern>
+      <token>Timestream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTSAIL" name="immunize lightsail">
+    <pattern>
+      <token>lightsail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_LIGHTSAIL_CAPS" name="immunize Lightsail">
+    <pattern>
+      <token>Lightsail</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

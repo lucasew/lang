@@ -2023,5 +2023,29 @@
       <message>Jargon; name deliberate-fault test quality checks instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_CONTRACT_TEST" name="contract test soft picky">
+      <pattern>
+        <token>contract</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name consumer-provider API compatibility checks instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SMOKE_TEST" name="smoke test soft picky">
+      <pattern>
+        <token>smoke</token>
+        <token>test</token>
+      </pattern>
+      <message>Jargon; name a shallow health check suite instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_FUZZ_TESTING" name="fuzz testing soft picky">
+      <pattern>
+        <token>fuzz</token>
+        <token>testing</token>
+      </pattern>
+      <message>Jargon; name random-input robustness testing instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>
