@@ -496,4 +496,46 @@
       <translation lang="en">set meal / fixed-price meal</translation>
     </rule>
   </rulegroup>
+  <rulegroup id="CORDIAL">
+    <rule>
+      <pattern lang="en">
+        <token>cordial</token>
+      </pattern>
+      <translation lang="es">cálido / amistoso</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>cordial</token>
+      </pattern>
+      <translation lang="en">heartfelt / warm (not a drink)</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="MOLEST">
+    <rule>
+      <pattern lang="en">
+        <token>molest</token>
+      </pattern>
+      <translation lang="es">acosar / abusar</translation>
+    </rule>
+    <rule>
+      <pattern lang="es">
+        <token>molestar</token>
+      </pattern>
+      <translation lang="en">bother / annoy</translation>
+    </rule>
+  </rulegroup>
+  <rulegroup id="SYMPATHY">
+    <rule>
+      <pattern lang="en">
+        <token>sympathy</token>
+      </pattern>
+      <translation lang="de">Mitgefühl / Beileid</translation>
+    </rule>
+    <rule>
+      <pattern lang="de">
+        <token>Sympathie</token>
+      </pattern>
+      <translation lang="en">liking / affinity</translation>
+    </rule>
+  </rulegroup>
 </rules>

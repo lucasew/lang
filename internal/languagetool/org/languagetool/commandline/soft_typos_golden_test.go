@@ -3532,6 +3532,91 @@ func TestGolden_SoftPickyML(t *testing.T) {
 	}
 }
 
+func TestGolden_SoftIdiomConfusablesWave13(t *testing.T) {
+	cases := []struct {
+		text, rule, sug string
+	}{
+		{"Park the vehical outside.", "EN_SOFT_VEHICAL", "vehicle"},
+		{"Report each occurence carefully.", "EN_SOFT_OCCURENCE", "occurrence"},
+		{"That looks wierd to me.", "EN_SOFT_WIERD", "weird"},
+		{"Choose wich path to take.", "EN_SOFT_WICH", "which"},
+		{"Come whith us tomorrow.", "EN_SOFT_WHITH", "with"},
+		{"I know wether it works.", "EN_SOFT_WETHER_ALONE", "whether"},
+		{"Check thier credentials first.", "EN_SOFT_THIER", "their"},
+		{"Open teh file carefully.", "EN_SOFT_TEH", "the"},
+		{"Keep the reciept for taxes.", "EN_SOFT_RECIEPT", "receipt"},
+		{"Persue the opportunity now.", "EN_SOFT_PERSUE", "Pursue"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.rule, func(t *testing.T) {
+			var buf bytes.Buffer
+			_, err := CoreGoldenHook(&buf, tc.text, &CommandLineOptions{Language: "en"})
+			require.NoError(t, err)
+			var findings []Finding
+			require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+			found := false
+			for _, f := range findings {
+				if f.Rule == tc.rule {
+					found = true
+					require.Equal(t, tc.sug, f.Suggestion)
+				}
+			}
+			require.True(t, found, "%+v", findings)
+		})
+	}
+}
+
+func TestGolden_SoftOptionalCRH(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "crh", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "Proyekt munasebetnen bekleyiz.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "CRH_SOFT_OPT_MUNASEBETNEN")
+}
+
+func TestGolden_SoftOptionalML(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "ml", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "പദ്ധതി സംബന്ധിച്ച് കാത്തിരിക്കുന്നു.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "ML_SOFT_OPT_SAMBANDHICHU")
+}
+
+func TestGolden_SoftOptionalENNearFuture(t *testing.T) {
+	var out, errb bytes.Buffer
+	code := RunWithIO([]string{"-l", "en", "-e", "SOFT_OPTIONAL", "--json", "-"}, RunHooks{
+		ReadStdin: func() (string, error) { return "In the near future we ship.", nil },
+		Check:     CoreCheckHook,
+	}, &out, &errb)
+	require.True(t, code == 0 || code == 1 || code == 2, "code=%d err=%s", code, errb.String())
+	require.Contains(t, out.String(), "EN_SOFT_OPT_IN_THE_NEAR_FUTURE")
+}
+
+func TestGolden_FalseFriendsMolest(t *testing.T) {
+	ff := softFalseFriendsPath(t)
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "No debes molestar ahora.", &CommandLineOptions{
+		Language:         "es",
+		MotherTongue:     "en",
+		FalseFriendsFile: ff,
+	})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "MOLEST" {
+			found = true
+			require.Equal(t, "bother / annoy", f.Suggestion)
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}
+
 func TestGolden_FalseFriendsActuality(t *testing.T) {
 	ff := softFalseFriendsPath(t)
 	var buf bytes.Buffer
@@ -3585,7 +3670,7 @@ func TestGolden_SoftListRulesSoftOptCount(t *testing.T) {
 	require.True(t, strings.Contains(out, "soft_opt=9") || strings.Contains(out, "soft_opt=1") ||
 		strings.Contains(out, "soft_opt=8") || strings.Contains(out, "soft_opt=7") ||
 		strings.Contains(out, "soft_opt=10") || strings.Contains(out, "soft_opt=12") ||
-		strings.Contains(out, "soft_opt=6"), out)
+		strings.Contains(out, "soft_opt=15") || strings.Contains(out, "soft_opt=6"), out)
 }
 
 func TestGolden_SoftListRulesOptionalOff(t *testing.T) {

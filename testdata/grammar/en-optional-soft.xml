@@ -117,5 +117,36 @@
       <message>Consider "by" or "using".</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_OPT_IN_THE_NEAR_FUTURE" name="in the near future soft optional" default="off">
+      <pattern>
+        <token>in</token>
+        <token>the</token>
+        <token>near</token>
+        <token>future</token>
+      </pattern>
+      <message>Consider "soon".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_AT_THIS_POINT_IN_TIME" name="at this point in time soft optional" default="off">
+      <pattern>
+        <token>at</token>
+        <token>this</token>
+        <token>point</token>
+        <token>in</token>
+        <token>time</token>
+      </pattern>
+      <message>Consider "now" or "at this point".</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_OPT_HAS_THE_ABILITY_TO" name="has the ability to soft optional" default="off">
+      <pattern>
+        <token>has</token>
+        <token>the</token>
+        <token>ability</token>
+        <token>to</token>
+      </pattern>
+      <message>Consider "can".</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

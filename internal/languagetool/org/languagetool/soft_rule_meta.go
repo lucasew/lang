@@ -139,7 +139,7 @@ func isSoftFalseFriendGroupID(id string) bool {
 		"ROMAN", "CARPET", "ASSIST", "DECEPTION", "BRAVE", "MIST",
 		"CHEMIST", "PREFIX", "COLLEGE", "LOCATION", "LECTURE", "FIGURE",
 		"EXIT", "CONSTIPATION", "ACTUALITY", "REALIZE", "RECORD",
-		"BALCONY", "MAP", "MENU":
+		"BALCONY", "MAP", "MENU", "CORDIAL", "MOLEST", "SYMPATHY":
 		return true
 	default:
 		return false

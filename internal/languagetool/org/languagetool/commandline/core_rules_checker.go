@@ -660,6 +660,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 			"fa-optional-soft.xml", "ar-optional-soft.xml", "zh-optional-soft.xml",
 			"ja-optional-soft.xml", "br-optional-soft.xml", "ast-optional-soft.xml",
 			"km-optional-soft.xml", "ta-optional-soft.xml", "tl-optional-soft.xml",
+			"crh-optional-soft.xml", "ml-optional-soft.xml",
 		} {
 			optPath := filepath.Join(gdir, name)
 			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {

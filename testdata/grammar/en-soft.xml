@@ -1877,6 +1877,76 @@
       <message>Did you mean "tomorrow"?</message>
       <short>tomorow</short>
     </rule>
+    <rule id="EN_SOFT_VEHICAL" name="vehical soft">
+      <pattern>
+        <token>vehical</token>
+      </pattern>
+      <message>Did you mean "vehicle"?</message>
+      <short>vehical</short>
+    </rule>
+    <rule id="EN_SOFT_OCCURENCE" name="occurence soft">
+      <pattern>
+        <token>occurence</token>
+      </pattern>
+      <message>Did you mean "occurrence"?</message>
+      <short>occurence</short>
+    </rule>
+    <rule id="EN_SOFT_WIERD" name="wierd soft">
+      <pattern>
+        <token>wierd</token>
+      </pattern>
+      <message>Did you mean "weird"?</message>
+      <short>wierd</short>
+    </rule>
+    <rule id="EN_SOFT_WICH" name="wich soft">
+      <pattern>
+        <token>wich</token>
+      </pattern>
+      <message>Did you mean "which"?</message>
+      <short>wich</short>
+    </rule>
+    <rule id="EN_SOFT_WHITH" name="whith soft">
+      <pattern>
+        <token>whith</token>
+      </pattern>
+      <message>Did you mean "with"?</message>
+      <short>whith</short>
+    </rule>
+    <rule id="EN_SOFT_WETHER_ALONE" name="wether alone soft">
+      <pattern>
+        <token>wether</token>
+      </pattern>
+      <message>Did you mean "whether" or "weather"?</message>
+      <short>wether</short>
+    </rule>
+    <rule id="EN_SOFT_THIER" name="thier soft">
+      <pattern>
+        <token>thier</token>
+      </pattern>
+      <message>Did you mean "their"?</message>
+      <short>thier</short>
+    </rule>
+    <rule id="EN_SOFT_TEH" name="teh soft">
+      <pattern>
+        <token>teh</token>
+      </pattern>
+      <message>Did you mean "the"?</message>
+      <short>teh</short>
+    </rule>
+    <rule id="EN_SOFT_RECIEPT" name="reciept soft">
+      <pattern>
+        <token>reciept</token>
+      </pattern>
+      <message>Did you mean "receipt"?</message>
+      <short>reciept</short>
+    </rule>
+    <rule id="EN_SOFT_PERSUE" name="persue soft">
+      <pattern>
+        <token>persue</token>
+      </pattern>
+      <message>Did you mean "pursue"?</message>
+      <short>persue</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>
