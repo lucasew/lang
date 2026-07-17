@@ -8737,6 +8737,76 @@
       <message>Did you mean "technically"?</message>
       <short>tecnically</short>
     </rule>
+    <rule id="EN_SOFT_TECHNIQUE_MISS" name="tecnique soft">
+      <pattern>
+        <token>tecnique</token>
+      </pattern>
+      <message>Did you mean "technique"?</message>
+      <short>tecnique</short>
+    </rule>
+    <rule id="EN_SOFT_TECHNIQUES_MISS" name="tecniques soft">
+      <pattern>
+        <token>tecniques</token>
+      </pattern>
+      <message>Did you mean "techniques"?</message>
+      <short>tecniques</short>
+    </rule>
+    <rule id="EN_SOFT_TEMPERATURES_MISS" name="tempertures soft">
+      <pattern>
+        <token>tempertures</token>
+      </pattern>
+      <message>Did you mean "temperatures"?</message>
+      <short>tempertures</short>
+    </rule>
+    <rule id="EN_SOFT_TONGUES_MISS" name="tounges soft">
+      <pattern>
+        <token>tounges</token>
+      </pattern>
+      <message>Did you mean "tongues"?</message>
+      <short>tounges</short>
+    </rule>
+    <rule id="EN_SOFT_TRULY_MISS2" name="truley soft">
+      <pattern>
+        <token>truley</token>
+      </pattern>
+      <message>Did you mean "truly"?</message>
+      <short>truley</short>
+    </rule>
+    <rule id="EN_SOFT_TWELFTH_MISS2" name="twelvth soft">
+      <pattern>
+        <token>twelvth</token>
+      </pattern>
+      <message>Did you mean "twelfth"?</message>
+      <short>twelvth</short>
+    </rule>
+    <rule id="EN_SOFT_USING_MISS" name="useing soft">
+      <pattern>
+        <token>useing</token>
+      </pattern>
+      <message>Did you mean "using"?</message>
+      <short>useing</short>
+    </rule>
+    <rule id="EN_SOFT_USUALLY_MISS" name="usualy soft">
+      <pattern>
+        <token>usualy</token>
+      </pattern>
+      <message>Did you mean "usually"?</message>
+      <short>usualy</short>
+    </rule>
+    <rule id="EN_SOFT_VARIANTS_MISS" name="varients soft">
+      <pattern>
+        <token>varients</token>
+      </pattern>
+      <message>Did you mean "variants"?</message>
+      <short>varients</short>
+    </rule>
+    <rule id="EN_SOFT_VEGETABLE_MISS" name="vegatable soft">
+      <pattern>
+        <token>vegatable</token>
+      </pattern>
+      <message>Did you mean "vegetable"?</message>
+      <short>vegatable</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

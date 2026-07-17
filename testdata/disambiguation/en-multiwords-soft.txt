@@ -399,3 +399,6 @@ Copper Corridor RegionNNP
 Salt Corridor RegionNNP
 Amber Corridor RegionNNP
 Ivory Corridor RegionNNP
+Jade Corridor RegionNNP
+Pearl Corridor RegionNNP
+Ruby Corridor RegionNNP

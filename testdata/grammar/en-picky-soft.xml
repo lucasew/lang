@@ -2336,5 +2336,29 @@
       <message>Jargon; name a single-instance lifetime design instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_COMPOSITE_PATTERN" name="composite pattern soft picky">
+      <pattern>
+        <token>composite</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a tree of uniform part-whole objects instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_BRIDGE_PATTERN" name="bridge pattern soft picky">
+      <pattern>
+        <token>bridge</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name a split of abstraction and implementation instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_COMMAND_PATTERN" name="command pattern soft picky">
+      <pattern>
+        <token>command</token>
+        <token>pattern</token>
+      </pattern>
+      <message>Jargon; name an encapsulate-the-request object instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

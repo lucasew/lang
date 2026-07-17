@@ -3651,4 +3651,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_KINESISVIDEO" name="immunize kinesisvideo">
+    <pattern>
+      <token>kinesisvideo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_KINESISVIDEO_CAPS" name="immunize KinesisVideo">
+    <pattern>
+      <token>KinesisVideo</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSTREAM" name="immunize appstream">
+    <pattern>
+      <token>appstream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_APPSTREAM_CAPS" name="immunize AppStream">
+    <pattern>
+      <token>AppStream</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICBEANSTALK" name="immunize elasticbeanstalk">
+    <pattern>
+      <token>elasticbeanstalk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_ELASTICBEANSTALK_CAPS" name="immunize ElasticBeanstalk">
+    <pattern>
+      <token>ElasticBeanstalk</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>
