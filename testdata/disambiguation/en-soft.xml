@@ -4119,4 +4119,40 @@
     </pattern>
     <disambig action="immunize"/>
   </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCAMPAIGNS" name="immunize connectcampaigns">
+    <pattern>
+      <token>connectcampaigns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTCAMPAIGNS_CAPS" name="immunize ConnectCampaigns">
+    <pattern>
+      <token>ConnectCampaigns</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTPARTICIPANT" name="immunize connectparticipant">
+    <pattern>
+      <token>connectparticipant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CONNECTPARTICIPANT_CAPS" name="immunize ConnectParticipant">
+    <pattern>
+      <token>ConnectParticipant</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUSTOMERPROFILES" name="immunize customerprofiles">
+    <pattern>
+      <token>customerprofiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="SOFT_IMMUNIZE_CUSTOMERPROFILES_CAPS" name="immunize CustomerProfiles">
+    <pattern>
+      <token>CustomerProfiles</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
 </rules>

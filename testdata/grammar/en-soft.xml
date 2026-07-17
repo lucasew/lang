@@ -9647,6 +9647,76 @@
       <message>Did you mean "pharaoh"?</message>
       <short>pharoah</short>
     </rule>
+    <rule id="EN_SOFT_PHENOMENA_MISS2" name="phenomona soft">
+      <pattern>
+        <token>phenomona</token>
+      </pattern>
+      <message>Did you mean "phenomena"?</message>
+      <short>phenomona</short>
+    </rule>
+    <rule id="EN_SOFT_PHENOMENON_MISS" name="phenominon soft">
+      <pattern>
+        <token>phenominon</token>
+      </pattern>
+      <message>Did you mean "phenomenon"?</message>
+      <short>phenominon</short>
+    </rule>
+    <rule id="EN_SOFT_PREFER_MISS" name="prefere soft">
+      <pattern>
+        <token>prefere</token>
+      </pattern>
+      <message>Did you mean "prefer"?</message>
+      <short>prefere</short>
+    </rule>
+    <rule id="EN_SOFT_LIBERTY_MISS" name="libertery soft">
+      <pattern>
+        <token>libertery</token>
+      </pattern>
+      <message>Did you mean "liberty"?</message>
+      <short>libertery</short>
+    </rule>
+    <rule id="EN_SOFT_INBETWEEN_MISS" name="inbetween soft">
+      <pattern>
+        <token>inbetween</token>
+      </pattern>
+      <message>Did you mean "in-between"?</message>
+      <short>inbetween</short>
+    </rule>
+    <rule id="EN_SOFT_INCIDENCES_MISS" name="incidencies soft">
+      <pattern>
+        <token>incidencies</token>
+      </pattern>
+      <message>Did you mean "incidences"?</message>
+      <short>incidencies</short>
+    </rule>
+    <rule id="EN_SOFT_IGNORANCE_MISS2" name="ingorance soft">
+      <pattern>
+        <token>ingorance</token>
+      </pattern>
+      <message>Did you mean "ignorance"?</message>
+      <short>ingorance</short>
+    </rule>
+    <rule id="EN_SOFT_INITIATIVES_MISS" name="initatives soft">
+      <pattern>
+        <token>initatives</token>
+      </pattern>
+      <message>Did you mean "initiatives"?</message>
+      <short>initatives</short>
+    </rule>
+    <rule id="EN_SOFT_IRRESISTIBLY_MISS" name="irrisistably soft">
+      <pattern>
+        <token>irrisistably</token>
+      </pattern>
+      <message>Did you mean "irresistibly"?</message>
+      <short>irrisistably</short>
+    </rule>
+    <rule id="EN_SOFT_INSTALLING_MISS" name="isntalling soft">
+      <pattern>
+        <token>isntalling</token>
+      </pattern>
+      <message>Did you mean "installing"?</message>
+      <short>isntalling</short>
+    </rule>
     <rule id="EN_SOFT_DEEP_SEEDED_ALT" name="deep-seeded alt soft">
       <pattern>
         <token>deep</token>

@@ -2654,5 +2654,31 @@
       <message>Jargon; name explicit done conditions for a story instead.</message>
       <short>style</short>
     </rule>
+    <rule id="EN_SOFT_PICKY_DEFINITION_OF_DONE" name="definition of done soft picky">
+      <pattern>
+        <token>definition</token>
+        <token>of</token>
+        <token>done</token>
+      </pattern>
+      <message>Jargon; name a shared quality checklist for finished work.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_DEFINITION_OF_READY" name="definition of ready soft picky">
+      <pattern>
+        <token>definition</token>
+        <token>of</token>
+        <token>ready</token>
+      </pattern>
+      <message>Jargon; name a shared checklist before work starts instead.</message>
+      <short>style</short>
+    </rule>
+    <rule id="EN_SOFT_PICKY_SMART_GOALS" name="smart goals soft picky">
+      <pattern>
+        <token>smart</token>
+        <token>goals</token>
+      </pattern>
+      <message>Jargon; name specific measurable objective framing instead.</message>
+      <short>style</short>
+    </rule>
   </category>
 </rules>

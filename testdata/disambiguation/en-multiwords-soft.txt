@@ -438,3 +438,6 @@ Tephra Corridor RegionNNP
 Lava Corridor RegionNNP
 Ash Corridor RegionNNP
 Cinder Corridor RegionNNP
+Magma Corridor RegionNNP
+Crater Corridor RegionNNP
+Vent Corridor RegionNNP
