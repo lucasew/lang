@@ -65,6 +65,12 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	// Mixed apostrophe styles across the document (text-level).
 	ap := NewConsistentApostrophesRule(nil)
 	lt.AddTextLevelRuleChecker(ap.GetID(), rules.AsTextLevelChecker(ap.MatchList))
+	// Coherent spelling of dual-admitted variants (official coherency.txt; text-level).
+	wc := NewWordCoherencyRule(nil)
+	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
+	// New Zealand regional replace table (en-NZ/replace.txt).
+	nz := NewNewZealandReplaceRule(nil)
+	lt.AddRuleChecker(nz.GetID(), rules.AsSentenceCheckerSimple(nz.Match))
 }
 
 // SoftEnglishPhraseReplacements is the soft PHRASE_REPLACE map (wrong → fix).
