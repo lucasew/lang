@@ -60,7 +60,9 @@ def expand_entities(raw: str) -> str:
                 return m.group(0)
             if n in entities:
                 return expand(entities[n], depth + 1)
-            return m.group(0)
+            # Upstream XML sometimes references entities from external DTD
+            # includes; drop unresolved ones so soft extract can continue.
+            return ""
 
         return re.sub(r"&([A-Za-z_][\w.-]*);", repl, s)
 
@@ -91,7 +93,7 @@ def parse_rules_xml(path: Path) -> ET.Element:
     try:
         return ET.fromstring(raw.encode("utf-8"))
     except ET.ParseError as e:
-        die(f"parse {path}: {e}")
+        raise RuntimeError(f"parse {path}: {e}") from e
 
 
 def token_is_simple(tok: ET.Element) -> bool:
@@ -347,15 +349,24 @@ def vendor_lang(lang: str) -> dict:
             copy_file(src, OUT / lang / "resource" / rel)
             stats["copied"] += 1
 
-    # derive soft pack + goldens from main grammar (+ style)
+    # derive soft pack + goldens from main grammar (+ style) and regional packs
     all_rules: list[dict] = []
     all_goldens: list[dict] = []
+    extract_paths: list[Path] = []
     for name in ("grammar.xml", "style.xml"):
         src = rules_base / name
-        if not src.is_file():
-            continue
+        if src.is_file():
+            extract_paths.append(src)
+    if rules_base.is_dir():
+        for p in sorted(rules_base.glob("*/grammar.xml")):
+            extract_paths.append(p)
+    for src in extract_paths:
         print(f"  extract simple patterns from {src.relative_to(ROOT)}")
-        root = parse_rules_xml(src)
+        try:
+            root = parse_rules_xml(src)
+        except RuntimeError as e:
+            print(f"  WARN skip {src.relative_to(ROOT)}: {e}")
+            continue
         rules, goldens = extract_simple_rules(root, str(src.relative_to(LT)))
         all_rules.extend(rules)
         all_goldens.extend(goldens)

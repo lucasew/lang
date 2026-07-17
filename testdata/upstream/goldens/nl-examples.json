@@ -1,0 +1,67 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "nl",
+  "cases": [
+    {
+      "rule": "MEN_MIJN",
+      "text": "Dit zijn men grootste prestaties.",
+      "suggestion": "m'n",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "MEN_MIJN",
+      "text": "Zij zijn men beste vrienden.",
+      "suggestion": "m'n",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "IN_HET_CONTINENT",
+      "text": "Taaladvies over in het continent.",
+      "suggestion": "op het continent",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/grammar.xml"
+    },
+    {
+      "rule": "VAAG_2",
+      "text": "Men is niemand.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "OVERDRIJVING_3",
+      "text": "Wij vonden het heel erg saai.",
+      "suggestion": "heel",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "INSPECIFIEK_3",
+      "text": "Dit is zeer waarschijnlijk onduidelijk.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "INSPECIFIEK_4",
+      "text": "Dit is heel vaak onduidelijk.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "INSPECIFIEK_6",
+      "text": "Dit is te verwachten.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "NOU",
+      "text": "We geven nou een hand.",
+      "suggestion": "nu",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    },
+    {
+      "rule": "MEKAAR",
+      "text": "We geven mekaar een hand.",
+      "suggestion": "elkaar",
+      "source": "languagetool-language-modules/nl/src/main/resources/org/languagetool/rules/nl/style.xml"
+    }
+  ]
+}

@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// upstreamENGoldenFile is produced by scripts/vendor-lt-testdata.py from official
+// upstreamGoldenFile is produced by scripts/vendor-lt-testdata.py from official
 // LanguageTool <example correction="…"> nodes. Do not hand-edit cases.
-type upstreamENGoldenFile struct {
+type upstreamGoldenFile struct {
 	Source   string `json:"source"`
 	Language string `json:"language"`
 	Cases    []struct {
@@ -24,41 +24,38 @@ type upstreamENGoldenFile struct {
 	} `json:"cases"`
 }
 
-func loadUpstreamENGoldens(t *testing.T) upstreamENGoldenFile {
+func repoRoot(t *testing.T) string {
 	t.Helper()
 	wd, err := os.Getwd()
 	require.NoError(t, err)
 	dir := wd
-	var path string
 	for {
-		cand := filepath.Join(dir, "testdata", "upstream", "goldens", "en-examples.json")
-		if st, err := os.Stat(cand); err == nil && !st.IsDir() {
-			path = cand
-			break
+		if st, err := os.Stat(filepath.Join(dir, "testdata", "upstream")); err == nil && st.IsDir() {
+			return dir
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			t.Fatal("testdata/upstream/goldens/en-examples.json not found; run scripts/vendor-lt-testdata.py")
+			t.Fatal("repo root with testdata/upstream not found")
 		}
 		dir = parent
 	}
+}
+
+func loadUpstreamGoldens(t *testing.T, lang string) upstreamGoldenFile {
+	t.Helper()
+	path := filepath.Join(repoRoot(t), "testdata", "upstream", "goldens", lang+"-examples.json")
 	data, err := os.ReadFile(path)
-	require.NoError(t, err)
-	var doc upstreamENGoldenFile
+	require.NoError(t, err, "run scripts/vendor-lt-testdata.py --langs %s", lang)
+	var doc upstreamGoldenFile
 	require.NoError(t, json.Unmarshal(data, &doc))
-	require.NotEmpty(t, doc.Cases, "upstream golden file is empty")
+	require.NotEmpty(t, doc.Cases, "upstream golden file empty for %s", lang)
 	return doc
 }
 
-// TestGolden_UpstreamENExamples runs CoreGoldenHook against vendored upstream
-// EN examples only — no invented fixtures.
-//
-// Default: sample of cases, assert majority green (soft tokenizer gaps expected).
-// LANG_UPSTREAM_GOLDEN_ALL=1 — entire JSON file.
-// LANG_UPSTREAM_GOLDEN_STRICT=1 — every case must match rule id.
-func TestGolden_UpstreamENExamples(t *testing.T) {
-	doc := loadUpstreamENGoldens(t)
-	require.NotEmpty(t, DiscoverGrammarDir(nil), "need testdata/grammar (en-upstream-soft.xml)")
+func runUpstreamGoldenSample(t *testing.T, lang string) {
+	t.Helper()
+	doc := loadUpstreamGoldens(t, lang)
+	require.NotEmpty(t, DiscoverGrammarDir(nil), "need testdata/grammar (*-upstream-soft.xml)")
 
 	sampleN := 40
 	if os.Getenv("LANG_UPSTREAM_GOLDEN_ALL") != "" {
@@ -68,15 +65,13 @@ func TestGolden_UpstreamENExamples(t *testing.T) {
 		sampleN = len(doc.Cases)
 	}
 
-	type miss struct {
-		Rule, Text, Why string
-	}
+	type miss struct{ Rule, Text, Why string }
 	var misses []miss
 	passed := 0
 	for i := 0; i < sampleN; i++ {
 		tc := doc.Cases[i]
 		var buf bytes.Buffer
-		_, err := CoreGoldenHook(&buf, tc.Text, &CommandLineOptions{Language: "en"})
+		_, err := CoreGoldenHook(&buf, tc.Text, &CommandLineOptions{Language: lang})
 		if err != nil {
 			misses = append(misses, miss{tc.Rule, tc.Text, "hook: " + err.Error()})
 			continue
@@ -107,19 +102,38 @@ func TestGolden_UpstreamENExamples(t *testing.T) {
 		}
 	}
 
-	t.Logf("upstream EN goldens: passed=%d missed=%d of %d", passed, len(misses), sampleN)
+	t.Logf("upstream %s goldens: passed=%d missed=%d of %d", lang, passed, len(misses), sampleN)
 	if len(misses) > 0 && len(misses) <= 8 {
 		for _, m := range misses {
 			t.Logf("  miss %s: %q (%s)", m.Rule, m.Text, m.Why)
 		}
 	}
-
-	strict := os.Getenv("LANG_UPSTREAM_GOLDEN_STRICT") == "1"
-	if strict {
-		require.Empty(t, misses, "strict upstream golden misses")
+	if os.Getenv("LANG_UPSTREAM_GOLDEN_STRICT") == "1" {
+		require.Empty(t, misses, "strict upstream golden misses for %s", lang)
 	}
-	// Soft engine is not full LT yet: require a solid majority of vendored examples.
-	require.Greater(t, passed, 0, "no upstream example matched")
+	require.Greater(t, passed, 0, "no upstream %s example matched", lang)
 	minPass := sampleN * 2 / 3
-	require.GreaterOrEqual(t, passed, minPass, "upstream pass rate too low: %d/%d misses=%v", passed, sampleN, misses)
+	// Small golden files (few simple rules): require all but allow 1 miss.
+	if sampleN < 10 {
+		minPass = sampleN - 1
+		if minPass < 1 {
+			minPass = 1
+		}
+	}
+	require.GreaterOrEqual(t, passed, minPass, "upstream %s pass rate too low: %d/%d", lang, passed, sampleN)
+}
+
+// TestGolden_UpstreamENExamples — vendored EN examples only (no invented fixtures).
+func TestGolden_UpstreamENExamples(t *testing.T) {
+	runUpstreamGoldenSample(t, "en")
+}
+
+// TestGolden_UpstreamDEExamples — vendored DE examples only.
+func TestGolden_UpstreamDEExamples(t *testing.T) {
+	runUpstreamGoldenSample(t, "de")
+}
+
+// TestGolden_UpstreamFRExamples — vendored FR examples only.
+func TestGolden_UpstreamFRExamples(t *testing.T) {
+	runUpstreamGoldenSample(t, "fr")
 }

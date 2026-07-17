@@ -1655,6 +1655,14 @@
       <message>The name of this disease is always capitalized and spelled with a possessive apostrophe.</message>
       <short>ALZHEIMERS</short>
     </rule>
+    <rule id="FOR_EVER_US" name="for ever (forever)">
+      <pattern>
+        <token>for</token>
+        <token>ever</token>
+      </pattern>
+      <message>The adverb <suggestion>forever</suggestion> is spelled as one word.</message>
+      <short>FOR_EVER_US</short>
+    </rule>
   </category>
   <category id="COMPOUNDING" name="Compounding">
     <rule id="GOD_SEND_COMPOUND" name="a god send (godsend)">
@@ -2847,6 +2855,14 @@
       <message>Did you mean 'case in point'?</message>
       <short>CASE_AND_POINT</short>
     </rule>
+    <rule id="UNION_JACK" name="Union Jack">
+      <pattern>
+        <token>union</token>
+        <token>jack</token>
+      </pattern>
+      <message>Capitalize this word if you mean the national flag of the UK.</message>
+      <short>UNION_JACK</short>
+    </rule>
   </category>
   <category id="TYPOGRAPHY" name="Typography">
     <rule id="A_LA_DIACRITIC" name="a la (à la)">
@@ -3209,6 +3225,14 @@
       </pattern>
       <message>'Also' is not used at the end of the sentence. Use <suggestion>as well</suggestion> or <suggestion>too</suggestion> instead.</message>
       <short>'Also' at the end of sentence</short>
+    </rule>
+    <rule id="FOR_EVER_GB" name="for ever (forever)">
+      <pattern>
+        <token>for</token>
+        <token>ever</token>
+      </pattern>
+      <message>It is more common to spell this adverb as one word.</message>
+      <short>FOR_EVER_GB</short>
     </rule>
   </category>
   <category id="REDUNDANCY" name="Redundant Phrases">
@@ -3970,6 +3994,39 @@
       </pattern>
       <message>Wikipedia style. Replace "currently" with a specific date, as "currently" will change over time.</message>
       <short>WIKIPEDIA_CURRENTLY</short>
+    </rule>
+  </category>
+  <category id="AMERICAN_ENGLISH" name="American English phrases">
+    <rule id="GROUND_VS_MINCED" name="ground beef/minced beef">
+      <pattern>
+        <token>ground</token>
+        <token>beef</token>
+      </pattern>
+      <message>The term '\1 \2' is common for American English. Did you mean <suggestion>minced \2</suggestion>?</message>
+      <short>AmE/BrE: ground beef/minced beef</short>
+    </rule>
+    <rule id="GOT_GOTTEN" name="gotten/got">
+      <pattern>
+        <token>gotten</token>
+      </pattern>
+      <message>"Gotten" is commonly used in American English. For varieties outside of North America, "got" is the preferred variant.</message>
+      <short>AmE/BrE: gotten/got</short>
+    </rule>
+    <rule id="ANYMORE" name="anymore (any more)">
+      <pattern>
+        <token>anymore</token>
+      </pattern>
+      <message>In British English, the spelling '\1' is sometimes considered incorrect. Did you mean <suggestion>any more</suggestion>?</message>
+      <short>AmE/BrE: anymore/any more</short>
+    </rule>
+  </category>
+  <category id="BRITISH_ENGLISH" name="British English phrases">
+    <rule id="AFTERWARDS_US" name="We visited them afterwards (afterward)">
+      <pattern>
+        <token>afterwards</token>
+      </pattern>
+      <message>In American English, 'afterward' is the preferred variant. 'Afterwards' is more commonly used in British English and other dialects.</message>
+      <short>AFTERWARDS_US</short>
     </rule>
   </category>
 </rules>

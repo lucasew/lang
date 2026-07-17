@@ -1,0 +1,901 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "fr",
+  "cases": [
+    {
+      "rule": "MILLE_MERCI_MERCIS",
+      "text": "Mille merci pour cette soirée agréable.",
+      "suggestion": "Mille mercis",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_AILLERONT_AILERON",
+      "text": "C'est un avion avec un ailleront.",
+      "suggestion": "aileron",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LEONARDO_DICAPRIO",
+      "text": "Leonardo Di Caprio?",
+      "suggestion": "DiCaprio",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_VACANCE_VACANCES",
+      "text": "Je ne serai pas disponible en août du fait de la vacance scolaire de cette année.",
+      "suggestion": "les vacances scolaires",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "JAMAIS",
+      "text": "Ça n’a j’aimais été un problème.",
+      "suggestion": "jamais",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LAQUELLE",
+      "text": "Ils constituent une ressource fondamentale sur la quelle sera bâti le programme.",
+      "suggestion": "laquelle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CHINA",
+      "text": "Fait au China",
+      "suggestion": "Chine",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "WIKIPEDIA",
+      "text": "Je consulte Wikipedia.",
+      "suggestion": "Wikipédia",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CO2",
+      "text": "Le C02 est un gaz à effet de serre.",
+      "suggestion": "CO2",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SE_FAISANT",
+      "text": "Il s’entraîne avec ardeur et, se faisant, il obtient de bons résultats.",
+      "suggestion": "ce faisant",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "GENTILLEMENT_GENTIMENT",
+      "text": "Il a gentillement accepté.",
+      "suggestion": "gentiment",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CONFUSION_METTRE_MAITRE_MOT",
+      "text": "C'est le mettre mot de cette méthode.",
+      "suggestion": "maître mot",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "A_INTERVALLE_REGULIER",
+      "text": "Ils se sont réunis à intervalle régulier.",
+      "suggestion": "à intervalles réguliers",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DE_TOUT_TEMPS",
+      "text": "De tous temps",
+      "suggestion": "De tout temps",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "A_TOUT_PRIX",
+      "text": "À tous prix",
+      "suggestion": "À tout prix",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "TES_MA",
+      "text": "Tes ma meilleure amie.",
+      "suggestion": "T'es ma",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "HAUVENT",
+      "text": "Réfugions-nous sous cet hauvent !",
+      "suggestion": "auvent",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "JE_SUI",
+      "text": "Encore une fois, je sui désolé.",
+      "suggestion": "je suis",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "FOI_FOIS",
+      "text": "Tu n'as pas à te présenter à chaque foi.",
+      "suggestion": "chaque fois",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PEUX_JE",
+      "text": "Peux-je rester ?",
+      "suggestion": "Puis-je",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "BOUCHE_A_OREILLE",
+      "text": "Par le bouche à oreille.",
+      "suggestion": "bouche-à-oreille",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LA_PLUS_PART",
+      "text": "La plus part du temps",
+      "suggestion": "La plupart",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "NUL_PART",
+      "text": "Il n’a nul part où aller.",
+      "suggestion": "nulle part",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "N_EST_CE_PAS",
+      "text": "Il vient, n’est ce pas ?",
+      "suggestion": "n'est-ce pas",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "EN_TOUT_CAS",
+      "text": "En tous cas, je vous donnerai des nouvelles.",
+      "suggestion": "tout",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CEE",
+      "text": "CÉE",
+      "suggestion": "CEE",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "NO",
+      "text": "Le no. 4.",
+      "suggestion": "nº",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DONT_ACTE",
+      "text": "Il est venu, donc acte.",
+      "suggestion": "dont",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "A_DEFAUT_DE_QUOI",
+      "text": "Ils doivent venir, à défaut de quoi ils partiront.",
+      "suggestion": "sinon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DE_PARTOUT",
+      "text": "Il y en a de partout.",
+      "suggestion": "partout",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "COMME_QUOI",
+      "text": "Il est là, comme quoi il est avenant.",
+      "suggestion": "ainsi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SUE_MESURE",
+      "text": "sue mesure.",
+      "suggestion": "sur mesure",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "GESTES_BARRIERES",
+      "text": "Il faut respecter les gestes barrière.",
+      "suggestion": "barrières",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AUTREMENT_1",
+      "text": "Celui-ci est autrement plus travaillé que le précédent.",
+      "suggestion": "autrement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AUTREMENT_2",
+      "text": "Celui-ci est autrement moins travaillé que le précédent.",
+      "suggestion": "bien moins",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "LHYDRO-QUEBEC",
+      "text": "l’Hydro-Québec",
+      "suggestion": "Hydro-Québec",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ASSIS-TOI",
+      "text": "assis-toi",
+      "suggestion": "assieds-toi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "ASSISEZ-VOUS",
+      "text": "assisez-vous",
+      "suggestion": "asseyez-vous",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AU_LAC_BEAUPORT",
+      "text": "au Lac-Beauport",
+      "suggestion": "à Lac-Beaport",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AU_CAP-DE-LA-MADELEINE",
+      "text": "au Cap-de-la-Madeleine",
+      "suggestion": "à Cap-de-la-Madeleine",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PRENDRE_A_BRASSE-CORPS",
+      "text": "prendre à brasse-corps",
+      "suggestion": "prendre à bras-le-corps",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "QUELQUES_TEMPS",
+      "text": "quelques temps",
+      "suggestion": "quelque temps",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "EN_PARTICULIERS",
+      "text": "Les métaux précieux et l’or en particuliers restent des investissements sûrs.",
+      "suggestion": "particulier",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SANS_DEFENSES",
+      "text": "sans défenses",
+      "suggestion": "sans défense",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SANS_CRAINTES",
+      "text": "sans craintes",
+      "suggestion": "sans crainte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "SUPER",
+      "text": "supers",
+      "suggestion": "super",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "TANT_PIRE",
+      "text": "Tant pire si je perds.",
+      "suggestion": "Tant pis",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "DE_MAL_EN_PIRE",
+      "text": "Les choses vont de mal en pire.",
+      "suggestion": "en mal en pis",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AUTANT_POUR_MOI",
+      "text": "autant pour moi.",
+      "suggestion": "au temps pour moi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "EN_QUELQUES_SORTES",
+      "text": "En quelques sortes.",
+      "suggestion": "En quelque sorte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "TikTok",
+      "text": "Je lui ai envoyé sur tik tok.",
+      "suggestion": "TikTok",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "WHATS_APP",
+      "text": "Whats App est une application mobile.",
+      "suggestion": "WhatsApp",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "JAVA_SCRIPT",
+      "text": "Java Script est un langage de programmation",
+      "suggestion": "JavaScript",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "YOU_TUBE",
+      "text": "You tube est un site web d’hébergement de vidéos.",
+      "suggestion": "YouTube",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "PAY_PAL",
+      "text": "Pay Pal est une entreprise américaine offrant un système de service de paiement.",
+      "suggestion": "PayPal",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "AFL_FUZZ",
+      "text": "American Fuzzy Loop.",
+      "suggestion": "American Fuzzy Lop",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "KLEENEX",
+      "text": "kleenex",
+      "suggestion": "mouchoir",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "CHINE_AVEC_MAJUSCULE",
+      "text": "La chine est un pays.",
+      "suggestion": "Chine",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "NAPOLEON",
+      "text": "sous le nom de napoléon Ier",
+      "suggestion": "Napoléon",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/grammar.xml"
+    },
+    {
+      "rule": "NOUVEL_AN",
+      "text": "Tu fais quoi pour nouvel an cette année ?",
+      "suggestion": "Nouvel An",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DE_MANIERE_A_CE_QUE",
+      "text": "Faites bien votre travail de manière à ce que vous soyez récompensé.",
+      "suggestion": "de manière que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CELLES_CEUX",
+      "text": "Ainsi, ceux et celles qui ont un pull doivent sortir.",
+      "suggestion": "celles et ceux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TOTALEMENT",
+      "text": "C'est totalement inhabituel.",
+      "suggestion": "complètement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AU_JOUR_D_AUJOURD_HUI",
+      "text": "au jour d’aujourd’hui.",
+      "suggestion": "à ce jour",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PREMIER_EN_TETE",
+      "text": "premier en tête",
+      "suggestion": "premier",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PUIS_APRES",
+      "text": "puis après",
+      "suggestion": "puis",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLEONASME_TOLLE_GENERAL",
+      "text": "tollé général",
+      "suggestion": "tollé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLEONASME_DANS_LE_CAS_ECHEANT",
+      "text": "Il faudra intervenir dans le cas échéant pour le bien commun.",
+      "suggestion": "le cas échéant",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BOIS_FRANC",
+      "text": "bois franc",
+      "suggestion": "bois dur",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SALISSAGE",
+      "text": "salissage",
+      "suggestion": "calomnie",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "GRATTEUX",
+      "text": "gratteux",
+      "suggestion": "billet à gratter",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PEIGNURE",
+      "text": "peignure",
+      "suggestion": "coiffure",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_LENDOS",
+      "text": "à l’endos",
+      "suggestion": "au dos",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "UNE_COUPLE_DE",
+      "text": "une couple de jours",
+      "suggestion": "un couple de",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EN_JUPITER",
+      "text": "en jupiter",
+      "suggestion": "très",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_QUELQUE_PART",
+      "text": "à quelque part",
+      "suggestion": "quelque part",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "JOURNALIERMENT",
+      "text": "journalièrement",
+      "suggestion": "journellement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SIFFLEUX",
+      "text": "siffleux",
+      "suggestion": "marmotte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BVLD",
+      "text": "bvld",
+      "suggestion": "boul.",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TOO_BAD",
+      "text": "too bad",
+      "suggestion": "c'est quand même incroyable !",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "HAPPY_SLAPPING",
+      "text": "happy slapping",
+      "suggestion": "vidéolynchage",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SPAMDEXING",
+      "text": "Il fait du spamdexing.",
+      "suggestion": "référencement abusif",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PHISHING",
+      "text": "Il fait du phishing.",
+      "suggestion": "filoutage",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "NAPKIN",
+      "text": "napkin.",
+      "suggestion": "serviette de table",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "NAPHTA",
+      "text": "naphta.",
+      "suggestion": "naphte",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "NO_VACANCY",
+      "text": "no vacancy.",
+      "suggestion": "complet",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "NO_FAULT",
+      "text": "no fault.",
+      "suggestion": "assurance inconditionnelle",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "WHISHFUL_THINKING",
+      "text": "wishful thinking.",
+      "suggestion": "prendre ses désirs pour des réalités",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "STAMINA",
+      "text": "stamina.",
+      "suggestion": "endurance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "STAINLESS",
+      "text": "stainless.",
+      "suggestion": "acier inoxydable",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BOXING_DAY",
+      "text": "Il parle du Boxing Day.",
+      "suggestion": "Les soldes d'après Noël",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CIRCA",
+      "text": "circa.",
+      "suggestion": "vers",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SEARCH",
+      "text": "Pense à rajouter une search pour les deux éléments.",
+      "suggestion": "recherche",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "JOUR_FERIE",
+      "text": "C'est un congé férié.",
+      "suggestion": "jour férié",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ET-OU",
+      "text": "La ligne diminue et/ou disparait à l'horizon.",
+      "suggestion": "ou",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_VENIR_A_DATE",
+      "text": "à venir à date",
+      "suggestion": "jusqu'à présent",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "JUSQUA_DATE",
+      "text": "jusqu’à date",
+      "suggestion": "jusqu'à présent",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CLINIQUE_EXTERNE",
+      "text": "cliniques externes",
+      "suggestion": "services de consultation externes",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "CHOC_ELECTRIQUE",
+      "text": "chocs électriques",
+      "suggestion": "décharges électriques",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EN_AVANT_DE_SON_TEMPS",
+      "text": "en avant de son temps",
+      "suggestion": "à l'avance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "EN_AUTANT_QUE",
+      "text": "en autant que",
+      "suggestion": "dans la mesure où",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COMMENT_AS-TU_AIME",
+      "text": "comment as-tu aimé",
+      "suggestion": "as-tu aimé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COMMENT_AVEZ-VOUS_AIME",
+      "text": "comment avez-vous aimé",
+      "suggestion": "avez-vous aimé",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "MINIMALEMENT",
+      "text": "minimalement",
+      "suggestion": "au minimum",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "DRASTIQUEMENT",
+      "text": "drastiquement",
+      "suggestion": "radicalement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_LEFFET_QUE",
+      "text": "à l’effet que",
+      "suggestion": "voulant que",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "COMBIEN_LOIN",
+      "text": "combien loin",
+      "suggestion": "à quelle distance",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "TAPIS_MUR_A_MUR",
+      "text": "tapis mur à mur",
+      "suggestion": "moquette",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AU_MEILLEUR_DE_MA_CONNAISSANCE",
+      "text": "au meilleur de ma connaissance",
+      "suggestion": "pour autant que je sache",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AU_MEILLEUR_DE_MA_MEMOIRE",
+      "text": "au meilleur de ma mémoire",
+      "suggestion": "autant que je m'en souvienne",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "AU_MEILLEUR_DE_MON_JUGEMENT",
+      "text": "au meilleur de mon jugement",
+      "suggestion": "autant que j'en puisse juger",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PRIX_SPECIAL",
+      "text": "prix spécial",
+      "suggestion": "prix de solde",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_L_ANNEE_LONGUE",
+      "text": "à l’année longue",
+      "suggestion": "à longueur d'année",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_LA_JOURNEE_LONGUE",
+      "text": "à la journée longue",
+      "suggestion": "à longueur de journée",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "A_LA_SEMAINE_LONGUE",
+      "text": "à la semaine longue.",
+      "suggestion": "toute la semaine",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "POUR_AUSSI_PEU_QUE",
+      "text": "pour aussi peu que",
+      "suggestion": "pour seulement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "BENEFICES_MARGINAUX",
+      "text": "bénéfices marginaux",
+      "suggestion": "avantages sociaux",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SAISONNIEREMENT",
+      "text": "saisonnièrement",
+      "suggestion": "de façon saisonnière",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "PLACE_A_L_AMELIORATION",
+      "text": "place à l’amélioration",
+      "suggestion": "à désirer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "SOUS_LINFLUENCE_DE_LALCOOL",
+      "text": "sous l'influence de l'alcool",
+      "suggestion": "en état d'ébriété",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "ANGLICISME_FAKE_NEWS",
+      "text": "Ce sont des fakes news.",
+      "suggestion": "fake news",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "OU_PAS",
+      "text": "T’es-tu décidé ou pas ?",
+      "suggestion": "ou non",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "OU_PAS",
+      "text": "T’es-tu décidé ou pas ?",
+      "suggestion": "ou non",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "LAISSER-PASSER",
+      "text": "Il vous faut un laisser-passer.",
+      "suggestion": "laissez-passer",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_MAINTENANT",
+      "text": "Il est grand maintenant.",
+      "suggestion": "présentement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_EN_PARTICULIER_TEST",
+      "text": "J’adore l’esprit et le son de cette guitare qui convient à tous les styles et en particulier à ce que j’ai envie faire !",
+      "suggestion": "nommément",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_QUAND",
+      "text": "Il est grand quand il le dit.",
+      "suggestion": "car",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_BIENTOT1",
+      "text": "Il viendra bientôt.",
+      "suggestion": "prochainement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_A_PEINE",
+      "text": "Tu l'a connais à peine.",
+      "suggestion": "peu",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_TOUJOURS",
+      "text": "Il est toujours là.",
+      "suggestion": "constamment",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_QUAND_MEME",
+      "text": "Il a quand même été renvoyé chez lui.",
+      "suggestion": "tout de même",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_EN_VRAI",
+      "text": "Alors, en vrai nous étudierons le rapport à l'art.",
+      "suggestion": "en réalité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_PLUS_OU_MOINS",
+      "text": "Il est plus ou moins important.",
+      "suggestion": "approximativement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_PAR_AILLEURS",
+      "text": "Il est par ailleurs important.",
+      "suggestion": "cependant",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_DE_MEME",
+      "text": "Il est, de même, important.",
+      "suggestion": "pareillement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_PAR_LA_SUITE",
+      "text": "Il est devenu par la suite important.",
+      "suggestion": "ensuite",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_TOUT_DE_SUITE",
+      "text": "Il est devenu tout de suite important.",
+      "suggestion": "immédiatement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_EN_FAIT",
+      "text": "Il est devenu en fait, important.",
+      "suggestion": "en réalité",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_EN_D_AUTRES_TERMES",
+      "text": "Alors, en d'autres termes ce sont des sondages frauduleux.",
+      "suggestion": "autrement dit",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_EN_TOUT_CAS",
+      "text": "Alors, en tout cas, ce sont des sondages frauduleux.",
+      "suggestion": "bien sûr",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_DE_FAIT",
+      "text": "Alors, de fait, ce sont des sondages frauduleux.",
+      "suggestion": "ainsi,",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_TOUT_A_COUP",
+      "text": "Alors, tout à coup, ce sont des sondages frauduleux.",
+      "suggestion": "soudainement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_BIEN_SUR",
+      "text": "Alors, bien sûr ce seront des sondages frauduleux.",
+      "suggestion": "certainement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_BIEN_ENTENDU",
+      "text": "Alors, bien entendu ce seront des sondages frauduleux.",
+      "suggestion": "certainement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_OUI",
+      "text": "Oui.",
+      "suggestion": "Exactement",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_NON",
+      "text": "Non.",
+      "suggestion": "Pas du tout",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_CERTES",
+      "text": "Ton idée, certes intéressante, ne me plaît pas tellement.",
+      "suggestion": "assurément",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_CEPENDANT",
+      "text": "C’est une décision qui, cependant, doit être mûrement réfléchie.",
+      "suggestion": "néanmoins",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    },
+    {
+      "rule": "REP_DONC",
+      "text": "Le vin blanc est donc idéal pour accompagner les viandes blanches.",
+      "suggestion": "ainsi",
+      "source": "languagetool-language-modules/fr/src/main/resources/org/languagetool/rules/fr/style.xml"
+    }
+  ]
+}

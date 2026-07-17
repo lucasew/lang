@@ -1,0 +1,943 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "de",
+  "cases": [
+    {
+      "rule": "FREUDE_BERIETEN_SPELLING_RULE",
+      "text": "Ich liebe es, Leuten eine Freude zu berieten.",
+      "suggestion": "bereiten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "IM_ENDDEFEKT_SPELLING_RULE",
+      "text": "Im Enddefekt ist alles gut verlaufen.",
+      "suggestion": "Endeffekt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "IM_ENDDEFEKT_SPELLING_RULE",
+      "text": "Was zählt, ist, dass im Enddefekt alles gut verlaufen ist.",
+      "suggestion": "Endeffekt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LETZTES_ENDES_SPELLING_RULE",
+      "text": "Das ist letztes Endes egal.",
+      "suggestion": "letzten Endes",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LETZTES_ENDES_SPELLING_RULE",
+      "text": "Letztes Endes kommt es nicht auf Schönheit an.",
+      "suggestion": "Letzten Endes",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SCHALL_UND_RAUCH_SPELLING_RULE",
+      "text": "Das ist alles Schal und Rauch.",
+      "suggestion": "Schall",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZEIL_SPELLING_RULE",
+      "text": "Ich bin beim Lesen in der Zeil verrutscht.",
+      "suggestion": "Ziel",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GILBT_SPELLING_RULE",
+      "text": "In Italien gilbt es viele Italiener.",
+      "suggestion": "gibt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "EUCH_ALL_SPELLING_RULE",
+      "text": "Ihr installiert Euch all das LanguageTool Browser-Add-on.",
+      "suggestion": "alle",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ETWAS_DASS",
+      "text": "Sie gaben auf Nachfrage Hinweise dazu, etwas dass ihr Nachname darin vorkomme.",
+      "suggestion": "etwa dass",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "EIN_ODER_MEHRMALS_SPELLING_RULE",
+      "text": "28 Prozent der Europäer konsumieren ein- oder mehrmals pro Woche Soja oder Sojagetränke.",
+      "suggestion": "ein oder mehrmals",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MIR_MIR",
+      "text": "Hab erbamen mir mir!",
+      "suggestion": "mit mir",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ANS_HERZ_GEWASCHEN_SPELLING_RULE",
+      "text": "Meine neue Freundin ist mir richtig ans Herz gewaschen.",
+      "suggestion": "gewachsen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SIEHE_SEHE",
+      "text": "Soweit ich siehe, ist alles in Ordnung.",
+      "suggestion": "sehe",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUR_KENNTNIS_SPELLING_RULE",
+      "text": "Sie nahm ihn zu Kenntnis.",
+      "suggestion": "zur",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUR_DER",
+      "text": "Wir kommen zur der Abschlussveranstaltung.",
+      "suggestion": "zu",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VON_GANZEN_GANZEM_HERZEN",
+      "text": "Das wünsche ich dir von ganzen Herzen.",
+      "suggestion": "von ganzem Herzen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DANK_DANKE_SPELLING_RULE",
+      "text": "Ich dank schön!",
+      "suggestion": "danke",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WAS_LANGE_WEHRT",
+      "text": "Was lange wehrt, wird endlich gut.",
+      "suggestion": "währt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "INS_UNS_SPELLING_RULE",
+      "text": "Der Teufel steckt ins uns.",
+      "suggestion": "in",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ES_WIR_SPELLING_RULE",
+      "text": "Es wir wieder wärmer draußen.",
+      "suggestion": "wird",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZU_SEIEN_SPELLING_RULE",
+      "text": "Er ist gut zu seien Haustieren.",
+      "suggestion": "sein",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZU_SEIEN_SPELLING_RULE",
+      "text": "Es scheint kaputt zu seien.",
+      "suggestion": "sein",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_ROSEN_GEBETET_SPELLING_RULE",
+      "text": "Ich bin auch nicht auf Rosen gebetet worden.",
+      "suggestion": "gebettet",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ER_EINZIGE",
+      "text": "Bin ich er Einzige, dem das so geht?",
+      "suggestion": "der",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERZEIHT_VERZIEHT",
+      "text": "Er verzeiht keine Miene.",
+      "suggestion": "verzieht",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BEKANNT_ALT",
+      "text": "Er ist bekannt alt intelligent.",
+      "suggestion": "als",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VON_HAND",
+      "text": "Autopflege van Hand ist einfach.",
+      "suggestion": "von",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HIN_UND_WIDER_SPELLING_RULE",
+      "text": "Hin und wider kann man es machen.",
+      "suggestion": "wieder",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SONDER_SPELLING_RULE",
+      "text": "Es gibt keine neuen Features, sonder nur Fehlerkorrekturen.",
+      "suggestion": "sondern",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "OHNE_GEWEHR",
+      "text": "Alle Angaben ohne Gewehr.",
+      "suggestion": "Gewähr",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VON_WIEDER_VON",
+      "text": "Das war's auch von wieder von mir.",
+      "suggestion": "schon",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BEREIT_BESTEHENDE",
+      "text": "Sie können dies als Service für Ihre bereit bestehende Seite benutzen.",
+      "suggestion": "bereits",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEWAFFNET_GEWAPPNET",
+      "text": "Ich bin heute für alles gewaffnet.",
+      "suggestion": "gewappnet",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AGENDAS",
+      "text": "Ich setze dieses Thema noch auf unsere Agendas.",
+      "suggestion": "Agenden",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GLUCK",
+      "text": "Aber ein Gluck, dass nichts Schlimmes passiert ist.",
+      "suggestion": "Glück",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUGEGEBENERWEISE",
+      "text": "Ich bin zugegebenerweise wirklich erstaunt!",
+      "suggestion": "zugegebenermaßen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "STRICK_DURCH_DIE_RECHNUNG",
+      "text": "Das schlechte Wetter macht dem Ausflugslokal einen Strick durch die Rechnung.",
+      "suggestion": "Strich",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HABACHTSTELLUNG",
+      "text": "Sie nahmen eine Halbachtstellung ein.",
+      "suggestion": "Habachtstellung",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERWANDET_VERWANDTE",
+      "text": "Meine Cousine ist meine Verwandet.",
+      "suggestion": "Verwandte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AM_EIGENEN_LAIB",
+      "text": "Ich musste das am eigenen Laib erfahren.",
+      "suggestion": "Leib",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VOLLZUG_VERZUG",
+      "text": "Da ist Gefahr im Vollzug!",
+      "suggestion": "Verzug",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "APARTHEIT",
+      "text": "Es gibt internationale Konventionen bezüglich der Bekämpfung und Bestrafung des Verbrechens der Apartheit.",
+      "suggestion": "Apartheid",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VERZINNST",
+      "text": "Mein Konto wird gut verzinnst.",
+      "suggestion": "verzinst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZEIT_UND_MUSE",
+      "text": "Zeit und Muse",
+      "suggestion": "Muße",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LIEHT",
+      "text": "Ich weiß nicht, woran das lieht.",
+      "suggestion": "liegt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GEISEL_DER_MENSCHHEIT",
+      "text": "Korruption ist mörderische Geisel der Menschheit",
+      "suggestion": "Geißel",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUSGESCHOSSEN",
+      "text": "Das ist ausgeschossen.",
+      "suggestion": "ausgeschlossen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SAN_JOSE",
+      "text": "Ich lebe in San Jose.",
+      "suggestion": "San José",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ASTRA_ZENECA",
+      "text": "Das Pharmaunternehmen Astra Zeneca kommt aus Großbritannien.",
+      "suggestion": "AstraZeneca",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WHATS_APP",
+      "text": "Wir schrieben per whats app.",
+      "suggestion": "WhatsApp",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "CHAT_GPT",
+      "text": "Wir nutzen jetzt Chat GPT, um Gedichte zu verfassen.",
+      "suggestion": "ChatGPT",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AIR_BNB",
+      "text": "Ich habe ein Zimmer via Air Bnb gebucht.",
+      "suggestion": "Airbnb",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "POWER_SHELL",
+      "text": "Power Shell ist ein plattformübergreifendes Framework von Microsoft zur Automatisierung, Konfiguration und Verwaltung von Systemen.",
+      "suggestion": "PowerShell",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "JAVA_SCRIPT",
+      "text": "Da er ein Programmier ist, kann er auch java script.",
+      "suggestion": "JavaScript",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "OBJECTIVE_C",
+      "text": "Diese App wurde mit objective c programmiert.",
+      "suggestion": "Objective-C",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "TIK_TOK",
+      "text": "Tik tok wurde von ByteDance entwickelt.",
+      "suggestion": "TikTok",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "TIK_TOKS",
+      "text": "Tik toks wurde von ByteDance entwickelt.",
+      "suggestion": "TikToks",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MEISSENER",
+      "text": "Die Meissener waren sehr nett.",
+      "suggestion": "Meißener",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AM_REIN",
+      "text": "Warum ist es am Rein so schön?",
+      "suggestion": "Rhein",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LAS_VEGAS",
+      "text": "Das ist jetzt der letzte Schrei in las Vegas.",
+      "suggestion": "Las",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "REIT_IM_WINKL",
+      "text": "Er wohnt in Reit im Winkel.",
+      "suggestion": "Winkl",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GUSTAF_GRUENDGENS",
+      "text": "Gustav Gründgens",
+      "suggestion": "Gustaf",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FELDHERRNHALLE",
+      "text": "Die Feldherrenhalle ist eine klassizistische Loggia am südlichen Ende des Odeonsplatzes.",
+      "suggestion": "Feldherrnhalle",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUR_VERFÜGUNGSTELLUNG",
+      "text": "Vielen Dank für die zur Verfügungstellung des Gewinnspielpreises.",
+      "suggestion": "Zurverfügungstellung",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HOECHST_WAHRSCHEINLICH",
+      "text": "Sie fand es höchst wahrscheinlich gut.",
+      "suggestion": "höchstwahrscheinlich",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "JEDER_ZEIT",
+      "text": "Ich kann mich jeder Zeit bei dir melden.",
+      "suggestion": "jederzeit",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SIEBEN_SACHEN",
+      "text": "Hast du alle deine sieben Sachen?",
+      "suggestion": "Siebensachen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SCHLICHT_WEG",
+      "text": "Das ist schlicht weg falsch!",
+      "suggestion": "schlichtweg",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "RABATT_BINDESTRICH_CODE",
+      "text": "Benutzen Sie auch gerne unseren Rabatt Code.",
+      "suggestion": "Rabatt-Code",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ALLER_HAND",
+      "text": "Es gibt aller Hand zu tun.",
+      "suggestion": "allerhand",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "JEDEN_FALLS",
+      "text": "Ich denke jeden Falls, dass das so richtig ist.",
+      "suggestion": "jedenfalls",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GUT_DUENKEN",
+      "text": "Ich mache das nach gut Dünken.",
+      "suggestion": "Gutdünken",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DUDEN_MENTOR_HYPHEN",
+      "text": "LanguageTool funktioniert besser als der Duden Mentor.",
+      "suggestion": "Duden-Mentor",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZWEIFELS_OHNE",
+      "text": "Das ist Zweifels ohne eine tolle Idee.",
+      "suggestion": "zweifelsohne",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SOZIAL_MEDIA",
+      "text": "Du kannst mir auf sozial Media folgen.",
+      "suggestion": "Social Media",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "RUND_UM_DIE_UHR_BEWACHUNG",
+      "text": "Er ordnete eine rund um die Uhr Bewachung an.",
+      "suggestion": "Rund-um-die-Uhr-Bewachung",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "EIN_KIND_POLITIK",
+      "text": "Die ein Kind Politik war eine Politik zur Kontrolle des Bevölkerungswachstums in der Volksrepublik China.",
+      "suggestion": "Ein-Kind-Politik",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "EBEN_FALLS",
+      "text": "Das ist eben falls falsch.",
+      "suggestion": "ebenfalls",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "IN_ZWISCHEN",
+      "text": "Ich habe in zwischen mehrere Kreditkarten.",
+      "suggestion": "inzwischen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SCHOCKSCHWERENOT",
+      "text": "Schock schwere Not, er hat sich den Arm gebrochen.",
+      "suggestion": "Schockschwerenot",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SICHER_GESTELLT",
+      "text": "Angenehme Wärme wird durch die Gasheizung sicher gestellt.",
+      "suggestion": "sichergestellt",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DRUMHERUM_REDEN",
+      "text": "Du sollst nicht drumherum reden.",
+      "suggestion": "drum herumreden",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MULTI-KULTI",
+      "text": "Multi-Kulti auf dem Stadtfest.",
+      "suggestion": "Multikulti",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_PASSEN",
+      "text": "Da muss man schon auf passen.",
+      "suggestion": "aufpassen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "TEUFELSKUECHE",
+      "text": "Lass die Finger davon, das Mistzeug bringt dich noch in Teufelsküche.",
+      "suggestion": "Teufels Küche",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DURCH_AUS",
+      "text": "Er ist durch aus lernfähig.",
+      "suggestion": "durchaus",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VON_NOETEN",
+      "text": "Hier ist schnelle Hilfe von Nöten.",
+      "suggestion": "vonnöten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KNOWHOW",
+      "text": "Da steckt viel Know How drin.",
+      "suggestion": "Know-how",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VIEL_ZAHL",
+      "text": "Wir haben eine viel zahl innovativer Konstruktionen gesehen.",
+      "suggestion": "Vielzahl",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VIEL_ZAHL",
+      "text": "Wir haben eine viel Zahl innovativer Konstruktionen gesehen.",
+      "suggestion": "Vielzahl",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "TROTZ_DEM_TROTZDEM",
+      "text": "Er tat es trotz dem.",
+      "suggestion": "trotzdem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "TROTZ_DEM_TROTZDEM",
+      "text": "Er tat es trotz dem Urteils.",
+      "suggestion": "trotzdem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VON_STATTEN",
+      "text": "Das ging recht langsam von statten.",
+      "suggestion": "vonstatten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "IN_RAGE",
+      "text": "Ich rede mich hier in rage.",
+      "suggestion": "Rage",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KUGELN_SUBST",
+      "text": "Bitte zwei kugeln Eis!",
+      "suggestion": "Kugeln",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUCKERBROT_UND_PEITSCHE",
+      "text": "Es gab abwechselnd Zuckerbrot und peitsche.",
+      "suggestion": "Peitsche",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ANS_EINGEMACHTE",
+      "text": "Das geht ans eingemachte.",
+      "suggestion": "Eingemachte",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SEGEL_SUBST",
+      "text": "Das nahm mir den Wind aus den segeln.",
+      "suggestion": "Segeln",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_DIE_SCHLICHE",
+      "text": "Ihm ist wohl jemand auf die schliche gekommen.",
+      "suggestion": "Schliche",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_DIE_SCHLICHE",
+      "text": "Die Polizei kam ihnen auf die schliche.",
+      "suggestion": "Schliche",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_DIE_SCHLICHE",
+      "text": "Die kommen uns niemals auf die schliche!",
+      "suggestion": "Schliche",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GENOSSINNEN_UND_GENOSSEN",
+      "text": "Liebe Genossinnen und genossen, ich bin gerührt.",
+      "suggestion": "Genossen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "HIMMEL_UND_ERDE",
+      "text": "Es gibt mehr Dinge zwischen Himmel und erde, als mancher glaubt.",
+      "suggestion": "Erde",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "UM_DIE_ECKE",
+      "text": "Da kamen die Jungs um die ecke.",
+      "suggestion": "Ecke",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ANGRIFF_AUF",
+      "text": "Das ist ein angriff auf die Menschenwürde.",
+      "suggestion": "Angriff",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DICHTER_UND_DENKER",
+      "text": "Das Land der dichter und Denker.",
+      "suggestion": "Dichter",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUS_VERSEHEN",
+      "text": "Die SPD meuchelt aus versehen ihren Chef.",
+      "suggestion": "Versehen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VOR_ALLEN",
+      "text": "Ich komme vor allen deswegen, weil ich das sehen will.",
+      "suggestion": "vor allem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUS_MEHRERE",
+      "text": "Sie können aus mehrere Sprachen auswählen.",
+      "suggestion": "mehreren",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AUF_DER_SCHLICHE",
+      "text": "Ich bin dem Fehler auf der Schliche.",
+      "suggestion": "auf der Spur",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "EIN_ANDER_MAL",
+      "text": "Vielleicht ein ander mal.",
+      "suggestion": "anderes Mal",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "JEDEN_DAS_SEINE",
+      "text": "Jeden das seine.",
+      "suggestion": "Jedem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "FUER_ALLEM",
+      "text": "Er findet für allem, dass es besser werden muss.",
+      "suggestion": "vor allem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "KEIN_GERINGER_ALS",
+      "text": "Es war kein Geringer als der Vize-Meister selbst.",
+      "suggestion": "Geringerer",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "AN_EINEN_STRANG",
+      "text": "Wir ziehen alle an einen Strang.",
+      "suggestion": "einem Strang",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "BEWERBE_BEWIRB",
+      "text": "Wenn du eine neue Herausforderung suchst, dann bewerbe dich jetzt bei uns.",
+      "suggestion": "bewirb",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ERGEBE_ERGIB",
+      "text": "Nun ergebe dich deinem Schicksal.",
+      "suggestion": "ergib",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "SACK_KARTOFFEL",
+      "text": "Er sitzt da wie ein Sack Kartoffel.",
+      "suggestion": "Kartoffeln",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "MIT_GEHACKTES",
+      "text": "Es gab Nudelsauce mit Gehacktes.",
+      "suggestion": "Gehacktem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "INSBESONDERS",
+      "text": "Er fiel ihnen auf, insbesonders durch sein verdächtiges Verhalten.",
+      "suggestion": "insbesondere",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WHO_S_WHO",
+      "text": "Das Who is Who des deutschen Fußballs war dort.",
+      "suggestion": "Who's who",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "DIESEM_EINEM",
+      "text": "Ich beschließe, es bei diesem einem Buch zu belassen.",
+      "suggestion": "diesem einen",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "VON_EINEN",
+      "text": "Mehrere Twitter-Accounts von einen Twitter-Account aus verwalten.",
+      "suggestion": "von einem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "LTD_ABK",
+      "text": "Arbeitest du für die Müller Ltd?",
+      "suggestion": "Ltd.",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "NEBEN_MIT",
+      "text": "Dort der Altberliner neben mit einer Flasche Bier.",
+      "suggestion": "neben",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "UEBER_DARUEBER",
+      "text": "Und über darüber geht sein Bericht.",
+      "suggestion": "über",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "GESAGT_GETAN",
+      "text": "Gesagt getan!",
+      "suggestion": "Gesagt, getan",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "APRIL_APRIL",
+      "text": "April April! Das war nur ein Scherz.",
+      "suggestion": "April, April",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "WEDER_OHNE_NOCH",
+      "text": "Das ist weder effektiv oder effizient.",
+      "suggestion": "",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZWEIGLEISIGES_SCHWERT",
+      "text": "Das ist ein zweigleisiges Schwert.",
+      "suggestion": "zweischneidiges Schwert",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "ZUM_VORSCHEIN",
+      "text": "Es kamen löchrige Socken zum Vorscheinen.",
+      "suggestion": "Vorschein",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
+    },
+    {
+      "rule": "OEFTESTEN",
+      "text": "Ich habe am öftesten das Ziel getroffen.",
+      "suggestion": "häufigsten",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "SPACEX",
+      "text": "Space X ist ein Raumfahrtunternehmen.",
+      "suggestion": "SpaceX",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "TSCHULDIGUNG",
+      "text": "Tschuldigung!",
+      "suggestion": "Entschuldigung",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "I_BIMS_JUGENDSPRACHE",
+      "text": "Hallo, I bims.",
+      "suggestion": "ich bin's",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "FUER_UMSONST",
+      "text": "LanguageTool gibt es für umsonst, aber nicht vergebens.",
+      "suggestion": "umsonst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "FUER_UMSONST",
+      "text": "Meine jahrelange Anstrengung war für umsonst.",
+      "suggestion": "umsonst",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "PER_DEFINITION",
+      "text": "Der Diktator ist per Definition kein Demokrat.",
+      "suggestion": "per definitionem",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "VERSEHENTLICHERWEISE",
+      "text": "Ich habe es versehentlicherweise kaputtgemacht.",
+      "suggestion": "versehentlich",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DRUEBER",
+      "text": "Ich springe später mal drüber.",
+      "suggestion": "darüber",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DRUNTER",
+      "text": "Ich schreib was drunter.",
+      "suggestion": "darunter",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRAUS",
+      "text": "Was machen wir jetzt dadraus?",
+      "suggestion": "daraus",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRAN",
+      "text": "Ich bin dadran gescheitert.",
+      "suggestion": "daran",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRAUF",
+      "text": "Er ist von alleine dadrauf gekommen.",
+      "suggestion": "darauf",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRINNEN",
+      "text": "Er ist dadrinnen gefangen.",
+      "suggestion": "darin",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRIN",
+      "text": "Er ist dadrin gefangen.",
+      "suggestion": "darin",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRUNTER",
+      "text": "Ich werde mal dadrunter gucken.",
+      "suggestion": "darunter",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRUEBER",
+      "text": "Ich werde mal dadrüber gucken.",
+      "suggestion": "darüber",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DADRUM",
+      "text": "Wir sollten es dadrum anders lösen.",
+      "suggestion": "darum",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "ALLEINE",
+      "text": "Er lebt alleine.",
+      "suggestion": "allein",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "NICHTSDESTOTROTZ_II",
+      "text": "Nichtsdestotrotz ist das Thema umstritten.",
+      "suggestion": "Nichtsdestoweniger",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "DIESEN_JAHRES",
+      "text": "Im April diesen Jahres ist Ostern.",
+      "suggestion": "dieses Jahres",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "GLEICHBEHANDLUNG",
+      "text": "Wir suchen Maler (m/w).",
+      "suggestion": "m/w/d",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/style.xml"
+    },
+    {
+      "rule": "OCHS_VORM_BERG",
+      "text": "Und jetzt stehst du da wie der Ochs vorm Berg.",
+      "suggestion": "wie der Esel am Berg",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/de-CH/grammar.xml"
+    },
+    {
+      "rule": "WEISS_SPELLING_RULE",
+      "text": "Das weiss ich auch.",
+      "suggestion": "weiß",
+      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/de-DE-AT/grammar.xml"
+    }
+  ]
+}

@@ -1,0 +1,1039 @@
+{
+  "source": "inspiration/languagetool",
+  "note": "Generated from upstream <example correction> only; do not invent.",
+  "language": "pl",
+  "cases": [
+    {
+      "rule": "WYPISZ_WYMALUJ",
+      "text": "Wypisz, wymaluj, sama pani Franciszka, czarnooka, czarnowłosa.",
+      "suggestion": "Wypisz wymaluj",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BRAK_PRZECINKA_NIC_DODAC_NIC_UJAC",
+      "text": "Nic dodać nic ująć, ciasto jest jak najbardziej wyśmienite do popołudniowej niedzielnej kawki.",
+      "suggestion": "dodać, nic",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "CHCAC_NIE_CHCAC",
+      "text": "Chcąc, nie chcąc poszedłem do lekarza.",
+      "suggestion": "Chcąc nie chcąc",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "CHYBIL_TRAFIL",
+      "text": "Szukali czegoś na chybił, trafił.",
+      "suggestion": "na chybił trafił",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BADZ_CO_BADZ",
+      "text": "Była to bądź, co bądź prawda.",
+      "suggestion": "bądź co bądź",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PL_ELLIPSIS_DOT",
+      "text": "To jest problem….",
+      "suggestion": "…",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "Z_BARK",
+      "text": "Mogła za cenę płacenia komornego wyjechać, mając rodziców, którzy zdjęli ciężar z bark.",
+      "suggestion": "z barków",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZAKOPANYM",
+      "text": "Byłem ostatnio w Zakopanym.",
+      "suggestion": "Zakopanem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POL_GODZIN",
+      "text": "Mimo to czas przejazdu skraca się z 4 i pół do 3 i pół godzin.",
+      "suggestion": "godziny",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "KULISOW",
+      "text": "Nie znam kulisów tej sprawy.",
+      "suggestion": "kulis",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PO_POL_GODZINIE",
+      "text": "Po pół godzinie rozmowy premier zasnął.",
+      "suggestion": "Po pół godziny",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_NIEMCZECH",
+      "text": "Jutro jadę do Niemczech.",
+      "suggestion": "do Niemiec",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ANI_RAZ",
+      "text": "Podczas całego przedstawienia ani raz nie spojrzałem na zegarek.",
+      "suggestion": "razu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_NP_NP_NA",
+      "text": "Kto podejmowałby ryzyko prowadzenia działalności, jeżeli równorzędny wynik uzyskałby lokując środki na np. lokacie w banku?",
+      "suggestion": "np. na",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_ULEGA_WATPLIWOSCI",
+      "text": "Nie ulega najmniejszych wątpliwości, że on był agentem obcego wywiadu.",
+      "suggestion": "Nie ulega najmniejszym wątpliwościom",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_LATO",
+      "text": "W lato wybieramy się do Danii.",
+      "suggestion": "Latem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DLA_CZEMU",
+      "text": "Dla czemu ludzie pomagają innym?",
+      "suggestion": "Dlaczego",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_KONTRASCIE_DO",
+      "text": "Medytacja w kontraście do nich może się wydawać nudna, nieciekawa.",
+      "suggestion": "w przeciwieństwie do",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NADER_WSZYSTKO_NADE_WSZYSTKO",
+      "text": "Daria lubiła z nim przebywać, był szczery do bólu i nader wszystko szanował swoją rodzinę, co było godne podziwu.",
+      "suggestion": "nade",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BARDZIEJ_LICZEBNY_LICZNIEJSZY",
+      "text": "Jest mniejszy, delikatniejszy i znacznie bardziej liczebny.",
+      "suggestion": "liczniejszy",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_POWOLANIU_SIE_NA",
+      "text": "Dokument ma uprawomocnić żądanie natychmiastowego wstrzymania wzbogacania uranu w powołaniu się na artykuł 39, względnie 40 Karty NZ.",
+      "suggestion": "powołując się na",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_NAWIAZANIU_DO",
+      "text": "W nawiązaniu do rozmowy telefonicznej przesyłam pytania, które chcę zadać panu Michałowi Kleiberowi.",
+      "suggestion": "Nawiązując do",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PRZY_UDZIALE",
+      "text": "Konferencja odbywała się przy udziale prezydenta.",
+      "suggestion": "z udziałem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_POSRODKU",
+      "text": "W pośrodku rynku stoi studnia.",
+      "suggestion": "Pośrodku",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_WZDLUZ",
+      "text": "Opona pękła na wzdłuż.",
+      "suggestion": "wzdłuż",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_PELNYM_TEGO",
+      "text": "Nałęczów jest uzdrowiskiem w pełnym tego słowa znaczeniu.",
+      "suggestion": "w całym znaczeniu tego słowa",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_DZIS_DZIEN",
+      "text": "Te przesądy utrzymują się do dziś dzień.",
+      "suggestion": "po dziś dzień",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_KAZDA_CENE",
+      "text": "Przemysław chciał zaimponować Jarosławowi za każdą cenę.",
+      "suggestion": "za wszelką cenę",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_SLAD_ZA",
+      "text": "W ślad za tymi działaniami gospodarka się ożywiła.",
+      "suggestion": "W następstwie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_TERAZ",
+      "text": "Do teraz nie wiadomo, za co Jarosław nie lubi Lecha.",
+      "suggestion": "Dotąd",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "OD_STOP_DO_GLOWY",
+      "text": "Rzepowa także czuła, że to gorąco, to zimno przebiega ją od stóp do głowy.",
+      "suggestion": "głów",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_TYM_WZGLEDZIE",
+      "text": "Przykładem klasycznym są w tym względzie dominujące nurty psychologii.",
+      "suggestion": "w tej sprawie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POD_ZAMKNIECIEM",
+      "text": "Towary trzymamy pod zamknięciem.",
+      "suggestion": "w zamknięciu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_DRODZE_WYJATKU",
+      "text": "W drodze wyjątku lokalne władze zezwalają na wjazd.",
+      "suggestion": "Wyjątkowo",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_POSROD",
+      "text": "W pośród serdecznych przyjaciół psy zająca zjadły.",
+      "suggestion": "Pośród",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POD_RZAD",
+      "text": "Mówiłem o tym kilka razy pod rząd.",
+      "suggestion": "z rzędu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_WYJATKIEM",
+      "text": "Za wyjątkiem powyższych sytuacji, będziemy używać i ujawniać informacje o twoim zdrowiu.",
+      "suggestion": "Z wyjątkiem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SPRZED_LATY",
+      "text": "Tego pytania nie postawiłem sobie sprzed laty.",
+      "suggestion": "przed laty",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_WSKUTEK",
+      "text": "Przemysław rozchorował się na wskutek docinków Ludwika.",
+      "suggestion": "wskutek",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_KAZDYM_BADZ",
+      "text": "W każdym bądź razie premier nie miał racji.",
+      "suggestion": "razie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_KAZDYM_BADZ",
+      "text": "W przeciwnym bądź razie premier poda się do dymisji.",
+      "suggestion": "razie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POKI_CO",
+      "text": "Póki co cieszmy się z innych korzyści.",
+      "suggestion": "Na razie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ILEKROC_RAZY",
+      "text": "Ilekroć razy mam problem, nawet najdrobniejszy, to Jezus pomaga mi.",
+      "suggestion": "Ilekroć",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_DZIEN_DZISIEJSZY",
+      "text": "Na dzień dzisiejszy wykonano 40 procent planu.",
+      "suggestion": "Obecnie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_GLORII_CHWALY",
+      "text": "Piłkarska reprezentacja Ekwadoru w glorii chwały wróciła do swojego kraju.",
+      "suggestion": "w glorii",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_CHWILI_OBECNEJ",
+      "text": "W chwili obecnej posiłki przygotowuje kuchnia polowa.",
+      "suggestion": "Obecnie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "JEDNYM_DUSZKIEM",
+      "text": "Pijcie jednym duszkiem.",
+      "suggestion": "duszkiem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_RAZIE_PRZYPADKU",
+      "text": "Postępowanie w razie przypadku niezamierzonego uwolnienia do środowiska",
+      "suggestion": "w razie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PRZEZ_MNIE",
+      "text": "To wszystko przez mnie.",
+      "suggestion": "przeze",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SPOD_LBA",
+      "text": "Nie patrz na mnie spod łba!",
+      "suggestion": "spode",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "GOLONKO",
+      "text": "Lech z Antonim jedli pyszne golonko.",
+      "suggestion": "golonka",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "JA_OSOBISCIE",
+      "text": "Ja osobiście polecam ta metodę jak najbardziej, musisz koniecznie spróbować.",
+      "suggestion": "Sam",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_OKOLICZNOSC",
+      "text": "Zbigniew przesłuchiwał go na okoliczność znieważenia prezydenta.",
+      "suggestion": "w sprawie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_OPARCIU",
+      "text": "W oparciu o te wyliczenia można podjąć decyzję.",
+      "suggestion": "Na podstawie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "GENERALNIE",
+      "text": "Generalnie pan minister ma rację.",
+      "suggestion": "Na ogół",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POD_CZAS_PODCZAS",
+      "text": "Ten eschatologiczny moment jest szczególnie mocno odczuwany pod czas katastrof, wojen, rewolucji i kryzysów cywilizacyjnych.",
+      "suggestion": "podczas",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PUKI_CO_NA_RAZIE",
+      "text": "Ale puki co to nam wystarczy.",
+      "suggestion": "na razie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "MISZ_MASZ_MISZMASZ",
+      "text": "Misz masz 5 września",
+      "suggestion": "Miszmasz",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "MIMO_CHODEM",
+      "text": "On wspomina o tym mimo chodem.",
+      "suggestion": "mimochodem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "O_JEJ",
+      "text": "O jej!",
+      "suggestion": "Ojej",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_UMYŚLNIE",
+      "text": "Józek na umyślnie przeszkadzał na lekcji.",
+      "suggestion": "naumyślnie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_PO_SRODKU",
+      "text": "Zbudowany jest na wzór rynku w Krakowie: dawne domy dookoła, w po środku - duży budynek.",
+      "suggestion": "pośrodku",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PO_NIEWCZASIE",
+      "text": "Dziękuję po niewczasie.",
+      "suggestion": "poniewczasie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIEMNIEJ_NIZ",
+      "text": "Okoliczności kształtują człowieka niemniej niż człowiek kształtuje okoliczności.",
+      "suggestion": "nie mniej",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BY_NAJMNIEJ_NIE",
+      "text": "By najmniej nie mówiłem, że uwielbiam prezesa.",
+      "suggestion": "Bynajmniej",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_OKA_MGNIENIU",
+      "text": "Premier wyniósł się z Sejmu w oka mgnieniu.",
+      "suggestion": "w okamgnieniu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "RAZ_WRAZ",
+      "text": "Raz wraz przerywały jazdę popsute mosty.",
+      "suggestion": "Raz w raz",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POBIEZ",
+      "text": "Pobież pliki",
+      "suggestion": "Pobierz",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "MAZE_O",
+      "text": "Mażę o Romanie w ramionach Wojtusia.",
+      "suggestion": "Marzę",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SP-NIA",
+      "text": "Sp-nia Mlecz. w Garwolinie",
+      "suggestion": "Spółdz.",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_POL_DO",
+      "text": "Jest w pół do pierwszej.",
+      "suggestion": "wpół do",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WKOLO_MACIEJU",
+      "text": "I tak wkoło Macieju.",
+      "suggestion": "w koło Macieju",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_NIE_DAWNA",
+      "text": "Do nie dawna Przemysław szanował Ludwika.",
+      "suggestion": "Do niedawna",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "O_PROCZ",
+      "text": "Lubię wszystkich polityków o prócz premiera.",
+      "suggestion": "oprócz",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_WZAJEM",
+      "text": "Pomóżmy sobie na wzajem!",
+      "suggestion": "nawzajem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_OPODAL",
+      "text": "Sklep jest nie opodal.",
+      "suggestion": "nieopodal",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "Z_PRZED",
+      "text": "Uciekł mi autobus z przed nosa.",
+      "suggestion": "sprzed",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "Z_POMIEDZY",
+      "text": "Wstrętny ryj wychynął z pomiędzy sztachet.",
+      "suggestion": "spomiędzy",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "TAM_TEDY",
+      "text": "Poszliśmy tam tędy.",
+      "suggestion": "tamtędy",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "CO_NIE_CO",
+      "text": "Pora na małe co nie co.",
+      "suggestion": "nieco",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "A_PROPOS",
+      "text": "Mam uwagę a pro po wystąpienia pana ministra.",
+      "suggestion": "à propos",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "GDZIENIEGDZIE",
+      "text": "Gdzie nie gdzie rośnie trawa.",
+      "suggestion": "Gdzieniegdzie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZANADTO",
+      "text": "Za nad to się wygłupiasz.",
+      "suggestion": "Zanadto",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "Z_POSROD",
+      "text": "Jarosław Kaczyński jest najwybitniejszym mężem stanu z pośród wszystkich Kaczyńskich.",
+      "suggestion": "spośród",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_NADTO",
+      "text": "Ten minister aż za nadto przypomina wioskowego głupka.",
+      "suggestion": "zanadto",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "AZ_NADTO",
+      "text": "Ten minister aż nad to przypomina wioskowego głupka.",
+      "suggestion": "nadto",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "Z_POD",
+      "text": "Ten minister przypomina głupka z pod budki z piwem.",
+      "suggestion": "spod",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZNAD",
+      "text": "Pokazał mi zdjęcia z nad oceanu.",
+      "suggestion": "znad",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SPOZA",
+      "text": "Jest to osoba z poza Australii.",
+      "suggestion": "spoza",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "AA_AA",
+      "text": "a/a",
+      "suggestion": "aa",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_TYCH_CZAS",
+      "text": "Co zrobiliśmy do tych czas?",
+      "suggestion": "dotychczas",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_MIAST",
+      "text": "Może za miast dużego tła wystarczy wstawić zwykły kolor?",
+      "suggestion": "zamiast",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_CALE",
+      "text": "Nie zdziwiłem się w cale.",
+      "suggestion": "wcale",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PRZED_WCZORAJ",
+      "text": "Przed wczoraj premier oświadczył, że nie jest wcieleniem Teletubisia.",
+      "suggestion": "Przedwczoraj",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "CO_NIE_MIARA",
+      "text": "Stoi jakiś pałac, wielki aż strach, a przed nim co nie miara bryk i wozów.",
+      "suggestion": "co niemiara",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_POTY",
+      "text": "Do póty będę jadł lody, dopóki będę miał ochotę.",
+      "suggestion": "Dopóty",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WG",
+      "text": "Sklepy wyświetlono w/g lokalizacji.",
+      "suggestion": "wg",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_MOZNA",
+      "text": "Niemożna ufać profesorom, którzy wierzą w Smoka Wawelskiego.",
+      "suggestion": "Nie można",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_WOLNO",
+      "text": "Niewolno ufać profesorom, którzy wierzą w Smoka Wawelskiego.",
+      "suggestion": "Nie wolno",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "TAK_NA_PRAWDE",
+      "text": "Premier tak na prawdę nienawidzi swoich wrogów.",
+      "suggestion": "naprawdę",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "KORZ_KURZ",
+      "text": "Było błoto, była woda, był kórz...",
+      "suggestion": "kurz",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BROZKA_BROSZKA",
+      "text": "To piękna brożka z brylantami.",
+      "suggestion": "broszka",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "RABY_ROMBY",
+      "text": "Kot Alik ma piękny sweterek w rąby.",
+      "suggestion": "romby",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_GRANICA-ZAGRANICA",
+      "text": "Miał 24 wystawy indywidualne w kraju z za granicą.",
+      "suggestion": "i za granicą",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "TUDZIEZ",
+      "text": "Rysio tu dzież Wiesio lubią grzybki w marynacie.",
+      "suggestion": "tudzież",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "QUI_BONO",
+      "text": "A ja pytam, qui bono?",
+      "suggestion": "cui bono",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIELUBI",
+      "text": "Nikt nas nielubi.",
+      "suggestion": "nie lubi",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NOC_WSPOLNEGO",
+      "text": "On nie chce mieć ze mną noc wspólnego.",
+      "suggestion": "nic",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "od_dawana",
+      "text": "Jerzy T. i Artur J. znali się od dawana.",
+      "suggestion": "od dawna",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BEZ_ZAHAMOWAC",
+      "text": "Wzory można zestawiać bez zahamować.",
+      "suggestion": "zahamowań",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "OPERA_SIE_OPIERA",
+      "text": "Rozwiązanie problemu ciemnego pokoju opera się na tym fakcie.",
+      "suggestion": "opiera",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_UCZYC",
+      "text": "Proponuję Panom Inspektorom się do uczyć trochę.",
+      "suggestion": "douczyć",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_PRZYGOTOWAC",
+      "text": "Rolnicy mogą się do przygotować do spisu powszechnego.",
+      "suggestion": "przygotować",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_STAZY",
+      "text": "Są już za staży.",
+      "suggestion": "starzy",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_PAPIEZE",
+      "text": "To projekt tylko na papieże.",
+      "suggestion": "papierze",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DOPOTY_DOPOTY",
+      "text": "Ostrz łańcuch dopóty, dopóty wszystkie uszkodzenia krawędzi tnących zęba nie zostaną usunięte.",
+      "suggestion": "dopóki",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_POROWNANIA_DO",
+      "text": "Różnica dla użytkownika może wynosić nawet 1000 euro netto miesięcznie w porównania do np. diesla.",
+      "suggestion": "porównaniu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WIERZE_WIERZE",
+      "text": "Jeśli pani mówi, że kończyła prawo, ja w to nie wierze osobiście!",
+      "suggestion": "wierzę",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "OBRONA_REKA",
+      "text": "Czy być może to „rekiny” z Rybnika sprawią niespodziankę na skalę krajową i wyjdą z dwumeczu obroną ręką?",
+      "suggestion": "obronną",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "O_BAJ_OBAJ",
+      "text": "O baj przedkładają skuteczność ponad sztukę.",
+      "suggestion": "Obaj",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "JAKO_WIDAC",
+      "text": "Jako widać, jedno działa, a drugie nie.",
+      "suggestion": "Jak widać",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PO_UWAG_POD_UWAG",
+      "text": "Fundusz powinien brać to po uwagę – twierdzi Roman Szełemej.",
+      "suggestion": "pod uwagę",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WZROST_GOSPODARZY_WZROST_GOSPODARCZY",
+      "text": "Niemniej w tym roku wzrost gospodarzy w Chinach wyniesie, według prognozy ADB, 11,5 proc.",
+      "suggestion": "wzrost gospodarczy",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "A_LE_ALE",
+      "text": "Drugi zdążył się schować w pobliskiej klatce schodowej, a le też go złapano.",
+      "suggestion": "ale",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "O_D_OD",
+      "text": "O d maja go nie widziałem.",
+      "suggestion": "Od",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_MNIE_NI_NIE_MNIEJ_NI",
+      "text": "Tak jak się dowiedzieliśmy, nie mnie niż 10% środków przeznaczonych na naukę zostanie przekazane na Narodowe Centrum Badań i Rozwoju.",
+      "suggestion": "mniej",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_ZABRANIE_NIE_ZABRAKNIE",
+      "text": "— Jemu nigdy nie zabranie żywności.",
+      "suggestion": "zabraknie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "TAN_NAPRAWDE",
+      "text": "Co tan naprawdę daje nam ZUS?",
+      "suggestion": "tak",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NIE_WOLO",
+      "text": "Nie wolo tu parkować!",
+      "suggestion": "wolno",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZZA_DAWNYCH",
+      "text": "Zdjęcie jak zza dawnych lat",
+      "suggestion": "za",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "TY_SAMYM",
+      "text": "Nawet wiem, że stoi w ty samym miejscu przy mapie.",
+      "suggestion": "tym samym",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_ZALEZNOSC_OD",
+      "text": "W zależność od potrzeb dostosuj ustawienia.",
+      "suggestion": "W zależności od",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZEZ",
+      "text": "Powiedział mi, żeż to nieprawda.",
+      "suggestion": "że",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POJECI",
+      "text": "Nie zdefiniowałeś pojęci prawdy.",
+      "suggestion": "pojęcia",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "AT_HOC",
+      "text": "To było at hoc.",
+      "suggestion": "ad hoc",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_TYM_SAMYM_CZACIE",
+      "text": "Wtedy też będzie możliwe ustalenie, czy mamy do czynienia z asteroidą typu C, powstałą w tym samym czacie co cały Układ Słoneczny.",
+      "suggestion": "w tym samym czasie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POZNA_NIA",
+      "text": "W tym miejscu zajmiemy się analizą tego, gdzie w polskiej sieci i pozna nią można zrobić naprawdę tanie zakupy.",
+      "suggestion": "poza nią",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SENSU_STRICTE",
+      "text": "To nie jest słownik sensu stricte.",
+      "suggestion": "sensu stricto",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_OBYM_W_OBCYM",
+      "text": "To zdanie w obym języku.",
+      "suggestion": "w obcym",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "M_IM",
+      "text": "Jest współautorem m.im. podręczników akademickich.",
+      "suggestion": "in",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DAJE_VU",
+      "text": "Przeżyłem daje vu.",
+      "suggestion": "déjà vu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "STAL_SIĘ",
+      "text": "Stal się bardzo nieprzyjemny.",
+      "suggestion": "Stał się",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_ZGODNIE_Z",
+      "text": "Decyzje podjęte zostały w zgodnie z długofalowym planem.",
+      "suggestion": "w zgodzie z",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "JA_SIE_OKAZUJE",
+      "text": "Ja się okazuje, ten komputer też był chiński.",
+      "suggestion": "Jak się okazuje",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SZYBO",
+      "text": "Jechałem szybo do domu.",
+      "suggestion": "szybko",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ILOCI",
+      "text": "Mam do sprzedania kłaki w dużej iloci.",
+      "suggestion": "ilości",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "ZA_MAZ",
+      "text": "Jolanta wyszła za maż za Aleksandra.",
+      "suggestion": "za mąż",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POPRALI",
+      "text": "Posłowie poprali inicjatywę ustawodawczą prezydenta.",
+      "suggestion": "poparli",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "OKAZALA_SIE",
+      "text": "Rzekoma artystka okazałą się oszustką.",
+      "suggestion": "okazała się",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "GWALTOWANIE",
+      "text": "Podniósł się gwałtowanie z łóżka.",
+      "suggestion": "gwałtownie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WSZECH_RZECZY",
+      "text": "Człowiek miarą wszech rzeczy.",
+      "suggestion": "wszechrzeczy",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PRZE_TO",
+      "text": "Należy prze to rozumieć organy działające w szkole.",
+      "suggestion": "przez to",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_PRZECIWIENSTWIE_OD",
+      "text": "Ponadto czarownicy w przeciwieństwie od czartów są zdecydowanie liczniejsi.",
+      "suggestion": "w przeciwieństwie do",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POKOJ",
+      "text": "To mój pokuj.",
+      "suggestion": "pokój",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "SYTEMU",
+      "text": "To nowa funkcja tego sytemu.",
+      "suggestion": "systemu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NADAL",
+      "text": "Ludwik na dal nie lubi Romana.",
+      "suggestion": "nadal",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "GLOWNIE_GLOWNIE",
+      "text": "Przemysław interesuje się głownie romansami Ludwika.",
+      "suggestion": "głównie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_POZIOME",
+      "text": "W Głownie nie ma ani jednej opery na poziome.",
+      "suggestion": "poziomie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "W_LINIE",
+      "text": "Dzieci, przynieście na jutro zeszyty w linię.",
+      "suggestion": "w linie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PO_KATEM",
+      "text": "Sprawę zbadano po kątem zgodności z prawem.",
+      "suggestion": "pod",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "POD_KATEM",
+      "text": "Sprawę zbadamy także pod katem zgodności z prawem.",
+      "suggestion": "pod kątem",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "A_NADTO",
+      "text": "Jestem skromnym pedagogiem, a nad to kobietą.",
+      "suggestion": "a nadto",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "DO_NA",
+      "text": "Tesco wchodząc do na nowy rynek zmieniło nazwę na Home Plus.",
+      "suggestion": "do",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "BARDO",
+      "text": "Bardo się martwię.",
+      "suggestion": "Bardzo",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "Z_DANIA_NA_DZIEN",
+      "text": "Politycy żyją z dania na dzień.",
+      "suggestion": "dnia",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WYDAJA_SIE",
+      "text": "Te ceny wydaja się za wysokie.",
+      "suggestion": "wydają się",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "COD_ZIEN",
+      "text": "Chodzę w tunikach na cod zień.",
+      "suggestion": "co dzień",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "MADREJ_GLOWIE_DOSC_PO_SLOWIE",
+      "text": "Powiedzmy sobie szczerze: mądrej głowie dość po słowie.",
+      "suggestion": "mądrej głowie dość dwie słowie",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "PO_LEWO",
+      "text": "Mijamy po lewo budynek Oddziału Regionalnego PTTK w Gorzowie.",
+      "suggestion": "na lewo",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "WSZEM_I_WOBEC",
+      "text": "Ogłaszam wszem i wobec, że rzucę premiera na pożarcie smokowi.",
+      "suggestion": "wszem wobec",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_SZCZERYM_POLU",
+      "text": "Budynki wybudowane od fundamentów na szczerym polu w I połowie XX wieku.",
+      "suggestion": "w szczerym polu",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    },
+    {
+      "rule": "NA_CALE_SZCZESCIE",
+      "text": "Jestem młodym człowiekiem i na całe szczęście większość swojego życia spędziłem w demokratycznej III RP.",
+      "suggestion": "całe szczęście, że",
+      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
+    }
+  ]
+}

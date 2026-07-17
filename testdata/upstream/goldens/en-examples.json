@@ -3008,6 +3008,54 @@
       "text": "currently",
       "suggestion": "",
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/style.xml"
+    },
+    {
+      "rule": "FOR_EVER_GB",
+      "text": "Your texts are stored for ever.",
+      "suggestion": "forever",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-CA/grammar.xml"
+    },
+    {
+      "rule": "GROUND_VS_MINCED",
+      "text": "Do vegetarians eat ground beef?",
+      "suggestion": "minced beef",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "GOT_GOTTEN",
+      "text": "He has gotten some food.",
+      "suggestion": "got",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "GOT_GOTTEN",
+      "text": "He's gotten up on the wrong side of bed.",
+      "suggestion": "got",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "ANYMORE",
+      "text": "I don't want to do this anymore.",
+      "suggestion": "any more",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "UNION_JACK",
+      "text": "The union jack is the national flag of the UK.",
+      "suggestion": "Union Jack",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-GB/grammar.xml"
+    },
+    {
+      "rule": "FOR_EVER_US",
+      "text": "Your texts are stored for ever.",
+      "suggestion": "forever",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-US/grammar.xml"
+    },
+    {
+      "rule": "AFTERWARDS_US",
+      "text": "We visited him afterwards.",
+      "suggestion": "afterward",
+      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/en-US/grammar.xml"
     }
   ]
 }
