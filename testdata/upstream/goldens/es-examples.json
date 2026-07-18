@@ -784,6 +784,36 @@
       "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
     },
     {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "La ama se fue.",
+      "suggestion": "El ama",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "La Ática es una región griega.",
+      "suggestion": "El Ática",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "Le dieron la alta en el hospital.",
+      "suggestion": "el alta",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "Le dieron la alta médica en el hospital.",
+      "suggestion": "el alta",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DET_FEM_NOM_FEM",
+      "text": "Me gusta la agua que hay ahí.",
+      "suggestion": "el agua",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
       "rule": "DE_BASA",
       "text": "De basa en otra solución.",
       "suggestion": "Se basa",
@@ -805,6 +835,48 @@
       "rule": "DE_LAS",
       "text": "La situación del as personas.",
       "suggestion": "de las personas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DHONDT",
+      "text": "La regla d'Hondt.",
+      "suggestion": "D'Hondt",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DHONDT",
+      "text": "La regla d'Hont.",
+      "suggestion": "D'Hondt",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DHONDT",
+      "text": "La regla de Hondt.",
+      "suggestion": "D'Hondt",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_00",
+      "text": "Lineas de actuación.",
+      "suggestion": "Líneas",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_01",
+      "text": "Capitulo 3.",
+      "suggestion": "Capítulo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_01",
+      "text": "El legitimo heredero.",
+      "suggestion": "legítimo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "DIACRITICS_01",
+      "text": "Sus pretensiones, si no legitimas, por lo menos eran pintorescas.",
+      "suggestion": "legítimas",
       "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
     },
     {
@@ -1252,6 +1324,12 @@
       "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/style.xml"
     },
     {
+      "rule": "MIN_DIAS_SEMANA",
+      "text": "Todos los Lunes son tristes.",
+      "suggestion": "lunes",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
       "rule": "MONTANA",
       "text": "húmedas montanas por encima de los 3000 m.",
       "suggestion": "montañas",
@@ -1660,9 +1738,27 @@
       "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
     },
     {
+      "rule": "TAJO_TRAJO",
+      "text": "Se lo tajo del Japón.",
+      "suggestion": "trajo",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
       "rule": "TAL_ES_ASI",
       "text": "Tal es así que los resultados fueron positivos.",
       "suggestion": "Tanto es así que",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TARTA_TRATA",
+      "text": "Se tarta de otro tema.",
+      "suggestion": "trata",
+      "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
+    },
+    {
+      "rule": "TE_NO",
+      "text": "Si te no mienten, vendrán mañana.",
+      "suggestion": "no te",
       "source": "languagetool-language-modules/es/src/main/resources/org/languagetool/rules/es/grammar.xml"
     },
     {

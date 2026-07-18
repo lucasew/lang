@@ -43,8 +43,30 @@ def local(tag: str | None) -> str:
     return tag.split("}")[-1]
 
 
-def expand_entities(raw: str) -> str:
+def load_entity_file(path: Path) -> dict[str, str]:
+    """Parse <!ENTITY name "val"> definitions from an entities.ent file."""
+    if not path.is_file():
+        return {}
+    text = path.read_text(encoding="utf-8", errors="replace")
+    out: dict[str, str] = {}
+    for m in RE_ENTITY.finditer(text):
+        name = m.group(1)
+        val = m.group(3) if m.group(3) is not None else m.group(4)
+        out[name] = val
+    return out
+
+
+def expand_entities(raw: str, base_dir: Path | None = None) -> str:
     entities: dict[str, str] = {}
+    # Resolve parameter-entity SYSTEM includes before stripping DOCTYPE
+    # (e.g. <!ENTITY % entities SYSTEM "../../resource/es/entities.ent">).
+    if base_dir is not None:
+        for m in re.finditer(
+            r'<!ENTITY\s+%\s+([A-Za-z_][\w.-]*)\s+SYSTEM\s+"([^"]+)"\s*>',
+            raw,
+        ):
+            ent_path = (base_dir / m.group(2)).resolve()
+            entities.update(load_entity_file(ent_path))
     for m in RE_ENTITY.finditer(raw):
         name = m.group(1)
         val = m.group(3) if m.group(3) is not None else m.group(4)
@@ -89,7 +111,7 @@ def expand_entities(raw: str) -> str:
 
 def parse_rules_xml(path: Path) -> ET.Element:
     raw = path.read_text(encoding="utf-8", errors="replace")
-    raw = expand_entities(raw)
+    raw = expand_entities(raw, base_dir=path.parent)
     try:
         return ET.fromstring(raw.encode("utf-8"))
     except ET.ParseError as e:
@@ -153,6 +175,11 @@ def serialize_token(tok: ET.Element) -> dict:
     excs = []
     for child in tok:
         if local(child.tag) != "exception":
+            continue
+        # Soft path has no tagger for exception postag filters (e.g. ama|haya
+        # only when V.[IS].*). Drop those so surface-only soft matching does not
+        # over-exclude (DET_FEM_NOM_FEM "La ama se fue.").
+        if (child.get("postag") or "").strip() or (child.get("postag_regexp") or "").strip():
             continue
         e = {"text": (child.text or "").strip()}
         for k in ("regexp", "case_sensitive", "negate"):

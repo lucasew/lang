@@ -149,6 +149,20 @@
       <message>Si es un comparativo, se escribe sin tilde. <suggestion>como</suggestion></message>
       <short>COMO_COMPARATIVO</short>
     </rule>
+    <rule id="DIACRITICS_00" name="linea/línea">
+      <pattern>
+        <token regexp="yes">linea|lineas|entrelinea|entrelineas|arboles|lagrima|lagrimas|victima|victimas|solida|solidas|solido|adan|magnifico|oleo|ovulo|oxido|oxigeno|pacifico|petroleo|pixeles|petalo|azucares|canceres|capsula|capsulas|indice|indices|espontaneo|espontanea|espontaneas|bufalo|bufala|bufalas|ovalo|ovalos|astrologo|astrologa|astrologas|petalos|clausula|clausulas|decrepito|decrepita|decrepitas|tempano|purpurea|purpureas|recamara|recamaras|embolo|epitome|epitomes|estomago|debito|ignifuga|ignifugas|ignifugo|epilogo</token>
+      </pattern>
+      <message>Si es adjetivo o nombre, se escribe con tilde. <suggestion>{suggestion}</suggestion></message>
+      <short>DIACRITICS_00</short>
+    </rule>
+    <rule id="DIACRITICS_01" name="verbo/adj o nombre 01">
+      <pattern>
+        <token regexp="yes">capitulo|titulo|medico|nauseas|nausea|cubica|cubicas|cubico|intimo|ilegitimo|retrograda|retrogradas|ulcera|ulceras|ilegitima|ilegitimas|legitimo|legitimas|matriculas|autentica|autenticas|autentico</token>
+      </pattern>
+      <message>Si es adjetivo o nombre, se escribe con tilde. <suggestion>{suggestion}</suggestion></message>
+      <short>DIACRITICS_01</short>
+    </rule>
     <rule id="GRAFICO" name="grafico/gráfico">
       <pattern>
         <token regexp="yes">graficas?|grafico</token>
@@ -593,6 +607,15 @@
       <message>El verbo adecuado es «desternillar». <suggestion>\1</suggestion></message>
       <short>DESTORNILLAR_RISA</short>
     </rule>
+    <rule id="DHONDT" name="D'Hondt">
+      <pattern>
+        <token regexp="yes">de?</token>
+        <token regexp="yes" min="0">['’´`]</token>
+        <token regexp="yes">Hond?t?</token>
+      </pattern>
+      <message>Error ortográfico. <suggestion>D'Hondt</suggestion></message>
+      <short>DHONDT</short>
+    </rule>
     <rule id="EN_LA_MEDIDA_EN_QUE" name="en la medida *de que/en que">
       <pattern>
         <token>en</token>
@@ -794,6 +817,33 @@
       </pattern>
       <message>Posible confusión. <suggestion>\3</suggestion></message>
       <short>SE_LO_ENTREGADA</short>
+    </rule>
+    <rule id="TAJO_TRAJO" name="tajo/trajo">
+      <pattern>
+        <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes"></token>
+        <token>tajo</token>
+      </pattern>
+      <message>Posible confusión. <suggestion>trajo</suggestion></message>
+      <short>TAJO_TRAJO</short>
+    </rule>
+    <rule id="TARTA_TRATA" name="tarta/trata">
+      <pattern>
+        <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes">
+          <exception regexp="yes">la|las</exception>
+        </token>
+        <token regexp="yes">tartas?</token>
+      </pattern>
+      <message>¿Quería decir <suggestion>\2</suggestion>?</message>
+      <short>TARTA_TRATA</short>
+    </rule>
+    <rule id="TE_NO" name="te no/no te (orden incorrecto)">
+      <pattern>
+        <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes"></token>
+        <token regexp="yes">no|ni</token>
+        <token postag="V.[SI].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Orden incorrecto. <suggestion>\2 \1</suggestion></message>
+      <short>TE_NO</short>
     </rule>
   </category>
   <category id="CONFUSIONS" name="Confusiones">
@@ -1524,7 +1574,7 @@
   <category id="SEMANTICS" name="Semántica">
     <rule id="ANY20011_2011" name="*20011/2011">
       <pattern>
-        <token regexp="yes">de|el|en|a|l|años?|cursos?|académicos?||</token>
+        <token regexp="yes">de|el|en|a|l|años?|cursos?|académicos?|enero|febrero|marzo|abril|mayo|junio|julio|agosto|sep?tiembre|octubre|noviembre|diciembre|ene|feb|mar|abr|may|jun|jul|ago|sep|set|oct|nov|dic</token>
         <token regexp="yes">200[12]\d</token>
       </pattern>
       <message>¿Quería decir <suggestion>\2</suggestion>?</message>
@@ -1532,11 +1582,11 @@
     </rule>
     <rule id="ES_DATE_WEEKDAY_CURRENTYEAR" name="ES_DATE_WEEKDAY_CURRENTYEAR">
       <pattern>
-        <token regexp="yes">|</token>
+        <token regexp="yes">lunes|martes|miércoles|jueves|viernes|sábado|domingo|lu|ma|mi|ju|vi|sa|do</token>
         <token min="0">,</token>
         <token regexp="yes">\d\d?</token>
         <token regexp="yes" min="0">de|del</token>
-        <token regexp="yes">|</token>
+        <token regexp="yes">enero|febrero|marzo|abril|mayo|junio|julio|agosto|sep?tiembre|octubre|noviembre|diciembre|ene|feb|mar|abr|may|jun|jul|ago|sep|set|oct|nov|dic</token>
       </pattern>
       <message>Si se refiere al año actual ({currentYear}), esta fecha no es un {day} sino un <suggestion>{realDay}</suggestion>.</message>
       <short>ES_DATE_WEEKDAY_CURRENTYEAR</short>
@@ -1595,9 +1645,7 @@
     </rule>
     <rule id="MEXICO" name="México/Méjico" default="on">
       <pattern>
-        <token regexp="yes">.*mejic.*|Méjico|Tejas
-          <exception>tejas</exception>
-        </token>
+        <token regexp="yes">.*mejic.*|Méjico|Tejas</token>
       </pattern>
       <message>Grafía recomendada. <suggestion>\1</suggestion></message>
       <short>MEXICO</short>
@@ -1694,6 +1742,16 @@
     </rule>
   </category>
   <category id="AGREEMENT_NOUNS" name="Concordancia en grupos nominales">
+    <rule id="DET_FEM_NOM_FEM" name="la agua&gt;el agua">
+      <pattern>
+        <token>la</token>
+        <token regexp="yes">acqua|Ática|abra|África|acta|afta|agua|ala|alba|alca|alga|algia|alma|alta|alza|ama|anca|ancla|ansia|ara|arca|archa|aria|arma|harpa|arpa|arria|arte|asa|ascua|asma|aspa|asta|aula|aura|ave|aya|haba|habla|hacha|hada|hambre|hampa|haya|ágata|ágora|águila|álgebra|áncora|ánfora|ánima|área|árnica
+          <exception case_sensitive="yes">ática</exception>
+        </token>
+      </pattern>
+      <message>En este caso se usa el artículo determinado masculino. <suggestion>el \2</suggestion></message>
+      <short>DET_FEM_NOM_FEM</short>
+    </rule>
     <rule id="EL_AGRAVANTE" name="El agravante y el atenuante">
       <pattern>
         <token postag="D..M.." postag_regexp="yes"></token>
@@ -1738,7 +1796,7 @@
         <token regexp="yes" case_sensitive="yes">eso|Eso</token>
       </pattern>
       <message>¿Quería decir <suggestion>ESO</suggestion> (Educación Secundaria Obligatoria)?</message>
-      <short>ESO</short>
+      <short>Mayúsculas y minúsculas</short>
     </rule>
     <rule id="MAY_ABREVIATURA" name="mayúscula en algunas abreviaturas">
       <pattern>
@@ -1746,7 +1804,14 @@
         <token>.</token>
       </pattern>
       <message>Esta abreviatura se escribe con mayúscula inicial. <suggestion>\1</suggestion></message>
-      <short>MAY_ABREVIATURA</short>
+      <short>Mayúsculas y minúsculas</short>
+    </rule>
+    <rule id="MIN_DIAS_SEMANA" name="Días de la semana en minúscula">
+      <pattern>
+        <token regexp="yes">Lunes|Martes|Miércoles|Jueves|Viernes|Sábados?|Domingos?</token>
+      </pattern>
+      <message>Los días de la semana se escriben en minúsculas, excepto si forman parte de un nombre propio. <suggestion>\1</suggestion></message>
+      <short>Mayúsculas y minúsculas</short>
     </rule>
   </category>
 </rules>
