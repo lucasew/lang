@@ -1,0 +1,221 @@
+package commandline
+
+import (
+	"os"
+	"path/filepath"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
+	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
+)
+
+// RegisterEnglishHybridDisambiguator installs Java EnglishHybridDisambiguator on lt:
+// spelling_global MultiWordChunker → /en/multiwords.txt chunker → XmlRuleDisambiguator(lang, true).
+// Resources must be official LT files (inspiration / vendored upstream), not soft extracts.
+//
+// Java: org.languagetool.tagging.en.EnglishHybridDisambiguator
+func RegisterEnglishHybridDisambiguator(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	if lt == nil {
+		return false
+	}
+	hybrid := entag.NewEnglishHybridDisambiguator()
+
+	// Java: MultiWordChunker.getInstance("/spelling_global.txt", true, true, false, tagForNotAddingTags)
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+			DefaultTag:            disambiguation.TagForNotAddingTags,
+		}); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			hybrid.GlobalChunker = c
+		}
+	}
+
+	// Java: MultiWordChunker.getInstance("/en/multiwords.txt", true, true, false)
+	if p := DiscoverEnglishMultiwords(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			c.SetRemovePreviousTags(true)
+			hybrid.Chunker = c
+		}
+	}
+
+	// Java: new XmlRuleDisambiguator(lang, true) after multiword chunkers.
+	// DisambiguationRuleLoader is still a simplified subset of full disambiguation.xml;
+	// applying a partial rule set corrupts POS (not Java-faithful). Wire XML only when
+	// the loader is complete — until then multiword stage alone is the faithful subset.
+	// DiscoverLanguageDisambiguationXML documents the official path for the next sector.
+	_ = DiscoverLanguageDisambiguationXML(opts, "en")
+	_ = DiscoverGlobalDisambiguationXML(opts)
+
+	if hybrid.GlobalChunker == nil && hybrid.Chunker == nil && hybrid.RulesDisambiguator == nil {
+		return false
+	}
+	lt.Disambiguator = hybrid
+	return true
+}
+
+func openMultiWordChunker(path string, settings disambiguation.MultiWordChunkerSettings) (*disambiguation.MultiWordChunker, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	return disambiguation.NewMultiWordChunkerFromReader(f, settings)
+}
+
+// loadXmlRuleDisambiguator loads official disambiguation.xml (+ optional global).
+// Java XmlRuleDisambiguator(language, useGlobalDisambiguation).
+func loadXmlRuleDisambiguator(lang string, opts *CommandLineOptions, useGlobal bool) *disambigrules.XmlRuleDisambiguator {
+	base := languageBaseCode(lang)
+	var all []*disambigrules.DisambiguationPatternRule
+	var uni *patterns.UnifierConfiguration
+
+	if p := DiscoverLanguageDisambiguationXML(opts, base); p != "" {
+		rules, u, err := loadDisambigRulesFile(p, base)
+		if err == nil {
+			all = append(all, rules...)
+			if uni == nil {
+				uni = u
+			}
+		}
+	}
+	if useGlobal {
+		if p := DiscoverGlobalDisambiguationXML(opts); p != "" {
+			rules, u, err := loadDisambigRulesFile(p, "global")
+			if err == nil {
+				all = append(all, rules...)
+				if uni == nil {
+					uni = u
+				}
+			}
+		}
+	}
+	if len(all) == 0 {
+		return nil
+	}
+	x := disambigrules.NewXmlRuleDisambiguator(all)
+	x.UnifierConfig = uni
+	return x
+}
+
+func loadDisambigRulesFile(path, languageCode string) ([]*disambigrules.DisambiguationPatternRule, *patterns.UnifierConfiguration, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer f.Close()
+	loader := disambigrules.NewDisambiguationRuleLoader()
+	return loader.GetRulesAndUnifierFromReader(f, languageCode, path)
+}
+
+// DiscoverSpellingGlobal finds official spelling_global.txt.
+// Java: /org/languagetool/resource/spelling_global.txt
+func DiscoverSpellingGlobal(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_SPELLING_GLOBAL"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "spelling_global.txt"),
+			filepath.Join(opts.GetDataDir(), "resource", "spelling_global.txt"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", "spelling_global.txt"),
+		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
+			"org", "languagetool", "resource", "spelling_global.txt"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+// DiscoverLanguageDisambiguationXML finds official disambiguation.xml for lang.
+// Not soft extracts. CLI --disambiguation-file / LANG_DISAMBIGUATION_FILE override.
+func DiscoverLanguageDisambiguationXML(opts *CommandLineOptions, lang string) string {
+	base := languageBaseCode(lang)
+	if base == "" {
+		return ""
+	}
+	if opts != nil {
+		if p := opts.GetDisambiguationFile(); p != "" {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+		}
+	}
+	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), base, "disambiguation.xml"),
+			filepath.Join(opts.GetDataDir(), "resource", base, "disambiguation.xml"),
+			filepath.Join(opts.GetDataDir(), "upstream", base, "resource", "disambiguation.xml"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", base, "resource", "disambiguation.xml"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+			"src", "main", "resources", "org", "languagetool", "resource", base, "disambiguation.xml"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+// DiscoverGlobalDisambiguationXML finds official disambiguation-global.xml.
+// Java: org/languagetool/resource/disambiguation-global.xml
+func DiscoverGlobalDisambiguationXML(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_DISAMBIGUATION_GLOBAL"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "disambiguation-global.xml"),
+			filepath.Join(opts.GetDataDir(), "resource", "disambiguation-global.xml"),
+			filepath.Join(opts.GetDataDir(), "upstream", "resource", "disambiguation-global.xml"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", "resource", "disambiguation-global.xml"),
+		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
+			"org", "languagetool", "resource", "disambiguation-global.xml"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}

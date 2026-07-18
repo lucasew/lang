@@ -174,7 +174,9 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			}
 			// Java English.createDefaultChunker().
 			en.RegisterEnglishChunker(lt)
-			// Soft hybrid disambiguator removed; wire Java MultiWordChunker + XmlRuleDisambiguator later.
+			// Java English.createDefaultDisambiguator(): EnglishHybridDisambiguator
+			// (spelling_global → multiwords → XmlRuleDisambiguator with global).
+			_ = RegisterEnglishHybridDisambiguator(lt, opts)
 		} else {
 			if posPath := DiscoverLanguagePOSDict(opts, base); posPath != "" {
 				// Official Morfologik POS dicts (FSA5/CFSA2) like Java createDefaultTagger().

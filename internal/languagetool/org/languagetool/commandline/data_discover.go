@@ -106,99 +106,9 @@ func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
 	return ""
 }
 
-// DiscoverEnglishTyposFile finds soft EN typo→suggestion TSV
-// (LANG_EN_TYPOS_FILE, data-dir/spelling/en-typos.tsv, walk-up testdata).
-func DiscoverEnglishTyposFile(opts *CommandLineOptions) string {
-	if p := os.Getenv("LANG_EN_TYPOS_FILE"); p != "" {
-		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-			return p
-		}
-	}
-	if opts != nil && opts.GetDataDir() != "" {
-		for _, rel := range []string{
-			filepath.Join(opts.GetDataDir(), "spelling", "en-typos.tsv"),
-			filepath.Join(opts.GetDataDir(), "en-typos.tsv"),
-		} {
-			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
-				return rel
-			}
-		}
-	}
-	return WalkUpFind("", filepath.Join("testdata", "spelling", "en-typos.tsv"))
-}
-
-// DiscoverEnglishIgnoreSpellingList finds soft EN ignore-spelling word list
-// (CLI --ignore-spelling-file, LANG_IGNORE_SPELLING_FILE, data-dir, walk-up).
-func DiscoverEnglishIgnoreSpellingList(opts *CommandLineOptions) string {
-	if opts != nil {
-		if p := opts.GetIgnoreSpellingFile(); p != "" {
-			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-				return p
-			}
-			// still return configured path for diagnostics even if missing
-			return p
-		}
-	}
-	if p := os.Getenv("LANG_IGNORE_SPELLING_FILE"); p != "" {
-		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-			return p
-		}
-	}
-	if opts != nil && opts.GetDataDir() != "" {
-		for _, rel := range []string{
-			filepath.Join(opts.GetDataDir(), "disambiguation", "en-ignore-spelling.txt"),
-			filepath.Join(opts.GetDataDir(), "en-ignore-spelling.txt"),
-		} {
-			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
-				return rel
-			}
-		}
-	}
-	return WalkUpFind("", filepath.Join("testdata", "disambiguation", "en-ignore-spelling.txt"))
-}
-
-// DiscoverEnglishSoftDisambiguationXML finds soft EN disambiguation XML
-// (CLI --disambiguation-file, LANG_DISAMBIGUATION_FILE, data-dir, walk-up).
-// Prefers vendored upstream extract over the legacy hand-written soft file.
-func DiscoverEnglishSoftDisambiguationXML(opts *CommandLineOptions) string {
-	if opts != nil {
-		if p := opts.GetDisambiguationFile(); p != "" {
-			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-				return p
-			}
-			return p
-		}
-	}
-	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
-		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-			return p
-		}
-	}
-	if opts != nil && opts.GetDataDir() != "" {
-		for _, rel := range []string{
-			filepath.Join(opts.GetDataDir(), "disambiguation", "en-disambiguation-upstream-soft.xml"),
-			filepath.Join(opts.GetDataDir(), "disambiguation", "en-soft.xml"),
-			filepath.Join(opts.GetDataDir(), "en-soft-disambiguation.xml"),
-		} {
-			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
-				return rel
-			}
-		}
-	}
-	for _, rel := range []string{
-		filepath.Join("testdata", "disambiguation", "en-disambiguation-upstream-soft.xml"),
-		filepath.Join("testdata", "upstream", "en", "en-disambiguation-from-upstream-soft.xml"),
-		filepath.Join("testdata", "disambiguation", "en-soft.xml"),
-	} {
-		if p := WalkUpFind("", rel); p != "" {
-			return p
-		}
-	}
-	return ""
-}
-
-// DiscoverEnglishMultiwords finds multiword dict for soft multiword disambiguation.
-// Prefers LANG_EN_MULTIWORDS, data-dir, vendored upstream multiwords, then legacy soft list.
+// DiscoverEnglishMultiwords finds official /en/multiwords.txt (Java MultiWordChunker path).
+// Prefers LANG_EN_MULTIWORDS, data-dir, vendored upstream, inspiration submodule.
+// Soft multiword lists are not used.
 func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 	if p := os.Getenv("LANG_EN_MULTIWORDS"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
@@ -207,8 +117,8 @@ func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 	}
 	if opts != nil && opts.GetDataDir() != "" {
 		for _, rel := range []string{
-			filepath.Join(opts.GetDataDir(), "disambiguation", "en-multiwords-soft.txt"),
 			filepath.Join(opts.GetDataDir(), "en", "multiwords.txt"),
+			filepath.Join(opts.GetDataDir(), "upstream", "en", "resource", "multiwords.txt"),
 			filepath.Join(opts.GetDataDir(), "multiwords.txt"),
 		} {
 			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
@@ -216,11 +126,9 @@ func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 			}
 		}
 	}
-	// Prefer vendored upstream multiwords, then legacy soft list, then submodule/third_party.
 	relPaths := []string{
-		filepath.Join("testdata", "disambiguation", "en-multiwords-upstream.txt"),
 		filepath.Join("testdata", "upstream", "en", "resource", "multiwords.txt"),
-		filepath.Join("testdata", "disambiguation", "en-multiwords-soft.txt"),
+		filepath.Join("testdata", "disambiguation", "en-multiwords-upstream.txt"),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "multiwords.txt"),
 		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "multiwords.txt"),
 	}
@@ -363,36 +271,6 @@ func languageBaseCode(lang string) string {
 		base = lang[:i]
 	}
 	return strings.ToLower(base)
-}
-
-// DiscoverLanguageSoftDisambiguationXML finds {lang}-disambiguation-upstream-soft.xml
-// (vendored soft extract of official disambiguation.xml). Prefer CLI override when set.
-func DiscoverLanguageSoftDisambiguationXML(opts *CommandLineOptions, lang string) string {
-	base := languageBaseCode(lang)
-	if base == "" {
-		return ""
-	}
-	if opts != nil {
-		if p := opts.GetDisambiguationFile(); p != "" {
-			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-				return p
-			}
-			return p
-		}
-	}
-	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
-		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-			return p
-		}
-	}
-	if opts != nil && opts.GetDataDir() != "" {
-		cand := filepath.Join(opts.GetDataDir(), "disambiguation", base+"-disambiguation-upstream-soft.xml")
-		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
-			return cand
-		}
-	}
-	rel := filepath.Join("testdata", "disambiguation", base+"-disambiguation-upstream-soft.xml")
-	return WalkUpFind("", rel)
 }
 
 // DiscoverLanguageMultiwords finds official multiwords.txt for lang

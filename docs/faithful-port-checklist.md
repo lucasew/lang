@@ -52,7 +52,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.10 | Soft expand / backref invent removed if not Java-equivalent | [ ] |
 | 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [ ] `english_chunker.go` still soft-heavy |
 | 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [ ] `soft_rule_meta.go` still present |
-| 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [ ] `data_discover.go` |
+| 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
 | 1.14 | Soft picky XML load paths removed from server text checker | [ ] `text_checker_check.go` |
 | 1.15 | Demo/map tagger & speller not presented as default engine (or moved outside when freeze lifts) | [ ] `DemoEnglish*`, `LANG_DEMO_SPELLER` |
 | 1.16 | Invent multiword lists / embedded soft multiwords gone | [ ] audit `register` / multiword defaults |
@@ -71,7 +71,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 |---|--------|--------|
 | 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [ ] |
 | 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] |
-| 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [ ] |
+| 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN multiwords + spelling_global wired |
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] path wiring exists; coverage incomplete |
 | 2.5 | Engine loads **same** speller dicts | [~] EN partial |
 | 2.6 | Engine loads **same** SRX / tokenizer resources | [~] |
@@ -92,9 +92,9 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 |---|----------------------|--------|--------|
 | 3.A.1 | Tokenizers (word + sentence / SRX) | 1:1 with Java for supported langs | [~] partial |
 | 3.A.2 | Taggers (Morfologik / language-specific) | 1:1 readings | [~] |
-| 3.A.3 | `MultiWordChunker` | Official multiwords only | [ ] |
+| 3.A.3 | `MultiWordChunker` | Official multiwords only | [~] EN hybrid multiword stage |
 | 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [ ] |
-| 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [ ] deleted soft; real twins TBD |
+| 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [~] EN multiword stages wired; XML stage deferred until loader 1:1 |
 | 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [ ] |
 | 3.A.7 | `JLanguageTool` analyze/check wiring | Same stages, mode flags | [~] |
 | 3.A.8 | Rule match pipeline (enable/disable, categories, text-level) | Java semantics | [~] |
