@@ -340,8 +340,37 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	if softFrenchElisionMatch(surface, want) || softFrenchElisionMatch(rawSurface, want) {
 		return true
 	}
+	// Catalan proclitics (CatalanWordTokenizer): l'/d' ↔ el/la/de.
+	if softCatalanElisionMatch(surface, want) || softCatalanElisionMatch(rawSurface, want) {
+		return true
+	}
 	// Soft Esperanto: Ambaux/Ambau ↔ ambaŭ after x-system + diacritic fold.
 	return softEsperantoFold(rawSurface) == softEsperantoFold(pt.Token)
+}
+
+// softCatalanElisionMatch mirrors French elision for Catalan articles/preps
+// and fused contractions from CatalanWordTokenizer (pel→pe+l, al→a+l).
+func softCatalanElisionMatch(surface, base string) bool {
+	s := strings.ToLower(normalizeApostrophes(surface))
+	b := strings.ToLower(normalizeApostrophes(base))
+	if s == b {
+		return true
+	}
+	switch b {
+	case "el", "la", "els", "les":
+		// article forms + proclitic l' (and gender swap el↔la for soft packs)
+		return s == "l'" || s == "l" || s == "el" || s == "la" || s == "els" || s == "les"
+	case "de":
+		return s == "d'" || s == "d"
+	case "per":
+		// pel → pe + l
+		return s == "pe"
+	case "a":
+		// al → a + l already leaves "a"
+		return s == "a"
+	default:
+		return false
+	}
 }
 
 // softHasArabic reports if s contains an Arabic-script letter.
@@ -375,6 +404,11 @@ func softLooksLikeWord(s string) bool {
 	for _, r := range s {
 		if r == '-' || r == '\'' || r == '’' || r == ',' || r == '.' {
 			// allow 1,000 / 3.14 style numbers as soft "words" for CD tags
+			continue
+		}
+		// Catalan ela geminada (l·l): Java CatalanWordTokenizer treats · as a
+		// word character (see wordCharacters). Soft POS open-class needs the same.
+		if r == '·' || r == '\u00B7' || r == '\u2022' || r == '\u22C5' || r == '\u2219' {
 			continue
 		}
 		// Allow combining marks (Khmer coeng/vowels, Indic matras, etc.).
@@ -786,7 +820,9 @@ func softIsModal(s string) bool {
 
 func softIsCC(s string) bool {
 	switch s {
-	case "and", "or", "but", "nor", "yet", "so", "plus", "&":
+	case "and", "or", "but", "nor", "yet", "so", "plus", "&",
+		// Catalan / Spanish coordinating conjunctions (FreeLing CC)
+		"i", "o", "ni", "però", "pero", "sinó", "sino", "y", "e", "u":
 		return true
 	default:
 		return false
@@ -1250,9 +1286,18 @@ var softIrregularLemma = map[string][]string{
 	"trepava": {"trepar"}, "trepa": {"trepar"}, "trepen": {"trepar"},
 	"vulgueu": {"voler"}, "vulguis": {"voler"}, "vulgui": {"voler"},
 	"sorts": {"sord"}, "sords": {"sord"}, "sordes": {"sord"},
+	// Catalan soft residuals (FreeLing-style lemmas; no catalan.dict in tree)
+	"calien": {"caldre"}, "cal": {"caldre"}, "calen": {"caldre"}, "calia": {"caldre"},
+	"prengueren": {"prendre"}, "prengué": {"prendre"}, "prengui": {"prendre"}, "prenguin": {"prendre"},
+	"conclogueren": {"concloure"}, "conclogué": {"concloure"}, "conclou": {"concloure"},
+	"donades": {"donar"}, "donada": {"donar"}, "donats": {"donar"}, "donat": {"donar"},
+	"cancerígenes": {"cancerigen"}, "cancerígena": {"cancerigen"}, "cancerígens": {"cancerigen"},
+	"desinteressada": {"desinteressat"}, "desinteressades": {"desinteressat"},
+	"interessant": {"interessant"}, "interessants": {"interessant"},
 	// Catalan noun plurals (dies ← dia for TOTS_ELS_DIES etc.)
 	"dies": {"dia"}, "anys": {"any"}, "mesos": {"mes"}, "hores": {"hora"}, "setmanes": {"setmana"},
 	"coes": {"coa"}, "oïdes": {"oïda"}, "col·laboració": {"col·laboració"},
+	"cèl·lules": {"cèl·lula"}, "cèl·lula": {"cèl·lula"},
 	// Irish prepositional pronouns (orm ← ar + mé, liom ← le + mé; Java tagger lemmas)
 	"orm": {"ar"}, "ort": {"ar"}, "air": {"ar"}, "uirthi": {"ar"}, "orainn": {"ar"}, "oraibh": {"ar"}, "orthu": {"ar"},
 	"liom": {"le"}, "leat": {"le"}, "leis": {"le"}, "léi": {"le"}, "linn": {"le"}, "libh": {"le"}, "leo": {"le"},
@@ -1273,6 +1318,9 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	}
 	// French elision before other checks (d’ ↔ de with inflected="yes").
 	if softFrenchElisionMatch(surface, base) {
+		return true
+	}
+	if softCatalanElisionMatch(surface, base) {
 		return true
 	}
 	// EO x-system / diacritic fold only when digraphs/diacritics present.

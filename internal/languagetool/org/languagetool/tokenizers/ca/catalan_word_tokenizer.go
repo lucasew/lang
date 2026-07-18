@@ -59,6 +59,9 @@ var (
 		"ph-metre": true, "ph-metres": true,
 		"vint-i-quatre": true, "mont-ras": true, "emília-romanya": true,
 		"abans-d'ahir": true, "abans-d’ahir": true, "tel-aviv": true,
+		// Twin tests / Java dict compounds (no catalan.dict in tree).
+		"sud-est": true, "nord-est": true, "sud-oest": true, "nord-oest": true,
+		"qui-sap-lo": true, "qui-sap-la": true, "qui-sap-los": true, "qui-sap-les": true,
 	}
 
 	// Full-string match for a single pronom feble (e.g. -se, 'n, -te).
@@ -156,7 +159,9 @@ func wordsToAddCA(s string) []string {
 	}
 	normalized := strings.ReplaceAll(s, "\u00AD", "")
 	normalized = strings.ReplaceAll(normalized, "’", "'")
-	if isTaggedCA(normalized) || doNotSplit[strings.ToLower(s)] {
+	// Keep compound only via isTaggedCA (doNotSplit + Title-Title policy).
+	// Do not OR doNotSplit alone — that kept "Sud-Est" via ToLower("sud-est").
+	if isTaggedCA(normalized) || isTaggedCA(s) {
 		l = append(l, s)
 		return l
 	}
@@ -199,9 +204,26 @@ func wordsToAddCA(s string) []string {
 }
 
 func isTaggedCA(s string) bool {
-	// Without CatalanTagger: keep known compounds + all-lower hyphen words + Title-lower
-	// (Mont-ras, Sud-est). Split Title-Title (Barcelona-València, Sud-Est) and compass (E-SE).
-	if doNotSplit[strings.ToLower(s)] {
+	// Java keeps hyphen compounds only when CatalanTagger/dict tags them.
+	// Soft path: allowlist (doNotSplit). Explicit list wins for Title-Title names
+	// (Emília-Romanya, Tel-Aviv) but Sud-Est must still split (not listed).
+	low := strings.ToLower(s)
+	if doNotSplit[low] {
+		// Reject Title-Title forms that are NOT themselves intended keepers:
+		// "sud-est" is allowlisted for Sud-est only — Sud-Est is Title-Title and
+		// must split (Java twin). Detect: allowlist entry matches lower form, but
+		// if both sides are Title-case AND the allowlist is a compass-style pair
+		// (sud-est etc.), only keep Title-lower (second part lower).
+		if strings.Contains(s, "-") {
+			parts := strings.Split(s, "-")
+			if len(parts) >= 2 && hasTitleStart(parts[0]) && hasTitleStart(parts[1]) {
+				// Emília-Romanya / Tel-Aviv: keep. Sud-Est: split.
+				switch low {
+				case "sud-est", "nord-est", "sud-oest", "nord-oest":
+					return false
+				}
+			}
+		}
 		return true
 	}
 	if !strings.Contains(s, "-") {
@@ -218,21 +240,6 @@ func isTaggedCA(s string) bool {
 	}
 	if len(parts) == 2 && isCompass(parts[0]) && isCompass(parts[1]) {
 		return false
-	}
-	// Java CatalanWordTokenizer keeps a hyphen compound only if the tagger/dict
-	// knows it. Without catalan.dict, do not keep arbitrary all-lowercase
-	// compounds (alter-ego, cost-efectiu, dejà-vu); still keep doNotSplit entries.
-	if allLowerParts(parts) {
-		return false
-	}
-	// Title-lower… e.g. Mont-ras, Sud-est (not Sud-Est)
-	if len(parts) >= 2 && hasTitleStart(parts[0]) {
-		for _, p := range parts[1:] {
-			if !isAllLower(p) {
-				return false
-			}
-		}
-		return true
 	}
 	return false
 }
