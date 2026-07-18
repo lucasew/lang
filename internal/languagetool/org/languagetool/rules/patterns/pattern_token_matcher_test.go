@@ -65,6 +65,23 @@ func TestSoftIrregularLemma(t *testing.T) {
 	require.False(t, softInflectedSurfaceMatch("va", "be", false))
 }
 
+func TestSoftClosedClassPOS(t *testing.T) {
+	// DT_PRP: empty PRP$ must not soft-match nouns.
+	prp := Pos("PRP$?")
+	prp.Pos.Regexp = true
+	m := NewPatternTokenMatcher(prp)
+	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("my", nil, nil)))
+	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("you", nil, nil)))
+	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("man", nil, nil)))
+	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("search", nil, nil)))
+
+	// Open-class empty POS still soft-matches words (NN-like).
+	nn := Pos("NN.*")
+	nn.Pos.Regexp = true
+	nm := NewPatternTokenMatcher(nn)
+	require.True(t, nm.IsMatched(languagetool.NewAnalyzedToken("man", nil, nil)))
+}
+
 // Upstream EN NON_ENGLISH_CHARACTER_IN_A_WORD uses Java \uXXXX escapes.
 func TestSoftNormalizeJavaRegexpUnicode(t *testing.T) {
 	pat := `[a-z]*(\u043E|\u0455|\u0435|\u0440|\u03BF)[a-z]*`

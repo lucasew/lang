@@ -156,6 +156,10 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 					} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
 						posOK = true
 					}
+				} else if softPostagIsClosedClassOnly(tag) {
+					// DT/PRP/IN/… without a tagger: only known closed-class surfaces
+					// (avoids DT_PRP soft-matching "a man", "the search", …).
+					posOK = softClosedClassSurfaceMatch(tag, tok)
 				} else if softLooksLikeWord(tok) {
 					posOK = true
 				} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
@@ -369,6 +373,180 @@ func softPostagIsSentenceBoundary(tag string) bool {
 		}
 	}
 	return strings.Contains(u, "SENT")
+}
+
+// softPostagIsClosedClassOnly is true when every | alternative is a closed-class
+// Penn tag family (DT, PRP, IN, …), not open classes (NN, VB, JJ, RB, CD, …).
+func softPostagIsClosedClassOnly(tag string) bool {
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	if u == "" || softPostagIsSentenceBoundary(u) {
+		return false
+	}
+	// If any open-class family appears, treat as open (soft word OK).
+	for _, open := range []string{"NN", "VB", "JJ", "RB", "CD", "FW", "UH", "SYM", "LS", "UNKNOWN"} {
+		// avoid DT matching inside "UNKNOWN" etc. via careful checks
+		if open == "UNKNOWN" && (u == "UNKNOWN" || strings.HasPrefix(u, "UNKNOWN")) {
+			return false
+		}
+	}
+	for _, part := range strings.Split(u, "|") {
+		p := softNormalizePostagPart(part)
+		if p == "" {
+			continue
+		}
+		if softPostagPartIsOpen(p) {
+			return false
+		}
+		if !softPostagPartIsClosed(p) {
+			return false
+		}
+	}
+	return true
+}
+
+func softNormalizePostagPart(p string) string {
+	p = strings.ToUpper(strings.TrimSpace(p))
+	p = strings.TrimPrefix(p, "^")
+	p = strings.TrimSuffix(p, "$")
+	p = strings.TrimPrefix(p, "(?:")
+	p = strings.TrimPrefix(p, "(")
+	p = strings.TrimSuffix(p, ")")
+	return p
+}
+
+func softPostagPartIsOpen(p string) bool {
+	for _, open := range []string{"NN", "VB", "JJ", "RB", "CD", "FW", "UH", "SYM", "LS"} {
+		if strings.HasPrefix(p, open) {
+			return true
+		}
+	}
+	return false
+}
+
+func softPostagPartIsClosed(p string) bool {
+	// PRP$ must be checked before PRP; WDT/WP/WRB before W*
+	for _, c := range []string{"PRP$", "PRP", "WDT", "WP$", "WP", "WRB", "PDT", "POS", "DT", "IN", "CC", "MD", "TO", "EX", "RP"} {
+		if strings.HasPrefix(p, c) {
+			return true
+		}
+	}
+	return false
+}
+
+func softClosedClassSurfaceMatch(tag, surface string) bool {
+	s := strings.ToLower(strings.TrimSpace(surface))
+	if s == "" {
+		return false
+	}
+	u := strings.ToUpper(tag)
+	// Pronouns (PRP / PRP$)
+	if strings.Contains(u, "PRP") {
+		return softIsPronoun(s)
+	}
+	// Determiners
+	if strings.Contains(u, "DT") || strings.Contains(u, "PDT") {
+		return softIsDeterminer(s)
+	}
+	// Prepositions / subordinating conjunctions (IN)
+	if strings.Contains(u, "IN") {
+		return softIsPreposition(s)
+	}
+	// Modals
+	if strings.Contains(u, "MD") {
+		return softIsModal(s)
+	}
+	// Coordinating conjunctions
+	if strings.Contains(u, "CC") {
+		return softIsCC(s)
+	}
+	// TO infinitive marker
+	if strings.Contains(u, "TO") {
+		return s == "to"
+	}
+	// Existential there
+	if strings.Contains(u, "EX") {
+		return s == "there"
+	}
+	// Wh-words
+	if strings.Contains(u, "WDT") || strings.Contains(u, "WP") || strings.Contains(u, "WRB") {
+		return softIsWh(s)
+	}
+	// Particle / possessive clitic — keep conservative
+	if strings.Contains(u, "RP") || strings.Contains(u, "POS") {
+		return softLooksLikeWord(surface)
+	}
+	return false
+}
+
+func softIsPronoun(s string) bool {
+	switch s {
+	case "i", "me", "my", "mine", "myself",
+		"you", "your", "yours", "yourself", "yourselves",
+		"he", "him", "his", "himself",
+		"she", "her", "hers", "herself",
+		"it", "its", "itself",
+		"we", "us", "our", "ours", "ourselves",
+		"they", "them", "their", "theirs", "themselves",
+		"thou", "thee", "thy", "thine", "ye":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsDeterminer(s string) bool {
+	switch s {
+	case "a", "an", "the", "this", "that", "these", "those",
+		"some", "any", "no", "every", "each", "either", "neither",
+		"all", "both", "half", "many", "much", "few", "several",
+		"another", "other", "such":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsPreposition(s string) bool {
+	switch s {
+	case "in", "on", "at", "to", "for", "of", "with", "by", "from", "as",
+		"into", "onto", "upon", "about", "over", "under", "after", "before",
+		"between", "among", "through", "during", "without", "within", "against",
+		"across", "behind", "beyond", "despite", "except", "inside", "outside",
+		"toward", "towards", "until", "via", "per", "than", "like", "near",
+		"off", "out", "up", "down", "around", "along", "since", "if", "whether",
+		"while", "because", "although", "though", "unless", "whereas":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsModal(s string) bool {
+	switch s {
+	case "can", "could", "may", "might", "must", "shall", "should", "will", "would":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsCC(s string) bool {
+	switch s {
+	case "and", "or", "but", "nor", "yet", "so", "plus", "&":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsWh(s string) bool {
+	switch s {
+	case "what", "which", "who", "whom", "whose", "where", "when", "why", "how",
+		"whatever", "whichever", "whoever", "whomever":
+		return true
+	default:
+		return false
+	}
 }
 
 // softIrregularLemma maps common irregular surfaces → possible dictionary lemmas
