@@ -26,6 +26,9 @@ type PatternToken struct {
 	// ChunkTag ports Java PatternToken chunk / chunk_re (ChunkTag on readings).
 	ChunkTag       string
 	ChunkTagRegexp bool
+	// AndGroup ports Java PatternToken and-group: other PatternTokens that must
+	// each match *some* reading of the same token (not necessarily the same reading).
+	AndGroup []*PatternToken
 	TokenException             string
 	TokenExceptionRE           bool
 	TokenExceptionCaseSensitive bool // when true, exception compares with exact case (LT case_sensitive on <exception>)
@@ -61,6 +64,14 @@ func (p *PatternToken) SetInsideMarker(v bool) { p.InsideMarker = v }
 func (p *PatternToken) SetChunkTag(tag string, regexp bool) {
 	p.ChunkTag = tag
 	p.ChunkTagRegexp = regexp
+}
+
+// AddAndGroupElement ports PatternToken.setAndGroupElement.
+func (p *PatternToken) AddAndGroupElement(andTok *PatternToken) {
+	if p == nil || andTok == nil {
+		return
+	}
+	p.AndGroup = append(p.AndGroup, andTok)
 }
 
 func (p *PatternToken) SetStringPosException(tokenException string, regexp bool) {

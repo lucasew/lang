@@ -391,6 +391,27 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="DT_CD_VBP" name="Disambiguate verb">
+    <antipattern>
+      <token regexp="yes">any|no</token>
+      <token regexp="yes">1|one</token>
+      <token postag="NN:UN" chunk="E-NP-singular"></token>
+    </antipattern>
+    <antipattern>
+      <token>the</token>
+      <token regexp="yes">one|1</token>
+      <token postag="NN:UN"></token>
+    </antipattern>
+    <pattern>
+      <token postag="DT"></token>
+      <token postag="CD"></token>
+      <token postag="VBP" marker="yes">
+        <and_token postag="NN:UN"></and_token>
+      </token>
+      <token postag="PRP|NN[PS]?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="NN:UN"/>
+  </rule>
   <rule id="half_past_CD" name="Disambiguate time no. 2">
     <pattern>
       <token postag="NN" marker="yes">half</token>
@@ -631,6 +652,15 @@
       </token>
     </pattern>
     <disambig action="remove" postag="VB.*"/>
+  </rule>
+  <rule id="EXCEPT_VBNN_VB" name="except do =&gt; verb">
+    <pattern>
+      <token postag="IN">except</token>
+      <token postag="NN" marker="yes">
+        <and_token postag="VB"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VB"/>
   </rule>
   <rule id="GO_APE" name="go ape =&gt; NN:UN">
     <pattern>
@@ -993,6 +1023,30 @@
     </pattern>
     <disambig action="replace" postag="JJS"/>
   </rule>
+  <rule id="BE_TO_VB" name="be + to + verb/... -&gt;be + to + verb">
+    <antipattern>
+      <token>been</token>
+      <token>to</token>
+      <token postag="NNP" chunk="E-NP-singular"></token>
+      <token chunk="B-NP-singular">'s</token>
+      <token postag="NN(:UN?)?" postag_regexp="yes" chunk="E-NP-singular"></token>
+    </antipattern>
+    <antipattern>
+      <token>been</token>
+      <token>to</token>
+      <token postag="NNP" chunk="E-NP-singular"></token>
+      <token>'s</token>
+      <token postag="PCT"></token>
+    </antipattern>
+    <pattern>
+      <token inflected="yes">be</token>
+      <token>to</token>
+      <token postag="VB" marker="yes">
+        <and_token postag="JJ|NN.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VB"/>
+  </rule>
   <rule id="_SOFT_ANON_63" name="_SOFT_ANON_63">
     <pattern>
       <token postag="VBZ" marker="yes">does</token>
@@ -1000,6 +1054,16 @@
       <token postag="VB" marker="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="DONT_VBNN_VB" name="don't/didn't/doesn't + verb/noun -&gt; VB">
+    <pattern>
+      <token regexp="yes">do|did|does</token>
+      <token regexp="yes">not|n't</token>
+      <token postag="VB" marker="yes">
+        <and_token postag="JJ|NN.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VB"/>
   </rule>
   <rule id="_SOFT_ANON_65" name="_SOFT_ANON_65">
     <antipattern>
@@ -1051,6 +1115,32 @@
       <token postag="DT"></token>
       <token postag="CD"></token>
       <token marker="yes">are</token>
+    </pattern>
+    <disambig action="replace" postag="VBP"/>
+  </rule>
+  <rule id="THESE_NNS_VBZ" name="these + vbz/nns =&gt; nns">
+    <pattern>
+      <token regexp="yes">th[eo]se</token>
+      <token postag="VBZ" marker="yes">
+        <and_token postag="NNS"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="NNS"/>
+  </rule>
+  <rule id="THESE_NNS_VBP" name="these + vbz/nns =&gt; nns">
+    <antipattern>
+      <token inflected="yes">be</token>
+      <token min="0">n't</token>
+      <token regexp="yes">th[eo]se</token>
+      <token postag="NNS"></token>
+      <token postag="JJR?" postag_regexp="yes"></token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes">th[eo]se</token>
+      <token postag="NNS"></token>
+      <token postag="VBP" marker="yes">
+        <and_token postag="NN:.*" postag_regexp="yes"></and_token>
+      </token>
     </pattern>
     <disambig action="replace" postag="VBP"/>
   </rule>
@@ -1233,6 +1323,74 @@
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
+  <rule id="IN_VBZ_NNS" name="preposition + 'this' + verb 3sg/NNS -&gt; nns">
+    <antipattern>
+      <token regexp="yes">after|although|as|because|before|if|lest|like|once|since|tha[nt]|though|unless|until|whenever|where|whereas|wherever|whether|while|why</token>
+      <token>this</token>
+      <token postag="VBZ"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">about|of|from</token>
+      <token>this</token>
+      <token postag="VBZ"></token>
+      <token regexp="yes">me|you|it|them|us|him|her</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">about|of|from</token>
+      <token>this</token>
+      <token postag="VBZ"></token>
+      <token postag="IN"></token>
+      <token postag="DT|PRP\$" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="SENT_START|CC|PCT" postag_regexp="yes"></token>
+      <token postag="RB" min="0"></token>
+      <token>from</token>
+      <token>this</token>
+      <token postag="VBZ"></token>
+      <token postag="P?DT|PRP\$" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="SENT_START|CC|PCT" postag_regexp="yes"></token>
+      <token postag="RB" min="0"></token>
+      <token>due</token>
+      <token>to</token>
+      <token>this</token>
+      <token postag="VBZ"></token>
+      <token postag="P?DT|PRP\$" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="SENT_START|CC|PCT" postag_regexp="yes"></token>
+      <token postag="RB" min="0"></token>
+      <token regexp="yes">all|none?|much</token>
+      <token>of</token>
+      <token>this</token>
+      <token postag="VBZ"></token>
+      <token postag="P?DT|PRP\$" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="IN"></token>
+      <token>this</token>
+      <token postag="VBZ" chunk_re=".-VP"></token>
+    </antipattern>
+    <pattern>
+      <token postag="IN"></token>
+      <token regexp="yes">th(is|ese)</token>
+      <token postag="NNS" marker="yes">
+        <and_token postag="VBZ"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="NNS"/>
+  </rule>
+  <rule id="DURING_VBZ_NNS" name="during + verb 3sg.NNS =&gt;NNS">
+    <pattern>
+      <token>during</token>
+      <token postag="NNS" marker="yes">
+        <and_token postag="VBZ"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="NNS"/>
+  </rule>
   <rule id="DT_TIMES_NNS" name="times/addresses as noun pl">
     <antipattern>
       <token postag="CC"></token>
@@ -1352,12 +1510,64 @@
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
+  <rule id="BE_VBGJJ_NN_VBG" name="be + verb progressive/jj + noun countable =&gt; verb progressive">
+    <antipattern>
+      <token postag="NNP"></token>
+      <token>'s</token>
+    </antipattern>
+    <pattern>
+      <token inflected="yes">be</token>
+      <token postag="VBG" marker="yes">
+        <and_token postag="JJ"></and_token>
+      </token>
+      <token postag="NN"></token>
+    </pattern>
+    <disambig action="replace" postag="VBG"/>
+  </rule>
   <rule id="BE_BETTER" name="be + better =&gt; .R">
     <pattern>
       <token inflected="yes">be</token>
       <token marker="yes">better</token>
     </pattern>
     <disambig action="filter" postag="..R"/>
+  </rule>
+  <rule id="THAT_MD_MD" name="that MD + be -&gt; MD">
+    <pattern>
+      <token regexp="yes">this|that</token>
+      <token postag="MD" marker="yes">
+        <and_token postag="NN.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="VB"></token>
+    </pattern>
+    <disambig action="replace" postag="MD"/>
+  </rule>
+  <rule id="AN_JJ_VB_NN" name="a/an/each + adj/nn + verb sing -&gt; NN">
+    <antipattern>
+      <token regexp="yes">an?|each</token>
+      <token postag="JJ" chunk_re="I-NP.*"></token>
+      <token postag="NNS" chunk_re="E-NP.*"></token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes">an?|each</token>
+      <token postag="JJ" marker="yes">
+        <and_token postag="NN(:UN?)?" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="VBZ"></token>
+    </pattern>
+    <disambig action="filter" postag="NN.*"/>
+  </rule>
+  <rule id="DT_JJR_SENTEND" name="determiner + JJR">
+    <pattern>
+      <token>the</token>
+      <token postag="JJR"></token>
+      <token min="0">,</token>
+      <token>the</token>
+      <token postag="VB" marker="yes">
+        <and_token postag="JJR"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[\.\?!]</token>
+    </pattern>
+    <disambig action="filter" postag="JJR"/>
   </rule>
   <rule id="QUARAN" name="Qur'an">
     <pattern>
@@ -1666,6 +1876,16 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="DT_plural_VBNNN_NN" name="those/these + VBN/NN + are -&gt; NN">
+    <pattern>
+      <token regexp="yes">th[eo]se</token>
+      <token postag="VB[PN]" postag_regexp="yes" marker="yes">
+        <and_token postag="NN(:U?N)?" postag_regexp="yes"></and_token>
+      </token>
+      <token>are</token>
+    </pattern>
+    <disambig action="remove" postag="VB[DP]?"/>
+  </rule>
   <rule id="DT_plural_so_vbn" name="those/these + so + VBN/VBD/JJ -&gt; so = JJ">
     <pattern>
       <token regexp="yes">th[eo]se</token>
@@ -1673,6 +1893,15 @@
       <token postag="VBN" marker="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="be_NN_VBG" name="be + NN/VBG + DT">
+    <pattern>
+      <token inflected="yes">be</token>
+      <token postag="NN" marker="yes">
+        <and_token postag="VBG"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VBG"/>
   </rule>
   <rule id="without_kk_NN_VBG" name="without having (NN/VBG)-&gt;VBG">
     <pattern>
@@ -1793,12 +2022,64 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="WORTH_VBG_NN" name="worth + VBG/NN -&gt; VBG">
+    <pattern>
+      <token>worth</token>
+      <token postag="NN" marker="yes">
+        <and_token postag="VBG"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VBG"/>
+  </rule>
   <rule id="IN_NO_DT" name="NO/DT/NN/NNP + NN|JJ -&gt; NO/DT">
     <pattern>
       <token marker="yes">no</token>
       <token postag="NN.*|JJ.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="DT"/>
+  </rule>
+  <rule id="PRP_VBZ" name="PRP + VBZ/NNS -&gt; VBZ">
+    <antipattern>
+      <token inflected="yes">have</token>
+      <token regexp="yes">more|less</token>
+      <token>than</token>
+      <token>one</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+      <token postag="SENT_END"></token>
+    </antipattern>
+    <antipattern>
+      <token>t</token>
+      <token>he</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">more|less</token>
+      <token>than</token>
+      <token>one</token>
+      <token regexp="yes" inflected="yes" postag="NN.*" postag_regexp="yes">fly|test</token>
+      <token regexp="yes" inflected="yes">be|become</token>
+    </antipattern>
+    <antipattern>
+      <token>there</token>
+      <token inflected="yes">be</token>
+      <token>one</token>
+      <token postag="NNS" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token case_sensitive="yes" chunk="I-NP-plural">IT</token>
+      <token postag="NNS" postag_regexp="yes" chunk="E-NP-plural"></token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">have</token>
+      <token>it</token>
+      <token postag="NNS"></token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes" postag="PRP|WP" postag_regexp="yes">it|he|she|(some)?one|nobody|who</token>
+      <token postag="VBZ" marker="yes">
+        <and_token postag="NN.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VBZ"/>
   </rule>
   <rule id="DT_WP_WDT_DT" name="That + NN -&gt;DT">
     <pattern>
@@ -1814,6 +2095,30 @@
       <token marker="yes">&quot;</token>
     </pattern>
     <disambig action="replace" postag="``"/>
+  </rule>
+  <rule id="_SOFT_ANON_116" name="s = POS with NNS + are/were">
+    <pattern>
+      <token postag="NN:UN?" postag_regexp="yes"></token>
+      <token spacebefore="no">'s</token>
+      <token postag="JJ" marker="yes">
+        <and_token postag="VBN"></and_token>
+      </token>
+      <token postag="NNS"></token>
+      <token regexp="yes">are|were</token>
+    </pattern>
+    <disambig action="replace" postag="JJ"/>
+  </rule>
+  <rule id="_SOFT_ANON_117" name="s = POS with NN + is/was">
+    <pattern>
+      <token postag="NN:UN?" postag_regexp="yes"></token>
+      <token spacebefore="no">'s</token>
+      <token postag="JJ" marker="yes">
+        <and_token postag="VBN"></and_token>
+      </token>
+      <token postag="NNP?|NN:.*" postag_regexp="yes"></token>
+      <token regexp="yes">is|was</token>
+    </pattern>
+    <disambig action="replace" postag="JJ"/>
   </rule>
   <rule id="_SOFT_ANON_118" name="s = has">
     <antipattern>
@@ -1928,6 +2233,18 @@
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
+  <rule id="THE_RBNN_THE" name="the + adverb/noun + the -&gt; noun">
+    <pattern>
+      <token>the</token>
+      <token postag="RB" marker="yes">
+        <and_token postag="NN.*" postag_regexp="yes"></and_token>
+      </token>
+      <token>the</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
   <rule id="PRP_VBP_AND_VBP" name="verb/noun and verb/noun -&gt; verb and verb">
     <pattern>
       <token regexp="yes">I|you|we|they</token>
@@ -1936,6 +2253,18 @@
       <token postag="VBP" marker="yes" chunk="I-VP"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="DONT_MOTHERS_KISS" name="don't mothers kiss">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes">ca|could|do|did|may|might|must|need|ought|sha|should|wo|would</token>
+      <token regexp="yes">not|n't</token>
+      <token postag="NNS" marker="yes">
+        <and_token postag="VBZ"></and_token>
+      </token>
+      <token postag="VBP"></token>
+    </pattern>
+    <disambig action="filter" postag="NNS"/>
   </rule>
   <rule id="_SOFT_ANON_129" name="_SOFT_ANON_129">
     <pattern>
@@ -1956,6 +2285,16 @@
     <disambig action="replace">
       <wd pos="POS" lemma="'s"/>
     </disambig>
+  </rule>
+  <rule id="HELP-VB-DT" name="help + verb/noun + determiner">
+    <pattern>
+      <token inflected="yes">help</token>
+      <token postag="VB" marker="yes">
+        <and_token postag="NN(:UN?)?" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="DT"></token>
+    </pattern>
+    <disambig action="replace" postag="VB"/>
   </rule>
   <rule id="CD_AD" name="24 AD">
     <pattern>
@@ -2176,6 +2515,172 @@
       <wd pos="NNP"/>
     </disambig>
   </rule>
+  <rule id="VBN_VBD" name="Past Participle">
+    <antipattern>
+      <token inflected="yes">be</token>
+      <token min="0" max="1">not</token>
+      <token regexp="yes">absolutely|amazingly|completely|exceptionally|incredibly|particularly|quite|really|remarkably|totally|unusually|utterly|very</token>
+      <token postag="JJ"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token>it</token>
+      <token spacebefore="no">'s</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token>drank</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="NNS"></token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="NN(:UN?)?" postag_regexp="yes" chunk="E-NP-singular"></token>
+      <token regexp="yes">is|was</token>
+      <token postag="JJR?" postag_regexp="yes"></token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="MD|RB" postag_regexp="yes"></token>
+      <token>be</token>
+      <token postag="JJR?" postag_regexp="yes"></token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token>this</token>
+      <token regexp="yes">is|was|be</token>
+      <token postag="JJR?" postag_regexp="yes"></token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token regexp="yes">either|none</token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">have</token>
+      <token postag="NN(:UN?)?" postag_regexp="yes"></token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="MD"></token>
+      <token postag="RB"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="NN:UN?" postag_regexp="yes"></token>
+      <token regexp="yes">I|you|he|she|it|we|they|one</token>
+      <token postag="VBD"></token>
+      <token postag="TO|IN" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">be</token>
+      <token>bit</token>
+      <token postag="JJ.*" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="JJ.*" postag_regexp="yes"></token>
+      <token postag="PRP|NNP" postag_regexp="yes"></token>
+      <token postag="VBD"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="PRP"></token>
+      <token postag="PRP"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+      <token postag="PRP"></token>
+      <token postag="VBD"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="IN|CC|W.*" postag_regexp="yes"></token>
+      <token postag="PRP"></token>
+      <token postag="VBD"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token>please</token>
+      <token postag="VB"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+      <token postag="PRP|NN.*" postag_regexp="yes"></token>
+      <token postag="VBD"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="RB.*" postag_regexp="yes"></token>
+      <token postag="PRP|NN.*" postag_regexp="yes"></token>
+      <token postag="VBD"></token>
+    </antipattern>
+    <antipattern>
+      <token>get</token>
+      <token>'s</token>
+      <token>used</token>
+    </antipattern>
+    <antipattern>
+      <token postag="NN.*" postag_regexp="yes" chunk_re="E-NP.*"></token>
+      <token regexp="yes">is|was</token>
+      <token regexp="yes">they|we|I|you</token>
+      <token postag="RB" min="0"></token>
+      <token postag="VBN"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes" inflected="yes">be|have</token>
+      <token postag="PRP|NN.*|RB" postag_regexp="yes"></token>
+      <token>please</token>
+      <token postag="VB"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">be|been</token>
+      <token postag="NN.*" postag_regexp="yes" chunk_re=".-NP.*"></token>
+      <token postag="VBD"></token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes" inflected="yes">be|have
+        <exception>'d</exception>
+      </token>
+      <token postag="PRP|NN.*|RB" postag_regexp="yes" min="0" max="2"></token>
+      <token postag="VBD" marker="yes">
+        <and_token postag="VBN"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="VBN"/>
+  </rule>
+  <rule id="JJ_VB" name="companies: verb to noun if preceded by adj">
+    <pattern>
+      <token postag="JJ.*" postag_regexp="yes"></token>
+      <token postag="VBZ" marker="yes">companies
+        <and_token postag="NNP?S" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VBZ"/>
+  </rule>
+  <rule id="VB_NNPRP_PRP" name="mine as PRP$">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="VB[ZPG]?" postag_regexp="yes">be|have</token>
+      <token postag="NN" marker="yes">
+        <and_token postag="PRP$"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="PRP$"/>
+  </rule>
   <rule id="PRP_SAW" name="saw as a verb">
     <pattern>
       <token postag="PRP"></token>
@@ -2214,6 +2719,37 @@
     </pattern>
     <disambig action="filter" postag="..R"/>
   </rule>
+  <rule id="DT_VBZ_NNU_IN" name="determiner + noun/verb =&gt; verb + noun + preposition">
+    <pattern>
+      <token postag="DT"></token>
+      <token postag="VBZ" marker="yes" chunk="B-VP">
+        <and_token postag="NNS"></and_token>
+      </token>
+      <token postag="NN:UN?" postag_regexp="yes" chunk="E-NP-singular"></token>
+      <token postag="IN"></token>
+    </pattern>
+    <disambig action="replace" postag="VBZ"/>
+  </rule>
+  <rule id="DT_VBZNNS_NNS" name="Plural determiners + noun plur/vb sg =&gt; noun plur">
+    <antipattern>
+      <token regexp="yes">both|some|many|th[eo]se|most</token>
+      <token postag="VBZ" chunk="B-VP"></token>
+      <token regexp="yes" chunk="E-NP-singular">me|you|him|her|it|us|them|one</token>
+    </antipattern>
+    <antipattern>
+      <token>who</token>
+      <token>most</token>
+      <token postag="VBZ"></token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes">both|some|fewer|many|whose|th[eo]se|most</token>
+      <token postag="VBZ" marker="yes">
+        <exception regexp="yes">is|does</exception>
+        <and_token postag="NNS"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="NNS"/>
+  </rule>
   <rule id="PRP_MD_RB_VB" name="pronoun + modal + adverb + noun/verb &gt; verb">
     <antipattern>
       <token>as</token>
@@ -2226,6 +2762,17 @@
       <token postag="VBP?" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="VB"/>
+  </rule>
+  <rule id="PREPOSITIONAL_DT_VBZNNS_NNS" name="Prepositional quantifiers + noun plur/vb sg = &gt;noun plur">
+    <pattern>
+      <token regexp="yes">group|deal|lots?|tons|plenty|litres</token>
+      <token>of</token>
+      <token postag="VBZ" marker="yes">
+        <exception regexp="yes">is|does</exception>
+        <and_token postag="NNS"></and_token>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="NNS"/>
   </rule>
   <rule id="MOST_VBP" name="most + verb in plural">
     <pattern>
@@ -2251,6 +2798,17 @@
       <token regexp="yes">away|now|before|after|back|here</token>
     </pattern>
     <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="SENT_START_IS_JJ" name="Is/was + it + verb/JJ =&gt;JJ">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes">is|was</token>
+      <token>it</token>
+      <token postag="JJ.?" postag_regexp="yes" marker="yes">
+        <and_token postag="VBP?" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="JJ.?"/>
   </rule>
   <rule id="FREE_OF_CHARGE" name="free of charge">
     <pattern>
@@ -2288,6 +2846,16 @@
       <token regexp="yes">if|at|for</token>
     </pattern>
     <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="DT_RBJJ_NN_JJ" name="a + rb/jj + nn =&gt; jj">
+    <pattern>
+      <token regexp="yes" inflected="yes">a|the</token>
+      <token postag="RB.?" postag_regexp="yes" marker="yes">
+        <and_token postag="JJ.?" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="JJ.?"/>
   </rule>
   <rule id="HOME_RB" name="home as adverb">
     <pattern>
@@ -2366,6 +2934,31 @@
       <token marker="yes">training</token>
     </pattern>
     <disambig action="replace" postag="NN:U"/>
+  </rule>
+  <rule id="DT_JJ_NNJJ_NN_VB_APOSTROPHE" name="determiner + adj + noun/adj + noun + verbn't =&gt; noun">
+    <pattern>
+      <token postag="DT" chunk="B-NP-plural"></token>
+      <token postag="JJR?" postag_regexp="yes" chunk="I-NP-plural"></token>
+      <token postag="JJR?" postag_regexp="yes" marker="yes">
+        <and_token postag="NN(:UN?)?" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="NNS" chunk="E-NP-plural"></token>
+      <token regexp="yes">ai|are|is|was|were|ca|could|do|does|did|has|had|have|may|might|must|need|ought|sha|should|used|wo|would</token>
+      <token>n't</token>
+    </pattern>
+    <disambig action="filter" postag="NN.*"/>
+  </rule>
+  <rule id="DT_JJ_NNJJ_NN_VB" name="determiner + adj + noun/adj + noun + verb =&gt; noun">
+    <pattern>
+      <token postag="DT" chunk="B-NP-plural"></token>
+      <token postag="JJR?" postag_regexp="yes" chunk="I-NP-plural"></token>
+      <token postag="JJR?" postag_regexp="yes" marker="yes">
+        <and_token postag="NN(:UN?)?" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="NNS" chunk="E-NP-plural"></token>
+      <token postag="VB[PD]?" postag_regexp="yes" chunk="B-VP"></token>
+    </pattern>
+    <disambig action="filter" postag="NN.*"/>
   </rule>
   <rule id="BENEATH_NOTICE" name="beneath notice">
     <pattern>
@@ -6837,6 +7430,20 @@
       <wd pos="NNP"/>
     </disambig>
   </rule>
+  <rule id="HOW_JJ_MD_NN" name="how high can birds fly (birds -&gt; NNS)">
+    <pattern>
+      <token regexp="yes">how|what|which|who</token>
+      <token postag="RB|JJ" postag_regexp="yes"></token>
+      <token postag="MD"></token>
+      <token postag="NNP?S" postag_regexp="yes" marker="yes" chunk="E-NP-plural">
+        <and_token postag="VBZ"></and_token>
+      </token>
+      <token postag="VBP?" postag_regexp="yes" chunk="B-VP">
+        <exception>are</exception>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="NN.*"/>
+  </rule>
   <rule id="_SOFT_ANON_201" name="_SOFT_ANON_201">
     <pattern>
       <token postag="PRP|MD|TO" postag_regexp="yes"></token>
@@ -7732,6 +8339,20 @@
       <token>to</token>
     </pattern>
     <disambig action="remove" postag="NNP"/>
+  </rule>
+  <rule id="CAN_I_ESCAPE" name="can I escape (VB)">
+    <pattern>
+      <token postag="W.*|PCT|SENT_START|CC" postag_regexp="yes"></token>
+      <token regexp="yes" inflected="yes">can|do|will|should|may</token>
+      <token min="0">n't</token>
+      <token postag="PRP_S.*|NNPS?" postag_regexp="yes" min="0" chunk_re="B-NP.*"></token>
+      <token postag="PRP.*|NN.*" postag_regexp="yes" chunk_re="E-NP.*"></token>
+      <token postag="VB" marker="yes" chunk_re=".-VP">
+        <exception>please</exception>
+        <and_token postag="VBP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="HERE_NO_NNP" name="'Here' no proper noun">
     <pattern>

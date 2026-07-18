@@ -135,3 +135,27 @@ func TestIsMatchedReadings_ChunkTag(t *testing.T) {
 	atr2.SetChunkTags([]string{"B-NP"})
 	require.True(t, m2.IsMatchedReadings(atr2))
 }
+
+func TestIsMatchedReadings_AndGroupAcrossReadings(t *testing.T) {
+	// Java <and><token postag="VBP"/><token postag="NN:UN"/></and>
+	// matches a token that has both readings (not one reading with both tags).
+	base := NewPatternToken("", false, false, false)
+	base.SetPosToken(PosToken{PosTag: "VBP", Regexp: false})
+	andNN := NewPatternToken("", false, false, false)
+	andNN.SetPosToken(PosToken{PosTag: "NN:UN", Regexp: false})
+	base.AddAndGroupElement(andNN)
+	m := NewPatternTokenMatcher(base)
+
+	vbp, nnun, nn := "VBP", "NN:UN", "NN"
+	// only VBP — fail
+	onlyVB := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("fall", &vbp, nil))
+	require.False(t, m.IsMatchedReadings(onlyVB))
+	// VBP + NN:UN — pass
+	both := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("fall", &vbp, nil))
+	both.AddReading(languagetool.NewAnalyzedToken("fall", &nnun, nil), "dict")
+	require.True(t, m.IsMatchedReadings(both))
+	// VBP + NN — fail and-group
+	vbnn := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("fall", &vbp, nil))
+	vbnn.AddReading(languagetool.NewAnalyzedToken("fall", &nn, nil), "dict")
+	require.False(t, m.IsMatchedReadings(vbnn))
+}

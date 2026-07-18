@@ -95,7 +95,9 @@ type disambigToken struct {
 	ChunkRe string `xml:"chunk_re,attr"`
 	// Exceptions ports Java <exception> under <token> (first positive used).
 	Exceptions []disambigException `xml:"exception"`
-	Content    string              `xml:",chardata"`
+	// AndTokens ports soft <and_token> = Java <and> group members.
+	AndTokens []disambigToken `xml:"and_token"`
+	Content   string          `xml:",chardata"`
 }
 
 // disambigException is a soft subset of Java pattern-token <exception>.
@@ -285,6 +287,10 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			strings.EqualFold(ex.CaseSensitive, "yes"),
 		)
 		break
+	}
+	// Java <and> group members (soft <and_token>): each must match some reading.
+	for _, at := range xt.AndTokens {
+		pt.AddAndGroupElement(disambigTokenFromXML(at, false))
 	}
 	return pt
 }

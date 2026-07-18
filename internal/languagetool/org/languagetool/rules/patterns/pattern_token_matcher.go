@@ -280,6 +280,9 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 // untagged surface is only used when the token has no real POS (no tagger path).
 // When POS tags exist, requiring postag must not soft-accept via a nil-POS probe
 // (that previously made dual surface+POS constraints match every surface hit).
+//
+// Java and-groups: base + each and-member must match *some* reading of the token
+// (PatternTokenMatcher.addMemberAndGroup / checkAndGroup across all readings).
 func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
@@ -296,6 +299,10 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 		if !chunkTagMatches(atr, m.Base.ChunkTag, m.Base.ChunkTagRegexp) {
 			return false
 		}
+	}
+	// And-group: evaluate base and each and-member across all readings.
+	if m.Base != nil && len(m.Base.AndGroup) > 0 {
+		return m.matchAndGroupReadings(atr)
 	}
 	hasRealPOS := false
 	for _, r := range atr.GetReadings() {
@@ -333,6 +340,53 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 	probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
 	probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
 	return m.IsMatched(probe)
+}
+
+// matchAndGroupReadings ports Java and-group accumulation over all readings.
+func (m *PatternTokenMatcher) matchAndGroupReadings(atr *languagetool.AnalyzedTokenReadings) bool {
+	base := m.Base
+	// Match base without re-entering and-group logic.
+	baseBare := *base
+	baseBare.AndGroup = nil
+	baseM := NewPatternTokenMatcher(&baseBare)
+	baseM.StrictPOS = m.StrictPOS
+	baseOK := false
+	andOK := make([]bool, len(base.AndGroup))
+	for _, r := range atr.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if baseM.IsMatched(r) {
+			baseOK = true
+		}
+		for i, andPt := range base.AndGroup {
+			if andPt == nil {
+				continue
+			}
+			am := NewPatternTokenMatcher(andPt)
+			am.StrictPOS = m.StrictPOS
+			if am.IsMatched(r) {
+				andOK[i] = true
+			}
+		}
+	}
+	if !baseOK {
+		// Soft untagged probe for base
+		if !m.StrictPOS {
+			probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+			probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
+			baseOK = baseM.IsMatched(probe)
+		}
+	}
+	if !baseOK {
+		return false
+	}
+	for _, ok := range andOK {
+		if !ok {
+			return false
+		}
+	}
+	return true
 }
 
 // chunkTagMatches ports Java ChunkTag exact/regexp check on readings' chunk tags.

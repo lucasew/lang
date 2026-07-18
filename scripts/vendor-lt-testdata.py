@@ -235,15 +235,15 @@ def serialize_soft_inline(el: ET.Element) -> str:
 
 
 def collapse_and(and_el: ET.Element) -> dict | None:
-    """Collapse simple <and> of one surface token + optional postag into one soft token.
+    """Collapse simple <and> into one soft token (+ optional and_group members).
 
-    LT <and> requires all children to match the same token position. Soft loader
-    has a single PatternToken with surface + POS, so we only accept:
-      - one surface-bearing token (optional regexp/case/exception)
-      - zero or one postag-only token
+    LT <and> requires all children to match the same token position. Soft path:
+      - one surface-bearing token + zero or more postag-only tokens
+      - or two+ postag-only tokens (first is base, rest are and_group)
+    Java and-group: each member must match *some* reading of that token.
     """
     surface = None
-    postag = None
+    postags: list[dict] = []
     for t in and_el:
         if local(t.tag) != "token":
             return None
@@ -253,7 +253,6 @@ def collapse_and(and_el: ET.Element) -> dict | None:
         has_surface = bool(st.get("text"))
         has_pos = bool(st.get("postag"))
         if has_surface and has_pos:
-            # already combined — only allow one such
             if surface is not None:
                 return None
             surface = st
@@ -264,17 +263,24 @@ def collapse_and(and_el: ET.Element) -> dict | None:
             surface = st
             continue
         if has_pos and not has_surface:
-            if postag is not None:
-                return None
-            postag = st
+            postags.append(st)
             continue
         return None
     if surface is None:
-        return None
-    if postag is not None:
-        surface["postag"] = postag["postag"]
-        if postag.get("postag_regexp"):
-            surface["postag_regexp"] = postag["postag_regexp"]
+        if len(postags) < 2:
+            return None
+        # postag-only and-group: first base, remaining and_group
+        main = dict(postags[0])
+        main["and_group"] = [dict(p) for p in postags[1:]]
+        return main
+    if postags:
+        # first postag merges into surface POS; further ones are and-group
+        surface = dict(surface)
+        surface["postag"] = postags[0]["postag"]
+        if postags[0].get("postag_regexp"):
+            surface["postag_regexp"] = postags[0]["postag_regexp"]
+        if len(postags) > 1:
+            surface["and_group"] = [dict(p) for p in postags[1:]]
     return surface
 
 
@@ -614,6 +620,9 @@ def soft_disambig_tokens(toks: list) -> list[dict] | None:
                 st[k] = t[k]
         if t.get("exceptions"):
             st["exceptions"] = t["exceptions"]
+        if t.get("and_group"):
+            # Nested soft and-group members (postag-only PatternTokens).
+            st["and_group"] = t["and_group"]
         if (
             not st["text"]
             and not st.get("postag")
@@ -651,11 +660,12 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
         attr_s = (" " + " ".join(attrs)) if attrs else ""
         body = xml_esc(t.get("text") if isinstance(t, dict) else t)
         excs = t.get("exceptions") if isinstance(t, dict) else None
-        if not excs:
+        and_group = t.get("and_group") if isinstance(t, dict) else None
+        if not excs and not and_group:
             lines.append(f"{indent}<token{attr_s}>{body}</token>")
         else:
             lines.append(f"{indent}<token{attr_s}>{body}")
-            for e in excs:
+            for e in excs or []:
                 ea = []
                 for k in ("regexp", "case_sensitive", "negate"):
                     if isinstance(e, dict) and e.get(k):
@@ -663,6 +673,17 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
                 eas = (" " + " ".join(ea)) if ea else ""
                 etext = e.get("text") if isinstance(e, dict) else ""
                 lines.append(f"{indent}  <exception{eas}>{xml_esc(etext or '')}</exception>")
+            # Soft <and_token> = Java and-group member (same token position).
+            for ag in and_group or []:
+                if not isinstance(ag, dict):
+                    continue
+                aa = []
+                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp"):
+                    if ag.get(k):
+                        aa.append(f'{k}="{xml_esc(str(ag[k]))}"')
+                aas = (" " + " ".join(aa)) if aa else ""
+                abody = xml_esc(ag.get("text") or "")
+                lines.append(f"{indent}  <and_token{aas}>{abody}</and_token>")
             lines.append(f"{indent}</token>")
 
 

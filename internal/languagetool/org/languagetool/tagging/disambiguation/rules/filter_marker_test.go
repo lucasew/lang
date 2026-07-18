@@ -653,3 +653,49 @@ func TestDisambigLoader_ChunkAttr(t *testing.T) {
 	require.Equal(t, "B-NP", rules[0].Tokens[0].ChunkTag)
 	require.False(t, rules[0].Tokens[0].ChunkTagRegexp)
 }
+
+func TestDisambigLoader_AndTokenGroup(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="AND_RM" name="and">
+    <pattern>
+      <token postag="VBP"><and_token postag="NN:UN"/></token>
+    </pattern>
+    <disambig action="remove" postag="NN:UN"/>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Len(t, rules[0].Tokens[0].AndGroup, 1)
+	require.Equal(t, "NN:UN", rules[0].Tokens[0].AndGroup[0].Pos.PosTag)
+
+	vbp, nnun := "VBP", "NN:UN"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("fall", &vbp, nil))
+			r.AddReading(languagetool.NewAnalyzedToken("fall", &nnun, nil), "dict")
+			return r
+		}(),
+	}
+	pos := 0
+	for _, atr := range toks {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out := rules[0].Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "fall" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tags, "VBP")
+	require.NotContains(t, tags, "NN:UN")
+}
