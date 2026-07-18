@@ -36,9 +36,14 @@ func AnalyzePlain(text string) *AnalyzedSentence {
 }
 
 // AnalyzeWithTokenizer is AnalyzePlain with an explicit word tokenizer (e.g. FrenchWordTokenizer).
+// JapaneseWordTokenizer follows Java: tokenize emits "surface POS lemma", then
+// asAnalyzedToken splits into surface/POS/lemma (JapaneseTagger).
 func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentence {
 	if wt == nil {
 		wt = tokenizers.NewWordTokenizer()
+	}
+	if _, ok := wt.(*jatok.JapaneseWordTokenizer); ok {
+		return analyzeJapaneseEncoded(wt.Tokenize(text))
 	}
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)
@@ -63,6 +68,41 @@ func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentenc
 	// (POINT_DIALOGUE and other rules match postag SENT_END on the final word).
 	softAttachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
+}
+
+// analyzeJapaneseEncoded ports JLanguageTool analysis for Japanese:
+// wordTokenizer.tokenize → "surface POS lemma"; tagger.asAnalyzedToken splits.
+func analyzeJapaneseEncoded(encoded []string) *AnalyzedSentence {
+	readings := make([]*AnalyzedTokenReadings, 0, len(encoded)+1)
+	ss := SentenceStartTagName
+	startTok := NewAnalyzedToken("", &ss, nil)
+	startR := NewAnalyzedTokenReadings(startTok)
+	startR.SetStartPos(0)
+	readings = append(readings, startR)
+	pos := 0
+	prev := ""
+	for _, word := range encoded {
+		at := japaneseAsAnalyzedToken(word)
+		ar := NewAnalyzedTokenReadingsAt(at, pos)
+		if prev != "" {
+			ar.SetWhitespaceBeforeToken(prev)
+		}
+		readings = append(readings, ar)
+		pos += tokenizers.UTF16Len(at.GetToken())
+		prev = at.GetToken()
+	}
+	softAttachSentenceEnd(readings)
+	return NewAnalyzedSentence(readings)
+}
+
+// japaneseAsAnalyzedToken ports JapaneseTagger.asAnalyzedToken.
+func japaneseAsAnalyzedToken(word string) *AnalyzedToken {
+	parts := strings.Split(word, " ")
+	if len(parts) != 3 {
+		return NewAnalyzedToken(" ", nil, nil)
+	}
+	p, l := parts[1], parts[2]
+	return NewAnalyzedToken(parts[0], &p, &l)
 }
 
 // softAttachSentenceEnd adds a SENT_END reading on the last non-SENT_START token.
@@ -328,12 +368,17 @@ func AnalyzeWithTagger(text string, tagWord func(token string) []TokenTag) *Anal
 }
 
 // AnalyzeWithTaggerAndTokenizer tags tokens produced by wt.
+// Japanese still uses Sen/kagome encode→decode (TagWord is per-surface and cannot
+// replace full-sentence morph analysis).
 func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []TokenTag, wt tokenizers.Tokenizer) *AnalyzedSentence {
-	if tagWord == nil {
-		return AnalyzeWithTokenizer(text, wt)
-	}
 	if wt == nil {
 		wt = tokenizers.NewWordTokenizer()
+	}
+	if _, ok := wt.(*jatok.JapaneseWordTokenizer); ok {
+		return analyzeJapaneseEncoded(wt.Tokenize(text))
+	}
+	if tagWord == nil {
+		return AnalyzeWithTokenizer(text, wt)
 	}
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)
