@@ -78,7 +78,8 @@ func (c *EnglishChunker) AddChunkTags(tokens []*languagetool.AnalyzedTokenReadin
 		var strs []string
 		for _, ct := range t.ChunkTags {
 			s := ct.GetChunkTag()
-			if s != "" && s != "O" {
+			// Keep "O" so chunk_re="…|O" matches (Java OpenNLP outside tag).
+			if s != "" {
 				strs = append(strs, s)
 			}
 		}
@@ -103,6 +104,15 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			phrases[i] = "VP"
 			poss[i] = "VB"
 			prevPOS = "VB"
+			prevSurf = t.Token
+			continue
+		}
+		// Possessive apostrophe (Alex'/fox'): keep NP context for the following
+		// noun (mother/tail) like Java POS clitic.
+		if softIsPossessiveApostrophe(t.Token) {
+			phrases[i] = "O"
+			poss[i] = "POS"
+			prevPOS = "PRP$"
 			prevSurf = t.Token
 			continue
 		}
@@ -131,6 +141,14 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			prevSurf = tok
 			continue
 		}
+		// "a great discover": discover is only VB in dict but pattern wants E-NP.
+		if softIsNominalizedVerbAfterAdj(prevPOS, t.Token) {
+			phrases[i] = "NP"
+			poss[i] = "NN"
+			prevPOS = "NN"
+			prevSurf = tok
+			continue
+		}
 		// "to home/upstairs/…" adverbials: prefer ADVP when RB reading exists.
 		if softIsDirectionalAfterTo(prevSurf, t) {
 			phrases[i] = "ADVP"
@@ -146,7 +164,11 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 	bio := toBIOWithPOS(phrases, poss)
 	for i := range out {
 		if bio[i] == "" || bio[i] == "O" {
-			// keep any pre-existing tags
+			// Java OpenNLP emits explicit "O" (outside). Soft patterns use
+			// chunk_re="…|O" (SINGED_CONTRACT); empty tags do not match.
+			if len(out[i].ChunkTags) == 0 {
+				out[i].ChunkTags = []ChunkTag{NewChunkTag("O")}
+			}
 			continue
 		}
 		out[i].ChunkTags = []ChunkTag{NewChunkTag(bio[i])}
@@ -161,7 +183,7 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	// Java EnglishChunker feeds OpenNLP a single POS from its own tagger.
 	// Soft multi-tag LT dicts need a pick: default first non-boundary reading
 	// (dict order ≈ frequency), with light context/aux heuristics.
-	var first, vb, vbfinite, nn, rp, in, rb, jj string
+	var first, vb, vbfinite, vbg, vbp, nn, rp, in, rb, jj string
 	for _, r := range t.Readings.GetReadings() {
 		if r == nil {
 			continue
@@ -193,6 +215,12 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 		if (strings.HasPrefix(pos, "VB") || pos == "MD") && vb == "" {
 			vb = pos
 		}
+		if pos == "VBG" && vbg == "" {
+			vbg = pos
+		}
+		if pos == "VBP" && vbp == "" {
+			vbp = pos
+		}
 		// Finite verbs (not VBG/VBN alone) for subject-verb after NN.
 		if (pos == "VB" || pos == "VBP" || pos == "VBZ" || pos == "VBD" || pos == "MD") && vbfinite == "" {
 			vbfinite = pos
@@ -205,6 +233,11 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	// OpenNLP POS would choose VB*; force VB for known aux surfaces.
 	if vb != "" && softIsEnglishAuxSurface(t.Token) {
 		return vb
+	}
+	// Prepositions multi-tagged NN|IN|RP (in/on/at) must stay IN/PP, not NN after a noun
+	// (was solution in this case — "in" was wrongly E-NP).
+	if in != "" && softIsEnglishPrepSurface(t.Token) {
+		return in
 	}
 	// Particles vs prepositions after a verb: "catch up" → RP/B-PRT, but
 	// "singed with" / "books at" prefer IN/B-PP (prep surfaces).
@@ -221,9 +254,20 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	}
 	// Infinitive/modal: only after surface "to" (TO tag) or MD — not after every
 	// IN ("like mine" must not force VB on mine).
+	// Exception: "to be singed" — already VB.
 	if prevPOS == "TO" || prevPOS == "MD" || strings.EqualFold(prevSurf, "to") {
 		if vb != "" {
 			return vb
+		}
+	}
+	// Copula "is/was/are/'s" + predicative NP (What is last price / was solution):
+	// prefer JJ/NN over spurious VB readings on last/price.
+	if softIsCopulaSurface(prevSurf) {
+		if jj != "" {
+			return jj
+		}
+		if nn != "" {
+			return nn
 		}
 	}
 	// After a determiner/possessive: prefer adjective when both JJ and NN are
@@ -236,15 +280,44 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 			return nn
 		}
 	}
-	// After a subject-like tag: prefer finite *tense* verb (Chris rose / Does)
-	// over bare VB/VBP which often mark noun compounds (mu house, cream paint).
-	// But after NN, prefer NNS over VBZ for compounds (voice disorders).
+	// After a subject-like tag:
+	//  - progressive VBG (are you going)
+	//  - finite VBD/VBZ (Chris rose / Does)
+	//  - NNS compound after NN (voice disorders)
+	//  - MY_NOT_MU: "mu house/opinion" keep NN
+	//  - present VBP for agreement errors (if user want)
 	if strings.HasPrefix(prevPOS, "NN") || prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_") {
+		// Does anyone knows — after singular indefinite PRP force finite verb.
+		if isSingularPronounSurface(prevSurf) {
+			if v := softFiniteTenseVerb(t); v != "" {
+				return v
+			}
+			if vbp != "" {
+				return vbp
+			}
+		}
+		// help your son sleeps — human subject + VBZ over NNS.
+		if softIsHumanNounSurface(prevSurf) {
+			if v := softFiniteTenseVerb(t); v != "" {
+				return v
+			}
+		}
+		if vbg != "" {
+			return vbg
+		}
 		if nn != "" && softHasPluralNounReading(t) && strings.HasPrefix(prevPOS, "NN") {
 			return nn
 		}
 		if vbdOrZ := softFiniteTenseVerb(t); vbdOrZ != "" {
 			return vbdOrZ
+		}
+		// "mu house" / "mu opinion" — keep noun compound (MY_NOT_MU).
+		if strings.EqualFold(prevSurf, "mu") && nn != "" {
+			return nn
+		}
+		// SUBJECT_NUMBER: user want / student need — VBP over NN:UN.
+		if vbp != "" {
+			return vbp
 		}
 		if nn != "" {
 			return nn
@@ -288,6 +361,15 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 			}
 			return vb
 		}
+	}
+	// Progressive after be / 'm / 're: I'm trying / are going.
+	if vbg != "" && softIsBeLikeSurface(prevSurf) {
+		return vbg
+	}
+	// After finite VBP/VBZ/VBD prefer object NN (if user want work).
+	// Do not apply after bare VB (keep see still serial-verb).
+	if (prevPOS == "VBP" || prevPOS == "VBZ" || prevPOS == "VBD") && nn != "" {
+		return nn
 	}
 	// After a verb, prefer another verb for serial/aspect complements (keep see,
 	// going tell) when both NN and VB exist.
@@ -452,6 +534,81 @@ func softHasPluralNounReading(t ChunkTaggedToken) bool {
 		}
 	}
 	return false
+}
+
+func softIsCopulaSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "is", "was", "are", "were", "be", "been", "being", "'s", "’s":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsBeLikeSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "is", "was", "are", "were", "be", "been", "being", "am",
+		"'m", "’m", "'s", "’s", "'re", "’re":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsBareSubjectPrev: subordinators introducing a bare singular subject
+// (if user want / when student need).
+func softIsBareSubjectPrev(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "if", "when", "whenever", "whether", "unless", "while", "although", "though", "because":
+		return true
+	default:
+		// also true when prev is the subject noun itself? handled by after NN
+		return false
+	}
+}
+
+// softIsNominalizedVerbAfterAdj: "a great discover" — dict has only VB for discover.
+func softIsNominalizedVerbAfterAdj(prevPOS, surface string) bool {
+	if !strings.HasPrefix(prevPOS, "JJ") && prevPOS != "DT" {
+		return false
+	}
+	switch strings.ToLower(strings.TrimSpace(surface)) {
+	case "discover", "develop", "analyze", "analyse", "perform", "respond", "succeed":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsHumanNounSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "son", "daughter", "mother", "father", "child", "kid", "boy", "girl",
+		"man", "woman", "student", "user", "teacher", "doctor", "patient", "friend",
+		"brother", "sister", "parent", "baby", "person":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsEnglishPrepSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "in", "on", "at", "by", "for", "from", "with", "of", "to", "into", "onto",
+		"over", "under", "about", "as", "like", "through", "between", "among", "without",
+		"within", "after", "before", "during", "against", "via", "per":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsPossessiveApostrophe(s string) bool {
+	switch strings.TrimSpace(s) {
+	case "'", "’", "ʼ", "`":
+		return true
+	default:
+		return false
+	}
 }
 
 func phraseFromPOS(pos string) string {

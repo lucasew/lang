@@ -28,6 +28,11 @@ func (f *EnglishChunkFilter) Filter(tokens []ChunkTaggedToken) []ChunkTaggedToke
 		var chunkTags []ChunkTag
 		if isBeginningOfNounPhrase(tagged) {
 			ct := getChunkType(tokens, i)
+			// anyone/someone: always singular NP (Java OpenNLP; not pluralized by
+			// a following NNS|VBZ "knows").
+			if isSingularPronounSurface(tagged.Token) {
+				ct = chunkSingular
+			}
 			if ct == chunkSingular || endOfNounPhraseIsSingular(tokens, i) {
 				chunkTags = append(chunkTags, NewChunkTag("B-NP-singular"))
 				newChunkTag = "NP-singular"
@@ -92,6 +97,7 @@ func getChunkType(tokens []ChunkTaggedToken, i int) chunkType {
 	// Java EnglishChunkFilter.getChunkType: only scan B-NP/I-NP tokens in the
 	// span; break before plural-check when the token is outside the NP (so a
 	// following NNS|VBZ verb like "knows" does not make "anyone" plural).
+	// Also: pure PRP (anyone/someone) is singular even if a later NNS is mis-tagged.
 	plural := false
 	for j := i; j < len(tokens); j++ {
 		tok := tokens[j]
@@ -106,6 +112,17 @@ func getChunkType(tokens []ChunkTaggedToken, i int) chunkType {
 		return chunkPlural
 	}
 	return chunkSingular
+}
+
+// isSingularPronounToken is true for PRP anyone/someone/everybody (not they/we).
+func isSingularPronounSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "anyone", "anybody", "someone", "somebody", "everyone", "everybody",
+		"noone", "nobody", "one", "each", "either", "neither":
+		return true
+	default:
+		return false
+	}
 }
 
 func isPluralToken(t ChunkTaggedToken) bool {
