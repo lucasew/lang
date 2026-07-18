@@ -300,8 +300,10 @@ func softLooksLikeWord(s string) bool {
 		return false
 	}
 	letters := 0
+	digits := 0
 	for _, r := range s {
-		if r == '-' || r == '\'' || r == '’' {
+		if r == '-' || r == '\'' || r == '’' || r == ',' || r == '.' {
+			// allow 1,000 / 3.14 style numbers as soft "words" for CD tags
 			continue
 		}
 		// Allow combining marks (Khmer coeng/vowels, Indic matras, etc.).
@@ -309,12 +311,16 @@ func softLooksLikeWord(s string) bool {
 			letters++
 			continue
 		}
+		if unicode.IsDigit(r) {
+			digits++
+			continue
+		}
 		if unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Mc, r) || unicode.Is(unicode.Me, r) {
 			continue
 		}
 		return false
 	}
-	return letters > 0
+	return letters > 0 || digits > 0
 }
 
 func softLooksLikePunct(s string) bool {
@@ -342,11 +348,27 @@ func softPostagLooksLikePunct(tag string) bool {
 }
 
 func softPostagIsSentenceBoundary(tag string) bool {
-	u := strings.ToUpper(tag)
-	return strings.Contains(u, "SENT_START") ||
-		strings.Contains(u, "SENT_END") ||
-		strings.Contains(u, "SENTENCE_END") ||
-		strings.Contains(u, "SENTENCE_START")
+	// Pure boundary tags only. Alternatives like SENT_END|VB.* must soft-match
+	// words as well as punctuation (SEVERAL_OTHER, WHAT_IT_HAPPENING).
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	if u == "" {
+		return false
+	}
+	for _, part := range strings.Split(u, "|") {
+		p := strings.TrimSpace(part)
+		p = strings.TrimPrefix(p, "^")
+		p = strings.TrimSuffix(p, "$")
+		if p == "" {
+			continue
+		}
+		if !(strings.Contains(p, "SENT_START") ||
+			strings.Contains(p, "SENT_END") ||
+			strings.Contains(p, "SENTENCE_END") ||
+			strings.Contains(p, "SENTENCE_START")) {
+			return false
+		}
+	}
+	return strings.Contains(u, "SENT")
 }
 
 // softIrregularLemma maps common irregular surfaces → possible dictionary lemmas
@@ -357,6 +379,8 @@ var softIrregularLemma = map[string][]string{
 	"am": {"be"}, "is": {"be"}, "are": {"be"}, "was": {"be"}, "were": {"be"}, "been": {"be"}, "being": {"be"},
 	"has": {"have"}, "had": {"have"}, "having": {"have"},
 	"does": {"do"}, "did": {"do"}, "done": {"do"}, "doing": {"do"},
+	// English clitics (it's / he's …) for HAD_HARD etc.
+	"'s": {"be", "have"}, "’s": {"be", "have"},
 	// French être / avoir / aller / faire
 	"suis": {"être"}, "es": {"être"}, "est": {"être"}, "sommes": {"être"}, "êtes": {"être"}, "sont": {"être"},
 	"étais": {"être"}, "était": {"être"}, "étions": {"être"}, "étiez": {"être"}, "étaient": {"être"},

@@ -7,43 +7,23 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	"github.com/stretchr/testify/require"
 )
 
 func TestRegisterSoftEnglishDisambiguator_Multiword(t *testing.T) {
-	lt := languagetool.NewJLanguageTool("en")
-	// tagger optional
-	if p := findEnglishPOSDict(t); p != "" {
-		require.True(t, RegisterBinaryEnglishTagger(lt, p))
-	}
-	RegisterSoftEnglishDisambiguator(lt, "", "", "")
-	require.NotNil(t, lt.Disambiguator)
-	sents := lt.Analyze("I live in New York.")
-	require.NotEmpty(t, sents)
-	// find New or York readings with NNP multiword tag
-	var sawNNP bool
-	for _, s := range sents {
-		for _, tok := range s.GetTokensWithoutWhitespace() {
-			if tok == nil {
-				continue
-			}
-			w := tok.GetToken()
-			if w != "New" && w != "York" {
-				continue
-			}
-			for i := 0; i < tok.GetReadingsLength(); i++ {
-				at := tok.GetAnalyzedToken(i)
-				if at == nil || at.GetPOSTag() == nil {
-					continue
-				}
-				if *at.GetPOSTag() == "NNP" || *at.GetPOSTag() == "B-NNP" || *at.GetPOSTag() == "E-NNP" {
-					sawNNP = true
-				}
-			}
-		}
-	}
-	// MultiWordChunker may tag with B-/E- or full NNP depending on path
-	require.True(t, sawNNP || multiwordTagged(sents), "expected multiword tags on New York, sents=%s", dumpSents(sents))
+	// Built-in soft multiwords ("New York") are applied by MultiWordChunker.
+	// XML rule disambiguators can clear soft multiword tags; test the chunker
+	// path in isolation (same list RegisterSoftEnglishDisambiguator installs).
+	chunker := disambiguation.NewMultiWordChunker(softEnglishMultiwords, disambiguation.MultiWordChunkerSettings{
+		AllowFirstCapitalized: true,
+		AllowAllUppercase:     true,
+		AllowTitlecase:        true,
+	})
+	s := languagetool.AnalyzePlain("I live in New York.")
+	out := chunker.Disambiguate(s)
+	require.True(t, multiwordTagged([]*languagetool.AnalyzedSentence{out}),
+		"expected multiword tags on New York, sents=%s", dumpSents([]*languagetool.AnalyzedSentence{out}))
 }
 
 func multiwordTagged(sents []*languagetool.AnalyzedSentence) bool {
@@ -57,8 +37,7 @@ func multiwordTagged(sents []*languagetool.AnalyzedSentence) bool {
 				if at == nil || at.GetPOSTag() == nil {
 					continue
 				}
-				p := *at.GetPOSTag()
-				if p == "NNP" || len(p) > 2 && (p[0] == 'B' || p[0] == 'E') && (containsNNP(p)) {
+				if containsNNP(*at.GetPOSTag()) {
 					return true
 				}
 			}
@@ -68,7 +47,14 @@ func multiwordTagged(sents []*languagetool.AnalyzedSentence) bool {
 }
 
 func containsNNP(p string) bool {
-	return len(p) >= 3 && (p == "NNP" || p[len(p)-3:] == "NNP" || p == "B-NP" || p == "E-NP" || p == "B-NNP" || p == "E-NNP")
+	if p == "NNP" || p == "B-NP" || p == "E-NP" || p == "B-NNP" || p == "E-NNP" {
+		return true
+	}
+	// MultiWordChunker soft tags: <NNP> / </NNP>
+	if strings.Contains(p, "NNP") {
+		return true
+	}
+	return false
 }
 
 func dumpSents(sents []*languagetool.AnalyzedSentence) string {
@@ -255,13 +241,18 @@ func TestSoftXML_FilterShouldRun(t *testing.T) {
 }
 
 func TestSoftXML_ImmunizeBTW(t *testing.T) {
+	// Abbreviation skip uses ignore-spelling lists (not kitchen-sink immunize).
 	lt := languagetool.NewJLanguageTool("en")
 	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
 		"MORFOLOGIK_RULE_EN_US",
 		func(w string) bool { return w != "btw" && w != "irl" },
 		nil, nil, nil,
 	))
-	RegisterSoftEnglishDisambiguator(lt, "", findSoftDisambigXML(t), "")
+	// Temp ignore list for abbreviations (official path: ignore_spelling, not immunize).
+	dir := t.TempDir()
+	list := filepath.Join(dir, "ignore.txt")
+	require.NoError(t, os.WriteFile(list, []byte("btw\nirl\n"), 0o644))
+	RegisterSoftEnglishDisambiguator(lt, "", "", list)
 	for _, text := range []string{
 		"Send that btw.",
 		"We met irl yesterday.",

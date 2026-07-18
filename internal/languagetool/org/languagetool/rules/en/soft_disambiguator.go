@@ -83,6 +83,19 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 		if err != nil || len(rules) == 0 {
 			continue
 		}
+		// Hand en-soft.xml immunizes ordinary words (kind, …). Drop IMMUNIZE when
+		// that pack is loaded explicitly; keep FILTER/REPLACE for modal soft tests.
+		base := filepath.Base(p)
+		if base == "en-soft.xml" || base == "en-soft-disambiguation.xml" {
+			filtered := rules[:0]
+			for _, r := range rules {
+				if r == nil || r.Action == disambigrules.ActionImmunize {
+					continue
+				}
+				filtered = append(filtered, r)
+			}
+			rules = filtered
+		}
 		allDisambigRules = append(allDisambigRules, rules...)
 	}
 	if len(allDisambigRules) > 0 {
@@ -152,8 +165,11 @@ func (w *ignoreSpellingWordList) Disambiguate(input *languagetool.AnalyzedSenten
 	return input
 }
 
-// softDisambiguationXMLPaths returns the primary soft/upstream disambig XML plus
-// companion en-soft.xml in the same directory (soft immunize abbreviations).
+// softDisambiguationXMLPaths returns soft/upstream disambiguation XML paths.
+// Prefer official upstream soft extract. Do NOT auto-merge hand en-soft.xml:
+// that pack immunizes thousands of ordinary words (e.g. "kind"), which blocks
+// official pattern rules. Hand en-soft is only used when it is the primary path
+// or when no upstream soft file is available.
 func softDisambiguationXMLPaths(primary string) []string {
 	var out []string
 	seen := map[string]struct{}{}
@@ -171,26 +187,15 @@ func softDisambiguationXMLPaths(primary string) []string {
 		out = append(out, p)
 	}
 	add(primary)
-	if primary != "" {
-		dir := filepath.Dir(primary)
-		base := filepath.Base(primary)
-		// When primary is upstream extract, also load hand soft immunize pack.
-		if strings.Contains(base, "upstream") || base == "en-disambiguation-from-upstream-soft.xml" {
-			add(filepath.Join(dir, "en-soft.xml"))
-		}
-		// When primary is en-soft, also try upstream if present.
-		if base == "en-soft.xml" || base == "en-soft-disambiguation.xml" {
-			add(filepath.Join(dir, "en-disambiguation-upstream-soft.xml"))
-		}
-	}
-	// walk-up fallbacks if primary empty
+	// walk-up fallbacks if primary empty — official upstream soft only.
+	// Hand en-soft.xml is opt-in via primary path (tests); it must not merge
+	// with upstream by default (immunize/filter interactions clear tags).
 	if len(out) == 0 {
 		wd, err := os.Getwd()
 		if err == nil {
 			dir := wd
 			for {
 				add(filepath.Join(dir, "testdata", "disambiguation", "en-disambiguation-upstream-soft.xml"))
-				add(filepath.Join(dir, "testdata", "disambiguation", "en-soft.xml"))
 				parent := filepath.Dir(dir)
 				if parent == dir {
 					break
