@@ -52,7 +52,7 @@ type LocalMatch struct {
 	ShortMessage   string
 	RuleID         string
 	Suggestions    []string
-	// Optional rule metadata (from soft grammar XML or SoftRuleMeta).
+	// Optional rule metadata (from the rule or SoftRuleMeta fallback for known Java families).
 	Description  string
 	CategoryID   string
 	CategoryName string

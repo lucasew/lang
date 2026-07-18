@@ -51,7 +51,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.9 | Soft cover/align hacks removed from `pattern_rule_matcher.go` (CJK surface align, fused prep, hyphen cover, …) | [x] |
 | 1.10 | Soft expand / backref invent removed if not Java-equivalent | [ ] |
 | 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [ ] `english_chunker.go` still soft-heavy |
-| 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [ ] `soft_rule_meta.go` still present |
+| 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [~] soft pack invent removed; fallback only for known Java families |
 | 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
 | 1.14 | Soft picky XML load paths removed from server text checker | [ ] `text_checker_check.go` |
 | 1.15 | Demo/map tagger & speller not presented as default engine (or moved outside when freeze lifts) | [ ] `DemoEnglish*`, `LANG_DEMO_SPELLER` |
