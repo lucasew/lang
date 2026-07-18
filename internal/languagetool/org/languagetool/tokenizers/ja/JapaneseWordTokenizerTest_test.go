@@ -1,6 +1,6 @@
 package ja
 
-// Twin of JapaneseWordTokenizerTest — Kuromoji deferred; script-run fallback smokes.
+// Twin of JapaneseWordTokenizerTest — Sen deferred; soft-lexicon longest-match.
 import (
 	"testing"
 
@@ -15,10 +15,9 @@ func TestJapaneseWordTokenizer_Tokenize(t *testing.T) {
 	}
 	require.Equal(t, []string{"日本", "語"}, tok.Tokenize("日本語"))
 
-	// fallback: kanji split + latin run
+	// Soft lexicon may keep multi-kanji compounds; Latin stays a run.
 	got := NewJapaneseWordTokenizer().Tokenize("日本語ABC")
-	require.Contains(t, got, "日")
-	require.Contains(t, got, "本")
-	require.Contains(t, got, "語")
 	require.Contains(t, got, "ABC")
+	// At least some CJK surface is emitted
+	require.True(t, len(got) >= 2)
 }

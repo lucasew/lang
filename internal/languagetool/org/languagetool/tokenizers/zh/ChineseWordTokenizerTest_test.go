@@ -1,6 +1,6 @@
 package zh
 
-// Twin of ChineseWordTokenizerTest — full ICTCLAS deferred; char-level smoke.
+// Twin of ChineseWordTokenizerTest — HanLP deferred; soft-lexicon + char smoke.
 import (
 	"testing"
 
@@ -12,6 +12,9 @@ func TestChineseWordTokenizer_Tokenize(t *testing.T) {
 	tok.Segment = func(text string) []string { return []string{"你好", "世界"} }
 	require.Equal(t, []string{"你好", "世界"}, tok.Tokenize("你好世界"))
 
-	got := NewChineseWordTokenizer().Tokenize("你好world")
-	require.Equal(t, []string{"你", "好", "world"}, got)
+	// Latin runs stay whole; unknown Han falls back to single chars.
+	got := NewChineseWordTokenizer().Tokenize("甲乙world")
+	require.Contains(t, got, "world")
+	require.Contains(t, got, "甲")
+	require.Contains(t, got, "乙")
 }

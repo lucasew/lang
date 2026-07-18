@@ -2,12 +2,14 @@ package zh
 
 import (
 	"strings"
-	"unicode"
 	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
-// ChineseWordTokenizer ports tokenizers.zh.ChineseWordTokenizer (character-level fallback).
-// Real Chinese segmentation (ICTCLAS/jieba) is deferred.
+// ChineseWordTokenizer ports tokenizers.zh.ChineseWordTokenizer.
+// Full HanLP segmentation is deferred. Soft path uses longest-match over
+// surfaces from zh-upstream-soft.xml with single-char Han fallback.
 type ChineseWordTokenizer struct {
 	// Segment optional custom segmenter.
 	Segment func(text string) []string
@@ -19,33 +21,8 @@ func (t *ChineseWordTokenizer) Tokenize(text string) []string {
 	if t != nil && t.Segment != nil {
 		return t.Segment(text)
 	}
-	if text == "" {
-		return nil
-	}
-	// split CJK runs into characters; keep non-CJK runs as words
-	var out []string
-	var buf strings.Builder
-	flush := func() {
-		if buf.Len() > 0 {
-			out = append(out, buf.String())
-			buf.Reset()
-		}
-	}
-	for _, r := range text {
-		if unicode.Is(unicode.Han, r) {
-			flush()
-			out = append(out, string(r))
-			continue
-		}
-		if unicode.IsSpace(r) {
-			flush()
-			out = append(out, string(r))
-			continue
-		}
-		buf.WriteRune(r)
-	}
-	flush()
-	return out
+	lex := tokenizers.SoftCJKLexiconForLang("zh")
+	return tokenizers.SegmentCJKLongestMatch(text, lex)
 }
 
 // ChineseSentenceTokenizer ports tokenizers.zh.ChineseSentenceTokenizer.

@@ -15,6 +15,7 @@ import (
 	estok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/es"
 	frtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/fr"
 	gltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/gl"
+	jatok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ja"
 	kmtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/km"
 	mltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ml"
 	nltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/nl"
@@ -24,6 +25,7 @@ import (
 	rutok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ru"
 	tltok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/tl"
 	uktok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/uk"
+	zhtok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/zh"
 )
 
 // AnalyzePlain ports a minimal getAnalyzedSentence for demo/rule unit tests:
@@ -115,6 +117,8 @@ func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 		return frtok.NewFrenchWordTokenizer()
 	case "gl":
 		return gltok.NewGalicianWordTokenizer()
+	case "ja":
+		return jatok.NewJapaneseWordTokenizer()
 	case "km":
 		return kmtok.NewKhmerWordTokenizer()
 	case "ml":
@@ -133,6 +137,8 @@ func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 		return tltok.NewTagalogWordTokenizer()
 	case "uk":
 		return uktok.NewUkrainianWordTokenizer()
+	case "zh":
+		return zhtok.NewChineseWordTokenizer()
 	default:
 		return tokenizers.NewWordTokenizer()
 	}
