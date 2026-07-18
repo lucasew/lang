@@ -12,7 +12,7 @@ import (
 
 // DisambiguationRuleLoader ports
 // org.languagetool.tagging.disambiguation.rules.DisambiguationRuleLoader
-// for a simplified disambiguation.xml subset.
+// Loads official disambiguation.xml (rulegroups, <and>, antipatterns, unifications).
 type DisambiguationRuleLoader struct{}
 
 func NewDisambiguationRuleLoader() *DisambiguationRuleLoader {
@@ -25,7 +25,7 @@ func (l *DisambiguationRuleLoader) GetRulesFromReader(r io.Reader, languageCode,
 	return rules, err
 }
 
-// GetRulesAndUnifierFromReader parses soft disambig rules plus <unification> tables.
+// GetRulesAndUnifierFromReader parses rules plus <unification> tables.
 func (l *DisambiguationRuleLoader) GetRulesAndUnifierFromReader(r io.Reader, languageCode, xmlPath string) ([]*DisambiguationPatternRule, *patterns.UnifierConfiguration, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
@@ -41,7 +41,7 @@ func (l *DisambiguationRuleLoader) GetRulesFromString(xmlStr, languageCode, xmlP
 	return rules, err
 }
 
-// GetRulesAndUnifierFromString is the soft-entry loader with UnifierConfiguration.
+// GetRulesAndUnifierFromString loads with UnifierConfiguration.
 func (l *DisambiguationRuleLoader) GetRulesAndUnifierFromString(xmlStr, languageCode, xmlPath string) ([]*DisambiguationPatternRule, *patterns.UnifierConfiguration, error) {
 	return l.GetRulesAndUnifierFromReader(strings.NewReader(xmlStr), languageCode, xmlPath)
 }
@@ -50,12 +50,21 @@ type disambigRoot struct {
 	XMLName       xml.Name              `xml:"rules"`
 	Unifications  []disambigUnification `xml:"unification"`
 	Rules         []disambigRule        `xml:"rule"`
+	// RuleGroups: Java nests many rules under <rulegroup> (not visible as top-level <rule>).
+	RuleGroups []disambigRuleGroup `xml:"rulegroup"`
 }
 
-// disambigUnification ports Java <unification feature="…"> for soft UNIFY.
+// disambigRuleGroup ports <rulegroup id="…" name="…"> containing nested <rule>.
+type disambigRuleGroup struct {
+	ID    string         `xml:"id,attr"`
+	Name  string         `xml:"name,attr"`
+	Rules []disambigRule `xml:"rule"`
+}
+
+// disambigUnification ports Java <unification feature="…">.
 type disambigUnification struct {
-	Feature      string                 `xml:"feature,attr"`
-	Equivalences []disambigEquivalence  `xml:"equivalence"`
+	Feature      string                `xml:"feature,attr"`
+	Equivalences []disambigEquivalence `xml:"equivalence"`
 }
 
 type disambigEquivalence struct {
@@ -71,8 +80,74 @@ type disambigRule struct {
 	Disambig     disambigElem      `xml:"disambig"`
 }
 
+// disambigPattern holds pattern children in document order: <token> and/or <and>.
+// Java PatternRuleHandler walks elements; empty tokens from skipped <and> must not load.
 type disambigPattern struct {
-	Tokens []disambigToken `xml:"token"`
+	// Tokens is filled by UnmarshalXML (ordered, includes synthetic AND-group tokens).
+	Tokens []disambigToken
+}
+
+// UnmarshalXML ports pattern content: sequence of <token> and <and><token>…</and>.
+func (p *disambigPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	p.Tokens = nil
+	for {
+		tok, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch t := tok.(type) {
+		case xml.EndElement:
+			if t.Name.Local == start.Name.Local {
+				return nil
+			}
+		case xml.StartElement:
+			switch t.Name.Local {
+			case "token":
+				var xt disambigToken
+				if err := d.DecodeElement(&xt, &t); err != nil {
+					return err
+				}
+				p.Tokens = append(p.Tokens, xt)
+			case "and":
+				// Java <and> is one pattern position: first token is base, rest AndGroup.
+				var andToks []disambigToken
+				for {
+					inner, err := d.Token()
+					if err != nil {
+						return err
+					}
+					switch it := inner.(type) {
+					case xml.EndElement:
+						if it.Name.Local == "and" {
+							goto andDone
+						}
+					case xml.StartElement:
+						if it.Name.Local == "token" {
+							var xt disambigToken
+							if err := d.DecodeElement(&xt, &it); err != nil {
+								return err
+							}
+							andToks = append(andToks, xt)
+						} else if err := d.Skip(); err != nil {
+							return err
+						}
+					}
+				}
+			andDone:
+				if len(andToks) == 0 {
+					continue
+				}
+				base := andToks[0]
+				// Sibling <token>s inside <and> become AndTokens (Java and-group).
+				base.AndTokens = append(base.AndTokens, andToks[1:]...)
+				p.Tokens = append(p.Tokens, base)
+			default:
+				if err := d.Skip(); err != nil {
+					return err
+				}
+			}
+		}
+	}
 }
 
 type disambigToken struct {
@@ -147,83 +222,102 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 			}
 		}
 	}
+	// Flatten top-level rules + rulegroup nested rules (Java DisambiguationRuleHandler).
+	var flat []disambigRule
+	flat = append(flat, root.Rules...)
+	for _, g := range root.RuleGroups {
+		flat = append(flat, g.Rules...)
+	}
+
 	var out []*DisambiguationPatternRule
-	for _, xr := range root.Rules {
-		var tokens []*patterns.PatternToken
-		anyMarker := false
-		for _, xt := range xr.Pattern.Tokens {
-			if strings.EqualFold(xt.Marker, "yes") {
-				anyMarker = true
-			}
-		}
-		for _, xt := range xr.Pattern.Tokens {
-			tokens = append(tokens, disambigTokenFromXML(xt, anyMarker))
-		}
-		action := ActionReplace
-		if xr.Disambig.Action != "" {
-			action = DisambiguatorAction(strings.ToUpper(xr.Disambig.Action))
-		}
-		// default Java: REPLACE when only postag set
-		rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, nil, action)
-		rule.UnifierConfig = cfg
-		if action == ActionUnify {
-			for _, f := range strings.Split(xr.Disambig.Features, ",") {
-				f = strings.TrimSpace(f)
-				if f != "" {
-					rule.UnifyFeatures = append(rule.UnifyFeatures, f)
-				}
-			}
-		}
-		// Java ADD with <wd pos="PCT"/> etc. (UNKNOWN_PCT, COMMA_POSTAG)
-		if len(xr.Disambig.Wds) > 0 {
-			var readings []*languagetool.AnalyzedToken
-			for _, wd := range xr.Disambig.Wds {
-				surf := strings.TrimSpace(wd.Content)
-				var posPtr, lemmaPtr *string
-				if wd.Pos != "" {
-					p := wd.Pos
-					posPtr = &p
-				}
-				if wd.Lemma != "" {
-					lm := wd.Lemma
-					lemmaPtr = &lm
-				}
-				// empty surface: filled from matched token at apply time
-				readings = append(readings, languagetool.NewAnalyzedToken(surf, posPtr, lemmaPtr))
-			}
-			rule.SetNewInterpretations(readings)
-		}
-		// Java <antipattern> → keepByDisambig (simple soft token sequences only).
-		if len(xr.AntiPatterns) > 0 {
-			var aps []*patterns.AbstractTokenBasedRule
-			for i, ap := range xr.AntiPatterns {
-				var apToks []*patterns.PatternToken
-				anyMarker := false
-				for _, xt := range ap.Tokens {
-					if strings.EqualFold(xt.Marker, "yes") {
-						anyMarker = true
-					}
-				}
-				for _, xt := range ap.Tokens {
-					apToks = append(apToks, disambigTokenFromXML(xt, anyMarker))
-				}
-				if len(apToks) == 0 {
-					continue
-				}
-				aps = append(aps, patterns.NewAbstractTokenBasedRule(
-					fmt.Sprintf("%s_anti_%d", xr.ID, i),
-					"antipattern",
-					languageCode,
-					apToks,
-				))
-			}
-			if len(aps) > 0 {
-				rule.SetAntiPatterns(aps)
-			}
+	for _, xr := range flat {
+		rule := buildDisambiguationPatternRule(xr, languageCode, cfg)
+		if rule == nil {
+			continue
 		}
 		out = append(out, rule)
 	}
 	return out, cfg, nil
+}
+
+// buildDisambiguationPatternRule converts one XML rule. Skips rules with empty patterns
+// (would match everything — not Java-faithful; usually a parse bug).
+func buildDisambiguationPatternRule(xr disambigRule, languageCode string, cfg *patterns.UnifierConfiguration) *DisambiguationPatternRule {
+	var tokens []*patterns.PatternToken
+	anyMarker := false
+	for _, xt := range xr.Pattern.Tokens {
+		if strings.EqualFold(xt.Marker, "yes") {
+			anyMarker = true
+		}
+	}
+	for _, xt := range xr.Pattern.Tokens {
+		tokens = append(tokens, disambigTokenFromXML(xt, anyMarker))
+	}
+	if len(tokens) == 0 {
+		return nil
+	}
+	action := ActionReplace
+	if xr.Disambig.Action != "" {
+		action = DisambiguatorAction(strings.ToUpper(xr.Disambig.Action))
+	}
+	// default Java: REPLACE when only postag set
+	rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, nil, action)
+	rule.UnifierConfig = cfg
+	if action == ActionUnify {
+		for _, f := range strings.Split(xr.Disambig.Features, ",") {
+			f = strings.TrimSpace(f)
+			if f != "" {
+				rule.UnifyFeatures = append(rule.UnifyFeatures, f)
+			}
+		}
+	}
+	// Java ADD/REMOVE with <wd pos="…" lemma="…"/>.
+	if len(xr.Disambig.Wds) > 0 {
+		var readings []*languagetool.AnalyzedToken
+		for _, wd := range xr.Disambig.Wds {
+			surf := strings.TrimSpace(wd.Content)
+			var posPtr, lemmaPtr *string
+			if wd.Pos != "" {
+				p := wd.Pos
+				posPtr = &p
+			}
+			if wd.Lemma != "" {
+				lm := wd.Lemma
+				lemmaPtr = &lm
+			}
+			readings = append(readings, languagetool.NewAnalyzedToken(surf, posPtr, lemmaPtr))
+		}
+		rule.SetNewInterpretations(readings)
+	}
+	// Java <antipattern>.
+	if len(xr.AntiPatterns) > 0 {
+		var aps []*patterns.AbstractTokenBasedRule
+		for i, ap := range xr.AntiPatterns {
+			var apToks []*patterns.PatternToken
+			anyMarker := false
+			for _, xt := range ap.Tokens {
+				if strings.EqualFold(xt.Marker, "yes") {
+					anyMarker = true
+				}
+			}
+			for _, xt := range ap.Tokens {
+				apToks = append(apToks, disambigTokenFromXML(xt, anyMarker))
+			}
+			if len(apToks) == 0 {
+				continue
+			}
+			aps = append(aps, patterns.NewAbstractTokenBasedRule(
+				fmt.Sprintf("%s_anti_%d", xr.ID, i),
+				"antipattern",
+				languageCode,
+				apToks,
+			))
+		}
+		if len(aps) > 0 {
+			rule.SetAntiPatterns(aps)
+		}
+	}
+	return rule
 }
 
 func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.PatternToken {
@@ -307,7 +401,7 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			pt.SetStringPosExceptionFull(exc, re, cs, posTag, posRE)
 		}
 	}
-	// Java <and> group members (soft <and_token>): each must match some reading.
+	// Java <and> group members (also soft <and_token> attribute path): each must match some reading.
 	for _, at := range xt.AndTokens {
 		pt.AddAndGroupElement(disambigTokenFromXML(at, false))
 	}
