@@ -113,3 +113,31 @@ func TestEnglishChunker_NotAvailableIADJP(t *testing.T) {
 	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{not, av})
 	require.Contains(t, strings.Join(av.GetChunkTags(), ","), "I-ADJP")
 }
+
+func TestEnglishChunker_KeepSeeAndIsGoing(t *testing.T) {
+	prp, vb, vbp, nn, vbz, vbg := "PRP", "VB", "VBP", "NN", "VBZ", "VBG"
+	i := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("I", &prp, nil))
+	keep := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("keep", &nn, nil),
+		languagetool.NewAnalyzedToken("keep", &vb, nil),
+		languagetool.NewAnalyzedToken("keep", &vbp, nil),
+	}, 0)
+	see := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("see", &nn, nil),
+		languagetool.NewAnalyzedToken("see", &vb, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{i, keep, see})
+	require.Contains(t, strings.Join(see.GetChunkTags(), ","), "VP")
+
+	is := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("is", &vbz, nil))
+	going := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("going", &nn, nil),
+		languagetool.NewAnalyzedToken("going", &vbg, nil),
+	}, 0)
+	makeT := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("make", &nn, nil),
+		languagetool.NewAnalyzedToken("make", &vb, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{is, going, makeT})
+	require.Contains(t, strings.Join(going.GetChunkTags(), ","), "VP")
+}

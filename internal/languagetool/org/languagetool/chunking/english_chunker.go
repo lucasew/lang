@@ -260,9 +260,15 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 			return vb
 		}
 	}
-	// Copula "is/was/are/'s" + predicative NP (What is last price / was solution):
-	// prefer JJ/NN over spurious VB readings on last/price.
+	// Copula "is/was/are/'s": progressive (is going), then finite verb
+	// (when is comes), else predicative JJ/NN (What is last price).
 	if softIsCopulaSurface(prevSurf) {
+		if vbg != "" {
+			return vbg
+		}
+		if v := softFiniteTenseVerb(t); v != "" {
+			return v
+		}
 		if jj != "" {
 			return jj
 		}
@@ -302,7 +308,9 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 				return v
 			}
 		}
-		if vbg != "" {
+		// Progressive after pronoun only (are you going) — not after NN compound
+		// (yoga training must stay NP, not VBG).
+		if vbg != "" && (prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_")) {
 			return vbg
 		}
 		if nn != "" && softHasPluralNounReading(t) && strings.HasPrefix(prevPOS, "NN") {
@@ -362,9 +370,13 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 			return vb
 		}
 	}
-	// Progressive after be / 'm / 're: I'm trying / are going.
+	// Progressive after be / 'm / 're / was: I'm trying / are going / was trying.
 	if vbg != "" && softIsBeLikeSurface(prevSurf) {
 		return vbg
+	}
+	// Aspectual keep/kept/keeps + bare verb (keep see, kept get) — not object NN.
+	if softIsAspectualKeepSurface(prevSurf) && vb != "" {
+		return vb
 	}
 	// After finite VBP/VBZ/VBD prefer object NN (if user want work).
 	// Do not apply after bare VB (keep see still serial-verb).
@@ -549,6 +561,19 @@ func softIsBeLikeSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "is", "was", "are", "were", "be", "been", "being", "am",
 		"'m", "’m", "'s", "’s", "'re", "’re":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsAspectualKeepSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "keep", "keeps", "kept", "keeping",
+		"start", "starts", "started", "starting",
+		"stop", "stops", "stopped", "stopping",
+		"begin", "begins", "began", "begun", "beginning",
+		"continue", "continues", "continued", "continuing":
 		return true
 	default:
 		return false
