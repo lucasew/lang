@@ -706,7 +706,10 @@ func softIsPronoun(s string) bool {
 		"er", "ihn", "ihm", "sein", "seine", "seiner", "seinem", "seinen",
 		"sie", "ihr", "ihre", "ihrer", "ihrem", "ihren", "ihnen",
 		"es", "wir", "uns", "unser", "unsere", "unserer", "unserem", "unseren",
-		"euch", "euer", "eure", "sich":
+		"euch", "euer", "eure", "sich",
+		// Irish (Pron.* — BHEAS_P etc.)
+		"mé", "tú", "é", "í", "sinn", "sibh", "siad", "muid",
+		"mise", "tusa", "eisean", "ise", "sinne", "sibhse", "siadsan":
 		return true
 	default:
 		return false
@@ -1140,7 +1143,7 @@ var softIrregularLemma = map[string][]string{
 	"voy": {"ir"}, "iba": {"ir"}, "iban": {"ir"}, "fue": {"ir"}, "fueron": {"ir"}, "ido": {"ir"},
 	"doy": {"dar"}, "das": {"dar"}, "da": {"dar"}, "dais": {"dar"}, "dan": {"dar"},
 	"daba": {"dar"}, "dabas": {"dar"}, "dábamos": {"dar"}, "daban": {"dar"},
-	"di": {"dar"}, "diste": {"dar"}, "dio": {"dar"}, "dimos": {"dar"}, "dieron": {"dar"},
+	"di": {"dar", "do"}, "diste": {"dar"}, "dio": {"dar"}, "dimos": {"dar"}, "dieron": {"dar"},
 	"he": {"haber", "haver"}, "ha": {"haber", "haver"}, "hemos": {"haber"}, "habéis": {"haber"}, "han": {"haber", "haver"},
 	"hem": {"haver"}, "heu": {"haver"},
 	"havia": {"haver"}, "havien": {"haver"}, "hagut": {"haver"},
@@ -1197,6 +1200,11 @@ var softIrregularLemma = map[string][]string{
 	// Catalan noun plurals (dies ← dia for TOTS_ELS_DIES etc.)
 	"dies": {"dia"}, "anys": {"any"}, "mesos": {"mes"}, "hores": {"hora"}, "setmanes": {"setmana"},
 	"coes": {"coa"}, "oïdes": {"oïda"}, "col·laboració": {"col·laboració"},
+	// Irish prepositional pronouns (orm ← ar + mé, liom ← le + mé; Java tagger lemmas)
+	"orm": {"ar"}, "ort": {"ar"}, "air": {"ar"}, "uirthi": {"ar"}, "orainn": {"ar"}, "oraibh": {"ar"}, "orthu": {"ar"},
+	"liom": {"le"}, "leat": {"le"}, "leis": {"le"}, "léi": {"le"}, "linn": {"le"}, "libh": {"le"}, "leo": {"le"},
+	"agam": {"ag"}, "agat": {"ag"}, "aige": {"ag"}, "aici": {"ag"}, "againn": {"ag"}, "agaibh": {"ag"}, "acu": {"ag"},
+	"dom": {"do"}, "duit": {"do"}, "dó": {"do"}, "dúinn": {"do"}, "daoibh": {"do"}, "dóibh": {"do"},
 }
 
 // softInflectedSurfaceMatch approximates lemma matching without a tagger:
