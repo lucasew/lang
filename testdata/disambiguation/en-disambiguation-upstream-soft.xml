@@ -47,6 +47,325 @@
       <wd pos=","/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_1" name="_SOFT_ANON_1">
+    <pattern>
+      <token marker="yes">ca</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="MD" lemma="can"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_2" name="_SOFT_ANON_2">
+    <pattern>
+      <token marker="yes">ca</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_3" name="_SOFT_ANON_3">
+    <pattern>
+      <token marker="yes">wo</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="MD" lemma="will"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_4" name="_SOFT_ANON_4">
+    <pattern>
+      <token marker="yes">wo</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_5" name="_SOFT_ANON_5">
+    <pattern>
+      <token marker="yes">sha</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="MD" lemma="shall"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_6" name="_SOFT_ANON_6">
+    <pattern>
+      <token marker="yes">sha</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_7" name="_SOFT_ANON_7">
+    <pattern>
+      <token regexp="yes" marker="yes" spacebefore="no">'m|'re|'s|n't|'ll|'d|'ve</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_8" name="_SOFT_ANON_8">
+    <pattern>
+      <token>let</token>
+      <token marker="yes">'s</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="PRP" lemma="we"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_9" name="_SOFT_ANON_9">
+    <pattern>
+      <token marker="yes">ai</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_10" name="_SOFT_ANON_10">
+    <pattern>
+      <token regexp="yes">it|she|he|this|that</token>
+      <token marker="yes">ai</token>
+      <token>n't</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBZ" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_11" name="_SOFT_ANON_11">
+    <pattern>
+      <token marker="yes">ai</token>
+      <token>n't</token>
+      <token regexp="yes">it|she|he|this|that</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBZ" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_12" name="_SOFT_ANON_12">
+    <pattern>
+      <token regexp="yes">I|you|we|they|th[eo]se</token>
+      <token marker="yes">ai</token>
+      <token>n't</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBP" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_13" name="_SOFT_ANON_13">
+    <pattern>
+      <token marker="yes">ai</token>
+      <token>n't</token>
+      <token regexp="yes">I|you|we|they|th[eo]se</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBP" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_14" name="_SOFT_ANON_14">
+    <pattern>
+      <token regexp="yes">who|which|that</token>
+      <token marker="yes">ai</token>
+      <token>n't</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBP" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_15" name="_SOFT_ANON_15">
+    <pattern>
+      <token regexp="yes">who|which|that</token>
+      <token marker="yes">ai</token>
+      <token>n't</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="VBZ" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_16" name="_SOFT_ANON_16">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes" marker="yes">
+        <exception>need</exception>
+      </token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_17" name="_SOFT_ANON_17">
+    <pattern>
+      <token marker="yes">'t</token>
+      <token spacebefore="no">was</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="PRP" lemma="it"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_18" name="_SOFT_ANON_18">
+    <pattern>
+      <token marker="yes">'t</token>
+      <token spacebefore="no">was</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_19" name="_SOFT_ANON_19">
+    <pattern>
+      <token regexp="yes" marker="yes">['’]</token>
+      <token regexp="yes" spacebefore="no">bout|burbs|cause|cuz|em|er|lil|n|ol|ole|spose|sposed|til|till|twixt|cept|fore</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_22" name="_SOFT_ANON_22">
+    <pattern>
+      <token regexp="yes">an|gangsta|jus|o|slo|tho|tol|ya</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_23" name="_SOFT_ANON_23">
+    <pattern>
+      <token regexp="yes">.+z</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="POS"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_25" name="_SOFT_ANON_25">
+    <pattern>
+      <token regexp="yes">.*-</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token regexp="yes" spacebefore="no">\p{L}+</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_26" name="_SOFT_ANON_26">
+    <pattern>
+      <token regexp="yes" marker="yes" spacebefore="yes">['’]</token>
+      <token regexp="yes" spacebefore="no">\d\ds?</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_27" name="_SOFT_ANON_27">
+    <pattern>
+      <token regexp="yes">\d+ers</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="POS"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_28" name="_SOFT_ANON_28">
+    <antipattern>
+      <token>'</token>
+      <token regexp="yes" spacebefore="no" skip="8">.+</token>
+      <token spacebefore="no">'</token>
+    </antipattern>
+    <antipattern>
+      <token>‘</token>
+      <token regexp="yes" spacebefore="no" skip="8">.+</token>
+      <token spacebefore="no">’</token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes">\d+</token>
+      <token regexp="yes" marker="yes">['’]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_29" name="_SOFT_ANON_29">
+    <pattern>
+      <token regexp="yes">\p{L}</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token regexp="yes" spacebefore="no">\p{L}.+</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_30" name="_SOFT_ANON_30">
+    <pattern>
+      <token regexp="yes">[\p{L}\-].+</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token regexp="yes" spacebefore="no">[\p{L}-].+</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_apostrophe_contraction_"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_33" name="_SOFT_ANON_33">
+    <pattern>
+      <token regexp="yes" marker="yes">[a-z]{3,15}wise</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_34" name="_SOFT_ANON_34">
+    <pattern>
+      <token regexp="yes" postag="UNKNOWN" marker="yes">[a-z]{3,15}-?wise</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_35" name="_SOFT_ANON_35">
+    <pattern>
+      <token regexp="yes" marker="yes">[a-z]{3,15}(like|less)
+        <exception regexp="yes">(colour|humour|odour)(like|less)</exception>
+      </token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_36" name="_SOFT_ANON_36">
+    <pattern>
+      <token regexp="yes" postag="UNKNOWN" marker="yes">[a-z]{3,15}-?(like|less)</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="JJ"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_37" name="_SOFT_ANON_37">
+    <pattern>
+      <token regexp="yes" postag="UNKNOWN" marker="yes">[a-z]{3,15}-(based|powered|shaped|sponsored|specific|driven|related|dominated|focuss?ed|friendly|worthy|oriented|connected|protected|operated|resistant|agnostic|generated|centric|compliant|dependent|wide|free|compatible|sized|owned|tolerant|influenced)</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="JJ"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_41" name="_SOFT_ANON_41">
+    <pattern>
+      <token regexp="yes" postag="JJ" marker="yes">(pre|post)-[a-z]+
+        <exception regexp="yes">.*(aluminium|colour|dialoge|programme|sulphur).*</exception>
+      </token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_42" name="_SOFT_ANON_42">
+    <antipattern>
+      <token regexp="yes">.*-old</token>
+      <token postag="NN:UN?" postag_regexp="yes"></token>
+      <token regexp="yes">are|were</token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes" marker="yes">([0-9]+|x|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)-(day|week|month|year)-old</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="JJ"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_44" name="_SOFT_ANON_44">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">([0-9]+|x|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)-(day|week|month|year)-olds</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNS"/>
+    </disambig>
+  </rule>
   <rule id="CD_PAST_CD" name="Disambiguate time">
     <pattern>
       <token postag="CD" marker="yes"></token>
@@ -225,6 +544,13 @@
       <wd pos="NNP"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_45" name="_SOFT_ANON_45">
+    <pattern>
+      <token marker="yes">last</token>
+      <token regexp="yes">month|week(end)?|year|Christmas|night|minute|time|season|thing|decade|day|couple|summer|resort|century|name|word|chance|spring</token>
+    </pattern>
+    <disambig action="replace" postag="JJ"/>
+  </rule>
   <rule id="SPORTS_ADJ" name="'sports' as adjective">
     <pattern>
       <token marker="yes">sports</token>
@@ -266,6 +592,13 @@
       <token>!</token>
     </pattern>
     <disambig action="replace" postag="UH"/>
+  </rule>
+  <rule id="_SOFT_ANON_47" name="_SOFT_ANON_47">
+    <pattern>
+      <token postag="VB.*" postag_regexp="yes"></token>
+      <token postag="VB.*" postag_regexp="yes" marker="yes">out</token>
+    </pattern>
+    <disambig action="filter" postag="[IN]N|R[BP]|UH"/>
   </rule>
   <rule id="GO_APE" name="go ape =&gt; NN:UN">
     <pattern>
@@ -458,6 +791,44 @@
     </pattern>
     <disambig action="replace" postag="IN"/>
   </rule>
+  <rule id="_SOFT_ANON_49" name="_SOFT_ANON_49">
+    <pattern>
+      <token>by</token>
+      <token regexp="yes" marker="yes">air|dint|crook|hook|hand|machine|word|cheque|accident|day|means|mistake|name|train|rail|railway|coach|bus|boat|automobile|helicopter|taxi|ambulance|plane|airplane|foot|section|article|page|road|letter|phone|telephone|mail|storm|arrangement|satellite|decree|year-end|lot|profession|district|week|eye|covenant|fiat|force|ship|jowl|tramway|subway|post|postcard|bicycle|bike</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_50" name="_SOFT_ANON_50">
+    <pattern>
+      <token>by</token>
+      <token regexp="yes" marker="yes">means|way</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_51" name="_SOFT_ANON_51">
+    <pattern>
+      <token>for</token>
+      <token regexp="yes" marker="yes">breakfast|fun|pleasure|instance|example|sale</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_52" name="_SOFT_ANON_52">
+    <pattern>
+      <token>for</token>
+      <token marker="yes">fear</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_53" name="_SOFT_ANON_53">
+    <pattern>
+      <token>word</token>
+      <token>for</token>
+      <token marker="yes">word</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
   <rule id="CH_IN_DYNASTY" name="'in as parts of proper names">
     <pattern>
       <token regexp="yes">\p{Lu}\p{Ll}+</token>
@@ -465,6 +836,60 @@
       <token marker="yes" spacebefore="no">in</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="_SOFT_ANON_54" name="_SOFT_ANON_54">
+    <pattern>
+      <token>in</token>
+      <token regexp="yes" marker="yes">conclusion|danger|detail|disgrace|doubt|fact|hand|paperback|person|retrospect|studio|summary|love|mood|name|turn|deed|outlook|favor|phase|reply|chorus|quest|series|answer|league|contradistinction|absentia|harness|peace|private|public|time|tune|place|order</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_55" name="_SOFT_ANON_55">
+    <pattern>
+      <token>in</token>
+      <token regexp="yes" marker="yes">honou?r|charge|expectation|memory|recognition|view</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_56" name="_SOFT_ANON_56">
+    <pattern>
+      <token>in</token>
+      <token regexp="yes" marker="yes">accordance|keeping|league|line|touch</token>
+      <token>with</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_57" name="_SOFT_ANON_57">
+    <pattern>
+      <token>on</token>
+      <token regexp="yes" marker="yes">fire|time|holiday|top|board|display|foot|hand|sale|affidavit|camera|cassette|chat|coach|deposit|diskette|end|file|lease|oath|offer|page|screen|site|strike|target|tour|track|exhibit|deck</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_58" name="_SOFT_ANON_58">
+    <pattern>
+      <token>on</token>
+      <token regexp="yes" marker="yes">account|pain|use|part|top|condition</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_59" name="_SOFT_ANON_59">
+    <pattern>
+      <token>out</token>
+      <token>of</token>
+      <token regexp="yes" marker="yes">bed|order|place|control|danger|envy|sympathy|greed|pocket|work|hand|reach|touch|time|fear|love|line|trouble|jail|shape</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_60" name="_SOFT_ANON_60">
+    <pattern>
+      <token marker="yes">out</token>
+      <token>of</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="IN"/>
   </rule>
   <rule id="UNDER_NN" name="under + nouns that require no determiner">
     <pattern>
@@ -535,6 +960,26 @@
       <token postag="IN"></token>
     </pattern>
     <disambig action="replace" postag="JJS"/>
+  </rule>
+  <rule id="_SOFT_ANON_63" name="_SOFT_ANON_63">
+    <pattern>
+      <token postag="VBZ" marker="yes">does</token>
+      <token marker="yes">not</token>
+      <token postag="VB" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_65" name="_SOFT_ANON_65">
+    <antipattern>
+      <token regexp="yes">the|an?</token>
+      <token>well</token>
+      <token postag="VBN"></token>
+    </antipattern>
+    <pattern>
+      <token postag="RB" marker="yes">well</token>
+      <token postag="VBN"></token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="WELL_VB_RB" name="verb + well =&gt; well = RB">
     <pattern>
@@ -632,6 +1077,24 @@
     </pattern>
     <disambig action="replace" postag="PRP$"/>
   </rule>
+  <rule id="_SOFT_ANON_66" name="_SOFT_ANON_66">
+    <pattern>
+      <token marker="yes">if</token>
+      <token postag="DT|PRP.*|EX" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="CC"/>
+  </rule>
+  <rule id="_SOFT_ANON_68" name="_SOFT_ANON_68">
+    <antipattern>
+      <token postag="PRP\$|DT" postag_regexp="yes"></token>
+      <token>if</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">if</token>
+      <token regexp="yes">yes|so|not|possible|any</token>
+    </pattern>
+    <disambig action="replace" postag="CC"/>
+  </rule>
   <rule id="LOS_NNP" name="los + proper name -&gt; los (proper name)">
     <pattern>
       <token marker="yes">Los</token>
@@ -649,6 +1112,76 @@
     <pattern>
       <token postag="JJ" marker="yes">kind</token>
       <token>of</token>
+    </pattern>
+    <disambig action="replace" postag="NN"/>
+  </rule>
+  <rule id="_SOFT_ANON_71" name="_SOFT_ANON_71">
+    <pattern>
+      <token postag="SENT_START|[:;,]" postag_regexp="yes"></token>
+      <token regexp="yes">I|you|he|she|we|they</token>
+      <token regexp="yes" marker="yes">can|will|must</token>
+    </pattern>
+    <disambig action="replace" postag="MD"/>
+  </rule>
+  <rule id="_SOFT_ANON_72" name="_SOFT_ANON_72">
+    <pattern>
+      <token postag="PCT|SENT_START|CC" postag_regexp="yes">
+        <exception>provided</exception>
+      </token>
+      <token regexp="yes" marker="yes">can|will</token>
+      <token postag="NNP|PRP" postag_regexp="yes"></token>
+      <token postag="RB" min="0"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="MD"/>
+  </rule>
+  <rule id="_SOFT_ANON_73" name="_SOFT_ANON_73">
+    <pattern>
+      <token postag="W.*" postag_regexp="yes">
+        <exception>that</exception>
+      </token>
+      <token regexp="yes" marker="yes">can|will</token>
+      <token postag="NNP|PRP" postag_regexp="yes"></token>
+      <token postag="RB" min="0"></token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="MD"/>
+  </rule>
+  <rule id="_SOFT_ANON_74" name="_SOFT_ANON_74">
+    <pattern>
+      <token regexp="yes">(\d+-)?oz</token>
+      <token marker="yes">can</token>
+    </pattern>
+    <disambig action="replace" postag="NN"/>
+  </rule>
+  <rule id="_SOFT_ANON_75" name="_SOFT_ANON_75">
+    <pattern>
+      <token regexp="yes">(\d+-)?oz</token>
+      <token>.</token>
+      <token marker="yes">can</token>
+    </pattern>
+    <disambig action="replace" postag="NN"/>
+  </rule>
+  <rule id="_SOFT_ANON_77" name="_SOFT_ANON_77">
+    <antipattern>
+      <token postag="PRP"></token>
+      <token postag="RB" min="0"></token>
+      <token>can</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">can</token>
+      <token postag="MD"></token>
+    </pattern>
+    <disambig action="replace" postag="NN"/>
+  </rule>
+  <rule id="_SOFT_ANON_78" name="_SOFT_ANON_78">
+    <antipattern>
+      <token regexp="yes">I|you|we|they|he|s?he|it</token>
+      <token>can</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">can</token>
+      <token regexp="yes">is|was|will|were</token>
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
@@ -885,6 +1418,20 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="_SOFT_ANON_87" name="_SOFT_ANON_87">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">United</token>
+      <token case_sensitive="yes">States</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="_SOFT_ANON_88" name="_SOFT_ANON_88">
+    <pattern>
+      <token case_sensitive="yes">United</token>
+      <token case_sensitive="yes" marker="yes">States</token>
+    </pattern>
+    <disambig action="replace" postag="NNPS"/>
+  </rule>
   <rule id="I_CD" name="I as Roman number in king names">
     <pattern>
       <token case_sensitive="yes" postag="NNP"></token>
@@ -924,6 +1471,33 @@
       <token regexp="yes" case_sensitive="yes" postag="JJR" marker="yes">\p{Lu}\p{Ll}+</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="_SOFT_ANON_89" name="_SOFT_ANON_89">
+    <pattern>
+      <token>from</token>
+      <token postag="NN" marker="yes"></token>
+      <token>to</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_91" name="_SOFT_ANON_91">
+    <pattern>
+      <token>from</token>
+      <token marker="yes">nose</token>
+      <token>to</token>
+      <token>tail</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_92" name="_SOFT_ANON_92">
+    <pattern>
+      <token>from</token>
+      <token>nose</token>
+      <token>to</token>
+      <token marker="yes">tail</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="SORE_THROAT" name="sore throat">
     <pattern>
@@ -971,6 +1545,33 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_96" name="_SOFT_ANON_96">
+    <pattern>
+      <token>a</token>
+      <token>few</token>
+      <token postag="NNS" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_97" name="_SOFT_ANON_97">
+    <pattern>
+      <token>a</token>
+      <token>few</token>
+      <token postag="JJ" marker="yes"></token>
+      <token postag="NNS" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_98" name="_SOFT_ANON_98">
+    <pattern>
+      <token>a</token>
+      <token>few</token>
+      <token postag="JJ" marker="yes"></token>
+      <token postag="JJ" marker="yes"></token>
+      <token postag="NNS" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="DT_plural_so_vbn" name="those/these + so + VBN/VBD/JJ -&gt; so = JJ">
     <pattern>
       <token regexp="yes">th[eo]se</token>
@@ -993,6 +1594,37 @@
     </pattern>
     <disambig action="replace" postag="VBG"/>
   </rule>
+  <rule id="_SOFT_ANON_101" name="_SOFT_ANON_101">
+    <pattern>
+      <token regexp="yes">off|in</token>
+      <token marker="yes">season</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_102" name="_SOFT_ANON_102">
+    <pattern>
+      <token>out</token>
+      <token>of</token>
+      <token marker="yes">season</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_103" name="_SOFT_ANON_103">
+    <pattern>
+      <token marker="yes">coast</token>
+      <token>to</token>
+      <token>coast</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_104" name="_SOFT_ANON_104">
+    <pattern>
+      <token>coast</token>
+      <token>to</token>
+      <token marker="yes">coast</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
   <rule id="ABOUT_NN_RB" name="about + figure -&gt; about (RB)">
     <pattern>
       <token marker="yes">about</token>
@@ -1000,12 +1632,59 @@
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
+  <rule id="_SOFT_ANON_105" name="_SOFT_ANON_105">
+    <pattern>
+      <token marker="yes">face</token>
+      <token>to</token>
+      <token>face</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_106" name="_SOFT_ANON_106">
+    <pattern>
+      <token>face</token>
+      <token>to</token>
+      <token marker="yes">face</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_107" name="_SOFT_ANON_107">
+    <pattern>
+      <token marker="yes">arm</token>
+      <token>in</token>
+      <token>arm</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_108" name="_SOFT_ANON_108">
+    <pattern>
+      <token>arm</token>
+      <token>in</token>
+      <token marker="yes">arm</token>
+    </pattern>
+    <disambig action="replace" postag="NN:UN"/>
+  </rule>
   <rule id="OLD_HAT" name="old hat">
     <pattern>
       <token>old</token>
       <token marker="yes">hat</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="_SOFT_ANON_109" name="_SOFT_ANON_109">
+    <pattern>
+      <token regexp="yes" marker="yes">figure|table|appendix|chapter|part|section|picture|lemma|column|row|fraction</token>
+      <token regexp="yes">\d+([\.\-]\d+)*|[A-Z]</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="_SOFT_ANON_110" name="_SOFT_ANON_110">
+    <pattern>
+      <token regexp="yes" marker="yes">fig|chap</token>
+      <token>.</token>
+      <token regexp="yes">[\d+\p{Lu}]</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="IN_NO_DT" name="NO/DT/NN/NNP + NN|JJ -&gt; NO/DT">
     <pattern>
@@ -1021,6 +1700,47 @@
       <token postag="NN(:UN)?" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="DT"/>
+  </rule>
+  <rule id="_SOFT_ANON_111" name="_SOFT_ANON_111">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token marker="yes">&quot;</token>
+    </pattern>
+    <disambig action="replace" postag="``"/>
+  </rule>
+  <rule id="_SOFT_ANON_118" name="s = has">
+    <antipattern>
+      <token>people</token>
+      <token>'s</token>
+    </antipattern>
+    <pattern>
+      <token postag="NN:UN?" postag_regexp="yes"></token>
+      <token marker="yes" spacebefore="no">'s</token>
+      <token postag="VBN"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBZ" lemma="have"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_119" name="s = has">
+    <pattern>
+      <token postag="PRP$"></token>
+      <token postag="NN"></token>
+      <token marker="yes" spacebefore="no">'s</token>
+      <token postag="VBN"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBZ" lemma="have"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_124" name="_SOFT_ANON_124">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+      <token>.</token>
+      <token postag="POS" marker="yes" spacebefore="no">'s</token>
+      <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="POS"/>
   </rule>
   <rule id="BE_VBGNN_VBG" name="be + vbg/nn =&gt; vbg">
     <antipattern>
@@ -1056,6 +1776,40 @@
       <token postag="JJ.*|NN.*|DT|PRP" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="IN"/>
+  </rule>
+  <rule id="_SOFT_ANON_126" name="_SOFT_ANON_126">
+    <pattern>
+      <token marker="yes">all</token>
+      <token regexp="yes">but|right</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="_SOFT_ANON_127" name="_SOFT_ANON_127">
+    <pattern>
+      <token>all</token>
+      <token marker="yes">but</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="_SOFT_ANON_129" name="_SOFT_ANON_129">
+    <pattern>
+      <token regexp="yes">else|\d+</token>
+      <token marker="yes">'s</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="POS" lemma="'s"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_130" name="_SOFT_ANON_130">
+    <pattern>
+      <token regexp="yes" postag="UNKNOWN">\p{Lu}.+</token>
+      <token marker="yes">'s</token>
+      <token postag="NN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="POS" lemma="'s"/>
+    </disambig>
   </rule>
   <rule id="CD_AD" name="24 AD">
     <pattern>
@@ -1350,6 +2104,28 @@
     </pattern>
     <disambig action="filter" postag="VB.*"/>
   </rule>
+  <rule id="_SOFT_ANON_131" name="_SOFT_ANON_131">
+    <pattern>
+      <token regexp="yes" inflected="yes">get|break</token>
+      <token marker="yes">even</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="_SOFT_ANON_132" name="_SOFT_ANON_132">
+    <pattern>
+      <token marker="yes">even</token>
+      <token>to</token>
+      <token>death</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="_SOFT_ANON_134" name="_SOFT_ANON_134">
+    <pattern>
+      <token marker="yes">even</token>
+      <token regexp="yes">if|at|for</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
   <rule id="HOME_RB" name="home as adverb">
     <pattern>
       <token>it</token>
@@ -1388,6 +2164,24 @@
       <token regexp="yes" postag="VBZ" marker="yes">guys|doctors|bitches</token>
     </pattern>
     <disambig action="replace" postag="NNS"/>
+  </rule>
+  <rule id="_SOFT_ANON_136" name="_SOFT_ANON_136">
+    <pattern>
+      <token postag="SENT_START|[,:;]" postag_regexp="yes"></token>
+      <token marker="yes">for</token>
+      <token regexp="yes">he|she</token>
+      <token postag="VB[ZD]" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="CC"/>
+  </rule>
+  <rule id="_SOFT_ANON_137" name="_SOFT_ANON_137">
+    <pattern>
+      <token postag="SENT_START|[,:;]" postag_regexp="yes"></token>
+      <token marker="yes">for</token>
+      <token regexp="yes">I|we|they</token>
+      <token postag="VB[PD]" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="CC"/>
   </rule>
   <rule id="DID_WASHING" name="Do washing">
     <pattern>
@@ -1564,6 +2358,48 @@
       <wd pos="NNP"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_138" name="_SOFT_ANON_138">
+    <pattern>
+      <token marker="yes">the</token>
+      <token case_sensitive="yes" marker="yes">Ashes</token>
+      <token regexp="yes">legend|series|urn</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NNP"/>
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_139" name="_SOFT_ANON_139">
+    <pattern>
+      <token>an</token>
+      <token case_sensitive="yes" marker="yes">Ashes</token>
+      <token>series</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_140" name="_SOFT_ANON_140">
+    <pattern>
+      <token>the</token>
+      <token postag="JJ"></token>
+      <token case_sensitive="yes" marker="yes" skip="-1">Ashes</token>
+      <token regexp="yes">Australia|England|cricket|match|series</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_141" name="_SOFT_ANON_141">
+    <pattern>
+      <token>the</token>
+      <token case_sensitive="yes" marker="yes" skip="-1">Ashes</token>
+      <token regexp="yes">Australia|England|cricket|match|series</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
   <rule id="THE_MONKEES" name="Proper noun: The Monkees">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[Tt]he</token>
@@ -1571,6 +2407,24 @@
     </pattern>
     <disambig action="replace">
       <wd pos="NNP"/>
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_142" name="_SOFT_ANON_142">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+      <token marker="yes">plc</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_143" name="_SOFT_ANON_143">
+    <pattern>
+      <token postag="NNP"></token>
+      <token marker="yes">plc</token>
+    </pattern>
+    <disambig action="add">
       <wd pos="NNP"/>
     </disambig>
   </rule>
@@ -1774,6 +2628,22 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="_SOFT_ANON_146" name="_SOFT_ANON_146">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]e</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" min="0">[Ll]as?|[Ll]os</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_147" name="_SOFT_ANON_147">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">De</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="IGNORE_SPELLING_OF_Y_DE" name="Ignore spelling of names containing 'y de'">
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
@@ -1832,6 +2702,12 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="_SOFT_ANON_148" name="_SOFT_ANON_148">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">pdf|jpe?g|gif|png|svg|docx|xlsx?|pptx?|html|php|s?css|jsx?|heif|mpe?g|exe|dmg|xml</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="HO_CHI_MINH" name="Proper noun: Ho Chi Minh">
     <pattern>
       <token case_sensitive="yes">Ho</token>
@@ -1842,6 +2718,18 @@
       <wd pos="NNP"/>
       <wd pos="NNP"/>
       <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_149" name="_SOFT_ANON_149">
+    <pattern>
+      <token>very</token>
+      <token regexp="yes" postag="RB">(.+)ly
+        <exception>family</exception>
+      </token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
     </disambig>
   </rule>
   <rule id="NUMBER_TIMES" name="Number of times">
@@ -4785,6 +5673,28 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="_SOFT_ANON_150" name="_SOFT_ANON_150">
+    <pattern>
+      <token>au</token>
+      <token>jus</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_151" name="_SOFT_ANON_151">
+    <pattern>
+      <token>jus</token>
+      <token>in</token>
+      <token>personam</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_152" name="_SOFT_ANON_152">
+    <pattern>
+      <token regexp="yes">[ij]us</token>
+      <token regexp="yes">gentium|sanguinis|soli|divinum|abutendi|aedilium|aedilicium|albanagii|angariae|canonicum|civile|commercii|commune|conubii|connubii|deliberandi|ecclesiasticum|edicendi|fruendi|honorarium</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="PER_CAPITA" name="Per capita">
     <pattern>
       <token>per</token>
@@ -4837,6 +5747,37 @@
   <rule id="US_DOLLAR" name="Ignore 'US$'">
     <pattern>
       <token case_sensitive="yes">US$</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_153" name="_SOFT_ANON_153">
+    <pattern>
+      <token>vasa</token>
+      <token>deferentia</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_154" name="_SOFT_ANON_154">
+    <pattern>
+      <token>vas</token>
+      <token>deferens</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_155" name="_SOFT_ANON_155">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">Von</token>
+      <token case_sensitive="yes" marker="yes">der</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Leyens?</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_156" name="_SOFT_ANON_156">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">von</token>
+      <token case_sensitive="yes" marker="yes">der</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Leyens?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -5081,6 +6022,56 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="_SOFT_ANON_157" name="_SOFT_ANON_157">
+    <pattern>
+      <token marker="yes">e</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token marker="yes" spacebefore="no">en</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_158" name="_SOFT_ANON_158">
+    <pattern>
+      <token marker="yes">e</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token marker="yes" spacebefore="no">en</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_159" name="_SOFT_ANON_159">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Hallowe</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token marker="yes" spacebefore="no">en</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NNP"/>
+      <wd pos="NNP"/>
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_160" name="_SOFT_ANON_160">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Hallowe</token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+      <token marker="yes" spacebefore="no">en</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_163" name="_SOFT_ANON_163">
+    <pattern>
+      <token regexp="yes">s?he|it|you|we|they|I|[wt]hat|who</token>
+      <token marker="yes" spacebefore="no">'d</token>
+      <token regexp="yes">been|gone|done</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBD" lemma="have"/>
+    </disambig>
+  </rule>
   <rule id="ON_BENDED_KNEES_SPELLING" name="Ignore spelling of 'on bended knees'">
     <pattern>
       <token>bended</token>
@@ -5132,6 +6123,46 @@
       <wd pos="NN"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_165" name="_SOFT_ANON_165">
+    <pattern>
+      <token postag="PRP|NNP" postag_regexp="yes"></token>
+      <token regexp="yes" marker="yes">directly|now</token>
+      <token postag="VB.*|MD" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="CC"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_166" name="_SOFT_ANON_166">
+    <pattern>
+      <token postag="MD"></token>
+      <token regexp="yes" marker="yes">directly|now</token>
+      <token postag="VB"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="CC"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_167" name="_SOFT_ANON_167">
+    <pattern>
+      <token regexp="yes">['’`´‘ʻ]</token>
+      <token spacebefore="no">t</token>
+      <token regexp="yes" marker="yes">directly|now</token>
+      <token postag="VB"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="CC"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_169" name="_SOFT_ANON_169">
+    <pattern>
+      <token regexp="yes" marker="yes">directly|now</token>
+      <token regexp="yes" postag="SENT_END">\p{P}</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="CC"/>
+    </disambig>
+  </rule>
   <rule id="ET_AL" name="ignore spelling of 'et al.'">
     <pattern>
       <token>et</token>
@@ -5139,6 +6170,36 @@
       <token spacebefore="no">.</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_170" name="_SOFT_ANON_170">
+    <pattern>
+      <token>a</token>
+      <token marker="yes">bummer</token>
+      <token postag="PCT|TO|IN|CC|DT|PRP.*|MD" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="JJR"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_171" name="_SOFT_ANON_171">
+    <pattern>
+      <token regexp="yes">an?</token>
+      <token postag="JJ.*" postag_regexp="yes"></token>
+      <token marker="yes">bummer</token>
+      <token postag="PCT|TO|IN|CC|DT|PRP.*|MD" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="JJR"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_175" name="_SOFT_ANON_175">
+    <pattern>
+      <token marker="yes">very</token>
+      <token regexp="yes">much|cool|awesome|kind|bad|nice|handsome|pretty|gorgeous|important|good|great|easy|small|big|large|huge|hard|soft|busy|simple|beautiful|essential|common|helpful|quiet|true|wrong|delicious</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="JJ"/>
+    </disambig>
   </rule>
   <rule id="MAJORITY_NN" name="Remove JJ from 'majority'">
     <pattern>
@@ -5148,6 +6209,101 @@
     <disambig action="remove">
       <wd pos="JJ"/>
     </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_176" name="_SOFT_ANON_176">
+    <pattern>
+      <token>very</token>
+      <token marker="yes">well</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="VB"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_177" name="_SOFT_ANON_177">
+    <pattern>
+      <token>very</token>
+      <token marker="yes">well</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="VBP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_179" name="_SOFT_ANON_179">
+    <pattern>
+      <token postag="SENT_START|PCT|CC" postag_regexp="yes"></token>
+      <token marker="yes">please</token>
+      <token>don</token>
+      <token regexp="yes">['’`´‘ʻ]</token>
+      <token>t</token>
+    </pattern>
+    <disambig action="filter" postag="RB"/>
+  </rule>
+  <rule id="_SOFT_ANON_182" name="_SOFT_ANON_182">
+    <antipattern>
+      <token>must</token>
+      <token>needs</token>
+    </antipattern>
+    <antipattern>
+      <token>needs</token>
+      <token>must</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">when|if</token>
+      <token>needs</token>
+      <token postag="VB"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">when|if</token>
+      <token postag="RB"></token>
+      <token>needs</token>
+      <token postag="VB"></token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">needs</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_183" name="_SOFT_ANON_183">
+    <antipattern>
+      <token regexp="yes">an?|the</token>
+      <token>are</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">an?|the</token>
+      <token postag="JJ.*" postag_regexp="yes"></token>
+      <token>are</token>
+    </antipattern>
+    <antipattern>
+      <token postag="CD|TO|UNKNOWN" postag_regexp="yes"></token>
+      <token>are</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">are</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="NN"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_184" name="_SOFT_ANON_184">
+    <antipattern>
+      <token postag="PCT"></token>
+      <token>forward</token>
+    </antipattern>
+    <antipattern>
+      <token postag="MD|TO" postag_regexp="yes"></token>
+      <token>forward</token>
+    </antipattern>
+    <antipattern>
+      <token>please</token>
+      <token>forward</token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes" inflected="yes" skip="3">pay|move|take|carry|look|put|drive|bring|push</token>
+      <token postag="VB" marker="yes">forward</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="ORDER_UH" name="UH on 'order'">
     <antipattern>
@@ -5200,6 +6356,27 @@
     </pattern>
     <disambig action="add">
       <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_194" name="_SOFT_ANON_194">
+    <pattern>
+      <token marker="yes">need</token>
+      <token>to</token>
+      <token postag="VB"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="MD"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_195" name="_SOFT_ANON_195">
+    <pattern>
+      <token marker="yes">need</token>
+      <token>to</token>
+      <token postag="RB" min="0"></token>
+      <token postag="VB"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="MD"/>
     </disambig>
   </rule>
   <rule id="NEED_MD" name="needn't is MD">
@@ -5257,10 +6434,290 @@
     </pattern>
     <disambig action="remove" postag="NNS"/>
   </rule>
+  <rule id="_SOFT_ANON_211" name="_SOFT_ANON_211">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]el?|[Ee]t|[Ee]l|[Uu]n</token>
+      <token regexp="yes" postag="UNKNOWN|NN.*" postag_regexp="yes">.*[a-z].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_212" name="_SOFT_ANON_212">
+    <pattern>
+      <token regexp="yes" postag="UNKNOWN|NN.*" postag_regexp="yes">.*[a-z].*</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]el?|[Ee]t</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="DE_FACTO" name="ignore spelling of 'de facto'">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[Dd]e|DE</token>
       <token regexp="yes" case_sensitive="yes">[Ff]acto|FACTO</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_213" name="_SOFT_ANON_213">
+    <pattern>
+      <token>a</token>
+      <token>cappella</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_214" name="_SOFT_ANON_214">
+    <pattern>
+      <token>a</token>
+      <token>fortiori</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_215" name="_SOFT_ANON_215">
+    <pattern>
+      <token>a</token>
+      <token>posteriori</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_216" name="_SOFT_ANON_216">
+    <pattern>
+      <token>a</token>
+      <token>priori</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_217" name="_SOFT_ANON_217">
+    <pattern>
+      <token>ab</token>
+      <token>initio</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_218" name="_SOFT_ANON_218">
+    <pattern>
+      <token>al</token>
+      <token>dente</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_219" name="_SOFT_ANON_219">
+    <pattern>
+      <token>al</token>
+      <token>fresco</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_220" name="_SOFT_ANON_220">
+    <pattern>
+      <token>bona</token>
+      <token>fide</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_221" name="_SOFT_ANON_221">
+    <pattern>
+      <token>bona</token>
+      <token>fides</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_222" name="_SOFT_ANON_222">
+    <pattern>
+      <token>cc</token>
+      <token>'d'</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_223" name="_SOFT_ANON_223">
+    <pattern>
+      <token>cordon</token>
+      <token>bleu</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_224" name="_SOFT_ANON_224">
+    <pattern>
+      <token regexp="yes">pm|rsvp|dm</token>
+      <token>'d</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_225" name="_SOFT_ANON_225">
+    <pattern>
+      <token>ejusdem</token>
+      <token>generis</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_226" name="_SOFT_ANON_226">
+    <pattern>
+      <token>ex</token>
+      <token>cathedra</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_227" name="_SOFT_ANON_227">
+    <pattern>
+      <token>ex</token>
+      <token>gratia</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_228" name="_SOFT_ANON_228">
+    <pattern>
+      <token>ex</token>
+      <token>officio</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_229" name="_SOFT_ANON_229">
+    <pattern>
+      <token>ex</token>
+      <token>parte</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_230" name="_SOFT_ANON_230">
+    <pattern>
+      <token>ex</token>
+      <token>post</token>
+      <token>facto</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_231" name="_SOFT_ANON_231">
+    <pattern>
+      <token>fin</token>
+      <token>de</token>
+      <token>siècle</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_232" name="_SOFT_ANON_232">
+    <pattern>
+      <token>jeu</token>
+      <token>d</token>
+      <token>'</token>
+      <token>esprit</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_233" name="_SOFT_ANON_233">
+    <pattern>
+      <token>grand</token>
+      <token>mal</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_234" name="_SOFT_ANON_234">
+    <pattern>
+      <token>in</token>
+      <token>loco</token>
+      <token>parentis</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_235" name="_SOFT_ANON_235">
+    <pattern>
+      <token>in</token>
+      <token>memoriam</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_236" name="_SOFT_ANON_236">
+    <pattern>
+      <token>in</token>
+      <token>situ</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_237" name="_SOFT_ANON_237">
+    <pattern>
+      <token>in</token>
+      <token>vitro</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_238" name="_SOFT_ANON_238">
+    <pattern>
+      <token>inter</token>
+      <token>vivos</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_239" name="_SOFT_ANON_239">
+    <pattern>
+      <token>mano</token>
+      <token>a</token>
+      <token>mano</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_240" name="_SOFT_ANON_240">
+    <pattern>
+      <token>memento</token>
+      <token>mori</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_241" name="_SOFT_ANON_241">
+    <pattern>
+      <token regexp="yes">partis?</token>
+      <token>pris</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_242" name="_SOFT_ANON_242">
+    <pattern>
+      <token>prima</token>
+      <token>facie</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_243" name="_SOFT_ANON_243">
+    <pattern>
+      <token>rosehip</token>
+      <token>tea</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_244" name="_SOFT_ANON_244">
+    <pattern>
+      <token>salade</token>
+      <token>niçoise</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_245" name="_SOFT_ANON_245">
+    <pattern>
+      <token>sotto</token>
+      <token>voce</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_246" name="_SOFT_ANON_246">
+    <pattern>
+      <token>sub</token>
+      <token>rosa</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_247" name="_SOFT_ANON_247">
+    <pattern>
+      <token>summa</token>
+      <token>cum</token>
+      <token>laude</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_248" name="_SOFT_ANON_248">
+    <pattern>
+      <token>ultra</token>
+      <token>vires</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_249" name="_SOFT_ANON_249">
+    <pattern>
+      <token>viva</token>
+      <token>voce</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -5286,6 +6743,55 @@
     <pattern>
       <token regexp="yes" case_sensitive="yes" marker="yes">[Tt]hou|THOU</token>
       <token regexp="yes" case_sensitive="yes" marker="yes">[Ww]ast|WAST</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_257" name="_SOFT_ANON_257">
+    <pattern>
+      <token>why</token>
+      <token marker="yes" spacebefore="no">'s</token>
+      <token regexp="yes">s?he|it|they|you|I|we</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="VBZ" lemma="be"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_260" name="_SOFT_ANON_260">
+    <pattern>
+      <token regexp="yes" marker="yes">.*[a-z0-9].*</token>
+      <token spacebefore="no">.</token>
+      <token regexp="yes" spacebefore="no">ai|asp|aspx|avi|bak|bat|bmp|cab|cfg|cgi|com|css|csv|dat|db|dbf|dll|doc|docx|eps|exe|flv|gif|htm|html|ibooks|ico|ini|jar|jpeg|jpg|js|jsp|lnk|md|mdb|mid|mov|mp3|mp4|mpa|mpg|ods|pdf|php|pl|png|pps|ppt|pptx|ps|psd|py|rar|rss|scss|sh|shtml|sql|svg|sys|tar|tif|tiff|tmp|ts|txt|wav|wma|xhtml|xls|xlsx|xml|xsl|yaml|yml|zip|zipx|7z|web[mp]</token>
+    </pattern>
+    <disambig action="remove" postag="VB.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_261" name="_SOFT_ANON_261">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">.*[a-z0-9].*</token>
+      <token regexp="yes" case_sensitive="yes" min="0">[\)\(,\/:]</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[BCDFGHJKLMNPQRSTVWXZ]{3,6}</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_262" name="_SOFT_ANON_262">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">.*[a-z0-9].*</token>
+      <token regexp="yes" case_sensitive="yes" min="0">[\)\(,\/:]</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[BCDFGHJKLMNPQRSTVWXZ]{2,6}s</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_263" name="_SOFT_ANON_263">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[BCDFGHJKLMNPQRSTVWXZ]{3,6}s?</token>
+      <token regexp="yes" case_sensitive="yes" min="0">[\)\(,\/:]</token>
+      <token regexp="yes" case_sensitive="yes">.*[a-z0-9].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_264" name="_SOFT_ANON_264">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token regexp="yes" case_sensitive="yes" postag="SENT_END" marker="yes">[BCDFGHJKLMNPQRSTVWXZ]{3,6}s?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -5346,6 +6852,42 @@
     </pattern>
     <disambig action="remove" postag="NN.*"/>
   </rule>
+  <rule id="_SOFT_ANON_265" name="_SOFT_ANON_265">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ][a-zäöüß]+</token>
+      <token case_sensitive="yes">Str</token>
+      <token case_sensitive="yes" spacebefore="no">.</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_266" name="_SOFT_ANON_266">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ][a-zäöüß]+</token>
+      <token regexp="yes" case_sensitive="yes">(Straße|Allee|Weg|Chaussee|Twiete|Brücke|Platz)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_267" name="_SOFT_ANON_267">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ][a-zäöüß]+-(Straße|Allee|Weg|Chaussee|Twiete|Brücke|Platz)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_268" name="_SOFT_ANON_268">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Michaels|MICHAELS</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_269" name="_SOFT_ANON_269">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-Z]|[Mm]rs?|[Dd]r|[Tt]he</token>
+      <token min="0">.</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Michaels|MICHAELS</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ON_FLEEK" name="on fleek">
     <pattern>
       <token>on</token>
@@ -5388,6 +6930,17 @@
     </pattern>
     <disambig action="remove" postag="DT.*"/>
   </rule>
+  <rule id="_SOFT_ANON_270" name="_SOFT_ANON_270">
+    <antipattern>
+      <token postag="P?DT|PRP\$" postag_regexp="yes"></token>
+      <token>comes</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">comes</token>
+      <token regexp="yes">from|by|to|into|(down|up)stairs</token>
+    </pattern>
+    <disambig action="remove" postag="NN"/>
+  </rule>
   <rule id="AGO_NO_ADJECTIVE" name="'ago' no adjective">
     <pattern>
       <token regexp="yes">seconds|minutes|hours|days|weeks|months|years|decades|moments|time</token>
@@ -5406,6 +6959,26 @@
     </pattern>
     <disambig action="remove" postag="VB.*"/>
   </rule>
+  <rule id="_SOFT_ANON_272" name="_SOFT_ANON_272">
+    <pattern>
+      <token regexp="yes" marker="yes">might|may</token>
+      <token>be</token>
+      <token postag="RB" min="0"></token>
+      <token postag="JJ.*|VBN" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="MD"/>
+  </rule>
+  <rule id="_SOFT_ANON_273" name="_SOFT_ANON_273">
+    <pattern>
+      <token regexp="yes" marker="yes">might|may</token>
+      <token>as</token>
+      <token>well</token>
+      <token>be</token>
+      <token postag="RB" min="0"></token>
+      <token postag="JJ.*|VBN" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="MD"/>
+  </rule>
   <rule id="A_NOTHER" name="a(nother)">
     <pattern>
       <token>a</token>
@@ -5420,6 +6993,22 @@
       <token regexp="yes" case_sensitive="yes">Hawai['’`´‘ʻ]i</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_278" name="_SOFT_ANON_278">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Going</token>
+      <token>forward</token>
+    </pattern>
+    <disambig action="remove" postag="NNP"/>
+  </rule>
+  <rule id="_SOFT_ANON_279" name="_SOFT_ANON_279">
+    <pattern>
+      <token inflected="yes">be</token>
+      <token postag="PRP" min="0"></token>
+      <token case_sensitive="yes" marker="yes">Going</token>
+      <token>to</token>
+    </pattern>
+    <disambig action="remove" postag="NNP"/>
   </rule>
   <rule id="A_NO_DT" name="'a' no 'DT' in 'n/a'">
     <pattern>
@@ -5473,6 +7062,29 @@
       <token spacebefore="no" min="0">/</token>
       <token regexp="yes" marker="yes" spacebefore="no">.*[a-z].*</token>
       <token regexp="yes" spacebefore="no">&gt;|\}</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_286" name="_SOFT_ANON_286">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token>&quot;</token>
+      <token regexp="yes" marker="yes" spacebefore="no">[a-z_\-0-9]+</token>
+      <token regexp="yes" spacebefore="no">&quot;</token>
+      <token spacebefore="no">:</token>
+      <token skip="-1">&quot;</token>
+      <token>&quot;</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_287" name="_SOFT_ANON_287">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token>&quot;</token>
+      <token regexp="yes" marker="yes" spacebefore="no">[a-z_\-0-9]+</token>
+      <token regexp="yes" spacebefore="no">&quot;</token>
+      <token spacebefore="no">:</token>
+      <token regexp="yes">\d+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -5553,6 +7165,38 @@
     <disambig action="add">
       <wd pos="RB"/>
     </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_288" name="_SOFT_ANON_288">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Rue|Avenue|Boulevard|Place</token>
+      <token regexp="yes" case_sensitive="yes">[Dd]es?|[Dd]u</token>
+      <token regexp="yes" case_sensitive="yes" min="0">\p{Lu}.*</token>
+      <token regexp="yes" case_sensitive="yes">\p{Lu}.*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_289" name="_SOFT_ANON_289">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Rue|Avenue|Boulevard|Place</token>
+      <token regexp="yes" case_sensitive="yes">\p{Lu}.*|[Dd]['’`´‘ʻ]\p{Lu}.*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_290" name="_SOFT_ANON_290">
+    <pattern>
+      <token>f</token>
+      <token>*</token>
+      <token regexp="yes">ck(s|ed|ing)?</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="_SOFT_ANON_291" name="_SOFT_ANON_291">
+    <pattern>
+      <token regexp="yes">(bull)?sh</token>
+      <token>*</token>
+      <token>t</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="I_O_NO_PRP" name="I in I/O is no PRP">
     <pattern>

@@ -148,6 +148,36 @@
     </pattern>
     <disambig action="replace" postag="conj"/>
   </rule>
+  <rule id="_SOFT_ANON_1" name="_SOFT_ANON_1">
+    <pattern>
+      <token regexp="yes" marker="yes">przeszło|ponad|minus|minimum|maksimum|blisko</token>
+      <token postag="num.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_2" name="_SOFT_ANON_2">
+    <pattern>
+      <token regexp="yes" marker="yes">przeszło|ponad|minimum|maksimum|blisko</token>
+      <token regexp="yes" inflected="yes">.+letni|.+krotnie|\d+</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_3" name="_SOFT_ANON_3">
+    <pattern>
+      <token regexp="yes" marker="yes">przeszło|ponad</token>
+      <token postag="prep.*" postag_regexp="yes"></token>
+      <token postag="num.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_4" name="_SOFT_ANON_4">
+    <pattern>
+      <token regexp="yes" marker="yes">przeszło|ponad</token>
+      <token postag="prep.*" postag_regexp="yes"></token>
+      <token>roku</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
   <rule id="prawie_rokiem" name="przed prawie rokiem, półwiekiem, miesiącem... =&gt; qub">
     <pattern>
       <token postag="prep:inst:nwok">przed</token>
@@ -200,6 +230,21 @@
       <token regexp="yes">dziś|dzisiaj|wczoraj</token>
     </pattern>
     <disambig action="remove" postag="prep:.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_5" name="_SOFT_ANON_5">
+    <pattern>
+      <token regexp="yes">co|ani</token>
+      <token marker="yes">rusz</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_6" name="_SOFT_ANON_6">
+    <pattern>
+      <token postag="qub">co</token>
+      <token>i</token>
+      <token marker="yes">rusz</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
   </rule>
   <rule id="DOPIERO_CO" name="dopiero co">
     <pattern>
@@ -303,6 +348,20 @@
       <token postag="interj">me</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_7" name="_SOFT_ANON_7">
+    <pattern>
+      <token marker="yes">bez</token>
+      <token regexp="yes">czarny|dziki</token>
+    </pattern>
+    <disambig action="filter" postag="subst:sg:(acc|nom):m3"/>
+  </rule>
+  <rule id="_SOFT_ANON_9" name="_SOFT_ANON_9">
+    <pattern>
+      <token marker="yes">bez</token>
+      <token postag=".*gen.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="prep:gen:nwok"/>
   </rule>
   <rule id="na_per" name="na per =&gt; prep">
     <pattern>
@@ -717,6 +776,22 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_10" name="_SOFT_ANON_10">
+    <pattern>
+      <token postag="verb:winien.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="verb:inf:imperf:nonrefl" marker="yes">być</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_11" name="_SOFT_ANON_11">
+    <pattern>
+      <token postag="verb:inf:imperf:nonrefl" marker="yes">być</token>
+      <token postag="(ppas|pact|adj):.*nom.*" postag_regexp="yes" marker="yes">
+        <exception>ma</exception>
+      </token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="CO_VERB_ADAMP" name="co przed czasownikiem nie jest przyimkiem">
     <pattern>
       <token marker="yes">co</token>
@@ -1041,12 +1116,34 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_12" name="_SOFT_ANON_12">
+    <pattern>
+      <token postag="subst.*" postag_regexp="yes" marker="yes">do</token>
+      <token postag="subst.*" postag_regexp="yes" marker="yes">re</token>
+      <token postag="subst.*" postag_regexp="yes" marker="yes">mi</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="do_non_subst" name="do to nie subst">
     <pattern>
       <token marker="yes">do</token>
       <token postag=".*gen.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="prep:gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_15" name="_SOFT_ANON_15">
+    <pattern>
+      <token marker="yes">od</token>
+      <token>niedawna</token>
+    </pattern>
+    <disambig action="replace" postag="prep:gen:nwok"/>
+  </rule>
+  <rule id="_SOFT_ANON_16" name="_SOFT_ANON_16">
+    <pattern>
+      <token>od</token>
+      <token marker="yes">niedawna</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
   </rule>
   <rule id="wzgledem_subst" name="względem - prep lub subst">
     <pattern>
@@ -1082,6 +1179,51 @@
       <token marker="yes">o</token>
     </pattern>
     <disambig action="replace" postag="prep:loc"/>
+  </rule>
+  <rule id="_SOFT_ANON_17" name="_SOFT_ANON_17">
+    <pattern>
+      <token marker="yes">o</token>
+      <token regexp="yes">[,!]</token>
+    </pattern>
+    <disambig action="replace" postag="interj"/>
+  </rule>
+  <rule id="_SOFT_ANON_19" name="_SOFT_ANON_19">
+    <pattern>
+      <token marker="yes">o</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="replace" postag="brev:pun"/>
+  </rule>
+  <rule id="_SOFT_ANON_21" name="_SOFT_ANON_21">
+    <antipattern>
+      <token>o</token>
+      <token regexp="yes" inflected="yes" skip="-1">który|jaki</token>
+      <token>?</token>
+    </antipattern>
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token postag="interj" marker="yes">o</token>
+      <token postag=".*voc.*" postag_regexp="yes" marker="yes">
+        <exception>tyle</exception>
+      </token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_22" name="_SOFT_ANON_22">
+    <pattern>
+      <token postag="interj" marker="yes">o</token>
+      <token postag=".*voc.*" postag_regexp="yes" marker="yes"></token>
+      <token postag=".*voc.*" postag_regexp="yes" marker="yes" skip="3"></token>
+      <token>!</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_23" name="_SOFT_ANON_23">
+    <pattern>
+      <token postag="interj">o</token>
+      <token postag="adv">tam</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="cos_tam" name="coś tam">
     <pattern>
@@ -1123,6 +1265,13 @@
       <token postag="verb:fin:sg:ter:perf:refl.nonrefl">da</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_25" name="_SOFT_ANON_25">
+    <pattern>
+      <token marker="yes">na</token>
+      <token regexp="yes">[,!]|tu</token>
+    </pattern>
+    <disambig action="replace" postag="interj"/>
   </rule>
   <rule id="razem_z" name="razem z">
     <pattern>
@@ -1252,6 +1401,36 @@
     </pattern>
     <disambig action="unify" features="case,number,gender"/>
   </rule>
+  <rule id="_SOFT_ANON_27" name="_SOFT_ANON_27">
+    <pattern>
+      <token marker="yes">miast</token>
+      <token regexp="yes">[:,;!]</token>
+    </pattern>
+    <disambig action="replace" postag="subst:pl:gen:n2"/>
+  </rule>
+  <rule id="_SOFT_ANON_28" name="_SOFT_ANON_28">
+    <pattern>
+      <token marker="yes">miast</token>
+      <token>i</token>
+      <token>wsi</token>
+    </pattern>
+    <disambig action="replace" postag="subst:pl:gen:n2"/>
+  </rule>
+  <rule id="_SOFT_ANON_29" name="_SOFT_ANON_29">
+    <pattern>
+      <token>wsi</token>
+      <token>i</token>
+      <token marker="yes">miast</token>
+    </pattern>
+    <disambig action="replace" postag="subst:pl:gen:n2"/>
+  </rule>
+  <rule id="_SOFT_ANON_30" name="_SOFT_ANON_30">
+    <pattern>
+      <token postag="ppas.*|adj.*|num.*:congr" postag_regexp="yes"></token>
+      <token postag="subst:pl:gen:n2">miast</token>
+    </pattern>
+    <disambig action="unify" features="case,number,gender"/>
+  </rule>
   <rule id="NICZYM_NIE_PREP" name="niczym jako rzeczownik">
     <pattern>
       <token marker="yes">niczym</token>
@@ -1279,6 +1458,13 @@
       <token>około</token>
     </pattern>
     <disambig action="replace" postag="prep:acc"/>
+  </rule>
+  <rule id="_SOFT_ANON_31" name="_SOFT_ANON_31">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="adj.*" postag_regexp="yes">nowy|pierwszy</token>
+      <token postag="subst.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="case,gender,number"/>
   </rule>
   <rule id="moze_by" name="może bym -&gt;">
     <pattern>
@@ -1350,6 +1536,39 @@
       <token postag="conj">ani</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_32" name="_SOFT_ANON_32">
+    <pattern>
+      <token marker="yes">lecz</token>
+      <token>się</token>
+      <token>sam</token>
+      <token regexp="yes">[\.!,-—…]+</token>
+    </pattern>
+    <disambig action="filter" postag="verb:impt.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_33" name="_SOFT_ANON_33">
+    <pattern>
+      <token>,</token>
+      <token marker="yes">lecz</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="_SOFT_ANON_34" name="_SOFT_ANON_34">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token marker="yes">lecz</token>
+      <token regexp="yes">też|również|i</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="_SOFT_ANON_35" name="_SOFT_ANON_35">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token marker="yes">lecz</token>
+      <token>za</token>
+      <token>to</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
   </rule>
   <rule id="badz_num" name="bądź i lub jako spójnik między liczbami">
     <pattern>
@@ -1674,6 +1893,20 @@
       <wd pos="verb:praet:sg:m1.m2.m3:ter:perf:refl.nonrefl"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_36" name="_SOFT_ANON_36">
+    <pattern>
+      <token regexp="yes" marker="yes">(?:roz|po|prze|u)?dział</token>
+      <token postag="adj.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="unify" features="gender,case,number"/>
+  </rule>
+  <rule id="_SOFT_ANON_37" name="_SOFT_ANON_37">
+    <pattern>
+      <token postag="adj.*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" marker="yes">(?:roz|po|prze|u)?dział</token>
+    </pattern>
+    <disambig action="unify" features="gender,case,number"/>
+  </rule>
   <rule id="INF_MUSZA" name="Muszą jako czasownik">
     <pattern>
       <token postag="verb:inf.*" postag_regexp="yes"></token>
@@ -1736,6 +1969,22 @@
       <token>cenę</token>
     </pattern>
     <disambig action="replace" postag="verb:fin:pl:ter:imperf:refl.nonrefl"/>
+  </rule>
+  <rule id="_SOFT_ANON_41" name="_SOFT_ANON_41">
+    <pattern>
+      <token regexp="yes" inflected="yes" skip="1">s?kończyć|zacząć|zaczynać</token>
+      <token marker="yes">powieść</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:acc:f"/>
+  </rule>
+  <rule id="_SOFT_ANON_42" name="_SOFT_ANON_42">
+    <pattern>
+      <token>powieść</token>
+      <token postag="adj.*" postag_regexp="yes">
+        <exception>ma</exception>
+      </token>
+    </pattern>
+    <disambig action="unify" features="case,gender,number"/>
   </rule>
   <rule id="lezy" name="leży to zwykle czasownik">
     <pattern>
@@ -1993,6 +2242,51 @@
     </pattern>
     <disambig action="replace" postag="subst:sg:inst:f"/>
   </rule>
+  <rule id="_SOFT_ANON_43" name="_SOFT_ANON_43">
+    <pattern>
+      <token regexp="yes">zupę|danie|pizzę|mięso|loda</token>
+      <token marker="yes">je</token>
+    </pattern>
+    <disambig action="replace" postag="verb:fin:sg:ter:imperf:refl.nonrefl"/>
+  </rule>
+  <rule id="_SOFT_ANON_45" name="_SOFT_ANON_45">
+    <pattern>
+      <token postag="verb.*" postag_regexp="yes"></token>
+      <token postag="qub|adv.*" postag_regexp="yes"></token>
+      <token marker="yes">je</token>
+    </pattern>
+    <disambig action="filter" postag="ppron3.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_46" name="_SOFT_ANON_46">
+    <pattern>
+      <token postag="verb.*" postag_regexp="yes"></token>
+      <token marker="yes">je</token>
+    </pattern>
+    <disambig action="filter" postag="ppron3.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_47" name="_SOFT_ANON_47">
+    <pattern>
+      <token marker="yes">je</token>
+      <token postag="verb.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="ppron3.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_48" name="_SOFT_ANON_48">
+    <pattern>
+      <token marker="yes">je</token>
+      <token postag="qub|adv.*" postag_regexp="yes"></token>
+      <token postag="verb.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="ppron3.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_49" name="_SOFT_ANON_49">
+    <pattern>
+      <token marker="yes">je</token>
+      <token regexp="yes">czasem|czasami|raz</token>
+      <token postag="verb.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="ppron3.*"/>
+  </rule>
   <rule id="DOSYC" name="dosyć nie jako dosycić">
     <pattern>
       <token postag="qub" marker="yes">dosyć</token>
@@ -2076,6 +2370,30 @@
     </pattern>
     <disambig action="replace" postag="adja"/>
   </rule>
+  <rule id="_SOFT_ANON_50" name="_SOFT_ANON_50">
+    <pattern>
+      <token postag="num.*:congr" postag_regexp="yes"></token>
+      <token postag="num.*:congr" postag_regexp="yes"></token>
+      <token postag="num.*:congr" postag_regexp="yes"></token>
+      <token postag="(subst|adj|pact|ppas).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="case,number,gender"/>
+  </rule>
+  <rule id="_SOFT_ANON_51" name="_SOFT_ANON_51">
+    <pattern>
+      <token postag="num.*:congr" postag_regexp="yes"></token>
+      <token postag="num.*:congr" postag_regexp="yes"></token>
+      <token postag="(subst|adj|pact|ppas).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="case,number,gender"/>
+  </rule>
+  <rule id="_SOFT_ANON_52" name="_SOFT_ANON_52">
+    <pattern>
+      <token postag="num.*:congr" postag_regexp="yes"></token>
+      <token postag="(subst|adj|pact|ppas).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="case,number,gender"/>
+  </rule>
   <rule id="NUM_SUBST_GEN" name="gen, też sg po num:rec">
     <pattern>
       <token regexp="yes" postag="num.*:rec|subst:.*" postag_regexp="yes" marker="yes">dużo|mało|mnóstwo|parę|trochę|część|niewiele|wiele|kilka|ćwierć|para</token>
@@ -2101,6 +2419,41 @@
     <pattern>
       <token regexp="yes" postag="num:pl:nom.gen.dat.inst.acc.loc.voc:m1.m2.m3.f.n1.n2.p1.p2:rec">pół|ćwierć</token>
       <token postag="(?:subst|adj|pact|ppas):sg:gen.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NUM_REC_SUBST_ADJ" name="gen pl po liczebniku bez związku zgody">
+    <pattern>
+      <token postag="num.*:rec" postag_regexp="yes" marker="yes">
+        <exception>jeden</exception>
+      </token>
+      <token postag="(?:ger|subst):pl.*gen.*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">wat|gram|amper|kilowat|kilogram|kiloamper|wolt|kilowolt|złoty|kilometr|metr|centymetr</exception>
+      </token>
+      <token postag="(?:adj|pact|ppas):pl.*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NUM_REC_ADJ_SUBST" name="gen pl po liczebniku bez związku zgody">
+    <pattern>
+      <token postag="num.*:rec" postag_regexp="yes" marker="yes">
+        <exception>jeden</exception>
+      </token>
+      <token postag="(?:adj|pact|ppas):pl.*gen.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="(?:ger|subst):pl.*gen.*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">wat|gram|amper|kilowat|kilogram|kiloamper|wolt|kilowolt|złoty|kilometr|metr|centymetr</exception>
+      </token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NUM_REC" name="gen pl po liczebniku bez związku zgody">
+    <pattern>
+      <token postag="num.*:rec" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">jeden|więcej|dużo|mało|mniej</exception>
+      </token>
+      <token postag="(?:adj|ger|subst|pact|ppas):pl.*gen.*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">mam|wat|gram|amper|kilowat|kilogram|kiloamper|wolt|kilowolt|złoty|kilometr|metr|centymetr</exception>
+      </token>
     </pattern>
     <disambig action="filterall"/>
   </rule>
@@ -2301,6 +2654,33 @@
     </pattern>
     <disambig action="replace" postag="adv:pos"/>
   </rule>
+  <rule id="_SOFT_ANON_55" name="_SOFT_ANON_55">
+    <pattern>
+      <token postag="prep:loc">na</token>
+      <token inflected="yes" postag="adj.*gen.*" postag_regexp="yes">który</token>
+      <token regexp="yes" postag="subst:sg:loc:f">mocy|podstawie</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_60" name="_SOFT_ANON_60">
+    <pattern>
+      <token regexp="yes" inflected="yes">zlać|zlewać|(?:po)?łączyć|stopić|stapiać|spajać|scal[ia]ć|splatać|spleść</token>
+      <token>w</token>
+      <token marker="yes">jedno</token>
+      <token>z</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:acc:n2"/>
+  </rule>
+  <rule id="_SOFT_ANON_61" name="_SOFT_ANON_61">
+    <pattern>
+      <token regexp="yes" inflected="yes">zlać|zlewać|(?:po)?łączyć|stopić|stapiać|spajać|scal[ai]ć|splatać|spleść</token>
+      <token>się</token>
+      <token>w</token>
+      <token marker="yes">jedno</token>
+      <token>z</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:acc:n2"/>
+  </rule>
   <rule id="JEDEN_Z_GEN" name="„jeden z” -&gt; przymiotnik">
     <pattern>
       <token inflected="yes" postag="adj.*" postag_regexp="yes" marker="yes">jeden</token>
@@ -2395,6 +2775,22 @@
       <token postag="(?:adj|pact|ppas|subst).*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="unify" features="case,number,gender"/>
+  </rule>
+  <rule id="_SOFT_ANON_65" name="_SOFT_ANON_65">
+    <pattern>
+      <token postag="verb.*pl.*:ter.*" postag_regexp="yes"></token>
+      <token postag="ppron3:pl:nom:m2.m3.f.n1.n2.p2.p3:ter:akc.nakc:praep.npraep">one</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_66" name="_SOFT_ANON_66">
+    <pattern>
+      <token postag="ppron3:pl:nom:m2.m3.f.n1.n2.p2.p3:ter:akc.nakc:praep.npraep">one</token>
+      <token postag="verb.*pl.*:ter.*" postag_regexp="yes">
+        <exception>gotów</exception>
+      </token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="IMIE_WARSZ" name="Warsz">
     <pattern>
@@ -2570,6 +2966,124 @@
       <wd pos="subst:sg:acc:m1"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_74" name="_SOFT_ANON_74">
+    <pattern>
+      <token regexp="yes" postag="prep.*" postag_regexp="yes">poza|za|o</token>
+      <token>tym</token>
+    </pattern>
+    <disambig action="unify" features="case"/>
+  </rule>
+  <rule id="_SOFT_ANON_76" name="_SOFT_ANON_76">
+    <pattern>
+      <token>na</token>
+      <token regexp="yes">czele|kształt|mocy|podstawie|rzecz|spodzie|działanie|zewnątrz</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_77" name="_SOFT_ANON_77">
+    <pattern>
+      <token>przy</token>
+      <token regexp="yes">pomocy|użyciu</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_78" name="_SOFT_ANON_78">
+    <pattern>
+      <token>w</token>
+      <token regexp="yes">braku|celu|ciągu|czasie|efekcie|formie|imię|imieniu|miarę|myśl|postaci|razie|rezultacie|trakcie|wyniku|wypadku|przypadku|głębi|obrębie|środku</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_79" name="_SOFT_ANON_79">
+    <pattern>
+      <token>we</token>
+      <token>wnętrzu</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_80" name="_SOFT_ANON_80">
+    <pattern>
+      <token>z</token>
+      <token regexp="yes">nadejściem|początkiem|pomocą|powodu|przyczyny|tytułu|wyjątkiem|wyłączeniem</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_81" name="_SOFT_ANON_81">
+    <pattern>
+      <token>za</token>
+      <token regexp="yes">pomocą|pośrednictwem|sprawą</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_82" name="_SOFT_ANON_82">
+    <pattern>
+      <token>pod</token>
+      <token regexp="yes">kątem|redakcją|pretekstem|względem|wezwaniem</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_83" name="_SOFT_ANON_83">
+    <pattern>
+      <token regexp="yes">[aà]</token>
+      <token>propos</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_84" name="_SOFT_ANON_84">
+    <pattern>
+      <token regexp="yes" skip="-1">(?:po)?między</token>
+      <token>a</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*inst.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*inst.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_85" name="_SOFT_ANON_85">
+    <pattern>
+      <token postag="prep:gen" marker="yes">śród</token>
+      <token postag="(?:adj|depr|ger|num|subst|ppron.*|ppas|pact):.*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_88" name="_SOFT_ANON_88">
+    <pattern>
+      <token postag="prep.*" postag_regexp="yes">ponad</token>
+      <token postag="(?:adj|depr|ger|subst|ppron.*|ppas|pact):.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="case"/>
+  </rule>
+  <rule id="_SOFT_ANON_91" name="_SOFT_ANON_91">
+    <pattern>
+      <token>wg</token>
+      <token postag=".*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_92" name="_SOFT_ANON_92">
+    <pattern>
+      <token regexp="yes">[wd]s|k</token>
+      <token>.</token>
+      <token postag=".*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_93" name="_SOFT_ANON_93">
+    <pattern>
+      <token>p</token>
+      <token>.</token>
+      <token>w</token>
+      <token>.</token>
+      <token postag=".*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag=".*gen.*"/>
+  </rule>
   <rule id="BLISKO_GEN" name="blisko/niedaleko + dopełniacz">
     <pattern>
       <token regexp="yes" inflected="yes">blisko|niedaleko</token>
@@ -2692,6 +3206,34 @@
       </token>
     </pattern>
     <disambig action="replace" postag="subst:sg:gen:f"/>
+  </rule>
+  <rule id="_SOFT_ANON_95" name="_SOFT_ANON_95">
+    <pattern>
+      <token regexp="yes">taka|taką</token>
+    </pattern>
+    <disambig action="filter" postag="adj.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_96" name="_SOFT_ANON_96">
+    <pattern>
+      <token regexp="yes">kłamie|czekał</token>
+    </pattern>
+    <disambig action="filter" postag="verb.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_97" name="_SOFT_ANON_97">
+    <pattern>
+      <token>nic</token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="subst:pl:gen:f" lemma="nica">nic</wd>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_98" name="_SOFT_ANON_98">
+    <pattern>
+      <token>szczerze</token>
+    </pattern>
+    <disambig action="remove">
+      <wd lemma="szczerza"/>
+    </disambig>
   </rule>
   <rule id="EMISJA_CIEPLA" name="emisja ciepła -&gt; subst">
     <pattern>
@@ -3597,6 +4139,13 @@
     </pattern>
     <disambig action="replace" postag="subst:sg:gen:f"/>
   </rule>
+  <rule id="_SOFT_ANON_99" name="_SOFT_ANON_99">
+    <pattern>
+      <token regexp="yes" inflected="yes">order|wyraz|pomnik|towarzystwo|więź|pakt|deklaracja|dowód|atmosfera|symbol|manifestacja|osiedle|szlak|granica</token>
+      <token marker="yes">przyjaźni</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:gen:f"/>
+  </rule>
   <rule id="SOLI_SUBST" name="soli jako genetiwus">
     <pattern>
       <token regexp="yes" inflected="yes">szczypta|brak|niedostatek|kopalnia|warzelnia|łyżeczka|słup|baryłka|roztwór|kryształek|beczka|łyżka|pokład|tona|kilo|odrobina|spożycie|kryształ|grudka|bryła</token>
@@ -3775,6 +4324,13 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_103" name="_SOFT_ANON_103">
+    <pattern>
+      <token postag="verb:bedzie.*" postag_regexp="yes"></token>
+      <token postag="verb:praet.*:imperf.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="number"/>
+  </rule>
   <rule id="W_SZTUCE_BIEGŁY" name="w sztuce biegły">
     <pattern>
       <token postag="prep:loc:nwok"></token>
@@ -3815,6 +4371,20 @@
     </pattern>
     <disambig action="replace" postag="subst:sg:gen:m3"/>
   </rule>
+  <rule id="_SOFT_ANON_107" name="_SOFT_ANON_107">
+    <pattern>
+      <token postag="adj:sg:nom.voc:f:pos" marker="yes"></token>
+      <token postag="subst:sg:nom:f" marker="yes">para</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_108" name="_SOFT_ANON_108">
+    <pattern>
+      <token postag="subst:sg:nom:f" marker="yes">para</token>
+      <token postag="adj:sg:nom.voc:f:pos">wodna</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="PASA_SUBST" name="pasa jako genetivus">
     <pattern>
       <token postag="subst:sg:gen:m3" marker="yes">pasa</token>
@@ -3828,6 +4398,21 @@
       <token marker="yes">pasa</token>
     </pattern>
     <disambig action="replace" postag="subst:sg:gen:m3"/>
+  </rule>
+  <rule id="_SOFT_ANON_109" name="_SOFT_ANON_109">
+    <pattern>
+      <token>do</token>
+      <token>samego</token>
+      <token marker="yes">pasa</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:gen:m3"/>
+  </rule>
+  <rule id="_SOFT_ANON_110" name="_SOFT_ANON_110">
+    <pattern>
+      <token>pasa</token>
+      <token postag="(?:adj|ppas|pact):sg.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="gender,case,number"/>
   </rule>
   <rule id="sklep_subst_2" name="sklep jako rzeczownik">
     <pattern>
@@ -3851,6 +4436,28 @@
       <token postag="subst.*gen.*(?:f|m1)" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="subst.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_111" name="_SOFT_ANON_111">
+    <pattern>
+      <token postag="subst:sg:nom:f"></token>
+      <token postag="adj:sg:nom.voc:f:pos">nasza</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_112" name="_SOFT_ANON_112">
+    <pattern>
+      <token postag="adj:sg:nom.voc:f:pos">nasza</token>
+      <token postag="subst:sg:nom:f"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_113" name="_SOFT_ANON_113">
+    <pattern>
+      <token postag="adj:sg:nom.voc:f:pos">nasza</token>
+      <token postag="adj:sg:nom.voc:f:pos"></token>
+      <token postag="subst:sg:nom:f"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="NASZE_ADJ" name="nasze jako przymiotnik">
     <pattern>
@@ -3939,6 +4546,23 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_114" name="_SOFT_ANON_114">
+    <pattern>
+      <token>to</token>
+      <token regexp="yes" marker="yes">jest|są|był[ayo]?</token>
+      <token postag="subst.*nom.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="unify" features="number"/>
+  </rule>
+  <rule id="_SOFT_ANON_115" name="_SOFT_ANON_115">
+    <pattern>
+      <token>to</token>
+      <token regexp="yes" marker="yes">jest|są|był[ayo]?</token>
+      <token postag="adj.*nom.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="subst.*nom.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="unify" features="number"/>
+  </rule>
   <rule id="nieslychanie_adv" name="niesłychanie + adj -&gt;adv">
     <antipattern>
       <token>silnie</token>
@@ -3960,6 +4584,15 @@
     <disambig action="replace">
       <wd pos="pred" lemma="to"/>
     </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_120" name="_SOFT_ANON_120">
+    <pattern>
+      <token marker="yes">jedna</token>
+      <token postag="adj.*|subst.*" postag_regexp="yes" marker="yes" max="2">
+        <exception>ma</exception>
+      </token>
+    </pattern>
+    <disambig action="unify" features="case,number,gender"/>
   </rule>
   <rule id="gen_dlugosci" name="adj:gen + długości -&gt;gen">
     <pattern>
@@ -4161,6 +4794,13 @@
     </pattern>
     <disambig action="replace" postag="adv:pos"/>
   </rule>
+  <rule id="_SOFT_ANON_124" name="_SOFT_ANON_124">
+    <pattern>
+      <token marker="yes">śmiało</token>
+      <token postag="verb.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="adv:pos"/>
+  </rule>
   <rule id="stanie_sie_adj" name="stanie się jasne -&gt; verb">
     <pattern>
       <token postag="verb:fin:sg:ter:perf:refl" marker="yes">stanie</token>
@@ -4186,6 +4826,28 @@
   <rule id="broni_sie" name="broni się -&gt; czasownik">
     <pattern>
       <token postag="verb:fin:sg:ter:imperf:refl.nonrefl">broni</token>
+      <token postag="qub">się</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_126" name="_SOFT_ANON_126">
+    <pattern>
+      <token postag="qub">nie</token>
+      <token postag="verb:fin:sg:ter:imperf:nonrefl">lubi</token>
+      <token postag=".*gen.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_127" name="_SOFT_ANON_127">
+    <pattern>
+      <token postag="verb:fin:sg:ter:imperf:nonrefl">lubi</token>
+      <token postag=".*acc.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_128" name="_SOFT_ANON_128">
+    <pattern>
+      <token postag="verb:fin:sg:ter:imperf:refl.nonrefl">lubi</token>
       <token postag="qub">się</token>
     </pattern>
     <disambig action="filterall"/>
@@ -4226,6 +4888,20 @@
       <token postag="subst.*nom.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="unify" features="number,gender"/>
+  </rule>
+  <rule id="_SOFT_ANON_132" name="_SOFT_ANON_132">
+    <pattern>
+      <token inflected="yes" marker="yes">luty</token>
+      <token regexp="yes">r|roku|\d{4}</token>
+    </pattern>
+    <disambig action="filter" postag="subst:sg.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_133" name="_SOFT_ANON_133">
+    <pattern>
+      <token regexp="yes">[12]?\d</token>
+      <token marker="yes">lutego</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:gen:m3"/>
   </rule>
   <rule id="MISTRZ_PYTA" name="nazwy własne błędnie rozpoznane jako czasowniki">
     <pattern>
@@ -4303,11 +4979,26 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_144" name="_SOFT_ANON_144">
+    <pattern>
+      <token postag="pact:.*:neg.*" postag_regexp="yes"></token>
+      <token postag=".*gen.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="GEN_NIE_MA_BYLO" name="Dopełniacz przed nie ma / nie było">
     <pattern>
       <token postag=".*gen.*" postag_regexp="yes" marker="yes"></token>
       <token postag="qub" marker="yes">nie</token>
       <token regexp="yes" postag="verb.*" postag_regexp="yes" marker="yes">ma(?:ją)?|było</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_152" name="_SOFT_ANON_152">
+    <pattern>
+      <token inflected="yes">nieprzywykły</token>
+      <token postag="verb:inf.*" postag_regexp="yes"></token>
+      <token postag="(?:adj|pact|ppas|subst|ger|depr).*gen.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
   </rule>
@@ -4328,12 +5019,38 @@
     </pattern>
     <disambig action="replace" postag="conj"/>
   </rule>
+  <rule id="_SOFT_ANON_153" name="_SOFT_ANON_153">
+    <pattern>
+      <token postag="verb:fin:pl:ter.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="ppron3:.*gen.*npraep" postag_regexp="yes" marker="yes"></token>
+      <token postag="subst:pl:nom.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="postaw_adj" name="postaw ideowych –&gt; rzeczownik">
     <pattern>
       <token>postaw</token>
       <token postag="adj.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="unify" features="case,number,gender"/>
+  </rule>
+  <rule id="_SOFT_ANON_160" name="_SOFT_ANON_160">
+    <pattern>
+      <token regexp="yes" marker="yes">coś|nic</token>
+      <token regexp="yes" min="0" max="1">też|wi[ęe]c|zatem|mniej|bardziej|jednak</token>
+      <token postag="adj:sg:gen:m1.m2.m3.n1.n2:.*" postag_regexp="yes"></token>
+      <token postag="verb:.*:pl.*" postag_regexp="yes">
+        <exception regexp="yes">doglądać|dokonać|dokonywać|dopełnia?ć|dopilnować|dosiadać|dosięgnąć|dosłuchiwać|dosypać|dosypywać|dotrzymać|dotrzymywać|dotykać|dotknąć|dowieść|dowodzić|doznać|doznawać|narwać|nienawidzić|naduży(?:wa)?ć|oczekiwać|pilnować|potrzebować|poszukiwać|pozbawić|pożądać|przestrzegać|przydać|przydawać|s?pytać|(?:wy|po)?słuch(?:iw)?ać|strzec|szukać|tknąć|(?:do)?tyczyć|uczyć|udziel[ia]ć|unikać|uniknąć|użyć|używać|wymagać|wypatrywać|zaniechać|zaniedbać|zaniedbywać|zażyć|zmarznąć|podupaść|wydorośleć|koczować|harcować|spuchnąć|spełzać|zlęknąć|obumierać|blagować|zadygotać|namartwić|dziecinnieć|przemarznąć|porozchodzić|umykać|domniemać|ześliznąć|śmieszyć|porzygać|gzić|graniczyć|przebrnąć|sterczeć|podsiąkać|usychać|podmuchać|przekwitać|współzawodniczyć|śmierdzieć|odpełznąć|czmychać|zażądać|zaperzać|załazić|zakosztować|ubolewać|należeć|wylądować|wrzynać|bazować|wyślizgnąć|podrzemać|żółcieć|powinszować|powydziwiać|wywiedzieć|odtajać|klękać|podzwonić|oddziałać|napsocić|migrować|ostygnąć|zapobiegać|ulec|oddzwonić|napatrzeć|figurować|uwięznąć|parskać|rozmięknąć|myśleć|zardzewieć|truchleć|czas|chrapnąć|zapracować|wybujać|pachnąć|kooperować|ręczyć|podlegać|rozejść|kaszleć|uśmiechać|skinąć|odkochać|dokuczać|zsiąść|rżeć|obciekać|brakować|rozmarzyć|dojrzewać|przyczaić|dopłynąć|zgrubieć|wagarować|poblednąć|kucharzyć|cackać|zbiednieć|utknąć|podobać|kapitulować|sekundować|pomarzyć|podfrunąć|nawyknąć|imprezować|zimować|uradować|rozrzewniać|ponarzekać|powracać|bumelować|dobiegać|zrzec|zbankrutować|blednąć|zwyknąć|natrafiać|hukać|ziać|wymachiwać|pulsować|przystać|pouciekać|pluskać|zbiec|wdrapać|poprzestać|okwitnąć|poszydzić|grzechotać|zatrzepotać|łypać|blaknąć|narzekać|kupczyć|dolecieć|skrzypnąć|jarzyć|żądać|zaszeleścić|skłamać|awanturować|złorzeczyć|wskakiwać|śpieszyć|naburmuszyć|gorączkować|wsiadać|rozpełzać|grzęznąć|zawinić|przesiąknąć|brodzić|zważać|przycichać|rozkazywać|poszybować|wdawać|przyklasnąć|dumać|zdołać|przysługiwać|wysilić|zaoponować|drętwieć|zaistnieć|zagapić|zgorzknieć|pretendować|mazgaić|ciekawić|wsłuchać|trzeszczeć|pogardzać|podchmielić|szybować|rozmarzać|potrwać|żonglować|pokłusować|hulać|przebrzmiewać|namyślić|kwiknąć|gazdować|to|zagrzechotać|przyjść|granatowieć|nabiec|zabraknąć|dyrygować|żyć|spekulować|bobrować|przymilić|wślizgiwać|wniknąć|podołać|zbaczać|rozmawiać|zemrzeć|zasługiwać|targować|maszerować|wpełzać|odlatywać|interweniować|fascynować|ustatkować|ślepnąć|pastwić|bywać|błądzić|charknąć|wyfruwać|pomykać|zabiec|telefonować|przeterminować|przeczyć|nabiedzić|biec|rozochocić|podłamać|ostać|frasować|zatrzeszczeć|omieszkać|chrypieć|zniecierpliwić|wysiadać|odrzekać|obyć|niedołężnieć|krztusić|spocić|poodchodzić|pląsać|obywać|zabłysnąć|przysłuchiwać|sarkać|odumierać|dezerterować|miesiączkować|igrać|pozasypiać|dziać|dosługiwać|zgrzytnąć|przebłyskiwać|nałykać|prezesować|zsiadać|przeszkodzić|posmutnieć|naciec|zapolować|wkraczać|przebąkiwać|plusnąć|błękitnieć|zawyć|rozradować|postępować|nawrzeszczeć|żeglować|zzielenieć|czuwać|głuchnąć|eksperymentować|zrelaksować|napuchnąć|zdumieć|posiedzieć|odetchnąć|nagadać|koncertować|nawykać|zagościć|przełazić|droczyć|zerknąć|ulęknąć|pomagać|bać|zaciec|ciec|zakradać|rozsiadać|posprzeczać|odrastać|służyć|królować|dotyczyć|siedzieć|obwisnąć|zamrugać|prześliznąć|powątpiewać|pofruwać|gestykulować|zrogowacieć|przyglądać|surfować|pomizernieć|pochlipywać|nieruchomieć|podrzemywać|ciurkać|wygramolić|wbiegać|obfitować|pozbyć|czekać|ucichnąć|pokumać|przybyć|wypełznąć|nadziwić|przestawać|bałaganić|żartować|rozćwierkać|tyć|rozleźć|wylec|wlecieć|przerodzić|nasłuchać|człapać|konferować|wypadać|jałowieć|harować|sflaczeć|odczekiwać|zakochać|świrować|zaśmiewać|pobaraszkować|odczekać|stanąć|korzystać|zapadać|startować|pokasływać|pochmurnieć|wzdychać|przylegać|zażyczyć|schudnąć|rozlatywać|osowieć|przyczynić|dowierzać|dygotać|współprzewodniczyć|wkraść|boleć|nabawić|wyelegantować|pozeskakiwać|potrzeba|ćwierkać|posiwieć|wygoić|zdziecinnieć|spazmować|naśmiecić|wleźć|powybiegać|zamachać|pomrzeć|zaginąć|wyzbyć|triumfować|spłonąć|łopotać|dziwić|skonsternować|akompaniować|kamienieć|rozporządzić|nachapać|zipać|drgać|stopnieć|rozpanoszyć|przeleżeć|głodować|zaskarbić|rozprysnąć|iść|zależeć|skowyczeć|rewanżować|przyjrzeć|ochłonąć|mieścić|rozmigotać|warto|szefować|rozpaczać|rozgorzeć|gdybać|fosforyzować|wylecieć|przegnić|posłować|zniknąć|zbiegać|zaprotestować|zwidywać|wdać|umrzeć|szczytować|poobsiadać|wlatywać|plotkować|bluznąć|uporać|prześwitywać|wyzierać|przezimować|nadkładać|dopływać|zmoknąć|zapragnąć|strzyknąć|prześlizgnąć|potargować|porozsychać|politykować|bluźnić|gardłować|zlecieć|zawyrokować|wypoczywać|roześmiać|podreptać|dorosnąć|zatriumfować|odfrunąć|ociągać|wrzasnąć|spełznąć|podążać|oszczenić|dobrnąć|tokować|dudnić|ulatywać|rozwrzeszczeć|pobłyskiwać|halsować|urastać|lobbować|gawędzić|nadpłynąć|zobojętnieć|zgęstnieć|rozbiegać|przegalopować|odumrzeć|dożywać|znamionować|zazdrościć|popatrywać|okocić|odleźć|klasnąć|zagalopować|rzec|odwykać|grasować|chuliganić|pogmerać|głowić|rozrzewnić|próchnieć|nasikać|sposępnieć|rozlecieć|pylić|przychodzić|doktoryzować|zakrawać|wibrować|urągać|rdzewieć|powyskakiwać|krygować|dyrdać|syczeć|mrugnąć|zaimponować|wbiec|lądować|zarzekać|szastać|polecieć|pokwękać|bożyć|wisieć|winszować|poszperać|pokpiwać|garbić|zdechnąć|rozsmakowywać|przydarzyć|mozolić|mknąć|obrzmiewać|istnieć|gramolić|marnieć|dymić|handlować|ćwierknąć|wspiąć|wyć|otrzaskać|ulotnić|łypnąć|wywietrzeć|trwać|posłużyć|nabrzmieć|zareagować|rozmówić|przylać|współuczestniczyć|pustynnieć|pochlebiać|pocierpieć|kucać|golnąć|dziękować|podskoczyć|nakłamać|gdakać|upłynąć|domyśleć|zwariować|spierzchnąć|rozpłynąć|wjechać|szlajać|obrzydnąć|sprzeciwiać|dyszeć|cierpieć|zasalutować|uleżeć|popłacać|omsknąć|ironizować|zbłaźnić|wzgardzić|przybywać|nabrudzić|rozweselić|opustoszeć|ocaleć|ciemnieć|wyszaleć|oponować|obrzęknąć|zgrzybieć|ociec|pobrzękiwać|doszukać|zamartwić|wyhasać|wylęgnąć|ściekać|przycichnąć|trzeźwieć|rejterować|przywierać|jaśnieć|zawtórować|wsiąkać|przydarzać|dopatrzyć|zemdleć|sarknąć|móc|prószyć|odżyć|usiłować|przybiec|opaść|biadolić|pieklić|wylęgać|poważnieć|polować|zaczekać|musieć|niecierpliwić|mrocznieć|braknąć|wyczołgać|rozbłyskać|zmarkotnieć|zalęgnąć|wiadomo|milczeć|zawarczeć|wysiąść|wyżalać|wdzięczyć|pokwikiwać|sympatyzować|rozprawić|poskoczyć|przykucać|owdowieć|napocić|nalatywać|kłusować|zasiąść|pełgać|napomknąć|żałować|zlodowacieć|otępieć|nadarzyć|chichotać|dobiec|troszczyć|poślizgnąć|przebranżowić|zżymać|zlatywać|zbrzydnąć|zaczołgać|wykłócać|wyjechać|poszaleć|postękać|pomuzykować|kolidować|deliberować|zejść|wżywać|śmiać|przymierać|kumać|gniazdować|wzrastać|wymarznąć|szczęścić|podskakiwać|podpływać|przepełznąć|pożyć|powściekać|buchać|wysforować|zaświtać|pobiec|rzednieć|przypaść|namoknąć|martwić|brzydzić|podkochiwać|bąkać|gardzić|grozić|zbutwieć|sprzysięgnąć|przyskoczyć|pochodzić|durzyć|gustować|pomyszkować|gratulować|żalić|zasłynąć|podrwiwać|nasłuchiwać|wypłynąć|podrożeć|zidiocieć|zaroić|zachybotać|zamarznąć|przytupywać|emocjonować|życzyć|tryumfować|dociec|speszyć|skandalizować|poczubić|powiać|bryknąć|poskutkować|poschnąć|dopełznąć|ślimaczyć|dbać|broić|wyleźć|warczeć|popracować|wietrzeć|ulatniać|trzeba|przykucnąć|borykać|pojechać|patrzeć|nażreć|siąść|nadarzać|nagrzeszyć|mrzeć|baczyć|zaleźć|swawolić|rozmyślać|pyskować|porać|kontratakować|grubieć|wyżyć|wybrnąć|pracować|sprzeczać|powylatywać|poflirtować|wytrysnąć|rozgoryczyć|wykwitać|struchleć|zaspać|lśnić|popływać|wyżywać|wydziwiać|ulitować|mizernieć|konkurować|wyspecjalizować|oniemieć|szczekać|skomleć|świtać|popadać|wałęsać|zrewanżować|dopomagać|wyjałowieć|wygasnąć|pokornieć|ryzykować|uganiać|teoretyzować|splunąć|kluć|patyczkować|wkupić|podupadać|kukać|zadomowić|wyprysnąć|nasiąkać|kręcić|wystartować|spacerować|przymarznąć|pielgrzymować|warknąć|rozkazać|popisywać|ucichać|przypływać|byczyć|zabłąkać|rozkwitać|poszczycić|powiadać|kwilić|cudzołożyć|szarogęsić|przeciwdziałać|majsterkować|zachłysnąć|wiecować|wdrapywać|brak|dziczeć|celować|upadać|rozczulić|popłakać|dyrektorować|polamentować|dostąpić|odpłacać|marudzić|decydować|wolno|rozminąć|przypłynąć|pospadać|okrzepnąć|chrzęścić|kolegować|uskarżać|szczycić|potrafić|pogapić|paktować|kwapić|wysychać|rozglądnąć|mądrzeć|blefować|wrzeszczeć|pomlaskać|naradzić|rozpierzchać|zabrzmieć|wyradzać|przekwitnąć|pokibicować|uprzeć|plajtować|zapiszczeć|naśmiać|optować|zatęsknić|wystarczyć|chybiać|żółknąć|pragnąć|popłakiwać|dospać|stróżować|przeboleć|poromansować|zelżeć|uczuć|fechtować|zapachnieć|przypełznąć|odpoczywać|wierzgać|osłupieć|korzyć|entuzjazmować|zasłabnąć|specjalizować|krzyczeć|czatować|gasnąć|stronić|pośniedzieć|pierzchać|jazgotać|wyzdrowieć|świszczeć|rozbłyskiwać|zająknąć|wmaszerować|ścierpnąć|żal|zmaleć|poszczekiwać|oddziaływać|dodzwaniać|charczeć|bąknąć|swędzić|pochylić|dźwięczeć|zaskarbiać|rozglądać|radzić|opiekować|dziwaczyć|jęknąć|rozszczebiotać|przybłąkać|poszarzeć|odezwać|cichnąć|stąpać|prześlizgiwać|popatrzyć|odechcieć|warować|leniuchować|łkać|łgać|następować|marzyć|rozstępować|nalegać|rozchorować|zwątpić|wracać|skorzystać|uchodzić|poskąpić|perorować|funkcjonować|żachnąć|podrosnąć|dojść|pogwarzyć|więdnąć|miewać|dosypiać|grasejować|zaniemóc|pojedynkować|partycypować|zaszkodzić|osłabnąć|wyguzdrać|odchodzić|naciekać|wymaszerować|dopominać|wystarczać|siąpić|reagować|pocierpnąć|najadać|lgnąć|przywędrować|zlitować|wytryskać|przypodobać|zaczernieć|umknąć|pójść|rozśpiewać|przypatrzyć|peszyć|pohukiwać|skamienieć|kraśnieć|zaciążyć|drżeć|biednieć|wyniknąć|wściec|zastukać|wystarać|wgryzać|rozbrykać|współistnieć|potknąć|podostawać|zmartwychwstawać|spurpurowieć|pasjonować|łazikować|zasnąć|zaniknąć|zagrozić|wypełzać|piąć|ociekać|ukłonić|parsknąć|konkludować|wysilać|zrzednąć|panoszyć|pałać|ubliżyć|prysnąć|przylgnąć|potykać|zamoknąć|pomarkotnieć|odkłonić|wyłysieć|wyłazić|dorównać|wstępować|rezonować|powszednieć|zadudnić|wysapać|pozielenieć|brązowieć|zawędrować|potanieć|odpływać|wspinać|namyślać|wydurniać|naobiecywać|linieć|pomdleć|nadciągać|zatryumfować|wżenić|procesować|pohasać|pochlubić|zasapać|wykraczać|wyrozumieć|wpatrywać|ochrypnąć|ryczeć|pomodlić|zastanowić|wywiązywać|wkupywać|przymilać|poznikać|odwarknąć|powschodzić|podrygiwać|kasłać|wystawać|mizdrzyć|odgałęziać|nadążyć|lęgnąć|kandydować|zaapelować|wpraszać|polegiwać|mawiać|zasyczeć|wyrodzić|pomóc|obejść|dowędrować|różowieć|przemknąć|poczołgać|górować|guzdrać|zalśnić|zadzwonić|pajacować|zipnąć|zdążyć|starczyć|przymarzać|wybrzydzać|skapnąć|rozłazić|przesiąść|pomieszkiwać|pokuśtykać|wnikać|kłaniać|pochlebić|twierdzić|rudzieć|rezygnować|zmięknąć|zmatowieć|wywiązać|wytrzeźwieć|pączkować|lewitować|czołgać|spoczywać|potonąć|podrałować|niknąć|pojeździć|zamartwiać|ubliżać|spoglądać|oślepnąć|naopowiadać|przymrzeć|przepaść|pełzać|zdrowieć|zawziąć|uwierzyć|kpić|przymawiać|przybiegać|pęknąć|pousychać|zaufać|rzygać|puszyć|meczeć|zakrzyknąć|zachorować|utyskiwać|rozstawać|naigrywać|klęknąć|zmierzchać|zawitać|kichać|jeździć|posługiwać|łysieć|blamować|ślizgać|debiutować|wskoczyć|muzykować|słynąć|pokrzyczeć|pogderać|miauczeć|zdrętwieć|zgnić|fruwać|chybotać|marznąć|chrapać|zawahać|porozrastać|popłynąć|intrygować|doszukiwać|zwiotczeć|siadać|wżyć|obcować|nadążać|uskoczyć|fuknąć|wyzbywać|zdrożeć|powchodzić|połasić|pluć|myszkować|dogasać|dyfundować|pokaszliwać|zdążać|wojować|użerać|starczać|płynąć|współżyć|powrócić|biedzić|szczęknąć|odmaszerować|obowiązywać|dybać|walczyć|rozpływać|przyczyniać|powstydzić|wkradać|przyplątać|włazić|wchodzić|uskakiwać|podjeżdżać|łaknąć|wygasać|rozkoszować|prychnąć|balować|zgadać|swędzieć|skutkować|drożyć|bryznąć|zleźć|zawadzić|zakotłować|przedobrzyć|dogadzać|zadebiutować|wyłgiwać|odpukać|zamierać|ukucnąć|plwać|nadbiec|nacieszyć|zubożeć|wstydzić|łajdaczyć|furczeć|dywagować|zaparować|wybuchnąć|polatać|gapić|zamydlić|zaintrygować|skumać|popękać|bryzgać|emigrować|skapitulować|siwieć|przystąpić|ożyć|siłować|rozwieść|przodować|podpadać|komutować|brzmieć|zniżkować|spozierać|figlować|zadrwić|wylatywać|silić|flirtować|trysnąć|trajlować|podorastać|paplać|pośliznąć|zaradzić|zatelefonować|zalatywać|schylić|radować|przystanąć|pozbywać|błyskać|zapracowywać|uschnąć|szpanować|kłamać|bimbać|zatętnić|szczękać|zaśmiać|rozpłakać|powychodzić|porykiwać|klaskać|dosiąść|pozostać|zdychać|rozporządzać|dorastać|rozlegać|muczeć|wysypiać|stacjonować|pozachodzić|nabiegać|błąkać|wpływać|natrząsać|dyżurować|zadurzyć|można|kwestować|ozwać|współdziałać|uwziąć|schlebiać|obciec|dowcipkować|pomlaskiwać|plenić|nalecieć|pobębnić|nasiedzieć|wywnętrzać|wybieleć|upływać|przyczajać|fantazjować|gorzeć|pogłówkować|zdurnieć|nacierpieć|imać|zdumiewać|panikować|pohałasować|huczeć|zawisnąć|bulwersować|zadrżeć|szczerzyć|podbiegać|piszczeć|czyhać|frymarczyć|fukać|zbieleć|wtargnąć|ustępować|zabłądzić|tęsknić|spływać|odrosnąć|tkwić|tyrać|lunatykować|ziewnąć|zatrząść|zapałać|łagodnieć|podlecieć|spojrzeć|rywalizować|podkpiwać|gmerać|pachnieć|niszczeć|kurwić|wgramolić|przekomarzać|plonować|błyszczeć|biegać|przeciekać|postarać|sekretarzować|grymasić|obsychać|zaciekać|przemijać|tryskać|poskarżyć|zgrzeszyć|przyklaskiwać|pozsiadać|lecieć|nadchodzić|strzykać|stanieć|powetować|kolaborować|czapkować|skrzypieć|nadskakiwać|kichnąć|procentować|wklęsnąć|umierać|zwyrodnieć|połazić|podejść|pobieleć|zazębić|zaowocować|wykluć|przemykać|odbiegać|rozboleć|butwieć|utrudzić|zapanować|domyślić|zarechotać|przemaszerować|pobrzmiewać|zwyżkować|wyginąć|przyzwalać|kląć|zechcieć|zbaranieć|tajać|podfruwać|najeść|asystować|ześlizgnąć|zakochiwać|żerować|wpaść|pojękiwać|pogłuchnąć|osiadać|odpocząć|wygłupiać|spokornieć|skamlać|bredzić|szkodzić|zasłuchać|przykrzyć|pośredniczyć|zginąć|wylegać|zsikać|kopulować|kaprysić|cuchnąć|dogasnąć|zezwalać|zdzierżyć|mdleć|uśmiać|tchórzyć|jazzować|wściekać|padać|odpłynąć|kaszlnąć|zemdlić|podbiec|konwersować|zażartować|wpatrzyć|płożyć|kuleć|ciążyć|omdleć|drzemać|zblednąć|przycupnąć|powypadać|rozumować|przewodniczyć|opadać|użalić|posnąć|odzywać|cierpnąć|dzwonić|wynikać|odgrażać|napluć|nadjeżdżać|zboczyć|rozweselać|napatoczyć|żebrać|odfruwać|pogadać|ozdrowieć|poleźć|zmartwieć|występować|przytaknąć|przymówić|naigrawać|flaczeć|pomachać|rozrosnąć|poginąć|wrastać|spodobać|splajtować|dokazać|nadymić|nadciągnąć|zaiskrzyć|wyfrunąć|wieczerzać|przyskakiwać|przejęzyczyć|panować|napływać|zsinieć|sposób|sztywnieć|spiskować|uwijać|napracować|spochmurnieć|poleżeć|omarznąć|rozczarować|podąsać|usnąć|pertraktować|zjawić|śmieć|bytować|debatować|rozstać|gruchać|doczekiwać|wyrzekać|wkroczyć|porozumieć|podlizać|naczytać|zrosnąć|przysłuchać|matkować|apelować|tułać|naśmiewać|zwisać|zdezerterować|zastygnąć|uciekać|zgłupieć|zezować|uczęszczać|szaleć|brzęczeć|dopatrzeć|szydzić|zamarzyć|topnieć|przypadać|konać|popiskiwać|kumplować|zrzekać|słaniać|rozpierzchnąć|ogorzeć|odprysnąć|zżółknąć|zgadzać|wiwatować|pozbiegać|wychynąć|postękiwać|promienieć|pochorować|odszeptywać|wrosnąć|wjeżdżać|spękać|prosperować|wonieć|odechciewać|wykluwać|terminować|syknąć|lękać|pobawić|parać|obstawać|kuśtykać|koziołkować|hamletyzować|wyrastać|jędrnieć|chorować|wionąć|urosnąć|podjechać|śnić|kumkać|przebrzmieć|iskrzyć|czubić|wyruszyć|drałować|zadumać|telegrafować|zakwitnąć|ubzdurać|skrzyć|przesiadywać|polec|doczekać|pogłowić|latać|zrastać|nakraść|wojażować|rozstąpić|wyhulać|opamiętywać|jechać|pomaszerować|zrejterować|współgrać|uwłaczać|oziębnąć|odkłaniać|imigrować|ubawić|rozpaść|zasmakować|ślęczeć|kibicować|zadziałać|wyskakiwać|westchnąć|spróbować|dorównywać|pobuszować|namakać|zawinszować|zapuchnąć|wyimaginować|odpryskiwać|zamarzać|zaburczeć|tętnić|naprzykrzyć|błaznować|wierzgnąć|wyczekać|odwdzięczyć|chuchnąć|dopełzać|spłynąć|rozrastać|chadzać|wątpić|wybywać|świerzbić|podleźć|dokazywać|solidaryzować|buszować|przemawiać|błysnąć|biesiadować|umilknąć|tleć|napatrzyć|chybić|spróchnieć|skrzeczeć|obozować|kluczyć|zabiegać|dolegać|przesiedzieć|pozazdrościć|zszarzeć|wczołgać|odlecieć|kapować|gorzknieć|dochrapać|wydobrzeć|wybyć|poprzychodzić|zalecieć|wstąpić|rozkwitnąć|migotać|wyruszać|spocząć|gnieździć|zmierzać|opamiętać|baraszkować|dogodzić|ucztować|zeźlić|zerkać|przywyknąć|ględzić|szusować|hasać|zbulwersować|kłębić|zionąć|zakrzątnąć|pokajać|rozsmakować|nabroić|zalegać|ustąpić|odrzec|pozować|poskrzypywać|pobekiwać|spadać|spać|nadpływać|dosłużyć|przesłyszeć|ziewać|odbiec|stąpnąć|rozczulać|czulić|ingerować|naprzykrzać|runąć|przytomnieć|pozasiadać|powariować|poprzestawać|przedostać|odwdzięczać|niedowidzieć|moralizować|zblaknąć|współbrzmieć|ochłodnąć|uśmiechnąć|uprzykrzyć|przesiadać|powróżyć|paradować|osiwieć|naradzać|zziajać|zanikać|przemoknąć|pokiwać|doczłapać|zasiadać|wpłynąć|wariować|pomilczeć|majaczyć|furkotać|zapłonąć|zaglądnąć|wystygnąć|wczuwać|zmieścić|drgnąć|szermować|oszaleć|zeskakiwać|zajrzeć|kaszlać|załomotać|zachłystywać|przytrafić|pojawić|narosnąć|interesować|bestwić|dyndać|spóźniać|zatroszczyć|stęsknić|dorośleć|dążyć|wyszumieć|zielenieć|wyszczerzyć|zmizernieć|replikować|chrząknąć|telepać|relaksować|spoważnieć|stęknąć|lubować|wilgotnieć|trzepotać|chałturzyć|dziadować|przemęczyć|przedzwonić|pochylać|wytrzymywać|rozczarowywać|poświecić|pozostawać|nadsłuchiwać|mędrkować|skonać|przygasnąć|pomstować|wschodzić|pogardzić|nabrzmiewać|maleć|wyglądać|histeryzować|szczeknąć|oczytać|owocować|wykwitnąć|przywidzieć|kursować|zaglądać|świecić|wypłakiwać|uprzykrzać|polśniewać|trza|rechotać|przyplątywać|gadać|zamilknąć|leźć|wstyd|ulecieć|srać|lewicować|doskwierać|weselić|kicać|zadrgać|posępnieć|rozmijać|zdecydować|uczestniczyć|porozumiewać|omdlewać|zwiedzieć|znieruchomieć|zazębiać|wsiąknąć|popatrzeć|dowiadywać|zjawiać|gospodarować|wyrokować|sąsiadować|rozbłysnąć|przesiąkać|pryskać|posiąść|dreptać|rajcować|wegetować|poszczęścić|zdrzemnąć|zżyć|zdębieć|swingować|przemarzać|popowstawać|zachrzęścić|urzędować|brykać|dostępować|szumieć|statystować|ogłuchnąć|popróchnieć|ześlizgiwać|nastąpić|kwiczeć|przemęczać|obsiąść|kolędować|rozlec|dożyć|popełznąć|pięknieć|mignąć|ubożeć|tanieć|spółkować|potakiwać|podśmiewać|dachować|gniewać|zstąpić|nakrzyczeć|alergizować|wskórać|natrafić|doigrać|wędkować|spanikować|przypatrzeć|kołatać|imponować|zaczerwienieć|wygłupić|trajkotać|rozprawiać|dopatrywać|doziębić|zaryzykować|wypryskiwać|roić|pojawiać|napłynąć|nabawiać|kwękać|szperać|spluwać|pofolgować|napierać|spóźnić|obwisać|nagimnastykować|modlić|znikać|szkoda|protestować|kiełkować|zalec|dowiedzieć|bawić|wymiotować|rozentuzjazmować|poczuwać|litować|usługiwać|przefrunąć|poklęczeć|prątkować|powinien|rozgałęziać|pierzchnąć|folgować|widać|skwierczeć|przyśnić|wyskoczyć|ożywać|biedować|wdepnąć|podziękować|zadźwięczeć|słychać|przepadać|szwankować|kapnąć|zadecydować|towarzyszyć|przytakiwać|przyglądnąć|wyrzec|wytrwać|wyemigrować|klęczeć|dodzwonić|zakolegować|tonąć|skradać|lamentować|brnąć|wystękać|wahać|zwiędnąć|zamieszkać|wybiec|ubyć|krążyć|grawitować|furknąć|stać|przytrafiać|prychać|poczekać|kimać|doszlusować|bankrutować|powędrować|posapywać|zakraść|wyjeżdżać|nastać|salutować|pocwałować|gęstnieć|pysznić|burczeć|przysypiać|przeciec|spierdalać|rozbiec|zagrzmieć|sykać|zstępować|trudnić|przespacerować|podzwaniać|gderać|wierzyć|basować|mniemać|wymykać|wymigiwać|romansować|truchtać|sprzykrzyć|odżywać|zgrzytać|pogasnąć|matowieć|wypaść|wśliznąć|pobolewać|wytryskiwać|nadbiegać|depeszować|stchórzyć|sczerwienieć|wyschnąć|naszukać|nasiąknąć|napić|znęcać|podsychać|podeschnąć|łasić|wyciec|szurać|powalczyć|zaschnąć|zapaść|napomykać|zaopiekować|sikać|powdzięczyć|podlizywać|niedosłyszeć|wykroczyć|naurągać|przystępować|nadłożyć|niedomagać|działać|sprzymierzyć|przystawać|biwakować|dociekać|wymigać|rozejrzeć|puchnąć|natknąć|kajać|oburzyć|zarobkować|sprzyjać|odsapnąć|pożółknąć|poczerwienieć|wczasować|wypływać|stękać|zawadzać|pękać|nastarczyć|brylować|zmarnieć|natykać|wiosłować|błaźnić|psioczyć|wymknąć|kusztykać|dopomnieć|pogratulować|boczyć|kadzić|zrezygnować|turkotać|kipieć|chodzić|odszeptać|naubliżać|zgarbić|wdzierać|wczołgiwać|zaradzać|zostać|uwinąć|schylać|cyrkulować|drożeć|uchybić|buzować|dolatywać|zmartwychwstać|przedostawać|poweseleć|spowinowacić|jawić|delektować|zapobiec|schnąć|polegać|podpełzać|wyczekiwać|przygnębiać|ubywać|zajęczeć|sprzymierzać|markotnieć|chrząkać|galopować|przygnębić|próżnować|tupnąć|oburzać|zachcieć|nałazić|nadejść|dworować|wykosztować|medytować|liderować|wyjednać|odwyknąć|zeskoczyć|zamachnąć|powskakiwać|chełpić|rozgościć|pomknąć|podyskutować|wymrzeć|spowszednieć|ryknąć|nastarczać|korcić|brzydnąć|przysnąć|ulegać|pobiedować|usłużyć|płonąć|osiąść|usiedzieć|pobłękitnieć|kapać|upierać|rzednąć|pustoszeć|postać|pospać|przywykać|nastawać|różnić|dotrwać|wczuć|sypiać|starać|podłazić|pocić|okwitać|narodzić|przynależeć|poróżowieć|wymierać|widnieć|poplotkować|otrzeźwieć|wychudnąć|podczołgać|obawiać|pałętać|zagrażać|współczuć|stygnąć|skamleć|wpadać|obeschnąć|łazić|kłosić|bieleć|przyzwolić|mrugać|siknąć|pogawędzić|ścierpieć|mdlić|zapatrzyć|współpracować|więznąć|porozmawiać|porozbiegać|patronować|obumrzeć|jęczeć|uchybiać|płakać|goreć|zastygać|zagłosować|zeschnąć|ściemnieć|powęszyć|pobłądzić|domyślać|powrzeszczeć|odburknąć|gnić|zamierzać|brunatnieć|wrzeć|zezwolić|zatroskać|przelęknąć|połyskiwać|odłazić|milknąć|wybuchać|stawać|podmarznąć|oddzwaniać|zachciewać|wyspać|dość|abdykować|grzeszyć|zatonąć|snobować|przywidywać|wtórować|rozsiąść|pochrapywać|powiewać|nadąsać|współwystępować|przebąknąć|nadjechać|wsłuchiwać|spodziewać|przyblednąć|subtelnieć|przeminąć|wyżalić|pokrzykiwać|podumać|﻿|przeszkadzać|podziałać|kwitnąć|zmierzchnąć|zesztywnieć|potrzaskiwać|podpłynąć|zaprzeczyć|polemizować|obmierznąć|zafrasować|zachrypieć|winien|zakrztusić|pożeglować|odstawać|wydarzyć|szeleścić|powstać|drwić|zapatrywać|korespondować|słabnąć|pobłażać|aspirować|zadbać|użalać|rozpełznąć|napytać|domagać|podpełznąć|odpadać|partnerować|goić|ginąć|zleniwieć|ugrzęznąć|ufać|kazać|uciec|namozolić|zdarzyć|złagodnieć|zemścić|wzrosnąć|sprostać|obojętnieć|meandrować|rozgorączkować|wiotczeć|szarzeć|pośmiać|zwietrzeć|wymądrzać|wyjść|patrzyć|ropieć|powstawać|wyrosnąć|leżeć|rozżalić|nakląć|mięknąć|dąsać|chuchać|przeleźć|wsiąść|przyświecać|fraternizować|dnieć|wyciekać|pogrozić|zaszpanować|lawirować|kucnąć|grzmieć|zamakać|troskać|skąpić|psocić|przywrzeć|podlatywać|wyłgać|utyć|pożartować|główkować|przeradzać|pożalić|poklaskać|pełznąć|gwarzyć|zasychać|zasłużyć|wejść|porabiać|manewrować|komenderować|koegzystować|zmiłować|wgryźć|naskarżyć|dogorywać|purpurowieć|wtyczkować|obradować|poigrać|dojeżdżać|zaprzeczać|przygasać|opuchnąć|zrzędzić|zaprocentować|połaszczyć|sinieć|połakomić|wydarzać|współdecydować|rozmyślić|wpełznąć|połazikować|obrzmieć|mieszkać|zdziczeć|oscylować|szwendać|mrowić|biadać|przypatrywać|naprzeć|kroczyć|podkołować|potrzebować|łakomić|zdarzać|pasożytować|chudnąć|hałasować|wzejść|wypocząć|sprzeciwić|pozłazić|krakać|zanocować|pożałować|narastać|domniemywać|głupieć|utonąć|rozpadać|mżyć|zakpić|krzątać|być|wyśliznąć|wędrować|ściec|strajkować|pływać|filozofować|zaperzyć|pokutować|utrafić|łobuzować|zastanawiać|polatywać|cwałować|ulżyć|rosnąć|mądrzyć|wykosztowywać|oprzytomnieć|zmądrzeć|zamrzeć|odszepnąć|chlubić|dłużyć|załopotać|odejść|wprosić|ucierpieć|podowcipkować|tlić|wystrzegać|pora|wystąpić|przysłużyć|przyjaźnić|zgasnąć|podrastać|grypsować|dopomóc|zmykać|wygrażać|oddychać|jąć|odburkiwać|ciamkać|bzyczeć|czmychnąć|cielić|dokuczyć|zwidzieć|wślizgnąć|odpłacić|czaić|przyjechać|przyjeżdżać</exception>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="subst:sg:acc.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_177" name="_SOFT_ANON_177">
+    <pattern>
+      <token postag="(verb|pact).*" postag_regexp="yes"></token>
+      <token marker="yes">to</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:acc:n2"/>
   </rule>
   <rule id="DAT_SIE_ZDAWALO" name="celownik + się zdawało, że">
     <pattern>
@@ -4411,6 +5128,21 @@
     </pattern>
     <disambig action="unify" features="number,gender,case"/>
   </rule>
+  <rule id="_SOFT_ANON_206" name="_SOFT_ANON_206">
+    <pattern>
+      <token postag="(?:adj|pact|ppas).*" postag_regexp="yes" marker="yes"></token>
+      <token postag="(?:adj|pact|ppas).*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" marker="yes">sposób|czas</token>
+    </pattern>
+    <disambig action="unify" features="number,gender,case"/>
+  </rule>
+  <rule id="_SOFT_ANON_208" name="_SOFT_ANON_208">
+    <pattern>
+      <token postag="(?:adj|pact|ppas).*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" marker="yes">sposób|czas</token>
+    </pattern>
+    <disambig action="unify" features="number,gender,case"/>
+  </rule>
   <rule id="unify_powstanie" name="unifikacja rzeczownika powstanie">
     <pattern>
       <token marker="yes">powstanie</token>
@@ -4442,6 +5174,13 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="_SOFT_ANON_210" name="_SOFT_ANON_210">
+    <pattern>
+      <token postag="verb:inf:imperf:nonrefl">być</token>
+      <token postag="qub">może</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="ON" name="on to nie adj">
     <pattern>
       <token>on</token>
@@ -4461,6 +5200,25 @@
       <token postag="(?:adj|ppas).*nom.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="unify" features="number"/>
+  </rule>
+  <rule id="_SOFT_ANON_213" name="_SOFT_ANON_213">
+    <pattern>
+      <token postag="subst:pl:nom:m1" marker="yes">panowie</token>
+      <token regexp="yes" postag="subst:sg:nom:m1" marker="yes">\p{Lu}\p{Ll}+</token>
+      <token postag="conj" marker="yes">i</token>
+      <token regexp="yes" postag="subst:sg:nom:m1" marker="yes">\p{Lu}\p{Ll}+</token>
+      <token postag="verb.*pl.*ter.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_226" name="_SOFT_ANON_226">
+    <pattern>
+      <token postag="ppron12.*:nom.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="verb:.*" postag_regexp="yes" marker="yes">
+        <exception>je</exception>
+      </token>
+    </pattern>
+    <disambig action="unify" features="number,person"/>
   </rule>
   <rule id="stanowi_verb" name="stanowi + rzecz/acc - &gt;verb">
     <pattern>
@@ -4542,6 +5300,15 @@
     </pattern>
     <disambig action="remove" postag="ger:.*"/>
   </rule>
+  <rule id="oboje_verb_praet" name="oboje jako podmiot">
+    <pattern>
+      <token postag="num:.*nom.*:rec" postag_regexp="yes">
+        <exception>trochę</exception>
+      </token>
+      <token postag="verb:(?:pot|praet):.*ter.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="unify" features="gender,number"/>
+  </rule>
   <rule id="wrecz_ze" name="wręcz, że =&gt; qub">
     <pattern>
       <token postag="qub">wręcz</token>
@@ -4565,6 +5332,20 @@
       <token postag="verb.*|ppas.*|pact.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="adv:pos"/>
+  </rule>
+  <rule id="_SOFT_ANON_248" name="_SOFT_ANON_248">
+    <pattern>
+      <token skip="-1">zrobiło</token>
+      <token marker="yes">żal</token>
+    </pattern>
+    <disambig action="replace" postag="pred"/>
+  </rule>
+  <rule id="_SOFT_ANON_249" name="_SOFT_ANON_249">
+    <pattern>
+      <token marker="yes" skip="-1">żal</token>
+      <token>zrobiło</token>
+    </pattern>
+    <disambig action="replace" postag="pred"/>
   </rule>
   <rule id="JEST_NIE_QUB_SPOSOB" name="verb:inf + jest nie sposób">
     <pattern>
@@ -4790,6 +5571,21 @@
     </pattern>
     <disambig action="replace" postag="qub"/>
   </rule>
+  <rule id="_SOFT_ANON_252" name="_SOFT_ANON_252">
+    <pattern>
+      <token>na</token>
+      <token marker="yes">chybił</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_253" name="_SOFT_ANON_253">
+    <pattern>
+      <token>na</token>
+      <token>chybił</token>
+      <token marker="yes">trafił</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
   <rule id="tez_nie_tenze" name="też to nie tenże">
     <pattern>
       <token marker="yes">też</token>
@@ -4840,6 +5636,13 @@
       <token>.</token>
     </pattern>
     <disambig action="replace" postag="brev:pun"/>
+  </rule>
+  <rule id="_SOFT_ANON_255" name="_SOFT_ANON_255">
+    <pattern>
+      <token regexp="yes" postag="verb:winien.*" postag_regexp="yes">win.*</token>
+      <token inflected="yes" postag="verb:.*" postag_regexp="yes">być</token>
+    </pattern>
+    <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="WINNA_LATOROSL" name="winna latorośl">
     <pattern>
@@ -5312,6 +6115,27 @@
     </pattern>
     <disambig action="replace" postag="pred"/>
   </rule>
+  <rule id="_SOFT_ANON_260" name="_SOFT_ANON_260">
+    <pattern>
+      <token postag="adv:pos">tak</token>
+      <token postag="pred">można</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_261" name="_SOFT_ANON_261">
+    <pattern>
+      <token marker="yes" skip="2">można</token>
+      <token regexp="yes">by(?:ło)?</token>
+    </pattern>
+    <disambig action="replace" postag="pred"/>
+  </rule>
+  <rule id="_SOFT_ANON_262" name="_SOFT_ANON_262">
+    <pattern>
+      <token>było</token>
+      <token marker="yes">można</token>
+    </pattern>
+    <disambig action="replace" postag="pred"/>
+  </rule>
   <rule id="pred_inf" name="można użyć &gt;inf">
     <pattern>
       <token regexp="yes">można|trzeba|należy|warto|należało</token>
@@ -5326,6 +6150,20 @@
       <token marker="yes">aby</token>
     </pattern>
     <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_263" name="_SOFT_ANON_263">
+    <pattern>
+      <token regexp="yes" marker="yes">chociaż|choć</token>
+      <token regexp="yes" inflected="yes">raz|trochę|jeden|przez|odrobinę|przypadkiem</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_264" name="_SOFT_ANON_264">
+    <pattern>
+      <token postag="qub">może</token>
+      <token regexp="yes" postag="qub">chociaż|choć</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="OKOLO" name="około jako kublik">
     <pattern>
@@ -5435,12 +6273,53 @@
       <wd pos="ign" lemma="hot"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_274" name="_SOFT_ANON_274">
+    <pattern>
+      <token marker="yes">co</token>
+      <token>innego</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="co_innego" lemma="co">co</wd>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_275" name="_SOFT_ANON_275">
+    <pattern>
+      <token marker="yes">czym</token>
+      <token>innym</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="czym_innym" lemma="co">czym</wd>
+    </disambig>
+  </rule>
   <rule id="co_niemiara" name="co niemiara">
     <pattern>
       <token postag="qub" marker="yes">co</token>
       <token postag="burk" marker="yes">niemiara</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_276" name="_SOFT_ANON_276">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token min="0" max="1">no</token>
+      <token marker="yes">to</token>
+      <token regexp="yes" skip="-1">co|kto</token>
+      <token postag="SENT_END">?</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="_SOFT_ANON_277" name="_SOFT_ANON_277">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token min="0" max="1">no</token>
+      <token marker="yes">to</token>
+      <token regexp="yes" skip="-1">co|kto</token>
+      <token>?</token>
+      <token>.</token>
+      <token>.</token>
+      <token postag="SENT_END">.</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
   </rule>
   <rule id="AD_FINEM" name="ad finem -&gt; zwrot obcojęzyczny">
     <pattern>
@@ -5463,6 +6342,68 @@
       <token inflected="yes">jota</token>
     </pattern>
     <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="_SOFT_ANON_278" name="_SOFT_ANON_278">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Bóg|licho</token>
+      <token case_sensitive="yes" min="0" max="1">jeden</token>
+      <token case_sensitive="yes" marker="yes">wie</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">co|kto|kiedy|dlaczego|gdzie|jak|skąd|dokąd|czemu</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="_SOFT_ANON_279" name="_SOFT_ANON_279">
+    <pattern>
+      <token>licho</token>
+      <token>nie</token>
+      <token marker="yes">wie</token>
+      <token regexp="yes" inflected="yes" marker="yes">co|kto|kiedy|dlaczego|gdzie|jak|skąd|dokąd|czemu|jaki|który</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="_SOFT_ANON_284" name="_SOFT_ANON_284">
+    <pattern>
+      <token>nie</token>
+      <token regexp="yes" marker="yes">wiadomo|wiedzieć</token>
+      <token regexp="yes" marker="yes">co|kto|kiedy|dlaczego|gdzie|jak|skąd|dokąd|czemu</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="_SOFT_ANON_285" name="_SOFT_ANON_285">
+    <pattern>
+      <token>nie</token>
+      <token regexp="yes" marker="yes">wiadomo|wiedzieć</token>
+      <token marker="yes">z</token>
+      <token regexp="yes">czego|kim</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="_SOFT_ANON_286" name="_SOFT_ANON_286">
+    <pattern>
+      <token>nie</token>
+      <token regexp="yes" marker="yes">wiadomo|wiedzieć</token>
+      <token regexp="yes" marker="yes">po|[zn]a</token>
+      <token>co</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="_SOFT_ANON_287" name="_SOFT_ANON_287">
+    <pattern>
+      <token>nie</token>
+      <token regexp="yes" marker="yes">wiadomo|wiedzieć</token>
+      <token regexp="yes" marker="yes">[zo]</token>
+      <token>czym</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="_SOFT_ANON_288" name="_SOFT_ANON_288">
+    <pattern>
+      <token>nie</token>
+      <token regexp="yes" marker="yes">wiadomo|wiedzieć</token>
+      <token marker="yes">do</token>
+      <token regexp="yes">kogo|czego</token>
+    </pattern>
+    <disambig action="immunize"/>
   </rule>
   <rule id="CO_KON_WYSKOCZY" name="co koń wyskoczy - bez przecinka">
     <pattern>

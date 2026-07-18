@@ -596,3 +596,43 @@ func TestUnify_NumberFeatureFiltersReadings(t *testing.T) {
 	require.NotEmpty(t, tags)
 	_ = nn
 }
+
+func TestAddChunk_WdPosAppendsChunkTag(t *testing.T) {
+	// Java Catalan PTime: addchunk with one <wd pos="PTime"/> on a surface token.
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="PTIME" name="ptime">
+    <pattern>
+      <token>hora</token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "ca", "test")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Equal(t, ActionAddChunk, rules[0].Action)
+	require.Len(t, rules[0].NewTokenReadings, 1)
+
+	nn := "NC"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("hora", &nn, nil)),
+	}
+	pos := 0
+	for _, atr := range toks {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out := rules[0].Replace(languagetool.NewAnalyzedSentence(toks))
+	var chunks []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "hora" {
+			continue
+		}
+		chunks = tok.GetChunkTags()
+	}
+	require.Contains(t, chunks, "PTime")
+}

@@ -358,14 +358,60 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			}
 		}
 	case ActionAddChunk:
-		// ADDCHUNK: DisambiguatedPOS is the chunk tag to set on matched tokens
+		// Java ADDCHUNK: each <wd pos="…"/> is a ChunkTag appended to the
+		// matching marker-span token (length must equal span). Soft also
+		// accepts a single DisambiguatedPOS when no <wd> list is present.
+		if len(r.NewTokenReadings) > 0 {
+			span := 0
+			if last >= first && first >= 0 {
+				span = last - first + 1
+			}
+			if span == 0 || len(r.NewTokenReadings) != span {
+				return
+			}
+			for i := first; i <= last && i < len(nws); i++ {
+				rel := i - first
+				if nws[i] == nil || r.NewTokenReadings[rel] == nil {
+					continue
+				}
+				pos := r.NewTokenReadings[rel].GetPOSTag()
+				if pos == nil || *pos == "" {
+					continue
+				}
+				tags := append([]string(nil), nws[i].GetChunkTags()...)
+				dup := false
+				for _, t := range tags {
+					if t == *pos {
+						dup = true
+						break
+					}
+				}
+				if !dup {
+					tags = append(tags, *pos)
+				}
+				nws[i].SetChunkTags(tags)
+			}
+			return
+		}
 		if r.DisambiguatedPOS == "" {
 			return
 		}
 		for i := first; i <= last && i < len(nws); i++ {
-			if nws[i] != nil {
-				nws[i].SetChunkTags([]string{r.DisambiguatedPOS})
+			if nws[i] == nil {
+				continue
 			}
+			tags := append([]string(nil), nws[i].GetChunkTags()...)
+			dup := false
+			for _, t := range tags {
+				if t == r.DisambiguatedPOS {
+					dup = true
+					break
+				}
+			}
+			if !dup {
+				tags = append(tags, r.DisambiguatedPOS)
+			}
+			nws[i].SetChunkTags(tags)
 		}
 	case ActionUnify:
 		// Java UNIFY: filter matched tokens to readings that share feature

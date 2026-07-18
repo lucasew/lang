@@ -300,8 +300,17 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
     return toks
 
 
-def pattern_is_simple_ex(pattern: ET.Element) -> tuple[list[dict] | None, list[str]]:
-    """Like pattern_is_simple, plus Java <unify><feature id="…"/> features."""
+def pattern_is_simple_ex(
+    pattern: ET.Element,
+    *,
+    allow_postag_only: bool = False,
+) -> tuple[list[dict] | None, list[str]]:
+    """Like pattern_is_simple, plus Java <unify><feature id="…"/> features.
+
+    allow_postag_only: when True, accept sequences with no surface (all tokens
+    have postag). Used for ADDCHUNK/FILTERALL/UNIFY under a real tagger; still
+    rejected for soft FILTER/REPLACE that would flood without tags.
+    """
     toks: list[dict] = []
     features: list[str] = []
     # Java: pattern case_sensitive inherits to tokens/exceptions when not set
@@ -390,7 +399,12 @@ def pattern_is_simple_ex(pattern: ET.Element) -> tuple[list[dict] | None, list[s
             has_surface = True
             break
     if not has_surface:
-        return None, []
+        if not allow_postag_only:
+            return None, []
+        # every token must carry a postag for postag-only soft match
+        for t in toks:
+            if not isinstance(t, dict) or not (t.get("postag") or "").strip():
+                return None, []
     return toks, features
 
 
@@ -418,11 +432,17 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
     """Extract soft-loadable disambiguation rules (filter/replace+postag, immunize, ignore_spelling)."""
     out: list[dict] = []
     seen: set[str] = set()
+    anon_n = 0
     for el in root.iter():
         if local(el.tag) != "rule":
             continue
-        rid = el.get("id") or ""
-        if not rid or rid in seen:
+        rid = (el.get("id") or "").strip()
+        # Java allows anonymous rules (often inside rulegroups). Soft assigns a
+        # stable synthetic id so ADDCHUNK/FILTERALL packs are not dropped.
+        if not rid:
+            anon_n += 1
+            rid = f"_SOFT_ANON_{anon_n}"
+        if rid in seen:
             continue
         pat = None
         dis = None
@@ -436,9 +456,10 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
             continue
         action = (dis.get("action") or "replace").lower()
         postag = (dis.get("postag") or "").strip()
-        # Soft ADD/REMOVE/REPLACE: <wd pos="…" lemma="…"/> (Java ca/n't MD, multi-NNP, …)
+        # Soft ADD/REMOVE/REPLACE/ADDCHUNK: <wd pos="…" lemma="…"/> (Java ca/n't MD,
+        # multi-NNP, Catalan PTime chunks, …)
         add_wds: list[dict] = []
-        if action in ("add", "remove", "replace"):
+        if action in ("add", "remove", "replace", "addchunk"):
             for c in dis:
                 if local(c.tag) != "wd":
                     continue
@@ -448,7 +469,7 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 if not wd_pos and not wd_lemma and not wd_text:
                     continue
                 add_wds.append({"pos": wd_pos, "lemma": wd_lemma, "text": wd_text})
-            if action == "add" and not add_wds:
+            if action in ("add", "addchunk") and not add_wds:
                 continue
             # remove/replace may use postag only or <wd> list (Java REPLACE with wd)
             if action in ("remove", "replace") and not add_wds and not postag:
@@ -470,7 +491,10 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         if list(dis) and action == "replace" and not add_wds:
             # replace with non-wd children (e.g. match) not soft-loaded
             continue
-        toks, unify_feats = pattern_is_simple_ex(pat)
+        # Postag-only patterns are useful for addchunk/filterall/unify when a
+        # tagger supplies tags (Java); still blocked for soft filter/replace.
+        allow_po = action in ("addchunk", "filterall", "unify")
+        toks, unify_feats = pattern_is_simple_ex(pat, allow_postag_only=allow_po)
         if not toks:
             continue
         if action == "unify" and not unify_feats:
@@ -654,7 +678,7 @@ def write_disambig_soft_xml(
         write_disambig_token_lines(lines, r["tokens"])
         lines.append("    </pattern>")
         act = r.get("action") or "replace"
-        if act in ("add", "remove", "replace") and r.get("add_wds"):
+        if act in ("add", "remove", "replace", "addchunk") and r.get("add_wds"):
             open_tag = f'    <disambig action="{xml_esc(act)}"'
             if act == "remove" and r.get("postag"):
                 open_tag += f' postag="{xml_esc(r["postag"])}"'
