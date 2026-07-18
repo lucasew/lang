@@ -9,6 +9,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ar"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/be"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/br"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/da"
@@ -63,8 +64,8 @@ var Supported = []struct {
 	{"fa", "Persian"},
 	{"ga", "Irish"},
 	{"sr", "Serbian"},
-	// generic layout + word-repeat packs (no language-specific rule twins yet)
 	{"be", "Belarusian"},
+	// generic layout + word-repeat packs (no language-specific rule twins yet)
 	{"eo", "Esperanto"},
 	{"is", "Icelandic"},
 	{"ja", "Japanese"},
@@ -157,7 +158,7 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 	case "ga":
 		ga.RegisterCoreIrishRules(lt)
 	case "be":
-		registerGeneric(lt, "be", "BE_WORD_REPEAT_RULE")
+		be.RegisterCoreBelarusianRules(lt)
 	case "eo":
 		registerGeneric(lt, "eo", "EO_WORD_REPEAT_RULE")
 	case "is":
