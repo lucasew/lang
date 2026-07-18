@@ -88,3 +88,28 @@ func TestEnglishChunker_AmassingADJP(t *testing.T) {
 	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{so, am})
 	require.Contains(t, strings.Join(am.GetChunkTags(), ","), "ADJP")
 }
+
+func TestEnglishChunker_CreamColoredPaint(t *testing.T) {
+	dt, jj, nn, vbd := "DT", "JJ", "NN", "VBD"
+	the := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("the", &dt, nil))
+	cream := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("cream", &jj, nil),
+		languagetool.NewAnalyzedToken("cream", &nn, nil),
+	}, 0)
+	colored := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("colored", &jj, nil),
+		languagetool.NewAnalyzedToken("colored", &vbd, nil),
+	}, 0)
+	paint := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("paint", &nn, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{the, cream, colored, paint})
+	require.Contains(t, strings.Join(colored.GetChunkTags(), ","), "NP")
+	require.Contains(t, strings.Join(paint.GetChunkTags(), ","), "NP")
+}
+
+func TestEnglishChunker_NotAvailableIADJP(t *testing.T) {
+	rb, jj := "RB", "JJ"
+	not := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("not", &rb, nil))
+	av := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("available", &jj, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{not, av})
+	require.Contains(t, strings.Join(av.GetChunkTags(), ","), "I-ADJP")
+}

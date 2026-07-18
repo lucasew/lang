@@ -124,6 +124,13 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			prevSurf = tok
 			continue
 		}
+		// "not available/good": NN_NOT_JJ expects chunk="I-ADJP" (exact).
+		if strings.EqualFold(prevSurf, "not") && (strings.HasPrefix(pos, "JJ") || jjReading(t)) {
+			out[i].ChunkTags = []ChunkTag{NewChunkTag("I-ADJP")}
+			prevPOS = "JJ"
+			prevSurf = tok
+			continue
+		}
 		// "to home/upstairs/…" adverbials: prefer ADVP when RB reading exists.
 		if softIsDirectionalAfterTo(prevSurf, t) {
 			phrases[i] = "ADVP"
@@ -219,25 +226,48 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 			return vb
 		}
 	}
-	// After a determiner/possessive, prefer noun over verb (the body/contract).
+	// After a determiner/possessive: prefer adjective when both JJ and NN are
+	// present (the cream colored paint); else noun over verb (the body/contract).
 	if prevPOS == "DT" || prevPOS == "PRP$" || strings.HasPrefix(prevPOS, "PRP$") {
+		if jj != "" && nn != "" {
+			return jj
+		}
 		if nn != "" {
 			return nn
 		}
 	}
-	// After a subject-like tag, prefer a *finite* verb (Chris rose / they run).
-	// Do not prefer VBG over NN ("yoga training" must stay NP).
+	// After a subject-like tag: prefer finite *tense* verb (Chris rose / Does)
+	// over bare VB/VBP which often mark noun compounds (mu house, cream paint).
+	// But after NN, prefer NNS over VBZ for compounds (voice disorders).
 	if strings.HasPrefix(prevPOS, "NN") || prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_") {
-		if vbfinite != "" {
-			return vbfinite
+		if nn != "" && softHasPluralNounReading(t) && strings.HasPrefix(prevPOS, "NN") {
+			return nn
+		}
+		if vbdOrZ := softFiniteTenseVerb(t); vbdOrZ != "" {
+			return vbdOrZ
+		}
+		if nn != "" {
+			return nn
 		}
 	}
-	// After adjective: "similar like mine" — prefer prep reading of like/as.
+	// After adjective:
+	//  - prep complement: similar like / different from
+	//  - stacked adjectives: cream colored
+	//  - noun head: lovely matter / major cause
+	//  - bare-infinitive after able-class: able think
 	if strings.HasPrefix(prevPOS, "JJ") {
 		if softIsAdjComplementPrep(t.Token) && in != "" {
 			return in
 		}
-		// "able think" / "great write"
+		if jj != "" {
+			return jj
+		}
+		if softIsAbleClassSurface(prevSurf) && vb != "" {
+			return vb
+		}
+		if nn != "" {
+			return nn
+		}
 		if vb != "" {
 			return vb
 		}
@@ -246,14 +276,32 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	if strings.HasPrefix(prevPOS, "RB") && vb != "" {
 		return vb
 	}
+	// After comma: list nouns (… chokes, and joint locks) keep NNS; clause verbs
+	// (… dysphonia, affect …) take VB when no plural noun reading.
+	if prevSurf == "," {
+		if nn != "" && softHasPluralNounReading(t) {
+			return nn
+		}
+		if vb != "" {
+			if vbdOrZ := softFiniteTenseVerb(t); vbdOrZ != "" {
+				return vbdOrZ
+			}
+			return vb
+		}
+	}
 	// After a verb, prefer another verb for serial/aspect complements (keep see,
 	// going tell) when both NN and VB exist.
 	if strings.HasPrefix(prevPOS, "VB") && vb != "" {
 		return vb
 	}
-	// After CC prefer verb (and catch up / and never make).
-	if prevPOS == "CC" && vb != "" {
-		return vb
+	// After CC: noun lists (and voice disorders) over verb; else verb (and catch).
+	if prevPOS == "CC" {
+		if nn != "" {
+			return nn
+		}
+		if vb != "" {
+			return vb
+		}
 	}
 	// Sentence-initial (or after O) imperative/content verbs: "Look the door"
 	// is often NN|VB in the dict; OpenNLP prefers VB in imperative context.
@@ -340,6 +388,70 @@ func softIsAdjComplementPrep(s string) bool {
 	default:
 		return false
 	}
+}
+
+// softIsAbleClassSurface: adjectives that take a bare infinitive (able think).
+func softIsAbleClassSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "able", "unable", "ready", "willing", "likely", "unlikely", "free", "glad", "eager":
+		return true
+	default:
+		return false
+	}
+}
+
+// softFiniteTenseVerb returns VBD/VBZ when present (not bare VB/VBP).
+func softFiniteTenseVerb(t ChunkTaggedToken) string {
+	if t.Readings == nil {
+		return ""
+	}
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		p := r.GetPOSTag()
+		if p == nil {
+			continue
+		}
+		if *p == "VBD" || *p == "VBZ" {
+			return *p
+		}
+	}
+	return ""
+}
+
+func jjReading(t ChunkTaggedToken) bool {
+	if t.Readings == nil {
+		return false
+	}
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if p := r.GetPOSTag(); p != nil && strings.HasPrefix(*p, "JJ") {
+			return true
+		}
+	}
+	return false
+}
+
+func softHasPluralNounReading(t ChunkTaggedToken) bool {
+	if t.Readings == nil {
+		return false
+	}
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		p := r.GetPOSTag()
+		if p == nil {
+			continue
+		}
+		if *p == "NNS" || *p == "NNPS" || strings.HasPrefix(*p, "NNS") || strings.HasPrefix(*p, "NNPS") {
+			return true
+		}
+	}
+	return false
 }
 
 func phraseFromPOS(pos string) string {
