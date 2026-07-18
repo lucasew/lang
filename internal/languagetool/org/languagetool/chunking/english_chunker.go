@@ -127,6 +127,17 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			prevSurf = t.Token
 			continue
 		}
+		// PAST_AN_PAST: "worked on the project" — on is IN/B-PP before DT, not
+		// particle B-PRT (OpenNLP). Particles up/out stay RP even before DT
+		// (set up the / hang out some).
+		if strings.HasPrefix(prevPOS, "VB") && softIsPrepPreferringParticle(t.Token) &&
+			i+1 < len(out) && softIsDetLikeSurface(out[i+1].Token) {
+			phrases[i] = "PP"
+			poss[i] = "IN"
+			prevPOS = "IN"
+			prevSurf = t.Token
+			continue
+		}
 		// WHERE_MD_VB: "find out where will…" — token before where must match
 		// chunk_re=".-VP|E-NP.*". OpenNLP PRT after verb blocks that; when the
 		// next token is WRB (where/when/how/why), keep the particle inside the
@@ -136,6 +147,28 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			phrases[i] = "VP"
 			poss[i] = "RP"
 			prevPOS = "RP"
+			prevSurf = t.Token
+			continue
+		}
+		// NNS|VBZ after singular NN: OpenNLP noun compounds (voice disorders,
+		// touch points, play grounds) vs finite verbs (increase affects the,
+		// monitor works?). Lookahead mirrors OpenNLP context.
+		if softIsSingularNounPOS(prevPOS) && softHasPluralNounReading(t) {
+			if v := softFiniteTenseVerb(t); v != "" && softNextSuggestsFiniteVerb(out, i) {
+				phrases[i] = "VP"
+				poss[i] = v
+				prevPOS = v
+				prevSurf = t.Token
+				continue
+			}
+		}
+		// FOR_VB: "for set up" / "for bring this" — bare VB after for when next
+		// is particle or object. "for inconvenience" stays NN (PP object).
+		if strings.EqualFold(prevSurf, "for") && softHasBareVerbReading(t) &&
+			softNextSuggestsForBareVerb(out, i) {
+			phrases[i] = "VP"
+			poss[i] = "VB"
+			prevPOS = "VB"
 			prevSurf = t.Token
 			continue
 		}
@@ -221,7 +254,7 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	// Java EnglishChunker feeds OpenNLP a single POS from its own tagger.
 	// Soft multi-tag LT dicts need a pick: default first non-boundary reading
 	// (dict order ≈ frequency), with light context/aux heuristics.
-	var first, vb, vbfinite, vbg, vbp, nn, rp, in, rb, jj string
+	var first, vb, vbfinite, vbg, vbp, md, nn, rp, in, rb, jj string
 	for _, r := range t.Readings.GetReadings() {
 		if r == nil {
 			continue
@@ -253,6 +286,9 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 		if (strings.HasPrefix(pos, "VB") || pos == "MD") && vb == "" {
 			vb = pos
 		}
+		if pos == "MD" && md == "" {
+			md = pos
+		}
 		if pos == "VBG" && vbg == "" {
 			vbg = pos
 		}
@@ -266,6 +302,11 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 		if strings.HasPrefix(pos, "NN") && nn == "" {
 			nn = pos
 		}
+	}
+	// OpenNLP: I'd/I'll/I've after pronouns are MD/VBP clitics, not VBD "had".
+	// Soft dict lists VBD before MD for 'd — force MD so "I'd like" is VP.
+	if md != "" && softIsPersonalPronounSurface(prevSurf) && softIsVerbCliticSurface(t.Token) {
+		return md
 	}
 	// English.dict often tags auxiliaries Does/Did as NNS|VBZ (plural noun first).
 	// OpenNLP POS would choose VB*; force VB for known aux surfaces.
@@ -282,23 +323,26 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	}
 	// Prepositions multi-tagged NN|IN|RP (in/on/at) must stay IN/PP, not NN after a noun
 	// (was solution in this case — "in" was wrongly E-NP).
-	// Exception: OpenNLP tags "I like" as VBP, not IN — skip prep force after subjects.
+	// Exception: OpenNLP tags "I like" / "I'd like" as VBP, not IN — skip prep
+	// force after subjects and after MD/VB (WANT_TO_NN: like to why).
 	if in != "" && softIsEnglishPrepSurface(t.Token) {
 		if !(prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_") ||
-			softIsPersonalPronounSurface(prevSurf)) {
+			softIsPersonalPronounSurface(prevSurf) ||
+			prevPOS == "MD" || strings.HasPrefix(prevPOS, "VB")) {
 			return in
 		}
 	}
 	// Particles vs prepositions after a verb: "catch up" → RP/B-PRT, but
 	// "singed with" / "books at" prefer IN/B-PP (prep surfaces).
+	// Do not force IN for dual verb/prep "like" (I'd like → VBP, not IN).
 	if strings.HasPrefix(prevPOS, "VB") {
 		if softIsEnglishParticleSurface(t.Token) && rp != "" {
 			return rp
 		}
-		if in != "" {
+		if in != "" && softIsEnglishPrepSurface(t.Token) && !softHasBareVerbReading(t) {
 			return in
 		}
-		if rp != "" {
+		if rp != "" && softIsEnglishParticleSurface(t.Token) {
 			return rp
 		}
 	}
@@ -310,14 +354,12 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 			return vb
 		}
 	}
-	// After prep (OpenNLP): PP objects are nouns ("on balls"); "for set/bring" is
-	// bare VB (FOR_VB wants B-VP); "for while" is while/NN (FOR_WHILE wants E-NP).
+	// After prep (OpenNLP): PP objects are nouns ("on balls", "for inconvenience").
+	// "for while" is while/NN (FOR_WHILE wants E-NP). Bare VB after for ("for set
+	// up") is handled in assignOpenNLPLike with particle/object lookahead.
 	if prevPOS == "IN" {
 		if (strings.EqualFold(t.Token, "while") || strings.EqualFold(t.Token, "moment")) && nn != "" {
 			return nn
-		}
-		if strings.EqualFold(prevSurf, "for") && softHasBareVerbReading(t) {
-			return "VB"
 		}
 		if nn != "" {
 			return nn
@@ -343,7 +385,20 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	}
 	// After a determiner/possessive: prefer adjective when both JJ and NN are
 	// present (the cream colored paint); else noun over verb (the body/contract).
+	// PAST_AN_PAST: "an turned" — OpenNLP still tags VBD; force verb over JJ.
+	// A_THANK_YOU: "our little thank you" — little often NN:U only; force JJ.
 	if prevPOS == "DT" || prevPOS == "PRP$" || strings.HasPrefix(prevPOS, "PRP$") {
+		if strings.EqualFold(prevSurf, "an") {
+			if v := softFiniteTenseVerb(t); v == "VBD" {
+				return v
+			}
+		}
+		if softIsCommonAdjSurface(t.Token) {
+			if jj != "" {
+				return jj
+			}
+			return "JJ"
+		}
 		if jj != "" && nn != "" {
 			return jj
 		}
@@ -354,8 +409,9 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	// After a subject-like tag:
 	//  - progressive VBG (are you going)
 	//  - finite VBD/VBZ (Chris rose / Does)
-	//  - NNS compound after NN (voice disorders)
-	//  - MY_NOT_MU: "mu house/opinion" keep NN
+	//  - NNS compound after NN (voice disorders) — default; finite override via
+	//    assignOpenNLPLike lookahead (increase affects the / monitor works?)
+	//  - MY_NOT_MU: "mu house/own/opinion" keep NN/JJ
 	//  - present VBP for agreement errors (if user want)
 	if strings.HasPrefix(prevPOS, "NN") || prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_") {
 		// Let's hang — 's clitic is PRP; force verb (not NN hang).
@@ -382,23 +438,26 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 		if vbg != "" && (prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_")) {
 			return vbg
 		}
-		// battery monitor works / each increase affects: after singular NN (incl.
-		// NN:UN) prefer VBZ over NNS. OpenNLP tags the finite verb as VP, not
-		// a plural noun compound (DOES_NP_VBZ).
-		// voice disorders: NNS after NN:UN with no finite-verb preference when
-		// the token is only NNS (no VBZ) — softFiniteTenseVerb empty then.
-		if vbdOrZ := softFiniteTenseVerb(t); vbdOrZ != "" && softIsSingularNounPOS(prevPOS) {
-			return vbdOrZ
-		}
+		// OpenNLP noun-noun compounds: voice disorders / touch points / play grounds.
+		// Finite NNS|VBZ override (affects the / works?) is in assignOpenNLPLike.
 		if nn != "" && softHasPluralNounReading(t) && strings.HasPrefix(prevPOS, "NN") {
 			return nn
+		}
+		// Pure VBZ after singular NN without NNS (knows after anyone already handled).
+		if vbdOrZ := softFiniteTenseVerb(t); vbdOrZ != "" && softIsSingularNounPOS(prevPOS) {
+			return vbdOrZ
 		}
 		if vbdOrZ := softFiniteTenseVerb(t); vbdOrZ != "" {
 			return vbdOrZ
 		}
-		// "mu house" / "mu opinion" — keep noun compound (MY_NOT_MU).
-		if strings.EqualFold(prevSurf, "mu") && nn != "" {
-			return nn
+		// "mu house/own/opinion" — MY_NOT_MU wants mu B-NP + own I-NP + N E-NP.
+		if strings.EqualFold(prevSurf, "mu") {
+			if jj != "" {
+				return jj
+			}
+			if nn != "" {
+				return nn
+			}
 		}
 		// SUBJECT_NUMBER: user want — VBP over NN when prev is human/indefinite subject.
 		// battery monitor: keep NN compound (not VBP on monitor).
@@ -410,6 +469,10 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 		if nn != "" && softIsPersonalPronounSurface(prevSurf) && vb != "" {
 			// I keep / they keep — prefer verb reading over NN:UN
 			return vb
+		}
+		if jj != "" && softIsSingularNounPOS(prevPOS) {
+			// mu own / brick red — adjective inside NP after noun
+			return jj
 		}
 		if nn != "" {
 			return nn
@@ -497,7 +560,11 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	}
 	// Sentence-initial: plural noun subjects (Gears shifted) over VBZ; else
 	// imperative NN|VB (Look the door) prefers VB.
+	// "Just want to sure" — Just/Please as RB so want is VP (WANT_TO_NN).
 	if prevPOS == "" {
+		if softIsSentenceInitialAdvSurface(t.Token) {
+			return "RB"
+		}
 		if nn != "" && softHasPluralNounReading(t) {
 			return nn
 		}
@@ -812,6 +879,101 @@ func softHasBareVerbReading(t ChunkTaggedToken) bool {
 func softIsWhAdverbSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "where", "when", "how", "why":
+		return true
+	default:
+		return false
+	}
+}
+
+// softNextSuggestsFiniteVerb: NNS|VBZ after a singular noun is a finite verb when
+// the next token looks like an object/adverbial/end (OpenNLP: affects the test,
+// works?, grows during) rather than a list/compound continuation (disorders such,
+// grounds are, points with).
+func softNextSuggestsFiniteVerb(tokens []ChunkTaggedToken, i int) bool {
+	if i+1 >= len(tokens) {
+		return true
+	}
+	n := strings.ToLower(strings.TrimSpace(tokens[i+1].Token))
+	switch n {
+	case "the", "a", "an", "this", "that", "these", "those",
+		"my", "your", "his", "her", "its", "our", "their",
+		"during", "after", "before", "while", "if", "when",
+		// WORK_AS_A_CHARM: "works as a charm" — finite verb, not NNS compound.
+		"as", "like",
+		"?", "!", ".", "…":
+		return true
+	default:
+		return false
+	}
+}
+
+// softNextSuggestsForBareVerb: FOR_VB "for set up" / "for bring this".
+func softNextSuggestsForBareVerb(tokens []ChunkTaggedToken, i int) bool {
+	if i+1 >= len(tokens) {
+		return false
+	}
+	n := strings.ToLower(strings.TrimSpace(tokens[i+1].Token))
+	if softIsEnglishParticleSurface(n) {
+		return true
+	}
+	switch n {
+	case "the", "a", "an", "this", "that", "these", "those",
+		"my", "your", "his", "her", "its", "our", "their",
+		"me", "you", "him", "us", "them", "it":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsCommonAdjSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "little", "big", "small", "old", "new", "good", "bad", "great",
+		"long", "short", "high", "low", "early", "late", "own", "other",
+		"same", "next", "last", "first", "second", "third":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsSentenceInitialAdvSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "just", "please", "only", "also", "now", "then", "so", "well",
+		"still", "even", "maybe", "perhaps", "actually", "basically":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsVerbCliticSurface(s string) bool {
+	s = strings.TrimSpace(s)
+	switch s {
+	case "'d", "\u2019d", "'ll", "\u2019ll", "'ve", "\u2019ve",
+		"'re", "\u2019re", "'m", "\u2019m":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsPrepPreferringParticle: surfaces that are particles in phrasals but
+// prepositions when followed by a determiner (worked on the / sit in the).
+// Excludes up/out/off/away (set up the / hang out some stay B-PRT).
+func softIsPrepPreferringParticle(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "on", "in", "at", "for", "with", "by", "from", "over", "under", "about", "through":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsDetLikeSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "the", "a", "an", "this", "that", "these", "those",
+		"my", "your", "his", "her", "its", "our", "their", "some", "any", "no", "every", "each":
 		return true
 	default:
 		return false

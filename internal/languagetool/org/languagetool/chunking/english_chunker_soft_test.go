@@ -221,3 +221,44 @@ func TestEnglishChunker_DoorBehind(t *testing.T) {
 	require.Contains(t, strings.Join(door.GetChunkTags(), ","), "E-NP")
 	require.Contains(t, strings.Join(behind.GetChunkTags(), ","), "PP")
 }
+
+// Noun compounds (voice disorders / touch points) stay NP; finite "affects the" is VP.
+func TestEnglishChunker_CompoundVsFiniteAfterNN(t *testing.T) {
+	nnun, nns, vbz, dt := "NN:UN", "NNS", "VBZ", "DT"
+	voice := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("voice", &nnun, nil))
+	disorders := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("disorders", &nns, nil),
+		languagetool.NewAnalyzedToken("disorders", &vbz, nil),
+	}, 0)
+	such := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("such", &dt, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{voice, disorders, such})
+	require.Contains(t, strings.Join(disorders.GetChunkTags(), ","), "NP")
+
+	increase := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("increase", &nnun, nil))
+	affects := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("affects", &nns, nil),
+		languagetool.NewAnalyzedToken("affects", &vbz, nil),
+	}, 0)
+	the := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("the", &dt, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{increase, affects, the})
+	require.Contains(t, strings.Join(affects.GetChunkTags(), ","), "VP")
+}
+
+// I'd like — 'd is MD after pronoun so like is VP (WANT_TO_NN).
+func TestEnglishChunker_IdLike(t *testing.T) {
+	prp, vbd, md, in, jj, nn, vb, vbp := "PRP", "VBD", "MD", "IN", "JJ", "NN", "VB", "VBP"
+	i := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("I", &prp, nil))
+	d := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("'d", &vbd, nil),
+		languagetool.NewAnalyzedToken("'d", &md, nil),
+	}, 0)
+	like := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("like", &in, nil),
+		languagetool.NewAnalyzedToken("like", &jj, nil),
+		languagetool.NewAnalyzedToken("like", &nn, nil),
+		languagetool.NewAnalyzedToken("like", &vb, nil),
+		languagetool.NewAnalyzedToken("like", &vbp, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{i, d, like})
+	require.Contains(t, strings.Join(like.GetChunkTags(), ","), "VP")
+}
