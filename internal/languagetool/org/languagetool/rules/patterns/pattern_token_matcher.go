@@ -517,12 +517,13 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 }
 
 func softClosedPartSurface(part, s string) bool {
-	// --- German STTS (colon tags or PRP:/ART:/PRO: families) ---
-	if strings.Contains(part, ":") || strings.HasPrefix(part, "PRP.") || strings.HasPrefix(part, "PRP:") ||
-		strings.Contains(part, "PRP.") || strings.Contains(part, "ART") || strings.Contains(part, "PRO:") ||
-		strings.Contains(part, "PRO.") || strings.Contains(part, "KON") || strings.Contains(part, "APPR") {
-		// Prepositions (STTS PRP / APPR) — "aus", "in", "im", "von", …
-		if strings.Contains(part, "PRP") || strings.Contains(part, "APPR") || strings.Contains(part, "APPO") || strings.Contains(part, "APZR") {
+	// --- German STTS (colon tags / case-tagged PRP / ART / PRO / APPR / KON) ---
+	// Do NOT treat English Penn "PRP.*" (pronoun regex) as STTS: "PRP." matches
+	// the start of "PRP.*" and would route "you"/"we" through the prep list.
+	if softIsSTTSClosedTag(part) {
+		// Prepositions (STTS PRP:… / PRP.*DAT.* / APPR) — "aus", "in", "im", "von", …
+		if softIsSTTSPrepositionTag(part) || strings.Contains(part, "APPR") ||
+			strings.Contains(part, "APPO") || strings.Contains(part, "APZR") {
 			return softIsPreposition(s) || softIsGermanPrep(s)
 		}
 		if strings.Contains(part, "ART") {
@@ -530,7 +531,7 @@ func softClosedPartSurface(part, s string) bool {
 		}
 		// STTS PRO (personal/demonstrative/relative); many DE rules use PRO:.+ where
 		// the surface is also a definite article reading (der/die/das…), as in WEHREND.
-		if strings.Contains(part, "PRO") {
+		if softIsPronounTag(part) {
 			return softIsPronoun(s) || softIsGermanArticle(s)
 		}
 		if strings.Contains(part, "KON") || strings.Contains(part, "KOU") || strings.Contains(part, "KOKOM") {
@@ -543,6 +544,7 @@ func softClosedPartSurface(part, s string) bool {
 	// --- English Penn ---
 	switch {
 	case strings.HasPrefix(part, "PRP"):
+		// PRP / PRP$ / PRP.* / PRP.+ — pronouns (not STTS prep)
 		return softIsPronoun(s)
 	case strings.HasPrefix(part, "DT") || strings.HasPrefix(part, "PDT"):
 		return softIsDeterminer(s)
@@ -566,6 +568,56 @@ func softClosedPartSurface(part, s string) bool {
 	default:
 		return false
 	}
+}
+
+// softIsSTTSClosedTag is true for German STTS closed-class tag patterns, not
+// English Penn PRP/PRP$ / PRP.* pronoun tags.
+func softIsSTTSClosedTag(part string) bool {
+	if strings.Contains(part, "ART") || strings.Contains(part, "APPR") ||
+		strings.Contains(part, "APPO") || strings.Contains(part, "APZR") ||
+		strings.Contains(part, "KON") || strings.Contains(part, "KOU") ||
+		strings.Contains(part, "KOKOM") || strings.Contains(part, "PTK") {
+		return true
+	}
+	if softIsPronounTag(part) {
+		return true
+	}
+	return softIsSTTSPrepositionTag(part)
+}
+
+// softIsPronounTag: PRO/PRON families (not English/STTS PRP*).
+func softIsPronounTag(part string) bool {
+	if strings.HasPrefix(part, "PRP") {
+		return false
+	}
+	// PRON… / PRO… / PRO:… / PRO.… (includes DA pron:.* uppercased to PRON:.*)
+	return strings.HasPrefix(part, "PRON") || strings.HasPrefix(part, "PRO") ||
+		strings.Contains(part, "PRO:") || strings.Contains(part, "PRO.")
+}
+
+// softIsSTTSPrepositionTag: German STTS preposition patterns on PRP.
+// English Penn uses PRP / PRP$ / PRP.* for pronouns — those must NOT match here.
+// STTS prepositions look like PRP:DAT:…, PRP.*DAT.*, PRP.AKK, …
+func softIsSTTSPrepositionTag(part string) bool {
+	if !strings.HasPrefix(part, "PRP") {
+		return false
+	}
+	// English: PRP, PRP$, PRP$?, PRP.*, PRP.+
+	if part == "PRP" || strings.HasPrefix(part, "PRP$") {
+		return false
+	}
+	if strings.HasPrefix(part, "PRP.*") || strings.HasPrefix(part, "PRP.+") {
+		// Only STTS if a case feature is present (PRP.*DAT.*)
+		return strings.Contains(part, "DAT") || strings.Contains(part, "AKK") ||
+			strings.Contains(part, "GEN") || strings.Contains(part, "NOM") ||
+			strings.Contains(part, ":")
+	}
+	// STTS: PRP:DAT:SIN, PRP.DAT, …
+	return strings.Contains(part, ":") ||
+		strings.Contains(part, "DAT") || strings.Contains(part, "AKK") ||
+		strings.Contains(part, "GEN") || strings.Contains(part, "NOM") ||
+		// PRP.<letter> case (not PRP.* quantifier)
+		(strings.Contains(part, "PRP.") && !strings.Contains(part, "PRP.*") && !strings.Contains(part, "PRP.+"))
 }
 
 func softIsGermanPrep(s string) bool {

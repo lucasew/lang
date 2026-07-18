@@ -15,6 +15,9 @@ func TestGolden_UpstreamENRemainingMisses(t *testing.T) {
 		{"BUY_TWO_GET_ONE_FREE", "Buy 2 Get 1 Free!"},
 		{"FIGURE_HYPHEN", "He earns a 6 figure salary."},
 		{"SEVERAL_OTHER", "Tom and several other did a great job."},
+		{"ADDITIONAL", "Additional we will have to check the results."},
+		{"MIS_MISS", "I mis you."},
+		{"TOR_TO", "I'm unable tor find my keys."},
 	}
 	for _, tc := range cases {
 		tc := tc
