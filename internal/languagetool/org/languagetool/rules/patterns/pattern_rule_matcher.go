@@ -3,7 +3,6 @@ package patterns
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -190,46 +189,30 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 				if occ != 1 {
 					continue
 				}
-				// Japanese grammar.xml often writes char/short surfaces (な+い, さ+せる)
-				// while Sen/kagome emits one morpheme (ない, させる). Soft bridge:
-				// (1) one analysis morph covers several pattern surfaces (concat),
-				// (2) one pattern surface covers several analysis morphs (しい←し+い).
-				if n := softCJKConcatCover(m.matchers[ki:], tokens[try]); n > 0 {
-					nsp := sp
-					if nsp.first < 0 {
-						nsp.first = try
-					}
-					nsp.last = try
-					for j := 0; j < n; j++ {
-						if m.matchers[ki+j].Base != nil && m.matchers[ki+j].Base.InsideMarker {
-							if nsp.firstMark < 0 {
-								nsp.firstMark = try
-							}
-							nsp.lastMark = try
-						}
-					}
-					lastSkip := 0
-					if m.matchers[ki+n-1].Base != nil {
-						lastSkip = m.matchers[ki+n-1].Base.SkipNext
-					}
-					if rm, ok := rec(ki+n, try+1, lastSkip, nsp); ok {
-						return rm, true
-					}
-				}
-				if n := softCJKAnalysisSpan(matcher, tokens[try:]); n > 1 {
-					end := try + n - 1
+				// Japanese grammar.xml often uses short surfaces that cut across
+				// Sen/kagome morph boundaries (最高+調 vs 最+高調, ず+らい vs ずら+い).
+				// Soft: match a run of pattern surfaces as consecutive substrings of
+				// the pure-CJK analysis stream from try (Java remains 1:1 morph match).
+				if nPat, nAna := softCJKSurfaceAlign(m.matchers[ki:], tokens[try:]); nPat > 0 {
+					end := try + nAna - 1
 					nsp := sp
 					if nsp.first < 0 {
 						nsp.first = try
 					}
 					nsp.last = end
-					if pt.InsideMarker {
-						if nsp.firstMark < 0 {
-							nsp.firstMark = try
+					for j := 0; j < nPat; j++ {
+						if m.matchers[ki+j].Base != nil && m.matchers[ki+j].Base.InsideMarker {
+							if nsp.firstMark < 0 {
+								nsp.firstMark = try
+							}
+							nsp.lastMark = end
 						}
-						nsp.lastMark = end
 					}
-					if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
+					lastSkip := 0
+					if m.matchers[ki+nPat-1].Base != nil {
+						lastSkip = m.matchers[ki+nPat-1].Base.SkipNext
+					}
+					if rm, ok := rec(ki+nPat, try+nAna, lastSkip, nsp); ok {
 						return rm, true
 					}
 				}
@@ -240,145 +223,96 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 	return rec(0, start, 0, span{-1, -1, -1, -1})
 }
 
-// softCJKConcatCover reports how many consecutive pattern tokens are covered by
-// one pure-CJK analysis token when their surfaces concatenate to that token.
-// Returns 0 if not applicable (non-CJK, POS-only tokens, regexp bodies, etc.).
-func softCJKConcatCover(matchers []*PatternTokenMatcher, atr *languagetool.AnalyzedTokenReadings) int {
-	if atr == nil || len(matchers) < 2 {
-		return 0
+// softCJKSurfaceAlign matches a prefix of pattern tokens as consecutive substrings
+// of the pure-CJK analysis stream starting at tokens[0].
+// Returns (nPattern, nAnalysis). Both 0 if not applicable.
+//
+// Examples (kagome analysis → grammar surfaces):
+//
+//	最+高調  → 最高+調
+//	ずら+い  → ず+らい
+//	おそ+る  → お+そる
+//	させる   → さ+せる
+func softCJKSurfaceAlign(matchers []*PatternTokenMatcher, tokens []*languagetool.AnalyzedTokenReadings) (nPat, nAna int) {
+	if len(matchers) == 0 || len(tokens) == 0 {
+		return 0, 0
 	}
-	surf := atr.GetToken()
-	rs := []rune(surf)
-	if len(rs) < 2 || len(rs) > 12 {
-		return 0
-	}
-	for _, r := range rs {
-		if !isSoftCJKRune(r) {
-			return 0
+	// Flatten a pure-CJK prefix of analysis tokens into a rune stream with
+	// reverse map from rune index → analysis token index.
+	var stream []rune
+	var runeToTok []int
+	for i, atr := range tokens {
+		if atr == nil || atr.IsImmunized() {
+			break
+		}
+		s := atr.GetToken()
+		if s == "" {
+			break
+		}
+		ok := true
+		for _, r := range s {
+			if !isSoftCJKRune(r) {
+				ok = false
+				break
+			}
+		}
+		if !ok {
+			break
+		}
+		for _, r := range s {
+			stream = append(stream, r)
+			runeToTok = append(runeToTok, i)
 		}
 	}
-	built := ""
-	n := 0
-	for i := 0; i < len(matchers) && n < 8; i++ {
-		pt := matchers[i].Base
+	if len(stream) == 0 {
+		return 0, 0
+	}
+	pos := 0
+	for mi := 0; mi < len(matchers) && mi < 12; mi++ {
+		pt := matchers[mi].Base
 		if pt == nil || pt.Token == "" {
-			return 0
+			break
 		}
-		// Only plain surfaces (or simple | alts without metacharacters).
-		part := pt.Token
-		if pt.Regexp {
-			if strings.ContainsAny(part, ".*+?[](){}\\") {
-				return 0
-			}
-			// Multi-alt RE: try each bar-separated alt for prefix growth.
-			alts := strings.Split(part, "|")
-			matched := false
-			for _, alt := range alts {
-				alt = strings.TrimSpace(alt)
-				if alt == "" {
-					continue
-				}
-				cand := built + alt
-				if cand == surf || strings.HasPrefix(surf, cand) {
-					built = cand
-					matched = true
-					break
+		// POS-only or complex RE: stop soft surface align
+		if pt.Regexp && strings.ContainsAny(pt.Token, ".*+?[](){}\\") {
+			break
+		}
+		alts := []string{pt.Token}
+		if pt.Regexp && strings.Contains(pt.Token, "|") {
+			alts = nil
+			for _, a := range strings.Split(pt.Token, "|") {
+				a = strings.TrimSpace(a)
+				if a != "" {
+					alts = append(alts, a)
 				}
 			}
-			if !matched {
-				return 0
+		}
+		matched := false
+		for _, alt := range alts {
+			ar := []rune(alt)
+			if len(ar) == 0 || pos+len(ar) > len(stream) {
+				continue
 			}
-		} else {
-			// Non-RE: optional case-insensitive for Latin; CJK exact.
-			cand := built + part
-			if cand != surf && !strings.HasPrefix(surf, cand) {
-				// try lowercase latin in part only
-				return 0
-			}
-			built = cand
-		}
-		n++
-		if built == surf {
-			// Require at least 2 pattern tokens and prefer multi-token cover
-			// over false single-token (already handled by IsMatchedReadings).
-			if n >= 2 && utf8.RuneCountInString(built) == len(rs) {
-				return n
-			}
-			return 0
-		}
-	}
-	return 0
-}
-
-// softCJKAnalysisSpan reports how many consecutive pure-CJK analysis tokens
-// concatenate to the pattern token surface (しい ← し+い). Opposite of
-// softCJKConcatCover. Returns 0 if not applicable.
-func softCJKAnalysisSpan(matcher *PatternTokenMatcher, tokens []*languagetool.AnalyzedTokenReadings) int {
-	if matcher == nil || matcher.Base == nil || len(tokens) < 2 {
-		return 0
-	}
-	pt := matcher.Base
-	if pt.Token == "" || pt.Pos != nil && pt.Token == "" {
-		return 0
-	}
-	want := pt.Token
-	if pt.Regexp {
-		if strings.ContainsAny(want, ".*+?[](){}\\") {
-			return 0
-		}
-		// single alt or bar alts handled below
-	}
-	alts := []string{want}
-	if pt.Regexp && strings.Contains(want, "|") {
-		alts = nil
-		for _, a := range strings.Split(want, "|") {
-			a = strings.TrimSpace(a)
-			if a != "" {
-				alts = append(alts, a)
-			}
-		}
-	}
-	for _, target := range alts {
-		trs := []rune(target)
-		if len(trs) < 2 {
-			continue
-		}
-		allCJK := true
-		for _, r := range trs {
-			if !unicode.Is(unicode.Han, r) && !unicode.In(r, unicode.Hiragana, unicode.Katakana) {
-				allCJK = false
+			if string(stream[pos:pos+len(ar)]) == alt {
+				pos += len(ar)
+				nPat++
+				matched = true
 				break
 			}
 		}
-		if !allCJK {
-			continue
-		}
-		built := ""
-		n := 0
-		for i := 0; i < len(tokens) && n < 8; i++ {
-			if tokens[i] == nil || tokens[i].IsImmunized() {
-				break
-			}
-			t := tokens[i].GetToken()
-			for _, r := range t {
-				if !isSoftCJKRune(r) {
-					return 0
-				}
-			}
-			built += t
-			n++
-			if built == target {
-				if n >= 2 {
-					return n
-				}
-				return 0
-			}
-			if !strings.HasPrefix(target, built) {
-				break
-			}
+		if !matched {
+			break
 		}
 	}
-	return 0
+	if nPat == 0 || pos == 0 {
+		return 0, 0
+	}
+	nAna = runeToTok[pos-1] + 1
+	// Skip pure 1:1 single-token (already handled by IsMatchedReadings).
+	if nPat == 1 && nAna == 1 {
+		return 0, 0
+	}
+	return nPat, nAna
 }
 
 // isSoftCJKRune is true for Han/kana and the prolonged sound mark ー (U+30FC),
