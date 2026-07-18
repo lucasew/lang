@@ -25,11 +25,14 @@ func (d *PolishHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSen
 		return nil
 	}
 	out := input
-	if d.Chunker != nil {
-		out = d.Chunker.Disambiguate(out)
-	}
+	// Java PolishHybridDisambiguator:
+	// return chunker.disambiguate(disambiguator.disambiguate(input));
+	// i.e. XML rules first, then multiword chunker.
 	if d.Rules != nil {
 		out = d.Rules.Disambiguate(out)
+	}
+	if d.Chunker != nil {
+		out = d.Chunker.Disambiguate(out)
 	}
 	return out
 }

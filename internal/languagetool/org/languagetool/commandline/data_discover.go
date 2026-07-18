@@ -355,3 +355,111 @@ func languagePOSDictNames(base string) []string {
 		return []string{base + ".dict"}
 	}
 }
+
+// languageBaseCode returns the ISO base (en from en-US).
+func languageBaseCode(lang string) string {
+	base := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		base = lang[:i]
+	}
+	return strings.ToLower(base)
+}
+
+// DiscoverLanguageSoftDisambiguationXML finds {lang}-disambiguation-upstream-soft.xml
+// (vendored soft extract of official disambiguation.xml). Prefer CLI override when set.
+func DiscoverLanguageSoftDisambiguationXML(opts *CommandLineOptions, lang string) string {
+	base := languageBaseCode(lang)
+	if base == "" {
+		return ""
+	}
+	if opts != nil {
+		if p := opts.GetDisambiguationFile(); p != "" {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+			return p
+		}
+	}
+	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		cand := filepath.Join(opts.GetDataDir(), "disambiguation", base+"-disambiguation-upstream-soft.xml")
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+	}
+	rel := filepath.Join("testdata", "disambiguation", base+"-disambiguation-upstream-soft.xml")
+	return WalkUpFind("", rel)
+}
+
+// DiscoverLanguageMultiwords finds official multiwords.txt for lang
+// (vendored {lang}-multiwords-upstream.txt or inspiration resource).
+func DiscoverLanguageMultiwords(opts *CommandLineOptions, lang string) string {
+	base := languageBaseCode(lang)
+	if base == "" {
+		return ""
+	}
+	envKey := "LANG_" + strings.ToUpper(base) + "_MULTIWORDS"
+	if p := os.Getenv(envKey); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "disambiguation", base+"-multiwords-upstream.txt"),
+			filepath.Join(opts.GetDataDir(), base, "multiwords.txt"),
+			filepath.Join(opts.GetDataDir(), "multiwords.txt"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "disambiguation", base+"-multiwords-upstream.txt"),
+		filepath.Join("testdata", "upstream", base, "resource", "multiwords.txt"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+			"src", "main", "resources", "org", "languagetool", "resource", base, "multiwords.txt"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+// DiscoverGermanMultitokenIgnore finds de/multitoken-ignore.txt (Java GermanRuleDisambiguator).
+func DiscoverGermanMultitokenIgnore(opts *CommandLineOptions) string {
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "de", "multitoken-ignore.txt"),
+			filepath.Join(opts.GetDataDir(), "resource", "de", "multitoken-ignore.txt"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	return WalkUpFind("", filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "de",
+		"src", "main", "resources", "org", "languagetool", "resource", "de", "multitoken-ignore.txt"))
+}
+
+// DiscoverGermanMultitokenSuggest finds de/multitoken-suggest.txt (Java GermanRuleDisambiguator).
+func DiscoverGermanMultitokenSuggest(opts *CommandLineOptions) string {
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "de", "multitoken-suggest.txt"),
+			filepath.Join(opts.GetDataDir(), "resource", "de", "multitoken-suggest.txt"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	return WalkUpFind("", filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "de",
+		"src", "main", "resources", "org", "languagetool", "resource", "de", "multitoken-suggest.txt"))
+}

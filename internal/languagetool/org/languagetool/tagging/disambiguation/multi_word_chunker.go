@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"sync"
 	"unicode"
@@ -18,6 +19,10 @@ const TagForNotAddingTags = "_NONE_"
 
 const maxTokensInMultiword = 20
 
+// germanLineExpander ports MultiWordChunker.GermanLineExpander: "^.*/[ESN]+$".
+// German multitoken lists mark optional -e/-s/-n endings after a slash.
+var germanLineExpander = regexp.MustCompile(`^.*/[ESN]+$`)
+
 // MultiWordChunkerSettings ports MultiWordChunker.Settings fields used at load time.
 type MultiWordChunkerSettings struct {
 	DefaultTag            string // if set, lines are phrase-only (no tag column)
@@ -27,7 +32,7 @@ type MultiWordChunkerSettings struct {
 }
 
 // MultiWordChunker ports org.languagetool.tagging.disambiguation.MultiWordChunker
-// (dictionary-driven multiword POS chunker; German line expander deferred).
+// (dictionary-driven multiword POS chunker).
 type MultiWordChunker struct {
 	AbstractDisambiguator
 	settings MultiWordChunkerSettings
@@ -41,6 +46,7 @@ type MultiWordChunker struct {
 
 	// Lines is the dictionary source when Filename broker loading is not used.
 	// Format: phrase\ttag (or phrase only when DefaultTag is set).
+	// May include a leading #separatorRegExp=… marker (Java loadWords).
 	Lines []string
 
 	AddIgnoreSpelling  bool
@@ -63,24 +69,50 @@ func NewMultiWordChunkerFromReader(r io.Reader, settings MultiWordChunkerSetting
 	return NewMultiWordChunker(lines, settings), nil
 }
 
+// loadMultiWordLines ports MultiWordChunker.loadWords (separator marker + German expander).
 func loadMultiWordLines(r io.Reader) ([]string, error) {
 	var lines []string
 	sc := bufio.NewScanner(r)
+	// DE multitoken-ignore.txt is large (~90k lines, some long).
+	buf := make([]byte, 0, 64*1024)
+	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
 		line := strings.TrimSpace(sc.Text())
+		if strings.HasPrefix(line, "#separatorRegExp=") {
+			// Keep marker for fillMaps (Java sets separator then skips the comment line).
+			lines = append(lines, line)
+			continue
+		}
 		if line == "" || strings.HasPrefix(line, "#") {
-			if strings.HasPrefix(line, "#separatorRegExp=") {
-				// separator handled per-file in fillMaps; keep marker for fillMaps
-				lines = append(lines, line)
-			}
 			continue
 		}
 		if i := strings.IndexByte(line, '#'); i >= 0 {
 			line = strings.TrimSpace(line[:i])
 		}
-		if line != "" {
-			lines = append(lines, line)
+		if line == "" {
+			continue
 		}
+		// Java German special case: base + optional e/s/n endings from /[ESN]+ suffix.
+		if germanLineExpander.MatchString(line) {
+			parts := strings.SplitN(line, "/", 2)
+			base := strings.TrimSpace(parts[0])
+			if base == "" {
+				continue
+			}
+			lines = append(lines, base)
+			suf := parts[1]
+			if strings.Contains(suf, "E") {
+				lines = append(lines, base+"e")
+			}
+			if strings.Contains(suf, "S") {
+				lines = append(lines, base+"s")
+			}
+			if strings.Contains(suf, "N") {
+				lines = append(lines, base+"n")
+			}
+			continue
+		}
+		lines = append(lines, line)
 	}
 	return lines, sc.Err()
 }
@@ -116,13 +148,24 @@ func (c *MultiWordChunker) lazyInit() {
 }
 
 func (c *MultiWordChunker) fillMaps() {
-	separator := "\t"
+	// Java: line.split(separator) — separator is a regex (default "\t", often "[\t;]").
+	sepRe := regexp.MustCompile("\t")
 	for _, line := range c.Lines {
 		if strings.HasPrefix(line, "#separatorRegExp=") {
-			separator = strings.TrimPrefix(line, "#separatorRegExp=")
+			pat := strings.TrimPrefix(line, "#separatorRegExp=")
+			re, err := regexp.Compile(pat)
+			if err != nil {
+				panic(fmt.Sprintf("Invalid #separatorRegExp=%s: %v", pat, err))
+			}
+			sepRe = re
 			continue
 		}
-		parts := strings.Split(line, separator)
+		// Java String.split discards trailing empty strings; SplitN(-1) keeps all.
+		parts := sepRe.Split(line, -1)
+		// Drop trailing empties to match Java split default limit 0.
+		for len(parts) > 0 && parts[len(parts)-1] == "" {
+			parts = parts[:len(parts)-1]
+		}
 		var original, tag string
 		if c.settings.DefaultTag != "" {
 			if len(parts) != 1 {
