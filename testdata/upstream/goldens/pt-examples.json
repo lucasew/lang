@@ -982,6 +982,18 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "AUTO-FALANTE",
+      "text": "O auto-falante está avariado.",
+      "suggestion": "altifalante",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "AUTO-FALANTE",
+      "text": "Os auto-falantes estão avariados.",
+      "suggestion": "altifalantes",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
       "rule": "A_CERCA_ACERCA",
       "text": "Nunca fui avisado a cerca desses alarmes.",
       "suggestion": "acerca",
@@ -4222,6 +4234,36 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
     },
     {
+      "rule": "CRIAR_QUERER",
+      "text": "Ele cria comprar o livro.",
+      "suggestion": "queria",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CRIAR_QUERER",
+      "text": "Eles criam comprar o livro.",
+      "suggestion": "queriam",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CRIAR_QUERER",
+      "text": "Tu crias comprar o livro.",
+      "suggestion": "querias",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CRIAR_QUERER",
+      "text": "É o que eu cria dizer.",
+      "suggestion": "queria",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CRIAR_QUERER",
+      "text": "É o que eu cria muito dizer.",
+      "suggestion": "queria",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
       "rule": "CURRENCY_PLACEMENT_BR",
       "text": "Deve 100.00£.",
       "suggestion": "£ 100.00",
@@ -4236,7 +4278,19 @@
     {
       "rule": "CURRENCY_PLACEMENT_EUR",
       "text": "Deve €100.",
-      "suggestion": "100€",
+      "suggestion": "100 €",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CURRENCY_PLACEMENT_PT_FOREIGN",
+      "text": "Deve 100.00£.",
+      "suggestion": "£100.00",
+      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
+    },
+    {
+      "rule": "CURRENCY_PLACEMENT_PT_FOREIGN",
+      "text": "Deve 100£.",
+      "suggestion": "£100",
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/pt-PT/grammar.xml"
     },
     {

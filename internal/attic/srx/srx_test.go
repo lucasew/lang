@@ -56,3 +56,24 @@ func TestSplitEnglish(t *testing.T) {
 		t.Fatalf("parts %#v", parts)
 	}
 }
+
+func TestSplitPortugueseOrdinal(t *testing.T) {
+	doc := loadDoc(t)
+	cases := []struct {
+		text string
+		want int
+	}{
+		{"O premiado é o 12o. da lista.", 1},
+		{"Cola o teu próprio texto aqui. Ou verifica este texto.", 2},
+		{"O Sr. João foi ao mercado.", 1},
+		{"Comprei frutas, legumes, etc. no supermercado.", 1},
+		{"O 1.º lugar foi do Brasil.", 1},
+		{"A 2.ª colocada foi a Argentina. O 3.º lugar ficou com o Uruguai.", 2},
+	}
+	for _, tc := range cases {
+		parts := doc.Split(tc.text, "pt", "_two")
+		if len(parts) != tc.want {
+			t.Errorf("%q: got %d parts %#v, want %d", tc.text, len(parts), parts, tc.want)
+		}
+	}
+}

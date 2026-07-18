@@ -121,6 +121,17 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				}
 			}
 		}
+		// Soft irregular lemmas against RE bases (põe→pôr for p[ôo]r, etc.).
+		if !matched && pt.Regexp {
+			if lems, ok := softIrregularLemma[strings.ToLower(token.GetToken())]; ok {
+				for _, lem := range lems {
+					if m.matchSurface(lem) {
+						matched = true
+						break
+					}
+				}
+			}
+		}
 		// Inflected non-RE: also try German adj stems as lemma (lateinischen→lateinisch).
 		if !matched && !pt.Regexp {
 			for _, cand := range softGermanAdjCandidates(token.GetToken()) {
@@ -1105,6 +1116,13 @@ var softIrregularLemma = map[string][]string{
 	"fez": {"fazer"}, "fizeram": {"fazer"}, "feito": {"fazer"},
 	"fiz": {"fazer"}, "fizeste": {"fazer"}, "fizemos": {"fazer"}, "fizessem": {"fazer"}, "fizesse": {"fazer"},
 	"fará": {"fazer"}, "farão": {"fazer"},
+	"põe": {"pôr"}, "pões": {"pôr"}, "pomos": {"pôr"}, "põem": {"pôr"}, "pôs": {"pôr"}, "pus": {"pôr"},
+	"dei": {"dar"}, "deste": {"dar"}, "demos": {"dar"},
+	"posso": {"poder"}, "podes": {"poder"}, "pode": {"poder"}, "podemos": {"poder"}, "podem": {"poder"}, "pôde": {"poder"},
+	"ouço": {"ouvir"}, "ouves": {"ouvir"}, "ouve": {"ouvir"}, "ouvimos": {"ouvir"}, "ouvem": {"ouvir"}, "ouvi": {"ouvir"},
+	"escuto": {"escutar"}, "escutas": {"escutar"}, "escuta": {"escutar"}, "escutamos": {"escutar"}, "escutam": {"escutar"},
+	"usou": {"usar"}, "usei": {"usar"}, "usamos": {"usar"}, "usaram": {"usar"}, "usando": {"usar"},
+	"referimos": {"referir"}, "referirei": {"referir"}, "referiremos": {"referir"}, "refiro": {"referir"}, "refere": {"referir"},
 	// Portuguese haver (há uns minutos) / cobrir / vir
 	"há": {"haver"}, "houve": {"haver"}, "haverá": {"haver"},
 	"coberto": {"cobrir"}, "coberta": {"cobrir"}, "cobertos": {"cobrir"}, "cobertas": {"cobrir"},

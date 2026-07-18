@@ -4,16 +4,18 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/attic/srx"
 )
 
 // SRXSentenceTokenizer ports org.languagetool.tokenizers.SRXSentenceTokenizer.
-// Full segment.srx (loomchild) is not embedded; this applies a practical SRX-like
-// rule set for common Latin punctuation, with language code reserved for later.
+// It applies LanguageTool's official segment.srx (embedded) via attic/srx, matching
+// Java's loomchild SrxTextIterator with cascade="yes".
 type SRXSentenceTokenizer struct {
 	LanguageCode string
 	// SrxPath is the resource path (default /segment.srx) for API parity.
 	SrxPath string
-	// Segment is an optional custom segmenter; nil uses built-in rules.
+	// Segment is an optional custom segmenter; nil uses embedded segment.srx.
 	Segment func(text, languageCode string) []string
 
 	parCode string // "_one" or "_two"
@@ -44,16 +46,22 @@ func (t *SRXSentenceTokenizer) SingleLineBreaksMarksPara() bool {
 	return t.parCode == "_one"
 }
 
-// Tokenize splits text into sentences.
+// Tokenize splits text into sentences using embedded segment.srx (Java parity).
+// languageCode is passed as Java Language.getShortCode() would be; maps match
+// both "pt_two" and "pt-PT_two" via (PT|pt).*.
 func (t *SRXSentenceTokenizer) Tokenize(text string) []string {
 	if text == "" {
 		return nil
 	}
-	code := t.LanguageCode + t.parCode
 	if t.Segment != nil {
-		return t.Segment(text, code)
+		return t.Segment(text, t.LanguageCode+t.parCode)
 	}
-	return defaultSrxLikeTokenize(text, t.parCode)
+	doc, err := srx.DefaultDocument()
+	if err != nil || doc == nil {
+		// Fallback only if embed/parse failed (should not happen in normal builds).
+		return defaultSrxLikeTokenize(text, t.parCode)
+	}
+	return doc.Split(text, t.LanguageCode, t.parCode)
 }
 
 func defaultSrxLikeTokenize(text, parCode string) []string {

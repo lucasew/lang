@@ -60,13 +60,26 @@ def expand_entities(raw: str, base_dir: Path | None = None) -> str:
     entities: dict[str, str] = {}
     # Resolve parameter-entity SYSTEM includes before stripping DOCTYPE
     # (e.g. <!ENTITY % entities SYSTEM "../../resource/es/entities.ent">).
+    # Walk up from base_dir so variant packs (pt/pt-PT/grammar.xml) still find
+    # resource/pt/entities/*.ent when the relative path is written for parent rules/.
     if base_dir is not None:
         for m in re.finditer(
             r'<!ENTITY\s+%\s+([A-Za-z_][\w.-]*)\s+SYSTEM\s+"([^"]+)"\s*>',
             raw,
         ):
-            ent_path = (base_dir / m.group(2)).resolve()
-            entities.update(load_entity_file(ent_path))
+            rel = m.group(2)
+            ent_path = None
+            cur = base_dir
+            for _ in range(8):
+                cand = (cur / rel).resolve()
+                if cand.is_file():
+                    ent_path = cand
+                    break
+                if cur.parent == cur:
+                    break
+                cur = cur.parent
+            if ent_path is not None:
+                entities.update(load_entity_file(ent_path))
     for m in RE_ENTITY.finditer(raw):
         name = m.group(1)
         val = m.group(3) if m.group(3) is not None else m.group(4)

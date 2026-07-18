@@ -9894,7 +9894,7 @@
       <pattern>
         <token regexp="yes">0\d</token>
         <token min="0">de</token>
-        <token regexp="yes">|</token>
+        <token regexp="yes">(?:[Aa]bril|[Aa]gosto|[Dd]ezembro|[Ff]evereiro|[Jj]aneiro|[Jj]ulho|[Jj]unho|[Mm]aio|[Mm]arço|[Nn]ovembro|[Oo]utubro|[Ss]etembro)|(?:[Aa]br|[Aa]go|[Dd]ez|[Ff]ev|[Jj]an|[Jj]ul|[Jj]un|mai|mar|[Nn]ov|[Oo]ut|[Ss]et)</token>
       </pattern>
       <message>A convenção padrão não utiliza o zero no dia do mês em datas escritas por extenso. <suggestion>\1 \2 \3</suggestion></message>
       <short>ZERO_IN_DAYS_OF_THE_MONTH</short>
@@ -12760,6 +12760,28 @@
       <short>VIR_A_VERBO_VERBO</short>
     </rule>
   </category>
+  <category id="CONFUSED_WORDS_PT_PT" name="🇵🇹 Confusão de Palavras">
+    <rule id="AUTO-FALANTE" name="🇵🇹❓ Auto-falante/Altifalante">
+      <pattern>
+        <token>auto</token>
+        <token regexp="yes" min="0">(?:[-‑]|–|—|ㅡ)</token>
+        <token regexp="yes">falantes?</token>
+      </pattern>
+      <message>Possível confusão de termos. <suggestion>\3</suggestion></message>
+      <short>AUTO-FALANTE</short>
+    </rule>
+    <rule id="CRIAR_QUERER" name="🇵🇹❓ Criar/Querer">
+      <pattern>
+        <token regexp="yes">cria[ms]?|criamos</token>
+        <token regexp="yes" min="0" max="1">(?:assaz|bastante|bem|demais|demasiado|imenso|mais|menos|mesmo|muita|muito|nada|não|pouca|pouco|quanto|quão|quase|tanto|tão|todo|tudo|várias|vários|.+mente)</token>
+        <token postag="VMN0000">
+          <exception>saber</exception>
+        </token>
+      </pattern>
+      <message>Possível confusão de termos. <suggestion>\1</suggestion></message>
+      <short>CRIAR_QUERER</short>
+    </rule>
+  </category>
   <category id="CONTRACTIONS" name="Contrações">
     <rule id="CONTRACAO_ADIANTE" name="A + diante">
       <pattern>
@@ -12978,8 +13000,18 @@
         <token>€</token>
         <token regexp="yes">\d+([,.]\d+)*</token>
       </pattern>
-      <message>O símbolo do euro deve seguir o valor monetário. <suggestion>\2\1</suggestion></message>
+      <message>O símbolo do euro deve seguir o valor monetário. <suggestion>\2 \1</suggestion></message>
       <short>Mova &quot;€&quot; para depois do valor</short>
+    </rule>
+    <rule id="CURRENCY_PLACEMENT_PT_FOREIGN" name="🇵🇹 Posição dos símbolos de moeda: '100£ (£100)">
+      <pattern>
+        <token regexp="yes">\d+([,.]\d+)*</token>
+        <token regexp="yes">\p{Lu}*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]
+          <exception>€</exception>
+        </token>
+      </pattern>
+      <message>Símbolos de moeda internacionais se escrevem, via de regra, antes do valor. <suggestion>\2\1</suggestion></message>
+      <short>Mova o símbolo da moeda para antes do valor</short>
     </rule>
   </category>
   <category id="EGGCORNS" name="Calinadas">

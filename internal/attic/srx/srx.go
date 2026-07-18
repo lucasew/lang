@@ -193,6 +193,11 @@ func (d *Document) ruleNames(code string) []string {
 }
 
 // Split splits text into sentences for LT short code (e.g. "en") with paragraph mode.
+//
+// Semantics match loomchild segment with segment.srx header cascade="yes":
+// language maps are applied in document order; at each candidate boundary the
+// first matching rule (before + after) decides break yes/no. Later rules that
+// also match the same boundary are ignored (unlike last-write-wins).
 func (d *Document) Split(text, shortCode, parCode string) []string {
 	if text == "" {
 		return nil
@@ -201,12 +206,12 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 	rn := len(runes)
 	names := d.ruleNames(shortCode + parCode)
 	breakAt := make([]bool, rn+1)
+	decided := make([]bool, rn+1)
 
 	for _, name := range names {
 		for _, rule := range d.LangRules[name] {
-			// Empty before: skip (ill-defined)
+			// Empty before: skip (ill-defined for boundary search)
 			if rule.Before == nil {
-				// empty before with break yes is rare; skip
 				continue
 			}
 			idxs := rule.Before.FindAllStringIndex(text, -1)
@@ -215,15 +220,15 @@ func (d *Document) Split(text, shortCode, parCode string) []string {
 				if pos <= 0 || pos >= rn {
 					continue
 				}
+				if decided[pos] {
+					continue
+				}
 				after := string(runes[pos:])
 				if !matchAfter(rule.After, after) {
 					continue
 				}
-				if rule.Break {
-					breakAt[pos] = true
-				} else {
-					breakAt[pos] = false
-				}
+				breakAt[pos] = rule.Break
+				decided[pos] = true
 			}
 		}
 	}
