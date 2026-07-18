@@ -32,18 +32,27 @@ func init() {
 	c.Register("org.languagetool.rules.en.YMDNewYearDateFilter", func() patterns.RuleFilter {
 		return ymdNewYearDateRuleFilter{core: enNewYearDateCore(), ymd: rules.NewYMDDateHelper()}
 	})
-	// Suppress-misspelled: without a speller hook, nothing is treated as misspelled
-	// (Java AbstractSuppressMisspelledSuggestionsFilter with no spelling rule keeps suggestions).
+	// Suppress-misspelled uses FilterDictIsMisspelled when en_US.dict is wired.
 	c.Register("org.languagetool.rules.en.EnglishSuppressMisspelledSuggestionsFilter", func() patterns.RuleFilter {
-		return suppressMisspelledRuleFilter{inner: &rules.AbstractSuppressMisspelledSuggestionsFilter{}}
+		return suppressMisspelledRuleFilter{inner: &rules.AbstractSuppressMisspelledSuggestionsFilter{
+			IsMisspelled: FilterDictIsMisspelled,
+		}}
 	})
-	// Number-in-word / FindSuggestions need a Morfologik speller. Fail-closed until wired:
-	// empty replacements / nil speller → drop match (do not invent suggestions).
+	// Number-in-word / FindSuggestions: fail-closed without dict; full Java logic when wired.
 	c.Register("org.languagetool.rules.en.EnglishNumberInWordFilter", func() patterns.RuleFilter {
 		return numberInWordRuleFilter{}
 	})
 	c.Register("org.languagetool.rules.en.FindSuggestionsFilter", func() patterns.RuleFilter {
-		return findSuggestionsRuleFilter{inner: &rules.AbstractFindSuggestionsFilter{}}
+		return findSuggestionsRuleFilter{inner: &rules.AbstractFindSuggestionsFilter{
+			// SpellingSuggestions reads the process dict at match time (may be wired later).
+			SpellingSuggestions: func(atr *languagetool.AnalyzedTokenReadings) []string {
+				if atr == nil {
+					return nil
+				}
+				return FilterDictSuggest(atr.GetToken())
+			},
+			// POS filter deferred until EnglishTagger is wired into filters (incomplete, not invent).
+		}}
 	})
 }
 
@@ -232,18 +241,51 @@ func (f suppressMisspelledRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, ar
 	return f.inner.AcceptRuleMatch(match, arguments)
 }
 
-// numberInWordRuleFilter ports AbstractNumberInWordFilter without a speller:
-// only pure surface rewrites are considered if they differ; without isMisspelled
-// we cannot accept invented dictionary hits, so drop (fail-closed).
+// numberInWordRuleFilter ports AbstractNumberInWordFilter.acceptRuleMatch.
 type numberInWordRuleFilter struct{}
 
 func (numberInWordRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
 	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
-	// Java requires isMisspelled + getSuggestions from MorfologikAmericanSpellerRule.
-	// Incomplete stack: do not invent suggestions; drop match.
-	_ = match
-	_ = arguments
-	return nil
+	if match == nil {
+		return nil
+	}
+	// Without MorfologikAmericanSpellerRule dict: fail-closed (do not invent).
+	if !FilterDictAvailable() {
+		return nil
+	}
+	word := arguments["word"]
+	if word == "" || !enDigitRE.MatchString(word) {
+		return nil
+	}
+	var replacements []string
+	wordReplacingZeroO := strings.ReplaceAll(word, "0", "o")
+	if wordReplacingZeroO != word && !FilterDictIsMisspelled(wordReplacingZeroO) {
+		replacements = append(replacements, wordReplacingZeroO)
+	}
+	wordWithoutNumber := enDigitRE.ReplaceAllString(word, "")
+	if wordWithoutNumber != "" && !FilterDictIsMisspelled(wordWithoutNumber) {
+		dup := false
+		for _, r := range replacements {
+			if r == wordWithoutNumber {
+				dup = true
+				break
+			}
+		}
+		if !dup {
+			replacements = append(replacements, wordWithoutNumber)
+		}
+	}
+	if len(replacements) == 0 {
+		// Java: getSuggestions(wordWithoutNumberCharacter)
+		for _, s := range FilterDictSuggest(wordWithoutNumber) {
+			replacements = append(replacements, s)
+		}
+	}
+	if len(replacements) == 0 {
+		return nil
+	}
+	match.SetSuggestedReplacements(replacements)
+	return match
 }
 
 // findSuggestionsRuleFilter ports FindSuggestionsFilter; nil SpellingSuggestions → drop.

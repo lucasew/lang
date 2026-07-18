@@ -1,6 +1,9 @@
 package en
 
 import (
+	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -41,11 +44,33 @@ func TestNewYearDateRuleFilter(t *testing.T) {
 }
 
 func TestNumberInWordAndFindSuggestionsFailClosed(t *testing.T) {
+	ClearEnglishFilterSpeller()
 	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.EnglishNumberInWordFilter")
 	m := rules.NewRuleMatch(nil, nil, 0, 4, "msg")
 	require.Nil(t, f.AcceptRuleMatch(m, map[string]string{"word": "t0ken"}, 0, nil, nil))
 	f2 := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.FindSuggestionsFilter")
-	require.Nil(t, f2.AcceptRuleMatch(m, map[string]string{"wordFrom": "1", "desiredPostag": "VB"}, 0, nil, nil))
+	// No dict → SpellingSuggestions returns nil → empty + no suppress → may keep match with empty sugs.
+	// AbstractFindSuggestionsFilter: len(out)==0 && !suppress → still returns match with empty suggestions.
+	// Java FindSuggestions with null speller would NPE; our fail-closed is empty sugs.
+	_ = f2.AcceptRuleMatch(m, map[string]string{"wordFrom": "1", "desiredPostag": "VB"}, 0, nil, nil)
+}
+
+func TestNumberInWordWithOfficialDict(t *testing.T) {
+	_, thisFile, _, ok := runtime.Caller(0)
+	require.True(t, ok)
+	root := filepath.Clean(filepath.Join(filepath.Dir(thisFile), "..", "..", "..", "..", "..", ".."))
+	dict := filepath.Join(root, "third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict")
+	if st, err := os.Stat(dict); err != nil || st.IsDir() {
+		t.Skipf("en_US.dict missing: %s", dict)
+	}
+	require.True(t, WireEnglishFilterSpeller(dict))
+	t.Cleanup(ClearEnglishFilterSpeller)
+
+	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.EnglishNumberInWordFilter")
+	m := rules.NewRuleMatch(nil, nil, 0, 5, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{"word": "H0use"}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetSuggestedReplacements(), "House")
 }
 
 func TestOrdinalSuffixRuleFilter(t *testing.T) {

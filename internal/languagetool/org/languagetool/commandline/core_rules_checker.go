@@ -156,16 +156,19 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			base = lang[:i]
 		}
 		if strings.EqualFold(base, "en") {
-			// Java English.getMultitokenSpeller() before grammar MultitokenSpellerFilter runs.
-			wireEnglishMultitokenSpeller(opts)
 			// Prefer CFSA2 en_US.dict when present; demo only under LANG_DEMO_SPELLER.
 			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 			nearest := en.DemoEnglishKnownWords()
 			sugs := en.CommonDemoSpellerSuggestions
 			spellRegistered := false
 			if dictPath := DiscoverEnglishUSDict(opts); dictPath != "" {
+				// Grammar filters (NumberInWord / FindSuggestions / SuppressMisspelled)
+				// share the same dict Java MorfologikAmericanSpellerRule uses.
+				_ = en.WireEnglishFilterSpeller(dictPath)
 				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
 			}
+			// Multitoken after filter dict so isMisspelled can use it.
+			wireEnglishMultitokenSpeller(opts)
 			if !spellRegistered && demoSpell {
 				en.RegisterDemoEnglishSpeller(lt, nearest, sugs)
 			}
@@ -234,10 +237,13 @@ func wireEnglishMultitokenSpeller(opts *CommandLineOptions) {
 	if err != nil || sp == nil || sp.MultitokenSpeller == nil {
 		return
 	}
-	// isMisspelled nil → MultitokenSpellerFilter treats tokens as not misspelled-checked
-	// (Java: default spelling rule null → isMisspelled false → areTokensAcceptedBySpeller true).
-	// When a binary speller is later wired, pass a real hook; do not invent misspell logic here.
-	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, nil)
+	// Java MultitokenSpellerFilter.isMisspelled uses language.getDefaultSpellingRule().
+	// When en_US.dict is wired, FilterDictIsMisspelled matches that; else nil-like (false).
+	var isMiss func(string) bool
+	if en.FilterDictAvailable() {
+		isMiss = en.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
 }
 
 // resolveGrammarDir prefers --data-dir/grammar, then LANG_GRAMMAR_DIR, then LANG_DATA_DIR/grammar.
