@@ -72,6 +72,17 @@ func TestSoftGermanGeParticiple(t *testing.T) {
 	require.True(t, softInflectedSurfaceMatch("genommen", "nehmen", false)) // irregular map
 	require.True(t, softInflectedSurfaceMatch("ging", "gehen", false) || softGermanGeParticiple("gegangen", "gehen"))
 	require.True(t, softInflectedSurfaceMatch("gegangen", "gehen", false) || softGermanGeParticiple("gegangen", "gehen"))
+	// separable: ausgelost (typo form) ← auslosen (ALARM_AUSLOSEN soft golden)
+	require.True(t, softGermanGeParticiple("ausgelost", "auslosen"))
+	require.True(t, softInflectedSurfaceMatch("ausgelost", "auslosen", false))
+}
+
+func TestSoftFrenchErInflected(t *testing.T) {
+	require.True(t, softFrenchErInflected("placé", "placer"))
+	require.True(t, softFrenchErInflected("places", "placer"))
+	require.True(t, softFrenchErInflected("rencontré", "rencontrer"))
+	require.True(t, softInflectedSurfaceMatch("mis", "mettre", false))
+	require.False(t, softFrenchErInflected("chat", "placer"))
 }
 
 func TestSoftClosedClassPOS(t *testing.T) {

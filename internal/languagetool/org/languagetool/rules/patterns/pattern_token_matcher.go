@@ -482,6 +482,7 @@ func softClosedPartSurface(part, s string) bool {
 
 func softIsPronoun(s string) bool {
 	switch s {
+	// English
 	case "i", "me", "my", "mine", "myself",
 		"you", "your", "yours", "yourself", "yourselves",
 		"he", "him", "his", "himself",
@@ -489,7 +490,14 @@ func softIsPronoun(s string) bool {
 		"it", "its", "itself",
 		"we", "us", "our", "ours", "ourselves",
 		"they", "them", "their", "theirs", "themselves",
-		"thou", "thee", "thy", "thine", "ye":
+		"thou", "thee", "thy", "thine", "ye",
+		// German (PRO:REF / personal)
+		"ich", "mich", "mir", "mein", "meine", "meiner", "meinem", "meinen",
+		"du", "dich", "dir", "dein", "deine", "deiner", "deinem", "deinen",
+		"er", "ihn", "ihm", "sein", "seine", "seiner", "seinem", "seinen",
+		"sie", "ihr", "ihre", "ihrer", "ihrem", "ihren", "ihnen",
+		"es", "wir", "uns", "unser", "unsere", "unserer", "unserem", "unseren",
+		"euch", "euer", "eure", "sich":
 		return true
 	default:
 		return false
@@ -554,10 +562,59 @@ func softIsWh(s string) bool {
 	}
 }
 
+// softFrenchErInflected maps common -er verb surfaces to infinitive without a tagger.
+// Examples: placé/placer, places/placer, rencontré/rencontrer.
+func softFrenchErInflected(surface, base string) bool {
+	s, b := strings.ToLower(surface), strings.ToLower(base)
+	if !strings.HasSuffix(b, "er") || len(b) < 4 {
+		return false
+	}
+	stem := b[:len(b)-2] // placer → plac
+	if len(stem) < 3 {
+		return false
+	}
+	// present / participle endings on the stem
+	for _, suf := range []string{"é", "ée", "és", "ées", "e", "es", "ent", "ons", "ez", "ant", "ais", "ait", "aient", "ai", "as", "a", "âmes", "âtes", "èrent"} {
+		if s == stem+suf {
+			return true
+		}
+	}
+	// ç- variants (plaçons)
+	if strings.HasSuffix(stem, "c") {
+		ced := stem[:len(stem)-1] + "ç"
+		for _, suf := range []string{"ons", "ait", "ais", "aient"} {
+			if s == ced+suf {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // softGermanGeParticiple approximates ge- + stem + (e)t/en ↔ infinitive …en.
 // Examples: gemacht/machen, gelernt/lernen, genommen/nehmen (strong ge-…en).
+// Separable prefixes: ausgelost/auslosen, angefangen/anfangen.
 func softGermanGeParticiple(surface, base string) bool {
 	s, b := strings.ToLower(surface), strings.ToLower(base)
+	if softGermanGeParticipleCore(s, b) {
+		return true
+	}
+	// Separable verb prefixes (common set used in LT DE soft packs).
+	for _, pref := range []string{
+		"aus", "ein", "an", "auf", "ab", "zu", "mit", "vor", "nach", "bei",
+		"her", "hin", "weg", "fest", "klar", "los", "weiter", "zurück", "zusammen",
+		"durch", "über", "unter", "um", "wider", "fort", "dar", "entgegen",
+	} {
+		if strings.HasPrefix(s, pref) && strings.HasPrefix(b, pref) && len(s) > len(pref)+3 && len(b) > len(pref)+2 {
+			if softGermanGeParticipleCore(s[len(pref):], b[len(pref):]) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func softGermanGeParticipleCore(s, b string) bool {
 	if !strings.HasPrefix(s, "ge") || len(s) < 5 || len(b) < 3 {
 		return false
 	}
@@ -620,6 +677,23 @@ var softIrregularLemma = map[string][]string{
 	"allait": {"aller"}, "allaient": {"aller"}, "allé": {"aller"}, "allée": {"aller"}, "allés": {"aller"},
 	"fais": {"faire"}, "fait": {"faire"}, "faisons": {"faire"}, "faites": {"faire"}, "font": {"faire"},
 	"faisait": {"faire"}, "faisaient": {"faire"},
+	"fit": {"faire"}, "firent": {"faire"}, "faisant": {"faire"},
+	// French mettre / prendre / partir / passer (+ common -er past forms)
+	"mets": {"mettre"}, "met": {"mettre"}, "mettons": {"mettre"}, "mettez": {"mettre"}, "mettent": {"mettre"},
+	"mis": {"mettre"}, "mise": {"mettre"}, "mises": {"mettre"}, "mettant": {"mettre"},
+	"prends": {"prendre"}, "prend": {"prendre"}, "prenons": {"prendre"}, "prenez": {"prendre"}, "prennent": {"prendre"},
+	"pris": {"prendre"}, "prise": {"prendre"}, "prises": {"prendre"}, "prenant": {"prendre"},
+	"pars": {"partir"}, "part": {"partir"}, "partons": {"partir"}, "partez": {"partir"}, "partent": {"partir"},
+	"parti": {"partir"}, "partie": {"partir"}, "partis": {"partir"}, "partant": {"partir"},
+	"passe": {"passer"}, "passes": {"passer"}, "passons": {"passer"}, "passez": {"passer"}, "passent": {"passer"},
+	"passé": {"passer"}, "passée": {"passer"}, "passés": {"passer"}, "passant": {"passer"},
+	"place": {"placer"}, "places": {"placer"}, "plaçons": {"placer"}, "placé": {"placer"}, "placée": {"placer"},
+	"tire": {"tirer"}, "tires": {"tirer"}, "tirons": {"tirer"}, "tiré": {"tirer"}, "tirée": {"tirer"},
+	"garde": {"garder"}, "gardes": {"garder"}, "gardons": {"garder"}, "gardé": {"garder"}, "gardée": {"garder"},
+	"loge": {"loger"}, "loges": {"loger"}, "logé": {"loger"}, "logée": {"loger"},
+	"remplis": {"remplir"}, "remplit": {"remplir"}, "remplissons": {"remplir"}, "rempli": {"remplir"}, "remplie": {"remplir"},
+	"achète": {"acheter"}, "achètes": {"acheter"}, "achetons": {"acheter"}, "acheté": {"acheter"}, "achetée": {"acheter"},
+	"ajoute": {"ajouter"}, "ajoutes": {"ajouter"}, "ajoutons": {"ajouter"}, "ajouté": {"ajouter"}, "ajoutée": {"ajouter"},
 	// German sein / haben + common strong/weak forms used in soft packs
 	"bin": {"sein"}, "bist": {"sein"}, "ist": {"sein"}, "sind": {"sein"}, "seid": {"sein"},
 	"war": {"sein"}, "warst": {"sein"}, "waren": {"sein"}, "wart": {"sein"}, "gewesen": {"sein"}, "sei": {"sein"},
@@ -642,6 +716,11 @@ var softIrregularLemma = map[string][]string{
 	"treibe": {"treiben"}, "treibst": {"treiben"}, "treibt": {"treiben"},
 	"trieb": {"treiben"}, "trieben": {"treiben"}, "getrieben": {"treiben"},
 	"lerne": {"lernen"}, "lernst": {"lernen"}, "lernt": {"lernen"}, "lernte": {"lernen"}, "gelernt": {"lernen"},
+	"tue": {"tun"}, "tust": {"tun"}, "tut": {"tun"}, "tat": {"tun"}, "taten": {"tun"}, "getan": {"tun"},
+	"drücke": {"drücken"}, "drückst": {"drücken"}, "drückt": {"drücken"}, "gedrückt": {"drücken"},
+	"ausdrücke": {"ausdrücken"}, "ausdrückt": {"ausdrücken"}, "ausgedrückt": {"ausdrücken"},
+	// typo soft target for SICH_AUSDRUCKEN (ausgedruckt ← ausdrucken)
+	"ausgedruckt": {"ausdrucken"},
 	// Portuguese ser / estar / ter / fazer / dar
 	"sou": {"ser"}, "és": {"ser"}, "é": {"ser"}, "somos": {"ser"}, "são": {"ser"},
 	"era": {"ser"}, "eram": {"ser"}, "foi": {"ser", "dir"}, "foram": {"ser"}, "sido": {"ser"},
@@ -695,6 +774,10 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	}
 	// German ge- participles (gemacht←machen) when not listed above.
 	if softGermanGeParticiple(surface, base) {
+		return true
+	}
+	// French -er past participle / present (placé←placer, place←placer).
+	if softFrenchErInflected(surface, base) {
 		return true
 	}
 	// Prefix check on folded forms (ambaŭ / Ambaux).
