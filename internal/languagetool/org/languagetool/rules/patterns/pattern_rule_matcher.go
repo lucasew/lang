@@ -216,6 +216,66 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 						return rm, true
 					}
 				}
+				// Soft DOUBLE_BANG etc.: UK/JA keep "!!" as one token while soft
+				// grammar patterns use <token>!</token><token>!</token>.
+				if n := softRepeatedPunctCover(m.matchers[ki:], tokens[try]); n > 0 {
+					nsp := sp
+					if nsp.first < 0 {
+						nsp.first = try
+					}
+					nsp.last = try
+					for j := 0; j < n; j++ {
+						if m.matchers[ki+j].Base != nil && m.matchers[ki+j].Base.InsideMarker {
+							if nsp.firstMark < 0 {
+								nsp.firstMark = try
+							}
+							nsp.lastMark = try
+						}
+					}
+					lastSkip := 0
+					if m.matchers[ki+n-1].Base != nil {
+						lastSkip = m.matchers[ki+n-1].Base.SkipNext
+					}
+					if rm, ok := rec(ki+n, try+1, lastSkip, nsp); ok {
+						return rm, true
+					}
+				}
+				// Soft: pattern "week-end" / "e-mail" when tokenizer splits week + - + end.
+				if n := softHyphenatedSurfaceCover(matcher, tokens[try:]); n > 1 {
+					end := try + n - 1
+					nsp := sp
+					if nsp.first < 0 {
+						nsp.first = try
+					}
+					nsp.last = end
+					if pt.InsideMarker {
+						if nsp.firstMark < 0 {
+							nsp.firstMark = try
+						}
+						nsp.lastMark = end
+					}
+					if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
+						return rm, true
+					}
+				}
+				// Soft: pattern "al"/"del" when CatalanWordTokenizer splits a+l / de+l.
+				if n := softFusedPrepCover(matcher, tokens[try:]); n > 1 {
+					end := try + n - 1
+					nsp := sp
+					if nsp.first < 0 {
+						nsp.first = try
+					}
+					nsp.last = end
+					if pt.InsideMarker {
+						if nsp.firstMark < 0 {
+							nsp.firstMark = try
+						}
+						nsp.lastMark = end
+					}
+					if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
+						return rm, true
+					}
+				}
 			}
 		}
 		return nil, false
@@ -324,4 +384,120 @@ func isSoftCJKRune(r rune) bool {
 	}
 	// ー prolonged sound; iteration marks sometimes appear in soft JA packs
 	return r == 'ー' || r == 'ゝ' || r == 'ゞ' || r == 'ヽ' || r == 'ヾ'
+}
+
+// softHyphenatedSurfaceCover: pattern token "week-end" matches analysis week + - + end
+// (FrenchWordTokenizer splits hyphens; soft FR-CA regional rules use full compounds).
+func softHyphenatedSurfaceCover(matcher *PatternTokenMatcher, tokens []*languagetool.AnalyzedTokenReadings) int {
+	if matcher == nil || matcher.Base == nil || len(tokens) < 3 {
+		return 0
+	}
+	pt := matcher.Base
+	if pt.Token == "" || pt.Regexp || !strings.Contains(pt.Token, "-") {
+		return 0
+	}
+	want := strings.ToLower(pt.Token)
+	parts := strings.Split(want, "-")
+	if len(parts) < 2 {
+		return 0
+	}
+	// Expect part, "-", part, "-", ... alternating
+	ti := 0
+	for pi, part := range parts {
+		if ti >= len(tokens) || tokens[ti] == nil || tokens[ti].IsImmunized() {
+			return 0
+		}
+		if !strings.EqualFold(tokens[ti].GetToken(), part) {
+			return 0
+		}
+		ti++
+		if pi < len(parts)-1 {
+			if ti >= len(tokens) || tokens[ti] == nil || tokens[ti].GetToken() != "-" {
+				return 0
+			}
+			ti++
+		}
+	}
+	if ti < 3 {
+		return 0
+	}
+	return ti
+}
+
+// softFusedPrepCover: pattern "al"/"del"/"pel" matches tokenizer splits a+l, de+l, pe+l
+// (CatalanWordTokenizer pe(ls?) pattern; soft picky rules use fused orthography).
+func softFusedPrepCover(matcher *PatternTokenMatcher, tokens []*languagetool.AnalyzedTokenReadings) int {
+	if matcher == nil || matcher.Base == nil || len(tokens) < 2 {
+		return 0
+	}
+	pt := matcher.Base
+	if pt.Token == "" || pt.Regexp {
+		return 0
+	}
+	want := strings.ToLower(pt.Token)
+	var parts []string
+	switch want {
+	case "al":
+		parts = []string{"a", "l"}
+	case "als":
+		parts = []string{"a", "ls"}
+	case "del":
+		parts = []string{"de", "l"}
+	case "dels":
+		parts = []string{"de", "ls"}
+	case "pel":
+		parts = []string{"pe", "l"}
+	case "pels":
+		parts = []string{"pe", "ls"}
+	case "al'", "a-l":
+		return 0
+	default:
+		return 0
+	}
+	for i, p := range parts {
+		if i >= len(tokens) || tokens[i] == nil || tokens[i].IsImmunized() {
+			return 0
+		}
+		if !strings.EqualFold(tokens[i].GetToken(), p) {
+			return 0
+		}
+	}
+	return len(parts)
+}
+
+// softRepeatedPunctCover reports how many consecutive single-char pattern tokens
+// are covered by one analysis token of the same repeated punctuation (e.g. "!!"
+// covers !+!). Used by soft DOUBLE_BANG packs; Ukrainian/Japanese tokenizers keep
+// !{2,3} as one token (Java UkrainianWordTokenizer SPLIT_CHARS multi-punct).
+func softRepeatedPunctCover(matchers []*PatternTokenMatcher, atr *languagetool.AnalyzedTokenReadings) int {
+	if atr == nil || len(matchers) < 2 {
+		return 0
+	}
+	surf := atr.GetToken()
+	rs := []rune(surf)
+	if len(rs) < 2 || len(rs) > 4 {
+		return 0
+	}
+	base := rs[0]
+	if unicode.IsLetter(base) || unicode.IsDigit(base) || unicode.IsSpace(base) {
+		return 0
+	}
+	for _, r := range rs[1:] {
+		if r != base {
+			return 0
+		}
+	}
+	want := string(base)
+	n := 0
+	for i := 0; i < len(matchers) && n < len(rs); i++ {
+		pt := matchers[i].Base
+		if pt == nil || pt.Token != want || pt.Regexp {
+			break
+		}
+		n++
+	}
+	if n == len(rs) && n >= 2 {
+		return n
+	}
+	return 0
 }
