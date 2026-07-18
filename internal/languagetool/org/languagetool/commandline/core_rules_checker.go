@@ -207,6 +207,12 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 				_, _ = patterns.RegisterGrammarFile(lt, rpath, lang)
 			}
 		}
+		// Java English.getRelevantRules: L2 grammar when mother tongue is de/fr (always, not gated).
+		if strings.EqualFold(base, "en") && opts.MotherTongue != "" {
+			if l2 := DiscoverEnglishL2GrammarXML(opts, opts.MotherTongue); l2 != "" {
+				_, _ = patterns.RegisterGrammarFile(lt, l2, lang)
+			}
+		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
 				return nil, err

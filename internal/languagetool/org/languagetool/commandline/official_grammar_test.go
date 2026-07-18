@@ -39,6 +39,52 @@ func TestDiscoverAndLoadOfficialENStyle(t *testing.T) {
 	require.Greater(t, n, 10, "style.xml should register surface-simple pattern rules")
 }
 
+func TestDiscoverAndLoadEnglishL2Grammar(t *testing.T) {
+	de := DiscoverEnglishL2GrammarXML(nil, "de")
+	require.NotEmpty(t, de, "grammar-l2-de.xml")
+	require.Contains(t, de, "grammar-l2-de.xml")
+	require.NotContains(t, de, "soft")
+	fr := DiscoverEnglishL2GrammarXML(nil, "fr")
+	require.NotEmpty(t, fr, "grammar-l2-fr.xml")
+	require.Contains(t, fr, "grammar-l2-fr.xml")
+	require.Empty(t, DiscoverEnglishL2GrammarXML(nil, "es"), "no invent for other mother tongues")
+
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := patterns.RegisterGrammarFile(lt, de, "en")
+	require.NoError(t, err)
+	t.Logf("L2-de registered %d rules from %s", n, de)
+	require.Greater(t, n, 0)
+	// Java idprefix="L2_" → L2_THAN_AS
+	ids := lt.GetAllRegisteredRuleIDs()
+	var hasL2 bool
+	for _, id := range ids {
+		if strings.HasPrefix(id, "L2_") {
+			hasL2 = true
+			break
+		}
+	}
+	require.True(t, hasL2, "ids=%v", ids)
+}
+
+func TestConfigureCoreLT_LoadsL2WhenMotherTongueDE(t *testing.T) {
+	lt, err := configureCoreLT("en", &CommandLineOptions{Language: "en", MotherTongue: "de"})
+	require.NoError(t, err)
+	ids := lt.GetAllRegisteredRuleIDs()
+	var hasL2 bool
+	for _, id := range ids {
+		if strings.HasPrefix(id, "L2_") {
+			hasL2 = true
+			t.Logf("found L2 id %s", id)
+			break
+		}
+	}
+	require.True(t, hasL2, "motherTongue=de should register L2_* ids; ids sample=%v", ids[:min(20, len(ids))])
+	ltCore, err := configureCoreLT("en", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	require.Greater(t, len(ids), len(ltCore.GetAllRegisteredRuleIDs()),
+		"motherTongue=de should load more rules than core alone")
+}
+
 func TestDiscoverLanguagePatternRuleFiles_EN(t *testing.T) {
 	files := DiscoverLanguagePatternRuleFiles(nil, "en")
 	require.GreaterOrEqual(t, len(files), 2, "grammar + style")

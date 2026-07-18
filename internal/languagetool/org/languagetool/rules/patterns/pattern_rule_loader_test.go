@@ -36,6 +36,24 @@ func TestPatternRuleLoader(t *testing.T) {
 	require.NotNil(t, pr)
 }
 
+func TestPatternRuleLoader_IdPrefix(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules idprefix="L2_">
+  <category>
+    <rule id="THAN_AS" name="than as">
+      <pattern>
+        <token>as</token>
+      </pattern>
+      <message>use than</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.Equal(t, "L2_THAN_AS", ars[0].ID)
+}
+
 func TestPatternRuleLoaderRelaxed(t *testing.T) {
 	xml := `<rules><category><rule><pattern><token>x</token></pattern></rule></category></rules>`
 	l := NewPatternRuleLoader()

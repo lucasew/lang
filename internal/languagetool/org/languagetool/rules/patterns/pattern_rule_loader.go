@@ -38,6 +38,8 @@ func (l *PatternRuleLoader) GetRulesFromString(xmlStr, filename, languageCode st
 
 type xmlRulesRoot struct {
 	XMLName    xml.Name      `xml:"rules"`
+	// IdPrefix ports Java rules idprefix="…" (e.g. L2_ on grammar-l2-de.xml).
+	IdPrefix   string        `xml:"idprefix,attr"`
 	Categories []xmlCategory `xml:"category"`
 	Rules      []xmlRule     `xml:"rule"` // allow top-level rules
 }
@@ -249,10 +251,15 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		return nil, err
 	}
 	var out []*AbstractPatternRule
+	idPrefix := strings.TrimSpace(root.IdPrefix)
 	add := func(xr xmlRule, defaultID, catID, catName string) error {
 		id := xr.ID
 		if id == "" {
 			id = defaultID
+		}
+		// Java PatternRuleHandler: id = idPrefix + id when idprefix is set on <rules>.
+		if id != "" && idPrefix != "" && !strings.HasPrefix(id, idPrefix) {
+			id = idPrefix + id
 		}
 		if id == "" && !l.RelaxedMode {
 			return fmt.Errorf("rule id not set")
@@ -326,7 +333,11 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 		for _, g := range cat.RuleGroups {
 			// Java: rulegroup antipatterns apply to every child rule (prepareRule).
-			groupAntis := antiPatternsFromXML(g.ID, languageCode, g.AntiPatterns)
+			groupID := g.ID
+			if groupID != "" && idPrefix != "" && !strings.HasPrefix(groupID, idPrefix) {
+				groupID = idPrefix + groupID
+			}
+			groupAntis := antiPatternsFromXML(groupID, languageCode, g.AntiPatterns)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
@@ -340,7 +351,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 					last := out[len(out)-1]
 					last.SubID = fmt.Sprintf("%d", i+1)
 					if last.ID == "" {
-						last.ID = g.ID
+						last.ID = groupID
 					}
 					// Java setAntiPatterns: rulegroup first, then rule-level (append).
 					if len(groupAntis) > 0 {

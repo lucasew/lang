@@ -342,6 +342,42 @@ func DiscoverGermanMultitokenSuggest(opts *CommandLineOptions) string {
 }
 
 
+// DiscoverEnglishL2GrammarXML finds EN L2 pattern rules for a mother tongue.
+// Java English.getRelevantRules: grammar-l2-de.xml / grammar-l2-fr.xml when motherTongue is de/fr.
+func DiscoverEnglishL2GrammarXML(opts *CommandLineOptions, motherTongue string) string {
+	mt := languageBaseCode(motherTongue)
+	if mt != "de" && mt != "fr" {
+		return ""
+	}
+	fileName := "grammar-l2-" + mt + ".xml"
+	if p := os.Getenv("LANG_EN_L2_GRAMMAR"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "en", fileName),
+			filepath.Join(opts.GetDataDir(), "rules", "en", fileName),
+			filepath.Join(opts.GetDataDir(), "upstream", "en", "rules", fileName),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", "en", "rules", fileName),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en",
+			"src", "main", "resources", "org", "languagetool", "rules", "en", fileName),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
 // DiscoverLanguageGrammarXML finds official grammar.xml for lang.
 // Java: /org/languagetool/rules/{lang}/grammar.xml
 func DiscoverLanguageGrammarXML(opts *CommandLineOptions, lang string) string {
