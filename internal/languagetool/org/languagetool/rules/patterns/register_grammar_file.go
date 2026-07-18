@@ -253,13 +253,23 @@ func upstreamGrammarCandidates(grammarDir, base, languageCode string) []string {
 }
 
 // softSpanTokens returns non-whitespace token surfaces whose span overlaps [from,to).
+// Includes SENT_START as "" so 1-based \N indices align with Java pattern elements
+// (element 1 is often SENT_START; \2 is the following word — e.g. ADDITIONAL → Additionally).
+// SENT_END is still skipped (not a numbered pattern element in soft spans).
 func softSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
 	if s == nil || from < 0 || to <= from {
 		return nil
 	}
 	var out []string
 	for _, tok := range s.GetTokensWithoutWhitespace() {
-		if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+		if tok == nil || tok.IsSentenceEnd() {
+			continue
+		}
+		if tok.IsSentenceStart() {
+			// Always count as pattern slot 1 when the match covers position 0.
+			if from == 0 {
+				out = append(out, "")
+			}
 			continue
 		}
 		ts, te := tok.GetStartPos(), tok.GetEndPos()

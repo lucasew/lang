@@ -10,6 +10,8 @@ func TestSoftExpandBackrefs(t *testing.T) {
 	require.Equal(t, "combined", softExpandBackrefs(`\1`, []string{"combined", "together"}))
 	require.Equal(t, "combined together", softExpandBackrefs(`\1 \2`, []string{"combined", "together"}))
 	require.Equal(t, "x", softExpandBackrefs(`\1`, []string{"x"}))
+	// Java ADDITIONAL: SENT_START + Additional + … → \2ly = Additionally
+	require.Equal(t, "Additionally", softExpandBackrefs(`\2ly`, []string{"", "Additional", "we"}))
 }
 
 func TestExtractSuggestionsBackref(t *testing.T) {

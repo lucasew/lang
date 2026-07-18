@@ -296,6 +296,12 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 						return true
 					}
 				}
+				// French -er participles (désactivé → désactiver for RE .*er / ETRE_DE_VERBE).
+				for _, cand := range softFrenchErLemmaCandidates(rawSurface) {
+					if m.tokenRE.MatchString(cand) {
+						return true
+					}
+				}
 			}
 			return false
 		}
@@ -366,15 +372,29 @@ func softLooksLikePunct(s string) bool {
 }
 
 func softPostagLooksLikePunct(tag string) bool {
-	// SENT_END, PSN*, PUNCT*, PCT (EN), PKT (DE STTS), SENTENCE_END, etc.
+	// SENT_END, PSN*, PUNCT*, PCT (EN), PKT (DE STTS), M (FR), SENTENCE_END, etc.
 	u := strings.ToUpper(tag)
-	return strings.Contains(u, "SENT_END") ||
+	if strings.Contains(u, "SENT_END") ||
 		strings.Contains(u, "SENTENCE_END") ||
 		strings.Contains(u, "PSN") ||
 		strings.Contains(u, "PUNC") ||
 		strings.Contains(u, "PCT") ||
 		strings.Contains(u, "PKT") ||
-		strings.Contains(u, "SENT_START")
+		strings.Contains(u, "SENT_START") {
+		return true
+	}
+	// French FreeLing-style: M / M.* / M punc (not MD modal, not MD.*)
+	for _, part := range strings.Split(u, "|") {
+		p := softNormalizePostagPart(part)
+		if p == "M" || strings.HasPrefix(p, "M.") || strings.HasPrefix(p, "M ") ||
+			(strings.HasPrefix(p, "M") && !strings.HasPrefix(p, "MD") && !strings.HasPrefix(p, "MD.")) {
+			// M, M.*, M punc… but not MD (English modal) or MM…
+			if p == "M" || strings.HasPrefix(p, "M.") || strings.HasPrefix(p, "M.*") || strings.HasPrefix(p, "M.+") {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func softPostagIsSentenceBoundary(tag string) bool {
@@ -816,6 +836,22 @@ func softFrenchErInflected(surface, base string) bool {
 	return false
 }
 
+// softFrenchErLemmaCandidates yields likely -er infinitives for a surface form
+// (désactivé → désactiver) so RE patterns like .*er match without a tagger.
+func softFrenchErLemmaCandidates(surface string) []string {
+	s := strings.ToLower(strings.TrimSpace(surface))
+	if s == "" {
+		return nil
+	}
+	for _, suf := range []string{"ées", "és", "ée", "é"} {
+		if strings.HasSuffix(s, suf) && len([]rune(s)) > len([]rune(suf))+2 {
+			stem := s[:len(s)-len(suf)]
+			return []string{stem + "er"}
+		}
+	}
+	return nil
+}
+
 // softGermanGeParticiple approximates ge- + stem + (e)t/en ↔ infinitive …en.
 // Examples: gemacht/machen, gelernt/lernen, genommen/nehmen (strong ge-…en).
 // Separable prefixes: ausgelost/auslosen, angefangen/anfangen.
@@ -896,7 +932,8 @@ var softIrregularLemma = map[string][]string{
 	"suis": {"être"}, "es": {"être"}, "est": {"être"}, "sommes": {"être"}, "êtes": {"être"}, "sont": {"être"},
 	"étais": {"être"}, "était": {"être"}, "étions": {"être"}, "étiez": {"être"}, "étaient": {"être"},
 	"été": {"être"}, "étant": {"être"}, "sera": {"être"}, "serai": {"être"}, "seras": {"être"}, "seront": {"être"},
-	"ai": {"avoir"}, "as": {"avoir"}, "avons": {"avoir"}, "avez": {"avoir"}, "ont": {"avoir"},
+	// "a" = 3sg present (y-a-t-il); keep with other avoir forms
+	"a": {"avoir"}, "ai": {"avoir"}, "as": {"avoir"}, "avons": {"avoir"}, "avez": {"avoir"}, "ont": {"avoir"},
 	"avais": {"avoir"}, "avait": {"avoir"}, "avaient": {"avoir"}, "eu": {"avoir"}, "ayant": {"avoir"},
 	"allons": {"aller"}, "allez": {"aller"}, "vont": {"aller"},
 	"allait": {"aller"}, "allaient": {"aller"}, "allé": {"aller"}, "allée": {"aller"}, "allés": {"aller"},

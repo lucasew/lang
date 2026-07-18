@@ -35,6 +35,8 @@ var (
 		"chez-nous": true, "chez-soi": true, "chez-toi": true, "chez-vous": true, "m'as-tu-vu": true,
 		// Soft stand-in for FrenchTagger dictionary hits used by Java wordsToAdd.
 		"strauss-kahn": true, "petit-déjeunes": true,
+		// Keep hyphenated surface so rules like A_PLEIN_TEMPS match "plein-temps".
+		"plein-temps": true,
 	}
 
 	frPatterns = []*regexp.Regexp{
