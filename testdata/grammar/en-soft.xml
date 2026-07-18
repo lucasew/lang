@@ -205,11 +205,11 @@
       <message>Did you mean "who's going"?</message>
       <short>whose/who's</short>
     </rule>
+    <!-- Java WHO_S_NN_VB tokenizes as [Ww]ho + 's (one token), not Who + ' + s. -->
     <rule id="EN_SOFT_WHO_S_BOOK" name="who's book">
       <pattern>
-        <token regexp="yes">Who|who</token>
-        <token>'</token>
-        <token>s</token>
+        <token regexp="yes" case_sensitive="yes">[Ww]ho</token>
+        <token>'s</token>
         <token>book</token>
       </pattern>
       <message>Did you mean "whose book"?</message>
