@@ -492,6 +492,10 @@
     <disambig action="remove" postag="J.*"/>
   </rule>
   <rule id="LA_NOT_NOUN" name="la (not noun)">
+    <antipattern>
+      <token>la</token>
+      <token regexp="yes">majeur|mineur|44\d</token>
+    </antipattern>
     <pattern>
       <token postag="[RD].*" postag_regexp="yes" marker="yes">la</token>
     </pattern>
@@ -592,6 +596,14 @@
     <disambig action="remove" postag="N m s"/>
   </rule>
   <rule id="INTERDIT" name="interdit">
+    <antipattern>
+      <token postag="V avoir.*" postag_regexp="yes"></token>
+      <token regexp="yes" postag="V.*" postag_regexp="yes">introduit|interdit</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">de|en</token>
+      <token regexp="yes">charge|mesure</token>
+    </antipattern>
     <pattern>
       <token postag="SENT_START"></token>
       <token postag="D.*" postag_regexp="yes"></token>
@@ -1408,6 +1420,10 @@
     <disambig action="filterall"/>
   </rule>
   <rule id="CONTRE" name="contre">
+    <antipattern>
+      <token regexp="yes">j'|il|elle</token>
+      <token>entre</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" postag="P" marker="yes">contre|entre|vers|envers</token>
       <token postag="[DR].*" postag_regexp="yes"></token>
@@ -1429,6 +1445,10 @@
     <disambig action="filterall"/>
   </rule>
   <rule id="CHER_Z" name="Cher">
+    <antipattern>
+      <token regexp="yes">\p{L}+</token>
+      <token case_sensitive="yes">Cher</token>
+    </antipattern>
     <pattern>
       <token postag="J m s" marker="yes">Cher</token>
       <token postag="[NJZ].*|V ppa.*" postag_regexp="yes"></token>
@@ -1442,6 +1462,10 @@
     <disambig action="filter" postag="Z.*"/>
   </rule>
   <rule id="MARIE" name="Marie">
+    <antipattern>
+      <token>Marie</token>
+      <token>moi</token>
+    </antipattern>
     <pattern>
       <token postag="Z.*" postag_regexp="yes">Marie</token>
     </pattern>
@@ -1841,6 +1865,12 @@
     <disambig action="filter" postag="N m s"/>
   </rule>
   <rule id="VINS" name="vins (noun)">
+    <antipattern>
+      <token>tu</token>
+      <token>ne</token>
+      <token postag="R pers obj.*" postag_regexp="yes" min="0" max="3"></token>
+      <token regexp="yes" postag="N m p">vins|comptes</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" postag="N m p" marker="yes">vins|comptes</token>
       <token postag="J [me] s?p|V.* ppa [me] s?p" postag_regexp="yes"></token>
@@ -2092,6 +2122,10 @@
     <disambig action="filterall"/>
   </rule>
   <rule id="HELAS" name="hélas">
+    <antipattern>
+      <token skip="-1">tu</token>
+      <token>hélas</token>
+    </antipattern>
     <pattern>
       <token marker="yes">hélas</token>
     </pattern>
@@ -2332,6 +2366,10 @@
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
   <rule id="PRESENTE" name="présente">
+    <antipattern>
+      <token inflected="yes">être</token>
+      <token>présente</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" postag="V (ind|sub|imp).*" postag_regexp="yes" marker="yes">présente|(re)?joint|pointe|séduit|prédit</token>
       <token postag="A" min="0"></token>
@@ -2379,6 +2417,11 @@
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
   <rule id="AURA" name="aura (verbe)">
+    <antipattern>
+      <token postag="D [fe] s" postag_regexp="yes"></token>
+      <token postag="J [fe] (s|sp)" postag_regexp="yes" min="0"></token>
+      <token>aura</token>
+    </antipattern>
     <pattern>
       <token postag="V.*" postag_regexp="yes" marker="yes">aura</token>
     </pattern>
@@ -2416,6 +2459,13 @@
     <disambig action="filter" postag="V.*"/>
   </rule>
   <rule id="CUIT" name="cuit">
+    <antipattern>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token>cuit</token>
+      <token postag="A" min="0" max="1"></token>
+      <token postag="V.*" postag_regexp="yes"></token>
+    </antipattern>
     <pattern>
       <token postag="D.*" postag_regexp="yes"></token>
       <token postag="N.*" postag_regexp="yes"></token>
@@ -2531,6 +2581,15 @@
     <disambig action="remove" postag="[NJ].*"/>
   </rule>
   <rule id="DIPOSE" name="dispose (not adjective)">
+    <antipattern>
+      <token>fraîche</token>
+      <token>et</token>
+      <token>dispose</token>
+    </antipattern>
+    <antipattern>
+      <token postag="D [fe] s" postag_regexp="yes"></token>
+      <token>demeure</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" postag="V.*" postag_regexp="yes" marker="yes">dispose|demeure</token>
     </pattern>
@@ -2577,18 +2636,30 @@
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
   <rule id="RIEN" name="rien">
+    <antipattern>
+      <token regexp="yes">un|le</token>
+      <token>rien</token>
+    </antipattern>
     <pattern>
       <token>rien</token>
     </pattern>
     <disambig action="filter" postag="R m s"/>
   </rule>
   <rule id="FUT" name="fut">
+    <antipattern>
+      <token regexp="yes">un|le|au|du</token>
+      <token regexp="yes">fut|fût</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" postag="V etre sub impa 3 s|V etre ind psim 3 s" postag_regexp="yes">fut|fût</token>
     </pattern>
     <disambig action="filter" postag="V etre sub impa 3 s|V etre ind psim 3 s"/>
   </rule>
   <rule id="DEVENIR" name="devenir">
+    <antipattern>
+      <token postag="(P\+)?D m s" postag_regexp="yes"></token>
+      <token>devenir</token>
+    </antipattern>
     <pattern>
       <token>devenir</token>
     </pattern>
@@ -2697,12 +2768,28 @@
     <disambig action="replace" postag="A"/>
   </rule>
   <rule id="TOMBE" name="tombe (verb)">
+    <antipattern>
+      <token postag="D f s"></token>
+      <token>tombe</token>
+    </antipattern>
+    <antipattern>
+      <token>tombe</token>
+      <token regexp="yes">de|d'|du</token>
+    </antipattern>
     <pattern>
       <token postag="V.*" postag_regexp="yes">tombe</token>
     </pattern>
     <disambig action="remove" postag="N f s"/>
   </rule>
   <rule id="JUGE" name="juge (verb)">
+    <antipattern>
+      <token postag="D m s"></token>
+      <token>juge</token>
+    </antipattern>
+    <antipattern>
+      <token>juge</token>
+      <token regexp="yes">de|d'|du</token>
+    </antipattern>
     <pattern>
       <token postag="V.*" postag_regexp="yes">juge</token>
     </pattern>
@@ -2732,6 +2819,10 @@
     <disambig action="replace" postag="N m s"/>
   </rule>
   <rule id="MAIS" name="mais">
+    <antipattern>
+      <token postag="D (e|m) p" postag_regexp="yes"></token>
+      <token>mais</token>
+    </antipattern>
     <pattern>
       <token>mais</token>
     </pattern>
@@ -2810,6 +2901,11 @@
     <disambig action="filter" postag="J.*"/>
   </rule>
   <rule id="CAR" name="car">
+    <antipattern>
+      <token postag="D m s|D e s" postag_regexp="yes"></token>
+      <token postag="[AJ].*" postag_regexp="yes"></token>
+      <token>car</token>
+    </antipattern>
     <pattern>
       <token marker="yes">car</token>
     </pattern>

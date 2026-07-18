@@ -33,6 +33,9 @@ type DisambiguationPatternRule struct {
 	NewTokenReadings  []*languagetool.AnalyzedToken
 	Examples          []DisambiguatedExample
 	UntouchedExamples []string
+	// AntiPatterns ports Java DisambiguationPatternRule anti-patterns
+	// (keepByDisambig overlap suppression).
+	AntiPatterns []*patterns.AbstractTokenBasedRule
 }
 
 func NewDisambiguationPatternRule(
@@ -74,6 +77,11 @@ func (r *DisambiguationPatternRule) SetUntouchedExamples(ex []string) {
 
 func (r *DisambiguationPatternRule) GetUntouchedExamples() []string { return r.UntouchedExamples }
 
+// SetAntiPatterns ports AbstractPatternRule.setAntiPatterns for soft disambig.
+func (r *DisambiguationPatternRule) SetAntiPatterns(aps []*patterns.AbstractTokenBasedRule) {
+	r.AntiPatterns = append([]*patterns.AbstractTokenBasedRule(nil), aps...)
+}
+
 // Replace applies the disambiguation pattern to the sentence (simplified actions).
 func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
 	if sentence == nil || r == nil {
@@ -93,6 +101,10 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 	tokens := append([]*languagetool.AnalyzedTokenReadings(nil), sentence.GetTokens()...)
 	nws := sentence.GetTokensWithoutWhitespace()
 	for _, m := range matches {
+		// Java keepByDisambig: suppress when an anti-pattern overlaps this match.
+		if !r.keepByDisambig(sentence, m.FromPos, m.ToPos) {
+			continue
+		}
 		// map match positions back to non-whitespace tokens by start pos
 		first, last := -1, -1
 		for i, t := range nws {
@@ -123,6 +135,41 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 	// GetTokensWithoutWhitespace returns subset; mutations on readings objects are shared.
 	_ = tokens
 	return languagetool.NewAnalyzedSentence(sentence.GetTokens())
+}
+
+// keepByDisambig ports DisambiguationPatternRuleReplacer.keepByDisambig:
+// false when any anti-pattern match overlaps [fromPos,toPos].
+func (r *DisambiguationPatternRule) keepByDisambig(sentence *languagetool.AnalyzedSentence, fromPos, toPos int) bool {
+	if r == nil || len(r.AntiPatterns) == 0 {
+		return true
+	}
+	for _, ap := range r.AntiPatterns {
+		if ap == nil {
+			continue
+		}
+		if ap.CanBeIgnoredFor(sentence) {
+			continue
+		}
+		// Java: new PatternRuleMatcher(antiPattern, false) — non-pre-disambig.
+		// Soft: non-strict POS so open-class anti patterns still fire without a tagger.
+		am := patterns.NewPatternRuleMatcher(ap)
+		antiMatches, err := am.Match(sentence)
+		if err != nil || len(antiMatches) == 0 {
+			continue
+		}
+		for _, dm := range antiMatches {
+			if dm == nil {
+				continue
+			}
+			// left overlap of rule match start, right of end, or anti inside rule match
+			if (dm.FromPos <= fromPos && dm.ToPos >= fromPos) ||
+				(dm.FromPos <= toPos && dm.ToPos >= toPos) ||
+				(dm.FromPos >= fromPos && dm.ToPos <= toPos) {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedTokenReadings, first, last int) {

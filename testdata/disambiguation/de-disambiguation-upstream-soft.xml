@@ -698,6 +698,11 @@
     </disambig>
   </rule>
   <rule id="NUMBER_COMPOUND_NOUN_3" name="60er -&gt; SUB">
+    <antipattern>
+      <token postag="ART:.+" postag_regexp="yes"></token>
+      <token regexp="yes">\d{2,4}er</token>
+      <token postag="SUB:.+" postag_regexp="yes"></token>
+    </antipattern>
     <pattern>
       <token regexp="yes">\d{2,4}er</token>
     </pattern>
@@ -706,6 +711,11 @@
     </disambig>
   </rule>
   <rule id="NUMBER_COMPOUND_NOUN_4" name="60er -&gt; SUB">
+    <antipattern>
+      <token postag="ART:.+" postag_regexp="yes"></token>
+      <token regexp="yes">\d{2,4}er</token>
+      <token postag="SUB:.+" postag_regexp="yes"></token>
+    </antipattern>
     <pattern>
       <token regexp="yes">\d{2,4}er</token>
     </pattern>
@@ -3636,6 +3646,14 @@
     <disambig action="remove" postag="SUB.+"/>
   </rule>
   <rule id="EINST_KEIN_VERB" name="'einst' kein Verb">
+    <antipattern>
+      <token skip="3">du</token>
+      <token>einst</token>
+    </antipattern>
+    <antipattern>
+      <token skip="3">einst</token>
+      <token>du</token>
+    </antipattern>
     <pattern>
       <token>einst</token>
     </pattern>
@@ -3767,6 +3785,10 @@
     <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="VIERTEL_NACH_VOR_KEIN_VERB" name="'viertel nach' kein Verb">
+    <antipattern>
+      <token>ich</token>
+      <token>viertel</token>
+    </antipattern>
     <pattern>
       <token marker="yes">viertel</token>
       <token regexp="yes">nach|vor</token>
@@ -3811,18 +3833,46 @@
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DANK_KEIN_VERB" name="'dank' kein Verb">
+    <antipattern>
+      <token regexp="yes">ich|bitte|dann</token>
+      <token>dank</token>
+    </antipattern>
+    <antipattern>
+      <token>dank</token>
+      <token>ich</token>
+    </antipattern>
     <pattern>
       <token>dank</token>
     </pattern>
     <disambig action="remove" postag="VER:1.*"/>
   </rule>
   <rule id="WIDER_KEIN_VERB" name="'wider' kein Verb">
+    <antipattern>
+      <token regexp="yes">ich|bitte|dann</token>
+      <token>wider</token>
+    </antipattern>
+    <antipattern>
+      <token>wider</token>
+      <token>ich</token>
+    </antipattern>
+    <antipattern>
+      <token postag="SENT_START"></token>
+      <token>wider</token>
+    </antipattern>
     <pattern>
       <token>wider</token>
     </pattern>
     <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="SCHNELL_KEIN_VERB" name="'schnell' kein Verb">
+    <antipattern>
+      <token>ich</token>
+      <token>schnell</token>
+    </antipattern>
+    <antipattern>
+      <token>schnell</token>
+      <token>ich</token>
+    </antipattern>
     <pattern>
       <token>schnell</token>
     </pattern>
@@ -4250,12 +4300,28 @@
     <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="LANG_KEIN_VER" name="'lang' kein Verb">
+    <antipattern>
+      <token regexp="yes">ich|bitte|dann|deswegen</token>
+      <token>lang</token>
+    </antipattern>
+    <antipattern>
+      <token>lang</token>
+      <token regexp="yes">ich|zu|['’`´‘]</token>
+    </antipattern>
     <pattern>
       <token case_sensitive="yes" marker="yes">lang</token>
     </pattern>
     <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="TROTZ_KEIN_VER" name="'trotz' kein Verb">
+    <antipattern>
+      <token regexp="yes">ich|bitte|dann|deswegen</token>
+      <token>trotz</token>
+    </antipattern>
+    <antipattern>
+      <token>trotz</token>
+      <token regexp="yes">ich|['’`´‘]</token>
+    </antipattern>
     <pattern>
       <token marker="yes">trotz</token>
       <token postag=".*(GEN|DAT).*" postag_regexp="yes"></token>
@@ -4365,6 +4431,14 @@
     <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="RECHT_KEIN_VERB" name="'eine' kein Verb in 'eine der besten'">
+    <antipattern>
+      <token regexp="yes" skip="6">er|sie|ihr|bitte</token>
+      <token>recht</token>
+    </antipattern>
+    <antipattern>
+      <token skip="6">recht</token>
+      <token regexp="yes">er|sie|ihr</token>
+    </antipattern>
     <pattern>
       <token case_sensitive="yes" marker="yes">recht</token>
     </pattern>
@@ -4437,6 +4511,30 @@
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HOLST_KEIN_VERB" name="'Holst' kein Verb">
+    <antipattern>
+      <token>du</token>
+      <token>holst</token>
+    </antipattern>
+    <antipattern>
+      <token>holst</token>
+      <token>du</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">er|sie|es|das|dieses</token>
+      <token>holt</token>
+    </antipattern>
+    <antipattern>
+      <token>holt</token>
+      <token regexp="yes">er|sie|es|das|dieses</token>
+    </antipattern>
+    <antipattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes">hols?t</token>
+    </antipattern>
+    <antipattern>
+      <token>:</token>
+      <token regexp="yes">hols?t</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" case_sensitive="yes">Hols?t</token>
     </pattern>

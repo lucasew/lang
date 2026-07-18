@@ -40,10 +40,11 @@ type disambigRoot struct {
 }
 
 type disambigRule struct {
-	ID       string          `xml:"id,attr"`
-	Name     string          `xml:"name,attr"`
-	Pattern  disambigPattern `xml:"pattern"`
-	Disambig disambigElem    `xml:"disambig"`
+	ID           string            `xml:"id,attr"`
+	Name         string            `xml:"name,attr"`
+	AntiPatterns []disambigPattern `xml:"antipattern"`
+	Pattern      disambigPattern   `xml:"pattern"`
+	Disambig     disambigElem      `xml:"disambig"`
 }
 
 type disambigPattern struct {
@@ -132,6 +133,34 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 				readings = append(readings, languagetool.NewAnalyzedToken(surf, posPtr, lemmaPtr))
 			}
 			rule.SetNewInterpretations(readings)
+		}
+		// Java <antipattern> → keepByDisambig (simple soft token sequences only).
+		if len(xr.AntiPatterns) > 0 {
+			var aps []*patterns.AbstractTokenBasedRule
+			for i, ap := range xr.AntiPatterns {
+				var apToks []*patterns.PatternToken
+				anyMarker := false
+				for _, xt := range ap.Tokens {
+					if strings.EqualFold(xt.Marker, "yes") {
+						anyMarker = true
+					}
+				}
+				for _, xt := range ap.Tokens {
+					apToks = append(apToks, disambigTokenFromXML(xt, anyMarker))
+				}
+				if len(apToks) == 0 {
+					continue
+				}
+				aps = append(aps, patterns.NewAbstractTokenBasedRule(
+					fmt.Sprintf("%s_anti_%d", xr.ID, i),
+					"antipattern",
+					languageCode,
+					apToks,
+				))
+			}
+			if len(aps) > 0 {
+				rule.SetAntiPatterns(aps)
+			}
 		}
 		out = append(out, rule)
 	}

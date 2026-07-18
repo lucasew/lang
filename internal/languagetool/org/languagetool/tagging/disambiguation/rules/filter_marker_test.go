@@ -335,3 +335,81 @@ func TestDisambigLoader_SkipAndMin(t *testing.T) {
 	require.Equal(t, []string{"PRP$"}, tags, "REPLACE fromPos on mine after skip=1")
 }
 
+
+func TestAntiPattern_SuppressesOverlappingReplace(t *testing.T) {
+	// Java keepByDisambig: antipattern "not mine" suppresses REPLACE on "mine".
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="MINE_PRP" name="mine">
+    <antipattern>
+      <token>not</token>
+      <token>mine</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">mine</token>
+    </pattern>
+    <disambig action="replace" postag="PRP$"/>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "test")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Len(t, rules[0].AntiPatterns, 1)
+
+	prp, nn := "PRP$", "NN"
+	mkMine := func() *languagetool.AnalyzedTokenReadings {
+		r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("mine", &nn, nil))
+		r.AddReading(languagetool.NewAnalyzedToken("mine", &prp, nil), "dict")
+		return r
+	}
+	// "is mine" → REPLACE applies
+	toksOK := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("is", strp2("VBZ"), nil)),
+		mkMine(),
+	}
+	pos := 0
+	for _, atr := range toksOK {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	outOK := rules[0].Replace(languagetool.NewAnalyzedSentence(toksOK))
+	var tagsOK []string
+	for _, tok := range outOK.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "mine" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tagsOK = append(tagsOK, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Equal(t, []string{"PRP$"}, tagsOK)
+
+	// "not mine" → antipattern overlaps, leave NN|PRP$
+	toksBlock := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("not", strp2("RB"), nil)),
+		mkMine(),
+	}
+	pos = 0
+	for _, atr := range toksBlock {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	outBlock := rules[0].Replace(languagetool.NewAnalyzedSentence(toksBlock))
+	var tagsBlock []string
+	for _, tok := range outBlock.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "mine" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tagsBlock = append(tagsBlock, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tagsBlock, "NN")
+	require.Contains(t, tagsBlock, "PRP$")
+}

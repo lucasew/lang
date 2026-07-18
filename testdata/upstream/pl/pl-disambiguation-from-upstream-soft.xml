@@ -3210,6 +3210,10 @@
     <disambig action="filterall"/>
   </rule>
   <rule id="nieslychanie_adv" name="niesłychanie + adj -&gt;adv">
+    <antipattern>
+      <token>silnie</token>
+      <token postag="adj:.*:(com|sup)" postag_regexp="yes"></token>
+    </antipattern>
     <pattern>
       <token regexp="yes" postag="adv(:pos)?" postag_regexp="yes">beztrosko|bujnie|ciepło|czytelnie|drogo|iście|jeno|jutro|licho|materialnie|mile|nieodparcie|nieopisanie|niepokalanie|nieporównanie|niesłychanie|nieskończenie|niespotykanie|niezrównanie|piekielnie|pięknie|pokojowo|przesadnie|rano|sądownie|silnie|skrajnie|szalenie|święcie|tajnie|tęgo|umiarkowanie|uparcie|zawzięcie|zbyt|zdecydowanie</token>
       <token postag="adj:.*|(?:pact|ppas|verb).*" postag_regexp="yes">

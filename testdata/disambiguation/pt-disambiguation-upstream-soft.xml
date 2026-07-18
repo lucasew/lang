@@ -15,6 +15,9 @@
     <disambig action="remove" postag="[NA].*"/>
   </rule>
   <rule id="USUAL" name="usual">
+    <antipattern>
+      <token>bebê</token>
+    </antipattern>
     <pattern>
       <token regexp="yes" inflected="yes">usual|embriagado|escasso|essa|observando|ver|dormir|entender|beber|esse</token>
     </pattern>
@@ -160,6 +163,10 @@
     <disambig action="filter" postag="N.*"/>
   </rule>
   <rule id="INFINITIVE_NOUN" name="saber, comer (infinitive / noun)">
+    <antipattern>
+      <token>de</token>
+      <token regexp="yes">podere?s?|bebê|babá|cartamo|maná|tupi</token>
+    </antipattern>
     <pattern>
       <token regexp="yes">para|de</token>
       <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>

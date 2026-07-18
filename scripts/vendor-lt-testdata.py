@@ -445,15 +445,75 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         toks = pattern_is_simple(pat)
         if not toks:
             continue
-        # soft disambig loader: surface/regexp/postag/inflected/negate/exception
-        # plus Java min/max/skip (PatternRuleMatcher already honors them).
-        simple_toks = []
-        ok = True
-        for t in toks:
-            if isinstance(t, str):
-                simple_toks.append({"text": t})
+        simple_toks = soft_disambig_tokens(toks)
+        if not simple_toks:
+            continue
+        # Java keepByDisambig: simple soft-loadable <antipattern> sequences.
+        antipatterns: list[list[dict]] = []
+        for c in el:
+            if local(c.tag) != "antipattern":
                 continue
-            st = {"text": t.get("text") or ""}
+            ap_toks = pattern_is_simple(c)
+            if not ap_toks:
+                continue
+            ap_simple = soft_disambig_tokens(ap_toks)
+            if ap_simple:
+                antipatterns.append(ap_simple)
+        seen.add(rid)
+        # Preserve ignore_spelling vs immunize: ignore_spelling only affects
+        # the speller (Java), while immunize skips pattern matching entirely.
+        entry = {
+            "id": rid,
+            "name": el.get("name") or rid,
+            "tokens": simple_toks,
+            "action": action,
+            "postag": postag,
+            "source": source,
+        }
+        if add_wds:
+            entry["add_wds"] = add_wds
+        if antipatterns:
+            entry["antipatterns"] = antipatterns
+        out.append(entry)
+    return out
+
+
+def soft_disambig_tokens(toks: list) -> list[dict] | None:
+    """Normalize pattern_is_simple tokens for soft disambig XML/loader."""
+    simple_toks: list[dict] = []
+    for t in toks:
+        if isinstance(t, str):
+            simple_toks.append({"text": t})
+            continue
+        st = {"text": t.get("text") or ""}
+        for k in (
+            "regexp",
+            "case_sensitive",
+            "inflected",
+            "negate",
+            "postag",
+            "postag_regexp",
+            "marker",
+            "spacebefore",
+            "min",
+            "max",
+            "skip",
+        ):
+            if t.get(k):
+                st[k] = t[k]
+        if t.get("exceptions"):
+            st["exceptions"] = t["exceptions"]
+        if not st["text"] and not st.get("postag") and not st.get("regexp"):
+            return None
+        simple_toks.append(st)
+    return simple_toks or None
+
+
+def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "      ") -> None:
+    """Emit soft <token> lines (shared by pattern and antipattern)."""
+    for t in tokens:
+        attrs = []
+        if isinstance(t, dict):
             for k in (
                 "regexp",
                 "case_sensitive",
@@ -468,31 +528,23 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 "skip",
             ):
                 if t.get(k):
-                    st[k] = t[k]
-            # First simple surface exception (pattern_is_simple already filters).
-            if t.get("exceptions"):
-                st["exceptions"] = t["exceptions"]
-            if not st["text"] and not st.get("postag") and not st.get("regexp"):
-                ok = False
-                break
-            simple_toks.append(st)
-        if not ok or not simple_toks:
-            continue
-        seen.add(rid)
-        # Preserve ignore_spelling vs immunize: ignore_spelling only affects
-        # the speller (Java), while immunize skips pattern matching entirely.
-        entry = {
-            "id": rid,
-            "name": el.get("name") or rid,
-            "tokens": simple_toks,
-            "action": action,
-            "postag": postag,
-            "source": source,
-        }
-        if add_wds:
-            entry["add_wds"] = add_wds
-        out.append(entry)
-    return out
+                    attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
+        attr_s = (" " + " ".join(attrs)) if attrs else ""
+        body = xml_esc(t.get("text") if isinstance(t, dict) else t)
+        excs = t.get("exceptions") if isinstance(t, dict) else None
+        if not excs:
+            lines.append(f"{indent}<token{attr_s}>{body}</token>")
+        else:
+            lines.append(f"{indent}<token{attr_s}>{body}")
+            for e in excs:
+                ea = []
+                for k in ("regexp", "case_sensitive", "negate"):
+                    if isinstance(e, dict) and e.get(k):
+                        ea.append(f'{k}="{xml_esc(str(e[k]))}"')
+                eas = (" " + " ".join(ea)) if ea else ""
+                etext = e.get("text") if isinstance(e, dict) else ""
+                lines.append(f"{indent}  <exception{eas}>{xml_esc(etext or '')}</exception>")
+            lines.append(f"{indent}</token>")
 
 
 def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
@@ -503,42 +555,13 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
     ]
     for r in rules:
         lines.append(f'  <rule id="{xml_esc(r["id"])}" name="{xml_esc(r["name"])}">')
+        # Java: antipatterns precede pattern; keepByDisambig suppresses overlapping matches.
+        for ap in r.get("antipatterns") or []:
+            lines.append("    <antipattern>")
+            write_disambig_token_lines(lines, ap)
+            lines.append("    </antipattern>")
         lines.append("    <pattern>")
-        for t in r["tokens"]:
-            attrs = []
-            if isinstance(t, dict):
-                for k in (
-                    "regexp",
-                    "case_sensitive",
-                    "inflected",
-                    "negate",
-                    "postag",
-                    "postag_regexp",
-                    "marker",
-                    "spacebefore",
-                    "min",
-                    "max",
-                    "skip",
-                ):
-                    if t.get(k):
-                        attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
-            attr_s = (" " + " ".join(attrs)) if attrs else ""
-            body = xml_esc(t.get("text") if isinstance(t, dict) else t)
-            excs = t.get("exceptions") if isinstance(t, dict) else None
-            if not excs:
-                lines.append(f"      <token{attr_s}>{body}</token>")
-            else:
-                # Java <exception> under pattern token (soft: first positive only).
-                lines.append(f"      <token{attr_s}>{body}")
-                for e in excs:
-                    ea = []
-                    for k in ("regexp", "case_sensitive", "negate"):
-                        if isinstance(e, dict) and e.get(k):
-                            ea.append(f'{k}="{xml_esc(str(e[k]))}"')
-                    eas = (" " + " ".join(ea)) if ea else ""
-                    etext = e.get("text") if isinstance(e, dict) else ""
-                    lines.append(f"        <exception{eas}>{xml_esc(etext or '')}</exception>")
-                lines.append("      </token>")
+        write_disambig_token_lines(lines, r["tokens"])
         lines.append("    </pattern>")
         act = r.get("action") or "replace"
         if act in ("add", "remove") and r.get("add_wds"):

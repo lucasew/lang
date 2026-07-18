@@ -356,6 +356,15 @@
     <disambig action="replace" postag="RBS"/>
   </rule>
   <rule id="BEST_JJS" name="best as adjective">
+    <antipattern>
+      <token regexp="yes">thee?</token>
+      <token>best</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">thee?</token>
+      <token postag="JJ"></token>
+      <token>best</token>
+    </antipattern>
     <pattern>
       <token>best</token>
       <token postag="IN"></token>
@@ -404,6 +413,11 @@
     <disambig action="replace" postag="VBP"/>
   </rule>
   <rule id="ARE_JJ_VBG" name="are (noun/verb)  + adjective/gerund/preposition -&gt; are (verb)">
+    <antipattern>
+      <token postag="DT"></token>
+      <token>are</token>
+      <token postag="VB[DZ]" postag_regexp="yes"></token>
+    </antipattern>
     <pattern>
       <token marker="yes">are</token>
       <token postag="JJ.*|VB[GN]|IN|DT|RB|PRP\$?" postag_regexp="yes"></token>
@@ -461,6 +475,12 @@
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="KIND_JJ" name="kind (adj) + of -&gt; kind (n)">
+    <antipattern>
+      <token regexp="yes">'s|is|was</token>
+      <token>kind</token>
+      <token>of</token>
+      <token regexp="yes">me|you|him|her|it|us|them|one</token>
+    </antipattern>
     <pattern>
       <token postag="JJ" marker="yes">kind</token>
       <token>of</token>
@@ -640,6 +660,10 @@
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="UPPER_NN_NNP" name="NNP + Uppercase NN -&gt; NNP">
+    <antipattern>
+      <token>Just</token>
+      <token postag="VB"></token>
+    </antipattern>
     <pattern>
       <token regexp="yes" case_sensitive="yes" inflected="yes" postag="NNP">\p{Lu}\p{Ll}+</token>
       <token regexp="yes" case_sensitive="yes" postag="NN" marker="yes">\p{Lu}\p{Ll}+
@@ -665,6 +689,11 @@
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="gazetteer" name="Simple gazetteer/proper name rule">
+    <antipattern>
+      <token postag="MD|TO|PRP" postag_regexp="yes"></token>
+      <token>port</token>
+      <token postag="IN|DT|PRP\$" postag_regexp="yes"></token>
+    </antipattern>
     <pattern>
       <token regexp="yes" case_sensitive="yes" marker="yes">Lake|Fort|Port|Mount</token>
       <token regexp="yes" case_sensitive="yes">\p{Lu}\p{Ll}+</token>
@@ -672,6 +701,10 @@
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="Street" name="street names">
+    <antipattern>
+      <token regexp="yes">I|you|he|she|it|we|they|one</token>
+      <token postag="RB"></token>
+    </antipattern>
     <pattern>
       <token regexp="yes" case_sensitive="yes" marker="yes">\p{Lu}\p{Ll}+</token>
       <token regexp="yes" case_sensitive="yes">Street|Avenue|Boulevard|Crescent|Drive|Lane|Road|Walk|Straße|Allee</token>
@@ -816,6 +849,24 @@
     <disambig action="replace" postag="DT"/>
   </rule>
   <rule id="BE_VBGNN_VBG" name="be + vbg/nn =&gt; vbg">
+    <antipattern>
+      <token postag="NN.*|DT" postag_regexp="yes"></token>
+      <token regexp="yes">is|was|are|were</token>
+      <token postag="JJ">pleasing</token>
+      <token>to</token>
+      <token postag="DT|PRP" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="NN.*" postag_regexp="yes"></token>
+      <token regexp="yes">is|was|are|were</token>
+      <token>wanting</token>
+      <token>in</token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">be</token>
+      <token>deserving</token>
+      <token>of</token>
+    </antipattern>
     <pattern>
       <token inflected="yes">be
         <exception>being</exception>
@@ -1013,6 +1064,11 @@
     <disambig action="filterall"/>
   </rule>
   <rule id="TO_VB_OR_VB" name="to + noun/verb &gt; verb + and/or + noun/verb &gt; verb">
+    <antipattern>
+      <token regexp="yes" postag="CC">and|or</token>
+      <token postag="NN:UN?" postag_regexp="yes"></token>
+      <token postag="IN"></token>
+    </antipattern>
     <pattern>
       <token postag="TO"></token>
       <token postag="VBP?" postag_regexp="yes" marker="yes"></token>
@@ -1976,6 +2032,14 @@
     </disambig>
   </rule>
   <rule id="ORDER_UH" name="UH on 'order'">
+    <antipattern>
+      <token regexp="yes">\p{P}</token>
+      <token>order</token>
+    </antipattern>
+    <antipattern>
+      <token>order</token>
+      <token regexp="yes">\p{P}</token>
+    </antipattern>
     <pattern>
       <token marker="yes">order</token>
     </pattern>
@@ -2198,6 +2262,10 @@
     <disambig action="remove" postag="JJ"/>
   </rule>
   <rule id="PATERNITY_LEAVE_NO_VB" name="'leave' no verb in 'paternity leave'">
+    <antipattern>
+      <token>leave</token>
+      <token>out</token>
+    </antipattern>
     <pattern>
       <token regexp="yes">paternity|parental|sick</token>
       <token marker="yes">leave</token>
@@ -2235,6 +2303,24 @@
     <disambig action="remove" postag="VBG"/>
   </rule>
   <rule id="BUG_NO_VB" name="'bug' no VB">
+    <antipattern>
+      <token postag="MD"></token>
+      <token postag="RB" min="0"></token>
+      <token>bug</token>
+      <token regexp="yes">fix|report</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">I|we|you|they</token>
+      <token postag="RB" min="0"></token>
+      <token>bug</token>
+      <token regexp="yes">fix|report</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">s?he|it</token>
+      <token postag="RB" min="0"></token>
+      <token>bug</token>
+      <token regexp="yes">fixes|reports</token>
+    </antipattern>
     <pattern>
       <token marker="yes">bug</token>
       <token regexp="yes">fix(es)?|reports?</token>
@@ -2272,6 +2358,24 @@
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BY_NO_NOUN" name="'by' no noun">
+    <antipattern>
+      <token>by</token>
+      <token>the</token>
+      <token>by</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">good|the|an?|leg</token>
+      <token>by</token>
+    </antipattern>
+    <antipattern>
+      <token>by</token>
+      <token regexp="yes">letter|workm[ea]n|weeks?</token>
+    </antipattern>
+    <antipattern>
+      <token>by</token>
+      <token min="0">,</token>
+      <token>by</token>
+    </antipattern>
     <pattern>
       <token marker="yes">by</token>
     </pattern>
