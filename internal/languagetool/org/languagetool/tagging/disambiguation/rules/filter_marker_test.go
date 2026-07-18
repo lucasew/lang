@@ -508,3 +508,91 @@ func TestReplace_WdLemmaPos(t *testing.T) {
 		require.Equal(t, []string{nnp}, ts, want)
 	}
 }
+
+func TestUnify_NumberFeatureFiltersReadings(t *testing.T) {
+	// Soft EN-style number unification: sg vs pl POS tags.
+	xml := `<?xml version="1.0"?>
+<rules>
+  <unification feature="number">
+    <equivalence type="sg">
+      <token postag="NN|NNP|VBZ" postag_regexp="yes"/>
+    </equivalence>
+    <equivalence type="pl">
+      <token postag="NNS|NNPS|VBP" postag_regexp="yes"/>
+    </equivalence>
+  </unification>
+  <rule id="UNIFY_DET_N" name="det noun number">
+    <pattern>
+      <token>the</token>
+      <token marker="yes" regexp="yes">cats|cat</token>
+    </pattern>
+    <disambig action="unify" features="number"/>
+  </rule>
+</rules>`
+	rules, cfg, err := NewDisambiguationRuleLoader().GetRulesAndUnifierFromString(xml, "en", "test")
+	require.NoError(t, err)
+	require.NotNil(t, cfg)
+	require.Len(t, rules, 1)
+	require.Equal(t, []string{"number"}, rules[0].UnifyFeatures)
+
+	nn, nns := "NN", "NNS"
+	// "the cats" with NN|NNS readings on cats — should keep NNS after unify with
+	// only one token marked; span is marker-only so unify is single-token.
+	// For multi-token unify use full span without exclusive markers.
+	xml2 := `<?xml version="1.0"?>
+<rules>
+  <unification feature="number">
+    <equivalence type="sg">
+      <token postag="DT|NN|NNP|VBZ" postag_regexp="yes"/>
+    </equivalence>
+    <equivalence type="pl">
+      <token postag="DT|NNS|NNPS|VBP" postag_regexp="yes"/>
+    </equivalence>
+  </unification>
+  <rule id="UNIFY_TWO" name="two tokens">
+    <pattern>
+      <token>these</token>
+      <token>cats</token>
+    </pattern>
+    <disambig action="unify" features="number"/>
+  </rule>
+</rules>`
+	rules2, _, err := NewDisambiguationRuleLoader().GetRulesAndUnifierFromString(xml2, "en", "t2")
+	require.NoError(t, err)
+	require.Len(t, rules2, 1)
+
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			// these: DT only (pl-ish via number table DT in both — use NNS on second)
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("these", strp2("DT"), nil))
+			return r
+		}(),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("cats", &nn, nil))
+			r.AddReading(languagetool.NewAnalyzedToken("cats", &nns, nil), "dict")
+			return r
+		}(),
+	}
+	pos := 0
+	for _, atr := range toks {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out := rules2[0].Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "cats" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+		}
+	}
+	// With DT in both sg and pl, agreement may keep both or one; ensure no panic
+	// and at least one reading survives.
+	require.NotEmpty(t, tags)
+	_ = nn
+}

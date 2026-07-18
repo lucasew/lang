@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
@@ -89,15 +90,23 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 	// Load upstream soft disambig first, then legacy en-soft.xml (hand soft immunize
 	// abbreviations). Prefer both so ignore_spelling vs immunize stay distinct.
 	var allDisambigRules []*disambigrules.DisambiguationPatternRule
+	var sharedUnifier *patterns.UnifierConfiguration
 	loader := disambigrules.NewDisambiguationRuleLoader()
 	for _, p := range softDisambiguationXMLPaths(softDisambigXMLPath) {
 		data, err := os.ReadFile(p)
 		if err != nil {
 			continue
 		}
-		rules, err := loader.GetRulesFromString(string(data), "en", p)
+		rules, cfg, err := loader.GetRulesAndUnifierFromString(string(data), "en", p)
 		if err != nil || len(rules) == 0 {
 			continue
+		}
+		if sharedUnifier == nil {
+			sharedUnifier = cfg
+		} else if cfg != nil {
+			for loc, pt := range cfg.GetEquivalenceTypes() {
+				sharedUnifier.SetEquivalence(loc.Feature, loc.Type, pt)
+			}
 		}
 		// Hand en-soft.xml immunizes ordinary words (kind, …). Drop IMMUNIZE when
 		// that pack is loaded explicitly; keep FILTER/REPLACE for modal soft tests.
@@ -112,10 +121,17 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 			}
 			rules = filtered
 		}
+		for _, r := range rules {
+			if r != nil {
+				r.UnifierConfig = sharedUnifier
+			}
+		}
 		allDisambigRules = append(allDisambigRules, rules...)
 	}
 	if len(allDisambigRules) > 0 {
-		hyb.RulesDisambiguator = disambigrules.NewXmlRuleDisambiguator(allDisambigRules)
+		x := disambigrules.NewXmlRuleDisambiguator(allDisambigRules)
+		x.UnifierConfig = sharedUnifier
+		hyb.RulesDisambiguator = x
 	}
 	var steps []languagetool.SentenceDisambiguator
 	steps = append(steps, hyb)

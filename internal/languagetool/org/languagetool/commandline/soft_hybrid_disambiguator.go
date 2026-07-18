@@ -480,11 +480,18 @@ func getCachedSoftXMLDisambiguator(lang, path string) *disambigrules.XmlRuleDisa
 		return nil
 	}
 	loader := disambigrules.NewDisambiguationRuleLoader()
-	rules, err := loader.GetRulesFromString(string(data), lang, path)
+	rules, cfg, err := loader.GetRulesAndUnifierFromString(string(data), lang, path)
 	if err != nil || len(rules) == 0 {
 		return nil
 	}
 	x := disambigrules.NewXmlRuleDisambiguator(rules)
+	x.UnifierConfig = cfg
+	// Ensure each rule sees the shared equivalence table (soft UNIFY).
+	for _, r := range x.Rules {
+		if r != nil && r.UnifierConfig == nil {
+			r.UnifierConfig = cfg
+		}
+	}
 	softXMLDisambigCache.Store(key, x)
 	return x
 }

@@ -296,7 +296,14 @@ def collapse_or(or_el: ET.Element) -> dict | None:
 
 
 def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
+    toks, _ = pattern_is_simple_ex(pattern)
+    return toks
+
+
+def pattern_is_simple_ex(pattern: ET.Element) -> tuple[list[dict] | None, list[str]]:
+    """Like pattern_is_simple, plus Java <unify><feature id="…"/> features."""
     toks: list[dict] = []
+    features: list[str] = []
     # Java: pattern case_sensitive inherits to tokens/exceptions when not set
     # on the child (PatternRuleHandler / XMLRuleHandler finalizeExceptions).
     pat_cs = (pattern.get("case_sensitive") or "").strip().lower()
@@ -345,6 +352,18 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
                 st = {**st, "marker": "yes"}
             toks.append(st)
             return True
+        if tag == "unify":
+            # Java <unify>: collect features and flatten soft tokens inside.
+            for c in child:
+                ct = local(c.tag)
+                if ct == "feature":
+                    fid = (c.get("id") or "").strip()
+                    if fid and fid not in features:
+                        features.append(fid)
+                    continue
+                if not add_child(c, inside_marker=inside_marker):
+                    return False
+            return True
         return False
 
     for child in pattern:
@@ -352,15 +371,18 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
         if tag == "marker":
             for t in child:
                 if not add_child(t, inside_marker=True):
-                    return None
+                    return None, []
             continue
         if not add_child(child):
-            return None
+            return None, []
     if not toks:
-        return None
+        return None, []
     # Soft path has no POS tagger: pure postag-only patterns (e.g. DT+PRP$)
     # match almost any token sequence and flood false positives. Require at
     # least one surface/regexp token (SENT_START/END alone is not enough).
+    # Exception: unify rules often use postag-only sequences with a tagger;
+    # still require surface for soft unless features present and every token
+    # has postag (DE NP unify with determiner surface usually has text).
     has_surface = False
     for t in toks:
         text = (t.get("text") or "").strip() if isinstance(t, dict) else str(t).strip()
@@ -368,8 +390,8 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
             has_surface = True
             break
     if not has_surface:
-        return None
-    return toks
+        return None, []
+    return toks, features
 
 
 def strip_markers(s: str) -> str:
@@ -431,12 +453,13 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
             # remove/replace may use postag only or <wd> list (Java REPLACE with wd)
             if action in ("remove", "replace") and not add_wds and not postag:
                 continue
-        elif action not in ("filter", "filterall", "immunize", "ignore_spelling"):
+        elif action not in ("filter", "filterall", "immunize", "ignore_spelling", "unify"):
             continue
         if action == "filter" and not postag:
             continue
         if action == "replace" and not postag and not add_wds:
             continue
+        # unify: no postag; features come from <unify><feature> in the pattern
         # filterall uses each pattern token's postag (Java FILTERALL); no disambig postag required
         if action == "filterall" and postag:
             # ignore spurious postag on filterall elements
@@ -447,8 +470,10 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         if list(dis) and action == "replace" and not add_wds:
             # replace with non-wd children (e.g. match) not soft-loaded
             continue
-        toks = pattern_is_simple(pat)
+        toks, unify_feats = pattern_is_simple_ex(pat)
         if not toks:
+            continue
+        if action == "unify" and not unify_feats:
             continue
         simple_toks = soft_disambig_tokens(toks)
         if not simple_toks:
@@ -479,7 +504,40 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
             entry["add_wds"] = add_wds
         if antipatterns:
             entry["antipatterns"] = antipatterns
+        if unify_feats:
+            entry["unify_features"] = unify_feats
         out.append(entry)
+    return out
+
+
+def extract_unifications(root: ET.Element) -> list[dict]:
+    """Extract Java <unification feature="…"><equivalence type="…"> blocks."""
+    out: list[dict] = []
+    for el in root:
+        if local(el.tag) != "unification":
+            continue
+        feat = (el.get("feature") or "").strip()
+        if not feat:
+            continue
+        eqs: list[dict] = []
+        for eq in el:
+            if local(eq.tag) != "equivalence":
+                continue
+            typ = (eq.get("type") or "").strip()
+            if not typ:
+                continue
+            # Soft: first simple token under equivalence (Java one PatternToken).
+            tok_el = None
+            for c in eq:
+                if local(c.tag) == "token":
+                    tok_el = c
+                    break
+            if tok_el is None or not token_is_soft(tok_el):
+                continue
+            st = serialize_token(tok_el)
+            eqs.append({"type": typ, "token": st})
+        if eqs:
+            out.append({"feature": feat, "equivalences": eqs})
     return out
 
 
@@ -552,12 +610,39 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
             lines.append(f"{indent}</token>")
 
 
-def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
+def write_disambig_soft_xml(
+    path: Path,
+    lang: str,
+    rules: list[dict],
+    unifications: list[dict] | None = None,
+) -> None:
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         "<!-- GENERATED by scripts/vendor-lt-testdata.py from upstream disambiguation.xml -->",
         f'<rules lang="{lang}">',
     ]
+    for u in unifications or []:
+        feat = u.get("feature") or ""
+        lines.append(f'  <unification feature="{xml_esc(feat)}">')
+        for eq in u.get("equivalences") or []:
+            lines.append(f'    <equivalence type="{xml_esc(eq.get("type") or "")}">')
+            t = eq.get("token") or {}
+            attrs = []
+            for k in (
+                "regexp",
+                "case_sensitive",
+                "inflected",
+                "negate",
+                "postag",
+                "postag_regexp",
+            ):
+                if t.get(k):
+                    attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
+            attr_s = (" " + " ".join(attrs)) if attrs else ""
+            body = xml_esc(t.get("text") or "")
+            lines.append(f"      <token{attr_s}>{body}</token>")
+            lines.append("    </equivalence>")
+        lines.append("  </unification>")
     for r in rules:
         lines.append(f'  <rule id="{xml_esc(r["id"])}" name="{xml_esc(r["name"])}">')
         # Java: antipatterns precede pattern; keepByDisambig suppresses overlapping matches.
@@ -594,6 +679,14 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
             lines.append(f'    <disambig action="{xml_esc(act)}" postag="{xml_esc(r["postag"])}"/>')
         elif act == "filterall":
             lines.append('    <disambig action="filterall"/>')
+        elif act == "unify":
+            feats = r.get("unify_features") or []
+            if feats:
+                lines.append(
+                    f'    <disambig action="unify" features="{xml_esc(",".join(feats))}"/>'
+                )
+            else:
+                lines.append('    <disambig action="unify"/>')
         else:
             lines.append(f'    <disambig action="{xml_esc(act)}"/>')
         lines.append("  </rule>")
@@ -994,13 +1087,20 @@ def vendor_lang(lang: str) -> dict:
         try:
             droot = parse_rules_xml(dis_src)
             drules = extract_disambig_soft(droot, str(dis_src.relative_to(LT)))
+            dunif = extract_unifications(droot)
         except RuntimeError as e:
             print(f"  WARN disambig skip: {e}")
             drules = []
+            dunif = []
         if drules:
-            write_disambig_soft_xml(OUT / lang / f"{lang}-disambiguation-from-upstream-soft.xml", lang, drules)
+            write_disambig_soft_xml(
+                OUT / lang / f"{lang}-disambiguation-from-upstream-soft.xml",
+                lang,
+                drules,
+                unifications=dunif,
+            )
             install_d = DIS_OUT / f"{lang}-disambiguation-upstream-soft.xml"
-            write_disambig_soft_xml(install_d, lang, drules)
+            write_disambig_soft_xml(install_d, lang, drules, unifications=dunif)
             print(f"  disambig soft: {len(drules)} -> {install_d.relative_to(ROOT)}")
             stats["disambig"] = len(drules)
 

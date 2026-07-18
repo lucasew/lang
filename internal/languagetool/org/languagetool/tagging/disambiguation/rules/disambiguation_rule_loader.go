@@ -21,9 +21,15 @@ func NewDisambiguationRuleLoader() *DisambiguationRuleLoader {
 
 // GetRulesFromReader parses simplified disambiguation rules XML.
 func (l *DisambiguationRuleLoader) GetRulesFromReader(r io.Reader, languageCode, xmlPath string) ([]*DisambiguationPatternRule, error) {
+	rules, _, err := l.GetRulesAndUnifierFromReader(r, languageCode, xmlPath)
+	return rules, err
+}
+
+// GetRulesAndUnifierFromReader parses soft disambig rules plus <unification> tables.
+func (l *DisambiguationRuleLoader) GetRulesAndUnifierFromReader(r io.Reader, languageCode, xmlPath string) ([]*DisambiguationPatternRule, *patterns.UnifierConfiguration, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// Official LT disambiguation.xml uses custom DTD entities.
 	data = patterns.ExpandLTXMLEntities(data)
@@ -31,12 +37,30 @@ func (l *DisambiguationRuleLoader) GetRulesFromReader(r io.Reader, languageCode,
 }
 
 func (l *DisambiguationRuleLoader) GetRulesFromString(xmlStr, languageCode, xmlPath string) ([]*DisambiguationPatternRule, error) {
-	return l.GetRulesFromReader(strings.NewReader(xmlStr), languageCode, xmlPath)
+	rules, _, err := l.GetRulesAndUnifierFromString(xmlStr, languageCode, xmlPath)
+	return rules, err
+}
+
+// GetRulesAndUnifierFromString is the soft-entry loader with UnifierConfiguration.
+func (l *DisambiguationRuleLoader) GetRulesAndUnifierFromString(xmlStr, languageCode, xmlPath string) ([]*DisambiguationPatternRule, *patterns.UnifierConfiguration, error) {
+	return l.GetRulesAndUnifierFromReader(strings.NewReader(xmlStr), languageCode, xmlPath)
 }
 
 type disambigRoot struct {
-	XMLName xml.Name       `xml:"rules"`
-	Rules   []disambigRule `xml:"rule"`
+	XMLName       xml.Name              `xml:"rules"`
+	Unifications  []disambigUnification `xml:"unification"`
+	Rules         []disambigRule        `xml:"rule"`
+}
+
+// disambigUnification ports Java <unification feature="…"> for soft UNIFY.
+type disambigUnification struct {
+	Feature      string                 `xml:"feature,attr"`
+	Equivalences []disambigEquivalence  `xml:"equivalence"`
+}
+
+type disambigEquivalence struct {
+	Type  string        `xml:"type,attr"`
+	Token disambigToken `xml:"token"`
 }
 
 type disambigRule struct {
@@ -80,9 +104,10 @@ type disambigException struct {
 }
 
 type disambigElem struct {
-	Action string      `xml:"action,attr"`
-	Postag string      `xml:"postag,attr"`
-	Wds    []disambigWd `xml:"wd"`
+	Action   string       `xml:"action,attr"`
+	Postag   string       `xml:"postag,attr"`
+	Features string       `xml:"features,attr"` // soft UNIFY: comma-separated feature ids
+	Wds      []disambigWd `xml:"wd"`
 }
 
 // disambigWd ports <wd pos="…" lemma="…"/> under <disambig action="add">.
@@ -92,10 +117,27 @@ type disambigWd struct {
 	Content string `xml:",chardata"`
 }
 
-func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath string) ([]*DisambiguationPatternRule, error) {
+func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath string) ([]*DisambiguationPatternRule, *patterns.UnifierConfiguration, error) {
 	var root disambigRoot
 	if err := xml.Unmarshal(data, &root); err != nil {
-		return nil, fmt.Errorf("parse disambiguation %s: %w", xmlPath, err)
+		return nil, nil, fmt.Errorf("parse disambiguation %s: %w", xmlPath, err)
+	}
+	cfg := patterns.NewUnifierConfiguration()
+	for _, u := range root.Unifications {
+		feat := strings.TrimSpace(u.Feature)
+		if feat == "" {
+			continue
+		}
+		for _, eq := range u.Equivalences {
+			typ := strings.TrimSpace(eq.Type)
+			if typ == "" {
+				continue
+			}
+			pt := disambigTokenFromXML(eq.Token, false)
+			if pt != nil {
+				cfg.SetEquivalence(feat, typ, pt)
+			}
+		}
 	}
 	var out []*DisambiguationPatternRule
 	for _, xr := range root.Rules {
@@ -115,6 +157,15 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 		}
 		// default Java: REPLACE when only postag set
 		rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, nil, action)
+		rule.UnifierConfig = cfg
+		if action == ActionUnify {
+			for _, f := range strings.Split(xr.Disambig.Features, ",") {
+				f = strings.TrimSpace(f)
+				if f != "" {
+					rule.UnifyFeatures = append(rule.UnifyFeatures, f)
+				}
+			}
+		}
 		// Java ADD with <wd pos="PCT"/> etc. (UNKNOWN_PCT, COMMA_POSTAG)
 		if len(xr.Disambig.Wds) > 0 {
 			var readings []*languagetool.AnalyzedToken
@@ -164,7 +215,7 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 		}
 		out = append(out, rule)
 	}
-	return out, nil
+	return out, cfg, nil
 }
 
 func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.PatternToken {

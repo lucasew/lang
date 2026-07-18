@@ -2,6 +2,7 @@ package rules
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
@@ -10,7 +11,8 @@ import (
 // with an injected rule list (XML loading via DisambiguationRuleLoader later).
 type XmlRuleDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Rules []*DisambiguationPatternRule
+	Rules         []*DisambiguationPatternRule
+	UnifierConfig *patterns.UnifierConfiguration
 }
 
 func NewXmlRuleDisambiguator(rules []*DisambiguationPatternRule) *XmlRuleDisambiguator {
@@ -33,6 +35,9 @@ func (d *XmlRuleDisambiguator) DisambiguateWithCancel(sentence *languagetool.Ana
 		}
 		if rule == nil {
 			continue
+		}
+		if rule.UnifierConfig == nil && d.UnifierConfig != nil {
+			rule.UnifierConfig = d.UnifierConfig
 		}
 		sentence = rule.Replace(sentence)
 	}
