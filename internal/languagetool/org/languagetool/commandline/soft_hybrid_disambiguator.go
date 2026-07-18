@@ -115,6 +115,26 @@ func softHybridProfile(lang string) hybridLangProfile {
 	}
 }
 
+// hybridInstanceCache mirrors Java MultiWordChunker.getInstance / hybrid field
+// singletons: rebuild once per (lang, paths), reuse across configureCoreLT calls
+// (miss scans create many JLanguageTools).
+var hybridInstanceCache sync.Map // cacheKey string -> languagetool.SentenceDisambiguator
+
+func softHybridCacheKey(base string, paths SoftHybridPaths) string {
+	gp := paths.SpellingGlobal
+	if gp == "" {
+		gp = discoverSoftSpellingGlobalPath()
+	}
+	return strings.Join([]string{
+		base,
+		paths.Multiwords,
+		paths.SoftDisambigXML,
+		paths.DEMultitokenIgnore,
+		paths.DEMultitokenSuggest,
+		gp,
+	}, "\x00")
+}
+
 // RegisterSoftHybridDisambiguator installs a Java-faithful hybrid disambiguator on lt
 // for the given language base code (fr, pl, de, …). EN soft path prefers
 // rules/en.RegisterSoftEnglishDisambiguator (adds spelling ignore lists).
@@ -127,36 +147,40 @@ func RegisterSoftHybridDisambiguator(lt *languagetool.JLanguageTool, lang string
 	if base == "" {
 		return false
 	}
+	key := softHybridCacheKey(base, paths)
+	if v, ok := hybridInstanceCache.Load(key); ok {
+		if d, ok := v.(languagetool.SentenceDisambiguator); ok && d != nil {
+			lt.Disambiguator = d
+			return true
+		}
+	}
+	chain, ok := buildSoftHybridDisambiguator(base, paths)
+	if !ok || chain == nil {
+		return false
+	}
+	hybridInstanceCache.Store(key, chain)
+	lt.Disambiguator = chain
+	return true
+}
+
+// buildSoftHybridDisambiguator constructs the hybrid once (Java HybridDisambiguator fields).
+func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languagetool.SentenceDisambiguator, bool) {
 	prof := softHybridProfile(base)
 
 	var global, multi, deIgnore, deSuggest *disambiguation.MultiWordChunker
 	var xmlRules *disambigrules.XmlRuleDisambiguator
 
 	if p := paths.SoftDisambigXML; p != "" {
-		if data, err := os.ReadFile(p); err == nil {
-			loader := disambigrules.NewDisambiguationRuleLoader()
-			if rules, err := loader.GetRulesFromString(string(data), base, p); err == nil && len(rules) > 0 {
-				xmlRules = disambigrules.NewXmlRuleDisambiguator(rules)
-			}
-		}
+		xmlRules = getCachedSoftXMLDisambiguator(base, p)
 	}
 
 	if p := paths.Multiwords; p != "" && prof.order != "de" {
-		if lines, err := loadCachedMultiWordFile(p); err == nil && len(lines) > 0 {
-			settings := disambiguation.MultiWordChunkerSettings{
-				DefaultTag:            prof.mwDefaultTag,
-				AllowFirstCapitalized: prof.mwAllowFirst,
-				AllowAllUppercase:     prof.mwAllowAllUpper,
-				AllowTitlecase:        prof.mwAllowTitle,
-			}
-			multi = disambiguation.NewMultiWordChunker(lines, settings)
-			if prof.mwRemovePrev {
-				multi.SetRemovePreviousTags(true)
-			}
-			if prof.mwIgnoreSpell {
-				multi.SetIgnoreSpelling(true)
-			}
-		}
+		multi = getCachedMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			DefaultTag:            prof.mwDefaultTag,
+			AllowFirstCapitalized: prof.mwAllowFirst,
+			AllowAllUppercase:     prof.mwAllowAllUpper,
+			AllowTitlecase:        prof.mwAllowTitle,
+		}, prof.mwRemovePrev, prof.mwIgnoreSpell, false)
 	}
 
 	if prof.useGlobal {
@@ -165,42 +189,31 @@ func RegisterSoftHybridDisambiguator(lt *languagetool.JLanguageTool, lang string
 			gp = discoverSoftSpellingGlobalPath()
 		}
 		if gp != "" {
-			if lines, err := loadPhraseOnlyMultiTokenFile(gp); err == nil && len(lines) > 0 {
-				global = disambiguation.NewMultiWordChunker(lines, disambiguation.MultiWordChunkerSettings{
-					DefaultTag:            prof.gDefaultTag,
-					AllowFirstCapitalized: prof.gAllowFirst,
-					AllowAllUppercase:     prof.gAllowAllUpper,
-					AllowTitlecase:        prof.gAllowTitle,
-				})
-				if prof.gIgnoreSpell {
-					global.SetIgnoreSpelling(true)
-				}
-			}
+			global = getCachedMultiWordChunker(gp, disambiguation.MultiWordChunkerSettings{
+				DefaultTag:            prof.gDefaultTag,
+				AllowFirstCapitalized: prof.gAllowFirst,
+				AllowAllUppercase:     prof.gAllowAllUpper,
+				AllowTitlecase:        prof.gAllowTitle,
+			}, false, prof.gIgnoreSpell, true)
 		}
 	}
 
 	if prof.order == "de" {
 		if p := paths.DEMultitokenIgnore; p != "" {
-			if lines, err := loadCachedMultiWordFile(p); err == nil && len(lines) > 0 {
-				deIgnore = disambiguation.NewMultiWordChunker(lines, disambiguation.MultiWordChunkerSettings{
-					DefaultTag:            disambiguation.TagForNotAddingTags,
-					AllowFirstCapitalized: true,
-					AllowAllUppercase:     true,
-					AllowTitlecase:        false,
-				})
-				deIgnore.SetIgnoreSpelling(true)
-			}
+			deIgnore = getCachedMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+				DefaultTag:            disambiguation.TagForNotAddingTags,
+				AllowFirstCapitalized: true,
+				AllowAllUppercase:     true,
+				AllowTitlecase:        false,
+			}, false, true, false)
 		}
 		if p := paths.DEMultitokenSuggest; p != "" {
-			if lines, err := loadCachedMultiWordFile(p); err == nil && len(lines) > 0 {
-				deSuggest = disambiguation.NewMultiWordChunker(lines, disambiguation.MultiWordChunkerSettings{
-					DefaultTag:            disambiguation.TagForNotAddingTags,
-					AllowFirstCapitalized: true,
-					AllowAllUppercase:     true,
-					AllowTitlecase:        false,
-				})
-				deSuggest.SetIgnoreSpelling(true)
-			}
+			deSuggest = getCachedMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+				DefaultTag:            disambiguation.TagForNotAddingTags,
+				AllowFirstCapitalized: true,
+				AllowAllUppercase:     true,
+				AllowTitlecase:        false,
+			}, false, true, false)
 		}
 	}
 
@@ -242,14 +255,107 @@ func RegisterSoftHybridDisambiguator(lt *languagetool.JLanguageTool, lang string
 	}
 
 	if len(steps) == 0 {
-		return false
+		return nil, false
 	}
 	if len(steps) == 1 {
-		lt.Disambiguator = steps[0]
-		return true
+		return steps[0], true
 	}
-	lt.Disambiguator = softHybridChain(steps)
-	return true
+	return softHybridChain(steps), true
+}
+
+// multiWordChunkerInstanceCache: path+settings → *MultiWordChunker (Java getInstance).
+var multiWordChunkerInstanceCache sync.Map
+
+type multiWordChunkerCacheKey struct {
+	path         string
+	defaultTag   string
+	allowFirst   bool
+	allowAllUp   bool
+	allowTitle   bool
+	removePrev   bool
+	ignoreSpell  bool
+	phraseOnly   bool // spelling_global: multi-token phrases only
+}
+
+func getCachedMultiWordChunker(
+	path string,
+	settings disambiguation.MultiWordChunkerSettings,
+	removePrev, ignoreSpell, phraseOnly bool,
+) *disambiguation.MultiWordChunker {
+	if path == "" {
+		return nil
+	}
+	key := multiWordChunkerCacheKey{
+		path: path, defaultTag: settings.DefaultTag,
+		allowFirst: settings.AllowFirstCapitalized, allowAllUp: settings.AllowAllUppercase,
+		allowTitle: settings.AllowTitlecase, removePrev: removePrev, ignoreSpell: ignoreSpell,
+		phraseOnly: phraseOnly,
+	}
+	if v, ok := multiWordChunkerInstanceCache.Load(key); ok {
+		if c, ok := v.(*disambiguation.MultiWordChunker); ok {
+			return c
+		}
+	}
+	var lines []string
+	var err error
+	if phraseOnly {
+		lines, err = loadPhraseOnlyMultiTokenFile(path)
+	} else {
+		lines, err = loadCachedMultiWordFile(path)
+	}
+	if err != nil || len(lines) == 0 {
+		return nil
+	}
+	c := disambiguation.NewMultiWordChunker(lines, settings)
+	if removePrev {
+		c.SetRemovePreviousTags(true)
+	}
+	if ignoreSpell {
+		c.SetIgnoreSpelling(true)
+	}
+	// Warm maps once (Java lazyInit on first use); share read-only after this.
+	warmMultiWordChunker(c)
+	multiWordChunkerInstanceCache.Store(key, c)
+	return c
+}
+
+func warmMultiWordChunker(c *disambiguation.MultiWordChunker) {
+	if c == nil {
+		return
+	}
+	// Disambiguate a trivial sentence so fillMaps runs under the chunker's mutex.
+	tag := languagetool.SentenceStartTagName
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", &tag, nil)),
+	}
+	_ = c.Disambiguate(languagetool.NewAnalyzedSentence(toks))
+}
+
+// softXMLDisambigCache: lang\0path → *XmlRuleDisambiguator
+var softXMLDisambigCache sync.Map
+
+func getCachedSoftXMLDisambiguator(lang, path string) *disambigrules.XmlRuleDisambiguator {
+	if path == "" {
+		return nil
+	}
+	key := lang + "\x00" + path
+	if v, ok := softXMLDisambigCache.Load(key); ok {
+		if x, ok := v.(*disambigrules.XmlRuleDisambiguator); ok {
+			return x
+		}
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	loader := disambigrules.NewDisambiguationRuleLoader()
+	rules, err := loader.GetRulesFromString(string(data), lang, path)
+	if err != nil || len(rules) == 0 {
+		return nil
+	}
+	x := disambigrules.NewXmlRuleDisambiguator(rules)
+	softXMLDisambigCache.Store(key, x)
+	return x
 }
 
 // softHybridChain applies steps in order (Java nesting: innermost first).

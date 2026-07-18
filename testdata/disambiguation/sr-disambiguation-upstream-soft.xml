@@ -3,7 +3,7 @@
 <rules lang="sr">
   <rule id="RIMSKI_BROJEVI" name="RIMSKI_BROJEVI">
     <pattern>
-      <token regexp="yes">(?:M*(?:D?C{0,3}|C[DM])(?:L?X{0,3}|X[LC])(?:V?I{0,3}|I[VX]))</token>
+      <token regexp="yes" case_sensitive="yes">(?:M*(?:D?C{0,3}|C[DM])(?:L?X{0,3}|X[LC])(?:V?I{0,3}|I[VX]))</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

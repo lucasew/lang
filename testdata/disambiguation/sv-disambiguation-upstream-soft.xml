@@ -17,22 +17,22 @@
   </rule>
   <rule id="SAMBAL_OELEK" name="Sambal Oelek">
     <pattern>
-      <token>Sambal</token>
-      <token>Oelek</token>
+      <token case_sensitive="yes">Sambal</token>
+      <token case_sensitive="yes">Oelek</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="PULLED_PORK" name="Pulled Pork">
     <pattern>
-      <token>Pulled</token>
-      <token>Pork</token>
+      <token case_sensitive="yes">Pulled</token>
+      <token case_sensitive="yes">Pork</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="EARL_GREY" name="Earl Grey">
     <pattern>
-      <token>Earl</token>
-      <token>Grey</token>
+      <token case_sensitive="yes">Earl</token>
+      <token case_sensitive="yes">Grey</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -45,8 +45,8 @@
   </rule>
   <rule id="LAS_VEGAS" name="Las Vegas">
     <pattern>
-      <token>Las</token>
-      <token regexp="yes">Ramblas|Vegas</token>
+      <token case_sensitive="yes">Las</token>
+      <token regexp="yes" case_sensitive="yes">Ramblas|Vegas</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -60,17 +60,17 @@
   </rule>
   <rule id="WOW" name="World of Warcraft">
     <pattern>
-      <token>World</token>
-      <token>of</token>
-      <token>Warcraft</token>
+      <token case_sensitive="yes">World</token>
+      <token case_sensitive="yes">of</token>
+      <token case_sensitive="yes">Warcraft</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WTC" name="World Trade Center">
     <pattern>
-      <token>World</token>
-      <token>Trade</token>
-      <token regexp="yes">Centers?</token>
+      <token case_sensitive="yes">World</token>
+      <token case_sensitive="yes">Trade</token>
+      <token regexp="yes" case_sensitive="yes">Centers?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -98,8 +98,8 @@
   </rule>
   <rule id="LA_PAZ" name="La Paz">
     <pattern>
-      <token>La</token>
-      <token regexp="yes">Paz|[Tt]raviata|Sapienza|Spezia|Rambla</token>
+      <token case_sensitive="yes">La</token>
+      <token regexp="yes" case_sensitive="yes">Paz|[Tt]raviata|Sapienza|Spezia|Rambla</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -112,8 +112,8 @@
   </rule>
   <rule id="SAN_BERNARDINO" name="San Bernardino">
     <pattern>
-      <token>San</token>
-      <token regexp="yes">Bernardino|Gottardo|Remo</token>
+      <token case_sensitive="yes">San</token>
+      <token regexp="yes" case_sensitive="yes">Bernardino|Gottardo|Remo</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -162,8 +162,8 @@
   </rule>
   <rule id="DELIRIUM_TREMENS" name="Delirium tremens">
     <pattern>
-      <token>Delirium</token>
-      <token>tremens</token>
+      <token case_sensitive="yes">Delirium</token>
+      <token case_sensitive="yes">tremens</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

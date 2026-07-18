@@ -4,21 +4,21 @@
   <rule id="D_O" name="d’o">
     <pattern>
       <token>d’</token>
-      <token>o</token>
+      <token marker="yes">o</token>
     </pattern>
     <disambig action="replace" postag="R e p 3 obj"/>
   </rule>
   <rule id="D_E" name="d’e">
     <pattern>
       <token>d’</token>
-      <token>e</token>
+      <token marker="yes">e</token>
     </pattern>
     <disambig action="replace" postag="R m s 1 obj"/>
   </rule>
   <rule id="RA_L" name="particule ra">
     <pattern>
       <token postag="SENT_START"></token>
-      <token>ra</token>
+      <token marker="yes">ra</token>
       <token postag="V (futu|conf) .*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="L r"/>
@@ -27,7 +27,7 @@
     <pattern>
       <token postag="V inf"></token>
       <token>a</token>
-      <token>ra</token>
+      <token marker="yes">ra</token>
     </pattern>
     <disambig action="replace" postag="V pres 3 s"/>
   </rule>
@@ -39,7 +39,7 @@
   </rule>
   <rule id="PAOT_MAT" name="paot mat">
     <pattern>
-      <token>paot</token>
+      <token marker="yes">paot</token>
       <token>mat</token>
     </pattern>
     <disambig action="filter" postag="J"/>
@@ -48,7 +48,7 @@
     <pattern>
       <token>ken</token>
       <token>ar</token>
-      <token>c’hentañ</token>
+      <token marker="yes">c’hentañ</token>
     </pattern>
     <disambig action="filter" postag="J.*"/>
   </rule>
@@ -57,13 +57,13 @@
       <token>a</token>
       <token>unan</token>
       <token>da</token>
-      <token>unan</token>
+      <token marker="yes">unan</token>
     </pattern>
     <disambig action="replace" postag="X A_UNAN_DA_UNAN"/>
   </rule>
   <rule id="AZEN_GORNEK" name="azen gornek">
     <pattern>
-      <token>azen</token>
+      <token marker="yes">azen</token>
       <token>gornek</token>
     </pattern>
     <disambig action="replace" postag="N f s"/>
@@ -72,14 +72,14 @@
     <pattern>
       <token postag="V inf"></token>
       <token>a</token>
-      <token>rez</token>
+      <token marker="yes">rez</token>
     </pattern>
     <disambig action="replace" postag="V pres 2 s"/>
   </rule>
   <rule id="OBER_VAN" name="ober van">
     <pattern>
       <token inflected="yes">ober</token>
-      <token>van</token>
+      <token marker="yes">van</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>

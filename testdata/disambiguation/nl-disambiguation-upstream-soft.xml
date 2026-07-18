@@ -13,6 +13,14 @@
     </pattern>
     <disambig action="replace" postag="ZNW:EKV:DE_"/>
   </rule>
+  <rule id="SAINT" name="Ignore saints">
+    <pattern>
+      <token case_sensitive="yes">St</token>
+      <token spacebefore="no">.</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">-[A-Z][a-z].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="RANGES2" name="Ignore ranges">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[0-9]+(ste|e)[-][0-9]+(ste|e)</token>
@@ -51,13 +59,13 @@
   </rule>
   <rule id="IGNORE_SPELLER_ROMAN_NUMBERS" name="ignore roman numbers">
     <pattern>
-      <token regexp="yes">(?:M*(?:D?C{0,3}|C[DM])(?:L?X{0,3}|X[LC])(?:V?I{0,3}|I[VX]))</token>
+      <token regexp="yes" case_sensitive="yes">(?:M*(?:D?C{0,3}|C[DM])(?:L?X{0,3}|X[LC])(?:V?I{0,3}|I[VX]))</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLER_ROMAN_NUMBERS_LC" name="ignore roman numbers">
     <pattern>
-      <token regexp="yes">(?:m*(?:d?c{0,3}|c[dm])(?:l?x{0,3}|x[lc])(?:v?i{0,3}|i[vx]))</token>
+      <token regexp="yes" case_sensitive="yes">(?:m*(?:d?c{0,3}|c[dm])(?:l?x{0,3}|x[lc])(?:v?i{0,3}|i[vx]))</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -87,7 +95,7 @@
   </rule>
   <rule id="SPELLER_NAME_VAN" name="ignore female names">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">[A-Z].*-[Vv]an</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z].*-[Vv]an</token>
       <token postag="ENM:PER:LST.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -118,7 +126,7 @@
   </rule>
   <rule id="SPELLER_FC_CLUB" name="ignore clubs">
     <pattern>
-      <token>FC</token>
+      <token marker="yes">FC</token>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -139,8 +147,16 @@
   </rule>
   <rule id="SPELLER_NEDERLANDSCHE" name="ignore parts of proper names">
     <pattern>
-      <token>Nederlandsche</token>
+      <token marker="yes">Nederlandsche</token>
       <token case_sensitive="yes">Bank</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SPELLER_DOMAINS_a" name="ignore parts of domains">
+    <pattern>
+      <token regexp="yes" marker="yes">[A-Za-z0-9]{3,50}</token>
+      <token spacebefore="no">.</token>
+      <token regexp="yes" spacebefore="no">com|nl|be|de</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1035,15 +1051,172 @@
   </rule>
   <rule id="XX_ROAD" name="XX_ROAD">
     <pattern>
-      <token regexp="yes">[A-Z].*</token>
-      <token regexp="yes">Road|Street|Avenue|Boulevard|Gardens|Square|Crescent</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z].*</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Road|Street|Avenue|Boulevard|Gardens|Square|Crescent</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="HAAKJES_IN_WOORD_1" name="HAAKJES_IN_WOORD_1">
+    <pattern>
+      <token case_sensitive="yes" marker="yes" spacebefore="yes">(</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">.*[a-zA-Z].*</token>
+      <token case_sensitive="yes" marker="yes" spacebefore="no">)</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">.*[a-zA-Z].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="HAAKJES_IN_WOORD_2" name="HAAKJES_IN_WOORD_2">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="yes">.*[a-zA-Z].*</token>
+      <token case_sensitive="yes" marker="yes" spacebefore="no">(</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">.*[a-zA-Z].*</token>
+      <token case_sensitive="yes" marker="yes" spacebefore="no">)</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">.*[a-zA-Z].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="HAAKJES_IN_WOORD_3" name="HAAKJES_IN_WOORD_3">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="yes">.*[a-zA-Z].*</token>
+      <token case_sensitive="yes" marker="yes" spacebefore="no">(</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">.*[a-zA-Z].*</token>
+      <token case_sensitive="yes" marker="yes" spacebefore="no">)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="TAG_NUMBER_1EKV" name="GUESS_number">
+    <pattern>
+      <token>1</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:001:EKV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_2" name="GUESS_number_2">
+    <pattern>
+      <token regexp="yes">[0-9]{2}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:002:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_3" name="GUESS_number_3">
+    <pattern>
+      <token regexp="yes">[0-9]{3}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:003:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_4" name="GUESS_number_4">
+    <pattern>
+      <token regexp="yes">[0-9]{4}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:004:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_5" name="GUESS_number_5">
+    <pattern>
+      <token regexp="yes">[0-9]{5}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:005:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_6" name="GUESS_number_6">
+    <pattern>
+      <token regexp="yes">[0-9]{6}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:006:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_7" name="GUESS_number_7">
+    <pattern>
+      <token regexp="yes">[0-9]{7}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:007:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_8" name="GUESS_number_8">
+    <pattern>
+      <token regexp="yes">[0-9]{8}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:008:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_9" name="GUESS_number_9">
+    <pattern>
+      <token regexp="yes">[0-9]{9}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:009:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_10" name="GUESS_number_10">
+    <pattern>
+      <token regexp="yes">[0-9]{10}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:010:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_11" name="GUESS_number_11">
+    <pattern>
+      <token regexp="yes">[0-9]{11}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:011:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="TAG_NUMBERS_12" name="GUESS_number_12">
+    <pattern>
+      <token regexp="yes">[0-9]{12}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:012:MRV"/>
+    </disambig>
+  </rule>
+  <rule id="ONS_BEKEND" name="terugcorrigeren">
+    <pattern>
+      <token>een</token>
+      <token marker="yes">ons</token>
+      <token postag="WKW:VTD:.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="VNW:PER:1EP:MRV:PSF"/>
+    </disambig>
+  </rule>
+  <rule id="WEES_01" name="WEES_01">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">wees</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="WKW:TGW:1EP"/>
+    </disambig>
   </rule>
   <rule id="IGNORE_BEI" name="IGNORE_BEI">
     <pattern>
       <token>bei</token>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="TIMES" name="IGNORE_TIME">
+    <pattern>
+      <token regexp="yes">[0-9]{2}</token>
+      <token regexp="yes" spacebefore="no">[:.]</token>
+      <token regexp="yes" spacebefore="no">[0-9]{2}[uh]</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="TIMES2" name="IGNORE_TIME2">
+    <pattern>
+      <token regexp="yes" spacebefore="yes">[0-9]{2}[uh]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1075,7 +1248,7 @@
   </rule>
   <rule id="ENGELS1" name="ENGELS1">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">World|Champions</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">World|Champions</token>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -1083,7 +1256,7 @@
   <rule id="ENGELS2" name="ENGELS2">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
-      <token case_sensitive="yes">World</token>
+      <token case_sensitive="yes" marker="yes">World</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1110,51 +1283,51 @@
   <rule id="MR_X" name="MR_X">
     <pattern>
       <token regexp="yes">meneer|mevrouw|heer|jongeheer|juffrouw|mejuffrouw</token>
-      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z][a-z].*</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">[A-Z][a-z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="X-VOUDIG" name="X-VOUDIG">
     <pattern>
-      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[0-9]+[-]voudige?</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">[0-9]+[-]voudige?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PARA_NUM" name="PARA_NUM">
     <pattern>
-      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[1-9][0-9]?[a-zA-Z]</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">[1-9][0-9]?[a-zA-Z]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NATIONS_LEAGUE" name="NATIONS_LEAGUE">
     <pattern>
-      <token regexp="yes">Nations|Champions</token>
-      <token regexp="yes">League.*</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Nations|Champions</token>
+      <token regexp="yes" case_sensitive="yes">League.*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="XX_IG" name="XX_IG">
     <pattern>
-      <token regexp="yes">[0-9]+[-](voud|blad|jar|kopp|vorm|ur|cijfer|talig|del)ige?</token>
+      <token regexp="yes" case_sensitive="yes">[0-9]+[-](voud|blad|jar|kopp|vorm|ur|cijfer|talig|del)ige?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DU" name="DU">
     <pattern>
-      <token regexp="yes">d[uai]</token>
-      <token regexp="yes">[A-Z].*</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">d[uai]</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TEMPERATURE" name="TEMPERATURE">
     <pattern>
-      <token regexp="yes">[-]?[0-9]+°[CKF]</token>
+      <token regexp="yes" case_sensitive="yes">[-]?[0-9]+°[CKF]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ATP_NUM" name="ATP_NUM">
     <pattern>
-      <token regexp="yes">(ATP|WTA|WS|PDC)[-][0-9]+</token>
+      <token regexp="yes" case_sensitive="yes">(ATP|WTA|WS|PDC)[-][0-9]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1175,5 +1348,40 @@
       <token regexp="yes">\d+[a-z]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="NEW_000d" name="-">
+    <pattern>
+      <token postag="BNW:VGR.*" postag_regexp="yes"></token>
+      <token marker="yes">dan</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="CMP"/>
+    </disambig>
+  </rule>
+  <rule id="NEW_000e" name="-">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" marker="yes">en|maar|of|[&quot;“`'‘’]|\.|[-—–*•●·−]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="START"/>
+    </disambig>
+  </rule>
+  <rule id="NEW_139" name="-">
+    <pattern>
+      <token regexp="yes">de|het</token>
+      <token regexp="yes" marker="yes">mijne|hare|zijne|uwe</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ZNW:EKV"/>
+    </disambig>
+  </rule>
+  <rule id="NEW_140" name="-">
+    <pattern>
+      <token regexp="yes">[0-9]+-[0-9]+-(zege|nederlaag|overwinning|eindstand|voorsprong|tussenstand|ruststand|thuiszege|achterstand|stand|afstraffing|thuisnederlaag|winst|uitzege|verliespartij|remise|recordzege|monsterzege|afgang)</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ZNW:EKV:DE_"/>
+    </disambig>
   </rule>
 </rules>

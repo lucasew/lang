@@ -3,133 +3,183 @@
 <rules lang="ga">
   <rule id="de_Valera" name="de Valera">
     <pattern>
-      <token>de</token>
+      <token marker="yes">de</token>
       <token regexp="yes">Valera|Brún|hÍde|Niro|Róiste|Cléir|Spáinn|Bhaldraithe</token>
     </pattern>
     <disambig action="replace" postag="Part:Pat"/>
   </rule>
   <rule id="leath_uair" name="leath uair">
     <pattern>
-      <token>leath</token>
+      <token marker="yes">leath</token>
       <token postag="Noun:.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="Det:Qty"/>
   </rule>
+  <rule id="NUM_DIG_ORD" name="6ú">
+    <pattern>
+      <token regexp="yes" marker="yes">[1-9][0-9]*ú</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="Num:Dig:Ord"/>
+    </disambig>
+  </rule>
+  <rule id="NUM_DIG_ORD_OBS" name="6adh">
+    <pattern>
+      <token regexp="yes" marker="yes">[1-9][0-9]*adh</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="Num:Dig:Ord"/>
+    </disambig>
+  </rule>
+  <rule id="DAOIS" name="d'aois">
+    <pattern>
+      <token marker="yes">d</token>
+      <token regexp="yes">['`’]</token>
+      <token regexp="yes">aois|airgead</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="Prep:Simp" lemma="de"/>
+    </disambig>
+  </rule>
   <rule id="NI_RAIBH" name="ní raibh - raibh is a verb">
     <pattern>
       <token postag="(?:C[MUC]:)?Part:Vb.*" postag_regexp="yes"></token>
-      <token postag="(?:C[MUC]:)?Verb:.*" postag_regexp="yes">raibh</token>
+      <token postag="(?:C[MUC]:)?Verb:.*" postag_regexp="yes" marker="yes">raibh</token>
     </pattern>
     <disambig action="filter" postag="(?:C[MUC]:)?Verb:.*"/>
   </rule>
   <rule id="I_BHFUIL" name="i bhfuil">
     <pattern>
       <token postag="Prep:Simp">i</token>
-      <token postag="Noun:Fem:Com:Sg:Ecl">bhfuil</token>
+      <token postag="Noun:Fem:Com:Sg:Ecl" marker="yes">bhfuil</token>
     </pattern>
     <disambig action="filter" postag="Noun:Fem:Com:Sg:Ecl"/>
   </rule>
   <rule id="START_BHI" name="Bhí">
     <pattern>
       <token postag="SENT_START"></token>
-      <token>bhí</token>
+      <token marker="yes">bhí</token>
     </pattern>
     <disambig action="filter" postag="Verb:VI:PastInd:Len"/>
   </rule>
   <rule id="AR_AR" name="ar ar">
     <pattern>
-      <token>ar</token>
+      <token marker="yes">ar</token>
       <token>ar</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="CIAROG_CIAROG" name="ciaróg ciaróg">
     <pattern>
-      <token>ciaróg</token>
+      <token marker="yes">ciaróg</token>
       <token>ciaróg</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="DEO_DEO" name="deo deo">
     <pattern>
-      <token>deo</token>
+      <token marker="yes">deo</token>
       <token>deo</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="DO_DO" name="do do">
     <pattern>
-      <token>do</token>
+      <token marker="yes">do</token>
       <token>do</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="E_E" name="é é">
     <pattern>
-      <token>é</token>
+      <token marker="yes">é</token>
       <token>é</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="FADA_FADA" name="fada fada">
     <pattern>
-      <token>fada</token>
+      <token marker="yes">fada</token>
       <token>fada</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="FADO_FADO" name="fadó fadó">
     <pattern>
-      <token>fadó</token>
+      <token marker="yes">fadó</token>
       <token>fadó</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="LEOR_LEOR" name="leor leor">
     <pattern>
-      <token>leor</token>
+      <token marker="yes">leor</token>
       <token>leor</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="ME_ME" name="mé mé">
     <pattern>
-      <token>mé</token>
+      <token marker="yes">mé</token>
       <token>mé</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="MILLIUN_MILLIUN" name="milliún milliún">
     <pattern>
-      <token>milliún</token>
+      <token marker="yes">milliún</token>
       <token>milliún</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="LATE_LATE" name="Late Late">
     <pattern>
-      <token>Late</token>
-      <token>Late</token>
+      <token case_sensitive="yes" marker="yes">Late</token>
+      <token case_sensitive="yes">Late</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="MOR_MOR" name="mór mór">
     <pattern>
-      <token>mór</token>
+      <token marker="yes">mór</token>
       <token>mór</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="SIN_SIN" name="sin sin">
     <pattern>
+      <token marker="yes">sin</token>
       <token>sin</token>
-      <token>sin</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="T_HYPHEN" name="t-">
+    <pattern>
+      <token marker="yes">t</token>
+      <token spacebefore="yes">-</token>
+      <token regexp="yes" spacebefore="no">[aeiouáéíóúsl].*</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="H_HYPHEN" name="h-">
+    <pattern>
+      <token marker="yes">h</token>
+      <token spacebefore="yes">-</token>
+      <token regexp="yes" spacebefore="no">[aeiouáéíóú].*</token>
+    </pattern>
+    <disambig action="immunize"/>
+  </rule>
+  <rule id="N_HYPHEN" name="n-">
+    <pattern>
+      <token marker="yes">n</token>
+      <token spacebefore="yes">-</token>
+      <token regexp="yes" spacebefore="no">[aeiouáéíóú].*</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="ARGOS_LTD" name="Argos Ltd">
     <pattern>
-      <token>Argos</token>
+      <token marker="yes">Argos</token>
       <token>Ltd</token>
     </pattern>
     <disambig action="immunize"/>

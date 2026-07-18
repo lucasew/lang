@@ -11,13 +11,13 @@
   <rule id="TAG_AS_NOUN" name="TAG AS NOUN">
     <pattern>
       <token regexp="yes">ការ|ភាព|សេចក្ដី</token>
-      <token postag="VB|JJ|RB" postag_regexp="yes"></token>
+      <token postag="VB|JJ|RB" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
   <rule id="TAG_AS_NOUN_END" name="TAG AS NOUN END">
     <pattern>
-      <token postag="VB|JJ|RB" postag_regexp="yes"></token>
+      <token postag="VB|JJ|RB" postag_regexp="yes" marker="yes"></token>
       <token regexp="yes">ធម៌|និយម|ករ</token>
     </pattern>
     <disambig action="replace" postag="NN"/>
@@ -25,7 +25,7 @@
   <rule id="USAGE_ALL" name="USAGE of អស់">
     <pattern>
       <token postag="PRO"></token>
-      <token>អស់</token>
+      <token marker="yes">អស់</token>
       <token postag="NN"></token>
     </pattern>
     <disambig action="replace" postag="RB"/>
@@ -33,14 +33,14 @@
   <rule id="DOWY_SA" name="CONJUNCTION ដោយសារ">
     <pattern>
       <token>ដោយ</token>
-      <token>សារ</token>
+      <token marker="yes">សារ</token>
     </pattern>
     <disambig action="replace" postag="CC"/>
   </rule>
   <rule id="TIME_AS_ADJ" name="ពេល as Adjective">
     <pattern>
       <token postag="JJ"></token>
-      <token>ពេល</token>
+      <token marker="yes">ពេល</token>
       <token postag="NN|VB|PRO" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="JJ"/>
@@ -49,14 +49,14 @@
     <pattern>
       <token>ជា</token>
       <token>អ្នក</token>
-      <token postag="VB|NN|JJ" postag_regexp="yes"></token>
+      <token postag="VB|NN|JJ" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
   <rule id="TOBE_YOU_as_Noun2" name="ជា + អ្នក + JJ NN JJ2">
     <pattern>
       <token>ជា</token>
-      <token>អ្នក</token>
+      <token marker="yes">អ្នក</token>
       <token postag="VB|NN|JJ" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN"/>
@@ -65,14 +65,14 @@
     <pattern>
       <token postag="CLS"></token>
       <token>អ្នក</token>
-      <token postag="VB|NN|JJ" postag_regexp="yes"></token>
+      <token postag="VB|NN|JJ" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
   <rule id="CLS_YOU_as_Noun2" name="CLS + អ្នក + VB NN JJ2">
     <pattern>
       <token postag="CLS"></token>
-      <token>អ្នក</token>
+      <token marker="yes">អ្នក</token>
       <token postag="VB|NN|JJ" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN"/>
@@ -81,14 +81,14 @@
     <pattern>
       <token postag="VB"></token>
       <token postag="PRO"></token>
-      <token>ផ្ទាល់</token>
+      <token marker="yes">ផ្ទាល់</token>
     </pattern>
     <disambig action="replace" postag="PRO"/>
   </rule>
   <rule id="self_PTOAL" name="theself">
     <pattern>
       <token>ខ្លួន</token>
-      <token>ឯង</token>
+      <token marker="yes">ឯង</token>
       <token>ផ្ទាល់</token>
     </pattern>
     <disambig action="replace" postag="PRO"/>
@@ -97,13 +97,13 @@
     <pattern>
       <token>ខ្លួន</token>
       <token>ឯង</token>
-      <token>ផ្ទាល់</token>
+      <token marker="yes">ផ្ទាល់</token>
     </pattern>
     <disambig action="replace" postag="PRO"/>
   </rule>
   <rule id="self_PTOAL3" name="theself3">
     <pattern>
-      <token>ខ្លួន</token>
+      <token marker="yes">ខ្លួន</token>
       <token>ឯង</token>
       <token>ផ្ទាល់</token>
     </pattern>
@@ -112,7 +112,7 @@
   <rule id="VERB_PTOAL2" name="ផ្ទាល់ as verb">
     <pattern>
       <token postag="PRO|NNP" postag_regexp="yes"></token>
-      <token>ផ្ទាល់</token>
+      <token marker="yes">ផ្ទាល់</token>
       <token postag="PRO|NNP" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="VB"/>
@@ -120,14 +120,14 @@
   <rule id="Ing-pronoun" name="ឯង as pronoun">
     <pattern>
       <token postag="PRO|NNP" postag_regexp="yes"></token>
-      <token>ឯង</token>
+      <token marker="yes">ឯង</token>
     </pattern>
     <disambig action="replace" postag="PRO"/>
   </rule>
   <rule id="ptoal-pronoun" name="ផ្ទាល់ as pronoun">
     <pattern>
       <token postag="PRO|NNP" postag_regexp="yes"></token>
-      <token>ផ្ទាល់</token>
+      <token marker="yes">ផ្ទាល់</token>
     </pattern>
     <disambig action="replace" postag="PRO"/>
   </rule>
@@ -142,7 +142,7 @@
   <rule id="TOBE_LONG" name="ជាយួរ">
     <pattern>
       <token>ជា</token>
-      <token>យូរ</token>
+      <token marker="yes">យូរ</token>
       <token postag="NN"></token>
     </pattern>
     <disambig action="replace" postag="RB"/>
@@ -151,13 +151,13 @@
     <pattern>
       <token postag="PRO"></token>
       <token postag="JJ"></token>
-      <token>ចិត្ត</token>
+      <token marker="yes">ចិត្ត</token>
     </pattern>
     <disambig action="replace" postag="JJ"/>
   </rule>
   <rule id="NUM_AMOUNT" name="NUM +ចំនួន">
     <pattern>
-      <token postag="NUM"></token>
+      <token postag="NUM" marker="yes"></token>
       <token>ចំនួន</token>
     </pattern>
     <disambig action="replace" postag="NUM"/>
@@ -179,21 +179,21 @@
   </rule>
   <rule id="PAST_TENSE_VERB" name="PAST TENSE VERB បាន">
     <pattern>
-      <token>បាន</token>
+      <token marker="yes">បាន</token>
       <token postag="VB"></token>
     </pattern>
     <disambig action="replace" postag="PAS"/>
   </rule>
   <rule id="ADVERB_MARKER" name="យ៉ាង as Adverb Marker">
     <pattern>
-      <token>យ៉ាង</token>
+      <token marker="yes">យ៉ាង</token>
       <token postag="JJ|RB" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="MON_PREP" name="មុន as Preposition">
     <pattern>
-      <token>មុន</token>
+      <token marker="yes">មុន</token>
       <token>ពេល</token>
     </pattern>
     <disambig action="replace" postag="IN"/>
