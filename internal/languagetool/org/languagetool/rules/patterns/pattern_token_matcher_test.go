@@ -65,6 +65,15 @@ func TestSoftIrregularLemma(t *testing.T) {
 	require.False(t, softInflectedSurfaceMatch("va", "be", false))
 }
 
+func TestSoftGermanGeParticiple(t *testing.T) {
+	require.True(t, softGermanGeParticiple("gemacht", "machen"))
+	require.True(t, softGermanGeParticiple("gelernt", "lernen"))
+	require.True(t, softInflectedSurfaceMatch("gemacht", "machen", false))
+	require.True(t, softInflectedSurfaceMatch("genommen", "nehmen", false)) // irregular map
+	require.True(t, softInflectedSurfaceMatch("ging", "gehen", false) || softGermanGeParticiple("gegangen", "gehen"))
+	require.True(t, softInflectedSurfaceMatch("gegangen", "gehen", false) || softGermanGeParticiple("gegangen", "gehen"))
+}
+
 func TestSoftClosedClassPOS(t *testing.T) {
 	// DT_PRP: empty PRP$ must not soft-match nouns.
 	prp := Pos("PRP$?")

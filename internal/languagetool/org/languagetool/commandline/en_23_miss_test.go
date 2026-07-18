@@ -57,3 +57,19 @@ func TestGolden_UpstreamEN23Misses(t *testing.T) {
 	}
 	require.Empty(t, miss, "still missing: %v", miss)
 }
+
+func TestGolden_UpstreamENExceptionRegarding(t *testing.T) {
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Exceptions regarding these general rules are in Table 3.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "EXCEPTION_PREPOSITION_THE_RULE" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "%+v", findings)
+}

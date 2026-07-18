@@ -516,7 +516,9 @@ func softIsPreposition(s string) bool {
 		"across", "behind", "beyond", "despite", "except", "inside", "outside",
 		"toward", "towards", "until", "via", "per", "than", "like", "near",
 		"off", "out", "up", "down", "around", "along", "since", "if", "whether",
-		"while", "because", "although", "though", "unless", "whereas":
+		"while", "because", "although", "though", "unless", "whereas",
+		"regarding", "concerning", "including", "excluding", "following",
+		"according", "depending", "considering", "given", "versus", "amid", "amidst":
 		return true
 	default:
 		return false
@@ -552,6 +554,38 @@ func softIsWh(s string) bool {
 	}
 }
 
+// softGermanGeParticiple approximates ge- + stem + (e)t/en ↔ infinitive …en.
+// Examples: gemacht/machen, gelernt/lernen, genommen/nehmen (strong ge-…en).
+func softGermanGeParticiple(surface, base string) bool {
+	s, b := strings.ToLower(surface), strings.ToLower(base)
+	if !strings.HasPrefix(s, "ge") || len(s) < 5 || len(b) < 3 {
+		return false
+	}
+	core := s[2:]
+	// strip participle endings
+	for _, suf := range []string{"en", "et", "t", "n"} {
+		if strings.HasSuffix(core, suf) && len(core) > len(suf)+2 {
+			core = core[:len(core)-len(suf)]
+			break
+		}
+	}
+	bcore := b
+	for _, suf := range []string{"en", "n", "ern", "eln"} {
+		if strings.HasSuffix(bcore, suf) && len(bcore) > len(suf)+2 {
+			bcore = bcore[:len(bcore)-len(suf)]
+			break
+		}
+	}
+	if len(core) < 3 || len(bcore) < 3 {
+		return false
+	}
+	if core == bcore {
+		return true
+	}
+	// nehmen → nomm in genommen (consonant change) — shared stem ≥3
+	return softSharedStemMatch(core, bcore)
+}
+
 // softIrregularLemma maps common irregular surfaces → possible dictionary lemmas
 // for soft MatchInflected without a tagger. Values are multi-lemma because the
 // same surface can map to different lemmas across languages (va→aller|ir|dir).
@@ -574,6 +608,8 @@ var softIrregularLemma = map[string][]string{
 	"threw": {"throw"}, "throws": {"throw"}, "throwing": {"throw"},
 	// Modal stems (could←can, would←will) for NIT_NOT / BE_WILL soft packs
 	"could": {"can"}, "would": {"will"},
+	"ging": {"gehen"}, "ginge": {"gehen"}, "gegangen": {"gehen"},
+	"gingst": {"gehen"}, "gingen": {"gehen"},
 	// French être / avoir / aller / faire
 	"suis": {"être"}, "es": {"être"}, "est": {"être"}, "sommes": {"être"}, "êtes": {"être"}, "sont": {"être"},
 	"étais": {"être"}, "était": {"être"}, "étions": {"être"}, "étiez": {"être"}, "étaient": {"être"},
@@ -584,11 +620,28 @@ var softIrregularLemma = map[string][]string{
 	"allait": {"aller"}, "allaient": {"aller"}, "allé": {"aller"}, "allée": {"aller"}, "allés": {"aller"},
 	"fais": {"faire"}, "fait": {"faire"}, "faisons": {"faire"}, "faites": {"faire"}, "font": {"faire"},
 	"faisait": {"faire"}, "faisaient": {"faire"},
-	// German sein / haben
+	// German sein / haben + common strong/weak forms used in soft packs
 	"bin": {"sein"}, "bist": {"sein"}, "ist": {"sein"}, "sind": {"sein"}, "seid": {"sein"},
 	"war": {"sein"}, "warst": {"sein"}, "waren": {"sein"}, "wart": {"sein"}, "gewesen": {"sein"}, "sei": {"sein"},
 	"habe": {"haben"}, "hast": {"haben"}, "hat": {"haben"}, "habt": {"haben"},
 	"hatte": {"haben"}, "hattest": {"haben"}, "hatten": {"haben"}, "gehabt": {"haben"},
+	"mache": {"machen"}, "machst": {"machen"}, "macht": {"machen"}, "machen": {"machen"},
+	"machte": {"machen"}, "gemacht": {"machen"},
+	"nehme": {"nehmen"}, "nimmst": {"nehmen"}, "nimmt": {"nehmen"}, "nehmen": {"nehmen"},
+	"nahm": {"nehmen"}, "nahmen": {"nehmen"}, "genommen": {"nehmen"},
+	"bringe": {"bringen"}, "bringst": {"bringen"}, "bringt": {"bringen"},
+	"brachte": {"bringen"}, "brachten": {"bringen"}, "gebracht": {"bringen"},
+	"lasse": {"lassen"}, "lässt": {"lassen"}, "lasst": {"lassen"},
+	"ließ": {"lassen"}, "liessen": {"lassen"}, "ließen": {"lassen"}, "gelassen": {"lassen"},
+	"stehe": {"stehen"}, "stehst": {"stehen"}, "steht": {"stehen"},
+	"stand": {"stehen"}, "standen": {"stehen"}, "gestanden": {"stehen"},
+	"sehe": {"sehen"}, "siehst": {"sehen"}, "sieht": {"sehen"},
+	"sah": {"sehen"}, "sahen": {"sehen"}, "gesehen": {"sehen"},
+	"greife": {"greifen"}, "greifst": {"greifen"}, "greift": {"greifen"},
+	"griff": {"greifen"}, "griffen": {"greifen"}, "gegriffen": {"greifen"},
+	"treibe": {"treiben"}, "treibst": {"treiben"}, "treibt": {"treiben"},
+	"trieb": {"treiben"}, "trieben": {"treiben"}, "getrieben": {"treiben"},
+	"lerne": {"lernen"}, "lernst": {"lernen"}, "lernt": {"lernen"}, "lernte": {"lernen"}, "gelernt": {"lernen"},
 	// Portuguese ser / estar / ter / fazer / dar
 	"sou": {"ser"}, "és": {"ser"}, "é": {"ser"}, "somos": {"ser"}, "são": {"ser"},
 	"era": {"ser"}, "eram": {"ser"}, "foi": {"ser", "dir"}, "foram": {"ser"}, "sido": {"ser"},
@@ -639,6 +692,10 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 				return true
 			}
 		}
+	}
+	// German ge- participles (gemacht←machen) when not listed above.
+	if softGermanGeParticiple(surface, base) {
+		return true
 	}
 	// Prefix check on folded forms (ambaŭ / Ambaux).
 	sf, bf := softEsperantoFold(surface), softEsperantoFold(base)
