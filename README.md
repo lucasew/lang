@@ -86,21 +86,20 @@ This project’s own code: see repository license when published.
 
 **LanguageTool** under `inspiration/languagetool` remains under its upstream licenses (LGPL). Official rule/data files are not re-licensed by this port.
 
+## Faithful port (anti-cheat)
+
+**`internal/languagetool` is a 1:1 transcription of Java LanguageTool.**  
+Java is the king of correctness; same text + same resources → same results.  
+See **[docs/faithful-port-policy.md](docs/faithful-port-policy.md)** and **[AGENTS.md](AGENTS.md)**.
+
+Soft / invent approximations are not valid inside that tree. Outside the tree is frozen while the faithful-port freeze holds.
+
 ## Vendoring upstream testdata
 
-Do **not** invent soft rules or golden strings. Official LT data is the source of truth.
-See **[docs/soft-port-policy.md](docs/soft-port-policy.md)** for the anti-cheat rules:
-every soft behavioral change must cite original Java/LT code (or vendored extracts);
-logic must be essentially the same as upstream.
+Official LT data under `inspiration/languagetool` is the source of truth for resources the engine loads.
 
 ```bash
 python3 scripts/vendor-lt-testdata.py --langs en
 ```
 
-This copies grammar/style/disambiguation/multiwords into `testdata/upstream/`,
-extracts soft-loader-compatible surface patterns to `testdata/grammar/*-upstream-soft.xml`,
-and writes example goldens to `testdata/upstream/goldens/`. Run
-`TestGolden_UpstreamENExamples` (set `LANG_UPSTREAM_GOLDEN_ALL=1` for the full matrix).
-
-Main soft miss scan: `LANG_EN_MISS_SCAN=1 go test ./internal/languagetool/org/languagetool/commandline/ -run TestDebugENMissScan -v`  
-Optional soft miss scan: `LANG_EN_OPT_MISS_SCAN=1 go test ... -run TestDebugENOptMissScan -v`
+This copies grammar/style/disambiguation/multiwords into `testdata/upstream/` and related extracts. Prefer real upstream resources for the faithful engine, not soft-only subsets.
