@@ -254,6 +254,13 @@ func ignoreSpellingPaths(primary string) []string {
 			// SpellingCheckRule.getSpellingFileName() → en/hunspell/spelling.txt
 			filepath.Join("testdata", "disambiguation", "en-spelling-upstream.txt"),
 			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "spelling.txt"),
+			// MorfologikAmericanSpellerRule.getLanguageVariantSpellingFileName()
+			// → en/hunspell/spelling_en-US.txt (default soft EN is en-US)
+			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "spelling_en-US.txt"),
+			filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en",
+				"src", "main", "resources", "org", "languagetool", "resource", "en", "hunspell", "spelling_en-US.txt"),
+			// SpellingCheckRule.CUSTOM_SPELLING_FILE
+			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "spelling_custom.txt"),
 			// SpellingCheckRule.GLOBAL_SPELLING_FILE → spelling_global.txt
 			filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
 				"org", "languagetool", "resource", "spelling_global.txt"),

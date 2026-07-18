@@ -357,6 +357,31 @@ func TestIgnoreSpellingPaths_MergesUpstreamSpelling(t *testing.T) {
 		_, okTLDRLow := words["tldr"]
 		require.True(t, okTLDR || okTLDRLow, "spelling_global.txt should include TLDR")
 	}
+	// en-US variant spelling (MorfologikAmericanSpellerRule)
+	us := filepath.Join(root, "testdata", "upstream", "en", "resource", "hunspell", "spelling_en-US.txt")
+	if _, err := os.Stat(us); err == nil {
+		_, okLock := words["lockup"]
+		require.True(t, okLock, "spelling_en-US.txt should include lockup")
+	}
+}
+
+func TestSoftIgnoreSpellingList_EnUSVariant(t *testing.T) {
+	// "lockup" is in spelling_en-US.txt (not necessarily base spelling.txt).
+	root := findRepoRoot(t)
+	us := filepath.Join(root, "testdata", "upstream", "en", "resource", "hunspell", "spelling_en-US.txt")
+	if _, err := os.Stat(us); err != nil {
+		t.Skip("spelling_en-US.txt missing")
+	}
+	lt := languagetool.NewJLanguageTool("en")
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", languagetool.SimplePredicateSpellerChecker(
+		"MORFOLOGIK_RULE_EN_US",
+		func(w string) bool { return w != "lockup" },
+		nil, nil, nil,
+	))
+	RegisterSoftEnglishDisambiguator(lt, "", "", "")
+	for _, x := range lt.Check("Check the lockup carefully.") {
+		require.NotEqual(t, "MORFOLOGIK_RULE_EN_US", x.RuleID, "%+v", lt.Check("Check the lockup carefully."))
+	}
 }
 
 func TestLoadSpellingGlobalMultiwordLines(t *testing.T) {
