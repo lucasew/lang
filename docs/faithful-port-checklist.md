@@ -107,7 +107,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | 3.B.2 | Exceptions, skip, regex, inflected, negation | [~] |
 | 3.B.3 | Unification | [ ] |
 | 3.B.4 | Filters / rule filters as Java | [~] |
-| 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar.xml + style.xml load; entity expand partial; includes deferred |
+| 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar/style/custom + variant files; entity expand partial; includes deferred |
 
 ### 3.C Rule families (per language, after stack)
 
