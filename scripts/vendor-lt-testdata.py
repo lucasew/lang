@@ -289,6 +289,17 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
             return None
     if not toks:
         return None
+    # Soft path has no POS tagger: pure postag-only patterns (e.g. DT+PRP$)
+    # match almost any token sequence and flood false positives. Require at
+    # least one surface/regexp token (SENT_START/END alone is not enough).
+    has_surface = False
+    for t in toks:
+        text = (t.get("text") or "").strip() if isinstance(t, dict) else str(t).strip()
+        if text:
+            has_surface = True
+            break
+    if not has_surface:
+        return None
     return toks
 
 

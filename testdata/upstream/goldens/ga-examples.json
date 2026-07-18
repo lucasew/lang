@@ -6130,18 +6130,6 @@
       "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
     },
     {
-      "rule": "MODH_FOSHUITEACH",
-      "text": "Ba iad mo shinsear rithe Chúige Uladh.",
-      "suggestion": "",
-      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
-    },
-    {
-      "rule": "MODH_FOSHUITEACH",
-      "text": "Is iad na trí cholún sin le cheile an tAontas Eorpach.",
-      "suggestion": "",
-      "source": "languagetool-language-modules/ga/src/main/resources/org/languagetool/rules/ga/grammar.xml"
-    },
-    {
       "rule": "MO_FADA",
       "text": "mó",
       "suggestion": "",

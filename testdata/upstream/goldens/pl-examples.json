@@ -1372,12 +1372,6 @@
       "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
     },
     {
-      "rule": "DO_CI_DO_CIEBIE",
-      "text": "Mówię do Cię.",
-      "suggestion": "Ciebie",
-      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
-    },
-    {
       "rule": "DO_CZEKAĆ",
       "text": "Nie mogę się do czekać.",
       "suggestion": "doczekać",
@@ -1426,12 +1420,6 @@
       "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
     },
     {
-      "rule": "DO_ZROBIENI",
-      "text": "Mam wiele rzeczy do zrobieni.",
-      "suggestion": "zrobienia",
-      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
-    },
-    {
       "rule": "DRAJWER",
       "text": "Nie mam drajwera tej karty graficznej.",
       "suggestion": "sterownika",
@@ -1465,12 +1453,6 @@
       "rule": "DUZO_ZDROWSZY",
       "text": "Dziś jestem dużo zdrowszy.",
       "suggestion": "znacznie zdrowszy",
-      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
-    },
-    {
-      "rule": "DWADZIESCIA_DWAJ",
-      "text": "Trzydzieści trzej mężczyźni śpią na lekcji.",
-      "suggestion": "Trzydziestu trzech mężczyzn",
       "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
     },
     {
@@ -2509,12 +2491,6 @@
       "rule": "PRYZ_PRZY",
       "text": "Ludwik nie lubi stać pryz Przemysławie.",
       "suggestion": "przy",
-      "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
-    },
-    {
-      "rule": "PRZECIAGNIJ-I-UPUSC",
-      "text": "Wśród innych aplikacji tego typu wyróżnia się m.in. łatwością obsługi (posiada pełne wsparcie dla technologii przeciągnij-i-upuść).",
-      "suggestion": "przeciągnij i upuść",
       "source": "languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml"
     },
     {

@@ -7588,12 +7588,6 @@
       "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
     },
     {
-      "rule": "EVITA_FUTUR_OBLIGACIO",
-      "text": "Serà obligatori fer-ho així.",
-      "suggestion": "És",
-      "source": "languagetool-language-modules/ca/src/main/resources/org/languagetool/rules/ca/grammar.xml"
-    },
-    {
       "rule": "EVITA_INFINITIUS_VALDRE",
       "text": "Deu valdre molt",
       "suggestion": "valer",

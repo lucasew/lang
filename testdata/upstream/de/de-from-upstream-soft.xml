@@ -6052,16 +6052,6 @@
       <message>Meinten Sie <suggestion>ihresgleichen</suggestion>?</message>
       <short>DIE_SEINESGLEICHEN</short>
     </rule>
-    <rule id="DOPPELUNG_MODALVERB" name="Wiederholung von Modalverben">
-      <pattern>
-        <token postag="VER:MOD:.*" postag_regexp="yes">
-          <exception regexp="yes">[a-z]*lassen</exception>
-        </token>
-        <token postag="VER:MOD:.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Möglicher Tippfehler: Hier stehen zwei Modalverben hintereinander. <suggestion>\1, \2</suggestion></message>
-      <short>DOPPELUNG_MODALVERB</short>
-    </rule>
     <rule id="ESS" name="ess (iss)">
       <pattern>
         <token postag="SENT_START"></token>

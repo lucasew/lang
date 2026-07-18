@@ -25,17 +25,6 @@
       <short>Błąd składniowy</short>
     </rule>
   </category>
-  <category id="SPELLING" name="Błędy ortograficzne">
-    <rule id="PRZECIAGNIJ-I-UPUSC" name="Wyrażenia pisane z wieloma łącznikami" default="off">
-      <pattern>
-        <token regexp="yes" postag="UNKNOWN">
-          <exception regexp="yes">staro-cerkiewno-słowiańs.*|staro-wysoko-niemiec.*|koh-i-noor.*</exception>
-        </token>
-      </pattern>
-      <message>Prawdopodobnie to wyrażenie jest kalką z języka obcego. W języku polskim zwykle nie łączy się wielu wyrazów łącznikiem w celu uzyskania jednego wyrazu. Poprawnie: <suggestion>\1</suggestion>.</message>
-      <short>Błąd ortograficzny</short>
-    </rule>
-  </category>
   <category id="SEMANTICS" name="Wyrazy modne i nadużywane">
     <rule id="W_WYPADKU" name="„w wypadku” (w razie)" default="off">
       <pattern>

@@ -12,17 +12,6 @@
           <suggestion>\1</suggestion></message>
       <short>EXODIVE_VERB_ADVB_COLLOCATION</short>
     </rule>
-    <rule id="NUMERAL_PLURAL_COLLOCATION" name="Sayı cemisi uyğulaşması">
-      <pattern>
-        <token postag="NUMR.*" postag_regexp="yes">
-          <exception regexp="yes">.*(ci|cı)</exception>
-        </token>
-        <token postag="(NPRO|NOUN|ADJF|NUMR|PRTF):plur.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Sayı cemisi şöyle yazılmalı: 
-          <suggestion>\2</suggestion></message>
-      <short>NUMERAL_PLURAL_COLLOCATION</short>
-    </rule>
     <rule id="REASON_PARTICLE_CASE_COLLOCATION" name="Sebep edadındaki keliş uyğulaşması">
       <pattern>
         <token postag="(NPRO|NOUN|ADJF|NUMR|PRTF).*exod.*" postag_regexp="yes"></token>

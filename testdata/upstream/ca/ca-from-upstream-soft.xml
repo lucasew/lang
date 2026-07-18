@@ -15008,15 +15008,6 @@
       <short>EVITA_AQUEIX_EIXE</short>
     </rule>
   </category>
-  <category id="ADMINISTRATIVE_LANGUAGE" name="Llenguatge administratiu">
-    <rule id="EVITA_FUTUR_OBLIGACIO" name="Revisa futur d'obligació">
-      <pattern>
-        <token postag="V.IF3.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Eviteu el futur per a indicar obligació. <suggestion>\1</suggestion></message>
-      <short>EVITA_FUTUR_OBLIGACIO</short>
-    </rule>
-  </category>
   <category id="REGIONAL_NON_VERBS" name="Variants regionals: accentuació, possessius, demostratius, pronoms">
     <rule id="EXIGEIX_POSSESSIUS_V" name="Exigeix els possessius amb v (meva, teva...)" default="on">
       <pattern>

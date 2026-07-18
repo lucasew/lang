@@ -7150,12 +7150,6 @@
       "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/style.xml"
     },
     {
-      "rule": "UNKNOWN_WORD",
-      "text": "De acordo com o teorema central do limite, a distribuição normal aborda o comportamento assentótico de várias distribuições de probabilidade.",
-      "suggestion": "",
-      "source": "languagetool-language-modules/pt/src/main/resources/org/languagetool/rules/pt/grammar.xml"
-    },
-    {
       "rule": "UNLIKELY_OPENING_PUNCTUATION",
       "text": "; Como estás?",
       "suggestion": "",

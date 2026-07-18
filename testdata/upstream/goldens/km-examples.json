@@ -82,12 +82,6 @@
       "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
     },
     {
-      "rule": "Gender_spec",
-      "text": "ស្រី​លោក។",
-      "suggestion": "លោក​ស្រី",
-      "source": "languagetool-language-modules/km/src/main/resources/org/languagetool/rules/km/grammar.xml"
-    },
-    {
       "rule": "NEG_PART_POS",
       "text": "ឡាន​នោះ​ខៀវ​មិន​ទេ។",
       "suggestion": "មិន​ខៀវ",

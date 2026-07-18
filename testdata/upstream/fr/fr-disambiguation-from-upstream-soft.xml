@@ -147,14 +147,6 @@
     </pattern>
     <disambig action="filter" postag="N m s"/>
   </rule>
-  <rule id="NOM_FEMININ" name="nom féminin">
-    <pattern>
-      <token postag="D f s"></token>
-      <token postag="N e s"></token>
-      <token postag="J f s"></token>
-    </pattern>
-    <disambig action="replace" postag="N f s"/>
-  </rule>
   <rule id="BIEN1" name="bien">
     <pattern>
       <token postag="V avoir.*" postag_regexp="yes"></token>

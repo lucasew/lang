@@ -37,12 +37,6 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
-  <rule id="ENGLISH_WORDS" name="english_words">
-    <pattern>
-      <token postag="_english_ignore_"></token>
-    </pattern>
-    <disambig action="ignore_spelling"/>
-  </rule>
   <rule id="DHONDT_SPELLING" name="D'Hondt-Verfahren spelling">
     <pattern>
       <token>D</token>

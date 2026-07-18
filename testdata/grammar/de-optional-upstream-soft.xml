@@ -96,19 +96,5 @@
       <message>Hier scheint die Übereinstimmung von Subjekt und Verb nicht zu stimmen. <suggestion>\6</suggestion></message>
       <short>WELCHE_SUBMAS_IST</short>
     </rule>
-    <rule id="WERDEN_FOLGENDEN_SUB" name="werden folgenden (folgende) Dinge" default="off">
-      <pattern>
-        <token postag="VER:AUX:INF">
-          <exception>sein</exception>
-        </token>
-        <token postag="ADJ:(DAT|GEN):PLU:.*:GRU:SOL|ADJ:(DAT|GEN|NOM|AKK):PLU:.*:GRU:(DEF|IND)" postag_regexp="yes">
-          <exception regexp="yes">weniger|weiter|lieber|früher|später|super</exception>
-        </token>
-        <token postag="SUB:.*" postag_regexp="yes"></token>
-        <token postag="PA2:.*" postag_regexp="yes"></token>
-      </pattern>
-      <message><suggestion>\2</suggestion>?</message>
-      <short>WERDEN_FOLGENDEN_SUB</short>
-    </rule>
   </category>
 </rules>

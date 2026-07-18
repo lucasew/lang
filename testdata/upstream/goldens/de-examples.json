@@ -2410,18 +2410,6 @@
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {
-      "rule": "DOPPELUNG_MODALVERB",
-      "text": "Das muss kann nicht sein.",
-      "suggestion": "muss, kann",
-      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
-    },
-    {
-      "rule": "DOPPELUNG_MODALVERB",
-      "text": "Wer mitfahren möchte sollte sich auf jeden Fall vorher melden, hier auf HFS.",
-      "suggestion": "möchte, sollte",
-      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
-    },
-    {
       "rule": "DRAUF_KLICKEN",
       "text": "Ich habe auf den Link drauf geklickt.",
       "suggestion": "draufgeklickt",
@@ -6175,30 +6163,6 @@
       "rule": "WENN_UND_ABER",
       "text": "Das gilt ohne wenn und aber.",
       "suggestion": "Wenn und Aber",
-      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
-    },
-    {
-      "rule": "WERDEN_FOLGENDEN_SUB",
-      "text": "Durch das Geld werden schönen Projekte unterstützt.",
-      "suggestion": "schöne",
-      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
-    },
-    {
-      "rule": "WERDEN_FOLGENDEN_SUB",
-      "text": "Durch den Rabatt-Code werden folgenden Autos gefördert.",
-      "suggestion": "folgende",
-      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
-    },
-    {
-      "rule": "WERDEN_FOLGENDEN_SUB",
-      "text": "Durch den Tracking-Code werden folgenden Informationen gesammelt.",
-      "suggestion": "folgende",
-      "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
-    },
-    {
-      "rule": "WERDEN_FOLGENDEN_SUB",
-      "text": "Durch die Medien werden folgenden Informationen verbreitet.",
-      "suggestion": "folgende",
       "source": "languagetool-language-modules/de/src/main/resources/org/languagetool/rules/de/grammar.xml"
     },
     {

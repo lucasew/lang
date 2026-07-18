@@ -537,13 +537,6 @@
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
-  <rule id="EX_SENT_END_RB" name="there + SENT_END -&gt; RB">
-    <pattern>
-      <token postag="EX"></token>
-      <token postag="SENT_END|,|IN|PRP" postag_regexp="yes"></token>
-    </pattern>
-    <disambig action="replace" postag="RB"/>
-  </rule>
   <rule id="BY_RB" name="by + rb → rb">
     <pattern>
       <token>by</token>

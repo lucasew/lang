@@ -7891,15 +7891,6 @@
       <short>PRETERITO_PERFEITO</short>
     </rule>
   </category>
-  <category id="DEVELOPMENT" name="Desenvolvimento">
-    <rule id="UNKNOWN_WORD" name="Desenvolvimento: palavra sem POS">
-      <pattern>
-        <token postag="UNKNOWN"></token>
-      </pattern>
-      <message>Palavra não identificada.</message>
-      <short>UNKNOWN_WORD</short>
-    </rule>
-  </category>
   <category id="PUNCTUATION" name="Pontuação">
     <rule id="UNLIKELY_OPENING_PUNCTUATION" name="Sinal de pontuação perdidos">
       <pattern>

@@ -2985,30 +2985,6 @@
       <message>تعبير "القيام بـالأمر" ركيك يستحسن تجنبه إلى تصريف المصدر الموالي، قل ضربت بدلا من القيام بالضرب.</message>
       <short>syntax_0000_Qam_bi_test</short>
     </rule>
-    <rule id="syntax_0002_as_ka_1" name="يعمل كمدير">
-      <pattern>
-        <token skip="2" postag="V.*;.*;.*" postag_regexp="yes"></token>
-        <token postag="N.*;.1I.;-K-" postag_regexp="yes"></token>
-      </pattern>
-      <message>استخدام الكاف للصفة استخدام أجنبي أدخله المترجمون، إذ يستعملون
-            "as"
-            بمعنى الكاف، فالأَوْلَى النصب على الحالية مثل  " أعمل مديرًا " أو على الاختصاص في: "نحن المسلمين".
-        <suggestion>\1 \2</suggestion>
-        <suggestion>\1 بصفة \2</suggestion></message>
-      <short>syntax_0002_as_ka_1</short>
-    </rule>
-    <rule id="syntax_0002_as_ka_2" name="يعمل كمدير">
-      <pattern>
-        <token skip="2" postag="V.*;.*;.*" postag_regexp="yes"></token>
-        <token postag="N.*;.[23][AI].;-K-" postag_regexp="yes"></token>
-      </pattern>
-      <message>استخدام الكاف للصفة استخدام أجنبي أدخله المترجمون، إذ يستعملون
-            "as"
-            بمعنى الكاف، فالأَوْلَى النصب على الحالية مثل  " أعمل مديرًا " أو على الاختصاص في: "نحن المسلمين".
-        <suggestion>\1 \2</suggestion>
-        <suggestion>\1 بصفة \2</suggestion></message>
-      <short>syntax_0002_as_ka_2</short>
-    </rule>
     <rule id="syntax_0002_as_ka_3" name="نحن كمسلمين">
       <pattern>
         <token regexp="yes">نحن|هم|أنتم|أنتن|هن</token>
@@ -3038,65 +3014,6 @@
 
 : <suggestion>\1 وإمّا</suggestion></message>
       <short>syntax_125_in_maa</short>
-    </rule>
-    <rule id="syntax_125_mobtadaa_nakira_1" name="مبتدأ نكرة بعده حرف جر">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token postag="N.*;.*;---" postag_regexp="yes"></token>
-        <token postag="PRD.*;.*;.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>لا يجوز الابتداء بنكرة، فيتقدم الخبر شبه الجملة مثلا "كتابان عندك" تصبح "عندك كتابان"
-
-: <suggestion>\3 \2</suggestion></message>
-      <short>syntax_125_mobtadaa_nakira_1</short>
-    </rule>
-    <rule id="syntax_125_mobtadaa_nakira_2" name="مبتدأ نكرة بعده حرف جر">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token postag="N.*;.*;---" postag_regexp="yes"></token>
-        <token postag="PR-;.*;---" postag_regexp="yes"></token>
-        <token postag="N.*;.*;--[LH]" postag_regexp="yes"></token>
-      </pattern>
-      <message>لا يجوز الابتداء بنكرة، فيتقدم الخبر شبه الجملة مثلا "كتاب  في البيت" تصبح "في البيت كتاب"
-
-: <suggestion>\3 \4 \2</suggestion></message>
-      <short>syntax_125_mobtadaa_nakira_2</short>
-    </rule>
-    <rule id="syntax_125_mobtadaa_nakira_3" name="مبتدأ نكرة بعده حرف جر">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token postag="N.*;.*;---" postag_regexp="yes"></token>
-        <token postag="N.*;.*;-[^-][LH]" postag_regexp="yes"></token>
-      </pattern>
-      <message>لا يجوز الابتداء بنكرة، فيتقدم الخبر شبه الجملة مثلا "كتاب  بالبيت" تصبح "بالبيت كتاب"
-
-: <suggestion>\3 \2</suggestion></message>
-      <short>syntax_125_mobtadaa_nakira_3</short>
-    </rule>
-    <rule id="syntax_125_mobtadaa_nakira_4" name="مبتدأ نكرة بعده حرف جر">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token postag="N.*;.*;---" postag_regexp="yes"></token>
-        <token postag="N.*;.*;-[^-]-" postag_regexp="yes"></token>
-        <token postag="N.*;.*;--[LH]" postag_regexp="yes"></token>
-      </pattern>
-      <message>لا يجوز الابتداء بنكرة، فيتقدم الخبر شبه الجملة مثلا "كتاب ببيت العالم" تصبح  "ببيت  العالم كتاب"
-
-: <suggestion>\3 \4 \2</suggestion></message>
-      <short>syntax_125_mobtadaa_nakira_4</short>
-    </rule>
-    <rule id="syntax_125_mobtadaa_nakira_5" name="مبتدأ نكرة بعده حرف جر">
-      <pattern>
-        <token postag="SENT_START"></token>
-        <token postag="N.*;.*;---" postag_regexp="yes"></token>
-        <token postag="PR-;.*;---" postag_regexp="yes"></token>
-        <token postag="N.*;.*;---" postag_regexp="yes"></token>
-        <token postag="N.*;.*;--[LH]" postag_regexp="yes"></token>
-      </pattern>
-      <message>لا يجوز الابتداء بنكرة، فيتقدم الخبر شبه الجملة مثلا "كتاب  في بيت الولد" تصبح "في بيت الولد كتاب"
-
-: <suggestion>\3 \4 \5 \2</suggestion></message>
-      <short>syntax_125_mobtadaa_nakira_5</short>
     </rule>
     <rule id="syntax_132_in_maa" name="إن ما">
       <pattern>
@@ -3240,15 +3157,6 @@
       <message>تُوصل "ما" الزائدة غير الكافّة بالظرف "بين"
         <suggestion>بينما</suggestion></message>
       <short>syntax_456_bynama_sent_start_2</short>
-    </rule>
-    <rule id="typo_000_tanwin_nasb2" name="تنوين النصب">
-      <pattern>
-        <token postag="N.*;M1[A].?;.?-n" postag_regexp="yes"></token>
-      </pattern>
-      <message>يستحسن وضع علامة التنوين أو الفتح للتفريق بين الاسم المنوّن وغيره
-: <suggestion>\1</suggestion>
-: <suggestion>\1</suggestion></message>
-      <short>typo_000_tanwin_nasb2</short>
     </rule>
   </category>
   <category id="GRAMMAR_ERROR" name="أخطاء نحوية">

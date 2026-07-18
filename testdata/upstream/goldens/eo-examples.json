@@ -100,12 +100,6 @@
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
-      "rule": "AKZ_R_AKZ",
-      "text": "Donu min akvon.",
-      "suggestion": "al mi",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
       "rule": "ALTA_TAJDO",
       "text": "Estas nun alta tajdo.",
       "suggestion": "altmaro",
@@ -862,12 +856,6 @@
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
-      "rule": "NTR_ATA",
-      "text": "La okazota vesto",
-      "suggestion": "",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
       "rule": "N_DA_O",
       "text": "Mi aĉetis dudek da ovoj.",
       "suggestion": "",
@@ -1042,12 +1030,6 @@
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {
-      "rule": "R_AKZ_AKZ",
-      "text": "Donu akvon min.",
-      "suggestion": "al mi",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
       "rule": "SEMI",
       "text": "Tio estas semicirklo.",
       "suggestion": "duoncirklo",
@@ -1165,12 +1147,6 @@
       "rule": "TERMOBOTELO",
       "text": "Mi aĉetis termobotelon.",
       "suggestion": "varmbotelon",
-      "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
-    },
-    {
-      "rule": "TIOJ",
-      "text": "Mi ŝatas tiojn.",
-      "suggestion": "",
       "source": "languagetool-language-modules/eo/src/main/resources/org/languagetool/rules/eo/grammar.xml"
     },
     {

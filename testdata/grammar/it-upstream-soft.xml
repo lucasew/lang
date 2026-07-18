@@ -12,16 +12,6 @@
       <short>ANNO20011_2011</short>
     </rule>
   </category>
-  <category id="CAT7" name="Grammatica - Verbi">
-    <rule id="DOPPIO_VERBO_AUSILIARE_TERZA_PERSONA" name="Doppio verbo ausiliare terza persona">
-      <pattern>
-        <token postag="AUX:ind+pres+3+p"></token>
-        <token postag="AUX:ind+pres+3+p"></token>
-      </pattern>
-      <message>La frase contiene un verbo ausiliare ripetuto</message>
-      <short>Verbo ausiliare ripetuto</short>
-    </rule>
-  </category>
   <category id="CAT13" name="Ulteriori errori comuni - ortografia">
     <rule id="GIRONI_GIORNI" name="7 gironi -&gt; 7 giorni">
       <pattern>

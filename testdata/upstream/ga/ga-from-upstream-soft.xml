@@ -9319,15 +9319,6 @@
       <short>Alt cinnte ar iarraidh</short>
     </rule>
   </category>
-  <category id="SUBJUNCTIVE" name="Subjunctive">
-    <rule id="MODH_FOSHUITEACH" name="Modh foshuiteach">
-      <pattern>
-        <token postag=".*PresSubj.*|.*PastImp.*Ecl" postag_regexp="yes"></token>
-      </pattern>
-      <message>Ní dócha go raibh intinn agat an modh foshuiteach a úsáid anseo.</message>
-      <short>Modh foshuiteach</short>
-    </rule>
-  </category>
   <category id="SYNTAX" name="syntactical errors">
     <rule id="TAIM_ME" name="táim mé">
       <pattern>

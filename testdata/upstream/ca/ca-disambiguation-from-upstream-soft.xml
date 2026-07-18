@@ -146,13 +146,6 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
-  <rule id="nompropi_ordinal" name="nom propi + ordinal: Pere III">
-    <pattern>
-      <token postag="NP.S.*" postag_regexp="yes"></token>
-      <token postag="AO.*" postag_regexp="yes"></token>
-    </pattern>
-    <disambig action="filter" postag="NP.S.*"/>
-  </rule>
   <rule id="tret" name="tret: no preposició">
     <pattern>
       <token postag="D[AID].MS." postag_regexp="yes"></token>
@@ -533,14 +526,6 @@
       <token postag="V.[GP].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="V.[GP].*|_GV_"/>
-  </rule>
-  <rule id="adv_adv" name="adverbis junts">
-    <pattern>
-      <token postag="RG_anteposat"></token>
-      <token postag="RG"></token>
-      <token postag="A.*|V.P.*" postag_regexp="yes"></token>
-    </pattern>
-    <disambig action="filter" postag="RG.*"/>
   </rule>
   <rule id="tecnicament_parlant" name="tècnicament parlant">
     <pattern>

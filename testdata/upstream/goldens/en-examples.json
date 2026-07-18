@@ -3754,24 +3754,6 @@
       "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
     },
     {
-      "rule": "A_MY",
-      "text": "The my car is in the garage.",
-      "suggestion": "The",
-      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
-    },
-    {
-      "rule": "A_MY",
-      "text": "These customs differ from those our country.",
-      "suggestion": "those",
-      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
-    },
-    {
-      "rule": "A_MY",
-      "text": "This your answer?",
-      "suggestion": "This",
-      "source": "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en/grammar.xml"
-    },
-    {
       "rule": "A_NNS_BEST_NN",
       "text": "I was a moderators worst enemy on the old espn message boards.",
       "suggestion": "moderator's",

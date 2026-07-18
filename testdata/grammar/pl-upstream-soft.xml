@@ -2000,16 +2000,6 @@
       <message>Prawdopodobna literówka. Czy chodziło o <suggestion>zajęć</suggestion>?</message>
       <short>Literówka</short>
     </rule>
-    <rule id="DO_ZROBIENI" name="„do zrobieni” (do zrobienia)">
-      <pattern>
-        <token postag="prep:gen">
-          <exception regexp="yes">obok|wokół</exception>
-        </token>
-        <token postag="ppas:pl:nom.voc:m1.p1:perf:aff"></token>
-      </pattern>
-      <message>Prawdopodobna literówka. Czy chodziło o <suggestion>\2a</suggestion>?</message>
-      <short>Prawdopodobna literówka</short>
-    </rule>
     <rule id="DUE_ZNACZENIA_MA_DUE_ZNACZENIE_MA" name="„duże znaczenia ma” (duże znaczenie ma)">
       <pattern>
         <token regexp="yes">duże|istotne|kluczowe</token>
@@ -3551,25 +3541,6 @@
         <token>do</token>
       </pattern>
       <message>Nieprawidłowa forma, tego wyrazu używa się bez przyimka „do” (chyba że ten przyimek jest konieczny ze względu na inne wyrazy w zdaniu). Wystarczy: <suggestion>\1</suggestion>.</message>
-      <short>Błąd składniowy</short>
-    </rule>
-    <rule id="DO_CI_DO_CIEBIE" name="Nieakcentowana forma zaimka po przyimku">
-      <pattern>
-        <token postag="prep:([a-z]+).*" postag_regexp="yes">
-          <exception regexp="yes">co|jak</exception>
-        </token>
-        <token postag="ppron.*:nakc.*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Tu powinna być forma akcentowana zaimka: <suggestion>\2</suggestion>.</message>
-      <short>Błędna forma gramatyczna</short>
-    </rule>
-    <rule id="DWADZIESCIA_DWAJ" name="„dwadzieścia dwaj uczniowie” (dwudziestu dwóch uczniów)">
-      <pattern>
-        <token postag="num:pl:nom.acc.voc:m2.m3.f.n2:rec"></token>
-        <token postag="num:pl:nom.voc:m1:congr"></token>
-        <token postag="subst:pl:nom:m1"></token>
-      </pattern>
-      <message>Niepoprawna składnia liczebników. Poprawnie: <suggestion>\1 \2 \3</suggestion>. Należy też ewentualnie dostosować liczbę czasownika!</message>
       <short>Błąd składniowy</short>
     </rule>
     <rule id="INSTRUKCJA_NA" name="„instrukcja na robienie” (instrukcja robienia)">

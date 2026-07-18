@@ -1556,18 +1556,6 @@
       <message>The usual collocation for "\3" is "in". <suggestion>in the \3</suggestion></message>
       <short>AT_IN_THE_MORNING</short>
     </rule>
-    <rule id="A_MY" name="article + possessive form">
-      <pattern>
-        <token postag="DT">
-          <exception regexp="yes">neither|either|that|all|much|last|next</exception>
-        </token>
-        <token postag="PRP$">
-          <exception regexp="yes" case_sensitive="yes">M[Yy]|Your|Our|His|Her|Their|thy</exception>
-        </token>
-      </pattern>
-      <message>A determiner cannot be combined with a possessive pronoun. Did you mean simply <suggestion>\1</suggestion> or <suggestion>\2</suggestion>?</message>
-      <short>A_MY</short>
-    </rule>
     <rule id="BETWEEN_TO_AND" name="Collocation: Between ... to/and ...">
       <pattern>
         <token>between</token>

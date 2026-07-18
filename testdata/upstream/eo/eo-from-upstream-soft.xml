@@ -44,14 +44,6 @@
       <message>Laŭ la kunteksto, ŝajnas ke vi intencis diri <suggestion>\3n</suggestion>.</message>
       <short>AKZ_KIEL_NAK</short>
     </rule>
-    <rule id="AKZ_R_AKZ" name="akuzativa pronomo + akuzativo">
-      <pattern>
-        <token postag="R akz .*" postag_regexp="yes"></token>
-        <token postag="[RO] akz .*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Ne eblas diri «\1 \2». Ĉu vi intencis <suggestion>al \1</suggestion>?</message>
-      <short>AKZ_R_AKZ</short>
-    </rule>
     <rule id="AMBAUX_SING" name="ambaŭ + sing">
       <pattern>
         <token inflected="yes">ambaŭ</token>
@@ -339,13 +331,6 @@
       <message>Oni devas skribi <suggestion>Nov-Zelando</suggestion> aŭ <suggestion>Nova Zelando</suggestion>.</message>
       <short>NOVA_ZELANDO</short>
     </rule>
-    <rule id="NTR_ATA" name="Netransitiva verbo + ata">
-      <pattern>
-        <token postag="C ... .. nt . - ." postag_regexp="yes"></token>
-      </pattern>
-      <message>Pasiva participo eblas nur kun transitivaj verboj.</message>
-      <short>NTR_ATA</short>
-    </rule>
     <rule id="N_DA_O" name="dudek da ovoj → dudek ovoj">
       <pattern>
         <token postag="N"></token>
@@ -440,14 +425,6 @@
       <message>Kun la vortoj plena, riĉa, abunda «da» ne estas uzebla, ĉar ili ne indikas mezuron. Uzu <suggestion>de</suggestion>.</message>
       <short>RICXA_DA</short>
     </rule>
-    <rule id="R_AKZ_AKZ" name="akuzativa pronomo + akuzativo">
-      <pattern>
-        <token postag="[ROT] akz .*" postag_regexp="yes"></token>
-        <token postag="R akz .*" postag_regexp="yes"></token>
-      </pattern>
-      <message>Ne eblas uzi du akuzativojn. Ĉu vi intencis <suggestion>al \2</suggestion>?</message>
-      <short>R_AKZ_AKZ</short>
-    </rule>
     <rule id="SEN_NEK" name="sen + nek (sen + kaj)">
       <pattern>
         <token skip="2">sen</token>
@@ -492,13 +469,6 @@
       </pattern>
       <message>O-participo per si mem montras personon, kaj tial aldono de UL normale estas eraro. <suggestion>\1</suggestion></message>
       <short>SUPERFLUA_UL</short>
-    </rule>
-    <rule id="TIOJ" name="navalidaj vortoj tioj, kioj, ktp.">
-      <pattern>
-        <token postag="T ... pl . o" postag_regexp="yes"></token>
-      </pattern>
-      <message>Normale tabelvortoj je O ne akceptas J-finaĵon.</message>
-      <short>TIOJ</short>
     </rule>
     <rule id="TIO_KIU" name="tion, kiun (tion, kion)">
       <pattern>

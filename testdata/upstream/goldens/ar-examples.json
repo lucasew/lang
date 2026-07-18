@@ -1666,18 +1666,6 @@
       "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
     },
     {
-      "rule": "syntax_0002_as_ka_1",
-      "text": "يعمل أخي كمدير",
-      "suggestion": "يعمل أخي مدير",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_0002_as_ka_2",
-      "text": "يتصرفون كمدرسين",
-      "suggestion": "يتصرفون مدرسين",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
       "rule": "syntax_0002_as_ka_3",
       "text": "نحن كمدرسين",
       "suggestion": "نحن المدرسين",
@@ -1843,78 +1831,6 @@
       "rule": "syntax_125_in_maa",
       "text": "هذا حقك، فأما أن تحفظه، وأما أن تضيعه",
       "suggestion": "فإمّا أن تحفظه، وإمّا",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_1",
-      "text": "قال أحمد. كتابان عندك",
-      "suggestion": "عندك كتابان",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_1",
-      "text": "كتابان عندك",
-      "suggestion": "عندك كتابان",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_2",
-      "text": "قال أحمد. كتاب في بيتنا",
-      "suggestion": "في بيتنا كتاب",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_2",
-      "text": "كتاب في البيت",
-      "suggestion": "في البيت كتاب",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_3",
-      "text": "قال أحمد. رجل لبيتنا",
-      "suggestion": "لبيتنا رجل",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_3",
-      "text": "قال أحمد. شجاع كالأسد",
-      "suggestion": "كالأسد شجاع",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_3",
-      "text": "كتاب بالبيت",
-      "suggestion": "بالبيت كتاب",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_4",
-      "text": "قال أحمد. رجل لبيت عالمنا",
-      "suggestion": "لبيت عالمنا رجل",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_4",
-      "text": "قال أحمد. شجاع كشجاعة الأسد",
-      "suggestion": "كشجاعة الأسد شجاع",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_4",
-      "text": "كتاب ببيت العالم",
-      "suggestion": "ببيت العالم كتاب",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_5",
-      "text": "قال أحمد. مزهرية في رواق بيتنا",
-      "suggestion": "في رواق بيتنا مزهرية",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "syntax_125_mobtadaa_nakira_5",
-      "text": "كتاب في بيت الولد",
-      "suggestion": "في بيت الولد كتاب",
       "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
     },
     {
@@ -2263,12 +2179,6 @@
       "rule": "typo_000_tanwin_nasb",
       "text": "شرب الطفل لبناً",
       "suggestion": "لبنًا",
-      "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
-    },
-    {
-      "rule": "typo_000_tanwin_nasb2",
-      "text": "استعمله استعمالا",
-      "suggestion": "استعمالًا",
       "source": "languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/grammar.xml"
     },
     {
