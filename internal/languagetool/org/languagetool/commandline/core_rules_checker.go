@@ -76,8 +76,8 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 	for _, id := range opts.GetDisabledRules() {
 		lt.DisableRule(id)
 	}
-	enabledIDs := languagetool.ExpandSoftEnableRuleIDsWithDefaultOff(
-		lt.GetAllRegisteredRuleIDs(), opts.GetEnabledRules(), lt.GetDefaultOffRuleIDs())
+	// Java JLanguageTool: -e enables listed rule IDs; no SOFT_* invent expansion.
+	enabledIDs := opts.GetEnabledRules()
 	if opts.IsUseEnabledOnly() {
 		enabled := map[string]struct{}{}
 		for _, id := range enabledIDs {
@@ -90,45 +90,14 @@ func ApplyCLIRuleFilters(lt *languagetool.JLanguageTool, opts *CommandLineOption
 				lt.DisableRule(id)
 			}
 		}
-		// soft: ensure expanded optional IDs are active under enabled-only
 		for id := range enabled {
 			lt.EnableRule(id)
 		}
 		return
 	}
-	// soft: --enable only re-enables previously disabled (Java also restricts category defaults)
 	for _, id := range enabledIDs {
 		lt.EnableRule(id)
 	}
-}
-
-// RegisterSoftPickyGrammar loads {base}-picky-soft.xml from grammar dir when present.
-// Used only for --level picky (or server picky boost). Prefer base language code
-// (en, de, fr) so en-US still gets en-picky-soft.xml.
-func RegisterSoftPickyGrammar(lt *languagetool.JLanguageTool, grammarDir, languageCode string) int {
-	if lt == nil || grammarDir == "" {
-		return 0
-	}
-	base := languageCode
-	if i := strings.IndexByte(languageCode, '-'); i > 0 {
-		base = languageCode[:i]
-	}
-	total := 0
-	for _, name := range []string{
-		base + "-picky-soft.xml",
-		languageCode + "-picky-soft.xml",
-	} {
-		p := filepath.Join(grammarDir, name)
-		if st, err := os.Stat(p); err != nil || !st.Mode().IsRegular() {
-			continue
-		}
-		n, err := patterns.RegisterGrammarFile(lt, p, languageCode)
-		if err != nil {
-			continue
-		}
-		total += n
-	}
-	return total
 }
 
 // RegisterRuleFilePatterns loads --rulefile XML pattern rules onto lt.
@@ -175,32 +144,19 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			baseLang = lang[:i]
 		}
 		if picky && strings.EqualFold(baseLang, "en") {
-			// soft picky level for English (core inject + soft XML pack below)
+			// Java English picky-level rules (not soft invent packs).
 			en.RegisterPickyEnglishRules(lt)
 		}
-		// optional soft grammar directory (e.g. testdata/grammar) with walk-up discovery
-		if dir := DiscoverGrammarDir(opts); dir != "" {
-			_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
-			if picky {
-				// {base}-picky-soft.xml: pedantic style rules only when --level picky
-				RegisterSoftPickyGrammar(lt, dir, lang)
-			}
-		}
+		// Soft grammar packs (testdata/*-soft.xml) are not loaded — faithful port only.
 		base := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			base = lang[:i]
 		}
 		if strings.EqualFold(base, "en") {
-			// Prefer CFSA2 en_US.dict when present; else optional map demo speller.
+			// Prefer CFSA2 en_US.dict when present; demo only under LANG_DEMO_SPELLER.
 			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
-			// Always provide a small nearest set for edit-distance soft suggestions.
 			nearest := en.DemoEnglishKnownWords()
 			sugs := en.CommonDemoSpellerSuggestions
-			if typoPath := DiscoverEnglishTyposFile(opts); typoPath != "" {
-				if extra, err := en.LoadSoftTyposFile(typoPath); err == nil && len(extra) > 0 {
-					sugs = en.MergeSpellerSuggestions(sugs, extra)
-				}
-			}
 			spellRegistered := false
 			if dictPath := DiscoverEnglishUSDict(opts); dictPath != "" {
 				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
@@ -208,7 +164,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !spellRegistered && demoSpell {
 				en.RegisterDemoEnglishSpeller(lt, nearest, sugs)
 			}
-			// Prefer CFSA2 english.dict POS tagger; else demo closed-class map under LANG_DEMO_SPELLER.
+			// Prefer CFSA2 english.dict POS tagger; else demo under LANG_DEMO_SPELLER.
 			taggerOK := false
 			if posPath := DiscoverEnglishPOSDict(opts); posPath != "" {
 				taggerOK = en.RegisterBinaryEnglishTagger(lt, posPath)
@@ -216,38 +172,19 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
-			// Java English.createDefaultChunker(): EnglishChunker after POS tag.
-			// Soft: POS-driven OpenNLP-like BIO + EnglishChunkFilter (no en-chunker.bin).
+			// Java English.createDefaultChunker().
 			en.RegisterEnglishChunker(lt)
-			// Soft multiword chunker + soft XML + ignore-spelling word list.
-			en.RegisterSoftEnglishDisambiguator(lt,
-				DiscoverEnglishMultiwords(opts),
-				DiscoverEnglishSoftDisambiguationXML(opts),
-				DiscoverEnglishIgnoreSpellingList(opts),
-			)
+			// Soft hybrid disambiguator removed; wire Java MultiWordChunker + XmlRuleDisambiguator later.
 		} else {
 			if posPath := DiscoverLanguagePOSDict(opts, base); posPath != "" {
-				// Wire official Morfologik POS dicts (FSA5/CFSA2) like Java createDefaultTagger().
-				// Soft closed-class surface lists are not used when real tags are available.
+				// Official Morfologik POS dicts (FSA5/CFSA2) like Java createDefaultTagger().
 				if base == "ar" {
-					// Java ArabicTagger: tashkeel strip + proclitic/enclitic stemming.
 					_ = RegisterArabicPOSTagger(lt, posPath)
 				} else {
 					_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 				}
 			}
-			// Java createDefaultDisambiguator(): HybridDisambiguator / GermanRuleDisambiguator
-			// with multiwords + soft XML extract of disambiguation.xml (+ DE multitoken lists).
-			// Order and MultiWordChunker flags follow each language's Java hybrid closely.
-			softPaths := SoftHybridPaths{
-				Multiwords:      DiscoverLanguageMultiwords(opts, base),
-				SoftDisambigXML: DiscoverLanguageSoftDisambiguationXML(opts, base),
-			}
-			if strings.EqualFold(base, "de") {
-				softPaths.DEMultitokenIgnore = DiscoverGermanMultitokenIgnore(opts)
-				softPaths.DEMultitokenSuggest = DiscoverGermanMultitokenSuggest(opts)
-			}
-			_ = RegisterSoftHybridDisambiguator(lt, base, softPaths)
+			// Soft hybrid disambiguator removed; Java HybridDisambiguator twins later.
 		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
@@ -612,7 +549,7 @@ func DefaultCoreHooks() RunHooks {
 	}
 }
 
-// CoreDoctor writes soft environment diagnostics (SPEC §2.3 doctor).
+// CoreDoctor writes environment diagnostics (SPEC §2.3 doctor).
 func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	if w == nil {
 		return nil
@@ -621,91 +558,7 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	_, _ = fmt.Fprintf(w, "version: %s\n", VersionString)
 	_, _ = fmt.Fprintf(w, "go: %s %s/%s\n", runtime.Version(), runtime.GOOS, runtime.GOARCH)
 	_, _ = fmt.Fprintf(w, "corepack languages: %d\n", len(corepack.Supported))
-	gdir := DiscoverGrammarDir(opts)
-	if gdir == "" {
-		_, _ = fmt.Fprintf(w, "grammar dir: (unset)\n")
-	} else {
-		softN := countSoftGrammarFiles(gdir)
-		_, _ = fmt.Fprintf(w, "grammar dir: %s\n", gdir)
-		_, _ = fmt.Fprintf(w, "soft grammar files: %d\n", softN)
-		// Vendored upstream extracts (scripts/vendor-lt-testdata.py)
-		upN, upOptN := countUpstreamSoftPacks(gdir)
-		if upN > 0 || upOptN > 0 {
-			_, _ = fmt.Fprintf(w, "upstream soft packs: %d\n", upN)
-			_, _ = fmt.Fprintf(w, "upstream optional packs: %d\n", upOptN)
-		}
-		// Regional soft spelling packs (loaded only for matching lang codes).
-		regional := []string{
-			"en-US-soft.xml", "en-GB-soft.xml", "en-AU-soft.xml", "en-CA-soft.xml",
-			"en-NZ-soft.xml",
-			"pt-BR-soft.xml", "pt-PT-soft.xml",
-			"es-MX-soft.xml", "es-ES-soft.xml",
-			"de-CH-soft.xml", "de-AT-soft.xml",
-			"fr-CA-soft.xml",
-		}
-		regionalN := 0
-		for _, name := range regional {
-			p := filepath.Join(gdir, name)
-			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-				regionalN++
-				_, _ = fmt.Fprintf(w, "soft spelling pack: %s\n", p)
-			}
-		}
-		if regionalN > 0 {
-			_, _ = fmt.Fprintf(w, "regional soft packs: %d\n", regionalN)
-		}
-		_, _ = fmt.Fprintf(w, "soft category filters: --disablecategories / --enablecategories\n")
-		pickyN := 0
-		for _, name := range []string{
-			"en-picky-soft.xml", "de-picky-soft.xml", "fr-picky-soft.xml",
-			"es-picky-soft.xml", "pt-picky-soft.xml", "it-picky-soft.xml",
-			"nl-picky-soft.xml", "sv-picky-soft.xml", "pl-picky-soft.xml",
-			"da-picky-soft.xml", "ru-picky-soft.xml",
-			"uk-picky-soft.xml", "ca-picky-soft.xml",
-			"el-picky-soft.xml", "ro-picky-soft.xml", "gl-picky-soft.xml",
-			"sk-picky-soft.xml", "sl-picky-soft.xml",
-			"be-picky-soft.xml", "sr-picky-soft.xml", "lt-picky-soft.xml",
-			"is-picky-soft.xml", "ga-picky-soft.xml", "eo-picky-soft.xml",
-			"fa-picky-soft.xml", "ar-picky-soft.xml", "zh-picky-soft.xml",
-			"ja-picky-soft.xml", "br-picky-soft.xml", "ast-picky-soft.xml",
-			"km-picky-soft.xml", "ta-picky-soft.xml", "tl-picky-soft.xml",
-			"crh-picky-soft.xml", "ml-picky-soft.xml",
-		} {
-			pickySoft := filepath.Join(gdir, name)
-			if st, err := os.Stat(pickySoft); err == nil && st.Mode().IsRegular() {
-				pickyN++
-				_, _ = fmt.Fprintf(w, "picky soft pack: %s (load with --level picky)\n", pickySoft)
-			}
-		}
-		if pickyN > 0 {
-			_, _ = fmt.Fprintf(w, "picky soft packs: %d\n", pickyN)
-		}
-		optN := 0
-		for _, name := range []string{
-			"en-optional-soft.xml", "de-optional-soft.xml", "fr-optional-soft.xml",
-			"es-optional-soft.xml", "pt-optional-soft.xml", "it-optional-soft.xml",
-			"nl-optional-soft.xml", "pl-optional-soft.xml", "sv-optional-soft.xml",
-			"da-optional-soft.xml", "ru-optional-soft.xml", "uk-optional-soft.xml",
-			"ca-optional-soft.xml", "el-optional-soft.xml", "ro-optional-soft.xml",
-			"gl-optional-soft.xml", "sk-optional-soft.xml", "sl-optional-soft.xml",
-			"be-optional-soft.xml", "sr-optional-soft.xml", "lt-optional-soft.xml",
-			"is-optional-soft.xml", "ga-optional-soft.xml", "eo-optional-soft.xml",
-			"fa-optional-soft.xml", "ar-optional-soft.xml", "zh-optional-soft.xml",
-			"ja-optional-soft.xml", "br-optional-soft.xml", "ast-optional-soft.xml",
-			"km-optional-soft.xml", "ta-optional-soft.xml", "tl-optional-soft.xml",
-			"crh-optional-soft.xml", "ml-optional-soft.xml",
-		} {
-			optPath := filepath.Join(gdir, name)
-			if st, err := os.Stat(optPath); err == nil && st.Mode().IsRegular() {
-				optN++
-				_, _ = fmt.Fprintf(w, "optional soft pack: %s (default off; enable with -e SOFT_OPTIONAL)\n", optPath)
-			}
-		}
-		if optN > 0 {
-			_, _ = fmt.Fprintf(w, "optional soft packs: %d\n", optN)
-			_, _ = fmt.Fprintf(w, "soft optional enable: -e SOFT_OPTIONAL (or SOFT_OPT_ALL)\n")
-		}
-	}
+	// Soft grammar packs are not part of the faithful engine; report real resources only.
 	ff := DiscoverFalseFriendsFile(opts)
 	if ff == "" {
 		ff = "(unset)"
@@ -721,40 +574,18 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	} else {
 		_, _ = fmt.Fprintf(w, "english.dict: (unset)\n")
 	}
-	if ign := DiscoverEnglishIgnoreSpellingList(opts); ign != "" {
-		_, _ = fmt.Fprintf(w, "ignore-spelling list: %s\n", ign)
-	} else {
-		_, _ = fmt.Fprintf(w, "ignore-spelling list: (unset)\n")
-	}
-	if dx := DiscoverEnglishSoftDisambiguationXML(opts); dx != "" {
-		_, _ = fmt.Fprintf(w, "soft disambiguation XML: %s\n", dx)
-	} else {
-		_, _ = fmt.Fprintf(w, "soft disambiguation XML: (unset)\n")
-	}
-	if ty := DiscoverEnglishTyposFile(opts); ty != "" {
-		_, _ = fmt.Fprintf(w, "en-typos.tsv: %s\n", ty)
-	} else {
-		_, _ = fmt.Fprintf(w, "en-typos.tsv: (unset)\n")
-	}
 	if mw := DiscoverEnglishMultiwords(opts); mw != "" {
 		_, _ = fmt.Fprintf(w, "en multiwords: %s\n", mw)
 	} else {
-		_, _ = fmt.Fprintf(w, "en multiwords: (embedded soft defaults)\n")
+		_, _ = fmt.Fprintf(w, "en multiwords: (unset)\n")
 	}
-	// smoke check
+	// smoke check (core pack only — no soft invent packs)
 	lt, err := configureCoreLT("en", opts)
 	if err != nil {
 		return err
 	}
 	ids := lt.GetAllRegisteredRuleIDs()
-	softEN := 0
-	for _, id := range ids {
-		if strings.Contains(id, "_SOFT_") {
-			softEN++
-		}
-	}
 	_, _ = fmt.Fprintf(w, "en registered rules: %d\n", len(ids))
-	_, _ = fmt.Fprintf(w, "en soft rules: %d\n", softEN)
 	ms := lt.Check("This is an test.")
 	_, _ = fmt.Fprintf(w, "en smoke matches: %d\n", len(ms))
 	found := false
@@ -769,138 +600,8 @@ func CoreDoctor(w io.Writer, opts *CommandLineOptions) error {
 	} else {
 		_, _ = fmt.Fprintf(w, "en smoke: EN_A_VS_AN missing\n")
 	}
-	// soft grammar smoke: fused contraction
-	msSoft := lt.Check("I wouldve gone.")
-	softHit := false
-	for _, m := range msSoft {
-		if m.RuleID == "EN_SOFT_WOULDVE" {
-			softHit = true
-			break
-		}
-	}
-	if softHit {
-		_, _ = fmt.Fprintf(w, "en soft smoke: EN_SOFT_WOULDVE ok\n")
-	} else {
-		_, _ = fmt.Fprintf(w, "en soft smoke: EN_SOFT_WOULDVE missing\n")
-	}
-	// regional soft spelling smoke (only if packs load via grammar dir)
-	if gdir != "" {
-		if ltUS, err := configureCoreLT("en-US", opts); err == nil {
-			hit := false
-			for _, m := range ltUS.Check("Pick a colour.") {
-				if m.RuleID == "EN_SOFT_COLOUR_US" {
-					hit = true
-					break
-				}
-			}
-			if hit {
-				_, _ = fmt.Fprintf(w, "en-US soft smoke: EN_SOFT_COLOUR_US ok\n")
-			} else {
-				_, _ = fmt.Fprintf(w, "en-US soft smoke: EN_SOFT_COLOUR_US missing\n")
-			}
-		}
-		if ltGB, err := configureCoreLT("en-GB", opts); err == nil {
-			hit := false
-			for _, m := range ltGB.Check("Pick a color.") {
-				if m.RuleID == "EN_SOFT_COLOR_GB" {
-					hit = true
-					break
-				}
-			}
-			if hit {
-				_, _ = fmt.Fprintf(w, "en-GB soft smoke: EN_SOFT_COLOR_GB ok\n")
-			} else {
-				_, _ = fmt.Fprintf(w, "en-GB soft smoke: EN_SOFT_COLOR_GB missing\n")
-			}
-		}
-		// multi-lang soft pack smoke (walk-up / data-dir soft grammar)
-		for _, sm := range []struct {
-			lang, text, rule, label string
-		}{
-			{"de", "Ich denke das es so ist.", "DE_SOFT_DAS_DASS", "de soft smoke"},
-			{"fr", "Je vais a la maison.", "FR_SOFT_A_LA", "fr soft smoke"},
-			{"es", "Voy a el parque.", "ES_SOFT_A_EL", "es soft smoke"},
-			{"pt", "Vou a o mercado.", "PT_SOFT_A_O", "pt soft smoke"},
-			{"pt-BR", "Peguei o autocarro cedo.", "PT_SOFT_AUTOCARRO_BR", "pt-BR soft smoke"},
-			{"pt-PT", "Peguei o ônibus cedo.", "PT_SOFT_ONIBUS_PT", "pt-PT soft smoke"},
-			{"es-MX", "Uso el ordenador hoy.", "ES_SOFT_ORDENADOR_MX", "es-MX soft smoke"},
-			{"es-ES", "Uso la computadora hoy.", "ES_SOFT_COMPUTADORA_ES", "es-ES soft smoke"},
-			{"de-CH", "Die Straße ist nass.", "DE_SOFT_STRASSE_CH", "de-CH soft smoke"},
-			{"de-AT", "Im Januar schneit es.", "DE_SOFT_JANUAR_AT", "de-AT soft smoke"},
-			{"fr-CA", "Bon week-end à tous.", "FR_SOFT_WEEKEND_CA", "fr-CA soft smoke"},
-		} {
-			ltL, err := configureCoreLT(sm.lang, opts)
-			if err != nil {
-				continue
-			}
-			hit := false
-			for _, m := range ltL.Check(sm.text) {
-				if m.RuleID == sm.rule {
-					hit = true
-					break
-				}
-			}
-			if hit {
-				_, _ = fmt.Fprintf(w, "%s: %s ok\n", sm.label, sm.rule)
-			} else {
-				_, _ = fmt.Fprintf(w, "%s: %s missing\n", sm.label, sm.rule)
-			}
-		}
-	}
 	_, _ = fmt.Fprintf(w, "status: ok\n")
 	return nil
-}
-
-// countSoftGrammarFiles counts *-soft.xml (and grammar-soft.xml) under dir.
-
-func countUpstreamSoftPacks(dir string) (upstream, optional int) {
-	if dir == "" {
-		return 0, 0
-	}
-	ents, err := os.ReadDir(dir)
-	if err != nil {
-		return 0, 0
-	}
-	for _, e := range ents {
-		if e.IsDir() {
-			continue
-		}
-		name := e.Name()
-		if strings.HasSuffix(name, "-optional-upstream-soft.xml") {
-			optional++
-			continue
-		}
-		if strings.HasSuffix(name, "-upstream-soft.xml") {
-			upstream++
-		}
-	}
-	return upstream, optional
-}
-
-func countSoftGrammarFiles(dir string) int {
-	if dir == "" || dir == "(unset)" {
-		return 0
-	}
-	ents, err := os.ReadDir(dir)
-	if err != nil {
-		return 0
-	}
-	n := 0
-	for _, e := range ents {
-		if e.IsDir() {
-			// {lang}/grammar-soft.xml layout
-			p := filepath.Join(dir, e.Name(), "grammar-soft.xml")
-			if st, err := os.Stat(p); err == nil && !st.IsDir() {
-				n++
-			}
-			continue
-		}
-		name := e.Name()
-		if strings.HasSuffix(name, "-soft.xml") || name == "grammar-soft.xml" {
-			n++
-		}
-	}
-	return n
 }
 
 func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize int, lang string) string {

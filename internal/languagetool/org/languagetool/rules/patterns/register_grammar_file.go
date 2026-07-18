@@ -1,16 +1,13 @@
 package patterns
 
 import (
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterGrammarFile loads a simplified grammar/rules XML file onto lt.
-// Complex constructs (unify, phrases, exceptions) are skipped by the soft loader.
+// RegisterGrammarFile loads a grammar/rules XML file onto lt.
 // Returns the number of pattern rules registered.
 func RegisterGrammarFile(lt *languagetool.JLanguageTool, path, languageCode string) (int, error) {
 	if lt == nil || path == "" {
@@ -174,83 +171,7 @@ func extractSuggestions(msg string) (clean string, suggs []string) {
 	return strings.TrimSpace(clean), suggs
 }
 
-// RegisterSoftGrammarDir loads soft and vendored upstream-extract grammar packs for lang.
-// Paths are de-duplicated so en and en-US do not register the same en-soft.xml twice.
-//
-// Full entity-expanded upstream grammar.xml is opt-in via LANG_USE_UPSTREAM_GRAMMAR=1
-// (slow: thousands of rules). Default uses filtered *-upstream-soft.xml extracts.
-func RegisterSoftGrammarDir(lt *languagetool.JLanguageTool, dir, languageCode string) (int, error) {
-	if lt == nil || dir == "" {
-		return 0, nil
-	}
-	base := languageCode
-	if i := strings.IndexByte(languageCode, '-'); i > 0 {
-		base = languageCode[:i]
-	}
-	total := 0
-	upstreamFull := 0
-	if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
-		for _, p := range upstreamGrammarCandidates(dir, base, languageCode) {
-			n, err := RegisterGrammarFile(lt, p, languageCode)
-			if err != nil {
-				if os.IsNotExist(err) {
-					continue
-				}
-				return total, err
-			}
-			total += n
-			upstreamFull += n
-		}
-	}
-	raw := []string{
-		dir + "/" + base + "-soft.xml",
-		dir + "/" + languageCode + "-soft.xml",
-		dir + "/" + base + "/grammar-soft.xml",
-		// soft optional packs (rules often default="off", enable with -e)
-		dir + "/" + base + "-optional-soft.xml",
-		dir + "/" + languageCode + "-optional-soft.xml",
-		dir + "/" + base + "-optional-upstream-soft.xml",
-		dir + "/" + languageCode + "-optional-upstream-soft.xml",
-	}
-	// Skip filtered extract when full upstream grammar already registered (same IDs).
-	if upstreamFull == 0 {
-		raw = append(raw,
-			dir+"/"+base+"-upstream-soft.xml",
-			dir+"/"+languageCode+"-upstream-soft.xml",
-		)
-	}
-	seen := map[string]struct{}{}
-	for _, c := range raw {
-		if _, ok := seen[c]; ok {
-			continue
-		}
-		seen[c] = struct{}{}
-		n, err := RegisterGrammarFile(lt, c, languageCode)
-		if err != nil {
-			if os.IsNotExist(err) {
-				continue
-			}
-			return total, err
-		}
-		total += n
-	}
-	return total, nil
-}
 
-// upstreamGrammarCandidates lists vendored full LT rule files for a language base.
-// grammarDir is typically …/testdata/grammar; upstream sits at …/testdata/upstream/<base>/rules/.
-func upstreamGrammarCandidates(grammarDir, base, languageCode string) []string {
-	parent := filepath.Dir(grammarDir)
-	upRoot := filepath.Join(parent, "upstream", base, "rules")
-	out := []string{
-		filepath.Join(upRoot, "grammar.xml"),
-		filepath.Join(upRoot, "style.xml"),
-	}
-	if languageCode != base {
-		out = append(out, filepath.Join(upRoot, languageCode, "grammar.xml"))
-	}
-	return out
-}
 
 // softSpanTokens returns non-whitespace token surfaces whose span overlaps [from,to).
 // Includes SENT_START as "" so 1-based \N indices align with Java pattern elements

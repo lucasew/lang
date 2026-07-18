@@ -4,17 +4,16 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
-
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
 // ChineseWordTokenizer ports tokenizers.zh.ChineseWordTokenizer.
 //
 // Java uses HanLP and returns each Term as Term.toString() → "surface/pos".
-// Full HanLP is deferred; soft path segments with SoftCJKLexicon longest-match
-// then encodes "surface/pos" so ChineseTagger.asAnalyzedToken can decode like Java.
+// Until HanLP (or an equivalent) is wired, this does not invent a soft lexicon
+// from grammar packs: it falls back to per-rune surfaces with POS "x".
+// See inspiration/languagetool language-modules/zh ChineseWordTokenizer.
 type ChineseWordTokenizer struct {
-	// Segment optional custom segmenter (surfaces only; POS still soft-guessed).
+	// Segment optional custom segmenter (surfaces only).
 	Segment func(text string) []string
 }
 
@@ -24,11 +23,26 @@ func (t *ChineseWordTokenizer) Tokenize(text string) []string {
 	if t != nil && t.Segment != nil {
 		return encodeChineseTerms(t.Segment(text))
 	}
-	lex := tokenizers.SoftCJKLexiconForLang("zh")
-	return encodeChineseTerms(tokenizers.SegmentCJKLongestMatch(text, lex))
+	// No HanLP: do not invent multi-character soft lexicons.
+	return encodeChineseTerms(segmentRunes(text))
+}
+
+func segmentRunes(text string) []string {
+	if text == "" {
+		return nil
+	}
+	var out []string
+	for _, r := range text {
+		if unicode.IsSpace(r) {
+			continue
+		}
+		out = append(out, string(r))
+	}
+	return out
 }
 
 // encodeChineseTerms maps surfaces to Java HanLP Term.toString form "surface/pos".
+// Without HanLP, POS is "x" (unknown) — not invented soft tags from grammar packs.
 func encodeChineseTerms(surfaces []string) []string {
 	if len(surfaces) == 0 {
 		return nil
@@ -38,63 +52,9 @@ func encodeChineseTerms(surfaces []string) []string {
 		if s == "" {
 			continue
 		}
-		out = append(out, s+"/"+softGuessHanLPStylePOS(s))
+		out = append(out, s+"/x")
 	}
 	return out
-}
-
-// softGuessHanLPStylePOS assigns a coarse HanLP-style short tag without HanLP.
-// Unknown CJK defaults to "x" (untagged soft path) so surface-only goldens stay stable.
-func softGuessHanLPStylePOS(s string) string {
-	if s == "" {
-		return "x"
-	}
-	// Pure punctuation / symbols → w (HanLP punctuation)
-	allPunct := true
-	allDigit := true
-	allLatin := true
-	hasHan := false
-	for _, r := range s {
-		if unicode.Is(unicode.Han, r) {
-			hasHan = true
-		}
-		if !unicode.IsPunct(r) && !unicode.IsSymbol(r) && !unicode.IsSpace(r) {
-			allPunct = false
-		}
-		if !unicode.IsDigit(r) {
-			allDigit = false
-		}
-		if r > 127 || !(unicode.IsLetter(r) || unicode.IsDigit(r)) {
-			if r <= 127 && (unicode.IsLetter(r) || unicode.IsDigit(r)) {
-				// ok
-			} else if r > 127 {
-				allLatin = false
-			}
-		}
-		if r > 127 {
-			allLatin = false
-		}
-	}
-	// recompute allLatin simply
-	allLatin = true
-	for _, r := range s {
-		if r > 127 || !(unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '\'') {
-			allLatin = false
-			break
-		}
-	}
-	if allPunct {
-		return "w"
-	}
-	if allDigit {
-		return "m"
-	}
-	if allLatin && !hasHan {
-		return "nx"
-	}
-	// Soft: leave open-class CJK as "x" so pattern soft POS matching (empty tag)
-	// still treats them as untagged words until HanLP is wired.
-	return "x"
 }
 
 // ChineseSentenceTokenizer ports tokenizers.zh.ChineseSentenceTokenizer.

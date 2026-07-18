@@ -4,12 +4,9 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -183,51 +180,3 @@ func TestCoreCheckHook_PickyLevel(t *testing.T) {
 	require.Contains(t, out.String(), "EN_A_LOT")
 }
 
-func TestCoreCheckHook_GrammarDir(t *testing.T) {
-	// module-relative testdata path
-	dir := filepath.Join("..", "..", "..", "..", "..", "testdata", "grammar")
-	// resolve from commandline package: internal/languagetool/org/languagetool/commandline = 5 ups
-	t.Setenv("LANG_GRAMMAR_DIR", filepath.Clean(filepath.Join("testdata", "grammar")))
-	// From package dir during test, cwd is package dir — use absolute from runtime
-	_, file, _, _ := runtime.Caller(0)
-	// commandline → languagetool → org → languagetool → internal → module root (5)
-	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../.."))
-	t.Setenv("LANG_GRAMMAR_DIR", filepath.Join(root, "testdata", "grammar"))
-
-	var out, errb bytes.Buffer
-	code := RunWithIO([]string{"-l", "en", "-"}, RunHooks{
-		ReadStdin: func() (string, error) { return "Well, your welcome to try.", nil },
-		Check:     CoreCheckHook,
-	}, &out, &errb)
-	require.Equal(t, 2, code, errb.String()+" cwd grammar: "+os.Getenv("LANG_GRAMMAR_DIR"))
-	require.Contains(t, out.String(), "EN_SOFT_YOUR_YOU_RE")
-	_ = dir
-}
-
-func TestRegisterSoftPickyGrammar(t *testing.T) {
-	dir := DiscoverGrammarDir(nil)
-	require.NotEmpty(t, dir)
-	lt := languagetool.NewJLanguageTool("de")
-	n := RegisterSoftPickyGrammar(lt, dir, "de")
-	require.Greater(t, n, 0)
-	ms := lt.Check("Es ist sehr sehr wichtig.")
-	found := false
-	for _, m := range ms {
-		if m.RuleID == "DE_SOFT_PICKY_SEHR_SEHR" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", ms)
-
-	ltFR := languagetool.NewJLanguageTool("fr")
-	nFR := RegisterSoftPickyGrammar(ltFR, dir, "fr")
-	require.Greater(t, nFR, 0)
-	msFR := ltFR.Check("Le meeting est demain.")
-	foundFR := false
-	for _, m := range msFR {
-		if m.RuleID == "FR_SOFT_PICKY_MEETING" {
-			foundFR = true
-		}
-	}
-	require.True(t, foundFR, "%+v", msFR)
-}

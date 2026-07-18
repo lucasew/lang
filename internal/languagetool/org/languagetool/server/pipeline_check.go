@@ -23,16 +23,14 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	}
 	lt := languagetool.NewJLanguageTool(lang)
 	corepack.Register(lt, lang)
-	if dir := softGrammarDirFromEnv(); dir != "" {
-		_, _ = patterns.RegisterSoftGrammarDir(lt, dir, lang)
-	}
-	// soft false friends when mother tongue is set
+	// Soft grammar packs are not loaded (faithful port).
+	// False friends when mother tongue is set (official XML path).
 	if mt := strings.TrimSpace(p.settings.MotherTongueCode); mt != "" {
 		if path := softFalseFriendsPath(); path != "" {
 			_, _ = patterns.RegisterFalseFriendsFile(lt, path, lang, mt)
 		}
 	}
-	// EN speller: prefer CFSA2 en_US.dict; optional map demo fallback
+	// EN: official dicts when present; demo only under LANG_DEMO_SPELLER.
 	base := lang
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
@@ -41,11 +39,6 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 		nearest := en.DemoEnglishKnownWords()
 		sugs := en.CommonDemoSpellerSuggestions
-		if typoPath := softEnglishTyposPath(); typoPath != "" {
-			if extra, err := en.LoadSoftTyposFile(typoPath); err == nil && len(extra) > 0 {
-				sugs = en.MergeSpellerSuggestions(sugs, extra)
-			}
-		}
 		spellOK := false
 		if dictPath := softEnglishUSDictPath(); dictPath != "" {
 			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
@@ -60,26 +53,15 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		if !taggerOK && demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
 		}
-		en.RegisterSoftEnglishDisambiguator(lt, softEnglishMultiwordsPath(), softEnglishDisambigXMLPath(), softEnglishIgnoreSpellingPath())
+		// Soft hybrid disambiguator removed.
 	} else {
-		// Java createDefaultTagger + createDefaultDisambiguator for non-EN
-		// (same soft wiring as commandline.configureCoreLT).
 		if posPath := commandline.DiscoverLanguagePOSDict(nil, base); posPath != "" {
 			_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 		}
-		softPaths := commandline.SoftHybridPaths{
-			Multiwords:      commandline.DiscoverLanguageMultiwords(nil, base),
-			SoftDisambigXML: commandline.DiscoverLanguageSoftDisambiguationXML(nil, base),
-		}
-		if strings.EqualFold(base, "de") {
-			// Multitoken lists are large; only attach when paths resolve (cached).
-			softPaths.DEMultitokenIgnore = commandline.DiscoverGermanMultitokenIgnore(nil)
-			softPaths.DEMultitokenSuggest = commandline.DiscoverGermanMultitokenSuggest(nil)
-		}
-		_ = commandline.RegisterSoftHybridDisambiguator(lt, base, softPaths)
+		// Soft hybrid disambiguator removed; Java HybridDisambiguator twins later.
 	}
 
-	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
+	// Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
 	switch strings.ToUpper(p.settings.Query.LanguageCode) {
 	case "TEXTLEVEL_ONLY", "TEXTLEVELONLY":
 		lt.SetMode(languagetool.ModeTextLevelOnly)
@@ -95,11 +77,9 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	for _, id := range p.settings.Query.DisabledRules {
 		lt.DisableRule(id)
 	}
-	// soft: expand SOFT_OPTIONAL / SOFT_OPT_ALL → all SOFT_OPT_* rules
-	enabledExpanded := languagetool.ExpandSoftEnableRuleIDs(lt.GetAllRegisteredRuleIDs(), p.settings.Query.EnabledRules)
-	// soft: re-enable optional packs when listed (not only under enabled-only)
+	// Java: enable listed rule IDs only (no SOFT_* invent expansion).
+	enabledExpanded := p.settings.Query.EnabledRules
 	for _, id := range enabledExpanded {
-		// skip aliases already expanded out of the slice
 		if id != "" {
 			lt.EnableRule(id)
 		}
