@@ -1,116 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules>
-  <!-- Soft POS filter: after modal, keep VB on the following verb (last token only) -->
+  <!-- Soft POS filter: modal/to + verb; marker on verb = Java FILTER fromPos -->
   <rule id="SOFT_WILL_RUN_VB" name="will run → VB">
     <pattern>
       <token>will</token>
-      <token>run</token>
+      <token marker="yes">run</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_WOULD_RUN_VB" name="would run → VB">
     <pattern>
       <token>would</token>
-      <token>run</token>
+      <token marker="yes">run</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_CAN_CAN_VB" name="can can → second VB">
     <pattern>
       <token>can</token>
-      <token>can</token>
+      <token marker="yes">can</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_WILL_BOOK_VB" name="will book → VB">
     <pattern>
       <token>will</token>
-      <token>book</token>
+      <token marker="yes">book</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MAY_BOOK_VB" name="may book → VB">
     <pattern>
       <token>may</token>
-      <token>book</token>
+      <token marker="yes">book</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_SHOULD_RUN_VB" name="should run → VB">
     <pattern>
       <token>should</token>
-      <token>run</token>
+      <token marker="yes">run</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_COULD_RUN_VB" name="could run → VB">
     <pattern>
       <token>could</token>
-      <token>run</token>
+      <token marker="yes">run</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MIGHT_RUN_VB" name="might run → VB">
     <pattern>
       <token>might</token>
-      <token>run</token>
+      <token marker="yes">run</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MUST_BOOK_VB" name="must book → VB">
     <pattern>
       <token>must</token>
-      <token>book</token>
+      <token marker="yes">book</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_WILL_READ_VB" name="will read → VB">
     <pattern>
       <token>will</token>
-      <token>read</token>
+      <token marker="yes">read</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_CAN_READ_VB" name="can read → VB">
     <pattern>
       <token>can</token>
-      <token>read</token>
+      <token marker="yes">read</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
-  <!-- Soft general: modal + common ambiguous verbs → VB on last token -->
+  <!-- Soft general: modal + common ambiguous verbs → VB (marker = fromPos) -->
   <rule id="SOFT_MODAL_MAKE_VB" name="modal make → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>make</token>
+      <token marker="yes">make</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_TAKE_VB" name="modal take → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>take</token>
+      <token marker="yes">take</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_SET_VB" name="modal set → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>set</token>
+      <token marker="yes">set</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_PLAY_VB" name="modal play → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>play</token>
+      <token marker="yes">play</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_WORK_VB" name="modal work → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>work</token>
+      <token marker="yes">work</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
@@ -227,105 +227,105 @@
   <rule id="SOFT_MODAL_LOOK_VB" name="modal look → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>look</token>
+      <token marker="yes">look</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_HELP_VB" name="modal help → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>help</token>
+      <token marker="yes">help</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_SHOW_VB" name="modal show → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>show</token>
+      <token marker="yes">show</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_KEEP_VB" name="modal keep → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>keep</token>
+      <token marker="yes">keep</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_LEAVE_VB" name="modal leave → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>leave</token>
+      <token marker="yes">leave</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_FIND_VB" name="modal find → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>find</token>
+      <token marker="yes">find</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_GIVE_VB" name="modal give → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>give</token>
+      <token marker="yes">give</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_GET_VB" name="modal get → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>get</token>
+      <token marker="yes">get</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_COME_VB" name="modal come → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>come</token>
+      <token marker="yes">come</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_RUN" name="to run → VB">
     <pattern>
       <token>to</token>
-      <token>run</token>
+      <token marker="yes">run</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_MAKE" name="to make → VB">
     <pattern>
       <token>to</token>
-      <token>make</token>
+      <token marker="yes">make</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_FIND" name="to find → VB">
     <pattern>
       <token>to</token>
-      <token>find</token>
+      <token marker="yes">find</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_GET" name="to get → VB">
     <pattern>
       <token>to</token>
-      <token>get</token>
+      <token marker="yes">get</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_GIVE" name="to give → VB">
     <pattern>
       <token>to</token>
-      <token>give</token>
+      <token marker="yes">give</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_KEEP" name="to keep → VB">
     <pattern>
       <token>to</token>
-      <token>keep</token>
+      <token marker="yes">keep</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
@@ -386,63 +386,63 @@
   <rule id="SOFT_MODAL_TELL_VB" name="modal tell → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>tell</token>
+      <token marker="yes">tell</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_CALL_VB" name="modal call → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>call</token>
+      <token marker="yes">call</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_MOVE_VB" name="modal move → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>move</token>
+      <token marker="yes">move</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_START_VB" name="modal start → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>start</token>
+      <token marker="yes">start</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_TELL" name="to tell → VB">
     <pattern>
       <token>to</token>
-      <token>tell</token>
+      <token marker="yes">tell</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_CALL" name="to call → VB">
     <pattern>
       <token>to</token>
-      <token>call</token>
+      <token marker="yes">call</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_START" name="to start → VB">
     <pattern>
       <token>to</token>
-      <token>start</token>
+      <token marker="yes">start</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_MOVE" name="to move → VB">
     <pattern>
       <token>to</token>
-      <token>move</token>
+      <token marker="yes">move</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_HELP" name="to help → VB">
     <pattern>
       <token>to</token>
-      <token>help</token>
+      <token marker="yes">help</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
@@ -491,77 +491,77 @@
   <rule id="SOFT_MODAL_TRY_VB" name="modal try → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>try</token>
+      <token marker="yes">try</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_NEED_VB" name="modal need → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>need</token>
+      <token marker="yes">need</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_TRY" name="to try → VB">
     <pattern>
       <token>to</token>
-      <token>try</token>
+      <token marker="yes">try</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_NEED" name="to need → VB">
     <pattern>
       <token>to</token>
-      <token>need</token>
+      <token marker="yes">need</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_USE" name="to use → VB">
     <pattern>
       <token>to</token>
-      <token>use</token>
+      <token marker="yes">use</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_USE_VB" name="modal use → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>use</token>
+      <token marker="yes">use</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_WANT_VB" name="modal want → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>want</token>
+      <token marker="yes">want</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_MODAL_SEEM_VB" name="modal seem → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>seem</token>
+      <token marker="yes">seem</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_WANT" name="to want → VB">
     <pattern>
       <token>to</token>
-      <token>want</token>
+      <token marker="yes">want</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_SEEM" name="to seem → VB">
     <pattern>
       <token>to</token>
-      <token>seem</token>
+      <token marker="yes">seem</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_WORK" name="to work → VB">
     <pattern>
       <token>to</token>
-      <token>work</token>
+      <token marker="yes">work</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
@@ -622,14 +622,14 @@
   <rule id="SOFT_MODAL_ASK_VB" name="modal ask → VB">
     <pattern>
       <token regexp="yes">will|would|can|could|should|might|must|shall|may</token>
-      <token>ask</token>
+      <token marker="yes">ask</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>
   <rule id="SOFT_TO_VB_ASK" name="to ask → VB">
     <pattern>
       <token>to</token>
-      <token>ask</token>
+      <token marker="yes">ask</token>
     </pattern>
     <disambig action="filter" postag="VB"/>
   </rule>

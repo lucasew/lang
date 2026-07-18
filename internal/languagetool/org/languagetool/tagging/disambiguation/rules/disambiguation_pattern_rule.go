@@ -187,8 +187,11 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			}
 		}
 	case ActionReplace:
-		// Java REPLACE with only postag (no <wd> list): replace *fromPos* only
-		// with a new reading — not LeaveReading (which empties when POS absent).
+		// Java REPLACE with <wd> list: one reading per matched (marker) token.
+		// Java REPLACE with only postag: replace *fromPos* only
+		// (DisambiguationPatternRuleReplacer: whTokens[fromPos] = new …).
+		// first/last already come from the matcher marker span (firstMark/lastMark),
+		// so first == Java fromPos after startPositionCorrection.
 		if len(r.NewTokenReadings) > 0 {
 			for i := first; i <= last && i < len(nws); i++ {
 				rel := i - first
@@ -210,10 +213,9 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			}
 			return
 		}
-		if r.DisambiguatedPOS == "" || first < 0 || first >= len(nws) || nws[first] == nil {
+		if first < 0 || first >= len(nws) || nws[first] == nil || r.DisambiguatedPOS == "" {
 			return
 		}
-		// fromPos only (Java whTokens[fromPos] = new …)
 		surface := nws[first].GetToken()
 		lemma := surface
 		for _, reading := range nws[first].GetReadings() {
@@ -231,8 +233,10 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 		newTok := languagetool.NewAnalyzedToken(surface, &pos, &lemma)
 		nws[first].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, r.ID)
 	case ActionFilter, ActionFilterAll:
-		// Java FILTER: POS is a regex; apply only when some reading matches;
-		// keep readings whose POS matches. fromPos for FILTER, all for FILTERALL.
+		// Java FILTER (DisambiguationPatternRuleReplacer case FILTER): POS is a
+		// regex; apply only when some reading matches (newPOSmatches); keep
+		// readings whose POS matches. Target is *fromPos only* (first of the
+		// matcher marker span). FILTERALL walks every token in the span.
 		if r.DisambiguatedPOS == "" {
 			return
 		}
@@ -240,19 +244,17 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 		if err != nil {
 			return
 		}
-		// FILTER uses fromPos (first match); soft multi-token "will run" rules that
-		// put the verb last still work when pattern markers select the verb.
-		// Practical default for multi-token FILTER without markers: last token
-		// (modal+verb filters), matching LT soft tests and common XML style.
-		start, end := first, first
+		var targets []int
 		if r.Action == ActionFilterAll {
-			start, end = first, last
-		} else if last > first {
-			// multi-token FILTER without per-token <wd>: filter last token
-			start, end = last, last
+			for i := first; i <= last && i < len(nws); i++ {
+				targets = append(targets, i)
+			}
+		} else if first >= 0 {
+			// Java: whTokens[fromPos] only — first is already marker-start.
+			targets = []int{first}
 		}
-		for i := start; i <= end && i < len(nws); i++ {
-			if nws[i] == nil {
+		for _, i := range targets {
+			if i < 0 || i >= len(nws) || nws[i] == nil {
 				continue
 			}
 			// only apply when at least one reading matches (Java newPOSmatches)
