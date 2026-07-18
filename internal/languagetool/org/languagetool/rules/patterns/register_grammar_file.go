@@ -100,6 +100,14 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 				if out[i].Priority == 0 {
 					out[i].Priority = 3
 				}
+				// Expand soft \N backrefs using non-whitespace tokens under the match span.
+				if text != "" && len(out[i].Suggestions) > 0 {
+					from, to := out[i].FromPos, out[i].ToPos
+					spanToks := softSpanTokens(s, from, to)
+					for j, sug := range out[i].Suggestions {
+						out[i].Suggestions[j] = softExpandBackrefs(sug, spanToks)
+					}
+				}
 				// Preserve sentence-case / ALL-CAPS from the matched surface on suggestions.
 				if text != "" && len(out[i].Suggestions) > 0 {
 					from, to := out[i].FromPos, out[i].ToPos
@@ -242,4 +250,46 @@ func upstreamGrammarCandidates(grammarDir, base, languageCode string) []string {
 		out = append(out, filepath.Join(upRoot, languageCode, "grammar.xml"))
 	}
 	return out
+}
+
+// softSpanTokens returns non-whitespace token surfaces whose span overlaps [from,to).
+func softSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
+	if s == nil || from < 0 || to <= from {
+		return nil
+	}
+	var out []string
+	for _, tok := range s.GetTokensWithoutWhitespace() {
+		if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+			continue
+		}
+		ts, te := tok.GetStartPos(), tok.GetEndPos()
+		if te <= from || ts >= to {
+			continue
+		}
+		if t := tok.GetToken(); t != "" {
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+// softExpandBackrefs replaces \1..\9 with span tokens (1-based). Unknown stays as-is.
+func softExpandBackrefs(sug string, spanToks []string) string {
+	if sug == "" || !strings.Contains(sug, `\`) {
+		return sug
+	}
+	var b strings.Builder
+	b.Grow(len(sug))
+	for i := 0; i < len(sug); i++ {
+		if sug[i] == '\\' && i+1 < len(sug) && sug[i+1] >= '1' && sug[i+1] <= '9' {
+			n := int(sug[i+1] - '0')
+			if n >= 1 && n <= len(spanToks) {
+				b.WriteString(spanToks[n-1])
+			}
+			i++
+			continue
+		}
+		b.WriteByte(sug[i])
+	}
+	return b.String()
 }

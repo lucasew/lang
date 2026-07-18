@@ -167,6 +167,29 @@ def serialize_token(tok: ET.Element) -> dict:
     return d
 
 
+def match_to_backref(el: ET.Element) -> str:
+    """Map LT <match no="N"/> (and optional postag attrs ignored) to soft \\N."""
+    no = (el.get("no") or "1").strip()
+    if not no.isdigit():
+        no = "1"
+    return "\\" + no
+
+
+def serialize_soft_inline(el: ET.Element) -> str:
+    """Flatten an element tree, turning <match no="N"/> into \\N backrefs."""
+    chunks: list[str] = []
+    if el.text:
+        chunks.append(el.text)
+    for ch in el:
+        if local(ch.tag) == "match":
+            chunks.append(match_to_backref(ch))
+        else:
+            chunks.append(serialize_soft_inline(ch))
+        if ch.tail:
+            chunks.append(ch.tail)
+    return "".join(chunks)
+
+
 def collapse_and(and_el: ET.Element) -> dict | None:
     """Collapse simple <and> of one surface token + optional postag into one soft token.
 
@@ -420,13 +443,18 @@ def extract_simple_rules(root: ET.Element, source: str) -> tuple[list[dict], lis
                 break
         msg_xml = ""
         if msg_el is not None:
-            # rebuild simple message with suggestion tags
+            # rebuild simple message with suggestion tags; <match no="N"/> → \N
+            # for soft backref expansion at runtime.
             chunks: list[str] = []
             if msg_el.text:
                 chunks.append(msg_el.text)
             for ch in msg_el:
                 if local(ch.tag) == "suggestion":
-                    chunks.append("<suggestion>" + "".join(ch.itertext()) + "</suggestion>")
+                    chunks.append(
+                        "<suggestion>" + serialize_soft_inline(ch) + "</suggestion>"
+                    )
+                elif local(ch.tag) == "match":
+                    chunks.append(match_to_backref(ch))
                 else:
                     chunks.append("".join(ch.itertext()))
                 if ch.tail:
@@ -439,7 +467,7 @@ def extract_simple_rules(root: ET.Element, source: str) -> tuple[list[dict], lis
         if "<suggestion>" not in msg_xml:
             for c in el:
                 if local(c.tag) == "suggestion":
-                    body = "".join(c.itertext()).strip()
+                    body = serialize_soft_inline(c).strip()
                     if body:
                         msg_xml = (msg_xml + " <suggestion>" + body + "</suggestion>").strip()
                         break

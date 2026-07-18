@@ -60,8 +60,13 @@ type xmlRule struct {
 	Name    string     `xml:"name,attr"`
 	Default string     `xml:"default,attr"`
 	Pattern xmlPattern `xml:"pattern"`
-	Message string     `xml:"message"`
+	// Message keeps inner XML so <suggestion>…</suggestion> and soft \N backrefs survive.
+	Message xmlMessage `xml:"message"`
 	Short   string     `xml:"short"`
+}
+
+type xmlMessage struct {
+	Inner string `xml:",innerxml"`
 }
 
 type xmlPattern struct {
@@ -116,7 +121,7 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 			tokens = append(tokens, pt)
 		}
 		r := NewAbstractPatternRule(id, name, languageCode, tokens, false)
-		r.Message = strings.TrimSpace(xr.Message)
+		r.Message = strings.TrimSpace(xr.Message.Inner)
 		r.ShortMessage = strings.TrimSpace(xr.Short)
 		r.CategoryID = catID
 		r.CategoryName = catName

@@ -94,14 +94,14 @@
       <pattern>
         <token regexp="yes">'.+</token>
       </pattern>
-      <message>Consider using the typewriter apostrophe.</message>
+      <message>Consider using the typewriter apostrophe. <suggestion>\1</suggestion></message>
       <short>TYPEWRITER_APOSTROPHE</short>
     </rule>
     <rule id="TYPOGRAPHICAL_APOSTROPHE" name="require typographical (curly) apostrophe (’)" default="off">
       <pattern>
         <token regexp="yes">'.+</token>
       </pattern>
-      <message>Consider using the typographical apostrophe.</message>
+      <message>Consider using the typographical apostrophe. <suggestion>\1</suggestion></message>
       <short>TYPOGRAPHICAL_APOSTROPHE</short>
     </rule>
   </category>
@@ -127,7 +127,7 @@
         <token postag="JJ." postag_regexp="yes"></token>
         <token>as</token>
       </pattern>
-      <message>Did you mean <suggestion></suggestion>?</message>
+      <message>Did you mean <suggestion>\2</suggestion>?</message>
       <short>COMPARISONS_AS_ADJECTIVE_AS</short>
     </rule>
   </category>
