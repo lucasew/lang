@@ -25,8 +25,8 @@ type ApiV2 struct {
 	TextChecker    *V2TextChecker
 	// Languages is a pluggable list of short codes for /languages.
 	Languages []LanguageInfo
-	// UserDict soft in-memory dictionary for /v2/words*.
-	UserDict *SoftUserDictionary
+	// UserDict in-memory dictionary for /v2/words*.
+	UserDict *UserDictionary
 }
 
 func NewApiV2(cfg *HTTPServerConfig, languages []LanguageInfo) *ApiV2 {
@@ -41,7 +41,7 @@ func NewApiV2(cfg *HTTPServerConfig, languages []LanguageInfo) *ApiV2 {
 		AllowOriginURL: cfg.AllowOriginURL,
 		TextChecker:    NewV2TextChecker(cfg, false, NewRequestCounter()),
 		Languages:      languages,
-		UserDict:       NewSoftUserDictionary(),
+		UserDict:       NewUserDictionary(),
 	}
 }
 
@@ -310,7 +310,7 @@ func (a *ApiV2) GetConfigurationInfoJSON(lang string) (string, error) {
 
 func (a *ApiV2) handleWordsList(parameters map[string]string) (string, error) {
 	if a.UserDict == nil {
-		a.UserDict = NewSoftUserDictionary()
+		a.UserDict = NewUserDictionary()
 	}
 	offset, _ := strconv.Atoi(parameters["offset"])
 	limit, _ := strconv.Atoi(parameters["limit"])
@@ -327,7 +327,7 @@ func (a *ApiV2) handleWordsList(parameters map[string]string) (string, error) {
 
 func (a *ApiV2) handleWordsAdd(parameters map[string]string) (string, error) {
 	if a.UserDict == nil {
-		a.UserDict = NewSoftUserDictionary()
+		a.UserDict = NewUserDictionary()
 	}
 	user := parameters["username"]
 	// single word or batch: mode=batch&words="a b c"
@@ -352,7 +352,7 @@ func (a *ApiV2) handleWordsAdd(parameters map[string]string) (string, error) {
 
 func (a *ApiV2) handleWordsDelete(parameters map[string]string) (string, error) {
 	if a.UserDict == nil {
-		a.UserDict = NewSoftUserDictionary()
+		a.UserDict = NewUserDictionary()
 	}
 	user := parameters["username"]
 	if strings.EqualFold(parameters["mode"], "batch") {

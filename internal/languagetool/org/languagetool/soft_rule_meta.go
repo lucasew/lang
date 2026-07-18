@@ -2,11 +2,11 @@ package languagetool
 
 import "strings"
 
-// SoftRuleMeta is a fallback when LocalMatch has no CategoryID/IssueType.
+// RuleMeta is a fallback when LocalMatch has no CategoryID/IssueType.
 // It maps well-known Java rule ID families to Categories / ITS types used in LT
-// (e.g. Morfologik → TYPOS/misspelling). It must not invent metadata for soft packs.
+// (e.g. Morfologik → TYPOS/misspelling). Unknown IDs stay uncategorized — no invent.
 // Prefer setting CategoryID/IssueType on LocalMatch from the rule itself.
-func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short string) {
+func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string) {
 	id := strings.ToUpper(ruleID)
 	switch {
 	case strings.Contains(id, "MORFOLOGIK") || strings.Contains(id, "HUNSPELL") ||
@@ -43,9 +43,14 @@ func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short str
 	}
 }
 
-// SoftRuleDescription returns a short description for known Java rule families.
+// SoftRuleMeta is a compatibility alias for RuleMeta.
+func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short string) {
+	return RuleMeta(ruleID)
+}
+
+// RuleDescription returns a short description for known Java rule families.
 // Prefer rule.GetDescription() when available; this is CLI/API fallback only.
-func SoftRuleDescription(ruleID string) string {
+func RuleDescription(ruleID string) string {
 	id := strings.ToUpper(ruleID)
 	switch {
 	case id == "EN_A_VS_AN" || strings.Contains(id, "A_VS_AN"):
@@ -76,6 +81,9 @@ func SoftRuleDescription(ruleID string) string {
 	}
 }
 
+// SoftRuleDescription is a compatibility alias for RuleDescription.
+func SoftRuleDescription(ruleID string) string { return RuleDescription(ruleID) }
+
 // SeverityFromIssueType maps ITS issue types to SARIF 2.1 result levels (SPEC §2.2).
 func SeverityFromIssueType(issueType string) string {
 	switch strings.ToLower(strings.TrimSpace(issueType)) {
@@ -91,14 +99,14 @@ func SeverityFromIssueType(issueType string) string {
 	}
 }
 
-// SoftRuleURL returns the LanguageTool community rule page for a rule ID.
-// Product help link (not soft invent). lang defaults via SoftRuleLangHint then "en".
-func SoftRuleURL(ruleID, lang string) string {
+// RuleURL returns the LanguageTool community rule page for a rule ID.
+// lang defaults via RuleLangHint then "en".
+func RuleURL(ruleID, lang string) string {
 	if ruleID == "" {
 		return ""
 	}
 	if lang == "" {
-		lang = SoftRuleLangHint(ruleID)
+		lang = RuleLangHint(ruleID)
 	}
 	if lang == "" {
 		lang = "en"
@@ -109,9 +117,12 @@ func SoftRuleURL(ruleID, lang string) string {
 	return "https://community.languagetool.org/rule/show/" + ruleID + "?lang=" + lang
 }
 
-// SoftRuleLangHint infers a language code from a rule ID prefix (e.g. DE_… → de).
+// SoftRuleURL is a compatibility alias for RuleURL.
+func SoftRuleURL(ruleID, lang string) string { return RuleURL(ruleID, lang) }
+
+// RuleLangHint infers a language code from a rule ID prefix (e.g. DE_… → de).
 // Only known LT language codes; empty if unknown.
-func SoftRuleLangHint(ruleID string) string {
+func RuleLangHint(ruleID string) string {
 	up := strings.ToUpper(strings.TrimSpace(ruleID))
 	i := strings.IndexByte(up, '_')
 	if i < 2 || i > 3 {
@@ -127,3 +138,6 @@ func SoftRuleLangHint(ruleID string) string {
 		return ""
 	}
 }
+
+// SoftRuleLangHint is a compatibility alias for RuleLangHint.
+func SoftRuleLangHint(ruleID string) string { return RuleLangHint(ruleID) }

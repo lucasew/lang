@@ -6,18 +6,25 @@ import (
 	"sync"
 )
 
-// SoftUserDictionary is an in-process stand-in for the premium DB-backed word list
-// used by /v2/words, /v2/words/add, and /v2/words/delete.
-type SoftUserDictionary struct {
+// UserDictionary is an in-process stand-in for the premium DB-backed word list
+// used by /v2/words, /v2/words/add, and /v2/words/delete (Java server API surface).
+// Not an invent soft pack — incomplete vs DB persistence.
+type UserDictionary struct {
 	mu    sync.RWMutex
 	words map[string]map[string]struct{} // username → word set
 }
 
-func NewSoftUserDictionary() *SoftUserDictionary {
-	return &SoftUserDictionary{words: map[string]map[string]struct{}{}}
+// SoftUserDictionary is a compatibility alias for UserDictionary.
+type SoftUserDictionary = UserDictionary
+
+func NewUserDictionary() *UserDictionary {
+	return &UserDictionary{words: map[string]map[string]struct{}{}}
 }
 
-func (d *SoftUserDictionary) key(username string) string {
+// NewSoftUserDictionary is a compatibility alias for NewUserDictionary.
+func NewSoftUserDictionary() *UserDictionary { return NewUserDictionary() }
+
+func (d *UserDictionary) key(username string) string {
 	u := strings.TrimSpace(username)
 	if u == "" {
 		return "anon"
@@ -26,7 +33,7 @@ func (d *SoftUserDictionary) key(username string) string {
 }
 
 // List returns sorted dictionary words for username (empty username → anon).
-func (d *SoftUserDictionary) List(username string, offset, limit int) []string {
+func (d *UserDictionary) List(username string, offset, limit int) []string {
 	if d == nil {
 		return nil
 	}
@@ -52,7 +59,7 @@ func (d *SoftUserDictionary) List(username string, offset, limit int) []string {
 }
 
 // Add inserts word; returns true if newly added.
-func (d *SoftUserDictionary) Add(username, word string) bool {
+func (d *UserDictionary) Add(username, word string) bool {
 	if d == nil {
 		return false
 	}
@@ -74,7 +81,7 @@ func (d *SoftUserDictionary) Add(username, word string) bool {
 }
 
 // Delete removes word; returns true if it was present.
-func (d *SoftUserDictionary) Delete(username, word string) bool {
+func (d *UserDictionary) Delete(username, word string) bool {
 	if d == nil {
 		return false
 	}
@@ -97,6 +104,6 @@ func (d *SoftUserDictionary) Delete(username, word string) bool {
 }
 
 // All returns all words for username (no pagination).
-func (d *SoftUserDictionary) All(username string) []string {
+func (d *UserDictionary) All(username string) []string {
 	return d.List(username, 0, 0)
 }

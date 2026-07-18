@@ -5,16 +5,14 @@ import (
 	"unicode/utf8"
 )
 
-// SoftForeignIgnoreRanges maps non-Latin script runs to matching altLanguages codes.
+// ForeignScriptIgnoreRanges maps non-Latin script runs to matching altLanguages codes.
 // Incomplete vs Java multi-language check (altLanguages on Pipeline); ignore-range
-// heuristic only — do not invent language IDs outside the provided alt list.
-// Name kept for API stability; not a soft invent pack.
-func SoftForeignIgnoreRanges(text, primaryLang string, altLangs []string) []IgnoreRangeInfo {
+// heuristic only — does not invent language IDs outside the provided alt list.
+func ForeignScriptIgnoreRanges(text, primaryLang string, altLangs []string) []IgnoreRangeInfo {
 	if text == "" || len(altLangs) == 0 {
 		return nil
 	}
 	primary := baseLangCode(primaryLang)
-	// skip if primary itself is non-Latin script language — soft: still ok
 	_ = primary
 
 	type span struct{ from, to int; kind string }
@@ -146,12 +144,13 @@ func pickAltForScript(kind string, alts []string) string {
 			}
 		}
 	}
-	// if no matching alt, still use first alt when kind is non-latin (soft)
-	if len(alts) > 0 && kind != "latin" && kind != "" {
-		// only if first alt base matches any known script preference loosely — else empty
-		return ""
-	}
+	// No invent: only return an alt when its code matches the script preference list.
 	return ""
+}
+
+// SoftForeignIgnoreRanges is a compatibility alias for ForeignScriptIgnoreRanges.
+func SoftForeignIgnoreRanges(text, primaryLang string, altLangs []string) []IgnoreRangeInfo {
+	return ForeignScriptIgnoreRanges(text, primaryLang, altLangs)
 }
 
 func baseLangCode(code string) string {
