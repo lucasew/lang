@@ -87,7 +87,9 @@ type disambigPattern struct {
 	Tokens []disambigToken
 }
 
-// UnmarshalXML ports pattern content: sequence of <token> and <and><token>…</and>.
+// UnmarshalXML ports pattern content: sequence of <token>, <marker>…</marker>, and <and>.
+// Java PatternRuleHandler walks children; skipping <marker> drops tokens and invents
+// empty/exception-only patterns (e.g. EXCEPT_NOT_VERB matched every word).
 func (p *disambigPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	p.Tokens = nil
 	for {
@@ -103,48 +105,104 @@ func (p *disambigPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) e
 		case xml.StartElement:
 			switch t.Name.Local {
 			case "token":
-				var xt disambigToken
-				if err := d.DecodeElement(&xt, &t); err != nil {
+				xt, err := decodeDisambigToken(d, t)
+				if err != nil {
 					return err
 				}
 				p.Tokens = append(p.Tokens, xt)
+			case "marker":
+				// Java <marker> wraps tokens that REPLACE/FILTER target (InsideMarker).
+				if err := p.decodeMarkerContents(d); err != nil {
+					return err
+				}
 			case "and":
-				// Java <and> is one pattern position: first token is base, rest AndGroup.
-				var andToks []disambigToken
-				for {
-					inner, err := d.Token()
-					if err != nil {
-						return err
-					}
-					switch it := inner.(type) {
-					case xml.EndElement:
-						if it.Name.Local == "and" {
-							goto andDone
-						}
-					case xml.StartElement:
-						if it.Name.Local == "token" {
-							var xt disambigToken
-							if err := d.DecodeElement(&xt, &it); err != nil {
-								return err
-							}
-							andToks = append(andToks, xt)
-						} else if err := d.Skip(); err != nil {
-							return err
-						}
-					}
+				base, err := decodeDisambigAnd(d, t)
+				if err != nil {
+					return err
 				}
-			andDone:
-				if len(andToks) == 0 {
-					continue
+				if base != nil {
+					p.Tokens = append(p.Tokens, *base)
 				}
-				base := andToks[0]
-				// Sibling <token>s inside <and> become AndTokens (Java and-group).
-				base.AndTokens = append(base.AndTokens, andToks[1:]...)
-				p.Tokens = append(p.Tokens, base)
 			default:
 				if err := d.Skip(); err != nil {
 					return err
 				}
+			}
+		}
+	}
+}
+
+func (p *disambigPattern) decodeMarkerContents(d *xml.Decoder) error {
+	for {
+		inner, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch it := inner.(type) {
+		case xml.EndElement:
+			if it.Name.Local == "marker" {
+				return nil
+			}
+		case xml.StartElement:
+			switch it.Name.Local {
+			case "token":
+				xt, err := decodeDisambigToken(d, it)
+				if err != nil {
+					return err
+				}
+				xt.Marker = "yes"
+				p.Tokens = append(p.Tokens, xt)
+			case "and":
+				base, err := decodeDisambigAnd(d, it)
+				if err != nil {
+					return err
+				}
+				if base != nil {
+					base.Marker = "yes"
+					p.Tokens = append(p.Tokens, *base)
+				}
+			default:
+				if err := d.Skip(); err != nil {
+					return err
+				}
+			}
+		}
+	}
+}
+
+func decodeDisambigToken(d *xml.Decoder, start xml.StartElement) (disambigToken, error) {
+	var xt disambigToken
+	err := d.DecodeElement(&xt, &start)
+	return xt, err
+}
+
+// decodeDisambigAnd reads Java <and><token>…</token></and> as one position with AndGroup.
+func decodeDisambigAnd(d *xml.Decoder, start xml.StartElement) (*disambigToken, error) {
+	var andToks []disambigToken
+	for {
+		inner, err := d.Token()
+		if err != nil {
+			return nil, err
+		}
+		switch it := inner.(type) {
+		case xml.EndElement:
+			if it.Name.Local == start.Name.Local {
+				if len(andToks) == 0 {
+					return nil, nil
+				}
+				base := andToks[0]
+				base.AndTokens = append(base.AndTokens, andToks[1:]...)
+				return &base, nil
+			}
+		case xml.StartElement:
+			if it.Name.Local == "token" {
+				xt, err := decodeDisambigToken(d, it)
+				if err != nil {
+					return nil, err
+				}
+				andToks = append(andToks, xt)
+			} else if err := d.Skip(); err != nil {
+				return nil, err
 			}
 		}
 	}

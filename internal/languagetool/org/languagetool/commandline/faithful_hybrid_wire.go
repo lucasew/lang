@@ -48,14 +48,11 @@ func RegisterEnglishHybridDisambiguator(lt *languagetool.JLanguageTool, opts *Co
 		}
 	}
 
-	// Java: new XmlRuleDisambiguator(lang, true) after multiword chunkers.
-	// Loader now parses rulegroups + <and> (see DisambiguationRuleLoader). Applying the
-	// full rule set still corrupts POS until DisambiguationPatternRule.Replace is 1:1
-	// with Java (e.g. FILTER/REPLACE/UNIFY edge cases). Keep multiword stages only;
-	// attach XML when replace semantics are proven — do not invent a partial soft set.
-	// loadXmlRuleDisambiguator remains for tests / next sector wire.
-	_ = DiscoverLanguageDisambiguationXML(opts, "en")
-	_ = DiscoverGlobalDisambiguationXML(opts)
+	// Java: new XmlRuleDisambiguator(lang, true) after multiword chunkers
+	// (language disambiguation.xml then disambiguation-global.xml).
+	if xml := loadXmlRuleDisambiguator("en", opts, true); xml != nil && len(xml.Rules) > 0 {
+		hybrid.RulesDisambiguator = xml
+	}
 
 	if hybrid.GlobalChunker == nil && hybrid.Chunker == nil && hybrid.RulesDisambiguator == nil {
 		return false

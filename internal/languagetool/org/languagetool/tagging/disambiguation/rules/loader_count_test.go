@@ -62,4 +62,25 @@ func TestLoadOfficialENDisambiguationCount(t *testing.T) {
 	if !found {
 		t.Fatal("INSTAL_INSTALL not loaded (and/rulegroup parse failed)")
 	}
+	// EXCEPT_NOT_VERB: <marker> must keep "except" token (not empty exception-only).
+	found = false
+	for _, r := range rules {
+		if r == nil || r.GetID() != "EXCEPT_NOT_VERB" {
+			continue
+		}
+		found = true
+		if len(r.Tokens) < 2 {
+			t.Fatalf("EXCEPT_NOT_VERB: want >=2 tokens (marker+follow), got %d", len(r.Tokens))
+		}
+		if r.Tokens[0].Token != "except" {
+			t.Fatalf("EXCEPT_NOT_VERB: first token want except, got %q", r.Tokens[0].Token)
+		}
+		if !r.Tokens[0].InsideMarker {
+			t.Fatal("EXCEPT_NOT_VERB: marked token must be InsideMarker")
+		}
+		break
+	}
+	if !found {
+		t.Fatal("EXCEPT_NOT_VERB not loaded (marker parse failed)")
+	}
 }
