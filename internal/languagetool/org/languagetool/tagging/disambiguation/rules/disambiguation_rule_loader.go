@@ -61,6 +61,10 @@ type disambigToken struct {
 	Marker string `xml:"marker,attr"`
 	// SpaceBefore ports spacebefore="yes|no".
 	SpaceBefore string `xml:"spacebefore,attr"`
+	// Min/Max/Skip port Java PatternToken min/max/skip (PatternRuleMatcher).
+	Min  string `xml:"min,attr"`
+	Max  string `xml:"max,attr"`
+	Skip string `xml:"skip,attr"`
 	// Exceptions ports Java <exception> under <token> (first positive used).
 	Exceptions []disambigException `xml:"exception"`
 	Content    string              `xml:",chardata"`
@@ -158,6 +162,24 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 	}
 	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
 		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+	}
+	if xt.Min != "" {
+		var n int
+		if _, err := fmt.Sscanf(xt.Min, "%d", &n); err == nil {
+			pt.SetMinOccurrence(n)
+		}
+	}
+	if xt.Max != "" {
+		var n int
+		if _, err := fmt.Sscanf(xt.Max, "%d", &n); err == nil {
+			pt.SetMaxOccurrence(n)
+		}
+	}
+	if xt.Skip != "" {
+		var n int
+		if _, err := fmt.Sscanf(xt.Skip, "%d", &n); err == nil {
+			pt.SetSkipNext(n)
+		}
 	}
 	// Java PatternToken exceptions: positive surface/regexp blocks the token.
 	// Soft subset: first non-negated exception only (same as pattern_rule_loader).

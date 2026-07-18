@@ -164,6 +164,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="na_per" name="na per =&gt; prep">
+    <pattern>
+      <token postag="prep:acc" marker="yes">na</token>
+      <token postag="prep:nom" marker="yes">per</token>
+      <token regexp="yes" min="0">[«»„&quot;]</token>
+      <token postag=".*nom.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="na_potem" name="na potem -&gt; adv">
     <pattern>
       <token postag="prep:acc">na</token>
@@ -286,6 +295,14 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="OD_DAWNA" name="od dawna">
+    <pattern>
+      <token>od</token>
+      <token regexp="yes" min="0" max="1">[tj]ak</token>
+      <token regexp="yes" marker="yes">dawna|niedawna|nowa</token>
+    </pattern>
+    <disambig action="replace" postag="adjp"/>
+  </rule>
   <rule id="OD_JAK_DAWNA" name="od jak dawna">
     <pattern>
       <token postag="prep:gen:nwok" marker="yes">od</token>
@@ -336,6 +353,14 @@
       <token regexp="yes">cna|czysta|niedawna|naga|pełna|późna|sucha|syta</token>
     </pattern>
     <disambig action="replace" postag="prep:gen"/>
+  </rule>
+  <rule id="OD_PREP_GEN" name="od to nie oda">
+    <pattern>
+      <token marker="yes">od</token>
+      <token regexp="yes" min="0" max="1">\d+</token>
+      <token postag=".*gen.*|adjp" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="prep:gen:nwok"/>
   </rule>
   <rule id="ciagle" name="ciągle to nie ciągło">
     <pattern>
@@ -478,6 +503,23 @@
     </pattern>
     <disambig action="remove" postag="prep.*"/>
   </rule>
+  <rule id="CZYZ_PYTANIE" name="czyż w pytaniu">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" min="0" max="1">[\p{Punct}\-−–—―„«»…’]+</token>
+      <token marker="yes" skip="-1">czyż</token>
+      <token postag="SENT_END">?</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="CZYZ_PYTANIE_COLON" name="czyż w pytaniu">
+    <pattern>
+      <token>:</token>
+      <token marker="yes" skip="-1">czyż</token>
+      <token postag="SENT_END">?</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
   <rule id="GORZEJ" name="gorzej to nie czasownik">
     <pattern>
       <token regexp="yes">odrobinę|znacznie|nieco|coraz|jeszcze|trochę|dużo|zdecydowanie|stokroć|wiele|im|lub|niewiele</token>
@@ -578,6 +620,14 @@
       <wd lemma="istnąć"/>
     </disambig>
   </rule>
+  <rule id="JAKI_TO_NIE_JAK" name="JAKI_PYT">
+    <pattern>
+      <token postag="SENT_START" skip="4"></token>
+      <token inflected="yes" marker="yes" skip="-1">jaki</token>
+      <token>?</token>
+    </pattern>
+    <disambig action="filter" postag="adj.*"/>
+  </rule>
   <rule id="LEPIEJ" name="lepiej">
     <pattern>
       <token marker="yes">lepiej</token>
@@ -663,6 +713,13 @@
       <token inflected="yes">Kichot</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="PRZYBRAC_POSTAC" name="przybrać postać">
+    <pattern>
+      <token inflected="yes" skip="3">przybrać</token>
+      <token marker="yes">postać</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:acc:f"/>
   </rule>
   <rule id="o_wym_2" name="wym na końcu zdania">
     <pattern>
@@ -780,6 +837,15 @@
       <wd pos="interj" lemma="oo"/>
     </disambig>
   </rule>
+  <rule id="ANO_INTERJ" name="ano jako wykrzyknienie">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" min="0" max="2">[-–—„]</token>
+      <token marker="yes">ano</token>
+      <token regexp="yes">[,!]</token>
+    </pattern>
+    <disambig action="replace" postag="interj"/>
+  </rule>
   <rule id="A_INTERJ" name="a jako wykrzyknienie">
     <pattern>
       <token marker="yes">a</token>
@@ -806,6 +872,15 @@
       <token marker="yes">państwo</token>
     </pattern>
     <disambig action="replace" postag="subst:pl:voc:p1"/>
+  </rule>
+  <rule id="warto_pred" name="warto nie wołacz">
+    <pattern>
+      <token marker="yes" skip="5">warto</token>
+      <token postag="verb:inf.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove">
+      <wd lemma="warta"/>
+    </disambig>
   </rule>
   <rule id="na_wskros_burk" name="Na wskroś">
     <pattern>
@@ -887,11 +962,27 @@
     </pattern>
     <disambig action="replace" postag="conj"/>
   </rule>
+  <rule id="albo_qub" name="albo na początku zdania =&gt; kublik">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token regexp="yes" case_sensitive="yes" min="0" max="2">[–—„&quot;]</token>
+      <token case_sensitive="yes" marker="yes">Albo</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
   <rule id="albo_niequb" name="w innych sytuacjach albo -&gt; conj">
     <pattern>
       <token postag="conj">albo</token>
     </pattern>
     <disambig action="filter" postag="comp:comma|conj"/>
+  </rule>
+  <rule id="ANI_ANI" name="ani, ani – spójniki">
+    <pattern>
+      <token postag="conj" marker="yes" skip="-1">ani</token>
+      <token postag="interp:comma">,</token>
+      <token postag="conj">ani</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="badz_num" name="bądź i lub jako spójnik między liczbami">
     <pattern>
@@ -1823,6 +1914,13 @@
     </pattern>
     <disambig action="filter" postag="subst:pl:acc:p3"/>
   </rule>
+  <rule id="BOGU_DZIEKI" name="Bogu dzięki &gt; nie prep">
+    <pattern>
+      <token case_sensitive="yes" skip="-1">Bogu</token>
+      <token case_sensitive="yes" marker="yes">dzięki</token>
+    </pattern>
+    <disambig action="filter" postag="subst:pl:nom:p3"/>
+  </rule>
   <rule id="DZIEKI_COMMA" name="dzięki + przecinek &gt; nie prep">
     <pattern>
       <token postag="prep:dat" marker="yes">dzięki</token>
@@ -1951,6 +2049,16 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="PIEC_INF" name="piec kolejne 40 minut">
+    <pattern>
+      <token marker="yes" skip="4">piec</token>
+      <token regexp="yes">\d+</token>
+      <token min="0">-</token>
+      <token regexp="yes" min="0">\d+</token>
+      <token regexp="yes" inflected="yes">minuta|godzina</token>
+    </pattern>
+    <disambig action="filter" postag="verb:inf:imperf:refl.nonrefl"/>
+  </rule>
   <rule id="czarno-na-białym" name="czarno na białym">
     <pattern>
       <token>czarno</token>
@@ -1962,6 +2070,15 @@
   <rule id="tylko_ze" name="tylko że">
     <pattern>
       <token postag="conj" marker="yes">tylko</token>
+      <token postag="comp.*" postag_regexp="yes" marker="yes">że</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="tyle_tylko_ze" name="tyle tylko, że">
+    <pattern>
+      <token postag="adv" marker="yes">tyle</token>
+      <token postag="conj" marker="yes">tylko</token>
+      <token marker="yes" min="0" max="1">,</token>
       <token postag="comp.*" postag_regexp="yes" marker="yes">że</token>
     </pattern>
     <disambig action="filterall"/>
@@ -2393,6 +2510,24 @@
       <wd lemma="walnie"/>
     </disambig>
   </rule>
+  <rule id="WALNIE_ADV_1" name="walnie przyF">
+    <pattern>
+      <token postag="adv:pos" marker="yes" skip="2">walnie</token>
+      <token inflected="yes">przyczynić</token>
+    </pattern>
+    <disambig action="remove">
+      <wd lemma="walnąć"/>
+    </disambig>
+  </rule>
+  <rule id="WALNIE_ADV_2" name="przyczynić walnie">
+    <pattern>
+      <token inflected="yes" skip="4">przyczynić</token>
+      <token postag="adv:pos" marker="yes">walnie</token>
+    </pattern>
+    <disambig action="remove">
+      <wd lemma="walnąć"/>
+    </disambig>
+  </rule>
   <rule id="WASZE" name="wasze to nie waszeć">
     <pattern>
       <token inflected="yes">wasze</token>
@@ -2492,6 +2627,60 @@
     <disambig action="remove">
       <wd lemma="wyżynać"/>
     </disambig>
+  </rule>
+  <rule id="INNY_NIZ_CONJ" name="inny niż =&gt; conj">
+    <pattern>
+      <token inflected="yes">inny</token>
+      <token min="0" max="1">,</token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="INACZEJ_NIZ_CONJ" name="inaczej niż =&gt; conj">
+    <pattern>
+      <token>inaczej</token>
+      <token min="0" max="1">,</token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="COM_NIZ" name="niż po stopniu wyższym">
+    <pattern>
+      <token postag=".*:com" postag_regexp="yes" skip="3"></token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="COM_NIZ_CONJ" name="stopień wyższy + niż =&gt; conj">
+    <pattern>
+      <token postag=".*:com" postag_regexp="yes"></token>
+      <token min="0" max="1">,</token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="COM_NIZ_CONJ_SLOPE" name="stopień wyższy + niż =&gt; conj">
+    <pattern>
+      <token postag=".*:com" postag_regexp="yes" skip="-1"></token>
+      <token>,</token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="WIECEJ_NIZ_CONJ_SLOPE" name="stopień wyższy + niż =&gt; conj">
+    <pattern>
+      <token regexp="yes" skip="-1">więcej|raczej</token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="BARDZIEJ_NIZ_CONJ" name="stopień wyższy z bardziej + niż =&gt; conj">
+    <pattern>
+      <token>bardziej</token>
+      <token postag="(adj|ppas|pact).*" postag_regexp="yes" skip="10"></token>
+      <token marker="yes">niż</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
   </rule>
   <rule id="PELNIA_ZYCIA" name="pełnią życia/księżyca to rzeczownik">
     <pattern>
@@ -2600,6 +2789,14 @@
       <token>lepią</token>
     </pattern>
     <disambig action="replace" postag="subst:pl:nom:m1"/>
+  </rule>
+  <rule id="GORSZY_OD" name="gorszy/gorszą + od/niż =&gt; przymiotnik">
+    <pattern>
+      <token regexp="yes" marker="yes">gorsz[yą]</token>
+      <token postag="adv.*|qub" postag_regexp="yes" min="0" max="1"></token>
+      <token regexp="yes">ode?|niż</token>
+    </pattern>
+    <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="atmosfera_swieta" name="atmosfera święta -&gt; rzeczownik">
     <pattern>
@@ -2800,6 +2997,27 @@
     </pattern>
     <disambig action="replace" postag="qub"/>
   </rule>
+  <rule id="ZALEGLA" name="zaległa cisza &gt; rzeczownik">
+    <pattern>
+      <token marker="yes" skip="4">zaległa</token>
+      <token>cisza</token>
+    </pattern>
+    <disambig action="replace" postag="verb:praet:sg:f:ter:perf:nonrefl"/>
+  </rule>
+  <rule id="ZATRUC_SUBST" name="zatruć jako genetiwus">
+    <pattern>
+      <token regexp="yes" inflected="yes" skip="4">unikać|uniknąć|oczekiwać</token>
+      <token marker="yes">zatruć</token>
+    </pattern>
+    <disambig action="replace" postag="subst:pl:gen:n2"/>
+  </rule>
+  <rule id="ZATRUC_SUBST_2" name="zatruć jako genetiwus">
+    <pattern>
+      <token regexp="yes" skip="2">śmiertelnych|ostrych|przewlekłych|pokarmowych|inhalacyjnych|ciężkich|chronicznych|silnych|alkoholowych|lekkich|masowych|tajemniczych|ciążowych|chemicznych</token>
+      <token marker="yes">zatruć</token>
+    </pattern>
+    <disambig action="replace" postag="subst:pl:gen:n2"/>
+  </rule>
   <rule id="ZATRUC_SUBST_3" name="zatruć jako genetiwus">
     <pattern>
       <token marker="yes">zatruć</token>
@@ -2869,6 +3087,14 @@
       <token marker="yes">była</token>
     </pattern>
     <disambig action="replace" postag="verb:praet:sg:f:ter:imperf:nonrefl"/>
+  </rule>
+  <rule id="winien_inf" name="powinien + inf">
+    <pattern>
+      <token postag="verb:winien.*" postag_regexp="yes"></token>
+      <token inflected="yes" postag="verb:praet.*" postag_regexp="yes" min="0">być</token>
+      <token postag="verb:inf.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="W_SZTUCE_BIEGŁY" name="w sztuce biegły">
     <pattern>
@@ -2968,6 +3194,14 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="JEDNA_DRUGA" name="„jedna, druga” – przymiotnik">
+    <pattern>
+      <token marker="yes">jedna</token>
+      <token min="0" max="1">,</token>
+      <token>druga</token>
+    </pattern>
+    <disambig action="replace" postag="adj:sg:nom.voc:f:pos"/>
+  </rule>
   <rule id="TYLKO_JEDEN" name="tylko jako kublik">
     <pattern>
       <token postag="qub" marker="yes">tylko</token>
@@ -3047,6 +3281,20 @@
     </pattern>
     <disambig action="replace" postag="subst:sg:inst:f"/>
   </rule>
+  <rule id="PIETRA_NIE_MIEC" name="pietra jako dopełniacz">
+    <pattern>
+      <token marker="yes" skip="5">pietra</token>
+      <token inflected="yes">mieć</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:gen:m1"/>
+  </rule>
+  <rule id="PIETRA_NIE_MIEC_2" name="pietra jako dopełniacz">
+    <pattern>
+      <token inflected="yes" skip="4">mieć</token>
+      <token marker="yes">pietra</token>
+    </pattern>
+    <disambig action="replace" postag="subst:sg:gen:m1"/>
+  </rule>
   <rule id="mialem" name="miałem + acc">
     <pattern>
       <token marker="yes">miałem</token>
@@ -3092,6 +3340,14 @@
       <token>że</token>
     </pattern>
     <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="tyle_co" name="co jako comp">
+    <pattern>
+      <token postag="adv|num.*" postag_regexp="yes" marker="yes">tyle</token>
+      <token postag="interp:comma" marker="yes" min="0" max="1">,</token>
+      <token postag="comp" marker="yes">co</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="ROWNIE_ADV_2" name="równie jako adv:pos">
     <pattern>
@@ -3215,6 +3471,14 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="RADZI_BY_INF" name="radzi jako pred">
+    <pattern>
+      <token postag="adj:pl:nom:m1.p1:pos" marker="yes">radzi</token>
+      <token postag="qub" marker="yes" skip="4">by</token>
+      <token postag="verb:inf.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="GEN_NIE_MA_BYLO" name="Dopełniacz przed nie ma / nie było">
     <pattern>
       <token postag=".*gen.*" postag_regexp="yes" marker="yes"></token>
@@ -3222,6 +3486,23 @@
       <token regexp="yes" postag="verb.*" postag_regexp="yes" marker="yes">ma(?:ją)?|było</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="to_conj_2" name="że jak... to">
+    <pattern>
+      <token>że</token>
+      <token skip="-1">jak</token>
+      <token>,</token>
+      <token postag="conj" marker="yes">to</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
+  </rule>
+  <rule id="to_conj_3" name="chociaż/choć, ... to">
+    <pattern>
+      <token regexp="yes" skip="-1">choć|chociaż|gdy.*|kiedy.*|skoro.*|co|ponieważ</token>
+      <token>,</token>
+      <token postag="conj" marker="yes">to</token>
+    </pattern>
+    <disambig action="replace" postag="conj"/>
   </rule>
   <rule id="DAT_SIE_ZDAWALO" name="celownik + się zdawało, że">
     <pattern>
@@ -3253,12 +3534,29 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="ZOSTANIE_ADJ" name="zostanie/pozostanie + adj:nom -&gt; verb">
+    <pattern>
+      <token regexp="yes" marker="yes">(?:po)?zostanie</token>
+      <token postag="adv.*|qub" postag_regexp="yes" min="0"></token>
+      <token postag="(ppas|adj|pact):.*nom.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="verb:fin.*"/>
+  </rule>
   <rule id="idzie_o" name="idzie to czasownik z o">
     <pattern>
       <token marker="yes">idzie</token>
       <token>o</token>
     </pattern>
     <disambig action="replace" postag="verb:fin:sg:ter:imperf:nonrefl"/>
+  </rule>
+  <rule id="mamze" name="mamże">
+    <pattern>
+      <token marker="yes" skip="-1">mamże</token>
+      <token>?</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="verb:fin:sg:pri:imperf:refl.nonrefl" lemma="mieć"/>
+    </disambig>
   </rule>
   <rule id="MAMZE_JA_ACC" name="mamże ja + acc">
     <pattern>
@@ -3358,6 +3656,40 @@
       <token postag="ppron.*dat.*nakc" postag_regexp="yes"></token>
       <token postag="qub">się</token>
       <token postag="subst:sg:nom:m3">nastrój</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="nalezycie" name="należycie + verb =&gt; adv">
+    <pattern>
+      <token marker="yes" skip="5">należycie</token>
+      <token postag="verb.*|ppas.*|pact.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="adv:pos"/>
+  </rule>
+  <rule id="JEST_NIE_QUB_SPOSOB" name="verb:inf + jest nie sposób">
+    <pattern>
+      <token postag="verb:inf.*" postag_regexp="yes" skip="3"></token>
+      <token regexp="yes">jest|było|będzie|byłoby</token>
+      <token postag="qub" marker="yes">nie</token>
+      <token postag="pred" marker="yes" skip="1">sposób</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NIE_QUB_SPOSOB" name="nie sposób jest">
+    <pattern>
+      <token postag="qub" marker="yes">nie</token>
+      <token postag="pred" marker="yes" skip="1">sposób</token>
+      <token regexp="yes" min="0" max="1">jest|było|będzie|byłoby</token>
+      <token postag="verb:inf.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NIE_QUB_SPOSOB_SIE" name="nie sposób jest się + zwrotny">
+    <pattern>
+      <token postag="qub" marker="yes">nie</token>
+      <token postag="pred" marker="yes" skip="1">sposób</token>
+      <token skip="4">się</token>
+      <token postag="verb:inf.*:refl.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
   </rule>
@@ -3533,6 +3865,14 @@
     </pattern>
     <disambig action="replace" postag="qub"/>
   </rule>
+  <rule id="NIE_ADAMP" name="„nie” na początku zdania">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" min="0" max="1">[\p{Punct}\-−–—―„«»…’]+</token>
+      <token marker="yes">nie</token>
+    </pattern>
+    <disambig action="replace" postag="qub"/>
+  </rule>
   <rule id="na-oklep" name="oklep">
     <pattern>
       <token>na</token>
@@ -3567,6 +3907,14 @@
       <token postag="verb:inf.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
+  </rule>
+  <rule id="wy_num_macie" name="wy macie">
+    <pattern>
+      <token>wy</token>
+      <token postag="num:pl:nom.acc.voc.*" postag_regexp="yes" min="0"></token>
+      <token marker="yes">macie</token>
+    </pattern>
+    <disambig action="replace" postag="verb:fin:pl:sec:imperf:refl.nonrefl"/>
   </rule>
   <rule id="dr_mgr_kropka" name="dr, mgr + . =&gt; qub">
     <pattern>
@@ -3656,6 +4004,14 @@
     <pattern>
       <token postag="qub" marker="yes">nie</token>
       <token postag="adv" marker="yes">tyle</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="nie_tyle_ile_adv" name="nie tyle ile">
+    <pattern>
+      <token>nie</token>
+      <token skip="-1">tyle</token>
+      <token postag="adv" marker="yes">ile</token>
     </pattern>
     <disambig action="filterall"/>
   </rule>
@@ -3801,6 +4157,14 @@
       <wd lemma="lut"/>
     </disambig>
   </rule>
+  <rule id="no_halo_interj" name="no, halo - interj">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" min="0">[–\-—]</token>
+      <token regexp="yes" marker="yes">no|halo|cóż</token>
+    </pattern>
+    <disambig action="replace" postag="interj"/>
+  </rule>
   <rule id="NUM_MAJA" name="3 maja">
     <pattern>
       <token regexp="yes">[1-3]?\d</token>
@@ -3900,6 +4264,13 @@
       <token marker="yes">około</token>
     </pattern>
     <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="OWCA_MECZY" name="meczy jako czasownik">
+    <pattern>
+      <token regexp="yes" skip="4">owca|koza|baran</token>
+      <token marker="yes">meczy</token>
+    </pattern>
+    <disambig action="replace" postag="meczeć/verb:fin:sg:ter:imperf:nonrefl"/>
   </rule>
   <rule id="TO_NIE_ZARTY" name="to nie żarty">
     <pattern>
@@ -4144,6 +4515,17 @@
       <token postag="num:.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="immunize"/>
+  </rule>
+  <rule id="URI_PROTOCOL" name="Ignore spelling of url protocols">
+    <pattern>
+      <token regexp="yes">[a-z\-]+</token>
+      <token spacebefore="no">:</token>
+      <token spacebefore="no">/</token>
+      <token spacebefore="no">/</token>
+      <token spacebefore="no" min="0">/</token>
+      <token regexp="yes" spacebefore="no">[a-z0-9\-]+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="prez" name="prez. Komorowski">
     <pattern>

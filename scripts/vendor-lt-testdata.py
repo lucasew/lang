@@ -446,18 +446,27 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         if not toks:
             continue
         # soft disambig loader: surface/regexp/postag/inflected/negate/exception
-        # (Java PatternToken exceptions; min/max/skip still deferred).
+        # plus Java min/max/skip (PatternRuleMatcher already honors them).
         simple_toks = []
         ok = True
         for t in toks:
             if isinstance(t, str):
                 simple_toks.append({"text": t})
                 continue
-            if any(k in t for k in ("min", "max", "skip")):
-                ok = False
-                break
             st = {"text": t.get("text") or ""}
-            for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker", "spacebefore"):
+            for k in (
+                "regexp",
+                "case_sensitive",
+                "inflected",
+                "negate",
+                "postag",
+                "postag_regexp",
+                "marker",
+                "spacebefore",
+                "min",
+                "max",
+                "skip",
+            ):
                 if t.get(k):
                     st[k] = t[k]
             # First simple surface exception (pattern_is_simple already filters).
@@ -498,7 +507,19 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
         for t in r["tokens"]:
             attrs = []
             if isinstance(t, dict):
-                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker", "spacebefore"):
+                for k in (
+                    "regexp",
+                    "case_sensitive",
+                    "inflected",
+                    "negate",
+                    "postag",
+                    "postag_regexp",
+                    "marker",
+                    "spacebefore",
+                    "min",
+                    "max",
+                    "skip",
+                ):
                     if t.get(k):
                         attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
             attr_s = (" " + " ".join(attrs)) if attrs else ""

@@ -258,9 +258,11 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 		}
 		filterReadingsByPOS(nws[first], re, r.ID)
 	case ActionFilterAll:
-		// Java FILTERALL: for each token in the marker span, filter readings by
-		// *that* PatternToken's POS tag treated as a regex (Match(..., true, …)).
-		// Not DisambiguatedPOS — each element keeps tags matching its own postag.
+		// Java FILTERALL: for each *matched* pattern token in the marker span,
+		// filter readings by that PatternToken's POS (Match postagRegexp=true).
+		// Soft maps 1:1 when marker span length == number of marked pattern
+		// tokens (no skip gaps). With skip/min gaps, tokenPositions are not
+		// available — leave the span unchanged rather than mis-assign POS.
 		var marked []*patterns.PatternToken
 		if r.AbstractTokenBasedRule != nil {
 			for _, pt := range r.Tokens {
@@ -269,16 +271,18 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 				}
 			}
 		}
-		j := 0
-		for i := first; i <= last && i < len(nws); i++ {
-			if nws[i] == nil {
+		span := 0
+		if last >= first && first >= 0 {
+			span = last - first + 1
+		}
+		if span == 0 || len(marked) != span {
+			return
+		}
+		for j, i := 0, first; i <= last && i < len(nws); i, j = i+1, j+1 {
+			if nws[i] == nil || j >= len(marked) || marked[j] == nil || marked[j].Pos == nil {
 				continue
 			}
-			posTag := ""
-			if j < len(marked) && marked[j] != nil && marked[j].Pos != nil {
-				posTag = marked[j].Pos.PosTag
-			}
-			j++
+			posTag := marked[j].Pos.PosTag
 			if posTag == "" {
 				continue
 			}

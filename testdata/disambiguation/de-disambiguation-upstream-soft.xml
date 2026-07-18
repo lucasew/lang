@@ -855,6 +855,14 @@
       <wd pos="ADV:MOD"/>
     </disambig>
   </rule>
+  <rule id="DAS_ZUVIEL" name="Zuviel als Nomen">
+    <pattern>
+      <token case_sensitive="yes" postag="ART.*|PRO.*" postag_regexp="yes"></token>
+      <token case_sensitive="yes" postag="ADJ.*" postag_regexp="yes" min="0"></token>
+      <token regexp="yes" case_sensitive="yes" postag="SUB.*SIN:NEU:INF" postag_regexp="yes">Zuviel</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ZAHL_GLIEDRIG" name="4-gliedrig">
     <pattern>
       <token regexp="yes">[1-9]*-gliedrig.*</token>
@@ -874,6 +882,24 @@
       <token>Schlacht</token>
       <token regexp="yes">um|bei|von</token>
       <token regexp="yes">Grocka|Krotzka|Mingolsheim|Mohács|Cholm|Peleliu|Rabaul|Courtrai|Gangut|Karfre|Lukan|Wakenstädt</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="IGNORE_AETSCH_BAETSCH" name="ätsch bätsch">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[Ää]tsch</token>
+      <token min="0">,</token>
+      <token case_sensitive="yes">bätsch</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="IGNORE_BLA_BLA_BLA" name="bla bla bla">
+    <pattern>
+      <token>bla</token>
+      <token min="0">,</token>
+      <token>bla</token>
+      <token min="0">,</token>
+      <token>bla</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -945,6 +971,13 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="IGNORE_DES_MACHENS" name="des Machens">
+    <pattern>
+      <token case_sensitive="yes" skip="1">des</token>
+      <token case_sensitive="yes">Machens</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="TELECOMMUNICATIONS" name="Telecommunications">
     <pattern>
       <token regexp="yes">International|Personal|FlexDSL</token>
@@ -965,10 +998,44 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="TELECOMMUNICATIONS_2" name="Telecommunications_2">
+    <pattern>
+      <token regexp="yes">Telecommunications?</token>
+      <token regexp="yes" min="0">compan(y|ies)|standardization|services?|development|Orbiters?|AG</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="CHAI_LATTE" name="Chai latte">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Chai|Fior</token>
+      <token case_sensitive="yes" min="0">di</token>
+      <token case_sensitive="yes">latte</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="CAFÉ_CRÈME" name="Café crème">
+    <pattern>
+      <token regexp="yes">Caff?[èéêe]</token>
+      <token min="0">con</token>
+      <token regexp="yes">crème|mélange|cortado|cheio|leche|latte|lungo|americano</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ESPRESSO_DOPPIO" name="Espresso doppio">
     <pattern>
       <token regexp="yes" case_sensitive="yes">Espresso|Latte</token>
       <token case_sensitive="yes">doppio</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="URI_PROTOCOL" name="Ignore spelling of url protocols">
+    <pattern>
+      <token regexp="yes">[a-z\-]+</token>
+      <token spacebefore="no">:</token>
+      <token spacebefore="no">/</token>
+      <token spacebefore="no">/</token>
+      <token spacebefore="no" min="0">/</token>
+      <token regexp="yes" spacebefore="no">[a-z0-9\-]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2003,6 +2070,14 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="PERSONA_NON_GRATA" name="Persona non grata">
+    <pattern>
+      <token>Persona</token>
+      <token min="0">non</token>
+      <token regexp="yes">(in)?grata</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ENFANT_TERRIBLE" name="Enfant terrible">
     <pattern>
       <token>Enfant</token>
@@ -2052,6 +2127,14 @@
       <token>Reih</token>
       <token>und</token>
       <token>Glied</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="MAGNA_CUM_LAUDE" name="Magna cum laude">
+    <pattern>
+      <token regexp="yes" min="0">magna|summa</token>
+      <token>cum</token>
+      <token>laude</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2363,6 +2446,14 @@
     <pattern>
       <token case_sensitive="yes">Cem</token>
       <token regexp="yes" case_sensitive="yes">Özdemirs?</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="KELLYANNE_CONWAY" name="Kellyanne Elizabeth Conway">
+    <pattern>
+      <token case_sensitive="yes">Kellyanne</token>
+      <token case_sensitive="yes" min="0">Elizabeth</token>
+      <token regexp="yes" case_sensitive="yes">Conways?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -3059,6 +3150,14 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="DEAL" name="DEAL">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Green|New</token>
+      <token case_sensitive="yes" min="0">New</token>
+      <token case_sensitive="yes">Deal</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="GREEN" name="GREEN">
     <pattern>
       <token case_sensitive="yes">Green</token>
@@ -3311,6 +3410,16 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="SCHNICK_SCHNACK_SCHNUCK" name="ignore spelling of 'Schnick, Schnack, Schnuck'">
+    <pattern>
+      <token case_sensitive="yes">Schnick</token>
+      <token case_sensitive="yes" min="0">,</token>
+      <token case_sensitive="yes">Schnack</token>
+      <token case_sensitive="yes" min="0">,</token>
+      <token case_sensitive="yes">Schnuck</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ABBREVATIONS_SEPARATED_BY_DOT" name="Abkürzungen mit Punkten">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-ZÜÄÖ]</token>
@@ -3319,6 +3428,15 @@
       <token case_sensitive="yes" spacebefore="no">.</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SOG_KEIN_VERB" name="Abkürzung 'sog.'">
+    <pattern>
+      <token marker="yes">sog</token>
+      <token spacebefore="no">.</token>
+      <token regexp="yes" spacebefore="yes" min="0">„|&quot;|“|‹|«</token>
+      <token regexp="yes" postag="(ADJ|SUB|EIG):.*|UNKNOWN|VER:INF.*" postag_regexp="yes">.*[a-z].*</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
   </rule>
   <rule id="GUTES_KEIN_SUB" name="'kein/nichts Gutes' kein Substantiv Genitiv">
     <pattern>
@@ -3489,6 +3607,13 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="GEMEIND_EIN" name="Wir gemeinden ein">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes" skip="1">[Gg]emeinden?</token>
+      <token case_sensitive="yes">ein</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="JOINT_CONTROL" name="Joint Control als Kompositum">
     <pattern>
       <token marker="yes">joint</token>
@@ -3595,6 +3720,15 @@
     </pattern>
     <disambig action="remove" postag="VER.*"/>
   </rule>
+  <rule id="NUETZE_KEIN_VERB" name="'nütze' kein Verb">
+    <pattern>
+      <token>zu</token>
+      <token postag="ADV.*" postag_regexp="yes" min="0"></token>
+      <token regexp="yes">(irgend)?was|(irgend)?etwas|nix|nichts</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">n[üu]tze</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
   <rule id="NULLTE_KEIN_VERB" name="'nullte' kein Verb">
     <pattern>
       <token postag="ART.*|PRO:POS" postag_regexp="yes"></token>
@@ -3652,6 +3786,15 @@
       </token>
     </pattern>
     <disambig action="remove" postag="VB.*"/>
+  </rule>
+  <rule id="ISLA_DE_X" name="Isla de">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Avenue|Bois|Camino|Car[áa]|Chemin|Chez|Creux|Derrière|Entre|Impasse|Isla|Passage|Pont|Regina|Route|Rue(elle)?|Stráda|Sous|Sur|Valle|Vers|Via|Vue</token>
+      <token regexp="yes" marker="yes">da|de[ls]?|du|les?</token>
+      <token marker="yes" min="0">la</token>
+      <token regexp="yes" postag="UNKNOWN" marker="yes">\p{Lu}.+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NEN_IGNORE_SPELLING" name="Ignore spelling of 'nen">
     <pattern>
@@ -4212,6 +4355,15 @@
     </pattern>
     <disambig action="remove" postag="(PRP|ZUS).*"/>
   </rule>
+  <rule id="EINE_KEIN_VERB" name="'eine' kein Verb in 'eine der besten'">
+    <pattern>
+      <token regexp="yes" marker="yes">einen?</token>
+      <token>der</token>
+      <token min="0">am</token>
+      <token regexp="yes" postag="ADJ.*SUP.*" postag_regexp="yes">.+sten</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
   <rule id="RECHT_KEIN_VERB" name="'eine' kein Verb in 'eine der besten'">
     <pattern>
       <token case_sensitive="yes" marker="yes">recht</token>
@@ -4311,9 +4463,23 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="IGNORE_SPELLING_OF_FUCK" name="ignore spelling of 'fuck'">
+    <pattern>
+      <token regexp="yes" skip="8">fucks?t|fuckte?|fucken</token>
+      <token case_sensitive="yes">ab</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="IGNORE_SPELLING_OF_NUMBERS_WITH_LETTERS" name="ignore spelling of numbers with letters">
     <pattern>
       <token regexp="yes" case_sensitive="yes">\d+[A-Z]+\d.*|[A-Z]+\d+[A-Z].*|[A-Z]{2,10}\d{2,10}</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="NEHMEN_HOPS" name="ignore spelling 'nehmen mich hops'">
+    <pattern>
+      <token inflected="yes" skip="4">nehmen</token>
+      <token marker="yes">hops</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

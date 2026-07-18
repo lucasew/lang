@@ -274,3 +274,64 @@ func TestDisambigLoader_TokenExceptionBlocksMatch(t *testing.T) {
 	require.Contains(t, tagsRun, "VB")
 	require.NotContains(t, tagsRun, "NN", "FILTER should drop NN when pattern matches")
 }
+
+func TestDisambigLoader_SkipAndMin(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="SKIP1" name="be skip mine">
+    <pattern>
+      <token inflected="yes" skip="1">be</token>
+      <token marker="yes">mine</token>
+    </pattern>
+    <disambig action="replace" postag="PRP$"/>
+  </rule>
+  <rule id="OPT" name="optional middle">
+    <pattern>
+      <token>very</token>
+      <token min="0">well</token>
+      <token marker="yes">done</token>
+    </pattern>
+    <disambig action="filter" postag="JJ"/>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "test")
+	require.NoError(t, err)
+	require.Len(t, rules, 2)
+	require.Equal(t, 1, rules[0].Tokens[0].SkipNext)
+	require.Equal(t, 0, rules[1].Tokens[1].MinOccurrence)
+
+	// be + entirely + mine → skip=1 allows "entirely" between
+	prp, nn, vb := "PRP$", "NN", "VB"
+	md := "MD"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("is", &vb, strp2("be"))),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("entirely", strp2("RB"), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("mine", &nn, nil))
+			r.AddReading(languagetool.NewAnalyzedToken("mine", &prp, nil), "dict")
+			r.AddReading(languagetool.NewAnalyzedToken("mine", &vb, nil), "dict")
+			return r
+		}(),
+	}
+	_ = md
+	pos := 0
+	for _, atr := range toks {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out := rules[0].Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "mine" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Equal(t, []string{"PRP$"}, tags, "REPLACE fromPos on mine after skip=1")
+}
+

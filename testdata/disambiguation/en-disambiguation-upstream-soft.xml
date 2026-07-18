@@ -807,6 +807,14 @@
     </pattern>
     <disambig action="replace" postag="DT"/>
   </rule>
+  <rule id="DT_WP_WDT_DT" name="That + NN -&gt;DT">
+    <pattern>
+      <token postag="WP" marker="yes">that</token>
+      <token postag="JJ" min="0"></token>
+      <token postag="NN(:UN)?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="DT"/>
+  </rule>
   <rule id="BE_VBGNN_VBG" name="be + vbg/nn =&gt; vbg">
     <pattern>
       <token inflected="yes">be
@@ -1102,6 +1110,17 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="URI_PROTOCOL" name="Ignore spelling of url protocols">
+    <pattern>
+      <token regexp="yes">[a-z\-]+</token>
+      <token spacebefore="no">:</token>
+      <token spacebefore="no">/</token>
+      <token spacebefore="no">/</token>
+      <token spacebefore="no" min="0">/</token>
+      <token regexp="yes" spacebefore="no">[a-z0-9\-]+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="IGNORE_SPELLING_OF_SUPERSCRIPTED_UNITS" name="Ignore spelling of superscripted units of measure">
     <pattern>
       <token regexp="yes" case_sensitive="yes">(Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|rad|sr|Hz|N|Pa|J|W|C|V|F|Ω|Sv?|Wb|T|H|l[mx]|Bq|Gy|kat|min|h|d|L|t|Np|B|eV|ua?)(⁻)?(¹|²|³)</token>
@@ -1145,6 +1164,15 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="IGNORE_SPELLING_OF_CIUDAD_DE" name="Ignore spelling of Hispanic names containing 'de'">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Ciudad|Playa|Casa|Puerto|Avenida|Santiago|Municipio|Paseo|Calle|Días|Di?os|Nacional|Villas|Cinco|Rancho|Cerro|Universidad|Banquo|Instituto|Copa|Academia|Plaza|Facultad|Torre|Camino|Club|Tapas|Palma|Águas|Costa|Isla|Ministerio|Grupo</token>
+      <token case_sensitive="yes" marker="yes">de</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" min="0">[Ll]a|[Ll][eoa]s</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="IGNORE_SPELLING_OF_CIUDAD" name="Ignore spelling of Hispanic names containing 'del'">
     <pattern>
       <token regexp="yes" case_sensitive="yes" marker="yes">Ciudad|Playa|Casa|Puerto|Avenida|Santiago|Municipio|Paseo|Calle|Días|Di?os|Nacional|Villas|Cinco|Rancho|Cerro|Universidad|Banquo|Instituto|Copa|Academia|Plaza|Facultad|Torre|Camino|Club|Tapas|Palma|Águas|Costa|Isla|Ministerio|Grupo</token>
@@ -1166,6 +1194,25 @@
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
       <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]el|du|di</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="IGNORE_SPELLING_OF_MR_DE" name="Ignore spelling of names containing 'de'">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Mrs?|Miss|Dr</token>
+      <token case_sensitive="yes" min="0">.</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]e</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" min="0">[Ll]as?|[Ll]os</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="IGNORE_SPELLING_OF_MR_DEL" name="Ignore spelling of names containing 'del'">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Mrs?|Miss</token>
+      <token case_sensitive="yes" min="0">.</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]el</token>
       <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -1414,6 +1461,15 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="DE_LOS" name="Ignore spelling of 'los'/'las' in proper nouns">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
+      <token regexp="yes" min="0">de|y</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">l[ao]s</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="POR_LA" name="Ignore spelling of 'por' in NEs">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
@@ -1511,6 +1567,14 @@
       <token case_sensitive="yes" marker="yes" spacebefore="no">it</token>
     </pattern>
     <disambig action="remove" postag="PRP"/>
+  </rule>
+  <rule id="MAGNA_CUM_LAUDE" name="Magna cum laude">
+    <pattern>
+      <token regexp="yes" min="0">magna|summa</token>
+      <token>cum</token>
+      <token>laude</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="STEAK_TARTARE" name="steak tartare">
     <pattern>
@@ -1693,6 +1757,14 @@
     <pattern>
       <token>de</token>
       <token regexp="yes" case_sensitive="yes">Blasio|Maupassant|Niro</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="LIL_NAMES" name="names with 'lil'">
+    <pattern>
+      <token case_sensitive="yes">Lil</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no" min="0">['’`´‘ʻ]</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2037,6 +2109,30 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="STEALTH_ISH" name="ignore spelling of stealth(ish)">
+    <pattern>
+      <token>(</token>
+      <token case_sensitive="yes" marker="yes" skip="-1">ish</token>
+      <token>)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="UNIVERSITE_DE_X" name="ignore spelling of 'Université de'">
+    <pattern>
+      <token case_sensitive="yes">Université</token>
+      <token case_sensitive="yes" postag="UNKNOWN" min="0"></token>
+      <token regexp="yes" case_sensitive="yes">[Dd]e</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="UNIVERSIDAD_DE_X" name="ignore spelling of 'Universidad de'">
+    <pattern>
+      <token case_sensitive="yes">Universidad</token>
+      <token case_sensitive="yes" postag="UNKNOWN" min="0"></token>
+      <token regexp="yes" case_sensitive="yes">[Dd]el?</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="NUMBER_PERIOD_A" name="remove 'DT' from '3.a'">
     <pattern>
       <token regexp="yes">\d+</token>
@@ -2148,6 +2244,15 @@
   <rule id="CO2_FREE" name="ignore spelling of 'CO₂-free'">
     <pattern>
       <token regexp="yes" case_sensitive="yes">CO₂-([Ff]ree|[Bb]ased|[Nn]eutral|[Cc]ompensat(ing|ed)|[Dd]ependent|[Ii]ndependent)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="IGNORE_SHARP_BRACKETS" name="Ignore spelling in sharp brackets">
+    <pattern>
+      <token regexp="yes">&lt;|\{</token>
+      <token spacebefore="no" min="0">/</token>
+      <token regexp="yes" marker="yes" spacebefore="no">.*[a-z].*</token>
+      <token regexp="yes" spacebefore="no">&gt;|\}</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

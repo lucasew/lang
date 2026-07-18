@@ -173,6 +173,15 @@
     </pattern>
     <disambig action="filter" postag="N m s"/>
   </rule>
+  <rule id="REPOS_COURT" name="repos court">
+    <pattern>
+      <token postag="[JN].*" postag_regexp="yes"></token>
+      <token marker="yes">court</token>
+      <token inflected="yes" min="0" max="1">ne</token>
+      <token postag="V.* 3 ." postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="J m s"/>
+  </rule>
   <rule id="BIEN1" name="bien">
     <pattern>
       <token postag="V avoir.*" postag_regexp="yes"></token>
@@ -285,6 +294,25 @@
       <token marker="yes">demande</token>
     </pattern>
     <disambig action="remove" postag="N f s"/>
+  </rule>
+  <rule id="CE_DERNIER_MESURE" name="ce dernier mesure">
+    <pattern>
+      <token postag="D m s"></token>
+      <token>dernier</token>
+      <token postag="V ind pres 3 s" marker="yes"></token>
+      <token postag="A" min="0" max="3"></token>
+      <token postag="D.*|C sub" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="N f s"/>
+  </rule>
+  <rule id="JE_SOIS" name="je sois">
+    <pattern>
+      <token>je</token>
+      <token inflected="yes" min="0" max="1">ne</token>
+      <token postag="R pers obj.*" postag_regexp="yes" min="0" max="3"></token>
+      <token postag="V etre sub pres 1 s" marker="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="V etre sub pres 2 s"/>
   </rule>
   <rule id="LA_LOTUS" name="la lotus">
     <pattern>
@@ -421,6 +449,24 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="JE_LE_POURRAIS" name="je le pourrais">
+    <pattern>
+      <token inflected="yes">je</token>
+      <token inflected="yes" min="0" max="1">ne</token>
+      <token postag="R pers obj.*" postag_regexp="yes" min="0" max="3"></token>
+      <token postag="V.* con pres 1 s" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="V.* con pres 2 s"/>
+  </rule>
+  <rule id="GOOGLE" name="google">
+    <pattern>
+      <token marker="yes">google</token>
+      <token inflected="yes" min="0" max="1">ne</token>
+      <token postag="R pers obj.*" postag_regexp="yes" min="0" max="3"></token>
+      <token postag="V.* (ind|con|sub).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="Z e sp"/>
+  </rule>
   <rule id="ETUDIANT" name="étudiant">
     <pattern>
       <token postag="SENT_START"></token>
@@ -428,6 +474,16 @@
       <token regexp="yes">des?|en</token>
     </pattern>
     <disambig action="remove" postag="V ppr"/>
+  </rule>
+  <rule id="AVOIR_ENVIE" name="avoir envie">
+    <pattern>
+      <token postag="V avoir.*" postag_regexp="yes"></token>
+      <token postag="A" min="0" max="1"></token>
+      <token min="0" max="1">du</token>
+      <token>tout</token>
+      <token regexp="yes" postag="V.*" postag_regexp="yes" marker="yes">envie|avantage</token>
+    </pattern>
+    <disambig action="replace" postag="N.*"/>
   </rule>
   <rule id="CLIENT" name="client (not adj)">
     <pattern>
@@ -480,6 +536,16 @@
       <wd pos="S"/>
     </disambig>
   </rule>
+  <rule id="COMME_NOUS_LE_NONTRE" name="comme nous le montre">
+    <pattern>
+      <token>comme</token>
+      <token regexp="yes" min="1" max="3">[nv]ous|leur|les?|la|lui|[mts]e|[mts]'</token>
+      <token postag="V ind pres 3 s" marker="yes"></token>
+      <token postag="N.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="[DA].*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="N.*"/>
+  </rule>
   <rule id="AB_UNITE" name="abréviation unité">
     <pattern>
       <token regexp="yes">min|(centi|milli|déci|déca|hecto|kilo|atto|exa|mega|giga|tera|peta|zetta|yotta|micro|nano|pico|femto|zepto|yocto)?[mètre|gramme|litre]|degré|[mchkd][wglm]|dag|dal|dam|volt|watt|hz|hertz|bits?|ms|s|cs|cc|dB|go|kw</token>
@@ -525,6 +591,20 @@
     </pattern>
     <disambig action="remove" postag="N m s"/>
   </rule>
+  <rule id="INTERDIT" name="interdit">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag="[NJ].*" postag_regexp="yes" min="1" max="2">
+        <exception>est</exception>
+      </token>
+      <token postag="P.*" postag_regexp="yes" min="0" max="1"></token>
+      <token postag="[NJ].*" postag_regexp="yes" min="0" max="2"></token>
+      <token regexp="yes" postag="V.*" postag_regexp="yes" marker="yes">introduit|interdit|charge|montre|porte|donne|mesure|veille|touche</token>
+      <token postag="[DZ].*|C sub" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
   <rule id="TAILLE_V" name="taille verbe">
     <pattern>
       <token marker="yes">taille</token>
@@ -546,6 +626,15 @@
       <token marker="yes">hyper</token>
     </pattern>
     <disambig action="filter" postag="A"/>
+  </rule>
+  <rule id="CHIENNE" name="chienne">
+    <pattern>
+      <token postag="D . s" postag_regexp="yes"></token>
+      <token postag="A" min="0" max="1"></token>
+      <token postag="J . s" postag_regexp="yes"></token>
+      <token marker="yes">chienne</token>
+    </pattern>
+    <disambig action="filter" postag="N f s"/>
   </rule>
   <rule id="VRAI" name="vrai">
     <pattern>
@@ -586,6 +675,14 @@
       <token marker="yes">invités</token>
     </pattern>
     <disambig action="filter" postag="N m p"/>
+  </rule>
+  <rule id="NEUF_CENT" name="neuf cent">
+    <pattern>
+      <token marker="yes">neuf</token>
+      <token min="0" max="1">-</token>
+      <token regexp="yes">cents?</token>
+    </pattern>
+    <disambig action="filter" postag="K"/>
   </rule>
   <rule id="LE_MANS" name="le mans">
     <pattern>
@@ -726,6 +823,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="AVOIR_ETE" name="avoir été">
+    <pattern>
+      <token inflected="yes">avoir</token>
+      <token min="0" max="1">comme</token>
+      <token postag="A" min="1" max="3"></token>
+      <token marker="yes">été</token>
+    </pattern>
+    <disambig action="filter" postag="V etre ppa e sp"/>
+  </rule>
   <rule id="SOUDAIN" name="soudain">
     <pattern>
       <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes">demeurer|être|devenir|para[îi]tre|rester|sembler</token>
@@ -748,6 +854,23 @@
       <token postag="V.* ppa.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="CONTINUER_A" name="continuer à">
+    <pattern>
+      <token inflected="yes" postag="V (ind|sub|imp).*" postag_regexp="yes" marker="yes">continuer</token>
+      <token regexp="yes" skip="1">à</token>
+      <token postag="V.* inf" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V (ind|sub|imp).*"/>
+  </rule>
+  <rule id="CRAINDRE_DE_VINF" name="craindre de">
+    <pattern>
+      <token inflected="yes" postag="V (ind|sub|imp) .*" postag_regexp="yes" marker="yes">craindre</token>
+      <token postag="A" min="0" max="3"></token>
+      <token>de</token>
+      <token postag="V inf"></token>
+    </pattern>
+    <disambig action="filter" postag="V (ind|sub|imp) .*"/>
   </rule>
   <rule id="PORTER_NAISSANCE" name="porter naissance">
     <pattern>
@@ -779,6 +902,13 @@
       <token regexp="yes" postag="N.*" postag_regexp="yes">allégeance|conseil|serment|aide|assistance|attention|foi|garde|hommage|main|main-forte|renfort|appui|secours</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="PRETER_UNE" name=" prêter">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes" skip="1">prêter</token>
+      <token regexp="yes" inflected="yes">flanc|oreille|concours|allégeance|conseil|serment|aide|assistance|attention|foi|garde|hommage|main|main-forte|renfort|appui|secours</token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
   </rule>
   <rule id="AVOIR_LIEU" name="avoir lieu">
     <pattern>
@@ -816,6 +946,14 @@
       <token postag="N m s">martyre</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="FAIT_PARTIE1" name="fait partie 1">
+    <pattern>
+      <token regexp="yes" postag="V ind pres 3 s" marker="yes">(re)?fait</token>
+      <token postag="A" min="0" max="3"></token>
+      <token regexp="yes" postag="N .*" postag_regexp="yes">allusion|montre|appel|autorité|foi|mine|surface|attention|résonn?ance|carrière|confiance|demi-tour|débat|erreur|face|faillite|figure|fortune|fureur|gaffe|gymnastique|horreur|intrusion|irruption|lecture|main|mal|mention|part|partie|peur|place|plaisir|pression|preuve|profil|référence|saillie|semblant|signe|silence|suite|usage|écho|étalage</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
   <rule id="PARLANT_AFFAIRE" name="parlant affaire">
     <pattern>
@@ -899,6 +1037,14 @@
       <token marker="yes">surprise</token>
     </pattern>
     <disambig action="replace" postag="J e sp"/>
+  </rule>
+  <rule id="DONNER_ENVIE" name="donner envie">
+    <pattern>
+      <token regexp="yes" inflected="yes">donner|faire|avoir</token>
+      <token postag="A" min="0" max="1"></token>
+      <token marker="yes">envie</token>
+    </pattern>
+    <disambig action="replace" postag="N f s"/>
   </rule>
   <rule id="CHARGE_PROJET" name="ondes radio">
     <pattern>
@@ -1159,6 +1305,24 @@
     </pattern>
     <disambig action="filter" postag="N m p"/>
   </rule>
+  <rule id="CONDUITE_DE_PROJET" name="conduite de projets">
+    <pattern>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token marker="yes">conduite</token>
+      <token min="0" max="1">de</token>
+      <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="N f s"/>
+  </rule>
+  <rule id="CONDUITE_DE_PROJET1" name="conduite de projets">
+    <pattern>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token marker="yes">conduites</token>
+      <token min="0" max="1">de</token>
+      <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="N f p"/>
+  </rule>
   <rule id="LICENCE_ENSEIGNANT" name="licence enseignant">
     <pattern>
       <token regexp="yes" inflected="yes" postag="N.*" postag_regexp="yes">licence|promotion|demande|aide</token>
@@ -1310,6 +1474,14 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="CONFIANCE" name="confiance">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes"></token>
+      <token postag="A" min="0" max="1"></token>
+      <token marker="yes">confiance</token>
+    </pattern>
+    <disambig action="filter" postag="J e s"/>
+  </rule>
   <rule id="CHINOISE" name="chinoise">
     <pattern>
       <token postag="N.*" postag_regexp="yes"></token>
@@ -1339,6 +1511,14 @@
       <token postag="V.* inf" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="N f s"/>
+  </rule>
+  <rule id="FAIRE_MONTRE" name="faire montre">
+    <pattern>
+      <token regexp="yes" inflected="yes">(re)?faire</token>
+      <token postag="A" min="0" max="3"></token>
+      <token marker="yes">montre</token>
+    </pattern>
+    <disambig action="filter" postag="N m s"/>
   </rule>
   <rule id="ATTENTAT_SUCIDE" name="attentat">
     <pattern>
@@ -1608,6 +1788,17 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="UNE_AURA" name="une aura">
+    <pattern>
+      <token postag="D . s" postag_regexp="yes"></token>
+      <token postag="J.*" postag_regexp="yes"></token>
+      <token marker="yes">aura</token>
+      <token inflected="yes" min="0" max="1">ne</token>
+      <token postag="R pers obj.*" postag_regexp="yes" min="0" max="3"></token>
+      <token postag="V.* 3 s" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="V avoir ind futu 3 s"/>
+  </rule>
   <rule id="COULEURS_VIVES" name="couleurs vives">
     <pattern>
       <token postag="N . p" postag_regexp="yes"></token>
@@ -1728,12 +1919,28 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="LA_SOUL" name="la soul (musical genere)">
+    <pattern>
+      <token regexp="yes">la|divas?|chanteurs?|chanteuses?</token>
+      <token min="0">de</token>
+      <token marker="yes">soul</token>
+    </pattern>
+    <disambig action="replace" postag="N f s"/>
+  </rule>
   <rule id="PAGE_BLANCHE" name="page blanche">
     <pattern>
       <token postag="N e s">page</token>
       <token postag="J f s">blanche</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="CAHIER_SPIRALE" name="cahier spirale">
+    <pattern>
+      <token regexp="yes">cahiers?</token>
+      <token min="0" max="1">à</token>
+      <token regexp="yes" marker="yes">spirales?</token>
+    </pattern>
+    <disambig action="filter" postag="N f.*"/>
   </rule>
   <rule id="FEUILLE" name="feuille">
     <pattern>
@@ -1907,6 +2114,13 @@
     </pattern>
     <disambig action="remove" postag="A"/>
   </rule>
+  <rule id="FAIT_EFFET" name="fait effet">
+    <pattern>
+      <token postag="V ind pres 3 s" marker="yes" skip="5">fait</token>
+      <token>effet</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
   <rule id="FAIT_GRISE_MINE" name="fait grise mine">
     <pattern>
       <token postag="V ind pres 3 s" marker="yes">fait</token>
@@ -1921,6 +2135,14 @@
       <token>le</token>
     </pattern>
     <disambig action="remove" postag="N f s"/>
+  </rule>
+  <rule id="PEUX" name="peux">
+    <pattern>
+      <token>je</token>
+      <token inflected="yes" min="0" max="1">ne</token>
+      <token marker="yes">peux</token>
+    </pattern>
+    <disambig action="remove" postag="V ind pres 2 s"/>
   </rule>
   <rule id="COUPONS_NET" name="coupons net">
     <pattern>
@@ -1978,6 +2200,15 @@
     </pattern>
     <disambig action="remove" postag="N . s"/>
   </rule>
+  <rule id="FAIRE_JEUNE_POUR_SON_AGE" name="faire jeune pour son âge">
+    <pattern>
+      <token postag="V ind pres 3 s">fait</token>
+      <token postag="J e s">jeune</token>
+      <token postag="P" skip="1">pour</token>
+      <token postag="N m s">âge</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="FAIRE_GRAND_BRUIT" name="faire grand bruit">
     <pattern>
       <token postag="V ind pres 3 s">fait</token>
@@ -2020,6 +2251,14 @@
     </pattern>
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
+  <rule id="FAIRE_IMPRESSION" name="faire impression">
+    <pattern>
+      <token postag="V ind pres 3 s">fait</token>
+      <token postag="A" min="0" max="3"></token>
+      <token>impression</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
   <rule id="FAIRE_RAGE" name="faire rage">
     <pattern>
       <token postag="V ind pres 3 s">fait</token>
@@ -2034,6 +2273,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="FAIRE_DE" name="faire de">
+    <pattern>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token postag="V ind pres 3 s" marker="yes">fait</token>
+      <token postag="P" min="0" max="1"></token>
+      <token postag="V.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
   <rule id="FAIRE_DE_MEME" name="faire de même">
     <pattern>
       <token postag="V ind pres 3 s" marker="yes">fait</token>
@@ -2041,6 +2289,33 @@
       <token>même</token>
     </pattern>
     <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
+  <rule id="FAIRE_DES_DEGATS" name="faire des dégâts">
+    <pattern>
+      <token postag="V ind pres 3 s" marker="yes">fait</token>
+      <token postag="A" min="0" max="3"></token>
+      <token postag="P"></token>
+      <token regexp="yes">bruit|dégâts</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
+  <rule id="FAIRE_L_OBJET_DE" name="faire l'objet de">
+    <pattern>
+      <token postag="V ind pres 3 s" marker="yes">fait</token>
+      <token postag="A" min="0" max="2"></token>
+      <token>l'</token>
+      <token>objet</token>
+      <token>de</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
+  <rule id="FAITES_ATTENTION" name="faire attention">
+    <pattern>
+      <token regexp="yes" postag="V (ind|imp) pres 2 p" postag_regexp="yes" marker="yes">(re)?faites</token>
+      <token regexp="yes" min="0" max="2">de|la</token>
+      <token regexp="yes">allusion|montre|appel|autorité|foi|mine|surface|attention|résonn?ance|carrière|confiance|demi-tour|débat|erreur|face|faillite|figure|fortune|fureur|gaffe|gymnastique|horreur|intrusion|irruption|lecture|main|mal|mention|part|partie|peur|place|plaisir|pression|preuve|profil|référence|saillie|semblant|signe|silence|suite|usage|écho|étalage</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="FAITES" name="faites + infinitif">
     <pattern>
@@ -2056,6 +2331,14 @@
     </pattern>
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
+  <rule id="PRESENTE" name="présente">
+    <pattern>
+      <token regexp="yes" postag="V (ind|sub|imp).*" postag_regexp="yes" marker="yes">présente|(re)?joint|pointe|séduit|prédit</token>
+      <token postag="A" min="0"></token>
+      <token postag="[ZD].*|R dem .*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V (ind|sub|imp).*"/>
+  </rule>
   <rule id="PREDIT" name="prédit">
     <pattern>
       <token postag="V (ind|sub|imp).*" postag_regexp="yes" marker="yes">prédit</token>
@@ -2063,11 +2346,28 @@
     </pattern>
     <disambig action="filter" postag="V (ind|sub|imp).*"/>
   </rule>
+  <rule id="LAISSE" name="laisse">
+    <pattern>
+      <token postag="R dem.*|[NZJ].*" postag_regexp="yes"></token>
+      <token postag="V (ind|sub) pres 3 s" postag_regexp="yes" marker="yes">laisse</token>
+      <token postag="A" min="0"></token>
+      <token postag="J .*|V ppa .*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V (ind|sub) pres 3 s"/>
+  </rule>
   <rule id="PATIENTE" name="patiente">
     <pattern>
       <token postag="D.*" postag_regexp="yes"></token>
       <token postag="N.*" postag_regexp="yes"></token>
       <token regexp="yes" postag="V ind pres 3 s" marker="yes">patiente|dépense|pointe</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
+  <rule id="FAIT_JEUNE" name="fait jeune">
+    <pattern>
+      <token postag="V ind pres 3 s" marker="yes">fait</token>
+      <token postag="A" min="0" max="3"></token>
+      <token regexp="yes" inflected="yes">jeune|vieux</token>
     </pattern>
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
@@ -2105,6 +2405,16 @@
     </pattern>
     <disambig action="filter" postag="V ind.*"/>
   </rule>
+  <rule id="DURE1" name="DURE1">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes" marker="yes">dure</token>
+      <token postag="[AYKJ]|D.*" postag_regexp="yes" min="0" max="4">
+        <exception>longtemps</exception>
+      </token>
+      <token regexp="yes" inflected="yes">temps|passé|présent|avenir|an|année|décade|décennie|heure|jour|lustre|millénaire|minute|mois|quadrimestre|seconde|semaine|semestre|siècle|trimestre|longtemps</token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
   <rule id="CUIT" name="cuit">
     <pattern>
       <token postag="D.*" postag_regexp="yes"></token>
@@ -2137,6 +2447,26 @@
       <token postag="V.*" postag_regexp="yes" marker="yes">sauve</token>
       <token postag="D.*" postag_regexp="yes"></token>
       <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="VIOLENT" name="violent (3 p)">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token postag="J.*" postag_regexp="yes" min="0" max="1"></token>
+      <token postag="V ind pres 3 p" marker="yes">violent</token>
+      <token postag="[DJNZ].*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 p"/>
+  </rule>
+  <rule id="DIVISE" name="divise">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes" min="0" max="1"></token>
+      <token postag="[ZN].*" postag_regexp="yes"></token>
+      <token regexp="yes" postag="V.*" postag_regexp="yes" marker="yes">divise|braque</token>
+      <token postag="D.*" postag_regexp="yes" min="0" max="1"></token>
+      <token postag="[NZ].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="V.*"/>
   </rule>
@@ -2191,6 +2521,14 @@
       <token postag="[JND].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="remove" postag="N.*"/>
+  </rule>
+  <rule id="AFFINE" name="affine (verbe)">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes" marker="yes">affine</token>
+      <token postag="A" min="0"></token>
+      <token postag="[JNDC].*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="[NJ].*"/>
   </rule>
   <rule id="DIPOSE" name="dispose (not adjective)">
     <pattern>
@@ -2306,6 +2644,14 @@
     </pattern>
     <disambig action="replace" postag="P"/>
   </rule>
+  <rule id="DERRIERE" name="derrière (prep)">
+    <pattern>
+      <token marker="yes">derrière</token>
+      <token min="0">-</token>
+      <token regexp="yes">-?(lui|eux|elle|elles|nous|vous|moi|toi|soi)</token>
+    </pattern>
+    <disambig action="replace" postag="P"/>
+  </rule>
   <rule id="RP-PLUS" name="RP : plus">
     <pattern>
       <token marker="yes">plus</token>
@@ -2361,6 +2707,14 @@
       <token postag="V.*" postag_regexp="yes">juge</token>
     </pattern>
     <disambig action="remove" postag="N [em] s"/>
+  </rule>
+  <rule id="AMENE" name="amène">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes" marker="yes">amène</token>
+      <token min="0">à</token>
+      <token postag="(P\+)*D.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="J e s"/>
   </rule>
   <rule id="COUR" name="cour">
     <pattern>
@@ -2460,6 +2814,14 @@
       <token marker="yes">car</token>
     </pattern>
     <disambig action="filter" postag="C coor"/>
+  </rule>
+  <rule id="FACILITE" name="facilité">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag="A" min="0" max="3"></token>
+      <token regexp="yes" marker="yes">facilités?</token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
   </rule>
   <rule id="SE_SAVOIR" name="se savoir">
     <pattern>
