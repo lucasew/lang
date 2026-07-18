@@ -262,3 +262,33 @@ func TestEnglishChunker_IdLike(t *testing.T) {
 	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{i, d, like})
 	require.Contains(t, strings.Join(like.GetChunkTags(), ","), "VP")
 }
+
+// MANY_NN: month is E-NP when ago is ADVP (not I-NP).
+func TestEnglishChunker_MonthAgo(t *testing.T) {
+	dt, jj, nn, rb := "DT", "JJ", "NN", "RB"
+	a := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("a", &dt, nil))
+	few := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("few", &jj, nil),
+		languagetool.NewAnalyzedToken("few", &nn, nil),
+	}, 0)
+	month := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("month", &nn, nil))
+	ago := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("ago", &rb, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{a, few, month, ago})
+	require.Contains(t, strings.Join(month.GetChunkTags(), ","), "E-NP")
+	require.Contains(t, strings.Join(ago.GetChunkTags(), ","), "ADVP")
+}
+
+// A_THANK_YOU: thank stays NP before you after adjective (not B-VP).
+func TestEnglishChunker_ThankYouNP(t *testing.T) {
+	jj, vb, vbp, prp := "JJ", "VB", "VBP", "PRP"
+	little := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("little", &jj, nil))
+	thank := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("thank", &vb, nil),
+		languagetool.NewAnalyzedToken("thank", &vbp, nil),
+	}, 0)
+	you := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("you", &prp, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{little, thank, you})
+	require.Contains(t, strings.Join(thank.GetChunkTags(), ","), "NP")
+}

@@ -2,6 +2,7 @@ package chunking
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -115,6 +116,64 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			prevPOS = "PRP$"
 			prevSurf = t.Token
 			continue
+		}
+		// MANY_NN: "a few month ago" — OpenNLP tags ago as RB/ADVP so month is
+		// E-NP (pattern wants E-NP on the singular countable noun).
+		if softIsTimeAgoSurface(t.Token) {
+			phrases[i] = "ADVP"
+			poss[i] = "RB"
+			prevPOS = "RB"
+			prevSurf = t.Token
+			continue
+		}
+		// NO_DET_NOUN_OF: "For example, boundary of …" — pattern is
+		// SENT_START|CC + E-NP + comma + NN. Sentence-initial "For" is CC
+		// (discourse connective) so "example" is the E-NP before the comma.
+		if prevPOS == "" && strings.EqualFold(t.Token, "for") &&
+			i+1 < len(out) && strings.EqualFold(out[i+1].Token, "example") {
+			phrases[i] = "O"
+			poss[i] = "CC"
+			prevPOS = "CC"
+			prevSurf = t.Token
+			continue
+		}
+		// NO_DET_NOUN_OF: capitalized unknowns (IndMys) get E-NP; Java OpenNLP
+		// still emits NP. Do not use NNP so the rule's NNP exception does not fire.
+		if softIsCapitalizedUnknown(t) {
+			phrases[i] = "NP"
+			poss[i] = "NN"
+			prevPOS = "NN"
+			prevSurf = t.Token
+			continue
+		}
+		// Hyphenated pre-modifiers with no POS (School-sponsored): treat as JJ so
+		// the following noun (cheerleading) is NP and the finite verb is B-VP
+		// (IS_AND_ARE needs promotes as B-VP).
+		if softIsHyphenatedModifier(t.Token) && !softHasAnyPOS(t) {
+			phrases[i] = "NP"
+			poss[i] = "JJ"
+			prevPOS = "JJ"
+			prevSurf = t.Token
+			continue
+		}
+		// A_THANK_YOU: "our little thank you" — OpenNLP NP for the noun "thank-you".
+		// If thank is B-VP, soft disambig PRP$+NN/JJ+VB strips JJ from little.
+		if softIsThankYouNounHead(t, out, i, prevPOS) {
+			phrases[i] = "NP"
+			poss[i] = "NN"
+			prevPOS = "NN"
+			prevSurf = t.Token
+			continue
+		}
+		// Gerund noun before finite VBZ: cheerleading promotes (NN not VBG).
+		if softHasGerundNounReading(t) && i+1 < len(out) && softFiniteTenseVerb(out[i+1]) == "VBZ" {
+			if nn := softNounReading(t); nn != "" {
+				phrases[i] = "NP"
+				poss[i] = nn
+				prevPOS = nn
+				prevSurf = t.Token
+				continue
+			}
 		}
 		// OpenNLP: "and catch up" — after CC, verb+particle is VP+PRT, not NP.
 		// primaryPOS alone prefers NN for multi-tag catch; particle lookahead
@@ -978,6 +1037,108 @@ func softIsDetLikeSurface(s string) bool {
 	default:
 		return false
 	}
+}
+
+func softIsTimeAgoSurface(s string) bool {
+	return strings.EqualFold(strings.TrimSpace(s), "ago")
+}
+
+func softHasAnyPOS(t ChunkTaggedToken) bool {
+	if t.Readings == nil {
+		return false
+	}
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if p := r.GetPOSTag(); p != nil && *p != "" &&
+			*p != languagetool.SentenceStartTagName &&
+			*p != languagetool.SentenceEndTagName &&
+			*p != languagetool.ParagraphEndTagName {
+			return true
+		}
+	}
+	return false
+}
+
+// softIsCapitalizedUnknown: title-case / camel token with no dict POS (IndMys).
+func softIsCapitalizedUnknown(t ChunkTaggedToken) bool {
+	if softHasAnyPOS(t) {
+		return false
+	}
+	s := strings.TrimSpace(t.Token)
+	if s == "" {
+		return false
+	}
+	r := []rune(s)
+	if !unicode.IsUpper(r[0]) {
+		return false
+	}
+	hasLetter := false
+	for _, c := range r {
+		if unicode.IsLetter(c) {
+			hasLetter = true
+			break
+		}
+	}
+	return hasLetter
+}
+
+func softIsHyphenatedModifier(s string) bool {
+	s = strings.TrimSpace(s)
+	return strings.Contains(s, "-") && !softIsHyphenPhrasalVerb(s)
+}
+
+// softIsThankYouNounHead: "thank" before "you" after DT/PRP$/JJ/NN (A_THANK_YOU).
+func softIsThankYouNounHead(t ChunkTaggedToken, tokens []ChunkTaggedToken, i int, prevPOS string) bool {
+	if !strings.EqualFold(strings.TrimSpace(t.Token), "thank") {
+		return false
+	}
+	if i+1 >= len(tokens) || !strings.EqualFold(strings.TrimSpace(tokens[i+1].Token), "you") {
+		return false
+	}
+	return prevPOS == "DT" || prevPOS == "PRP$" || strings.HasPrefix(prevPOS, "PRP$") ||
+		strings.HasPrefix(prevPOS, "JJ") || softIsSingularNounPOS(prevPOS) ||
+		strings.HasPrefix(prevPOS, "NN")
+}
+
+func softHasGerundNounReading(t ChunkTaggedToken) bool {
+	if t.Readings == nil {
+		return false
+	}
+	hasVBG, hasNN := false, false
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		p := r.GetPOSTag()
+		if p == nil {
+			continue
+		}
+		if *p == "VBG" {
+			hasVBG = true
+		}
+		if strings.HasPrefix(*p, "NN") {
+			hasNN = true
+		}
+	}
+	return hasVBG && hasNN
+}
+
+func softNounReading(t ChunkTaggedToken) string {
+	if t.Readings == nil {
+		return ""
+	}
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		p := r.GetPOSTag()
+		if p != nil && strings.HasPrefix(*p, "NN") {
+			return *p
+		}
+	}
+	return ""
 }
 
 func softIsPossessiveApostrophe(s string) bool {
