@@ -636,3 +636,20 @@ func TestAddChunk_WdPosAppendsChunkTag(t *testing.T) {
 	}
 	require.Contains(t, chunks, "PTime")
 }
+
+func TestDisambigLoader_ChunkAttr(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="CHUNK_RM" name="chunk">
+    <pattern>
+      <token chunk="B-NP">house</token>
+    </pattern>
+    <disambig action="remove" postag="NN"/>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "t")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Equal(t, "B-NP", rules[0].Tokens[0].ChunkTag)
+	require.False(t, rules[0].Tokens[0].ChunkTagRegexp)
+}

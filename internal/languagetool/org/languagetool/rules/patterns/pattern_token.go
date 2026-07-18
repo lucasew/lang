@@ -23,6 +23,9 @@ type PatternToken struct {
 	SkipNext         int
 	InsideMarker     bool
 	WhitespaceBefore *bool // nil = unset
+	// ChunkTag ports Java PatternToken chunk / chunk_re (ChunkTag on readings).
+	ChunkTag       string
+	ChunkTagRegexp bool
 	TokenException             string
 	TokenExceptionRE           bool
 	TokenExceptionCaseSensitive bool // when true, exception compares with exact case (LT case_sensitive on <exception>)
@@ -53,6 +56,12 @@ func (p *PatternToken) SetMaxOccurrence(n int) { p.MaxOccurrence = n }
 func (p *PatternToken) SetNegation(v bool)     { p.Negation = v }
 func (p *PatternToken) SetSkipNext(n int)      { p.SkipNext = n }
 func (p *PatternToken) SetInsideMarker(v bool) { p.InsideMarker = v }
+
+// SetChunkTag ports PatternToken.setChunkTag (exact or regexp chunk name).
+func (p *PatternToken) SetChunkTag(tag string, regexp bool) {
+	p.ChunkTag = tag
+	p.ChunkTagRegexp = regexp
+}
 
 func (p *PatternToken) SetStringPosException(tokenException string, regexp bool) {
 	p.SetStringPosExceptionCS(tokenException, regexp, false)

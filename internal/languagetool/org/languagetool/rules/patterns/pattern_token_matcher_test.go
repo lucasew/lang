@@ -113,3 +113,25 @@ func TestSoftNormalizeJavaRegexpUnicode(t *testing.T) {
 	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("ѕee", nil, nil)))
 	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("see", nil, nil)))
 }
+
+func TestIsMatchedReadings_ChunkTag(t *testing.T) {
+	// Java chunk="B-NP" must match token chunk tags (AND with surface).
+	pt := NewPatternToken("house", false, false, false)
+	pt.SetChunkTag("B-NP", false)
+	m := NewPatternTokenMatcher(pt)
+	nn := "NN"
+	atr := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("house", &nn, nil))
+	require.False(t, m.IsMatchedReadings(atr), "no chunk tag yet")
+	atr.SetChunkTags([]string{"B-NP"})
+	require.True(t, m.IsMatchedReadings(atr))
+	atr.SetChunkTags([]string{"I-NP"})
+	require.False(t, m.IsMatchedReadings(atr))
+
+	// chunk_re
+	pt2 := NewPatternToken("", false, false, false)
+	pt2.SetChunkTag(".-NP", true)
+	m2 := NewPatternTokenMatcher(pt2)
+	atr2 := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("x", &nn, nil))
+	atr2.SetChunkTags([]string{"B-NP"})
+	require.True(t, m2.IsMatchedReadings(atr2))
+}

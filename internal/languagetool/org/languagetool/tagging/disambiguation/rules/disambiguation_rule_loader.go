@@ -90,6 +90,9 @@ type disambigToken struct {
 	Min  string `xml:"min,attr"`
 	Max  string `xml:"max,attr"`
 	Skip string `xml:"skip,attr"`
+	// Chunk / ChunkRe port Java PatternToken chunk / chunk_re (ChunkTag).
+	Chunk   string `xml:"chunk,attr"`
+	ChunkRe string `xml:"chunk_re,attr"`
 	// Exceptions ports Java <exception> under <token> (first positive used).
 	Exceptions []disambigException `xml:"exception"`
 	Content    string              `xml:",chardata"`
@@ -242,6 +245,11 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 	}
 	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
 		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+	}
+	if ch := strings.TrimSpace(xt.ChunkRe); ch != "" {
+		pt.SetChunkTag(ch, true)
+	} else if ch := strings.TrimSpace(xt.Chunk); ch != "" {
+		pt.SetChunkTag(ch, false)
 	}
 	if xt.Min != "" {
 		var n int

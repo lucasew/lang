@@ -955,6 +955,17 @@
       <wd pos="PTime"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_108" name="_SOFT_ANON_108">
+    <pattern>
+      <token regexp="yes" marker="yes">més|menys</token>
+      <token regexp="yes" marker="yes">de|d'</token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_109" name="_SOFT_ANON_109">
     <pattern>
       <token regexp="yes" inflected="yes" postag="NC.*" postag_regexp="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|molt|poc|temps|temporada|temporadeta|estona|estoneta|estació|curs|eternitat|legislatura|primavera|estiu|tardor|hivern|matinada|matí|migdia|tarda|vesprada|horabaixa|vespre|capvespre|nit1|mitjanit</token>
@@ -1009,6 +1020,57 @@
       <wd pos="PTime"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_113" name="_SOFT_ANON_113">
+    <pattern>
+      <token regexp="yes" marker="yes">quasi|gairebé</token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_114" name="_SOFT_ANON_114">
+    <pattern>
+      <token chunk="PTime"></token>
+      <token marker="yes">i</token>
+      <token regexp="yes" marker="yes">mig|mitja</token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_115" name="_SOFT_ANON_115">
+    <pattern>
+      <token chunk="PTime"></token>
+      <token postag="CC" marker="yes"></token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_116" name="_SOFT_ANON_116">
+    <pattern>
+      <token chunk="PTime"></token>
+      <token regexp="yes" marker="yes">de|d'</token>
+      <token regexp="yes" marker="yes">vida|servei|embaràs</token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_117" name="_SOFT_ANON_117">
+    <pattern>
+      <token regexp="yes" inflected="yes">portar|dur</token>
+      <token marker="yes">ja</token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_118" name="_SOFT_ANON_118">
     <pattern>
       <token regexp="yes" inflected="yes">portar|dur</token>
@@ -1028,6 +1090,59 @@
       <token postag="D.*" postag_regexp="yes" marker="yes"></token>
       <token marker="yes">sant</token>
       <token marker="yes">dia</token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_120" name="_SOFT_ANON_120">
+    <pattern>
+      <token marker="yes">ben</token>
+      <token marker="yes">bé</token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_121" name="_SOFT_ANON_121">
+    <pattern>
+      <token inflected="yes">passar</token>
+      <token postag="D.*" postag_regexp="yes" marker="yes"></token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_122" name="_SOFT_ANON_122">
+    <pattern>
+      <token marker="yes">la</token>
+      <token marker="yes">major</token>
+      <token marker="yes">part</token>
+      <token marker="yes">de</token>
+      <token postag="D.*" postag_regexp="yes" marker="yes"></token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="addchunk">
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+      <wd pos="PTime"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_123" name="_SOFT_ANON_123">
+    <pattern>
+      <token marker="yes">la</token>
+      <token marker="yes">majoria</token>
+      <token marker="yes">de</token>
+      <token postag="D.*" postag_regexp="yes" marker="yes"></token>
+      <token chunk="PTime"></token>
     </pattern>
     <disambig action="addchunk">
       <wd pos="PTime"/>
@@ -4061,6 +4176,25 @@
     </pattern>
     <disambig action="filter" postag="[^R].*"/>
   </rule>
+  <rule id="_SOFT_ANON_434" name="_SOFT_ANON_434">
+    <pattern>
+      <token postag="N.*|A.*" postag_regexp="yes"></token>
+      <token postag="SPS00"></token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_435" name="_SOFT_ANON_435">
+    <pattern>
+      <token postag=".*LOC_PREP.*" postag_regexp="yes"></token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_436" name="_SOFT_ANON_436">
     <pattern>
       <token postag="SPS00|.*LOC_PREP.*" postag_regexp="yes"></token>
@@ -4071,9 +4205,31 @@
       <wd pos="complement"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_437" name="_SOFT_ANON_437">
+    <pattern>
+      <token postag="N.*|A.*" postag_regexp="yes"></token>
+      <token postag="SPS00"></token>
+      <token postag="SPS00"></token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_438" name="_SOFT_ANON_438">
     <pattern>
       <token regexp="yes">en|,|a</token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_439" name="_SOFT_ANON_439">
+    <pattern>
+      <token postag="SENT_START|_PUNCT.*|D[ADI].MS.*" postag_regexp="yes">
+        <exception>tant</exception>
+      </token>
       <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="add">
@@ -5791,6 +5947,18 @@
     </pattern>
     <disambig action="filter" postag="RG"/>
   </rule>
+  <rule id="_SOFT_ANON_652" name="_SOFT_ANON_652">
+    <pattern>
+      <token postag="V.[SI].*" postag_regexp="yes"></token>
+      <token postag="V.[NP].*" postag_regexp="yes" min="0"></token>
+      <token postag="RG.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="RG.*|LOC_ADV" postag_regexp="yes" min="0" max="4"></token>
+      <token postag="SP.*|_PUNCT.*|D...P.|CC" postag_regexp="yes">
+        <exception>de</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="DI0[MC]S0"/>
+  </rule>
   <rule id="_SOFT_ANON_653" name="_SOFT_ANON_653">
     <pattern>
       <token postag="V.[SI].*" postag_regexp="yes"></token>
@@ -6304,6 +6472,13 @@
     </pattern>
     <disambig action="remove" postag="[AN].*"/>
   </rule>
+  <rule id="_SOFT_ANON_705" name="_SOFT_ANON_705">
+    <pattern>
+      <token postag="VMIP3S00" marker="yes">dura</token>
+      <token chunk="PTime"></token>
+    </pattern>
+    <disambig action="remove" postag="[AN].*"/>
+  </rule>
   <rule id="segons" name="segons (preposició)">
     <pattern>
       <token postag="SPS00" marker="yes">segons</token>
@@ -6466,6 +6641,46 @@
       <token postag="NC.*|A.*|V.P.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="remove" postag="DA0MS0"/>
+  </rule>
+  <rule id="_SOFT_ANON_741" name="_SOFT_ANON_741">
+    <pattern>
+      <token postag="D[^R].[MC][SN0].*" postag_regexp="yes" marker="yes"></token>
+      <token postag="A..[MC][SN0].*|V.P..SM.?|PX.[MC][SN0].*" postag_regexp="yes" marker="yes"></token>
+      <token postag="N.[MC][SN0].*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">pren|recull|passi|sabeu|fan|surt|perquè|diu|si|però|escull|creix|escolta|troba|tot|som</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_GN_MS"/>
+      <wd pos="_GN_MS"/>
+      <wd pos="_GN_MS"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_742" name="_SOFT_ANON_742">
+    <pattern>
+      <token postag="D[^R].[FC][SN0].*" postag_regexp="yes" marker="yes"></token>
+      <token postag="A..[FC][SN0].*|V.P..SF.?|PX.[FC][SN0].*" postag_regexp="yes" marker="yes"></token>
+      <token postag="N.[FC][SN0].*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">ara|quina|fan|era|mira|queda|estima|passa|escolta|troba|fou</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_GN_FS"/>
+      <wd pos="_GN_FS"/>
+      <wd pos="_GN_FS"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_744" name="_SOFT_ANON_744">
+    <pattern>
+      <token postag="D[^R].[FC][PN0].*" postag_regexp="yes" marker="yes"></token>
+      <token postag="A..[FC][PN0].*|V.P..PF.?|PX.[FC][PN0].*" postag_regexp="yes" marker="yes"></token>
+      <token postag="N.[FC][PN0].*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_GN_FP"/>
+      <wd pos="_GN_FP"/>
+      <wd pos="_GN_FP"/>
+    </disambig>
   </rule>
   <rule id="_SOFT_ANON_755" name="_SOFT_ANON_755">
     <pattern>
@@ -7287,10 +7502,34 @@
     </pattern>
     <disambig action="remove" postag="PI.*"/>
   </rule>
+  <rule id="_SOFT_ANON_994" name="_SOFT_ANON_994">
+    <pattern>
+      <token postag="SPS00|.*LOC_PREP.*" postag_regexp="yes">
+        <exception>a</exception>
+      </token>
+      <token postag="N.*|PI.*|PD.*" postag_regexp="yes" marker="yes">
+        <exception>molt</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_995" name="_SOFT_ANON_995">
     <pattern>
       <token>com</token>
       <token postag="N.*|PI.*|PD.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1002" name="_SOFT_ANON_1002">
+    <pattern>
+      <token postag="SPS00|.*LOC_PREP.*" postag_regexp="yes">
+        <exception>a</exception>
+      </token>
+      <token postag="PD0NS000" marker="yes"></token>
     </pattern>
     <disambig action="add">
       <wd pos="complement"/>

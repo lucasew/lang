@@ -290,6 +290,13 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 			return false
 		}
 	}
+	// Java AbstractPatternRulePerformer.testAllReadings: chunk tags are AND-ed
+	// with the reading match (exact contains or regexp on chunk name).
+	if m.Base != nil && m.Base.ChunkTag != "" {
+		if !chunkTagMatches(atr, m.Base.ChunkTag, m.Base.ChunkTagRegexp) {
+			return false
+		}
+	}
 	hasRealPOS := false
 	for _, r := range atr.GetReadings() {
 		if r == nil {
@@ -307,6 +314,10 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 		// Java: no match if no reading satisfied string+POS constraints.
 		return false
 	}
+	// Chunk-only pattern tokens (empty surface/POS): chunk already matched above.
+	if m.Base != nil && m.Base.Token == "" && (m.Base.Pos == nil || m.Base.Pos.PosTag == "") && m.Base.ChunkTag != "" {
+		return true
+	}
 	// Disambiguation with a tagger (StrictPOS): untagged surfaces are UNKNOWN only.
 	// Do not soft-promote America1s→VBN so OF_VBN_JJ does not invent JJ tags.
 	if m.StrictPOS {
@@ -322,6 +333,23 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 	probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
 	probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
 	return m.IsMatched(probe)
+}
+
+// chunkTagMatches ports Java ChunkTag exact/regexp check on readings' chunk tags.
+func chunkTagMatches(atr *languagetool.AnalyzedTokenReadings, want string, isRegexp bool) bool {
+	if atr == nil || want == "" {
+		return false
+	}
+	tags := atr.GetChunkTags()
+	if isRegexp {
+		return atr.MatchesChunkRegex(want)
+	}
+	for _, t := range tags {
+		if t == want {
+			return true
+		}
+	}
+	return false
 }
 
 func (m *PatternTokenMatcher) matchSurface(surface string) bool {

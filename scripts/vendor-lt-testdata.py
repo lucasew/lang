@@ -143,6 +143,8 @@ SOFT_TOKEN_ATTRS = {
     "postag",
     "postag_regexp",
     "spacebefore",  # Java PatternToken.setWhitespaceBefore (yes/no)
+    "chunk",  # Java PatternToken.setChunkTag
+    "chunk_re",  # Java ChunkTag regexp
 }
 
 
@@ -169,7 +171,8 @@ def token_is_soft(tok: ET.Element) -> bool:
             return False
     text = (tok.text or "").strip()
     has_postag = bool((tok.get("postag") or "").strip())
-    if not text and not has_postag:
+    has_chunk = bool((tok.get("chunk") or tok.get("chunk_re") or "").strip())
+    if not text and not has_postag and not has_chunk:
         return False
     if "&" in text:
         return False
@@ -401,9 +404,15 @@ def pattern_is_simple_ex(
     if not has_surface:
         if not allow_postag_only:
             return None, []
-        # every token must carry a postag for postag-only soft match
+        # every token must carry a postag and/or chunk for tagger/chunker paths
         for t in toks:
-            if not isinstance(t, dict) or not (t.get("postag") or "").strip():
+            if not isinstance(t, dict):
+                return None, []
+            if not (
+                (t.get("postag") or "").strip()
+                or (t.get("chunk") or "").strip()
+                or (t.get("chunk_re") or "").strip()
+            ):
                 return None, []
     return toks, features
 
@@ -491,10 +500,23 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         if list(dis) and action == "replace" and not add_wds:
             # replace with non-wd children (e.g. match) not soft-loaded
             continue
-        # Postag-only patterns are useful for addchunk/filterall/unify when a
-        # tagger supplies tags (Java); still blocked for soft filter/replace.
-        allow_po = action in ("addchunk", "filterall", "unify")
-        toks, unify_feats = pattern_is_simple_ex(pat, allow_postag_only=allow_po)
+        # Prefer surface-anchored patterns. Retry postag/chunk-only for
+        # addchunk/filterall/unify and any pattern that uses chunk gates.
+        toks, unify_feats = pattern_is_simple_ex(pat, allow_postag_only=False)
+        if not toks:
+            toks, unify_feats = pattern_is_simple_ex(pat, allow_postag_only=True)
+            if toks and action in ("filter", "replace"):
+                has_surface = any(
+                    (t.get("text") if isinstance(t, dict) else str(t) or "").strip()
+                    for t in toks
+                )
+                has_chunk = any(
+                    isinstance(t, dict) and (t.get("chunk") or t.get("chunk_re"))
+                    for t in toks
+                )
+                # pure postag-only filter/replace floods soft without surface
+                if not has_surface and not has_chunk:
+                    toks = None
         if not toks:
             continue
         if action == "unify" and not unify_feats:
@@ -585,12 +607,20 @@ def soft_disambig_tokens(toks: list) -> list[dict] | None:
             "min",
             "max",
             "skip",
+            "chunk",
+            "chunk_re",
         ):
             if t.get(k):
                 st[k] = t[k]
         if t.get("exceptions"):
             st["exceptions"] = t["exceptions"]
-        if not st["text"] and not st.get("postag") and not st.get("regexp"):
+        if (
+            not st["text"]
+            and not st.get("postag")
+            and not st.get("regexp")
+            and not st.get("chunk")
+            and not st.get("chunk_re")
+        ):
             return None
         simple_toks.append(st)
     return simple_toks or None
@@ -613,6 +643,8 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
                 "min",
                 "max",
                 "skip",
+                "chunk",
+                "chunk_re",
             ):
                 if t.get(k):
                     attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
