@@ -24,9 +24,7 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 		}
 	}
 	require.True(t, hasEN)
-	// phrase
-	m = lt.Check("Guide tot he Galaxy")
-	require.NotEmpty(t, m)
+	// Soft invent PHRASE_REPLACE ("tot he") pack removed.
 
 	// long sentence (40+ words)
 	var b strings.Builder
@@ -46,16 +44,7 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 	}
 	require.True(t, hasLong, "%+v", m)
 
-	// pattern token sequence
-	m = lt.Check("I could of done better.")
-	var hasCould bool
-	for _, x := range m {
-		if x.RuleID == "EN_COULD_OF" {
-			hasCould = true
-			require.Contains(t, x.Suggestions, "could have")
-		}
-	}
-	require.True(t, hasCould, "%+v", m)
+	// Soft invent EN_COULD_OF pack removed; official grammar.xml load is the path for that rule.
 }
 
 func TestRegisterDemoEnglishSpeller(t *testing.T) {

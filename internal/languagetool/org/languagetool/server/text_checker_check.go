@@ -1,7 +1,6 @@
 package server
 
 import (
-	"os"
 	"strconv"
 	"strings"
 
@@ -9,7 +8,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // CheckOptions carries optional check-query knobs beyond language/disabled rules.
@@ -246,8 +244,9 @@ func applyRuleValues(lang, text string, existing []languagetool.LocalMatch, raw 
 	return out
 }
 
-// applyLevelPickyBoost runs extra picky patterns when level is PICKY (soft).
-// English: core picky inject + en-picky-soft.xml. de/fr: {lang}-picky-soft.xml only.
+// applyLevelPickyBoost runs official picky-level rules when level is PICKY.
+// Java: English.getRelevantRules Tag.picky (profanity, unit conversion, …).
+// Soft invent packs / picky-soft.xml are not loaded (faithful-port policy).
 func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool.LocalMatch, text string) []languagetool.LocalMatch {
 	if !strings.EqualFold(string(level), string(CheckLevelPicky)) {
 		return existing
@@ -256,38 +255,30 @@ func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
 	}
-	lt := languagetool.NewJLanguageTool(lang)
-	if strings.EqualFold(base, "en") {
-		en.RegisterCoreEnglishLanguageRules(lt)
-		en.RegisterPickyEnglishRules(lt)
-	}
-	// soft picky XML packs (en/de/fr-picky-soft.xml)
-	if dir := softGrammarDirFromEnv(); dir != "" {
-		for _, name := range []string{base + "-picky-soft.xml", lang + "-picky-soft.xml"} {
-			pickyPath := dir + "/" + name
-			if st, err := os.Stat(pickyPath); err == nil && st.Mode().IsRegular() {
-				_, _ = patterns.RegisterGrammarFile(lt, pickyPath, lang)
-			}
-		}
-	} else if !strings.EqualFold(base, "en") {
+	if !strings.EqualFold(base, "en") {
+		// Non-EN picky grammar.xml packs deferred until full official load is wired.
 		return existing
 	}
-	// only keep picky-only rule ids from this pass (core inject + soft picky pack)
-	picky := map[string]struct{}{
-		"EN_A_LOT": {}, "EN_IRREGARDLESS": {}, "EN_SUPPOSABLY": {},
-		"EN_EXPRESSO": {}, "EN_EXCAPE": {}, "EN_NUKEULAR": {},
-		"EN_LIBARY": {}, "EN_MISCHIEVOUS": {}, "EN_ORIENTATE": {},
-		"EN_PREVENTATIVE": {},
+	lt := languagetool.NewJLanguageTool(lang)
+	en.RegisterPickyEnglishRules(lt)
+	// Official picky rule IDs from RegisterPickyEnglishRules (not invent sequences).
+	pickyIDs := map[string]struct{}{}
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		pickyIDs[id] = struct{}{}
+	}
+	seen := map[string]struct{}{}
+	for _, m := range existing {
+		seen[m.RuleID] = struct{}{}
 	}
 	for _, m := range lt.Check(text) {
-		if _, ok := picky[m.RuleID]; ok {
-			existing = append(existing, m)
+		if _, ok := pickyIDs[m.RuleID]; !ok {
 			continue
 		}
-		// soft picky pack: *_SOFT_PICKY_*
-		if strings.Contains(m.RuleID, "SOFT_PICKY") {
-			existing = append(existing, m)
+		if _, dup := seen[m.RuleID]; dup {
+			continue
 		}
+		existing = append(existing, m)
+		seen[m.RuleID] = struct{}{}
 	}
 	return existing
 }

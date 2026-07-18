@@ -14,7 +14,8 @@ func TestJLanguageTool_DemoCodeForHomepage(t *testing.T) {
 		"A": {}, "a": {}, "an": {}, "sentence": {}, "with": {}, "error": {}, "in": {}, "the": {},
 		"Hitchhiker": {}, "Guide": {}, "Galaxy": {}, "to": {}, "he": {}, "s": {},
 	}, nil)
-	src := "A sentence with a error in the Hitchhiker's Guide tot he Galaxy"
+	// Soft invent PHRASE_REPLACE pack removed; homepage demo covers a/an (official inject).
+	src := "A sentence with a error in the Hitchhiker's Guide to the Galaxy"
 	matches := lt.Check(src)
 	require.NotEmpty(t, matches)
 	ids := map[string]bool{}
@@ -22,8 +23,7 @@ func TestJLanguageTool_DemoCodeForHomepage(t *testing.T) {
 		ids[m.RuleID] = true
 	}
 	require.True(t, ids["EN_A_VS_AN"], "expected a→an for 'a error'")
-	require.True(t, ids["PHRASE_REPLACE"], "expected tot he → to the")
-	// Prefer grammar/phrase fixes; cap passes so incomplete spellers cannot loop.
+	// Prefer grammar fixes; cap passes so incomplete spellers cannot loop.
 	fixed := src
 	for pass := 0; pass < 16; pass++ {
 		ms := lt.Check(fixed)
@@ -36,7 +36,7 @@ func TestJLanguageTool_DemoCodeForHomepage(t *testing.T) {
 			if len(m.Suggestions) == 0 {
 				continue
 			}
-			if m.RuleID == "EN_A_VS_AN" || m.RuleID == "PHRASE_REPLACE" {
+			if m.RuleID == "EN_A_VS_AN" {
 				pick = m
 				break
 			}

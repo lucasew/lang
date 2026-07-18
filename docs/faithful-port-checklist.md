@@ -55,7 +55,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
 | 1.14 | Soft picky XML load paths removed from server text checker | [ ] `text_checker_check.go` |
 | 1.15 | Demo/map tagger & speller not presented as default engine (or moved outside when freeze lifts) | [ ] `DemoEnglish*`, `LANG_DEMO_SPELLER` |
-| 1.16 | Invent multiword lists / embedded soft multiwords gone | [ ] audit `register` / multiword defaults |
+| 1.16 | Invent multiword lists / embedded soft multiwords gone | [~] SoftEnglish phrase/token invent packs removed from EN core |
 | 1.17 | `SoftForeignIgnoreRanges` / soft user-dict naming cleaned to Java twins or removed | [ ] server |
 | 1.18 | ZH tokenizer: real HanLP-equivalent or explicit incomplete (no soft POS invent) | [~] per-rune + `x`; needs real twin |
 | 1.19 | Dead soft comments / CLI help (`--level` soft packs) cleaned | [ ] |

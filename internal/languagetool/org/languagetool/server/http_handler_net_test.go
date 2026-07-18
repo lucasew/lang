@@ -54,15 +54,16 @@ func TestLanguageToolHttpHandler_ServeHTTP_MissingLang(t *testing.T) {
 }
 
 func TestApiV2_CheckPickyLevel(t *testing.T) {
+	// Invent picky token packs removed; picky path still returns 200 for ordinary grammar.
 	api := NewApiV2(nil, nil)
 	r, err := api.Handle("check", map[string]string{
 		"language": "en",
-		"text":     "I have alot of work.",
+		"text":     "This is an test.",
 		"level":    "picky",
 	})
 	require.NoError(t, err)
 	require.Equal(t, 200, r.Status)
-	require.Contains(t, r.Body, "EN_A_LOT")
+	require.Contains(t, r.Body, "EN_A_VS_AN")
 }
 
 func TestApiV2_CheckEnabledOnly(t *testing.T) {

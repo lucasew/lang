@@ -171,12 +171,13 @@ func TestCoreRulesChecker_CleanOverlaps(t *testing.T) {
 }
 
 func TestCoreCheckHook_PickyLevel(t *testing.T) {
+	// Invent picky token packs removed; picky still loads official profanity/unit rules without panic.
 	var out, errb bytes.Buffer
 	code := RunWithIO([]string{"-l", "en", "--level", "picky", "-"}, RunHooks{
-		ReadStdin: func() (string, error) { return "I have alot of work.", nil },
+		ReadStdin: func() (string, error) { return "This is an test.", nil },
 		Check:     CoreCheckHook,
 	}, &out, &errb)
 	require.Equal(t, 2, code, errb.String())
-	require.Contains(t, out.String(), "EN_A_LOT")
+	require.Contains(t, out.String(), "EN_A_VS_AN")
 }
 
