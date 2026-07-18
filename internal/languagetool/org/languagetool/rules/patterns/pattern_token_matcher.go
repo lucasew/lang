@@ -185,10 +185,23 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				softFreeLingClosedSurfaceMatch(pt.Pos.PosTag, token.GetToken()) {
 				posOK = true
 			}
+			// LT soft punctuation tags: pattern _PUNCT must accept readings like
+			// _PUNCT_SENT_START / _PUNCT_PERIOD (Java A_DESTACAR: "- A destacar…").
+			if !posOK && !m.StrictPOS && softPostagIsLTPunctPattern(pt.Pos.PosTag) &&
+				(softPOSIsPunctTag(pos) || softLooksLikePunct(token.GetToken())) {
+				posOK = true
+			}
+			// FreeLing multiword locution tags (LOC_ADV_TEMP, LOC_PREP, …) come from
+			// Java disambiguation only. Soft-accept letter/number surfaces so rules
+			// like FINS_A_POCS_DIES_DESPRES (.*LOC_ADV_TEMP.*) still fire.
+			if !posOK && !m.StrictPOS && softPostagIsLocutionPattern(pt.Pos.PosTag) &&
+				(softLooksLikeWord(token.GetToken()) || softLooksLikeNumber(token.GetToken())) {
+				posOK = true
+			}
 			// Soft multiword/disambig may only attach underscore context tags
 			// (_CONTEXTO_…); treat those as non-morph so open-class postags still
 			// soft-match letter surfaces (PT PHRASAL_VERB_PREFERIR "carne").
-			if !posOK && !m.StrictPOS && softPOSIsContextTag(pos) &&
+			if !posOK && !m.StrictPOS && softPOSIsContextTag(pos) && !softPOSIsPunctTag(pos) &&
 				softLooksLikeWord(token.GetToken()) && !softPostagIsClosedClassOnly(pt.Pos.PosTag) &&
 				!softPostagIsNumberOnly(pt.Pos.PosTag) && !softPostagIsSentenceBoundary(strings.ToUpper(pt.Pos.PosTag)) {
 				posOK = true
@@ -741,12 +754,13 @@ func softLooksLikePunct(s string) bool {
 }
 
 func softPostagLooksLikePunct(tag string) bool {
-	// SENT_END, PSN*, PUNCT*, PCT (EN), PKT (DE STTS), M (FR), SENTENCE_END, etc.
+	// SENT_END, PSN*, PUNCT*, _PUNCT (LT soft), PCT (EN), PKT (DE STTS), M (FR), …
 	u := strings.ToUpper(tag)
 	if strings.Contains(u, "SENT_END") ||
 		strings.Contains(u, "SENTENCE_END") ||
 		strings.Contains(u, "PSN") ||
 		strings.Contains(u, "PUNC") ||
+		strings.Contains(u, "_PUNCT") ||
 		strings.Contains(u, "PCT") ||
 		strings.Contains(u, "PKT") ||
 		strings.Contains(u, "SENT_START") {
@@ -891,6 +905,10 @@ func softPostagPartIsOpen(p string) bool {
 }
 
 func softPostagPartIsClosed(p string) bool {
+	// LT soft punctuation tags (_PUNCT, _PUNCT_PERIOD, …)
+	if strings.HasPrefix(p, "_PUNCT") || p == "_PUNCT" {
+		return true
+	}
 	// FreeLing Romance determiners (D.+, DA0MS0, DI0FS0, DP…, …) — PT/ES/CA/GL soft packs.
 	if softFreeLingPartIsDeterminer(p) {
 		return true
@@ -949,6 +967,10 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 }
 
 func softClosedPartSurface(part, s string) bool {
+	// LT soft punctuation (_PUNCT / _PUNCT_SENT_START / …)
+	if strings.HasPrefix(part, "_PUNCT") || part == "_PUNCT" {
+		return softLooksLikePunct(s)
+	}
 	// FreeLing Romance D*/P*/S*/C* (PT/ES/CA soft packs without full dict).
 	if softFreeLingPartIsDeterminer(part) {
 		return softFreeLingDetSurface(part, s)
@@ -1083,6 +1105,38 @@ func softIsGermanPrep(s string) bool {
 // softPOSIsContextTag: underscore-prefixed LT context tags (_CONTEXTO_…, _PUNCT…).
 func softPOSIsContextTag(pos *string) bool {
 	return pos != nil && strings.HasPrefix(*pos, "_")
+}
+
+// softPOSIsPunctTag: LT soft punctuation POS (_PUNCT, _PUNCT_SENT_START, …).
+func softPOSIsPunctTag(pos *string) bool {
+	return pos != nil && (strings.HasPrefix(*pos, "_PUNCT") || *pos == "_PUNCT")
+}
+
+// softPostagIsLTPunctPattern: grammar postag requires LT soft punct (_PUNCT / _PUNCT.*).
+func softPostagIsLTPunctPattern(tag string) bool {
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	if u == "" {
+		return false
+	}
+	for _, part := range strings.Split(u, "|") {
+		p := softNormalizePostagPart(part)
+		if p == "_PUNCT" || strings.HasPrefix(p, "_PUNCT") {
+			return true
+		}
+	}
+	return strings.Contains(u, "_PUNCT")
+}
+
+// softPostagIsLocutionPattern: FreeLing multiword/locution POS from Java disambig
+// (LOC_ADV, LOC_ADV_TEMP, LOC_PREP, _GN.*, …).
+func softPostagIsLocutionPattern(tag string) bool {
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	if u == "" {
+		return false
+	}
+	return strings.Contains(u, "LOC_ADV") || strings.Contains(u, "LOC_PREP") ||
+		strings.Contains(u, "LOC_ADJ") || strings.Contains(u, "LOC_CONJ") ||
+		strings.Contains(u, "_GN") || strings.Contains(u, "LOC_")
 }
 
 // softPostagIsFreeLingDeterminer: FreeLing D.+ / DA0MS0 / DI… / mixed D[AI].+|NC.+.
@@ -1264,20 +1318,26 @@ func softFreeLingPatternHasPronoun(u string) bool {
 }
 
 // softFreeLingDetSurface matches FreeLing determiner type to surface lists
-// (tagset_PT type: A article, D demonstrative, I indefinite, P possessive, …).
+// (tagset_PT type: A article, D demonstrative, I indefinite, P possessive, N numeral, T interrogative).
 func softFreeLingDetSurface(part, s string) bool {
 	// Type-specific when pattern pins a subtype; broad D.+ accepts any.
 	switch {
 	case strings.HasPrefix(part, "DP"):
 		return softIsRomancePossessiveSurface(s)
 	case strings.HasPrefix(part, "DI"):
-		return softIsRomanceIndefiniteDetSurface(s)
+		// FreeLing DI includes indefinite articles un/una (Java catalan/portuguese.dict).
+		return softIsRomanceIndefiniteDetSurface(s) || softIsRomanceArticleSurface(s)
 	case strings.HasPrefix(part, "DD"):
 		return softIsRomanceDemonstrativeSurface(s)
 	case strings.HasPrefix(part, "DA"):
 		return softIsRomanceArticleSurface(s)
+	case strings.HasPrefix(part, "DN"):
+		return softIsRomanceNumeralDetSurface(s)
+	case strings.HasPrefix(part, "DT") || strings.HasPrefix(part, "DE"):
+		// Interrogative / exclamative determiners (quin/quina… FreeLing DT).
+		return softIsRomanceInterrogativeDetSurface(s)
 	default:
-		// D.+ / D[AI].+ / D[AIP].+ / mixed — any FreeLing determiner surface
+		// D.+ / D[AI].+ / D[AIP].+ / D..MS. / mixed — any FreeLing determiner surface
 		return softIsRomanceDeterminerSurface(s)
 	}
 }
@@ -1290,17 +1350,22 @@ func softFreeLingPronSurface(part, s string) bool {
 		return softIsRomanceIndefiniteDetSurface(s) || softIsRomanceIndefinitePronSurface(s)
 	case strings.HasPrefix(part, "PP"):
 		return softIsPronoun(s)
+	case strings.HasPrefix(part, "PX"):
+		// FreeLing possessive pronoun (PX.*); Java catalan.dict seua/seva/nostra…
+		return softIsRomancePossessiveSurface(s)
 	default:
 		return softIsRomancePronounSurface(s)
 	}
 }
 
-// softIsRomanceDeterminerSurface: any FreeLing D* surface (article/demo/indef/poss).
+// softIsRomanceDeterminerSurface: any FreeLing D* surface (article/demo/indef/poss/num/int).
 func softIsRomanceDeterminerSurface(s string) bool {
 	return softIsRomanceArticleSurface(s) ||
 		softIsRomanceDemonstrativeSurface(s) ||
 		softIsRomanceIndefiniteDetSurface(s) ||
 		softIsRomancePossessiveSurface(s) ||
+		softIsRomanceNumeralDetSurface(s) ||
+		softIsRomanceInterrogativeDetSurface(s) ||
 		softIsDeterminer(s)
 }
 
@@ -1308,11 +1373,16 @@ func softIsRomanceArticleSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "o", "a", "os", "as", "um", "uma", "uns", "umas",
 		"el", "la", "los", "las", "un", "una", "unos", "unas",
-		"lo", "les", "els", "na", "nas", "ao", "à", "aos", "às",
+		"lo", "les", "els",
+		// Catalan tokenizer splits contractions: al→a+l, als→a+ls, del→de+l…
+		"l", "ls", "n", "m", "t", "s",
+		"na", "nas", "ao", "à", "aos", "às",
 		// FreeLing fused prep+article (SPS00:DA…): do/da/no/na/pelo…
 		"do", "da", "dos", "das", "no", "nos",
 		"pelo", "pela", "pelos", "pelas",
-		"dum", "duma", "duns", "dumas", "num", "numa", "nuns", "numas":
+		"dum", "duma", "duns", "dumas", "num", "numa", "nuns", "numas",
+		// Catalan elided
+		"l'", "d'", "n'", "m'", "t'", "s'":
 		return true
 	default:
 		return false
@@ -1333,16 +1403,20 @@ func softIsRomanceDemonstrativeSurface(s string) bool {
 		"neste", "nesta", "nestes", "nestas", "nesse", "nessa", "nesses", "nessas",
 		"naquele", "naquela", "naqueles", "naquelas",
 		"àquele", "àquela", "àqueles", "àquelas", "aeste", "aesta",
-		// Catalan
-		"aquest", "aquesta", "aquestos", "aquestes", "aquell", "aquells", "aquelles",
-		"això", "allò", "açò":
+		// Catalan (aquests = standard masc. plural; aquestos = variant)
+		// "aquella" shared with Spanish above
+		"aquest", "aquesta", "aquests", "aquestos", "aquestes",
+		"aquell", "aquells", "aquelles",
+		"això", "allò", "açò",
+		"aqueix", "aqueixa", "aqueixos", "aqueixes",
+		"eixe", "eixa", "eixos", "eixes":
 		return true
 	default:
 		return false
 	}
 }
 
-// softIsRomancePossessiveSurface: FreeLing DP (meu/teu/seu/…); Java portuguese.dict.
+// softIsRomancePossessiveSurface: FreeLing DP / PX (meu/teu/seu/seva/…); Java dicts.
 func softIsRomancePossessiveSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "meu", "minha", "meus", "minhas",
@@ -1354,16 +1428,19 @@ func softIsRomancePossessiveSurface(s string) bool {
 		"mi", "mis", "tu", "tus", "su", "sus",
 		"nuestro", "nuestra", "nuestros", "nuestras",
 		"vuestro", "vuestra", "vuestros", "vuestras",
-		// Catalan possessives (meua/seua; meu/teu/seu shared with PT)
-		"meua", "meues", "teua", "teues", "seua", "seues",
-		"nostre", "nostra", "nostres", "vostra", "vostre", "vostres":
+		// Catalan possessives (central + valencian); FreeLing PX.* / DP.*
+		"meva", "meves", "meua", "meues",
+		"teva", "teves", "teua", "teues",
+		"seva", "seves", "seua", "seues",
+		"nostre", "nostra", "nostres", "vostra", "vostre", "vostres",
+		"llur", "llurs":
 		return true
 	default:
 		return false
 	}
 }
 
-// softIsRomanceIndefiniteDetSurface: FreeLing DI (qualquer, algum, …).
+// softIsRomanceIndefiniteDetSurface: FreeLing DI (qualquer, cap, algun, …).
 func softIsRomanceIndefiniteDetSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "qualquer", "quaisquer",
@@ -1378,13 +1455,79 @@ func softIsRomanceIndefiniteDetSurface(s string) bool {
 		"tanto", "tanta", "tantos", "tantas",
 		"quanto", "quanta", "quantos", "quantas",
 		"sendos", "sendas",
+		// Catalan: cap = no/any (DI); gaire; prou; força… ("alguns" shared with PT above)
+		"cap", "gaire", "prou", "força", "bastant", "bastants",
+		"algun", "algunes",
 		// Spanish/Catalan common DI
 		"algún", "alguna", "algunos", "algunas",
-		"ningún", "ninguna", "ningunos", "ningunas",
+		"ningún", "ninguna", "ningunos", "ningunas", "ningun", "ninguns", "ningunes",
 		"otro", "otra", "otros", "otras",
 		"varios", "varias",
 		"cualquier", "cualquiera", "cualesquiera",
-		"tot", "tota", "tots", "totes", "altre", "altra", "altres":
+		"tot", "tota", "tots", "totes", "altre", "altra", "altres",
+		"mateix", "mateixa", "mateixos", "mateixes",
+		"tal", "tals", "cert", "certs", "certes":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsRomanceNumeralDetSurface: FreeLing DN (dos/tres/vuit/set-cents…).
+func softIsRomanceNumeralDetSurface(s string) bool {
+	s = strings.ToLower(strings.TrimSpace(s))
+	if s == "" {
+		return false
+	}
+	// Digit numerals (2020); letter forms below.
+	if softLooksLikeNumber(s) {
+		return true
+	}
+	// Hyphenated Catalan compounds: set-cents, vint-i-un, …
+	if strings.Contains(s, "-") {
+		for _, p := range strings.Split(s, "-") {
+			if p == "" || p == "i" {
+				continue
+			}
+			if !softIsRomanceNumeralDetSurface(p) {
+				return false
+			}
+		}
+		return true
+	}
+	switch s {
+	// Shared Romance + Catalan cardinals (FreeLing DN.*)
+	case "zero", "un", "una", "uno", "uns", "unes", "um", "uma",
+		"dos", "dues", "dois", "duas", "tres",
+		"quatre", "cuatro", "quatro", "cinc", "cinco",
+		"sis", "seis", "set", "siete", "sete",
+		"vuit", "ocho", "oito", "nou", "nueve", "nove",
+		"deu", "diez", "dez",
+		"onze", "once", "dotze", "doce", "doze",
+		"tretze", "treze", "catorze", "quatorze", "catorce",
+		"quinze", "quince", "setze", "dieciséis",
+		"disset", "divuit", "dinou",
+		"vint", "veinte", "vinte", "trenta", "treinta", "trinta",
+		"quaranta", "quarenta", "cinquanta", "cinquenta", "cincuenta",
+		"seixanta", "setanta", "vuitanta", "noranta",
+		"cent", "cents", "cien", "ciento", "cem", "cento",
+		"mil", "milió", "milions", "milhão", "milhões", "millón", "millones",
+		"primer", "primera", "segon", "segona", "tercer", "tercera":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsRomanceInterrogativeDetSurface: FreeLing DT (quin/quina/quins/quines).
+func softIsRomanceInterrogativeDetSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "quin", "quina", "quins", "quines",
+		"qual", "quals",
+		"què", "que",
+		"cuánto", "cuánta", "cuántos", "cuántas",
+		"cuanto", "cuanta", "cuantos", "cuantas",
+		"qué", "cuál", "cuáles":
 		return true
 	default:
 		return false
@@ -1395,7 +1538,7 @@ func softIsRomanceIndefinitePronSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "alguém", "ninguém", "tudo", "nada", "algo", "outrem",
 		"alguien", "nadie",
-		"algú", "ningú", "res":
+		"algú", "ningú", "res", "hom", "quelcom":
 		return true
 	default:
 		return false
@@ -1404,6 +1547,7 @@ func softIsRomanceIndefinitePronSurface(s string) bool {
 
 func softIsRomancePronounSurface(s string) bool {
 	return softIsPronoun(s) ||
+		softIsRomancePossessiveSurface(s) ||
 		softIsRomanceDemonstrativeSurface(s) ||
 		softIsRomanceIndefinitePronSurface(s) ||
 		softIsRomanceIndefiniteDetSurface(s)
@@ -1416,9 +1560,11 @@ func softIsRomancePrepSurface(s string) bool {
 		"ao", "à", "aos", "às", "do", "da", "dos", "das", "no", "na", "nos", "nas",
 		"pelo", "pela", "pelos", "pelas", "dum", "duma", "duns", "dumas",
 		"num", "numa", "nuns", "numas", "pra", "pro",
-		// Spanish/Catalan
+		// Spanish/Catalan (FreeLing SPS00; Java catalan.dict sota/damunt/…)
 		"en", "con", "sin", "hacia", "según", "durante", "mediante", "versus",
-		"amb", "sense", "cap", "des", "dins", "fora", "per", "segons":
+		"amb", "sense", "cap", "des", "dins", "dintre", "fora", "per", "segons",
+		"sota", "damunt", "davall", "davant", "darrere", "prop", "fins",
+		"envers", "mitjançant", "malgrat", "tret", "excepte", "salvant":
 		return true
 	default:
 		return softIsPreposition(s)
@@ -1464,6 +1610,14 @@ func softIsPronoun(s string) bool {
 		"mim", "ti", "si", "lhe", "lhes", "nos", "vos",
 		"meu", "minha", "meus", "minhas", "teu", "tua", "teus", "tuas",
 		"seu", "sua", "seus", "suas", "nosso", "nossa", "nossos", "nossas",
+		// Catalan personal / weak pronouns (FreeLing PP*; Java catalan.dict).
+		// "me"/"us"/"vos"/"es" shared with EN/PT/DE above or below.
+		// Tokenizer splits se'ns → se + 'ns (PASSAR_LES_GANES).
+		"jo", "mi", "ell", "ella", "nosaltres", "vosaltres", "ells", "elles",
+		"em", "et", "ens", "li", "ho", "hi", "en", "ns", "'ns",
+		"te", "se", "mos", "los", "les",
+		"-ho", "-hi", "-en", "-me", "-te", "-se", "-nos", "-vos", "-lo", "-la", "-los", "-les",
+		"-li", "-us", "-m", "-t", "-s", "-n",
 		// German (PRO:REF / personal)
 		"ich", "mich", "mir", "mein", "meine", "meiner", "meinem", "meinen",
 		"du", "dich", "dir", "dein", "deine", "deiner", "deinem", "deinen",
