@@ -874,6 +874,15 @@ func softPostagPartIsOpen(p string) bool {
 			strings.Contains(p, "INF") || strings.Contains(p, "PPR"))) {
 		return true
 	}
+	// Irish Gramadóir tags: Noun:… / Verb:… (optional C[UMC]: dialect prefix).
+	if strings.Contains(p, "NOUN:") || strings.Contains(p, "VERB:") {
+		return true
+	}
+	// Russian colon tags: PT: participle, NN: noun, VF: verb finite, …
+	if strings.HasPrefix(p, "PT:") || strings.HasPrefix(p, "NN:") || strings.HasPrefix(p, "VF:") ||
+		strings.HasPrefix(p, "INF:") || strings.HasPrefix(p, "ADJ:") {
+		return true
+	}
 	// FreeLing Romance open classes (PT/ES/CA/GL tagset_PT): N*, A* (adj), R* (adv), V*
 	// before English Penn — FreeLing VMP00 / NCMS000 / AQ0FS0 / RG, not Penn VB/NN alone.
 	// French A alone is adverb (closed); Iberian AQ/AO remain open adjectives.
@@ -1021,7 +1030,7 @@ func softClosedPartSurface(part, s string) bool {
 		return softIsFrenchAdverbSurface(s)
 	}
 	if softFreeLingPartIsAdposition(part) {
-		return softIsRomancePrepSurface(s) || softIsFrenchPrepSurface(s)
+		return softIsRomancePrepSurface(s) || softIsFrenchPrepSurface(s) || softIsEsperantoPrepSurface(s)
 	}
 	if softFreeLingPartIsConjunction(part) {
 		return softIsCC(s)
@@ -1216,7 +1225,8 @@ func softFreeLingClosedSurfaceMatch(pattern, surface string) bool {
 		if softFreeLingPartIsPronoun(p) && softFreeLingPronSurface(p, s) {
 			return true
 		}
-		if softFreeLingPartIsAdposition(p) && softIsRomancePrepSurface(s) {
+		if softFreeLingPartIsAdposition(p) &&
+			(softIsRomancePrepSurface(s) || softIsFrenchPrepSurface(s) || softIsEsperantoPrepSurface(s)) {
 			return true
 		}
 		if softFreeLingPartIsConjunction(p) && softIsCC(s) {
@@ -1288,14 +1298,19 @@ func softFreeLingPartIsPronoun(p string) bool {
 	if strings.HasPrefix(p, "PRO") {
 		return false
 	}
+	// Colon tags are STTS / Russian (PT: participle, NN:, …), not FreeLing PD/PP.
+	if strings.Contains(p, ":") {
+		return false
+	}
 	// French FreeLing uses P.* for prepositions (space tagset), not pronouns.
 	// Iberian FreeLing uses multi-char PD/PI/PP/PR/PX/… — not bare P.*/P.+.
+	// Esperanto uses "P .ak" (space) for prepositions.
 	if p == "P" || strings.HasPrefix(p, "P.") || strings.HasPrefix(p, "P*") ||
 		strings.HasPrefix(p, "P+") || strings.HasPrefix(p, "P ") {
 		return false
 	}
 	// FreeLing P + type: PD PI PP PR PX PT PE PN (tagset_PT pronoun).
-	// Bare P.*/P.+ already excluded above (French prepositions).
+	// Bare P.*/P.+ already excluded above (French/EO prepositions).
 	if len(p) >= 2 && p[0] == 'P' {
 		switch p[1] {
 		case 'D', 'I', 'P', 'R', 'X', 'T', 'E', 'N', '[':
@@ -1311,7 +1326,8 @@ func softFreeLingPartIsAdposition(p string) bool {
 		strings.HasPrefix(p, "SP[") || p == "SP" || p == "SPS00" {
 		return true
 	}
-	// French: P, P.*, P e, P.* … (not PD/PP Iberian pronouns)
+	// French / Esperanto space prepositions: P, P.*, P .ak, P e, …
+	// (not Iberian PD/PP multi-char pronouns)
 	if p == "P" || strings.HasPrefix(p, "P.") || strings.HasPrefix(p, "P*") ||
 		strings.HasPrefix(p, "P+") || strings.HasPrefix(p, "P ") {
 		return true
@@ -1360,9 +1376,14 @@ func softFrenchPartIsAdverb(p string) bool {
 }
 
 func softFreeLingPartIsConjunction(p string) bool {
-	// FreeLing CC / CS (not English CC alone — still fine: softIsCC handles EN+Romance)
+	// FreeLing CC / CS (not English CC alone — still fine: softIsCC handles EN+Romance).
+	// Do NOT treat C[UMC]: (Irish dialect prefix on Noun:/Verb:) as conjunction.
+	if strings.Contains(p, "NOUN:") || strings.Contains(p, "VERB:") ||
+		strings.Contains(p, "C[UMC]") || strings.Contains(p, "C[UMC]:") {
+		return false
+	}
 	return p == "CC" || p == "CS" || strings.HasPrefix(p, "CC.") || strings.HasPrefix(p, "CS.") ||
-		strings.HasPrefix(p, "C[") || (p == "C")
+		p == "C" || strings.HasPrefix(p, "C.") || strings.HasPrefix(p, "C*") || strings.HasPrefix(p, "C+")
 }
 
 // softFreeLingPatternHasDeterminer scans full postag patterns for a D-family segment
@@ -1587,6 +1608,21 @@ func softIsFrenchPrepSurface(s string) bool {
 		return true
 	default:
 		return softIsPreposition(s)
+	}
+}
+
+// softIsEsperantoPrepSurface: Esperanto P .ak (kun/de/en/…); Java EO soft SI_TRIAPERSONA.
+func softIsEsperantoPrepSurface(s string) bool {
+	switch softEsperantoFold(strings.ToLower(strings.TrimSpace(s))) {
+	case "al", "anstataux", "antaux", "apud", "ce", "cxe", "cxirkaux", "da", "de", "dum",
+		"ekster", "el", "en", "gxis", "inter", "je", "kontraux", "krom", "kun", "laux",
+		"malgraux", "per", "po", "por", "post", "preter", "pri", "pro", "sen", "sub",
+		"super", "sur", "tra", "trans",
+		// Unicode diacritics
+		"anstataŭ", "antaŭ", "ĉe", "ĉirkaŭ", "ĝis", "kontraŭ", "laŭ", "malgraŭ":
+		return true
+	default:
+		return false
 	}
 }
 
