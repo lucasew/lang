@@ -29,6 +29,9 @@ func NewTokenHint(inflected bool, possibleValues []string, tokenIndex int) Token
 }
 
 // CanBeIgnoredFor returns true if none of the hint values appear in the sentence tokens/lemmas.
+// Java uses AnalyzedSentence.getLemmaOffsets for inflected hints (tagger lemmas). Soft
+// without a tagger approximates lemmas via softInflectedSurfaceMatch so rules like
+// WAITING_MY_PATIENT_FINISH (inflected "wait") are not skipped on "waiting".
 func (th TokenHint) CanBeIgnoredFor(sentence *languagetool.AnalyzedSentence) bool {
 	if sentence == nil || len(th.LowerCaseValues) == 0 {
 		return false
@@ -44,6 +47,16 @@ func (th TokenHint) CanBeIgnoredFor(sentence *languagetool.AnalyzedSentence) boo
 					if _, ok := want[strings.ToLower(*lem)]; ok {
 						return false
 					}
+				}
+			}
+			// Soft untagged: surface equals lemma or is a simple inflection of it.
+			surface := strings.ToLower(tok.GetToken())
+			if _, ok := want[surface]; ok {
+				return false
+			}
+			for v := range want {
+				if softInflectedSurfaceMatch(surface, v, false) {
+					return false
 				}
 			}
 		} else {

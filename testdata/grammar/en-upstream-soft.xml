@@ -957,6 +957,17 @@
       <message>Consider using <suggestion>\2</suggestion>.</message>
       <short>Redundant phrase</short>
     </rule>
+    <rule id="ADJECTIVE_IN_ATTRIBUTE" name="Big in size, yellow in color, etc.">
+      <pattern>
+        <token postag="JJ|JJR|JJS" postag_regexp="yes">
+          <exception regexp="yes">average|up|down|on|out|over|through|(in)?sufficient|(in)?variable|modest|(ir)?regular|maximum|minimum|(un)?manageable|[bm]illion|trillion|near|off|now|\d+(rd|th|st|nd)|work|just|only|overall|sales|close|far|pleasing|building|(un)?matching|(un)?limited|(un)?even|similar|different|around|(un)?available|almost|other|one|similar|alone|religious|corresponding|(un|in)?equal|next|doubl(e|ing)|great|possible|autocratic|necessary|beautiful|rich|back|identical|more|less|much|second|(un|in)?comparable|characteristic|endless|familiar|handy|(in)?distinguishable|(in)?finite|intermediate|least|light|(dis)?proportional|regional|national|local|superior|inferior|then|.*first|.*second|.*third|.*fourth|.*fifth|.*sixth|.*seventh|.*eighth|.*ninth|.*tenth|.*eleventh|.*twelfth|.*teenth|.*hundredth|.*thousandth|.*millionth</exception>
+        </token>
+        <token>in</token>
+        <token regexp="yes">size|duration|colou?r|number|shape|length|[hw]eight</token>
+      </pattern>
+      <message>This wording could be more concise. <suggestion>\1</suggestion></message>
+      <short>Possible redundancy</short>
+    </rule>
     <rule id="ALL_OF_THE" name="all of the (all the)">
       <pattern>
         <token marker="yes">all</token>
@@ -1095,6 +1106,17 @@
       <message>Use <suggestion>female</suggestion>.</message>
       <short>Incorrect phrase</short>
     </rule>
+    <rule id="FOCUS_IN" name="focus in (focus on)">
+      <pattern>
+        <token inflected="yes" postag="V.*" postag_regexp="yes">focus</token>
+        <token marker="yes">in
+          <exception scope="next" regexp="yes">order|on</exception>
+        </token>
+        <token chunk_re="B-NP.*"></token>
+      </pattern>
+      <message>In this context, 'focus' is usually used with the preposition <suggestion>on</suggestion>.</message>
+      <short>Possibly wrong preposition</short>
+    </rule>
     <rule id="FOREIGN_IMPORT" name="foreign import (import)">
       <pattern>
         <token>foreign</token>
@@ -1216,6 +1238,18 @@
       </pattern>
       <message>Consider using <suggestion>emailed</suggestion>.</message>
       <short>Redundant phrase</short>
+    </rule>
+    <rule id="TELL_IT" name="I [told it to] -&gt; I [told] Leo">
+      <pattern>
+        <token inflected="yes" marker="yes">tell</token>
+        <token marker="yes">it</token>
+        <token marker="yes">to</token>
+        <token chunk_re="B-NP.*">
+          <exception postag="V.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>This phrasing could be wordy. <suggestion>\1</suggestion></message>
+      <short>TELL_IT</short>
     </rule>
     <rule id="THE_FALL_SEASON" name="fall season (fall)">
       <pattern>
@@ -1752,6 +1786,15 @@
       <message>The usual collocation for "\1" is "of", not "\3". Did you mean <suggestion>\1 \2 of</suggestion>?</message>
       <short>DEPRIVE_FROM_OF</short>
     </rule>
+    <rule id="DID_A_MISTAKE" name="made (did) a mistake">
+      <pattern>
+        <token regexp="yes" marker="yes">did|done</token>
+        <token regexp="yes">an?|some</token>
+        <token regexp="yes">mistakes?|errors?</token>
+      </pattern>
+      <message>Did you mean <suggestion>made</suggestion>?</message>
+      <short>DID_A_MISTAKE</short>
+    </rule>
     <rule id="DIFFICULT_TO_ME" name="Collocation: difficult to/for">
       <pattern>
         <token>difficult</token>
@@ -1769,6 +1812,17 @@
       <message>The usual collocation for "\1" is "with" or "in" or "by" or "at" or "about", not "\2". Did you mean <suggestion>\1 with</suggestion> or <suggestion>\1 in</suggestion> or <suggestion>\1 by</suggestion> or <suggestion>\1 at</suggestion> or <suggestion>\1 about</suggestion>?</message>
       <short>DISAPPOINT_FROM</short>
     </rule>
+    <rule id="DIVERSITY_OF" name="Collocation: a diversity of colors OR diverse colors">
+      <pattern>
+        <token postag="DT"></token>
+        <token regexp="yes" marker="yes">diversity|diversitie</token>
+        <token postag="NN(S|:UN)" postag_regexp="yes" marker="yes">
+          <exception regexp="yes">initiatives?</exception>
+        </token>
+      </pattern>
+      <message>The word "of" is missing between "\2" and "\3". <suggestion>\2 of \3</suggestion></message>
+      <short>DIVERSITY_OF</short>
+    </rule>
     <rule id="DO_HAVE_A_MEETING" name="Collocation: do/have a meeting">
       <pattern>
         <token inflected="yes">do</token>
@@ -1777,6 +1831,18 @@
       </pattern>
       <message>The usual verb for "a meeting" is "have", not "do" <suggestion>\1 a meeting</suggestion></message>
       <short>DO_HAVE_A_MEETING</short>
+    </rule>
+    <rule id="DRESS_WITH_IN" name="Collocation: dress with/in">
+      <pattern>
+        <token postag="NN.*|PRP_S.*" postag_regexp="yes" chunk_re=".-NP.*"></token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token inflected="yes" marker="yes" chunk_re=".-VP">dress</token>
+        <token marker="yes">with</token>
+      </pattern>
+      <message>The usual collocation for "\3" is "in", not "\4". Did you mean <suggestion>\3 in</suggestion>?</message>
+      <short>DRESS_WITH_IN</short>
     </rule>
     <rule id="EAT_ANTIBIOTICS" name="eat (take) antibiotics">
       <pattern>
@@ -2154,6 +2220,17 @@
       </pattern>
       <message>The usual preposition for "mirror" is "in", not "at". <suggestion>\1 in a mirror</suggestion></message>
       <short>LOOK_AT_TO</short>
+    </rule>
+    <rule id="LOT_OF" name="Collocation: lot (of)" default="on">
+      <pattern>
+        <token>a</token>
+        <token regexp="yes">lots?|handful</token>
+        <token postag="NN(:UN?|P?S)" postag_regexp="yes">
+          <exception regexp="yes">of|tonight|tomorrow|yesterday|thanks|flight|right|will|left|wrong|backs|moor</exception>
+        </token>
+      </pattern>
+      <message>If you mean a great quantity, use <suggestion>\1 \2 of \3</suggestion>.</message>
+      <short>Missing preposition</short>
     </rule>
     <rule id="LUNCH_TO_FOR" name="Collocation: lunch to/for">
       <pattern>
@@ -2753,6 +2830,14 @@
       <message>Did you mean <suggestion>back and forth</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="BRAKE_AWAY_BREAK_AWAY" name="brake away (break away)">
+      <pattern>
+        <token>brake</token>
+        <token>away</token>
+      </pattern>
+      <message>Did you mean <suggestion>break away</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
     <rule id="BYE_THE_WAY" name="bye the way (by the way)">
       <pattern>
         <token>bye</token>
@@ -3181,6 +3266,21 @@
       <message>Architect is a noun, not a verb. Did you mean <suggestion>design</suggestion> or <suggestion>devise</suggestion>?</message>
       <short>Architect is a noun, not a verb</short>
     </rule>
+    <rule id="ARE_OUR" name="are vs our">
+      <pattern>
+        <token postag="VB.*" postag_regexp="yes" chunk_re="[BI]-VP"></token>
+        <token min="0">sure</token>
+        <token case_sensitive="yes" marker="yes">are</token>
+        <token postag="NN:UN?|NN" postag_regexp="yes">
+          <exception postag="VB[GN]" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" case_sensitive="yes">is|was|has|have|do|does</token>
+        <token postag="RB" min="0"></token>
+        <token postag="JJ.*|VBG" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>our</suggestion>?</message>
+      <short>ARE_OUR</short>
+    </rule>
     <rule id="ASK_WETHER" name="ask wether/weather (whether)">
       <pattern>
         <token regexp="yes" inflected="yes" skip="1">ask|question</token>
@@ -3337,6 +3437,24 @@
       </pattern>
       <message>Did you mean the verb <suggestion>carries</suggestion> ("to carry")?</message>
       <short>CARRIES_CARIES</short>
+    </rule>
+    <rule id="COINCIDENT_COINCIDENCE" name="coincident vs coincidence">
+      <pattern>
+        <token regexp="yes">an?|the</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token marker="yes">coincident</token>
+      </pattern>
+      <message>Did you mean the noun <suggestion>coincidence</suggestion>?</message>
+      <short>COINCIDENT_COINCIDENCE</short>
+    </rule>
+    <rule id="COMMA_THAN" name="..., than (then)">
+      <pattern>
+        <token postag="SENT_START" skip="-1"></token>
+        <token>,</token>
+        <token marker="yes">than</token>
+      </pattern>
+      <message>Did you mean <suggestion>then</suggestion>?</message>
+      <short>Possible typo</short>
     </rule>
     <rule id="CONFUSION_AWAIT_WAIT" name="await (wait)">
       <pattern>
@@ -3662,6 +3780,16 @@
       <message>Did you mean <suggestion>hard</suggestion>?</message>
       <short>HAD_HARD</short>
     </rule>
+    <rule id="HART_OF" name="He has a hart (heart) of a lion">
+      <pattern>
+        <token marker="yes">hart
+          <exception postag="NNP"></exception>
+        </token>
+        <token>of</token>
+      </pattern>
+      <message>Did you mean to write 'heart' here? <suggestion>heart</suggestion></message>
+      <short>HART_OF</short>
+    </rule>
     <rule id="HEARS_YEARS" name="hears vs years">
       <pattern>
         <token postag="CD">
@@ -3681,6 +3809,20 @@
       </pattern>
       <message>Did you mean the verb <suggestion>hear</suggestion>?</message>
       <short>HER_HEAR</short>
+    </rule>
+    <rule id="HE_BE" name="he vs be">
+      <pattern>
+        <token postag="MD"></token>
+        <token regexp="yes" min="0">['’`´‘ʻ]</token>
+        <token postag="RB" min="0"></token>
+        <token case_sensitive="yes" marker="yes">he</token>
+        <token postag="VBN">
+          <exception postag="VBP?" postag_regexp="yes"></exception>
+        </token>
+        <token postag="CC|PCT|IN|RB" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>be</suggestion>?</message>
+      <short>HE_BE</short>
     </rule>
     <rule id="HWY_WHY" name="hwy vs why">
       <pattern>
@@ -3777,6 +3919,28 @@
       <message>Did you mean <suggestion>\2</suggestion>?</message>
       <short>KEY_STOKE</short>
     </rule>
+    <rule id="KNEW_NEW" name="knew (new)">
+      <pattern>
+        <token postag="JJ">
+          <exception regexp="yes">only|ever|already|or|then|likely|soon|now|one|else|few|much|just</exception>
+        </token>
+        <token marker="yes">knew</token>
+      </pattern>
+      <message>Did you mean <suggestion>new</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
+    <rule id="LEAR_LEARN" name="lear vs learn">
+      <pattern>
+        <token postag="MD|PRP_S.*|NNPS?|TO" postag_regexp="yes"></token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token case_sensitive="yes" marker="yes">lear</token>
+        <token>from</token>
+      </pattern>
+      <message>Did you mean the verb <suggestion>learn</suggestion>?</message>
+      <short>LEAR_LEARN</short>
+    </rule>
     <rule id="LEAS_LEAST" name="leas vs least">
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Aa]t</token>
@@ -3792,6 +3956,20 @@
       </pattern>
       <message>Did you mean <suggestion>landing \2</suggestion>?</message>
       <short>LENDING_LANDING</short>
+    </rule>
+    <rule id="LESS_MORE_THEN" name="less/more ... then (than)">
+      <pattern>
+        <token regexp="yes">(less|more)</token>
+        <token postag="(JJ|NNS?|NN:.*)" postag_regexp="yes">
+          <exception postag="IN|PRP.*|CC|DT" postag_regexp="yes"></exception>
+        </token>
+        <token postag="(NNS?|NN:.*)" postag_regexp="yes" min="0">
+          <exception postag="IN|PRP.*|CC|DT" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">then</token>
+      </pattern>
+      <message>Did you mean <suggestion>than</suggestion>?</message>
+      <short>Possible typo</short>
     </rule>
     <rule id="LET_IS_VB" name="let is (us) know">
       <pattern>
@@ -3880,6 +4058,16 @@
       <message>Did you mean <suggestion>matter</suggestion>?</message>
       <short>MATER_MATTER</short>
     </rule>
+    <rule id="MA_MY" name="ma vs my">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes" marker="yes">[Mm]a</token>
+        <token postag="JJ.*|NN.*|RB.*" postag_regexp="yes">
+          <exception postag="IN|MD|W.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>my</suggestion>?</message>
+      <short>MA_MY</short>
+    </rule>
     <rule id="MEAN_MEANT" name="mean vs meant">
       <pattern>
         <token inflected="yes">be
@@ -3900,6 +4088,23 @@
       </pattern>
       <message>Did you mean <suggestion>\1</suggestion>?</message>
       <short>MEED_MEET</short>
+    </rule>
+    <rule id="ME_BE" name="me vs be">
+      <pattern>
+        <token postag="MD">
+          <exception>need</exception>
+        </token>
+        <token postag="RB" min="0">
+          <exception postag="VB|IN" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">me</token>
+        <token regexp="yes" postag="RB" min="0">.*ly</token>
+        <token postag="JJ.*|VBN|IN|DT|PRP\$" postag_regexp="yes">
+          <exception regexp="yes">just|only</exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>be</suggestion>?</message>
+      <short>ME_BE</short>
     </rule>
     <rule id="MINUETS" name="minuet (minute)">
       <pattern>
@@ -4032,6 +4237,17 @@
       <message>Did you mean the verb, adjective or adverb <suggestion>\1\2</suggestion> (i.e., for or during the entire night)?</message>
       <short>OVERNIGHT</short>
     </rule>
+    <rule id="O_TO" name="o (to)">
+      <pattern>
+        <token postag="VB.*" postag_regexp="yes"></token>
+        <token case_sensitive="yes" marker="yes">o</token>
+        <token postag="VB">
+          <exception postag="JJ"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>to</suggestion>?</message>
+      <short>O_TO</short>
+    </rule>
     <rule id="PARE_PAIR" name="a pare (pair) of">
       <pattern>
         <token regexp="yes">an?|the|my|his|her|y?our|their|its</token>
@@ -4131,6 +4347,19 @@
       </pattern>
       <message>Did you mean <suggestion>\1</suggestion> (=source, cause)?</message>
       <short>Commonly confused word</short>
+    </rule>
+    <rule id="SE_SEE" name="se vs see">
+      <pattern>
+        <token postag="MD|PRP_S[12]" postag_regexp="yes">
+          <exception>need</exception>
+        </token>
+        <token postag="RB" min="0">
+          <exception postag="IN|VB.*" postag_regexp="yes"></exception>
+        </token>
+        <token case_sensitive="yes" marker="yes">Se</token>
+      </pattern>
+      <message>Did you mean <suggestion>See</suggestion>?</message>
+      <short>SE_SEE</short>
     </rule>
     <rule id="SIGH_SIGN" name="sigh vs sign">
       <pattern>
@@ -4258,6 +4487,28 @@
       <message>Did you mean <suggestion>flu</suggestion> (flew is past tense of fly, flu is a viral disease)?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="THROUGH_THOROUGH" name="a through(thorough) discussion etc.">
+      <pattern>
+        <token regexp="yes">an?</token>
+        <token regexp="yes" min="0">more|less|very</token>
+        <token marker="yes">through</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|RB|MD|DT|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>thorough</suggestion> (accurate, exhaustive)?</message>
+      <short>THROUGH_THOROUGH</short>
+    </rule>
+    <rule id="TOO_TOOL" name="too vs tool">
+      <pattern>
+        <token regexp="yes">the|an?</token>
+        <token marker="yes">too
+          <exception scope="next" regexp="yes">many|spread|long|much|big</exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>two</suggestion> or <suggestion>tool</suggestion>?</message>
+      <short>TOO_TOOL</short>
+    </rule>
     <rule id="TORCHER_TORTURE" name="torcher (torture) yourself">
       <pattern>
         <token postag="MD|PRP" postag_regexp="yes"></token>
@@ -4295,6 +4546,17 @@
       <message>Did you mean <suggestion>United \2</suggestion>?</message>
       <short>UNITES_UNITED</short>
     </rule>
+    <rule id="VARIOUS_VARIES" name="The decision sometimes various (varies)">
+      <pattern>
+        <token chunk="E-NP-singular"></token>
+        <token postag="RB">
+          <exception postag="IN|RP|TO" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">various</token>
+      </pattern>
+      <message>Did you mean to write the verb "varies" here? <suggestion>varies</suggestion></message>
+      <short>VARIOUS_VARIES</short>
+    </rule>
     <rule id="VERSE" name="'written in verses (verse)'">
       <pattern>
         <token inflected="yes">write</token>
@@ -4323,6 +4585,19 @@
       </pattern>
       <message>Did you mean <suggestion>we</suggestion>?</message>
       <short>WEE_WE</short>
+    </rule>
+    <rule id="WERE_WEAR" name="were vs wear">
+      <pattern>
+        <token chunk="E-NP-singular">
+          <exception regexp="yes">there|their</exception>
+        </token>
+        <token marker="yes">were</token>
+        <token regexp="yes">an?|my|her|his|short|long</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token regexp="yes" chunk_re="E-NP.*">dress|shoes|rings?|(t-)?shirts?|sweaters?|hoodies?|hats?|jeans|trousers?|skirts?|sleeves?|suits?|cape</token>
+      </pattern>
+      <message>Did you mean the verb <suggestion>wear</suggestion> (= "to wear a dress")?</message>
+      <short>WERE_WEAR</short>
     </rule>
     <rule id="WE_LL_WELL" name="we'll vs well">
       <pattern>
@@ -4353,6 +4628,18 @@
       </pattern>
       <message>Did you mean <suggestion>is</suggestion>?</message>
       <short>WHAT_IT_THE</short>
+    </rule>
+    <rule id="WHICH_WISH" name="which vs wish">
+      <pattern>
+        <token regexp="yes">I|we</token>
+        <token marker="yes">which</token>
+        <token regexp="yes">you|them|him</token>
+        <token postag="JJ|DT" postag_regexp="yes">
+          <exception postag="VB.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>wish</suggestion>?</message>
+      <short>WHICH_WISH</short>
     </rule>
     <rule id="WHIT_WITH" name="whit vs with">
       <pattern>
@@ -4547,6 +4834,13 @@
       </pattern>
       <message>Did you mean <suggestion>and so forth</suggestion>?</message>
       <short>AND_SO_FOURTH</short>
+    </rule>
+    <rule id="ANTHER" name="anther (another)">
+      <pattern>
+        <token>anther</token>
+      </pattern>
+      <message>Did you mean <suggestion>another</suggestion>? An anther is part of a flower.</message>
+      <short>Possible typo</short>
     </rule>
     <rule id="ANY_WHERE" name="any where (anywhere)">
       <pattern>
@@ -6153,6 +6447,13 @@
       <message>Did you mean <suggestion>year in and year out</suggestion>?</message>
       <short>YEAR_END_AND_YEAR_OUT</short>
     </rule>
+    <rule id="A3FT" name="a3ft (a 3ft elephant)">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[Aa]\d{1,2}(ft|in|yd|[kcm]?m)</token>
+      </pattern>
+      <message>There might be a space missing here. <suggestion>\1</suggestion></message>
+      <short>A3FT</short>
+    </rule>
     <rule id="ABOUT_WHO_TO" name="about who (whom) to">
       <pattern>
         <token regexp="yes">about|of|over</token>
@@ -6168,6 +6469,25 @@
       </pattern>
       <message>Did you mean <suggestion>\1</suggestion>?</message>
       <short>ADD_NO</short>
+    </rule>
+    <rule id="AIT" name="ait (it)">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes">[Aa]it
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>The rare word '\1' means a small island in a river. <suggestion>air</suggestion></message>
+      <short>Possible typo</short>
+    </rule>
+    <rule id="ALLUDE_ELUDE" name="allude (elude)">
+      <pattern>
+        <token inflected="yes" marker="yes">allude</token>
+        <token postag="DT|NN.*" postag_regexp="yes">
+          <exception postag="TO|PRP.?|VB.*|W.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>\1</suggestion>?</message>
+      <short>ALLUDE_ELUDE</short>
     </rule>
     <rule id="ALL_MOST" name="all most (almost)">
       <pattern>
@@ -6215,6 +6535,16 @@
         <token>,</token>
       </pattern>
       <message>Did you mean <suggestion>in other words</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
+    <rule id="AN_THEN" name="an then (and then)">
+      <pattern>
+        <token>an
+          <exception postag="NNP"></exception>
+        </token>
+        <token regexp="yes">th(en|is|at|[eo]se|ere)</token>
+      </pattern>
+      <message>Possible typo. Did you mean <suggestion>and \2</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
     <rule id="ARE_STILL_THE_SOME" name="are still the some (same)">
@@ -6303,6 +6633,17 @@
       <message>Make sure that '\1' is an abbreviation (bureau, bushel). Did you mean <suggestion>by</suggestion>, <suggestion>but</suggestion>, <suggestion>bug</suggestion>, or <suggestion>bus</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="BY_PASSIVE_PARTICIPLE_BE" name="'by' + passive participle (be)">
+      <pattern>
+        <token postag="MD"></token>
+        <token marker="yes">by</token>
+        <token postag="JJ.?|VBN" postag_regexp="yes">
+          <exception postag="DT"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>be</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
     <rule id="CAN_BACKUP" name="can backup (back up)">
       <pattern>
         <token regexp="yes">can|to</token>
@@ -6329,6 +6670,22 @@
       </pattern>
       <message>Did you mean <suggestion>can</suggestion>?</message>
       <short>CAN_MISSPELLING</short>
+    </rule>
+    <rule id="CC_IT_VBG" name="'it' vs. 'its' after 'and'">
+      <pattern>
+        <token postag="SENT_START|PCT" postag_regexp="yes"></token>
+        <token postag="PRP\$|DT" postag_regexp="yes" min="0"></token>
+        <token postag="NNP?" postag_regexp="yes"></token>
+        <token regexp="yes">and|or</token>
+        <token regexp="yes" case_sensitive="yes" marker="yes">[Ii]t</token>
+        <token marker="yes" min="0">'s</token>
+        <token postag="VBG"></token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="JJ"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>its</suggestion> (possessive pronoun) instead of 'it’s' (short for 'it is')?</message>
+      <short>CC_IT_VBG</short>
     </rule>
     <rule id="CD_WEEK_S" name="Number + 'week's time' (weeks' time)">
       <pattern>
@@ -6384,6 +6741,17 @@
       </pattern>
       <message>Did you mean <suggestion>these</suggestion>?</message>
       <short>CONFUSION_OF_THESES_THESE</short>
+    </rule>
+    <rule id="COULDVE_IRREGULAR_VERB" name="'Could've' + irregular past tense verb">
+      <pattern>
+        <token regexp="yes">could|would|should|you|i|we|they</token>
+        <token spacebefore="no">'ve</token>
+        <token regexp="yes">ab[io]de|alight|ar[io]se|ate|aw[ao]ke|be(ar)?|became|bef[ae]ll|beg[ai]n|beg[eo]t|behold|bend|beseech|betake|bethink|betook|bind|bite?|bleed|bl[eo]w|bore|break|breed|bring|broke|browbeat|build|burn|buy|came|catch|chide|choo?se|clap|cling|clothe|creep|dare|daydream|deal|di[dg]|disprove|dive|do(ve)?|draw|dream|drew|drink|dr[io]ve|dwell|eat|f[ae]ll|fee[dl]|fight|find|fle[ew]|fling|fly|forbade|forbear|forbid|forbore|forego|foresaw|foresee|foretell|forewent|forgave|forg[eo]t|forgive|forsake|forsook|forswear|freeze|frostbite|froze|gainsay|g[ai]ve|get|gild|gr[eo]w|grind|hang|have|hear|heave|hew|hewed|hide?|hold|inbreed|inlay|keep|kneel|kn[eo]w|lade|landslide|lay|lea[dnp]|learn|leave|lend|lie|light|lose|make|mean|meet|mislead|misspell|mistake|mistook|misunderstand|mow|outdid|outdo|outgrew|outgrow|outlay|outran|outride|outshine|overbore|overcame|overdo|overeat|overhang|overhear|overlay|overleap|overlie|overran|override|oversaw|oversee|overtake|overthrew|overthrow|overtook|overwrite|partake|partook|pay|plead|prove|ran|rang|rebuild|redid|redo|reeve|refit|regrow|relay|relight|remake|rend|repay|retake|retell|rethink|retook|rewind|rewrite|rewrote|ride|ring|rise|rived|rode|rose|sang|sank|saw|say|see|seek|sell|send|sew|shake|shave|shear|sheared|shine|shoe|shook|shoot|show|showed|shrank|shrink|sing|sink|sit|slay|sleep|slide|sling|slink|smell|smite|sneak|sow|sowed|speak|speed|spell|spend|spill|spin|spoil|spoke|sprang|spring|stand|stank|stave|steal|stick|sting|stink|stole|strew|strewed|stride|strike|string|strip|strive|strode|strove|sunburn|swam|swear|sweep|swell|swelled|swim|swing|swore|take|teach|tear|tell|think|threw|thrive|throve|throw|took|tore|tread|troubleshoot|typewrite|unbend|unbind|undergo|underlay|underlie|undersell|understand|undertake|undertook|underwent|undid|undo|unlearn|unmake|unsay|unwind|uphold|vex|wake|was|waylay|wear|weave|wed|weep|went|whet|win|wind|withdraw|withdrew|withhold|withstand|woke|wore|wove|wring|write|wrote
+          <exception postag="VBN">showed</exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>\1\2 \3</suggestion>?</message>
+      <short>COULDVE_IRREGULAR_VERB</short>
     </rule>
     <rule id="DEGREE_CHANGE" name="360 (180) degree change">
       <pattern>
@@ -6593,6 +6961,17 @@
       <message>Did you mean <suggestion>heart</suggestion> (=muscular organ)?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="HASNT_IRREGULAR_VERB" name="'hasn't' + irregular past tense verb">
+      <pattern>
+        <token regexp="yes">has|were|had|have</token>
+        <token>n't</token>
+        <token regexp="yes">ab[io]de|alight|ar[io]se|ate|aw[ao]ke|be(ar|came)?|bef[ae]ll|beg(an|et|in|ot)|behold|bend|beseech|betake|bethink|betook|bind|bit|bite|bleed|blew|blow|bore|break|breed|bring|broke|browbeat|build|burn|buy|came|catch|chide|choo?se|clap|cling|clothe|creep|dare|daydream|deal|di[dg]|disprove|dive|do|dove|drank|draw|dream|drew|drink|dr[io]ve|dwell|eat|f[ae]ll|feed|feel|fight|find|flee|flew|fling|fly|forbade|forbear|forbid|forbore|forego|foresaw|foresee|foretell|forewent|forgave|forget|forgive|forgot|forsake|forsook|forswear|freeze|frostbite|froze|gainsay|gave|get|gild|give|go|grew|grind|grow|hang|have|hear|heave|hew|hewed|hid|hide|hold|inbreed|inlay|keep|kneel|knew|know|lade|landslide|lay|lead|lean|leap|learn|leave|lend|lie|light|lose|make|mean|meet|mislead|misspell|mistake|mistook|misunderstand|mow|outdid|outdo|outgrew|outgrow|outlay|outran|outride|outshine|overbore|overcame|overdo|overeat|overhang|overhear|overlay|overleap|overlie|overran|override|oversaw|oversee|overtake|overthrew|overthrow|overtook|overwrite|partake|partook|pay|plead|prove|ran|rang|rebuild|redid|redo|reeve|refit|regrow|relay|relight|remake|rend|repay|retake|retell|rethink|retook|rewind|rewrite|rewrote|ride|ring|rise|rived|rode|rose|sang|sank|saw|say|see|seek|sell|send|sew|shake|shave|shear|sheared|shine|shoe|shook|shoot|show|showed|shrank|shrink|sing|sink|sit|slay|sleep|slide|sling|slink|smell|smite|sneak|sow|sowed|speak|speed|spell|spend|spill|spin|spoil|spoke|sprang|spring|stand|stank|stave|steal|stick|sting|stink|stole|strew|strewed|stride|strike|string|strip|strive|stro[dv]e|sunburn|swam|swear|sweep|swell(ed)?|swim|swing|swore|take|teach|tear|tell|think|threw|thrive|throve|throw|took|tore|tread|troubleshoot|typewrite|unb[ei]nd|undergo|underlay|underlie|undersell|understand|undertake|undertook|underwent|undid|undo|unlearn|unmake|unsay|unwind|uphold|vex|wake|was|waylay|wear|weave|wed|weep|went|whet|wind?|withdr[ae]w|withhold|withstand|wo[krv]e|wring|write|wrote
+          <exception postag="VBN">showed</exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>\1\2 \3</suggestion>?</message>
+      <short>HASNT_IRREGULAR_VERB</short>
+    </rule>
     <rule id="HAWAIIAN" name="Hawaiian">
       <pattern>
         <token regexp="yes">hawaii?</token>
@@ -6641,6 +7020,37 @@
       </pattern>
       <message>Did you mean <suggestion>\1 \3</suggestion>?</message>
       <short>ID_WOULD</short>
+    </rule>
+    <rule id="ILL_I_LL" name="Ill (I'll)">
+      <pattern>
+        <token case_sensitive="yes" marker="yes">Ill
+          <exception scope="previous">be</exception>
+        </token>
+        <token case_sensitive="yes" postag="[VR]B" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>I'll</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
+    <rule id="IM_I_M" name="im (I'm)">
+      <pattern>
+        <token case_sensitive="yes" marker="yes">IM
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>Make sure that '\1' is an abbreviation (instant message, individual medley, infectious mononucleosis). Did you mean <suggestion>\1</suggestion> or <suggestion>\1</suggestion>?</message>
+      <short>Possible typo</short>
+    </rule>
+    <rule id="INDUSTRY_LEADING_NN" name="industry leading (industry-leading)">
+      <pattern>
+        <token postag="DT"></token>
+        <token marker="yes">industry</token>
+        <token marker="yes">leading</token>
+        <token postag="N.+" postag_regexp="yes">
+          <exception postag="IN|CC|DT|PRP.*|W.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>\2-\3</suggestion>?</message>
+      <short>INDUSTRY_LEADING_NN</short>
     </rule>
     <rule id="IN_JANUARY" name="in January 1 (on January 1)">
       <pattern>
@@ -6810,6 +7220,16 @@
       <message>Did you mean <suggestion>fewer \2</suggestion>?</message>
       <short>LESS_DOLLARSMINUTESHOURS</short>
     </rule>
+    <rule id="LIGATURES" name="Word contains a ligature">
+      <pattern>
+        <token regexp="yes">.*(æ|ﬀ|ﬁ|ﬂ).*
+          <exception regexp="yes">.</exception>
+          <exception scope="previous">nihilque</exception>
+        </token>
+      </pattern>
+      <message>The word '\1' contains a ligature (joined letters). Modern English does not usually use ligatures. A ligature in a word causes a spelling error. If the word is an English word, write it with standard characters.</message>
+      <short>Ligature</short>
+    </rule>
     <rule id="LOOK_ATE" name="look ate (at)">
       <pattern>
         <token regexp="yes" inflected="yes">look|stand</token>
@@ -6818,6 +7238,15 @@
       <message>Did you mean <suggestion>at</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="LOOK_DOOR" name="look (lock) the door">
+      <pattern>
+        <token regexp="yes" marker="yes" chunk_re=".-VP.*">look(s|ed|ing)?</token>
+        <token min="0" max="-1" chunk_re="[BI]-NP.*"></token>
+        <token chunk_re="E-NP.*">door</token>
+      </pattern>
+      <message>Possible typo: Did you mean <suggestion>\1</suggestion>?</message>
+      <short>LOOK_DOOR</short>
+    </rule>
     <rule id="LOOSING_EFFORTRECORDSEASON" name="loosing (losing) effort">
       <pattern>
         <token>loosing</token>
@@ -6825,6 +7254,19 @@
       </pattern>
       <message>Did you mean <suggestion>losing \2</suggestion> (losing: cease to have, loosing: to free/liberate/relax)?</message>
       <short>LOOSING_EFFORTRECORDSEASON</short>
+    </rule>
+    <rule id="LOT_ON_OF" name="I have a lot on (of) balls">
+      <pattern>
+        <token regexp="yes" inflected="yes">be|do|have</token>
+        <token>a</token>
+        <token>lot</token>
+        <token marker="yes">on</token>
+        <token postag="N.*" postag_regexp="yes" chunk_re="E-NP.*">
+          <exception postag="NNPS?" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean to write 'of' here? <suggestion>of</suggestion></message>
+      <short>LOT_ON_OF</short>
     </rule>
     <rule id="MAH" name="mah (my)">
       <pattern>
@@ -7065,6 +7507,18 @@
       <message>Did you mean <suggestion>note</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="PRP_AREA" name="they area (are)">
+      <pattern>
+        <token regexp="yes">they|you|we</token>
+        <token marker="yes">area</token>
+        <token postag="RB" min="0">
+          <exception postag="IN"></exception>
+        </token>
+        <token postag="VBG|JJ.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>are</suggestion>?</message>
+      <short>PRP_AREA</short>
+    </rule>
     <rule id="PRP_BACKUP" name="They backup (back up)">
       <pattern>
         <token regexp="yes">I|you|they|we</token>
@@ -7199,6 +7653,17 @@
       <message>Did you mean <suggestion>\1</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="STAND_ALONE_NN" name="stand alone (standalone)">
+      <pattern>
+        <token marker="yes">stand</token>
+        <token marker="yes">alone</token>
+        <token postag="NN:.*|NNS|NN" postag_regexp="yes">
+          <exception postag="IN|CC|DT|PRP.*|W.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>In this context, this term is usually written with a hyphen or as one word. <suggestion>\1-\2</suggestion></message>
+      <short>Possible typo</short>
+    </rule>
     <rule id="TAKE_THE_REIGNS" name="take the reigns (reins)">
       <pattern>
         <token inflected="yes">take</token>
@@ -7284,6 +7749,18 @@
       <message>Did you mean <suggestion>are</suggestion>?</message>
       <short>Possible typo</short>
     </rule>
+    <rule id="THIS_YEARS_POSSESSIVE_APOSTROPHE" name="Missing possessive: This weeks (week's) meeting">
+      <pattern>
+        <token regexp="yes">this|last|next</token>
+        <token regexp="yes" marker="yes">years|months|weeks|weekends|afternoons|evenings|mornings|nights</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="MD|PRP.*|IN|W.*|CC|DT" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>It seems that a possessive apostrophe is missing. <suggestion>\2</suggestion></message>
+      <short>THIS_YEARS_POSSESSIVE_APOSTROPHE</short>
+    </rule>
     <rule id="TIS" name="tis (this)">
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Tt]is
@@ -7292,6 +7769,17 @@
       </pattern>
       <message>Did you mean <suggestion>this</suggestion> or the literary contraction <suggestion>'\1</suggestion> (straight apostrophe) or <suggestion>’\1</suggestion> (curly apostrophe) as an alternative for <suggestion>it is</suggestion>?</message>
       <short>Possible typo</short>
+    </rule>
+    <rule id="TOMORROW_POSSESSIVE_APOSTROPHE" name="Missing possessive: Todays (today's) meeting">
+      <pattern>
+        <token regexp="yes" marker="yes">tomorrows|yesterdays|todays|tonights</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="MD|PRP.*|IN|W.*|CC|DT" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>It seems that a possessive apostrophe is missing. <suggestion>\1</suggestion></message>
+      <short>TOMORROW_POSSESSIVE_APOSTROPHE</short>
     </rule>
     <rule id="TOOL_LONG" name="tool long (too long)">
       <pattern>
@@ -7495,6 +7983,17 @@
       <message>Are you sure that "wold" is the correct noun here? A wold is an upland area of open country. <suggestion>word</suggestion></message>
       <short>Possible typo</short>
     </rule>
+    <rule id="WORD_CONTAINS_UNDERSCORE" name="A word contains an underscore">
+      <pattern>
+        <token regexp="yes">[a-z-]+</token>
+        <token spacebefore="no" min="1" max="-1">_
+          <exception postag="NNP"></exception>
+        </token>
+        <token regexp="yes" spacebefore="no">[a-z-]+</token>
+      </pattern>
+      <message>An underscore (_) within a word is atypical (except in technical contexts, nicknames, etc.). Make sure that the word '\1\2\3' is correct. <suggestion>\1 \3</suggestion></message>
+      <short>Possible typo</short>
+    </rule>
     <rule id="WRB_THERE_THEY_RE" name="'wherever there (they are) going'">
       <pattern>
         <token postag="WRB"></token>
@@ -7519,6 +8018,16 @@
       </pattern>
       <message>Did you mean <suggestion>\1 gaffes</suggestion>?</message>
       <short>WRITINGPOLITICALSCIENCE_GAFFS</short>
+    </rule>
+    <rule id="WRONG_GENITIVE_APOSTROPHE" name="wrong genitive (e.g., 'employees's' instead of 'employee's')">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes" postag="NNS">[a-z]+s
+          <exception case_sensitive="yes" postag="NNP"></exception>
+        </token>
+        <token case_sensitive="yes">'s</token>
+      </pattern>
+      <message>Did you mean <suggestion>\1's</suggestion> or <suggestion>\1'</suggestion>?</message>
+      <short>WRONG_GENITIVE_APOSTROPHE</short>
     </rule>
     <rule id="W_HAT" name="w hat (what)">
       <pattern>
@@ -7645,6 +8154,15 @@
       </pattern>
       <message>In the US, the word '\3' is usually for doctoral degrees. Did you mean <suggestion>\1\2 \3</suggestion>?</message>
       <short>BrE/AmE: dissertation/thesis</short>
+    </rule>
+    <rule id="SI_UNITS_OF_MEASUREMENT_ADJECTIVES_BRE" name="1-litre/1-liter">
+      <pattern>
+        <token regexp="yes">([0-9]+-)(quetta|ronna|yotta|zetta|exa|peta|tera|giga|mega|kilo|hecto|deca|deci|centi|milli|micro|nano|pico|femto|atto|zepto|yocto|ronto|quecto)?(gramme|litre|metre)
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>The word '\1' is an adjective (SI unit of measurement), but the spelling is not correct American English.</message>
+      <short>AmE/BrE: SI units (adjectives)</short>
     </rule>
   </category>
   <category id="GRAMMAR" name="Grammar">
@@ -8074,6 +8592,18 @@
       <message>Did you mean <suggestion>y'all</suggestion>?</message>
       <short>YA_LL</short>
     </rule>
+    <rule id="ABLE_VBP" name="missing 'to' after 'able'">
+      <pattern>
+        <token inflected="yes">be</token>
+        <token postag="RB" min="0"></token>
+        <token regexp="yes" marker="yes">(un)?able</token>
+        <token postag="VBP" marker="yes">
+          <exception postag="IN"></exception>
+        </token>
+      </pattern>
+      <message>The preposition 'to' is required before the verb '\4'. <suggestion>\3 to \4</suggestion></message>
+      <short>ABLE_VBP</short>
+    </rule>
     <rule id="ACCORDING_TO" name="according to">
       <pattern>
         <token marker="yes">according</token>
@@ -8093,6 +8623,16 @@
       </pattern>
       <message>This phrase can sound awkward in English. Consider using <suggestion>in my opinion</suggestion> or <suggestion>I think</suggestion>.</message>
       <short>Grammatical problem</short>
+    </rule>
+    <rule id="ACCUSTOMED_TO" name="accustomed to">
+      <pattern>
+        <token>accustomed</token>
+        <token postag="IN">
+          <exception>to</exception>
+        </token>
+      </pattern>
+      <message>Did you mean: <suggestion>accustomed to</suggestion>?</message>
+      <short>Wrong preposition: accustomed to</short>
     </rule>
     <rule id="ACHE_COMPOUNDS" name="head ache (headache)">
       <pattern>
@@ -8139,6 +8679,19 @@
       </pattern>
       <message>This is normally spelled as one word. <suggestion>\3\4</suggestion></message>
       <short>AFTERMARKET</short>
+    </rule>
+    <rule id="ALLOW_TO_DO" name="Missing preposition: allow (to) do">
+      <pattern>
+        <token inflected="yes">allow</token>
+        <token postag="PRP" min="0">
+          <exception>one</exception>
+        </token>
+        <token postag="VBP?" postag_regexp="yes" marker="yes">
+          <exception postag="JJ.*|NN.*|CC|IN" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The preposition 'to' may be missing (allow someone to do something). <suggestion>to \3</suggestion></message>
+      <short>Missing preposition</short>
     </rule>
     <rule id="ALL_OF_SUDDEN" name="all of (a) sudden">
       <pattern>
@@ -8194,6 +8747,28 @@
       <message>This expression is usually spelled with a hyphen. <suggestion>anti-\2</suggestion></message>
       <short>ANTI_AMERICAN_HYPHEN</short>
     </rule>
+    <rule id="ANY_WAY_TO_VB" name="Is there anyway (any way) to change this?">
+      <pattern>
+        <token marker="yes">anyway</token>
+        <token>to</token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB" chunk_re=".-VP"></token>
+      </pattern>
+      <message>Instead of the adverb, did you mean to write 'any way'? <suggestion>any way</suggestion></message>
+      <short>ANY_WAY_TO_VB</short>
+    </rule>
+    <rule id="AN_ARE" name="an + are">
+      <pattern>
+        <token marker="yes">an
+          <exception postag="NNP"></exception>
+        </token>
+        <token regexp="yes" marker="yes">aren?</token>
+      </pattern>
+      <message>Did you mean <suggestion>and \2</suggestion>?</message>
+      <short>AN_ARE</short>
+    </rule>
     <rule id="APPRECIATE_IF" name="I would appreciate (it) if">
       <pattern>
         <token regexp="yes" marker="yes" chunk_re=".-VP">appreciates?</token>
@@ -8222,6 +8797,59 @@
       <message>The verb 'to \1 someone' does not require a preposition. <suggestion>\3</suggestion></message>
       <short>ASK_NO_PREPOSITION</short>
     </rule>
+    <rule id="AS_ADJ_AS" name="Comparison with 'as'">
+      <pattern>
+        <token>as</token>
+        <token postag="JJ|RB" postag_regexp="yes">
+          <exception regexp="yes">other|(no|some|any)(thing|body|where|one)|one|only|almost|just|wholesale</exception>
+        </token>
+        <token regexp="yes" marker="yes">like|th[ae]n</token>
+      </pattern>
+      <message>Comparison is written 'as \2 as'. <suggestion>as</suggestion></message>
+      <short>Grammatical problem: use 'as'</short>
+    </rule>
+    <rule id="AS_DISCUSS" name="as discuss (discussed)">
+      <pattern>
+        <token postag="SENT_START|PCT|CC" postag_regexp="yes"></token>
+        <token>as</token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" marker="yes">discuss?</token>
+        <token min="0">before</token>
+        <token postag="IN|DT|PRP.*|NNP|EX|PCT" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>discussed</suggestion>?</message>
+      <short>AS_DISCUSS</short>
+    </rule>
+    <rule id="AS_MENTION" name="as mention (mentioned)">
+      <pattern>
+        <token postag="SENT_START|PCT|CC" postag_regexp="yes"></token>
+        <token>as</token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">mention</token>
+        <token min="0">before</token>
+        <token postag="DT|PRP.*|NNP|EX|PCT" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>mentioned</suggestion> (past tense of "mention")?</message>
+      <short>AS_MENTION</short>
+    </rule>
+    <rule id="AS_SAD" name="as sad (said)">
+      <pattern>
+        <token postag="SENT_START|PCT|CC" postag_regexp="yes"></token>
+        <token>as</token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" marker="yes">sad|sayed</token>
+        <token min="0">before</token>
+        <token postag="DT|PRP.*|NNP|EX|PCT" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>said</suggestion> (past tense of "say")?</message>
+      <short>AS_SAD</short>
+    </rule>
     <rule id="AT_CD_CLOCK" name="At 7 clock (o'clock)">
       <pattern>
         <token>at</token>
@@ -8240,6 +8868,21 @@
       <message>The progressive form of the verb may be more appropriate here. <suggestion>\3</suggestion></message>
       <short>AVOIDING_TO_INFIN</short>
     </rule>
+    <rule id="A_BIT_OF" name="a bit (of)">
+      <pattern>
+        <token regexp="yes">an?</token>
+        <token regexp="yes" min="0">vast|huge|large|big|significant|small|little|new|old|good|great</token>
+        <token regexp="yes" marker="yes">bunch|lot|pair|majority|bit</token>
+        <token postag="JJ" min="0">
+          <exception postag="JJR|IN|NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token postag="NNS|NN:UN?|NNPS" postag_regexp="yes">
+          <exception regexp="yes">of|back|support|crap|shit|queer|brief|nuts|overkill|light|long|down|up|wrong|right|rough|OP|DIY|lame|tender|cause|part|question|answer|process|concern|bear|system|rule|uses?|thinks?|makes?|thanks|nothing|lead|para|red|yellow|blue|green|black|white|pink|gray|grey|orange|will|perspective</exception>
+        </token>
+      </pattern>
+      <message>It seems that there's a missing preposition after '\3'. <suggestion>\3 of</suggestion></message>
+      <short>A_BIT_OF</short>
+    </rule>
     <rule id="A_BLESS_DAY" name="Have a bless (blessed) day">
       <pattern>
         <token regexp="yes">an?|the</token>
@@ -8248,6 +8891,31 @@
       </pattern>
       <message>Did you mean <suggestion>blessed</suggestion> or <suggestion>blessing</suggestion>?</message>
       <short>A_BLESS_DAY</short>
+    </rule>
+    <rule id="A_CD_NNS" name="I have a 20 cars (I have 20 cars)">
+      <pattern>
+        <token regexp="yes" marker="yes">an?</token>
+        <token postag="CD" marker="yes" spacebefore="yes">
+          <exception regexp="yes">billion|trillion|million|thousand|hundred|milliard|quadrillion</exception>
+        </token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token postag="NNP?S" postag_regexp="yes">
+          <exception postag="NN|NN:UN?|NNP" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The article "\1" is not needed here. <suggestion>\2</suggestion></message>
+      <short>A_CD_NNS</short>
+    </rule>
+    <rule id="A_COMPLAIN" name="a + complain/restrain">
+      <pattern>
+        <token regexp="yes">an?|the|my|his|her|their|our|your|'s</token>
+        <token postag="JJS?|RB" postag_regexp="yes" min="0">
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" marker="yes">(complain|restrain|constrain)s?</token>
+      </pattern>
+      <message>The word '\3' is a verb. Did you mean the noun <suggestion>\3</suggestion>?</message>
+      <short>A_COMPLAIN</short>
     </rule>
     <rule id="A_DISCOVER" name="a discover (discovery)">
       <pattern>
@@ -8307,6 +8975,33 @@
       <message>The plural noun '\2' cannot follow the article '\1'. Did you mean to use the singular form? <suggestion>\1 \2</suggestion></message>
       <short>A_NNS_AND</short>
     </rule>
+    <rule id="A_NUMBER_NNS" name="number (of) years">
+      <pattern>
+        <token>a</token>
+        <token regexp="yes" min="0">good|great|high|big|huge|small|tiny|little|low|long|fine|decent</token>
+        <token marker="yes">number</token>
+        <token postag="JJR?" postag_regexp="yes" min="0">
+          <exception postag="IN"></exception>
+        </token>
+        <token postag="NNS"></token>
+      </pattern>
+      <message>Did you mean <suggestion>\3 of</suggestion>?</message>
+      <short>A_NUMBER_NNS</short>
+    </rule>
+    <rule id="A_RB_NN" name="Adverb instead of an adjective">
+      <pattern>
+        <token regexp="yes">an?|the</token>
+        <token postag="RB" marker="yes">
+          <exception postag="JJ[RS]?|NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token postag="NN(:UN?)?" postag_regexp="yes" marker="yes">
+          <exception regexp="yes">set-up|put-down|think|long|black|say</exception>
+          <exception scope="next" regexp="yes">based|powered|shaped|sponsored|specific|driven|related|dominated|focuss?ed|friendly|worthy|oriented|connected|protected|operated|resistant|agnostic|generated|centric|compliant|dependent|wide|free|compatible|sized|owned|tolerant|influenced|prohibitive|enabled</exception>
+        </token>
+      </pattern>
+      <message>You used an adverb ('\2') instead of an adjective, or a noun ('\3') instead of another adjective.</message>
+      <short>Incorrect adverb</short>
+    </rule>
     <rule id="A_SCISSOR" name="a scissor (scissors)">
       <pattern>
         <token regexp="yes">an?|the</token>
@@ -8341,6 +9036,43 @@
       </pattern>
       <message>This is normally spelled as one word. <suggestion>back\2</suggestion></message>
       <short>BACK_COMPOUNDS</short>
+    </rule>
+    <rule id="BARE_BONES_HYPHEN" name="bare bones (bare-bones)">
+      <pattern>
+        <token marker="yes">bare</token>
+        <token regexp="yes" marker="yes">bones?</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|PRP\$?|CC" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>This adjective is spelled <suggestion>bare-bones</suggestion>.</message>
+      <short>BARE_BONES_HYPHEN</short>
+    </rule>
+    <rule id="BARE_INFINITIVE_CAUSATIVE_VERB_MAKE_PRP_VBZ" name="makes me goes → makes me go">
+      <pattern>
+        <token regexp="yes" inflected="yes" postag="VB.*" postag_regexp="yes">make|let|have|get|help
+          <exception scope="previous">the</exception>
+        </token>
+        <token regexp="yes" postag="PRP">me|you|him|her|it|them|us</token>
+        <token regexp="yes" case_sensitive="yes" postag="VBZ" marker="yes">[a-z]+
+          <exception postag="VB"></exception>
+        </token>
+      </pattern>
+      <message>The causative verb '\1' and the object '\2' should be followed by the bare infinitive <suggestion>\3</suggestion>.</message>
+      <short>BARE_INFINITIVE_CAUSATIVE_VERB_MAKE_PRP_VBZ</short>
+    </rule>
+    <rule id="BARE_INFINITIVE_VERB_OF_PERCEPTION_SEE_PRP_VBZ" name="see him goes → see him go">
+      <pattern>
+        <token inflected="yes" postag="VB.*" postag_regexp="yes">see
+          <exception scope="previous">the</exception>
+        </token>
+        <token regexp="yes" postag="PRP">me|you|him|her|it|them|us</token>
+        <token regexp="yes" case_sensitive="yes" postag="VBZ" marker="yes">[a-z]+
+          <exception postag="VB"></exception>
+        </token>
+      </pattern>
+      <message>The verb of perception '\1' and the object '\2' should be followed by the bare infinitive <suggestion>\3</suggestion>.</message>
+      <short>BARE_INFINITIVE_VERB_OF_PERCEPTION_SEE_PRP_VBZ</short>
     </rule>
     <rule id="BECAUSE_OF_I" name="because of we (because we)">
       <pattern>
@@ -8429,6 +9161,24 @@
       </pattern>
       <message>It seems that the verb "be" is not needed here. <suggestion>\4</suggestion></message>
       <short>BE_NOT_BE_JJ</short>
+    </rule>
+    <rule id="BE_NO_VB" name="I am no (not) coming">
+      <pattern>
+        <token inflected="yes">be</token>
+        <token postag="RB" min="0">
+          <exception postag="CC|IN" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">no</token>
+        <token postag="RB" min="0">
+          <exception postag="CC|IN" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB[NG]|JJ" postag_regexp="yes"></token>
+        <token postag="DT|PRP.*|IN" postag_regexp="yes">
+          <exception regexp="yes">one|n?either|like</exception>
+        </token>
+      </pattern>
+      <message>In this context, the correct negation is <suggestion>not</suggestion>. Or did you mean <suggestion>now</suggestion>?</message>
+      <short>BE_NO_VB</short>
     </rule>
     <rule id="BE_RB_BE" name="be + adverb + be">
       <pattern>
@@ -8601,6 +9351,17 @@
       <message>The noun or verb <suggestion>car\2</suggestion> is spelled as one word.</message>
       <short>CAR_POOL_COMPOUND</short>
     </rule>
+    <rule id="CA_BRAND_NEW" name="Compound adjective: brand new">
+      <pattern>
+        <token marker="yes">brand</token>
+        <token marker="yes">new</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="PRP.*|IN|DT|CC|MD|W.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>'\1 \2' seems to be a compound adjective before a noun. Use a hyphen: <suggestion>\1-\2</suggestion>.</message>
+      <short>CA_BRAND_NEW</short>
+    </rule>
     <rule id="CA_BRICK_RED" name="Compound adjective: brick red">
       <pattern>
         <token marker="yes">brick</token>
@@ -8676,6 +9437,18 @@
       <message>'\1 \2 \3' seems to be a compound adjective before a noun. Use a hyphen: <suggestion>\1-\2-\3</suggestion>.</message>
       <short>CA_DOWN_AND_OUT</short>
     </rule>
+    <rule id="CA_DO_OR_DIE" name="Compound adjective: do or die">
+      <pattern>
+        <token marker="yes">do</token>
+        <token marker="yes">or</token>
+        <token marker="yes">die</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="MD|RB|IN|CC|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>'\1 \2 \3' seems to be a compound adjective before a noun. Use a hyphen: <suggestion>\1-\2-\3</suggestion>.</message>
+      <short>CA_DO_OR_DIE</short>
+    </rule>
     <rule id="CA_DUAL_PURPOSE" name="Compound adjective: dual purpose">
       <pattern>
         <token marker="yes">dual</token>
@@ -8711,6 +9484,17 @@
       </pattern>
       <message>'\1 \2' seems to be a compound adjective before a noun. Use a hyphen: <suggestion>\1-\2</suggestion>.</message>
       <short>CA_EYE_CATCHING</short>
+    </rule>
+    <rule id="CA_FIRST_HAND" name="Compound adjective: first hand">
+      <pattern>
+        <token marker="yes">first</token>
+        <token marker="yes">hand</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|RB|W.*|CC|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>'\1 \2' seems to be a compound adjective before a noun. Use a hyphen: <suggestion>\1-\2</suggestion>.</message>
+      <short>CA_FIRST_HAND</short>
     </rule>
     <rule id="CA_FLY_BY_NIGHT" name="Compound adjective: fly by night">
       <pattern>
@@ -8836,6 +9620,22 @@
       </pattern>
       <message>This word is normally spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>CLEAR_CUT_HYPHEN</short>
+    </rule>
+    <rule id="COLLECTIVE_NOUN_VERB_AGREEMENT_VBP" name="a fleet of ships are (is)">
+      <pattern>
+        <token postag="NN">
+          <exception postag="^(?!.*NN(?!(S|P))).*$" postag_regexp="yes"></exception>
+        </token>
+        <token>of</token>
+        <token postag="NNS">
+          <exception postag="^(?!.*(NNS|VBZ)).*$" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VBP" marker="yes">
+          <exception postag="RB|IN|MD|VBN" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Possible verb agreement error. Did you mean <suggestion>\4</suggestion>? (Some collective nouns can be treated as both singular and plural, so '\4' is not always incorrect.)</message>
+      <short>COLLECTIVE_NOUN_VERB_AGREEMENT_VBP</short>
     </rule>
     <rule id="COMPERE" name="Compere (compère or compare)">
       <pattern>
@@ -9047,6 +9847,19 @@
       <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>DOOR_HYPHEN</short>
     </rule>
+    <rule id="DOS" name="Dos vs Does">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]os</token>
+        <token postag="DT|PRP\$" postag_regexp="yes" min="0"></token>
+        <token postag="PRP_S.*|NN.*" postag_regexp="yes" chunk_re="E-NP.*"></token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB" chunk_re=".-VP"></token>
+      </pattern>
+      <message>Did you mean the verb <suggestion>does</suggestion>?</message>
+      <short>DOS</short>
+    </rule>
     <rule id="DOSNT" name="he dosn't (doesn't)">
       <pattern>
         <token regexp="yes">do[se]n|does|dosan|doasn|dosen</token>
@@ -9055,6 +9868,25 @@
       </pattern>
       <message>Typo detected. Did you mean <suggestion>doesn\2t</suggestion>?</message>
       <short>DOSNT</short>
+    </rule>
+    <rule id="DOUBLE_AUX" name="Did your yoga training was (Was your yoga training) good today?">
+      <pattern>
+        <token postag="SENT_START|CC|PCT" postag_regexp="yes"></token>
+        <token inflected="yes" marker="yes">do</token>
+        <token marker="yes" min="0" chunk_re="B-NP.*"></token>
+        <token marker="yes" min="0" chunk_re="I-NP.*">
+          <exception postag="VB"></exception>
+        </token>
+        <token marker="yes" chunk_re="E-NP.*"></token>
+        <token inflected="yes" marker="yes">be
+          <exception>be</exception>
+        </token>
+        <token postag="J.*" postag_regexp="yes"></token>
+        <token postag="RB" min="0"></token>
+        <token>?</token>
+      </pattern>
+      <message>This question only requires the auxiliary verb "\6". <suggestion>\6 \3 \4 \5</suggestion></message>
+      <short>DOUBLE_AUX</short>
     </rule>
     <rule id="DOWN_COMPOUNDS" name="down load (download)">
       <pattern>
@@ -9075,6 +9907,60 @@
       </pattern>
       <message>Did you mean <suggestion>does \4</suggestion>?</message>
       <short>DO_ANYONE</short>
+    </rule>
+    <rule id="DO_IT_SOMETIME" name="Let's go to the movie some time (sometime)">
+      <pattern>
+        <token chunk_re=".-VP">
+          <exception postag="VBZ"></exception>
+        </token>
+        <token min="0" chunk="B-PP"></token>
+        <token chunk_re="B-NP.*">
+          <exception postag="RB"></exception>
+        </token>
+        <token min="0" max="2" chunk_re="I-NP.*"></token>
+        <token min="0" chunk_re="E-NP.*">
+          <exception postag="RB"></exception>
+        </token>
+        <token marker="yes">some</token>
+        <token marker="yes">time</token>
+        <token postag="CC|PCT|SENT_END" postag_regexp="yes">
+          <exception regexp="yes">after|before|soon|when</exception>
+        </token>
+      </pattern>
+      <message>Instead of the noun phrase 'some time', did you mean to use the adverb 'sometime'? <suggestion>sometime</suggestion></message>
+      <short>DO_IT_SOMETIME</short>
+    </rule>
+    <rule id="DO_NO_VB" name="I did no (not) have">
+      <pattern>
+        <token inflected="yes">do</token>
+        <token marker="yes">no</token>
+        <token postag="RB" min="0">
+          <exception postag="CC|IN" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VBP?" postag_regexp="yes">
+          <exception regexp="yes">harm|damage</exception>
+        </token>
+        <token postag="DT|PRP.*|IN" postag_regexp="yes">
+          <exception regexp="yes">one|n?either|like</exception>
+        </token>
+      </pattern>
+      <message>In this context, the correct negation is <suggestion>not</suggestion>.</message>
+      <short>DO_NO_VB</short>
+    </rule>
+    <rule id="DO_VBZ" name="do you sings (sing)">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes" min="0">wh(at|ere)</token>
+        <token regexp="yes">Do(es)?|did</token>
+        <token postag="P?RP|NN.*" postag_regexp="yes">
+          <exception regexp="yes">.+ing|more|extra</exception>
+        </token>
+        <token postag="VB[DZ]" postag_regexp="yes" marker="yes">
+          <exception regexp="yes">kids|guys|shoes|schools|symbols|soldiers|people</exception>
+        </token>
+      </pattern>
+      <message>After the auxiliary verb 'do', use the base form of the main verb. Did you mean <suggestion>\5</suggestion>?</message>
+      <short>DO_VBZ</short>
     </rule>
     <rule id="DO_VBZ_AMBIGUOUS_VERB" name="do you found (find)">
       <pattern>
@@ -9117,6 +10003,19 @@
       <message>Using a determiner and a pronoun together is incorrect. Did you mean <suggestion>\1</suggestion> or <suggestion>\2</suggestion>?</message>
       <short>Using a determiner and a pronoun together is incorrect.</short>
     </rule>
+    <rule id="DT_RB_IN" name="Adverb instead of noun">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes" marker="yes">[Tt]he|[Aa]n?</token>
+        <token postag="RB" marker="yes">
+          <exception regexp="yes" case_sensitive="yes">[A-Z].*</exception>
+        </token>
+        <token postag="PCT|CC|IN|MD" postag_regexp="yes">
+          <exception postag="NN.*|JJ.*|VBD" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The adverb "\2" cannot be used like a noun.</message>
+      <short>DT_RB_IN</short>
+    </rule>
     <rule id="EACH_OTHERS" name="each others’ (other’s)">
       <pattern>
         <token>each</token>
@@ -9125,6 +10024,17 @@
       </pattern>
       <message>Did you mean <suggestion>other's</suggestion>?</message>
       <short>Grammatical problem: incorrect apostrophe</short>
+    </rule>
+    <rule id="EAGER_TO" name="Non-infinitive verb with 'eager to...'">
+      <pattern>
+        <token>eager</token>
+        <token>to</token>
+        <token postag="VB[GZND]" postag_regexp="yes" marker="yes">
+          <exception postag="VB"></exception>
+        </token>
+      </pattern>
+      <message>With 'eager to', use the base form of the verb. <suggestion>\3</suggestion></message>
+      <short>Grammatical problem: use the base form</short>
     </rule>
     <rule id="EASY_GOING_HYPHEN" name="missing hyphen in 'easy going'">
       <pattern>
@@ -9145,6 +10055,19 @@
       <message>The noun <suggestion>\1-\2-\3</suggestion> is normally spelled with hyphens.</message>
       <short>EDITOR_IN_CHIEF_HYPHEN</short>
     </rule>
+    <rule id="EITHER_OF_THE_NN" name="either of the car (cars)">
+      <pattern>
+        <token regexp="yes">n?either</token>
+        <token>of</token>
+        <token>the</token>
+        <token postag="JJ.*|NN.*" postag_regexp="yes" min="0" chunk_re="B-NP.*"></token>
+        <token postag="NN:UN?|NNP?" postag_regexp="yes" marker="yes" chunk_re="E-NP.*">
+          <exception regexp="yes">following|former|latter|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve</exception>
+        </token>
+      </pattern>
+      <message>The pronoun "\1" requires the plural noun form: <suggestion>\5</suggestion></message>
+      <short>EITHER_OF_THE_NN</short>
+    </rule>
     <rule id="END_TO_END_HYPHEN" name="missing hyphen in 'end-to-end">
       <pattern>
         <token marker="yes">end</token>
@@ -9154,6 +10077,19 @@
       </pattern>
       <message>Did you mean the adjective <suggestion>\1-\2-\3</suggestion> (spelled with hyphens)?</message>
       <short>END_TO_END_HYPHEN</short>
+    </rule>
+    <rule id="ESPECIALLY" name="(e)specially">
+      <pattern>
+        <token>,</token>
+        <token marker="yes">specially</token>
+        <token postag="JJ.?" postag_regexp="yes">
+          <exception postag="VBN"></exception>
+        </token>
+        <token>ones</token>
+        <token postag="PCT"></token>
+      </pattern>
+      <message>Consider using <suggestion>especially</suggestion>.</message>
+      <short>Possible typo</short>
     </rule>
     <rule id="ESSENTIAL_ESSENTIALLY" name="essentially">
       <pattern>
@@ -9186,6 +10122,37 @@
       </pattern>
       <message>The adverb 'well' may be more appropriate in this context. <suggestion>well</suggestion></message>
       <short>EVERYTHING_WENT_GOOD</short>
+    </rule>
+    <rule id="EVERY_EACH_SINGULAR" name="'every/each' + SINGULAR">
+      <pattern>
+        <token regexp="yes">each|every</token>
+        <token postag="NNS" marker="yes">
+          <exception postag="NN|PRP\$|NN:UN?|VBZ" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The noun should probably be in the singular form. <suggestion>\2</suggestion></message>
+      <short>Grammatical problem</short>
+    </rule>
+    <rule id="EVER_DAY" name="ever day (every day)">
+      <pattern>
+        <token>ever
+          <exception scope="previous">never</exception>
+        </token>
+        <token regexp="yes">day|one</token>
+      </pattern>
+      <message>Did you mean <suggestion>every \2</suggestion>?</message>
+      <short>EVER_DAY</short>
+    </rule>
+    <rule id="EVER_NN" name="ever day (every day)">
+      <pattern>
+        <token marker="yes">ever</token>
+        <token postag="NNP?" postag_regexp="yes" marker="yes">
+          <exception postag="VB.*" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB[DZ]" postag_regexp="yes"></token>
+      </pattern>
+      <message>Did you mean <suggestion>every \2</suggestion>?</message>
+      <short>EVER_NN</short>
     </rule>
     <rule id="EXCEPTION_PREPOSITION_THE_RULE" name="wrong preposition: 'exception PREPOSITION the rule' (exception to the rule)">
       <pattern>
@@ -9312,6 +10279,24 @@
       <message>It appears that an article is missing. <suggestion>the \3</suggestion></message>
       <short>FOR_INCONVENIENCE</short>
     </rule>
+    <rule id="FOR_VB" name="thank you for bring (bringing) this">
+      <pattern>
+        <token marker="yes">for
+          <exception scope="previous" regexp="yes">ask|look|long|wait|pay|call|allow|prepare|search|provide|care|account</exception>
+        </token>
+        <token regexp="yes" postag="VB" marker="yes" chunk="B-VP">\p{Ll}.{1,30}
+          <exception postag="JJ.*|NN|UH|RB" postag_regexp="yes"></exception>
+        </token>
+        <token postag="IN" min="0">
+          <exception>for</exception>
+        </token>
+        <token chunk_re="B-NP.*">
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The verb '\2' seems to be in the wrong form here. <suggestion>\1 \2</suggestion></message>
+      <short>FOR_VB</short>
+    </rule>
     <rule id="FOR_WHATEVER_REASONS" name="for some reasons (reason)">
       <pattern>
         <token>for</token>
@@ -9364,6 +10349,17 @@
       <message>This adverb is normally spelled as one word. <suggestion>furthermore</suggestion></message>
       <short>FURTHER_MORE_COMPOUND</short>
     </rule>
+    <rule id="GAVE_GIVE" name="verb before 'gave'">
+      <pattern>
+        <token postag="VBP?" postag_regexp="yes">
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">gave</token>
+        <token negate="yes">in</token>
+      </pattern>
+      <message>Did you mean <suggestion>give</suggestion>?</message>
+      <short>GAVE_GIVE</short>
+    </rule>
     <rule id="GOING_BE" name="going (to) be">
       <pattern>
         <token chunk_re=".-VP">going</token>
@@ -9371,6 +10367,17 @@
       </pattern>
       <message>Did you mean <suggestion>to \2</suggestion>?</message>
       <short>GOING_BE</short>
+    </rule>
+    <rule id="GOING_TO_VBD" name="Use of past form with 'going to ...'">
+      <pattern>
+        <token>going</token>
+        <token>to</token>
+        <token postag="VBD" marker="yes">
+          <exception postag="VB"></exception>
+        </token>
+      </pattern>
+      <message>The verb after 'going to' requires the base form. <suggestion>\3</suggestion></message>
+      <short>GOING_TO_VBD</short>
     </rule>
     <rule id="GOOD_WELL" name="good (well)">
       <pattern>
@@ -9408,6 +10415,17 @@
       <message>This is normally spelled as one word. <suggestion>hair\2</suggestion></message>
       <short>HAIR_COMPOUNDS</short>
     </rule>
+    <rule id="HANDS_FREE_HYPHEN" name="hands free (hands-free)">
+      <pattern>
+        <token marker="yes">hands</token>
+        <token marker="yes">free</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|PRP\$?|CC" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The adjective <suggestion>\1-\2</suggestion> is spelled with a hyphen.</message>
+      <short>HANDS_FREE_HYPHEN</short>
+    </rule>
     <rule id="HAND_CUFF_COMPOUND" name="hand cuff (handcuff)">
       <pattern>
         <token>hand</token>
@@ -9444,6 +10462,17 @@
       <message>Typo detected. Did you mean <suggestion>haven\2t</suggestion>?</message>
       <short>HAVNT</short>
     </rule>
+    <rule id="HEADED_HYPHEN" name="missing hyphen in 'two headed monster'">
+      <pattern>
+        <token postag="CD" marker="yes"></token>
+        <token regexp="yes" marker="yes">headed|tailed|armed</token>
+        <token postag="NN|NN:UN?" postag_regexp="yes" marker="yes">
+          <exception postag="MD|IN|RB.*|JJR|CC|W.*|NNP?S" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
+      <short>HEADED_HYPHEN</short>
+    </rule>
     <rule id="HEAD_COMPOUNDS" name="head shot (thunderstorm)">
       <pattern>
         <token>head</token>
@@ -9451,6 +10480,21 @@
       </pattern>
       <message>The word <suggestion>head\2</suggestion> is spelled as one word.</message>
       <short>HEAD_COMPOUNDS</short>
+    </rule>
+    <rule id="HELP_NP_VBZ" name="this will help him sleeps (sleep)">
+      <pattern>
+        <token inflected="yes" postag="V.[^G]*" postag_regexp="yes" chunk_re="[BI]-VP">help
+          <exception scope="previous">it</exception>
+          <exception scope="next">those</exception>
+        </token>
+        <token max="3" chunk_re=".-NP.*"></token>
+        <token postag="VBZ" marker="yes" chunk_re="[BI]-VP">
+          <exception regexp="yes">be|help|seem|mean|matter</exception>
+          <exception scope="previous" regexp="yes">it|that</exception>
+        </token>
+      </pattern>
+      <message>In this case, the verb should be in its base form. <suggestion>\3</suggestion></message>
+      <short>HELP_NP_VBZ</short>
     </rule>
     <rule id="HER_S" name="her's (here's)">
       <pattern>
@@ -9463,6 +10507,18 @@
       </pattern>
       <message>Did you mean <suggestion>here\3</suggestion>?</message>
       <short>HER_S</short>
+    </rule>
+    <rule id="HE_D_VBD" name="He'd wrote (write / written)">
+      <pattern>
+        <token regexp="yes">s?he|it|they|we|I|you</token>
+        <token spacebefore="no">'d</token>
+        <token postag="RB" min="0"></token>
+        <token postag="VB[DGZ]" postag_regexp="yes" marker="yes">
+          <exception postag="VB[NP]?" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The verb form seems incorrect. The '\1\2' contraction requires either the past participle ("\1 had gone") or the base form ("\1 would go"). <suggestion>\4</suggestion></message>
+      <short>Agreement error</short>
     </rule>
     <rule id="HE_NEED" name="He need (needs)">
       <pattern>
@@ -9490,6 +10546,20 @@
       </pattern>
       <message>The correct form of "have" after the third-person singular pronoun is "has". <suggestion>\1 has</suggestion></message>
       <short>Agreement error</short>
+    </rule>
+    <rule id="HIGH_END_HYPHEN" name="missing hyphen in 'high end'">
+      <pattern>
+        <token regexp="yes" marker="yes">high|low</token>
+        <token marker="yes">end</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0">
+          <exception postag="IN"></exception>
+        </token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="MD|IN|CC|PRP.*|W.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean the adjective <suggestion>high-end</suggestion> (spelled with a hyphen)?</message>
+      <short>HIGH_END_HYPHEN</short>
     </rule>
     <rule id="HITCH_HIKE_COMPOUNDS" name="hitch hike (hitchhike)">
       <pattern>
@@ -9571,6 +10641,19 @@
       <message>The adverb <suggestion>\1\2</suggestion> is spelled as one word.</message>
       <short>HOW_COMPOUNDS</short>
     </rule>
+    <rule id="HOW_DOES_THIS_CHANGES" name="how does this changes (change)">
+      <pattern>
+        <token regexp="yes">how|what|when|where|who|why|which</token>
+        <token postag="RB" min="0"></token>
+        <token regexp="yes">does|did</token>
+        <token regexp="yes">this|that|it|s?he|they|we|you</token>
+        <token postag="VBZ" marker="yes">
+          <exception postag="VBP?" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>It seems that the verb form is incorrect. <suggestion>\5</suggestion></message>
+      <short>HOW_DOES_THIS_CHANGES</short>
+    </rule>
     <rule id="HUNDREDS_OF_THOUSAND" name="hundreds of thousand (thousands of) users">
       <pattern>
         <token regexp="yes" marker="yes">tens|hundreds</token>
@@ -9607,6 +10690,17 @@
       </pattern>
       <message>Did you mean <suggestion>\2 is</suggestion>?</message>
       <short>IF_IT_OK_FOR</short>
+    </rule>
+    <rule id="IF_VB_PCT" name="if need (needed)">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes">[Ii]f|[Ww]hen</token>
+        <token postag="VBP?" postag_regexp="yes" marker="yes">
+          <exception postag="JJ.*|VB[DN]|IN|DT" postag_regexp="yes"></exception>
+        </token>
+        <token postag="PCT" spacebefore="no"></token>
+      </pattern>
+      <message>The conjunction "\1" requires the past participle <suggestion>\2</suggestion>. Or did you mean <suggestion>you \2</suggestion>?</message>
+      <short>IF_VB_PCT</short>
     </rule>
     <rule id="IF_YOU_FURTHER_QUESTIONS" name="if you (have) further questions">
       <pattern>
@@ -9734,6 +10828,29 @@
       <message>Typo detected. Did you mean <suggestion>\1\2\3</suggestion>?</message>
       <short>ISEN_T</short>
     </rule>
+    <rule id="IS_AND_ARE" name="...is a major cause of death and affect(s) approximately 795,000">
+      <pattern>
+        <token postag="VBZ" chunk="B-VP">
+          <exception postag="NNS"></exception>
+        </token>
+        <token min="0" chunk_re="B-NP.*"></token>
+        <token min="0" chunk_re="I-NP.*"></token>
+        <token chunk_re="E-NP.*"></token>
+        <token min="0">of</token>
+        <token min="0" chunk_re="B-NP.*"></token>
+        <token min="0" chunk_re="E-NP.*"></token>
+        <token>and</token>
+        <token postag="RB" min="0">
+          <exception regexp="yes">t?here</exception>
+        </token>
+        <token postag="VBP" marker="yes" chunk_re=".-VP">
+          <exception postag="JJ|VB[DN]" postag_regexp="yes"></exception>
+        </token>
+        <token chunk_re="B-NP.*"></token>
+      </pattern>
+      <message>Possible subject-verb agreement error. <suggestion>\10</suggestion></message>
+      <short>IS_AND_ARE</short>
+    </rule>
     <rule id="IS_CAUSE_BY" name="is cause (caused) by">
       <pattern>
         <token regexp="yes">is|was|are|were|been</token>
@@ -9826,6 +10943,19 @@
       <message>It appears that a verb is missing before "\4". <suggestion>have \5</suggestion></message>
       <short>Possible missing verb</short>
     </rule>
+    <rule id="I_M_MD" name="I'm might (I might) be">
+      <pattern>
+        <token postag="SENT_START|PCT" postag_regexp="yes"></token>
+        <token regexp="yes" min="0">and|but</token>
+        <token regexp="yes" marker="yes">s?he|it|we|they|you|I</token>
+        <token inflected="yes" marker="yes">be</token>
+        <token postag="MD" marker="yes">
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>It seems that only one verb should be used here. <suggestion>\3 \6</suggestion></message>
+      <short>I_M_MD</short>
+    </rule>
     <rule id="JAILBREAKED" name="jailbreaked (jailbroke)">
       <pattern>
         <token regexp="yes">jail-?breaked</token>
@@ -9840,6 +10970,18 @@
       </pattern>
       <message>This noun is normally spelled as one word. <suggestion>\1\2</suggestion></message>
       <short>KEEPER_COMPOUNDS</short>
+    </rule>
+    <rule id="KEEP_SEEING" name="I keep see(ing) these errors in my log">
+      <pattern>
+        <token inflected="yes">keep
+          <exception>keeping</exception>
+        </token>
+        <token postag="V.*" postag_regexp="yes" marker="yes" chunk_re=".-VP">
+          <exception postag="IN|J.*|RP|VB[GN]" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>After the verb 'keep', the progressive form of '\2' should be used. <suggestion>\2</suggestion></message>
+      <short>KEEP_SEEING</short>
     </rule>
     <rule id="KICK_START_HYPHEN" name="kick start (kick-start)">
       <pattern>
@@ -9857,6 +10999,19 @@
       </pattern>
       <message>If '\1' is a classification term, '\3' is not necessary. Use <suggestion>\1 \2</suggestion>. (The phrases 'kind of' and 'sort of' are informal if they mean 'to some extent'.)</message>
       <short>Grammatical problem: possible unnecessary 'a/an'</short>
+    </rule>
+    <rule id="KNOW_IT_ALL_HYPHEN" name="missing hyphens in 'know it all'">
+      <pattern>
+        <token regexp="yes">the|an?|my|his|her|their|y?our</token>
+        <token postag="JJ" min="0">
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">know</token>
+        <token marker="yes">it</token>
+        <token regexp="yes" marker="yes">alls?</token>
+      </pattern>
+      <message>The noun or adjective <suggestion>\3-\4-\5</suggestion> is spelled with hyphens.</message>
+      <short>KNOW_IT_ALL_HYPHEN</short>
     </rule>
     <rule id="LAND_COMPOUNDS" name="land lord (landlord)">
       <pattern>
@@ -9921,6 +11076,21 @@
       <message>Non-standard use of the comparative or superlative. Did you mean <suggestion>\1 \2</suggestion>?</message>
       <short>Grammatical problem: non-standard comparative/superlative</short>
     </rule>
+    <rule id="LET_IT_INFINITIVE" name="Don't let any negativity to affect (affect) you">
+      <pattern>
+        <token inflected="yes">let</token>
+        <token postag="DT|PDT|PRP\$" postag_regexp="yes" min="0"></token>
+        <token postag="N.*|PRP" postag_regexp="yes">
+          <exception postag="V.*" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">to</token>
+        <token postag="VB" marker="yes">
+          <exception regexp="yes">long|silver</exception>
+        </token>
+      </pattern>
+      <message>Using the to-infinitive may not be correct in this context. Consider using the bare infinitive (without "to") instead. <suggestion>\5</suggestion></message>
+      <short>LET_IT_INFINITIVE</short>
+    </rule>
     <rule id="LET_OBJECT" name="Let + object">
       <pattern>
         <token case_sensitive="yes" postag="SENT_START"></token>
@@ -9984,6 +11154,17 @@
       <message>This is normally spelled as one word. <suggestion>\1\2</suggestion></message>
       <short>LINE_COMPOUNDS</short>
     </rule>
+    <rule id="LONG_COMPOUNDS" name="life long">
+      <pattern>
+        <token marker="yes">life</token>
+        <token marker="yes">long</token>
+        <token postag="JJ|NN.*" postag_regexp="yes">
+          <exception postag="VBD"></exception>
+        </token>
+      </pattern>
+      <message>The adjective <suggestion>lifelong</suggestion> is spelled as one word.</message>
+      <short>LONG_COMPOUNDS</short>
+    </rule>
     <rule id="LOSE_LIVES" name="lose their life (lives)">
       <pattern>
         <token regexp="yes" inflected="yes">lose|save|sacrifice|give|risk|end|put|change|affect</token>
@@ -10036,6 +11217,20 @@
       <message>Did you mean <suggestion>\4</suggestion>?</message>
       <short>MANY_KINDS_OF</short>
     </rule>
+    <rule id="MANY_NN" name="Possible agreement error: 'many/several/few' + singular countable noun">
+      <pattern>
+        <token regexp="yes" marker="yes">many|several|few|various</token>
+        <token postag="NNP?|NN:UN?|JJ.*" postag_regexp="yes" marker="yes" min="0" chunk_re="I-NP-.*">
+          <exception postag="NNP?S|IN|VBD" postag_regexp="yes"></exception>
+        </token>
+        <token postag="NN:UN|NNP?" postag_regexp="yes" marker="yes" chunk_re="E-NP-.*">
+          <exception postag="NN:U|NNP?S|MD|CC|VB[DG]|IN|RB|PRP.*|W.*" postag_regexp="yes"></exception>
+          <exception scope="next" regexp="yes">(['’`´‘ʻ]).*</exception>
+        </token>
+      </pattern>
+      <message>Possible agreement error. The noun '\3' seems to be countable; consider using: <suggestion>\1 \2 \3</suggestion>.</message>
+      <short>Grammatical problem</short>
+    </rule>
     <rule id="MAN_COMPOUNDS" name="business man (businessman)">
       <pattern>
         <token regexp="yes">fisher|business|warehouse|chair|spokes|sales|horse|anchor|stunt|gun|congress|boogey|swords|fresh|sea|front|infantry|weather|council|camera</token>
@@ -10084,6 +11279,25 @@
       </pattern>
       <message>Did you mean <suggestion>\1 be \2</suggestion>?</message>
       <short>MD_ABLE</short>
+    </rule>
+    <rule id="MD_NO_VB" name="I can no (not) speak English">
+      <pattern>
+        <token postag="MD">
+          <exception>need</exception>
+        </token>
+        <token postag="RB" min="0">
+          <exception postag="CC|IN" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">no</token>
+        <token postag="RB" min="0">
+          <exception postag="CC|IN" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VBP?" postag_regexp="yes">
+          <exception regexp="yes">ooh|key|chevy|neck|shark|chicken|counsel|suicide|dam|rice|twin|taboo|core|lullaby|ginger|patronage|caravan|buddy|guy|wive|van|green|toenail|pothole|yellow|safari|crap|bulldog|voodoo|minute|radio|fair|squirrel|ape|fox|badger|ferret|beagle|parrot|rat|arbitrage|privilege|deed|wolf|contango|coo|cat|tot|jut|bulletin|purpose|bitter|zinc|yuck|dot|valet|overnight|automobile|toilet|grandfather|mushroom|luck|paragraph|ambition|concept|field|baby|doll|flower|soldier|dude|volume|letter|id|pipeline|blackberry|bin|pretzel|turtle|panel|muscle|silver|warehouse|wood|machine|magic|clown|traffic|page|monkey|version|bundle|fan|till|dog|reason|garage|chapter|company|conference|chance|candy|room|console|margin|rabbit|article|cheese|while|yes|queen|gas|oil|officer|term|people|evidence|max|captain|case|step|minister|fun|water|excel|church|husband|dinner|police|curl|weed|platform|best|better|worst|twitter|prod|summit|calendar|chair|belt|mesh|curry|spam|sauce|lord|section|sheet|weekend|even|breakfast|tent|word|mad|mine|blue|eclipse|diesel|up|down|content|off|pretty|minor|well|physic|knight|dirty|tree|peter|harry|matt|mike|nick|bob|rick|sally|ralph|carol|war|shrimp|table|kit|gang|pen|soup|founder|proverb|jimmy|marcel|roger|wallpaper|primary|coal|tower|noise|cant|card|advantage|background|invalid|wrong|orgasm|babbitt|waitress|ballpark|carp|devil|cop|hot|major|negative|summer|winter|yip|bird|frog|window|web|cringe|beware|splat|bat|skipper|moon|sex|grass|horseplay|crowd|pain|season|wind|champ|friend|duck|institute|bunch|journey|diagram|clerk|photo|cake|wing|breast|course|nose|bread|certificate|cup|interface|cart|lumber|dish|massacre|crater|cement|stake|badge|crew|task|hole|stomach|doodle|weird|roadmap|mother|court|perch|gut|hat|architect|pit|square|bald|headquarter|mar|buffalo|pm|bellow|fret|scheme|cling|spider|project|clue</exception>
+        </token>
+      </pattern>
+      <message>In this context, the correct negation is <suggestion>not</suggestion>.</message>
+      <short>MD_NO_VB</short>
     </rule>
     <rule id="MD_WON_T" name="I would won't (want)">
       <pattern>
@@ -10142,6 +11356,17 @@
       </pattern>
       <message>Did you mean <suggestion>a more \3</suggestion>?</message>
       <short>Grammatical problem: word order</short>
+    </rule>
+    <rule id="MOST_SOME_OF_NNS" name="Articles: 'most/some of' + plural noun">
+      <pattern>
+        <token regexp="yes">most|some</token>
+        <token>of</token>
+        <token regexp="yes" postag="NNS">\p{Ll}+
+          <exception postag="PRP$"></exception>
+        </token>
+      </pattern>
+      <message>After '\1 of', you should use 'the' (<suggestion>\1 \2 the \3</suggestion>) or simply say <suggestion>\1 \3</suggestion>.</message>
+      <short>Missing 'the'</short>
     </rule>
     <rule id="MOST_SUPERLATIVE" name="No 'more' or 'most' before superlatives">
       <pattern>
@@ -10214,6 +11439,50 @@
       <message>The proper noun in this adjective needs to be capitalized. <suggestion>\1</suggestion></message>
       <short>NNP_BASED</short>
     </rule>
+    <rule id="NNS_THAT_AGREEMENT" name="She brought some things that isn't (aren't) on the list">
+      <pattern>
+        <token postag="SENT_START|PCT|V.*" postag_regexp="yes">
+          <exception postag="NN:UN?|RP" postag_regexp="yes"></exception>
+        </token>
+        <token postag="P?DT|PRP\$.*|JJ" postag_regexp="yes" min="0">
+          <exception postag="RP"></exception>
+        </token>
+        <token postag="NNS">
+          <exception postag="NN(:UN)?" postag_regexp="yes"></exception>
+        </token>
+        <token>that</token>
+        <token postag="VBZ" marker="yes">
+          <exception regexp="yes">brands|horses|husbands|is|issues|kids|provisions|slaves|soldiers</exception>
+        </token>
+      </pattern>
+      <message>Possible subject-verb agreement error. <suggestion>\5</suggestion></message>
+      <short>NNS_THAT_AGREEMENT</short>
+    </rule>
+    <rule id="NN_NOT_JJ" name="missing verb before 'not'">
+      <pattern>
+        <token postag="SENT_START|CC" postag_regexp="yes">
+          <exception postag="IN"></exception>
+        </token>
+        <token postag="DT|JJ|PRP\$" postag_regexp="yes" min="0" chunk="B-NP-singular"></token>
+        <token postag="NNP?|NN:UN?" postag_regexp="yes" chunk_re=".-NP-singular">
+          <exception regexp="yes">@.+</exception>
+        </token>
+        <token marker="yes">not</token>
+        <token postag="RB" min="0"></token>
+        <token postag="JJR?" postag_regexp="yes" chunk="I-ADJP"></token>
+      </pattern>
+      <message>A verb may be missing. <suggestion>is \4</suggestion></message>
+      <short>NN_NOT_JJ</short>
+    </rule>
+    <rule id="NODT_DOZEN" name="Numeral (dozen, hundred, thousand, million) without a determiner or a number">
+      <pattern>
+        <token regexp="yes">dozen|hundred|thousand|[bm]illion
+          <exception scope="previous" regexp="yes">[$€£¥฿₹₿\u8371]|\p{Lu}+\d+|per|'s|of|few|several|'|couple|.+-half</exception>
+        </token>
+      </pattern>
+      <message>Use <suggestion>a \1</suggestion>, or use a number before '\1'.</message>
+      <short>Grammatical problem: missing determiner</short>
+    </rule>
     <rule id="NONE_THE_LESS" name="none the less (nonetheless)">
       <pattern>
         <token regexp="yes">none?</token>
@@ -10260,6 +11529,18 @@
       <message>"Not" and "never" have a similar meaning. Please check if one can be removed. <suggestion>\1</suggestion></message>
       <short>NOT_NEVER</short>
     </rule>
+    <rule id="NOUN_ENDING_WITH_X_POSSESSIVE_APOSTROPHE" name="possessive apostrophe for noun ending with 'x'">
+      <pattern>
+        <token regexp="yes" postag="NNP?|NN:UN?" postag_regexp="yes" marker="yes">.+x
+          <exception postag="NNP?S" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" marker="yes" spacebefore="no">['’]</token>
+        <token postag="JJ.*" postag_regexp="yes" spacebefore="yes" min="0" chunk_re=".-NP.*"></token>
+        <token postag="NN.*" postag_regexp="yes" chunk_re="E-NP.*"></token>
+      </pattern>
+      <message>Nouns ending with 'x' require a possessive 's' after the apostrophe. <suggestion>\1\2s</suggestion></message>
+      <short>NOUN_ENDING_WITH_X_POSSESSIVE_APOSTROPHE</short>
+    </rule>
     <rule id="NOW_ARE_THE_TIME" name="Now are (is) the time">
       <pattern>
         <token postag="SENT_START|CC|PCT" postag_regexp="yes"></token>
@@ -10271,6 +11552,25 @@
       </pattern>
       <message>Did you mean <suggestion>is</suggestion>?</message>
       <short>NOW_ARE_THE_TIME</short>
+    </rule>
+    <rule id="NO_DET_NOUN_OF" name="IndMys, (a|the) derivative of Alpha-3 code for India and Malaysia...">
+      <pattern>
+        <token postag="SENT_START|CC" postag_regexp="yes"></token>
+        <token chunk="E-NP-singular">
+          <exception postag="NNP"></exception>
+        </token>
+        <token postag=","></token>
+        <token postag="NN" marker="yes" chunk_re="B-NP-singular|B-ADJP">
+          <exception postag="CD"></exception>
+        </token>
+        <token>of</token>
+        <token skip="-1" chunk_re="B-NP.*">
+          <exception scope="next">-</exception>
+        </token>
+        <token postag="VBZ" chunk_re=".-VP"></token>
+      </pattern>
+      <message>A determiner like 'a', 'an', or 'the' seems to be missing. <suggestion>\4</suggestion></message>
+      <short>NO_DET_NOUN_OF</short>
     </rule>
     <rule id="NO_PROBLEM_ET_AL" name="et al (at all)">
       <pattern>
@@ -10508,6 +11808,21 @@
       <message>It appears that a verb is missing after "not".</message>
       <short>Missing verb</short>
     </rule>
+    <rule id="PLEASE_NOT_VB" name="please not do this (please don't do this)">
+      <pattern>
+        <token postag="SENT_START|CC|PCT" postag_regexp="yes"></token>
+        <token>please</token>
+        <token regexp="yes" marker="yes">not?</token>
+        <token postag="RB" marker="yes" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB" marker="yes">
+          <exception regexp="yes">ooh|key|chevy|neck|shark|chicken|counsel|suicide|dam|rice|twin|taboo|core|lullaby|ginger|patronage|caravan|buddy|guy|wive|van|green|toenail|pothole|yellow|safari|crap|bulldog|voodoo|minute|radio|fair|squirrel|ape|fox|badger|ferret|beagle|parrot|rat|arbitrage|privilege|deed|wolf|contango|coo|cat|tot|jut|bulletin|purpose|bitter|zinc|yuck|dot|valet|overnight|automobile|toilet|grandfather|mushroom|luck|paragraph|ambition|concept|field|baby|doll|flower|soldier|dude|volume|letter|id|pipeline|blackberry|bin|pretzel|turtle|panel|muscle|silver|warehouse|wood|machine|magic|clown|traffic|page|monkey|version|bundle|fan|till|dog|reason|garage|chapter|company|conference|chance|candy|room|console|margin|rabbit|article|cheese|while|yes|queen|gas|oil|officer|term|people|evidence|max|captain|case|step|minister|fun|water|excel|church|husband|dinner|police|curl|weed|platform|best|better|worst|twitter|prod|summit|calendar|chair|belt|mesh|curry|spam|sauce|lord|section|sheet|weekend|even|breakfast|tent|word|mad|mine|blue|eclipse|diesel|up|down|content|off|pretty|minor|well|physic|knight|dirty|tree|peter|harry|matt|mike|nick|bob|rick|sally|ralph|carol|war|shrimp|table|kit|gang|pen|soup|founder|proverb|jimmy|marcel|roger|wallpaper|primary|coal|tower|noise|cant|card|advantage|background|invalid|wrong|orgasm|babbitt|waitress|ballpark|carp|devil|cop|hot|major|negative|summer|winter|yip|bird|frog|window|web|cringe|beware|splat|bat|skipper|moon|sex|grass|horseplay|crowd|pain|season|wind|champ|friend|duck|institute|bunch|journey|diagram|clerk|photo|cake|wing|breast|course|nose|bread|certificate|cup|interface|cart|lumber|dish|massacre|crater|cement|stake|badge|crew|task|hole|stomach|doodle|weird|roadmap|mother|court|perch|gut|hat|architect|pit|square|bald|headquarter|mar|buffalo|pm|bellow|fret|scheme|cling|spider|near</exception>
+        </token>
+      </pattern>
+      <message>Consider using the negated verb form of "do" here. <suggestion>don't \4 \5</suggestion></message>
+      <short>PLEASE_NOT_VB</short>
+    </rule>
     <rule id="PLEASE_TO_INFORM" name="please (pleased) to">
       <pattern>
         <token postag="CC|SENT_START|PCT" postag_regexp="yes">
@@ -10569,6 +11884,31 @@
       </pattern>
       <message>The correct term is <suggestion>profit \4</suggestion>.</message>
       <short>PROFITS_WARNINGS</short>
+    </rule>
+    <rule id="PRONOUN_NOUN" name="Pronoun + noun">
+      <pattern>
+        <token regexp="yes" marker="yes">It?|you|s?he|we|they
+          <exception case_sensitive="yes">IT</exception>
+        </token>
+        <token postag="N.+" postag_regexp="yes" marker="yes">
+          <exception postag="V.+|RBR?|IN|UH" postag_regexp="yes"></exception>
+        </token>
+        <token postag="V.+" postag_regexp="yes"></token>
+      </pattern>
+      <message>Possible error detected: Please verify that having a noun follow a pronoun is correct in this context.</message>
+      <short>PRONOUN_NOUN</short>
+    </rule>
+    <rule id="PROOFED_PROVED" name="It proofed (proved) to be better">
+      <pattern>
+        <token marker="yes">proofed</token>
+        <token>to</token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB"></token>
+      </pattern>
+      <message>Did you mean to write 'proved'? <suggestion>proved</suggestion></message>
+      <short>PROOFED_PROVED</short>
     </rule>
     <rule id="PROSTRATE_PROSTATE" name="prostrate (prostate)">
       <pattern>
@@ -10717,6 +12057,20 @@
       </pattern>
       <message>Did you mean <suggestion>\3</suggestion> (= verb)?</message>
       <short>PRP_PORTRAIT</short>
+    </rule>
+    <rule id="PRP_RB_NO_VB" name="Verb missing after personal pronoun and adverb at beginning of sentence.">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token postag="PRP"></token>
+        <token postag="RB.*" postag_regexp="yes" marker="yes">
+          <exception postag="IN|JJ.*|VB.*" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" marker="yes">.*[a-z0-9\.,:;].*
+          <exception postag="VB.*|,|\.|CC|IN|TO|JJ.*|WP|MD|RB" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>A verb may be missing after '\3'.</message>
+      <short>PRP_RB_NO_VB</short>
     </rule>
     <rule id="PRP_SOOTHS" name="it sooths (soothes)">
       <pattern>
@@ -10944,6 +12298,19 @@
       <message>This is normally spelled as one word. <suggestion>smart\2</suggestion></message>
       <short>SMART_COMPOUNDS</short>
     </rule>
+    <rule id="SOME_NN_VBP" name="'some' + sing. noun + verb">
+      <pattern>
+        <token>some</token>
+        <token postag="NN(:UN)?" postag_regexp="yes" marker="yes">
+          <exception postag="NNP?S|MD|CC|RB|PRP.*" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VBP" marker="yes">
+          <exception regexp="yes" postag="NN:UN?|IN|JJR|PRP.*|VBD" postag_regexp="yes">(?!tell$).+</exception>
+        </token>
+      </pattern>
+      <message>It appears that the noun or verb are incorrect. <suggestion>\2 \3</suggestion></message>
+      <short>Possible agreement error</short>
+    </rule>
     <rule id="SOME_TIME_SOMETIMES" name="Some time (Sometimes) I like to read fiction">
       <pattern>
         <token postag="SENT_START|PCT" postag_regexp="yes"></token>
@@ -11015,6 +12382,31 @@
       <message>Did you mean <suggestion>\1stairs</suggestion>?</message>
       <short>STAIRS_COMPOUNDS</short>
     </rule>
+    <rule id="STARS_AND_STEPS" name="Missing hyphen: number + page/step/star">
+      <pattern>
+        <token postag="CD" marker="yes"></token>
+        <token regexp="yes" marker="yes">star|page|slide|step</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="JJ.*|RB.*|CC|DT|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>'\1 \2' is missing a hyphen. <suggestion>\1-\2</suggestion></message>
+      <short>STARS_AND_STEPS</short>
+    </rule>
+    <rule id="STARTING_DOING" name="he has starting (started) doing that">
+      <pattern>
+        <token inflected="yes" postag="VB[PZD]" postag_regexp="yes">have
+          <exception>be</exception>
+        </token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" inflected="yes" postag="VBG" marker="yes">start|begin|stop|continue|report|try|enjoy|finish|prove|consider</token>
+        <token postag="VBG" chunk="I-VP"></token>
+      </pattern>
+      <message>Possible typo found: Did you mean to use the past participle? <suggestion>\3</suggestion></message>
+      <short>STARTING_DOING</short>
+    </rule>
     <rule id="STEP_BY_STEP_HYPHEN" name="missing hyphens in 'step-by-step'">
       <pattern>
         <token marker="yes">step</token>
@@ -11043,6 +12435,21 @@
       <message>This term is normally spelled with a hyphen. <suggestion>\1-\2 \3</suggestion></message>
       <short>SUBJECT_MATTER_HYPHEN</short>
     </rule>
+    <rule id="SUBJECT_NUMBER" name="...if user(s) open the card by clicking on the error?">
+      <pattern>
+        <token>if</token>
+        <token postag="NN(:UN)?" postag_regexp="yes" marker="yes" chunk="E-NP-singular">
+          <exception postag="J.*|NNPS?|V.*|UH" postag_regexp="yes"></exception>
+        </token>
+        <token postag="RB" min="0"></token>
+        <token postag="VBP" chunk="B-VP">
+          <exception postag="MD"></exception>
+        </token>
+        <token chunk_re="B-NP.*"></token>
+      </pattern>
+      <message>Possible subject-verb agreement error detected: Did you mean to use the plural form here? <suggestion>\2</suggestion></message>
+      <short>SUBJECT_NUMBER</short>
+    </rule>
     <rule id="SUIT_COMPOUNDS" name="swim suit (swimsuit)">
       <pattern>
         <token regexp="yes">law|body|swim|jump|counter|track|pant|snow|pur|cat|sun|wet</token>
@@ -11058,6 +12465,16 @@
       </pattern>
       <message>The comparative '\1' is usually followed by 'to'. <suggestion>\1 to</suggestion></message>
       <short>SUPERIOR_THAN_TO</short>
+    </rule>
+    <rule id="SUPERLATIVE_THAN" name="SUPERLATIVE + THAN, e.g. worst (worse) than">
+      <pattern>
+        <token postag="JJS?" postag_regexp="yes" marker="yes">
+          <exception regexp="yes">more|less|rather|other(?:wise)?|different|inferior|superior|back|meaning|else</exception>
+        </token>
+        <token marker="yes">than</token>
+      </pattern>
+      <message>Use <suggestion>\1 \2</suggestion> to make a comparison with this adjective.</message>
+      <short>SUPERLATIVE_THAN</short>
     </rule>
     <rule id="SUPER_COMPOUNDS" name="super market (supermarket)">
       <pattern>
@@ -11122,6 +12539,20 @@
       </pattern>
       <message>Did you mean <suggestion>\1 \2</suggestion>?</message>
       <short>THANK_YOUR</short>
+    </rule>
+    <rule id="THAT_S_WHAT_S" name="That's what's (what)">
+      <pattern>
+        <token>that</token>
+        <token>'s</token>
+        <token marker="yes">what</token>
+        <token marker="yes">'s</token>
+        <token postag="RB" min="0"></token>
+        <token postag="VBZ">
+          <exception postag="JJ.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>It appears that the verb is not needed <suggestion>\3</suggestion></message>
+      <short>THAT_S_WHAT_S</short>
     </rule>
     <rule id="THAT_VERY_COOL" name="That cool (That is cool)">
       <pattern>
@@ -11215,6 +12646,16 @@
       <message>A word may be missing after '\2'.</message>
       <short>THE_SENT_END</short>
     </rule>
+    <rule id="THE_THIRD_PARTY" name="the third-party">
+      <pattern>
+        <token regexp="yes">the|an?</token>
+        <token regexp="yes" marker="yes">third\-?part(y|ies)
+          <exception scope="next" regexp="yes">and|or|add|log</exception>
+        </token>
+      </pattern>
+      <message>The noun <suggestion>\2</suggestion> is written as two words.</message>
+      <short>THE_THIRD_PARTY</short>
+    </rule>
     <rule id="THE_WELSH" name="the/a welsh (Welsh)">
       <pattern>
         <token regexp="yes">the|an?|y?our|my|their|his|her|its|s</token>
@@ -11226,6 +12667,25 @@
       <message>Consider capitalizing this word if you want to describe something related to the country "Wales". <suggestion>Welsh</suggestion></message>
       <short>THE_WELSH</short>
     </rule>
+    <rule id="THIS_CD" name="This (These) two are happy">
+      <pattern>
+        <token postag="SENT_START|CC|PCT" postag_regexp="yes">
+          <exception postag="IN|VB.*" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">this</token>
+        <token postag="CD">
+          <exception regexp="yes">1|one|0|zero</exception>
+        </token>
+        <token postag="RB" min="0">
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" inflected="yes">do|have|be|will|go|take|should|can|want|say|make|know|hope|think|see|look|use|find|give|tell|work|try|like|love|need
+          <exception>was</exception>
+        </token>
+      </pattern>
+      <message>Use <suggestion>these</suggestion> if you are referring to a plural noun.</message>
+      <short>Possible agreement error</short>
+    </rule>
     <rule id="THIS_IS_HAVE" name="This is has (has/is)">
       <pattern>
         <token postag="SENT_START|PCT|CC" postag_regexp="yes"></token>
@@ -11235,6 +12695,18 @@
       </pattern>
       <message>It appears that only one verb is needed. <suggestion>\3</suggestion></message>
       <short>THIS_IS_HAVE</short>
+    </rule>
+    <rule id="THIS_TOOLS" name="This tools (These tools)">
+      <pattern>
+        <token postag="VB.*" postag_regexp="yes"></token>
+        <token marker="yes" chunk="B-NP-plural">this</token>
+        <token postag="NNP?S" postag_regexp="yes" chunk="E-NP-plural">
+          <exception regexp="yes">works|helps|st[ai]cks|jeans|guys|boys|girls|gals|folks|peeps|devs|friends</exception>
+        </token>
+        <token regexp="yes" postag="SENT_END">\p{P}</token>
+      </pattern>
+      <message>Did you mean <suggestion>these</suggestion>?</message>
+      <short>Agreement error</short>
     </rule>
     <rule id="THIS_TWO_MEN" name="this (these) two men">
       <pattern>
@@ -11250,6 +12722,17 @@
       <message>Did you mean <suggestion>these</suggestion>?</message>
       <short>Agreement error</short>
     </rule>
+    <rule id="THOUSANDS_OF_NN" name="There are thousands of add-on(s) available">
+      <pattern>
+        <token regexp="yes">dozens|hundreds|thousands|millions|billions</token>
+        <token>of</token>
+        <token postag="NN" marker="yes" chunk="B-NP-singular">
+          <exception postag="J.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The noun '\3' seems to be countable. Consider using the plural form: <suggestion>\3</suggestion>.</message>
+      <short>Grammatical error</short>
+    </rule>
     <rule id="THUNDER_COMPOUNDS" name="thunder storm (thunderstorm)">
       <pattern>
         <token>thunder</token>
@@ -11257,6 +12740,18 @@
       </pattern>
       <message>The word <suggestion>thunder\2</suggestion> is spelled as one word.</message>
       <short>THUNDER_COMPOUNDS</short>
+    </rule>
+    <rule id="TOO_ADJECTIVE_TO" name="too ADJECTIVE to">
+      <pattern>
+        <token>to</token>
+        <token postag="JJ">
+          <exception postag="NN|NN:UN|VB.*" postag_regexp="yes"></exception>
+        </token>
+        <token min="0">,</token>
+        <token>to</token>
+      </pattern>
+      <message>Did you mean <suggestion>\1o \2 \4</suggestion>?</message>
+      <short>TOO_ADJECTIVE_TO</short>
     </rule>
     <rule id="TOSS_UP_HYPHEN" name="missing hyphen in 'toss up'">
       <pattern>
@@ -11312,6 +12807,16 @@
       <message>Did you mean <suggestion>withdraw</suggestion>?</message>
       <short>TO_WITHDRAWN</short>
     </rule>
+    <rule id="TWO_CONNECTED_MODAL_VERBS" name="Two modal verbs in a row (could should)">
+      <pattern>
+        <token regexp="yes">c(an|ould)|w(ill|ould)|sh(ould|all)|m(ight|ay|ust)
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" case_sensitive="yes">c(an|ould)|w(ill|ould)|sh(ould|all)|m(ight|ay|ust)</token>
+      </pattern>
+      <message>Two modal verbs in a row. Did you mean: <suggestion>\1, \2</suggestion>, <suggestion>\1</suggestion> or <suggestion>\2</suggestion>?</message>
+      <short>TWO_CONNECTED_MODAL_VERBS</short>
+    </rule>
     <rule id="VE_HAVING" name="'ve having → 've been having">
       <pattern>
         <token regexp="yes">[cw]ould|should|you|i|we|they</token>
@@ -11331,6 +12836,17 @@
       </pattern>
       <message>In this context, the infinitive form may be more appropriate. <suggestion>resend</suggestion></message>
       <short>WANTED_TO_RE_SENT</short>
+    </rule>
+    <rule id="WANT_TO_NN" name="unexpected noun after 'to'">
+      <pattern>
+        <token regexp="yes" inflected="yes" chunk_re=".-VP">need|want|have|try|love|like|hate</token>
+        <token marker="yes">to</token>
+        <token postag="JJ.*|NN.*" postag_regexp="yes" marker="yes">
+          <exception postag="VB.*|IN" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Normally, after "\1 \2" a verb is expected.</message>
+      <short>Possible agreement error</short>
     </rule>
     <rule id="WARE_COMPOUNDS" name="soft ware (software)">
       <pattern>
@@ -11374,6 +12890,21 @@
       <message>When a time span like '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>WEEK_HYPHEN</short>
     </rule>
+    <rule id="WEEK_LONG_HYPHEN" name="A week long (week-long) vacation">
+      <pattern>
+        <token regexp="yes">an?|the|this|th[oe]se|my|y?our|their|his|her|s|of</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0">
+          <exception postag="CD"></exception>
+        </token>
+        <token regexp="yes" marker="yes">hour|day|week|month|year</token>
+        <token regexp="yes" marker="yes">long|old</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|PRP.*|MD|RB" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>It appears that a hyphen is missing in the adjective <suggestion>\3-\4</suggestion>.</message>
+      <short>WEEK_LONG_HYPHEN</short>
+    </rule>
     <rule id="WELL_KNOWN" name="is well know">
       <pattern>
         <token regexp="yes" inflected="yes">be|the|a</token>
@@ -11403,6 +12934,48 @@
       <message>Did you mean <suggestion>\4</suggestion>?</message>
       <short>WE_RB_ARE_VB</short>
     </rule>
+    <rule id="WHAT_DID_VBD" name="What did happened (happen)?">
+      <pattern>
+        <token regexp="yes">(what|who|when|which|where)(ever)?</token>
+        <token regexp="yes">did|does</token>
+        <token postag="RB" min="0">
+          <exception>so</exception>
+        </token>
+        <token postag="VBD" marker="yes">
+          <exception postag="VB|NNP" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The base form of the verb <suggestion>\4</suggestion> is expected after "do".</message>
+      <short>Agreement error</short>
+    </rule>
+    <rule id="WHAT_DO_THAT" name="Who do (does) that?">
+      <pattern>
+        <token postag="SENT_START|PCT|CC" postag_regexp="yes">
+          <exception postag="IN|VB.*" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes">(what|who|when|which|where|how)(ever)?</token>
+        <token postag="VB" marker="yes" chunk="B-VP">
+          <exception postag="VBD|MD" postag_regexp="yes"></exception>
+        </token>
+        <token regexp="yes" skip="-1">this|that|t?here|now|when|if|once|before|after</token>
+        <token postag="SENT_END">?</token>
+      </pattern>
+      <message>Did you mean <suggestion>\3</suggestion>?</message>
+      <short>Agreement error</short>
+    </rule>
+    <rule id="WHAT_IS_REASON" name="What is (the) reason?">
+      <pattern>
+        <token regexp="yes">what|which</token>
+        <token regexp="yes">is|was|'s</token>
+        <token postag="JJ.*" postag_regexp="yes" marker="yes" min="0" chunk_re="B-NP.*">
+          <exception postag="CD"></exception>
+        </token>
+        <token regexp="yes" marker="yes" chunk_re="E-NP.*">reason|city|country|town|time|step|cause|price|option|cost|solution|answer|weather|motivation|goal|intention|meaning|name|question|problem</token>
+        <token postag="PCT|IN|TO|RB|DT|W.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>It appears that an article is missing. <suggestion>the \3 \4</suggestion></message>
+      <short>WHAT_IS_REASON</short>
+    </rule>
     <rule id="WHAT_IS_YOU" name="What is you (your)">
       <pattern>
         <token regexp="yes">(how|who|what|which|when|where|why)(ever)?</token>
@@ -11413,6 +12986,32 @@
       <message>Did you mean <suggestion>\2 your</suggestion>?</message>
       <short>WHAT_IS_YOU</short>
     </rule>
+    <rule id="WHAT_TO_VBD" name="I know what to sent (send)">
+      <pattern>
+        <token regexp="yes">what|which|when|who|where|why|how</token>
+        <token marker="yes">to</token>
+        <token postag="RB" marker="yes" min="0">
+          <exception postag="VB"></exception>
+        </token>
+        <token postag="VB[DNZG]" postag_regexp="yes" marker="yes">
+          <exception postag="VB"></exception>
+        </token>
+      </pattern>
+      <message>The base form is expected after "to". <suggestion>to \3 \4</suggestion></message>
+      <short>WHAT_TO_VBD</short>
+    </rule>
+    <rule id="WHAT_VBZ" name="3rd person verb (base verb) after what/who">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes">Wh(at|o)</token>
+        <token postag="VBP?" postag_regexp="yes" marker="yes">
+          <exception postag="VB[ZD]" postag_regexp="yes"></exception>
+        </token>
+        <token postag="IN"></token>
+      </pattern>
+      <message>After '\2', use the third-person verb form <suggestion>\3</suggestion>.</message>
+      <short>Possible agreement error</short>
+    </rule>
     <rule id="WHEEL_COMPOUNDS" name="wheel chair (wheelchair)">
       <pattern>
         <token>wheel</token>
@@ -11420,6 +13019,22 @@
       </pattern>
       <message>This word is normally spelled as one. <suggestion>wheel\2</suggestion></message>
       <short>WHEEL_COMPOUNDS</short>
+    </rule>
+    <rule id="WHERE_MD_VB" name="missing pronoun after 'where/when/how/why'">
+      <pattern>
+        <token chunk_re=".-VP|E-NP.*"></token>
+        <token min="0" chunk_re=".-ADVP"></token>
+        <token min="0">,</token>
+        <token regexp="yes" marker="yes">where|when|how|why</token>
+        <token postag="MD"></token>
+        <token postag="RB" min="0">
+          <exception postag="IN|EX" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VB" skip="-1" chunk_re=".-VP"></token>
+        <token regexp="yes" postag="SENT_END">[.!\)]</token>
+      </pattern>
+      <message>It appears that a pronoun is missing. <suggestion>\4 it</suggestion></message>
+      <short>WHERE_MD_VB</short>
     </rule>
     <rule id="WHERE_YOU_FROM" name="Where you from?">
       <pattern>
@@ -11440,6 +13055,18 @@
       <message>This word is normally spelled as one word. <suggestion>whole\2</suggestion></message>
       <short>WHOLE_COMPOUNDS</short>
     </rule>
+    <rule id="WHO_NOUN" name="Noun following 'who'">
+      <pattern>
+        <token>who
+          <exception case_sensitive="yes">WHO</exception>
+        </token>
+        <token postag="NN">
+          <exception postag="VB.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>In this context, a noun should not follow 'who'. Maybe a verb is missing? <suggestion>who is a \2</suggestion></message>
+      <short>WHO_NOUN</short>
+    </rule>
     <rule id="WHO_S_NN_VB" name="Who's (whose) idea was that?">
       <pattern>
         <token regexp="yes" case_sensitive="yes" marker="yes">[Ww]ho</token>
@@ -11453,6 +13080,17 @@
       </pattern>
       <message>It appears that the correct determiner here is <suggestion>whose</suggestion>.</message>
       <short>WHO_S_NN_VB</short>
+    </rule>
+    <rule id="WHO_VERB" name="Who + verb (who know's/knows)">
+      <pattern>
+        <token>who</token>
+        <token postag="VB.*|NN.*" postag_regexp="yes">
+          <exception postag="NNP"></exception>
+        </token>
+        <token>'s</token>
+      </pattern>
+      <message>Did you mean <suggestion>\1 \2s</suggestion>?</message>
+      <short>WHO_VERB</short>
     </rule>
     <rule id="WIDE_ACCEPTED" name="It is wide(ly) accepted that...">
       <pattern>
@@ -11469,6 +13107,20 @@
       </pattern>
       <message>The adjective <suggestion>wide\2</suggestion> is spelled as one word.</message>
       <short>WIDE_COMPOUNDS</short>
+    </rule>
+    <rule id="WILL_BECOMING" name="will becoming (be coming)">
+      <pattern>
+        <token postag="MD">
+          <exception>need</exception>
+        </token>
+        <token regexp="yes" min="0">['’`´‘ʻ]</token>
+        <token postag="RB" min="0">
+          <exception postag="IN"></exception>
+        </token>
+        <token marker="yes">becoming</token>
+      </pattern>
+      <message>Did you mean <suggestion>be coming</suggestion>?</message>
+      <short>WILL_BECOMING</short>
     </rule>
     <rule id="WILL_LIKE_TO" name="'will like to' (would like to)">
       <pattern>
@@ -11544,6 +13196,17 @@
       </pattern>
       <message>The infinitive "\4" after "be" requires "to". Did you mean <suggestion>\2 \3 to \4</suggestion>?</message>
       <short>WOULD_BE_JJ_VB</short>
+    </rule>
+    <rule id="WOULD_NEVER_VBN" name="would never done (have done)">
+      <pattern>
+        <token regexp="yes">(c|w|sh)ould</token>
+        <token>never</token>
+        <token postag="VBN">
+          <exception postag="VBP?" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Did you mean <suggestion>\1 \2 have \3</suggestion>?</message>
+      <short>WOULD_NEVER_VBN</short>
     </rule>
     <rule id="WOUN_T" name="woun't → wouldn't, won't">
       <pattern>
@@ -12487,6 +14150,15 @@
       <message>When specifying a month and year, 'of' is unnecessary. <suggestion>\1 \3</suggestion></message>
       <short>Nonstandard date</short>
     </rule>
+    <rule id="SI_UNITS_OF_MEASURMENT_ADJECTIVES_PLURAL" name="5-farads/5-farad">
+      <pattern>
+        <token regexp="yes">([0-9]+-)(yotta|zetta|exa|peta|tera|giga|mega|kilo|hecto|deca|deka|deci|centi|milli|micro|nano|pico|femto|atto|zepto|yocto)?(amperes|becquerels|candelas|coulombs|farads|grams|grammes|grays|henries|hertz|joules|katals|kelvins|liters|litres|lumens|lux|meters|metres|moles|newtons|ohms|pascals|radians|siemens|sieverts|steradians|teslas|volts|watts|webers)
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>The word '\1' is an adjective (SI unit of measurement), but the spelling is not correct. Do not use a plural adjective. Refer to section 5.4.3 in 'SI Brochure: The International System of Units (SI)'.</message>
+      <short>SI units, plural adjectives</short>
+    </rule>
     <rule id="THE_QUESTION_WH" name="the question what (the question of what)">
       <pattern>
         <token>the</token>
@@ -12569,6 +14241,15 @@
       </pattern>
       <message>Lower-case '\1' is American English. For British English use <suggestion>OK</suggestion>.</message>
       <short>AmE/BrE: ok/OK</short>
+    </rule>
+    <rule id="SI_UNITS_OF_MEASUREMENT_ADJECTIVES_AME" name="1-liter/1-litre">
+      <pattern>
+        <token regexp="yes">([0-9]+-)(quetta|ronna|yotta|zetta|exa|peta|tera|giga|mega|kilo|hecto|deka|deci|centi|milli|micro|nano|pico|femto|atto|zepto|yocto|ronto|quecto)?(liter|meter)
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>The word '\1' is an adjective (SI unit of measurement), but the spelling is not correct British English.</message>
+      <short>AmE/BrE: SI units (adjectives)</short>
     </rule>
     <rule id="TRUNK_BOOT" name="trunk/boot (of car)">
       <pattern>
@@ -12753,6 +14434,24 @@
       <message>Did you mean <suggestion>this</suggestion>?</message>
       <short>DIS</short>
     </rule>
+    <rule id="FOUR_NN" name="Readability: Four nouns in a row">
+      <pattern>
+        <token regexp="yes" postag="NN(:.+)?" postag_regexp="yes">.{4,30}
+          <exception regexp="yes">today|yesterday|tomorrow</exception>
+        </token>
+        <token regexp="yes" postag="NN(:.+)?" postag_regexp="yes">.{4,30}
+          <exception regexp="yes">today|yesterday|tomorrow</exception>
+        </token>
+        <token regexp="yes" postag="NN(:.+)?" postag_regexp="yes">.{4,30}
+          <exception regexp="yes">today|yesterday|tomorrow</exception>
+        </token>
+        <token regexp="yes" postag="NN(:.+)?" postag_regexp="yes">.{4,30}
+          <exception regexp="yes">today|yesterday|tomorrow</exception>
+        </token>
+      </pattern>
+      <message>Using four (or more) nouns in a row may decrease readability.</message>
+      <short>Confusing language</short>
+    </rule>
     <rule id="GIMME" name="gimme (give me)">
       <pattern>
         <token regexp="yes" marker="yes">gimmi?e</token>
@@ -12835,6 +14534,19 @@
       <message>The abbreviation for <suggestion>people</suggestion> can be considered informal.</message>
       <short>PPL</short>
     </rule>
+    <rule id="PREVENT_FROM" name="It's supposed to prevent it (from) spilling over">
+      <pattern>
+        <token inflected="yes">prevent</token>
+        <token postag="N.*|PRP_.*" postag_regexp="yes">
+          <exception postag="IN|RP" postag_regexp="yes"></exception>
+        </token>
+        <token postag="VBG" marker="yes">
+          <exception regexp="yes">reportin[g']|smugglin[g']</exception>
+        </token>
+      </pattern>
+      <message>Try inserting 'from' here. <suggestion>from \3</suggestion></message>
+      <short>PREVENT_FROM</short>
+    </rule>
     <rule id="THAN_I" name="be bigger than me (I)">
       <pattern>
         <token case_sensitive="yes" inflected="yes">be</token>
@@ -12880,8 +14592,29 @@
       <message>The expression 'a whole other' can seem colloquial. Consider replacing it with a more formal alternative. <suggestion>an entirely different \4</suggestion></message>
       <short>WHOLE_OTHER</short>
     </rule>
+    <rule id="WILL_ALLOW" name="This will allow (allows) them to bloom...">
+      <pattern>
+        <token chunk="E-NP-singular">
+          <exception postag="NNP"></exception>
+        </token>
+        <token>will</token>
+        <token>allow</token>
+      </pattern>
+      <message>Future tense may not be necessary in this context. <suggestion>\1 allows</suggestion></message>
+      <short>WILL_ALLOW</short>
+    </rule>
   </category>
   <category id="COMPOUNDING" name="Compounding">
+    <rule id="ANY_MORE" name="any more (anymore)">
+      <pattern>
+        <token marker="yes">any</token>
+        <token marker="yes">more
+          <exception scope="next" regexp="yes">of|than|often</exception>
+        </token>
+      </pattern>
+      <message>Did you mean the adverb <suggestion>\1\2</suggestion>?</message>
+      <short>American English, possible typo</short>
+    </rule>
     <rule id="ASTRA_ZENECA" name="AstraZeneca">
       <pattern>
         <token>astra</token>
@@ -13002,6 +14735,17 @@
       <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>BLACK_HAT_HYPHEN</short>
     </rule>
+    <rule id="BORN_HYPHEN" name="Missing hyphen in 'An American born scientist'">
+      <pattern>
+        <token regexp="yes" postag="NNP" marker="yes">Saudi|American|German|French|Dutch|Ukrainian|Indian|Czech|Danish|Canadian|Mexican|Panamanian|Spanish|Russian|Polish|Irish|Italian|Austrian|Swiss|Belgium|Egyptian|Australian|Bahraini|English|Swedish|California|York|Cuban|Texas|Florida|Norwegian|Chinese|Scottish|Japanese|European|Asian|Brazilian|British|Portuguese|Iranian</token>
+        <token marker="yes">born</token>
+        <token postag="NN.*|PCT" postag_regexp="yes">
+          <exception postag="IN|CC|PRP.*|RB|W.*|DT" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
+      <short>BORN_HYPHEN</short>
+    </rule>
     <rule id="BREAK_OUT_HYPHEN" name="missing hyphen in 'break out'">
       <pattern>
         <token marker="yes">break</token>
@@ -13010,6 +14754,18 @@
       </pattern>
       <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>BREAK_OUT_HYPHEN</short>
+    </rule>
+    <rule id="CHECK_BOX_COMPOUND" name="check box (checkbox)">
+      <pattern>
+        <token regexp="yes">an?|the|my|y?our|their|its|his</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0">
+          <exception postag="NN.*" postag_regexp="yes"></exception>
+        </token>
+        <token marker="yes">check</token>
+        <token regexp="yes" marker="yes">box(es)?|lists?|mates?</token>
+      </pattern>
+      <message>The noun <suggestion>check\4</suggestion> is spelled as one word.</message>
+      <short>CHECK_BOX_COMPOUND</short>
     </rule>
     <rule id="CHICKEN_AND_EGG_HYPHEN" name="hyphens in 'chicken-and-egg'">
       <pattern>
@@ -13066,6 +14822,18 @@
       <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
       <short>DIAL_UP_HYPHEN</short>
     </rule>
+    <rule id="DOG_EAT_DOG_HYPHEN" name="dog-eat-dog">
+      <pattern>
+        <token marker="yes">dog</token>
+        <token marker="yes">eat</token>
+        <token marker="yes">dog</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|MD|W.*|CC|RB|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The adjective phrase <suggestion>\1-\2-\3</suggestion> is spelled with a hyphen when it modifies a noun.</message>
+      <short>DOG_EAT_DOG_HYPHEN</short>
+    </rule>
     <rule id="DRIVE_THROUGH_HYPHEN" name="missing hyphen in 'drive-through'">
       <pattern>
         <token marker="yes">drive</token>
@@ -13111,6 +14879,19 @@
       <message>It appears that a hyphen is missing in the verb <suggestion>\1-\2</suggestion>.</message>
       <short>FORCE_FEED_HYPHEN</short>
     </rule>
+    <rule id="FOR_PROFIT_HYPHEN" name="missing hyphen in 'for-profit'">
+      <pattern>
+        <token regexp="yes">an?|the|my|y?our|his|of</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token marker="yes">for</token>
+        <token marker="yes">profit</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="PRP.*|DT|MD|CC|W.*|RB" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The adjective <suggestion>\3-\4</suggestion> is normally spelled with a hyphen.</message>
+      <short>FOR_PROFIT_HYPHEN</short>
+    </rule>
     <rule id="HAND_FULL_COMPOUND" name="hand full (handful)">
       <pattern>
         <token regexp="yes">an?</token>
@@ -13138,6 +14919,16 @@
       </pattern>
       <message>When '\1-\2' is used as a modifier, it is usually spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
       <short>HOUSE_HYPHEN</short>
+    </rule>
+    <rule id="MID_HYPHEN" name="missing hyphen after 'mid'">
+      <pattern>
+        <token>mid</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="RB.*|MD|CC|PRP.*|EX|DT|IN|VBN" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>This word is normally spelled with a hyphen. <suggestion>\1-\2</suggestion></message>
+      <short>MID_HYPHEN</short>
     </rule>
     <rule id="MILLION_DOLLAR_HYPHEN" name="Missing hyphen in 'billion dollar'">
       <pattern>
@@ -13200,6 +14991,18 @@
       </pattern>
       <message>The noun <suggestion>\3-\4</suggestion> is spelled with a hyphen.</message>
       <short>OFF_RAMP_HYPHEN</short>
+    </rule>
+    <rule id="ONBOARD" name="onboard -&gt; on board">
+      <pattern>
+        <token regexp="yes">have|having|gets?|getting|welcomes?|welcoming</token>
+        <token regexp="yes">you|me|them|him|her</token>
+        <token postag="RB" min="0">
+          <exception>very</exception>
+        </token>
+        <token regexp="yes" marker="yes">on-?board</token>
+      </pattern>
+      <message>In this context, <suggestion>on board</suggestion> is used as an adverb and should be spelled as two words.</message>
+      <short>ONBOARD</short>
     </rule>
     <rule id="ONE_HANDED_HYPHEN" name="one handed (one-handed)">
       <pattern>
@@ -13362,6 +15165,20 @@
       <message>The noun <suggestion>score\2</suggestion> is spelled as one word.</message>
       <short>SCORE_COMPOUNDS</short>
     </rule>
+    <rule id="SECOND_LARGEST_HYPHEN" name="Missing hyphen in 'second largest'">
+      <pattern>
+        <token regexp="yes" marker="yes">second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth</token>
+        <token postag="JJS" marker="yes">
+          <exception regexp="yes">most|least</exception>
+        </token>
+        <token postag="JJ" min="0"></token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="PRP.*|DT|VBN|CC|IN|MD" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>It appears that a hyphen is missing. <suggestion>\1-\2</suggestion></message>
+      <short>SECOND_LARGEST_HYPHEN</short>
+    </rule>
     <rule id="SEEKER_COMPOUNDS" name="home seeker (homeseeker)">
       <pattern>
         <token regexp="yes" case_sensitive="yes">[Hh]ome|[Ss]un|[Jj]ob</token>
@@ -13379,6 +15196,23 @@
       </pattern>
       <message>The noun <suggestion>shitshow</suggestion> is spelled as one word.</message>
       <short>SHIT_SHOW_COMPOUND</short>
+    </rule>
+    <rule id="STRAIGHT_UP_HYPHEN" name="straight up (straight-up)">
+      <pattern>
+        <token postag="PRP\$|DT|IN|CD" postag_regexp="yes">
+          <exception regexp="yes">like|to</exception>
+        </token>
+        <token regexp="yes" min="0">very|really|quite</token>
+        <token postag="JJ" min="0"></token>
+        <token marker="yes">straight</token>
+        <token regexp="yes" marker="yes">up|time</token>
+        <token postag="JJ" min="0"></token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|RB|CC|MD|DT|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The adjective <suggestion>\4-\5</suggestion> is spelled with a hyphen.</message>
+      <short>STRAIGHT_UP_HYPHEN</short>
     </rule>
     <rule id="STREET_LIGHTS_COMPOUND" name="street light (streetlight)">
       <pattern>
@@ -13442,6 +15276,19 @@
       </pattern>
       <message>Consider adding a hyphen to this noun/adjective. <suggestion>\1-\2</suggestion></message>
       <short>TRUE_CRIME_HYPHEN</short>
+    </rule>
+    <rule id="UP_AND_COMING_HYPHEN" name="missing hyphens in 'up and coming'">
+      <pattern>
+        <token marker="yes">up</token>
+        <token marker="yes">and</token>
+        <token marker="yes">coming</token>
+        <token postag="JJ.*" postag_regexp="yes" min="0"></token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="IN|CC|RB|DT|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>The adjective <suggestion>\1-\2-\3</suggestion> is normally spelled with hyphens.</message>
+      <short>UP_AND_COMING_HYPHEN</short>
     </rule>
     <rule id="VIDEO_TAPE_COMPOUND" name="video tape (videotape)">
       <pattern>
@@ -13610,6 +15457,17 @@
       <message>Capitalize this word if you mean the New York borough. <suggestion>\2</suggestion></message>
       <short>Capitalization</short>
     </rule>
+    <rule id="LC_AFTER_PERIOD" name="Lowercase word after word and no space in between">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes" spacebefore="yes">.*[a-zöäüß]$</token>
+        <token spacebefore="no">.</token>
+        <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">[a-zöüäßA-ZÖÄÜ].+
+          <exception postag="UNKNOWN"></exception>
+        </token>
+      </pattern>
+      <message>If a new sentence starts here, add a space and start with an uppercase letter. <suggestion>\3</suggestion></message>
+      <short>Capitalization</short>
+    </rule>
     <rule id="OMICRON_VARIANT" name="Omicron">
       <pattern>
         <token regexp="yes" case_sensitive="yes" marker="yes">omicron|delta</token>
@@ -13763,6 +15621,16 @@
       </pattern>
       <message>Capitalize this word if you mean the national flag of the UK. <suggestion>Union Jack</suggestion></message>
       <short>UNION_JACK</short>
+    </rule>
+    <rule id="APOSTROPHE_UPPERCASE_LETTER" name="Inconsistent case: She'S (She's)">
+      <pattern>
+        <token regexp="yes" case_sensitive="yes">.*[a-z]
+          <exception postag="UNKNOWN"></exception>
+        </token>
+        <token regexp="yes" case_sensitive="yes" spacebefore="no">'(S|D|Ve|VE|vE|rE|Re|RE|T|Ll|lL|LL)</token>
+      </pattern>
+      <message>Inconsistent capitalization in contraction. <suggestion>\1\2</suggestion></message>
+      <short>APOSTROPHE_UPPERCASE_LETTER</short>
     </rule>
     <rule id="SALT_TO_INJURY" name="add salt to injury (insult to injury)">
       <pattern>
@@ -13973,6 +15841,19 @@
       <message>Consider adding a comma here or splitting the sentence. <suggestion>\3, \4</suggestion></message>
       <short>SENT_START_JJ_THAT_COMMA</short>
     </rule>
+    <rule id="STATE_OF_THE_ART" name="state of the art (state-of-the-art)">
+      <pattern>
+        <token marker="yes">state</token>
+        <token marker="yes">of</token>
+        <token marker="yes">the</token>
+        <token marker="yes">art</token>
+        <token postag="NN.*" postag_regexp="yes">
+          <exception postag="MD|DT|RB.*|IN|PRP.*" postag_regexp="yes"></exception>
+        </token>
+      </pattern>
+      <message>Consider adding hyphens to this phrasal adjective. <suggestion>\1-\2-\3-\4</suggestion></message>
+      <short>STATE_OF_THE_ART</short>
+    </rule>
     <rule id="SUPERFLUOUS_OXFORD_ADJACENT" name="Remove comma after Oxford list, before predicate">
       <pattern>
         <token chunk_re="E-NP.*"></token>
@@ -14067,6 +15948,15 @@
       <message>Apostrophes aren't needed for decades. <suggestion>\1\2</suggestion></message>
       <short>Apostrophe in a decade date</short>
     </rule>
+    <rule id="CAFE_DIACRITIC" name="cafe (café)">
+      <pattern>
+        <token regexp="yes">cafes?
+          <exception postag="NNP"></exception>
+        </token>
+      </pattern>
+      <message>'\1' is a foreign word which originally has a diacritic. <suggestion>\1</suggestion></message>
+      <short>CAFE_DIACRITIC</short>
+    </rule>
     <rule id="CD_TH" name="number + (th, nd, st, rd)">
       <pattern>
         <token regexp="yes">\d{1,2}</token>
@@ -14116,6 +16006,20 @@
       </pattern>
       <message>Did you mean <suggestion>®</suggestion>?</message>
       <short>Nonstandard notation of ®</short>
+    </rule>
+    <rule id="SPACE_BEFORE_PARENTHESIS" name="Missing whitespace before a parenthesis">
+      <pattern>
+        <token regexp="yes">.*[a-z0-9].*
+          <exception regexp="yes" case_sensitive="yes">.*_.*|.*\$.*|.*[a-z][A-Z][a-z].*|function|cos|plot|varchar|int|if|while|for|return|resolve|reject|print|sleep|setTimeout|log|switch|min|max|foreach|each|exp|.*-|round</exception>
+        </token>
+        <token marker="yes" spacebefore="no">(</token>
+        <token regexp="yes">.*[a-z0-9]{2,30}.*
+          <exception regexp="yes" case_sensitive="yes">.*_.*|0[Xx].*|.*\$.*|.*[a-z][A-Z][a-z].*|function|true|false|0|e.?|in(nen)?|ever|able|less|ish</exception>
+          <exception scope="next" regexp="yes">\(|\=</exception>
+        </token>
+      </pattern>
+      <message>It appears that a white space is missing. <suggestion>(</suggestion></message>
+      <short>Missing space</short>
     </rule>
     <rule id="TL_DR" name="TL DR (TL;DR)">
       <pattern>

@@ -108,13 +108,9 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 	if pt.WhitespaceBefore != nil && token.IsWhitespaceBefore() != *pt.WhitespaceBefore {
 		return false
 	}
-	// Positive string exception: matching surface/lemma means "do not match this pattern token".
-	if pt.TokenException != "" && m.matchesException(token) {
-		if pt.Negation {
-			return true
-		}
-		return false
-	}
+	// Exceptions are checked after any-reading match (Java isExceptionMatchedCompletely
+	// in AbstractPatternRulePerformer.testAllReadings), not per-reading here — so a
+	// POS-only exception on reading NNS can reject a token whose VBZ reading matched.
 	matched := m.matchSurface(token.GetToken())
 	if pt.MatchInflected && !matched {
 		if lem := token.GetLemma(); lem != nil && *lem != "" {
@@ -243,14 +239,6 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 	return matched
 }
 
-func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken) bool {
-	pt := m.Base
-	if pt == nil || pt.TokenException == "" || token == nil {
-		return false
-	}
-	return matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive)
-}
-
 // IsMatchedByPreviousException ports PatternToken.isMatchedByPreviousException
 // for soft surface/regexp scope="previous" exceptions.
 func (m *PatternTokenMatcher) IsMatchedByPreviousException(prev *languagetool.AnalyzedTokenReadings) bool {
@@ -332,9 +320,13 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 	}
 	// And-group: evaluate base and each and-member across all readings.
 	if m.Base != nil && len(m.Base.AndGroup) > 0 {
-		return m.matchAndGroupReadings(atr)
+		if !m.matchAndGroupReadings(atr) {
+			return false
+		}
+		return !m.anyReadingExceptionMatched(atr)
 	}
 	hasRealPOS := false
+	anyMatched := false
 	for _, r := range atr.GetReadings() {
 		if r == nil {
 			continue
@@ -344,32 +336,91 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 			hasRealPOS = true
 		}
 		if m.IsMatched(r) {
+			anyMatched = true
+		}
+	}
+	if !anyMatched {
+		if hasRealPOS {
+			// Java: no match if no reading satisfied string+POS constraints.
+			return false
+		}
+		// Chunk-only pattern tokens (empty surface/POS): chunk already matched above.
+		if m.Base != nil && m.Base.Token == "" && (m.Base.Pos == nil || m.Base.Pos.PosTag == "") && m.Base.ChunkTag != "" {
+			return !m.anyReadingExceptionMatched(atr)
+		}
+		// Disambiguation with a tagger (StrictPOS): untagged surfaces are UNKNOWN only.
+		// Do not soft-promote America1s→VBN so OF_VBN_JJ does not invent JJ tags.
+		if m.StrictPOS {
+			if m.Base != nil && m.Base.Pos != nil && m.Base.Pos.PosTag != "" {
+				tag := strings.ToUpper(m.Base.Pos.PosTag)
+				if tag != "UNKNOWN" && !strings.HasPrefix(tag, "UNKNOWN") {
+					return false
+				}
+			}
+		}
+		// Soft path without a tagger: untagged tokens only.
+		// Propagate whitespace-before so spacebefore= constraints still apply.
+		probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+		probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
+		if !m.IsMatched(probe) {
+			return false
+		}
+		return !m.isExceptionMatchedCompletely(probe)
+	}
+	// Java AbstractPatternRulePerformer: after anyMatched, reject if any reading
+	// isExceptionMatchedCompletely (surface and/or POS exception).
+	return !m.anyReadingExceptionMatched(atr)
+}
+
+// anyReadingExceptionMatched is true when any reading matches the current exception.
+func (m *PatternTokenMatcher) anyReadingExceptionMatched(atr *languagetool.AnalyzedTokenReadings) bool {
+	if m == nil || m.Base == nil || !m.Base.HasCurrentException() || atr == nil {
+		return false
+	}
+	for _, r := range atr.GetReadings() {
+		if r != nil && m.isExceptionMatchedCompletely(r) {
 			return true
 		}
 	}
-	if hasRealPOS {
-		// Java: no match if no reading satisfied string+POS constraints.
+	// Surface exception also checks the token surface when readings are empty.
+	if len(atr.GetReadings()) == 0 {
+		probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+		return m.isExceptionMatchedCompletely(probe)
+	}
+	return false
+}
+
+// isExceptionMatchedCompletely ports PatternToken.isExceptionMatchedCompletely for
+// the soft current-scope exception (surface and/or POS). Both gates AND when set.
+func (m *PatternTokenMatcher) isExceptionMatchedCompletely(token *languagetool.AnalyzedToken) bool {
+	if m == nil || m.Base == nil || token == nil || !m.Base.HasCurrentException() {
 		return false
 	}
-	// Chunk-only pattern tokens (empty surface/POS): chunk already matched above.
-	if m.Base != nil && m.Base.Token == "" && (m.Base.Pos == nil || m.Base.Pos.PosTag == "") && m.Base.ChunkTag != "" {
-		return true
-	}
-	// Disambiguation with a tagger (StrictPOS): untagged surfaces are UNKNOWN only.
-	// Do not soft-promote America1s→VBN so OF_VBN_JJ does not invent JJ tags.
-	if m.StrictPOS {
-		if m.Base != nil && m.Base.Pos != nil && m.Base.Pos.PosTag != "" {
-			tag := strings.ToUpper(m.Base.Pos.PosTag)
-			if tag != "UNKNOWN" && !strings.HasPrefix(tag, "UNKNOWN") {
+	pt := m.Base
+	if pt.TokenException != "" {
+		if !matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive) {
+			// also try lemma like surface match paths
+			if lem := token.GetLemma(); lem == nil || *lem == "" ||
+				!matchExceptionSurface(*lem, pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive) {
 				return false
 			}
 		}
 	}
-	// Soft path without a tagger: untagged tokens only.
-	// Propagate whitespace-before so spacebefore= constraints still apply.
-	probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
-	probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
-	return m.IsMatched(probe)
+	if pt.TokenExceptionPosTag != "" {
+		pos := token.GetPOSTag()
+		if pos == nil || *pos == "" {
+			return false
+		}
+		if pt.TokenExceptionPosRE {
+			re, err := regexp.Compile("^(?:" + softNormalizeJavaRegexp(pt.TokenExceptionPosTag) + ")$")
+			if err != nil || !re.MatchString(*pos) {
+				return false
+			}
+		} else if *pos != pt.TokenExceptionPosTag {
+			return false
+		}
+	}
+	return true
 }
 
 // matchAndGroupReadings ports Java and-group accumulation over all readings.

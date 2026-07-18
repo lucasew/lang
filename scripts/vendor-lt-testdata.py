@@ -153,6 +153,9 @@ def token_is_soft(tok: ET.Element) -> bool:
     if local(tok.tag) != "token":
         return False
     # Allow simple <exception> children only (no and/or/unify/phraseref).
+    # Surface and/or postag exceptions are serialised (Java PatternToken). Negate
+    # exceptions are still skipped at serialize time. Token stays loadable even
+    # when only postag exceptions are present (e.g. DT_JJ_NN NN.* exception).
     for child in list(tok):
         if local(child.tag) != "exception":
             return False
@@ -169,14 +172,6 @@ def token_is_soft(tok: ET.Element) -> bool:
                 "scope",  # previous|next|current
             ):
                 return False
-        if (child.get("negate") or "").lower() == "yes":
-            return False  # soft loader skips negate exceptions
-        # Soft previous/next/current exceptions without postag (no tagger on exception POS).
-        if (child.get("postag") or "").strip() or (child.get("postag_regexp") or "").strip():
-            return False
-        ex = (child.text or "").strip()
-        if not ex or "&" in ex:
-            return False
     for k in tok.attrib:
         if k not in SOFT_TOKEN_ATTRS:
             return False
@@ -206,28 +201,41 @@ def serialize_token(tok: ET.Element) -> dict:
     for child in tok:
         if local(child.tag) != "exception":
             continue
-        # Soft path has no tagger for exception postag filters (e.g. ama|haya
-        # only when V.[IS].*). Drop those so surface-only soft matching does not
-        # over-exclude (DET_FEM_NOM_FEM "La ama se fue.").
-        if (child.get("postag") or "").strip() or (child.get("postag_regexp") or "").strip():
-            continue
         if (child.get("negate") or "").lower() == "yes":
             continue
         scope = (child.get("scope") or "").lower()
-        e = {"text": (child.text or "").strip()}
-        for k in ("regexp", "case_sensitive"):
+        text = (child.text or "").strip()
+        postag = (child.get("postag") or "").strip()
+        # Java exceptions: surface and/or postag. POS-only is valid (e.g. DT_JJ_NN
+        # <exception postag="NN.*|VBN"/>). Without a tagger POS-only never matches
+        # untagged soft readings, so it does not over-exclude pure soft languages.
+        if not text and not postag:
+            continue
+        e: dict = {}
+        if text:
+            e["text"] = text
+        for k in ("regexp", "case_sensitive", "postag", "postag_regexp"):
             v = child.get(k)
             if v is not None and str(v).strip() != "":
                 e[k] = v
-        if not e["text"]:
-            continue
         if scope == "previous":
-            if prev_exc is None:
-                prev_exc = e
+            # previous/next soft subset: surface only
+            if text and prev_exc is None:
+                pe = {"text": text}
+                for k in ("regexp", "case_sensitive"):
+                    v = child.get(k)
+                    if v is not None and str(v).strip() != "":
+                        pe[k] = v
+                prev_exc = pe
             continue
         if scope == "next":
-            if next_exc is None:
-                next_exc = e
+            if text and next_exc is None:
+                ne = {"text": text}
+                for k in ("regexp", "case_sensitive"):
+                    v = child.get(k)
+                    if v is not None and str(v).strip() != "":
+                        ne[k] = v
+                next_exc = ne
             continue
         if not excs:
             excs.append(e)
@@ -704,13 +712,16 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
         else:
             lines.append(f"{indent}<token{attr_s}>{body}")
             for e in excs or []:
+                if not isinstance(e, dict):
+                    continue
                 ea = []
-                for k in ("regexp", "case_sensitive", "negate"):
-                    if isinstance(e, dict) and e.get(k):
+                for k in ("regexp", "case_sensitive", "negate", "postag", "postag_regexp"):
+                    if e.get(k):
                         ea.append(f'{k}="{xml_esc(str(e[k]))}"')
                 eas = (" " + " ".join(ea)) if ea else ""
-                etext = e.get("text") if isinstance(e, dict) else ""
-                lines.append(f"{indent}  <exception{eas}>{xml_esc(etext or '')}</exception>")
+                etext = e.get("text") or ""
+                # POS-only exception: self-closing-style empty body is fine.
+                lines.append(f"{indent}  <exception{eas}>{xml_esc(etext)}</exception>")
             # Soft <and_token> = Java and-group member (same token position).
             for ag in and_group or []:
                 if not isinstance(ag, dict):

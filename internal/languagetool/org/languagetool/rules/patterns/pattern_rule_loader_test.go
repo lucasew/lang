@@ -69,9 +69,13 @@ func TestPatternRuleLoader_ExceptionAndInflected(t *testing.T) {
 	m := NewPatternTokenMatcher(pt)
 	runTok := languagetool.NewAnalyzedToken("run", nil, strPtr("run"))
 	runningTok := languagetool.NewAnalyzedToken("running", nil, strPtr("run"))
+	// Java isMatched is surface/POS only; exceptions apply via
+	// isExceptionMatchedCompletely after any reading matches (IsMatchedReadings).
 	require.True(t, m.IsMatched(runTok))
-	// surface exception "running" blocks even if lemma is run
-	require.False(t, m.IsMatched(runningTok))
+	require.True(t, m.IsMatched(runningTok), "lemma run still matches pattern before exception gate")
+	require.True(t, m.IsMatchedReadings(languagetool.NewAnalyzedTokenReadings(runTok)))
+	require.False(t, m.IsMatchedReadings(languagetool.NewAnalyzedTokenReadings(runningTok)),
+		"surface exception running blocks via isExceptionMatchedCompletely")
 }
 
 func TestPatternRuleLoader_PreviousNextException(t *testing.T) {

@@ -106,6 +106,8 @@ type disambigException struct {
 	CaseSensitive string `xml:"case_sensitive,attr"`
 	Negate        string `xml:"negate,attr"`
 	Scope         string `xml:"scope,attr"` // previous|next|empty=current
+	Postag        string `xml:"postag,attr"`
+	PostagRegexp  string `xml:"postag_regexp,attr"`
 	Content       string `xml:",chardata"`
 }
 
@@ -272,43 +274,37 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			pt.SetSkipNext(n)
 		}
 	}
-	// Java PatternToken exceptions: positive surface/regexp blocks the token.
-	// Soft subset: first non-negated current exception; first scope=previous.
+	// Java PatternToken exceptions: positive surface/regexp and/or postag blocks
+	// the token after any reading matches (isExceptionMatchedCompletely).
+	// Soft: first non-negated current exception; first scope=previous|next.
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
-		if exc == "" {
+		posTag := strings.TrimSpace(ex.Postag)
+		if exc == "" && posTag == "" {
 			continue
 		}
 		if strings.EqualFold(ex.Negate, "yes") {
 			continue
 		}
 		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
+		re := strings.EqualFold(ex.Regexp, "yes")
+		cs := strings.EqualFold(ex.CaseSensitive, "yes")
+		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
 		if scope == "previous" {
-			if pt.PreviousException == "" {
-				pt.SetPreviousException(
-					exc,
-					strings.EqualFold(ex.Regexp, "yes"),
-					strings.EqualFold(ex.CaseSensitive, "yes"),
-				)
+			// scope=previous: surface only (soft subset; POS not on previous yet)
+			if exc != "" && pt.PreviousException == "" {
+				pt.SetPreviousException(exc, re, cs)
 			}
 			continue
 		}
 		if scope == "next" {
-			if pt.NextException == "" {
-				pt.SetNextException(
-					exc,
-					strings.EqualFold(ex.Regexp, "yes"),
-					strings.EqualFold(ex.CaseSensitive, "yes"),
-				)
+			if exc != "" && pt.NextException == "" {
+				pt.SetNextException(exc, re, cs)
 			}
 			continue
 		}
-		if pt.TokenException == "" {
-			pt.SetStringPosExceptionCS(
-				exc,
-				strings.EqualFold(ex.Regexp, "yes"),
-				strings.EqualFold(ex.CaseSensitive, "yes"),
-			)
+		if !pt.HasCurrentException() {
+			pt.SetStringPosExceptionFull(exc, re, cs, posTag, posRE)
 		}
 	}
 	// Java <and> group members (soft <and_token>): each must match some reading.

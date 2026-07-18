@@ -32,6 +32,10 @@ type PatternToken struct {
 	TokenException             string
 	TokenExceptionRE           bool
 	TokenExceptionCaseSensitive bool // when true, exception compares with exact case (LT case_sensitive on <exception>)
+	// TokenExceptionPos ports Java <exception postag="…"> (optional POS gate on
+	// the same exception PatternToken). Empty surface + POS-only is valid Java.
+	TokenExceptionPosTag string
+	TokenExceptionPosRE  bool
 	// PreviousException ports Java exception scope="previous" (soft surface/regexp).
 	PreviousException             string
 	PreviousExceptionRE           bool
@@ -91,6 +95,21 @@ func (p *PatternToken) SetStringPosExceptionCS(tokenException string, regexp, ca
 	p.TokenException = tokenException
 	p.TokenExceptionRE = regexp
 	p.TokenExceptionCaseSensitive = caseSensitive
+}
+
+// SetStringPosExceptionFull ports Java PatternToken.setStringPosException with optional POS.
+// Surface and/or postag may be set (POS-only exceptions are valid Java).
+func (p *PatternToken) SetStringPosExceptionFull(tokenException string, surfaceRE, caseSensitive bool, posTag string, posRE bool) {
+	p.TokenException = tokenException
+	p.TokenExceptionRE = surfaceRE
+	p.TokenExceptionCaseSensitive = caseSensitive
+	p.TokenExceptionPosTag = posTag
+	p.TokenExceptionPosRE = posRE
+}
+
+// HasCurrentException reports whether a current-scope exception (surface and/or POS) is set.
+func (p *PatternToken) HasCurrentException() bool {
+	return p != nil && (p.TokenException != "" || p.TokenExceptionPosTag != "")
 }
 
 // SetPreviousException ports Java exception scope="previous" (soft surface/regexp).

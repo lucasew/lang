@@ -100,6 +100,8 @@ type xmlException struct {
 	Negate        string `xml:"negate,attr"`
 	CaseSensitive string `xml:"case_sensitive,attr"`
 	Scope         string `xml:"scope,attr"` // previous|next|empty=current
+	Postag        string `xml:"postag,attr"`
+	PostagRegexp  string `xml:"postag_regexp,attr"`
 	Content       string `xml:",chardata"`
 }
 
@@ -226,32 +228,34 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 	} else if ch := strings.TrimSpace(xt.Chunk); ch != "" {
 		pt.SetChunkTag(ch, false)
 	}
-	// Soft subset: current exception + scope previous/next (Java PatternToken).
+	// Soft subset: current exception (surface and/or postag) + scope previous/next.
+	// Java: isExceptionMatchedCompletely after any reading matches the token.
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
-		if exc == "" {
+		posTag := strings.TrimSpace(ex.Postag)
+		if exc == "" && posTag == "" {
 			continue
 		}
-		// LT negate="yes" on exception means "exception that must match" is inverted;
-		// soft path only implements positive exceptions (surface must not match).
+		// LT negate="yes" on exception is inverted; soft only implements positive.
 		if strings.EqualFold(ex.Negate, "yes") {
 			continue
 		}
 		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
 		re := strings.EqualFold(ex.Regexp, "yes")
 		cs := strings.EqualFold(ex.CaseSensitive, "yes")
+		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
 		switch scope {
 		case "previous":
-			if pt.PreviousException == "" {
+			if exc != "" && pt.PreviousException == "" {
 				pt.SetPreviousException(exc, re, cs)
 			}
 		case "next":
-			if pt.NextException == "" {
+			if exc != "" && pt.NextException == "" {
 				pt.SetNextException(exc, re, cs)
 			}
 		default:
-			if pt.TokenException == "" {
-				pt.SetStringPosExceptionCS(exc, re, cs)
+			if !pt.HasCurrentException() {
+				pt.SetStringPosExceptionFull(exc, re, cs, posTag, posRE)
 			}
 		}
 	}
