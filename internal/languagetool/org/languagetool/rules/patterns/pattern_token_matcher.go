@@ -277,20 +277,16 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	// French soft packs (often ASCII d'/l') match FrenchWordTokenizer (often ’).
 	// Keep the raw surface for regexp matching against REs compiled with either form.
 	rawSurface := surface
-	// Arabic: Java ArabicTagger strips tashkeel before lookup; lemmas often keep
-	// diacritics (هَذَا) while pattern tokens are undiacritized (هذا).
-	if softHasArabic(surface) || softHasArabic(pt.Token) {
-		surface = tools.RemoveTashkeel(surface)
-		rawSurface = tools.RemoveTashkeel(rawSurface)
-	}
 	surface = normalizeApostrophes(surface)
 	want := normalizeApostrophes(pt.Token)
-	if softHasArabic(want) {
-		want = tools.RemoveTashkeel(want)
-	}
-	patTok := pt.Token
-	if softHasArabic(patTok) {
-		patTok = tools.RemoveTashkeel(patTok)
+	// Arabic: Java tagger strips tashkeel for lookup; lemmas often keep diacritics
+	// (هَذَا) while pattern tokens are undiacritized (هذا). Do NOT strip before
+	// regexp match — patterns like .*اً$ need the tanwin character.
+	surfaceNT, wantNT, patNT := surface, want, pt.Token
+	if softHasArabic(surface) || softHasArabic(pt.Token) {
+		surfaceNT = tools.RemoveTashkeel(surface)
+		wantNT = tools.RemoveTashkeel(want)
+		patNT = tools.RemoveTashkeel(pt.Token)
 	}
 	if pt.Regexp {
 		if m.tokenRE != nil {
@@ -328,17 +324,24 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	}
 	if pt.CaseSensitive {
 		// Exact only — do not EO-fold (would ignore case via ToLower).
-		return rawSurface == patTok || surface == want
+		return rawSurface == pt.Token || surface == want ||
+			(surfaceNT != surface && (surfaceNT == wantNT || surfaceNT == patNT))
 	}
-	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, patTok) {
+	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, pt.Token) {
 		return true
+	}
+	// Undiacritized Arabic equality (هَذَا ↔ هذا).
+	if surfaceNT != surface || wantNT != want {
+		if strings.EqualFold(surfaceNT, wantNT) || strings.EqualFold(surfaceNT, patNT) {
+			return true
+		}
 	}
 	// French elision: d'/d’ ↔ de, l’ ↔ le/la, qu’ ↔ que (FrenchWordTokenizer splits).
 	if softFrenchElisionMatch(surface, want) || softFrenchElisionMatch(rawSurface, want) {
 		return true
 	}
 	// Soft Esperanto: Ambaux/Ambau ↔ ambaŭ after x-system + diacritic fold.
-	return softEsperantoFold(rawSurface) == softEsperantoFold(patTok)
+	return softEsperantoFold(rawSurface) == softEsperantoFold(pt.Token)
 }
 
 // softHasArabic reports if s contains an Arabic-script letter.
