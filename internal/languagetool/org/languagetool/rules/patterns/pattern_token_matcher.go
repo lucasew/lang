@@ -23,10 +23,14 @@ func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
 	m := &PatternTokenMatcher{Base: pt}
 	if pt != nil && pt.Regexp && pt.Token != "" {
 		flags := ""
-		if !pt.CaseSensitive {
+		// Go RE2 (?i) folds \p{Lu}/\p{Ll} so "run" matches \p{Lu}\p{Ll}+.
+		// Java CASE_INSENSITIVE does not fold Unicode property classes the same way;
+		// LT rules like NN_NNP_JJR rely on that (titlecase-only second token).
+		pat := softNormalizeJavaRegexp(pt.Token)
+		if !pt.CaseSensitive && !strings.Contains(pat, `\p{`) {
 			flags = "(?i)"
 		}
-		re, err := regexp.Compile(flags + "^(?:" + softNormalizeJavaRegexp(pt.Token) + ")$")
+		re, err := regexp.Compile(flags + "^(?:" + pat + ")$")
 		if err == nil {
 			m.tokenRE = re
 		}
@@ -255,16 +259,32 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 }
 
 // IsMatchedReadings is true if any reading of atr matches.
+// Java PatternTokenMatcher only tests real readings. Soft fallback to an
+// untagged surface is only used when the token has no real POS (no tagger path).
+// When POS tags exist, requiring postag must not soft-accept via a nil-POS probe
+// (that previously made dual surface+POS constraints match every surface hit).
 func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
 	}
+	hasRealPOS := false
 	for _, r := range atr.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if p := r.GetPOSTag(); p != nil && *p != "" && *p != languagetool.SentenceStartTagName &&
+			*p != languagetool.SentenceEndTagName && *p != languagetool.ParagraphEndTagName {
+			hasRealPOS = true
+		}
 		if m.IsMatched(r) {
 			return true
 		}
 	}
-	// also allow surface-only match against token string when untagged
+	if hasRealPOS {
+		// Java: no match if no reading satisfied string+POS constraints.
+		return false
+	}
+	// Soft path without a tagger: untagged tokens only.
 	return m.IsMatched(languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil))
 }
 

@@ -56,7 +56,9 @@ type disambigToken struct {
 	Negate        string `xml:"negate,attr"`
 	Postag        string `xml:"postag,attr"`
 	PostagRegexp  string `xml:"postag_regexp,attr"`
-	Content       string `xml:",chardata"`
+	// Marker is soft extract for Java <marker>…</marker> (which tokens REPLACE/FILTER target).
+	Marker  string `xml:"marker,attr"`
+	Content string `xml:",chardata"`
 }
 
 type disambigElem struct {
@@ -72,8 +74,14 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 	var out []*DisambiguationPatternRule
 	for _, xr := range root.Rules {
 		var tokens []*patterns.PatternToken
+		anyMarker := false
 		for _, xt := range xr.Pattern.Tokens {
-			tokens = append(tokens, disambigTokenFromXML(xt))
+			if strings.EqualFold(xt.Marker, "yes") {
+				anyMarker = true
+			}
+		}
+		for _, xt := range xr.Pattern.Tokens {
+			tokens = append(tokens, disambigTokenFromXML(xt, anyMarker))
 		}
 		action := ActionReplace
 		if xr.Disambig.Action != "" {
@@ -86,7 +94,7 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 	return out, nil
 }
 
-func disambigTokenFromXML(xt disambigToken) *patterns.PatternToken {
+func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.PatternToken {
 	content := strings.TrimSpace(xt.Content)
 	cs := strings.EqualFold(xt.CaseSensitive, "yes")
 	re := strings.EqualFold(xt.Regexp, "yes")
@@ -100,6 +108,13 @@ func disambigTokenFromXML(xt disambigToken) *patterns.PatternToken {
 			PosTag: xt.Postag,
 			Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
 		})
+	}
+	// Java: default InsideMarker=true when the pattern has no <marker>.
+	// When markers exist, only tokens inside <marker> are InsideMarker.
+	if patternHasMarker {
+		pt.InsideMarker = strings.EqualFold(xt.Marker, "yes")
+	} else {
+		pt.InsideMarker = true
 	}
 	return pt
 }

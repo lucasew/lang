@@ -315,24 +315,34 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
             tok = {**tok, "exceptions": new_excs}
         return tok
 
-    def add_child(child: ET.Element) -> bool:
+    def add_child(child: ET.Element, *, inside_marker: bool = False) -> bool:
         tag = local(child.tag)
         if tag == "token":
             if not token_is_soft(child):
                 return False
-            toks.append(inherit_case_sensitive(serialize_token(child)))
+            st = inherit_case_sensitive(serialize_token(child))
+            # Java <marker> selects which tokens REPLACE/FILTER act on.
+            if inside_marker and isinstance(st, dict):
+                st = {**st, "marker": "yes"}
+            toks.append(st)
             return True
         if tag == "or":
             collapsed = collapse_or(child)
             if collapsed is None:
                 return False
-            toks.append(inherit_case_sensitive(collapsed))
+            st = inherit_case_sensitive(collapsed)
+            if inside_marker and isinstance(st, dict):
+                st = {**st, "marker": "yes"}
+            toks.append(st)
             return True
         if tag == "and":
             collapsed = collapse_and(child)
             if collapsed is None:
                 return False
-            toks.append(inherit_case_sensitive(collapsed))
+            st = inherit_case_sensitive(collapsed)
+            if inside_marker and isinstance(st, dict):
+                st = {**st, "marker": "yes"}
+            toks.append(st)
             return True
         return False
 
@@ -340,7 +350,7 @@ def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
         tag = local(child.tag)
         if tag == "marker":
             for t in child:
-                if not add_child(t):
+                if not add_child(t, inside_marker=True):
                     return None
             continue
         if not add_child(child):
@@ -424,7 +434,7 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 ok = False
                 break
             st = {"text": t.get("text") or ""}
-            for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp"):
+            for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker"):
                 if t.get(k):
                     st[k] = t[k]
             if not st["text"] and not st.get("postag") and not st.get("regexp"):
@@ -459,7 +469,7 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
         for t in r["tokens"]:
             attrs = []
             if isinstance(t, dict):
-                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp"):
+                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker"):
                     if t.get(k):
                         attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
             attr_s = (" " + " ".join(attrs)) if attrs else ""

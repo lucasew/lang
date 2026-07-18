@@ -9,15 +9,15 @@
   </rule>
   <rule id="AMERICAN_AIRLINES" name="American Airlines">
     <pattern>
-      <token>American</token>
-      <token>Airlines</token>
+      <token case_sensitive="yes">American</token>
+      <token case_sensitive="yes" marker="yes">Airlines</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="FIRST_THING" name="first/last thing does not need an article">
     <pattern>
       <token regexp="yes">first|last</token>
-      <token>thing</token>
+      <token marker="yes">thing</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
@@ -25,14 +25,14 @@
     <pattern>
       <token postag="SENT_START"></token>
       <token>dear</token>
-      <token postag="NN"></token>
+      <token postag="NN" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="UH" name="Interjections">
     <pattern>
       <token postag="SENT_START"></token>
-      <token postag="UH"></token>
+      <token postag="UH" marker="yes"></token>
       <token>!</token>
     </pattern>
     <disambig action="replace" postag="UH"/>
@@ -40,7 +40,7 @@
   <rule id="GO_APE" name="go ape =&gt; NN:UN">
     <pattern>
       <token inflected="yes">go</token>
-      <token>ape</token>
+      <token marker="yes">ape</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
@@ -48,20 +48,20 @@
     <pattern>
       <token inflected="yes">go</token>
       <token>to</token>
-      <token regexp="yes">bed|college|school|university|war</token>
+      <token regexp="yes" marker="yes">bed|college|school|university|war</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="GIVE_EAR" name="give ear =&gt; NN:UN">
     <pattern>
       <token inflected="yes">give</token>
-      <token>ear</token>
+      <token marker="yes">ear</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="HAT_IN_HAND" name="hat in hand =&gt; no determiner required">
     <pattern>
-      <token>hat</token>
+      <token marker="yes">hat</token>
       <token>in</token>
       <token>hand</token>
     </pattern>
@@ -70,27 +70,27 @@
   <rule id="BELOW_ABOVE_GROUND" name="above/below ground =&gt; no determiner required">
     <pattern>
       <token regexp="yes">above|below</token>
-      <token>ground</token>
+      <token marker="yes">ground</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="AT_NN" name="at + nouns that require no determiner">
     <pattern>
       <token>at</token>
-      <token regexp="yes">ba[yt]|breakfast|first|night|risk|war|home|school|work|sea|anchor|birth|fault|hand|issue|length|liberty|source|stake|table|variance|onset</token>
+      <token regexp="yes" marker="yes">ba[yt]|breakfast|first|night|risk|war|home|school|work|sea|anchor|birth|fault|hand|issue|length|liberty|source|stake|table|variance|onset</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="BEYOND_NN" name="beyond + nouns that require no determiner">
     <pattern>
       <token>beyond</token>
-      <token regexp="yes">reach|description|dispute|reproach</token>
+      <token regexp="yes" marker="yes">reach|description|dispute|reproach</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="BEYOND_IN" name="beyond + nouns that require no determiner">
     <pattern>
-      <token>beyond</token>
+      <token marker="yes">beyond</token>
       <token regexp="yes">reach|description|dispute|reproach</token>
     </pattern>
     <disambig action="replace" postag="IN"/>
@@ -211,14 +211,14 @@
   <rule id="UNDER_NN" name="under + nouns that require no determiner">
     <pattern>
       <token>under</token>
-      <token regexp="yes">control|discussion|oath|observation</token>
+      <token regexp="yes" marker="yes">control|discussion|oath|observation</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="WITH_NN" name="with + nouns that require no determiner">
     <pattern>
       <token>with</token>
-      <token regexp="yes">reference|regard|respect|intent|access</token>
+      <token regexp="yes" marker="yes">reference|regard|respect|intent|access</token>
       <token>to</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
@@ -226,20 +226,20 @@
   <rule id="WITHOUT_NN" name="without + nouns that require no determiner">
     <pattern>
       <token>without</token>
-      <token regexp="yes">end|cause|doubt|fail|permission|notice|question|fear|power|delay|charge|pay|help</token>
+      <token regexp="yes" marker="yes">end|cause|doubt|fail|permission|notice|question|fear|power|delay|charge|pay|help</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="LOOK_LIKE" name="look like - like =&gt; preposition">
     <pattern>
       <token inflected="yes">look</token>
-      <token>like</token>
+      <token marker="yes">like</token>
     </pattern>
     <disambig action="replace" postag="IN"/>
   </rule>
   <rule id="KIND_OF_JJRB" name="kind of + adj/adv =&gt; no determiner required">
     <pattern>
-      <token>kind</token>
+      <token marker="yes">kind</token>
       <token>of</token>
       <token postag="JJ.*|RB.*" postag_regexp="yes"></token>
     </pattern>
@@ -250,7 +250,7 @@
       <token>one</token>
       <token>of</token>
       <token>the</token>
-      <token>most</token>
+      <token marker="yes">most</token>
       <token postag="JJ|VBG" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="RBS"/>
@@ -264,14 +264,14 @@
   </rule>
   <rule id="IN_NNUN" name="in as noun/preposition + uncountable noun -&gt; in as preposition">
     <pattern>
-      <token>in</token>
+      <token marker="yes">in</token>
       <token postag="NN:U.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="IN"/>
   </rule>
   <rule id="IN_ADJ_NN" name="in + adjective + noun">
     <pattern>
-      <token>in</token>
+      <token marker="yes">in</token>
       <token postag="JJ"></token>
       <token postag="NN:UN?" postag_regexp="yes"></token>
     </pattern>
@@ -281,13 +281,13 @@
     <pattern>
       <token postag="DT"></token>
       <token postag="CD"></token>
-      <token>are</token>
+      <token marker="yes">are</token>
     </pattern>
     <disambig action="replace" postag="VBP"/>
   </rule>
   <rule id="ARE_JJ_VBG" name="are (noun/verb)  + adjective/gerund/preposition -&gt; are (verb)">
     <pattern>
-      <token>are</token>
+      <token marker="yes">are</token>
       <token postag="JJ.*|VB[GN]|IN|DT|RB|PRP\$?" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="VBP"/>
@@ -295,34 +295,34 @@
   <rule id="SENT_START_ARE" name="Are...?">
     <pattern>
       <token postag="SENT_START"></token>
-      <token>are</token>
+      <token marker="yes">are</token>
     </pattern>
     <disambig action="replace" postag="VBP"/>
   </rule>
   <rule id="SENT_START_DOES" name="Does...?">
     <pattern>
       <token postag="SENT_START"></token>
-      <token case_sensitive="yes">Does</token>
+      <token case_sensitive="yes" marker="yes">Does</token>
     </pattern>
     <disambig action="replace" postag="VBZ"/>
   </rule>
   <rule id="NNS_ARE" name="NNS|EX + are (noun/verb) -&gt; are (verb)">
     <pattern>
       <token postag="EX|NNS|WP" postag_regexp="yes"></token>
-      <token>are</token>
+      <token marker="yes">are</token>
     </pattern>
     <disambig action="replace" postag="VBP"/>
   </rule>
   <rule id="ARE_PRP" name="are + we|you -&gt; are (verb)">
     <pattern>
-      <token>are</token>
+      <token marker="yes">are</token>
       <token regexp="yes">you|we|they</token>
     </pattern>
     <disambig action="replace" postag="VBP"/>
   </rule>
   <rule id="are_NNS" name="are + : + NNS">
     <pattern>
-      <token>are</token>
+      <token marker="yes">are</token>
       <token>:</token>
       <token postag="NNS"></token>
     </pattern>
@@ -330,21 +330,21 @@
   </rule>
   <rule id="HIS_NN_PRP" name="his (noun/prep) + noun -&gt; his (prep)">
     <pattern>
-      <token>his</token>
+      <token marker="yes">his</token>
       <token postag="NN.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="PRP$"/>
   </rule>
   <rule id="LOS_NNP" name="los + proper name -&gt; los (proper name)">
     <pattern>
-      <token>Los</token>
+      <token marker="yes">Los</token>
       <token postag="NNP"></token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="KIND_JJ" name="kind (adj) + of -&gt; kind (n)">
     <pattern>
-      <token postag="JJ">kind</token>
+      <token postag="JJ" marker="yes">kind</token>
       <token>of</token>
     </pattern>
     <disambig action="replace" postag="NN"/>
@@ -353,7 +353,7 @@
     <pattern>
       <token postag="CC"></token>
       <token regexp="yes">each|either|neither|this</token>
-      <token regexp="yes">times|addresses</token>
+      <token regexp="yes" marker="yes">times|addresses</token>
       <token postag="DT"></token>
     </pattern>
     <disambig action="replace" postag="VBZ"/>
@@ -361,13 +361,13 @@
   <rule id="AT_TIMES_NNS" name="times as noun pl">
     <pattern>
       <token>at</token>
-      <token>times</token>
+      <token marker="yes">times</token>
     </pattern>
     <disambig action="replace" postag="NNS"/>
   </rule>
   <rule id="MEANS_OF" name="means/verb + of =&gt;noun">
     <pattern>
-      <token postag="VBZ">means</token>
+      <token postag="VBZ" marker="yes">means</token>
       <token>of</token>
       <token postag="NN(:UN?)?" postag_regexp="yes"></token>
     </pattern>
@@ -377,7 +377,7 @@
     <pattern>
       <token>a</token>
       <token>mere</token>
-      <token>means</token>
+      <token marker="yes">means</token>
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
@@ -404,7 +404,7 @@
   </rule>
   <rule id="LET_GO" name="let as a verb">
     <pattern>
-      <token>let</token>
+      <token marker="yes">let</token>
       <token postag="VB"></token>
     </pattern>
     <disambig action="filter" postag="VB.*"/>
@@ -412,14 +412,14 @@
   <rule id="BE_OUT" name="OUT as RB">
     <pattern>
       <token regexp="yes" inflected="yes">be|go|get|come</token>
-      <token postag="RB">out</token>
+      <token postag="RB" marker="yes">out</token>
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="BE_BETTER" name="be + better =&gt; .R">
     <pattern>
       <token inflected="yes">be</token>
-      <token>better</token>
+      <token marker="yes">better</token>
     </pattern>
     <disambig action="filter" postag="..R"/>
   </rule>
@@ -427,13 +427,13 @@
     <pattern>
       <token>world</token>
       <token>war</token>
-      <token regexp="yes">[12]|I|II</token>
+      <token regexp="yes" marker="yes">[12]|I|II</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="A_AND_B" name="a and be">
     <pattern>
-      <token>a</token>
+      <token marker="yes">a</token>
       <token>and</token>
       <token>b</token>
     </pattern>
@@ -441,14 +441,14 @@
   </rule>
   <rule id="A_IS" name="A is...">
     <pattern>
-      <token>A</token>
-      <token>is</token>
+      <token case_sensitive="yes" marker="yes">A</token>
+      <token case_sensitive="yes">is</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="ABC" name="A.B.C.">
     <pattern>
-      <token>a</token>
+      <token marker="yes">a</token>
       <token>.</token>
       <token>b</token>
       <token>.</token>
@@ -459,73 +459,73 @@
   </rule>
   <rule id="A_PRIORI" name="A priori / posteriori">
     <pattern>
-      <token>a</token>
+      <token marker="yes">a</token>
       <token regexp="yes">priori|posteriori|capella</token>
     </pattern>
     <disambig action="replace" postag="FW"/>
   </rule>
   <rule id="A_AND_OR" name="'A' before 'and' and 'or'">
     <pattern>
-      <token>a</token>
+      <token marker="yes">a</token>
       <token regexp="yes">and|or</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="UPPER_UNKNOWN_NNP" name="Uppercase word/no tag + 's -&gt; NNP">
     <pattern>
-      <token regexp="yes" postag="UNKNOWN">\p{Lu}\p{Ll}+</token>
-      <token>'s</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">\p{Lu}\p{Ll}+</token>
+      <token case_sensitive="yes">'s</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="gazetteer" name="Simple gazetteer/proper name rule">
     <pattern>
-      <token regexp="yes">Lake|Fort|Port|Mount</token>
-      <token regexp="yes">\p{Lu}\p{Ll}+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Lake|Fort|Port|Mount</token>
+      <token regexp="yes" case_sensitive="yes">\p{Lu}\p{Ll}+</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="Street" name="street names">
     <pattern>
-      <token regexp="yes">\p{Lu}\p{Ll}+</token>
-      <token regexp="yes">Street|Avenue|Boulevard|Crescent|Drive|Lane|Road|Walk|Straße|Allee</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">\p{Lu}\p{Ll}+</token>
+      <token regexp="yes" case_sensitive="yes">Street|Avenue|Boulevard|Crescent|Drive|Lane|Road|Walk|Straße|Allee</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="I_CD" name="I as Roman number in king names">
     <pattern>
-      <token postag="NNP"></token>
-      <token>I</token>
-      <token postag="VBZ"></token>
+      <token case_sensitive="yes" postag="NNP"></token>
+      <token case_sensitive="yes" marker="yes">I</token>
+      <token case_sensitive="yes" postag="VBZ"></token>
     </pattern>
     <disambig action="replace" postag="CD"/>
   </rule>
   <rule id="I_NNP" name="i as variable name">
     <pattern>
       <token regexp="yes">variable|index</token>
-      <token>i</token>
+      <token marker="yes">i</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="OF_VBN_JJ" name="of + VBN + JJ -&gt; JJ">
     <pattern>
       <token>of</token>
-      <token postag="VBN"></token>
+      <token postag="VBN" marker="yes"></token>
       <token postag="JJ"></token>
     </pattern>
     <disambig action="replace" postag="JJ"/>
   </rule>
   <rule id="NN_NNP_JJR" name="NN + NNP/JJR -&gt; NNP">
     <pattern>
-      <token regexp="yes" postag="NN.*" postag_regexp="yes">\p{Ll}+</token>
-      <token regexp="yes" postag="JJR">\p{Lu}\p{Ll}+</token>
+      <token regexp="yes" case_sensitive="yes" postag="NN.*" postag_regexp="yes">\p{Ll}+</token>
+      <token regexp="yes" case_sensitive="yes" postag="JJR" marker="yes">\p{Lu}\p{Ll}+</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="SORE_THROAT" name="sore throat">
     <pattern>
       <token>sore</token>
-      <token>throat</token>
+      <token marker="yes">throat</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
@@ -533,34 +533,34 @@
     <pattern>
       <token inflected="yes">give</token>
       <token postag="NNP|PRP" postag_regexp="yes"></token>
-      <token>credit</token>
+      <token marker="yes">credit</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="BY_RB" name="by + rb → rb">
     <pattern>
       <token>by</token>
-      <token postag="RB"></token>
+      <token postag="RB" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="without_kk_NN_VBG" name="without having (NN/VBG)-&gt;VBG">
     <pattern>
       <token regexp="yes">before|after|while|from|without</token>
-      <token postag="NN">having</token>
+      <token postag="NN" marker="yes">having</token>
     </pattern>
     <disambig action="replace" postag="VBG"/>
   </rule>
   <rule id="HAVING_VBN" name="having (NN/VBG) + VBN -&gt;VBG">
     <pattern>
-      <token postag="NN">having</token>
+      <token postag="NN" marker="yes">having</token>
       <token postag="VBN"></token>
     </pattern>
     <disambig action="replace" postag="VBG"/>
   </rule>
   <rule id="ABOUT_NN_RB" name="about + figure -&gt; about (RB)">
     <pattern>
-      <token>about</token>
+      <token marker="yes">about</token>
       <token regexp="yes">(one\-(third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|sixteenth|hundredth|thousandth|millionth|trillionth|quadrillionth|quintillionth|half))|two\-(thirds)</token>
     </pattern>
     <disambig action="replace" postag="RB"/>
@@ -568,13 +568,13 @@
   <rule id="OLD_HAT" name="old hat">
     <pattern>
       <token>old</token>
-      <token>hat</token>
+      <token marker="yes">hat</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="IN_NO_DT" name="NO/DT/NN/NNP + NN|JJ -&gt; NO/DT">
     <pattern>
-      <token>no</token>
+      <token marker="yes">no</token>
       <token postag="NN.*|JJ.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="DT"/>
@@ -582,28 +582,28 @@
   <rule id="LIKE_IN" name="like as preposition">
     <pattern>
       <token inflected="yes">be</token>
-      <token>like</token>
+      <token marker="yes">like</token>
       <token postag="JJ.*|NN.*|DT|PRP" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="IN"/>
   </rule>
   <rule id="CD_AD" name="24 AD">
     <pattern>
-      <token postag="CD"></token>
-      <token>AD</token>
+      <token case_sensitive="yes" postag="CD"></token>
+      <token case_sensitive="yes" marker="yes">AD</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="CAME_FROM" name="came -&gt; vbd">
     <pattern>
-      <token>came</token>
+      <token marker="yes">came</token>
       <token>from</token>
     </pattern>
     <disambig action="replace" postag="VBD"/>
   </rule>
   <rule id="SAW_PRP" name="saw him">
     <pattern>
-      <token>saw</token>
+      <token marker="yes">saw</token>
       <token postag="PRP"></token>
     </pattern>
     <disambig action="replace" postag="VBD"/>
@@ -611,20 +611,20 @@
   <rule id="PRP_SAW" name="saw as a verb">
     <pattern>
       <token postag="PRP"></token>
-      <token>saw</token>
+      <token marker="yes">saw</token>
     </pattern>
     <disambig action="replace" postag="VBD"/>
   </rule>
   <rule id="DT_WAY" name="a/the + way =&gt; noun">
     <pattern>
       <token postag="DT"></token>
-      <token>way</token>
+      <token marker="yes">way</token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
   <rule id="AS_ADVERB_2" name="as">
     <pattern>
-      <token>as</token>
+      <token marker="yes">as</token>
       <token postag="JJ"></token>
       <token>as</token>
     </pattern>
@@ -632,35 +632,35 @@
   </rule>
   <rule id="BETTER_THAN" name="better than">
     <pattern>
-      <token postag="..R" postag_regexp="yes"></token>
+      <token postag="..R" postag_regexp="yes" marker="yes"></token>
       <token>than</token>
     </pattern>
     <disambig action="filter" postag="..R"/>
   </rule>
   <rule id="MOST_VBP" name="most + verb in plural">
     <pattern>
-      <token>most</token>
+      <token marker="yes">most</token>
       <token postag="VBP"></token>
     </pattern>
     <disambig action="replace" postag="JJS"/>
   </rule>
   <rule id="UP_TO" name="up to - not a noun">
     <pattern>
-      <token>up</token>
+      <token marker="yes">up</token>
       <token>to</token>
     </pattern>
     <disambig action="replace" postag="IN"/>
   </rule>
   <rule id="RIGHT_RB" name="right + away/now =&gt; RB">
     <pattern>
-      <token>right</token>
+      <token marker="yes">right</token>
       <token regexp="yes">away|now|before|after|back|here</token>
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="FREE_OF_CHARGE" name="free of charge">
     <pattern>
-      <token>free</token>
+      <token marker="yes">free</token>
       <token>of</token>
       <token>charge</token>
     </pattern>
@@ -668,7 +668,7 @@
   </rule>
   <rule id="EVEN_VB" name="even as a verb">
     <pattern>
-      <token>even</token>
+      <token marker="yes">even</token>
       <token regexp="yes">out|up</token>
     </pattern>
     <disambig action="filter" postag="VB.*"/>
@@ -676,93 +676,93 @@
   <rule id="HOME_RB" name="home as adverb">
     <pattern>
       <token>it</token>
-      <token>home</token>
+      <token marker="yes">home</token>
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
   <rule id="SORT_OF" name="sort + of =&gt; not a verb">
     <pattern>
-      <token>sort</token>
+      <token marker="yes">sort</token>
       <token>of</token>
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
   <rule id="I_PRP_NNP" name="I. as an abbreviation">
     <pattern>
-      <token regexp="yes">[Tt]he|[Aa]n</token>
-      <token>I</token>
-      <token>.</token>
+      <token regexp="yes" case_sensitive="yes">[Tt]he|[Aa]n</token>
+      <token case_sensitive="yes" marker="yes">I</token>
+      <token case_sensitive="yes">.</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
   <rule id="YOU_GUYS" name="You guys =&gt;NNS">
     <pattern>
       <token>you</token>
-      <token regexp="yes" postag="VBZ">guys|doctors|bitches</token>
+      <token regexp="yes" postag="VBZ" marker="yes">guys|doctors|bitches</token>
     </pattern>
     <disambig action="replace" postag="NNS"/>
   </rule>
   <rule id="DID_WASHING" name="Do washing">
     <pattern>
       <token inflected="yes">do</token>
-      <token>washing</token>
+      <token marker="yes">washing</token>
     </pattern>
     <disambig action="replace" postag="NN:U"/>
   </rule>
   <rule id="ORDERS_NN" name="orders &gt; noun">
     <pattern>
       <token regexp="yes" inflected="yes">give|take|stand|follow|place|make|receive|issue|obey|have|be|purchase|bark|get|disobey|accept|limit|cancel|await|deliver|pass</token>
-      <token>orders</token>
+      <token marker="yes">orders</token>
     </pattern>
     <disambig action="replace" postag="NNS"/>
   </rule>
   <rule id="IN_TRAINING" name="preposition + training =&gt;noun">
     <pattern>
       <token postag="IN"></token>
-      <token>training</token>
+      <token marker="yes">training</token>
     </pattern>
     <disambig action="replace" postag="NN:U"/>
   </rule>
   <rule id="SPELLING_ASPARTIC_ACID" name="NN: aspartic acid">
     <pattern>
-      <token>aspartic</token>
-      <token>acid</token>
+      <token marker="yes">aspartic</token>
+      <token marker="yes">acid</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_KETO" name="KETO">
     <pattern>
-      <token>keto</token>
-      <token regexp="yes">acids?|diets?</token>
+      <token marker="yes">keto</token>
+      <token regexp="yes" marker="yes">acids?|diets?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KUNG_FU" name="KUNG_FU">
     <pattern>
-      <token>kung</token>
-      <token>fu</token>
+      <token marker="yes">kung</token>
+      <token marker="yes">fu</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_CARTE_BLANCHE" name="CARTE_BLANCHE">
     <pattern>
-      <token>carte</token>
-      <token>blanche</token>
+      <token marker="yes">carte</token>
+      <token marker="yes">blanche</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_IN_VIVO" name="IN_VIVO">
     <pattern>
-      <token>in</token>
-      <token>vivo</token>
+      <token marker="yes">in</token>
+      <token marker="yes">vivo</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPELLING_CARTE_DE_VISITE" name="CARTE_DE_VISITE">
     <pattern>
-      <token regexp="yes">cartes?</token>
-      <token>de</token>
-      <token>visite</token>
+      <token regexp="yes" marker="yes">cartes?</token>
+      <token marker="yes">de</token>
+      <token marker="yes">visite</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -774,7 +774,7 @@
   </rule>
   <rule id="IGNORE_SPELLING_OF_SUPERSCRIPTED_UNITS" name="Ignore spelling of superscripted units of measure">
     <pattern>
-      <token regexp="yes">(Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|rad|sr|Hz|N|Pa|J|W|C|V|F|Ω|Sv?|Wb|T|H|l[mx]|Bq|Gy|kat|min|h|d|L|t|Np|B|eV|ua?)(⁻)?(¹|²|³)</token>
+      <token regexp="yes" case_sensitive="yes">(Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|rad|sr|Hz|N|Pa|J|W|C|V|F|Ω|Sv?|Wb|T|H|l[mx]|Bq|Gy|kat|min|h|d|L|t|Np|B|eV|ua?)(⁻)?(¹|²|³)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -801,42 +801,42 @@
   </rule>
   <rule id="IGNORE_SPELLING_OF_VAN_DE" name="Ignore spelling of 'van de'">
     <pattern>
-      <token>van</token>
-      <token regexp="yes">de[nr]?</token>
-      <token regexp="yes">[A-Z].+</token>
+      <token case_sensitive="yes" marker="yes">van</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">de[nr]?</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_VON" name="Ignore spelling of 'von'">
     <pattern>
-      <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
-      <token>von</token>
-      <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token case_sensitive="yes" marker="yes">von</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_CIUDAD" name="Ignore spelling of Hispanic names containing 'del'">
     <pattern>
-      <token regexp="yes">Ciudad|Playa|Casa|Puerto|Avenida|Santiago|Municipio|Paseo|Calle|Días|Di?os|Nacional|Villas|Cinco|Rancho|Cerro|Universidad|Banquo|Instituto|Copa|Academia|Plaza|Facultad|Torre|Camino|Club|Tapas|Palma|Águas|Costa|Isla|Ministerio|Grupo</token>
-      <token regexp="yes">[Dd]el</token>
-      <token regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Ciudad|Playa|Casa|Puerto|Avenida|Santiago|Municipio|Paseo|Calle|Días|Di?os|Nacional|Villas|Cinco|Rancho|Cerro|Universidad|Banquo|Instituto|Copa|Academia|Plaza|Facultad|Torre|Camino|Club|Tapas|Palma|Águas|Costa|Isla|Ministerio|Grupo</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]el</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_Y_DE" name="Ignore spelling of names containing 'y de'">
     <pattern>
-      <token regexp="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
-      <token>y</token>
-      <token>de</token>
-      <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token case_sensitive="yes" marker="yes">y</token>
+      <token case_sensitive="yes" marker="yes">de</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_DEL" name="Ignore spelling of names containing 'del/du/di'">
     <pattern>
-      <token regexp="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
-      <token regexp="yes">[Dd]el|du|di</token>
-      <token regexp="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" postag="NN.*|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Dd]el|du|di</token>
+      <token regexp="yes" case_sensitive="yes" postag="NNP|UNKNOWN" postag_regexp="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -849,16 +849,16 @@
   </rule>
   <rule id="IGNORE_SPELLING_OF_EAU_DE" name="Ignore spelling of 'eau de'">
     <pattern>
-      <token regexp="yes">eaux?</token>
-      <token>de</token>
-      <token regexp="yes">toilettes?|parfums?|javel|javelle|nile|colognes?</token>
+      <token regexp="yes" marker="yes">eaux?</token>
+      <token marker="yes">de</token>
+      <token regexp="yes" marker="yes">toilettes?|parfums?|javel|javelle|nile|colognes?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_NOTRE_DAME" name="Ignore spelling of 'Notre Dame'">
     <pattern>
-      <token>Notre</token>
-      <token>Dame</token>
+      <token case_sensitive="yes">Notre</token>
+      <token case_sensitive="yes">Dame</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -879,8 +879,8 @@
   <rule id="POR_LA" name="Ignore spelling of 'por' in NEs">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
-      <token>por</token>
-      <token regexp="yes">el|los|las?</token>
+      <token marker="yes">por</token>
+      <token regexp="yes" marker="yes">el|los|las?</token>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -888,7 +888,7 @@
   <rule id="AL" name="Abdullah al (ignore spelling) Sharbi">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
-      <token regexp="yes">[ae]l</token>
+      <token regexp="yes" marker="yes">[ae]l</token>
       <token regexp="yes" case_sensitive="yes">[A-Z][a-z]*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -897,7 +897,7 @@
     <pattern>
       <token>$</token>
       <token>\</token>
-      <token regexp="yes">.+\$</token>
+      <token regexp="yes" marker="yes">.+\$</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -924,8 +924,8 @@
   </rule>
   <rule id="ESCHERICHIA_COLI" name="Escherichia coli">
     <pattern>
-      <token>Escherichia</token>
-      <token regexp="yes">[Cc]oli</token>
+      <token case_sensitive="yes">Escherichia</token>
+      <token regexp="yes" case_sensitive="yes">[Cc]oli</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -959,29 +959,29 @@
   </rule>
   <rule id="IGNORE_LATIN_AD" name="Ignore Latin phrases with 'ad'">
     <pattern>
-      <token>ad</token>
-      <token regexp="yes">absurdum|hoc|hominem|infinitum|interim|nauseam</token>
+      <token case_sensitive="yes">ad</token>
+      <token regexp="yes" case_sensitive="yes">absurdum|hoc|hominem|infinitum|interim|nauseam</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_DE" name="Ignore phrases with 'de'">
     <pattern>
-      <token>de</token>
-      <token regexp="yes">facto|[ji]ure|minimis|profundis|rigueur|trop</token>
+      <token case_sensitive="yes">de</token>
+      <token regexp="yes" case_sensitive="yes">facto|[ji]ure|minimis|profundis|rigueur|trop</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_IPSO" name="Ignore phrases with 'ipso'">
     <pattern>
-      <token>ipso</token>
-      <token>facto</token>
+      <token case_sensitive="yes">ipso</token>
+      <token case_sensitive="yes">facto</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_NOBLESSE_OBLIGE" name="Ignore 'noblesse oblige'">
     <pattern>
-      <token>noblesse</token>
-      <token>oblige</token>
+      <token case_sensitive="yes">noblesse</token>
+      <token case_sensitive="yes">oblige</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1070,8 +1070,8 @@
   </rule>
   <rule id="GRUPO_NAMES" name="names with 'Grupo'">
     <pattern>
-      <token>Grupo</token>
-      <token regexp="yes" postag="UNKNOWN|NN.*" postag_regexp="yes">[A-Z].*</token>
+      <token case_sensitive="yes">Grupo</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN|NN.*" postag_regexp="yes">[A-Z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1182,9 +1182,9 @@
   </rule>
   <rule id="PAPUA_NEW_GUINEA" name="Ignore spelling of 'Papua New Guinea'">
     <pattern>
-      <token>Papua</token>
-      <token>New</token>
-      <token regexp="yes">Guinea|Guineans?</token>
+      <token case_sensitive="yes">Papua</token>
+      <token case_sensitive="yes">New</token>
+      <token regexp="yes" case_sensitive="yes">Guinea|Guineans?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1209,7 +1209,7 @@
   </rule>
   <rule id="SECTION_SIGN_LETTER_SPELLING" name="Ignore spelling of '§ + uppercase letter'">
     <pattern>
-      <token regexp="yes">§[A-Z]</token>
+      <token regexp="yes" case_sensitive="yes">§[A-Z]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1223,7 +1223,7 @@
   <rule id="SALUT_SENT_START_SPELLING" name="Ignore spelling of 'Salut' at SENT_START">
     <pattern>
       <token postag="SENT_START"></token>
-      <token>Salut</token>
+      <token marker="yes">Salut</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1263,7 +1263,7 @@
   </rule>
   <rule id="NEED_MD" name="needn't is MD">
     <pattern>
-      <token>need</token>
+      <token marker="yes">need</token>
       <token>n't</token>
     </pattern>
     <disambig action="filter" postag="MD"/>
@@ -1284,33 +1284,33 @@
   </rule>
   <rule id="DE_FACTO" name="ignore spelling of 'de facto'">
     <pattern>
-      <token regexp="yes">[Dd]e|DE</token>
-      <token regexp="yes">[Ff]acto|FACTO</token>
+      <token regexp="yes" case_sensitive="yes">[Dd]e|DE</token>
+      <token regexp="yes" case_sensitive="yes">[Ff]acto|FACTO</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_REAIS_SYMBOL" name="ignore spelling of 'R$'">
     <pattern>
-      <token case_sensitive="yes">R$</token>
+      <token case_sensitive="yes" marker="yes">R$</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_SUPERSCRIPT_NUMBERS" name="ignore spelling of 'mc²'">
     <pattern>
-      <token regexp="yes">([a-z]|mc|mi|[dkm]m|sp)[²³]</token>
+      <token regexp="yes" marker="yes">([a-z]|mc|mi|[dkm]m|sp)[²³]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_WORDS_WITH_UNDERSCORE_OR_AT" name="ignore spelling of things like REMOTE_USER and name@company">
     <pattern>
-      <token regexp="yes">[\p{L}\p{Nd}_\-.]+[@_][\p{L}\p{Nd}_\-.]+</token>
+      <token regexp="yes" marker="yes">[\p{L}\p{Nd}_\-.]+[@_][\p{L}\p{Nd}_\-.]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_THOU_WAST" name="ignore spelling of archaic 'thou wast'">
     <pattern>
-      <token regexp="yes">[Tt]hou|THOU</token>
-      <token regexp="yes">[Ww]ast|WAST</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Tt]hou|THOU</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Ww]ast|WAST</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1318,7 +1318,7 @@
     <pattern>
       <token postag="VB"></token>
       <token>(</token>
-      <token regexp="yes" case_sensitive="yes">ing|ed</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">ing|ed</token>
       <token>)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
@@ -1326,7 +1326,7 @@
   <rule id="ON_FLEEK" name="on fleek">
     <pattern>
       <token>on</token>
-      <token regexp="yes" case_sensitive="yes">[Ff]leek|FLEEK</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Ff]leek|FLEEK</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1339,7 +1339,7 @@
   <rule id="ING" name="ignore spelling of 'go(ing)'">
     <pattern>
       <token regexp="yes">\(|/</token>
-      <token regexp="yes">ing|ed</token>
+      <token regexp="yes" marker="yes">ing|ed</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1351,7 +1351,7 @@
   </rule>
   <rule id="BUG_NO_VB" name="'bug' no VB">
     <pattern>
-      <token>bug</token>
+      <token marker="yes">bug</token>
       <token regexp="yes">fix(es)?|reports?</token>
     </pattern>
     <disambig action="filter" postag="NN.*"/>
@@ -1364,30 +1364,30 @@
   </rule>
   <rule id="PRAIA_DA" name="ignore spelling of 'Praia da Luz'">
     <pattern>
-      <token>Praia</token>
-      <token regexp="yes">d[oa]</token>
-      <token regexp="yes">[A-Z].+</token>
+      <token case_sensitive="yes" marker="yes">Praia</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">d[oa]</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WHOLE_NOTHER_IGNORE_SPELLING" name="ignore spelling of 'whole nother'">
     <pattern>
       <token>whole</token>
-      <token regexp="yes" case_sensitive="yes">[Nn]other|NOTHER</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Nn]other|NOTHER</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_ES_SPELLING" name="ignore spelling of '(es)'">
     <pattern>
       <token>(</token>
-      <token case_sensitive="yes">es</token>
+      <token case_sensitive="yes" marker="yes">es</token>
       <token>)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_WHYS_AND_WHEREFORES" name="ignore 'whys and wherefores'">
     <pattern>
-      <token>whys</token>
+      <token marker="yes">whys</token>
       <token>and</token>
       <token>wherefores</token>
     </pattern>

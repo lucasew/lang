@@ -163,16 +163,23 @@ func TestGolden_SoftXML_ModalTellAndToStart(t *testing.T) {
 }
 
 func TestGolden_SoftMultiwords_NorthAmerica(t *testing.T) {
+	// Java MultiWordChunker loads /en/multiwords.txt — "North America" is not an
+	// entry there (only longer names like "North American Van Lines"). Use an
+	// official multiword: "New York".
 	if DiscoverEnglishMultiwords(nil) == "" {
 		t.Skip("multiwords not found")
 	}
+	if DiscoverEnglishPOSDict(nil) == "" {
+		t.Skip("english.dict not found")
+	}
 	var out bytes.Buffer
-	err := CoreTagHook(&out, "Trade in North America grew.", &CommandLineOptions{Language: "en"})
+	err := CoreTagHook(&out, "I live in New York.", &CommandLineOptions{Language: "en"})
 	require.NoError(t, err)
 	s := out.String()
-	require.Contains(t, s, "North")
+	require.Contains(t, s, "New")
 	require.True(t,
-		strings.Contains(s, "NNP") || strings.Contains(s, "B-N") || strings.Contains(s, "E-N") || strings.Contains(s, "B-NP"),
+		strings.Contains(s, "NNP") || strings.Contains(s, "<NNP>") || strings.Contains(s, "</NNP>") ||
+			strings.Contains(s, "B-N") || strings.Contains(s, "E-N") || strings.Contains(s, "B-NP"),
 		s,
 	)
 }

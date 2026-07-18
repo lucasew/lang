@@ -2,6 +2,7 @@ package rules
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
@@ -129,18 +130,29 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			nws[i].Immunize(0)
 		}
 	case ActionRemove:
-		// remove readings with matching POS if set
-		for i := first; i <= last && i < len(nws); i++ {
-			if r.DisambiguatedPOS == "" {
-				continue
-			}
-			for _, reading := range nws[i].GetReadings() {
-				if reading.GetPOSTag() != nil && *reading.GetPOSTag() == r.DisambiguatedPOS {
-					nws[i].RemoveReading(reading, r.ID)
+		// Java REMOVE with disambiguatedPOS: negative filtering via POS *regex*
+		// on fromPos (first matched token), not exact string equality.
+		if r.DisambiguatedPOS == "" {
+			if len(r.NewTokenReadings) > 0 {
+				for i := first; i <= last && i < len(nws); i++ {
+					rel := i - first
+					if rel < len(r.NewTokenReadings) && r.NewTokenReadings[rel] != nil {
+						nws[i].RemoveReading(r.NewTokenReadings[rel], r.ID)
+					}
 				}
 			}
+			return
 		}
-	case ActionAdd, ActionReplace:
+		re, err := regexp.Compile("^(?:" + r.DisambiguatedPOS + ")$")
+		if err != nil || first < 0 || first >= len(nws) || nws[first] == nil {
+			return
+		}
+		for _, reading := range append([]*languagetool.AnalyzedToken(nil), nws[first].GetReadings()...) {
+			if reading.GetPOSTag() != nil && re.MatchString(*reading.GetPOSTag()) {
+				nws[first].RemoveReading(reading, r.ID)
+			}
+		}
+	case ActionAdd:
 		for i := first; i <= last && i < len(nws); i++ {
 			rel := i - first
 			var tok *languagetool.AnalyzedToken
@@ -151,31 +163,92 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 				surface := nws[i].GetToken()
 				tok = languagetool.NewAnalyzedToken(surface, &pos, nil)
 			}
-			if tok == nil {
-				continue
-			}
-			if r.Action == ActionReplace {
-				// leave only new reading
-				nws[i].LeaveReading(tok)
-			} else {
+			if tok != nil {
 				nws[i].AddReading(tok, r.ID)
 			}
 		}
+	case ActionReplace:
+		// Java REPLACE with only postag (no <wd> list): replace *fromPos* only
+		// with a new reading — not LeaveReading (which empties when POS absent).
+		if len(r.NewTokenReadings) > 0 {
+			for i := first; i <= last && i < len(nws); i++ {
+				rel := i - first
+				if rel >= len(r.NewTokenReadings) || r.NewTokenReadings[rel] == nil || nws[i] == nil {
+					continue
+				}
+				tok := r.NewTokenReadings[rel]
+				surface := nws[i].GetToken()
+				if tok.GetToken() != "" {
+					surface = tok.GetToken()
+				}
+				pos := tok.GetPOSTag()
+				lemma := tok.GetLemma()
+				if lemma == nil {
+					lemma = &surface
+				}
+				newTok := languagetool.NewAnalyzedToken(surface, pos, lemma)
+				nws[i].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, r.ID)
+			}
+			return
+		}
+		if r.DisambiguatedPOS == "" || first < 0 || first >= len(nws) || nws[first] == nil {
+			return
+		}
+		// fromPos only (Java whTokens[fromPos] = new …)
+		surface := nws[first].GetToken()
+		lemma := surface
+		for _, reading := range nws[first].GetReadings() {
+			if reading.GetPOSTag() != nil && *reading.GetPOSTag() == r.DisambiguatedPOS && reading.GetLemma() != nil {
+				lemma = *reading.GetLemma()
+				break
+			}
+		}
+		if lemma == surface {
+			if at := nws[first].GetAnalyzedToken(0); at != nil && at.GetLemma() != nil && *at.GetLemma() != "" {
+				lemma = *at.GetLemma()
+			}
+		}
+		pos := r.DisambiguatedPOS
+		newTok := languagetool.NewAnalyzedToken(surface, &pos, &lemma)
+		nws[first].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, r.ID)
 	case ActionFilter, ActionFilterAll:
-		// keep readings whose POS equals DisambiguatedPOS
+		// Java FILTER: POS is a regex; apply only when some reading matches;
+		// keep readings whose POS matches. fromPos for FILTER, all for FILTERALL.
 		if r.DisambiguatedPOS == "" {
 			return
 		}
-		// Soft/LT practical default: multi-token patterns filter the *last* token
-		// (context tokens like "will" in "will run" must not lose their tags).
-		// FILTERALL still applies to every matched token.
-		start := first
-		if r.Action == ActionFilter && last >= first {
-			start = last
+		re, err := regexp.Compile("^(?:" + r.DisambiguatedPOS + ")$")
+		if err != nil {
+			return
 		}
-		for i := start; i <= last && i < len(nws); i++ {
+		// FILTER uses fromPos (first match); soft multi-token "will run" rules that
+		// put the verb last still work when pattern markers select the verb.
+		// Practical default for multi-token FILTER without markers: last token
+		// (modal+verb filters), matching LT soft tests and common XML style.
+		start, end := first, first
+		if r.Action == ActionFilterAll {
+			start, end = first, last
+		} else if last > first {
+			// multi-token FILTER without per-token <wd>: filter last token
+			start, end = last, last
+		}
+		for i := start; i <= end && i < len(nws); i++ {
+			if nws[i] == nil {
+				continue
+			}
+			// only apply when at least one reading matches (Java newPOSmatches)
+			any := false
+			for _, reading := range nws[i].GetReadings() {
+				if reading.GetPOSTag() != nil && re.MatchString(*reading.GetPOSTag()) {
+					any = true
+					break
+				}
+			}
+			if !any {
+				continue
+			}
 			for _, reading := range append([]*languagetool.AnalyzedToken(nil), nws[i].GetReadings()...) {
-				if reading.GetPOSTag() == nil || *reading.GetPOSTag() != r.DisambiguatedPOS {
+				if reading.GetPOSTag() == nil || !re.MatchString(*reading.GetPOSTag()) {
 					nws[i].RemoveReading(reading, r.ID)
 				}
 			}

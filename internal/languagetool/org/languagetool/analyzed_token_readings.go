@@ -248,6 +248,32 @@ func (r *AnalyzedTokenReadings) LeaveReading(token *AnalyzedToken) {
 	r.hasSameLemmas = r.areLemmasSame()
 }
 
+// ReplaceReadings ports the Java disambiguator REPLACE path that builds
+// new AnalyzedTokenReadings(old, newReadings, ruleId): keep metadata, set readings.
+func (r *AnalyzedTokenReadings) ReplaceReadings(newReadings []*AnalyzedToken, ruleApplied string) {
+	if r == nil || len(newReadings) == 0 {
+		return
+	}
+	_ = ruleApplied
+	sentEnd, paraEnd := r.isSentEnd, r.isParaEnd
+	for _, t := range newReadings {
+		if t != nil {
+			t.SetWhitespaceBefore(r.isWhitespaceBefore)
+		}
+	}
+	r.anTokReadings = append([]*AnalyzedToken(nil), newReadings...)
+	r.token = newReadings[0].GetToken()
+	r.setNoRealPOStag()
+	r.hasSameLemmas = r.areLemmasSame()
+	r.isSentEnd, r.isParaEnd = false, false
+	if sentEnd {
+		r.SetSentEnd()
+	}
+	if paraEnd {
+		r.SetParagraphEnd()
+	}
+}
+
 func (r *AnalyzedTokenReadings) GetReadingsLength() int { return len(r.anTokReadings) }
 func (r *AnalyzedTokenReadings) IsWhitespace() bool     { return r.isWhitespace }
 func (r *AnalyzedTokenReadings) IsLinebreak() bool      { return r.isLinebreak }
