@@ -114,11 +114,16 @@ func getChunkType(tokens []ChunkTaggedToken, i int) chunkType {
 	return chunkSingular
 }
 
-// isSingularPronounToken is true for PRP anyone/someone/everybody (not they/we).
+// isSingularPronounSurface: indefinite singular pronouns only.
+// Java EnglishChunkFilter has no such list — getChunkType breaks at non-NP so
+// "anyone knows" stays singular when knows is VP. We still force singular for
+// these surfaces when a following NNS|VBZ is mis-chunked as I-NP.
+// Do NOT include each/either/neither: DT_TIMES_NNS needs E-NP-plural on
+// "Each times" so disambig can strip VBZ for EVERY_EACH_SINGULAR.
 func isSingularPronounSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "anyone", "anybody", "someone", "somebody", "everyone", "everybody",
-		"noone", "nobody", "one", "each", "either", "neither":
+		"noone", "nobody", "one":
 		return true
 	default:
 		return false

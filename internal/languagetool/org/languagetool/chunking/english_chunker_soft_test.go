@@ -141,3 +141,83 @@ func TestEnglishChunker_KeepSeeAndIsGoing(t *testing.T) {
 	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{is, going, makeT})
 	require.Contains(t, strings.Join(going.GetChunkTags(), ","), "VP")
 }
+
+// OpenNLP (Java EnglishChunker): Let's hang out → hang B-VP, out B-PRT.
+// LT dict pre-disambig tags 's as POS|VBZ only; soft primaryPOS must force PRP
+// after "let" so PHRASAL_VERB_SOMETIME (chunk_re=".-VP" + chunk="B-PRT") fires.
+func TestEnglishChunker_LetsHangOut(t *testing.T) {
+	nn, vb, vbp, vbz, pos, rp, in, rb, uh := "NN", "VB", "VBP", "VBZ", "POS", "RP", "IN", "RB", "UH"
+	let := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Let", &nn, nil),
+		languagetool.NewAnalyzedToken("Let", &vb, nil),
+		languagetool.NewAnalyzedToken("Let", &vbp, nil),
+	}, 0)
+	// Pre-disambiguation readings (no PRP yet — matches English.dict).
+	s := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("'s", &pos, nil),
+		languagetool.NewAnalyzedToken("'s", &vbz, nil),
+	}, 0)
+	hang := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("hang", &nn, nil),
+		languagetool.NewAnalyzedToken("hang", &vb, nil),
+		languagetool.NewAnalyzedToken("hang", &vbp, nil),
+	}, 0)
+	out := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("out", &in, nil),
+		languagetool.NewAnalyzedToken("out", &nn, nil),
+		languagetool.NewAnalyzedToken("out", &rb, nil),
+		languagetool.NewAnalyzedToken("out", &rp, nil),
+		languagetool.NewAnalyzedToken("out", &uh, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{let, s, hang, out})
+	require.Contains(t, strings.Join(hang.GetChunkTags(), ","), "VP")
+	require.Contains(t, strings.Join(out.GetChunkTags(), ","), "B-PRT")
+}
+
+// "and catch up" — particle lookahead forces catch VP + up B-PRT.
+func TestEnglishChunker_AndCatchUp(t *testing.T) {
+	nn, vb, vbp, cc, rp, in := "NN", "VB", "VBP", "CC", "RP", "IN"
+	and := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("and", &cc, nil))
+	catch := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("catch", &nn, nil),
+		languagetool.NewAnalyzedToken("catch", &vb, nil),
+		languagetool.NewAnalyzedToken("catch", &vbp, nil),
+	}, 0)
+	up := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("up", &in, nil),
+		languagetool.NewAnalyzedToken("up", &rp, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{and, catch, up})
+	require.Contains(t, strings.Join(catch.GetChunkTags(), ","), "VP")
+	require.Contains(t, strings.Join(up.GetChunkTags(), ","), "B-PRT")
+}
+
+// "find out where" — particle before WRB stays I-VP for WHERE_MD_VB.
+func TestEnglishChunker_FindOutWhere(t *testing.T) {
+	vb, rp, in, wrb := "VB", "RP", "IN", "WRB"
+	find := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("find", &vb, nil))
+	out := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("out", &in, nil),
+		languagetool.NewAnalyzedToken("out", &rp, nil),
+	}, 0)
+	where := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("where", &wrb, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{find, out, where})
+	require.Contains(t, strings.Join(out.GetChunkTags(), ","), "VP")
+}
+
+// "door behind" — behind is prep so door is E-NP (LOOK_DOOR).
+func TestEnglishChunker_DoorBehind(t *testing.T) {
+	dt, nn, in, jj, rb, rp := "DT", "NN", "IN", "JJ", "RB", "RP"
+	the := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("the", &dt, nil))
+	door := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("door", &nn, nil))
+	behind := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("behind", &in, nil),
+		languagetool.NewAnalyzedToken("behind", &jj, nil),
+		languagetool.NewAnalyzedToken("behind", &nn, nil),
+		languagetool.NewAnalyzedToken("behind", &rb, nil),
+		languagetool.NewAnalyzedToken("behind", &rp, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{the, door, behind})
+	require.Contains(t, strings.Join(door.GetChunkTags(), ","), "E-NP")
+	require.Contains(t, strings.Join(behind.GetChunkTags(), ","), "PP")
+}
