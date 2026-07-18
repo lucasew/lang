@@ -47,8 +47,8 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.5 | Soft grammar dir loader (`RegisterSoftGrammarDir`) gone | [x] |
 | 1.6 | Soft miss-scan / soft golden harnesses gone | [x] first wave |
 | 1.7 | Soft pack loading removed from `configureCoreLT` / server pipeline | [x] first wave |
-| 1.8 | **Soft POS surface invent** removed from `pattern_token_matcher.go` (closed-class lists, FreeLing soft, STTS soft, URL soft surface, etc.) | [ ] **largest remaining** |
-| 1.9 | Soft cover/align hacks removed from `pattern_rule_matcher.go` (CJK surface align, fused prep, hyphen cover, …) | [ ] |
+| 1.8 | **Soft POS surface invent** removed from `pattern_token_matcher.go` (closed-class lists, FreeLing soft, STTS soft, URL soft surface, etc.) | [x] sector: PatternTokenMatcher |
+| 1.9 | Soft cover/align hacks removed from `pattern_rule_matcher.go` (CJK surface align, fused prep, hyphen cover, …) | [x] |
 | 1.10 | Soft expand / backref invent removed if not Java-equivalent | [ ] |
 | 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [ ] `english_chunker.go` still soft-heavy |
 | 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [ ] `soft_rule_meta.go` still present |

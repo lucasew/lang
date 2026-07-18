@@ -43,32 +43,6 @@ func TestPattern_FlyByNight(t *testing.T) {
 	require.NotEmpty(t, ms)
 }
 
-func TestPattern_WaitingPatient(t *testing.T) {
-	wait := NewPatternToken("wait", false, false, true)
-	prp := NewPatternToken("", false, false, false)
-	prp.SetPosToken(PosToken{PosTag: "PRP$", Regexp: false})
-	nn := NewPatternToken("", false, false, false)
-	nn.SetPosToken(PosToken{PosTag: "NN.*", Regexp: true})
-	vb := NewPatternToken("", false, false, false)
-	vb.SetPosToken(PosToken{PosTag: "VB", Regexp: false})
-	rule := NewAbstractTokenBasedRule("W", "t", "en", []*PatternToken{wait, prp, nn, vb})
-	m := NewPatternRuleMatcher(rule)
-	ats := []*languagetool.AnalyzedTokenReadings{
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strPtr(languagetool.SentenceStartTagName), nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("waiting", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("my", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("patient", nil, nil)),
-		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("finish", nil, nil)),
-	}
-	pos := 0
-	for _, a := range ats {
-		a.SetStartPos(pos)
-		pos += len(a.GetToken()) + 1
-	}
-	ms, err := m.Match(languagetool.NewAnalyzedSentence(ats))
-	require.NoError(t, err)
-	require.NotEmpty(t, ms)
-}
 
 func TestPattern_POSExceptionBlocksMultiReading(t *testing.T) {
 	// Java: pattern postag VB. matches VBZ, but exception postag NN.* on NNS reading
