@@ -8,6 +8,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // PatternTokenMatcher ports org.languagetool.rules.patterns.PatternTokenMatcher
@@ -276,8 +277,21 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	// French soft packs (often ASCII d'/l') match FrenchWordTokenizer (often ’).
 	// Keep the raw surface for regexp matching against REs compiled with either form.
 	rawSurface := surface
+	// Arabic: Java ArabicTagger strips tashkeel before lookup; lemmas often keep
+	// diacritics (هَذَا) while pattern tokens are undiacritized (هذا).
+	if softHasArabic(surface) || softHasArabic(pt.Token) {
+		surface = tools.RemoveTashkeel(surface)
+		rawSurface = tools.RemoveTashkeel(rawSurface)
+	}
 	surface = normalizeApostrophes(surface)
 	want := normalizeApostrophes(pt.Token)
+	if softHasArabic(want) {
+		want = tools.RemoveTashkeel(want)
+	}
+	patTok := pt.Token
+	if softHasArabic(patTok) {
+		patTok = tools.RemoveTashkeel(patTok)
+	}
 	if pt.Regexp {
 		if m.tokenRE != nil {
 			// Try raw and apostrophe-normalized surfaces (pattern may use ’ or ').
@@ -314,9 +328,9 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	}
 	if pt.CaseSensitive {
 		// Exact only — do not EO-fold (would ignore case via ToLower).
-		return rawSurface == pt.Token || surface == want
+		return rawSurface == patTok || surface == want
 	}
-	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, pt.Token) {
+	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, patTok) {
 		return true
 	}
 	// French elision: d'/d’ ↔ de, l’ ↔ le/la, qu’ ↔ que (FrenchWordTokenizer splits).
@@ -324,7 +338,17 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 		return true
 	}
 	// Soft Esperanto: Ambaux/Ambau ↔ ambaŭ after x-system + diacritic fold.
-	return softEsperantoFold(rawSurface) == softEsperantoFold(pt.Token)
+	return softEsperantoFold(rawSurface) == softEsperantoFold(patTok)
+}
+
+// softHasArabic reports if s contains an Arabic-script letter.
+func softHasArabic(s string) bool {
+	for _, r := range s {
+		if unicode.In(r, unicode.Arabic) {
+			return true
+		}
+	}
+	return false
 }
 
 func normalizeApostrophes(s string) string {

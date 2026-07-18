@@ -1,5 +1,7 @@
 package ar
 
+import "strings"
+
 // ArabicTagManager ports org.languagetool.tagging.ar.ArabicTagManager.
 type ArabicTagManager struct {
 	flagPos map[string]int
@@ -270,19 +272,81 @@ func (m *ArabicTagManager) SetProcleticFlags(postag string) string {
 	return postag
 }
 
-// ModifyPosTag applies a list of flag strings to a postag (subset of Java addTag path).
+// ModifyPosTag ports ArabicTagManager.modifyPosTag — applies "TYPE;FLAG" tags
+// (e.g. CONJ;W, JAR;B, PRONOUN;D). Returns "" if any tag is incompatible (Java null).
 func (m *ArabicTagManager) ModifyPosTag(postag string, tags []string) string {
 	if postag == "" {
 		return ""
 	}
-	for _, t := range tags {
-		if t == "" {
-			continue
+	for _, tg := range tags {
+		postag = m.AddTag(postag, tg)
+		if postag == "" {
+			return ""
 		}
-		// Simple flag forms: "CONJ:W", "JAR:B", "PRONOUN:H"
-		if len(t) >= 3 && t[len(t)-2] == ':' {
-			postag = m.SetFlag(postag, t[:len(t)-2], rune(t[len(t)-1]))
+	}
+	return postag
+}
+
+// AddTag ports ArabicTagManager.addTag(postag, flagString) with "TYPE;FLAG".
+func (m *ArabicTagManager) AddTag(postag, flagString string) string {
+	if m == nil || postag == "" {
+		return postag
+	}
+	parts := strings.Split(flagString, ";")
+	flag, flagType := "", ""
+	if len(parts) == 1 {
+		flag = parts[0]
+	} else if len(parts) >= 2 {
+		flagType = parts[0]
+		flag = parts[1]
+	}
+	return m.addTagTyped(postag, flagType, flag)
+}
+
+// addTagTyped ports ArabicTagManager.addTag(postag, flagType, flag).
+func (m *ArabicTagManager) addTagTyped(postag, flagType, flag string) string {
+	switch flag {
+	case "W":
+		return m.SetFlag(postag, "CONJ", 'W')
+	case "K":
+		if !m.IsNoun(postag) {
+			return ""
 		}
+		if !m.IsMajrour(postag) {
+			return ""
+		}
+		return m.SetFlag(postag, "JAR", 'K')
+	case "B":
+		if !m.IsNoun(postag) {
+			return ""
+		}
+		if !m.IsMajrour(postag) {
+			return ""
+		}
+		return m.SetFlag(postag, "JAR", 'B')
+	case "L":
+		if m.IsNoun(postag) {
+			if !m.IsMajrour(postag) {
+				return ""
+			}
+			return m.SetFlag(postag, "JAR", 'L')
+		}
+		// verb: istiqbal
+		return m.SetFlag(postag, "ISTIQBAL", 'L')
+	case "D":
+		if !m.IsUnAttachedNoun(postag) {
+			return ""
+		}
+		return m.SetFlag(postag, "PRONOUN", 'L')
+	case "S":
+		if !m.IsFutureTense(postag) {
+			return ""
+		}
+		return m.SetFlag(postag, "ISTIQBAL", 'S')
+	}
+	// Pronoun letters (including new-style)
+	if flagType == "PRONOUN" && flag != "" && flag != "D" {
+		return m.SetFlag(postag, "PRONOUN", []rune(flag)[0])
 	}
 	return postag
 }

@@ -225,7 +225,12 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		} else if posPath := DiscoverLanguagePOSDict(opts, base); posPath != "" {
 			// Wire official Morfologik POS dicts (FSA5/CFSA2) like Java createDefaultTagger().
 			// Soft closed-class surface lists are not used when real tags are available.
-			_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
+			if base == "ar" {
+				// Java ArabicTagger: tashkeel strip + proclitic/enclitic stemming.
+				_ = RegisterArabicPOSTagger(lt, posPath)
+			} else {
+				_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
+			}
 		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
