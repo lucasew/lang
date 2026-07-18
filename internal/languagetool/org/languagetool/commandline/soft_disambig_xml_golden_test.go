@@ -123,33 +123,18 @@ func TestGolden_SoftXML_ToMakeFilter(t *testing.T) {
 }
 
 func TestGolden_ImmunizeBtwIrlNoSpell(t *testing.T) {
-	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
-		t.Skip("en-soft.xml not found")
+	// Java SpellingCheckRule.init() loads en/hunspell/ignore.txt into wordsToBeIgnored.
+	// Soft path marks those surfaces IgnoreSpelling (same skip as isIgnoredBySpeller).
+	// Only forms present in official ignore.txt — not invented chat slang lists.
+	if DiscoverEnglishIgnoreSpellingList(nil) == "" && DiscoverEnglishSoftDisambiguationXML(nil) == "" {
+		t.Skip("ignore-spelling / soft disambig not found")
 	}
 	for _, text := range []string{
-		"Send that btw.",
-		"We met irl yesterday.",
-		"That was funny lol.",
-		"Omg that works.",
-		"Tbh I agree.",
-		"Idk what happened.",
-		"Nvm about that.",
-		"Smh at this.",
-		"Yolo try it.",
-		"Fomo is real.",
-		"Afaik that is correct.",
-		"Icymi the release shipped.",
-		"Tbf they tried hard.",
-		"Iykyk about that meme.",
-		"Grok ftw today.",
-		"Imho this works.",
-		"Ngl that is funny.",
-		"Istg I saw it.",
-		"Talk later rn.",
-		"Lmao that was good.",
-		"Rofl at the joke.",
-		"Omw to the store.",
-		"Gg well played.",
+		"Send that btw.",       // ignore.txt: btw
+		"We met irl yesterday.", // ignore.txt: IRL (case-folded)
+		"Tbh I agree.",          // ignore.txt: TBH
+		"Iykyk about that meme.", // ignore.txt: IYKYK
+		"Omw to the store.",     // ignore.txt: OMW
 	} {
 		t.Run(text, func(t *testing.T) {
 			var buf bytes.Buffer

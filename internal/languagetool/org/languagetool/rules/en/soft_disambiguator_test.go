@@ -322,11 +322,11 @@ func findRepoRoot(t *testing.T) string {
 
 func TestIgnoreSpellingPaths_MergesUpstreamSpelling(t *testing.T) {
 	root := findRepoRoot(t)
-	up := filepath.Join(root, "testdata", "disambiguation", "en-spelling-upstream.txt")
-	if _, err := os.Stat(up); err != nil {
-		t.Skip("en-spelling-upstream.txt missing; run vendor script")
+	ignore := filepath.Join(root, "testdata", "upstream", "en", "resource", "hunspell", "ignore.txt")
+	if _, err := os.Stat(ignore); err != nil {
+		t.Skip("official en/hunspell/ignore.txt missing; run vendor script")
 	}
-	// primary soft list + auto walk-up upstream
+	// primary soft list + auto walk-up Java ignore.txt + spelling.txt
 	soft := filepath.Join(root, "testdata", "disambiguation", "en-ignore-spelling.txt")
 	paths := ignoreSpellingPaths(soft)
 	require.GreaterOrEqual(t, len(paths), 2)
@@ -342,7 +342,13 @@ func TestIgnoreSpellingPaths_MergesUpstreamSpelling(t *testing.T) {
 	_, okChat := words["ChatGPT"]
 	_, okChatLow := words["chatgpt"]
 	require.True(t, okChat || okChatLow, "soft list should include ChatGPT")
-	// upstream spelling.txt sample
-	_, okBash := words["Bash"]
-	require.True(t, okBash, "upstream spelling should include Bash")
+	// Java SpellingCheckRule.getIgnoreFileName() sample (chat abbreviations)
+	_, okBTW := words["btw"]
+	require.True(t, okBTW, "official ignore.txt should include btw")
+	// upstream spelling.txt sample (when vendored)
+	up := filepath.Join(root, "testdata", "disambiguation", "en-spelling-upstream.txt")
+	if _, err := os.Stat(up); err == nil {
+		_, okBash := words["Bash"]
+		require.True(t, okBash, "upstream spelling should include Bash")
+	}
 }

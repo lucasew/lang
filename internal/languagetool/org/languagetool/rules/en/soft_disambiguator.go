@@ -207,7 +207,9 @@ func softDisambiguationXMLPaths(primary string) []string {
 	return out
 }
 
-// ignoreSpellingPaths returns soft list first (if set), then vendored upstream spelling.txt.
+// ignoreSpellingPaths mirrors Java SpellingCheckRule.init(): soft list (if set), then
+// official hunspell/ignore.txt and spelling.txt (words accepted by the speller).
+// Soft tech list is optional extra; ignore.txt is the primary Java ignore source.
 func ignoreSpellingPaths(primary string) []string {
 	var out []string
 	seen := map[string]struct{}{}
@@ -222,7 +224,8 @@ func ignoreSpellingPaths(primary string) []string {
 		out = append(out, p)
 	}
 	add(primary)
-	// walk-up from cwd for vendored official spelling extensions
+	// walk-up from cwd for vendored official EN hunspell lists
+	// (Java: language.getShortCode() + "/hunspell/ignore.txt" and spelling.txt).
 	wd, err := os.Getwd()
 	if err != nil {
 		return out
@@ -230,6 +233,11 @@ func ignoreSpellingPaths(primary string) []string {
 	dir := wd
 	for {
 		for _, rel := range []string{
+			// SpellingCheckRule.getIgnoreFileName() → en/hunspell/ignore.txt
+			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "ignore.txt"),
+			filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en",
+				"src", "main", "resources", "org", "languagetool", "resource", "en", "hunspell", "ignore.txt"),
+			// SpellingCheckRule.getSpellingFileName() → en/hunspell/spelling.txt
 			filepath.Join("testdata", "disambiguation", "en-spelling-upstream.txt"),
 			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "spelling.txt"),
 		} {
