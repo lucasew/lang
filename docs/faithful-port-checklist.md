@@ -58,7 +58,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.16 | Invent multiword lists / embedded soft multiwords gone | [~] SoftEnglish phrase/token invent packs removed from EN core |
 | 1.17 | `SoftForeignIgnoreRanges` / soft user-dict naming cleaned to Java twins or removed | [ ] server |
 | 1.18 | ZH tokenizer: real HanLP-equivalent or explicit incomplete (no soft POS invent) | [~] per-rune + `x`; needs real twin |
-| 1.19 | Dead soft comments / CLI help (`--level` soft packs) cleaned | [ ] |
+| 1.19 | Dead soft comments / CLI help (`--level` soft packs) cleaned | [~] help text + false-friends resolve use official paths; SoftRuleMeta labels remain |
 | 1.20 | No resurrected soft modules (path law + reviewer) | [ ] ongoing |
 
 **Keep (not invent):** Java-named types such as UK `SimpleReplaceSoftRule`, `TestHackHelper` — verify against Java periodically.

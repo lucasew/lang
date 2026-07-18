@@ -54,17 +54,17 @@ type CommandLineOptions struct {
 	RuleValues                    []string
 	RuleFile                      string
 	FalseFriendsFile              string
-	// IgnoreWords soft user-dictionary surfaces (suppress spelling matches).
-	IgnoreWords                   []string
-	// IgnoreSpellingFile soft path to EN ignore-spelling word list (one form per line).
-	IgnoreSpellingFile            string
-	// DisambiguationFile soft path to EN soft disambiguation XML.
-	DisambiguationFile            string
-	// DataDir soft data root (grammar soft XML, false-friends soft file).
-	DataDir                       string
-	// FailOn is soft severity threshold for lint/sarif exit: error|warning|note (SPEC §2.2 optional).
-	FailOn                        string
-	// Soft product modes for golden dump / compare.
+	// IgnoreWords user-dictionary surfaces (suppress spelling matches).
+	IgnoreWords []string
+	// IgnoreSpellingFile path to ignore-spelling word list (one form per line).
+	IgnoreSpellingFile string
+	// DisambiguationFile override for official disambiguation.xml.
+	DisambiguationFile string
+	// DataDir root for official resources (grammar/style/false-friends when present).
+	DataDir string
+	// FailOn severity threshold for lint/sarif exit: error|warning|note.
+	FailOn string
+	// GoldenMode / CompareMode for golden dump / compare subcommands.
 	GoldenMode        bool
 	CompareMode       bool
 	CompareGoldenPath string

@@ -11,11 +11,11 @@ import (
 const UsageText = `Usage: lang [lint|languages|version|help] [OPTION]... [FILE]
        languagetool [OPTION]... [FILE]
 
-Soft product subcommands (SPEC §2):
+Subcommands:
   lint                     check text with linter columns (same as --lint)
   languages                list languages (same as --list)
   rules                    list registered rule IDs for -l language
-  golden                   dump SPEC findings JSON (goldens)
+  golden                   dump findings JSON (goldens)
   compare GOLDEN.json      compare live findings to a golden file
   doctor                   environment / self-check diagnostics
   version                  print version
@@ -26,9 +26,8 @@ Options:
   -m, --mothertongue CODE  mother tongue for false friends
   -d, --disable RULES      comma-separated disabled rule ids
   -e, --enable RULES       comma-separated enabled rule ids
-                           soft aliases: SOFT_OPTIONAL / SOFT_OPT_ALL enable all SOFT_OPT_* rules
-  --level LEVEL            DEFAULT or PICKY (loads {lang}-picky-soft.xml style packs)
-  --enablecategories CATS  only report matches in these soft/core categories
+  --level LEVEL            DEFAULT or PICKY (Java picky rules; not invent packs)
+  --enablecategories CATS  only report matches in these categories
   --disablecategories CATS suppress matches in these categories (e.g. STYLE)
   -t, --taggeronly         only tag the text
   -a, --apply              apply first suggestions to text, print result
@@ -37,19 +36,18 @@ Options:
   --xml                    XML output
   --sarif                  SARIF 2.1 output
   --lint                   linter columns (location severity type rule message suggestion)
-  --format FMT             output format: text|lint|json|sarif|xml (text≡lint per SPEC)
+  --format FMT             output format: text|lint|json|sarif|xml
   --xmlfilter              remove XML/HTML tags from input before check
   --rulefile FILE          additional grammar/rule file
   --falsefriends FILE      external false-friends XML
   --ignore-words LIST      CSV surfaces to suppress spelling matches
-  --ignore-spelling-file F soft EN ignore-spelling word list (one form/line)
-  --disambiguation-file F  soft EN disambiguation XML
-  --ruleValues LIST        soft RULE_ID:value pairs (e.g. TOO_LONG_SENTENCE:10)
+  --ignore-spelling-file F ignore-spelling word list (one form/line)
+  --disambiguation-file F  official disambiguation.xml override
+  --ruleValues LIST        RULE_ID:value pairs (e.g. TOO_LONG_SENTENCE:10)
   --autoDetect, -adl       detect language from text
   --list                   list languages
-  --list-rules             list registered rule IDs for -l language
-                           (with --level picky: includes picky soft packs; column: on|off)
-  --data-dir DIR           soft data root (grammar + false-friends soft files)
+  --list-rules             list registered rule IDs for -l language (on|off column)
+  --data-dir DIR           data root (official grammar/style/false-friends when present)
   --fail-on LEVEL          lint/sarif fail threshold: error|warning|note (default error)
   -r, --recursive          recurse into directories when linting paths
   --doctor                 environment / self-check diagnostics
@@ -142,7 +140,7 @@ func RunWithIO(args []string, hooks RunHooks, stdout, stderr io.Writer) int {
 		if opts.Language == "" {
 			opts.Language = "en"
 		}
-		// soft: honor --level picky so picky soft packs appear in list-rules
+		// Honor --level picky so Java picky rules are registered before listing.
 		if err := CoreListRulesOpts(stdout, opts); err != nil {
 			_, _ = fmt.Fprintln(stderr, err.Error())
 			return 1

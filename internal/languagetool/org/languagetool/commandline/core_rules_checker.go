@@ -264,16 +264,36 @@ func resolveGrammarDir(opts *CommandLineOptions) string {
 	return ""
 }
 
-// resolveFalseFriendsFile prefers LANG_FALSEFRIENDS_FILE, then --data-dir/false-friends-soft.xml.
+// resolveFalseFriendsFile prefers LANG_FALSEFRIENDS_FILE, then data-dir official names.
+// Java: /org/languagetool/rules/false-friends.xml — not soft invent files.
 func resolveFalseFriendsFile(opts *CommandLineOptions) string {
 	if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
 		return p
 	}
+	try := func(dir string) string {
+		if dir == "" {
+			return ""
+		}
+		for _, name := range []string{
+			"false-friends-nodtd.xml",
+			"false-friends.xml",
+		} {
+			p := filepath.Join(dir, name)
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+		}
+		return ""
+	}
 	if opts != nil && opts.GetDataDir() != "" {
-		return filepath.Join(opts.GetDataDir(), "false-friends-soft.xml")
+		if p := try(opts.GetDataDir()); p != "" {
+			return p
+		}
 	}
 	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		return filepath.Join(dir, "false-friends-soft.xml")
+		if p := try(dir); p != "" {
+			return p
+		}
 	}
 	return ""
 }
@@ -401,7 +421,7 @@ func CoreApplySuggestionsHook(w io.Writer, text string, opts *CommandLineOptions
 		return 0, err
 	}
 	ms := lt.Check(text)
-	// Prefer higher-priority / non-overlapping spans so soft+speller on the same
+	// Prefer higher-priority / non-overlapping spans so grammar+speller on the same
 	// token do not undo each other (e.g. EN_SOFT_ALOT "a lot" vs MORFOLOGIK "lot").
 	ms = languagetool.CleanOverlappingLocalMatches(ms)
 	// apply non-overlapping suggestions in document order
@@ -476,14 +496,12 @@ func CoreListLanguages(w io.Writer) error {
 	return nil
 }
 
-// CoreListRules writes registered rule IDs for lang (one per line), with soft category.
-// Soft rules (ID contains _SOFT_) append a fifth column "soft" for easy filtering.
-// Soft rules are listed first (sorted), then core (sorted). Footer counts soft by issue type.
+// CoreListRules writes registered rule IDs for lang (tab columns: id cat issue url kind state).
 func CoreListRules(w io.Writer, lang string) error {
 	return CoreListRulesOpts(w, &CommandLineOptions{Language: lang})
 }
 
-// CoreListRulesOpts is like CoreListRules but honors opts (e.g. Level=PICKY for picky soft packs).
+// CoreListRulesOpts is like CoreListRules but honors opts (e.g. Level=PICKY).
 func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	if w == nil {
 		return nil
@@ -495,7 +513,6 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	if lang == "" {
 		lang = "en"
 	}
-	// ensure Language is set for configureCoreLT soft discovery
 	if opts.Language == "" {
 		opts.Language = lang
 	}
@@ -508,23 +525,9 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	for _, id := range lt.GetAllActiveRuleIDs() {
 		active[id] = struct{}{}
 	}
-	var softIDs, coreIDs []string
+	sort.Strings(ids)
+	offN := 0
 	for _, id := range ids {
-		if strings.Contains(id, "_SOFT_") {
-			softIDs = append(softIDs, id)
-		} else {
-			coreIDs = append(coreIDs, id)
-		}
-	}
-	sort.Strings(softIDs)
-	sort.Strings(coreIDs)
-	ordered := append(softIDs, coreIDs...)
-	softN := len(softIDs)
-	softByIssue := map[string]int{}
-	pickySoftN := 0
-	optSoftN := 0
-	softOffN := 0
-	for _, id := range ordered {
 		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
 		if cat == "" {
 			cat = "MISC"
@@ -533,47 +536,20 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 			issue = "uncategorized"
 		}
 		url := languagetool.SoftRuleURL(id, lang)
+		// kind is always "core" once invent soft packs are gone; keep column for tooling.
 		kind := "core"
-		if strings.Contains(id, "_SOFT_") {
-			kind = "soft"
-			softByIssue[issue]++
-			if strings.Contains(id, "SOFT_PICKY") {
-				pickySoftN++
-			}
-			if strings.Contains(id, "SOFT_OPT_") {
-				optSoftN++
-			}
-		}
-		// soft: sixth column on|off (default="off" soft rules start off)
 		state := "on"
 		if _, ok := active[id]; !ok {
 			state = "off"
-			if kind == "soft" {
-				softOffN++
-			}
+			offN++
 		}
 		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", id, cat, issue, url, kind, state); err != nil {
 			return err
 		}
 	}
-	// stable soft breakdown for tooling / doctor-adjacent use
 	parts := []string{
 		fmt.Sprintf("total=%d", len(ids)),
-		fmt.Sprintf("soft=%d", softN),
-	}
-	for _, k := range []string{"grammar", "style", "misspelling", "typographical", "whitespace", "uncategorized"} {
-		if n := softByIssue[k]; n > 0 {
-			parts = append(parts, fmt.Sprintf("soft_%s=%d", k, n))
-		}
-	}
-	if pickySoftN > 0 {
-		parts = append(parts, fmt.Sprintf("soft_picky=%d", pickySoftN))
-	}
-	if optSoftN > 0 {
-		parts = append(parts, fmt.Sprintf("soft_opt=%d", optSoftN))
-	}
-	if softOffN > 0 {
-		parts = append(parts, fmt.Sprintf("soft_off=%d", softOffN))
+		fmt.Sprintf("off=%d", offN),
 	}
 	if strings.EqualFold(opts.Level, "PICKY") {
 		parts = append(parts, "level=picky")
