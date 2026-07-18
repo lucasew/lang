@@ -314,6 +314,10 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 	if strings.EqualFold(surface, want) || strings.EqualFold(rawSurface, pt.Token) {
 		return true
 	}
+	// French elision: d'/d’ ↔ de, l’ ↔ le/la, qu’ ↔ que (FrenchWordTokenizer splits).
+	if softFrenchElisionMatch(surface, want) || softFrenchElisionMatch(rawSurface, want) {
+		return true
+	}
 	// Soft Esperanto: Ambaux/Ambau ↔ ambaŭ after x-system + diacritic fold.
 	return softEsperantoFold(rawSurface) == softEsperantoFold(pt.Token)
 }
@@ -836,6 +840,38 @@ func softFrenchErInflected(surface, base string) bool {
 	return false
 }
 
+// softFrenchElisionMatch is true when surface is a French elided form of base
+// (or equal), as produced by FrenchWordTokenizer (d’électricité → d’ + électricité).
+func softFrenchElisionMatch(surface, base string) bool {
+	s := strings.ToLower(normalizeApostrophes(surface))
+	b := strings.ToLower(normalizeApostrophes(base))
+	if s == b {
+		return true
+	}
+	switch b {
+	case "de":
+		return s == "d'"
+	case "le", "la":
+		return s == "l'"
+	case "je":
+		return s == "j'"
+	case "me":
+		return s == "m'"
+	case "te":
+		return s == "t'"
+	case "se":
+		return s == "s'"
+	case "ne":
+		return s == "n'"
+	case "que":
+		return s == "qu'"
+	case "ce":
+		return s == "c'" || s == "ç'"
+	default:
+		return false
+	}
+}
+
 // softFrenchErLemmaCandidates yields likely -er infinitives for a surface form
 // (désactivé → désactiver) so RE patterns like .*er match without a tagger.
 func softFrenchErLemmaCandidates(surface string) []string {
@@ -935,6 +971,9 @@ var softIrregularLemma = map[string][]string{
 	// "a" = 3sg present (y-a-t-il); keep with other avoir forms
 	"a": {"avoir"}, "ai": {"avoir"}, "as": {"avoir"}, "avons": {"avoir"}, "avez": {"avoir"}, "ont": {"avoir"},
 	"avais": {"avoir"}, "avait": {"avoir"}, "avaient": {"avoir"}, "eu": {"avoir"}, "ayant": {"avoir"},
+	// venir / venir forms (CONFUSION_OU viennent)
+	"viens": {"venir"}, "vient": {"venir"}, "venons": {"venir"}, "venez": {"venir"}, "viennent": {"venir"},
+	"venait": {"venir"}, "venaient": {"venir"}, "venu": {"venir"}, "venue": {"venir"}, "venus": {"venir"}, "venues": {"venir"},
 	"allons": {"aller"}, "allez": {"aller"}, "vont": {"aller"},
 	"allait": {"aller"}, "allaient": {"aller"}, "allé": {"aller"}, "allée": {"aller"}, "allés": {"aller"},
 	"fais": {"faire"}, "fait": {"faire"}, "faisons": {"faire"}, "faites": {"faire"}, "font": {"faire"},
@@ -1018,6 +1057,10 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	if !caseSensitive {
 		surface = strings.ToLower(surface)
 		base = strings.ToLower(base)
+	}
+	// French elision before other checks (d’ ↔ de with inflected="yes").
+	if softFrenchElisionMatch(surface, base) {
+		return true
 	}
 	// EO x-system / diacritic fold before prefix checks.
 	if softEsperantoFold(surface) == softEsperantoFold(base) {

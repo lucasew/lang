@@ -37,6 +37,12 @@ var (
 		"strauss-kahn": true, "petit-déjeunes": true,
 		// Keep hyphenated surface so rules like A_PLEIN_TEMPS match "plein-temps".
 		"plein-temps": true,
+		// Residual soft-pack compounds (AMANITE, AVANT-MIDI, INTER-CLUB, …)
+		"tue-mouches": true, "tue-mouche": true,
+		"avant-midi": true, "avants-midis": true, "avant-midis": true, "avants-midi": true,
+		"inter-club": true, "inter-clubs": true,
+		"vice-président": true, "vice-présidente": true, "vice-présidents": true, "vice-présidentes": true,
+		"vice-president": true, "vice-presidente": true,
 	}
 
 	frPatterns = []*regexp.Regexp{
