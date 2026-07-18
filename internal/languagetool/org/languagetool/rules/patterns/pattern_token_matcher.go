@@ -863,35 +863,55 @@ func softPostagPartIsOpen(p string) bool {
 			}
 		}
 	}
+	// French FreeLing space tagset: V / N / J open; A is adverb (closed); R is pronoun (closed).
+	// Patterns: (V) (.*), V.*, V ppa.*, N.*, J.*
+	if softFrenchPartIsAdjective(p) {
+		return true
+	}
+	if strings.HasPrefix(p, "V)") || strings.HasPrefix(p, "V ") || strings.Contains(p, "V ") ||
+		(strings.HasPrefix(p, "V") && (strings.Contains(p, "PPA") || strings.Contains(p, "IND") ||
+			strings.Contains(p, "SUB") || strings.Contains(p, "CON") || strings.Contains(p, "IMP") ||
+			strings.Contains(p, "INF") || strings.Contains(p, "PPR"))) {
+		return true
+	}
 	// FreeLing Romance open classes (PT/ES/CA/GL tagset_PT): N*, A* (adj), R* (adv), V*
 	// before English Penn — FreeLing VMP00 / NCMS000 / AQ0FS0 / RG, not Penn VB/NN alone.
+	// French A alone is adverb (closed); Iberian AQ/AO remain open adjectives.
 	if len(p) > 0 {
 		switch p[0] {
 		case 'N':
-			// NC / NP / N.+ / N[CP] — not German "NEG" etc. without FreeLing shape
+			// NC / NP / N.+ / N[CP] / French N.* — not German "NEG" etc. without FreeLing shape
 			if strings.HasPrefix(p, "NC") || strings.HasPrefix(p, "NP") ||
-				strings.HasPrefix(p, "N.") || strings.HasPrefix(p, "N[") || p == "N" {
+				strings.HasPrefix(p, "N.") || strings.HasPrefix(p, "N[") || p == "N" ||
+				strings.HasPrefix(p, "N ") || strings.HasPrefix(p, "N*") || strings.HasPrefix(p, "N+") {
 				return true
 			}
 		case 'A':
-			// AQ / AO / AP / A.+ — adjectives (not ART)
+			// AQ / AO / AP / A.+ — Iberian adjectives only (not bare French A adverb)
 			if strings.HasPrefix(p, "AQ") || strings.HasPrefix(p, "AO") ||
-				strings.HasPrefix(p, "AP") || strings.HasPrefix(p, "A.") ||
-				strings.HasPrefix(p, "A[") || p == "A" {
+				strings.HasPrefix(p, "AP") || strings.HasPrefix(p, "A[") {
+				return true
+			}
+			// A.+ / A.* as Iberian adjective patterns only when not French space form.
+			// French uses bare "A" for adverb; Iberian uses A.+ rarely without Q.
+			if (strings.HasPrefix(p, "A.+") || strings.HasPrefix(p, "A.*")) && !strings.Contains(p, " ") {
 				return true
 			}
 		case 'R':
-			// RG / RN / RM / R. — FreeLing adverbs (not English RB already below)
+			// RG / RN / RM / R. / R.+ — Iberian FreeLing adverbs (PT CONSISTE_DE_BR R.)
+			// French R.* m p pronouns are closed via softFrenchPartIsPronoun.
 			if strings.HasPrefix(p, "RG") || strings.HasPrefix(p, "RN") ||
-				strings.HasPrefix(p, "RM") || strings.HasPrefix(p, "R.") ||
-				strings.HasPrefix(p, "R[") || p == "R" {
+				strings.HasPrefix(p, "RM") || p == "R." || p == "R.+" || p == "R.*" ||
+				p == "R.?" || p == "R" {
 				return true
 			}
 		case 'V':
-			// VM* / VA* / VS* / VMP00 / V.+ — FreeLing verbs/participles
+			// VM* / VA* / VS* / VMP00 / V.+ / French V.* — verbs/participles
 			if strings.HasPrefix(p, "VM") || strings.HasPrefix(p, "VA") ||
 				strings.HasPrefix(p, "VS") || strings.HasPrefix(p, "V.") ||
-				strings.HasPrefix(p, "V[") || p == "V" {
+				strings.HasPrefix(p, "V[") || p == "V" ||
+				strings.HasPrefix(p, "V*") || strings.HasPrefix(p, "V+") ||
+				strings.HasPrefix(p, "V ") {
 				return true
 			}
 		}
@@ -910,11 +930,16 @@ func softPostagPartIsClosed(p string) bool {
 		return true
 	}
 	// FreeLing Romance determiners (D.+, DA0MS0, DI0FS0, DP…, …) — PT/ES/CA/GL soft packs.
+	// French FreeLing also uses D.* / D.* e p (space tagset).
 	if softFreeLingPartIsDeterminer(p) {
 		return true
 	}
 	// FreeLing pronouns (PD / PI / PP / PR / PX / PT) and adpositions/conjunctions.
 	if softFreeLingPartIsPronoun(p) || softFreeLingPartIsAdposition(p) || softFreeLingPartIsConjunction(p) {
+		return true
+	}
+	// French FreeLing R* pronouns and A adverbs (closed-class soft surface lists).
+	if softFrenchPartIsPronoun(p) || softFrenchPartIsAdverb(p) {
 		return true
 	}
 	// German STTS closed: ART, PRP (preposition!), PRO, KON, APPR, APPO, APZR, …
@@ -941,8 +966,18 @@ func softPostagPartIsClosed(p string) bool {
 	return false
 }
 
+// softNormApos maps typographic apostrophes to ASCII ' (Java FR soft goldens use ’).
+func softNormApos(s string) string {
+	s = strings.ReplaceAll(s, "\u2019", "'") // ’
+	s = strings.ReplaceAll(s, "\u2018", "'") // ‘
+	s = strings.ReplaceAll(s, "\u02BC", "'")
+	s = strings.ReplaceAll(s, "\u00B4", "'") // ´
+	s = strings.ReplaceAll(s, "\u2032", "'") // ′
+	return s
+}
+
 func softClosedClassSurfaceMatch(tag, surface string) bool {
-	s := strings.ToLower(strings.TrimSpace(surface))
+	s := softNormApos(strings.ToLower(strings.TrimSpace(surface)))
 	if s == "" {
 		return false
 	}
@@ -978,8 +1013,15 @@ func softClosedPartSurface(part, s string) bool {
 	if softFreeLingPartIsPronoun(part) {
 		return softFreeLingPronSurface(part, s)
 	}
+	// French FreeLing R* (pronouns) / A (adverb) — before Iberian R-as-adverb open path.
+	if softFrenchPartIsPronoun(part) {
+		return softIsFrenchPronounSurface(s)
+	}
+	if softFrenchPartIsAdverb(part) {
+		return softIsFrenchAdverbSurface(s)
+	}
 	if softFreeLingPartIsAdposition(part) {
-		return softIsRomancePrepSurface(s)
+		return softIsRomancePrepSurface(s) || softIsFrenchPrepSurface(s)
 	}
 	if softFreeLingPartIsConjunction(part) {
 		return softIsCC(s)
@@ -1164,7 +1206,7 @@ func softFreeLingClosedSurfaceMatch(pattern, surface string) bool {
 	if u == "" || surface == "" {
 		return false
 	}
-	s := strings.ToLower(strings.TrimSpace(surface))
+	s := softNormApos(strings.ToLower(strings.TrimSpace(surface)))
 	// Prefer type-specific lists when the pattern is a single FreeLing family.
 	for _, part := range strings.Split(u, "|") {
 		p := softNormalizeFreeLingPostagPart(part)
@@ -1242,20 +1284,79 @@ func softFreeLingPartIsPronoun(p string) bool {
 	if strings.HasPrefix(p, "PRP") || strings.HasPrefix(p, "PDT") || strings.HasPrefix(p, "POS") {
 		return false
 	}
-	// FreeLing P + type: PD PI PP PR PX PT PE PN (tagset_PT pronoun)
+	// Not German STTS PRO:.+ (use softIsPronounTag / softIsGermanArticle).
+	if strings.HasPrefix(p, "PRO") {
+		return false
+	}
+	// French FreeLing uses P.* for prepositions (space tagset), not pronouns.
+	// Iberian FreeLing uses multi-char PD/PI/PP/PR/PX/… — not bare P.*/P.+.
+	if p == "P" || strings.HasPrefix(p, "P.") || strings.HasPrefix(p, "P*") ||
+		strings.HasPrefix(p, "P+") || strings.HasPrefix(p, "P ") {
+		return false
+	}
+	// FreeLing P + type: PD PI PP PR PX PT PE PN (tagset_PT pronoun).
+	// Bare P.*/P.+ already excluded above (French prepositions).
 	if len(p) >= 2 && p[0] == 'P' {
 		switch p[1] {
-		case 'D', 'I', 'P', 'R', 'X', 'T', 'E', 'N', '.', '[', '+', '*':
+		case 'D', 'I', 'P', 'R', 'X', 'T', 'E', 'N', '[':
 			return true
 		}
 	}
-	return p == "P"
+	return false
 }
 
 func softFreeLingPartIsAdposition(p string) bool {
-	// FreeLing SPS00 / SP.* (prepositions); not English.
-	return strings.HasPrefix(p, "SPS") || strings.HasPrefix(p, "SP.") ||
-		strings.HasPrefix(p, "SP[") || p == "SP" || p == "SPS00"
+	// FreeLing SPS00 / SP.* (Iberian) and French FreeLing P / P.* (prepositions).
+	if strings.HasPrefix(p, "SPS") || strings.HasPrefix(p, "SP.") ||
+		strings.HasPrefix(p, "SP[") || p == "SP" || p == "SPS00" {
+		return true
+	}
+	// French: P, P.*, P e, P.* … (not PD/PP Iberian pronouns)
+	if p == "P" || strings.HasPrefix(p, "P.") || strings.HasPrefix(p, "P*") ||
+		strings.HasPrefix(p, "P+") || strings.HasPrefix(p, "P ") {
+		return true
+	}
+	return false
+}
+
+// softFrenchPartIsPronoun: French FreeLing R* pronouns (R.* m p, R pers obj.*).
+// Iberian FreeLing uses R. / R.+ / RG for adverbs (open) — must not close those.
+func softFrenchPartIsPronoun(p string) bool {
+	if p == "" {
+		return false
+	}
+	// Iberian FreeLing R = adverb (RG/RN/RM and bare R./R.+/R.*)
+	if strings.HasPrefix(p, "RG") || strings.HasPrefix(p, "RN") || strings.HasPrefix(p, "RM") {
+		return false
+	}
+	if p == "R" || p == "R." || p == "R.+" || p == "R.*" || p == "R.?" || p == "R[" {
+		return false
+	}
+	// French space/feature patterns: "R.* M P", "R PERS OBJ.*", "R.* F S", …
+	u := strings.ToUpper(p)
+	if strings.HasPrefix(u, "R.") || strings.HasPrefix(u, "R ") || strings.HasPrefix(u, "R*") ||
+		strings.HasPrefix(u, "R+") || strings.HasPrefix(u, "R[") {
+		return strings.Contains(u, " ") || strings.Contains(u, "PERS") ||
+			strings.Contains(u, " OBJ") || strings.Contains(u, " SUJ") ||
+			strings.Contains(u, " M ") || strings.Contains(u, " F ") ||
+			strings.Contains(u, " S") || strings.Contains(u, " P")
+	}
+	return false
+}
+
+// softFrenchPartIsAdjective: French FreeLing J* (adjectives; A is adverb in FR).
+func softFrenchPartIsAdjective(p string) bool {
+	return p == "J" || strings.HasPrefix(p, "J.") || strings.HasPrefix(p, "J ") ||
+		strings.HasPrefix(p, "J*") || strings.HasPrefix(p, "J+") || strings.HasPrefix(p, "J[")
+}
+
+// softFrenchPartIsAdverb: French FreeLing A / A.* (not Iberian AQ adjectives).
+func softFrenchPartIsAdverb(p string) bool {
+	if strings.HasPrefix(p, "AQ") || strings.HasPrefix(p, "AO") || strings.HasPrefix(p, "AP") {
+		return false
+	}
+	return p == "A" || strings.HasPrefix(p, "A.") || strings.HasPrefix(p, "A ") ||
+		strings.HasPrefix(p, "A*") || strings.HasPrefix(p, "A+")
 }
 
 func softFreeLingPartIsConjunction(p string) bool {
@@ -1370,10 +1471,12 @@ func softIsRomanceDeterminerSurface(s string) bool {
 }
 
 func softIsRomanceArticleSurface(s string) bool {
-	switch strings.ToLower(strings.TrimSpace(s)) {
+	switch softNormApos(strings.ToLower(strings.TrimSpace(s))) {
 	case "o", "a", "os", "as", "um", "uma", "uns", "umas",
 		"el", "la", "los", "las", "un", "una", "unos", "unas",
 		"lo", "les", "els",
+		// French FreeLing D* (le/la/les/un/une/des/du/au/aux) — Java french.dict
+		"le", "une", "des", "du", "au", "aux", "ce", "cet", "cette", "ces",
 		// Catalan tokenizer splits contractions: al→a+l, als→a+ls, del→de+l…
 		"l", "ls", "n", "m", "t", "s",
 		"na", "nas", "ao", "à", "aos", "às",
@@ -1381,8 +1484,8 @@ func softIsRomanceArticleSurface(s string) bool {
 		"do", "da", "dos", "das", "no", "nos",
 		"pelo", "pela", "pelos", "pelas",
 		"dum", "duma", "duns", "dumas", "num", "numa", "nuns", "numas",
-		// Catalan elided
-		"l'", "d'", "n'", "m'", "t'", "s'":
+		// Catalan elided / French elided
+		"l'", "d'", "n'", "m'", "t'", "s'", "c'", "j'", "qu'":
 		return true
 	default:
 		return false
@@ -1428,6 +1531,9 @@ func softIsRomancePossessiveSurface(s string) bool {
 		"mi", "mis", "tu", "tus", "su", "sus",
 		"nuestro", "nuestra", "nuestros", "nuestras",
 		"vuestro", "vuestra", "vuestros", "vuestras",
+		// French possessives (FreeLing D* / Java french.dict mon/ton/son…)
+		"mon", "ma", "mes", "ton", "ta", "tes", "son", "sa", "ses",
+		"notre", "nos", "votre", "vos", "leur", "leurs",
 		// Catalan possessives (central + valencian); FreeLing PX.* / DP.*
 		"meva", "meves", "meua", "meues",
 		"teva", "teves", "teua", "teues",
@@ -1437,6 +1543,50 @@ func softIsRomancePossessiveSurface(s string) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+// softIsFrenchPronounSurface: French FreeLing R* (il/ils/elle/ce/je/…).
+func softIsFrenchPronounSurface(s string) bool {
+	switch softNormApos(strings.ToLower(strings.TrimSpace(s))) {
+	case "je", "j'", "tu", "il", "elle", "on", "nous", "vous", "ils", "elles",
+		"me", "m'", "te", "t'", "se", "s'", "le", "la", "l'", "les", "lui", "leur", "leurs",
+		"y", "en", "moi", "toi", "soi", "eux",
+		"ce", "c'", "ceci", "cela", "ça", "celui", "celle", "ceux", "celles",
+		"qui", "que", "qu'", "quoi", "dont", "où",
+		"lequel", "laquelle", "lesquels", "lesquelles",
+		"aucun", "aucune", "personne", "rien", "quelqu'un", "quelque", "chacun", "chacune",
+		"tout", "tous", "toute", "toutes":
+		return true
+	default:
+		return softIsPronoun(s)
+	}
+}
+
+// softIsFrenchAdverbSurface: common French adverbs matching FreeLing A.
+func softIsFrenchAdverbSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "tout", "tous", "très", "trop", "plus", "moins", "bien", "mal", "mieux",
+		"peu", "assez", "beaucoup", "encore", "déjà", "toujours", "jamais", "souvent",
+		"ici", "là", "ainsi", "aussi", "si", "oui", "non", "ne", "pas",
+		"même", "seulement", "vraiment", "peut-être", "aujourd'hui", "demain", "hier":
+		return true
+	default:
+		// short letter adverbs: soft-accept open-looking short words for bare A
+		return softLooksLikeWord(s) && len([]rune(s)) <= 12
+	}
+}
+
+// softIsFrenchPrepSurface: French FreeLing P* (de/d'/à/…).
+func softIsFrenchPrepSurface(s string) bool {
+	switch softNormApos(strings.ToLower(strings.TrimSpace(s))) {
+	case "de", "d'", "à", "a", "au", "aux", "en", "dans", "sur", "sous", "avec", "sans",
+		"pour", "par", "chez", "vers", "entre", "parmi", "contre", "selon", "pendant",
+		"depuis", "jusque", "jusqu'", "malgré", "sauf", "excepté", "durant", "après",
+		"avant", "devant", "derrière", "près", "loin", "hors", "outre", "via":
+		return true
+	default:
+		return softIsPreposition(s)
 	}
 }
 
