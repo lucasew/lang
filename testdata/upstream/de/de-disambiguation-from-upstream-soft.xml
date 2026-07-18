@@ -3,7 +3,7 @@
 <rules lang="de">
   <rule id="UNKNOWN_BINDESTRICH" name="porto- und spesenfrei">
     <pattern>
-      <token regexp="yes" postag="UNKNOWN">(porto)-</token>
+      <token regexp="yes" postag="UNKNOWN" marker="yes">(porto)-</token>
       <token regexp="yes">und|oder|aber|sowie</token>
       <token regexp="yes" postag="ADJ.*" postag_regexp="yes">.+(frei|los|arm)</token>
     </pattern>
@@ -11,13 +11,13 @@
   </rule>
   <rule id="ZWEIPFÜNDER" name="2-Pfünder">
     <pattern>
-      <token regexp="yes">[1-9]*-Pfünder</token>
+      <token regexp="yes" marker="yes">[1-9]*-Pfünder</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KREUCHT_UND_FLEUCHT" name="kreucht und fleucht">
     <pattern>
-      <token>kreucht</token>
+      <token marker="yes">kreucht</token>
       <token>und</token>
       <token>fleucht</token>
     </pattern>
@@ -25,7 +25,7 @@
   </rule>
   <rule id="ENGLISCHE_WOERTER" name="englische Wörter">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">Bingewatching|Breakeven.*|Blow-up|Cancel-Culture|Carving-Ski|Chill-out-Area|Chill-out|Corned-Beef-Büchse|Conférencier|De-Luxe-Ausstattung|Egoshooter|Fun-Fact|Glam-Rock|Cybergrooming|Jam-Session|Low-[fF]at-Diät|Low-[Cc]arb-Rezept|Health-?food|Hacienda|Learning-by-Doing-Methode|Lowbudget-Film</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Bingewatching|Breakeven.*|Blow-up|Cancel-Culture|Carving-Ski|Chill-out-Area|Chill-out|Corned-Beef-Büchse|Conférencier|De-Luxe-Ausstattung|Egoshooter|Fun-Fact|Glam-Rock|Cybergrooming|Jam-Session|Low-[fF]at-Diät|Low-[Cc]arb-Rezept|Health-?food|Hacienda|Learning-by-Doing-Methode|Lowbudget-Film</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -41,9 +41,819 @@
     <pattern>
       <token>D</token>
       <token>'</token>
-      <token>Hondt-Verfahren</token>
+      <token marker="yes">Hondt-Verfahren</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="HAFT_KEIN_SUB" name="'Ekelhaft' kein Substantiv">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">(Gönner|Ekel|Schmerz|Lach|Fabel|Rätsel|Herz|Leib|Ehren|Engel|Ernst|Gott)haft</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="PUNKTEN_KEIN_SUB" name="'Aussichtspunkten' kein Verb">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">(Aussichts|Eck|Tau|Lade|Blick|Plus|Zeit|Ziel|Basis|Stich|Stütz|Treff|Knack|Wende|Doppel|Mittel|Strich|Anhats|Ausgangs|Elfmeter|Schmelz|Gesichts|Prozent|Anhalts|Berührungs|Tagesordnungs|Marinestütz|Scheitel|Tatzeit|Dezimal)punkten</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+INF"/>
+  </rule>
+  <rule id="LANGE_ZEIT_ADV" name="lange Zeit">
+    <pattern>
+      <token regexp="yes">lange|längere</token>
+      <token>Zeit</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADV:TMP"/>
+      <wd pos="ADV:TMP"/>
+    </disambig>
+  </rule>
+  <rule id="LETZTE_WOCHE_ADV" name="letzte Woche">
+    <pattern>
+      <token regexp="yes">(vor(vor)?)?letzte|vorige|(über(über)?)?nächste</token>
+      <token>Woche</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADV:TMP"/>
+      <wd pos="ADV:TMP"/>
+    </disambig>
+  </rule>
+  <rule id="NAECHSTES_JAHR_ADV" name="nächstes Jahr">
+    <pattern>
+      <token regexp="yes">(vor(vor)?)?letztes|voriges|(über(über)?)?nächstes</token>
+      <token>Jahr</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADV:TMP"/>
+      <wd pos="ADV:TMP"/>
+    </disambig>
+  </rule>
+  <rule id="EIN_BISSCHEN_ADV" name="ein bisschen → ADV">
+    <pattern>
+      <token regexp="yes">k?ein</token>
+      <token>bisschen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADV:MOD"/>
+      <wd pos="ADV:MOD"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_1" name="-jähriges UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iges|\d+-faches</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_2" name="-jähriges UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iges|\d+-faches</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_3" name="-jähriges UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iges|\d+-faches</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_4" name="-jähriges UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iges|\d+-faches</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_6" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_7" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_8" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_9" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_10" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_11" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_12" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_13" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_14" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_15" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_16" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_17" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_18" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_19" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_20" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_21" name="-jährige UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ige|\d+-fache</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_22" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_23" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_24" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_25" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_26" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_27" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_28" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_29" name="-jähriger UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)iger|\d+-facher</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:SIN:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_30" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_31" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_32" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_33" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_34" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_35" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:PLU:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_36" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_37" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_38" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:AKK:SIN:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_39" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_40" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_41" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:FEM:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_42" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_43" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_44" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_45" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_46" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_47" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_48" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_49" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_50" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_51" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_52" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_53" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:SIN:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_54" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_55" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_56" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_57" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_58" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_59" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:PLU:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_60" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_61" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_62" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_63" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_64" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:MAS:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_65" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_66" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_67" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:GEN:SIN:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_68" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:FEM:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_69" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:FEM:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_70" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:MAS:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_71" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:MAS:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_72" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJECTIVE_73" name="-jährigen UNKNOWN -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">(?-i)(\d+-|(ein|zw(ei|an)|dreiß?|vier|fünf|s(echs?|ieb(en)?)|acht|neun|zehn|elf|zwölf)(zehn|zig)?)(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)igen|\d+-fachen</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:NOM:PLU:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="UNKNOWN_PKT" name=".,;:…!? UNKNOWN -&gt; PKT">
+    <pattern>
+      <token regexp="yes">[\.,;:…!\?]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="PKT"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_NOUN_1" name="60ern -&gt; SUB">
+    <pattern>
+      <token regexp="yes">\d{2,4}ern</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="SUB:AKK:PLU:FEM"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_NOUN_2" name="60ern -&gt; SUB">
+    <pattern>
+      <token regexp="yes">\d{2,4}ern</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="SUB:DAT:PLU:FEM"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_NOUN_3" name="60er -&gt; SUB">
+    <pattern>
+      <token regexp="yes">\d{2,4}er</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="SUB:NOM:PLU:FEM"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_NOUN_4" name="60er -&gt; SUB">
+    <pattern>
+      <token regexp="yes">\d{2,4}er</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="SUB:GEN:PLU:FEM"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJ_1" name="60er -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">\d{2,4}er</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:NEU:GRU:DEF"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJ_2" name="60er -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">\d{2,4}er</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:NEU:GRU:IND"/>
+    </disambig>
+  </rule>
+  <rule id="NUMBER_COMPOUND_ADJ_3" name="60er -&gt; ADJ">
+    <pattern>
+      <token regexp="yes">\d{2,4}er</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADJ:DAT:PLU:NEU:GRU:SOL"/>
+    </disambig>
+  </rule>
+  <rule id="LEBENSWERTEN" name="lebenswerten (VER) -&gt; lebenswerten ()">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[a-zäöü]+enswerten?</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="SENT_START_DER" name="'Der' am Satzanfang (kein Genitiv Singular)">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">Der</token>
+    </pattern>
+    <disambig action="remove" postag="ART:DEF:GEN:SIN:FEM"/>
+  </rule>
+  <rule id="ICH_SENT_START" name="Ich am Satzanfang">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Ich|Wir</token>
+      <token case_sensitive="yes" postag="VER:1:.+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.*:NEU"/>
+  </rule>
+  <rule id="WORKAROUND_GH_635" name="WORKAROUND_GH_635">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">-</token>
+    </pattern>
+    <disambig action="remove" postag=".+"/>
+  </rule>
+  <rule id="FIDEL" name="FIDEL">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Fidel</token>
+      <token regexp="yes" case_sensitive="yes">Castros?</token>
+    </pattern>
+    <disambig action="remove" postag="(ADJ|SUB).*"/>
+  </rule>
+  <rule id="HOCHDRAMATISCH" name="kein Verb: charismatischen / hochdramatischen">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" inflected="yes" marker="yes">(charis|hochdra)matischen|minimalistischen</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="EX_LEGE" name="kein Verb: charismatischen / hochdramatischen">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">de|ex|sine</token>
+      <token case_sensitive="yes" marker="yes">lege</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="BITTE" name="kein Verb: 'bitte' am Satzende">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">bitte</token>
+      <token regexp="yes" case_sensitive="yes" postag="PKT">[\.!]</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="ALTBEKANNTE" name="kein Partizip: altbekannte">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">altbekannte</token>
+    </pattern>
+    <disambig action="remove" postag="(PA2|VER):.+"/>
+  </rule>
+  <rule id="RECHTSCHAFFEN" name="kein Verb: rechtschaffen">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">rechtschaffen</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="KAUFVERHALTEN" name="kein Verb: Kaufverhalten">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="VER:.+" postag_regexp="yes" marker="yes">[A-Z].+verhalten</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="SUBSTANTIVIERTES_VERB" name="kein Verb: substantiviertes Verb">
+    <pattern>
+      <token case_sensitive="yes" postag="PRP:LOK:DAT|ART:DEF:.+:NEU" postag_regexp="yes"></token>
+      <token regexp="yes" case_sensitive="yes" postag="VER:INF.+" postag_regexp="yes" marker="yes">[A-ZÄÖÜ].+</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="SEIN_PA2" name="PA2 nach 'sein'">
+    <pattern>
+      <token case_sensitive="yes" inflected="yes">sein</token>
+      <token case_sensitive="yes" postag=".*PA2:.+" postag_regexp="yes" marker="yes"></token>
+      <token case_sensitive="yes" postag="PKT"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:[1-3I].+"/>
+  </rule>
+  <rule id="ZU_MIT_INFINITIV" name="Infinitiv nach 'zu'">
+    <pattern>
+      <token case_sensitive="yes">zu</token>
+      <token case_sensitive="yes" postag="VER:INF:.+" postag_regexp="yes" marker="yes"></token>
+      <token case_sensitive="yes" postag="PKT|KON:NEB" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:[1-3]:.+"/>
+  </rule>
+  <rule id="RIW" name="Reit im Winkl">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Reit</token>
+      <token case_sensitive="yes">im</token>
+      <token case_sensitive="yes">Winkl</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="WUERDIGE" name="eine würdige (keine Verbform)">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[kdms]?eine|die(se)?|viele</token>
+      <token case_sensitive="yes" marker="yes">würdige</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="VORSICHTSHALBER" name=".+shalber → ADV">
+    <pattern>
+      <token regexp="yes" postag="UNKNOWN">.+shalber</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ADV:MOD"/>
+    </disambig>
   </rule>
   <rule id="ZAHL_GLIEDRIG" name="4-gliedrig">
     <pattern>
@@ -75,6 +885,13 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="IGNORE_MORDS_MAESSIG" name="mords mäßig">
+    <pattern>
+      <token case_sensitive="yes">mords</token>
+      <token postag="ADJ.*" postag_regexp="yes" spacebefore="yes"></token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="IGNORE_SPELLING_MORDSKLEIN" name="mordsklein">
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="ADJ.*" postag_regexp="yes">mords.+</token>
@@ -83,48 +900,48 @@
   </rule>
   <rule id="IGNORE_MORGENSTUND" name="Morgenstund hat Gold im Mund">
     <pattern>
-      <token>Morgenstund</token>
-      <token>hat</token>
-      <token>Gold</token>
-      <token>im</token>
-      <token>Mund</token>
+      <token case_sensitive="yes">Morgenstund</token>
+      <token case_sensitive="yes">hat</token>
+      <token case_sensitive="yes">Gold</token>
+      <token case_sensitive="yes">im</token>
+      <token case_sensitive="yes">Mund</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_HEMPELS" name="bei Hempels unterm Sofa">
     <pattern>
-      <token>bei</token>
-      <token>Hempels</token>
-      <token>unterm</token>
-      <token>Sofa</token>
+      <token case_sensitive="yes">bei</token>
+      <token case_sensitive="yes">Hempels</token>
+      <token case_sensitive="yes">unterm</token>
+      <token case_sensitive="yes">Sofa</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_ACOUSTIC" name="Acoustic (engl.)">
     <pattern>
-      <token>Acoustic</token>
-      <token regexp="yes" postag="UNKNOWN">[A-Z].*</token>
+      <token case_sensitive="yes">Acoustic</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_ACOUSTIC2" name="Acoustic (engl.) 2">
     <pattern>
-      <token>Acoustic</token>
-      <token regexp="yes">Grand|Groove|Party|(Software|Combo|Tour|Festival|Album)s?</token>
+      <token case_sensitive="yes">Acoustic</token>
+      <token regexp="yes" case_sensitive="yes">Grand|Groove|Party|(Software|Combo|Tour|Festival|Album)s?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_ACOUSTIC3" name="Acoustic (engl.) 3">
     <pattern>
-      <token regexp="yes" postag="UNKNOWN">[A-Z].*</token>
-      <token>Acoustic</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z].*</token>
+      <token case_sensitive="yes">Acoustic</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_ACOUSTIC4" name="Acoustic (engl.) 3">
     <pattern>
-      <token regexp="yes">Bands?|Impact</token>
-      <token>Acoustic</token>
+      <token regexp="yes" case_sensitive="yes">Bands?|Impact</token>
+      <token case_sensitive="yes">Acoustic</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -150,14 +967,22 @@
   </rule>
   <rule id="ESPRESSO_DOPPIO" name="Espresso doppio">
     <pattern>
-      <token regexp="yes">Espresso|Latte</token>
-      <token>doppio</token>
+      <token regexp="yes" case_sensitive="yes">Espresso|Latte</token>
+      <token case_sensitive="yes">doppio</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IPVx" name="IPv4/6">
     <pattern>
       <token regexp="yes">IPv[46]-(Adressen?|Adressraum(s|es)?|Verbindung|Standard|Präfix|Netzwerke?|Netzwerke[ns]|Paket(e|en|s|es)?|Einstellung|Implementierung|Header|Host|Routing|Gerät(s|es|e|en)?|Kommunikation|fähig(e|er|es|en|em)?)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="ZAHL_X" name="1.x">
+    <pattern>
+      <token regexp="yes">\d+</token>
+      <token spacebefore="no">.</token>
+      <token spacebefore="no">x</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -197,15 +1022,15 @@
   </rule>
   <rule id="AYERS_ROCK" name="Ayers Rock">
     <pattern>
-      <token>Ayers</token>
-      <token>Rock</token>
+      <token case_sensitive="yes">Ayers</token>
+      <token case_sensitive="yes">Rock</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ALICE_SPRINGS" name="Alice Springs">
     <pattern>
-      <token>Alice</token>
-      <token>Springs</token>
+      <token case_sensitive="yes">Alice</token>
+      <token case_sensitive="yes">Springs</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -265,17 +1090,17 @@
   </rule>
   <rule id="CREME_DE_LA_CREME" name="Crème de la Crème">
     <pattern>
-      <token>Crème</token>
-      <token>de</token>
-      <token>la</token>
-      <token>Crème</token>
+      <token case_sensitive="yes">Crème</token>
+      <token case_sensitive="yes">de</token>
+      <token case_sensitive="yes">la</token>
+      <token case_sensitive="yes">Crème</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CREME_FRAICHE" name="Crème fraîche/brûlée">
     <pattern>
-      <token>Crème</token>
-      <token regexp="yes">br[ûu]lée|Caramel|double|fraîche</token>
+      <token case_sensitive="yes">Crème</token>
+      <token regexp="yes" case_sensitive="yes">br[ûu]lée|Caramel|double|fraîche</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -327,33 +1152,33 @@
   </rule>
   <rule id="PAR_EXCELLENCE" name="par excellence">
     <pattern>
-      <token>par</token>
-      <token>excellence</token>
+      <token case_sensitive="yes">par</token>
+      <token case_sensitive="yes">excellence</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TOUR_DE_FORCE" name="Tour de Force/France">
     <pattern>
-      <token>Tour</token>
-      <token>de</token>
-      <token regexp="yes">F(or|ran)ce|S(ki|uisse)</token>
+      <token case_sensitive="yes">Tour</token>
+      <token case_sensitive="yes">de</token>
+      <token regexp="yes" case_sensitive="yes">F(or|ran)ce|S(ki|uisse)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TOUR_D_HORIZON" name="Tour d'Horizon/Honneur">
     <pattern>
-      <token regexp="yes">Tours?</token>
-      <token>d</token>
-      <token regexp="yes">['’]</token>
-      <token regexp="yes">Ho(nneur|rizon)</token>
+      <token regexp="yes" case_sensitive="yes">Tours?</token>
+      <token case_sensitive="yes">d</token>
+      <token regexp="yes" case_sensitive="yes">['’]</token>
+      <token regexp="yes" case_sensitive="yes">Ho(nneur|rizon)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PAS_DE_DEUX" name="Pas de deux">
     <pattern>
-      <token>Pas</token>
-      <token>de</token>
-      <token>deux</token>
+      <token case_sensitive="yes">Pas</token>
+      <token case_sensitive="yes">de</token>
+      <token case_sensitive="yes">deux</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -367,9 +1192,9 @@
   </rule>
   <rule id="ARC_DE_TRIOMPHE" name="Arc de Triomphe">
     <pattern>
-      <token>Arc</token>
-      <token>de</token>
-      <token>Triomphe</token>
+      <token case_sensitive="yes">Arc</token>
+      <token case_sensitive="yes">de</token>
+      <token case_sensitive="yes">Triomphe</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -391,8 +1216,8 @@
   </rule>
   <rule id="CORDON_BLEU" name="Cordon bleu">
     <pattern>
-      <token>Cordon</token>
-      <token regexp="yes">bleu|sanitaire</token>
+      <token case_sensitive="yes">Cordon</token>
+      <token regexp="yes" case_sensitive="yes">bleu|sanitaire</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -432,29 +1257,29 @@
   </rule>
   <rule id="SAMBAL_OELEK" name="Sambal Oelek">
     <pattern>
-      <token>Sambal</token>
-      <token>Oelek</token>
+      <token case_sensitive="yes">Sambal</token>
+      <token case_sensitive="yes">Oelek</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="PULLED_PORK" name="Pulled Pork">
     <pattern>
-      <token>Pulled</token>
-      <token>Pork</token>
+      <token case_sensitive="yes">Pulled</token>
+      <token case_sensitive="yes">Pork</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="EARL_GREY" name="Earl Grey">
     <pattern>
-      <token>Earl</token>
-      <token>Grey</token>
+      <token case_sensitive="yes">Earl</token>
+      <token case_sensitive="yes">Grey</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="SIERRA_MADRE" name="Sierra Madre">
     <pattern>
-      <token>Sierra</token>
-      <token regexp="yes">Madre|Negra</token>
+      <token case_sensitive="yes">Sierra</token>
+      <token regexp="yes" case_sensitive="yes">Madre|Negra</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -467,29 +1292,29 @@
   </rule>
   <rule id="LAS_VEGAS" name="Las Vegas">
     <pattern>
-      <token>Las</token>
-      <token regexp="yes">Ramblas|Vegas</token>
+      <token case_sensitive="yes">Las</token>
+      <token regexp="yes" case_sensitive="yes">Ramblas|Vegas</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="ABBEY" name="ABBEY">
     <pattern>
-      <token>Westminster</token>
-      <token>Abbey</token>
+      <token case_sensitive="yes">Westminster</token>
+      <token case_sensitive="yes">Abbey</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="VALLEYS" name="Valleys">
     <pattern>
-      <token regexp="yes">Death|Napa|Silicon</token>
-      <token regexp="yes">Valleys?</token>
+      <token regexp="yes" case_sensitive="yes">Death|Napa|Silicon</token>
+      <token regexp="yes" case_sensitive="yes">Valleys?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="OAK_RIDGE" name="Oak Ridge">
     <pattern>
-      <token>Oak</token>
-      <token>Ridge</token>
+      <token case_sensitive="yes">Oak</token>
+      <token case_sensitive="yes">Ridge</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -503,25 +1328,25 @@
   </rule>
   <rule id="WOW" name="World of Warcraft">
     <pattern>
-      <token>World</token>
-      <token>of</token>
-      <token>Warcraft</token>
+      <token case_sensitive="yes">World</token>
+      <token case_sensitive="yes">of</token>
+      <token case_sensitive="yes">Warcraft</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WTC" name="World Trade Center">
     <pattern>
-      <token>World</token>
-      <token>Trade</token>
-      <token regexp="yes">Centers?</token>
+      <token case_sensitive="yes">World</token>
+      <token case_sensitive="yes">Trade</token>
+      <token regexp="yes" case_sensitive="yes">Centers?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CSD" name="Christopher Street Day">
     <pattern>
-      <token>Christopher</token>
-      <token>Street</token>
-      <token>Day</token>
+      <token case_sensitive="yes">Christopher</token>
+      <token case_sensitive="yes">Street</token>
+      <token case_sensitive="yes">Day</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -570,8 +1395,8 @@
   </rule>
   <rule id="LA_PAZ" name="La Paz">
     <pattern>
-      <token>La</token>
-      <token regexp="yes">Paz|[Tt]raviata|Sapienza|Spezia|Rambla</token>
+      <token case_sensitive="yes">La</token>
+      <token regexp="yes" case_sensitive="yes">Paz|[Tt]raviata|Sapienza|Spezia|Rambla</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -584,15 +1409,15 @@
   </rule>
   <rule id="SAN_BERNARDINO" name="San Bernardino">
     <pattern>
-      <token>San</token>
-      <token regexp="yes">Bernardino|Gottardo|Remo</token>
+      <token case_sensitive="yes">San</token>
+      <token regexp="yes" case_sensitive="yes">Bernardino|Gottardo|Remo</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CINQUE_TERRE" name="Cinque Terre">
     <pattern>
-      <token>Cinque</token>
-      <token>Terre</token>
+      <token case_sensitive="yes">Cinque</token>
+      <token case_sensitive="yes">Terre</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -626,15 +1451,15 @@
   </rule>
   <rule id="VISUAL_STUDIO" name="Visual Studio/Basic">
     <pattern>
-      <token>Visual</token>
-      <token regexp="yes">Studio|Basic</token>
+      <token case_sensitive="yes">Visual</token>
+      <token regexp="yes" case_sensitive="yes">Studio|Basic</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="EUROPEAN_STANDARDISATION" name="European Standardisation">
     <pattern>
-      <token>European</token>
-      <token>Standardisation</token>
+      <token case_sensitive="yes">European</token>
+      <token case_sensitive="yes">Standardisation</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -661,9 +1486,9 @@
   </rule>
   <rule id="CHIEF" name="Chief">
     <pattern>
-      <token>Chief</token>
-      <token regexp="yes">Executive|Growth|Product|Technology|Technical|Digital|Design|Data|Operating|Operations?|Financial|Sales|Business|Administrative|Analytics|Brand(ing)?|Information|Investment|Learning|Petty|People|Customer|Communications?|Creative|Support|Commercial|Procurement|Privacy|Project|Research|Risk|Strategy|Sales|Security|Visionary|Marketing|Innovation</token>
-      <token regexp="yes">Officers?</token>
+      <token case_sensitive="yes">Chief</token>
+      <token regexp="yes" case_sensitive="yes">Executive|Growth|Product|Technology|Technical|Digital|Design|Data|Operating|Operations?|Financial|Sales|Business|Administrative|Analytics|Brand(ing)?|Information|Investment|Learning|Petty|People|Customer|Communications?|Creative|Support|Commercial|Procurement|Privacy|Project|Research|Risk|Strategy|Sales|Security|Visionary|Marketing|Innovation</token>
+      <token regexp="yes" case_sensitive="yes">Officers?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -771,8 +1596,8 @@
   </rule>
   <rule id="DELIRIUM_TREMENS" name="Delirium tremens">
     <pattern>
-      <token>Delirium</token>
-      <token>tremens</token>
+      <token case_sensitive="yes">Delirium</token>
+      <token case_sensitive="yes">tremens</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -833,22 +1658,22 @@
   </rule>
   <rule id="OPUS_DEI" name="Opus Dei">
     <pattern>
-      <token>Opus</token>
-      <token>Dei</token>
+      <token case_sensitive="yes">Opus</token>
+      <token case_sensitive="yes">Dei</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ALMA_MATER" name="Alma Mater">
     <pattern>
-      <token>Alma</token>
-      <token>Mater</token>
+      <token case_sensitive="yes">Alma</token>
+      <token case_sensitive="yes">Mater</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HOMO_FABER" name="homo faber">
     <pattern>
-      <token>Homo</token>
-      <token regexp="yes">erectus|faber|habilis|ludens|neanderthalensis|novus|oeconomicus|oecologicus</token>
+      <token case_sensitive="yes">Homo</token>
+      <token regexp="yes" case_sensitive="yes">erectus|faber|habilis|ludens|neanderthalensis|novus|oeconomicus|oecologicus</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1135,11 +1960,18 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="AIR_CHINA" name="Air China (Air kein SUB)">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Air</token>
+      <token postag="SUB.*|UNKNOWN|EIG.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
   <rule id="AIR_FORCE_ONE" name="Air Force One">
     <pattern>
-      <token>Air</token>
-      <token>Force</token>
-      <token>One</token>
+      <token case_sensitive="yes">Air</token>
+      <token case_sensitive="yes">Force</token>
+      <token case_sensitive="yes">One</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1180,24 +2012,24 @@
   </rule>
   <rule id="FAIR_PLAY" name="Fair Play">
     <pattern>
-      <token>Fair</token>
-      <token regexp="yes">Play|Trade</token>
+      <token case_sensitive="yes">Fair</token>
+      <token regexp="yes" case_sensitive="yes">Play|Trade</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="UNIVERSITY_OF" name="University of">
     <pattern>
-      <token>University</token>
-      <token>of</token>
-      <token regexp="yes">[A-Z][a-z]+</token>
+      <token case_sensitive="yes">University</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z][a-z]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="JOURNAL_OF" name="Journal of">
     <pattern>
-      <token>Journal</token>
-      <token>of</token>
-      <token regexp="yes">[A-Z][a-z]+</token>
+      <token case_sensitive="yes">Journal</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z][a-z]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1283,23 +2115,23 @@
   </rule>
   <rule id="HIGH" name="High">
     <pattern>
-      <token>High</token>
-      <token regexp="yes">Noon|Potential|Society</token>
+      <token case_sensitive="yes">High</token>
+      <token regexp="yes" case_sensitive="yes">Noon|Potential|Society</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GRAND_CANYON" name="Grand Canyon">
     <pattern>
-      <token>Grand</token>
-      <token regexp="yes">Canyons?|Jury|Slams?|Hyatt|Prix|Cru|Marnier|Fleet|Lit</token>
+      <token case_sensitive="yes">Grand</token>
+      <token regexp="yes" case_sensitive="yes">Canyons?|Jury|Slams?|Hyatt|Prix|Cru|Marnier|Fleet|Lit</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GRAND_JURY" name="die Grand Jury">
     <pattern>
-      <token regexp="yes">[dD]ie</token>
-      <token>Grand</token>
-      <token>Jury</token>
+      <token regexp="yes" case_sensitive="yes">[dD]ie</token>
+      <token case_sensitive="yes">Grand</token>
+      <token case_sensitive="yes">Jury</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -1319,15 +2151,15 @@
   </rule>
   <rule id="JAVAANSE_JONGENS" name="Javaanse Jongens">
     <pattern>
-      <token>Javaanse</token>
-      <token>Jongens</token>
+      <token case_sensitive="yes">Javaanse</token>
+      <token case_sensitive="yes">Jongens</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BOEHSE_ONKELZ" name="Böhse Onkelz">
     <pattern>
-      <token regexp="yes">Böhsen?</token>
-      <token>Onkelz</token>
+      <token regexp="yes" case_sensitive="yes">Böhsen?</token>
+      <token case_sensitive="yes">Onkelz</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1347,8 +2179,8 @@
   </rule>
   <rule id="GRANA_PADANO" name="Grana Padano">
     <pattern>
-      <token>Grana</token>
-      <token>Padano</token>
+      <token case_sensitive="yes">Grana</token>
+      <token case_sensitive="yes">Padano</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1369,15 +2201,15 @@
   </rule>
   <rule id="TRAFALGAR_SQUARE" name="Trafalgar Square">
     <pattern>
-      <token regexp="yes">Madison|Trafalgar</token>
-      <token>Square</token>
+      <token regexp="yes" case_sensitive="yes">Madison|Trafalgar</token>
+      <token case_sensitive="yes">Square</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FIFTH_AVENUE" name="Fifth Avenue">
     <pattern>
-      <token regexp="yes">Fifth|[4-9]th</token>
-      <token>Avenue</token>
+      <token regexp="yes" case_sensitive="yes">Fifth|[4-9]th</token>
+      <token case_sensitive="yes">Avenue</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1391,65 +2223,65 @@
   </rule>
   <rule id="CUBA_LIBRE" name="Cuba Libre">
     <pattern>
-      <token>Cuba</token>
-      <token>Libre</token>
+      <token case_sensitive="yes">Cuba</token>
+      <token case_sensitive="yes">Libre</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TEQUILA_SUNRISE" name="Tequila Sunrise">
     <pattern>
-      <token>Tequila</token>
-      <token>Sunrise</token>
+      <token case_sensitive="yes">Tequila</token>
+      <token case_sensitive="yes">Sunrise</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BLOODY_MARY" name="Bloody Mary">
     <pattern>
-      <token>Bloody</token>
-      <token>Mary</token>
+      <token case_sensitive="yes">Bloody</token>
+      <token case_sensitive="yes">Mary</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AMERICAN_GINGER_ALE" name="American Ginger Ale">
     <pattern>
-      <token>American</token>
-      <token>Ginger</token>
-      <token>Ale</token>
+      <token case_sensitive="yes">American</token>
+      <token case_sensitive="yes">Ginger</token>
+      <token case_sensitive="yes">Ale</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="AMERICAN_DREAM" name="American Dream">
     <pattern>
-      <token>American</token>
-      <token regexp="yes">Airlines|Dreams?|Express|Football|Horror|Dad|Cookies?|Ways?|Bar</token>
+      <token case_sensitive="yes">American</token>
+      <token regexp="yes" case_sensitive="yes">Airlines|Dreams?|Express|Football|Horror|Dad|Cookies?|Ways?|Bar</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FINANCIAL_TIMES" name="Financial Times">
     <pattern>
-      <token>Financial</token>
-      <token regexp="yes">Times|Services?|Engineerings?</token>
+      <token case_sensitive="yes">Financial</token>
+      <token regexp="yes" case_sensitive="yes">Times|Services?|Engineerings?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DAILY" name="Daily">
     <pattern>
-      <token>Daily</token>
-      <token regexp="yes">Mail|Telegraphs?|Express|Mirrors?|Talks?|Soaps?|Work</token>
+      <token case_sensitive="yes">Daily</token>
+      <token regexp="yes" case_sensitive="yes">Mail|Telegraphs?|Express|Mirrors?|Talks?|Soaps?|Work</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ELECTRONIC" name="Electronic">
     <pattern>
-      <token>Electronic</token>
-      <token regexp="yes">Mails?|Books?|Cards?|Drums?|Bankings?|Cash|Shoppings?|Votings?|Publishings?|Business(es)?|Commerce|Learnings?</token>
+      <token case_sensitive="yes">Electronic</token>
+      <token regexp="yes" case_sensitive="yes">Mails?|Books?|Cards?|Drums?|Bankings?|Cash|Shoppings?|Votings?|Publishings?|Business(es)?|Commerce|Learnings?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NATIONAL_GEOGRAPHIC" name="National Geographic">
     <pattern>
-      <token>National</token>
-      <token>Geographic</token>
+      <token case_sensitive="yes">National</token>
+      <token case_sensitive="yes">Geographic</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1470,9 +2302,9 @@
   </rule>
   <rule id="VPN" name="virtual">
     <pattern>
-      <token>Virtual</token>
-      <token>Private</token>
-      <token>Network</token>
+      <token case_sensitive="yes">Virtual</token>
+      <token case_sensitive="yes">Private</token>
+      <token case_sensitive="yes">Network</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1499,133 +2331,133 @@
   </rule>
   <rule id="HO_CHI_MINH" name="Ho Chi Minh">
     <pattern>
-      <token>Ho</token>
-      <token>Chi</token>
-      <token>Minh</token>
+      <token case_sensitive="yes">Ho</token>
+      <token case_sensitive="yes">Chi</token>
+      <token case_sensitive="yes">Minh</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HO_CHI_MINH_SPECIAL" name="Hồ Chí Minh">
     <pattern>
-      <token>Hồ</token>
-      <token>Chí</token>
-      <token>Minh</token>
+      <token case_sensitive="yes">Hồ</token>
+      <token case_sensitive="yes">Chí</token>
+      <token case_sensitive="yes">Minh</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FRA_ANGELICO" name="Fra Angelico">
     <pattern>
-      <token>Fra</token>
-      <token regexp="yes">Angelicos?</token>
+      <token case_sensitive="yes">Fra</token>
+      <token regexp="yes" case_sensitive="yes">Angelicos?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GEERT_WILDERS" name="Geert Wilders">
     <pattern>
-      <token>Geert</token>
-      <token>Wilders</token>
+      <token case_sensitive="yes">Geert</token>
+      <token case_sensitive="yes">Wilders</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CEM_OEZDEMIR" name="Cem Özdemir">
     <pattern>
-      <token>Cem</token>
-      <token regexp="yes">Özdemirs?</token>
+      <token case_sensitive="yes">Cem</token>
+      <token regexp="yes" case_sensitive="yes">Özdemirs?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GUELEN" name="Fethullah Gülen">
     <pattern>
-      <token>Fethullah</token>
-      <token regexp="yes">Gülens?</token>
+      <token case_sensitive="yes">Fethullah</token>
+      <token regexp="yes" case_sensitive="yes">Gülens?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BJARNE_STROUSTRUP" name="Bjarne Stroustrup">
     <pattern>
-      <token>Bjarne</token>
-      <token regexp="yes">Stroustrups?</token>
+      <token case_sensitive="yes">Bjarne</token>
+      <token regexp="yes" case_sensitive="yes">Stroustrups?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="RINGO_STARR" name="Ringo Starr">
     <pattern>
-      <token>Ringo</token>
-      <token regexp="yes">Starrs?</token>
+      <token case_sensitive="yes">Ringo</token>
+      <token regexp="yes" case_sensitive="yes">Starrs?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="JUSTIN_BIEBER" name="Justin Bieber">
     <pattern>
-      <token>Justin</token>
-      <token regexp="yes">Biebers?</token>
+      <token case_sensitive="yes">Justin</token>
+      <token regexp="yes" case_sensitive="yes">Biebers?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ERDOGAN" name="Recep Tayyip Erdoğan">
     <pattern>
-      <token>Recep</token>
-      <token>Tayyip</token>
-      <token regexp="yes">Erdoğans?</token>
+      <token case_sensitive="yes">Recep</token>
+      <token case_sensitive="yes">Tayyip</token>
+      <token regexp="yes" case_sensitive="yes">Erdoğans?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HILLARY_CLINTON" name="Hillary Clinton">
     <pattern>
-      <token regexp="yes">Hillary|Bill</token>
-      <token regexp="yes">Clintons?</token>
+      <token regexp="yes" case_sensitive="yes">Hillary|Bill</token>
+      <token regexp="yes" case_sensitive="yes">Clintons?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ABU_DHABI" name="Abu">
     <pattern>
-      <token>Abu</token>
-      <token>Dhabi</token>
+      <token case_sensitive="yes">Abu</token>
+      <token case_sensitive="yes">Dhabi</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GREAT_BARRIER_REEF" name="Great Barrier Reef">
     <pattern>
-      <token>Great</token>
-      <token>Barrier</token>
-      <token>Reef</token>
+      <token case_sensitive="yes">Great</token>
+      <token case_sensitive="yes">Barrier</token>
+      <token case_sensitive="yes">Reef</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ROCKY_MOUNTAINS" name="Rocky Mountains">
     <pattern>
-      <token>Rocky</token>
-      <token>Mountains</token>
+      <token case_sensitive="yes">Rocky</token>
+      <token case_sensitive="yes">Mountains</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BEAUVOIR" name="de Beauvoir">
     <pattern>
-      <token>de</token>
-      <token regexp="yes">Beauvoirs?</token>
+      <token case_sensitive="yes">de</token>
+      <token regexp="yes" case_sensitive="yes">Beauvoirs?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="COTE_DAZUR" name="Côte d'Azur">
     <pattern>
-      <token>Côte</token>
-      <token>d</token>
-      <token regexp="yes">['’]</token>
-      <token>Azur</token>
+      <token case_sensitive="yes">Côte</token>
+      <token case_sensitive="yes">d</token>
+      <token regexp="yes" case_sensitive="yes">['’]</token>
+      <token case_sensitive="yes">Azur</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ALPHA_PROXIMA_CENTAURI" name="Alpha Centauri">
     <pattern>
-      <token regexp="yes">Alpha|Proxima</token>
-      <token>Centauri</token>
+      <token regexp="yes" case_sensitive="yes">Alpha|Proxima</token>
+      <token case_sensitive="yes">Centauri</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PEARL_HARBOR" name="Pearl Harbor">
     <pattern>
-      <token>Pearl</token>
-      <token>Harbor</token>
+      <token case_sensitive="yes">Pearl</token>
+      <token case_sensitive="yes">Harbor</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1638,139 +2470,139 @@
   </rule>
   <rule id="ISLE_OF_MAN" name="Isle of Man">
     <pattern>
-      <token>Isle</token>
-      <token>of</token>
-      <token regexp="yes">Man|Wight|Arran|Mull</token>
+      <token case_sensitive="yes">Isle</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">Man|Wight|Arran|Mull</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SEX_CITY" name="Sex and the City">
     <pattern>
-      <token>Sex</token>
-      <token>and</token>
-      <token>the</token>
-      <token>City</token>
+      <token case_sensitive="yes">Sex</token>
+      <token case_sensitive="yes">and</token>
+      <token case_sensitive="yes">the</token>
+      <token case_sensitive="yes">City</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ADDAMS_FAMILY" name="Addams Family">
     <pattern>
-      <token>Addams</token>
-      <token>Family</token>
+      <token case_sensitive="yes">Addams</token>
+      <token case_sensitive="yes">Family</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BREAKING_BAD" name="Breaking Bad">
     <pattern>
-      <token>Breaking</token>
-      <token>Bad</token>
+      <token case_sensitive="yes">Breaking</token>
+      <token case_sensitive="yes">Bad</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="STARWARS" name="Star Wars">
     <pattern>
-      <token>Star</token>
-      <token regexp="yes">Wars|Trek</token>
+      <token case_sensitive="yes">Star</token>
+      <token regexp="yes" case_sensitive="yes">Wars|Trek</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GOOGLE_MAPS" name="Google Maps">
     <pattern>
-      <token>Google</token>
-      <token regexp="yes">Ads|Assistant|Docs|Drive|Earth|Groups|Hangouts|Maps|Wallet</token>
+      <token case_sensitive="yes">Google</token>
+      <token regexp="yes" case_sensitive="yes">Ads|Assistant|Docs|Drive|Earth|Groups|Hangouts|Maps|Wallet</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="VIENNA_CAPITALS" name="Vienna Capitals">
     <pattern>
-      <token>Vienna</token>
-      <token>Capitals</token>
+      <token case_sensitive="yes">Vienna</token>
+      <token case_sensitive="yes">Capitals</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HUMAN_RIGHTS_WATCH" name="Human Rights Watch">
     <pattern>
-      <token>Human</token>
-      <token>Rights</token>
-      <token>Watch</token>
+      <token case_sensitive="yes">Human</token>
+      <token case_sensitive="yes">Rights</token>
+      <token case_sensitive="yes">Watch</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="RUBY_ON_RAILS" name="Ruby on Rails">
     <pattern>
-      <token>Ruby</token>
-      <token>on</token>
-      <token>Rails</token>
+      <token case_sensitive="yes">Ruby</token>
+      <token case_sensitive="yes">on</token>
+      <token case_sensitive="yes">Rails</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CON_CARNE" name="con Carne">
     <pattern>
-      <token>con</token>
-      <token>Carne</token>
+      <token case_sensitive="yes">con</token>
+      <token case_sensitive="yes">Carne</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SPECIAL_OLYMPICS" name="Special Olympics">
     <pattern>
-      <token>Special</token>
-      <token regexp="yes">Olympics|Agents?|Effects?|Offers?|Inspectors?|Operations?</token>
+      <token case_sensitive="yes">Special</token>
+      <token regexp="yes" case_sensitive="yes">Olympics|Agents?|Effects?|Offers?|Inspectors?|Operations?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SCOTLAND_YARD" name="Scotland Yard">
     <pattern>
-      <token>Scotland</token>
-      <token>Yard</token>
+      <token case_sensitive="yes">Scotland</token>
+      <token case_sensitive="yes">Yard</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BUCKINGHAM_PALACE" name="Buckingham Palace">
     <pattern>
-      <token>Buckingham</token>
-      <token>Palace</token>
+      <token case_sensitive="yes">Buckingham</token>
+      <token case_sensitive="yes">Palace</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PARKS" name="Parks">
     <pattern>
-      <token regexp="yes">Bletchley|Central|Hyde</token>
-      <token>Park</token>
+      <token regexp="yes" case_sensitive="yes">Bletchley|Central|Hyde</token>
+      <token case_sensitive="yes">Park</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TRANSPARENCY" name="Transparency International">
     <pattern>
-      <token>Transparency</token>
-      <token>International</token>
+      <token case_sensitive="yes">Transparency</token>
+      <token case_sensitive="yes">International</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AURORA" name="Aurora">
     <pattern>
-      <token>Aurora</token>
-      <token regexp="yes">(bore|austr)alis</token>
+      <token case_sensitive="yes">Aurora</token>
+      <token regexp="yes" case_sensitive="yes">(bore|austr)alis</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TOP_TEN" name="Top Ten">
     <pattern>
-      <token>Top</token>
-      <token>Ten</token>
+      <token case_sensitive="yes">Top</token>
+      <token case_sensitive="yes">Ten</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SECRET" name="Secret">
     <pattern>
-      <token>Secret</token>
-      <token>Service</token>
+      <token case_sensitive="yes">Secret</token>
+      <token case_sensitive="yes">Service</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MEXICO" name="Mexico">
     <pattern>
-      <token>New</token>
-      <token regexp="yes">Haven|Mexico|Age|Economy</token>
+      <token case_sensitive="yes">New</token>
+      <token regexp="yes" case_sensitive="yes">Haven|Mexico|Age|Economy</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1784,15 +2616,15 @@
   </rule>
   <rule id="ENOLA_GAY" name="Enola Gay">
     <pattern>
-      <token>Enola</token>
-      <token>Gay</token>
+      <token case_sensitive="yes">Enola</token>
+      <token case_sensitive="yes">Gay</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LITTLE_BOY" name="Little Boy">
     <pattern>
-      <token>Little</token>
-      <token regexp="yes">Bighorn|Boy|Italy|John|Rock</token>
+      <token case_sensitive="yes">Little</token>
+      <token regexp="yes" case_sensitive="yes">Bighorn|Boy|Italy|John|Rock</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1805,79 +2637,88 @@
   </rule>
   <rule id="MOULIN_ROUGE" name="Moulin Rouge">
     <pattern>
-      <token regexp="yes">Baton|Moulin</token>
-      <token>Rouge</token>
+      <token regexp="yes" case_sensitive="yes">Baton|Moulin</token>
+      <token case_sensitive="yes">Rouge</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CORNED_BEEF" name="Corned Beef">
     <pattern>
-      <token>Corned</token>
-      <token>Beef</token>
+      <token case_sensitive="yes">Corned</token>
+      <token case_sensitive="yes">Beef</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BELLE_EPOQUE" name="Belle Epoque">
     <pattern>
-      <token>Belle</token>
-      <token regexp="yes">[EÉ]poque</token>
+      <token case_sensitive="yes">Belle</token>
+      <token regexp="yes" case_sensitive="yes">[EÉ]poque</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HAPPY_END" name="Happy End">
     <pattern>
-      <token>Happy</token>
-      <token regexp="yes">Ends?|Hours?|Fews?|Meals?|Birthdays?|Weekends?|Slappings?|Days?</token>
+      <token case_sensitive="yes">Happy</token>
+      <token regexp="yes" case_sensitive="yes">Ends?|Hours?|Fews?|Meals?|Birthdays?|Weekends?|Slappings?|Days?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PIETRA_DURA" name="Pietra dura">
     <pattern>
-      <token>Pietra</token>
-      <token>dura</token>
+      <token case_sensitive="yes">Pietra</token>
+      <token case_sensitive="yes">dura</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TADSCH_MAHAL" name="Tadsch Mahal">
     <pattern>
-      <token regexp="yes">Ta(dsch|j)</token>
-      <token regexp="yes">Mahals?</token>
+      <token regexp="yes" case_sensitive="yes">Ta(dsch|j)</token>
+      <token regexp="yes" case_sensitive="yes">Mahals?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ROYAL_SOCIETY" name="Royal Society">
     <pattern>
-      <token>Royal</token>
-      <token regexp="yes">Academy|British|Navy|Society</token>
+      <token case_sensitive="yes">Royal</token>
+      <token regexp="yes" case_sensitive="yes">Academy|British|Navy|Society</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MIT" name="Institute of Technology">
     <pattern>
-      <token>Institute</token>
-      <token>of</token>
-      <token regexp="yes">Technology|Research</token>
+      <token case_sensitive="yes">Institute</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">Technology|Research</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SCHOOL_OF" name="School of">
     <pattern>
-      <token>School</token>
-      <token>of</token>
-      <token regexp="yes">Advanced|Aviation|Law|Medicine</token>
+      <token case_sensitive="yes">School</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">Advanced|Aviation|Law|Medicine</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="PHD" name="Doktortitel">
+    <pattern>
+      <token case_sensitive="yes">Dr</token>
+      <token case_sensitive="yes" spacebefore="no">.</token>
+      <token regexp="yes" case_sensitive="yes">iur|med|oec|phil|rer|theol</token>
+      <token case_sensitive="yes" spacebefore="no">.</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ZAHL_ERN" name="68ern">
     <pattern>
-      <token regexp="yes">\d{2,4}ern?</token>
+      <token regexp="yes" case_sensitive="yes">\d{2,4}ern?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MONT" name="Mont">
     <pattern>
-      <token>Mont</token>
-      <token regexp="yes">Blanc|Ventoux|Vully</token>
+      <token case_sensitive="yes">Mont</token>
+      <token regexp="yes" case_sensitive="yes">Blanc|Ventoux|Vully</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1891,23 +2732,23 @@
   </rule>
   <rule id="PRINCE" name="Prince">
     <pattern>
-      <token regexp="yes">Prince(ss)?</token>
-      <token>of</token>
-      <token>Wales</token>
+      <token regexp="yes" case_sensitive="yes">Prince(ss)?</token>
+      <token case_sensitive="yes">of</token>
+      <token case_sensitive="yes">Wales</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PRESS" name="Press">
     <pattern>
-      <token>University</token>
-      <token>Press</token>
+      <token case_sensitive="yes">University</token>
+      <token case_sensitive="yes">Press</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HOTDOG" name="Hotdog">
     <pattern>
-      <token>Hot</token>
-      <token>Dog</token>
+      <token case_sensitive="yes">Hot</token>
+      <token case_sensitive="yes">Dog</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1920,117 +2761,132 @@
   </rule>
   <rule id="MACHU_PICCHU" name="Machu Picchu">
     <pattern>
-      <token>Machu</token>
-      <token>Picchu</token>
+      <token case_sensitive="yes">Machu</token>
+      <token case_sensitive="yes">Picchu</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KOEPFIG" name="-köpfig">
     <pattern>
-      <token regexp="yes">\d+-(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ig(e[mnsr]?)?</token>
+      <token regexp="yes" case_sensitive="yes">\d+-(jähr|bänd|seit|monat|täg|köpf|tür|spur|geschoss|stöck|mal|teil|lag|stünd|minüt|sekünd|zeil|wöch|stell|räum|schicht|zähn|eck|arm|karät|buchstab|phas|flut)ig(e[mnsr]?)?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="OF_ARTS" name="Bachelor/Master of Arts">
     <pattern>
-      <token>of</token>
-      <token regexp="yes">Arts|Business|Engineering|Laws|Science</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">Arts|Business|Engineering|Laws|Science</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LOW_CARB" name="Low Carb">
     <pattern>
-      <token>Low</token>
-      <token>Carb</token>
+      <token case_sensitive="yes">Low</token>
+      <token case_sensitive="yes">Carb</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CORPORATE" name="Corporate">
     <pattern>
-      <token>Corporate</token>
-      <token regexp="yes">Designs?|Identit(ies|y)</token>
+      <token case_sensitive="yes">Corporate</token>
+      <token regexp="yes" case_sensitive="yes">Designs?|Identit(ies|y)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="COSA" name="Cosa Nostra">
     <pattern>
-      <token>Cosa</token>
-      <token>Nostra</token>
+      <token case_sensitive="yes">Cosa</token>
+      <token case_sensitive="yes">Nostra</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FLEUR" name="Fleur">
     <pattern>
-      <token>Fleur</token>
-      <token>de</token>
-      <token>Sel</token>
+      <token case_sensitive="yes">Fleur</token>
+      <token case_sensitive="yes">de</token>
+      <token case_sensitive="yes">Sel</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="UPPERCASE_ABBREVIATIONS" name="Abkürzungen">
+    <pattern>
+      <token case_sensitive="yes">(</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">[A-Z]{2,3}</token>
+      <token case_sensitive="yes" spacebefore="no">)</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SCH" name="sch (Ohm'sches Gesetz)">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">['´’]</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">sche[rmns]?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="REIT_IM_WINKL" name="Reit im Winkl">
     <pattern>
-      <token>Reit</token>
-      <token>im</token>
-      <token>Winkl</token>
+      <token case_sensitive="yes">Reit</token>
+      <token case_sensitive="yes">im</token>
+      <token case_sensitive="yes">Winkl</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="A_LA" name="à la">
     <pattern>
-      <token>à</token>
-      <token>la</token>
+      <token case_sensitive="yes">à</token>
+      <token case_sensitive="yes">la</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LONG_ISLAND" name="Long Island">
     <pattern>
-      <token>Long</token>
-      <token regexp="yes">Beach|Island</token>
+      <token case_sensitive="yes">Long</token>
+      <token regexp="yes" case_sensitive="yes">Beach|Island</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CAPE_COD" name="Cape Cod">
     <pattern>
-      <token>Cape</token>
-      <token regexp="yes">C(anaveral|od|oral)</token>
+      <token case_sensitive="yes">Cape</token>
+      <token regexp="yes" case_sensitive="yes">C(anaveral|od|oral)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="KOTTBUSSER" name="Kottbusser">
     <pattern>
-      <token>Kottbusser</token>
-      <token regexp="yes">Brücke|Damms?|Tors?</token>
+      <token case_sensitive="yes">Kottbusser</token>
+      <token regexp="yes" case_sensitive="yes">Brücke|Damms?|Tors?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AL" name="Al Kaida">
     <pattern>
-      <token>Al</token>
-      <token regexp="yes">Capones?|Gores?|Jazeeras?|Kaidas?</token>
+      <token case_sensitive="yes">Al</token>
+      <token regexp="yes" case_sensitive="yes">Capones?|Gores?|Jazeeras?|Kaidas?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HIN_HER" name="hin- und hergerissen">
     <pattern>
-      <token regexp="yes">(a[bn]|aus|um|über|unter|auf|hin|nach|vor|zurück)-</token>
-      <token postag="KON:.+" postag_regexp="yes"></token>
-      <token regexp="yes">(a[bn]|aus|um|über|unter|auf|her|hin|nach|vor|weg|zurück)\w+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">(a[bn]|aus|um|über|unter|auf|hin|nach|vor|zurück)-</token>
+      <token case_sensitive="yes" postag="KON:.+" postag_regexp="yes"></token>
+      <token regexp="yes" case_sensitive="yes">(a[bn]|aus|um|über|unter|auf|her|hin|nach|vor|weg|zurück)\w+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HIN_HER_KOMMA" name="hin- und hergerissen">
     <pattern>
-      <token regexp="yes">(a[bn]|aus|um|über|unter|auf|hin|nach|vor|zurück)-</token>
-      <token>,</token>
-      <token regexp="yes">(a[bn]|aus|um|über|unter|auf|her|hin|nach|vor|weg|zurück)[\w-]+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">(a[bn]|aus|um|über|unter|auf|hin|nach|vor|zurück)-</token>
+      <token case_sensitive="yes">,</token>
+      <token regexp="yes" case_sensitive="yes">(a[bn]|aus|um|über|unter|auf|her|hin|nach|vor|weg|zurück)[\w-]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HIN_HER_GROSS" name="Auf- oder Abwertung">
     <pattern>
-      <token regexp="yes">(A[bn]|Aus|Um|Über|Unter|Auf|Hin|Nach|Vor|Zurück)-</token>
-      <token postag="KON:.+" postag_regexp="yes"></token>
-      <token regexp="yes">(A[bn]|Aus|Um|Über|Unter|Auf|Her|Hin|Nach|Vor|Weg|Zurück|Rück)\w+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">(A[bn]|Aus|Um|Über|Unter|Auf|Hin|Nach|Vor|Zurück)-</token>
+      <token case_sensitive="yes" postag="KON:.+" postag_regexp="yes"></token>
+      <token regexp="yes" case_sensitive="yes">(A[bn]|Aus|Um|Über|Unter|Auf|Her|Hin|Nach|Vor|Weg|Zurück|Rück)\w+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2043,8 +2899,8 @@
   </rule>
   <rule id="AL_DENTE" name="al dente">
     <pattern>
-      <token>al</token>
-      <token regexp="yes">dente|diavolo|fine|pari</token>
+      <token case_sensitive="yes">al</token>
+      <token regexp="yes" case_sensitive="yes">dente|diavolo|fine|pari</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2058,80 +2914,87 @@
   </rule>
   <rule id="HEAD_OF" name="Head of XXX">
     <pattern>
-      <token>Head</token>
-      <token>of</token>
+      <token case_sensitive="yes">Head</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ARCHITECT" name="ARCHITECT">
     <pattern>
-      <token regexp="yes">Frontend|Backend|Software|Hardware</token>
-      <token regexp="yes">Architects?</token>
+      <token regexp="yes" case_sensitive="yes">Frontend|Backend|Software|Hardware</token>
+      <token regexp="yes" case_sensitive="yes">Architects?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DIRECTOR_OF" name="Director of XXX">
     <pattern>
-      <token>Director</token>
-      <token>of</token>
+      <token case_sensitive="yes">Director</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CHIEF_OF" name="Chief of XXX">
     <pattern>
-      <token>Chief</token>
-      <token>of</token>
+      <token case_sensitive="yes">Chief</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="CHIEF_KEIN_SUB" name="Chief of XXX">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Chiefs?</token>
+      <token case_sensitive="yes">of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
   <rule id="VICE_PRESIDENT_OF" name="Vice President of XXX">
     <pattern>
-      <token>Vice</token>
-      <token>President</token>
-      <token>of</token>
+      <token case_sensitive="yes">Vice</token>
+      <token case_sensitive="yes">President</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="VP_OF" name="VP of XXX">
     <pattern>
-      <token>VP</token>
-      <token>of</token>
+      <token case_sensitive="yes">VP</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="COURT" name="COURT">
     <pattern>
-      <token regexp="yes">Cent(er|re)|Supreme</token>
-      <token regexp="yes">Courts?</token>
+      <token regexp="yes" case_sensitive="yes">Cent(er|re)|Supreme</token>
+      <token regexp="yes" case_sensitive="yes">Courts?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SOCIAL" name="SOCIAL">
     <pattern>
-      <token>Social</token>
-      <token regexp="yes">Collaboration|Engineerings?|Learnings?|Networks?|Software|Sponsorings?|Bots?|Media|Costs?|Freezing|Responsibility|Entrepreneurships?|Taggings?|Business|Gamings?|Payments?|Security|Web|Distancings?|Marketings?|Franchisings?|Investments?</token>
+      <token case_sensitive="yes">Social</token>
+      <token regexp="yes" case_sensitive="yes">Collaboration|Engineerings?|Learnings?|Networks?|Software|Sponsorings?|Bots?|Media|Costs?|Freezing|Responsibility|Entrepreneurships?|Taggings?|Business|Gamings?|Payments?|Security|Web|Distancings?|Marketings?|Franchisings?|Investments?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WOODS" name="WOODS">
     <pattern>
-      <token postag="UNKNOWN|EIG:.+" postag_regexp="yes"></token>
-      <token>Woods</token>
+      <token case_sensitive="yes" postag="UNKNOWN|EIG:.+" postag_regexp="yes"></token>
+      <token case_sensitive="yes">Woods</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="JEROME" name="JEROME">
     <pattern>
-      <token>Jérôme</token>
-      <token regexp="yes">Lalandes?|Leroys?|Cahuzacs?|Ferraris?|Bonapartes?|Ferandnez|Bels?|Kerviels?</token>
+      <token case_sensitive="yes">Jérôme</token>
+      <token regexp="yes" case_sensitive="yes">Lalandes?|Leroys?|Cahuzacs?|Ferraris?|Bonapartes?|Ferandnez|Bels?|Kerviels?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HALL_OF_FAME" name="Hall of Fame">
     <pattern>
-      <token regexp="yes">Halls?|Walls?</token>
-      <token regexp="yes">[Oof]</token>
-      <token>Fame</token>
+      <token regexp="yes" case_sensitive="yes">Halls?|Walls?</token>
+      <token regexp="yes" case_sensitive="yes">[Oof]</token>
+      <token case_sensitive="yes">Fame</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2145,191 +3008,199 @@
   </rule>
   <rule id="CONNECT" name="CONNECT">
     <pattern>
-      <token regexp="yes">Spotify|Staples|Car|OpenI|Conrad|digitec</token>
-      <token regexp="yes">Connects?</token>
+      <token regexp="yes" case_sensitive="yes">Spotify|Staples|Car|OpenI|Conrad|digitec</token>
+      <token regexp="yes" case_sensitive="yes">Connects?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WHITE" name="WHITE">
     <pattern>
-      <token>White</token>
-      <token regexp="yes">House|Collars?|Citys?|Lions?|Supremacy|Islands?|Christmas|Knights?|Noise|Oaks?|Russians?|Labels?</token>
+      <token case_sensitive="yes">White</token>
+      <token regexp="yes" case_sensitive="yes">House|Collars?|Citys?|Lions?|Supremacy|Islands?|Christmas|Knights?|Noise|Oaks?|Russians?|Labels?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FULL" name="FULL">
     <pattern>
-      <token>Full</token>
-      <token regexp="yes">HD|House|Services?|Speed|Dress|Force</token>
+      <token case_sensitive="yes">Full</token>
+      <token regexp="yes" case_sensitive="yes">HD|House|Services?|Speed|Dress|Force</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="TECHNICAL" name="TECHNICAL">
     <pattern>
-      <token>Technical</token>
-      <token regexp="yes">Support|Product|Sergeant</token>
+      <token case_sensitive="yes">Technical</token>
+      <token regexp="yes" case_sensitive="yes">Support|Product|Sergeant</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LETS" name="Let's Encrypt/Dance">
     <pattern>
-      <token>Let</token>
-      <token regexp="yes">[’']</token>
-      <token>s</token>
-      <token regexp="yes">Encrypts?|Dances?</token>
+      <token case_sensitive="yes">Let</token>
+      <token regexp="yes" case_sensitive="yes">[’']</token>
+      <token case_sensitive="yes">s</token>
+      <token regexp="yes" case_sensitive="yes">Encrypts?|Dances?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PAID" name="PAID">
     <pattern>
-      <token>Paid</token>
-      <token regexp="yes">Content|Crowdsourcing|Services?</token>
+      <token case_sensitive="yes">Paid</token>
+      <token regexp="yes" case_sensitive="yes">Content|Crowdsourcing|Services?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GREEN" name="GREEN">
     <pattern>
-      <token>Green</token>
-      <token regexp="yes">Bays?|Days?|Lanterns?|Books?|IT|Cards?|Tech</token>
+      <token case_sensitive="yes">Green</token>
+      <token regexp="yes" case_sensitive="yes">Bays?|Days?|Lanterns?|Books?|IT|Cards?|Tech</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CRYSTAL" name="CRYSTAL">
     <pattern>
-      <token>Crystal</token>
-      <token regexp="yes">Lakes?|Palace|Mountains?</token>
+      <token case_sensitive="yes">Crystal</token>
+      <token regexp="yes" case_sensitive="yes">Lakes?|Palace|Mountains?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FRENCH" name="FRENCH">
     <pattern>
-      <token>French</token>
-      <token regexp="yes">Open|Dressings?|Knickers?|Fries|Montanas?|House</token>
+      <token case_sensitive="yes">French</token>
+      <token regexp="yes" case_sensitive="yes">Open|Dressings?|Knickers?|Fries|Montanas?|House</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DRY" name="DRY">
     <pattern>
-      <token>Dry</token>
-      <token regexp="yes">Barrels?|Farmings?|Needling|Countys?</token>
+      <token case_sensitive="yes">Dry</token>
+      <token regexp="yes" case_sensitive="yes">Barrels?|Farmings?|Needling|Countys?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SECOND" name="SECOND">
     <pattern>
-      <token>Second</token>
-      <token regexp="yes">Screens?|Life|Line|Home|Reality|Army</token>
+      <token case_sensitive="yes">Second</token>
+      <token regexp="yes" case_sensitive="yes">Screens?|Life|Line|Home|Reality|Army</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="CENTER_OF" name="CENTER_OF">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">Center|Bank|Institute</token>
-      <token regexp="yes" case_sensitive="yes">of|for</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Center|Bank|Institute</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">of|for</token>
       <token regexp="yes">.*[a-z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="WHO_S_WHO" name="WHO_S_WHO">
     <pattern>
-      <token>Who</token>
-      <token regexp="yes">'|’</token>
-      <token>s</token>
-      <token>who</token>
+      <token case_sensitive="yes">Who</token>
+      <token regexp="yes" case_sensitive="yes">'|’</token>
+      <token case_sensitive="yes">s</token>
+      <token case_sensitive="yes">who</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NEWS" name="NEWS">
     <pattern>
-      <token regexp="yes">Breaking|Soft|Fake</token>
-      <token>News</token>
+      <token regexp="yes" case_sensitive="yes">Breaking|Soft|Fake</token>
+      <token case_sensitive="yes">News</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HUMAN" name="HUMAN">
     <pattern>
-      <token>Human</token>
-      <token regexp="yes">(Resource|Interface|Interaction|Engineering|Counter|Relation)s?</token>
+      <token case_sensitive="yes">Human</token>
+      <token regexp="yes" case_sensitive="yes">(Resource|Interface|Interaction|Engineering|Counter|Relation)s?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="HUMAN_COMPUTER" name="HUMAN_COMPUTER">
     <pattern>
-      <token>Human</token>
-      <token>Computer</token>
-      <token regexp="yes">(Interface|Interaction|Engineering)s?</token>
+      <token case_sensitive="yes">Human</token>
+      <token case_sensitive="yes">Computer</token>
+      <token regexp="yes" case_sensitive="yes">(Interface|Interaction|Engineering)s?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PUBLIC" name="PUBLIC">
     <pattern>
-      <token>Public</token>
-      <token regexp="yes">(School|Viewing|Relation)s?|Health</token>
+      <token case_sensitive="yes">Public</token>
+      <token regexp="yes" case_sensitive="yes">(School|Viewing|Relation)s?|Health</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SCHOOL" name="SCHOOL">
     <pattern>
-      <token regexp="yes">Business|Grammar|Public|Old|Media|Law|Medical</token>
-      <token regexp="yes">Schools?</token>
+      <token regexp="yes" case_sensitive="yes">Business|Grammar|Public|Old|Media|Law|Medical</token>
+      <token regexp="yes" case_sensitive="yes">Schools?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SLOW" name="SLOW">
     <pattern>
-      <token>Slow</token>
-      <token regexp="yes">Foods?|Motions?|Cookers?</token>
+      <token case_sensitive="yes">Slow</token>
+      <token regexp="yes" case_sensitive="yes">Foods?|Motions?|Cookers?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LONG" name="LONG">
     <pattern>
-      <token>Long</token>
-      <token regexp="yes">Drinks?</token>
+      <token case_sensitive="yes">Long</token>
+      <token regexp="yes" case_sensitive="yes">Drinks?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BRITISH" name="BRITISH">
     <pattern>
-      <token>British</token>
-      <token regexp="yes">Airways|Columbias?|Army|Empires?|Library|Academy|Museum|Broadcasting</token>
+      <token case_sensitive="yes">British</token>
+      <token regexp="yes" case_sensitive="yes">Airways|Columbias?|Army|Empires?|Library|Academy|Museum|Broadcasting</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DRAGON" name="DRAGON">
     <pattern>
-      <token>Dragon</token>
-      <token regexp="yes">Balls?|Age|Quests?|\d+</token>
+      <token case_sensitive="yes">Dragon</token>
+      <token regexp="yes" case_sensitive="yes">Balls?|Age|Quests?|\d+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LETTER" name="LETTER">
     <pattern>
-      <token>Letter</token>
-      <token>of</token>
-      <token regexp="yes">Intents?|Comfort|Credit|Protest</token>
+      <token case_sensitive="yes">Letter</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">Intents?|Comfort|Credit|Protest</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ART" name="ART">
     <pattern>
-      <token>Art</token>
-      <token>of</token>
-      <token regexp="yes">Fighting|Anarchy|Balance|War|Belt|Trance|Infinity</token>
+      <token case_sensitive="yes">Art</token>
+      <token case_sensitive="yes">of</token>
+      <token regexp="yes" case_sensitive="yes">Fighting|Anarchy|Balance|War|Belt|Trance|Infinity</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MIXED" name="MIXED">
     <pattern>
-      <token>Mixed</token>
-      <token regexp="yes">Zones?|Martial|Ups?|Emotions|Economy|Drinks?|Grills?|Media|Pickles</token>
+      <token case_sensitive="yes">Mixed</token>
+      <token regexp="yes" case_sensitive="yes">Zones?|Martial|Ups?|Emotions|Economy|Drinks?|Grills?|Media|Pickles</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="DAY" name="DAY">
     <pattern>
-      <token regexp="yes">Boxing|Welcome|Prime|Community</token>
-      <token regexp="yes">Days?</token>
+      <token regexp="yes" case_sensitive="yes">Boxing|Welcome|Prime|Community</token>
+      <token regexp="yes" case_sensitive="yes">Days?</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="DELONGHI" name="De'Longhi">
+    <pattern>
+      <token case_sensitive="yes">De</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">['’]</token>
+      <token case_sensitive="yes" spacebefore="no">Longhi</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2341,29 +3212,38 @@
   </rule>
   <rule id="BLIND" name="Poker term">
     <pattern>
-      <token regexp="yes">Big|Small</token>
-      <token regexp="yes">Blinds?</token>
+      <token regexp="yes" case_sensitive="yes">Big|Small</token>
+      <token regexp="yes" case_sensitive="yes">Blinds?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="PRODUCTION" name="Lean Production">
     <pattern>
-      <token regexp="yes">Lean|Clean</token>
-      <token>Production</token>
+      <token regexp="yes" case_sensitive="yes">Lean|Clean</token>
+      <token case_sensitive="yes">Production</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BILLIE" name="Billie Eilish">
     <pattern>
-      <token>Billie</token>
-      <token regexp="yes">Jeans?|Eilish|Holidays?|Pipers?</token>
+      <token case_sensitive="yes">Billie</token>
+      <token regexp="yes" case_sensitive="yes">Jeans?|Eilish|Holidays?|Pipers?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="AMAZING" name="Amazing Grace">
     <pattern>
-      <token>Amazing</token>
-      <token regexp="yes">Grace|Spider-Mans?|Stories</token>
+      <token case_sensitive="yes">Amazing</token>
+      <token regexp="yes" case_sensitive="yes">Grace|Spider-Mans?|Stories</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="EVERYBODYS_DARLING" name="Ignore spelling of 'Everybody's Darling'">
+    <pattern>
+      <token>Everybody</token>
+      <token regexp="yes" spacebefore="no">['’`´‘]</token>
+      <token spacebefore="no">s</token>
+      <token>Darling</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2382,6 +3262,13 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="DOT_HYPHEN" name="ignore spelling of '.-'">
+    <pattern>
+      <token>.</token>
+      <token spacebefore="no">-</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="HYPHENS" name="ignore spelling of multiple '-'">
     <pattern>
       <token regexp="yes">[\-]{3,30}</token>
@@ -2390,8 +3277,8 @@
   </rule>
   <rule id="ILKAY_GUNDOGAN" name="ignore spelling of multiple 'İlkay Gündoğan'">
     <pattern>
-      <token>İlkay</token>
-      <token regexp="yes">Gündoğans?</token>
+      <token case_sensitive="yes">İlkay</token>
+      <token regexp="yes" case_sensitive="yes">Gündoğans?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2404,43 +3291,256 @@
   <rule id="GRÜNE_NEUNE" name="Grüne Neune">
     <pattern>
       <token>grüne</token>
-      <token case_sensitive="yes">Neune</token>
+      <token case_sensitive="yes" marker="yes">Neune</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="ALLE_NEUNE" name="Alle neune">
     <pattern>
       <token>alle</token>
-      <token case_sensitive="yes">neune</token>
+      <token case_sensitive="yes" marker="yes">neune</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="ABBREVATIONS_SEPARATED_BY_DOT" name="Abkürzungen mit Punkten">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-ZÜÄÖ]</token>
+      <token case_sensitive="yes" spacebefore="no">.</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">[A-ZÜÄÖ]</token>
+      <token case_sensitive="yes" spacebefore="no">.</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="GUTES_KEIN_SUB" name="'kein/nichts Gutes' kein Substantiv Genitiv">
+    <pattern>
+      <token regexp="yes">[mksd]?ein|ihr|nichts|(et)?was|irgend(et)?was</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Gutes|Sinnloses|Wei(ß|ss)es|Festes|Objektives|Subjektives|Unrechtes|Hilfreiches|Wertloses|Kollektives</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:GEN.*"/>
+  </rule>
+  <rule id="EINEN_TICKEN_KEIN_VERB" name="'Tick' kein Verb">
+    <pattern>
+      <token regexp="yes">(kl?)?ein|(kl?)?einen</token>
+      <token regexp="yes" marker="yes">Tick(en)?</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LAST_BUT_NOT_LEAST_KEIN_VERB" name="'least' kein Verb">
+    <pattern>
+      <token>not</token>
+      <token marker="yes">least</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="ALBERT_KEIN_VERB" name="Name 'Albert'">
+    <pattern>
+      <token marker="yes">Albert</token>
+      <token regexp="yes">Einsteins?|Schweitzers?|Speers?|Camus</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="WALT_DISNEY" name="'Walt' kein Verb">
+    <pattern>
+      <token marker="yes">walt</token>
+      <token regexp="yes" case_sensitive="yes" postag="EIG:.*|UNKNOWN" postag_regexp="yes">[A-Z].*</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="OPEL_KADETT" name="'Kadett' kein Substantiv in 'Opel Kadett'">
+    <pattern>
+      <token>Opel</token>
+      <token regexp="yes" marker="yes">Kadetts?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="FIAT_UNO" name="'Uno' kein Substantiv in 'Fiat Uno'">
+    <pattern>
+      <token>Fiat</token>
+      <token regexp="yes" marker="yes">Unos?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="PAGE_KEIN_SUB_MAS" name="'Page' kein Substantiv in 'Page View'">
+    <pattern>
+      <token marker="yes">Page</token>
+      <token regexp="yes">Views?|Impressions?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="CHAMPIONS_KEIN_SUB" name="'Champions' kein Substantiv in 'Champions League'">
+    <pattern>
+      <token marker="yes">Champions</token>
+      <token regexp="yes">League.*|Hockey.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="EUROPA_KEIN_SUB" name="'Europa' kein Substantiv in 'Europa League'">
+    <pattern>
+      <token marker="yes">Europa</token>
+      <token regexp="yes">League.*|Conference.*|Nations.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="BLIND_KEIN_ADJ" name="'Blind' kein Substantiv in 'Blind Date'">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Blind</token>
+      <token regexp="yes">Date.*</token>
+    </pattern>
+    <disambig action="remove" postag="(ADJ|ZUS).*"/>
+  </rule>
+  <rule id="JOUR_FIXE_KEIN_ADJ" name="'fixe' kein ADJ in 'Jour fixe'">
+    <pattern>
+      <token case_sensitive="yes">Jour</token>
+      <token regexp="yes" marker="yes">fixe?s?</token>
+    </pattern>
+    <disambig action="remove" postag="(ADJ|VER).*"/>
+  </rule>
+  <rule id="UNION_JACK" name="'Union' kein fem. Substantiv in 'Union Jack'">
+    <pattern>
+      <token marker="yes">Union</token>
+      <token>Jack</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="UEFA_CUP" name="'Union' kein fem. Substantiv in 'UEFA Cup'">
+    <pattern>
+      <token regexp="yes" marker="yes">UEFA|FIFA</token>
+      <token regexp="yes" case_sensitive="yes">Cups?|Conference|Super|League|World</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="EUROVISION_SONG_CONTEST" name="'Eurovision' kein fem. Substantiv in 'Eurovision Song Context'">
+    <pattern>
+      <token marker="yes">Eurovision</token>
+      <token>Song</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="GRAND_CANYON_POS" name="'Grand' kein maskulines Substantiv in 'Grand Canyon'">
+    <pattern>
+      <token marker="yes">Grand</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="FREI_KEIN_ZUS" name="'versandkostenfrei' kein 'ZUS'">
+    <pattern>
+      <token regexp="yes">.+frei</token>
+    </pattern>
+    <disambig action="remove" postag="ZUS"/>
+  </rule>
+  <rule id="STAR_WARS" name="'Star' kein Substantiv in 'Star Wars'">
+    <pattern>
+      <token marker="yes">Star</token>
+      <token regexp="yes">Wars|Gates?|Treks?|Games</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="PLANTEN_UN_BLOMEN" name="'Planten' kein Verb in 'Planten un Blomen'">
+    <pattern>
+      <token marker="yes">Planten</token>
+      <token regexp="yes">und?</token>
+      <token regexp="yes">Blomens?</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="LIKE_A_PRAYER" name="'Like' kein Substantiv in 'Like a Prayer'">
+    <pattern>
+      <token marker="yes">Like</token>
+      <token regexp="yes">an?|the|my|y?our|me</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="TAKE_THAT" name="'TAKE' kein Substantiv in 'Take That'">
+    <pattern>
+      <token marker="yes">Take</token>
+      <token>That</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
   </rule>
   <rule id="ALOE_VERA" name="Ignore spelling of 'Aloe vera'">
     <pattern>
-      <token>Aloe</token>
-      <token>vera</token>
+      <token case_sensitive="yes">Aloe</token>
+      <token case_sensitive="yes">vera</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="ID_3" name="ID.3">
+    <pattern>
+      <token marker="yes">ID</token>
+      <token>.</token>
+      <token regexp="yes">[1-8](-[a-zäöüß]+)?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
   <rule id="POWERED_BY_IGNORE_SPELLING" name="powered by">
     <pattern>
-      <token regexp="yes">[Pp]owered|POWERED|[Dd]esigned|DESIGNED</token>
-      <token regexp="yes">by|BY</token>
+      <token regexp="yes" case_sensitive="yes">[Pp]owered|POWERED|[Dd]esigned|DESIGNED</token>
+      <token regexp="yes" case_sensitive="yes">by|BY</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="JOINT_CONTROL" name="Joint Control als Kompositum">
+    <pattern>
+      <token marker="yes">joint</token>
+      <token regexp="yes">control.*</token>
+    </pattern>
+    <disambig action="remove" postag=".+"/>
+  </rule>
+  <rule id="HOUSE_OF_X" name="'House of XXX' als Kompositum">
+    <pattern>
+      <token marker="yes">House</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+"/>
+  </rule>
+  <rule id="STAEDTE_MIT_BAD" name="'Bad' kein Substantiv">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Bad</token>
+      <token regexp="yes" case_sensitive="yes">Kissinger[sn]?|Moms|[mM]eets|(Kreuznach|Soden|Rothenfelde|Urach|Wildungen|Wimpfen|Salzuflen|Teinach-Zavelstein|Vilbel|Vöslau|Saulgau|Tölz|Arolsen|Aibling|Ischl|Oldesloe|Pyrmont|Neuenahr|Bergzabern|Essen|Erlach|Langensalza|Lippspringe|Münstereifel|Ems|Gams|Honnef|Kissingen|Fallingbostel|Reichenhall|Friedrichshall|Rappenau|Cannstatt|Wurzach|[A-ZÄÖÜ].+(heim|berg|burg|hof|hofen|st[ea]dt|stein|bach|see|dorf|tal|hausen|walde|felde?|hafen|ingen))(s|er[ns]?|erin|erinnen|aner[ns]?|anerin|anerinnen)?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+"/>
+  </rule>
+  <rule id="EINST_KEIN_VERB" name="'einst' kein Verb">
+    <pattern>
+      <token>einst</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LOS_KEIN_NOMEN" name="'Los' kein Nomen">
+    <pattern>
+      <token marker="yes">Los</token>
+      <token regexp="yes">Angel[oe]s|Zetas|Gatos|Alamos</token>
+    </pattern>
+    <disambig action="remove" postag="(SUB|VER|ADV|ZUS).*"/>
+  </rule>
+  <rule id="DAILY_WEEKLY_KEIN_NOMEN" name="'Daily' kein Nomen">
+    <pattern>
+      <token regexp="yes" marker="yes">Daily|Weekly</token>
+      <token postag="SUB.*|UNKNOWN" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="IGNORE_SPELLING_OF_NUMBER_PERIOD_LETTER" name="ignore '2.a'">
+    <pattern>
+      <token regexp="yes">\d+</token>
+      <token marker="yes" spacebefore="no">.</token>
+      <token regexp="yes" marker="yes" spacebefore="no">[a-z]</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_ON_TOUR" name="ignore 'on tour'">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">[Oo]n</token>
-      <token regexp="yes">[Tt]our</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[Oo]n</token>
+      <token regexp="yes" marker="yes">[Tt]our</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_MADE_IN_GERMANY" name="ignore 'made in Germany'">
     <pattern>
-      <token regexp="yes">[Mm]ade|MADE|[Dd]esigned|DESIGNED</token>
-      <token regexp="yes">in|IN</token>
-      <token regexp="yes">Europe|EUROPE|Switzerland|SWITZERLAND|Austria|AUSTRIA|Germany|GERMANY|Italy|ITALY|China|CHINA|USA|Thailand|THAILAND|India|INDIA|France|FRANCE</token>
+      <token regexp="yes" case_sensitive="yes">[Mm]ade|MADE|[Dd]esigned|DESIGNED</token>
+      <token regexp="yes" case_sensitive="yes">in|IN</token>
+      <token regexp="yes" case_sensitive="yes">Europe|EUROPE|Switzerland|SWITZERLAND|Austria|AUSTRIA|Germany|GERMANY|Italy|ITALY|China|CHINA|USA|Thailand|THAILAND|India|INDIA|France|FRANCE</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2451,28 +3551,141 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="USER_IN" name="'Hautärzt*in' keine Präposition">
+    <pattern>
+      <token regexp="yes">.*[a-z].*</token>
+      <token regexp="yes" spacebefore="no">[*:\/]</token>
+      <token marker="yes" spacebefore="no">in</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="USER_INNEN" name="'Hautärzt*innen' keine Adverb">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ][a-zäöüß\-]+</token>
+      <token regexp="yes" spacebefore="no">[*:\/]</token>
+      <token marker="yes" spacebefore="no">innen</token>
+    </pattern>
+    <disambig action="remove" postag="ADV.*"/>
+  </rule>
   <rule id="PROZENT_IGE" name="ignore spelling of '100%ige'">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">(\d+)?%ige</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">(\d+)?%ige</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GPT_THREE" name="ignore spelling of 'GPT-3'">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">[A-Z]{2,5}-\d+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z]{2,5}-\d+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SANKT_KEIN_VERB" name="'Sankt' kein Verb">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Sankt</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN|EIG.*|SUB.*" postag_regexp="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="NULLTE_KEIN_VERB" name="'nullte' kein Verb">
+    <pattern>
+      <token postag="ART.*|PRO:POS" postag_regexp="yes"></token>
+      <token case_sensitive="yes" marker="yes">nullte</token>
+      <token postag="SUB.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="FRANZ_KEIN_VERB" name="'franz.' kein Verb">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">franz</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="UNTER_FERNER_LIEFEN" name="'unter ferner liefen' kein Verb">
+    <pattern>
+      <token>unter</token>
+      <token>ferner</token>
+      <token marker="yes">liefen</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="DE_LAS_KEIN_VERB" name="'de las' kein Verb">
+    <pattern>
+      <token>de</token>
+      <token marker="yes">las</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="ON_TOUR_KEIN_VERB" name="'on tour' kein Verb">
+    <pattern>
+      <token>on</token>
+      <token marker="yes">tour</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="VIERTEL_NACH_VOR_KEIN_VERB" name="'viertel nach' kein Verb">
+    <pattern>
+      <token marker="yes">viertel</token>
+      <token regexp="yes">nach|vor</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="ZEIT_KEIN_PRP" name="'unizeit' kein PRP">
+    <pattern>
+      <token regexp="yes">.+zeit</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="NEN_IGNORE_SPELLING" name="Ignore spelling of 'nen">
+    <pattern>
+      <token regexp="yes">[’']</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">ne[nm]?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="LINGUA_FRANCA_IGNORE_SPELLING" name="Ignore spelling of 'Lingua franca">
     <pattern>
       <token case_sensitive="yes">Lingua</token>
-      <token regexp="yes">franca|geral</token>
+      <token regexp="yes" marker="yes">franca|geral</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="DANK_KEIN_VERB" name="'dank' kein Verb">
+    <pattern>
+      <token>dank</token>
+    </pattern>
+    <disambig action="remove" postag="VER:1.*"/>
+  </rule>
+  <rule id="WIDER_KEIN_VERB" name="'wider' kein Verb">
+    <pattern>
+      <token>wider</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="SCHNELL_KEIN_VERB" name="'schnell' kein Verb">
+    <pattern>
+      <token>schnell</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="BLEU_KEIN_VERB" name="'bleu' kein Verb">
+    <pattern>
+      <token>Cordon</token>
+      <token marker="yes">bleu</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="SPANISCHSPRECHEND" name="ignore spelling of 'spanischsprechend'">
     <pattern>
       <token regexp="yes">(afrikanisch|alt(arabisch|chinesisch|griechisch|persisch)|amerikanisch|arabisch|chinesisch|dänisch|deutsch|plattdeutsch|englisch|finnisch|französisch|frühneuhochdeutsch|germanisch|griechisch|hocharabisch|hochchinesisch|hochdeutsch|holländisch|italienisch|japanisch|jiddisch|jugoslawisch|koreanisch|kroatisch|lateinisch|luxemburgisch|mittelhochdeutsch|neuhochdeutsch|niederländisch|norwegisch|persisch|polnisch|portugiesisch|russisch|schwedisch|schweizerisch|semitisch|serbisch|serbokroatisch|slawisch|spanisch|tschechisch|türkisch|ukrainisch|ungarisch|weißrussisch|weissrussisch|hebräisch)(sprechend|klingend|rappend|korrigierend|singend|übersetzend|verstehend)(e[srnm]?)?</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SAT_1" name="ignore spelling of 'Sat.1'">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Sat|SAT</token>
+      <token case_sensitive="yes" marker="yes" spacebefore="no">.</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">1(-.+)?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2484,46 +3697,347 @@
   </rule>
   <rule id="BMW_3ER" name="'3er' ignore spelling">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">\d+er[ns]?</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">\d+er[ns]?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="FÜNFZIG_STE" name="'50ste' ignore spelling">
     <pattern>
-      <token regexp="yes">\d+(ste|te)(r|n|s|m)?</token>
+      <token regexp="yes" marker="yes">\d+(ste|te)(r|n|s|m)?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="MP_3" name="'mp3' ignore spelling">
     <pattern>
-      <token regexp="yes">mp[34]</token>
+      <token regexp="yes" marker="yes">mp[34]</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="EXE_DATEI" name="ignore spelling of '.exe-Datei'">
+    <pattern>
+      <token>.</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">(ai|asp|aspx|avi|bak|bat|bmp|cab|cfg|cgi|com|css|csv|dat|db|dbf|dll|doc|docx|eps|exe|flv|gif|htm|html|ibooks|ico|idml|ini|indd|jar|jpeg|jpg|js|jsp|lnk|md|mdb|mid|mov|mp3|mp4|mpa|mpg|ods|pdf|php|pl|png|pps|ppt|pptx|ps|psd|py|rar|rss|scss|sh|shtml|sql|stl|svg|sys|tar|tif|tiff|tmp|ts|txt|wav|wma|xhtml|xls|xlsx|xml|xsl|yaml|yml|zip|zipx|7z|web[mp])-(Erweiterung(en)?|Suffixe?|Textdatei(en)?|Datei(en|typs?|formats?|endung(en)?|suffixe?)?|Format(e[sn]?|s)?)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="NATIONAL_INSTITUTE_OF" name="ignore spelling of 'National Institute'">
     <pattern>
-      <token regexp="yes">National|International</token>
-      <token regexp="yes">Institutes?</token>
-      <token regexp="yes">of|for</token>
-      <token regexp="yes">[A-Z].+</token>
+      <token regexp="yes" case_sensitive="yes">National|International</token>
+      <token regexp="yes" case_sensitive="yes">Institutes?</token>
+      <token regexp="yes" case_sensitive="yes">of|for</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="TRADE_KEIN_SUB" name="'Trade' kein Substantiv">
+    <pattern>
+      <token marker="yes">Trade</token>
+      <token regexp="yes">Republic.*|Union|of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="CASE_KEIN_SUB" name="'Case' kein Substantiv">
+    <pattern>
+      <token marker="yes">Case</token>
+      <token regexp="yes">Study.*|Western</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="INNOVATION_KEIN_SUB" name="'Innovation' kein Substantiv">
+    <pattern>
+      <token marker="yes">Innovation</token>
+      <token regexp="yes">(Lab|Hub|Camp).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="LAST_KEIN_SUB" name="'Last' kein Substantiv">
+    <pattern>
+      <token marker="yes">Last</token>
+      <token regexp="yes">Minute.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="GENDER_KEIN_SUB" name="'Gender' kein Substantiv">
+    <pattern>
+      <token marker="yes">Gender</token>
+      <token regexp="yes">Studies.*</token>
+    </pattern>
+    <disambig action="remove" postag="(SUB|VER).*"/>
+  </rule>
+  <rule id="CREDIT_KEIN_SUB" name="'Credit' kein Substantiv">
+    <pattern>
+      <token marker="yes">Credit</token>
+      <token regexp="yes">Suisse.*|Karma.*|Agricole.*|Sesame.*|Card.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="PREMIER_KEIN_SUB" name="'Premier' kein Substantiv">
+    <pattern>
+      <token marker="yes">Premier</token>
+      <token regexp="yes">League.*|Academy.*|Classics</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="SUPER_KEIN_SUB" name="'Super' kein Substantiv">
+    <pattern>
+      <token marker="yes">Super</token>
+      <token regexp="yes">League.*|RTL.*|Audio.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="CALL_KEIN_SUB" name="'Call' kein Substantiv">
+    <pattern>
+      <token marker="yes">Call</token>
+      <token regexp="yes">of|me|my</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="FIFA_KEIN_SUB" name="'Fifa' kein Substantiv">
+    <pattern>
+      <token regexp="yes" marker="yes">FIFA|UEFA</token>
+      <token regexp="yes">Conf.*|Fed.*|Nations.*|World.*|Champion.*|Europa.*|Youth.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="JUNIOR_KEIN_SUB" name="'Junior' kein Substantiv">
+    <pattern>
+      <token marker="yes">Junior</token>
+      <token regexp="yes">Suites?|Manager(s|in|innen)?|High.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="COOKIE_KEIN_SUB" name="'Cookie' kein Substantiv">
+    <pattern>
+      <token marker="yes">Cookie</token>
+      <token regexp="yes">Policy.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="COCKTEIL_KEIN_SUB" name="'Junior' kein Substantiv">
+    <pattern>
+      <token marker="yes">Cocktail</token>
+      <token regexp="yes">Happy.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="BALANCE_KEIN_SUB" name="'Balance' kein Substantiv">
+    <pattern>
+      <token marker="yes">Balance</token>
+      <token regexp="yes">Sheets?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="NORD_KEIN_SUB" name="'Nord' kein Substantiv">
+    <pattern>
+      <token marker="yes">Nord</token>
+      <token regexp="yes">Stream.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="FUNKE_KEIN_SUB" name="'Funke' kein Substantiv">
+    <pattern>
+      <token marker="yes">Funke</token>
+      <token regexp="yes">Mediengruppe.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="THW_KEIN_SUB" name="'THW' kein Substantiv">
+    <pattern>
+      <token marker="yes">THW</token>
+      <token regexp="yes">Kiel.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="LEOPARD_KEIN_SUB" name="'Leopard' kein Substantiv">
+    <pattern>
+      <token marker="yes">Leopard</token>
+      <token regexp="yes">1|2|3|.*panzer.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="NOVA_KEIN_SUB" name="'Nova' kein Substantiv">
+    <pattern>
+      <token marker="yes">Nova</token>
+      <token regexp="yes">(Rock|Scotia|Motors).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="SPECIAL_KEIN_SUB" name="'Special' kein Substantiv">
+    <pattern>
+      <token marker="yes">Special</token>
+      <token regexp="yes">(Olympic|Agent|Offer|Effect|Air|Operations|Inspector|Boat).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="TASK_KEIN_SUB" name="'Task' kein Substantiv">
+    <pattern>
+      <token marker="yes">Task</token>
+      <token regexp="yes">Force.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="INTERNET_EXPLORER" name="'Internet' kein Substantiv">
+    <pattern>
+      <token marker="yes">Internet</token>
+      <token regexp="yes">Explorer.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*NEU.*"/>
+  </rule>
+  <rule id="BUSINESS_SCHOOL" name="'Internet' kein Substantiv">
+    <pattern>
+      <token marker="yes">Business</token>
+      <token regexp="yes">School.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*NEU.*"/>
+  </rule>
+  <rule id="SLOT_MACHINE" name="'Slot' kein Substantiv">
+    <pattern>
+      <token marker="yes">Slot</token>
+      <token regexp="yes">Machine.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="LAKE_KEIN_SUB" name="'Lake' kein Substantiv">
+    <pattern>
+      <token marker="yes">Lake</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z].+</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="SHOOTING_KEIN_SUB" name="'Shooting' kein Substantiv">
+    <pattern>
+      <token marker="yes">Shooting</token>
+      <token regexp="yes">Guards.*|Brake.*|Fish.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="GAME_KEIN_SUB" name="'Game' kein Substantiv">
+    <pattern>
+      <token marker="yes">Game</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="GIRO_KEIN_SUB" name="'Giro' kein Substantiv">
+    <pattern>
+      <token marker="yes">Giro</token>
+      <token>d</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="TOP_KEIN_SUB" name="'Top' kein Substantiv">
+    <pattern>
+      <token marker="yes">Top</token>
+      <token regexp="yes">\d+|Three|Five|Ten|Zehn|Fünf|Hundert|Tausend</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="TRACK_KEIN_SUB" name="'Track' kein Substantiv">
+    <pattern>
+      <token regexp="yes" marker="yes">Track|Jump</token>
+      <token regexp="yes">Pant.*|Suit.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="USER_KEIN_SUB" name="'User' kein Substantiv">
+    <pattern>
+      <token marker="yes">User</token>
+      <token regexp="yes">Experience.*|Story.*|Agent.*|Datagram.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="CONTENT_KEIN_SUB" name="'Content' kein Substantiv">
+    <pattern>
+      <token marker="yes">Content</token>
+      <token regexp="yes">Creator.*|Delivery.*|Farm|Collaboration.*|Security.*|Wiki</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="TRIPLE_KEIN_SUB" name="'Triple' kein Substantiv">
+    <pattern>
+      <token marker="yes">Triple</token>
+      <token regexp="yes">Entente.*|Crown.*|9</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="UNION_KEIN_SUB" name="'Union' kein Substantiv">
+    <pattern>
+      <token marker="yes">Union</token>
+      <token regexp="yes">Investment.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="BUS_KEIN_SUB" name="'Bus' kein Substantiv">
+    <pattern>
+      <token marker="yes">Bus</token>
+      <token regexp="yes">Ostschweiz.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="VON_DER_OSTEN_KEIN_SUB" name="'von der Osten' kein Substantiv">
+    <pattern>
+      <token>von</token>
+      <token>der</token>
+      <token case_sensitive="yes" marker="yes">Osten</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
   </rule>
   <rule id="VAN_DER_NAME" name="van der Valk">
     <pattern>
       <token>van</token>
       <token regexp="yes">der?</token>
-      <token regexp="yes" case_sensitive="yes">[A-Z][a-zäöü\-]+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z][a-zäöü\-]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="BETEILIGUNGS_GMBH" name="häufiger Firmenname mit Fugen-S 'XX Beteiligungs GmbH'">
     <pattern>
       <token regexp="yes" postag="EIG.*|SUB.*|UNKNOWN" postag_regexp="yes">[A-ZÄÖÜ].*</token>
-      <token regexp="yes" case_sensitive="yes">Verwaltungs|Beteiligungs</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Verwaltungs|Beteiligungs</token>
       <token regexp="yes">GmbH|AG|Ltd|UG</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="METAVERSE" name="Metaverse kein Maskulinum">
+    <pattern>
+      <token regexp="yes">.*metaversen?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="SIEBEN_KEIN_VERB" name="'sieben' kein Verb">
+    <pattern>
+      <token marker="yes">sieben</token>
+      <token regexp="yes">Tagen?|Monaten?|Zwergen?|Todsünden|Leben|Weltwundern?|Schwestern?</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="SCHOEN_KEIN_ADJ" name="'schön' kein Adjektiv">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Schön</token>
+      <token regexp="yes">Klinik.*</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ.*"/>
+  </rule>
+  <rule id="BMW_KEIN_SUB" name="'BMW' kein Nomen">
+    <pattern>
+      <token marker="yes">BMW</token>
+      <token regexp="yes" case_sensitive="yes">i?[ZXM].+|[zmxi]\d+|Isetta</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="FRONT_KEIN_SUB" name="'Front' kein Nomen">
+    <pattern>
+      <token marker="yes">Front</token>
+      <token regexp="yes" case_sensitive="yes">(National|Runner|Line).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="KING_KEIN_SUB" name="'Front' kein Nomen">
+    <pattern>
+      <token marker="yes">King</token>
+      <token regexp="yes" case_sensitive="yes">(Size|of|Crimson|Arthur|Diamond).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
   </rule>
   <rule id="THREE_D_SECURE" name="'3D-Secure'">
     <pattern>
@@ -2531,27 +4045,180 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="VORS_KEIN_PRP" name="'vors' kein PRP">
+    <pattern>
+      <token marker="yes">vors</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="IN_KEIN_PRP" name="'in' kein PRP">
+    <pattern>
+      <token regexp="yes" spacebefore="no">[_\*:]</token>
+      <token marker="yes" spacebefore="no">in</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="MOORESCHEN_KEIN_SUB" name="Mooreschen Gesetz">
+    <pattern>
+      <token regexp="yes" marker="yes">Mooresche.*</token>
+      <token regexp="yes">Gesetz.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="KUND_KEIN_VERB" name="'Kund' kein Verb in 'Kund:in'">
+    <pattern>
+      <token marker="yes">Kund</token>
+      <token regexp="yes" spacebefore="no">[:/_*]</token>
+      <token regexp="yes" spacebefore="no">in.*</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LATTE_KEIN_SUB" name="'Latte' kein FEM Sub in 'Latte macchiato'">
+    <pattern>
+      <token marker="yes">Latte</token>
+      <token regexp="yes">macc?hiatt?o.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*FEM.*"/>
+  </rule>
+  <rule id="BITTE_KEIN_VER" name="'Bitte' kein Verb">
+    <pattern>
+      <token>wer</token>
+      <token case_sensitive="yes" marker="yes">bitte</token>
+      <token postag="VER.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LANG_KEIN_VER" name="'lang' kein Verb">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">lang</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="TROTZ_KEIN_VER" name="'trotz' kein Verb">
+    <pattern>
+      <token marker="yes">trotz</token>
+      <token postag=".*(GEN|DAT).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="DRAMATISCHEN_KEIN_VER" name="'...tischen' kein Verb">
+    <pattern>
+      <token regexp="yes" marker="yes">.*(drama|roman|elas|nazis|narziss)tisch(en?)?</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="VOLKSWAGEN_KEIN_VER" name="'Wagen' kein Verb">
+    <pattern>
+      <token marker="yes">Volkswagen</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*INF"/>
+  </rule>
+  <rule id="INSTITUTE_OF" name="'Institute of' kein Pluralnomen">
+    <pattern>
+      <token regexp="yes" marker="yes">Institutes?</token>
+      <token regexp="yes">of|for</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="DOMAIN_KEIN_VERB" name="'web.de' kein Verb">
+    <pattern>
+      <token postag="VER.*|ADV.*|PRP.*" postag_regexp="yes" marker="yes"></token>
+      <token spacebefore="no">.</token>
+      <token regexp="yes" spacebefore="no">de|net|biz|eu|ru|be|co|uk|us|info|at|ch|nl|lu|org|ai|asp|aspx|avi|bak|bat|bmp|cab|cfg|cgi|com|css|csv|dat|db|dbf|dll|doc|docx|eps|exe|flv|gif|htm|html|ibooks|ico|idml|ini|indd|jar|jpeg|jpg|js|jsp|lnk|md|mdb|mid|mov|mp3|mp4|mpa|mpg|ods|pdf|php|pl|png|pps|ppt|pptx|ps|psd|py|rar|rss|scss|sh|shtml|sql|stl|svg|sys|tar|tif|tiff|tmp|ts|txt|wav|wma|xhtml|xls|xlsx|xml|xsl|yaml|yml|zip|zipx|7z|web[mp]</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*|ADV.*|PRP.*"/>
+  </rule>
+  <rule id="UNIVERSAL_UNKNOWN" name="'Universal' als englisches Wort/Eigenname">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Universals?</token>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ].*|records?|music|studios|analytics|edition|serial|design|mobile|plug|orlando</token>
+    </pattern>
+    <disambig action="remove" postag="(SUB|ADJ).*"/>
+  </rule>
+  <rule id="PATRIOT_ACT" name="'Patriot' als englisches Wort/Eigenname">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Patriot</token>
+      <token regexp="yes" case_sensitive="yes">Acts?|Movements?|Rails?|Days?|Games?|Hills?|Leagues?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="REAL_KEIN_SUB" name="'Real' als Eigenname">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Real</token>
+      <token regexp="yes">Madrids?|Mallorcas?|Murcias?|Valladolids?|Sitio|Sociedads?|Universidad|Oviedos?|Times?|Lifes?|People|Racings?|Estates?|Academia|Bras[ií]lias?|BIP|Betis|Cartagenas?|Canoes?|de|Espa[nñ]a|Hospicios?|Hospitals?|Irish|Jard[ií]n|Kakamoras?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="WEISE_KEIN_ADJ" name="Wörter, die mit 'weise' enden sind kein Adjektiv">
+    <pattern>
+      <token regexp="yes" postag="ADJ.*" postag_regexp="yes">.+weise</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ.*"/>
+  </rule>
+  <rule id="DENN_EIG" name="denn's kein Adverb">
+    <pattern>
+      <token marker="yes">denn</token>
+      <token regexp="yes" spacebefore="no">['’`´‘]</token>
+      <token spacebefore="no">s</token>
+    </pattern>
+    <disambig action="remove" postag="ADV.*|KON.*"/>
+  </rule>
+  <rule id="SMART_SPEAKER" name="'Smart' kein Adjektiv">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Smart</token>
+      <token regexp="yes">Speaker[sn]?|Homes?|For.*|Citys?|Roadster[sn]?|Meter[sn]?</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ.*"/>
+  </rule>
   <rule id="KU_DAMM" name="Ku'damm">
     <pattern>
-      <token>Ku</token>
-      <token regexp="yes">['’]</token>
-      <token>damm</token>
+      <token case_sensitive="yes">Ku</token>
+      <token regexp="yes" case_sensitive="yes">['’]</token>
+      <token case_sensitive="yes">damm</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="NACH_WIE_VOR" name="nach wie vor ('vor' keine Präposition)">
+    <pattern>
+      <token>nach</token>
+      <token>wie</token>
+      <token marker="yes">vor</token>
+    </pattern>
+    <disambig action="remove" postag="(PRP|ZUS).*"/>
+  </rule>
+  <rule id="RECHT_KEIN_VERB" name="'eine' kein Verb in 'eine der besten'">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">recht</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="DICHTE_KEIN_ADJ" name="Nomen mit 'Dichte' am ende">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="SUB.+ADJ" postag_regexp="yes">[A-ZÄÖÜ].+dichten?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+ADJ"/>
+  </rule>
+  <rule id="IN_VITRO_NO_PREPOSITION" name="in vitro (in = keine Präposition)">
+    <pattern>
+      <token marker="yes">in</token>
+      <token>vitro</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
   <rule id="PRAIA_DA" name="ignore spelling of 'Praia da Luz'">
     <pattern>
-      <token>Praia</token>
-      <token regexp="yes">d[oa]</token>
-      <token regexp="yes">[A-Z].+</token>
+      <token case_sensitive="yes" marker="yes">Praia</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">d[oa]</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z].+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="RÄTSEL-" name="ignore spelling of '(Rätsel-)Spaß'">
     <pattern>
-      <token>(</token>
-      <token>Rätsel-</token>
-      <token>)</token>
+      <token case_sensitive="yes" marker="yes">(</token>
+      <token case_sensitive="yes" marker="yes">Rätsel-</token>
+      <token case_sensitive="yes" marker="yes">)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2565,7 +4232,7 @@
   <rule id="INTER_NATIONAL" name="ignore spelling of (inter)national">
     <pattern>
       <token>(</token>
-      <token regexp="yes">inter|multi</token>
+      <token regexp="yes" marker="yes">inter|multi</token>
       <token>)</token>
       <token regexp="yes">national.*</token>
     </pattern>
@@ -2577,12 +4244,26 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="EIGTL_ABK" name="ignore spelling of 'eigtl'">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">Eigtl</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ÜBERFAHRENWERDEN" name="ignore spelling of substantivized verbs + 'werden'">
     <pattern>
       <token postag="ART.+" postag_regexp="yes"></token>
-      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ].+(en|t)werden</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[A-ZÄÖÜ].+(en|t)werden</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="HOLST_KEIN_VERB" name="'Holst' kein Verb">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Hols?t</token>
+    </pattern>
+    <disambig action="remove" postag="EIG.*"/>
   </rule>
   <rule id="IGNORE_2ND_LEVEL_SUPPORT" name="ignore '2nd-Level-Support'">
     <pattern>
@@ -2593,15 +4274,15 @@
   <rule id="IGNORE_SPELLING_OF_LEGAL_PARAGRAPHS" name="ignore paragraph numbers 'Absatz 2aa'">
     <pattern>
       <token regexp="yes">.*(Absatz|Absätzen?|Paragra(ph|f)(en)?|Artikels?)</token>
-      <token regexp="yes">\d{1,2}[abcdef]{2}</token>
+      <token regexp="yes" marker="yes">\d{1,2}[abcdef]{2}</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_UPPERCASED_UNDERSCORED_WORDS" name="ignore words like ">
     <pattern>
-      <token regexp="yes">[A-Z0-9]+</token>
-      <token>_</token>
-      <token regexp="yes">[A-Z0-9]+</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z0-9]+</token>
+      <token case_sensitive="yes">_</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z0-9]+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -2613,7 +4294,7 @@
   </rule>
   <rule id="TYPO3" name="ignore spelling 'TYPO3'">
     <pattern>
-      <token regexp="yes">TYPO3(-Ding(e|en)?)?</token>
+      <token regexp="yes" marker="yes">TYPO3(-Ding(e|en)?)?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

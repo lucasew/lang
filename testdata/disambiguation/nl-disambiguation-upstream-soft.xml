@@ -1180,6 +1180,38 @@
       <wd pos="GET:ARA:012:MRV"/>
     </disambig>
   </rule>
+  <rule id="DE_AFKO_RARE_WERKWOORDVORM" name="werkwoord 1e persoon onwaarschijnlijk">
+    <pattern>
+      <token>de</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z]{3,4}</token>
+      <token regexp="yes" marker="yes">aanhang|chip|groep|kaart|kring|leden|pomp|raad|stoel|tafel|tour</token>
+    </pattern>
+    <disambig action="remove" postag="WKW.*"/>
+  </rule>
+  <rule id="ZNW_ZELDZAAM2" name="niet, bij etc">
+    <pattern>
+      <token marker="yes">jan</token>
+    </pattern>
+    <disambig action="remove" postag="ENM.*"/>
+  </rule>
+  <rule id="ZNW_ZELDZAAM3" name="van">
+    <pattern>
+      <token marker="yes">van</token>
+    </pattern>
+    <disambig action="remove" postag="ZNW.*"/>
+  </rule>
+  <rule id="ZNW_ZELDZAAM4" name="waar">
+    <pattern>
+      <token marker="yes">waar</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:1EP"/>
+  </rule>
+  <rule id="NIET" name="-">
+    <pattern>
+      <token marker="yes">niet</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:1EP|WKW:TGW:3EP|VNW:OBP|ZNW:EKV:DE_"/>
+  </rule>
   <rule id="ONS_BEKEND" name="terugcorrigeren">
     <pattern>
       <token>een</token>
@@ -1621,6 +1653,12 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_000b" name="-">
+    <pattern>
+      <token>in</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:1EP"/>
+  </rule>
   <rule id="NEW_000c" name="-">
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="GET:RNG">Tweede|Eerste</token>
@@ -1667,6 +1705,26 @@
       <token postag="WKW:VLT:1EP">was</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_074" name="-">
+    <pattern>
+      <token marker="yes">dat</token>
+      <token>ik</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OND:MRV:HET|VNW:AWZ:EKV:HET|VNW:OND:EKV:HET"/>
+  </rule>
+  <rule id="NEW_075" name="-">
+    <pattern>
+      <token marker="yes">over</token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV"/>
+  </rule>
+  <rule id="NEW_080" name="-">
+    <pattern>
+      <token postag="WKW:VLT:INF" marker="yes">voor</token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="VGW"/>
   </rule>
   <rule id="NEW_112" name="-">
     <pattern>
@@ -1765,6 +1823,93 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_172" name="-">
+    <pattern>
+      <token marker="yes">dat</token>
+      <token>hij</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OND:MRV:HET|VNW:AWZ:EKV:HET|VNW:OND:EKV:HET"/>
+  </rule>
+  <rule id="NEW_174" name="-">
+    <pattern>
+      <token marker="yes">dat</token>
+      <token>niet</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:AWZ:EKV:HET"/>
+  </rule>
+  <rule id="NEW_176" name="-">
+    <pattern>
+      <token marker="yes">haar</token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:PER:3EP:EKV:BEZ"/>
+  </rule>
+  <rule id="NEW_186" name="-">
+    <pattern>
+      <token regexp="yes">het|dit|dat</token>
+      <token marker="yes">wel</token>
+    </pattern>
+    <disambig action="remove" postag="TSW|ZNW:EKV"/>
+  </rule>
+  <rule id="NEW_189a" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token>ze</token>
+      <token marker="yes">zijn</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:PER:3EP:EKV:BEZ"/>
+  </rule>
+  <rule id="NEW_189b" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">ze</token>
+      <token>zijn</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:PER:3EP:EKV:ACT|VNW:PER:3EP:MRV:PSF"/>
+  </rule>
+  <rule id="NEW_191" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">meer</token>
+    </pattern>
+    <disambig action="remove" postag="BYW|ZNW:EKV:HET|WKW:TGW:1EP"/>
+  </rule>
+  <rule id="NEW_192" name="-">
+    <pattern>
+      <token marker="yes">wat</token>
+      <token regexp="yes">ik|hij|jij|zij|men|u</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:URT|BYW:GRD|TSW|VNW:OBP:EKV|VNW:VRG"/>
+  </rule>
+  <rule id="NEW_202" name="-">
+    <pattern>
+      <token postag="VGW" marker="yes"></token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="VGW"/>
+  </rule>
+  <rule id="NEW_203" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token>ik</token>
+      <token marker="yes">weet</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:VLT:GIJ"/>
+  </rule>
+  <rule id="NEW_204" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">wel</token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV"/>
+  </rule>
+  <rule id="NEW_220" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">want</token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV|WKW:TGW:3EP"/>
+  </rule>
   <rule id="NEW_225" name="-">
     <pattern>
       <token postag="SENT_START|START" postag_regexp="yes"></token>
@@ -1772,6 +1917,13 @@
       <token>,</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_232" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">echt</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:1EP|WKW:TGW:3EP|ZNW:EKV:DE_"/>
   </rule>
   <rule id="NEW_235" name="-">
     <pattern>
@@ -1789,6 +1941,13 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_245" name="-">
+    <pattern>
+      <token postag="maar" marker="yes"></token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:1EP"/>
+  </rule>
   <rule id="NEW_251" name="-">
     <pattern>
       <token postag="SENT_START|START" postag_regexp="yes"></token>
@@ -1797,12 +1956,40 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_276" name="-">
+    <pattern>
+      <token marker="yes">neer</token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV:DE_|WKW:TGW:1EP"/>
+  </rule>
+  <rule id="NEW_277" name="-">
+    <pattern>
+      <token marker="yes">veel</token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="BYW:GRD|WKW:TGW:1EP"/>
+  </rule>
   <rule id="NEW_286" name="-">
     <pattern>
       <token postag="VNW:PER:3EP:EKV:ACT">u</token>
       <token postag="WKW:TGW:3EP">bent</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_289" name="-">
+    <pattern>
+      <token negate="yes">van</token>
+      <token postag="ENM:PER:LST:VAN" marker="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="ENM:PER:LST:VAN"/>
+  </rule>
+  <rule id="NEW_296" name="-">
+    <pattern>
+      <token marker="yes">veel</token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OBP"/>
   </rule>
   <rule id="NEW_300" name="-">
     <pattern>
@@ -1819,6 +2006,16 @@
       <token postag="VNW:PER:2EP:EKV:ACT">je</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_337" name="-">
+    <pattern>
+      <token marker="yes">het</token>
+      <token case_sensitive="yes">United</token>
+      <token case_sensitive="yes">States</token>
+      <token case_sensitive="yes">Census</token>
+      <token case_sensitive="yes">Bureau</token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OND:MRV:HET|VNW:OND:EKV:HET"/>
   </rule>
   <rule id="NEW_344" name="-">
     <pattern>

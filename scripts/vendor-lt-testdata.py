@@ -414,9 +414,9 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
             continue
         action = (dis.get("action") or "replace").lower()
         postag = (dis.get("postag") or "").strip()
-        # Soft ADD: single <wd pos="…"/> (Java UNKNOWN_PCT, COMMA_POSTAG, …)
+        # Soft ADD/REMOVE: <wd pos="…" lemma="…"/> (Java UNKNOWN_PCT, REMOVE_JJ_FOR_OR, …)
         add_wds: list[dict] = []
-        if action == "add":
+        if action in ("add", "remove"):
             for c in dis:
                 if local(c.tag) != "wd":
                     continue
@@ -426,7 +426,10 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 if not wd_pos and not wd_lemma and not wd_text:
                     continue
                 add_wds.append({"pos": wd_pos, "lemma": wd_lemma, "text": wd_text})
-            if not add_wds:
+            if action == "add" and not add_wds:
+                continue
+            # remove may use postag only (negative filter) or <wd> list
+            if action == "remove" and not add_wds and not postag:
                 continue
         elif action not in ("filter", "filterall", "replace", "immunize", "ignore_spelling"):
             continue
@@ -499,8 +502,12 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
             lines.append(f"      <token{attr_s}>{body}</token>")
         lines.append("    </pattern>")
         act = r.get("action") or "replace"
-        if act == "add" and r.get("add_wds"):
-            lines.append(f'    <disambig action="add">')
+        if act in ("add", "remove") and r.get("add_wds"):
+            open_tag = f'    <disambig action="{xml_esc(act)}"'
+            if act == "remove" and r.get("postag"):
+                open_tag += f' postag="{xml_esc(r["postag"])}"'
+            open_tag += ">"
+            lines.append(open_tag)
             for wd in r["add_wds"]:
                 attrs = []
                 if wd.get("pos"):
@@ -514,6 +521,8 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
                 else:
                     lines.append(f"      <wd{attr_s}/>")
             lines.append("    </disambig>")
+        elif act == "remove" and r.get("postag"):
+            lines.append(f'    <disambig action="remove" postag="{xml_esc(r["postag"])}"/>')
         elif act in ("filter", "replace") and r.get("postag"):
             lines.append(f'    <disambig action="{xml_esc(act)}" postag="{xml_esc(r["postag"])}"/>')
         elif act == "filterall":

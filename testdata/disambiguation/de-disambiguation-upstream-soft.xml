@@ -45,6 +45,18 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="HAFT_KEIN_SUB" name="'Ekelhaft' kein Substantiv">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">(Gönner|Ekel|Schmerz|Lach|Fabel|Rätsel|Herz|Leib|Ehren|Engel|Ernst|Gott)haft</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="PUNKTEN_KEIN_SUB" name="'Aussichtspunkten' kein Verb">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">(Aussichts|Eck|Tau|Lade|Blick|Plus|Zeit|Ziel|Basis|Stich|Stütz|Treff|Knack|Wende|Doppel|Mittel|Strich|Anhats|Ausgangs|Elfmeter|Schmelz|Gesichts|Prozent|Anhalts|Berührungs|Tagesordnungs|Marinestütz|Scheitel|Tatzeit|Dezimal)punkten</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+INF"/>
+  </rule>
   <rule id="LANGE_ZEIT_ADV" name="lange Zeit">
     <pattern>
       <token regexp="yes">lange|längere</token>
@@ -724,6 +736,116 @@
     <disambig action="add">
       <wd pos="ADJ:DAT:PLU:NEU:GRU:SOL"/>
     </disambig>
+  </rule>
+  <rule id="LEBENSWERTEN" name="lebenswerten (VER) -&gt; lebenswerten ()">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[a-zäöü]+enswerten?</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="SENT_START_DER" name="'Der' am Satzanfang (kein Genitiv Singular)">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">Der</token>
+    </pattern>
+    <disambig action="remove" postag="ART:DEF:GEN:SIN:FEM"/>
+  </rule>
+  <rule id="ICH_SENT_START" name="Ich am Satzanfang">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Ich|Wir</token>
+      <token case_sensitive="yes" postag="VER:1:.+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.*:NEU"/>
+  </rule>
+  <rule id="WORKAROUND_GH_635" name="WORKAROUND_GH_635">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">-</token>
+    </pattern>
+    <disambig action="remove" postag=".+"/>
+  </rule>
+  <rule id="FIDEL" name="FIDEL">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Fidel</token>
+      <token regexp="yes" case_sensitive="yes">Castros?</token>
+    </pattern>
+    <disambig action="remove" postag="(ADJ|SUB).*"/>
+  </rule>
+  <rule id="HOCHDRAMATISCH" name="kein Verb: charismatischen / hochdramatischen">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" inflected="yes" marker="yes">(charis|hochdra)matischen|minimalistischen</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="EX_LEGE" name="kein Verb: charismatischen / hochdramatischen">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">de|ex|sine</token>
+      <token case_sensitive="yes" marker="yes">lege</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="BITTE" name="kein Verb: 'bitte' am Satzende">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">bitte</token>
+      <token regexp="yes" case_sensitive="yes" postag="PKT">[\.!]</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="ALTBEKANNTE" name="kein Partizip: altbekannte">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">altbekannte</token>
+    </pattern>
+    <disambig action="remove" postag="(PA2|VER):.+"/>
+  </rule>
+  <rule id="RECHTSCHAFFEN" name="kein Verb: rechtschaffen">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">rechtschaffen</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="KAUFVERHALTEN" name="kein Verb: Kaufverhalten">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="VER:.+" postag_regexp="yes" marker="yes">[A-Z].+verhalten</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="SUBSTANTIVIERTES_VERB" name="kein Verb: substantiviertes Verb">
+    <pattern>
+      <token case_sensitive="yes" postag="PRP:LOK:DAT|ART:DEF:.+:NEU" postag_regexp="yes"></token>
+      <token regexp="yes" case_sensitive="yes" postag="VER:INF.+" postag_regexp="yes" marker="yes">[A-ZÄÖÜ].+</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="SEIN_PA2" name="PA2 nach 'sein'">
+    <pattern>
+      <token case_sensitive="yes" inflected="yes">sein</token>
+      <token case_sensitive="yes" postag=".*PA2:.+" postag_regexp="yes" marker="yes"></token>
+      <token case_sensitive="yes" postag="PKT"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:[1-3I].+"/>
+  </rule>
+  <rule id="ZU_MIT_INFINITIV" name="Infinitiv nach 'zu'">
+    <pattern>
+      <token case_sensitive="yes">zu</token>
+      <token case_sensitive="yes" postag="VER:INF:.+" postag_regexp="yes" marker="yes"></token>
+      <token case_sensitive="yes" postag="PKT|KON:NEB" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:[1-3]:.+"/>
+  </rule>
+  <rule id="RIW" name="Reit im Winkl">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Reit</token>
+      <token case_sensitive="yes">im</token>
+      <token case_sensitive="yes">Winkl</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="WUERDIGE" name="eine würdige (keine Verbform)">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[kdms]?eine|die(se)?|viele</token>
+      <token case_sensitive="yes" marker="yes">würdige</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
   </rule>
   <rule id="VORSICHTSHALBER" name=".+shalber → ADV">
     <pattern>
@@ -1838,6 +1960,13 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="AIR_CHINA" name="Air China (Air kein SUB)">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Air</token>
+      <token postag="SUB.*|UNKNOWN|EIG.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
   <rule id="AIR_FORCE_ONE" name="Air Force One">
     <pattern>
       <token case_sensitive="yes">Air</token>
@@ -2811,6 +2940,13 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="CHIEF_KEIN_SUB" name="Chief of XXX">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Chiefs?</token>
+      <token case_sensitive="yes">of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
   <rule id="VICE_PRESIDENT_OF" name="Vice President of XXX">
     <pattern>
       <token case_sensitive="yes">Vice</token>
@@ -3175,6 +3311,153 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="GUTES_KEIN_SUB" name="'kein/nichts Gutes' kein Substantiv Genitiv">
+    <pattern>
+      <token regexp="yes">[mksd]?ein|ihr|nichts|(et)?was|irgend(et)?was</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Gutes|Sinnloses|Wei(ß|ss)es|Festes|Objektives|Subjektives|Unrechtes|Hilfreiches|Wertloses|Kollektives</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:GEN.*"/>
+  </rule>
+  <rule id="EINEN_TICKEN_KEIN_VERB" name="'Tick' kein Verb">
+    <pattern>
+      <token regexp="yes">(kl?)?ein|(kl?)?einen</token>
+      <token regexp="yes" marker="yes">Tick(en)?</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LAST_BUT_NOT_LEAST_KEIN_VERB" name="'least' kein Verb">
+    <pattern>
+      <token>not</token>
+      <token marker="yes">least</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="ALBERT_KEIN_VERB" name="Name 'Albert'">
+    <pattern>
+      <token marker="yes">Albert</token>
+      <token regexp="yes">Einsteins?|Schweitzers?|Speers?|Camus</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="WALT_DISNEY" name="'Walt' kein Verb">
+    <pattern>
+      <token marker="yes">walt</token>
+      <token regexp="yes" case_sensitive="yes" postag="EIG:.*|UNKNOWN" postag_regexp="yes">[A-Z].*</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="OPEL_KADETT" name="'Kadett' kein Substantiv in 'Opel Kadett'">
+    <pattern>
+      <token>Opel</token>
+      <token regexp="yes" marker="yes">Kadetts?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="FIAT_UNO" name="'Uno' kein Substantiv in 'Fiat Uno'">
+    <pattern>
+      <token>Fiat</token>
+      <token regexp="yes" marker="yes">Unos?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="PAGE_KEIN_SUB_MAS" name="'Page' kein Substantiv in 'Page View'">
+    <pattern>
+      <token marker="yes">Page</token>
+      <token regexp="yes">Views?|Impressions?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="CHAMPIONS_KEIN_SUB" name="'Champions' kein Substantiv in 'Champions League'">
+    <pattern>
+      <token marker="yes">Champions</token>
+      <token regexp="yes">League.*|Hockey.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="EUROPA_KEIN_SUB" name="'Europa' kein Substantiv in 'Europa League'">
+    <pattern>
+      <token marker="yes">Europa</token>
+      <token regexp="yes">League.*|Conference.*|Nations.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="BLIND_KEIN_ADJ" name="'Blind' kein Substantiv in 'Blind Date'">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Blind</token>
+      <token regexp="yes">Date.*</token>
+    </pattern>
+    <disambig action="remove" postag="(ADJ|ZUS).*"/>
+  </rule>
+  <rule id="JOUR_FIXE_KEIN_ADJ" name="'fixe' kein ADJ in 'Jour fixe'">
+    <pattern>
+      <token case_sensitive="yes">Jour</token>
+      <token regexp="yes" marker="yes">fixe?s?</token>
+    </pattern>
+    <disambig action="remove" postag="(ADJ|VER).*"/>
+  </rule>
+  <rule id="UNION_JACK" name="'Union' kein fem. Substantiv in 'Union Jack'">
+    <pattern>
+      <token marker="yes">Union</token>
+      <token>Jack</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="UEFA_CUP" name="'Union' kein fem. Substantiv in 'UEFA Cup'">
+    <pattern>
+      <token regexp="yes" marker="yes">UEFA|FIFA</token>
+      <token regexp="yes" case_sensitive="yes">Cups?|Conference|Super|League|World</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="EUROVISION_SONG_CONTEST" name="'Eurovision' kein fem. Substantiv in 'Eurovision Song Context'">
+    <pattern>
+      <token marker="yes">Eurovision</token>
+      <token>Song</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="GRAND_CANYON_POS" name="'Grand' kein maskulines Substantiv in 'Grand Canyon'">
+    <pattern>
+      <token marker="yes">Grand</token>
+      <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="FREI_KEIN_ZUS" name="'versandkostenfrei' kein 'ZUS'">
+    <pattern>
+      <token regexp="yes">.+frei</token>
+    </pattern>
+    <disambig action="remove" postag="ZUS"/>
+  </rule>
+  <rule id="STAR_WARS" name="'Star' kein Substantiv in 'Star Wars'">
+    <pattern>
+      <token marker="yes">Star</token>
+      <token regexp="yes">Wars|Gates?|Treks?|Games</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="PLANTEN_UN_BLOMEN" name="'Planten' kein Verb in 'Planten un Blomen'">
+    <pattern>
+      <token marker="yes">Planten</token>
+      <token regexp="yes">und?</token>
+      <token regexp="yes">Blomens?</token>
+    </pattern>
+    <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="LIKE_A_PRAYER" name="'Like' kein Substantiv in 'Like a Prayer'">
+    <pattern>
+      <token marker="yes">Like</token>
+      <token regexp="yes">an?|the|my|y?our|me</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
+  <rule id="TAKE_THAT" name="'TAKE' kein Substantiv in 'Take That'">
+    <pattern>
+      <token marker="yes">Take</token>
+      <token>That</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
   <rule id="ALOE_VERA" name="Ignore spelling of 'Aloe vera'">
     <pattern>
       <token case_sensitive="yes">Aloe</token>
@@ -3182,12 +3465,61 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="ID_3" name="ID.3">
+    <pattern>
+      <token marker="yes">ID</token>
+      <token>.</token>
+      <token regexp="yes">[1-8](-[a-zäöüß]+)?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB:.+"/>
+  </rule>
   <rule id="POWERED_BY_IGNORE_SPELLING" name="powered by">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[Pp]owered|POWERED|[Dd]esigned|DESIGNED</token>
       <token regexp="yes" case_sensitive="yes">by|BY</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="JOINT_CONTROL" name="Joint Control als Kompositum">
+    <pattern>
+      <token marker="yes">joint</token>
+      <token regexp="yes">control.*</token>
+    </pattern>
+    <disambig action="remove" postag=".+"/>
+  </rule>
+  <rule id="HOUSE_OF_X" name="'House of XXX' als Kompositum">
+    <pattern>
+      <token marker="yes">House</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+"/>
+  </rule>
+  <rule id="STAEDTE_MIT_BAD" name="'Bad' kein Substantiv">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Bad</token>
+      <token regexp="yes" case_sensitive="yes">Kissinger[sn]?|Moms|[mM]eets|(Kreuznach|Soden|Rothenfelde|Urach|Wildungen|Wimpfen|Salzuflen|Teinach-Zavelstein|Vilbel|Vöslau|Saulgau|Tölz|Arolsen|Aibling|Ischl|Oldesloe|Pyrmont|Neuenahr|Bergzabern|Essen|Erlach|Langensalza|Lippspringe|Münstereifel|Ems|Gams|Honnef|Kissingen|Fallingbostel|Reichenhall|Friedrichshall|Rappenau|Cannstatt|Wurzach|[A-ZÄÖÜ].+(heim|berg|burg|hof|hofen|st[ea]dt|stein|bach|see|dorf|tal|hausen|walde|felde?|hafen|ingen))(s|er[ns]?|erin|erinnen|aner[ns]?|anerin|anerinnen)?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+"/>
+  </rule>
+  <rule id="EINST_KEIN_VERB" name="'einst' kein Verb">
+    <pattern>
+      <token>einst</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LOS_KEIN_NOMEN" name="'Los' kein Nomen">
+    <pattern>
+      <token marker="yes">Los</token>
+      <token regexp="yes">Angel[oe]s|Zetas|Gatos|Alamos</token>
+    </pattern>
+    <disambig action="remove" postag="(SUB|VER|ADV|ZUS).*"/>
+  </rule>
+  <rule id="DAILY_WEEKLY_KEIN_NOMEN" name="'Daily' kein Nomen">
+    <pattern>
+      <token regexp="yes" marker="yes">Daily|Weekly</token>
+      <token postag="SUB.*|UNKNOWN" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
   </rule>
   <rule id="IGNORE_SPELLING_OF_NUMBER_PERIOD_LETTER" name="ignore '2.a'">
     <pattern>
@@ -3219,6 +3551,22 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="USER_IN" name="'Hautärzt*in' keine Präposition">
+    <pattern>
+      <token regexp="yes">.*[a-z].*</token>
+      <token regexp="yes" spacebefore="no">[*:\/]</token>
+      <token marker="yes" spacebefore="no">in</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="USER_INNEN" name="'Hautärzt*innen' keine Adverb">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ][a-zäöüß\-]+</token>
+      <token regexp="yes" spacebefore="no">[*:\/]</token>
+      <token marker="yes" spacebefore="no">innen</token>
+    </pattern>
+    <disambig action="remove" postag="ADV.*"/>
+  </rule>
   <rule id="PROZENT_IGE" name="ignore spelling of '100%ige'">
     <pattern>
       <token regexp="yes" case_sensitive="yes" marker="yes">(\d+)?%ige</token>
@@ -3230,6 +3578,63 @@
       <token regexp="yes" case_sensitive="yes" marker="yes">[A-Z]{2,5}-\d+</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SANKT_KEIN_VERB" name="'Sankt' kein Verb">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Sankt</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN|EIG.*|SUB.*" postag_regexp="yes">[A-Z].+</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="NULLTE_KEIN_VERB" name="'nullte' kein Verb">
+    <pattern>
+      <token postag="ART.*|PRO:POS" postag_regexp="yes"></token>
+      <token case_sensitive="yes" marker="yes">nullte</token>
+      <token postag="SUB.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="FRANZ_KEIN_VERB" name="'franz.' kein Verb">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">franz</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="UNTER_FERNER_LIEFEN" name="'unter ferner liefen' kein Verb">
+    <pattern>
+      <token>unter</token>
+      <token>ferner</token>
+      <token marker="yes">liefen</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="DE_LAS_KEIN_VERB" name="'de las' kein Verb">
+    <pattern>
+      <token>de</token>
+      <token marker="yes">las</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="ON_TOUR_KEIN_VERB" name="'on tour' kein Verb">
+    <pattern>
+      <token>on</token>
+      <token marker="yes">tour</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="VIERTEL_NACH_VOR_KEIN_VERB" name="'viertel nach' kein Verb">
+    <pattern>
+      <token marker="yes">viertel</token>
+      <token regexp="yes">nach|vor</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="ZEIT_KEIN_PRP" name="'unizeit' kein PRP">
+    <pattern>
+      <token regexp="yes">.+zeit</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
   </rule>
   <rule id="NEN_IGNORE_SPELLING" name="Ignore spelling of 'nen">
     <pattern>
@@ -3244,6 +3649,31 @@
       <token regexp="yes" marker="yes">franca|geral</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="DANK_KEIN_VERB" name="'dank' kein Verb">
+    <pattern>
+      <token>dank</token>
+    </pattern>
+    <disambig action="remove" postag="VER:1.*"/>
+  </rule>
+  <rule id="WIDER_KEIN_VERB" name="'wider' kein Verb">
+    <pattern>
+      <token>wider</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="SCHNELL_KEIN_VERB" name="'schnell' kein Verb">
+    <pattern>
+      <token>schnell</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="BLEU_KEIN_VERB" name="'bleu' kein Verb">
+    <pattern>
+      <token>Cordon</token>
+      <token marker="yes">bleu</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
   </rule>
   <rule id="SPANISCHSPRECHEND" name="ignore spelling of 'spanischsprechend'">
     <pattern>
@@ -3299,6 +3729,259 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="TRADE_KEIN_SUB" name="'Trade' kein Substantiv">
+    <pattern>
+      <token marker="yes">Trade</token>
+      <token regexp="yes">Republic.*|Union|of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="CASE_KEIN_SUB" name="'Case' kein Substantiv">
+    <pattern>
+      <token marker="yes">Case</token>
+      <token regexp="yes">Study.*|Western</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="INNOVATION_KEIN_SUB" name="'Innovation' kein Substantiv">
+    <pattern>
+      <token marker="yes">Innovation</token>
+      <token regexp="yes">(Lab|Hub|Camp).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="LAST_KEIN_SUB" name="'Last' kein Substantiv">
+    <pattern>
+      <token marker="yes">Last</token>
+      <token regexp="yes">Minute.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="GENDER_KEIN_SUB" name="'Gender' kein Substantiv">
+    <pattern>
+      <token marker="yes">Gender</token>
+      <token regexp="yes">Studies.*</token>
+    </pattern>
+    <disambig action="remove" postag="(SUB|VER).*"/>
+  </rule>
+  <rule id="CREDIT_KEIN_SUB" name="'Credit' kein Substantiv">
+    <pattern>
+      <token marker="yes">Credit</token>
+      <token regexp="yes">Suisse.*|Karma.*|Agricole.*|Sesame.*|Card.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="PREMIER_KEIN_SUB" name="'Premier' kein Substantiv">
+    <pattern>
+      <token marker="yes">Premier</token>
+      <token regexp="yes">League.*|Academy.*|Classics</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="SUPER_KEIN_SUB" name="'Super' kein Substantiv">
+    <pattern>
+      <token marker="yes">Super</token>
+      <token regexp="yes">League.*|RTL.*|Audio.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="CALL_KEIN_SUB" name="'Call' kein Substantiv">
+    <pattern>
+      <token marker="yes">Call</token>
+      <token regexp="yes">of|me|my</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="FIFA_KEIN_SUB" name="'Fifa' kein Substantiv">
+    <pattern>
+      <token regexp="yes" marker="yes">FIFA|UEFA</token>
+      <token regexp="yes">Conf.*|Fed.*|Nations.*|World.*|Champion.*|Europa.*|Youth.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="JUNIOR_KEIN_SUB" name="'Junior' kein Substantiv">
+    <pattern>
+      <token marker="yes">Junior</token>
+      <token regexp="yes">Suites?|Manager(s|in|innen)?|High.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="COOKIE_KEIN_SUB" name="'Cookie' kein Substantiv">
+    <pattern>
+      <token marker="yes">Cookie</token>
+      <token regexp="yes">Policy.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="COCKTEIL_KEIN_SUB" name="'Junior' kein Substantiv">
+    <pattern>
+      <token marker="yes">Cocktail</token>
+      <token regexp="yes">Happy.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="BALANCE_KEIN_SUB" name="'Balance' kein Substantiv">
+    <pattern>
+      <token marker="yes">Balance</token>
+      <token regexp="yes">Sheets?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="NORD_KEIN_SUB" name="'Nord' kein Substantiv">
+    <pattern>
+      <token marker="yes">Nord</token>
+      <token regexp="yes">Stream.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="FUNKE_KEIN_SUB" name="'Funke' kein Substantiv">
+    <pattern>
+      <token marker="yes">Funke</token>
+      <token regexp="yes">Mediengruppe.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="THW_KEIN_SUB" name="'THW' kein Substantiv">
+    <pattern>
+      <token marker="yes">THW</token>
+      <token regexp="yes">Kiel.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="LEOPARD_KEIN_SUB" name="'Leopard' kein Substantiv">
+    <pattern>
+      <token marker="yes">Leopard</token>
+      <token regexp="yes">1|2|3|.*panzer.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="NOVA_KEIN_SUB" name="'Nova' kein Substantiv">
+    <pattern>
+      <token marker="yes">Nova</token>
+      <token regexp="yes">(Rock|Scotia|Motors).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="SPECIAL_KEIN_SUB" name="'Special' kein Substantiv">
+    <pattern>
+      <token marker="yes">Special</token>
+      <token regexp="yes">(Olympic|Agent|Offer|Effect|Air|Operations|Inspector|Boat).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="TASK_KEIN_SUB" name="'Task' kein Substantiv">
+    <pattern>
+      <token marker="yes">Task</token>
+      <token regexp="yes">Force.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="INTERNET_EXPLORER" name="'Internet' kein Substantiv">
+    <pattern>
+      <token marker="yes">Internet</token>
+      <token regexp="yes">Explorer.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*NEU.*"/>
+  </rule>
+  <rule id="BUSINESS_SCHOOL" name="'Internet' kein Substantiv">
+    <pattern>
+      <token marker="yes">Business</token>
+      <token regexp="yes">School.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*NEU.*"/>
+  </rule>
+  <rule id="SLOT_MACHINE" name="'Slot' kein Substantiv">
+    <pattern>
+      <token marker="yes">Slot</token>
+      <token regexp="yes">Machine.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="LAKE_KEIN_SUB" name="'Lake' kein Substantiv">
+    <pattern>
+      <token marker="yes">Lake</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN">[A-Z].+</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="SHOOTING_KEIN_SUB" name="'Shooting' kein Substantiv">
+    <pattern>
+      <token marker="yes">Shooting</token>
+      <token regexp="yes">Guards.*|Brake.*|Fish.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="GAME_KEIN_SUB" name="'Game' kein Substantiv">
+    <pattern>
+      <token marker="yes">Game</token>
+      <token>of</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="GIRO_KEIN_SUB" name="'Giro' kein Substantiv">
+    <pattern>
+      <token marker="yes">Giro</token>
+      <token>d</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="TOP_KEIN_SUB" name="'Top' kein Substantiv">
+    <pattern>
+      <token marker="yes">Top</token>
+      <token regexp="yes">\d+|Three|Five|Ten|Zehn|Fünf|Hundert|Tausend</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="TRACK_KEIN_SUB" name="'Track' kein Substantiv">
+    <pattern>
+      <token regexp="yes" marker="yes">Track|Jump</token>
+      <token regexp="yes">Pant.*|Suit.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="USER_KEIN_SUB" name="'User' kein Substantiv">
+    <pattern>
+      <token marker="yes">User</token>
+      <token regexp="yes">Experience.*|Story.*|Agent.*|Datagram.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="CONTENT_KEIN_SUB" name="'Content' kein Substantiv">
+    <pattern>
+      <token marker="yes">Content</token>
+      <token regexp="yes">Creator.*|Delivery.*|Farm|Collaboration.*|Security.*|Wiki</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="TRIPLE_KEIN_SUB" name="'Triple' kein Substantiv">
+    <pattern>
+      <token marker="yes">Triple</token>
+      <token regexp="yes">Entente.*|Crown.*|9</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="UNION_KEIN_SUB" name="'Union' kein Substantiv">
+    <pattern>
+      <token marker="yes">Union</token>
+      <token regexp="yes">Investment.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="BUS_KEIN_SUB" name="'Bus' kein Substantiv">
+    <pattern>
+      <token marker="yes">Bus</token>
+      <token regexp="yes">Ostschweiz.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="VON_DER_OSTEN_KEIN_SUB" name="'von der Osten' kein Substantiv">
+    <pattern>
+      <token>von</token>
+      <token>der</token>
+      <token case_sensitive="yes" marker="yes">Osten</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
   <rule id="VAN_DER_NAME" name="van der Valk">
     <pattern>
       <token>van</token>
@@ -3315,11 +3998,178 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="METAVERSE" name="Metaverse kein Maskulinum">
+    <pattern>
+      <token regexp="yes">.*metaversen?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*MAS.*"/>
+  </rule>
+  <rule id="SIEBEN_KEIN_VERB" name="'sieben' kein Verb">
+    <pattern>
+      <token marker="yes">sieben</token>
+      <token regexp="yes">Tagen?|Monaten?|Zwergen?|Todsünden|Leben|Weltwundern?|Schwestern?</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="SCHOEN_KEIN_ADJ" name="'schön' kein Adjektiv">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Schön</token>
+      <token regexp="yes">Klinik.*</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ.*"/>
+  </rule>
+  <rule id="BMW_KEIN_SUB" name="'BMW' kein Nomen">
+    <pattern>
+      <token marker="yes">BMW</token>
+      <token regexp="yes" case_sensitive="yes">i?[ZXM].+|[zmxi]\d+|Isetta</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="FRONT_KEIN_SUB" name="'Front' kein Nomen">
+    <pattern>
+      <token marker="yes">Front</token>
+      <token regexp="yes" case_sensitive="yes">(National|Runner|Line).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="KING_KEIN_SUB" name="'Front' kein Nomen">
+    <pattern>
+      <token marker="yes">King</token>
+      <token regexp="yes" case_sensitive="yes">(Size|of|Crimson|Arthur|Diamond).*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
   <rule id="THREE_D_SECURE" name="'3D-Secure'">
     <pattern>
       <token regexp="yes" case_sensitive="yes">3D-Secure(-(Verfahren|Bezahlverfahren)s?)?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="VORS_KEIN_PRP" name="'vors' kein PRP">
+    <pattern>
+      <token marker="yes">vors</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="IN_KEIN_PRP" name="'in' kein PRP">
+    <pattern>
+      <token regexp="yes" spacebefore="no">[_\*:]</token>
+      <token marker="yes" spacebefore="no">in</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="MOORESCHEN_KEIN_SUB" name="Mooreschen Gesetz">
+    <pattern>
+      <token regexp="yes" marker="yes">Mooresche.*</token>
+      <token regexp="yes">Gesetz.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="KUND_KEIN_VERB" name="'Kund' kein Verb in 'Kund:in'">
+    <pattern>
+      <token marker="yes">Kund</token>
+      <token regexp="yes" spacebefore="no">[:/_*]</token>
+      <token regexp="yes" spacebefore="no">in.*</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LATTE_KEIN_SUB" name="'Latte' kein FEM Sub in 'Latte macchiato'">
+    <pattern>
+      <token marker="yes">Latte</token>
+      <token regexp="yes">macc?hiatt?o.*</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*FEM.*"/>
+  </rule>
+  <rule id="BITTE_KEIN_VER" name="'Bitte' kein Verb">
+    <pattern>
+      <token>wer</token>
+      <token case_sensitive="yes" marker="yes">bitte</token>
+      <token postag="VER.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="LANG_KEIN_VER" name="'lang' kein Verb">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">lang</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="TROTZ_KEIN_VER" name="'trotz' kein Verb">
+    <pattern>
+      <token marker="yes">trotz</token>
+      <token postag=".*(GEN|DAT).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="DRAMATISCHEN_KEIN_VER" name="'...tischen' kein Verb">
+    <pattern>
+      <token regexp="yes" marker="yes">.*(drama|roman|elas|nazis|narziss)tisch(en?)?</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="VOLKSWAGEN_KEIN_VER" name="'Wagen' kein Verb">
+    <pattern>
+      <token marker="yes">Volkswagen</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*INF"/>
+  </rule>
+  <rule id="INSTITUTE_OF" name="'Institute of' kein Pluralnomen">
+    <pattern>
+      <token regexp="yes" marker="yes">Institutes?</token>
+      <token regexp="yes">of|for</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="DOMAIN_KEIN_VERB" name="'web.de' kein Verb">
+    <pattern>
+      <token postag="VER.*|ADV.*|PRP.*" postag_regexp="yes" marker="yes"></token>
+      <token spacebefore="no">.</token>
+      <token regexp="yes" spacebefore="no">de|net|biz|eu|ru|be|co|uk|us|info|at|ch|nl|lu|org|ai|asp|aspx|avi|bak|bat|bmp|cab|cfg|cgi|com|css|csv|dat|db|dbf|dll|doc|docx|eps|exe|flv|gif|htm|html|ibooks|ico|idml|ini|indd|jar|jpeg|jpg|js|jsp|lnk|md|mdb|mid|mov|mp3|mp4|mpa|mpg|ods|pdf|php|pl|png|pps|ppt|pptx|ps|psd|py|rar|rss|scss|sh|shtml|sql|stl|svg|sys|tar|tif|tiff|tmp|ts|txt|wav|wma|xhtml|xls|xlsx|xml|xsl|yaml|yml|zip|zipx|7z|web[mp]</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*|ADV.*|PRP.*"/>
+  </rule>
+  <rule id="UNIVERSAL_UNKNOWN" name="'Universal' als englisches Wort/Eigenname">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Universals?</token>
+      <token regexp="yes" case_sensitive="yes">[A-ZÄÖÜ].*|records?|music|studios|analytics|edition|serial|design|mobile|plug|orlando</token>
+    </pattern>
+    <disambig action="remove" postag="(SUB|ADJ).*"/>
+  </rule>
+  <rule id="PATRIOT_ACT" name="'Patriot' als englisches Wort/Eigenname">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Patriot</token>
+      <token regexp="yes" case_sensitive="yes">Acts?|Movements?|Rails?|Days?|Games?|Hills?|Leagues?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="REAL_KEIN_SUB" name="'Real' als Eigenname">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Real</token>
+      <token regexp="yes">Madrids?|Mallorcas?|Murcias?|Valladolids?|Sitio|Sociedads?|Universidad|Oviedos?|Times?|Lifes?|People|Racings?|Estates?|Academia|Bras[ií]lias?|BIP|Betis|Cartagenas?|Canoes?|de|Espa[nñ]a|Hospicios?|Hospitals?|Irish|Jard[ií]n|Kakamoras?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.*"/>
+  </rule>
+  <rule id="WEISE_KEIN_ADJ" name="Wörter, die mit 'weise' enden sind kein Adjektiv">
+    <pattern>
+      <token regexp="yes" postag="ADJ.*" postag_regexp="yes">.+weise</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ.*"/>
+  </rule>
+  <rule id="DENN_EIG" name="denn's kein Adverb">
+    <pattern>
+      <token marker="yes">denn</token>
+      <token regexp="yes" spacebefore="no">['’`´‘]</token>
+      <token spacebefore="no">s</token>
+    </pattern>
+    <disambig action="remove" postag="ADV.*|KON.*"/>
+  </rule>
+  <rule id="SMART_SPEAKER" name="'Smart' kein Adjektiv">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Smart</token>
+      <token regexp="yes">Speaker[sn]?|Homes?|For.*|Citys?|Roadster[sn]?|Meter[sn]?</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ.*"/>
   </rule>
   <rule id="KU_DAMM" name="Ku'damm">
     <pattern>
@@ -3328,6 +4178,33 @@
       <token case_sensitive="yes">damm</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="NACH_WIE_VOR" name="nach wie vor ('vor' keine Präposition)">
+    <pattern>
+      <token>nach</token>
+      <token>wie</token>
+      <token marker="yes">vor</token>
+    </pattern>
+    <disambig action="remove" postag="(PRP|ZUS).*"/>
+  </rule>
+  <rule id="RECHT_KEIN_VERB" name="'eine' kein Verb in 'eine der besten'">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">recht</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="DICHTE_KEIN_ADJ" name="Nomen mit 'Dichte' am ende">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="SUB.+ADJ" postag_regexp="yes">[A-ZÄÖÜ].+dichten?</token>
+    </pattern>
+    <disambig action="remove" postag="SUB.+ADJ"/>
+  </rule>
+  <rule id="IN_VITRO_NO_PREPOSITION" name="in vitro (in = keine Präposition)">
+    <pattern>
+      <token marker="yes">in</token>
+      <token>vitro</token>
+    </pattern>
+    <disambig action="remove" postag="PRP.*"/>
   </rule>
   <rule id="PRAIA_DA" name="ignore spelling of 'Praia da Luz'">
     <pattern>
@@ -3381,6 +4258,12 @@
       <token regexp="yes" case_sensitive="yes" marker="yes">[A-ZÄÖÜ].+(en|t)werden</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="HOLST_KEIN_VERB" name="'Holst' kein Verb">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">Hols?t</token>
+    </pattern>
+    <disambig action="remove" postag="EIG.*"/>
   </rule>
   <rule id="IGNORE_2ND_LEVEL_SUPPORT" name="ignore '2nd-Level-Support'">
     <pattern>

@@ -132,3 +132,76 @@ func TestFilter_MarkerOnSecondToken_JavaFromPos(t *testing.T) {
 }
 
 func strp2(s string) *string { return &s }
+
+func TestRemove_WdPosPartialMatch(t *testing.T) {
+	// Java REMOVE_JJ_FOR_OR: remove reading matching <wd pos="JJ"/>
+	orTok := patterns.NewPatternToken("or", true, false, false)
+	rule := NewDisambiguationPatternRule("REMOVE_JJ_FOR_OR", "t", "en",
+		[]*patterns.PatternToken{orTok}, "", nil, ActionRemove)
+	jj, cc := "JJ", "CC"
+	rule.SetNewInterpretations([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", &jj, nil),
+	})
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("or", &cc, nil))
+			r.AddReading(languagetool.NewAnalyzedToken("or", &jj, nil), "dict")
+			return r
+		}(),
+	}
+	pos := 0
+	for _, t := range toks {
+		t.SetStartPos(pos)
+		pos += len(t.GetToken()) + 1
+	}
+	out := rule.Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "or" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tags, "CC")
+	require.NotContains(t, tags, "JJ", "REMOVE <wd pos=JJ> should drop JJ")
+}
+
+func TestRemove_PostagRegexFromPos(t *testing.T) {
+	// Java REMOVE postag="VB.*" on fromPos only
+	tok := patterns.NewPatternToken("index", false, false, false)
+	rule := NewDisambiguationPatternRule("WHY_S", "t", "en",
+		[]*patterns.PatternToken{tok}, "VB.*", nil, ActionRemove)
+	vb, nn := "VBZ", "NN"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("index", &nn, nil))
+			r.AddReading(languagetool.NewAnalyzedToken("index", &vb, nil), "dict")
+			return r
+		}(),
+	}
+	pos := 0
+	for _, t := range toks {
+		t.SetStartPos(pos)
+		pos += len(t.GetToken()) + 1
+	}
+	out := rule.Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "index" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tags, "NN")
+	require.NotContains(t, tags, "VBZ")
+}

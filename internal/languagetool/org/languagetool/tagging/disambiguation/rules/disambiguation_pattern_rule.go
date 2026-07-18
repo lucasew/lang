@@ -132,21 +132,33 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			nws[i].Immunize(0)
 		}
 	case ActionRemove:
-		// Java REMOVE with disambiguatedPOS: negative filtering via POS *regex*
-		// on fromPos (first matched token), not exact string equality.
-		if r.DisambiguatedPOS == "" {
-			if len(r.NewTokenReadings) > 0 {
-				for i := first; i <= last && i < len(nws); i++ {
-					rel := i - first
-					if rel < len(r.NewTokenReadings) && r.NewTokenReadings[rel] != nil {
-						nws[i].RemoveReading(r.NewTokenReadings[rel], r.ID)
-					}
+		// Java REMOVE (DisambiguationPatternRuleReplacer):
+		// 1) <wd> list: only when length equals marker-span token count; each
+		//    wd removes matching readings via AnalyzedToken.matches (partial).
+		// 2) else disambiguatedPOS: negative POS *regex* filter on fromPos only.
+		if len(r.NewTokenReadings) > 0 {
+			span := 0
+			if last >= first && first >= 0 {
+				span = last - first + 1
+			}
+			// Java: newTokenReadings.length == matchingTokensWithCorrection - …
+			if span == 0 || len(r.NewTokenReadings) != span {
+				return
+			}
+			for i := first; i <= last && i < len(nws); i++ {
+				rel := i - first
+				if r.NewTokenReadings[rel] == nil || nws[i] == nil {
+					continue
 				}
+				nws[i].RemoveReading(r.NewTokenReadings[rel], r.ID)
 			}
 			return
 		}
+		if r.DisambiguatedPOS == "" || first < 0 || first >= len(nws) || nws[first] == nil {
+			return
+		}
 		re, err := regexp.Compile("^(?:" + r.DisambiguatedPOS + ")$")
-		if err != nil || first < 0 || first >= len(nws) || nws[first] == nil {
+		if err != nil {
 			return
 		}
 		for _, reading := range append([]*languagetool.AnalyzedToken(nil), nws[first].GetReadings()...) {
