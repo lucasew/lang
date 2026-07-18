@@ -22,7 +22,7 @@
       <pattern>
         <token regexp="yes">adoquíns?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>lastra</suggestion> (feminino).</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>lastra</suggestion> (feminino).</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="AFORO" name="aforo (capacidade)">
@@ -36,28 +36,28 @@
       <pattern>
         <token regexp="yes">andamios?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>estada</suggestion> (feminino).</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>estada</suggestion> (feminino).</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="ANDEN" name="andén (plataforma)">
       <pattern>
         <token regexp="yes">andéns?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>plataforma</suggestion> (feminino).</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>plataforma</suggestion> (feminino).</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="APORTACION" name="aportación, aporte (achega, contribución)">
       <pattern>
         <token regexp="yes">aport(e|ación)s?</token>
       </pattern>
-      <message>Posíbel castelanismo: o substantivo «» non existe en galego. Quería vostede dicir <suggestion>achega</suggestion> ou <suggestion>contribución</suggestion>?</message>
+      <message>Posíbel castelanismo: o substantivo «\1» non existe en galego. Quería vostede dicir <suggestion>achega</suggestion> ou <suggestion>contribución</suggestion>?</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="ARCEN" name="arcén (beiravía)">
       <pattern>
         <token regexp="yes">arcéns?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>beiravía</suggestion> (feminino).</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>beiravía</suggestion> (feminino).</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="ASIGNATURA" name="asignatura (materia, disciplina)">
@@ -71,7 +71,7 @@
       <pattern>
         <token regexp="yes">baf?fles?</token>
       </pattern>
-      <message>A palabra «» é un anglicismo. Empregue mellor <suggestion>pantalla acústica</suggestion>.</message>
+      <message>A palabra «\1» é un anglicismo. Empregue mellor <suggestion>pantalla acústica</suggestion>.</message>
       <short>BAFFLE</short>
     </rule>
     <rule id="BASURA" name="basura (lixo)">
@@ -92,21 +92,21 @@
       <pattern>
         <token regexp="yes">brúxulas?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>compás</suggestion> (masculino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>compás</suggestion> (masculino)?</message>
       <short>BRUXULA</short>
     </rule>
     <rule id="BUZON" name="buzón (caixa de correos)">
       <pattern>
         <token regexp="yes">buzóns?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion></suggestion> (feminino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>\1</suggestion> (feminino)?</message>
       <short>BUZON</short>
     </rule>
     <rule id="CALAMAR" name="calamar (lura)">
       <pattern>
         <token regexp="yes">calamar(es)?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion></suggestion> (feminino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>\1</suggestion> (feminino)?</message>
       <short>CALAMAR</short>
     </rule>
     <rule id="CALLEXON" name="callexón, calexón (canella)">
@@ -127,14 +127,14 @@
       <pattern>
         <token regexp="yes">chefs?</token>
       </pattern>
-      <message>A palabra «» é un galicismo. Empregue mellor <suggestion>xefe de cociña</suggestion> ou <suggestion>xefa de cociña</suggestion>.</message>
+      <message>A palabra «\1» é un galicismo. Empregue mellor <suggestion>xefe de cociña</suggestion> ou <suggestion>xefa de cociña</suggestion>.</message>
       <short>CHEF</short>
     </rule>
     <rule id="CHEQUEO" name="chequeo (revisión, recoñecemento)">
       <pattern>
         <token regexp="yes">chequeos?</token>
       </pattern>
-      <message>Posíbel castelanismo: o substantivo «» non existe en galego. Quería vostede dicir <suggestion>revisión</suggestion> ou <suggestion>recoñecemento</suggestion>?</message>
+      <message>Posíbel castelanismo: o substantivo «\1» non existe en galego. Quería vostede dicir <suggestion>revisión</suggestion> ou <suggestion>recoñecemento</suggestion>?</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="CONCELLAL" name="concellal, concexal (concelleiro)">
@@ -148,21 +148,21 @@
       <pattern>
         <token regexp="yes">cont[áa]iner(es)?</token>
       </pattern>
-      <message>A palabra «» é un anglicismo. Empregue mellor <suggestion>colector</suggestion>.</message>
+      <message>A palabra «\1» é un anglicismo. Empregue mellor <suggestion>colector</suggestion>.</message>
       <short>CONTAINER</short>
     </rule>
     <rule id="CONTRASEÑA" name="contraseña (contrasinal)">
       <pattern>
         <token regexp="yes">contraseñas?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>contrasinal</suggestion> (masculino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>contrasinal</suggestion> (masculino)?</message>
       <short>CONTRASEÑA</short>
     </rule>
     <rule id="CORBATA" name="corbata (gravata, garavata)">
       <pattern>
         <token regexp="yes">corbata?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>garavata</suggestion> ou <suggestion>gravata</suggestion>?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>garavata</suggestion> ou <suggestion>gravata</suggestion>?</message>
       <short>CORBATA</short>
     </rule>
     <rule id="CORTEZA_CEREBRAL" name="corteza cerebral (córtex cerebral)">
@@ -199,35 +199,35 @@
       <pattern>
         <token regexp="yes">(anti)?d[oó]pings?</token>
       </pattern>
-      <message>A palabra «» é un anglicismo. Empregue mellor <suggestion></suggestion> (feminino).</message>
+      <message>A palabra «\1» é un anglicismo. Empregue mellor <suggestion>\1</suggestion> (feminino).</message>
       <short>DOPING</short>
     </rule>
     <rule id="EQUIPA" name="equipa (equipo)">
       <pattern>
         <token regexp="yes">equipas?</token>
       </pattern>
-      <message>A palabra «» é un lusismo. Empregue mellor <suggestion>equipo</suggestion> (masculino).</message>
+      <message>A palabra «\1» é un lusismo. Empregue mellor <suggestion>equipo</suggestion> (masculino).</message>
       <short>EQUIPA</short>
     </rule>
     <rule id="GRIFO" name="grifo (billa)">
       <pattern>
         <token regexp="yes">grifos?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>billa</suggestion> (feminino).</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>billa</suggestion> (feminino).</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="GRULLA" name="grulla (grou, grúa)">
       <pattern>
         <token regexp="yes">grullas?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>grou</suggestion> (masculino) ou <suggestion>grúa</suggestion>?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>grou</suggestion> (masculino) ou <suggestion>grúa</suggestion>?</message>
       <short>GRULLA</short>
     </rule>
     <rule id="LIBRETA" name="libreta (caderno)">
       <pattern>
         <token regexp="yes">libretas?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>caderno</suggestion> (masculino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>caderno</suggestion> (masculino)?</message>
       <short>LIBRETA</short>
     </rule>
     <rule id="MARTINPESCADOR" name="martín pescador (picapeixe)">
@@ -242,7 +242,7 @@
       <pattern>
         <token regexp="yes">mordiscos?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>dentada</suggestion> (feminino).</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>dentada</suggestion> (feminino).</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="OFFTHERECORD" name="off the record (en privado)">
@@ -258,14 +258,14 @@
       <pattern>
         <token regexp="yes">playbacks?</token>
       </pattern>
-      <message>A palabra «» é un anglicismo. Empregue mellor <suggestion>son pregravado</suggestion> ou <suggestion>son de estudio</suggestion>.</message>
+      <message>A palabra «\1» é un anglicismo. Empregue mellor <suggestion>son pregravado</suggestion> ou <suggestion>son de estudio</suggestion>.</message>
       <short>PLAYBACK</short>
     </rule>
     <rule id="PREVENIDO" name="prevenido (prevido)">
       <pattern>
         <token regexp="yes">(des)?prevenid[oa]s?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion></suggestion>?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>\1</suggestion>?</message>
       <short>PREVENIDO</short>
     </rule>
     <rule id="PROMEDIO" name="promedio (termo medio)">
@@ -307,42 +307,42 @@
       <pattern>
         <token regexp="yes">e?str[eé]ss?</token>
       </pattern>
-      <message>A palabra «» é un anglicismo. Empregue mellor <suggestion>tensión</suggestion>.</message>
+      <message>A palabra «\1» é un anglicismo. Empregue mellor <suggestion>tensión</suggestion>.</message>
       <short>STRESS</short>
     </rule>
     <rule id="TIBURON" name="tiburón (quenlla)">
       <pattern>
         <token regexp="yes">tiburóns?</token>
       </pattern>
-      <message>Posíbel castelanismo: o substantivo «» non existe en galego. Quería vostede dicir <suggestion>quenlla</suggestion> (feminino)?</message>
+      <message>Posíbel castelanismo: o substantivo «\1» non existe en galego. Quería vostede dicir <suggestion>quenlla</suggestion> (feminino)?</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="TIZA" name="tiza (xiz)">
       <pattern>
         <token regexp="yes">tizas?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>xiz</suggestion> (masculino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>xiz</suggestion> (masculino)?</message>
       <short>TIZA</short>
     </rule>
     <rule id="TRAGALUZ" name="tragaluz (bufarda)">
       <pattern>
         <token regexp="yes">tragalu(z|ces)</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>bufarda</suggestion> (feminino)?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>bufarda</suggestion> (feminino)?</message>
       <short>TRAGALUZ</short>
     </rule>
     <rule id="TRINEO" name="trineo (zorra)">
       <pattern>
         <token regexp="yes">trineos?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>zorra</suggestion>.</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>zorra</suggestion>.</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="TURNO_TANDA" name="turno, tanda (quenda, vez)">
       <pattern>
         <token regexp="yes">turnos?|tandas?</token>
       </pattern>
-      <message>A palabra «» é un castelanismo. Empregue no seu sitio <suggestion>quenda</suggestion> ou <suggestion>vez</suggestion> tendo en conta as diferenzas de xénero.</message>
+      <message>A palabra «\1» é un castelanismo. Empregue no seu sitio <suggestion>quenda</suggestion> ou <suggestion>vez</suggestion> tendo en conta as diferenzas de xénero.</message>
       <short>Castelanismo léxico</short>
     </rule>
     <rule id="VELETA" name="veleta (catavento)">
@@ -363,21 +363,21 @@
       <pattern>
         <token regexp="yes">w[aá]ter(es)?</token>
       </pattern>
-      <message>A palabra «» é un anglicismo. Empregue mellor <suggestion>váter</suggestion>.</message>
+      <message>A palabra «\1» é un anglicismo. Empregue mellor <suggestion>váter</suggestion>.</message>
       <short>WATER</short>
     </rule>
     <rule id="XARRON" name="xarrón (floreiro, vaso)">
       <pattern>
         <token regexp="yes">xarróns?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>floreiro</suggestion> ou <suggestion>vaso</suggestion>?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>floreiro</suggestion> ou <suggestion>vaso</suggestion>?</message>
       <short>XARRON</short>
     </rule>
     <rule id="XOROBA" name="xoroba (chepa, carrumba)">
       <pattern>
         <token regexp="yes">xorobas?</token>
       </pattern>
-      <message>Palabra incorrecta: a forma «» non existe en galego. Quería vostede dicir <suggestion>chepa</suggestion> ou <suggestion>carrumba</suggestion>?</message>
+      <message>Palabra incorrecta: a forma «\1» non existe en galego. Quería vostede dicir <suggestion>chepa</suggestion> ou <suggestion>carrumba</suggestion>?</message>
       <short>XOROBA</short>
     </rule>
   </category>
@@ -458,7 +458,7 @@
         <token>polo</token>
         <token>aro</token>
       </pattern>
-      <message>A expresión «\1 polo aro» non é correcta en galego. Empregue mellor <suggestion>vir ao rego</suggestion>.</message>
+      <message>A expresión «\1 polo aro» non é correcta en galego. Empregue mellor <suggestion>\1 ao rego</suggestion>.</message>
       <short>Locución incorrecta</short>
     </rule>
   </category>
@@ -500,7 +500,7 @@
         <token regexp="yes">adiante|arredor|arriba|atrás|baixo|cerca|debaixo|dediante|derredor|derriba|detrás|diante|embaixo|encima|enriba|riba</token>
         <token regexp="yes">nosa|vosa</token>
       </pattern>
-      <message>A expresión «\1 \2» é incorrecta. Empregue mellor <suggestion>\1 de </suggestion> no seu lugar.</message>
+      <message>A expresión «\1 \2» é incorrecta. Empregue mellor <suggestion>\1 de \2</suggestion> no seu lugar.</message>
       <short>Un posesivo non pode complementar un adverbio</short>
     </rule>
     <rule id="DETRAS_SUA" name="detrás súa (detrás del/dela/deles/delas)">
@@ -525,7 +525,7 @@
         <token regexp="yes">m[aá]is</token>
         <token regexp="yes">[oa]s?</token>
       </pattern>
-      <message>A conxunción «e mais» e o artigo «» contraen. Quería vostede dicir <suggestion>e mail\3</suggestion>?</message>
+      <message>A conxunción «e mais» e o artigo «\3» contraen. Quería vostede dicir <suggestion>e mail\3</suggestion>?</message>
       <short>Contracción posíbel</short>
     </rule>
     <rule id="MAILO" name="mailo (e mailo)">
@@ -541,7 +541,7 @@
         <token>por</token>
         <token regexp="yes">[oa]s?</token>
       </pattern>
-      <message>A preposición «por» e o artigo «» contraen. Quería vostede dicir <suggestion>\2</suggestion>?</message>
+      <message>A preposición «por» e o artigo «\2» contraen. Quería vostede dicir <suggestion>\1\2</suggestion>?</message>
       <short>Contracción</short>
     </rule>
     <rule id="SENON_QUE" name="se non que (senón que)">
@@ -567,7 +567,7 @@
       <pattern>
         <token inflected="yes">aportar</token>
       </pattern>
-      <message>O verbo «aportar» significa «chegar a porto».  A forma correcta para o sentido de «proporcionar» ou «presentar» é <suggestion>achegar</suggestion> ou <suggestion>facer unha achega</suggestion>.</message>
+      <message>O verbo «aportar» significa «chegar a porto».  A forma correcta para o sentido de «proporcionar» ou «presentar» é <suggestion>\1</suggestion> ou <suggestion>\1 unha achega</suggestion>.</message>
       <short>Posíbel castelanismo</short>
     </rule>
     <rule id="ASCO" name="asco (noxo)">
@@ -632,7 +632,7 @@
       <pattern>
         <token inflected="yes">adicar</token>
       </pattern>
-      <message>A palabra «\1» non é aconsellábel en galego. Empregue mellor <suggestion>dedicar</suggestion>.</message>
+      <message>A palabra «\1» non é aconsellábel en galego. Empregue mellor <suggestion>\1</suggestion>.</message>
       <short>Barbarismo</short>
     </rule>
   </category>
@@ -642,7 +642,7 @@
         <token>homo</token>
         <token regexp="yes">[a-zA-Z].*</token>
       </pattern>
-      <message>Na nomenclatura binomial, que se escribe en cursiva, o xénero vai en maiúscula e a especie e a subespecie en minúscula.</message>
+      <message>Na nomenclatura binomial, que se escribe en cursiva, o xénero vai en maiúscula e a especie e a subespecie en minúscula. <suggestion>\1 \2</suggestion></message>
       <short>Nomenclatura binomial</short>
     </rule>
     <rule id="BINOMIAL_SPECIES_UPPER" name="BINOMIAL_SPECIES_UPPER">
@@ -650,7 +650,7 @@
         <token>Homo</token>
         <token regexp="yes">[A-Z].*</token>
       </pattern>
-      <message>Na nomenclatura binomial, que se escribe en cursiva, o xénero vai en maiúscula e a especie e a subespecie en minúscula.</message>
+      <message>Na nomenclatura binomial, que se escribe en cursiva, o xénero vai en maiúscula e a especie e a subespecie en minúscula. <suggestion>\1 \2</suggestion></message>
       <short>Nomenclatura binomial</short>
     </rule>
   </category>
@@ -664,7 +664,7 @@
         </token>
         <token regexp="yes">\!|\?</token>
       </pattern>
-      <message>Nas preguntas e exclamacións os pronomes átonos van antes do verbo.</message>
+      <message>Nas preguntas e exclamacións os pronomes átonos van antes do verbo. <suggestion>\3 \3</suggestion></message>
       <short>Colocación do pronome</short>
     </rule>
     <rule id="CLITICS_02B" name="Cliticos en interrogativas e exclamativas - monotransitivas">
@@ -676,7 +676,7 @@
         </token>
         <token regexp="yes">\!|\?</token>
       </pattern>
-      <message>Nas preguntas e exclamacións os pronomes átonos van antes do verbo.</message>
+      <message>Nas preguntas e exclamacións os pronomes átonos van antes do verbo. <suggestion>\3 \3</suggestion></message>
       <short>Colocación do pronome</short>
     </rule>
   </category>
@@ -685,7 +685,7 @@
       <pattern>
         <token regexp="yes">\d+(?:[\,\.]\d+)?[€]</token>
       </pattern>
-      <message>Os símbolos monetarios do euro (€) sepáranse cun espazo<suggestion></suggestion>.</message>
+      <message>Os símbolos monetarios do euro (€) sepáranse cun espazo<suggestion>\1</suggestion>.</message>
       <short>Espazo incorrecto</short>
     </rule>
     <rule id="SERVICEMARK" name="Tipografia: Servicemark - ℠">
@@ -705,7 +705,7 @@
         <token>de</token>
         <token regexp="yes">seguido|contado|contino</token>
       </pattern>
-      <message>As formas «de» e «» forman en galego unha locución que se escribe unida. Quería vostede dicir <suggestion>\1\2</suggestion>?</message>
+      <message>As formas «de» e «\2» forman en galego unha locución que se escribe unida. Quería vostede dicir <suggestion>\1\2</suggestion>?</message>
       <short>DE_SEGUIDO_CONTADO_CONTINO</short>
     </rule>
   </category>

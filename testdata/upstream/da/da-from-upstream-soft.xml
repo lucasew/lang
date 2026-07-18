@@ -59,28 +59,28 @@
       <pattern>
         <token regexp="yes">(egenavn)(|et|e|ene|s|ets|es|enes)</token>
       </pattern>
-      <message>Et egenavn er navnet på et specifik egetræ, f.eks. Dun-Eg og Vinter-Eg. Hvor <suggestion></suggestion> er alle navne f.eks. Jens, Sørnsen, Odense, og Vestas.</message>
+      <message>Et egenavn er navnet på et specifik egetræ, f.eks. Dun-Eg og Vinter-Eg. Hvor <suggestion>\1</suggestion> er alle navne f.eks. Jens, Sørnsen, Odense, og Vestas.</message>
       <short>Mulige ordforveksling</short>
     </rule>
     <rule id="grube" name="gruppe→grube">
       <pattern>
         <token regexp="yes">(guld|fald)(grupp|grup)(e|er|en|erne)</token>
       </pattern>
-      <message>Mente du <suggestion></suggestion>, altså en mine eller et hul i jorden?</message>
+      <message>Mente du <suggestion>\1</suggestion>, altså en mine eller et hul i jorden?</message>
       <short>Mulig ordforveksling</short>
     </rule>
     <rule id="skraldemand" name="skrællemand→skraldemand">
       <pattern>
         <token regexp="yes">(skrælle|skrælde)(mand(|en)|mænd(|ene))</token>
       </pattern>
-      <message>Mente du <suggestion></suggestion>, altså en person der indsamler skrald?</message>
+      <message>Mente du <suggestion>\1</suggestion>, altså en person der indsamler skrald?</message>
       <short>Mulig ordforveksling</short>
     </rule>
     <rule id="standart_standard" name="standart→standard">
       <pattern>
         <token regexp="yes">.*standart.*</token>
       </pattern>
-      <message>Mente du: <suggestion></suggestion> som standard=niveau, procedure, el. norm eller standart=fane?</message>
+      <message>Mente du: <suggestion>\1</suggestion> som standard=niveau, procedure, el. norm eller standart=fane?</message>
       <short>Mulige ordforveksling</short>
     </rule>
     <rule id="undt" name="ondt→undt">
@@ -96,7 +96,7 @@
       <pattern>
         <token regexp="yes">varetegn(|et|ene)</token>
       </pattern>
-      <message>Udtrykket skrives <suggestion></suggestion>.</message>
+      <message>Udtrykket skrives <suggestion>\1</suggestion>.</message>
       <short>Mulig ordforveksling</short>
     </rule>
     <rule id="vel_at_mærke" name="vel og mærke(t)→vel at mærke">
@@ -112,7 +112,7 @@
       <pattern>
         <token regexp="yes">ynglings(|.*[a-s,u-å])</token>
       </pattern>
-      <message>Udtrykket staves <suggestion></suggestion> .</message>
+      <message>Udtrykket staves <suggestion>\1</suggestion> .</message>
       <short>Mulig ordforveksling</short>
     </rule>
   </category>
@@ -121,7 +121,7 @@
       <pattern>
         <token regexp="yes">.*([0-9])(er|erne|eren|s)</token>
       </pattern>
-      <message>Mangler muligvis appostrof mellem tallet og endelsen: <suggestion></suggestion>.</message>
+      <message>Mangler muligvis appostrof mellem tallet og endelsen: <suggestion>\1</suggestion>.</message>
       <short>Muligvis manglende appostrof.</short>
     </rule>
   </category>
@@ -130,7 +130,7 @@
       <pattern>
         <token regexp="yes">(.*)-(og|eller)</token>
       </pattern>
-      <message>Mulig slåfejl manglende mellemrum efter bindestreg: <suggestion></suggestion>.</message>
+      <message>Mulig slåfejl manglende mellemrum efter bindestreg: <suggestion>\1</suggestion>.</message>
       <short>Mulig slåfejl</short>
     </rule>
   </category>

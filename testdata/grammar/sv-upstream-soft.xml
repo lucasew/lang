@@ -125,14 +125,14 @@
       <pattern>
         <token regexp="yes">januaris?|februaris?|mars'?|aprils?|majs?|junis?|julis?|augustis?|septembers?|oktobers?|novembers?|decembers?</token>
       </pattern>
-      <message>Månaders namn skrivs med inledande gemen bokstav. Skriv <suggestion></suggestion> inte "\1".</message>
+      <message>Månaders namn skrivs med inledande gemen bokstav. Skriv <suggestion>\1</suggestion> inte "\1".</message>
       <short>MÅNADERS_NAMN</short>
     </rule>
     <rule id="VECKODAGARS_NAMN" name="Veckodagars namn">
       <pattern>
         <token regexp="yes">måndags?|tisdags?|onsdags?|torsdags?|fredags?|lördags?|söndags?</token>
       </pattern>
-      <message>Veckodagars namn skrivs med inledande gemen bokstav. Skriv <suggestion></suggestion> inte "\1".</message>
+      <message>Veckodagars namn skrivs med inledande gemen bokstav. Skriv <suggestion>\1</suggestion> inte "\1".</message>
       <short>VECKODAGARS_NAMN</short>
     </rule>
   </category>
@@ -141,14 +141,14 @@
       <pattern>
         <token regexp="yes">^(1a|2a|[\d]*[1-2]e)</token>
       </pattern>
-      <message>Siffror med ändelser binds ihop med ett kolon: <suggestion></suggestion></message>
+      <message>Siffror med ändelser binds ihop med ett kolon: <suggestion>\1</suggestion></message>
       <short>ORDNINGSTAL</short>
     </rule>
     <rule id="ORDNINGSTAL2" name="Ordningstal2">
       <pattern>
         <token regexp="yes">^([3-90][ae]|[\d]*[3-90][e]|[^1]*[012][ae])</token>
       </pattern>
-      <message>Siffror med ändelser binds ihop med ett kolon: <suggestion></suggestion></message>
+      <message>Siffror med ändelser binds ihop med ett kolon: <suggestion>\1</suggestion></message>
       <short>ORDNINGSTAL2</short>
     </rule>
   </category>

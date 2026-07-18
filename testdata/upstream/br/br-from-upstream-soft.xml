@@ -122,7 +122,7 @@
           <exception regexp="yes">([kg]emend|c’hemend|a-hend|hend|mod)-all</exception>
         </token>
       </pattern>
-      <message>Implijit <suggestion></suggestion>.</message>
+      <message>Implijit <suggestion>\1</suggestion>.</message>
       <short>ALL</short>
     </rule>
     <rule id="ANV_BIHAN" name="anv bihan → anv-bihan (hag all)">
@@ -145,7 +145,7 @@
       <pattern>
         <token regexp="yes">.*-a-walc’h</token>
       </pattern>
-      <message>Barrennig-stagañ ebet dirak an adverb «a-walc’h». (CHALM Sa)</message>
+      <message>Barrennig-stagañ ebet dirak an adverb «a-walc’h». (CHALM Sa) <suggestion>\1</suggestion></message>
       <short>A_WALCH</short>
     </rule>
     <rule id="BALAFENN_NOZ" name="balafenn noz → balafenn-noz">
@@ -168,7 +168,7 @@
       <pattern>
         <token regexp="yes">.+-holl-(se|mañ|hont)</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion></suggestion>? (CHALM R1.1.2)</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1</suggestion>? (CHALM R1.1.2)</message>
       <short>BED_HOLL_MAN</short>
     </rule>
     <rule id="BLEIZ_MOR" name="bleiz mor → bleiz-mor">
@@ -387,7 +387,7 @@
       <pattern>
         <token regexp="yes">.*-man</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion></suggestion>? (CHALM Q 1.2)</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1</suggestion>? (CHALM Q 1.2)</message>
       <short>MAN</short>
     </rule>
     <rule id="MARCH_HOUARN" name="marc’h houarn → marc’h-houarn">
@@ -687,7 +687,7 @@
       <pattern>
         <token regexp="yes">(?:.*-)?C’?H\p{Ll}+</token>
       </pattern>
-      <message>Gwelloc’h eo skrivañ <suggestion></suggestion>. (CHALM A17)</message>
+      <message>Gwelloc’h eo skrivañ <suggestion>\1</suggestion>. (CHALM A17)</message>
       <short>CH</short>
     </rule>
     <rule id="DAOUGEMENTIN" name="daou gementiñ → daougementiñ">
@@ -711,7 +711,7 @@
         <token regexp="yes">en?</token>
         <token regexp="yes">a[lrn]</token>
       </pattern>
-      <message>Ret eo skrivañ <suggestion></suggestion>. (CHALM L6)</message>
+      <message>Ret eo skrivañ <suggestion>\1\2</suggestion>. (CHALM L6)</message>
       <short>EL_EN_ER</short>
     </rule>
     <rule id="HOLL_MA" name="holl ma → ma holl">
@@ -727,7 +727,7 @@
       <pattern>
         <token regexp="yes">(([kg]|c’h)ozh|nevez|pizh|ruz|serzh)(oc’h|añ|a?at)|reizhoc’h</token>
       </pattern>
-      <message>«\1» a zo ur verb diasur. Ha fellout a rae deoc’h skrivañ <suggestion></suggestion> kentoc’h? (CHALM Sb4)</message>
+      <message>«\1» a zo ur verb diasur. Ha fellout a rae deoc’h skrivañ <suggestion>\1</suggestion> kentoc’h? (CHALM Sb4)</message>
       <short>KOZHOCH</short>
     </rule>
     <rule id="LECH_LERCH" name="lec’h → lerc’h">
@@ -736,7 +736,7 @@
           <exception>lerc’h-ouzh-lerc’h</exception>
         </token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion></suggestion>?</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1</suggestion>?</message>
       <short>LECH_LERCH</short>
     </rule>
     <rule id="MAZ_EO" name="maz eo → ma’z eo">
@@ -744,7 +744,7 @@
         <token>maz</token>
         <token regexp="yes">eo|eus</token>
       </pattern>
-      <message>Ret eo skrivañ <suggestion>’z \2</suggestion>.</message>
+      <message>Ret eo skrivañ <suggestion>\1’z \2</suggestion>.</message>
       <short>MAZ_EO</short>
     </rule>
     <rule id="MEMES_MA_V" name="memes ma + verb → ha pa + verb">
@@ -777,7 +777,7 @@
         <token inflected="yes">miz</token>
         <token regexp="yes">genver|c’hwevrer|meurzh|ebrel|mae|even|mezheven|gouere|gouhere|eost|gwengolo|here|du|kerdu|kerzu</token>
       </pattern>
-      <message>Lakaet e vez ur bennlizherenn da anvioù ar mizioù. (CHALM A17)</message>
+      <message>Lakaet e vez ur bennlizherenn da anvioù ar mizioù. (CHALM A17) <suggestion>\2</suggestion></message>
       <short>PENLIZH_MIZ</short>
     </rule>
     <rule id="RENK_RANK" name="a renk bezañ → a rank bezañ">
@@ -829,14 +829,14 @@
       <pattern>
         <token regexp="yes">hanter-kant-?vedenn|([dtz]aoù|[tdz]ri|[pbf]evar|[bpf]emp|c’hwerc’h|seizh|eizh|nav)-ugent-?vedenn</token>
       </pattern>
-      <message>Ha fellout a rae skrivañ <suggestion></suggestion>? (CHALM P3.2)</message>
+      <message>Ha fellout a rae skrivañ <suggestion>\1</suggestion>? (CHALM P3.2)</message>
       <short>HUNTERKANTVEDENN</short>
     </rule>
     <rule id="HUNTERKANTVET" name="hanter-kantvet → hanterkantvet">
       <pattern>
         <token regexp="yes">hanter-kant-?vet|([dtz]aoù|[tdz]ri|[pbf]evar|[bpf]emp|c’hwerc’h|seizh|eizh|nav)-ugent-?vet</token>
       </pattern>
-      <message>Ha fellout a rae skrivañ <suggestion></suggestion>? (CHALM P2.1)</message>
+      <message>Ha fellout a rae skrivañ <suggestion>\1</suggestion>? (CHALM P2.1)</message>
       <short>HUNTERKANTVET</short>
     </rule>
     <rule id="UGENT" name="daou ugent → daou-ugent">
@@ -863,7 +863,7 @@
         <token>a</token>
         <token regexp="yes">zae?</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion>az </suggestion> pe <suggestion>a y</suggestion>?</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>az \2</suggestion> pe <suggestion>a y\2</suggestion>?</message>
       <short>AZ_A</short>
     </rule>
     <rule id="BEZ_EZ_EUS" name="bez’ eus → bez’ ez eus">
@@ -871,7 +871,7 @@
         <token regexp="yes">bez’?</token>
         <token>eus</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion> ez eus</suggestion>?</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1 ez eus</suggestion>?</message>
       <short>BEZ_EZ_EUS</short>
     </rule>
     <rule id="EN_DEUS" name="eñ deus/doa → en deus/doa">
@@ -879,7 +879,7 @@
         <token>eñ</token>
         <token regexp="yes">deus|do[ae]?|de[fz]e?|dije|devezet?|devezo|devo[ae]?</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion></suggestion>?</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1</suggestion>?</message>
       <short>EN_DEUS</short>
     </rule>
     <rule id="EZ_EUS" name="ez eus → bez ez eus">
@@ -921,7 +921,7 @@
           <exception regexp="yes">k[gm]|kPa|kHz</exception>
         </token>
       </pattern>
-      <message>Ne c’hall ket bezañ un anv a grog gant «k» goude ar ger-mell «\1».</message>
+      <message>Ne c’hall ket bezañ un anv a grog gant «k» goude ar ger-mell «\1». <suggestion>\2</suggestion></message>
       <short>AR_K</short>
     </rule>
     <rule id="BERR_GOMZOU" name="e berr komzoù → e berr gomzoù">
@@ -968,7 +968,7 @@
         <token regexp="yes">[au]l</token>
         <token regexp="yes" inflected="yes">tsunami|tsar|jazz|jean|joniged</token>
       </pattern>
-      <message>Ar ger-mell <suggestion></suggestion> pe <suggestion></suggestion> a vez implijet gant ar ger estren «\2». (CHALM L3)</message>
+      <message>Ar ger-mell <suggestion>\1</suggestion> pe <suggestion>\1</suggestion> a vez implijet gant ar ger estren «\2». (CHALM L3)</message>
       <short>AR_TSAR</short>
     </rule>
   </category>
@@ -1006,7 +1006,7 @@
         <token regexp="yes">[BVP]ro</token>
         <token regexp="yes">Alamagn|Amerika|Aostralia|C’hall|Dreger|Friz|Gembre|Gerne|Iwerzhon|Japan|Leon|Naoned|Raez|Roazhon|Saoz|Sant-Brieg|Sant-Maloù|Skos|Spagn|Suis|Ulad|Wened</token>
       </pattern>
-      <message>Implijit <suggestion>-</suggestion>.</message>
+      <message>Implijit <suggestion>\1-\2</suggestion>.</message>
       <short>BRO</short>
     </rule>
     <rule id="C_HASTELL_NEVEZ" name="C’hastell Nevez → C’hastell-Nevez">
@@ -1031,7 +1031,7 @@
         <token>da’</token>
         <token regexp="yes">[lnr]</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion>’a\2</suggestion>?</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>\1’a\2</suggestion>?</message>
       <short>D_AR</short>
     </rule>
     <rule id="MZ_EUS" name="m’eus → ’m eus">
@@ -1039,7 +1039,7 @@
         <token regexp="yes">[mz]’</token>
         <token>eus</token>
       </pattern>
-      <message>Ha fellout a rae deoc’h skrivañ <suggestion>’ eus</suggestion>?</message>
+      <message>Ha fellout a rae deoc’h skrivañ <suggestion>’\1 eus</suggestion>?</message>
       <short>MZ_EUS</short>
     </rule>
   </category>

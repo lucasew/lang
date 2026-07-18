@@ -68,7 +68,7 @@
       <pattern>
         <token regexp="yes">(.*)raid</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>?</message>
+      <message>Do you mean <suggestion>\1</suggestion>?</message>
       <short>Loan Word</short>
     </rule>
   </category>
@@ -292,7 +292,7 @@
         <token>na</token>
         <token regexp="yes">daang?</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>? If the preceding word ends with a vowel,  should start with the letter R.</message>
+      <message>Do you mean <suggestion>\3</suggestion>? If the preceding word ends with a vowel, \3 should start with the letter R.</message>
       <short>Alternation of 'd' and 'r'</short>
     </rule>
     <rule id="D_WORDS" name="Sound and Letter Change from 'd' to 'r'">
@@ -300,7 +300,7 @@
         <token regexp="yes">.*[aeiou]</token>
         <token regexp="yes">ding?|dito|ditong|daw|diyang?|dyang?|doong?</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>? If the preceding word ends with a vowel,  should start with the letter R.</message>
+      <message>Do you mean <suggestion>\2</suggestion>? If the preceding word ends with a vowel, \2 should start with the letter R.</message>
       <short>Alternation of 'd' and 'r'</short>
     </rule>
     <rule id="RAAN" name="raan (daan)">
@@ -308,7 +308,7 @@
         <token regexp="yes">isang|dalawang|tatlong|limang|pitong|walong</token>
         <token regexp="yes">raang?</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>? If the preceding word ends with a vowel,  should start with the letter D.</message>
+      <message>Do you mean <suggestion>\2</suggestion>? If the preceding word ends with a vowel, \2 should start with the letter D.</message>
       <short>Alternation of 'd' and 'r'</short>
     </rule>
     <rule id="R_WORDS" name="Sound and Letter Change from 'r' to 'd'">
@@ -316,7 +316,7 @@
         <token regexp="yes">.*[bcdfghjklmnpqrstvwxyz]</token>
         <token regexp="yes">ring?|rito|ritong|raw|riyang?|roong?</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>? If the preceding word ends with a vowel,  should start with the letter D.</message>
+      <message>Do you mean <suggestion>\2</suggestion>? If the preceding word ends with a vowel, \2 should start with the letter D.</message>
       <short>Alternation of 'd' and 'r'</short>
     </rule>
   </category>
@@ -351,14 +351,14 @@
       <pattern>
         <token regexp="yes">nag(bisita|buhay|bulong|bunot|buo|daing|damay|dapo|dating|dayo)</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>?</message>
+      <message>Do you mean <suggestion>\1</suggestion>?</message>
       <short>Wrong Actor Affix</short>
     </rule>
     <rule id="NAG-_SS" name="Nag- (CL-um-)">
       <pattern>
         <token regexp="yes">Nag(bisita|buhay|bulong|bunot|buo|daing|damay|dapo|dating|dayo)</token>
       </pattern>
-      <message>Do you mean <suggestion></suggestion>?</message>
+      <message>Do you mean <suggestion>\1</suggestion>?</message>
       <short>Wrong Actor Affix</short>
     </rule>
   </category>
@@ -369,7 +369,7 @@
         <token regexp="yes">si|sina</token>
         <token postag="(PSNP|PSNQ|PSNE|PSNC)" postag_regexp="yes"></token>
       </pattern>
-      <message>Do you mean <suggestion> \1</suggestion>? Irregular POS sequence due to transposition of words.</message>
+      <message>Do you mean <suggestion>\2 \1</suggestion>? Irregular POS sequence due to transposition of words.</message>
       <short>Exchange Word Positions</short>
     </rule>
   </category>

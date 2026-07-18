@@ -24,7 +24,7 @@
         <token regexp="yes">([ءآأؤإئابپةتثجحخچدذرزژسشصضطظعغفقكکگلمنهوىیيًٌٍَُِّْ]+)</token>
         <token regexp="yes">ها(ی|یی|یم|یت|یش|مان|تان|شان|)</token>
       </pattern>
-      <message>آیا منظور شما  «<suggestion>\2</suggestion>» است؟</message>
+      <message>آیا منظور شما  «<suggestion>\1\2</suggestion>» است؟</message>
       <short>فاصلهٔ «ها» را با واژهٔ پیشین حذف کنید</short>
     </rule>
   </category>

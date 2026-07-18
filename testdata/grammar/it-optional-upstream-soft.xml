@@ -22,7 +22,7 @@
         <token>o</token>
         <token postag="VER:part.+past.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Forse volevi dire <suggestion>ho </suggestion>?</message>
+      <message>Forse volevi dire <suggestion>ho \2</suggestion>?</message>
       <short>ER_01_004</short>
     </rule>
   </category>

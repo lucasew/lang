@@ -94,7 +94,7 @@
         <token>an</token>
         <token regexp="yes" postag="UNKNOWN">(?:bhf|mb|gc|nd|ng|bp|dt).*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\4</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
   </category>

@@ -33,7 +33,7 @@
         <token>lang</token>
         <token regexp="yes">gehegt(e[mnrs]?)?|anhaltend(e[mnrs]?)?|andauernd(e[mnrs]?)?|gestreckt(e[mnrs]?)?|laufend(e[mnrs]?)?</token>
       </pattern>
-      <message>Möchten Sie die empfohlene Schreibweise <suggestion></suggestion> verwenden?</message>
+      <message>Möchten Sie die empfohlene Schreibweise <suggestion>\1\2</suggestion> verwenden?</message>
       <short>EMPFOHLEN_LANGGEHEGT</short>
     </rule>
     <rule id="EMPFOHLEN_TIEFGREIFEND" name="tief greifend (tiefgreifend)" default="off">
@@ -41,7 +41,7 @@
         <token>tief</token>
         <token regexp="yes">greifend(e[mnrs]?)?|gehend(e[mnrs]?)?|schürfend(e[mnrs]?)?</token>
       </pattern>
-      <message>Möchten Sie die empfohlene Schreibweise <suggestion></suggestion> verwenden?</message>
+      <message>Möchten Sie die empfohlene Schreibweise <suggestion>\1\2</suggestion> verwenden?</message>
       <short>EMPFOHLEN_TIEFGREIFEND</short>
     </rule>
     <rule id="EMPFOHLEN_WEITREICHEND" name="weit reichend (weitreichend)" default="off">
@@ -49,7 +49,7 @@
         <token>weit</token>
         <token regexp="yes">reichend(e[mnrs]?)?|blickend(e[mnrs]?)?|gehend(e[mnrs]?)?|greifend(e[mnrs]?)?</token>
       </pattern>
-      <message>Möchten Sie die empfohlene Schreibweise <suggestion></suggestion> verwenden?</message>
+      <message>Möchten Sie die empfohlene Schreibweise <suggestion>\1\2</suggestion> verwenden?</message>
       <short>EMPFOHLEN_WEITREICHEND</short>
     </rule>
   </category>
@@ -59,7 +59,7 @@
         <token postag="SENT_START"></token>
         <token>LG</token>
       </pattern>
-      <message>Das Abkürzen von Schlussformeln kann als unhöflich empfunden werden.</message>
+      <message>Das Abkürzen von Schlussformeln kann als unhöflich empfunden werden. <suggestion>\2</suggestion></message>
       <short>Schlussformeln sollten nicht abgekürzt werden</short>
     </rule>
   </category>
@@ -68,7 +68,7 @@
       <pattern>
         <token regexp="yes">[A-ZÄÖÜß]{3,30}.+7[A-ZÄÖÜß]{3,30}.+</token>
       </pattern>
-      <message>Vertippt? Meinten Sie den Schrägstrich '/' statt der '7'?</message>
+      <message>Vertippt? Meinten Sie den Schrägstrich '/' statt der '7'? <suggestion>\1</suggestion></message>
       <short>TEST_BERECHNET7ERMITTELT_SPELLING_RULE</short>
     </rule>
   </category>
@@ -80,7 +80,7 @@
         <token min="0">zu</token>
         <token postag="VER.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Nominalisierte Adjektive sollten in der Regel großgeschrieben werden.</message>
+      <message>Nominalisierte Adjektive sollten in der Regel großgeschrieben werden. <suggestion>\2</suggestion></message>
       <short>UM_LETZTERES</short>
     </rule>
   </category>
@@ -93,7 +93,7 @@
         <token postag="SUB.*PLU:(MAS|NEU)" postag_regexp="yes"></token>
         <token postag="VER:3:SIN.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Hier scheint die Übereinstimmung von Subjekt und Verb nicht zu stimmen.</message>
+      <message>Hier scheint die Übereinstimmung von Subjekt und Verb nicht zu stimmen. <suggestion>\6</suggestion></message>
       <short>WELCHE_SUBMAS_IST</short>
     </rule>
     <rule id="WERDEN_FOLGENDEN_SUB" name="werden folgenden (folgende) Dinge" default="off">
@@ -107,7 +107,7 @@
         <token postag="SUB:.*" postag_regexp="yes"></token>
         <token postag="PA2:.*" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion></suggestion>?</message>
+      <message><suggestion>\2</suggestion>?</message>
       <short>WERDEN_FOLGENDEN_SUB</short>
     </rule>
   </category>

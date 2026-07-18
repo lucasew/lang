@@ -108,7 +108,7 @@
         <token regexp="yes">(សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ)(ជំនឿ|ទំនាក់ទំនង|តម្រូវការ)</token>
       </pattern>
       <message>Do not add a noun modifier to a word that is already a noun.
-                <suggestion></suggestion></message>
+                <suggestion>\1</suggestion></message>
       <short>Do not add a noun modifier to a word that is already a noun.</short>
     </rule>
     <rule id="DOUBLE_NOUNS2" name="Do not double up nouns 2">
@@ -136,7 +136,7 @@
         <token regexp="yes">(.*)(ន៍)</token>
       </pattern>
       <message>Remove ន៍ because the word is already a modified noun.
-                <suggestion></suggestion></message>
+                <suggestion>\2</suggestion></message>
       <short>Remove ន៍ because the word is already a modified noun.</short>
     </rule>
     <rule id="TonakeatWithNoun2" name="Do not use ការ​ ឬ ភាព with ទណ្ឌឃាត 2">
@@ -144,7 +144,7 @@
         <token regexp="yes">(សេចក្តី|សេចក្ដី|ការ|ភាព|អំពើ)(.*)(ន៍)</token>
       </pattern>
       <message>Remove ន៍ because the word is already a modified noun.
-                <suggestion></suggestion></message>
+                <suggestion>\1</suggestion></message>
       <short>Remove ន៍ because the word is already a modified noun.</short>
     </rule>
   </category>

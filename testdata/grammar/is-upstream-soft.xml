@@ -191,7 +191,7 @@
         <token>forða</token>
         <token regexp="yes">slysi|stórslysi|gjaldþroti|þroti|hruni|eyðingu|gjöreyðingu|skemmdum|voðaverkum</token>
       </pattern>
-      <message>Betra þykir: <suggestion>afstýra</suggestion></message>
+      <message>Betra þykir: <suggestion>afstýra</suggestion> \2</message>
       <short>Betra þykir: afstýra</short>
     </rule>
   </category>
@@ -217,7 +217,7 @@
         <token>Bláa</token>
         <token regexp="yes">Lónið|Lóninu|Lónsins</token>
       </pattern>
-      <message>Stórt 'B' í Bláa en lítið 'l' í <suggestion></suggestion></message>
+      <message>Stórt 'B' í Bláa en lítið 'l' í <suggestion>\2</suggestion></message>
       <short>Lítið 'l' í lónið</short>
     </rule>
     <rule id="DAGUR_TUNGU" name="dagur íslenskrar tungu">
@@ -226,7 +226,7 @@
         <token>íslenskrar</token>
         <token>tungu</token>
       </pattern>
-      <message>Rita skal lítinn upphafsstaf í: <suggestion></suggestion> íslenskrar tungu (og að jafnaði í öllum nöfnum daga og tímabila)</message>
+      <message>Rita skal lítinn upphafsstaf í: <suggestion>\1</suggestion> íslenskrar tungu (og að jafnaði í öllum nöfnum daga og tímabila)</message>
       <short>Hástafur/lágstafur</short>
     </rule>
     <rule id="EGILS_SAGA" name="Egils saga">
@@ -234,7 +234,7 @@
         <token regexp="yes">Egils|Njáls|Grettis|Völsunga|Ljósvetninga|Borgfirðinga|Gunnlaugs</token>
         <token regexp="yes">Saga|Sögu</token>
       </pattern>
-      <message>Aðeins stór upphafsstafur í fyrsta hluta nafns: <suggestion> </suggestion></message>
+      <message>Aðeins stór upphafsstafur í fyrsta hluta nafns: <suggestion>\1 \2</suggestion></message>
       <short>Hástafur/lágstafur</short>
     </rule>
     <rule id="MAL_OG_MENNING" name="Mál og menning">
@@ -243,14 +243,14 @@
         <token>og</token>
         <token regexp="yes">Menning|Menningu|Menningar</token>
       </pattern>
-      <message>Stórt 'M' í Mál en lítið 'm' í <suggestion></suggestion></message>
+      <message>Stórt 'M' í Mál en lítið 'm' í <suggestion>\3</suggestion></message>
       <short>Mál og menning (lítið 'm' í menning)</short>
     </rule>
     <rule id="RADUNEYTI" name="ráðuneyti">
       <pattern>
         <token regexp="yes">([A-Z])([a-záéíúýæþð]*)ráðuneyti([a-zð]*)</token>
       </pattern>
-      <message>Rita skal lítinn upphafsstaf í <suggestion></suggestion> (og öllum nöfnum ráðuneyta)</message>
+      <message>Rita skal lítinn upphafsstaf í <suggestion>\1</suggestion> (og öllum nöfnum ráðuneyta)</message>
       <short>Hástafur/lágstafur</short>
     </rule>
   </category>

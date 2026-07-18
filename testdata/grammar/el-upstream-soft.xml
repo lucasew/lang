@@ -24,7 +24,7 @@
         <token inflected="yes">έχω</token>
         <token postag="V"></token>
       </pattern>
-      <message>Πιθανόν να χρειάζεται να χρησιμοποιήσετε τον απαρεμφατικό τύπο <suggestion></suggestion></message>
+      <message>Πιθανόν να χρειάζεται να χρησιμοποιήσετε τον απαρεμφατικό τύπο <suggestion>\2</suggestion></message>
       <short>Πρόβλημα συμφωνίας</short>
     </rule>
   </category>

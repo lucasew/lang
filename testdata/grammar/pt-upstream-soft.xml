@@ -232,7 +232,7 @@
         <token regexp="yes">(duz|trez|quatroc|quinh|seic|setec|oitoc|novec)entas</token>
         <token>gramas</token>
       </pattern>
-      <message>Se "grama" se refere a peso, substitua "\1 \2" por <suggestion> \2</suggestion>.</message>
+      <message>Se "grama" se refere a peso, substitua "\1 \2" por <suggestion>\1 \2</suggestion>.</message>
       <short>DUZENTAS_GRAMAS_NUMERAL</short>
     </rule>
     <rule id="EXISTE_VARIOS_BR" name="🇧🇷 Existem vários">
@@ -258,7 +258,7 @@
         <token postag="Z.C.+|D[NI].+" postag_regexp="yes"></token>
         <token regexp="yes" postag="NC.P.+" postag_regexp="yes"></token>
       </pattern>
-      <message>O verbo "fazer" no sentido temporal é impessoal. Substitua "\1" por <suggestion></suggestion>.</message>
+      <message>O verbo "fazer" no sentido temporal é impessoal. Substitua "\1" por <suggestion>\1</suggestion>.</message>
       <short>FAZEM_TEMPO</short>
     </rule>
     <rule id="MAS_BR" name="🇧🇷 mais">
@@ -311,7 +311,7 @@
         <token postag="Z.C.+|D[NI].+" postag_regexp="yes"></token>
         <token regexp="yes" postag="NC.P.+" postag_regexp="yes"></token>
       </pattern>
-      <message>O verbo "fazer" no sentido temporal é impessoal. Substitua "\1 \2" por <suggestion> \2</suggestion>.</message>
+      <message>O verbo "fazer" no sentido temporal é impessoal. Substitua "\1 \2" por <suggestion>\1 \2</suggestion>.</message>
       <short>VAO_FAZER_TEMPO</short>
     </rule>
   </category>
@@ -375,7 +375,7 @@
         <token>o</token>
         <token>leito</token>
       </pattern>
-      <message>Substitua por <suggestion>deixar a cama</suggestion>.</message>
+      <message>Substitua por <suggestion>\1 a cama</suggestion>.</message>
       <short>ABANDONAR_O_LEITO</short>
     </rule>
     <rule id="AGORA_ATUAL" name="Agora → Atual">
@@ -387,7 +387,7 @@
         <token inflected="yes" postag="VMIP.+" postag_regexp="yes">ter</token>
         <token regexp="yes">agora|atualmente|correntemente|hoje|presentemente</token>
       </pattern>
-      <message>Num contexto formal empregue <suggestion>atual</suggestion>.</message>
+      <message>Num contexto formal empregue <suggestion>\3</suggestion>.</message>
       <short>AGORA_ATUAL</short>
     </rule>
     <rule id="APENAS_SOMENTE" name="Apenas → Somente">
@@ -401,7 +401,7 @@
       <pattern>
         <token regexp="no" inflected="yes">aturar</token>
       </pattern>
-      <message><suggestion>suportar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>ATURAR_SUPORTAR_TOLERAR</short>
     </rule>
     <rule id="A_VOLTA_DE_EM_TORNO_DE" name="🤵 'à/em volta' de → 'em torno'">
@@ -427,7 +427,7 @@
       <pattern>
         <token regexp="yes">carros?</token>
       </pattern>
-      <message>Use "carro" no cotidiano, "automóvel" em contextos técnicos e "veículo" para designar qualquer meio de transporte. <suggestion>automóvel</suggestion></message>
+      <message>Use "carro" no cotidiano, "automóvel" em contextos técnicos e "veículo" para designar qualquer meio de transporte. <suggestion>\1</suggestion></message>
       <short>CARRO_AUTOMOVEL_VEICULO</short>
     </rule>
     <rule id="CERTO_INDICADO_PARA" name="'Certo' para → indicado/adequado/qualificado/apropriado">
@@ -437,14 +437,14 @@
         <token regexp="yes">cert[ao]s?</token>
         <token>para</token>
       </pattern>
-      <message>"Certo" é aceitável em registos informais. Em registos formais, prefira "indicado", "adequado", "qualificado" ou "apropriado". <suggestion>indicado</suggestion></message>
+      <message>"Certo" é aceitável em registos informais. Em registos formais, prefira "indicado", "adequado", "qualificado" ou "apropriado". <suggestion>\3</suggestion></message>
       <short>CERTO_INDICADO_PARA</short>
     </rule>
     <rule id="CHATEAR_INCOMODAR_IMPORTUNAR" name="Chatear → incomodar/importunar">
       <pattern>
         <token regexp="no" inflected="yes">chatear</token>
       </pattern>
-      <message><suggestion>incomodar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CHATEAR_INCOMODAR_IMPORTUNAR</short>
     </rule>
     <rule id="CLICHE_10_ESTAR" name="Clichê: Estar no vermelho">
@@ -473,7 +473,7 @@
         <token>as</token>
         <token>pernas</token>
       </pattern>
-      <message><suggestion>submeter-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_110_METER</short>
     </rule>
     <rule id="CLICHE_111_PENDURAR" name="Clichê: Pendurar as botas">
@@ -482,7 +482,7 @@
         <token>as</token>
         <token regexp="yes">botas|chuteiras</token>
       </pattern>
-      <message><suggestion>aposentar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_111_PENDURAR</short>
     </rule>
     <rule id="CLICHE_113_PENSAR" name="Clichê: Pensar com os seus botões">
@@ -504,7 +504,7 @@
         <token>da</token>
         <token>bezerra</token>
       </pattern>
-      <message><suggestion>distrair-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_114_PENSAR</short>
     </rule>
     <rule id="CLICHE_115_PENSAR" name="Clichê: Pensar na morte da bezerra">
@@ -515,7 +515,7 @@
         <token>da</token>
         <token>bezerra</token>
       </pattern>
-      <message><suggestion>estar distraído</suggestion></message>
+      <message><suggestion>\1 distraído</suggestion></message>
       <short>CLICHE_115_PENSAR</short>
     </rule>
     <rule id="CLICHE_117_POR" name="Clichê: Pôr a barba de molho">
@@ -537,7 +537,7 @@
         <token>em</token>
         <token>água</token>
       </pattern>
-      <message><suggestion>cansar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_118_POR</short>
     </rule>
     <rule id="CLICHE_119_POR" name="Clichê: Pôr a casa em ordem">
@@ -577,7 +577,7 @@
         <token>na</token>
         <token>massa</token>
       </pattern>
-      <message><suggestion>fazer</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_120_POR</short>
     </rule>
     <rule id="CLICHE_121_POR" name="Clichê: Pôr a pata na poça">
@@ -588,7 +588,7 @@
         <token>na</token>
         <token>poça</token>
       </pattern>
-      <message><suggestion>fazer asneira</suggestion></message>
+      <message><suggestion>\1 asneira</suggestion></message>
       <short>CLICHE_121_POR</short>
     </rule>
     <rule id="CLICHE_122_POR" name="Clichê: Pôr as barbas de molho">
@@ -599,7 +599,7 @@
         <token>de</token>
         <token>molho</token>
       </pattern>
-      <message><suggestion>precaver-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_122_POR</short>
     </rule>
     <rule id="CLICHE_123_POR" name="Clichê: Pôr as cartas na mesa">
@@ -619,7 +619,7 @@
         <token>os</token>
         <token>dados</token>
       </pattern>
-      <message><suggestion>expor os factos</suggestion></message>
+      <message><suggestion>\1 os factos</suggestion></message>
       <short>CLICHE_124_LANCAR</short>
     </rule>
     <rule id="CLICHE_124_POR" name="Clichê: Pôr as cartas na mesa">
@@ -630,7 +630,7 @@
         <token>na</token>
         <token>mesa</token>
       </pattern>
-      <message><suggestion>expor os factos</suggestion></message>
+      <message><suggestion>\1 os factos</suggestion></message>
       <short>CLICHE_124_POR</short>
     </rule>
     <rule id="CLICHE_125_POR" name="Clichê: Por força das circunstâncias">
@@ -660,7 +660,7 @@
         <token>à</token>
         <token>obra</token>
       </pattern>
-      <message><suggestion>trabalhar com afinco</suggestion></message>
+      <message><suggestion>\1 com afinco</suggestion></message>
       <short>CLICHE_127_POR</short>
     </rule>
     <rule id="CLICHE_128_POR" name="Clichê: Pôr minhoca na cabeça">
@@ -670,7 +670,7 @@
         <token>na</token>
         <token>cabeça</token>
       </pattern>
-      <message><suggestion>criar problemas onde não existem</suggestion></message>
+      <message><suggestion>\1 problemas onde não existem</suggestion></message>
       <short>CLICHE_128_POR</short>
     </rule>
     <rule id="CLICHE_129_POR" name="Clichê: Pôr os pontos nos is">
@@ -681,7 +681,7 @@
         <token>nos</token>
         <token>is</token>
       </pattern>
-      <message><suggestion>esclarecer a situação</suggestion></message>
+      <message><suggestion>\1 a situação</suggestion></message>
       <short>CLICHE_129_POR</short>
     </rule>
     <rule id="CLICHE_12_ESTAR" name="Clichê: Estar paiado">
@@ -700,7 +700,7 @@
         <token>da</token>
         <token>bananeira</token>
       </pattern>
-      <message><suggestion>ficar despreocupado</suggestion></message>
+      <message><suggestion>\1 despreocupado</suggestion></message>
       <short>CLICHE_12_FICAR</short>
     </rule>
     <rule id="CLICHE_13_FICAR" name="Clichê: Ficar a ver navios">
@@ -728,7 +728,7 @@
         <token>o</token>
         <token>coração</token>
       </pattern>
-      <message><suggestion>emocionar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_15_INUNDAR</short>
     </rule>
     <rule id="CLICHE_16_LAVAR" name="Clichê: Lavar roupa suja">
@@ -737,7 +737,7 @@
         <token>roupa</token>
         <token>suja</token>
       </pattern>
-      <message><suggestion>discutir assuntos particulares em público</suggestion></message>
+      <message><suggestion>\1 assuntos particulares em público</suggestion></message>
       <short>CLICHE_16_LAVAR</short>
     </rule>
     <rule id="CLICHE_17_LEVANTAR" name="Clichê: Levantar acampamento">
@@ -745,7 +745,7 @@
         <token inflected="yes">levantar</token>
         <token>acampamento</token>
       </pattern>
-      <message><suggestion>sair</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_17_LEVANTAR</short>
     </rule>
     <rule id="CLICHE_18_LEVANTAR" name="Clichê: Levantar com o pé esquerdo">
@@ -756,7 +756,7 @@
         <token>pé</token>
         <token>esquerdo</token>
       </pattern>
-      <message><suggestion>ter um dia ruim</suggestion></message>
+      <message><suggestion>\1 um dia ruim</suggestion></message>
       <short>CLICHE_18_LEVANTAR</short>
     </rule>
     <rule id="CLICHE_19_METER" name="Clichê: Meter o dedo na ferida">
@@ -767,7 +767,7 @@
         <token>na</token>
         <token>ferida</token>
       </pattern>
-      <message><suggestion>insistir em situação problemática</suggestion></message>
+      <message><suggestion>\1 em situação problemática</suggestion></message>
       <short>CLICHE_19_METER</short>
     </rule>
     <rule id="CLICHE_1_ESTAR" name="Clichê: Estar com a bola murcha">
@@ -788,7 +788,7 @@
         <token>de</token>
         <token>siri</token>
       </pattern>
-      <message><suggestion>manter segredo</suggestion></message>
+      <message><suggestion>\1 segredo</suggestion></message>
       <short>CLICHE_1_FAZER</short>
     </rule>
     <rule id="CLICHE_210_ABRIR" name="Clichê: Abrir o jogo">
@@ -797,7 +797,7 @@
         <token>o</token>
         <token>jogo</token>
       </pattern>
-      <message><suggestion>denunciar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_210_ABRIR</short>
     </rule>
     <rule id="CLICHE_211_ABRIR" name="Clichê: Abrir os olhos a alguém">
@@ -808,7 +808,7 @@
         <token>a</token>
         <token>alguém</token>
       </pattern>
-      <message><suggestion>convencer</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_211_ABRIR</short>
     </rule>
     <rule id="CLICHE_212_ACABAR" name="Clichê: Acabar em pizza">
@@ -817,7 +817,7 @@
         <token>em</token>
         <token>pizza</token>
       </pattern>
-      <message><suggestion>ficar por resolver</suggestion></message>
+      <message><suggestion>\1 por resolver</suggestion></message>
       <short>CLICHE_212_ACABAR</short>
     </rule>
     <rule id="CLICHE_213_ACERTAR" name="Clichê: Acertar agulhas">
@@ -825,7 +825,7 @@
         <token inflected="yes">acertar</token>
         <token>agulhas</token>
       </pattern>
-      <message><suggestion>combinar algo</suggestion></message>
+      <message><suggestion>\1 algo</suggestion></message>
       <short>CLICHE_213_ACERTAR</short>
     </rule>
     <rule id="CLICHE_214_ACERTAR" name="Clichê: Acertar em cheio">
@@ -834,7 +834,7 @@
         <token regexp="yes">em|na</token>
         <token regexp="yes">cheio|lata|mosca|mouche</token>
       </pattern>
-      <message><suggestion>acertar precisamente</suggestion></message>
+      <message><suggestion>\1 precisamente</suggestion></message>
       <short>CLICHE_214_ACERTAR</short>
     </rule>
     <rule id="CLICHE_218_ACHAR" name="Clichê: Achar chifre em cabeça de cavalo">
@@ -846,7 +846,7 @@
         <token>de</token>
         <token>cavalo</token>
       </pattern>
-      <message><suggestion>procurar problemas onde não existem</suggestion></message>
+      <message><suggestion>\1 problemas onde não existem</suggestion></message>
       <short>CLICHE_218_ACHAR</short>
     </rule>
     <rule id="CLICHE_219_ACHAR" name="Clichê: Achar pêlo em ovo">
@@ -856,7 +856,7 @@
         <token>em</token>
         <token>ovo</token>
       </pattern>
-      <message><suggestion>procurar o impossível</suggestion></message>
+      <message><suggestion>\1 o impossível</suggestion></message>
       <short>CLICHE_219_ACHAR</short>
     </rule>
     <rule id="CLICHE_21_ABALAR" name="Clichê: Abalar os alicerces">
@@ -865,7 +865,7 @@
         <token>os</token>
         <token>alicerces</token>
       </pattern>
-      <message><suggestion>afectar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_21_ABALAR</short>
     </rule>
     <rule id="CLICHE_220_ACOLHER" name="Clichê: Acolher de braços abertos">
@@ -875,7 +875,7 @@
         <token>braços</token>
         <token>abertos</token>
       </pattern>
-      <message><suggestion>acolher bem</suggestion></message>
+      <message><suggestion>\1 bem</suggestion></message>
       <short>CLICHE_220_ACOLHER</short>
     </rule>
     <rule id="CLICHE_221_ACORDAR" name="Clichê: Acordar com os pés de fora">
@@ -887,7 +887,7 @@
         <token>de</token>
         <token>fora</token>
       </pattern>
-      <message><suggestion>estar mal disposto</suggestion></message>
+      <message><suggestion>\1 mal disposto</suggestion></message>
       <short>CLICHE_221_ACORDAR</short>
     </rule>
     <rule id="CLICHE_222_ADOÇAR" name="Clichê: Adoçar a boca">
@@ -896,7 +896,7 @@
         <token>a</token>
         <token>boca</token>
       </pattern>
-      <message><suggestion>procurar atrair favores</suggestion></message>
+      <message><suggestion>\1 atrair favores</suggestion></message>
       <short>CLICHE_222_ADOÇAR</short>
     </rule>
     <rule id="CLICHE_223_AFIRMAR" name="Clichê: Afirmar com bastante precisão">
@@ -906,7 +906,7 @@
         <token>bastante</token>
         <token>precisão</token>
       </pattern>
-      <message><suggestion>afirmar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_223_AFIRMAR</short>
     </rule>
     <rule id="CLICHE_224_AFOGAR" name="Clichê: Afogar as mágoas">
@@ -926,7 +926,7 @@
         <token>e</token>
         <token>dentes</token>
       </pattern>
-      <message><suggestion>não desistir facilmente</suggestion></message>
+      <message><suggestion>não \1 facilmente</suggestion></message>
       <short>CLICHE_225_AGARRAR</short>
     </rule>
     <rule id="CLICHE_226_AMARRAR" name="Clichê: Amarrar o burro">
@@ -935,7 +935,7 @@
         <token regexp="yes">[ao]</token>
         <token regexp="yes">burr[ao]</token>
       </pattern>
-      <message><suggestion>ficar em descanso</suggestion></message>
+      <message><suggestion>\1 em descanso</suggestion></message>
       <short>CLICHE_226_AMARRAR</short>
     </rule>
     <rule id="CLICHE_227_ANDAR" name="Clichê: Andar feito barata tonta">
@@ -945,7 +945,7 @@
         <token>barata</token>
         <token>tonta</token>
       </pattern>
-      <message><suggestion>estar distraído</suggestion></message>
+      <message><suggestion>\1 distraído</suggestion></message>
       <short>CLICHE_227_ANDAR</short>
     </rule>
     <rule id="CLICHE_228_ANDAR" name="Clichê: Andar na linha">
@@ -954,7 +954,7 @@
         <token>na</token>
         <token>linha</token>
       </pattern>
-      <message><suggestion>estar elegante</suggestion></message>
+      <message><suggestion>\1 elegante</suggestion></message>
       <short>CLICHE_228_ANDAR</short>
     </rule>
     <rule id="CLICHE_229_ANDAR" name="Clichê: Andar nas nuvens">
@@ -963,7 +963,7 @@
         <token>nas</token>
         <token>nuvens</token>
       </pattern>
-      <message><suggestion>estar desatento</suggestion></message>
+      <message><suggestion>\1 desatento</suggestion></message>
       <short>CLICHE_229_ANDAR</short>
     </rule>
     <rule id="CLICHE_22_ABANDONAR" name="Clichê: Abandonar o barco">
@@ -972,7 +972,7 @@
         <token>o</token>
         <token>barco</token>
       </pattern>
-      <message><suggestion>desistir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_22_ABANDONAR</short>
     </rule>
     <rule id="CLICHE_230_APANHAR" name="Clichê: Apanhar a pata">
@@ -981,7 +981,7 @@
         <token>a</token>
         <token>pata</token>
       </pattern>
-      <message><suggestion>ter controlo sobre</suggestion></message>
+      <message><suggestion>\1 controlo sobre</suggestion></message>
       <short>CLICHE_230_APANHAR</short>
     </rule>
     <rule id="CLICHE_231_APANHAR" name="Clichê: Apanhar de surpresa">
@@ -990,7 +990,7 @@
         <token>de</token>
         <token>surpresa</token>
       </pattern>
-      <message><suggestion>surpreender</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_231_APANHAR</short>
     </rule>
     <rule id="CLICHE_232_APARAR" name="Clichê: Aparar as arestas">
@@ -999,7 +999,7 @@
         <token>as</token>
         <token>arestas</token>
       </pattern>
-      <message><suggestion>aprimorar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_232_APARAR</short>
     </rule>
     <rule id="CLICHE_233_APROVEITAR" name="Clichê: Aproveitar a boleia">
@@ -1008,7 +1008,7 @@
         <token>a</token>
         <token>boleia</token>
       </pattern>
-      <message><suggestion>ir junto</suggestion></message>
+      <message><suggestion>\1 junto</suggestion></message>
       <short>CLICHE_233_APROVEITAR</short>
     </rule>
     <rule id="CLICHE_234_AQUECER" name="Clichê: Aquecer as turbinas">
@@ -1030,7 +1030,7 @@
         <token>dos</token>
         <token>outros</token>
       </pattern>
-      <message><suggestion>trabalhar para proveito alheio</suggestion></message>
+      <message><suggestion>\1 para proveito alheio</suggestion></message>
       <short>CLICHE_235_AQUENTAR</short>
     </rule>
     <rule id="CLICHE_236_ARMAR" name="Clichê: Armar um barraco">
@@ -1039,7 +1039,7 @@
         <token>um</token>
         <token>barraco</token>
       </pattern>
-      <message><suggestion>criar confusão em público</suggestion></message>
+      <message><suggestion>\1 confusão em público</suggestion></message>
       <short>CLICHE_236_ARMAR</short>
     </rule>
     <rule id="CLICHE_237_ARRANCAR" name="Clichê: Arrancar cabelos">
@@ -1048,7 +1048,7 @@
         <token regexp="yes" min="0">os?</token>
         <token regexp="yes">cabelos?</token>
       </pattern>
-      <message><suggestion>entrar em desespero</suggestion></message>
+      <message><suggestion>\1 em desespero</suggestion></message>
       <short>CLICHE_237_ARRANCAR</short>
     </rule>
     <rule id="CLICHE_239_ARRASTAR" name="Clichê: Arrastar as asas">
@@ -1057,7 +1057,7 @@
         <token regexp="yes">as?</token>
         <token regexp="yes">asas?|asinhas?</token>
       </pattern>
-      <message><suggestion>enamorar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_239_ARRASTAR</short>
     </rule>
     <rule id="CLICHE_23_ABOTOAR" name="Clichê: Abotoar o paletó">
@@ -1066,7 +1066,7 @@
         <token>o</token>
         <token>paletó</token>
       </pattern>
-      <message><suggestion>morrer</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_23_ABOTOAR</short>
     </rule>
     <rule id="CLICHE_240_ARMAR-SE" name="Clichê: Armar-se até aos dentes|armado até aos dentes|armado até os dentes">
@@ -1076,7 +1076,7 @@
         <token regexp="yes">a?os</token>
         <token>dentes</token>
       </pattern>
-      <message><suggestion>armar exageradamente</suggestion></message>
+      <message><suggestion>\1 exageradamente</suggestion></message>
       <short>CLICHE_240_ARMAR-SE</short>
     </rule>
     <rule id="CLICHE_242_ARREBENTAR" name="Clichê: Arrebentar a boca do balão">
@@ -1096,7 +1096,7 @@
         <token>as</token>
         <token>mangas</token>
       </pattern>
-      <message><suggestion>trabalhar com afinco</suggestion></message>
+      <message><suggestion>\1 com afinco</suggestion></message>
       <short>CLICHE_243_ARREGAÇAR</short>
     </rule>
     <rule id="CLICHE_245_ARRUMAR" name="Clichê: Arrumar sarna para se coçar">
@@ -1107,7 +1107,7 @@
         <token>se</token>
         <token>coçar</token>
       </pattern>
-      <message><suggestion>procurar por problemas</suggestion></message>
+      <message><suggestion>\1 por problemas</suggestion></message>
       <short>CLICHE_245_ARRUMAR</short>
     </rule>
     <rule id="CLICHE_248_VER" name="Clichê: Ver fumo/bilhas">
@@ -1115,7 +1115,7 @@
         <token inflected="yes">ver</token>
         <token regexp="yes">fumo|bilhas</token>
       </pattern>
-      <message><suggestion>ter dificuldade</suggestion></message>
+      <message><suggestion>\1 dificuldade</suggestion></message>
       <short>CLICHE_248_VER</short>
     </rule>
     <rule id="CLICHE_249_VER" name="Clichê: Ver a avó pela greta">
@@ -1126,7 +1126,7 @@
         <token>pela</token>
         <token>greta</token>
       </pattern>
-      <message><suggestion>estar quase a morrer</suggestion></message>
+      <message><suggestion>\1 quase a morrer</suggestion></message>
       <short>CLICHE_249_VER</short>
     </rule>
     <rule id="CLICHE_24_ABRAÇAR" name="Clichê: Abraçar uma causa">
@@ -1146,7 +1146,7 @@
         <token>de</token>
         <token>ouro</token>
       </pattern>
-      <message><suggestion>começar bem</suggestion></message>
+      <message><suggestion>\1 bem</suggestion></message>
       <short>CLICHE_25_ABRIR</short>
     </rule>
     <rule id="CLICHE_26_ABRIR" name="Clichê: Abrir espaço na agenda">
@@ -1165,7 +1165,7 @@
         <token>mão</token>
         <token min="0">de</token>
       </pattern>
-      <message><suggestion>renunciar a</suggestion></message>
+      <message><suggestion>\1 a</suggestion></message>
       <short>CLICHE_27_ABRIR</short>
     </rule>
     <rule id="CLICHE_29_ABRIR" name="Clichê: Abrir o coração">
@@ -1174,7 +1174,7 @@
         <token>o</token>
         <token>coração</token>
       </pattern>
-      <message><suggestion>desabafar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_29_ABRIR</short>
     </rule>
     <rule id="CLICHE_2_ESTAR" name="Clichê: Estar com a cabeça nas nuvens">
@@ -1217,7 +1217,7 @@
         <token>de</token>
         <token>alguém</token>
       </pattern>
-      <message><suggestion>utilizar emprestado</suggestion></message>
+      <message><suggestion>\1 emprestado</suggestion></message>
       <short>CLICHE_3101_ESTAR</short>
     </rule>
     <rule id="CLICHE_3102_FAZER" name="Clichê: Fazer vista grossa">
@@ -1226,7 +1226,7 @@
         <token>vista</token>
         <token>grossa</token>
       </pattern>
-      <message><suggestion>fingir que não ver</suggestion></message>
+      <message><suggestion>\1 que não \1</suggestion></message>
       <short>CLICHE_3102_FAZER</short>
     </rule>
     <rule id="CLICHE_3103_FINCAR" name="Clichê: Fincar o pé">
@@ -1235,7 +1235,7 @@
         <token>o</token>
         <token>pé</token>
       </pattern>
-      <message><suggestion>insistir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_3103_FINCAR</short>
     </rule>
     <rule id="CLICHE_3104_GERAR" name="Clichê: Gerar polémica">
@@ -1253,7 +1253,7 @@
         <token>plenos</token>
         <token>pulmões</token>
       </pattern>
-      <message><suggestion>gritar com toda a força</suggestion></message>
+      <message><suggestion>\1 com toda a força</suggestion></message>
       <short>CLICHE_3105_GRITAR</short>
     </rule>
     <rule id="CLICHE_3106_LEVAR" name="Clichê: Levar à barra dos tribunais">
@@ -1264,7 +1264,7 @@
         <token>dos</token>
         <token>tribunais</token>
       </pattern>
-      <message><suggestion>levar a tribunal</suggestion></message>
+      <message><suggestion>\1 a tribunal</suggestion></message>
       <short>CLICHE_3106_LEVAR</short>
     </rule>
     <rule id="CLICHE_3107_LEVAR" name="Clichê: Levar a peito">
@@ -1273,7 +1273,7 @@
         <token>a</token>
         <token>peito</token>
       </pattern>
-      <message><suggestion>tomar para si</suggestion></message>
+      <message><suggestion>\1 para si</suggestion></message>
       <short>CLICHE_3107_LEVAR</short>
     </rule>
     <rule id="CLICHE_3108_LEVAR" name="Clichê: Levar chumbo|levar ferro|levar pau">
@@ -1281,7 +1281,7 @@
         <token inflected="yes">levar</token>
         <token regexp="yes">chumbo|ferro|pau</token>
       </pattern>
-      <message><suggestion>fracassar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_3108_LEVAR</short>
     </rule>
     <rule id="CLICHE_3109_LEVAR" name="Clichê: Levar de vencida">
@@ -1300,7 +1300,7 @@
         <token>frente</token>
         <token>com</token>
       </pattern>
-      <message><suggestion>entrar em conflito</suggestion></message>
+      <message><suggestion>\1 em conflito</suggestion></message>
       <short>CLICHE_310_BATER</short>
     </rule>
     <rule id="CLICHE_3110_LEVAR" name="Clichê: Levar toco">
@@ -1308,7 +1308,7 @@
         <token inflected="yes">levar</token>
         <token>toco</token>
       </pattern>
-      <message><suggestion>ser deixado</suggestion></message>
+      <message><suggestion>\1 deixado</suggestion></message>
       <short>CLICHE_3110_LEVAR</short>
     </rule>
     <rule id="CLICHE_3111_LEVAR" name="Clichê: Levar tudo por trás">
@@ -1318,7 +1318,7 @@
         <token>por</token>
         <token>trás</token>
       </pattern>
-      <message><suggestion>entender tudo de maneira pejorativa</suggestion></message>
+      <message><suggestion>\1 tudo de maneira pejorativa</suggestion></message>
       <short>CLICHE_3111_LEVAR</short>
     </rule>
     <rule id="CLICHE_3112_LEVAR" name="Clichê: Levar um fora">
@@ -1327,7 +1327,7 @@
         <token>um</token>
         <token>fora</token>
       </pattern>
-      <message><suggestion>ser descartado</suggestion></message>
+      <message><suggestion>\1 descartado</suggestion></message>
       <short>CLICHE_3112_LEVAR</short>
     </rule>
     <rule id="CLICHE_3113_LEVAR" name="Clichê: Levar um mambo militar">
@@ -1337,7 +1337,7 @@
         <token>mambo</token>
         <token>militar</token>
       </pattern>
-      <message><suggestion>ser submetido a uma reação extrema</suggestion></message>
+      <message><suggestion>\1 submetido a uma reação extrema</suggestion></message>
       <short>CLICHE_3113_LEVAR</short>
     </rule>
     <rule id="CLICHE_3114_METER" name="Clichê: Meter os pés pelas mãos">
@@ -1348,7 +1348,7 @@
         <token>pelas</token>
         <token>mãos</token>
       </pattern>
-      <message><suggestion>agir desajeitadamente</suggestion></message>
+      <message><suggestion>\1 desajeitadamente</suggestion></message>
       <short>CLICHE_3114_METER</short>
     </rule>
     <rule id="CLICHE_3115_MEXER" name="Clichê: Mexer num vespeiro">
@@ -1366,7 +1366,7 @@
         <token>de</token>
         <token>amores</token>
       </pattern>
-      <message><suggestion>gostar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_3117_MORRER</short>
     </rule>
     <rule id="CLICHE_3118_PASSAR" name="Clichê: Passar a pente fino">
@@ -1376,7 +1376,7 @@
         <token>pente</token>
         <token>fino</token>
       </pattern>
-      <message><suggestion>analisar minuciosamente</suggestion></message>
+      <message><suggestion>\1 minuciosamente</suggestion></message>
       <short>CLICHE_3118_PASSAR</short>
     </rule>
     <rule id="CLICHE_3119_PASSAR" name="Clichê: Passar em branco">
@@ -1394,7 +1394,7 @@
         <token>em</token>
         <token>retirada</token>
       </pattern>
-      <message><suggestion>fugir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_311_BATER</short>
     </rule>
     <rule id="CLICHE_3120_PEGAR" name="Clichê: Pegar no tranco">
@@ -1422,7 +1422,7 @@
         <token>a</token>
         <token>linha</token>
       </pattern>
-      <message><suggestion>perder a educação</suggestion></message>
+      <message><suggestion>\1 a educação</suggestion></message>
       <short>CLICHE_3122_PERDER</short>
     </rule>
     <rule id="CLICHE_3123_PERDER" name="Clichê: Perder as estribeiras">
@@ -1431,7 +1431,7 @@
         <token>as</token>
         <token>estribeiras</token>
       </pattern>
-      <message><suggestion>desnortear-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_3123_PERDER</short>
     </rule>
     <rule id="CLICHE_3124_PERDER" name="Clichê: Perder o fio à meada">
@@ -1442,7 +1442,7 @@
         <token>à</token>
         <token>meada</token>
       </pattern>
-      <message><suggestion>desnortear-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_3124_PERDER</short>
     </rule>
     <rule id="CLICHE_312_BATER" name="Clichê: Bater na mesma tecla">
@@ -1452,7 +1452,7 @@
         <token>mesma</token>
         <token>tecla</token>
       </pattern>
-      <message><suggestion>repetir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_312_BATER</short>
     </rule>
     <rule id="CLICHE_313_BATER" name="Clichê: Bater papo">
@@ -1460,7 +1460,7 @@
         <token inflected="yes">bater</token>
         <token>papo</token>
       </pattern>
-      <message><suggestion>conversar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_313_BATER</short>
     </rule>
     <rule id="CLICHE_314_BEBER" name="Clichê: Beber água nas orelhas dos outros">
@@ -1472,7 +1472,7 @@
         <token>dos</token>
         <token>outros</token>
       </pattern>
-      <message><suggestion>viver sempre a cochichar</suggestion></message>
+      <message><suggestion>\1 sempre a cochichar</suggestion></message>
       <short>CLICHE_314_BEBER</short>
     </rule>
     <rule id="CLICHE_316_BOTAR" name="Clichê: Botar a boca no trombone|pôr a boca no trombone">
@@ -1483,7 +1483,7 @@
         <token>no</token>
         <token>trombone</token>
       </pattern>
-      <message><suggestion>revelar um segredo</suggestion></message>
+      <message><suggestion>\1 um segredo</suggestion></message>
       <short>CLICHE_316_BOTAR</short>
     </rule>
     <rule id="CLICHE_317_BOTAR" name="Clichê: Botar banca">
@@ -1504,7 +1504,7 @@
         <token>dos</token>
         <token>bois</token>
       </pattern>
-      <message><suggestion>saltar etapas de forma inapropriada</suggestion></message>
+      <message><suggestion>\1 etapas de forma inapropriada</suggestion></message>
       <short>CLICHE_318_BOTAR</short>
     </rule>
     <rule id="CLICHE_319_BOTAR" name="Clichê: Botar para quebrar|mandar ver">
@@ -1513,7 +1513,7 @@
         <token>para</token>
         <token>quebrar</token>
       </pattern>
-      <message><suggestion>fazer algo com extrema intensidade</suggestion></message>
+      <message><suggestion>\1 algo com extrema intensidade</suggestion></message>
       <short>CLICHE_319_BOTAR</short>
     </rule>
     <rule id="CLICHE_319_BOTAR_2" name="Clichê: Botar para quebrar|mandar ver">
@@ -1521,7 +1521,7 @@
         <token inflected="yes">mandar</token>
         <token>ver</token>
       </pattern>
-      <message><suggestion>fazer algo com extrema intensidade</suggestion></message>
+      <message><suggestion>\1 algo com extrema intensidade</suggestion></message>
       <short>CLICHE_319_BOTAR_2</short>
     </rule>
     <rule id="CLICHE_31_AGRADAR" name="Clichê: Agradar gregos e troianos">
@@ -1531,7 +1531,7 @@
         <token>e</token>
         <token>troianos</token>
       </pattern>
-      <message><suggestion>agradar a todos</suggestion></message>
+      <message><suggestion>\1 a todos</suggestion></message>
       <short>CLICHE_31_AGRADAR</short>
     </rule>
     <rule id="CLICHE_320_BRINCAR" name="Clichê: Brincar com fogo">
@@ -1540,7 +1540,7 @@
         <token>com</token>
         <token>fogo</token>
       </pattern>
-      <message><suggestion>arriscar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_320_BRINCAR</short>
     </rule>
     <rule id="CLICHE_321_CAIR" name="Clichê: Cair pelas tabelas">
@@ -1558,7 +1558,7 @@
         <token>a</token>
         <token>ficha</token>
       </pattern>
-      <message><suggestion>entender tardiamente</suggestion></message>
+      <message><suggestion>\1 tardiamente</suggestion></message>
       <short>CLICHE_322_CAIR</short>
     </rule>
     <rule id="CLICHE_323_CAIR" name="Clichê: Cair como uma luva">
@@ -1568,7 +1568,7 @@
         <token>uma</token>
         <token>luva</token>
       </pattern>
-      <message><suggestion>ficar bem</suggestion></message>
+      <message><suggestion>\1 bem</suggestion></message>
       <short>CLICHE_323_CAIR</short>
     </rule>
     <rule id="CLICHE_324_CAIR" name="Clichê: Cair das nuvens">
@@ -1577,7 +1577,7 @@
         <token>das</token>
         <token>nuvens</token>
       </pattern>
-      <message><suggestion>voltar à realidade</suggestion></message>
+      <message><suggestion>\1 à realidade</suggestion></message>
       <short>CLICHE_324_CAIR</short>
     </rule>
     <rule id="CLICHE_325_CAIR" name="Clichê: Cair de maduro">
@@ -1595,7 +1595,7 @@
         <token>por</token>
         <token>terra</token>
       </pattern>
-      <message><suggestion>perder</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_326_CAIR</short>
     </rule>
     <rule id="CLICHE_327_CANTAR" name="Clichê: Cantar vitória">
@@ -1603,7 +1603,7 @@
         <token inflected="yes">cantar</token>
         <token>vitória</token>
       </pattern>
-      <message><suggestion>festejar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_327_CANTAR</short>
     </rule>
     <rule id="CLICHE_328_CARREGAR" name="Clichê: Carregar nas tintas">
@@ -1612,7 +1612,7 @@
         <token>nas</token>
         <token>tintas</token>
       </pattern>
-      <message><suggestion>exagerar na descrição</suggestion></message>
+      <message><suggestion>\1 na descrição</suggestion></message>
       <short>CLICHE_328_CARREGAR</short>
     </rule>
     <rule id="CLICHE_329_CAUSAR" name="Clichê: Causar espécie">
@@ -1620,7 +1620,7 @@
         <token inflected="yes">causar</token>
         <token>espécie</token>
       </pattern>
-      <message><suggestion>fazer confusão</suggestion></message>
+      <message><suggestion>\1 confusão</suggestion></message>
       <short>CLICHE_329_CAUSAR</short>
     </rule>
     <rule id="CLICHE_32_ATINGIR" name="Clichê: Atingir em cheio">
@@ -1651,7 +1651,7 @@
         <token>leite</token>
         <token>derramado</token>
       </pattern>
-      <message><suggestion>lamentar-se por algo que não tem solução</suggestion></message>
+      <message><suggestion>\1-se por algo que não tem solução</suggestion></message>
       <short>CLICHE_331_CHORAR</short>
     </rule>
     <rule id="CLICHE_332_CHOVER" name="Clichê: Chover no molhado">
@@ -1668,7 +1668,7 @@
         <token inflected="yes">chutar</token>
         <token>alto</token>
       </pattern>
-      <message><suggestion>vangloriar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_333_CHUTAR</short>
     </rule>
     <rule id="CLICHE_334_CHUTAR" name="Clichê: Chutar o balde">
@@ -1686,7 +1686,7 @@
         <token>o</token>
         <token>balde</token>
       </pattern>
-      <message><suggestion>agir irresponsavelmente</suggestion></message>
+      <message><suggestion>\1 irresponsavelmente</suggestion></message>
       <short>CLICHE_335_CHUTAR</short>
     </rule>
     <rule id="CLICHE_336_CHUTAR" name="Clichê: Chutar o pau da barraca">
@@ -1697,7 +1697,7 @@
         <token>da</token>
         <token>barraca</token>
       </pattern>
-      <message><suggestion>agir irresponsavelmente</suggestion></message>
+      <message><suggestion>\1 irresponsavelmente</suggestion></message>
       <short>CLICHE_336_CHUTAR</short>
     </rule>
     <rule id="CLICHE_337_COLOCAR" name="Clichê: Colocar melancia na cabeça">
@@ -1707,7 +1707,7 @@
         <token>na</token>
         <token>cabeça</token>
       </pattern>
-      <message><suggestion>querer aparecer</suggestion></message>
+      <message><suggestion>\1 aparecer</suggestion></message>
       <short>CLICHE_337_COLOCAR</short>
     </rule>
     <rule id="CLICHE_338_COLOCAR" name="Clichê: Colocar um ponto final">
@@ -1717,7 +1717,7 @@
         <token>ponto</token>
         <token>final</token>
       </pattern>
-      <message><suggestion>terminar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_338_COLOCAR</short>
     </rule>
     <rule id="CLICHE_339_COMER" name="Clichê: Comer água">
@@ -1725,7 +1725,7 @@
         <token inflected="yes">comer</token>
         <token>água</token>
       </pattern>
-      <message><suggestion>sair para beber</suggestion></message>
+      <message><suggestion>\1 para beber</suggestion></message>
       <short>CLICHE_339_COMER</short>
     </rule>
     <rule id="CLICHE_33_ATIRAR" name="Clichê: Atirar farpas|lançar farpas">
@@ -1743,7 +1743,7 @@
         <token>um</token>
         <token>abade</token>
       </pattern>
-      <message><suggestion>comer muito</suggestion></message>
+      <message><suggestion>\1 muito</suggestion></message>
       <short>CLICHE_340_COMER</short>
     </rule>
     <rule id="CLICHE_341_COMER" name="Clichê: Comer cru e quente">
@@ -1753,7 +1753,7 @@
         <token>e</token>
         <token>quente</token>
       </pattern>
-      <message><suggestion>ser apressado e pouco perfeccionista</suggestion></message>
+      <message><suggestion>\1 apressado e pouco perfeccionista</suggestion></message>
       <short>CLICHE_341_COMER</short>
     </rule>
     <rule id="CLICHE_342_COMPRAR" name="Clichê: Comprar gato por lebre">
@@ -1763,7 +1763,7 @@
         <token>por</token>
         <token>lebre</token>
       </pattern>
-      <message><suggestion>ser enganado</suggestion></message>
+      <message><suggestion>\1 enganado</suggestion></message>
       <short>CLICHE_342_COMPRAR</short>
     </rule>
     <rule id="CLICHE_343_CONFUNDIR" name="Clichê: Confundir alhos com bugalhos">
@@ -1773,7 +1773,7 @@
         <token>com</token>
         <token>bugalhos</token>
       </pattern>
-      <message><suggestion>confundir conceitos</suggestion></message>
+      <message><suggestion>\1 conceitos</suggestion></message>
       <short>CLICHE_343_CONFUNDIR</short>
     </rule>
     <rule id="CLICHE_344_CONJUGAR" name="Clichê: Conjugar esforços">
@@ -1808,7 +1808,7 @@
         <token>as</token>
         <token>vazas</token>
       </pattern>
-      <message><suggestion>impedir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_348_CORTAR</short>
     </rule>
     <rule id="CLICHE_349_COSTURAR" name="Clichê: Costurar um acordo">
@@ -1825,7 +1825,7 @@
         <token inflected="yes">babar</token>
         <token>ovo</token>
       </pattern>
-      <message><suggestion>puxar o saco</suggestion></message>
+      <message><suggestion>\1 o saco</suggestion></message>
       <short>CLICHE_34_BABAR</short>
     </rule>
     <rule id="CLICHE_350_CRIVAR" name="Clichê: Crivar de balas">
@@ -1855,7 +1855,7 @@
         <token>vara</token>
         <token>curta</token>
       </pattern>
-      <message><suggestion>arrumar problema</suggestion></message>
+      <message><suggestion>\1 problema</suggestion></message>
       <short>CLICHE_352_CUTUCAR</short>
     </rule>
     <rule id="CLICHE_353_DAR" name="Clichê: Dar a devida atenção">
@@ -1877,7 +1877,7 @@
         <token>bilhar</token>
         <token>grande</token>
       </pattern>
-      <message><suggestion>ir chatear outro</suggestion></message>
+      <message><suggestion>\1 chatear outro</suggestion></message>
       <short>CLICHE_354_DAR</short>
     </rule>
     <rule id="CLICHE_355_DAR" name="Clichê: Dar a volta por cima">
@@ -1888,7 +1888,7 @@
         <token>por</token>
         <token>cima</token>
       </pattern>
-      <message><suggestion>recuperar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_355_DAR</short>
     </rule>
     <rule id="CLICHE_356_DAR" name="Clichê: Dar bilingue">
@@ -1896,7 +1896,7 @@
         <token inflected="yes">dar</token>
         <token>bilingue</token>
       </pattern>
-      <message><suggestion>mentir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_356_DAR</short>
     </rule>
     <rule id="CLICHE_357_DAR" name="Clichê: Dar bola">
@@ -1904,7 +1904,7 @@
         <token inflected="yes">dar</token>
         <token>bola</token>
       </pattern>
-      <message><suggestion>insinuar-se romanticamente para alguém</suggestion></message>
+      <message><suggestion>\1-se romanticamente para alguém</suggestion></message>
       <short>CLICHE_357_DAR</short>
     </rule>
     <rule id="CLICHE_358_DAR" name="Clichê: Dar com a cara na porta">
@@ -1916,7 +1916,7 @@
         <token>na</token>
         <token>porta</token>
       </pattern>
-      <message><suggestion>decepcionar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_358_DAR</short>
     </rule>
     <rule id="CLICHE_359_DAR" name="Clichê: Dar com a língua nos dentes">
@@ -1928,7 +1928,7 @@
         <token>nos</token>
         <token>dentes</token>
       </pattern>
-      <message><suggestion>contar um segredo</suggestion></message>
+      <message><suggestion>\1 um segredo</suggestion></message>
       <short>CLICHE_359_DAR</short>
     </rule>
     <rule id="CLICHE_35_BAIXAR" name="Clichê: Baixar a bola">
@@ -1937,7 +1937,7 @@
         <token>a</token>
         <token>bola</token>
       </pattern>
-      <message><suggestion>acalmar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_35_BAIXAR</short>
     </rule>
     <rule id="CLICHE_360_DAR" name="Clichê: Dar com o nariz na porta">
@@ -1949,7 +1949,7 @@
         <token>na</token>
         <token>porta</token>
       </pattern>
-      <message><suggestion>decepcionar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_360_DAR</short>
     </rule>
     <rule id="CLICHE_361_DAR" name="Clichê: Dar com os burros na água">
@@ -1969,7 +1969,7 @@
         <token inflected="yes">dar</token>
         <token>galho</token>
       </pattern>
-      <message><suggestion>causar dificuldades</suggestion></message>
+      <message><suggestion>\1 dificuldades</suggestion></message>
       <short>CLICHE_362_DAR</short>
     </rule>
     <rule id="CLICHE_363_DAR" name="Clichê: Dar gasosa">
@@ -1977,7 +1977,7 @@
         <token inflected="yes">dar</token>
         <token>gasosa</token>
       </pattern>
-      <message><suggestion>entregar gorjeta</suggestion></message>
+      <message><suggestion>\1 gorjeta</suggestion></message>
       <short>CLICHE_363_DAR</short>
     </rule>
     <rule id="CLICHE_364_DAR" name="Clichê: Dar jajão">
@@ -1985,7 +1985,7 @@
         <token inflected="yes">dar</token>
         <token>jajão</token>
       </pattern>
-      <message><suggestion>simular</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_364_DAR</short>
     </rule>
     <rule id="CLICHE_365_DAR" name="Clichê: Dar mancada">
@@ -1993,7 +1993,7 @@
         <token inflected="yes">dar</token>
         <token>mancada</token>
       </pattern>
-      <message><suggestion>não cumprir promessa</suggestion></message>
+      <message><suggestion>não \1 promessa</suggestion></message>
       <short>CLICHE_365_DAR</short>
     </rule>
     <rule id="CLICHE_366_DAR" name="Clichê: Dar na telha">
@@ -2035,7 +2035,7 @@
         <token>a</token>
         <token>torcer</token>
       </pattern>
-      <message><suggestion>voltar atrás na decisão</suggestion></message>
+      <message><suggestion>\1 atrás na decisão</suggestion></message>
       <short>CLICHE_369_DAR</short>
     </rule>
     <rule id="CLICHE_36_BAIXAR" name="Clichê: Baixar a guarda">
@@ -2044,7 +2044,7 @@
         <token>a</token>
         <token>guarda</token>
       </pattern>
-      <message><suggestion>descontrair</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_36_BAIXAR</short>
     </rule>
     <rule id="CLICHE_370_DAR" name="Clichê: Dar o braço a torcer">
@@ -2055,7 +2055,7 @@
         <token>a</token>
         <token>torcer</token>
       </pattern>
-      <message><suggestion>voltar atrás numa decisão</suggestion></message>
+      <message><suggestion>\1 atrás numa decisão</suggestion></message>
       <short>CLICHE_370_DAR</short>
     </rule>
     <rule id="CLICHE_371_DAR" name="Clichê: Dar o último adeus">
@@ -2065,7 +2065,7 @@
         <token>último</token>
         <token>adeus</token>
       </pattern>
-      <message><suggestion>despedir-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_371_DAR</short>
     </rule>
     <rule id="CLICHE_372_DAR" name="Clichê: Dar pau na máquina">
@@ -2104,7 +2104,7 @@
         <token>uma</token>
         <token>mãozinha</token>
       </pattern>
-      <message><suggestion>ajudar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_375_DAR</short>
     </rule>
     <rule id="CLICHE_376_DAR" name="Clichê: Dar uma mãozinha">
@@ -2122,7 +2122,7 @@
         <token>as</token>
         <token>chamas</token>
       </pattern>
-      <message><suggestion>dissipar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_377_DEBELAR</short>
     </rule>
     <rule id="CLICHE_378_DEITAR" name="Clichê: Deitar o cabelo">
@@ -2131,7 +2131,7 @@
         <token>o</token>
         <token>cabelo</token>
       </pattern>
-      <message><suggestion>correr muito</suggestion></message>
+      <message><suggestion>\1 muito</suggestion></message>
       <short>CLICHE_378_DEITAR</short>
     </rule>
     <rule id="CLICHE_379_DEITAR" name="Clichê: Deitar raízes">
@@ -2148,7 +2148,7 @@
         <token>as</token>
         <token>botas</token>
       </pattern>
-      <message><suggestion>morrer</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_37_BATER</short>
     </rule>
     <rule id="CLICHE_380_DEIXAR" name="Clichê: Deixar a desejar">
@@ -2166,7 +2166,7 @@
         <token>na</token>
         <token>mão</token>
       </pattern>
-      <message><suggestion>não colaborar</suggestion></message>
+      <message><suggestion>não \1</suggestion></message>
       <short>CLICHE_381_DEIXAR</short>
     </rule>
     <rule id="CLICHE_382_DEIXAR" name="Clichê: Deixar a desejar">
@@ -2175,7 +2175,7 @@
         <token>a</token>
         <token>desejar</token>
       </pattern>
-      <message><suggestion>decepcionar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_382_DEIXAR</short>
     </rule>
     <rule id="CLICHE_383_DETONAR" name="Clichê: Detonar um processo">
@@ -2192,7 +2192,7 @@
         <token inflected="yes" postag="V.[^M].+" postag_regexp="yes">dispensar</token>
         <token>apresentações</token>
       </pattern>
-      <message><suggestion>ser famoso</suggestion></message>
+      <message><suggestion>\1 famoso</suggestion></message>
       <short>CLICHE_384_DISPENSAR</short>
     </rule>
     <rule id="CLICHE_385_DISSIPAR" name="Clichê: Dissipar dúvidas">
@@ -2238,7 +2238,7 @@
         <token>na</token>
         <token>mão</token>
       </pattern>
-      <message><suggestion>ter o poder</suggestion></message>
+      <message><suggestion>\1 o poder</suggestion></message>
       <short>CLICHE_388_ESTAR</short>
     </rule>
     <rule id="CLICHE_389_ESTAR" name="Clichê: Estar com o pé atrás da porta|de pé atrás">
@@ -2251,7 +2251,7 @@
         <token>da</token>
         <token>porta</token>
       </pattern>
-      <message><suggestion>estar desconfiado</suggestion></message>
+      <message><suggestion>\1 desconfiado</suggestion></message>
       <short>CLICHE_389_ESTAR</short>
     </rule>
     <rule id="CLICHE_389_ESTAR_2" name="Clichê: Estar com o pé atrás da porta|de pé atrás">
@@ -2261,7 +2261,7 @@
         <token>pé</token>
         <token>atrás</token>
       </pattern>
-      <message><suggestion>estar desconfiado</suggestion></message>
+      <message><suggestion>\1 desconfiado</suggestion></message>
       <short>CLICHE_389_ESTAR_2</short>
     </rule>
     <rule id="CLICHE_38_BATER" name="Clichê: Bater com a cabeça na parede">
@@ -2273,7 +2273,7 @@
         <token>na</token>
         <token>parede</token>
       </pattern>
-      <message><suggestion>aprender com os erros</suggestion></message>
+      <message><suggestion>\1 com os erros</suggestion></message>
       <short>CLICHE_38_BATER</short>
     </rule>
     <rule id="CLICHE_390_ESTAR" name="Clichê: Estar com os azeites">
@@ -2296,7 +2296,7 @@
         <token min="0">a</token>
         <token>cova</token>
       </pattern>
-      <message><suggestion>estar para morrer</suggestion></message>
+      <message><suggestion>\1 para morrer</suggestion></message>
       <short>CLICHE_391_ESTAR</short>
     </rule>
     <rule id="CLICHE_392_ESTAR" name="Clichê: Estar com uma mão na vela e outra no soro">
@@ -2312,7 +2312,7 @@
         <token>no</token>
         <token>soro</token>
       </pattern>
-      <message><suggestion>estar em estado grave</suggestion></message>
+      <message><suggestion>\1 em estado grave</suggestion></message>
       <short>CLICHE_392_ESTAR</short>
     </rule>
     <rule id="CLICHE_393_ESTAR" name="Clichê: Estar com uma pedra no sapato">
@@ -2324,7 +2324,7 @@
         <token>no</token>
         <token>sapato</token>
       </pattern>
-      <message><suggestion>ter um problema por resolver</suggestion></message>
+      <message><suggestion>\1 um problema por resolver</suggestion></message>
       <short>CLICHE_393_ESTAR</short>
     </rule>
     <rule id="CLICHE_394_ESTAR" name="Clichê: Estar a dar sopa">
@@ -2334,7 +2334,7 @@
         <token regexp="yes">dar|dando</token>
         <token>sopa</token>
       </pattern>
-      <message><suggestion>estar inadvertidamente vulnerável</suggestion></message>
+      <message><suggestion>\1 inadvertidamente vulnerável</suggestion></message>
       <short>CLICHE_394_ESTAR</short>
     </rule>
     <rule id="CLICHE_395_ESTAR" name="Clichê: Estar de gesso">
@@ -2343,7 +2343,7 @@
         <token>de</token>
         <token>gesso</token>
       </pattern>
-      <message><suggestion>não dar resposta</suggestion></message>
+      <message><suggestion>não \1 resposta</suggestion></message>
       <short>CLICHE_395_ESTAR</short>
     </rule>
     <rule id="CLICHE_396_ESTAR" name="Clichê: Estar de mãos a abanar">
@@ -2354,7 +2354,7 @@
         <token>a</token>
         <token>abanar</token>
       </pattern>
-      <message><suggestion>não conseguir o que pretendia</suggestion></message>
+      <message><suggestion>não \1 o que pretendia</suggestion></message>
       <short>CLICHE_396_ESTAR</short>
     </rule>
     <rule id="CLICHE_397_ESTAR" name="Clichê: Estar de mãos a abanar|abanando">
@@ -2365,7 +2365,7 @@
         <token>a</token>
         <token regexp="yes">abanar|abanando</token>
       </pattern>
-      <message><suggestion>não conseguir o que pretendia</suggestion></message>
+      <message><suggestion>não \1 o que pretendia</suggestion></message>
       <short>CLICHE_397_ESTAR</short>
     </rule>
     <rule id="CLICHE_398_ESTAR" name="Clichê: Estar de mãos atadas">
@@ -2375,7 +2375,7 @@
         <token>mãos</token>
         <token>atadas</token>
       </pattern>
-      <message><suggestion>não poder fazer nada</suggestion></message>
+      <message><suggestion>não \1 fazer nada</suggestion></message>
       <short>CLICHE_398_ESTAR</short>
     </rule>
     <rule id="CLICHE_399_ESTAR" name="Clichê: Estar de trombas">
@@ -2384,7 +2384,7 @@
         <token>de</token>
         <token>trombas</token>
       </pattern>
-      <message><suggestion>estar aborrecido</suggestion></message>
+      <message><suggestion>\1 aborrecido</suggestion></message>
       <short>CLICHE_399_ESTAR</short>
     </rule>
     <rule id="CLICHE_39_BATER" name="Clichê: Bater com as dez">
@@ -2394,7 +2394,7 @@
         <token>as</token>
         <token>dez</token>
       </pattern>
-      <message><suggestion>morrer</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_39_BATER</short>
     </rule>
     <rule id="CLICHE_3_ESTAR" name="Clichê: Estar com a cabeça quente">
@@ -2436,7 +2436,7 @@
         <token regexp="yes">nas?</token>
         <token regexp="yes">escadas?</token>
       </pattern>
-      <message><suggestion>não prestar correta atenção ao assunto</suggestion></message>
+      <message><suggestion>não \1 correta atenção ao assunto</suggestion></message>
       <short>CLICHE_411_OUVIR</short>
     </rule>
     <rule id="CLICHE_412_PAGAR" name="Clichê: Pagar o pato">
@@ -2445,7 +2445,7 @@
         <token>o</token>
         <token>pato</token>
       </pattern>
-      <message><suggestion>ser responsabilizado por algo que não cometeu</suggestion></message>
+      <message><suggestion>\1 responsabilizado por algo que não cometeu</suggestion></message>
       <short>CLICHE_412_PAGAR</short>
     </rule>
     <rule id="CLICHE_413_PIRAR" name="Clichê: Pirar na batatinha">
@@ -2454,7 +2454,7 @@
         <token>na</token>
         <token>batatinha</token>
       </pattern>
-      <message><suggestion>pensar no improvável</suggestion></message>
+      <message><suggestion>\1 no improvável</suggestion></message>
       <short>CLICHE_413_PIRAR</short>
     </rule>
     <rule id="CLICHE_414_PISAR" name="Clichê: Pisar na bola, pisar no tomate">
@@ -2463,7 +2463,7 @@
         <token regexp="yes">n[ao]</token>
         <token regexp="yes">bola|tomate</token>
       </pattern>
-      <message><suggestion>cometer um deslize</suggestion></message>
+      <message><suggestion>\1 um deslize</suggestion></message>
       <short>CLICHE_414_PISAR</short>
     </rule>
     <rule id="CLICHE_415_PROCURAR" name="Clichê: Procurar chifre em cabeça de cavalo">
@@ -2475,7 +2475,7 @@
         <token regexp="yes">d[eo]</token>
         <token>cavalo</token>
       </pattern>
-      <message><suggestion>exagerar problemas</suggestion></message>
+      <message><suggestion>\1 problemas</suggestion></message>
       <short>CLICHE_415_PROCURAR</short>
     </rule>
     <rule id="CLICHE_416_PROCURAR" name="Clichê: Procurar pelo em ovo">
@@ -2485,7 +2485,7 @@
         <token>em</token>
         <token>ovo</token>
       </pattern>
-      <message><suggestion>exagerar problemas</suggestion></message>
+      <message><suggestion>\1 problemas</suggestion></message>
       <short>CLICHE_416_PROCURAR</short>
     </rule>
     <rule id="CLICHE_417_PROCURAR" name="Clichê: Procurar sarna para se coçar">
@@ -2496,7 +2496,7 @@
         <token>se</token>
         <token>coçar</token>
       </pattern>
-      <message><suggestion>envolver-se em problemas sem necessidade</suggestion></message>
+      <message><suggestion>\1-se em problemas sem necessidade</suggestion></message>
       <short>CLICHE_417_PROCURAR</short>
     </rule>
     <rule id="CLICHE_418_PROCURAR" name="Clichê: Procurar uma agulha num palheiro">
@@ -2507,7 +2507,7 @@
         <token regexp="yes">em|no|num</token>
         <token>palheiro</token>
       </pattern>
-      <message><suggestion>tentar algo quase impossível</suggestion></message>
+      <message><suggestion>\1 algo quase impossível</suggestion></message>
       <short>CLICHE_418_PROCURAR</short>
     </rule>
     <rule id="CLICHE_419_PLANTAR" name="Clichê: Plantar bananeira">
@@ -2515,7 +2515,7 @@
         <token inflected="yes">plantar</token>
         <token regexp="yes">bananeiras?</token>
       </pattern>
-      <message><suggestion>colocar-se de cabeça para baixo</suggestion></message>
+      <message><suggestion>\1-se de cabeça para baixo</suggestion></message>
       <short>CLICHE_419_PLANTAR</short>
     </rule>
     <rule id="CLICHE_41_CRIANÇAS" name="Clichê: Crianças ser o futuro">
@@ -2534,7 +2534,7 @@
         <token>o</token>
         <token>galho</token>
       </pattern>
-      <message><suggestion>improvisar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_420_QUEBRAR</short>
     </rule>
     <rule id="CLICHE_421_QUEBRAR" name="Clichê: Quebrar o protocolo">
@@ -2552,7 +2552,7 @@
         <token regexp="yes">as?</token>
         <token regexp="yes">baterias?</token>
       </pattern>
-      <message>Did you mean a correction for CLICHE_422_RECARREGAR?</message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_422_RECARREGAR</short>
     </rule>
     <rule id="CLICHE_423_RECEBER" name="Clichê: Receber um balde de água fria">
@@ -2564,7 +2564,7 @@
         <token>água</token>
         <token>fria</token>
       </pattern>
-      <message><suggestion>ter entusiasmo transformado em desilusão</suggestion></message>
+      <message><suggestion>\1 entusiasmo transformado em desilusão</suggestion></message>
       <short>CLICHE_423_RECEBER</short>
     </rule>
     <rule id="CLICHE_424_RESOLVER" name="Clichê: Resolver um pepino">
@@ -2590,7 +2590,7 @@
         <token inflected="yes">segurar</token>
         <token>vela</token>
       </pattern>
-      <message><suggestion>atrapalhar namoro</suggestion></message>
+      <message><suggestion>\1 namoro</suggestion></message>
       <short>CLICHE_426_SEGURAR</short>
     </rule>
     <rule id="CLICHE_427_SENTIR" name="Clichê: Sentir dor de corno">
@@ -2610,7 +2610,7 @@
         <token>de</token>
         <token>cotovelo</token>
       </pattern>
-      <message><suggestion>sentir inveja</suggestion></message>
+      <message><suggestion>\1 inveja</suggestion></message>
       <short>CLICHE_428_SENTIR</short>
     </rule>
     <rule id="CLICHE_429_SER" name="Clichê: Ser de bom comer">
@@ -2620,7 +2620,7 @@
         <token>bom</token>
         <token>comer</token>
       </pattern>
-      <message><suggestion>ter boa boca</suggestion></message>
+      <message><suggestion>\1 boa boca</suggestion></message>
       <short>CLICHE_429_SER</short>
     </rule>
     <rule id="CLICHE_42_MULHER" name="Clichê: Mulher ser na cozinha">
@@ -2650,7 +2650,7 @@
         <token regexp="yes">uma?s?|uns</token>
         <token>troca-tintas</token>
       </pattern>
-      <message><suggestion>mudar de ideias facilmente</suggestion></message>
+      <message><suggestion>\1 de ideias facilmente</suggestion></message>
       <short>CLICHE_433_SER</short>
     </rule>
     <rule id="CLICHE_434_SER" name="Clichê: Ser um maria-vai-com-as-outras">
@@ -2659,7 +2659,7 @@
         <token regexp="yes">uma?s?|uns</token>
         <token>maria-vai-com-as-outras</token>
       </pattern>
-      <message><suggestion>não ter personalidade própria</suggestion></message>
+      <message><suggestion>não \1 personalidade própria</suggestion></message>
       <short>CLICHE_434_SER</short>
     </rule>
     <rule id="CLICHE_435_SER" name="Clichê: Ser uma mala sem alça">
@@ -2681,7 +2681,7 @@
         <token>na</token>
         <token>roda</token>
       </pattern>
-      <message><suggestion>ajudar muito</suggestion></message>
+      <message><suggestion>\1 muito</suggestion></message>
       <short>CLICHE_436_SER</short>
     </rule>
     <rule id="CLICHE_437_SER" name="Clichê: Ser uma pedra no sapato|ser uma pedra no caminho">
@@ -2714,7 +2714,7 @@
         <token regexp="yes">bichos?</token>
         <token regexp="yes">carpinteiros?</token>
       </pattern>
-      <message><suggestion>estar irrequieto</suggestion></message>
+      <message><suggestion>\1 irrequieto</suggestion></message>
       <short>CLICHE_439_TER</short>
     </rule>
     <rule id="CLICHE_43_MUNDO" name="Clichê: Mundo ser dos espertos">
@@ -2732,7 +2732,7 @@
         <token inflected="yes">ter</token>
         <token>lata</token>
       </pattern>
-      <message><suggestion>ser descarado</suggestion></message>
+      <message><suggestion>\1 descarado</suggestion></message>
       <short>CLICHE_440_TER</short>
     </rule>
     <rule id="CLICHE_441_TER" name="Clichê: Ter macacos no sótão">
@@ -2763,7 +2763,7 @@
         <token regexp="yes">dos?</token>
         <token regexp="yes">joelhos?</token>
       </pattern>
-      <message><suggestion>urinar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_443_TIRAR</short>
     </rule>
     <rule id="CLICHE_444_TIRAR" name="Clichê: Tirar de letra">
@@ -2772,7 +2772,7 @@
         <token>de</token>
         <token>letra</token>
       </pattern>
-      <message><suggestion>fazer algo com facilidade</suggestion></message>
+      <message><suggestion>\1 algo com facilidade</suggestion></message>
       <short>CLICHE_444_TIRAR</short>
     </rule>
     <rule id="CLICHE_445_TIRAR" name="Clichê: Tirar o cavalo da chuva">
@@ -2783,7 +2783,7 @@
         <token>da</token>
         <token>chuva</token>
       </pattern>
-      <message><suggestion>desistir de algo</suggestion></message>
+      <message><suggestion>\1 de algo</suggestion></message>
       <short>CLICHE_445_TIRAR</short>
     </rule>
     <rule id="CLICHE_446_TIRAR" name="Clichê: Tirar onda">
@@ -2791,7 +2791,7 @@
         <token inflected="yes">tirar</token>
         <token>onda</token>
       </pattern>
-      <message><suggestion>brincar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_446_TIRAR</short>
     </rule>
     <rule id="CLICHE_447_TOMAR" name="Clichê: Tomar um banho de loja">
@@ -2813,7 +2813,7 @@
         <token>para</token>
         <token>lá</token>
       </pattern>
-      <message><suggestion>ser descartado</suggestion></message>
+      <message><suggestion>\1 descartado</suggestion></message>
       <short>CLICHE_448_TOMAR</short>
     </rule>
     <rule id="CLICHE_449_TRAIR-SE" name="Clichê: Trair-se pela emoção">
@@ -2833,7 +2833,7 @@
         <token>da</token>
         <token>bola</token>
       </pattern>
-      <message><suggestion>ser maluco</suggestion></message>
+      <message><suggestion>\2 maluco</suggestion></message>
       <short>CLICHE_44_NÃO</short>
     </rule>
     <rule id="CLICHE_450_TRAZER" name="Clichê: Trazer à tona">
@@ -2842,7 +2842,7 @@
         <token>à</token>
         <token>tona</token>
       </pattern>
-      <message><suggestion>revisitar</suggestion></message>
+      <message><suggestion>re\1</suggestion></message>
       <short>CLICHE_450_TRAZER</short>
     </rule>
     <rule id="CLICHE_451_TREPAR" name="Clichê: Trepar paredes">
@@ -2850,7 +2850,7 @@
         <token inflected="yes">trepar</token>
         <token>paredes</token>
       </pattern>
-      <message><suggestion>estar desesperado</suggestion></message>
+      <message><suggestion>\1 desesperado</suggestion></message>
       <short>CLICHE_451_TREPAR</short>
     </rule>
     <rule id="CLICHE_452_TROCAR" name="Clichê: Trocar alhos por bugalhos">
@@ -2860,7 +2860,7 @@
         <token>por</token>
         <token>bugalhos</token>
       </pattern>
-      <message><suggestion>confundir factos</suggestion></message>
+      <message><suggestion>\1 factos</suggestion></message>
       <short>CLICHE_452_TROCAR</short>
     </rule>
     <rule id="CLICHE_453_TROCAR" name="Clichê: Trocar as bolas">
@@ -2869,7 +2869,7 @@
         <token>as</token>
         <token>bolas</token>
       </pattern>
-      <message><suggestion>atrapalhar-se</suggestion></message>
+      <message><suggestion>\1-se</suggestion></message>
       <short>CLICHE_453_TROCAR</short>
     </rule>
     <rule id="CLICHE_454_TROCAR" name="Clichê: Trocar farpas">
@@ -2896,7 +2896,7 @@
         <token>pelas</token>
         <token>mãos</token>
       </pattern>
-      <message><suggestion>agir desajeitadamente</suggestion></message>
+      <message><suggestion>\1 desajeitadamente</suggestion></message>
       <short>CLICHE_456_TROCAR</short>
     </rule>
     <rule id="CLICHE_457_TROCAR" name="Clichê: Trocar seis por meia dúzia">
@@ -2907,7 +2907,7 @@
         <token>meia</token>
         <token>dúzia</token>
       </pattern>
-      <message><suggestion>trocar sem fazer qualquer diferença</suggestion></message>
+      <message><suggestion>\1 sem fazer qualquer diferença</suggestion></message>
       <short>CLICHE_457_TROCAR</short>
     </rule>
     <rule id="CLICHE_45_NÃO" name="Clichê: Não deixou margem a dúvidas">
@@ -2928,7 +2928,7 @@
         <token>nem</token>
         <token>aí</token>
       </pattern>
-      <message><suggestion>ignorar</suggestion></message>
+      <message><suggestion>\2</suggestion></message>
       <short>CLICHE_46_NÃO</short>
     </rule>
     <rule id="CLICHE_47_NÃO" name="Clichê: Não fazer bom cabelo">
@@ -2938,7 +2938,7 @@
         <token>bom</token>
         <token>cabelo</token>
       </pattern>
-      <message><suggestion>não ouvir</suggestion></message>
+      <message><suggestion>não \2</suggestion></message>
       <short>CLICHE_47_NÃO</short>
     </rule>
     <rule id="CLICHE_48_NÃO" name="Clichê: Não fugir ao seu destino">
@@ -2959,7 +2959,7 @@
         <token>de</token>
         <token regexp="yes">apresentaç(?:ão|ões)</token>
       </pattern>
-      <message><suggestion>ser famoso</suggestion></message>
+      <message><suggestion>\2 famoso</suggestion></message>
       <short>CLICHE_49_NÃO</short>
     </rule>
     <rule id="CLICHE_4_ESTAR" name="Clichê: Estar com aperto no coração">
@@ -3022,7 +3022,7 @@
         <token>por</token>
         <token>merecer</token>
       </pattern>
-      <message><suggestion>merecer</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_6_FAZER</short>
     </rule>
     <rule id="CLICHE_7_ESTAR" name="Clichê: Estar feito ao bife">
@@ -3044,7 +3044,7 @@
         <token>de</token>
         <token>água</token>
       </pattern>
-      <message><suggestion>transformar banalidades em tragédia</suggestion></message>
+      <message><suggestion>\1 banalidades em tragédia</suggestion></message>
       <short>CLICHE_7_FAZER</short>
     </rule>
     <rule id="CLICHE_8_ESTAR" name="Clichê: Estar fixe">
@@ -3063,7 +3063,7 @@
         <token>da</token>
         <token>china</token>
       </pattern>
-      <message><suggestion>aproveitar uma grande oportunidade</suggestion></message>
+      <message><suggestion>\1 uma grande oportunidade</suggestion></message>
       <short>CLICHE_8_FAZER</short>
     </rule>
     <rule id="CLICHE_9_ESTAR" name="Clichê: Estar no bico do corvo">
@@ -3083,7 +3083,7 @@
         <token>no</token>
         <token>contexto</token>
       </pattern>
-      <message><suggestion>enquadrar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CLICHE_9_INSERIR</short>
     </rule>
     <rule id="COISAS_FUNCIONALIDADES" name="Coisas → funcionalidades">
@@ -3091,7 +3091,7 @@
         <token regexp="no" inflected="yes" skip="4">implementar</token>
         <token regexp="yes">coisas?</token>
       </pattern>
-      <message>Num contexto formal empregue <suggestion>funcionalidade</suggestion>.</message>
+      <message>Num contexto formal empregue <suggestion>\2</suggestion>.</message>
       <short>COISAS_FUNCIONALIDADES</short>
     </rule>
     <rule id="COMO_SEGUNDO_CONFORME" name="🤵 Como/segundo → conforme">
@@ -3111,7 +3111,7 @@
         <token regexp="yes" skip="1">às?|aos?</token>
         <token postag="N.+|AQ.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Em registo formal, pode explicitar o destinatário com "dirigido a". <suggestion>dirigido \4</suggestion></message>
+      <message>Em registo formal, pode explicitar o destinatário com "dirigido a". <suggestion>\2 \4</suggestion></message>
       <short>COMUNICADO_DIRIGIDO_A</short>
     </rule>
     <rule id="CONFUSÃO_DINHEIRO_VALOR" name="[Confusão] Diferença no 'dinheiro'/valor">
@@ -3120,7 +3120,7 @@
         <token regexp="yes">de|nos?</token>
         <token regexp="yes">dinheiros?</token>
       </pattern>
-      <message>Possível confusão de termos. <suggestion>valor</suggestion></message>
+      <message>Possível confusão de termos. <suggestion>\3</suggestion></message>
       <short>CONFUSÃO_DINHEIRO_VALOR</short>
     </rule>
     <rule id="DECIDIR_DELIBERAR" name="🤵 Decidir → deliberar (órgão colegiado)">
@@ -3131,7 +3131,7 @@
         <token min="0" max="1" postag="RG"></token>
         <token inflected="yes">decidir</token>
       </pattern>
-      <message>Quando o sujeito é um órgão colegiado, prefira "deliberar" em vez de "decidir". <suggestion>deliberar</suggestion></message>
+      <message>Quando o sujeito é um órgão colegiado, prefira "deliberar" em vez de "decidir". <suggestion>\5</suggestion></message>
       <short>DECIDIR_DELIBERAR</short>
     </rule>
     <rule id="DURANTE_ESTE_O_PRESENTE" name="🤵 Forma administrativa: 'presente' + expressão temporal">
@@ -3140,7 +3140,7 @@
         <token regexp="yes">est[ae]</token>
         <token regexp="yes">mês|ano|semestre|trimestre|período|ciclo|exercício|dia|intervalo|prazo|lapso|momento|instante|semana|data|fase|época</token>
       </pattern>
-      <message>Em contexto formal, use "presente" com períodos de tempo ("presente mês", "presente semana"). Em linguagem comum, prefira "este/esta". <suggestion>o presente</suggestion></message>
+      <message>Em contexto formal, use "presente" com períodos de tempo ("presente mês", "presente semana"). Em linguagem comum, prefira "este/esta". <suggestion>\2 presente</suggestion></message>
       <short>DURANTE_ESTE_O_PRESENTE</short>
     </rule>
     <rule id="ESTAR_CONSTAR" name="Estar → constar">
@@ -3149,7 +3149,7 @@
         <token regexp="yes">n[ao]s?</token>
         <token regexp="yes" inflected="yes">anais|anexo|artigo|autos|bibliografia|biografia|carta|contrato|cr[óô]nica|currículo|CV|dissertação|documento|edital|ensaio|escritos|Europass|guia|licença|livro|manual|memorial|memórias|monografia|parecer|pesquisa|plano|projeto|publicação|referências|registo|relatório|revista|sentença|tese|texto|tratado</token>
       </pattern>
-      <message>Substitua "está" por "consta" para indicar registo oficial ou dar um tom mais formal. <suggestion>constar</suggestion></message>
+      <message>Substitua "está" por "consta" para indicar registo oficial ou dar um tom mais formal. <suggestion>\1</suggestion></message>
       <short>ESTAR_CONSTAR</short>
     </rule>
     <rule id="ESTAR_DE_ACORDO" name="concordar/corresponder/validar/confirmar">
@@ -3158,7 +3158,7 @@
         <token>de</token>
         <token>acordo</token>
       </pattern>
-      <message>Substitua por <suggestion>concordar</suggestion></message>
+      <message>Substitua por <suggestion>\1</suggestion></message>
       <short>ESTAR_DE_ACORDO</short>
     </rule>
     <rule id="ESTAR_LIXADO_ZANGADO_COM_PROBLEMAS" name="Lixado → zangado/'com problemas'">
@@ -3167,7 +3167,7 @@
         <token regexp="yes" skip="1">lixad[ao]s?</token>
         <token postag="SPS00" postag_regexp="no"></token>
       </pattern>
-      <message><suggestion>zangar</suggestion></message>
+      <message><suggestion>\2</suggestion></message>
       <short>ESTAR_LIXADO_ZANGADO_COM_PROBLEMAS</short>
     </rule>
     <rule id="FAZER_TRAÇAR_DELINEAR_ELABORAR_V3" name="Fazer/traçar → delinear/elaborar">
@@ -3177,7 +3177,7 @@
         <token regexp="yes" skip="1">[ao]s?|u(m|ns)|umas?</token>
         <token regexp="yes" inflected="yes">abordagem|ac?ção|agenda|arranjo|configuração|cronograma|designação|diretriz|esquema|estratégia|estrutura|formulação|intenção|meta|método|modelo|objec?tivo|planej?amento|plano|processo|projec?to|protocolo|roteiro|solução|tác?tica</token>
       </pattern>
-      <message>Num contexto formal, empregue o verbo "delinear" ou "elaborar". <suggestion>delinear</suggestion></message>
+      <message>Num contexto formal, empregue o verbo "delinear" ou "elaborar". <suggestion>\1</suggestion></message>
       <short>FAZER_TRAÇAR_DELINEAR_ELABORAR_V3</short>
     </rule>
     <rule id="FEEDBACK" name="feedback">
@@ -3185,7 +3185,7 @@
         <token inflected="yes" skip="2">fornecer</token>
         <token regexp="yes">feedbacks?</token>
       </pattern>
-      <message>O verbo "fornecer" é sinônimo de "abastecer" ou "proporcionar". Neste contexto, é preferível utilizar o verbo "dar". <suggestion>dar \2</suggestion></message>
+      <message>O verbo "fornecer" é sinônimo de "abastecer" ou "proporcionar". Neste contexto, é preferível utilizar o verbo "dar". <suggestion>\1 \2</suggestion></message>
       <short>FEEDBACK</short>
     </rule>
     <rule id="MAIORES_PRINCIPAIS" name="Maiores → principais (plural apenas)">
@@ -3215,7 +3215,7 @@
         <token inflected="yes">deixar</token>
         <token>que</token>
       </pattern>
-      <message>A expressão "permitir" é mais formal e direta do que "deixar que". <suggestion>permitir</suggestion></message>
+      <message>A expressão "permitir" é mais formal e direta do que "deixar que". <suggestion>\3</suggestion></message>
       <short>NAO_DEIXAR_QUE_PERMITIR</short>
     </rule>
     <rule id="PARA_DENTRO_INTERIOR" name="Para 'dentro' → Para 'o interior'">
@@ -3234,7 +3234,7 @@
       <pattern>
         <token inflected="yes" postag="V.+" postag_regexp="yes">pedir</token>
       </pattern>
-      <message><suggestion>solicitar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>PEDIR_SOLICITAR_V3</short>
     </rule>
     <rule id="PENSAR_REFLETIR_PONDERAR" name="🤵 pensar → refletir/ponderar">
@@ -3244,7 +3244,7 @@
         <token inflected="yes">pensar</token>
         <token>melhor</token>
       </pattern>
-      <message>Em contextos formais, pode preferir "refletir" ou "ponderar" em vez de "pensar". <suggestion>refletir</suggestion></message>
+      <message>Em contextos formais, pode preferir "refletir" ou "ponderar" em vez de "pensar". <suggestion>\3</suggestion></message>
       <short>PENSAR_REFLETIR_PONDERAR</short>
     </rule>
     <rule id="POR_FAVOR_FACAM_INFINITIVO_FORMAL" name="🤵 Sugestão de formalidade: Peço, por favor, que façam">
@@ -3269,7 +3269,7 @@
         <token regexp="yes" skip="1">em|n[oa]s?|nu(m|ns)|numas?</token>
         <token regexp="yes" inflected="yes">trânsito|tráfego|engarrafamento|congestionamento|fila|espera|bloqueio|interdição|paragem|paralisação|via|estrada|rodovia|auto-estrada|autoestrada|avenida|ciclovia|ponte|túnel|acesso|saída|rotunda|cruzamento|portagem|pedágio|aeroporto|terminal|porto|estação|plataforma|embarque|desembarque|check-in|checkin|inspeção|fiscalização|vistoria|controlo|controle|segurança|fronteira|alfândega|aduana|imigração|passaporte|bagagem|mala|encomenda|pacote|remessa|carga|mercadoria|contentor|contêiner|container|transportadora|correio|entrega|distribuição|triagem|armazém|depósito|despacho|expedição|liberação|desalfandegamento|desembaraço</token>
       </pattern>
-      <message>Empregue "retido" em textos formais, salvo ao referir-se a prisão de liberdade. <suggestion>reter</suggestion></message>
+      <message>Empregue "retido" em textos formais, salvo ao referir-se a prisão de liberdade. <suggestion>\2</suggestion></message>
       <short>PRESO_RETIDO_V2</short>
     </rule>
     <rule id="QUE_VEM_PROXIMA" name="✂️ Substantivo + que vem → próxim(ao)(s) + substantivo">
@@ -3280,7 +3280,7 @@
         <token regexp="no">vem</token>
         <token postag="V.+|_PUNCT|CC" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion>próximo \2</suggestion></message>
+      <message><suggestion>\1 \2</suggestion></message>
       <short>QUE_VEM_PROXIMA</short>
     </rule>
     <rule id="SOB_O_PONTO_DE_VISTA" name="do ponto de vista">
@@ -3302,7 +3302,7 @@
         <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
         <token regexp="yes">provas?|desafios?|obstáculos?|dificuldades?</token>
       </pattern>
-      <message>Enriqueça a linguagem para causar mais impacto ao leitor. <suggestion>superar</suggestion></message>
+      <message>Enriqueça a linguagem para causar mais impacto ao leitor. <suggestion>\1</suggestion></message>
       <short>ULTRAPASSAR_SUPERAR_VENCER</short>
     </rule>
     <rule id="UMA_COISA_ALGO" name="Algo">
@@ -3323,7 +3323,7 @@
         <token regexp="yes">uns|umas</token>
         <token regexp="yes" inflected="yes" postag="NC.P.+" postag_regexp="yes"></token>
       </pattern>
-      <message>"Uns/umas" são formas informais. Em contextos mais formais, prefira "alguns/algumas". <suggestion>algum</suggestion></message>
+      <message>"Uns/umas" são formas informais. Em contextos mais formais, prefira "alguns/algumas". <suggestion>\2</suggestion></message>
       <short>UNS_ALGUNS_UMAS_ALGUMAS</short>
     </rule>
     <rule id="USAR_UTILIZAR" name="🤵 Usar → utilizar">
@@ -3332,7 +3332,7 @@
           <exception regexp="no" case_sensitive="yes">USA</exception>
         </token>
       </pattern>
-      <message>Em contexto formal, prefira "utilizar" em vez de "usar" (exceto com roupa, acessórios ou cosmética). <suggestion>utilizar</suggestion></message>
+      <message>Em contexto formal, prefira "utilizar" em vez de "usar" (exceto com roupa, acessórios ou cosmética). <suggestion>\1</suggestion></message>
       <short>USAR_UTILIZAR</short>
     </rule>
     <rule id="VIR_ESTAR_ESTRAGADO_AVARIADO_DANIFICADO" name="Vir/estar danificado/avariado">
@@ -3341,7 +3341,7 @@
         <token regexp="yes" inflected="yes" skip="4">vir|estar</token>
         <token regexp="yes">estragad[ao]s?</token>
       </pattern>
-      <message>Se for equipamento eletrônico, prefira o verbo "avariar" ou "danificar". <suggestion>danificar</suggestion></message>
+      <message>Se for equipamento eletrônico, prefira o verbo "avariar" ou "danificar". <suggestion>\3</suggestion></message>
       <short>VIR_ESTAR_ESTRAGADO_AVARIADO_DANIFICADO</short>
     </rule>
   </category>
@@ -3396,7 +3396,7 @@
         <token>ossadas</token>
         <token>de</token>
       </pattern>
-      <message>Esta palavra é referida no singular se só descreve um indivíduo.</message>
+      <message>Esta palavra é referida no singular se só descreve um indivíduo. <suggestion>\1 \2</suggestion></message>
       <short>AS_OSSADAS_DE</short>
     </rule>
     <rule id="ATREVIMENTO_A" name="Atrevimento para">
@@ -3821,7 +3821,7 @@
         <token regexp="yes">impac?tos?</token>
         <token regexp="yes">ecológicas?</token>
       </pattern>
-      <message>Substitua por <suggestion>\1 \2 ecológico</suggestion>.</message>
+      <message>Substitua por <suggestion>\1 \2 ecológico\2</suggestion>.</message>
       <short>Erro de concordância</short>
     </rule>
     <rule id="DE_MANEIRA_A_QUE" name="De maneira que">
@@ -3888,7 +3888,7 @@
         <token inflected="yes" postag="V...3P.:PP3CNO00" postag_regexp="yes">falar</token>
         <token>de</token>
       </pattern>
-      <message>Substitua por <suggestion></suggestion>.</message>
+      <message>Substitua por <suggestion>\1</suggestion>.</message>
       <short>FALARAM-SE_DE</short>
     </rule>
     <rule id="FOI_SOU_UM-UMA" name="Foi só um/uma">
@@ -3905,7 +3905,7 @@
         <token regexp="yes">formas?</token>
         <token regexp="yes">inovadores?</token>
       </pattern>
-      <message>Substitua por <suggestion>\1 inovadora</suggestion>.</message>
+      <message>Substitua por <suggestion>\1 inovadora\1</suggestion>.</message>
       <short>FORMAS_INOVADORES</short>
     </rule>
     <rule id="MAIOR" name="Maiores">
@@ -3942,7 +3942,7 @@
         <token>a</token>
         <token inflected="yes">ocupar</token>
       </pattern>
-      <message>Substitua por <suggestion>ocupar</suggestion>.</message>
+      <message>Substitua por <suggestion>\2</suggestion>.</message>
       <short>PARA_FICAR_A_OCUPAR</short>
     </rule>
     <rule id="PERFILHAR_DA_DOUTRINA_DE" name="Perfilhar a doutrina de">
@@ -3970,7 +3970,7 @@
         <token min="0" postag="D.+" postag_regexp="yes"></token>
         <token regexp="yes">perguntas?</token>
       </pattern>
-      <message>Substitua por fazer. <suggestion>fazer \2 \3</suggestion></message>
+      <message>Substitua por \1. <suggestion>\1 \2 \3</suggestion></message>
       <short>PÔR_PERGUNTAS</short>
     </rule>
     <rule id="RECOMENDÁVEL_DE" name="recomendável">
@@ -4097,7 +4097,7 @@
       <pattern>
         <token case_sensitive="yes">viagem</token>
       </pattern>
-      <message>'Viagem' é um substantivo. Se é um verbo, deve utilizar a forma com 'j'.</message>
+      <message>'Viagem' é um substantivo. Se é um verbo, deve utilizar a forma com 'j'. <suggestion>\1</suggestion></message>
       <short>HOMONYM_VIAGEM_2</short>
     </rule>
     <rule id="HÁS_VEZES" name="Confusão de termos: 'hás' vezes/'às'">
@@ -4178,7 +4178,7 @@
         <token skip="4" postag="SPS00|(SPS00:)?[DP].+" postag_regexp="yes"></token>
         <token regexp="yes" inflected="yes">bico|catana|espada|espeto|estaca|extremidade|faca|flecha|foice|lâmina|lança|lápis|machado|navalha|objec?to|ponta|tesoura</token>
       </pattern>
-      <message>Possível confusão de termos. <suggestion>afiar</suggestion></message>
+      <message>Possível confusão de termos. <suggestion>\1</suggestion></message>
       <short>AFEAR</short>
     </rule>
     <rule id="ANALISE" name="Confusão: analise - análise">
@@ -4202,7 +4202,7 @@
         <token inflected="yes" skip="4">arrear</token>
         <token regexp="yes" inflected="yes">bandeira|cabo|linha|rede|vela</token>
       </pattern>
-      <message>Possível confusão de termos. O verbo "arrear" significa pôr os arreios em algo e o verbo "arriar" significa abaixar algo. <suggestion>arriar</suggestion></message>
+      <message>Possível confusão de termos. O verbo "arrear" significa pôr os arreios em algo e o verbo "arriar" significa abaixar algo. <suggestion>\1</suggestion></message>
       <short>ARREAR_ARRIAR</short>
     </rule>
     <rule id="A_CERCA_ACERCA" name="❓ 'a cerca'/acerca">
@@ -4249,7 +4249,7 @@
         <token regexp="yes" negate="yes" min="0" max="1">comprimidos?|fármacos?|medicação|medicamentos?|remédios?|pílulas?</token>
         <token regexp="yes">comprimidos?|fármacos?|medicação|medicamentos?|remédios?|pílulas?</token>
       </pattern>
-      <message>Se estiver a referir-se a fármacos ou afins, empregue o termo 'tomar'. <suggestion>tomar</suggestion></message>
+      <message>Se estiver a referir-se a fármacos ou afins, empregue o termo 'tomar'. <suggestion>\1</suggestion></message>
       <short>CONFUSÃO_BEBER_COMER_TOMAR_FÁRMACOS</short>
     </rule>
     <rule id="CONFUSÃO_MA_NA" name="❓ ma/na">
@@ -4326,7 +4326,7 @@
         <token regexp="yes">baixa|férias|folga|licença</token>
         <token postag="SPS.+|_PUNCT" postag_regexp="yes"></token>
       </pattern>
-      <message>Possível confusão de termos. <suggestion>estar</suggestion></message>
+      <message>Possível confusão de termos. <suggestion>\1</suggestion></message>
       <short>CONFUSÃO_TIVE_ESTIVE</short>
     </rule>
     <rule id="CONFUSÃO_VARIAS_VÁRIAS" name="❓ varias/várias">
@@ -4386,7 +4386,7 @@
         <token>em</token>
         <token regexp="yes">previstos?</token>
       </pattern>
-      <message>Possível confusão entre "em previsto" e "imprevisto". <suggestion>imprevisto</suggestion></message>
+      <message>Possível confusão entre "em previsto" e "imprevisto". <suggestion>imprevisto\3</suggestion></message>
       <short>EM_PREVISTO_IMPREVISTO</short>
     </rule>
     <rule id="EM_VÊS_DE_DA_DAS_DO_DOS" name="❓ vês/vez">
@@ -4406,7 +4406,7 @@
         <token regexp="yes">de|que</token>
         <token postag="VMN0.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Possível confusão entre "estar" e "ter". <suggestion>ter \2 \3</suggestion></message>
+      <message>Possível confusão entre "estar" e "ter". <suggestion>\1 \2 \3</suggestion></message>
       <short>ESTAR_TER_CONFUSAO</short>
     </rule>
     <rule id="HOMONYM_ACO_9" name="Homófona: aço - asso">
@@ -4415,7 +4415,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">assos?</token>
       </pattern>
-      <message>Esta palavra refere-se à ação de cozinhar. Se pretende referir-se à liga metálica, deve utilizar a forma com 'ç'.</message>
+      <message>Esta palavra refere-se à ação de cozinhar. Se pretende referir-se à liga metálica, deve utilizar a forma com 'ç'. <suggestion>\1 \2 \3</suggestion></message>
       <short>HOMONYM_ACO_9</short>
     </rule>
     <rule id="HOMONYM_CUMPRIMENTOS_COMPRIMENTOS" name="Homófona: cumprimentos - comprimentos">
@@ -4437,7 +4437,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">extirpes?</token>
       </pattern>
-      <message>Esta palavra refere-se à ação de remover as vísceras. Se pretende referir-se a raiz ou linhagem, deve utilizar a forma com 's'.</message>
+      <message>Esta palavra refere-se à ação de remover as vísceras. Se pretende referir-se a raiz ou linhagem, deve utilizar a forma com 's'. <suggestion>\1 \2 \3</suggestion></message>
       <short>HOMONYM_ESTIRPE_5</short>
     </rule>
     <rule id="HOMONYM_PROFETISA_3" name="Homófona: profetisa - profetiza">
@@ -4446,7 +4446,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">profetizas?</token>
       </pattern>
-      <message>Esta palavra refere-se à ação de divulgar profecias. Se pretende referir-se à pessoa que as profere, deve utilizar a forma com 's'.</message>
+      <message>Esta palavra refere-se à ação de divulgar profecias. Se pretende referir-se à pessoa que as profere, deve utilizar a forma com 's'. <suggestion>\1 \2 \3</suggestion></message>
       <short>HOMONYM_PROFETISA_3</short>
     </rule>
     <rule id="HOMONYM_SERRA_11" name="Homófona: serra - cerra">
@@ -4455,7 +4455,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">cerras?</token>
       </pattern>
-      <message>Esta palavra refere-se à ação de cerrar (p.ex. com uma serra). Se pretende referir-se ao instrumento ou a uma montanha, deve utilizar a forma com 's'.</message>
+      <message>Esta palavra refere-se à ação de cerrar (p.ex. com uma serra). Se pretende referir-se ao instrumento ou a uma montanha, deve utilizar a forma com 's'. <suggestion>\1 \2 \3</suggestion></message>
       <short>HOMONYM_SERRA_11</short>
     </rule>
     <rule id="HOMONYM_SERRA_11_2" name="Homófona: serra - cerra (2)">
@@ -4464,7 +4464,7 @@
         <token regexp="yes" min="0">d[eao]s?</token>
         <token regexp="yes">\p{Lu}.+</token>
       </pattern>
-      <message>Esta palavra refere-se à ação de cerrar, relacionado com terminar ou fechar. Se pretende referir-se ao instrumento ou a uma montanha, deve utilizar a forma com 's'.</message>
+      <message>Esta palavra refere-se à ação de cerrar, relacionado com terminar ou fechar. Se pretende referir-se ao instrumento ou a uma montanha, deve utilizar a forma com 's'. <suggestion>\1 \2 \3</suggestion></message>
       <short>HOMONYM_SERRA_11_2</short>
     </rule>
     <rule id="HOMONYM_VIAGEM_3" name="Homófona: viagem - viajem">
@@ -4473,7 +4473,7 @@
         <token>viagem</token>
         <token postag="RG"></token>
       </pattern>
-      <message>'Viagem' é um substantivo. Se é um verbo, deve utilizar a forma com 'j'.</message>
+      <message>'Viagem' é um substantivo. Se é um verbo, deve utilizar a forma com 'j'. <suggestion>\2</suggestion></message>
       <short>HOMONYM_VIAGEM_3</short>
     </rule>
     <rule id="HOMONYM_VIAJEM_1" name="Homófona: viajem - viagem">
@@ -4482,7 +4482,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">viaje(?:m|ns)</token>
       </pattern>
-      <message>Esta palavra refere-se à ação de viajar. Se pretende referir-se ao ato de viajar, deve utilizar a forma com 'g'.</message>
+      <message>Esta palavra refere-se à ação de viajar. Se pretende referir-se ao ato de viajar, deve utilizar a forma com 'g'. <suggestion>\1 \2 \3</suggestion></message>
       <short>HOMONYM_VIAJEM_1</short>
     </rule>
     <rule id="HÁ-DIRECTION" name="❓ Há + Direção">
@@ -4537,7 +4537,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">paragrafos?</token>
       </pattern>
-      <message>Possível erro de acentuação.</message>
+      <message>Possível erro de acentuação. <suggestion>\3</suggestion></message>
       <short>PARONYM_ARVORE_0c</short>
     </rule>
     <rule id="PARONYM_CIENTIFICA_388" name="Parónimo: cientifica">
@@ -4548,7 +4548,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">cientificas?</token>
       </pattern>
-      <message><suggestion>científica</suggestion></message>
+      <message><suggestion>\1 \2 científica\3</suggestion></message>
       <short>PARONYM_CIENTIFICA_388</short>
     </rule>
     <rule id="PARONYM_CIENTIFICO_389" name="Parónimo: cientifico">
@@ -4557,7 +4557,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">cientificos?</token>
       </pattern>
-      <message><suggestion>científico</suggestion></message>
+      <message><suggestion>\1 \2 científico\3</suggestion></message>
       <short>PARONYM_CIENTIFICO_389</short>
     </rule>
     <rule id="PARONYM_ESPIA_614" name="Parónimo: espia">
@@ -4566,7 +4566,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">espias?</token>
       </pattern>
-      <message>Did you mean a correction for PARONYM_ESPIA_614?</message>
+      <message><suggestion>\1 \2 \3</suggestion></message>
       <short>PARONYM_ESPIA_614</short>
     </rule>
     <rule id="PARONYM_HISTORIA_MARCOAGPINTO" name="Parónimo: historia">
@@ -4575,14 +4575,14 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">historias?</token>
       </pattern>
-      <message><suggestion>história</suggestion></message>
+      <message><suggestion>\1 \2 história\3</suggestion></message>
       <short>PARONYM_HISTORIA_MARCOAGPINTO</short>
     </rule>
     <rule id="PARONYM_MUSICA_498_bis" name="Parónimo: musica">
       <pattern>
         <token regexp="yes">musicas?</token>
       </pattern>
-      <message><suggestion>música</suggestion></message>
+      <message><suggestion>música\1</suggestion></message>
       <short>PARONYM_MUSICA_498_bis</short>
     </rule>
     <rule id="PARONYM_PRATICO_247" name="Parónimo: pratico">
@@ -4591,7 +4591,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">praticos?</token>
       </pattern>
-      <message><suggestion>prático</suggestion></message>
+      <message><suggestion>\1 \2 prático\3</suggestion></message>
       <short>PARONYM_PRATICO_247</short>
     </rule>
     <rule id="PARONYM_RADIO_2" name="Parónimo: radia">
@@ -4599,7 +4599,7 @@
         <token regexp="yes" inflected="yes" skip="2">ouvir|escutar</token>
         <token regexp="yes">radi[ao]s?</token>
       </pattern>
-      <message><suggestion>rádi</suggestion></message>
+      <message><suggestion>rádi\2</suggestion></message>
       <short>PARONYM_RADIO_2</short>
     </rule>
     <rule id="PARONYM_RADIO_3" name="Parónimo: radia">
@@ -4609,7 +4609,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">radi[ao]s?</token>
       </pattern>
-      <message><suggestion>rádi</suggestion></message>
+      <message><suggestion>rádi\4</suggestion></message>
       <short>PARONYM_RADIO_3</short>
     </rule>
     <rule id="PARONYM_VARIA_340" name="Parónimo: varia">
@@ -4618,7 +4618,7 @@
         <token min="0" postag="A.+" postag_regexp="yes"></token>
         <token regexp="yes">vari[ao]s?</token>
       </pattern>
-      <message><suggestion>vári</suggestion></message>
+      <message><suggestion>\1 \2 vári\3</suggestion></message>
       <short>PARONYM_VARIA_340</short>
     </rule>
     <rule id="PEDIR_UM_CONCELHO" name="❓ concelho/conselho">
@@ -4636,7 +4636,7 @@
         <token>de</token>
         <token regexp="yes">(?:[0-9,\.]+?%|alguém|aparelho|conexão|dados|gordura|mandato|memória|peso|potência|safra|senha|sina(l|is)|tempo|vaga|volume)s?</token>
       </pattern>
-      <message>Possível confusão de termos. 'Perca' é utilizado para se referir a um peixe ou a uma forma verbal do verbo perder. <suggestion>\2 \3</suggestion></message>
+      <message>Possível confusão de termos. 'Perca' é utilizado para se referir a um peixe ou a uma forma verbal do verbo perder. <suggestion>\1 \2 \3</suggestion></message>
       <short>Possível confusão de termos</short>
     </rule>
     <rule id="QUE_QUÊ" name="❓ que/quê">
@@ -4681,7 +4681,7 @@
         <token>lugar</token>
         <token regexp="yes" negate="yes">d[oea]s?</token>
       </pattern>
-      <message>Possível confusão de termos. <suggestion>ter</suggestion></message>
+      <message>Possível confusão de termos. <suggestion>\1</suggestion></message>
       <short>TOMAR_TER_LUGAR</short>
     </rule>
   </category>
@@ -4698,7 +4698,7 @@
       <pattern>
         <token regexp="yes">aterri(?:z|ss?).+</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion></suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>\1</suggestion>.</message>
       <short>BRASILEIRISMO_ATERRISAR</short>
     </rule>
     <rule id="BRASILEIRISMO_CONTROLO_CONTROLE" name="🇵🇹🇧🇷 controle → controlo">
@@ -4714,7 +4714,7 @@
       <pattern>
         <token regexp="yes">decol.+</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion></suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>\1</suggestion>.</message>
       <short>BRASILEIRISMO_DECOLAR</short>
     </rule>
     <rule id="BRASILEIRISMO_ESTAR_DE_SACO_CHEIO" name="🇵🇹🇧🇷 estar 'de saco cheio' → farto/saturado">
@@ -4724,7 +4724,7 @@
         <token>saco</token>
         <token>cheio</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por: <suggestion>farto</suggestion></message>
+      <message>Grafia do Brasil. Substitua por: <suggestion>\1</suggestion></message>
       <short>BRASILEIRISMO_ESTAR_DE_SACO_CHEIO</short>
     </rule>
     <rule id="BRASILEIRISMO_EXPERIMENTO" name="🇵🇹🇧🇷 experimento → experiência">
@@ -4732,14 +4732,14 @@
         <token postag="[AD]..M[SP].+" postag_regexp="yes"></token>
         <token regexp="yes">experimentos?</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion>experiência</suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>\2</suggestion>.</message>
       <short>BRASILEIRISMO_EXPERIMENTO</short>
     </rule>
     <rule id="BRASILEIRISMO_MACHUCAR" name="🇵🇹🇧🇷 machucar → magoar/aleijar/ferir">
       <pattern>
         <token regexp="no" inflected="yes">machucar</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por: <suggestion>magoar</suggestion></message>
+      <message>Grafia do Brasil. Substitua por: <suggestion>\1</suggestion></message>
       <short>BRASILEIRISMO_MACHUCAR</short>
     </rule>
     <rule id="BRASILEIRISMO_PRIVADA" name="🇵🇹🇧🇷 'privada sanitária', 'vaso sanitário' → retrete">
@@ -4754,21 +4754,21 @@
       <pattern>
         <token inflected="yes">revisar</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion>rever</suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>\1</suggestion>.</message>
       <short>BRASILEIRISMO_REVISAR</short>
     </rule>
     <rule id="BRASILEIRISMO_TIMES" name="🇵🇹🇧🇷 time → equipa">
       <pattern>
         <token regexp="yes">times?</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion>equipa</suggestion>, ou inglesa para <suggestion>tempo</suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>equipa\1</suggestion>, ou inglesa para <suggestion>tempo\1</suggestion>.</message>
       <short>BRASILEIRISMO_TIMES</short>
     </rule>
     <rule id="BRASILEIRISMO_XINGAR" name="🇵🇹🇧🇷 xingar → gozar">
       <pattern>
         <token regexp="yes">xing.+</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion></suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>\1</suggestion>.</message>
       <short>BRASILEIRISMO_XINGAR</short>
     </rule>
     <rule id="EQUIPES" name="🇵🇹🇧🇷 equipes → equipas">
@@ -4776,7 +4776,7 @@
         <token regexp="yes">(?:d|n|outr|pel)?[ao]s?|(?:alg|d|n)?(?:um(a|as)?|uns)|em|(?:sua|[nv]ossa|tua)s?</token>
         <token regexp="yes">equipes?</token>
       </pattern>
-      <message>Grafia do Brasil. Substitua por <suggestion></suggestion>.</message>
+      <message>Grafia do Brasil. Substitua por <suggestion>\2</suggestion>.</message>
       <short>EQUIPES</short>
     </rule>
     <rule id="ZERO_IN_DAYS_OF_THE_MONTH" name="🇵🇹 Datas: zeros nos dias do mês">
@@ -4785,7 +4785,7 @@
         <token min="0">de</token>
         <token regexp="yes">|</token>
       </pattern>
-      <message>A convenção padrão não utiliza o zero no dia do mês em datas escritas por extenso. <suggestion>\3</suggestion></message>
+      <message>A convenção padrão não utiliza o zero no dia do mês em datas escritas por extenso. <suggestion>\1 \2 \3</suggestion></message>
       <short>ZERO_IN_DAYS_OF_THE_MONTH</short>
     </rule>
   </category>
@@ -4814,21 +4814,21 @@
         <token regexp="yes" skip="2">\d+</token>
         <token regexp="yes">norte|sul|leste|oeste</token>
       </pattern>
-      <message>Did you mean a correction for DEGREE_SYMBOL_COORDINATES_EXPLICIT?</message>
+      <message><suggestion>\1</suggestion></message>
       <short>DEGREE_SYMBOL_COORDINATES_EXPLICIT</short>
     </rule>
     <rule id="DEGREE_SYMBOL_COORDINATES_SINGLE_TOKEN" name="DEGREE_SYMBOL_COORDINATES_SINGLE_TOKEN">
       <pattern>
         <token regexp="yes">\d+\d+</token>
       </pattern>
-      <message>Did you mean a correction for DEGREE_SYMBOL_COORDINATES_SINGLE_TOKEN?</message>
+      <message><suggestion>\1</suggestion></message>
       <short>DEGREE_SYMBOL_COORDINATES_SINGLE_TOKEN</short>
     </rule>
     <rule id="DEGREE_SYMBOL_NEGATIVE" name="DEGREE_SYMBOL_NEGATIVE">
       <pattern>
         <token regexp="yes">\d+[\d,.]*</token>
       </pattern>
-      <message>Did you mean a correction for DEGREE_SYMBOL_NEGATIVE?</message>
+      <message><suggestion>\1</suggestion></message>
       <short>DEGREE_SYMBOL_NEGATIVE</short>
     </rule>
     <rule id="ENUMERATION_AND_DASHES" name="Enumerações com travessões: 1.2.-">
@@ -4848,7 +4848,7 @@
           <exception regexp="yes">pcs|vs|tons</exception>
         </token>
       </pattern>
-      <message>As abreviaturas de unidades de medida padrão não tem plural.</message>
+      <message>As abreviaturas de unidades de medida padrão não tem plural. <suggestion>\2</suggestion></message>
       <short>PLURAL_IN_UNITS_OF_MEASURE</short>
     </rule>
     <rule id="POSICAO_DO_PONTO_EM_ORDINAL_ABREVIADO" name="Pôr o ponto entre o número e o indicador de ordinal, e não depois deste." default="on">
@@ -4892,7 +4892,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">(?:)</token>
       </pattern>
-      <message>Neste caso, põe-se um espaço estreito entre o número e o símbolo de grau.</message>
+      <message>Neste caso, põe-se um espaço estreito entre o número e o símbolo de grau. <suggestion>\1</suggestion></message>
       <short>SIMBOLO_DE_GRAU_ESPACAMENTO_NENHUM</short>
     </rule>
     <rule id="SPACE_AFTER_ARCAIC_CONTRACTION" name="Espaçamento: Contrações arcaicas">
@@ -4990,7 +4990,7 @@
       <pattern>
         <token regexp="yes" postag="VMIP2S0:PP3..A00" postag_regexp="yes">.+([aeo]|[aeou]i)-l[oa]s?</token>
       </pattern>
-      <message>Possível erro de acentuação.</message>
+      <message>Possível erro de acentuação. <suggestion>\1</suggestion></message>
       <short>ACENTUAÇÃO_VOGAL_ÊNCLISE</short>
     </rule>
     <rule id="A_GENTE-SINGULAR_PLURAL-VERB" name="Erro de concordância de número A GENTE + SINGULAR VERB">
@@ -4999,7 +4999,7 @@
         <token>gente</token>
         <token postag="V...1P.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Erro de concordância de número: <suggestion>\1 \2 </suggestion></message>
+      <message>Erro de concordância de número: <suggestion>\1 \2 \3</suggestion></message>
       <short>Erro de concordância de número</short>
     </rule>
     <rule id="COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO" name="COLOCACAO_PRONOMINAL_COM_ATRATOR_COMPLEXO">
@@ -5044,7 +5044,7 @@
         <token regexp="yes">d[eê]s</token>
         <token regexp="yes">d[oa]s?|des[st][ea]s?|daquel[ea]s?</token>
       </pattern>
-      <message>Encontrado possível erro de digitação <suggestion>desde</suggestion></message>
+      <message>Encontrado possível erro de digitação <suggestion>desde \2</suggestion></message>
       <short>DES_DOS</short>
     </rule>
     <rule id="ESTAR_CLARO_DE_QUE" name="Verbo do tipo estar + Adj. + de que">
@@ -5111,7 +5111,7 @@
         <token regexp="yes">pelas?</token>
         <token regexp="yes">qua(l|is)</token>
       </pattern>
-      <message>Possível erro de concordância. Verifique se não quis dizer: <suggestion>por:o</suggestion></message>
+      <message>Possível erro de concordância. Verifique se não quis dizer: <suggestion>\3</suggestion></message>
       <short>PELA_QUAL_PELO_QUAL</short>
     </rule>
     <rule id="PELO_QUAL_PELA_QUAL" name="Concordância: 'pelo' → 'pela'">
@@ -5121,7 +5121,7 @@
         <token regexp="yes">pelos?</token>
         <token regexp="yes">qua(l|is)</token>
       </pattern>
-      <message>Possível erro de concordância. Verifique se não quis dizer: <suggestion>por:o</suggestion></message>
+      <message>Possível erro de concordância. Verifique se não quis dizer: <suggestion>\3</suggestion></message>
       <short>PELO_QUAL_PELA_QUAL</short>
     </rule>
     <rule id="PHRASAL_VERB_A_DE" name="Regência verbal: VERBO + a (de)">
@@ -5181,7 +5181,7 @@
         <token inflected="yes" postag="V...3S.+:PP3CNO00" postag_regexp="yes">procurar</token>
         <token postag="(?:N..|A...)P.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Did you mean a correction for PROCURA_SE-PROCURAM_SE?</message>
+      <message><suggestion>\1</suggestion></message>
       <short>PROCURA_SE-PROCURAM_SE</short>
     </rule>
     <rule id="SUBST_DE_QUE_TER_DIREITO_A_QUE" name="Substantivo 'de que' … tem direito' → 'a que'">
@@ -5204,7 +5204,7 @@
         <token regexp="yes">tod[ao]s</token>
         <token postag="N..P.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Se '\3' é um substantivo, '\2' no plural exige um segundo artigo. <suggestion>\2  \3</suggestion></message>
+      <message>Se '\3' é um substantivo, '\2' no plural exige um segundo artigo. <suggestion>\2 \2 \3</suggestion></message>
       <short>TODOS_FOLLOWED_BY_NOUN_PLURAL</short>
     </rule>
     <rule id="V3_DE_QUE" name="Verbo na 3.ª pessoa + de que">
@@ -5263,7 +5263,7 @@
           <exception regexp="yes">com|para</exception>
         </token>
       </pattern>
-      <message><suggestion>dificultar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>CAUSAR_DIFICULDADE_DIFICULTAR</short>
     </rule>
     <rule id="DENOMINADA" name="Denominada(o)(s)">
@@ -5293,7 +5293,7 @@
         <token regexp="yes">d[ae]</token>
         <token>justiça</token>
       </pattern>
-      <message>Expressão não pode ser traduzida literalmente. <suggestion>justiceiro</suggestion></message>
+      <message>Expressão não pode ser traduzida literalmente. <suggestion>\1</suggestion></message>
       <short>ERRO_TRADUÇÃO_TRAZEDORES_DA_JUSTIÇA</short>
     </rule>
     <rule id="PAÍSES_DO_TERCEIRO_MUNDO" name="'aos/os países do terceiro mundo' → 'ao/o Terceiro Mundo'">
@@ -5304,7 +5304,7 @@
         <token>terceiro</token>
         <token>mundo</token>
       </pattern>
-      <message>Para uma frase mais objetiva, considere omitir "países" e empregar <suggestion> Terceiro Mundo</suggestion>.</message>
+      <message>Para uma frase mais objetiva, considere omitir "países" e empregar <suggestion>\1 Terceiro Mundo</suggestion>.</message>
       <short>PAÍSES_DO_TERCEIRO_MUNDO</short>
     </rule>
     <rule id="PORQUE_VERBOEUELE_AS_OS_POR_AO_VERBOINF_AS_OS" name="Porque + Verbo Eu/ele + A(s)/O(s) &gt; Por/Ao + Verbo_inf + a(s)/o(s)">
@@ -5313,7 +5313,7 @@
         <token postag="VMIS1S0|VMIS3S0" postag_regexp="yes"></token>
         <token regexp="yes">as?|os?</token>
       </pattern>
-      <message><suggestion>ao</suggestion></message>
+      <message><suggestion>ao \2</suggestion></message>
       <short>PORQUE_VERBOEUELE_AS_OS_POR_AO_VERBOINF_AS_OS</short>
     </rule>
     <rule id="SEM_FIM" name="Sem fim">
@@ -5336,7 +5336,7 @@
         <token regexp="yes" min="0" max="1">não|mal|bem</token>
         <token regexp="yes">pag[ao]s?</token>
       </pattern>
-      <message>É mais correto empregar o termo "remunerado". <suggestion>remunerar</suggestion></message>
+      <message>É mais correto empregar o termo "remunerado". <suggestion>\6</suggestion></message>
       <short>TRABALHO_PAGO_REMUNERADO</short>
     </rule>
   </category>
@@ -5381,7 +5381,7 @@
       <pattern>
         <token regexp="yes">emails?</token>
       </pattern>
-      <message>Em contextos oficiais ou formais, prefira escrever <suggestion></suggestion> com hífen.</message>
+      <message>Em contextos oficiais ou formais, prefira escrever <suggestion>\1</suggestion> com hífen.</message>
       <short>EMAIL_SEM_HIFEN</short>
     </rule>
     <rule id="MENAGE_A_TROIS" name="Erro ortográfico: ménage à trois">
@@ -5430,7 +5430,7 @@
         <token min="0" max="3" postag="R." postag_regexp="yes"></token>
         <token regexp="yes">aceit[ao]s?</token>
       </pattern>
-      <message>Em Portugal, a forma mais comum deste particípio é . <suggestion>\1</suggestion></message>
+      <message>Em Portugal, a forma mais comum deste particípio é \3. <suggestion>\1 \2 \3</suggestion></message>
       <short>ACEITO_ACEITE</short>
     </rule>
     <rule id="CLITIC_AS_SUBJECT_ME_SER" name="🇵🇹 me → eu (sujeito)">
@@ -5518,7 +5518,7 @@
         <token postag="D.+" postag_regexp="yes"></token>
         <token regexp="yes">powerpoints?</token>
       </pattern>
-      <message>PowerPoint é um programa específico. Se pretende generalizar, utilize: <suggestion>apresentação de slides</suggestion></message>
+      <message>PowerPoint é um programa específico. Se pretende generalizar, utilize: <suggestion>\1 apresentação de slides</suggestion></message>
       <short>PRESENTATION</short>
     </rule>
     <rule id="WINDOWS" name="Nome de Produto: Window → Windows">
@@ -5533,7 +5533,7 @@
       <pattern>
         <token regexp="yes" case_sensitive="yes">X86(?:[-_]64)?</token>
       </pattern>
-      <message>Pretende dizer <suggestion></suggestion>?</message>
+      <message>Pretende dizer <suggestion>\1</suggestion>?</message>
       <short>X86</short>
     </rule>
     <rule id="X_ACTO" name="Nome de Produto: X-Acto">
@@ -5562,7 +5562,7 @@
           <exception regexp="yes">mar|dez</exception>
         </token>
       </pattern>
-      <message>Segundo o Acordo Ortográfico de 45, os meses e as estações do ano devem ser capitalizados.</message>
+      <message>Segundo o Acordo Ortográfico de 45, os meses e as estações do ano devem ser capitalizados. <suggestion>\1</suggestion></message>
       <short>AO45_MONTHS_CASING</short>
     </rule>
   </category>
@@ -5579,7 +5579,7 @@
         <token regexp="yes">graus?</token>
         <token>kelvin</token>
       </pattern>
-      <message>Não se deve referir à unidade de temperatura Kelvin como um "grau". <suggestion>\2</suggestion></message>
+      <message>Não se deve referir à unidade de temperatura Kelvin como um "grau". <suggestion>\2\1</suggestion></message>
       <short>GRAU_KELVIN</short>
     </rule>
   </category>
@@ -5627,7 +5627,7 @@
         <token inflected="yes">caminhar</token>
         <token>caminhos</token>
       </pattern>
-      <message>Expressão não pode ser traduzida literalmente. <suggestion>percorrer</suggestion></message>
+      <message>Expressão não pode ser traduzida literalmente. <suggestion>\1</suggestion></message>
       <short>ERRO_TRADUÇÃO_CAMINHAR_CAMINHOS</short>
     </rule>
     <rule id="EXPORTAR_PARA_FORA" name="Exportar">
@@ -5644,7 +5644,7 @@
         <token inflected="yes" skip="2">cumprir</token>
         <token regexp="yes">compromissos?</token>
       </pattern>
-      <message>Pode usar uma forma mais enfática: <suggestion>honrar</suggestion></message>
+      <message>Pode usar uma forma mais enfática: <suggestion>\1</suggestion></message>
       <short>HONRAR_COMPROMISSOS</short>
     </rule>
     <rule id="IMAGEM_DE_SATELITE" name="Imagem satélite → Imagem de satélite">
@@ -5661,7 +5661,7 @@
         <token inflected="yes">ser</token>
         <token regexp="yes">possível|possíveis</token>
       </pattern>
-      <message>Possível redundância com poder/possível. Substitua por: <suggestion>dever \2</suggestion></message>
+      <message>Possível redundância com poder/possível. Substitua por: <suggestion>\1 \2</suggestion></message>
       <short>PODER_SER_POSSIVEL</short>
     </rule>
     <rule id="REDUNDANCY_10_AVANÇAR" name="Pleonasmo: avançar para a frente">
@@ -6296,7 +6296,7 @@
         <token min="0" postag="R." postag_regexp="yes"></token>
         <token regexp="yes" inflected="yes">amanhecer|entardecer</token>
       </pattern>
-      <message><suggestion>\5</suggestion></message>
+      <message><suggestion>\3 \5</suggestion></message>
       <short>REDUNDANCY_5_AMANHECER</short>
     </rule>
     <rule id="REDUNDANCY_5_ANEXAR" name="Pleonasmo: Anexar junto">
@@ -6520,7 +6520,7 @@
         <token>de</token>
         <token>frente</token>
       </pattern>
-      <message>Did you mean a correction for REDUNDANCY_ENCARAR_1?</message>
+      <message><suggestion>\1 \2 \3</suggestion></message>
       <short>REDUNDANCY_ENCARAR_1</short>
     </rule>
     <rule id="REDUNDANCY_ENCARAR_2" name="Pleonasmo: Encarar cara a cara">
@@ -6532,7 +6532,7 @@
         <token>a</token>
         <token>cara</token>
       </pattern>
-      <message>Did you mean a correction for REDUNDANCY_ENCARAR_2?</message>
+      <message><suggestion>\1 \2 \3</suggestion></message>
       <short>REDUNDANCY_ENCARAR_2</short>
     </rule>
     <rule id="REDUNDANCY_ENTRAR" name="Pleonasmo: Entrar para dentro">
@@ -6888,7 +6888,7 @@
         <token regexp="yes">2[02]\d\d\d</token>
         <token regexp="yes" negate="yes">||</token>
       </pattern>
-      <message>Será que quis dizer <suggestion></suggestion>?</message>
+      <message>Será que quis dizer <suggestion>\2</suggestion>?</message>
       <short>ANY20016_2016</short>
     </rule>
     <rule id="EMERGIR_EM" name="Confusão: Emergir + em">
@@ -6899,7 +6899,7 @@
         <token regexp="yes" skip="4">em|n[ao]s?|numa?s?|nuns|dentro</token>
         <token regexp="yes">águas?|piscinas?|lagos?|mare?s?|oceanos?|rios?|lagoas?|copos?|baldes?|bacias?|recipientes?|taças?|chás?|chávenas?|xícaras?|panelas?|livros?|histórias?|estados?</token>
       </pattern>
-      <message>Confusão de palavras</message>
+      <message>Confusão de palavras <suggestion>\1</suggestion></message>
       <short>EMERGIR_EM</short>
     </rule>
     <rule id="EMIGRAR_DE" name="Confusão: Emigrar + de">
@@ -6907,7 +6907,7 @@
         <token inflected="yes">emigrar</token>
         <token regexp="yes">pa?ra</token>
       </pattern>
-      <message>Possível confusão de palavras. "Emigrar" corresponde ao ato de sair do país. "Imigrar" corresponde ao ato de entrar em um país visando residência definitiva. <suggestion>imigrar \2</suggestion></message>
+      <message>Possível confusão de palavras. "Emigrar" corresponde ao ato de sair do país. "Imigrar" corresponde ao ato de entrar em um país visando residência definitiva. <suggestion>\1 \2</suggestion></message>
       <short>EMIGRAR_DE</short>
     </rule>
     <rule id="IMERGIR_DE" name="Confusão: Imergir + de">
@@ -6915,7 +6915,7 @@
         <token inflected="yes">imergir</token>
         <token regexp="yes">d[eao]s?|à|duma?s?|duns|daquel[ae]s?|de[st]eas?</token>
       </pattern>
-      <message>Confusão de palavras <suggestion>\2</suggestion></message>
+      <message>Confusão de palavras <suggestion>\1 \2</suggestion></message>
       <short>IMERGIR_DE</short>
     </rule>
     <rule id="IMIGRAR_PARA" name="Confusão: Imigrar + para">
@@ -6923,7 +6923,7 @@
         <token inflected="yes">imigrar</token>
         <token regexp="yes" postag="SPS.+" postag_regexp="yes">d.*</token>
       </pattern>
-      <message>Possível confusão de palavras. "Imigrar" corresponde ao ato de entrar em um país visando residência definitiva. "Emigrar" corresponde ao ato de sair do país. <suggestion>emigrar \2</suggestion></message>
+      <message>Possível confusão de palavras. "Imigrar" corresponde ao ato de entrar em um país visando residência definitiva. "Emigrar" corresponde ao ato de sair do país. <suggestion>\1 \2</suggestion></message>
       <short>IMIGRAR_PARA</short>
     </rule>
     <rule id="WEEKDAY_TO_WEEKDAY" name="Datas: redundância de '-feira'">
@@ -6932,7 +6932,7 @@
         <token regexp="yes">a|à|e|,</token>
         <token regexp="yes">.+-feira</token>
       </pattern>
-      <message>Redundância não gramatical. <suggestion>a \3</suggestion></message>
+      <message>Redundância não gramatical. <suggestion>\1 a \3</suggestion></message>
       <short>WEEKDAY_TO_WEEKDAY</short>
     </rule>
   </category>
@@ -6953,7 +6953,7 @@
         <token regexp="yes">p[oó]lo</token>
         <token regexp="yes">norte|sul</token>
       </pattern>
-      <message>Segundo o AO90, deve capitalizar esta expressão geográfica.</message>
+      <message>Segundo o AO90, deve capitalizar esta expressão geográfica. <suggestion>\1 \2</suggestion></message>
       <short>AO90_POLO_CAPITALIZATION</short>
     </rule>
   </category>
@@ -6993,7 +6993,7 @@
         <token regexp="yes" inflected="yes" skip="1">usar|utilizar</token>
         <token regexp="yes">termos?</token>
       </pattern>
-      <message>Num contexto formal, é preferível escrever "empregar um termo". <suggestion>empregar</suggestion></message>
+      <message>Num contexto formal, é preferível escrever "empregar um termo". <suggestion>\1</suggestion></message>
       <short>CIENTÍFICO_EMPREGAR_TERMO</short>
     </rule>
     <rule id="COMPARADA_COMPARÁVEL" name="🎓 'Comparada' a → Comparável">
@@ -7003,7 +7003,7 @@
         <token regexp="yes">comparad[ao]s?</token>
         <token regexp="yes">a|às?|aos?</token>
       </pattern>
-      <message>Em escrita académica, "comparável" é frequentemente preferido a "comparada" por expressar semelhança de forma mais objetiva. <suggestion>comparável</suggestion></message>
+      <message>Em escrita académica, "comparável" é frequentemente preferido a "comparada" por expressar semelhança de forma mais objetiva. <suggestion>\3</suggestion></message>
       <short>COMPARADA_COMPARÁVEL</short>
     </rule>
     <rule id="DIFERENTES_DISTINTOS" name="🎓 Diferentes → distintos">
@@ -7013,7 +7013,7 @@
         <token min="0" max="2" postag="RG|RM" postag_regexp="yes"></token>
         <token>diferentes</token>
       </pattern>
-      <message>Num contexto formal/científico, é frequente empregar "distintos" em vez de "diferentes". <suggestion>distinto</suggestion></message>
+      <message>Num contexto formal/científico, é frequente empregar "distintos" em vez de "diferentes". <suggestion>\1</suggestion></message>
       <short>DIFERENTES_DISTINTOS</short>
     </rule>
     <rule id="ERRO_TRADUÇÃO_COBRIR_ABRANGER" name="[Erro tradução] cobrir → abranger">
@@ -7024,7 +7024,7 @@
         <token inflected="yes">cobrir</token>
         <token postag="SPS00|DA.+|SPS00:DA.+|DI.+|SPS00:DI.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Expressão não pode ser traduzida literalmente. <suggestion>abranger</suggestion></message>
+      <message>Expressão não pode ser traduzida literalmente. <suggestion>\4</suggestion></message>
       <short>ERRO_TRADUÇÃO_COBRIR_ABRANGER</short>
     </rule>
     <rule id="EVIDENCIAR_COMPROVAR_DEMONSTRAR" name="🎓 Mostrar → evidenciar/comprovar/demonstrar/indicar">
@@ -7032,7 +7032,7 @@
         <token regexp="yes" inflected="yes" skip="1">abordagem|achado|amostra|análise|artigo|avaliação|caso|cenário|coleta|comparação|conceito|consulta|contexto|critério|dado|diagnóstico|dissertação|documento|enquadramento|ensaio|entrevista|equação|estratégia|estudo|evidência|experiência|experimento|fen[óô]meno|fórmula|framework|hipótese|indicador|inquérito|instrumento|investigação|levantamento|mecanismo|método|métrica|modelo|monografia|padrão|paradigma|parâmetro|pesquisa|prática|pressuposto|princípio|procedimento|processo|projeto|protocolo|relatório|resultado|revisão|sondagem|técnica|tecnologia|tendência|teoria|tese|teste|trabalho|variável</token>
         <token inflected="yes">mostrar</token>
       </pattern>
-      <message>Num contexto formal/universitário, é preferível escrever "evidenciar", "comprovar", "indicar" ou "demonstrar". <suggestion>evidenciar</suggestion></message>
+      <message>Num contexto formal/universitário, é preferível escrever "evidenciar", "comprovar", "indicar" ou "demonstrar". <suggestion>\2</suggestion></message>
       <short>EVIDENCIAR_COMPROVAR_DEMONSTRAR</short>
     </rule>
     <rule id="FICAR_PARADO_TEMPO_ESTAGNAR" name="🎓🤵 'Ficar parado no tempo' → estagnar">
@@ -7042,7 +7042,7 @@
         <token>no</token>
         <token>tempo</token>
       </pattern>
-      <message>Num contexto formal/universitário, é preferível escrever "estagnar". <suggestion>estagnar</suggestion></message>
+      <message>Num contexto formal/universitário, é preferível escrever "estagnar". <suggestion>\1</suggestion></message>
       <short>FICAR_PARADO_TEMPO_ESTAGNAR</short>
     </rule>
     <rule id="MUITO_BASTANTE_EXTENSIVAMENTE" name="🎓🔬 Muito/bastante/enormemente → Extensivamente/amplamente">
@@ -7064,7 +7064,7 @@
         <token postag="DA.+" postag_regexp="yes"></token>
         <token postag="NC.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Se for um texto científico/universitário, pondere empregar o termo "indelével". <suggestion>\5 \6 ser indelével</suggestion></message>
+      <message>Se for um texto científico/universitário, pondere empregar o termo "indelével". <suggestion>\5 \6 \6 \6</suggestion></message>
       <short>NÃO_SE_PODE_APAGAR_É_INDELÉVEL</short>
     </rule>
     <rule id="OBTER_ALCANCAR" name="🎓 Obter → alcançar">
@@ -7073,7 +7073,7 @@
         <token regexp="yes" skip="1">a|o</token>
         <token regexp="yes">vitória|objetivo|objectivo|meta|finalidade</token>
       </pattern>
-      <message>Num contexto formal/científico, prefira "alcançar" a "obter" quando se refere a metas, objetivos, ou vitória. <suggestion>alcançar</suggestion></message>
+      <message>Num contexto formal/científico, prefira "alcançar" a "obter" quando se refere a metas, objetivos, ou vitória. <suggestion>\1</suggestion></message>
       <short>OBTER_ALCANCAR</short>
     </rule>
     <rule id="PHD_TESE_FICOU_DEMONSTRADO_QUE_DEMONSTRÁMOS_QUE" name="🎓 Expressões do tipo 'ficou demonstrado que' → ‘demonstrámos que'">
@@ -7082,7 +7082,7 @@
         <token postag="VMP00S.+" postag_regexp="yes"></token>
         <token>que</token>
       </pattern>
-      <message><suggestion>-se</suggestion></message>
+      <message><suggestion>\2</suggestion></message>
       <short>PHD_TESE_FICOU_DEMONSTRADO_QUE_DEMONSTRÁMOS_QUE</short>
     </rule>
     <rule id="PHD_TESE_PARA_AJUDAR_A_VINFINITIVO_PARA_VINFINITIVO" name="🎓 Para Ajudar a + V.Inf. → Para V.Inf.">
@@ -7102,7 +7102,7 @@
         <token regexp="yes">a|de</token>
         <token regexp="yes">seguir|seguida</token>
       </pattern>
-      <message>Did you mean a correction for PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS?</message>
+      <message><suggestion>\2</suggestion></message>
       <short>PHD_TESE_REFERIREMOS_A_SEGUIR_REFERIDAS_REFERIDOS</short>
     </rule>
     <rule id="VERBO_O_USO_DE_X_X" name="🎓 Verbo + 'o uso de X' → X">
@@ -7145,7 +7145,7 @@
         <token regexp="yes">cert[ao]s?</token>
         <token regexp="yes" inflected="yes">altura|momento|ponto|fase|etapa|instante|ocasião</token>
       </pattern>
-      <message>Em contexto formal, prefere-se "a dado/a dada" em vez de "a certo/a certa". <suggestion>dado</suggestion></message>
+      <message>Em contexto formal, prefere-se "a dado/a dada" em vez de "a certo/a certa". <suggestion>\3</suggestion></message>
       <short>CERTA_CERTO_DADA_DADO</short>
     </rule>
     <rule id="COMO_SER_O_CASO_DO" name="✂️ Como é/são o caso do → Como o">
@@ -7157,7 +7157,7 @@
         <token regexp="yes">d[ao]s?</token>
         <token postag="DP.+|SPS00:PP.+|NC.+|AQ.+" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion>\1 o \6</suggestion></message>
+      <message><suggestion>\1 \5 \6</suggestion></message>
       <short>COMO_SER_O_CASO_DO</short>
     </rule>
     <rule id="DAR_VALOR_VALORIZAR" name="✂️ Verbo 'dar' + valor → valorizar">
@@ -7166,7 +7166,7 @@
         <token>valor</token>
         <token regexp="yes">às?|aos?</token>
       </pattern>
-      <message><suggestion>valorizar o</suggestion></message>
+      <message><suggestion>\1 \3</suggestion></message>
       <short>DAR_VALOR_VALORIZAR</short>
     </rule>
     <rule id="DELIMITADA_COM-DE-POR_FRONTEIRAS_FISICAS" name="Delimitada(o)(s) fisicamente">
@@ -7200,7 +7200,7 @@
           <exception regexp="yes">.*[áéíóúâêôãõàèìòù].*|inclusiv[oa]|geral|pulverizada|transparente|especial|diferente|independente</exception>
         </token>
       </pattern>
-      <message>Substitua por <suggestion>mente</suggestion></message>
+      <message>Substitua por <suggestion>\3mente</suggestion></message>
       <short>DE_FORMA-MODO_ADJ</short>
     </rule>
     <rule id="EM_QUE_NAO_HA_PRONOME-INDEFINIDO" name="✂️ Em que não há + Pron.Indef. → Sem Pron.Indef.">
@@ -7253,7 +7253,7 @@
         <token>a</token>
         <token>cabo</token>
       </pattern>
-      <message>Num contexto formal, é preferível escrever "efetuar", "realizar", "conduzir", "concretizar" ou "elaborar". <suggestion>efetuar</suggestion></message>
+      <message>Num contexto formal, é preferível escrever "efetuar", "realizar", "conduzir", "concretizar" ou "elaborar". <suggestion>\1</suggestion></message>
       <short>LEVAR_A_CABO</short>
     </rule>
     <rule id="MADRUGADA_MATINAL" name="✂️ da madrugada/manhã → matinal">
@@ -7264,7 +7264,7 @@
         <token regexp="yes">das?</token>
         <token regexp="yes">madrugadas?|manhãs?</token>
       </pattern>
-      <message><suggestion>matinal</suggestion></message>
+      <message><suggestion>\5</suggestion></message>
       <short>MADRUGADA_MATINAL</short>
     </rule>
     <rule id="MAS_EMBORA_CONTUDO_SEM" name="✂️ Expressões do tipo: 'não ter utilidade' → 'sem utilidade'">
@@ -7293,7 +7293,7 @@
         <token>voltar</token>
         <token>atrás</token>
       </pattern>
-      <message><suggestion>irreversível</suggestion></message>
+      <message><suggestion>\2</suggestion></message>
       <short>NÃO_DÁ_PARA_VOLTAR_ATRÁS_IRREVERSÍVEL</short>
     </rule>
     <rule id="NÃO_VÁLIDA_INVÁLIDA" name="Não válid[ao](s) → inválid[ao](s)">
@@ -7325,7 +7325,7 @@
         <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
         <token regexp="yes" inflected="yes">fronteira|porta|portão|entrada|saída|passagem|túnel|galeria|corredor|passadiço|ponte|viaduto|passarela|estrada|rua|avenida|travessa|autoestrada|caminho|atalho|trilho|vereda|obstáculo|barreira|muralha|vedação|cerca|grade|barricada|bloqueio|multidão</token>
       </pattern>
-      <message><suggestion>atravessar o</suggestion></message>
+      <message><suggestion>\1 \3</suggestion></message>
       <short>PASSAR_ATRAVES_LUGAR_ATRAVESSAR</short>
     </rule>
     <rule id="PERDER_A_VIDA" name="Perder a vida → morrer/falecer/perecer">
@@ -7335,7 +7335,7 @@
         <token min="0" max="1" postag="DP.+" postag_regexp="yes"></token>
         <token regexp="yes">vidas?</token>
       </pattern>
-      <message>Melhore a redação. <suggestion>morrer</suggestion></message>
+      <message>Melhore a redação. <suggestion>\1</suggestion></message>
       <short>PERDER_A_VIDA</short>
     </rule>
     <rule id="QUANDO_TER_DE_QUE_VINF_AO_VINF" name="✂️ 'Quando V.Ter de/que V.Inf.' com → 'Ao V.Inf.'">
@@ -7405,7 +7405,7 @@
         <token min="0" max="1" postag="NP.+" postag_regexp="yes"></token>
         <token regexp="yes" negate="yes">[.]</token>
       </pattern>
-      <message>Did you mean a correction for QUE_VERB_GERUND?</message>
+      <message><suggestion>\3</suggestion></message>
       <short>QUE_VERB_GERUND</short>
     </rule>
     <rule id="SER_CAPAZ_DE_CONSEGUIR" name="✂️ Ser capaz de → Conseguir">
@@ -7415,7 +7415,7 @@
         <token>de</token>
         <token postag="V.+|DI.+|PI.+|RG" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion>conseguir</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>SER_CAPAZ_DE_CONSEGUIR</short>
     </rule>
     <rule id="SER_PARA_SER_PARTPASSADO_VINFINITIVO" name="✂️ Ser + para + 'ser(em) + Part.Pass' → Infinitivo">
@@ -7425,7 +7425,7 @@
         <token regexp="yes">ser(em)?</token>
         <token postag="VMP00.+" postag_regexp="yes"></token>
       </pattern>
-      <message>Construção passiva frequentemente simplificável com infinitivo.</message>
+      <message>Construção passiva frequentemente simplificável com infinitivo. <suggestion>\4</suggestion></message>
       <short>SER_PARA_SER_PARTPASSADO_VINFINITIVO</short>
     </rule>
     <rule id="SIMPLIFICAR_NÃO_VERBO_NADA_NADA_VERBO" name="🎓 Não + V. + nada → nada + V.">
@@ -7467,7 +7467,7 @@
           <exception regexp="yes">como|pel[ao]s?|por</exception>
         </token>
       </pattern>
-      <message><suggestion>ser \3</suggestion></message>
+      <message><suggestion>\1 \3</suggestion></message>
       <short>TER_SIDO_PART_PASSADO_VERBO</short>
     </rule>
     <rule id="TIRAR_FOTOGRAFIA_FOTOGRAFAR" name="✂️ Tirar fotografia/foto → fotografar">
@@ -7479,7 +7479,7 @@
           <exception regexp="yes">[dn][ao]s?</exception>
         </token>
       </pattern>
-      <message><suggestion>fotografar o</suggestion></message>
+      <message><suggestion>\1 \4</suggestion></message>
       <short>TIRAR_FOTOGRAFIA_FOTOGRAFAR</short>
     </rule>
     <rule id="TOTALIZAR" name="✂️ 'perfazer um total de' → totalizar">
@@ -7490,7 +7490,7 @@
         <token>de</token>
         <token postag="Z0.+|NC.+" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion>totalizar</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>TOTALIZAR</short>
     </rule>
     <rule id="VERBO1_QUE_VERBO2_VERBO3_O_QUE" name="✂️ verbo2 + verbo3_infinitivo">
@@ -7502,7 +7502,7 @@
         <token>o</token>
         <token>que</token>
       </pattern>
-      <message><suggestion>\4</suggestion></message>
+      <message><suggestion>\3 \4</suggestion></message>
       <short>VERBO1_QUE_VERBO2_VERBO3_O_QUE</short>
     </rule>
     <rule id="VER_OBSERVAR_CONSTATAR_V2" name="🎓 Ver → observar/constatar">
@@ -7511,7 +7511,7 @@
         <token regexp="yes" skip="1">que|n[ao]s?|em</token>
         <token regexp="yes" inflected="yes" postag="NC.+|AQ.+" postag_regexp="yes">dado|resultado|figura|tabela|gráfico|estudo|análise|evidência|amostra|variável|modelo|experiência|ensaio|distribuição|correlação</token>
       </pattern>
-      <message>Em contexto formal/científico, prefira "observar" ou "constatar". <suggestion>observar</suggestion></message>
+      <message>Em contexto formal/científico, prefira "observar" ou "constatar". <suggestion>\1</suggestion></message>
       <short>VER_OBSERVAR_CONSTATAR_V2</short>
     </rule>
     <rule id="VIR_A_VERBO_VERBO" name="✂️ Vir + a + Verbo → Verbo">
@@ -7540,7 +7540,7 @@
         <token regexp="yes">d?[aà]quel[ae]s?</token>
         <token regexp="yes" case_sensitive="yes">outr[ao]s?</token>
       </pattern>
-      <message>Pode dizer <suggestion>\2</suggestion>.</message>
+      <message>Pode dizer <suggestion>\1\2</suggestion>.</message>
       <short>CONTRACAO_AQUELOUTRA</short>
     </rule>
     <rule id="CONTRACAO_DA" name="De + artigos">
@@ -7724,7 +7724,7 @@
         <token>a</token>
         <token regexp="yes">as?|aquel[ae]s?|aquilo|os?|diante</token>
       </pattern>
-      <message>Será que quis dizer <suggestion></suggestion>?</message>
+      <message>Será que quis dizer <suggestion>\2</suggestion>?</message>
       <short>CONTRACAO_À</short>
     </rule>
   </category>
@@ -7744,7 +7744,7 @@
         <token regexp="yes">diagnósticos?</token>
         <token regexp="yes">reservados?</token>
       </pattern>
-      <message>Substitua por <suggestion>prognóstico \2</suggestion>.</message>
+      <message>Substitua por <suggestion>prognóstico\1 \2</suggestion>.</message>
       <short>DIAGNÓSTICO_RESERVADO</short>
     </rule>
     <rule id="EM_CURTO_MÉDIO_LONGO_PRAZO_TERMO" name="Calinada: a curto/médio/longo prazo/termo">
@@ -7780,7 +7780,7 @@
         <token regexp="yes">ovelhas?</token>
         <token regexp="yes">ranhosas?</token>
       </pattern>
-      <message>Substitua por <suggestion>\1 </suggestion>.</message>
+      <message>Substitua por <suggestion>\1 \2</suggestion>.</message>
       <short>OVELHA_RANHOSA</short>
     </rule>
     <rule id="O_ANOS-ONUS-ÂNUS_DA_PROVA" name="Calinada: anos - ónus">
@@ -7798,7 +7798,7 @@
         <token>de</token>
         <token>vime</token>
       </pattern>
-      <message>Substitua por <suggestion></suggestion>.</message>
+      <message>Substitua por <suggestion>\1</suggestion>.</message>
       <short>SEXTA_DE_VIME</short>
     </rule>
   </category>
@@ -7817,7 +7817,7 @@
         <token regexp="yes" inflected="yes" skip="4">furtar|roubar</token>
         <token regexp="yes">identidades?</token>
       </pattern>
-      <message>Expressão não pode ser traduzida literalmente. <suggestion>usurpar</suggestion></message>
+      <message>Expressão não pode ser traduzida literalmente. <suggestion>\1</suggestion></message>
       <short>ERRO_TRADUÇÃO_FURTO_ROUBO_IDENTIDADE</short>
     </rule>
   </category>
@@ -7846,7 +7846,7 @@
         <token>de</token>
         <token>Avogadro</token>
       </pattern>
-      <message>prefira "constante de Avogadro". <suggestion>constante de Avogadro</suggestion></message>
+      <message>prefira "constante de Avogadro". <suggestion>\1 constante de Avogadro</suggestion></message>
       <short>NUMERO_DE_AVOGADRO</short>
     </rule>
   </category>
@@ -7870,7 +7870,7 @@
         <token>não</token>
         <token regexp="yes">milita(r|res)</token>
       </pattern>
-      <message>Veja se pretende referir uma entidade civil. <suggestion>civil</suggestion></message>
+      <message>Veja se pretende referir uma entidade civil. <suggestion>\3</suggestion></message>
       <short>NAO_MILITARES_CIVIS</short>
     </rule>
   </category>
@@ -7880,14 +7880,14 @@
         <token regexp="yes" inflected="yes">|dever|poder|querer|costumar</token>
         <token regexp="yes">premios?</token>
       </pattern>
-      <message>Esta palavra é um verbo. Se pretende referir-se a um nome ou adjetivo, deve utilizar a forma acentuada. <suggestion>prêmio</suggestion></message>
+      <message>Esta palavra é um verbo. Se pretende referir-se a um nome ou adjetivo, deve utilizar a forma acentuada. <suggestion>prêmio\2</suggestion></message>
       <short>PARONYM_PREMIO_252_PT2</short>
     </rule>
     <rule id="PRETERITO_PERFEITO" name="🇧🇷 Pretérito perfeito: provámos -&gt; provamos" default="on">
       <pattern>
         <token regexp="yes" postag="VMIS1P0P">.*ámos</token>
       </pattern>
-      <message>No português do Brasil, escreve-se sem acento.</message>
+      <message>No português do Brasil, escreve-se sem acento. <suggestion>\1</suggestion></message>
       <short>PRETERITO_PERFEITO</short>
     </rule>
   </category>

@@ -101,17 +101,17 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 					out[i].Priority = 3
 				}
 				// Expand soft \N backrefs using non-whitespace tokens under the match span.
-				if text != "" && len(out[i].Suggestions) > 0 {
+				if text != "" {
 					from, to := out[i].FromPos, out[i].ToPos
 					spanToks := softSpanTokens(s, from, to)
+					if out[i].Message != "" {
+						out[i].Message = softExpandBackrefs(out[i].Message, spanToks)
+					}
 					for j, sug := range out[i].Suggestions {
 						out[i].Suggestions[j] = softExpandBackrefs(sug, spanToks)
 					}
-				}
-				// Preserve sentence-case / ALL-CAPS from the matched surface on suggestions.
-				if text != "" && len(out[i].Suggestions) > 0 {
-					from, to := out[i].FromPos, out[i].ToPos
-					if from >= 0 && to <= len(text) && from < to {
+					// Preserve sentence-case / ALL-CAPS from the matched surface on suggestions.
+					if from >= 0 && to <= len(text) && from < to && len(out[i].Suggestions) > 0 {
 						matched := text[from:to]
 						for j, sug := range out[i].Suggestions {
 							out[i].Suggestions[j] = languagetool.SoftPreserveCase(matched, sug)

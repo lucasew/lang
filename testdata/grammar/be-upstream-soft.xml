@@ -76,7 +76,7 @@
         <token regexp="yes" skip="1">[уў]</token>
         <token>сартыменце</token>
       </pattern>
-      <message>Магчыма памылка друку: <suggestion> асартыменце</suggestion>.</message>
+      <message>Магчыма памылка друку: <suggestion>\1 асартыменце</suggestion>.</message>
       <short>Памылка друку</short>
     </rule>
     <rule id="YEAR_20001" name="«Красавік 20001 (Красавік 2001)»">
@@ -84,7 +84,7 @@
         <token regexp="yes">студзень|люты|сакавік|красавік|май|травень|чэрвень|ліпень|жнівень|верасень|кастрычнік|лістапад|снежань|студзеня|лютага|сакавіка|красавіка|мая|траўня|чэрвеня|ліпеня|жніўня|верасня|кастрычніка|лістапада|снежня|год</token>
         <token regexp="yes">200\d\d</token>
       </pattern>
-      <message>Сапраўды \2? Можа мелася на ўвазе <suggestion> </suggestion>?</message>
+      <message>Сапраўды \2? Можа мелася на ўвазе <suggestion>\1 \2</suggestion>?</message>
       <short>Памылка друку?</short>
     </rule>
   </category>

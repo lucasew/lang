@@ -3447,7 +3447,7 @@
         <token>一</token>
         <token regexp="yes">痛.*</token>
       </pattern>
-      <message>您的意思是"<suggestion>千古一</suggestion>"？</message>
+      <message>您的意思是"<suggestion>千古一\3</suggestion>"？</message>
       <short>成语错误</short>
     </rule>
     <rule id="FU5_FU6" name="副/付">
@@ -3537,7 +3537,7 @@
         <token regexp="yes">.*琅琅</token>
         <token>乾坤</token>
       </pattern>
-      <message>您的意思是"<suggestion>乾坤</suggestion>"？</message>
+      <message>您的意思是"<suggestion>\1乾坤</suggestion>"？</message>
       <short>成语错误</short>
     </rule>
     <rule id="LAOCHENGCHIZHONG" name="老成持重">
@@ -3582,7 +3582,7 @@
         <token regexp="yes">评|论</token>
         <token>足</token>
       </pattern>
-      <message>您的意思是"<suggestion>头\3足</suggestion>"？</message>
+      <message>您的意思是"<suggestion>\1头\3足</suggestion>"？</message>
       <short>成语错误</short>
     </rule>
     <rule id="QING5_QING6" name="顷/倾">
@@ -5765,7 +5765,7 @@
         <token>忌</token>
         <token regexp="yes">(怛|殚).*</token>
       </pattern>
-      <message>您的意思是“<suggestion>肆无忌</suggestion>”吗？</message>
+      <message>您的意思是“<suggestion>肆无忌\4</suggestion>”吗？</message>
       <short>成语错误</short>
     </rule>
     <rule id="WUYANZHANGQI" name="乌烟瘴气">
@@ -5813,7 +5813,7 @@
         <token regexp="yes">(有|任何)?</token>
         <token postag="v|n" postag_regexp="yes"></token>
       </pattern>
-      <message>“”为欧化中文，您可以使用<suggestion>没有</suggestion>。</message>
+      <message>“\1\2\3”为欧化中文，您可以使用<suggestion>没有</suggestion>。</message>
       <short>NOT_EXIST_NO</short>
     </rule>
     <rule id="ZH3" name="搭配不当_执行+责任">

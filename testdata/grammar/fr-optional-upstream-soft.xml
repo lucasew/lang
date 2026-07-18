@@ -69,28 +69,28 @@
       <pattern>
         <token inflected="yes" postag="V.*" postag_regexp="yes">adresser</token>
       </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>envoyer</suggestion></message>
+      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>\1</suggestion></message>
       <short>REP_ADRESSER</short>
     </rule>
     <rule id="REP_COMMUN" name="commun" default="off">
       <pattern>
         <token case_sensitive="yes" inflected="yes" postag="J (.*)" postag_regexp="yes">commun</token>
       </pattern>
-      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>global</suggestion></message>
+      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>\1</suggestion></message>
       <short>REP_COMMUN</short>
     </rule>
     <rule id="REP_POSSIBLE" name="possible" default="off">
       <pattern>
         <token inflected="yes" postag="J.*" postag_regexp="yes">possible</token>
       </pattern>
-      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>prévisible</suggestion></message>
+      <message>Dans un contexte formel, d'autres structures peuvent être utilisées pour enrichir votre style. <suggestion>\1</suggestion></message>
       <short>REP_POSSIBLE</short>
     </rule>
     <rule id="REP_REMERCIER" name="remercier (style)" default="off">
       <pattern>
         <token inflected="yes" postag="V.*" postag_regexp="yes">remercier</token>
       </pattern>
-      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>saluer</suggestion></message>
+      <message>Dans un contexte formel des synonymes peuvent enrichir votre style. <suggestion>\1</suggestion></message>
       <short>REP_REMERCIER</short>
     </rule>
   </category>
@@ -146,7 +146,7 @@
         <token>qui</token>
         <token postag="V (ind|sub) pres 3 s" postag_regexp="yes"></token>
       </pattern>
-      <message>L'antécédent au pluriel « \2 » appelle un verbe au pluriel après « qui ».</message>
+      <message>L'antécédent au pluriel « \2 » appelle un verbe au pluriel après « qui ». <suggestion>\4</suggestion></message>
       <short>ACCORD_QUI_VERBE_PLURIEL</short>
     </rule>
     <rule id="GARANTIR_DE" name="garantir de" default="off">
@@ -165,7 +165,7 @@
         <token regexp="yes">mouvements?|courants?|partis?|régimes?|doctrines?|idéologies?|tendances?|mouvances?</token>
         <token regexp="yes" postag="N.*" postag_regexp="yes">.*isme</token>
       </pattern>
-      <message>Après « \1 », un adjectif est attendu : « \2 » est un nom. Vouliez-vous l'adjectif en -iste ?</message>
+      <message>Après « \1 », un adjectif est attendu : « \2 » est un nom. Vouliez-vous l'adjectif en -iste ? <suggestion>\2</suggestion></message>
       <short>MOUVEMENT_ISME_VS_ISTE</short>
     </rule>
     <rule id="TROUVER_PLUS_NOM_INCORRECT" name="trouver suivi d'un nom incorrect" default="temp_off">
@@ -194,7 +194,7 @@
         <token inflected="yes" skip="1">contrôler</token>
         <token regexp="yes">circulations?</token>
       </pattern>
-      <message>« Contrôler la circulation » peut être considéré comme un anglicisme. <suggestion>régler</suggestion></message>
+      <message>« Contrôler la circulation » peut être considéré comme un anglicisme. <suggestion>\1</suggestion></message>
       <short>CONTROLER_LA_CIRCULATION</short>
     </rule>
     <rule id="CONTROLER_LA_SITUATION" name="contrôler la situation" default="temp_off">
@@ -202,7 +202,7 @@
         <token inflected="yes" skip="1">contrôler</token>
         <token regexp="yes">situations?</token>
       </pattern>
-      <message>« Contrôler la situation » peut être considéré comme un anglicisme. <suggestion>avoir la situation en mains</suggestion></message>
+      <message>« Contrôler la situation » peut être considéré comme un anglicisme. <suggestion>\1 la situation en mains</suggestion></message>
       <short>CONTROLER_LA_SITUATION</short>
     </rule>
     <rule id="EN_AUTORITE" name="en autorité" default="temp_off">

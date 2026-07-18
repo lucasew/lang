@@ -47,7 +47,7 @@
       <pattern>
         <token regexp="yes">sèpi(a|es)</token>
       </pattern>
-      <message>La forma principal és <suggestion></suggestion>.</message>
+      <message>La forma principal és <suggestion>\1</suggestion>.</message>
       <short>Forma preferible</short>
     </rule>
     <rule id="DONAR_COMPLIMENT" name="donar compliment/complir" default="off">
@@ -55,7 +55,7 @@
         <token inflected="yes">donar</token>
         <token>compliment</token>
       </pattern>
-      <message>Expressió preferible. <suggestion>complir</suggestion></message>
+      <message>Expressió preferible. <suggestion>\1</suggestion></message>
       <short>DONAR_COMPLIMENT</short>
     </rule>
     <rule id="DON_D" name="Revisa l'abreviatura Don/D." default="off">
@@ -99,7 +99,7 @@
         <token regexp="yes">vares|vàrem|vàreu|varen</token>
         <token postag="V.N.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Usem preferentment la forma <suggestion></suggestion>.</message>
+      <message>Usem preferentment la forma <suggestion>\1</suggestion>.</message>
       <short>VAREM_VAM</short>
     </rule>
   </category>
@@ -122,7 +122,7 @@
       <pattern>
         <token inflected="yes" postag="V.*" postag_regexp="yes">apoltronar</token>
       </pattern>
-      <message>Paraula admesa només en alguns diccionaris. <suggestion>endropir</suggestion></message>
+      <message>Paraula admesa només en alguns diccionaris. <suggestion>\1</suggestion></message>
       <short>APOLTRONARSE</short>
     </rule>
     <rule id="ESTUDIANTAT" name="estudiantat/estudiants" default="off">
@@ -143,7 +143,7 @@
       <pattern>
         <token inflected="yes" postag="N.*" postag_regexp="yes">fregona</token>
       </pattern>
-      <message>Paraula admesa només en alguns diccionaris. <suggestion>pal de fregar</suggestion></message>
+      <message>Paraula admesa només en alguns diccionaris. <suggestion>\1 de fregar</suggestion></message>
       <short>FREGONA</short>
     </rule>
   </category>
@@ -163,7 +163,7 @@
           <exception>'</exception>
         </token>
       </pattern>
-      <message>Useu l'apòstrof recte.</message>
+      <message>Useu l'apòstrof recte. <suggestion>\1</suggestion></message>
       <short>Opció de tipografia</short>
     </rule>
     <rule id="APOSTROF_TIPOGRAFIC" name="Exigeix l'apòstrof tipogràfic (’)" default="off">
@@ -172,14 +172,14 @@
           <exception>'</exception>
         </token>
       </pattern>
-      <message>En tipografia acurada, useu l'apòstrof tipogràfic.</message>
+      <message>En tipografia acurada, useu l'apòstrof tipogràfic. <suggestion>\1</suggestion></message>
       <short>Opció de tipografia</short>
     </rule>
     <rule id="PERCENT_AMB_ESPAI" name="tant per cent amb espai fi abans (3 %)" default="off">
       <pattern>
         <token regexp="yes">[\d.,]+[%‰‱]</token>
       </pattern>
-      <message>Hi falta un espai fi.</message>
+      <message>Hi falta un espai fi. <suggestion>\1</suggestion></message>
       <short>Opció de tipografia</short>
     </rule>
   </category>
@@ -189,7 +189,7 @@
         <token inflected="yes">condició</token>
         <token regexp="yes" inflected="yes" postag="A.*" postag_regexp="yes">climatològic|climàtic</token>
       </pattern>
-      <message>L'adjectiu apropiat és probablement <suggestion>meteorològic</suggestion>. La meteorologia fa referència al curt termini, i el clima, al llarg termini (vint anys).</message>
+      <message>L'adjectiu apropiat és probablement <suggestion>\2</suggestion>. La meteorologia fa referència al curt termini, i el clima, al llarg termini (vint anys).</message>
       <short>CLIMATOLOGIC_METEOROLOGIC</short>
     </rule>
   </category>
@@ -216,28 +216,28 @@
       <pattern>
         <token inflected="yes" postag="DD.*" postag_regexp="yes">aqueix</token>
       </pattern>
-      <message>Useu demostratius reduïts. <suggestion>eixe</suggestion></message>
+      <message>Useu demostratius reduïts. <suggestion>\1</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_AQUEIX</short>
     </rule>
     <rule id="EVITA_DEMOSTRATIUS_AQUEST" name="Evita els demostratius 'aquest'" default="off">
       <pattern>
         <token inflected="yes" postag="DD.*" postag_regexp="yes">aquest</token>
       </pattern>
-      <message>Useu demostratius reduïts. <suggestion>este</suggestion></message>
+      <message>Useu demostratius reduïts. <suggestion>\1</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_AQUEST</short>
     </rule>
     <rule id="EVITA_DEMOSTRATIUS_EIXE" name="Evita els demostratius 'eixe'" default="off">
       <pattern>
         <token inflected="yes" postag="DD.*" postag_regexp="yes">eixe</token>
       </pattern>
-      <message>Useu demostratius reforçats. <suggestion>aquest</suggestion></message>
+      <message>Useu demostratius reforçats. <suggestion>\1</suggestion></message>
       <short>EVITA_DEMOSTRATIUS_EIXE</short>
     </rule>
     <rule id="EXIGEIX_POSSESSIUS_U" name="Exigeix els possessius amb u (meua, teua...)" default="off">
       <pattern>
         <token regexp="yes">(me|te|se)v(a|es)</token>
       </pattern>
-      <message>Esteu usant possessius amb 'u'.</message>
+      <message>Esteu usant possessius amb 'u'. <suggestion>\1</suggestion></message>
       <short>EXIGEIX_POSSESSIUS_U</short>
     </rule>
   </category>
@@ -246,28 +246,28 @@
       <pattern>
         <token regexp="yes" postag="V.N.*" postag_regexp="yes">(preva|va|ca|do)ldre</token>
       </pattern>
-      <message>Variant informal.</message>
+      <message>Variant informal. <suggestion>\1</suggestion></message>
       <short>EVITA_INFINITIUS_VALDRE</short>
     </rule>
     <rule id="EXIGEIX_INFINITIUS_ALDRE" name="Usa infinitius caldre, valdre, doldre" default="off">
       <pattern>
         <token regexp="yes" postag="V.N.*" postag_regexp="yes">(preva|va|ca|do)ler</token>
       </pattern>
-      <message>Usem preferentment la terminació -ldre.</message>
+      <message>Usem preferentment la terminació -ldre. <suggestion>\1</suggestion></message>
       <short>EXIGEIX_INFINITIUS_ALDRE</short>
     </rule>
     <rule id="EXIGEIX_INFINITIUS_INDRE" name="Usa infinitius i noms en -vindre, -tindre" default="off">
       <pattern>
         <token regexp="yes">.*[tv]enirs?</token>
       </pattern>
-      <message>Usem preferentment la terminació -indre.</message>
+      <message>Usem preferentment la terminació -indre. <suggestion>\1</suggestion></message>
       <short>EXIGEIX_INFINITIUS_INDRE</short>
     </rule>
     <rule id="EXIGEIX_TENIR_VENIR" name="Exigeix infinitius venir i tenir" default="off">
       <pattern>
         <token regexp="yes">[tv]indres?</token>
       </pattern>
-      <message>Variant informal.</message>
+      <message>Variant informal. <suggestion>\1</suggestion></message>
       <short>EXIGEIX_TENIR_VENIR</short>
     </rule>
     <rule id="FINS_CAP_A_DEMOSTRATIU" name="Exigeix 'fins a/cap a' davant de demostratiu" default="off">
@@ -275,7 +275,7 @@
         <token regexp="yes">fins|cap</token>
         <token postag="DD.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Escrivim <suggestion> a</suggestion> davant de demostratiu.</message>
+      <message>Escrivim <suggestion>\1 a</suggestion> davant de demostratiu.</message>
       <short>FINS_CAP_A_DEMOSTRATIU</short>
     </rule>
     <rule id="FINS_CAP_DEMOSTRATIU" name="Exigeix 'fins/cap' davant de demostratiu" default="off">
@@ -284,7 +284,7 @@
         <token>a</token>
         <token postag="DD.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Escrivim <suggestion></suggestion> davant de demostratiu.</message>
+      <message>Escrivim <suggestion>\1</suggestion> davant de demostratiu.</message>
       <short>FINS_CAP_DEMOSTRATIU</short>
     </rule>
   </category>
@@ -311,7 +311,7 @@
           <exception regexp="yes">.+ix[ae]r|eixir|(re|sobre|des)eixir|.*cruixir</exception>
         </token>
       </pattern>
-      <message>Esteu usant terminacions verbals en -eix.</message>
+      <message>Esteu usant terminacions verbals en -eix. <suggestion>\1</suggestion></message>
       <short>EXIGEIX_VERBS_EIX</short>
     </rule>
     <rule id="EXIGEIX_VERBS_IX" name="Exigeix terminacions verbals en -ix" default="off">
@@ -320,7 +320,7 @@
           <exception regexp="yes">.+[eèé]ixer|.+eixar</exception>
         </token>
       </pattern>
-      <message>Esteu usant terminacions verbals en -ix.</message>
+      <message>Esteu usant terminacions verbals en -ix. <suggestion>\1</suggestion></message>
       <short>EXIGEIX_VERBS_IX</short>
     </rule>
   </category>
@@ -374,7 +374,7 @@
         <token>no</token>
         <token regexp="yes">recordo|record|recorde</token>
       </pattern>
-      <message>Val més usar una altra expressió. <suggestion>si no  malament</suggestion></message>
+      <message>Val més usar una altra expressió. <suggestion>si no \4 malament</suggestion></message>
       <short>SI_MAL_NO_RECORDO</short>
     </rule>
   </category>
@@ -432,7 +432,7 @@
         <token min="0" max="2" postag="DI.FS.|AQ.[FC]S." postag_regexp="yes"></token>
         <token>vida</token>
       </pattern>
-      <message>Val més usar una altra expressió. <suggestion>tenir</suggestion></message>
+      <message>Val més usar una altra expressió. <suggestion>\1</suggestion></message>
       <short>PORTAR_UNA_VIDA</short>
     </rule>
   </category>
@@ -441,7 +441,7 @@
       <pattern>
         <token inflected="yes" postag="N.*" postag_regexp="yes">tema</token>
       </pattern>
-      <message><suggestion>qüestió</suggestion></message>
+      <message><suggestion>\1</suggestion></message>
       <short>REP_TEMA</short>
     </rule>
   </category>
@@ -451,7 +451,7 @@
         <token regexp="yes" postag="V.[NG].*" postag_regexp="yes">ser|estar</token>
         <token regexp="yes" postag="V.N.*" postag_regexp="yes">\p{Ll}.*r</token>
       </pattern>
-      <message>Possible confusió. ¿Volíeu dir <suggestion></suggestion>?</message>
+      <message>Possible confusió. ¿Volíeu dir <suggestion>\2</suggestion>?</message>
       <short>SER_RETRATAR</short>
     </rule>
     <rule id="VA_A_INFINITIU" name="se'n va (a) lluitar" default="off">

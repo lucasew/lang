@@ -7,7 +7,7 @@
       <pattern>
         <token regexp="yes">[\d.,]+[%‰‱]</token>
       </pattern>
-      <message>Escolleu a opción de inserción de espazo.</message>
+      <message>Escolleu a opción de inserción de espazo. <suggestion>\1</suggestion></message>
       <short>PERCENT_WITH_SPACE</short>
     </rule>
   </category>

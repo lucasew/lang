@@ -76,7 +76,7 @@
         <token>en</token>
         <token regexp="yes">él|ell[iao]|ell[oe]s</token>
       </pattern>
-      <message>La preposición «en» contrái col pronome personal: <suggestion>n</suggestion>.</message>
+      <message>La preposición «en» contrái col pronome personal: <suggestion>n\2</suggestion>.</message>
       <short>Contraición d’«en» con pronome personal.</short>
     </rule>
     <rule id="EN_ESTI_CONTR" name="En + demostrativu">
@@ -84,7 +84,7 @@
         <token>en</token>
         <token regexp="yes">est?[iao]|est?[oe]s|aquel|aquell[iao]|aquell[oe]s</token>
       </pattern>
-      <message>La preposición «en» contrái col demostrativu: <suggestion>n</suggestion>.</message>
+      <message>La preposición «en» contrái col demostrativu: <suggestion>n\2</suggestion>.</message>
       <short>Contraición d’«en» con demostrativu.</short>
     </rule>
     <rule id="EN_UN_CONTR" name="En + artículu indefiníu">
@@ -92,7 +92,7 @@
         <token>en</token>
         <token regexp="yes">[uú]n|un[uao]|un[oe]s</token>
       </pattern>
-      <message>La preposición «en» contrái col indefiníu: <suggestion>n</suggestion>.</message>
+      <message>La preposición «en» contrái col indefiníu: <suggestion>n\2</suggestion>.</message>
       <short>Contraición d’«en» con artículu indefiníu.</short>
     </rule>
   </category>

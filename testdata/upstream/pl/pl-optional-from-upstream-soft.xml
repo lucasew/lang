@@ -32,7 +32,7 @@
           <exception regexp="yes">staro-cerkiewno-słowiańs.*|staro-wysoko-niemiec.*|koh-i-noor.*</exception>
         </token>
       </pattern>
-      <message>Prawdopodobnie to wyrażenie jest kalką z języka obcego. W języku polskim zwykle nie łączy się wielu wyrazów łącznikiem w celu uzyskania jednego wyrazu. Poprawnie: <suggestion></suggestion>.</message>
+      <message>Prawdopodobnie to wyrażenie jest kalką z języka obcego. W języku polskim zwykle nie łączy się wielu wyrazów łącznikiem w celu uzyskania jednego wyrazu. Poprawnie: <suggestion>\1</suggestion>.</message>
       <short>Błąd ortograficzny</short>
     </rule>
   </category>

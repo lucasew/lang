@@ -9,7 +9,7 @@
         <token>soñ</token>
       </pattern>
       <message>Fiildeki çıqış kelişi şöyle uyğulaşmalı: 
-          <suggestion></suggestion></message>
+          <suggestion>\1</suggestion></message>
       <short>EXODIVE_VERB_ADVB_COLLOCATION</short>
     </rule>
     <rule id="NUMERAL_PLURAL_COLLOCATION" name="Sayı cemisi uyğulaşması">
@@ -20,7 +20,7 @@
         <token postag="(NPRO|NOUN|ADJF|NUMR|PRTF):plur.*" postag_regexp="yes"></token>
       </pattern>
       <message>Sayı cemisi şöyle yazılmalı: 
-          <suggestion></suggestion></message>
+          <suggestion>\2</suggestion></message>
       <short>NUMERAL_PLURAL_COLLOCATION</short>
     </rule>
     <rule id="REASON_PARTICLE_CASE_COLLOCATION" name="Sebep edadındaki keliş uyğulaşması">
@@ -29,7 +29,7 @@
         <token>içün</token>
       </pattern>
       <message>Sebep edadındaki keliş uyğulaşmalı: 
-          <suggestion></suggestion></message>
+          <suggestion>\1</suggestion></message>
       <short>REASON_PARTICLE_CASE_COLLOCATION</short>
     </rule>
     <rule id="TENSE_PARTICLE_CASE_COLLOCATION" name="Vaqıt edadındaki keliş uyğulaşması">
@@ -38,7 +38,7 @@
         <token>evel</token>
       </pattern>
       <message>Vaqıt edadındaki keliş uyğulaşmalı: 
-          <suggestion></suggestion></message>
+          <suggestion>\1</suggestion></message>
       <short>TENSE_PARTICLE_CASE_COLLOCATION</short>
     </rule>
     <rule id="THANKFULLNESS_COLLOQUIAL" name="Minnetdarlıq forması">
@@ -47,7 +47,7 @@
         <token>sağ</token>
         <token regexp="yes">ol|oluñız</token>
       </pattern>
-      <message>Minnetdarliilq formas soyle: <suggestion></suggestion></message>
+      <message>Minnetdarliilq formas soyle: <suggestion>\1</suggestion></message>
       <short>THANKFULLNESS_COLLOQUIAL</short>
     </rule>
   </category>

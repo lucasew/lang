@@ -103,7 +103,7 @@
         <token inflected="yes" postag="V.+:PP3CNO00" postag_regexp="yes">basear</token>
         <token>em</token>
       </pattern>
-      <message>Substitua por <suggestion>ter por base</suggestion>.</message>
+      <message>Substitua por <suggestion>\1 por base</suggestion>.</message>
       <short>BASEIA-SE_EM</short>
     </rule>
     <rule id="PARAR_DE_CHATEAR" name="Parar de incomodar/importunar" default="off">
@@ -113,7 +113,7 @@
         <token regexp="yes" min="0" max="1">as?|os?|me|te|lhes?|nos|vos</token>
         <token inflected="yes">chatear</token>
       </pattern>
-      <message>Expressão informal, pondere empregar: <suggestion>incomodar</suggestion></message>
+      <message>Expressão informal, pondere empregar: <suggestion>\4</suggestion></message>
       <short>PARAR_DE_CHATEAR</short>
     </rule>
   </category>
@@ -177,7 +177,7 @@
         <token regexp="yes" min="0">[ao]s?</token>
         <token regexp="yes">(?:home(?:m|ns)|mulher(?:es)?)</token>
       </pattern>
-      <message>Possível redundância. Se não pretende realçar diferenças, é suficiente utilizar <suggestion> pessoa</suggestion>.</message>
+      <message>Possível redundância. Se não pretende realçar diferenças, é suficiente utilizar <suggestion>\1 pessoa\2</suggestion>.</message>
       <short>REDUNDANCY_MAN_AND_WOMAN</short>
     </rule>
   </category>
@@ -186,7 +186,7 @@
       <pattern>
         <token regexp="yes">[\d.,]+[%‰‱]</token>
       </pattern>
-      <message>Escolheu a opção de inserção de espaço.</message>
+      <message>Escolheu a opção de inserção de espaço. <suggestion>\1</suggestion></message>
       <short>PERCENT_WITH_SPACE</short>
     </rule>
   </category>
@@ -207,7 +207,7 @@
         <token regexp="yes" case_sensitive="yes" postag="_IS_URL">\p{Ll}.*</token>
         <token max="-1" postag="_IS_URL"></token>
       </pattern>
-      <message>Para evitar uma frase iniciada por letra minúscula, considere não começá-la diretamente com uma referência a um site de internet. <suggestion>O site \1\3</suggestion></message>
+      <message>Para evitar uma frase iniciada por letra minúscula, considere não começá-la diretamente com uma referência a um site de internet. <suggestion>O site \1\2\3</suggestion></message>
       <short>URL_INICIAL</short>
     </rule>
   </category>

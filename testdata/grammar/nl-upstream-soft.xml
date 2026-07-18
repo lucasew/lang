@@ -57,7 +57,7 @@
       <pattern>
         <token inflected="yes">douwen</token>
       </pattern>
-      <message>'Douwen' is spreektaal, in schrijftaal is <suggestion>duwen</suggestion> beter.</message>
+      <message>'Douwen' is spreektaal, in schrijftaal is <suggestion>\1</suggestion> beter.</message>
       <short>DOUWEN</short>
     </rule>
   </category>
@@ -110,7 +110,7 @@
       <pattern>
         <token inflected="yes">conditie</token>
       </pattern>
-      <message>Als u een voorwaarde bedoelt kunt u ook beter <suggestion>voorwaarde</suggestion> schrijven.</message>
+      <message>Als u een voorwaarde bedoelt kunt u ook beter <suggestion>\1</suggestion> schrijven.</message>
       <short>CONDITIE</short>
     </rule>
   </category>
@@ -128,7 +128,7 @@
         <token postag="BNW:STL:ONV|BYW.*" postag_regexp="yes"></token>
         <token regexp="yes" postag="SENT_END">[.!]</token>
       </pattern>
-      <message>Dit is vast de verkeerde vorm van het werkwoord.</message>
+      <message>Dit is vast de verkeerde vorm van het werkwoord. <suggestion>\3</suggestion></message>
       <short>FULL_SENTENCE_001</short>
     </rule>
   </category>

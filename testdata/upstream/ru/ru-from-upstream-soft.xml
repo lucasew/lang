@@ -91,7 +91,7 @@
         <token inflected="yes">храбрый</token>
         <token regexp="yes">мысль|решение|идея</token>
       </pattern>
-      <message>Лингвистическая ошибка: <suggestion> </suggestion>?</message>
+      <message>Лингвистическая ошибка: <suggestion>\1 \2</suggestion>?</message>
       <short>Лингвистическая ошибка</short>
     </rule>
     <rule id="Logical_biographia_gizni" name="Логические ошибки: «биография жизни»">
@@ -116,7 +116,7 @@
         <token inflected="yes">высиживать</token>
         <token inflected="yes">яйцо</token>
       </pattern>
-      <message>Логическая ошибка: <suggestion>  </suggestion>.</message>
+      <message>Логическая ошибка: <suggestion>\1 \2 \3</suggestion>.</message>
       <short>Логическая ошибка</short>
     </rule>
     <rule id="Logical_prignul_s_parashuta" name="Логические ошибки: «прыгать с парашюта»">
@@ -266,7 +266,7 @@
         <token inflected="yes">местный</token>
         <token inflected="yes">абориген</token>
       </pattern>
-      <message>Языковая избыточность: <suggestion></suggestion>.</message>
+      <message>Языковая избыточность: <suggestion>\2</suggestion>.</message>
       <short>Тавтология</short>
     </rule>
     <rule id="Tavtology_nebolshaja_gorstka" name="Тавтология: «небольшая горстка»">
@@ -366,7 +366,7 @@
         <token>сортименте</token>
         <token>.</token>
       </pattern>
-      <message>Опечатка: <suggestion> ассортименте.</suggestion></message>
+      <message>Опечатка: <suggestion>\1 ассортименте.</suggestion></message>
       <short>Опечатка</short>
     </rule>
     <rule id="WRONG_INN" name="Некорректный ИНН" default="on">
@@ -383,7 +383,7 @@
         <token regexp="yes">январь|февраль|март|апрель|май|июнь|июль|август|сентябрь|октябрь|ноябрь|декабрь|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|год</token>
         <token regexp="yes">200\d\d</token>
       </pattern>
-      <message>Действительно \2? или <suggestion> </suggestion>?</message>
+      <message>Действительно \2? или <suggestion>\1 \2</suggestion>?</message>
       <short>Опечатка?</short>
     </rule>
     <rule id="ZASEDANIJE_ZAJEDANIJE" name="Логические ошибки: «заседание» или «заедание»">
@@ -391,7 +391,7 @@
         <token inflected="yes">заедание</token>
         <token inflected="no">суда</token>
       </pattern>
-      <message>Имелось в виду: <suggestion> </suggestion>?</message>
+      <message>Имелось в виду: <suggestion>\1 \2</suggestion>?</message>
       <short>Логическая ошибка</short>
     </rule>
     <rule id="razvevatsja_razvivatsja" name="Опечатка: «развеваться» или «развиваться»">
@@ -399,7 +399,7 @@
         <token regexp="yes" inflected="yes" skip="2">развеваться|развестись</token>
         <token regexp="yes">болезнь|недуг|заболевание|опухоль</token>
       </pattern>
-      <message>Опечатка: <suggestion> </suggestion></message>
+      <message>Опечатка: <suggestion>\1 \2</suggestion></message>
       <short>Опечатка</short>
     </rule>
     <rule id="sovestnij_sovmestnij" name="Опечатка: «совестный» или «совместный»">
@@ -407,7 +407,7 @@
         <token inflected="yes">совестный</token>
         <token regexp="yes" inflected="yes">бизнес|предприятие</token>
       </pattern>
-      <message>Опечатка: <suggestion> </suggestion></message>
+      <message>Опечатка: <suggestion>\1 \2</suggestion></message>
       <short>Опечатка</short>
     </rule>
     <rule id="translate_carreer_diplomat" name="Ошибки перевода «карьерный дипломат»">
@@ -415,7 +415,7 @@
         <token inflected="yes">карьерный</token>
         <token inflected="yes">дипломат</token>
       </pattern>
-      <message>Ошибка перевода: <suggestion> </suggestion>?</message>
+      <message>Ошибка перевода: <suggestion>\1 \2</suggestion>?</message>
       <short>Ошибка перевода</short>
     </rule>
     <rule id="zakonchit_shkolu" name="Опечатка: «закончить или окончить»">
@@ -423,7 +423,7 @@
         <token inflected="yes">закончить</token>
         <token regexp="yes">школу|институт|университет|вуз|курсы|техникум|пту|училище|академию</token>
       </pattern>
-      <message>Опечатка: <suggestion> </suggestion></message>
+      <message>Опечатка: <suggestion>\1 \2</suggestion></message>
       <short>Опечатка</short>
     </rule>
   </category>
@@ -442,7 +442,7 @@
         <token>уж</token>
         <token>то</token>
       </pattern>
-      <message>Пишется слитно: <suggestion></suggestion></message>
+      <message>Пишется слитно: <suggestion>\1\2\3</suggestion></message>
       <short>Слитно</short>
     </rule>
     <rule id="NI_CHTO_NE" name="Словосочетания: «ничто не»" default="on">
@@ -587,7 +587,7 @@
         <token regexp="yes">днём|днем</token>
         <token>рожденья</token>
       </pattern>
-      <message>Просторечие. Верно: <suggestion>  рождения</suggestion>.</message>
+      <message>Просторечие. Верно: <suggestion>\1 \2 рождения</suggestion>.</message>
       <short>Просторечие</short>
     </rule>
   </category>
@@ -600,7 +600,7 @@
         <token>,</token>
         <token>как</token>
       </pattern>
-      <message>Запятая не нужна: <suggestion>  </suggestion></message>
+      <message>Запятая не нужна: <suggestion>\2 \3 \5</suggestion></message>
       <short>Запятая не нужна</short>
     </rule>
     <rule id="drug_s_drugom" name="Словосочетание: «равноправны друг c другом»" default="on">
@@ -638,7 +638,7 @@
         <token regexp="yes">решение|постановление|определение</token>
         <token postag="NN:.*:Sin:R" postag_regexp="yes"></token>
       </pattern>
-      <message>Требуется родительный падеж: <suggestion>   </suggestion></message>
+      <message>Требуется родительный падеж: <suggestion>\1 \2 \3 \4</suggestion></message>
       <short>Требуется родительный падеж</short>
     </rule>
     <rule id="PREP_NA_VS_V" name="Предлог «на» или предлог «в» и существительное" default="on">
@@ -646,7 +646,7 @@
         <token>в</token>
         <token regexp="yes">балет|заводе|Кавказ|концерт|фабрике|факультете</token>
       </pattern>
-      <message>Требуется предлог «на» вместо предлога «в»: <suggestion>на </suggestion></message>
+      <message>Требуется предлог «на» вместо предлога «в»: <suggestion>на \2</suggestion></message>
       <short>Требуется предлог «на»</short>
     </rule>
     <rule id="PREP_V_VS_NA" name="Предлог «в» или предлог «на» и существительное" default="on">
@@ -654,7 +654,7 @@
         <token>на</token>
         <token regexp="yes">институте|кино|Крым|Крыму|мастерской|спортзале|театре|техникуме|университете|цехе|цирке|школе|экспедицию</token>
       </pattern>
-      <message>Требуется предлог «в» вместо предлога «на»: <suggestion>в </suggestion></message>
+      <message>Требуется предлог «в» вместо предлога «на»: <suggestion>в \2</suggestion></message>
       <short>Требуется предлог «в»</short>
     </rule>
     <rule id="V_TECHENII" name="Словосочетание: «в течении реки»">
@@ -671,7 +671,7 @@
         <token regexp="yes">немного|слегка|чуть-чуть</token>
         <token regexp="yes" postag="ADJ:Short:.*" postag_regexp="yes">(.*)(оват)</token>
       </pattern>
-      <message>Грамматическая ошибка: <suggestion></suggestion>.</message>
+      <message>Грамматическая ошибка: <suggestion>\2</suggestion>.</message>
       <short>Грамматическая ошибка</short>
     </rule>
     <rule id="grammar_poshel_k" name="Грамматика: «пошёл» + ...">
@@ -687,7 +687,7 @@
         <token regexp="yes" inflected="yes">летать|плыть</token>
         <token regexp="yes">лодкой|вертолётом|кораблём|самолётом</token>
       </pattern>
-      <message>Существительное «\1» предполагает употребление зависимого слова в предложном падеже: <suggestion> на </suggestion></message>
+      <message>Существительное «\1» предполагает употребление зависимого слова в предложном падеже: <suggestion>\1 на \2</suggestion></message>
       <short>Требуется предложный падеж</short>
     </rule>
     <rule id="prosit_proshenija" name="Выражение «просить прощения»">

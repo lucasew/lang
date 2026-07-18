@@ -99,7 +99,7 @@
         <token postag="Cop.*" postag_regexp="yes">ab</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="ACH_AN_ECLTAG" name="ach an ECL">
@@ -108,7 +108,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="AG_FAIL_BAIS" name="ag fáil báis">
@@ -126,7 +126,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="AMHAIL_AN_MBEAN" name="amhail an mbean">
@@ -135,7 +135,7 @@
         <token>an</token>
         <token postag="(?:C[UMC]:)?Noun:Fem:Com:Sg:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="ARBH_UNLENITEDF" name="arbh Unlenited-F">
@@ -143,7 +143,7 @@
         <token>arbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="A_CLOG" name="a clog">
@@ -167,7 +167,7 @@
         <token>cárbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="CILL_MANTAIN" name="Cill Mantáin">
@@ -199,7 +199,7 @@
         <token regexp="yes">g?ch?os</token>
         <token regexp="yes">bata|crainn|maide|móna|plaistigh</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="DARBH_UNLENITEDF" name="darbh Unlenited-F">
@@ -207,7 +207,7 @@
         <token postag="Cop.*" postag_regexp="yes">darbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="FAOINARBH_UNLENITEDF" name="faoinarbh Unlenited-F">
@@ -215,7 +215,7 @@
         <token>faoinarbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="FAOINAR_UNLENITEDF" name="faoinar Unlenited-F">
@@ -223,7 +223,7 @@
         <token>faoinar</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="GAN_AN_ECLTAG" name="gan an ECL">
@@ -232,7 +232,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="GO_DTI_AN_ECLTAG" name="go dtí an ECL">
@@ -242,7 +242,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\4</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="GUALAINN_BAGUIN" name="gualainn bagúin">
@@ -250,7 +250,7 @@
         <token regexp="yes">n?gh?ualainn</token>
         <token regexp="yes">bagúin|caoireola|mairteola</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="GURBH_UNLENITEDF" name="gurbh Unlenited-F">
@@ -258,7 +258,7 @@
         <token>gurbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="IDIR_AN_ECLTAG" name="idir an ECL">
@@ -267,7 +267,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="INARBH_UNLENITEDF" name="inarbh Unlenited-F">
@@ -275,7 +275,7 @@
         <token>inarbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="LENARBH_UNLENITEDF" name="lenarbh Unlenited-F">
@@ -283,7 +283,7 @@
         <token>lenarbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="MAR_AN_ECLTAG" name="mar an ECL">
@@ -292,7 +292,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="MHIC_CAPITALUNLENITEDNOTCG" name="Mhic CAPITALUNLENITEDNOTCG">
@@ -300,7 +300,7 @@
         <token regexp="yes">M[Hh][Ii][CcGg]</token>
         <token regexp="yes">[BDFMPT][^Hh].*|S[lnraeiouáéíóúLNRAEIOUÁÉÍÓÚ].*|bhF.*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="MUIN_MAIRC" name="muin mairc">
@@ -317,7 +317,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="MURARBH_UNLENITEDF" name="murarbh Unlenited-F">
@@ -325,7 +325,7 @@
         <token>murarbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="NARBH_UNLENITEDF" name="nárbh Unlenited-F">
@@ -333,7 +333,7 @@
         <token>nárbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="NA_AN_ECLTAG" name="ná an ECL">
@@ -342,7 +342,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="NIORBH_UNLENITEDF" name="níorbh Unlenited-F">
@@ -350,7 +350,7 @@
         <token>níorbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="ONARBH_UNLENITEDF" name="ónarbh Unlenited-F">
@@ -358,7 +358,7 @@
         <token>ónarbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="SAN_UNLENITEDF" name="san Unlenited-F">
@@ -366,7 +366,7 @@
         <token>san</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="SA_UNLENITEDBCFGMP" name="sa UNLENITEDBCFGMP">
@@ -374,7 +374,7 @@
         <token>sa</token>
         <token regexp="yes">(?:[bcfgmp][^h'`’]|bhf).*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="SEACHAS_AN_ECLTAG" name="seachas an ECL">
@@ -383,7 +383,7 @@
         <token>an</token>
         <token postag=".*Noun.*Fem.*:Ecl" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\3</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="SULARBH_UNLENITEDF" name="sularbh Unlenited-F">
@@ -391,7 +391,7 @@
         <token>sularbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="TRINARBH_UNLENITEDF" name="trínarbh Unlenited-F">
@@ -399,7 +399,7 @@
         <token>trínarbh</token>
         <token regexp="yes">f[aeiouáéíóú].*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
     <rule id="UM_UNLENITEDCDFGST" name="um UNLENITEDCDFGST">
@@ -407,7 +407,7 @@
         <token>um</token>
         <token regexp="yes">(?:[cdfgt][^h'`’]|s[lnraeiouáéíóú]|bhf).*</token>
       </pattern>
-      <message>Séimhiú ar iarraidh: <suggestion></suggestion></message>
+      <message>Séimhiú ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Séimhiú ar iarraidh</short>
     </rule>
   </category>
@@ -1255,14 +1255,14 @@
       <pattern>
         <token regexp="yes">h?air(ea|i)mh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="AIRITHE" name="airithe">
       <pattern>
         <token regexp="yes">h?airithe</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="AN_CHEAD_N" name="an chead N">
@@ -1279,7 +1279,7 @@
         <token>an</token>
         <token regexp="yes">th?ráigh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\2</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="AR_FUAID" name="ar fuaid">
@@ -1310,7 +1310,7 @@
         <token postag=".*Art.*|.*Poss.*" postag_regexp="yes"></token>
         <token regexp="yes">g?ch?rádh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\2</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="A_FHAIL" name="á fhail">
@@ -1325,7 +1325,7 @@
       <pattern>
         <token regexp="yes">m?bh?aise</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="BAS" name="bas">
@@ -1339,42 +1339,42 @@
       <pattern>
         <token regexp="yes">m?bh?asa</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="BEANNOG" name="binneog">
       <pattern>
         <token regexp="yes">m?bh?eannóg</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="BEATHACH" name="beathach">
       <pattern>
         <token regexp="yes">bh?eathach</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="BRUGHADH" name="brughadh">
       <pattern>
         <token regexp="yes">m?bh?rughadh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CARTA" name="carta">
       <pattern>
         <token regexp="yes">g?ch?arta</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CEANTRACHA" name="ceantracha">
       <pattern>
         <token regexp="yes">g?ch?eantracha</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CEARD_COP" name="ceard COP">
@@ -1397,35 +1397,35 @@
       <pattern>
         <token regexp="yes">g?ch?ineadh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CLÁRACHA" name="cláracha">
       <pattern>
         <token regexp="yes">ch?láracha</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CODACH" name="codach">
       <pattern>
         <token regexp="yes">ch?odach</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="COLANN" name="colann">
       <pattern>
         <token regexp="yes">g?ch?olann</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="CONACH" name="conach">
       <pattern>
         <token regexp="yes">g?ch?onach</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="COP_CHOIR" name="COP choir">
@@ -1448,49 +1448,49 @@
       <pattern>
         <token regexp="yes">g?ch?unta</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DALTA" name="dálta">
       <pattern>
         <token regexp="yes">dh?álta</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DEIRE" name="deire">
       <pattern>
         <token regexp="yes">n?dh?eire</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DILEAS" name="díleas">
       <pattern>
         <token regexp="yes">dh?íleas</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DRAMA" name="drama">
       <pattern>
         <token regexp="yes">n?dh?rama</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DREOLAN" name="dreolán">
       <pattern>
         <token regexp="yes">n?dh?reolán</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="DRUD" name="drud">
       <pattern>
         <token regexp="yes">n?dh?rud</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="EAGOSUL" name="éagosúl">
@@ -1520,70 +1520,70 @@
       <pattern>
         <token regexp="yes">(bh)?fh?alaing</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FATA" name="fata">
       <pattern>
         <token inflected="yes">fata</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion>práta</suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FATHACH" name="fáthach">
       <pattern>
         <token regexp="yes">fh?áthach</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FIACHAIL" name="fiacháil">
       <pattern>
         <token regexp="yes">fh?iacháil</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FINI" name="finí">
       <pattern>
         <token regexp="yes">fh?iní</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FIONNTAR" name="fionntar">
       <pattern>
         <token regexp="yes">(bh)?fh?ionntar</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FIRINNE" name="firinne">
       <pattern>
         <token regexp="yes">fh?irinne</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FOCLAI" name="foclaí">
       <pattern>
         <token regexp="yes">fh?oclaí</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FORAIN" name="foráin">
       <pattern>
         <token regexp="yes">fh?oráin</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FORAN" name="forán">
       <pattern>
         <token regexp="yes">fh?orán</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="FPREP_AIT" name="ait">
@@ -1606,49 +1606,49 @@
       <pattern>
         <token regexp="yes">n?gh?airbhín</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="GAOITH" name="gaoith">
       <pattern>
         <token regexp="yes">n?gh?aoith</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="GOIRE" name="goire">
       <pattern>
         <token regexp="yes">n?gh?oire</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="GRADH" name="grádh">
       <pattern>
         <token regexp="yes">n?gh?rádh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="GREAS" name="greas">
       <pattern>
         <token regexp="yes">n?gh?reas</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="LEITREACHA" name="leitreach">
       <pattern>
         <token regexp="yes">leitreacha?</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="MAISTRI" name="maistrí">
       <pattern>
         <token regexp="yes">mh?aistrí</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="MARA_VERB" name="mara VERB">
@@ -1663,21 +1663,21 @@
       <pattern>
         <token regexp="yes">mh?éan</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="MUNADH" name="múnadh">
       <pattern>
         <token regexp="yes">mh?únadh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="MUSCAIL" name="muscail">
       <pattern>
         <token regexp="yes">mh?uscail</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="OBANN" name="obann">
@@ -1729,14 +1729,14 @@
       <pattern>
         <token regexp="yes">b?ph?láigh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="POIRE" name="póire">
       <pattern>
         <token regexp="yes">b?ph?óire</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="PREP_ARRACHTACH" name="PREP arrachtach">
@@ -1744,7 +1744,7 @@
         <token postag=".*Prep.*|.*Pron.*" postag_regexp="yes"></token>
         <token regexp="yes">h?arrachtach</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\2</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="PREP_GHNACH" name="PREP ghnách">
@@ -1790,7 +1790,7 @@
       <pattern>
         <token regexp="yes">sh?oláthraigh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="T-ASTAR" name="t-astar">
@@ -1804,28 +1804,28 @@
       <pattern>
         <token regexp="yes">th?arrach?</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="TOISEACH" name="toiseach">
       <pattern>
         <token regexp="yes">d?th?oiseach</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="TOISIGH" name="toisigh">
       <pattern>
         <token regexp="yes">th?oisigh</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="TOITHE" name="toithe">
       <pattern>
         <token regexp="yes">d?th?oithe</token>
       </pattern>
-      <message>Focal ceart ach tá <suggestion></suggestion> níos coitianta.</message>
+      <message>Focal ceart ach tá <suggestion>\1</suggestion> níos coitianta.</message>
       <short>Neamhchoitianta</short>
     </rule>
     <rule id="TRAIGH" name="tráigh">
@@ -2512,7 +2512,7 @@
         <token>is</token>
         <token>críoch</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="BEARLA_EAGAIR" name="béarla eagair">
@@ -2520,7 +2520,7 @@
         <token regexp="yes">m?bh?éarla</token>
         <token>eagair</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="BHEAS_P" name="bhéas P">
@@ -2537,7 +2537,7 @@
         <token>os</token>
         <token>cionn</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="BUN_OS_TOLL" name="bun os toll">
@@ -2546,7 +2546,7 @@
         <token>os</token>
         <token>toll</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="CARNAN_CAISIL" name="carnán caisil">
@@ -2554,7 +2554,7 @@
         <token regexp="yes">g?ch?arnán</token>
         <token>caisil</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion> caisil</suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1 caisil</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="CARR_MOGAIL" name="carr mogail">
@@ -2562,7 +2562,7 @@
         <token regexp="yes">g?ch?arr</token>
         <token>mogail</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="CA_MEID" name="cá méid">
@@ -2578,7 +2578,7 @@
         <token regexp="yes">g?ch?eithre</token>
         <token regexp="yes">ch?earna</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion> chearn</suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1 chearn</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="CE_MEID" name="cé méid">
@@ -2594,7 +2594,7 @@
         <token regexp="yes">g?ch?uan</token>
         <token>mara</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion> mara</suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1 mara</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="DALLA_MULLOG" name="dalla mullóg">
@@ -2602,7 +2602,7 @@
         <token regexp="yes">dh?alla</token>
         <token>mullóg</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="DALL_NA_MULLOG" name="dall na mullóg">
@@ -2611,7 +2611,7 @@
         <token>na</token>
         <token>mullóg</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="DAR" name="d'ár">
@@ -2627,7 +2627,7 @@
       <pattern>
         <token regexp="yes">dh?athannaí</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="DA_MEID" name="dá méid">
@@ -2660,7 +2660,7 @@
         <token>na</token>
         <token>fáilte</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion> na fáilte</suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1 na fáilte</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="FUARLACH_CROI" name="fuarlach croí">
@@ -2668,7 +2668,7 @@
         <token regexp="yes">fh?uarlach</token>
         <token>croí</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion> croí</suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1 croí</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="FUATH_FIONA" name="fuath fíona">
@@ -2676,7 +2676,7 @@
         <token regexp="yes">fh?uath</token>
         <token>fíona</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="GHA_CEANNACH" name="ghá ceannach">
@@ -2715,7 +2715,7 @@
       <pattern>
         <token regexp="yes">n?gh?naithe</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="IN_UMHAL" name="in umhal">
@@ -2767,7 +2767,7 @@
       <pattern>
         <token regexp="yes">mh?éad</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="MURAB" name="murab'">
@@ -2806,14 +2806,14 @@
       <pattern>
         <token regexp="yes">[1-9][0-9]*adh</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="NUM_THSTNDRD" name="-th">
       <pattern>
         <token regexp="yes">[1-9][0-9]*(?:st|th|[rn]d)</token>
       </pattern>
-      <message>An <suggestion></suggestion> a bhí i gceist agat?</message>
+      <message>An <suggestion>\1</suggestion> a bhí i gceist agat?</message>
       <short>NUM_THSTNDRD</short>
     </rule>
     <rule id="PLE_RACA" name="plé ráca">
@@ -2821,7 +2821,7 @@
         <token regexp="yes">b?ph?lé</token>
         <token>ráca</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="PLE_SEAM" name="plé seam">
@@ -2829,7 +2829,7 @@
         <token regexp="yes">b?ph?lé</token>
         <token>seam</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="SAIL_CHUACH" name="sail chuach">
@@ -2837,7 +2837,7 @@
         <token regexp="yes">sh?ail</token>
         <token>chuach</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="SAIL_CHUAICHE" name="sail chuaiche">
@@ -2845,7 +2845,7 @@
         <token regexp="yes">sh?ail</token>
         <token>chuaiche</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="SHAITH_PRONOUN" name="sháith (mé|sí|sibh|tú)">
@@ -2861,7 +2861,7 @@
         <token regexp="yes">sh?ú</token>
         <token>salúin</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion> talún</suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1 talún</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="THAR_EIS" name="thar éis">
@@ -2877,7 +2877,7 @@
         <token regexp="yes">d?th?ine</token>
         <token>aoil</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="TONNA_AP" name="tonna AP">
@@ -2893,7 +2893,7 @@
         <token regexp="yes">d?th?uilleamh</token>
         <token>buí</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="V_GOIR" name="V goir">
@@ -6140,14 +6140,14 @@
       <pattern>
         <token regexp="yes">m?bh?óín</token>
       </pattern>
-      <message>Ní úsáidtear an focal seo ach san abairtín <suggestion> Dé</suggestion> de ghnáth</message>
+      <message>Ní úsáidtear an focal seo ach san abairtín <suggestion>\1 Dé</suggestion> de ghnáth</message>
       <short>In abairt</short>
     </rule>
     <rule id="BRIN" name="brín">
       <pattern>
         <token regexp="yes">m?bh?rín</token>
       </pattern>
-      <message>Ní úsáidtear an focal seo ach san abairtín <suggestion> óg</suggestion> de ghnáth</message>
+      <message>Ní úsáidtear an focal seo ach san abairtín <suggestion>\1 óg</suggestion> de ghnáth</message>
       <short>In abairt</short>
     </rule>
     <rule id="BUAILEAM" name="buaileam">
@@ -6203,7 +6203,7 @@
       <pattern>
         <token regexp="yes">n?dh?allach</token>
       </pattern>
-      <message>Ní úsáidtear an focal seo ach san abairtín <suggestion> dubh</suggestion> de ghnáth</message>
+      <message>Ní úsáidtear an focal seo ach san abairtín <suggestion>\1 dubh</suggestion> de ghnáth</message>
       <short>In abairt</short>
     </rule>
     <rule id="DEANAI" name="déanaí">
@@ -6590,7 +6590,7 @@
         <token>ach</token>
         <token postag=".*Noun.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="ADHARC_NOUN" name="adharc NOUN">
@@ -6598,7 +6598,7 @@
         <token regexp="yes">h?adharc</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="AG_FEMVN_NGlenited" name="ag VN GEN">
@@ -6607,7 +6607,7 @@
         <token regexp="yes" postag=".*Noun:Fem:Com:Sg.*|.*Verbal:Noun.*" postag_regexp="yes">(?:.+i[lnr]t|.+áil|breith|foghlaim|iarraidh|obair|seilg)</token>
         <token regexp="yes" postag=".*Noun:(?:Fem|Masc):Gen:(?:Sg|Pl).*" postag_regexp="yes">(?:[cdfgmpst]h|bh[^fF]).+</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\3</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="AON_LENDST" name="aon thaobh">
@@ -6615,7 +6615,7 @@
         <token regexp="yes">h?aon</token>
         <token regexp="yes" postag=".*Noun.*" postag_regexp="yes">[dst]h.+</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="A_CEAD_NOUN" name="a céad NOUN">
@@ -6624,7 +6624,7 @@
         <token>céad</token>
         <token regexp="yes" postag=".*Noun.*Len.*" postag_regexp="yes">[dst]h.+</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\3</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CAOIRIGH_ADJ" name="caoirigh ADJ">
@@ -6632,7 +6632,7 @@
         <token regexp="yes">g?caoirigh</token>
         <token postag="Adj:Com:Slender:Pl:Len"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CA_NOUN" name="cá NOUN">
@@ -6640,7 +6640,7 @@
         <token>cá</token>
         <token postag=".*Noun.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CEITHRE_BHLIANA" name="ceithre bhliana">
@@ -6648,7 +6648,7 @@
         <token regexp="yes">g?ceithre</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CHAOIRIGH_ADJ" name="caoirigh ADJ">
@@ -6656,7 +6656,7 @@
         <token>chaoirigh</token>
         <token postag="Adj:Com:Slender:Pl:Len"></token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="CHEITHRE_BHLIANA" name="cheithre bhliana">
@@ -6664,7 +6664,7 @@
         <token>cheithre</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="CHLUAS_NOUN" name="cluas NOUN">
@@ -6672,7 +6672,7 @@
         <token>chluas</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="CHNAMH_NOUN" name="cnámh NOUN">
@@ -6680,7 +6680,7 @@
         <token>chnámh</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="CHUIG_BHLIANA" name="chúig bhliana">
@@ -6688,7 +6688,7 @@
         <token>chúig</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="CINN_DEAG" name="cinn déag">
@@ -6704,7 +6704,7 @@
         <token regexp="yes">g?cluas</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CNAMH_NOUN" name="cnámh NOUN">
@@ -6712,7 +6712,7 @@
         <token regexp="yes">g?cnámh</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="COLAINN_BHAID" name="colainn bháid">
@@ -6728,7 +6728,7 @@
         <token regexp="yes">g?cos</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CRUB_NOUN" name="crúb NOUN">
@@ -6736,7 +6736,7 @@
         <token regexp="yes">g?ch?rúb</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="CUIG_BHLIANA" name="cúig bhliana">
@@ -6744,7 +6744,7 @@
         <token regexp="yes">g?cúig</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="FAOIN_DHA" name="faoin dhá">
@@ -6768,7 +6768,7 @@
         <token>nach</token>
         <token postag=".*Noun.*Len.*|.*Adj.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="NFCSdentals_NGdots" name="trí bhliana">
@@ -6776,7 +6776,7 @@
         <token regexp="yes" postag=".*Noun:Fem:Com:Sg.*" postag_regexp="yes">.+[DdLlNnSsTt]</token>
         <token regexp="yes" postag=".*Noun.*Gen.*:Len.*" postag_regexp="yes">[dst]h.+</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="NIC_LENITEDCAPCG" name="Nic LENITEDCAPCG">
@@ -6784,7 +6784,7 @@
         <token regexp="yes" case_sensitive="yes">Ni[cg]</token>
         <token regexp="yes" case_sensitive="yes" postag=".*Noun.*" postag_regexp="yes">[CG]h.+</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="SE_BHLIANA" name="sé bhliana">
@@ -6792,7 +6792,7 @@
         <token>sé</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="SHE_BHLIANA" name="shé bhliana">
@@ -6800,7 +6800,7 @@
         <token>shé</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="SHRON_NOUN" name="shrón NOUN">
@@ -6808,7 +6808,7 @@
         <token>shrón</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>SHRON_NOUN</short>
     </rule>
     <rule id="SRON_NOUN" name="srón NOUN">
@@ -6816,7 +6816,7 @@
         <token regexp="yes">t?srón</token>
         <token postag=".*Noun.*Gen.*Len.*" postag_regexp="yes"></token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="THRI_BHLIANA" name="thrí bhliana">
@@ -6824,7 +6824,7 @@
         <token>thrí</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Ní gá leis an dara séimhiú: <suggestion></suggestion></message>
+      <message>Ní gá leis an dara séimhiú: <suggestion>\2</suggestion></message>
       <short>Ní gá leis an dara séimhiú</short>
     </rule>
     <rule id="TRI_BHLIANA" name="trí bhliana">
@@ -6832,7 +6832,7 @@
         <token regexp="yes">d?trí</token>
         <token regexp="yes">bhliana|chinn|chloigne|chuarta|fhichid|phingine|sheachtaine|throithe</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
     <rule id="UM_LENBMP" name="um bhaile">
@@ -6840,7 +6840,7 @@
         <token>um</token>
         <token regexp="yes" postag=".*Noun.*" postag_regexp="yes">(?:[mp]h|bh[^f]).+</token>
       </pattern>
-      <message>Séimhiú gan ghá: <suggestion></suggestion></message>
+      <message>Séimhiú gan ghá: <suggestion>\2</suggestion></message>
       <short>Séimhiú gan ghá</short>
     </rule>
   </category>
@@ -6850,7 +6850,7 @@
         <token>an</token>
         <token>Sionainn</token>
       </pattern>
-      <message>Réamhlitir ‘t’ ar iarraidh: <suggestion></suggestion></message>
+      <message>Réamhlitir ‘t’ ar iarraidh: <suggestion>\2</suggestion></message>
       <short>Réamhlitir ‘t’ ar iarraidh</short>
     </rule>
   </category>
@@ -7686,7 +7686,7 @@
         <token regexp="yes">(?:a[grs]|chuig|d[eo]|faoi|gan|go|le|ó|in?|roimh|thar|tríd?|um)</token>
         <token regexp="yes">(?:[nh])?Éire(?:ann)?</token>
       </pattern>
-      <message>Ba chóir duit <suggestion></suggestion> a scríobh.</message>
+      <message>Ba chóir duit <suggestion>\2</suggestion> a scríobh.</message>
       <short>DATIVEPREP_EIRE</short>
     </rule>
     <rule id="DE_AR" name="de ár">
@@ -7822,7 +7822,7 @@
         <token regexp="yes" postag="Prep:Art:Sg">(?:d[eo]n|san?|faoin|ón)</token>
         <token postag=".*Noun:(Masc|Fem):(Com|Gen)(?::Strong)?:Pl(?::DefArt)?" postag_regexp="yes"></token>
       </pattern>
-      <message>Ba chóir duit <suggestion> na</suggestion> a scríobh.</message>
+      <message>Ba chóir duit <suggestion>\1 na</suggestion> a scríobh.</message>
       <short>FUSEDPREP_NP</short>
     </rule>
     <rule id="FUSEDPREP_TRI" name="FUSEDPREP trí">
@@ -7830,7 +7830,7 @@
         <token regexp="yes">(?:d[eo]n|san?|faoin|ón)</token>
         <token regexp="yes">(th?rí|ch?eithre|ch?úig|sh?é|sh?eacht|ocht|naoi|dh?eich)</token>
       </pattern>
-      <message>Ba chóir duit <suggestion> na</suggestion> a scríobh.</message>
+      <message>Ba chóir duit <suggestion>\1 na</suggestion> a scríobh.</message>
       <short>FUSEDPREP_TRI</short>
     </rule>
     <rule id="GO_AN" name="go an">
@@ -8007,7 +8007,7 @@
         <token>i</token>
         <token regexp="yes">n(?:-[aeiouáéíóú]).*</token>
       </pattern>
-      <message>Ba chóir duit <suggestion>in </suggestion> a scríobh.</message>
+      <message>Ba chóir duit <suggestion>in \2</suggestion> a scríobh.</message>
       <short>I_ECLIPSEDVOWEL</short>
     </rule>
     <rule id="I_INITIALVOWEL" name="i oifig">
@@ -8393,7 +8393,7 @@
         <token>sa</token>
         <token regexp="yes">n(?:-[aeiouáéíóú]).*</token>
       </pattern>
-      <message>Ba chóir duit <suggestion>san </suggestion> a scríobh.</message>
+      <message>Ba chóir duit <suggestion>san \2</suggestion> a scríobh.</message>
       <short>SA_ECLIPSEDVOWEL</short>
     </rule>
     <rule id="SA_INITIALVOWELORF" name="sa oighear">
@@ -8638,7 +8638,7 @@
         <token>Dé</token>
         <token>Aoine</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
     <rule id="A_AON" name="a aon">
@@ -8646,7 +8646,7 @@
         <token>a</token>
         <token regexp="yes">aon|ochtó|ocht</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
     <rule id="CA_NOUNVOWEL" name="cá áit">
@@ -8654,7 +8654,7 @@
         <token>cá</token>
         <token regexp="yes" postag=".*Noun.*" postag_regexp="yes">[aáeéiíoóuú].*</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
     <rule id="CE_PRONVOWEL" name="cé iad">
@@ -8662,7 +8662,7 @@
         <token>cé</token>
         <token regexp="yes" postag=".*Pron.*" postag_regexp="yes">[aáeéiíoóuú].*</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
     <rule id="DARA_INITIALVOWEL" name="dara alt">
@@ -8670,7 +8670,7 @@
         <token>dara</token>
         <token regexp="yes" postag=".*Noun.*" postag_regexp="yes">[aeiouáéíóú].*</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
     <rule id="DIGORD_INITIALVOWEL" name="3ú alt">
@@ -8678,7 +8678,7 @@
         <token postag="Num:Dig:Ord"></token>
         <token regexp="yes" postag=".*Noun.*" postag_regexp="yes">[aeiouáéíóú].*</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
     <rule id="ORD_INITIALVOWEL" name="tríú alt">
@@ -8686,7 +8686,7 @@
         <token postag="Num:Ord"></token>
         <token regexp="yes" postag=".*Noun.*" postag_regexp="yes">[aeiouáéíóú].*</token>
       </pattern>
-      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion></suggestion>.</message>
+      <message>Réamhlitir ‘h’ ar iarraidh: <suggestion>\2</suggestion>.</message>
       <short>Réamhlitir ‘h’ ar iarraidh</short>
     </rule>
   </category>
@@ -8897,7 +8897,7 @@
       <pattern>
         <token inflected="yes">blagadóir</token>
       </pattern>
-      <message>An raibh <suggestion>blagálaí</suggestion> i gceist agat?</message>
+      <message>An raibh <suggestion>\1</suggestion> i gceist agat?</message>
       <short>BLAGADOIR</short>
     </rule>
   </category>
@@ -8906,14 +8906,14 @@
       <pattern>
         <token regexp="yes">m?Bh?reatain|m?Bh?ruiséil|m?Bh?eilg|m?Bh?ablóin|m?Bh?riotáin|m?Bh?rasaíl</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\1</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
     <rule id="BREATAINE" name="Breataine">
       <pattern>
         <token regexp="yes">m?Bh?reataine|m?Bh?ruiséile|m?Bh?eilge|m?Bh?ablóine|m?Bh?riotáine|m?Bh?rasaíle</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\1</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
   </category>
@@ -8922,14 +8922,14 @@
       <pattern>
         <token regexp="yes">m?bh?uadh.*</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
     <rule id="MBH-" name="mbh-">
       <pattern>
         <token regexp="yes">mbh.*</token>
       </pattern>
-      <message>Foirm neamhchaighdeánach de <suggestion></suggestion></message>
+      <message>Foirm neamhchaighdeánach de <suggestion>\1</suggestion></message>
       <short>Neamhchaighdeánach</short>
     </rule>
   </category>
@@ -9283,7 +9283,7 @@
         <token regexp="yes">mh?í</token>
         <token regexp="yes">Bh?ealtaine</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\2</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
     <rule id="MI_MARTA" name="mí Márta">
@@ -9291,7 +9291,7 @@
         <token regexp="yes">mh?í</token>
         <token regexp="yes">Mh?árta</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\2</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
     <rule id="MI_MEITHEAMH" name="mí Meitheamh">
@@ -9299,7 +9299,7 @@
         <token regexp="yes">mh?í</token>
         <token regexp="yes">Mh?eithimh|Mh?eitheamh</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\2</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
     <rule id="MI_NOLLAG" name="mí Nollag">
@@ -9307,7 +9307,7 @@
         <token regexp="yes">mh?í</token>
         <token regexp="yes">Nollai?g</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\2</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
     <rule id="MI_SAMHNA" name="mí Samhna">
@@ -9315,7 +9315,7 @@
         <token regexp="yes">mh?í</token>
         <token regexp="yes">Sh?amhain|Sh?amhna</token>
       </pattern>
-      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion></suggestion></message>
+      <message>Ba chóir duit an t-alt cinnte a úsáid: <suggestion>\2</suggestion></message>
       <short>Alt cinnte ar iarraidh</short>
     </rule>
   </category>
@@ -9334,7 +9334,7 @@
         <token postag="(?:C[UMC]:)?Verb:.*:1P:Sg.*" postag_regexp="yes"></token>
         <token>mé</token>
       </pattern>
-      <message>Is féidir <suggestion></suggestion> nó “ ” a úsáid</message>
+      <message>Is féidir <suggestion>\1</suggestion> nó “\1 \2” a úsáid</message>
       <short>TAIM_ME</short>
     </rule>
   </category>
@@ -9343,7 +9343,7 @@
       <pattern>
         <token regexp="yes" postag=".*Verb.*(?:PastInd|PastImp|Cond).*" postag_regexp="yes">^(?:[aeiouáéíóú]|fh[aeiouáéíóú]).+</token>
       </pattern>
-      <message>Réamhlitir ‘d'’ ar iarraidh: <suggestion>d’</suggestion></message>
+      <message>Réamhlitir ‘d'’ ar iarraidh: <suggestion>d’\1</suggestion></message>
       <short>Réamhlitir ‘d'’ ar iarraidh</short>
     </rule>
   </category>

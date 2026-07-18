@@ -346,7 +346,7 @@
         <token>un</token>
         <token>spor</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion>spori</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="ALCOOLIC_CRONIC" name="alcoolic cronic">
@@ -422,7 +422,7 @@
         <token regexp="yes">o|câteva|niște|unele</token>
         <token inflected="yes">completare</token>
       </pattern>
-      <message>Ați vrut să scrieți <suggestion>completa</suggestion>?</message>
+      <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_ANEXA_ALATURI" name="a anexa alături">
@@ -430,7 +430,7 @@
         <token inflected="yes">anexa</token>
         <token>alături</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>alătura</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion> sau <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_AVANSA_INAINTE" name="a avansa înainte">
@@ -438,7 +438,7 @@
         <token inflected="yes">avansa</token>
         <token inflected="yes">înainte</token>
       </pattern>
-      <message>"A avansa" implică noţiunea de înaintare. Ați vrut să scrieți <suggestion></suggestion> sau <suggestion>înainta</suggestion>?</message>
+      <message>"A avansa" implică noţiunea de înaintare. Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_COEXISTA_IMPREUNA" name="a coexista împreună">
@@ -462,7 +462,7 @@
         <token inflected="yes">conlocui</token>
         <token regexp="yes">împreună|laolaltă</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>locui </suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion> sau <suggestion>\1 \2</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_CONLUCRA_IMPREUNA" name="a conlucra împreună">
@@ -470,7 +470,7 @@
         <token inflected="yes">conlucra</token>
         <token>împreună</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>lucra </suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion> sau <suggestion>\1 \2</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_CONTINE_IN_CUPRINS" name="a conţine în cuprins">
@@ -479,7 +479,7 @@
         <token>în</token>
         <token>cuprins</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>cuprinde</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion> sau <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_CONVIETUI_LAOLALTA" name="a conviețui laolaltă">
@@ -556,7 +556,7 @@
         <token inflected="yes">prilejui</token>
         <token>ocazia</token>
       </pattern>
-      <message>Ați vrut să scrieți <suggestion>oferi </suggestion>?</message>
+      <message>Ați vrut să scrieți <suggestion>\1 \2</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="A_RAMANE_IN_CONTINUARE" name="a rămâne în continuare">
@@ -661,7 +661,7 @@
         <token>o</token>
         <token>solicitare</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion>face  </suggestion> sau <suggestion>solicita</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1 \2 \3</suggestion> sau <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="CHIAR_EL_INSUSI" name="chiar el însuși">
@@ -686,7 +686,7 @@
       <pattern>
         <token inflected="yes">coasociat</token>
       </pattern>
-      <message>Ați vrut să scrieți <suggestion>asociat</suggestion>?</message>
+      <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="COBAI_DE_EXPERIENTA" name="cobai de experiență">
@@ -728,14 +728,14 @@
       <pattern>
         <token inflected="yes">copărtaș</token>
       </pattern>
-      <message>Ați vrut să scrieți <suggestion>părtaș</suggestion>?</message>
+      <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="COPARTENER" name="copartener">
       <pattern>
         <token regexp="yes">copartener|copartenerul|copartenerului|copartenerilor|coparteneri</token>
       </pattern>
-      <message>Ați vrut să scrieți <suggestion></suggestion>?</message>
+      <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="COROBORA_COMPARATIV" name="corobora comparativ">
@@ -796,7 +796,7 @@
         <token inflected="yes">deschidere</token>
         <token inflected="yes">vernisaj</token>
       </pattern>
-      <message>vernisaj = este ceremonia de deschiderea a unei expoziţii. Ați dorit să scrieți <suggestion>vernisaj</suggestion>?</message>
+      <message>vernisaj = este ceremonia de deschiderea a unei expoziţii. Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="DE_MILIOANE" name="de milioane">
@@ -920,7 +920,7 @@
         <token>piciorului</token>
         <token postag="C.*|SENT_END" postag_regexp="yes"></token>
       </pattern>
-      <message>Ați vrut să scrieți <suggestion></suggestion>?</message>
+      <message>Ați vrut să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="GOALE_SI_FARA_SENS" name="goale și fără sens">
@@ -957,7 +957,7 @@
         <token regexp="yes">cu|prin</token>
         <token inflected="yes">exemplu</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion>exemplifica</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="IMPARTIT_IN_DOUA_SEMESTRE" name="împărțit în două semestre">
@@ -1041,7 +1041,7 @@
         <token>de</token>
         <token>cap</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion></suggestion> sau <suggestion>durere de cap</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion> sau <suggestion>\1 de cap</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="MIJLOACE_MASS-MEDIA" name="mijloace mass-media">
@@ -1129,7 +1129,7 @@
         <token inflected="yes">panaceu</token>
         <token>universal</token>
       </pattern>
-      <message>Panaceu înseamnă remediu universal. Ați vrut să scrieți <suggestion></suggestion> sau <suggestion>remediu </suggestion>?</message>
+      <message>Panaceu înseamnă remediu universal. Ați vrut să scrieți <suggestion>\1</suggestion> sau <suggestion>\1 \2</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="PAUZA_TEMPORARA" name="pauză temporară">
@@ -1155,7 +1155,7 @@
         <token>fi</token>
         <token inflected="yes">admisibil</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion>este </suggestion> sau <suggestion>poate fi admis</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>este \3</suggestion> sau <suggestion>poate fi \3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="POATE_FI_POSIBIL" name="poate fi posibil">
@@ -1164,7 +1164,7 @@
         <token>fi</token>
         <token inflected="yes">posibil</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion>este </suggestion> sau <suggestion>poate fi realizat</suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>este \3</suggestion> sau <suggestion>poate fi \3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="POATE_FI_UTILIZABIL" name="poate fi utilizabil">
@@ -1173,7 +1173,7 @@
         <token>fi</token>
         <token inflected="yes">utilizabil</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion>  utilizat</suggestion> sau <suggestion>fi </suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1 \2 \3</suggestion> sau <suggestion>\1 \3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="PREFERA_MAI_BINE" name="a prefera mai bine">
@@ -1251,7 +1251,7 @@
         <token>peste</token>
         <token postag="S(.*)" postag_regexp="yes"></token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion> </suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1 \3</suggestion>?</message>
       <short>Pleonasm</short>
     </rule>
     <rule id="SERVOLEAZA_PRIN_AER" name="survolează prin aer">
@@ -1512,7 +1512,7 @@
       <pattern>
         <token regexp="yes">crei(am|ai|a|ați|au|ez|ezi|ăm|eze|ași|arăm|arăți|asem|aseși|ase|aserăm|aserăți|aseră)</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion></suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1</suggestion>?</message>
       <short>CREIAM</short>
     </rule>
     <rule id="INTRODUCERE_PRELIMINARA" name="introducere preliminară">
@@ -1549,7 +1549,7 @@
         <token inflected="yes">stare</token>
         <token>civila</token>
       </pattern>
-      <message>Ați dorit să scrieți <suggestion> </suggestion>?</message>
+      <message>Ați dorit să scrieți <suggestion>\1 \2</suggestion>?</message>
       <short>Dezacord sau diacritice lispă.</short>
     </rule>
     <rule id="TRECUT_IN_NEFIINTA" name="a trece în neființă">
@@ -1558,7 +1558,7 @@
         <token>în</token>
         <token>neființă</token>
       </pattern>
-      <message>Inadvertenţă gramaticală între verbul „a trece” şi substantivul „nefiinţă”. Puteți folosi <suggestion>\1 la cele veșnice</suggestion>, <suggestion>\1 la cele sfinte</suggestion>, <suggestion>pleca dintre noi</suggestion>, <suggestion>înceta din viață</suggestion> etc.</message>
+      <message>Inadvertenţă gramaticală între verbul „a trece” şi substantivul „nefiinţă”. Puteți folosi <suggestion>\1 la cele veșnice</suggestion>, <suggestion>\1 la cele sfinte</suggestion>, <suggestion>\1 dintre noi</suggestion>, <suggestion>\1 din viață</suggestion> etc.</message>
       <short>Formă nerecomandată.</short>
     </rule>
     <rule id="VOR_SA_FACA_MULTE" name="sa - să. Ex: vor sa/să facă">
@@ -1722,7 +1722,7 @@
         <token>această</token>
         <token postag="Sfs3aac000"></token>
       </pattern>
-      <message>Folosire incorectă a substantivului feminin articulat. "Această" cere substantiv nearticulat: <suggestion></suggestion></message>
+      <message>Folosire incorectă a substantivului feminin articulat. "Această" cere substantiv nearticulat: <suggestion>\2</suggestion></message>
       <short>&quot;Această&quot; cere substantiv nearticulat.</short>
     </rule>
     <rule id="CEA_MAI_SUBST_ART" name="cea + mai + (subst art) - cea + mai + (subst neart)">
@@ -1731,7 +1731,7 @@
         <token>mai</token>
         <token postag="A(...)aa(.*)" postag_regexp="yes"></token>
       </pattern>
-      <message>Folosire incorectă a adjectivului articulat. "\1 \2" cere adjectiv nearticulat: <suggestion>  </suggestion>.</message>
+      <message>Folosire incorectă a adjectivului articulat. "\1 \2" cere adjectiv nearticulat: <suggestion>\1 \2 \3</suggestion>.</message>
       <short>Greșeală gramaticală</short>
     </rule>
     <rule id="SFN_ESTE_A" name="(subst fem neart) + este a - (subst fem art) + este a ">
@@ -1741,7 +1741,7 @@
         <token>este</token>
         <token>a</token>
       </pattern>
-      <message>Ați vrut să folosiți substantivul articulat <suggestion></suggestion></message>
+      <message>Ați vrut să folosiți substantivul articulat <suggestion>\2</suggestion></message>
       <short>Greșeală gramaticală</short>
     </rule>
     <rule id="UNOR_AAG_UNOR_SN" name="unor + (subst art g) - unor + (subst neart)">
@@ -1749,7 +1749,7 @@
         <token>unor</token>
         <token postag="S(m|f|n)p3gac000" postag_regexp="yes"></token>
       </pattern>
-      <message>Folosire incorectă a substantivului masculin articulat. "unor" cere substantiv nearticulat: <suggestion></suggestion>.</message>
+      <message>Folosire incorectă a substantivului masculin articulat. "unor" cere substantiv nearticulat: <suggestion>\2</suggestion>.</message>
       <short>Dezacord gramatical</short>
     </rule>
     <rule id="UNUI_SAG_UN_SNEART" name="unui + (subst art g) - un + (subst neart)">
@@ -1757,7 +1757,7 @@
         <token>unui</token>
         <token postag="Sms3gac000"></token>
       </pattern>
-      <message>Folosire incorectă a substantivului masculin articulat. "unui" cere substantiv nearticulat: <suggestion></suggestion>.</message>
+      <message>Folosire incorectă a substantivului masculin articulat. "unui" cere substantiv nearticulat: <suggestion>\2</suggestion>.</message>
       <short>Dezacord gramatical</short>
     </rule>
   </category>

@@ -11,7 +11,7 @@
       </pattern>
       <message>Pri pamätných dňoch použite veľké začiatočné písmeno:
 		    
-		    <suggestion> \2 \3</suggestion>.</message>
+		    <suggestion>\1 \2 \3</suggestion>.</message>
       <short>Pamätný deň začína veľkým písmenom.</short>
     </rule>
     <rule id="vzniku_Slovenskej_republiky" name="Deň vzniku Slovenskej republiky">
@@ -23,7 +23,7 @@
       </pattern>
       <message>Pri pamätných dňoch použite veľké začiatočné písmeno:
 		    
-		    <suggestion>   </suggestion>.</message>
+		    <suggestion>\1 \2 \3 \4</suggestion>.</message>
       <short>Pamätný deň začína veľkým písmenom.</short>
     </rule>
     <rule id="víťazstva_nad_fašizmom" name="Deň víťazstva nad fašizmom">
@@ -35,7 +35,7 @@
       </pattern>
       <message>Pri pamätných dňoch použite veľké začiatočné písmeno:
 		    
-		    <suggestion>   </suggestion>.</message>
+		    <suggestion>\1 \2 \3 \4</suggestion>.</message>
       <short>Pamätný deň začína veľkým písmenom.</short>
     </rule>
   </category>
