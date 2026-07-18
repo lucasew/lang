@@ -45,4 +45,25 @@ func TestRegisterBinaryEnglishTagger(t *testing.T) {
 	// case fold
 	tags = lt.TagWord("This")
 	require.NotEmpty(t, tags)
+	// Java EnglishTagger: sentence-start "How" keeps lowercase WRB readings
+	tags = lt.TagWord("How")
+	var hasWRB, hasNNP bool
+	for _, tg := range tags {
+		if tg.POS == "WRB" {
+			hasWRB = true
+		}
+		if tg.POS == "NNP" {
+			hasNNP = true
+		}
+	}
+	require.True(t, hasWRB, "How should include WRB from lowercase how: %+v", tags)
+	require.True(t, hasNNP, "How may still include NNP proper-name: %+v", tags)
+}
+
+func TestEnglishIsMixedCase(t *testing.T) {
+	require.False(t, englishIsMixedCase("How"))
+	require.False(t, englishIsMixedCase("HOW"))
+	require.False(t, englishIsMixedCase("how"))
+	require.True(t, englishIsMixedCase("iPhone"))
+	require.True(t, englishIsMixedCase("McDonald"))
 }
