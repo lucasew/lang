@@ -69,6 +69,9 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 		AllowTitlecase:        true,
 	})
 	chunker.SetIgnoreSpelling(true)
+	// Java EnglishHybridDisambiguator: chunker.setRemovePreviousTags(true)
+	// so <NNP></NNP> becomes NNP NNP and original POS is replaced.
+	chunker.SetRemovePreviousTags(true)
 	hyb := entag.NewEnglishHybridDisambiguator()
 	// Java EnglishHybridDisambiguator: chunkerGlobal = MultiWordChunker(/spelling_global.txt,
 	// tagForNotAddingTags) with setIgnoreSpelling(true), run before multiwords.

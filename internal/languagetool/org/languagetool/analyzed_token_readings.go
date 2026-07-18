@@ -100,6 +100,39 @@ func (r *AnalyzedTokenReadings) HasPosTag(posTag string) bool {
 	return false
 }
 
+// HasPosTagAndLemma ports AnalyzedTokenReadings.hasPosTagAndLemma.
+func (r *AnalyzedTokenReadings) HasPosTagAndLemma(posTag, lemma string) bool {
+	if r == nil {
+		return false
+	}
+	for _, reading := range r.anTokReadings {
+		if reading.GetPOSTag() == nil || *reading.GetPOSTag() != posTag {
+			continue
+		}
+		lem := ""
+		if reading.GetLemma() != nil {
+			lem = *reading.GetLemma()
+		}
+		if lem == lemma {
+			return true
+		}
+	}
+	return false
+}
+
+// ReadingWithExactTag returns the first reading whose POS equals tag (or nil).
+func (r *AnalyzedTokenReadings) ReadingWithExactTag(tag string) *AnalyzedToken {
+	if r == nil {
+		return nil
+	}
+	for _, reading := range r.anTokReadings {
+		if reading.GetPOSTag() != nil && *reading.GetPOSTag() == tag {
+			return reading
+		}
+	}
+	return nil
+}
+
 func (r *AnalyzedTokenReadings) HasPartialPosTag(posTag string) bool {
 	for _, reading := range r.anTokReadings {
 		if reading.GetPOSTag() != nil && strings.Contains(*reading.GetPOSTag(), posTag) {
