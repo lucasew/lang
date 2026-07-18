@@ -31,13 +31,23 @@ func (t *PolishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 			w = strings.ReplaceAll(w, "’", "'")
 		}
 		var readings []*languagetool.AnalyzedToken
+		// Java PolishTagger: always add surface tags, then lowercase tags when not already lower.
 		for _, tw := range t.TagWord(w) {
 			readings = append(readings, tagged(word, tw))
 		}
 		lower := strings.ToLower(w)
-		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
+		if w != lower {
 			for _, tw := range t.TagWord(lower) {
 				readings = append(readings, tagged(word, tw))
+			}
+		}
+		// uppercase first-char only when both empty (Java PolishTagger)
+		if len(readings) == 0 && w == lower {
+			title := tools.UppercaseFirstChar(w)
+			if title != w {
+				for _, tw := range t.TagWord(title) {
+					readings = append(readings, tagged(word, tw))
+				}
 			}
 		}
 		if len(readings) == 0 {

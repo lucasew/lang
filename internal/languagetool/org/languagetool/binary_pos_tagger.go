@@ -22,7 +22,10 @@ func RegisterBinaryPOSTagger(lt *JLanguageTool, dictPath string) bool {
 }
 
 // BinaryPOSTagWord returns a TagWord inject from an opened POS dictionary.
-// Case retries mirror typical LT BaseTagger lowercasing when the surface miss hits.
+// Case logic follows Java PolishTagger (and similar BaseTagger ports): always
+// look up the surface form, then for non-lowercase surfaces also merge the
+// lowercase dictionary readings (so "Białym" keeps adj:… lemma biały as well as
+// proper-noun subst readings). Only when both are empty, try Title case.
 func BinaryPOSTagWord(d *atticmorfo.Dictionary) func(token string) []TokenTag {
 	if d == nil {
 		return nil
@@ -54,26 +57,35 @@ func BinaryPOSTagWord(d *atticmorfo.Dictionary) func(token string) []TokenTag {
 		if token == "" {
 			return nil
 		}
-		if tags := lookup(token); len(tags) > 0 {
-			return tags
-		}
 		low := strings.ToLower(token)
-		if low != token {
-			if tags := lookup(low); len(tags) > 0 {
-				return tags
+		var out []TokenTag
+		seen := map[string]struct{}{}
+		add := func(tags []TokenTag) {
+			for _, t := range tags {
+				key := t.POS + "\x00" + t.Lemma
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, t)
 			}
 		}
-		if low != "" {
+		// normal case
+		add(lookup(token))
+		// Java PolishTagger: if (!isLowercase) addTokens(lowerTaggerTokens)
+		if low != token {
+			add(lookup(low))
+		}
+		// uppercase of lower only when both empty (Java PolishTagger)
+		if len(out) == 0 && low != "" {
 			runes := []rune(low)
 			if len(runes) > 0 {
 				title := strings.ToUpper(string(runes[0])) + string(runes[1:])
 				if title != token && title != low {
-					if tags := lookup(title); len(tags) > 0 {
-						return tags
-					}
+					add(lookup(title))
 				}
 			}
 		}
-		return nil
+		return out
 	}
 }
