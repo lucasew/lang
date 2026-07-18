@@ -438,44 +438,46 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 	if s == "" {
 		return false
 	}
+	// Match if surface fits any closed-class alternative in the tag pattern.
 	u := strings.ToUpper(tag)
-	// Pronouns (PRP / PRP$)
-	if strings.Contains(u, "PRP") {
-		return softIsPronoun(s)
-	}
-	// Determiners
-	if strings.Contains(u, "DT") || strings.Contains(u, "PDT") {
-		return softIsDeterminer(s)
-	}
-	// Prepositions / subordinating conjunctions (IN)
-	if strings.Contains(u, "IN") {
-		return softIsPreposition(s)
-	}
-	// Modals
-	if strings.Contains(u, "MD") {
-		return softIsModal(s)
-	}
-	// Coordinating conjunctions
-	if strings.Contains(u, "CC") {
-		return softIsCC(s)
-	}
-	// TO infinitive marker
-	if strings.Contains(u, "TO") {
-		return s == "to"
-	}
-	// Existential there
-	if strings.Contains(u, "EX") {
-		return s == "there"
-	}
-	// Wh-words
-	if strings.Contains(u, "WDT") || strings.Contains(u, "WP") || strings.Contains(u, "WRB") {
-		return softIsWh(s)
-	}
-	// Particle / possessive clitic — keep conservative
-	if strings.Contains(u, "RP") || strings.Contains(u, "POS") {
-		return softLooksLikeWord(surface)
+	for _, part := range strings.Split(u, "|") {
+		p := softNormalizePostagPart(part)
+		if p == "" || softPostagPartIsOpen(p) {
+			continue
+		}
+		if softClosedPartSurface(p, s) {
+			return true
+		}
 	}
 	return false
+}
+
+func softClosedPartSurface(part, s string) bool {
+	switch {
+	case strings.HasPrefix(part, "PRP"):
+		return softIsPronoun(s)
+	case strings.HasPrefix(part, "DT") || strings.HasPrefix(part, "PDT"):
+		return softIsDeterminer(s)
+	case strings.HasPrefix(part, "IN"):
+		return softIsPreposition(s)
+	case strings.HasPrefix(part, "MD"):
+		return softIsModal(s)
+	case strings.HasPrefix(part, "CC"):
+		return softIsCC(s)
+	case strings.HasPrefix(part, "TO"):
+		return s == "to"
+	case strings.HasPrefix(part, "EX"):
+		return s == "there"
+	case strings.HasPrefix(part, "WDT") || strings.HasPrefix(part, "WP") || strings.HasPrefix(part, "WRB"):
+		return softIsWh(s)
+	case strings.HasPrefix(part, "RP") || strings.HasPrefix(part, "POS"):
+		// particles / possessive clitics: allow short words and 's
+		return softLooksLikeWord(s) || s == "'s" || s == "\u2019s"
+	case strings.Contains(part, "PCT") || strings.Contains(part, "PUNC"):
+		return softLooksLikePunct(s)
+	default:
+		return false
+	}
 }
 
 func softIsPronoun(s string) bool {
@@ -542,7 +544,8 @@ func softIsCC(s string) bool {
 func softIsWh(s string) bool {
 	switch s {
 	case "what", "which", "who", "whom", "whose", "where", "when", "why", "how",
-		"whatever", "whichever", "whoever", "whomever":
+		"whatever", "whichever", "whoever", "whomever",
+		"wherever", "whenever", "however", "whyever":
 		return true
 	default:
 		return false
@@ -559,6 +562,18 @@ var softIrregularLemma = map[string][]string{
 	"does": {"do"}, "did": {"do"}, "done": {"do"}, "doing": {"do"},
 	// English clitics (it's / he's …) for HAD_HARD etc.
 	"'s": {"be", "have"}, "’s": {"be", "have"},
+	// Common EN irregulars used by upstream soft packs (came/come, going/go, …)
+	"came": {"come"}, "comes": {"come"}, "coming": {"come"},
+	"went": {"go"}, "goes": {"go"}, "going": {"go"}, "gone": {"go"},
+	"ate": {"eat"}, "eats": {"eat"}, "eating": {"eat"},
+	"took": {"take"}, "takes": {"take"}, "taking": {"take"},
+	"made": {"make"}, "makes": {"make"}, "making": {"make"},
+	"drove": {"drive"}, "drives": {"drive"}, "driving": {"drive"},
+	"applied": {"apply"}, "applies": {"apply"}, "applying": {"apply"},
+	"participated": {"participate"}, "participates": {"participate"}, "participating": {"participate"},
+	"threw": {"throw"}, "throws": {"throw"}, "throwing": {"throw"},
+	// Modal stems (could←can, would←will) for NIT_NOT / BE_WILL soft packs
+	"could": {"can"}, "would": {"will"},
 	// French être / avoir / aller / faire
 	"suis": {"être"}, "es": {"être"}, "est": {"être"}, "sommes": {"être"}, "êtes": {"être"}, "sont": {"être"},
 	"étais": {"être"}, "était": {"être"}, "étions": {"être"}, "étiez": {"être"}, "étaient": {"être"},
@@ -631,7 +646,8 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 		suf := sf[len(bf):]
 		if len(suf) > 0 && len(suf) <= 4 {
 			switch suf {
-			case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "j", "jn", "oj", "ojn", "an", "on":
+			case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "j", "jn", "oj", "ojn", "an", "on",
+				"ing", "ed", "ied", "ies", "d":
 				return true
 			default:
 				ok := true
@@ -659,7 +675,8 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	}
 	// Common short inflection suffixes across LT languages (not full morphology).
 	switch suf {
-	case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "aren", "eren", "j", "jn", "oj", "ojn":
+	case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "aren", "eren", "j", "jn", "oj", "ojn",
+		"ing", "ed", "ied", "ies", "d":
 		return true
 	default:
 		// all-letter short suffix only
