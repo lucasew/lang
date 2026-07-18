@@ -198,6 +198,12 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				(softLooksLikeWord(token.GetToken()) || softLooksLikeNumber(token.GetToken())) {
 				posOK = true
 			}
+			// Java disambiguation-global.xml adds _IS_URL on domain labels / TLDs / dots.
+			// Soft without that XML: accept domain-like surfaces (PT URL_INICIAL).
+			if !posOK && !m.StrictPOS && softPostagIsURLTag(pt.Pos.PosTag) &&
+				softLooksLikeURLSurface(token.GetToken()) {
+				posOK = true
+			}
 			// Soft multiword/disambig may only attach underscore context tags
 			// (_CONTEXTO_…); treat those as non-morph so open-class postags still
 			// soft-match letter surfaces (PT PHRASAL_VERB_PREFERIR "carne").
@@ -240,6 +246,9 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 					// ordinary words as Z.+ (PT A_RANGE was replace-tagging every "a"
 					// between two letter tokens with SP000 and breaking grammar POS).
 					posOK = softLooksLikeNumber(tok)
+				} else if softPostagIsURLTag(tag) {
+					// Java disambiguation-global _IS_URL without soft XML extract.
+					posOK = softLooksLikeURLSurface(tok)
 				} else if softLooksLikeWord(tok) {
 					posOK = true
 				} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
@@ -1188,6 +1197,52 @@ func softPostagIsLocutionPattern(tag string) bool {
 	return strings.Contains(u, "LOC_ADV") || strings.Contains(u, "LOC_PREP") ||
 		strings.Contains(u, "LOC_ADJ") || strings.Contains(u, "LOC_CONJ") ||
 		strings.Contains(u, "_GN") || strings.Contains(u, "LOC_")
+}
+
+// softPostagIsURLTag: Java disambiguation-global _IS_URL / IS_URL.
+func softPostagIsURLTag(tag string) bool {
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	return u == "_IS_URL" || u == "IS_URL" || strings.Contains(u, "_IS_URL")
+}
+
+// softLooksLikeURLSurface: domain label, TLD, or "." from global URL disambig patterns.
+func softLooksLikeURLSurface(s string) bool {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return false
+	}
+	if s == "." || s == "/" || s == ":" {
+		return true
+	}
+	// www / http(s) tokens
+	low := strings.ToLower(s)
+	if low == "www" || low == "http" || low == "https" || low == "ftp" {
+		return true
+	}
+	// Domain label / TLD: alnum + optional internal hyphens (google, com, br, co)
+	return softLooksLikeDomainLabel(s)
+}
+
+// softLooksLikeDomainLabel: [a-z0-9][a-z0-9-]* (Java disambiguation-global domain tokens).
+func softLooksLikeDomainLabel(s string) bool {
+	if s == "" {
+		return false
+	}
+	for i, r := range s {
+		if r >= 'A' && r <= 'Z' {
+			r = r - 'A' + 'a'
+		}
+		if r >= 'a' && r <= 'z' || r >= '0' && r <= '9' {
+			continue
+		}
+		if r == '-' && i > 0 {
+			continue
+		}
+		return false
+	}
+	// must start with letter/digit
+	r0 := rune(s[0])
+	return (r0 >= 'a' && r0 <= 'z') || (r0 >= 'A' && r0 <= 'Z') || (r0 >= '0' && r0 <= '9')
 }
 
 // softPostagIsFreeLingDeterminer: FreeLing D.+ / DA0MS0 / DI… / mixed D[AI].+|NC.+.
@@ -2145,6 +2200,16 @@ var softIrregularLemma = map[string][]string{
 	"took": {"take"}, "takes": {"take"}, "taking": {"take"},
 	"made": {"make"}, "makes": {"make"}, "making": {"make"},
 	"drove": {"drive"}, "drives": {"drive"}, "driving": {"drive"},
+	// French devenir / paraître / être (IL_DEVIENT_QUOI soft optional)
+	"devient": {"devenir"}, "deviens": {"devenir"}, "deviennent": {"devenir"},
+	"devenu": {"devenir"}, "devenue": {"devenir"}, "devenus": {"devenir"}, "devenues": {"devenir"},
+	"devenait": {"devenir"}, "devenais": {"devenir"}, "devenaient": {"devenir"},
+	"paraît": {"paraître", "paraitre"}, "parait": {"paraître", "paraitre"},
+	"semble": {"sembler"}, "semblez": {"sembler"}, "semblent": {"sembler"},
+	"reste": {"rester"}, "restent": {"rester"},
+	"demeure": {"demeurer"}, "demeurent": {"demeurer"},
+	// Dutch kunnen (INSPECIFIEK_7 soft optional)
+	"kan": {"kunnen"}, "kunt": {"kunnen"}, "kon": {"kunnen"}, "konden": {"kunnen"},
 	"applied": {"apply"}, "applies": {"apply"}, "applying": {"apply"},
 	"participated": {"participate"}, "participates": {"participate"}, "participating": {"participate"},
 	"threw": {"throw"}, "throws": {"throw"}, "throwing": {"throw"},

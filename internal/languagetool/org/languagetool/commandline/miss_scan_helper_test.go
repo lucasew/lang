@@ -17,9 +17,29 @@ func runDebugMissScan(t *testing.T, lang string) {
 		// also accept full code upper (e.g. LANG_PT_MISS_SCAN already matches base)
 		t.Skip("set " + env + "=1")
 	}
+	runDebugMissScanMode(t, lang, false)
+}
+
+// runDebugOptionalMissScan scores only optional-upstream soft golden cases with
+// SOFT_OPTIONAL enabled. Env LANG_{LANG}_OPT_MISS_SCAN=1 enables.
+func runDebugOptionalMissScan(t *testing.T, lang string) {
+	t.Helper()
+	base := strings.ToUpper(languageBaseCode(lang))
+	env := "LANG_" + base + "_OPT_MISS_SCAN"
+	if os.Getenv(env) == "" {
+		t.Skip("set " + env + "=1")
+	}
+	runDebugMissScanMode(t, lang, true)
+}
+
+func runDebugMissScanMode(t *testing.T, lang string, optionalOnly bool) {
+	t.Helper()
 	doc := loadUpstreamGoldens(t, lang)
 	optionalIDs := loadOptionalUpstreamSoftRuleIDs(t, lang)
 	opts := &CommandLineOptions{Language: lang}
+	if optionalOnly {
+		opts.EnabledRules = []string{"SOFT_OPTIONAL"}
+	}
 	lt, err := configureCoreLT(lang, opts)
 	if err != nil {
 		t.Fatalf("configureCoreLT: %v", err)
@@ -30,7 +50,12 @@ func runDebugMissScan(t *testing.T, lang string) {
 	passed, tried := 0, 0
 	var samples []string
 	for _, tc := range doc.Cases {
-		if _, off := optionalIDs[tc.Rule]; off {
+		_, isOpt := optionalIDs[tc.Rule]
+		if optionalOnly {
+			if !isOpt {
+				continue
+			}
+		} else if isOpt {
 			continue
 		}
 		tried++
@@ -72,7 +97,11 @@ func runDebugMissScan(t *testing.T, lang string) {
 	if tried > 0 {
 		pct = 100 * float64(passed) / float64(tried)
 	}
-	t.Logf("%s full: passed=%d missed=%d of %d (%.1f%%)", lang, passed, tried-passed, tried, pct)
+	label := "full"
+	if optionalOnly {
+		label = "optional"
+	}
+	t.Logf("%s %s: passed=%d missed=%d of %d (%.1f%%)", lang, label, passed, tried-passed, tried, pct)
 	for i, x := range ks {
 		if i >= 30 {
 			break

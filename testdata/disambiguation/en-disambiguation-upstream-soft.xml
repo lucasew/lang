@@ -3527,6 +3527,19 @@
     </pattern>
     <disambig action="replace" postag="PRP$"/>
   </rule>
+  <!-- From Java en/disambiguation.xml PRPPOSS_VB_NN: my/her/their + NNS|VBZ → filter NN.
+       Soft extract of official rule (GOT_IT_DONE: "my nails did"). -->
+  <rule id="PRPPOSS_VB_NN" name="Possessive pronoun + verb/noun =&gt;noun">
+    <pattern>
+      <token postag="PRP$">
+        <exception>mine</exception>
+      </token>
+      <token postag="NN.*" postag_regexp="yes" marker="yes">
+        <and_token postag="VB[PZ]?|MD" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="NN.*|JJ.*"/>
+  </rule>
   <rule id="VBP_NN_VBZ_NN" name="have palm trees - palm is a noun">
     <antipattern>
       <token>let</token>

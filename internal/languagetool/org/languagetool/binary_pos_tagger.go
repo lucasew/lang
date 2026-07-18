@@ -35,15 +35,33 @@ func BinaryPOSTagWord(d *atticmorfo.Dictionary) func(token string) []TokenTag {
 		if err != nil || len(forms) == 0 {
 			return nil
 		}
-		// PolishTagger (and other Morfeusz-style dicts) store multiple POS tags
-		// joined with '+'. Java splits them into separate AnalyzedToken readings.
+		// Polish Morfeusz-style dicts store *multiple* POS tags joined with '+',
+		// each segment a full colon tag (subst:sg:nom:m1+adj:…). Java splits those
+		// into separate AnalyzedToken readings.
+		// Italian morph-it (and similar) use '+' *inside* one tag
+		// (VER:part+past+s+m) — BaseTagger keeps the whole string so patterns like
+		// VER:part.+past.* match. Only split when every '+' segment contains ':'.
 		out := make([]TokenTag, 0, len(forms)*2)
 		for _, f := range forms {
 			if f.Tag == "" || !strings.Contains(f.Tag, "+") {
 				out = append(out, TokenTag{POS: f.Tag, Lemma: f.Stem})
 				continue
 			}
-			for _, part := range strings.Split(f.Tag, "+") {
+			parts := strings.Split(f.Tag, "+")
+			splitMulti := len(parts) > 1
+			if splitMulti {
+				for _, part := range parts {
+					if !strings.Contains(part, ":") {
+						splitMulti = false
+						break
+					}
+				}
+			}
+			if !splitMulti {
+				out = append(out, TokenTag{POS: f.Tag, Lemma: f.Stem})
+				continue
+			}
+			for _, part := range parts {
 				part = strings.TrimSpace(part)
 				if part == "" {
 					continue

@@ -267,9 +267,16 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			continue
 		}
 		pos := primaryPOS(t, prevPOS, prevSurf)
-		// A_NNS_AND: "a pens and paper" — OpenNLP keeps "and" inside the NP.
-		if pos == "CC" && i+1 < len(out) && softLooksNounish(out[i+1]) &&
-			(strings.HasPrefix(prevPOS, "NN") || strings.HasPrefix(prevPOS, "JJ")) {
+		// A_NNS_AND: "a pens and paper" — OpenNLP keeps "and" inside the NP
+		// when the next token is noun-headed (paper/NNS). Do not keep "and"
+		// inside the NP before an adjective-led phrase ("movements and
+		// respiratory functions") so EnglishChunkFilter can mark E-NP on the
+		// pre-and noun (APOSTROPHE_S: sufferers … movements/E-NP).
+		// Ref: Java EnglishChunkFilter.isEndOfNounPhrase + OpenNLP NP spans.
+		if pos == "CC" && i+1 < len(out) &&
+			(strings.HasPrefix(prevPOS, "NN") || strings.HasPrefix(prevPOS, "JJ")) &&
+			(softNounReading(out[i+1]) != "" || softHasPluralNounReading(out[i+1])) &&
+			!softIsPrimarilyAdjective(out[i+1]) {
 			phrases[i] = "NP"
 			poss[i] = "CC"
 			prevPOS = "CC"
@@ -305,6 +312,16 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			phrases[i] = "NP"
 			poss[i] = "NN"
 			prevPOS = "NN"
+			prevSurf = tok
+			continue
+		}
+		// HAVE_NOT_VBG (optional): "have not onboarding/coming" — OpenNLP keeps
+		// the VBG as I-VP after have/has/had + not (not I-ADJP for JJ|VBG).
+		if i >= 2 && strings.EqualFold(prevSurf, "not") && softHasVBGReading(t) &&
+			softIsHaveFormSurface(tokens[i-2].Token) {
+			out[i].ChunkTags = []ChunkTag{NewChunkTag("I-VP")}
+			poss[i] = "VBG"
+			prevPOS = "VBG"
 			prevSurf = tok
 			continue
 		}
@@ -812,6 +829,31 @@ func jjReading(t ChunkTaggedToken) bool {
 	return false
 }
 
+func softHasVBGReading(t ChunkTaggedToken) bool {
+	if t.Readings == nil {
+		return false
+	}
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if p := r.GetPOSTag(); p != nil && *p == "VBG" {
+			return true
+		}
+	}
+	return false
+}
+
+// softIsHaveFormSurface: have/has/had auxiliaries for HAVE_NOT_VBG chunking.
+func softIsHaveFormSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "have", "has", "had", "having", "'ve", "\u2019ve":
+		return true
+	default:
+		return false
+	}
+}
+
 func softHasPluralNounReading(t ChunkTaggedToken) bool {
 	if t.Readings == nil {
 		return false
@@ -1219,6 +1261,32 @@ func softNounReading(t ChunkTaggedToken) string {
 		}
 	}
 	return ""
+}
+
+// softIsPrimarilyAdjective: next token after "and" is adj-led (respiratory)
+// rather than noun-headed (paper). Used so coordinated NPs with and+JJ do not
+// swallow the pre-and E-NP (OpenNLP-style NP boundaries).
+func softIsPrimarilyAdjective(t ChunkTaggedToken) bool {
+	if t.Readings == nil {
+		return false
+	}
+	hasJJ, hasNN := false, false
+	for _, r := range t.Readings.GetReadings() {
+		if r == nil {
+			continue
+		}
+		p := r.GetPOSTag()
+		if p == nil {
+			continue
+		}
+		if strings.HasPrefix(*p, "JJ") {
+			hasJJ = true
+		}
+		if strings.HasPrefix(*p, "NN") {
+			hasNN = true
+		}
+	}
+	return hasJJ && !hasNN
 }
 
 func softIsPossessiveApostrophe(s string) bool {
