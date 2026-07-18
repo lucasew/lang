@@ -202,6 +202,11 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 					// DT/PRP/IN/… without a tagger: only known closed-class surfaces
 					// (avoids DT_PRP soft-matching "a man", "the search", …).
 					posOK = softClosedClassSurfaceMatch(tag, tok)
+				} else if softPostagIsNumberOnly(tag) {
+					// Java Z/CD/CARD = numeral readings. Soft untagged must not treat
+					// ordinary words as Z.+ (PT A_RANGE was replace-tagging every "a"
+					// between two letter tokens with SP000 and breaking grammar POS).
+					posOK = softLooksLikeNumber(tok)
 				} else if softLooksLikeWord(tok) {
 					posOK = true
 				} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
@@ -459,6 +464,64 @@ func softLooksLikeWord(s string) bool {
 		return false
 	}
 	return letters > 0 || digits > 0
+}
+
+// softLooksLikeNumber is true for digit-only surfaces (optional grouping/decimal).
+// Used when soft postag is number-only (Java Z/CD/CARD) without a real tagger.
+func softLooksLikeNumber(s string) bool {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return false
+	}
+	hasDigit := false
+	for _, r := range s {
+		if unicode.IsDigit(r) {
+			hasDigit = true
+			continue
+		}
+		// thousands / decimal / thin space separators common in FreeLing Z tokens
+		if r == '.' || r == ',' || r == ' ' || r == '\u00A0' || r == '\u202F' || r == '-' || r == '−' {
+			continue
+		}
+		return false
+	}
+	return hasDigit
+}
+
+// softPostagIsNumberOnly is true when every | alternative is a number POS
+// (PT/ES FreeLing Z, EN CD, DE CARD, …). Mixed Z|N patterns stay open-class.
+func softPostagIsNumberOnly(tag string) bool {
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	if u == "" {
+		return false
+	}
+	any := false
+	for _, part := range strings.Split(u, "|") {
+		p := softNormalizePostagPart(part)
+		if p == "" {
+			continue
+		}
+		if !softPostagPartIsNumber(p) {
+			return false
+		}
+		any = true
+	}
+	return any
+}
+
+func softPostagPartIsNumber(p string) bool {
+	// FreeLing (PT/ES/CA): Z, Z.*, Z.+
+	if p == "Z" || strings.HasPrefix(p, "Z.") || strings.HasPrefix(p, "Z ") ||
+		strings.HasPrefix(p, "Z+") || strings.HasPrefix(p, "Z*") {
+		return true
+	}
+	// Penn CD; DE CARD; generic NUM*
+	if p == "CD" || strings.HasPrefix(p, "CD") ||
+		strings.Contains(p, "CARD") ||
+		p == "NUM" || strings.HasPrefix(p, "NUM") {
+		return true
+	}
+	return false
 }
 
 func softLooksLikePunct(s string) bool {
