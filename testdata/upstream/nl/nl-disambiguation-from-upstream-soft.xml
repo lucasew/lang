@@ -1275,6 +1275,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="TE_MRV" name="alleen wkw">
+    <pattern>
+      <token>te</token>
+      <token postag="ZNW:MRV:DE_" marker="yes">
+        <and_token postag="WKW:TGW:INF"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:INF"/>
+  </rule>
   <rule id="DE_X_END" name="alleen znw">
     <pattern>
       <token>de</token>
@@ -1440,6 +1449,15 @@
       <token postag="WKW:TGW:3EP|WKW:VLT:1EP|WKW:(TGW|VLT):INF" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_1EP" name="-">
+    <pattern>
+      <token regexp="yes">de|een</token>
+      <token postag="WKW:(TGW|VLT):1EP" postag_regexp="yes" marker="yes">
+        <and_token postag="ZNW:EKV:DE_" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="WKW:(TGW|VLT):1EP"/>
   </rule>
   <rule id="START_INDIEN" name="-">
     <pattern>
@@ -1823,6 +1841,41 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="AMBIGUITY_001" name="x">
+    <pattern>
+      <token postag="BNW:.*:ONV" postag_regexp="yes">
+        <and_token postag="BNW:.*:IET" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="BNW:.*IET"/>
+  </rule>
+  <rule id="AMBIGUITY_002" name="x">
+    <pattern>
+      <token regexp="yes" skip="1">n?iets</token>
+      <token postag="BNW:.*:ONV" postag_regexp="yes" marker="yes">
+        <and_token postag="BNW:.*:IET" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="BNW:.*ONV"/>
+  </rule>
+  <rule id="AMBIGUITY_235830" name="x">
+    <pattern>
+      <token postag="VNW:AWZ:EKV:HET" marker="yes">
+        <and_token postag="VNW:OND:EKV:HET"></and_token>
+      </token>
+      <token postag="ZNW.*HET" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OND:EKV:HET"/>
+  </rule>
+  <rule id="BYW_GRD" name="x">
+    <pattern>
+      <token postag="(BNW|WKW).*:ONV" postag_regexp="yes" marker="yes">
+        <and_token postag="BYW:GRD"></and_token>
+      </token>
+      <token postag="(BNW|WKW).*:ONV" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="(BNW|WKW).*:ONV"/>
+  </rule>
   <rule id="DATUM" name="Datum">
     <pattern>
       <token regexp="yes" postag="GET:ARA:00[12]:MRV|GET:ARA:001:EKV" postag_regexp="yes">[1-9]|[12][0-9]|3[01]</token>
@@ -1830,6 +1883,14 @@
       <token postag="GET:ARA:004:MRV"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_000" name="-">
+    <pattern>
+      <token postag="VRZ" marker="yes">
+        <and_token postag="BYW"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="BYW"/>
   </rule>
   <rule id="NEW_000b" name="-">
     <pattern>
@@ -1877,12 +1938,31 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_042" name="-">
+    <pattern>
+      <token postag="BNW:STL:VRB" marker="yes">
+        <and_token postag="BNW:STL:ONV"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="BNW:STL:VRB"/>
+  </rule>
   <rule id="NEW_044" name="-">
     <pattern>
       <token postag="VNW:AWZ:MRV:DE_" marker="yes"></token>
       <token postag="ZNW:MRV:DE_" marker="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_049" name="-">
+    <pattern>
+      <token postag="WKW:VLT:INF" marker="yes">
+        <and_token postag="WKW:VTD:ONV"></and_token>
+        <and_token postag="WKW:VTD:VRB"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:VTD:VRB"/>
   </rule>
   <rule id="NEW_051" name="-">
     <pattern>
@@ -1904,6 +1984,15 @@
     </pattern>
     <disambig action="remove" postag="ZNW:EKV"/>
   </rule>
+  <rule id="NEW_076" name="-">
+    <pattern>
+      <token>ik</token>
+      <token postag="WKW:TGW:1EP" marker="yes">
+        <and_token postag="WKW:TGW:3EP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:3EP"/>
+  </rule>
   <rule id="NEW_080" name="-">
     <pattern>
       <token postag="WKW:VLT:INF" marker="yes">voor</token>
@@ -1911,12 +2000,41 @@
     </pattern>
     <disambig action="remove" postag="VGW"/>
   </rule>
+  <rule id="NEW_105" name="-">
+    <pattern>
+      <token postag="WKW:TGW:INF" marker="yes">
+        <and_token postag="WKW:VTD:ONV"></and_token>
+        <and_token postag="WKW:VTD:VRB"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:VTD:VRB"/>
+  </rule>
+  <rule id="NEW_106" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="ENM:LOC:PTS" marker="yes">
+        <and_token postag="ENM:PER:FST"></and_token>
+      </token>
+      <token postag="WKW:VLT:1EP|WKW:TGW:3EP" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="ENM:LOC:PTS"/>
+  </rule>
   <rule id="NEW_112" name="-">
     <pattern>
       <token regexp="yes" postag="VNW:OND:EKV:HET" marker="yes">het|dit|dat</token>
       <token regexp="yes" postag="SENT_END">[.!?]</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_121" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="ZNW:EKV:DE_" marker="yes">
+        <and_token postag="BYW"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV:DE_"/>
   </rule>
   <rule id="NEW_124" name="-">
     <pattern>
@@ -1972,6 +2090,33 @@
       <wd pos="ZNW:EKV:DE_"/>
     </disambig>
   </rule>
+  <rule id="NEW_141" name="-">
+    <pattern>
+      <token regexp="yes">in|te</token>
+      <token postag="ENM:LOC:PTS" marker="yes">
+        <and_token postag="ENM:PER:LST:.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ENM:PER:LST:.*"/>
+  </rule>
+  <rule id="NEW_142" name="-">
+    <pattern>
+      <token regexp="yes">zei|zegt</token>
+      <token postag="ENM:LOC:PTS" marker="yes">
+        <and_token postag="ENM:PER:FST"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ENM:LOC:PTS"/>
+  </rule>
+  <rule id="NEW_143" name="-">
+    <pattern>
+      <token>,</token>
+      <token postag="VGW" marker="yes">
+        <and_token postag="VRZ"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VRZ"/>
+  </rule>
   <rule id="NEW_144" name="-">
     <pattern>
       <token>,</token>
@@ -2000,6 +2145,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_158" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="BNW:STL:VRB" marker="yes">
+        <and_token postag="ZNW:EKV"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV"/>
+  </rule>
   <rule id="NEW_168" name="-">
     <pattern>
       <token postag="TYD:DAG"></token>
@@ -2016,6 +2170,17 @@
       <token postag="ENM:PER:FST|ENM:PER:LST.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_170" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="TSW"></token>
+      <token>,</token>
+      <token postag="ENM:LOC:PTS" marker="yes">
+        <and_token postag="ENM:PER:FST"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ENM:LOC:PTS"/>
   </rule>
   <rule id="NEW_172" name="-">
     <pattern>
@@ -2037,6 +2202,15 @@
       <token regexp="yes" postag="SENT_END">[.!?]</token>
     </pattern>
     <disambig action="remove" postag="VNW:PER:3EP:EKV:BEZ"/>
+  </rule>
+  <rule id="NEW_177" name="-">
+    <pattern>
+      <token marker="yes">haar</token>
+      <token postag="WKW:TGW:INF">
+        <and_token postag="ZNW:MRV:DE_"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV"/>
   </rule>
   <rule id="NEW_186" name="-">
     <pattern>
@@ -2075,6 +2249,15 @@
     </pattern>
     <disambig action="remove" postag="VNW:URT|BYW:GRD|TSW|VNW:OBP:EKV|VNW:VRG"/>
   </rule>
+  <rule id="NEW_199" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="GET:TXT:MRV" marker="yes">
+        <and_token postag="ZNW:EKV:DE_"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV:DE_"/>
+  </rule>
   <rule id="NEW_202" name="-">
     <pattern>
       <token postag="VGW" marker="yes"></token>
@@ -2096,6 +2279,26 @@
       <token marker="yes">wel</token>
     </pattern>
     <disambig action="remove" postag="ZNW:EKV"/>
+  </rule>
+  <rule id="NEW_208a" name="-">
+    <pattern>
+      <token marker="yes">zijn</token>
+      <token postag="ZNW:EKV:DE_">
+        <and_token postag="WKW:TGW:1EP"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:INF"/>
+  </rule>
+  <rule id="NEW_208b" name="-">
+    <pattern>
+      <token>zijn</token>
+      <token postag="ZNW:EKV:DE_" marker="yes">
+        <and_token postag="WKW:TGW:1EP"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="WKW:TGW:1EP"/>
   </rule>
   <rule id="NEW_220" name="-">
     <pattern>
@@ -2127,6 +2330,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_236" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="BYW" marker="yes">
+        <and_token postag="BNW:STL:IET"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="BNW:STL:IET"/>
+  </rule>
   <rule id="NEW_238" name="-">
     <pattern>
       <token postag="SENT_START|START" postag_regexp="yes"></token>
@@ -2135,12 +2347,50 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="NEW_242" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token>ik</token>
+      <token postag="WKW:VLT:1EP" marker="yes">
+        <and_token postag="WKW:VLT:GIJ"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="WKW:VLT:GIJ"/>
+  </rule>
+  <rule id="NEW_243" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="WKW:TGW:INF" marker="yes">
+        <and_token postag="BNW:STL:MRV:DE_"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="BNW:STL:MRV:DE_"/>
+  </rule>
   <rule id="NEW_245" name="-">
     <pattern>
       <token postag="maar" marker="yes"></token>
       <token regexp="yes" postag="SENT_END">[.!?]</token>
     </pattern>
     <disambig action="remove" postag="WKW:TGW:1EP"/>
+  </rule>
+  <rule id="NEW_246" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token>ik</token>
+      <token postag="ZNW:EKV:HET" marker="yes">
+        <and_token postag="WKW:TGW:1EP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="ZNW:EKV:HET"/>
+  </rule>
+  <rule id="NEW_247" name="-">
+    <pattern>
+      <token postag="MEH:EKV" marker="yes">
+        <and_token postag="GET:ROM:MRV"></and_token>
+      </token>
+      <token postag="SENT_END">.</token>
+    </pattern>
+    <disambig action="remove" postag="GET:ROM:MRV"/>
   </rule>
   <rule id="NEW_251" name="-">
     <pattern>
@@ -2149,6 +2399,26 @@
       <token postag="ZNW:EKV:DE_"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_256" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token regexp="yes" marker="yes">het|dit|dat</token>
+      <token postag="WKW:TGW:1EP">
+        <and_token postag="ZNW:EKV:HET"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OND:MRV:HET"/>
+  </rule>
+  <rule id="NEW_257" name="-">
+    <pattern>
+      <token>de</token>
+      <token postag="BNW:STL:ONV" marker="yes">
+        <and_token postag="ZNW:EKV:DE_"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="BNW:STL:ONV"/>
   </rule>
   <rule id="NEW_276" name="-">
     <pattern>
@@ -2163,6 +2433,26 @@
       <token regexp="yes" postag="SENT_END">[.!?]</token>
     </pattern>
     <disambig action="remove" postag="BYW:GRD|WKW:TGW:1EP"/>
+  </rule>
+  <rule id="NEW_280" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token marker="yes">het</token>
+      <token postag="WKW:TGW:1EP">
+        <and_token postag="WKW:TGW:3EP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VNW:OND:MRV:HET|VNW:AWZ:EKV:HET"/>
+  </rule>
+  <rule id="NEW_284" name="-">
+    <pattern>
+      <token>,</token>
+      <token postag="ENM:LOC:PTS" marker="yes">
+        <and_token postag="ENM:PER:FST"></and_token>
+      </token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="remove" postag="ENM:LOC:PTS"/>
   </rule>
   <rule id="NEW_286" name="-">
     <pattern>

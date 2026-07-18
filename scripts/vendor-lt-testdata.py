@@ -982,39 +982,8 @@ def write_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
                 def_attr = f' default="{dflt}"'
             lines.append(f'    <rule id="{xml_esc(r["id"])}" name="{xml_esc(r["name"])}"{def_attr}>')
             lines.append("      <pattern>")
-            for t in r["tokens"]:
-                if isinstance(t, str):
-                    lines.append(f"        <token>{xml_esc(t)}</token>")
-                    continue
-                attrs = []
-                for k in (
-                    "regexp",
-                    "case_sensitive",
-                    "negate",
-                    "inflected",
-                    "min",
-                    "max",
-                    "skip",
-                    "postag",
-                    "postag_regexp",
-                ):
-                    if k in t and t[k] is not None and str(t[k]) != "":
-                        attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
-                attr_s = (" " + " ".join(attrs)) if attrs else ""
-                body = xml_esc(t.get("text") or "")
-                excs = t.get("exceptions") or []
-                if not excs:
-                    lines.append(f"        <token{attr_s}>{body}</token>")
-                else:
-                    lines.append(f"        <token{attr_s}>{body}")
-                    for e in excs:
-                        ea = []
-                        for k in ("regexp", "case_sensitive", "negate"):
-                            if k in e and e[k]:
-                                ea.append(f'{k}="{xml_esc(str(e[k]))}"')
-                        eas = (" " + " ".join(ea)) if ea else ""
-                        lines.append(f"          <exception{eas}>{xml_esc(e.get('text') or '')}</exception>")
-                    lines.append("        </token>")
+            # Reuse disambig token writer: exceptions, previous/next, and_token, chunk.
+            write_disambig_token_lines(lines, r["tokens"], indent="        ")
             lines.append("      </pattern>")
             lines.append(f"      <message>{r['message']}</message>")  # may contain <suggestion>
             lines.append(f"      <short>{xml_esc(r['short'])}</short>")

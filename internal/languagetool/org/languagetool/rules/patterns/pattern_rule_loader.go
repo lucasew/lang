@@ -85,15 +85,21 @@ type xmlToken struct {
 	Postag        string         `xml:"postag,attr"`
 	PostagRegexp  string         `xml:"postag_regexp,attr"`
 	// SpaceBefore ports spacebefore="yes|no" (Java PatternToken.setWhitespaceBefore).
-	SpaceBefore string         `xml:"spacebefore,attr"`
-	Content     string         `xml:",chardata"`
-	Exceptions  []xmlException `xml:"exception"`
+	SpaceBefore string `xml:"spacebefore,attr"`
+	// Chunk / ChunkRe port Java PatternToken chunk / chunk_re.
+	Chunk   string `xml:"chunk,attr"`
+	ChunkRe string `xml:"chunk_re,attr"`
+	Content    string         `xml:",chardata"`
+	Exceptions []xmlException `xml:"exception"`
+	// AndTokens ports soft <and_token> = Java <and> group members.
+	AndTokens []xmlToken `xml:"and_token"`
 }
 
 type xmlException struct {
 	Regexp        string `xml:"regexp,attr"`
 	Negate        string `xml:"negate,attr"`
 	CaseSensitive string `xml:"case_sensitive,attr"`
+	Scope         string `xml:"scope,attr"` // previous|next|empty=current
 	Content       string `xml:",chardata"`
 }
 
@@ -215,7 +221,12 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
 		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 	}
-	// Soft subset: first simple string exception only (full and-groups later).
+	if ch := strings.TrimSpace(xt.ChunkRe); ch != "" {
+		pt.SetChunkTag(ch, true)
+	} else if ch := strings.TrimSpace(xt.Chunk); ch != "" {
+		pt.SetChunkTag(ch, false)
+	}
+	// Soft subset: current exception + scope previous/next (Java PatternToken).
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		if exc == "" {
@@ -226,8 +237,27 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		if strings.EqualFold(ex.Negate, "yes") {
 			continue
 		}
-		pt.SetStringPosExceptionCS(exc, strings.EqualFold(ex.Regexp, "yes"), strings.EqualFold(ex.CaseSensitive, "yes"))
-		break
+		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
+		re := strings.EqualFold(ex.Regexp, "yes")
+		cs := strings.EqualFold(ex.CaseSensitive, "yes")
+		switch scope {
+		case "previous":
+			if pt.PreviousException == "" {
+				pt.SetPreviousException(exc, re, cs)
+			}
+		case "next":
+			if pt.NextException == "" {
+				pt.SetNextException(exc, re, cs)
+			}
+		default:
+			if pt.TokenException == "" {
+				pt.SetStringPosExceptionCS(exc, re, cs)
+			}
+		}
+	}
+	// Java <and> group members (soft <and_token>).
+	for _, at := range xt.AndTokens {
+		pt.AddAndGroupElement(tokenFromXML(at))
 	}
 	return pt
 }

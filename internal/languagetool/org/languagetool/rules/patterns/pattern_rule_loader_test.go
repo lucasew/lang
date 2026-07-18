@@ -73,3 +73,31 @@ func TestPatternRuleLoader_ExceptionAndInflected(t *testing.T) {
 	// surface exception "running" blocks even if lemma is run
 	require.False(t, m.IsMatched(runningTok))
 }
+
+func TestPatternRuleLoader_PreviousNextException(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category id="C" name="C">
+    <rule id="PREV" name="prev">
+      <pattern>
+        <token>mine<exception scope="previous">not</exception></token>
+      </pattern>
+      <message>m</message>
+      <short>s</short>
+    </rule>
+    <rule id="NEXT" name="next">
+      <pattern>
+        <token>can<exception scope="next" regexp="yes">be|do</exception></token>
+      </pattern>
+      <message>m</message>
+      <short>s</short>
+    </rule>
+  </category>
+</rules>`
+	rules, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, rules, 2)
+	require.Equal(t, "not", rules[0].PatternTokens[0].PreviousException)
+	require.Equal(t, "be|do", rules[1].PatternTokens[0].NextException)
+	require.True(t, rules[1].PatternTokens[0].NextExceptionRE)
+}
