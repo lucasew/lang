@@ -397,13 +397,11 @@ func (m *PatternTokenMatcher) isExceptionMatchedCompletely(token *languagetool.A
 		return false
 	}
 	pt := m.Base
+	// Java PatternToken exception without inflected="yes" matches surface only
+	// (DOUBLE_AUX <exception>be</exception> must not reject lemma-be "were").
 	if pt.TokenException != "" {
 		if !matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive) {
-			// also try lemma like surface match paths
-			if lem := token.GetLemma(); lem == nil || *lem == "" ||
-				!matchExceptionSurface(*lem, pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive) {
-				return false
-			}
+			return false
 		}
 	}
 	if pt.TokenExceptionPosTag != "" {

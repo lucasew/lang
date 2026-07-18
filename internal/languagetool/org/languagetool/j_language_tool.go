@@ -99,6 +99,13 @@ type JLanguageTool struct {
 	TagWord func(token string) []TokenTag
 	// Disambiguator optional post-tag sentence filter (multiword chunker / XML rules).
 	Disambiguator SentenceDisambiguator
+	// Chunker ports Java Language.getChunker(); runs on tagged tokens before
+	// disambiguation (JLanguageTool.getRawAnalyzedSentence).
+	// Interface lives here to avoid import cycles with package chunking.
+	Chunker SentenceChunker
+	// PostDisambiguationChunker ports Language.getPostDisambiguationChunker();
+	// runs after disambiguation when set.
+	PostDisambiguationChunker SentenceChunker
 	// IgnoreWords soft user-dictionary / spell-ignore set (surface forms).
 	IgnoreWords map[string]struct{}
 	// UserConfig optional user preferences (accepted phrases, speller words).
@@ -109,6 +116,11 @@ type JLanguageTool struct {
 // SentenceDisambiguator filters/augments POS on an analyzed sentence (soft LT disambiguator hook).
 type SentenceDisambiguator interface {
 	Disambiguate(input *AnalyzedSentence) *AnalyzedSentence
+}
+
+// SentenceChunker ports org.languagetool.chunking.Chunker for Analyze wiring.
+type SentenceChunker interface {
+	AddChunkTags(tokens []*AnalyzedTokenReadings)
 }
 
 func NewJLanguageTool(languageCode string) *JLanguageTool {
@@ -279,10 +291,18 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 		} else {
 			s = AnalyzeWithTokenizer(p, wt)
 		}
+		// Java getRawAnalyzedSentence: tagger then language.getChunker().
+		if s != nil && lt.Chunker != nil {
+			lt.Chunker.AddChunkTags(s.GetTokens())
+		}
 		if lt.Disambiguator != nil && s != nil {
 			if d := lt.Disambiguator.Disambiguate(s); d != nil {
 				s = d
 			}
+		}
+		// Java getAnalyzedSentence: optional post-disambiguation chunker.
+		if s != nil && lt.PostDisambiguationChunker != nil {
+			lt.PostDisambiguationChunker.AddChunkTags(s.GetTokens())
 		}
 		out = append(out, s)
 	}

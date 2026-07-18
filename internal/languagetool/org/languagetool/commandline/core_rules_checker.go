@@ -216,6 +216,9 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
+			// Java English.createDefaultChunker(): EnglishChunker after POS tag.
+			// Soft: POS-driven OpenNLP-like BIO + EnglishChunkFilter (no en-chunker.bin).
+			en.RegisterEnglishChunker(lt)
 			// Soft multiword chunker + soft XML + ignore-spelling word list.
 			en.RegisterSoftEnglishDisambiguator(lt,
 				DiscoverEnglishMultiwords(opts),

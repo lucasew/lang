@@ -2,6 +2,7 @@ package chunking
 
 // Twin of languagetool-language-modules/en/src/test/java/org/languagetool/chunking/EnglishChunkerTest.java
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -54,7 +55,7 @@ func TestEnglishChunker_AddChunkTagsSingular(t *testing.T) {
 	require.Contains(t, joined, "singular")
 }
 
-// Port of EnglishChunkerTest.testContractions — basic NP still assigned on content words
+// Port of EnglishChunkerTest.testContractions — soft OpenNLP-like BIO from POS.
 func TestEnglishChunker_Contractions(t *testing.T) {
 	tokens := []*languagetool.AnalyzedTokenReadings{
 		readings("I", "PRP", 0),
@@ -62,8 +63,10 @@ func TestEnglishChunker_Contractions(t *testing.T) {
 		readings("fine", "JJ", 4),
 	}
 	NewEnglishChunker().AddChunkTags(tokens)
-	// no panic; PRP not nounish
-	require.Empty(t, tokens[0].GetChunkTags())
+	// no panic; OpenNLP treats PRP as NP and VBP as VP
+	require.NotEmpty(t, tokens[0].GetChunkTags())
+	require.Contains(t, strings.Join(tokens[0].GetChunkTags(), ","), "NP")
+	require.Contains(t, strings.Join(tokens[1].GetChunkTags(), ","), "VP")
 }
 
 // Port of EnglishChunkerTest.testTokenize — chunker does not re-tokenize; surface tokens preserved

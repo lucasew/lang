@@ -71,11 +71,12 @@ func isContinuationOfNounPhrase(t ChunkTaggedToken) bool {
 }
 
 func isEndOfNounPhrase(tokens []ChunkTaggedToken, i int) bool {
+	// Java EnglishChunkFilter.isEndOfNounPhrase: true when next is not I-NP
+	// (including when next is B-NP starting a new phrase, or O/VP/…).
 	if i+1 >= len(tokens) {
 		return true
 	}
-	// end when next is not I-NP
-	return !isContinuationOfNounPhrase(tokens[i+1]) && !isBeginningOfNounPhrase(tokens[i+1])
+	return !isContinuationOfNounPhrase(tokens[i+1])
 }
 
 func endOfNounPhraseIsSingular(tokens []ChunkTaggedToken, i int) bool {
