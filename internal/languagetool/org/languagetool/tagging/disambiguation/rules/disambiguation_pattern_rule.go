@@ -82,7 +82,9 @@ func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSente
 	if r.CanBeIgnoredFor(sentence) {
 		return sentence
 	}
-	matcher := patterns.NewPatternRuleMatcher(r.AbstractTokenBasedRule)
+	// Strict POS: untagged tokens are UNKNOWN only (Java with a real tagger).
+	// Soft grammar keeps the non-strict matcher so open-class postags soft-match.
+	matcher := patterns.NewPatternRuleMatcherStrict(r.AbstractTokenBasedRule)
 	matches, err := matcher.Match(sentence)
 	if err != nil || len(matches) == 0 {
 		return sentence

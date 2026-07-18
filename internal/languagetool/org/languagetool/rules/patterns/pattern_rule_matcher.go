@@ -31,6 +31,18 @@ func NewPatternRuleMatcher(rule *AbstractTokenBasedRule) *PatternRuleMatcher {
 	return &PatternRuleMatcher{Rule: rule, matchers: ms}
 }
 
+// NewPatternRuleMatcherStrict builds a matcher with StrictPOS on every token
+// (Java disambiguation: unknown surfaces only satisfy postag=UNKNOWN).
+func NewPatternRuleMatcherStrict(rule *AbstractTokenBasedRule) *PatternRuleMatcher {
+	m := NewPatternRuleMatcher(rule)
+	for _, mt := range m.matchers {
+		if mt != nil {
+			mt.StrictPOS = true
+		}
+	}
+	return m
+}
+
 // NewPatternRuleMatcherFromPattern builds a matcher from a PatternRule.
 func NewPatternRuleMatcherFromPattern(rule *PatternRule) *PatternRuleMatcher {
 	if rule == nil {

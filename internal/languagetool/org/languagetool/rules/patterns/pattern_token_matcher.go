@@ -17,6 +17,10 @@ type PatternTokenMatcher struct {
 	Base *PatternToken
 	// compiled RE for Token when Regexp is set
 	tokenRE *regexp.Regexp
+	// StrictPOS when true: untagged tokens only match postag=UNKNOWN (Java
+	// disambiguation with a real tagger). Soft grammar without a tagger keeps
+	// StrictPOS false so open-class postags can soft-accept letter words.
+	StrictPOS bool
 }
 
 func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
@@ -186,7 +190,11 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			// Surface+word POS (e.g. TL ADJECTIVE-V with RE+postag): when the
 			// surface already matched, accept non-negated POS without a tagger.
 			tag := strings.ToUpper(pt.Pos.PosTag)
-			if tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN") {
+			// StrictPOS (disambiguation with a tagger): nil POS is UNKNOWN only.
+			// Do not soft-promote America1s→VBN so OF_VBN_JJ invents JJ tags.
+			if m.StrictPOS {
+				posOK = tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN")
+			} else if tag == "UNKNOWN" || strings.HasPrefix(tag, "UNKNOWN") {
 				posOK = true
 			} else if pt.Token == "" {
 				tok := token.GetToken()
@@ -298,6 +306,16 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 	if hasRealPOS {
 		// Java: no match if no reading satisfied string+POS constraints.
 		return false
+	}
+	// Disambiguation with a tagger (StrictPOS): untagged surfaces are UNKNOWN only.
+	// Do not soft-promote America1s→VBN so OF_VBN_JJ does not invent JJ tags.
+	if m.StrictPOS {
+		if m.Base != nil && m.Base.Pos != nil && m.Base.Pos.PosTag != "" {
+			tag := strings.ToUpper(m.Base.Pos.PosTag)
+			if tag != "UNKNOWN" && !strings.HasPrefix(tag, "UNKNOWN") {
+				return false
+			}
+		}
 	}
 	// Soft path without a tagger: untagged tokens only.
 	// Propagate whitespace-before so spacebefore= constraints still apply.
