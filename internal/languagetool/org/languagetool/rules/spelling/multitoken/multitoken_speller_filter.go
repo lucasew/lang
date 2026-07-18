@@ -34,7 +34,9 @@ func (f *MultitokenSpellerFilter) AcceptRuleMatch(match *rules.RuleMatch, origin
 	if originalError == "" {
 		return nil
 	}
-	acceptedBySpeller := false
+	// Java MultitokenSpellerFilter.isMisspelled: null default spelling rule → false
+	// so areTokensAcceptedBySpeller = true when no speller hook is wired.
+	acceptedBySpeller := true
 	if f.IsMisspelled != nil {
 		acceptedBySpeller = !f.IsMisspelled(originalError)
 	}

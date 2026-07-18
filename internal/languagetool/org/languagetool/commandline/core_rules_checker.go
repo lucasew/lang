@@ -155,12 +155,9 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			base = lang[:i]
 		}
-		if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
-			if gpath := DiscoverLanguageGrammarXML(opts, base); gpath != "" {
-				_, _ = patterns.RegisterGrammarFile(lt, gpath, lang)
-			}
-		}
 		if strings.EqualFold(base, "en") {
+			// Java English.getMultitokenSpeller() before grammar MultitokenSpellerFilter runs.
+			wireEnglishMultitokenSpeller(opts)
 			// Prefer CFSA2 en_US.dict when present; demo only under LANG_DEMO_SPELLER.
 			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 			nearest := en.DemoEnglishKnownWords()
@@ -197,6 +194,12 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			// Java createDefaultDisambiguator(): FR/ES/PT hybrids when resources exist.
 			_ = RegisterHybridDisambiguator(lt, base, opts)
 		}
+		// Grammar after multitoken speller so MultitokenSpellerFilter can use the dict.
+		if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
+			if gpath := DiscoverLanguageGrammarXML(opts, base); gpath != "" {
+				_, _ = patterns.RegisterGrammarFile(lt, gpath, lang)
+			}
+		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {
 				return nil, err
@@ -217,6 +220,24 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 		ApplyCLIRuleFilters(lt, opts)
 	}
 	return lt, nil
+}
+
+// wireEnglishMultitokenSpeller ports English.getMultitokenSpeller resource load
+// (multiwords.txt + spelling_global.txt) into MultitokenSpellerFilter.
+func wireEnglishMultitokenSpeller(opts *CommandLineOptions) {
+	mw := DiscoverEnglishMultiwords(opts)
+	sg := DiscoverSpellingGlobal(opts)
+	if mw == "" && sg == "" {
+		return
+	}
+	sp, err := en.LoadEnglishMultitokenSpeller(mw, sg)
+	if err != nil || sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	// isMisspelled nil → MultitokenSpellerFilter treats tokens as not misspelled-checked
+	// (Java: default spelling rule null → isMisspelled false → areTokensAcceptedBySpeller true).
+	// When a binary speller is later wired, pass a real hook; do not invent misspell logic here.
+	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, nil)
 }
 
 // resolveGrammarDir prefers --data-dir/grammar, then LANG_GRAMMAR_DIR, then LANG_DATA_DIR/grammar.

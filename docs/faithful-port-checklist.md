@@ -71,7 +71,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 |---|--------|--------|
 | 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1; antipattern keep; registered filters (Apostrophe/UnderlineSpaces/Multitoken fail-closed); skip unknown filters |
 | 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] |
-| 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN multiwords + spelling_global wired |
+| 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN hybrid multiwords; EnglishMultitokenSpeller loads multiwords+spelling_global for MultitokenSpellerFilter |
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] path wiring exists; coverage incomplete |
 | 2.5 | Engine loads **same** speller dicts | [~] EN partial |
 | 2.6 | Engine loads **same** SRX / tokenizer resources | [~] |
