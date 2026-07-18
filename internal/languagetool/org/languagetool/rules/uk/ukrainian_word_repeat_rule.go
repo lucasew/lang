@@ -77,15 +77,20 @@ func (r *UkrainianWordRepeatRule) ukIgnore(tokens []*languagetool.AnalyzedTokenR
 
 	// Java: if any POS tag is non-initial non-SENT_END → do not ignore (return false).
 	// If all tags null (no tagger) → Java returns true (ignore reduplication of unknowns).
-	// Without a tagger we approximate: still flag common function-word doubles ("без без").
+	// Soft Analyze attaches SENT_END on the last content token; that is not
+	// morphological POS and must not alone trigger "hasAnyPos → ignore".
+	// Without a tagger we still flag common function-word doubles ("без без").
 	hasAnyPos := false
 	for _, at := range atr.GetReadings() {
 		posTag := at.GetPOSTag()
 		if posTag == nil {
 			continue
 		}
+		if *posTag == languagetool.SentenceEndTagName || *posTag == languagetool.ParagraphEndTagName {
+			continue
+		}
 		hasAnyPos = true
-		if !isInitialReading(at, tokens, position) && *posTag != languagetool.SentenceEndTagName {
+		if !isInitialReading(at, tokens, position) {
 			return false
 		}
 	}

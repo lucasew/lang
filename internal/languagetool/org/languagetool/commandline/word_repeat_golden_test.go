@@ -1,26 +1,32 @@
 package commandline
 
 import (
-	"bytes"
-	"encoding/json"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/stretchr/testify/require"
 )
 
-func TestGolden_WordRepeat(t *testing.T) {
-	var buf bytes.Buffer
-	_, err := CoreGoldenHook(&buf, "This is is wrong.", &CommandLineOptions{Language: "en"})
-	require.NoError(t, err)
-	var findings []Finding
-	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
-	found := false
-	for _, f := range findings {
-		if f.Rule == "ENGLISH_WORD_REPEAT_RULE" {
-			found = true
-			require.Equal(t, "duplication", f.Type)
-			require.Equal(t, "warning", f.Severity)
-		}
+// Soft Analyze attaches SENT_END on the last content word (Java AddReading drops
+// null POS). PL AdvancedWordRepeat + UK WordRepeat must still flag adjacent
+// doubles without a trailing period (server multi-lang smoke).
+func TestGolden_WordRepeat_NoTrailingPeriod(t *testing.T) {
+	for _, tc := range []struct{ lang, text, want string }{
+		{"pl", "test test", "PL_WORD_REPEAT"},
+		{"uk", "без без", "UKRAINIAN_WORD_REPEAT_RULE"},
+		{"fr", "bonjour bonjour", "FR_WORD_REPEAT_RULE"},
+	} {
+		t.Run(tc.lang, func(t *testing.T) {
+			lt := languagetool.NewJLanguageTool(tc.lang)
+			corepack.Register(lt, tc.lang)
+			found := false
+			for _, m := range lt.Check(tc.text) {
+				if m.RuleID == tc.want {
+					found = true
+				}
+			}
+			require.True(t, found, "want %s", tc.want)
+		})
 	}
-	require.True(t, found, "%+v", findings)
 }

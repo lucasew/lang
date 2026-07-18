@@ -87,19 +87,24 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 		repetition := false
 		prevLemma := ""
 		if isWord {
-			notSentEnd := false
+			// Soft Analyze uses AddReading for SENT_END, which (like Java) drops a
+			// trailing null-POS reading. The last content word then has only SENT_END.
+			// Still count its surface so two-word sentences without "." match
+			// (server multi-lang "test test" / PL_WORD_REPEAT).
+			contentReadings := 0
 			for _, analyzedToken := range tokens[i].GetReadings() {
 				pos := analyzedToken.GetPOSTag()
-				if pos != nil && *pos == languagetool.SentenceEndTagName {
-					notSentEnd = true
+				if pos != nil && (*pos == languagetool.SentenceEndTagName || *pos == languagetool.ParagraphEndTagName) {
+					continue
 				}
+				contentReadings++
 				if hasLemma {
 					lemmaPtr := analyzedToken.GetLemma()
 					if lemmaPtr == nil {
 						continue
 					}
 					curLemma := *lemmaPtr
-					if prevLemma != curLemma && !notSentEnd {
+					if prevLemma != curLemma {
 						if inflectedWords[curLemma] && curToken != i {
 							repetition = true
 						} else {
@@ -111,13 +116,20 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 				} else {
 					// Without lemmas, compare case-insensitively (Java lemmas are lowercased).
 					key := strings.ToLower(token)
-					if !notSentEnd {
-						if inflectedWords[key] {
-							repetition = true
-						} else {
-							inflectedWords[key] = true
-						}
+					if inflectedWords[key] {
+						repetition = true
+					} else {
+						inflectedWords[key] = true
 					}
+				}
+			}
+			if contentReadings == 0 && !hasLemma {
+				// Pure SENT_END annotation on last content word: still track surface.
+				key := strings.ToLower(token)
+				if inflectedWords[key] {
+					repetition = true
+				} else {
+					inflectedWords[key] = true
 				}
 			}
 		}
