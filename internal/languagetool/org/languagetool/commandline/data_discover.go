@@ -3,6 +3,7 @@ package commandline
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // WalkUpFind walks from start (or cwd) toward root looking for relPath.
@@ -259,4 +260,78 @@ func DiscoverEnglishPOSDict(opts *CommandLineOptions) string {
 		}
 	}
 	return ""
+}
+
+// DiscoverLanguagePOSDict finds a Morfologik POS dict for lang (e.g. "da" → danish.dict).
+// Order: LANG_{CODE}_DICT env, --data-dir/{code}/*.dict, walk-up inspiration resource path.
+func DiscoverLanguagePOSDict(opts *CommandLineOptions, lang string) string {
+	base := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		base = lang[:i]
+	}
+	base = strings.ToLower(base)
+	if base == "" {
+		return ""
+	}
+	envKey := "LANG_" + strings.ToUpper(base) + "_DICT"
+	if p := os.Getenv(envKey); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	// Common dict basenames used by upstream modules
+	names := languagePOSDictNames(base)
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, name := range names {
+			for _, rel := range []string{
+				filepath.Join(opts.GetDataDir(), base, name),
+				filepath.Join(opts.GetDataDir(), name),
+			} {
+				if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+					return rel
+				}
+			}
+		}
+	}
+	for _, name := range names {
+		rel := filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+			"src", "main", "resources", "org", "languagetool", "resource", base, name)
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+func languagePOSDictNames(base string) []string {
+	switch base {
+	case "da":
+		return []string{"danish.dict"}
+	case "km":
+		return []string{"khmer.dict"}
+	case "de":
+		return []string{"german.dict"}
+	case "fr":
+		return []string{"french.dict"}
+	case "es":
+		return []string{"spanish.dict"}
+	case "nl":
+		return []string{"dutch.dict"}
+	case "pl":
+		return []string{"polish.dict"}
+	case "it":
+		return []string{"italian.dict"}
+	case "pt":
+		return []string{"portuguese.dict"}
+	case "ru":
+		return []string{"russian.dict"}
+	case "sv":
+		return []string{"swedish.dict"}
+	case "ca":
+		return []string{"catalan.dict"}
+	case "en":
+		return []string{"english.dict"}
+	default:
+		return []string{base + ".dict"}
+	}
 }
