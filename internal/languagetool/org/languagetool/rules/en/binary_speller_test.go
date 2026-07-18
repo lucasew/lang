@@ -3,6 +3,7 @@ package en
 import (
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -67,4 +68,30 @@ func TestRegisterBinaryEnglishSpeller_Edit1Suggestions(t *testing.T) {
 		}
 	}
 	require.True(t, found, "expected language among findings %+v", m)
+}
+
+func TestRegisterBinaryEnglishSpeller_ProhibitFile(t *testing.T) {
+	// Java SpellingCheckRule: prohibit.txt forces misspell even when dict accepts.
+	// "easter" is in en/hunspell/prohibit.txt and accepted by en_US.dict.
+	if len(discoverEnglishProhibitPaths()) == 0 {
+		t.Skip("prohibit.txt not found")
+	}
+	// reset cache so test sees files from repo root walk-up
+	enProhibitOnce = sync.Once{}
+	enProhibitSet = nil
+
+	p := findEnUSDict(t)
+	lt := languagetool.NewJLanguageTool("en")
+	require.True(t, RegisterBinaryEnglishSpeller(lt, p, nil, map[string][]string{}))
+	m := lt.Check("Celebrate easter carefully.")
+	var hasSpell bool
+	for _, x := range m {
+		if x.RuleID == "MORFOLOGIK_RULE_EN_US" && x.FromPos >= 0 {
+			// surface at "easter"
+			hasSpell = true
+		}
+	}
+	require.True(t, hasSpell, "prohibit easter should spell-flag; matches=%+v", m)
+	require.True(t, isEnglishProhibited(englishProhibitedWords(), "easter"))
+	require.False(t, isEnglishProhibited(englishProhibitedWords(), "Easter")) // Java exact case
 }

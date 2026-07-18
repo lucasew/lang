@@ -61,3 +61,23 @@ func TestCoreDoctor_ReportsSpellerDict(t *testing.T) {
 		require.Contains(t, out, "en_US.dict")
 	}
 }
+
+func TestGolden_ProhibitEasterFlags(t *testing.T) {
+	// Java en/hunspell/prohibit.txt: "easter" is a spelling error even if dict accepts it.
+	if DiscoverEnglishUSDict(nil) == "" {
+		t.Skip("en_US.dict missing")
+	}
+	var buf bytes.Buffer
+	_, err := CoreGoldenHook(&buf, "Celebrate easter carefully.", &CommandLineOptions{Language: "en"})
+	require.NoError(t, err)
+	var findings []Finding
+	require.NoError(t, json.Unmarshal(buf.Bytes(), &findings))
+	found := false
+	for _, f := range findings {
+		if f.Rule == "MORFOLOGIK_RULE_EN_US" {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "want MORFOLOGIK_RULE_EN_US for prohibited easter; %+v", findings)
+}
