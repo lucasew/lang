@@ -272,7 +272,8 @@ func TestGolden_MultiLangSoftGrammarExtra(t *testing.T) {
 		{"br", "War war an hent.", "BR_SOFT_HA_WAR", ""},
 		{"br", "Demat!!", "BR_SOFT_DOUBLE_BANG", "!"},
 		{"ga", "An an madra.", "GA_SOFT_AN_AN", ""},
-		{"ga", "Tá mé ar ar an mbord.", "GA_SOFT_AR_AR", ""},
+		// Not GA_SOFT_AR_AR: official ga disambiguation AR_AR immunizes "ar ar"
+		// (Java soft disambig), so pattern grammar must not expect a hit.
 		{"ga", "Labhair le le Seán.", "GA_SOFT_LE_LE", ""},
 		{"ga", "Dia duit!!", "GA_SOFT_DOUBLE_BANG", "!"},
 		{"zh", "是 是 的。", "ZH_SOFT_SHI_SHI", ""},
