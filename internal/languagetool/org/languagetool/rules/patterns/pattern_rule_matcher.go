@@ -138,7 +138,10 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 		// Try occurrence counts from max down to min (include 0 = skip optional).
 		for occ := maxOcc; occ >= minOcc; occ-- {
 			if occ == 0 {
-				if rm, ok := rec(ki+1, pos, pt.SkipNext, sp); ok {
+				// Optional element absent: preserve the previous token's skip window
+				// so later required elements still see skip="N" (Java PatternRuleMatcher).
+				// Using pt.SkipNext here would drop e.g. couper skip=4 before dépenses.
+				if rm, ok := rec(ki+1, pos, prevSkip, sp); ok {
 					return rm, true
 				}
 				continue

@@ -812,7 +812,7 @@ func softGermanAdjCandidates(surface string) []string {
 }
 
 // softFrenchErInflected maps common -er verb surfaces to infinitive without a tagger.
-// Examples: placé/placer, places/placer, rencontré/rencontrer.
+// Examples: placé/placer, places/placer, rencontré/rencontrer, opère/opérer (é/è fold).
 func softFrenchErInflected(surface, base string) bool {
 	s, b := strings.ToLower(surface), strings.ToLower(base)
 	if !strings.HasSuffix(b, "er") || len(b) < 4 {
@@ -822,9 +822,10 @@ func softFrenchErInflected(surface, base string) bool {
 	if len(stem) < 3 {
 		return false
 	}
+	sf := softFrenchAccentFold(s)
 	// present / participle endings on the stem
-	for _, suf := range []string{"é", "ée", "és", "ées", "e", "es", "ent", "ons", "ez", "ant", "ais", "ait", "aient", "ai", "as", "a", "âmes", "âtes", "èrent"} {
-		if s == stem+suf {
+	for _, suf := range []string{"é", "ée", "és", "ées", "è", "ès", "e", "es", "ent", "ons", "ez", "ant", "ais", "ait", "aient", "ai", "as", "a", "âmes", "âtes", "èrent"} {
+		if s == stem+suf || sf == softFrenchAccentFold(stem+suf) {
 			return true
 		}
 	}
@@ -832,12 +833,25 @@ func softFrenchErInflected(surface, base string) bool {
 	if strings.HasSuffix(stem, "c") {
 		ced := stem[:len(stem)-1] + "ç"
 		for _, suf := range []string{"ons", "ait", "ais", "aient"} {
-			if s == ced+suf {
+			if s == ced+suf || sf == softFrenchAccentFold(ced+suf) {
 				return true
 			}
 		}
 	}
 	return false
+}
+
+// softFrenchAccentFold maps accented vowels to ASCII for soft stem compares (opère/opérer).
+func softFrenchAccentFold(s string) string {
+	return strings.NewReplacer(
+		"é", "e", "è", "e", "ê", "e", "ë", "e",
+		"à", "a", "â", "a", "ä", "a",
+		"ù", "u", "û", "u", "ü", "u",
+		"ô", "o", "ö", "o",
+		"î", "i", "ï", "i",
+		"ç", "c",
+		"É", "e", "È", "e", "Ê", "e",
+	).Replace(strings.ToLower(s))
 }
 
 // softFrenchElisionMatch is true when surface is a French elided form of base
@@ -972,6 +986,18 @@ var softIrregularLemma = map[string][]string{
 	"a": {"avoir"}, "ai": {"avoir"}, "as": {"avoir"}, "avons": {"avoir"}, "avez": {"avoir"}, "ont": {"avoir"},
 	"avais": {"avoir"}, "avait": {"avoir"}, "avaient": {"avoir"}, "eu": {"avoir"}, "ayant": {"avoir"},
 	// venir / venir forms (CONFUSION_OU viennent)
+
+	// valoir / falloir / pouvoir / devoir (FR soft residuals)
+	"vaut": {"valoir"}, "valu": {"valoir"}, "valait": {"valoir"}, "valaient": {"valoir"}, "valons": {"valoir"}, "valez": {"valoir"}, "valent": {"valoir"},
+	"faut": {"falloir"}, "fallait": {"falloir"}, "faudra": {"falloir"}, "fallu": {"falloir"},
+	"peux": {"pouvoir"}, "peut": {"pouvoir"}, "pouvons": {"pouvoir"}, "pouvez": {"pouvoir"}, "peuvent": {"pouvoir"},
+	"pouvais": {"pouvoir"}, "pouvait": {"pouvoir"}, "pouvaient": {"pouvoir"}, "pu": {"pouvoir"},
+	"dois": {"devoir"}, "doit": {"devoir"}, "devons": {"devoir"}, "devez": {"devoir"}, "doivent": {"devoir"},
+	"devais": {"devoir"}, "devait": {"devoir"}, "devaient": {"devoir"}, "devrais": {"devoir"}, "devrait": {"devoir"}, "devrions": {"devoir"}, "devriez": {"devoir"}, "devraient": {"devoir"},
+	"dû": {"devoir"}, "due": {"devoir"}, "dus": {"devoir"}, "dues": {"devoir"},
+	// aller future/conditional (ira, irai…)
+	"irai": {"aller"}, "iras": {"aller"}, "ira": {"aller"}, "irons": {"aller"}, "irez": {"aller"}, "iront": {"aller"},
+	"irais": {"aller"}, "irait": {"aller"}, "irions": {"aller"}, "iriez": {"aller"}, "iraient": {"aller"},
 	"viens": {"venir"}, "vient": {"venir"}, "venons": {"venir"}, "venez": {"venir"}, "viennent": {"venir"},
 	"venait": {"venir"}, "venaient": {"venir"}, "venu": {"venir"}, "venue": {"venir"}, "venus": {"venir"}, "venues": {"venir"},
 	"allons": {"aller"}, "allez": {"aller"}, "vont": {"aller"},

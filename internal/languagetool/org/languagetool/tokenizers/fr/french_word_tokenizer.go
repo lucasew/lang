@@ -39,6 +39,14 @@ var (
 		"plein-temps": true,
 		// Residual soft-pack compounds (AMANITE, AVANT-MIDI, INTER-CLUB, …)
 		"tue-mouches": true, "tue-mouche": true,
+
+		"pare-chocs": true, "pare-choc": true,
+		"sous-contracteur": true, "sous-contracteurs": true,
+		"lui-même": true, "elle-même": true, "eux-mêmes": true, "elles-mêmes": true,
+		"moi-même": true, "toi-même": true, "nous-mêmes": true, "vous-mêmes": true,
+		"grand-mère": true, "grand-mères": true, "grand-père": true, "grand-pères": true,
+		"petit-fils": true, "petite-fille": true, "petites-filles": true,
+		"répondit-il": true, "demanda-t-il": true,
 		"avant-midi": true, "avants-midis": true, "avant-midis": true, "avants-midi": true,
 		"inter-club": true, "inter-clubs": true,
 		"vice-président": true, "vice-présidente": true, "vice-présidents": true, "vice-présidentes": true,

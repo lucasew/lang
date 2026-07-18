@@ -57,7 +57,26 @@ func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentenc
 		readings = append(readings, ar)
 		prev = tok
 	}
+	// Soft: mirror LT analysis by tagging the last content token with SENT_END
+	// (POINT_DIALOGUE and other rules match postag SENT_END on the final word).
+	softAttachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
+}
+
+// softAttachSentenceEnd adds a SENT_END reading on the last non-SENT_START token.
+func softAttachSentenceEnd(readings []*AnalyzedTokenReadings) {
+	if len(readings) < 2 {
+		return
+	}
+	last := readings[len(readings)-1]
+	if last == nil || last.IsSentenceStart() {
+		return
+	}
+	if last.HasPosTag(SentenceEndTagName) {
+		return
+	}
+	se := SentenceEndTagName
+	last.AddReading(NewAnalyzedToken(last.GetToken(), &se, nil), "")
 }
 
 // WordTokenizerForLanguage returns the language-specific soft word tokenizer.
@@ -357,5 +376,6 @@ func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []Tok
 		readings = append(readings, ar)
 		prev = tok
 	}
+	softAttachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }
