@@ -52,6 +52,12 @@ func (t *SimpleSentenceTokenizer) Tokenize(text string) []string {
 			i = j
 			continue
 		}
+		// Soft: do not break after ordinal/day numbers (18. Main, 12. bis 11. Januar).
+		// German dates and ordinals use digit+period without ending the sentence.
+		if r == '.' && isOrdinalNumberPeriod(runes, i) {
+			i = j
+			continue
+		}
 		// case 1: punct + whitespace → break after one whitespace
 		if j+1 < len(runes) && unicode.IsSpace(runes[j+1]) {
 			end := j + 2 // include one whitespace (SRX \s)
@@ -77,6 +83,23 @@ func (t *SimpleSentenceTokenizer) Tokenize(text string) []string {
 		out = append(out, string(runes[start:]))
 	}
 	return out
+}
+
+// isOrdinalNumberPeriod is true when the period follows one or more digits
+// (German ordinal/day: "18. Mai", "12. bis 11. Januar").
+func isOrdinalNumberPeriod(runes []rune, dotIdx int) bool {
+	if dotIdx <= 0 || runes[dotIdx] != '.' {
+		return false
+	}
+	j := dotIdx - 1
+	if j < 0 || !unicode.IsDigit(runes[j]) {
+		return false
+	}
+	// consume full digit run (optional)
+	for j > 0 && unicode.IsDigit(runes[j-1]) {
+		j--
+	}
+	return true
 }
 
 // isAbbrevPeriod reports whether runes[dotIdx] is a period after a known abbreviation.

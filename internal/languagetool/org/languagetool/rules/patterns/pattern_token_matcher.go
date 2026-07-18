@@ -33,10 +33,18 @@ func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
 	return m
 }
 
-// softNormalizeJavaRegexp maps Java/PCRE unicode escapes used in LT XML
-// (\uXXXX, \UXXXXXXXX) to Go RE2 \x{...} form. Leaves other escapes alone.
+// softNormalizeJavaRegexp maps Java/PCRE constructs used in LT XML to Go RE2:
+//   - \uXXXX / \UXXXXXXXX → \x{...}
+//   - inline (?iu)/(?i)/(?u) flags stripped (case handled via PatternToken.CaseSensitive)
 func softNormalizeJavaRegexp(pat string) string {
-	if pat == "" || !strings.Contains(pat, `\u`) && !strings.Contains(pat, `\U`) {
+	if pat == "" {
+		return pat
+	}
+	// Strip Java inline flags RE2 rejects ((?iu) is common in DE soft packs).
+	for _, flag := range []string{"(?iu)", "(?ui)", "(?i)", "(?u)", "(?m)", "(?s)"} {
+		pat = strings.ReplaceAll(pat, flag, "")
+	}
+	if !strings.Contains(pat, `\u`) && !strings.Contains(pat, `\U`) {
 		return pat
 	}
 	var b strings.Builder
@@ -108,6 +116,17 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		if !matched && pt.Regexp && strings.Contains(pt.Token, "|") {
 			for _, alt := range softRegexpAlternatives(pt.Token) {
 				if softInflectedSurfaceMatch(token.GetToken(), alt, pt.CaseSensitive) {
+					matched = true
+					break
+				}
+			}
+		}
+		// Inflected non-RE: also try German adj stems as lemma (lateinischen→lateinisch).
+		if !matched && !pt.Regexp {
+			for _, cand := range softGermanAdjCandidates(token.GetToken()) {
+				if softInflectedSurfaceMatch(cand, pt.Token, pt.CaseSensitive) ||
+					(!pt.CaseSensitive && strings.EqualFold(cand, pt.Token)) ||
+					(pt.CaseSensitive && cand == pt.Token) {
 					matched = true
 					break
 				}
@@ -271,6 +290,12 @@ func (m *PatternTokenMatcher) matchSurface(surface string) bool {
 						return true
 					}
 				}
+				// German adjective/participle endings (Steigende→steigend for RE steigend?).
+				for _, cand := range softGermanAdjCandidates(rawSurface) {
+					if m.tokenRE.MatchString(cand) {
+						return true
+					}
+				}
 			}
 			return false
 		}
@@ -341,13 +366,14 @@ func softLooksLikePunct(s string) bool {
 }
 
 func softPostagLooksLikePunct(tag string) bool {
-	// SENT_END, PSN*, PUNCT*, PCT (EN), SENTENCE_END, etc.
+	// SENT_END, PSN*, PUNCT*, PCT (EN), PKT (DE STTS), SENTENCE_END, etc.
 	u := strings.ToUpper(tag)
 	return strings.Contains(u, "SENT_END") ||
 		strings.Contains(u, "SENTENCE_END") ||
 		strings.Contains(u, "PSN") ||
 		strings.Contains(u, "PUNC") ||
 		strings.Contains(u, "PCT") ||
+		strings.Contains(u, "PKT") ||
 		strings.Contains(u, "SENT_START")
 }
 
@@ -415,6 +441,24 @@ func softNormalizePostagPart(p string) string {
 }
 
 func softPostagPartIsOpen(p string) bool {
+	// German STTS open classes (often COLON-separated: SUB:NOM:SIN:…)
+	if strings.Contains(p, ":") {
+		for _, open := range []string{"SUB", "EIG", "ADJ", "ADV", "PA1", "PA2", "VER", "ZUS", "TRUNC", "FM"} {
+			if strings.HasPrefix(p, open) || strings.Contains(p, ":"+open) || strings.HasPrefix(p, open+":") {
+				return true
+			}
+			// ADJ:PRD, VER:INF, etc.
+			if strings.HasPrefix(p, open) {
+				return true
+			}
+		}
+		// patterns like (ADV:|ADJ:PRD:GRU).*
+		for _, open := range []string{"ADJ", "ADV", "SUB", "VER", "PA1", "PA2", "EIG"} {
+			if strings.Contains(p, open+":") || strings.Contains(p, open+".") {
+				return true
+			}
+		}
+	}
 	for _, open := range []string{"NN", "VB", "JJ", "RB", "CD", "FW", "UH", "SYM", "LS"} {
 		if strings.HasPrefix(p, open) {
 			return true
@@ -424,7 +468,22 @@ func softPostagPartIsOpen(p string) bool {
 }
 
 func softPostagPartIsClosed(p string) bool {
-	// PRP$ must be checked before PRP; WDT/WP/WRB before W*
+	// German STTS closed: ART, PRP (preposition!), PRO, KON, APPR, APPO, APZR, …
+	if strings.Contains(p, ":") || strings.HasPrefix(p, "PRP") || strings.HasPrefix(p, "ART") ||
+		strings.HasPrefix(p, "PRO") || strings.HasPrefix(p, "KON") || strings.HasPrefix(p, "APPR") ||
+		strings.HasPrefix(p, "APPO") || strings.HasPrefix(p, "APZR") || strings.HasPrefix(p, "KOUI") ||
+		strings.HasPrefix(p, "KOUS") || strings.HasPrefix(p, "KOKOM") {
+		// German PRP is preposition, not pronoun — still closed-class
+		if strings.HasPrefix(p, "PRP") || strings.Contains(p, "PRP:") || strings.Contains(p, "PRP.") {
+			return true
+		}
+		for _, c := range []string{"ART", "PRO", "KON", "APPR", "APPO", "APZR", "KOUI", "KOUS", "KOKOM", "PTKZU", "PTKNEG", "PTKVZ", "PTKANT"} {
+			if strings.HasPrefix(p, c) || strings.Contains(p, c+":") || strings.Contains(p, c+".") {
+				return true
+			}
+		}
+	}
+	// English Penn: PRP$ before PRP; WDT/WP/WRB before W*
 	for _, c := range []string{"PRP$", "PRP", "WDT", "WP$", "WP", "WRB", "PDT", "POS", "DT", "IN", "CC", "MD", "TO", "EX", "RP"} {
 		if strings.HasPrefix(p, c) {
 			return true
@@ -440,9 +499,14 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 	}
 	// Match if surface fits any closed-class alternative in the tag pattern.
 	u := strings.ToUpper(tag)
-	for _, part := range strings.Split(u, "|") {
+	// German STTS often uses .* wildcards without | — treat whole tag as one part.
+	parts := strings.Split(u, "|")
+	for _, part := range parts {
 		p := softNormalizePostagPart(part)
-		if p == "" || softPostagPartIsOpen(p) {
+		if p == "" {
+			continue
+		}
+		if softPostagPartIsOpen(p) {
 			continue
 		}
 		if softClosedPartSurface(p, s) {
@@ -453,6 +517,28 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 }
 
 func softClosedPartSurface(part, s string) bool {
+	// --- German STTS (colon tags or PRP:/ART:/PRO: families) ---
+	if strings.Contains(part, ":") || strings.HasPrefix(part, "PRP.") || strings.HasPrefix(part, "PRP:") ||
+		strings.Contains(part, "PRP.") || strings.Contains(part, "ART") || strings.Contains(part, "PRO:") ||
+		strings.Contains(part, "PRO.") || strings.Contains(part, "KON") || strings.Contains(part, "APPR") {
+		// Prepositions (STTS PRP / APPR) — "aus", "in", "im", "von", …
+		if strings.Contains(part, "PRP") || strings.Contains(part, "APPR") || strings.Contains(part, "APPO") || strings.Contains(part, "APZR") {
+			return softIsPreposition(s) || softIsGermanPrep(s)
+		}
+		if strings.Contains(part, "ART") {
+			return softIsGermanArticle(s)
+		}
+		if strings.Contains(part, "PRO") {
+			return softIsPronoun(s)
+		}
+		if strings.Contains(part, "KON") || strings.Contains(part, "KOU") || strings.Contains(part, "KOKOM") {
+			return softIsCC(s) || softIsGermanConj(s)
+		}
+		if strings.Contains(part, "PTK") {
+			return softLooksLikeWord(s)
+		}
+	}
+	// --- English Penn ---
 	switch {
 	case strings.HasPrefix(part, "PRP"):
 		return softIsPronoun(s)
@@ -473,8 +559,46 @@ func softClosedPartSurface(part, s string) bool {
 	case strings.HasPrefix(part, "RP") || strings.HasPrefix(part, "POS"):
 		// particles / possessive clitics: allow short words and 's
 		return softLooksLikeWord(s) || s == "'s" || s == "\u2019s"
-	case strings.Contains(part, "PCT") || strings.Contains(part, "PUNC"):
+	case strings.Contains(part, "PCT") || strings.Contains(part, "PUNC") || strings.Contains(part, "PKT"):
 		return softLooksLikePunct(s)
+	default:
+		return false
+	}
+}
+
+func softIsGermanPrep(s string) bool {
+	switch s {
+	case "aus", "außer", "bei", "beim", "bis", "durch", "entlang", "für", "gegen",
+		"gegenüber", "ohne", "um", "wider", "an", "am", "auf", "hinter", "in", "im", "ins",
+		"neben", "über", "unter", "vor", "vom", "zwischen", "zu", "zum", "zur", "von",
+		"nach", "mit", "seit", "während", "wegen", "trotz", "dank", "laut", "gemäß",
+		"binnen", "entgegen", "entsprechend", "nahe", "nebst", "samt", "per", "pro",
+		"via", "inklusive", "exklusive", "betreffs", "mangels", "mittels", "zwecks",
+		"diesseits", "jenseits", "abseits", "außerhalb", "innerhalb", "oberhalb", "unterhalb":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsGermanArticle(s string) bool {
+	switch s {
+	case "der", "die", "das", "den", "dem", "des",
+		"ein", "eine", "einen", "einem", "einer", "eines",
+		"kein", "keine", "keinen", "keinem", "keiner", "keines":
+		return true
+	default:
+		return softIsDeterminer(s)
+	}
+}
+
+func softIsGermanConj(s string) bool {
+	switch s {
+	case "und", "oder", "aber", "denn", "sondern", "doch", "sowie",
+		"weil", "dass", "daß", "ob", "wenn", "als", "wie", "indem",
+		"während", "obwohl", "bevor", "nachdem", "seit", "seitdem",
+		"sobald", "solange", "falls", "sofern", "damit", "sodass", "so daß":
+		return true
 	default:
 		return false
 	}
@@ -560,6 +684,53 @@ func softIsWh(s string) bool {
 	default:
 		return false
 	}
+}
+
+// softGermanAdjCandidates yields lemma-like forms by stripping German adj endings.
+// Used for inflected+regexp soft tokens (Steigende ↔ steigend?).
+func softGermanAdjCandidates(surface string) []string {
+	if surface == "" {
+		return nil
+	}
+	seen := map[string]struct{}{}
+	var out []string
+	add := func(s string) {
+		if s == "" {
+			return
+		}
+		if _, ok := seen[s]; ok {
+			return
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	add(surface)
+	low := strings.ToLower(surface)
+	add(low)
+	cur := low
+	// longest endings first
+	for _, suf := range []string{"em", "en", "er", "es", "e", "n", "s", "d"} {
+		if strings.HasSuffix(cur, suf) && len([]rune(cur)) > len([]rune(suf))+3 {
+			cur = cur[:len(cur)-len(suf)]
+			add(cur)
+		}
+	}
+	// one more pass from full lower (e.g. lateinischen → lateinisch)
+	cur = low
+	for _, suf := range []string{"ischen", "lichem", "licher", "liches", "liche", "isch", "em", "en", "er", "es", "e"} {
+		if strings.HasSuffix(cur, suf) && len(cur) > len(suf)+3 {
+			add(cur[:len(cur)-len(suf)])
+			if strings.HasSuffix(suf, "en") || strings.HasSuffix(suf, "e") {
+				// lateinisch from lateinischen
+				stem := cur[:len(cur)-len(suf)]
+				if !strings.HasSuffix(stem, "isch") && strings.Contains(low, "isch") {
+					// already handled by ischen
+				}
+				add(stem + "isch")
+			}
+		}
+	}
+	return out
 }
 
 // softFrenchErInflected maps common -er verb surfaces to infinitive without a tagger.
@@ -829,11 +1000,30 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	}
 }
 
+// softGermanUmlautFold maps äöüß to ascii for soft stem compares (Tänze/Tanz).
+func softGermanUmlautFold(s string) string {
+	return strings.NewReplacer(
+		"ä", "a", "ö", "o", "ü", "u", "ß", "ss",
+		"Ä", "a", "Ö", "o", "Ü", "u",
+	).Replace(strings.ToLower(s))
+}
+
 // softSharedStemMatch is true when surface and base share a long letter stem
 // and differ only by short inflectional endings (говорить/говорите, храбрый/храбрая).
 // Min stem is 4 for longer words; 3 is allowed for short bases (яйцо/яйца).
 func softSharedStemMatch(a, b string) bool {
-	ar, br := []rune(a), []rune(b)
+	// Try umlaut-folded compare for German plurals (Tänze/Tanz).
+	if softSharedStemMatchRunes([]rune(a), []rune(b)) {
+		return true
+	}
+	fa, fb := softGermanUmlautFold(a), softGermanUmlautFold(b)
+	if fa != strings.ToLower(a) || fb != strings.ToLower(b) {
+		return softSharedStemMatchRunes([]rune(fa), []rune(fb))
+	}
+	return false
+}
+
+func softSharedStemMatchRunes(ar, br []rune) bool {
 	n := 0
 	for n < len(ar) && n < len(br) && ar[n] == br[n] {
 		n++
