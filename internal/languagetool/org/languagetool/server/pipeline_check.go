@@ -12,7 +12,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
-// newConfiguredLT builds a language tool with core packs and pipeline filters applied.
+// newConfiguredLT builds a language tool aligned with commandline.configureCoreLT
+// (official resources only — no soft invent packs or soft false-friends paths).
 func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	if p == nil {
 		return languagetool.NewJLanguageTool("en")
@@ -23,42 +24,69 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	}
 	lt := languagetool.NewJLanguageTool(lang)
 	corepack.Register(lt, lang)
-	// Soft grammar packs are not loaded (faithful port).
-	// False friends when mother tongue is set (official XML path).
-	if mt := strings.TrimSpace(p.settings.MotherTongueCode); mt != "" {
-		if path := softFalseFriendsPath(); path != "" {
-			_, _ = patterns.RegisterFalseFriendsFile(lt, path, lang, mt)
-		}
-	}
-	// EN: official dicts when present; demo only under LANG_DEMO_SPELLER.
 	base := lang
 	if i := strings.IndexByte(lang, '-'); i > 0 {
 		base = lang[:i]
 	}
+	mt := strings.TrimSpace(p.settings.MotherTongueCode)
+
+	// EN: official dicts/filters/multitoken/hybrid; demo only under LANG_DEMO_SPELLER.
 	if strings.EqualFold(base, "en") {
 		demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 		nearest := en.DemoEnglishKnownWords()
-		sugs := en.CommonDemoSpellerSuggestions
 		spellOK := false
-		if dictPath := softEnglishUSDictPath(); dictPath != "" {
-			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
+		if dictPath := commandline.DiscoverEnglishUSDict(nil); dictPath != "" {
+			_ = en.WireEnglishFilterSpeller(dictPath)
+			// Dict SuggestEdits only — no invent typo map.
+			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, nil)
 		}
 		if !spellOK && demoSpell {
-			en.RegisterDemoEnglishSpeller(lt, nearest, sugs)
+			en.RegisterDemoEnglishSpeller(lt, nearest, en.CommonDemoSpellerSuggestions)
 		}
 		taggerOK := false
-		if posPath := softEnglishPOSDictPath(); posPath != "" {
+		if posPath := commandline.DiscoverEnglishPOSDict(nil); posPath != "" {
 			taggerOK = en.RegisterBinaryEnglishTagger(lt, posPath)
+			_ = en.WireEnglishFilterTagger(posPath)
 		}
 		if !taggerOK && demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
 		}
-		// Soft hybrid disambiguator removed.
+		en.RegisterEnglishChunker(lt)
+		// Multitoken speller for MultitokenSpellerFilter (official multiwords + spelling_global).
+		if mw, sg := commandline.DiscoverEnglishMultiwords(nil), commandline.DiscoverSpellingGlobal(nil); mw != "" || sg != "" {
+			if sp, err := en.LoadEnglishMultitokenSpeller(mw, sg); err == nil && sp != nil {
+				var isMiss func(string) bool
+				if en.FilterDictAvailable() {
+					isMiss = en.FilterDictIsMisspelled
+				}
+				patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+			}
+		}
+		_ = commandline.RegisterHybridDisambiguator(lt, base, nil)
 	} else {
 		if posPath := commandline.DiscoverLanguagePOSDict(nil, base); posPath != "" {
 			_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 		}
-		// Soft hybrid disambiguator removed; Java HybridDisambiguator twins later.
+		_ = commandline.RegisterHybridDisambiguator(lt, base, nil)
+	}
+
+	// Official grammar/style/variant files (Java getRuleFileNames) when enabled.
+	if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
+		for _, rpath := range commandline.DiscoverLanguagePatternRuleFiles(nil, lang) {
+			_, _ = patterns.RegisterGrammarFile(lt, rpath, lang)
+		}
+	}
+	// Java English L2 grammar when mother tongue is de/fr.
+	if strings.EqualFold(base, "en") && mt != "" {
+		if l2 := commandline.DiscoverEnglishL2GrammarXML(nil, mt); l2 != "" {
+			_, _ = patterns.RegisterGrammarFile(lt, l2, lang)
+		}
+	}
+	// Official false friends (no soft invent file).
+	if mt != "" {
+		if path := commandline.DiscoverFalseFriendsFile(nil); path != "" {
+			_, _ = patterns.RegisterFalseFriendsFile(lt, path, lang, mt)
+		}
 	}
 
 	// Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
@@ -77,7 +105,7 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	for _, id := range p.settings.Query.DisabledRules {
 		lt.DisableRule(id)
 	}
-	// Java: enable listed rule IDs only (no SOFT_* invent expansion).
+	// Java: enable listed rule IDs only (no invent alias expansion).
 	enabledExpanded := p.settings.Query.EnabledRules
 	for _, id := range enabledExpanded {
 		if id != "" {
@@ -104,155 +132,12 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	return lt
 }
 
-// softGrammarDirFromEnv resolves LANG_GRAMMAR_DIR, LANG_DATA_DIR/grammar, or walk-up testdata/grammar.
-func softGrammarDirFromEnv() string {
-	if dir := os.Getenv("LANG_GRAMMAR_DIR"); dir != "" {
-		return dir
-	}
-	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		return dir + "/grammar"
-	}
-	return walkUpFind("testdata/grammar")
-}
-
-// softEnglishUSDictPath resolves LANG_EN_US_DICT or walk-up third_party en_US.dict.
-func softEnglishUSDictPath() string {
-	if p := os.Getenv("LANG_EN_US_DICT"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		for _, rel := range []string{
-			dir + "/en/hunspell/en_US.dict",
-			dir + "/en_US.dict",
-		} {
-			if _, err := os.Stat(rel); err == nil {
-				return rel
-			}
-		}
-	}
-	if p := walkUpFind("third_party/english-pos-dict/org/languagetool/resource/en/hunspell/en_US.dict"); p != "" {
-		return p
-	}
-	return walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/hunspell/en_US.dict")
-}
-
-// softEnglishDisambigXMLPath resolves LANG_DISAMBIGUATION_FILE or walk-up en-soft.xml.
-func softEnglishDisambigXMLPath() string {
-	if p := os.Getenv("LANG_DISAMBIGUATION_FILE"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	return walkUpFind("testdata/disambiguation/en-soft.xml")
-}
-
-// softEnglishIgnoreSpellingPath resolves LANG_IGNORE_SPELLING_FILE or walk-up word list.
-func softEnglishIgnoreSpellingPath() string {
-	if p := os.Getenv("LANG_IGNORE_SPELLING_FILE"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	return walkUpFind("testdata/disambiguation/en-ignore-spelling.txt")
-}
-
-// softEnglishTyposPath resolves LANG_EN_TYPOS_FILE or walk-up en-typos.tsv.
-func softEnglishTyposPath() string {
-	if p := os.Getenv("LANG_EN_TYPOS_FILE"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	return walkUpFind("testdata/spelling/en-typos.tsv")
-}
-
-// softEnglishMultiwordsPath resolves LANG_EN_MULTIWORDS or walk-up multiwords.txt.
-func softEnglishMultiwordsPath() string {
-	if p := os.Getenv("LANG_EN_MULTIWORDS"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	if p := walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/multiwords.txt"); p != "" {
-		return p
-	}
-	return walkUpFind("third_party/english-pos-dict/org/languagetool/resource/en/multiwords.txt")
-}
-
-// softEnglishPOSDictPath resolves LANG_ENGLISH_DICT or walk-up third_party english.dict.
-func softEnglishPOSDictPath() string {
-	if p := os.Getenv("LANG_ENGLISH_DICT"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		for _, rel := range []string{
-			dir + "/en/english.dict",
-			dir + "/english.dict",
-		} {
-			if _, err := os.Stat(rel); err == nil {
-				return rel
-			}
-		}
-	}
-	if p := walkUpFind("third_party/english-pos-dict/org/languagetool/resource/en/english.dict"); p != "" {
-		return p
-	}
-	return walkUpFind("inspiration/languagetool/languagetool-language-modules/en/src/main/resources/org/languagetool/resource/en/english.dict")
-}
-
-// softFalseFriendsPath resolves LANG_FALSEFRIENDS_FILE or a well-known testdata path.
-func softFalseFriendsPath() string {
-	if p := os.Getenv("LANG_FALSEFRIENDS_FILE"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	if dir := os.Getenv("LANG_DATA_DIR"); dir != "" {
-		p := dir + "/false-friends-soft.xml"
-		if _, err := os.Stat(p); err == nil {
-			return p
-		}
-	}
-	return walkUpFind("testdata/false-friends-soft.xml")
-}
-
-func walkUpFind(rel string) string {
-	dir, err := os.Getwd()
-	if err != nil {
-		return ""
-	}
-	for i := 0; i < 12; i++ {
-		cand := dir + "/" + rel
-		if _, err := os.Stat(cand); err == nil {
-			return cand
-		}
-		parent := dir
-		// trim last segment
-		for j := len(dir) - 1; j >= 0; j-- {
-			if dir[j] == '/' {
-				parent = dir[:j]
-				if parent == "" {
-					parent = "/"
-				}
-				break
-			}
-		}
-		if parent == dir {
-			break
-		}
-		dir = parent
-	}
-	return ""
-}
-
 func (p *Pipeline) cleanMatches(matches []languagetool.LocalMatch) []languagetool.LocalMatch {
 	if p == nil || !p.cleanOverlaps {
 		return matches
 	}
+	// Prefer higher priority for known core grammar IDs over speller on the same span
+	// (Java CleanOverlappingFilter / priority tables — incomplete subset, not invent IDs).
 	for i := range matches {
 		id := matches[i].RuleID
 		if id == "EN_A_VS_AN" || strings.Contains(id, "WORD_REPEAT") ||
@@ -265,7 +150,7 @@ func (p *Pipeline) cleanMatches(matches []languagetool.LocalMatch) []languagetoo
 	return languagetool.CleanOverlappingLocalMatches(matches)
 }
 
-// Check runs a language-aware core rule pack on text (full XML grammar deferred).
+// Check runs configured core (+ optional official grammar) rules on text.
 // Honors pipeline disabled-rule IDs and optional overlap cleaning.
 // Uses multi-threaded Check for multi-sentence texts (pool size = GOMAXPROCS soft).
 func (p *Pipeline) Check(text string) []languagetool.LocalMatch {

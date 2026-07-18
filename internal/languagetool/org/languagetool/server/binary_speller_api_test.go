@@ -3,11 +3,12 @@ package server
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/commandline"
 	"github.com/stretchr/testify/require"
 )
 
 func TestApiV2_BinarySpeller(t *testing.T) {
-	if softEnglishUSDictPath() == "" {
+	if commandline.DiscoverEnglishUSDict(nil) == "" {
 		t.Skip("en_US.dict not available")
 	}
 	api := NewApiV2(nil, nil)

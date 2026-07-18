@@ -17,14 +17,14 @@ type CheckOptions struct {
 	UseEnabledOnly bool
 	Mode           CheckMode
 	Level          CheckLevel
-	// MotherTongue enables soft false-friend rules when a false-friends file is available.
+	// MotherTongue enables false-friend rules when official false-friends.xml is available.
 	MotherTongue string
-	// IgnoreWords soft user-dictionary surfaces (suppresses spelling matches).
+	// IgnoreWords user-dictionary surfaces (suppresses spelling matches).
 	IgnoreWords []string
-	// Category filters (SoftRuleMeta / LocalMatch category IDs).
+	// Category filters (rule meta / LocalMatch category IDs).
 	DisabledCategories []string
 	EnabledCategories  []string
-	// RuleValues soft configurable rule options (e.g. "TOO_LONG_SENTENCE:10").
+	// RuleValues configurable rule options (e.g. "TOO_LONG_SENTENCE:10").
 	RuleValues []string
 }
 
@@ -53,7 +53,7 @@ func pipelineSettingsFor(lang string, opts CheckOptions) PipelineSettings {
 		keyParts = append(keyParts, "level:"+string(opts.Level))
 	}
 	if opts.Mode != "" {
-		// soft: Query.LanguageCode carries check mode for Pipeline.Check
+		// Query.LanguageCode carries check mode for Pipeline.Check (TEXTLEVEL_ONLY, …).
 		settings.Query.LanguageCode = string(opts.Mode)
 		keyParts = append(keyParts, "mode:"+string(opts.Mode))
 	}

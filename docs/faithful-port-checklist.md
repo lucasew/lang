@@ -53,7 +53,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [~] soft invent lists removed; POS→BIO interim until OpenNLP maxent wired |
 | 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [~] soft pack invent removed; fallback only for known Java families |
 | 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
-| 1.14 | Soft picky XML load paths removed from server text checker | [ ] `text_checker_check.go` |
+| 1.14 | Soft picky XML load paths removed from server text checker | [~] picky uses official RegisterPickyEnglishRules; pipeline uses official resources |
 | 1.15 | Demo/map tagger & speller not presented as default engine (or moved outside when freeze lifts) | [~] binary speller default (no invent map); demo only under `LANG_DEMO_SPELLER` |
 | 1.16 | Invent multiword lists / embedded soft multiwords gone | [~] SoftEnglish phrase/token invent packs removed from EN core |
 | 1.17 | `SoftForeignIgnoreRanges` / soft user-dict naming cleaned to Java twins or removed | [ ] server |

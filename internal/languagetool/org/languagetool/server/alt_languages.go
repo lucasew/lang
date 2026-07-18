@@ -5,9 +5,10 @@ import (
 	"unicode/utf8"
 )
 
-// SoftForeignIgnoreRanges finds runs of letters that look foreign to the primary
-// language (soft multi-language heuristic) and maps them to altLanguages when set.
-// Cyrillic spans → first alt that is ru/uk/be/sr/bg or "ru"; CJK → ja/zh/ko; Arabic → ar.
+// SoftForeignIgnoreRanges maps non-Latin script runs to matching altLanguages codes.
+// Incomplete vs Java multi-language check (altLanguages on Pipeline); ignore-range
+// heuristic only — do not invent language IDs outside the provided alt list.
+// Name kept for API stability; not a soft invent pack.
 func SoftForeignIgnoreRanges(text, primaryLang string, altLangs []string) []IgnoreRangeInfo {
 	if text == "" || len(altLangs) == 0 {
 		return nil
