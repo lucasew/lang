@@ -1,6 +1,10 @@
 package patterns
 
 import (
+	"strings"
+	"unicode"
+	"unicode/utf8"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
@@ -57,9 +61,10 @@ func (m *PatternRuleMatcher) Match(sentence *languagetool.AnalyzedSentence) ([]*
 	if patternSize == 0 {
 		return nil, nil
 	}
-	// limit like Java: tokens.length - patternSize + 1 (+ min occur correction deferred)
-	minToks := minPatternTokens(m.matchers)
-	limit := len(tokens) - minToks + 1
+	// Java: tokens.length - patternSize + 1. Soft CJK cover maps several pattern
+	// tokens onto fewer analysis morphs (and often only SENT_START + one word),
+	// so always try every start index; matchFrom fails quickly on mismatches.
+	limit := len(tokens)
 	if limit < 0 {
 		limit = 0
 	}
@@ -148,41 +153,241 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 			}
 			// Find a start in [pos, windowEnd] that yields occ consecutive matches.
 			for try := pos; try <= windowEnd && try < len(tokens); try++ {
-				if tokens[try].IsImmunized() || !matcher.IsMatchedReadings(tokens[try]) {
+				if tokens[try].IsImmunized() {
 					continue
 				}
-				// consume occ consecutive
-				ok := true
-				end := try
-				for c := 1; c < occ; c++ {
-					j := try + c
-					if j >= len(tokens) || tokens[j].IsImmunized() || !matcher.IsMatchedReadings(tokens[j]) {
-						ok = false
-						break
+				if matcher.IsMatchedReadings(tokens[try]) {
+					// consume occ consecutive
+					ok := true
+					end := try
+					for c := 1; c < occ; c++ {
+						j := try + c
+						if j >= len(tokens) || tokens[j].IsImmunized() || !matcher.IsMatchedReadings(tokens[j]) {
+							ok = false
+							break
+						}
+						end = j
 					}
-					end = j
-				}
-				if !ok {
+					if !ok {
+						continue
+					}
+					nsp := sp
+					if nsp.first < 0 {
+						nsp.first = try
+					}
+					nsp.last = end
+					if pt.InsideMarker {
+						if nsp.firstMark < 0 {
+							nsp.firstMark = try
+						}
+						nsp.lastMark = end
+					}
+					if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
+						return rm, true
+					}
 					continue
 				}
-				nsp := sp
-				if nsp.first < 0 {
-					nsp.first = try
+				if occ != 1 {
+					continue
 				}
-				nsp.last = end
-				if pt.InsideMarker {
-					if nsp.firstMark < 0 {
-						nsp.firstMark = try
+				// Japanese grammar.xml often writes char/short surfaces (な+い, さ+せる)
+				// while Sen/kagome emits one morpheme (ない, させる). Soft bridge:
+				// (1) one analysis morph covers several pattern surfaces (concat),
+				// (2) one pattern surface covers several analysis morphs (しい←し+い).
+				if n := softCJKConcatCover(m.matchers[ki:], tokens[try]); n > 0 {
+					nsp := sp
+					if nsp.first < 0 {
+						nsp.first = try
 					}
-					nsp.lastMark = end
+					nsp.last = try
+					for j := 0; j < n; j++ {
+						if m.matchers[ki+j].Base != nil && m.matchers[ki+j].Base.InsideMarker {
+							if nsp.firstMark < 0 {
+								nsp.firstMark = try
+							}
+							nsp.lastMark = try
+						}
+					}
+					lastSkip := 0
+					if m.matchers[ki+n-1].Base != nil {
+						lastSkip = m.matchers[ki+n-1].Base.SkipNext
+					}
+					if rm, ok := rec(ki+n, try+1, lastSkip, nsp); ok {
+						return rm, true
+					}
 				}
-				if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
-					return rm, true
+				if n := softCJKAnalysisSpan(matcher, tokens[try:]); n > 1 {
+					end := try + n - 1
+					nsp := sp
+					if nsp.first < 0 {
+						nsp.first = try
+					}
+					nsp.last = end
+					if pt.InsideMarker {
+						if nsp.firstMark < 0 {
+							nsp.firstMark = try
+						}
+						nsp.lastMark = end
+					}
+					if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
+						return rm, true
+					}
 				}
-				// try next window position
 			}
 		}
 		return nil, false
 	}
 	return rec(0, start, 0, span{-1, -1, -1, -1})
+}
+
+// softCJKConcatCover reports how many consecutive pattern tokens are covered by
+// one pure-CJK analysis token when their surfaces concatenate to that token.
+// Returns 0 if not applicable (non-CJK, POS-only tokens, regexp bodies, etc.).
+func softCJKConcatCover(matchers []*PatternTokenMatcher, atr *languagetool.AnalyzedTokenReadings) int {
+	if atr == nil || len(matchers) < 2 {
+		return 0
+	}
+	surf := atr.GetToken()
+	rs := []rune(surf)
+	if len(rs) < 2 || len(rs) > 12 {
+		return 0
+	}
+	for _, r := range rs {
+		if !isSoftCJKRune(r) {
+			return 0
+		}
+	}
+	built := ""
+	n := 0
+	for i := 0; i < len(matchers) && n < 8; i++ {
+		pt := matchers[i].Base
+		if pt == nil || pt.Token == "" {
+			return 0
+		}
+		// Only plain surfaces (or simple | alts without metacharacters).
+		part := pt.Token
+		if pt.Regexp {
+			if strings.ContainsAny(part, ".*+?[](){}\\") {
+				return 0
+			}
+			// Multi-alt RE: try each bar-separated alt for prefix growth.
+			alts := strings.Split(part, "|")
+			matched := false
+			for _, alt := range alts {
+				alt = strings.TrimSpace(alt)
+				if alt == "" {
+					continue
+				}
+				cand := built + alt
+				if cand == surf || strings.HasPrefix(surf, cand) {
+					built = cand
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				return 0
+			}
+		} else {
+			// Non-RE: optional case-insensitive for Latin; CJK exact.
+			cand := built + part
+			if cand != surf && !strings.HasPrefix(surf, cand) {
+				// try lowercase latin in part only
+				return 0
+			}
+			built = cand
+		}
+		n++
+		if built == surf {
+			// Require at least 2 pattern tokens and prefer multi-token cover
+			// over false single-token (already handled by IsMatchedReadings).
+			if n >= 2 && utf8.RuneCountInString(built) == len(rs) {
+				return n
+			}
+			return 0
+		}
+	}
+	return 0
+}
+
+// softCJKAnalysisSpan reports how many consecutive pure-CJK analysis tokens
+// concatenate to the pattern token surface (しい ← し+い). Opposite of
+// softCJKConcatCover. Returns 0 if not applicable.
+func softCJKAnalysisSpan(matcher *PatternTokenMatcher, tokens []*languagetool.AnalyzedTokenReadings) int {
+	if matcher == nil || matcher.Base == nil || len(tokens) < 2 {
+		return 0
+	}
+	pt := matcher.Base
+	if pt.Token == "" || pt.Pos != nil && pt.Token == "" {
+		return 0
+	}
+	want := pt.Token
+	if pt.Regexp {
+		if strings.ContainsAny(want, ".*+?[](){}\\") {
+			return 0
+		}
+		// single alt or bar alts handled below
+	}
+	alts := []string{want}
+	if pt.Regexp && strings.Contains(want, "|") {
+		alts = nil
+		for _, a := range strings.Split(want, "|") {
+			a = strings.TrimSpace(a)
+			if a != "" {
+				alts = append(alts, a)
+			}
+		}
+	}
+	for _, target := range alts {
+		trs := []rune(target)
+		if len(trs) < 2 {
+			continue
+		}
+		allCJK := true
+		for _, r := range trs {
+			if !unicode.Is(unicode.Han, r) && !unicode.In(r, unicode.Hiragana, unicode.Katakana) {
+				allCJK = false
+				break
+			}
+		}
+		if !allCJK {
+			continue
+		}
+		built := ""
+		n := 0
+		for i := 0; i < len(tokens) && n < 8; i++ {
+			if tokens[i] == nil || tokens[i].IsImmunized() {
+				break
+			}
+			t := tokens[i].GetToken()
+			for _, r := range t {
+				if !isSoftCJKRune(r) {
+					return 0
+				}
+			}
+			built += t
+			n++
+			if built == target {
+				if n >= 2 {
+					return n
+				}
+				return 0
+			}
+			if !strings.HasPrefix(target, built) {
+				break
+			}
+		}
+	}
+	return 0
+}
+
+// isSoftCJKRune is true for Han/kana and the prolonged sound mark ー (U+30FC),
+// which Go's unicode.Katakana table does not include but Sen/kagome keeps inside
+// katakana words (ストリート, …).
+func isSoftCJKRune(r rune) bool {
+	if unicode.Is(unicode.Han, r) || unicode.In(r, unicode.Hiragana, unicode.Katakana) {
+		return true
+	}
+	// ー prolonged sound; iteration marks sometimes appear in soft JA packs
+	return r == 'ー' || r == 'ゝ' || r == 'ゞ' || r == 'ヽ' || r == 'ヾ'
 }
