@@ -155,7 +155,14 @@ func compilePart(pat string) (*regexp.Regexp, error) {
 }
 
 // javaRegexToGo converts common Java Pattern escapes to RE2.
+//
+// Java SRX uses Pattern.UNICODE_CHARACTER_CLASS (see SrxTools), so \b treats
+// letters like ș/ä as word chars. RE2's \b is ASCII-only ([A-Za-z0-9_]), which
+// breaks Romanian șamd, German abbreviations, etc. We expand \b to a Unicode
+// approximation: zero-width at ^/$, otherwise one non-word rune. SRX break
+// positions use the match end, so a leading consumed separator is safe.
 func javaRegexToGo(pat string) string {
+	const unicodeWordBoundary = `(?:^|$|[^\p{L}\p{N}_])`
 	var b strings.Builder
 	b.Grow(len(pat) + 8)
 	for i := 0; i < len(pat); i++ {
@@ -171,7 +178,14 @@ func javaRegexToGo(pat string) string {
 					continue
 				}
 			}
-			// \x{...} already fine; \p{...} fine
+			// \b → Unicode-aware word boundary (Java UNICODE_CHARACTER_CLASS)
+			if pat[i+1] == 'b' {
+				b.WriteString(unicodeWordBoundary)
+				i++
+				continue
+			}
+			// \B non-boundary: leave as-is (rare in segment.srx)
+			// \x{...} / \p{...} already fine for RE2
 		}
 		b.WriteByte(pat[i])
 	}

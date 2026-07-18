@@ -1763,7 +1763,7 @@
   </category>
   <category id="CAT10" name="Cacofonie">
     <rule id="CACOFONIE__CA" name="cacofonie: ...ca ca...">
-      <pattern>
+      <pattern case_sensitive="yes">
         <token regexp="yes">.*c[aîă]|C[ăa]
           <exception regexp="yes">Biserica|biserica|aortică</exception>
         </token>
