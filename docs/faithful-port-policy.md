@@ -102,6 +102,7 @@ When the freeze lifts (human decision only):
 
 ## 8. Related
 
+- **Master checklist (must check):** [`faithful-port-checklist.md`](faithful-port-checklist.md)
 - Product contract: [`SPEC.md`](../SPEC.md)
 - Java reference tree: `inspiration/languagetool/`
 - Test twin audit (when used): `scripts/check_lt_test_twins.py`, `internal/languagetool/twin_audit_test.go`

@@ -41,7 +41,8 @@ Go 1:1 port of LanguageTool. Pure Go at lint time. **Java under `inspiration/lan
 
 ## More context (read when relevant)
 
-- [`docs/faithful-port-policy.md`](docs/faithful-port-policy.md) — **required** for any `internal/languagetool` work (implementer + reviewer checklist)
+- [`docs/faithful-port-policy.md`](docs/faithful-port-policy.md) — **required** for any `internal/languagetool` work (implementer + reviewer)
+- [`docs/faithful-port-checklist.md`](docs/faithful-port-checklist.md) — **master TODO** of everything that must be checked
 - [`SPEC.md`](SPEC.md) — product CLI contract
 - [`README.md`](README.md) — setup and usage
 
