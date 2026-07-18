@@ -148,9 +148,15 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			en.RegisterPickyEnglishRules(lt)
 		}
 		// Soft grammar packs (testdata/*-soft.xml) are not loaded — faithful port only.
+		// Official grammar.xml from inspiration/upstream when present.
 		base := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			base = lang[:i]
+		}
+		if gpath := DiscoverLanguageGrammarXML(opts, base); gpath != "" {
+			if n, err := patterns.RegisterGrammarFile(lt, gpath, lang); err == nil && n > 0 {
+				_ = n
+			}
 		}
 		if strings.EqualFold(base, "en") {
 			// Prefer CFSA2 en_US.dict when present; demo only under LANG_DEMO_SPELLER.

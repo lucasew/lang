@@ -341,3 +341,39 @@ func DiscoverGermanMultitokenSuggest(opts *CommandLineOptions) string {
 	return WalkUpFind("", filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "de",
 		"src", "main", "resources", "org", "languagetool", "resource", "de", "multitoken-suggest.txt"))
 }
+
+
+// DiscoverLanguageGrammarXML finds official grammar.xml for lang.
+// Java: /org/languagetool/rules/{lang}/grammar.xml
+func DiscoverLanguageGrammarXML(opts *CommandLineOptions, lang string) string {
+	base := languageBaseCode(lang)
+	if base == "" {
+		return ""
+	}
+	if p := os.Getenv("LANG_" + strings.ToUpper(base) + "_GRAMMAR"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), base, "grammar.xml"),
+			filepath.Join(opts.GetDataDir(), "rules", base, "grammar.xml"),
+			filepath.Join(opts.GetDataDir(), "upstream", base, "rules", "grammar.xml"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", base, "rules", "grammar.xml"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+			"src", "main", "resources", "org", "languagetool", "rules", base, "grammar.xml"),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}

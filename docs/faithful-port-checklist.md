@@ -69,7 +69,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 
 | # | Check | Status |
 |---|--------|--------|
-| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [ ] |
+| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] EN official grammar.xml auto-loaded (~5k surface rules) |
 | 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] |
 | 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN multiwords + spelling_global wired |
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] path wiring exists; coverage incomplete |
@@ -107,7 +107,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | 3.B.2 | Exceptions, skip, regex, inflected, negation | [~] |
 | 3.B.3 | Unification | [ ] |
 | 3.B.4 | Filters / rule filters as Java | [~] |
-| 3.B.5 | Full grammar/style load (entities, includes) | [ ] |
+| 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar.xml load; style/includes deferred |
 
 ### 3.C Rule families (per language, after stack)
 

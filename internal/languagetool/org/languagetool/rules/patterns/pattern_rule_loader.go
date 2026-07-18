@@ -69,9 +69,133 @@ type xmlMessage struct {
 	Inner string `xml:",innerxml"`
 }
 
+// xmlPattern holds ordered pattern children: <token>, <marker>, <and>.
 type xmlPattern struct {
-	CaseSensitive string     `xml:"case_sensitive,attr"`
-	Tokens        []xmlToken `xml:"token"`
+	CaseSensitive string `xml:"case_sensitive,attr"`
+	// Tokens filled by UnmarshalXML (document order).
+	Tokens []xmlToken
+}
+
+// UnmarshalXML ports Java pattern children so <marker> / <and> are not dropped.
+func (p *xmlPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	p.Tokens = nil
+	for _, a := range start.Attr {
+		if a.Name.Local == "case_sensitive" {
+			p.CaseSensitive = a.Value
+		}
+	}
+	for {
+		tok, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch t := tok.(type) {
+		case xml.EndElement:
+			if t.Name.Local == start.Name.Local {
+				return nil
+			}
+		case xml.StartElement:
+			switch t.Name.Local {
+			case "token":
+				xt, err := decodeXMLToken(d, t)
+				if err != nil {
+					return err
+				}
+				p.Tokens = append(p.Tokens, xt)
+			case "marker":
+				if err := p.decodeXMLMarker(d); err != nil {
+					return err
+				}
+			case "and":
+				base, err := decodeXMLAnd(d, t)
+				if err != nil {
+					return err
+				}
+				if base != nil {
+					p.Tokens = append(p.Tokens, *base)
+				}
+			default:
+				if err := d.Skip(); err != nil {
+					return err
+				}
+			}
+		}
+	}
+}
+
+func (p *xmlPattern) decodeXMLMarker(d *xml.Decoder) error {
+	for {
+		inner, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch it := inner.(type) {
+		case xml.EndElement:
+			if it.Name.Local == "marker" {
+				return nil
+			}
+		case xml.StartElement:
+			switch it.Name.Local {
+			case "token":
+				xt, err := decodeXMLToken(d, it)
+				if err != nil {
+					return err
+				}
+				// Marker attr used by disambig; grammar uses InsideMarker on PatternToken via loader.
+				// Keep tokens; full InsideMarker for grammar replace is future work.
+				p.Tokens = append(p.Tokens, xt)
+			case "and":
+				base, err := decodeXMLAnd(d, it)
+				if err != nil {
+					return err
+				}
+				if base != nil {
+					p.Tokens = append(p.Tokens, *base)
+				}
+			default:
+				if err := d.Skip(); err != nil {
+					return err
+				}
+			}
+		}
+	}
+}
+
+func decodeXMLToken(d *xml.Decoder, start xml.StartElement) (xmlToken, error) {
+	var xt xmlToken
+	err := d.DecodeElement(&xt, &start)
+	return xt, err
+}
+
+func decodeXMLAnd(d *xml.Decoder, start xml.StartElement) (*xmlToken, error) {
+	var andToks []xmlToken
+	for {
+		inner, err := d.Token()
+		if err != nil {
+			return nil, err
+		}
+		switch it := inner.(type) {
+		case xml.EndElement:
+			if it.Name.Local == start.Name.Local {
+				if len(andToks) == 0 {
+					return nil, nil
+				}
+				base := andToks[0]
+				base.AndTokens = append(base.AndTokens, andToks[1:]...)
+				return &base, nil
+			}
+		case xml.StartElement:
+			if it.Name.Local == "token" {
+				xt, err := decodeXMLToken(d, it)
+				if err != nil {
+					return nil, err
+				}
+				andToks = append(andToks, xt)
+			} else if err := d.Skip(); err != nil {
+				return nil, err
+			}
+		}
+	}
 }
 
 type xmlToken struct {
@@ -143,6 +267,10 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 			}
 			pt := tokenFromXML(xt)
 			tokens = append(tokens, pt)
+		}
+		// Empty patterns would match everything — not Java-faithful; skip.
+		if len(tokens) == 0 {
+			return nil
 		}
 		r := NewAbstractPatternRule(id, name, languageCode, tokens, false)
 		r.Message = strings.TrimSpace(xr.Message.Inner)
