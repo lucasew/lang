@@ -6,6 +6,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
@@ -62,8 +63,16 @@ type disambigToken struct {
 }
 
 type disambigElem struct {
-	Action string `xml:"action,attr"`
-	Postag string `xml:"postag,attr"`
+	Action string      `xml:"action,attr"`
+	Postag string      `xml:"postag,attr"`
+	Wds    []disambigWd `xml:"wd"`
+}
+
+// disambigWd ports <wd pos="…" lemma="…"/> under <disambig action="add">.
+type disambigWd struct {
+	Pos    string `xml:"pos,attr"`
+	Lemma  string `xml:"lemma,attr"`
+	Content string `xml:",chardata"`
 }
 
 func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath string) ([]*DisambiguationPatternRule, error) {
@@ -89,6 +98,25 @@ func (l *DisambiguationRuleLoader) parse(data []byte, languageCode, xmlPath stri
 		}
 		// default Java: REPLACE when only postag set
 		rule := NewDisambiguationPatternRule(xr.ID, xr.Name, languageCode, tokens, xr.Disambig.Postag, nil, action)
+		// Java ADD with <wd pos="PCT"/> etc. (UNKNOWN_PCT, COMMA_POSTAG)
+		if len(xr.Disambig.Wds) > 0 {
+			var readings []*languagetool.AnalyzedToken
+			for _, wd := range xr.Disambig.Wds {
+				surf := strings.TrimSpace(wd.Content)
+				var posPtr, lemmaPtr *string
+				if wd.Pos != "" {
+					p := wd.Pos
+					posPtr = &p
+				}
+				if wd.Lemma != "" {
+					lm := wd.Lemma
+					lemmaPtr = &lm
+				}
+				// empty surface: filled from matched token at apply time
+				readings = append(readings, languagetool.NewAnalyzedToken(surf, posPtr, lemmaPtr))
+			}
+			rule.SetNewInterpretations(readings)
+		}
 		out = append(out, rule)
 	}
 	return out, nil

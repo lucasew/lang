@@ -153,15 +153,32 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			}
 		}
 	case ActionAdd:
+		// Java ADD: empty <wd> surface uses the matched token string.
 		for i := first; i <= last && i < len(nws); i++ {
+			if nws[i] == nil {
+				continue
+			}
 			rel := i - first
 			var tok *languagetool.AnalyzedToken
-			if rel < len(r.NewTokenReadings) {
-				tok = r.NewTokenReadings[rel]
+			if rel < len(r.NewTokenReadings) && r.NewTokenReadings[rel] != nil {
+				base := r.NewTokenReadings[rel]
+				surface := nws[i].GetToken()
+				if base.GetToken() != "" {
+					surface = base.GetToken()
+				}
+				tok = languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), base.GetLemma())
 			} else if r.DisambiguatedPOS != "" {
 				pos := r.DisambiguatedPOS
 				surface := nws[i].GetToken()
 				tok = languagetool.NewAnalyzedToken(surface, &pos, nil)
+			} else if len(r.NewTokenReadings) == 1 && r.NewTokenReadings[0] != nil {
+				// Single <wd/> applied to every matched token (UNKNOWN_PCT style).
+				base := r.NewTokenReadings[0]
+				surface := nws[i].GetToken()
+				if base.GetToken() != "" {
+					surface = base.GetToken()
+				}
+				tok = languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), base.GetLemma())
 			}
 			if tok != nil {
 				nws[i].AddReading(tok, r.ID)

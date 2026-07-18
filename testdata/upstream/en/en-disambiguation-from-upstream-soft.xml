@@ -7,12 +7,46 @@
     </pattern>
     <disambig action="replace" postag="CD"/>
   </rule>
+  <rule id="UNKNOWN_PCT" name=".,;:…!? UNKNOWN -&gt; PCT">
+    <pattern>
+      <token regexp="yes">[\.,;:…!\?]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="PCT"/>
+    </disambig>
+  </rule>
+  <rule id="COMMA_POSTAG" name="separate postag for commas">
+    <pattern>
+      <token>,</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos=","/>
+    </disambig>
+  </rule>
   <rule id="AMERICAN_AIRLINES" name="American Airlines">
     <pattern>
       <token case_sensitive="yes">American</token>
       <token case_sensitive="yes" marker="yes">Airlines</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="CREATIVE_COMMONS" name="Creative Commons">
+    <pattern>
+      <token case_sensitive="yes">Creative</token>
+      <token case_sensitive="yes">Commons</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="ORDINAL_NUMBERS" name="ordinal numbers">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">([a-z]+-)?first|([a-z]+-)?second|([a-z]+-)?third|([a-z]+-)?fourth|([a-z]+-)?fifth|([a-z]+-)?sixth|([a-z]+-)?seventh|([a-z]+-)?eighth|([a-z]+-)?ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth|twentieth|thirtieth|f(if|or)tieth|sixtieth|seventieth|eightieth|ninetieth|hundredth|thousandth|millionth|billionth|trillionth</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="ORD"/>
+    </disambig>
   </rule>
   <rule id="FIRST_THING" name="first/last thing does not need an article">
     <pattern>
@@ -381,6 +415,24 @@
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
+  <rule id="CC_VBD" name="cc'd">
+    <pattern>
+      <token regexp="yes" marker="yes">cc|rsvp|pm|dm|dj</token>
+      <token>'d</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="VBD" lemma="cc"/>
+    </disambig>
+  </rule>
+  <rule id="CC_VBN" name="cc'd">
+    <pattern>
+      <token regexp="yes" marker="yes">cc|rsvp|pm|dm</token>
+      <token>'d</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="VBN" lemma="cc"/>
+    </disambig>
+  </rule>
   <rule id="CC_ING_SPELLING" name="cc'ing spelling">
     <pattern>
       <token>cc</token>
@@ -430,6 +482,15 @@
       <token regexp="yes" marker="yes">[12]|I|II</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="SUPER_TUESDAY" name="Super Tuesday =&gt; NNP">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Super</token>
+      <token case_sensitive="yes">Tuesday</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+    </disambig>
   </rule>
   <rule id="A_AND_B" name="a and be">
     <pattern>
@@ -594,6 +655,16 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="PLAY_STORE" name="NNP for 'Play Store'">
+    <pattern>
+      <token marker="yes">Play</token>
+      <token marker="yes">Store</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
   <rule id="CAME_FROM" name="came -&gt; vbd">
     <pattern>
       <token marker="yes">came</token>
@@ -607,6 +678,15 @@
       <token postag="PRP"></token>
     </pattern>
     <disambig action="replace" postag="VBD"/>
+  </rule>
+  <rule id="MOS_6502" name="MOS 6502">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">MOS</token>
+      <token case_sensitive="yes">6502</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+    </disambig>
   </rule>
   <rule id="PRP_SAW" name="saw as a verb">
     <pattern>
@@ -722,6 +802,46 @@
       <token marker="yes">training</token>
     </pattern>
     <disambig action="replace" postag="NN:U"/>
+  </rule>
+  <rule id="ENTER_KEY" name="NN: Enter Key">
+    <pattern>
+      <token marker="yes">enter</token>
+      <token marker="yes">key</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN"/>
+      <wd pos="NN"/>
+    </disambig>
+  </rule>
+  <rule id="SOCIAL_DISTANCING" name="NN:U: social distancing">
+    <pattern>
+      <token marker="yes">social</token>
+      <token marker="yes">distancing</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN:U"/>
+      <wd pos="NN:U"/>
+    </disambig>
+  </rule>
+  <rule id="ENTER_KEYS" name="NNS: Enter Keys">
+    <pattern>
+      <token marker="yes">enter</token>
+      <token marker="yes">keys</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN"/>
+      <wd pos="NNS"/>
+    </disambig>
+  </rule>
+  <rule id="POS_ASPARTIC_ACID" name="NN: aspartic acid">
+    <pattern>
+      <token marker="yes">aspartic</token>
+      <token marker="yes">acid</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN"/>
+      <wd pos="NN"/>
+    </disambig>
   </rule>
   <rule id="SPELLING_ASPARTIC_ACID" name="NN: aspartic acid">
     <pattern>
@@ -862,12 +982,220 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="AVANT_GARDE_NN" name="avant-garde">
+    <pattern>
+      <token>avant-garde</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN:U"/>
+    </disambig>
+  </rule>
+  <rule id="COMME_CI_COMME_ÇA_RB" name="comme ci, comme ça">
+    <pattern>
+      <token>comme</token>
+      <token>ci</token>
+      <token>,</token>
+      <token>comme</token>
+      <token>ça</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="LAISSEZ_FAIRE_NNU" name="laissez faire (noun)">
+    <pattern>
+      <token>laissez</token>
+      <token>faire</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN:U"/>
+      <wd pos="NN:U"/>
+    </disambig>
+  </rule>
+  <rule id="A_CAPPELLA_ADVERB" name="a cappella (adverb)">
+    <pattern>
+      <token>a</token>
+      <token>cappella</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="IN_VITRO_ADVERB" name="in vitro (adverb)">
+    <pattern>
+      <token>in</token>
+      <token>vitro</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="AB_INITIO_ADVERB" name="ab initio (adverb)">
+    <pattern>
+      <token>ab</token>
+      <token>initio</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="AD_ADVERB" name="ad + ADVERB">
+    <pattern>
+      <token>ad</token>
+      <token regexp="yes">absurdum|hoc|interim|lib|nauseam|infinitum</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="BONA_FIDE_ADVERB" name="bona fide (adverb)">
+    <pattern>
+      <token>bona</token>
+      <token>fide</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="DE_ADVERB" name="de + ADVERB">
+    <pattern>
+      <token>de</token>
+      <token regexp="yes">facto|jure</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="EJUSDEM_GENERIS_ADVERB" name="ejusdem generis (adverb)">
+    <pattern>
+      <token>ejusdem</token>
+      <token>generis</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="EX_ADVERB" name="ex + ADVERB">
+    <pattern>
+      <token>ex</token>
+      <token regexp="yes">cathedra|gratia|officio|parte</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="EX_POST_FACTO_ADVERB" name="ex post facto (adverb)">
+    <pattern>
+      <token>ex</token>
+      <token>post</token>
+      <token>facto</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="PER_ADVERB" name="per + ADVERB">
+    <pattern>
+      <token>per</token>
+      <token regexp="yes">annum|capita|incuriam|se</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="PRIMA_FACIE_ADVERB" name="prima facie (adverb)">
+    <pattern>
+      <token>prima</token>
+      <token>facie</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="PRO_ADVERB" name="pro + ADVERB">
+    <pattern>
+      <token>pro</token>
+      <token regexp="yes">bono|forma|rata|tem|tempore</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
   <rule id="PRO_SPELLING" name="pro + ADJECTIVE">
     <pattern>
       <token>pro</token>
       <token regexp="yes">bono|forma|rata|tem|tempore</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="SUB_ADVERB" name="sub + ADVERB">
+    <pattern>
+      <token>sub</token>
+      <token regexp="yes">judice|rosa</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="ULTRA_VIRES_ADVERB" name="ultra vires (adverb)">
+    <pattern>
+      <token>ultra</token>
+      <token>vires</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="VIVA_VOCE_ADVERB" name="viva voce (adverb)">
+    <pattern>
+      <token>viva</token>
+      <token>voce</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
+  </rule>
+  <rule id="VIVA_VOCE_NOUN" name="viva voce (noun)">
+    <pattern>
+      <token>viva</token>
+      <token>voce</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN:U"/>
+      <wd pos="NN:U"/>
+    </disambig>
+  </rule>
+  <rule id="MANO_A_MANO_ADVERB" name="mano a mano (adverb)">
+    <pattern>
+      <token>mano</token>
+      <token>a</token>
+      <token>mano</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+      <wd pos="RB"/>
+    </disambig>
   </rule>
   <rule id="POR_FAVOR" name="Ignore spelling of 'por favor'">
     <pattern>
@@ -900,6 +1228,71 @@
       <token regexp="yes" marker="yes">.+\$</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="PHRASES_1_WORD" name="1-word phrases">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">But|However|Initially|Moreover|Nevertheless|Really</token>
+      <token marker="yes">,</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+    </disambig>
+  </rule>
+  <rule id="PHRASE_WHENEVER_POSSIBLE" name="Whenever possible">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">Whenever</token>
+      <token marker="yes">possible</token>
+      <token marker="yes">,</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+    </disambig>
+  </rule>
+  <rule id="PHRASE_FIRST_OF_ALL" name="First of all">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">First</token>
+      <token marker="yes">of</token>
+      <token marker="yes">all</token>
+      <token marker="yes">,</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+    </disambig>
+  </rule>
+  <rule id="PHRASE_ON_THE_OTHER_HAND" name="On the other hand">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">On</token>
+      <token marker="yes">the</token>
+      <token marker="yes">other</token>
+      <token marker="yes">hand</token>
+      <token marker="yes">,</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+      <wd pos="RB_SENT"/>
+    </disambig>
+  </rule>
+  <rule id="PLAY_CATCH" name="Play catch (NN:UN)">
+    <pattern>
+      <token inflected="yes">play</token>
+      <token marker="yes">catch</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN:UN"/>
+    </disambig>
   </rule>
   <rule id="STEAK_TARTARE" name="steak tartare">
     <pattern>
@@ -1233,6 +1626,15 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="ABOUT_TURN" name="About Turn (NN)">
+    <pattern>
+      <token marker="yes">about</token>
+      <token regexp="yes">turns?</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NN"/>
+    </disambig>
+  </rule>
   <rule id="IN_PERPETUUM" name="ignore spelling of 'in perpetuum'">
     <pattern>
       <token>in</token>
@@ -1260,6 +1662,15 @@
       <token>abled</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="THE_TIMES_NNP" name="The Times -&gt; NNP">
+    <pattern>
+      <token>The</token>
+      <token case_sensitive="yes" marker="yes">Times</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+    </disambig>
   </rule>
   <rule id="NEED_MD" name="needn't is MD">
     <pattern>
@@ -1392,5 +1803,14 @@
       <token>wherefores</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="OTHER_THAN_ADVERB" name="'other' adverb in 'other than'">
+    <pattern>
+      <token marker="yes">other</token>
+      <token>than</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="RB"/>
+    </disambig>
   </rule>
 </rules>

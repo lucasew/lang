@@ -413,12 +413,26 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
             continue
         action = (dis.get("action") or "replace").lower()
         postag = (dis.get("postag") or "").strip()
-        if action not in ("filter", "replace", "immunize", "ignore_spelling"):
+        # Soft ADD: single <wd pos="…"/> (Java UNKNOWN_PCT, COMMA_POSTAG, …)
+        add_wds: list[dict] = []
+        if action == "add":
+            for c in dis:
+                if local(c.tag) != "wd":
+                    continue
+                wd_pos = (c.get("pos") or "").strip()
+                wd_lemma = (c.get("lemma") or "").strip()
+                wd_text = (c.text or "").strip()
+                if not wd_pos and not wd_lemma and not wd_text:
+                    continue
+                add_wds.append({"pos": wd_pos, "lemma": wd_lemma, "text": wd_text})
+            if not add_wds:
+                continue
+        elif action not in ("filter", "replace", "immunize", "ignore_spelling"):
             continue
         if action in ("filter", "replace") and not postag:
             continue
         if list(dis) and action in ("filter", "replace"):
-            # nested <wd> not soft-loaded
+            # nested <wd> not soft-loaded for filter/replace
             continue
         toks = pattern_is_simple(pat)
         if not toks:
@@ -446,14 +460,17 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         seen.add(rid)
         # Preserve ignore_spelling vs immunize: ignore_spelling only affects
         # the speller (Java), while immunize skips pattern matching entirely.
-        out.append({
+        entry = {
             "id": rid,
             "name": el.get("name") or rid,
             "tokens": simple_toks,
             "action": action,
             "postag": postag,
             "source": source,
-        })
+        }
+        if add_wds:
+            entry["add_wds"] = add_wds
+        out.append(entry)
     return out
 
 
@@ -477,7 +494,22 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
             lines.append(f"      <token{attr_s}>{body}</token>")
         lines.append("    </pattern>")
         act = r.get("action") or "replace"
-        if act in ("filter", "replace") and r.get("postag"):
+        if act == "add" and r.get("add_wds"):
+            lines.append(f'    <disambig action="add">')
+            for wd in r["add_wds"]:
+                attrs = []
+                if wd.get("pos"):
+                    attrs.append(f'pos="{xml_esc(wd["pos"])}"')
+                if wd.get("lemma"):
+                    attrs.append(f'lemma="{xml_esc(wd["lemma"])}"')
+                attr_s = (" " + " ".join(attrs)) if attrs else ""
+                body = xml_esc(wd.get("text") or "")
+                if body:
+                    lines.append(f"      <wd{attr_s}>{body}</wd>")
+                else:
+                    lines.append(f"      <wd{attr_s}/>")
+            lines.append("    </disambig>")
+        elif act in ("filter", "replace") and r.get("postag"):
             lines.append(f'    <disambig action="{xml_esc(act)}" postag="{xml_esc(r["postag"])}"/>')
         else:
             lines.append(f'    <disambig action="{xml_esc(act)}"/>')
