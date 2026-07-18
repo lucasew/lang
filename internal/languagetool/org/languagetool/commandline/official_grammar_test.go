@@ -26,10 +26,10 @@ func TestDiscoverAndLoadOfficialENGrammar(t *testing.T) {
 	}
 }
 
-func TestConfigureCoreLT_LoadsOfficialGrammar(t *testing.T) {
+func TestConfigureCoreLT_LoadsOfficialGrammarWhenEnabled(t *testing.T) {
+	t.Setenv("LANG_USE_UPSTREAM_GRAMMAR", "1")
 	lt, err := configureCoreLT("en", &CommandLineOptions{Language: "en"})
 	require.NoError(t, err)
-	// With official grammar present, many rules registered
 	ids := lt.GetAllRegisteredRuleIDs()
-	require.Greater(t, len(ids), 50, "core + grammar should register many rules")
+	require.Greater(t, len(ids), 100, "core + grammar should register many rules when enabled")
 }

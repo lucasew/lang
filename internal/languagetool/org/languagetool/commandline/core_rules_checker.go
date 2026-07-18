@@ -148,14 +148,17 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			en.RegisterPickyEnglishRules(lt)
 		}
 		// Soft grammar packs (testdata/*-soft.xml) are not loaded — faithful port only.
-		// Official grammar.xml from inspiration/upstream when present.
+		// Official grammar.xml: load when LANG_USE_UPSTREAM_GRAMMAR=1. The simplified
+		// pattern matcher still lacks skip/unify/filters for many rules; applying the
+		// full file by default false-fires (e.g. EN_MULTITOKEN_SPELLING_*). Prefer
+		// incomplete (core rules) over corrupt matches — enable opt-in for progress.
 		base := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			base = lang[:i]
 		}
-		if gpath := DiscoverLanguageGrammarXML(opts, base); gpath != "" {
-			if n, err := patterns.RegisterGrammarFile(lt, gpath, lang); err == nil && n > 0 {
-				_ = n
+		if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
+			if gpath := DiscoverLanguageGrammarXML(opts, base); gpath != "" {
+				_, _ = patterns.RegisterGrammarFile(lt, gpath, lang)
 			}
 		}
 		if strings.EqualFold(base, "en") {
