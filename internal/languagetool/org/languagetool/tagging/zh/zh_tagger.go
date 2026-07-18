@@ -2,47 +2,61 @@ package zh
 
 import (
 	"strings"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
+// ChineseDictPath is retained for twins; Chinese analysis does not load Morfologik.
+// Java ChineseTagger only parses HanLP-encoded "surface/pos" tokens.
 const ChineseDictPath = "/zh/zh.dict"
 
-type ChineseTagger struct { *tagging.BaseTagger }
+// ChineseTagger ports tagging.zh.ChineseTagger.
+// Each input token is "surface/pos" from ChineseWordTokenizer (HanLP Term.toString).
+type ChineseTagger struct{}
 
-func NewChineseTagger(wt tagging.WordTagger) *ChineseTagger {
-	return &ChineseTagger{BaseTagger: tagging.NewBaseTagger(wt, ChineseDictPath, "zh", false)}
-}
+func NewChineseTagger() *ChineseTagger { return &ChineseTagger{} }
 
+// GetDictionaryPath matches twins that assert the Java resource path.
+func (t *ChineseTagger) GetDictionaryPath() string { return ChineseDictPath }
+
+// Tag ports ChineseTagger.tag: split each encoded token into AnalyzedToken.
 func (t *ChineseTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTokenReadings {
-	if t == nil { return nil }
+	if t == nil {
+		return nil
+	}
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
-		w := strings.ReplaceAll(word, "’", "'")
-		var readings []*languagetool.AnalyzedToken
-		for _, tw := range t.TagWord(w) {
-			readings = append(readings, toTok(word, tw))
-		}
-		lower := strings.ToLower(w)
-		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
-			for _, tw := range t.TagWord(lower) {
-				readings = append(readings, toTok(word, tw))
-			}
-		}
-		if len(readings) == 0 {
-			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
-		}
-		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-		pos += len([]rune(word))
+		at := asAnalyzedToken(word)
+		out = append(out, languagetool.NewAnalyzedTokenReadingsAt(at, pos))
+		// Java: pos += at.getToken().length() (UTF-16 units for BMP CJK)
+		pos += tokenizers.UTF16Len(at.GetToken())
 	}
 	return out
 }
 
-func toTok(surface string, tw tagging.TaggedWord) *languagetool.AnalyzedToken {
-	var pos, lemma *string
-	if tw.PosTag != "" { p := tw.PosTag; pos = &p }
-	if tw.Lemma != "" { l := tw.Lemma; lemma = &l }
-	return languagetool.NewAnalyzedToken(surface, pos, lemma)
+// asAnalyzedToken ports ChineseTagger.asAnalyzedToken.
+func asAnalyzedToken(word string) *languagetool.AnalyzedToken {
+	if !strings.Contains(word, "/") {
+		return languagetool.NewAnalyzedToken(" ", nil, nil)
+	}
+	// Java:
+	// if parts[0].equals("") && parts[parts.length-1].equals("w")
+	//   return new AnalyzedToken(word.substring(0, word.length()-2), last char, null)
+	parts := strings.Split(word, "/")
+	if parts[0] == "" && parts[len(parts)-1] == "w" {
+		p := "w"
+		surface := word[:len(word)-2]
+		return languagetool.NewAnalyzedToken(surface, &p, nil)
+	}
+	surface := parts[0]
+	posTag := parts[1]
+	// Soft: "x" means unknown — leave POS nil so soft open-class matching still works
+	// until HanLP POS is available.
+	if posTag == "" || posTag == "x" {
+		return languagetool.NewAnalyzedToken(surface, nil, nil)
+	}
+	p := posTag
+	return languagetool.NewAnalyzedToken(surface, &p, nil)
 }

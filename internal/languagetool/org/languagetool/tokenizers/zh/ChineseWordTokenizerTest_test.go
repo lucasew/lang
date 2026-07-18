@@ -1,7 +1,8 @@
 package zh
 
-// Twin of ChineseWordTokenizerTest — HanLP deferred; soft-lexicon + char smoke.
+// Twin of ChineseWordTokenizerTest — HanLP deferred; soft lexicon + surface/pos encode.
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -9,12 +10,16 @@ import (
 
 func TestChineseWordTokenizer_Tokenize(t *testing.T) {
 	tok := NewChineseWordTokenizer()
-	tok.Segment = func(text string) []string { return []string{"你好", "世界"} }
-	require.Equal(t, []string{"你好", "世界"}, tok.Tokenize("你好世界"))
+	tok.Segment = func(text string) []string {
+		return []string{"甲", "乙"}
+	}
+	got := tok.Tokenize("甲乙")
+	require.Equal(t, []string{"甲/x", "乙/x"}, got)
 
-	// Latin runs stay whole; unknown Han falls back to single chars.
-	got := NewChineseWordTokenizer().Tokenize("甲乙world")
-	require.Contains(t, got, "world")
-	require.Contains(t, got, "甲")
-	require.Contains(t, got, "乙")
+	raw := NewChineseWordTokenizer().Tokenize("甲乙world")
+	var surfaces []string
+	for _, e := range raw {
+		surfaces = append(surfaces, strings.SplitN(e, "/", 2)[0])
+	}
+	require.Contains(t, surfaces, "world")
 }

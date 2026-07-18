@@ -38,12 +38,17 @@ func AnalyzePlain(text string) *AnalyzedSentence {
 // AnalyzeWithTokenizer is AnalyzePlain with an explicit word tokenizer (e.g. FrenchWordTokenizer).
 // JapaneseWordTokenizer follows Java: tokenize emits "surface POS lemma", then
 // asAnalyzedToken splits into surface/POS/lemma (JapaneseTagger).
+// ChineseWordTokenizer follows Java: tokenize emits "surface/pos" (HanLP Term.toString),
+// then ChineseTagger.asAnalyzedToken splits.
 func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentence {
 	if wt == nil {
 		wt = tokenizers.NewWordTokenizer()
 	}
 	if _, ok := wt.(*jatok.JapaneseWordTokenizer); ok {
 		return analyzeJapaneseEncoded(wt.Tokenize(text))
+	}
+	if _, ok := wt.(*zhtok.ChineseWordTokenizer); ok {
+		return analyzeChineseEncoded(wt.Tokenize(text))
 	}
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)
@@ -103,6 +108,51 @@ func japaneseAsAnalyzedToken(word string) *AnalyzedToken {
 	}
 	p, l := parts[1], parts[2]
 	return NewAnalyzedToken(parts[0], &p, &l)
+}
+
+// analyzeChineseEncoded ports JLanguageTool analysis for Chinese:
+// wordTokenizer.tokenize → "surface/pos"; ChineseTagger.asAnalyzedToken splits.
+func analyzeChineseEncoded(encoded []string) *AnalyzedSentence {
+	readings := make([]*AnalyzedTokenReadings, 0, len(encoded)+1)
+	ss := SentenceStartTagName
+	startTok := NewAnalyzedToken("", &ss, nil)
+	startR := NewAnalyzedTokenReadings(startTok)
+	startR.SetStartPos(0)
+	readings = append(readings, startR)
+	pos := 0
+	prev := ""
+	for _, word := range encoded {
+		at := chineseAsAnalyzedToken(word)
+		ar := NewAnalyzedTokenReadingsAt(at, pos)
+		if prev != "" {
+			ar.SetWhitespaceBeforeToken(prev)
+		}
+		readings = append(readings, ar)
+		pos += tokenizers.UTF16Len(at.GetToken())
+		prev = at.GetToken()
+	}
+	softAttachSentenceEnd(readings)
+	return NewAnalyzedSentence(readings)
+}
+
+// chineseAsAnalyzedToken ports ChineseTagger.asAnalyzedToken.
+func chineseAsAnalyzedToken(word string) *AnalyzedToken {
+	if !strings.Contains(word, "/") {
+		return NewAnalyzedToken(" ", nil, nil)
+	}
+	parts := strings.Split(word, "/")
+	if parts[0] == "" && parts[len(parts)-1] == "w" {
+		p := "w"
+		return NewAnalyzedToken(word[:len(word)-2], &p, nil)
+	}
+	surface := parts[0]
+	posTag := parts[1]
+	// Soft unknown POS "x" → nil (open-class soft matching until HanLP).
+	if posTag == "" || posTag == "x" {
+		return NewAnalyzedToken(surface, nil, nil)
+	}
+	p := posTag
+	return NewAnalyzedToken(surface, &p, nil)
 }
 
 // softAttachSentenceEnd adds a SENT_END reading on the last non-SENT_START token.
@@ -369,13 +419,16 @@ func AnalyzeWithTagger(text string, tagWord func(token string) []TokenTag) *Anal
 
 // AnalyzeWithTaggerAndTokenizer tags tokens produced by wt.
 // Japanese still uses Sen/kagome encode→decode (TagWord is per-surface and cannot
-// replace full-sentence morph analysis).
+// replace full-sentence morph analysis). Chinese uses HanLP-style surface/pos encode.
 func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []TokenTag, wt tokenizers.Tokenizer) *AnalyzedSentence {
 	if wt == nil {
 		wt = tokenizers.NewWordTokenizer()
 	}
 	if _, ok := wt.(*jatok.JapaneseWordTokenizer); ok {
 		return analyzeJapaneseEncoded(wt.Tokenize(text))
+	}
+	if _, ok := wt.(*zhtok.ChineseWordTokenizer); ok {
+		return analyzeChineseEncoded(wt.Tokenize(text))
 	}
 	if tagWord == nil {
 		return AnalyzeWithTokenizer(text, wt)
