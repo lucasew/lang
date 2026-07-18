@@ -177,6 +177,21 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 			} else {
 				posOK = *pos == pt.Pos.PosTag
 			}
+			// Soft without portuguese.dict: FreeLing disambig may only add Z0MS0
+			// to "um" (numeral) while grammar patterns require D.+. Java dict
+			// also has DA0MS0; soft-accept D.* when surface is a known article.
+			if !posOK && !m.StrictPOS && softPostagIsFreeLingDeterminer(pt.Pos.PosTag) &&
+				softIsRomanceDeterminerSurface(token.GetToken()) {
+				posOK = true
+			}
+			// Soft multiword/disambig may only attach underscore context tags
+			// (_CONTEXTO_…); treat those as non-morph so open-class postags still
+			// soft-match letter surfaces (PT PHRASAL_VERB_PREFERIR "carne").
+			if !posOK && !m.StrictPOS && softPOSIsContextTag(pos) &&
+				softLooksLikeWord(token.GetToken()) && !softPostagIsClosedClassOnly(pt.Pos.PosTag) &&
+				!softPostagIsNumberOnly(pt.Pos.PosTag) && !softPostagIsSentenceBoundary(strings.ToUpper(pt.Pos.PosTag)) {
+				posOK = true
+			}
 		} else {
 			// Soft path without a tagger: untagged tokens act as UNKNOWN.
 			// Postag-only empty surface tokens accept letter words or punctuation
@@ -841,6 +856,22 @@ func softPostagPartIsOpen(p string) bool {
 }
 
 func softPostagPartIsClosed(p string) bool {
+	// FreeLing Romance determiners (D.+, DA0MS0, DI0FS0, …) — PT/ES/CA/GL soft packs.
+	if len(p) > 0 && (p[0] == 'D' || strings.HasPrefix(p, "D.")) {
+		// Not German DAT/… colon tags (handled below).
+		if !strings.Contains(p, ":") || strings.HasPrefix(p, "DA") || strings.HasPrefix(p, "DI") ||
+			strings.HasPrefix(p, "DD") || strings.HasPrefix(p, "DE") || strings.HasPrefix(p, "DP") ||
+			strings.HasPrefix(p, "DT") {
+			if strings.HasPrefix(p, "D") && !strings.HasPrefix(p, "DT") && !strings.HasPrefix(p, "DAT") {
+				// FreeLing D* but not Penn DT alone (already listed) / not STTS DAT
+				if strings.HasPrefix(p, "DA") || strings.HasPrefix(p, "DI") || strings.HasPrefix(p, "DD") ||
+					strings.HasPrefix(p, "DE") || strings.HasPrefix(p, "DP") || strings.HasPrefix(p, "D.") ||
+					p == "D" || strings.HasPrefix(p, "D.+") || strings.HasPrefix(p, "D[") {
+					return true
+				}
+			}
+		}
+	}
 	// German STTS closed: ART, PRP (preposition!), PRO, KON, APPR, APPO, APZR, …
 	if strings.Contains(p, ":") || strings.HasPrefix(p, "PRP") || strings.HasPrefix(p, "ART") ||
 		strings.HasPrefix(p, "PRO") || strings.HasPrefix(p, "KON") || strings.HasPrefix(p, "APPR") ||
@@ -890,6 +921,10 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 }
 
 func softClosedPartSurface(part, s string) bool {
+	// FreeLing Romance D* determiners (PT/ES/CA soft packs without full dict).
+	if softPostagIsFreeLingDeterminer(part) {
+		return softIsRomanceDeterminerSurface(s)
+	}
 	// --- German STTS (colon tags / case-tagged PRP / ART / PRO / APPR / KON) ---
 	// Do NOT treat English Penn "PRP.*" (pronoun regex) as STTS: "PRP." matches
 	// the start of "PRP.*" and would route "you"/"we" through the prep list.
@@ -1005,6 +1040,52 @@ func softIsGermanPrep(s string) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+// softPOSIsContextTag: underscore-prefixed LT context tags (_CONTEXTO_…, _PUNCT…).
+func softPOSIsContextTag(pos *string) bool {
+	return pos != nil && strings.HasPrefix(*pos, "_")
+}
+
+// softPostagIsFreeLingDeterminer: FreeLing D.+ / DA0MS0 / DI… (PT/ES/CA/GL).
+func softPostagIsFreeLingDeterminer(tag string) bool {
+	u := strings.ToUpper(strings.TrimSpace(tag))
+	if u == "" {
+		return false
+	}
+	// Pattern fragments like D.+ or D[AI].+
+	if strings.HasPrefix(u, "D.") || strings.HasPrefix(u, "D[") || u == "D" {
+		return true
+	}
+	// Concrete FreeLing tags: DA0MS0, DI0FS0, DD0CP0, DE0CN0, DP…
+	if len(u) >= 2 && u[0] == 'D' {
+		switch u[1] {
+		case 'A', 'I', 'D', 'E', 'P', 'T', 'N':
+			// DT is also Penn determiner — still fine for surface article check
+			return true
+		}
+	}
+	return false
+}
+
+// softIsRomanceDeterminerSurface: FreeLing article/demonstrative surfaces.
+func softIsRomanceDeterminerSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	// PT/ES/GL/CA articles & indefinites
+	case "o", "a", "os", "as", "um", "uma", "uns", "umas",
+		"el", "la", "los", "las", "un", "una", "unos", "unas",
+		"lo", "les", "els", "na", "nas",
+		// PT/ES demonstratives
+		"este", "esta", "estes", "estas", "esse", "essa", "esses", "essas",
+		"aquele", "aquela", "aqueles", "aquelas", "isto", "isso", "aquilo",
+		"estos", "ese", "esa", "esos", "esas",
+		"aquel", "aquella", "aquellos", "aquellas",
+		// Catalan
+		"aquest", "aquesta", "aquestos", "aquestes", "aquell", "aquells", "aquelles":
+		return true
+	default:
+		return softIsDeterminer(s)
 	}
 }
 
@@ -1480,6 +1561,12 @@ var softIrregularLemma = map[string][]string{
 	"fiz": {"fazer"}, "fizeste": {"fazer"}, "fizemos": {"fazer"}, "fizessem": {"fazer"}, "fizesse": {"fazer"},
 	"fará": {"fazer"}, "farão": {"fazer"},
 	"põe": {"pôr"}, "pões": {"pôr"}, "pomos": {"pôr"}, "põem": {"pôr"}, "pôs": {"pôr"}, "pus": {"pôr"},
+	"ponho": {"pôr"}, "pondes": {"pôr"},
+	// preferir (PHRASAL_VERB_PREFERIR soft without portuguese.dict)
+	"prefiro": {"preferir"}, "preferes": {"preferir"}, "prefere": {"preferir"},
+	"preferimos": {"preferir"}, "preferem": {"preferir"}, "preferiu": {"preferir"},
+	// ir present extras; vou/vão/vais already under Romance go-verbs
+	"ides": {"ir"}, "fui": {"ir"},
 	"dei": {"dar"}, "deste": {"dar"}, "demos": {"dar"},
 	"posso": {"poder"}, "podes": {"poder"}, "pode": {"poder"}, "podemos": {"poder"}, "podem": {"poder"}, "pôde": {"poder"},
 	"puc": {"poder"}, "pots": {"poder"}, "pot": {"poder"}, "podeu": {"poder"}, "poden": {"poder"},
