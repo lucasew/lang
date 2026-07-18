@@ -31,5 +31,11 @@ func TestConfigureCoreLT_LoadsOfficialGrammarWhenEnabled(t *testing.T) {
 	lt, err := configureCoreLT("en", &CommandLineOptions{Language: "en"})
 	require.NoError(t, err)
 	ids := lt.GetAllRegisteredRuleIDs()
-	require.Greater(t, len(ids), 100, "core + grammar should register many rules when enabled")
+	require.Greater(t, len(ids), 100, "core + grammar when enabled")
+	// Unsupported filter/antipattern rules skipped — no multitoken-spelling false fire.
+	ms := lt.Check("This is a simple sentence.")
+	for _, m := range ms {
+		require.NotContains(t, m.RuleID, "MULTITOKEN_SPELLING", "%+v", m)
+		require.NotEqual(t, "REPEATED_VERBS", m.RuleID, "%+v", m)
+	}
 }

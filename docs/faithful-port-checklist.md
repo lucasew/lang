@@ -69,7 +69,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 
 | # | Check | Status |
 |---|--------|--------|
-| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] official grammar via LANG_USE_UPSTREAM_GRAMMAR=1 (~5k rules); default core until matcher complete |
+| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1; skip filter/antipattern rules until ported (~3.8k safe surface rules) |
 | 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] |
 | 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN multiwords + spelling_global wired |
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] path wiring exists; coverage incomplete |

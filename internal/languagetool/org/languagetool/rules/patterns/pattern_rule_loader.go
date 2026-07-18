@@ -63,6 +63,18 @@ type xmlRule struct {
 	// Message keeps inner XML so <suggestion>…</suggestion> and soft \N backrefs survive.
 	Message xmlMessage `xml:"message"`
 	Short   string     `xml:"short"`
+	// Filter is Java <filter class="…"/> — not implemented for most classes.
+	// Rules with an unsupported filter must not register (would match without filter = cheat).
+	Filter *xmlFilter `xml:"filter"`
+	// AntiPatterns: without keepByAntiPattern, rules false-fire (e.g. REPEATED_VERBS).
+	// Skip until antipattern matching is 1:1 with Java.
+	AntiPatterns []xmlPattern `xml:"antipattern"`
+}
+
+// xmlFilter ports <filter class="org.languagetool.…Filter" args="…"/>.
+type xmlFilter struct {
+	Class string `xml:"class,attr"`
+	Args  string `xml:"args,attr"`
 }
 
 type xmlMessage struct {
@@ -249,6 +261,16 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 			if id == "" {
 				return fmt.Errorf("rule id/name not set")
 			}
+		}
+		// Java RuleFilter: MultitokenSpellerFilter etc. decide match acceptance.
+		// Without the filter, registering the pattern alone false-fires (cheat).
+		// Skip until the filter class is ported.
+		if xr.Filter != nil && strings.TrimSpace(xr.Filter.Class) != "" {
+			return nil
+		}
+		// Antipatterns suppress matches; without them many rules false-fire.
+		if len(xr.AntiPatterns) > 0 {
+			return nil
 		}
 		// Java: pattern-level case_sensitive inherits to tokens/exceptions
 		// when the child does not set its own case_sensitive attribute.
