@@ -354,6 +354,67 @@ func DiscoverLanguageStyleXML(opts *CommandLineOptions, lang string) string {
 	return discoverLanguageRuleXML(opts, lang, "style.xml", "STYLE")
 }
 
+// DiscoverLanguagePatternRuleFiles ports Language.getRuleFileNames() path order:
+//   {lang}/grammar.xml, {lang}/style.xml (if any), {lang}/grammar_custom.xml (if any),
+//   and when lang has a country variant (e.g. en-US):
+//   {lang}/{variant}/grammar.xml, style.xml, grammar-premium.xml (each if present).
+// Only existing official files are returned — no soft invent paths.
+func DiscoverLanguagePatternRuleFiles(opts *CommandLineOptions, lang string) []string {
+	base := languageBaseCode(lang)
+	if base == "" {
+		return nil
+	}
+	var out []string
+	seen := map[string]struct{}{}
+	add := func(p string) {
+		if p == "" {
+			return
+		}
+		if _, ok := seen[p]; ok {
+			return
+		}
+		seen[p] = struct{}{}
+		out = append(out, p)
+	}
+	// Java always adds grammar; style/custom only when they exist.
+	add(discoverLanguageRuleXML(opts, base, "grammar.xml", "GRAMMAR"))
+	if p := discoverLanguageRuleXML(opts, base, "style.xml", "STYLE"); p != "" {
+		add(p)
+	}
+	if p := discoverLanguageRuleXML(opts, base, "grammar_custom.xml", ""); p != "" {
+		add(p)
+	}
+	// Variant files: shortCodeWithCountryAndVariant length > 2 in Java.
+	variant := languageVariantCode(lang)
+	if variant != "" && variant != base {
+		add(discoverLanguageVariantRuleXML(opts, base, variant, "grammar.xml"))
+		add(discoverLanguageVariantRuleXML(opts, base, variant, "style.xml"))
+		add(discoverLanguageVariantRuleXML(opts, base, variant, "grammar-premium.xml"))
+	}
+	return out
+}
+
+// languageVariantCode returns the full short code with country when present (e.g. en-US).
+func languageVariantCode(lang string) string {
+	lang = strings.TrimSpace(lang)
+	if lang == "" {
+		return ""
+	}
+	// normalize underscore variants (en_US → en-US)
+	lang = strings.ReplaceAll(lang, "_", "-")
+	parts := strings.Split(lang, "-")
+	if len(parts) < 2 || parts[0] == "" || parts[1] == "" {
+		return ""
+	}
+	// en-US, de-DE, pt-BR — keep first two segments lower-Upper when 2-letter country
+	base := strings.ToLower(parts[0])
+	region := parts[1]
+	if len(region) == 2 {
+		region = strings.ToUpper(region)
+	}
+	return base + "-" + region
+}
+
 // discoverLanguageRuleXML finds rules/{lang}/{fileName} (grammar.xml / style.xml).
 func discoverLanguageRuleXML(opts *CommandLineOptions, lang, fileName, envSuffix string) string {
 	base := languageBaseCode(lang)
@@ -382,6 +443,35 @@ func discoverLanguageRuleXML(opts *CommandLineOptions, lang, fileName, envSuffix
 		filepath.Join("testdata", "upstream", base, "rules", fileName),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
 			"src", "main", "resources", "org", "languagetool", "rules", base, fileName),
+	} {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+// discoverLanguageVariantRuleXML finds rules/{base}/{variant}/{fileName}
+// e.g. en/en-US/grammar.xml (Java getShortCode()+"/"+getShortCodeWithCountryAndVariant()+"/"+file).
+func discoverLanguageVariantRuleXML(opts *CommandLineOptions, base, variant, fileName string) string {
+	if base == "" || variant == "" || fileName == "" {
+		return ""
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), base, variant, fileName),
+			filepath.Join(opts.GetDataDir(), "rules", base, variant, fileName),
+			filepath.Join(opts.GetDataDir(), "upstream", base, "rules", variant, fileName),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	for _, rel := range []string{
+		filepath.Join("testdata", "upstream", base, "rules", variant, fileName),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+			"src", "main", "resources", "org", "languagetool", "rules", base, variant, fileName),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p

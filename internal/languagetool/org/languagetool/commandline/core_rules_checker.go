@@ -200,14 +200,11 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			// Java createDefaultDisambiguator(): FR/ES/PT hybrids when resources exist.
 			_ = RegisterHybridDisambiguator(lt, base, opts)
 		}
-		// Grammar + style after multitoken speller so MultitokenSpellerFilter can use the dict.
-		// Java Language.getRuleFileNames(): grammar.xml then style.xml (same loader).
+		// Pattern rule files after multitoken speller so MultitokenSpellerFilter can use the dict.
+		// Java Language.getRuleFileNames(): grammar, style, custom, then variant files.
 		if os.Getenv("LANG_USE_UPSTREAM_GRAMMAR") == "1" {
-			if gpath := DiscoverLanguageGrammarXML(opts, base); gpath != "" {
-				_, _ = patterns.RegisterGrammarFile(lt, gpath, lang)
-			}
-			if spath := DiscoverLanguageStyleXML(opts, base); spath != "" {
-				_, _ = patterns.RegisterGrammarFile(lt, spath, lang)
+			for _, rpath := range DiscoverLanguagePatternRuleFiles(opts, lang) {
+				_, _ = patterns.RegisterGrammarFile(lt, rpath, lang)
 			}
 		}
 		if opts.GetRuleFile() != "" {

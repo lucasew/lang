@@ -1,6 +1,7 @@
 package commandline
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -36,6 +37,31 @@ func TestDiscoverAndLoadOfficialENStyle(t *testing.T) {
 	require.NoError(t, err)
 	t.Logf("registered %d rules from %s", n, p)
 	require.Greater(t, n, 10, "style.xml should register surface-simple pattern rules")
+}
+
+func TestDiscoverLanguagePatternRuleFiles_EN(t *testing.T) {
+	files := DiscoverLanguagePatternRuleFiles(nil, "en")
+	require.GreaterOrEqual(t, len(files), 2, "grammar + style")
+	require.Contains(t, files[0], "grammar.xml")
+	require.Contains(t, files[1], "style.xml")
+	for _, f := range files {
+		require.NotContains(t, f, "soft")
+	}
+}
+
+func TestDiscoverLanguagePatternRuleFiles_ENUS_Variant(t *testing.T) {
+	files := DiscoverLanguagePatternRuleFiles(nil, "en-US")
+	require.GreaterOrEqual(t, len(files), 2, "base grammar + style at least")
+	// Java adds en/en-US/grammar.xml when present.
+	var hasVariantGrammar bool
+	for _, f := range files {
+		require.NotContains(t, f, "soft")
+		if strings.Contains(f, "en-US") && strings.Contains(f, "grammar.xml") {
+			hasVariantGrammar = true
+		}
+	}
+	// inspiration or testdata should provide en-US/grammar.xml
+	require.True(t, hasVariantGrammar, "files=%v", files)
 }
 
 func TestConfigureCoreLT_LoadsOfficialGrammarWhenEnabled(t *testing.T) {

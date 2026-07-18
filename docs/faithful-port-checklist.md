@@ -69,7 +69,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 
 | # | Check | Status |
 |---|--------|--------|
-| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1 loads grammar.xml + style.xml; filters/dicts wired; variant style paths deferred |
+| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1: getRuleFileNames order (grammar/style/custom + variant); filters/dicts wired |
 | 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] |
 | 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN hybrid multiwords; EnglishMultitokenSpeller loads multiwords+spelling_global for MultitokenSpellerFilter |
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] EN english.dict for tagger + FindSuggestions desiredPostag; other langs partial |
