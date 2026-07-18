@@ -7,10 +7,14 @@ import (
 
 // EnglishHybridDisambiguator ports
 // org.languagetool.tagging.en.EnglishHybridDisambiguator:
-// MultiWordChunker (optional) then XmlRuleDisambiguator (pluggable).
+// spelling_global MultiWordChunker, then /en/multiwords.txt chunker, then XML rules.
 type EnglishHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	// Chunker optional multi-word chunker applied first.
+	// GlobalChunker optional spelling_global.txt chunker (Java chunkerGlobal first).
+	GlobalChunker interface {
+		Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	}
+	// Chunker optional multi-word chunker applied after GlobalChunker.
 	Chunker interface {
 		Disambiguate(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
 	}
@@ -29,6 +33,10 @@ func (d *EnglishHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSe
 		return nil
 	}
 	out := input
+	// Java: disambiguator.disambiguate(chunker.disambiguate(chunkerGlobal.disambiguate(...)))
+	if d.GlobalChunker != nil {
+		out = d.GlobalChunker.Disambiguate(out)
+	}
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}

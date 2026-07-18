@@ -351,4 +351,22 @@ func TestIgnoreSpellingPaths_MergesUpstreamSpelling(t *testing.T) {
 		_, okBash := words["Bash"]
 		require.True(t, okBash, "upstream spelling should include Bash")
 	}
+	// SpellingCheckRule.GLOBAL_SPELLING_FILE single-token sample
+	if gp := discoverSpellingGlobalPath(); gp != "" {
+		_, okTLDR := words["TLDR"]
+		_, okTLDRLow := words["tldr"]
+		require.True(t, okTLDR || okTLDRLow, "spelling_global.txt should include TLDR")
+	}
+}
+
+func TestLoadSpellingGlobalMultiwordLines(t *testing.T) {
+	if discoverSpellingGlobalPath() == "" {
+		t.Skip("spelling_global.txt not found")
+	}
+	lines := loadSpellingGlobalMultiwordLines()
+	require.NotEmpty(t, lines, "expected multi-token phrases from spelling_global")
+	// single tokens must not appear as multiword lines
+	for _, l := range lines {
+		require.Contains(t, l, " ", "multiword line should contain space: %q", l)
+	}
 }

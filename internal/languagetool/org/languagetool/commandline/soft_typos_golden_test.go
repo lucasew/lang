@@ -19151,14 +19151,15 @@ func TestGolden_FalseFriendsActuality(t *testing.T) {
 }
 
 func TestGolden_ImmunizeAfairIirc(t *testing.T) {
-	if DiscoverEnglishSoftDisambiguationXML(nil) == "" {
-		t.Skip("en-soft disambig missing")
+	// Java SpellingCheckRule: ignore.txt (AFAIR, IIRC) + spelling_global.txt (TLDR).
+	// Do not invent forms like fwiw that are absent from official lists.
+	if DiscoverEnglishSoftDisambiguationXML(nil) == "" && DiscoverEnglishIgnoreSpellingList(nil) == "" {
+		t.Skip("ignore-spelling / soft disambig missing")
 	}
 	for _, text := range []string{
-		"Afair that shipped last week.",
-		"Iirc the API changed.",
-		"Fwiw I agree.",
-		"TLDR the patch works.",
+		"Afair that shipped last week.", // ignore.txt: AFAIR
+		"Iirc the API changed.",         // ignore.txt: IIRC
+		"TLDR the patch works.",         // spelling_global.txt: TLDR
 	} {
 		t.Run(text, func(t *testing.T) {
 			var buf bytes.Buffer

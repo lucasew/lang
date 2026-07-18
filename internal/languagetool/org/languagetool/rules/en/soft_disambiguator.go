@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
@@ -69,6 +70,18 @@ func RegisterSoftEnglishDisambiguator(lt *languagetool.JLanguageTool, multiwords
 	})
 	chunker.SetIgnoreSpelling(true)
 	hyb := entag.NewEnglishHybridDisambiguator()
+	// Java EnglishHybridDisambiguator: chunkerGlobal = MultiWordChunker(/spelling_global.txt,
+	// tagForNotAddingTags) with setIgnoreSpelling(true), run before multiwords.
+	if globalLines := loadSpellingGlobalMultiwordLines(); len(globalLines) > 0 {
+		global := disambiguation.NewMultiWordChunker(globalLines, disambiguation.MultiWordChunkerSettings{
+			DefaultTag:            disambiguation.TagForNotAddingTags,
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        true,
+		})
+		global.SetIgnoreSpelling(true)
+		hyb.GlobalChunker = global
+	}
 	hyb.Chunker = chunker
 	// Load upstream soft disambig first, then legacy en-soft.xml (hand soft immunize
 	// abbreviations). Prefer both so ignore_spelling vs immunize stay distinct.
@@ -208,8 +221,7 @@ func softDisambiguationXMLPaths(primary string) []string {
 }
 
 // ignoreSpellingPaths mirrors Java SpellingCheckRule.init(): soft list (if set), then
-// official hunspell/ignore.txt and spelling.txt (words accepted by the speller).
-// Soft tech list is optional extra; ignore.txt is the primary Java ignore source.
+// hunspell/ignore.txt, spelling.txt, and spelling_global.txt (getAdditionalSpellingFileNames).
 func ignoreSpellingPaths(primary string) []string {
 	var out []string
 	seen := map[string]struct{}{}
@@ -224,8 +236,7 @@ func ignoreSpellingPaths(primary string) []string {
 		out = append(out, p)
 	}
 	add(primary)
-	// walk-up from cwd for vendored official EN hunspell lists
-	// (Java: language.getShortCode() + "/hunspell/ignore.txt" and spelling.txt).
+	// walk-up from cwd for vendored official EN hunspell + global spelling lists
 	wd, err := os.Getwd()
 	if err != nil {
 		return out
@@ -240,6 +251,10 @@ func ignoreSpellingPaths(primary string) []string {
 			// SpellingCheckRule.getSpellingFileName() → en/hunspell/spelling.txt
 			filepath.Join("testdata", "disambiguation", "en-spelling-upstream.txt"),
 			filepath.Join("testdata", "upstream", "en", "resource", "hunspell", "spelling.txt"),
+			// SpellingCheckRule.GLOBAL_SPELLING_FILE → spelling_global.txt
+			filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
+				"org", "languagetool", "resource", "spelling_global.txt"),
+			filepath.Join("testdata", "upstream", "spelling_global.txt"),
 		} {
 			cand := filepath.Join(dir, rel)
 			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
@@ -255,6 +270,76 @@ func ignoreSpellingPaths(primary string) []string {
 	return out
 }
 
+// discoverSpellingGlobalPath finds official spelling_global.txt (Java /spelling_global.txt).
+func discoverSpellingGlobalPath() string {
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for {
+		for _, rel := range []string{
+			filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
+				"org", "languagetool", "resource", "spelling_global.txt"),
+			filepath.Join("testdata", "upstream", "spelling_global.txt"),
+		} {
+			cand := filepath.Join(dir, rel)
+			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+				return cand
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
+
+// Cached multi-token phrases from spelling_global.txt (Java chunkerGlobal is a singleton).
+var (
+	spellingGlobalMWOnce  sync.Once
+	spellingGlobalMWLines []string
+)
+
+// loadSpellingGlobalMultiwordLines loads multi-token phrases from spelling_global.txt
+// for MultiWordChunker (Java chunkerGlobal; tagForNotAddingTags + ignoreSpelling).
+// Single-token lines are handled via ignoreSpellingWordList (wordsToBeIgnored).
+func loadSpellingGlobalMultiwordLines() []string {
+	spellingGlobalMWOnce.Do(func() {
+		p := discoverSpellingGlobalPath()
+		if p == "" {
+			return
+		}
+		f, err := os.Open(p)
+		if err != nil {
+			return
+		}
+		defer f.Close()
+		var lines []string
+		sc := bufio.NewScanner(f)
+		buf := make([]byte, 0, 64*1024)
+		sc.Buffer(buf, 1024*1024)
+		for sc.Scan() {
+			line := strings.TrimSpace(sc.Text())
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			if i := strings.IndexByte(line, '#'); i >= 0 {
+				line = strings.TrimSpace(line[:i])
+			}
+			if line == "" || !strings.Contains(line, " ") {
+				continue
+			}
+			// phrase-only; DefaultTag supplies TagForNotAddingTags
+			lines = append(lines, line)
+		}
+		spellingGlobalMWLines = lines
+	})
+	return spellingGlobalMWLines
+}
+
 func loadIgnoreSpellingWords(path string) (map[string]struct{}, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -263,6 +348,8 @@ func loadIgnoreSpellingWords(path string) (map[string]struct{}, error) {
 	defer f.Close()
 	out := map[string]struct{}{}
 	sc := bufio.NewScanner(f)
+	buf := make([]byte, 0, 64*1024)
+	sc.Buffer(buf, 1024*1024)
 	for sc.Scan() {
 		line := strings.TrimSpace(sc.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
@@ -272,6 +359,12 @@ func loadIgnoreSpellingWords(path string) (map[string]struct{}, error) {
 			line = strings.TrimSpace(line[:i])
 		}
 		if line == "" {
+			continue
+		}
+		// Java addIgnoreWords: multi-token lines become IGNORE_SPELLING antipatterns
+		// (handled by MultiWordChunker for spelling_global); only single tokens go
+		// into the wordsToBeIgnored set used by ignoreWord().
+		if strings.Contains(line, " ") {
 			continue
 		}
 		out[line] = struct{}{}
