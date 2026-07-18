@@ -9,6 +9,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	cadis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ca"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 )
 
@@ -263,6 +264,14 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 		appendXML(xmlRules)
 	}
 
+	// Java CatalanHybridDisambiguator: multitokenDisambiguator after XML rules.
+	// Soft: known multi-token phrases from multiwords.txt + spelling_global (not invent lists).
+	if base == "ca" {
+		if mt := softCatalanMultitokenDisambiguator(paths); mt != nil {
+			steps = append(steps, mt)
+		}
+	}
+
 	if len(steps) == 0 {
 		return nil, false
 	}
@@ -270,6 +279,79 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 		return steps[0], true
 	}
 	return softHybridChain(steps), true
+}
+
+// softCatalanMultitokenDisambiguator ports CatalanMultitokenDisambiguator with
+// IsMisspelled backed by official multiword / spelling_global phrase sets
+// (Java uses CatalanMorfologikMultitokenSpeller over multitoken data).
+func softCatalanMultitokenDisambiguator(paths SoftHybridPaths) *cadis.CatalanMultitokenDisambiguator {
+	known := softLoadKnownMultiTokenPhrases(paths.Multiwords)
+	gp := paths.SpellingGlobal
+	if gp == "" {
+		gp = discoverSoftSpellingGlobalPath()
+	}
+	for p := range softLoadKnownMultiTokenPhrases(gp) {
+		known[p] = struct{}{}
+	}
+	if len(known) == 0 {
+		return nil
+	}
+	mt := cadis.NewCatalanMultitokenDisambiguator()
+	mt.IsMisspelled = func(phrase string) bool {
+		if phrase == "" {
+			return true
+		}
+		if _, ok := known[phrase]; ok {
+			return false
+		}
+		if _, ok := known[strings.ToLower(phrase)]; ok {
+			return false
+		}
+		return true
+	}
+	return mt
+}
+
+// softLoadKnownMultiTokenPhrases loads phrase keys (before tab/semicolon) from
+// multiwords or spelling lists; multi-token phrases only.
+func softLoadKnownMultiTokenPhrases(path string) map[string]struct{} {
+	out := map[string]struct{}{}
+	if path == "" {
+		return out
+	}
+	lines, err := loadCachedMultiWordFile(path)
+	if err != nil {
+		// spelling_global is phrase-only without separator markers
+		pl, err2 := loadPhraseOnlyMultiTokenFile(path)
+		if err2 != nil {
+			return out
+		}
+		for _, line := range pl {
+			if strings.Contains(line, " ") {
+				out[line] = struct{}{}
+				out[strings.ToLower(line)] = struct{}{}
+			}
+		}
+		return out
+	}
+	for _, line := range lines {
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+		phrase := line
+		if i := strings.IndexByte(line, '\t'); i >= 0 {
+			phrase = line[:i]
+		} else if i := strings.IndexByte(line, ';'); i >= 0 {
+			phrase = line[:i]
+		}
+		phrase = strings.TrimSpace(phrase)
+		if phrase == "" || !strings.Contains(phrase, " ") {
+			continue
+		}
+		out[phrase] = struct{}{}
+		out[strings.ToLower(phrase)] = struct{}{}
+	}
+	return out
 }
 
 // multiWordChunkerInstanceCache: path+settings → *MultiWordChunker (Java getInstance).
