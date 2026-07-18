@@ -55,7 +55,7 @@
         <token>tempo</token>
         <token>que</token>
       </pattern>
-      <message><suggestion>enquanto</suggestion></message>
+      <message>Para conferir mais clareza ao seu texto, busque usar uma linguagem mais concisa. <suggestion>enquanto</suggestion></message>
       <short>AO_MESMO_TEMPO_QUE_ENQUANTO</short>
     </rule>
     <rule id="POUCO_IMPORTA_NÃO_IMPORTA" name="✂️ 'Pouco' importa → não" default="off">
@@ -64,7 +64,7 @@
         <token>importa</token>
         <token postag="SPS00|(SPS00:)?D[AI].+|PP3CN000" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion>não</suggestion></message>
+      <message>Para conferir mais clareza ao seu texto, busque usar uma linguagem mais concisa. <suggestion>não</suggestion></message>
       <short>POUCO_IMPORTA_NÃO_IMPORTA</short>
     </rule>
   </category>
@@ -128,6 +128,47 @@
       <message>Possível confusão de termos. <suggestion>fases</suggestion></message>
       <short>CONFUSÃO_FAZES_FASES</short>
     </rule>
+    <rule id="PARONYM_HOMILIA_158" name="Parónimo: homilia" default="off">
+      <pattern>
+        <token regexp="yes">(?:(?:[mts](?:eu|ua)|minha|[nv]oss[ao])|(?:d|n|pel)?(?:outr)?[ao]|à|ao)s?|com|de(?:sde)?|em|entre|mediante|p(?:ara|erante|or)|s(em|obre)|trás|(alg|d|n)?(um(as?)?|uns)
+          <exception regexp="yes">os?</exception>
+        </token>
+        <token min="0" postag="A.+" postag_regexp="yes"></token>
+        <token regexp="yes">homilias?</token>
+      </pattern>
+      <message>Quando escrita sem acento, esta palavra é um verbo. Se pretende referir-se a um substantivo ou adjetivo, deve utilizar a forma acentuada. <suggestion>\1 \2 homília\3</suggestion></message>
+      <short>PARONYM_HOMILIA_158</short>
+    </rule>
+    <rule id="PARONYM_INDICIA_164" name="Parónimo: indicia" default="off">
+      <pattern>
+        <token regexp="yes">(?:(?:[mts](?:eu|ua)|minha|[nv]oss[ao])|(?:d|n|pel)?(?:outr)?[ao]|à|ao)s?|com|de(?:sde)?|em|entre|mediante|p(?:ara|erante|or)|s(em|obre)|trás|(alg|d|n)?(um(as?)?|uns)
+          <exception regexp="yes">os?</exception>
+        </token>
+        <token min="0" postag="A.+" postag_regexp="yes"></token>
+        <token regexp="yes">indicias?</token>
+      </pattern>
+      <message>Quando escrita sem acento, esta palavra é um verbo. Se pretende referir-se a um substantivo ou adjetivo, deve utilizar a forma acentuada. <suggestion>\1 \2 indícia\3</suggestion></message>
+      <short>PARONYM_INDICIA_164</short>
+    </rule>
+    <rule id="PARONYM_PARECIA_509" name="Parónimo: parecia" default="off">
+      <pattern>
+        <token regexp="yes">(?:(?:[mts](?:eu|ua)|minha|[nv]oss[ao])|(?:d|n|pel)?(?:outr)?[ao]|à|ao)s?|com|de(?:sde)?|em|entre|mediante|p(?:ara|erante|or)|s(em|obre)|trás|(alg|d|n)?(um(as?)?|uns)
+          <exception regexp="yes">os?</exception>
+        </token>
+        <token regexp="yes">parecias?</token>
+      </pattern>
+      <message>Quando escrita sem acento, esta palavra é um verbo. Se pretende referir-se a um substantivo ou adjetivo, deve utilizar a forma acentuada. <suggestion>\1 pareça\2</suggestion></message>
+      <short>PARONYM_PARECIA_509</short>
+    </rule>
+    <rule id="PARONYM_VALIA_337" name="Parónimo: valia" default="off">
+      <pattern>
+        <token regexp="yes">(?:(?:[mts](?:eu|ua)|minha|[nv]oss[ao])|(?:d|n|pel)?(?:outr)?[ao]|à|ao)s?|com|de(?:sde)?|em|entre|mediante|p(?:ara|erante|or)|s(em|obre)|trás|(alg|d|n)?(um(as?)?|uns)</token>
+        <token min="0" postag="A.+" postag_regexp="yes"></token>
+        <token regexp="yes">vali[ao]s?</token>
+      </pattern>
+      <message>Quando escrita sem acento, esta palavra é um verbo. Se pretende referir-se a um substantivo ou adjetivo, deve utilizar a forma acentuada. <suggestion>\1 \2 váli\3</suggestion></message>
+      <short>PARONYM_VALIA_337</short>
+    </rule>
   </category>
   <category id="CONTRACTIONS_PT_PT" name="🇵🇹 Contrações">
     <rule id="CONTRAÇÃO_DOUTREM_PT_PT" name="🇵🇹[Contração] De outro/outrem → doutro/doutrem" default="off">
@@ -166,7 +207,7 @@
         <token min="0">e</token>
         <token>maneira</token>
       </pattern>
-      <message><suggestion>de forma alguma</suggestion></message>
+      <message>Para conferir mais clareza ao seu texto, evite pleonasmos. <suggestion>de forma alguma</suggestion></message>
       <short>REDUNDANCY_16_DE</short>
     </rule>
     <rule id="REDUNDANCY_MAN_AND_WOMAN" name="Redundâncias não sexistas: Homens e mulheres" default="off">

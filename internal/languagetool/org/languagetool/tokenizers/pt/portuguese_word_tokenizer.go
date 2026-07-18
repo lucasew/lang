@@ -147,11 +147,12 @@ func wordsToAddPT(s string) []string {
 // Without PortugueseTagger: keep only forms the Java tagger would keep in unit tests.
 // Unknown hyphen compounds (húngaro-americano, Paris-São, dê-mo, é-mesmo) are split.
 var (
-	// simple enclitics; deliberately exclude rare -mo (dê-mo splits in tests)
-	ptSimpleClitic = regexp.MustCompile(`(?i)^[\p{L}]+-(se|lo|la|lhe|lhes|nos|vos|me|te|o|a|os|as)$`)
+	// simple enclitics; deliberately exclude rare -mo (dê-mo splits in tests).
+	// Include -los/-las (3pl) used by ênclise accent rules (distrai-los, puxa-las).
+	ptSimpleClitic = regexp.MustCompile(`(?i)^[\p{L}]+-(se|lo|la|los|las|lhe|lhes|nos|vos|me|te|o|a|os|as)$`)
 	ptNoLo         = regexp.MustCompile(`(?i)^[\p{L}]+-no-lo$`)
 	// mesoclisis e.g. fá-lo-á, dir-lhe-ia, banhar-nos-emos
-	ptMesoclisis = regexp.MustCompile(`(?i)^[\p{L}]+-(lo|la|lhe|lhes|nos|vos|me|te|se|o|a|os|as)-[\p{L}]+$`)
+	ptMesoclisis = regexp.MustCompile(`(?i)^[\p{L}]+-(lo|la|los|las|lhe|lhes|nos|vos|me|te|se|o|a|os|as)-[\p{L}]+$`)
 	ptPrefixes   = map[string]bool{"soto": true, "anti": true, "pré": true, "pós": true, "ex": true}
 )
 

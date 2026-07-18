@@ -127,6 +127,12 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="CURRENCY_SPELLING_IGNORE" name="CURRENCY_SPELLING_IGNORE">
+    <pattern>
+      <token regexp="yes">\p{Lu}*[฿₿₵¢₡$₫֏€ƒ₲₴₭₾₺₼₦₱£៛₽₹₪৳₸₮₩¥¤]</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="NUMBER_ABBREV_IGNORE_NO_PERIOD" name="NUMBER_ABBREV_IGNORE_NO_PERIOD">
     <pattern>
       <token regexp="yes">[nN][°º]\d*</token>
@@ -171,7 +177,7 @@
   </rule>
   <rule id="X_AS_MULTIPLICATION_SIGN_IGNORE" name="X_AS_MULTIPLICATION_SIGN_IGNORE">
     <pattern>
-      <token regexp="yes">x[a-zA-Z]*</token>
+      <token regexp="yes">−?\d+(?:[,. ]\d+)*x−?\d+(?:[,. ]\d+)*[a-zA-Z]*</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

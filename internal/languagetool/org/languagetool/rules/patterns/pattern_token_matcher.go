@@ -858,6 +858,22 @@ func softFrenchAccentFold(s string) string {
 	).Replace(strings.ToLower(s))
 }
 
+// softPortugueseStripEnclitic removes PT ênclise clitics after hyphen or fused
+// (Esqueceu-se → esqueceu, distrai-los kept whole by tokenizer then stripped).
+func softPortugueseStripEnclitic(s string) string {
+	s = strings.ToLower(s)
+	// hyphenated clitics: esqueceu-se, puxa-las
+	if i := strings.LastIndex(s, "-"); i > 0 {
+		cl := s[i+1:]
+		switch cl {
+		case "se", "me", "te", "lhe", "lhes", "nos", "vos",
+			"lo", "la", "los", "las", "o", "a", "os", "as", "mo", "to", "lho":
+			return s[:i]
+		}
+	}
+	return s
+}
+
 // softSpanishStripEnclitic removes common Spanish object clitics from the end
 // of gerunds/infinitives (asiéndolos → asiendo, hacerlo → hacer).
 func softSpanishStripEnclitic(s string) string {
@@ -1089,6 +1105,10 @@ var softIrregularLemma = map[string][]string{
 	"va": {"aller", "ir", "dir"},
 	"vamos": {"ir", "dir"},
 	"van": {"ir", "dir"},
+	// Portuguese ir (vão fazer tempo) / esquecer
+	"vou": {"ir"}, "vão": {"ir"}, "ia": {"ir"}, "iam": {"ir"},
+	"esqueceu": {"esquecer"}, "esqueceste": {"esquecer"}, "esqueci": {"esquecer"},
+	"esquecemos": {"esquecer"}, "esqueceram": {"esquecer"},
 	// Spanish ir / dar / haber / asir / revertir
 	"voy": {"ir"}, "iba": {"ir"}, "iban": {"ir"}, "fue": {"ir"}, "fueron": {"ir"}, "ido": {"ir"},
 	"doy": {"dar"}, "das": {"dar"}, "da": {"dar"}, "dais": {"dar"}, "dan": {"dar"},
@@ -1134,6 +1154,19 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	}
 	// Spanish enclitics on gerunds/infinitives (asiéndolos → asiendo → asir).
 	if core := softSpanishStripEnclitic(surface); core != surface {
+		if softInflectedSurfaceMatch(core, base, true) {
+			return true
+		}
+		if lems, ok := softIrregularLemma[core]; ok {
+			for _, lem := range lems {
+				if lem == base {
+					return true
+				}
+			}
+		}
+	}
+	// Portuguese ênclise (Esqueceu-se → esqueceu → esquecer; cobrir-se → cobrir).
+	if core := softPortugueseStripEnclitic(surface); core != surface {
 		if softInflectedSurfaceMatch(core, base, true) {
 			return true
 		}
