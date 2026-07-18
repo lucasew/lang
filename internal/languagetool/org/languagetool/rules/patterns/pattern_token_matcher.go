@@ -132,8 +132,9 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				}
 			}
 		}
-		// Inflected non-RE: also try German adj stems as lemma (lateinischen→lateinisch).
-		if !matched && !pt.Regexp {
+		// Inflected non-RE: German adj stems (lateinischen→lateinisch). Gate on
+		// DE-looking surfaces so CA/Romance packs do not pay this cost every match.
+		if !matched && !pt.Regexp && softLooksGermanAdjSurface(token.GetToken()) {
 			for _, cand := range softGermanAdjCandidates(token.GetToken()) {
 				if softInflectedSurfaceMatch(cand, pt.Token, pt.CaseSensitive) ||
 					(!pt.CaseSensitive && strings.EqualFold(cand, pt.Token)) ||
@@ -143,7 +144,9 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				}
 			}
 		}
-		// Esperanto: try x-system/diacritic fold and common -o/-oj/-ojn stems.
+		// Esperanto: x-system/diacritic fold and -o/-oj/-ojn / -as→-i stems.
+		// Cheap candidate list (suffix strips); still needed for pure-ASCII EO
+		// (darfas→darfi) with no diacritics.
 		if !matched {
 			for _, cand := range softEsperantoLemmaCandidates(token.GetToken()) {
 				if m.matchSurface(cand) {
@@ -774,6 +777,27 @@ func softIsWh(s string) bool {
 	}
 }
 
+// softLooksGermanAdjSurface is true when surface likely needs DE adj stem stripping
+// (umlaut/ß or long -isch/-lich endings). Avoids O(n) stem work on Romance soft packs.
+func softLooksGermanAdjSurface(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, r := range s {
+		switch r {
+		case 'ä', 'ö', 'ü', 'ß', 'Ä', 'Ö', 'Ü':
+			return true
+		}
+	}
+	low := strings.ToLower(s)
+	for _, suf := range []string{"ischen", "lichem", "licher", "liches", "liche", "isch"} {
+		if strings.HasSuffix(low, suf) && len(low) > len(suf)+3 {
+			return true
+		}
+	}
+	return false
+}
+
 // softGermanAdjCandidates yields lemma-like forms by stripping German adj endings.
 // Used for inflected+regexp soft tokens (Steigende ↔ steigend?).
 func softGermanAdjCandidates(surface string) []string {
@@ -852,16 +876,18 @@ func softFrenchErInflected(surface, base string) bool {
 }
 
 // softFrenchAccentFold maps accented vowels to ASCII for soft stem compares (opère/opérer).
+var softFrenchAccentReplacer = strings.NewReplacer(
+	"é", "e", "è", "e", "ê", "e", "ë", "e",
+	"à", "a", "â", "a", "ä", "a",
+	"ù", "u", "û", "u", "ü", "u",
+	"ô", "o", "ö", "o",
+	"î", "i", "ï", "i",
+	"ç", "c",
+	"É", "e", "È", "e", "Ê", "e",
+)
+
 func softFrenchAccentFold(s string) string {
-	return strings.NewReplacer(
-		"é", "e", "è", "e", "ê", "e", "ë", "e",
-		"à", "a", "â", "a", "ä", "a",
-		"ù", "u", "û", "u", "ü", "u",
-		"ô", "o", "ö", "o",
-		"î", "i", "ï", "i",
-		"ç", "c",
-		"É", "e", "È", "e", "Ê", "e",
-	).Replace(strings.ToLower(s))
+	return softFrenchAccentReplacer.Replace(strings.ToLower(s))
 }
 
 // softPortugueseStripEnclitic removes PT ênclise clitics after hyphen or fused
@@ -1222,9 +1248,11 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	if softFrenchElisionMatch(surface, base) {
 		return true
 	}
-	// EO x-system / diacritic fold before prefix checks.
-	if softEsperantoFold(surface) == softEsperantoFold(base) {
-		return true
+	// EO x-system / diacritic fold only when digraphs/diacritics present.
+	if softMayNeedEOFold(surface) || softMayNeedEOFold(base) {
+		if softEsperantoFold(surface) == softEsperantoFold(base) {
+			return true
+		}
 	}
 	if surface == base {
 		return true
@@ -1275,25 +1303,27 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	if softFrenchErInflected(surface, base) {
 		return true
 	}
-	// Prefix check on folded forms (ambaŭ / Ambaux).
-	sf, bf := softEsperantoFold(surface), softEsperantoFold(base)
-	if strings.HasPrefix(sf, bf) {
-		suf := sf[len(bf):]
-		if len(suf) > 0 && len(suf) <= 4 {
-			switch suf {
-			case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "j", "jn", "oj", "ojn", "an", "on",
-				"ing", "ed", "ied", "ies", "d":
-				return true
-			default:
-				ok := true
-				for _, r := range suf {
-					if !unicode.IsLetter(r) {
-						ok = false
-						break
-					}
-				}
-				if ok && len(suf) <= 2 {
+	// Prefix check on EO-folded forms (ambaŭ / Ambaux) when EO marks present.
+	if softMayNeedEOFold(surface) || softMayNeedEOFold(base) {
+		sf, bf := softEsperantoFold(surface), softEsperantoFold(base)
+		if strings.HasPrefix(sf, bf) {
+			suf := sf[len(bf):]
+			if len(suf) > 0 && len(suf) <= 4 {
+				switch suf {
+				case "s", "es", "n", "en", "er", "e", "a", "os", "as", "is", "ns", "j", "jn", "oj", "ojn", "an", "on",
+					"ing", "ed", "ied", "ies", "d":
 					return true
+				default:
+					ok := true
+					for _, r := range suf {
+						if !unicode.IsLetter(r) {
+							ok = false
+							break
+						}
+					}
+					if ok && len(suf) <= 2 {
+						return true
+					}
 				}
 			}
 		}
@@ -1325,11 +1355,13 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 }
 
 // softGermanUmlautFold maps äöüß to ascii for soft stem compares (Tänze/Tanz).
+var softGermanUmlautReplacer = strings.NewReplacer(
+	"ä", "a", "ö", "o", "ü", "u", "ß", "ss",
+	"Ä", "a", "Ö", "o", "Ü", "u",
+)
+
 func softGermanUmlautFold(s string) string {
-	return strings.NewReplacer(
-		"ä", "a", "ö", "o", "ü", "u", "ß", "ss",
-		"Ä", "a", "Ö", "o", "Ü", "u",
-	).Replace(strings.ToLower(s))
+	return softGermanUmlautReplacer.Replace(strings.ToLower(s))
 }
 
 // softGermanAdjStemAlt handles irregular adjective stems (Java tagger lemma hoch
@@ -1453,14 +1485,30 @@ func softRegexpAlternatives(pat string) []string {
 	return out
 }
 
+// softMayNeedEOFold is true when s may contain Esperanto x-system digraphs or
+// ĉĝĥĵŝŭ. Hot soft match paths skip EO fold work when this is false.
+func softMayNeedEOFold(s string) bool {
+	for _, r := range s {
+		switch r {
+		case 'x', 'X',
+			'ĉ', 'ĝ', 'ĥ', 'ĵ', 'ŝ', 'ŭ',
+			'Ĉ', 'Ĝ', 'Ĥ', 'Ĵ', 'Ŝ', 'Ŭ':
+			return true
+		}
+	}
+	return false
+}
+
 // softEsperantoUnicode converts x-system digraphs to Unicode diacritics (cx→ĉ).
 func softEsperantoUnicode(s string) string {
-	if s == "" || !strings.ContainsAny(strings.ToLower(s), "x") {
+	if s == "" || !softMayNeedEOFold(s) {
 		return s
 	}
-	// Process lowercase digraphs in a case-preserving way via lower map then restore is hard;
-	// apply case-insensitive sequential replaces on a lowered copy for matching only.
+	// Process lowercase digraphs; matching only needs a lowered canonical form.
 	low := strings.ToLower(s)
+	if !strings.Contains(low, "x") {
+		return low
+	}
 	repl := []struct{ from, to string }{
 		{"cx", "ĉ"}, {"gx", "ĝ"}, {"hx", "ĥ"}, {"jx", "ĵ"}, {"sx", "ŝ"}, {"ux", "ŭ"},
 	}
@@ -1470,20 +1518,35 @@ func softEsperantoUnicode(s string) string {
 	return low
 }
 
+// softEOFoldReplacer strips EO diacritics to ASCII (cached; do not NewReplacer per call).
+var softEOFoldReplacer = strings.NewReplacer(
+	"ĉ", "c", "ĝ", "g", "ĥ", "h", "ĵ", "j", "ŝ", "s", "ŭ", "u",
+)
+
 // softEsperantoFold maps x-system and EO diacritics to plain ASCII letters for soft compare.
 func softEsperantoFold(s string) string {
+	if s == "" {
+		return s
+	}
+	if !softMayNeedEOFold(s) {
+		return strings.ToLower(s)
+	}
 	s = softEsperantoUnicode(strings.ToLower(s))
-	return strings.NewReplacer(
-		"ĉ", "c", "ĝ", "g", "ĥ", "h", "ĵ", "j", "ŝ", "s", "ŭ", "u",
-	).Replace(s)
+	return softEOFoldReplacer.Replace(s)
 }
 
 // softEsperantoLemmaCandidates yields likely dictionary forms for EO surfaces (biliardoj→biliardo).
+// Pure-ASCII EO verbs (darfas→darfi) have no diacritics; always allow suffix strips.
 func softEsperantoLemmaCandidates(surface string) []string {
 	if surface == "" {
 		return nil
 	}
-	u := softEsperantoUnicode(strings.ToLower(surface))
+	low := strings.ToLower(surface)
+	u := softEsperantoUnicode(low)
+	if u == low && !softMayNeedEOFold(low) {
+		// No digraph/diacritic rewrite; still try morphology on lowered surface.
+		u = low
+	}
 	out := []string{u}
 	// Strip accusative/plural endings common in EO.
 	type strip struct{ suf, base string }
