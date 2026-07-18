@@ -283,12 +283,19 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			continue
 		}
 		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
-		if scope == "next" {
-			continue
-		}
 		if scope == "previous" {
 			if pt.PreviousException == "" {
 				pt.SetPreviousException(
+					exc,
+					strings.EqualFold(ex.Regexp, "yes"),
+					strings.EqualFold(ex.CaseSensitive, "yes"),
+				)
+			}
+			continue
+		}
+		if scope == "next" {
+			if pt.NextException == "" {
+				pt.SetNextException(
 					exc,
 					strings.EqualFold(ex.Regexp, "yes"),
 					strings.EqualFold(ex.CaseSensitive, "yes"),

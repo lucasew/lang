@@ -810,6 +810,15 @@
     </pattern>
     <disambig action="filter" postag="A.*"/>
   </rule>
+  <rule id="vint_aniversari" name="vint aniversari">
+    <pattern>
+      <token postag="NCCN000" marker="yes">
+        <and_token postag="DN0CP0"></and_token>
+      </token>
+      <token>aniversari</token>
+    </pattern>
+    <disambig action="replace" postag="AO0MS0"/>
+  </rule>
   <rule id="_SOFT_ANON_100" name="_SOFT_ANON_100">
     <antipattern>
       <token regexp="yes">el|en|l</token>
@@ -2391,6 +2400,20 @@
       <wd pos="LOC_ADV"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_202" name="_SOFT_ANON_202">
+    <pattern>
+      <token postag="DA.*" postag_regexp="yes"></token>
+      <token regexp="yes" inflected="yes">mot|paraula|terme|expressió|vocable|nom|tipus|denominació</token>
+      <token postag="V.[IMS].*" postag_regexp="yes" marker="yes">
+        <exception>pren</exception>
+        <and_token postag="NC.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="V.[IMS].*|P0.*|PP.*" postag_regexp="yes">
+        <exception regexp="yes">si|['-].+|jo|mi|tu|ella?|nosaltres|vosaltres|elle?s|vostès?|vós</exception>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="NC.*"/>
+  </rule>
   <rule id="_SOFT_ANON_203" name="_SOFT_ANON_203">
     <pattern>
       <token>un</token>
@@ -2576,6 +2599,15 @@
       <token postag="V.N.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="VMIP1P00"/>
+  </rule>
+  <rule id="_SOFT_ANON_225" name="_SOFT_ANON_225">
+    <pattern>
+      <token postag="SPS00|LOC_PREP" postag_regexp="yes"></token>
+      <token postag="NP..G.." postag_regexp="yes" marker="yes">
+        <and_token postag="NP..O.." postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="NP..O.."/>
   </rule>
   <rule id="_SOFT_ANON_226" name="_SOFT_ANON_226">
     <pattern>
@@ -3125,6 +3157,17 @@
     </pattern>
     <disambig action="filter" postag=".*[^B]"/>
   </rule>
+  <rule id="improbable_verb_balear2" name="verb balear improbable">
+    <pattern>
+      <token regexp="yes">es|és</token>
+      <token postag="VMIP1S0B" marker="yes">
+        <and_token postag="[NA].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="VMIP1S0B"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_293" name="_SOFT_ANON_293">
     <pattern>
       <token marker="yes">entre</token>
@@ -3177,6 +3220,15 @@
       <token postag="V.N.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_303" name="_SOFT_ANON_303">
+    <pattern>
+      <token regexp="yes">molt|ben|tan</token>
+      <token postag="V.[IS].2S0.?" postag_regexp="yes" marker="yes">
+        <and_token postag="A.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="A.*"/>
   </rule>
   <rule id="_SOFT_ANON_305" name="_SOFT_ANON_305">
     <pattern>
@@ -3241,6 +3293,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="ploure_impersonal" name="ploure (impersonal)">
+    <pattern>
+      <token postag="V...1S.." postag_regexp="yes" marker="yes">
+        <and_token postag="V...3S.." postag_regexp="yes"></and_token>
+      </token>
+      <token inflected="yes" marker="yes">ploure</token>
+    </pattern>
+    <disambig action="remove" postag="V...1S.."/>
+  </rule>
   <rule id="TRET_PARTICIPI" name="tret, salvat (participi, no preposició)">
     <antipattern>
       <token regexp="yes">de|una|lletra|la</token>
@@ -3269,6 +3330,12 @@
       <token>costat</token>
       <token>i</token>
       <token>costat</token>
+    </antipattern>
+    <antipattern>
+      <token>em
+        <exception scope="previous" regexp="yes">t'|l'|li|ens|us|vos|els|les</exception>
+      </token>
+      <token postag="V.[SI].*" postag_regexp="yes"></token>
     </antipattern>
     <antipattern>
       <token>a</token>
@@ -3338,6 +3405,32 @@
     </pattern>
     <disambig action="filter" postag="V.P.*"/>
   </rule>
+  <rule id="_SOFT_ANON_312" name="_SOFT_ANON_312">
+    <pattern>
+      <token regexp="yes" postag="[AN].*" postag_regexp="yes">mort|morta|morts|mortes
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.P.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_313" name="_SOFT_ANON_313">
+    <pattern>
+      <token postag="D..M.." postag_regexp="yes"></token>
+      <token regexp="yes" marker="yes">mort|morts
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="NCF.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_315" name="_SOFT_ANON_315">
+    <pattern>
+      <token regexp="yes" marker="yes">possibilitats?
+        <exception scope="previous">haver</exception>
+        <exception scope="next" regexp="yes">per|pe</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.P.*"/>
+  </rule>
   <rule id="la_culpa" name="culpa (nom)">
     <pattern>
       <token>te</token>
@@ -3357,6 +3450,14 @@
       <token inflected="yes" postag="NC.*" postag_regexp="yes" marker="yes">dificultat</token>
     </pattern>
     <disambig action="filter" postag="NC.*"/>
+  </rule>
+  <rule id="espes" name="espès (no participi)">
+    <pattern>
+      <token regexp="yes" postag="A.*|N.*" postag_regexp="yes">espès|espés|costats?
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.P.*"/>
   </rule>
   <rule id="_SOFT_ANON_316" name="_SOFT_ANON_316">
     <pattern>
@@ -4384,6 +4485,17 @@
     </pattern>
     <disambig action="remove" postag="V.[^PN].*"/>
   </rule>
+  <rule id="_SOFT_ANON_455" name="_SOFT_ANON_455">
+    <pattern>
+      <token regexp="yes" inflected="yes">fer|donar
+        <exception regexp="yes">dona|dones</exception>
+      </token>
+      <token postag="V.P.*" postag_regexp="yes" marker="yes">
+        <and_token postag="NC.*|A.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="NC.*|A.*"/>
+  </rule>
   <rule id="_SOFT_ANON_458" name="_SOFT_ANON_458">
     <pattern>
       <token postag="VMIP3P00" marker="yes">fan</token>
@@ -4427,6 +4539,15 @@
     </pattern>
     <disambig action="remove" postag="V.N.*"/>
   </rule>
+  <rule id="caldrevoler_nomparticipi" name="caldre/voler + nom/participi">
+    <pattern>
+      <token regexp="yes" inflected="yes">caldre|voler</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.P.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
   <rule id="calent" name="calent (adj)">
     <pattern>
       <token inflected="yes" postag="AQ.*" postag_regexp="yes" marker="yes">calent</token>
@@ -4447,6 +4568,16 @@
     <pattern>
       <token postag="V.N.*" postag_regexp="yes" marker="yes">poder</token>
       <token regexp="yes">seu|de|d'</token>
+    </pattern>
+    <disambig action="remove" postag="V.N.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_466" name="_SOFT_ANON_466">
+    <pattern>
+      <token>com</token>
+      <token>a</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.N.*" postag_regexp="yes"></and_token>
+      </token>
     </pattern>
     <disambig action="remove" postag="V.N.*"/>
   </rule>
@@ -4479,6 +4610,17 @@
       <token regexp="yes">de|d'</token>
     </pattern>
     <disambig action="remove" postag="V.N.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_469" name="_SOFT_ANON_469">
+    <pattern>
+      <token regexp="yes" inflected="yes" skip="2">tenir|haver</token>
+      <token>prou</token>
+      <token regexp="yes">amb|de</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.N.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="N.*"/>
   </rule>
   <rule id="ON_relatiu" name="on, pronom relatiu">
     <pattern>
@@ -4671,6 +4813,16 @@
       <token postag="AQ.[CF].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="de_manera_adj" name="de manera expressa">
+    <pattern>
+      <token>de</token>
+      <token>manera</token>
+      <token postag="AQ.[CF][SN]." postag_regexp="yes" marker="yes">
+        <and_token postag="[^A].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="A.*"/>
   </rule>
   <rule id="_SOFT_ANON_487" name="_SOFT_ANON_487">
     <pattern>
@@ -4930,6 +5082,27 @@
     <pattern>
       <token inflected="yes">haver</token>
       <token regexp="yes" inflected="yes" postag="N.*" postag_regexp="yes" marker="yes">sortida|eixida|entrada</token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
+  <rule id="_SOFT_ANON_517" name="_SOFT_ANON_517">
+    <pattern>
+      <token>haver</token>
+      <token>-hi</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.P.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
+  <rule id="_SOFT_ANON_518" name="_SOFT_ANON_518">
+    <pattern>
+      <token>hi</token>
+      <token regexp="yes">van?|varen</token>
+      <token>haver</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.P.*" postag_regexp="yes"></and_token>
+      </token>
     </pattern>
     <disambig action="filter" postag="[^V].*"/>
   </rule>
@@ -5793,6 +5966,15 @@
     </pattern>
     <disambig action="remove" postag="NCFS000"/>
   </rule>
+  <rule id="infinitiu_o_nom0" name="infinitiu o nom (previ)">
+    <pattern>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="NCMS.*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes" postag="P.*" postag_regexp="yes">[-'].+</token>
+    </pattern>
+    <disambig action="filter" postag="V.N.*"/>
+  </rule>
   <rule id="_SOFT_ANON_633" name="_SOFT_ANON_633">
     <pattern>
       <token postag="RG" marker="yes">mig</token>
@@ -5838,6 +6020,16 @@
     </pattern>
     <disambig action="filter" postag="V.[GP].*|_GV_"/>
   </rule>
+  <rule id="sense_poca" name="sense-veu poca-vergonya">
+    <pattern>
+      <token regexp="yes">sense|poca|anti</token>
+      <token>-</token>
+      <token postag="V.[MSI].*" postag_regexp="yes" marker="yes">
+        <and_token postag="NC.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
   <rule id="fins_passat_el" name="fins passat el">
     <pattern>
       <token postag="SPS00">fins</token>
@@ -5845,6 +6037,16 @@
       <token postag="D[^R].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="_SOFT_ANON_637" name="_SOFT_ANON_637">
+    <pattern>
+      <token>hi</token>
+      <token inflected="yes">haver</token>
+      <token postag="V.*" postag_regexp="yes" marker="yes">
+        <and_token postag="N.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
   </rule>
   <rule id="_SOFT_ANON_639" name="_SOFT_ANON_639">
     <pattern>
@@ -5901,6 +6103,15 @@
     </pattern>
     <disambig action="remove" postag="V.G.*"/>
   </rule>
+  <rule id="tot_adjgerund" name="tot + adjectiu/gerundi">
+    <pattern>
+      <token postag="RG">tot</token>
+      <token postag="V.G.*" postag_regexp="yes" marker="yes">
+        <and_token postag="A.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="V.G.*"/>
+  </rule>
   <rule id="tecnicament_parlant" name="tècnicament parlant">
     <pattern>
       <token postag="RG_anteposat|.*LOC_ADV.*" postag_regexp="yes"></token>
@@ -5916,6 +6127,15 @@
     </pattern>
     <disambig action="remove" postag="[AN].*"/>
   </rule>
+  <rule id="adv_adjverb" name="adverbi + adjectiu/verb">
+    <pattern>
+      <token regexp="yes" postag="RG_anteposat">tant?</token>
+      <token postag="V.[MIS].*" postag_regexp="yes" marker="yes">
+        <and_token postag="A.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
   <rule id="DA_PX" name="article + possessiu(nostre)">
     <pattern>
       <token postag="DA.*" postag_regexp="yes"></token>
@@ -5929,6 +6149,17 @@
       <token marker="yes">aparença</token>
     </pattern>
     <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="verbnom_sentstart" name="verb i nom a principi de frase">
+    <pattern>
+      <token postag="SENT_START|CC|_PUNCT.*" postag_regexp="yes"></token>
+      <token postag="V.[IS].*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">surts?|posa|poses|era|deixa</exception>
+        <and_token postag="NC.*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes" inflected="yes">de|entre</token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
   </rule>
   <rule id="_SOFT_ANON_649" name="_SOFT_ANON_649">
     <pattern>
@@ -6309,6 +6540,24 @@
     </pattern>
     <disambig action="filter" postag="DA.*"/>
   </rule>
+  <rule id="_SOFT_ANON_688" name="_SOFT_ANON_688">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag="VMIP1S0B" marker="yes">
+        <and_token postag="NC.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VMIP1S0B"/>
+  </rule>
+  <rule id="_SOFT_ANON_689" name="_SOFT_ANON_689">
+    <pattern>
+      <token>em</token>
+      <token postag="VMIP1S0B" marker="yes">
+        <and_token postag="V.P.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VMIP1S0B"/>
+  </rule>
   <rule id="_SOFT_ANON_690" name="_SOFT_ANON_690">
     <pattern>
       <token>en</token>
@@ -6410,6 +6659,17 @@
       <token postag="V.*" postag_regexp="yes" marker="yes">va</token>
     </pattern>
     <disambig action="filter" postag="V.*|_GV_"/>
+  </rule>
+  <rule id="_SOFT_ANON_696" name="_SOFT_ANON_696">
+    <pattern>
+      <token inflected="yes">altre</token>
+      <token postag="V.[SI].*" postag_regexp="yes" marker="yes">
+        <exception>prendre</exception>
+        <and_token postag="NC.*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes">de|d'</token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
   </rule>
   <rule id="SET" name="set">
     <pattern>
@@ -6749,6 +7009,17 @@
     </pattern>
     <disambig action="remove" postag="SPS00"/>
   </rule>
+  <rule id="prep_mesmenys_nom" name="preposició + més/menys + nom">
+    <pattern>
+      <token postag="SPS00|.*LOC_PREP.*" postag_regexp="yes"></token>
+      <token regexp="yes">més|menys</token>
+      <token postag="N..P.*" postag_regexp="yes" marker="yes">
+        <exception>nous</exception>
+        <and_token postag="A.*|V.P.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
   <rule id="quelcom" name="quelcom">
     <pattern>
       <token postag="PI0CS000">quelcom</token>
@@ -6814,6 +7085,38 @@
       <token>bava</token>
     </pattern>
     <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_781" name="_SOFT_ANON_781">
+    <pattern>
+      <token postag="D[DAI].*" postag_regexp="yes"></token>
+      <token postag="V.[IS].*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">llevar|treure</exception>
+        <and_token postag="N.*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes">no|ja</token>
+      <token postag="(PP|P0).*|V.[IS].*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
+  <rule id="_SOFT_ANON_784" name="_SOFT_ANON_784">
+    <pattern>
+      <token regexp="yes" postag="(PP|P0).*" postag_regexp="yes">['-].+</token>
+      <token postag="DA.*" postag_regexp="yes"></token>
+      <token postag="N.*|A.*|PX.*|V.P.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.[IS].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="N.*|A.*|PX.*|V.P.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_785" name="_SOFT_ANON_785">
+    <pattern>
+      <token regexp="yes" postag="(PP|P0).*" postag_regexp="yes">['-].+</token>
+      <token>en</token>
+      <token postag="V.[IS].*" postag_regexp="yes" marker="yes">
+        <and_token postag="N.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="N.*"/>
   </rule>
   <rule id="segons1" name="segons + pronom">
     <pattern>
@@ -7003,6 +7306,19 @@
     </pattern>
     <disambig action="filter" postag="R.*"/>
   </rule>
+  <rule id="_SOFT_ANON_816" name="_SOFT_ANON_816">
+    <pattern>
+      <token postag="RG.*" postag_regexp="yes" marker="yes">
+        <exception>massa</exception>
+        <and_token postag="DI.[MC][SN].*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes">de|d'</token>
+      <token postag="N.[MC][SN].*" postag_regexp="yes">
+        <exception regexp="yes">fons|si|acord</exception>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^R].*"/>
+  </rule>
   <rule id="_SOFT_ANON_818" name="_SOFT_ANON_818">
     <pattern>
       <token postag="DI.CN.*" postag_regexp="yes" marker="yes">massa</token>
@@ -7011,6 +7327,15 @@
       </token>
     </pattern>
     <disambig action="filter" postag="[^R].*"/>
+  </rule>
+  <rule id="TOT_gerundi" name="tot + gerundi">
+    <pattern>
+      <token>tot</token>
+      <token postag="NC.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.G.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^N].*"/>
   </rule>
   <rule id="poc_capital" name="poc capital">
     <pattern>
@@ -7081,6 +7406,32 @@
       <wd pos="_GN_FP"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_838" name="_SOFT_ANON_838">
+    <pattern>
+      <token postag="D.*|PX.*" postag_regexp="yes">
+        <and_token postag="_GN_MP"></and_token>
+      </token>
+      <token postag="NCCP.*|NCMN.*|NCCN.*" postag_regexp="yes" marker="yes">
+        <and_token postag="_GN_MP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NCMP000"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_839" name="_SOFT_ANON_839">
+    <pattern>
+      <token postag="D.*|PX.*" postag_regexp="yes">
+        <and_token postag="_GN_FP"></and_token>
+      </token>
+      <token postag="NCCP.*|NCFN.*|NCCN.*" postag_regexp="yes" marker="yes">
+        <and_token postag="_GN_FP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NCFP000"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_844" name="_SOFT_ANON_844">
     <pattern>
       <token postag="AO.*" postag_regexp="yes" marker="yes"></token>
@@ -7129,6 +7480,17 @@
     </pattern>
     <disambig action="filter" postag="N.*|_GN_.*"/>
   </rule>
+  <rule id="_SOFT_ANON_874" name="_SOFT_ANON_874">
+    <pattern>
+      <token postag="V.[SI].*" postag_regexp="yes"></token>
+      <token min="0" max="4" chunk="GV"></token>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token postag="[NA].*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.[SIM].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.[SIM].*"/>
+  </rule>
   <rule id="_SOFT_ANON_875" name="_SOFT_ANON_875">
     <pattern>
       <token inflected="yes" postag="N.*" postag_regexp="yes" marker="yes">mitjà</token>
@@ -7151,6 +7513,30 @@
       <token postag="NCCS000" marker="yes">fan</token>
     </pattern>
     <disambig action="filter" postag="NCCS000"/>
+  </rule>
+  <rule id="_SOFT_ANON_889" name="_SOFT_ANON_889">
+    <pattern>
+      <token postag="DN.[FC][PN]." postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">i|ni|o|,</token>
+      <token postag="DN.[FC][PN]." postag_regexp="yes">
+        <and_token postag="_GN_FP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_GN_FP"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_890" name="_SOFT_ANON_890">
+    <pattern>
+      <token postag="DN.[MC][PN]." postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">i|ni|o|,</token>
+      <token postag="DN.[MC][PN]." postag_regexp="yes">
+        <and_token postag="_GN_MP"></and_token>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_GN_MP"/>
+    </disambig>
   </rule>
   <rule id="_SOFT_ANON_897" name="_SOFT_ANON_897">
     <pattern>
@@ -7177,6 +7563,17 @@
     </pattern>
     <disambig action="filter" postag="AQ.*|_GN_MS"/>
   </rule>
+  <rule id="noVerbBalear0" name="es estiu (no balear)">
+    <pattern>
+      <token>es</token>
+      <token postag="VMIP1S0B" marker="yes">
+        <and_token postag="[NAI].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="VMIP1S0B"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_905" name="_SOFT_ANON_905">
     <pattern>
       <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes" marker="yes">
@@ -7201,12 +7598,107 @@
       <wd pos="_GV_"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_907" name="_SOFT_ANON_907">
+    <pattern>
+      <token>sinó</token>
+      <token postag="_GN_.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.[MSI].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="_GN_.*|A.*|N.*|D.*|V.P.*|PX.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_908" name="_SOFT_ANON_908">
+    <pattern>
+      <token skip="3">sinó
+        <exception scope="next" regexp="yes">que|perquè</exception>
+      </token>
+      <token postag="_GN_.*|N.*|A.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.[MSI].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="_GN_.*|A.*|N.*|D.*|V.P.*|PX.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_909" name="_SOFT_ANON_909">
+    <pattern>
+      <token skip="3">sinó
+        <exception scope="next" regexp="yes">que|perquè</exception>
+      </token>
+      <token postag="DA.*" postag_regexp="yes" marker="yes">
+        <and_token postag="_GV_"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="_GN_.*|A.*|N.*|D.*|V.P.*|PX.*"/>
+  </rule>
   <rule id="_SOFT_ANON_912" name="_SOFT_ANON_912">
     <pattern>
       <token marker="yes">encara</token>
       <token regexp="yes">que|bo|gràcies|sort</token>
     </pattern>
     <disambig action="filter" postag="[^V].*"/>
+  </rule>
+  <rule id="_SOFT_ANON_913" name="_SOFT_ANON_913">
+    <pattern>
+      <token>tot</token>
+      <token regexp="yes">el|l'</token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="NCMS.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_914" name="_SOFT_ANON_914">
+    <pattern>
+      <token regexp="yes">l|el|l'</token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="NCMS.*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes">que|on</token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_915" name="_SOFT_ANON_915">
+    <pattern>
+      <token regexp="yes">l|el|l'</token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="NCMS.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="A.0[MC][SN].|VMP00SM.?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_916" name="_SOFT_ANON_916">
+    <pattern>
+      <token regexp="yes">l|el|l'</token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="NCMS.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="RG_anteposat"></token>
+      <token postag="A.0[MC][SN].|VMP00SM.?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_919" name="_SOFT_ANON_919">
+    <pattern>
+      <token postag="SPS00"></token>
+      <token regexp="yes">l|el|l'</token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <and_token postag="N.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="SPS00"></token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_920" name="_SOFT_ANON_920">
+    <pattern>
+      <token regexp="yes">més|menys
+        <exception scope="previous">valer</exception>
+      </token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes">
+        <exception>ser</exception>
+        <and_token postag="N.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="N.*|_GN_.*"/>
   </rule>
   <rule id="_SOFT_ANON_921" name="_SOFT_ANON_921">
     <pattern>
@@ -7227,6 +7719,34 @@
       <token>que</token>
     </pattern>
     <disambig action="filter" postag="RG"/>
+  </rule>
+  <rule id="_SOFT_ANON_927" name="_SOFT_ANON_927">
+    <pattern>
+      <token postag="V.P....B" postag_regexp="yes" marker="yes">
+        <and_token postag="[NA].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.P....B"/>
+  </rule>
+  <rule id="_SOFT_ANON_928" name="_SOFT_ANON_928">
+    <pattern>
+      <token postag="VMIP1S0B" marker="yes">
+        <and_token postag="[NAI].*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="VMIP1S0B"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_929" name="_SOFT_ANON_929">
+    <pattern>
+      <token postag="VMIP1S0B" marker="yes">
+        <and_token postag="RG"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove">
+      <wd pos="VMIP1S0B"/>
+    </disambig>
   </rule>
   <rule id="tant_no_det" name="tant: no determinant">
     <pattern>
@@ -7311,6 +7831,16 @@
     </pattern>
     <disambig action="remove" postag="V.[MS].*"/>
   </rule>
+  <rule id="encara_mes_VerbAdj" name="encara/molt més dures">
+    <pattern>
+      <token postag="RG.*" postag_regexp="yes"></token>
+      <token>més</token>
+      <token postag="A.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.IP.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^V].*"/>
+  </rule>
   <rule id="_SOFT_ANON_951" name="_SOFT_ANON_951">
     <pattern>
       <token regexp="yes" postag="N.*" postag_regexp="yes">partida|dada|dades|partits?|estats?|beguda|begudes</token>
@@ -7382,6 +7912,17 @@
     </pattern>
     <disambig action="filter" postag="N.*|_GN_.*|V.*|_GV_"/>
   </rule>
+  <rule id="_SOFT_ANON_971" name="_SOFT_ANON_971">
+    <pattern>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token postag="RG_anteposat" postag_regexp="yes" marker="yes">força
+        <and_token postag="V.*" postag_regexp="yes"></and_token>
+        <and_token postag="DI.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="AQ.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="RG.*"/>
+  </rule>
   <rule id="molt_adv" name="molt (adverbi)">
     <pattern>
       <token postag="RG.*" postag_regexp="yes">molt</token>
@@ -7446,6 +7987,14 @@
       <token postag="SPS00" marker="yes">segons</token>
     </pattern>
     <disambig action="filter" postag="SPS00"/>
+  </rule>
+  <rule id="PronomNom2" name="nom i pronom">
+    <pattern>
+      <token postag="PP.*" postag_regexp="yes" marker="yes">te
+        <and_token postag="_GN_.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="[^P].*"/>
   </rule>
   <rule id="_SOFT_ANON_984" name="_SOFT_ANON_984">
     <pattern>
@@ -7561,6 +8110,30 @@
     </pattern>
     <disambig action="add">
       <wd pos="complement_a"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1011" name="_SOFT_ANON_1011">
+    <pattern>
+      <token postag="NCF.*" postag_regexp="yes">
+        <and_token postag="complement.*" postag_regexp="yes"></and_token>
+      </token>
+      <token>i</token>
+      <token marker="yes">mitja</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="complement"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1012" name="_SOFT_ANON_1012">
+    <pattern>
+      <token postag="NCM.*" postag_regexp="yes">
+        <and_token postag="complement.*" postag_regexp="yes"></and_token>
+      </token>
+      <token>i</token>
+      <token marker="yes">mig</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="complement"/>
     </disambig>
   </rule>
   <rule id="_SOFT_ANON_1013" name="_SOFT_ANON_1013">
@@ -8147,6 +8720,18 @@
       <wd pos="_no_relatiu"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_1082" name="_SOFT_ANON_1082">
+    <pattern>
+      <token regexp="yes" inflected="yes" skip="5">mirar|intentar|permetre|decidir
+        <exception scope="next">que</exception>
+      </token>
+      <token regexp="yes" marker="yes">de|d'</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_complement_directe"/>
+    </disambig>
+  </rule>
   <rule id="qui" name="els qui">
     <pattern>
       <token postag="D[DA].*" postag_regexp="yes"></token>
@@ -8169,6 +8754,42 @@
     </pattern>
     <disambig action="remove" postag="VMIS3S00"/>
   </rule>
+  <rule id="_SOFT_ANON_1083" name="_SOFT_ANON_1083">
+    <antipattern>
+      <token>es</token>
+      <token postag="V.S.*" postag_regexp="yes" skip="20"></token>
+      <token>o</token>
+    </antipattern>
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+      <token postag="V.S.*" postag_regexp="yes" marker="yes">
+        <and_token postag="V.I.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.S.*"/>
+  </rule>
+  <rule id="subj_valencia" name="verb subjuntiu (valencià): procurarem que no hi tornen.">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="V.IF...." postag_regexp="yes">fer|procurar|intentar</token>
+      <token>que</token>
+      <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|RN" postag_regexp="yes" min="0" max="2"></token>
+      <token postag="V.S.[32]..V" postag_regexp="yes" marker="yes">
+        <and_token postag="V.I.[32]..0" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.[IM].*"/>
+  </rule>
+  <rule id="_SOFT_ANON_1085" name="_SOFT_ANON_1085">
+    <pattern>
+      <token regexp="yes">[;,\(]</token>
+      <token postag="V.S.*" postag_regexp="yes" marker="yes">
+        <exception>haguem</exception>
+        <and_token postag="V.M.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.S.*"/>
+  </rule>
   <rule id="_SOFT_ANON_1087" name="_SOFT_ANON_1087">
     <pattern>
       <token regexp="yes">que|quals?</token>
@@ -8176,6 +8797,106 @@
       <token postag="V.I.*" postag_regexp="yes" marker="yes">té</token>
     </pattern>
     <disambig action="filter" postag="V.I.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_1088" name="_SOFT_ANON_1088">
+    <pattern>
+      <token regexp="yes">es|se|s'|hom|ella?</token>
+      <token postag="V...1S.." postag_regexp="yes" marker="yes">
+        <and_token postag="V...3S.." postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="V...[^1]...|_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_1089" name="_SOFT_ANON_1089">
+    <pattern>
+      <token regexp="yes">se|s'|hom|ella?</token>
+      <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|PP[12]C[SP]000" postag_regexp="yes"></token>
+      <token postag="V...1S.." postag_regexp="yes" marker="yes">
+        <and_token postag="V...3S.." postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="V...[^1]...|_.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_1092" name="_SOFT_ANON_1092">
+    <pattern>
+      <token postag="_GN_.*|PD.*|NP.*" postag_regexp="yes"></token>
+      <token postag="VM..1S0." postag_regexp="yes" marker="yes">
+        <and_token postag="VM..3S0." postag_regexp="yes"></and_token>
+        <exception scope="previous">jo</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VM..1S0."/>
+  </rule>
+  <rule id="_SOFT_ANON_1093" name="_SOFT_ANON_1093">
+    <pattern>
+      <token inflected="yes" postag="VM..3S0." postag_regexp="yes">procedir
+        <exception scope="previous">jo</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VM..1S0."/>
+  </rule>
+  <rule id="_SOFT_ANON_1094" name="_SOFT_ANON_1094">
+    <pattern>
+      <token inflected="yes" postag="VM..3S0." postag_regexp="yes" marker="yes" skip="3">caure
+        <exception scope="previous">jo</exception>
+      </token>
+      <token postag="PD.*|PI.*|_GN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VM..1S0."/>
+  </rule>
+  <rule id="_SOFT_ANON_1095" name="_SOFT_ANON_1095">
+    <pattern>
+      <token inflected="yes" postag="VM..3S0." postag_regexp="yes" marker="yes">venir
+        <exception scope="previous">jo</exception>
+      </token>
+      <token postag="PD.*|PI.*|_GN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VM..1S0."/>
+  </rule>
+  <rule id="_SOFT_ANON_1096" name="_SOFT_ANON_1096">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="VM..3S0." postag_regexp="yes" marker="yes" skip="3">caure|venir|anar
+        <exception scope="previous">jo</exception>
+      </token>
+      <token regexp="yes" inflected="yes">bé|de gust</token>
+    </pattern>
+    <disambig action="remove" postag="VM..1S0."/>
+  </rule>
+  <rule id="_SOFT_ANON_1097" name="_SOFT_ANON_1097">
+    <pattern>
+      <token inflected="yes" postag="VA..3S0." postag_regexp="yes" marker="yes" skip="3">haver
+        <exception scope="previous">jo</exception>
+      </token>
+      <token regexp="yes">caigut|vingut|anat</token>
+      <token regexp="yes" inflected="yes">bé|de gust</token>
+    </pattern>
+    <disambig action="remove" postag="VA..1S0."/>
+  </rule>
+  <rule id="_SOFT_ANON_1104" name="_SOFT_ANON_1104">
+    <pattern>
+      <token regexp="yes">algú|algun|jo|mi|ella?|vostè|vosté|vós</token>
+      <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|R.*" postag_regexp="yes" min="0" max="3"></token>
+      <token postag="V.[SI].1S.." postag_regexp="yes">
+        <and_token postag="V.[SI].3S.." postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="V.[SI].1S.."/>
+  </rule>
+  <rule id="_SOFT_ANON_1106" name="_SOFT_ANON_1106">
+    <pattern>
+      <token regexp="yes">em|m'
+        <exception scope="previous">jo</exception>
+      </token>
+      <token postag="V.[SI].1S.." postag_regexp="yes" marker="yes">
+        <and_token postag="V.[SI].3S.." postag_regexp="yes"></and_token>
+      </token>
+      <token min="0" max="1" chunk="GV">
+        <exception regexp="yes">fer|deixar</exception>
+      </token>
+      <token regexp="yes" inflected="yes">fer|deixar</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="V.[SI].1S.."/>
   </rule>
   <rule id="_SOFT_ANON_1109" name="_SOFT_ANON_1109">
     <pattern>
@@ -8570,6 +9291,18 @@
       <wd pos="_es_personal_pl"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_1164" name="_SOFT_ANON_1164">
+    <pattern>
+      <token regexp="yes" skip="1">alguns|nosaltres|vosaltres|elle?s|vost[èé]s
+        <exception scope="previous" regexp="yes">en|a</exception>
+      </token>
+      <token inflected="yes" marker="yes">es</token>
+      <token postag="V.[SI].3P.." postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_es_personal_pl"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_1165" name="_SOFT_ANON_1165">
     <pattern>
       <token postag="SENT_START|_PUNCT.*|C.*" postag_regexp="yes"></token>
@@ -8673,6 +9406,16 @@
     <pattern>
       <token regexp="yes" inflected="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|molt|poc|temps|temporada|temporadeta|estona|estoneta|estació|curs|eternitat|legislatura|primavera|estiu|tardor|hivern</token>
       <token regexp="yes" marker="yes">enrere|arrere|endarrere</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_marca_passat"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1181" name="_SOFT_ANON_1181">
+    <pattern>
+      <token regexp="yes" marker="yes">(despús-|abans-d')?ahir|antany|anit
+        <exception scope="previous" regexp="yes">de|d'</exception>
+      </token>
     </pattern>
     <disambig action="add">
       <wd pos="_marca_passat"/>
@@ -9152,6 +9895,46 @@
     </pattern>
     <disambig action="add">
       <wd pos="_data_concreta"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1232" name="_SOFT_ANON_1232">
+    <pattern>
+      <token marker="yes">pringat
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="AQ0MS0" lemma="pringat"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1233" name="_SOFT_ANON_1233">
+    <pattern>
+      <token marker="yes">pringats
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="AQ0MP0" lemma="pringat"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1234" name="_SOFT_ANON_1234">
+    <pattern>
+      <token marker="yes">pringada
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="AQ0FS0" lemma="pringat"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_1235" name="_SOFT_ANON_1235">
+    <pattern>
+      <token marker="yes">pringades
+        <exception scope="previous">haver</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="AQ0FP0" lemma="pringat"/>
     </disambig>
   </rule>
   <rule id="noms_lletres" name="algunes lletres">

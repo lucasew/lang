@@ -257,17 +257,30 @@ func (m *PatternTokenMatcher) IsMatchedByPreviousException(prev *languagetool.An
 	if m == nil || m.Base == nil || prev == nil || m.Base.PreviousException == "" {
 		return false
 	}
-	// Java: any reading of previous token matching the exception blocks current.
-	for _, r := range prev.GetReadings() {
+	return matchExceptionOnReadings(prev, m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive)
+}
+
+// IsMatchedByNextException ports PatternToken scope="next" exception matching.
+func (m *PatternTokenMatcher) IsMatchedByNextException(next *languagetool.AnalyzedTokenReadings) bool {
+	if m == nil || m.Base == nil || next == nil || m.Base.NextException == "" {
+		return false
+	}
+	return matchExceptionOnReadings(next, m.Base.NextException, m.Base.NextExceptionRE, m.Base.NextExceptionCaseSensitive)
+}
+
+func matchExceptionOnReadings(tok *languagetool.AnalyzedTokenReadings, exc string, isRE, caseSensitive bool) bool {
+	if tok == nil || exc == "" {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
 		if r == nil {
 			continue
 		}
-		if matchExceptionSurface(r.GetToken(), m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive) {
+		if matchExceptionSurface(r.GetToken(), exc, isRE, caseSensitive) {
 			return true
 		}
 	}
-	// Also check the token surface (untagged soft path).
-	return matchExceptionSurface(prev.GetToken(), m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive)
+	return matchExceptionSurface(tok.GetToken(), exc, isRE, caseSensitive)
 }
 
 func matchExceptionSurface(surface, exc string, isRE, caseSensitive bool) bool {

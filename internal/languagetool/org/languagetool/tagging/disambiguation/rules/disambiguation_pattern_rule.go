@@ -219,36 +219,42 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			}
 		}
 	case ActionAdd:
-		// Java ADD: empty <wd> surface uses the matched token string.
-		for i := first; i <= last && i < len(nws); i++ {
-			if nws[i] == nil {
-				continue
+		// Java ADD (DisambiguationPatternRuleReplacer): <wd> list only when
+		// length equals marker-span count; empty wd surface uses matched token.
+		// Bare postag adds that POS to each matched token without a wd list.
+		if len(r.NewTokenReadings) > 0 {
+			span := 0
+			if last >= first && first >= 0 {
+				span = last - first + 1
 			}
-			rel := i - first
-			var tok *languagetool.AnalyzedToken
-			if rel < len(r.NewTokenReadings) && r.NewTokenReadings[rel] != nil {
+			if span == 0 || len(r.NewTokenReadings) != span {
+				return
+			}
+			for i := first; i <= last && i < len(nws); i++ {
+				rel := i - first
+				if nws[i] == nil || r.NewTokenReadings[rel] == nil {
+					continue
+				}
 				base := r.NewTokenReadings[rel]
 				surface := nws[i].GetToken()
 				if base.GetToken() != "" {
 					surface = base.GetToken()
 				}
-				tok = languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), base.GetLemma())
-			} else if r.DisambiguatedPOS != "" {
-				pos := r.DisambiguatedPOS
-				surface := nws[i].GetToken()
-				tok = languagetool.NewAnalyzedToken(surface, &pos, nil)
-			} else if len(r.NewTokenReadings) == 1 && r.NewTokenReadings[0] != nil {
-				// Single <wd/> applied to every matched token (UNKNOWN_PCT style).
-				base := r.NewTokenReadings[0]
-				surface := nws[i].GetToken()
-				if base.GetToken() != "" {
-					surface = base.GetToken()
-				}
-				tok = languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), base.GetLemma())
-			}
-			if tok != nil {
+				tok := languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), base.GetLemma())
 				nws[i].AddReading(tok, r.ID)
 			}
+			return
+		}
+		if r.DisambiguatedPOS == "" {
+			return
+		}
+		pos := r.DisambiguatedPOS
+		for i := first; i <= last && i < len(nws); i++ {
+			if nws[i] == nil {
+				continue
+			}
+			surface := nws[i].GetToken()
+			nws[i].AddReading(languagetool.NewAnalyzedToken(surface, &pos, nil), r.ID)
 		}
 	case ActionReplace:
 		// Java REPLACE with <wd> list: only when length equals marker-span count

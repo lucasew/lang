@@ -171,10 +171,7 @@ def token_is_soft(tok: ET.Element) -> bool:
                 return False
         if (child.get("negate") or "").lower() == "yes":
             return False  # soft loader skips negate exceptions
-        # Soft: scope=next needs match-time next-token checks beyond first pass.
-        if (child.get("scope") or "").lower() == "next":
-            return False
-        # Soft previous/current exceptions without postag only (no tagger on exception POS).
+        # Soft previous/next/current exceptions without postag (no tagger on exception POS).
         if (child.get("postag") or "").strip() or (child.get("postag_regexp") or "").strip():
             return False
         ex = (child.text or "").strip()
@@ -205,6 +202,7 @@ def serialize_token(tok: ET.Element) -> dict:
             d[k] = v
     excs = []
     prev_exc = None
+    next_exc = None
     for child in tok:
         if local(child.tag) != "exception":
             continue
@@ -216,8 +214,6 @@ def serialize_token(tok: ET.Element) -> dict:
         if (child.get("negate") or "").lower() == "yes":
             continue
         scope = (child.get("scope") or "").lower()
-        if scope == "next":
-            continue
         e = {"text": (child.text or "").strip()}
         for k in ("regexp", "case_sensitive"):
             v = child.get(k)
@@ -229,12 +225,18 @@ def serialize_token(tok: ET.Element) -> dict:
             if prev_exc is None:
                 prev_exc = e
             continue
+        if scope == "next":
+            if next_exc is None:
+                next_exc = e
+            continue
         if not excs:
             excs.append(e)
     if excs:
         d["exceptions"] = excs
     if prev_exc is not None:
         d["previous_exception"] = prev_exc
+    if next_exc is not None:
+        d["next_exception"] = next_exc
     return d
 
 
@@ -649,6 +651,8 @@ def soft_disambig_tokens(toks: list) -> list[dict] | None:
             st["exceptions"] = t["exceptions"]
         if t.get("previous_exception"):
             st["previous_exception"] = t["previous_exception"]
+        if t.get("next_exception"):
+            st["next_exception"] = t["next_exception"]
         if t.get("and_group"):
             # Nested soft and-group members (postag-only PatternTokens).
             st["and_group"] = t["and_group"]
@@ -691,9 +695,10 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
         excs = t.get("exceptions") if isinstance(t, dict) else None
         and_group = t.get("and_group") if isinstance(t, dict) else None
         prev_e = t.get("previous_exception") if isinstance(t, dict) else None
+        next_e = t.get("next_exception") if isinstance(t, dict) else None
         has_nested = bool(excs) or bool(and_group) or (
             isinstance(prev_e, dict) and bool(prev_e.get("text"))
-        )
+        ) or (isinstance(next_e, dict) and bool(next_e.get("text")))
         if not has_nested:
             lines.append(f"{indent}<token{attr_s}>{body}</token>")
         else:
@@ -725,6 +730,15 @@ def write_disambig_token_lines(lines: list[str], tokens: list, indent: str = "  
                 eas = " " + " ".join(ea)
                 lines.append(
                     f'{indent}  <exception{eas}>{xml_esc(prev_e.get("text") or "")}</exception>'
+                )
+            if isinstance(next_e, dict) and next_e.get("text"):
+                ea = ['scope="next"']
+                for k in ("regexp", "case_sensitive"):
+                    if next_e.get(k):
+                        ea.append(f'{k}="{xml_esc(str(next_e[k]))}"')
+                eas = " " + " ".join(ea)
+                lines.append(
+                    f'{indent}  <exception{eas}>{xml_esc(next_e.get("text") or "")}</exception>'
                 )
             lines.append(f"{indent}</token>")
 

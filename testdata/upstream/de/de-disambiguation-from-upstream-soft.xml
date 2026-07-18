@@ -105,6 +105,12 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="ENGLISH_WORDS" name="english_words">
+    <pattern>
+      <token postag="_english_ignore_"></token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="_SOFT_ANON_6" name="_SOFT_ANON_6">
     <pattern>
       <token>n-te</token>
@@ -140,6 +146,76 @@
       <token regexp="yes" case_sensitive="yes">(Aussichts|Eck|Tau|Lade|Blick|Plus|Zeit|Ziel|Basis|Stich|Stütz|Treff|Knack|Wende|Doppel|Mittel|Strich|Anhats|Ausgangs|Elfmeter|Schmelz|Gesichts|Prozent|Anhalts|Berührungs|Tagesordnungs|Marinestütz|Scheitel|Tatzeit|Dezimal)punkten</token>
     </pattern>
     <disambig action="remove" postag="SUB.+INF"/>
+  </rule>
+  <rule id="_SOFT_ANON_8" name="_SOFT_ANON_8">
+    <pattern>
+      <token postag="(PKT|SENT_START)" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" marker="yes" skip="-1">
+        <and_token postag="VER:IMP:SIN.*" postag_regexp="yes"></and_token>
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="(PKT|SENT_END)" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:1:SIN:(PRÄ|KJ1).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_9" name="_SOFT_ANON_9">
+    <pattern>
+      <token postag="(PKT|SENT_START)" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" marker="yes" skip="-1">
+        <and_token postag="VER:IMP:SIN.*" postag_regexp="yes"></and_token>
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="(PKT|SENT_END)" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:1:SIN:(PRÄ|KJ1).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_10" name="_SOFT_ANON_10">
+    <pattern>
+      <token postag="(PKT|SENT_START)" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" marker="yes" skip="-1">
+        <and_token postag="VER:IMP:SIN.*" postag_regexp="yes"></and_token>
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="(PKT|SENT_END)" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:1:SIN:(PRÄ|KJ1).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_11" name="_SOFT_ANON_11">
+    <pattern>
+      <token postag="(PKT|SENT_START)" postag_regexp="yes" skip="-1">
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="VER:1:SIN:(PRÄ|KJ1).*" postag_regexp="yes" marker="yes" skip="-1">
+        <and_token postag="VER:IMP:SIN.*" postag_regexp="yes"></and_token>
+        <exception scope="next">ich</exception>
+      </token>
+      <token postag="(PKT|SENT_END)" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:1:SIN:(PRÄ|KJ1).+"/>
   </rule>
   <rule id="LANGE_ZEIT_ADV" name="lange Zeit">
     <pattern>
@@ -1097,6 +1173,28 @@
     </pattern>
     <disambig action="remove" postag="VER.*:(3|IMP):.+|PRO:POS:.+"/>
   </rule>
+  <rule id="_SOFT_ANON_33" name="_SOFT_ANON_33">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" skip="2">wurde(n|st)?</token>
+      <token case_sensitive="yes" postag="VER:PA2:.+" postag_regexp="yes" marker="yes">
+        <and_token postag="VER:[123].+" postag_regexp="yes"></and_token>
+      </token>
+      <token case_sensitive="yes" postag="PKT"></token>
+    </pattern>
+    <disambig action="filter" postag="VER:PA2.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_34" name="_SOFT_ANON_34">
+    <pattern>
+      <token case_sensitive="yes">,</token>
+      <token case_sensitive="yes" marker="yes" skip="7">um
+        <exception scope="next">,</exception>
+      </token>
+      <token case_sensitive="yes">zu</token>
+      <token case_sensitive="yes" postag="VER:INF:.+" postag_regexp="yes"></token>
+      <token case_sensitive="yes" postag="PKT"></token>
+    </pattern>
+    <disambig action="filter" postag="KON:INF"/>
+  </rule>
   <rule id="_SOFT_ANON_35" name="_SOFT_ANON_35">
     <pattern>
       <token case_sensitive="yes">,</token>
@@ -1105,6 +1203,26 @@
       <token case_sensitive="yes" postag="PKT"></token>
     </pattern>
     <disambig action="filter" postag="KON:INF"/>
+  </rule>
+  <rule id="_SOFT_ANON_38" name="_SOFT_ANON_38">
+    <pattern>
+      <token case_sensitive="yes" postag="ZUS" marker="yes">
+        <and_token postag="PRP:.+" postag_regexp="yes"></and_token>
+      </token>
+      <token case_sensitive="yes">,</token>
+      <token case_sensitive="yes" postag="KON:UNT"></token>
+    </pattern>
+    <disambig action="filter" postag="PRP:.+"/>
+  </rule>
+  <rule id="_SOFT_ANON_39" name="_SOFT_ANON_39">
+    <pattern>
+      <token case_sensitive="yes" postag="VER:[123]:.+" postag_regexp="yes" skip="-1"></token>
+      <token case_sensitive="yes" postag="ZUS" marker="yes">
+        <and_token postag="PRP:.+" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes" case_sensitive="yes" postag="SENT_END">\W</token>
+    </pattern>
+    <disambig action="filter" postag="ZUS"/>
   </rule>
   <rule id="WORKAROUND_GH_635" name="WORKAROUND_GH_635">
     <pattern>
@@ -1180,6 +1298,20 @@
     </pattern>
     <disambig action="remove" postag="VER:[1-3]:.+"/>
   </rule>
+  <rule id="MODALVERB_MIT_INFINITIV" name="Infinitiv mit Modalverb">
+    <pattern>
+      <token case_sensitive="yes" postag="VER:INF:.+" postag_regexp="yes" marker="yes"></token>
+      <token case_sensitive="yes" postag="VER:(AUX|MOD):[1-3]:SIN:.+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:[1-3]:.+"/>
+  </rule>
+  <rule id="MODALVERB_MIT_INFINITIV_2" name="Infinitiv mit Modalverb">
+    <pattern>
+      <token case_sensitive="yes" postag="VER:(AUX|MOD):[1-3]:SIN:.+" postag_regexp="yes"></token>
+      <token case_sensitive="yes" postag="VER:INF:.+" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER:[1-3]:.+"/>
+  </rule>
   <rule id="RIW" name="Reit im Winkl">
     <pattern>
       <token case_sensitive="yes" marker="yes">Reit</token>
@@ -1230,6 +1362,51 @@
     <disambig action="add">
       <wd pos="VER:MOD:3:PLU:PRÄ" lemma="können">können</wd>
     </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_44" name="_SOFT_ANON_44">
+    <pattern>
+      <token>ich</token>
+      <token postag="VER:MOD:1:SIN:.+" postag_regexp="yes" marker="yes">
+        <and_token postag="VER:MOD:3:SIN:.+" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VER.*:(3|IMP).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_45" name="_SOFT_ANON_45">
+    <pattern>
+      <token>er</token>
+      <token postag="VER:MOD:1:SIN:.+" postag_regexp="yes" marker="yes">
+        <and_token postag="VER:MOD:3:SIN:.+" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VER.*:(1|IMP).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_46" name="_SOFT_ANON_46">
+    <pattern>
+      <token postag="VER:MOD:1:SIN:.+" postag_regexp="yes" marker="yes">
+        <and_token postag="VER:MOD:3:SIN:.+" postag_regexp="yes"></and_token>
+      </token>
+      <token>ich</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*:(3|IMP).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_47" name="_SOFT_ANON_47">
+    <pattern>
+      <token postag="VER:MOD:1:SIN:.+" postag_regexp="yes" marker="yes">
+        <and_token postag="VER:MOD:3:SIN:.+" postag_regexp="yes"></and_token>
+      </token>
+      <token>er</token>
+    </pattern>
+    <disambig action="remove" postag="VER.*:(1|IMP).+"/>
+  </rule>
+  <rule id="_SOFT_ANON_48" name="_SOFT_ANON_48">
+    <pattern>
+      <token regexp="yes">e[rs]|sie</token>
+      <token regexp="yes" case_sensitive="yes" postag="VER:.*3:SIN:.+" postag_regexp="yes" marker="yes">[a-zäöü]+e
+        <exception scope="next">ich</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VER.*:1:.+"/>
   </rule>
   <rule id="_SOFT_ANON_49" name="_SOFT_ANON_49">
     <pattern>
@@ -1297,6 +1474,15 @@
     </pattern>
     <disambig action="remove" postag="SUB:.+:SIN:NEU.*"/>
   </rule>
+  <rule id="_SOFT_ANON_64" name="_SOFT_ANON_64">
+    <pattern>
+      <token case_sensitive="yes" postag="PRP:LOK(\+TMP)?:DAT" postag_regexp="yes"></token>
+      <token case_sensitive="yes" postag=".+(NOM|AKK):.+" postag_regexp="yes" marker="yes">
+        <and_token postag=".+(DAT|GEN):.+" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag=".+:(NOM|AKK):.+"/>
+  </rule>
   <rule id="_SOFT_ANON_67" name="_SOFT_ANON_67">
     <pattern>
       <token case_sensitive="yes" marker="yes">zurate</token>
@@ -1362,6 +1548,15 @@
       <token regexp="yes" case_sensitive="yes" postag="SUB:.+" postag_regexp="yes">[A-ZÄÖÜ].+</token>
     </pattern>
     <disambig action="remove" postag="VER:.+"/>
+  </rule>
+  <rule id="_SOFT_ANON_77" name="_SOFT_ANON_77">
+    <pattern>
+      <token case_sensitive="yes" postag="PA2:.+" postag_regexp="yes" marker="yes">
+        <and_token postag="ADJ:PRD:GRU"></and_token>
+      </token>
+      <token regexp="yes" case_sensitive="yes">w[eo]rden</token>
+    </pattern>
+    <disambig action="remove" postag="ADJ:PRD:GRU"/>
   </rule>
   <rule id="VORSICHTSHALBER" name=".+shalber → ADV">
     <pattern>
@@ -5040,6 +5235,24 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="INDEFINITPRONOMEN_ALS_SUBJEKT" name="Bei Indefinitpronomen als Subjekt stimmt die finite Verbform und nicht das Partizip">
+    <antipattern>
+      <token postag="PRO:IND:NOM.*" postag_regexp="yes"></token>
+      <token postag="PA2.*" postag_regexp="yes"></token>
+      <token postag="SUB:AKK:SIN.*" postag_regexp="yes"></token>
+      <token>und</token>
+      <token postag="SUB:AKK:SIN.*" postag_regexp="yes"></token>
+      <token postag="VER.*:3:SIN.*" postag_regexp="yes"></token>
+    </antipattern>
+    <pattern>
+      <token postag="PRO:IND:NOM.*" postag_regexp="yes"></token>
+      <token postag="PA2.*" postag_regexp="yes" marker="yes">
+        <and_token postag="VER:3:.*:PRT.*" postag_regexp="yes"></and_token>
+      </token>
+      <token postag="SUB:AKK:SIN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="PA2:.*"/>
+  </rule>
   <rule id="DANK_KEIN_VERB" name="'dank' kein Verb">
     <antipattern>
       <token regexp="yes">ich|bitte|dann</token>
@@ -5648,6 +5861,25 @@
       <token postag="PKT"></token>
     </pattern>
     <disambig action="remove" postag="PRP.*"/>
+  </rule>
+  <rule id="_SOFT_ANON_182" name="_SOFT_ANON_182">
+    <pattern>
+      <token postag="VER.*" postag_regexp="yes" marker="yes">
+        <and_token postag="ADJ.*" postag_regexp="yes"></and_token>
+      </token>
+      <token regexp="yes" inflected="yes" postag="VER.*" postag_regexp="yes">aussehen|sein|werden</token>
+    </pattern>
+    <disambig action="remove" postag="VER:(IMP|[123]).*"/>
+  </rule>
+  <rule id="_SOFT_ANON_183" name="_SOFT_ANON_183">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="VER.*" postag_regexp="yes">sein|werden</token>
+      <token regexp="yes">ich|du|er|sie|es|wir|ihr</token>
+      <token postag="VER.*" postag_regexp="yes" marker="yes">
+        <and_token postag="ADJ.*" postag_regexp="yes"></and_token>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VER:(IMP|[123]).*"/>
   </rule>
   <rule id="VOLKSWAGEN_KEIN_VER" name="'Wagen' kein Verb">
     <pattern>

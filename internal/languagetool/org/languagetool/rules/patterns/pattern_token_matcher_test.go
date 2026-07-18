@@ -198,3 +198,40 @@ func TestPreviousException_BlocksMatch(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, ms2)
 }
+
+func TestNextException_BlocksMatch(t *testing.T) {
+	// Java: can with exception scope=next be|do|not
+	can := NewPatternToken("can", false, false, false)
+	can.SetNextException("be|do|not", true, false)
+	rule := NewAbstractTokenBasedRule("T", "t", "en", []*PatternToken{can})
+	m := NewPatternRuleMatcher(rule)
+	md := "MD"
+	// "can run" — match
+	toksOK := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strPtr(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("can", &md, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("run", strPtr("VB"), nil)),
+	}
+	pos := 0
+	for _, atr := range toksOK {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	ms, err := m.Match(languagetool.NewAnalyzedSentence(toksOK))
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+	// "can be" — next exception blocks
+	toksBlock := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strPtr(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("can", &md, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("be", strPtr("VB"), nil)),
+	}
+	pos = 0
+	for _, atr := range toksBlock {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	ms2, err := m.Match(languagetool.NewAnalyzedSentence(toksBlock))
+	require.NoError(t, err)
+	require.Empty(t, ms2)
+}
