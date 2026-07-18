@@ -105,7 +105,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 |---|--------|--------|
 | 3.B.1 | Pattern token matching = Java (no soft POS accept) | [ ] blocked on 1.8 |
 | 3.B.2 | Exceptions, skip, regex, inflected, negation | [~] |
-| 3.B.3 | Unification | [ ] |
+| 3.B.3 | Unification | [~] Unifier type exists; rules with `<unify>` skipped fail-closed until matcher ports testUnification |
 | 3.B.4 | Filters / rule filters as Java | [~] |
 | 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar/style/custom + variant + EN L2 (de/fr); idprefix; entity expand partial; includes deferred |
 

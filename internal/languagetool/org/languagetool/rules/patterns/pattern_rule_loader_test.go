@@ -36,6 +36,35 @@ func TestPatternRuleLoader(t *testing.T) {
 	require.NotNil(t, pr)
 }
 
+// Rules with <unify> must not register without matcher support (fail-closed).
+func TestPatternRuleLoader_UnifySkippedFailClosed(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="U1" name="needs unify">
+      <pattern>
+        <unify>
+          <feature id="number"/>
+          <token postag="NN"/>
+          <token postag="VB"/>
+        </unify>
+      </pattern>
+      <message>u</message>
+    </rule>
+    <rule id="OK" name="surface">
+      <pattern>
+        <token>hello</token>
+      </pattern>
+      <message>ok</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.Equal(t, "OK", ars[0].ID)
+}
+
 func TestPatternRuleLoader_IdPrefix(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules idprefix="L2_">

@@ -85,16 +85,20 @@ type xmlMessage struct {
 	Inner string `xml:",innerxml"`
 }
 
-// xmlPattern holds ordered pattern children: <token>, <marker>, <and>.
+// xmlPattern holds ordered pattern children: <token>, <marker>, <and>, <unify>.
 type xmlPattern struct {
 	CaseSensitive string `xml:"case_sensitive,attr"`
 	// Tokens filled by UnmarshalXML (document order).
 	Tokens []xmlToken
+	// HasUnify is true when the pattern (or antipattern) contains <unify>.
+	// Matcher unification is incomplete — rules with HasUnify are skipped fail-closed.
+	HasUnify bool
 }
 
 // UnmarshalXML ports Java pattern children so <marker> / <and> are not dropped.
 func (p *xmlPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	p.Tokens = nil
+	p.HasUnify = false
 	for _, a := range start.Attr {
 		if a.Name.Local == "case_sensitive" {
 			p.CaseSensitive = a.Value
@@ -129,6 +133,13 @@ func (p *xmlPattern) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 				}
 				if base != nil {
 					p.Tokens = append(p.Tokens, *base)
+				}
+			case "unify":
+				// Java AbstractPatternRulePerformer.testUnification — not in PatternRuleMatcher yet.
+				// Mark and skip body (do not invent matches by loading bare tokens without unify).
+				p.HasUnify = true
+				if err := d.Skip(); err != nil {
+					return err
 				}
 			default:
 				if err := d.Skip(); err != nil {
@@ -167,6 +178,11 @@ func (p *xmlPattern) decodeXMLMarker(d *xml.Decoder) error {
 				}
 				if base != nil {
 					p.Tokens = append(p.Tokens, *base)
+				}
+			case "unify":
+				p.HasUnify = true
+				if err := d.Skip(); err != nil {
+					return err
 				}
 			default:
 				if err := d.Skip(); err != nil {
@@ -306,6 +322,21 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		if len(tokens) == 0 {
 			return nil
 		}
+		// Java <unify> requires Unifier during match. Without it, surface tokens alone
+		// false-fire (cheat). Fail-closed until PatternRuleMatcher ports testUnification.
+		if xr.Pattern.HasUnify {
+			return nil
+		}
+		// Antipatterns that only use unify are unusable for keep; keep rules that still
+		// have surface antipatterns without unify.
+		var usableAntis []xmlPattern
+		for _, ap := range xr.AntiPatterns {
+			if ap.HasUnify {
+				continue
+			}
+			usableAntis = append(usableAntis, ap)
+		}
+		xr.AntiPatterns = usableAntis
 		r := NewAbstractPatternRule(id, name, languageCode, tokens, false)
 		r.Message = strings.TrimSpace(xr.Message.Inner)
 		r.ShortMessage = strings.TrimSpace(xr.Short)
