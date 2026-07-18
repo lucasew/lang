@@ -125,6 +125,8 @@ func softHybridCacheKey(base string, paths SoftHybridPaths) string {
 	if gp == "" {
 		gp = discoverSoftSpellingGlobalPath()
 	}
+	// Remap mode depends on POS dict availability (no invent morph when untagged soft).
+	pos := DiscoverLanguagePOSDict(nil, base)
 	return strings.Join([]string{
 		base,
 		paths.Multiwords,
@@ -132,6 +134,7 @@ func softHybridCacheKey(base string, paths SoftHybridPaths) string {
 		paths.DEMultitokenIgnore,
 		paths.DEMultitokenSuggest,
 		gp,
+		pos,
 	}, "\x00")
 }
 
@@ -175,12 +178,18 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 	}
 
 	if p := paths.Multiwords; p != "" && prof.order != "de" {
+		// Without a FreeLing/Morfologik POS dict, single-letter multiword tags
+		// (e.g. FR "a priori\tA") replace soft-untagged surfaces and block
+		// grammar postag soft-accept (CE_CET). Map those tags to TagForNotAddingTags
+		// so multiword still ignore-spells without inventing morph POS. Multi-token
+		// tags like "N f s" stay real for home-page style chunking.
+		remapSingleLetter := DiscoverLanguagePOSDict(nil, base) == "" && prof.mwDefaultTag == ""
 		multi = getCachedMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
 			DefaultTag:            prof.mwDefaultTag,
 			AllowFirstCapitalized: prof.mwAllowFirst,
 			AllowAllUppercase:     prof.mwAllowAllUpper,
 			AllowTitlecase:        prof.mwAllowTitle,
-		}, prof.mwRemovePrev, prof.mwIgnoreSpell, false)
+		}, prof.mwRemovePrev, prof.mwIgnoreSpell, false, remapSingleLetter)
 	}
 
 	if prof.useGlobal {
@@ -194,7 +203,7 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 				AllowFirstCapitalized: prof.gAllowFirst,
 				AllowAllUppercase:     prof.gAllowAllUpper,
 				AllowTitlecase:        prof.gAllowTitle,
-			}, false, prof.gIgnoreSpell, true)
+			}, false, prof.gIgnoreSpell, true, false)
 		}
 	}
 
@@ -205,7 +214,7 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 				AllowFirstCapitalized: true,
 				AllowAllUppercase:     true,
 				AllowTitlecase:        false,
-			}, false, true, false)
+			}, false, true, false, false)
 		}
 		if p := paths.DEMultitokenSuggest; p != "" {
 			deSuggest = getCachedMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
@@ -213,7 +222,7 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 				AllowFirstCapitalized: true,
 				AllowAllUppercase:     true,
 				AllowTitlecase:        false,
-			}, false, true, false)
+			}, false, true, false, false)
 		}
 	}
 
@@ -267,20 +276,21 @@ func buildSoftHybridDisambiguator(base string, paths SoftHybridPaths) (languaget
 var multiWordChunkerInstanceCache sync.Map
 
 type multiWordChunkerCacheKey struct {
-	path         string
-	defaultTag   string
-	allowFirst   bool
-	allowAllUp   bool
-	allowTitle   bool
-	removePrev   bool
-	ignoreSpell  bool
-	phraseOnly   bool // spelling_global: multi-token phrases only
+	path              string
+	defaultTag        string
+	allowFirst        bool
+	allowAllUp        bool
+	allowTitle        bool
+	removePrev        bool
+	ignoreSpell       bool
+	phraseOnly        bool // spelling_global: multi-token phrases only
+	remapSingleLetter bool // soft no-tagger: A → TagForNotAddingTags
 }
 
 func getCachedMultiWordChunker(
 	path string,
 	settings disambiguation.MultiWordChunkerSettings,
-	removePrev, ignoreSpell, phraseOnly bool,
+	removePrev, ignoreSpell, phraseOnly, remapSingleLetter bool,
 ) *disambiguation.MultiWordChunker {
 	if path == "" {
 		return nil
@@ -289,7 +299,7 @@ func getCachedMultiWordChunker(
 		path: path, defaultTag: settings.DefaultTag,
 		allowFirst: settings.AllowFirstCapitalized, allowAllUp: settings.AllowAllUppercase,
 		allowTitle: settings.AllowTitlecase, removePrev: removePrev, ignoreSpell: ignoreSpell,
-		phraseOnly: phraseOnly,
+		phraseOnly: phraseOnly, remapSingleLetter: remapSingleLetter,
 	}
 	if v, ok := multiWordChunkerInstanceCache.Load(key); ok {
 		if c, ok := v.(*disambiguation.MultiWordChunker); ok {
@@ -306,6 +316,9 @@ func getCachedMultiWordChunker(
 	if err != nil || len(lines) == 0 {
 		return nil
 	}
+	if remapSingleLetter {
+		lines = remapSingleLetterMultiwordTags(lines)
+	}
 	c := disambiguation.NewMultiWordChunker(lines, settings)
 	if removePrev {
 		c.SetRemovePreviousTags(true)
@@ -317,6 +330,42 @@ func getCachedMultiWordChunker(
 	warmMultiWordChunker(c)
 	multiWordChunkerInstanceCache.Store(key, c)
 	return c
+}
+
+// remapSingleLetterMultiwordTags maps FreeLing single-letter POS tags (A, S, …)
+// to TagForNotAddingTags for soft runs without a real POS dictionary.
+// Keeps multi-token tags (N f s, Z m s, …) for real multiword POS chunking.
+func remapSingleLetterMultiwordTags(lines []string) []string {
+	out := make([]string, 0, len(lines))
+	for _, line := range lines {
+		if strings.HasPrefix(line, "#separatorRegExp=") {
+			out = append(out, line)
+			continue
+		}
+		// Prefer tab, then semicolon (after soft separator handling in fillMaps).
+		sep := "\t"
+		i := strings.IndexByte(line, '\t')
+		if i < 0 {
+			i = strings.IndexByte(line, ';')
+			sep = ";"
+		}
+		if i < 0 {
+			out = append(out, line)
+			continue
+		}
+		phrase := line[:i]
+		tag := strings.TrimSpace(line[i+1:])
+		// Single Latin letter FreeLing tags only (A, S, P, I, …).
+		if len(tag) == 1 {
+			r := tag[0]
+			if (r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z') {
+				out = append(out, phrase+sep+disambiguation.TagForNotAddingTags)
+				continue
+			}
+		}
+		out = append(out, line)
+	}
+	return out
 }
 
 func warmMultiWordChunker(c *disambiguation.MultiWordChunker) {
