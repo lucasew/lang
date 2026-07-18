@@ -1168,18 +1168,35 @@ var softIrregularLemma = map[string][]string{
 	"queia": {"caure"}, "queien": {"caure"}, "cau": {"caure"}, "cauen": {"caure"},
 	"correran": {"córrer"}, "correré": {"córrer"}, "correrà": {"córrer"}, "corre": {"córrer"}, "corren": {"córrer"},
 	"permet": {"permetre"}, "permeten": {"permetre"}, "permetia": {"permetre"},
-	"mereix": {"merèixer"}, "mereixen": {"merèixer"}, "mereixia": {"merèixer"},
+	"permetéssim": {"permetre"}, "permeté": {"permetre"}, "permetre": {"permetre"},
+	"mereix": {"merèixer"}, "mereixen": {"merèixer"}, "mereixia": {"merèixer"}, "mereixerà": {"merèixer"},
 	"riu": {"riure"}, "riuen": {"riure"}, "reia": {"riure"},
 	"tinc": {"tenir"}, "té": {"tenir"}, "tenim": {"tenir"}, "teniu": {"tenir"}, "tenen": {"tenir"},
 	"tenia": {"tenir"}, "tenien": {"tenir"}, "tindrà": {"tenir"}, "tindré": {"tenir"}, "tindran": {"tenir"},
+	"tingueu": {"tenir"}, "tingut": {"tenir"}, "tindreu": {"tenir"}, "tingues": {"tenir"},
 	"servia": {"servir"}, "serveix": {"servir"}, "seiem": {"seure"},
 	"sortia": {"sortir"}, "surto": {"sortir"}, "surten": {"sortir"}, "eixit": {"eixir"}, "eixien": {"eixir"},
 	"declarat": {"declarar"}, "declarada": {"declarar"},
 	"autoimmolà": {"autoimmolar"}, "autoinculpà": {"autoinculpar"},
 	"autoimmola": {"autoimmolar"}, "autoinculpa": {"autoinculpar"},
+	"facis": {"fer"}, "faci": {"fer"}, "facin": {"fer"}, "fent": {"fer"}, "féu": {"fer"},
+	"hauria": {"haver"}, "hauries": {"haver"}, "hauríem": {"haver"}, "haurieu": {"haver"}, "haurien": {"haver"},
+	"hagués": {"haver"}, "haguéssiu": {"haver"}, "hagéssiu": {"hajar"}, "hagés": {"hajar"},
+	"fou": {"ser"}, "cessat": {"cessar"}, "cessada": {"cessar"},
+	"mútua": {"mutu"}, "mútues": {"mutu"}, "mutus": {"mutu"},
+	"vingué": {"venir"}, "vingueren": {"venir"}, "venia": {"venir"}, "venien": {"venir"}, "vingui": {"venir"},
+	"vivia": {"viure"}, "vivien": {"viure"}, "viu": {"viure"}, "viuen": {"viure"},
+	"acompliran": {"acomplir", "complir"}, "acompleix": {"acomplir", "complir"}, "compleix": {"complir"},
+	"vés": {"anar", "enviar"}, "ves": {"anar", "enviar"},
+	"posis": {"posar"}, "posi": {"posar"}, "posa": {"posar"}, "posen": {"posar"},
+	"sap": {"saber"}, "saps": {"saber"}, "sabem": {"saber"}, "saben": {"saber"},
+	"tragueren": {"treure", "traure"}, "tragué": {"treure", "traure"}, "treu": {"treure"},
+	"trepava": {"trepar"}, "trepa": {"trepar"}, "trepen": {"trepar"},
+	"vulgueu": {"voler"}, "vulguis": {"voler"}, "vulgui": {"voler"},
+	"sorts": {"sord"}, "sords": {"sord"}, "sordes": {"sord"},
 	// Catalan noun plurals (dies ← dia for TOTS_ELS_DIES etc.)
 	"dies": {"dia"}, "anys": {"any"}, "mesos": {"mes"}, "hores": {"hora"}, "setmanes": {"setmana"},
-	"coes": {"coa"}, "oïdes": {"oïda"},
+	"coes": {"coa"}, "oïdes": {"oïda"}, "col·laboració": {"col·laboració"},
 }
 
 // softInflectedSurfaceMatch approximates lemma matching without a tagger:
@@ -1469,6 +1486,17 @@ func softEsperantoLemmaCandidates(surface string) []string {
 		if strings.HasSuffix(u, st.suf) {
 			stem := u[:len(u)-len(st.suf)] + st.base
 			if stem != u && stem != "" {
+				out = append(out, stem)
+			}
+		}
+	}
+	// Verb finite → infinitive -i (preferas→preferi, darfas→darfi).
+	for _, st := range []strip{
+		{"as", "i"}, {"is", "i"}, {"os", "i"}, {"us", "i"}, {"u", "i"},
+	} {
+		if strings.HasSuffix(u, st.suf) && len(u) > len(st.suf)+1 {
+			stem := u[:len(u)-len(st.suf)] + st.base
+			if stem != u {
 				out = append(out, stem)
 			}
 		}

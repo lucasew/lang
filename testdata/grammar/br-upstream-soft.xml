@@ -947,8 +947,7 @@
         <token postag="[CD].*|SENT_START" postag_regexp="yes"></token>
         <token>gwir</token>
         <token regexp="yes" inflected="yes" postag="N.*" postag_regexp="yes">[ktpgdbm].*
-          <exception regexp="yes">[ktpgdbm].*</exception>
-        </token>
+</token>
       </pattern>
       <message>Ur c’hemmadur klok dre vlotaat a zlefe bezañ goude an anv-gwan «\2». (CHALM S1.1)</message>
       <short>GWIR_ANV</short>
