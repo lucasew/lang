@@ -303,34 +303,54 @@ func DiscoverLanguagePOSDict(opts *CommandLineOptions, lang string) string {
 	return ""
 }
 
+// languagePOSDictNames maps ISO codes to upstream Morfologik POS basenames
+// under resource/{code}/ (see languagetool-language-modules).
 func languagePOSDictNames(base string) []string {
 	switch base {
+	case "ar":
+		return []string{"arabic.dict"}
+	case "br":
+		return []string{"breton.dict"}
+	case "ca":
+		return []string{"catalan.dict"}
 	case "da":
 		return []string{"danish.dict"}
-	case "km":
-		return []string{"khmer.dict"}
 	case "de":
 		return []string{"german.dict"}
-	case "fr":
-		return []string{"french.dict"}
+	case "el":
+		return []string{"greek.dict"}
+	case "en":
+		return []string{"english.dict"}
 	case "es":
 		return []string{"spanish.dict"}
+	case "fr":
+		return []string{"french.dict"}
+	case "gl":
+		return []string{"galician.dict"}
+	case "it":
+		return []string{"italian.dict"}
+	case "km":
+		return []string{"khmer.dict"}
+	case "ml":
+		return []string{"malayalam.dict"}
 	case "nl":
 		return []string{"dutch.dict"}
 	case "pl":
 		return []string{"polish.dict"}
-	case "it":
-		return []string{"italian.dict"}
 	case "pt":
 		return []string{"portuguese.dict"}
+	case "ro":
+		return []string{"romanian.dict"}
 	case "ru":
 		return []string{"russian.dict"}
+	case "sk":
+		return []string{"slovak.dict"}
 	case "sv":
 		return []string{"swedish.dict"}
-	case "ca":
-		return []string{"catalan.dict"}
-	case "en":
-		return []string{"english.dict"}
+	case "ta":
+		return []string{"tamil.dict"}
+	case "tl":
+		return []string{"tagalog.dict"}
 	default:
 		return []string{base + ".dict"}
 	}

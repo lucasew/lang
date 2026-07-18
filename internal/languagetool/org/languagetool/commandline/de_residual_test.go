@@ -29,6 +29,8 @@ func TestGolden_UpstreamDEResiduals(t *testing.T) {
 		{"STELLT_FEST", "Später stellte man Fest, dass er krank war."},
 		{"ERSTEN_MAIN", "Ich will noch mal auf den 18. Main hinweisen."},
 		{"DATUM_VON_BIS", "Die Messe findet vom 12. bis 11. Januar statt."},
+		{"WEHREND", "Hätte es sowas wehrend der Schulzeit gegeben!"},
+		{"ZAHL_LANG_NOMEN", "Die 2 hohe Hürde wurde ihm zum Verhängnis."},
 	}
 	var miss []string
 	for _, tc := range cases {

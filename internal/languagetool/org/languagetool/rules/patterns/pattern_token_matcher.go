@@ -528,8 +528,10 @@ func softClosedPartSurface(part, s string) bool {
 		if strings.Contains(part, "ART") {
 			return softIsGermanArticle(s)
 		}
+		// STTS PRO (personal/demonstrative/relative); many DE rules use PRO:.+ where
+		// the surface is also a definite article reading (der/die/das…), as in WEHREND.
 		if strings.Contains(part, "PRO") {
-			return softIsPronoun(s)
+			return softIsPronoun(s) || softIsGermanArticle(s)
 		}
 		if strings.Contains(part, "KON") || strings.Contains(part, "KOU") || strings.Contains(part, "KOKOM") {
 			return softIsCC(s) || softIsGermanConj(s)
@@ -947,6 +949,10 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 	if softGermanGeParticiple(surface, base) {
 		return true
 	}
+	// German adj stem alternation: hoch → hohe/hohen/… (ch→h before vowel ending).
+	if softGermanAdjStemAlt(surface, base) {
+		return true
+	}
 	// French -er past participle / present (placé←placer, place←placer).
 	if softFrenchErInflected(surface, base) {
 		return true
@@ -1006,6 +1012,31 @@ func softGermanUmlautFold(s string) string {
 		"ä", "a", "ö", "o", "ü", "u", "ß", "ss",
 		"Ä", "a", "Ö", "o", "Ü", "u",
 	).Replace(strings.ToLower(s))
+}
+
+// softGermanAdjStemAlt handles irregular adjective stems (Java tagger lemma hoch
+// for surface hohe). Pattern: base ends in "ch", declined forms use stem+"h"+ending
+// (hoch→hohe/hohen/hoher/hohes/hohem). Used when no DE Morfologik dict is available.
+func softGermanAdjStemAlt(surface, base string) bool {
+	if surface == "" || base == "" {
+		return false
+	}
+	s := strings.ToLower(surface)
+	b := strings.ToLower(base)
+	if !strings.HasSuffix(b, "ch") || len(b) < 3 {
+		return false
+	}
+	// hoch → hoh
+	stem := b[:len(b)-2] + "h"
+	if !strings.HasPrefix(s, stem) {
+		return false
+	}
+	switch s[len(stem):] {
+	case "", "e", "en", "er", "es", "em":
+		return true
+	default:
+		return false
+	}
 }
 
 // softSharedStemMatch is true when surface and base share a long letter stem
