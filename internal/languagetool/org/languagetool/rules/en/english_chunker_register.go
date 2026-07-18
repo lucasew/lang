@@ -5,8 +5,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/chunking"
 )
 
-// RegisterEnglishChunker installs Java English.createDefaultChunker() soft port
-// (POS-driven OpenNLP-like BIO + EnglishChunkFilter) on lt.Chunker.
+// RegisterEnglishChunker installs English.createDefaultChunker() twin on lt.Chunker.
+// OpenNLP maxent is not run yet; POS→BIO + EnglishChunkFilter only (incomplete, no soft invent).
 func RegisterEnglishChunker(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return

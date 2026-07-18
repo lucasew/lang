@@ -5,7 +5,7 @@ import (
 )
 
 // EnglishChunkFilter ports org.languagetool.chunking.EnglishChunkFilter.
-// Adds singular/plural NP tags to B-NP/I-NP sequences.
+// Adds singular/plural NP tags to B-NP/I-NP sequences (Java twin).
 type EnglishChunkFilter struct{}
 
 func NewEnglishChunkFilter() *EnglishChunkFilter { return &EnglishChunkFilter{} }
@@ -28,17 +28,6 @@ func (f *EnglishChunkFilter) Filter(tokens []ChunkTaggedToken) []ChunkTaggedToke
 		var chunkTags []ChunkTag
 		if isBeginningOfNounPhrase(tagged) {
 			ct := getChunkType(tokens, i)
-			// anyone/someone: always singular NP (Java OpenNLP; not pluralized by
-			// a following NNS|VBZ "knows").
-			if isSingularPronounSurface(tagged.Token) {
-				ct = chunkSingular
-			}
-			// A_NNS_AND: "a pens and paper" — article a/an forces singular NP
-			// BIO so the pattern chunk="I-NP-singular" can match (OpenNLP POS
-			// often tags the plural noun as NN for chunking while LT keeps NNS).
-			if isIndefiniteArticleSurface(tagged.Token) {
-				ct = chunkSingular
-			}
 			if ct == chunkSingular || endOfNounPhraseIsSingular(tokens, i) {
 				chunkTags = append(chunkTags, NewChunkTag("B-NP-singular"))
 				newChunkTag = "NP-singular"
@@ -81,10 +70,10 @@ func isContinuationOfNounPhrase(t ChunkTaggedToken) bool {
 	return false
 }
 
+// isEndOfNounPhrase ports Java: true when next is not I-NP (or end of list).
 func isEndOfNounPhrase(tokens []ChunkTaggedToken, i int) bool {
-	// Java EnglishChunkFilter.isEndOfNounPhrase: true when next is not I-NP
-	// (including when next is B-NP starting a new phrase, or O/VP/…).
-	if i+1 >= len(tokens) {
+	// Java: if (i > tokens.size() - 2) return true;
+	if i > len(tokens)-2 {
 		return true
 	}
 	return !isContinuationOfNounPhrase(tokens[i+1])
@@ -99,18 +88,16 @@ func endOfNounPhraseIsSingular(tokens []ChunkTaggedToken, i int) bool {
 	return false
 }
 
+// getChunkType ports Java EnglishChunkFilter.getChunkType.
 func getChunkType(tokens []ChunkTaggedToken, i int) chunkType {
-	// Java EnglishChunkFilter.getChunkType: only scan B-NP/I-NP tokens in the
-	// span; break before plural-check when the token is outside the NP (so a
-	// following NNS|VBZ verb like "knows" does not make "anyone" plural).
-	// Also: pure PRP (anyone/someone) is singular even if a later NNS is mis-tagged.
 	plural := false
 	for j := i; j < len(tokens); j++ {
 		tok := tokens[j]
 		if !isBeginningOfNounPhrase(tok) && !isContinuationOfNounPhrase(tok) {
 			break
 		}
-		if isPluralToken(tok) {
+		// Java "and" plural branch is disabled (if (false && "and".equals...)).
+		if hasNounWithPluralReading(tok) {
 			plural = true
 		}
 	}
@@ -120,36 +107,10 @@ func getChunkType(tokens []ChunkTaggedToken, i int) chunkType {
 	return chunkSingular
 }
 
-// isSingularPronounSurface: indefinite singular pronouns only.
-// Java EnglishChunkFilter has no such list — getChunkType breaks at non-NP so
-// "anyone knows" stays singular when knows is VP. We still force singular for
-// these surfaces when a following NNS|VBZ is mis-chunked as I-NP.
-// Do NOT include each/either/neither: DT_TIMES_NNS needs E-NP-plural on
-// "Each times" so disambig can strip VBZ for EVERY_EACH_SINGULAR.
-func isSingularPronounSurface(s string) bool {
-	switch strings.ToLower(strings.TrimSpace(s)) {
-	case "anyone", "anybody", "someone", "somebody", "everyone", "everybody",
-		"noone", "nobody", "one":
-		return true
-	default:
-		return false
-	}
-}
-
-func isIndefiniteArticleSurface(s string) bool {
-	switch strings.ToLower(strings.TrimSpace(s)) {
-	case "a", "an":
-		return true
-	default:
-		return false
-	}
-}
-
-func isPluralToken(t ChunkTaggedToken) bool {
+// hasNounWithPluralReading ports Java hasNounWithPluralReading.
+func hasNounWithPluralReading(t ChunkTaggedToken) bool {
 	if t.Readings == nil {
-		// heuristic: ends with s
-		tok := t.Token
-		return strings.HasSuffix(strings.ToLower(tok), "s") && !strings.HasSuffix(strings.ToLower(tok), "ss")
+		return false
 	}
 	for _, r := range t.Readings.GetReadings() {
 		if r == nil {
@@ -160,11 +121,10 @@ func isPluralToken(t ChunkTaggedToken) bool {
 			continue
 		}
 		tag := *pt
-		if tag == "NNS" || tag == "NNPS" || strings.HasPrefix(tag, "NNS") || strings.HasPrefix(tag, "NNPS") {
+		// Java: posTag != null && posTag.startsWith("N") && posTag.endsWith("S")
+		if strings.HasPrefix(tag, "N") && strings.HasSuffix(tag, "S") {
 			return true
 		}
 	}
 	return false
 }
-
-// Ensure unused import for languagetool if readings used

@@ -50,7 +50,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.8 | **Soft POS surface invent** removed from `pattern_token_matcher.go` (closed-class lists, FreeLing soft, STTS soft, URL soft surface, etc.) | [x] sector: PatternTokenMatcher |
 | 1.9 | Soft cover/align hacks removed from `pattern_rule_matcher.go` (CJK surface align, fused prep, hyphen cover, …) | [x] |
 | 1.10 | Soft expand / backref invent removed if not Java-equivalent | [ ] |
-| 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [ ] `english_chunker.go` still soft-heavy |
+| 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [~] soft invent lists removed; POS→BIO interim until OpenNLP maxent wired |
 | 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [~] soft pack invent removed; fallback only for known Java families |
 | 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
 | 1.14 | Soft picky XML load paths removed from server text checker | [ ] `text_checker_check.go` |
@@ -95,7 +95,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | 3.A.3 | `MultiWordChunker` | Official multiwords only | [~] EN hybrid multiword stage |
 | 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [~] EN hybrid wires official XML+global; loader has rulegroup/`and`/`marker` |
 | 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [~] EN/FR/ES/PT/DE/CA/NL wired to official resources |
-| 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [ ] |
+| 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [~] EnglishChunkFilter 1:1; POS→BIO without soft invent; OpenNLP models not executed |
 | 3.A.7 | `JLanguageTool` analyze/check wiring | Same stages, mode flags | [~] |
 | 3.A.8 | Rule match pipeline (enable/disable, categories, text-level) | Java semantics | [~] |
 
