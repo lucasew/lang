@@ -436,12 +436,28 @@
       <short>PORTAR_UNA_VIDA</short>
     </rule>
   </category>
+  <category id="DIACRITICS" name="Accents diacrítics comuns">
+    <rule id="QUE_INICIAL_SENSEACCENT_VERB" name="què -&gt; que (a l'inici de frase)" default="off">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes" min="0" max="3">\p{P}</token>
+        <token>què</token>
+        <token min="0" max="3" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes">
+          <exception>ho</exception>
+        </token>
+        <token skip="-1" postag="V.[SI].*" postag_regexp="yes"></token>
+        <token>?</token>
+      </pattern>
+      <message>S'escriu sense accent si la resposta és "sí" o "no". Si és un pronom interrogatiu (=quina cosa), s'escriu amb accent. <suggestion>que</suggestion></message>
+      <short>QUE_INICIAL_SENSEACCENT_VERB</short>
+    </rule>
+  </category>
   <category id="REPETITIONS_STYLE" name="Repeticions (estil)">
     <rule id="REP_TEMA" name="repetició: tema" default="off">
       <pattern>
         <token inflected="yes" postag="N.*" postag_regexp="yes">tema</token>
       </pattern>
-      <message><suggestion>\1</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>\1</suggestion></message>
       <short>REP_TEMA</short>
     </rule>
   </category>

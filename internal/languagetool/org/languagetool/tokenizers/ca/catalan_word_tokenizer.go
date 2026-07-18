@@ -219,8 +219,11 @@ func isTaggedCA(s string) bool {
 	if len(parts) == 2 && isCompass(parts[0]) && isCompass(parts[1]) {
 		return false
 	}
+	// Java CatalanWordTokenizer keeps a hyphen compound only if the tagger/dict
+	// knows it. Without catalan.dict, do not keep arbitrary all-lowercase
+	// compounds (alter-ego, cost-efectiu, dejà-vu); still keep doNotSplit entries.
 	if allLowerParts(parts) {
-		return true
+		return false
 	}
 	// Title-lower… e.g. Mont-ras, Sud-est (not Sud-Est)
 	if len(parts) >= 2 && hasTitleStart(parts[0]) {

@@ -21,7 +21,7 @@
     </rule>
     <rule id="ALA" name="Alà/Al·là">
       <pattern>
-        <token>Alà</token>
+        <token case_sensitive="yes">Alà</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Al·là</suggestion> (nom de Déu en l'islam)? Correcte en altres sentits.</message>
       <short>Possible confusió</short>
@@ -366,7 +366,7 @@
     </rule>
     <rule id="ECT_ETC" name="ect -&gt; etc">
       <pattern>
-        <token>ect</token>
+        <token case_sensitive="yes">ect</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>etc</suggestion> (abreviatura de 'etcètera')?</message>
       <short>ECT_ETC</short>
@@ -520,7 +520,7 @@
     </rule>
     <rule id="GALES_GALLES" name="Gales/Gal·les">
       <pattern>
-        <token>Gales</token>
+        <token case_sensitive="yes">Gales</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Gal·les</suggestion> (nom de país)?</message>
       <short>GALES_GALLES</short>
@@ -871,8 +871,8 @@
     </rule>
     <rule id="STEPEHN_HAWKING" name="Stephen Hawkins -&gt; Stephen Hawking">
       <pattern>
-        <token>Stephen</token>
-        <token>Hawkins</token>
+        <token case_sensitive="yes">Stephen</token>
+        <token case_sensitive="yes">Hawkins</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Stephen Hawking</suggestion> (físic i divulgador científic anglès)? "Stephen Hawkins" és una altra persona.</message>
       <short>STEPEHN_HAWKING</short>
@@ -1135,6 +1135,15 @@
       <message>¿Volíeu dir <suggestion>annals</suggestion> en comptes de "anal" (relatiu a l'anus)?</message>
       <short>ANALS_ANNALS</short>
     </rule>
+    <rule id="ANARA" name="anara -&gt; anar a">
+      <pattern>
+        <token regexp="yes">vaig|vas|vares|va|vam|vàrem|vau|vàreu|van|varen</token>
+        <token>anara</token>
+        <token postag="V.N.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>anar a</suggestion>?</message>
+      <short>ANARA</short>
+    </rule>
     <rule id="ANAR_BE" name="anar ve -&gt; bé">
       <pattern>
         <token regexp="yes" inflected="yes">anar|venir</token>
@@ -1206,7 +1215,7 @@
     </rule>
     <rule id="AVENIR_A_VENIR" name="avenir -&gt; a venir">
       <pattern>
-        <token regexp="yes" inflected="yes">|veure</token>
+        <token regexp="yes" inflected="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|veure</token>
         <token>avenir</token>
       </pattern>
       <message>En aquest context cal dir <suggestion>a venir</suggestion>.</message>
@@ -1346,6 +1355,15 @@
       <message>¿Volíeu dir <suggestion>bé</suggestion>?</message>
       <short>B_BE</short>
     </rule>
+    <rule id="CALLAT_CALLAR" name="fer callat -&gt; callar">
+      <pattern>
+        <token inflected="yes">fer</token>
+        <token min="0" max="1" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token>callat</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>callar</suggestion>?</message>
+      <short>CALLAT_CALLAR</short>
+    </rule>
     <rule id="CAL_VAL" name="cal -&gt; val">
       <pattern>
         <token>cal</token>
@@ -1467,9 +1485,7 @@
     </rule>
     <rule id="CELA" name="cela/cel·la, celo/cel·la">
       <pattern>
-        <token regexp="yes">celo|cela|celes
-          <exception>Cela</exception>
-        </token>
+        <token regexp="yes">celo|cela|celes</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\1</suggestion>? "\1" és del v. 'celar' (ocultar).</message>
       <short>Possible confusió</short>
@@ -1928,7 +1944,7 @@
     <rule id="ESCORTAR_ESCOLTAR" name="escortar -&gt; escoltar">
       <pattern>
         <token inflected="yes" skip="5" postag="V.*" postag_regexp="yes">escortar</token>
-        <token regexp="yes" inflected="yes">ràdio|programa|
+        <token regexp="yes" inflected="yes">ràdio|programa|acompanyament|acompanyar|acordió|acústica|afinar|agut|altar|arpa|arranjador|assajar|Bach|ballet|banda|barana|barroc|basílica|Beethoven|bemoll|benedictí|bisell|blanca|bonic|bordó|bracet|cadira|callar|canonge|cant|cantar|cantata|cantúria|cançó|canó|capella|casament|catedral|cicle|ciri|clarinet|clavecí|clavicordi|compondre|composició|compositor|comunió|concert|conservatori|constructor|construir|contrabaix|contralt|convent|coral|corda|corxera|credo|crist|cromàtic|culte|càntic|desafinar|director|electrònic|elèctric|emmudir|encens|escolania|església|estança|evangeli|façana|fidel|flabiol|flauta|fuga|fusa|fusta|galeria|greu|guitarra|Hammond|harmonia|harmònic|harmònium|hidràulic|himne|hàbit|immens|imponent|improvisació|improvisador|inaugurar|instrument|instrumentista|intermezzo|interpretar|kyrie|liceu|lied|llaüt|llengüeteria|majestuós|maneta|manxa|manxar|melodia|Mendelssohn|Messiaen|mestre|metall|mico|missa|mona|monestir|motet|Mozart|musical|musicalment|musicar|músic|música|negra|noces|nota|noviciat|nupcial|nuvi|obertura|oboè|obra|oració|oratori|organista|organologia|orguener|orquestra|orquestrador|orquestrar|palanca|parroquial|parròquia|partitura|passacaglia|pedal|penetrant|percussió|peça|pianista|piano|polifònic|portàtil|preludi|quartet|redona|registre|renaixement|renaixentista|repertori|responsori|ressò|restaurar|retaule|retrunyir|rodona|rèquiem|sacerdot|salm|salmer|saló|sant|sardana|saxofon|saxòfon|semicorxera|semifusa|silenci|simfonia|simfònic|sintetizador|sintètic|so|solemne|solista|somort|sonant|sonar|sonata|sonoritat|soprano|mezzo|mezzosoprano|baríton|sostingut|suite|tecla|teclat|teclista|tedèum|tema|temple|tenor|timbal|timbala|to|tocador|tocar|tocata|tonada|travesser|trencavent|tro|trombó|trompa|trompeta|tub|tubular|variació|vent|viola|violinista|violoncel|violí|vitrall|àngel|òpera
           <exception regexp="yes">acompany.*</exception>
         </token>
       </pattern>
@@ -2029,7 +2045,7 @@
     </rule>
     <rule id="EUROPES" name="Europes/Europees">
       <pattern>
-        <token regexp="yes">Europes|EUROPES</token>
+        <token regexp="yes" case_sensitive="yes">Europes|EUROPES</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\1</suggestion> (adjectiu)? Correcte si és el plural d'Europa (menys freqüent).</message>
       <short>EUROPES</short>
@@ -2048,6 +2064,14 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>\1</suggestion> (del v. 'fer') en comptes de \1 (del v. 'faixar')?</message>
       <short>FAIXI_FACI</short>
+    </rule>
+    <rule id="FAM_FAN" name="fam -&gt; fan, fem">
+      <pattern>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token>fam</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>fan</suggestion> o <suggestion>fem</suggestion> (del v. 'fer')?</message>
+      <short>FAM_FAN</short>
     </rule>
     <rule id="FEIA_FEINA" name="feia -&gt; feina">
       <pattern>
@@ -2098,7 +2122,7 @@
         <token>fins</token>
         <token>de</token>
         <token>l</token>
-        <token regexp="yes">\d+||||</token>
+        <token regexp="yes">\d+|gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|gen|febr|abr|jul|ag|set|oct|nov|des|dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge|dl|dt|dc|dj|dv|ds|dg</token>
       </pattern>
       <message>Possible confusió. ¿Volíeu dir <suggestion>fins al</suggestion>?</message>
       <short>FINS_DEL_FINS_AL</short>
@@ -2288,7 +2312,7 @@
     <rule id="JO_HO" name="ho -&gt; jo">
       <pattern>
         <token>ho</token>
-        <token min="1" max="2" postag="|RN" postag_regexp="yes"></token>
+        <token min="1" max="2" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|RN" postag_regexp="yes"></token>
         <token postag="V...1S.." postag_regexp="yes"></token>
       </pattern>
       <message>¿Volíeu dir <suggestion>jo</suggestion>?</message>
@@ -2516,6 +2540,15 @@
       <message>¿Volíeu dir <suggestion>mort</suggestion>?</message>
       <short>MOT_MORT</short>
     </rule>
+    <rule id="MO_NO" name="confusió: mo -&gt; no">
+      <pattern>
+        <token>Mo</token>
+        <token min="0" max="3" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[IS].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>no</suggestion>?</message>
+      <short>MO_NO</short>
+    </rule>
     <rule id="NI_NO_SI_NO" name="*ni no/si no">
       <pattern>
         <token>ni</token>
@@ -2551,6 +2584,14 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>obra</suggestion>?</message>
       <short>OBRE_OBRA</short>
+    </rule>
+    <rule id="ODI_ODII" name="odi -&gt; odiï">
+      <pattern>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token>odi</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>odiï</suggestion> (del v. 'odiar')?</message>
+      <short>ODI_ODII</short>
     </rule>
     <rule id="ODONTOLOGIC" name="codi *odontològic">
       <pattern>
@@ -2722,6 +2763,14 @@
       <message>¿Volíeu dir <suggestion>posat</suggestion>?</message>
       <short>Possible confusió</short>
     </rule>
+    <rule id="PREC_PRENC" name="prec -&gt; prenc">
+      <pattern>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token>prec</token>
+      </pattern>
+      <message>Possible confusió. ¿Volíeu dir <suggestion>prenc</suggestion>?</message>
+      <short>PREC_PRENC</short>
+    </rule>
     <rule id="PREGUEM_DISCULPIN" name="preguem respectin/respecteu">
       <pattern>
         <token>preguem</token>
@@ -2784,7 +2833,7 @@
         <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
         <token>qui</token>
         <token regexp="yes" skip="-1" postag="NCMS000">\p{Ll}.*
-          <exception regexp="yes">|son|est|deu|mana</exception>
+          <exception regexp="yes">(re)?(diastres?|daixonses|dallonses|caraissos|caratxos|coi|collons|cony|diablet|dimontri|dimonis?|carais?|diantres?|diables?|caram|caralls?|punyeta|punyetes|carat|nassos|hòstia|hòsties|diastre|merda|merdes)|son|est|deu|mana</exception>
         </token>
         <token>?</token>
       </pattern>
@@ -3038,6 +3087,16 @@
       <message>¿Volíeu dir <suggestion>suma</suggestion> (addició)? "Summa" vol dir "recopilació" o bé és el femení de l'adjectiu "summe".</message>
       <short>Possible confusió</short>
     </rule>
+    <rule id="S_EMPRE" name="s'empre -&gt; sempre">
+      <pattern>
+        <token>s'</token>
+        <token>empre</token>
+        <token min="0" max="2" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[IS].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>sempre</suggestion> (en tot moment)?</message>
+      <short>S_EMPRE</short>
+    </rule>
     <rule id="TANTA_TANT_LA" name="*tanta/tant">
       <pattern>
         <token postag="V.[SI].*|_GV_" postag_regexp="yes">
@@ -3086,10 +3145,20 @@
     </rule>
     <rule id="TEX_TEXT" name="tex / text">
       <pattern>
-        <token regexp="yes">[Tt]ex</token>
+        <token regexp="yes" case_sensitive="yes">[Tt]ex</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\1t</suggestion>?</message>
       <short>Possible confusió</short>
+    </rule>
+    <rule id="THE_TE" name="t'he / te">
+      <pattern>
+        <token>t'</token>
+        <token>he</token>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[IS].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>te</suggestion>?</message>
+      <short>THE_TE</short>
     </rule>
     <rule id="THINK_TANK" name="think *thank/tank">
       <pattern>
@@ -3144,7 +3213,7 @@
     </rule>
     <rule id="TRUC_TURC" name="truc -&gt; turc">
       <pattern>
-        <token regexp="yes" inflected="yes" postag="N.[MC].*|AQ.[MC].." postag_regexp="yes"></token>
+        <token regexp="yes" inflected="yes" postag="N.[MC].*|AQ.[MC].." postag_regexp="yes">actor|aliat|ambaixada|arquitectura|art|atac|autor|avió|banc|bany|cafè|capital|cinema|ciutadana|ciutadà|ciutat|comerç|comunitat|consolat|costa|cuina|cultura|dansa|dinastia|diplomàtic|director|dirigent|dona|economia|empresa|enemic|energia|entrenador|equip|estat|estudiant|exèrcit|frontera|gas|gastronomia|govern|governant|guerra|hamam|història|home|hospital|hotel|idioma|illa|imperi|indústria|jugador|lira|literatura|llei|llengua|llibre|mar|mercat|mesquita|militar|ministre|moneda|música|oposició|origen|otomà|parlament|partit|passaport|país|pel·lícula|península|periodista|periòdic|petroli|poble|policia|política|president|producte|professor|refugiats|regió|relació|restaurant|revolució|sistema|soldat|territori|tractat|tradició|turista|tèxtil|universitat|vaixell|viatge</token>
         <token regexp="yes">trucs?</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\2</suggestion> (de Turquia)?</message>
@@ -3243,6 +3312,14 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>vas a</suggestion>?</message>
       <short>VA_SA_VAS_A</short>
+    </rule>
+    <rule id="VA_SE_VA_SER" name="va se -&gt; va ser">
+      <pattern>
+        <token regexp="yes">vaig|vas|vares|va|vam|vàrem|vau|vàreu|van|varen</token>
+        <token regexp="yes">se|sé</token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>ser</suggestion>?</message>
+      <short>VA_SE_VA_SER</short>
     </rule>
     <rule id="VEM_VAM" name="vem anar -&gt; vam anar">
       <pattern>
@@ -4538,7 +4615,7 @@
       <pattern>
         <token>a</token>
         <token>mitjans</token>
-        <token regexp="yes">|||temporada|estació|curs</token>
+        <token regexp="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|primavera|estiu|tardor|hivern|segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|temporada|estació|curs</token>
       </pattern>
       <message>L'expressió adequada és <suggestion>a mitjan</suggestion>.</message>
       <short>A_MITJANS_JULIOL</short>
@@ -4564,7 +4641,7 @@
     <rule id="A_PRESA" name="a presa &gt; de pressa">
       <pattern>
         <token postag="V.[SIM].*|_GV_" postag_regexp="yes"></token>
-        <token min="0" max="4" postag="|RG|LOC_ADV" postag_regexp="yes"></token>
+        <token min="0" max="4" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|RG|LOC_ADV" postag_regexp="yes"></token>
         <token>a</token>
         <token>presa</token>
       </pattern>
@@ -4737,6 +4814,15 @@
       <message>En aquest context cal dir <suggestion>\2</suggestion>.</message>
       <short>CINEMATIC</short>
     </rule>
+    <rule id="COMPLIRSE" name="complir-se -&gt; fer">
+      <pattern>
+        <token regexp="yes" inflected="yes" postag="_reflexiu">complir|acomplir</token>
+        <token min="1" max="3" postag="D[NI].*" postag_regexp="yes"></token>
+        <token regexp="yes" inflected="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet</token>
+      </pattern>
+      <message>En aquest context, cal usar el verb 'fer'. "Complir-se" no és una expressió adequada. <suggestion>fer</suggestion></message>
+      <short>COMPLIRSE</short>
+    </rule>
     <rule id="COMPTE_ALIE" name="per compte *aliè/d'altri">
       <pattern>
         <token>per</token>
@@ -4762,6 +4848,17 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>\1</suggestion> (disputa, litigi)?</message>
       <short>COMTESSA</short>
+    </rule>
+    <rule id="COM_ABANS" name="com abans -&gt; com més aviat">
+      <pattern>
+        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
+        <token>com</token>
+        <token>abans</token>
+        <token min="0" max="2" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[IS]P.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>Expressió inadequada. <suggestion>com més aviat</suggestion></message>
+      <short>COM_ABANS</short>
     </rule>
     <rule id="COM_NO" name="com no">
       <pattern>
@@ -4795,7 +4892,7 @@
     <rule id="CONTES_QUADREN" name="els *contes/comptes quadren">
       <pattern>
         <token regexp="yes">contes|comtes</token>
-        <token min="0" max="2" postag="RN|" postag_regexp="yes"></token>
+        <token min="0" max="2" postag="RN|P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
         <token regexp="yes" inflected="yes" min="0">anar|haver</token>
         <token regexp="yes" inflected="yes">sortir|eixir|quadrar</token>
       </pattern>
@@ -4956,7 +5053,7 @@
       <pattern>
         <token>després</token>
         <token regexp="yes" skip="5">de|d'</token>
-        <token regexp="yes" inflected="yes" min="1" max="2">|</token>
+        <token regexp="yes" inflected="yes" min="1" max="2">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|molt|poc|temps|temporada|temporadeta|estona|estoneta|estació|curs|eternitat|legislatura</token>
         <token>sense</token>
         <token>fer</token>
         <token>-ho</token>
@@ -5064,7 +5161,7 @@
         <token regexp="yes">dins|dintre</token>
         <token>de</token>
         <token>tot</token>
-        <token postag="_PUNCT.*|V.[SI].*|" postag_regexp="yes"></token>
+        <token postag="_PUNCT.*|V.[SI].*|P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
       </pattern>
       <message>Val més fer servir una altra expressió. <suggestion>ben mirat</suggestion></message>
       <short>DINS_DE_TOT</short>
@@ -6005,8 +6102,8 @@
     </rule>
     <rule id="NEW_YORK" name="New York">
       <pattern>
-        <token regexp="yes">New|Nueva</token>
-        <token>York</token>
+        <token regexp="yes" case_sensitive="yes">New|Nueva</token>
+        <token case_sensitive="yes">York</token>
       </pattern>
       <message>Normalment fem servir el nom d'aquesta ciutat traduït. <suggestion>Nova York</suggestion></message>
       <short>NEW_YORK</short>
@@ -6458,6 +6555,18 @@
       <message>Expressió incorrecta. <suggestion>tal o tal altre</suggestion></message>
       <short>QUAL_O_QUAL</short>
     </rule>
+    <rule id="QUAN_ABANS" name="quan abans -&gt; com més aviat">
+      <pattern>
+        <token postag="SENT_START|_PUNCT.*|CC" postag_regexp="yes"></token>
+        <token regexp="yes">com|quan|quant</token>
+        <token>abans</token>
+        <token min="0" max="2" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token skip="-1" postag="V.[SI].*" postag_regexp="yes"></token>
+        <token regexp="yes">millor|pitjor|abans|més|menys</token>
+      </pattern>
+      <message>Expressió inadequada. <suggestion>com més aviat</suggestion></message>
+      <short>QUAN_ABANS</short>
+    </rule>
     <rule id="QUAN_MENYS" name="quan menys">
       <pattern>
         <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
@@ -6470,7 +6579,7 @@
     </rule>
     <rule id="QUEBE_QUE_VE" name="quebe -&gt; que ve">
       <pattern>
-        <token regexp="yes">|||</token>
+        <token regexp="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge|primavera|estiu|tardor|hivern</token>
         <token regexp="yes">quebe|quebé|queve|quevé</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>que ve</suggestion> (<suggestion>vinent</suggestion>)?</message>
@@ -6770,7 +6879,7 @@
     <rule id="TENIR_EN_COMTE_CONTE" name="tenir en comte/conte/compte">
       <pattern>
         <token inflected="yes">tenir</token>
-        <token min="0" postag="RG|" postag_regexp="yes"></token>
+        <token min="0" postag="RG|P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
         <token regexp="yes">en|em</token>
         <token regexp="yes">co[mn]te|compta|compte|conta</token>
       </pattern>
@@ -7339,7 +7448,7 @@
     </rule>
     <rule id="ESTEVA" name="*Esteva/Esteve">
       <pattern>
-        <token>Esteva</token>
+        <token case_sensitive="yes">Esteva</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Esteve</suggestion>?</message>
       <short>ESTEVA</short>
@@ -7402,10 +7511,10 @@
     </rule>
     <rule id="MONICA" name="mònica -&gt; Mònica">
       <pattern>
-        <token>mònica</token>
+        <token case_sensitive="yes">mònica</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Mònica</suggestion> (nom de persona)?</message>
-      <short>MONICA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="NIT_BONA" name="*nit bona">
       <pattern>
@@ -8084,7 +8193,7 @@
     </rule>
     <rule id="ENRIC" name="enric/Enric">
       <pattern>
-        <token regexp="yes">enrics?</token>
+        <token regexp="yes" case_sensitive="yes">enrics?</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\1</suggestion> (nom de persona)? En minúscula és el nom d'una moneda històrica.</message>
       <short>ENRIC</short>
@@ -8885,7 +8994,7 @@
     </rule>
     <rule id="GARBO" name="garbo">
       <pattern>
-        <token regexp="yes">garbos?</token>
+        <token regexp="yes" case_sensitive="yes">garbos?</token>
       </pattern>
       <message>Paraula pròpia del llenguatge col·loquial. Només admesa per alguns diccionaris. <suggestion>\1</suggestion></message>
       <short>Llenguatge col·loquial</short>
@@ -9444,7 +9553,7 @@
         <token regexp="yes">meitat|mitat</token>
         <token regexp="yes">de|d'</token>
         <token regexp="yes" min="0">l|la|l'</token>
-        <token regexp="yes">||\d+|</token>
+        <token regexp="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|\d+|primavera|estiu|tardor|hivern</token>
       </pattern>
       <message>És preferible usar l'expressió "a mitjan". <suggestion>a mitjan \6</suggestion></message>
       <short>A_LA_MEITAT_DE_A_MITJAN</short>
@@ -9465,7 +9574,7 @@
         <token>mitjans</token>
         <token regexp="yes">de|d'</token>
         <token regexp="yes" min="0">l|la|l'</token>
-        <token regexp="yes">||\d+|</token>
+        <token regexp="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|\d+|primavera|estiu|tardor|hivern</token>
       </pattern>
       <message>És preferible usar l'expressió "a mitjan". <suggestion>\1 mitjan \5</suggestion></message>
       <short>A_MITJANS_A_MITJAN</short>
@@ -10614,6 +10723,15 @@
       <message>"Què" s'accentua quan equival a "quina cosa". <suggestion>que què</suggestion></message>
       <short>QUE_QUE_VOLS</short>
     </rule>
+    <rule id="VA_SOLS_VA" name="*va sols va">
+      <pattern>
+        <token regexp="yes">vaig|vas|vares|va|vam|vàrem|vau|vàreu|van|varen</token>
+        <token postag="R.*" postag_regexp="yes"></token>
+        <token regexp="yes">vaig|vas|vares|va|vam|vàrem|vau|vàreu|van|varen</token>
+      </pattern>
+      <message>Possible error: paraula repetida. <suggestion>\2 \3</suggestion></message>
+      <short>VA_SOLS_VA</short>
+    </rule>
   </category>
   <category id="PREPOSITIONS" name="Preposicions">
     <rule id="AMB_SENSE" name="amb sense">
@@ -10667,6 +10785,30 @@
       <message>Combinació de preposicions probablement incorrecta. <suggestion>entre</suggestion></message>
       <short>PER_ENTRE</short>
     </rule>
+    <rule id="AMB_DATA_DEL" name="amb data del -&gt; amb data">
+      <pattern>
+        <token regexp="yes">amb|en</token>
+        <token>data</token>
+        <token>de</token>
+        <token min="0">l</token>
+        <token regexp="yes">\d+</token>
+        <token regexp="yes">de|d'</token>
+        <token regexp="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre</token>
+      </pattern>
+      <message>La preposició 'de' és innecessària. <suggestion>\1 \2</suggestion></message>
+      <short>AMB_DATA_DEL</short>
+    </rule>
+    <rule id="AMB_QUE_PUC_AJUDAR" name="amb què puc ajudar -&gt; en què puc ajudar">
+      <pattern>
+        <token>amb</token>
+        <token>què</token>
+        <token min="0" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token inflected="yes">poder</token>
+        <token>ajudar</token>
+      </pattern>
+      <message>La preposició adequada és probablement <suggestion>en</suggestion>.</message>
+      <short>AMB_QUE_PUC_AJUDAR</short>
+    </rule>
     <rule id="ANAR_EN_SEGONES" name="anar en segones">
       <pattern>
         <token inflected="yes">anar</token>
@@ -10695,7 +10837,7 @@
     <rule id="BASAR_EN" name="basar *amb/en">
       <pattern>
         <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes">basar|centrar|fixar|confiar|implicar|involucrar</token>
-        <token min="0" max="3" postag="RG|LOC_ADV|" postag_regexp="yes">
+        <token min="0" max="3" postag="RG|LOC_ADV|P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes">
           <exception>-hi</exception>
         </token>
         <token>amb</token>
@@ -10845,6 +10987,16 @@
       <message>La preposició adequada en aquesta expressió és <suggestion>en</suggestion>.</message>
       <short>EN_VIGOR</short>
     </rule>
+    <rule id="ESCRIT_AMB_CATALA" name="escrit amb català -&gt; escrit en català">
+      <pattern>
+        <token regexp="yes" inflected="yes">escriure|parlar|traduir</token>
+        <token min="0" max="4" postag="RG|LOC_ADV" postag_regexp="yes"></token>
+        <token>amb</token>
+        <token regexp="yes">aasa|aasax|abaknon|abar|abazí|abira|abishira|abkhaz|abron|acatec|acateco|achagua|achawa|achomawi|achual|achuar|achumawi|achí|adasen|addasen|addo|adigué|adsawa|adsoa|afrikaans|afroseminola|age|agnang|aguacateco|aguajun|aguaruna|agul|agusan|agutainen|agutaino|agutayanen|agutayano|agutaynon|ahtena|ahtna|ahuajún|aikanã|aikewara|aimara|aimoré|aixanti|ajagua|ajawa|ajlujlay|ajujure|ajurú|akateko|akawaio|akeanon|akewara|akewere|akhvakh|akie|akiek|aklan|aklano|aklanon|akuawa|akum|akunsu|akuntsu|akuntsú|akurio|akuriyana|akuriyo|akwawa|akwen|akweto|alabama|alacaluf|alagwa|alagwaisi|alagwase|alakaluf|alangan|alawa|albanès|albanés|alemany|aleuta|alguerès|alguerés|alibamu|alsacià|aluku|alunfa|alutiiq|amacacore|amaguaco|amahuaca|amanavil|amarakaeri|amarinya|amasi|amawaca|amawaka|amawáka|amazic|ambele|amenguaca|americà|amerindi|ameuhaque|amhàric|amoesha|amonap|amuesha|anambè|anambé|andi|andira|andoa|andoke|andoque|angaité|angie|anglès|anglés|angoni|anishinaabemowin|annabonense|annamita|annobonense|annobonès|annobonés|anodöb|anta|antiqueño|anumaniá|anyah|anyan|anyang|anyar|anyú|aona|aoniken|apalai|apalakiri|apalaí|apaniekrà|aparai|aparaí|aparis|apay|apayao|apiacá|apiake|apiakà|apinagé|apinajé|apinayé|apingui|apsaalooke|apsaloka|apsaroka|apurawnon|apurinà|apurinã|arabela|aragonès|aragonés|aramanik|arameu|aranès|aranés|araona|arapaho|arapahoe|arapium|araucà|arauine|arauite|arawak|arawetè|arekuna|arequena|arhuaco|ariathí|aricapú|arickaree|arikapú|arikara|arikari|aripaktsá|armeni|arnarnanusa|arpità|arrapaho|arsario|artxi|arutani|aruà|aràra|arára|asa|asaka|asante|asax|ashaninca|ashaninka|asheninca|asheninka|ashochimi|ashuar|ashàninga|ashéninga|asi|asiq|assaka|assiniboin|assiniboine|assumbo|assuriní|asturianolleonès|asturianolleonés|asturià|asturlleonès|asturlleonés|asu|asumbo|asurinikin|atacama|atacameño|atalalà|athu|ati|atie|atiri|atna|atong|atorad|atorada|atsugewi|atta|attié|auaqué|auca|aueti|aueto|auiti|aukan|aura|aurà|aurá|aurã|auré|aurê|aushiri|auxira|avand|avande|avà|awa|awaeté|awajún|awakateko|awake|awana|awapit|awareté|awaruna|awaté|aweikoma|awen|aweti|awetí|awetö|awi|awing|awshiri|awà|ayao|ayawa|ayaya|aymoré|ayo|ayoreo|ayoréode|ayta|ayurú|azerbaidjanès|azerbaidjanés|añu|añuja|añún|babanki|bable|baboute|babute|babuyan|baca|bacairi|bacairí|badian|badzumbo|bafangi|bafanji|bafanyi|bafmen|bafoumeng|bafuchu|bafumen|bafut|bagobo|bagvalal|bagyeli|baixkir|bajan|bajele|baka|bakairi|bako|bakoko|bakola|balaban|balanda|balangad|balangao|balangaw|balant|balanta|balante|balear|balegete|balengue|bali|baliwon|balkar|ballante|balo|balutxi|bamankan|bambili|bamboute|bambuluwe|bamekon|bamenyan|bameta|bamileke|bamileké|bamiléké|baminge|bamum|bamun|bana|banagere|banen|banend|bang|bangla|bangon|baninge|baniva|banivo|baniwa|banja|banjangi|banoho|banso|banta|bantakpa|bantoanon|banton|banyang|banyangi|bapinyi|barasana|barasano|barbardian|bari|barà|baré|barí|basa|basc|basoo|bassa|batak|batako|batanga|batangan|bati|batibo|bats|batsbi|baure|bayangi|baza|bea|beaver|bebe|beezen|bekoe|belante|belarús|belegete|belibi|belip|bena|bende|benga|bengalí|benin|berber|berbice|beseki|besiro|besleri|bezhta|bicolano|bida|bielorús|bikol|bikom|bilaan|binatak|bini|binisaya|binokid|binukid|bisa|bisio|bisiwo|bissa|bissio|bitare|blaan|blackfeet|blackfoot|blante|bocotà|bogotà|bogue|bogyeli|bokotà|bolinao|bonde|bondei|bongo|bongwe|boni|bontoc|bontok|bora|boro|bororo|boruca|borun|borunca|boróro|borôro|bosha|bosnià|botlikh|boto|botocudo|botolan|boulahay|boumba|boute|bowe|brase|brasiler|brassa|bribri|bron|brong|brunca|bruncas|brunka|bu|bual|bubi|bubure|budukh|bue|bufe|bugkalut|buglere|bugre|buhagana|buhid|bukalot|bukidnon|bula|bulahai|bulahay|bulanda|bule|bulu|bulunge|bung|bungnu|bungu|bungun|bunu|buriad|buriat|burunca|burunge|burungi|buryat|buré|busam|bute|butuanon|buwal|bvukoo|bàmbara|bésiro|bía|bíntucua|búlgar|cabixi|cabiyari|cabécar|cacahueros|cacaopera|cachibo|cacibo|caddo|caddoe|cadiueu|caduveo|cagayan|cagayancillo|cagayano|cagayanon|cahivo|cahuarana|cahuarano|cahuilla|caiabi|caixubi|caka|cakchiquel|calamiano|calchaquí|caliana|calibugan|calinga|callahuaya|callawaya|calmuc|cambap|cambeba|camfranglais|camiguinon|campa|camsà|canarès|canarés|candoshi|candoxi|cane|canela|canesi|canichana|canoeiro|capabaquebo|capacho|capampangan|capanahua|capanawa|capishto|caposho|capuleño|capuruchano|capverdià|caquetá|caquinte|carabayo|carajà|carapana|carapano|caraïta|carelià|carib|carihona|carijona|carina|carirí|caritiana|cariña|carrier|cashinahua|cashquiha|casiguran|casiguranin|castellà|casu|català|catamarcana|catauixi|catawichi|catawishi|cauzuh|cavina|cavineña|cavineño|caviteño|caviyari|cawarano|caxararí|caxibo|caxinaua|caxiniti|cayapa|cayubaba|cayuga|cayuvava|cayuwava|cebuano|cevenda|chabacano|chabakano|chachi|chaga|chagga|chaima|chaka|chake|chalchiteko|chamacoco|chamakoko|chamicura|chamicuro|chamikolo|chamikuro|chamila|chan|chaná|chané|chapacura|charrúa|charumã|chasi|chasu|chavacano|chayawita|chayma|chebero|chedungun|cheke|chenanesmà|cheremis|cherokee|cheyanne|cheyenne|chiasu|chibcha|chibena|chicano|chicao|chickasaw|chidigo|chigogo|chikagulu|chikena|chilanga|chilcoaten|chilcotin|chimakonde|chimane|chimatengo|chimegi|chimila|chimpoto|chimwera|chimíle|chinamwanga|chindali|chindonde|chingoni|chinimakonde|chipaya|chipewyan|chipewyà|chipogolo|chipogoro|chippewa|chiquimulilla|chiquitano|chiquito|chiricahua|chirichano|chiripuno|chiriquí|chirripó|chittagonià|chitumbuka|chivenda|chiwere|chiyao|chizigula|chocré|choctaw|chocó|choinimni|chokó|chol|cholo|choluteca|chopunnish|chori|chorote|chorotega|choroti|choynumni|chubo|chufie'|chuh|chuhe|chuj|chuje|chukchansi|chulupí|chumano|chuncho|chunupí|churoya|chuufi|chàcobo|chàkobo|cifipa|cigogo|cilungu|cimakonde|cimarrón|cimwera|cinamiguin|cintalarga|cipimbwe|cisafwa|clallam|coaiquer|coaià|coche|cocopa|cocopah|cocoy|cofan|cogapakori|cogui|colorado|columbian|colúmbia|comanxe|combe|comox|concani|concow|conking|conob|coos|copte|coreguaje|coreà|corina|coroado|correguaje|cors|corumbiara|coto|coushatta|coyavitis|coyote|crahô|craô|cree|creek|crenge|crenye|creola|creye|crioulo|croat|crow|cueva|cuiba|cuiva|cujareño|culina|cumanagoto|cumanasho|cuna|cunimía|cunza|cupeño|curripaco|curripako|curuaià|curâ|cuvok|cuyare|cuyo|cuyono|cuyunon|càmbric|cágaba|cèltic|còrnic|daba|dabba|dacoromanès|dacoromanés|dagbamba|dagbane|dagbani|dagomba|daguestànic|dahomeen|dahseyé|dakota|damana|damara|damaweño|dani|danès|danés|daní|darguà|dari|datoga|datooga|davaoeño|davawenyo|davaweño|dawson|debabaon|delaware|denaina|dene|dengurume|deni|denya|dení|desana|desano|dholuo|diaguita|dibabaon|dibabawon|didinaht|dido|diegueño|digo|digüt|din|dineh|diola|diria|ditidat|diula|djao|djedji|djimi|djula|doe|dogrib|dohe|doma|dougour|dugwor|dukaya|dule|dulegaya|duleigaiya|dumbo|dumbule|dunneza|dyula|dzalamo|dzaze|dzinda|dzindza|dâw|ebele|ebkuo|ebwe|echijita|echoja|ecijita|edo|edulia|efe|egipci|egun|eibe|ekibena|ekihaya|ekikerebe|ekikinga|ekipangwa|ekpwo|elip|eman|emane|embera|emberá|emerillon|emoa|enimaca|enimaga|enumaniá|epena|erikbaktsá|erokh|erzya|escocès|escocés|eshisango|esimbi|eslovac|eslovè|espanyol|esperanto|essimbi|estonià|etelena|eteteguaje|eton|etsehesenestse|euchee|eue|eusquera|evand|evant|eve|ewe|ewondo|ewundu|eyan|eye|fanagalo|fanakalo|fang|fante|fanti|farangao|farsi|fernandino|feroès|feroés|fiba|fiji|filipí|finlandès|finlandés|finès|finés|fiome|fipa|flaaitaal|flamenc|flathead|fo|fogbe|fon|fongbe|fonnu|fornió|foute|frananglais|francoprovençal|francès|francés|franglais|frisó|friülà|friülès|friülés|ful|fula|fulani|fulbe|fulfulde|fulniô|furlà|furnió|fut|ga|gadala|gaddang|gae|gagaús|galavda|galibi|galim|gallec|gallegoportuguès|gallegoportugués|gallinoméro|galvaxdaxa|gal·lès|gal·lés|garifuna|garífuna|gascó|gauar|gavar|gavião|gavoko|gawar|gaye|gbe|gbunhu|geechee|gelebda|gemjek|georgià|geral|germànic|gevoko|ghboko|ghuduvun|giangan|giangga|gieli|giha|ginabwal|gitano|gitksan|glanda|glavda|godoberi|gogo|goroa|gorowa|gorwaa|goude|gouwar|grec|grikwa|griqua|groenlandès|groenlandés|gry|guacanahua|guagua|guaharibo|guahibo|guajajará|guajiro|guajà|guamaca|guambiano|guana|guanano|guanà|guaraní|guarao|guarasugwé|guarayo|guarayu|guarayú|guarequena|guariba|guatuso|guató|guaviare|guaxare|guayabero|guaymí|guazacapan|gubat|gude|guelebda|guemshek|guennaken|gueren|guetar|gugbe|guianes|guiangga|guicurú|gujarati|gullah|gunu|guru|guyanais|gvoko|gwamba|gweno|gyaman|gyeli|gàl·lic|güenoa|haarat|hadza|hadzapi|hagueti|haiao|haida|haisla|hakka|halakwalip|halh|halití|halkomelem|halqomeylem|hamacore|hanalulo|hangaza|hanis|hanonoo|hanunóo|harakmbet|harakmbut|hatsa|haussa|hawaià|hawuwut|haya|hdi|hebreu|hedi|hehe|heiltsuk|hewadie|hiaitíihi|hiao|hidatsa|hidé|hijuk|hikaya|hilipan|hiloona|himarimã|himli|himlu|hina|hinatsa|hindavi|hindi|hindko|hindku|hindustànic|hinukh|hiraca|hiskariana|hitchiti|hitnü|hiwi|hixkariana|hixkaryána|hocak|hocangara|hochangara|hochank|hochunk|hohe|holandès|holandés|holikachuk|holólupai|hongarès|hongarés|hongote|hoopa|hopi|hora|hotcangara|hova|huambisa|huambiza|huao|huaorani|huarayo|huarí|huetar|huitoto|hunzib|hupda|hyao|hän|híligaynon|ianomami|iaualapití|iauanauá|ibadoy|ibaloi|ibaloy|ibanag|ibanago|ibataan|ibatan|ibini|ibo|ichbayaten|ichilambya|ichimambwe|ichinamwanga|ichipimbwe|ichirungu|ichirungwa|ichiwanda|icifipa|icilungwa|icipimbwe|iciwanda|ide|ifugao|ifugaw|igbo|igiha|igikuria|ignaciano|igodor|igorot|ihatum|ikalahan|ikalasan|ikibena|ikibungu|ikiha|ikikizo|ikikizu|ikingonde|ikingurimi|ikinilamba|ikiniramba|ikinyakyusa|ikiruguru|ikizanaki|ikizu|ikoma|ikpen|ikpeng|ikõro|ilamba|ilanum|ilianen|illongo|ilocano|iloco|ilokano|iloko|ilonggo|ilongo|ilongot|iluko|imakua|inabaknon|inamari|inamwanga|inaquean|inato|indostànic|ingalik|ingrià|ingúix|ini|inibaloi|inmeas|innoko|insinai|inthome|intsome|inuit|inã|ioruba|ipewi|ipitineri|ipugao|ipulo|ipurinã|iquito|iraku|iramba|irangi|iranon|iranun|iraqw|iraya|irlandès|irlandés|iroka|irántxe|iránxe|isanzu|iscamtho|iscobaquebu|isconahua|isconawa|ishimalilia|ishinyiha|ishiro|ishisafwa|isikhumsha|isikula|isimbi|isinai|isinay|isindebele|isiswazi|isixhosa|iskonawa|islandès|islandés|isnag|isnay|isneg|itaal|italià|itanga|itawes|itawiq|itawis|itawit|itbayat|itbayaten|itene|iteneo|itenez|itinek|itneg|itogapuc|itogapúk|itonama|itoreuhip|ituarupa|itucali|itvayat|itza'|itzaj|iuruna|ivatan|iwa|ixil|iyive|iyon|izoceño|iñapari|iñeri|jabutí|jakalteko|jaminawa|jao|japonès|japonés|japreria|jaru|jaruna|jaruro|jaunde|javanès|javanés|javaé|javeriano|jawanaua|jebero|jemez|jemjem|jeral|jicaque|jicarilla|jiji|jimi|jimijimen|jinja|jita|jitnu|jiwi|jodi|jola|joloano|jorà|jorá|juanauo|judeocastellà|judeoespanyol|judeotat|jula|juli|jumaytepeque|juri|juriti|juruna|juruti|jurúna|jívaro|jònic|kaagan|kaapor|kabardí|kabiyari|kabori|kabuverdianu|kabékar|kachuana|kadasan|kadiweu|kado|kadohadacho|kagayan|kagayanen|kagulu|kaguru|kagwahiva|kaigani|kaingan|kaingà|kaingán|kajabi|kakaba|kakan|kakua|kakwere|kaká|kalagan|kalamian|kalamianen|kalamianon|kalanguya|kalapálo|kalasa|kaliana|kalibugan|kalina'|kalinga|kalingga|kalinha|kalispel|kallahan|kalong|kamaiurà|kamajura|kamanawa|kamayo|kamayurà|kamazung|kambéwa|kami|kamigin|kamkam|kamsiki|kamsà|kamtok|kamã|kandoshi|kanela|kangeju|kangite|kanhgág|kanhobal|kanichana|kanienkehaka|kaniuà|kankanaey|kankanay|kannada|kanoé|kanoê|kanuri|kaníbo|kapampangan|kapanawa|kapixaná|kapsiki|kapul|kaputxa|kaqchikel|kaqchiquel|kara|karafawyana|karahawyana|karajá|karamiananen|karao|karapana|karapotó|karata|karaw|kariana|karijona|karipuna|karipuná|kariri|karirí|karitiana|karitiâna|kariña|karnijó|karo|karok|karuk|kasave|kashaya|kashuyana|kasiguranin|kasinawa|kaska|kaskiha|kasnapan|kasupà|katangnan|kataugnan|katawishi|katawixi|katuena|katukina|katío|kavirondo|kawahiva|kawaiisu|kawaskar|kawesqar|kawillari|kawésqar|kaxarari|kaxujana|kaxuyana|kayabí|kayapó|kayuvava|kazakh|kedjom|kejeng|kejia|kejom|kekchí|kemezung|kenai|kenaitze|kendem|kenyang|kera|kerebe|keremi|keres|keresa|keresan|kerewe|khaladj|kheyol|khinalug|khoe|khoekhoe|khoekhoegowap|khoi|khutu|khvarxi|khwe|khwedam|kialagwa|kibena|kibende|kibondei|kibungu|kibwyo|kidigo|kidjaluo|kidoe|kidzem|kidzom|kifipa|kigiwo|kigogo|kigweno|kiha|kihangaza|kihehe|kiikizu|kiikoma|kiiraqw|kijita|kikaguru|kikami|kikimbu|kikinga|kikisi|kikonongo|kiksht|kikuria|kikutu|kikwaya|kikwere|kila|kilaangi|kilangi|kiliwa|kiliwi|kiluguru|kimaasai|kimakua|kimalila|kimambwe|kimanda|kimatengo|kimatumbi|kimawanda|kimbu|kimbugwe|kimbundu|kimwera|kinabe|kinamigin|kinamwanga|kindali|kindendeule|kindendeuli|kindiga|kinga|kingengereko|kinghwele|kingindo|kingoni|kingulu|kinikinao|kinikinau|kinikinawa|kinilamba|kiniramba|kinyakyusa|kinyamwesi|kinyamwezi|kinyasa|kinyaturu|kinyiha|kinyihanzu|kinyisanzu|kiowa|kipangwa|kipimbwe|kipiu|kirangi|kiremi|kirguís|kirimi|kiriri|kirirí|kiruguru|kiruihi|kirwo|kisafwa|kisagala|kisagara|kisambaa|kisandawe|kisangu|kiseguju|kishambaa|kishambala|kisi|kisizaki|kisonjo|kisukuma|kisumbwa|kisutu|kiswahili|kithaulhú|kitongwe|kividunda|kivinza|kivwanji|kiwanda|kiwanji|kizanaki|kizaramo|kizigula|klallam|klamath|koaià|koasati|koayà|kofane|kogi|kogui|kohoroxitari|koià|kokoy|kolchan|kom|koma|kombe|komi|komià|konda|konde|kondja|kong|konja|konkani|konkau|konkow|konongo|koosa|kootenai|kootenay|koreguaje|koshin|koskin|koso|kotsuñe|koyukon|krahó|krahô|kraô|krenak|krenakore|krenhakarore|krepe|krepi|kreye|kreyé|krikati|krinkati|kriol|kriolu|krits|ksanka|ktunaxa|kuakua|kuaya|kubeo|kudala|kuikuro|kuikuru|kuikúro|kuku|kukwe|kulina|kumeyaay|kuna|kung|kunsa|kunza|kuo|kurateg|kurd|kuria|kurkuro|kurripaco|kurripako|kuruaia|kuruaya|kuruayá|kurya|kutchin|kutenai|kutu|kuvoko|kuyonon|kuyubí|kuyunin|kuyunon|kuyuonon|kwadza|kwagiutl|kwaiker|kwakiutl|kwakwala|kwanja|kwasio|kwaya|kwaza|kweedishchaaht|kwele|kwere|kwinti|kwtsaan|kwtsan|kxoe|kxoedam|kyisapang|kyoma|kággaba|kótedia|kótiria|köggaba|kúmik|ladí|lagouané|lagubi|lagwan|lagwane|lak|lakhota|laklano|lakota|lamanik|lambia|lambya|lamnso'|lamso|lanapsua|landogo|langi|lanon|lapalapa|lapó|laz|leco|leko|lemba|lenape|lenca|lengua|lesguià|letuarã|letó|libie|ligam|lillooet|limi|lingala|lingo|lingotes|linguará|lingít|lipa|lipan|lipà|lituà|livià|llaruro|llatí|lleonès|lleonés|logone|loko|lokono|lomavren|loretano|loucheux|ludià|lughuru|lugulu|luguru|luiseño|lumbwa|lungu|lungwa|luo|lusaci|lusacià|lushootseed|lutuamian|luvure|luxemburguès|luxemburgués|lyaasa|lèsguic|maa|maasa|mabas|macaguán|macedoni|macedònic|machiguenga|machinere|machineri|machinerí|machinga|macoa|macoita|maconde|macuna|macuni|macurap|macurapi|macusa|macusi|macuxi|maczsa|macà|macú|madi|mafa|magiar|magindanao|magindanaoan|magindanaw|magingo|magu|maguindanaon|maguindanaw|magüta|mahairi|maharashtri|mahuayana|maia|maidu|maiduan|maina|maiongong|majur|maka|makaguane|makah|makchan|makhua|makiritari|makoa|makonde|makua|makuna|makurap|makuwa|makuxí|makà|makú|malagueg|malai|malaiàlam|malaueg|malaweg|malayo|maleku|malgache|malgaix|malila|malilia|malinke|maltès|maltés|malweg|malécu|mam|mamaindê|mamanwa|mamaua|mamaw|mambere|mambila|mambilla|mambue|mambwe|mamenyam|mamenyan|managua|manchinere|manchineri|manda|mandahuaca|mandan|mandara|mandarí|mandawaca|mandawaka|mandaya|mandinga|mandinka|mandjac|mandjak|mangue|maninka|manipuri|manitenere|manitenerí|manjac|manjaku|manjanku|mankon|manmanua|manoa|manta|manx|manyang|maori|mapidian|mapodi|mapoyo|mapuda|mapudungu|mapudungun|mapun|maputxe|maquiri|maquiritare|maragua|maranao|maranaw|marathi|mari|maricopa|marinawa|mariès|mariés|marobo|marocacero|marubo|masakà|masbatenyo|mashco|maskoy|maslava|massai|massaka|mataco|matagalpa|matakam|matambe|matambwe|matengo|matigsalug|matino|matis|mato|matsuvan|matsé|matsés|matumbi|matís|maurici|maué|mawakwa|mawanda|mawayana|mawé|maxakalí|maxubí|maxuruna|maya|mayabo|mayangna|mayiruna|mayo|mayoruna|mayuzuna|mazagway|mañari|mbedam|mbia|mbocobí|mbogno|mbokou|mboku|mbola|mbongno|mbougou|mbu|mbugu|mbugwe|mbui|mbuko|mbuku|mbule|mbulu|mbulugwe|mbulunge|mbunga|mbuwe|mbya|mebengokre|mefele|megimba|mehinako|mehinaku|mehta|meidoo|meinaco|meitei|meithei|mekaf|mekens|mekwengo|melchora|melebuganon|melokwo|memekere|mendankwe|meneca|meneka|mengambo|mengum|menka|menominee|menomini|menta|mequens|mere|merey|meri|meru|mescalero|meskwaki|mesquakie|messaga|messaka|meta'|metta|miccosukee|michens|michif|michopdo|micmac|miguelinho|miguhni|mikasuki|mina|minasbate|mindanao|mingi|mingrelià|minica|minitari|minnetaree|minto|miranha|miraña|mirikivo|mirãnha|mise|miskito|miskitu|missong|mitaa|mitchif|mixtec|mixteca|mizeran|mizlime|mmaala|mmala|mme|mmem|mmen|mobima|mochda|mocigin|mocobí|mocoví|mofa|mofou|moghamo|mogimba|moguex|mogés|mohave|mohawk|mojave|mojo|mokyo|molbog|molboga|molbogo|moldau|molebugan|molebuganon|molendji|molengue|molko|molkoa|molkwo|moloko|molokwo|mombe|monache|monachi|monaxo|mongol|monimbó|mono|monocho|monshoro|montagnais|montero|moore|mooré|moosehide|mopan|mopane|moquen|moracano|mordovià|mordvà|mordví|more|moro|morotoco|moré|mosca|mosetene|mosetén|moshe|mossi|motchekin|motilone|motilón|motsuvan|mouyenge|mouyengue|movere|movima|moxo|moyanek|mpoto|mudaye|mudjétira|muinane|muinani|muisca|muiska|mundabli|mundani|mundum|mundurucú|mundurukú|mundé|mungaka|mungyen|muniche|munichi|munichino|munsee|munshi|munsi|munxar|mura|murai|murato|murire|murui|muskogee|muta|mutú|mutús|muyang|muyenge|mvanip|mvanlip|mvano|mvanon|mvanöp|mwanga|mwela|mwera|myagatwa|myau|myenge|myky|mynky|métis|mískitu|mítua|mítus|mïnïka|mükü|nabaloi|nabesna|nadëb|nadöbö|nagranda|nahanni|nahua|nahuat|nahuatl|nakarothe|naki|nakoda|nakota|nama|nambikuàra|nambiquara|namwanga|namwezi|nanti|nass|nata|natakan|natuak|navaho|navajo|nawa|nbule|ncane|nchaney|nchanti|nchufie|ncufie|ndali|ndamba|ndara|nde|ndee|ndendeule|ndendeuli|ndengeleko|ndengereko|ndir|ndjuka|ndomde|ndonde|ndoola|ndoro|ndunda|ndzundza|neerlandès|neerlandés|neeshenam|negerhollands|nenets|nentsià|neoarameu|neoegipci|nepalès|nepalés|nepoye|nevome|nga|ngaaka|ngabere|ngamambo|ngamambu|ngasa|ngemba|ngembo|nggweshe|nghuki|ngi|ngie|ngindo|ngishe|ngomba|ngonde|ngoni|ngoshie|ngossi|nguemba|ngulu|ngumbi|nguni|ngunu|ngurimi|nguru|nguruimi|ngwaw|ngwele|ngwo|ngöbe|nheengatú|nhwele|niagantsi|nilamba|nilyamba|nipode|niramba|nisenan|nisgha|nishinam|nishnabé|nitinaht|nitinat|nivaclé|njemnjem|njen|njerep|njindo|njoyame|njurup|njwande|nklampx|nkom|nkwen|noamlakee|noanama|nogai|noho|nohu|noku|nomatsiguenga|nomlaki|noni|nonuya|noone|noori|nootka|nor|noruec|nrebele|nsari|nsilxcin|nso'|ntlakapamux|ntlakapmuk|ntogapid|ntogapig|ntshanti|nuasue|nubaca|nugunu|nukak|nukini|nukuíni|nulibie|numipu|nundoro|nuquiní|nutka|nuuchahnulth|nuxalk|nyamnyam|nyamwanga|nyamwesi|nyamwezi|nyang|nyanza|nyasa|nyaturu|nyen|nyiha|nyika|nyilamba|nyiramba|nyixa|nynaka|nzin|nàhuatl|nábela|nákum|nènet|nïpode|nòrdic|nóóni|oayampi|obonya|ocaina|occità|odri|odrum|ofaié|ofayé|oirat|ojibwa|ojibwe|ojibwemowin|okaina|okanagon|okanagà|okanisi|okanogan|okiek|oku|okum|oliya|omagua|omaha|omawa|ona|onandaga|oneida|ongamo|onondaga|onödowága|onötowáka|opaié|orechicano|orechón|orejón|orissa|oriya|orotiña|orowari|osage|osatu|oshie|ossatu|osseta|otanabe|otanave|ouala|ouayeone|ouldémé|ovand|ovande|ovando|oviedo|ovioba|pacaguara|pacahuara|pacawara|pacecí|padogo|padokwa|paduko|pahikwaki|pai|paipai|paixtu|pakaanova|pakawara|palaihnih|palanan|palanenyo|palavano|palawan|palawano|palawanun|palaweño|palenque|palenquero|palikur|palmela|palmella|pamenyan|pamoari|pampa|pampanga|pampangan|pampanggo|pampango|panamint|panare|panari|panarà|panará|panay|panayano|paneroa|pangasinam|pangasinan|pangasinense|panggalatok|pangwa|panjabi|pano|panobo|papiamento|papiamentu|papiwa|parakanân|parakanã|paranan|paraujano|pare|pareci|parecís|parekwa|paresi|paressí|paresí|parikwaki|parintintín|parirí|parkateje|parkwa|parkwa/podoko|parkàteye|paro|parocana|parquenahua|parua|parukotó|pascuense|patagon|patagones|patois|patsoka|patwa|patween|paucerne|paumarí|paumelenho|pauserna|paviotso|pawdawkwa|pawnee|paya|payagua|payniken|paño|pech|pedi|pelasla|pelimpo|penin|penyin|pepojivi|persa|pesaa|peshawari|peul|phuthi|pianakoto|piano|piapoco|piapoko|piaroa|pichi|pichinglis|picuris|picurís|pidgin|pidginglis|piegan|piipaash|pikanii|pilacà|pilagà|pimbwe|pinche|pinyin|pipil|pirahã|piratapuya|piratapuyo|piro|pisabo|pisagua|pisahua|pisamira|planan|playero|pocanga|pocomchí|pocomán|poconchí|podogo|podoko|podokwo|pogolo|pogolu|pogora|pogoro|poianaua|pokomam|pokomchí|polonès|polonés|ponca|ponka|popengare|popo|popti|poqomam|poqomchi'|porteurs|portuguès|portugués|potawatomi|pottawatomie|pottawotomi|poyanawa|poyenisati|pponkka|provençal|psikye|ptsake|pueblo|puelche|puinabe|puinahua|puinare|puinave|pujuni|pula|pulaar|pumbora|pumé|puruba|puruborà|purupurú|pute|páez|pápiwa|pélasla|pémono|pël|qalispe|qanjobal|qawashqar|qawasqar|quaià|quarotean|quechan|quiangan|quiativis|quiché|quileute|quiligua|quillayute|quinamiguin|quipiu|quiturran|quítxua|qwadza|qwiqwidicciat|rama|ramarama|ramkokamekrà|ranao|rangi|rankokamekra|rankokamekran|rankokamekrá|rapanui|ree|regi|remi|restigouche|resígaro|retoromànic|retuarna|retuarã|reyesano|rikbaktsà|rimi|ripa|ris|roea|romanx|romanès|romanés|romaní|romanó|romblomanon|romblon|rori|roucouyenne|ruandès|ruandés|rufiji|ruguru|ruhaya|ruihi|runga|rungu|rungwa|rus|rwa|rwo|rútul|sabane|sabanero|sabanes|sabones|sabriles|sacapulteco|safwa|sagala|sagara|sageju|sahaptin|sahnish|sakapulteko|sakirabiat|sakurabiat|salumã|samal|samareño|samarà|sambaa|sambala|sambara|sami|sanam|sanapanà|sandaui|sandawe|sandaweeki|sandawi|sandwe|sanggil|sangil|sangiré|sango|sanish|sanka|sanká|saponi|sapoteka|sapoteko|sapukí|sapé|sarahole|sarahule|saraiki|sarakole|sarakule|saramaccan|saramaka|saramo|saraveca|sarawule|sarcee|sarci|sard|sari|sarirá|sarsi|sarwaye|sasi|sateré|sayacu|sayma|schambala|sebuano|sechelt|seco|secumne|secwepemc|secwepemctsin|segeju|sekani|sekasie|seke|seki|sekiana|sekiani|sekiyani|sekumne|selis|selkirk|selknam|semigae|seneca|sengeju|senufo|sepantsula|sepedi|seraiki|serbi|serbocroat|sereer|serer|serrano|seshelt|sesotho|setsotsi|setswana|sewe|sgaroore|shaka|shalambombo|shambaa|shambala|shanenawa|shangaan|shangana|shaninawa|sharanawa|sharwa|shashi|shashishalhem|shasta|shastika|shavante|shawano|shawnee|shawni|shede|sheke|sherente|sherwin|shikana|shimacu|shimalilia|shimigae|shimizya|shinyiha|shipaja|shipibo|shitsonga|shiwi|shiwiar|shiwiro|shoro|shoshone|shoshoni|shuar|shubi|shuswap|siamès|siamés|siaviri|sibhende|sibundoy|sikanni|sikiana|siksika|sikuani|sileti|siloti|silviano|simacu|simiza|simza|sinama|sinauna|sindebele|sindhi|sindi|singalès|singalés|sinja|siocon|sioux|sipacapense|sipacapeño|sipakapense|siraiki|siriana|siriane|siriano|sirionó|sisutho|siswati|sitongwe|sizaki|skarohreh|skarureh|skepi|skitswish|slave|slavi|sobo|sochile|socré|sokile|sokili|somyev|soninke|sonjo|sonyo|sorowahá|soràbic|sose|soso|sotho|soto|soussou|souto|spokane|squamish|sranan|ssuga|stoney|straits|suahili|suba|subanen|subanon|subanun|subi|suec|suga|sugboanon|sugcestun|sugpiaq|suiá|sukuma|sulu|suluk|sumbwa|sumo|sumu|suomi|surianá|surigaonon|suroa|suruwahà|suryana|susoo|susu|suthu|suto|sutu|suuhtúk|suyà|svan|svanetià|swahili|swati|swazi|sylheti|sàliba|sànscrit|síwila|sòrab|taal|tabassaran|tabele|tacana|tachi|tadianan|tadyawan|tagabawa|tagabili|tagakaulu|tagal|tagbanwa|tagbo|tage|tagish|tagàlog|tahltan|tahltà|tai|tailandès|tailandés|taiwanès|taiwanés|takamanda|takana|takudh|talamanca|talix|taliàseri|tama|tamboka|tambuka|tanacross|tanaina|tanana|tanimuka|tanka|tano|taos|tapacua|tapanhúna|tapiete|tapirapè|tapirapé|tapíete|tarapecosi|tariana|tariano|taruma|tarumã|tatog|tatoga|taturu|tatuyo|taubuid|taushiro|tausug|tawbuid|tawit|tawka|taya|taze|taíno|taïno|tboli|tchade|tchakidjebe|tchede|tchevi|tchouvok|teco|tectiteco|tectitán|tedoray|teduray|teguray|tehuelche|tehuesh|tejuca|tekela|tekenika|tekeza|teko|tektiteko|telaki|teleki|telugu|tembé|temi|tende|tenetehar|tenetehara|tenetehára|tequenica|terena|tereno|teribe|terki|ternateño|terêna|teteté|teushen|tewa|thai|thlingchadine|thompson|thonga|tiatinagua|tibetà|tiboli|ticuna|tidulay|tikuna|timbisha|timbuka|timbé|timote|tinde|tindi|tindiga|tinggian|tingian|tinguian|tinguianes|tinigua|tinitianes|tiribí|tirio|tiriyó|tirió|tirub|tiruray|tiv|tiwa|tlapanec|tlicho|tlingit|toba|tol|tolowa|tolpan|tolupan|tombucas|tongbo|tongwe|tonore|toothle|tora|toraz|torbi|torerizes|toromona|toromono|torrupan|torà|torá|toré|towa|towolhi|trinitario|trio|trumai|trumaí|tsakhur|tsalagi|tsamak|tsattine|tsez|tshivenda|tsimpshian|tsimshian|tsimshià|tsiname|tsinghwele|tsitsistas|tslagi|tsoneka|tsonga|tsotsitaal|tsoyaha|tsuvan|tswana|tsàchila|tsáçe|tubarão|tubatulabal|tucano|tuchone|tucuna|tukano|tukudh|tukuna|tumboka|tumbuka|tunayana|tunebo|tunen|tunuli|tupamasa|tupari|tuparí|tura|turc|turcman|turiuara|turiwara|turu|turá|tuscarora|tutapi|tutapishco|tutchone|tutelo|tutxone|tuyuca|twendi|txamalal|txec|txeremís|txerquès|txerqués|txetxè|txicão|txikân|txikão|txol|txuvaix|tzeltal|tzilkotin|tzutuhil|tàmil|tàtar|térraba|tübatulabal|tümpisa|uaicana|uaieue|uaikena|uainana|uaiuai|uakambalelté|uanana|uari|uasöna|uaurá|ubikh|uchean|uchi|ucraïnès|ucraïnés|udin|udlam|udmurt|ugare|ugie|ugweno|uive|ukfwo|uku|uldemé|ulipe|ulwa|umanhan|umawa|umbundu|umua|unami|ungie|uomo|upsaroka|urarina|urdú|urequema|urhobo|uriya|uru|uruak|urubú|urukú|urupà|urushubi|urutani|uspanteco|uspanteko|ute|utkali|uwa|uzam|uzlam|vacacocha|vadiya|valencià|valiente|vamé|vanda|vasakela|vaurá|veiao|vemgo|venda|vepse|vhe|viceíta|vidunda|vidunga|vietnamita|vilela|vinza|visaia|vot|voto|voute|voutere|vute|vwanji|waali|wabui|waiboi|waikhara|waikino|waimaha|waina|waiwai|wajao|wajaru|wajurú|wakingdiga|wala|wali|wama|wambiano|wanano|wanda|wandala|wanji|wanninawa|wanse|wanána|waorani|wapishana|wapitxana|wapixana|wappo|wapumni|warao|warapiche|waray|warekena|wari|wariapano|warikiana|warikyana|waruwaru|washo|wasi|wasonjo|watemi|watindega|watuso|wauja|waumeo|waunana|waurà|wawa|wayampi|wayana|wayhara|wayora|wayoró|wayurú|wayuu|wayú|wazaizara|wende|wichita|wichí|winnebago|wintu|wintun|winá|withi|wiwa|wothuha|woute|wu|wuhána|wungu|wunua|wute|wuzlam|wuöthuja|wánai|wòlof|xaadas|xadi|xagua|xambioà|xebero|xedi|xeiene|xerente|xerenti|xerewyana|xhosa|xipaia|xipaya|xiri|xirianà|xirigowab|xirikwa|xiriwai|xokleng|xokren|xosa|xu|yabarana|yagan|yaghan|yagua|yahua|yahuanahua|yakan|yamanawa|yambassa|yaminaha|yaminawa|yanesha|yangben|yanoama|yanomami|yanzi|yao|yaounde|yapaco|yaprería|yari|yaruro|yarí|yasa|yassa|yatê|yaunde|yava|yawa|yawabo|yawalapiti|yawalpití|yawanawà|yawarana|yawelmani|ybanag|yeba|yecuana|yegua|yei|yekuana|yeral|yiive|yini|yjxa|yogad|yogap|yora|yoranahua|yowlumni|ypugao|yshirö|yuana|yuapin|yuba|yuchee|yuchi|yucuna|yudhia|yudya|yue|yuki|yuko|yukuna|yukutare|yukí|yuma|yupa|yuqui|yura|yuracaré|yurakaré|yuri|yuriti|yurok|yurutí|yurí|yurúna|yàmana|yófuajà|zalamo|zamuco|zanaki|zapoteca|zapoteco|zaramo|zaramu|ziba|zigua|zigula|zinja|zinza|zolota|zoró|zulgo|zulgwa|zulu|zulú|zuni|zuruwahá|zuñi|zàparo|àrab|àtic|àvar|àzeri|èuscar|êpera|ìtón|ídix|ñandeva|ñañañe|khomani</token>
+      </pattern>
+      <message>La preposició més adequada en aquest cas és <suggestion>en</suggestion>.</message>
+      <short>ESCRIT_AMB_CATALA</short>
+    </rule>
     <rule id="ES_COMPLAU_A" name="es complau informar-vos -&gt; es complau a informar-vos">
       <pattern>
         <token inflected="yes" postag="_reflexiu">complaure</token>
@@ -10854,12 +11006,20 @@
       <message>Hi manca la preposició 'a'. <suggestion>a \3</suggestion></message>
       <short>ES_COMPLAU_A</short>
     </rule>
+    <rule id="FINS_AGOST" name="fins agost -&gt; fins a agost">
+      <pattern>
+        <token>fins</token>
+        <token regexp="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre</token>
+      </pattern>
+      <message>Cal escriure <suggestion>fins a</suggestion>, excepte si equival a "fins i tot".</message>
+      <short>FINS_AGOST</short>
+    </rule>
     <rule id="FINS_A_ARA" name="fins a ara -&gt; fins ara">
       <pattern>
         <token>fins</token>
         <token>a</token>
         <token regexp="yes" min="0">ben|molt|força|bastant|prou</token>
-        <token regexp="yes">|</token>
+        <token regexp="yes">sempre|entra(t|ts|da|des)|passa(t|ts|da|des)|tocad(a|es)|arran|enfront|per|durant|llavors|tard|aviat|pròximament|properament|prompte|avui|abans|després|hui|ara|demà|ahir|abans-d'ahir|despús-ahir|despús-demà|aquí|ací|allí|allà|ahí|aleshores|recentment|posteriorment|mai|dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge</token>
       </pattern>
       <message>Escrivim <suggestion>fins</suggestion> davant d'alguns adverbis de temps i de lloc.</message>
       <short>FINS_A_ARA</short>
@@ -11161,6 +11321,16 @@
       </pattern>
       <message>Error de concordança. <suggestion>\1 \2</suggestion></message>
       <short>DETECTIVA</short>
+    </rule>
+    <rule id="INCLOS_FINS_I_TOT" name="inclòs -&gt; fins i tot">
+      <pattern>
+        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
+        <token>inclòs</token>
+        <token min="0" max="3" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[IS].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>fins i tot</suggestion>?</message>
+      <short>INCLOS_FINS_I_TOT</short>
     </rule>
     <rule id="LA_TESIS" name="la tesis -&gt; la tesi">
       <pattern>
@@ -11973,7 +12143,7 @@
       <pattern>
         <token regexp="yes">tots|totes</token>
         <token regexp="yes">els|les</token>
-        <token regexp="yes" inflected="yes">||cop|colp|vegada|volta</token>
+        <token regexp="yes" inflected="yes">matinada|matí|migdia|tarda|vesprada|horabaixa|vespre|capvespre|nit1|mitjanit|segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|cop|colp|vegada|volta</token>
       </pattern>
       <message>Amb valor freqüentatiu val més dir <suggestion>cada \3</suggestion>.</message>
       <short>Expressió preferible</short>
@@ -12131,8 +12301,8 @@
   <category id="NOMS_PROPIS_MULTI" name="noms de persones i llocs">
     <rule id="A_PUNT" name="À Punt">
       <pattern>
-        <token>A</token>
-        <token>Punt</token>
+        <token case_sensitive="yes">A</token>
+        <token case_sensitive="yes">Punt</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>À Punt</suggestion> (televisió pública valenciana)?</message>
       <short>A_PUNT</short>
@@ -12324,14 +12494,14 @@
   <category id="CASING" name="Majúscules i minúscules">
     <rule id="BARCA_MAJUSCULES" name="barça/Barça">
       <pattern>
-        <token>barça</token>
+        <token case_sensitive="yes">barça</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Barça</suggestion> (club de futbol)?</message>
-      <short>BARCA_MAJUSCULES</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="DOSCAT" name="2CAT -&gt; 2Cat">
       <pattern>
-        <token>2CAT</token>
+        <token case_sensitive="yes">2CAT</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>2Cat</suggestion>?</message>
       <short>DOSCAT</short>
@@ -12342,58 +12512,58 @@
         <token>humans</token>
       </pattern>
       <message>Cal escriure-ho en minúscula, excepte si forma part d'un nom propi. <suggestion>\1 \2</suggestion></message>
-      <short>DRETS_HUMANS</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="HOLANDA" name="Holanda">
       <pattern>
-        <token>holanda</token>
+        <token case_sensitive="yes">holanda</token>
       </pattern>
       <message>Si és un nom de lloc, s'escriu amb majúscula. Existeix com a nom comú (en minúscula) amb sentits menys freqüents. <suggestion>Holanda</suggestion></message>
-      <short>HOLANDA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="KEVLAR" name="Kevlar/kevlar">
       <pattern>
-        <token>Kevlar</token>
+        <token case_sensitive="yes">Kevlar</token>
       </pattern>
       <message>Si és el material (i no la marca), s'escriu en minúscula. <suggestion>\1</suggestion></message>
-      <short>KEVLAR</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="PALESTINA" name="palestina -&gt; Palestina">
       <pattern>
         <token case_sensitive="yes">palestina</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>Palestina</suggestion> (topònim)? Si és un adjectiu, es pot escriure en minúscula.</message>
-      <short>PALESTINA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="SUECIA" name="suècia/Suècia">
       <pattern>
         <token case_sensitive="yes">suècia</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\1</suggestion> (país)? En minúscula és una pell usada per a fer guants.</message>
-      <short>SUECIA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="TRESCAT" name="3CAT -&gt; 3Cat">
       <pattern>
-        <token>3CAT</token>
+        <token case_sensitive="yes">3CAT</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>3Cat</suggestion>?</message>
       <short>TRESCAT</short>
     </rule>
     <rule id="VILA_REAL" name="Vila-Real / Vila-real">
       <pattern>
-        <token>Vila</token>
-        <token>-</token>
-        <token>Real</token>
+        <token case_sensitive="yes">Vila</token>
+        <token case_sensitive="yes">-</token>
+        <token case_sensitive="yes">Real</token>
       </pattern>
       <message>Cal escriure <suggestion>Vila-real</suggestion>.</message>
-      <short>VILA_REAL</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="WHATSAPP_MAJ_MIN" name="Whatsapp -&gt; WhatsApp, whatsapp">
       <pattern>
-        <token>Whatsapp</token>
+        <token case_sensitive="yes">Whatsapp</token>
       </pattern>
       <message>Per a referir-vos a un missatge, escriviu <suggestion>\1</suggestion>; per a l'aplicació, <suggestion>WhatsApp</suggestion>.</message>
-      <short>WHATSAPP_MAJ_MIN</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="AJUNTAMENT_MAJ" name="Ajuntament/Diputació (majúscula)">
       <pattern>
@@ -12403,7 +12573,7 @@
         <token postag="NP..G.*" postag_regexp="yes"></token>
       </pattern>
       <message>Com a nom d'una institució, s'escriu amb majúscula. <suggestion>\1</suggestion></message>
-      <short>AJUNTAMENT_MAJ</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="ALEMANYA" name="alemanya/Alemanya">
       <pattern>
@@ -12411,7 +12581,7 @@
         <token case_sensitive="yes">alemanya</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\2</suggestion> (país)? En minúscula és correcte com a adjectiu.</message>
-      <short>ALEMANYA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="BRAILLE" name="braille">
       <pattern>
@@ -12419,7 +12589,7 @@
         <token case_sensitive="yes">Braille</token>
       </pattern>
       <message>El sistema d'escriptura per a cecs inventat per Louis Braille s'escriu en minúscula. <suggestion>\2</suggestion></message>
-      <short>BRAILLE</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="CM_MINUSCULA" name="cm (centímetres) en minúscula">
       <pattern>
@@ -12451,7 +12621,7 @@
         <token>.</token>
       </pattern>
       <message>Aquesta abreviatura s'escriu amb majúscula inicial. <suggestion>\1</suggestion></message>
-      <short>MAJ_ABREVIATURA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="MEDITERRANI" name="mediterrani/Mediterrani">
       <pattern>
@@ -12459,21 +12629,21 @@
         <token regexp="yes" case_sensitive="yes">mediterrani|mediterrània</token>
       </pattern>
       <message>Si és un nom propi (mar \2), s'escriu en majúscula. Si és un adjectiu, en minúscula. <suggestion>\2</suggestion></message>
-      <short>MEDITERRANI</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="NADAL" name="nadal/Nadal">
       <pattern>
         <token regexp="yes" case_sensitive="yes">nadals?</token>
       </pattern>
       <message>Normalment s'escriu en majúscula. <suggestion>\1</suggestion></message>
-      <short>NADAL</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="ORDINALS_MINUSCULA" name="símbols d'ordinals en minúscules">
       <pattern>
         <token regexp="yes" case_sensitive="yes">1RS?|2NS?|3RS?|4TS?|[5-9](È|NS)|\d\d+(È|NS)|\d+A|\d+ES</token>
       </pattern>
       <message>Si és un símbol de numeral ordinal, s'escriu en minúscula. <suggestion>\1</suggestion></message>
-      <short>ORDINALS_MINUSCULA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="SUISSA" name="suïssa/Suïssa">
       <pattern>
@@ -12481,7 +12651,7 @@
         <token case_sensitive="yes">suïssa</token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\2</suggestion> (país)? En minúscula és correcte com a adjectiu.</message>
-      <short>SUISSA</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="WHATSAPPS" name="Whatsapps -&gt; whatsapps">
       <pattern>
@@ -12490,14 +12660,14 @@
         </token>
       </pattern>
       <message>Per a referir-vos als missatges, escriviu <suggestion>\1</suggestion>; per a l'aplicació, <suggestion>WhatsApp</suggestion>.</message>
-      <short>WHATSAPPS</short>
+      <short>Majúscules i minúscules</short>
     </rule>
     <rule id="WIFI" name="wifi">
       <pattern>
         <token regexp="yes">wifis?</token>
       </pattern>
       <message>Normalment s'escriu en minúscula. <suggestion>\1</suggestion></message>
-      <short>WIFI</short>
+      <short>Majúscules i minúscules</short>
     </rule>
   </category>
   <category id="AUTOMATIC_TRANSLATION" name="Errors de traductor automàtic">
@@ -12562,7 +12732,7 @@
     </rule>
     <rule id="ANYS_I_MITJA" name="anys i *mitjà/mig">
       <pattern>
-        <token regexp="yes" inflected="yes">|temporada|curs|vegada|cop|volta</token>
+        <token regexp="yes" inflected="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|temporada|curs|vegada|cop|volta</token>
         <token>i</token>
         <token regexp="yes">mitjà|mitjana</token>
       </pattern>
@@ -12742,7 +12912,7 @@
         <token>de</token>
         <token min="0" postag="DA.*" postag_regexp="yes"></token>
         <token regexp="yes" min="0">mateixa?</token>
-        <token regexp="yes">|[XIV]+|s|||\d+||dictadura|guerra|primera|segona</token>
+        <token regexp="yes">segon|minut|hora|horeta|dia|jorn|jornada|setmana|quinzena|mes|trimestre|quadrimestre|semestre|any|lustre|dècada|decenni|segle|mil·lenni|mil·lenari|minutet|segonet|anyet|[XIV]+|s|estona|poc|temps|moment|instant|període|ara|avui|hui|demà|despús-demà|ahir|despús-ahir|endemà|enguany|temporada|curs|abans-d'ahir|\d+|gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|dictadura|guerra|primera|segona</token>
       </pattern>
       <message>Possible error de traductor automàtic. <suggestion>la fi</suggestion></message>
       <short>FINALITATS_FI</short>
@@ -12777,7 +12947,7 @@
       <pattern>
         <token inflected="yes" postag="V.IP3..." postag_regexp="yes">poder</token>
         <token>que</token>
-        <token min="0" max="3" postag="|R.*" postag_regexp="yes"></token>
+        <token min="0" max="3" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|R.*" postag_regexp="yes"></token>
         <token postag="V.S.*" postag_regexp="yes"></token>
       </pattern>
       <message>Aquesta expressió és probablement un calc del castellà. <suggestion>\1 ser que</suggestion></message>
@@ -12927,9 +13097,9 @@
     </rule>
     <rule id="SOBRA_ESPAI_EN_UNITATS_BARRA_UNITATS" name="km/ h -&gt; km/h">
       <pattern>
-        <token regexp="yes">|</token>
-        <token>/</token>
-        <token regexp="yes">|</token>
+        <token regexp="yes" case_sensitive="yes">(da|h|k|M|G|T|P|E|Z|Y|d|c|m|µ|n|p|f|a|z|y)?(m|g|s|A|K|cd|mol|Hz|N|Pa|J|W|Wh|C|V|Ω|S|F|T|Wb|H|rad|sr|lm|lx|Bq|Gy|Sv|kat|l|L)[²³23]?|CV|cc|aC|dC|AM|PM|MB|GB|TB|M|m?[lL]|mmHg|dB|mm|cm|dm|m|km|d|h|min|s|seg|g|kg|Hz|[kM]Hz|°[FC]|K|pts|ptes|M?[£€$]|(mm|cm|dm|m|km)[23²³]</token>
+        <token case_sensitive="yes">/</token>
+        <token regexp="yes" case_sensitive="yes">(da|h|k|M|G|T|P|E|Z|Y|d|c|m|µ|n|p|f|a|z|y)?(m|g|s|A|K|cd|mol|Hz|N|Pa|J|W|Wh|C|V|Ω|S|F|T|Wb|H|rad|sr|lm|lx|Bq|Gy|Sv|kat|l|L)[²³23]?|CV|cc|aC|dC|AM|PM|MB|GB|TB|M|m?[lL]|mmHg|dB|mm|cm|dm|m|km|d|h|min|s|seg|g|kg|Hz|[kM]Hz|°[FC]|K|pts|ptes|M?[£€$]|(mm|cm|dm|m|km)[23²³]</token>
       </pattern>
       <message>S'escriu junt sense espais. <suggestion>\1\2\3</suggestion></message>
       <short>SOBRA_ESPAI_EN_UNITATS_BARRA_UNITATS</short>
@@ -13079,6 +13249,34 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>mon</suggestion> (possessiu)?</message>
       <short>MON_SENSEACCENT</short>
+    </rule>
+    <rule id="QUE_INICIAL_AMBACCENT_HO" name="'que' amb accent (amb pronom ho)">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes" min="0" max="3">\p{P}</token>
+        <token>que</token>
+        <token min="0" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes">
+          <exception>ho</exception>
+        </token>
+        <token skip="-1">ho</token>
+        <token>?</token>
+      </pattern>
+      <message>S'accentua si es pot substituir per "quina cosa". No s'accentua si la resposta a la pregunta és "sí" o "no". <suggestion>què</suggestion></message>
+      <short>QUE_INICIAL_AMBACCENT_HO</short>
+    </rule>
+    <rule id="QUE_INICIAL_SENSEACCENT_HO" name="què sense accent (amb pronom ho)">
+      <pattern>
+        <token postag="SENT_START"></token>
+        <token regexp="yes" min="0" max="3">\p{P}</token>
+        <token>què</token>
+        <token min="0" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes">
+          <exception>ho</exception>
+        </token>
+        <token skip="-1">ho</token>
+        <token>?</token>
+      </pattern>
+      <message>No s'accentua si la resposta a la pregunta és "sí" o "no". S'accentua si es pot substituir per "quina cosa". <suggestion>que</suggestion></message>
+      <short>QUE_INICIAL_SENSEACCENT_HO</short>
     </rule>
     <rule id="QUE_SENSE_ACCENT4" name="què &gt; que">
       <pattern>
@@ -13258,6 +13456,17 @@
       <message>¿Volíeu dir <suggestion>calç</suggestion> (òxid de calci, substància de color blanc)?</message>
       <short>CALS_CALC</short>
     </rule>
+    <rule id="COM_M_ES" name="com m'és -&gt; com més">
+      <pattern>
+        <token regexp="yes">com|quan</token>
+        <token>m'</token>
+        <token>és</token>
+        <token min="0" max="2" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[SI].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>més</suggestion> en comptes de "és" (del verb 'ser')?</message>
+      <short>COM_M_ES</short>
+    </rule>
     <rule id="COM_VEUREM" name="com veure'm/veurem">
       <pattern>
         <token>com</token>
@@ -13433,6 +13642,15 @@
       <message>¿Volíeu dir <suggestion>\2</suggestion>?</message>
       <short>PLURALS</short>
     </rule>
+    <rule id="POC_PUC" name="poc -&gt; puc">
+      <pattern>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token>poc</token>
+        <token postag="V.N.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>puc</suggestion> (del verb 'poder')?</message>
+      <short>POC_PUC</short>
+    </rule>
     <rule id="QU_E" name="q ue -&gt; que">
       <pattern>
         <token>qu</token>
@@ -13478,6 +13696,17 @@
       <message>¿Volíeu dir <suggestion>sent</suggestion> (gerundi del verb 'ser')?</message>
       <short>SE_N_SENT</short>
     </rule>
+    <rule id="SHE_SE" name="s'he -&gt; se">
+      <pattern>
+        <token regexp="yes">s'?</token>
+        <token regexp="yes" min="0">['’´`′]</token>
+        <token regexp="yes">he|e</token>
+        <token min="0" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.[IS].*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>se</suggestion> (pronom feble)?</message>
+      <short>SHE_SE</short>
+    </rule>
     <rule id="TAL_COMO_COM" name="així como -&gt; com">
       <pattern>
         <token>tal</token>
@@ -13512,6 +13741,28 @@
       </pattern>
       <message>¿Volíeu dir <suggestion>ha \2</suggestion>?</message>
       <short>VA_HA</short>
+    </rule>
+    <rule id="VEGEU_VEIEU" name="vegeu (subjuntiu) -&gt; veieu (indicatiu)">
+      <pattern>
+        <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
+        <token min="0">com</token>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token>vegeu</token>
+        <token>?</token>
+      </pattern>
+      <message>En aquest context, cal usar el verb en mode indicatiu. <suggestion>veieu</suggestion></message>
+      <short>VEGEU_VEIEU</short>
+    </rule>
+    <rule id="VEUREM" name="veure'm &gt; veurem">
+      <pattern>
+        <token regexp="yes">veure|vore</token>
+        <token>'m</token>
+        <token regexp="yes" inflected="yes">que|què|qui|quan|quant|on|quin|si</token>
+        <token min="0" max="2" postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
+        <token postag="V.I.*" postag_regexp="yes"></token>
+      </pattern>
+      <message>¿Volíeu dir <suggestion>\1m</suggestion> (verb en futur)?</message>
+      <short>VEUREM</short>
     </rule>
   </category>
   <category id="PRONOMS_FEBLES" name="Pronoms febles">
@@ -13589,7 +13840,7 @@
         <token>de</token>
         <token postag="D[AD]..P." postag_regexp="yes"></token>
         <token regexp="yes">que|qui</token>
-        <token min="0" max="3" postag="RN|" postag_regexp="yes"></token>
+        <token min="0" max="3" postag="RN|P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes"></token>
         <token postag="V...[13]S.." postag_regexp="yes"></token>
       </pattern>
       <message>Sembla que el verb hauria de ser en plural. <suggestion>\7</suggestion></message>
@@ -13599,9 +13850,9 @@
   <category id="STYLE_OPTIONAL" name="Qüestions estilístiques opcionals">
     <rule id="I_O" name="i/o: fórmula innecessària">
       <pattern>
-        <token>i</token>
-        <token>/</token>
-        <token>o</token>
+        <token case_sensitive="yes">i</token>
+        <token case_sensitive="yes">/</token>
+        <token case_sensitive="yes">o</token>
       </pattern>
       <message>Fórmula sovint innecessària, llevat de contexts molt tècnics. <suggestion>o</suggestion></message>
       <short>I_O</short>
@@ -13706,11 +13957,11 @@
     </rule>
     <rule id="CA_DATE_WEEKDAY_CURRENTYEAR" name="Data incorrecta (any actual)">
       <pattern>
-        <token regexp="yes">|</token>
+        <token regexp="yes">dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge|dl|dt|dc|dj|dv|ds|dg</token>
         <token min="0">,</token>
         <token regexp="yes">\d\d?</token>
         <token regexp="yes" min="0">de|d'</token>
-        <token regexp="yes">|</token>
+        <token regexp="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|gen|febr|abr|jul|ag|set|oct|nov|des</token>
       </pattern>
       <message>Si us referiu a l'any actual ({currentYear}), aquesta data no és un {day} sinó un {realDay}.</message>
       <short>CA_DATE_WEEKDAY_CURRENTYEAR</short>
@@ -13757,7 +14008,7 @@
         <token min="0" postag="VA.*" postag_regexp="yes"></token>
         <token inflected="yes">pertànyer</token>
       </pattern>
-      <message><suggestion>\2</suggestion></message>
+      <message>Reviseu la construcció de relatiu. És incorrecta si es pot substituir per algun dels suggeriments. <suggestion>\2</suggestion></message>
       <short>AL_QUAL_PERTANY</short>
     </rule>
     <rule id="QUELCOM_CONDICIONALS" name="quelcom/res en frases condicionals">
@@ -13797,14 +14048,14 @@
         <token>a</token>
         <token>més</token>
       </pattern>
-      <message><suggestion>d'altra banda</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>d'altra banda</suggestion></message>
       <short>REP_A_MES_A_MES</short>
     </rule>
     <rule id="REP_DESPRES" name="repetició: després">
       <pattern>
         <token>després</token>
       </pattern>
-      <message><suggestion>en acabat</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>en acabat</suggestion></message>
       <short>REP_DESPRES</short>
     </rule>
     <rule id="REP_ES_PER_AIXO_QUE" name="repetició: és per això que">
@@ -13814,7 +14065,7 @@
         <token>això</token>
         <token>que</token>
       </pattern>
-      <message><suggestion>per aquest motiu</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>per aquest motiu</suggestion></message>
       <short>REP_ES_PER_AIXO_QUE</short>
     </rule>
     <rule id="REP_JA_QUE" name="repetició: ja que">
@@ -13822,7 +14073,7 @@
         <token>ja</token>
         <token>que</token>
       </pattern>
-      <message><suggestion>perquè</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>perquè</suggestion></message>
       <short>REP_JA_QUE</short>
     </rule>
     <rule id="REP_PER_TANT" name="repetició: per tant">
@@ -13830,14 +14081,14 @@
         <token>per</token>
         <token>tant</token>
       </pattern>
-      <message><suggestion>en conseqüència</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>en conseqüència</suggestion></message>
       <short>REP_PER_TANT</short>
     </rule>
     <rule id="REP_TANMATEIX" name="repetició: tanmateix">
       <pattern>
         <token>tanmateix</token>
       </pattern>
-      <message><suggestion>això no obstant</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>això no obstant</suggestion></message>
       <short>REP_TANMATEIX</short>
     </rule>
     <rule id="REP_COMPTAR_AMB" name="repetició: comptar amb">
@@ -13845,21 +14096,21 @@
         <token inflected="yes" postag="(V.[^M].*)" postag_regexp="yes">comptar</token>
         <token>amb</token>
       </pattern>
-      <message><suggestion>\1</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>\1</suggestion></message>
       <short>REP_COMPTAR_AMB</short>
     </rule>
     <rule id="REP_ENVIAR" name="repetició: enviar">
       <pattern>
         <token inflected="yes">enviar</token>
       </pattern>
-      <message><suggestion>\1</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>\1</suggestion></message>
       <short>REP_ENVIAR</short>
     </rule>
     <rule id="REP_IMPORTANT" name="repetició: important">
       <pattern>
         <token inflected="yes" postag="A.*" postag_regexp="yes">important</token>
       </pattern>
-      <message><suggestion>\1</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>\1</suggestion></message>
       <short>REP_IMPORTANT</short>
     </rule>
     <rule id="REP_PERO" name="repetició: però">
@@ -13867,7 +14118,7 @@
         <token postag="SENT_START|_PUNCT.*" postag_regexp="yes"></token>
         <token>però</token>
       </pattern>
-      <message><suggestion>això no obstant</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>això no obstant</suggestion></message>
       <short>REP_PERO</short>
     </rule>
     <rule id="REP_SEGUIR" name="repetició: seguir">
@@ -13875,7 +14126,7 @@
         <token inflected="yes">seguir</token>
         <token postag="V.G.*" postag_regexp="yes"></token>
       </pattern>
-      <message><suggestion>\1</suggestion></message>
+      <message>Aquesta expressió ja ha aparegut abans. Podeu usar un sinònim per a fer més variat el text. <suggestion>\1</suggestion></message>
       <short>REP_SEGUIR</short>
     </rule>
   </category>
@@ -14256,6 +14507,25 @@
       </pattern>
       <message>Val més dir <suggestion>\1</suggestion>.</message>
       <short>ESTAR_A_TEMPS</short>
+    </rule>
+    <rule id="ESTEM_A_DIMARTS" name="estem a dimarts -&gt; és dimarts">
+      <pattern>
+        <token inflected="yes">estar</token>
+        <token>a</token>
+        <token regexp="yes" inflected="yes">dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge</token>
+      </pattern>
+      <message>Val més fer servir una altra expressió. <suggestion>\1 \3</suggestion></message>
+      <short>ESTEM_A_DIMARTS</short>
+    </rule>
+    <rule id="ESTEM_A_NOVEMBRE" name="estem a novembre -&gt; és novembre">
+      <pattern>
+        <token inflected="yes">estar</token>
+        <token regexp="yes">a|en</token>
+        <token regexp="yes" min="0">l|el</token>
+        <token regexp="yes" inflected="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre</token>
+      </pattern>
+      <message>Val més fer servir una altra expressió. <suggestion>\1 \4</suggestion></message>
+      <short>ESTEM_A_NOVEMBRE</short>
     </rule>
     <rule id="ESTEU_ESTIGUEU" name="esteu -&gt; estigueu (imperatiu)">
       <pattern>
@@ -14845,6 +15115,20 @@
       <message>Si és un nom, s'escriu amb accent. "Alies" és una forma del verb 'aliar'. <suggestion>àlies</suggestion></message>
       <short>ALIES</short>
     </rule>
+    <rule id="DIACRITICS_00" name="numero/número">
+      <pattern>
+        <token regexp="yes">republica|republiques|numero|radio|termometre|termometres|especie|especies</token>
+      </pattern>
+      <message>Si és adjectiu o nom, s'escriu amb accent. <suggestion>{suggestion}</suggestion></message>
+      <short>DIACRITICS_00</short>
+    </rule>
+    <rule id="DIACRITICS_01" name="verb sense accent -&gt; adjectiu o nom amb accent">
+      <pattern>
+        <token regexp="yes">rabia|rabies|hostia|hosties|quilometre|quilometres|arbitre|arbitres|cronometre|cronometres|eutanasia|eutanasies|pifia|pifies|franquicia|franquicies|indiferencia|indiferencies</token>
+      </pattern>
+      <message>Si és adjectiu o nom, s'escriu amb accent. <suggestion>{suggestion}</suggestion></message>
+      <short>DIACRITICS_01</short>
+    </rule>
     <rule id="EVIDENCIA" name="evidencia -&gt; evidència">
       <pattern>
         <token regexp="yes">en|d'|a|per</token>
@@ -14902,13 +15186,13 @@
     <rule id="COMMA_DATE" name="coma entre nom de lloc i data">
       <pattern>
         <token regexp="yes" postag="N.*|UNKNOWN" postag_regexp="yes">\p{Lu}.*
-          <exception regexp="yes">|dia|resolució|llei|ordre</exception>
+          <exception regexp="yes">dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge|dia|resolució|llei|ordre</exception>
         </token>
         <token postag="DN.*" postag_regexp="yes">
           <exception regexp="yes">\d\d\d+</exception>
         </token>
         <token regexp="yes">de|d'</token>
-        <token regexp="yes">||[1-9]|11|12</token>
+        <token regexp="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|gen|febr|abr|jul|ag|set|oct|nov|des|[1-9]|11|12</token>
         <token>de</token>
         <token regexp="yes" min="0" max="2">l|l'|any</token>
         <token regexp="yes">\d+</token>
@@ -14984,7 +15268,7 @@
       <pattern>
         <token>no</token>
         <token regexp="yes">ningú|gens|enlloc|mai|tampoc</token>
-        <token postag="|V.[MSI].*" postag_regexp="yes"></token>
+        <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00|V.[MSI].*" postag_regexp="yes"></token>
       </pattern>
       <message>¿Volíeu dir <suggestion>\2 \1</suggestion>?</message>
       <short>NO_MAI</short>
@@ -15018,6 +15302,15 @@
     </rule>
   </category>
   <category id="TYPOGRAPHY_OPTIONS" name="Opcions de tipografia">
+    <rule id="GENER_01" name="01 de gener -&gt; 1 de gener">
+      <pattern>
+        <token regexp="yes">0[1-9]</token>
+        <token regexp="yes">de|d'</token>
+        <token regexp="yes">gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre</token>
+      </pattern>
+      <message>En dates, és més apropiat escriure <suggestion>\1</suggestion>.</message>
+      <short>GENER_01</short>
+    </rule>
     <rule id="NUM_200K" name="200k -&gt; dos-cents-mil">
       <pattern>
         <token regexp="yes">\d+k
@@ -15045,6 +15338,16 @@
       </pattern>
       <message>Els percentatges amb xifres s'escriuen preferiblement amb el símbol "%". <suggestion>\1 %</suggestion></message>
       <short>Opció de tipografia</short>
+    </rule>
+  </category>
+  <category id="LLENGUATGE_INCLUSIU" name="Llenguatge inclusiu">
+    <rule id="INFANTS_DISCAPACITATS" name="infants discapacitats -&gt; infants amb discapacitat">
+      <pattern>
+        <token regexp="yes" inflected="yes">persona|nen|infants?|xiquet|nin|xicot|noi|joves?|adolescents?|home|dona|dependents?</token>
+        <token inflected="yes">discapacitat2</token>
+      </pattern>
+      <message>Seguint les recomanacions de llenguatge inclusiu, és preferible dir <suggestion>amb discapacitat</suggestion>.</message>
+      <short>INFANTS_DISCAPACITATS</short>
     </rule>
   </category>
   <category id="REFLEXIVE_VERBS" name="verbs reflexius">
