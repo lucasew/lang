@@ -5,15 +5,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
-// SpanishHybridDisambiguator ports hybrid disambiguation for es.
+type sentenceStep interface {
+	Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+}
+
+// SpanishHybridDisambiguator ports
+// org.languagetool.tagging.disambiguation.es.SpanishHybridDisambiguator:
+// spelling_global → /es/multiwords.txt → XmlRuleDisambiguator(lang, true).
 type SpanishHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Chunker interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
-	Rules interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
+	GlobalChunker sentenceStep
+	Chunker       sentenceStep
+	Rules         sentenceStep
 }
 
 func NewSpanishHybridDisambiguator() *SpanishHybridDisambiguator {
@@ -25,6 +28,10 @@ func (d *SpanishHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSe
 		return nil
 	}
 	out := input
+	// Java: disambiguator.disambiguate(chunker.disambiguate(chunkerGlobal.disambiguate(...)))
+	if d.GlobalChunker != nil {
+		out = d.GlobalChunker.Disambiguate(out)
+	}
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}

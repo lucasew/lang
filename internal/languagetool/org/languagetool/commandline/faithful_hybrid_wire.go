@@ -7,6 +7,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/es"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
 )
@@ -58,6 +61,133 @@ func RegisterEnglishHybridDisambiguator(lt *languagetool.JLanguageTool, opts *Co
 		return false
 	}
 	lt.Disambiguator = hybrid
+	return true
+}
+
+// RegisterHybridDisambiguator installs the Java hybrid for supported languages.
+// Official multiwords + spelling_global + disambiguation.xml only (no soft extracts).
+func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, opts *CommandLineOptions) bool {
+	if lt == nil {
+		return false
+	}
+	base := languageBaseCode(lang)
+	switch base {
+	case "en":
+		return RegisterEnglishHybridDisambiguator(lt, opts)
+	case "fr":
+		return registerFrenchHybrid(lt, opts)
+	case "es":
+		return registerSpanishHybrid(lt, opts)
+	case "pt":
+		return registerPortugueseHybrid(lt, opts)
+	default:
+		return false
+	}
+}
+
+// registerFrenchHybrid ports FrenchHybridDisambiguator wiring.
+// Java: multiwords true,true,false + removePreviousTags; global false,true,false tagForNotAddingTags.
+func registerFrenchHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := fr.NewFrenchHybridDisambiguator()
+	// Java chunkerGlobal first
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+			DefaultTag:            disambiguation.TagForNotAddingTags,
+		}); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.GlobalChunker = c
+		}
+	}
+	if p := DiscoverLanguageMultiwords(opts, "fr"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			c.SetRemovePreviousTags(true)
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("fr", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.GlobalChunker == nil && h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerSpanishHybrid ports SpanishHybridDisambiguator.
+// Java global DefaultTag "NPCN000"; multiwords removePreviousTags.
+func registerSpanishHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := es.NewSpanishHybridDisambiguator()
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+			DefaultTag:            "NPCN000",
+		}); err == nil && c != nil {
+			h.GlobalChunker = c
+		}
+	}
+	if p := DiscoverLanguageMultiwords(opts, "es"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			c.SetRemovePreviousTags(true)
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("es", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.GlobalChunker == nil && h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerPortugueseHybrid ports PortugueseHybridDisambiguator.
+// Java multiwords true,true,true; global false,true,true "NPCN000"; ignoreSpelling on both.
+func registerPortugueseHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := pt.NewPortugueseHybridDisambiguator()
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        true,
+			DefaultTag:            "NPCN000",
+		}); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.GlobalChunker = c
+		}
+	}
+	if p := DiscoverLanguageMultiwords(opts, "pt"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        true,
+		}); err == nil && c != nil {
+			c.SetRemovePreviousTags(true)
+			c.AddIgnoreSpelling = true
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("pt", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.GlobalChunker == nil && h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
 	return true
 }
 

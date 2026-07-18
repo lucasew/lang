@@ -5,15 +5,22 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
-// FrenchHybridDisambiguator ports hybrid disambiguation for fr.
+// sentenceStep is a Disambiguate-capable stage (MultiWordChunker / XmlRuleDisambiguator).
+type sentenceStep interface {
+	Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+}
+
+// FrenchHybridDisambiguator ports
+// org.languagetool.tagging.disambiguation.fr.FrenchHybridDisambiguator:
+// spelling_global → /fr/multiwords.txt → XmlRuleDisambiguator(lang, true).
 type FrenchHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Chunker interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
-	Rules interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
+	// GlobalChunker is Java chunkerGlobal (spelling_global.txt).
+	GlobalChunker sentenceStep
+	// Chunker is Java /fr/multiwords.txt MultiWordChunker.
+	Chunker sentenceStep
+	// Rules is Java XmlRuleDisambiguator.
+	Rules sentenceStep
 }
 
 func NewFrenchHybridDisambiguator() *FrenchHybridDisambiguator {
@@ -25,6 +32,10 @@ func (d *FrenchHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSen
 		return nil
 	}
 	out := input
+	// Java: disambiguator.disambiguate(chunker.disambiguate(chunkerGlobal.disambiguate(...)))
+	if d.GlobalChunker != nil {
+		out = d.GlobalChunker.Disambiguate(out)
+	}
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}

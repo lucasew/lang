@@ -50,10 +50,15 @@ func NewDisambiguationPatternRule(
 	posSelect *patterns.Match,
 	action DisambiguatorAction,
 ) *DisambiguationPatternRule {
+	// Java allows ADD/REMOVE/IMMUNIZE/… with only <wd> list (set after construct).
+	// Empty postag + empty action defaults to REPLACE in the loader.
 	if disambiguatedPOS == "" && posSelect == nil &&
 		action != ActionUnify && action != ActionAdd && action != ActionRemove &&
-		action != ActionImmunize && action != ActionReplace && action != ActionFilterAll &&
-		action != ActionIgnoreSpelling && action != ActionAddChunk {
+		action != ActionImmunize && action != ActionReplace && action != ActionFilter &&
+		action != ActionFilterAll && action != ActionIgnoreSpelling && action != ActionAddChunk &&
+		action != "" {
+		// Unknown action without POS — skip via panic only for programming errors.
+		// Loader should not invent POS; callers must pass a known action.
 		panic("disambiguated POS cannot be null with posSelect == null and " + string(action))
 	}
 	base := patterns.NewAbstractTokenBasedRule(id, description, languageCode, patternTokens)

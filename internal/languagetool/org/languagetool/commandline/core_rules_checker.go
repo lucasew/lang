@@ -176,7 +176,7 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			en.RegisterEnglishChunker(lt)
 			// Java English.createDefaultDisambiguator(): EnglishHybridDisambiguator
 			// (spelling_global → multiwords → XmlRuleDisambiguator with global).
-			_ = RegisterEnglishHybridDisambiguator(lt, opts)
+			_ = RegisterHybridDisambiguator(lt, base, opts)
 		} else {
 			if posPath := DiscoverLanguagePOSDict(opts, base); posPath != "" {
 				// Official Morfologik POS dicts (FSA5/CFSA2) like Java createDefaultTagger().
@@ -186,7 +186,8 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 					_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 				}
 			}
-			// Soft hybrid disambiguator removed; Java HybridDisambiguator twins later.
+			// Java createDefaultDisambiguator(): FR/ES/PT hybrids when resources exist.
+			_ = RegisterHybridDisambiguator(lt, base, opts)
 		}
 		if opts.GetRuleFile() != "" {
 			if err := RegisterRuleFilePatterns(lt, opts.GetRuleFile(), lang); err != nil {

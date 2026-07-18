@@ -34,3 +34,25 @@ func TestRegisterEnglishHybridDisambiguator(t *testing.T) {
 	sents := lt.Analyze("New York is big.")
 	require.NotEmpty(t, sents)
 }
+
+func TestRegisterHybridDisambiguator_FR_ES_PT(t *testing.T) {
+	for _, lang := range []string{"fr", "es", "pt"} {
+		t.Run(lang, func(t *testing.T) {
+			lt, err := configureCoreLT(lang, &CommandLineOptions{Language: lang})
+			require.NoError(t, err)
+			// Official multiwords or disambiguation.xml should yield a hybrid.
+			if DiscoverLanguageMultiwords(nil, lang) != "" || DiscoverLanguageDisambiguationXML(nil, lang) != "" {
+				require.NotNil(t, lt.Disambiguator, "hybrid for %s", lang)
+			}
+			// Analyze must not panic / wipe tokens
+			sents := lt.Analyze("Bonjour le monde.")
+			if lang == "es" {
+				sents = lt.Analyze("Hola mundo.")
+			}
+			if lang == "pt" {
+				sents = lt.Analyze("Olá mundo.")
+			}
+			require.NotEmpty(t, sents)
+		})
+	}
+}

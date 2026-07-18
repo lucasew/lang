@@ -5,15 +5,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
-// PortugueseHybridDisambiguator ports hybrid disambiguation for pt.
+type sentenceStep interface {
+	Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+}
+
+// PortugueseHybridDisambiguator ports
+// org.languagetool.tagging.disambiguation.pt.PortugueseHybridDisambiguator:
+// spelling_global → /pt/multiwords.txt → XmlRuleDisambiguator(lang, true).
 type PortugueseHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Chunker interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
-	Rules interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
+	GlobalChunker sentenceStep
+	Chunker       sentenceStep
+	Rules         sentenceStep
 }
 
 func NewPortugueseHybridDisambiguator() *PortugueseHybridDisambiguator {
@@ -25,6 +28,10 @@ func (d *PortugueseHybridDisambiguator) Disambiguate(input *languagetool.Analyze
 		return nil
 	}
 	out := input
+	// Java: disambiguator.disambiguate(chunker.disambiguate(chunkerGlobal.disambiguate(...)))
+	if d.GlobalChunker != nil {
+		out = d.GlobalChunker.Disambiguate(out)
+	}
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}
