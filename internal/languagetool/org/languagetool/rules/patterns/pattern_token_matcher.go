@@ -697,6 +697,11 @@ func softIsPronoun(s string) bool {
 		"we", "us", "our", "ours", "ourselves",
 		"they", "them", "their", "theirs", "themselves",
 		"thou", "thee", "thy", "thine", "ye",
+		// Portuguese personal (CONFUSÃO_TER_ESTAR PP.+)
+		"eu", "tu", "ele", "ela", "nós", "vós", "eles", "elas",
+		"mim", "ti", "si", "lhe", "lhes", "nos", "vos",
+		"meu", "minha", "meus", "minhas", "teu", "tua", "teus", "tuas",
+		"seu", "sua", "seus", "suas", "nosso", "nossa", "nossos", "nossas",
 		// German (PRO:REF / personal)
 		"ich", "mich", "mir", "mein", "meine", "meiner", "meinem", "meinen",
 		"du", "dich", "dir", "dein", "deine", "deiner", "deinem", "deinen",
@@ -1095,8 +1100,18 @@ var softIrregularLemma = map[string][]string{
 	"estava": {"estar"}, "estavam": {"estar"}, "estado": {"estar"},
 	"tenho": {"ter"}, "tens": {"ter"}, "tem": {"ter"}, "temos": {"ter"}, "têm": {"ter"},
 	"tinha": {"ter"}, "tinham": {"ter"}, "tido": {"ter"},
+	"tive": {"ter"}, "tiveste": {"ter"}, "teve": {"ter"}, "tivemos": {"ter"}, "tiveram": {"ter"},
 	"faço": {"fazer"}, "fazes": {"fazer"}, "faz": {"fazer"}, "fazemos": {"fazer"}, "fazem": {"fazer"},
 	"fez": {"fazer"}, "fizeram": {"fazer"}, "feito": {"fazer"},
+	"fiz": {"fazer"}, "fizeste": {"fazer"}, "fizemos": {"fazer"}, "fizessem": {"fazer"}, "fizesse": {"fazer"},
+	"fará": {"fazer"}, "farão": {"fazer"},
+	// Portuguese haver (há uns minutos) / cobrir / vir
+	"há": {"haver"}, "houve": {"haver"}, "haverá": {"haver"},
+	"coberto": {"cobrir"}, "coberta": {"cobrir"}, "cobertos": {"cobrir"}, "cobertas": {"cobrir"},
+	"cobre": {"cobrir"}, "cobrem": {"cobrir"}, "cobria": {"cobrir"},
+	"veio": {"vir"}, "vieram": {"vir"}, "viria": {"vir"}, "viriam": {"vir"},
+	"venha": {"vir"}, "venham": {"vir"}, "vinha": {"vir"}, "vinham": {"vir"},
+	"estive": {"estar"}, "esteve": {"estar"}, "estivemos": {"estar"}, "estiveram": {"estar"},
 	"dou": {"dar"}, "dás": {"dar"}, "dá": {"dar"}, "damos": {"dar"}, "dão": {"dar"},
 	"deu": {"dar"}, "deram": {"dar"}, "dado": {"dar"},
 	// Shared Romance "go" present (FR aller / ES ir / AST dir)
@@ -1322,10 +1337,10 @@ func softSharedStemMatchRunes(ar, br []rune) bool {
 // Nested groups/character classes are not fully parsed — only plain | splits
 // used by upstream soft packs (программный|аппаратный).
 func softRegexpAlternatives(pat string) []string {
-	if pat == "" || !strings.Contains(pat, "|") {
-		if pat == "" {
-			return nil
-		}
+	if pat == "" {
+		return nil
+	}
+	if !strings.Contains(pat, "|") {
 		return []string{pat}
 	}
 	// Strip outer non-capturing group if present.
@@ -1355,9 +1370,15 @@ func softRegexpAlternatives(pat string) []string {
 	out := make([]string, 0, len(alts))
 	for _, a := range alts {
 		a = strings.TrimSpace(a)
-		if a != "" {
-			out = append(out, a)
+		if a == "" {
+			continue
 		}
+		// Flatten nested (?:ser|estar|ter) so inflected soft can match lemmas.
+		if strings.HasPrefix(a, "(?:") && strings.HasSuffix(a, ")") && strings.Contains(a, "|") {
+			out = append(out, softRegexpAlternatives(a)...)
+			continue
+		}
+		out = append(out, a)
 	}
 	return out
 }

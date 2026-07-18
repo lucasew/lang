@@ -175,6 +175,9 @@ func init() {
 	for _, s := range []string{
 		"tsé-tung", "sex-appeal", "aix-en-provence", "montemor-o-novo", "andorra-a-velha",
 		"jiu-jitsu", "franco-prussiano",
+		// Soft grammar compounds (WEEKDAY_TO_WEEKDAY, clichés)
+		"segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira",
+		"troca-tintas", "maria-vai-com-as-outras", "joão-sem-braço",
 	} {
 		doNotSplit[s] = true
 	}
