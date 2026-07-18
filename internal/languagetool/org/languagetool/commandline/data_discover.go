@@ -52,7 +52,7 @@ func DiscoverGrammarDir(opts *CommandLineOptions) string {
 }
 
 // DiscoverFalseFriendsFile finds false-friends XML via env/data-dir/walk-up.
-// Prefers vendored upstream (DOCTYPE-stripped) over the legacy soft subset.
+// Official upstream only (no false-friends-soft invent path).
 func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 	if p := resolveFalseFriendsFile(opts); p != "" {
 		if _, err := os.Stat(p); err == nil {
@@ -65,7 +65,6 @@ func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 	for _, rel := range []string{
 		filepath.Join("testdata", "upstream", "false-friends-nodtd.xml"),
 		filepath.Join("testdata", "upstream", "false-friends.xml"),
-		filepath.Join("testdata", "false-friends-soft.xml"),
 		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources", "org", "languagetool", "rules", "false-friends.xml"),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
@@ -346,20 +345,33 @@ func DiscoverGermanMultitokenSuggest(opts *CommandLineOptions) string {
 // DiscoverLanguageGrammarXML finds official grammar.xml for lang.
 // Java: /org/languagetool/rules/{lang}/grammar.xml
 func DiscoverLanguageGrammarXML(opts *CommandLineOptions, lang string) string {
+	return discoverLanguageRuleXML(opts, lang, "grammar.xml", "GRAMMAR")
+}
+
+// DiscoverLanguageStyleXML finds official style.xml for lang.
+// Java: Language.getRuleFileNames() also loads /org/languagetool/rules/{lang}/style.xml
+func DiscoverLanguageStyleXML(opts *CommandLineOptions, lang string) string {
+	return discoverLanguageRuleXML(opts, lang, "style.xml", "STYLE")
+}
+
+// discoverLanguageRuleXML finds rules/{lang}/{fileName} (grammar.xml / style.xml).
+func discoverLanguageRuleXML(opts *CommandLineOptions, lang, fileName, envSuffix string) string {
 	base := languageBaseCode(lang)
-	if base == "" {
+	if base == "" || fileName == "" {
 		return ""
 	}
-	if p := os.Getenv("LANG_" + strings.ToUpper(base) + "_GRAMMAR"); p != "" {
-		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
-			return p
+	if envSuffix != "" {
+		if p := os.Getenv("LANG_" + strings.ToUpper(base) + "_" + envSuffix); p != "" {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
 		}
 	}
 	if opts != nil && opts.GetDataDir() != "" {
 		for _, rel := range []string{
-			filepath.Join(opts.GetDataDir(), base, "grammar.xml"),
-			filepath.Join(opts.GetDataDir(), "rules", base, "grammar.xml"),
-			filepath.Join(opts.GetDataDir(), "upstream", base, "rules", "grammar.xml"),
+			filepath.Join(opts.GetDataDir(), base, fileName),
+			filepath.Join(opts.GetDataDir(), "rules", base, fileName),
+			filepath.Join(opts.GetDataDir(), "upstream", base, "rules", fileName),
 		} {
 			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
 				return rel
@@ -367,9 +379,9 @@ func DiscoverLanguageGrammarXML(opts *CommandLineOptions, lang string) string {
 		}
 	}
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", base, "rules", "grammar.xml"),
+		filepath.Join("testdata", "upstream", base, "rules", fileName),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
-			"src", "main", "resources", "org", "languagetool", "rules", base, "grammar.xml"),
+			"src", "main", "resources", "org", "languagetool", "rules", base, fileName),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p

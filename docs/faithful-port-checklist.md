@@ -69,7 +69,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 
 | # | Check | Status |
 |---|--------|--------|
-| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1; antipattern keep; EN filters + en_US.dict/english.dict for NumberInWord/FindSuggestions POS/Suppress/Multitoken |
+| 2.1 | Engine loads **same** grammar/style XML Java loads (not `*-soft.xml` substitutes) | [~] LANG_USE_UPSTREAM_GRAMMAR=1 loads grammar.xml + style.xml; filters/dicts wired; variant style paths deferred |
 | 2.2 | Engine loads **same** `disambiguation.xml` (+ global when Java does) | [ ] |
 | 2.3 | Engine loads **same** `multiwords.txt` / multitoken lists | [~] EN hybrid multiwords; EnglishMultitokenSpeller loads multiwords+spelling_global for MultitokenSpellerFilter |
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] EN english.dict for tagger + FindSuggestions desiredPostag; other langs partial |
@@ -107,7 +107,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | 3.B.2 | Exceptions, skip, regex, inflected, negation | [~] |
 | 3.B.3 | Unification | [ ] |
 | 3.B.4 | Filters / rule filters as Java | [~] |
-| 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar.xml load; style/includes deferred |
+| 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar.xml + style.xml load; entity expand partial; includes deferred |
 
 ### 3.C Rule families (per language, after stack)
 

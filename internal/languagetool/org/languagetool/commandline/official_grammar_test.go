@@ -26,13 +26,26 @@ func TestDiscoverAndLoadOfficialENGrammar(t *testing.T) {
 	}
 }
 
+func TestDiscoverAndLoadOfficialENStyle(t *testing.T) {
+	p := DiscoverLanguageStyleXML(nil, "en")
+	require.NotEmpty(t, p, "official en style.xml")
+	require.NotContains(t, p, "soft.xml")
+	require.Contains(t, p, "style.xml")
+	lt := languagetool.NewJLanguageTool("en")
+	n, err := patterns.RegisterGrammarFile(lt, p, "en")
+	require.NoError(t, err)
+	t.Logf("registered %d rules from %s", n, p)
+	require.Greater(t, n, 10, "style.xml should register surface-simple pattern rules")
+}
+
 func TestConfigureCoreLT_LoadsOfficialGrammarWhenEnabled(t *testing.T) {
 	t.Setenv("LANG_USE_UPSTREAM_GRAMMAR", "1")
 	lt, err := configureCoreLT("en", &CommandLineOptions{Language: "en"})
 	require.NoError(t, err)
 	ids := lt.GetAllRegisteredRuleIDs()
-	require.Greater(t, len(ids), 100, "core + grammar when enabled")
-	// Filter-class rules still skipped (e.g. MULTITOKEN_SPELLING). Antipatterns load+keep.
+	// grammar + style both load under the same gate (Java getRuleFileNames).
+	require.Greater(t, len(ids), 100, "core + grammar + style when enabled")
+	// Filter-class rules still skipped when unsupported (e.g. incomplete filters).
 	ms := lt.Check("This is a simple sentence.")
 	for _, m := range ms {
 		require.NotContains(t, m.RuleID, "MULTITOKEN_SPELLING", "%+v", m)
