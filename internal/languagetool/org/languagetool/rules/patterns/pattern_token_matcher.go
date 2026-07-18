@@ -1294,6 +1294,11 @@ var softIrregularLemma = map[string][]string{
 	"cancerígenes": {"cancerigen"}, "cancerígena": {"cancerigen"}, "cancerígens": {"cancerigen"},
 	"desinteressada": {"desinteressat"}, "desinteressades": {"desinteressat"},
 	"interessant": {"interessant"}, "interessants": {"interessant"},
+	// FreeLing multiword/special lemmas used by Catalan grammar.xml (Java tagger)
+	"discapacitats": {"discapacitat2", "discapacitat"},
+	"discapacitades": {"discapacitat2", "discapacitat"},
+	"discapacitat": {"discapacitat2", "discapacitat"},
+	"discapacitada": {"discapacitat2", "discapacitat"},
 	// Catalan noun plurals (dies ← dia for TOTS_ELS_DIES etc.)
 	"dies": {"dia"}, "anys": {"any"}, "mesos": {"mes"}, "hores": {"hora"}, "setmanes": {"setmana"},
 	"coes": {"coa"}, "oïdes": {"oïda"}, "col·laboració": {"col·laboració"},

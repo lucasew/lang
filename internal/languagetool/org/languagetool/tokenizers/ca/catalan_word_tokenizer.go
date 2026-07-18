@@ -62,6 +62,11 @@ var (
 		// Twin tests / Java dict compounds (no catalan.dict in tree).
 		"sud-est": true, "nord-est": true, "sud-oest": true, "nord-oest": true,
 		"qui-sap-lo": true, "qui-sap-la": true, "qui-sap-los": true, "qui-sap-les": true,
+		// Hyphenated Catalan numerals (FreeLing DN; COMPLIRSE soft goldens).
+		"set-cents": true, "set-centes": true, "dos-cents": true, "dos-centes": true,
+		"tres-cents": true, "tres-centes": true, "quatre-cents": true, "quatre-centes": true,
+		"cinc-cents": true, "cinc-centes": true, "sis-cents": true, "sis-centes": true,
+		"vuit-cents": true, "vuit-centes": true, "nou-cents": true, "nou-centes": true,
 	}
 
 	// Full-string match for a single pronom feble (e.g. -se, 'n, -te).
