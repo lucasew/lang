@@ -15,6 +15,37 @@
     </pattern>
     <disambig action="replace" postag="number:latin:bad"/>
   </rule>
+  <rule id="POINT_NUMBER" name="Номер_пункту">
+    <pattern>
+      <token regexp="yes" inflected="yes">номер|будинок|[№§/]</token>
+      <token regexp="yes" marker="yes">[0-9]+-[а-жєґ]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noninfl"/>
+    </disambig>
+  </rule>
+  <rule id="house_numbers_noninfl_0" name="Номер_будинку 0">
+    <pattern>
+      <token regexp="yes" inflected="yes">вулиця|вул\.</token>
+      <token regexp="yes" case_sensitive="yes" max="2">[А-ЯІЇЄҐ].*</token>
+      <token min="0">,</token>
+      <token regexp="yes" marker="yes">[0-9]+-[а-жєґ]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noninfl"/>
+    </disambig>
+  </rule>
+  <rule id="house_numbers_noninfl_1" name="Номер будинку - 1">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[А-ЯІЇЄҐ][а-яіїєґ']{4,15}([-–][А-ЯІЇЄҐ][а-яіїєґ']{4,15})?</token>
+      <token>,</token>
+      <token regexp="yes" marker="yes">[0-9]{1,3}[-–][а-жєґ]</token>
+      <token regexp="yes">[,.;:)»]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noninfl"/>
+    </disambig>
+  </rule>
   <rule id="ska_mistake" name="ска - помилка">
     <pattern>
       <token marker="yes">ска</token>
@@ -865,6 +896,15 @@
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
+  <rule id="KOROTKOGO_METRU" name="Короткого метру">
+    <pattern>
+      <token regexp="yes">короткого|повного</token>
+      <token marker="yes">метру</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noun:inanim:m:v_rod" lemma="метр"/>
+    </disambig>
+  </rule>
   <rule id="shlem_sholom_1" name="Шлем/шолом 1">
     <pattern>
       <token regexp="yes" case_sensitive="yes">Велик.*|Мал.*|Гранд|[«&quot;“„]</token>
@@ -877,6 +917,15 @@
       <token inflected="yes" postag="noun.*?:bad.*" postag_regexp="yes" marker="yes">шлем</token>
     </pattern>
     <disambig action="remove" postag="noun.*?:xp1.*"/>
+  </rule>
+  <rule id="velykogo_sholomu" name="Великого шолому">
+    <pattern>
+      <token case_sensitive="yes">Великого</token>
+      <token marker="yes">шолому</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noun:inanim:m:v_rod" lemma="шолом"/>
+    </disambig>
   </rule>
   <rule id="dacha-giving" name="Дача - надання">
     <pattern>
@@ -1253,6 +1302,24 @@
       <token case_sensitive="yes" postag="noun:anim:f.*?:[lp]name.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="noun:anim:f.*fname.*"/>
+  </rule>
+  <rule id="DIS_EDGAR_PO" name="Едгар По">
+    <pattern>
+      <token case_sensitive="yes" postag="noun.*?fname.*" postag_regexp="yes"></token>
+      <token case_sensitive="yes" marker="yes">По</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noun:anim:m:nv:prop:lname" lemma="По"/>
+    </disambig>
+  </rule>
+  <rule id="DIS_EDGAR_PO_2" name="Едгар Аллан По">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[А-ЯІЇЄҐ]\.|ім'я|родина</token>
+      <token case_sensitive="yes" marker="yes">По</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noun:anim:m:nv:prop:lname" lemma="По"/>
+    </disambig>
   </rule>
   <rule id="POLINA" name="Поліна">
     <pattern>
@@ -1739,6 +1806,25 @@
       <token postag="noun.*?:lname.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="part.*"/>
+  </rule>
+  <rule id="part_arte" name="Частка 'арте'">
+    <pattern>
+      <token>дель</token>
+      <token marker="yes">арте</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noninfl:foreign" lemma="арте"/>
+    </disambig>
+  </rule>
+  <rule id="shvah_noninfl" name="швах - noninfl">
+    <pattern>
+      <token regexp="yes">повний|зовсім|діл[оа]|справ[аи]</token>
+      <token regexp="yes" min="0">[—–-]</token>
+      <token marker="yes">швах</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="noninfl:slang" lemma="швах"/>
+    </disambig>
   </rule>
   <rule id="conj_or_part_da" name="Сполучник та частка 'да'">
     <pattern>

@@ -413,3 +413,98 @@ func TestAntiPattern_SuppressesOverlappingReplace(t *testing.T) {
 	require.Contains(t, tagsBlock, "NN")
 	require.Contains(t, tagsBlock, "PRP$")
 }
+
+func TestReplace_WdLemmaPos(t *testing.T) {
+	// Java ca/n't style: <marker>ca</marker> + n't → replace wd lemma=can pos=MD
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="CANT_MD" name="ca n't">
+    <pattern>
+      <token marker="yes">ca</token>
+      <token spacebefore="no">n't</token>
+    </pattern>
+    <disambig action="replace">
+      <wd lemma="can" pos="MD"/>
+    </disambig>
+  </rule>
+  <rule id="NY_NNP" name="New York">
+    <pattern>
+      <token>New</token>
+      <token>York</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NNP"/>
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "test")
+	require.NoError(t, err)
+	require.Len(t, rules, 2)
+	require.Len(t, rules[0].NewTokenReadings, 1)
+	require.Len(t, rules[1].NewTokenReadings, 2)
+
+	md, nn := "MD", "NN"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("ca", &nn, nil))
+			return r
+		}(),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("n't", strp2("RB"), nil)),
+	}
+	// spacebefore=no on n't — set whitespace before false
+	toks[2].SetWhitespaceBefore(false)
+	pos := 0
+	for _, atr := range toks {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out := rules[0].Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	var lemma string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "ca" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+			if r != nil && r.GetLemma() != nil {
+				lemma = *r.GetLemma()
+			}
+		}
+	}
+	require.Equal(t, []string{"MD"}, tags)
+	require.Equal(t, "can", lemma)
+	_ = md
+
+	// multi-token REPLACE both NNP
+	nnp := "NNP"
+	toks2 := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("New", &nn, nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("York", &nn, nil)),
+	}
+	pos = 0
+	for _, atr := range toks2 {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out2 := rules[1].Replace(languagetool.NewAnalyzedSentence(toks2))
+	for _, want := range []string{"New", "York"} {
+		var ts []string
+		for _, tok := range out2.GetTokensWithoutWhitespace() {
+			if tok.GetToken() != want {
+				continue
+			}
+			for _, r := range tok.GetReadings() {
+				if r != nil && r.GetPOSTag() != nil {
+					ts = append(ts, *r.GetPOSTag())
+				}
+			}
+		}
+		require.Equal(t, []string{nnp}, ts, want)
+	}
+}

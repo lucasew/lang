@@ -86,6 +86,117 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="pese_a" name="pese a">
+    <pattern>
+      <token marker="yes">pese</token>
+      <token regexp="yes">a|al</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_PREP"/>
+    </disambig>
+  </rule>
+  <rule id="junto_a" name="junto a/con">
+    <antipattern>
+      <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes"></token>
+      <token>junto</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">junto</token>
+      <token regexp="yes" marker="yes">a|con</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_PREP"/>
+      <wd pos="LOC_PREP"/>
+    </disambig>
+  </rule>
+  <rule id="junto_al" name="junto al">
+    <antipattern>
+      <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes"></token>
+      <token>junto</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">junto</token>
+      <token>al</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_PREP"/>
+    </disambig>
+  </rule>
+  <rule id="acerca_de" name="acerca de">
+    <antipattern>
+      <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes"></token>
+      <token regexp="yes">acerca|aparte</token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes" marker="yes">acerca|aparte</token>
+      <token marker="yes">de</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_PREP"/>
+      <wd pos="LOC_PREP"/>
+    </disambig>
+  </rule>
+  <rule id="acerca_del" name="acerca del">
+    <antipattern>
+      <token postag="PP3..A.*|PP[123]C[SP][0D]00|P0[123].*" postag_regexp="yes"></token>
+      <token regexp="yes">acerca|aparte</token>
+    </antipattern>
+    <pattern>
+      <token regexp="yes" marker="yes">acerca|aparte</token>
+      <token>del</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_PREP"/>
+    </disambig>
+  </rule>
+  <rule id="en_pos_del" name="en pos del">
+    <pattern>
+      <token marker="yes">en</token>
+      <token marker="yes">pos</token>
+      <token>del</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_PREP"/>
+      <wd pos="LOC_PREP"/>
+    </disambig>
+  </rule>
+  <rule id="CARA_A_CARA" name="cara a cara (noun)">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes"></token>
+      <token marker="yes">cara</token>
+      <token marker="yes">a</token>
+      <token marker="yes">cara</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMN000" lemma="cara a cara"/>
+      <wd pos="AQ0MN0" lemma="cara a cara"/>
+      <wd pos="AQ0MN0" lemma="cara a cara"/>
+    </disambig>
+  </rule>
+  <rule id="CADA_VEZ_MAS" name="cada vez más">
+    <pattern>
+      <token>cada</token>
+      <token regexp="yes">segundo|minuto|hora|día|semana|quincena|mes|bimestre|trimestre|cuatrimestre|semestre|año|lustro|década|siglo|centuria|milenio|vez</token>
+      <token regexp="yes">más|menos</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_ADV" lemma="cada vez más"/>
+      <wd pos="LOC_ADV" lemma="cada vez más"/>
+      <wd pos="LOC_ADV" lemma="cada vez más"/>
+    </disambig>
+  </rule>
+  <rule id="por_primera_vez" name="por primera vez (locución adverbial)">
+    <pattern>
+      <token marker="yes">por</token>
+      <token postag="AO0FS0" marker="yes"></token>
+      <token marker="yes">vez</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_ADV" lemma="por primera vez"/>
+      <wd pos="LOC_ADV" lemma="por primera vez"/>
+      <wd pos="LOC_ADV" lemma="por primera vez"/>
+    </disambig>
+  </rule>
   <rule id="frente_a" name="frente a">
     <pattern>
       <token marker="yes">frente</token>
@@ -93,12 +204,109 @@
     </pattern>
     <disambig action="filter" postag="RG"/>
   </rule>
+  <rule id="cualquieras" name="unos cualquieras">
+    <pattern>
+      <token regexp="yes">unos|unas|un|una</token>
+      <token marker="yes">cualquieras</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCCP000" lemma="cualquiera"/>
+    </disambig>
+  </rule>
+  <rule id="cualquiera" name="unos cualquieras">
+    <pattern>
+      <token regexp="yes">unos|unas|un|una</token>
+      <token marker="yes">cualquiera</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCCS000" lemma="cualquiera"/>
+    </disambig>
+  </rule>
+  <rule id="en_absoluto" name="en absoluto">
+    <pattern>
+      <token marker="yes">en</token>
+      <token marker="yes">absoluto</token>
+      <token postag="AQ.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_ADV"/>
+      <wd pos="LOC_ADV"/>
+    </disambig>
+  </rule>
+  <rule id="mientras_tanto" name="mientras tanto">
+    <pattern>
+      <token marker="yes">mientras</token>
+      <token marker="yes">tanto</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_ADV"/>
+      <wd pos="LOC_ADV"/>
+    </disambig>
+  </rule>
   <rule id="lo_demás" name="lo demás">
     <pattern>
       <token postag="DA0NS0">lo</token>
       <token postag="PI0CN000">demás</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="el_paso_a_paso" name="el paso a paso (noun)">
+    <pattern>
+      <token regexp="yes">el|del|al</token>
+      <token marker="yes">paso</token>
+      <token marker="yes">a</token>
+      <token marker="yes">paso</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMS000"/>
+      <wd pos="SPS00"/>
+      <wd pos="NCMS000"/>
+    </disambig>
+  </rule>
+  <rule id="el_dia_a_dia" name="el día a día (noun)">
+    <pattern>
+      <token regexp="yes">el|del|al|mi|tu|su|nuestro|vuestro</token>
+      <token marker="yes">día</token>
+      <token marker="yes">a</token>
+      <token marker="yes">día</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMS000"/>
+      <wd pos="SPS00"/>
+      <wd pos="NCMS000"/>
+    </disambig>
+  </rule>
+  <rule id="el_sin_fin" name="el sin fin (noun)">
+    <pattern>
+      <token regexp="yes">el|del|al|un|este|ese|aquel</token>
+      <token marker="yes">sin</token>
+      <token marker="yes">fin</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMS000"/>
+      <wd pos="AQ0MS0"/>
+    </disambig>
+  </rule>
+  <rule id="por_tant" name="por tanto">
+    <pattern>
+      <token marker="yes">por</token>
+      <token marker="yes">tanto</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_CS" lemma="por tanto"/>
+      <wd pos="LOC_CS" lemma="por tanto"/>
+    </disambig>
+  </rule>
+  <rule id="manos_libres" name="manos libres">
+    <pattern>
+      <token postag="D..M[SP]." postag_regexp="yes"></token>
+      <token marker="yes">manos</token>
+      <token marker="yes">libres</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMN000" lemma="manos libres"/>
+      <wd pos="AQ0MN0" lemma="manos libres"/>
+    </disambig>
   </rule>
   <rule id="DEMASIADO" name="demasiado">
     <pattern>
@@ -121,6 +329,32 @@
       <wd pos="RG_before"/>
     </disambig>
   </rule>
+  <rule id="la_numero_dos" name="la número dos">
+    <pattern>
+      <token regexp="yes" marker="yes">la|una|esta|esa|aquella</token>
+      <token marker="yes">número</token>
+      <token postag="AO0C[NS]0|DN0[^F]P0" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">.*un</exception>
+      </token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="_GN_FS"/>
+      <wd pos="_GN_FS"/>
+      <wd pos="_GN_FS"/>
+    </disambig>
+  </rule>
+  <rule id="la_numero_uno" name="la número uno">
+    <pattern>
+      <token regexp="yes" marker="yes">la|una|esta|esa|aquella</token>
+      <token marker="yes">número</token>
+      <token regexp="yes" marker="yes">uno|1</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="_GN_FS"/>
+      <wd pos="_GN_FS"/>
+      <wd pos="_GN_FS"/>
+    </disambig>
+  </rule>
   <rule id="en_base" name="en base + numeral">
     <pattern>
       <token regexp="yes">en|de</token>
@@ -129,12 +363,58 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="percentage" name="porcentaje">
+    <pattern>
+      <token regexp="yes">[\d,. ]+[%‰‱]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMS000"/>
+    </disambig>
+  </rule>
+  <rule id="numero_graus" name="grados">
+    <pattern>
+      <token regexp="yes">([\d,. ]+[º°′″‴])+[CFKNSEW]?
+        <exception regexp="yes">[\d,. ]+º</exception>
+      </token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMP000"/>
+    </disambig>
+  </rule>
+  <rule id="graus" name="graus">
+    <pattern>
+      <token regexp="yes">°[CFKNSEW]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMN000"/>
+    </disambig>
+  </rule>
+  <rule id="un_grau" name="1 grau">
+    <pattern>
+      <token regexp="yes">1°[CFNSEW]?</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCMS000"/>
+    </disambig>
+  </rule>
   <rule id="hemos" name="hemos (haber)">
     <pattern>
       <token postag="VAIP1P0">hemos</token>
       <token postag="V.P.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="alrededor_de" name="alrededor de">
+    <pattern>
+      <token postag="D...P." postag_regexp="yes"></token>
+      <token regexp="yes" marker="yes">alrededor|cerca</token>
+      <token marker="yes">de</token>
+      <token postag="DN.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="LOC_ADV" lemma="alrededor de"/>
+      <wd pos="LOC_ADV" lemma="alrededor de"/>
+    </disambig>
   </rule>
   <rule id="ellas_juntas" name="ellas juntas">
     <pattern>
@@ -168,6 +448,35 @@
       <token regexp="yes" inflected="yes" postag="N.*|PI.*" postag_regexp="yes" marker="yes">revista|chiste|novela|nada</token>
     </pattern>
     <disambig action="remove" postag="V.*"/>
+  </rule>
+  <rule id="DA_VINCI" name="da Vinci">
+    <pattern>
+      <token marker="yes">da</token>
+      <token regexp="yes" marker="yes">(?-i)Messina|Cividale|Morte|Costa|Lingua|Língua|Gagliano|Palestrina|Perugia|Silva|Cunha|Gama|Viadana|Vinci|Ponte</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NPCNSP0"/>
+      <wd pos="NPCNSP0"/>
+    </disambig>
+  </rule>
+  <rule id="DI_STEFANO" name="di Stefano">
+    <pattern>
+      <token marker="yes">di</token>
+      <token regexp="yes" marker="yes">(?-i)Stefano|Stéfano|Maria|María</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NPCNSP0"/>
+      <wd pos="NPCNSP0"/>
+    </disambig>
+  </rule>
+  <rule id="s_ese" name="ese">
+    <pattern>
+      <token regexp="yes" marker="yes">s|ese</token>
+      <token regexp="yes">larga|corta|sonora|sorda|impura|marcada|líquida|mayúscula</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="NCFS000" lemma="ese"/>
+    </disambig>
   </rule>
   <rule id="annual" name="desastre de Annual">
     <pattern>
@@ -240,6 +549,19 @@
       <token regexp="yes" marker="yes">largo|seguro</token>
     </pattern>
     <disambig action="filter" postag="AQ.*"/>
+  </rule>
+  <rule id="clara_y_simplemente" name="clara y simplemente (adv)">
+    <pattern>
+      <token postag="A..[FC]S." postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" marker="yes">y|e|ni|o|u</token>
+      <token regexp="yes" postag="RG" marker="yes">.*mente</token>
+      <token postag="AQ.*|V.P.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="RG"/>
+      <wd pos="RG"/>
+      <wd pos="RG"/>
+    </disambig>
   </rule>
   <rule id="ESTAR_GERUNDIO" name="estar/ir + gerundio">
     <pattern>
@@ -332,6 +654,16 @@
       <wd pos="_GV_"/>
     </disambig>
   </rule>
+  <rule id="como_resultado" name="como resultado">
+    <pattern>
+      <token>como</token>
+      <token>resultado</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="SPS00" lemma="como"/>
+      <wd pos="NCMS00" lemma="resultado"/>
+    </disambig>
+  </rule>
   <rule id="presentar" name="presentar reclamo">
     <pattern>
       <token inflected="yes" postag="V.*" postag_regexp="yes">presentar</token>
@@ -355,6 +687,16 @@
       <token postag="V.[MSI].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="CS"/>
+  </rule>
+  <rule id="dance" name="dance (english)">
+    <pattern>
+      <token regexp="yes" inflected="yes">música|canción|ritmo|baile|lista|estilo|carácter</token>
+      <token postag="_QM_OPEN" min="0"></token>
+      <token marker="yes">dance</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="AQ0CN0"/>
+    </disambig>
   </rule>
   <rule id="blandas" name="blandas (adj)">
     <pattern>

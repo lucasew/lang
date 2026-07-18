@@ -414,9 +414,9 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
             continue
         action = (dis.get("action") or "replace").lower()
         postag = (dis.get("postag") or "").strip()
-        # Soft ADD/REMOVE: <wd pos="…" lemma="…"/> (Java UNKNOWN_PCT, REMOVE_JJ_FOR_OR, …)
+        # Soft ADD/REMOVE/REPLACE: <wd pos="…" lemma="…"/> (Java ca/n't MD, multi-NNP, …)
         add_wds: list[dict] = []
-        if action in ("add", "remove"):
+        if action in ("add", "remove", "replace"):
             for c in dis:
                 if local(c.tag) != "wd":
                     continue
@@ -428,19 +428,24 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 add_wds.append({"pos": wd_pos, "lemma": wd_lemma, "text": wd_text})
             if action == "add" and not add_wds:
                 continue
-            # remove may use postag only (negative filter) or <wd> list
-            if action == "remove" and not add_wds and not postag:
+            # remove/replace may use postag only or <wd> list (Java REPLACE with wd)
+            if action in ("remove", "replace") and not add_wds and not postag:
                 continue
-        elif action not in ("filter", "filterall", "replace", "immunize", "ignore_spelling"):
+        elif action not in ("filter", "filterall", "immunize", "ignore_spelling"):
             continue
-        if action in ("filter", "replace") and not postag:
+        if action == "filter" and not postag:
+            continue
+        if action == "replace" and not postag and not add_wds:
             continue
         # filterall uses each pattern token's postag (Java FILTERALL); no disambig postag required
         if action == "filterall" and postag:
             # ignore spurious postag on filterall elements
             postag = ""
-        if list(dis) and action in ("filter", "replace", "filterall"):
-            # nested <wd> not soft-loaded for filter/replace/filterall
+        if list(dis) and action in ("filter", "filterall"):
+            # nested children not soft-loaded for filter/filterall
+            continue
+        if list(dis) and action == "replace" and not add_wds:
+            # replace with non-wd children (e.g. match) not soft-loaded
             continue
         toks = pattern_is_simple(pat)
         if not toks:
@@ -564,7 +569,7 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
         write_disambig_token_lines(lines, r["tokens"])
         lines.append("    </pattern>")
         act = r.get("action") or "replace"
-        if act in ("add", "remove") and r.get("add_wds"):
+        if act in ("add", "remove", "replace") and r.get("add_wds"):
             open_tag = f'    <disambig action="{xml_esc(act)}"'
             if act == "remove" and r.get("postag"):
                 open_tag += f' postag="{xml_esc(r["postag"])}"'

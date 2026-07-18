@@ -53,6 +53,16 @@
       <wd pos="comp:comma"/>
     </disambig>
   </rule>
+  <rule id="number_comma" name="Liczby z częścią dziesiętną - przecinek nie jest językowy">
+    <pattern>
+      <token regexp="yes">\d+</token>
+      <token marker="yes" spacebefore="no">,</token>
+      <token regexp="yes" spacebefore="no">\d+.*</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="interp"/>
+    </disambig>
+  </rule>
   <rule id="opisany_powyzej" name="opisany powyżej">
     <pattern>
       <token regexp="yes" inflected="yes">pisać|opisać|przedstawić|przedstawiać|podać|zamieścić|wymienić</token>
@@ -83,6 +93,15 @@
       <wd pos="adjp" lemma="po ciemku">ciemku</wd>
     </disambig>
   </rule>
+  <rule id="litera_u" name="litera u/a/i">
+    <pattern>
+      <token inflected="yes">litera</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">[AUIW]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="subst:sg:nom:n2"/>
+    </disambig>
+  </rule>
   <rule id="tym_niemniej" name="tym niemniej">
     <pattern>
       <token marker="yes">tym</token>
@@ -110,6 +129,49 @@
       <token postag="qub" marker="yes">co</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="NA_CHRUPKO" name="na chrupko">
+    <pattern>
+      <token>na</token>
+      <token marker="yes">chrupko</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="chrupki"/>
+    </disambig>
+  </rule>
+  <rule id="OD_A_DO_Z_1" name="od a do z">
+    <pattern>
+      <token>od</token>
+      <token marker="yes">a</token>
+      <token>do</token>
+      <token>z</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="subst:sg:gen:n2"/>
+    </disambig>
+  </rule>
+  <rule id="OD_A_DO_Z_2" name="od a do z">
+    <pattern>
+      <token>od</token>
+      <token>a</token>
+      <token>do</token>
+      <token marker="yes">z</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="subst:sg:gen:n2"/>
+    </disambig>
+  </rule>
+  <rule id="PREP_LITERA_SUBST" name="jednoliterowe wyrazy oznaczające litery w wyliczeniu">
+    <pattern>
+      <token regexp="yes">\p{L}{1,2}</token>
+      <token>,</token>
+      <token regexp="yes" postag="prep.*" postag_regexp="yes" marker="yes">\p{L}</token>
+      <token>,</token>
+      <token regexp="yes">\p{L}{1,2}</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="subst:sg:nom:n2"/>
+    </disambig>
   </rule>
   <rule id="A_NUZ" name="a nuż">
     <pattern>
@@ -333,6 +395,17 @@
     </pattern>
     <disambig action="replace" postag="adjp"/>
   </rule>
+  <rule id="skorzystac_z_prawa_gen" name="skorzystać z prawa">
+    <pattern>
+      <token regexp="yes" inflected="yes">s?korzystać</token>
+      <token marker="yes">z</token>
+      <token marker="yes">prawa</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="prep:gen:nwok" lemma="z"/>
+      <wd pos="subst:sg:gen:n2" lemma="prawo"/>
+    </disambig>
+  </rule>
   <rule id="CO_GORSZA" name="co gorsza">
     <pattern>
       <token>co</token>
@@ -346,6 +419,78 @@
       <token>gorsza</token>
     </pattern>
     <disambig action="replace" postag="prep:acc"/>
+  </rule>
+  <rule id="DO_CNA" name="do cna">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">cna</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="cny"/>
+    </disambig>
+  </rule>
+  <rule id="DO_CZYSTA" name="do czysta">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">czysta</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="czysty"/>
+    </disambig>
+  </rule>
+  <rule id="DO_NAGA" name="do naga">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">naga</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="nagi"/>
+    </disambig>
+  </rule>
+  <rule id="DO_NIEDAWNA" name="do niedawna">
+    <pattern>
+      <token regexp="yes">do|od</token>
+      <token marker="yes">niedawna</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="niedawny"/>
+    </disambig>
+  </rule>
+  <rule id="DO_PELNA" name="do pełna">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">pełna</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="pełny"/>
+    </disambig>
+  </rule>
+  <rule id="DO_POZNA" name="do późna">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">późna</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="późny"/>
+    </disambig>
+  </rule>
+  <rule id="DO_SUCHA" name="do sucha">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">sucha</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="suchy"/>
+    </disambig>
+  </rule>
+  <rule id="DO_SYTA" name="do syta">
+    <pattern>
+      <token>do</token>
+      <token marker="yes">syta</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="syty"/>
+    </disambig>
   </rule>
   <rule id="do_cna" name="do cna/czysta">
     <pattern>
@@ -395,6 +540,16 @@
     </pattern>
     <disambig action="replace" postag="brev:npun"/>
   </rule>
+  <rule id="W_uppercase" name="W jako inicjał">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">W</token>
+      <token case_sensitive="yes">.</token>
+      <token regexp="yes" case_sensitive="yes">\p{Lu}\p{Ll}+</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:pun"/>
+    </disambig>
+  </rule>
   <rule id="w_prep" name="W prep">
     <pattern>
       <token postag="prep:(acc|loc):nwok" postag_regexp="yes">w</token>
@@ -408,6 +563,16 @@
       <token postag="adj.*n1.*:pos" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="dol_brev" name="dol. to skrót">
+    <pattern>
+      <token regexp="yes">\d+|[bm]l[dn]|[\.]</token>
+      <token marker="yes">dol</token>
+      <token>.</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:pun" lemma="dolar"/>
+    </disambig>
   </rule>
   <rule id="dzieki_prep_dat" name="dzięki czemu">
     <pattern>
@@ -808,6 +973,18 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="auto_da_fe" name="auto da fe">
+    <pattern>
+      <token regexp="yes">autos?</token>
+      <token>da</token>
+      <token regexp="yes">f[ée]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign" lemma="auto"/>
+      <wd pos="ign" lemma="de"/>
+      <wd pos="ign" lemma="fé"/>
+    </disambig>
+  </rule>
   <rule id="da_sie" name="da się">
     <pattern>
       <token postag="verb:fin:sg:ter:perf:refl.nonrefl">da</token>
@@ -889,6 +1066,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="BEZ_MALA" name="Bez mała - adjp, jak w NKJP">
+    <pattern>
+      <token>bez</token>
+      <token marker="yes">mała</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp" lemma="mały"/>
+    </disambig>
+  </rule>
   <rule id="BEZ_MALA_2" name="bez mała">
     <pattern>
       <token marker="yes">bez</token>
@@ -947,6 +1133,26 @@
     </pattern>
     <disambig action="replace" postag="prep:acc"/>
   </rule>
+  <rule id="moze_by" name="może bym -&gt;">
+    <pattern>
+      <token marker="yes">może</token>
+      <token inflected="yes" marker="yes">by</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="qub" lemma="może"/>
+      <wd pos="qub" lemma="by"/>
+    </disambig>
+  </rule>
+  <rule id="by_moze" name="bym może -&gt; qub">
+    <pattern>
+      <token inflected="yes" marker="yes">by</token>
+      <token marker="yes">może</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="qub" lemma="by"/>
+      <wd pos="qub" lemma="może"/>
+    </disambig>
+  </rule>
   <rule id="byc_to_moze" name="być to może -&gt;qub">
     <pattern>
       <token inflected="yes" postag="verb.*:ter.*" postag_regexp="yes">być</token>
@@ -975,6 +1181,20 @@
       <token postag="conj">albo</token>
     </pattern>
     <disambig action="filter" postag="comp:comma|conj"/>
+  </rule>
+  <rule id="ALE_ALE" name="Ale, ale jako wykrzyknik (za Innym słownikiem)">
+    <pattern>
+      <token case_sensitive="yes" postag="SENT_START"></token>
+      <token case_sensitive="yes" marker="yes">Ale</token>
+      <token case_sensitive="yes" marker="yes">,</token>
+      <token case_sensitive="yes" marker="yes">ale</token>
+      <token regexp="yes" case_sensitive="yes">[!,]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="interj" lemma="ale"/>
+      <wd pos="interp:comma" lemma=","/>
+      <wd pos="interj" lemma="ale"/>
+    </disambig>
   </rule>
   <rule id="ANI_ANI" name="ani, ani – spójniki">
     <pattern>
@@ -1201,6 +1421,15 @@
       <wd lemma="zakupić"/>
     </disambig>
   </rule>
+  <rule id="GRAND_HOTEL" name="Grand Hotel, Grand Prix -&gt; pierwszy człon to burkinostka">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Grand</token>
+      <token regexp="yes" case_sensitive="yes" inflected="yes">hotel|prix</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="burk" lemma="Grand"/>
+    </disambig>
+  </rule>
   <rule id="LAS_BURK" name="Las Vegas">
     <pattern>
       <token case_sensitive="yes" marker="yes">Las</token>
@@ -1214,6 +1443,15 @@
     </pattern>
     <disambig action="remove">
       <wd pos="burk"/>
+    </disambig>
+  </rule>
+  <rule id="MAIN_STREET" name="Main Street">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Main</token>
+      <token case_sensitive="yes">Street</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="burk" lemma="Main"/>
     </disambig>
   </rule>
   <rule id="NEW_BURK" name="New York">
@@ -1459,6 +1697,16 @@
       <token postag="subst:sg:(?:nom|voc):f|adj:sg:nom.voc:f.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="moj_boze" name="mój Boże -&gt; vocativus">
+    <pattern>
+      <token>mój</token>
+      <token>Boże</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adj:sg:nom.voc:m1.m2.m3:pos"/>
+      <wd pos="subst:sg:voc:m1" lemma="Bóg"/>
+    </disambig>
   </rule>
   <rule id="boze_bron" name="Boże broń -&gt; vocativus">
     <pattern>
@@ -1719,6 +1967,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="oboje_congr" name="oboje występuje z przymiotnikami l.m. w związku zgody!">
+    <pattern>
+      <token marker="yes">oboje</token>
+      <token postag="(?:adj|ppas|pact):pl:nom.voc:m1.p1.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="num:pl:nom.voc:m1:congr" lemma="oba"/>
+    </disambig>
+  </rule>
   <rule id="jaki_mamy" name="jaki + mamy =&gt; czasownik">
     <pattern>
       <token inflected="yes" postag="adj.*acc.*" postag_regexp="yes" marker="yes">jaki</token>
@@ -1850,6 +2107,15 @@
     </pattern>
     <disambig action="replace" postag="adv:pos"/>
   </rule>
+  <rule id="po_staremu" name="po staremu/nowemu -&gt;adjp">
+    <pattern>
+      <token>po</token>
+      <token regexp="yes" marker="yes">nowemu|staremu</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adjp"/>
+    </disambig>
+  </rule>
   <rule id="PO_ADJP" name="po polsku">
     <pattern>
       <token>po</token>
@@ -1870,6 +2136,15 @@
       <token marker="yes">bronią</token>
     </pattern>
     <disambig action="replace" postag="subst:sg:inst:f"/>
+  </rule>
+  <rule id="IMIE_WARSZ" name="Warsz">
+    <pattern>
+      <token case_sensitive="yes" inflected="yes">imię</token>
+      <token case_sensitive="yes" marker="yes">Warsz</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="subst:sg:nom.voc:m1" lemma="Warsz"/>
+    </disambig>
   </rule>
   <rule id="zostanie_ppas" name="zostanie + ppas =&gt; verb">
     <pattern>
@@ -2003,6 +2278,16 @@
       <token case_sensitive="yes">York</token>
     </pattern>
     <disambig action="replace" postag="burk"/>
+  </rule>
+  <rule id="ZA_MAZ" name="za mąż -&gt; biernik (tak w NKJP i w Innym">
+    <pattern>
+      <token>za</token>
+      <token>mąż</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="prep:acc"/>
+      <wd pos="subst:sg:acc:m1"/>
+    </disambig>
   </rule>
   <rule id="BLISKO_GEN" name="blisko/niedaleko + dopełniacz">
     <pattern>
@@ -2432,6 +2717,14 @@
     </pattern>
     <disambig action="remove">
       <wd lemma="próżniaczyć"/>
+    </disambig>
+  </rule>
+  <rule id="PRZECIE" name="przecie to nie przeć">
+    <pattern>
+      <token>przecie</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="qub" lemma="przecie"/>
     </disambig>
   </rule>
   <rule id="ROSNIE" name="rośnie to raczej czasownik">
@@ -3222,6 +3515,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="to_pred_byc" name="to + jest/są -&gt; predykatyw">
+    <pattern>
+      <token marker="yes">to</token>
+      <token regexp="yes">jest|są|był[ayo]?</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="pred" lemma="to"/>
+    </disambig>
+  </rule>
   <rule id="gen_dlugosci" name="adj:gen + długości -&gt;gen">
     <pattern>
       <token postag="adj:sg:gen:f.*" postag_regexp="yes"></token>
@@ -3704,6 +4006,16 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="JAK_ZES" name="jak żeś -&gt; adv qub">
+    <pattern>
+      <token>jak</token>
+      <token inflected="yes">że</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="adv" lemma="jak"/>
+      <wd pos="qub" lemma="że"/>
+    </disambig>
+  </rule>
   <rule id="miec_inf" name="mieć to nie miecić">
     <pattern>
       <token>mieć</token>
@@ -4054,6 +4366,28 @@
     </pattern>
     <disambig action="replace" postag="ign"/>
   </rule>
+  <rule id="art_brev" name="art deco">
+    <pattern>
+      <token marker="yes">art</token>
+      <token regexp="yes">d[eé]co</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign" lemma="art"/>
+    </disambig>
+  </rule>
+  <rule id="M_IN" name="m.in.">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">m</token>
+      <token case_sensitive="yes" marker="yes">.</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">i[mn]</token>
+      <token case_sensitive="yes">.</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:pun" lemma="między"/>
+      <wd lemma="."/>
+      <wd pos="brev:pun" lemma="innymi"/>
+    </disambig>
+  </rule>
   <rule id="PL_DOMAIN_NAME" name=".pl, .jp, .al">
     <pattern>
       <token>.</token>
@@ -4063,6 +4397,16 @@
       <wd pos="brev:pun"/>
     </disambig>
   </rule>
+  <rule id="L_ART" name="l'art">
+    <pattern>
+      <token>l</token>
+      <token regexp="yes">['`’]</token>
+      <token marker="yes">art</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign" lemma="art"/>
+    </disambig>
+  </rule>
   <rule id="KC" name="KC">
     <pattern>
       <token case_sensitive="yes" marker="yes">KC</token>
@@ -4070,6 +4414,15 @@
     </pattern>
     <disambig action="remove">
       <wd lemma="kodeks cywilny"/>
+    </disambig>
+  </rule>
+  <rule id="KS" name="KS">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">KS</token>
+      <token regexp="yes" case_sensitive="yes">\p{Lu}\p{Ll}+</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:npun" lemma="klub sportowy"/>
     </disambig>
   </rule>
   <rule id="w_proc" name="w proc. =&gt; brev">
@@ -4094,6 +4447,18 @@
     </pattern>
     <disambig action="remove">
       <wd lemma="emerytowany"/>
+    </disambig>
+  </rule>
+  <rule id="NP_NOT_BREV" name="P=NP">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">P</token>
+      <token case_sensitive="yes" marker="yes">=</token>
+      <token case_sensitive="yes" marker="yes">NP</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign"/>
+      <wd pos="interp" lemma="="/>
+      <wd pos="ign"/>
     </disambig>
   </rule>
   <rule id="nie_brev_tylko_zmienna" name="litery jako zmienne, nie skróty">
@@ -4145,12 +4510,41 @@
       <wd pos="brev:pun"/>
     </disambig>
   </rule>
+  <rule id="CENTER_FOR" name="Center for">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Center</token>
+      <token case_sensitive="yes" marker="yes">for</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign"/>
+      <wd pos="ign"/>
+    </disambig>
+  </rule>
+  <rule id="FOR_WINDOWS" name="for Windows">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">for</token>
+      <token case_sensitive="yes" marker="yes">Windows</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign"/>
+      <wd pos="ign"/>
+    </disambig>
+  </rule>
   <rule id="US_Open" name="US OPEN">
     <pattern>
       <token marker="yes">US</token>
       <token>Open</token>
     </pattern>
     <disambig action="replace" postag="ign"/>
+  </rule>
+  <rule id="GLAM_ROCK" name="glam rock">
+    <pattern>
+      <token marker="yes">glam</token>
+      <token inflected="yes">rock</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign" lemma="glam"/>
+    </disambig>
   </rule>
   <rule id="NUM_LUTY" name="1 luty">
     <pattern>
@@ -4159,6 +4553,16 @@
     </pattern>
     <disambig action="remove">
       <wd lemma="lut"/>
+    </disambig>
+  </rule>
+  <rule id="no_coz" name="no cóż -&gt; interj">
+    <pattern>
+      <token marker="yes">no</token>
+      <token marker="yes">cóż</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="interj" lemma="no"/>
+      <wd pos="interj" lemma="cóż"/>
     </disambig>
   </rule>
   <rule id="no_halo_interj" name="no, halo - interj">
@@ -4190,6 +4594,15 @@
     </pattern>
     <disambig action="replace" postag="interj"/>
   </rule>
+  <rule id="BIG_BEN" name="Big Ben">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Big</token>
+      <token case_sensitive="yes" inflected="yes">Ben</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="burk" lemma="Big"/>
+    </disambig>
+  </rule>
   <rule id="TEL_AWIW" name="Tel Awiw">
     <pattern>
       <token case_sensitive="yes" marker="yes">Tel</token>
@@ -4203,6 +4616,15 @@
       <token regexp="yes" case_sensitive="yes" inflected="yes">Leone|Nevada</token>
     </pattern>
     <disambig action="replace" postag="burk"/>
+  </rule>
+  <rule id="OS_X" name="OS X">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">OS</token>
+      <token case_sensitive="yes">X</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="burk" lemma="OS"/>
+    </disambig>
   </rule>
   <rule id="NE_BREV" name="n.e.">
     <pattern>
@@ -4231,6 +4653,19 @@
     </pattern>
     <disambig action="add">
       <wd pos="brev:pun" lemma="naukowy"/>
+    </disambig>
+  </rule>
+  <rule id="npm" name="n.p.m.">
+    <pattern>
+      <token regexp="yes">[np]</token>
+      <token>.</token>
+      <token>p</token>
+      <token>.</token>
+      <token marker="yes">m</token>
+      <token>.</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:pun" lemma="morza"/>
     </disambig>
   </rule>
   <rule id="K" name="K">
@@ -4268,6 +4703,15 @@
       <token marker="yes">około</token>
     </pattern>
     <disambig action="replace" postag="qub"/>
+  </rule>
+  <rule id="Anno_xxx" name="Anno Domini to nie wołacz">
+    <pattern>
+      <token marker="yes">Anno</token>
+      <token>Domini</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="xxx" lemma="annus"/>
+    </disambig>
   </rule>
   <rule id="OWCA_MECZY" name="meczy jako czasownik">
     <pattern>
@@ -4319,6 +4763,25 @@
       <wd pos="brev:pun" lemma="piątek"/>
     </disambig>
   </rule>
+  <rule id="pt_piatek_brev_2" name="pt.">
+    <pattern>
+      <token marker="yes">pt</token>
+      <token postag="SENT_END" spacebefore="no">.</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:pun" lemma="piątek"/>
+    </disambig>
+  </rule>
+  <rule id="por_brev" name="por. to porucznik">
+    <pattern>
+      <token marker="yes">por</token>
+      <token>.</token>
+      <token regexp="yes">\p{Lu}\p{Ll}+</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="brev:pun" lemma="porucznik"/>
+    </disambig>
+  </rule>
   <rule id="PRZE_ZEMNIE" name="zemnie -&gt; xxx">
     <pattern>
       <token>prze</token>
@@ -4332,6 +4795,15 @@
       <token regexp="yes">Vinci|gamba</token>
     </pattern>
     <disambig action="replace" postag="ign"/>
+  </rule>
+  <rule id="HOT_DOG" name="hot dog">
+    <pattern>
+      <token marker="yes">hot</token>
+      <token inflected="yes">dog</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="ign" lemma="hot"/>
+    </disambig>
   </rule>
   <rule id="co_niemiara" name="co niemiara">
     <pattern>

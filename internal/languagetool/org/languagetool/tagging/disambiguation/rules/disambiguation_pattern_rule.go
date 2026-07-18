@@ -246,15 +246,21 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 			}
 		}
 	case ActionReplace:
-		// Java REPLACE with <wd> list: one reading per matched (marker) token.
+		// Java REPLACE with <wd> list: only when length equals marker-span count
+		// (DisambiguationPatternRuleReplacer: newTokenReadings.length == …).
 		// Java REPLACE with only postag: replace *fromPos* only
-		// (DisambiguationPatternRuleReplacer: whTokens[fromPos] = new …).
-		// first/last already come from the matcher marker span (firstMark/lastMark),
-		// so first == Java fromPos after startPositionCorrection.
+		// (whTokens[fromPos] = new …). first is matcher marker start (fromPos).
 		if len(r.NewTokenReadings) > 0 {
+			span := 0
+			if last >= first && first >= 0 {
+				span = last - first + 1
+			}
+			if span == 0 || len(r.NewTokenReadings) != span {
+				return
+			}
 			for i := first; i <= last && i < len(nws); i++ {
 				rel := i - first
-				if rel >= len(r.NewTokenReadings) || r.NewTokenReadings[rel] == nil || nws[i] == nil {
+				if r.NewTokenReadings[rel] == nil || nws[i] == nil {
 					continue
 				}
 				tok := r.NewTokenReadings[rel]

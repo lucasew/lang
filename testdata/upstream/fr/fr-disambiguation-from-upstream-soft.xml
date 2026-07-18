@@ -22,6 +22,15 @@
     </pattern>
     <disambig action="replace" postag="K"/>
   </rule>
+  <rule id="ANNEES" name="années">
+    <pattern>
+      <token regexp="yes">\d+</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">EC|CE|AEC</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+    </disambig>
+  </rule>
   <rule id="NEUF_CHIFFRE" name="neuf chiffre">
     <pattern>
       <token postag="[YK]" postag_regexp="yes"></token>
@@ -835,6 +844,18 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="LE_PLUS" name="le plus (adv)">
+    <pattern>
+      <token inflected="yes">avoir</token>
+      <token marker="yes">le</token>
+      <token regexp="yes" marker="yes">plus|moins</token>
+      <token postag="V.* ppa.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A" lemma="le plus"/>
+      <wd pos="A" lemma="le plus"/>
+    </disambig>
+  </rule>
   <rule id="AVOIR_ETE" name="avoir été">
     <pattern>
       <token inflected="yes">avoir</token>
@@ -1135,12 +1156,34 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="FORTE_PUISSANCE" name="forte puissance">
+    <pattern>
+      <token postag="N.*" postag_regexp="yes"></token>
+      <token marker="yes">forte</token>
+      <token marker="yes">puissance</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="J e sp" lemma="fort puissance"/>
+      <wd pos="J e sp" lemma="fort puissance"/>
+    </disambig>
+  </rule>
   <rule id="SECTION_PERIODIQUES" name="section périodiques">
     <pattern>
       <token inflected="yes" postag="N f s">section</token>
       <token postag="N m p">périodiques</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="JOURNEE_PORTES_OUVERTES" name="journée portes ouvertes">
+    <pattern>
+      <token inflected="yes" postag="N .*" postag_regexp="yes">journée</token>
+      <token marker="yes">portes</token>
+      <token marker="yes">ouvertes</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="J e sp" lemma="portes ouvertes"/>
+      <wd pos="J e sp" lemma="portes ouvertes"/>
+    </disambig>
   </rule>
   <rule id="IDEES_MENU" name="idées menu">
     <pattern>
@@ -1419,6 +1462,17 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="AU_COURS_DE" name="au cours de">
+    <pattern>
+      <token marker="yes">au</token>
+      <token marker="yes">cours</token>
+      <token regexp="yes">de|d'|des|du</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="P" lemma="au cours"/>
+      <wd pos="P" lemma="au cours"/>
+    </disambig>
+  </rule>
   <rule id="CONTRE" name="contre">
     <antipattern>
       <token regexp="yes">j'|il|elle</token>
@@ -1455,11 +1509,51 @@
     </pattern>
     <disambig action="filter" postag="J m s"/>
   </rule>
+  <rule id="WINDOWS" name="windows">
+    <pattern>
+      <token>Windows</token>
+      <token regexp="yes">\d+</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="Z m sp"/>
+      <wd pos="Z m sp"/>
+    </disambig>
+  </rule>
+  <rule id="DA_VINCI" name="da Vinci">
+    <pattern>
+      <token marker="yes">da</token>
+      <token regexp="yes" marker="yes">(?-i)Messina|Cividale|Morte|Costa|Lingua|Língua|Gagliano|Palestrina|Perugia|Silva|Cunha|Gama|Viadana|Vinci|Ponte</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="Z e sp"/>
+      <wd pos="Z e sp"/>
+    </disambig>
+  </rule>
   <rule id="Paris" name="paris">
     <pattern>
       <token regexp="yes" marker="yes">(?-i)Paris</token>
     </pattern>
     <disambig action="filter" postag="Z.*"/>
+  </rule>
+  <rule id="LE_PETIT_NOM" name="le petit Chose">
+    <pattern>
+      <token>le</token>
+      <token>petit</token>
+      <token regexp="yes" marker="yes">(?-i)[A-Z].*</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="Z m sp"/>
+    </disambig>
+  </rule>
+  <rule id="LA_PETITE_NOM" name="la petite Chose">
+    <pattern>
+      <token>la</token>
+      <token>petite</token>
+      <token regexp="yes" marker="yes">(?-i)[A-Z].*</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="Z f sp"/>
+    </disambig>
   </rule>
   <rule id="MARIE" name="Marie">
     <antipattern>
@@ -1877,6 +1971,16 @@
     </pattern>
     <disambig action="filter" postag="N m p"/>
   </rule>
+  <rule id="LES_QUELQUES" name="les quelques">
+    <pattern>
+      <token postag="(P.)?D e p" postag_regexp="yes"></token>
+      <token marker="yes">quelques</token>
+      <token postag="N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="J e p"/>
+    </disambig>
+  </rule>
   <rule id="PERMIS" name="permis (nom)">
     <pattern>
       <token postag="(P.)?D.*" postag_regexp="yes"></token>
@@ -1891,6 +1995,15 @@
       <token regexp="yes">de|du|des|d'</token>
     </pattern>
     <disambig action="filter" postag="N m s"/>
+  </rule>
+  <rule id="CERVICALES" name="cervicales">
+    <pattern>
+      <token>spécial</token>
+      <token inflected="yes" postag="J f.*" postag_regexp="yes" marker="yes">cervical</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="J e sp"/>
+    </disambig>
   </rule>
   <rule id="CARRE" name="carré">
     <pattern>
@@ -2027,6 +2140,30 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="SAINT-Z" name="saint-z">
+    <pattern>
+      <token regexp="yes">(?-i)Saint</token>
+      <token>-</token>
+      <token postag="Z m sp"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="Z m sp"/>
+      <wd pos="Z m sp"/>
+      <wd pos="Z m sp"/>
+    </disambig>
+  </rule>
+  <rule id="SAINTE-Z" name="sainte-z">
+    <pattern>
+      <token regexp="yes">(?-i)Sainte</token>
+      <token>-</token>
+      <token postag="Z f sp"></token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="Z f sp"/>
+      <wd pos="Z f sp"/>
+      <wd pos="Z f sp"/>
+    </disambig>
+  </rule>
   <rule id="GRAND_FEMININE" name="grand faim">
     <pattern>
       <token marker="yes">grand</token>
@@ -2121,6 +2258,22 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="SUR_LE_COUP" name="sur le coup">
+    <antipattern>
+      <token>coup</token>
+      <token postag="J [me] sp?" postag_regexp="yes"></token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">sur</token>
+      <token marker="yes">le</token>
+      <token marker="yes">coup</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A" lemma="sur le coup"/>
+      <wd pos="A" lemma="sur le coup"/>
+      <wd pos="A" lemma="sur le coup"/>
+    </disambig>
+  </rule>
   <rule id="HELAS" name="hélas">
     <antipattern>
       <token skip="-1">tu</token>
@@ -2147,6 +2300,103 @@
       <token postag="[DN].*" postag_regexp="yes">pareil</token>
     </pattern>
     <disambig action="remove" postag="A"/>
+  </rule>
+  <rule id="DE_CE_FAIT" name="de ce fait">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token marker="yes">de</token>
+      <token marker="yes">ce</token>
+      <token marker="yes">fait</token>
+      <token>,</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A" lemma="de ce fait"/>
+      <wd pos="A" lemma="de ce fait"/>
+      <wd pos="A" lemma="de ce fait"/>
+    </disambig>
+  </rule>
+  <rule id="A_MES_YEUX" name="à mes yeux">
+    <pattern>
+      <token postag="V etre.*" postag_regexp="yes"></token>
+      <token marker="yes">à</token>
+      <token postag="D.*" postag_regexp="yes" marker="yes"></token>
+      <token marker="yes">yeux</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
+  </rule>
+  <rule id="A_L_ORIGINE" name="à l'origine">
+    <pattern>
+      <token marker="yes">à</token>
+      <token marker="yes">l'</token>
+      <token marker="yes">origine</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
+  </rule>
+  <rule id="EN_REALITE" name="en réalité">
+    <antipattern>
+      <token>réalité</token>
+      <token regexp="yes">augmentée|virtuelle</token>
+    </antipattern>
+    <pattern>
+      <token marker="yes">en</token>
+      <token marker="yes">réalité</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
+  </rule>
+  <rule id="EN_GENERAL" name="en général">
+    <pattern>
+      <token>en</token>
+      <token regexp="yes">apparence|conséquence|définitive|effet|général|gros|particulier|partie|principe|revanche</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
+  </rule>
+  <rule id="PETIT_A_PETIT" name="petit à petit">
+    <pattern>
+      <token>petit</token>
+      <token>à</token>
+      <token>petit</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
+  </rule>
+  <rule id="TOUT_A_FAIT" name="tout à fait">
+    <pattern>
+      <token>tout</token>
+      <token>à</token>
+      <token>fait</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
+  </rule>
+  <rule id="DU_TOUT" name="du tout">
+    <pattern>
+      <token>du</token>
+      <token>tout</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
   </rule>
   <rule id="FAIT_EFFET" name="fait effet">
     <pattern>
@@ -2565,6 +2815,17 @@
     </pattern>
     <disambig action="replace" postag="N m sp"/>
   </rule>
+  <rule id="A_PRIORI" name="a priori (noun/loc adverbial)">
+    <pattern>
+      <token regexp="yes">ce|cet|un|le</token>
+      <token marker="yes">a</token>
+      <token marker="yes">priori</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="N m s" lemma="a priori"/>
+      <wd pos="J m s" lemma="a priori"/>
+    </disambig>
+  </rule>
   <rule id="DEVINS" name="devins (verbe)">
     <pattern>
       <token postag="V.*" postag_regexp="yes" marker="yes">devins</token>
@@ -2628,6 +2889,21 @@
       <token postag="V ppr"></token>
     </pattern>
     <disambig action="filter" postag="P"/>
+  </rule>
+  <rule id="DE_LA_VIE" name="de la vie (adv)">
+    <pattern>
+      <token>ne</token>
+      <token postag="R.*" postag_regexp="yes" min="0"></token>
+      <token postag="V.*[123].*" postag_regexp="yes"></token>
+      <token marker="yes">de</token>
+      <token regexp="yes" marker="yes">ma|sa|la|ta</token>
+      <token marker="yes">vie</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="A"/>
+      <wd pos="A"/>
+      <wd pos="A"/>
+    </disambig>
   </rule>
   <rule id="CRAINT" name="craint">
     <pattern>
@@ -2849,6 +3125,16 @@
       <token marker="yes">honneur</token>
     </pattern>
     <disambig action="replace" postag="N f s"/>
+  </rule>
+  <rule id="DON_JUAN" name="don Juan">
+    <pattern>
+      <token>don</token>
+      <token>Juan</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="N m sp"/>
+      <wd pos="N m sp"/>
+    </disambig>
   </rule>
   <rule id="EN_PERMANENCE" name="en permanence">
     <pattern>
