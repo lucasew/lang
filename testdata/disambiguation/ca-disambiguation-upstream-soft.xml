@@ -204,6 +204,14 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="pujar_i_baixar" name="pujar i baixar (verbs)">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">pujar</token>
+      <token regexp="yes" postag="CC" marker="yes">i|o|ni</token>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">baixar</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="RIU_AMUNT" name="riu amunt/avall">
     <pattern>
       <token regexp="yes" postag="NC.*" postag_regexp="yes" marker="yes">riu|costa|baixada|escala|escales</token>
@@ -211,12 +219,36 @@
     </pattern>
     <disambig action="filter" postag="NC.*"/>
   </rule>
+  <rule id="valer_la_pena" name="valer la pena">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">valer|pagar</token>
+      <token postag="D.*" postag_regexp="yes" marker="yes">la</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">pena</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="posar_fi_a" name="posar fi a">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">posar</token>
+      <token postag="NCFS000" marker="yes">fi</token>
+      <token postag="SPS00" marker="yes">a</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="tenor_nom" name="tenor, soprano (nom no adj)">
     <pattern>
       <token postag="D.*" postag_regexp="yes"></token>
       <token inflected="yes" postag="N.*" postag_regexp="yes" marker="yes">tenor</token>
     </pattern>
     <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="trucada" name="trucada (nom no adj)">
+    <pattern>
+      <token inflected="yes" postag="NCF.*" postag_regexp="yes" marker="yes">trucada</token>
+      <token inflected="yes">de</token>
+      <token>telèfon</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="deixar_de_fer" name="deixar de fer">
     <pattern>
@@ -258,6 +290,13 @@
     </pattern>
     <disambig action="filter" postag="VAIP3P00"/>
   </rule>
+  <rule id="mans_enlaire" name="mans enlaire">
+    <pattern>
+      <token postag="NCFP000">mans</token>
+      <token postag="RG">enlaire</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="assumptes" name="assumptes">
     <pattern>
       <token postag="D..MP." postag_regexp="yes"></token>
@@ -278,6 +317,20 @@
       <token postag="N.*" postag_regexp="yes" marker="yes">tret</token>
     </pattern>
     <disambig action="filter" postag="N.*|V.P.*"/>
+  </rule>
+  <rule id="uns_quants" name="uns quants">
+    <pattern>
+      <token postag="DI0MP0|PI0MP000" postag_regexp="yes">uns</token>
+      <token postag="DI0MP0|PI0MP000" postag_regexp="yes">quants</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="unes_quantes" name="unes quantes">
+    <pattern>
+      <token postag="DI0FP0|PI0FP000" postag_regexp="yes">unes</token>
+      <token postag="DI0FP0|PI0FP000" postag_regexp="yes">quantes</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="diguem_ne" name="diguem-ne">
     <pattern>
@@ -303,6 +356,21 @@
     </pattern>
     <disambig action="filter" postag="V.*"/>
   </rule>
+  <rule id="anada" name="anada (nom)">
+    <pattern>
+      <token inflected="yes" postag="N.*" postag_regexp="yes" marker="yes">anada</token>
+      <token postag="CC"></token>
+      <token regexp="yes" inflected="yes">tornada|vinguda</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="donat_cas" name="cas (masc sg)">
+    <pattern>
+      <token postag="V.P..SM." postag_regexp="yes"></token>
+      <token postag="NCMS000" marker="yes">cas</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="fer_nVerbConjug" name="no sol ser verb conjugat: fer">
     <pattern>
       <token regexp="yes" marker="yes">fer|refer</token>
@@ -315,6 +383,13 @@
     </pattern>
     <disambig action="filter" postag=".*[^B]"/>
   </rule>
+  <rule id="peu_calces" name="peu calces">
+    <pattern>
+      <token postag="NC.*" postag_regexp="yes">peu</token>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">calçar</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="cru_substantiu" name="cru substantiu">
     <pattern>
       <token regexp="yes" inflected="yes">barril|litre</token>
@@ -322,6 +397,21 @@
       <token marker="yes">cru</token>
     </pattern>
     <disambig action="replace" postag="NCMS000"/>
+  </rule>
+  <rule id="la_torna" name="la torna">
+    <pattern>
+      <token inflected="yes">ser</token>
+      <token postag="DA0FS0" marker="yes">la</token>
+      <token postag="NCFS000" marker="yes">torna</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="vares" name="vares + infinitiu">
+    <pattern>
+      <token inflected="yes" postag="VA.*" postag_regexp="yes">anar</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="en_sec" name="en sec">
     <pattern>
@@ -336,6 +426,13 @@
       <token regexp="yes" marker="yes">persona|vers</token>
     </pattern>
     <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="ADRECA" name="adreça">
+    <pattern>
+      <token inflected="yes" postag="NC.*" postag_regexp="yes" marker="yes">adreça</token>
+      <token inflected="yes">electrònic</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="la_culpa" name="culpa (nom)">
     <pattern>
@@ -386,12 +483,41 @@
     </pattern>
     <disambig action="filter" postag="N.*|.*_GN_.*"/>
   </rule>
+  <rule id="feu_verb" name="feu (verb)">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes" marker="yes">feu</token>
+      <token regexp="yes" postag="N.*" postag_regexp="yes" marker="yes">clic|bondat</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="fera_nom" name="fera (nom)">
     <pattern>
       <token inflected="yes" postag="N.*" postag_regexp="yes" marker="yes">fera</token>
       <token regexp="yes" inflected="yes">salvatge|feroç|ferotge</token>
     </pattern>
     <disambig action="filter" postag="N.*|.*_GN_.*"/>
+  </rule>
+  <rule id="donar_fe" name="donar fe">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">donar</token>
+      <token postag="NCFS000">fe</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="posar_en_marxa" name="posar en parxa">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">posar</token>
+      <token postag="SPS00">en</token>
+      <token regexp="yes" postag="N.*" postag_regexp="yes">marxa|contacte|dubte|directe</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="tractat_militar" name="tractat militar">
+    <pattern>
+      <token regexp="yes" postag="NCMS000">tractat|agregat</token>
+      <token postag="AQ0CS0">militar</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="calent" name="calent (adj)">
     <pattern>
@@ -407,6 +533,15 @@
       <token marker="yes">on</token>
     </pattern>
     <disambig action="filter" postag="PR.*"/>
+  </rule>
+  <rule id="plana_si_plana_no" name="plana sí plana no">
+    <pattern>
+      <token postag="NC.*" postag_regexp="yes"></token>
+      <token>sí</token>
+      <token postag="NC.*" postag_regexp="yes"></token>
+      <token regexp="yes">no|també</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="tornes" name="tornés: verb o adjectiu">
     <pattern>
@@ -456,12 +591,33 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="PORTAR_PRESSA" name="portar pressa">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">donar|portar</token>
+      <token postag="NCFS000" marker="yes">pressa</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="DONAR" name="donar">
     <pattern>
       <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">donar</token>
       <token regexp="yes">part|sentit|importància|plaer|goig</token>
     </pattern>
     <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="seguit_nom" name="seguit: nom no participi">
+    <pattern>
+      <token postag="D..MS.*" postag_regexp="yes"></token>
+      <token postag="N.*" postag_regexp="yes">seguit</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="deure_infinitiu" name="deure + infinitiu">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">deure</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="mesos" name="mesos no participi del verb metre">
     <pattern>
@@ -520,6 +676,13 @@
       <token postag="N.M[SN].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="A.*"/>
+  </rule>
+  <rule id="fer_fora" name="fer fora (verb)">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">fer</token>
+      <token postag="RG" marker="yes">fora</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="fora_mida" name="fora mida">
     <pattern>
@@ -647,6 +810,13 @@
     </pattern>
     <disambig action="filter" postag="NC.*"/>
   </rule>
+  <rule id="mitja_dotzena" name="mitja dotzena">
+    <pattern>
+      <token postag="A.*" postag_regexp="yes" marker="yes">mitja</token>
+      <token postag="N.*" postag_regexp="yes" marker="yes">dotzena</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="de_vas" name="de vas">
     <pattern>
       <token regexp="yes">de|un|el|l</token>
@@ -724,6 +894,20 @@
     </pattern>
     <disambig action="filter" postag="V.*"/>
   </rule>
+  <rule id="doble_moral" name="doble_moral">
+    <pattern>
+      <token inflected="yes" postag="A.*" postag_regexp="yes">doble</token>
+      <token inflected="yes" postag="N.*" postag_regexp="yes">moral</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="corrent_politic" name="corrent polític">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="NC.*" postag_regexp="yes">corrent|vessant</token>
+      <token regexp="yes" inflected="yes" postag="A.*" postag_regexp="yes">polític|marí</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="adj_costum" name="adj + costum">
     <pattern>
       <token postag="A.*" postag_regexp="yes" marker="yes"></token>
@@ -789,12 +973,26 @@
     </pattern>
     <disambig action="filter" postag="NCFS000"/>
   </rule>
+  <rule id="causar_baixa" name=" causar baixes">
+    <pattern>
+      <token inflected="yes" postag="V.*|_GV_" postag_regexp="yes">causar</token>
+      <token inflected="yes" postag="N.*" postag_regexp="yes">baixa</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="tot_son" name="tot son (són)">
     <pattern>
       <token inflected="yes" postag="PI.*" postag_regexp="yes" marker="yes">tot</token>
       <token>son</token>
     </pattern>
     <disambig action="filter" postag="PI.*"/>
+  </rule>
+  <rule id="quelcom" name="quelcom">
+    <pattern>
+      <token postag="PI0CS000">quelcom</token>
+      <token postag="AQ0[MC]S0" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="aa1" name="aa1">
     <pattern>
@@ -804,12 +1002,34 @@
     </pattern>
     <disambig action="filter" postag="R.*"/>
   </rule>
+  <rule id="molt_fi" name="molt fi">
+    <pattern>
+      <token regexp="yes" postag="RG.*" postag_regexp="yes" marker="yes">molt|poc|tan|força|massa|tot</token>
+      <token postag="AQ.*" postag_regexp="yes" marker="yes">fi</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="via_no_prep" name="via no preposició">
     <pattern>
       <token postag="D..FS." postag_regexp="yes"></token>
       <token postag="NCFS000" marker="yes">via</token>
     </pattern>
     <disambig action="filter" postag="N.*|_GN_.*"/>
+  </rule>
+  <rule id="en_costes" name="en costes">
+    <pattern>
+      <token postag="V.[SI].*|_GV_" postag_regexp="yes"></token>
+      <token postag="SPS00" marker="yes">en</token>
+      <token postag="NCFP000" marker="yes">costes</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="els_dona" name="els dona">
+    <pattern>
+      <token postag="PP3CP000" marker="yes">els</token>
+      <token postag="VMIP3S00" marker="yes">dona</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="caure_la_bava" name="caure la bava">
     <pattern>
@@ -834,6 +1054,13 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="poc_capital" name="poc capital">
+    <pattern>
+      <token postag="DI0MS0">poc</token>
+      <token postag="NCMS000">capital</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="en_prep" name="en (preposició)">
     <pattern>
       <token postag="V.P.*" postag_regexp="yes"></token>
@@ -841,6 +1068,13 @@
       <token regexp="yes">\p{Lu}.*</token>
     </pattern>
     <disambig action="filter" postag="SPS00"/>
+  </rule>
+  <rule id="JO" name="jo mateixa">
+    <pattern>
+      <token postag="PP1CSN00">jo</token>
+      <token postag="AQ0FS0">mateixa</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="ser_fan" name="ser fan">
     <pattern>
@@ -893,6 +1127,13 @@
       <token postag="V.N.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="VA.*|_GV_|_obligacio"/>
+  </rule>
+  <rule id="molt_adv" name="molt (adverbi)">
+    <pattern>
+      <token postag="RG.*" postag_regexp="yes">molt</token>
+      <token regexp="yes" postag="AQ.*" postag_regexp="yes">llarg|clar</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="clara_d_ou" name="clara d'ou">
     <pattern>

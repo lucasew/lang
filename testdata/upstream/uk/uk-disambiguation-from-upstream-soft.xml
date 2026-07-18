@@ -4,13 +4,13 @@
   <rule id="сyrillic_digit_I" name="Кирилічна цифра I">
     <pattern>
       <token postag="noun:anim:.*?fname.*" postag_regexp="yes"></token>
-      <token case_sensitive="yes">І</token>
+      <token case_sensitive="yes" marker="yes">І</token>
     </pattern>
     <disambig action="replace" postag="number:latin:bad"/>
   </rule>
   <rule id="сyrillic_digit_I_2" name="Кирилічна цифра I">
     <pattern>
-      <token case_sensitive="yes">І</token>
+      <token case_sensitive="yes" marker="yes">І</token>
       <token>ст.</token>
     </pattern>
     <disambig action="replace" postag="number:latin:bad"/>
@@ -18,27 +18,45 @@
   <rule id="naletiv_noun" name="налетів - noun">
     <pattern>
       <token postag="adj:p:v_rod(?!.*pron).*" postag_regexp="yes"></token>
-      <token>налетів</token>
+      <token marker="yes">налетів</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:p:v_rod.*"/>
   </rule>
   <rule id="metoda_subst_2" name="Метода - subst">
     <pattern>
       <token regexp="yes" inflected="yes">основа|щодо|і?з|до|без|від|для|замість|крім|проти</token>
-      <token>метода</token>
+      <token marker="yes">метода</token>
     </pattern>
     <disambig action="filter" postag="noun.*subst"/>
+  </rule>
+  <rule id="anim_v_kly_zvert" name="Кличний у звертанні">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" postag="adj:p:v_kly.*" postag_regexp="yes" marker="yes">шановні|дорогі</token>
+      <token postag="noun:anim:p:v_kly.*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">[,!.]|\.\.\.</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="anim_v_kly_zvert_2" name="Кличний у звертанні">
+    <pattern>
+      <token regexp="yes">[«„&quot;—–-]</token>
+      <token regexp="yes" postag="adj:p:v_kly.*" postag_regexp="yes" marker="yes">шановні|дорогі</token>
+      <token postag="noun:anim:p:v_kly.*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">[,!.]|\.\.\.</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="rady_prep_1" name="ради: prep">
     <pattern>
       <token regexp="yes">бога|Христа|цікавост[іи]</token>
-      <token>ради</token>
+      <token marker="yes">ради</token>
     </pattern>
     <disambig action="filter" postag="prep"/>
   </rule>
   <rule id="rady_prep_2" name="ради: prep">
     <pattern>
-      <token>ради</token>
+      <token marker="yes">ради</token>
       <token regexp="yes">бога|Христа|чого|тебе|цікавост[іи]|дати</token>
     </pattern>
     <disambig action="filter" postag="prep"/>
@@ -46,33 +64,33 @@
   <rule id="rusi_noun_01" name="Русі - іменник 01">
     <pattern>
       <token regexp="yes" inflected="yes">на|київський|галицький|давній|південний|північний|підкарпатський</token>
-      <token>Русі</token>
+      <token marker="yes">Русі</token>
     </pattern>
     <disambig action="filter" postag="noun:.*geo.*"/>
   </rule>
   <rule id="rana_f" name="рана - ж.р.">
     <pattern>
-      <token>рана</token>
+      <token marker="yes">рана</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:f.*"/>
   </rule>
   <rule id="rizni_adj" name="різні - прикм">
     <pattern>
-      <token>різні</token>
-      <token postag="noun:.*:p:v_naz.*|noun:inanim:p:v_zna.*" postag_regexp="yes"></token>
+      <token marker="yes">різні</token>
+      <token postag="noun:.*:p:v_naz.*|noun:inanim:p:v_zna.*" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="bilshe_adv_5" name="більше - adv">
     <pattern>
       <token>ба</token>
-      <token>більше</token>
+      <token marker="yes">більше</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="shvydshe_adv_1" name="швидше - adv">
     <pattern>
-      <token>швидше</token>
+      <token marker="yes">швидше</token>
       <token>за</token>
       <token regexp="yes">[ву]се</token>
     </pattern>
@@ -80,7 +98,7 @@
   </rule>
   <rule id="skhozhe_adj_1" name="схоже - прикм">
     <pattern>
-      <token>схоже</token>
+      <token marker="yes">схоже</token>
       <token>на</token>
     </pattern>
     <disambig action="filter" postag="adj:n:v_(naz|zna).*"/>
@@ -88,20 +106,20 @@
   <rule id="skhozhe_adj_2" name="схоже - прикм">
     <pattern>
       <token>щось</token>
-      <token>схоже</token>
+      <token marker="yes">схоже</token>
     </pattern>
     <disambig action="filter" postag="adj:n:v_(naz|zna).*"/>
   </rule>
   <rule id="vytoky_bad_2" name="витоки - bad">
     <pattern>
       <token regexp="yes" inflected="yes">історичний|глибинний</token>
-      <token inflected="yes">витоки</token>
+      <token inflected="yes" marker="yes">витоки</token>
     </pattern>
     <disambig action="filter" postag=".*bad"/>
   </rule>
   <rule id="dobre_adv_3" name="добре - присл.">
     <pattern>
-      <token>добре</token>
+      <token marker="yes">добре</token>
       <token regexp="yes" inflected="yes">відомий|відомо|знайомий|знайомо|зрозумілий|зрозуміло|помітний|помітно|видно</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
@@ -109,41 +127,41 @@
   <rule id="slukh_bad" name="слух - bad">
     <pattern>
       <token regexp="yes">.*(ход|розповс|пус[кт]).*</token>
-      <token>слух</token>
+      <token marker="yes">слух</token>
     </pattern>
     <disambig action="filter" postag="noun.*bad.*"/>
   </rule>
   <rule id="svyata_noun_2" name="свята - ім.">
     <pattern>
       <token regexp="yes" inflected="yes">гість|гостя|атмосфера|проведення|формат|програма</token>
-      <token>свята</token>
+      <token marker="yes">свята</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:n:v_rod.*"/>
   </rule>
   <rule id="svyata_noun_3" name="свята - ім.">
     <pattern>
       <token postag="prep"></token>
-      <token>свята</token>
+      <token marker="yes">свята</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim(?!.*v_(kly|naz)).*"/>
   </rule>
   <rule id="Lutska_noun_1" name="Луцька - іменн.">
     <pattern>
       <token regexp="yes">і?з|до|від|біля|поблизу|коло</token>
-      <token regexp="yes">Донецька|Мінська|Дніпропетровська|Луганська|Луцька|Івано-Франківська</token>
+      <token regexp="yes" marker="yes">Донецька|Мінська|Дніпропетровська|Луганська|Луцька|Івано-Франківська</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_rod.*"/>
   </rule>
   <rule id="zbirna_noun_2" name="Збірна - іменн.">
     <pattern>
-      <token inflected="yes" postag="adj:[fp]:.*" postag_regexp="yes">збірний</token>
+      <token inflected="yes" postag="adj:[fp]:.*" postag_regexp="yes" marker="yes">збірний</token>
       <token postag="noun:inanim:.:v_rod.*prop:geo.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="noun:.*"/>
   </rule>
   <rule id="batkiv_noun_2" name="батьків - іменн.">
     <pattern>
-      <token regexp="yes">батьків|авторів|чоловіків|діячів|лікарів|суддів|глядачів|сусідів|хлопців|клієнтів|художників|козаків|офіцерів|президентів|клубів|предків|майстрів|міністрів|господарів|синів|фермерів</token>
+      <token regexp="yes" marker="yes">батьків|авторів|чоловіків|діячів|лікарів|суддів|глядачів|сусідів|хлопців|клієнтів|художників|козаків|офіцерів|президентів|клубів|предків|майстрів|міністрів|господарів|синів|фермерів</token>
       <token regexp="yes">[,.—–-]</token>
     </pattern>
     <disambig action="filter" postag="noun:.*"/>
@@ -151,27 +169,27 @@
   <rule id="NOUN_OR_POSSESSIVE_ADJ_1" name="Іменник чи присвійний прикметник 1">
     <pattern>
       <token postag="number"></token>
-      <token regexp="yes" postag="noun:.*?:p:v_rod.*" postag_regexp="yes">.*[ії]в</token>
+      <token regexp="yes" postag="noun:.*?:p:v_rod.*" postag_regexp="yes" marker="yes">.*[ії]в</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="minstriv_noun1" name="міністрів - іменник">
     <pattern>
       <token regexp="yes" inflected="yes">кабінет|(на)?рада|рішення|зустріч|рівень|комітет|народний|заступник|для|[0-9]+</token>
-      <token>міністрів</token>
+      <token marker="yes">міністрів</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="суддів_noun1" name="суддів - іменник">
     <pattern>
       <token regexp="yes" inflected="yes">рада|комісія|колегія|з'їзд|статус|збори|посада|рішення|признач[аи]ти|федеральний|двоє|троє|для|із?|[0-9]+</token>
-      <token>суддів</token>
+      <token marker="yes">суддів</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="vchenyi-adj" name="вчений - прикметник">
     <pattern>
-      <token inflected="yes">вчений</token>
+      <token inflected="yes" marker="yes">вчений</token>
       <token regexp="yes" inflected="yes">секретар|ступінь|звання|рада|людина|чоловік</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
@@ -179,61 +197,61 @@
   <rule id="po_pyani_noun" name="По п'яні - іменник">
     <pattern>
       <token>по</token>
-      <token>п'яні</token>
+      <token marker="yes">п'яні</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:f:v_mis:bad"/>
   </rule>
   <rule id="pyani_adj" name="П'яні - прикметник">
     <pattern>
-      <token>п'яні</token>
+      <token marker="yes">п'яні</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="viyskovyh_adj" name="військових - прикм.">
     <pattern>
-      <token>військових</token>
-      <token postag="noun:anim:p:v_(rod|zna).*|noun:inanim:p:v_rod.*" postag_regexp="yes"></token>
+      <token marker="yes">військових</token>
+      <token postag="noun:anim:p:v_(rod|zna).*|noun:inanim:p:v_rod.*" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="filter" postag="adj:p:.*"/>
   </rule>
   <rule id="viyskovyh_noun" name="військових - імен.">
     <pattern>
-      <token>військових</token>
-      <token>.</token>
+      <token marker="yes">військових</token>
+      <token marker="yes">.</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:p:.*"/>
   </rule>
   <rule id="grudni_noun" name="Грудні - ім.">
     <pattern>
       <token regexp="yes">[ву]</token>
-      <token regexp="yes">грудні|січні</token>
+      <token regexp="yes" marker="yes">грудні|січні</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_mis"/>
   </rule>
   <rule id="LYUTYI" name="Лютого">
     <pattern>
       <token regexp="yes">[1-9]|[12][0-9]|[12]?[0-9][—–-][12]?[0-9]</token>
-      <token>лютого</token>
+      <token marker="yes">лютого</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="LYUTYI2" name="Лютого">
     <pattern>
-      <token inflected="yes">лютий</token>
+      <token inflected="yes" marker="yes">лютий</token>
       <token regexp="yes">[0-9]+</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="chayna" name="Чайна">
     <pattern>
-      <token inflected="yes">чайна</token>
+      <token inflected="yes" marker="yes">чайна</token>
       <token regexp="yes" inflected="yes">ложка|сервіз|церемонія|кущ|троянда|заварка|запарка</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="svogo_adj_m_1" name="Свого - прикметник ч.р. 1">
     <pattern>
-      <token regexp="yes">свого|такого|різного|одного|певного</token>
+      <token regexp="yes" marker="yes">свого|такого|різного|одного|певного</token>
       <token regexp="yes">роду|разу|типу</token>
     </pattern>
     <disambig action="filter" postag="adj:m:v_rod.*"/>
@@ -241,13 +259,13 @@
   <rule id="parku_noun_1" name="парку - імен.">
     <pattern>
       <token regexp="yes">[ву]|при|на</token>
-      <token>парку</token>
+      <token marker="yes">парку</token>
     </pattern>
     <disambig action="filter" postag="noun:.*"/>
   </rule>
   <rule id="cholovik_plural_2" name="Чоловік - множина">
     <pattern>
-      <token>чоловік</token>
+      <token marker="yes">чоловік</token>
       <token regexp="yes">з|зо|із</token>
       <token postag="number|numr:p:v_naz.*|noun.*v_naz.*num.*" postag_regexp="yes"></token>
     </pattern>
@@ -255,7 +273,7 @@
   </rule>
   <rule id="yest_intj_1" name="Єсть - вигук">
     <pattern>
-      <token case_sensitive="yes">Єсть</token>
+      <token case_sensitive="yes" marker="yes">Єсть</token>
       <token>!</token>
     </pattern>
     <disambig action="filter" postag="intj:bad"/>
@@ -263,103 +281,103 @@
   <rule id="styag_noun" name="Стяг - іменн">
     <pattern>
       <token postag="adj:m:v_(naz|zna:rianim).*|prep.*" postag_regexp="yes"></token>
-      <token>стяг</token>
+      <token marker="yes">стяг</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:.*"/>
   </rule>
   <rule id="derzhav-noun" name="держав - іменник">
     <pattern>
       <token postag="adj:p:v_rod.*|.*?num.*|prep.*" postag_regexp="yes"></token>
-      <token>держав</token>
+      <token marker="yes">держав</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:p:v_rod.*"/>
   </rule>
   <rule id="dovryv_noun" name="добрив - іменник">
     <pattern>
       <token postag="adj:p:v_rod.*|prep" postag_regexp="yes"></token>
-      <token>добрив</token>
+      <token marker="yes">добрив</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.*"/>
   </rule>
   <rule id="stanu_noun" name="стану - іменник">
     <pattern>
       <token postag="adj:m:v_rod.*|.*?num.*|prep" postag_regexp="yes"></token>
-      <token regexp="yes">стану|закладу|прикладу|нападу|складу|росту|устрою</token>
+      <token regexp="yes" marker="yes">стану|закладу|прикладу|нападу|складу|росту|устрою</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:.*"/>
   </rule>
   <rule id="potik_noun" name="потік - іменник">
     <pattern>
       <token postag="adj:m:v_(naz|zna).*" postag_regexp="yes"></token>
-      <token regexp="yes">потік|запас</token>
+      <token regexp="yes" marker="yes">потік|запас</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:.*"/>
   </rule>
   <rule id="vzhyvy_adv_1" name="Вживу">
     <pattern>
       <token regexp="yes">[&quot;«“„]</token>
-      <token>вживу</token>
+      <token marker="yes">вживу</token>
       <token regexp="yes">[&quot;»“”]</token>
     </pattern>
     <disambig action="filter" postag="adv:bad"/>
   </rule>
   <rule id="vzhyvy_adv_2" name="Вживу">
     <pattern>
-      <token postag="adv:bad">вживу</token>
+      <token postag="adv:bad" marker="yes">вживу</token>
     </pattern>
     <disambig action="filter" postag="adv:bad"/>
   </rule>
   <rule id="diyu_noun" name="Іменник «дію»">
     <pattern>
-      <token>дію</token>
+      <token marker="yes">дію</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="rozumiyetsa-insert" name="Розуміється - insert">
     <pattern>
       <token regexp="yes">[,—–-]</token>
-      <token>розуміється</token>
+      <token marker="yes">розуміється</token>
       <token regexp="yes">[,.!?…:;—–-]</token>
     </pattern>
     <disambig action="filter" postag="noninfl:insert:bad"/>
   </rule>
   <rule id="rozumiyetsa-verb" name="Розуміється - verb">
     <pattern>
-      <token>розуміється</token>
+      <token marker="yes">розуміється</token>
     </pattern>
     <disambig action="filter" postag="verb:rev:imperf:pres:s:3"/>
   </rule>
   <rule id="zhyve_noun" name="живе - іменник">
     <pattern>
       <token postag="prep.*" postag_regexp="yes"></token>
-      <token>живе</token>
+      <token marker="yes">живе</token>
     </pattern>
     <disambig action="filter" postag="(adj|noun):.*"/>
   </rule>
   <rule id="zhyve_verb_1" name="живе - дієслово">
     <pattern>
       <token regexp="yes">хто|дехто|він|вона|яка|який|котрий|котра|хай</token>
-      <token>живе</token>
+      <token marker="yes">живе</token>
     </pattern>
     <disambig action="filter" postag="verb:.*"/>
   </rule>
   <rule id="zhyve_verb_2" name="живе - дієслово">
     <pattern>
       <token postag="noun:anim:.:v_naz:prop:.*name.*" postag_regexp="yes"></token>
-      <token>живе</token>
+      <token marker="yes">живе</token>
     </pattern>
     <disambig action="filter" postag="verb:.*"/>
   </rule>
   <rule id="prystroyu-noun" name="пристрою - іменник">
     <pattern>
       <token postag="adj:m:v_rod.*|prep.*" postag_regexp="yes"></token>
-      <token>пристрою</token>
+      <token marker="yes">пристрою</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.*"/>
   </rule>
   <rule id="uyavy_sobi" name="уяви собі">
     <pattern>
-      <token>уяви</token>
+      <token marker="yes">уяви</token>
       <token>собі</token>
     </pattern>
     <disambig action="filter" postag="verb:perf:impr:s:2"/>
@@ -367,41 +385,41 @@
   <rule id="budu_verb_1" name="Буду - дієслово">
     <pattern>
       <token regexp="yes">я|не|це|що|вже|знову</token>
-      <token>буду</token>
+      <token marker="yes">буду</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="nazvu_noun" name="Назву - іменник">
     <pattern>
       <token postag="verb.*|adj:f:v_zna:rianim.*|prep.*" postag_regexp="yes"></token>
-      <token>назву</token>
+      <token marker="yes">назву</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:f:v_zna.*"/>
   </rule>
   <rule id="platy_noun" name="плати - іменник">
     <pattern>
       <token regexp="yes" inflected="yes">заробітний|орендний|рентний|абонементний|мінімальний|.*місячний|.*річний</token>
-      <token>плати</token>
+      <token marker="yes">плати</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="vyznacheno_verb" name="визначено - дієслово">
     <pattern>
       <token regexp="yes">було|буде|чітко|не</token>
-      <token>визначено</token>
+      <token marker="yes">визначено</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="not_an_imperative_0" name="не наказова 3">
     <pattern>
       <token postag="adj.*" postag_regexp="yes"></token>
-      <token regexp="yes">мрій|удар</token>
+      <token regexp="yes" marker="yes">мрій|удар</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="tym_noun_1" name="Тим - іменник 1">
     <pattern>
-      <token>тим</token>
+      <token marker="yes">тим</token>
       <token postag="adv:compc.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:n:v_oru.*"/>
@@ -410,13 +428,13 @@
     <pattern>
       <token>разом</token>
       <token regexp="yes">з|із</token>
-      <token>тим</token>
+      <token marker="yes">тим</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:n:v_oru.*"/>
   </rule>
   <rule id="tym_adj_m_1" name="Тим - прикметник ч.р. 1">
     <pattern>
-      <token regexp="yes">тим|таким|певним|відповідним</token>
+      <token regexp="yes" marker="yes">тим|таким|певним|відповідним</token>
       <token regexp="yes">часом|чином</token>
     </pattern>
     <disambig action="filter" postag="adj:m:v_oru.*"/>
@@ -424,80 +442,80 @@
   <rule id="chynom_neist" name="Чином - неіст.">
     <pattern>
       <token regexp="yes">таким|яким(о?(сь))?|головним|певним|жодним|належним|схожим|відповідним|дивним</token>
-      <token>чином</token>
+      <token marker="yes">чином</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_oru.*"/>
   </rule>
   <rule id="chasom_noun" name="Часом - іменник">
     <pattern>
       <token regexp="yes">з|із|перед|над|між|за|поміж|під|межи|понад</token>
-      <token>часом</token>
+      <token marker="yes">часом</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_oru.*"/>
   </rule>
   <rule id="chasom_noun2" name="Часом - іменник">
     <pattern>
       <token postag="adj:m:v_oru.*" postag_regexp="yes"></token>
-      <token>часом</token>
+      <token marker="yes">часом</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_oru.*"/>
   </rule>
   <rule id="kinec_noun_1" name="Кінець/Шляхом - noun">
     <pattern>
-      <token regexp="yes">шляхом|кінець</token>
+      <token regexp="yes" marker="yes">шляхом|кінець</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="uryadovtsi_plural" name="урядовці - мн.">
     <pattern>
       <token postag="adj:p:v_naz.*" postag_regexp="yes"></token>
-      <token>урядовці</token>
+      <token marker="yes">урядовці</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:p:v_naz.*"/>
   </rule>
   <rule id="mezh_noun_1" name="Меж - іменн.">
     <pattern>
-      <token>меж</token>
+      <token marker="yes">меж</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="kinec_noun_2" name="Кінець - noun">
     <pattern>
       <token postag="prep.*" postag_regexp="yes"></token>
-      <token regexp="yes">кінець|меж</token>
+      <token regexp="yes" marker="yes">кінець|меж</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="zalyv_noun" name="залив - іменник">
     <pattern>
       <token postag="adj:m:v_(naz|zna:rinanim)(?!.*pron).*" postag_regexp="yes"></token>
-      <token>залив</token>
+      <token marker="yes">залив</token>
     </pattern>
     <disambig action="filter" postag="noun.*?:bad.*"/>
   </rule>
   <rule id="zalyv_verb" name="залив - дієслово">
     <pattern>
-      <token>залив</token>
+      <token marker="yes">залив</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="zamorozky_noun_f_1" name="Заморозки - ж.р.">
     <pattern>
       <token postag="adj:f:v_rod.*" postag_regexp="yes"></token>
-      <token>заморозки</token>
+      <token marker="yes">заморозки</token>
     </pattern>
     <disambig action="filter" postag="noun.*?:bad.*"/>
   </rule>
   <rule id="strilka_f_1" name="Стрілка - ж.р.">
     <pattern>
       <token regexp="yes" inflected="yes">годинниковий|хвилинний|секундний|великий|переведення|переводити|перевести|перевівши|переводячи|забивати|забити</token>
-      <token inflected="yes" postag="noun:inanim:[fp]:.*" postag_regexp="yes">стрілка</token>
+      <token inflected="yes" postag="noun:inanim:[fp]:.*" postag_regexp="yes" marker="yes">стрілка</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:[fp].*"/>
   </rule>
   <rule id="strilka_f_12" name="Стрілка - ж.р.">
     <pattern>
-      <token inflected="yes" postag="noun:inanim:[fp]:.*" postag_regexp="yes">стрілка</token>
+      <token inflected="yes" postag="noun:inanim:[fp]:.*" postag_regexp="yes" marker="yes">стрілка</token>
       <token regexp="yes" inflected="yes">годинник|компас|прилад|перевести|переводити</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:[fp].*"/>
@@ -505,41 +523,41 @@
   <rule id="bal_with_numr" name="Бал + числівник">
     <pattern>
       <token postag="num.*" postag_regexp="yes"></token>
-      <token inflected="yes" postag="noun:inanim:.*:xp1" postag_regexp="yes">бал</token>
+      <token inflected="yes" postag="noun:inanim:.*:xp1" postag_regexp="yes" marker="yes">бал</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.*:xp1"/>
   </rule>
   <rule id="hraty-noun2" name="Грати - іменник 2">
     <pattern>
       <token regexp="yes">міцні|сталеві|металеві|чавунні|важкі|ті</token>
-      <token>грати</token>
+      <token marker="yes">грати</token>
     </pattern>
     <disambig action="filter" postag="noun.*?:bad.*"/>
   </rule>
   <rule id="dity-verb" name="діти - дієслово">
     <pattern>
       <token>правди</token>
-      <token>діти</token>
+      <token marker="yes">діти</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="poshyv_verb_1" name="пошив - дієслово">
     <pattern>
       <token postag="noun.*v_naz.*" postag_regexp="yes"></token>
-      <token>пошив</token>
+      <token marker="yes">пошив</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="dity-noun" name="діти - іменник">
     <pattern>
-      <token postag="noun:anim:p.*" postag_regexp="yes">діти</token>
+      <token postag="noun:anim:p.*" postag_regexp="yes" marker="yes">діти</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:p.*"/>
   </rule>
   <rule id="laska_inanim" name="ласка - inanim">
     <pattern>
       <token regexp="yes">будь|материнська|материна|жіноча|божа|господня</token>
-      <token>ласка</token>
+      <token marker="yes">ласка</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim.*"/>
   </rule>
@@ -547,34 +565,34 @@
     <pattern>
       <token regexp="yes">коли|як|якщо</token>
       <token regexp="yes">ваша|твоя</token>
-      <token>ласка</token>
+      <token marker="yes">ласка</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim.*"/>
   </rule>
   <rule id="pity_verb_1" name="піти - дієслово">
     <pattern>
       <token regexp="yes" inflected="yes">слід|варто|треба|можна|годі|потрібно|повинно|необхідно|(не)?можливо|дозволити|з?мусити|з?могти|с?хотіти|стати|вирішити|збиратися|довестися|наважитися|бажати|змушений|повинний|здатний|ладний|мати</token>
-      <token>піти</token>
+      <token marker="yes">піти</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="pity_verb_2" name="піти - дієслово">
     <pattern>
-      <token>піти</token>
+      <token marker="yes">піти</token>
       <token postag="prep.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="braty_verb_2" name="брати - дієслово">
     <pattern>
-      <token>брати</token>
+      <token marker="yes">брати</token>
       <token>участь</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="braty_noun_1" name="брати - іменник">
     <pattern>
-      <token>брати</token>
+      <token marker="yes">брати</token>
       <token postag="noun:anim:p:v_naz:prop:lname"></token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
@@ -582,28 +600,28 @@
   <rule id="daty_noun_1" name="дати - verb">
     <pattern>
       <token postag="prep.*" postag_regexp="yes"></token>
-      <token>дати</token>
+      <token marker="yes">дати</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="daty_verb_1" name="дати - verb">
     <pattern>
       <token regexp="yes" inflected="yes">слід|варто|треба|можна|годі|потрібно|повинно|необхідно|(не)?можливо|дозволити|з?мусити|з?могти|с?хотіти|стати|вирішити|збиратися|довестися|наважитися|бажати|змушений|повинний|здатний|ладний|мати</token>
-      <token>дати</token>
+      <token marker="yes">дати</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="maty_verb" name="мати - verb">
     <pattern>
       <token regexp="yes" inflected="yes">слід|варто|треба|можна|годі|потрібно|повинно|необхідно|(не)?можливо|дозволити|з?мусити|з?могти|с?хотіти|стати|вирішити|збиратися|довестися|наважитися|бажати|змушений|повинний|здатний|ладний|мати</token>
-      <token>мати</token>
+      <token marker="yes">мати</token>
       <token postag=".*v_zna.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="verb:imperf:inf"/>
   </rule>
   <rule id="malo_adv_3" name="мало - adv">
     <pattern>
-      <token>мало</token>
+      <token marker="yes">мало</token>
       <token regexp="yes">хто|треба</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
@@ -611,34 +629,34 @@
   <rule id="malo_adv_4" name="мало - adv">
     <pattern>
       <token regexp="yes">дуже|доволі|можна</token>
-      <token>мало</token>
+      <token marker="yes">мало</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="borzi_noun" name="борзі - noun">
     <pattern>
       <token regexp="yes" inflected="yes" postag="adj:m:v_mis.*" postag_regexp="yes">державний|загальний|зовнішній|внутрішній|наявний|валютний|існуючий|той|цей</token>
-      <token>борзі</token>
+      <token marker="yes">борзі</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="sprava_noun" name="справа - noun">
     <pattern>
       <token regexp="yes">одна|інша|ця|його|її|їхня|наша|ваша|твоя|вся|велика|складна|добра|особиста</token>
-      <token>справа</token>
+      <token marker="yes">справа</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="nichogo_noun" name="нічого - іменн.">
     <pattern>
-      <token>нічого</token>
+      <token marker="yes">нічого</token>
       <token>не</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:n:v_rod:pron:neg:predic"/>
   </rule>
   <rule id="kilka_numr" name="кілька - числ.">
     <pattern>
-      <token>кілька</token>
+      <token marker="yes">кілька</token>
       <token postag="(noun.*?|adj):p:v_rod.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="numr.*"/>
@@ -646,20 +664,20 @@
   <rule id="DIS_NOUN_AND_NUMR_40" name="Іменник та числівник сорока">
     <pattern>
       <token regexp="yes">до|мінус|плюс|приблизно</token>
-      <token regexp="yes">сорока|п'яти</token>
+      <token regexp="yes" marker="yes">сорока|п'яти</token>
     </pattern>
     <disambig action="filter" postag="numr.*"/>
   </rule>
   <rule id="kv-adj" name="кв. - прикметник">
     <pattern>
-      <token>кв.</token>
+      <token marker="yes">кв.</token>
       <token regexp="yes">[ксм]м</token>
     </pattern>
     <disambig action="filter" postag="adj:[mp]:.*"/>
   </rule>
   <rule id="c-r_1" name="ц.р. 1">
     <pattern>
-      <token>ц.</token>
+      <token marker="yes">ц.</token>
       <token>р.</token>
     </pattern>
     <disambig action="replace" postag="adj:m:v_rod:pron:dem"/>
@@ -667,27 +685,27 @@
   <rule id="c-r_2" name="ц.р. 2">
     <pattern>
       <token>ц.</token>
-      <token>р.</token>
+      <token marker="yes">р.</token>
     </pattern>
     <disambig action="replace" postag="noun:inanim:m:v_rod"/>
   </rule>
   <rule id="HA_HEKTAR_1" name="га - гектар 1">
     <pattern>
       <token postag=".*?num.*" postag_regexp="yes"></token>
-      <token case_sensitive="yes">га</token>
+      <token case_sensitive="yes" marker="yes">га</token>
     </pattern>
     <disambig action="filter" postag="noun.*?:abbr"/>
   </rule>
   <rule id="HA_HEKTAR_2" name="га - гектар 2">
     <pattern>
       <token>/</token>
-      <token case_sensitive="yes">га</token>
+      <token case_sensitive="yes" marker="yes">га</token>
     </pattern>
     <disambig action="filter" postag="noun.*?:abbr"/>
   </rule>
   <rule id="HA_INTJ" name="га - вигук">
     <pattern>
-      <token>га</token>
+      <token marker="yes">га</token>
       <token>?</token>
     </pattern>
     <disambig action="filter" postag="intj"/>
@@ -695,13 +713,13 @@
   <rule id="NOUN_VERB_TYS_2" name="Дієслово «тис»">
     <pattern>
       <token regexp="yes">довго|сильно|дуже|силою|щосили|різко|радо|навмисн[ое]</token>
-      <token>тис</token>
+      <token marker="yes">тис</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="NOUN_VERB_TYS_3" name="Іменник «тис»">
     <pattern>
-      <token>тис</token>
+      <token marker="yes">тис</token>
       <token>ягідний</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
@@ -709,20 +727,20 @@
   <rule id="fig_slang_1" name="фіг - сленг">
     <pattern>
       <token regexp="yes">на|по</token>
-      <token regexp="yes">фіга?</token>
+      <token regexp="yes" marker="yes">фіга?</token>
     </pattern>
     <disambig action="filter" postag="noun.*(zna|rod).*slang"/>
   </rule>
   <rule id="fig_slang_2" name="фіг - сленг">
     <pattern>
       <token>по</token>
-      <token>фігу</token>
+      <token marker="yes">фігу</token>
     </pattern>
     <disambig action="filter" postag="noun.*mis.*slang"/>
   </rule>
   <rule id="fig_slang_3" name="фіг - сленг">
     <pattern>
-      <token>фіг</token>
+      <token marker="yes">фіг</token>
       <token regexp="yes">його|знає?</token>
     </pattern>
     <disambig action="filter" postag="noun.*(zna|rod).*slang"/>
@@ -730,26 +748,26 @@
   <rule id="NOUN_VERB_TYS_DOT_ERA_2" name="Іменник «тис.» - тисячоліття">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[IVXІХ]+</token>
-      <token>тис.</token>
+      <token marker="yes">тис.</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:(?!.*numr).*"/>
   </rule>
   <rule id="NOUN_VERB_TYS_DOT_NUMR" name="Іменник «тис.» - тисяча">
     <pattern>
-      <token>тис.</token>
+      <token marker="yes">тис.</token>
     </pattern>
     <disambig action="filter" postag="noun.*numr.*"/>
   </rule>
   <rule id="ch_chaina" name="ч. - чайна">
     <pattern>
-      <token>ч.</token>
+      <token marker="yes">ч.</token>
       <token regexp="yes">л\.?|ложк.*</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="ch_chastyna" name="ч. - частина">
     <pattern>
-      <token>ч.</token>
+      <token marker="yes">ч.</token>
       <token postag="number"></token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:f.*"/>
@@ -758,7 +776,7 @@
     <pattern>
       <token regexp="yes">[ву]</token>
       <token>т.</token>
-      <token>ч.</token>
+      <token marker="yes">ч.</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:n:.*"/>
   </rule>
@@ -770,27 +788,27 @@
   </rule>
   <rule id="fem_name_with_lastname" name="Люба з прізвищем/по батькові - ім'я">
     <pattern>
-      <token regexp="yes" inflected="yes" postag="noun:anim:f.*fname.*" postag_regexp="yes">Люба|Злата</token>
-      <token postag="noun:anim:f.*?:[lp]name.*" postag_regexp="yes"></token>
+      <token regexp="yes" case_sensitive="yes" inflected="yes" postag="noun:anim:f.*fname.*" postag_regexp="yes" marker="yes">Люба|Злата</token>
+      <token case_sensitive="yes" postag="noun:anim:f.*?:[lp]name.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="noun:anim:f.*fname.*"/>
   </rule>
   <rule id="POLINA" name="Поліна">
     <pattern>
-      <token regexp="yes">Полін[аиіу]</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Полін[аиіу]</token>
     </pattern>
     <disambig action="filter" postag="noun:anim.*?:fname.*"/>
   </rule>
   <rule id="otto_name" name="Отто - ім'я">
     <pattern>
-      <token case_sensitive="yes">Отто</token>
+      <token case_sensitive="yes" marker="yes">Отто</token>
       <token regexp="yes" case_sensitive="yes">[А-ЯІЇЄҐ].*|фон</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:.*:fname.*"/>
   </rule>
   <rule id="yakym_pron_2" name="Яким - займ.">
     <pattern>
-      <token case_sensitive="yes">Яким</token>
+      <token case_sensitive="yes" marker="yes">Яким</token>
       <token postag="noun.*v_naz.*" postag_regexp="yes"></token>
       <token postag="verb.*" postag_regexp="yes"></token>
     </pattern>
@@ -799,67 +817,67 @@
   <rule id="sviatogo_yura" name="Святого Юра">
     <pattern>
       <token>святого</token>
-      <token case_sensitive="yes">Юра</token>
+      <token case_sensitive="yes" marker="yes">Юра</token>
     </pattern>
     <disambig action="replace" postag="noun:anim:m:v_rod:prop:fname"/>
   </rule>
   <rule id="kim_chen_ir" name="Кім Чен Ір">
     <pattern>
-      <token regexp="yes">Ч[еоа]н</token>
-      <token regexp="yes">Ір(а|у|і)?</token>
+      <token regexp="yes" case_sensitive="yes">Ч[еоа]н</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Ір(а|у|і)?</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:m:.*lname.*"/>
   </rule>
   <rule id="ira" name="Іра">
     <pattern>
-      <token regexp="yes" case_sensitive="yes">Ір(а|у|і)?</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Ір(а|у|і)?</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:f:.*fname.*"/>
   </rule>
   <rule id="kim_ir_sen" name="Кім Ір Сен">
     <pattern>
-      <token>Ір</token>
-      <token regexp="yes" case_sensitive="yes">Сен(а|у|і)</token>
+      <token case_sensitive="yes">Ір</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Сен(а|у|і)</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:m:.*lname.*"/>
   </rule>
   <rule id="PANI_NAME_FEM" name="«пані» з іменами та прізвищами">
     <pattern>
       <token regexp="yes" inflected="yes">пані|міс|місіс|фрау|сеньора|сеньйоріта|мадам|маде?муазель|добродійка</token>
-      <token postag="noun:anim:f.*?[fl]name.*" postag_regexp="yes"></token>
+      <token postag="noun:anim:f.*?[fl]name.*" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="filter" postag="noun:anim:f.*?:[fl]name.*"/>
   </rule>
   <rule id="York" name="Йорк">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Йорк</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Йорк</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_...:prop:geo"/>
   </rule>
   <rule id="V_UKRAYINI" name="В Україні">
     <pattern>
       <token regexp="yes">[ву]|на</token>
-      <token regexp="yes" case_sensitive="yes">Україні|УКРАЇНІ|Росії|РОСІЇ</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Україні|УКРАЇНІ|Росії|РОСІЇ</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.:v_mis:prop:geo"/>
   </rule>
   <rule id="U_LVOVI" name="У Львові">
     <pattern>
       <token regexp="yes">[ув]</token>
-      <token regexp="yes" case_sensitive="yes">Львові|ЛЬВОВІ</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Львові|ЛЬВОВІ</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.:v_mis:prop:geo"/>
   </rule>
   <rule id="dosi_noun" name="в Досі - іменник">
     <pattern>
       <token regexp="yes">[ву]</token>
-      <token regexp="yes" case_sensitive="yes">Досі|Римі|Черкасах</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">Досі|Римі|Черкасах</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.:v_mis:prop:geo.*"/>
   </rule>
   <rule id="lizi_noun" name="в Лізі - загальний">
     <pattern>
-      <token case_sensitive="yes">Лізі</token>
+      <token case_sensitive="yes" marker="yes">Лізі</token>
       <token regexp="yes">чемпіонів|Європи|націй</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.*"/>
@@ -867,21 +885,21 @@
   <rule id="canton_vo" name="Кантон Во">
     <pattern>
       <token inflected="yes">кантон</token>
-      <token case_sensitive="yes" inflected="yes">Во</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Во</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_...:nv:prop:geo"/>
   </rule>
   <rule id="lname_vo" name="Прізвище Во">
     <pattern>
       <token regexp="yes" case_sensitive="yes">де|[А-ЯІЇЄҐ][а-яіїєґ'-]+</token>
-      <token case_sensitive="yes" inflected="yes">Во</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Во</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:m:v_...:nv:prop:lname"/>
   </rule>
   <rule id="selo_misto_geo_1" name="село/місто">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[сС]ело|[мС]істо|смт\.|[см]\.</token>
-      <token regexp="yes" case_sensitive="yes" postag="noun:inanim.*prop:geo.*" postag_regexp="yes">[А-ЯІЇЄҐ]'?[а-яіїєґ'-]+</token>
+      <token regexp="yes" case_sensitive="yes" postag="noun:inanim.*prop:geo.*" postag_regexp="yes" marker="yes">[А-ЯІЇЄҐ]'?[а-яіїєґ'-]+</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.:(?!v_kly).*:prop:geo.*"/>
   </rule>
@@ -889,34 +907,43 @@
     <pattern>
       <token case_sensitive="yes">н.</token>
       <token case_sensitive="yes">п.</token>
-      <token regexp="yes" case_sensitive="yes" postag="noun:inanim.*prop:geo.*" postag_regexp="yes">[А-ЯІЇЄҐ]'?[а-яіїєґ'-]+</token>
+      <token regexp="yes" case_sensitive="yes" postag="noun:inanim.*prop:geo.*" postag_regexp="yes" marker="yes">[А-ЯІЇЄҐ]'?[а-яіїєґ'-]+</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:.:(?!v_kly).*:prop:geo.*"/>
   </rule>
+  <rule id="DIS_KOT_D_IVUAR1" name="Кот д'Івуар">
+    <pattern>
+      <token case_sensitive="yes" marker="yes">Кот</token>
+      <token regexp="yes" case_sensitive="yes">д'Івуар.*</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="noninfl:foreign" lemma="Кот">Кот</wd>
+    </disambig>
+  </rule>
   <rule id="DIS_KOT_D_IVUAR2" name="Кот д'Івуар">
     <pattern>
-      <token>Кот</token>
-      <token regexp="yes">д'Івуар.*</token>
+      <token case_sensitive="yes" marker="yes">Кот</token>
+      <token regexp="yes" case_sensitive="yes">д'Івуар.*</token>
     </pattern>
     <disambig action="replace" postag="noninfl:foreign:prop:geo:bad"/>
   </rule>
   <rule id="raz_noun_1" name="раз - іменник">
     <pattern>
       <token regexp="yes">за|ще|іще|хоч|тільки|не</token>
-      <token>раз</token>
+      <token marker="yes">раз</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_zna.*"/>
   </rule>
   <rule id="raz_noun_2" name="раз - іменник">
     <pattern>
       <token postag="(adj|numr):m:v_(naz|zna).*|number" postag_regexp="yes"></token>
-      <token>раз</token>
+      <token marker="yes">раз</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="raz_noun_3" name="раз - іменник">
     <pattern>
-      <token>раз</token>
+      <token marker="yes">раз</token>
       <token>на</token>
       <token postag=".*zna.*" postag_regexp="yes"></token>
     </pattern>
@@ -924,41 +951,41 @@
   </rule>
   <rule id="raz_noun_4" name="раз - іменник">
     <pattern>
-      <token>раз</token>
+      <token marker="yes">раз</token>
       <token>!</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="vidpovidno_adv_1" name="Прийменник та прислівник 'відповідно'">
     <pattern>
-      <token>відповідно</token>
+      <token marker="yes">відповідно</token>
       <token regexp="yes">[,;:–—.!?»“…-]</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="za_prev_adv" name="Прийменник та прислівник 'за'">
     <pattern>
-      <token>за</token>
+      <token marker="yes">за</token>
     </pattern>
     <disambig action="filter" postag="prep.*|adv.*|&lt;.*"/>
   </rule>
   <rule id="za_prep" name="Прийменник 'за'">
     <pattern>
-      <token>за</token>
+      <token marker="yes">за</token>
       <token regexp="yes" negate="yes">[&quot;»,.ій]|та</token>
     </pattern>
     <disambig action="filter" postag="prep.*|&lt;.*"/>
   </rule>
   <rule id="chornyi_adj" name="Чорний - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Чорний</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Чорний</token>
       <token regexp="yes" inflected="yes">море|озеро|яр</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="chornyi_adj_2" name="Чорний - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Чорний</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Чорний</token>
       <token regexp="yes">і|й|та</token>
       <token inflected="yes">азовський</token>
     </pattern>
@@ -966,28 +993,28 @@
   </rule>
   <rule id="chervonyi_adj" name="Червоний - прикм'">
     <pattern>
-      <token regexp="yes" case_sensitive="yes" inflected="yes">Червон(а|ий)</token>
+      <token regexp="yes" case_sensitive="yes" inflected="yes" marker="yes">Червон(а|ий)</token>
       <token regexp="yes" inflected="yes">армія|книга|калина|рута|шапочка|зірка|площа|хрест|море</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="bilyi_adj" name="Білий - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Білий</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Білий</token>
       <token inflected="yes">дім</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="pivdennyi_adj" name="Південний - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Південне</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Південне</token>
       <token regexp="yes" inflected="yes">потік|Кавказ|Буг|регіон|полюс|берег|схід</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="chornomorskyi_adj" name="Чорноморський - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Чорноморське</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Чорноморське</token>
       <token regexp="yes" inflected="yes">флот|шельф|регіон|узбережжя</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
@@ -995,27 +1022,27 @@
   <rule id="krymskyi_noun_1" name="Кримський - прізвище'">
     <pattern>
       <token postag="noun:anim.*[fp]name.*" postag_regexp="yes"></token>
-      <token case_sensitive="yes" inflected="yes">Кримський</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Кримський</token>
     </pattern>
     <disambig action="filter" postag="noun:anim.*lname.*"/>
   </rule>
   <rule id="krymskyi_noun_2" name="Кримський - прізвище'">
     <pattern>
       <token regexp="yes">[А-ЯІЇЄҐ]\.</token>
-      <token case_sensitive="yes" inflected="yes">Кримський</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Кримський</token>
     </pattern>
     <disambig action="filter" postag="noun:anim.*lname.*"/>
   </rule>
   <rule id="krymskyi_adj" name="Кримський - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Кримський</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Кримський</token>
       <token regexp="yes" inflected="yes">півострів|ханство</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="nebesnyi_adj" name="Небесний - прикм'">
     <pattern>
-      <token case_sensitive="yes" inflected="yes">Небесна</token>
+      <token case_sensitive="yes" inflected="yes" marker="yes">Небесна</token>
       <token inflected="yes">сотня</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
@@ -1023,27 +1050,27 @@
   <rule id="nikoly_pron" name="Ніколи - займ.">
     <pattern>
       <token postag="SENT_START"></token>
-      <token case_sensitive="yes">Ніколи</token>
+      <token case_sensitive="yes" marker="yes">Ніколи</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="golovni_adj" name="Головні - прикм.">
     <pattern>
       <token postag="SENT_START"></token>
-      <token case_sensitive="yes">Головні</token>
+      <token case_sensitive="yes" marker="yes">Головні</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="lystopada_month" name="Листопада - місяць">
     <pattern>
       <token postag=".*num.*" postag_regexp="yes"></token>
-      <token case_sensitive="yes">Листопада</token>
+      <token case_sensitive="yes" marker="yes">Листопада</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim.*"/>
   </rule>
   <rule id="smotryashchii_noun" name="Смотрящий - іменн.">
     <pattern>
-      <token inflected="yes">смотрящий</token>
+      <token inflected="yes" marker="yes">смотрящий</token>
       <token regexp="yes" inflected="yes">за|[„«&quot;]</token>
     </pattern>
     <disambig action="filter" postag="noun:anim.*"/>
@@ -1051,26 +1078,26 @@
   <rule id="klad_bad" name="Клад - bad">
     <pattern>
       <token regexp="yes" inflected="yes">цінний|цілий|знайдений|заритий|золотий|великий</token>
-      <token inflected="yes">клад</token>
+      <token inflected="yes" marker="yes">клад</token>
     </pattern>
     <disambig action="filter" postag="noun.*bad.*"/>
   </rule>
   <rule id="adv_dali" name="Прислівник 'далі'">
     <pattern>
-      <token case_sensitive="yes">далі</token>
+      <token case_sensitive="yes" marker="yes">далі</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="CONJ_OR_PART_A_2" name="Сполучник та частка 'а'">
     <pattern>
       <token>,</token>
-      <token>а</token>
+      <token marker="yes">а</token>
     </pattern>
     <disambig action="filter" postag="conj.*"/>
   </rule>
   <rule id="CONJ_OR_INTJ_ALE" name="Сполучник та вигук 'але'">
     <pattern>
-      <token>але</token>
+      <token marker="yes">але</token>
       <token>!</token>
     </pattern>
     <disambig action="filter" postag="intj"/>
@@ -1078,26 +1105,26 @@
   <rule id="VERB_OR_PART_DER_1" name="Дієслово та частка 'дер'">
     <pattern>
       <token regexp="yes">ван|фон</token>
-      <token>дер</token>
+      <token marker="yes">дер</token>
     </pattern>
     <disambig action="filter" postag="part:pers"/>
   </rule>
   <rule id="VERB_OR_PART_DER_2" name="Дієслово та частка 'дер'">
     <pattern>
-      <token>дер</token>
+      <token marker="yes">дер</token>
     </pattern>
     <disambig action="filter" postag="verb:imperf:past:m"/>
   </rule>
   <rule id="NOUN_OR_PART_VAN" name="Іменник та частка 'ван'">
     <pattern>
-      <token>ван</token>
+      <token marker="yes">ван</token>
       <token postag="noun.*?:lname.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="part.*"/>
   </rule>
   <rule id="conj_or_part_da" name="Сполучник та частка 'да'">
     <pattern>
-      <token>да</token>
+      <token marker="yes">да</token>
       <token regexp="yes" case_sensitive="yes">Ві́?нчі|[ГҐ]а́?мм?а|Сі́?лва|Карава́?джо|Палестр[іи]на</token>
     </pattern>
     <disambig action="replace" postag="part:pers"/>
@@ -1106,14 +1133,14 @@
     <pattern>
       <token regexp="yes">без|до|з|із|для|з-під</token>
       <token postag="adj:.:v_rod.*?:pron.*" postag_regexp="yes"></token>
-      <token regexp="yes">відом[ау]</token>
+      <token regexp="yes" marker="yes">відом[ау]</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_(rod|v_dav).*"/>
   </rule>
   <rule id="vidoma-noun2" name="Відома - іменник">
     <pattern>
       <token regexp="yes">без|до|з|із|для|з-під</token>
-      <token regexp="yes">відом[ау]</token>
+      <token regexp="yes" marker="yes">відом[ау]</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_(rod|dav).*"/>
   </rule>
@@ -1122,20 +1149,20 @@
       <token>без</token>
       <token postag="noun.*?:v_rod.*" postag_regexp="yes"></token>
       <token regexp="yes">і|та|й</token>
-      <token>відома</token>
+      <token marker="yes">відома</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_rod.*"/>
   </rule>
   <rule id="vidoma_adj" name="Відома - прикметник">
     <pattern>
-      <token regexp="yes" postag="adj.*" postag_regexp="yes">відом[ауі]</token>
+      <token regexp="yes" postag="adj.*" postag_regexp="yes" marker="yes">відом[ауі]</token>
     </pattern>
     <disambig action="filter" postag="adj.*"/>
   </rule>
   <rule id="myrnoho_atomu" name="Мирного атому">
     <pattern>
       <token regexp="yes">мирного|військового|воєнного|немирного</token>
-      <token>атому</token>
+      <token marker="yes">атому</token>
     </pattern>
     <disambig action="replace" postag="noun:inanim:m:v_rod"/>
   </rule>
@@ -1143,14 +1170,14 @@
     <pattern>
       <token regexp="yes">на|при</token>
       <token postag="(adj|numr):m:v_mis.*" postag_regexp="yes"></token>
-      <token>рівні</token>
+      <token marker="yes">рівні</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="rivni_noun_3" name="Рівні: рівень">
     <pattern>
       <token>на</token>
-      <token>рівні</token>
+      <token marker="yes">рівні</token>
       <token postag="adj:.:v_rod.*" postag_regexp="yes"></token>
       <token postag="noun:.*:v_rod(?!.*pron).*" postag_regexp="yes"></token>
     </pattern>
@@ -1159,41 +1186,41 @@
   <rule id="prostori_noun_2" name="просторі - ім.">
     <pattern>
       <token regexp="yes">[ув]|на</token>
-      <token>просторі</token>
+      <token marker="yes">просторі</token>
       <token regexp="yes">[,.]|та|[ій]</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="dani_noun_1" name="Дані: іменник">
     <pattern>
-      <token inflected="yes">дані</token>
+      <token inflected="yes" marker="yes">дані</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="pokolinni_noun" name="Поколінні - іменник">
     <pattern>
       <token postag="adj:n:v_(dav|mis).*" postag_regexp="yes"></token>
-      <token>поколінні</token>
+      <token marker="yes">поколінні</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:n.*"/>
   </rule>
   <rule id="naimu_noun" name="Найму - іменник">
     <pattern>
       <token postag="prep.*" postag_regexp="yes"></token>
-      <token>найму</token>
+      <token marker="yes">найму</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m.*"/>
   </rule>
   <rule id="naimu_noun2" name="Найму - іменник">
     <pattern>
       <token regexp="yes" inflected="yes">бюро|контора|умова|договір|угода|вид|право|форма|справа|питання|житловий|вільний</token>
-      <token>найму</token>
+      <token marker="yes">найму</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m.*"/>
   </rule>
   <rule id="naimu_noun3" name="Найму - іменник">
     <pattern>
-      <token>найму</token>
+      <token marker="yes">найму</token>
       <token regexp="yes">житла|майна|помешкання|працівників|персоналу</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m.*"/>
@@ -1201,13 +1228,13 @@
   <rule id="naimu_ver" name="Найму - іменник">
     <pattern>
       <token regexp="yes">я|собі</token>
-      <token>найму</token>
+      <token marker="yes">найму</token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
   </rule>
   <rule id="grata_noninfl_1" name="Нон грата - невідм.">
     <pattern>
-      <token>нон</token>
+      <token marker="yes">нон</token>
       <token regexp="yes">[гґ]рата|стоп</token>
     </pattern>
     <disambig action="filter" postag="noninfl"/>
@@ -1215,14 +1242,14 @@
   <rule id="grata_noninfl_2" name="Нон ґрата - невідм.">
     <pattern>
       <token>нон</token>
-      <token>ґрата</token>
+      <token marker="yes">ґрата</token>
     </pattern>
     <disambig action="replace" postag="noninfl"/>
   </rule>
   <rule id="date_month" name="Місяць дати">
     <pattern>
       <token regexp="yes">[1-3]?[0-9]</token>
-      <token regexp="yes">Січ|Лют|Бер|Кві|Тра|Чер|Лип|Сер|Вер|Жов|Лис|Гру</token>
+      <token regexp="yes" marker="yes">Січ|Лют|Бер|Кві|Тра|Чер|Лип|Сер|Вер|Жов|Лис|Гру</token>
       <token regexp="yes">[0-9]{4}</token>
     </pattern>
     <disambig action="replace" postag="noninfl:abbr"/>
@@ -1230,41 +1257,41 @@
   <rule id="rodom_not_a_name" name="Родом - не ім'я">
     <pattern>
       <token postag="SENT_START"></token>
-      <token case_sensitive="yes">Родом</token>
+      <token case_sensitive="yes" marker="yes">Родом</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_oru.*"/>
   </rule>
   <rule id="glyb_sing" name="Глиб - одн">
     <pattern>
       <token regexp="yes">[ву]|на</token>
-      <token>глиб</token>
+      <token marker="yes">глиб</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_zna.*"/>
   </rule>
   <rule id="busy_bus_1" name="буси - автобуси">
     <pattern>
       <token postag="num.*" postag_regexp="yes"></token>
-      <token>буси</token>
+      <token marker="yes">буси</token>
     </pattern>
     <disambig action="filter" postag="noun(?!.*ns).*"/>
   </rule>
   <rule id="obrizka_2" name="Обрізка">
     <pattern>
       <token regexp="yes">для|від|після|щодо|і?з|проти</token>
-      <token>обрізки</token>
+      <token marker="yes">обрізки</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:f.*"/>
   </rule>
   <rule id="kachka_bird_2" name="Качка - птах">
     <pattern>
       <token regexp="yes" inflected="yes">як|плавати|летіти|літати|тушка|.*фарш.*|[«„“]</token>
-      <token inflected="yes">качка</token>
+      <token inflected="yes" marker="yes">качка</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:[fp](?!.*slang).*"/>
   </rule>
   <rule id="kachka_bird_3" name="Качка - птах">
     <pattern>
-      <token inflected="yes">качка</token>
+      <token inflected="yes" marker="yes">качка</token>
       <token inflected="yes">копнути</token>
     </pattern>
     <disambig action="filter" postag="noun:anim:f.*"/>
@@ -1272,27 +1299,27 @@
   <rule id="kachka_bad" name="Качка - рух">
     <pattern>
       <token regexp="yes" inflected="yes">боковий|сильний</token>
-      <token inflected="yes">качка</token>
+      <token inflected="yes" marker="yes">качка</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:f.*"/>
   </rule>
   <rule id="td_bad" name="тд - т.д.">
     <pattern>
       <token regexp="yes">[ій]</token>
-      <token>тд</token>
+      <token marker="yes">тд</token>
     </pattern>
     <disambig action="replace" postag="noninfl:bad"/>
   </rule>
   <rule id="ogliadiv_noun" name="Оглядів - іменник">
     <pattern>
       <token postag="num.*|adj:p:v_rod.*" postag_regexp="yes"></token>
-      <token>оглядів</token>
+      <token marker="yes">оглядів</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:p.*"/>
   </rule>
   <rule id="tak_adv" name="так - adv">
     <pattern>
-      <token>так</token>
+      <token marker="yes">так</token>
       <token>,</token>
       <token regexp="yes">щоби?</token>
     </pattern>
@@ -1301,14 +1328,14 @@
   <rule id="skhodu_noun0" name="сходу - іменник">
     <pattern>
       <token postag="[a-z].*" postag_regexp="yes"></token>
-      <token case_sensitive="yes">Сходу</token>
+      <token case_sensitive="yes" marker="yes">Сходу</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:.*"/>
   </rule>
   <rule id="skhodu_noun1" name="сходу - іменник">
     <pattern>
       <token postag="prep.*" postag_regexp="yes"></token>
-      <token>сходу</token>
+      <token marker="yes">сходу</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:.*"/>
   </rule>
@@ -1316,20 +1343,20 @@
     <pattern>
       <token regexp="yes">заходу|півдн[яю]|півночі|Криму</token>
       <token postag="conj.*" postag_regexp="yes"></token>
-      <token>сходу</token>
+      <token marker="yes">сходу</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_.*"/>
   </rule>
   <rule id="skhodu_noun22" name="сходу - іменник">
     <pattern>
       <token regexp="yes" inflected="yes">територія|мешканець|житель|місто</token>
-      <token>сходу</token>
+      <token marker="yes">сходу</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_.*"/>
   </rule>
   <rule id="skhodu_noun3" name="сходу - іменник">
     <pattern>
-      <token>сходу</token>
+      <token marker="yes">сходу</token>
       <token postag="conj.*" postag_regexp="yes"></token>
       <token regexp="yes">заходу|півдн[яю]|півночі</token>
     </pattern>
@@ -1338,40 +1365,40 @@
   <rule id="skhodu_noun4" name="сходу - іменник">
     <pattern>
       <token postag="adj:m:v_(rod|dav).*" postag_regexp="yes"></token>
-      <token>сходу</token>
+      <token marker="yes">сходу</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_.*"/>
   </rule>
   <rule id="prosto_prep" name="просто - прийм.">
     <pattern>
-      <token>просто</token>
+      <token marker="yes">просто</token>
       <token>неба</token>
     </pattern>
     <disambig action="filter" postag="prep"/>
   </rule>
   <rule id="sim_numr" name="сім - числ.">
     <pattern>
-      <token postag="numr.*" postag_regexp="yes">сім</token>
+      <token postag="numr.*" postag_regexp="yes" marker="yes">сім</token>
     </pattern>
     <disambig action="filter" postag="numr.*"/>
   </rule>
   <rule id="pyaty_noun" name="п'яти - іменн.">
     <pattern>
       <token regexp="yes" postag="adj.*" postag_regexp="yes">ахіл.*</token>
-      <token regexp="yes">п'ят[иау]</token>
+      <token regexp="yes" marker="yes">п'ят[иау]</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="stalа_noun" name="стала - іменник">
     <pattern>
-      <token>стала</token>
+      <token marker="yes">стала</token>
       <token regexp="yes">Планка|Больцмана|Ейлера</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="stalа_verb4" name="стала - дієслово">
     <pattern>
-      <token>стала</token>
+      <token marker="yes">стала</token>
       <token postag="verb.*inf.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="verb.*"/>
@@ -1379,34 +1406,34 @@
   <rule id="uryad_noun1" name="уряд - іменник">
     <pattern>
       <token postag="adj:m:v_(naz|zna:rinanim)(?!.*pron).*" postag_regexp="yes"></token>
-      <token>уряд</token>
+      <token marker="yes">уряд</token>
     </pattern>
     <disambig action="filter" postag="noun.*"/>
   </rule>
   <rule id="zhal_noun1" name="жаль - іменник">
     <pattern>
       <token>на</token>
-      <token>жаль</token>
+      <token marker="yes">жаль</token>
     </pattern>
     <disambig action="filter" postag="noun:inanim:m:v_zna.*"/>
   </rule>
   <rule id="samo_adv1" name="само - прислівник">
     <pattern>
       <token regexp="yes">так|там</token>
-      <token>само</token>
+      <token marker="yes">само</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="zrozumilo_adv1" name="зрозуміло - прислівник">
     <pattern>
       <token regexp="yes" inflected="yes">бути|стати|ставати|зовсім|цілком|більш-менш|чітко|наразі|собою|тепер|мені|абсолютно</token>
-      <token>зрозуміло</token>
+      <token marker="yes">зрозуміло</token>
     </pattern>
     <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="vo_intj" name="во - intj">
     <pattern>
-      <token>во</token>
+      <token marker="yes">во</token>
       <token regexp="yes">!.*</token>
     </pattern>
     <disambig action="filter" postag="intj"/>

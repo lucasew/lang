@@ -13,6 +13,41 @@
     </pattern>
     <disambig action="filter" postag="DD.*"/>
   </rule>
+  <rule id="LA_FORA" name="lá fora">
+    <pattern>
+      <token postag="RG">lá</token>
+      <token postag="RG">fora</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="PELO_VISTO" name="pelo visto">
+    <pattern>
+      <token postag="SPS00:DA0MS0">pelo</token>
+      <token postag="VMP00SM">visto</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="SABER" name="saber + infinitive">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">saber</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="GERUND" name="auxiliar + gerund">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes">continuar|estar|ir|ficar|andar|vir</token>
+      <token postag="V.G.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="JUNTO_A" name="junto a">
+    <pattern>
+      <token postag="RG">junto</token>
+      <token regexp="yes" postag="SPS00">a|com</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="SPS_SI" name="Preposição + Si">
     <pattern>
       <token postag="SP.+" postag_regexp="yes"></token>
@@ -76,6 +111,14 @@
     </pattern>
     <disambig action="filter" postag="V.N.*"/>
   </rule>
+  <rule id="VERB_PRONOUN" name="verb + pronoun (enclitic)">
+    <pattern>
+      <token postag="V.[SIMN].*" postag_regexp="yes"></token>
+      <token spacebefore="no">-</token>
+      <token postag="P.*" postag_regexp="yes" spacebefore="no"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="DEVE_SER" name="Deve + Infinitivo">
     <pattern>
       <token inflected="yes" marker="yes">dever</token>
@@ -90,6 +133,14 @@
       <token postag="VMN0000"></token>
     </pattern>
     <disambig action="filter" postag="VMIS3S0"/>
+  </rule>
+  <rule id="AMBOS_PREPOSITION" name="Verbo + ambos">
+    <pattern>
+      <token postag="V....P.+" postag_regexp="yes"></token>
+      <token postag="P.+" postag_regexp="yes">ambos</token>
+      <token postag="N.(F.|MS).+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="SER_TODOS" name="Ser + Todos">
     <pattern>

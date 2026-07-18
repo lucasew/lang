@@ -428,12 +428,16 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 add_wds.append({"pos": wd_pos, "lemma": wd_lemma, "text": wd_text})
             if not add_wds:
                 continue
-        elif action not in ("filter", "replace", "immunize", "ignore_spelling"):
+        elif action not in ("filter", "filterall", "replace", "immunize", "ignore_spelling"):
             continue
         if action in ("filter", "replace") and not postag:
             continue
-        if list(dis) and action in ("filter", "replace"):
-            # nested <wd> not soft-loaded for filter/replace
+        # filterall uses each pattern token's postag (Java FILTERALL); no disambig postag required
+        if action == "filterall" and postag:
+            # ignore spurious postag on filterall elements
+            postag = ""
+        if list(dis) and action in ("filter", "replace", "filterall"):
+            # nested <wd> not soft-loaded for filter/replace/filterall
             continue
         toks = pattern_is_simple(pat)
         if not toks:
@@ -512,6 +516,8 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
             lines.append("    </disambig>")
         elif act in ("filter", "replace") and r.get("postag"):
             lines.append(f'    <disambig action="{xml_esc(act)}" postag="{xml_esc(r["postag"])}"/>')
+        elif act == "filterall":
+            lines.append('    <disambig action="filterall"/>')
         else:
             lines.append(f'    <disambig action="{xml_esc(act)}"/>')
         lines.append("  </rule>")

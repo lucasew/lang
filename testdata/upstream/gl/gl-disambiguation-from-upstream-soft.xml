@@ -3,7 +3,7 @@
 <rules lang="gl">
   <rule id="NON_ADVERB" name="Não como advérbio">
     <pattern>
-      <token>non</token>
+      <token marker="yes">non</token>
       <token postag="(R|V).+" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="R.+"/>
@@ -11,9 +11,17 @@
   <rule id="DET_CANS" name="det + can(s)">
     <pattern>
       <token postag="D.*" postag_regexp="yes"></token>
-      <token regexp="yes">cans?</token>
+      <token regexp="yes" marker="yes">cans?</token>
     </pattern>
     <disambig action="filter" postag="N.*"/>
+  </rule>
+  <rule id="PUNCT" name="pontuacción">
+    <pattern>
+      <token regexp="yes">[.,;:!?…()\[\]‑‒–—―«»”“‘’\-]|[\*×∗·\+\/÷:=]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_PUNCT"/>
+    </disambig>
   </rule>
   <rule id="EN_VOGUE" name="en vogue">
     <pattern>
@@ -40,22 +48,22 @@
   </rule>
   <rule id="LAS_VEGAS" name="Las Vegas">
     <pattern>
-      <token>Las</token>
-      <token>Vegas</token>
+      <token case_sensitive="yes">Las</token>
+      <token case_sensitive="yes">Vegas</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
   <rule id="VALLEYS" name="Valleys">
     <pattern>
-      <token regexp="yes">Death|Silicon</token>
-      <token>Valley</token>
+      <token regexp="yes" case_sensitive="yes">Death|Silicon</token>
+      <token case_sensitive="yes">Valley</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="OAK_RIDGE" name="Oak Ridge">
     <pattern>
-      <token>Oak</token>
-      <token>Ridge</token>
+      <token case_sensitive="yes">Oak</token>
+      <token case_sensitive="yes">Ridge</token>
     </pattern>
     <disambig action="immunize"/>
   </rule>
@@ -235,15 +243,15 @@
   </rule>
   <rule id="FAIR_PLAY" name="Fair Play">
     <pattern>
-      <token>Fair</token>
-      <token>Play</token>
+      <token case_sensitive="yes">Fair</token>
+      <token case_sensitive="yes">Play</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="UNIVERSITY_OF" name="University of">
     <pattern>
-      <token>University</token>
-      <token>of</token>
+      <token case_sensitive="yes">University</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -437,15 +445,15 @@
   </rule>
   <rule id="CON_CARNE" name="con Carne">
     <pattern>
-      <token>con</token>
-      <token>Carne</token>
+      <token case_sensitive="yes">con</token>
+      <token case_sensitive="yes">Carne</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="SCOTLAND_YARD" name="Scotland Yard">
     <pattern>
-      <token>Scotland</token>
-      <token>Yard</token>
+      <token case_sensitive="yes">Scotland</token>
+      <token case_sensitive="yes">Yard</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -459,8 +467,8 @@
   </rule>
   <rule id="PARKS" name="Parks">
     <pattern>
-      <token regexp="yes">Central|Hyde</token>
-      <token>Park</token>
+      <token regexp="yes" case_sensitive="yes">Central|Hyde</token>
+      <token case_sensitive="yes">Park</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -557,15 +565,23 @@
   </rule>
   <rule id="VISUAL_STUDIO" name="Visual Studio/Basic">
     <pattern>
-      <token>Visual</token>
-      <token regexp="yes">Studio|Basic</token>
+      <token case_sensitive="yes">Visual</token>
+      <token regexp="yes" case_sensitive="yes">Studio|Basic</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
   <rule id="GOOGLE_MAPS" name="Google Maps">
     <pattern>
-      <token>Google</token>
-      <token regexp="yes">Ad|Alerts|Analytics|APIs|App|Apps|Art|Attribution|Authenticator|Bookmarks|Business|Calendar|Charts|Checkout|Classroom|Cloud|Compute|Contacts|Cultural|Current|Data|Developers|Docs|Drive|Fit|Flights|Fonts|for|Fusion|Get|Groups|Home|Maps|Mobile|Moderator|My|Ngram|One|Opinion|Photos|Play|Plugin|Primer|Public|Questions|Schemer|Scholar|Search|Search‎|Shopping|Sites|Spaces|Store|Street|Surveys|Sync|Tez|Translate|Translator|URL|Videos|Wallet|Website|WiFi</token>
+      <token case_sensitive="yes">Google</token>
+      <token regexp="yes" case_sensitive="yes">Ad|Alerts|Analytics|APIs|App|Apps|Art|Attribution|Authenticator|Bookmarks|Business|Calendar|Charts|Checkout|Classroom|Cloud|Compute|Contacts|Cultural|Current|Data|Developers|Docs|Drive|Fit|Flights|Fonts|for|Fusion|Get|Groups|Home|Maps|Mobile|Moderator|My|Ngram|One|Opinion|Photos|Play|Plugin|Primer|Public|Questions|Schemer|Scholar|Search|Search‎|Shopping|Sites|Spaces|Store|Street|Surveys|Sync|Tez|Translate|Translator|URL|Videos|Wallet|Website|WiFi</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="T-SHIRT" name="T-shirts">
+    <pattern>
+      <token>t</token>
+      <token regexp="yes" spacebefore="no">[-‑]</token>
+      <token regexp="yes" spacebefore="no">shirts?</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -585,6 +601,14 @@
   <rule id="IGNORE_USER_MENTION" name="Ignore spelling of @user mentions">
     <pattern>
       <token regexp="yes">@.+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="IGNORE_DOMAIN_NAMES" name="Ignore spelling of domain names">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[A-Za-z0-9\-]+</token>
+      <token case_sensitive="yes" spacebefore="no">.</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">(?:cat|ae|ar|asia|at|au|be|bid|biz|br|ca|cc|cf|ch|cl|club|cn|co|com|cz|de|dk|edu|es|eu|fi|fr|ga|gdn|gov|gq|gr|hk|hu|id|ie|il|in|info|int|io|ir|it|jp|kiwi|kr|kz|life|link|loan|lt|me|men|mil|ml|mobi|mx|my|name|net|nl|no|nu|nz|online|org|party|pl|pro|pt|pw|racing|ro|ru|se|sg|shop|site|sk|space|store|su|tech|tk|top|tr|trade|tv|tw|ua|uk|us|vip|vn|wang|website|win|ws|xin|xyz|za)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

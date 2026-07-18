@@ -232,47 +232,50 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 		pos := r.DisambiguatedPOS
 		newTok := languagetool.NewAnalyzedToken(surface, &pos, &lemma)
 		nws[first].ReplaceReadings([]*languagetool.AnalyzedToken{newTok}, r.ID)
-	case ActionFilter, ActionFilterAll:
+	case ActionFilter:
 		// Java FILTER (DisambiguationPatternRuleReplacer case FILTER): POS is a
 		// regex; apply only when some reading matches (newPOSmatches); keep
 		// readings whose POS matches. Target is *fromPos only* (first of the
-		// matcher marker span). FILTERALL walks every token in the span.
-		if r.DisambiguatedPOS == "" {
+		// matcher marker span — Java whTokens[fromPos]).
+		if r.DisambiguatedPOS == "" || first < 0 || first >= len(nws) || nws[first] == nil {
 			return
 		}
 		re, err := regexp.Compile("^(?:" + r.DisambiguatedPOS + ")$")
 		if err != nil {
 			return
 		}
-		var targets []int
-		if r.Action == ActionFilterAll {
-			for i := first; i <= last && i < len(nws); i++ {
-				targets = append(targets, i)
+		filterReadingsByPOS(nws[first], re, r.ID)
+	case ActionFilterAll:
+		// Java FILTERALL: for each token in the marker span, filter readings by
+		// *that* PatternToken's POS tag treated as a regex (Match(..., true, …)).
+		// Not DisambiguatedPOS — each element keeps tags matching its own postag.
+		var marked []*patterns.PatternToken
+		if r.AbstractTokenBasedRule != nil {
+			for _, pt := range r.Tokens {
+				if pt != nil && pt.InsideMarker {
+					marked = append(marked, pt)
+				}
 			}
-		} else if first >= 0 {
-			// Java: whTokens[fromPos] only — first is already marker-start.
-			targets = []int{first}
 		}
-		for _, i := range targets {
-			if i < 0 || i >= len(nws) || nws[i] == nil {
+		j := 0
+		for i := first; i <= last && i < len(nws); i++ {
+			if nws[i] == nil {
 				continue
 			}
-			// only apply when at least one reading matches (Java newPOSmatches)
-			any := false
-			for _, reading := range nws[i].GetReadings() {
-				if reading.GetPOSTag() != nil && re.MatchString(*reading.GetPOSTag()) {
-					any = true
-					break
-				}
+			posTag := ""
+			if j < len(marked) && marked[j] != nil && marked[j].Pos != nil {
+				posTag = marked[j].Pos.PosTag
 			}
-			if !any {
+			j++
+			if posTag == "" {
 				continue
 			}
-			for _, reading := range append([]*languagetool.AnalyzedToken(nil), nws[i].GetReadings()...) {
-				if reading.GetPOSTag() == nil || !re.MatchString(*reading.GetPOSTag()) {
-					nws[i].RemoveReading(reading, r.ID)
-				}
+			// Java always builds Match with postagRegexp=true for FILTERALL.
+			re, err := regexp.Compile("^(?:" + posTag + ")$")
+			if err != nil {
+				continue
 			}
+			filterReadingsByPOS(nws[i], re, r.ID)
 		}
 	case ActionIgnoreSpelling:
 		for i := first; i <= last && i < len(nws); i++ {
@@ -293,5 +296,29 @@ func (r *DisambiguationPatternRule) applyAction(nws []*languagetool.AnalyzedToke
 	default:
 		// UNIFY deferred
 		_ = fmt.Sprintf
+	}
+}
+
+// filterReadingsByPOS keeps readings whose POS matches re (Java MatchState.filterReadings
+// for disambiguation FILTER/FILTERALL). No-op when no reading matches (Java FILTER's
+// newPOSmatches gate; FILTERALL empty path leaves the token via soft no-op).
+func filterReadingsByPOS(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp, ruleID string) {
+	if tok == nil || re == nil {
+		return
+	}
+	any := false
+	for _, reading := range tok.GetReadings() {
+		if reading.GetPOSTag() != nil && re.MatchString(*reading.GetPOSTag()) {
+			any = true
+			break
+		}
+	}
+	if !any {
+		return
+	}
+	for _, reading := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+		if reading.GetPOSTag() == nil || !re.MatchString(*reading.GetPOSTag()) {
+			tok.RemoveReading(reading, ruleID)
+		}
 	}
 }

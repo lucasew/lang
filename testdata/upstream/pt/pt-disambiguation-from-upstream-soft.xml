@@ -13,23 +13,58 @@
     </pattern>
     <disambig action="filter" postag="DD.*"/>
   </rule>
+  <rule id="LA_FORA" name="lá fora">
+    <pattern>
+      <token postag="RG">lá</token>
+      <token postag="RG">fora</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="PELO_VISTO" name="pelo visto">
+    <pattern>
+      <token postag="SPS00:DA0MS0">pelo</token>
+      <token postag="VMP00SM">visto</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="SABER" name="saber + infinitive">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes">saber</token>
+      <token postag="V.N.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="GERUND" name="auxiliar + gerund">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes">continuar|estar|ir|ficar|andar|vir</token>
+      <token postag="V.G.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="JUNTO_A" name="junto a">
+    <pattern>
+      <token postag="RG">junto</token>
+      <token regexp="yes" postag="SPS00">a|com</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="SPS_SI" name="Preposição + Si">
     <pattern>
       <token postag="SP.+" postag_regexp="yes"></token>
-      <token>si</token>
+      <token marker="yes">si</token>
     </pattern>
     <disambig action="filter" postag="PP.+"/>
   </rule>
   <rule id="A_SPS" name="a (preposition)">
     <pattern>
-      <token postag="SPS00">a</token>
+      <token postag="SPS00" marker="yes">a</token>
       <token regexp="yes">eu|tu</token>
     </pattern>
     <disambig action="filter" postag="SPS00"/>
   </rule>
   <rule id="NAO_ADVERB" name="Não como advérbio">
     <pattern>
-      <token>não</token>
+      <token marker="yes">não</token>
       <token postag="(R|V).+" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="R.+"/>
@@ -37,27 +72,27 @@
   <rule id="ALVO" name="alvo como adjetivo impessoal">
     <pattern>
       <token postag="V....P.+|NCFP.+" postag_regexp="yes"></token>
-      <token>alvo</token>
+      <token marker="yes">alvo</token>
     </pattern>
     <disambig action="replace" postag="NCCN000"/>
   </rule>
   <rule id="CERTO" name="Estar + Certo">
     <pattern>
       <token inflected="yes">estar</token>
-      <token regexp="yes">cert[ao]s?</token>
+      <token regexp="yes" marker="yes">cert[ao]s?</token>
     </pattern>
     <disambig action="filter" postag="A.+"/>
   </rule>
   <rule id="CITAR" name="CITAR + Fontes">
     <pattern>
-      <token inflected="yes">citar</token>
+      <token inflected="yes" marker="yes">citar</token>
       <token regexp="yes">(?:artigos|documento|fonte|livro|revista)s?|jorna(?:l|is)</token>
     </pattern>
     <disambig action="filter" postag="V.+"/>
   </rule>
   <rule id="CONSEGUIR" name="conseguir + inf">
     <pattern>
-      <token inflected="yes" postag="V.*" postag_regexp="yes">conseguir</token>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">conseguir</token>
       <token postag="V.N.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="V.*"/>
@@ -65,51 +100,102 @@
   <rule id="AMIGO" name="amigo (noun, not adjective">
     <pattern>
       <token postag="A.*|V.P.*" postag_regexp="yes"></token>
-      <token inflected="yes" postag="N.*" postag_regexp="yes">amigo</token>
+      <token inflected="yes" postag="N.*" postag_regexp="yes" marker="yes">amigo</token>
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
   <rule id="INFINITIVE_NOUN" name="saber, comer (infinitive / noun)">
     <pattern>
       <token regexp="yes">para|de</token>
-      <token postag="V.N.*" postag_regexp="yes"></token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="filter" postag="V.N.*"/>
   </rule>
+  <rule id="VERB_PRONOUN" name="verb + pronoun (enclitic)">
+    <pattern>
+      <token postag="V.[SIMN].*" postag_regexp="yes"></token>
+      <token spacebefore="no">-</token>
+      <token postag="P.*" postag_regexp="yes" spacebefore="no"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="DEVE_SER" name="Deve + Infinitivo">
     <pattern>
-      <token inflected="yes">dever</token>
+      <token inflected="yes" marker="yes">dever</token>
       <token postag="VMN0000"></token>
     </pattern>
     <disambig action="filter" postag="V.+"/>
   </rule>
   <rule id="VEIAR_VIR" name="Veio a + Infinitive">
     <pattern>
-      <token>veio</token>
+      <token marker="yes">veio</token>
       <token>a</token>
       <token postag="VMN0000"></token>
     </pattern>
     <disambig action="filter" postag="VMIS3S0"/>
   </rule>
+  <rule id="AMBOS_PREPOSITION" name="Verbo + ambos">
+    <pattern>
+      <token postag="V....P.+" postag_regexp="yes"></token>
+      <token postag="P.+" postag_regexp="yes">ambos</token>
+      <token postag="N.(F.|MS).+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="SER_TODOS" name="Ser + Todos">
     <pattern>
       <token inflected="yes">ser</token>
-      <token regexp="yes">todos?</token>
+      <token regexp="yes" marker="yes">todos?</token>
     </pattern>
     <disambig action="filter" postag="P.+"/>
+  </rule>
+  <rule id="PREPOSITION_SE" name="'Se' como preposição">
+    <pattern>
+      <token regexp="yes">(?:[-‑])</token>
+      <token postag="P.+" postag_regexp="yes" marker="yes" spacebefore="no"></token>
+    </pattern>
+    <disambig action="filter" postag="P.+"/>
+  </rule>
+  <rule id="PUNCT" name="Pontuação">
+    <pattern>
+      <token regexp="yes">[.,;:!?…()\[\]‑‒–—―«»”“‘’'\-]|[\*×∗·\+\/÷:=]</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_PUNCT"/>
+    </disambig>
+  </rule>
+  <rule id="TRES_PONTOS" name="Reticencias">
+    <pattern>
+      <token>.</token>
+      <token>.</token>
+      <token>.</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_TRESPONTOS"/>
+      <wd pos="_TRESPONTOS"/>
+      <wd pos="_TRESPONTOS"/>
+    </disambig>
+  </rule>
+  <rule id="QUOTATION_MARCOAGPINTO" name="Aspas MARCOAGPINTO">
+    <pattern>
+      <token regexp="yes">[»«&quot;”“‘’‹›']</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="_QUOT"/>
+    </disambig>
   </rule>
   <rule id="A_RANGE" name="Range">
     <pattern>
       <token postag="Z.+" postag_regexp="yes"></token>
-      <token>a</token>
+      <token marker="yes">a</token>
       <token postag="Z.+" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="SP000"/>
   </rule>
   <rule id="UNIVERSITY_OF" name="University of">
     <pattern>
-      <token>University</token>
-      <token>of</token>
+      <token case_sensitive="yes">University</token>
+      <token case_sensitive="yes">of</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -139,6 +225,14 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="NUMBER_ABBREV_IGNORE_WITH_PERIOD" name="NUMBER_ABBREV_IGNORE_WITH_PERIOD">
+    <pattern>
+      <token regexp="yes">[nN]</token>
+      <token regexp="yes" spacebefore="no">\.</token>
+      <token regexp="yes" marker="yes" spacebefore="no">[°º]\d*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ABBREV_VEZES_AS_X_IGNORE" name="ABBREV_VEZES_AS_X_IGNORE">
     <pattern>
       <token regexp="yes">\d+[xX]</token>
@@ -154,6 +248,15 @@
   <rule id="UPPERCASE_AND_DIGIT_IGNORE" name="UPPERCASE_AND_DIGIT_IGNORE">
     <pattern>
       <token regexp="yes">[A-Z]+\d+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="PARENTHETICAL_INFLECTION_ES_IGNORE" name="PARENTHETICAL_INFLECTION_ES_IGNORE">
+    <pattern>
+      <token postag="N..S000" postag_regexp="yes"></token>
+      <token spacebefore="no">(</token>
+      <token regexp="yes" marker="yes" spacebefore="no">[ie]s</token>
+      <token spacebefore="no">)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -223,32 +326,67 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="INTERJ_HAHA_HEHE" name="INTERJ_HAHA_HEHE">
+    <pattern>
+      <token regexp="yes">(h[ea])+h?</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="I"/>
+    </disambig>
+  </rule>
+  <rule id="INTERJ_HUEHUE" name="INTERJ_HUEHUE">
+    <pattern>
+      <token regexp="yes">(hue)+h?</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="I"/>
+    </disambig>
+  </rule>
+  <rule id="INTERJ_KKK_LAUGHTER" name="INTERJ_KKK_LAUGHTER">
+    <pattern>
+      <token regexp="yes">k{3,15}</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="I"/>
+    </disambig>
+  </rule>
   <rule id="SOBRE_VERB_20251111" name="In this case SOBRE is SPS00">
     <pattern>
       <token postag="V.+|NC.+|AQ.+" postag_regexp="yes"></token>
-      <token postag="SPS00">sobre</token>
+      <token postag="SPS00" marker="yes">sobre</token>
     </pattern>
     <disambig action="filter" postag="SPS00"/>
   </rule>
   <rule id="PRAZER_VERB_20251116" name="In this case PRAZER is NCMS000">
     <pattern>
       <token postag="V.+|NC.+|AQ.+" postag_regexp="yes"></token>
-      <token postag="NCMS000">prazer</token>
+      <token postag="NCMS000" marker="yes">prazer</token>
     </pattern>
     <disambig action="filter" postag="NCMS000"/>
   </rule>
   <rule id="NÓS_PROFESSORES_NCMP000" name="professores aparecia como verbo">
     <pattern>
       <token>nós</token>
-      <token>professores</token>
+      <token marker="yes">professores</token>
     </pattern>
     <disambig action="replace" postag="NCMP000"/>
   </rule>
   <rule id="HÁ_VERB_20260116" name="In this case HÁ is VMIP3S0">
     <pattern>
-      <token postag="VMIP3S0|VMM02S0" postag_regexp="yes">há</token>
+      <token postag="VMIP3S0|VMM02S0" postag_regexp="yes" marker="yes">há</token>
       <token postag="Z0.+|NC.+|AQ.+" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="VMIP3S0"/>
+  </rule>
+  <rule id="PARA_POR_TODOS_TERMOS_SUBSTANTIVO_PARA_VERBO" name="Adicionar tag de verbo ao substantivo">
+    <pattern>
+      <token regexp="yes">para|por</token>
+      <token regexp="yes">tod[ao]s</token>
+      <token marker="yes">termos</token>
+      <token postag="N.+|AQ.+" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="VMN01P0"/>
+    </disambig>
   </rule>
 </rules>

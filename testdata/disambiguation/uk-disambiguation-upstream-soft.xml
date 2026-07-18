@@ -29,6 +29,24 @@
     </pattern>
     <disambig action="filter" postag="noun.*subst"/>
   </rule>
+  <rule id="anim_v_kly_zvert" name="Кличний у звертанні">
+    <pattern>
+      <token postag="SENT_START"></token>
+      <token regexp="yes" postag="adj:p:v_kly.*" postag_regexp="yes" marker="yes">шановні|дорогі</token>
+      <token postag="noun:anim:p:v_kly.*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">[,!.]|\.\.\.</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="anim_v_kly_zvert_2" name="Кличний у звертанні">
+    <pattern>
+      <token regexp="yes">[«„&quot;—–-]</token>
+      <token regexp="yes" postag="adj:p:v_kly.*" postag_regexp="yes" marker="yes">шановні|дорогі</token>
+      <token postag="noun:anim:p:v_kly.*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">[,!.]|\.\.\.</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="rady_prep_1" name="ради: prep">
     <pattern>
       <token regexp="yes">бога|Христа|цікавост[іи]</token>

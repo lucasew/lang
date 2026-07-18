@@ -49,6 +49,48 @@ func TestFilter_ExclusiveMarkerTargetsFirst(t *testing.T) {
 	require.NotContains(t, letPOS, "NN", "FILTER fromPos (marker) on let should drop NN")
 }
 
+func TestFilterAll_UsesEachPatternTokenPOS(t *testing.T) {
+	// Java TE_X style: te + <marker postag="WKW:.*|ENM:.*"/> → FILTERALL keeps
+	// only readings matching that pattern token POS on the marked token.
+	te := patterns.NewPatternToken("te", false, false, false)
+	te.SetInsideMarker(false)
+	verb := patterns.NewPatternToken("", false, false, false)
+	verb.SetPosToken(patterns.PosToken{PosTag: "WKW:.*", Regexp: true})
+	verb.SetInsideMarker(true)
+	rule := NewDisambiguationPatternRule("TE_X", "t", "nl",
+		[]*patterns.PatternToken{te, verb}, "", nil, ActionFilterAll)
+
+	wkw, bnw := "WKW:TGW:INF", "BNW:STL:ONV"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("te", strp2("VZ"), nil)),
+		func() *languagetool.AnalyzedTokenReadings {
+			r := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("paard", &wkw, nil))
+			r.AddReading(languagetool.NewAnalyzedToken("paard", &bnw, nil), "test")
+			return r
+		}(),
+	}
+	pos := 0
+	for _, t := range toks {
+		t.SetStartPos(pos)
+		pos += len(t.GetToken()) + 1
+	}
+	out := rule.Replace(languagetool.NewAnalyzedSentence(toks))
+	var tags []string
+	for _, tok := range out.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "paard" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tags = append(tags, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tags, "WKW:TGW:INF")
+	require.NotContains(t, tags, "BNW:STL:ONV", "FILTERALL should drop non-matching POS")
+}
+
 func TestFilter_MarkerOnSecondToken_JavaFromPos(t *testing.T) {
 	// Soft modal style, Java-faithful: will + <marker>run</marker> → FILTER run.
 	will := patterns.NewPatternToken("will", false, false, false)

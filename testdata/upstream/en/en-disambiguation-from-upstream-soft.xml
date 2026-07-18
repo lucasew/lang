@@ -23,6 +23,22 @@
       <wd pos=","/>
     </disambig>
   </rule>
+  <rule id="CD_PAST_CD" name="Disambiguate time">
+    <pattern>
+      <token postag="CD" marker="yes"></token>
+      <token regexp="yes" postag="IN" marker="yes">past|to</token>
+      <token postag="CD" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="half_past_CD" name="Disambiguate time no. 2">
+    <pattern>
+      <token postag="NN" marker="yes">half</token>
+      <token regexp="yes" postag="IN" marker="yes">past|to</token>
+      <token postag="CD" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="AMERICAN_AIRLINES" name="American Airlines">
     <pattern>
       <token case_sensitive="yes">American</token>
@@ -286,6 +302,13 @@
       <token postag="JJ.*|RB.*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
+  </rule>
+  <rule id="NO_ONE" name="No one as personal pronoun">
+    <pattern>
+      <token postag="DT">no</token>
+      <token postag="PRP">one</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="ONE_OF_THE_MOST" name="'most' as RBS">
     <pattern>
@@ -622,12 +645,44 @@
     </pattern>
     <disambig action="replace" postag="NN:UN"/>
   </rule>
+  <rule id="WEB_PAGE" name="Web page (noun/verb) -&gt; page (noun)">
+    <pattern>
+      <token postag="NN">web</token>
+      <token postag="NN">page</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="BY_RB" name="by + rb → rb">
     <pattern>
       <token>by</token>
       <token postag="RB" marker="yes"></token>
     </pattern>
     <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="by_chance_morning" name="by chance / morning -&gt;NN">
+    <pattern>
+      <token>by</token>
+      <token regexp="yes" postag="NN.*" postag_regexp="yes" marker="yes">chance|morning</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DT_JJR_JJ_CC_JJ" name="DT|JJ + JJR + JJ/NN -&gt; JJ + CC + JJ">
+    <pattern>
+      <token postag="DT|PRP\$" postag_regexp="yes"></token>
+      <token>most</token>
+      <token postag="JJ" marker="yes"></token>
+      <token>and</token>
+      <token postag="JJ"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DT_plural_so_vbn" name="those/these + so + VBN/VBD/JJ -&gt; so = JJ">
+    <pattern>
+      <token regexp="yes">th[eo]se</token>
+      <token postag="JJ" marker="yes">so</token>
+      <token postag="VBN" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="without_kk_NN_VBG" name="without having (NN/VBG)-&gt;VBG">
     <pattern>
@@ -826,6 +881,29 @@
       <token marker="yes">training</token>
     </pattern>
     <disambig action="replace" postag="NN:U"/>
+  </rule>
+  <rule id="BENEATH_NOTICE" name="beneath notice">
+    <pattern>
+      <token postag="IN">beneath</token>
+      <token postag="NN:UN">notice</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="WATER_SOLUBLE" name="water soluble">
+    <pattern>
+      <token postag="NN:U">water</token>
+      <token postag="JJ">soluble</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="TO_VB_OR_VB" name="to + noun/verb &gt; verb + and/or + noun/verb &gt; verb">
+    <pattern>
+      <token postag="TO"></token>
+      <token postag="VBP?" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" postag="CC" marker="yes">and|or</token>
+      <token postag="VBP?" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="ENTER_KEY" name="NN: Enter Key">
     <pattern>

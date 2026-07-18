@@ -1190,6 +1190,270 @@
       <wd pos="VNW:PER:1EP:MRV:PSF"/>
     </disambig>
   </rule>
+  <rule id="ZIJ_AWS" name="wat er ook van zij">
+    <pattern>
+      <token>wat</token>
+      <token regexp="yes">er|daar</token>
+      <token>ook</token>
+      <token>van</token>
+      <token postag="WKW:AWS">zij</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DES_TE_X" name="na des te komt een vergroting">
+    <pattern>
+      <token>des</token>
+      <token>te</token>
+      <token postag="BNW:VGR:.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="TE_X" name="na te komt een werkwoord of een vergroting meestal; eventueel een plaats">
+    <pattern>
+      <token>te</token>
+      <token postag="WKW:TGW:INF.*|ENM:LOC:PTS" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="TE_BNW-STL-ONV" name="alleen bnw">
+    <pattern>
+      <token>te</token>
+      <token postag="BNW:STL:ONV"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_X_END" name="alleen znw">
+    <pattern>
+      <token>de</token>
+      <token postag="ZNW:EKV|ZNW.*MRV.*" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">[.!]</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="START_HET_IS_EEN" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:OND:EKV:HET" marker="yes"></token>
+      <token postag="WKW:TGW:3EP|WKW:VLT:1EP" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes">een|de|het|geen</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_X_VAN" name="-">
+    <pattern>
+      <token>de</token>
+      <token postag="ZNW:EKV|ZNW:EKV:DE_|.*MRV.*" postag_regexp="yes"></token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="HET_KIND_VAN" name="-">
+    <pattern>
+      <token postag="VNW:AWZ:EKV:HET" marker="yes"></token>
+      <token postag="ZNW:EKV|ZNW:EKV:HET|ZNW:EKV:VRK:HET|WKW:TGW:INF" postag_regexp="yes" marker="yes"></token>
+      <token marker="yes">van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="HET_ZWARE_KIND_VAN" name="-">
+    <pattern>
+      <token postag="VNW:AWZ:EKV:HET" marker="yes"></token>
+      <token postag="BNW.*VRB|WKW:VTD:VRB|WKW:ODW:VRB|GET:RNG" postag_regexp="yes" marker="yes"></token>
+      <token postag="ZNW:EKV|ZNW:EKV:HET|ZNW:EKV:VRK:HET|WKW:TGW:INF" postag_regexp="yes" marker="yes"></token>
+      <token marker="yes">van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="EEN_LELIJK_KIND_VAN" name="-">
+    <pattern>
+      <token>een</token>
+      <token postag="BNW:.*:ONV|BNW:VGR:ONV|WKW:VTD:ONV|WKW:ODW:ONV" postag_regexp="yes"></token>
+      <token postag="ZNW:EKV|ZNW:EKV.*HET" postag_regexp="yes"></token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_MANNEN_VAN" name="-">
+    <pattern>
+      <token>de</token>
+      <token postag="ZNW:EKV|ZNW:.*DE_|GET:RNG" postag_regexp="yes"></token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_LELIJKE_MANNEN_VAN" name="-">
+    <pattern>
+      <token>de</token>
+      <token postag="BNW:.*:(VRB)|WKW:VTD:VRB|BNW:VGR:ONV|WKW:ODW:VRB" postag_regexp="yes"></token>
+      <token postag="ZNW:EKV|ZNW:EKV:DE_|ZNW:MRV:DE_|ZNW:MRV:VRK:DE_|GET:RNG" postag_regexp="yes"></token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="EEN_LELIJKE_MAN_VAN" name="-">
+    <pattern>
+      <token>een</token>
+      <token postag="BNW:.*:(VRB)|WKW:VTD:VRB|WKW:ODW:VRB" postag_regexp="yes"></token>
+      <token postag="ZNW:EKV|ZNW:EKV:DE_" postag_regexp="yes"></token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="ZO_SNEL_MOGELIJK" name="-">
+    <pattern>
+      <token>zo</token>
+      <token postag="BNW:STL:ONV|WKW:VTD:ONV" postag_regexp="yes"></token>
+      <token>mogelijk</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_ZWARE_MAN_DIE" name="-">
+    <pattern>
+      <token>de</token>
+      <token postag="BNW.*VRB|WKW:VTD:VRB|WKW:ODW:VRB|GET:RNG" postag_regexp="yes" marker="yes"></token>
+      <token postag="ZNW:EKV|ZNW:EKV:DE_" postag_regexp="yes" marker="yes"></token>
+      <token postag="VGW:EKV:DE_" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_ZWARE_MANNEN_DIE" name="-">
+    <pattern>
+      <token>de</token>
+      <token postag="BNW.*VRB|WKW:VTD:VRB|WKW:ODW:VRB|GET.*MRV" postag_regexp="yes" marker="yes"></token>
+      <token postag=".*MRV.*" postag_regexp="yes" marker="yes"></token>
+      <token postag="VGW:EKV:DE_" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DE_MEEST_ZWARE_MANNEN_DIE" name="-">
+    <pattern>
+      <token>de</token>
+      <token>meest</token>
+      <token postag="BNW.*VRB|WKW:VTD:VRB|WKW:ODW:VRB" postag_regexp="yes" marker="yes"></token>
+      <token postag="ZNW:EKV|ZNW.*DE_" postag_regexp="yes" marker="yes"></token>
+      <token postag="VGW:EKV:DE_" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="OP_DEZE_PAGINA_VIND_JE" name="-">
+    <pattern>
+      <token postag="VRZ" marker="yes"></token>
+      <token postag="VNW:AWZ:EKV:DE_" marker="yes"></token>
+      <token postag="ZNW:EKV|ZNW:.*DE_" postag_regexp="yes" marker="yes"></token>
+      <token postag="WKW:(TGW|VLT):1EP" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" marker="yes">je|jij|ik</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="OP_DEZE_PAGINA_VINDEN_WE" name="-">
+    <pattern>
+      <token postag="VRZ" marker="yes"></token>
+      <token postag="VNW:AWZ:EKV:DE_" marker="yes"></token>
+      <token postag="ZNW:EKV|ZNW:.*DE_" postag_regexp="yes" marker="yes"></token>
+      <token postag="WKW:(TGW|VLT):1EP" postag_regexp="yes" marker="yes"></token>
+      <token regexp="yes" marker="yes">we|wij|zij|ze</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="START_ER_1EP" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes" marker="yes"></token>
+      <token marker="yes">er</token>
+      <token postag="WKW:TGW:3EP|WKW:VLT:1EP|WKW:(TGW|VLT):INF" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="START_INDIEN" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VGW" marker="yes">indien</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="IN_HET_KADER_VAN" name="-">
+    <pattern>
+      <token postag="VRZ">in</token>
+      <token postag="VNW:AWZ:EKV:HET">het</token>
+      <token postag="ZNW:EKV:HET">kader</token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="IN_DE_LOOP_VAN" name="-">
+    <pattern>
+      <token postag="VRZ">in</token>
+      <token>de</token>
+      <token postag="ZNW:EKV:DE">loop</token>
+      <token>van</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="ZIJN_END" name="-">
+    <pattern>
+      <token postag="WKW:TGW:INF">zijn</token>
+      <token regexp="yes">[.!?,;:]|er|en|of</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="IN" name=" maak van in een voorzetsel; is erg gulzig; moet ooit nog als ik-vorm worden toegevoegd met regel">
+    <pattern>
+      <token postag="VRZ">in</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="ZIJ_AAN_ZIJ" name="-">
+    <pattern>
+      <token postag="ZNW:EKV:DE">zij</token>
+      <token postag="VRZ">aan</token>
+      <token postag="ZNW:EKV:DE">zij</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DAT_ER_EEN_PROBLEEM_IS" name="-">
+    <pattern>
+      <token postag="VGW.*" postag_regexp="yes"></token>
+      <token>er</token>
+      <token postag="GET:EKV"></token>
+      <token postag="ZNW:EKV.*" postag_regexp="yes"></token>
+      <token postag="WKW:(VLT|TGW):3EP" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="MEN_X" name="-">
+    <pattern>
+      <token postag="VNW:PER:3EP:EKV:ACT">men</token>
+      <token postag="WKW:TGW:3EP|WKW:VLT:1EP" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="X_MEN" name="-">
+    <pattern>
+      <token postag="WKW:TGW:3EP|WKW:VLT:1EP" postag_regexp="yes"></token>
+      <token postag="VNW:PER:3EP:EKV:ACT">men</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DISAMBIG_BEN_1" name="-">
+    <pattern>
+      <token>Ik</token>
+      <token regexp="yes" postag="WKW:TGW:1EP">ben|heb</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DISAMBIG_BEN_2" name="-">
+    <pattern>
+      <token regexp="yes" postag="WKW:TGW:1EP">ben|heb</token>
+      <token regexp="yes">ik|je|jij</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="DISAMBIG_BENT" name="-">
+    <pattern>
+      <token regexp="yes">je|jij</token>
+      <token postag="WKW:TGW:2EP">bent</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="WEES_01" name="WEES_01">
     <pattern>
       <token postag="SENT_START|START" postag_regexp="yes"></token>
@@ -1349,6 +1613,21 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="DATUM" name="Datum">
+    <pattern>
+      <token regexp="yes" postag="GET:ARA:00[12]:MRV|GET:ARA:001:EKV" postag_regexp="yes">[1-9]|[12][0-9]|3[01]</token>
+      <token postag="TYD:MND"></token>
+      <token postag="GET:ARA:004:MRV"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_000c" name="-">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="GET:RNG">Tweede|Eerste</token>
+      <token case_sensitive="yes" postag="ZNW:EKV:DE_">Kamer</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="NEW_000d" name="-">
     <pattern>
       <token postag="BNW:VGR.*" postag_regexp="yes"></token>
@@ -1367,6 +1646,72 @@
       <wd pos="START"/>
     </disambig>
   </rule>
+  <rule id="NEW_018" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:OND:EKV:HET" marker="yes">het</token>
+      <token postag="WKW:VLT:1EP" marker="yes">was</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_038" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="BYW:VRG" marker="yes">waarom</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_051" name="-">
+    <pattern>
+      <token postag="VNW:OND:EKV:HET">dat</token>
+      <token postag="WKW:VLT:1EP">was</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_112" name="-">
+    <pattern>
+      <token regexp="yes" postag="VNW:OND:EKV:HET" marker="yes">het|dit|dat</token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_124" name="-">
+    <pattern>
+      <token postag="VNW:PER:2EP:EKV:ACT">je</token>
+      <token postag="WKW:TGW:3EP">bent</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_125" name="-">
+    <pattern>
+      <token>geen</token>
+      <token postag="ZNW:EKV:DE_" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_126" name="-">
+    <pattern>
+      <token>?</token>
+      <token>'</token>
+      <token postag="WKW:VLT:1EP" marker="yes">vroeg</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_127" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:PER:3EP:EKV:ACT" marker="yes">ze</token>
+      <token postag="WKW:VLT:1EP" marker="yes">was</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_136" name="-">
+    <pattern>
+      <token>met</token>
+      <token postag="VNW:PER:3EP:EKV:BEZ" marker="yes">zijn</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="NEW_139" name="-">
     <pattern>
       <token regexp="yes">de|het</token>
@@ -1383,5 +1728,145 @@
     <disambig action="add">
       <wd pos="ZNW:EKV:DE_"/>
     </disambig>
+  </rule>
+  <rule id="NEW_144" name="-">
+    <pattern>
+      <token>,</token>
+      <token postag="VGW" marker="yes">maar</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_151" name="-">
+    <pattern>
+      <token>,</token>
+      <token postag="VGW" marker="yes">want</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_156" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VGW" marker="yes">maar</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_157" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:PER:1EP:EKV:BEZ" marker="yes">mijn</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_169" name="-">
+    <pattern>
+      <token regexp="yes">['&quot;]</token>
+      <token postag="WKW:VLT:1EP">vroeg</token>
+      <token postag="ENM:PER:FST|ENM:PER:LST.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_225" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="TSW" marker="yes"></token>
+      <token>,</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_235" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:OND:EKV:HET">het</token>
+      <token postag="WKW:TGW:3EP">kan</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_238" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:PER:1EP:EKV:BEZ">mijn</token>
+      <token postag="ZNW:EKV:DE_"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_251" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:PER:3EP:EKV:BEZ">zijn</token>
+      <token postag="ZNW:EKV:DE_"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_286" name="-">
+    <pattern>
+      <token postag="VNW:PER:3EP:EKV:ACT">u</token>
+      <token postag="WKW:TGW:3EP">bent</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_300" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="VNW:PER:3EP:EKV:ACT">ze</token>
+      <token postag="WKW:VLT:1EP"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_312" name="-">
+    <pattern>
+      <token postag="SENT_START|START" postag_regexp="yes"></token>
+      <token postag="WKW:TGW:1EP">je</token>
+      <token postag="VNW:PER:2EP:EKV:ACT">je</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_344" name="-">
+    <pattern>
+      <token postag="WKW:VTD:ONV">geschat</token>
+      <token postag="VRZ">op</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_400" name="-">
+    <pattern>
+      <token postag="GET:(ARA|TXT).*" postag_regexp="yes"></token>
+      <token regexp="yes" inflected="yes">seconde|minuut|kwartier|halfuur|uur|dag|week|maand|seizoen|jaar|decennium|eeuw|eeuwigheid</token>
+      <token postag="BYW" marker="yes">geleden</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_487" name="-">
+    <pattern>
+      <token postag="VRZ">voor</token>
+      <token postag="VNW:AWZ:EKV:HET">het</token>
+      <token postag="BYW">eerst</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_499" name="-">
+    <pattern>
+      <token postag="VNW:AWZ:EKV:DE_"></token>
+      <token postag="BNW:STL:VRB"></token>
+      <token postag="ZNW:EKV:DE_"></token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_546" name="-">
+    <pattern>
+      <token postag="VRZ">voor</token>
+      <token postag="VNW:AWZ:EKV:HET">het</token>
+      <token postag="BNW:OVR:ONV">laatst</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
+  <rule id="NEW_581" name="-">
+    <pattern>
+      <token postag="VRZ" marker="yes"></token>
+      <token postag="VNW:AWZ:EKV:HET" marker="yes"></token>
+      <token postag="ZNW:EKV:HET" marker="yes"></token>
+      <token regexp="yes" postag="SENT_END">[.!?]</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
 </rules>
