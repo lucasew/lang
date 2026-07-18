@@ -178,10 +178,11 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				posOK = *pos == pt.Pos.PosTag
 			}
 			// Soft without portuguese.dict: FreeLing disambig may only add Z0MS0
-			// to "um" (numeral) while grammar patterns require D.+. Java dict
-			// also has DA0MS0; soft-accept D.* when surface is a known article.
-			if !posOK && !m.StrictPOS && softPostagIsFreeLingDeterminer(pt.Pos.PosTag) &&
-				softIsRomanceDeterminerSurface(token.GetToken()) {
+			// to "um" (numeral) while grammar patterns require D.+ / D[AI].+|NC.+.
+			// Java Morfologik also has DA0MS0 / DP… / DI…; soft-accept FreeLing D*
+			// (and PD* pronouns) when the surface is a known closed-class form.
+			if !posOK && !m.StrictPOS &&
+				softFreeLingClosedSurfaceMatch(pt.Pos.PosTag, token.GetToken()) {
 				posOK = true
 			}
 			// Soft multiword/disambig may only attach underscore context tags
@@ -804,7 +805,8 @@ func softPostagIsClosedClassOnly(tag string) bool {
 		}
 	}
 	for _, part := range strings.Split(u, "|") {
-		p := softNormalizePostagPart(part)
+		// FreeLing (SPS00:)?PD.+ must classify as pronoun PD, not adposition SPS.
+		p := softNormalizeFreeLingPostagPart(part)
 		if p == "" {
 			continue
 		}
@@ -847,6 +849,39 @@ func softPostagPartIsOpen(p string) bool {
 			}
 		}
 	}
+	// FreeLing Romance open classes (PT/ES/CA/GL tagset_PT): N*, A* (adj), R* (adv), V*
+	// before English Penn — FreeLing VMP00 / NCMS000 / AQ0FS0 / RG, not Penn VB/NN alone.
+	if len(p) > 0 {
+		switch p[0] {
+		case 'N':
+			// NC / NP / N.+ / N[CP] — not German "NEG" etc. without FreeLing shape
+			if strings.HasPrefix(p, "NC") || strings.HasPrefix(p, "NP") ||
+				strings.HasPrefix(p, "N.") || strings.HasPrefix(p, "N[") || p == "N" {
+				return true
+			}
+		case 'A':
+			// AQ / AO / AP / A.+ — adjectives (not ART)
+			if strings.HasPrefix(p, "AQ") || strings.HasPrefix(p, "AO") ||
+				strings.HasPrefix(p, "AP") || strings.HasPrefix(p, "A.") ||
+				strings.HasPrefix(p, "A[") || p == "A" {
+				return true
+			}
+		case 'R':
+			// RG / RN / RM / R. — FreeLing adverbs (not English RB already below)
+			if strings.HasPrefix(p, "RG") || strings.HasPrefix(p, "RN") ||
+				strings.HasPrefix(p, "RM") || strings.HasPrefix(p, "R.") ||
+				strings.HasPrefix(p, "R[") || p == "R" {
+				return true
+			}
+		case 'V':
+			// VM* / VA* / VS* / VMP00 / V.+ — FreeLing verbs/participles
+			if strings.HasPrefix(p, "VM") || strings.HasPrefix(p, "VA") ||
+				strings.HasPrefix(p, "VS") || strings.HasPrefix(p, "V.") ||
+				strings.HasPrefix(p, "V[") || p == "V" {
+				return true
+			}
+		}
+	}
 	for _, open := range []string{"NN", "VB", "JJ", "RB", "CD", "FW", "UH", "SYM", "LS"} {
 		if strings.HasPrefix(p, open) {
 			return true
@@ -856,21 +891,13 @@ func softPostagPartIsOpen(p string) bool {
 }
 
 func softPostagPartIsClosed(p string) bool {
-	// FreeLing Romance determiners (D.+, DA0MS0, DI0FS0, …) — PT/ES/CA/GL soft packs.
-	if len(p) > 0 && (p[0] == 'D' || strings.HasPrefix(p, "D.")) {
-		// Not German DAT/… colon tags (handled below).
-		if !strings.Contains(p, ":") || strings.HasPrefix(p, "DA") || strings.HasPrefix(p, "DI") ||
-			strings.HasPrefix(p, "DD") || strings.HasPrefix(p, "DE") || strings.HasPrefix(p, "DP") ||
-			strings.HasPrefix(p, "DT") {
-			if strings.HasPrefix(p, "D") && !strings.HasPrefix(p, "DT") && !strings.HasPrefix(p, "DAT") {
-				// FreeLing D* but not Penn DT alone (already listed) / not STTS DAT
-				if strings.HasPrefix(p, "DA") || strings.HasPrefix(p, "DI") || strings.HasPrefix(p, "DD") ||
-					strings.HasPrefix(p, "DE") || strings.HasPrefix(p, "DP") || strings.HasPrefix(p, "D.") ||
-					p == "D" || strings.HasPrefix(p, "D.+") || strings.HasPrefix(p, "D[") {
-					return true
-				}
-			}
-		}
+	// FreeLing Romance determiners (D.+, DA0MS0, DI0FS0, DP…, …) — PT/ES/CA/GL soft packs.
+	if softFreeLingPartIsDeterminer(p) {
+		return true
+	}
+	// FreeLing pronouns (PD / PI / PP / PR / PX / PT) and adpositions/conjunctions.
+	if softFreeLingPartIsPronoun(p) || softFreeLingPartIsAdposition(p) || softFreeLingPartIsConjunction(p) {
+		return true
 	}
 	// German STTS closed: ART, PRP (preposition!), PRO, KON, APPR, APPO, APZR, …
 	if strings.Contains(p, ":") || strings.HasPrefix(p, "PRP") || strings.HasPrefix(p, "ART") ||
@@ -906,7 +933,8 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 	// German STTS often uses .* wildcards without | — treat whole tag as one part.
 	parts := strings.Split(u, "|")
 	for _, part := range parts {
-		p := softNormalizePostagPart(part)
+		// Strip FreeLing optional contraction prefixes so (SPS00:)?PD.+ → PD.+
+		p := softNormalizeFreeLingPostagPart(part)
 		if p == "" {
 			continue
 		}
@@ -921,9 +949,18 @@ func softClosedClassSurfaceMatch(tag, surface string) bool {
 }
 
 func softClosedPartSurface(part, s string) bool {
-	// FreeLing Romance D* determiners (PT/ES/CA soft packs without full dict).
-	if softPostagIsFreeLingDeterminer(part) {
-		return softIsRomanceDeterminerSurface(s)
+	// FreeLing Romance D*/P*/S*/C* (PT/ES/CA soft packs without full dict).
+	if softFreeLingPartIsDeterminer(part) {
+		return softFreeLingDetSurface(part, s)
+	}
+	if softFreeLingPartIsPronoun(part) {
+		return softFreeLingPronSurface(part, s)
+	}
+	if softFreeLingPartIsAdposition(part) {
+		return softIsRomancePrepSurface(s)
+	}
+	if softFreeLingPartIsConjunction(part) {
+		return softIsCC(s)
 	}
 	// --- German STTS (colon tags / case-tagged PRP / ART / PRO / APPR / KON) ---
 	// Do NOT treat English Penn "PRP.*" (pronoun regex) as STTS: "PRP." matches
@@ -1048,44 +1085,343 @@ func softPOSIsContextTag(pos *string) bool {
 	return pos != nil && strings.HasPrefix(*pos, "_")
 }
 
-// softPostagIsFreeLingDeterminer: FreeLing D.+ / DA0MS0 / DI… (PT/ES/CA/GL).
+// softPostagIsFreeLingDeterminer: FreeLing D.+ / DA0MS0 / DI… / mixed D[AI].+|NC.+.
+// Mirrors FreeLing determiner category (tagset_PT: D + type A/D/E/I/T/N/P).
 func softPostagIsFreeLingDeterminer(tag string) bool {
 	u := strings.ToUpper(strings.TrimSpace(tag))
 	if u == "" {
 		return false
 	}
-	// Pattern fragments like D.+ or D[AI].+
-	if strings.HasPrefix(u, "D.") || strings.HasPrefix(u, "D[") || u == "D" {
+	for _, part := range strings.Split(u, "|") {
+		if softFreeLingPartIsDeterminer(softNormalizeFreeLingPostagPart(part)) {
+			return true
+		}
+	}
+	// Whole-pattern scan for (SPS00:)?D[AI].+ style wrappers.
+	return softFreeLingPatternHasDeterminer(u)
+}
+
+// softFreeLingClosedSurfaceMatch: soft-accept FreeLing closed-class POS patterns
+// (D*, PD*, PP*, …) when the surface is a known FreeLing closed-class form.
+// Used both for untagged soft probes and when the only real reading is Z0MS0
+// (numeral disambig) while Java also has DA0MS0/DP…/DI… from portuguese.dict.
+func softFreeLingClosedSurfaceMatch(pattern, surface string) bool {
+	u := strings.ToUpper(strings.TrimSpace(pattern))
+	if u == "" || surface == "" {
+		return false
+	}
+	s := strings.ToLower(strings.TrimSpace(surface))
+	// Prefer type-specific lists when the pattern is a single FreeLing family.
+	for _, part := range strings.Split(u, "|") {
+		p := softNormalizeFreeLingPostagPart(part)
+		if softFreeLingPartIsDeterminer(p) && softFreeLingDetSurface(p, s) {
+			return true
+		}
+		if softFreeLingPartIsPronoun(p) && softFreeLingPronSurface(p, s) {
+			return true
+		}
+		if softFreeLingPartIsAdposition(p) && softIsRomancePrepSurface(s) {
+			return true
+		}
+		if softFreeLingPartIsConjunction(p) && softIsCC(s) {
+			return true
+		}
+	}
+	// Mixed patterns like (SPS00:)?D[AI].+|NC.+|AQ.+ — accept D-family surfaces.
+	if softFreeLingPatternHasDeterminer(u) && softIsRomanceDeterminerSurface(s) {
 		return true
 	}
-	// Concrete FreeLing tags: DA0MS0, DI0FS0, DD0CP0, DE0CN0, DP…
-	if len(u) >= 2 && u[0] == 'D' {
-		switch u[1] {
+	if softFreeLingPatternHasPronoun(u) && softIsRomancePronounSurface(s) {
+		return true
+	}
+	return false
+}
+
+// softNormalizeFreeLingPostagPart strips optional FreeLing contraction wrappers
+// used in PT/ES/CA grammar: (SPS00:)?D[AI].+ → D[AI].+
+func softNormalizeFreeLingPostagPart(p string) string {
+	p = softNormalizePostagPart(p)
+	// After softNormalizePostagPart, "(SPS00:)?" becomes "SPS00:)?"
+	for _, pref := range []string{
+		"SPS00:)?", "SPS00:?", "SPS00:",
+		"SP.+:)?", "SP.+:?", "SP.+:",
+		"SP.:)?", "SP.:?",
+	} {
+		if strings.HasPrefix(p, pref) {
+			p = p[len(pref):]
+		}
+	}
+	// Leading "?:" leftovers from non-capturing groups
+	p = strings.TrimPrefix(p, "?:")
+	p = strings.TrimPrefix(p, "?")
+	return p
+}
+
+func softFreeLingPartIsDeterminer(p string) bool {
+	if p == "" {
+		return false
+	}
+	// Pattern fragments D.+ / D[AI].+ / D
+	if p == "D" || strings.HasPrefix(p, "D.") || strings.HasPrefix(p, "D[") || strings.HasPrefix(p, "D.+") {
+		return true
+	}
+	// Concrete FreeLing: DA0MS0, DI0FS0, DD0CP0, DE0CN0, DP…, DT…, DN…
+	// Not STTS DAT… (colon case tags handled elsewhere).
+	if len(p) >= 2 && p[0] == 'D' {
+		switch p[1] {
 		case 'A', 'I', 'D', 'E', 'P', 'T', 'N':
-			// DT is also Penn determiner — still fine for surface article check
+			// Avoid bare "DAT" as FreeLing — DAT is STTS dative
+			if strings.HasPrefix(p, "DAT") && (len(p) == 3 || p[3] == ':' || p[3] == '.') {
+				return false
+			}
 			return true
 		}
 	}
 	return false
 }
 
-// softIsRomanceDeterminerSurface: FreeLing article/demonstrative surfaces.
+func softFreeLingPartIsPronoun(p string) bool {
+	if p == "" {
+		return false
+	}
+	// Not English Penn PDT / POS / PRP / PRP$ (those use softIsDeterminer / softIsPronoun).
+	if strings.HasPrefix(p, "PRP") || strings.HasPrefix(p, "PDT") || strings.HasPrefix(p, "POS") {
+		return false
+	}
+	// FreeLing P + type: PD PI PP PR PX PT PE PN (tagset_PT pronoun)
+	if len(p) >= 2 && p[0] == 'P' {
+		switch p[1] {
+		case 'D', 'I', 'P', 'R', 'X', 'T', 'E', 'N', '.', '[', '+', '*':
+			return true
+		}
+	}
+	return p == "P"
+}
+
+func softFreeLingPartIsAdposition(p string) bool {
+	// FreeLing SPS00 / SP.* (prepositions); not English.
+	return strings.HasPrefix(p, "SPS") || strings.HasPrefix(p, "SP.") ||
+		strings.HasPrefix(p, "SP[") || p == "SP" || p == "SPS00"
+}
+
+func softFreeLingPartIsConjunction(p string) bool {
+	// FreeLing CC / CS (not English CC alone — still fine: softIsCC handles EN+Romance)
+	return p == "CC" || p == "CS" || strings.HasPrefix(p, "CC.") || strings.HasPrefix(p, "CS.") ||
+		strings.HasPrefix(p, "C[") || (p == "C")
+}
+
+// softFreeLingPatternHasDeterminer scans full postag patterns for a D-family segment
+// (including mixed | and optional (SPS00:)? prefixes).
+func softFreeLingPatternHasDeterminer(u string) bool {
+	for i := 0; i < len(u); i++ {
+		if u[i] != 'D' {
+			continue
+		}
+		if i > 0 {
+			prev := u[i-1]
+			// Segment start after | ( : ? ) 
+			if prev != '|' && prev != '(' && prev != ':' && prev != '?' {
+				continue
+			}
+		}
+		if i+1 >= len(u) {
+			return true
+		}
+		switch u[i+1] {
+		case 'A', 'I', 'D', 'E', 'P', 'T', 'N', '.', '[', '*', '+', '?':
+			return true
+		}
+	}
+	return false
+}
+
+func softFreeLingPatternHasPronoun(u string) bool {
+	for i := 0; i < len(u); i++ {
+		if u[i] != 'P' {
+			continue
+		}
+		if i > 0 {
+			prev := u[i-1]
+			if prev != '|' && prev != '(' && prev != ':' && prev != '?' {
+				continue
+			}
+		}
+		if i+1 >= len(u) {
+			return true
+		}
+		switch u[i+1] {
+		case 'D', 'I', 'P', 'R', 'X', 'T', 'E', 'N', '.', '[', '*', '+', '?':
+			// Avoid matching Penn PDT / POS / PRP as FreeLing P-only via PDT prefix —
+			// PDT is determiner (already handled); PRP is English pronoun (other path).
+			if strings.HasPrefix(u[i:], "PRP") || strings.HasPrefix(u[i:], "PDT") ||
+				strings.HasPrefix(u[i:], "POS") {
+				continue
+			}
+			return true
+		}
+	}
+	return false
+}
+
+// softFreeLingDetSurface matches FreeLing determiner type to surface lists
+// (tagset_PT type: A article, D demonstrative, I indefinite, P possessive, …).
+func softFreeLingDetSurface(part, s string) bool {
+	// Type-specific when pattern pins a subtype; broad D.+ accepts any.
+	switch {
+	case strings.HasPrefix(part, "DP"):
+		return softIsRomancePossessiveSurface(s)
+	case strings.HasPrefix(part, "DI"):
+		return softIsRomanceIndefiniteDetSurface(s)
+	case strings.HasPrefix(part, "DD"):
+		return softIsRomanceDemonstrativeSurface(s)
+	case strings.HasPrefix(part, "DA"):
+		return softIsRomanceArticleSurface(s)
+	default:
+		// D.+ / D[AI].+ / D[AIP].+ / mixed — any FreeLing determiner surface
+		return softIsRomanceDeterminerSurface(s)
+	}
+}
+
+func softFreeLingPronSurface(part, s string) bool {
+	switch {
+	case strings.HasPrefix(part, "PD"):
+		return softIsRomanceDemonstrativeSurface(s)
+	case strings.HasPrefix(part, "PI"):
+		return softIsRomanceIndefiniteDetSurface(s) || softIsRomanceIndefinitePronSurface(s)
+	case strings.HasPrefix(part, "PP"):
+		return softIsPronoun(s)
+	default:
+		return softIsRomancePronounSurface(s)
+	}
+}
+
+// softIsRomanceDeterminerSurface: any FreeLing D* surface (article/demo/indef/poss).
 func softIsRomanceDeterminerSurface(s string) bool {
+	return softIsRomanceArticleSurface(s) ||
+		softIsRomanceDemonstrativeSurface(s) ||
+		softIsRomanceIndefiniteDetSurface(s) ||
+		softIsRomancePossessiveSurface(s) ||
+		softIsDeterminer(s)
+}
+
+func softIsRomanceArticleSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
-	// PT/ES/GL/CA articles & indefinites
 	case "o", "a", "os", "as", "um", "uma", "uns", "umas",
 		"el", "la", "los", "las", "un", "una", "unos", "unas",
-		"lo", "les", "els", "na", "nas",
-		// PT/ES demonstratives
-		"este", "esta", "estes", "estas", "esse", "essa", "esses", "essas",
+		"lo", "les", "els", "na", "nas", "ao", "à", "aos", "às",
+		// FreeLing fused prep+article (SPS00:DA…): do/da/no/na/pelo…
+		"do", "da", "dos", "das", "no", "nos",
+		"pelo", "pela", "pelos", "pelas",
+		"dum", "duma", "duns", "dumas", "num", "numa", "nuns", "numas":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsRomanceDemonstrativeSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	// PT/ES/GL demonstratives (DD / PD)
+	case "este", "esta", "estes", "estas", "esse", "essa", "esses", "essas",
 		"aquele", "aquela", "aqueles", "aquelas", "isto", "isso", "aquilo",
 		"estos", "ese", "esa", "esos", "esas",
 		"aquel", "aquella", "aquellos", "aquellas",
+		// FreeLing fused prep+demonstrative (SPS00:DD…): dessa/nesta/…
+		// Java portuguese.dict tags "dessa" as SPS00:DD0FS0, "nesta" as SPS00:DD0FS0.
+		"deste", "desta", "destes", "destas", "desse", "dessa", "desses", "dessas",
+		"daquele", "daquela", "daqueles", "daquelas",
+		"neste", "nesta", "nestes", "nestas", "nesse", "nessa", "nesses", "nessas",
+		"naquele", "naquela", "naqueles", "naquelas",
+		"àquele", "àquela", "àqueles", "àquelas", "aeste", "aesta",
 		// Catalan
-		"aquest", "aquesta", "aquestos", "aquestes", "aquell", "aquells", "aquelles":
+		"aquest", "aquesta", "aquestos", "aquestes", "aquell", "aquells", "aquelles",
+		"això", "allò", "açò":
 		return true
 	default:
-		return softIsDeterminer(s)
+		return false
+	}
+}
+
+// softIsRomancePossessiveSurface: FreeLing DP (meu/teu/seu/…); Java portuguese.dict.
+func softIsRomancePossessiveSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "meu", "minha", "meus", "minhas",
+		"teu", "tua", "teus", "tuas",
+		"seu", "sua", "seus", "suas",
+		"nosso", "nossa", "nossos", "nossas",
+		"vosso", "vossa", "vossos", "vossas",
+		// Spanish possessives
+		"mi", "mis", "tu", "tus", "su", "sus",
+		"nuestro", "nuestra", "nuestros", "nuestras",
+		"vuestro", "vuestra", "vuestros", "vuestras",
+		// Catalan possessives (meua/seua; meu/teu/seu shared with PT)
+		"meua", "meues", "teua", "teues", "seua", "seues",
+		"nostre", "nostra", "nostres", "vostra", "vostre", "vostres":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsRomanceIndefiniteDetSurface: FreeLing DI (qualquer, algum, …).
+func softIsRomanceIndefiniteDetSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "qualquer", "quaisquer",
+		"algum", "alguma", "alguns", "algumas",
+		"nenhum", "nenhuma", "nenhuns", "nenhumas",
+		"todo", "toda", "todos", "todas",
+		"outro", "outra", "outros", "outras",
+		"cada", "certo", "certa", "certos", "certas",
+		"vário", "vária", "vários", "várias",
+		"muito", "muita", "muitos", "muitas",
+		"pouco", "pouca", "poucos", "poucas",
+		"tanto", "tanta", "tantos", "tantas",
+		"quanto", "quanta", "quantos", "quantas",
+		"sendos", "sendas",
+		// Spanish/Catalan common DI
+		"algún", "alguna", "algunos", "algunas",
+		"ningún", "ninguna", "ningunos", "ningunas",
+		"otro", "otra", "otros", "otras",
+		"varios", "varias",
+		"cualquier", "cualquiera", "cualesquiera",
+		"tot", "tota", "tots", "totes", "altre", "altra", "altres":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsRomanceIndefinitePronSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "alguém", "ninguém", "tudo", "nada", "algo", "outrem",
+		"alguien", "nadie",
+		"algú", "ningú", "res":
+		return true
+	default:
+		return false
+	}
+}
+
+func softIsRomancePronounSurface(s string) bool {
+	return softIsPronoun(s) ||
+		softIsRomanceDemonstrativeSurface(s) ||
+		softIsRomanceIndefinitePronSurface(s) ||
+		softIsRomanceIndefiniteDetSurface(s)
+}
+
+func softIsRomancePrepSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "a", "ante", "após", "até", "com", "contra", "de", "desde", "em", "entre",
+		"para", "perante", "por", "sem", "sob", "sobre", "trás",
+		"ao", "à", "aos", "às", "do", "da", "dos", "das", "no", "na", "nos", "nas",
+		"pelo", "pela", "pelos", "pelas", "dum", "duma", "duns", "dumas",
+		"num", "numa", "nuns", "numas", "pra", "pro",
+		// Spanish/Catalan
+		"en", "con", "sin", "hacia", "según", "durante", "mediante", "versus",
+		"amb", "sense", "cap", "des", "dins", "fora", "per", "segons":
+		return true
+	default:
+		return softIsPreposition(s)
 	}
 }
 
