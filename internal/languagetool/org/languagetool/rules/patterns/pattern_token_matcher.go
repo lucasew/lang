@@ -148,7 +148,15 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 				posOK = true
 			} else if pt.Token == "" {
 				tok := token.GetToken()
-				if softLooksLikeWord(tok) {
+				// SENT_START/SENT_END must not soft-match ordinary words (would
+				// make boundary tokens match every letter token).
+				if softPostagIsSentenceBoundary(tag) {
+					if tok == "" {
+						posOK = true
+					} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
+						posOK = true
+					}
+				} else if softLooksLikeWord(tok) {
 					posOK = true
 				} else if softLooksLikePunct(tok) && softPostagLooksLikePunct(tag) {
 					posOK = true
@@ -331,6 +339,14 @@ func softPostagLooksLikePunct(tag string) bool {
 		strings.Contains(u, "PUNC") ||
 		strings.Contains(u, "PCT") ||
 		strings.Contains(u, "SENT_START")
+}
+
+func softPostagIsSentenceBoundary(tag string) bool {
+	u := strings.ToUpper(tag)
+	return strings.Contains(u, "SENT_START") ||
+		strings.Contains(u, "SENT_END") ||
+		strings.Contains(u, "SENTENCE_END") ||
+		strings.Contains(u, "SENTENCE_START")
 }
 
 // softIrregularLemma maps common irregular surfaces → possible dictionary lemmas

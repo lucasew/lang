@@ -89,13 +89,31 @@ func minPatternTokens(matchers []*PatternTokenMatcher) int {
 }
 
 // matchFrom tries to match the pattern starting at token index start.
+// Optional elements (min=0) backtrack so soft POS over-acceptance does not
+// greedily steal tokens needed by later pattern elements (e.g. NL FULL_SENTENCE_001).
 func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, tokens []*languagetool.AnalyzedTokenReadings, start int) (*rules.RuleMatch, bool) {
-	pos := start
-	firstMatch, lastMatch := -1, -1
-	firstMarker, lastMarker := -1, -1
-	prevSkip := 0
-
-	for ki, matcher := range m.matchers {
+	type span struct{ first, last, firstMark, lastMark int }
+	var rec func(ki, pos, prevSkip int, sp span) (*rules.RuleMatch, bool)
+	rec = func(ki, pos, prevSkip int, sp span) (*rules.RuleMatch, bool) {
+		if ki >= len(m.matchers) {
+			if sp.first < 0 || sp.last < 0 {
+				return nil, false
+			}
+			fm, lm := sp.firstMark, sp.lastMark
+			if fm < 0 {
+				fm, lm = sp.first, sp.last
+			}
+			fromPos := tokens[fm].GetStartPos()
+			toPos := tokens[lm].GetEndPos()
+			msg := m.Rule.Message
+			if msg == "" {
+				msg = m.Rule.Description
+			}
+			rm := rules.NewRuleMatch(m.Rule, sentence, fromPos, toPos, msg)
+			rm.ShortMessage = m.Rule.ShortMessage
+			return rm, true
+		}
+		matcher := m.matchers[ki]
 		pt := matcher.Base
 		if pt == nil {
 			return nil, false
@@ -108,8 +126,6 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 		if minOcc < 0 {
 			minOcc = 0
 		}
-		// search window: current pos .. pos+prevSkip
-		// SkipNext -1 means unlimited (LT PatternToken.skip = -1).
 		windowEnd := pos
 		if prevSkip < 0 {
 			windowEnd = len(tokens) - 1
@@ -119,71 +135,51 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 				windowEnd = len(tokens) - 1
 			}
 		}
-		matchedCount := 0
-		foundAt := -1
-		for try := pos; try <= windowEnd && try < len(tokens) && matchedCount < maxOcc; try++ {
-			if tokens[try].IsImmunized() {
+		// Try occurrence counts from max down to min (include 0 = skip optional).
+		for occ := maxOcc; occ >= minOcc; occ-- {
+			if occ == 0 {
+				if rm, ok := rec(ki+1, pos, pt.SkipNext, sp); ok {
+					return rm, true
+				}
 				continue
 			}
-			if matcher.IsMatchedReadings(tokens[try]) {
-				if firstMatch < 0 {
-					firstMatch = try
+			// Find a start in [pos, windowEnd] that yields occ consecutive matches.
+			for try := pos; try <= windowEnd && try < len(tokens); try++ {
+				if tokens[try].IsImmunized() || !matcher.IsMatchedReadings(tokens[try]) {
+					continue
 				}
-				lastMatch = try
-				if pt.InsideMarker {
-					if firstMarker < 0 {
-						firstMarker = try
-					}
-					lastMarker = try
-				}
-				// greedy consume consecutive maxOcc from try
-				foundAt = try
-				matchedCount = 1
-				j := try + 1
-				for matchedCount < maxOcc && j < len(tokens) {
-					if tokens[j].IsImmunized() || !matcher.IsMatchedReadings(tokens[j]) {
+				// consume occ consecutive
+				ok := true
+				end := try
+				for c := 1; c < occ; c++ {
+					j := try + c
+					if j >= len(tokens) || tokens[j].IsImmunized() || !matcher.IsMatchedReadings(tokens[j]) {
+						ok = false
 						break
 					}
-					lastMatch = j
-					if pt.InsideMarker {
-						lastMarker = j
-					}
-					matchedCount++
-					j++
+					end = j
 				}
-				pos = try + matchedCount
-				break
+				if !ok {
+					continue
+				}
+				nsp := sp
+				if nsp.first < 0 {
+					nsp.first = try
+				}
+				nsp.last = end
+				if pt.InsideMarker {
+					if nsp.firstMark < 0 {
+						nsp.firstMark = try
+					}
+					nsp.lastMark = end
+				}
+				if rm, ok := rec(ki+1, end+1, pt.SkipNext, nsp); ok {
+					return rm, true
+				}
+				// try next window position
 			}
-			// for min=0, not finding in window is OK
 		}
-		if matchedCount < minOcc {
-			// optional element: advance without consuming
-			if minOcc == 0 {
-				prevSkip = pt.SkipNext
-				_ = ki
-				continue
-			}
-			return nil, false
-		}
-		if foundAt < 0 && minOcc == 0 {
-			prevSkip = pt.SkipNext
-			continue
-		}
-		prevSkip = pt.SkipNext
-	}
-	if firstMatch < 0 || lastMatch < 0 {
 		return nil, false
 	}
-	if firstMarker < 0 {
-		firstMarker, lastMarker = firstMatch, lastMatch
-	}
-	fromPos := tokens[firstMarker].GetStartPos()
-	toPos := tokens[lastMarker].GetEndPos()
-	msg := m.Rule.Message
-	if msg == "" {
-		msg = m.Rule.Description
-	}
-	rm := rules.NewRuleMatch(m.Rule, sentence, fromPos, toPos, msg)
-	rm.ShortMessage = m.Rule.ShortMessage
-	return rm, true
+	return rec(0, start, 0, span{-1, -1, -1, -1})
 }
