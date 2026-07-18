@@ -1,12 +1,16 @@
 package en
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
+
+// enPunctPCTRE ports EN disambiguation UNKNOWN_PCT: [\.,;:…!\?] → add POS PCT.
+var enPunctPCTRE = regexp.MustCompile(`^[\.,;:…!\?]+$`)
 
 // RegisterBinaryEnglishTagger installs lt.TagWord backed by CFSA2 english.dict POS lookup.
 // Returns false if the dictionary cannot be opened.
@@ -90,6 +94,11 @@ func BinaryEnglishTagWord(d *atticmorfo.Dictionary) func(token string) []languag
 			if !isLower && !isMixed {
 				add(lookup(strings.ToLower(corrected)))
 			}
+		}
+		// Java disambiguation UNKNOWN_PCT: add PCT on .,;:…!? so grammar
+		// patterns postag="…|PCT" match commas (ALL_OF_SUDDEN, etc.).
+		if enPunctPCTRE.MatchString(word) {
+			add([]languagetool.TokenTag{{POS: "PCT", Lemma: word}})
 		}
 		return out
 	}

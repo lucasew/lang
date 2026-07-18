@@ -67,3 +67,18 @@ func TestEnglishIsMixedCase(t *testing.T) {
 	require.True(t, englishIsMixedCase("iPhone"))
 	require.True(t, englishIsMixedCase("McDonald"))
 }
+
+func TestBinaryEnglishTagWord_PCT(t *testing.T) {
+	// Java UNKNOWN_PCT disambiguation: comma gets PCT so ALL_OF_SUDDEN matches.
+	p := findEnglishPOSDict(t)
+	lt := languagetool.NewJLanguageTool("en")
+	require.True(t, RegisterBinaryEnglishTagger(lt, p))
+	tags := lt.TagWord(",")
+	var hasPCT bool
+	for _, tg := range tags {
+		if tg.POS == "PCT" {
+			hasPCT = true
+		}
+	}
+	require.True(t, hasPCT, "comma should have PCT: %+v", tags)
+}
