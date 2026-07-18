@@ -5,15 +5,18 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
-// DutchHybridDisambiguator ports hybrid disambiguation for nl.
+type sentenceStep interface {
+	Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+}
+
+// DutchHybridDisambiguator ports org.languagetool.tagging.nl.DutchHybridDisambiguator
+// (also mirrored under tagging/disambiguation/nl for package layout).
+// Java: spelling_global → multiwords (tagForNotAddingTags) → XmlRuleDisambiguator.
 type DutchHybridDisambiguator struct {
 	disambiguation.AbstractDisambiguator
-	Chunker interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
-	Rules interface {
-		Disambiguate(*languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
-	}
+	GlobalChunker sentenceStep
+	Chunker       sentenceStep
+	Rules         sentenceStep
 }
 
 func NewDutchHybridDisambiguator() *DutchHybridDisambiguator {
@@ -25,6 +28,9 @@ func (d *DutchHybridDisambiguator) Disambiguate(input *languagetool.AnalyzedSent
 		return nil
 	}
 	out := input
+	if d.GlobalChunker != nil {
+		out = d.GlobalChunker.Disambiguate(out)
+	}
 	if d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}

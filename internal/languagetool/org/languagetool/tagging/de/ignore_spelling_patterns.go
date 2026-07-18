@@ -36,3 +36,10 @@ func MarkIgnoreSpellingPatterns(input *languagetool.AnalyzedSentence) *languaget
 func IsDigitHyphenAdj(token string) bool {
 	return reDigitHyphenAdj.MatchString(token)
 }
+
+// ignoreSpellingStep adapts MarkIgnoreSpellingPatterns for GermanRuleDisambiguator tests.
+type ignoreSpellingStep struct{}
+
+func (ignoreSpellingStep) Disambiguate(s *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	return MarkIgnoreSpellingPatterns(s)
+}

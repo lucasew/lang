@@ -34,7 +34,8 @@ func TestGermanDisambiguation_Chunker(t *testing.T) {
 		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("System", nil, nil)),
 	}
 	d := disde.NewGermanRuleDisambiguator()
-	d.MultitokenIgnore = MarkIgnoreSpellingPatterns
+	// Test-only stage: digit-hyphen ignore pattern (not production invent).
+	d.MultitokenIgnore = ignoreSpellingStep{}
 	sent := languagetool.NewAnalyzedSentence(toks3)
 	out := d.Disambiguate(sent)
 	require.True(t, out.GetTokens()[0].IsIgnoredBySpeller())

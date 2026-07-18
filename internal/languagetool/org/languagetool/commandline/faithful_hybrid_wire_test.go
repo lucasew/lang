@@ -56,3 +56,23 @@ func TestRegisterHybridDisambiguator_FR_ES_PT(t *testing.T) {
 		})
 	}
 }
+
+func TestRegisterHybridDisambiguator_DE_CA_NL(t *testing.T) {
+	for _, lang := range []string{"de", "ca", "nl"} {
+		t.Run(lang, func(t *testing.T) {
+			// DE multitoken lists are large; allow longer timeout via package default.
+			lt, err := configureCoreLT(lang, &CommandLineOptions{Language: lang})
+			require.NoError(t, err)
+			require.NotNil(t, lt.Disambiguator, "hybrid for %s", lang)
+			text := "Hallo Welt."
+			switch lang {
+			case "ca":
+				text = "Hola món."
+			case "nl":
+				text = "Hallo wereld."
+			}
+			sents := lt.Analyze(text)
+			require.NotEmpty(t, sents)
+		})
+	}
+}

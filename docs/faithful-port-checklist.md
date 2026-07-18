@@ -94,7 +94,7 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | 3.A.2 | Taggers (Morfologik / language-specific) | 1:1 readings | [~] |
 | 3.A.3 | `MultiWordChunker` | Official multiwords only | [~] EN hybrid multiword stage |
 | 3.A.4 | `XmlRuleDisambiguator` | Full lang XML + global when Java enables | [~] EN hybrid wires official XML+global; loader has rulegroup/`and`/`marker` |
-| 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [~] EN/FR/ES/PT full hybrid wired; DE/NL/CA next |
+| 3.A.5 | Hybrid disambiguators (EN/FR/DE/NL/PT/CA/ES/…) | Same order as Java hybrids | [~] EN/FR/ES/PT/DE/CA/NL wired to official resources |
 | 3.A.6 | Chunker (`EnglishChunker` + filters) | Same BIO/filter as Java | [ ] |
 | 3.A.7 | `JLanguageTool` analyze/check wiring | Same stages, mode flags | [~] |
 | 3.A.8 | Rule match pipeline (enable/disable, categories, text-level) | Java semantics | [~] |

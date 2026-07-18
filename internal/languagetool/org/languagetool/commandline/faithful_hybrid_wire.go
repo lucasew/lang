@@ -7,7 +7,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ca"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/es"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/fr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
@@ -80,6 +83,12 @@ func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, op
 		return registerSpanishHybrid(lt, opts)
 	case "pt":
 		return registerPortugueseHybrid(lt, opts)
+	case "de":
+		return registerGermanHybrid(lt, opts)
+	case "ca":
+		return registerCatalanHybrid(lt, opts)
+	case "nl":
+		return registerDutchHybrid(lt, opts)
 	default:
 		return false
 	}
@@ -182,6 +191,123 @@ func registerPortugueseHybrid(lt *languagetool.JLanguageTool, opts *CommandLineO
 		}
 	}
 	if xml := loadXmlRuleDisambiguator("pt", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.GlobalChunker == nil && h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerGermanHybrid ports GermanRuleDisambiguator.
+// Java: multitoken-ignore → spelling_global → multitoken-suggest → XmlRuleDisambiguator(true).
+func registerGermanHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := de.NewGermanRuleDisambiguator()
+	tagNone := disambiguation.MultiWordChunkerSettings{
+		AllowFirstCapitalized: true,
+		AllowAllUppercase:     true,
+		AllowTitlecase:        false,
+		DefaultTag:            disambiguation.TagForNotAddingTags,
+	}
+	if p := DiscoverGermanMultitokenIgnore(opts); p != "" {
+		if c, err := openMultiWordChunker(p, tagNone); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.MultitokenIgnore = c
+		}
+	}
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+			DefaultTag:            disambiguation.TagForNotAddingTags,
+		}); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.MultitokenGlobal = c
+		}
+	}
+	if p := DiscoverGermanMultitokenSuggest(opts); p != "" {
+		if c, err := openMultiWordChunker(p, tagNone); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.MultitokenSuggest = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("de", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	if h.MultitokenIgnore == nil && h.MultitokenGlobal == nil && h.MultitokenSuggest == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerCatalanHybrid ports CatalanHybridDisambiguator.
+// Java: global NPCN000 → multiwords removePrevious → XML → CatalanMultitokenDisambiguator.
+func registerCatalanHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := ca.NewCatalanHybridDisambiguator()
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: false,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+			DefaultTag:            "NPCN000",
+		}); err == nil && c != nil {
+			h.GlobalChunker = c
+		}
+	}
+	if p := DiscoverLanguageMultiwords(opts, "ca"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			c.SetRemovePreviousTags(true)
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("ca", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Rules = xml
+	}
+	// Java CatalanMultitokenDisambiguator after XML.
+	// Without Morfologik multitoken speller, IsMisspelled stays nil (no invent list).
+	h.Multitoken = ca.NewCatalanMultitokenDisambiguator()
+	if h.GlobalChunker == nil && h.Chunker == nil && h.Rules == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
+}
+
+// registerDutchHybrid ports DutchHybridDisambiguator.
+// Java: global + multiwords both tagForNotAddingTags, ignoreSpelling; then XML.
+func registerDutchHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := nl.NewDutchHybridDisambiguator()
+	tagNone := disambiguation.MultiWordChunkerSettings{
+		AllowFirstCapitalized: false,
+		AllowAllUppercase:     true,
+		AllowTitlecase:        false,
+		DefaultTag:            disambiguation.TagForNotAddingTags,
+	}
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		if c, err := openMultiWordChunker(p, tagNone); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.GlobalChunker = c
+		}
+	}
+	if p := DiscoverLanguageMultiwords(opts, "nl"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     true,
+			AllowTitlecase:        false,
+			DefaultTag:            disambiguation.TagForNotAddingTags,
+		}); err == nil && c != nil {
+			c.AddIgnoreSpelling = true
+			h.Chunker = c
+		}
+	}
+	if xml := loadXmlRuleDisambiguator("nl", opts, true); xml != nil && len(xml.Rules) > 0 {
 		h.Rules = xml
 	}
 	if h.GlobalChunker == nil && h.Chunker == nil && h.Rules == nil {
