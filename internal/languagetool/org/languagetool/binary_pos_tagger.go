@@ -32,9 +32,21 @@ func BinaryPOSTagWord(d *atticmorfo.Dictionary) func(token string) []TokenTag {
 		if err != nil || len(forms) == 0 {
 			return nil
 		}
-		out := make([]TokenTag, 0, len(forms))
+		// PolishTagger (and other Morfeusz-style dicts) store multiple POS tags
+		// joined with '+'. Java splits them into separate AnalyzedToken readings.
+		out := make([]TokenTag, 0, len(forms)*2)
 		for _, f := range forms {
-			out = append(out, TokenTag{POS: f.Tag, Lemma: f.Stem})
+			if f.Tag == "" || !strings.Contains(f.Tag, "+") {
+				out = append(out, TokenTag{POS: f.Tag, Lemma: f.Stem})
+				continue
+			}
+			for _, part := range strings.Split(f.Tag, "+") {
+				part = strings.TrimSpace(part)
+				if part == "" {
+					continue
+				}
+				out = append(out, TokenTag{POS: part, Lemma: f.Stem})
+			}
 		}
 		return out
 	}

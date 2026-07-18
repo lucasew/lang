@@ -2274,7 +2274,7 @@
       <short>Błąd ortograficzny</short>
     </rule>
     <rule id="OPOLE" name="„opole” (Opole)">
-      <pattern>
+      <pattern case_sensitive="yes">
         <token inflected="yes">opole
           <exception regexp="yes">O.*</exception>
         </token>
@@ -2406,7 +2406,7 @@
       <short>Prawdopodobna literówka</short>
     </rule>
     <rule id="SADOWA" name="„sadowy” (sądowy)">
-      <pattern>
+      <pattern case_sensitive="yes">
         <token inflected="yes">sadowy
           <exception regexp="yes">S.*</exception>
         </token>

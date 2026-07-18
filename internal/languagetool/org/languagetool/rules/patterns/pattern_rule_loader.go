@@ -70,7 +70,8 @@ type xmlMessage struct {
 }
 
 type xmlPattern struct {
-	Tokens []xmlToken `xml:"token"`
+	CaseSensitive string     `xml:"case_sensitive,attr"`
+	Tokens        []xmlToken `xml:"token"`
 }
 
 type xmlToken struct {
@@ -115,8 +116,21 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				return fmt.Errorf("rule id/name not set")
 			}
 		}
+		// Java: pattern-level case_sensitive inherits to tokens/exceptions
+		// when the child does not set its own case_sensitive attribute.
+		patternCS := strings.EqualFold(xr.Pattern.CaseSensitive, "yes")
 		var tokens []*PatternToken
 		for _, xt := range xr.Pattern.Tokens {
+			if patternCS {
+				if xt.CaseSensitive == "" {
+					xt.CaseSensitive = "yes"
+				}
+				for i := range xt.Exceptions {
+					if xt.Exceptions[i].CaseSensitive == "" {
+						xt.Exceptions[i].CaseSensitive = "yes"
+					}
+				}
+			}
 			pt := tokenFromXML(xt)
 			tokens = append(tokens, pt)
 		}

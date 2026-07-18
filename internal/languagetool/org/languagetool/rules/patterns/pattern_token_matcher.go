@@ -226,6 +226,9 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 	surface := token.GetToken()
 	// Exception case sensitivity is independent of the pattern token (LT).
 	excCS := pt.TokenExceptionCaseSensitive
+	// Java exceptions are PatternTokens that default to non-inflected: match surface
+	// only (getTestToken returns token, not lemma) unless the exception itself is
+	// marked inflected="yes". Soft path stores no exception-inflected flag yet.
 	if pt.TokenExceptionRE {
 		flags := ""
 		// Java case_insensitive does not fold Unicode character classes the same
@@ -239,28 +242,12 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 		if err != nil {
 			return false
 		}
-		if re.MatchString(surface) {
-			return true
-		}
-		if lem := token.GetLemma(); lem != nil {
-			return re.MatchString(*lem)
-		}
-		return false
+		return re.MatchString(surface)
 	}
 	if excCS {
-		if surface == pt.TokenException {
-			return true
-		}
-	} else if strings.EqualFold(surface, pt.TokenException) {
-		return true
+		return surface == pt.TokenException
 	}
-	if lem := token.GetLemma(); lem != nil {
-		if excCS {
-			return *lem == pt.TokenException
-		}
-		return strings.EqualFold(*lem, pt.TokenException)
-	}
-	return false
+	return strings.EqualFold(surface, pt.TokenException)
 }
 
 // IsMatchedReadings is true if any reading of atr matches.

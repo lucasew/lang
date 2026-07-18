@@ -296,25 +296,43 @@ def collapse_or(or_el: ET.Element) -> dict | None:
 
 def pattern_is_simple(pattern: ET.Element) -> list[dict] | None:
     toks: list[dict] = []
+    # Java: pattern case_sensitive inherits to tokens/exceptions when not set
+    # on the child (PatternRuleHandler / XMLRuleHandler finalizeExceptions).
+    pat_cs = (pattern.get("case_sensitive") or "").strip().lower()
+
+    def inherit_case_sensitive(tok: dict) -> dict:
+        if not isinstance(tok, dict) or pat_cs != "yes":
+            return tok
+        if not tok.get("case_sensitive"):
+            tok = {**tok, "case_sensitive": "yes"}
+        excs = tok.get("exceptions") or []
+        if excs:
+            new_excs = []
+            for e in excs:
+                if isinstance(e, dict) and not e.get("case_sensitive"):
+                    e = {**e, "case_sensitive": "yes"}
+                new_excs.append(e)
+            tok = {**tok, "exceptions": new_excs}
+        return tok
 
     def add_child(child: ET.Element) -> bool:
         tag = local(child.tag)
         if tag == "token":
             if not token_is_soft(child):
                 return False
-            toks.append(serialize_token(child))
+            toks.append(inherit_case_sensitive(serialize_token(child)))
             return True
         if tag == "or":
             collapsed = collapse_or(child)
             if collapsed is None:
                 return False
-            toks.append(collapsed)
+            toks.append(inherit_case_sensitive(collapsed))
             return True
         if tag == "and":
             collapsed = collapse_and(child)
             if collapsed is None:
                 return False
-            toks.append(collapsed)
+            toks.append(inherit_case_sensitive(collapsed))
             return True
         return False
 

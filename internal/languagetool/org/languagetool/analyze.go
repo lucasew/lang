@@ -379,3 +379,45 @@ func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []Tok
 	softAttachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }
+
+// attachPolishHyphenTagger wires TagWord into PolishWordTokenizer like Java setTagger.
+func attachPolishHyphenTagger(wt tokenizers.Tokenizer, tagWord func(string) []TokenTag) {
+	if tagWord == nil {
+		return
+	}
+	pl, ok := wt.(*pltok.PolishWordTokenizer)
+	if !ok || pl == nil {
+		return
+	}
+	pl.SetTagger(polishHyphenTagger(tagWord))
+}
+
+type polishHyphenTagger func(string) []TokenTag
+
+func (t polishHyphenTagger) Tag(tokens []string) []pltok.PolishTokenReadings {
+	out := make([]pltok.PolishTokenReadings, len(tokens))
+	for i, tok := range tokens {
+		tags := t(tok)
+		if len(tags) == 0 {
+			continue
+		}
+		r := pltok.PolishTokenReadings{IsTagged: true}
+		for _, tg := range tags {
+			pos := tg.POS
+			if pos == "adja" {
+				r.HasAdja = true
+			}
+			if strings.HasPrefix(pos, "adj:") || pos == "adja" {
+				r.HasAdjPartial = true
+			}
+			if strings.HasPrefix(pos, "subst:") {
+				r.HasSubstPartial = true
+			}
+			if strings.HasPrefix(pos, "num:") {
+				r.HasNumPartial = true
+			}
+		}
+		out[i] = r
+	}
+	return out
+}

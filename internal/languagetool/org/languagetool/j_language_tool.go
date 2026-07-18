@@ -270,6 +270,8 @@ func (lt *JLanguageTool) Analyze(text string) []*AnalyzedSentence {
 	}
 	out := make([]*AnalyzedSentence, 0, len(parts))
 	wt := WordTokenizerForLanguage(lt.LanguageCode)
+	// Java PolishWordTokenizer.setTagger: hyphen compounds split using POS (adja+adj, …).
+	attachPolishHyphenTagger(wt, lt.TagWord)
 	for _, p := range parts {
 		var s *AnalyzedSentence
 		if lt.TagWord != nil {
