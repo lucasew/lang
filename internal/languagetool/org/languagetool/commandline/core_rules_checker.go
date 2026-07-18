@@ -159,18 +159,19 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			// Prefer CFSA2 en_US.dict when present; demo only under LANG_DEMO_SPELLER.
 			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 			nearest := en.DemoEnglishKnownWords()
-			sugs := en.CommonDemoSpellerSuggestions
 			spellRegistered := false
 			if dictPath := DiscoverEnglishUSDict(opts); dictPath != "" {
 				// Grammar filters (NumberInWord / FindSuggestions / SuppressMisspelled)
 				// share the same dict Java MorfologikAmericanSpellerRule uses.
 				_ = en.WireEnglishFilterSpeller(dictPath)
-				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, sugs)
+				// Binary speller: dict SuggestEdits only (no invent typo map).
+				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, nil)
 			}
 			// Multitoken after filter dict so isMisspelled can use it.
 			wireEnglishMultitokenSpeller(opts)
 			if !spellRegistered && demoSpell {
-				en.RegisterDemoEnglishSpeller(lt, nearest, sugs)
+				// Explicit demo-only path (not default engine).
+				en.RegisterDemoEnglishSpeller(lt, nearest, en.CommonDemoSpellerSuggestions)
 			}
 			// Prefer CFSA2 english.dict POS tagger; else demo under LANG_DEMO_SPELLER.
 			taggerOK := false

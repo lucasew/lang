@@ -82,7 +82,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 					out[i].CategoryName = catName
 				}
 				if out[i].IssueType == "" && catID != "" {
-					// soft default: grammar categories map to grammar ITS type
+					// Java category → ITS type (subset used by XML categories).
 					switch strings.ToUpper(catID) {
 					case "TYPOS":
 						out[i].IssueType = "misspelling"
@@ -96,21 +96,17 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 						out[i].IssueType = "grammar"
 					}
 				}
-				// Soft pattern rules beat map/CFSA2 speller on the same span for --apply.
-				if out[i].Priority == 0 {
-					out[i].Priority = 3
-				}
-				// Expand soft \N backrefs using non-whitespace tokens under the match span.
+				// Expand \N backrefs (Java formatMatches subset) using tokens in the match span.
 				if text != "" {
 					from, to := out[i].FromPos, out[i].ToPos
-					spanToks := softSpanTokens(s, from, to)
+					spanToks := matchSpanTokens(s, from, to)
 					if out[i].Message != "" {
-						out[i].Message = softExpandBackrefs(out[i].Message, spanToks)
+						out[i].Message = expandPatternBackrefs(out[i].Message, spanToks)
 					}
 					for j, sug := range out[i].Suggestions {
-						out[i].Suggestions[j] = softExpandBackrefs(sug, spanToks)
+						out[i].Suggestions[j] = expandPatternBackrefs(sug, spanToks)
 					}
-					// Preserve sentence-case / ALL-CAPS from the matched surface on suggestions.
+					// Java RuleMatch startsWithUppercase / isAllUppercase adjustment.
 					if from >= 0 && to <= len(text) && from < to && len(out[i].Suggestions) > 0 {
 						matched := text[from:to]
 						for j, sug := range out[i].Suggestions {
@@ -121,7 +117,7 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 			}
 			return out
 		})
-		// soft: XML default="off" → registered but disabled until -e RULE_ID / SOFT_OPTIONAL
+		// XML default="off" / temp_off → registered but disabled (Java Rule.defaultOff).
 		if ar.DefaultOff {
 			lt.DisableRule(id)
 			lt.MarkDefaultOff(id)
@@ -131,6 +127,8 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 	return n, nil
 }
 
+// extractSuggestions pulls <suggestion>…</suggestion> from rule messages (Java markup).
+// Does not invent suggestions from quoted prose.
 func extractSuggestions(msg string) (clean string, suggs []string) {
 	clean = msg
 	for {
@@ -147,53 +145,19 @@ func extractSuggestions(msg string) (clean string, suggs []string) {
 		suggs = append(suggs, inner)
 		clean = clean[:start] + inner + clean[end+len("</suggestion>"):]
 	}
-	// soft: also pull "quoted" segments from Did you mean "..."?
-	if len(suggs) == 0 {
-		for _, q := range []string{`"`, `'`} {
-			i := strings.Index(clean, q)
-			for i >= 0 {
-				j := strings.Index(clean[i+1:], q)
-				if j < 0 {
-					break
-				}
-				j += i + 1
-				inner := clean[i+1 : j]
-				if len(inner) > 0 && len(inner) < 80 {
-					suggs = append(suggs, inner)
-				}
-				i = strings.Index(clean[j+1:], q)
-				if i >= 0 {
-					i += j + 1
-				}
-			}
-			if len(suggs) > 0 {
-				break
-			}
-		}
-	}
 	return strings.TrimSpace(clean), suggs
 }
 
-
-
-// softSpanTokens returns non-whitespace token surfaces whose span overlaps [from,to).
-// Includes SENT_START as "" so 1-based \N indices align with Java pattern elements
-// (element 1 is often SENT_START; \2 is the following word — e.g. ADDITIONAL → Additionally).
-// SENT_END is still skipped (not a numbered pattern element in soft spans).
-func softSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
+// matchSpanTokens returns non-whitespace token surfaces whose span overlaps [from,to).
+// Incomplete vs Java formatMatches (pattern-element indices / optional tokens / SENT_START):
+// only real token surfaces in the match range — no invent of empty SENT_START slots.
+func matchSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
 	if s == nil || from < 0 || to <= from {
 		return nil
 	}
 	var out []string
 	for _, tok := range s.GetTokensWithoutWhitespace() {
-		if tok == nil || tok.IsSentenceEnd() {
-			continue
-		}
-		if tok.IsSentenceStart() {
-			// Always count as pattern slot 1 when the match covers position 0.
-			if from == 0 {
-				out = append(out, "")
-			}
+		if tok == nil || tok.IsSentenceEnd() || tok.IsSentenceStart() {
 			continue
 		}
 		ts, te := tok.GetStartPos(), tok.GetEndPos()
@@ -207,8 +171,9 @@ func softSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
 	return out
 }
 
-// softExpandBackrefs replaces \1..\9 with span tokens (1-based). Unknown stays as-is.
-func softExpandBackrefs(sug string, spanToks []string) string {
+// expandPatternBackrefs replaces \1..\9 with span tokens (1-based). Unknown stays as-is.
+// Subset of Java PatternRuleMatcher.formatMatches backref handling.
+func expandPatternBackrefs(sug string, spanToks []string) string {
 	if sug == "" || !strings.Contains(sug, `\`) {
 		return sug
 	}
@@ -219,6 +184,10 @@ func softExpandBackrefs(sug string, spanToks []string) string {
 			n := int(sug[i+1] - '0')
 			if n >= 1 && n <= len(spanToks) {
 				b.WriteString(spanToks[n-1])
+			} else {
+				// Unknown backref: leave literal (incomplete vs Java; do not invent empty).
+				b.WriteByte('\\')
+				b.WriteByte(sug[i+1])
 			}
 			i++
 			continue
