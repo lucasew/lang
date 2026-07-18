@@ -176,6 +176,8 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			taggerOK := false
 			if posPath := DiscoverEnglishPOSDict(opts); posPath != "" {
 				taggerOK = en.RegisterBinaryEnglishTagger(lt, posPath)
+				// FindSuggestionsFilter desiredPostag (Java EnglishTagger.INSTANCE).
+				_ = en.WireEnglishFilterTagger(posPath)
 			}
 			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)

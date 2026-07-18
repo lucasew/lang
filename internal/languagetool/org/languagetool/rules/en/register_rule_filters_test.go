@@ -45,20 +45,24 @@ func TestNewYearDateRuleFilter(t *testing.T) {
 
 func TestNumberInWordAndFindSuggestionsFailClosed(t *testing.T) {
 	ClearEnglishFilterSpeller()
+	ClearEnglishFilterTagger()
 	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.EnglishNumberInWordFilter")
 	m := rules.NewRuleMatch(nil, nil, 0, 4, "msg")
 	require.Nil(t, f.AcceptRuleMatch(m, map[string]string{"word": "t0ken"}, 0, nil, nil))
 	f2 := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.FindSuggestionsFilter")
-	// No dict → SpellingSuggestions returns nil → empty + no suppress → may keep match with empty sugs.
-	// AbstractFindSuggestionsFilter: len(out)==0 && !suppress → still returns match with empty suggestions.
-	// Java FindSuggestions with null speller would NPE; our fail-closed is empty sugs.
-	_ = f2.AcceptRuleMatch(m, map[string]string{"wordFrom": "1", "desiredPostag": "VB"}, 0, nil, nil)
+	// No speller dict → fail-closed (do not invent suggestions).
+	require.Nil(t, f2.AcceptRuleMatch(m, map[string]string{"wordFrom": "1", "desiredPostag": "VB"}, 0, nil, nil))
+}
+
+func repoRoot(t *testing.T) string {
+	t.Helper()
+	_, thisFile, _, ok := runtime.Caller(0)
+	require.True(t, ok)
+	return filepath.Clean(filepath.Join(filepath.Dir(thisFile), "..", "..", "..", "..", "..", ".."))
 }
 
 func TestNumberInWordWithOfficialDict(t *testing.T) {
-	_, thisFile, _, ok := runtime.Caller(0)
-	require.True(t, ok)
-	root := filepath.Clean(filepath.Join(filepath.Dir(thisFile), "..", "..", "..", "..", "..", ".."))
+	root := repoRoot(t)
 	dict := filepath.Join(root, "third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict")
 	if st, err := os.Stat(dict); err != nil || st.IsDir() {
 		t.Skipf("en_US.dict missing: %s", dict)
@@ -71,6 +75,42 @@ func TestNumberInWordWithOfficialDict(t *testing.T) {
 	out := f.AcceptRuleMatch(m, map[string]string{"word": "H0use"}, 0, nil, nil)
 	require.NotNil(t, out)
 	require.Contains(t, out.GetSuggestedReplacements(), "House")
+}
+
+func TestFindSuggestionsWithDictAndTagger(t *testing.T) {
+	root := repoRoot(t)
+	speller := filepath.Join(root, "third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict")
+	pos := filepath.Join(root, "third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "english.dict")
+	if st, err := os.Stat(speller); err != nil || st.IsDir() {
+		t.Skipf("en_US.dict missing: %s", speller)
+	}
+	if st, err := os.Stat(pos); err != nil || st.IsDir() {
+		t.Skipf("english.dict missing: %s", pos)
+	}
+	require.True(t, WireEnglishFilterSpeller(speller))
+	require.True(t, WireEnglishFilterTagger(pos))
+	t.Cleanup(func() {
+		ClearEnglishFilterSpeller()
+		ClearEnglishFilterTagger()
+	})
+
+	// POS probe: known verb should match VB.*
+	require.True(t, FilterSuggestionMatchesPostag("running", "VBG|NN"))
+	require.False(t, FilterSuggestionMatchesPostag("running", "^DT$"))
+
+	// Filter end-to-end: suggestion must pass desiredPostag
+	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.FindSuggestionsFilter")
+	tok := atr("runing", 0) // misspelling of running
+	m := rules.NewRuleMatch(nil, languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{tok}), 0, 6, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"wordFrom": "1", "desiredPostag": "VB.*|NN",
+	}, 0, []*languagetool.AnalyzedTokenReadings{tok}, []int{1})
+	// may or may not find "running" depending on SuggestEdits; if any sugs, all must tag-match
+	if out != nil {
+		for _, s := range out.GetSuggestedReplacements() {
+			require.True(t, FilterSuggestionMatchesPostag(s, "VB.*|NN"), "suggestion %q must match desiredPostag", s)
+		}
+	}
 }
 
 func TestOrdinalSuffixRuleFilter(t *testing.T) {

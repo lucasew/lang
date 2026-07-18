@@ -44,14 +44,15 @@ func init() {
 	})
 	c.Register("org.languagetool.rules.en.FindSuggestionsFilter", func() patterns.RuleFilter {
 		return findSuggestionsRuleFilter{inner: &rules.AbstractFindSuggestionsFilter{
-			// SpellingSuggestions reads the process dict at match time (may be wired later).
+			// SpellingSuggestions / POS use process-wide dicts at match time.
 			SpellingSuggestions: func(atr *languagetool.AnalyzedTokenReadings) []string {
 				if atr == nil {
 					return nil
 				}
 				return FilterDictSuggest(atr.GetToken())
 			},
-			// POS filter deferred until EnglishTagger is wired into filters (incomplete, not invent).
+			// Java: getTagger().tag(suggestion).matchesPosTagRegex(desiredPostag)
+			MatchesDesiredPostag: FilterSuggestionMatchesPostag,
 		}}
 	})
 }
@@ -288,15 +289,58 @@ func (numberInWordRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments 
 	return match
 }
 
-// findSuggestionsRuleFilter ports FindSuggestionsFilter; nil SpellingSuggestions → drop.
+// findSuggestionsRuleFilter ports FindSuggestionsFilter.
 type findSuggestionsRuleFilter struct {
 	inner *rules.AbstractFindSuggestionsFilter
 }
 
 func (f findSuggestionsRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
-	if f.inner == nil {
+	if f.inner == nil || match == nil {
 		return nil
 	}
+	// Without speller dict, cannot produce spelling suggestions (fail-closed).
+	if !FilterDictAvailable() {
+		return nil
+	}
+	// Java diacriticsMode: if original already matches desiredPostag → drop.
+	if strings.EqualFold(arguments["Mode"], "diacritics") {
+		desired := arguments["desiredPostag"]
+		atr := resolveFindWordFrom(arguments["wordFrom"], match, patternTokens, tokenPositions)
+		if atr != nil && FilterOriginalMatchesPostag(atr.GetToken(), desired) {
+			return nil
+		}
+	}
 	return f.inner.AcceptRuleMatch(match, arguments, patternTokens, tokenPositions)
+}
+
+// resolveFindWordFrom mirrors AbstractFindSuggestionsFilter.resolveWordFrom for diacritics gate.
+func resolveFindWordFrom(wordFrom string, match *rules.RuleMatch,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *languagetool.AnalyzedTokenReadings {
+	// Delegate via a throwaway call path: rebuild the same rules helper by accepting
+	// only the token lookup — keep local for package boundaries.
+	if wordFrom == "marker" || wordFrom == "inmarker" {
+		for _, t := range patternTokens {
+			if t != nil && t.GetStartPos() >= match.GetFromPos() && t.GetStartPos() < match.GetToPos() {
+				return t
+			}
+		}
+		if len(patternTokens) > 0 {
+			return patternTokens[0]
+		}
+		return nil
+	}
+	// numeric wordFrom: 1-based pattern element index (tokenPositions all 1s common)
+	n := 0
+	for _, r := range wordFrom {
+		if r < '0' || r > '9' {
+			return nil
+		}
+		n = n*10 + int(r-'0')
+	}
+	if n < 1 || n > len(patternTokens) {
+		return nil
+	}
+	_ = tokenPositions
+	return patternTokens[n-1]
 }
