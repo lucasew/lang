@@ -231,7 +231,51 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			prevSurf = t.Token
 			continue
 		}
+		// After comma: list nouns (peach, …) stay NP; clause verbs with object
+		// next (", affect the") become VP (SUPERFLUOUS_OXFORD / list predicates).
+		if prevSurf == "," && softHasBareVerbReading(t) && softNextSuggestsFiniteVerb(out, i) {
+			if v := softFiniteTenseVerb(t); v != "" {
+				phrases[i] = "VP"
+				poss[i] = v
+				prevPOS = v
+				prevSurf = t.Token
+				continue
+			}
+			if softHasBareVerbReading(t) {
+				phrases[i] = "VP"
+				poss[i] = "VB"
+				prevPOS = "VB"
+				prevSurf = t.Token
+				continue
+			}
+		}
+		// Unknown lowercase tokens in lists (azulene) → NP like OpenNLP content.
+		if !softHasAnyPOS(t) && softIsListContextSurface(prevSurf) {
+			phrases[i] = "NP"
+			poss[i] = "NN"
+			prevPOS = "NN"
+			prevSurf = t.Token
+			continue
+		}
+		// WHERE_MD_VB: "call so when can…" — so is optional ADVP (not NP).
+		// Pattern is E-NP + optional ADVP + when; O would block min=0 skip.
+		if strings.EqualFold(t.Token, "so") && i+1 < len(out) && softIsWhAdverbSurface(out[i+1].Token) {
+			phrases[i] = "ADVP"
+			poss[i] = "RB"
+			prevPOS = "RB"
+			prevSurf = t.Token
+			continue
+		}
 		pos := primaryPOS(t, prevPOS, prevSurf)
+		// A_NNS_AND: "a pens and paper" — OpenNLP keeps "and" inside the NP.
+		if pos == "CC" && i+1 < len(out) && softLooksNounish(out[i+1]) &&
+			(strings.HasPrefix(prevPOS, "NN") || strings.HasPrefix(prevPOS, "JJ")) {
+			phrases[i] = "NP"
+			poss[i] = "CC"
+			prevPOS = "CC"
+			prevSurf = t.Token
+			continue
+		}
 		poss[i] = pos
 		tok := t.Token
 		if tok == "" || pos == languagetool.SentenceStartTagName ||
@@ -566,10 +610,14 @@ func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	if strings.HasPrefix(prevPOS, "RB") && vb != "" {
 		return vb
 	}
-	// After comma: list nouns (… chokes, and joint locks) keep NNS; clause verbs
-	// (… dysphonia, affect …) take VB when no plural noun reading.
+	// After comma: Oxford/list nouns (peach, strawberry / joint locks) keep NN
+	// by default. Clause verbs (", affect the …") are overridden in
+	// assignOpenNLPLike when the next token looks like an object/adverbial.
 	if prevSurf == "," {
 		if nn != "" && softHasPluralNounReading(t) {
+			return nn
+		}
+		if nn != "" {
 			return nn
 		}
 		if vb != "" {
@@ -1041,6 +1089,38 @@ func softIsDetLikeSurface(s string) bool {
 
 func softIsTimeAgoSurface(s string) bool {
 	return strings.EqualFold(strings.TrimSpace(s), "ago")
+}
+
+func softIsListContextSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case ",", "and", "or", "as", "such", "like", "versus", "vs":
+		return true
+	default:
+		return false
+	}
+}
+
+func softLooksNounish(t ChunkTaggedToken) bool {
+	if softHasAnyPOS(t) {
+		if softNounReading(t) != "" || softHasPluralNounReading(t) {
+			return true
+		}
+		// adjectives in coordinated NPs
+		if t.Readings != nil {
+			for _, r := range t.Readings.GetReadings() {
+				if r == nil {
+					continue
+				}
+				if p := r.GetPOSTag(); p != nil && strings.HasPrefix(*p, "JJ") {
+					return true
+				}
+			}
+		}
+		return false
+	}
+	// unknown capitalized or lowercase content after and/or
+	s := strings.TrimSpace(t.Token)
+	return s != "" && unicode.IsLetter([]rune(s)[0])
 }
 
 func softHasAnyPOS(t ChunkTaggedToken) bool {

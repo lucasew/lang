@@ -9,6 +9,80 @@
       <token postag="NNP?S|VB[PD]|SENT_END|PCT" postag_regexp="yes"></token>
     </equivalence>
   </unification>
+    <!-- Vendored from Java disambiguation.xml DT_VB_NN (core pattern; antipatterns
+       with entity expansions simplified to soft-loadable subset). Needed so
+       "some time please" keeps NN on time (SOME_NN_VBP). -->
+  <!-- Vendored from Java disambiguation.xml DT_VB_NN (soft-loadable subset).
+       Antipatterns for MD_NO_VB / DO_NO_VB / some+VBP+object must stay. -->
+  <rule id="DT_VB_NN" name="determiner + verb/NN -&gt; NN">
+    <antipattern><!-- relative that/which + finite (tools that works) -->
+      <token regexp="yes">that|which|who</token>
+      <token postag="VB.*|NNS" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">these|those|all|each|some</token>
+      <token postag="VB[PD]" postag_regexp="yes"></token>
+      <token regexp="yes">me|you|him|her|it|us|them|one</token>
+    </antipattern>
+    <antipattern>
+      <token>a</token>
+      <token postag="VBZ" postag_regexp="yes"></token>
+      <token regexp="yes">me|you|him|her|it|us|them|one</token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">many|some</token>
+      <token postag="VBP"></token>
+      <token postag="IN">
+        <exception>of</exception>
+      </token>
+    </antipattern>
+    <antipattern>
+      <token regexp="yes">all|many|some</token>
+      <token chunk_re=".-VP" regexp="yes">have|came|may|will|can</token>
+    </antipattern>
+    <antipattern>
+      <token postag="MD"></token>
+      <token>no</token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">have</token>
+      <token>no</token>
+      <token postag="VBN"></token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">do</token>
+      <token>no</token>
+      <token postag="VBP?" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token inflected="yes">be</token>
+      <token>no</token>
+      <token postag="VB[NG]" postag_regexp="yes"></token>
+    </antipattern>
+    <antipattern>
+      <token postag="DT"></token>
+      <token chunk_re="I-NP.*" postag="JJ.*" postag_regexp="yes"></token>
+      <token chunk_re="[EI]-NP.*" postag="NN.*" postag_regexp="yes"></token>
+    </antipattern>
+    <pattern>
+      <token postag="DT">
+        <exception postag="PDT|RB" postag_regexp="yes"></exception>
+        <exception regexp="yes">th[eo]se|each|that|much</exception>
+      </token>
+      <token postag="VB[PZDN]?|MD" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">given|known</exception>
+        <and_token postag="NN.*" postag_regexp="yes"></and_token>
+      </token>
+      <token>
+        <exception postag="JJ"></exception>
+        <exception postag="DT|PRP$" postag_regexp="yes"></exception>
+        <exception>not</exception>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="NN.*"/>
+  </rule>
+
   <rule id="REMOVE_JJ_FOR_OR" name="or">
     <pattern>
       <token case_sensitive="yes">or</token>

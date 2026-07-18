@@ -35,7 +35,9 @@ var softEnglishMultiwords = []string{
 	"status quo\tNN",
 	"Status Quo\tNN",
 	"as well\tRB",
-	"for example\tRB",
+	// Not "for example\tRB": Java multiwords.txt has no such entry; tagging both
+	// tokens RB (with removePreviousTags) breaks NO_DET_NOUN_OF which needs
+	// CC/IN on For + NN on example (FOR_NN only disambiguates example→NN:UN).
 	"in fact\tRB",
 	"of course\tRB",
 	"at least\tRB",

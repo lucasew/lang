@@ -33,6 +33,12 @@ func (f *EnglishChunkFilter) Filter(tokens []ChunkTaggedToken) []ChunkTaggedToke
 			if isSingularPronounSurface(tagged.Token) {
 				ct = chunkSingular
 			}
+			// A_NNS_AND: "a pens and paper" — article a/an forces singular NP
+			// BIO so the pattern chunk="I-NP-singular" can match (OpenNLP POS
+			// often tags the plural noun as NN for chunking while LT keeps NNS).
+			if isIndefiniteArticleSurface(tagged.Token) {
+				ct = chunkSingular
+			}
 			if ct == chunkSingular || endOfNounPhraseIsSingular(tokens, i) {
 				chunkTags = append(chunkTags, NewChunkTag("B-NP-singular"))
 				newChunkTag = "NP-singular"
@@ -124,6 +130,15 @@ func isSingularPronounSurface(s string) bool {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "anyone", "anybody", "someone", "somebody", "everyone", "everybody",
 		"noone", "nobody", "one":
+		return true
+	default:
+		return false
+	}
+}
+
+func isIndefiniteArticleSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "a", "an":
 		return true
 	default:
 		return false
