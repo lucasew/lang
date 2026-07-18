@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/commandline"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
@@ -60,6 +61,22 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 			en.RegisterDemoEnglishTagger(lt)
 		}
 		en.RegisterSoftEnglishDisambiguator(lt, softEnglishMultiwordsPath(), softEnglishDisambigXMLPath(), softEnglishIgnoreSpellingPath())
+	} else {
+		// Java createDefaultTagger + createDefaultDisambiguator for non-EN
+		// (same soft wiring as commandline.configureCoreLT).
+		if posPath := commandline.DiscoverLanguagePOSDict(nil, base); posPath != "" {
+			_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
+		}
+		softPaths := commandline.SoftHybridPaths{
+			Multiwords:      commandline.DiscoverLanguageMultiwords(nil, base),
+			SoftDisambigXML: commandline.DiscoverLanguageSoftDisambiguationXML(nil, base),
+		}
+		if strings.EqualFold(base, "de") {
+			// Multitoken lists are large; only attach when paths resolve (cached).
+			softPaths.DEMultitokenIgnore = commandline.DiscoverGermanMultitokenIgnore(nil)
+			softPaths.DEMultitokenSuggest = commandline.DiscoverGermanMultitokenSuggest(nil)
+		}
+		_ = commandline.RegisterSoftHybridDisambiguator(lt, base, softPaths)
 	}
 
 	// soft: Query.LanguageCode may carry check mode (TEXTLEVEL_ONLY / ALL_BUT_TEXTLEVEL_ONLY)
