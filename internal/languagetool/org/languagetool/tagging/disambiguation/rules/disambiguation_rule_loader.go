@@ -58,8 +58,10 @@ type disambigToken struct {
 	Postag        string `xml:"postag,attr"`
 	PostagRegexp  string `xml:"postag_regexp,attr"`
 	// Marker is soft extract for Java <marker>…</marker> (which tokens REPLACE/FILTER target).
-	Marker  string `xml:"marker,attr"`
-	Content string `xml:",chardata"`
+	Marker string `xml:"marker,attr"`
+	// SpaceBefore ports spacebefore="yes|no".
+	SpaceBefore string `xml:"spacebefore,attr"`
+	Content     string `xml:",chardata"`
 }
 
 type disambigElem struct {
@@ -143,6 +145,9 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 		pt.InsideMarker = strings.EqualFold(xt.Marker, "yes")
 	} else {
 		pt.InsideMarker = true
+	}
+	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
+		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 	}
 	return pt
 }

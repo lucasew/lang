@@ -242,6 +242,14 @@
     </pattern>
     <disambig action="replace" postag="IN"/>
   </rule>
+  <rule id="CH_IN_DYNASTY" name="'in as parts of proper names">
+    <pattern>
+      <token regexp="yes">\p{Lu}\p{Ll}+</token>
+      <token regexp="yes" spacebefore="no">['’]</token>
+      <token marker="yes" spacebefore="no">in</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
   <rule id="UNDER_NN" name="under + nouns that require no determiner">
     <pattern>
       <token>under</token>
@@ -475,6 +483,14 @@
     </pattern>
     <disambig action="filter" postag="..R"/>
   </rule>
+  <rule id="QUARAN" name="Qur'an">
+    <pattern>
+      <token regexp="yes">\p{L}+</token>
+      <token regexp="yes" spacebefore="no">['’]</token>
+      <token inflected="yes" marker="yes" spacebefore="no">a</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
   <rule id="WORLD_WAR_12" name="The World War 1/2 =&gt;NNP">
     <pattern>
       <token>world</token>
@@ -515,6 +531,14 @@
       <token>.</token>
       <token>c</token>
       <token>.</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="A_MENTION" name="A mentioned (and not used)">
+    <pattern>
+      <token regexp="yes" spacebefore="yes">&quot;|'</token>
+      <token marker="yes" spacebefore="no">a</token>
+      <token regexp="yes" spacebefore="no">&quot;|'</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
@@ -1315,6 +1339,15 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="CONCOURS_D_ELEGANCE" name="concours d'elegance">
+    <pattern>
+      <token>concours</token>
+      <token>d</token>
+      <token regexp="yes" spacebefore="no">['’`´‘ʻ]</token>
+      <token spacebefore="no">elegance</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ESCHERICHIA_COLI" name="Escherichia coli">
     <pattern>
       <token case_sensitive="yes">Escherichia</token>
@@ -1381,6 +1414,14 @@
   <rule id="US_DOLLAR" name="Ignore 'US$'">
     <pattern>
       <token case_sensitive="yes">US$</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="C_MON_SPELLING" name="cc'mon spelling">
+    <pattern>
+      <token>c</token>
+      <token regexp="yes" spacebefore="no">['’`´‘ʻ]</token>
+      <token spacebefore="no">mon</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1516,6 +1557,14 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="DELONGHI" name="De'Longhi">
+    <pattern>
+      <token case_sensitive="yes">De</token>
+      <token regexp="yes" case_sensitive="yes" spacebefore="no">['’]</token>
+      <token case_sensitive="yes" spacebefore="no">Longhi</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="BUENOS_DIAS" name="buenos días">
     <pattern>
       <token>buenos</token>
@@ -1555,6 +1604,14 @@
   <rule id="TILDE_SPELLING" name="Ignore spelling of '~'">
     <pattern>
       <token regexp="yes">[~►◄%]+</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="TLDR_SPELLING" name="Ignore spelling of 'tl;dr'">
+    <pattern>
+      <token>tl</token>
+      <token spacebefore="no">;</token>
+      <token spacebefore="no">dr</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
@@ -1634,6 +1691,14 @@
     <disambig action="add">
       <wd pos="NN"/>
     </disambig>
+  </rule>
+  <rule id="ET_AL" name="ignore spelling of 'et al.'">
+    <pattern>
+      <token>et</token>
+      <token>al</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
   </rule>
   <rule id="IN_PERPETUUM" name="ignore spelling of 'in perpetuum'">
     <pattern>
@@ -1725,6 +1790,15 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="UN_HAPPY" name="ignore spelling of (un)happy">
+    <pattern>
+      <token>(</token>
+      <token regexp="yes" case_sensitive="yes" marker="yes">un|dis</token>
+      <token>)</token>
+      <token postag="JJ|VB.*" postag_regexp="yes" spacebefore="no"></token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="PLAY_ING" name="ignore spelling of play(ing)">
     <pattern>
       <token postag="VB"></token>
@@ -1747,10 +1821,33 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="RETD" name="ignore spelling of 'retd.'">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">[Rr]etd</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="CA" name="ignore spelling of 'ca.'">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">ca|CA|Ca</token>
+      <token spacebefore="no">.</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="ING" name="ignore spelling of 'go(ing)'">
     <pattern>
       <token regexp="yes">\(|/</token>
       <token regexp="yes" marker="yes">ing|ed</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="A_NOTHER" name="a(nother)">
+    <pattern>
+      <token>a</token>
+      <token spacebefore="no">(</token>
+      <token marker="yes">nother</token>
+      <token>)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>

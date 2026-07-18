@@ -142,6 +142,7 @@ SOFT_TOKEN_ATTRS = {
     "skip",
     "postag",
     "postag_regexp",
+    "spacebefore",  # Java PatternToken.setWhitespaceBefore (yes/no)
 }
 
 
@@ -448,7 +449,7 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
                 ok = False
                 break
             st = {"text": t.get("text") or ""}
-            for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker"):
+            for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker", "spacebefore"):
                 if t.get(k):
                     st[k] = t[k]
             if not st["text"] and not st.get("postag") and not st.get("regexp"):
@@ -486,7 +487,7 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
         for t in r["tokens"]:
             attrs = []
             if isinstance(t, dict):
-                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker"):
+                for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker", "spacebefore"):
                     if t.get(k):
                         attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
             attr_s = (" " + " ".join(attrs)) if attrs else ""

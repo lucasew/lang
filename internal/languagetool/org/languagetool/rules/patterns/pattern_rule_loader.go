@@ -84,8 +84,10 @@ type xmlToken struct {
 	Skip          string         `xml:"skip,attr"`
 	Postag        string         `xml:"postag,attr"`
 	PostagRegexp  string         `xml:"postag_regexp,attr"`
-	Content       string         `xml:",chardata"`
-	Exceptions    []xmlException `xml:"exception"`
+	// SpaceBefore ports spacebefore="yes|no" (Java PatternToken.setWhitespaceBefore).
+	SpaceBefore string         `xml:"spacebefore,attr"`
+	Content     string         `xml:",chardata"`
+	Exceptions  []xmlException `xml:"exception"`
 }
 
 type xmlException struct {
@@ -209,6 +211,9 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 			PosTag: xt.Postag,
 			Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
 		})
+	}
+	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
+		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 	}
 	// Soft subset: first simple string exception only (full and-groups later).
 	for _, ex := range xt.Exceptions {

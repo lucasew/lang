@@ -100,6 +100,10 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 		return false
 	}
 	pt := m.Base
+	// Java PatternToken.isMatched: spacebefore=yes/no must match token.isWhitespaceBefore().
+	if pt.WhitespaceBefore != nil && token.IsWhitespaceBefore() != *pt.WhitespaceBefore {
+		return false
+	}
 	// Positive string exception: matching surface/lemma means "do not match this pattern token".
 	if pt.TokenException != "" && m.matchesException(token) {
 		if pt.Negation {
@@ -267,6 +271,12 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 	if atr == nil {
 		return false
 	}
+	// Space-before is a property of the token readings, not each POS reading.
+	if m.Base != nil && m.Base.WhitespaceBefore != nil {
+		if atr.IsWhitespaceBefore() != *m.Base.WhitespaceBefore {
+			return false
+		}
+	}
 	hasRealPOS := false
 	for _, r := range atr.GetReadings() {
 		if r == nil {
@@ -285,7 +295,10 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 		return false
 	}
 	// Soft path without a tagger: untagged tokens only.
-	return m.IsMatched(languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil))
+	// Propagate whitespace-before so spacebefore= constraints still apply.
+	probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+	probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
+	return m.IsMatched(probe)
 }
 
 func (m *PatternTokenMatcher) matchSurface(surface string) bool {
