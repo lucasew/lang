@@ -159,3 +159,42 @@ func TestIsMatchedReadings_AndGroupAcrossReadings(t *testing.T) {
 	vbnn.AddReading(languagetool.NewAnalyzedToken("fall", &nn, nil), "dict")
 	require.False(t, m.IsMatchedReadings(vbnn))
 }
+
+func TestPreviousException_BlocksMatch(t *testing.T) {
+	// Java: token "mine" with exception scope=previous "not"
+	mine := NewPatternToken("mine", false, false, false)
+	mine.SetPreviousException("not", false, false)
+	rule := NewAbstractTokenBasedRule("T", "t", "en", []*PatternToken{mine})
+	m := NewPatternRuleMatcher(rule)
+
+	nn := "NN"
+	// "is mine" — should match
+	toksOK := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strPtr(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("is", strPtr("VBZ"), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("mine", &nn, nil)),
+	}
+	pos := 0
+	for _, atr := range toksOK {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	ms, err := m.Match(languagetool.NewAnalyzedSentence(toksOK))
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+
+	// "not mine" — previous exception blocks
+	toksBlock := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strPtr(languagetool.SentenceStartTagName), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("not", strPtr("RB"), nil)),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("mine", &nn, nil)),
+	}
+	pos = 0
+	for _, atr := range toksBlock {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	ms2, err := m.Match(languagetool.NewAnalyzedSentence(toksBlock))
+	require.NoError(t, err)
+	require.Empty(t, ms2)
+}

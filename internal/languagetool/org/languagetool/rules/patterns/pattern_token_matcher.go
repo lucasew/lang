@@ -248,19 +248,36 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 	if pt == nil || pt.TokenException == "" || token == nil {
 		return false
 	}
-	surface := token.GetToken()
-	// Exception case sensitivity is independent of the pattern token (LT).
-	excCS := pt.TokenExceptionCaseSensitive
-	// Java exceptions are PatternTokens that default to non-inflected: match surface
-	// only (getTestToken returns token, not lemma) unless the exception itself is
-	// marked inflected="yes". Soft path stores no exception-inflected flag yet.
-	if pt.TokenExceptionRE {
+	return matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive)
+}
+
+// IsMatchedByPreviousException ports PatternToken.isMatchedByPreviousException
+// for soft surface/regexp scope="previous" exceptions.
+func (m *PatternTokenMatcher) IsMatchedByPreviousException(prev *languagetool.AnalyzedTokenReadings) bool {
+	if m == nil || m.Base == nil || prev == nil || m.Base.PreviousException == "" {
+		return false
+	}
+	// Java: any reading of previous token matching the exception blocks current.
+	for _, r := range prev.GetReadings() {
+		if r == nil {
+			continue
+		}
+		if matchExceptionSurface(r.GetToken(), m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive) {
+			return true
+		}
+	}
+	// Also check the token surface (untagged soft path).
+	return matchExceptionSurface(prev.GetToken(), m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive)
+}
+
+func matchExceptionSurface(surface, exc string, isRE, caseSensitive bool) bool {
+	if exc == "" {
+		return false
+	}
+	if isRE {
 		flags := ""
-		// Java case_insensitive does not fold Unicode character classes the same
-		// way: (?i)\p{Lu} would match lowercase in Go RE2 and break exceptions
-		// like \p{Lu}.*|\d+ on PREFIJOS_JUNTOS_EN_DICCIONARIO.
-		excPat := softNormalizeJavaRegexp(pt.TokenException)
-		if !excCS && !strings.Contains(excPat, `\p{`) {
+		excPat := softNormalizeJavaRegexp(exc)
+		if !caseSensitive && !strings.Contains(excPat, `\p{`) {
 			flags = "(?i)"
 		}
 		re, err := regexp.Compile(flags + "^(?:" + excPat + ")$")
@@ -269,10 +286,10 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 		}
 		return re.MatchString(surface)
 	}
-	if excCS {
-		return surface == pt.TokenException
+	if caseSensitive {
+		return surface == exc
 	}
-	return strings.EqualFold(surface, pt.TokenException)
+	return strings.EqualFold(surface, exc)
 }
 
 // IsMatchedReadings is true if any reading of atr matches.

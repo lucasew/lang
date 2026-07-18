@@ -168,6 +168,13 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 					continue
 				}
 				if matcher.IsMatchedReadings(tokens[try]) {
+					// Java: scope="previous" exception on this element blocks when
+					// the previous token matches (AbstractPatternRulePerformer;
+					// only when tokenNo > 0).
+					if pt.HasPreviousException() && try > 0 &&
+						matcher.IsMatchedByPreviousException(tokens[try-1]) {
+						continue
+					}
 					// consume occ consecutive
 					ok := true
 					end := try
@@ -177,6 +184,7 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 							ok = false
 							break
 						}
+						// previous-exception is only on the pattern element, not each occ
 						end = j
 					}
 					if !ok {

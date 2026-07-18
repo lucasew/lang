@@ -105,6 +105,7 @@ type disambigException struct {
 	Regexp        string `xml:"regexp,attr"`
 	CaseSensitive string `xml:"case_sensitive,attr"`
 	Negate        string `xml:"negate,attr"`
+	Scope         string `xml:"scope,attr"` // previous|next|empty=current
 	Content       string `xml:",chardata"`
 }
 
@@ -272,7 +273,7 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 		}
 	}
 	// Java PatternToken exceptions: positive surface/regexp blocks the token.
-	// Soft subset: first non-negated exception only (same as pattern_rule_loader).
+	// Soft subset: first non-negated current exception; first scope=previous.
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		if exc == "" {
@@ -281,12 +282,27 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 		if strings.EqualFold(ex.Negate, "yes") {
 			continue
 		}
-		pt.SetStringPosExceptionCS(
-			exc,
-			strings.EqualFold(ex.Regexp, "yes"),
-			strings.EqualFold(ex.CaseSensitive, "yes"),
-		)
-		break
+		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
+		if scope == "next" {
+			continue
+		}
+		if scope == "previous" {
+			if pt.PreviousException == "" {
+				pt.SetPreviousException(
+					exc,
+					strings.EqualFold(ex.Regexp, "yes"),
+					strings.EqualFold(ex.CaseSensitive, "yes"),
+				)
+			}
+			continue
+		}
+		if pt.TokenException == "" {
+			pt.SetStringPosExceptionCS(
+				exc,
+				strings.EqualFold(ex.Regexp, "yes"),
+				strings.EqualFold(ex.CaseSensitive, "yes"),
+			)
+		}
 	}
 	// Java <and> group members (soft <and_token>): each must match some reading.
 	for _, at := range xt.AndTokens {

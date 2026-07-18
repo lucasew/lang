@@ -32,6 +32,10 @@ type PatternToken struct {
 	TokenException             string
 	TokenExceptionRE           bool
 	TokenExceptionCaseSensitive bool // when true, exception compares with exact case (LT case_sensitive on <exception>)
+	// PreviousException ports Java exception scope="previous" (soft surface/regexp).
+	PreviousException             string
+	PreviousExceptionRE           bool
+	PreviousExceptionCaseSensitive bool
 }
 
 func NewPatternToken(token string, caseSensitive, regexp, matchInflected bool) *PatternToken {
@@ -83,6 +87,18 @@ func (p *PatternToken) SetStringPosExceptionCS(tokenException string, regexp, ca
 	p.TokenException = tokenException
 	p.TokenExceptionRE = regexp
 	p.TokenExceptionCaseSensitive = caseSensitive
+}
+
+// SetPreviousException ports Java exception scope="previous" (soft surface/regexp).
+func (p *PatternToken) SetPreviousException(tokenException string, regexp, caseSensitive bool) {
+	p.PreviousException = tokenException
+	p.PreviousExceptionRE = regexp
+	p.PreviousExceptionCaseSensitive = caseSensitive
+}
+
+// HasPreviousException reports whether a scope=previous exception is set.
+func (p *PatternToken) HasPreviousException() bool {
+	return p != nil && p.PreviousException != ""
 }
 
 // IsMatched ports PatternToken.isMatched for a single AnalyzedToken reading.

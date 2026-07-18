@@ -598,6 +598,15 @@
       <wd pos="JJ" lemma="sports"/>
     </disambig>
   </rule>
+  <rule id="EVEN_NOW" name="even now">
+    <pattern>
+      <token postag="RB">even
+        <exception scope="previous" regexp="yes">break|get</exception>
+      </token>
+      <token postag="RB">now</token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="FIRST_THING" name="first/last thing does not need an article">
     <pattern>
       <token regexp="yes">first|last</token>
@@ -1144,6 +1153,15 @@
     </pattern>
     <disambig action="replace" postag="VBP"/>
   </rule>
+  <rule id="AM_NNP" name="AM as NNP">
+    <pattern>
+      <token case_sensitive="yes" postag="NNP" marker="yes">AM
+        <exception scope="previous">I</exception>
+      </token>
+      <token case_sensitive="yes" inflected="yes">be</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
   <rule id="ARE_JJ_VBG" name="are (noun/verb)  + adjective/gerund/preposition -&gt; are (verb)">
     <antipattern>
       <token postag="DT"></token>
@@ -1441,6 +1459,18 @@
     </pattern>
     <disambig action="replace" postag="NN"/>
   </rule>
+  <rule id="TO_VB_MEANS_TO_VB" name="to ... means to ... =&gt; verb">
+    <pattern>
+      <token>to</token>
+      <token postag="VB" skip="-1"></token>
+      <token postag="VBZ" marker="yes">means
+        <exception scope="previous" regexp="yes">an?|the</exception>
+      </token>
+      <token>to</token>
+      <token postag="VB"></token>
+    </pattern>
+    <disambig action="replace" postag="VBZ"/>
+  </rule>
   <rule id="AIN_T_FILTER_NN" name="ain't">
     <pattern>
       <token marker="yes">ai</token>
@@ -1486,6 +1516,15 @@
       <token regexp="yes" case_sensitive="yes">(cc|CC)[’'](d|ing)</token>
     </pattern>
     <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="ARE_VBG_NN" name="are + VBG/NN -&gt; VBG">
+    <pattern>
+      <token>'re
+        <exception scope="previous">there</exception>
+      </token>
+      <token postag="VBG" marker="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="VBG"/>
   </rule>
   <rule id="POS_HAVE_VBZ" name="'s -&gt; have/vbz">
     <pattern>
@@ -2153,6 +2192,28 @@
       <wd pos="VBZ" lemma="have"/>
     </disambig>
   </rule>
+  <rule id="_SOFT_ANON_121" name="_SOFT_ANON_121">
+    <pattern>
+      <token regexp="yes" postag="NN.*" postag_regexp="yes">.*s
+        <exception scope="previous">'</exception>
+      </token>
+      <token regexp="yes" marker="yes" spacebefore="no">['’`´‘ʻ]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="POS" lemma="'"/>
+    </disambig>
+  </rule>
+  <rule id="_SOFT_ANON_122" name="_SOFT_ANON_122">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN|^(?!NN.*?).*" postag_regexp="yes">\p{Lu}.+s|\p{Lu}+S
+        <exception scope="previous">'</exception>
+      </token>
+      <token regexp="yes" case_sensitive="yes" marker="yes" spacebefore="no">['’`´‘ʻ]</token>
+    </pattern>
+    <disambig action="replace">
+      <wd pos="POS" lemma="'"/>
+    </disambig>
+  </rule>
   <rule id="_SOFT_ANON_124" name="_SOFT_ANON_124">
     <pattern>
       <token regexp="yes" case_sensitive="yes">[A-Z].*</token>
@@ -2810,6 +2871,15 @@
     </pattern>
     <disambig action="filter" postag="JJ.?"/>
   </rule>
+  <rule id="BY_VBG" name="by + vbg → vbg">
+    <pattern>
+      <token>by
+        <exception scope="previous" regexp="yes">'ll|will|shall</exception>
+      </token>
+      <token postag="VBG" marker="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="VBG"/>
+  </rule>
   <rule id="FREE_OF_CHARGE" name="free of charge">
     <pattern>
       <token marker="yes">free</token>
@@ -2840,10 +2910,30 @@
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
+  <rule id="_SOFT_ANON_133" name="_SOFT_ANON_133">
+    <pattern>
+      <token marker="yes">even
+        <exception scope="previous" regexp="yes">an?|the</exception>
+      </token>
+      <token postag="VB.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
   <rule id="_SOFT_ANON_134" name="_SOFT_ANON_134">
     <pattern>
       <token marker="yes">even</token>
       <token regexp="yes">if|at|for</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
+  <rule id="LIVE_IN_NNP" name="live as RB">
+    <pattern>
+      <token regexp="yes" inflected="yes" skip="3">perform|show|have</token>
+      <token marker="yes">live
+        <exception scope="previous">to</exception>
+      </token>
+      <token regexp="yes">in|at</token>
+      <token postag="NNP"></token>
     </pattern>
     <disambig action="replace" postag="RB"/>
   </rule>
