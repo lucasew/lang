@@ -217,10 +217,14 @@ func (m *PatternTokenMatcher) matchesException(token *languagetool.AnalyzedToken
 	excCS := pt.TokenExceptionCaseSensitive
 	if pt.TokenExceptionRE {
 		flags := ""
-		if !excCS {
+		// Java case_insensitive does not fold Unicode character classes the same
+		// way: (?i)\p{Lu} would match lowercase in Go RE2 and break exceptions
+		// like \p{Lu}.*|\d+ on PREFIJOS_JUNTOS_EN_DICCIONARIO.
+		excPat := softNormalizeJavaRegexp(pt.TokenException)
+		if !excCS && !strings.Contains(excPat, `\p{`) {
 			flags = "(?i)"
 		}
-		re, err := regexp.Compile(flags + "^(?:" + softNormalizeJavaRegexp(pt.TokenException) + ")$")
+		re, err := regexp.Compile(flags + "^(?:" + excPat + ")$")
 		if err != nil {
 			return false
 		}
@@ -854,6 +858,25 @@ func softFrenchAccentFold(s string) string {
 	).Replace(strings.ToLower(s))
 }
 
+// softSpanishStripEnclitic removes common Spanish object clitics from the end
+// of gerunds/infinitives (asiéndolos → asiendo, hacerlo → hacer).
+func softSpanishStripEnclitic(s string) string {
+	s = strings.ToLower(s)
+	for _, suf := range []string{
+		"noslos", "noslas", "selos", "selas", "melos", "melas", "telos", "telas",
+		"noslo", "nosla", "selo", "sela", "melo", "mela", "telo", "tela",
+		"los", "las", "les", "nos", "me", "te", "se", "lo", "la", "le", "os",
+	} {
+		if strings.HasSuffix(s, suf) {
+			core := s[:len(s)-len(suf)]
+			if len([]rune(core)) >= 4 {
+				return core
+			}
+		}
+	}
+	return s
+}
+
 // softFrenchElisionMatch is true when surface is a French elided form of base
 // (or equal), as produced by FrenchWordTokenizer (d’électricité → d’ + électricité).
 func softFrenchElisionMatch(surface, base string) bool {
@@ -960,7 +983,7 @@ func softGermanGeParticipleCore(s, b string) bool {
 var softIrregularLemma = map[string][]string{
 	// English
 	"am": {"be"}, "is": {"be"}, "are": {"be"}, "was": {"be"}, "were": {"be"}, "been": {"be"}, "being": {"be"},
-	"has": {"have"}, "had": {"have"}, "having": {"have"},
+	"has": {"have", "haber"}, "had": {"have"}, "having": {"have"},
 	"does": {"do"}, "did": {"do"}, "done": {"do"}, "doing": {"do"},
 	// English clitics (it's / he's …) for HAD_HARD etc.
 	"'s": {"be", "have"}, "’s": {"be", "have"},
@@ -998,7 +1021,8 @@ var softIrregularLemma = map[string][]string{
 	// aller future/conditional (ira, irai…)
 	"irai": {"aller"}, "iras": {"aller"}, "ira": {"aller"}, "irons": {"aller"}, "irez": {"aller"}, "iront": {"aller"},
 	"irais": {"aller"}, "irait": {"aller"}, "irions": {"aller"}, "iriez": {"aller"}, "iraient": {"aller"},
-	"viens": {"venir"}, "vient": {"venir"}, "venons": {"venir"}, "venez": {"venir"}, "viennent": {"venir"},
+	"viens": {"venir"},
+	"vient": {"venir"}, "venons": {"venir"}, "venez": {"venir"}, "viennent": {"venir"},
 	"venait": {"venir"}, "venaient": {"venir"}, "venu": {"venir"}, "venue": {"venir"}, "venus": {"venir"}, "venues": {"venir"},
 	"allons": {"aller"}, "allez": {"aller"}, "vont": {"aller"},
 	"allait": {"aller"}, "allaient": {"aller"}, "allé": {"aller"}, "allée": {"aller"}, "allés": {"aller"},
@@ -1065,10 +1089,15 @@ var softIrregularLemma = map[string][]string{
 	"va": {"aller", "ir", "dir"},
 	"vamos": {"ir", "dir"},
 	"van": {"ir", "dir"},
-	// Spanish ir / dar
+	// Spanish ir / dar / haber / asir / revertir
 	"voy": {"ir"}, "iba": {"ir"}, "iban": {"ir"}, "fue": {"ir"}, "fueron": {"ir"}, "ido": {"ir"},
 	"doy": {"dar"}, "das": {"dar"}, "da": {"dar"}, "dais": {"dar"}, "dan": {"dar"},
-	"dio": {"dar"}, "dieron": {"dar"},
+	"daba": {"dar"}, "dabas": {"dar"}, "dábamos": {"dar"}, "daban": {"dar"},
+	"di": {"dar"}, "diste": {"dar"}, "dio": {"dar"}, "dimos": {"dar"}, "dieron": {"dar"},
+	"he": {"haber"}, "ha": {"haber"}, "hemos": {"haber"}, "habéis": {"haber"}, "han": {"haber"},
+	"había": {"haber"}, "habías": {"haber"}, "habíamos": {"haber"}, "habían": {"haber"}, "hubo": {"haber"},
+	"asiendo": {"asir"}, "asiéndo": {"asir"},
+	"revierte": {"revertir"}, "revierten": {"revertir"}, "revertía": {"revertir"},
 	// Asturian dir
 	"voi": {"dir"}, "foron": {"dir"},
 }
@@ -1100,6 +1129,19 @@ func softInflectedSurfaceMatch(surface, base string, caseSensitive bool) bool {
 		for _, lem := range lems {
 			if lem == base {
 				return true
+			}
+		}
+	}
+	// Spanish enclitics on gerunds/infinitives (asiéndolos → asiendo → asir).
+	if core := softSpanishStripEnclitic(surface); core != surface {
+		if softInflectedSurfaceMatch(core, base, true) {
+			return true
+		}
+		if lems, ok := softIrregularLemma[core]; ok {
+			for _, lem := range lems {
+				if lem == base {
+					return true
+				}
 			}
 		}
 	}

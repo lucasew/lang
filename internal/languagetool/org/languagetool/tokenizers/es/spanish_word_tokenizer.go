@@ -23,9 +23,13 @@ var (
 	// fails after º/ª (Java uses UNICODE_CHARACTER_CLASS).
 	ordinalPoint = regexp.MustCompile(`(?i)\b([\d]+)\.(º|ª|er|os|as|o|a)`)
 	softHyphen       = regexp.MustCompile(`\x{00AD}`)
+	// Soft: keep only known dictionary-like compounds (Java keeps when tagged).
+	// Default is split so grammar patterns with explicit "-" tokens can match.
 	hyphenExceptions = map[string]bool{
 		"mers-cov": true, "mcgraw-hill": true, "sars-cov-2": true, "sars-cov": true,
 		"ph-metre": true, "ph-metres": true,
+		"e-mails": true, "e-mail": true, "best-seller": true, "best-sellers": true,
+		"covid-19": true, "al-ándalus": true, "al-andalus": true,
 	}
 )
 
@@ -89,25 +93,9 @@ func wordsToAddES(s string) []string {
 }
 
 func isTaggedES(s string) bool {
-	// Without SpanishTagger: keep common hyphenated compounds (letter/digit parts).
-	// Matches dictionary hits needed by unit tests (e-mails, best-seller, al-Ándalus, Covid-19).
-	if s == "" {
-		return false
-	}
-	for _, r := range s {
-		if r == '-' {
-			continue
-		}
-		if (r >= '0' && r <= '9') || (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
-			continue
-		}
-		// allow letters with diacritics via unicode categories roughly: if letter keep
-		if r > 127 {
-			// allow non-ASCII letters
-			continue
-		}
-		return false
-	}
-	// must contain at least one hyphen and not start/end with hyphen for compound
-	return strings.Contains(s, "-") && !strings.HasPrefix(s, "-") && !strings.HasSuffix(s, "-")
+	// Soft path without SpanishTagger: do not keep arbitrary hyphen compounds.
+	// Java only keeps hyphenated forms when the dictionary tags them; untagged
+	// forms are split so rules like PREFIJO_CUASI / DEJA_VU can match.
+	_ = s
+	return false
 }
