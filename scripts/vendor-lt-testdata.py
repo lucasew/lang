@@ -445,20 +445,24 @@ def extract_disambig_soft(root: ET.Element, source: str) -> list[dict]:
         toks = pattern_is_simple(pat)
         if not toks:
             continue
-        # soft disambig loader supports surface/regexp/postag/inflected/negate
+        # soft disambig loader: surface/regexp/postag/inflected/negate/exception
+        # (Java PatternToken exceptions; min/max/skip still deferred).
         simple_toks = []
         ok = True
         for t in toks:
             if isinstance(t, str):
                 simple_toks.append({"text": t})
                 continue
-            if any(k in t for k in ("min", "max", "skip", "exceptions")):
+            if any(k in t for k in ("min", "max", "skip")):
                 ok = False
                 break
             st = {"text": t.get("text") or ""}
             for k in ("regexp", "case_sensitive", "inflected", "negate", "postag", "postag_regexp", "marker", "spacebefore"):
                 if t.get(k):
                     st[k] = t[k]
+            # First simple surface exception (pattern_is_simple already filters).
+            if t.get("exceptions"):
+                st["exceptions"] = t["exceptions"]
             if not st["text"] and not st.get("postag") and not st.get("regexp"):
                 ok = False
                 break
@@ -499,7 +503,21 @@ def write_disambig_soft_xml(path: Path, lang: str, rules: list[dict]) -> None:
                         attrs.append(f'{k}="{xml_esc(str(t[k]))}"')
             attr_s = (" " + " ".join(attrs)) if attrs else ""
             body = xml_esc(t.get("text") if isinstance(t, dict) else t)
-            lines.append(f"      <token{attr_s}>{body}</token>")
+            excs = t.get("exceptions") if isinstance(t, dict) else None
+            if not excs:
+                lines.append(f"      <token{attr_s}>{body}</token>")
+            else:
+                # Java <exception> under pattern token (soft: first positive only).
+                lines.append(f"      <token{attr_s}>{body}")
+                for e in excs:
+                    ea = []
+                    for k in ("regexp", "case_sensitive", "negate"):
+                        if isinstance(e, dict) and e.get(k):
+                            ea.append(f'{k}="{xml_esc(str(e[k]))}"')
+                    eas = (" " + " ".join(ea)) if ea else ""
+                    etext = e.get("text") if isinstance(e, dict) else ""
+                    lines.append(f"        <exception{eas}>{xml_esc(etext or '')}</exception>")
+                lines.append("      </token>")
         lines.append("    </pattern>")
         act = r.get("action") or "replace"
         if act in ("add", "remove") and r.get("add_wds"):

@@ -174,6 +174,16 @@
     </pattern>
     <disambig action="filter" postag="NCFS000"/>
   </rule>
+  <rule id="en_forma_n" name="en forma (nom)">
+    <pattern>
+      <token postag="SPS00" marker="yes">en</token>
+      <token postag="NCFS000" marker="yes">forma</token>
+      <token postag="AQ.[FC]S.*|VMP..SF." postag_regexp="yes">
+        <exception>part</exception>
+      </token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="primer_vegada" name="per primer(a) vegada">
     <pattern>
       <token postag="AO.*" postag_regexp="yes" marker="yes"></token>
@@ -230,6 +240,15 @@
       <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">baixar</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="deixar_verb" name="deixar verb">
+    <pattern>
+      <token inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">deixar
+        <exception>deix</exception>
+      </token>
+      <token postag="[NA].*|V.P.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
   </rule>
   <rule id="RIU_AMUNT" name="riu amunt/avall">
     <pattern>
@@ -388,6 +407,15 @@
     <pattern>
       <token regexp="yes" postag="V.*" postag_regexp="yes" marker="yes">vols?</token>
       <token regexp="yes">xàrter|charter|comercials?|transoceànics?|privats?|freqüents?</token>
+    </pattern>
+    <disambig action="remove" postag="V.*"/>
+  </rule>
+  <rule id="te_substantiu" name="te/té (amb error) + substantiu">
+    <pattern>
+      <token>te</token>
+      <token postag="NC.*" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">dius?|dic|tornes|fan|don|trobes|barrejada</exception>
+      </token>
     </pattern>
     <disambig action="remove" postag="V.*"/>
   </rule>
@@ -1040,6 +1068,15 @@
     </pattern>
     <disambig action="filter" postag="N.*"/>
   </rule>
+  <rule id="es_diu" name="es diu Corredor (verb dir)">
+    <pattern>
+      <token postag="P0.{6}|PP3CN000|PP3NN000|PP3..A00|PP[123]CP000|PP3CSD00" postag_regexp="yes">
+        <exception regexp="yes">els?</exception>
+      </token>
+      <token regexp="yes" postag="V.[^MNGP].*" postag_regexp="yes" marker="yes">dius?</token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
   <rule id="informe" name="informe (nom)">
     <pattern>
       <token marker="yes">informe</token>
@@ -1071,6 +1108,15 @@
   <rule id="surt" name="surt (no nom)">
     <pattern>
       <token regexp="yes" postag="VM.*" postag_regexp="yes">surts?</token>
+    </pattern>
+    <disambig action="filter" postag="V.*"/>
+  </rule>
+  <rule id="pot" name="pot (no nom)">
+    <pattern>
+      <token postag="D[TE].*" postag_regexp="yes">
+        <exception regexp="yes">quins?|quants</exception>
+      </token>
+      <token regexp="yes" postag="VM.*" postag_regexp="yes" marker="yes">pots?</token>
     </pattern>
     <disambig action="filter" postag="V.*"/>
   </rule>
@@ -1181,6 +1227,16 @@
       <token inflected="yes" postag="N.*" postag_regexp="yes">baixa</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="segons" name="segons (preposició)">
+    <pattern>
+      <token postag="SPS00" marker="yes">segons</token>
+      <token postag="D.*" postag_regexp="yes">
+        <exception>es</exception>
+      </token>
+      <token postag="[NA].*|PR.*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="SPS00"/>
   </rule>
   <rule id="hi_trobes" name="hi trobes">
     <pattern>

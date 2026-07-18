@@ -361,6 +361,15 @@
     </pattern>
     <disambig action="remove" postag="V.[^N].*"/>
   </rule>
+  <rule id="modal_verb" name="modal verb">
+    <pattern>
+      <token regexp="yes" inflected="yes" postag="V.*" postag_regexp="yes" marker="yes">querer|deber|poder|gustar|encantar|intentar|saber
+        <exception>gusto</exception>
+      </token>
+      <token postag="V.N.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filterall"/>
+  </rule>
   <rule id="MEGA" name="mega">
     <pattern>
       <token postag="D.*" postag_regexp="yes"></token>

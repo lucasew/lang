@@ -61,7 +61,17 @@ type disambigToken struct {
 	Marker string `xml:"marker,attr"`
 	// SpaceBefore ports spacebefore="yes|no".
 	SpaceBefore string `xml:"spacebefore,attr"`
-	Content     string `xml:",chardata"`
+	// Exceptions ports Java <exception> under <token> (first positive used).
+	Exceptions []disambigException `xml:"exception"`
+	Content    string              `xml:",chardata"`
+}
+
+// disambigException is a soft subset of Java pattern-token <exception>.
+type disambigException struct {
+	Regexp        string `xml:"regexp,attr"`
+	CaseSensitive string `xml:"case_sensitive,attr"`
+	Negate        string `xml:"negate,attr"`
+	Content       string `xml:",chardata"`
 }
 
 type disambigElem struct {
@@ -148,6 +158,23 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 	}
 	if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
 		pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+	}
+	// Java PatternToken exceptions: positive surface/regexp blocks the token.
+	// Soft subset: first non-negated exception only (same as pattern_rule_loader).
+	for _, ex := range xt.Exceptions {
+		exc := strings.TrimSpace(ex.Content)
+		if exc == "" {
+			continue
+		}
+		if strings.EqualFold(ex.Negate, "yes") {
+			continue
+		}
+		pt.SetStringPosExceptionCS(
+			exc,
+			strings.EqualFold(ex.Regexp, "yes"),
+			strings.EqualFold(ex.CaseSensitive, "yes"),
+		)
+		break
 	}
 	return pt
 }

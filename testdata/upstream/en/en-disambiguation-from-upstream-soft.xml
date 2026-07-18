@@ -55,6 +55,15 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="SO_JJ" name="so + adj/rb =&gt; so/RB">
+    <pattern>
+      <token marker="yes">so</token>
+      <token postag="JJ.?|RB.?" postag_regexp="yes">
+        <exception regexp="yes">therefore|hence|thus</exception>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
   <rule id="AMERICAN_AIRLINES" name="American Airlines">
     <pattern>
       <token case_sensitive="yes">American</token>
@@ -353,6 +362,15 @@
     </pattern>
     <disambig action="replace" postag="JJS"/>
   </rule>
+  <rule id="WELL_VB_RB" name="verb + well =&gt; well = RB">
+    <pattern>
+      <token postag="VB[PGZ]?" postag_regexp="yes">
+        <exception>be</exception>
+      </token>
+      <token marker="yes">well</token>
+    </pattern>
+    <disambig action="replace" postag="RB"/>
+  </rule>
   <rule id="IN_NNUN" name="in as noun/preposition + uncountable noun -&gt; in as preposition">
     <pattern>
       <token marker="yes">in</token>
@@ -621,10 +639,28 @@
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
+  <rule id="UPPER_NN_NNP" name="NNP + Uppercase NN -&gt; NNP">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" inflected="yes" postag="NNP">\p{Lu}\p{Ll}+</token>
+      <token regexp="yes" case_sensitive="yes" postag="NN" marker="yes">\p{Lu}\p{Ll}+
+        <exception case_sensitive="yes">Why</exception>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
   <rule id="UPPER_UNKNOWN_NNP" name="Uppercase word/no tag + 's -&gt; NNP">
     <pattern>
       <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">\p{Lu}\p{Ll}+</token>
       <token case_sensitive="yes">'s</token>
+    </pattern>
+    <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="title_NNP" name="President Brown -&gt; NNP">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" marker="yes">(?iu)president|captain|sergeant|general|madame|engineer|minister|chair|deputy|representative|manager|secretary|professor|bishop|attorney|vicar|treasurer|commander|archbishop|editor|principal|dean|sheriff|lieutenant</token>
+      <token regexp="yes" case_sensitive="yes">\p{Lu}\p{Ll}*
+        <exception case_sensitive="yes">I</exception>
+      </token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
   </rule>
@@ -656,6 +692,16 @@
       <token marker="yes">i</token>
     </pattern>
     <disambig action="replace" postag="NNP"/>
+  </rule>
+  <rule id="DT_VBN_JJ" name="DT + VBN + JJ -&gt; VBN=JJ">
+    <pattern>
+      <token regexp="yes">a|an|the</token>
+      <token postag="VBN" marker="yes">
+        <exception>feed</exception>
+      </token>
+      <token postag="JJ|NNS?" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="replace" postag="JJ"/>
   </rule>
   <rule id="OF_VBN_JJ" name="of + VBN + JJ -&gt; JJ">
     <pattern>
@@ -761,6 +807,15 @@
     </pattern>
     <disambig action="replace" postag="DT"/>
   </rule>
+  <rule id="BE_VBGNN_VBG" name="be + vbg/nn =&gt; vbg">
+    <pattern>
+      <token inflected="yes">be
+        <exception>being</exception>
+      </token>
+      <token regexp="yes" postag="NN(:UN?)?" postag_regexp="yes" marker="yes">.+in[g']</token>
+    </pattern>
+    <disambig action="filter" postag="VBG"/>
+  </rule>
   <rule id="LIKE_IN" name="like as preposition">
     <pattern>
       <token inflected="yes">be</token>
@@ -804,6 +859,17 @@
     <pattern>
       <token case_sensitive="yes" marker="yes">MOS</token>
       <token case_sensitive="yes">6502</token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="NNP"/>
+    </disambig>
+  </rule>
+  <rule id="NNP_CD" name="Apollo 11">
+    <pattern>
+      <token postag="NNP">
+        <exception regexp="yes">January|February|March|April|May|Ju(ne|ly)|August|September|October|November|December|Jan|Feb|Mar|Apr|Ju[ln]|Aug|Sept?|Oct|Nov|Dec</exception>
+      </token>
+      <token regexp="yes" postag="CD" marker="yes">\d+</token>
     </pattern>
     <disambig action="add">
       <wd pos="NNP"/>

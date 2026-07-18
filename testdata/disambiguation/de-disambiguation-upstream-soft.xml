@@ -2431,6 +2431,15 @@
     </pattern>
     <disambig action="ignore_spelling"/>
   </rule>
+  <rule id="EINHEITEN" name="Energie-, Zeit- und Längeneinheiten">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes">\d+</token>
+      <token regexp="yes" case_sensitive="yes">[hμnpf][ms]|[MG]?eV
+        <exception case_sensitive="yes">hs</exception>
+      </token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
   <rule id="BEAUVOIR" name="de Beauvoir">
     <pattern>
       <token case_sensitive="yes">de</token>
@@ -3636,6 +3645,14 @@
     </pattern>
     <disambig action="remove" postag="PRP.*"/>
   </rule>
+  <rule id="WILLIGEN_KEIN_VB" name="'Einkaufswilligen' kein VB">
+    <pattern>
+      <token regexp="yes">.+willigen
+        <exception regexp="yes">(ein|be|darein|nachbe)willigen</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="VB.*"/>
+  </rule>
   <rule id="NEN_IGNORE_SPELLING" name="Ignore spelling of 'nen">
     <pattern>
       <token regexp="yes">[’']</token>
@@ -4099,6 +4116,14 @@
     <pattern>
       <token marker="yes">trotz</token>
       <token postag=".*(GEN|DAT).*" postag_regexp="yes"></token>
+    </pattern>
+    <disambig action="remove" postag="VER.*"/>
+  </rule>
+  <rule id="FAHRERLOSEN_KEIN_VER" name="'fahrerlosen' kein Verb">
+    <pattern>
+      <token regexp="yes">.+losen?
+        <exception regexp="yes">.*(ver|aus|raus|heraus|herein|hinein|be)(zu)?losen?</exception>
+      </token>
     </pattern>
     <disambig action="remove" postag="VER.*"/>
   </rule>

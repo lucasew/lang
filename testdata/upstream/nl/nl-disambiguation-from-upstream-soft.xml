@@ -1092,6 +1092,16 @@
       <wd pos="GET:ARA:001:EKV"/>
     </disambig>
   </rule>
+  <rule id="TAG_NUMBERS_1" name="GUESS_number_1">
+    <pattern>
+      <token regexp="yes">[0-9]{1}
+        <exception>1</exception>
+      </token>
+    </pattern>
+    <disambig action="add">
+      <wd pos="GET:ARA:001:MRV"/>
+    </disambig>
+  </rule>
   <rule id="TAG_NUMBERS_2" name="GUESS_number_2">
     <pattern>
       <token regexp="yes">[0-9]{2}</token>
@@ -1579,6 +1589,15 @@
   <rule id="MR_X" name="MR_X">
     <pattern>
       <token regexp="yes">meneer|mevrouw|heer|jongeheer|juffrouw|mejuffrouw</token>
+      <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">[A-Z][a-z].*</token>
+    </pattern>
+    <disambig action="ignore_spelling"/>
+  </rule>
+  <rule id="PETER_X" name="PETER_X">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="ENM:PER:FST">[A-Z][a-z].*
+        <exception regexp="yes">Batman|Disney</exception>
+      </token>
       <token regexp="yes" case_sensitive="yes" postag="UNKNOWN" marker="yes">[A-Z][a-z].*</token>
     </pattern>
     <disambig action="ignore_spelling"/>

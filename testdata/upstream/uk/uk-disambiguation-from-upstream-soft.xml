@@ -66,6 +66,14 @@
     </pattern>
     <disambig action="filterall"/>
   </rule>
+  <rule id="inanim_v_kly_abbr" name="Кличний неістот для абревіатур">
+    <pattern>
+      <token regexp="yes" case_sensitive="yes" postag="noun:inanim:.:v_kly" postag_regexp="yes" marker="yes">[А-ЯІЇЄҐ]{3,20}
+        <exception regexp="yes">УКРАЇНО|КИЄВЄ|ПЕРЧЕ</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="noun:inanim:.:v_kly"/>
+  </rule>
   <rule id="zagalom_adv" name="Загалом: adv">
     <pattern>
       <token marker="yes">загалом</token>
@@ -342,6 +350,15 @@
     </pattern>
     <disambig action="filter" postag="noun:.*"/>
   </rule>
+  <rule id="cholovik_plural_1" name="Чоловік - множина">
+    <pattern>
+      <token postag="number|numr:p:.*|noun.*num.*" postag_regexp="yes">
+        <exception regexp="yes">один|перший|1</exception>
+      </token>
+      <token marker="yes">чоловік</token>
+    </pattern>
+    <disambig action="filter" postag="noun:anim:p:v_...:subst"/>
+  </rule>
   <rule id="cholovik_plural_2" name="Чоловік - множина">
     <pattern>
       <token marker="yes">чоловік</token>
@@ -417,6 +434,15 @@
       <token postag="adv:bad" marker="yes">вживу</token>
     </pattern>
     <disambig action="filter" postag="adv:bad"/>
+  </rule>
+  <rule id="vidkryto_adv" name="відкрито - присл.">
+    <pattern>
+      <token marker="yes">відкрито</token>
+      <token postag="verb.*" postag_regexp="yes">
+        <exception regexp="yes">було|буде</exception>
+      </token>
+    </pattern>
+    <disambig action="filter" postag="adv.*"/>
   </rule>
   <rule id="diyu_noun" name="Іменник «дію»">
     <pattern>
@@ -1026,6 +1052,15 @@
       <token postag="noun:anim:f.*?[fl]name.*" postag_regexp="yes" marker="yes"></token>
     </pattern>
     <disambig action="filter" postag="noun:anim:f.*?:[fl]name.*"/>
+  </rule>
+  <rule id="PAN_NAME_MASC" name="«пан» з іменами та прізвищами">
+    <pattern>
+      <token regexp="yes" inflected="yes">пан|містер|гер|сеньйор|монсеньйор|добродій
+        <exception>пані</exception>
+      </token>
+      <token postag="noun:anim:m.*?:[fl]name.*" postag_regexp="yes" marker="yes"></token>
+    </pattern>
+    <disambig action="filter" postag="noun:anim:m.*:[fl]name.*"/>
   </rule>
   <rule id="York" name="Йорк">
     <pattern>

@@ -205,3 +205,72 @@ func TestRemove_PostagRegexFromPos(t *testing.T) {
 	require.Contains(t, tags, "NN")
 	require.NotContains(t, tags, "VBZ")
 }
+
+func TestDisambigLoader_TokenExceptionBlocksMatch(t *testing.T) {
+	// Java: token matches surface unless exception surface matches.
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rule id="EX_RUN" name="run except running">
+    <pattern>
+      <token>run<exception>running</exception></token>
+    </pattern>
+    <disambig action="filter" postag="VB"/>
+  </rule>
+</rules>`
+	rules, err := NewDisambiguationRuleLoader().GetRulesFromString(xml, "en", "test")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Equal(t, "running", rules[0].Tokens[0].TokenException)
+
+	vb, nn := "VB", "NN"
+	// "running" must NOT match (exception); leave NN|VB as-is
+	running := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("running", &nn, nil))
+	running.AddReading(languagetool.NewAnalyzedToken("running", &vb, nil), "dict")
+	// "run" matches and FILTER keeps VB
+	run := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("run", &nn, nil))
+	run.AddReading(languagetool.NewAnalyzedToken("run", &vb, nil), "dict")
+	for _, atr := range []*languagetool.AnalyzedTokenReadings{running, run} {
+		_ = atr
+	}
+	pos := 0
+	sentStart := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil))
+	for _, atr := range []*languagetool.AnalyzedTokenReadings{sentStart, running} {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out1 := rules[0].Replace(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{sentStart, running}))
+	var tagsRunning []string
+	for _, tok := range out1.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "running" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tagsRunning = append(tagsRunning, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tagsRunning, "NN", "exception should block FILTER on running")
+	require.Contains(t, tagsRunning, "VB")
+
+	pos = 0
+	sentStart2 := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", strp2(languagetool.SentenceStartTagName), nil))
+	for _, atr := range []*languagetool.AnalyzedTokenReadings{sentStart2, run} {
+		atr.SetStartPos(pos)
+		pos += len(atr.GetToken()) + 1
+	}
+	out2 := rules[0].Replace(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{sentStart2, run}))
+	var tagsRun []string
+	for _, tok := range out2.GetTokensWithoutWhitespace() {
+		if tok.GetToken() != "run" {
+			continue
+		}
+		for _, r := range tok.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				tagsRun = append(tagsRun, *r.GetPOSTag())
+			}
+		}
+	}
+	require.Contains(t, tagsRun, "VB")
+	require.NotContains(t, tagsRun, "NN", "FILTER should drop NN when pattern matches")
+}

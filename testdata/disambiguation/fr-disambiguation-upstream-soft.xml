@@ -90,6 +90,15 @@
     </pattern>
     <disambig action="filter" postag="N f s"/>
   </rule>
+  <rule id="ANXIETE_CHRONIQUE" name="anxiété chronique">
+    <pattern>
+      <token postag="N . s" postag_regexp="yes">
+        <exception regexp="yes">une?</exception>
+      </token>
+      <token marker="yes">chronique</token>
+    </pattern>
+    <disambig action="filter" postag="J e s"/>
+  </rule>
   <rule id="TAPE_AUTOUR" name="tape autour">
     <pattern>
       <token postag="[VAN].*" postag_regexp="yes"></token>
@@ -122,6 +131,16 @@
     <pattern>
       <token postag="[NJZ].*" postag_regexp="yes"></token>
       <token marker="yes">toucher</token>
+    </pattern>
+    <disambig action="filter" postag="V ind pres 3 s"/>
+  </rule>
+  <rule id="SORT" name="sort">
+    <pattern>
+      <token postag="[NJZ].*" postag_regexp="yes">
+        <exception regexp="yes">une?</exception>
+      </token>
+      <token marker="yes">sort</token>
+      <token postag="[AD].*" postag_regexp="yes"></token>
     </pattern>
     <disambig action="filter" postag="V ind pres 3 s"/>
   </rule>
@@ -177,6 +196,15 @@
       <token regexp="yes" marker="yes">faits|appliqués|coulissants|aquifères</token>
     </pattern>
     <disambig action="filter" postag="N m p"/>
+  </rule>
+  <rule id="TRANSIT" name="transit">
+    <pattern>
+      <token postag="V.*" postag_regexp="yes">
+        <exception>faire</exception>
+      </token>
+      <token marker="yes">transit</token>
+    </pattern>
+    <disambig action="remove" postag="N m s"/>
   </rule>
   <rule id="BAS" name="bas">
     <pattern>
@@ -671,6 +699,15 @@
     <disambig action="add">
       <wd pos="Z e sp"/>
     </disambig>
+  </rule>
+  <rule id="VERB_PRON" name="verb + pronoun">
+    <pattern>
+      <token postag="V.* (ind|sub|imp|inf|cond) .*" postag_regexp="yes">
+        <exception>entre</exception>
+      </token>
+      <token regexp="yes" postag="R .*" postag_regexp="yes" spacebefore="no">['-].*</token>
+    </pattern>
+    <disambig action="filterall"/>
   </rule>
   <rule id="JUSTE_TOUS" name="juste tous">
     <pattern>
@@ -1517,6 +1554,24 @@
     </pattern>
     <disambig action="filter" postag="N m s"/>
   </rule>
+  <rule id="UN_AVOIR" name="un avoir">
+    <pattern>
+      <token postag="D m s">
+        <exception>l'</exception>
+      </token>
+      <token marker="yes">avoir</token>
+    </pattern>
+    <disambig action="filter" postag="N m s"/>
+  </rule>
+  <rule id="DES_ETRES" name="des êtres">
+    <pattern>
+      <token postag="D.*" postag_regexp="yes">
+        <exception regexp="yes">tous|toute?s?|d'</exception>
+      </token>
+      <token marker="yes">être</token>
+    </pattern>
+    <disambig action="filter" postag="N m s"/>
+  </rule>
   <rule id="BENIN" name="bénin">
     <pattern>
       <token postag="(P\+)?D m s" postag_regexp="yes"></token>
@@ -1913,6 +1968,16 @@
       <wd pos="A"/>
     </disambig>
   </rule>
+  <rule id="ON_LEUR_DONNE" name="on leur donne">
+    <pattern>
+      <token regexp="yes">je|il|elle|on</token>
+      <token>leur</token>
+      <token postag="N . s" postag_regexp="yes" marker="yes">
+        <exception regexp="yes">façon|profil</exception>
+      </token>
+    </pattern>
+    <disambig action="remove" postag="N . s"/>
+  </rule>
   <rule id="FAIRE_GRAND_BRUIT" name="faire grand bruit">
     <pattern>
       <token postag="V ind pres 3 s">fait</token>
@@ -2102,6 +2167,16 @@
       <token regexp="yes" postag="R . s" postag_regexp="yes">un|une</token>
     </pattern>
     <disambig action="filterall"/>
+  </rule>
+  <rule id="MI" name="mi">
+    <pattern>
+      <token marker="yes">mi</token>
+      <token spacebefore="no">-</token>
+      <token postag="[NJY].*" postag_regexp="yes" spacebefore="no">
+        <exception regexp="yes">\d</exception>
+      </token>
+    </pattern>
+    <disambig action="replace" postag="N f s"/>
   </rule>
   <rule id="LA_N" name="la (nom)">
     <pattern>
