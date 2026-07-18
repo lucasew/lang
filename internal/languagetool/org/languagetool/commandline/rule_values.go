@@ -103,8 +103,12 @@ func countFailOnMatches(matches []*rules.RuleMatch, failOn string) int {
 		if m == nil {
 			continue
 		}
-		id := ruleIDOfMatch(m)
-		_, _, issue, _ := languagetool.SoftRuleMeta(id)
+		// Prefer issue type from the match (set by the rule); SoftRuleMeta is fallback only.
+		issue := m.IssueType
+		if issue == "" {
+			id := ruleIDOfMatch(m)
+			_, _, issue, _ = languagetool.SoftRuleMeta(id)
+		}
 		sev := languagetool.SeverityFromIssueType(issue)
 		if severityRank(sev) >= threshold {
 			n++
@@ -113,7 +117,7 @@ func countFailOnMatches(matches []*rules.RuleMatch, failOn string) int {
 	return n
 }
 
-// countErrorSeverityMatches counts matches whose SoftRuleMeta issue type maps to SARIF error.
+// countErrorSeverityMatches counts matches whose issue type maps to SARIF error.
 func countErrorSeverityMatches(matches []*rules.RuleMatch) int {
 	return countFailOnMatches(matches, "error")
 }

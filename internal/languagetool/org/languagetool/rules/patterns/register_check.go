@@ -46,7 +46,19 @@ func RegisterTokenSequence(lt *languagetool.JLanguageTool, id, lang string, toke
 				}
 			}
 		}
-		return rules.ToLocalMatches(ms)
+		out := rules.ToLocalMatches(ms)
+		// Token-sequence injects are grammar patterns (Java Categories.GRAMMAR / ITS grammar)
+		// when the rule does not carry its own category metadata.
+		for i := range out {
+			if out[i].IssueType == "" {
+				out[i].IssueType = "grammar"
+			}
+			if out[i].CategoryID == "" {
+				out[i].CategoryID = "GRAMMAR"
+				out[i].CategoryName = "Grammar"
+			}
+		}
+		return out
 	})
 }
 
