@@ -41,6 +41,8 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		}
 		pr := NewPatternRule(ar.ID, ar.LanguageCode, ar.PatternTokens, ar.Description, ar.Message, ar.ShortMessage)
 		pr.AntiPatterns = append([]*PatternRule(nil), ar.AntiPatterns...)
+		pr.Filter = ar.Filter
+		pr.FilterArgs = ar.FilterArgs
 		// strip XML suggestion tags from message for display; keep as suggestions if present
 		msg, suggs := extractSuggestions(pr.Message)
 		pr.Message = msg

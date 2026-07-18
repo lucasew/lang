@@ -19,6 +19,9 @@ type PatternRule struct {
 	Tags         []rules.Tag
 	// AntiPatterns ports Java AbstractPatternRule anti-patterns (suppress overlapping matches).
 	AntiPatterns []*PatternRule
+	// Filter / FilterArgs port AbstractPatternRule filter applied after pattern match.
+	Filter     RuleFilter
+	FilterArgs string
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {

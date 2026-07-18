@@ -124,6 +124,21 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 			}
 			rm := rules.NewRuleMatch(m.Rule, sentence, fromPos, toPos, msg)
 			rm.ShortMessage = m.Rule.ShortMessage
+			// Java PatternRuleMatcher.createRuleMatch: run RuleFilter when set.
+			if m.Rule.PatternRule != nil && m.Rule.PatternRule.Filter != nil {
+				// patternTokens = tokens[firstMatchToken:lastMatchToken+1]
+				patternTokens := tokens[sp.first : sp.last+1]
+				// tokenPositions: one consumed token per pattern element (skip not yet tracked).
+				tokenPositions := make([]int, len(m.matchers))
+				for i := range tokenPositions {
+					tokenPositions[i] = 1
+				}
+				eval := NewRuleFilterEvaluator(m.Rule.PatternRule.Filter)
+				rm = eval.RunFilter(m.Rule.PatternRule.FilterArgs, rm, patternTokens, sp.first, tokenPositions)
+				if rm == nil {
+					return nil, false
+				}
+			}
 			return rm, true
 		}
 		matcher := m.matchers[ki]

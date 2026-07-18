@@ -45,6 +45,76 @@ func TestPatternRuleLoaderRelaxed(t *testing.T) {
 	require.Len(t, rules, 1)
 }
 
+// Java: registered filter classes load; unknown filter classes skip the rule (fail-closed).
+func TestPatternRuleLoader_KnownFilterLoaded(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="US" name="underline spaces">
+      <pattern>
+        <token>foo</token>
+      </pattern>
+      <filter class="org.languagetool.rules.UnderlineSpacesFilter" args="underlineSpaces:both"/>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.NotNil(t, ars[0].Filter)
+	require.Equal(t, "underlineSpaces:both", ars[0].FilterArgs)
+}
+
+func TestPatternRuleLoader_UnknownFilterSkipped(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="BAD" name="unknown filter">
+      <pattern>
+        <token>foo</token>
+      </pattern>
+      <filter class="org.languagetool.rules.en.NotPortedYetFilter" args="x:1"/>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Empty(t, ars, "unsupported filter must not register (would false-fire)")
+}
+
+// MultitokenSpellerFilter without dict drops matches (Java empty suggestions → null).
+func TestPatternRuleMatcher_MultitokenFilterFailClosed(t *testing.T) {
+	// Ensure no default multitoken speller invents hits.
+	SetDefaultMultitokenSpeller(nil, nil)
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="MT" name="multitoken">
+      <pattern>
+        <token>New</token>
+        <token>Yrok</token>
+      </pattern>
+      <filter class="org.languagetool.rules.spelling.multitoken.MultitokenSpellerFilter" args="none:none"/>
+      <message>spell</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	pr := NewPatternRule(ars[0].ID, "en", ars[0].PatternTokens, ars[0].Description, ars[0].Message, "")
+	pr.Filter = ars[0].Filter
+	pr.FilterArgs = ars[0].FilterArgs
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrTok("New", 0), atrTok("Yrok", 4),
+	})
+	ms, err := pr.Match(sent)
+	require.NoError(t, err)
+	require.Empty(t, ms, "no multitoken dict → filter drops (fail-closed)")
+}
+
 // Java: rules with <antipattern> load (not skipped); Match suppresses overlapping hits.
 func TestPatternRuleLoader_AntiPatternsLoaded(t *testing.T) {
 	xml := `<?xml version="1.0"?>

@@ -264,11 +264,18 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				return fmt.Errorf("rule id/name not set")
 			}
 		}
-		// Java RuleFilter: MultitokenSpellerFilter etc. decide match acceptance.
-		// Without the filter, registering the pattern alone false-fires (cheat).
-		// Skip until the filter class is ported.
+		// Java RuleFilter: decide match acceptance (e.g. MultitokenSpellerFilter).
+		// Unknown filter class → skip rule (fail-closed; never match without filter).
+		var resolvedFilter RuleFilter
+		var filterArgs string
 		if xr.Filter != nil && strings.TrimSpace(xr.Filter.Class) != "" {
-			return nil
+			class := strings.TrimSpace(xr.Filter.Class)
+			f, ok := GlobalRuleFilterCreator.TryGetFilter(class)
+			if !ok {
+				return nil
+			}
+			resolvedFilter = f
+			filterArgs = strings.TrimSpace(xr.Filter.Args)
 		}
 		// Java: pattern-level case_sensitive inherits to tokens/exceptions
 		// when the child does not set its own case_sensitive attribute.
@@ -297,6 +304,10 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		r.ShortMessage = strings.TrimSpace(xr.Short)
 		// Java antipatterns: load for Match suppress (do not invent by ignoring them).
 		r.AntiPatterns = append(r.AntiPatterns, antiPatternsFromXML(id, languageCode, xr.AntiPatterns)...)
+		if resolvedFilter != nil {
+			r.Filter = resolvedFilter
+			r.FilterArgs = filterArgs
+		}
 		r.CategoryID = catID
 		r.CategoryName = catName
 		// soft: default="off" / default="temp_off" registers but starts disabled

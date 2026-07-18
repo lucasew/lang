@@ -148,9 +148,9 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			en.RegisterPickyEnglishRules(lt)
 		}
 		// Soft grammar packs (testdata/*-soft.xml) are not loaded — faithful port only.
-		// Official grammar.xml when LANG_USE_UPSTREAM_GRAMMAR=1. PatternRuleLoader skips
-		// rules with unsupported <filter> (no filter class yet = would false-fire).
-		// <antipattern> is loaded and applied in PatternRule.Match.
+		// Official grammar.xml when LANG_USE_UPSTREAM_GRAMMAR=1. PatternRuleLoader
+		// attaches registered RuleFilters; unknown filter classes skip the rule
+		// (fail-closed). <antipattern> is loaded and applied in PatternRule.Match.
 		base := lang
 		if i := strings.IndexByte(lang, '-'); i > 0 {
 			base = lang[:i]
