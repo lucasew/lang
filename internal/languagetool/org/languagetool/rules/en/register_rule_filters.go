@@ -1,6 +1,8 @@
 package en
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -23,6 +25,25 @@ func init() {
 	})
 	c.Register("org.languagetool.rules.en.DateCheckFilter", func() patterns.RuleFilter {
 		return dateCheckRuleFilter{inner: enDateCheckWithSuggestions()}
+	})
+	c.Register("org.languagetool.rules.en.NewYearDateFilter", func() patterns.RuleFilter {
+		return newYearDateRuleFilter{core: enNewYearDateCore()}
+	})
+	c.Register("org.languagetool.rules.en.YMDNewYearDateFilter", func() patterns.RuleFilter {
+		return ymdNewYearDateRuleFilter{core: enNewYearDateCore(), ymd: rules.NewYMDDateHelper()}
+	})
+	// Suppress-misspelled: without a speller hook, nothing is treated as misspelled
+	// (Java AbstractSuppressMisspelledSuggestionsFilter with no spelling rule keeps suggestions).
+	c.Register("org.languagetool.rules.en.EnglishSuppressMisspelledSuggestionsFilter", func() patterns.RuleFilter {
+		return suppressMisspelledRuleFilter{inner: &rules.AbstractSuppressMisspelledSuggestionsFilter{}}
+	})
+	// Number-in-word / FindSuggestions need a Morfologik speller. Fail-closed until wired:
+	// empty replacements / nil speller → drop match (do not invent suggestions).
+	c.Register("org.languagetool.rules.en.EnglishNumberInWordFilter", func() patterns.RuleFilter {
+		return numberInWordRuleFilter{}
+	})
+	c.Register("org.languagetool.rules.en.FindSuggestionsFilter", func() patterns.RuleFilter {
+		return findSuggestionsRuleFilter{inner: &rules.AbstractFindSuggestionsFilter{}}
 	})
 }
 
@@ -124,6 +145,113 @@ type dateCheckRuleFilter struct {
 }
 
 func (f dateCheckRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+	if f.inner == nil {
+		return nil
+	}
+	return f.inner.AcceptRuleMatch(match, arguments, patternTokens, tokenPositions)
+}
+
+func enNewYearDateCore() *rules.NewYearDateFilterCore {
+	h := NewDateFilterHelper()
+	return &rules.NewYearDateFilterCore{
+		GetMonth: func(localized string) (int, error) {
+			m, err := h.GetMonth(localized)
+			if err != nil {
+				return 0, err
+			}
+			return int(m), nil
+		},
+	}
+}
+
+// newYearDateRuleFilter ports AbstractNewYearDateFilter.
+type newYearDateRuleFilter struct {
+	core *rules.NewYearDateFilterCore
+}
+
+func (f newYearDateRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if match == nil || f.core == nil {
+		return nil
+	}
+	msg := f.core.AcceptFromArgs(arguments, match.GetMessage())
+	if msg == "" {
+		return nil
+	}
+	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), msg)
+	out.ShortMessage = match.ShortMessage
+	return out
+}
+
+// ymdNewYearDateRuleFilter ports YMDNewYearDateFilter (date=yyyy-mm-dd then NewYear).
+type ymdNewYearDateRuleFilter struct {
+	core *rules.NewYearDateFilterCore
+	ymd  *rules.YMDDateHelper
+}
+
+func (f ymdNewYearDateRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if match == nil || f.core == nil || f.ymd == nil {
+		return nil
+	}
+	if _, ok := arguments["year"]; ok {
+		panic("set only 'weekDay' and 'date' for YMDNewYearDateFilter")
+	}
+	if _, ok := arguments["month"]; ok {
+		panic("set only 'weekDay' and 'date' for YMDNewYearDateFilter")
+	}
+	if _, ok := arguments["day"]; ok {
+		panic("set only 'weekDay' and 'date' for YMDNewYearDateFilter")
+	}
+	parsed, err := f.ymd.ParseDate(arguments)
+	if err != nil {
+		return nil
+	}
+	// Java: correctDate replaces {realDate} with year+1-mm-dd before NewYear filter.
+	y := 0
+	_, _ = fmt.Sscanf(parsed["year"], "%d", &y)
+	correctDate := fmt.Sprintf("%d-%s-%s", y+1, parsed["month"], parsed["day"])
+	msg := match.GetMessage()
+	msg = strings.ReplaceAll(msg, "{realDate}", correctDate)
+	m2 := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), msg)
+	m2.ShortMessage = match.ShortMessage
+	return (newYearDateRuleFilter{core: f.core}).AcceptRuleMatch(m2, parsed, 0, nil, nil)
+}
+
+// suppressMisspelledRuleFilter ports AbstractSuppressMisspelledSuggestionsFilter.
+type suppressMisspelledRuleFilter struct {
+	inner *rules.AbstractSuppressMisspelledSuggestionsFilter
+}
+
+func (f suppressMisspelledRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f.inner == nil {
+		return nil
+	}
+	return f.inner.AcceptRuleMatch(match, arguments)
+}
+
+// numberInWordRuleFilter ports AbstractNumberInWordFilter without a speller:
+// only pure surface rewrites are considered if they differ; without isMisspelled
+// we cannot accept invented dictionary hits, so drop (fail-closed).
+type numberInWordRuleFilter struct{}
+
+func (numberInWordRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	// Java requires isMisspelled + getSuggestions from MorfologikAmericanSpellerRule.
+	// Incomplete stack: do not invent suggestions; drop match.
+	_ = match
+	_ = arguments
+	return nil
+}
+
+// findSuggestionsRuleFilter ports FindSuggestionsFilter; nil SpellingSuggestions → drop.
+type findSuggestionsRuleFilter struct {
+	inner *rules.AbstractFindSuggestionsFilter
+}
+
+func (f findSuggestionsRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
 	if f.inner == nil {
 		return nil

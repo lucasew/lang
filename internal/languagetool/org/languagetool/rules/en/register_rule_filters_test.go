@@ -15,10 +15,37 @@ func TestENRuleFiltersRegistered(t *testing.T) {
 		"org.languagetool.rules.en.AdverbFilter",
 		"org.languagetool.rules.en.FutureDateFilter",
 		"org.languagetool.rules.en.DateCheckFilter",
+		"org.languagetool.rules.en.NewYearDateFilter",
+		"org.languagetool.rules.en.YMDNewYearDateFilter",
+		"org.languagetool.rules.en.EnglishSuppressMisspelledSuggestionsFilter",
+		"org.languagetool.rules.en.EnglishNumberInWordFilter",
+		"org.languagetool.rules.en.FindSuggestionsFilter",
+		"org.languagetool.rules.patterns.RegexAntiPatternFilter",
 	} {
 		require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(class), class)
 		require.NotNil(t, patterns.GlobalRuleFilterCreator.GetFilter(class), class)
 	}
+}
+
+func TestNewYearDateRuleFilter(t *testing.T) {
+	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.NewYearDateFilter")
+	// rules.IsTest() forces January 2014 → year 2013 non-December should flag
+	m := rules.NewRuleMatch(nil, nil, 0, 5, "Did you mean {realYear} instead of {year}?")
+	out := f.AcceptRuleMatch(m, map[string]string{"year": "2013", "month": "March", "day": "1"}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.Message, "2014")
+	require.Contains(t, out.Message, "2013")
+	// December suppressed
+	out = f.AcceptRuleMatch(m, map[string]string{"year": "2013", "month": "December", "day": "1"}, 0, nil, nil)
+	require.Nil(t, out)
+}
+
+func TestNumberInWordAndFindSuggestionsFailClosed(t *testing.T) {
+	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.EnglishNumberInWordFilter")
+	m := rules.NewRuleMatch(nil, nil, 0, 4, "msg")
+	require.Nil(t, f.AcceptRuleMatch(m, map[string]string{"word": "t0ken"}, 0, nil, nil))
+	f2 := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.en.FindSuggestionsFilter")
+	require.Nil(t, f2.AcceptRuleMatch(m, map[string]string{"wordFrom": "1", "desiredPostag": "VB"}, 0, nil, nil))
 }
 
 func TestOrdinalSuffixRuleFilter(t *testing.T) {

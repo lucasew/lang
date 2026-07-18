@@ -22,6 +22,10 @@ func registerDefaultRuleFilters(c *RuleFilterCreator) {
 	c.Register("org.languagetool.rules.patterns.ApostropheTypeFilter", func() RuleFilter {
 		return ApostropheTypeFilter{}
 	})
+	// RegexAntiPatternFilter is a RegexRuleFilter in Java; also used on pattern rules in EN grammar.
+	c.Register("org.languagetool.rules.patterns.RegexAntiPatternFilter", func() RuleFilter {
+		return regexAntiPatternAsRuleFilter{}
+	})
 	c.Register("org.languagetool.rules.UnderlineSpacesFilter", func() RuleFilter {
 		return underlineSpacesRuleFilter{}
 	})
@@ -30,6 +34,18 @@ func registerDefaultRuleFilters(c *RuleFilterCreator) {
 	c.Register("org.languagetool.rules.spelling.multitoken.MultitokenSpellerFilter", func() RuleFilter {
 		return multitokenSpellerRuleFilter{}
 	})
+}
+
+// regexAntiPatternAsRuleFilter adapts RegexAntiPatternFilter to RuleFilter (pattern rules).
+type regexAntiPatternAsRuleFilter struct{}
+
+func (regexAntiPatternAsRuleFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	sent := (*languagetool.AnalyzedSentence)(nil)
+	if match != nil {
+		sent = match.Sentence
+	}
+	return (RegexAntiPatternFilter{}).AcceptRegexMatch(match, arguments, sent)
 }
 
 // underlineSpacesRuleFilter adapts rules.UnderlineSpacesFilter to RuleFilter.
