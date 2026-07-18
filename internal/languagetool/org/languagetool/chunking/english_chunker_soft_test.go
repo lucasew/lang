@@ -55,3 +55,36 @@ func TestEnglishChunkFilter_KnowsDoesNotPluralizeAnyone(t *testing.T) {
 	require.Contains(t, strings.Join(toks[1].GetChunkTags(), ","), "singular")
 	require.Contains(t, strings.Join(toks[0].GetChunkTags(), ","), "VP")
 }
+
+func TestEnglishChunker_AbleThinkAndSimilarLike(t *testing.T) {
+	// able think → think is VP; similar like mine → like PP, mine NP
+	jj, vb, in, nn := "JJ", "VB", "IN", "NN"
+	able := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("able", &jj, nil))
+	think := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("think", &nn, nil),
+		languagetool.NewAnalyzedToken("think", &vb, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{able, think})
+	require.Contains(t, strings.Join(think.GetChunkTags(), ","), "VP")
+
+	sim := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("similar", &jj, nil))
+	like := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("like", &in, nil),
+		languagetool.NewAnalyzedToken("like", &vb, nil),
+	}, 0)
+	mine := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("mine", &nn, nil),
+		languagetool.NewAnalyzedToken("mine", &vb, nil),
+	}, 0)
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{sim, like, mine})
+	require.Contains(t, strings.Join(like.GetChunkTags(), ","), "PP")
+	require.Contains(t, strings.Join(mine.GetChunkTags(), ","), "NP")
+}
+
+func TestEnglishChunker_AmassingADJP(t *testing.T) {
+	rb, vbg := "RB", "VBG"
+	so := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("so", &rb, nil))
+	am := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("amassing", &vbg, nil))
+	NewEnglishChunker().AddChunkTags([]*languagetool.AnalyzedTokenReadings{so, am})
+	require.Contains(t, strings.Join(am.GetChunkTags(), ","), "ADJP")
+}

@@ -95,6 +95,7 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 	phrases := make([]string, len(tokens))
 	poss := make([]string, len(tokens))
 	prevPOS := ""
+	prevSurf := ""
 	for i, t := range out {
 		// Hyphenated sign-in/log-up style phrasal verbs: dict often only has NN;
 		// OpenNLP treats them as VP for SIGN_IN-style rules.
@@ -102,19 +103,38 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 			phrases[i] = "VP"
 			poss[i] = "VB"
 			prevPOS = "VB"
+			prevSurf = t.Token
 			continue
 		}
-		pos := primaryPOS(t, prevPOS)
+		pos := primaryPOS(t, prevPOS, prevSurf)
 		poss[i] = pos
 		tok := t.Token
 		if tok == "" || pos == languagetool.SentenceStartTagName ||
 			pos == languagetool.SentenceEndTagName || pos == languagetool.ParagraphEndTagName {
 			phrases[i] = "O"
 			prevPOS = ""
+			prevSurf = ""
+			continue
+		}
+		// Predicative amassing/amazing after so/very: OpenNLP ADJP, not VP.
+		if softIsPredicativeAdjContext(prevSurf, pos) {
+			phrases[i] = "ADJP"
+			poss[i] = "JJ"
+			prevPOS = "JJ"
+			prevSurf = tok
+			continue
+		}
+		// "to home/upstairs/…" adverbials: prefer ADVP when RB reading exists.
+		if softIsDirectionalAfterTo(prevSurf, t) {
+			phrases[i] = "ADVP"
+			poss[i] = "RB"
+			prevPOS = "RB"
+			prevSurf = tok
 			continue
 		}
 		phrases[i] = phraseFromPOS(pos)
 		prevPOS = pos
+		prevSurf = tok
 	}
 	bio := toBIOWithPOS(phrases, poss)
 	for i := range out {
@@ -127,14 +147,14 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 	return out
 }
 
-func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
+func primaryPOS(t ChunkTaggedToken, prevPOS, prevSurf string) string {
 	if t.Readings == nil {
 		return ""
 	}
 	// Java EnglishChunker feeds OpenNLP a single POS from its own tagger.
 	// Soft multi-tag LT dicts need a pick: default first non-boundary reading
 	// (dict order ≈ frequency), with light context/aux heuristics.
-	var first, vb, vbfinite, nn, rp, in string
+	var first, vb, vbfinite, nn, rp, in, rb, jj string
 	for _, r := range t.Readings.GetReadings() {
 		if r == nil {
 			continue
@@ -156,6 +176,12 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 		}
 		if pos == "IN" && in == "" {
 			in = pos
+		}
+		if strings.HasPrefix(pos, "RB") && rb == "" {
+			rb = pos
+		}
+		if strings.HasPrefix(pos, "JJ") && jj == "" {
+			jj = pos
 		}
 		if (strings.HasPrefix(pos, "VB") || pos == "MD") && vb == "" {
 			vb = pos
@@ -186,8 +212,9 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 			return rp
 		}
 	}
-	// Infinitive/modal: "to tell", "can run". Soft dict may list IN before TO.
-	if prevPOS == "TO" || prevPOS == "IN" || prevPOS == "MD" {
+	// Infinitive/modal: only after surface "to" (TO tag) or MD — not after every
+	// IN ("like mine" must not force VB on mine).
+	if prevPOS == "TO" || prevPOS == "MD" || strings.EqualFold(prevSurf, "to") {
 		if vb != "" {
 			return vb
 		}
@@ -205,12 +232,26 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 			return vbfinite
 		}
 	}
+	// After adjective: "similar like mine" — prefer prep reading of like/as.
+	if strings.HasPrefix(prevPOS, "JJ") {
+		if softIsAdjComplementPrep(t.Token) && in != "" {
+			return in
+		}
+		// "able think" / "great write"
+		if vb != "" {
+			return vb
+		}
+	}
+	// After adverb: verb complement (never make).
+	if strings.HasPrefix(prevPOS, "RB") && vb != "" {
+		return vb
+	}
 	// After a verb, prefer another verb for serial/aspect complements (keep see,
 	// going tell) when both NN and VB exist.
 	if strings.HasPrefix(prevPOS, "VB") && vb != "" {
 		return vb
 	}
-	// After CC prefer verb (and catch up).
+	// After CC prefer verb (and catch up / and never make).
 	if prevPOS == "CC" && vb != "" {
 		return vb
 	}
@@ -220,6 +261,42 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 		return vb
 	}
 	return first
+}
+
+func softIsPredicativeAdjContext(prevSurf, pos string) bool {
+	// "is so amassing" — VBG/JJ after intensifier should chunk as ADJP.
+	switch strings.ToLower(strings.TrimSpace(prevSurf)) {
+	case "so", "very", "really", "quite", "totally", "pretty", "rather":
+		return strings.HasPrefix(pos, "VB") || strings.HasPrefix(pos, "JJ")
+	default:
+		return false
+	}
+}
+
+func softIsDirectionalAfterTo(prevSurf string, t ChunkTaggedToken) bool {
+	if !strings.EqualFold(strings.TrimSpace(prevSurf), "to") {
+		return false
+	}
+	switch strings.ToLower(strings.TrimSpace(t.Token)) {
+	case "home", "upstairs", "downstairs", "downtown", "inside", "outside",
+		"there", "here", "away", "near", "abroad", "overseas",
+		"everywhere", "somewhere", "nowhere", "underground":
+		// need an RB reading (or bare adverbial surface)
+		if t.Readings == nil {
+			return true
+		}
+		for _, r := range t.Readings.GetReadings() {
+			if r == nil {
+				continue
+			}
+			if p := r.GetPOSTag(); p != nil && (strings.HasPrefix(*p, "RB") || *p == "JJ") {
+				return true
+			}
+		}
+		return true
+	default:
+		return false
+	}
 }
 
 func softIsEnglishAuxSurface(s string) bool {
@@ -249,6 +326,16 @@ func softIsHyphenPhrasalVerb(s string) bool {
 	low := strings.ToLower(strings.TrimSpace(s))
 	switch low {
 	case "sign-in", "sign-up", "sign-off", "log-in", "log-up", "log-off":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsAdjComplementPrep: prepositions that follow adjectives (similar like, different from).
+func softIsAdjComplementPrep(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "like", "as", "from", "to", "with", "of", "for", "about", "than":
 		return true
 	default:
 		return false
