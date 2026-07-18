@@ -136,7 +136,15 @@ func (m *PatternRuleMatcher) matchFrom(sentence *languagetool.AnalyzedSentence, 
 		}
 		minOcc := pt.MinOccurrence
 		maxOcc := pt.MaxOccurrence
-		if maxOcc < 1 {
+		// Java PatternToken max="-1" means unlimited occurrences (LOOK_DOOR
+		// min=0 max=-1 chunk_re="[BI]-NP.*"). Soft previously clamped max<1 to 1.
+		if maxOcc < 0 {
+			// cap by remaining tokens so the occ loop stays finite
+			maxOcc = len(tokens) - pos
+			if maxOcc < minOcc {
+				maxOcc = minOcc
+			}
+		} else if maxOcc < 1 {
 			maxOcc = 1
 		}
 		if minOcc < 0 {

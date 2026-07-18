@@ -36,3 +36,22 @@ func TestEnglishChunker_ToTellVP(t *testing.T) {
 }
 
 func strPtr(s string) *string { return &s }
+
+func TestEnglishChunkFilter_KnowsDoesNotPluralizeAnyone(t *testing.T) {
+	// Regression: getChunkType must not scan past the NP into NNS|VBZ "knows".
+	nns, vbz, prp := "NNS", "VBZ", "PRP"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+			languagetool.NewAnalyzedToken("Does", &nns, strPtr("do")),
+			languagetool.NewAnalyzedToken("Does", &vbz, strPtr("do")),
+		}, 0),
+		languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("anyone", &prp, strPtr("anyone"))),
+		languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+			languagetool.NewAnalyzedToken("knows", &nns, strPtr("know")),
+			languagetool.NewAnalyzedToken("knows", &vbz, strPtr("know")),
+		}, 0),
+	}
+	NewEnglishChunker().AddChunkTags(toks)
+	require.Contains(t, strings.Join(toks[1].GetChunkTags(), ","), "singular")
+	require.Contains(t, strings.Join(toks[0].GetChunkTags(), ","), "VP")
+}

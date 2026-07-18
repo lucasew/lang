@@ -89,17 +89,21 @@ func endOfNounPhraseIsSingular(tokens []ChunkTaggedToken, i int) bool {
 }
 
 func getChunkType(tokens []ChunkTaggedToken, i int) chunkType {
-	// scan NP span for plural POS (NNS, NNPS) or plural pronouns
+	// Java EnglishChunkFilter.getChunkType: only scan B-NP/I-NP tokens in the
+	// span; break before plural-check when the token is outside the NP (so a
+	// following NNS|VBZ verb like "knows" does not make "anyone" plural).
+	plural := false
 	for j := i; j < len(tokens); j++ {
-		if j > i && isBeginningOfNounPhrase(tokens[j]) {
+		tok := tokens[j]
+		if !isBeginningOfNounPhrase(tok) && !isContinuationOfNounPhrase(tok) {
 			break
 		}
-		if isPluralToken(tokens[j]) {
-			return chunkPlural
+		if isPluralToken(tok) {
+			plural = true
 		}
-		if j > i && !isContinuationOfNounPhrase(tokens[j]) && !isBeginningOfNounPhrase(tokens[j]) {
-			break
-		}
+	}
+	if plural {
+		return chunkPlural
 	}
 	return chunkSingular
 }

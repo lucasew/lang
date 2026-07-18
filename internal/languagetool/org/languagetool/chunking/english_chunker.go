@@ -96,6 +96,14 @@ func (c *EnglishChunker) assignOpenNLPLike(tokens []ChunkTaggedToken) []ChunkTag
 	poss := make([]string, len(tokens))
 	prevPOS := ""
 	for i, t := range out {
+		// Hyphenated sign-in/log-up style phrasal verbs: dict often only has NN;
+		// OpenNLP treats them as VP for SIGN_IN-style rules.
+		if softIsHyphenPhrasalVerb(t.Token) {
+			phrases[i] = "VP"
+			poss[i] = "VB"
+			prevPOS = "VB"
+			continue
+		}
 		pos := primaryPOS(t, prevPOS)
 		poss[i] = pos
 		tok := t.Token
@@ -125,9 +133,8 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 	}
 	// Java EnglishChunker feeds OpenNLP a single POS from its own tagger.
 	// Soft multi-tag LT dicts need a pick: default first non-boundary reading
-	// (dict order ≈ frequency). After TO/MD prefer a verb reading so
-	// infinitives/modals chunk as VP (ANY_WAY_TO_VB: "to tell").
-	var first, vb, nn string
+	// (dict order ≈ frequency), with light context/aux heuristics.
+	var first, vb, vbfinite, nn, rp, in string
 	for _, r := range t.Readings.GetReadings() {
 		if r == nil {
 			continue
@@ -144,11 +151,39 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 		if first == "" {
 			first = pos
 		}
+		if pos == "RP" && rp == "" {
+			rp = pos
+		}
+		if pos == "IN" && in == "" {
+			in = pos
+		}
 		if (strings.HasPrefix(pos, "VB") || pos == "MD") && vb == "" {
 			vb = pos
 		}
+		// Finite verbs (not VBG/VBN alone) for subject-verb after NN.
+		if (pos == "VB" || pos == "VBP" || pos == "VBZ" || pos == "VBD" || pos == "MD") && vbfinite == "" {
+			vbfinite = pos
+		}
 		if strings.HasPrefix(pos, "NN") && nn == "" {
 			nn = pos
+		}
+	}
+	// English.dict often tags auxiliaries Does/Did as NNS|VBZ (plural noun first).
+	// OpenNLP POS would choose VB*; force VB for known aux surfaces.
+	if vb != "" && softIsEnglishAuxSurface(t.Token) {
+		return vb
+	}
+	// Particles vs prepositions after a verb: "catch up" → RP/B-PRT, but
+	// "singed with" / "books at" prefer IN/B-PP (prep surfaces).
+	if strings.HasPrefix(prevPOS, "VB") {
+		if softIsEnglishParticleSurface(t.Token) && rp != "" {
+			return rp
+		}
+		if in != "" {
+			return in
+		}
+		if rp != "" {
+			return rp
 		}
 	}
 	// Infinitive/modal: "to tell", "can run". Soft dict may list IN before TO.
@@ -163,13 +198,61 @@ func primaryPOS(t ChunkTaggedToken, prevPOS string) string {
 			return nn
 		}
 	}
-	// After a subject-like tag, prefer verb (Chris rose / they run).
+	// After a subject-like tag, prefer a *finite* verb (Chris rose / they run).
+	// Do not prefer VBG over NN ("yoga training" must stay NP).
 	if strings.HasPrefix(prevPOS, "NN") || prevPOS == "PRP" || strings.HasPrefix(prevPOS, "PRP_") {
-		if vb != "" {
-			return vb
+		if vbfinite != "" {
+			return vbfinite
 		}
 	}
+	// After a verb, prefer another verb for serial/aspect complements (keep see,
+	// going tell) when both NN and VB exist.
+	if strings.HasPrefix(prevPOS, "VB") && vb != "" {
+		return vb
+	}
+	// After CC prefer verb (and catch up).
+	if prevPOS == "CC" && vb != "" {
+		return vb
+	}
+	// Sentence-initial (or after O) imperative/content verbs: "Look the door"
+	// is often NN|VB in the dict; OpenNLP prefers VB in imperative context.
+	if prevPOS == "" && vb != "" && nn != "" {
+		return vb
+	}
 	return first
+}
+
+func softIsEnglishAuxSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "do", "does", "did", "is", "am", "are", "was", "were",
+		"has", "have", "had", "be", "been", "being",
+		"will", "would", "shall", "should", "can", "could", "may", "might", "must":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsEnglishParticleSurface: common verb particles (OpenNLP B-PRT), not
+// prepositions that are also tagged RP (with/at/for…).
+func softIsEnglishParticleSurface(s string) bool {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "up", "out", "off", "away", "back", "down", "over", "along", "around", "through", "in", "on":
+		return true
+	default:
+		return false
+	}
+}
+
+// softIsHyphenPhrasalVerb matches SIGN_IN pattern surfaces (sign|log)-(in|up|off).
+func softIsHyphenPhrasalVerb(s string) bool {
+	low := strings.ToLower(strings.TrimSpace(s))
+	switch low {
+	case "sign-in", "sign-up", "sign-off", "log-in", "log-up", "log-off":
+		return true
+	default:
+		return false
+	}
 }
 
 func phraseFromPOS(pos string) string {
@@ -180,7 +263,10 @@ func phraseFromPOS(pos string) string {
 		return "VP"
 	case strings.HasPrefix(pos, "RB") || pos == "WRB":
 		return "ADVP"
-	case pos == "IN" || pos == "TO" || pos == "RP":
+	case pos == "RP":
+		// OpenNLP particle chunk (catch up / sign in) → B-PRT
+		return "PRT"
+	case pos == "IN" || pos == "TO":
 		return "PP"
 	case strings.HasPrefix(pos, "NN") || pos == "DT" || pos == "PDT" ||
 		pos == "PRP" || pos == "PRP$" || pos == "CD" || pos == "EX" ||
@@ -216,8 +302,9 @@ func toBIO(phrase []string) []string {
 	return out
 }
 
-// toBIOWithPOS restarts NP at DT/PDT so "his chair an …" is two NPs
-// (OpenNLP rarely chains a determiner after a head noun into one chunk).
+// toBIOWithPOS restarts NP at DT/PDT/PRP so "his chair an …" / "Some time I …"
+// are multiple NPs (OpenNLP rarely chains a new determiner/pronoun into the
+// previous noun phrase).
 func toBIOWithPOS(phrase []string, poss []string) []string {
 	out := make([]string, len(phrase))
 	prev := ""
@@ -230,7 +317,7 @@ func toBIOWithPOS(phrase []string, poss []string) []string {
 		restart := false
 		if p == "NP" && prev == "NP" && i < len(poss) {
 			pos := poss[i]
-			if pos == "DT" || pos == "PDT" {
+			if pos == "DT" || pos == "PDT" || pos == "PRP" || strings.HasPrefix(pos, "PRP_") {
 				restart = true
 			}
 		}
