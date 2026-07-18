@@ -533,10 +533,18 @@ func softPostagPartIsNumber(p string) bool {
 		strings.HasPrefix(p, "Z+") || strings.HasPrefix(p, "Z*") {
 		return true
 	}
-	// Penn CD; DE CARD; generic NUM*
-	if p == "CD" || strings.HasPrefix(p, "CD") ||
-		strings.Contains(p, "CARD") ||
-		p == "NUM" || strings.HasPrefix(p, "NUM") {
+	// Penn CD; DE CARD. Do NOT treat Irish "Num:Ord" / "Num:Dig:Ord" as digit-only:
+	// those are morphological ordinal tags for spelled-out words (tríú), not Z/CD.
+	if p == "CD" || strings.HasPrefix(p, "CD.") || strings.HasPrefix(p, "CD ") ||
+		strings.HasPrefix(p, "CD+") || strings.HasPrefix(p, "CD*") {
+		return true
+	}
+	if strings.Contains(p, "CARD") {
+		return true
+	}
+	// Bare NUM / NUM.* digit tags only (not Num:Ord, Num:Dig:Ord, …).
+	if p == "NUM" || strings.HasPrefix(p, "NUM.") || strings.HasPrefix(p, "NUM ") ||
+		strings.HasPrefix(p, "NUM+") || strings.HasPrefix(p, "NUM*") {
 		return true
 	}
 	return false
