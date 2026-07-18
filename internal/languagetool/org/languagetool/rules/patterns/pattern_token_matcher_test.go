@@ -235,3 +235,17 @@ func TestNextException_BlocksMatch(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, ms2)
 }
+
+func TestSoftInflected_PolishSuppletiveComparative(t *testing.T) {
+	// LEPSZE_ZLO: inflected="yes" token "dobry" must match "lepszym"
+	pt := NewPatternToken("dobry", false, false, true)
+	m := NewPatternTokenMatcher(pt)
+	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("lepszym", nil, nil)))
+	require.True(t, m.IsMatched(languagetool.NewAnalyzedToken("lepsze", nil, nil)))
+	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("czerwony", nil, nil)))
+
+	zlo := NewPatternToken("zło", false, false, true)
+	zm := NewPatternTokenMatcher(zlo)
+	require.True(t, zm.IsMatched(languagetool.NewAnalyzedToken("złem", nil, nil)))
+	require.True(t, zm.IsMatched(languagetool.NewAnalyzedToken("zła", nil, nil)))
+}

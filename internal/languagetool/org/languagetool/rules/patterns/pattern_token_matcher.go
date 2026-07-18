@@ -1542,6 +1542,21 @@ var softIrregularLemma = map[string][]string{
 	"liom": {"le"}, "leat": {"le"}, "leis": {"le"}, "léi": {"le"}, "linn": {"le"}, "libh": {"le"}, "leo": {"le"},
 	"agam": {"ag"}, "agat": {"ag"}, "aige": {"ag"}, "aici": {"ag"}, "againn": {"ag"}, "agaibh": {"ag"}, "acu": {"ag"},
 	"dom": {"do"}, "duit": {"do"}, "dó": {"do"}, "dúinn": {"do"}, "daoibh": {"do"}, "dóibh": {"do"},
+	// Polish suppletive comparative (dobry→lepszy) and zło case forms — LEPSZE_ZLO.
+	"lepszy": {"dobry"}, "lepsza": {"dobry"}, "lepsze": {"dobry"},
+	"lepszego": {"dobry"}, "lepszej": {"dobry"}, "lepszemu": {"dobry"},
+	"lepszą": {"dobry"}, "lepszym": {"dobry"}, "lepszych": {"dobry"},
+	"lepszymi": {"dobry"}, "lepsi": {"dobry"},
+	"najlepszy": {"dobry"}, "najlepsza": {"dobry"}, "najlepsze": {"dobry"},
+	"najlepszym": {"dobry"}, "najlepszej": {"dobry"}, "najlepszych": {"dobry"},
+	"gorszy": {"zły"}, "gorsza": {"zły"}, "gorsze": {"zły"},
+	"gorszym": {"zły"}, "gorszej": {"zły"}, "gorszych": {"zły"},
+	"mniejszy": {"mały"}, "mniejsza": {"mały"}, "mniejsze": {"mały"},
+	"mniejszego": {"mały"}, "mniejszej": {"mały"}, "mniejszemu": {"mały"},
+	"mniejszą": {"mały"}, "mniejszym": {"mały"}, "mniejszych": {"mały"},
+	"mniejszymi": {"mały"}, "mniejsi": {"mały"},
+	"zła": {"zło"}, "złe": {"zło"}, "złego": {"zło"}, "złemu": {"zło"},
+	"złym": {"zło"}, "złem": {"zło"}, "złych": {"zło"}, "złymi": {"zło"},
 }
 
 // softInflectedSurfaceMatch approximates lemma matching without a tagger:
