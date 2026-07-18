@@ -43,49 +43,45 @@ func SoftCJKLexiconForLang(lang string) *SoftCJKLexicon {
 	}
 	path := discoverSoftGrammar(base)
 	lex := &SoftCJKLexicon{Words: map[string]struct{}{}, MaxLen: 1}
+	add := func(part string) {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			return
+		}
+		n := utf8.RuneCountInString(part)
+		if n < 2 || n > 12 {
+			return
+		}
+		if isAllASCIIWord(part) {
+			return
+		}
+		// Require at least one CJK rune.
+		hasCJK := false
+		for _, r := range part {
+			if isHan(r) || isHiragana(r) || isKatakana(r) {
+				hasCJK = true
+				break
+			}
+		}
+		if !hasCJK {
+			return
+		}
+		lex.Words[part] = struct{}{}
+		if n > lex.MaxLen {
+			lex.MaxLen = n
+		}
+	}
 	if path != "" {
 		if data, err := os.ReadFile(path); err == nil {
 			for _, m := range softTokenRE.FindAllSubmatch(data, -1) {
 				attrs := string(m[1])
 				w := strings.TrimSpace(string(m[2]))
-				if w == "" {
-					continue
-				}
-				// Expand simple | alternatives; strip trivial .* prefix REs
-				// (e.g. .*琅琅 → 琅琅 for LANG1_LANG2 soft matching).
-				parts := []string{w}
-				if strings.Contains(attrs, `regexp="yes"`) {
-					if strings.HasPrefix(w, ".*") && !strings.ContainsAny(w[2:], ".*+?[](){}\\|") {
-						parts = []string{w[2:]}
-					} else if strings.Contains(w, "|") && !strings.ContainsAny(w, ".*+?[](){}\\") {
-						parts = strings.Split(w, "|")
-					} else {
-						continue
-					}
-				} else if strings.Contains(w, "|") && !strings.ContainsAny(w, ".*+?[](){}\\") {
-					parts = strings.Split(w, "|")
-				}
-				for _, part := range parts {
-					part = strings.TrimSpace(part)
-					if part == "" {
-						continue
-					}
-					n := utf8.RuneCountInString(part)
-					if n < 2 {
-						continue
-					}
-					if isAllASCIIWord(part) {
-						continue
-					}
-					lex.Words[part] = struct{}{}
-					if n > lex.MaxLen {
-						lex.MaxLen = n
-					}
+				for _, part := range softLexiconParts(w, attrs) {
+					add(part)
 				}
 			}
 		}
 	}
-	// Bust cache only on first load; tests may need clear — accept process lifetime.
 	softCJKCache[base] = lex
 	return lex
 }
@@ -98,20 +94,22 @@ func ClearSoftCJKLexiconCache() {
 }
 
 func discoverSoftGrammar(lang string) string {
-	envKey := "LANG_" + strings.ToUpper(lang) + "_SOFT_GRAMMAR"
+	return walkUpSoftFile(lang, []string{
+		filepath.Join("testdata", "grammar", lang+"-upstream-soft.xml"),
+		filepath.Join("testdata", "upstream", lang, lang+"-from-upstream-soft.xml"),
+	}, "LANG_"+strings.ToUpper(lang)+"_SOFT_GRAMMAR")
+}
+
+func walkUpSoftFile(lang string, rels []string, envKey string) string {
 	if p := os.Getenv(envKey); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 			return p
 		}
 	}
-	name := lang + "-upstream-soft.xml"
 	wd, _ := os.Getwd()
 	dir := wd
 	for i := 0; i < 12; i++ {
-		for _, rel := range []string{
-			filepath.Join("testdata", "grammar", name),
-			filepath.Join("testdata", "upstream", lang, lang+"-from-upstream-soft.xml"),
-		} {
+		for _, rel := range rels {
 			p := filepath.Join(dir, rel)
 			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 				return p
@@ -138,9 +136,57 @@ func isAllASCIIWord(s string) bool {
 	return true
 }
 
-// SegmentCJKLongestMatch splits text using longest-match against lex for CJK,
-// kana runs when unknown, Latin/digit runs (excluding CJK letters), and
-// punctuation as single tokens.
+// softLexiconParts extracts literal CJK multi-char surfaces from a soft <token> body.
+func softLexiconParts(w, attrs string) []string {
+	w = strings.TrimSpace(w)
+	if w == "" {
+		return nil
+	}
+	// (有|任何)? → 有, 任何
+	if strings.HasPrefix(w, "(") && (strings.HasSuffix(w, ")?") || strings.HasSuffix(w, ")*") || strings.HasSuffix(w, ")+")) {
+		inner := w
+		switch {
+		case strings.HasSuffix(inner, ")?"):
+			inner = strings.TrimSuffix(inner, ")?")
+		case strings.HasSuffix(inner, ")*"):
+			inner = strings.TrimSuffix(inner, ")*")
+		default:
+			inner = strings.TrimSuffix(inner, ")+")
+		}
+		inner = strings.TrimPrefix(inner, "(")
+		if !strings.ContainsAny(inner, ".*+?[]{}\\") {
+			return splitBar(inner)
+		}
+	}
+	if strings.Contains(attrs, `regexp="yes"`) {
+		if strings.HasPrefix(w, ".*") && !strings.ContainsAny(w[2:], ".*+?[](){}\\|") {
+			return []string{w[2:]}
+		}
+		if strings.Contains(w, "|") && !strings.ContainsAny(w, ".*+?[](){}\\") {
+			return splitBar(w)
+		}
+		return nil
+	}
+	if strings.Contains(w, "|") && !strings.ContainsAny(w, ".*+?[](){}\\") {
+		return splitBar(w)
+	}
+	return []string{w}
+}
+
+func splitBar(s string) []string {
+	var out []string
+	for _, p := range strings.Split(s, "|") {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// SegmentCJKLongestMatch splits text using forward maximum matching against
+// lex for CJK (Han/kana), with a light look-ahead so e.g. し+いっそう wins over
+// しい when いっそう is a lexicon word. Latin/digit runs exclude CJK.
 func SegmentCJKLongestMatch(text string, lex *SoftCJKLexicon) []string {
 	if text == "" {
 		return nil
@@ -165,7 +211,6 @@ func SegmentCJKLongestMatch(text string, lex *SoftCJKLexicon) []string {
 			continue
 		}
 		if isHan(r) || isHiragana(r) || isKatakana(r) {
-			// longest lexicon match first
 			limit := maxLen
 			if rem := len(runes) - i; rem < limit {
 				limit = rem
@@ -180,16 +225,12 @@ func SegmentCJKLongestMatch(text string, lex *SoftCJKLexicon) []string {
 					break
 				}
 			}
-			if matched {
-				continue
+			if !matched {
+				out = append(out, string(r))
+				i++
 			}
-			// Unknown CJK: single character (soft rules often need ず+らい
-			// and 呼+べ separately when not in the lexicon).
-			out = append(out, string(r))
-			i++
 			continue
 		}
-		// Latin / digit runs — must NOT swallow CJK (Han is unicode.IsLetter).
 		if isASCIILetterOrDigit(r) {
 			j := i + 1
 			for j < len(runes) {
@@ -203,7 +244,6 @@ func SegmentCJKLongestMatch(text string, lex *SoftCJKLexicon) []string {
 			i = j
 			continue
 		}
-		// Other letters (e.g. Arabic) as runs excluding CJK
 		if unicode.IsLetter(r) || unicode.IsDigit(r) {
 			j := i + 1
 			for j < len(runes) {
