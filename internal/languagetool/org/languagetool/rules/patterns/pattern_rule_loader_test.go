@@ -45,6 +45,87 @@ func TestPatternRuleLoaderRelaxed(t *testing.T) {
 	require.Len(t, rules, 1)
 }
 
+// Java: rules with <antipattern> load (not skipped); Match suppresses overlapping hits.
+func TestPatternRuleLoader_AntiPatternsLoaded(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="REPEAT" name="repeated">
+      <pattern>
+        <token>go</token>
+        <token>go</token>
+      </pattern>
+      <antipattern>
+        <token>to</token>
+        <token>go</token>
+        <token>go</token>
+      </antipattern>
+      <message>repeated go</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 1)
+	require.Len(t, ars[0].AntiPatterns, 1)
+	require.Len(t, ars[0].AntiPatterns[0].Tokens, 3)
+
+	pr := NewPatternRule(ars[0].ID, "en", ars[0].PatternTokens, ars[0].Description, ars[0].Message, "")
+	pr.AntiPatterns = ars[0].AntiPatterns
+
+	// "go go" alone → fire
+	sentFire := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrTok("go", 0), atrTok("go", 3),
+	})
+	ms, err := pr.Match(sentFire)
+	require.NoError(t, err)
+	require.Len(t, ms, 1)
+
+	// "to go go" → antipattern overlaps → suppress
+	sentKeep := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrTok("to", 0), atrTok("go", 3), atrTok("go", 6),
+	})
+	ms, err = pr.Match(sentKeep)
+	require.NoError(t, err)
+	require.Empty(t, ms, "antipattern must suppress overlapping rule match")
+}
+
+// Java PatternRuleHandler: rulegroup <antipattern> attaches to every child rule.
+func TestPatternRuleLoader_RuleGroupAntiPatterns(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rulegroup id="RG" name="group">
+      <antipattern>
+        <token>safe</token>
+        <token>word</token>
+      </antipattern>
+      <rule>
+        <pattern>
+          <token>word</token>
+          <token>word</token>
+        </pattern>
+        <message>dup</message>
+      </rule>
+      <rule id="RG_B">
+        <pattern>
+          <token>x</token>
+        </pattern>
+        <message>x</message>
+      </rule>
+    </rulegroup>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 2)
+	require.Equal(t, "RG", ars[0].ID)
+	require.Equal(t, "1", ars[0].SubID)
+	require.Len(t, ars[0].AntiPatterns, 1)
+	require.Len(t, ars[1].AntiPatterns, 1)
+	require.Equal(t, "RG_B", ars[1].ID)
+}
+
 func TestPatternRuleLoader_ExceptionAndInflected(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules>

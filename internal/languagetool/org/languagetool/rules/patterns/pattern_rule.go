@@ -17,6 +17,8 @@ type PatternRule struct {
 	Message      string
 	ShortMessage string
 	Tags         []rules.Tag
+	// AntiPatterns ports Java AbstractPatternRule anti-patterns (suppress overlapping matches).
+	AntiPatterns []*PatternRule
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -85,6 +87,45 @@ func NewFalseFriendPatternRule(id, languageCode string, tokens []*PatternToken, 
 }
 
 // Match runs a simplified PatternRuleMatcher against the sentence.
+// Java: matches suppressed when an antipattern overlaps (AbstractPatternRulePerformer).
 func (r *PatternRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
-	return NewPatternRuleMatcherFromPattern(r).Match(sentence)
+	found, err := NewPatternRuleMatcherFromPattern(r).Match(sentence)
+	if err != nil || len(found) == 0 || len(r.AntiPatterns) == 0 {
+		return found, err
+	}
+	var kept []*rules.RuleMatch
+	for _, rm := range found {
+		if rm == nil {
+			continue
+		}
+		if keepByGrammarAntiPatterns(r.AntiPatterns, sentence, rm.FromPos, rm.ToPos) {
+			kept = append(kept, rm)
+		}
+	}
+	return kept, nil
+}
+
+// keepByGrammarAntiPatterns returns false when any antipattern match overlaps [from,to].
+// Same overlap test as DisambiguationPatternRule.keepByDisambig / Java PatternRuleMatcher.
+func keepByGrammarAntiPatterns(antis []*PatternRule, sentence *languagetool.AnalyzedSentence, fromPos, toPos int) bool {
+	for _, ap := range antis {
+		if ap == nil || len(ap.Tokens) == 0 {
+			continue
+		}
+		antiMatches, err := NewPatternRuleMatcherFromPattern(ap).Match(sentence)
+		if err != nil || len(antiMatches) == 0 {
+			continue
+		}
+		for _, dm := range antiMatches {
+			if dm == nil {
+				continue
+			}
+			if (dm.FromPos <= fromPos && dm.ToPos >= fromPos) ||
+				(dm.FromPos <= toPos && dm.ToPos >= toPos) ||
+				(dm.FromPos >= fromPos && dm.ToPos <= toPos) {
+				return false
+			}
+		}
+	}
+	return true
 }

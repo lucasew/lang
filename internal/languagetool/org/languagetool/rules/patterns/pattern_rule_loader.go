@@ -52,7 +52,9 @@ type xmlCategory struct {
 type xmlRuleGroup struct {
 	ID    string    `xml:"id,attr"`
 	Name  string    `xml:"name,attr"`
-	Rules []xmlRule `xml:"rule"`
+	// AntiPatterns on the rulegroup apply to every child rule (Java PatternRuleHandler).
+	AntiPatterns []xmlPattern `xml:"antipattern"`
+	Rules        []xmlRule    `xml:"rule"`
 }
 
 type xmlRule struct {
@@ -66,8 +68,8 @@ type xmlRule struct {
 	// Filter is Java <filter class="…"/> — not implemented for most classes.
 	// Rules with an unsupported filter must not register (would match without filter = cheat).
 	Filter *xmlFilter `xml:"filter"`
-	// AntiPatterns: without keepByAntiPattern, rules false-fire (e.g. REPEATED_VERBS).
-	// Skip until antipattern matching is 1:1 with Java.
+	// AntiPatterns ports Java <antipattern>; loaded and applied in PatternRule.Match
+	// via keepByGrammarAntiPatterns (overlap suppress, same test as keepByDisambig).
 	AntiPatterns []xmlPattern `xml:"antipattern"`
 }
 
@@ -268,10 +270,6 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		if xr.Filter != nil && strings.TrimSpace(xr.Filter.Class) != "" {
 			return nil
 		}
-		// Antipatterns suppress matches; without them many rules false-fire.
-		if len(xr.AntiPatterns) > 0 {
-			return nil
-		}
 		// Java: pattern-level case_sensitive inherits to tokens/exceptions
 		// when the child does not set its own case_sensitive attribute.
 		patternCS := strings.EqualFold(xr.Pattern.CaseSensitive, "yes")
@@ -297,6 +295,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		r := NewAbstractPatternRule(id, name, languageCode, tokens, false)
 		r.Message = strings.TrimSpace(xr.Message.Inner)
 		r.ShortMessage = strings.TrimSpace(xr.Short)
+		// Java antipatterns: load for Match suppress (do not invent by ignoring them).
+		r.AntiPatterns = append(r.AntiPatterns, antiPatternsFromXML(id, languageCode, xr.AntiPatterns)...)
 		r.CategoryID = catID
 		r.CategoryName = catName
 		// soft: default="off" / default="temp_off" registers but starts disabled
@@ -314,6 +314,8 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 			}
 		}
 		for _, g := range cat.RuleGroups {
+			// Java: rulegroup antipatterns apply to every child rule (prepareRule).
+			groupAntis := antiPatternsFromXML(g.ID, languageCode, g.AntiPatterns)
 			for i, xr := range g.Rules {
 				id := xr.ID
 				if id == "" {
@@ -324,9 +326,14 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 				}
 				// sub id 1-based
 				if len(out) > 0 {
-					out[len(out)-1].SubID = fmt.Sprintf("%d", i+1)
-					if out[len(out)-1].ID == "" {
-						out[len(out)-1].ID = g.ID
+					last := out[len(out)-1]
+					last.SubID = fmt.Sprintf("%d", i+1)
+					if last.ID == "" {
+						last.ID = g.ID
+					}
+					// Java setAntiPatterns: rulegroup first, then rule-level (append).
+					if len(groupAntis) > 0 {
+						last.AntiPatterns = append(append([]*PatternRule(nil), groupAntis...), last.AntiPatterns...)
 					}
 				}
 			}
@@ -338,6 +345,41 @@ func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode string) ([]*
 		}
 	}
 	return out, nil
+}
+
+// antiPatternsFromXML builds PatternRule antipatterns from XML <antipattern> blocks.
+// Java: DisambiguationPatternRule with IMMUNIZE; Go Match uses overlap suppress equivalent.
+func antiPatternsFromXML(ruleID, languageCode string, aps []xmlPattern) []*PatternRule {
+	if len(aps) == 0 {
+		return nil
+	}
+	var out []*PatternRule
+	for i, ap := range aps {
+		var apToks []*PatternToken
+		// Java: pattern-level case_sensitive inherits to antipattern tokens too when set.
+		patternCS := strings.EqualFold(ap.CaseSensitive, "yes")
+		for _, xt := range ap.Tokens {
+			if patternCS && xt.CaseSensitive == "" {
+				xt.CaseSensitive = "yes"
+			}
+			apToks = append(apToks, tokenFromXML(xt))
+		}
+		if len(apToks) == 0 {
+			continue
+		}
+		// Java without <marker>: mark all tokens inside marker so immunize spans the full antipattern.
+		for _, t := range apToks {
+			if t != nil {
+				t.InsideMarker = true
+			}
+		}
+		apID := fmt.Sprintf("%s_anti_%d", ruleID, i)
+		if ruleID == "" {
+			apID = fmt.Sprintf("anti_%d", i)
+		}
+		out = append(out, NewPatternRule(apID, languageCode, apToks, "antipattern", "", ""))
+	}
+	return out
 }
 
 func tokenFromXML(xt xmlToken) *PatternToken {
