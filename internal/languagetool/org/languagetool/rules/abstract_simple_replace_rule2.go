@@ -46,6 +46,15 @@ type AbstractSimpleReplaceRule2 struct {
 	LanguageCode         string
 	// Category ports Rule.category (Java MISC).
 	Category *Category
+	// IssueType ports getLocQualityIssueType.
+	IssueType ITSIssueType
+	// Tags ports Rule.tags (e.g. Tag.picky).
+	Tags []Tag
+	// URL ports Rule.url (Java setUrl).
+	URL string
+	// RuleHasSuggestions ports setRuleHasSuggestions (false for profanity — no repls).
+	// When false, Match still runs but does not attach suggestion lists from the file.
+	RuleHasSuggestions *bool
 	// MatchShortAllUpperInCheckCase ports setIgnoreShortUppercaseWords(false):
 	// when true, short ALLCAPS tokens (len≤4) still match in CheckingCase mode (Dutch).
 	MatchShortAllUpperInCheckCase bool
@@ -165,6 +174,58 @@ func (r *AbstractSimpleReplaceRule2) GetCategory() *Category {
 		return nil
 	}
 	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AbstractSimpleReplaceRule2) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSUncategorized
+	}
+	return r.IssueType
+}
+
+// GetURL ports Rule.getUrl.
+func (r *AbstractSimpleReplaceRule2) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *AbstractSimpleReplaceRule2) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// GetTags ports Rule.getTags.
+func (r *AbstractSimpleReplaceRule2) GetTags() []Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
+}
+
+// HasTag ports Rule.hasTag.
+func (r *AbstractSimpleReplaceRule2) HasTag(tag Tag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// hasSuggestions ports ruleHasSuggestions (Java default true).
+func (r *AbstractSimpleReplaceRule2) hasSuggestions() bool {
+	if r != nil && r.RuleHasSuggestions != nil {
+		return *r.RuleHasSuggestions
+	}
+	return true
 }
 
 // Match ports AbstractSimpleReplaceRule2.match.
@@ -338,7 +399,9 @@ func (r *AbstractSimpleReplaceRule2) createMatch(
 			break
 		}
 	}
-	if len(finalReplacements) == 0 {
+	// Java: if (ruleHasSuggestions && finalReplacements.isEmpty()) return;
+	// Profanity (ruleHasSuggestions=false) still creates matches without replacements.
+	if r.hasSuggestions() && len(finalReplacements) == 0 {
 		return
 	}
 
@@ -371,7 +434,9 @@ func (r *AbstractSimpleReplaceRule2) createMatch(
 
 	ruleMatch := NewRuleMatch(r, sentence, fromPos, toPos, msg)
 	ruleMatch.ShortMessage = r.ShortMsg
-	ruleMatch.SetSuggestedReplacements(finalReplacements)
+	if r.hasSuggestions() {
+		ruleMatch.SetSuggestedReplacements(finalReplacements)
+	}
 	if r.IsRuleMatchException != nil && r.IsRuleMatchException(ruleMatch) {
 		return
 	}

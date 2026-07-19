@@ -23,13 +23,20 @@ func loadProfanity() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
+		// Java SimpleReplaceProfanityRule: STYLE, Style ITS, picky, no suggestions, wiktionary URL
+		noSug := false
 		base := &rules.AbstractSimpleReplaceRule2{
-			ID:              "PROFANITY",
-			Description:     "Profanity",
-			ShortMsg:        "Profanity",
-			MessageTemplate: "This expression can be considered offensive.",
-			CaseSens:        rules.CaseInsensitive,
-			LanguageCode:    "en",
+			ID:                 "PROFANITY",
+			Description:        "Profanity",
+			ShortMsg:           "Profanity",
+			MessageTemplate:    "This expression can be considered offensive.",
+			CaseSens:           rules.CaseInsensitive,
+			LanguageCode:       "en",
+			Category:           rules.CatStyle.GetCategory(nil),
+			IssueType:          rules.ITSStyle,
+			Tags:               []rules.Tag{rules.TagPicky},
+			URL:                "https://en.wiktionary.org/wiki/Category:English_offensive_terms",
+			RuleHasSuggestions: &noSug,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/replace_profanity.txt"); err != nil {
 			panic(err)
@@ -49,6 +56,7 @@ func NewSimpleReplaceProfanityRule(messages map[string]string) *SimpleReplacePro
 	base := loadProfanity()
 	r := *base
 	r.Messages = messages
+	r.Category = rules.CatStyle.GetCategory(messages)
 	return &SimpleReplaceProfanityRule{AbstractSimpleReplaceRule2: &r}
 }
 
