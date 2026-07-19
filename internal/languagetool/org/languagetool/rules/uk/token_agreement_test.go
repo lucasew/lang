@@ -219,3 +219,36 @@ func TestNumrNounException_SurfaceArms(t *testing.T) {
 		atr("дві", "numr:f:v_naz"), atr("книги", "noun:inanim:f:v_naz"),
 	}, 0, 1))
 }
+
+func TestNounVerbException_EarlyArms(t *testing.T) {
+	// правда + verb
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("правда", "noun:inanim:f:v_naz"),
+		atr("було", "verb:imperf:past:n"),
+	}, 0, 1))
+	// під три чорти
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("під", "prep"), atr("три", "numr"), atr("чорти", "noun"),
+		atr("люди", "noun:anim:p:v_naz"), atr("йдуть", "verb:imperf:pres:p:3"),
+	}, 3, 4))
+	// normal disagree pair not exception
+	require.False(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("хлопець", "noun:anim:m:v_naz"),
+		atr("читає", "verb:imperf:pres:s:3"),
+	}, 0, 1))
+}
+
+func TestVerbNounException_EarlyArms(t *testing.T) {
+	// хотіти + v_oru
+	lem := "хотіти"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("хоче", &lem, "verb:imperf:pres:s:3"),
+		atr("маляром", "noun:anim:m:v_oru"),
+	}, 0, 1))
+	// чим могла
+	mog := "могти"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("чим", "pron"), atrLemma("могла", &mog, "verb:imperf:past:f"),
+		atr("силою", "noun:inanim:f:v_oru"),
+	}, 1, 2))
+}

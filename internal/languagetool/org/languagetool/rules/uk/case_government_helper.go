@@ -66,10 +66,11 @@ func LoadCaseGovernmentHelper() *CaseGovernmentHelper {
 		// Java CaseGovernmentHelper static: merge DERIVATIVES_MAP into CASE_GOVERNMENT_MAP
 		// (derivative key inherits government of each base verb).
 		for deriv, verbs := range loadDerivats() {
-			set, ok := m[deriv]
-			if !ok {
-				set = map[string]struct{}{}
-				m[deriv] = set
+			set := map[string]struct{}{}
+			if existing, ok := m[deriv]; ok {
+				for c := range existing {
+					set[c] = struct{}{}
+				}
 			}
 			for v := range verbs {
 				if rvs, ok := m[v]; ok {
@@ -77,6 +78,10 @@ func LoadCaseGovernmentHelper() *CaseGovernmentHelper {
 						set[c] = struct{}{}
 					}
 				}
+			}
+			// Java may leave empty sets; skip empty so lookup stays useful (no invent cases).
+			if len(set) > 0 {
+				m[deriv] = set
 			}
 		}
 		caseGov = &CaseGovernmentHelper{Map: m}

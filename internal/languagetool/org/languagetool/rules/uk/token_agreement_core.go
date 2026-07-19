@@ -747,12 +747,228 @@ func IsNumrNounException(tokens []*languagetool.AnalyzedTokenReadings, numrPos, 
 	return false
 }
 
-// IsNounVerbException stub.
+// IsNounVerbException ports TokenAgreementNounVerbExceptionHelper early arms
+// (full table deferred). Invalid layout → exception.
 func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, verbPos int) bool {
-	return nounPos < 0 || verbPos <= nounPos
+	// Invalid subject/verb order → exception (no flag). Missing tokens: only order check.
+	if nounPos < 0 || verbPos <= nounPos {
+		return true
+	}
+	if tokens == nil || nounPos >= len(tokens) || verbPos >= len(tokens) {
+		return false
+	}
+	noun, verb := tokens[nounPos], tokens[verbPos]
+	if noun == nil || verb == nil {
+		return false
+	}
+
+	// Любителі фотографувати їжу — inf verb after noun governing v_inf
+	if HasPosTagRE(verb, verbInfPattern) {
+		if LoadCaseGovernmentHelper().HasCaseGovernment(lemmaOf(noun), "v_inf") ||
+			hasCaseGovFromReadings(noun, "v_inf") {
+			return true
+		}
+		if tokenLineBefore(tokens, nounPos, "не", "сила") ||
+			tokenLineBefore(tokens, nounPos, "не", "проти") {
+			return true
+		}
+		if nl := CleanTokenLower(noun); nl == "хтось" || nl == "дехто" {
+			return true
+		}
+		if verbPos > 0 && CleanTokenLower(tokens[verbPos-1]) == "намагаючись" {
+			return true
+		}
+	}
+
+	// шкода було / годі буде
+	if HasPosTagPart(noun, "predic") {
+		vl := CleanTokenLower(verb)
+		if vl == "було" || vl == "буде" {
+			return true
+		}
+	}
+	if CleanTokenLower(noun) == "правда" {
+		return true
+	}
+	if tokenLineBefore(tokens, nounPos, "під", "три", "чорти") ||
+		tokenLineBefore(tokens, nounPos, "не", "штука") ||
+		tokenLineBefore(tokens, nounPos, "бісики") {
+		return true
+	}
+	// будь якого after verb
+	if tokenLineAfter(tokens, verbPos, "будь", "якого") {
+		return true
+	}
+	// не сказати б after verb-1
+	if verbPos > 0 && tokenLineAfter(tokens, verbPos-1, "не", "сказати", "б") {
+		return true
+	}
+	if verbPos > 0 && tokenLineBefore(tokens, verbPos-1, "не", "проти") {
+		return true
+	}
+	// воно/решта + :impers
+	if HasLemmaTokenAny(noun, []string{"воно", "решта"}) && HasPosTagPart(verb, ":impers") {
+		return true
+	}
+	if verbPos > 0 && HasLemmaToken(tokens[verbPos-1], "Газа") {
+		return true
+	}
+	// чотири дні був
+	if nounPos > 1 &&
+		hasPosWithoutPron(noun, regexp.MustCompile(`noun:.*:p:v_naz`)) &&
+		HasLemmaWithPosRE(tokens[nounPos-1], []string{"два", "три", "чотири"}, regexp.MustCompile(`numr:p:v_zna`)) {
+		return true
+	}
+
+	return false
 }
 
-// IsVerbNounException stub.
+// IsVerbNounException ports TokenAgreementVerbNounExceptionHelper early arms.
 func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, nounPos int) bool {
-	return verbPos < 0 || nounPos <= verbPos
+	if verbPos < 0 || nounPos <= verbPos {
+		return true
+	}
+	if tokens == nil || verbPos >= len(tokens) || nounPos >= len(tokens) {
+		return false
+	}
+	verb, noun := tokens[verbPos], tokens[nounPos]
+	if verb == nil || noun == nil {
+		return false
+	}
+
+	// numr v_naz / quant + s/n verb (боротиметься кілька / входило двоє)
+	quantish := HasPosTagRE(noun, regexp.MustCompile(`numr.*v_naz.*`)) ||
+		HasLemmaTokenRE(noun, AdvQuantPattern) ||
+		(AdvQuantPattern.MatchString(CleanTokenLower(noun)) &&
+			HasPosTagRE(noun, regexp.MustCompile(`noun.*v_naz.*|adv.*|part.*`)))
+	if quantish {
+		if HasPosTagRE(verb, regexp.MustCompile(`.*:[sn](:.*|$)`)) {
+			return true
+		}
+		if verbPos > 1 && HasPosTagRE(verb, regexp.MustCompile(`verb.*inf.*`)) &&
+			HasLemmaWithPosRE(tokens[verbPos-1], []string{"бути", "мусити"}, regexp.MustCompile(`verb.*(past:n|:s:3).*`)) {
+			return true
+		}
+	}
+
+	// здатна була
+	if verbPos > 1 && HasLemmaToken(verb, "бути") {
+		modals := []string{"змушений", "вимушений", "повинний", "здатний", "готовий", "ладний", "радий"}
+		if HasLemmaWithPosRE(tokens[verbPos-1], modals, regexp.MustCompile(`adj:.:v_naz.*`)) {
+			return true
+		}
+	}
+	// зможе + v_oru / чим могла
+	if HasLemmaTokenRE(verb, regexp.MustCompile(`^з?могти$`)) {
+		if HasPosTagPart(noun, "v_oru") {
+			return true
+		}
+		if verbPos > 1 && CleanTokenLower(tokens[verbPos-1]) == "чим" {
+			return true
+		}
+	}
+	// стало відомо
+	if verbPos < len(tokens)-1 && strings.EqualFold(CleanTokenLower(verb), "стало") {
+		next := CleanTokenLower(tokens[verbPos+1])
+		if next == "відомо" || next == "видно" || next == "зрозуміло" {
+			return true
+		}
+	}
+	// я буду каву
+	if verbPos > 1 && CleanTokenLower(tokens[verbPos-1]) == "я" && CleanTokenLower(verb) == "буду" {
+		if HasPosTagRE(noun, regexp.MustCompile(`noun:inanim:.:v_zna.*`)) ||
+			hasPosWithoutRanim(noun, regexp.MustCompile(`adj:.:v_zna`)) {
+			return true
+		}
+	}
+	// хоче маляром
+	if HasLemmaToken(verb, "хотіти") && HasPosTagPart(noun, "v_oru") {
+		return true
+	}
+
+	return false
+}
+
+// hasPosWithoutRanim is RE2-friendly stand-in for adj:.:v_zna(?!:ranim).
+func hasPosWithoutRanim(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.Contains(p, "ranim") {
+			continue
+		}
+		if re.MatchString(p) {
+			return true
+		}
+	}
+	return false
+}
+
+var verbInfPattern = regexp.MustCompile(`verb.*inf.*|inf:`)
+
+// lemmaOf returns first non-empty lemma or clean token lower.
+func lemmaOf(tok *languagetool.AnalyzedTokenReadings) string {
+	if tok == nil {
+		return ""
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetLemma() != nil && *r.GetLemma() != "" {
+			return *r.GetLemma()
+		}
+	}
+	return CleanTokenLower(tok)
+}
+
+func hasCaseGovFromReadings(tok *languagetool.AnalyzedTokenReadings, rvCase string) bool {
+	if tok == nil {
+		return false
+	}
+	// try noun/adj/adv prefixes used in Java hasCaseGovernment without startPos
+	cg := LoadCaseGovernmentHelper()
+	for _, prefix := range []string{"noun", "adj", "adv", "verb"} {
+		cases := cg.GetCaseGovernmentsFromReadings(tok, prefix)
+		if _, ok := cases[rvCase]; ok {
+			return true
+		}
+	}
+	// also map lookup by lemma alone
+	return cg.HasCaseGovernment(lemmaOf(tok), rvCase)
+}
+
+// tokenLineBefore reports whether tokens ending just before pos form the given surface line.
+func tokenLineBefore(tokens []*languagetool.AnalyzedTokenReadings, pos int, words ...string) bool {
+	if pos < len(words) {
+		return false
+	}
+	start := pos - len(words)
+	for i, w := range words {
+		if tokens[start+i] == nil {
+			return false
+		}
+		if !strings.EqualFold(CleanTokenLower(tokens[start+i]), w) &&
+			!strings.EqualFold(tokens[start+i].GetToken(), w) {
+			// allow case-insensitive clean match only
+			if CleanTokenLower(tokens[start+i]) != strings.ToLower(w) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+// tokenLineAfter reports whether tokens starting at pos form the given surface line.
+func tokenLineAfter(tokens []*languagetool.AnalyzedTokenReadings, pos int, words ...string) bool {
+	if pos < 0 || pos+len(words) > len(tokens) {
+		return false
+	}
+	for i, w := range words {
+		if tokens[pos+i] == nil {
+			return false
+		}
+		if CleanTokenLower(tokens[pos+i]) != strings.ToLower(w) {
+			return false
+		}
+	}
+	return true
 }
