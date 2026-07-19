@@ -496,3 +496,94 @@ func TestPrepNounException_StrongAndNonInfl(t *testing.T) {
 		atr("SENT_START"), atr("не"), atr("те"), atr("по", "prep"), atr("лихим", "adj"),
 	}, 3, 4))
 }
+
+func TestAdjNounException_MoreJavaArms(t *testing.T) {
+	// гвардії + next noun overlap
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("молодшого", "adj:m:v_rod"), atr("гвардії", "noun:inanim:f:v_rod"),
+		atr("сержанта", "noun:anim:m:v_rod"),
+	}, 0, 1))
+
+	// півстоліття
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("довгих", "adj:p:v_rod"), atr("півстоліття", "noun:inanim:n:v_rod"),
+	}, 0, 1))
+
+	// чверть століття
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("довгих", "adj:p:v_rod"), atr("чверть", "noun"), atr("століття", "noun:inanim:n:v_rod"),
+	}, 0, 1))
+
+	// переконана + m profession
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("переконана", "adj:f:v_naz"), atr("лікар", "noun:anim:m:v_naz"),
+	}, 0, 1))
+
+	// станом на
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("чинних", "adj:p:v_rod"), atr("станом", "noun"), atr("на", "prep"),
+	}, 0, 1))
+
+	// Богом after pron
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("таку", "adj:f:v_zna:pron"), atr("Богом", "noun:anim:m:v_oru"),
+	}, 0, 1))
+
+	// той родом
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("той", strPtr("той"), "adj:m:v_naz"), atr("родом", "noun"),
+	}, 0, 1))
+
+	// таких
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("таких", "adj:p:v_rod"), atr("люди", "noun:anim:p:v_naz"),
+	}, 0, 1))
+
+	// на рівних — Java adjPos > 1 (SENT_START pad)
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("на", "prep"), atr("рівних", "adj:p:v_rod"), atr("міністри", "noun"),
+	}, 2, 3))
+
+	// зразка
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("польські", "adj:p:v_naz"), atr("зразка", "noun"), atr("1620", "number"),
+	}, 0, 1))
+
+	// плюс
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("зелених", "adj:p:v_rod"), atr("плюс", "noun"),
+	}, 0, 1))
+
+	// пару років
+	para := "пара"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("важкими", "adj:p:v_oru"), atrLemma("пару", &para, "noun:inanim:f:v_zna"),
+		atr("років", "noun:inanim:p:v_rod"),
+	}, 0, 1))
+
+	// років 6
+	rik := "рік"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("минулих", "adj:p:v_rod"), atrLemma("років", &rik, "noun:inanim:p:v_rod"),
+		atr("6", "number"),
+	}, 0, 1))
+
+	// осіб на 30
+	osoba := "особа"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("деяких", "adj:p:v_rod"), atrLemma("осіб", &osoba, "noun:anim:p:v_rod"),
+		atrLemma("на", strPtr("на"), "prep"), atr("30", "number"),
+	}, 0, 1))
+
+	// dash range
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("минулих", "adj:p:v_rod"), atr("травня", "noun:inanim:m:v_rod"),
+		atr("–"), atr("липня", "noun:inanim:m:v_rod"),
+	}, 0, 1))
+
+	// з + v_oru after plural adj
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("зв'язаних", "adj:p:v_rod"), atr("ченця", "noun:anim:m:v_rod"),
+		atr("з", "prep"), atr("черницею", "noun:anim:f:v_oru"),
+	}, 0, 1))
+}

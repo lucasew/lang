@@ -194,3 +194,22 @@ func InflectionsIntersect(master, slave []Inflection) bool {
 	}
 	return false
 }
+
+// InflectionsIntersectIgnoreGender ports TokenAgreementAdjNounExceptionHelper.hasOverlapIgnoreGender
+// (optional gender filters on master/slave; empty string = no filter).
+func InflectionsIntersectIgnoreGender(master, slave []Inflection, masterGenderFilter, slaveGenderFilter string) bool {
+	for _, m := range master {
+		if masterGenderFilter != "" && !strings.EqualFold(m.Gender, masterGenderFilter) {
+			continue
+		}
+		for _, s := range slave {
+			if slaveGenderFilter != "" && !strings.EqualFold(s.Gender, slaveGenderFilter) {
+				continue
+			}
+			if m.EqualsIgnoreGender(s) {
+				return true
+			}
+		}
+	}
+	return false
+}

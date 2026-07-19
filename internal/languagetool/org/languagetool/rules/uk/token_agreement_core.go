@@ -426,6 +426,215 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		return true
 	}
 
+	masterInfs := GetAdjCaseInflections(CollectPOSTags(adj))
+	slaveInfs := GetNounCaseInflections(CollectPOSTags(noun))
+
+	// молодшого гвардії сержанта
+	if nounPos < len(tokens)-1 && noun.GetToken() == "гвардії" &&
+		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`^noun`)) &&
+		InflectionsIntersect(masterInfs, GetNounCaseInflections(CollectPOSTags(tokens[nounPos+1]))) {
+		return true
+	}
+
+	// князівством Литовським — prev noun + capitalized adj, inflections overlap
+	if adjPos > 1 && HasPosTagPart(tokens[adjPos-1], "noun") && isUpperFirst(adj.GetToken()) &&
+		InflectionsIntersect(masterInfs, GetNounCaseInflections(CollectPOSTags(tokens[adjPos-1]))) {
+		return true
+	}
+
+	// абзац другий частини першої
+	if adjPos > 1 && nounPos < len(tokens)-1 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:[mf]:.*numr.*|^number`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:inanim:.:v_rod.*`)) &&
+		HasLemmaTokenAny(tokens[adjPos-1], []string{"абзац", "розділ", "пункт", "підпункт", "частина", "стаття"}) {
+		return true
+	}
+
+	// протягом минулих травня – липня
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:p:`)) &&
+		DashesPattern.MatchString(tokens[nounPos+1].GetToken()) &&
+		HasPosTagRE(tokens[nounPos+2], regexp.MustCompile(`^(?:adj|noun)`)) &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+		return true
+	}
+
+	// зв'язаних ченця з черницею / на зарубаних матір з двома синами
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:p:`)) {
+		mid := tokens[nounPos+1]
+		if mid != nil {
+			ml := CleanTokenLower(mid)
+			if (ml == "з" || ml == "із" || ml == "зі") &&
+				HasPosTagRE(tokens[nounPos+2], regexp.MustCompile(`(?:noun|numr).*:v_oru.*`)) &&
+				InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+				return true
+			}
+		}
+	}
+
+	// на довгих півстоліття
+	if HasPosTagRE(adj, regexp.MustCompile(`adj:p:v_rod.*`)) &&
+		strings.HasPrefix(noun.GetToken(), "пів") &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*v_rod.*`)) {
+		return true
+	}
+	// на довгих чверть століття
+	if nounPos < len(tokens)-1 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:p:v_rod.*`)) &&
+		noun.GetToken() == "чверть" &&
+		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*v_rod.*`)) {
+		return true
+	}
+	// розділеного вже чверть століття / створених близько чверті століття
+	if nounPos < len(tokens)-1 &&
+		HasPosTagPart(adj, "adjp") &&
+		HasLemmaTokenAny(noun, []string{"чверть", "третина"}) &&
+		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*v_rod.*`)) {
+		return true
+	}
+	// заклопотані чимало людей — adjp, quant before noun
+	if HasPosTagPart(adj, "adjp") && nounPos > 0 &&
+		HasLemmaTokenAny(tokens[nounPos-1], []string{"чимало", "багато", "небагато", "немало", "обмаль"}) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*:p:v_rod.*`)) {
+		return true
+	}
+
+	// присудок ж.р. + професія ч.р.
+	if containsStr([]string{"переконана", "впевнена", "упевнена", "годна", "ладна", "певна", "причетна", "обрана", "призначена"}, adj.GetToken()) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:anim:m:v_naz.*`)) {
+		return true
+	}
+
+	// чинних станом на
+	if nounPos < len(tokens)-1 && noun.GetToken() == "станом" &&
+		tokens[nounPos+1] != nil && tokens[nounPos+1].GetToken() == "на" {
+		return true
+	}
+
+	// на таку Богом забуту
+	if HasPosTagPart(adj, "pron") && strings.EqualFold(noun.GetCleanToken(), "богом") {
+		return true
+	}
+	// той родом з
+	if HasLemmaToken(adj, "той") &&
+		containsStr([]string{"родом", "кулею", "розміром"}, CleanTokenLower(noun)) {
+		return true
+	}
+	// такого світ ще не бачив
+	if containsStr([]string{"таке", "такого"}, CleanTokenLower(adj)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*:v_naz.*`)) &&
+		NewSearchMatch("").
+			Target(ConditionPostag(regexp.MustCompile(`verb.*`))).
+			WithLimit(2).
+			Skip(ConditionPostag(regexp.MustCompile(`^(?:part|adv)`))).
+			MAfterATR(tokens, nounPos+1) > 0 {
+		return true
+	}
+	// той мантію надів
+	if nounPos < len(tokens)-1 &&
+		strings.EqualFold(CleanTokenLower(adj), "той") &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*:v_(zna|oru).*`)) &&
+		HasPosTagStart(tokens[nounPos+1], "verb") {
+		return true
+	}
+	// що таке звук
+	if adjPos > 1 && adj.GetToken() == "таке" &&
+		ReverseSearch(tokens, adjPos-1, 3, regexp.MustCompile(`^що$`), nil) {
+		return true
+	}
+	// таких + p:v_naz / меншість|більшість
+	if strings.EqualFold(adj.GetToken(), "таких") &&
+		(HasPosTagPart(noun, ":p:v_naz") ||
+			containsStr([]string{"меншість", "більшість"}, CleanTokenLower(noun))) {
+		return true
+	}
+	// на рівних
+	if adjPos > 1 && adj.GetToken() == "рівних" &&
+		strings.EqualFold(tokens[adjPos-1].GetToken(), "на") {
+		return true
+	}
+	// польські зразка 1620
+	if nounPos < len(tokens)-1 && noun.GetToken() == "зразка" {
+		return true
+	}
+	// три зелених плюс два
+	if noun.GetToken() == "мінус" || noun.GetToken() == "плюс" {
+		return true
+	}
+
+	// важкими пару років / неконституційними низку законів
+	if nounPos < len(tokens)-1 &&
+		HasLemmaTokenAny(noun, []string{"пара", "низка", "ряд", "купа", "більшість", "десятка", "сотня", "тисяча", "мільйон"}) &&
+		(HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*?:p:v_rod.*`)) ||
+			(nounPos < len(tokens)-2 &&
+				HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`adj:p:v_rod.*`)) &&
+				HasPosTagRE(tokens[nounPos+2], regexp.MustCompile(`noun.*?:p:v_rod.*`)))) {
+		return true
+	}
+
+	// разів (у) десять
+	if nounPos < len(tokens)-1 &&
+		HasLemmaWithPosRE(noun, []string{"раз"}, regexp.MustCompile(`.*p:v_(naz|rod).*`)) &&
+		(HasPosTagRE(tokens[nounPos+1], adjNounNumberVNazRE) ||
+			HasPosTagPart(tokens[nounPos+1], "prep")) {
+		return true
+	}
+
+	// років 6, відсотків зо два
+	if nounPos < len(tokens)-1 &&
+		HasLemmaWithPosRE(noun, TimePlusLemmaList(), regexp.MustCompile(`noun.*?p:v_(naz|rod).*`)) {
+		if HasPosTagRE(tokens[nounPos+1], adjNounNumberVNazRE) {
+			return true
+		}
+		if nounPos < len(tokens)-2 &&
+			HasLemmaWithPartPos(tokens[nounPos+1], []string{"на", "за", "з", "із", "зо", "через", "під"}, "prep") &&
+			HasPosTagRE(tokens[nounPos+2], adjNounNumberVNazRE) {
+			return true
+		}
+	}
+
+	// осіб на 30
+	if nounPos < len(tokens)-2 &&
+		HasLemmaWithPosRE(noun, []string{"особа"}, regexp.MustCompile(`noun.*?p:v_(naz|rod).*`)) &&
+		HasLemmaWithPartPos(tokens[nounPos+1], []string{"на", "з", "із", "зо", "під"}, "prep") &&
+		HasPosTagRE(tokens[nounPos+2], adjNounNumberVNazRE) {
+		return true
+	}
+
+	// хвилини з 55-ї
+	if adjPos > 2 &&
+		HasLemmaTokenAny(tokens[adjPos-2], TimeLemmasShort) &&
+		HasPosTagStart(tokens[adjPos-1], "prep") &&
+		HasPosTagPart(adj, "num") {
+		return true
+	}
+
+	// predic + verb inf/past:n/futr
+	if nounPos < len(tokens)-1 && HasPosTagPart(noun, "predic") {
+		afterPred := regexp.MustCompile(`.*(?:inf|past:n|futr:s:3).*`)
+		if HasPosTagRE(tokens[nounPos+1], afterPred) {
+			return true
+		}
+		if nounPos < len(tokens)-2 &&
+			HasPosTagStart(tokens[nounPos+1], "adv") &&
+			HasPosTagRE(tokens[nounPos+2], afterPred) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// adjNounNumberVNazRE ports TokenAgreementAdjNounExceptionHelper.NUMBER_V_NAZ.
+var adjNounNumberVNazRE = regexp.MustCompile(`^(?:number|numr:p:v_naz|noun.*?:p:v_naz.*:numr.*)$`)
+
+func containsStr(list []string, s string) bool {
+	for _, x := range list {
+		if x == s {
+			return true
+		}
+	}
 	return false
 }
 
