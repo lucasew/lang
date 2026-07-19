@@ -9,9 +9,25 @@ import (
 	rulesuk "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
 
+var (
+	// Java ST_ABBR / LATIN_DIGITS / DIGITS / STATION / PATTERN_2
+	stAbbr             = "ст."
+	stLatinDigitsRE    = regexp.MustCompile(`^[XIVХІ]+(?:[–—-][XIVХІ]+)?$`)
+	stArabicDigitsRE   = regexp.MustCompile(`^[0-9]+(?:[–—-][0-9]+)?$`)
+	stStationNameRE    = regexp.MustCompile(`^метро|[А-Я][а-яіїєґ'-]+$`)
+	stArticlePageNumRE = regexp.MustCompile(`^[0-9]+(?:[.,–—-][0-9]+)?$`)
+	stXp3KeepRE        = regexp.MustCompile(`noun.*:xp3.*`)
+	stNounInanimFRE    = regexp.MustCompile(`^noun:inanim:f:.*`)
+	stNounInanimPRE    = regexp.MustCompile(`^noun:inanim:p:.*`)
+	stNounInanimNRE    = regexp.MustCompile(`^noun:inanim:n:.*`)
+	stNounInanimNFRE   = regexp.MustCompile(`^noun:inanim:[nf]:.*`)
+	stAdjFPRE          = regexp.MustCompile(`^adj:[fp]:.*`)
+	stAdjMRE           = regexp.MustCompile(`^adj:m:.*`)
+	stRankLemmas       = []string{"лейтенант", "сержант", "солдат", "науковий", "медсестра"}
+)
+
 // DisambiguateSt ports UkrainianHybridDisambiguator.disambiguateSt for "ст.".
-// Java removeTokensWithout keeps noun:inanim:[nf] (or p) readings near digits —
-// never invents abbr POS when untagged (fail closed).
+// Filters existing readings only (never invents tags).
 func DisambiguateSt(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -19,62 +35,155 @@ func DisambiguateSt(input *languagetool.AnalyzedSentence) {
 	tokens := input.GetTokensWithoutWhitespace()
 	for i := 1; i < len(tokens); i++ {
 		tok := tokens[i]
-		if tok == nil {
+		if tok == nil || tok.GetToken() != stAbbr {
 			continue
 		}
-		// Java: ST_ABBR.equals exact "ст."
-		if tok.GetToken() != "ст." {
+
+		// 10 мм рт. ст. → keep xp3; otherwise drop xp3 when i > 1
+		if i > 1 && tokens[i-1] != nil {
+			if tokens[i-1].GetToken() == "рт." {
+				removeTokensWithout(tok, stXp3KeepRE)
+				continue
+			}
+			// Java: Pattern.compile("(?!.*:xp3).*") — keep readings without :xp3
+			removeTokensWithoutRE2NoXp3(tok)
+		}
+
+		// стаття/сторінка: next is number → f (or p for ст. ст.)
+		if i < len(tokens)-1 && tokens[i+1] != nil &&
+			stArticlePageNumRE.MatchString(tokens[i+1].GetToken()) {
+			pat := stNounInanimFRE
+			if i > 2 && tokens[i-1] != nil && tokens[i-1].GetToken() == stAbbr {
+				pat = stNounInanimPRE
+				removeTokensWithout(tokens[i-1], pat)
+			}
+			removeTokensWithout(tok, pat)
 			continue
 		}
-		// need preceding number (digits or latin) like Java i > 1 branches
-		if i < 2 || tokens[i-1] == nil || !isNumberish(tokens[i-1]) {
-			// also allow number after "ст." for incomplete subset tests
-			hasAfter := false
-			for j := i + 1; j < len(tokens) && j <= i+2; j++ {
-				if tokens[j] != nil && isNumberish(tokens[j]) {
-					hasAfter = true
-					break
+
+		if i < len(tokens)-1 && tokens[i+1] != nil {
+			next := tokens[i+1]
+			// столова: ложка / л.
+			if hasLemmaToken(next, "ложка") || next.GetToken() == "л." {
+				removeTokensWithout(tok, stAdjFPRE)
+				i++
+				continue
+			}
+			// старший: rank lemmas
+			if hasAnyLemma(next, stRankLemmas) {
+				removeTokensWithout(tok, stAdjMRE)
+				i++
+				continue
+			}
+			// станція
+			if stStationNameRE.MatchString(next.GetToken()) {
+				removeTokensWithout(tok, stNounInanimFRE)
+				i++
+				continue
+			}
+		}
+
+		// століття: latin / arabic digits before
+		if i > 1 && tokens[i-1] != nil {
+			prevTok := tokens[i-1].GetToken()
+			if stLatinDigitsRE.MatchString(prevTok) {
+				pat := stNounInanimNRE
+				if i < len(tokens)-1 && tokens[i+1] != nil && tokens[i+1].GetToken() == stAbbr {
+					pat = stNounInanimPRE
+					removeTokensWithout(tokens[i+1], pat)
 				}
+				removeTokensWithout(tok, pat)
+				i++
+				continue
 			}
-			if !hasAfter {
+			if stArabicDigitsRE.MatchString(prevTok) {
+				pat := stNounInanimNFRE
+				if i < len(tokens)-1 && tokens[i+1] != nil && tokens[i+1].GetToken() == stAbbr {
+					pat = stNounInanimPRE
+					removeTokensWithout(tokens[i+1], pat)
+				}
+				removeTokensWithout(tok, pat)
+				i++
 				continue
 			}
 		}
-		// Java removeTokensWithout: drop readings that are not noun:inanim:[nf]:.*
-		// (or noun:inanim:p when paired ст.ст. — deferred). Keep SENT_END.
-		readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
-		for _, r := range readings {
-			if r == nil || r.GetPOSTag() == nil {
-				continue
-			}
-			pos := *r.GetPOSTag()
-			if pos == languagetool.SentenceEndTagName {
-				continue
-			}
-			if strings.HasPrefix(pos, "noun:inanim:") &&
-				(strings.Contains(pos, ":f:") || strings.Contains(pos, ":n:") || strings.Contains(pos, ":p:")) {
-				continue
-			}
-			tok.RemoveReading(r, "dis_st")
-		}
-		// no inject when untagged — Java only filters existing readings
 	}
 }
 
+// removeTokensWithout ports Java removeTokensWithout (keep SENT_END + matching POS).
+func removeTokensWithout(tok *languagetool.AnalyzedTokenReadings, keep *regexp.Regexp) {
+	if tok == nil || keep == nil {
+		return
+	}
+	readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
+	for _, r := range readings {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		pos := *r.GetPOSTag()
+		if pos == languagetool.SentenceEndTagName {
+			continue
+		}
+		// Java Matcher.matches() = full string
+		loc := keep.FindStringIndex(pos)
+		if loc != nil && loc[0] == 0 && loc[1] == len(pos) {
+			continue
+		}
+		tok.RemoveReading(r, "UkranianHybridDisambiguator")
+	}
+}
+
+// removeTokensWithoutRE2NoXp3 keeps readings that do not contain :xp3 (Java (?!.*:xp3).*).
+func removeTokensWithoutRE2NoXp3(tok *languagetool.AnalyzedTokenReadings) {
+	if tok == nil {
+		return
+	}
+	readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
+	for _, r := range readings {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		pos := *r.GetPOSTag()
+		if pos == languagetool.SentenceEndTagName {
+			continue
+		}
+		if strings.Contains(pos, ":xp3") {
+			tok.RemoveReading(r, "UkranianHybridDisambiguator")
+		}
+	}
+}
+
+func hasLemmaToken(tok *languagetool.AnalyzedTokenReadings, lemma string) bool {
+	if tok == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetLemma() != nil && *r.GetLemma() == lemma {
+			return true
+		}
+	}
+	return false
+}
+
+func hasAnyLemma(tok *languagetool.AnalyzedTokenReadings, lemmas []string) bool {
+	for _, l := range lemmas {
+		if hasLemmaToken(tok, l) {
+			return true
+		}
+	}
+	return false
+}
+
+// isNumberish reports digit-only surface or number POS (tests / soft helpers).
 func isNumberish(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
 	if tok.HasPosTag("number") || tok.HasPartialPosTag("number") {
 		return true
 	}
 	s := tok.GetToken()
-	if s == "" {
-		return false
-	}
-	for _, r := range s {
-		if r < '0' || r > '9' {
-			return false
-		}
-	}
-	return true
+	return stArabicDigitsRE.MatchString(s)
 }
 
 // DisambiguatePronPos: "його/її/їх" before noun → keep poss adj; before verb → keep pers.

@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -9,7 +10,7 @@ import (
 
 func TestDisambiguateSt(t *testing.T) {
 	start := atrSent("SENT_START", "SENT_START")
-	// Java: number before ст. (18 ст.)
+	// Java: number before ст. (18 ст.) → keep noun:inanim:[nf]
 	num := atrSent("18", "number")
 	st := atrMulti("ст.", [][2]string{
 		{"ст.", "verb:imperf:inf"}, // noise — removed
@@ -25,6 +26,36 @@ func TestDisambiguateSt(t *testing.T) {
 	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, atrSent("18", "number"), st2})
 	DisambiguateSt(sent2)
 	require.False(t, sent2.GetTokensWithoutWhitespace()[2].IsTagged())
+
+	// Java: i>2 && prev ST_ABBR + next number → plural on both (e.g. «див. ст. ст. 5»)
+	filler := atrSent("див.", "abbr")
+	stA := atrMulti("ст.", [][2]string{
+		{"ст.", "noun:inanim:f:v_naz:nv:abbr"},
+		{"ст.", "noun:inanim:p:v_naz:nv:abbr"},
+	})
+	stB := atrMulti("ст.", [][2]string{
+		{"ст.", "noun:inanim:f:v_naz:nv:abbr"},
+		{"ст.", "noun:inanim:p:v_naz:nv:abbr"},
+	})
+	num2 := atrSent("5", "number")
+	// tokens: SENT, filler, stA, stB, num → stB at i=3 > 2
+	sent3 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, filler, stA, stB, num2})
+	DisambiguateSt(sent3)
+	tokB := sent3.GetTokensWithoutWhitespace()[3]
+	require.True(t, tokB.HasPartialPosTag(":p:"))
+	require.False(t, hasGenderF(tokB))
+}
+
+func hasGenderF(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), ":f:") {
+			return true
+		}
+	}
+	return false
 }
 
 func TestDisambiguatePronPos(t *testing.T) {
