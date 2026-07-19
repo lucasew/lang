@@ -1,9 +1,13 @@
 package uk
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
 // RegisterCoreUkrainianRules installs Java Ukrainian.getRelevantRules ports
@@ -61,20 +65,28 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	hyphen := NewMissingHyphenRule(nil)
 	lt.AddRuleChecker(hyphen.GetID(), rules.AsSentenceCheckerSimple(hyphen.Match))
 
+	// Java createDefaultSynthesizer → UkrainianSynthesizer for agreement suggestions.
+	synth := discoverUkrainianSynthesizer()
+
 	// Token agreement (Java order: VerbNoun, NounVerb, AdjNoun, PrepNoun, NumrNoun)
-	for _, reg := range []struct {
-		id string
-		fn func(*languagetool.AnalyzedSentence) []*rules.RuleMatch
-	}{
-		{TokenAgreementVerbNounRuleID, NewTokenAgreementVerbNounRule().Match},
-		{TokenAgreementNounVerbRuleID, NewTokenAgreementNounVerbRule().Match},
-		{TokenAgreementAdjNounRuleID, NewTokenAgreementAdjNounRule().Match},
-		{TokenAgreementPrepNounRuleID, NewTokenAgreementPrepNounRule().Match},
-		{TokenAgreementNumrNounRuleID, NewTokenAgreementNumrNounRule().Match},
-	} {
-		id, fn := reg.id, reg.fn
-		lt.AddRuleChecker(id, rules.AsSentenceCheckerSimple(fn))
-	}
+	vn := NewTokenAgreementVerbNounRule()
+	vn.Synth = synth
+	lt.AddRuleChecker(vn.GetID(), rules.AsSentenceCheckerSimple(vn.Match))
+
+	nv := NewTokenAgreementNounVerbRule()
+	lt.AddRuleChecker(nv.GetID(), rules.AsSentenceCheckerSimple(nv.Match))
+
+	an := NewTokenAgreementAdjNounRule()
+	an.Synth = synth
+	lt.AddRuleChecker(an.GetID(), rules.AsSentenceCheckerSimple(an.Match))
+
+	pn := NewTokenAgreementPrepNounRule()
+	pn.Synth = synth
+	lt.AddRuleChecker(pn.GetID(), rules.AsSentenceCheckerSimple(pn.Match))
+
+	nn := NewTokenAgreementNumrNounRule()
+	nn.Synth = synth
+	lt.AddRuleChecker(nn.GetID(), rules.AsSentenceCheckerSimple(nn.Match))
 
 	mixed := NewMixedAlphabetsRule(nil)
 	lt.AddRuleChecker(mixed.GetID(), rules.AsSentenceCheckerSimple(mixed.Match))
@@ -86,4 +98,26 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(rn.GetID(), rules.AsSentenceCheckerSimple(rn.Match))
 	sr := NewSimpleReplaceRule(nil)
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+}
+
+// discoverUkrainianSynthesizer finds ukrainian_synth.dict (Java RESOURCE_FILENAME).
+// Order: LANG_UK_SYNTH_DICT env, sibling of POS/speller dict dir.
+func discoverUkrainianSynthesizer() synthesis.Synthesizer {
+	if p := os.Getenv("LANG_UK_SYNTH_DICT"); p != "" {
+		if s := synthesis.OpenBaseSynthesizerFromDictPath("uk", p); s != nil {
+			return s
+		}
+	}
+	// Sibling of official morfologik POS / speller resource dir
+	for _, dictName := range []string{UkrainianSpellerDict, "ukrainian.dict"} {
+		if pos := morfologik.DiscoverLanguageDict(dictName); pos != "" {
+			cand := filepath.Join(filepath.Dir(pos), "ukrainian_synth.dict")
+			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+				if s := synthesis.OpenBaseSynthesizerFromDictPath("uk", cand); s != nil {
+					return s
+				}
+			}
+		}
+	}
+	return nil
 }

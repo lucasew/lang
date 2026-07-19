@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
@@ -14,6 +15,8 @@ const TokenAgreementNumrNounRuleID = "UK_NUMR_NOUN_INFLECTION_AGREEMENT"
 // TokenAgreementNumrNounRule ports TokenAgreementNumrNounRule.
 type TokenAgreementNumrNounRule struct {
 	*tokenAgreementMatch
+	// Synth optional (Java ukrainian.getSynthesizer()); nil → no suggestions.
+	Synth synthesis.Synthesizer
 }
 
 func hasNumrReading(tok *languagetool.AnalyzedTokenReadings) bool {
@@ -336,9 +339,76 @@ func (r *TokenAgreementNumrNounRule) Match(sentence *languagetool.AnalyzedSenten
 			msg := numrNounMsg(numrTok, numrClean, master, slave, tok, nounTags)
 			m := rules.NewRuleMatch(r, sentence, numrTok.GetStartPos(), tok.GetEndPos(), msg)
 			m.ShortMessage = r.shortMsg
+			if sugs := r.numrNounSuggestions(master, tokens, numrPos, i, numrTok, tok, numrClean); len(sugs) > 0 {
+				m.SetSuggestedReplacements(sugs)
+			}
 			out = append(out, m)
 		}
 		numrPos = -1
+	}
+	return out
+}
+
+// numrNounSuggestions ports TokenAgreementNumrNounRule synthesizer replacement loop.
+func (r *TokenAgreementNumrNounRule) numrNounSuggestions(
+	master []Inflection,
+	tokens []*languagetool.AnalyzedTokenReadings,
+	numrPos, nounPos int,
+	numrTok, nounTok *languagetool.AnalyzedTokenReadings,
+	numrClean string,
+) []string {
+	if r == nil || r.Synth == nil || numrTok == nil || nounTok == nil {
+		return nil
+	}
+	seen := map[string]struct{}{}
+	var out []string
+	for _, numrInf := range master {
+		genderTag := ":" + numrInf.Gender + ":"
+		vidmTag := numrInf.Case
+		for _, nr := range nounTok.GetReadings() {
+			if nr == nil || nr.GetPOSTag() == nil {
+				continue
+			}
+			old := *nr.GetPOSTag()
+			if numrInf.animMatters() {
+				animTag := ":" + numrInf.AnimTag
+				if strings.HasPrefix(old, "noun") {
+					// as-is
+				} else {
+					animTag = ":r" + numrInf.AnimTag
+				}
+				if numrInf.AnimTag != "" && !strings.Contains(old, animTag) {
+					continue
+				}
+			}
+			newTag := regexp.MustCompile(`:.:v_...`).ReplaceAllString(old, genderTag+vidmTag)
+			forms, err := r.Synth.Synthesize(nr, newTag)
+			if err != nil {
+				continue
+			}
+			for _, s := range forms {
+				if s == "" {
+					continue
+				}
+				// півтора + раз → only «раза»
+				if strings.EqualFold(numrClean, "півтора") &&
+					nr.GetLemma() != nil && *nr.GetLemma() == "раз" && s != "раза" {
+					continue
+				}
+				sug := numrTok.GetToken()
+				for j := numrPos + 1; j < nounPos && j < len(tokens); j++ {
+					if tokens[j] != nil {
+						sug += " " + tokens[j].GetToken()
+					}
+				}
+				sug += " " + s
+				if _, ok := seen[sug]; ok {
+					continue
+				}
+				seen[sug] = struct{}{}
+				out = append(out, sug)
+			}
+		}
 	}
 	return out
 }
