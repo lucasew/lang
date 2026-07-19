@@ -6,15 +6,16 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// Patterns for tokens often marked ignore-by-speller via multiword/XML rules
-// (simplified stand-in for full German multitoken lists).
+// Patterns for tokens Java MultitokenIgnore marks ignore-by-speller.
+// Incomplete vs full German multitoken XML lists — only the documented
+// digit-hyphen adjective pattern (GermanDisambiguationTest "3-adische"), not invent.
 var (
 	// digit-hyphen adjective stems: "3-adische", "2-fach"
 	reDigitHyphenAdj = regexp.MustCompile(`(?i)^\d+-[a-zäöüß]+$`)
 )
 
-// MarkIgnoreSpellingPatterns marks tokens matching known German ignore patterns.
-// Used as a MultitokenIgnore stage stand-in for GermanRuleDisambiguator.
+// MarkIgnoreSpellingPatterns marks tokens matching reDigitHyphenAdj.
+// Incomplete MultitokenIgnore subset for GermanRuleDisambiguator tests.
 func MarkIgnoreSpellingPatterns(input *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
 	if input == nil {
 		return nil

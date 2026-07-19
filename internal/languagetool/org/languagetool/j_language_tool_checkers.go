@@ -86,9 +86,10 @@ func SimpleUnpairedBracketsChecker() SentenceChecker {
 	}
 }
 
-// SimplePhraseReplaceChecker flags phrase occurrences (ASCII/space phrases).
+// SimplePhraseReplaceChecker flags phrase occurrences from an explicit map
+// (test helper / injected data only — not an invent soft phrase pack).
 // Matching is case-insensitive; suggestions inherit ALL-CAPS or leading capital
-// from the matched span (soft case preservation).
+// from the matched span (Java StringTools-style case preservation).
 // phrases maps wrong phrase → suggested replacement.
 func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) SentenceChecker {
 	if ruleID == "" {
@@ -235,8 +236,9 @@ func ProjectMatchesToOriginal(at *markup.AnnotatedText, matches []LocalMatch) []
 	return out
 }
 
-// RegisterDemoEnglishCheckers installs a/an, word-repeat, multi-space, unpaired brackets,
-// common phrase fixes, and optional map speller for homepage-style demos.
+// RegisterDemoEnglishCheckers installs faithful a/an, word-repeat, multi-space,
+// unpaired brackets, and optional map speller for homepage-style demos.
+// Soft invent PHRASE_REPLACE packs ("tot he" etc.) are not registered — use grammar.xml.
 // Tiny demo lexicons do not use nearestKnownWords (that fights a/an and loops forever).
 func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, spellSuggestions map[string][]string) {
 	if lt == nil {
@@ -246,9 +248,6 @@ func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, 
 	lt.AddRuleChecker("WORD_REPEAT_RULE", SimpleWordRepeatChecker("WORD_REPEAT_RULE"))
 	lt.AddRuleChecker("WHITESPACE_RULE", SimpleMultipleWhitespaceChecker())
 	lt.AddRuleChecker("UNPAIRED_BRACKETS", SimpleUnpairedBracketsChecker())
-	lt.AddRuleChecker("PHRASE_REPLACE", SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
-		"tot he": "to the",
-	}))
 	if known != nil {
 		isKnown := func(w string) bool {
 			if _, ok := known[w]; ok {
@@ -257,6 +256,7 @@ func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, 
 			_, ok := known[strings.ToLower(w)]
 			return ok
 		}
+		// Explicit suggestion map only — no soft edit-distance invent when map miss.
 		lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimplePredicateSpellerChecker(
 			"MORFOLOGIK_RULE_EN_US", isKnown, spellSuggestions, nil, nil,
 		))

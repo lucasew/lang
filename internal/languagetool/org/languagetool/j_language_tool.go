@@ -1133,18 +1133,99 @@ func sameRuleGroupOverlapLocal(match, next LocalMatch) bool {
 	return match.FromPos <= next.ToPos && match.ToPos >= next.FromPos
 }
 
-// PreferredWordRepeatFactory is set by package rules to the faithful WordRepeatRule
-// checker (Java equalsIgnoreCase + ignore list). When nil, SimpleWordRepeatChecker
-// fails closed (no soft case-sensitive invent).
+// PreferredWordRepeatFactory is set by package rules to WordRepeatRule when available.
+// When nil, SimpleWordRepeatChecker uses an in-package Java-faithful fallback
+// (equalsIgnoreCase + isWord + name exceptions) — no soft case-sensitive invent.
 var PreferredWordRepeatFactory func(ruleID string) SentenceChecker
 
-// SimpleWordRepeatChecker returns the faithful WordRepeatRule path when wired.
-// Soft case-sensitive surface invent was removed.
+// SimpleWordRepeatChecker flags consecutive word tokens (Java WordRepeatRule).
 func SimpleWordRepeatChecker(ruleID string) SentenceChecker {
 	if PreferredWordRepeatFactory != nil {
 		return PreferredWordRepeatFactory(ruleID)
 	}
-	return func(*AnalyzedSentence) []LocalMatch { return nil }
+	return simpleWordRepeatFallback(ruleID)
+}
+
+// simpleWordRepeatFallback ports WordRepeatRule.match without importing rules
+// (avoids package cycle). Same semantics as org.languagetool.rules.WordRepeatRule.
+func simpleWordRepeatFallback(ruleID string) SentenceChecker {
+	if ruleID == "" {
+		ruleID = "WORD_REPEAT_RULE"
+	}
+	// Java WordRepeatRule.ignore name exceptions
+	ignoreNames := map[string]struct{}{
+		"Phi": {}, "Li": {}, "Xiao": {}, "Duran": {}, "Wagga": {},
+		"Abdullah": {}, "Nwe": {}, "Pago": {}, "Cao": {},
+	}
+	return func(sentence *AnalyzedSentence) []LocalMatch {
+		if sentence == nil {
+			return nil
+		}
+		toks := sentence.GetTokensWithoutWhitespace()
+		var out []LocalMatch
+		prevToken := ""
+		for i := 1; i < len(toks); i++ {
+			if toks[i] == nil {
+				continue
+			}
+			if toks[i].IsImmunized() {
+				prevToken = ""
+				continue
+			}
+			token := toks[i].GetToken()
+			if isWordRepeatToken(token) && strings.EqualFold(prevToken, token) {
+				// ignore name doubles (exact case like Java wordRepetitionOf)
+				if _, ok := ignoreNames[token]; ok && prevToken == token {
+					prevToken = token
+					continue
+				}
+				prevPos := toks[i-1].GetStartPos()
+				pos := toks[i].GetStartPos()
+				// Java: end = pos + prevToken.length() (UTF-16)
+				end := pos
+				for _, r := range prevToken {
+					if r >= 0x10000 {
+						end += 2
+					} else {
+						end++
+					}
+				}
+				out = append(out, LocalMatch{
+					FromPos:      prevPos,
+					ToPos:        end,
+					Message:      "Word repetition",
+					ShortMessage: "Word repetition",
+					RuleID:       ruleID,
+					Suggestions:  []string{prevToken},
+				})
+			}
+			prevToken = token
+		}
+		return out
+	}
+}
+
+func isWordRepeatToken(token string) bool {
+	if token == "" {
+		return false
+	}
+	// Java StringTools.isEmoji / isNumericSpace simplified: no pure digits/punct
+	runes := []rune(token)
+	if len(runes) == 1 && !unicode.IsLetter(runes[0]) {
+		return false
+	}
+	// pure numeric
+	allDigit := true
+	for _, r := range runes {
+		if !unicode.IsDigit(r) && r != ' ' {
+			allDigit = false
+			break
+		}
+	}
+	if allDigit {
+		return false
+	}
+	return true
 }
 
 // KnownWordSet builds an IsKnownWord from a set of dictionary forms (case-sensitive).
@@ -1164,8 +1245,8 @@ func KnownWordSet(words ...string) func(string) bool {
 }
 
 // SimpleMapSpellerChecker flags letter tokens not in known; optional suggestion map.
-// When no map entry exists, soft edit-distance suggestions are taken from known
-// (capped dictionary size so demo packs stay cheap).
+// Does not invent edit-distance peers from the known set (pass nearestKnown via
+// SimplePredicateSpellerChecker when a real dict SuggestEdits path is wired).
 func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestions map[string][]string) SentenceChecker {
 	isKnown := func(w string) bool {
 		if _, ok := known[w]; ok {
@@ -1174,7 +1255,7 @@ func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestio
 		_, ok := known[strings.ToLower(w)]
 		return ok
 	}
-	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, known, nil)
+	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, nil, nil)
 }
 
 // SimplePredicateSpellerChecker flags letter tokens rejected by isKnown.

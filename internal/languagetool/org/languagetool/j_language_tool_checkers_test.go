@@ -1,6 +1,7 @@
 package languagetool
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/markup"
@@ -105,26 +106,35 @@ func TestRegisterDemoEnglishCheckers(t *testing.T) {
 		"A": {}, "sentence": {}, "with": {}, "error": {}, "in": {}, "the": {},
 		"Hitchhiker": {}, "s": {}, "Guide": {}, "to": {}, "Galaxy": {},
 	}
-	// allow apostrophe tokens soft
 	lt.RegisterDemoEnglishCheckers(known, map[string][]string{"speling": {"spelling"}})
-	// a error + tot he
-	src := "A sentence with a error in the Hitchhiker's Guide tot he Galaxy"
-	m := lt.Check(src)
+	// whitespace + word-repeat (AvsAn needs rules/en import; tested in en package)
+	require.NotEmpty(t, lt.Check("hello  world"))
+	m := lt.Check("this this")
 	require.NotEmpty(t, m)
 	ids := map[string]bool{}
 	for _, x := range m {
 		ids[x.RuleID] = true
 	}
-	require.True(t, ids["EN_A_VS_AN"] || ids["PHRASE_REPLACE"])
+	require.True(t, ids["WORD_REPEAT_RULE"] || ids["WHITESPACE_RULE"])
 }
 
 func TestSimpleMapSpellerChecker_EditDistanceSuggestions(t *testing.T) {
 	known := map[string]struct{}{
 		"test": {}, "the": {}, "book": {}, "hello": {},
 	}
-	// no explicit suggestion map → edit-distance fallback
+	// Explicit nearestKnown opt-in (not invent via SimpleMapSpellerChecker)
 	lt := NewJLanguageTool("en")
-	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimpleMapSpellerChecker("MORFOLOGIK_RULE_EN_US", known, nil))
+	lt.AddRuleChecker("MORFOLOGIK_RULE_EN_US", SimplePredicateSpellerChecker(
+		"MORFOLOGIK_RULE_EN_US",
+		func(w string) bool {
+			_, ok := known[w]
+			if !ok {
+				_, ok = known[strings.ToLower(w)]
+			}
+			return ok
+		},
+		nil, known, nil,
+	))
 	m := lt.Check("tset the bok")
 	require.NotEmpty(t, m)
 	// tset → test, bok → book
