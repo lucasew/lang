@@ -8,62 +8,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
-// FullTagMatchReadings tags A-B when both sides share a POS family (Java CompoundTagger
-// tagMatch path). tagWord is the dictionary lookup — fail closed when either side is
-// untagged (no soft invent of intj/adv/redup without dict).
+// FullTagMatchReadings ports CompoundTagger.tagMatch for A-B compounds via TagMatch.
+// tagWord is dictionary lookup — fail closed when either side is untagged.
 func FullTagMatchReadings(token string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
-	t := strings.ReplaceAll(token, "–", "-")
-	t = strings.ReplaceAll(t, "—", "-")
-	t = strings.ReplaceAll(t, "\u2011", "-") // non-breaking hyphen
-	if strings.Count(t, "-") != 1 {
-		return nil
-	}
-	parts := strings.SplitN(t, "-", 2)
-	left, right := parts[0], parts[1]
-	if left == "" || right == "" {
-		return nil
-	}
-
-	leftTags := lookupBothCases(left, tagWord)
-	rightTags := lookupBothCases(right, tagWord)
-	if len(leftTags) == 0 || len(rightTags) == 0 {
-		// Java tags both parts via wordTagger — incomplete without dictionary, not invent.
-		return nil
-	}
-
-	// find shared POS family and matching case when possible
-	var out []*languagetool.AnalyzedToken
-	seen := map[string]struct{}{}
-	for _, lt := range leftTags {
-		fam := posFamily(lt.PosTag)
-		if fam == "" {
-			continue
-		}
-		for _, rt := range rightTags {
-			if posFamily(rt.PosTag) != fam {
-				continue
-			}
-			// prefer same case marker if present
-			caseL, caseR := caseMarker(lt.PosTag), caseMarker(rt.PosTag)
-			if caseL != "" && caseR != "" && caseL != caseR {
-				continue
-			}
-			pos := mergePOS(lt.PosTag, rt.PosTag)
-			lemma := combineLemma(lt.Lemma, rt.Lemma, left, right)
-			key := pos + "|" + lemma
-			if _, ok := seen[key]; ok {
-				continue
-			}
-			seen[key] = struct{}{}
-			p, l := pos, lemma
-			// lower lemma for non-proper
-			if !strings.Contains(pos, "prop") {
-				l = strings.ToLower(l)
-			}
-			out = append(out, languagetool.NewAnalyzedToken(token, &p, &l))
-		}
-	}
-	return out
+	return FullTagMatchViaTagMatch(token, tagWord)
 }
 
 func lookupBothCases(word string, tagWord func(string) []tagging.TaggedWord) []tagging.TaggedWord {
