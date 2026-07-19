@@ -121,22 +121,13 @@ func VerbInflectionsOverlap(verbTags, nounTags []string) bool {
 	return false
 }
 
-// Equals compares gender/person/plural loosely (as used for overlap checks).
+// Equals ports VerbInflectionHelper.Inflection.equals (person, then gender, then plural).
 func (inf VerbInflection) Equals(other VerbInflection) bool {
 	if inf.Person != "" && other.Person != "" && inf.Person != other.Person {
 		return false
 	}
-	// match gender when both set
-	if inf.Gender != "" && other.Gender != "" {
-		if inf.Gender == other.Gender {
-			return true
-		}
-		// i/o specials only match self
+	if inf.Gender != "" && other.Gender != "" && inf.Gender != other.Gender {
 		return false
 	}
-	// plural-only (s/p)
-	if inf.Plural != "" && other.Plural != "" {
-		return inf.Plural == other.Plural
-	}
-	return true
+	return inf.Plural == other.Plural
 }

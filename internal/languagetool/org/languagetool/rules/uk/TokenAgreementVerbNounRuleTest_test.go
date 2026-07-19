@@ -73,13 +73,13 @@ func TestTokenAgreementVerbNounRule_RuleTN(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTnVdav
 func TestTokenAgreementVerbNounRule_RuleTnVdav(t *testing.T) {
-	// dative-governed verb with wrong case object
+	// dative-governed verb: wrong indir case flags; correct v_dav ok.
+	// Pure v_naz is subject-slot (Java may pass via inflection overlap) — use v_zna object.
 	r := NewTokenAgreementVerbNounRule()
-	// вірити v_dav/v_oru — wrong v_naz
 	v := "вірити"
 	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atrLemma("вірить", &v, "verb:imperf:pres:s:3"),
-		atr("друг", "noun:anim:m:v_naz"),
+		atr("друга", "noun:anim:m:v_zna"),
 	})))
 	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atrLemma("вірить", &v, "verb:imperf:pres:s:3"),
@@ -101,30 +101,37 @@ func TestTokenAgreementVerbNounRule_RuleTn_V_N_Vinf(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTn_V_Vinf_N
 func TestTokenAgreementVerbNounRule_RuleTn_V_Vinf_N(t *testing.T) {
-	// V + Vinf + N: simplified left-to-right pairs only; Vinf resets as non-noun intermediate
-	// unless particle — still green: finite verb + noun after particle
+	// PARTS_CANT_SKIP includes "й" → clears verb state (Java isExceptionSkip returns -1).
+	// Skippable "не" keeps state so wrong-case object after particle still flags.
 	r := NewTokenAgreementVerbNounRule()
-	v := "хотіти"
-	// хотіти governs v_inf primarily — noun after may not flag if only v_inf gov
-	// use боятися + wrong case through particle
 	v2 := "боятися"
-	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atrLemma("боятися", &v2, "verb:imperf:inf"),
 		atr("й", "part"),
 		atr("закордоном", "noun:inanim:m:v_oru"),
 	})))
-	_ = v
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("боятися", &v2, "verb:imperf:inf"),
+		atr("не", "part"),
+		atr("закордоном", "noun:inanim:m:v_oru"),
+	})))
 }
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/rules/uk/TokenAgreementVerbNounRuleTest.java :: TokenAgreementVerbNounRuleTest.testRuleTn_ADV_Vinf_N
 func TestTokenAgreementVerbNounRule_RuleTn_ADV_Vinf_N(t *testing.T) {
-	// ADV between verb and noun is not ignorable → no pair (green: no false positive)
+	// Java isExceptionSkip skips pure adv (keep verb state) — wrong-case object still flags.
+	// Correct genitive object after adv is fine (subject-style empty for gov match).
 	r := NewTokenAgreementVerbNounRule()
 	v := "досягнути"
-	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atrLemma("досягнув", &v, "verb:perf:past:m"),
 		atr("швидко", "adv"),
 		atr("піку", "noun:inanim:m:v_dav"),
+	})))
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("досягнув", &v, "verb:perf:past:m"),
+		atr("швидко", "adv"),
+		atr("піку", "noun:inanim:m:v_rod"),
 	})))
 }
 
@@ -225,21 +232,29 @@ func TestTokenAgreementVerbNounRule_RuleTnNumr(t *testing.T) {
 
 // Port of TokenAgreementVerbNounRuleTest.testRuleTNvNaz
 func TestTokenAgreementVerbNounRule_RuleTNvNaz(t *testing.T) {
-	// nominative object often wrong for transitive governers (вірити needs dav)
+	// Java: pure v_naz is subject-slot — inflection overlap passes; no government flag.
+	// (testRuleTNvNaz is assertEmptyMatch for "прийшов Тарас" etc.)
 	r := NewTokenAgreementVerbNounRule()
-	v := "вірити"
+	v := "прийти"
+	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("прийшов", &v, "verb:perf:past:m"),
+		atr("Тарас", "noun:anim:m:v_naz:prop"),
+	})))
+	// indir wrong case still flags (not pure v_naz path)
+	v2 := "вірити"
 	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atrLemma("вірить", &v, "verb:imperf:pres:s:3"),
-		atr("друг", "noun:anim:m:v_naz"),
+		atrLemma("вірить", &v2, "verb:imperf:pres:s:3"),
+		atr("друга", "noun:anim:m:v_zna"),
 	})))
 }
 
 // Port of TokenAgreementVerbNounRuleTest.testRuleTNTime
 func TestTokenAgreementVerbNounRule_RuleTNTime(t *testing.T) {
-	// verb lemma absent from case_government → soft pass (full time exceptions deferred)
+	// Java: empty case-government + indir with :v_ → !hasVidm → flag (unless TIME_PLUS exception).
+	// Synthetic unknown lemma has no gov → flags; real TIME_PLUS paths covered by exception helper.
 	r := NewTokenAgreementVerbNounRule()
 	v := "неозначенийдієслівнийлема"
-	require.Empty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+	require.NotEmpty(t, r.Match(languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atrLemma("приходить", &v, "verb:imperf:pres:s:3"),
 		atr("вчора", "noun:inanim:n:v_zna:prop"),
 	})))
