@@ -44,6 +44,11 @@ var (
 func NewSpanishWordRepeatBeginningRule(messages map[string]string) *SpanishWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "SPANISH_WORD_REPEAT_BEGINNING_RULE"
+	// Java: Asimismo… <marker>Asimismo</marker> (fixed has no markers; exact Java text)
+	base.AddExamplePair(
+		rules.Wrong("Asimismo, la calle es casi toda residencial. <marker>Asimismo</marker>, lleva el nombre de un poeta."),
+		rules.Fixed("Además, la calle es casi toda residencal. También lleva el nombre de un poeta."),
+	)
 	r := &SpanishWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsExceptionFn = r.isException
 	base.IsAdverbFn = r.isAdverb
