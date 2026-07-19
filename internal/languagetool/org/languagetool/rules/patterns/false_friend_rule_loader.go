@@ -119,8 +119,9 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		if msg == "" {
 			msg = "Possible false friend: {0} → {1}"
 		}
+		// Java FalseFriendRuleHandler.formatTranslations: "a", "b"
 		msg = strings.ReplaceAll(msg, "{0}", tokensAsString(tokens))
-		msg = strings.ReplaceAll(msg, "{1}", strings.Join(motherTranslations, ", "))
+		msg = strings.ReplaceAll(msg, "{1}", formatFFTranslations(motherTranslations))
 		msg = strings.ReplaceAll(msg, "{2}", motherLang)
 		// suggestions
 		suggMsg := l.FalseFriendSugg
@@ -132,6 +133,9 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		var sb strings.Builder
 		sb.WriteString(msg)
 		for _, s := range motherTranslations {
+			if s == "" {
+				continue
+			}
 			sb.WriteString(" <suggestion>")
 			sb.WriteString(s)
 			sb.WriteString("</suggestion>")
@@ -167,4 +171,18 @@ func tokensAsString(tokens []*PatternToken) string {
 		}
 	}
 	return strings.Join(parts, " ")
+}
+
+// formatFFTranslations ports FalseFriendRuleHandler.formatTranslations:
+// each translation wrapped in quotes, joined by ", ".
+func formatFFTranslations(trs []string) string {
+	parts := make([]string, 0, len(trs))
+	for _, t := range trs {
+		t = strings.TrimSpace(t)
+		if t == "" {
+			continue
+		}
+		parts = append(parts, `"`+t+`"`)
+	}
+	return strings.Join(parts, ", ")
 }

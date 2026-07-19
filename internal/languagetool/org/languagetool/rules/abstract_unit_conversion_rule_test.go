@@ -49,4 +49,15 @@ func TestAbstractUnitConversionRule_ShortMessage(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, ms)
 	require.Equal(t, "Add metric equivalent?", ms[0].GetShortMessage())
+	// Java setUrl → Wolfram convert … to metric
+	require.Contains(t, ms[0].GetURL(), "wolframalpha.com")
+	require.Contains(t, ms[0].GetURL(), "convert")
+}
+
+func TestNaturalnessJavaOrder(t *testing.T) {
+	// Java: score abs-50 for 1..100 — 2 scores -48, 50 scores 0 (lower better)
+	require.Less(t, naturalness(2), naturalness(50))
+	require.Less(t, naturalness(50), naturalness(200))
+	// abs < 1: 1/(abs²*2) — smaller abs is larger (worse) score
+	require.Greater(t, naturalness(0.01), naturalness(0.5))
 }

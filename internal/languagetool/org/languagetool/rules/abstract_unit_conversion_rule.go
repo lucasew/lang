@@ -3,6 +3,7 @@ package rules
 import (
 	"fmt"
 	"math"
+	"net/url"
 	"regexp"
 	"sort"
 	"strconv"
@@ -338,6 +339,17 @@ func (r *AbstractUnitConversionRule) newUnitMatch(
 	return m
 }
 
+// newUnitMatchWithURL builds a match and sets Wolfram explanation URL for original span text.
+func (r *AbstractUnitConversionRule) newUnitMatchWithURL(
+	sentence *languagetool.AnalyzedSentence, from, to int, msg UnitConversionMessage, original string,
+) *RuleMatch {
+	m := r.newUnitMatch(sentence, from, to, msg)
+	if u := buildURLForExplanation(original); u != "" {
+		m.SetURL(u)
+	}
+	return m
+}
+
 func (r *AbstractUnitConversionRule) formatNumber(v float64) string {
 	if r != nil && r.FormatNumber != nil {
 		return r.FormatNumber(v)
@@ -434,16 +446,32 @@ func (r *AbstractUnitConversionRule) GetMetricEquivalent(value float64, unit Uni
 	return out
 }
 
+// naturalness ports AbstractUnitConversionRule.sortByNaturalness score
+// (smaller score → better). Java:
+//
+//	abs < 1 → 1/(abs²*2); abs < 100 → abs-50; else abs²
 func naturalness(v float64) float64 {
 	av := math.Abs(v)
-	if av == 0 {
-		return math.Inf(1)
+	if av < 1.0 {
+		if av == 0 {
+			return math.Inf(1)
+		}
+		return 1.0 / (av * av * 2)
 	}
-	// prefer values near 1..100
-	if av >= 1 && av <= 100 {
-		return 0
+	if av < 100 {
+		return av - 50
 	}
-	return math.Abs(math.Log10(av) - 1)
+	return av * av
+}
+
+// buildURLForExplanation ports AbstractUnitConversionRule.buildURLForExplanation
+// (WolframAlpha "convert … to metric").
+func buildURLForExplanation(original string) string {
+	if original == "" {
+		return ""
+	}
+	q := url.QueryEscape("convert " + original + " to metric")
+	return "http://www.wolframalpha.com/input/?i=" + q
 }
 
 // FormatSuggestion builds "original (converted)" style text.
@@ -560,7 +588,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					break
 				}
 			}
-			m := r.newUnitMatch(sentence, from, fullEnd, UnitMsgSuggestion)
+			m := r.newUnitMatchWithURL(sentence, from, fullEnd, UnitMsgSuggestion, strings.TrimSpace(highlight))
 			m.SetSuggestedReplacements(suggs)
 			matches = append(matches, m)
 		}
@@ -632,7 +660,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					break
 				}
 			}
-			m := r.newUnitMatch(sentence, loc[0], loc[1], UnitMsgSuggestion)
+			m := r.newUnitMatchWithURL(sentence, loc[0], loc[1], UnitMsgSuggestion, strings.TrimSpace(full))
 			m.SetSuggestedReplacements(suggs)
 			matches = append(matches, m)
 		}
@@ -696,7 +724,11 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	}
 	if convertedUnit == nil {
 		// unknown unit in paren — Java CHECK_UNKNOWN_UNIT; report on paren span
-		return r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheckUnknownUnit)
+		m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheckUnknownUnit)
+		if u := buildURLForExplanation(originalFull); u != "" {
+			m.SetURL(u)
+		}
+		return m
 	}
 	// same unit as source → leave alone (Java)
 	if convertedUnit.ID == srcUnit.ID && convertedUnit.Symbol == srcUnit.Symbol {
@@ -704,7 +736,11 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	}
 	expected, ok := Convert(srcVal, srcUnit, *convertedUnit)
 	if !ok {
-		return r.newUnitMatch(sentence, convFrom, convTo, UnitMsgUnitMismatch)
+		m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgUnitMismatch)
+		if u := buildURLForExplanation(originalFull); u != "" {
+			m.SetURL(u)
+		}
+		return m
 	}
 	if math.Abs(expected-given) <= unitDelta*math.Max(1, math.Abs(expected)) {
 		// accurate enough
@@ -720,6 +756,9 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheck)
 	// suggest corrected number + unit
 	m.SetSuggestedReplacement(r.formatNumber(expected) + " " + convertedUnit.Symbol)
+	if u := buildURLForExplanation(originalFull); u != "" {
+		m.SetURL(u)
+	}
 	return m
 }
 
