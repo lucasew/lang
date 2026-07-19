@@ -871,6 +871,24 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		return true
 	}
 
+	// Прем'єр-міністр повторила — masc profession + fem verb (Java hasMascFemLemma)
+	if HasPosTagPart(noun, "noun:anim:m:v_naz") &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*:f(:.*|$)`)) &&
+		HasMascFemLemma(noun) {
+		return true
+	}
+	// пора було
+	if CleanTokenLower(noun) == "пора" && CleanTokenLower(verb) == "було" {
+		return true
+	}
+	// решта/частина/… + plural/neuter verb
+	pseudoPlural := map[string]bool{
+		"решта": true, "частина": true, "частка": true, "половина": true, "третина": true, "чверть": true,
+	}
+	if pseudoPlural[CleanTokenLower(noun)] && HasPosTagRE(verb, regexp.MustCompile(`.*:[pn](:.*|$)`)) {
+		return true
+	}
+
 	// можуть російськомовні громадяни вважатися — INF_ARGREEMENT before/after inf
 	// Java: reverseSearchIdx / forwardLemmaSearchIdx with INF_ARGREEMENT_PATTERN
 	if HasPosTagRE(verb, verbInfPattern) {
