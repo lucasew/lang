@@ -125,6 +125,37 @@ type AbstractUnitConversionRule struct {
 	ShortMessageFor func(m UnitConversionMessage) string
 	// ParseNumber optional locale number parse (default: comma→dot only).
 	ParseNumber func(s string) (float64, error)
+	// incorrectExamples / correctExamples port Rule lists (Java addExamplePair).
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
+}
+
+// AddExamplePair ports Rule.addExamplePair for unit conversion subclasses.
+func (r *AbstractUnitConversionRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractUnitConversionRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractUnitConversionRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 type unitPattern struct {

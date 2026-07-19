@@ -21,6 +21,11 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	base := rules.NewAbstractUnitConversionRule(messages)
 	// Java getId
 	base.ID = "EINHEITEN_METRISCH"
+	// Java: addExamplePair(Example.wrong(...), Example.fixed(...))
+	base.AddExamplePair(
+		rules.Wrong("Ich bin <marker>6 Fuß</marker> groß."),
+		rules.Fixed("Ich bin <marker>6 Fuß (1,83 m)</marker> groß."),
+	)
 	base.FormatNumber = formatDEUnitNumber
 	base.ParseNumber = parseDEUnitNumber
 	base.MessageFor = func(m rules.UnitConversionMessage) string {
