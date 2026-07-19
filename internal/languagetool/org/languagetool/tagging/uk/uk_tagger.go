@@ -347,6 +347,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
 			}
 		}
+		// Java doGuessTwoHyphens (exactly two dashes) before/alongside single-dash tagMatch.
+		if len(readings) == 0 && strings.Count(strings.ReplaceAll(strings.ReplaceAll(w, "–", "-"), "—", "-"), "-") == 2 {
+			if two := DynamicTwoHyphenReadings(w, t.TagWord); len(two) > 0 {
+				readings = two
+			}
+		}
 		if len(readings) == 0 && strings.Contains(w, "-") {
 			if ft := FullTagMatchReadings(w, t.TagWord); len(ft) > 0 {
 				readings = ft
