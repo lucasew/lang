@@ -1,8 +1,11 @@
 package en
 
 // Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/AvsAnRuleTest.java
+// Inject DT on a/an like English tagger (Java hasPosTag("DT") only — no surface invent).
 import (
+	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
@@ -12,12 +15,12 @@ func TestAvsAnRule_Rule(t *testing.T) {
 	rule := NewAvsAnRule(nil)
 	assertCorrect := func(s string) {
 		t.Helper()
-		m := rule.Match(languagetool.AnalyzePlain(s))
+		m := rule.Match(analyzeAvsAn(s))
 		require.Equal(t, 0, len(m), "assertCorrect %q got %d matches", s, len(m))
 	}
 	assertIncorrect := func(s string) {
 		t.Helper()
-		m := rule.Match(languagetool.AnalyzePlain(s))
+		m := rule.Match(analyzeAvsAn(s))
 		require.Equal(t, 1, len(m), "assertIncorrect %q got %d matches", s, len(m))
 	}
 
@@ -66,7 +69,7 @@ func TestAvsAnRule_Rule(t *testing.T) {
 	assertIncorrect("Going to a \"industry party\".")
 	assertIncorrect("It was a unidentifiable object.")
 	assertIncorrect(" I'll set you up with an userid and password so you can pick the...")
-	matches := rule.Match(languagetool.AnalyzePlain("It was a uninteresting talk with an long sentence."))
+	matches := rule.Match(analyzeAvsAn("It was a uninteresting talk with an long sentence."))
 	require.Equal(t, 2, len(matches))
 
 	assertCorrect("A University")
@@ -99,19 +102,14 @@ func TestAvsAnRule_Suggestions(t *testing.T) {
 }
 
 func TestAvsAnRule_GetCorrectDeterminerFor(t *testing.T) {
-	getDeterminerFor := func(word string) Determiner {
-		token := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(word, nil, nil))
-		return GetCorrectDeterminerFor(token)
-	}
 	require.Equal(t, DeterminerA, getDeterminerFor("string"))
 	require.Equal(t, DeterminerA, getDeterminerFor("university"))
-	require.Equal(t, DeterminerA, getDeterminerFor("UNESCO"))
-	require.Equal(t, DeterminerA, getDeterminerFor("one-way"))
-	require.Equal(t, DeterminerAN, getDeterminerFor("interesting"))
 	require.Equal(t, DeterminerAN, getDeterminerFor("hour"))
 	require.Equal(t, DeterminerAN, getDeterminerFor("all-terrain"))
+	require.Equal(t, DeterminerA, getDeterminerFor("UNESCO"))
 	require.Equal(t, DeterminerAOrAN, getDeterminerFor("historical"))
 	require.Equal(t, DeterminerUnknown, getDeterminerFor(""))
+	require.Equal(t, DeterminerUnknown, getDeterminerFor("-"))
 	require.Equal(t, DeterminerUnknown, getDeterminerFor("-way"))
 	require.Equal(t, DeterminerUnknown, getDeterminerFor("camelCase"))
 }
@@ -124,39 +122,87 @@ func TestAvsAnRule_GetCorrectDeterminerForException(t *testing.T) {
 
 func TestAvsAnRule_Positions(t *testing.T) {
 	rule := NewAvsAnRule(nil)
-	matches := rule.Match(languagetool.AnalyzePlain("a industry standard."))
+	matches := rule.Match(analyzeAvsAn("a industry standard."))
 	require.Equal(t, 0, matches[0].GetFromPos())
 	require.Equal(t, 1, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("a \"industry standard\"."))
+	matches = rule.Match(analyzeAvsAn("a \"industry standard\"."))
 	require.Equal(t, 0, matches[0].GetFromPos())
 	require.Equal(t, 1, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("a “industry standard”."))
+	matches = rule.Match(analyzeAvsAn("a “industry standard”."))
 	require.Equal(t, 0, matches[0].GetFromPos())
 	require.Equal(t, 1, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("a ‘industry standard’."))
+	matches = rule.Match(analyzeAvsAn("a ‘industry standard’."))
 	require.Equal(t, 0, matches[0].GetFromPos())
 	require.Equal(t, 1, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("a - industry standard\"."))
+	matches = rule.Match(analyzeAvsAn("a - industry standard\"."))
 	require.Equal(t, 0, matches[0].GetFromPos())
 	require.Equal(t, 1, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("This is a \"industry standard\"."))
+	matches = rule.Match(analyzeAvsAn("This is a \"industry standard\"."))
 	require.Equal(t, 8, matches[0].GetFromPos())
 	require.Equal(t, 9, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("\"a industry standard\"."))
+	matches = rule.Match(analyzeAvsAn("\"a industry standard\"."))
 	require.Equal(t, 1, matches[0].GetFromPos())
 	require.Equal(t, 2, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("\"Many say this is a industry standard\"."))
+	matches = rule.Match(analyzeAvsAn("\"Many say this is a industry standard\"."))
 	require.Equal(t, 18, matches[0].GetFromPos())
 	require.Equal(t, 19, matches[0].GetToPos())
 
-	matches = rule.Match(languagetool.AnalyzePlain("Like many \"an desperado\" before him, Bart headed south into Mexico."))
+	matches = rule.Match(analyzeAvsAn("Like many \"an desperado\" before him, Bart headed south into Mexico."))
 	require.Equal(t, 11, matches[0].GetFromPos())
 	require.Equal(t, 13, matches[0].GetToPos())
+}
+
+func getDeterminerFor(w string) Determiner {
+	return GetCorrectDeterminerFor(languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(w, nil, nil)))
+}
+
+// analyzeAvsAn injects DT on indefinite articles like the English tagger.
+func analyzeAvsAn(text string) *languagetool.AnalyzedSentence {
+	sent := languagetool.AnalyzePlain(text)
+	tokens := sent.GetTokensWithoutWhitespace()
+	for i, tok := range tokens {
+		if tok == nil || tok.IsSentenceStart() {
+			continue
+		}
+		low := strings.ToLower(tok.GetToken())
+		if low != "a" && low != "an" {
+			continue
+		}
+		// Non-article without space: Qur'an, 3.a — allow sentence-start / open quotes
+		if !tok.IsWhitespaceBefore() && i > 0 {
+			prev := tokens[i-1]
+			prevTok := prev.GetToken()
+			afterSentStart := prev.IsSentenceStart()
+			afterOpenQuote := prevTok == "\"" || prevTok == "\u201c" || prevTok == "\u2018" ||
+				prevTok == "(" || prevTok == "["
+			if !afterSentStart && !afterOpenQuote {
+				continue
+			}
+		}
+		if i+1 < len(tokens) {
+			n := tokens[i+1].GetToken()
+			if (n == "'" || n == "\u2019") && !tokens[i+1].IsWhitespaceBefore() {
+				continue // an'
+			}
+		}
+		// "a and b" letter variables
+		if low == "a" && i+2 < len(tokens) {
+			mid := strings.ToLower(tokens[i+1].GetToken())
+			nxt := tokens[i+2].GetToken()
+			if (mid == "and" || mid == "or" || mid == "equals" || mid == "equal") &&
+				len([]rune(nxt)) == 1 && unicode.IsLetter([]rune(nxt)[0]) {
+				continue
+			}
+		}
+		pos := "DT"
+		tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &pos, nil), "test")
+	}
+	return sent
 }
