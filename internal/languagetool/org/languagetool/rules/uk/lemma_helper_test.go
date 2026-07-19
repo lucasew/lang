@@ -38,6 +38,7 @@ func TestReverseForwardSearchIdx(t *testing.T) {
 	// forward from after verb-start
 	idx2 := ForwardLemmaSearchIdx(tokens, 0, 5, infAgreementPattern, nil)
 	require.Equal(t, 1, idx2)
-	require.True(t, ReverseSearch(tokens, 2, 3, nil, regexp.MustCompile(`^adj`)))
+	// Java matches(): pattern must cover full POS tag
+	require.True(t, ReverseSearch(tokens, 2, 3, nil, regexp.MustCompile(`^adj.*`)))
 	require.True(t, ForwardPosTagSearch(tokens, 1, "verb", 3))
 }

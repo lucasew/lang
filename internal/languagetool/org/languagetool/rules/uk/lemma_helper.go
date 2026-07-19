@@ -258,7 +258,8 @@ func ReverseSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, pos, depth i
 		if lemmaRE != nil && !HasLemmaTokenRE(tokens[i], lemmaRE) {
 			continue
 		}
-		if posRE != nil && !HasPosTagRE(tokens[i], posRE) {
+		// Java hasPosTag(Pattern) = Matcher.matches() full tag
+		if posRE != nil && !HasPosTagMatches(tokens[i], posRE) {
 			continue
 		}
 		return i
@@ -318,7 +319,8 @@ func ForwardLemmaSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, pos, de
 		if lemmaRE != nil && !HasLemmaTokenRE(tokens[i], lemmaRE) {
 			continue
 		}
-		if posRE != nil && !HasPosTagRE(tokens[i], posRE) {
+		// Java hasPosTag(Pattern) = Matcher.matches() full tag
+		if posRE != nil && !HasPosTagMatches(tokens[i], posRE) {
 			continue
 		}
 		return i

@@ -645,7 +645,8 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:p:`)) &&
 		(reverseConjFind(tokens, adjPos-1, 3) || reverseConjAdvFind(tokens, adjPos-1, 3)) &&
 		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "p") &&
-		ReverseSearch(tokens, adjPos-2, 100, nil, regexp.MustCompile(`^(?:adj|numr)`)) {
+		// Java hasPosTag Pattern matches full tag → need .* after prefix
+		ReverseSearch(tokens, adjPos-2, 100, nil, regexp.MustCompile(`^(?:adj|numr).*`)) {
 		return true
 	}
 
@@ -1096,12 +1097,28 @@ func containsStr(list []string, s string) bool {
 }
 
 // HasPosTagRE reports whether any POS matches re (Java PosTagHelper.hasPosTag Pattern).
+// HasPosTagRE reports whether any POS tag matches re (MatchString / find).
+// For Java Matcher.matches() (full tag), call HasPosTagMatches or write re with ^…$ / .* ends.
 func HasPosTagRE(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
 	if tok == nil || re == nil {
 		return false
 	}
 	for _, p := range CollectPOSTags(tok) {
 		if re.MatchString(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// HasPosTagMatches ports PosTagHelper.hasPosTag(…, Pattern) — Matcher.matches() full tag.
+func HasPosTagMatches(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		loc := re.FindStringIndex(p)
+		if loc != nil && loc[0] == 0 && loc[1] == len(p) {
 			return true
 		}
 	}
