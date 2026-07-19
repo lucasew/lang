@@ -1,6 +1,7 @@
 package commandline
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -75,4 +76,28 @@ func TestRegisterHybridDisambiguator_DE_CA_NL(t *testing.T) {
 			require.NotEmpty(t, sents)
 		})
 	}
+}
+
+func TestRegisterHybridDisambiguator_UK(t *testing.T) {
+	// Official multiwords and/or disambiguation.xml under inspiration.
+	require.NotEmpty(t, DiscoverLanguageMultiwords(nil, "uk"), "uk multiwords.txt")
+	require.NotEmpty(t, DiscoverLanguageDisambiguationXML(nil, "uk"), "uk disambiguation.xml")
+
+	lt, err := configureCoreLT("uk", &CommandLineOptions{Language: "uk"})
+	require.NoError(t, err)
+	require.NotNil(t, lt.Disambiguator, "UkrainianHybridDisambiguator should be wired")
+
+	// Smoke: analyze does not panic
+	sents := lt.Analyze("Це просте речення.")
+	require.NotEmpty(t, sents)
+}
+
+func TestDiscoverLanguageMultiwords_UK(t *testing.T) {
+	p := DiscoverLanguageMultiwords(nil, "uk")
+	require.NotEmpty(t, p)
+	// official multiwords.txt or vendored *-multiwords-upstream.txt
+	require.True(t,
+		strings.Contains(p, "multiwords.txt") || strings.Contains(p, "multiwords-upstream"),
+		"path=%s", p)
+	require.NotContains(t, p, "soft")
 }

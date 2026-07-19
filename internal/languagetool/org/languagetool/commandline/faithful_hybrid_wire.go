@@ -14,6 +14,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/fr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
+	ukdis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/uk"
 	entag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/en"
 )
 
@@ -89,9 +90,41 @@ func RegisterHybridDisambiguator(lt *languagetool.JLanguageTool, lang string, op
 		return registerCatalanHybrid(lt, opts)
 	case "nl":
 		return registerDutchHybrid(lt, opts)
+	case "uk":
+		return registerUkrainianHybrid(lt, opts)
 	default:
 		return false
 	}
+}
+
+// registerUkrainianHybrid ports UkrainianHybridDisambiguator wiring.
+// Java: preDisambiguate (SimpleDisambiguator) → multiwords (/uk/multiwords.txt, allowFirstCap)
+// → XmlRuleDisambiguator(Ukrainian) → hybrid context filters (in package uk).
+func registerUkrainianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOptions) bool {
+	h := ukdis.NewUkrainianHybridDisambiguator()
+	// Simple maps are loaded by NewUkrainianHybridDisambiguator (official disambig_remove/dups).
+
+	// Java: new UkrainianMultiwordChunker("/uk/multiwords.txt", true)
+	if p := DiscoverLanguageMultiwords(opts, "uk"); p != "" {
+		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
+			AllowFirstCapitalized: true,
+			AllowAllUppercase:     false,
+			AllowTitlecase:        false,
+		}); err == nil && c != nil {
+			h.Chunker = c
+		}
+	}
+	// Java: new XmlRuleDisambiguator(Ukrainian.DEFAULT_VARIANT) — language XML (global optional).
+	if xml := loadXmlRuleDisambiguator("uk", opts, true); xml != nil && len(xml.Rules) > 0 {
+		h.Inner = xml
+	}
+	// Always install when we have simple maps (always) or multiwords/XML.
+	// Simple alone is useful; fail only if hybrid is completely empty of work.
+	if h.Simple == nil && h.Chunker == nil && h.Inner == nil {
+		return false
+	}
+	lt.Disambiguator = h
+	return true
 }
 
 // registerFrenchHybrid ports FrenchHybridDisambiguator wiring.
