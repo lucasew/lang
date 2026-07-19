@@ -38,6 +38,11 @@ func loadBRReplace() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/pt-BR/replace.txt"); err != nil {
 			panic(err)
 		}
+		// Java: hospedeira de bordo → aeromoça
+		base.AddExamplePair(
+			rules.Wrong("<marker>hospedeira de bordo</marker>"),
+			rules.Fixed("<marker>aeromoça</marker>"),
+		)
 		brReplaceBase = base
 	})
 	return brReplaceBase

@@ -36,6 +36,11 @@ func loadDiacritics() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/diacritics.txt"); err != nil {
 			panic(err)
 		}
+		// Java: coupe → coupé
+		base.AddExamplePair(
+			rules.Wrong("<marker>coupe</marker>"),
+			rules.Fixed("<marker>coupé</marker>"),
+		)
 		diacriticsBase = base
 	})
 	return diacriticsBase

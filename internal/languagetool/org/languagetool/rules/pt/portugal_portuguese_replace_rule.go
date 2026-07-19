@@ -38,6 +38,11 @@ func loadPTPTReplace() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/pt-PT/replace.txt"); err != nil {
 			panic(err)
 		}
+		// Java: aeromoça → hospedeira de bordo
+		base.AddExamplePair(
+			rules.Wrong("<marker>aeromoça</marker>"),
+			rules.Fixed("<marker>hospedeira de bordo</marker>"),
+		)
 		ptPTReplaceBase = base
 	})
 	return ptPTReplaceBase

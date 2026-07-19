@@ -36,6 +36,11 @@ func loadRedundancy() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/redundancies.txt"); err != nil {
 			panic(err)
 		}
+		// Java: duna de areia → duna
+		base.AddExamplePair(
+			rules.Wrong("<marker>duna de areia</marker>"),
+			rules.Fixed("<marker>duna</marker>"),
+		)
 		redundancyBase = base
 	})
 	return redundancyBase

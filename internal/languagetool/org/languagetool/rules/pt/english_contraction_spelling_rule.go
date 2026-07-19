@@ -53,6 +53,11 @@ func NewEnglishContractionSpellingRule(messages map[string]string) *EnglishContr
 			return "Caso seja uma contração da língua inglesa, prefira \"" + replacements[0] + "\"."
 		},
 	}
+	// Java: whats → what's
+	base.AddExamplePair(
+		rules.Wrong("Ele adorava assistir <marker>whats</marker> cooking às sextas-feiras."),
+		rules.Fixed("Ele adorava assistir <marker>what's</marker> cooking às sextas-feiras."),
+	)
 	return &EnglishContractionSpellingRule{AbstractSimpleReplaceRule: base}
 }
 

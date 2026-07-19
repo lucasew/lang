@@ -50,6 +50,11 @@ func NewPortugueseWrongWordInContextRule(messages map[string]string) *Portuguese
 	}
 	// Java: getCategoryString → "Confusão de Palavras: $match"
 	rules.InitWrongWordInContextMeta(base, messages, "Confusão de Palavras: $match")
+	// Java: infringiu → infligiu
+	base.AddExamplePair(
+		rules.Wrong("O acidente <marker>infringiu</marker> grandes danos."),
+		rules.Fixed("O acidente <marker>infligiu</marker> grandes danos."),
+	)
 	return &PortugueseWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

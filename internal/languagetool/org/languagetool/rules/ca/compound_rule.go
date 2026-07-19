@@ -54,6 +54,11 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 	}
 	base.UseSubRuleSpecificIDs()
 	rules.InitCompoundRuleMeta(base, messages)
+	// Java: Ryan-Air → Ryanair
+	base.AddExamplePair(
+		rules.Wrong("<marker>Ryan-Air</marker>."),
+		rules.Fixed("<marker>Ryanair</marker>."),
+	)
 	r := &CompoundRule{AbstractCompoundRule: base}
 	base.IsMisspelled = func(word string) bool {
 		if r.TagIsTagged == nil {

@@ -23,6 +23,11 @@ var (
 func NewPortugueseWordRepeatRule(messages map[string]string) *PortugueseWordRepeatRule {
 	base := rules.NewWordRepeatRule(messages)
 	base.IDOverride = "PORTUGUESE_WORD_REPEAT_RULE"
+	// Java: é é → é
+	base.AddExamplePair(
+		rules.Wrong("Este <marker>é é</marker> apenas uma frase de exemplo."),
+		rules.Fixed("Este <marker>é</marker> apenas uma frase de exemplo."),
+	)
 	r := &PortugueseWordRepeatRule{WordRepeatRule: base}
 	base.ExtraIgnore = r.ptIgnore
 	return r

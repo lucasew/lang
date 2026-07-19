@@ -51,6 +51,11 @@ func NewPortugueseAgreementReplaceRule(messages map[string]string) *PortugueseAg
 				joinCommaPT(replacements) + "."
 		},
 	}
+	// Java: abstracto → abstrato
+	base.AddExamplePair(
+		rules.Wrong("<marker>abstracto</marker>"),
+		rules.Fixed("<marker>abstrato</marker>"),
+	)
 	return &PortugueseAgreementReplaceRule{AbstractSimpleReplaceRule: base}
 }
 

@@ -58,6 +58,11 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: pesebre / pessebre consistency (multi-marker wrong; first fixed marker = pesebre)
+	base.AddExamplePair(
+		rules.Wrong("Un <marker>pesebre</marker> ací i un altre <marker>pessebre</marker> allà."),
+		rules.Fixed("Un <marker>pesebre</marker> ací i un altre <marker>pesebre</marker> allà."),
+	)
 	r := &WordCoherencyRule{AbstractWordCoherencyRule: base}
 	base.CreateReplacement = r.createReplacement
 	return r

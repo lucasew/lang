@@ -49,6 +49,11 @@ func NewPortugueseWordCoherencyRule(messages map[string]string) *PortugueseWordC
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: duradoiro → duradouro
+	base.AddExamplePair(
+		rules.Wrong("Foi um período duradouro. Tão marcante e <marker>duradoiro</marker> dificilmente será esquecido."),
+		rules.Fixed("Foi um período duradouro. Tão marcante e <marker>duradouro</marker> dificilmente será esquecido."),
+	)
 	return &PortugueseWordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

@@ -42,6 +42,11 @@ var (
 func NewCatalanWordRepeatBeginningRule(messages map[string]string) *CatalanWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "CATALAN_WORD_REPEAT_BEGINNING_RULE"
+	// Java: Però… <marker>Però</marker> (fixed without markers)
+	base.AddExamplePair(
+		rules.Wrong("Però el carrer és tot modernista. <marker>Però</marker> té nom de poeta."),
+		rules.Fixed("Però el carrer és tot modernista. Així i tot, té nom de poeta."),
+	)
 	r := &CatalanWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsExceptionFn = r.isException
 	base.IsAdverbFn = r.isAdverb
