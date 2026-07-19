@@ -122,9 +122,35 @@ func TestCheckParenthetical_FeetInchCompositeSkipped(t *testing.T) {
 	r := NewAbstractUnitConversionRule(nil)
 	sent := languagetool.AnalyzePlain("x")
 	// unitBody half of "(2 ft 6 inch)" after number group
-	m := r.checkParentheticalConversion(sent, 0, 1, 2, 10, 1.9, UnitMetre, 2, "ft 6 inch", "1.9 m")
+	// args: srcFrom,srcTo,convFrom,convTo,numFrom,numTo,unitBodyEnd, srcVal,srcUnit, given, unitBody, original
+	m := r.checkParentheticalConversion(sent, 0, 1, 2, 10, 3, 4, 9, 1.9, UnitMetre, 2, "ft 6 inch", "1.9 m")
 	require.Nil(t, m)
 	// plain feet body still checked
-	m2 := r.checkParentheticalConversion(sent, 0, 1, 2, 10, 1.9, UnitMetre, 2, "ft", "1.9 m")
+	m2 := r.checkParentheticalConversion(sent, 0, 1, 2, 10, 3, 4, 6, 1.9, UnitMetre, 2, "ft", "1.9 m")
 	require.NotNil(t, m2)
+}
+
+// Java metric-source CHECK highlights only the paren number (group 1), not the full unit span.
+func TestCheckParenthetical_MetricSourceSpanIsNumberOnly(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	// "10 km (20 mi)" — metric primary, wrong mi conversion
+	text := "10 km (20 mi)"
+	sent := languagetool.AnalyzePlain(text)
+	// synthetic positions matching convertedParenRE groups for " (20 mi)"
+	// "10 km" at 0..5; paren at 5..13; number "20" at 7..9
+	m := r.checkParentheticalConversion(sent, 0, 5, 5, 13, 7, 9, 12, 10, UnitKilometre, 20, "mi", "10 km")
+	require.NotNil(t, m)
+	require.Equal(t, 7, m.GetFromPos())
+	require.Equal(t, 9, m.GetToPos())
+}
+
+// Java non-metric CHECK spans unitMatcher.start … convertedMatcher.end(0).
+func TestCheckParenthetical_NonMetricSourceSpanFull(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	// "10 mi (5 km)" wrong
+	sent := languagetool.AnalyzePlain("10 mi (5 km)")
+	m := r.checkParentheticalConversion(sent, 0, 5, 5, 12, 7, 8, 11, 10, UnitMile, 5, "km", "10 mi")
+	require.NotNil(t, m)
+	require.Equal(t, 0, m.GetFromPos())
+	require.Equal(t, 12, m.GetToPos())
 }

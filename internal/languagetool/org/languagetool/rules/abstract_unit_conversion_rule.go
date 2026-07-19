@@ -614,11 +614,14 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			if cm := convertedParenRE.FindStringSubmatchIndex(text[fullEnd:]); cm != nil {
 				cFrom := fullEnd + cm[0]
 				cTo := fullEnd + cm[1]
-				numInParen := text[fullEnd+cm[2] : fullEnd+cm[3]]
-				unitBody := strings.TrimSpace(text[fullEnd+cm[4] : fullEnd+cm[5]])
+				numFrom := fullEnd + cm[2]
+				numTo := fullEnd + cm[3]
+				unitBodyEnd := fullEnd + cm[5]
+				numInParen := text[numFrom:numTo]
+				unitBody := strings.TrimSpace(text[fullEnd+cm[4] : unitBodyEnd])
 				if given, errG := r.parseNumber(numInParen); errG == nil {
 					highlight := text[from:fullEnd]
-					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, val, sp.unit, given, unitBody, highlight); check != nil {
+					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, numFrom, numTo, unitBodyEnd, val, sp.unit, given, unitBody, highlight); check != nil {
 						claim(from, cTo)
 						matches = append(matches, check)
 						continue
@@ -690,11 +693,14 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 				if cm := convertedParenRE.FindStringSubmatchIndex(text[loc[1]:]); cm != nil {
 					cFrom := loc[1] + cm[0]
 					cTo := loc[1] + cm[1]
-					numInParen := text[loc[1]+cm[2] : loc[1]+cm[3]]
-					unitBody := strings.TrimSpace(text[loc[1]+cm[4] : loc[1]+cm[5]])
+					numFrom := loc[1] + cm[2]
+					numTo := loc[1] + cm[3]
+					unitBodyEnd := loc[1] + cm[5]
+					numInParen := text[numFrom:numTo]
+					unitBody := strings.TrimSpace(text[loc[1]+cm[4] : unitBodyEnd])
 					given, errG := r.parseNumber(numInParen)
 					if errG == nil {
-						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, val, up.unit, given, unitBody, full); check != nil {
+						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, numFrom, numTo, unitBodyEnd, val, up.unit, given, unitBody, full); check != nil {
 							claim(loc[0], cTo)
 							matches = append(matches, check)
 							continue
@@ -768,9 +774,15 @@ func dedupeUnitMatchesByStart(matches []*RuleMatch) []*RuleMatch {
 
 // checkParentheticalConversion ports the Java CHECK branch when a conversion already follows.
 // Returns a RuleMatch if the given conversion is wrong; nil if OK or not verifiable.
+//
+// Span choices match Java tryConversion:
+//   - metric source (reverse CHECK): number group only (start(1)/end(1))
+//   - non-metric source (CHECK): unitMatcher.start … convertedMatcher.end(0)
+//   - unknown unit: number through unit body (start(1)/end(2))
+//   - unit mismatch: unitMatcher.start … convertedMatcher.end(0)
 func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	sentence *languagetool.AnalyzedSentence,
-	srcFrom, srcTo, convFrom, convTo int,
+	srcFrom, srcTo, convFrom, convTo, numFrom, numTo, unitBodyEnd int,
 	srcVal float64, srcUnit UnitDef,
 	given float64, unitBody, originalFull string,
 ) *RuleMatch {
@@ -832,8 +844,12 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 		}
 	}
 	if convertedUnit == nil {
-		// unknown unit in paren — Java CHECK_UNKNOWN_UNIT; report on paren span
-		m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheckUnknownUnit)
+		// Java CHECK_UNKNOWN_UNIT: start(1)…end(2) = number through unit body
+		from, to := numFrom, unitBodyEnd
+		if from <= 0 || to <= from {
+			from, to = convFrom, convTo
+		}
+		m := r.newUnitMatch(sentence, from, to, UnitMsgCheckUnknownUnit)
 		if u := buildURLForExplanation(originalFull); u != "" {
 			m.SetURL(u)
 		}
@@ -845,7 +861,8 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	}
 	expected, ok := Convert(srcVal, srcUnit, *convertedUnit)
 	if !ok {
-		m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgUnitMismatch)
+		// Java UNIT_MISMATCH: unitMatcher.start … convertedMatcher.end
+		m := r.newUnitMatch(sentence, srcFrom, convTo, UnitMsgUnitMismatch)
 		if u := buildURLForExplanation(originalFull); u != "" {
 			m.SetURL(u)
 		}
@@ -863,7 +880,12 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 			return nil
 		}
 	}
-	m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheck)
+	// Java spans: metric source → number only; non-metric → unit through full paren
+	matchFrom, matchTo := srcFrom, convTo
+	if srcUnit.Metric {
+		matchFrom, matchTo = numFrom, numTo
+	}
+	m := r.newUnitMatch(sentence, matchFrom, matchTo, UnitMsgCheck)
 	// suggest corrected number + unit
 	m.SetSuggestedReplacement(r.formatNumber(expected) + " " + convertedUnit.Symbol)
 	if u := buildURLForExplanation(originalFull); u != "" {
