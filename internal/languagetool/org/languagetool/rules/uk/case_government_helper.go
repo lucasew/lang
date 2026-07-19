@@ -227,7 +227,8 @@ func getCustomCaseGovs(tok *languagetool.AnalyzedTokenReadings) []string {
 	} else if HasLemmaWithPosRE(tok, []string{"належить"}, cgNalezhytyInfRE) {
 		// Java list is surface "належить" as lemma list — keep twin
 		list = append(list, "v_inf")
-	} else if HasLemmaTokenRE(tok, cgBilshMenshRE) && HasPosTagMatches(tok, cgBilshMenshPosRE) {
+	} else if HasLemmaREWithPosRE(tok, cgBilshMenshRE, cgBilshMenshPosRE) {
+		// Java hasLemma(Pattern lemma, Pattern pos) on same reading
 		list = append(list, "v_rod")
 	}
 	return list

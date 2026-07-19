@@ -259,19 +259,10 @@ func findInDeriv(w string) []string {
 	return suggestions
 }
 
+// hasPosTagRE ports PosTagHelper.hasPosTag(…, Pattern) for package-local callers.
+// Uses Matcher.matches() full-tag semantics via HasPosTagMatches.
 func hasPosTagRE(tokenReadings *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
-	if tokenReadings == nil || re == nil {
-		return false
-	}
-	for _, at := range tokenReadings.GetReadings() {
-		if at == nil || at.GetPOSTag() == nil {
-			continue
-		}
-		if re.MatchString(*at.GetPOSTag()) {
-			return true
-		}
-	}
-	return false
+	return HasPosTagMatches(tokenReadings, re)
 }
 
 func hasPosTagPart(tokenReadings *languagetool.AnalyzedTokenReadings, part string) bool {

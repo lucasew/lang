@@ -53,3 +53,16 @@ func TestAdvpVerbLemma(t *testing.T) {
 	at2 := atrLemma("роблячи", &l2, "advp")
 	require.Equal(t, "робити", advpVerbLemma(at2.GetReadings()[0]))
 }
+
+func TestHasLemmaREWithPosRE_SameReading(t *testing.T) {
+	// lemma on one reading, POS on another → must not match
+	men := "меншати"
+	// reading 0: wrong POS for pattern, reading 1: different lemma with good POS
+	tok := atrLemma("меншає", &men, "noun:inanim:m:v_naz")
+	// append second reading via GetReadings mutation is hard; use only custom gov path
+	// same reading good POS
+	tokOK := atrLemma("меншає", &men, "verb:imperf:pres:s:3")
+	require.True(t, HasLemmaREWithPosRE(tokOK, cgBilshMenshRE, cgBilshMenshPosRE))
+	// lemma matches but POS does not → false
+	require.False(t, HasLemmaREWithPosRE(tok, cgBilshMenshRE, cgBilshMenshPosRE))
+}

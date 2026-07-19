@@ -209,6 +209,30 @@ func HasLemmaWithPosRE(tok *languagetool.AnalyzedTokenReadings, lemmas []string,
 	return false
 }
 
+// HasLemmaREWithPosRE ports LemmaHelper.hasLemma(readings, Pattern lemma, Pattern pos) —
+// both patterns use Matcher.matches() on the same reading.
+func HasLemmaREWithPosRE(tok *languagetool.AnalyzedTokenReadings, lemmaRE, posRE *regexp.Regexp) bool {
+	if tok == nil || lemmaRE == nil || posRE == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		lem, pos := *r.GetLemma(), *r.GetPOSTag()
+		lloc := lemmaRE.FindStringIndex(lem)
+		if lloc == nil || lloc[0] != 0 || lloc[1] != len(lem) {
+			continue
+		}
+		ploc := posRE.FindStringIndex(pos)
+		if ploc == nil || ploc[0] != 0 || ploc[1] != len(pos) {
+			continue
+		}
+		return true
+	}
+	return false
+}
+
 // HasLemmaBase ports LemmaHelper.hasLemmaBase (lemma or first hyphen segment).
 func HasLemmaBase(tok *languagetool.AnalyzedTokenReadings, lemmas []string, posRE *regexp.Regexp) bool {
 	if tok == nil || posRE == nil || len(lemmas) == 0 {

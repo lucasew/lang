@@ -1838,7 +1838,8 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 	// чотири дні був
 	if nounPos > 1 &&
 		hasPosWithoutPron(noun, regexp.MustCompile(`noun:.*:p:v_naz`)) &&
-		HasLemmaWithPosRE(tokens[nounPos-1], []string{"два", "три", "чотири"}, regexp.MustCompile(`numr:p:v_zna`)) {
+		// Java Pattern.compile("numr:p:v_zna") Matcher.matches() — full tag exactly
+		HasLemmaWithPosRE(tokens[nounPos-1], []string{"два", "три", "чотири"}, regexp.MustCompile(`^numr:p:v_zna$`)) {
 		return true
 	}
 
