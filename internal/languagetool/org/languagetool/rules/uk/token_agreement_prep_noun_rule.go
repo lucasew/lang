@@ -21,6 +21,9 @@ type TokenAgreementPrepNounRule struct {
 	CaseGov *CaseGovernmentHelper
 	// Synth optional (Java ukrainian.getSynthesizer()); nil → no suggestions.
 	Synth synthesis.Synthesizer
+	// Tag optional (Java ukrainian.getTagger().tag); nil → skip prep+adv merge message.
+	// Signature matches Tagger.Tag: one surface word → ATR list (use first element).
+	Tag func(words []string) []*languagetool.AnalyzedTokenReadings
 }
 
 func hasPrepReading(tok *languagetool.AnalyzedTokenReadings) bool {
@@ -684,11 +687,14 @@ func (r *TokenAgreementPrepNounRule) newPrepNounMatch(
 			}
 			break
 		}
+	case i > 0 && tokens != nil && tokens[i-1] != nil && HasPosTagStart(tokens[i-1], "adv") &&
+		r != nil && r.Tag != nil && prepTok != nil:
+		// Java: tag(prep + tokens[i-1]); if result starts with adv → merge hint
+		merged := cleanTokenSurface(prepTok) + cleanTokenSurface(tokens[i-1])
+		if tagged := r.Tag([]string{merged}); len(tagged) > 0 && HasPosTagStart(tagged[0], "adv") {
+			msg += ". Можливо, прийменник і прислівник мають бути одним словом?"
+		}
 	}
-	// Java adv-merge ("Можливо, прийменник і прислівник…") needs tagger on prep+adv;
-	// deferred until Tag hook is wired on the rule.
-	_ = tokens
-	_ = i
 
 	m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
 	m.ShortMessage = r.shortMsg

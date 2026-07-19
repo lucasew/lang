@@ -1,18 +1,32 @@
 package uk
 
-// TokenAgreementPrepNounExceptionHelper ports org.languagetool.rules.uk.TokenAgreementPrepNounExceptionHelper (exception surface).
-// Full dictionary-driven exception tables are deferred; callers can inject IsException.
-type TokenAgreementPrepNounExceptionHelper struct {
-	// IsException optional override for tests / full port.
-	IsException func(tokens []string, a, b int) bool
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
+// TokenAgreementPrepNounExceptionHelper anchors the Java twin name.
+// Logic lives in GetPrepNounExceptionStrong / NonInfl / Infl and IsPrepNounException
+// (token_agreement_core.go), matching TokenAgreementPrepNounExceptionHelper.
+type TokenAgreementPrepNounExceptionHelper struct{}
+
+func NewTokenAgreementPrepNounExceptionHelper() *TokenAgreementPrepNounExceptionHelper {
+	return &TokenAgreementPrepNounExceptionHelper{}
 }
 
-func NewTokenAgreementPrepNounExceptionHelper() *TokenAgreementPrepNounExceptionHelper { return &TokenAgreementPrepNounExceptionHelper{} }
+// GetExceptionStrong ports getExceptionStrong.
+func (TokenAgreementPrepNounExceptionHelper) GetExceptionStrong(tokens []*languagetool.AnalyzedTokenReadings, i int, prepTok *languagetool.AnalyzedTokenReadings) RuleException {
+	return GetPrepNounExceptionStrong(tokens, i, prepTok)
+}
 
-// Exception reports whether the pair at positions should be ignored.
-func (h *TokenAgreementPrepNounExceptionHelper) Exception(tokens []string, a, b int) bool {
-	if h != nil && h.IsException != nil {
-		return h.IsException(tokens, a, b)
-	}
-	return false
+// GetExceptionNonInfl ports getExceptionNonInfl.
+func (TokenAgreementPrepNounExceptionHelper) GetExceptionNonInfl(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleException {
+	return GetPrepNounExceptionNonInfl(tokens, i)
+}
+
+// GetExceptionInfl ports getExceptionInfl.
+func (TokenAgreementPrepNounExceptionHelper) GetExceptionInfl(tokens []*languagetool.AnalyzedTokenReadings, prepPos, i int) RuleException {
+	return GetPrepNounExceptionInfl(tokens, prepPos, i)
+}
+
+// Exception is a boolean any-hit wrapper (tests / soft callers).
+func (TokenAgreementPrepNounExceptionHelper) Exception(tokens []*languagetool.AnalyzedTokenReadings, prepPos, nounPos int) bool {
+	return IsPrepNounException(tokens, prepPos, nounPos)
 }

@@ -1001,10 +1001,10 @@ func TestVerbNounHardAdjAndVerbSide(t *testing.T) {
 	require.True(t, IsExceptionVerb([]*languagetool.AnalyzedTokenReadings{
 		atr("SENT"), atr("як"), atr("є", "verb"),
 	}, 2))
-	// pluperfect
+	// pluperfect — Java isExceptionVerb requires i > 1 (SENT pad)
 	require.True(t, IsExceptionVerbSkip([]*languagetool.AnalyzedTokenReadings{
-		atr("розпочав", "verb:perf:past:m"), atr("був", "verb"),
-	}, 1))
+		atr("SENT_START"), atr("розпочав", "verb:perf:past:m"), atr("був", "verb"),
+	}, 2))
 }
 
 func TestNounVerbException_MorePlural(t *testing.T) {

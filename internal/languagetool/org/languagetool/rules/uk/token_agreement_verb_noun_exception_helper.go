@@ -137,62 +137,65 @@ func hasPosTagAllPartConjAdv(tok *languagetool.AnalyzedTokenReadings) bool {
 	return true
 }
 
-// IsExceptionVerb reports verb-side soft exception (Java isExceptionVerb Type.exception).
-func IsExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+// GetExceptionVerb ports isExceptionVerb (RuleException: exception clears state; skip keeps).
+func GetExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleException {
 	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil {
-		return false
+		return NewRuleException(RuleExceptionNone)
 	}
 	if HasLemmaToken(tokens[i], "мусити") {
-		return true
+		return NewRuleException(RuleExceptionException)
 	}
 	clean := CleanTokenLower(tokens[i])
 	if clean == "може" {
-		return true
+		return NewRuleException(RuleExceptionException)
 	}
 	// як є / як могти
-	if i > 1 && (clean == "є" || HasLemmaToken(tokens[i], "могти")) &&
+	if i > 1 && tokens[i-1] != nil && (clean == "є" || HasLemmaToken(tokens[i], "могти")) &&
 		strings.EqualFold(tokens[i-1].GetCleanToken(), "як") {
-		return true
+		return NewRuleException(RuleExceptionException)
 	}
 	// будь то
-	if i < len(tokens)-2 && clean == "будь" &&
+	if i < len(tokens)-2 && clean == "будь" && tokens[i+1] != nil &&
 		strings.EqualFold(tokens[i+1].GetCleanToken(), "то") {
-		return true
+		return NewRuleException(RuleExceptionException)
 	}
-	return false
+	// вкласти спати — Type.skip (keep prior verb state, do not install спати)
+	if i > 1 && i < len(tokens)-1 && clean == "спати" && tokens[i-1] != nil &&
+		HasLemmaTokenRE(tokens[i-1], regexp.MustCompile(`^(?:по|в)?кла(?:сти|вши)$`)) {
+		return NewRuleException(RuleExceptionSkip)
+	}
+	// pluperfect: розпочав був — RuleException(0) skip
+	if i > 1 && tokens[i-1] != nil {
+		if regexp.MustCompile(`^(?:був|було)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:m.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		if regexp.MustCompile(`^(?:були|було)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:p.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		if clean == "було" && HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:n.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		if regexp.MustCompile(`^(?:була|було)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:f.*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+		// чути/проголошено було
+		if regexp.MustCompile(`^(?:було|буде)$`).MatchString(clean) &&
+			HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*(?:impers|predic).*`)) {
+			return NewRuleExceptionSkip(0)
+		}
+	}
+	return NewRuleException(RuleExceptionNone)
+}
+
+// IsExceptionVerb reports verb-side soft exception (Java isExceptionVerb Type.exception).
+func IsExceptionVerb(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	return GetExceptionVerb(tokens, i).Type == RuleExceptionException
 }
 
 // IsExceptionVerbSkip reports verb-side skip patterns (спати after класти, pluperfect був).
 func IsExceptionVerbSkip(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
-	if tokens == nil || i < 1 || i >= len(tokens) || tokens[i] == nil {
-		return false
-	}
-	clean := CleanTokenLower(tokens[i])
-	// вкласти спати
-	if i < len(tokens)-1 && clean == "спати" &&
-		HasLemmaTokenRE(tokens[i-1], regexp.MustCompile(`^(?:по|в)?кла(?:сти|вши)$`)) {
-		return true
-	}
-	// розпочав був / pluperfect
-	if regexp.MustCompile(`^(?:був|було)$`).MatchString(clean) &&
-		HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:m.*`)) {
-		return true
-	}
-	if regexp.MustCompile(`^(?:були|було)$`).MatchString(clean) &&
-		HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:p.*`)) {
-		return true
-	}
-	if clean == "було" && HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:n.*`)) {
-		return true
-	}
-	if regexp.MustCompile(`^(?:була|було)$`).MatchString(clean) &&
-		HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*:past:f.*`)) {
-		return true
-	}
-	// чути/проголошено було
-	if regexp.MustCompile(`^(?:було|буде)$`).MatchString(clean) &&
-		HasPosTagRE(tokens[i-1], regexp.MustCompile(`verb.*(?:impers|predic).*`)) {
-		return true
-	}
-	return false
+	return GetExceptionVerb(tokens, i).Type == RuleExceptionSkip
 }

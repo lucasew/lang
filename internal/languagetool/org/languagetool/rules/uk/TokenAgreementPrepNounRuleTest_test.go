@@ -121,6 +121,27 @@ func TestTokenAgreementPrepNounRule_WithAdv(t *testing.T) {
 	require.NotEmpty(t, r.Match(sent), "adv skip keeps prep; wrong case noun still matches")
 }
 
+func TestTokenAgreementPrepNounRule_AdvMergeMessage(t *testing.T) {
+	// Java createRuleMatch: prep + prior adv, tagger says merged is adv → merge hint.
+	// Synthetic: у + двічі + дешевша(adj wrong case) with Tag returning adv for "удвічі".
+	r := NewTokenAgreementPrepNounRule()
+	r.Tag = func(words []string) []*languagetool.AnalyzedTokenReadings {
+		if len(words) == 1 && words[0] == "удвічі" {
+			return []*languagetool.AnalyzedTokenReadings{atr("удвічі", "adv")}
+		}
+		return nil
+	}
+	lemma := "у"
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("у", &lemma, "prep"),
+		atr("двічі", "adv"),
+		atr("дешевша", "adj:f:v_naz"),
+	})
+	matches := r.Match(sent)
+	require.NotEmpty(t, matches)
+	require.Contains(t, matches[0].GetMessage(), "прийменник і прислівник")
+}
+
 // Port of TokenAgreementPrepNounRuleTest.testIsCapitalized
 func TestTokenAgreementPrepNounRule_IsCapitalized(t *testing.T) {
 	require.False(t, IsCapitalized("боснія"))

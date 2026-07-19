@@ -113,12 +113,12 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 
 		if hasVerbOrAdvpReading(tok) {
-			if IsExceptionVerb(tokens, i) {
-				verbPos = -1
-				continue
-			}
-			if IsExceptionVerbSkip(tokens, i) {
-				// Java Type.skip: keep existing state, do not install new verb
+			// Java isExceptionVerb: exception clears; skip keeps + i+=skip; neither installs
+			if ex := GetExceptionVerb(tokens, i); ex.Type != RuleExceptionNone {
+				if ex.Type == RuleExceptionException {
+					verbPos = -1
+				}
+				i += ex.Skip
 				continue
 			}
 			st := getVerbNounState(tokens, i)
