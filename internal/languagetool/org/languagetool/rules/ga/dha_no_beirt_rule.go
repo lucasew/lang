@@ -59,7 +59,7 @@ func loadPeople() map[string]bool {
 }
 
 // DhaNoBeirtRule ports org.languagetool.rules.ga.DhaNoBeirtRule.
-// Surface person matching (no Irish tagger lemmas).
+// isPerson: surface toLower in people.txt OR lemma readings (Java) — no de-lenition invent.
 type DhaNoBeirtRule struct {
 	messages map[string]string
 }
@@ -75,7 +75,7 @@ func (r *DhaNoBeirtRule) Match(sentence *languagetool.AnalyzedSentence) []*rules
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var ruleMatches []*rules.RuleMatch
 	for i := 1; i < len(tokens); i++ {
-		if !isNumber(tokens[i].GetToken()) || i+1 >= len(tokens) || !isPerson(tokens[i+1].GetToken()) {
+		if !isNumber(tokens[i].GetToken()) || i+1 >= len(tokens) || !isPerson(tokens[i+1]) {
 			continue
 		}
 		// dhá … déag → dháréag + delete déag
@@ -118,28 +118,26 @@ func isNumber(tok string) bool {
 	return ok
 }
 
-func isPerson(tok string) bool {
+// isPerson ports DhaNoBeirtRule.isPerson:
+// 1) surface toLower in people.txt
+// 2) else any reading lemma in people.txt
+// No de-lenition or substring invent (Java has neither).
+func isPerson(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
 	people := loadPeople()
-	for _, cand := range personCandidates(strings.ToLower(tok)) {
-		if people[cand] {
-			return true
+	if people[strings.ToLower(tok.GetToken())] {
+		return true
+	}
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil {
+			continue
 		}
-		for p := range people {
-			if len(p) >= 3 && (strings.HasPrefix(cand, p) || strings.Contains(cand, p)) {
-				return true
-			}
+		lem := *r.GetLemma()
+		if people[lem] || people[strings.ToLower(lem)] {
+			return true
 		}
 	}
 	return false
-}
-
-// personCandidates yields the surface form plus a simple de-lenited form (C+h → C).
-func personCandidates(t string) []string {
-	out := []string{t}
-	r := []rune(t)
-	if len(r) > 2 && r[1] == 'h' {
-		// dheartháireacha → deartháireacha
-		out = append(out, string(r[0])+string(r[2:]))
-	}
-	return out
 }

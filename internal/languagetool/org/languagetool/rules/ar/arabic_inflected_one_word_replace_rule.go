@@ -65,7 +65,8 @@ type ArabicInflectedOneWordReplaceRule struct {
 	Messages map[string]string
 	words    map[string]rules.SuggestionWithMessage
 	// InflectLemmaLike ports synthesizer.inflectLemmaLike(targetLemma, sourceToken).
-	// When nil, bare dictionary suggestions are used (no surface clitic invent).
+	// When nil, Java tag-miss path is used: "["+lemma+"]" — not bare lemma as surface invent.
+	// Full clitic merge needs tagger (incomplete until wired).
 	InflectLemmaLike func(targetLemma string, source *languagetool.AnalyzedToken) []string
 }
 
@@ -113,8 +114,9 @@ func (r *ArabicInflectedOneWordReplaceRule) Match(sentence *languagetool.Analyze
 				if r.InflectLemmaLike != nil {
 					forms = append(forms, r.InflectLemmaLike(prop, wordTok)...)
 				} else {
-					// without synthesizer: bare replacement lemmas (Java always has synth)
-					forms = append(forms, prop)
+					// Java always has ArabicSynthesizer; without it, mirror tag-miss path
+					// (inflectLemmaLike returns "["+lemma+"]"), not bare prop invent.
+					forms = append(forms, "["+prop+"]")
 				}
 			}
 			if len(forms) == 0 {
