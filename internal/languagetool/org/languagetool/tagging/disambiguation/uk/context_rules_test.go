@@ -60,19 +60,23 @@ func hasGenderF(tok *languagetool.AnalyzedTokenReadings) bool {
 
 func TestDisambiguatePronPos(t *testing.T) {
 	start := atrSent("SENT_START", "SENT_START")
-	// його + noun → drop pers, keep pos
+	// Java: drop adj.*pron:pos that does not agree with neighbor noun gender/case
+	// f pos adj + f noun → keep pos; m pos adj + f noun → drop m pos
 	yoho := atrMulti("його", [][2]string{
 		{"він", "noun:unanim:m:v_rod:pron:pers:3"},
 		{"його", "adj:f:v_naz:nv:pron:pos"},
+		{"його", "adj:m:v_zna:nv:pron:pos"},
 	})
 	noun := atrSent("машина", "noun:inanim:f:v_naz")
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, yoho, noun})
 	DisambiguatePronPos(sent)
 	tok := sent.GetTokensWithoutWhitespace()[1]
-	require.True(t, tok.HasPartialPosTag("pron:pos"))
-	require.False(t, tok.HasPartialPosTag("pron:pers"))
+	require.True(t, tok.HasPartialPosTag("adj:f:v_naz"))
+	require.False(t, tok.HasPartialPosTag("adj:m:v_zna"))
+	// pers reading is not adj — Java leaves it
+	require.True(t, tok.HasPartialPosTag("pron:pers"))
 
-	// їх + verb → drop pos
+	// no neighboring noun inflections (verb only) → no adj filter
 	yih := atrMulti("їх", [][2]string{
 		{"вони", "noun:unanim:p:v_zna:pron:pers:3"},
 		{"їх", "adj:p:v_naz:nv:pron:pos"},
@@ -81,8 +85,8 @@ func TestDisambiguatePronPos(t *testing.T) {
 	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, yih, verb})
 	DisambiguatePronPos(sent2)
 	tok2 := sent2.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok2.HasPartialPosTag("pron:pos"))
 	require.True(t, tok2.HasPartialPosTag("pron:pers"))
-	require.False(t, tok2.HasPartialPosTag("pron:pos"))
 }
 
 func TestRetagInitials(t *testing.T) {

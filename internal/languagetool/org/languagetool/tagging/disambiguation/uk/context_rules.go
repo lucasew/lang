@@ -186,13 +186,18 @@ func isNumberish(tok *languagetool.AnalyzedTokenReadings) bool {
 	return stArabicDigitsRE.MatchString(s)
 }
 
-// DisambiguatePronPos: "його/її/їх" before noun → keep poss adj; before verb → keep pers.
+// ignoreInPronPos ports IGNORE_IN_PRON_POS (substring match on POS tags).
+var ignoreInPronPosRE = regexp.MustCompile(`pron|noun:anim:p:v_zna.*:rare.*`)
+
+// DisambiguatePronPos ports UkrainianHybridDisambiguator.disambiguatePronPos:
+// for його/її/їх with adj.*pron:pos, drop adj readings that do not share gender/case
+// with neighboring noun inflections (prev and/or next).
 func DisambiguatePronPos(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
 	}
 	tokens := input.GetTokensWithoutWhitespace()
-	for i := 1; i < len(tokens)-1; i++ {
+	for i := 1; i < len(tokens); i++ {
 		tok := tokens[i]
 		if tok == nil {
 			continue
@@ -201,46 +206,48 @@ func DisambiguatePronPos(input *languagetool.AnalyzedSentence) {
 		if low != "його" && low != "її" && low != "їх" {
 			continue
 		}
-		next := tokens[i+1]
-		if next == nil {
+		// Java: only if token has adj.*pron:pos
+		if !hasPosTagREMatch(tok, `adj.*pron:pos.*`) {
 			continue
 		}
-		nextNoun := hasPOSPrefix(next, "noun")
-		nextVerb := hasPOSPrefix(next, "verb")
-		readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
-		if nextNoun && !nextVerb {
-			// keep adj:…:pron:pos; drop pure pers if poss present
-			hasPos := false
-			for _, r := range readings {
-				if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), "pron:pos") {
-					hasPos = true
-					break
-				}
-			}
-			if hasPos {
-				for _, r := range readings {
-					if r == nil || r.GetPOSTag() == nil {
-						continue
-					}
-					pos := *r.GetPOSTag()
-					if strings.Contains(pos, "pron:pers") && !strings.Contains(pos, "pron:pos") {
-						tok.RemoveReading(r, "dis_pron_pos")
-					}
-				}
-			}
+		var nounInfs []rulesuk.Inflection
+		if i > 1 && tokens[i-1] != nil {
+			nounInfs = append(nounInfs, nounInfsFromTok(tokens[i-1], ignoreInPronPosRE)...)
 		}
-		if nextVerb && !nextNoun {
-			// keep pers; drop pos adj
-			for _, r := range readings {
-				if r == nil || r.GetPOSTag() == nil {
-					continue
-				}
-				if strings.Contains(*r.GetPOSTag(), "pron:pos") {
-					tok.RemoveReading(r, "dis_pron_pos")
-				}
+		if i < len(tokens)-1 && tokens[i+1] != nil {
+			nounInfs = append(nounInfs, nounInfsFromTok(tokens[i+1], ignoreInPronPosRE)...)
+		}
+		if len(nounInfs) == 0 {
+			continue
+		}
+		readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
+		for _, r := range readings {
+			if r == nil || r.GetPOSTag() == nil {
+				continue
+			}
+			if !strings.HasPrefix(*r.GetPOSTag(), "adj") {
+				continue
+			}
+			adjInfs := rulesuk.GetAdjCaseInflections([]string{*r.GetPOSTag()})
+			if !rulesuk.InflectionsIntersect(nounInfs, adjInfs) {
+				tok.RemoveReading(r, "dis_pron_pos")
 			}
 		}
 	}
+}
+
+func nounInfsFromTok(tok *languagetool.AnalyzedTokenReadings, ignore *regexp.Regexp) []rulesuk.Inflection {
+	if tok == nil {
+		return nil
+	}
+	var tags []string
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		tags = append(tags, *r.GetPOSTag())
+	}
+	return rulesuk.GetNounInflectionsFromTags(tags, ignore)
 }
 
 // DisambiguateYih ports removeYih (їх/його/її → drop adj.*pron when object-like).
