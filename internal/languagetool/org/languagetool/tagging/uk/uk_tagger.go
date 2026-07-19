@@ -382,7 +382,27 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = dp
 			}
 		}
+		// Java півгодини-годину (left p:v_*:nv + right noun:inanim → :p:)
 		if len(readings) == 0 && strings.Contains(w, "-") {
+			if piv := DynamicPivNvDualReadings(w, t.TagWord); len(piv) > 0 {
+				readings = piv
+			}
+		}
+		// Java upper-right arm (adj:bad solid lower, tryOWithAdj)
+		if len(readings) == 0 && strings.Contains(w, "-") {
+			if ur := DynamicUpperRightCompoundReadings(w, t.TagWord); len(ur) > 0 {
+				readings = ur
+			}
+		}
+		// Java: skip tagMatch when solid no-dash form is already tagged (non-intj left)
+		// or upper-right returns null for non-noun pairs.
+		skipTagMatch := false
+		if strings.Contains(w, "-") {
+			if DynamicNoDashSolidHasTags(w, t.TagWord) || DynamicUpperRightBlocks(w, t.TagWord) {
+				skipTagMatch = true
+			}
+		}
+		if len(readings) == 0 && strings.Contains(w, "-") && !skipTagMatch {
 			if ft := FullTagMatchReadings(w, t.TagWord); len(ft) > 0 {
 				readings = ft
 			}
