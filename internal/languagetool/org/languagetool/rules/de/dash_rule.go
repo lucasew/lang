@@ -14,13 +14,22 @@ import (
 type DashRule struct {
 	Messages map[string]string
 	Category *rules.Category
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewDashRule(messages map[string]string) *DashRule {
-	return &DashRule{
+	r := &DashRule{
 		Messages: messages,
 		Category: rules.CatCompounding.GetCategory(messages),
 	}
+	// Java: Diäten- Erhöhung → Diäten-Erhöhung
+	r.AddExamplePair(
+		rules.Wrong("Bundestag beschließt <marker>Diäten- Erhöhung</marker>"),
+		rules.Fixed("Bundestag beschließt <marker>Diäten-Erhöhung</marker>"),
+	)
+	return r
 }
 
 func (r *DashRule) GetID() string { return "DE_DASH" }
@@ -40,6 +49,37 @@ func (r *DashRule) GetCategory() *rules.Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *DashRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *DashRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *DashRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *DashRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

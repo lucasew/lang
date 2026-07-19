@@ -19,14 +19,54 @@ type CompoundInfinitivRule struct {
 	Category     *rules.Category
 	IssueType    rules.ITSIssueType
 	IsMisspelled func(word string) bool // optional; nil → fail-closed misspelled (no false compounds)
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewCompoundInfinitivRule(messages map[string]string) *CompoundInfinitivRule {
-	return &CompoundInfinitivRule{
+	r := &CompoundInfinitivRule{
 		Messages:  messages,
 		Category:  rules.CatCompounding.GetCategory(messages),
 		IssueType: rules.ITSMisspelling,
 	}
+	// Java: sicher zu gehen → sicherzugehen
+	r.AddExamplePair(
+		rules.Wrong("Er überprüfte die Rechnungen noch einmal, um <marker>sicher zu gehen</marker>."),
+		rules.Fixed("Er überprüfte die Rechnungen noch einmal, um <marker>sicherzugehen</marker>."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *CompoundInfinitivRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *CompoundInfinitivRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *CompoundInfinitivRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *CompoundInfinitivRule) GetID() string { return "COMPOUND_INFINITIV_RULE" }

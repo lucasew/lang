@@ -84,6 +84,11 @@ func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
 		Data:                        loadDECompoundData(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
+	// Java GermanCompoundRule: HNO Arzt → HNO-Arzt
+	base.AddExamplePair(
+		rules.Wrong("Wenn es schlimmer wird, solltest Du zum <marker>HNO Arzt</marker> gehen."),
+		rules.Fixed("Wenn es schlimmer wird, solltest Du zum <marker>HNO-Arzt</marker> gehen."),
+	)
 	r := &GermanCompoundRule{AbstractCompoundRule: base}
 	base.IsMisspelled = func(word string) bool {
 		if r.SpellingIsMisspelled == nil {
