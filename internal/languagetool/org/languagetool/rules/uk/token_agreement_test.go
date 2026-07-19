@@ -587,3 +587,72 @@ func TestAdjNounException_MoreJavaArms(t *testing.T) {
 		atr("з", "prep"), atr("черницею", "noun:anim:f:v_oru"),
 	}, 0, 1))
 }
+
+func TestAdjNounException_ConjAndMore(t *testing.T) {
+	// навчальної та середньої шкіл
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atr("навчальної", "adj:f:v_rod"), atr("та", "conj:coord"),
+		atr("середньої", "adj:f:v_rod"), atr("шкіл", "noun:inanim:p:v_rod"),
+	}, 3, 4))
+
+	// моїх маму й сестер — need ignore-gender case overlap (v_zna both)
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("моїх", "adj:p:v_zna"), atr("маму", "noun:anim:f:v_zna"),
+		atr("й", "conj:coord"), atr("сестер", "noun:anim:p:v_rod"),
+	}, 0, 1))
+
+	// коринфський з іонійським ордери — Java adjPos > 2 (SENT pad)
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atr("коринфський", "adj:m:v_naz"), atr("з", "prep"),
+		atr("іонійським", "adj:m:v_oru"), atr("ордери", "noun:inanim:p:v_naz"),
+	}, 3, 4))
+
+	// рік тому
+	rik := "рік"
+	tomu := "тому"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("пофарбований", "adj:m:v_naz"), atrLemma("рік", &rik, "noun:inanim:m:v_naz"),
+		atrLemma("тому", &tomu, "adv"),
+	}, 0, 1))
+
+	// два нових горнятка — Java adjPos > 1
+	dva := "два"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("два", &dva, "numr:p:v_naz"), atr("нових", "adj:p:v_rod"),
+		atr("горнятка", "noun:inanim:p:v_naz"),
+	}, 2, 3))
+
+	// кількох десятих
+	des := "десятий"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("кількох", "numr"), atrLemma("десятих", &des, "adj:p:v_rod"),
+		atr("відсотка", "noun:inanim:m:v_rod"),
+	}, 1, 2))
+
+	// 2003-го
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("2003-го", "adj:m:v_rod:numr"), atr("прем'єром", "noun"),
+	}, 0, 1))
+
+	// 11-ту ранку
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("11-ту", "adj:f:v_zna:numr"), atr("ранку", "noun"),
+	}, 0, 1))
+
+	// reverseConjFind2: 3, 4 і 5-ї — left of і is number, right adj numr
+	require.True(t, reverseConjFind2([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("3", "number"), atr(","), atr("4", "number"),
+		atr("і", "conj"), atr("5-ї", "adj:f:v_rod:numr"), atr("категорій", "noun:inanim:p:v_rod"),
+	}, 4, 3))
+
+	// IsNonPluralA
+	require.True(t, IsNonPluralA([]*languagetool.AnalyzedTokenReadings{
+		atr("а"), atr("просто"),
+	}, 0))
+	require.False(t, IsNonPluralA([]*languagetool.AnalyzedTokenReadings{
+		atr("а"), atrLemma("також", strPtr("також"), "adv"),
+	}, 0))
+}

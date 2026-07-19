@@ -602,12 +602,21 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		return true
 	}
 
-	// хвилини з 55-ї
+	// хвилини з 55-ї — prep case gov on both time lemma and num adj
 	if adjPos > 2 &&
 		HasLemmaTokenAny(tokens[adjPos-2], TimeLemmasShort) &&
 		HasPosTagStart(tokens[adjPos-1], "prep") &&
 		HasPosTagPart(adj, "num") {
-		return true
+		govs := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadings(tokens[adjPos-1], "prep")
+		if len(govs) > 0 {
+			var list []string
+			for c := range govs {
+				list = append(list, c)
+			}
+			if HasVidmPosTag(list, tokens[adjPos-2]) && HasVidmPosTag(list, adj) {
+				return true
+			}
+		}
 	}
 
 	// predic + verb inf/past:n/futr
@@ -619,6 +628,169 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		if nounPos < len(tokens)-2 &&
 			HasPosTagStart(tokens[nounPos+1], "adv") &&
 			HasPosTagRE(tokens[nounPos+2], afterPred) {
+			return true
+		}
+	}
+
+	// моїх маму й сестер
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:p:`)) &&
+		forwardConjFind(tokens, nounPos+1, 2) &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "p", "") {
+		return true
+	}
+
+	// навчальної та середньої шкіл
+	if adjPos > 2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:p:`)) &&
+		(reverseConjFind(tokens, adjPos-1, 3) || reverseConjAdvFind(tokens, adjPos-1, 3)) &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "p") &&
+		ReverseSearch(tokens, adjPos-2, 100, nil, regexp.MustCompile(`^(?:adj|numr)`)) {
+		return true
+	}
+
+	// Большого та Маріїнського театрів / 3, 4 і 5-ї категорій
+	if adjPos > 2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:p:`)) &&
+		reverseConjFind2(tokens, adjPos-1, 3) &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "p") {
+		return true
+	}
+
+	// ні у методологічному, ні у практичному аспектах
+	if adjPos > 6 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:p:`)) &&
+		HasPosTagRE(adj, regexp.MustCompile(`^adj:`)) &&
+		HasPosTagStart(tokens[adjPos-1], "prep") &&
+		HasLemmaTokenAny(tokens[adjPos-2], []string{"ні", "ані", "хоч", "що", "як"}) &&
+		tokens[adjPos-3] != nil && tokens[adjPos-3].GetToken() == "," &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+		return true
+	}
+
+	// коринфський з іонійським ордери
+	if adjPos > 2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:p:`)) &&
+		regexp.MustCompile(`^(?:з|із|зі)$`).MatchString(CleanTokenLower(tokens[adjPos-1])) &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*v_oru.*`)) &&
+		InflectionsIntersectIgnoreGender(
+			GetAdjCaseInflections(CollectPOSTags(tokens[adjPos-2])), slaveInfs, "", "") {
+		return true
+	}
+
+	// пофарбований рік тому
+	if nounPos < len(tokens)-1 &&
+		HasLemmaTokenAny(noun, TimeLemmas) &&
+		HasLemmaToken(tokens[nounPos+1], "тому") {
+		return true
+	}
+	// замість звичного десятиліттями
+	if nounPos < len(tokens)-1 &&
+		HasLemmaWithPosRE(noun, TimePlusLemmaList(), regexp.MustCompile(`noun:inanim:p:v_oru.*`)) {
+		return true
+	}
+
+	// кількох десятих відсотка
+	if HasLemmaTokenAny(adj, []string{"десятий", "сотий", "тисячний", "десятитисячний", "стотитисячний", "мільйонний", "мільярдний"}) &&
+		HasPosTagRE(adj, regexp.MustCompile(`.*:[fp]:.*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*v_rod.*`)) {
+		return true
+	}
+
+	// два нових горнятка / 33 народних обранці
+	if adjPos > 1 &&
+		HasPosTagRE(adj, regexp.MustCompile(`.*:p:v_(rod|naz).*`)) &&
+		ReverseSearch(tokens, adjPos-1, 5, DovyeTroyeRE, nil) &&
+		(HasPosTagRE(noun, regexp.MustCompile(`.*(?:p:v_naz|:n:v_rod).*`)) ||
+			containsStr([]string{"імені", "ока"}, noun.GetToken())) {
+		return true
+	}
+
+	// 1-3-й класи / на сьомому–восьмому поверхах
+	cleanAdj := adj.GetCleanToken()
+	if cleanAdj == "" {
+		cleanAdj = adj.GetToken()
+	}
+	if (regexp.MustCompile(`^[0-9]+[\x{2014}\x{2013}-][0-9]+[\x{2013}-][а-яіїєґ]{1,3}$`).MatchString(cleanAdj) ||
+		(regexp.MustCompile(`.*[а-яїієґ][\x{2014}\x{2013}-].*`).MatchString(cleanAdj) && HasPosTagPart(adj, "numr"))) &&
+		HasPosTagPart(noun, ":p:") &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+		return true
+	}
+	// восьмого – дев’ятого класів
+	if nounPos > 2 && adjPos > 1 &&
+		containsStr([]string{"\u2013", "\u2014"}, tokens[adjPos-1].GetToken()) &&
+		HasPosTagPart(adj, "num") && HasPosTagPart(tokens[adjPos-2], "num") &&
+		HasPosTagPart(noun, ":p:") &&
+		(HasPosTagStart(tokens[adjPos-2], "number") ||
+			InflectionsIntersectIgnoreGender(GetAdjCaseInflections(CollectPOSTags(tokens[adjPos-2])), slaveInfs, "", "")) &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+		return true
+	}
+
+	// найближчі рік-два
+	if HasPosTagRE(adj, regexp.MustCompile(`adj.*:p:`)) &&
+		regexp.MustCompile(`.*[\x{2014}\x{2013}-].*`).MatchString(noun.GetToken()) {
+		lemma0 := lemmaOf(noun)
+		base := strings.Split(lemma0, "\u2014")[0]
+		base = strings.Split(base, "\u2013")[0]
+		base = strings.Split(base, "-")[0]
+		if IsTimePlusLemma(base) || InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+			return true
+		}
+	}
+
+	// Від наступних пари десятків
+	if nounPos < len(tokens)-1 &&
+		HasLemmaToken(noun, "пара") &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*:p:`)) &&
+		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`.*:p:v_rod.*`)) {
+		return true
+	}
+
+	// п'ять шостих / одній восьмій
+	if nounPos > 1 && adjPos > 0 &&
+		HasPosTagPart(tokens[adjPos-1], "num") &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*num.*`)) {
+		if HasPosTagRE(tokens[adjPos-1], regexp.MustCompile(`^(?:noun|numr)`)) &&
+			HasPosTagRE(adj, regexp.MustCompile(`adj:p:v_rod.*`)) {
+			if HasLemmaToken(adj, "другий") && !HasLemmaToken(tokens[adjPos-1], "один") {
+				// Java: return false (not exception)
+			} else {
+				return true
+			}
+		}
+		if HasLemmaWithPosRE(tokens[adjPos-1], []string{"один"}, regexp.MustCompile(`numr:f:.*`)) &&
+			InflectionsIntersect(
+				GetNumrCaseInflections(CollectPOSTags(tokens[adjPos-1])),
+				GetAdjCaseInflections(CollectPOSTags(adj))) {
+			return true
+		}
+	}
+
+	// 1/8-ї фіналу
+	if nounPos > 3 && adjPos > 1 &&
+		tokens[adjPos-1] != nil && tokens[adjPos-1].GetToken() == "/" &&
+		HasPosTagPart(tokens[adjPos-2], "numb") &&
+		InflectionsIntersectIgnoreGender(masterInfs, slaveInfs, "", "") {
+		return true
+	}
+
+	// dates with :numr
+	if HasPosTagPart(adj, ":numr") {
+		at := adj.GetToken()
+		if regexp.MustCompile(`^(?:[12][0-9])?[0-9][0-9][\x{2014}\x{2013}-](?:й|го|м|му)$`).MatchString(at) ||
+			regexp.MustCompile(`^(?:[12][0-9])?[0-9]0[\x{2014}\x{2013}-](?:ті|тих|их|х)$`).MatchString(at) ||
+			regexp.MustCompile(`^(?:[12][0-9])?[0-9][0-9][\x{2014}\x{2013}-](?:[12][0-9])?[0-9][0-9][\x{2014}\x{2013}-](?:й|го|м|му|ті|тих|их|х)$`).MatchString(at) {
+			return true
+		}
+		if adjPos > 1 && HasPosTagPart(adj, ":f:") &&
+			HasLemmaTokenAny(tokens[adjPos-1], []string{"на", "в", "у", "за", "о", "до", "після", "близько", "раніше"}) &&
+			!HasLemmaTokenAny(noun, []string{"хвилина", "година"}) {
+			return true
+		}
+		if HasPosTagPart(adj, ":f:") &&
+			regexp.MustCompile(`^(?:ранку|дня|вечора|ночі|пополудня)$`).MatchString(noun.GetToken()) {
 			return true
 		}
 	}
