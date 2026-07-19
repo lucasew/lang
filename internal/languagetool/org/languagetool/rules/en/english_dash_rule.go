@@ -39,12 +39,12 @@ type EnglishDashRule struct {
 
 func NewEnglishDashRule(messages map[string]string) *EnglishDashRule {
 	base := &rules.AbstractDashRule{
-		Messages:         messages,
 		ID:               "EN_DASH_RULE",
 		CompoundPatterns: loadDashPatterns(),
 		Message:          "A dash was used instead of a hyphen.",
 		Description:      "Checks if hyphenated words were spelled with dashes",
 	}
+	rules.InitDashRuleMeta(base, messages)
 	return &EnglishDashRule{AbstractDashRule: base}
 }
 

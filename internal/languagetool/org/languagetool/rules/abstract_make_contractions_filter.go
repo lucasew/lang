@@ -1,5 +1,7 @@
 package rules
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
 // MakeContractionsFilter ports AbstractMakeContractionsFilter: rewrites suggestions
 // via a language-specific FixContractions function.
 type MakeContractionsFilter struct {
@@ -11,6 +13,16 @@ func NewMakeContractionsFilter(fix func(string) string) *MakeContractionsFilter 
 		fix = func(s string) string { return s }
 	}
 	return &MakeContractionsFilter{FixContractions: fix}
+}
+
+// AcceptRuleMatch ports AbstractMakeContractionsFilter.acceptRuleMatch.
+func (f *MakeContractionsFilter) AcceptRuleMatch(match *RuleMatch, _ map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *RuleMatch {
+	if match == nil {
+		return nil
+	}
+	match.SetSuggestedReplacements(f.MapSuggestions(match.GetSuggestedReplacements()))
+	return match
 }
 
 // MapSuggestions applies FixContractions to each suggestion.

@@ -25,7 +25,8 @@ func TestMorfologikRussianYOSpellerRule_MorfologikSpeller(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, m)
 
-	m, err = r.Match(languagetool.AnalyzePlain("xyzzy"))
+	// Latin tokens ignored by default (conf_ru_Value=0); use Cyrillic misspell
+	m, err = r.Match(languagetool.AnalyzePlain("ёлкаа"))
 	require.NoError(t, err)
 	require.NotEmpty(t, m)
 }

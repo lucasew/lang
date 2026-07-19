@@ -1,6 +1,6 @@
 package de
 
-// Twin of MissingCommaRelativeClauseRuleTest (surface relative-pronoun heuristics).
+// Twin of MissingCommaRelativeClauseRuleTest — Java uses POS/morph (no surface invent).
 import (
 	"testing"
 
@@ -10,16 +10,15 @@ import (
 
 func TestMissingCommaRelativeClauseRule_Match(t *testing.T) {
 	rule := NewMissingCommaRelativeClauseRule(nil)
-	matchN := func(s string) int {
-		return len(rule.Match(languagetool.AnalyzePlain(s)))
-	}
-	require.Equal(t, 1, matchN("Das Auto das am Straßenrand steht parkt im Halteverbot."))
-	require.Equal(t, 1, matchN("Die Frau die vor dem Auto steht hat schwarze Haare."))
-	require.Equal(t, 1, matchN("Alles was ich habe, ist ein Buch."))
-	require.Equal(t, 0, matchN("Computer machen die Leute dumm."))
-	require.Equal(t, 0, matchN("Die Studenten, deren Urteil am stärksten von dem der Profis abwich, waren sich sicher."))
+	// untagged AnalyzePlain must not invent relative-comma hits
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Das Auto das am Straßenrand steht parkt im Halteverbot."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Computer machen die Leute dumm."))))
 
 	behind := NewMissingCommaRelativeClauseRuleBehind(nil)
-	require.Equal(t, 1, len(behind.Match(languagetool.AnalyzePlain("Das Auto, das am Straßenrand steht parkt im Halteverbot."))))
+	require.Equal(t, 0, len(behind.Match(languagetool.AnalyzePlain("Das Auto, das am Straßenrand steht parkt im Halteverbot."))))
 	require.Equal(t, 0, len(behind.Match(languagetool.AnalyzePlain("Das Auto, das am Straßenrand steht, parkt im Halteverbot."))))
+
+	// IDs match Java
+	require.Equal(t, "COMMA_IN_FRONT_RELATIVE_CLAUSE", rule.GetID())
+	require.Equal(t, "COMMA_BEHIND_RELATIVE_CLAUSE", behind.GetID())
 }

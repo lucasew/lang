@@ -3,7 +3,7 @@ package it
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreItalianRules installs shared layout + Italian word-repeat + beginning.
@@ -20,8 +20,16 @@ func RegisterCoreItalianRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "it", []patterns.TokenSequenceSpec{
-		{ID: "IT_A_IL", Tokens: []string{"a", "il"}, Message: "Forse intendeva 'al'?", Suggestion: "al"},
-		{ID: "IT_DI_IL", Tokens: []string{"di", "il"}, Message: "Forse intendeva 'del'?", Suggestion: "del"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
+
+	// Java createDefaultSpellingRule → MorfologikItalianSpellerRule.
+	// Always register full Match (orderSuggestions capitalization drop); wire filter
+	// dict when binary resource is on disk (fail-closed IsMisspelled without it).
+	sp := NewMorfologikItalianSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(ItalianSpellerDict); p != "" {
+		if WireItalianFilterSpeller(p) {
+			sp.IsMisspelled = FilterDictIsMisspelled
+		}
+	}
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

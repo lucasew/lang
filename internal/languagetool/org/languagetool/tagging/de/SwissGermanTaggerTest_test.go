@@ -9,12 +9,13 @@ import (
 )
 
 func TestSwissGermanTagger_Tagger(t *testing.T) {
-	// DE dict has ß spellings; Swiss uses ss
+	// DE dict has ß spellings; Swiss uses ss. Lookup uses ignoreCase=false so ß forms
+	// must match exact surface (as in german.dict).
 	wt := tagging.MapWordTagger{
 		"groß":     {tagging.NewTaggedWord("groß", "ADJ:PRD:GRU")},
-		"anmaßung": {tagging.NewTaggedWord("Anmaßung", "SUB:NOM:SIN:FEM")},
+		"Anmaßung": {tagging.NewTaggedWord("Anmaßung", "SUB:NOM:SIN:FEM")},
 		"die":      {tagging.NewTaggedWord("die", "ART:DEF:NOM:SIN:FEM")},
-		"auto":     {tagging.NewTaggedWord("Auto", "SUB:NOM:SIN:NEU")},
+		"Auto":     {tagging.NewTaggedWord("Auto", "SUB:NOM:SIN:NEU")},
 	}
 	swiss := NewSwissGermanTagger(wt)
 	german := NewGermanTagger(wt)

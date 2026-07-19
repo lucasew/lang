@@ -144,7 +144,7 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 						}
 					}
 					matched := text[idx : idx+len(wrong)]
-					sug := SoftPreserveCase(matched, repl)
+					sug := PreserveCase(matched, repl)
 					out = append(out, LocalMatch{
 						FromPos: idx, ToPos: idx + len(wrong),
 						Message: "Phrase", RuleID: ruleID,
@@ -158,12 +158,13 @@ func SimplePhraseReplaceChecker(ruleID string, phrases map[string]string) Senten
 	}
 }
 
-// SoftPreserveCase maps suggestion casing from the matched original span.
+// PreserveCase maps suggestion casing from the matched original span
+// (Java StringTools / suggestion case adjustment — not a soft invent path).
 // ALL-CAPS match → ALL-CAPS suggestion; leading capital → capitalize suggestion
 // when the suggestion replaces the whole span (same or more word tokens).
 // Shorter single-token fixes for multi-word matches (e.g. "They is" → "are")
 // keep suggestion casing so apply does not yield "Are …".
-func SoftPreserveCase(matched, suggestion string) string {
+func PreserveCase(matched, suggestion string) string {
 	if matched == "" || suggestion == "" {
 		return suggestion
 	}
@@ -204,6 +205,11 @@ func SoftPreserveCase(matched, suggestion string) string {
 		}
 	}
 	return suggestion
+}
+
+// SoftPreserveCase is a deprecated alias for PreserveCase (anti-cheat naming).
+func SoftPreserveCase(matched, suggestion string) string {
+	return PreserveCase(matched, suggestion)
 }
 
 // CheckAnnotated runs Check on plain text extracted from AnnotatedText.

@@ -51,4 +51,30 @@ func TestQuestionWhitespaceRule_Rule(t *testing.T) {
 	require.Equal(t, "littérature\u00a0»", matches3[1].GetSuggestedReplacements()[0])
 	require.Equal(t, 141, matches3[1].GetFromPos())
 	require.Equal(t, 153, matches3[1].GetToPos())
+
+	// Java ANTI_PATTERNS surface cases (CSV) — immunized, not flagged:
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("1;2;3"))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("asd@dsa.fr;test@foo.com;"))))
+}
+
+func TestQuestionWhitespaceRule_AntiPatternsCount(t *testing.T) {
+	// Java QuestionWhitespaceRule.ANTI_PATTERNS has 7 entries.
+	require.Equal(t, 7, len(QuestionWhitespaceAntiPatterns), "Java ANTI_PATTERNS 7/7")
+	require.Equal(t, 7, len(frWhitespaceAntiPatterns()), "IMMUNIZE rules 7/7")
+}
+
+func TestQuestionWhitespaceRule_AntiPatternImmunizeSmiley(t *testing.T) {
+	sent := languagetool.AnalyzePlain("Bonjour :)")
+	imm := getSentenceWithFRWhitespaceImmunization(sent)
+	anyImm := false
+	for _, tok := range imm.GetTokens() {
+		if tok != nil && tok.IsImmunized() {
+			anyImm = true
+			break
+		}
+	}
+	require.True(t, anyImm, "expected :) smiley anti-pattern to immunize")
+	for _, tok := range sent.GetTokens() {
+		require.False(t, tok != nil && tok.IsImmunized(), "original must not be mutated")
+	}
 }

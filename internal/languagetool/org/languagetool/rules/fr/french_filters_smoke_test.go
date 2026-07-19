@@ -8,8 +8,13 @@ import (
 )
 
 func TestFrenchNumberInWordFilter_Suggestions(t *testing.T) {
+	ClearFrenchFilterSpeller()
 	f := NewFrenchNumberInWordFilter()
-	sugg := f.Suggestions("m0t")
+	// fail-closed without speller (Java isMisspelled gate)
+	require.Empty(t, f.Suggestions("m0t"))
+	f.inner.IsMisspelled = func(w string) bool { return w != "mot" && w != "mt" }
+	f.inner.GetSuggestions = nil
+	sugg := f.inner.Suggestions("m0t")
 	require.Contains(t, sugg, "mot")
 }
 

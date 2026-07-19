@@ -1,42 +1,50 @@
 package es
 
 import (
-	"regexp"
-	"strings"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// SpanishNumberInWordFilter ports AbstractNumberInWordFilter suggestion logic
-// without a speller: always proposes digit-stripped / 0→o forms when different.
-type SpanishNumberInWordFilter struct{}
-
-func NewSpanishNumberInWordFilter() *SpanishNumberInWordFilter {
-	return &SpanishNumberInWordFilter{}
+// SpanishNumberInWordFilter ports org.languagetool.rules.es.SpanishNumberInWordFilter
+// (extends AbstractNumberInWordFilter; isMisspelled/getSuggestions from
+// MorfologikSpanishSpellerRule).
+type SpanishNumberInWordFilter struct {
+	inner *rules.NumberInWordFilter
 }
 
-var esDigitRE = regexp.MustCompile(`[0-9]`)
+func NewSpanishNumberInWordFilter() *SpanishNumberInWordFilter {
+	return &SpanishNumberInWordFilter{
+		inner: &rules.NumberInWordFilter{
+			// Java: spanishSpellerRule.isMisspelled / getSpellingSuggestions
+			IsMisspelled:   FilterDictIsMisspelled,
+			GetSuggestions: FilterDictSuggest,
+		},
+	}
+}
 
-// Suggestions returns candidate fixes for words containing digits.
+// Suggestions ports acceptRuleMatch candidate building (speller-gated; fail-closed without dict).
 func (f *SpanishNumberInWordFilter) Suggestions(word string) []string {
-	if !esDigitRE.MatchString(word) {
+	if f == nil || f.inner == nil {
 		return nil
 	}
-	var out []string
-	repl0 := strings.ReplaceAll(word, "0", "o")
-	if repl0 != word {
-		out = append(out, repl0)
+	// Without dict: Java always has MorfologikSpanishSpellerRule; fail-closed invent none.
+	if !FilterDictAvailable() {
+		return nil
 	}
-	without := esDigitRE.ReplaceAllString(word, "")
-	if without != "" && without != word {
-		dup := false
-		for _, s := range out {
-			if s == without {
-				dup = true
-				break
-			}
-		}
-		if !dup {
-			out = append(out, without)
-		}
+	return f.inner.Suggestions(word)
+}
+
+// AcceptRuleMatch ports AbstractNumberInWordFilter.acceptRuleMatch.
+func (f *SpanishNumberInWordFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
 	}
-	return out
+	if !FilterDictAvailable() {
+		return nil
+	}
+	if f.inner == nil {
+		return nil
+	}
+	return f.inner.AcceptRuleMatch(match, arguments, 0, nil, nil)
 }

@@ -11,6 +11,7 @@ import (
 
 // AdvancedWordRepeatRule ports org.languagetool.rules.AdvancedWordRepeatRule.
 // Detects same word/lemma anywhere in the sentence (not only adjacent).
+// Java ctor: setCategory(MISC), setDefaultOff(), setLocQualityIssueType(Style).
 type AdvancedWordRepeatRule struct {
 	Messages         map[string]string
 	ExcludedWords    map[string]bool
@@ -19,10 +20,31 @@ type AdvancedWordRepeatRule struct {
 	ID               string
 	Message          string
 	ShortMessage     string
+	// Category ports Rule.category (Java MISC).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
+	// DefaultOff ports setDefaultOff() (Java true for this abstract rule).
+	DefaultOff bool
 	// AlsoExcludeSurface skips tokens whose lowercased surface is in ExcludedWords
 	// or ExtraSurfaceExcluded (stand-in for prep POS without a tagger).
 	AlsoExcludeSurface   bool
 	ExtraSurfaceExcluded map[string]bool
+}
+
+// InitAdvancedWordRepeatMeta applies Java AdvancedWordRepeatRule constructor metadata.
+func InitAdvancedWordRepeatMeta(r *AdvancedWordRepeatRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatMisc.GetCategory(messages)
+	}
+	if r.IssueType == "" {
+		r.IssueType = ITSStyle
+	}
+	r.DefaultOff = true
 }
 
 func (r *AdvancedWordRepeatRule) GetID() string {
@@ -30,6 +52,27 @@ func (r *AdvancedWordRepeatRule) GetID() string {
 		return r.ID
 	}
 	return "ADVANCED_WORD_REPEAT"
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *AdvancedWordRepeatRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AdvancedWordRepeatRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *AdvancedWordRepeatRule) IsDefaultOff() bool {
+	return r != nil && r.DefaultOff
 }
 
 func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {

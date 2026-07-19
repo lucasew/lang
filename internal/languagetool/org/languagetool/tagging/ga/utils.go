@@ -326,3 +326,60 @@ func SimplifyMathematical(s string) string {
 	}
 	return out.String()
 }
+
+// IsAllMathsChars ports Utils.isAllMathsChars.
+// Java checks UTF-16 surrogate pairs (D835 + trail in mathematical alphanumeric range).
+// In Go each mathematical alphanumeric is one rune in U+1D400..U+1D7FF.
+func IsAllMathsChars(s string) bool {
+	// Java: s.length() % 2 != 0 → false (UTF-16 units). Empty (0) passes and returns true.
+	if s == "" {
+		return true
+	}
+	// Non-empty: every rune must be mathematical alphanumeric block (approx Java range).
+	// MATHEMATICAL_BOLD_CAPITAL_A = U+1D400 … MATHEMATICAL_MONOSPACE_DIGIT_NINE = U+1D7FF
+	n := 0
+	for _, r := range s {
+		n++
+		if r < 0x1D400 || r > 0x1D7FF {
+			return false
+		}
+	}
+	// Java length is 2*n (surrogate pairs); n runes → even UTF-16 length always when all are supplementary.
+	return n > 0
+}
+
+// IsAllHalfWidthChars ports Utils.isAllHalfWidthChars (fullwidth Latin A–Z a–z only).
+func IsAllHalfWidthChars(s string) bool {
+	// Empty: Java loop empty → true
+	if s == "" {
+		return true
+	}
+	for _, r := range s {
+		// 'Ａ' U+FF21 … 'Ｚ' U+FF3A, 'ａ' U+FF41 … 'ｚ' U+FF5A
+		if r >= 'Ａ' && r <= 'Ｚ' {
+			continue
+		}
+		if r >= 'ａ' && r <= 'ｚ' {
+			continue
+		}
+		return false
+	}
+	return true
+}
+
+// HalfwidthLatinToLatin ports Utils.halfwidthLatinToLatin.
+func HalfwidthLatinToLatin(s string) string {
+	var b strings.Builder
+	b.Grow(len(s))
+	for _, r := range s {
+		switch {
+		case r >= 'Ａ' && r <= 'Ｚ':
+			b.WriteRune('A' + (r - 'Ａ'))
+		case r >= 'ａ' && r <= 'ｚ':
+			b.WriteRune('a' + (r - 'ａ'))
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}

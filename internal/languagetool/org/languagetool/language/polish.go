@@ -1,9 +1,6 @@
 package language
 
-func NewPolish() struct {
-	ShortCode, Name, SpellerRuleID string
-	Countries                      []string
-} {
+func NewPolish() PolishLang {
 	return Polish
 }
 

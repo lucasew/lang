@@ -3,7 +3,6 @@ package da
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreDanishRules installs shared layout + language word-repeat + beginning.
@@ -19,7 +18,10 @@ func RegisterCoreDanishRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "da", []patterns.TokenSequenceSpec{
-		{ID: "DA_I_I", Tokens: []string{"i", "i"}, Message: "Mulig gentagelse af 'i'.", Suggestion: "i"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
+
+	// Java Danish.getRelevantRules / createDefaultSpellingRule → HunspellRule (HUNSPELL_RULE).
+	// Dict loading deferred; nil dict fails closed (no invent misspell flags).
+	sp := NewDanishHunspellRule()
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

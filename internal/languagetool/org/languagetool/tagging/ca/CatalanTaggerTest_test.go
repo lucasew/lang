@@ -33,3 +33,14 @@ func TestCatalanTagger_Tagger(t *testing.T) {
 	require.NotNil(t, got[1].GetReadings()[0].GetPOSTag())
 	require.Nil(t, got[2].GetReadings()[0].GetPOSTag())
 }
+
+func TestCatalanTagger_TypographicApostrophe(t *testing.T) {
+	tagger := NewCatalanTagger(tagging.MapWordTagger{
+		"l'home": {tagging.NewTaggedWord("home", "NCMS000")},
+	})
+	got := tagger.Tag([]string{"l’home"})
+	require.Len(t, got, 1)
+	require.True(t, got[0].HasTypographicApostrophe())
+	// surface kept original; lookup used typewriter form
+	require.Equal(t, "l’home", got[0].GetToken())
+}

@@ -32,6 +32,8 @@ func loadPTPTReplace() *rules.AbstractSimpleReplaceRule2 {
 			CaseSens:             rules.CaseInsensitive,
 			LanguageCode:         "pt",
 			SubRuleSpecificIDs:   true,
+			// Java isTokenException: NP* || isImmunized
+			IsTokenException: ptPTReplaceTokenException,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/pt-PT/replace.txt"); err != nil {
 			panic(err)
@@ -39,6 +41,20 @@ func loadPTPTReplace() *rules.AbstractSimpleReplaceRule2 {
 		ptPTReplaceBase = base
 	})
 	return ptPTReplaceBase
+}
+
+// ptPTReplaceTokenException ports PortugalPortugueseReplaceRule.isTokenException.
+func ptPTReplaceTokenException(atr *languagetool.AnalyzedTokenReadings) bool {
+	if atr == nil {
+		return false
+	}
+	if atr.IsImmunized() {
+		return true
+	}
+	if atr.HasPosTagStartingWith("NP") {
+		return true
+	}
+	return false
 }
 
 // PortugalPortugueseReplaceRule ports org.languagetool.rules.pt.PortugalPortugueseReplaceRule.

@@ -21,8 +21,9 @@ func TestGermanChunker_Chunking(t *testing.T) {
 		deTok("bellt", "VER:3:SIN:PRÄ:SFT", 9),
 	}
 	NewGermanChunker().AddChunkTags(tokens)
-	require.Equal(t, []string{"B-NP"}, tokens[0].GetChunkTags())
-	require.Equal(t, []string{"I-NP"}, tokens[1].GetChunkTags())
+	// REGEXES2 may add NPS on top of B-NP/I-NP (Java additive tags).
+	require.Contains(t, tokens[0].GetChunkTags(), "B-NP")
+	require.Contains(t, tokens[1].GetChunkTags(), "I-NP")
 	require.Empty(t, tokens[2].GetChunkTags())
 }
 
@@ -34,16 +35,19 @@ func TestGermanChunker_OpenNLPLikeChunking(t *testing.T) {
 		deTok("Haus", "SUB:NOM:SIN:NEU", 12),
 	}
 	NewGermanChunker().AddChunkTags(tokens)
-	require.Equal(t, []string{"B-NP"}, tokens[0].GetChunkTags())
-	require.Equal(t, []string{"I-NP"}, tokens[1].GetChunkTags())
-	require.Equal(t, []string{"I-NP"}, tokens[2].GetChunkTags())
+	require.Contains(t, tokens[0].GetChunkTags(), "B-NP")
+	require.Contains(t, tokens[1].GetChunkTags(), "I-NP")
+	require.Contains(t, tokens[2].GetChunkTags(), "I-NP")
 }
 
-// Port of GermanChunkerTest.testTemp — short smoke
+// Port of GermanChunkerTest.testTemp — bare EIG alone is not REGEXES1 (needs Herr+EIG etc.).
+// Java leaves untagged tokens as O; no invent POS→BIO fallback.
 func TestGermanChunker_Temp(t *testing.T) {
 	tokens := []*languagetool.AnalyzedTokenReadings{
 		deTok("Berlin", "EIG:NOM:SIN:NEU", 0),
 	}
 	NewGermanChunker().AddChunkTags(tokens)
-	require.Equal(t, []string{"B-NP"}, tokens[0].GetChunkTags())
+	// No B-NP invent for lone EIG (REGEXES1 has no bare-EIG pattern).
+	require.NotContains(t, tokens[0].GetChunkTags(), "B-NP")
+	require.NotContains(t, tokens[0].GetChunkTags(), "I-NP")
 }

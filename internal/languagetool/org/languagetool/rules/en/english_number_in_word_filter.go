@@ -1,40 +1,49 @@
 package en
 
 import (
-	"regexp"
-	"strings"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// EnglishNumberInWordFilter ports AbstractNumberInWordFilter suggestion logic.
-type EnglishNumberInWordFilter struct{}
-
-func NewEnglishNumberInWordFilter() *EnglishNumberInWordFilter {
-	return &EnglishNumberInWordFilter{}
+// EnglishNumberInWordFilter ports org.languagetool.rules.en.EnglishNumberInWordFilter
+// (extends AbstractNumberInWordFilter with MorfologikAmericanSpellerRule).
+type EnglishNumberInWordFilter struct {
+	inner *rules.NumberInWordFilter
 }
 
-var enDigitRE = regexp.MustCompile(`[0-9]`)
+func NewEnglishNumberInWordFilter() *EnglishNumberInWordFilter {
+	return &EnglishNumberInWordFilter{
+		inner: &rules.NumberInWordFilter{
+			// Java: englishSpellerRule.isMisspelled / getSpellingSuggestions
+			IsMisspelled:   FilterDictIsMisspelled,
+			GetSuggestions: FilterDictSuggest,
+		},
+	}
+}
 
+// Suggestions ports acceptRuleMatch candidate building (speller-gated; fail-closed without dict).
 func (f *EnglishNumberInWordFilter) Suggestions(word string) []string {
-	if !enDigitRE.MatchString(word) {
+	if f == nil || f.inner == nil {
 		return nil
 	}
-	var out []string
-	repl0 := strings.ReplaceAll(word, "0", "o")
-	if repl0 != word {
-		out = append(out, repl0)
+	// Without dict: Java always has speller; fail-closed invent none.
+	if !FilterDictAvailable() {
+		return nil
 	}
-	without := enDigitRE.ReplaceAllString(word, "")
-	if without != "" && without != word {
-		found := false
-		for _, s := range out {
-			if s == without {
-				found = true
-				break
-			}
-		}
-		if !found {
-			out = append(out, without)
-		}
+	return f.inner.Suggestions(word)
+}
+
+// AcceptRuleMatch ports AbstractNumberInWordFilter.acceptRuleMatch.
+func (f *EnglishNumberInWordFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
 	}
-	return out
+	if !FilterDictAvailable() {
+		return nil
+	}
+	if f.inner == nil {
+		return nil
+	}
+	return f.inner.AcceptRuleMatch(match, arguments, 0, nil, nil)
 }

@@ -41,13 +41,13 @@ type RussianDashRule struct {
 
 func NewRussianDashRule(messages map[string]string) *RussianDashRule {
 	base := &rules.AbstractDashRule{
-		Messages:         messages,
 		ID:               "RU_DASH_RULE",
 		CompoundPatterns: loadDashPatterns(),
 		Message:          "Использовано тире вместо дефиса.",
 		Description:      "Тире вместо дефиса («из — за» вместо «из-за»).",
 		IsLetter:         isCyrillicLetter,
 	}
+	rules.InitDashRuleMeta(base, messages)
 	return &RussianDashRule{AbstractDashRule: base}
 }
 

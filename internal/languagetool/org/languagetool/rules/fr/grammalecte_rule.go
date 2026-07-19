@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	GrammalecteRuleID = "GRAMMALECTE"
+	GrammalecteRuleID  = "GRAMMALECTE"
 	grammalecteTimeout = 500 * time.Millisecond
 	grammalecteDownMS  = 5000
 )
@@ -24,30 +24,30 @@ const (
 var GrammalecteIgnoreRules = map[string]struct{}{
 	"tab_fin_ligne": {}, "apostrophe_typographique": {},
 	"typo_guillemets_typographiques_doubles_ouvrants": {},
-	"nbsp_avant_double_ponctuation": {},
+	"nbsp_avant_double_ponctuation":                   {},
 	"typo_guillemets_typographiques_doubles_fermants": {},
-	"nbsp_avant_deux_points": {}, "apostrophe_typographique_après_t": {},
+	"nbsp_avant_deux_points":                          {}, "apostrophe_typographique_après_t": {},
 	"typo_point_collé_à_mot_suivant": {}, "typo_tiret_début_ligne": {},
 }
 
 // GrammalecteRule ports rules.fr.GrammalecteRule — queries a local Grammalecte HTTP server.
 type GrammalecteRule struct {
-	ID       string
+	ID        string
 	ServerURL string // e.g. http://localhost:8080
-	Client   *http.Client
+	Client    *http.Client
 	// Post optional override for tests.
 	Post func(text string) ([]GrammalecteMatch, error)
 
-	mu           sync.Mutex
-	lastErrorAt  time.Time
+	mu          sync.Mutex
+	lastErrorAt time.Time
 }
 
 // GrammalecteMatch is one error from the Grammalecte JSON API (simplified).
 type GrammalecteMatch struct {
-	RuleID   string   `json:"rule"`
-	Start    int      `json:"start"`
-	End      int      `json:"end"`
-	Message  string   `json:"message"`
+	RuleID      string   `json:"rule"`
+	Start       int      `json:"start"`
+	End         int      `json:"end"`
+	Message     string   `json:"message"`
 	Suggestions []string `json:"suggestions"`
 }
 

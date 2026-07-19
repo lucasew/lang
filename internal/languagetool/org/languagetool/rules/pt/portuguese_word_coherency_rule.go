@@ -40,7 +40,6 @@ type PortugueseWordCoherencyRule struct {
 func NewPortugueseWordCoherencyRule(messages map[string]string) *PortugueseWordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "PT_WORD_COHERENCY",
 		Description: "Consistência de palavras com grafias múltiplas",
 		WordMap:     d.WordMap,
@@ -49,6 +48,7 @@ func NewPortugueseWordCoherencyRule(messages map[string]string) *PortugueseWordC
 			return "Não deve utilizar formas distintas de palavras com dupla grafia no mesmo texto. Escolha entre '" + word1 + "' e '" + word2 + "'."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &PortugueseWordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

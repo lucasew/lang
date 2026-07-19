@@ -3,6 +3,7 @@ package rules
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
@@ -16,17 +17,32 @@ var (
 )
 
 // LongSentenceRule ports org.languagetool.rules.LongSentenceRule.
+// Java: STYLE, Style, Tag.picky.
 type LongSentenceRule struct {
 	Messages map[string]string
 	MaxWords int
 	// RuleID overrides GetID when set (e.g. TOO_LONG_SENTENCE_DE).
 	RuleID string
+	// Description overrides GetDescription when set (language modules).
+	Description string
 	// ShortMsg optional short message for language wrappers.
 	ShortMsg string
+	// Category ports Rule.category (Java STYLE).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
+	// Tags ports Rule.tags (Java picky).
+	Tags []Tag
 }
 
 func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentenceRule {
-	return &LongSentenceRule{Messages: messages, MaxWords: maxWords}
+	return &LongSentenceRule{
+		Messages:  messages,
+		MaxWords:  maxWords,
+		Category:  CatStyle.GetCategory(messages),
+		IssueType: ITSStyle,
+		Tags:      []Tag{TagPicky},
+	}
 }
 
 func (r *LongSentenceRule) GetID() string {
@@ -34,6 +50,60 @@ func (r *LongSentenceRule) GetID() string {
 		return r.RuleID
 	}
 	return "TOO_LONG_SENTENCE"
+}
+
+func (r *LongSentenceRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *LongSentenceRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *LongSentenceRule) GetTags() []Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
+}
+
+func (r *LongSentenceRule) HasTag(tag Tag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// GetDescription ports LongSentenceRule.getDescription.
+// Default: MessageFormat(messages["long_sentence_rule_desc"], maxWords).
+func (r *LongSentenceRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	if r != nil && r.Messages != nil {
+		if tmpl := r.Messages["long_sentence_rule_desc"]; tmpl != "" {
+			return fmt.Sprintf(strings.ReplaceAll(tmpl, "{0}", "%d"), r.MaxWords)
+		}
+	}
+	return fmt.Sprintf("Finds long sentences (more than %d words)", r.maxWords())
+}
+
+func (r *LongSentenceRule) maxWords() int {
+	if r == nil || r.MaxWords <= 0 {
+		return 40
+	}
+	return r.MaxWords
 }
 
 func (r *LongSentenceRule) GetMessage() string {

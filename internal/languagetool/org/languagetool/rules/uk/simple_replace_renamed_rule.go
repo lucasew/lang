@@ -3,77 +3,63 @@ package uk
 import (
 	"bufio"
 	"embed"
+	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/replace_renamed.txt
 var renamedFS embed.FS
 
-type renamedEntry struct {
-	suggestions []string
-	info        string
-}
-
 var (
 	renamedOnce sync.Once
-	renamedMap  map[string]renamedEntry // lowercase key
+	// renamedMap keys as in Java ExtraDictionaryLoader.loadLists (original case).
+	renamedMap map[string][]string
+
+	// geoPostagPattern ports SimpleReplaceRenamedRule.GEO_POSTAG_PATTERN:
+	// noun:inanim.*?:prop.*|adj.*  (full match, Java Pattern.matches).
+	geoPostagPattern = regexp.MustCompile(`^(?:noun:inanim.*?:prop.*|adj.*)$`)
+
+	decomunizationURL = mustParseURL("https://uk.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D1%82%D0%BE%D0%BF%D0%BE%D0%BD%D1%96%D0%BC%D1%96%D0%B2_%D0%A3%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D0%B8,_%D0%BF%D0%B5%D1%80%D0%B5%D0%B9%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%85_%D0%B2%D0%BD%D0%B0%D1%81%D0%BB%D1%96%D0%B4%D0%BE%D0%BA_%D0%B4%D0%B5%D0%BA%D0%BE%D0%BC%D1%83%D0%BD%D1%96%D0%B7%D0%B0%D1%86%D1%96%D1%97")
 )
 
-func loadRenamed() map[string]renamedEntry {
+func mustParseURL(s string) *url.URL {
+	u, err := url.Parse(s)
+	if err != nil {
+		panic(err)
+	}
+	return u
+}
+
+func loadRenamed() map[string][]string {
 	renamedOnce.Do(func() {
 		f, err := renamedFS.Open("data/replace_renamed.txt")
 		if err != nil {
 			panic(err)
 		}
 		defer f.Close()
-		m := map[string]renamedEntry{}
+		// Java: line.split(" *= *|\\|") then put(split[0], subList(1, length))
+		m := map[string][]string{}
 		sc := bufio.NewScanner(f)
 		buf := make([]byte, 0, 64*1024)
 		sc.Buffer(buf, 1024*1024)
 		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
-			if line == "" || line[0] == '#' {
+			line := sc.Text()
+			if strings.HasPrefix(line, "#") || strings.TrimSpace(line) == "" {
 				continue
 			}
-			if i := strings.IndexByte(line, '#'); i >= 0 {
-				line = strings.TrimSpace(line[:i])
-			}
-			parts := splitRenamedLine(line)
+			// split on " *= *|" or "|"
+			parts := splitRenamedJava(line)
 			if len(parts) < 2 {
 				continue
 			}
-			key := strings.ToLower(parts[0])
-			info := ""
-			suggs := parts[1:]
-			// Metadata only when last field looks like a year or decommunization note.
-			if len(suggs) > 1 && looksLikeRenamedMeta(suggs[len(suggs)-1]) {
-				info = suggs[len(suggs)-1]
-				suggs = suggs[:len(suggs)-1]
-			}
-			// Merge case-variant keys (Переяслав-Хмельницький vs переяслав-хмельницький).
-			if prev, ok := m[key]; ok {
-				seen := map[string]bool{}
-				for _, s := range prev.suggestions {
-					seen[s] = true
-				}
-				for _, s := range suggs {
-					if !seen[s] {
-						prev.suggestions = append(prev.suggestions, s)
-						seen[s] = true
-					}
-				}
-				if prev.info == "" {
-					prev.info = info
-				}
-				m[key] = prev
-			} else {
-				m[key] = renamedEntry{suggestions: suggs, info: info}
-			}
+			key := parts[0]
+			list := parts[1:]
+			m[key] = list
 		}
 		if err := sc.Err(); err != nil {
 			panic(err)
@@ -83,23 +69,27 @@ func loadRenamed() map[string]renamedEntry {
 	return renamedMap
 }
 
-func splitRenamedLine(line string) []string {
-	eq := strings.IndexByte(line, '=')
-	if eq < 0 {
+// splitRenamedJava ports Java line.split(" *= *|\\|").
+func splitRenamedJava(line string) []string {
+	// First field ends at " = " or "=" with optional spaces; rest split by |
+	eq := regexp.MustCompile(` *= *`).FindStringIndex(line)
+	if eq == nil {
 		return nil
 	}
-	left := strings.TrimSpace(line[:eq])
-	right := strings.TrimSpace(line[eq+1:])
-	parts := []string{left}
-	for _, p := range strings.Split(right, "|") {
-		parts = append(parts, strings.TrimSpace(p))
+	key := line[:eq[0]]
+	rest := line[eq[1]:]
+	out := []string{key}
+	if rest == "" {
+		return out
 	}
-	return parts
+	for _, p := range strings.Split(rest, "|") {
+		out = append(out, p)
+	}
+	return out
 }
 
-// SimpleReplaceRenamedRule ports org.languagetool.rules.uk.SimpleReplaceRenamedRule
-// without POS filtering; surface + light inflection prefix match.
-// Joins apostrophe-split tokens (Червонознам'янка).
+// SimpleReplaceRenamedRule ports org.languagetool.rules.uk.SimpleReplaceRenamedRule.
+// Match is lemma + GEO POS only (Java); without tags/lemmas fail closed (no surface invent).
 type SimpleReplaceRenamedRule struct {
 	messages map[string]string
 }
@@ -111,169 +101,92 @@ func NewSimpleReplaceRenamedRule(messages map[string]string) *SimpleReplaceRenam
 
 func (r *SimpleReplaceRenamedRule) GetID() string { return "UK_SIMPLE_REPLACE_RENAMED" }
 
+func (r *SimpleReplaceRenamedRule) GetDescription() string {
+	return "Пропозиція поточної назви для перейменованих власних назв"
+}
+
 func (r *SimpleReplaceRenamedRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	m := loadRenamed()
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var out []*rules.RuleMatch
-	for i := 0; i < len(tokens); i++ {
-		tok := tokens[i]
-		if tok.IsSentenceStart() || tok.IsImmunized() {
+	for _, tokenReadings := range tokens {
+		if tokenReadings == nil || tokenReadings.IsSentenceStart() {
 			continue
 		}
-		// Join non-whitespace-separated fragments (apostrophes, hyphens already one token).
-		joined := tok.GetToken()
-		endIdx := i
-		for j := i + 1; j < len(tokens) && !tokens[j].IsWhitespaceBefore() && !tokens[j].IsSentenceStart(); j++ {
-			// stop at sentence-ending punctuation alone
-			if isOnlyPunct(tokens[j].GetToken()) {
+		// LinkedHashSet order of first-seen lemmas
+		var renamedLemmas []string
+		seen := map[string]bool{}
+		clear := false
+		for _, reading := range tokenReadings.GetReadings() {
+			if reading == nil {
+				continue
+			}
+			pos := reading.GetPOSTag()
+			if pos != nil && *pos == languagetool.SentenceEndTagName {
+				continue
+			}
+			lemmaPtr := reading.GetLemma()
+			if lemmaPtr == nil {
+				continue
+			}
+			lemma := *lemmaPtr
+			repl, inList := m[lemma]
+			_ = repl
+			if inList && geoPOSMatch(pos) {
+				if !seen[lemma] {
+					seen[lemma] = true
+					renamedLemmas = append(renamedLemmas, lemma)
+				}
+			} else {
+				// overlaps with normal lemma
+				renamedLemmas = nil
+				clear = true
 				break
 			}
-			joined += tokens[j].GetToken()
-			endIdx = j
 		}
-		// advance outer loop past joined pieces
-		if endIdx > i {
-			// will set i at end
-		}
-		clean := strings.TrimRight(joined, ".,;:!?\"'«»")
-		if clean == "" {
+		if clear || len(renamedLemmas) == 0 {
 			continue
 		}
-		entries := findRenamedEntries(m, clean)
-		if len(entries) == 0 {
-			if endIdx > i {
-				i = endIdx
-			}
-			continue
-		}
-		var suggestions []string
 		info := ""
-		seen := map[string]bool{}
-		for _, e := range entries {
-			for _, s := range e.suggestions {
-				if !seen[s] {
-					seen[s] = true
-					adj := s
-					if tools.StartsWithUppercase(clean) && !tools.IsAllUppercase(clean) {
-						adj = tools.UppercaseFirstChar(s)
-					}
-					suggestions = append(suggestions, adj)
-				}
+		var replacements []string
+		for _, lemma := range renamedLemmas {
+			repl := m[lemma]
+			if len(repl) == 0 {
+				continue
 			}
-			if info == "" && e.info != "" {
-				info = e.info
+			replacements = append(replacements, repl[0])
+			// Java: for i=1; i<repl.size()-1; i++
+			for i := 1; i < len(repl)-1; i++ {
+				replacements = append(replacements, repl[i])
+			}
+			if info == "" && len(repl) > 1 {
+				info = repl[len(repl)-1]
 			}
 		}
-		if len(suggestions) == 0 {
-			if endIdx > i {
-				i = endIdx
-			}
+		if len(replacements) == 0 {
 			continue
 		}
-		msg := "«" + clean + "» було перейменовано"
+		// Java createRuleMatch: message uses first lemma as tokenStr
+		msgLemma := renamedLemmas[0]
+		msg := "«" + msgLemma + "» було перейменовано"
 		if info != "" {
 			msg += " (" + info + ")"
 		}
-		from := tok.GetStartPos()
-		to := tokens[endIdx].GetEndPos()
-		// if trailing punct was not included in join, end at last word fragment
-		if clean != joined {
-			// recompute: end at clean length in utf16 from from
-			to = from + utf16Len(clean)
-		}
-		rm := rules.NewRuleMatch(r, sentence, from, to, msg)
+		rm := rules.NewRuleMatch(r, sentence, tokenReadings.GetStartPos(), tokenReadings.GetEndPos(), msg)
 		rm.ShortMessage = "Перейменована назва"
-		rm.SetSuggestedReplacements(suggestions)
+		rm.SetSuggestedReplacements(replacements)
+		if strings.Contains(info, "декомуніз") {
+			rm.URL = decomunizationURL.String()
+		}
 		out = append(out, rm)
-		i = endIdx
 	}
 	return out
 }
 
-func isOnlyPunct(s string) bool {
-	if s == "" {
+// geoPOSMatch ports PosTagHelper.hasPosTag(reading, GEO_POSTAG_PATTERN) for one reading.
+func geoPOSMatch(pos *string) bool {
+	if pos == nil {
 		return false
 	}
-	for _, r := range s {
-		if (r >= '0' && r <= '9') || (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
-			return false
-		}
-		// Ukrainian letters
-		if r >= 0x0400 && r <= 0x04FF {
-			return false
-		}
-	}
-	// apostrophe alone is not "only punct" for joining purposes — handled by join loop
-	return s != "'" && s != "’" && s != "`"
-}
-
-func findRenamedEntries(m map[string]renamedEntry, token string) []renamedEntry {
-	lc := strings.ToLower(token)
-	// Prefer exact key match only when present (avoids over-prefixing multiword toponyms).
-	if e, ok := m[lc]; ok {
-		return []renamedEntry{e}
-	}
-	var found []renamedEntry
-	for key, e := range m {
-		if renamedKeyMatches(lc, key) {
-			found = append(found, e)
-		}
-	}
-	return found
-}
-
-func renamedKeyMatches(token, key string) bool {
-	if token == key {
-		return true
-	}
-	if strings.HasPrefix(token, key) {
-		return isShortInflection(token[len(key):])
-	}
-	for _, suf := range []string{"ий", "ій", "а", "я", "е", "є", "і", "ї", "ої", "ого", "ому", "им", "ими", "их"} {
-		if strings.HasSuffix(key, suf) {
-			stem := strings.TrimSuffix(key, suf)
-			if stem != "" && strings.HasPrefix(token, stem) {
-				return isShortInflection(token[len(stem):])
-			}
-		}
-	}
-	return false
-}
-
-func looksLikeRenamedMeta(s string) bool {
-	if s == "" {
-		return false
-	}
-	// years like 2016, 1993
-	if len(s) == 4 {
-		allDigit := true
-		for _, r := range s {
-			if r < '0' || r > '9' {
-				allDigit = false
-				break
-			}
-		}
-		if allDigit {
-			return true
-		}
-	}
-	return strings.Contains(s, "декомуніз")
-}
-
-func isShortInflection(rest string) bool {
-	if rest == "" {
-		return true
-	}
-	// Multiword remainder (e.g. "-хмельницький") is not an inflection.
-	if strings.Contains(rest, "-") {
-		return false
-	}
-	n := 0
-	for range rest {
-		n++
-		if n > 6 {
-			return false
-		}
-	}
-	return true
+	return geoPostagPattern.MatchString(*pos)
 }

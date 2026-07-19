@@ -18,6 +18,25 @@ func NewGermanDoublePunctuationRule(messages map[string]string) *GermanDoublePun
 	return &GermanDoublePunctuationRule{DoublePunctuationRule: base}
 }
 
+func (r *GermanDoublePunctuationRule) GetID() string {
+	if r != nil && r.DoublePunctuationRule != nil {
+		return r.DoublePunctuationRule.GetID()
+	}
+	return "DE_DOUBLE_PUNCTUATION"
+}
+
+// GetURL ports GermanDoublePunctuationRule constructor setUrl.
+func (r *GermanDoublePunctuationRule) GetURL() string {
+	return "https://dict.leo.org/grammatik/deutsch/Rechtschreibung/Amtlich/Interpunktion/pgf101-105.html#grammarpgf103"
+}
+
 func (r *GermanDoublePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.DoublePunctuationRule.Match(sentence)
+	// Java attaches this (DE rule) so setUrl is visible on matches.
+	ms := r.DoublePunctuationRule.Match(sentence)
+	for _, m := range ms {
+		if m != nil {
+			m.Rule = r
+		}
+	}
+	return ms
 }

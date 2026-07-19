@@ -1,6 +1,6 @@
 package de
 
-// Twin of UpperCaseNgramRuleTest (surface Tage/Tagen heuristics).
+// Twin of UpperCaseNgramRuleTest — Java requires LanguageModel (no surface invent).
 import (
 	"testing"
 
@@ -8,13 +8,27 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUpperCaseNgramRule_Rule(t *testing.T) {
+func TestUpperCaseNgramRule_WithoutLM_FailClosed(t *testing.T) {
 	rule := NewUpperCaseNgramRule(nil)
-	matchN := func(s string) int {
-		return len(rule.Match(languagetool.AnalyzePlain(s)))
-	}
-	require.Equal(t, 0, matchN("Nach 5 Tagen war es aus."))
-	require.Equal(t, 1, matchN("Nach 5 tagen war es aus."))
-	require.Equal(t, 0, matchN("Sie tagen im Hotel."))
-	require.Equal(t, 1, matchN("Sie Tagen im Hotel."))
+	require.Empty(t, rule.Match(languagetool.AnalyzePlain("Nach 5 tagen war es aus.")))
+	require.Empty(t, rule.Match(languagetool.AnalyzePlain("Sie Tagen im Hotel.")))
+}
+
+func TestUpperCaseNgramRule_WithProbability(t *testing.T) {
+	rule := NewUpperCaseNgramRuleWithLM(nil, func(tri []string) float64 {
+		if len(tri) != 3 {
+			return 1e-20
+		}
+		// after "5", "Tagen" is common, "tagen" is not
+		if tri[0] == "5" && tri[1] == "Tagen" {
+			return 1.0
+		}
+		if tri[0] == "5" && tri[1] == "tagen" {
+			return 0.001
+		}
+		return 0.01
+	})
+	ms := rule.Match(languagetool.AnalyzePlain("Nach 5 tagen war es aus."))
+	require.Equal(t, 1, len(ms))
+	require.Equal(t, "Tagen", ms[0].GetSuggestedReplacements()[0])
 }

@@ -32,10 +32,8 @@ func loadBarbarismsBR() *rules.AbstractSimpleReplaceRule2 {
 			CaseSens:             rules.CaseInsensitive,
 			LanguageCode:         "pt",
 			SubRuleSpecificIDs:   true,
-			// Java also skips NP / _english_ignore_ tags; surface-only port has no POS.
-			IsTokenException: func(atr *languagetool.AnalyzedTokenReadings) bool {
-				return atr.IsImmunized()
-			},
+			// Java isTokenException: isImmunized || NP* || _english_ignore_*
+			IsTokenException: barbarismsTokenException,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/pt-BR/barbarisms.txt"); err != nil {
 			panic(err)
@@ -43,6 +41,24 @@ func loadBarbarismsBR() *rules.AbstractSimpleReplaceRule2 {
 		barbarismsBRBase = base
 	})
 	return barbarismsBRBase
+}
+
+// barbarismsTokenException ports PortugueseBarbarismsRule.isTokenException.
+// Without NP / _english_ignore_ tags, only immunization applies (fail closed).
+func barbarismsTokenException(atr *languagetool.AnalyzedTokenReadings) bool {
+	if atr == nil {
+		return false
+	}
+	if atr.IsImmunized() {
+		return true
+	}
+	if atr.HasPosTagStartingWith("NP") {
+		return true
+	}
+	if atr.HasPosTagStartingWith("_english_ignore_") {
+		return true
+	}
+	return false
 }
 
 // PortugueseBarbarismsRule ports org.languagetool.rules.pt.PortugueseBarbarismsRule

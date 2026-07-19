@@ -48,6 +48,8 @@ func NewDutchWrongWordInContextRule(messages map[string]string) *DutchWrongWordI
 		LanguageCode:       "nl",
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: getCategoryString → "Gemakkelijk te verwarren woorden"
+	rules.InitWrongWordInContextMeta(base, messages, "Gemakkelijk te verwarren woorden")
 	return &DutchWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

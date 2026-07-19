@@ -1,6 +1,12 @@
 package patterns
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+)
 
 // Match ports org.languagetool.rules.patterns.Match — configuration of a <match/> element.
 type Match struct {
@@ -19,6 +25,24 @@ type Match struct {
 	InMessageOnly      bool
 	regexCompiled      *regexp.Regexp
 	posRegexCompiled   *regexp.Regexp
+}
+
+// compileMatchRE compiles a Java-oriented regex for Match attributes.
+// Invalid patterns yield nil (no invent rewrite); Java (?iu)/(?ui) → Go (?i).
+func compileMatchRE(s string) *regexp.Regexp {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return nil
+	}
+	// Go RE2 has no inline u flag; case-insensitive is (?i).
+	s = strings.ReplaceAll(s, "(?iu)", "(?i)")
+	s = strings.ReplaceAll(s, "(?ui)", "(?i)")
+	s = strings.ReplaceAll(s, "(?u)", "")
+	re, err := regexp.Compile(s)
+	if err != nil {
+		return nil
+	}
+	return re
 }
 
 // NewMatch constructs a Match (ports the Java constructor).
@@ -42,10 +66,10 @@ func NewMatch(
 		IncludeSkipped:     includeSkipped,
 	}
 	if regexMatch != "" {
-		m.regexCompiled = regexp.MustCompile(regexMatch)
+		m.regexCompiled = compileMatchRE(regexMatch)
 	}
 	if postagRegexp && posTag != "" {
-		m.posRegexCompiled = regexp.MustCompile(posTag)
+		m.posRegexCompiled = compileMatchRE(posTag)
 	}
 	return m
 }
@@ -78,12 +102,20 @@ func (m *Match) SetLemmaString(lemmaString string) {
 	m.StaticLemma = true
 	m.PostagRegexp = true
 	if m.PosTag != "" {
-		m.posRegexCompiled = regexp.MustCompile(m.PosTag)
+		m.posRegexCompiled = compileMatchRE(m.PosTag)
 	}
 }
 
-// CreateState ports Match.createState for a single token.
-func (m *Match) CreateState(token interface { /* synthesizer deferred */
-}) *MatchState {
+// CreateState ports Match.createState(synthesizer, token) with nil synthesizer.
+func (m *Match) CreateState() *MatchState {
 	return NewMatchState(m)
+}
+
+// CreateStateWithSynth ports Match.createState(Synthesizer, AnalyzedTokenReadings).
+func (m *Match) CreateStateWithSynth(synth synthesis.Synthesizer, token *languagetool.AnalyzedTokenReadings) *MatchState {
+	st := NewMatchStateWithSynth(m, synth)
+	if token != nil {
+		st.SetToken(token)
+	}
+	return st
 }

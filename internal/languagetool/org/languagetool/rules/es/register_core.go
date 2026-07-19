@@ -2,8 +2,9 @@ package es
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreSpanishRules installs shared layout + Spanish word-repeat + beginning.
@@ -11,6 +12,17 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	// Java Spanish.getPriorityForId on Check priorities.
+	lt.PriorityForId = language.SpanishPriorityForId
+	// Java Spanish.adaptSuggestion for AdaptSuggestionsFilter (pattern rules).
+	languagetool.LanguageAdaptSuggestionByCode["es"] = language.SpanishAdaptSuggestion
+	// Java Spanish.filterRuleMatches (AI_ES_GGEC). Hook from language init (cycle-safe).
+	if languagetool.FilterSpanishRuleMatchesHook != nil {
+		lt.FilterRuleMatches = languagetool.FilterSpanishRuleMatchesHook
+	}
+	// Java getTagger() for voseo suggestion drop — wire POS dict when available
+	// (fail-closed empty tagger if spanish.dict not on disk).
+	_ = language.TryWireSpanishVoseoWordTagger()
 	rules.RegisterSharedLayoutRules(lt, "es")
 	wr := NewSpanishWordRepeatRule(map[string]string{"repetition": "Repetición de palabra"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
@@ -20,10 +32,7 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "es", []patterns.TokenSequenceSpec{
-		{ID: "ES_A_EL", Tokens: []string{"a", "el"}, Message: "¿Quiso decir 'al'?", Suggestion: "al"},
-		{ID: "ES_DE_EL", Tokens: []string{"de", "el"}, Message: "¿Quiso decir 'del'?", Suggestion: "del"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace.txt / replace_custom.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
@@ -39,4 +48,22 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
 	vr := NewSimpleReplaceVerbsRule(nil)
 	lt.AddRuleChecker(vr.GetID(), rules.AsSentenceCheckerSimple(vr.Match))
+
+	// Java createDefaultSpellingRule → MorfologikSpanishSpellerRule.
+	// Always register full Match (orderSuggestions + pronoun/digit tops via TagPOS).
+	sp := NewMorfologikSpanishSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(SpanishSpellerDict); p != "" {
+		if WireSpanishFilterSpeller(p) {
+			sp.IsMisspelled = FilterDictIsMisspelled
+		}
+	}
+	// Late-bind TagPOS to lt.TagWord (POS may be installed after RegisterCore).
+	ltRef := lt
+	WireSpanishSpellerTagPOS(sp, func(token string) []languagetool.TokenTag {
+		if ltRef.TagWord == nil {
+			return nil
+		}
+		return ltRef.TagWord(token)
+	})
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

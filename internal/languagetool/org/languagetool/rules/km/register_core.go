@@ -25,4 +25,9 @@ func RegisterCoreKhmerRules(lt *languagetool.JLanguageTool) {
 	// Official space-before rule.
 	sb := NewKhmerSpaceBeforeRule(nil)
 	lt.AddRuleChecker(sb.GetID(), rules.AsSentenceCheckerSimple(sb.Match))
+
+	// Java Khmer.getRelevantRules / createDefaultSpellingRule → KhmerHunspellRule (HUNSPELL_RULE).
+	// Dict loading deferred; nil dict fails closed (no invent misspell flags).
+	sp := NewKhmerHunspellRuleDefault()
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

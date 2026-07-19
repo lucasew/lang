@@ -10,6 +10,7 @@ import (
 
 // AbstractSimpleReplaceRule ports org.languagetool.rules.AbstractSimpleReplaceRule
 // for dictionary-based token replacements (checkLemmas path optional).
+// Java ctor: MISC category.
 type AbstractSimpleReplaceRule struct {
 	Messages          map[string]string
 	WrongWords        map[string][]string
@@ -19,10 +20,26 @@ type AbstractSimpleReplaceRule struct {
 	ID                string
 	Description       string
 	ShortMsg          string
+	// Category ports Rule.category (Java MISC).
+	Category *Category
 	// MessageFn custom message; if nil uses default.
 	MessageFn func(tokenStr string, replacements []string) string
 	// TokenException optional skip (ports isTokenException).
 	TokenException func(token *languagetool.AnalyzedTokenReadings) bool
+	// IsTagged optional override for ignoreTaggedWords (Java protected isTagged).
+	// nil → tokenReadings.IsTagged().
+	IsTagged func(token *languagetool.AnalyzedTokenReadings) bool
+}
+
+// InitSimpleReplaceMeta applies Java AbstractSimpleReplaceRule constructor metadata.
+func InitSimpleReplaceMeta(r *AbstractSimpleReplaceRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatMisc.GetCategory(messages)
+	}
 }
 
 func (r *AbstractSimpleReplaceRule) GetID() string {
@@ -30,6 +47,20 @@ func (r *AbstractSimpleReplaceRule) GetID() string {
 		return r.ID
 	}
 	return "SIMPLE_REPLACE"
+}
+
+func (r *AbstractSimpleReplaceRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *AbstractSimpleReplaceRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return ""
 }
 
 func (r *AbstractSimpleReplaceRule) cleanup(word string) string {
@@ -52,13 +83,24 @@ func (r *AbstractSimpleReplaceRule) Match(sentence *languagetool.AnalyzedSentenc
 		if tokenReadings.IsIgnoredBySpeller() {
 			continue
 		}
-		if r.IgnoreTaggedWords && tokenReadings.IsTagged() {
-			continue
+		if r.IgnoreTaggedWords {
+			tagged := tokenReadings.IsTagged()
+			if r.IsTagged != nil {
+				tagged = r.IsTagged(tokenReadings)
+			}
+			if tagged {
+				continue
+			}
 		}
-		matches := r.findMatches(tokenReadings, sentence)
+		matches := r.FindMatches(tokenReadings, sentence)
 		ruleMatches = append(ruleMatches, matches...)
 	}
 	return ruleMatches
+}
+
+// FindMatches ports AbstractSimpleReplaceRule.findMatches (exported for language overrides).
+func (r *AbstractSimpleReplaceRule) FindMatches(tokenReadings *languagetool.AnalyzedTokenReadings, sentence *languagetool.AnalyzedSentence) []*RuleMatch {
+	return r.findMatches(tokenReadings, sentence)
 }
 
 func (r *AbstractSimpleReplaceRule) findMatches(tokenReadings *languagetool.AnalyzedTokenReadings, sentence *languagetool.AnalyzedSentence) []*RuleMatch {

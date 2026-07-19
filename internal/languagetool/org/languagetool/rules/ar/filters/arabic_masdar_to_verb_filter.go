@@ -3,6 +3,7 @@ package filters
 import (
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
@@ -126,4 +127,21 @@ func ApplySuggestions(match *rules.RuleMatch, suggestions []string) *rules.RuleM
 	cur := match.GetSuggestedReplacements()
 	match.SetSuggestedReplacements(append(append([]string{}, cur...), suggestions...))
 	return match
+}
+
+// AcceptRuleMatch ports ArabicMasdarToVerbFilter.acceptRuleMatch (surface masdar map path).
+// Full Java path also filters aux lemmas via tagger and inflects via synthesizer; without those
+// hooks we only emit mapped verb lemmas (fail-closed empty when map misses).
+func (f *ArabicMasdarToVerbFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	sugs := f.SuggestionsFromArgs(arguments)
+	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
+	out.ShortMessage = match.ShortMessage
+	if len(sugs) > 0 {
+		out.SetSuggestedReplacements(sugs)
+	}
+	return out
 }

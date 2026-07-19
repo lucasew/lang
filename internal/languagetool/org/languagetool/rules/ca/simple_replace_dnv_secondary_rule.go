@@ -2,7 +2,6 @@ package ca
 
 import (
 	"embed"
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -28,84 +27,37 @@ func loadDNVSecondary() map[string][]string {
 		if err != nil {
 			panic(err)
 		}
-		out := make(map[string][]string, len(m))
-		for k, v := range m {
-			out[strings.ToLower(k)] = v
-		}
-		// Surface stand-in for participle of dispondre (Java uses lemma + synthesizer).
-		if r, ok := out["dispondre"]; ok {
-			// common past participle forms used in tests / prose
-			out["dispost"] = []string{"disposat"}
-			out["disposta"] = []string{"disposada"}
-			out["dispostos"] = []string{"disposats"}
-			out["dispostes"] = []string{"disposades"}
-			_ = r
-		}
-		dnvSecondaryMap = out
+		// Lemma keys as in file (Java loadFromPath); case-sensitive lemmas from tagger.
+		dnvSecondaryMap = m
 	})
 	return dnvSecondaryMap
 }
 
 // SimpleReplaceDNVSecondaryRule ports org.languagetool.rules.ca.SimpleReplaceDNVSecondaryRule
-// without Catalan synthesizer (surface + light plural heuristics + dispost stand-in).
+// (AbstractSimpleReplaceLemmasRule: lemma + optional Catalan synthesizer).
+// Without lemma POS readings, fail closed (no surface invent of dispost/plurals).
 type SimpleReplaceDNVSecondaryRule struct {
-	messages map[string]string
+	*AbstractSimpleReplaceLemmasRule
 }
 
 func NewSimpleReplaceDNVSecondaryRule(messages map[string]string) *SimpleReplaceDNVSecondaryRule {
-	_ = loadDNVSecondary()
-	return &SimpleReplaceDNVSecondaryRule{messages: messages}
+	base := &AbstractSimpleReplaceLemmasRule{
+		ID:          "CA_SIMPLE_REPLACE_DNV_SECONDARY",
+		Description: "Recomana paraules o formes preferents.",
+		ShortMsg:    "Forma secundària",
+		WrongLemmas: loadDNVSecondary(),
+		MessageFn: func(tokenStr string, replacements []string) string {
+			return "Paraula o forma secundària."
+		},
+	}
+	_ = messages
+	return &SimpleReplaceDNVSecondaryRule{AbstractSimpleReplaceLemmasRule: base}
 }
 
-func (r *SimpleReplaceDNVSecondaryRule) GetID() string { return "CA_SIMPLE_REPLACE_DNV_SECONDARY" }
-
+// Match delegates to lemma path.
 func (r *SimpleReplaceDNVSecondaryRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	m := loadDNVSecondary()
-	var out []*rules.RuleMatch
-	covered := map[int]bool{}
-	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		if tok.IsSentenceStart() || tok.IsImmunized() {
-			continue
-		}
-		t := tok.GetToken()
-		from := tok.GetStartPos()
-		if covered[from] {
-			continue
-		}
-		reps, ok := lookupDNVSecondary(strings.ToLower(t), m)
-		if !ok {
-			continue
-		}
-		// Skip correct forms that are also alternative spellings appearing as suggestions.
-		// e.g. "dispostes" as adjective of disposat is correct in the Java good sentence —
-		// but our stand-in maps dispostes→disposades. Java good: "Estan dispostes..."
-		// only flags when lemma is DNV-secondary; "dispostes" with correct tag may be OK.
-		// Without tagger we cannot distinguish; leave surface map as-is and adjust test.
-		covered[from] = true
-		final := caseAdjustAll(t, reps)
-		rm := rules.NewRuleMatch(r, sentence, from, from+utf16Len(t), "Paraula o forma secundària.")
-		rm.ShortMessage = "Forma secundària"
-		rm.SetSuggestedReplacements(final)
-		out = append(out, rm)
+	if r == nil {
+		return nil
 	}
-	return out
-}
-
-func lookupDNVSecondary(token string, m map[string][]string) ([]string, bool) {
-	if r, ok := m[token]; ok {
-		return r, true
-	}
-	if strings.HasSuffix(token, "s") {
-		base := strings.TrimSuffix(token, "s")
-		if r, ok := m[base]; ok {
-			return pluralizeCASuggestions(r), true
-		}
-		if strings.HasSuffix(token, "es") {
-			stem := strings.TrimSuffix(token, "es")
-			if r, ok := m[stem+"a"]; ok {
-				return pluralizeCASuggestions(r), true
-			}
-		}
-	}
-	return nil, false
+	return r.AbstractSimpleReplaceLemmasRule.Match(sentence)
 }

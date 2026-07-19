@@ -1,105 +1,145 @@
 package de
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// ConjunctionAtBeginOfSentenceRule is a surface stand-in for the DE statistic rule:
-// when MinPercent is 0 (always), flags sentences starting with listed conjunctions
-// (Java uses KON POS tags and percentage thresholds).
+// ConjunctionAtBeginOfSentenceRule ports
+// org.languagetool.rules.de.ConjunctionAtBeginOfSentenceRule
+// (AbstractStatisticSentenceStyleRule; default off; DEFAULT_MIN_PERCENT=10).
+// Java: hasPosTagStartingWith("KON") only — fillerWords list is commented out (no invent).
 type ConjunctionAtBeginOfSentenceRule struct {
-	Messages   map[string]string
-	MinPercent int // 0 = flag all matching sentence starts
-	// conjunctions lowercased
-	conjunctions map[string]struct{}
+	*rules.AbstractStatisticSentenceStyleRule
 }
 
+const conjunctionBeginDefaultMinPercent = 10
+
 func NewConjunctionAtBeginOfSentenceRule(messages map[string]string) *ConjunctionAtBeginOfSentenceRule {
-	// from commented fillerWords list in Java source (common sentence-start conjunctions)
-	words := []string{
-		"aber", "als", "also", "andererseits", "anschließend", "anschliessend", "anstatt",
-		"außer", "ausserdem", "bevor", "beziehungsweise", "bis", "da", "dadurch", "dafür",
-		"dagegen", "damit", "danach", "dann", "darauf", "darum", "dass", "davor", "dazu",
-		"denn", "deshalb", "dessen", "desto", "desungeachtet", "deswegen", "doch", "ehe",
-		"eh", "entweder", "falls", "ferner", "folglich", "genauso", "geschweige", "immerhin",
-		"indem", "indes", "indessen", "insofern", "insoweit", "inzwischen", "je", "jedoch",
-		"nachdem", "ob", "obgleich", "obschon", "obwohl", "obzwar", "oder", "respektive",
-		"seit", "seitdem", "so", "sodass", "sofern", "solang", "solange", "sondern", "sooft",
-		"soviel", "soweit", "sowie", "sowohl", "später", "statt", "trotzdem", "um", "umso",
-		"und", "ungeachtet", "vorher", "während", "währenddem", "währenddessen", "weder",
-		"weil", "wenn", "wenngleich", "wennschon", "wie", "wiewohl", "wobei", "wohingegen",
-		"zumal", "zuvor", "zwar", "allerdings", "auch",
+	r := &ConjunctionAtBeginOfSentenceRule{
+		AbstractStatisticSentenceStyleRule: &rules.AbstractStatisticSentenceStyleRule{
+			// Java getId
+			ID:                  "SENTENCE_BEGINNING_WITH_CONJUNCTION_DE",
+			Description:         "Statistische Stilanalyse: Sätze beginnend mit Konjunktion",
+			MinPercent:          0,
+			ExcludeDirectSpeech: true,
+			Denominator:         100,
+		},
 	}
-	m := map[string]struct{}{}
-	for _, w := range words {
-		m[w] = struct{}{}
-	}
-	return &ConjunctionAtBeginOfSentenceRule{
-		Messages:     messages,
-		MinPercent:   0,
-		conjunctions: m,
-	}
+	r.ConditionFulfilled = r.conditionFulfilled
+	r.LimitMessage = r.getLimitMessage
+	rules.InitStatisticSentenceStyleMeta(r.AbstractStatisticSentenceStyleRule, messages, false)
+	return r
+}
+
+func NewConjunctionAtBeginOfSentenceRuleWithDefaultLimit(messages map[string]string) *ConjunctionAtBeginOfSentenceRule {
+	r := NewConjunctionAtBeginOfSentenceRule(messages)
+	r.MinPercent = conjunctionBeginDefaultMinPercent
+	return r
 }
 
 func (r *ConjunctionAtBeginOfSentenceRule) GetID() string {
-	return "CONJUNCTION_BEGIN_SENTENCE_DE"
+	if r != nil && r.AbstractStatisticSentenceStyleRule != nil {
+		return r.AbstractStatisticSentenceStyleRule.GetID()
+	}
+	return "SENTENCE_BEGINNING_WITH_CONJUNCTION_DE"
 }
 
-func (r *ConjunctionAtBeginOfSentenceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	if r.MinPercent != 0 {
+func (r *ConjunctionAtBeginOfSentenceRule) GetDescription() string {
+	return "Statistische Stilanalyse: Sätze beginnend mit Konjunktion"
+}
+
+func (r *ConjunctionAtBeginOfSentenceRule) getLimitMessage(limit int, percent float64) string {
+	if limit == 0 {
+		return "Eine Konjunktion sollte nur in Ausnahmefällen am Satzanfang verwendet werden. Formulieren Sie den Satz um, falls möglich."
+	}
+	return "Mehr als " + itoaDE(limit) + "% Sätze beginnen mit einer Konjunktion {" +
+		itoaDE(int(percent+0.5)) + "%} gefunden. Formulieren Sie den Satz um, falls möglich."
+}
+
+func isConjunctionToken(token *languagetool.AnalyzedTokenReadings) bool {
+	// Java: hasPosTagStartingWith("KON") only
+	return token != nil && token.HasPosTagStartingWith("KON")
+}
+
+func isCommaToken(token *languagetool.AnalyzedTokenReadings) bool {
+	return token != nil && token.GetToken() == ","
+}
+
+func (r *ConjunctionAtBeginOfSentenceRule) conditionFulfilled(sentence []*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedTokenReadings {
+	// Java works on relevant sentence part (no SENT_START); list index 0 is first word.
+	if len(sentence) < 3 {
 		return nil
 	}
-	tokens := sentence.GetTokensWithoutWhitespace()
-	if len(tokens) < 3 {
-		return nil
-	}
-	num := 1
-	// skip opening quote
-	if isOpeningQuoteDE(tokens[num].GetToken()) {
+	num := 0
+	if rules.IsStatisticOpeningQuote(sentence[0]) {
 		num++
 	}
-	if num >= len(tokens) {
+	if num >= len(sentence) {
 		return nil
 	}
-	tok := tokens[num]
-	word := tok.GetToken()
-	lc := strings.ToLower(word)
-	if _, ok := r.conjunctions[lc]; !ok {
+	var token *languagetool.AnalyzedTokenReadings
+	if isConjunctionToken(sentence[num]) {
+		token = sentence[num]
+	}
+	if token == nil {
 		return nil
 	}
-	// Java exceptions
-	if word == "Wie" || word == "Seit" || word == "Allerdings" {
+	// Java exceptions by surface
+	if token.GetToken() == "Wie" || token.GetToken() == "Seit" || token.GetToken() == "Allerdings" ||
+		(token.GetToken() == "Aber" && num+1 < len(sentence) && sentence[num+1] != nil && sentence[num+1].GetToken() == "auch") {
 		return nil
 	}
-	if word == "Aber" && num+1 < len(tokens) && tokens[num+1].GetToken() == "auch" {
-		return nil
-	}
-	if word == "Auch" && num+1 < len(tokens) && tokens[num+1].GetToken() == "wenn" {
-		return nil
-	}
-	if word == "Um" {
-		for i := num + 1; i < len(tokens); i++ {
-			if tokens[i].GetToken() == "," || tokens[i].GetToken() == "herum" {
+	if token.GetToken() == "Um" {
+		for i := 1; i < len(sentence); i++ {
+			if isCommaToken(sentence[i]) || (sentence[i] != nil && sentence[i].GetToken() == "herum") {
 				return nil
 			}
 		}
+		return token
 	}
-	if word == "Sondern" {
-		return nil
+	// KON:UNT path vs other (Java)
+	if !token.HasPosTagStartingWith("KON:UNT") || token.GetToken() == "Sondern" ||
+		(token.GetToken() == "Auch" && num+1 < len(sentence) && sentence[num+1] != nil && sentence[num+1].GetToken() == "wenn") {
+		if token.GetToken() == "Entweder" {
+			for i := 1; i < len(sentence); i++ {
+				if sentence[i] != nil && sentence[i].GetToken() == "oder" {
+					return nil
+				}
+			}
+		} else if token.GetToken() == "Sowohl" {
+			for i := 1; i < len(sentence)-1; i++ {
+				if sentence[i] != nil && sentence[i+1] != nil &&
+					sentence[i].GetToken() == "als" && sentence[i+1].GetToken() == "auch" {
+					return nil
+				}
+			}
+		} else if token.GetToken() == "Weder" {
+			for i := 1; i < len(sentence); i++ {
+				if sentence[i] != nil && sentence[i].GetToken() == "noch" {
+					return nil
+				}
+			}
+		} else {
+			// not Entweder/Sowohl/Weder: if ? at end, null; else return token
+			if sentence[len(sentence)-1] != nil && sentence[len(sentence)-1].GetToken() == "?" {
+				return nil
+			}
+			return token
+		}
 	}
-	msg := "Viele Sätze beginnen mit einer Konjunktion. Variieren Sie den Satzanfang."
-	rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-	rm.ShortMessage = "Konjunktion am Satzanfang"
-	return []*rules.RuleMatch{rm}
+	// KON:UNT and not Sondern/Auch wenn: scan for comma after pos 2
+	for i := 2; i < len(sentence); i++ {
+		if isCommaToken(sentence[i]) {
+			return nil
+		}
+	}
+	return token
 }
 
-func isOpeningQuoteDE(s string) bool {
-	switch s {
-	case "\"", "„", "«", "»", "'", "‚", "‘":
-		return true
+func (r *ConjunctionAtBeginOfSentenceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil {
+		return nil
 	}
-	return false
+	return r.MatchList([]*languagetool.AnalyzedSentence{sentence})
 }

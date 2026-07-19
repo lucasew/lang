@@ -12,8 +12,12 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	rulesnl "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -122,6 +126,10 @@ func RegisterRuleFilePatterns(lt *languagetool.JLanguageTool, ruleFile, lang str
 			continue
 		}
 		pr := patterns.NewPatternRule(ar.ID, ar.LanguageCode, ar.PatternTokens, ar.Description, ar.Message, ar.ShortMessage)
+		pr.UnifierConfig = ar.UnifierConfig
+		pr.AntiPatterns = append([]*patterns.PatternRule(nil), ar.AntiPatterns...)
+		pr.Filter = ar.Filter
+		pr.FilterArgs = ar.FilterArgs
 		patterns.RegisterPatternRule(lt, pr)
 	}
 	return nil
@@ -156,16 +164,28 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			base = lang[:i]
 		}
 		if strings.EqualFold(base, "en") {
-			// Prefer CFSA2 en_US.dict when present; demo only under LANG_DEMO_SPELLER.
+			// Prefer CFSA2 locale hunspell/*.dict when present; demo only under LANG_DEMO_SPELLER.
+			// RegisterCoreEnglishLanguageRules already installs the binary speller when dict is found;
+			// only fill in here if core pack did not (e.g. dict discovered via --data-dir only).
 			demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 			nearest := en.DemoEnglishKnownWords()
 			spellRegistered := false
-			if dictPath := DiscoverEnglishUSDict(opts); dictPath != "" {
+			ruleID, _ := en.EnglishVariantSpellerMeta(lang)
+			for _, id := range lt.GetAllRegisteredRuleIDs() {
+				if id == ruleID {
+					spellRegistered = true
+					break
+				}
+			}
+			if dictPath := DiscoverEnglishVariantDict(opts, lang); dictPath != "" {
 				// Grammar filters (NumberInWord / FindSuggestions / SuppressMisspelled)
-				// share the same dict Java MorfologikAmericanSpellerRule uses.
+				// share the same dict Java Morfologik*SpellerRule uses.
 				_ = en.WireEnglishFilterSpeller(dictPath)
 				// Binary speller: dict SuggestEdits only (no invent typo map).
-				spellRegistered = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, nil)
+				// Skip second registration when RegisterCore already wired this ID.
+				if !spellRegistered {
+					spellRegistered = en.RegisterBinaryEnglishSpellerID(lt, dictPath, ruleID, nearest, nil)
+				}
 			}
 			// Multitoken after filter dict so isMisspelled can use it.
 			wireEnglishMultitokenSpeller(opts)
@@ -183,6 +203,14 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if !taggerOK && demoSpell {
 				en.RegisterDemoEnglishTagger(lt)
 			}
+			// Java English.createDefaultSynthesizer() → EnglishSynthesizer.INSTANCE
+			// for pattern <match postag="…"/> suggestions (RegisterLanguageSynthesizer).
+			if synthPath := DiscoverEnglishSynthDict(opts); synthPath != "" {
+				if synth := ensynth.OpenEnglishSynthesizerFromDictPath(synthPath); synth != nil {
+					patterns.RegisterLanguageSynthesizer("en", synth)
+					patterns.RegisterLanguageSynthesizer(lang, synth)
+				}
+			}
 			// Java English.createDefaultChunker().
 			en.RegisterEnglishChunker(lt)
 			// Java English.createDefaultDisambiguator(): EnglishHybridDisambiguator
@@ -197,8 +225,23 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 					_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
 				}
 			}
+			// Java createDefaultSynthesizer when *_synth.dict is present.
+			if synthPath := DiscoverLanguageSynthDict(opts, base); synthPath != "" {
+				if synth := synthesis.OpenBaseSynthesizerFromDictPath(base, synthPath); synth != nil {
+					patterns.RegisterLanguageSynthesizer(base, synth)
+					patterns.RegisterLanguageSynthesizer(lang, synth)
+				}
+			}
 			// Java createDefaultDisambiguator(): FR/ES/PT hybrids when resources exist.
 			_ = RegisterHybridDisambiguator(lt, base, opts)
+			// German multitoken speller for MultitokenSpellerFilter (Java GermanMultitokenSpeller.INSTANCE).
+			if strings.EqualFold(base, "de") {
+				wireGermanMultitokenSpeller(opts)
+			}
+			// Dutch multitoken speller (Java DutchMultitokenSpeller.INSTANCE).
+			if strings.EqualFold(base, "nl") {
+				wireDutchMultitokenSpeller(opts)
+			}
 		}
 		// Pattern rule files after multitoken speller so MultitokenSpellerFilter can use the dict.
 		// Java Language.getRuleFileNames(): grammar, style, custom, then variant files.
@@ -252,6 +295,75 @@ func wireEnglishMultitokenSpeller(opts *CommandLineOptions) {
 	var isMiss func(string) bool
 	if en.FilterDictAvailable() {
 		isMiss = en.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+}
+
+// wireGermanMultitokenSpeller ports GermanMultitokenSpeller resource load
+// (multitoken-suggest.txt, spelling_global.txt, hunspell/spelling.txt).
+func wireGermanMultitokenSpeller(opts *CommandLineOptions) {
+	var paths []string
+	if p := DiscoverGermanMultitokenSuggest(opts); p != "" {
+		paths = append(paths, p)
+	}
+	if p := DiscoverSpellingGlobal(opts); p != "" {
+		paths = append(paths, p)
+	}
+	// hunspell/spelling.txt beside multitoken-suggest when present
+	if len(paths) > 0 {
+		dir := filepath.Dir(paths[0])
+		// multitoken-suggest is under de/; spelling.txt under de/hunspell/
+		sp := filepath.Join(dir, "hunspell", "spelling.txt")
+		if st, err := os.Stat(sp); err == nil && st.Mode().IsRegular() {
+			paths = append(paths, sp)
+		}
+	}
+	if len(paths) == 0 {
+		sp := de.DiscoverAndLoadGermanMultitokenSpeller()
+		if sp != nil && sp.MultitokenSpeller != nil {
+			var isMiss func(string) bool
+			if de.FilterDictAvailable() {
+				isMiss = de.FilterDictIsMisspelled
+			}
+			patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+		}
+		return
+	}
+	sp, err := de.LoadGermanMultitokenSpeller(paths...)
+	if err != nil || sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	var isMiss func(string) bool
+	if de.FilterDictAvailable() {
+		isMiss = de.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+}
+
+// wireDutchMultitokenSpeller ports Dutch.getMultitokenSpeller resource load
+// (/nl/multiwords.txt + /spelling_global.txt) into MultitokenSpellerFilter.
+func wireDutchMultitokenSpeller(opts *CommandLineOptions) {
+	mw := DiscoverLanguageMultiwords(opts, "nl")
+	sg := DiscoverSpellingGlobal(opts)
+	if mw == "" && sg == "" {
+		// still try package discover (inspiration / testdata walk)
+		sp := rulesnl.DiscoverAndLoadDutchMultitokenSpeller()
+		if sp != nil && sp.MultitokenSpeller != nil {
+			var isMiss func(string) bool
+			if rulesnl.FilterDictAvailable() {
+				isMiss = rulesnl.FilterDictIsMisspelled
+			}
+			patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+		}
+		return
+	}
+	sp, err := rulesnl.LoadDutchMultitokenSpeller(mw, sg)
+	if err != nil || sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	var isMiss func(string) bool
+	if rulesnl.FilterDictAvailable() {
+		isMiss = rulesnl.FilterDictIsMisspelled
 	}
 	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
 }
@@ -470,7 +582,8 @@ func CoreTagHook(w io.Writer, text string, opts *CommandLineOptions) error {
 		}
 		var parts []string
 		for _, t := range s.GetTokensWithoutWhitespace() {
-			if t == nil || t.IsSentenceStart() || t.IsSentenceEnd() {
+			// Skip pure SENT_START only — last content word carries SENT_END in LT.
+			if t == nil || t.IsSentenceStart() {
 				continue
 			}
 			parts = append(parts, FormatTaggedToken(t))

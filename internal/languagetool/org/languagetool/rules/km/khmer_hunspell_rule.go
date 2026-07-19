@@ -2,18 +2,21 @@ package km
 
 import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/hunspell"
 
+// KhmerHunspellClasspath ports Java KhmerHunspellRule / Hunspell path for km_KH.
+const KhmerHunspellClasspath = "/km/hunspell/km_KH.dic"
+
 // KhmerHunspellRule ports org.languagetool.rules.km.KhmerHunspellRule.
 type KhmerHunspellRule struct {
 	*hunspell.HunspellRule
 }
 
 func NewKhmerHunspellRule(dict hunspell.HunspellDictionary) *KhmerHunspellRule {
+	// Java KhmerHunspellRule extends HunspellRule without getId override → HUNSPELL_RULE.
 	r := hunspell.NewHunspellRule("km", dict)
-	// Java uses HunspellRule base id; keep language-specific override optional.
-	r.ID = "HUNSPELL_RULE_KM"
 	return &KhmerHunspellRule{HunspellRule: r}
 }
 
+// NewKhmerHunspellRuleDefault opens official km_KH.dic when present; nil fails closed.
 func NewKhmerHunspellRuleDefault() *KhmerHunspellRule {
-	return NewKhmerHunspellRule(nil)
+	return NewKhmerHunspellRule(hunspell.TryOpenFromClasspath(KhmerHunspellClasspath))
 }

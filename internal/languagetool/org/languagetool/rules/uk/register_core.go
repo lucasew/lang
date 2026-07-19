@@ -3,7 +3,7 @@ package uk
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreUkrainianRules installs shared layout + Ukrainian word-repeat + beginning.
@@ -11,6 +11,8 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	// Java Ukrainian.IGNORED_CHARS: soft hyphen + combining acute.
+	lt.IgnoredCharacters = languagetool.UkrainianIgnoredCharactersRegex
 	rules.RegisterSharedLayoutRules(lt, "uk")
 	wr := NewUkrainianWordRepeatRule(map[string]string{"repetition": "Повтор слова"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
@@ -19,10 +21,7 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "uk", []patterns.TokenSequenceSpec{
-		{ID: "UK_В_В", Tokens: []string{"в", "в"}, Message: "Можливий повтор прийменника «в».", Suggestion: "в"},
-		{ID: "UK_З_З", Tokens: []string{"з", "з"}, Message: "Можливий повтор прийменника «з».", Suggestion: "з"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
@@ -31,4 +30,18 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(ss.GetID(), rules.AsSentenceCheckerSimple(ss.Match))
 	rn := NewSimpleReplaceRenamedRule(nil)
 	lt.AddRuleChecker(rn.GetID(), rules.AsSentenceCheckerSimple(rn.Match))
+
+	// Java createDefaultSpellingRule → MorfologikUkrainianSpellerRule.
+	// Always full Match (ignoreToken, filterSuggestions, dash tops, !hasGoodTag).
+	sp := NewMorfologikUkrainianSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(UkrainianSpellerDict); p != "" {
+		if WireUkrainianFilterSpeller(p) {
+			// Preserve trailing-hyphen arm: wrap FilterDictIsMisspelledUK.
+			inner := FilterDictIsMisspelledUK
+			sp.IsMisspelled = func(word string) bool {
+				return sp.ukIsMisspelled(word, inner)
+			}
+		}
+	}
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

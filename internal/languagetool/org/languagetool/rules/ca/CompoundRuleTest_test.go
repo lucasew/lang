@@ -22,3 +22,17 @@ func TestCompoundRule_Rule(t *testing.T) {
 	check(0, "tam-tam")
 	check(1, "Ryan-Air", "Ryanair")
 }
+
+func TestCompoundRule_IsMisspelledViaTagIsTagged(t *testing.T) {
+	rule := NewCompoundRule(nil)
+	// default: keep suggestion
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("Ryan-Air"))))
+
+	rule.TagIsTagged = func(word string) bool { return false }
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Ryan-Air"))), "untagged form drops suggestion")
+
+	rule.TagIsTagged = func(word string) bool { return word == "Ryanair" }
+	matches := rule.Match(languagetool.AnalyzePlain("Ryan-Air"))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"Ryanair"}, matches[0].GetSuggestedReplacements())
+}

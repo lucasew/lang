@@ -49,7 +49,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 1.7 | Soft pack loading removed from `configureCoreLT` / server pipeline | [x] first wave |
 | 1.8 | **Soft POS surface invent** removed from `pattern_token_matcher.go` (closed-class lists, FreeLing soft, STTS soft, URL soft surface, etc.) | [x] sector: PatternTokenMatcher |
 | 1.9 | Soft cover/align hacks removed from `pattern_rule_matcher.go` (CJK surface align, fused prep, hyphen cover, …) | [x] |
-| 1.10 | Soft expand / backref invent removed if not Java-equivalent | [~] no quoted invent; no SENT_START slot invent; `\N` span expand incomplete vs Java formatMatches |
+| 1.10 | Soft expand / backref invent removed if not Java-equivalent | [~] formatMatches + multi-lang `*_synth.dict` + suppress_misspelled + setpos getPosTagCorrection |
 | 1.11 | Soft chunker approximations removed; only Java `EnglishChunker` / filter logic | [~] soft invent lists removed; POS→BIO interim until OpenNLP maxent wired |
 | 1.12 | `SoftRuleMeta` invent removed; rule category/ITS come from Java Rule meta | [~] `RuleMeta` (Soft* aliases); fallback only for known Java families |
 | 1.13 | Soft discovery APIs removed (`Discover*Soft*`, soft typos path, soft disambig XML paths) | [x] soft discover deleted; official discover added |
@@ -75,7 +75,7 @@ Mark items `[x]` only when **reviewer ACCEPT** (or human) confirms for that item
 | 2.4 | Engine loads **same** Morfologik POS dicts (per language) | [~] EN english.dict for tagger + FindSuggestions desiredPostag; other langs partial |
 | 2.5 | Engine loads **same** speller dicts | [~] EN en_US.dict for speller rule + grammar filter hooks |
 | 2.6 | Engine loads **same** SRX / tokenizer resources | [~] |
-| 2.7 | OpenNLP / chunker models where Java uses them (or documented missing asset = incomplete, not soft invent) | [ ] |
+| 2.7 | OpenNLP / chunker models where Java uses them (or documented missing asset = incomplete, not soft invent) | [~] models in third_party/opennlp-models; runtime still POS→BIO interim (no invent OpenNLP) |
 | 2.8 | FreeLing / language-specific tagger resources as Java | [ ] |
 | 2.9 | `spelling_global.txt` and other core resource files as Java | [ ] |
 | 2.10 | No soft extract as production input | [~] loaders removed; discover helpers still point at soft paths |
@@ -104,16 +104,16 @@ Port/review **one Java type per sector**. Order is dependency order, not complet
 | # | Check | Status |
 |---|--------|--------|
 | 3.B.1 | Pattern token matching = Java (no soft POS accept) | [ ] blocked on 1.8 |
-| 3.B.2 | Exceptions, skip, regex, inflected, negation | [~] |
-| 3.B.3 | Unification | [~] Unifier type exists; rules with `<unify>` skipped fail-closed until matcher ports testUnification |
-| 3.B.4 | Filters / rule filters as Java | [~] |
-| 3.B.5 | Full grammar/style load (entities, includes) | [~] grammar/style/custom + variant + EN L2 (de/fr); idprefix; entity expand partial; includes deferred |
+| 3.B.2 | Exceptions, skip, regex, inflected, negation, `<or>`/`phraseref`/setpos/and/raw_pos | [~] + exception negate/negate_pos XOR; prev/next surface; multi-exception remaining |
+| 3.B.3 | Unification | [~] Loader parses `<unification>`+`<unify>`; matcher ports testUnification; UniFeatures/Last/Neg/Neutral wired |
+| 3.B.4 | Filters / rule filters as Java | [~] AdvancedSynthesizer+postagReplace (fail-closed); CA/NL dates; DE NumberInWord; CA Adjust* remaining |
+| 3.B.5 | Full grammar/style load (entities, includes) | [~] SYSTEM `.ent`; phrases/phraseref/includephrases expand; style/variant/L2 |
 
 ### 3.C Rule families (per language, after stack)
 
 | # | Check | Status |
 |---|--------|--------|
-| 3.C.1 | Core layout rules (whitespace, unpaired, …) | [~] |
+| 3.C.1 | Core layout rules (whitespace, unpaired, …) | [~] Tools.isParagraphEnd shared; ConvertToSentenceCaseFilter registered |
 | 3.C.2 | Speller rules (Morfologik/Hunspell) | [~] |
 | 3.C.3 | Language-specific Java rules (EN AvsAn, DE, …) | [~] by language |
 | 3.C.4 | False friends | [~] |

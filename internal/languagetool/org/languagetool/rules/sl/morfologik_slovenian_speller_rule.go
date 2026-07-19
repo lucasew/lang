@@ -1,10 +1,16 @@
 package sl
 
-import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+)
 
 const (
-	MorfologikSlovenianSpellerRuleID = "MORFOLOGIK_RULE_SL"
-	SlovenianSpellerDict             = "/sl/hunspell/sl_SI.dict"
+	// MorfologikSlovenianSpellerRuleID ports MorfologikSlovenianSpellerRule.getId().
+	// Java: "MORFOLOGIK_RULE_SL_SI" (not MORFOLOGIK_RULE_SL).
+	MorfologikSlovenianSpellerRuleID = "MORFOLOGIK_RULE_SL_SI"
+	// SlovenianSpellerDict ports MorfologikSlovenianSpellerRule.getFileName() → RESOURCE_FILENAME.
+	// Java: "/sl/hunspell/sl_SI.dict"
+	SlovenianSpellerDict = "/sl/hunspell/sl_SI.dict"
 )
 
 // MorfologikSlovenianSpellerRule ports rules.sl.MorfologikSlovenianSpellerRule.

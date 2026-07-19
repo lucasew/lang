@@ -7,15 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRegisterCoreSpanishRules_Patterns(t *testing.T) {
+func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
+	// Soft invent token sequences removed; official grammar.xml is incomplete until loaded.
 	lt := languagetool.NewJLanguageTool("es")
 	RegisterCoreSpanishRules(lt)
-	m := lt.Check("Voy a el mercado.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "ES_A_EL" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", m)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "ES_A_EL")
 }

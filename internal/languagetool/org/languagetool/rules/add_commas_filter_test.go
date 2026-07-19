@@ -1,8 +1,10 @@
 package rules
 
 import (
+	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -69,4 +71,18 @@ func TestAddCommasFilter_SuppressWhenOK(t *testing.T) {
 	}
 	require.False(t, f.Accept(ctx))
 	require.Nil(t, f.Suggest(ctx))
+}
+
+func TestAddCommasFilter_AcceptRuleMatch(t *testing.T) {
+	// "y aun así sigue" — need commas around "aun así"
+	sent := languagetool.AnalyzePlain("y aun así sigue.")
+	// find "aun" span
+	text := sent.GetText()
+	from := strings.Index(text, "aun así")
+	require.GreaterOrEqual(t, from, 0)
+	to := from + len("aun así")
+	m := NewRuleMatch(NewFakeRule("COMMA"), sent, from, to, "add commas")
+	out := NewAddCommasFilter().AcceptRuleMatch(m, nil, 0, nil, nil)
+	require.NotNil(t, out)
+	require.NotEmpty(t, out.GetSuggestedReplacements())
 }

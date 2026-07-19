@@ -9,8 +9,13 @@ import (
 )
 
 // WordRepeatRule ports org.languagetool.rules.WordRepeatRule.
+// Java ctor: setCategory(MISC), setLocQualityIssueType(Duplication).
 type WordRepeatRule struct {
 	Messages map[string]string
+	// Category ports Rule.category (Java MISC).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Duplication).
+	IssueType ITSIssueType
 	// ExtraIgnore is called from Ignore for language-specific exceptions (e.g. EnglishWordRepeatRule).
 	ExtraIgnore func(tokens []*languagetool.AnalyzedTokenReadings, position int) bool
 	// CreateMatchFn optional override for createRuleMatch (e.g. Ukrainian І/і suggestion).
@@ -20,7 +25,11 @@ type WordRepeatRule struct {
 }
 
 func NewWordRepeatRule(messages map[string]string) *WordRepeatRule {
-	return &WordRepeatRule{Messages: messages}
+	return &WordRepeatRule{
+		Messages:  messages,
+		Category:  CatMisc.GetCategory(messages),
+		IssueType: ITSDuplication,
+	}
 }
 
 func (r *WordRepeatRule) GetID() string {
@@ -28,6 +37,44 @@ func (r *WordRepeatRule) GetID() string {
 		return r.IDOverride
 	}
 	return "WORD_REPEAT_RULE"
+}
+
+// GetDescription ports WordRepeatRule.getDescription (messages "desc_repetition").
+func (r *WordRepeatRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_repetition"]; s != "" {
+			return s
+		}
+	}
+	return "Word repetition (e.g. 'will will')"
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *WordRepeatRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *WordRepeatRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSDuplication
+	}
+	return r.IssueType
+}
+
+// EstimateContextForSureMatch ports estimateContextForSureMatch (Java returns 1).
+func (r *WordRepeatRule) EstimateContextForSureMatch() int { return 1 }
+
+func (r *WordRepeatRule) shortMessage() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_repetition_short"]; s != "" {
+			return s
+		}
+	}
+	return "Word repetition"
 }
 
 func (r *WordRepeatRule) Ignore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
@@ -69,7 +116,9 @@ func (r *WordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleM
 			if r.CreateMatchFn != nil {
 				rm = r.CreateMatchFn(r, sentence, prevToken, token, prevPos, pos, msg)
 			} else {
+				// Java createRuleMatch: shortMessage = messages.getString("desc_repetition_short")
 				rm = NewRuleMatch(r, sentence, prevPos, pos+utf16Len(prevToken), msg)
+				rm.ShortMessage = r.shortMessage()
 				rm.SetSuggestedReplacement(prevToken)
 			}
 			ruleMatches = append(ruleMatches, rm)

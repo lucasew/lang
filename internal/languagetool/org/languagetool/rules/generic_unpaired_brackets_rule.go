@@ -33,10 +33,13 @@ type SymbolLocator struct {
 }
 
 // GenericUnpairedBracketsRule ports org.languagetool.rules.GenericUnpairedBracketsRule.
+// Java: PUNCTUATION, Typographical.
 type GenericUnpairedBracketsRule struct {
 	Messages     map[string]string
 	StartSymbols []string
 	EndSymbols   []string
+	Category     *Category
+	IssueType    ITSIssueType
 	uniqueMap    map[string]bool
 	numerals     *regexp.Regexp
 	ruleID       string
@@ -58,6 +61,8 @@ func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []str
 	}
 	return &GenericUnpairedBracketsRule{
 		Messages:     messages,
+		Category:     CatPunctuation.GetCategory(messages),
+		IssueType:    ITSTypographical,
 		StartSymbols: start,
 		EndSymbols:   end,
 		uniqueMap:    uniqueMap,
@@ -69,6 +74,20 @@ func NewGenericUnpairedBracketsRule(messages map[string]string, start, end []str
 func (r *GenericUnpairedBracketsRule) GetID() string { return r.ruleID }
 
 func (r *GenericUnpairedBracketsRule) SetRuleID(id string) { r.ruleID = id }
+
+func (r *GenericUnpairedBracketsRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *GenericUnpairedBracketsRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSTypographical
+	}
+	return r.IssueType
+}
 
 func (r *GenericUnpairedBracketsRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	symbolStack := NewUnsyncStack[SymbolLocator]()

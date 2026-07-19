@@ -15,9 +15,32 @@ func NewGermanUnpairedBracketsRule(messages map[string]string) *GermanUnpairedBr
 	start := []string{"[", "(", "{"}
 	end := []string{"]", ")", "}"}
 	base := rules.NewGenericUnpairedBracketsRule(messages, start, end)
+	// Java: getId returns UNPAIRED_BRACKETS (no DE_ prefix for compatibility)
+	if base != nil {
+		base.SetRuleID("UNPAIRED_BRACKETS")
+	}
 	return &GermanUnpairedBracketsRule{GenericUnpairedBracketsRule: base}
 }
 
+func (r *GermanUnpairedBracketsRule) GetID() string {
+	if r != nil && r.GenericUnpairedBracketsRule != nil {
+		return r.GenericUnpairedBracketsRule.GetID()
+	}
+	return "UNPAIRED_BRACKETS"
+}
+
+// GetURL ports GermanUnpairedBracketsRule constructor setUrl.
+func (r *GermanUnpairedBracketsRule) GetURL() string {
+	return "https://languagetool.org/insights/de/beitrag/klammern/"
+}
+
 func (r *GermanUnpairedBracketsRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.GenericUnpairedBracketsRule.MatchList(sentences)
+	// Java attaches this (DE rule) so setUrl is visible on matches.
+	ms := r.GenericUnpairedBracketsRule.MatchList(sentences)
+	for _, m := range ms {
+		if m != nil {
+			m.Rule = r
+		}
+	}
+	return ms
 }

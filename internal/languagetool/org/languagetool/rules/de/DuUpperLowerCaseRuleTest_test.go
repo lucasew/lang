@@ -28,4 +28,6 @@ func TestDuUpperLowerCaseRule_Rule(t *testing.T) {
 		languagetool.AnalyzePlain("Bist du wieder gesund?"),
 	}
 	require.Equal(t, 1, len(rule.MatchList(sents)))
+	require.Equal(t, "https://languagetool.org/insights/de/beitrag/duzen-grossgeschrieben/", rule.GetURL())
+	require.Equal(t, -1, rule.MinToCheckParagraph())
 }

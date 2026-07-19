@@ -32,15 +32,8 @@ func loadBRReplace() *rules.AbstractSimpleReplaceRule2 {
 			CaseSens:             rules.CaseInsensitive,
 			LanguageCode:         "pt",
 			SubRuleSpecificIDs:   true,
-			// Without NP tagger: exempt common PT given names that are proper-noun exceptions in Java.
-			IsTokenException: func(atr *languagetool.AnalyzedTokenReadings) bool {
-				switch atr.GetToken() {
-				case "António", "Antónios", "Jerónimo", "Jerónimos",
-					"antónio", "antónios", "jerónimo", "jerónimos":
-					return true
-				}
-				return atr.IsImmunized()
-			},
+			// Java isTokenException: NP* || isImmunized (no surface name invent).
+			IsTokenException: brReplaceTokenException,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/pt-BR/replace.txt"); err != nil {
 			panic(err)
@@ -48,6 +41,20 @@ func loadBRReplace() *rules.AbstractSimpleReplaceRule2 {
 		brReplaceBase = base
 	})
 	return brReplaceBase
+}
+
+// brReplaceTokenException ports BrazilianPortugueseReplaceRule.isTokenException.
+func brReplaceTokenException(atr *languagetool.AnalyzedTokenReadings) bool {
+	if atr == nil {
+		return false
+	}
+	if atr.IsImmunized() {
+		return true
+	}
+	if atr.HasPosTagStartingWith("NP") {
+		return true
+	}
+	return false
 }
 
 // BrazilianPortugueseReplaceRule ports org.languagetool.rules.pt.BrazilianPortugueseReplaceRule.

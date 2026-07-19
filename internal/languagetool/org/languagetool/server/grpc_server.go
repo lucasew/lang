@@ -74,7 +74,8 @@ func (g *GRPCServer) Analyze(opt ProcessingOptions, text string) (lang string, t
 			continue
 		}
 		for _, tok := range s.GetTokensWithoutWhitespace() {
-			if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+			// Skip pure SENT_START only — last content word carries SENT_END in LT.
+			if tok == nil || tok.IsSentenceStart() {
 				continue
 			}
 			n++

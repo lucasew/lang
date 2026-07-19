@@ -363,7 +363,10 @@ func (c *MultiWordChunker) Disambiguate(input *languagetool.AnalyzedSentence) *l
 					}
 					if pos != TagForNotAddingTags {
 						if i == j {
-							output[i] = setAndAnnotate(output[i], languagetool.NewAnalyzedToken(anTokens[j].GetToken(), at.GetPOSTag(), at.GetLemma()))
+							// Java: only add low-priority multiword tags when no real POS yet
+							if !multiwordIsLowPriorityTag(pos) || !output[i].HasReading() || output[i].IsPosTagUnknown() {
+								output[i] = setAndAnnotate(output[i], languagetool.NewAnalyzedToken(anTokens[j].GetToken(), at.GetPOSTag(), at.GetLemma()))
+							}
 						} else {
 							output[i] = prepareNewReading(at, anTokens[i].GetToken(), output[i], false)
 							output[j] = prepareNewReading(at, anTokens[j].GetToken(), output[j], true)

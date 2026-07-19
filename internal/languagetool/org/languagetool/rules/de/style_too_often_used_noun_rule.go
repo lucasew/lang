@@ -1,77 +1,63 @@
 package de
 
 import (
-	"strings"
-	"unicode"
-	"unicode/utf8"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// StyleTooOftenUsedNounRule is a surface stand-in for StyleTooOftenUsedNounRule.
-// Without SUB: POS tags, mid-sentence capitalized tokens (German noun heuristic) are counted.
+// StyleTooOftenUsedNounRule ports org.languagetool.rules.de.StyleTooOftenUsedNounRule.
+// Java: SUB: only (no surface invent). Default MinPercent 5, MinWordCount 100.
+// Twin tests use MinPercent 0 / MinWordCount 0.
 type StyleTooOftenUsedNounRule struct {
 	*rules.AbstractStyleTooOftenUsedWordRule
 }
 
+const styleTooOftenDefaultMinPercent = 5
+
 func NewStyleTooOftenUsedNounRule(messages map[string]string) *StyleTooOftenUsedNounRule {
 	base := &rules.AbstractStyleTooOftenUsedWordRule{
-		Messages:    messages,
-		ID:          "TOO_OFTEN_USED_NOUN_DE",
-		Description: "Statistische Stilanalyse: Zu häufig genutztes Substantiv",
-		MinPercent:  0, // show-all for surface tests
-		MinWords:    0,
-		IsCounted: func(tok *languagetool.AnalyzedTokenReadings, index int, tokens []*languagetool.AnalyzedTokenReadings) bool {
-			w := tok.GetToken()
-			if utf8.RuneCountInString(w) < 3 {
-				return false
-			}
-			// sentence-start capital is ambiguous; skip first content token
-			if index <= 1 {
-				return false
-			}
-			if !tools.StartsWithUppercase(w) {
-				return false
-			}
-			for _, r := range w {
-				if !unicode.IsLetter(r) && r != '-' {
-					return false
-				}
-			}
-			// skip some interjections
-			switch w {
-			case "Ich", "Aber", "Ja", "Nein", "Doch":
-				return false
-			}
-			return true
-		},
-		Key: func(tok *languagetool.AnalyzedTokenReadings) string {
-			return strings.ToLower(tok.GetToken())
-		},
+		Messages:     messages,
+		ID:           "TOO_OFTEN_USED_NOUN_DE",
+		Description:  "Statistische Stilanalyse: Zu häufig genutztes Substantiv",
+		MinPercent:   0, // show-all for twin tests
+		MinWordCount: 0,
 		LimitMessage: func(limit int) string {
-			if limit == 0 {
-				return "Das Substantiv wird mehrfach verwendet. Möglicherweise ist es besser es durch ein Synonym zu ersetzen."
-			}
-			return "Das Substantiv wird häufiger verwendet als " + itoa(limit) + "% aller Substantive. Möglicherweise ist es besser es durch ein Synonym zu ersetzen."
+			return "Das Substantiv wird häufiger verwendet als " + itoaDE(limit) +
+				"% aller Substantive. Möglicherweise ist es besser es durch ein Synonym zu ersetzen."
 		},
 	}
+	base.IsToCountedWord = func(tok *languagetool.AnalyzedTokenReadings) bool {
+		return tok != nil && tok.HasPosTagStartingWith("SUB:")
+	}
+	base.IsException = func(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {
+		token := tokens[n]
+		if token.HasPosTagStartingWith("PRO:") {
+			return true
+		}
+		switch token.GetToken() {
+		case "Ich", "Aber", "Ja":
+			return true
+		}
+		// Frau/Herr + EIG or isPosTagUnknown
+		if n < len(tokens)-1 && tokens[n+1] != nil &&
+			(token.GetToken() == "Frau" || token.GetToken() == "Herr") &&
+			(tokens[n+1].HasPosTagStartingWith("EIG:") || !tokens[n+1].IsTagged()) {
+			return true
+		}
+		return false
+	}
+	base.ToAddedLemma = func(tok *languagetool.AnalyzedTokenReadings) string {
+		return rules.LemmaForPosTagStartsWith("SUB:", tok)
+	}
+	rules.InitStyleTooOftenUsedWordMeta(base, messages, false)
 	return &StyleTooOftenUsedNounRule{AbstractStyleTooOftenUsedWordRule: base}
 }
 
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	var b [12]byte
-	i := len(b)
-	for n > 0 {
-		i--
-		b[i] = byte('0' + n%10)
-		n /= 10
-	}
-	return string(b[i:])
+func NewStyleTooOftenUsedNounRuleWithDefaultLimit(messages map[string]string) *StyleTooOftenUsedNounRule {
+	r := NewStyleTooOftenUsedNounRule(messages)
+	r.MinPercent = styleTooOftenDefaultMinPercent
+	r.MinWordCount = 100
+	return r
 }
 
 func (r *StyleTooOftenUsedNounRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {

@@ -47,7 +47,7 @@ func targetSpan(target *languagetool.AnalyzedSentence) (from, to int) {
 		return 0, 0
 	}
 	last := toks[len(toks)-1]
-	return 0, last.GetStartPos() + len([]rune(last.GetToken())) // approximate; use GetEndPos
+	return 0, last.GetEndPos()
 }
 
 func targetEndPos(target *languagetool.AnalyzedSentence) int {

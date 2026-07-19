@@ -29,6 +29,10 @@ type PatternToken struct {
 	// AndGroup ports Java PatternToken and-group: other PatternTokens that must
 	// each match *some* reading of the same token (not necessarily the same reading).
 	AndGroup []*PatternToken
+	// OrGroup ports Java PatternToken or-group: alternatives expanded at load time
+	// (PatternRuleHandler.createRules). The base token is alternative 0; OrGroup
+	// holds the remaining alternatives (not used at match time after expansion).
+	OrGroup []*PatternToken
 	TokenException             string
 	TokenExceptionRE           bool
 	TokenExceptionCaseSensitive bool // when true, exception compares with exact case (LT case_sensitive on <exception>)
@@ -36,6 +40,9 @@ type PatternToken struct {
 	// the same exception PatternToken). Empty surface + POS-only is valid Java.
 	TokenExceptionPosTag string
 	TokenExceptionPosRE  bool
+	// TokenExceptionNegation / PosNegation port exception negate / negate_pos.
+	TokenExceptionNegation    bool
+	TokenExceptionPosNegation bool
 	// PreviousException ports Java exception scope="previous" (soft surface/regexp).
 	PreviousException             string
 	PreviousExceptionRE           bool
@@ -44,6 +51,19 @@ type PatternToken struct {
 	NextException             string
 	NextExceptionRE           bool
 	NextExceptionCaseSensitive bool
+	// UniFeatures ports Java PatternToken unificationFeatures (feature → types).
+	// Non-nil means the token participates in unification (isUnified).
+	// Empty type list means all registered types for that feature (Java).
+	UniFeatures map[string][]string
+	// UniNegated ports isUniNegated — set on last token of <unify negate="yes">.
+	UniNegated bool
+	// LastInUnification ports isLastInUnification — last token in a <unify> block.
+	LastInUnification bool
+	// UnificationNeutral ports isUnificationNeutral — <unify-ignore> token.
+	UnificationNeutral bool
+	// TokenMatch ports PatternToken tokenReference (<match no="…" setpos="yes"/> inside token).
+	// TokenRef is the raw XML no= value used as offset from firstMatchToken (Java resolveReference).
+	TokenMatch *Match
 }
 
 func NewPatternToken(token string, caseSensitive, regexp, matchInflected bool) *PatternToken {
@@ -86,6 +106,19 @@ func (p *PatternToken) AddAndGroupElement(andTok *PatternToken) {
 	p.AndGroup = append(p.AndGroup, andTok)
 }
 
+// AddOrGroupElement ports PatternToken.setOrGroupElement.
+func (p *PatternToken) AddOrGroupElement(orTok *PatternToken) {
+	if p == nil || orTok == nil {
+		return
+	}
+	p.OrGroup = append(p.OrGroup, orTok)
+}
+
+// HasOrGroup ports PatternToken.hasOrGroup.
+func (p *PatternToken) HasOrGroup() bool {
+	return p != nil && len(p.OrGroup) > 0
+}
+
 func (p *PatternToken) SetStringPosException(tokenException string, regexp bool) {
 	p.SetStringPosExceptionCS(tokenException, regexp, false)
 }
@@ -100,11 +133,18 @@ func (p *PatternToken) SetStringPosExceptionCS(tokenException string, regexp, ca
 // SetStringPosExceptionFull ports Java PatternToken.setStringPosException with optional POS.
 // Surface and/or postag may be set (POS-only exceptions are valid Java).
 func (p *PatternToken) SetStringPosExceptionFull(tokenException string, surfaceRE, caseSensitive bool, posTag string, posRE bool) {
+	p.SetStringPosExceptionFullNeg(tokenException, surfaceRE, caseSensitive, false, posTag, posRE, false)
+}
+
+// SetStringPosExceptionFullNeg ports setStringPosException with surface/POS negation flags.
+func (p *PatternToken) SetStringPosExceptionFullNeg(tokenException string, surfaceRE, caseSensitive, negation bool, posTag string, posRE, posNegation bool) {
 	p.TokenException = tokenException
 	p.TokenExceptionRE = surfaceRE
 	p.TokenExceptionCaseSensitive = caseSensitive
+	p.TokenExceptionNegation = negation
 	p.TokenExceptionPosTag = posTag
 	p.TokenExceptionPosRE = posRE
+	p.TokenExceptionPosNegation = posNegation
 }
 
 // HasCurrentException reports whether a current-scope exception (surface and/or POS) is set.
@@ -139,4 +179,89 @@ func (p *PatternToken) HasNextException() bool {
 // IsMatched ports PatternToken.isMatched for a single AnalyzedToken reading.
 func (p *PatternToken) IsMatched(token *languagetool.AnalyzedToken) bool {
 	return NewPatternTokenMatcher(p).IsMatched(token)
+}
+
+// IsUnified ports PatternToken.isUnified.
+func (p *PatternToken) IsUnified() bool {
+	return p != nil && p.UniFeatures != nil
+}
+
+// GetUniFeatures ports PatternToken.getUniFeatures.
+func (p *PatternToken) GetUniFeatures() map[string][]string {
+	if p == nil {
+		return nil
+	}
+	return p.UniFeatures
+}
+
+// SetUnification ports PatternToken.setUnification (copies the feature map).
+func (p *PatternToken) SetUnification(uniFeatures map[string][]string) {
+	if p == nil {
+		return
+	}
+	if uniFeatures == nil {
+		p.UniFeatures = map[string][]string{}
+		return
+	}
+	out := make(map[string][]string, len(uniFeatures))
+	for k, v := range uniFeatures {
+		out[k] = append([]string(nil), v...)
+	}
+	p.UniFeatures = out
+}
+
+// SetUniNegation ports PatternToken.setUniNegation.
+func (p *PatternToken) SetUniNegation() {
+	if p != nil {
+		p.UniNegated = true
+	}
+}
+
+// IsUniNegated ports PatternToken.isUniNegated.
+func (p *PatternToken) IsUniNegated() bool {
+	return p != nil && p.UniNegated
+}
+
+// SetLastInUnification ports PatternToken.setLastInUnification.
+func (p *PatternToken) SetLastInUnification() {
+	if p != nil {
+		p.LastInUnification = true
+	}
+}
+
+// IsLastInUnification ports PatternToken.isLastInUnification.
+func (p *PatternToken) IsLastInUnification() bool {
+	return p != nil && p.LastInUnification
+}
+
+// SetUnificationNeutral ports PatternToken.setUnificationNeutral.
+func (p *PatternToken) SetUnificationNeutral() {
+	if p != nil {
+		p.UnificationNeutral = true
+	}
+}
+
+// IsUnificationNeutral ports PatternToken.isUnificationNeutral.
+func (p *PatternToken) IsUnificationNeutral() bool {
+	return p != nil && p.UnificationNeutral
+}
+
+// IsReferenceElement ports PatternToken.isReferenceElement.
+func (p *PatternToken) IsReferenceElement() bool {
+	return p != nil && p.TokenMatch != nil
+}
+
+// SetMatch ports PatternToken.setMatch.
+func (p *PatternToken) SetMatch(m *Match) {
+	if p != nil {
+		p.TokenMatch = m
+	}
+}
+
+// GetMatch ports PatternToken.getMatch.
+func (p *PatternToken) GetMatch() *Match {
+	if p == nil {
+		return nil
+	}
+	return p.TokenMatch
 }

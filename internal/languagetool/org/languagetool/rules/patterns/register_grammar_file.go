@@ -43,28 +43,24 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		pr.AntiPatterns = append([]*PatternRule(nil), ar.AntiPatterns...)
 		pr.Filter = ar.Filter
 		pr.FilterArgs = ar.FilterArgs
-		// strip XML suggestion tags from message for display; keep as suggestions if present
+		pr.UnifierConfig = ar.UnifierConfig
+		pr.SuggestionMatches = append([]*Match(nil), ar.SuggestionMatches...)
+		pr.InterpretPreDisambig = ar.InterpretPreDisambig
+		// strip XML suggestion tags from message for display; templates expanded in matcher.
 		msg, suggs := extractSuggestions(pr.Message)
 		pr.Message = msg
+		pr.SuggestionTemplates = append([]string(nil), suggs...)
 		id := pr.GetID()
 		if id == "" {
 			continue
 		}
 		rule := pr
-		suggestions := suggs
 		catID, catName := ar.CategoryID, ar.CategoryName
 		desc := ar.Description
 		lt.AddRuleChecker(id, func(s *languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 			ms, err := rule.Match(s)
 			if err != nil || len(ms) == 0 {
 				return nil
-			}
-			if len(suggestions) > 0 {
-				for _, m := range ms {
-					if m != nil && len(m.GetSuggestedReplacements()) == 0 {
-						m.SetSuggestedReplacements(append([]string(nil), suggestions...))
-					}
-				}
 			}
 			out := rules.ToLocalMatches(ms)
 			text := ""
@@ -96,21 +92,13 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 						out[i].IssueType = "grammar"
 					}
 				}
-				// Expand \N backrefs (Java formatMatches subset) using tokens in the match span.
+				// Case adjustment when matcher left suggestions (formatMatches already ran).
 				if text != "" {
 					from, to := out[i].FromPos, out[i].ToPos
-					spanToks := matchSpanTokens(s, from, to)
-					if out[i].Message != "" {
-						out[i].Message = expandPatternBackrefs(out[i].Message, spanToks)
-					}
-					for j, sug := range out[i].Suggestions {
-						out[i].Suggestions[j] = expandPatternBackrefs(sug, spanToks)
-					}
-					// Java RuleMatch startsWithUppercase / isAllUppercase adjustment.
 					if from >= 0 && to <= len(text) && from < to && len(out[i].Suggestions) > 0 {
 						matched := text[from:to]
 						for j, sug := range out[i].Suggestions {
-							out[i].Suggestions[j] = languagetool.SoftPreserveCase(matched, sug)
+							out[i].Suggestions[j] = languagetool.PreserveCase(matched, sug)
 						}
 					}
 				}
@@ -124,6 +112,10 @@ func RegisterGrammarXML(lt *languagetool.JLanguageTool, xmlStr, filename, langua
 		}
 		n++
 	}
+	// Java activateDefaultPatternRules: after loading pattern rules, apply
+	// getDefaultEnabledRulesForVariant / getDefaultDisabledRulesForVariant
+	// (setDefaultOn / setDefaultOff on matching rule IDs).
+	lt.ApplyVariantDefaultRules()
 	return n, nil
 }
 

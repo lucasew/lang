@@ -53,13 +53,13 @@ type PostReformPortugueseDashRule struct {
 
 func NewPostReformPortugueseDashRule(messages map[string]string) *PostReformPortugueseDashRule {
 	base := &rules.AbstractDashRule{
-		Messages:         messages,
 		ID:               "PT_POSAO_DASH_RULE",
 		CompoundPatterns: loadPostReformDashPatterns(),
 		Message:          "Um travessão foi utilizado em vez de um hífen.",
 		Description:      "Travessões no lugar de hífens",
 		IsLetter:         isPortugueseLetter,
 	}
+	rules.InitDashRuleMeta(base, messages)
 	return &PostReformPortugueseDashRule{AbstractDashRule: base}
 }
 

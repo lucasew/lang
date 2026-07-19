@@ -2,10 +2,11 @@ package fr
 
 import (
 	"regexp"
-	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -15,6 +16,11 @@ const (
 )
 
 var urlSchemeRE = regexp.MustCompile(`^(file|s?ftp|finger|git|gopher|hdl|https?|shttp|imap|mailto|mms|nntp|s?news(post|reply)?|prospero|rsync|rtspu|sips?|svn|svn\+ssh|telnet|wais)$`)
+
+var (
+	frWhitespaceAntiOnce  sync.Once
+	frWhitespaceAntiRules []*disambigrules.DisambiguationPatternRule
+)
 
 // QuestionWhitespaceRule ports org.languagetool.rules.fr.QuestionWhitespaceRule.
 // Non-strict: any whitespace before ?!; is accepted.
@@ -40,20 +46,20 @@ func (r *QuestionWhitespaceRule) GetID() string {
 	return "FRENCH_WHITESPACE"
 }
 
+func (r *QuestionWhitespaceRule) GetDescription() string {
+	return "Insertion des espaces fines insécables"
+}
+
+// Match ports QuestionWhitespaceRule.match:
+// Java: tokens = getSentenceWithImmunization(sentence).getTokens()
 func (r *QuestionWhitespaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	tokens := sentence.GetTokens() // include whitespace tokens
+	tokens := getSentenceWithFRWhitespaceImmunization(sentence).GetTokens() // include whitespace tokens
 	var ruleMatches []*rules.RuleMatch
 	prevPrevToken := ""
 	prevToken := ""
 	for i := 1; i < len(tokens); i++ {
 		token := tokens[i].GetToken()
 		if tokens[i].IsImmunized() || prevToken == "(" || prevToken == "[" {
-			prevPrevToken = prevToken
-			prevToken = token
-			continue
-		}
-		// Light anti-patterns (smileys, times, ??, MAC, CSV)
-		if frWhitespaceAntiPattern(tokens, i) {
 			prevPrevToken = prevToken
 			prevToken = token
 			continue
@@ -141,99 +147,53 @@ func (r *QuestionWhitespaceRule) isAllowedWhitespaceChar(tokens []*languagetool.
 	return tokens[i].IsWhitespace()
 }
 
-// frWhitespaceAntiPattern approximates ANTI_PATTERNS without DisambiguationPatternRule.
-func frWhitespaceAntiPattern(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
-	tok := tokens[i].GetToken()
-	// smileys :) :-) — also skip the colon of a smiley
-	if tok == ":" && i+1 < len(tokens) {
-		n := tokens[i+1].GetToken()
-		if n == ")" || n == "(" || n == "D" || n == "-" {
-			return true
-		}
-	}
-	if (tok == ")" || tok == "(" || tok == "D") && i >= 1 {
-		if tokens[i-1].GetToken() == "-" && i >= 2 {
-			p := tokens[i-2].GetToken()
-			if p == ":" || p == ";" {
-				return true
+// frWhitespaceAntiPatterns ports QuestionWhitespaceRule.getAntiPatterns (cached IMMUNIZE).
+func frWhitespaceAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	frWhitespaceAntiOnce.Do(func() {
+		aps := QuestionWhitespaceAntiPatterns
+		frWhitespaceAntiRules = make([]*disambigrules.DisambiguationPatternRule, 0, len(aps))
+		for _, toks := range aps {
+			if len(toks) == 0 {
+				continue
 			}
+			// Java makeAntiPatterns / cacheAntiPatterns: INTERNAL_ANTIPATTERN + IMMUNIZE
+			rule := disambigrules.NewDisambiguationPatternRule(
+				"INTERNAL_ANTIPATTERN", "(no description)", "fr",
+				toks, "", nil, disambigrules.ActionImmunize,
+			)
+			frWhitespaceAntiRules = append(frWhitespaceAntiRules, rule)
 		}
-		if i >= 1 {
-			p := tokens[i-1].GetToken()
-			if (p == ":" || p == ";") && !tokens[i].IsWhitespaceBefore() {
-				return true
-			}
-		}
-	}
-	// times 23:20
-	if tok == ":" && i > 0 && i+1 < len(tokens) {
-		prev, next := tokens[i-1].GetToken(), tokens[i+1].GetToken()
-		if looksLikeTimePart(prev) && isDigits(next) {
-			return true
-		}
-	}
-	// ?? !!
-	if (tok == "?" || tok == "!") && i > 0 {
-		p := tokens[i-1].GetToken()
-		if p == "?" || p == "!" {
-			return true
-		}
-	}
-	// MAC-ish : between hex pairs
-	if tok == ":" && i > 0 && i+1 < len(tokens) {
-		if isHex2(tokens[i-1].GetToken()) && isHex2(tokens[i+1].GetToken()) {
-			return true
-		}
-	}
-	// CSV ;
-	if tok == ";" {
-		if i+1 < len(tokens) && !tokens[i+1].IsWhitespaceBefore() && tokens[i+1].GetToken() != "" {
-			// 1;2;3 style
-			return true
-		}
-	}
-	return false
+	})
+	return frWhitespaceAntiRules
 }
 
-func looksLikeTimePart(s string) bool {
-	// ends with 1-2 digits
-	n := 0
-	for i := len(s) - 1; i >= 0 && n < 3; i-- {
-		if s[i] >= '0' && s[i] <= '9' {
-			n++
-		} else {
-			break
+// getSentenceWithFRWhitespaceImmunization ports Rule.getSentenceWithImmunization
+// for QuestionWhitespaceRule.ANTI_PATTERNS.
+func getSentenceWithFRWhitespaceImmunization(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	if sentence == nil {
+		return nil
+	}
+	aps := frWhitespaceAntiPatterns()
+	if len(aps) == 0 {
+		return sentence
+	}
+	src := sentence.GetTokens()
+	cloned := make([]*languagetool.AnalyzedTokenReadings, len(src))
+	for i, t := range src {
+		if t == nil {
+			continue
 		}
+		cloned[i] = languagetool.NewAnalyzedTokenReadingsFromOld(t, t.GetReadings(), "")
 	}
-	return n >= 1 && n <= 2
-}
-
-func isDigits(s string) bool {
-	if s == "" {
-		return false
-	}
-	for _, r := range s {
-		if r < '0' || r > '9' {
-			return false
+	immunized := languagetool.NewAnalyzedSentence(cloned)
+	for _, ap := range aps {
+		if ap == nil {
+			continue
 		}
+		immunized = ap.Replace(immunized)
 	}
-	return true
+	return immunized
 }
-
-func isHex2(s string) bool {
-	if len(s) != 2 {
-		return false
-	}
-	for _, c := range s {
-		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
-			return false
-		}
-	}
-	return true
-}
-
-// silence
-var _ = strings.Contains
 
 // QuestionWhitespaceStrictRule is the Java-name twin of the strict whitespace rule.
 // Construct with NewQuestionWhitespaceStrictRule.

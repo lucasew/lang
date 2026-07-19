@@ -3,7 +3,6 @@ package sk
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreSlovakRules installs shared layout + language word-repeat + beginning.
@@ -18,11 +17,15 @@ func RegisterCoreSlovakRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "Tri vety po sebe začínajú rovnakým slovom.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "sk", []patterns.TokenSequenceSpec{
-		{ID: "SK_V_V", Tokens: []string{"v", "v"}, Message: "Možné opakovanie predložky 'v'.", Suggestion: "v"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official compounds.txt (embedded from upstream).
 	cr := NewCompoundRule(nil)
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+
+	// Java createDefaultSpellingRule / Morfologik getId; CFSA2 when dict present.
+	// Empty map shell fails closed when binary resource is missing (no invent).
+	// Always full Match (fail-closed map Words when binary dict missing; no invent).
+	sp := NewMorfologikSlovakSpellerRule()
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

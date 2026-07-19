@@ -10,6 +10,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/corepack"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	ensynth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/en"
 )
 
 // newConfiguredLT builds a language tool aligned with commandline.configureCoreLT
@@ -35,10 +37,20 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		demoSpell := os.Getenv("LANG_DEMO_SPELLER") == "1"
 		nearest := en.DemoEnglishKnownWords()
 		spellOK := false
-		if dictPath := commandline.DiscoverEnglishUSDict(nil); dictPath != "" {
+		ruleID, _ := en.EnglishVariantSpellerMeta(lang)
+		if dictPath := commandline.DiscoverEnglishVariantDict(nil, lang); dictPath != "" {
 			_ = en.WireEnglishFilterSpeller(dictPath)
 			// Dict SuggestEdits only — no invent typo map.
-			spellOK = en.RegisterBinaryEnglishSpeller(lt, dictPath, nearest, nil)
+			// Skip if core pack already registered this speller ID.
+			for _, id := range lt.GetAllRegisteredRuleIDs() {
+				if id == ruleID {
+					spellOK = true
+					break
+				}
+			}
+			if !spellOK {
+				spellOK = en.RegisterBinaryEnglishSpellerID(lt, dictPath, ruleID, nearest, nil)
+			}
 		}
 		if !spellOK && demoSpell {
 			en.RegisterDemoEnglishSpeller(lt, nearest, en.CommonDemoSpellerSuggestions)
@@ -50,6 +62,13 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 		}
 		if !taggerOK && demoSpell {
 			en.RegisterDemoEnglishTagger(lt)
+		}
+		// Java English.createDefaultSynthesizer for pattern match suggestions.
+		if synthPath := commandline.DiscoverEnglishSynthDict(nil); synthPath != "" {
+			if synth := ensynth.OpenEnglishSynthesizerFromDictPath(synthPath); synth != nil {
+				patterns.RegisterLanguageSynthesizer("en", synth)
+				patterns.RegisterLanguageSynthesizer(lang, synth)
+			}
 		}
 		en.RegisterEnglishChunker(lt)
 		// Multitoken speller for MultitokenSpellerFilter (official multiwords + spelling_global).
@@ -66,6 +85,12 @@ func (p *Pipeline) newConfiguredLT() *languagetool.JLanguageTool {
 	} else {
 		if posPath := commandline.DiscoverLanguagePOSDict(nil, base); posPath != "" {
 			_ = languagetool.RegisterBinaryPOSTagger(lt, posPath)
+		}
+		if synthPath := commandline.DiscoverLanguageSynthDict(nil, base); synthPath != "" {
+			if synth := synthesis.OpenBaseSynthesizerFromDictPath(base, synthPath); synth != nil {
+				patterns.RegisterLanguageSynthesizer(base, synth)
+				patterns.RegisterLanguageSynthesizer(lang, synth)
+			}
 		}
 		_ = commandline.RegisterHybridDisambiguator(lt, base, nil)
 	}

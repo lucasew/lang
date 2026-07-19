@@ -3,10 +3,13 @@ package fr
 import (
 	"fmt"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
 // DMYDateCheckFilter ports org.languagetool.rules.fr.DMYDateCheckFilter.
-// Expects date argument as dd-mm-yyyy.
+// Expects date argument as dd-mm-yyyy; delegates to DateCheckFilter super.
 type DMYDateCheckFilter struct {
 	dateCheck *DateCheckFilter
 }
@@ -42,4 +45,31 @@ func (f *DMYDateCheckFilter) PrepareArgs(args map[string]string) (map[string]str
 	out["month"] = parts[1]
 	out["year"] = parts[2]
 	return out, nil
+}
+
+// AcceptRuleMatch ports DMYDateCheckFilter.acceptRuleMatch.
+// Java: reject year/month/day keys; parse dd-mm-yyyy; super.acceptRuleMatch.
+func (f *DMYDateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, args map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	if _, ok := args["year"]; ok {
+		panic("Set only 'weekDay' and 'date' for DMYDateCheckFilter")
+	}
+	if _, ok := args["month"]; ok {
+		panic("Set only 'weekDay' and 'date' for DMYDateCheckFilter")
+	}
+	if _, ok := args["day"]; ok {
+		panic("Set only 'weekDay' and 'date' for DMYDateCheckFilter")
+	}
+	parsed, err := f.PrepareArgs(args)
+	if err != nil {
+		// Java: getRequired throws / RuntimeException on bad format
+		panic(err.Error())
+	}
+	if f.dateCheck == nil {
+		f.dateCheck = NewDateCheckFilter()
+	}
+	return f.dateCheck.AcceptRuleMatch(match, parsed, 0, patternTokens, tokenPositions)
 }

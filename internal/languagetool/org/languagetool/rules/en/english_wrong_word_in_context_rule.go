@@ -48,6 +48,8 @@ func NewEnglishWrongWordInContextRule(messages map[string]string) *EnglishWrongW
 		LanguageCode:       "en",
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: getCategoryString → "Commonly Confused Words"
+	rules.InitWrongWordInContextMeta(base, messages, "Commonly Confused Words")
 	return &EnglishWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

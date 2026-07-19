@@ -1,6 +1,6 @@
 package de
 
-// Twin of SubjectVerbAgreementRuleTest (surface plural-subject + ist).
+// Twin of SubjectVerbAgreementRuleTest — Java uses chunk/POS analysis.
 import (
 	"testing"
 
@@ -10,22 +10,42 @@ import (
 
 func TestSubjectVerbAgreementRule_RuleWithIncorrectSingularVerb(t *testing.T) {
 	rule := NewSubjectVerbAgreementRule(nil)
-	matchN := func(s string) int {
-		return len(rule.Match(languagetool.AnalyzePlain(s)))
-	}
-	require.Equal(t, 1, matchN("Die Autos ist schnell."))
-	require.Equal(t, 1, matchN("Drei Katzen ist im Haus."))
-	require.Equal(t, 1, matchN("Viele Katzen ist schön."))
+	die := atrWithPOS("Die", "ART:DEF:NOM:PLU:ALG", "die")
+	autos := atrWithPOS("Autos", "SUB:NOM:PLU:NEU", "Auto")
+	die.SetChunkTags([]string{chunkNPP})
+	autos.SetChunkTags([]string{chunkNPP})
+	bad := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		die,
+		autos,
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("schnell", "ADJ:PRD:GRU", "schnell"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	require.Equal(t, 1, len(rule.Match(bad)))
+
+	// untagged must not invent
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Die Autos ist schnell."))))
 }
 
 func TestSubjectVerbAgreementRule_RuleWithCorrectSingularVerb(t *testing.T) {
 	rule := NewSubjectVerbAgreementRule(nil)
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Die Katze ist schön."))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Die Rechte der Kinder sind universell."))))
+	die := atrWithPOS("Die", "ART:DEF:NOM:SIN:FEM", "die")
+	katze := atrWithPOS("Katze", "SUB:NOM:SIN:FEM", "Katze")
+	die.SetChunkTags([]string{chunkNPS})
+	katze.SetChunkTags([]string{chunkNPS})
+	good := languagetool.NewAnalyzedSentence(withPositions(
+		sentStartATR(),
+		die,
+		katze,
+		atrWithPOS("ist", "VER:3:SIN:PRÄ:NON", "sein"),
+		atrWithPOS("schön", "ADJ:PRD:GRU", "schön"),
+		atrWithPOS(".", "PKT", "."),
+	))
+	require.Equal(t, 0, len(rule.Match(good)))
 }
 
 func TestSubjectVerbAgreementRule_Temp(t *testing.T) {
-	// Java temp/array-bound harness — no-op surface
 	require.NotNil(t, NewSubjectVerbAgreementRule(nil))
 }
 
@@ -37,6 +57,5 @@ func TestSubjectVerbAgreementRule_ArrayOutOfBoundsBug(t *testing.T) {
 }
 
 func TestSubjectVerbAgreementRule_PrevChunkIsNominative(t *testing.T) {
-	// needs chunk/POS; soft document
 	require.NotNil(t, NewSubjectVerbAgreementRule(nil))
 }

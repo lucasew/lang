@@ -27,6 +27,10 @@ func NewArabicHunspellSpellerRule(dict hunspell.HunspellDictionary) *ArabicHunsp
 	base := hunspell.NewHunspellRule("ar", dict)
 	base.ID = ArabicHunspellRuleID
 	base.Description = "Possible spelling mistake"
+	// Java isLatinScript() = false
+	if base.SpellingCheckRule != nil {
+		base.NonLatinScript = true
+	}
 	r := &ArabicHunspellSpellerRule{HunspellRule: base}
 	base.IsMisspelled = r.IsMisspelledStripped
 	return r

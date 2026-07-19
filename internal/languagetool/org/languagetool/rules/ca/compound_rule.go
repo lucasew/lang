@@ -33,13 +33,16 @@ func loadCompoundData() *rules.CompoundRuleData {
 }
 
 // CompoundRule ports org.languagetool.rules.ca.CompoundRule.
+// isMisspelled uses TagIsTagged (Java CatalanTagger.INSTANCE_VAL.tag(...).isTagged()).
+// Without TagIsTagged, isMisspelled is false (AbstractCompoundRule default).
 type CompoundRule struct {
 	*rules.AbstractCompoundRule
+	// TagIsTagged ports CatalanTagger.tag([word])[0].isTagged(); nil → misspelled=false.
+	TagIsTagged func(word string) bool
 }
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "CA_COMPOUNDS",
 		Description:                 "Paraules compostes amb guionet: $match",
 		WithHyphenMessage:           "S'escriu amb un guionet.",
@@ -50,7 +53,32 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		Data:                        loadCompoundData(),
 	}
 	base.UseSubRuleSpecificIDs()
-	return &CompoundRule{AbstractCompoundRule: base}
+	rules.InitCompoundRuleMeta(base, messages)
+	r := &CompoundRule{AbstractCompoundRule: base}
+	base.IsMisspelled = func(word string) bool {
+		if r.TagIsTagged == nil {
+			return false
+		}
+		return !r.TagIsTagged(word)
+	}
+	return r
+}
+
+// WireCompoundRuleTagger attaches CatalanTagger-style isTagged for isMisspelled.
+func WireCompoundRuleTagger(r *CompoundRule, tagWord func(word string) []*languagetool.AnalyzedTokenReadings) {
+	if r == nil {
+		return
+	}
+	r.TagIsTagged = func(word string) bool {
+		if tagWord == nil {
+			return false
+		}
+		readings := tagWord(word)
+		if len(readings) == 0 || readings[0] == nil {
+			return false
+		}
+		return readings[0].IsTagged()
+	}
 }
 
 func (r *CompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

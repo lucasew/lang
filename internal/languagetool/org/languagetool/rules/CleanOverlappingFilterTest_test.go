@@ -164,3 +164,76 @@ func TestCleanOverlappingFilter_Filter(t *testing.T) {
 		})
 	})
 }
+
+// Java isPunctuationOnlyChange: OriginalErrorStr first; letters+digits equal ⇒ punct-only.
+func TestCleanOverlappingFilter_IsPunctuationOnly_OriginalErrorStr(t *testing.T) {
+	f := newCleanFilter()
+	sent := languagetool.AnalyzePlain("Hallo, Welt")
+	// punctuation-only: "Hallo," → "Hallo"
+	rm := NewRuleMatch(NewFakeRule("MISC"), sent, 0, 6, "msg")
+	rm.OriginalErrorStr = "Hallo,"
+	rm.SetSuggestedReplacement("Hallo")
+	require.True(t, f.isPunctuationOnlyChange(rm))
+
+	// not punctuation-only: different letters
+	rm2 := NewRuleMatch(NewFakeRule("MISC"), sent, 0, 5, "msg")
+	rm2.OriginalErrorStr = "Hallo"
+	rm2.SetSuggestedReplacement("Hello")
+	require.False(t, f.isPunctuationOnlyChange(rm2))
+
+	// identical strings → false (not a change)
+	rm3 := NewRuleMatch(NewFakeRule("MISC"), sent, 0, 5, "msg")
+	rm3.OriginalErrorStr = "Hallo"
+	rm3.SetSuggestedReplacement("Hallo")
+	require.False(t, f.isPunctuationOnlyChange(rm3))
+
+	// empty OriginalErrorStr + empty sentence span → false (fail-closed)
+	rm4 := NewRuleMatch(NewFakeRule("MISC"), emptySentence(), 0, 5, "msg")
+	rm4.SetSuggestedReplacement("x")
+	require.False(t, f.isPunctuationOnlyChange(rm4))
+}
+
+// Java: when OriginalErrorStr empty, use sentence FromPosSentence then FromPos (UTF-16).
+func TestCleanOverlappingFilter_IsPunctuationOnly_SentenceFallback(t *testing.T) {
+	f := newCleanFilter()
+	sent := languagetool.AnalyzePlain("Hallo,")
+	rm := NewRuleMatch(NewFakeRule("MISC"), sent, 0, 6, "msg")
+	// FromPos/ToPos cover "Hallo," (6 UTF-16 units)
+	rm.SetSuggestedReplacement("Hallo")
+	require.True(t, f.isPunctuationOnlyChange(rm))
+
+	// Sentence-relative positions when document FromPos would be wrong/unset
+	rm2 := NewRuleMatch(NewFakeRule("MISC"), sent, 100, 106, "msg") // out of range doc pos
+	rm2.FromPosSentence = 0
+	rm2.ToPosSentence = 6
+	rm2.SetSuggestedReplacement("Hallo")
+	require.True(t, f.isPunctuationOnlyChange(rm2),
+		"FromPosSentence must supply original when FromPos is out of range")
+}
+
+// Java: both punctuation-only and one includedAllAtOnce → boost the all-at-once
+// match when its base priority is lower (currentPriority = prevPriority+1).
+func TestCleanOverlappingFilter_PunctuationOnly_AllAtOnceBoost(t *testing.T) {
+	filter := newCleanFilter()
+	sent := languagetool.AnalyzePlain("Hallo,")
+	// MISC prio 0 + allAtOnce vs P1_RULE prio 1 without — allAtOnce should win after boost.
+	rAll := NewFakeRule("MISC")
+	rAll.SetIncludedInErrorsCorrectedAllAtOnce(true)
+	rmAll := NewRuleMatch(rAll, sent, 0, 6, "all")
+	rmAll.OriginalErrorStr = "Hallo,"
+	rmAll.SetSuggestedReplacement("Hallo")
+
+	rmPlain := NewRuleMatch(NewFakeRule("P1_RULE"), sent, 0, 6, "plain")
+	rmPlain.OriginalErrorStr = "Hallo,"
+	rmPlain.SetSuggestedReplacement("Hallo")
+
+	// all-at-once first (lower prio), plain second — boost prev when prevAll
+	out := filter.Filter([]*RuleMatch{rmAll, rmPlain})
+	require.Len(t, out, 1)
+	require.Equal(t, "MISC", ruleIDOf(out[0].Rule))
+
+	// reverse: plain first (higher prio), all-at-once second — boost current when curAll
+	out2 := filter.Filter([]*RuleMatch{rmPlain, rmAll})
+	require.Len(t, out2, 1)
+	require.Equal(t, "MISC", ruleIDOf(out2[0].Rule))
+}

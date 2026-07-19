@@ -1,72 +1,131 @@
 package de
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// PassiveSentenceRule is a surface stand-in for PassiveSentenceRule.
-// Looks for forms of "werden" plus a past-participle-like token (ge…t / ge…en).
-// MinPercent 0 shows all matching sentences.
+// PassiveSentenceRule ports org.languagetool.rules.de.PassiveSentenceRule
+// (extends AbstractStatisticSentenceStyleRule; default off, DEFAULT_MIN_PERCENT=8).
+// Match() uses MinPercent for single-sentence convenience (Java is text-level MatchList).
+// Java: hasLemma("werden") + hasPosTagStartingWith("VER:PA2:") — no surface invent.
 type PassiveSentenceRule struct {
-	Messages   map[string]string
-	MinPercent int
-	werden     map[string]struct{}
+	*rules.AbstractStatisticSentenceStyleRule
 }
+
+const passiveSentenceDefaultMinPercent = 8
 
 func NewPassiveSentenceRule(messages map[string]string) *PassiveSentenceRule {
-	list := []string{
-		"werde", "wirst", "wird", "werden", "werdet",
-		"wurde", "wurdest", "wurden", "wurdet",
-		"würde", "würdest", "würden", "würdet",
-		"worden",
+	r := &PassiveSentenceRule{
+		AbstractStatisticSentenceStyleRule: &rules.AbstractStatisticSentenceStyleRule{
+			ID:                  "PASSIVE_SENTENCE_DE",
+			Description:         "Statistische Stilanalyse: Passivsätze",
+			MinPercent:          0, // twin tests / Match show all; Java default 8 via UserConfig
+			ExcludeDirectSpeech: true,
+			Denominator:         100,
+		},
 	}
-	m := map[string]struct{}{}
-	for _, w := range list {
-		m[w] = struct{}{}
-	}
-	return &PassiveSentenceRule{Messages: messages, MinPercent: 0, werden: m}
+	r.ConditionFulfilled = r.conditionFulfilled
+	r.LimitMessage = r.getLimitMessage
+	rules.InitStatisticSentenceStyleMeta(r.AbstractStatisticSentenceStyleRule, messages, false)
+	return r
 }
 
-func (r *PassiveSentenceRule) GetID() string { return "PASSIVE_SENTENCE_DE" }
-
-func looksLikePastParticipleDE(s string) bool {
-	lc := strings.ToLower(s)
-	if strings.HasPrefix(lc, "ge") && (strings.HasSuffix(lc, "t") || strings.HasSuffix(lc, "en")) && len(lc) > 4 {
-		return true
-	}
-	// separable prefix + ge (e.g. abgegeben, hergestellt)
-	if strings.Contains(lc, "ge") && (strings.HasSuffix(lc, "t") || strings.HasSuffix(lc, "en")) && len(lc) > 6 {
-		// weak heuristic: contains "ge" not only at start
-		return true
-	}
-	return false
+// NewPassiveSentenceRuleWithDefaultLimit uses Java DEFAULT_MIN_PERCENT=8.
+func NewPassiveSentenceRuleWithDefaultLimit(messages map[string]string) *PassiveSentenceRule {
+	r := NewPassiveSentenceRule(messages)
+	r.MinPercent = passiveSentenceDefaultMinPercent
+	return r
 }
 
+func (r *PassiveSentenceRule) GetID() string {
+	if r != nil && r.AbstractStatisticSentenceStyleRule != nil {
+		return r.AbstractStatisticSentenceStyleRule.GetID()
+	}
+	return "PASSIVE_SENTENCE_DE"
+}
+
+func (r *PassiveSentenceRule) GetDescription() string {
+	return "Statistische Stilanalyse: Passivsätze"
+}
+
+func (r *PassiveSentenceRule) getLimitMessage(limit int, percent float64) string {
+	if limit == 0 {
+		return "Passivsatz: Aktiv formulierte Sätze sprechen im Regelfall den Leser stärker an."
+	}
+	return "Mehr als " + itoaDE(limit) + "% Passivsätze {" + itoaDE(int(percent+0.5)) +
+		"%} gefunden. Aktiv formulierte Sätze sprechen im Regelfall den Leser stärker an."
+}
+
+func (r *PassiveSentenceRule) conditionFulfilled(sentence []*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedTokenReadings {
+	// Java PassiveSentenceRule.conditionFulfilled — werden lemma + VER:PA2 (either order)
+	for i := 0; i < len(sentence); i++ {
+		if sentence[i] == nil {
+			continue
+		}
+		if isWerdenPassive(sentence[i]) {
+			token := sentence[i]
+			for j := i + 1; j < len(sentence); j++ {
+				if sentence[j] == nil {
+					continue
+				}
+				if isPassivePA2(sentence[j]) {
+					return token
+				} else if rules.IsStatisticMark(sentence[j]) {
+					return nil
+				}
+			}
+		} else if isPassivePA2(sentence[i]) {
+			for j := i + 1; j < len(sentence); j++ {
+				if sentence[j] == nil {
+					continue
+				}
+				if isWerdenPassive(sentence[j]) {
+					return sentence[j]
+				} else if rules.IsStatisticMark(sentence[j]) {
+					return nil
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func isWerdenPassive(t *languagetool.AnalyzedTokenReadings) bool {
+	return t != nil && t.HasAnyLemma("werden")
+}
+
+func isPassivePA2(t *languagetool.AnalyzedTokenReadings) bool {
+	return t != nil && t.HasPosTagStartingWith("VER:PA2:")
+}
+
+// Match is single-sentence convenience (Java is text-level only).
 func (r *PassiveSentenceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	if r.MinPercent != 0 {
+	if r == nil {
 		return nil
 	}
-	tokens := sentence.GetTokensWithoutWhitespace()
-	var werdenTok *languagetool.AnalyzedTokenReadings
-	hasParticiple := false
-	for i := 1; i < len(tokens); i++ {
-		tok := tokens[i]
-		lc := strings.ToLower(tok.GetToken())
-		if _, ok := r.werden[lc]; ok && werdenTok == nil {
-			werdenTok = tok
-		}
-		if looksLikePastParticipleDE(tok.GetToken()) {
-			hasParticiple = true
-		}
+	return r.MatchList([]*languagetool.AnalyzedSentence{sentence})
+}
+
+// itoaDE minimal int string (avoid strconv import cycles / keep leaf simple).
+func itoaDE(n int) string {
+	if n == 0 {
+		return "0"
 	}
-	if werdenTok == nil || !hasParticiple {
-		return nil
+	neg := n < 0
+	if neg {
+		n = -n
 	}
-	msg := "Passivsatz: Aktiv formulierte Sätze sprechen im Regelfall den Leser stärker an."
-	rm := rules.NewRuleMatch(r, sentence, werdenTok.GetStartPos(), werdenTok.GetEndPos(), msg)
-	rm.ShortMessage = "Passivsatz"
-	return []*rules.RuleMatch{rm}
+	var b [20]byte
+	i := len(b)
+	for n > 0 {
+		i--
+		b[i] = byte('0' + n%10)
+		n /= 10
+	}
+	if neg {
+		i--
+		b[i] = '-'
+	}
+	return string(b[i:])
 }

@@ -2,126 +2,131 @@ package de
 
 import (
 	"regexp"
-	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 )
 
 // GermanWordRepeatRule ports org.languagetool.rules.de.GermanWordRepeatRule.
-// Anti-patterns that need the German tagger are approximated with surface heuristics
-// covering the unit tests.
+// Anti-patterns immunize via DisambiguationPatternRule; ignore() is 1:1 with Java
+// (POS-only gates — no surface invent for untagged AnalyzePlain).
 type GermanWordRepeatRule struct {
 	*rules.WordRepeatRule
 }
 
-var deSingleChar = regexp.MustCompile(`(?i)^[a-zäöüß]$`)
+// deSingleChar ports GermanWordRepeatRule.SINGLE_CHAR: (?i)^[a-z]$
+var deSingleChar = regexp.MustCompile(`(?i)^[a-z]$`)
 
 func NewGermanWordRepeatRule(messages map[string]string) *GermanWordRepeatRule {
 	base := rules.NewWordRepeatRule(messages)
 	base.IDOverride = "GERMAN_WORD_REPEAT_RULE"
+	// Java GermanWordRepeatRule: super.setCategory(Categories.REDUNDANCY) (overrides base MISC).
+	base.Category = rules.CatRedundancy.GetCategory(messages)
 	r := &GermanWordRepeatRule{WordRepeatRule: base}
 	base.ExtraIgnore = r.germanIgnore
 	return r
 }
 
+func (r *GermanWordRepeatRule) GetID() string {
+	return "GERMAN_WORD_REPEAT_RULE"
+}
+
+var (
+	gwrAntiOnce  sync.Once
+	gwrAntiRules []*disambigrules.DisambiguationPatternRule
+)
+
+func germanWordRepeatAntiPatternRules() []*disambigrules.DisambiguationPatternRule {
+	gwrAntiOnce.Do(func() {
+		aps := GermanWordRepeatAntiPatterns
+		gwrAntiRules = make([]*disambigrules.DisambiguationPatternRule, 0, len(aps))
+		for _, toks := range aps {
+			if len(toks) == 0 {
+				continue
+			}
+			rule := disambigrules.NewDisambiguationPatternRule(
+				"INTERNAL_ANTIPATTERN", "(no description)", "de",
+				toks, "", nil, disambigrules.ActionImmunize,
+			)
+			gwrAntiRules = append(gwrAntiRules, rule)
+		}
+	})
+	return gwrAntiRules
+}
+
+func (r *GermanWordRepeatRule) getSentenceWithImmunization(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	if sentence == nil {
+		return nil
+	}
+	aps := germanWordRepeatAntiPatternRules()
+	if len(aps) == 0 {
+		return sentence
+	}
+	src := sentence.GetTokens()
+	cloned := make([]*languagetool.AnalyzedTokenReadings, len(src))
+	for i, t := range src {
+		if t == nil {
+			continue
+		}
+		cloned[i] = languagetool.NewAnalyzedTokenReadingsFromOld(t, t.GetReadings(), "")
+	}
+	immunized := languagetool.NewAnalyzedSentence(cloned)
+	for _, ap := range aps {
+		if ap != nil {
+			immunized = ap.Replace(immunized)
+		}
+	}
+	return immunized
+}
+
+// Match ports WordRepeatRule.match with German anti-pattern immunization.
+func (r *GermanWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || r.WordRepeatRule == nil {
+		return nil
+	}
+	return r.WordRepeatRule.Match(r.getSentenceWithImmunization(sentence))
+}
+
+// germanIgnore ports GermanWordRepeatRule.ignore (Java then super.ignore via WordRepeatRule.Ignore).
 func (r *GermanWordRepeatRule) germanIgnore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
-	if position == 0 {
+	if position < 1 || position >= len(tokens) || tokens[position] == nil || tokens[position-1] == nil {
 		return false
 	}
 	prev := tokens[position-1].GetToken()
 	cur := tokens[position].GetToken()
 
-	// "Warum fragen Sie sie nicht selbst?" — not sentence-initial "Sie sie …"
-	if ((prev == "Sie" && cur == "sie") || (prev == "sie" && cur == "Sie")) && position > 2 {
+	// Java: position != 2 && Sie sie || sie Sie  (|| lower precedence than &&)
+	if (position != 2 && prev == "Sie" && cur == "sie") || (prev == "sie" && cur == "Sie") {
 		return true
 	}
-	// "Waren waren"
-	if (prev == "Waren" && cur == "waren") || (prev == "waren" && cur == "Waren") {
+	// Waren waren / waren Waren
+	if (position != 2 && prev == "Waren" && cur == "waren") || (prev == "waren" && cur == "Waren") {
 		return true
 	}
-	// "sie sie" after verb-ish / subordinate
-	if prev == "sie" && cur == "sie" && position > 2 {
-		p2 := tokens[position-2].GetToken()
-		// KON:UNT surface: damit, weil, dass, ob, falls, wenn
-		switch strings.ToLower(p2) {
-		case "damit", "weil", "dass", "daß", "ob", "falls", "wenn":
+	// sie sie after KON:UNT or VER:3+ZUS / VER:MOD:3+VER:INF (POS only — Java)
+	if position > 2 && prev == "sie" && cur == "sie" && tokens[position-2] != nil {
+		p2 := tokens[position-2]
+		if p2.HasPosTag("KON:UNT") {
 			return true
 		}
-		// VER:3 + ZUS: warfen ... weg; konnte ... sehen
-		if position+1 < len(tokens) {
-			next := strings.ToLower(tokens[position+1].GetToken())
-			if isGermanVerb3(p2) && (next == "weg" || next == "sehen" || isInfinitive(next)) {
+		// Java: hasPosTag("ZUS") / hasPosTag("VER:INF:NON") — exact tags, not invent partial INF.
+		if position+1 < len(tokens) && tokens[position+1] != nil {
+			next := tokens[position+1]
+			if p2.HasPosTagStartingWith("VER:3:") && next.HasPosTag("ZUS") {
 				return true
 			}
-		}
-	}
-	// Leben leben / Essen essen
-	if (prev == "Leben" && cur == "leben") || (prev == "Essen" && cur == "essen") {
-		return true
-	}
-	// die die after comma / alle die die
-	if strings.EqualFold(prev, "die") && strings.EqualFold(cur, "die") && position >= 2 {
-		p2 := tokens[position-2].GetToken()
-		if p2 == "," || isDieDieException(p2) {
-			return true
-		}
-	}
-	// das das after ist/war/wäre/für/dass or prep (auf das das Mädchen) or "als/wenn PRO das das"
-	if strings.EqualFold(prev, "das") && strings.EqualFold(cur, "das") && position >= 2 {
-		p2 := strings.ToLower(tokens[position-2].GetToken())
-		switch p2 {
-		case "ist", "war", "wäre", "ware", "für", "fur", "dass", "daß", "als", "wenn", "falls", "ob",
-			"auf", "in", "an", "mit", "von", "zu", "über", "unter", "nach", "vor", "bei":
-			return true
-		}
-		// Als ich das das erste Mal …
-		if position >= 3 {
-			p3 := strings.ToLower(tokens[position-3].GetToken())
-			switch p3 {
-			case "als", "wenn", "falls", "ob":
+			if p2.HasPosTagStartingWith("VER:MOD:3") && next.HasPosTag("VER:INF:NON") {
 				return true
 			}
-		}
-	}
-	// wer wer after weiß/,
-	if strings.EqualFold(prev, "wer") && strings.EqualFold(cur, "wer") && position >= 2 {
-		p2 := tokens[position-2].GetToken()
-		if p2 == "," || strings.HasPrefix(strings.ToLower(p2), "weiß") || strings.HasPrefix(strings.ToLower(p2), "weiss") ||
-			strings.EqualFold(p2, "nicht") {
-			return true
 		}
 	}
 	// single-char spelling A B B A
 	if deSingleChar.MatchString(cur) && position > 1 &&
-		deSingleChar.MatchString(tokens[position-2].GetToken()) &&
-		position+1 < len(tokens) && deSingleChar.MatchString(tokens[position+1].GetToken()) {
-		return true
-	}
-	// base Phi etc.
-	return false
-}
-
-func isGermanVerb3(s string) bool {
-	// surface: warfen, konnte, wollten, ...
-	l := strings.ToLower(s)
-	if strings.HasSuffix(l, "te") || strings.HasSuffix(l, "ten") || strings.HasSuffix(l, "en") {
-		return true
-	}
-	switch l {
-	case "warf", "warfen", "konnte", "konnten", "wollte", "sollte", "musste", "müsste":
-		return true
-	}
-	return false
-}
-
-func isInfinitive(s string) bool {
-	return strings.HasSuffix(strings.ToLower(s), "en") || strings.HasSuffix(strings.ToLower(s), "n")
-}
-
-func isDieDieException(s string) bool {
-	switch strings.ToLower(s) {
-	case "alle", "nur", "obwohl", "lediglich", "für", "fur", "zwar", "aber", "wie", "bei":
+		tokens[position-2] != nil && deSingleChar.MatchString(tokens[position-2].GetToken()) &&
+		position+1 < len(tokens) && tokens[position+1] != nil &&
+		deSingleChar.MatchString(tokens[position+1].GetToken()) {
 		return true
 	}
 	return false

@@ -2,8 +2,9 @@ package pl
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCorePolishRules installs shared layout + Polish word-repeat + beginning.
@@ -11,6 +12,7 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	lt.PriorityForId = language.PolishPriorityForId
 	rules.RegisterSharedLayoutRules(lt, "pl")
 	wr := NewPolishWordRepeatRule(map[string]string{"repetition": "Powtórzenie"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
@@ -19,10 +21,7 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "pl", []patterns.TokenSequenceSpec{
-		{ID: "PL_W_W", Tokens: []string{"w", "w"}, Message: "Możliwe powtórzenie przyimka 'w'.", Suggestion: "w"},
-		{ID: "PL_Z_Z", Tokens: []string{"z", "z"}, Message: "Możliwe powtórzenie przyimka 'z'.", Suggestion: "z"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
@@ -35,4 +34,22 @@ func RegisterCorePolishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
 	dr := NewDashRule(nil)
 	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
+
+	// Java createDefaultSpellingRule → MorfologikPolishSpellerRule.
+	// Always register full Match (isNotCompound, pruneSuggestions, niby-/quasi-);
+	// wire filter dict when binary present (fail-closed IsMisspelled without it).
+	sp := NewMorfologikPolishSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(PolishSpellerDict); p != "" {
+		if WirePolishFilterSpeller(p) {
+			sp.IsMisspelled = FilterDictIsMisspelled
+		}
+	}
+	ltRef := lt
+	WirePolishSpellerTagPOS(sp, func(token string) []languagetool.TokenTag {
+		if ltRef.TagWord == nil {
+			return nil
+		}
+		return ltRef.TagWord(token)
+	})
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

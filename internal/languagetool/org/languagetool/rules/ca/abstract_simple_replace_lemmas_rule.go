@@ -8,45 +8,67 @@ import (
 )
 
 // SynthesizeFunc synthesizes surface forms for lemma+postag (pluggable synthesizer).
-// Returns empty when synthesis fails; caller may fall back to bare lemma.
+// Ports CatalanSynthesizer.synthesize(AnalyzedToken, postag). Empty when synthesis fails.
 type SynthesizeFunc func(lemma, postag string) []string
 
 // AbstractSimpleReplaceLemmasRule ports org.languagetool.rules.ca.AbstractSimpleReplaceLemmasRule.
-// Matches wrong lemmas and suggests synthesized replacements.
+// Matches wrong lemmas (from tagger readings) and suggests synthesized replacements.
+// Without lemma readings, fail closed (no surface invent of forms).
 type AbstractSimpleReplaceLemmasRule struct {
 	ID          string
 	Description string
+	ShortMsg    string
+	// MessageFn optional; default "Possible lemma replacement for {lemma}".
+	MessageFn func(tokenStr string, replacements []string) string
 	// WrongLemmas maps wrong lemma → replacement lemmas.
 	WrongLemmas map[string][]string
-	// Synthesize optional; when nil, bare replacement lemmas are suggested.
+	// Synthesize optional; when nil/empty, bare replacement lemmas are suggested (Java).
 	Synthesize SynthesizeFunc
 }
 
 func (r *AbstractSimpleReplaceLemmasRule) GetID() string {
-	if r.ID != "" {
+	if r != nil && r.ID != "" {
 		return r.ID
 	}
 	return "CA_LEMMA_REPLACE"
 }
 
+func (r *AbstractSimpleReplaceLemmasRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return ""
+}
+
 func (r *AbstractSimpleReplaceLemmasRule) GetWrongWords() map[string][]string {
+	if r == nil {
+		return nil
+	}
 	return r.WrongLemmas
 }
 
+// Match ports AbstractSimpleReplaceLemmasRule.match.
 func (r *AbstractSimpleReplaceLemmasRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	if sentence == nil || r.WrongLemmas == nil {
+	if r == nil || sentence == nil || r.WrongLemmas == nil {
 		return nil
 	}
 	var out []*rules.RuleMatch
 	tokens := sentence.GetTokensWithoutWhitespace()
 	for i := 1; i < len(tokens); i++ {
+		tok := tokens[i]
+		if tok == nil || tok.IsImmunized() {
+			continue
+		}
 		var replacementLemmas []string
 		var replacePOSTag string
 		var originalLemma string
 		matched := false
-		for _, at := range tokens[i].GetReadings() {
+		for _, at := range tok.GetReadings() {
+			if at == nil {
+				continue
+			}
 			lem := at.GetLemma()
-			if lem == nil {
+			if lem == nil || *lem == "" {
 				continue
 			}
 			if repl, ok := r.WrongLemmas[*lem]; ok {
@@ -62,12 +84,12 @@ func (r *AbstractSimpleReplaceLemmasRule) Match(sentence *languagetool.AnalyzedS
 		if !matched {
 			continue
 		}
+		// find suggestions (Java: only when replacePOSTag != null)
 		var possible []string
 		if replacementLemmas != nil && replacePOSTag != "" {
 			for _, rl := range replacementLemmas {
 				synthesized := r.synth(rl, replacePOSTag)
 				if len(synthesized) == 0 {
-					// try gender-neutral postag like Java
 					tag2 := relaxGender(replacePOSTag)
 					if tag2 != replacePOSTag {
 						synthesized = r.synth(rl, tag2)
@@ -80,8 +102,12 @@ func (r *AbstractSimpleReplaceLemmasRule) Match(sentence *languagetool.AnalyzedS
 				}
 			}
 		}
-		m := rules.NewRuleMatch(r, sentence, tokens[i].GetStartPos(), tokens[i].GetEndPos(),
-			"Possible lemma replacement for "+originalLemma)
+		msg := "Possible lemma replacement for " + originalLemma
+		if r.MessageFn != nil {
+			msg = r.MessageFn(tok.GetToken(), possible)
+		}
+		m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
+		m.ShortMessage = r.ShortMsg
 		if len(possible) > 0 {
 			m.SetSuggestedReplacements(possible)
 		}
@@ -91,7 +117,7 @@ func (r *AbstractSimpleReplaceLemmasRule) Match(sentence *languagetool.AnalyzedS
 }
 
 func (r *AbstractSimpleReplaceLemmasRule) synth(lemma, postag string) []string {
-	if r.Synthesize == nil {
+	if r == nil || r.Synthesize == nil {
 		return nil
 	}
 	return r.Synthesize(lemma, postag)

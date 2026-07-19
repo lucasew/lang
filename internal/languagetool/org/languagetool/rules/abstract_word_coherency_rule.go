@@ -9,17 +9,32 @@ import (
 )
 
 // AbstractWordCoherencyRule ports org.languagetool.rules.AbstractWordCoherencyRule.
+// Java ctor: setCategory(MISC). getShortMessage() default null. minToCheckParagraph = -1.
 type AbstractWordCoherencyRule struct {
 	Messages    map[string]string
 	ID          string
 	Description string
 	WordMap     map[string]map[string]struct{}
-	// ToBase maps surface form → uninflected file form (lemma stand-in).
+	// Category ports Rule.category (Java MISC).
+	Category *Category
+	// ToBase maps surface form → uninflected file form (lemma stand-in for replacement casing).
+	// Not an invent expand of inflections — production loads file pairs only; lemmas come from tagger.
 	ToBase map[string]string
 	// MessageFn(word1, word2) — word1 is the later variant, word2 the established one.
 	MessageFn         func(word1, word2 string) string
-	ShortMsg          string
+	ShortMsg          string // Java getShortMessage(); empty = null
 	CreateReplacement func(marked, token, otherSpelling string, tmpToken *languagetool.AnalyzedTokenReadings) string
+}
+
+// InitWordCoherencyMeta applies Java AbstractWordCoherencyRule constructor metadata.
+func InitWordCoherencyMeta(r *AbstractWordCoherencyRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatMisc.GetCategory(messages)
+	}
 }
 
 func (r *AbstractWordCoherencyRule) GetID() string {
@@ -28,6 +43,24 @@ func (r *AbstractWordCoherencyRule) GetID() string {
 	}
 	return "WORD_COHERENCY"
 }
+
+func (r *AbstractWordCoherencyRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return ""
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *AbstractWordCoherencyRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// MinToCheckParagraph ports AbstractWordCoherencyRule.minToCheckParagraph (Java returns -1).
+func (r *AbstractWordCoherencyRule) MinToCheckParagraph() int { return -1 }
 
 // Match ports AbstractWordCoherencyRule.match over sentences.
 func (r *AbstractWordCoherencyRule) Match(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
@@ -91,6 +124,12 @@ func (r *AbstractWordCoherencyRule) createReplacement(marked, token, otherSpelli
 	if r.CreateReplacement != nil {
 		return r.CreateReplacement(marked, token, otherSpelling, tmpToken)
 	}
+	return DefaultWordCoherencyReplacement(marked, token, otherSpelling)
+}
+
+// DefaultWordCoherencyReplacement ports AbstractWordCoherencyRule.createReplacement
+// surface substitution (used when language override falls through).
+func DefaultWordCoherencyReplacement(marked, token, otherSpelling string) string {
 	re, err := regexp.Compile("(?i)" + regexp.QuoteMeta(token))
 	if err != nil {
 		return otherSpelling

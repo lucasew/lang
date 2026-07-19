@@ -5,6 +5,9 @@ import (
 	"embed"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
 //go:embed data/addedCompound.txt
@@ -73,4 +76,17 @@ func (f *CompoundCheckFilter) Accept(part1, part2 string) bool {
 	}
 	_, ok := set[strings.ToLower(part2)]
 	return ok
+}
+
+// AcceptRuleMatch ports CompoundCheckFilter.acceptRuleMatch.
+// Keep match only when part1;part2 appears in addedCompound.txt.
+func (f *CompoundCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if match == nil {
+		return nil
+	}
+	if !f.Accept(arguments["part1"], arguments["part2"]) {
+		return nil
+	}
+	return match
 }

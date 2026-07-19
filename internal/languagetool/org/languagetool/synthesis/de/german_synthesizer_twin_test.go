@@ -67,3 +67,81 @@ func TestGermanSynthesizer_MorfologikBug(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, []string{"anfragen"}, forms)
 }
+
+// REMOVE + case gate (Java GermanSynthesizer.lookup / synthesize).
+func TestGermanSynthesizer_RemoveAndCase(t *testing.T) {
+	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
+		"schloß\tschließen\tVER:3:SIN:PRT:NON:NEB\n" +
+			"schloss\tschließen\tVER:3:SIN:PRT:NON:NEB\n" +
+			"Häuser\thaus\tSUB:NOM:PLU:NEU\n" + // uppercase form for lowercase lemma → drop
+			"häuser\thaus\tSUB:NOM:PLU:NEU\n" +
+			"Ihr\tmein\tPRO:PER:NOM:PLU:ALG\n", // mein allows cross-case
+	))
+	require.NoError(t, err)
+	s := NewGermanSynthesizer(manual)
+
+	// old spelling in REMOVE set is dropped
+	lem := "schließen"
+	tok := languagetool.NewAnalyzedToken("schließen", nil, &lem)
+	forms, err := s.Synthesize(tok, "VER:3:SIN:PRT:NON:NEB")
+	require.NoError(t, err)
+	require.Equal(t, []string{"schloss"}, forms)
+
+	// lowercase lemma must not yield uppercase form
+	hl := "haus"
+	htok := languagetool.NewAnalyzedToken("haus", nil, &hl)
+	forms, err = s.Synthesize(htok, "SUB:NOM:PLU:NEU")
+	require.NoError(t, err)
+	require.Equal(t, []string{"häuser"}, forms)
+
+	// mein allows Ihr (cross-case exception)
+	ml := "mein"
+	mtok := languagetool.NewAnalyzedToken("mein", nil, &ml)
+	forms, err = s.Synthesize(mtok, "PRO:PER:NOM:PLU:ALG")
+	require.NoError(t, err)
+	require.Equal(t, []string{"Ihr"}, forms)
+}
+
+// getCompoundForms: whole compound not in synth dict → split last part, rejoin (Java).
+func TestGermanSynthesizer_GetCompoundForms(t *testing.T) {
+	// Only last-part lemma Boot is in the synth manual; Hausboot is not.
+	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
+		"Boote\tBoot\tSUB:NOM:PLU:NEU\n" +
+			"Booten\tBoot\tSUB:DAT:PLU:NEU\n",
+	))
+	require.NoError(t, err)
+	s := NewGermanSynthesizer(manual)
+
+	lemma := "Hausboot"
+	tok := languagetool.NewAnalyzedToken("Hausboot", nil, &lemma)
+
+	// Without compound tokenizer: fail-closed (no invent split)
+	forms, err := s.Synthesize(tok, "SUB:NOM:PLU:NEU")
+	require.NoError(t, err)
+	require.Empty(t, forms)
+
+	// Strict split like GermanCompoundTokenizer when lexicon knows parts
+	s.StrictCompoundTokenize = func(w string) []string {
+		if w == "Hausboot" {
+			return []string{"Haus", "Boot"}
+		}
+		if w == "Haus-Boot" {
+			return []string{"Haus-Boot"} // single → hyphen split in getCompoundForms
+		}
+		return []string{w}
+	}
+	forms, err = s.Synthesize(tok, "SUB:NOM:PLU:NEU")
+	require.NoError(t, err)
+	require.Equal(t, []string{"Hausboote"}, forms)
+
+	forms, err = s.SynthesizeRE(tok, ".*:PLU:.*", true)
+	require.NoError(t, err)
+	require.ElementsMatch(t, []string{"Hausboote", "Hausbooten"}, forms)
+
+	// Hyphen compounds: last segment keeps capital when original last part was capital
+	hyLemma := "Haus-Boot"
+	hyTok := languagetool.NewAnalyzedToken("Haus-Boot", nil, &hyLemma)
+	forms, err = s.Synthesize(hyTok, "SUB:NOM:PLU:NEU")
+	require.NoError(t, err)
+	require.Equal(t, []string{"Haus-Boote"}, forms)
+}

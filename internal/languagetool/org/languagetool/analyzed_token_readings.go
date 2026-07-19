@@ -7,17 +7,24 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// AnalyzedTokenReadings ports org.languagetool.AnalyzedTokenReadings (subset needed for tests; expand 1:1).
+// AnalyzedTokenReadings ports org.languagetool.AnalyzedTokenReadings (1:1 expand).
 type AnalyzedTokenReadings struct {
 	anTokReadings            []*AnalyzedToken
 	startPos                 int
 	token                    string
+	// cleanToken is optional surface after soft-hyphen / fixup (Java cleanToken); nil ⇒ use token.
+	cleanToken               *string
+	// fixPos ports posFix for getCorrectedTextLength (soft-hyphen removal offsets).
+	fixPos                   int
 	isWhitespace             bool
 	isLinebreak              bool
 	isSentStart              bool
 	isSentEnd                bool
 	isParaEnd                bool
 	isWhitespaceBefore       bool
+	// whitespaceBeforeChar is the preceding whitespace string (Java whitespaceBeforeChar).
+	// Empty when there is no whitespace before the token.
+	whitespaceBeforeChar     string
 	isImmunized              bool
 	immunizationSrcLine      int
 	historicalAnnotations    string
@@ -25,6 +32,8 @@ type AnalyzedTokenReadings struct {
 	hasTypographicApostrophe bool
 	chunkTags                []string
 	isIgnoredBySpeller       bool
+	// isPosTagUnknown ports Java isPosTagUnknown: single reading with null POS at construction.
+	isPosTagUnknown          bool
 }
 
 func NewAnalyzedTokenReadings(tok *AnalyzedToken) *AnalyzedTokenReadings {
@@ -40,10 +49,13 @@ func NewAnalyzedTokenReadingsList(tokens []*AnalyzedToken, startPos int) *Analyz
 		panic("AnalyzedTokenReadings: empty tokens")
 	}
 	r := &AnalyzedTokenReadings{
-		anTokReadings: append([]*AnalyzedToken(nil), tokens...),
-		startPos:      startPos,
-		token:         tokens[0].GetToken(),
+		anTokReadings:        append([]*AnalyzedToken(nil), tokens...),
+		startPos:             startPos,
+		token:                tokens[0].GetToken(),
+		whitespaceBeforeChar: "", // Java constructor default
 	}
+	// Java: isPosTagUnknown = tokens.size() == 1 && tokens.get(0).getPOSTag() == null
+	r.isPosTagUnknown = len(tokens) == 1 && tokens[0].GetPOSTag() == nil
 	r.isWhitespace = tools.IsWhitespace(r.token)
 	r.isWhitespaceBefore = tokens[0].IsWhitespaceBefore()
 	r.isLinebreak = r.token == "\n" || r.token == "\r\n" || r.token == "\r" || r.token == "\n\r"
@@ -66,9 +78,11 @@ func NewAnalyzedTokenReadingsFromOld(old *AnalyzedTokenReadings, newReadings []*
 	if old.IsParagraphEnd() {
 		r.SetParagraphEnd()
 	}
-	r.isWhitespaceBefore = old.isWhitespaceBefore
-	for _, t := range r.anTokReadings {
-		t.SetWhitespaceBefore(r.isWhitespaceBefore)
+	// Java: setWhitespaceBefore(oldAtr.getWhitespaceBefore())
+	r.SetWhitespaceBeforeToken(old.GetWhitespaceBefore())
+	// Java: setChunkTags(oldAtr.getChunkTags()) — required for SubjectVerbAgreement etc.
+	if len(old.chunkTags) > 0 {
+		r.SetChunkTags(old.chunkTags)
 	}
 	if old.isImmunized {
 		r.Immunize(old.immunizationSrcLine)
@@ -76,9 +90,39 @@ func NewAnalyzedTokenReadingsFromOld(old *AnalyzedTokenReadings, newReadings []*
 	if old.isIgnoredBySpeller {
 		r.IgnoreSpelling()
 	}
-	r.historicalAnnotations = old.historicalAnnotations
-	_ = ruleApplied
+	// Java: if (oldAtr.hasTypographicApostrophe()) setTypographicApostrophe()
+	if old.hasTypographicApostrophe {
+		r.SetTypographicApostrophe(true)
+	}
+	// cleanToken / posFix are not copied by Java FromOld constructor — leave defaults.
+	// Java: setHistoricalAnnotations + addHistoricalAnnotations (only when GlobalConfig.isVerbose)
+	r.setHistoricalAnnotations(old.GetHistoricalAnnotations())
+	r.addHistoricalAnnotations(old.String(), ruleApplied)
 	return r
+}
+
+// GetHistoricalAnnotations ports getHistoricalAnnotations.
+func (r *AnalyzedTokenReadings) GetHistoricalAnnotations() string {
+	if r == nil {
+		return ""
+	}
+	return r.historicalAnnotations
+}
+
+// setHistoricalAnnotations ports private setHistoricalAnnotations (verbose-gated).
+func (r *AnalyzedTokenReadings) setHistoricalAnnotations(s string) {
+	if r == nil || !IsVerbose() {
+		return
+	}
+	r.historicalAnnotations = s
+}
+
+// addHistoricalAnnotations ports private addHistoricalAnnotations (verbose-gated).
+func (r *AnalyzedTokenReadings) addHistoricalAnnotations(oldValue, ruleApplied string) {
+	if r == nil || !IsVerbose() || ruleApplied == "" {
+		return
+	}
+	r.historicalAnnotations = r.GetHistoricalAnnotations() + "\n" + ruleApplied + ": " + oldValue + " -> " + r.String()
 }
 
 func (r *AnalyzedTokenReadings) GetReadings() []*AnalyzedToken {
@@ -133,6 +177,36 @@ func (r *AnalyzedTokenReadings) ReadingWithExactTag(tag string) *AnalyzedToken {
 	return nil
 }
 
+// ReadingWithTagRegex ports readingWithTagRegex — first reading whose POS fully matches the regex.
+func (r *AnalyzedTokenReadings) ReadingWithTagRegex(posTagRegex string) *AnalyzedToken {
+	if r == nil {
+		return nil
+	}
+	re, err := regexp.Compile("^(?:" + posTagRegex + ")$")
+	if err != nil {
+		return nil
+	}
+	for _, reading := range r.anTokReadings {
+		if reading.GetPOSTag() != nil && re.MatchString(*reading.GetPOSTag()) {
+			return reading
+		}
+	}
+	return nil
+}
+
+// ReadingWithLemma ports readingWithLemma — first reading with exact lemma.
+func (r *AnalyzedTokenReadings) ReadingWithLemma(lemma string) *AnalyzedToken {
+	if r == nil {
+		return nil
+	}
+	for _, reading := range r.anTokReadings {
+		if reading.GetLemma() != nil && *reading.GetLemma() == lemma {
+			return reading
+		}
+	}
+	return nil
+}
+
 func (r *AnalyzedTokenReadings) HasPartialPosTag(posTag string) bool {
 	for _, reading := range r.anTokReadings {
 		if reading.GetPOSTag() != nil && strings.Contains(*reading.GetPOSTag(), posTag) {
@@ -140,6 +214,91 @@ func (r *AnalyzedTokenReadings) HasPartialPosTag(posTag string) bool {
 		}
 	}
 	return false
+}
+
+// HasAnyPartialPosTag ports hasAnyPartialPosTag.
+func (r *AnalyzedTokenReadings) HasAnyPartialPosTag(posTags ...string) bool {
+	for _, p := range posTags {
+		if r.HasPartialPosTag(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// HasLemma ports hasLemma — true if any reading has the given lemma.
+func (r *AnalyzedTokenReadings) HasLemma(lemma string) bool {
+	return r.ReadingWithLemma(lemma) != nil
+}
+
+// HasReading ports hasReading — true if there is at least one reading slot.
+func (r *AnalyzedTokenReadings) HasReading() bool {
+	return r != nil && len(r.anTokReadings) > 0
+}
+
+// HasSameLemmas ports hasSameLemmas (all readings share one lemma).
+func (r *AnalyzedTokenReadings) HasSameLemmas() bool {
+	if r == nil {
+		return true
+	}
+	return r.hasSameLemmas
+}
+
+// IsPosTagUnknown ports isPosTagUnknown (single untagged reading at construction).
+func (r *AnalyzedTokenReadings) IsPosTagUnknown() bool {
+	return r != nil && r.isPosTagUnknown
+}
+
+// GetImmunizationSourceLine ports getImmunizationSourceLine.
+func (r *AnalyzedTokenReadings) GetImmunizationSourceLine() int {
+	if r == nil {
+		return 0
+	}
+	return r.immunizationSrcLine
+}
+
+// SetPosFix / GetPosFix port posFix (soft-hyphen position fixes).
+func (r *AnalyzedTokenReadings) SetPosFix(fix int) {
+	if r != nil {
+		r.fixPos = fix
+	}
+}
+
+func (r *AnalyzedTokenReadings) GetPosFix() int {
+	if r == nil {
+		return 0
+	}
+	return r.fixPos
+}
+
+// SetCleanToken / GetCleanToken port cleanToken (Experimental in Java 5.1).
+func (r *AnalyzedTokenReadings) SetCleanToken(clean string) {
+	if r == nil {
+		return
+	}
+	c := clean
+	r.cleanToken = &c
+}
+
+// SetTokenSurface ports AnalyzedTokenReadings.addReading when a longer surface
+// replaces this.token (Java soft-hyphen: orig with U+00AD becomes getToken()).
+func (r *AnalyzedTokenReadings) SetTokenSurface(surface string) {
+	if r == nil {
+		return
+	}
+	r.token = surface
+	r.isWhitespace = tools.IsWhitespace(surface)
+	r.isLinebreak = surface == "\n" || surface == "\r\n" || surface == "\r" || surface == "\n\r"
+}
+
+func (r *AnalyzedTokenReadings) GetCleanToken() string {
+	if r == nil {
+		return ""
+	}
+	if r.cleanToken != nil {
+		return *r.cleanToken
+	}
+	return r.token
 }
 
 // HasPosTagStartingWith ports AnalyzedTokenReadings.hasPosTagStartingWith.
@@ -206,7 +365,7 @@ func (r *AnalyzedTokenReadings) MatchesPosTagRegex(posTagRegex string) bool {
 }
 
 func (r *AnalyzedTokenReadings) AddReading(token *AnalyzedToken, ruleApplied string) {
-	_ = ruleApplied
+	oldValue := r.String()
 	l := make([]*AnalyzedToken, 0, len(r.anTokReadings)+1)
 	// Java: subList(0, length-1) then maybe add last if POS non-null
 	if len(r.anTokReadings) > 0 {
@@ -227,10 +386,11 @@ func (r *AnalyzedTokenReadings) AddReading(token *AnalyzedToken, ruleApplied str
 	r.isSentEnd = r.HasPosTag(SentenceEndTagName)
 	r.setNoRealPOStag()
 	r.hasSameLemmas = r.areLemmasSame()
+	r.addHistoricalAnnotations(oldValue, ruleApplied)
 }
 
 func (r *AnalyzedTokenReadings) RemoveReading(token *AnalyzedToken, ruleApplied string) {
-	_ = ruleApplied
+	oldValue := r.String()
 	tmpTok := NewAnalyzedToken(token.GetToken(), token.GetPOSTag(), token.GetLemma())
 	tmpTok.SetWhitespaceBefore(r.isWhitespaceBefore)
 	var l []*AnalyzedToken
@@ -260,6 +420,7 @@ func (r *AnalyzedTokenReadings) RemoveReading(token *AnalyzedToken, ruleApplied 
 		r.SetParagraphEnd()
 	}
 	r.hasSameLemmas = r.areLemmasSame()
+	r.addHistoricalAnnotations(oldValue, ruleApplied)
 }
 
 func (r *AnalyzedTokenReadings) LeaveReading(token *AnalyzedToken) {
@@ -454,11 +615,26 @@ func (r *AnalyzedTokenReadings) IsFieldCode() bool {
 	t := r.token
 	return t == "\u0001" || t == "\u0002"
 }
-func (r *AnalyzedTokenReadings) IsWhitespaceBefore() bool { return r.isWhitespaceBefore }
+func (r *AnalyzedTokenReadings) IsWhitespaceBefore() bool {
+	if r == nil {
+		return false
+	}
+	return r.isWhitespaceBefore
+}
 
-// SetWhitespaceBefore ports AnalyzedTokenReadings.setWhitespaceBefore(boolean) +
-// the prevToken overload used by JLanguageTool (whitespace if prev is whitespace).
+// GetWhitespaceBefore ports AnalyzedTokenReadings.getWhitespaceBefore (preceding ws string).
+func (r *AnalyzedTokenReadings) GetWhitespaceBefore() string {
+	if r == nil {
+		return ""
+	}
+	return r.whitespaceBeforeChar
+}
+
+// SetWhitespaceBefore ports boolean whitespace-before flag (does not change whitespaceBeforeChar).
 func (r *AnalyzedTokenReadings) SetWhitespaceBefore(v bool) {
+	if r == nil {
+		return
+	}
 	r.isWhitespaceBefore = v
 	for _, t := range r.anTokReadings {
 		t.SetWhitespaceBefore(v)
@@ -466,8 +642,20 @@ func (r *AnalyzedTokenReadings) SetWhitespaceBefore(v bool) {
 }
 
 // SetWhitespaceBeforeToken ports setWhitespaceBefore(String prevToken).
+// Stores prevToken as whitespaceBeforeChar when it is whitespace.
 func (r *AnalyzedTokenReadings) SetWhitespaceBeforeToken(prevToken string) {
-	r.SetWhitespaceBefore(prevToken != "" && tools.IsWhitespace(prevToken))
+	if r == nil {
+		return
+	}
+	isWS := prevToken != "" && tools.IsWhitespace(prevToken)
+	r.isWhitespaceBefore = isWS
+	for _, t := range r.anTokReadings {
+		t.SetWhitespaceBefore(isWS)
+	}
+	// Java only assigns whitespaceBeforeChar when isWhitespaceBefore is true.
+	if isWS {
+		r.whitespaceBeforeChar = prevToken
+	}
 }
 
 // IsNonWord ports AnalyzedTokenReadings.isNonWord — punctuation/bracket-only tokens.

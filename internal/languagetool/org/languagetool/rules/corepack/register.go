@@ -7,22 +7,30 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	// Side-effect: language init wires FilterFrenchRuleMatchesHook (French AI_FR_GGEC).
+	_ "github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ar"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ast"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/be"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/br"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ca"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/crh"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/da"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/el"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/eo" // DateCheckFilter init + RegisterCore
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/es"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fa"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/fr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ga"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/gl"
+	islang "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/is"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/it"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/km"
+	ltlang "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/lt"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ml"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/pt"
@@ -32,6 +40,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sr"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/sv"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/tl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
 
@@ -65,17 +74,18 @@ var Supported = []struct {
 	{"ga", "Irish"},
 	{"sr", "Serbian"},
 	{"be", "Belarusian"},
-	// generic layout + word-repeat packs (no language-specific rule twins yet)
+	// named packs with faithful spellers where Java registers one
 	{"eo", "Esperanto"},
 	{"is", "Icelandic"},
-	{"ja", "Japanese"},
 	{"lt", "Lithuanian"},
 	{"ml", "Malayalam"},
-	{"ta", "Tamil"},
 	{"tl", "Tagalog"},
-	{"zh", "Chinese"},
 	{"ast", "Asturian"},
 	{"crh", "Crimean Tatar"},
+	// generic layout + word-repeat (no Java default speller / no pack twins yet)
+	{"ja", "Japanese"},
+	{"ta", "Tamil"},
+	{"zh", "Chinese"},
 }
 
 // registerGeneric installs shared layout + base word-repeat + word-repeat-beginning.
@@ -160,27 +170,27 @@ func Register(lt *languagetool.JLanguageTool, lang string) {
 	case "be":
 		be.RegisterCoreBelarusianRules(lt)
 	case "eo":
-		registerGeneric(lt, "eo", "EO_WORD_REPEAT_RULE")
+		eo.RegisterCoreEsperantoRules(lt)
 	case "is":
-		registerGeneric(lt, "is", "IS_WORD_REPEAT_RULE")
-	case "ja":
-		registerGeneric(lt, "ja", "JA_WORD_REPEAT_RULE")
+		islang.RegisterCoreIcelandicRules(lt)
 	case "lt":
-		registerGeneric(lt, "lt", "LT_WORD_REPEAT_RULE")
+		ltlang.RegisterCoreLithuanianRules(lt)
 	case "ml":
-		registerGeneric(lt, "ml", "ML_WORD_REPEAT_RULE")
+		ml.RegisterCoreMalayalamRules(lt)
+	case "tl":
+		tl.RegisterCoreTagalogRules(lt)
+	case "ast":
+		ast.RegisterCoreAsturianRules(lt)
+	case "crh":
+		crh.RegisterCoreCrimeanTatarRules(lt)
 	case "sr":
 		sr.RegisterCoreSerbianRules(lt)
+	case "ja":
+		registerGeneric(lt, "ja", "JA_WORD_REPEAT_RULE")
 	case "ta":
 		registerGeneric(lt, "ta", "TA_WORD_REPEAT_RULE")
-	case "tl":
-		registerGeneric(lt, "tl", "TL_WORD_REPEAT_RULE")
 	case "zh":
 		registerGeneric(lt, "zh", "ZH_WORD_REPEAT_RULE")
-	case "ast":
-		registerGeneric(lt, "ast", "AST_WORD_REPEAT_RULE")
-	case "crh":
-		registerGeneric(lt, "crh", "CRH_WORD_REPEAT_RULE")
 	default:
 		rules.RegisterCoreRules(lt, lang)
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 // PortugueseFillerWordsRule ports org.languagetool.rules.pt.PortugueseFillerWordsRule
-// in minPercent=0 mode (report all fillers).
+// Java default minPercent=8 (AbstractFillerWordsRule).
 type PortugueseFillerWordsRule struct {
 	*rules.AbstractFillerWordsRule
 }
@@ -41,13 +41,13 @@ func NewPortugueseFillerWordsRule(messages map[string]string) *PortugueseFillerW
 		fillers[w] = struct{}{}
 	}
 	base := &rules.AbstractFillerWordsRule{
-		Messages:    messages,
-		ID:          "FILLER_WORDS_PT",
-		Description: "Filler words",
-		ShortMsg:    "Filler word",
-		Message:     "Esta palavra pode ser um enchimento estilístico.",
-		FillerWords: fillers,
-		MinPercent:  0,
+		AbstractStatisticStyleRule: &rules.AbstractStatisticStyleRule{},
+		Messages:                   messages,
+		ID:                         "FILLER_WORDS_PT",
+		Description:                "Filler words",
+		ShortMsg:                   "Filler word",
+		Message:                    "Esta palavra pode ser um enchimento estilístico.",
+		FillerWords:                fillers,
 		IsException: func(tokens []*languagetool.AnalyzedTokenReadings, num int) bool {
 			if num >= 1 && tokens[num].GetToken() == "mas" && tokens[num-1].GetToken() == "," {
 				return true
@@ -55,6 +55,7 @@ func NewPortugueseFillerWordsRule(messages map[string]string) *PortugueseFillerW
 			return false
 		},
 	}
+	rules.InitFillerWordsMeta(base, messages, false)
 	return &PortugueseFillerWordsRule{AbstractFillerWordsRule: base}
 }
 

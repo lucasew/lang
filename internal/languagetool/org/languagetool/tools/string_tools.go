@@ -430,9 +430,26 @@ func ReadStream(r io.Reader) (string, error) {
 	return string(b), nil
 }
 
-var punctuationMarkRE = regexp.MustCompile(`^[\p{P}']+$`)
+// Java: Pattern.compile("[\\p{IsPunctuation}']") — entire string is one punct char (or apostrophe).
+var punctuationMarkRE = regexp.MustCompile(`^[\p{P}']$`)
 
 // IsPunctuationMark ports StringTools.isPunctuationMark.
 func IsPunctuationMark(input string) bool {
 	return punctuationMarkRE.MatchString(input)
+}
+
+// Java: Pattern.compile("[\\p{IsPunctuation}\\p{S}']")
+var punctuationOrSymbolRE = regexp.MustCompile(`^[\p{P}\p{S}']$`)
+
+// IsPunctuationOrSymbol ports StringTools.isPunctuationOrSymbol.
+func IsPunctuationOrSymbol(input string) bool {
+	return punctuationOrSymbolRE.MatchString(input)
+}
+
+// Java: Pattern.compile("[^\\p{L}]+") — entire string is one or more non-letters.
+var notWordStringRE = regexp.MustCompile(`^[^\p{L}]+$`)
+
+// IsNotWordString ports StringTools.isNotWordString.
+func IsNotWordString(input string) bool {
+	return notWordStringRE.MatchString(input)
 }

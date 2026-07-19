@@ -1,47 +1,77 @@
 package de
 
-import "time"
+import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+)
 
-// NewYearDateFilter ports org.languagetool.rules.de.NewYearDateFilter helpers
-// for pattern-rule year mismatch detection in early January.
+// NewYearDateFilter ports org.languagetool.rules.de.NewYearDateFilter
+// (extends AbstractNewYearDateFilter with DE month localization).
 type NewYearDateFilter struct {
 	// ForceJanuary / ForceYear override calendar for tests (Java TestHackHelper).
 	ForceJanuary *bool
 	ForceYear    *int
+	core         *rules.NewYearDateFilterCore
 }
 
 func NewNewYearDateFilter() *NewYearDateFilter {
-	return &NewYearDateFilter{}
+	return &NewYearDateFilter{
+		core: deNewYearDateCore(),
+	}
 }
 
-func (f *NewYearDateFilter) isJanuary() bool {
-	if f.ForceJanuary != nil {
-		return *f.ForceJanuary
+func (f *NewYearDateFilter) effectiveCore() *rules.NewYearDateFilterCore {
+	if f == nil {
+		return nil
 	}
-	return time.Now().Month() == time.January
-}
-
-func (f *NewYearDateFilter) currentYear() int {
-	if f.ForceYear != nil {
-		return *f.ForceYear
+	core := f.core
+	if core == nil {
+		core = deNewYearDateCore()
 	}
-	return time.Now().Year()
+	// Copy so Force* on this filter apply without mutating shared defaults.
+	c := *core
+	c.ForceJanuary = f.ForceJanuary
+	c.ForceYear = f.ForceYear
+	if c.GetMonth == nil {
+		c.GetMonth = core.GetMonth
+	}
+	return &c
 }
 
 // ShouldFlag reports whether a date with year/month may still refer to the previous
-// year wrongly (Java: January + year == currentYear-1 + month != December).
+// year wrongly (Java: January + year+1 == currentYear + month != December).
 func (f *NewYearDateFilter) ShouldFlag(year, month int) bool {
-	if !f.isJanuary() {
-		return false
-	}
-	if month == 12 {
-		return false
-	}
-	return year == f.currentYear()-1
+	return f.effectiveCore().ShouldFlag(year, month)
 }
 
 // MonthNumber uses DateFilterHelper (1–12).
 func (f *NewYearDateFilter) MonthNumber(localizedMonth string) (int, error) {
+	core := f.effectiveCore()
+	if core != nil && core.GetMonth != nil {
+		return core.GetMonth(localizedMonth)
+	}
 	m, err := NewDateFilterHelper().GetMonth(localizedMonth)
 	return int(m), err
+}
+
+// AcceptRuleMatch ports AbstractNewYearDateFilter.acceptRuleMatch.
+// Keeps match in January for non-December dates with year == currentYear-1;
+// rewrites {year} and {realYear} in the message.
+func (f *NewYearDateFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	core := f.effectiveCore()
+	if core == nil {
+		return nil
+	}
+	msg := core.AcceptFromArgs(arguments, match.GetMessage())
+	if msg == "" {
+		return nil
+	}
+	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), msg)
+	out.ShortMessage = match.ShortMessage
+	out.IssueType = match.IssueType
+	return out
 }

@@ -36,12 +36,12 @@ type DashRule struct {
 
 func NewDashRule(messages map[string]string) *DashRule {
 	base := &rules.AbstractDashRule{
-		Messages:         messages,
 		ID:               "DASH_RULE",
 		CompoundPatterns: loadDashPatterns(),
 		Message:          "Błędne użycie myślnika zamiast łącznika.",
 		Description:      "Sprawdza, czy wyrazy pisane z łącznikiem zapisano z myślnikami (np. „Lądek — Zdrój” zamiast „Lądek-Zdrój”).",
 	}
+	rules.InitDashRuleMeta(base, messages)
 	return &DashRule{AbstractDashRule: base}
 }
 

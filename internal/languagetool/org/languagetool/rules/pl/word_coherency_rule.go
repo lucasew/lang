@@ -23,8 +23,9 @@ func loadCoherencyData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
-		// Expand case endings for full forms (blefu / bluffem).
-		d, err := rules.LoadWordCoherencyData(f, "/pl/coherency.txt", true)
+		// Java WordCoherencyDataLoader: file pairs only (no invent case suffixes).
+		// Inflected forms match via tagger lemmas in AbstractWordCoherencyRule.
+		d, err := rules.LoadWordCoherencyData(f, "/pl/coherency.txt", false)
 		if err != nil {
 			panic(err)
 		}
@@ -41,7 +42,6 @@ type WordCoherencyRule struct {
 func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "PL_WORD_COHERENCY",
 		Description: "Jednolita pisownia wyrazów o obocznej dopuszczalnej pisowni",
 		WordMap:     d.WordMap,
@@ -50,6 +50,7 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 			return "Formy „" + word1 + "” i „" + word2 + "” zwykle nie powinny być używane jednocześnie."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

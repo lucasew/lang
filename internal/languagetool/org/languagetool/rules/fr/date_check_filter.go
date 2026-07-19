@@ -1,17 +1,24 @@
 package fr
 
 import (
-	"fmt"
 	"time"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// DateCheckFilter ports org.languagetool.rules.fr.DateCheckFilter helpers.
+// DateCheckFilter ports org.languagetool.rules.fr.DateCheckFilter
+// (extends AbstractDateCheckWithSuggestionsFilter with FR localization).
 type DateCheckFilter struct {
 	helper *DateFilterHelper
+	inner  *rules.AbstractDateCheckWithSuggestionsFilter
 }
 
 func NewDateCheckFilter() *DateCheckFilter {
-	return &DateCheckFilter{helper: NewDateFilterHelper()}
+	return &DateCheckFilter{
+		helper: NewDateFilterHelper(),
+		inner:  frDateCheckWithSuggestions(),
+	}
 }
 
 // GetDayOfWeekJava returns Java Calendar day-of-week (Sunday=1 … Saturday=7).
@@ -33,13 +40,22 @@ func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
 
 func (f *DateCheckFilter) GetDayOfWeekName(year, month, day int) string {
 	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	return formatFRDayOfWeek(t)
+}
+
+func formatFRDayOfWeek(t time.Time) string {
 	names := []string{"dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"}
 	return names[int(t.Weekday())]
 }
 
-func (f *DateCheckFilter) AcceptRuleMatch(args map[string]string) (string, error) {
-	if _, ok := args["weekDay"]; !ok {
-		return "", fmt.Errorf("incomplete args: weekDay required")
+// AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch (super).
+func (f *DateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
 	}
-	return "", nil
+	if f.inner == nil {
+		f.inner = frDateCheckWithSuggestions()
+	}
+	return f.inner.AcceptRuleMatch(match, arguments, patternTokens, tokenPositions)
 }

@@ -3,7 +3,6 @@ package el
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreGreekRules installs shared layout + language word-repeat + beginning.
@@ -18,9 +17,7 @@ func RegisterCoreGreekRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "Τρεις διαδοχικές προτάσεις αρχίζουν με την ίδια λέξη.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "el", []patterns.TokenSequenceSpec{
-		{ID: "EL_ΚΑΙ_ΚΑΙ", Tokens: []string{"και", "και"}, Message: "Πιθανή επανάληψη του «και».", Suggestion: "και"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official homonyms replace table (embedded from upstream).
 	hr := NewReplaceHomonymsRule(nil)
@@ -31,4 +28,10 @@ func RegisterCoreGreekRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
 	sc := NewGreekSpecificCaseRule(nil)
 	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
+
+	// Java createDefaultSpellingRule / Morfologik getId; CFSA2 when dict present.
+	// Empty map shell fails closed when binary resource is missing (no invent).
+	// Always full Match (fail-closed map Words when binary dict missing; no invent).
+	sp := NewMorfologikGreekSpellerRule()
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

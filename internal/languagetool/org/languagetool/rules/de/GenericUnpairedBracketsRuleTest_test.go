@@ -24,4 +24,9 @@ func TestGenericUnpairedBracketsRule_GermanRule(t *testing.T) {
 	// unpaired (Java example style: missing close paren)
 	require.Equal(t, 1, matchN("Auch)"))
 	require.Equal(t, 1, matchN("Dem Präsidenten des Deutschen Bauernverbands (DBV zufolge habe die Dürre einen Schaden verursacht."))
+	require.Equal(t, "UNPAIRED_BRACKETS", rule.GetID())
+	require.Contains(t, rule.GetURL(), "klammern")
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain("Auch)")})
+	require.NotEmpty(t, ms)
+	require.Equal(t, rule, ms[0].GetRule())
 }

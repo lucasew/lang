@@ -23,3 +23,11 @@ func TestSpanishTagger_DictionaryPath(t *testing.T) {
 	tagger := NewSpanishTagger(nil)
 	require.NotEmpty(t, tagger.GetDictionaryPath())
 }
+
+func TestSpanishTagger_TypographicApostrophe(t *testing.T) {
+	wt := tagging.MapWordTagger{"d'": {tagging.NewTaggedWord("de", "SPS00")}}
+	tagger := NewSpanishTagger(wt)
+	got := tagger.Tag([]string{"d’"})
+	require.Len(t, got, 1)
+	require.True(t, got[0].HasTypographicApostrophe())
+}

@@ -5,15 +5,50 @@ import (
 )
 
 // WhiteSpaceAtBeginOfParagraph ports org.languagetool.rules.WhiteSpaceAtBeginOfParagraph.
+// Java: STYLE, Style; default ctor setDefaultOff.
 type WhiteSpaceAtBeginOfParagraph struct {
-	Messages map[string]string
+	Messages   map[string]string
+	Category   *Category
+	IssueType  ITSIssueType
+	DefaultOff bool
 }
 
 func NewWhiteSpaceAtBeginOfParagraph(messages map[string]string) *WhiteSpaceAtBeginOfParagraph {
-	return &WhiteSpaceAtBeginOfParagraph{Messages: messages}
+	return &WhiteSpaceAtBeginOfParagraph{
+		Messages:   messages,
+		Category:   CatStyle.GetCategory(messages),
+		IssueType:  ITSStyle,
+		DefaultOff: true,
+	}
 }
 
 func (r *WhiteSpaceAtBeginOfParagraph) GetID() string { return "WHITESPACE_PARAGRAPH_BEGIN" }
+
+// GetDescription ports getDescription (whitespace_at_begin_parapgraph_desc).
+func (r *WhiteSpaceAtBeginOfParagraph) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["whitespace_at_begin_parapgraph_desc"]; s != "" {
+			return s
+		}
+	}
+	return "Whitespace at begin of paragraph"
+}
+
+func (r *WhiteSpaceAtBeginOfParagraph) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *WhiteSpaceAtBeginOfParagraph) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *WhiteSpaceAtBeginOfParagraph) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
 func isWhitespaceDel(token *languagetool.AnalyzedTokenReadings) bool {
 	return token.IsWhitespace() && token.GetToken() != "\u200B" && !token.IsLinebreak()

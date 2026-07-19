@@ -1,15 +1,151 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/WordCoherencyRuleTest.java
+// Production loads coherency.txt pairs only (no invent suffixes). Inflected forms
+// match via lemmas — Java uses GermanTagger; tests attach the same lemmas the
+// morph dict would (fixture when german.dict is absent).
 import (
+	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
+// twinCoherencyLemmas: surface (lower) → lemma for WordCoherencyRuleTest inputs.
+// Mirrors GermanTagger base forms for those surfaces (not a production invent path).
+var twinCoherencyLemmas = map[string]string{
+	"aufwendig": "aufwendig", "aufwändig": "aufwändig",
+	"aufwendige": "aufwendig", "aufwändige": "aufwändig",
+	"aufwendiger": "aufwendig", "aufwändiger": "aufwändig",
+	"aufwendigste": "aufwendig", "aufwändigste": "aufwändig",
+	"delfin": "delfin", "delphin": "delphin",
+	"delfins": "delfin", "delphine": "delphin",
+	"essentiell": "essentiell", "essenziell": "essenziell",
+	"essentieller": "essentiell", "essenzielles": "essenziell",
+	"differential": "differential", "differenzial": "differenzial",
+	"differentials": "differential", "differenzials": "differenzial",
+	"facette": "facette", "fassette": "fassette",
+	"facetten": "facetten", "fassetten": "fassetten",
+	"joghurt": "joghurt", "jogurt": "jogurt",
+	// plurals lemma to singular base pairs in coherency.txt (Java morph)
+	"joghurts": "joghurt", "jogurts": "jogurt",
+	"ketchup": "ketchup", "ketschup": "ketschup",
+	"ketchups": "ketchup", "ketschups": "ketschup",
+	"kommuniqué": "kommuniqué", "kommunikee": "kommunikee",
+	"kommuniqués": "kommuniqué", "kommunikees": "kommunikee",
+	"necessaire": "necessaire", "nessessär": "nessessär",
+	"necessaires": "necessaire", "nessessärs": "nessessär",
+	"orthographie": "orthographie", "orthografie": "orthografie",
+	"substantiell": "substantiell", "substanziell": "substanziell",
+	"substantieller": "substantiell", "substanzielles": "substanziell",
+	"thunfisch": "thunfisch", "tunfisch": "tunfisch",
+	// plural forms also listed as pairs in coherency.txt
+	"thunfische": "thunfische", "tunfische": "tunfische",
+	"xylophon": "xylophon", "xylofon": "xylofon",
+	"xylophone": "xylophon", "xylofone": "xylofon",
+	"selbständig": "selbständig", "selbstständig": "selbstständig",
+	"selbständiges": "selbständig", "selbstständiger": "selbstständig",
+	"bahnhofsplatz": "bahnhofsplatz", "bahnhofplatz": "bahnhofplatz",
+}
+
 func analyzeDECoherency(s string) []*languagetool.AnalyzedSentence {
-	return languagetool.AnalyzeTextLocal(s)
+	// Sentence-local positions like AnalyzeTextLocal, with lemmas on content tokens.
+	if s == "" {
+		return nil
+	}
+	var parts []string
+	start := 0
+	runes := []rune(s)
+	for i := 0; i < len(runes); i++ {
+		r := runes[i]
+		if r == '.' || r == '!' || r == '?' {
+			if r == '.' && i+1 < len(runes) {
+				n := runes[i+1]
+				if (n >= 'a' && n <= 'z') || (n >= '0' && n <= '9') {
+					continue
+				}
+			}
+			end := i + 1
+			if end < len(runes) && (runes[end] == ' ' || runes[end] == '\n' || runes[end] == '\u00A0') {
+				if runes[end] == '\n' && end+1 < len(runes) && runes[end+1] == '\n' {
+					end++
+					if end < len(runes) && runes[end] == '\n' {
+						end++
+					}
+				} else if runes[end] == ' ' || runes[end] == '\u00A0' {
+					end++
+				} else if runes[end] == '\n' {
+					end++
+				}
+			}
+			parts = append(parts, string(runes[start:end]))
+			start = end
+			i = end - 1
+		}
+	}
+	if start < len(runes) {
+		parts = append(parts, string(runes[start:]))
+	}
+	out := make([]*languagetool.AnalyzedSentence, 0, len(parts))
+	for _, p := range parts {
+		if p == "" {
+			continue
+		}
+		out = append(out, languagetool.AnalyzeWithTagger(p, deCoherencyTagWord))
+	}
+	return out
+}
+
+var deCoherencyTaggerCached = openDiscoveredGermanTagger(DiscoverGermanResourceDir())
+
+func deCoherencyTagWord(tok string) []languagetool.TokenTag {
+	if tok == "" {
+		return nil
+	}
+	// Prefer real GermanTagger when resources exist (Java path).
+	if deCoherencyTaggerCached != nil {
+		if rd := deCoherencyTaggerCached.Lookup(tok); rd != nil {
+			var tags []languagetool.TokenTag
+			for _, r := range rd.GetReadings() {
+				if r == nil {
+					continue
+				}
+				tt := languagetool.TokenTag{}
+				if p := r.GetPOSTag(); p != nil {
+					tt.POS = *p
+				}
+				if l := r.GetLemma(); l != nil {
+					tt.Lemma = *l
+				}
+				if tt.POS != "" || tt.Lemma != "" {
+					tags = append(tags, tt)
+				}
+			}
+			if len(tags) > 0 {
+				return tags
+			}
+		}
+	}
+	// Fixture lemmas for twin-test surfaces when morph dict is missing.
+	key := strings.ToLower(tok)
+	key = strings.TrimFunc(key, func(r rune) bool {
+		return !unicode.IsLetter(r) && r != 'ä' && r != 'ö' && r != 'ü' && r != 'ß' && r != 'é' && r != 'á'
+	})
+	if lem, ok := twinCoherencyLemmas[key]; ok {
+		return []languagetool.TokenTag{{Lemma: lem}}
+	}
+	return nil
+}
+
+// Untagged AnalyzeTextLocal must not invent suffix maps (production expand=false).
+func TestWordCoherencyRule_NoInventWithoutLemma(t *testing.T) {
+	rule := NewWordCoherencyRule(nil)
+	// Plain analysis has no lemmas → inflected surfaces not in coherency.txt must not match.
+	ms := rule.MatchList(languagetool.AnalyzeTextLocal("Das ist aufwendiger, aber nicht zu aufwändig."))
+	require.Equal(t, 0, len(ms), "fail-closed without invent expand / lemmas")
 }
 
 func TestWordCoherencyRule_Rule(t *testing.T) {
@@ -115,4 +251,12 @@ func TestWordCoherencyRule_RuleCompleteTexts(t *testing.T) {
 	require.Equal(t, 1, check("Das ist das aufwändigste. Aber hallo. Es ist wirklich aufwendig."))
 	// cross-paragraph: AnalyzeTextLocal may not split on \n\n alone — use AnalyzeTextDemo if needed
 	require.Equal(t, 1, check("Das ist das aufwändigste.\n\nAber hallo. Es ist wirklich aufwendig."))
+}
+
+
+func TestWordCoherencyRule_CategoryAndMinParagraph(t *testing.T) {
+	r := NewWordCoherencyRule(nil)
+	require.NotNil(t, r.GetCategory())
+	require.Equal(t, rules.NewCategoryId("MISC"), r.GetCategory().GetID())
+	require.Equal(t, -1, r.MinToCheckParagraph())
 }

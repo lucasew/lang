@@ -26,9 +26,18 @@ func (t *FrenchTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
+		// Java FrenchTagger: apostrophe chunk tags (not setTypographicApostrophe).
 		w := word
-		if strings.Contains(w, "’") {
-			w = strings.ReplaceAll(w, "’", "'")
+		containsTypewriterApostrophe := false
+		containsTypographicApostrophe := false
+		if len(w) > 1 {
+			if strings.Contains(w, "'") {
+				containsTypewriterApostrophe = true
+			}
+			if strings.Contains(w, "’") {
+				containsTypographicApostrophe = true
+				w = strings.ReplaceAll(w, "’", "'")
+			}
 		}
 		var readings []*languagetool.AnalyzedToken
 		for _, tw := range t.TagWord(w) {
@@ -43,7 +52,15 @@ func (t *FrenchTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedToke
 		if len(readings) == 0 {
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
-		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+		atr := languagetool.NewAnalyzedTokenReadingsList(readings, pos)
+		// Java: setChunkTags replaces list; typographic overwrites typewriter when both.
+		if containsTypewriterApostrophe {
+			atr.SetChunkTags([]string{"containsTypewriterApostrophe"})
+		}
+		if containsTypographicApostrophe {
+			atr.SetChunkTags([]string{"containsTypographicApostrophe"})
+		}
+		out = append(out, atr)
 		pos += len([]rune(word))
 	}
 	return out

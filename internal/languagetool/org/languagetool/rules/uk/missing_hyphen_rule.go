@@ -11,7 +11,6 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/dash_prefixes.txt
@@ -21,7 +20,7 @@ const ua1992Tag = ":alt"
 
 var (
 	dashOnce     sync.Once
-	dashPrefixes map[string]string // lowercased prefix → tag (may be empty, ":alt", ":bad", ":slang")
+	dashPrefixes map[string]string // lowercased prefix → tag (may be empty, ":alt", …)
 	allLowerUK   = regexp.MustCompile(`^[а-яіїєґ'\-]+$`)
 )
 
@@ -39,7 +38,6 @@ func loadDashPrefixes() map[string]string {
 			if line == "" || line[0] == '#' {
 				continue
 			}
-			// strip trailing comments after #
 			if i := strings.IndexByte(line, '#'); i >= 0 {
 				line = strings.TrimSpace(line[:i])
 			}
@@ -52,7 +50,7 @@ func loadDashPrefixes() map[string]string {
 			if len(parts) > 1 {
 				tag = parts[1]
 			}
-			// Java filters
+			// Java static filters
 			if key == "блок" || key == "рейтинг" {
 				continue
 			}
@@ -70,10 +68,14 @@ func loadDashPrefixes() map[string]string {
 	return dashPrefixes
 }
 
-// MissingHyphenRule ports org.languagetool.rules.uk.MissingHyphenRule without a word tagger
-// (always suggests when prefix matches; Java only when compound is known to the dictionary).
+// MissingHyphenRule ports org.languagetool.rules.uk.MissingHyphenRule.
+// Next token must be noun (not pron); compound accepted only when WordTagged(suggested)
+// or (:alt && next has :alt). Without POS / WordTagged, fail closed (no invent).
 type MissingHyphenRule struct {
 	Messages map[string]string
+	// WordTagged ports wordTagger.tag(token).size() > 0 for the joined/hyphenated form.
+	// When nil, non-alt path never matches; alt path may still match via next :alt POS.
+	WordTagged func(word string) bool
 }
 
 func NewMissingHyphenRule(messages map[string]string) *MissingHyphenRule {
@@ -81,75 +83,126 @@ func NewMissingHyphenRule(messages map[string]string) *MissingHyphenRule {
 	return &MissingHyphenRule{Messages: messages}
 }
 
-func (r *MissingHyphenRule) GetID() string { return "UK_MISSING_HYPHEN" }
-
-func isCapitalizedUK(s string) bool {
-	rs := []rune(s)
-	if len(rs) < 2 {
-		return false
-	}
-	return unicode.IsUpper(rs[0]) && unicode.IsLower(rs[1])
-}
-
-func uncapitalize(s string) string {
-	r, size := utf8.DecodeRuneInString(s)
-	if r == utf8.RuneError {
-		return s
-	}
-	return string(unicode.ToLower(r)) + s[size:]
-}
+func (r *MissingHyphenRule) GetID() string          { return "UK_MISSING_HYPHEN" }
+func (r *MissingHyphenRule) GetDescription() string { return "Пропущений дефіс" }
 
 func (r *MissingHyphenRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || sentence == nil {
+		return nil
+	}
 	prefixes := loadDashPrefixes()
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var matches []*rules.RuleMatch
 	for i := 1; i < len(tokens)-1; i++ {
-		cur := tokens[i]
-		next := tokens[i+1]
-		nextTok := next.GetToken()
-		if !allLowerUK.MatchString(strings.ToLower(nextTok)) {
+		tokenReadings := tokens[i]
+		nextTokenReadings := tokens[i+1]
+		if tokenReadings == nil || nextTokenReadings == nil {
 			continue
 		}
-		isCap := isCapitalizedUK(cur.GetToken())
-		key := cur.GetToken()
-		if isCap {
-			key = uncapitalize(key)
-		} else {
-			key = strings.ToLower(key)
+
+		// Java: PosTagHelper.hasPosTagStart(next, "noun") && !hasPosTagPart(next, "pron")
+		// && ALL_LOWER on clean token
+		if !hasPosTagStart(nextTokenReadings, "noun") || hasPosTagPart(nextTokenReadings, "pron") {
+			continue
 		}
-		extraTag, ok := prefixes[key]
-		// special: тайм + аут
-		if !ok && strings.EqualFold(cur.GetToken(), "тайм") && strings.EqualFold(nextTok, "аут") {
+		nextClean := nextTokenReadings.GetCleanToken()
+		if nextClean == "" {
+			nextClean = nextTokenReadings.GetToken()
+		}
+		if !allLowerUK.MatchString(strings.ToLower(nextClean)) {
+			continue
+		}
+
+		curClean := tokenReadings.GetCleanToken()
+		if curClean == "" {
+			curClean = tokenReadings.GetToken()
+		}
+		isCap := IsCapitalized(curClean)
+
+		extraTag, ok := getPrefixExtraTag(prefixes, tokenReadings, isCap)
+		// special: тайм + lemma аут
+		if !ok && strings.EqualFold(curClean, "тайм") && nextTokenReadings.HasLemma("аут") {
+			ok = true
+			extraTag = ""
+		}
+		// without lemma, surface аут still allowed for tests when token is аут (Java has lemma)
+		if !ok && strings.EqualFold(curClean, "тайм") && strings.EqualFold(nextClean, "аут") {
 			ok = true
 			extraTag = ""
 		}
 		if !ok {
 			continue
 		}
+
 		// exceptions
-		if strings.EqualFold(cur.GetToken(), "медіа") &&
-			(nextTok == "країни" || nextTok == "півострова") {
+		if strings.EqualFold(curClean, "медіа") &&
+			(nextClean == "країни" || nextClean == "півострова") {
 			continue
 		}
-		if strings.EqualFold(cur.GetToken(), "шоу") && strings.Contains(nextTok, "-") {
+		if strings.EqualFold(curClean, "шоу") && strings.Contains(nextClean, "-") {
 			continue
 		}
+
+		// Use surface tokens for suggestion (Java uses getToken(), not clean)
+		curTok := tokenReadings.GetToken()
+		nextTok := nextTokenReadings.GetToken()
 		var suggested, message string
 		if extraTag == ua1992Tag {
-			suggested = cur.GetToken() + next.GetToken()
+			suggested = curTok + nextTok
 			message = "Можливо, зайвий пробіл?"
 		} else {
-			suggested = cur.GetToken() + "-" + next.GetToken()
+			suggested = curTok + "-" + nextTok
 			message = "Можливо, пропущено дефіс?"
 		}
+
+		tokenToCheck := suggested
 		if isCap {
-			// keep capitalization of first part as in original token
-			_ = tools.UppercaseFirstChar
+			tokenToCheck = uncapitalizeUK(suggested)
 		}
-		rm := rules.NewRuleMatch(r, sentence, cur.GetStartPos(), next.GetEndPos(), message)
+
+		// Java: wordTagger.tag(tokenToCheck).size() > 0
+		//   || (:alt && next has :alt)
+		known := false
+		if r.WordTagged != nil {
+			known = r.WordTagged(tokenToCheck)
+		}
+		if !known && extraTag == ua1992Tag && hasPosTagPart(nextTokenReadings, ua1992Tag) {
+			known = true
+		}
+		if !known {
+			// fail closed without tagger hit
+			continue
+		}
+
+		rm := rules.NewRuleMatch(r, sentence, tokenReadings.GetStartPos(), nextTokenReadings.GetEndPos(), message)
 		rm.ShortMessage = "Пропущений дефіс"
 		rm.SetSuggestedReplacement(suggested)
 		matches = append(matches, rm)
 	}
 	return matches
+}
+
+func getPrefixExtraTag(prefixes map[string]string, tokenReadings *languagetool.AnalyzedTokenReadings, isCapitalized bool) (string, bool) {
+	token := tokenReadings.GetToken()
+	// Java getPrefixExtraTag uses getToken(), then uncapitalize if capitalized
+	if isCapitalized {
+		token = uncapitalizeUK(token)
+	} else {
+		// map keys are lowercased; Java map may be case-sensitive original keys lower
+		token = strings.ToLower(token)
+	}
+	// also try clean token uncapitalized
+	tag, ok := prefixes[strings.ToLower(token)]
+	if !ok {
+		return "", false
+	}
+	return tag, true
+}
+
+func uncapitalizeUK(s string) string {
+	r, size := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError {
+		return s
+	}
+	return string(unicode.ToLower(r)) + s[size:]
 }

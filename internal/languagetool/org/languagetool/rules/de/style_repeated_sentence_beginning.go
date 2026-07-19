@@ -1,48 +1,63 @@
 package de
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// StyleRepeatedSentenceBeginning is a surface stand-in for
-// org.languagetool.rules.de.StyleRepeatedSentenceBeginning.
-// Without ART/PRO POS tags, flags ≥3 consecutive sentences that start with a
-// definite/indefinite article or a nominative personal pronoun.
+// StyleRepeatedSentenceBeginning ports
+// org.languagetool.rules.de.StyleRepeatedSentenceBeginning (default off).
+// Java: ART:DEF:NOM / ART:IND:NOM or PRO:PER:NOM at tokens[1] only — no surface invent.
+// Java: Category CREATIVE_WRITING, setDefaultOff(), ITS Style.
 type StyleRepeatedSentenceBeginning struct {
 	Messages    map[string]string
-	MinRepeated int
+	MinRepeated int // Java MIN_REPEATED = 3
+	Category    *rules.Category
+	IssueType   rules.ITSIssueType
+	DefaultOff  bool
 }
 
 func NewStyleRepeatedSentenceBeginning(messages map[string]string) *StyleRepeatedSentenceBeginning {
-	return &StyleRepeatedSentenceBeginning{Messages: messages, MinRepeated: 3}
+	// Java: CREATIVE_WRITING category + setDefaultOff() + ITS Style.
+	return &StyleRepeatedSentenceBeginning{
+		Messages:    messages,
+		MinRepeated: 3,
+		Category:    rules.CreativeWritingCategory(messages),
+		IssueType:   rules.ITSStyle,
+		DefaultOff:  true,
+	}
 }
 
 func (r *StyleRepeatedSentenceBeginning) GetID() string {
 	return "STYLE_REPEATED_SENTENCE_BEGINNING"
 }
 
-var styleBeginArticles = map[string]struct{}{
-	"der": {}, "die": {}, "das": {}, "den": {}, "dem": {}, "des": {},
-	"ein": {}, "eine": {}, "einen": {}, "einem": {}, "einer": {}, "eines": {},
+func (r *StyleRepeatedSentenceBeginning) GetDescription() string {
+	return "Subjekt als wiederholter Satzanfang"
 }
 
-var styleBeginPronouns = map[string]struct{}{
-	"ich": {}, "du": {}, "er": {}, "sie": {}, "es": {}, "wir": {}, "ihr": {},
-	"man": {},
+func (r *StyleRepeatedSentenceBeginning) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
 }
 
-func styleIsSubjectStart(token string) (is bool, endAtWord bool) {
-	lc := strings.ToLower(token)
-	if _, ok := styleBeginArticles[lc]; ok {
-		return true, true // extend to following noun-ish word
+func (r *StyleRepeatedSentenceBeginning) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSStyle
 	}
-	if _, ok := styleBeginPronouns[lc]; ok {
-		return true, false
+	return r.IssueType
+}
+
+func (r *StyleRepeatedSentenceBeginning) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// MinToCheckParagraph ports minToCheckParagraph (Java returns MIN_REPEATED).
+func (r *StyleRepeatedSentenceBeginning) MinToCheckParagraph() int {
+	if r == nil || r.MinRepeated <= 0 {
+		return 3
 	}
-	return false, false
+	return r.MinRepeated
 }
 
 func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
@@ -60,10 +75,10 @@ func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.Ana
 	var repeated []*languagetool.AnalyzedSentence
 	flush := func() {
 		if nRepeated >= minR {
-			msg := "Subjekt als wiederholter Satzanfang"
+			// Java: new RuleMatch(..., getDescription()) — no shortMessage.
+			msg := r.GetDescription()
 			for i := 0; i < len(repeated); i++ {
 				rm := rules.NewRuleMatch(r, repeated[i], startPos[i], endPos[i], msg)
-				rm.ShortMessage = "wiederholter Satzanfang"
 				ruleMatches = append(ruleMatches, rm)
 			}
 		}
@@ -73,31 +88,45 @@ func (r *StyleRepeatedSentenceBeginning) MatchList(sentences []*languagetool.Ana
 		nRepeated = 0
 	}
 	for _, sentence := range sentences {
+		if sentence == nil {
+			flush()
+			continue
+		}
 		tokens := sentence.GetTokensWithoutWhitespace()
-		if len(tokens) < 2 {
+		if len(tokens) < 2 || tokens[1] == nil {
 			flush()
 			pos += sentence.GetCorrectedTextLength()
 			continue
 		}
-		first := tokens[1]
-		ok, extend := styleIsSubjectStart(first.GetToken())
-		if !ok {
-			flush()
-			pos += sentence.GetCorrectedTextLength()
-			continue
-		}
-		from := first.GetStartPos() + pos
-		to := first.GetEndPos() + pos
-		if extend {
-			// include next content token if present (article + noun)
-			if len(tokens) > 2 && !strings.ContainsAny(tokens[2].GetToken(), ".?!") {
-				to = tokens[2].GetEndPos() + pos
+		t1 := tokens[1]
+		isArt := t1.HasPosTagStartingWith("ART:DEF:NOM") || t1.HasPosTagStartingWith("ART:IND:NOM")
+		isPro := t1.HasPosTagStartingWith("PRO:PER:NOM")
+		if isArt {
+			end := t1.GetEndPos() + pos
+			// Java: scan for SUB before VER; else end at article
+			noSub := true
+			for i := 2; i < len(tokens) && tokens[i] != nil && !tokens[i].HasPosTagStartingWith("VER"); i++ {
+				if tokens[i].HasPosTagStartingWith("SUB") {
+					noSub = false
+					end = tokens[i].GetEndPos() + pos
+					break
+				}
 			}
+			if noSub {
+				end = t1.GetEndPos() + pos
+			}
+			repeated = append(repeated, sentence)
+			startPos = append(startPos, t1.GetStartPos()+pos)
+			endPos = append(endPos, end)
+			nRepeated++
+		} else if isPro {
+			repeated = append(repeated, sentence)
+			startPos = append(startPos, t1.GetStartPos()+pos)
+			endPos = append(endPos, t1.GetEndPos()+pos)
+			nRepeated++
+		} else {
+			flush()
 		}
-		repeated = append(repeated, sentence)
-		startPos = append(startPos, from)
-		endPos = append(endPos, to)
-		nRepeated++
 		pos += sentence.GetCorrectedTextLength()
 	}
 	flush()

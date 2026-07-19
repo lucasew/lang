@@ -21,3 +21,11 @@ func TestEnglishTagger(t *testing.T) {
 	// unknown
 	require.Equal(t, "xyz", got[2].GetToken())
 }
+
+func TestEnglishTagger_TypographicApostrophe(t *testing.T) {
+	wt := tagging.MapWordTagger{"don't": {tagging.NewTaggedWord("do", "VBP")}}
+	tagger := NewEnglishTagger(wt)
+	got := tagger.Tag([]string{"don’t"})
+	require.Len(t, got, 1)
+	require.True(t, got[0].HasTypographicApostrophe())
+}

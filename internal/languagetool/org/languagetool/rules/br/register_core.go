@@ -3,7 +3,7 @@ package br
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreBretonRules installs shared layout + word-repeat + beginning.
@@ -19,9 +19,7 @@ func RegisterCoreBretonRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "Teir frazenn war-lerc'h a grog gant ar ger memes.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "br", []patterns.TokenSequenceSpec{
-		{ID: "BR_HA_HA", Tokens: []string{"ha", "ha"}, Message: "Adlask posubl eus 'ha'.", Suggestion: "ha"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official topo.txt place-name replace (embedded from upstream).
 	tr := NewTopoReplaceRule(nil)
@@ -30,4 +28,13 @@ func RegisterCoreBretonRules(lt *languagetool.JLanguageTool) {
 	// Official compounds.txt.
 	cr := NewBretonCompoundRule(nil)
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+
+	// Java createDefaultSpellingRule → MorfologikBretonSpellerRule.
+	// Always full Match (IgnoreTaggedWords + hyphen tokenizingPattern).
+	sp := NewMorfologikBretonSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(MorfologikBretonSpellerRuleDict); p != "" {
+		// Binary CFSA2 optional — fail-closed map Words when missing.
+		_ = p
+	}
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

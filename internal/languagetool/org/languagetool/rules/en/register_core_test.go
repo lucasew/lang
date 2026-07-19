@@ -26,13 +26,19 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 	require.True(t, hasEN)
 	// Soft invent PHRASE_REPLACE ("tot he") pack removed.
 
-	// long sentence (40+ words)
+	// long sentence (40+ words). Capitalize the first word so UPPERCASE_SENTENCE_START
+	// does not fire: Java LongSentenceRule is Tag.picky, so CleanOverlappingFilter demotes
+	// it below non-picky layout rules that share the span (faithful, not invent).
 	var b strings.Builder
 	for i := 0; i < 45; i++ {
 		if i > 0 {
 			b.WriteByte(' ')
 		}
-		b.WriteString("word")
+		if i == 0 {
+			b.WriteString("Word")
+		} else {
+			b.WriteString("word")
+		}
 	}
 	b.WriteByte('.')
 	m = lt.Check(b.String())

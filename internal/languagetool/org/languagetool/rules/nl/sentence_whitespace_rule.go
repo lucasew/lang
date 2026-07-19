@@ -11,8 +11,8 @@ type SentenceWhitespaceRule struct {
 }
 
 func NewSentenceWhitespaceRule(messages map[string]string) *SentenceWhitespaceRule {
+	// Java SentenceWhitespaceRule.getId() → "SENTENCE_WHITESPACE"
 	base := rules.NewSentenceWhitespaceRule(messages)
-	base.RuleID = "NL_SENTENCE_WHITESPACE"
 	base.MessageAfterSentence = "Voeg een spatie tussen zinnen toe."
 	base.MessageAfterNumber = "Voeg een spatie toe na rangtelwoorden."
 	return &SentenceWhitespaceRule{SentenceWhitespaceRule: base}

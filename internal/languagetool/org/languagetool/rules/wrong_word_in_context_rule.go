@@ -19,6 +19,9 @@ type ContextWords struct {
 }
 
 // WrongWordInContextRule ports org.languagetool.rules.WrongWordInContextRule.
+// Java ctor: setCategory(new Category(CONFUSED_WORDS, getCategoryString())),
+// setLocQualityIssueType(Misspelling). Default getCategoryString() is messages
+// "category_misc"; language subclasses override the display name.
 type WrongWordInContextRule struct {
 	Messages           map[string]string
 	ID                 string
@@ -29,6 +32,45 @@ type WrongWordInContextRule struct {
 	LanguageCode       string
 	MatchLemmas        bool
 	Entries            []ContextWords
+	// Category ports Rule.category (Java CONFUSED_WORDS + getCategoryString name).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Misspelling).
+	IssueType ITSIssueType
+}
+
+// InitWrongWordInContextMeta ports WrongWordInContextRule constructor meta.
+// categoryString is getCategoryString(); empty uses default (messages "category_misc").
+func InitWrongWordInContextMeta(r *WrongWordInContextRule, messages map[string]string, categoryString string) {
+	if r == nil {
+		return
+	}
+	name := categoryString
+	if name == "" {
+		name = "MISC"
+		if messages != nil {
+			if s := messages["category_misc"]; s != "" {
+				name = s
+			}
+		}
+	}
+	r.Category = NewCategory(CategoryConfusedWords, name)
+	r.IssueType = ITSMisspelling
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *WrongWordInContextRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *WrongWordInContextRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSMisspelling
+	}
+	return r.IssueType
 }
 
 // LoadWrongWordInContext loads tab-separated context confusion entries.
@@ -94,6 +136,13 @@ func (r *WrongWordInContextRule) GetID() string {
 		return r.ID
 	}
 	return "WRONG_WORD_IN_CONTEXT"
+}
+
+func (r *WrongWordInContextRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return ""
 }
 
 // Match ports WrongWordInContextRule.match.

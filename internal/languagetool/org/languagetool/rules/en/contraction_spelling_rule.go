@@ -33,6 +33,8 @@ func loadContractions() map[string][]string {
 }
 
 // ContractionSpellingRule ports org.languagetool.rules.en.ContractionSpellingRule.
+// No isTokenException in Java — "whys and wherefores" is handled by disambiguation
+// IGNORE_SPELLING (IsIgnoredBySpeller), not surface invent.
 type ContractionSpellingRule struct {
 	*rules.AbstractSimpleReplaceRule
 }
@@ -48,15 +50,6 @@ func NewContractionSpellingRule(messages map[string]string) *ContractionSpelling
 		ShortMsg:      "Spelling mistake",
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Possible spelling mistake found."
-		},
-		// Idiom "whys and wherefores" (plural nouns) must not fire; Java twin expects 0 matches.
-		// Full LT may tag/immunize these; without a tagger we exempt the known false alarm.
-		TokenException: func(token *languagetool.AnalyzedTokenReadings) bool {
-			switch token.GetToken() {
-			case "whys", "Whys", "WHYS", "wherefores", "Wherefores", "WHEREFORES":
-				return true
-			}
-			return false
 		},
 	}
 	return &ContractionSpellingRule{AbstractSimpleReplaceRule: base}

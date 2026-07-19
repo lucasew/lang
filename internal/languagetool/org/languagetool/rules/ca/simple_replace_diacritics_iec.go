@@ -33,6 +33,7 @@ func loadDiacriticsIEC() map[string][]string {
 }
 
 // SimpleReplaceDiacriticsIEC ports org.languagetool.rules.ca.SimpleReplaceDiacriticsIEC.
+// Java isTokenException: hasPosTagStartingWith("NP") only.
 type SimpleReplaceDiacriticsIEC struct {
 	*rules.AbstractSimpleReplaceRule
 }
@@ -49,8 +50,17 @@ func NewSimpleReplaceDiacriticsIEC(messages map[string]string) *SimpleReplaceDia
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Hi sobra l'accent diacrític (segons les normes noves)."
 		},
+		TokenException: diacriticsIECTokenException,
 	}
 	return &SimpleReplaceDiacriticsIEC{AbstractSimpleReplaceRule: base}
+}
+
+// diacriticsIECTokenException ports SimpleReplaceDiacriticsIEC.isTokenException.
+func diacriticsIECTokenException(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil {
+		return false
+	}
+	return token.HasPosTagStartingWith("NP")
 }
 
 func (r *SimpleReplaceDiacriticsIEC) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

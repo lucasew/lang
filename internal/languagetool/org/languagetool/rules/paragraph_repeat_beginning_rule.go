@@ -8,8 +8,15 @@ import (
 )
 
 // ParagraphRepeatBeginningRule ports org.languagetool.rules.ParagraphRepeatBeginningRule.
+// Java ctor: setCategory(STYLE), setLocQualityIssueType(Style), setDefaultOff().
 type ParagraphRepeatBeginningRule struct {
 	Messages map[string]string
+	// Category ports Rule.category (Java STYLE).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
+	// DefaultOff ports setDefaultOff (Java true).
+	DefaultOff bool
 	// IsArticle optional POS stand-in; default false (only first word compared).
 	IsArticle func(token *languagetool.AnalyzedTokenReadings) bool
 	// SingleLineBreaksMarksPara matches Demo/SRX default false → need \n\n
@@ -20,7 +27,12 @@ type ParagraphRepeatBeginningRule struct {
 var paraQuotesRE = regexp.MustCompile(`[’'"„“”»«‚‘›‹()\[\]]`)
 
 func NewParagraphRepeatBeginningRule(messages map[string]string) *ParagraphRepeatBeginningRule {
-	return &ParagraphRepeatBeginningRule{Messages: messages}
+	return &ParagraphRepeatBeginningRule{
+		Messages:   messages,
+		Category:   CatStyle.GetCategory(messages),
+		IssueType:  ITSStyle,
+		DefaultOff: true,
+	}
 }
 
 func (r *ParagraphRepeatBeginningRule) GetID() string {
@@ -30,32 +42,27 @@ func (r *ParagraphRepeatBeginningRule) GetID() string {
 	return "PARAGRAPH_REPEAT_BEGINNING_RULE"
 }
 
-func (r *ParagraphRepeatBeginningRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
-	if nTest >= len(sentences)-1 {
-		return true
+// GetCategory ports Rule.getCategory.
+func (r *ParagraphRepeatBeginningRule) GetCategory() *Category {
+	if r == nil {
+		return nil
 	}
-	text := sentences[nTest].GetText()
-	if r.SingleLineBreaksMarksPara {
-		if len(text) > 0 && (text[len(text)-1] == '\n' || hasSuffix(text, "\n\r")) {
-			return true
-		}
-	} else {
-		if hasSuffix(text, "\n\n") || hasSuffix(text, "\n\r\n\r") || hasSuffix(text, "\r\n\r\n") {
-			return true
-		}
-	}
-	next := sentences[nTest+1].GetText()
-	if len(next) > 0 && (next[0] == '\n' || hasPrefix(next, "\r\n")) {
-		return true
-	}
-	return false
+	return r.Category
 }
 
-func hasSuffix(s, suf string) bool {
-	return len(s) >= len(suf) && s[len(s)-len(suf):] == suf
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *ParagraphRepeatBeginningRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
 }
-func hasPrefix(s, pre string) bool {
-	return len(s) >= len(pre) && s[:len(pre)] == pre
+
+// IsDefaultOff ports Rule.isDefaultOff.
+func (r *ParagraphRepeatBeginningRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+func (r *ParagraphRepeatBeginningRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
+	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
 func (r *ParagraphRepeatBeginningRule) isArticle(token *languagetool.AnalyzedTokenReadings) bool {

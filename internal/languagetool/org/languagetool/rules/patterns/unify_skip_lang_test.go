@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLoadOfficialFRGrammar_UnifySkipped(t *testing.T) {
+func TestLoadOfficialFRGrammar_UnifyLoaded(t *testing.T) {
 	cands := []string{
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "fr",
 			"src", "main", "resources", "org", "languagetool", "rules", "fr", "grammar.xml"),
@@ -37,7 +37,18 @@ func TestLoadOfficialFRGrammar_UnifySkipped(t *testing.T) {
 	l.SetRelaxedMode(true)
 	ars, err := l.GetRulesFromString(string(data), p, "fr")
 	require.NoError(t, err)
-	t.Logf("FR grammar surface rules (unify skipped): %d", len(ars))
-	// Should still load many non-unify rules
+	unified := 0
+	for _, ar := range ars {
+		if ar != nil && ar.TestUnification {
+			unified++
+		}
+	}
+	t.Logf("FR grammar rules: %d (with unify: %d)", len(ars), unified)
 	require.Greater(t, len(ars), 100)
+	require.Greater(t, unified, 0, "FR grammar has many <unify> rules; loader must keep them")
+	// Unification equivalence tables from <unification feature="…">
+	require.NotNil(t, l.LastUnifierConfig)
+	feats := l.LastUnifierConfig.GetEquivalenceFeatures()
+	require.Contains(t, feats, "number")
+	require.Contains(t, feats, "gender")
 }

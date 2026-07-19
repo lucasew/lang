@@ -3,7 +3,6 @@ package ro
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCoreRomanianRules installs shared layout + language word-repeat + beginning.
@@ -18,9 +17,7 @@ func RegisterCoreRomanianRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "Trei propoziții consecutive încep cu același cuvânt.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "ro", []patterns.TokenSequenceSpec{
-		{ID: "RO_DE_DE", Tokens: []string{"de", "de"}, Message: "Posibilă repetiție a prepoziției 'de'.", Suggestion: "de"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
@@ -29,4 +26,10 @@ func RegisterCoreRomanianRules(lt *languagetool.JLanguageTool) {
 	// Official compounds.txt.
 	cr := NewCompoundRule(nil)
 	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+
+	// Java createDefaultSpellingRule / Morfologik getId; CFSA2 when dict present.
+	// Empty map shell fails closed when binary resource is missing (no invent).
+	// Always full Match (fail-closed map Words when binary dict missing; no invent).
+	sp := NewMorfologikRomanianSpellerRule()
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

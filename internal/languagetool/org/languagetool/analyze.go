@@ -1,6 +1,7 @@
 package languagetool
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
@@ -41,6 +42,12 @@ func AnalyzePlain(text string) *AnalyzedSentence {
 // ChineseWordTokenizer follows Java: tokenize emits "surface/pos" (HanLP Term.toString),
 // then ChineseTagger.asAnalyzedToken splits.
 func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentence {
+	return AnalyzeWithTokenizerAndIgnore(text, wt, nil)
+}
+
+// AnalyzeWithTokenizerAndIgnore is AnalyzeWithTokenizer after applying
+// Language.getIgnoredCharactersRegex per token (Java replaceSoftHyphens).
+func AnalyzeWithTokenizerAndIgnore(text string, wt tokenizers.Tokenizer, ignore *regexp.Regexp) *AnalyzedSentence {
 	if wt == nil {
 		wt = tokenizers.NewWordTokenizer()
 	}
@@ -50,17 +57,19 @@ func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentenc
 	if _, ok := wt.(*zhtok.ChineseWordTokenizer); ok {
 		return analyzeChineseEncoded(wt.Tokenize(text))
 	}
-	raw := wt.Tokenize(text)
-	positions := tokenizers.BuildPositions(raw)
-	// tokens: SENT_START at 0, then each raw token
-	readings := make([]*AnalyzedTokenReadings, 0, len(raw)+1)
+	orig := wt.Tokenize(text)
+	// Java: tag cleaned surfaces; keep orig for soft-hyphen CleanToken/posFix.
+	cleaned, softMap := ReplaceSoftHyphens(orig, ignore)
+	positions := tokenizers.BuildPositions(cleaned)
+	// tokens: SENT_START at 0, then each cleaned token
+	readings := make([]*AnalyzedTokenReadings, 0, len(cleaned)+1)
 	ss := SentenceStartTagName
 	startTok := NewAnalyzedToken("", &ss, nil)
 	startR := NewAnalyzedTokenReadings(startTok)
 	startR.SetStartPos(0)
 	readings = append(readings, startR)
 	prev := ""
-	for i, tok := range raw {
+	for i, tok := range cleaned {
 		at := NewAnalyzedToken(tok, nil, nil)
 		ar := NewAnalyzedTokenReadingsAt(at, positions[i])
 		if prev != "" {
@@ -69,6 +78,7 @@ func AnalyzeWithTokenizer(text string, wt tokenizers.Tokenizer) *AnalyzedSentenc
 		readings = append(readings, ar)
 		prev = tok
 	}
+	applySoftHyphenMetadata(readings, softMap)
 	// Soft: mirror LT analysis by tagging the last content token with SENT_END
 	// (POINT_DIALOGUE and other rules match postag SENT_END on the final word).
 	softAttachSentenceEnd(readings)
@@ -155,20 +165,38 @@ func chineseAsAnalyzedToken(word string) *AnalyzedToken {
 	return NewAnalyzedToken(surface, &p, nil)
 }
 
-// softAttachSentenceEnd adds a SENT_END reading on the last non-SENT_START token.
+// softAttachSentenceEnd ports JLanguageTool.getAnalyzedSentence tail:
+// SENT_END on the last non-whitespace token (not on trailing \n whitespace).
+// Trailing linebreak-only tokens stay pure whitespace → excluded from
+// getTokensWithoutWhitespace (unless they carry sent/para end).
 func softAttachSentenceEnd(readings []*AnalyzedTokenReadings) {
 	if len(readings) < 2 {
 		return
 	}
-	last := readings[len(readings)-1]
-	if last == nil || last.IsSentenceStart() {
+	toArrayCount := len(readings)
+	lastToken := toArrayCount - 1
+	// Java: make SENT_END appear at last not whitespace token
+	for i := 0; i < toArrayCount-1; i++ {
+		cand := readings[lastToken-i]
+		if cand == nil {
+			continue
+		}
+		if !cand.IsWhitespace() {
+			lastToken = lastToken - i
+			break
+		}
+	}
+	target := readings[lastToken]
+	if target == nil || target.IsSentenceStart() {
 		return
 	}
-	if last.HasPosTag(SentenceEndTagName) {
-		return
+	if !target.IsSentenceEnd() {
+		target.SetSentEnd()
 	}
-	se := SentenceEndTagName
-	last.AddReading(NewAnalyzedToken(last.GetToken(), &se, nil), "")
+	// Java: if only token after walk is a linebreak, mark paragraph end.
+	if len(readings) == lastToken+1 && target.IsLinebreak() {
+		target.SetParagraphEnd()
+	}
 }
 
 // WordTokenizerForLanguage returns the language-specific soft word tokenizer.
@@ -238,6 +266,90 @@ func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 func AnalyzePlainStripSoftHyphen(text string) *AnalyzedSentence {
 	return AnalyzePlain(strings.ReplaceAll(text, "\u00AD", ""))
 }
+
+// SoftHyphenToken ports JLanguageTool.CleanToken (orig + cleaned surfaces).
+type SoftHyphenToken struct {
+	Orig  string
+	Clean string
+}
+
+// ReplaceSoftHyphens ports JLanguageTool.replaceSoftHyphens:
+// for tokens matching ignoredCharacterRegex, store orig/clean and replace the
+// token list entry with the cleaned form (for tagging). Nil re → no changes.
+func ReplaceSoftHyphens(tokens []string, re *regexp.Regexp) (cleaned []string, soft map[int]SoftHyphenToken) {
+	if len(tokens) == 0 {
+		return tokens, nil
+	}
+	if re == nil {
+		return tokens, nil
+	}
+	cleaned = make([]string, len(tokens))
+	soft = map[int]SoftHyphenToken{}
+	for i, t := range tokens {
+		if re.MatchString(t) {
+			c := re.ReplaceAllString(t, "")
+			soft[i] = SoftHyphenToken{Orig: t, Clean: c}
+			cleaned[i] = c
+		} else {
+			cleaned[i] = t
+		}
+	}
+	if len(soft) == 0 {
+		return cleaned, nil
+	}
+	return cleaned, soft
+}
+
+// ApplyIgnoredCharactersRegex ports the token-list mutation of replaceSoftHyphens
+// (cleaned surfaces only). Prefer ReplaceSoftHyphens when posFix/cleanToken are needed.
+func ApplyIgnoredCharactersRegex(tokens []string, re *regexp.Regexp) []string {
+	out, _ := ReplaceSoftHyphens(tokens, re)
+	return out
+}
+
+// applySoftHyphenMetadata ports the second loop of getRawAnalyzedSentence after tagging:
+// setCleanToken, lengthen surface to orig (addReading), setPosFix, adjust StartPos.
+// readings[0] is SENT_START; content tokens start at index 1.
+// soft keys are content-token indices (0-based into the tokenize list).
+func applySoftHyphenMetadata(readings []*AnalyzedTokenReadings, soft map[int]SoftHyphenToken) {
+	if soft == nil || len(readings) < 2 {
+		return
+	}
+	posFix := 0
+	for i := 1; i < len(readings); i++ {
+		ar := readings[i]
+		if ar == nil {
+			continue
+		}
+		contentIdx := i - 1
+		if contentIdx > 0 {
+			// Java: startPos was based on cleaned lengths; add cumulative posFix.
+			ar.SetStartPos(ar.GetStartPos() + posFix)
+			ar.SetPosFix(posFix)
+		}
+		if sh, ok := soft[contentIdx]; ok {
+			// posFix uses UTF-16 lengths like Java String.length().
+			// Measure cleaned surface before addReading lengthens getToken().
+			posFix += tokenizers.UTF16Len(sh.Orig) - tokenizers.UTF16Len(ar.GetToken())
+			ar.SetCleanToken(sh.Clean)
+			// Java: createToken(orig, null) + addReading(..., "softHyphenTokens")
+			// (longer surface becomes getToken()).
+			ar.AddReading(NewAnalyzedToken(sh.Orig, nil, nil), "softHyphenTokens")
+		}
+	}
+}
+
+// GermanIgnoredCharactersRegex ports German.ignoredCharactersRegex = [\u00AD] (soft hyphen).
+var GermanIgnoredCharactersRegex = regexp.MustCompile("[\u00AD]")
+
+// RussianIgnoredCharactersRegex ports Russian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave.
+var RussianIgnoredCharactersRegex = regexp.MustCompile("[\u00AD\u0301\u0300]")
+
+// BelarusianIgnoredCharactersRegex ports Belarusian.getIgnoredCharactersRegex (same set as Russian).
+var BelarusianIgnoredCharactersRegex = regexp.MustCompile("[\u00AD\u0301\u0300]")
+
+// UkrainianIgnoredCharactersRegex ports Ukrainian.IGNORED_CHARS: soft hyphen + combining acute.
+var UkrainianIgnoredCharactersRegex = regexp.MustCompile("[\u00AD\u0301]")
 
 // CheckWhitespaceOnly runs MultipleWhitespace-style single-sentence check via callback.
 // Kept in languagetool package for test helpers.
@@ -421,6 +533,12 @@ func AnalyzeWithTagger(text string, tagWord func(token string) []TokenTag) *Anal
 // Japanese still uses Sen/kagome encode→decode (TagWord is per-surface and cannot
 // replace full-sentence morph analysis). Chinese uses HanLP-style surface/pos encode.
 func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []TokenTag, wt tokenizers.Tokenizer) *AnalyzedSentence {
+	return AnalyzeWithTaggerTokenizerAndIgnore(text, tagWord, wt, nil)
+}
+
+// AnalyzeWithTaggerTokenizerAndIgnore is AnalyzeWithTaggerAndTokenizer after
+// Language.getIgnoredCharactersRegex per token (Java replaceSoftHyphens).
+func AnalyzeWithTaggerTokenizerAndIgnore(text string, tagWord func(token string) []TokenTag, wt tokenizers.Tokenizer, ignore *regexp.Regexp) *AnalyzedSentence {
 	if wt == nil {
 		wt = tokenizers.NewWordTokenizer()
 	}
@@ -431,18 +549,20 @@ func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []Tok
 		return analyzeChineseEncoded(wt.Tokenize(text))
 	}
 	if tagWord == nil {
-		return AnalyzeWithTokenizer(text, wt)
+		return AnalyzeWithTokenizerAndIgnore(text, wt, ignore)
 	}
-	raw := wt.Tokenize(text)
-	positions := tokenizers.BuildPositions(raw)
-	readings := make([]*AnalyzedTokenReadings, 0, len(raw)+1)
+	orig := wt.Tokenize(text)
+	cleaned, softMap := ReplaceSoftHyphens(orig, ignore)
+	positions := tokenizers.BuildPositions(cleaned)
+	readings := make([]*AnalyzedTokenReadings, 0, len(cleaned)+1)
 	ss := SentenceStartTagName
 	startTok := NewAnalyzedToken("", &ss, nil)
 	startR := NewAnalyzedTokenReadings(startTok)
 	startR.SetStartPos(0)
 	readings = append(readings, startR)
 	prev := ""
-	for i, tok := range raw {
+	for i, tok := range cleaned {
+		// Tag cleaned surface (Java tags after replaceSoftHyphens mutates the list).
 		tags := tagWord(tok)
 		var ar *AnalyzedTokenReadings
 		if len(tags) == 0 {
@@ -480,6 +600,7 @@ func AnalyzeWithTaggerAndTokenizer(text string, tagWord func(token string) []Tok
 		readings = append(readings, ar)
 		prev = tok
 	}
+	applySoftHyphenMetadata(readings, softMap)
 	softAttachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }

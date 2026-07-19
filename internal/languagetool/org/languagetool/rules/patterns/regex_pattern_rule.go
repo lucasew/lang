@@ -126,7 +126,8 @@ func (r *RegexPatternRule) doMatch(sentence *languagetool.AnalyzedSentence, text
 
 		if r.RegexFilter != nil {
 			eval := NewRegexRuleFilterEvaluator(r.RegexFilter)
-			filtered := eval.RunFilter(r.FilterArgs, rm, sentence, groups[0])
+			// groups[0]=full match, groups[1…]=captures (Java Matcher.group).
+			filtered := eval.RunFilter(r.FilterArgs, rm, sentence, groups)
 			if filtered != nil {
 				matches = append(matches, rm)
 			}

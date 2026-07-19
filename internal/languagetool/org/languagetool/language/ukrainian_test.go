@@ -12,4 +12,14 @@ func TestUkrainianLanguage(t *testing.T) {
 	require.Contains(t, UkrainianLanguageDefault.GetCountries(), "UA")
 	require.True(t, UkrainianIgnoredChars.MatchString("\u0301"))
 	require.Contains(t, UkrainianLanguageDefault.RuleFiles, "grammar-spelling.xml")
+	// GetRuleFileNames: grammar.xml + RULE_FILES in Java order
+	files := UkrainianLanguageDefault.GetRuleFileNames()
+	require.Equal(t, []string{
+		"/org/languagetool/rules/uk/grammar.xml",
+		"/org/languagetool/rules/uk/grammar-spelling.xml",
+		"/org/languagetool/rules/uk/grammar-grammar.xml",
+		"/org/languagetool/rules/uk/grammar-barbarism.xml",
+		"/org/languagetool/rules/uk/grammar-style.xml",
+		"/org/languagetool/rules/uk/grammar-punctuation.xml",
+	}, files)
 }

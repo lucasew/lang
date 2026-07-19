@@ -33,24 +33,43 @@ func loadCoherencyVal() *rules.WordCoherencyData {
 }
 
 // WordCoherencyValencianRule ports org.languagetool.rules.ca.WordCoherencyValencianRule.
+// Same createReplacement synth path as WordCoherencyRule ([VAND].* + Synthesize).
 type WordCoherencyValencianRule struct {
 	*rules.AbstractWordCoherencyRule
+	// Synthesize ports CatalanSynthesizer.synthesize(otherSpelling lemma, postag).
+	Synthesize func(lemma, postag string) []string
 }
 
 func NewWordCoherencyValencianRule(messages map[string]string) *WordCoherencyValencianRule {
 	d := loadCoherencyVal()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "CA_WORD_COHERENCY_VALENCIA",
 		Description: "Detecta l'ús incoherent de diferents formes dins d'un text.",
 		ShortMsg:    "Coherència",
 		WordMap:     d.WordMap,
 		ToBase:      d.ToBase,
+		Category:    rules.CatStyle.GetCategory(messages),
 		MessageFn: func(word1, word2 string) string {
 			return "No és coherent usar '" + word1 + "' i '" + word2 + "' dins d'un mateix text."
 		},
 	}
-	return &WordCoherencyValencianRule{AbstractWordCoherencyRule: base}
+	rules.InitWordCoherencyMeta(base, messages)
+	r := &WordCoherencyValencianRule{AbstractWordCoherencyRule: base}
+	base.CreateReplacement = r.createReplacement
+	return r
+}
+
+func (r *WordCoherencyValencianRule) createReplacement(marked, token, otherSpelling string, atrs *languagetool.AnalyzedTokenReadings) string {
+	if atrs != nil && r.Synthesize != nil {
+		atr := atrs.ReadingWithTagRegex(caCoherencyAllowedPOS)
+		if atr != nil && atr.GetPOSTag() != nil {
+			forms := r.Synthesize(otherSpelling, *atr.GetPOSTag())
+			if len(forms) > 0 {
+				return forms[0]
+			}
+		}
+	}
+	return rules.DefaultWordCoherencyReplacement(marked, token, otherSpelling)
 }
 
 func (r *WordCoherencyValencianRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {

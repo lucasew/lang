@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,4 +44,23 @@ func TestTextToNumberFilter_FormatResult(t *testing.T) {
 		FormatResult: func(s string) string { return s + "x" },
 	}
 	require.Equal(t, "0.5x", f.ConvertTokens([]string{"medio"}))
+}
+
+func TestTextToNumberFilter_AcceptRuleMatch(t *testing.T) {
+	f := &TextToNumberFilter{
+		Numbers:     map[string]float64{"dos": 2},
+		Multipliers: map[string]float64{"mil": 1000},
+	}
+	tok1 := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("dos", nil, nil), 0)
+	tok2 := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("mil", nil, nil), 4)
+	m := NewRuleMatch(nil, nil, 0, 7, "msg")
+	out := f.AcceptRuleMatch(m, nil, 0, []*languagetool.AnalyzedTokenReadings{tok1, tok2}, nil)
+	require.NotNil(t, out)
+	require.Equal(t, []string{"2000"}, out.GetSuggestedReplacements())
+	// appends to existing suggestions
+	m2 := NewRuleMatch(nil, nil, 0, 3, "msg")
+	m2.SetSuggestedReplacements([]string{"prev"})
+	out2 := f.AcceptRuleMatch(m2, nil, 0, []*languagetool.AnalyzedTokenReadings{tok1}, nil)
+	require.Equal(t, []string{"prev", "2"}, out2.GetSuggestedReplacements())
+	require.Nil(t, f.AcceptRuleMatch(nil, nil, 0, nil, nil))
 }

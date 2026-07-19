@@ -5,15 +5,36 @@ import (
 )
 
 // DoublePunctuationRule ports org.languagetool.rules.DoublePunctuationRule.
+// Java: PUNCTUATION, Typographical.
 type DoublePunctuationRule struct {
 	Messages       map[string]string
 	RuleID         string // override GetID when set (e.g. DE_DOUBLE_PUNCTUATION)
 	DotMessage     string // override two-dots message when set
 	CommaCharacter string // override comma character (Arabic/Persian "،")
+	Category       *Category
+	IssueType      ITSIssueType
 }
 
 func NewDoublePunctuationRule(messages map[string]string) *DoublePunctuationRule {
-	return &DoublePunctuationRule{Messages: messages}
+	return &DoublePunctuationRule{
+		Messages:  messages,
+		Category:  CatPunctuation.GetCategory(messages),
+		IssueType: ITSTypographical,
+	}
+}
+
+func (r *DoublePunctuationRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *DoublePunctuationRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSTypographical
+	}
+	return r.IssueType
 }
 
 func (r *DoublePunctuationRule) GetID() string {

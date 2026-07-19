@@ -39,7 +39,6 @@ type CompoundRule struct {
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "NL_COMPOUNDS",
 		Description:                 "Woorden die aaneengeschreven horen, bijvoorbeeld 'zee-egel' i.p.v. 'zee egel': $match",
 		WithHyphenMessage:           "Dit woord hoort waarschijnlijk aaneengeschreven met een koppelteken.",
@@ -50,6 +49,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		Data:                        loadCompoundData(),
 	}
 	base.UseSubRuleSpecificIDs()
+	rules.InitCompoundRuleMeta(base, messages)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

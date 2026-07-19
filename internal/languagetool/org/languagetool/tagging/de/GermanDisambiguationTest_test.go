@@ -24,8 +24,9 @@ func TestGermanDisambiguation_Chunker(t *testing.T) {
 	}
 	ch := chunking.NewGermanChunker()
 	ch.AddChunkTags(toks2)
-	require.Equal(t, []string{"B-NP"}, toks2[0].GetChunkTags())
-	require.Equal(t, []string{"I-NP"}, toks2[1].GetChunkTags())
+	// REGEXES2 may add NPS on top of B-NP/I-NP (Java additive tags).
+	require.Contains(t, toks2[0].GetChunkTags(), "B-NP")
+	require.Contains(t, toks2[1].GetChunkTags(), "I-NP")
 
 	// "3-adische System" — digit-hyphen adj ignore-by-speller
 	toks3 := []*languagetool.AnalyzedTokenReadings{

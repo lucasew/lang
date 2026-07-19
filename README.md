@@ -61,7 +61,7 @@ go run ./cmd/lang-server -port 8081 -public
 | Morfologik FSA (CFSA2) + dictionary lookup | done |
 | English tagger (`english.dict`) | done |
 | English speller (`MORFOLOGIK_RULE_EN_US`) | done (CFSA2 edit-1 + soft typos TSV) |
-| Pattern XML + POS/inflected match | done (filters/unify/AI incomplete skipped) |
+| Pattern XML + POS/inflected match | done (unify load+match; some filters/AI still incomplete) |
 | `WHITESPACE_RULE` / `WORD_REPEAT_RULE` | done |
 | Layout (sentence/punct/paragraph whitespace, unpaired, uppercase) | done |
 | Soft grammar packs (`testdata/grammar/*-soft.xml`) | 35+ packs; en-US / en-GB soft spelling variants; CoreGoldenHook matrix |

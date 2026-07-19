@@ -1,16 +1,82 @@
 package en
 
 // Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/WordCoherencyRuleTest.java
+// Production loads coherency.txt pairs only (no invent -ed/-ing). Inflected forms
+// match via lemmas (Java tagger); tests attach morph lemmas for twin inputs.
 import (
+	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
+// twinCoherencyLemmas: surface → lemma for WordCoherencyRuleTest (Java morph).
+var twinCoherencyLemmas = map[string]string{
+	"archeology": "archeology", "archaeology": "archaeology",
+	"reelect": "reelect", "re-elect": "re-elect",
+	"reelected": "reelect", "re-elected": "re-elect",
+	"oxidise": "oxidise", "oxidize": "oxidize",
+	"oxidises": "oxidise", "oxidizes": "oxidize",
+	"westernise": "westernise", "westernize": "westernize",
+}
+
 func analyzeCoherency(s string) []*languagetool.AnalyzedSentence {
 	// Sentence-local positions; TextLevelRule adds GetCorrectedTextLength (Java analyzeText).
-	return languagetool.AnalyzeTextLocal(s)
+	if s == "" {
+		return nil
+	}
+	var parts []string
+	start := 0
+	runes := []rune(s)
+	for i := 0; i < len(runes); i++ {
+		r := runes[i]
+		if r == '.' || r == '!' || r == '?' {
+			if r == '.' && i+1 < len(runes) {
+				n := runes[i+1]
+				if (n >= 'a' && n <= 'z') || (n >= '0' && n <= '9') {
+					continue
+				}
+			}
+			end := i + 1
+			if end < len(runes) && (runes[end] == ' ' || runes[end] == '\n' || runes[end] == '\u00A0') {
+				if runes[end] == '\n' && end+1 < len(runes) && runes[end+1] == '\n' {
+					end++
+					if end < len(runes) && runes[end] == '\n' {
+						end++
+					}
+				} else if runes[end] == ' ' || runes[end] == '\u00A0' {
+					end++
+				} else if runes[end] == '\n' {
+					end++
+				}
+			}
+			parts = append(parts, string(runes[start:end]))
+			start = end
+			i = end - 1
+		}
+	}
+	if start < len(runes) {
+		parts = append(parts, string(runes[start:]))
+	}
+	out := make([]*languagetool.AnalyzedSentence, 0, len(parts))
+	for _, p := range parts {
+		if p == "" {
+			continue
+		}
+		out = append(out, languagetool.AnalyzeWithTagger(p, enCoherencyTagWord))
+	}
+	return out
+}
+
+func enCoherencyTagWord(tok string) []languagetool.TokenTag {
+	key := strings.ToLower(tok)
+	key = strings.TrimFunc(key, func(r rune) bool { return !unicode.IsLetter(r) && r != '-' })
+	if lem, ok := twinCoherencyLemmas[key]; ok {
+		return []languagetool.TokenTag{{Lemma: lem}}
+	}
+	return nil
 }
 
 func TestWordCoherencyRule_Rule(t *testing.T) {

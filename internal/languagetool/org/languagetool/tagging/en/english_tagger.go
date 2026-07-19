@@ -35,8 +35,11 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 	out := make([]*languagetool.AnalyzedTokenReadings, 0, len(sentenceTokens))
 	pos := 0
 	for _, word := range sentenceTokens {
+		// Java EnglishTagger: typewriter apostrophe hack + setTypographicApostrophe.
 		w := word
+		containsTypographicApostrophe := false
 		if len(w) > 1 && strings.Contains(w, "’") {
+			containsTypographicApostrophe = true
 			w = strings.ReplaceAll(w, "’", "'")
 		}
 		lower := strings.ToLower(w)
@@ -62,7 +65,11 @@ func (t *EnglishTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedTok
 		if len(readings) == 0 {
 			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, nil, nil)}
 		}
-		out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+		atr := languagetool.NewAnalyzedTokenReadingsList(readings, pos)
+		if containsTypographicApostrophe {
+			atr.SetTypographicApostrophe(true)
+		}
+		out = append(out, atr)
 		pos += len([]rune(word))
 	}
 	return out

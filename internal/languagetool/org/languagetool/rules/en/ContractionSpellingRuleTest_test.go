@@ -16,7 +16,9 @@ func TestContractionSpellingRule_Rule(t *testing.T) {
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("I'm ill."))))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Staatszerfall im südlichen Afrika."))))
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("by IVE"))))
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Never mind the whys and wherefores."))))
+	// Java disambiguation IGNORE_WHYS_AND_WHEREFORES → ignore_spelling on "whys"
+	// (not surface invent TokenException).
+	require.Equal(t, 0, len(rule.Match(withIgnoreSpelling("Never mind the whys and wherefores.", "whys"))))
 
 	checkSimple := func(sentence, word string) {
 		t.Helper()
@@ -38,4 +40,22 @@ func TestContractionSpellingRule_Rule(t *testing.T) {
 	require.Equal(t, 2, len(matches[0].GetSuggestedReplacements()))
 	require.Equal(t, "Where've", matches[0].GetSuggestedReplacements()[0])
 	require.Equal(t, "Wherever", matches[0].GetSuggestedReplacements()[1])
+}
+
+func TestContractionSpellingRule_FailClosedWithoutDisambig(t *testing.T) {
+	rule := NewContractionSpellingRule(nil)
+	// Without ignore_spelling from disambiguation, "whys" is in contractions.txt.
+	matches := rule.Match(languagetool.AnalyzePlain("Never mind the whys and wherefores."))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, "why's", matches[0].GetSuggestedReplacements()[0])
+}
+
+func withIgnoreSpelling(text, surface string) *languagetool.AnalyzedSentence {
+	sent := languagetool.AnalyzePlain(text)
+	for _, tok := range sent.GetTokensWithoutWhitespace() {
+		if tok != nil && tok.GetToken() == surface {
+			tok.IgnoreSpelling()
+		}
+	}
+	return sent
 }

@@ -23,8 +23,9 @@ func loadCoherencyData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
-		// Expand inflections: pure-Go path has no tagger lemmas for re-elected/oxidises.
-		d, err := rules.LoadWordCoherencyData(f, "/en/coherency.txt", true)
+		// Java WordCoherencyDataLoader: file pairs only (no invent -ed/-ing expand).
+		// Inflected forms match via tagger lemmas in AbstractWordCoherencyRule.
+		d, err := rules.LoadWordCoherencyData(f, "/en/coherency.txt", false)
 		if err != nil {
 			panic(err)
 		}
@@ -41,7 +42,6 @@ type WordCoherencyRule struct {
 func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "EN_WORD_COHERENCY",
 		Description: "Coherent spelling of words with two admitted variants.",
 		WordMap:     d.WordMap,
@@ -50,6 +50,7 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 			return "Do not mix variants of the same word ('" + word1 + "' and '" + word2 + "') within a single text."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

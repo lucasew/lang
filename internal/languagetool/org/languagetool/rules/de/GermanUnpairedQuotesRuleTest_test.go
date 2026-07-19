@@ -22,4 +22,9 @@ func TestGermanUnpairedQuotesRule_GermanRule(t *testing.T) {
 	require.Equal(t, 1, matchN("Die „Sätze zum Testen."))
 	require.Equal(t, 1, matchN("Die «Sätze zum Testen."))
 	require.Equal(t, 1, matchN("Die »Sätze zum Testen."))
+	require.Equal(t, "DE_UNPAIRED_QUOTES", rule.GetID())
+	require.Contains(t, rule.GetURL(), "klammern")
+	ms := rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain("Die „Sätze zum Testen.")})
+	require.NotEmpty(t, ms)
+	require.Equal(t, rule, ms[0].GetRule())
 }

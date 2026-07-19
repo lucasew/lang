@@ -49,6 +49,8 @@ func NewSpanishWrongWordInContextRule(messages map[string]string) *SpanishWrongW
 		MatchLemmas:        true,
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: getCategoryString → "Confusiones"
+	rules.InitWrongWordInContextMeta(base, messages, "Confusiones")
 	return &SpanishWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

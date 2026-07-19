@@ -19,6 +19,9 @@ type MultitokenSpeller struct {
 	noSpaces map[string][]string
 	// PrepareLine optional language hook (default: identity single line).
 	PrepareLine func(line string) []string
+	// IsException optional language hook (Java MultitokenSpeller.isException).
+	// When true for (original, candidate), stopSearching returns true (no suggestion).
+	IsException func(original, candidate string) bool
 	mu          sync.RWMutex
 	cache       map[string][]string
 }
@@ -113,7 +116,7 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 	normalizedNoSpaces := strings.ReplaceAll(normalizedWord, " ", "")
 	m.mu.RLock()
 	if cands, ok := m.noSpaces[normalizedNoSpaces]; ok {
-		if stopSearching(cands, originalWord) {
+		if m.stopSearching(cands, originalWord) {
 			m.mu.RUnlock()
 			return nil
 		}
@@ -125,7 +128,7 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 	byChar := m.byFirstChar[first]
 	if len(weightedCandidates) == 0 && byChar != nil {
 		for normalizedCandidate, candidates := range byChar {
-			if stopSearching(candidates, originalWord) {
+			if m.stopSearching(candidates, originalWord) {
 				m.mu.RUnlock()
 				return nil
 			}
@@ -177,8 +180,11 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 	return results
 }
 
-func stopSearching(candidates []string, originalWord string) bool {
+func (m *MultitokenSpeller) stopSearching(candidates []string, originalWord string) bool {
 	for _, candidate := range candidates {
+		if m != nil && m.IsException != nil && m.IsException(originalWord, candidate) {
+			return true
+		}
 		if candidate == originalWord {
 			return true
 		}

@@ -2,30 +2,50 @@ package rules
 
 import (
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 const findSuggestionsMax = 10
 
-// AbstractFindSuggestionsFilter ports org.languagetool.rules.AbstractFindSuggestionsFilter
-// with pluggable spelling suggestions and optional POS filter.
+// AbstractFindSuggestionsFilter ports org.languagetool.rules.AbstractFindSuggestionsFilter.
+//
+// SpellingSuggestions / Tag are required for full behavior (Java abstract methods).
+// Optional Synthesize enables the synthesizer fallback path (replacements2).
 type AbstractFindSuggestionsFilter struct {
-	// SpellingSuggestions returns candidates for the focused token.
+	// SpellingSuggestions returns candidates for the focused token (Java getSpellingSuggestions).
 	SpellingSuggestions func(atr *languagetool.AnalyzedTokenReadings) []string
-	// MatchesDesiredPostag optional; when set, filters candidates by desiredPostag regex.
+	// Tag tags a single word form (Java getTagger().tag).
+	Tag func(word string) *languagetool.AnalyzedTokenReadings
+	// Synthesize ports getSynthesizer().synthesize(token, desiredPostag, true); nil skips path.
+	Synthesize func(tok *languagetool.AnalyzedToken, postagRE string) []string
+	// IsSuggestionException ports isSuggestionException (default false).
+	IsSuggestionException func(atr *languagetool.AnalyzedTokenReadings) bool
+	// PreProcessWrongWord ports preProcessWrongWord (default: strip spaces).
+	PreProcessWrongWord func(word string) string
+	// CleanSuggestion ports cleanSuggestion (default: identity).
+	CleanSuggestion func(s string) string
+	// MatchesDesiredPostag optional override; when nil, Tag + MatchesPosTagRegex is used.
 	MatchesDesiredPostag func(suggestion string, desiredPostag string) bool
 }
 
-// AcceptRuleMatch filters/ranks suggestions for wordFrom token.
-// Required args: wordFrom, desiredPostag. Optional: removeSuggestionsRegexp, suppressMatch, Mode=diacritics.
+// AcceptRuleMatch ports AbstractFindSuggestionsFilter.acceptRuleMatch.
+// Required args: wordFrom, desiredPostag.
+// Optional: priorityPostag, removeSuggestionsRegexp, suppressMatch, Mode=diacritics.
 func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args map[string]string,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *RuleMatch {
-	if f == nil || f.SpellingSuggestions == nil || match == nil {
+	if f == nil || match == nil {
 		return nil
 	}
+	if f.SpellingSuggestions == nil {
+		return nil
+	}
+
 	wordFrom, ok := args["wordFrom"]
 	if !ok {
 		panic("Missing key 'wordFrom'")
@@ -34,79 +54,291 @@ func (f *AbstractFindSuggestionsFilter) AcceptRuleMatch(match *RuleMatch, args m
 	if !ok {
 		panic("Missing key 'desiredPostag'")
 	}
-	atr := resolveWordFrom(wordFrom, match, patternTokens, tokenPositions)
-	if atr == nil {
-		return nil
-	}
-	cands := f.SpellingSuggestions(atr)
-	var removeRE *regexp.Regexp
-	if re, ok := args["removeSuggestionsRegexp"]; ok && re != "" {
-		removeRE, _ = regexp.Compile(re)
-	}
-	var out []string
-	for _, c := range cands {
-		if removeRE != nil && removeRE.MatchString(c) {
-			continue
+	priorityPostag := args["priorityPostag"]
+	removeSuggestionsRegexp := args["removeSuggestionsRegexp"]
+	bSuppressMatch := strings.EqualFold(args["suppressMatch"], "true")
+	diacriticsMode := args["Mode"] == "diacritics"
+	generateSuggestions := true
+
+	var replacements, replacements2 []string
+	var regexpPattern *regexp.Regexp
+	usedLemmas := map[string]struct{}{}
+	stringComparatorWord := ""
+
+	if wordFrom != "" && desiredPostag != "" {
+		var atrWord *languagetool.AnalyzedTokenReadings
+		if wordFrom == "inmarker" {
+			match.SetOriginalErrorStr()
+			pre := match.GetOriginalErrorStr()
+			if f.PreProcessWrongWord != nil {
+				pre = f.PreProcessWrongWord(pre)
+			} else {
+				pre = strings.ReplaceAll(pre, " ", "")
+			}
+			atrWord = languagetool.NewAnalyzedTokenReadings(
+				languagetool.NewAnalyzedToken(pre, nil, nil))
+		} else {
+			atrWord = resolveWordFromFS(wordFrom, match, patternTokens, tokenPositions)
 		}
-		if f.MatchesDesiredPostag != nil && !f.MatchesDesiredPostag(c, desiredPostag) {
-			continue
+		if atrWord == nil {
+			return nil
 		}
-		out = append(out, c)
-		if len(out) >= findSuggestionsMax {
+		stringComparatorWord = atrWord.GetToken()
+		isWordCapitalized := tools.IsCapitalizedWord(atrWord.GetToken())
+		isWordAllupper := tools.IsAllUppercase(atrWord.GetToken())
+
+		// Check if the original token meets desiredPostag → diacritics mode drops match
+		if f.Tag != nil {
+			aOriginal := f.Tag(atrWord.GetToken())
+			if aOriginal != nil && aOriginal.MatchesPosTagRegex(desiredPostag) {
+				if diacriticsMode {
+					return nil
+				}
+			}
+		}
+
+		if generateSuggestions {
+			if removeSuggestionsRegexp != "" {
+				regexpPattern, _ = regexp.Compile("(?i)" + removeSuggestionsRegexp)
+				// Java UNICODE_CASE; Go (?i) approximates case fold
+			}
+			suggestions := f.SpellingSuggestions(atrWord)
+			usedPriorityPostagPos := 0
+			for _, suggestion := range suggestions {
+				if len(replacements) >= 2*findSuggestionsMax {
+					break
+				}
+				clean := suggestion
+				if f.CleanSuggestion != nil {
+					clean = f.CleanSuggestion(suggestion)
+				}
+				var analyzedList []*languagetool.AnalyzedTokenReadings
+				if f.Tag != nil {
+					if atr := f.Tag(clean); atr != nil {
+						analyzedList = []*languagetool.AnalyzedTokenReadings{atr}
+					}
+				} else if f.MatchesDesiredPostag != nil {
+					// fallback without tagger: synthetic empty readings path via MatchesDesiredPostag
+					if f.MatchesDesiredPostag(suggestion, desiredPostag) && suggestion != atrWord.GetToken() {
+						if !containsStrFS(replacements, suggestion) && !containsStrFS(replacements, strings.ToLower(suggestion)) {
+							if !diacriticsMode || equalWithoutDiacritics(suggestion, atrWord.GetToken()) {
+								if regexpPattern == nil || !regexpPattern.MatchString(suggestion) {
+									repl := suggestion
+									if isWordAllupper {
+										repl = strings.ToUpper(repl)
+									} else if isWordCapitalized {
+										repl = tools.UppercaseFirstChar(repl)
+									}
+									replacements = append(replacements, repl)
+								}
+							}
+						}
+					}
+					continue
+				}
+				for _, analyzedSuggestion := range analyzedList {
+					if f.IsSuggestionException != nil && f.IsSuggestionException(analyzedSuggestion) {
+						continue
+					}
+					if len(replacements) >= 2*findSuggestionsMax {
+						break
+					}
+					used := false
+					if suggestion != atrWord.GetToken() && analyzedSuggestion.MatchesPosTagRegex(desiredPostag) {
+						if !containsStrFS(replacements, suggestion) &&
+							!containsStrFS(replacements, strings.ToLower(suggestion)) &&
+							(!diacriticsMode || equalWithoutDiacritics(suggestion, atrWord.GetToken())) {
+							if regexpPattern == nil || !regexpPattern.MatchString(suggestion) {
+								replacement := suggestion
+								if isWordAllupper {
+									replacement = strings.ToUpper(replacement)
+								}
+								if isWordCapitalized {
+									replacement = tools.UppercaseFirstChar(replacement)
+								}
+								if priorityPostag != "" && analyzedSuggestion.MatchesPosTagRegex(priorityPostag) {
+									// insert at usedPriorityPostagPos
+									replacements = append(replacements[:usedPriorityPostagPos],
+										append([]string{replacement}, replacements[usedPriorityPostagPos:]...)...)
+									usedPriorityPostagPos++
+									used = true
+								} else {
+									replacements = append(replacements, replacement)
+									used = true
+								}
+							}
+						}
+					}
+					// synthesizer path
+					if !used && f.Synthesize != nil {
+						var synthesizedSuggestions []string
+						for _, at := range analyzedSuggestion.GetReadings() {
+							if at == nil || at.GetLemma() == nil {
+								continue
+							}
+							lemma := *at.GetLemma()
+							if _, ok := usedLemmas[lemma]; ok {
+								continue
+							}
+							usedLemmas[lemma] = struct{}{}
+							for _, syn := range f.Synthesize(at, desiredPostag) {
+								if !containsStrFS(synthesizedSuggestions, syn) {
+									synthesizedSuggestions = append(synthesizedSuggestions, syn)
+								}
+							}
+							for _, replacement := range synthesizedSuggestions {
+								if isWordAllupper {
+									replacement = strings.ToUpper(replacement)
+								}
+								if isWordCapitalized {
+									replacement = tools.UppercaseFirstChar(replacement)
+								}
+								replacements2 = append(replacements2, replacement)
+							}
+							// reset for next reading's accumulate — Java rebuilds list per reading
+							synthesizedSuggestions = nil
+						}
+					}
+				}
+			}
+		}
+	}
+
+	matchContainsSomeFinishedSuggestion := false
+	for _, k := range match.GetSuggestedReplacements() {
+		if !strings.Contains(strings.ToLower(k), "{suggestion}") {
+			matchContainsSomeFinishedSuggestion = true
 			break
 		}
 	}
-	suppress := strings.EqualFold(args["suppressMatch"], "true")
-	diacriticsMode := args["Mode"] == "diacritics"
-	if diacriticsMode {
-		out = filterDiacriticOnly(atr.GetToken(), out)
-	}
-	if len(out) == 0 && suppress {
+	if diacriticsMode && len(replacements) == 0 && !matchContainsSomeFinishedSuggestion {
 		return nil
 	}
-	if len(out) == 0 && diacriticsMode {
+	if len(replacements)+len(replacements2) == 0 && bSuppressMatch && !matchContainsSomeFinishedSuggestion {
 		return nil
 	}
-	match.SetSuggestedReplacements(out)
-	return match
-}
 
-func resolveWordFrom(wordFrom string, match *RuleMatch, patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *languagetool.AnalyzedTokenReadings {
-	if wordFrom == "marker" || wordFrom == "inmarker" {
-		for _, t := range patternTokens {
-			if t.GetStartPos() >= match.GetFromPos() && t.GetStartPos() < match.GetToPos() {
-				return t
+	out := NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
+	out.ShortMessage = match.GetShortMessage()
+	// preserve type-like fields
+	out.IssueType = match.IssueType
+	out.CategoryID = match.CategoryID
+	out.CategoryName = match.CategoryName
+
+	var definitiveReplacements []string
+	replacementsUsed := false
+	if generateSuggestions {
+		for _, s := range match.GetSuggestedReplacements() {
+			if strings.Contains(s, "{suggestion}") || strings.Contains(s, "{Suggestion}") || strings.Contains(s, "{SUGGESTION}") {
+				replacementsUsed = true
+				for _, s2 := range replacements {
+					if len(definitiveReplacements) >= findSuggestionsMax {
+						break
+					}
+					switch {
+					case strings.Contains(s, "{suggestion}"):
+						if !containsStrFS(definitiveReplacements, s2) {
+							definitiveReplacements = append(definitiveReplacements, strings.ReplaceAll(s, "{suggestion}", s2))
+						}
+					case strings.Contains(s, "{Suggestion}"):
+						u := tools.UppercaseFirstChar(s2)
+						if !containsStrFS(definitiveReplacements, u) {
+							definitiveReplacements = append(definitiveReplacements, strings.ReplaceAll(s, "{Suggestion}", u))
+						}
+					default: // {SUGGESTION}
+						u := strings.ToUpper(s2)
+						if !containsStrFS(definitiveReplacements, u) {
+							definitiveReplacements = append(definitiveReplacements, strings.ReplaceAll(s, "{SUGGESTION}", u))
+						}
+					}
+				}
+			} else {
+				if !containsStrFS(definitiveReplacements, s) {
+					definitiveReplacements = append(definitiveReplacements, s)
+				}
 			}
 		}
-		if len(patternTokens) > 0 {
-			return patternTokens[0]
+		if !replacementsUsed {
+			if len(replacements) == 0 {
+				sort.SliceStable(replacements2, func(i, j int) bool {
+					return stringComparatorLess(stringComparatorWord, replacements2[i], replacements2[j])
+				})
+				for _, replacement := range replacements2 {
+					if !containsStrFS(replacements, replacement) && !containsStrFS(definitiveReplacements, replacement) {
+						replacements = append(replacements, replacement)
+					}
+				}
+			}
+			for _, replacement := range replacements {
+				if len(definitiveReplacements) >= findSuggestionsMax {
+					break
+				}
+				if !containsStrFS(definitiveReplacements, replacement) {
+					definitiveReplacements = append(definitiveReplacements, replacement)
+				}
+			}
+		}
+	}
+	// remove original error string
+	orig := match.GetOriginalErrorStr()
+	if orig == "" && match.Sentence != nil {
+		text := match.Sentence.GetText()
+		if match.FromPos >= 0 && match.ToPos <= len(text) {
+			orig = text[match.FromPos:match.ToPos]
+		}
+	}
+	definitiveReplacements = removeStringFS(definitiveReplacements, orig)
+	// distinct
+	definitiveReplacements = distinctFS(definitiveReplacements)
+	if len(definitiveReplacements) > 0 {
+		out.SetSuggestedReplacements(definitiveReplacements)
+	}
+	return out
+}
+
+func resolveWordFromFS(wordFrom string, match *RuleMatch, patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *languagetool.AnalyzedTokenReadings {
+	if wordFrom == "marker" {
+		// getPosition("marker") style
+		i := 0
+		for i < len(patternTokens) &&
+			(patternTokens[i].GetStartPos() < match.GetFromPos() || patternTokens[i].IsSentenceStart()) {
+			i++
+		}
+		i++ // Java getPosition then returns i-1 after increment — wait:
+		// getPosition: while...; i++; return i-1 → first token at/after match
+		// Actually after while i points to first token with start>=from and not sent start skip,
+		// then i++, then return i-1 which is the token after the while stop.
+		if i-1 >= 0 && i-1 < len(patternTokens) {
+			return patternTokens[i-1]
 		}
 		return nil
+	}
+	if wordFrom == "inmarker" {
+		return nil // handled by caller
 	}
 	n, err := strconv.Atoi(wordFrom)
 	if err != nil {
+		// try getPosition numeric path without skip: Java Integer.parseInt
 		return nil
 	}
-	idx := skipCorrectedRef(tokenPositions, n)
+	// Java getPosition for numeric: i = parseInt; return i-1 (1-based)
+	// Also getSkipCorrectedReference when used — Abstract uses getPosition only.
+	idx := n - 1
+	if idx < 0 || idx >= len(patternTokens) {
+		// also try skipCorrectedRef for tokenPositions compatibility
+		idx = skipCorrectedRef(tokenPositions, n)
+	}
 	if idx < 0 || idx >= len(patternTokens) {
 		return nil
 	}
 	return patternTokens[idx]
 }
 
-func filterDiacriticOnly(original string, cands []string) []string {
-	base := stripDiacriticsLight(original)
-	var out []string
-	for _, c := range cands {
-		if stripDiacriticsLight(c) == base && c != original {
-			out = append(out, c)
-		}
-	}
-	return out
+func equalWithoutDiacritics(s, t string) bool {
+	return strings.EqualFold(stripDiacriticsLight(s), stripDiacriticsLight(t))
 }
 
 func stripDiacriticsLight(s string) string {
-	// reuse simple map from multitoken-style replacements
 	var b strings.Builder
 	for _, r := range strings.ToLower(s) {
 		switch r {
@@ -124,9 +356,123 @@ func stripDiacriticsLight(s string) string {
 			b.WriteByte('c')
 		case 'ñ':
 			b.WriteByte('n')
+		case '·':
+			// keep mid-dot for ela geminada comparisons lightly
+			b.WriteRune(r)
 		default:
 			b.WriteRune(r)
 		}
 	}
 	return b.String()
 }
+
+func containsStrFS(list []string, s string) bool {
+	for _, x := range list {
+		if x == s {
+			return true
+		}
+	}
+	return false
+}
+
+func removeStringFS(list []string, s string) []string {
+	if s == "" {
+		return list
+	}
+	var out []string
+	for _, x := range list {
+		if x != s {
+			out = append(out, x)
+		}
+	}
+	return out
+}
+
+func distinctFS(in []string) []string {
+	seen := map[string]struct{}{}
+	var out []string
+	for _, s := range in {
+		if _, ok := seen[s]; ok {
+			continue
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	return out
+}
+
+// stringComparatorLess ports StringComparator with simple Levenshtein (maxDistance 4).
+func stringComparatorLess(word, o1, o2 string) bool {
+	d1 := levCapped(word, o1, 4)
+	d2 := levCapped(word, o2, 4)
+	if d1 < 0 {
+		d1 = 8
+	}
+	if d2 < 0 {
+		d2 = 8
+	}
+	return d1 < d2
+}
+
+func levCapped(a, b string, max int) int {
+	// simple rune Levenshtein; return -1 if > max (like Damerau compare)
+	ar, br := []rune(a), []rune(b)
+	if abs(len(ar)-len(br)) > max {
+		return -1
+	}
+	// DP
+	prev := make([]int, len(br)+1)
+	cur := make([]int, len(br)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ar); i++ {
+		cur[0] = i
+		rowMin := cur[0]
+		for j := 1; j <= len(br); j++ {
+			cost := 1
+			if ar[i-1] == br[j-1] {
+				cost = 0
+			}
+			del := prev[j] + 1
+			ins := cur[j-1] + 1
+			sub := prev[j-1] + cost
+			cur[j] = min3(del, ins, sub)
+			if cur[j] < rowMin {
+				rowMin = cur[j]
+			}
+		}
+		if rowMin > max {
+			return -1
+		}
+		prev, cur = cur, prev
+	}
+	d := prev[len(br)]
+	if d > max {
+		return -1
+	}
+	return d
+}
+
+func min3(a, b, c int) int {
+	if a < b {
+		if a < c {
+			return a
+		}
+		return c
+	}
+	if b < c {
+		return b
+	}
+	return c
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+// keep unicode import used for potential future isLetter checks
+var _ = unicode.IsLetter

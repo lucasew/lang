@@ -25,9 +25,13 @@ type AbstractPatternRule struct {
 	SuggestionMatches       []*Match
 	SuggestionMatchesOutMsg []*Match
 	AntiPatterns            []*PatternRule // lightweight stand-in for DisambiguationPatternRule
-	LineNumber              int
-	DistanceTokens          int
-	Premium                 bool
+	// UnifierConfig is the language-level <unification> table from the same grammar file.
+	UnifierConfig *UnifierConfiguration
+	// InterpretPreDisambig ports pattern raw_pos="yes".
+	InterpretPreDisambig bool
+	LineNumber           int
+	DistanceTokens       int
+	Premium              bool
 	// DefaultOff is true when XML default="off" or default="temp_off" (soft grammar).
 	DefaultOff bool
 }

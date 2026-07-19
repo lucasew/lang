@@ -1,5 +1,7 @@
 package language
 
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
 // EnglishVariant ports English locale Language subclasses (metadata surface).
 type EnglishVariant struct {
 	ShortCode    string   // en-US
@@ -10,23 +12,36 @@ type EnglishVariant struct {
 	RelevantExtraRuleIDs []string
 }
 
+// GetShortCode ports English.getShortCode ("en" for all locales).
+func (v EnglishVariant) GetShortCode() string { return "en" }
+
+// GetShortCodeWithCountryAndVariant ports Language.buildShortCodeWithCountryAndVariant.
+// Stored ShortCode is the full locale code (en-US, en-GB, …).
 func (v EnglishVariant) GetShortCodeWithCountryAndVariant() string { return v.ShortCode }
-func (v EnglishVariant) GetName() string                           { return v.Name }
+
+func (v EnglishVariant) GetName() string { return v.Name }
 func (v EnglishVariant) GetCountries() []string {
 	return append([]string(nil), v.Countries...)
+}
+
+// GetCommonWordsPath ports Language.getCommonWordsPath → en/common_words.txt.
+func (v EnglishVariant) GetCommonWordsPath() string {
+	return DefaultCommonWordsPath(v.GetShortCode())
 }
 
 // Predefined English variants.
 var (
 	AmericanEnglish = EnglishVariant{
 		ShortCode: "en-US", Name: "English (US)", Countries: []string{"US"},
-		SpellerRuleID:        "MORFOLOGIK_RULE_EN_US",
-		RelevantExtraRuleIDs: []string{"AMERICAN_ENGLISH_REPLACE", "UNIT_CONVERSION_RULE_US"},
+		SpellerRuleID: "MORFOLOGIK_RULE_EN_US",
+		// Java AmericanEnglish.getRelevantRules: AmericanReplaceRule + UnitConversionRuleUS.
+		RelevantExtraRuleIDs: []string{"EN_US_SIMPLE_REPLACE", "METRIC_UNITS_EN_US"},
 	}
 	BritishEnglish = EnglishVariant{
 		ShortCode: "en-GB", Name: "English (British)", Countries: []string{"GB"},
-		SpellerRuleID:        "MORFOLOGIK_RULE_EN_GB",
-		RelevantExtraRuleIDs: []string{"BRITISH_ENGLISH_REPLACE"},
+		SpellerRuleID: "MORFOLOGIK_RULE_EN_GB",
+		// Java BritishEnglish.getRelevantRules: BritishReplaceRule + UnitConversionRuleImperial.
+		RelevantExtraRuleIDs: []string{"EN_GB_SIMPLE_REPLACE", "METRIC_UNITS_EN_IMPERIAL"},
 	}
 	CanadianEnglish = EnglishVariant{
 		ShortCode: "en-CA", Name: "English (Canadian)", Countries: []string{"CA"},
@@ -82,3 +97,53 @@ func equalFoldASCII(a, b string) bool {
 	}
 	return true
 }
+
+// GetMaintainedState ports English.getMaintainedState → ActivelyMaintained.
+func (v EnglishVariant) GetMaintainedState() languagetool.LanguageMaintainedState {
+	return languagetool.ActivelyMaintained
+}
+
+// GetMaintainers ports English.getMaintainers (Mike Unwalla, Marcin Miłkowski, Daniel Naber).
+func (v EnglishVariant) GetMaintainers() []Contributor {
+	return []Contributor{
+		NewContributor("Mike Unwalla"),
+		MarcinMilkowski,
+		DanielNaber,
+	}
+}
+
+// HasNGramFalseFriendRule ports English.hasNGramFalseFriendRule for mother short code.
+func (v EnglishVariant) HasNGramFalseFriendRule(motherTongueShortCode string) bool {
+	return EnglishHasNGramFalseFriendRule(motherTongueShortCode)
+}
+
+// GetDefaultSpellingRuleID ports createDefaultSpellingRule / Morfologik* getId.
+func (v EnglishVariant) GetDefaultSpellingRuleID() string {
+	return v.SpellerRuleID
+}
+
+// GetOpeningDoubleQuote ports English.getOpeningDoubleQuote ("“").
+func (v EnglishVariant) GetOpeningDoubleQuote() string { return "“" }
+
+// GetClosingDoubleQuote ports English.getClosingDoubleQuote ("”").
+func (v EnglishVariant) GetClosingDoubleQuote() string { return "”" }
+
+// GetOpeningSingleQuote ports English.getOpeningSingleQuote ("‘").
+func (v EnglishVariant) GetOpeningSingleQuote() string { return "‘" }
+
+// GetClosingSingleQuote ports English.getClosingSingleQuote ("’").
+func (v EnglishVariant) GetClosingSingleQuote() string { return "’" }
+
+// IsAdvancedTypographyEnabled ports English.isAdvancedTypographyEnabled (true).
+func (v EnglishVariant) IsAdvancedTypographyEnabled() bool { return true }
+
+// ToAdvancedTypography ports English base Language.toAdvancedTypography with English quotes.
+func (v EnglishVariant) ToAdvancedTypography(input string) string {
+	return EnglishAdvancedTypography(input)
+}
+
+// HasMinMatchesRules ports English.hasMinMatchesRules (true).
+func (v EnglishVariant) HasMinMatchesRules() bool { return true }
+
+// GetDefaultRulePriorityForStyle ports English.getDefaultRulePriorityForStyle (-50).
+func (v EnglishVariant) GetDefaultRulePriorityForStyle() int { return -50 }

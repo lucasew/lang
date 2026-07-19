@@ -46,13 +46,14 @@ type SimpleReplaceRule struct {
 
 func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 	base := &rules.AbstractSimpleReplaceRule{
-		Messages:      messages,
-		WrongWords:    loadReplaceWords(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
-		ID:            "ES_SIMPLE_REPLACE_SIMPLE",
-		Description:   "Palabra incorrecta: $match",
-		ShortMsg:      "Palabra incorrecta",
+		Messages:          messages,
+		WrongWords:        loadReplaceWords(),
+		CaseSensitive:     false,
+		CheckLemmas:       false,
+		IgnoreTaggedWords: true, // Java setIgnoreTaggedWords()
+		ID:                "ES_SIMPLE_REPLACE_SIMPLE",
+		Description:       "Palabra incorrecta: $match",
+		ShortMsg:          "Palabra incorrecta",
 		MessageFn: func(tokenStr string, replacements []string) string {
 			if len(replacements) > 0 {
 				return "¿Quería decir «" + replacements[0] + "»?"

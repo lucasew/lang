@@ -2,35 +2,66 @@ package sr
 
 import (
 	"testing"
-	"time"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/stretchr/testify/require"
 )
 
-func TestDateCheckFilter(t *testing.T) {
+func TestDateCheckFilter_Helpers(t *testing.T) {
 	f := NewDateCheckFilter()
-	require.NotNil(t, f)
-	_, err := f.AcceptRuleMatch(map[string]string{})
-	require.Error(t, err)
-	_, err = f.AcceptRuleMatch(map[string]string{"weekDay": "1"})
+	// Java Calendar Sunday=1
+	d, err := f.GetDayOfWeekJava("недеља")
 	require.NoError(t, err)
+	require.Equal(t, 1, d)
+	d, err = f.GetDayOfWeekJava("по")
+	require.NoError(t, err)
+	require.Equal(t, 2, d)
+	m, err := f.GetMonth("јануар")
+	require.NoError(t, err)
+	require.Equal(t, 1, m)
+	m, err = f.GetMonth("XII")
+	require.NoError(t, err)
+	require.Equal(t, 12, m)
+	require.Equal(t, "петак", f.GetDayOfWeekName(2014, 8, 29))
+	require.Equal(t, "субота", f.GetDayOfWeekName(2014, 8, 23))
+}
+
+func TestDateCheckFilter_AcceptWrongWeekday(t *testing.T) {
+	// 2014-08-23 is Saturday (субота); claiming недеља keeps the match
+	f := NewDateCheckFilter()
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 10, "wrong {realDay} not {day}")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"year": "2014", "month": "8", "day": "23", "weekDay": "недеља",
+	}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetMessage(), "субота")
+}
+
+func TestDateCheckFilter_AcceptCorrectWeekday(t *testing.T) {
+	f := NewDateCheckFilter()
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 10, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"year": "2014", "month": "8", "day": "23", "weekDay": "субота",
+	}, 0, nil, nil)
+	require.Nil(t, out)
+}
+
+func TestDateCheckFilter_MissingWeekDayPanics(t *testing.T) {
+	f := NewDateCheckFilter()
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 5, "msg")
+	require.Panics(t, func() {
+		f.AcceptRuleMatch(m, map[string]string{"year": "2014"}, 0, nil, nil)
+	})
+}
+
+func TestDateCheckFilter_Registered(t *testing.T) {
+	require.True(t, patterns.GlobalRuleFilterCreator.HasFilter("org.languagetool.rules.sr.DateCheckFilter"))
 }
 
 func TestDateFilterHelper_Month(t *testing.T) {
 	h := NewDateFilterHelper()
-	m, err := h.GetMonth("1")
-	if err != nil {
-		// try language names
-		for _, name := range []string{"januar"} {
-			m, err = h.GetMonth(name)
-			if err == nil {
-				break
-			}
-		}
-	}
-	if err == nil {
-		require.GreaterOrEqual(t, int(m), 1)
-		require.LessOrEqual(t, int(m), 12)
-	}
-	_ = time.January
+	m, err := h.GetMonth("март")
+	require.NoError(t, err)
+	require.Equal(t, 3, int(m))
 }

@@ -1,14 +1,79 @@
 package de
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestAdaptSuggestionFilter_AdaptedDet(t *testing.T) {
+// testGender ports getNounGender for unit tests only (not production invent).
+func testGender(w string) string {
+	switch w {
+	case "Mann", "Plan", "Tisch", "Baum", "Hund", "Tag", "Name":
+		return "MAS"
+	case "Frau", "Idee", "Roadmap", "Katze", "Zeit", "Stadt", "Blume":
+		return "FEM"
+	case "Kind", "Verfahren", "Haus", "Buch", "Auto", "Mädchen", "Tier":
+		return "NEU"
+	default:
+		return ""
+	}
+}
+
+// testSynthesize ports a minimal GermanSynthesizer subset for ART/PRO used in tests.
+// Keys are built from postagRE containing CASE and GENDER after MAS|FEM|NEU replace.
+func testSynthesize(lemma, postagRE string) []string {
+	// postagRE examples: ART:DEF:NOM:SIN:MAS, ART:IND:AKK:SIN:MAS, PRO:POS:NOM:SIN:FEM
+	gender := ""
+	for _, g := range []string{"MAS", "FEM", "NEU"} {
+		if strings.Contains(postagRE, g) {
+			gender = g
+			break
+		}
+	}
+	cas := ""
+	for _, c := range []string{"NOM", "AKK", "GEN", "DAT"} {
+		if strings.Contains(postagRE, c) {
+			cas = c
+			break
+		}
+	}
+	key := strings.ToLower(lemma) + "|" + cas + "|" + gender
+	if forms, ok := testDetSynth[key]; ok {
+		return append([]string(nil), forms...)
+	}
+	return nil
+}
+
+var testDetSynth = map[string][]string{
+	"der|NOM|MAS": {"der"}, "der|AKK|MAS": {"den"}, "der|GEN|MAS": {"des"}, "der|DAT|MAS": {"dem"},
+	"der|NOM|FEM": {"die"}, "der|AKK|FEM": {"die"}, "der|GEN|FEM": {"der"}, "der|DAT|FEM": {"der"},
+	"der|NOM|NEU": {"das"}, "der|AKK|NEU": {"das"}, "der|GEN|NEU": {"des"}, "der|DAT|NEU": {"dem"},
+	"ein|NOM|MAS": {"ein"}, "ein|AKK|MAS": {"einen"}, "ein|GEN|MAS": {"eines"}, "ein|DAT|MAS": {"einem"},
+	"ein|NOM|FEM": {"eine"}, "ein|AKK|FEM": {"eine"}, "ein|GEN|FEM": {"einer"}, "ein|DAT|FEM": {"einer"},
+	"ein|NOM|NEU": {"ein"}, "ein|AKK|NEU": {"ein"}, "ein|GEN|NEU": {"eines"}, "ein|DAT|NEU": {"einem"},
+	"mein|NOM|MAS": {"mein"}, "mein|AKK|MAS": {"meinen"}, "mein|GEN|MAS": {"meines"}, "mein|DAT|MAS": {"meinem"},
+	"mein|NOM|FEM": {"meine"}, "mein|AKK|FEM": {"meine"}, "mein|GEN|FEM": {"meiner"}, "mein|DAT|FEM": {"meiner"},
+	"mein|NOM|NEU": {"mein"}, "mein|AKK|NEU": {"mein"}, "mein|GEN|NEU": {"meines"}, "mein|DAT|NEU": {"meinem"},
+	"unser|NOM|MAS": {"unser"}, "unser|AKK|MAS": {"unseren"}, "unser|NOM|FEM": {"unsere"}, "unser|AKK|FEM": {"unsere"},
+}
+
+func withTestHooks(f *AdaptSuggestionFilter) *AdaptSuggestionFilter {
+	f.GenderOf = testGender
+	f.Synthesize = testSynthesize
+	return f
+}
+
+func TestAdaptSuggestionFilter_FailClosedWithoutHooks(t *testing.T) {
 	f := NewAdaptSuggestionFilter()
-	// Port of AdaptSuggestionFilterTest.testAdaptedDet
+	// soft invent removed: no GenderOf/Synthesize → empty
+	require.Empty(t, f.AdaptedDet(DetReading{Token: "die", POS: "ART:DEF:NOM:SIN:FEM", Lemma: "der"}, "Mann"))
+	require.Empty(t, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Plan"}))
+}
+
+func TestAdaptSuggestionFilter_AdaptedDet(t *testing.T) {
+	f := withTestHooks(NewAdaptSuggestionFilter())
 	require.Equal(t, []string{"der"}, f.AdaptedDet(DetReading{Token: "die", POS: "ART:DEF:NOM:SIN:FEM", Lemma: "der"}, "Mann"))
 	require.Equal(t, []string{"die"}, f.AdaptedDet(DetReading{Token: "der", POS: "ART:DEF:NOM:SIN:MAS", Lemma: "der"}, "Frau"))
 	require.Equal(t, []string{"das"}, f.AdaptedDet(DetReading{Token: "der", POS: "ART:DEF:NOM:SIN:NEU", Lemma: "der"}, "Kind"))
@@ -20,7 +85,7 @@ func TestAdaptSuggestionFilter_AdaptedDet(t *testing.T) {
 }
 
 func TestAdaptSuggestionFilter_Possessives(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
+	f := withTestHooks(NewAdaptSuggestionFilter())
 	require.Equal(t, []string{"mein"}, f.AdaptedDet(DetReading{Token: "meine", POS: "PRO:POS:NOM:SIN:FEM", Lemma: "mein"}, "Plan"))
 	require.Equal(t, []string{"meinen"}, f.AdaptedDet(DetReading{Token: "meine", POS: "PRO:POS:AKK:SIN:FEM", Lemma: "mein"}, "Plan"))
 	require.Equal(t, []string{"unser"}, f.AdaptedDet(DetReading{Token: "unsere", POS: "PRO:POS:NOM:SIN:FEM", Lemma: "unser"}, "Plan"))
@@ -29,8 +94,7 @@ func TestAdaptSuggestionFilter_Possessives(t *testing.T) {
 }
 
 func TestAdaptSuggestionFilter_SuggestWithDet(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
-	// "die Roadmap" → "Plan" (MAS): der/den depending on case; NOM reading of "die" FEM → der for MAS NOM
+	f := withTestHooks(NewAdaptSuggestionFilter())
 	got := f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Plan"})
 	require.Equal(t, []string{"der Plan"}, got)
 
@@ -39,7 +103,7 @@ func TestAdaptSuggestionFilter_SuggestWithDet(t *testing.T) {
 }
 
 func TestAdaptSuggestionFilter_UppercaseDet(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
+	f := withTestHooks(NewAdaptSuggestionFilter())
 	got := f.AdaptedDet(DetReading{Token: "Die", POS: "ART:DEF:NOM:SIN:FEM", Lemma: "der"}, "Plan")
 	require.Equal(t, []string{"Der"}, got)
 }

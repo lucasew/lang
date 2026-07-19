@@ -1,17 +1,52 @@
 package pt
 
-import "strings"
+import (
+	"strings"
 
-// PortugueseProclisisFilter ports pronoun remapping from
-// org.languagetool.rules.pt.PortugueseProclisisFilter.
-// Verb form synthesis is provided via SynthesizeVerb (optional).
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+)
+
+// PortugueseProclisisFilter ports org.languagetool.rules.pt.PortugueseProclisisFilter.
+// Verb form synthesis is provided via SynthesizeVerb (Java: PortugueseSynthesizer).
 type PortugueseProclisisFilter struct {
-	// SynthesizeVerb returns the non-enclitic verb form for a lemma/POS; nil uses old verb stem.
+	// SynthesizeVerb returns the non-enclitic verb form for a lemma/POS;
+	// nil falls back to the hyphen-stripped stem (surface path until synth is wired).
 	SynthesizeVerb func(token, verbTag string) string
 }
 
 func NewPortugueseProclisisFilter() *PortugueseProclisisFilter {
 	return &PortugueseProclisisFilter{}
+}
+
+// AcceptRuleMatch ports PortugueseProclisisFilter.acceptRuleMatch.
+// Uses the last pattern token as the enclitic verb (Java: patternTokens[length-1]).
+func (f *PortugueseProclisisFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil || len(patternTokens) == 0 {
+		return nil
+	}
+	enclitic := patternTokens[len(patternTokens)-1]
+	if enclitic == nil {
+		return nil
+	}
+	var readings []struct{ Token, POS string }
+	for _, at := range enclitic.GetReadings() {
+		if at == nil {
+			continue
+		}
+		pos := ""
+		if at.GetPOSTag() != nil {
+			pos = *at.GetPOSTag()
+		}
+		readings = append(readings, struct{ Token, POS string }{Token: at.GetToken(), POS: pos})
+	}
+	// If no readings, still try surface token with empty POS (Suggest skips non-V).
+	if len(readings) == 0 {
+		readings = []struct{ Token, POS string }{{Token: enclitic.GetToken()}}
+	}
+	match.SetSuggestedReplacements(f.Suggest(readings))
+	return match
 }
 
 // Suggest builds proclisis suggestions from an enclitic verb token like "dizer-lhe".

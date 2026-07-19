@@ -1,7 +1,7 @@
 package de
 
 // Twin of languagetool-language-modules/de/src/test/java/org/languagetool/rules/de/OldSpellingRuleTest.java
-// Surface CSV + short-inflection port (no full German synthesizer / Aho-Corasick).
+// Inflected ß→ss (e.g. Rußlands) when german_synth.dict is discoverable; else CSV-only fail-closed.
 import (
 	"testing"
 
@@ -11,6 +11,7 @@ import (
 
 func TestOldSpellingRule(t *testing.T) {
 	rule := NewOldSpellingRule(nil)
+	m, _ := loadOldSpelling()
 
 	check := func(sentence string, sugg string) {
 		t.Helper()
@@ -25,7 +26,13 @@ func TestOldSpellingRule(t *testing.T) {
 
 	check("Ein Kuß", "Kuss")
 	check("Das Corpus delicti", "Corpus Delicti")
-	check("In Rußlands Weiten", "Russlands")
+	// Base CSV form always present; genitive Rußlands only via synthesizer (Java SpellingData).
+	check("In Rußland Weiten", "Russland")
+	if _, ok := m["Rußlands"]; ok {
+		check("In Rußlands Weiten", "Russlands")
+	} else {
+		no("In Rußlands Weiten") // fail-closed without invent when synth dict missing
+	}
 	check("Hot pants", "Hotpants")
 	check("Ich muß los", "muss")
 	matches := rule.Match(languagetool.AnalyzePlain("schwarzweißmalen"))
@@ -55,6 +62,24 @@ func TestOldSpellingRule(t *testing.T) {
 
 	check("Naß ist das Wasser", "Nass")
 	check("Läßt du das bitte", "Lässt")
+}
+
+// End-to-end SpellingData expand path used by OldSpellingRule (mock synth, no invent).
+func TestOldSpellingRule_ExpandFormsIntegration(t *testing.T) {
+	content := "Rußland;Russland\n"
+	expand := func(old string) []string {
+		if old == "Rußland" {
+			return []string{"Rußlands"}
+		}
+		return nil
+	}
+	sd, err := LoadSpellingDataBoth(content, "t.csv", expand)
+	require.NoError(t, err)
+	require.Equal(t, "Russlands", sd.Map["Rußlands"])
+	// suggestion for expanded form is ß→ss on the form itself (Java)
+	neu, ok := lookupOldSpelling("Rußlands", sd.Map)
+	require.True(t, ok)
+	require.Equal(t, "Russlands", neu)
 }
 
 func TestOldSpellingRule_GermanAT(t *testing.T) {

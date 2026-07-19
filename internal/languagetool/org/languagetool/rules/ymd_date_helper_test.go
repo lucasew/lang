@@ -17,3 +17,11 @@ func TestYMDDateHelper_ParseDate(t *testing.T) {
 	_, err = h.ParseDate(map[string]string{})
 	require.Error(t, err)
 }
+
+func TestYMDDateHelper_CorrectDate(t *testing.T) {
+	h := NewYMDDateHelper()
+	m := NewRuleMatch(NewFakeRule("Y"), nil, 0, 4, "use {realDate} instead")
+	out := h.CorrectDate(m, map[string]string{"year": "2013", "month": "03", "day": "15"})
+	require.NotNil(t, out)
+	require.Equal(t, "use 2014-03-15 instead", out.GetMessage())
+}

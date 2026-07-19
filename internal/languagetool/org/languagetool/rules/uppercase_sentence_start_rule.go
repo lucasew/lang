@@ -24,18 +24,52 @@ var (
 )
 
 // UppercaseSentenceStartRule ports org.languagetool.rules.UppercaseSentenceStartRule.
+// Java: CASING, Typographical.
 type UppercaseSentenceStartRule struct {
 	Messages map[string]string
 	LangCode string // short code e.g. "en"
+	// Category ports Rule.category (Java CASING).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Typographical).
+	IssueType ITSIssueType
 	// IsException skips this sentence's start check (language-specific).
 	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
 }
 
 func NewUppercaseSentenceStartRule(messages map[string]string, langCode string) *UppercaseSentenceStartRule {
-	return &UppercaseSentenceStartRule{Messages: messages, LangCode: langCode}
+	return &UppercaseSentenceStartRule{
+		Messages:  messages,
+		LangCode:  langCode,
+		Category:  CatCasing.GetCategory(messages),
+		IssueType: ITSTypographical,
+	}
 }
 
 func (r *UppercaseSentenceStartRule) GetID() string { return "UPPERCASE_SENTENCE_START" }
+
+// GetDescription ports getDescription (desc_uppercase_sentence).
+func (r *UppercaseSentenceStartRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_uppercase_sentence"]; s != "" {
+			return s
+		}
+	}
+	return "Checks that a sentence starts with an uppercase letter"
+}
+
+func (r *UppercaseSentenceStartRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *UppercaseSentenceStartRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSTypographical
+	}
+	return r.IssueType
+}
 
 func (r *UppercaseSentenceStartRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
 	lastParagraphString := ""

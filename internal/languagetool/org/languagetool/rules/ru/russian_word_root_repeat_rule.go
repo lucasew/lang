@@ -41,7 +41,6 @@ type RussianWordRootRepeatRule struct {
 func NewRussianWordRootRepeatRule(messages map[string]string) *RussianWordRootRepeatRule {
 	d := loadWordRootData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "RU_WORD_ROOT_REPEAT",
 		Description: "Повтор однокоренных слов",
 		WordMap:     d.WordMap,
@@ -50,6 +49,7 @@ func NewRussianWordRootRepeatRule(messages map[string]string) *RussianWordRootRe
 			return "«" + word1 + "» и «" + word2 + "» – однокоренные слова, их не стоит использовать одновременно"
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &RussianWordRootRepeatRule{AbstractWordCoherencyRule: base}
 }
 

@@ -16,8 +16,24 @@ func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentence
 	}
 	base := rules.NewLongSentenceRule(messages, maxWords)
 	base.RuleID = "TOO_LONG_SENTENCE_DE"
+	// Java de.LongSentenceRule overrides getDescription / short message.
+	base.Description = "Findet lange Sätze"
 	base.ShortMsg = "Langer Satz"
 	return &LongSentenceRule{LongSentenceRule: base}
+}
+
+func (r *LongSentenceRule) GetID() string {
+	if r != nil && r.LongSentenceRule != nil {
+		return r.LongSentenceRule.GetID()
+	}
+	return "TOO_LONG_SENTENCE_DE"
+}
+
+func (r *LongSentenceRule) GetDescription() string {
+	if r != nil && r.LongSentenceRule != nil {
+		return r.LongSentenceRule.GetDescription()
+	}
+	return "Findet lange Sätze"
 }
 
 func (r *LongSentenceRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {

@@ -7,15 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRegisterCoreRomanianRules_Patterns(t *testing.T) {
+func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
+	// Soft invent token sequences removed; official grammar.xml is incomplete until loaded.
 	lt := languagetool.NewJLanguageTool("ro")
 	RegisterCoreRomanianRules(lt)
-	m := lt.Check("Am nevoie de de ajutor.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "RO_DE_DE" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", m)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "RO_DE_DE")
 }

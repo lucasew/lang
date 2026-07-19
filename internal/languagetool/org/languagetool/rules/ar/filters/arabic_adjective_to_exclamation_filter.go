@@ -1,17 +1,25 @@
 package filters
 
 import (
+	"fmt"
+	"strconv"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// Default adjective → comparative map (Java ArabicAdjectiveToExclamationFilter subset).
+// Default adjective → comparative map (Java ArabicAdjectiveToExclamationFilter built-in subset).
+// Full list also loads from /ar/arabic_adjective_exclamation.txt when wired.
 var defaultAdj2Comp = map[string][]string{
 	"رشيد": {"أرشد"},
 	"طويل": {"أطول"},
 	"بديع": {"أبدع"},
+	"جميل": {"أجمل"},
+	"سعيد": {"أسعد"},
 }
 
-// ArabicAdjectiveToExclamationFilter ports comparative suggestion helpers.
+// ArabicAdjectiveToExclamationFilter ports org.languagetool.rules.ar.filters.ArabicAdjectiveToExclamationFilter.
 type ArabicAdjectiveToExclamationFilter struct {
 	Adj2Comp map[string][]string
 }
@@ -22,6 +30,71 @@ func NewArabicAdjectiveToExclamationFilter() *ArabicAdjectiveToExclamationFilter
 		m[k] = append([]string{}, v...)
 	}
 	return &ArabicAdjectiveToExclamationFilter{Adj2Comp: m}
+}
+
+// AcceptRuleMatch ports ArabicAdjectiveToExclamationFilter.acceptRuleMatch.
+// Args: adj, noun, adj_pos (1-based pattern token index for the adjective).
+// Without ArabicTagger, lemmas come from reading lemmas + surface adj (fail-closed empty if map misses).
+func (f *ArabicAdjectiveToExclamationFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	adj := arguments["adj"]
+	noun := arguments["noun"]
+	adjPosStr := arguments["adj_pos"]
+	adjTokenIndex, err := strconv.Atoi(adjPosStr)
+	if err != nil {
+		panic(fmt.Sprintf("Error parsing adj_pos from : %s", adjPosStr))
+	}
+	adjTokenIndex-- // 1-based → 0-based
+
+	// Collect adjective lemmas (Java: tagger.getLemmas(..., "adj")).
+	var adjLemmas []string
+	seen := map[string]struct{}{}
+	add := func(s string) {
+		if s == "" {
+			return
+		}
+		if _, ok := seen[s]; ok {
+			return
+		}
+		seen[s] = struct{}{}
+		adjLemmas = append(adjLemmas, s)
+	}
+	if adjTokenIndex >= 0 && adjTokenIndex < len(patternTokens) && patternTokens[adjTokenIndex] != nil {
+		tok := patternTokens[adjTokenIndex]
+		for _, r := range tok.GetReadings() {
+			if r == nil {
+				continue
+			}
+			if r.GetLemma() != nil {
+				add(*r.GetLemma())
+			}
+		}
+		add(tok.GetToken())
+	}
+	add(adj)
+
+	var compList []string
+	compSeen := map[string]struct{}{}
+	for _, lem := range adjLemmas {
+		for _, c := range f.ComparativesFor(lem) {
+			if _, ok := compSeen[c]; ok {
+				continue
+			}
+			compSeen[c] = struct{}{}
+			compList = append(compList, c)
+		}
+	}
+
+	sugs := PrepareExclamationSuggestionsList(compList, noun)
+	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
+	out.ShortMessage = match.ShortMessage
+	if len(sugs) > 0 {
+		out.SetSuggestedReplacements(sugs)
+	}
+	return out
 }
 
 func (f *ArabicAdjectiveToExclamationFilter) ComparativesFor(adjLemma string) []string {
@@ -37,13 +110,12 @@ func (f *ArabicAdjectiveToExclamationFilter) ComparativesFor(adjLemma string) []
 	return nil
 }
 
-// PrepareSuggestions ports prepareSuggestions(comp, noun).
+// PrepareExclamationSuggestions ports prepareSuggestions(comp, noun).
 func PrepareExclamationSuggestions(comp, noun string) []string {
 	if comp == "" {
 		return nil
 	}
-	var b string
-	b = comp
+	b := comp
 	if noun == "" {
 		return []string{b}
 	}
@@ -58,7 +130,7 @@ func PrepareExclamationSuggestions(comp, noun string) []string {
 	return []string{b}
 }
 
-// PrepareSuggestionsList maps each comparative.
+// PrepareExclamationSuggestionsList maps each comparative.
 func PrepareExclamationSuggestionsList(compList []string, noun string) []string {
 	var out []string
 	for _, c := range compList {
@@ -68,6 +140,11 @@ func PrepareExclamationSuggestionsList(compList []string, noun string) []string 
 }
 
 func isArabicPronoun(noun string) bool {
+	// Java isPronoun list (plus tools map for attached forms used in tests).
+	switch noun {
+	case "هو", "هي", "هم", "هما", "أنا", "هن", "نحن":
+		return true
+	}
 	_, ok := tools.IsolatedToAttachedPronoun[noun]
 	return ok
 }

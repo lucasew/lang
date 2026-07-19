@@ -10,6 +10,7 @@ import (
 )
 
 // germanAbbrRE ports German.TYPOGRAPHY_PATTERN — non-breaking space in abbreviations.
+// (language.GermanAdvancedTypography is the production twin; kept local to avoid test import cycle.)
 var germanAbbrRE = regexp.MustCompile(`\b([a-zA-Z]\.)([a-zA-Z]\.)`)
 
 func germanTypography(s string) string {

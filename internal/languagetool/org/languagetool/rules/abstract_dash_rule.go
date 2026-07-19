@@ -12,15 +12,60 @@ import (
 )
 
 // AbstractDashRule ports org.languagetool.rules.AbstractDashRule.
+// Java: TYPOGRAPHY, Tag.picky.
 type AbstractDashRule struct {
 	Messages         map[string]string
 	ID               string
 	CompoundPatterns []string // longest first
 	Message          string
 	Description      string
+	// Category ports Rule.category (Java TYPOGRAPHY).
+	Category *Category
+	// Tags ports Rule.tags (Java picky).
+	Tags []Tag
 	// IsLetter reports whether r is a word character for boundary checks.
 	// When nil, ASCII letters are used (EN/PL default). RU/PT override this.
 	IsLetter func(r rune) bool
+}
+
+// InitDashRuleMeta applies Java AbstractDashRule constructor metadata.
+func InitDashRuleMeta(r *AbstractDashRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatTypography.GetCategory(messages)
+	}
+	if len(r.Tags) == 0 {
+		r.Tags = []Tag{TagPicky}
+	}
+}
+
+func (r *AbstractDashRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *AbstractDashRule) GetTags() []Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
+}
+
+func (r *AbstractDashRule) HasTag(tag Tag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
 }
 
 // LoadDashCompoundPatterns ports AbstractDashRule.loadCompoundFile variants.

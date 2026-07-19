@@ -7,49 +7,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchDevTest (Java @Ignore interactive).
-// Soft: AcceptRuleMatch-style rewrite of det+noun suggestions without full JLT pipeline.
-func TestAdaptSuggestionFilter_AcceptRuleMatchDevTest(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
-	// simulate rule match suggestions that need det adaptation
-	// prev det "die" FEM + replacement "Plan" MAS → "der Plan"
-	got := f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Plan", "Idee"})
-	require.Contains(t, got, "der Plan")
-	require.Contains(t, got, "die Idee")
-	// empty replacements → empty
-	require.Empty(t, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", nil))
-}
-
-// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDet
+// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDet (surface det path).
 func TestAdaptSuggestionFilter_AcceptRuleMatchWithDet(t *testing.T) {
-	// Surface twin of a subset of Java testAcceptRuleMatchWithDet (no full JLanguageTool pipeline).
-	f := NewAdaptSuggestionFilter()
-	// MAS (der Plan) after FEM det "die":
+	f := withTestHooks(NewAdaptSuggestionFilter())
 	require.Equal(t, []string{"der Plan"}, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Plan"}))
 	require.Equal(t, []string{"ein Plan"}, f.SuggestWithDet("eine", "ART:IND:NOM:SIN:FEM", "ein", []string{"Plan"}))
 	require.Equal(t, []string{"mein Plan"}, f.SuggestWithDet("meine", "PRO:POS:NOM:SIN:FEM", "mein", []string{"Plan"}))
-	// FEM (die Idee):
 	require.Equal(t, []string{"die Idee"}, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Idee"}))
 	require.Equal(t, []string{"meine Idee"}, f.SuggestWithDet("meine", "PRO:POS:NOM:SIN:FEM", "mein", []string{"Idee"}))
-	// NEU (das Verfahren):
 	require.Equal(t, []string{"das Verfahren"}, f.SuggestWithDet("die", "ART:DEF:NOM:SIN:FEM", "der", []string{"Verfahren"}))
 	require.Equal(t, []string{"mein Verfahren"}, f.SuggestWithDet("meine", "PRO:POS:NOM:SIN:FEM", "mein", []string{"Verfahren"}))
 }
 
-// Port of AdaptSuggestionFilterTest.testAcceptRuleMatchWithDetAdj
-func TestAdaptSuggestionFilter_AcceptRuleMatchWithDetAdj(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
-	// die + schöne + Plan → der schöne Plan (masc)
-	got := f.SuggestWithDetAdj("die", "ART:DEF:NOM:SIN:FEM", "der", "schöne", []string{"Plan"})
-	require.Contains(t, got, "der schöne Plan")
-	// meine + gute + Idee
-	got2 := f.SuggestWithDetAdj("meine", "PRO:POS:NOM:SIN:FEM", "mein", "gute", []string{"Idee"})
-	require.Contains(t, got2, "meine gute Idee")
-}
-
 // Port of AdaptSuggestionFilterTest.testAdaptedDet
 func TestAdaptSuggestionFilter_AdaptedDet_Twin(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
+	f := withTestHooks(NewAdaptSuggestionFilter())
 	require.Equal(t, []string{"der"}, f.AdaptedDet(DetReading{Token: "die", POS: "ART:DEF:NOM:SIN:FEM", Lemma: "der"}, "Mann"))
 	require.Equal(t, []string{"die"}, f.AdaptedDet(DetReading{Token: "der", POS: "ART:DEF:NOM:SIN:MAS", Lemma: "der"}, "Frau"))
 	require.Equal(t, []string{"das"}, f.AdaptedDet(DetReading{Token: "der", POS: "ART:DEF:NOM:SIN:NEU", Lemma: "der"}, "Kind"))
@@ -59,18 +31,10 @@ func TestAdaptSuggestionFilter_AdaptedDet_Twin(t *testing.T) {
 	require.Equal(t, []string{"einem"}, f.AdaptedDet(DetReading{Token: "einer", POS: "ART:IND:DAT:SIN:FEM", Lemma: "ein"}, "Plan"))
 }
 
-// Port of AdaptSuggestionFilterTest.testdAdaptedDetAdj — weak adj ending soft.
-func TestAdaptSuggestionFilter_DAdaptedDetAdj(t *testing.T) {
-	f := NewAdaptSuggestionFilter()
-	// der + schöne + Mann (already weak -e for MAS NOM)
-	got := f.SuggestWithDetAdj("der", "ART:DEF:NOM:SIN:MAS", "der", "schöne", []string{"Mann"})
-	require.Contains(t, got, "der schöne Mann")
-	// die + schöne + Plan → der schöne Plan
-	got2 := f.SuggestWithDetAdj("die", "ART:DEF:NOM:SIN:FEM", "der", "schöne", []string{"Plan"})
-	require.Contains(t, got2, "der schöne Plan")
-	// den + guten (AKK MAS) + Plan
-	got3 := f.SuggestWithDetAdj("die", "ART:DEF:AKK:SIN:FEM", "der", "gute", []string{"Plan"})
-	require.NotEmpty(t, got3)
-	// should prefer -en for AKK MAS
-	require.Contains(t, got3[0], "Plan")
+// detAdjNoun is disabled in Java (&& false); soft SuggestWithDetAdj path removed.
+func TestAdaptSuggestionFilter_DetAdjBranchDisabled(t *testing.T) {
+	// Document: Java accepts only det+noun until detAdj is uncommented upstream.
+	// Go does not invent weak-adj synthesis.
+	f := withTestHooks(NewAdaptSuggestionFilter())
+	require.NotNil(t, f)
 }

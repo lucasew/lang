@@ -8,5 +8,5 @@ import (
 
 func TestKhmerHunspellRule(t *testing.T) {
 	r := NewKhmerHunspellRuleDefault()
-	require.Equal(t, "HUNSPELL_RULE_KM", r.GetID())
+	require.Equal(t, "HUNSPELL_RULE", r.GetID())
 }

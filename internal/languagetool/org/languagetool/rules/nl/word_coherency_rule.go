@@ -40,7 +40,6 @@ type WordCoherencyRule struct {
 func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "NL_WORD_COHERENCY",
 		Description: "Consistente spelling van woorden met meerdere correcte vormen.",
 		WordMap:     d.WordMap,
@@ -49,6 +48,7 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 			return "Gebruik liever niet '" + word1 + "' en '" + word2 + "' door elkaar in een tekst."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

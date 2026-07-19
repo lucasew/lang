@@ -18,6 +18,25 @@ func NewGermanUnpairedQuotesRule(messages map[string]string) *GermanUnpairedQuot
 	return &GermanUnpairedQuotesRule{GenericUnpairedQuotesRule: base}
 }
 
+func (r *GermanUnpairedQuotesRule) GetID() string {
+	if r != nil && r.GenericUnpairedQuotesRule != nil {
+		return r.GenericUnpairedQuotesRule.GetID()
+	}
+	return "DE_UNPAIRED_QUOTES"
+}
+
+// GetURL ports GermanUnpairedQuotesRule constructor setUrl.
+func (r *GermanUnpairedQuotesRule) GetURL() string {
+	return "https://languagetool.org/insights/de/beitrag/klammern/"
+}
+
 func (r *GermanUnpairedQuotesRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.GenericUnpairedQuotesRule.MatchList(sentences)
+	// Java attaches this (DE rule) so setUrl is visible on matches.
+	ms := r.GenericUnpairedQuotesRule.MatchList(sentences)
+	for _, m := range ms {
+		if m != nil {
+			m.Rule = r
+		}
+	}
+	return ms
 }

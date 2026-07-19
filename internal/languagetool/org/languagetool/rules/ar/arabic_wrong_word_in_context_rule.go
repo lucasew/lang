@@ -48,6 +48,8 @@ func NewArabicWrongWordInContextRule(messages map[string]string) *ArabicWrongWor
 		LanguageCode:       "ar",
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: getCategoryString → "كلمات متشابهة"
+	rules.InitWrongWordInContextMeta(base, messages, "كلمات متشابهة")
 	return &ArabicWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

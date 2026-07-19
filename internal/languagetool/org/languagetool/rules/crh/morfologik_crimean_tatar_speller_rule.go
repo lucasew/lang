@@ -3,7 +3,7 @@ package crh
 import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 
 const (
-	MorfologikCrimeanTatarSpellerRuleID = "MORFOLOGIK_RULE_CRH_UA"
+	MorfologikCrimeanTatarSpellerRuleID   = "MORFOLOGIK_RULE_CRH_UA"
 	MorfologikCrimeanTatarSpellerRuleDict = "/crh/hunspell/crh_UA.dict"
 )
 
@@ -13,8 +13,16 @@ type MorfologikCrimeanTatarSpellerRule struct {
 }
 
 func NewMorfologikCrimeanTatarSpellerRule() *MorfologikCrimeanTatarSpellerRule {
-	return &MorfologikCrimeanTatarSpellerRule{
+	r := &MorfologikCrimeanTatarSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikCrimeanTatarSpellerRuleID, "crh", MorfologikCrimeanTatarSpellerRuleDict, nil),
 	}
+	// Java isLatinScript() = false
+	if r.SpellingCheckRule != nil {
+		r.NonLatinScript = true
+	}
+	return r
 }
+
+// IsLatinScript ports isLatinScript.
+func (r *MorfologikCrimeanTatarSpellerRule) IsLatinScript() bool { return false }

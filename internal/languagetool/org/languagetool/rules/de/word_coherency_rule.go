@@ -23,8 +23,9 @@ func loadCoherencyData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
-		// Expand full forms (aufwendiger / aufwändigste) without a German tagger.
-		d, err := rules.LoadWordCoherencyData(f, "/de/coherency.txt", true)
+		// Java WordCoherencyDataLoader.loadWords: file pairs only (no invent suffixes).
+		// Inflected forms (aufwendiger, …) match via tagger lemmas in AbstractWordCoherencyRule.
+		d, err := rules.LoadWordCoherencyData(f, "/de/coherency.txt", false)
 		if err != nil {
 			panic(err)
 		}
@@ -40,8 +41,8 @@ type WordCoherencyRule struct {
 
 func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
+	// Java WordCoherencyRule + AbstractWordCoherencyRule: MISC category; no shortMessage override.
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "DE_WORD_COHERENCY",
 		Description: "Einheitliche Schreibweise für Wörter mit mehr als einer korrekten Schreibweise",
 		WordMap:     d.WordMap,
@@ -50,9 +51,15 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 			return "'" + word1 + "' und '" + word2 + "' sollten nicht gleichzeitig benutzt werden."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 
 func (r *WordCoherencyRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	return r.AbstractWordCoherencyRule.Match(sentences)
+}
+
+// MinToCheckParagraph ports AbstractWordCoherencyRule.minToCheckParagraph (Java returns -1).
+func (r *WordCoherencyRule) MinToCheckParagraph() int {
+	return r.AbstractWordCoherencyRule.MinToCheckParagraph()
 }

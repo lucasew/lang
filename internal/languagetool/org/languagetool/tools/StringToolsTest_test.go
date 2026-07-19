@@ -137,6 +137,23 @@ func TestStringTools_IsEmpty(t *testing.T) {
 	require.Equal(t, false, IsEmptyStr("a"))
 }
 
+func TestStringTools_IsPunctuationAndNotWord(t *testing.T) {
+	// Java isPunctuationMark: single punctuation char (or apostrophe).
+	require.True(t, IsPunctuationMark("."))
+	require.True(t, IsPunctuationMark("'"))
+	require.False(t, IsPunctuationMark("..."))
+	require.False(t, IsPunctuationMark("a"))
+	require.False(t, IsPunctuationMark(""))
+	// isNotWordString: entire string non-letters
+	require.True(t, IsNotWordString("..."))
+	require.True(t, IsNotWordString("123"))
+	require.True(t, IsNotWordString("!?"))
+	require.False(t, IsNotWordString("a"))
+	require.False(t, IsNotWordString("a!"))
+	require.False(t, IsNotWordString(""))
+	require.True(t, IsPunctuationOrSymbol("="))
+}
+
 func TestStringTools_FilterXML(t *testing.T) {
 	require.Equal(t, "test", FilterXML("test"))
 	require.Equal(t, "<<test>>", FilterXML("<<test>>"))

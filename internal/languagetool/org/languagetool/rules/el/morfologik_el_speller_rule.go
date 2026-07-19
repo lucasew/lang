@@ -4,13 +4,24 @@ import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spe
 
 const (
 	MorfologikGreekSpellerRuleID = "MORFOLOGIK_RULE_EL_GR"
-	GreekSpellerDict = "/el/hunspell/el_GR.dict"
+	GreekSpellerDict             = "/el/hunspell/el_GR.dict"
 )
 
-type MorfologikGreekSpellerRule struct { *morfologik.MorfologikSpellerRule }
+// MorfologikGreekSpellerRule ports rules.el.MorfologikGreekSpellerRule.
+type MorfologikGreekSpellerRule struct {
+	*morfologik.MorfologikSpellerRule
+}
 
 func NewMorfologikGreekSpellerRule() *MorfologikGreekSpellerRule {
-	return &MorfologikGreekSpellerRule{
+	r := &MorfologikGreekSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(MorfologikGreekSpellerRuleID, "el", GreekSpellerDict, nil),
 	}
+	// Java isLatinScript() = false
+	if r.SpellingCheckRule != nil {
+		r.NonLatinScript = true
+	}
+	return r
 }
+
+// IsLatinScript ports isLatinScript.
+func (r *MorfologikGreekSpellerRule) IsLatinScript() bool { return false }

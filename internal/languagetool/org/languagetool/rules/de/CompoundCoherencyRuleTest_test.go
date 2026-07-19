@@ -25,4 +25,7 @@ func TestCompoundCoherencyRule_Rule(t *testing.T) {
 
 	// Zahn-Ärzte vs Zahnärzte
 	require.Equal(t, 1, match2("Viele Zahn-Ärzte.", "Oder Zahnärzte."))
+
+	require.Equal(t, "Einheitliche Schreibweise bei Komposita (mit oder ohne Bindestrich)", rule.GetDescription())
+	require.Equal(t, -1, rule.MinToCheckParagraph())
 }

@@ -106,6 +106,35 @@ func runDECompoundTests(t *testing.T, rule compoundMatcher) {
 	check(1, "Aggregat-Zustand", "Aggregatzustand")
 	check(1, "Aggregat Zustand", "Aggregatzustand")
 	check(1, "Billard Kugel", "Billardkugel")
+
+	// Surface ANTI_PATTERNS (Java GermanCompoundRule.ANTI_PATTERNS remaining arms):
+	check(0, "Kung Fu Panda")
+	check(0, "Harlem Gospel Singers")
+	check(0, "Always on my mind")
+	check(0, "sich selbst gerecht werden")
+}
+
+func TestGermanCompoundRule_AntiPatternsCount(t *testing.T) {
+	// Java GermanCompoundRule.ANTI_PATTERNS has 8 entries.
+	require.Equal(t, 8, len(GermanCompoundRuleAntiPatterns), "Java ANTI_PATTERNS 8/8")
+	require.Equal(t, 8, len(deCompoundAntiPatterns()), "IMMUNIZE rules 8/8")
+}
+
+func TestGermanCompoundRule_AntiPatternImmunizeSurface(t *testing.T) {
+	sent := languagetool.AnalyzePlain("Die Bürger konnten an die 900 Meter Kabel in Eigenregie verlegen.")
+	imm := getSentenceWithDECompoundImmunization(sent)
+	anyImm := false
+	for _, tok := range imm.GetTokensWithoutWhitespace() {
+		if tok != nil && tok.IsImmunized() {
+			anyImm = true
+			break
+		}
+	}
+	require.True(t, anyImm, "expected an die 900 anti-pattern to immunize")
+	// Original sentence must not be mutated (Java clones).
+	for _, tok := range sent.GetTokensWithoutWhitespace() {
+		require.False(t, tok != nil && tok.IsImmunized(), "original must not be mutated")
+	}
 }
 
 func formatDEMatches(matches []*rules.RuleMatch) string {

@@ -48,6 +48,9 @@ func NewGermanWrongWordInContextRule(messages map[string]string) *GermanWrongWor
 		LanguageCode:       "de",
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: Category(CONFUSED_WORDS, getCategoryString()) + Misspelling.
+	// getCategoryString → "Leicht zu verwechselnde Wörter".
+	rules.InitWrongWordInContextMeta(base, messages, "Leicht zu verwechselnde Wörter")
 	return &GermanWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

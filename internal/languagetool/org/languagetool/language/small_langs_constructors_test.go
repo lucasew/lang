@@ -16,10 +16,16 @@ func TestSmallLangConstructors(t *testing.T) {
 	all := AllExtendedSmallLangs()
 	require.GreaterOrEqual(t, len(all), 10)
 	seen := map[string]bool{}
+	// Java modules without createDefaultSpellingRule / no speller in getRelevantRules
+	noDefaultSpeller := map[string]bool{"ja": true, "zh": true, "fa": true, "ta": true}
 	for _, l := range all {
 		require.False(t, seen[l.ShortCode], l.ShortCode)
 		seen[l.ShortCode] = true
 		require.NotEmpty(t, l.Name)
-		require.NotEmpty(t, l.SpellerRuleID)
+		if noDefaultSpeller[l.ShortCode] {
+			require.Empty(t, l.SpellerRuleID, l.ShortCode)
+		} else {
+			require.NotEmpty(t, l.SpellerRuleID, l.ShortCode)
+		}
 	}
 }

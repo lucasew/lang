@@ -39,7 +39,6 @@ type CompoundRule struct {
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "SK_COMPOUNDS",
 		Description:                 "Slová so spojovníkom napr. použite „česko-slovenský” namiesto „česko slovenský”",
 		WithHyphenMessage:           "Toto slovo sa zvyčajne píše so spojovníkom.",
@@ -49,6 +48,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

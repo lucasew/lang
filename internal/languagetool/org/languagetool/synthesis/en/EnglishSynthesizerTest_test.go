@@ -1,6 +1,7 @@
 package en
 
-// Twin of EnglishSynthesizerTest — manual map + determiner specials (full en.dict deferred)
+// Twin of EnglishSynthesizerTest — manual map + determiner specials.
+// Full binary dict: OpenEnglishSynthesizerFromDictPath / TestOpenEnglishSynthesizerFromDict_RealDict.
 import (
 	"strings"
 	"testing"

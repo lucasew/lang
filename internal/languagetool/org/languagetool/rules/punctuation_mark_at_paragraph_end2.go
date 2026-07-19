@@ -2,7 +2,6 @@ package rules
 
 import (
 	"regexp"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -26,19 +25,7 @@ func NewPunctuationMarkAtParagraphEnd2(messages map[string]string) *PunctuationM
 func (r *PunctuationMarkAtParagraphEnd2) GetID() string { return "PUNCTUATION_PARAGRAPH_END2" }
 
 func (r *PunctuationMarkAtParagraphEnd2) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
-	if nTest >= len(sentences)-1 {
-		return true
-	}
-	text := sentences[nTest].GetText()
-	if r.SingleLineBreaksMarksPara {
-		if strings.HasSuffix(text, "\n") || strings.HasSuffix(text, "\n\r") {
-			return true
-		}
-	} else if strings.HasSuffix(text, "\n\n") || strings.HasSuffix(text, "\n\r\n\r") || strings.HasSuffix(text, "\r\n\r\n") {
-		return true
-	}
-	next := sentences[nTest+1].GetText()
-	return strings.HasPrefix(next, "\n") || strings.HasPrefix(next, "\r\n")
+	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
 func getLastNonSpaceToken(tokens []*languagetool.AnalyzedTokenReadings) *languagetool.AnalyzedTokenReadings {

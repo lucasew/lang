@@ -7,15 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRegisterCoreRussianRules_Patterns(t *testing.T) {
+func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
+	// Soft invent token sequences removed; official grammar.xml is incomplete until loaded.
 	lt := languagetool.NewJLanguageTool("ru")
 	RegisterCoreRussianRules(lt)
-	m := lt.Check("Он пошёл в в дом.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "RU_В_В" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", m)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "RU_В_В")
 }

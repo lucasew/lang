@@ -15,7 +15,9 @@ type WordCoherencyData struct {
 	ToBase map[string]string
 }
 
-// LoadWordCoherencyData ports WordCoherencyDataLoader.loadWords (+ optional inflection expansion).
+// LoadWordCoherencyData ports WordCoherencyDataLoader.loadWords.
+// expandInflections is legacy/soft-only: Java never invents suffixes — languages must
+// pass false and rely on tagger lemmas. Prefer false for all faithful ports.
 func LoadWordCoherencyData(r io.Reader, path string, expandInflections bool) (*WordCoherencyData, error) {
 	d := &WordCoherencyData{
 		WordMap: make(map[string]map[string]struct{}),

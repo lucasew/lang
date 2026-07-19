@@ -17,6 +17,10 @@ import (
 // is not part of this twin — see docs/faithful-port-policy.md.
 type PatternTokenMatcher struct {
 	Base *PatternToken
+	// patternToken is the working token after resolveReference (Java patternToken field).
+	patternToken *PatternToken
+	// andMatchers are AndGroup members after prepareAndGroup/resolveReference.
+	andMatchers []*PatternTokenMatcher
 	// compiled RE for Token when Regexp is set
 	tokenRE *regexp.Regexp
 	// StrictPOS: untagged tokens only match postag=UNKNOWN (Java with a real tagger).
@@ -25,11 +29,16 @@ type PatternTokenMatcher struct {
 }
 
 func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
-	m := &PatternTokenMatcher{Base: pt, StrictPOS: true}
+	m := &PatternTokenMatcher{Base: pt, patternToken: pt, StrictPOS: true}
+	m.recompileTokenRE()
+	return m
+}
+
+func (m *PatternTokenMatcher) recompileTokenRE() {
+	m.tokenRE = nil
+	pt := m.active()
 	if pt != nil && pt.Regexp && pt.Token != "" {
 		flags := ""
-		// Go RE2 (?i) folds \p{Lu}/\p{Ll}; Java CASE_INSENSITIVE does not fold
-		// Unicode property classes the same way (e.g. NN_NNP_JJR).
 		pat := normalizeJavaRegexp(pt.Token)
 		if !pt.CaseSensitive && !strings.Contains(pat, `\p{`) {
 			flags = "(?i)"
@@ -39,7 +48,58 @@ func NewPatternTokenMatcher(pt *PatternToken) *PatternTokenMatcher {
 			m.tokenRE = re
 		}
 	}
-	return m
+}
+
+// active returns the working PatternToken (compiled reference or base).
+func (m *PatternTokenMatcher) active() *PatternToken {
+	if m == nil {
+		return nil
+	}
+	if m.patternToken != nil {
+		return m.patternToken
+	}
+	return m.Base
+}
+
+// ResolveReference ports PatternTokenMatcher.resolveReference.
+// firstMatchToken is the absolute index of the first matched pattern token (-1 if none yet).
+// langCode selects LanguageSynthesizer for setpos target tags.
+func (m *PatternTokenMatcher) ResolveReference(firstMatchToken int, tokens []*languagetool.AnalyzedTokenReadings, langCode string) {
+	if m == nil || m.Base == nil {
+		return
+	}
+	m.patternToken = m.Base
+	m.recompileTokenRE()
+	if !m.Base.IsReferenceElement() {
+		return
+	}
+	// Java: refPos = firstMatchToken + getTokenRef() (TokenRef is raw no=, not 1-based).
+	refPos := firstMatchToken + m.Base.TokenMatch.GetTokenRef()
+	if firstMatchToken < 0 || refPos < 0 || refPos >= len(tokens) || tokens[refPos] == nil {
+		return
+	}
+	synth := LanguageSynthesizer(langCode)
+	m.patternToken = m.Base.CompileFromReference(tokens[refPos], synth)
+	m.recompileTokenRE()
+}
+
+// PrepareAndGroup ports PatternTokenMatcher.prepareAndGroup:
+// resolve references on each AndGroup member before and-group checks.
+func (m *PatternTokenMatcher) PrepareAndGroup(firstMatchToken int, tokens []*languagetool.AnalyzedTokenReadings, langCode string) {
+	if m == nil || m.Base == nil || len(m.Base.AndGroup) == 0 {
+		m.andMatchers = nil
+		return
+	}
+	m.andMatchers = make([]*PatternTokenMatcher, 0, len(m.Base.AndGroup))
+	for _, andPt := range m.Base.AndGroup {
+		if andPt == nil {
+			continue
+		}
+		am := NewPatternTokenMatcher(andPt)
+		am.StrictPOS = m.StrictPOS
+		am.ResolveReference(firstMatchToken, tokens, langCode)
+		m.andMatchers = append(m.andMatchers, am)
+	}
 }
 
 // normalizeJavaRegexp maps Java/PCRE constructs used in LT XML to Go RE2.
@@ -89,16 +149,16 @@ func (m *PatternTokenMatcher) GetPatternToken() *PatternToken {
 	if m == nil {
 		return nil
 	}
-	return m.Base
+	return m.active()
 }
 
 // IsMatched checks whether a single AnalyzedToken matches the pattern token.
 // Ports PatternToken.isMatched / PatternTokenMatcher.isMatched (string + POS only).
 func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool {
-	if m == nil || m.Base == nil || token == nil {
+	if m == nil || m.active() == nil || token == nil {
 		return false
 	}
-	pt := m.Base
+	pt := m.active()
 	// Java PatternToken.isMatched: spacebefore=yes/no must match token.isWhitespaceBefore().
 	if pt.WhitespaceBefore != nil && token.IsWhitespaceBefore() != *pt.WhitespaceBefore {
 		return false
@@ -205,22 +265,49 @@ func matchExceptionSurface(surface, exc string, isRE, caseSensitive bool) bool {
 	return strings.EqualFold(surface, exc)
 }
 
+// CollectMatchedReadings returns readings that satisfy IsMatched (for Unifier).
+// Ports the readingsToUnify collection in AbstractPatternRulePerformer.testAllReadings.
+func (m *PatternTokenMatcher) CollectMatchedReadings(atr *languagetool.AnalyzedTokenReadings) []*languagetool.AnalyzedToken {
+	if m == nil || atr == nil {
+		return nil
+	}
+	var out []*languagetool.AnalyzedToken
+	for _, r := range atr.GetReadings() {
+		if r != nil && m.IsMatched(r) {
+			out = append(out, r)
+		}
+	}
+	if len(out) == 0 {
+		// Untagged surface path used by IsMatchedReadings.
+		probe := languagetool.NewAnalyzedToken(atr.GetToken(), nil, nil)
+		probe.SetWhitespaceBefore(atr.IsWhitespaceBefore())
+		if m.IsMatched(probe) {
+			out = append(out, probe)
+		}
+	}
+	return out
+}
+
 // IsMatchedReadings evaluates the pattern token against all readings (Java-style).
 func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenReadings) bool {
 	if atr == nil {
 		return false
 	}
-	if m.Base != nil && m.Base.WhitespaceBefore != nil {
-		if atr.IsWhitespaceBefore() != *m.Base.WhitespaceBefore {
+	pt := m.active()
+	if pt == nil {
+		return false
+	}
+	if pt.WhitespaceBefore != nil {
+		if atr.IsWhitespaceBefore() != *pt.WhitespaceBefore {
 			return false
 		}
 	}
-	if m.Base != nil && m.Base.ChunkTag != "" {
-		if !chunkTagMatches(atr, m.Base.ChunkTag, m.Base.ChunkTagRegexp) {
+	if pt.ChunkTag != "" {
+		if !chunkTagMatches(atr, pt.ChunkTag, pt.ChunkTagRegexp) {
 			return false
 		}
 	}
-	if m.Base != nil && len(m.Base.AndGroup) > 0 {
+	if len(pt.AndGroup) > 0 {
 		if !m.matchAndGroupReadings(atr) {
 			return false
 		}
@@ -238,7 +325,7 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 	}
 	if !anyMatched {
 		// Chunk-only pattern tokens (empty surface/POS): chunk already matched above.
-		if m.Base != nil && m.Base.Token == "" && (m.Base.Pos == nil || m.Base.Pos.PosTag == "") && m.Base.ChunkTag != "" {
+		if pt.Token == "" && (pt.Pos == nil || pt.Pos.PosTag == "") && pt.ChunkTag != "" {
 			return !m.anyReadingExceptionMatched(atr)
 		}
 		// Faithful: untagged surface — only UNKNOWN postag patterns can match.
@@ -268,43 +355,75 @@ func (m *PatternTokenMatcher) anyReadingExceptionMatched(atr *languagetool.Analy
 	return false
 }
 
-// isExceptionMatchedCompletely ports PatternToken.isExceptionMatchedCompletely.
+// isExceptionMatchedCompletely ports PatternToken.isExceptionMatchedCompletely
+// via isExceptionMatched → exception PatternToken.isMatched (with negation XOR).
 func (m *PatternTokenMatcher) isExceptionMatchedCompletely(token *languagetool.AnalyzedToken) bool {
 	if m == nil || m.Base == nil || token == nil || !m.Base.HasCurrentException() {
 		return false
 	}
 	pt := m.Base
-	if pt.TokenException != "" {
-		if !matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive) {
-			return false
-		}
+	// Surface match (Java textMatcher / getNegation XOR).
+	hasSurface := pt.TokenException != ""
+	surfaceMatch := false
+	if hasSurface {
+		surfaceMatch = matchExceptionSurface(token.GetToken(), pt.TokenException, pt.TokenExceptionRE, pt.TokenExceptionCaseSensitive)
 	}
+	// POS match (Java isPosTokenMatched; null posToken → true).
+	posMatch := true
 	if pt.TokenExceptionPosTag != "" {
 		pos := token.GetPOSTag()
 		if pos == nil || *pos == "" {
-			return false
-		}
-		if pt.TokenExceptionPosRE {
-			re, err := regexp.Compile("^(?:" + normalizeJavaRegexp(pt.TokenExceptionPosTag) + ")$")
-			if err != nil || !re.MatchString(*pos) {
-				return false
+			// Java UNKNOWN_TAG matches null POS; otherwise false
+			if strings.Contains(pt.TokenExceptionPosTag, "UNKNOWN") {
+				posMatch = true
+			} else {
+				posMatch = false
 			}
-		} else if *pos != pt.TokenExceptionPosTag {
-			return false
+		} else if pt.TokenExceptionPosRE {
+			re, err := regexp.Compile("^(?:" + normalizeJavaRegexp(pt.TokenExceptionPosTag) + ")$")
+			posMatch = err == nil && re.MatchString(*pos)
+		} else {
+			posMatch = *pos == pt.TokenExceptionPosTag
 		}
 	}
-	return true
+	// Java isMatched:
+	//   with surface: (textMatch ^ neg) && (posMatch ^ posNeg)
+	//   without:      !neg && (posMatch ^ posNeg)
+	if hasSurface {
+		return (surfaceMatch != pt.TokenExceptionNegation) && (posMatch != pt.TokenExceptionPosNegation)
+	}
+	return !pt.TokenExceptionNegation && (posMatch != pt.TokenExceptionPosNegation)
 }
 
 // matchAndGroupReadings ports Java and-group accumulation over all readings.
+// Uses prepareAndGroup-resolved andMatchers when present (refs/setpos on and-members).
 func (m *PatternTokenMatcher) matchAndGroupReadings(atr *languagetool.AnalyzedTokenReadings) bool {
-	base := m.Base
+	if atr == nil {
+		return false
+	}
+	// Base element without AndGroup list (Java isMatched on base patternToken).
+	base := m.active()
+	if base == nil {
+		return false
+	}
 	baseBare := *base
 	baseBare.AndGroup = nil
 	baseM := NewPatternTokenMatcher(&baseBare)
-	baseM.StrictPOS = true
+	baseM.patternToken = &baseBare
+	baseM.StrictPOS = m.StrictPOS
+	baseM.recompileTokenRE()
+
+	andMatchers := m.andMatchers
+	if len(andMatchers) == 0 && m.Base != nil {
+		// Fallback without prepareAndGroup (tests).
+		for _, andPt := range m.Base.AndGroup {
+			am := NewPatternTokenMatcher(andPt)
+			am.StrictPOS = m.StrictPOS
+			andMatchers = append(andMatchers, am)
+		}
+	}
 	baseOK := false
-	andOK := make([]bool, len(base.AndGroup))
+	andOK := make([]bool, len(andMatchers))
 	for _, r := range atr.GetReadings() {
 		if r == nil {
 			continue
@@ -312,13 +431,8 @@ func (m *PatternTokenMatcher) matchAndGroupReadings(atr *languagetool.AnalyzedTo
 		if baseM.IsMatched(r) {
 			baseOK = true
 		}
-		for i, andPt := range base.AndGroup {
-			if andPt == nil {
-				continue
-			}
-			am := NewPatternTokenMatcher(andPt)
-			am.StrictPOS = true
-			if am.IsMatched(r) {
+		for i, am := range andMatchers {
+			if am != nil && am.IsMatched(r) {
 				andOK[i] = true
 			}
 		}
@@ -351,7 +465,10 @@ func chunkTagMatches(atr *languagetool.AnalyzedTokenReadings, want string, isReg
 
 // matchSurface ports Java string/regexp surface match (no soft morphology invent).
 func (m *PatternTokenMatcher) matchSurface(surface string) bool {
-	pt := m.Base
+	pt := m.active()
+	if pt == nil {
+		return false
+	}
 	if pt.Token == "" {
 		return true
 	}

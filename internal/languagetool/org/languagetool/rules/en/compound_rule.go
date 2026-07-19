@@ -5,11 +5,15 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 )
 
 var (
 	compoundOnce sync.Once
 	compoundData *rules.CompoundRuleData
+
+	compoundAntiOnce  sync.Once
+	compoundAntiRules []*disambigrules.DisambiguationPatternRule
 )
 
 func loadCompoundData() *rules.CompoundRuleData {
@@ -29,14 +33,17 @@ func loadCompoundData() *rules.CompoundRuleData {
 }
 
 // CompoundRule ports org.languagetool.rules.en.CompoundRule.
+// isMisspelled uses SpellingIsMisspelled (Java english.getDefaultSpellingRule().isMisspelled).
+// Without SpellingIsMisspelled, isMisspelled is false (AbstractCompoundRule default).
 type CompoundRule struct {
 	*rules.AbstractCompoundRule
+	// SpellingIsMisspelled ports Morfologik speller isMisspelled; nil → misspelled=false.
+	SpellingIsMisspelled func(word string) bool
 }
 
 // NewCompoundRule constructs EN_COMPOUNDS.
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "EN_COMPOUNDS",
 		Description:                 "Hyphenated words: $match",
 		WithHyphenMessage:           "This word is normally spelled with a hyphen.",
@@ -45,81 +52,70 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		ShortDesc:                   "Compound",
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
-		// Without Morfologik, treat suggestions as correctly spelled (Java isMisspelled default false).
 	}
 	base.UseSubRuleSpecificIDs()
-	return &CompoundRule{AbstractCompoundRule: base}
-}
-
-// Match applies light anti-patterns then AbstractCompoundRule.
-// Full DisambiguationPatternRule anti-patterns are not ported; cover the ones
-// required by CompoundRuleTest (contraction 're, &|and co, etc.).
-func (r *CompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	immunizeENCompoundAntiPatterns(sentence)
-	return r.AbstractCompoundRule.Match(sentence)
-}
-
-// immunizeENCompoundAntiPatterns ports a subset of CompoundRule.ANTI_PATTERNS.
-func immunizeENCompoundAntiPatterns(sentence *languagetool.AnalyzedSentence) {
-	tokens := sentence.GetTokensWithoutWhitespace()
-	for i := 0; i < len(tokens); i++ {
-		tok := tokens[i].GetToken()
-		// ['’`´‘] + re  (they're / we're / …)
-		if isApostropheToken(tok) && i+1 < len(tokens) {
-			next := tokens[i+1].GetToken()
-			if next == "re" || next == "Re" || next == "RE" {
-				tokens[i].Immunize(0)
-				tokens[i+1].Immunize(0)
-			}
-		}
-		// and|& + co  (Tiffany & Co)
-		if (tok == "and" || tok == "And" || tok == "&") && i+1 < len(tokens) {
-			next := tokens[i+1].GetToken()
-			if next == "co" || next == "Co" || next == "CO" {
-				tokens[i].Immunize(0)
-				tokens[i+1].Immunize(0)
-			}
-		}
-		// first + ever + green
-		if equalFold(tok, "first") && i+2 < len(tokens) &&
-			equalFold(tokens[i+1].GetToken(), "ever") &&
-			equalFold(tokens[i+2].GetToken(), "green") {
-			tokens[i].Immunize(0)
-			tokens[i+1].Immunize(0)
-			tokens[i+2].Immunize(0)
-		}
-	}
-}
-
-func isApostropheToken(s string) bool {
-	switch s {
-	case "'", "’", "`", "´", "‘":
-		return true
-	}
-	return false
-}
-
-func equalFold(a, b string) bool {
-	if len(a) != len(b) {
-		// still use simple ASCII fold for anti-pattern tokens
-	}
-	if a == b {
-		return true
-	}
-	if len(a) != len(b) {
-		return false
-	}
-	for i := 0; i < len(a); i++ {
-		ca, cb := a[i], b[i]
-		if ca >= 'A' && ca <= 'Z' {
-			ca += 'a' - 'A'
-		}
-		if cb >= 'A' && cb <= 'Z' {
-			cb += 'a' - 'A'
-		}
-		if ca != cb {
+	rules.InitCompoundRuleMeta(base, messages)
+	r := &CompoundRule{AbstractCompoundRule: base}
+	// Java CompoundRule.isMisspelled: english.getDefaultSpellingRule().isMisspelled(word)
+	base.IsMisspelled = func(word string) bool {
+		if r.SpellingIsMisspelled == nil {
 			return false
 		}
+		return r.SpellingIsMisspelled(word)
 	}
-	return true
+	return r
+}
+
+// Match applies ANTI_PATTERNS immunization then AbstractCompoundRule.
+// Java: getSentenceWithImmunization(sentence) via getAntiPatterns().
+func (r *CompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	return r.AbstractCompoundRule.Match(getSentenceWithCompoundImmunization(sentence))
+}
+
+// compoundAntiPatterns ports CompoundRule.getAntiPatterns (cached IMMUNIZE rules).
+func compoundAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	compoundAntiOnce.Do(func() {
+		aps := CompoundRuleAntiPatterns
+		compoundAntiRules = make([]*disambigrules.DisambiguationPatternRule, 0, len(aps))
+		for _, toks := range aps {
+			if len(toks) == 0 {
+				continue
+			}
+			// Java makeAntiPatterns: INTERNAL_ANTIPATTERN + IMMUNIZE
+			rule := disambigrules.NewDisambiguationPatternRule(
+				"INTERNAL_ANTIPATTERN", "(no description)", "en",
+				toks, "", nil, disambigrules.ActionImmunize,
+			)
+			compoundAntiRules = append(compoundAntiRules, rule)
+		}
+	})
+	return compoundAntiRules
+}
+
+// getSentenceWithCompoundImmunization ports Rule.getSentenceWithImmunization
+// for CompoundRule.ANTI_PATTERNS.
+func getSentenceWithCompoundImmunization(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	if sentence == nil {
+		return nil
+	}
+	aps := compoundAntiPatterns()
+	if len(aps) == 0 {
+		return sentence
+	}
+	src := sentence.GetTokens()
+	cloned := make([]*languagetool.AnalyzedTokenReadings, len(src))
+	for i, t := range src {
+		if t == nil {
+			continue
+		}
+		cloned[i] = languagetool.NewAnalyzedTokenReadingsFromOld(t, t.GetReadings(), "")
+	}
+	immunized := languagetool.NewAnalyzedSentence(cloned)
+	for _, ap := range aps {
+		if ap == nil {
+			continue
+		}
+		immunized = ap.Replace(immunized)
+	}
+	return immunized
 }

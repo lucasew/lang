@@ -40,7 +40,6 @@ type WordCoherencyRule struct {
 func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "FA_WORD_COHERENCY",
 		Description: "چند املا برای یک کلمه که یکی از آنها اولویت بیشتری دارد",
 		WordMap:     d.WordMap,
@@ -49,6 +48,7 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 			return "'" + word1 + "' و '" + word2 + "' نباید در یک جا استفاده شوند"
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

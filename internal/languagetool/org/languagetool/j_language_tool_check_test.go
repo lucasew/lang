@@ -32,7 +32,7 @@ func TestJLanguageTool_UnknownWords(t *testing.T) {
 }
 
 func TestCleanOverlappingLocalMatches(t *testing.T) {
-	// non-overlap preserved
+	// non-overlap preserved (juxtaposed)
 	require.Len(t, CleanOverlappingLocalMatches([]LocalMatch{
 		{FromPos: 0, ToPos: 2, Priority: 1},
 		{FromPos: 3, ToPos: 5, Priority: 1},
@@ -44,6 +44,175 @@ func TestCleanOverlappingLocalMatches(t *testing.T) {
 	})
 	require.Len(t, got, 1)
 	require.Equal(t, "b", got[0].RuleID)
+
+	// equal priority → longest span (Java)
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 0, ToPos: 4, RuleID: "short", Priority: 1},
+		{FromPos: 1, ToPos: 20, RuleID: "long", Priority: 1},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "long", got[0].RuleID)
+
+	// picky demotion: non-picky wins over picky at same base priority
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 0, ToPos: 10, RuleID: "picky", Priority: 1, IsPicky: true},
+		{FromPos: 2, ToPos: 5, RuleID: "plain", Priority: 1},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "plain", got[0].RuleID)
+
+	// three non-overlapping survive
+	require.Len(t, CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 0, ToPos: 2, Priority: 1},
+		{FromPos: 3, ToPos: 5, Priority: 1},
+		{FromPos: 6, ToPos: 8, Priority: 1},
+	}), 3)
+
+	// both punctuation-only: prefer IncludedInErrorsCorrectedAllAtOnce (Java)
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{
+			FromPos: 0, ToPos: 5, RuleID: "plain", Priority: 5,
+			OriginalErrorStr: "Hallo", Suggestions: []string{"Hallo,"},
+		},
+		{
+			FromPos: 0, ToPos: 5, RuleID: "allAtOnce", Priority: 1,
+			OriginalErrorStr:                   "Hallo",
+			Suggestions:                        []string{"Hallo!"},
+			IncludedInErrorsCorrectedAllAtOnce: true,
+		},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "allAtOnce", got[0].RuleID)
+
+	// without OriginalErrorStr and without SentenceText: not punctuation-only → higher base priority wins
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 0, ToPos: 5, RuleID: "high", Priority: 5, Suggestions: []string{"Hallo,"}},
+		{
+			FromPos: 0, ToPos: 5, RuleID: "allAtOnce", Priority: 1,
+			Suggestions:                        []string{"Hallo!"},
+			IncludedInErrorsCorrectedAllAtOnce: true,
+		},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "high", got[0].RuleID)
+
+	// Java isPunctuationOnlyChange: OriginalErrorStr empty → sentence.substring(from,to)
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{
+			FromPos: 0, ToPos: 5, RuleID: "plain", Priority: 5,
+			SentenceText: "Hallo", FromPosSentence: 0, ToPosSentence: 5,
+			Suggestions: []string{"Hallo,"},
+		},
+		{
+			FromPos: 0, ToPos: 5, RuleID: "allAtOnce", Priority: 1,
+			SentenceText: "Hallo", FromPosSentence: 0, ToPosSentence: 5,
+			Suggestions:                        []string{"Hallo!"},
+			IncludedInErrorsCorrectedAllAtOnce: true,
+		},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "allAtOnce", got[0].RuleID)
+
+	// Sentence fallback via document FromPos/ToPos when sentence positions unset (Java second branch)
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{
+			FromPos: 0, ToPos: 5, RuleID: "plain", Priority: 5,
+			SentenceText: "Hallo", Suggestions: []string{"Hallo,"},
+		},
+		{
+			FromPos: 0, ToPos: 5, RuleID: "allAtOnce", Priority: 1,
+			SentenceText:                       "Hallo",
+			Suggestions:                        []string{"Hallo!"},
+			IncludedInErrorsCorrectedAllAtOnce: true,
+		},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "allAtOnce", got[0].RuleID)
+
+	// HidePremiumMatches: premium demoted to MinInt32 → non-premium wins on overlap
+	got = CleanOverlappingLocalMatchesOpts([]LocalMatch{
+		{FromPos: 0, ToPos: 10, RuleID: "P2_PREMIUM_RULE", Priority: 10},
+		{FromPos: 2, ToPos: 5, RuleID: "P1_RULE", Priority: 1},
+	}, CleanOverlapOpts{HidePremiumMatches: true})
+	require.Len(t, got, 1)
+	require.Equal(t, "P1_RULE", got[0].RuleID)
+
+	// Explicit IsPremium without PREMIUM in id
+	got = CleanOverlappingLocalMatchesOpts([]LocalMatch{
+		{FromPos: 0, ToPos: 10, RuleID: "SECRET", Priority: 10, IsPremium: true},
+		{FromPos: 2, ToPos: 5, RuleID: "OPEN", Priority: 1},
+	}, CleanOverlapOpts{HidePremiumMatches: true})
+	require.Len(t, got, 1)
+	require.Equal(t, "OPEN", got[0].RuleID)
+
+	// DefaultPremium.IsPremiumRule (Java Premium.get().isPremiumRule) without IsPremium flag
+	prevPremium := DefaultPremium
+	DefaultPremium = premiumRuleIDs{ids: map[string]bool{"SECRET_VIA_REGISTRY": true}}
+	t.Cleanup(func() { DefaultPremium = prevPremium })
+	got = CleanOverlappingLocalMatchesOpts([]LocalMatch{
+		{FromPos: 0, ToPos: 10, RuleID: "SECRET_VIA_REGISTRY", Priority: 10},
+		{FromPos: 2, ToPos: 5, RuleID: "OPEN", Priority: 1},
+	}, CleanOverlapOpts{HidePremiumMatches: true})
+	require.Len(t, got, 1)
+	require.Equal(t, "OPEN", got[0].RuleID)
+
+	// Without hide, premium keeps higher priority
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 0, ToPos: 10, RuleID: "P2_PREMIUM_RULE", Priority: 10},
+		{FromPos: 2, ToPos: 5, RuleID: "P1_RULE", Priority: 1},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "P2_PREMIUM_RULE", got[0].RuleID)
+
+	// Java CleanOverlappingFilter: juxtaposed comma dup-suggestion treated as overlap
+	// (prev ends with ",", cur starts with ", "; FromPos == prev.ToPos).
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 5, ToPos: 10, RuleID: "COMMA_LOW_PRIORITY", Priority: 1, Suggestions: []string{"right,"}},
+		{FromPos: 10, ToPos: 15, RuleID: "COMMA_HIGH_PRIORITY", Priority: 10, Suggestions: []string{", left"}},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "COMMA_HIGH_PRIORITY", got[0].RuleID)
+
+	// High priority first: still keep high when dup-sug with low
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 5, ToPos: 10, RuleID: "COMMA_HIGH_PRIORITY", Priority: 10, Suggestions: []string{"right,"}},
+		{FromPos: 10, ToPos: 15, RuleID: "COMMA_LOW_PRIORITY", Priority: 1, Suggestions: []string{", left"}},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "COMMA_HIGH_PRIORITY", got[0].RuleID)
+
+	// Equal priority: take last (Java currentPriority++)
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 5, ToPos: 10, RuleID: "COMMA_LOW_PRIORITY2", Priority: 1, Suggestions: []string{"right,"}},
+		{FromPos: 10, ToPos: 15, RuleID: "COMMA_LOW_PRIORITY", Priority: 1, Suggestions: []string{", left"}},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "COMMA_LOW_PRIORITY", got[0].RuleID)
+
+	// Java: multi-word suggestion share token across gap FromPos == ToPos+1
+	// ("of the" + "the provisions" → treat as overlap; higher prio wins).
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 5, ToPos: 10, RuleID: "MISSING_THE_HIGH_PRIORITY", Priority: 10, Suggestions: []string{"of the"}},
+		{FromPos: 11, ToPos: 15, RuleID: "MISSING_THE_LOW_PRIORITY", Priority: 1, Suggestions: []string{"the provisions"}},
+	})
+	require.Len(t, got, 1)
+	require.Equal(t, "MISSING_THE_HIGH_PRIORITY", got[0].RuleID)
+
+	// Juxtaposed without dup-sug pattern → both kept
+	got = CleanOverlappingLocalMatches([]LocalMatch{
+		{FromPos: 0, ToPos: 4, RuleID: "A", Priority: 1, Suggestions: []string{"foo"}},
+		{FromPos: 4, ToPos: 8, RuleID: "B", Priority: 1, Suggestions: []string{"bar"}},
+	})
+	require.Len(t, got, 2)
+}
+
+// premiumRuleIDs is a test Premium that marks listed rule IDs as premium.
+type premiumRuleIDs struct {
+	ids map[string]bool
+}
+
+func (p premiumRuleIDs) IsPremiumRule(ruleID string) bool {
+	return p.ids[ruleID]
 }
 
 func TestJLanguageTool_AvsAnAndCorrect(t *testing.T) {
@@ -62,4 +231,35 @@ func TestJLanguageTool_DisableRule(t *testing.T) {
 	require.Empty(t, lt.Check("is is"))
 	lt.EnableRule("WORD_REPEAT_RULE")
 	require.NotEmpty(t, lt.Check("is is"))
+}
+
+// Java sentence.substring(from,to) is UTF-16; multi-byte German must not corrupt.
+func TestOriginalSurface_UTF16MultiByte(t *testing.T) {
+	m := LocalMatch{
+		SentenceText: "Größe,",
+		FromPos:      0,
+		ToPos:        5, // "Größe" in UTF-16 units
+	}
+	require.Equal(t, "Größe", m.OriginalSurface())
+
+	m2 := LocalMatch{
+		SentenceText: "Größe,",
+		FromPos:      0,
+		ToPos:        6, // "Größe,"
+	}
+	require.Equal(t, "Größe,", m2.OriginalSurface())
+
+	// Explicit OriginalErrorStr wins
+	m3 := LocalMatch{OriginalErrorStr: "explicit", SentenceText: "Größe,", FromPos: 0, ToPos: 5}
+	require.Equal(t, "explicit", m3.OriginalSurface())
+
+	// Sentence positions preferred
+	m4 := LocalMatch{
+		SentenceText:    "Größe,",
+		FromPos:         99,
+		ToPos:           104,
+		FromPosSentence: 0,
+		ToPosSentence:   5,
+	}
+	require.Equal(t, "Größe", m4.OriginalSurface())
 }

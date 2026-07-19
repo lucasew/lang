@@ -3,6 +3,9 @@ package pt
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,4 +21,21 @@ func TestPortugueseProclisisFilter(t *testing.T) {
 	})
 	require.Contains(t, got, "nos dizem")
 	require.Contains(t, got, "os dizem")
+}
+
+func TestPortugueseProclisisFilter_AcceptRuleMatch(t *testing.T) {
+	f := NewPortugueseProclisisFilter()
+	pos := "VMIP1P0:PP3MSA00"
+	tok := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("bebemo-lo", &pos, nil), 0)
+	m := rules.NewRuleMatch(nil, nil, 0, 9, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{"foo": "bar"}, 0,
+		[]*languagetool.AnalyzedTokenReadings{tok}, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetSuggestedReplacements(), "o bebemo")
+}
+
+func TestPortugueseProclisisFilterRegistered(t *testing.T) {
+	require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(
+		"org.languagetool.rules.pt.PortugueseProclisisFilter"))
 }

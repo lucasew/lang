@@ -16,6 +16,7 @@ var (
 )
 
 // AbstractCompoundRule ports org.languagetool.rules.AbstractCompoundRule.
+// Java ctor: MISC, Misspelling.
 type AbstractCompoundRule struct {
 	Messages                   map[string]string
 	ID                         string
@@ -24,12 +25,30 @@ type AbstractCompoundRule struct {
 	WithoutHyphenMessage       string
 	WithOrWithoutHyphenMessage string
 	ShortDesc                  string
+	// Category ports Rule.category (Java MISC).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Misspelling).
+	IssueType ITSIssueType
 	// SentenceStartsWithUpperCase uncapitalizes the first word when matching after SENT_START.
 	SentenceStartsWithUpperCase bool
 	SubRuleSpecificIDs          bool
 	Data                        *CompoundRuleData
 	// IsMisspelled optional; default treats all as correctly spelled (Java returns false).
 	IsMisspelled func(word string) bool
+}
+
+// InitCompoundRuleMeta applies Java AbstractCompoundRule constructor metadata.
+func InitCompoundRuleMeta(r *AbstractCompoundRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatMisc.GetCategory(messages)
+	}
+	if r.IssueType == "" {
+		r.IssueType = ITSMisspelling
+	}
 }
 
 func (r *AbstractCompoundRule) GetID() string {
@@ -41,6 +60,20 @@ func (r *AbstractCompoundRule) GetID() string {
 
 func (r *AbstractCompoundRule) GetDescription() string {
 	return r.Description
+}
+
+func (r *AbstractCompoundRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *AbstractCompoundRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSMisspelling
+	}
+	return r.IssueType
 }
 
 func (r *AbstractCompoundRule) GetCompoundRuleData() *CompoundRuleData {

@@ -7,15 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRegisterCorePersianRules_Patterns(t *testing.T) {
+func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
+	// Soft invent token sequences removed; official grammar.xml is incomplete until loaded.
 	lt := languagetool.NewJLanguageTool("fa")
 	RegisterCorePersianRules(lt)
-	m := lt.Check("رفتم در در خانه.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "FA_در_در" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", m)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "FA_در_در")
 }

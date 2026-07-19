@@ -18,4 +18,22 @@ func TestSimilarNameRule_Rule(t *testing.T) {
 	require.Equal(t, 0, matchN("Hier steht Angela Müller. Dann Mulla, nicht ähnlich genug."))
 	require.Equal(t, 0, matchN("Ein Mikrocontroller, bei Mikrocontrollern"))
 	require.Equal(t, 0, matchN("Hier steht das Rad Deiner Freundin. Und Deinem Hund geht es gut?"))
+	require.Equal(t, -1, rule.MinToCheckParagraph())
+
+	// Java: isPosTagUnknown only (not invent !isTagged for multi-reading untagged).
+	// Tagged non-EIG SUB must not be treated as a name.
+	sub := atrWithPOS("Miller", "SUB:NOM:SIN:MAS", "Miller")
+	require.False(t, isMaybeName(sub))
+	// Single null-POS reading → isPosTagUnknown (AnalyzePlain tokens).
+	unk := languagetool.AnalyzePlain("Miller").GetTokensWithoutWhitespace()
+	// find Miller token
+	found := false
+	for _, tok := range unk {
+		if tok != nil && tok.GetToken() == "Miller" {
+			require.True(t, tok.IsPosTagUnknown())
+			require.True(t, isMaybeName(tok))
+			found = true
+		}
+	}
+	require.True(t, found)
 }

@@ -36,10 +36,14 @@ func TestPatternRuleLoader(t *testing.T) {
 	require.NotNil(t, pr)
 }
 
-// Rules with <unify> must not register without matcher support (fail-closed).
-func TestPatternRuleLoader_UnifySkippedFailClosed(t *testing.T) {
+// Rules with <unify> load with UniFeatures and TestUnification (matcher ports testUnification).
+func TestPatternRuleLoader_UnifyLoads(t *testing.T) {
 	xml := `<?xml version="1.0"?>
 <rules>
+  <unification feature="number">
+    <equivalence type="sg"><token postag="NN"/></equivalence>
+    <equivalence type="pl"><token postag="NNS"/></equivalence>
+  </unification>
   <category>
     <rule id="U1" name="needs unify">
       <pattern>
@@ -51,6 +55,16 @@ func TestPatternRuleLoader_UnifySkippedFailClosed(t *testing.T) {
       </pattern>
       <message>u</message>
     </rule>
+    <rule id="U2" name="negate unify">
+      <pattern>
+        <unify negate="yes">
+          <feature id="number"/>
+          <token postag="NN"/>
+          <token postag="NNS"/>
+        </unify>
+      </pattern>
+      <message>neg</message>
+    </rule>
     <rule id="OK" name="surface">
       <pattern>
         <token>hello</token>
@@ -59,10 +73,121 @@ func TestPatternRuleLoader_UnifySkippedFailClosed(t *testing.T) {
     </rule>
   </category>
 </rules>`
+	loader := NewPatternRuleLoader()
+	ars, err := loader.GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	require.Len(t, ars, 3)
+	require.Equal(t, "U1", ars[0].ID)
+	require.True(t, ars[0].TestUnification)
+	require.NotNil(t, ars[0].UnifierConfig)
+	require.Len(t, ars[0].PatternTokens, 2)
+	require.True(t, ars[0].PatternTokens[0].IsUnified())
+	require.True(t, ars[0].PatternTokens[1].IsLastInUnification())
+	require.False(t, ars[0].PatternTokens[1].IsUniNegated())
+	require.True(t, ars[1].PatternTokens[1].IsUniNegated())
+	require.Equal(t, "OK", ars[2].ID)
+	// Equivalence tables from <unification>
+	require.NotNil(t, loader.LastUnifierConfig)
+	types := loader.LastUnifierConfig.GetEquivalenceTypes()
+	require.Contains(t, types, NewEquivalenceTypeLocator("number", "sg"))
+}
+
+func TestPatternRuleLoader_PhraserefExpands(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <phrases>
+    <phrase id="A">
+      <token>hello</token>
+    </phrase>
+    <phrase id="B">
+      <token>hi</token>
+    </phrase>
+    <phrase id="START">
+      <includephrases>
+        <phraseref idref="A"/>
+        <phraseref idref="B"/>
+      </includephrases>
+    </phrase>
+  </phrases>
+  <category>
+    <rule id="R" name="phrase rule">
+      <pattern>
+        <phraseref idref="START"/>
+        <token>world</token>
+      </pattern>
+      <message>m</message>
+    </rule>
+  </category>
+</rules>`
 	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
 	require.NoError(t, err)
-	require.Len(t, ars, 1)
-	require.Equal(t, "OK", ars[0].ID)
+	// START expands to hello|hi, each + world → 2 rules
+	require.Len(t, ars, 2)
+	surfaces := map[string]bool{}
+	for _, ar := range ars {
+		require.Equal(t, "R", ar.ID)
+		require.Len(t, ar.PatternTokens, 2)
+		require.Equal(t, "world", ar.PatternTokens[1].Token)
+		surfaces[ar.PatternTokens[0].Token] = true
+	}
+	require.True(t, surfaces["hello"])
+	require.True(t, surfaces["hi"])
+
+	// Match "hello world"
+	for _, ar := range ars {
+		if ar.PatternTokens[0].Token != "hello" {
+			continue
+		}
+		pr := NewPatternRule(ar.ID, "en", ar.PatternTokens, ar.Description, ar.Message, "")
+		toks := []*languagetool.AnalyzedTokenReadings{atr("hello", 0), atr("world", 6)}
+		ms, err := pr.Match(languagetool.NewAnalyzedSentence(toks))
+		require.NoError(t, err)
+		require.Len(t, ms, 1)
+	}
+}
+
+func TestPatternRuleLoader_OrExpands(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <category>
+    <rule id="OR1" name="or rule">
+      <pattern>
+        <or>
+          <token>think</token>
+          <token>hope</token>
+        </or>
+        <token>its</token>
+      </pattern>
+      <message>it's</message>
+    </rule>
+  </category>
+</rules>`
+	ars, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
+	require.NoError(t, err)
+	// Java createRules: base + each OrGroup member → 2 rules
+	require.Len(t, ars, 2)
+	surfaces := map[string]bool{}
+	for _, ar := range ars {
+		require.Equal(t, "OR1", ar.ID)
+		require.Len(t, ar.PatternTokens, 2)
+		require.Equal(t, "its", ar.PatternTokens[1].Token)
+		require.False(t, ar.PatternTokens[0].HasOrGroup(), "expanded tokens clear OrGroup")
+		surfaces[ar.PatternTokens[0].Token] = true
+	}
+	require.True(t, surfaces["think"])
+	require.True(t, surfaces["hope"])
+
+	// Match either alternative
+	for _, ar := range ars {
+		pr := NewPatternRule(ar.ID, "en", ar.PatternTokens, ar.Description, ar.Message, "")
+		toks := []*languagetool.AnalyzedTokenReadings{
+			atr(ar.PatternTokens[0].Token, 0),
+			atr("its", 10),
+		}
+		ms, err := pr.Match(languagetool.NewAnalyzedSentence(toks))
+		require.NoError(t, err)
+		require.Len(t, ms, 1, "surface %s its", ar.PatternTokens[0].Token)
+	}
 }
 
 func TestPatternRuleLoader_IdPrefix(t *testing.T) {

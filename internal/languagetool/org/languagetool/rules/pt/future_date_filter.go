@@ -1,37 +1,67 @@
 package pt
 
 import (
-	"strconv"
 	"time"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// FutureDateFilter ports org.languagetool.rules.pt.FutureDateFilter date assembly.
+// FutureDateFilter ports org.languagetool.rules.pt.FutureDateFilter
+// (extends AbstractFutureDateFilter with PT month localization).
 type FutureDateFilter struct {
 	helper *DateFilterHelper
+	core   *rules.FutureDateFilterCore
 }
 
 func NewFutureDateFilter() *FutureDateFilter {
-	return &FutureDateFilter{helper: NewDateFilterHelper()}
+	return &FutureDateFilter{
+		helper: NewDateFilterHelper(),
+		core:   ptFutureDateCore(),
+	}
 }
 
+func (f *FutureDateFilter) effectiveCore() *rules.FutureDateFilterCore {
+	if f == nil {
+		return nil
+	}
+	if f.core != nil {
+		return f.core
+	}
+	return ptFutureDateCore()
+}
+
+// IsFuture reports whether year/month/day (1-based month) is strictly after today.
 func (f *FutureDateFilter) IsFuture(year, month, day int) bool {
-	if year <= 0 || month < 1 || month > 12 || day < 1 {
-		return false
-	}
-	d := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	now := time.Now().UTC()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	return d.After(today)
+	return f.effectiveCore().IsFuture(year, month, day)
 }
 
+// ParseDayOfMonth extracts leading digits from strings like "23." / "23".
 func ParseDayOfMonth(s string) (int, error) {
-	n := ""
-	for _, r := range s {
-		if r >= '0' && r <= '9' {
-			n += string(r)
-		} else if n != "" {
-			break
-		}
+	return rules.ParseDayOfMonthArg(s, nil)
+}
+
+// AcceptRuleMatch ports AbstractFutureDateFilter.acceptRuleMatch:
+// keep match only when the date in args is strictly after today.
+func (f *FutureDateFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
 	}
-	return strconv.Atoi(n)
+	core := f.effectiveCore()
+	if core == nil || !core.AcceptFromArgs(arguments) {
+		return nil
+	}
+	return match
+}
+
+// SetNow overrides the reference "today" (tests / calendar inject).
+func (f *FutureDateFilter) SetNow(now func() time.Time) {
+	if f == nil {
+		return
+	}
+	if f.core == nil {
+		f.core = ptFutureDateCore()
+	}
+	f.core.Now = now
 }

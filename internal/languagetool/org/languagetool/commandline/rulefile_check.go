@@ -41,6 +41,10 @@ func CheckWithPatternRuleFile(w io.Writer, text string, opts *CommandLineOptions
 			continue
 		}
 		pr := patterns.NewPatternRule(ar.ID, ar.LanguageCode, ar.PatternTokens, ar.Description, ar.Message, ar.ShortMessage)
+		pr.UnifierConfig = ar.UnifierConfig
+		pr.AntiPatterns = append([]*patterns.PatternRule(nil), ar.AntiPatterns...)
+		pr.Filter = ar.Filter
+		pr.FilterArgs = ar.FilterArgs
 		patterns.RegisterPatternRule(lt, pr)
 	}
 	// apply CLI enable/disable

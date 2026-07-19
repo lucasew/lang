@@ -3,6 +3,8 @@ package nl
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,4 +29,16 @@ func TestCompoundFilter_Filter(t *testing.T) {
 	for _, tc := range cases {
 		require.Equal(t, tc.want, f.Suggest(tc.words), "words=%v", tc.words)
 	}
+}
+
+func TestCompoundFilter_AcceptRuleMatchRegistered(t *testing.T) {
+	require.True(t, patterns.GlobalRuleFilterCreator.HasFilter("org.languagetool.rules.nl.CompoundFilter"))
+	f := patterns.GlobalRuleFilterCreator.GetFilter("org.languagetool.rules.nl.CompoundFilter")
+	m := rules.NewRuleMatch(rules.NewFakeRule("C"), nil, 0, 10, "use <suggestion>x</suggestion>")
+	m.ShortMessage = "short <suggestion>y</suggestion>"
+	out := f.AcceptRuleMatch(m, map[string]string{"word1": "tv", "word2": "meubel"}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Equal(t, []string{"tv-meubel"}, out.GetSuggestedReplacements())
+	require.Contains(t, out.GetMessage(), "tv-meubel")
+	require.Contains(t, out.ShortMessage, "tv-meubel")
 }

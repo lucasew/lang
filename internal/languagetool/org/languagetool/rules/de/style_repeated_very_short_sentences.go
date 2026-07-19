@@ -1,27 +1,71 @@
 package de
 
 import (
+	"regexp"
+
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// StyleRepeatedVeryShortSentences ports org.languagetool.rules.de.StyleRepeatedVeryShortSentences
-// without direct-speech exclusion (surface length only).
+// StyleRepeatedVeryShortSentences ports org.languagetool.rules.de.StyleRepeatedVeryShortSentences.
+// Direct-speech exclusion and paragraph-end handling follow Java (default excludeDirectSpeech=true).
+// Java: Category CREATIVE_WRITING, setDefaultOff(), ITS Style.
 type StyleRepeatedVeryShortSentences struct {
-	Messages    map[string]string
-	MinWords    int
-	MinRepeated int
+	Messages            map[string]string
+	MinWords            int
+	MinRepeated         int
+	ExcludeDirectSpeech bool
+	Category            *rules.Category
+	IssueType           rules.ITSIssueType
+	DefaultOff          bool
 }
 
+var (
+	styleShortOpenQuotes   = regexp.MustCompile(`[\"“„»«]`)
+	styleShortEndingQuotes = regexp.MustCompile(`[\"“”»«]`)
+)
+
 func NewStyleRepeatedVeryShortSentences(messages map[string]string) *StyleRepeatedVeryShortSentences {
+	// Java: CREATIVE_WRITING category + setDefaultOff() + ITS Style.
 	return &StyleRepeatedVeryShortSentences{
-		Messages:    messages,
-		MinWords:    4,
-		MinRepeated: 3,
+		Messages:            messages,
+		MinWords:            4,
+		MinRepeated:         3,
+		ExcludeDirectSpeech: true, // Java EXCLUDE_DIRECT_SPEECH default
+		Category:            rules.CreativeWritingCategory(messages),
+		IssueType:           rules.ITSStyle,
+		DefaultOff:          true,
 	}
 }
 
 func (r *StyleRepeatedVeryShortSentences) GetID() string { return "STYLE_REPEATED_SHORT_SENTENCES" }
+
+// GetDescription ports StyleRepeatedVeryShortSentences.getDescription.
+func (r *StyleRepeatedVeryShortSentences) GetDescription() string { return "Stakkato-Sätze" }
+
+func (r *StyleRepeatedVeryShortSentences) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *StyleRepeatedVeryShortSentences) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *StyleRepeatedVeryShortSentences) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// MinToCheckParagraph ports minToCheckParagraph (Java returns minRepeated).
+func (r *StyleRepeatedVeryShortSentences) MinToCheckParagraph() int {
+	if r == nil || r.MinRepeated <= 0 {
+		return 3
+	}
+	return r.MinRepeated
+}
 
 func (r *StyleRepeatedVeryShortSentences) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	minW := r.MinWords
@@ -38,14 +82,17 @@ func (r *StyleRepeatedVeryShortSentences) MatchList(sentences []*languagetool.An
 	var ruleMatches []*rules.RuleMatch
 	pos := 0
 	nRepeated := 0
+	nPara := -1
 	var startPos, endPos []int
 	var repeated []*languagetool.AnalyzedSentence
+	beginsWithDirectSpeech := false
+	endsWithDirectSpeech := false
 	flush := func() {
 		if nRepeated >= minR {
+			// Java: new RuleMatch(..., getDescription()) — no shortMessage.
+			msg := r.GetDescription()
 			for i := 0; i < len(repeated); i++ {
-				msg := "Stakkato-Sätze"
 				rm := rules.NewRuleMatch(r, repeated[i], startPos[i], endPos[i], msg)
-				rm.ShortMessage = "kurze Sätze"
 				ruleMatches = append(ruleMatches, rm)
 			}
 		}
@@ -54,12 +101,32 @@ func (r *StyleRepeatedVeryShortSentences) MatchList(sentences []*languagetool.An
 		endPos = nil
 		nRepeated = 0
 	}
-	for _, sentence := range sentences {
+	for n, sentence := range sentences {
+		nPara++
 		tokens := sentence.GetTokensWithoutWhitespace()
-		// tokens include SENT_START; short sentence: >3 and <= minWords+2 (start + words + punct)
-		if len(tokens) > 3 && len(tokens) <= minW+2 {
+		if r.ExcludeDirectSpeech {
+			if endsWithDirectSpeech {
+				beginsWithDirectSpeech = true
+			} else {
+				beginsWithDirectSpeech = false
+			}
+			for i := 0; i < len(tokens); i++ {
+				tok := tokens[i].GetToken()
+				if !beginsWithDirectSpeech && styleShortOpenQuotes.MatchString(tok) &&
+					i < len(tokens)-1 && !tokens[i+1].IsWhitespaceBefore() {
+					beginsWithDirectSpeech = true
+					endsWithDirectSpeech = true
+				} else if beginsWithDirectSpeech && styleShortEndingQuotes.MatchString(tok) &&
+					i > 1 && !tokens[i].IsWhitespaceBefore() {
+					endsWithDirectSpeech = false
+				}
+			}
+		}
+		// Java: Tools.isParagraphEnd(sentences, n, lang) — singleLineBreaksMarksPara false for German.
+		paragraphEnd := languagetool.IsParagraphEnd(sentences, n, false)
+		// Java: !beginnsWithDirectSpeech && (!paragraphEnd || nPara > 0) && tokens.length > 3 && tokens.length <= minWords + 2
+		if !beginsWithDirectSpeech && (!paragraphEnd || nPara > 0) && len(tokens) > 3 && len(tokens) <= minW+2 {
 			repeated = append(repeated, sentence)
-			// mark last content token through end punctuation (Java: tokens[len-2] .. tokens[len-1])
 			from := tokens[len(tokens)-2].GetStartPos() + pos
 			to := tokens[len(tokens)-1].GetEndPos() + pos
 			startPos = append(startPos, from)
@@ -69,6 +136,9 @@ func (r *StyleRepeatedVeryShortSentences) MatchList(sentences []*languagetool.An
 			flush()
 		}
 		pos += sentence.GetCorrectedTextLength()
+		if paragraphEnd {
+			nPara = -1
+		}
 	}
 	flush()
 	return ruleMatches

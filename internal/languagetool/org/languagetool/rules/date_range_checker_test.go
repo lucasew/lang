@@ -20,6 +20,9 @@ func TestShortenedYearRangeChecker(t *testing.T) {
 	// 1998-92 → 1992, 1998 >= 1992 → invalid → keep
 	require.True(t, c.Accept("1998", "92"))
 	require.False(t, c.Accept("x", "92"))
+	m := NewRuleMatch(nil, nil, 0, 5, "msg")
+	require.NotNil(t, c.AcceptRuleMatch(m, map[string]string{"x": "1998", "y": "92"}, 0, nil, nil))
+	require.Nil(t, c.AcceptRuleMatch(m, map[string]string{"x": "1998", "y": "99"}, 0, nil, nil))
 }
 
 func TestMatchPositionAndSuggestion(t *testing.T) {

@@ -40,15 +40,26 @@ const (
 	GenusFem Genus = "FEM"
 	GenusNeu Genus = "NEU"
 	GenusNoG Genus = "NOG"
+	// GenusALG ports ALLGEMEIN (expands to all genders in agreement).
+	GenusALG Genus = "ALG"
+)
+
+// Determination ports GermanToken.Determination.
+type Determination string
+
+const (
+	DetDefinite   Determination = "DEFINITE"
+	DetIndefinite Determination = "INDEFINITE"
 )
 
 // AnalyzedGermanToken ports tagging.de.AnalyzedGermanToken (POS parse helpers).
 type AnalyzedGermanToken struct {
-	Reading string
-	Type    POSType
-	Kasus   Kasus
-	Numerus Numerus
-	Genus   Genus
+	Reading        string
+	Type           POSType
+	Kasus          Kasus
+	Numerus        Numerus
+	Genus          Genus
+	Determination  Determination
 }
 
 // ParseGermanPOS extracts coarse fields from a German POS string like "SUB:NOM:SIN:MAS".
@@ -105,6 +116,12 @@ func ParseGermanPOS(pos string) AnalyzedGermanToken {
 			a.Genus = GenusNeu
 		case "NOG":
 			a.Genus = GenusNoG
+		case "ALG":
+			a.Genus = GenusALG
+		case "DEF":
+			a.Determination = DetDefinite
+		case "IND":
+			a.Determination = DetIndefinite
 		}
 	}
 	return a

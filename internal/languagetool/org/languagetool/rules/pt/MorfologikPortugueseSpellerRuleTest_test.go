@@ -41,7 +41,7 @@ func TestMorfologikPortugueseSpeller_EuropeanPortugueseSpelling(t *testing.T) {
 }
 
 func TestMorfologikPortugueseSpeller_AfricanPortugueseSpelling(t *testing.T) {
-	r := NewMorfologikPortugueseSpellerRule("pt-AO", "/pt/hunspell/pt_AO.dict", "MORFOLOGIK_RULE_PT_AO")
+	r := NewMorfologikPortugueseSpellerRule("pt-AO", "/pt/spelling/pt-PT-45.dict", "MORFOLOGIK_RULE_PT_AO")
 	require.Equal(t, "pt-AO", r.VariantCode)
 }
 

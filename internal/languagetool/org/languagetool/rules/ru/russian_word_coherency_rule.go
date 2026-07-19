@@ -23,8 +23,9 @@ func loadCoherencyData() *rules.WordCoherencyData {
 			panic(err)
 		}
 		defer f.Close()
-		// Expand full forms (нулю/ноль) without a Russian tagger.
-		d, err := rules.LoadWordCoherencyData(f, "/ru/coherency.txt", true)
+		// Java WordCoherencyDataLoader: file pairs only (no invent case suffixes).
+		// Inflected forms match via tagger lemmas in AbstractWordCoherencyRule.
+		d, err := rules.LoadWordCoherencyData(f, "/ru/coherency.txt", false)
 		if err != nil {
 			panic(err)
 		}
@@ -41,7 +42,6 @@ type RussianWordCoherencyRule struct {
 func NewRussianWordCoherencyRule(messages map[string]string) *RussianWordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "RU_WORD_COHERENCY",
 		Description: "Единообразное написание слов с более чем одним допустимым написанием",
 		WordMap:     d.WordMap,
@@ -50,6 +50,7 @@ func NewRussianWordCoherencyRule(messages map[string]string) *RussianWordCoheren
 			return "«" + word1 + "» и «" + word2 + "» не следует использовать одновременно"
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &RussianWordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

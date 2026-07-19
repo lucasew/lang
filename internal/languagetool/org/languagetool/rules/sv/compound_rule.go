@@ -39,7 +39,6 @@ type CompoundRule struct {
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "SV_COMPOUNDS",
 		Description:                 "Särskrivningar, t.ex. 'e mail' bör skrivas 'e-mail'",
 		WithHyphenMessage:           "Dessa ord skrivs samman med bindestreck.",
@@ -48,6 +47,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

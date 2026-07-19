@@ -40,7 +40,6 @@ type WordCoherencyRule struct {
 func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "SV_WORD_COHERENCY",
 		Description: "Konsekvent stavning av ord med flera korrekta former",
 		WordMap:     d.WordMap,
@@ -49,6 +48,7 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 			return "Använd endast en av stavningsvarianterna '" + word1 + "' och '" + word2 + "' i en och samma text."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

@@ -2,14 +2,28 @@ package ca
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreCatalanRules installs shared layout + Catalan word-repeat + beginning.
 func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
+	}
+	// Java Catalan.getPriorityForId on Check priorities.
+	lt.PriorityForId = language.CatalanPriorityForId
+	// Java Catalan.getDefaultRulePriorityForStyle() = -50
+	lt.DefaultRulePriorityForStyle = -50
+	// Java Catalan.adaptSuggestion for AdaptSuggestionsFilter (pattern rules).
+	languagetool.LanguageAdaptSuggestionByCode["ca"] = language.CatalanAdaptSuggestion
+	// Java Catalan.filterRuleMatches + filterRuleMatchesAfterOverlapping (hooks from language init).
+	if languagetool.FilterCatalanRuleMatchesHook != nil {
+		lt.FilterRuleMatches = languagetool.FilterCatalanRuleMatchesHook
+	}
+	if languagetool.FilterCatalanRuleMatchesAfterOverlappingHook != nil {
+		lt.FilterRuleMatchesAfterOverlapping = languagetool.FilterCatalanRuleMatchesAfterOverlappingHook
 	}
 	rules.RegisterSharedLayoutRules(lt, "ca")
 	wr := NewCatalanWordRepeatRule(map[string]string{"repetition": "Repetició de paraula"})
@@ -19,10 +33,7 @@ func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "ca", []patterns.TokenSequenceSpec{
-		{ID: "CA_A_EL", Tokens: []string{"a", "el"}, Message: "Volíeu dir 'al'?", Suggestion: "al"},
-		{ID: "CA_DE_EL", Tokens: []string{"de", "el"}, Message: "Volíeu dir 'del'?", Suggestion: "del"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
@@ -65,4 +76,23 @@ func RegisterCoreCatalanRules(lt *languagetool.JLanguageTool) {
 	// Valencian coherency variants (official coherency-valencia.txt).
 	wcv := NewWordCoherencyValencianRule(nil)
 	lt.AddTextLevelRuleChecker(wcv.GetID(), rules.AsTextLevelChecker(wcv.MatchList))
+
+	// Java createDefaultSpellingRule → MorfologikCatalanSpellerRule.
+	// Always register full Match (IgnoreTaggedWords + orderSuggestions + tops);
+	// wire filter dict when binary resource is on disk (fail-closed without it).
+	sp := NewMorfologikCatalanSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(CatalanSpellerDict); p != "" {
+		if WireCatalanFilterSpeller(p) {
+			sp.IsMisspelled = FilterDictIsMisspelled
+		}
+	}
+	// Late-bind TagPOS to lt.TagWord (POS may install after RegisterCore).
+	ltRef := lt
+	WireCatalanSpellerTagPOS(sp, func(token string) []languagetool.TokenTag {
+		if ltRef.TagWord == nil {
+			return nil
+		}
+		return ltRef.TagWord(token)
+	})
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

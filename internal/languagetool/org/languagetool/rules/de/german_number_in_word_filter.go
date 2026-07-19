@@ -1,43 +1,50 @@
 package de
 
 import (
-	"regexp"
-	"strings"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// GermanNumberInWordFilter ports AbstractNumberInWordFilter suggestion logic
-// without a speller: always proposes digit-stripped / 0→o forms when different.
-type GermanNumberInWordFilter struct{}
-
-func NewGermanNumberInWordFilter() *GermanNumberInWordFilter {
-	return &GermanNumberInWordFilter{}
+// GermanNumberInWordFilter ports org.languagetool.rules.de.GermanNumberInWordFilter
+// (extends AbstractNumberInWordFilter; isMisspelled/getSuggestions from
+// GermanyGerman.getDefaultSpellingRule()).
+type GermanNumberInWordFilter struct {
+	inner *rules.NumberInWordFilter
 }
 
-var digitRE = regexp.MustCompile(`[0-9]`)
+func NewGermanNumberInWordFilter() *GermanNumberInWordFilter {
+	return &GermanNumberInWordFilter{
+		inner: &rules.NumberInWordFilter{
+			// Java: GermanyGerman.getInstance().getDefaultSpellingRule().isMisspelled / getSuggestions
+			IsMisspelled:   FilterDictIsMisspelled,
+			GetSuggestions: FilterDictSuggest,
+		},
+	}
+}
 
-// Suggestions returns candidate fixes for words containing digits.
+// Suggestions ports acceptRuleMatch candidate building (speller-gated; fail-closed without dict).
 func (f *GermanNumberInWordFilter) Suggestions(word string) []string {
-	if !digitRE.MatchString(word) {
+	if f == nil || f.inner == nil {
 		return nil
 	}
-	var out []string
-	repl0 := strings.ReplaceAll(word, "0", "o")
-	if repl0 != word {
-		out = append(out, repl0)
+	// Without dict: Java always has default spelling rule; fail-closed invent none.
+	if !FilterDictAvailable() {
+		return nil
 	}
-	without := digitRE.ReplaceAllString(word, "")
-	if without != "" && without != word {
-		// avoid duplicates
-		dup := false
-		for _, s := range out {
-			if s == without {
-				dup = true
-				break
-			}
-		}
-		if !dup {
-			out = append(out, without)
-		}
+	return f.inner.Suggestions(word)
+}
+
+// AcceptRuleMatch ports AbstractNumberInWordFilter.acceptRuleMatch.
+func (f *GermanNumberInWordFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
 	}
-	return out
+	if !FilterDictAvailable() {
+		return nil
+	}
+	if f.inner == nil {
+		return nil
+	}
+	return f.inner.AcceptRuleMatch(match, arguments, 0, nil, nil)
 }

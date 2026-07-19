@@ -25,30 +25,17 @@ func LoadSpellingData(r io.Reader, pathHint string) (*SpellingData, error) {
 	return LoadSpellingDataWithExpand(r, pathHint, nil)
 }
 
+// LoadSpellingDataWithExpand ports SpellingData.getCoherencyMap for body + sentence-start maps.
+// Buffers the full CSV so both modes can be built (Java builds two tries from the same file).
 func LoadSpellingDataWithExpand(r io.Reader, pathHint string, expand func(string) []string) (*SpellingData, error) {
 	if pathHint == "" {
 		pathHint = "spelling data"
 	}
-	body, err := getCoherencyMap(r, pathHint, false, expand)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
-	// re-read not possible; rebuild sentence start from body keys by re-parsing
-	// Callers often only need body map; rebuild sentStart from body:
-	sent := map[string]string{}
-	for oldS, newS := range body {
-		if tools.StartsWithUppercase(oldS) || tools.StartsWithUppercase(newS) {
-			sent[oldS] = newS
-			continue
-		}
-		// lowercase pair → also store capitalized for sentence start mode
-		// (Java builds a separate map; we approximate from body)
-		_ = oldS
-		_ = newS
-	}
-	// For faithful sentence-start map, re-parse stream — already consumed.
-	// Return body only and empty sentence map; provide dual loader below.
-	return &SpellingData{Map: body, SentenceStartMap: sent, ExpandForms: expand}, nil
+	return LoadSpellingDataBoth(string(data), pathHint, expand)
 }
 
 // LoadSpellingDataBoth builds body and sentence-start maps from the same content string.
@@ -66,7 +53,6 @@ func LoadSpellingDataBoth(content, pathHint string, expand func(string) []string
 
 func getCoherencyMap(r io.Reader, filePath string, sentStartMode bool, expand func(string) []string) (map[string]string, error) {
 	coherencyMap := map[string]string{}
-	// preserve insertion order not required for lookups
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()

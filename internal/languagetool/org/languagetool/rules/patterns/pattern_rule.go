@@ -22,6 +22,14 @@ type PatternRule struct {
 	// Filter / FilterArgs port AbstractPatternRule filter applied after pattern match.
 	Filter     RuleFilter
 	FilterArgs string
+	// UnifierConfig ports Language.getUnifierConfiguration for testUnification.
+	UnifierConfig *UnifierConfiguration
+	// SuggestionMatches ports AbstractPatternRule.suggestionMatches for formatMatches.
+	SuggestionMatches []*Match
+	// SuggestionTemplates are <suggestion> bodies after ProcessRuleMessage (may contain \N).
+	SuggestionTemplates []string
+	// InterpretPreDisambig ports PatternRule.interpretPosTagsPreDisambiguation (raw_pos="yes").
+	InterpretPreDisambig bool
 }
 
 func NewPatternRule(id, languageCode string, tokens []*PatternToken, description, message, shortMessage string) *PatternRule {
@@ -39,6 +47,14 @@ func (r *PatternRule) GetID() string          { return r.ID }
 func (r *PatternRule) GetDescription() string { return r.Description }
 func (r *PatternRule) GetMessage() string     { return r.Message }
 func (r *PatternRule) GetTags() []rules.Tag   { return r.Tags }
+
+// GetLanguageCode ports Language short code for AdaptSuggestionsFilter (Java getLanguage().getShortCode).
+func (r *PatternRule) GetLanguageCode() string {
+	if r == nil {
+		return ""
+	}
+	return r.LanguageCode
+}
 func (r *PatternRule) SetTags(tags []rules.Tag) {
 	r.Tags = append([]rules.Tag(nil), tags...)
 }

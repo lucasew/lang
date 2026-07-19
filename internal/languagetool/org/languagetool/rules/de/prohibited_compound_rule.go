@@ -1,8 +1,8 @@
 package de
 
 import (
+	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -10,130 +10,91 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// prohibitedPair is a confusable compound fragment pair (all-lowercase).
+// prohibitedPair ports ProhibitedCompoundRule.Pair (all-lowercase parts in source list).
 type prohibitedPair struct {
 	part1, desc1, part2, desc2 string
 }
 
-// Preferred bad→good fragments without n-gram LM (covers Java test compounds).
-var prohibitedPreferred = map[string]string{
-	"lehr": "leer",
-	"uhrb": "urb",   // Uhrberliner
-	"uhre": "ure",   // Uhreinwohner
-	"mita": "mieta", // Mitauto
-}
-
-var lowercaseProhibitedPairs = []prohibitedPair{
-	{"knoten", "Verschlingung von Fäden", "konten", "Plural von 'Konto'"},
-	{"schaf", "Tier", "schaft", "'-schaft' (Element zur Wortbildung, z. B. 'Freundschaft')"},
-	{"schafen", "Dativ Plural von 'Schaf'", "schaften", "'-schaften' (Element zur Wortbildung, z. B. 'Freundschaften')"},
-	{"alpen", "Hochgebirge in Mittel- und Südeuropa", "alben", "Plural von 'Album'"},
-	{"pillen", "Tabletten", "pullen", "Plural von 'Pulle' (Flasche)"},
-	{"tauben", "Vogelart", "trauben", "Obstsorte"},
-	{"panel", "ausgewählte Personengruppe", "paneel", "Platte für Wand- und Deckenverkleidungen"},
-	{"nabe", "Mittelteil eines Rades", "narbe", "verheilende Wunde"},
-	{"first", "höchste Kante an einem geneigten Dach", "frist", "spätester Zeitpunkt"},
-	{"kisten", "Behälter", "kosten", "Ausgaben"},
-	{"koma", "Zustand tiefer Bewusstlosigkeit", "komma", "Satzzeichen"},
-	{"korn", "Getreide sowie dessen Frucht", "kron", "Vorsilbe z.B. in 'Kronkorken'"},
-	{"bauten", "Form von 'Bau' (Bauwerk, Haus, ...)", "beuten", "Form von 'Beute'"},
-	{"file", "engl. 'Datei'", "filet", "ein Stück Fleisch oder Fisch"},
-	{"zecke", "blutsaugender Parasit", "zwecke", "Dativ von 'Zweck' (Ziel)"},
-	{"frucht", "Teil einer Pflanze; Obst", "furcht", "Angst"},
-	{"rate", "Verhältnis zwischen zwei Größen", "ratte", "Nagetier"},
-	{"posten", "Arbeitsplatz, Wachposten", "posen", "Pose: betonte Körperhaltung"},
-	{"himmel", "Bereich über der Erde", "hummel", "Insekt"},
-	{"server", "Computer", "servier", "zu 'servieren'"},
-	{"ziege", "Tier", "ziegel", "Ziegelstein"},
-	{"robe", "Kleidungsstück", "probe", "Test, Kontrolle"},
-	{"mode", "Kleidung", "monde", "Begleiter eines Planeten"},
-	{"eigen", "'selbst', z.B. 'Eigenzitat'", "eingen", "Möglicher Tippfehler"},
-	{"stümpfe", "Rest eines Körpergliedes", "strümpfe", "Bekleidungsstück für den Fuß"},
-	{"gelände", "Gebiet", "geländer", "Konstruktion zum Festhalten entlang von Treppen"},
-	{"tropen", "feuchtwarme Gebiete am Äquator", "tropfen", "kleine Menge Flüssigkeit"},
-	{"enge", "Mangel an Platz", "menge", "Anzahl an Einheiten"},
-	{"ritt", "Reiten", "tritt", "Aufsetzen eines Fußes"},
-	{"beine", "Körperteil", "biene", "Insekt"},
-	{"rebe", "Weinrebe", "reibe", "Küchenreibe"},
-	{"ass", "Spielkarte", "pass", "Reisepass; Übergang durch ein Gebirge"},
-	{"türmer", "Turmwächter", "türme", "Plural von 'Turm' (Bauwerk)"},
-	{"soge", "ziehende Strömungen", "sorge", "bedrückendes Gefühl"},
-	{"panne", "technischer Defekt", "spanne", "Zeitraum"},
-	{"elfer", "Elfmeter", "helfer", "Person, die hilft"},
-	{"bau", "Bauwerk, Baustelle", "baum", "Pflanze"},
-	{"gase", "Plural von 'Gas' (Aggregatzustand)", "gasse", "kleine Straße"},
-	{"ekel", "Abscheu", "enkel", "Kind eines eigenen Kindes"},
-	{"reis", "Nahrungsmittel", "reise", "Ausflug/Fahrt"},
-	{"speichel", "Körperflüssigkeit", "speicher", "Lager, Depot, Ablage"},
-	{"hüte", "Kopfbedeckungen", "häute", "Plural von 'Haut'"},
-	{"bach", "kleiner Fluss", "bauch", "Teil des menschlichen Körpers"},
-	{"lage", "Position", "alge", "im Wasser lebende Organismen"},
-	{"schenke", "Gastwirtschaft (auch: Schänke)", "schenkel", "Ober- und Unterschenkel"},
-	{"rune", "Schriftzeichen der Germanen", "runde", "Rundstrecke"},
-	{"mai", "Monat nach April", "mail", "E-Mail"},
-	{"pump", "'auf Pump': umgangssprachlich für 'auf Kredit'", "pumpe", "Gerät zur Beförderung von Flüssigkeiten"},
-	{"mitte", "zentral", "mittel", "Methode, um etwas zu erreichen"},
-	{"fein", "feinkörnig, genau, gut", "feind", "Gegner"},
-	{"traum", "Erleben während des Schlafes", "trauma", "Verletzung"},
-	{"name", "Bezeichnung (z.B. 'Vorname')", "nahme", "zu 'nehmen' (z.B. 'Teilnahme')"},
-	{"bart", "Haarbewuchs im Gesicht", "dart", "Wurfpfeil"},
-	{"hart", "fest", "dart", "Wurfpfeil"},
-	{"speiche", "Verbindung zwischen Nabe und Felge beim Rad", "speicher", "Lagerraum"},
-	{"speichen", "Verbindung zwischen Nabe und Felge beim Rad", "speicher", "Lagerraum"},
-	{"kart", "Gokart (Fahrzeug)", "karte", "Fahrkarte, Postkarte, Landkarte, ..."},
-	{"karts", "Kart = Gokart (Fahrzeug)", "karte", "Fahrkarte, Postkarte, Landkarte, ..."},
-	{"kurz", "Gegenteil von 'lang'", "kur", "medizinische Vorsorge und Rehabilitation"},
-	{"kiefer", "knöcherner Teil des Schädels", "kiefern", "Kieferngewächse (Baum)"},
-	{"gel", "dickflüssige Masse", "geld", "Zahlungsmittel"},
-	{"flucht", "Entkommen, Fliehen", "frucht", "Ummantelung des Samens einer Pflanze"},
-	{"kamp", "Flurname für ein Stück Land", "kampf", "Auseinandersetzung"},
-	{"obst", "Frucht", "ost", "Himmelsrichtung"},
-	{"beeren", "Früchte", "bären", "Raubtiere"},
-	{"laus", "Insekt", "lauf", "Bewegungsart"},
-	{"läuse", "Insekt", "läufe", "Bewegungsart"},
-	{"läusen", "Insekt", "läufen", "Bewegungsart"},
-	{"ruck", "plötzliche Bewegung", "druck", "Belastung"},
-	{"brüste", "Plural von Brust", "bürste", "Gerät mit Borsten, z.B. zum Reinigen"},
-	{"attraktion", "Sehenswürdigkeit", "akttaktion", "vermutlicher Tippfehler"},
-	{"nah", "zu 'nah' (wenig entfernt)", "näh", "zu 'nähen' (mit einem Faden verbinden)"},
-	{"turn", "zu 'turnen'", "turm", "hohes Bauwerk"},
-	{"mit", "Präposition", "miet", "zu 'Miete' (Überlassung gegen Bezahlung)"},
-	{"bart", "Behaarung im Gesicht", "brat", "zu 'braten', z.B. 'Bratkartoffel'"},
-	{"uhr", "Instrument zur Zeitmessung", "ur", "ursprünglich"},
-	{"abschluss", "Ende", "abschuss", "Vorgang des Abschießens, z.B. mit einer Waffe"},
-	{"brache", "verlassenes Grundstück", "branche", "Wirtschaftszweig"},
-	{"wieder", "erneut, wiederholt, nochmal (Wiederholung, Wiedervorlage, ...)", "wider", "gegen, entgegen (Widerwille, Widerstand, Widerspruch, ...)"},
-	{"leer", "ohne Inhalt", "lehr", "bezogen auf Ausbildung und Wissen"},
-	{"gewerbe", "wirtschaftliche Tätigkeit", "gewebe", "gewebter Stoff; Verbund ähnlicher Zellen"},
-	{"schuh", "Fußbekleidung", "schul", "auf die Schule bezogen"},
-	{"klima", "langfristige Wetterzustände", "lima", "Hauptstadt von Peru"},
-	{"modell", "vereinfachtes Abbild der Wirklichkeit", "model", "Fotomodell"},
-	{"treppen", "Folge von Stufen (Mehrzahl)", "truppen", "Armee oder Teil einer Armee (Mehrzahl)"},
-	{"häufigkeit", "Anzahl von Ereignissen", "häutigkeit", "z.B. in Dunkelhäutigkeit"},
-	{"hin", "in Richtung", "hirn", "Gehirn, Denkapparat"},
-	{"verklärung", "Beschönigung, Darstellung in einem besseren Licht", "erklärung", "Darstellung, Erläuterung"},
-	{"spitze", "spitzes Ende eines Gegenstandes", "spritze", "medizinisches Instrument zur Injektion"},
-	{"punk", "Jugendkultur", "punkt", "Satzzeichen"},
-	{"reis", "Nahrungsmittel", "eis", "gefrorenes Wasser"},
-	{"balkan", "Region in Südosteuropa", "balkon", "Plattform, die aus einem Gebäude herausragt"},
-	{"haft", "Freiheitsentzug", "schaft", "-schaft (Element zur Wortbildung)"},
-	{"stande", "zu 'Stand'", "stange", "länglicher Gegenstand"},
-}
-
-// ProhibitedCompoundRule is a surface stand-in for
-// org.languagetool.rules.de.ProhibitedCompoundRule without n-gram LM / speller.
+// ProhibitedCompoundRule ports org.languagetool.rules.de.ProhibitedCompoundRule.
+// Language model: Frequency[token] count (Java BaseLanguageModel.getCount).
+// Without Frequency, Match fails closed (Java requires LanguageModel).
 type ProhibitedCompoundRule struct {
 	Messages map[string]string
-	Prefer   map[string]string
+	// Frequency ports BaseLanguageModel.getCount(word); nil → fail-closed Match.
+	Frequency map[string]int64
+	// IsMisspelled optional; nil uses FilterDictIsMisspelled.
+	IsMisspelled func(word string) bool
+	// Blacklist extra words (compound_exceptions.txt); optional.
+	Blacklist map[string]struct{}
+	// Premium / Category / IssueType / Tags mirror Rule metadata for SpecificIdRule (Java isPremium/getCategory/…).
+	Premium   bool
+	Category  *rules.Category
+	IssueType rules.ITSIssueType
+	Tags      []rules.Tag
+}
+
+var herrnFrauRE = regexp.MustCompile(`^(Herrn?|Frau|Dr|Prof|Mag|Hr|Fr|Mr|Mrs|Ms|Fräulein)$`)
+
+var prohibitedBlacklistRegexes = []*regexp.Regexp{
+	regexp.MustCompile(`Lande(basis|basen|region|gebiets?|gebieten?|regionen|betriebs?|betrieben?|offizieren?|bereichs?|bereichen?|einrichtung|einrichtungen|massen?|plans?|versuchs?|versuchen?)`),
+	regexp.MustCompile(`Model(vertrags?|verträgen?|erfahrung|erfahrungen|szene|welt)`),
+	regexp.MustCompile(`(Raum|Surf|Jazz|Herbst|Gymnastik|Normal)schuhen?`),
+	regexp.MustCompile(`preis`),
+	regexp.MustCompile(`reisähnlich(e|e[nmrs])?`),
+	regexp.MustCompile(`neugestartet(e|e[nmrs])?`),
+	regexp.MustCompile(`reisender`),
+	regexp.MustCompile(`[a-zöäüß]+sender`),
+	regexp.MustCompile(`gra(ph|f)ische?`),
+	regexp.MustCompile(`gra(ph|f)ische[rsnm]`),
+	regexp.MustCompile(`gra(ph|f)s?$`),
+	regexp.MustCompile(`gra(ph|f)en`),
+	regexp.MustCompile(`gra(ph|f)in`),
+	regexp.MustCompile(`gra(ph|f)ik`),
+	regexp.MustCompile(`gra(ph|f)ie`),
+	regexp.MustCompile(`Gra(ph|f)its?`),
+	regexp.MustCompile(`.+gra(ph|f)its?`),
 }
 
 func NewProhibitedCompoundRule(messages map[string]string) *ProhibitedCompoundRule {
-	return &ProhibitedCompoundRule{Messages: messages, Prefer: prohibitedPreferred}
+	return &ProhibitedCompoundRule{
+		Messages: messages,
+		// Java: super.setCategory(Categories.TYPOS.getCategory(messages)); ITSIssueType.Uncategorized default.
+		Category:  rules.CatTypos.GetCategory(messages),
+		IssueType: rules.ITSUncategorized,
+	}
+}
+
+// NewProhibitedCompoundRuleWithFrequency ports FakeLanguageModel constructor path.
+func NewProhibitedCompoundRuleWithFrequency(messages map[string]string, freq map[string]int64) *ProhibitedCompoundRule {
+	r := NewProhibitedCompoundRule(messages)
+	r.Frequency = freq
+	return r
 }
 
 func (r *ProhibitedCompoundRule) GetID() string { return "DE_PROHIBITED_COMPOUNDS" }
 
+func (r *ProhibitedCompoundRule) GetDescription() string {
+	return "Markiert wahrscheinlich falsche Komposita wie 'Lehrzeile', wenn 'Leerzeile' häufiger vorkommt."
+}
+
+func (r *ProhibitedCompoundRule) getCount(word string) int64 {
+	if r == nil || r.Frequency == nil {
+		return 0
+	}
+	return r.Frequency[word]
+}
+
+func (r *ProhibitedCompoundRule) isMisspelled(word string) bool {
+	if r != nil && r.IsMisspelled != nil {
+		return r.IsMisspelled(word)
+	}
+	return FilterDictIsMisspelled(word)
+}
+
+func (r *ProhibitedCompoundRule) getThreshold() int64 { return 0 }
+
 func removeHyphensAndAdaptCase(word string) string {
+	// Java returns null when no hyphens or short parts; Go uses "" for none
 	if !strings.Contains(word, "-") {
 		return ""
 	}
@@ -149,105 +110,171 @@ func removeHyphensAndAdaptCase(word string) string {
 			b.WriteString(p)
 			continue
 		}
-		rs := []rune(p)
-		if len(rs) == 0 {
-			continue
-		}
-		rs[0] = unicode.ToLower(rs[0])
-		b.WriteString(string(rs))
+		b.WriteString(tools.LowercaseFirstChar(p))
 	}
 	return b.String()
 }
 
 func (r *ProhibitedCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	tokens := sentence.GetTokensWithoutWhitespace()
-	var matches []*rules.RuleMatch
-	prev := ""
-	seen := map[[2]int]bool{}
-	for i := 1; i < len(tokens); i++ {
-		tok := tokens[i]
-		word := tok.GetToken()
-		if prev == "Herr" || prev == "Frau" || prev == "Herrn" {
-			prev = word
-			continue
-		}
-		candidates := []string{word}
-		if j := removeHyphensAndAdaptCase(word); j != "" {
-			candidates = append(candidates, j)
-		}
-		for _, part := range strings.Split(word, "-") {
-			candidates = append(candidates, part)
-		}
-		for _, part := range candidates {
-			if m := r.matchPart(sentence, tok, part); m != nil {
-				key := [2]int{m.GetFromPos(), m.GetToPos()}
-				if !seen[key] {
-					seen[key] = true
-					matches = append(matches, m)
-				}
-				break
-			}
-		}
-		prev = word
-	}
-	return matches
-}
-
-func (r *ProhibitedCompoundRule) matchPart(sentence *languagetool.AnalyzedSentence, tok *languagetool.AnalyzedTokenReadings, wordPart string) *rules.RuleMatch {
-	if utf8.RuneCountInString(wordPart) <= 6 {
+	if sentence == nil || r == nil || r.Frequency == nil {
+		// Java requires LanguageModel; without Frequency fail closed (no Prefer invent).
 		return nil
 	}
-	prefer := r.Prefer
-	if prefer == nil {
-		prefer = prohibitedPreferred
+	tokens := sentence.GetTokensWithoutWhitespace()
+	var ruleMatches []*rules.RuleMatch
+	var prev *languagetool.AnalyzedTokenReadings
+	for _, readings := range tokens {
+		if readings == nil {
+			continue
+		}
+		tmpWord := readings.GetToken()
+		if prev != nil && prev.HasPartialPosTag("EIG:") && tools.StartsWithUppercase(tmpWord) &&
+			(readings.HasPartialPosTag("EIG:") || !readings.IsTagged()) {
+			// assume name (e.g. Bianca Baalhorn); isPosTagUnknown → !IsTagged for plain
+			// With AnalyzePlain IsTagged false always — skip only when prev EIG (morph).
+			if prev.HasPartialPosTag("EIG:") {
+				prev = readings
+				continue
+			}
+		}
+		if prev != nil && herrnFrauRE.MatchString(prev.GetToken()) {
+			prev = readings
+			continue
+		}
+		wordsParts := strings.Split(tmpWord, "-")
+		partsStartPos := 0
+		for _, wordPart := range wordsParts {
+			partsStartPos = r.getMatches(sentence, &ruleMatches, readings, partsStartPos, wordPart, 0)
+		}
+		noHyphens := removeHyphensAndAdaptCase(tmpWord)
+		if noHyphens != "" {
+			r.getMatches(sentence, &ruleMatches, readings, 0, noHyphens, utf8.RuneCountInString(tmpWord)-utf8.RuneCountInString(noHyphens))
+		}
+		prev = readings
 	}
-	lc := strings.ToLower(wordPart)
-	// longest bad key first
-	type kv struct{ bad, good string }
-	var keys []kv
-	for bad, good := range prefer {
-		keys = append(keys, kv{bad, good})
+	return ruleMatches
+}
+
+func blacklistMatch(wordPart string) bool {
+	for _, re := range prohibitedBlacklistRegexes {
+		if re.MatchString(wordPart) {
+			return true
+		}
 	}
-	// sort by len bad desc
-	for i := 0; i < len(keys); i++ {
-		for j := i + 1; j < len(keys); j++ {
-			if len(keys[j].bad) > len(keys[i].bad) {
-				keys[i], keys[j] = keys[j], keys[i]
+	return false
+}
+
+func (r *ProhibitedCompoundRule) getMatches(
+	sentence *languagetool.AnalyzedSentence,
+	ruleMatches *[]*rules.RuleMatch,
+	readings *languagetool.AnalyzedTokenReadings,
+	partsStartPos int,
+	wordPart string,
+	toPosCorrection int,
+) int {
+	// Java: tagged non-SUB (except EIG) skip; length <= 6 skip
+	if readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:") ||
+		utf8.RuneCountInString(wordPart) <= 6 {
+		// AnalyzePlain: IsTagged false → don't skip by POS
+		if readings.IsTagged() && !readings.HasPartialPosTag("SUB") && !readings.HasPosTagStartingWith("EIG:") {
+			return partsStartPos + utf8.RuneCountInString(wordPart) + 1
+		}
+		if utf8.RuneCountInString(wordPart) <= 6 {
+			return partsStartPos + utf8.RuneCountInString(wordPart) + 1
+		}
+	}
+
+	type cand struct {
+		pair    prohibitedPair
+		variant string
+		weight  int64
+	}
+	var weighted []cand
+
+	// Collect candidate pairs where either part appears in wordPart
+	for _, pair := range AllProhibitedPairs() {
+		// case variants: try lc pair and first-upper variants
+		variants := []prohibitedPair{pair}
+		uc1, uc2 := tools.UppercaseFirstChar(pair.part1), tools.UppercaseFirstChar(pair.part2)
+		if pair.part1 != uc1 || pair.part2 != uc2 {
+			variants = append(variants, prohibitedPair{uc1, pair.desc1, uc2, pair.desc2})
+		}
+		for _, p := range variants {
+			var variant string
+			if strings.Contains(wordPart, p.part1) {
+				variant = strings.Replace(wordPart, p.part1, p.part2, 1)
+			} else if strings.Contains(wordPart, p.part2) {
+				variant = strings.Replace(wordPart, p.part2, p.part1, 1)
+			} else {
+				continue
+			}
+			if variant == "" || variant == wordPart {
+				continue
+			}
+			wordCount := r.getCount(wordPart)
+			variantCount := r.getCount(variant)
+
+			if r.isBlacklistedWord(wordPart) {
+				continue
+			}
+			if variantCount > r.getThreshold() && wordCount == 0 &&
+				!blacklistMatch(wordPart) && !r.isMisspelled(variant) {
+				weighted = append(weighted, cand{pair: p, variant: variant, weight: variantCount})
 			}
 		}
 	}
-	for _, kg := range keys {
-		bad, good := kg.bad, kg.good
-		if !strings.Contains(lc, bad) {
-			continue
-		}
-		idx := strings.Index(lc, bad)
-		// if this is already the good form overlapping, skip
-		if idx >= 0 && idx+len(good) <= len(lc) && lc[idx:idx+len(good)] == good {
-			continue
-		}
-		variant := wordPart[:idx] + good + wordPart[idx+len(bad):]
-		// fix case of replacement segment: keep lower for mid-word
-		if tools.StartsWithUppercase(wordPart) && idx == 0 {
-			variant = tools.UppercaseFirstChar(variant)
-		}
-		msg := "Möglicher Tippfehler: " + bad + "/" + good
-		for _, p := range lowercaseProhibitedPairs {
-			if (p.part1 == bad || p.part2 == bad) && (p.part1 == good || p.part2 == good ||
-				strings.HasPrefix(bad, p.part1) || strings.HasPrefix(bad, p.part2)) {
-				msg = "Möglicher Tippfehler. " + tools.UppercaseFirstChar(p.part1) + ": " + p.desc1 + ", " +
-					tools.UppercaseFirstChar(p.part2) + ": " + p.desc2
-				break
+
+	if len(weighted) > 0 {
+		// sort by weight desc
+		for i := 0; i < len(weighted); i++ {
+			for j := i + 1; j < len(weighted); j++ {
+				if weighted[j].weight > weighted[i].weight {
+					weighted[i], weighted[j] = weighted[j], weighted[i]
+				}
 			}
 		}
-		// map short keys to pair descs
-		if bad == "lehr" || good == "leer" {
-			msg = "Möglicher Tippfehler. Leer: ohne Inhalt, Lehr: bezogen auf Ausbildung und Wissen"
+		best := weighted[0]
+		msg := "Möglicher Tippfehler: " + best.pair.part1 + "/" + best.pair.part2
+		if best.pair.desc1 != "" && best.pair.desc2 != "" {
+			msg = "Möglicher Tippfehler. " + tools.UppercaseFirstChar(best.pair.part1) + ": " + best.pair.desc1 +
+				", " + tools.UppercaseFirstChar(best.pair.part2) + ": " + best.pair.desc2
 		}
-		rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-		rm.ShortMessage = "vermutlich falsches Kompositum"
-		rm.SetSuggestedReplacement(variant)
-		return rm
+		fromPos := readings.GetStartPos() + partsStartPos
+		toPos := fromPos + utf8.RuneCountInString(wordPart) + toPosCorrection
+		// clamp to token end for hyphenated partials
+		if toPos > readings.GetEndPos() {
+			toPos = readings.GetEndPos()
+		}
+		// Java: SpecificIdRule(toId(RULE_ID_part1_part2), desc, isPremium, category, issueType, tags)
+		// then new RuleMatch(idRule, …) + setSuggestedReplacement (no shortMessage).
+		id := tools.ToId(r.GetID()+"_"+best.pair.part1+"_"+best.pair.part2, "de")
+		desc := "Markiert wahrscheinlich falsche Komposita mit Teilwort '" +
+			tools.UppercaseFirstChar(best.pair.part1) + "' statt '" +
+			tools.UppercaseFirstChar(best.pair.part2) + "' und umgekehrt"
+		cat := r.Category
+		if cat == nil {
+			cat = rules.NewCategory(rules.CategoryTypos, "Typos")
+		}
+		issue := r.IssueType
+		if issue == "" {
+			issue = rules.ITSUncategorized
+		}
+		idRule := rules.NewSpecificIdRule(id, desc, r.Premium, cat, issue, r.Tags)
+		rm := rules.NewRuleMatch(idRule, sentence, fromPos, toPos, msg)
+		rm.SetSuggestedReplacement(best.variant)
+		*ruleMatches = append(*ruleMatches, rm)
 	}
-	return nil
+	return partsStartPos + utf8.RuneCountInString(wordPart) + 1
+}
+
+func (r *ProhibitedCompoundRule) isBlacklistedWord(wordPart string) bool {
+	if r != nil && r.Blacklist != nil {
+		if _, ok := r.Blacklist[wordPart]; ok {
+			return true
+		}
+	}
+	if _, ok := ProhibitedCompoundExceptions()[wordPart]; ok {
+		return true
+	}
+	return false
 }

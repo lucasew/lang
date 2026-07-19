@@ -11,15 +11,23 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// SynonymsData ports org.languagetool.rules.SynonymsData (postag/chunk ignored on surface port).
+// SynonymsData ports org.languagetool.rules.SynonymsData.
 type SynonymsData struct {
 	Synonyms []string
 	Postag   string
 	Chunk    string
 }
 
-// AbstractRepeatedWordsRule is a surface-level port of AbstractRepeatedWordsRule.
-// Tokens are treated as lemmas (no tagger/synthesizer).
+// AbstractRepeatedWordsRule ports org.languagetool.rules.AbstractRepeatedWordsRule.
+// Matching uses AnalyzedToken lemmas (not surface invent). Suggestions go through
+// SynthesizeRE when set; empty result falls back to the synonym lemma (Java).
+// Synthesizer/tagger wiring is language-owned; incomplete when SynthesizeRE is nil
+// (lemma suggestions only — same as empty synthesize()).
+//
+// SentenceWithImmunization ports Rule.getSentenceWithImmunization (language anti-patterns).
+// Kept as a callback so this package does not import rules/patterns (import cycle).
+//
+// Java ctor: setCategory(REPETITIONS_STYLE), setLocQualityIssueType(Style).
 type AbstractRepeatedWordsRule struct {
 	Messages     map[string]string
 	ID           string
@@ -28,8 +36,38 @@ type AbstractRepeatedWordsRule struct {
 	ShortMsg     string
 	WordsToCheck map[string]*SynonymsData
 	MaxDistance  int // default 150
-	// IsException optional; when nil, empty tokens and sentence-start punct are skipped lightly.
+	// LanguageCode is the short code for StringTools.toId (e.g. "de").
+	LanguageCode string
+	// Category ports Rule.category (Java REPETITIONS_STYLE).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
+	// Tags ports Rule.tags (Java EN/ES/CA set Tag.picky).
+	Tags []Tag
+	// SentenceWithImmunization ports getSentenceWithImmunization. Nil = identity.
+	// Language packages wire ANTI_PATTERNS → IMMUNIZE DisambiguationPatternRules here.
+	SentenceWithImmunization func(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence
+	// IsException optional; when nil, empty tokens are skipped only.
 	IsException func(tokens []*languagetool.AnalyzedTokenReadings, i int, sentStart, isCapitalized, isAllUpper bool) bool
+	// AdjustPostag ports adjustPostag; nil keeps postag unchanged.
+	AdjustPostag func(postag string) string
+	// SynthesizeRE ports getSynthesizer().synthesize(token, postag, true).
+	// Nil → treat as empty forms → use synonym lemma as surface (Java empty array path).
+	SynthesizeRE func(token *languagetool.AnalyzedToken, posTag string) []string
+}
+
+// InitRepeatedWordsMeta applies Java AbstractRepeatedWordsRule constructor metadata.
+func InitRepeatedWordsMeta(r *AbstractRepeatedWordsRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatRepetitionsStyle.GetCategory(messages)
+	}
+	if r.IssueType == "" {
+		r.IssueType = ITSStyle
+	}
 }
 
 func (r *AbstractRepeatedWordsRule) GetID() string {
@@ -39,6 +77,50 @@ func (r *AbstractRepeatedWordsRule) GetID() string {
 	return "REPEATEDWORDS"
 }
 
+func (r *AbstractRepeatedWordsRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return ""
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *AbstractRepeatedWordsRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AbstractRepeatedWordsRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+// GetTags ports Rule.getTags.
+func (r *AbstractRepeatedWordsRule) GetTags() []Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
+}
+
+// HasTag ports Rule.hasTag.
+func (r *AbstractRepeatedWordsRule) HasTag(tag Tag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
 func (r *AbstractRepeatedWordsRule) maxDist() int {
 	if r.MaxDistance > 0 {
 		return r.MaxDistance
@@ -46,7 +128,15 @@ func (r *AbstractRepeatedWordsRule) maxDist() int {
 	return 150
 }
 
+func (r *AbstractRepeatedWordsRule) adjustPostag(postag string) string {
+	if r != nil && r.AdjustPostag != nil {
+		return r.AdjustPostag(postag)
+	}
+	return postag
+}
+
 // LoadSynonymsWords ports AbstractRepeatedWordsRule.loadWords.
+// Keys stay as in the file (Java does not lower-case).
 func LoadSynonymsWords(reader io.Reader) (map[string]*SynonymsData, error) {
 	hashPattern := regexp.MustCompile(`#.*`)
 	out := map[string]*SynonymsData{}
@@ -77,19 +167,20 @@ func LoadSynonymsWords(reader io.Reader) (map[string]*SynonymsData, error) {
 		} else {
 			continue
 		}
-		// trim parts
 		for i := range parts {
 			parts[i] = strings.TrimSpace(parts[i])
 		}
 		if word != "" {
-			// drop empty synonyms
 			var syns []string
 			for _, p := range parts {
 				if p != "" {
 					syns = append(syns, p)
 				}
 			}
-			out[strings.ToLower(word)] = &SynonymsData{Synonyms: syns, Postag: postag, Chunk: chunk}
+			// Java: map.put(word, …) — no ToLower
+			if _, exists := out[word]; !exists {
+				out[word] = &SynonymsData{Synonyms: syns, Postag: postag, Chunk: chunk}
+			}
 		} else {
 			for _, key := range parts {
 				if key == "" {
@@ -101,7 +192,9 @@ func LoadSynonymsWords(reader io.Reader) (map[string]*SynonymsData, error) {
 						values = append(values, v)
 					}
 				}
-				out[strings.ToLower(key)] = &SynonymsData{Synonyms: values, Postag: postag, Chunk: chunk}
+				if _, exists := out[key]; !exists {
+					out[key] = &SynonymsData{Synonyms: values, Postag: postag, Chunk: chunk}
+				}
 			}
 		}
 	}
@@ -124,9 +217,18 @@ func (r *AbstractRepeatedWordsRule) MatchList(sentences []*languagetool.Analyzed
 	pos := 0
 	prevSentenceLength := 0
 	for _, sentence := range sentences {
-		tokens := sentence.GetTokensWithoutWhitespace()
+		// Java: getSentenceWithImmunization(sentence).getTokensWithoutWhitespace()
+		imm := sentence
+		if r != nil && r.SentenceWithImmunization != nil {
+			imm = r.SentenceWithImmunization(sentence)
+		}
+		if imm == nil {
+			imm = sentence
+		}
+		tokens := imm.GetTokensWithoutWhitespace()
 		pos += prevSentenceLength
-		prevSentenceLength = len([]byte(sentence.GetText())) // UTF-8; Java uses char length — OK for BMP tests
+		// Java: sentence.getText().length() is UTF-16 code units (String.length).
+		prevSentenceLength = utf16Len(sentence.GetText())
 		if len(tokens) == 0 {
 			continue
 		}
@@ -156,36 +258,108 @@ func (r *AbstractRepeatedWordsRule) MatchList(sentences []*languagetool.Analyzed
 			if isException {
 				continue
 			}
-			// surface lemma = lowercased token
-			lemma := strings.ToLower(token)
-			if seen, ok := wordsLastSeen[lemma]; ok && !lemmasInSentence[lemma] &&
-				(wordNumber-seen) <= r.maxDist() {
-				if data, ok := r.WordsToCheck[lemma]; ok {
-					msg := r.Message
-					if msg == "" {
-						msg = "Repeated word"
-					}
-					rm := NewRuleMatch(r, sentence, pos+atrs.GetStartPos(), pos+atrs.GetEndPos(), msg)
-					rm.ShortMessage = r.ShortMsg
-					for _, rep := range data.Synonyms {
-						sugg := rep
-						if isAllUpper {
-							sugg = strings.ToUpper(rep)
-						} else if isCap {
-							sugg = tools.UppercaseFirstChar(rep)
-						}
-						rm.SuggestedReplacements = append(rm.SuggestedReplacements, sugg)
-					}
-					matches = append(matches, rm)
+			// Java: for each AnalyzedToken reading — real lemmas, not surface invent.
+			var lemmas []string
+			for _, atr := range atrs.GetReadings() {
+				if atr == nil {
+					continue
 				}
+				lemPtr := atr.GetLemma()
+				if lemPtr == nil || *lemPtr == "" {
+					// Java still adds null lemmas; null keys are useless for lookup — skip empty.
+					continue
+				}
+				lemma := *lemPtr
+				lemmas = append(lemmas, lemma)
+				seen, ok := wordsLastSeen[lemma]
+				if !ok || lemmasInSentence[lemma] || (wordNumber-seen) > r.maxDist() {
+					continue
+				}
+				data, ok := r.WordsToCheck[lemma]
+				if !ok || data == nil {
+					continue
+				}
+				createMatch := true
+				// Java: postag != null && !atr.getPOSTag().matches(postag)
+				if data.Postag != "" {
+					posPtr := atr.GetPOSTag()
+					if posPtr == nil || !javaStringMatches(data.Postag, *posPtr) {
+						createMatch = false
+					}
+				}
+				// Java: chunk != null && !atrs.matchesChunkRegex(chunk)
+				if data.Chunk != "" && !atrs.MatchesChunkRegex(data.Chunk) {
+					createMatch = false
+				}
+				if !createMatch {
+					continue
+				}
+				msg := r.Message
+				if msg == "" {
+					msg = "Repeated word"
+				}
+				rm := NewRuleMatch(r, sentence, pos+atrs.GetStartPos(), pos+atrs.GetEndPos(), msg)
+				rm.ShortMessage = r.ShortMsg
+				// Java: setSpecificRuleId(ruleId + "_" + StringTools.toId(lemma, language))
+				lang := r.LanguageCode
+				rm.SetSpecificRuleId(r.GetID() + "_" + tools.ToId(lemma, lang))
+				tokenPos := atr.GetPOSTag()
+				var tokenPosStr string
+				if tokenPos != nil {
+					tokenPosStr = *tokenPos
+				}
+				for _, replacementLemma := range data.Synonyms {
+					replacements := r.synthesizeForms(token, tokenPosStr, replacementLemma)
+					if len(replacements) == 0 {
+						replacements = []string{replacementLemma}
+					}
+					for _, sug := range replacements {
+						if isAllUpper {
+							sug = strings.ToUpper(sug)
+						} else if isCap {
+							sug = tools.UppercaseFirstChar(sug)
+						}
+						rm.SuggestedReplacements = append(rm.SuggestedReplacements, sug)
+					}
+				}
+				matches = append(matches, rm)
+				// Java: break after first matching reading (remaining lemmas not counted)
+				break
 			}
-			if _, ok := r.WordsToCheck[lemma]; ok {
-				wordsLastSeen[lemma] = wordNumber
-				lemmasInSentence[lemma] = true
+			// count even if postag/chunk don't match
+			for _, lemma := range lemmas {
+				if _, ok := r.WordsToCheck[lemma]; ok {
+					wordsLastSeen[lemma] = wordNumber
+					lemmasInSentence[lemma] = true
+				}
 			}
 		}
 	}
 	return matches
+}
+
+func (r *AbstractRepeatedWordsRule) synthesizeForms(token, posTag, replacementLemma string) []string {
+	if r == nil || r.SynthesizeRE == nil {
+		return nil
+	}
+	var posPtr *string
+	if posTag != "" {
+		p := posTag
+		posPtr = &p
+	}
+	lem := replacementLemma
+	tok := languagetool.NewAnalyzedToken(token, posPtr, &lem)
+	adjusted := r.adjustPostag(posTag)
+	return r.SynthesizeRE(tok, adjusted)
+}
+
+// javaStringMatches ports Java String.matches(regex): full-region Pattern match.
+func javaStringMatches(regex, s string) bool {
+	re, err := regexp.Compile("^(?:" + regex + ")$")
+	if err != nil {
+		return false
+	}
+	return re.MatchString(s)
 }
 
 func isPunctOnly(s string) bool {

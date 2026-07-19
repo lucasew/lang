@@ -2,11 +2,13 @@ package hunspell
 
 import (
 	"regexp"
+	"strings"
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // HunspellRuleID ports HunspellRule.RULE_ID.
@@ -32,6 +34,8 @@ func NewHunspellRule(languageCode string, dict HunspellDictionary) *HunspellRule
 		Dict:              dict,
 	}
 	r.IsMisspelled = r.IsMisspelledWord
+	// Java SpellingCheckRule.init: ignore/spelling/prohibit word lists for language.
+	ApplyDefaultSpellingWordLists(r.SpellingCheckRule)
 	return r
 }
 
@@ -59,26 +63,61 @@ func (r *HunspellRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.
 	if sentence == nil || r == nil {
 		return nil, nil
 	}
+	// Java HunspellRule.match: getSentenceWithImmunization(sentence).
+	work := sentence
+	if r.SpellingCheckRule != nil {
+		work = r.SpellingCheckRule.SentenceWithImmunization(sentence)
+		r.SpellingCheckRule.MarkMultiWordIgnoreSpelling(work)
+	}
+	tokens := work.GetTokensWithoutWhitespace()
 	var out []*rules.RuleMatch
-	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+	for idx, tok := range tokens {
+		// Java: immunized / ignoredBySpeller / isUrl / isEMail
+		if spelling.CanBeIgnoredToken(tok) {
+			continue
+		}
+		// Java ignoreToken → ignoreWord
+		if r.SpellingCheckRule != nil && r.IgnoreToken(tokens, idx) {
 			continue
 		}
 		w := tok.GetToken()
+		// Sentence-end markers with no letters (e.g. bare ".") are skipped; the last
+		// content word may still carry IsSentenceEnd in AnalyzePlain and must be checked.
 		if w == "" || !hasLetter(w) {
 			continue
 		}
-		if r.IgnoreTaggedWords && tok.IsTagged() {
+		// Java getSentenceTextWithoutImmunizedTokens: stringForSpeller strips emoji etc.
+		check := tools.StringForSpeller(w)
+		check = strings.TrimSpace(check)
+		if check == "" || !hasLetter(check) {
 			continue
 		}
+		if r.IgnoreTaggedWords && tok.IsTagged() {
+			if r.SpellingCheckRule == nil || !r.IsProhibited(w) {
+				continue
+			}
+		}
 		// AcceptWord is true when the word should not be flagged.
-		if r.AcceptWord(w) {
+		if r.AcceptWord(check) {
+			continue
+		}
+		// Java HunspellRule.match: after isMisspelled, ignorePotentiallyMisspelledWord.
+		if r.SpellingCheckRule != nil && r.IgnorePotentiallyMisspelledWord(check) {
 			continue
 		}
 		m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(),
 			"Possible spelling mistake found")
-		if sug := r.Suggest(w); len(sug) > 0 {
-			m.SetSuggestedReplacements(sug)
+		if sug := r.Suggest(check); len(sug) > 0 {
+			// Java: getAdditionalTopSuggestions then filterSuggestions
+			if top := spelling.AdditionalTopSuggestions(sug, check); len(top) > 0 {
+				sug = append(top, sug...)
+			}
+			if r.SpellingCheckRule != nil {
+				sug = r.SpellingCheckRule.FilterSuggestions(sug)
+			}
+			if len(sug) > 0 {
+				m.SetSuggestedReplacements(sug)
+			}
 		}
 		out = append(out, m)
 	}

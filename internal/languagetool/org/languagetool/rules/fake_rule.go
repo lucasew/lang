@@ -56,6 +56,13 @@ func (r *FakeRule) IsIncludedInErrorsCorrectedAllAtOnce() bool {
 	return r.includedAllAtOnce
 }
 
+// SetIncludedInErrorsCorrectedAllAtOnce ports PatternRule-style all-at-once flag for tests.
+func (r *FakeRule) SetIncludedInErrorsCorrectedAllAtOnce(v bool) {
+	if r != nil {
+		r.includedAllAtOnce = v
+	}
+}
+
 // PatternRule is a minimal stub of org.languagetool.rules.patterns.PatternRule
 // sufficient for RuleWithMaxFilter / SameRuleGroupFilter unit tests.
 type PatternRule struct {

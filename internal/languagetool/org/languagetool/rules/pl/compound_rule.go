@@ -39,7 +39,6 @@ type CompoundRule struct {
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "PL_COMPOUNDS",
 		Description:                 "Sprawdza wyrazy z łącznikiem, np. „łapu capu” zamiast „łapu-capu”",
 		WithHyphenMessage:           "Ten wyraz pisze się z łącznikiem.",
@@ -49,6 +48,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

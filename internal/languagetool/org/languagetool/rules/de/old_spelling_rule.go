@@ -1,7 +1,6 @@
 package de
 
 import (
-	"bufio"
 	"embed"
 	"sort"
 	"strings"
@@ -25,12 +24,10 @@ var oldSpellingExceptions = []string{
 	"World Telephone", "Tip Top", "Hans Joachim Blaß", "kurz fassen",
 }
 
-// Short German inflection suffixes used as a stand-in for the Java synthesizer.
-// Kept tight (genitive/plural-ish only) to avoid false substring hits like Photo+n → Photon.
-var deOldInflSuffixes = []string{
-	"", "s", "es",
-}
-
+// loadOldSpelling ports SpellingData(file) body map: CSV pairs plus optional
+// ß→ss inflected forms via GermanSynthesizer.synthesizeForPosTags when
+// german_synth.dict is discoverable. Without synthesizer resources, fail closed
+// (CSV forms only — no invented suffixes).
 var (
 	oldSpellingOnce sync.Once
 	oldSpellingKeys []string // longest first
@@ -39,34 +36,15 @@ var (
 
 func loadOldSpelling() (map[string]string, []string) {
 	oldSpellingOnce.Do(func() {
-		f, err := altNeuFS.Open("data/alt_neu.csv")
+		data, err := altNeuFS.ReadFile("data/alt_neu.csv")
 		if err != nil {
 			panic(err)
 		}
-		defer f.Close()
-		m := map[string]string{}
-		sc := bufio.NewScanner(f)
-		for sc.Scan() {
-			line := strings.TrimSpace(sc.Text())
-			if line == "" || line[0] == '#' {
-				continue
-			}
-			parts := strings.Split(line, ";")
-			if len(parts) < 2 {
-				continue
-			}
-			old := strings.TrimSpace(parts[0])
-			neu := strings.TrimSpace(parts[1])
-			if old == "" || neu == "" || old == neu {
-				continue
-			}
-			if _, ok := m[old]; !ok {
-				m[old] = neu
-			}
-		}
-		if err := sc.Err(); err != nil {
+		sd, err := LoadSpellingDataBoth(string(data), "alt_neu.csv", oldSpellingExpandForms())
+		if err != nil {
 			panic(err)
 		}
+		m := sd.Map
 		keys := make([]string, 0, len(m))
 		for k := range m {
 			keys = append(keys, k)
@@ -80,16 +58,40 @@ func loadOldSpelling() (map[string]string, []string) {
 	return oldSpellingMap, oldSpellingKeys
 }
 
-// OldSpellingRule ports org.languagetool.rules.de.OldSpellingRule without Aho-Corasick
-// or German synthesizer (listed CSV forms + short inflection suffixes).
+// oldSpellingExpandForms ports SpellingData's GermanSynthesizer.INSTANCE.synthesizeForPosTags(old, s -> true).
+// Returns nil when german_synth.dict / tags are missing (fail-closed).
+func oldSpellingExpandForms() func(string) []string {
+	if gs := openDiscoveredGermanSynthesizer(); gs != nil {
+		return func(oldSpelling string) []string {
+			return gs.SynthesizeForPosTags(oldSpelling, func(string) bool { return true })
+		}
+	}
+	// Bare base without German case filter — still better than invent suffixes.
+	if base := openDiscoveredGermanSynthBase(); base != nil {
+		return func(oldSpelling string) []string {
+			return base.SynthesizeForPosTags(oldSpelling, func(string) bool { return true })
+		}
+	}
+	return nil
+}
+
+// OldSpellingRule ports org.languagetool.rules.de.OldSpellingRule.
+// Inflected ß→ss forms require german_synth.dict (same as Java GermanSynthesizer).
+// Java: TYPOS, Misspelling.
 type OldSpellingRule struct {
-	messages map[string]string
-	austrian bool
+	messages  map[string]string
+	austrian  bool
+	Category  *rules.Category
+	IssueType rules.ITSIssueType
 }
 
 func NewOldSpellingRule(messages map[string]string) *OldSpellingRule {
 	_, _ = loadOldSpelling()
-	return &OldSpellingRule{messages: messages}
+	return &OldSpellingRule{
+		messages:  messages,
+		Category:  rules.CatTypos.GetCategory(messages),
+		IssueType: rules.ITSMisspelling,
+	}
 }
 
 // NewOldSpellingRuleAT is the Austrian variant (Geschoß remains acceptable).
@@ -101,8 +103,27 @@ func NewOldSpellingRuleAT(messages map[string]string) *OldSpellingRule {
 
 func (r *OldSpellingRule) GetID() string { return "OLD_SPELLING_RULE" }
 
+// GetDescription ports OldSpellingRule.getDescription.
+func (r *OldSpellingRule) GetDescription() string {
+	return "Findet Schreibweisen, die nur in der alten Rechtschreibung gültig waren"
+}
+
+func (r *OldSpellingRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *OldSpellingRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSMisspelling
+	}
+	return r.IssueType
+}
+
 func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	m, keys := loadOldSpelling()
+	m, _ := loadOldSpelling()
 	text := sentence.GetText()
 	tokens := sentence.GetTokensWithoutWhitespace()
 	covered := map[int]bool{}
@@ -133,7 +154,7 @@ func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 			}
 			b.WriteString(tokens[j].GetToken())
 			phrase := b.String()
-			if neu, ok := lookupOldSpelling(phrase, m, keys); ok {
+			if neu, ok := lookupOldSpelling(phrase, m); ok {
 				bestEnd = j
 				bestNeu = neu
 				bestCovered = phrase
@@ -177,47 +198,18 @@ func (r *OldSpellingRule) Match(sentence *languagetool.AnalyzedSentence) []*rule
 	return out
 }
 
-func lookupOldSpelling(phrase string, m map[string]string, keys []string) (string, bool) {
+func lookupOldSpelling(phrase string, m map[string]string) (string, bool) {
 	if neu, ok := m[phrase]; ok {
 		return neu, true
 	}
 	// Sentence-start capitalization of a lowercase CSV entry (Läßt ← läßt).
+	// Java SpellingData also builds a sentence-start trie with UppercaseFirstChar keys.
 	runes := []rune(phrase)
 	if len(runes) > 0 && unicode.IsUpper(runes[0]) {
 		runes[0] = unicode.ToLower(runes[0])
 		low := string(runes)
 		if neu, ok := m[low]; ok {
 			return capitalizeSuggestions(neu), true
-		}
-		if neu, ok := matchOldWithInfl(low, keys, m); ok {
-			return capitalizeSuggestions(neu), true
-		}
-	}
-	if neu, ok := matchOldWithInfl(phrase, keys, m); ok {
-		return neu, true
-	}
-	return "", false
-}
-
-func matchOldWithInfl(token string, keys []string, m map[string]string) (string, bool) {
-	if strings.Contains(token, " ") {
-		return "", false
-	}
-	for _, key := range keys {
-		if !strings.HasPrefix(token, key) {
-			continue
-		}
-		rest := token[len(key):]
-		for _, suf := range deOldInflSuffixes {
-			if rest != suf {
-				continue
-			}
-			neu := m[key]
-			parts := strings.Split(neu, "|")
-			for i, p := range parts {
-				parts[i] = p + suf
-			}
-			return strings.Join(parts, "|"), true
 		}
 	}
 	return "", false

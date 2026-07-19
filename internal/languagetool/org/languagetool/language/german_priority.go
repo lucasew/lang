@@ -1,0 +1,361 @@
+package language
+
+import "regexp"
+
+// German rule priorities from org.languagetool.language.German (id2prio + getPriorityForId).
+// Java is king — do not invent extra IDs.
+
+// AI_DE_GGEC_MISSING_PUNCT ports German.AI_DE_GGEC_MISSING_PUNCT.
+var aiDeGgecMissingPunct = regexp.MustCompile(`(?i)AI_DE_GGEC_MISSING_PUNCTUATION_\d+_DASH_J(_|AE)HRIG|AI_DE_GGEC_REPLACEMENT_CONFUSION`)
+
+var germanID2Prio = map[string]int{
+	"ABERS_SATZANFANG_SPELLING_RULE": -2,
+	"AB_TEST": 1,
+	"AERZTEN_INNEN": -2,
+	"AKZENT_STATT_APOSTROPH": -1,
+	"ALLES_GUTE": 1,
+	"ALL_UPPERCASE": -15,
+	"ALTERNATIVEN_FUER_ANGLIZISMEN": -2,
+	"ANFUEHRUNGSZEICHEN_CH_FR": 1,
+	"ANFUEHRUNGSZEICHEN_DE_AT": 1,
+	"ANFUEHRUNG_VERSCHACHTELT": -5,
+	"ANGLIZISMEN": -2,
+	"ANGLIZISMUS_INTERNAL": -2,
+	"ANGLIZISMUS_PA_MIT_ED": -2,
+	"ANGL_PA_ED_UNANGEMESSEN": 1,
+	"ANS_OHNE_APOSTROPH": 1,
+	"AN_STATT": 1,
+	"ART_ADJ_SOL": -52,
+	"ART_IND_ADJ_SUB": -2,
+	"AUFFORDERUNG_SIE": 2,
+	"AUF_BITTEN": 1,
+	"AUF_DRÄNGEN": 1,
+	"AUF_ZACK": 1,
+	"AUSLASSUNGSPUNKTE_LEERZEICHEN": -1,
+	"AUSSER_ORDENTLICH": 1,
+	"AUSTRIAN_GERMAN_SPELLER_RULE": -3,
+	"BEENDE_IST_SENTEND": -1,
+	"BEI_GOOGLE": 2,
+	"BEI_VERB": -14,
+	"BLUETOOTH_LAUTSPRECHER": 1,
+	"BZGL_ABK": 1,
+	"COLLOQUIALISMS": -15,
+	"COMMA_BEHIND_RELATIVE_CLAUSE": -52,
+	"COMMA_IN_FRONT_RELATIVE_CLAUSE": -13,
+	"COVID_19": 1,
+	"DASS_DAS_PA2_DAS_PROIND": 1,
+	"DASS_MIT_VERB": 1,
+	"DAS_ALTER": 1,
+	"DAS_IST_GLAUBE_ICH_EGAL": 1,
+	"DAS_WETTER_IST": -5,
+	"DAS_WUENSCHE_ICH": 1,
+	"DATIV_NACH_PRP": -14,
+	"DAT_ODER_AKK_NACH_PRP": -14,
+	"DA_DRAUS": 1,
+	"DA_DURCH": 2,
+	"DA_VOR": 1,
+	"DEF_ARTIKEL_INDEF_ADJ": -52,
+	"DE_AGREEMENT": -1,
+	"DE_AGREEMENT2": -1,
+	"DE_COMPOUNDS": 10,
+	"DE_COMPOUND_COHERENCY": -1,
+	"DE_PHRASE_REPETITION": -4,
+	"DE_PROHIBITED_PHRASE": 11,
+	"DE_UNPAIRED_QUOTES": -2,
+	"DE_VERBAGREEMENT": -4,
+	"DIESEN_JAHRES": 1,
+	"DIESE_HABE_ER_BELEIDIGTE": -12,
+	"DIES_MAL": 1,
+	"DOPPELTER_NOMINATIV": -2,
+	"DOPPELTES_VERB": -53,
+	"DOPPELUNG_GLEICHES_VERB": -55,
+	"DOPPELUNG_MODALVERB": -52,
+	"DOPPELUNG_VER_MOD_AUX": -2,
+	"DRIVE_IN": 1,
+	"DURCH_WACHSEN": 1,
+	"EBEN_FALLS": 1,
+	"EINEN_VERSUCH_WERT": 1,
+	"EINE_ORIGINAL_RECHNUNG": 1,
+	"EINE_ORIGINAL_RECHNUNG_TEST": 2,
+	"EINZELBUCHSTABE_PREMIUM": -2,
+	"EIN_FACH": 1,
+	"EIN_LOGGEN": 1,
+	"EMAIL": 1,
+	"ERNEUERBARE_ENERGIEN": 1,
+	"E_MAIL_SIGNATUR": 10,
+	"FALSCHES_ANFUEHRUNGSZEICHEN": -1,
+	"FALSCHES_RELATIVPRONOMEN": -1,
+	"FEHLENDES_NOMEN": -60,
+	"FRAGEZEICHEN_NACH_DIREKTER_REDE": -4,
+	"FUER_INSBESONDERE": 1,
+	"F_ANSTATT_PH_2": -4,
+	"GEFEATURED": -1,
+	"GENDER_NEUTRALITY": -15,
+	"GERMAN_SPELLER_RULE": -3,
+	"GERMAN_WORD_REPEAT_BEGINNING_RULE": -61,
+	"GERMAN_WORD_REPEAT_RULE": -15,
+	"GROSSSCHREIBUNG_WOERTLICHER_REDE": -4,
+	"GRUNDE": 1,
+	"HAST_DICH": 1,
+	"HAT_DU": 1,
+	"HIER_FUER": 1,
+	"HIER_MIT": 1,
+	"ICH_BIN_STAND_JETZT_KOMMA": 1,
+	"ICH_GEHE_DU_BLEIBST": -12,
+	"ICH_GLAUBE_FUER_EUCH": -2,
+	"ICH_INF_PREMIUM": -2,
+	"ICH_KOENNT": 1,
+	"ICH_LIEBS": -2,
+	"ICH_WARTE": 1,
+	"IMPFLICHT": 1,
+	"IM_ALTER": 1,
+	"IM_ERSCHEINUNG_SPELLING_RULE": -1,
+	"IM_IHM_SPELLING_RULE": -4,
+	"IM_STICH_LASSEN": 1,
+	"IM_UM": 1,
+	"INF_VER_MOD_SPELLING_RULE": -53,
+	"INS_FITNESS": 1,
+	"IN_DEUTSCHE_SPRACHE": 1,
+	"IN_UND_AUSWENDIG": 1,
+	"IN_UNKNOWNKLEIN_VER": -4,
+	"IRGEND_COMPOUND": 10,
+	"JEDEN_FALLS": 1,
+	"JOE_BIDEN": 1,
+	"KANNST_WERDEN": -13,
+	"KATARI": -2,
+	"KLEINSCHREIBUNG_MAL": 1,
+	"KOENNT_ICH": 1,
+	"KOMMA_NEBEN_UND_HAUPTSATZ": -1,
+	"KOMMA_VOR_RELATIVSATZ": -10,
+	"KOMMA_ZWISCHEN_HAUPT_UND_NEBENSATZ": -53,
+	"KOMMA_ZWISCHEN_HAUPT_UND_NEBENSATZ_2": -14,
+	"KUDAMM": -2,
+	"LEERZEICHEN_NACH_VOR_ANFUEHRUNGSZEICHEN": -4,
+	"LT_RECOMMENDATION": -1,
+	"MAN_SIEHT_SEHR_SCHOEN": -14,
+	"MEHRERE_WOCHE_PREMIUM": -2,
+	"MEINET_WEGEN": 1,
+	"MEINSTE": -2,
+	"MEIN_KLEIN_HAUS": -2,
+	"MFG": -1,
+	"MIO_PUNKT": -1,
+	"MIT_FREUNDLICHEN_GRUESSE": 1,
+	"MIT_REISSEN": 1,
+	"MIT_UNTER": 1,
+	"MIT_VERANTWORTLICH": 1,
+	"MODALVERB_FLEKT_VERB": -14,
+	"MOEGLICHER_WEISE_ETC": 1,
+	"NEUN_NEUEN": 1,
+	"NULL_KOMMA_NICHTS": 1,
+	"NUMBER_SUB": -1,
+	"NUR_LEDIGLICH": -16,
+	"N_NETTER_TYP": -1,
+	"OBJECT_AGREEMENT": -2,
+	"OK": 1,
+	"OLD_SPELLING_RULE": 10,
+	"PASSWORTE": 1,
+	"PA_WAS": -12,
+	"PROPERNOMSIN_VERIMPSIN": -12,
+	"PRP_ADJ_AGREEMENT": -52,
+	"PRP_VER_PRGK": -13,
+	"PUNCTUATION_PARAGRAPH_END": -4,
+	"PUNKT_ENDE_ABSATZ": -10,
+	"PUNKT_ENDE_DIREKTE_REDE": -4,
+	"REDUNDANCY": -15,
+	"REPETITIONS_STYLE": -60,
+	"RESOURCE_RESSOURCE": 1,
+	"ROCK_N_ROLL": 1,
+	"RUNDUM_SORGLOS_PAKET": 1,
+	"SAGT_RUFT": -13,
+	"SAGT_SAGT": -9,
+	"SATZBAU_AN_DEN_KOMMT": -5,
+	"SCHMIERE_STEHEN": 1,
+	"SCHOENE_WETTER": -2,
+	"SEHR_GEEHRTER_NAME": -4,
+	"SEIT_BEKANNT_WERDEN": 1,
+	"SEIT_GEBURT_AN": 1,
+	"SEIT_KLEIN_AUF": 1,
+	"SEIT_LAENGEREN": 1,
+	"SEIT_VS_SEID": 1,
+	"SENT_START_PLU_SIN": -14,
+	"SENT_START_SIN_PLU": -14,
+	"SICH_SICHT": 1,
+	"SIE_WOLLTEN_SIND": -52,
+	"SO_WIES_IST": 1,
+	"SPACE_BEFORE_OG": -1,
+	"STYLE": -15,
+	"STYLE_KEINE_AHNUNG": -16,
+	"SUBJECT_VERB_AGREEMENT": -5,
+	"SUBJUNKTION_KOMMA_2": -54,
+	"SUB_VER_KLEIN": 1,
+	"SWISS_GERMAN_SPELLER_RULE": -3,
+	"TAG_EIN_TAG_AUS": 1,
+	"TELEFON_NR": 10,
+	"TOO_LONG_PARAGRAPH": -15,
+	"TOUREN_SUBST": 1,
+	"TYPOGRAPHY": -14,
+	"UEBER_EIN_MANGEL": 1,
+	"UNPAIRED_BRACKETS": -2,
+	"UNTER_DRUCK": 1,
+	"UPPERCASE_SENTENCE_START": -4,
+	"UST_ID": 1,
+	"VALENZ_TEST": 1,
+	"VER123_VERAUXMOD": -1,
+	"VER123_VERAUXMOD_TEST1": -12,
+	"VERBEN_PRAEFIX_AUS": -5,
+	"VERB_FEM_SUBST": -54,
+	"VERB_IST": -53,
+	"VEREIZ_VERINF_PKT": -5,
+	"VERINF_DAS_DASS_SUB": 1,
+	"VERMOD_SKIP_VER_PKT": -1,
+	"VERNEB": -2,
+	"VERSEHENTLICHERWEISE": -1,
+	"VERWANDET_VERWANDTE": 1,
+	"VERWECHSLUNG_MIR_DIR_MIR_DIE": 1,
+	"VER_ADJ_ZU_SCHLAFEN": -1,
+	"VER_DOPPELUNG": -52,
+	"VER_INFNOMEN": -14,
+	"VER_INF_PKT_VER_INF": 1,
+	"VER_INF_VER_INF": -1,
+	"VER_KOMMA_PRO_RIN": -1,
+	"VER_WER_VER_3": -12,
+	"VONSTATTEN_GEHEN": 2,
+	"VON_LEBENSLAEUFE_SPELLING_RULE": -12,
+	"VON_SEITEN_RECOMMENDATION": 2,
+	"VORHER_NACHHER_BILD": 1,
+	"VOR_BEI": 1,
+	"VOR_LACHEN": 1,
+	"WAEHRUNGSANGABEN_CHF": 1,
+	"WAR_WAHR": -52,
+	"WAR_WERDEN": -53,
+	"WEIS_ICH": 2,
+	"WENNS_UND_ABERS": -2,
+	"WERT_SEIN": 1,
+	"WER_STARK_SCHWITZ": -5,
+	"WIR_GEFUEHL": 1,
+	"WIR_HABE": 1,
+	"WOGEN_SUBST": 1,
+	"WO_VON": 1,
+	"WRONG_SPELLING_PREMIUM_INTERNAL": 10,
+	"WURDEN_WORDEN_1": -52,
+	"ZAHL_IM_WORT": -2,
+	"ZAHL_IM_WORT_SPELLING_RULE": -2,
+	"ZEICHENSETZUNG_DIREKTE_REDE": -4,
+	"ZUCCHINIS": 1,
+	"ZULANGE": 1,
+	"ZUSAMMENGESETZTE_VERBEN": -12,
+	"ZU_GENÜGE": 1,
+	"ZU_KOMMEN_LASSEN": 1,
+	"ZU_SCHICKEN_LASSEN": 1,
+	"ZWEI_AN_HALB": 1,
+}
+
+// GermanPriorityMap ports German.getPriorityMap (immutable copy of id2prio).
+// Callers must not mutate the returned map (copy is defensive).
+func GermanPriorityMap() map[string]int {
+	out := make(map[string]int, len(germanID2Prio))
+	for k, v := range germanID2Prio {
+		out[k] = v
+	}
+	return out
+}
+
+// GermanPriorityForId ports German.getPriorityForId (then Language base).
+func GermanPriorityForId(id string) int {
+	if p, ok := germanID2Prio[id]; ok {
+		return p
+	}
+	if len(id) == 0 {
+		return 0
+	}
+	switch {
+	case hasPrefix(id, "DE_PROHIBITED_COMPOUNDS_") || hasPrefix(id, "DE_PROHIBITED_COMPOUNDS_PREMIUM_"):
+		return -4
+	case hasPrefix(id, "DE_MULTITOKEN_SPELLING"):
+		return -2
+	case hasPrefix(id, "CONFUSION_RULE_"):
+		return -1
+	case hasPrefix(id, "AI_DE_HYDRA_LEO"):
+		if hasPrefix(id, "AI_DE_HYDRA_LEO_MISSING_COMMA") {
+			return -51
+		}
+		if hasPrefix(id, "AI_DE_HYDRA_LEO_CP") {
+			return 2
+		}
+		if hasPrefix(id, "AI_DE_HYDRA_LEO_DATAKK") {
+			return 1
+		}
+		return -11
+	case hasPrefix(id, "AI_DE_KOMMA"):
+		return -52
+	case hasPrefix(id, "AI_DE_GGEC"):
+		switch id {
+		case "AI_DE_GGEC_MISSING_PUNCTUATION_E_DASH_MAIL":
+			return 0
+		case "AI_DE_GGEC_REPLACEMENT_ADJECTIVE":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_ADVERB":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_NOUN":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_ORTHOGRAPHY_LOWERCASE":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_ORTHOGRAPHY_SPELL":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_OTHER":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_VERB":
+			return -1
+		case "AI_DE_GGEC_REPLACEMENT_VERB_FORM":
+			return -1
+		case "AI_DE_GGEC_UNNECESSARY_ORTHOGRAPHY_SPACE":
+			return -1
+		case "AI_DE_GGEC_UNNECESSARY_OTHER":
+			return -1
+		case "AI_DE_GGEC_UNNECESSARY_SPACE":
+			return -1
+		}
+		if hasPrefix(id, "AI_DE_GGEC_MISSING_ORTHOGRAPHY_SPACE") {
+			return -2
+		}
+		if hasPrefix(id, "AI_DE_GGEC_MISSING_PUNCTUATION_PERIOD") {
+			return -4
+		}
+		if hasPrefix(id, "AI_DE_GGEC_UNNECESSARY_PUNCTUATION") {
+			return -2
+		}
+		if aiDeGgecMissingPunct.MatchString(id) {
+			return -1
+		}
+		return 1
+	}
+	// Language.getPriorityForId base
+	return languagePriorityForId(id)
+}
+
+func hasPrefix(s, p string) bool {
+	return len(s) >= len(p) && s[:len(p)] == p
+}
+
+// languagePriorityForId ports Language.getPriorityForId (base defaults).
+func languagePriorityForId(id string) int {
+	if equalFoldASCII(id, "TOO_LONG_SENTENCE") {
+		return -101
+	}
+	if id == "REPETITIONS_STYLE" {
+		return -55
+	}
+	if containsASCII(id, "STYLE") {
+		return -50
+	}
+	return 0
+}
+
+func containsASCII(s, sub string) bool {
+	for i := 0; i+len(sub) <= len(s); i++ {
+		if s[i:i+len(sub)] == sub {
+			return true
+		}
+	}
+	return false
+}

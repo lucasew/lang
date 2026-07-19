@@ -19,16 +19,19 @@ func TestLanguageSpecificSpellchecker_Rules(t *testing.T) {
 	require.Equal(t, MorfologikUkrainianSpellerRuleID, r.GetID())
 	require.Equal(t, UkrainianSpellerDict, r.GetFileName())
 
-	// inject: known word OK, misspelling flagged
+	// inject: known word OK (tagged → ignoreToken hasGoodTag), misspelling flagged
 	sp := morfologik.NewMorfologikSpeller(UkrainianSpellerDict, 1)
 	sp.AddWord("тест")
 	sp.AddWord("мова")
 	r.Speller = sp
-	r.IsMisspelled = sp.IsMisspelled
-	m, err := r.Match(languagetool.AnalyzePlain("тест мова"))
+	inner := sp.IsMisspelled
+	r.IsMisspelled = func(w string) bool { return r.ukIsMisspelled(w, inner) }
+	// Java: tagged Ukrainian words skip spellcheck via hasGoodTag
+	m, err := ukMatchTagged(r, "тест мова")
 	require.NoError(t, err)
 	require.Empty(t, m)
-	m, err = r.Match(languagetool.AnalyzePlain("xyzzy"))
+	// non-Ukrainian letters ignored (not flagged); use untagged misspell
+	m, err = r.Match(languagetool.AnalyzePlain("слвво"))
 	require.NoError(t, err)
 	require.NotEmpty(t, m)
 }

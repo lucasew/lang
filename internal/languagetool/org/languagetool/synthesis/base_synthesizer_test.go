@@ -19,6 +19,28 @@ func TestBaseSynthesizer(t *testing.T) {
 	require.Equal(t, []string{"dogs"}, forms)
 }
 
+// Port of Java BaseSynthesizer.synthesizeForPosTags (accept-all and filter).
+func TestBaseSynthesizer_SynthesizeForPosTags(t *testing.T) {
+	man, err := NewManualSynthesizer(strings.NewReader(
+		"Rußlands\tRußland\tSUB:GEN:SIN:NEU\n" +
+			"Rußland\tRußland\tSUB:NOM:SIN:NEU\n" +
+			"dogs\tdog\tNNS\n",
+	))
+	require.NoError(t, err)
+	s := NewBaseSynthesizer("de", man)
+
+	all := s.SynthesizeForPosTags("Rußland", func(string) bool { return true })
+	require.ElementsMatch(t, []string{"Rußlands", "Rußland"}, all)
+
+	gen := s.SynthesizeForPosTags("Rußland", func(tag string) bool {
+		return strings.Contains(tag, "GEN")
+	})
+	require.Equal(t, []string{"Rußlands"}, gen)
+
+	require.Empty(t, s.SynthesizeForPosTags("missing", func(string) bool { return true }))
+	require.Empty(t, s.SynthesizeForPosTags("Rußland", nil))
+}
+
 func TestJLanguageToolConstants(t *testing.T) {
 	// compile-time presence via languagetool package constants tested elsewhere
 }

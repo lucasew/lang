@@ -3,6 +3,9 @@ package ca
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,4 +23,17 @@ func TestTextToNumberFilter_Catalan(t *testing.T) {
 	require.Equal(t, "0,5", f.ConvertTokens([]string{"mig"}))
 	// percentage "per cent"
 	require.Equal(t, "10\u202F%", f.ConvertTokens([]string{"deu", "per", "cent"}))
+}
+
+func TestCATextToNumberFilterRegistered(t *testing.T) {
+	class := "org.languagetool.rules.ca.TextToNumberFilter"
+	require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(class), class)
+	f := patterns.GlobalRuleFilterCreator.GetFilter(class)
+	require.NotNil(t, f)
+	tok := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("dues", nil, nil), 0)
+	m := rules.NewRuleMatch(nil, nil, 0, 4, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{"ignore": "ignore"}, 0,
+		[]*languagetool.AnalyzedTokenReadings{tok}, nil)
+	require.NotNil(t, out)
+	require.Equal(t, []string{"2"}, out.GetSuggestedReplacements())
 }

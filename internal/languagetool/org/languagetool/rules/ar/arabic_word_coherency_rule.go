@@ -40,7 +40,6 @@ type ArabicWordCoherencyRule struct {
 func NewArabicWordCoherencyRule(messages map[string]string) *ArabicWordCoherencyRule {
 	d := loadCoherencyData()
 	base := &rules.AbstractWordCoherencyRule{
-		Messages:    messages,
 		ID:          "AR_WORD_COHERENCY",
 		Description: "ضبط انسجام التهجئة للكلمات التي تكتب بطرق مختلفة مقبولة.",
 		WordMap:     d.WordMap,
@@ -49,6 +48,7 @@ func NewArabicWordCoherencyRule(messages map[string]string) *ArabicWordCoherency
 			return "تجنب استعمال شكلين للكلمة نفسها ('" + word1 + "' و '" + word2 + "') في  النص نفسه."
 		},
 	}
+	rules.InitWordCoherencyMeta(base, messages)
 	return &ArabicWordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

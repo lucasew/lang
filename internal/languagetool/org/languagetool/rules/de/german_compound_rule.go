@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 )
 
 //go:embed data/compounds.txt data/compound-cities.txt
@@ -18,6 +19,9 @@ var (
 	deCompoundData *rules.CompoundRuleData
 	chCompoundOnce sync.Once
 	chCompoundData *rules.CompoundRuleData
+
+	deCompoundAntiOnce  sync.Once
+	deCompoundAntiRules []*disambigrules.DisambiguationPatternRule
 )
 
 func mustLoadCompoundData(expander rules.LineExpander) *rules.CompoundRuleData {
@@ -66,7 +70,6 @@ type GermanCompoundRule struct {
 
 func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "DE_COMPOUNDS",
 		Description:                 "Zusammenschreibung von Wörtern, z. B. 'CD-ROM' statt 'CD ROM'",
 		WithHyphenMessage:           "Dieses Wort wird mit Bindestrich geschrieben.",
@@ -76,22 +79,24 @@ func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadDECompoundData(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &GermanCompoundRule{AbstractCompoundRule: base}
 }
 
+// Match applies ANTI_PATTERNS immunization then AbstractCompoundRule.
+// Java: getSentenceWithImmunization(sentence) via getAntiPatterns().
 func (r *GermanCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	immunizeDECompoundAntiPatterns(sentence)
-	return r.AbstractCompoundRule.Match(sentence)
+	return r.AbstractCompoundRule.Match(getSentenceWithDECompoundImmunization(sentence))
 }
 
 // SwissCompoundRule ports org.languagetool.rules.de.SwissCompoundRule.
+// Java extends GermanCompoundRule and inherits ANTI_PATTERNS.
 type SwissCompoundRule struct {
 	*rules.AbstractCompoundRule
 }
 
 func NewSwissCompoundRule(messages map[string]string) *SwissCompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "DE_CH_COMPOUNDS",
 		Description:                 "Zusammenschreibung von Wörtern, z. B. 'CD-ROM' statt 'CD ROM'",
 		WithHyphenMessage:           "Dieses Wort wird mit Bindestrich geschrieben.",
@@ -101,53 +106,64 @@ func NewSwissCompoundRule(messages map[string]string) *SwissCompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCHCompoundData(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &SwissCompoundRule{AbstractCompoundRule: base}
 }
 
 func (r *SwissCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	immunizeDECompoundAntiPatterns(sentence)
-	return r.AbstractCompoundRule.Match(sentence)
+	return r.AbstractCompoundRule.Match(getSentenceWithDECompoundImmunization(sentence))
 }
 
-// Light anti-patterns for GermanCompoundRuleTest good cases (subset of Java ANTI_PATTERNS).
-func immunizeDECompoundAntiPatterns(sentence *languagetool.AnalyzedSentence) {
-	tokens := sentence.GetTokensWithoutWhitespace()
-	for i := 1; i < len(tokens); i++ {
-		t := tokens[i].GetToken()
-		// an|um + die + digits
-		if (t == "an" || t == "um" || t == "An" || t == "Um") && i+2 < len(tokens) {
-			if equalFoldASCII(tokens[i+1].GetToken(), "die") && isDigits(tokens[i+2].GetToken()) {
-				tokens[i].Immunize(0)
-				tokens[i+1].Immunize(0)
-				tokens[i+2].Immunize(0)
+// deCompoundAntiPatterns ports GermanCompoundRule.getAntiPatterns (cached IMMUNIZE rules).
+func deCompoundAntiPatterns() []*disambigrules.DisambiguationPatternRule {
+	deCompoundAntiOnce.Do(func() {
+		aps := GermanCompoundRuleAntiPatterns
+		deCompoundAntiRules = make([]*disambigrules.DisambiguationPatternRule, 0, len(aps))
+		for _, toks := range aps {
+			if len(toks) == 0 {
+				continue
 			}
+			// Java makeAntiPatterns: INTERNAL_ANTIPATTERN + IMMUNIZE
+			rule := disambigrules.NewDisambiguationPatternRule(
+				"INTERNAL_ANTIPATTERN", "(no description)", "de",
+				toks, "", nil, disambigrules.ActionImmunize,
+			)
+			deCompoundAntiRules = append(deCompoundAntiRules, rule)
 		}
-		// rund|etwa|... + digits
-		switch strings.ToLower(t) {
-		case "rund", "etwa", "zirka", "cirka", "ungefähr", "annähernd", "grob", "wohl", "gegen", "schätzungsweise":
-			if i+1 < len(tokens) && isDigits(tokens[i+1].GetToken()) {
-				tokens[i].Immunize(0)
-				tokens[i+1].Immunize(0)
-			}
-		}
-		// ca . digits
-		if equalFoldASCII(t, "ca") && i+2 < len(tokens) && tokens[i+1].GetToken() == "." && isDigits(tokens[i+2].GetToken()) {
-			tokens[i].Immunize(0)
-			tokens[i+1].Immunize(0)
-			tokens[i+2].Immunize(0)
-		}
-		// von|vom ... aus gedacht
-		if equalFoldASCII(t, "aus") && i+1 < len(tokens) && equalFoldASCII(tokens[i+1].GetToken(), "gedacht") {
-			tokens[i].Immunize(0)
-			tokens[i+1].Immunize(0)
-		}
+	})
+	return deCompoundAntiRules
+}
+
+// getSentenceWithDECompoundImmunization ports Rule.getSentenceWithImmunization
+// for GermanCompoundRule.ANTI_PATTERNS (also used by SwissCompoundRule).
+func getSentenceWithDECompoundImmunization(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
+	if sentence == nil {
+		return nil
 	}
+	aps := deCompoundAntiPatterns()
+	if len(aps) == 0 {
+		return sentence
+	}
+	src := sentence.GetTokens()
+	cloned := make([]*languagetool.AnalyzedTokenReadings, len(src))
+	for i, t := range src {
+		if t == nil {
+			continue
+		}
+		cloned[i] = languagetool.NewAnalyzedTokenReadingsFromOld(t, t.GetReadings(), "")
+	}
+	immunized := languagetool.NewAnalyzedSentence(cloned)
+	for _, ap := range aps {
+		if ap == nil {
+			continue
+		}
+		immunized = ap.Replace(immunized)
+	}
+	return immunized
 }
 
-func equalFoldASCII(a, b string) bool {
-	return strings.EqualFold(a, b)
-}
-
+// isDigits reports whether s is non-empty and consists only of ASCII digits.
+// Used by agreement and compound helpers in this package.
 func isDigits(s string) bool {
 	if s == "" {
 		return false

@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"fmt"
 	"regexp"
 	"sync"
 
@@ -89,21 +90,28 @@ func (f *RemoteRuleFilters) FilterMatches(langCode string, sentence *languagetoo
 
 	// build blocked positions per filter id-pattern
 	type blocked struct {
-		re  *regexp.Regexp
+		re *regexp.Regexp
+		// pos is populated when MatchPositions is set (XML-backed / position filters).
 		pos map[MatchPosition]struct{}
+		// requirePos: true when MatchPositions is non-nil — only drop on equal span.
+		// false (MatchPositions nil): drop every remote id matching the regex (manual tests).
+		requirePos bool
 	}
 	var blocks []blocked
 	for _, fr := range filters {
 		if fr == nil || fr.IDPattern == nil {
 			continue
 		}
-		pos := map[MatchPosition]struct{}{}
-		if fr.MatchPositions != nil && sentence != nil {
-			for _, p := range fr.MatchPositions(sentence) {
-				pos[p] = struct{}{}
+		b := blocked{re: fr.IDPattern, pos: map[MatchPosition]struct{}{}}
+		if fr.MatchPositions != nil {
+			b.requirePos = true
+			if sentence != nil {
+				for _, p := range fr.MatchPositions(sentence) {
+					b.pos[p] = struct{}{}
+				}
 			}
 		}
-		blocks = append(blocks, blocked{re: fr.IDPattern, pos: pos})
+		blocks = append(blocks, b)
 	}
 
 	var out []*RuleMatch
@@ -115,11 +123,12 @@ func (f *RemoteRuleFilters) FilterMatches(langCode string, sentence *languagetoo
 		span := MatchPosition{Start: m.FromPos, End: m.ToPos}
 		drop := false
 		for _, b := range blocks {
-			if !b.re.MatchString(id) {
+			// Java Pattern.matcher(id).matches() / String.matches — whole-string match.
+			if !remoteRuleIDFullMatch(b.re, id) {
 				continue
 			}
-			// if filter has no positions, drop all matching ids (aggressive test mode)
-			if len(b.pos) == 0 {
+			if !b.requirePos {
+				// MatchPositions nil: drop all matching ids (test / aggressive register).
 				drop = true
 				break
 			}
@@ -148,4 +157,22 @@ func ruleIDOfMatch(m *RuleMatch) string {
 		return r.GetID()
 	}
 	return ""
+}
+
+// remoteRuleIDFullMatch ports Java Matcher.matches() (entire region must match).
+func remoteRuleIDFullMatch(re *regexp.Regexp, id string) bool {
+	if re == nil {
+		return false
+	}
+	loc := re.FindStringIndex(id)
+	return loc != nil && loc[0] == 0 && loc[1] == len(id)
+}
+
+// CompileRemoteRuleIDPattern compiles a filter rule id as a regex over remote match IDs
+// (Java RemoteRuleFilters.compilePatterns).
+func CompileRemoteRuleIDPattern(ruleID string) (*regexp.Regexp, error) {
+	if ruleID == "" {
+		return nil, fmt.Errorf("empty remote rule filter id")
+	}
+	return regexp.Compile(ruleID)
 }

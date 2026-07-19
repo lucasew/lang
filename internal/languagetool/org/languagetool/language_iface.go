@@ -62,3 +62,9 @@ func (l LanguageDefaults) ToAdvancedTypography(input string) string {
 
 // HasMinMatchesRules ports Language.hasMinMatchesRules (default false).
 func (l LanguageDefaults) HasMinMatchesRules() bool { return false }
+
+// GetDefaultEnabledRulesForVariant ports Language.getDefaultEnabledRulesForVariant (default empty).
+func (l LanguageDefaults) GetDefaultEnabledRulesForVariant() []string { return nil }
+
+// GetDefaultDisabledRulesForVariant ports Language.getDefaultDisabledRulesForVariant (default empty).
+func (l LanguageDefaults) GetDefaultDisabledRulesForVariant() []string { return nil }

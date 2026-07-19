@@ -32,6 +32,7 @@ type SuggestionWithMessage struct {
 }
 
 // AbstractSimpleReplaceRule2 ports org.languagetool.rules.AbstractSimpleReplaceRule2.
+// Java ctor: MISC category.
 type AbstractSimpleReplaceRule2 struct {
 	Messages             map[string]string
 	ID                   string
@@ -43,6 +44,8 @@ type AbstractSimpleReplaceRule2 struct {
 	SubRuleSpecificIDs   bool
 	CheckingCase         bool
 	LanguageCode         string
+	// Category ports Rule.category (Java MISC).
+	Category *Category
 	// MatchShortAllUpperInCheckCase ports setIgnoreShortUppercaseWords(false):
 	// when true, short ALLCAPS tokens (len≤4) still match in CheckingCase mode (Dutch).
 	MatchShortAllUpperInCheckCase bool
@@ -137,6 +140,31 @@ func (r *AbstractSimpleReplaceRule2) GetID() string {
 		return r.ID
 	}
 	return "SIMPLE_REPLACE_2"
+}
+
+func (r *AbstractSimpleReplaceRule2) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return ""
+}
+
+// InitSimpleReplace2Meta applies Java AbstractSimpleReplaceRule2 constructor metadata.
+func InitSimpleReplace2Meta(r *AbstractSimpleReplaceRule2, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatMisc.GetCategory(messages)
+	}
+}
+
+func (r *AbstractSimpleReplaceRule2) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
 }
 
 // Match ports AbstractSimpleReplaceRule2.match.

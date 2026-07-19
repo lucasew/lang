@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -20,13 +21,38 @@ func NewIsEnglishWordFilter(tag EnglishTaggerFunc) *IsEnglishWordFilter {
 	return &IsEnglishWordFilter{Tag: tag}
 }
 
+var (
+	enWordTagMu sync.RWMutex
+	defaultENWordTag EnglishTaggerFunc
+)
+
+// SetDefaultEnglishWordTagger wires EN tagger for IsEnglishWordFilter
+// (Java: Languages.getLanguageForShortCode("en-US").createDefaultTagger()).
+func SetDefaultEnglishWordTagger(tag EnglishTaggerFunc) {
+	enWordTagMu.Lock()
+	defer enWordTagMu.Unlock()
+	defaultENWordTag = tag
+}
+
 // AcceptRuleMatch keeps the match when all formPositions refer to English-tagged words.
 // tokenPositions is used for skip-corrected refs (same as RuleFilterEvaluator).
+// Without a tagger: fail-closed (Java returns null when tagger is null).
 func (f *IsEnglishWordFilter) AcceptRuleMatch(match *RuleMatch, args map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *RuleMatch {
-	if f == nil || f.Tag == nil {
+	tag := EnglishTaggerFunc(nil)
+	if f != nil {
+		tag = f.Tag
+	}
+	if tag == nil {
+		enWordTagMu.RLock()
+		tag = defaultENWordTag
+		enWordTagMu.RUnlock()
+	}
+	if tag == nil {
 		return nil
 	}
+	// use local filter with resolved tag
+	f = &IsEnglishWordFilter{Tag: tag}
 	formPosStr, ok := args["formPositions"]
 	if !ok {
 		panic("Missing key 'formPositions'")

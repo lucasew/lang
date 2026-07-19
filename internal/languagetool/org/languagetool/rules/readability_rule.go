@@ -75,19 +75,31 @@ func ReadabilityLevel(flesch float64) int {
 }
 
 // ReadabilityRule ports metadata for org.languagetool.rules.ReadabilityRule.
+// Java: Category TEXT_ANALYSIS (default off category), Style; setDefaultOff when !defaultOn.
 type ReadabilityRule struct {
 	TooEasyTest bool
 	Level       int // threshold level
 	MinWords    int
+	// Category ports Rule.category (Java TEXT_ANALYSIS).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
+	// DefaultOff ports setDefaultOff (Java when defaultOn=false).
+	DefaultOff bool
 	// CountSyllables defaults to CountSyllablesEN when nil.
 	CountSyllables func(word string) int
 }
 
 func NewReadabilityRule(tooEasy bool, level int) *ReadabilityRule {
+	// Java: TEXT_ANALYSIS category with onByDefault=false; typically setDefaultOff().
+	cat := NewCategoryFull(NewCategoryId("TEXT_ANALYSIS"), "Text Analysis", CategoryInternal, false, "")
 	return &ReadabilityRule{
 		TooEasyTest: tooEasy,
 		Level:       level,
 		MinWords:    10,
+		Category:    cat,
+		IssueType:   ITSStyle,
+		DefaultOff:  true,
 	}
 }
 
@@ -97,6 +109,22 @@ func (r *ReadabilityRule) GetID() string {
 	}
 	return "READABILITY_RULE_DIFFICULT"
 }
+
+func (r *ReadabilityRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *ReadabilityRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *ReadabilityRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
 // EvaluateParagraph returns flesch score and level for whitespace-split words/sentences.
 // sentences is count of sentences in the paragraph.

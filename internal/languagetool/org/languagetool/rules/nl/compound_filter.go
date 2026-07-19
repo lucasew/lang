@@ -3,6 +3,9 @@ package nl
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
 // CompoundFilter ports org.languagetool.rules.nl.CompoundFilter.
@@ -35,4 +38,19 @@ func (f *CompoundFilter) SuggestFromArgs(args map[string]string) string {
 		words = append(words, arg)
 	}
 	return f.Suggest(words)
+}
+
+// AcceptRuleMatch ports CompoundFilter.acceptRuleMatch.
+func (f *CompoundFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if match == nil {
+		return nil
+	}
+	repl := f.SuggestFromArgs(arguments)
+	msg := f.RewriteMessage(match.GetMessage(), repl)
+	short := f.RewriteMessage(match.ShortMessage, repl)
+	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), msg)
+	out.ShortMessage = short
+	out.SetSuggestedReplacement(repl)
+	return out
 }

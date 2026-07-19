@@ -1,6 +1,7 @@
 package jekavian
 
 // Twin of MorfologikJekavianSpellerRuleTest — map inject.
+// Java isLatinScript() default true: pure Cyrillic ignored by pHasNoLetterLatin.
 import (
 	"testing"
 
@@ -16,19 +17,19 @@ func TestMorfologikJekavianSpellerRule_MorfologikSpeller(t *testing.T) {
 	require.Equal(t, JekavianSpellerDict, r.GetFileName())
 
 	sp := morfologik.NewMorfologikSpeller(JekavianSpellerDict, 1)
-	for _, w := range []string{"здраво", "свијет", "тест"} {
+	for _, w := range []string{"zdravo", "svijet", "test"} {
 		sp.AddWord(w)
 	}
-	sp.Suggestions["свијетт"] = []string{"свијет"}
+	sp.Suggestions["zdrav"] = []string{"zdravo"}
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 
-	m, err := r.Match(languagetool.AnalyzePlain("здраво свијет"))
+	m, err := r.Match(languagetool.AnalyzePlain("zdravo svijet"))
 	require.NoError(t, err)
 	require.Empty(t, m)
 
-	m, err = r.Match(languagetool.AnalyzePlain("свијетт"))
+	m, err = r.Match(languagetool.AnalyzePlain("zdrav"))
 	require.NoError(t, err)
 	require.Len(t, m, 1)
-	require.Contains(t, m[0].GetSuggestedReplacements(), "свијет")
+	require.Contains(t, m[0].GetSuggestedReplacements(), "zdravo")
 }

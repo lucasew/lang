@@ -2,6 +2,7 @@ package be
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
@@ -10,6 +11,9 @@ func RegisterCoreBelarusianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	lt.PriorityForId = language.BelarusianPriorityForId
+	// Java Belarusian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave.
+	lt.IgnoredCharacters = languagetool.BelarusianIgnoredCharactersRegex
 	rules.RegisterSharedLayoutRules(lt, "be")
 	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Паўтор слова"})
 	wr.IDOverride = "BE_WORD_REPEAT_RULE"
@@ -25,4 +29,9 @@ func RegisterCoreBelarusianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
 	sc := NewBelarusianSpecificCaseRule(nil)
 	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
+
+	// Java createDefaultSpellingRule / Morfologik getId; CFSA2 when dict present.
+	// Always full Match (fail-closed map Words when binary dict missing; no invent).
+	sp := NewMorfologikBelarusianSpellerRule()
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

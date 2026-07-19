@@ -28,6 +28,7 @@ func loadReplace() *rules.AbstractSimpleReplaceRule2 {
 			LanguageCode:         "de",
 			SubRuleSpecificIDs:   true,
 		}
+		// Category set per NewSimpleReplaceRule via Init (messages may vary).
 		for _, name := range []string{"data/replace.txt", "data/replace_custom.txt"} {
 			f, err := replaceFS.Open(name)
 			if err != nil {
@@ -52,7 +53,7 @@ type SimpleReplaceRule struct {
 func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 	base := loadReplace()
 	r := *base
-	r.Messages = messages
+	rules.InitSimpleReplace2Meta(&r, messages)
 	return &SimpleReplaceRule{AbstractSimpleReplaceRule2: &r}
 }
 

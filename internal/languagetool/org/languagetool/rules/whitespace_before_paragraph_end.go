@@ -5,34 +5,55 @@ import (
 )
 
 // WhiteSpaceBeforeParagraphEnd ports org.languagetool.rules.WhiteSpaceBeforeParagraphEnd.
+// Java: STYLE, Style; default ctor setDefaultOff.
 type WhiteSpaceBeforeParagraphEnd struct {
 	Messages                  map[string]string
 	SingleLineBreaksMarksPara bool
+	Category                  *Category
+	IssueType                 ITSIssueType
+	DefaultOff                bool
 }
 
 func NewWhiteSpaceBeforeParagraphEnd(messages map[string]string) *WhiteSpaceBeforeParagraphEnd {
-	return &WhiteSpaceBeforeParagraphEnd{Messages: messages}
+	// Java (messages, lang) → defaultActive false → setDefaultOff().
+	return &WhiteSpaceBeforeParagraphEnd{
+		Messages:   messages,
+		Category:   CatStyle.GetCategory(messages),
+		IssueType:  ITSStyle,
+		DefaultOff: true,
+	}
 }
 
 func (r *WhiteSpaceBeforeParagraphEnd) GetID() string { return "WHITESPACE_PARAGRAPH" }
 
-func (r *WhiteSpaceBeforeParagraphEnd) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
-	if nTest >= len(sentences)-1 {
-		return true
-	}
-	text := sentences[nTest].GetText()
-	if r.SingleLineBreaksMarksPara {
-		if len(text) > 0 && text[len(text)-1] == '\n' {
-			return true
+// GetDescription ports getDescription (whitespace_before_parapgraph_end_desc).
+func (r *WhiteSpaceBeforeParagraphEnd) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["whitespace_before_parapgraph_end_desc"]; s != "" {
+			return s
 		}
-	} else if len(text) >= 2 && text[len(text)-2:] == "\n\n" {
-		return true
 	}
-	next := sentences[nTest+1].GetText()
-	if len(next) > 0 && next[0] == '\n' {
-		return true
+	return "Whitespace before paragraph end"
+}
+
+func (r *WhiteSpaceBeforeParagraphEnd) GetCategory() *Category {
+	if r == nil {
+		return nil
 	}
-	return false
+	return r.Category
+}
+
+func (r *WhiteSpaceBeforeParagraphEnd) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *WhiteSpaceBeforeParagraphEnd) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+func (r *WhiteSpaceBeforeParagraphEnd) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
+	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
 // MatchList ports match(List<AnalyzedSentence>).

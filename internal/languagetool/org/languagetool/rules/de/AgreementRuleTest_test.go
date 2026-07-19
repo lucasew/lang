@@ -1,6 +1,6 @@
 package de
 
-// Twin of AgreementRuleTest (surface open-compound heuristic).
+// Twin of AgreementRuleTest — open compounds need getCompoundError (dict/lt.check), not invent.
 import (
 	"testing"
 
@@ -10,12 +10,10 @@ import (
 
 func TestAgreementRule_CompoundMatch(t *testing.T) {
 	rule := NewAgreementRule(nil)
-	matchN := func(s string) int {
-		return len(rule.Match(languagetool.AnalyzePlain(s)))
-	}
-	require.Equal(t, 1, matchN("Das ist die Original Mail."))
-	require.Equal(t, 1, matchN("Doch dieser kleine Magnesium Anteil ist entscheidend."))
-	require.Equal(t, 0, matchN("War das Eifersucht?"))
+	// Untagged AnalyzePlain: no invent of open-compound hits
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Das ist die Original Mail."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Doch dieser kleine Magnesium Anteil ist entscheidend."))))
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("War das Eifersucht?"))))
 }
 
 func TestAgreementRule_GetCategoriesCausingError(t *testing.T) {

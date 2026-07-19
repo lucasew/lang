@@ -60,18 +60,49 @@ func (s *AnalyzedSentence) GetPreDisambigTokensWithoutWhitespace() []*AnalyzedTo
 	return s.nonBlankPreDisambigTokens
 }
 
+// cloneAnalyzedTokenSlice deep-copies readings for pre-disambiguation snapshots
+// (Java keeps pre-disambig tokens separate from disambiguated tokens).
+func cloneAnalyzedTokenSlice(in []*AnalyzedTokenReadings) []*AnalyzedTokenReadings {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]*AnalyzedTokenReadings, len(in))
+	for i, t := range in {
+		if t == nil {
+			continue
+		}
+		// Copy readings slice so disambiguator mutations do not alias pre-disambig.
+		rds := append([]*AnalyzedToken(nil), t.GetReadings()...)
+		out[i] = NewAnalyzedTokenReadingsFromOld(t, rds, "")
+	}
+	return out
+}
+
 // Copy ports AnalyzedSentence.copy.
+// Token readings are deep-copied so immunization / IGNORE_SPELLING antipatterns
+// (Rule.getSentenceWithImmunization) can mutate the copy without affecting the original.
 func (s *AnalyzedSentence) Copy(sentence *AnalyzedSentence) *AnalyzedSentence {
-	copyTokens := make([]*AnalyzedTokenReadings, len(sentence.GetTokens()))
-	for i, analyzedTokens := range sentence.GetTokens() {
+	if sentence == nil {
+		return nil
+	}
+	origTokens := sentence.GetTokens()
+	copyTokens := make([]*AnalyzedTokenReadings, len(origTokens))
+	for i, analyzedTokens := range origTokens {
+		if analyzedTokens == nil {
+			continue
+		}
 		copyTokens[i] = NewAnalyzedTokenReadingsFromOld(analyzedTokens, analyzedTokens.GetReadings(), "")
 	}
+	// Rebuild non-blank slice from the *copy* tokens (same criteria as getNonBlankReadings;
+	// Java copy does not share AnalyzedTokenReadings references with the original).
+	var mapping []int
+	nonBlank := getNonBlankReadings(copyTokens, mapping)
 	return &AnalyzedSentence{
 		tokens:                    copyTokens,
 		preDisambigTokens:         copyTokens,
 		whPositions:               append([]int(nil), sentence.whPositions...),
-		nonBlankTokens:            sentence.GetTokensWithoutWhitespace(),
-		nonBlankPreDisambigTokens: sentence.GetPreDisambigTokensWithoutWhitespace(),
+		nonBlankTokens:            nonBlank,
+		nonBlankPreDisambigTokens: nonBlank,
 	}
 }
 
@@ -212,12 +243,19 @@ func (s *AnalyzedSentence) equalTokens(a, b []*AnalyzedTokenReadings) bool {
 	return true
 }
 
-// GetCorrectedTextLength ports AnalyzedSentence.getCorrectedTextLength.
+// GetCorrectedTextLength ports AnalyzedSentence.getCorrectedTextLength:
+// sum of getCleanToken().length() (UTF-16) + getPosFix() only on the last token.
 func (s *AnalyzedSentence) GetCorrectedTextLength() int {
+	if s == nil {
+		return 0
+	}
 	lenSum := 0
+	nTok := len(s.tokens)
 	for i, element := range s.tokens {
-		// use token length; clean token if we had it
-		t := element.GetToken()
+		if element == nil {
+			continue
+		}
+		t := element.GetCleanToken()
 		n := 0
 		for _, r := range t {
 			if r >= 0x10000 {
@@ -227,7 +265,10 @@ func (s *AnalyzedSentence) GetCorrectedTextLength() int {
 			}
 		}
 		lenSum += n
-		_ = i
+		// Java: only apply posFix at end so per-token fixes do not accumulate
+		if i == nTok-1 {
+			lenSum += element.GetPosFix()
+		}
 	}
 	return lenSum
 }

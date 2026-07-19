@@ -9,6 +9,7 @@ import (
 )
 
 // CommaWhitespaceRule ports org.languagetool.rules.CommaWhitespaceRule.
+// Java: TYPOGRAPHY, Whitespace.
 type CommaWhitespaceRule struct {
 	Messages              map[string]string
 	QuotesWhitespaceCheck bool
@@ -16,6 +17,10 @@ type CommaWhitespaceRule struct {
 	CommaCharacter string
 	// RuleID overrides GetID when set (language-specific wrappers).
 	RuleID string
+	// Category ports Rule.category (Java TYPOGRAPHY).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Whitespace).
+	IssueType ITSIssueType
 	// IsException skips a candidate match at token index i (language-specific).
 	IsException func(tokens []*languagetool.AnalyzedTokenReadings, tokenIdx int) bool
 	fileExt     *regexp.Regexp
@@ -27,6 +32,8 @@ func NewCommaWhitespaceRule(messages map[string]string) *CommaWhitespaceRule {
 		Messages:              messages,
 		QuotesWhitespaceCheck: true,
 		CommaCharacter:        ",",
+		Category:              CatTypography.GetCategory(messages),
+		IssueType:             ITSWhitespace,
 		fileExt:               regexp.MustCompile(`^([a-z]{3,4}|[A-Z]{3,4}|ai|mp[34]|MP[34])(-.+)?$`),
 		domain:                regexp.MustCompile(`(?i)^(com|org|net|int|edu|gov|mil|[a-z]{2})$`),
 	}
@@ -37,6 +44,30 @@ func (r *CommaWhitespaceRule) GetID() string {
 		return r.RuleID
 	}
 	return "COMMA_PARENTHESIS_WHITESPACE"
+}
+
+// GetDescription ports getDescription (desc_comma_whitespace).
+func (r *CommaWhitespaceRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_comma_whitespace"]; s != "" {
+			return s
+		}
+	}
+	return "Spacing around commas and parentheses"
+}
+
+func (r *CommaWhitespaceRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *CommaWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSWhitespace
+	}
+	return r.IssueType
 }
 func (r *CommaWhitespaceRule) GetCommaCharacter() string {
 	if r.CommaCharacter != "" {

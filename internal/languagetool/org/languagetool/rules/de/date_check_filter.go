@@ -1,18 +1,25 @@
 package de
 
 import (
-	"fmt"
+	"strings"
 	"time"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// DateCheckFilter ports org.languagetool.rules.de.DateCheckFilter helpers
-// used by pattern-rule date checks (acceptRuleMatch needs full filter stack later).
+// DateCheckFilter ports org.languagetool.rules.de.DateCheckFilter
+// (extends AbstractDateCheckWithSuggestionsFilter with DE localization).
 type DateCheckFilter struct {
 	helper *DateFilterHelper
+	inner  *rules.AbstractDateCheckWithSuggestionsFilter
 }
 
 func NewDateCheckFilter() *DateCheckFilter {
-	return &DateCheckFilter{helper: NewDateFilterHelper()}
+	return &DateCheckFilter{
+		helper: NewDateFilterHelper(),
+		inner:  deDateCheckWithSuggestions(),
+	}
 }
 
 // GetDayOfWeekJava returns Java Calendar day-of-week (Sunday=1 … Saturday=7).
@@ -37,18 +44,33 @@ func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
 // GetDayOfWeekName returns German long weekday name for a date.
 func (f *DateCheckFilter) GetDayOfWeekName(year, month, day int) string {
 	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	// German weekday names
 	names := []string{"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"}
 	return names[int(t.Weekday())]
 }
 
-// AcceptRuleMatch soft-checks year/month/day/weekDay consistency.
-// Returns an error message if inconsistent, empty if OK.
-// Requires weekDay key (Java throws if missing).
-func (f *DateCheckFilter) AcceptRuleMatch(args map[string]string) (string, error) {
-	if _, ok := args["weekDay"]; !ok {
-		return "", fmt.Errorf("incomplete args: weekDay required")
+// AdjustSuggestion ports DateCheckFilter.adjustSuggestion (So. vs Sonntag).
+func AdjustDateCheckSuggestion(sugg string) string {
+	dotCommaPos := strings.Index(sugg, ".,")
+	if dotCommaPos > 5 && dotCommaPos < 12 {
+		// remove unnecessary dot
+		return strings.Replace(sugg, ".,", ",", 1)
 	}
-	// Full calendar validation deferred (pattern integration).
-	return "", nil
+	commaPos := strings.Index(sugg, ",")
+	if dotCommaPos < 0 && commaPos > 0 && commaPos < 5 {
+		// add dot
+		return strings.Replace(sugg, ",", ".,", 1)
+	}
+	return sugg
+}
+
+// AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch (super).
+func (f *DateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, tokenPositions []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	if f.inner == nil {
+		f.inner = deDateCheckWithSuggestions()
+	}
+	return f.inner.AcceptRuleMatch(match, arguments, patternTokens, tokenPositions)
 }

@@ -1,66 +1,118 @@
 package de
 
 import (
-	"strings"
-	"unicode"
-	"unicode/utf8"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// UpperCaseNgramRule is a surface stand-in for UpperCaseNgramRule without n-grams.
-// Handles the Tage/Tagen ambiguity with simple context heuristics from the Java tests.
+// UpperCaseNgramRule ports org.languagetool.rules.de.UpperCaseNgramRule.
+// PseudoProbability(trigram) returns probability of [prev, word, next].
+// Without LM hook, Match is empty (Java requires LanguageModel; defaultTempOff).
+// No surface heuristic invent when LM is absent.
 type UpperCaseNgramRule struct {
 	Messages map[string]string
+	// Category ports setCategory(CASING).
+	Category *rules.Category
+	// IssueType ports setLocQualityIssueType(Misspelling).
+	IssueType rules.ITSIssueType
+	// PseudoProbability ports LanguageModel.getPseudoProbability(list).GetProb().
+	// Return 0 for unknown; ratios use these probs.
+	PseudoProbability func(trigram []string) float64
+	// DefaultTempOff mirrors Java setDefaultTempOff.
+	DefaultTempOff bool
+}
+
+const upperCaseNgramThreshold = 50.0
+
+var upperCaseNgramRelevant = map[string]struct{}{
+	"tage": {}, "tagen": {},
+	"Tage": {}, "Tagen": {},
 }
 
 func NewUpperCaseNgramRule(messages map[string]string) *UpperCaseNgramRule {
-	return &UpperCaseNgramRule{Messages: messages}
+	return &UpperCaseNgramRule{
+		Messages:       messages,
+		Category:       rules.CatCasing.GetCategory(messages),
+		IssueType:      rules.ITSMisspelling,
+		DefaultTempOff: true,
+	}
+}
+
+// NewUpperCaseNgramRuleWithLM ports the Java constructor that requires LanguageModel.
+// lm is GetPseudoProbability for a 3-token list (prev, word, next).
+func NewUpperCaseNgramRuleWithLM(messages map[string]string, lm func(trigram []string) float64) *UpperCaseNgramRule {
+	r := NewUpperCaseNgramRule(messages)
+	r.PseudoProbability = lm
+	return r
 }
 
 func (r *UpperCaseNgramRule) GetID() string { return "DE_UPPER_CASE_NGRAM" }
 
-func isDigitsToken(s string) bool {
-	if s == "" {
-		return false
+func (r *UpperCaseNgramRule) GetDescription() string {
+	return "Prüft Wörter, ob sie fälschlich groß- oder fälschlich kleingeschrieben sind"
+}
+
+func (r *UpperCaseNgramRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
 	}
-	for _, r0 := range s {
-		if !unicode.IsDigit(r0) && r0 != '.' && r0 != ',' {
-			return false
-		}
+	return r.Category
+}
+
+func (r *UpperCaseNgramRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSMisspelling
 	}
-	return unicode.IsDigit([]rune(s)[0])
+	return r.IssueType
 }
 
 func (r *UpperCaseNgramRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if sentence == nil || r == nil || r.PseudoProbability == nil {
+		// Java always has LM; without it fail closed (no invent).
+		return nil
+	}
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var matches []*rules.RuleMatch
 	for i := 1; i < len(tokens); i++ {
-		tok := tokens[i]
-		w := tok.GetToken()
-		lc := strings.ToLower(w)
-		if lc != "tage" && lc != "tagen" {
+		if i+1 >= len(tokens) || tokens[i] == nil || tokens[i-1] == nil || tokens[i+1] == nil {
 			continue
 		}
-		// After a number: prefer capitalized Tagen/Tage (noun)
-		if i > 1 && isDigitsToken(tokens[i-1].GetToken()) {
-			if !tools.StartsWithUppercase(w) {
-				msg := "Meinten Sie '" + tools.UppercaseFirstChar(w) + "' (Substantiv)?"
-				rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-				rm.SetSuggestedReplacement(tools.UppercaseFirstChar(w))
+		tokenStr := tokens[i].GetToken()
+		if _, ok := upperCaseNgramRelevant[tokenStr]; !ok {
+			continue
+		}
+		if tools.IsAllUppercase(tokenStr) {
+			continue
+		}
+		ucToken := tools.UppercaseFirstChar(tokenStr)
+		lcToken := tools.LowercaseFirstChar(tokenStr)
+		prev, next := tokens[i-1].GetToken(), tokens[i+1].GetToken()
+
+		ucProb := r.PseudoProbability([]string{prev, ucToken, next})
+		lcProb := r.PseudoProbability([]string{prev, lcToken, next})
+		if ucProb <= 0 {
+			ucProb = 1e-20
+		}
+		if lcProb <= 0 {
+			lcProb = 1e-20
+		}
+		if tools.StartsWithUppercase(tokenStr) {
+			ratio := lcProb / ucProb
+			if ratio > upperCaseNgramThreshold {
+				msg := "Meinten Sie das Verb '" + lcToken + "'? Nur Nomen und Eigennamen werden großgeschrieben."
+				rm := rules.NewRuleMatch(r, sentence, tokens[i].GetStartPos(), tokens[i].GetEndPos(), msg)
+				rm.SetSuggestedReplacement(lcToken)
 				matches = append(matches, rm)
 			}
-			continue
-		}
-		// After "Sie" (pronoun): prefer lowercase verb "tagen"
-		if i > 1 && tokens[i-1].GetToken() == "Sie" && tools.StartsWithUppercase(w) && utf8.RuneCountInString(w) > 0 {
-			// sentence-start "Sie Tagen" — verb should be lower
-			msg := "Meinten Sie '" + strings.ToLower(w) + "' (Verb)?"
-			rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-			rm.SetSuggestedReplacement(strings.ToLower(w))
-			matches = append(matches, rm)
+		} else {
+			ratio := ucProb / lcProb
+			if ratio > upperCaseNgramThreshold {
+				msg := "Meinten Sie das Nomen '" + ucToken + "'? Nomen und Eigennamen werden großgeschrieben."
+				rm := rules.NewRuleMatch(r, sentence, tokens[i].GetStartPos(), tokens[i].GetEndPos(), msg)
+				rm.SetSuggestedReplacement(ucToken)
+				matches = append(matches, rm)
+			}
 		}
 	}
 	return matches

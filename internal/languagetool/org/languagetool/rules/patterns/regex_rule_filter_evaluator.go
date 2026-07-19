@@ -18,9 +18,9 @@ func NewRegexRuleFilterEvaluator(filter RegexRuleFilter) *RegexRuleFilterEvaluat
 }
 
 func (e *RegexRuleFilterEvaluator) RunFilter(filterArgs string, ruleMatch *rules.RuleMatch,
-	sentence *languagetool.AnalyzedSentence, patternMatch string) *rules.RuleMatch {
+	sentence *languagetool.AnalyzedSentence, groups []string) *rules.RuleMatch {
 	args := ResolveFilterArguments(filterArgs)
-	return e.Filter.AcceptRuleMatch(ruleMatch, args, sentence, patternMatch)
+	return e.Filter.AcceptRuleMatch(ruleMatch, args, sentence, groups)
 }
 
 // ResolveFilterArguments parses "key:value key2:value2" space-separated pairs.

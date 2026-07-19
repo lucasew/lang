@@ -36,23 +36,28 @@ type UnitDef struct {
 
 // SI conversion bases: mass kg, length m, area m², volume m³, temp °C, speed m/s.
 var (
-	UnitKilogram = UnitDef{ID: "kg", Kind: UnitMass, Factor: 1, Symbol: "kg", Metric: true}
-	UnitGram     = UnitDef{ID: "g", Kind: UnitMass, Factor: 1e-3, Symbol: "g", Metric: true}
-	UnitPound    = UnitDef{ID: "lb", Kind: UnitMass, Factor: 0.45359237, Symbol: "lb", Metric: false}
-	UnitMetre    = UnitDef{ID: "m", Kind: UnitLength, Factor: 1, Symbol: "m", Metric: true}
-	UnitKilometre = UnitDef{ID: "km", Kind: UnitLength, Factor: 1e3, Symbol: "km", Metric: true}
+	UnitKilogram   = UnitDef{ID: "kg", Kind: UnitMass, Factor: 1, Symbol: "kg", Metric: true}
+	UnitGram       = UnitDef{ID: "g", Kind: UnitMass, Factor: 1e-3, Symbol: "g", Metric: true}
+	UnitPound      = UnitDef{ID: "lb", Kind: UnitMass, Factor: 0.45359237, Symbol: "lb", Metric: false}
+	UnitMetre      = UnitDef{ID: "m", Kind: UnitLength, Factor: 1, Symbol: "m", Metric: true}
+	UnitKilometre  = UnitDef{ID: "km", Kind: UnitLength, Factor: 1e3, Symbol: "km", Metric: true}
 	UnitCentimetre = UnitDef{ID: "cm", Kind: UnitLength, Factor: 1e-2, Symbol: "cm", Metric: true}
 	UnitMillimetre = UnitDef{ID: "mm", Kind: UnitLength, Factor: 1e-3, Symbol: "mm", Metric: true}
-	UnitMile     = UnitDef{ID: "mi", Kind: UnitLength, Factor: 1609.344, Symbol: "mi", Metric: false}
-	UnitYard     = UnitDef{ID: "yd", Kind: UnitLength, Factor: 0.9144, Symbol: "yd", Metric: false}
-	UnitFeet     = UnitDef{ID: "ft", Kind: UnitLength, Factor: 0.3048, Symbol: "ft", Metric: false}
-	UnitInch     = UnitDef{ID: "inch", Kind: UnitLength, Factor: 0.0254, Symbol: "inch", Metric: false}
-	UnitLitre    = UnitDef{ID: "l", Kind: UnitVolume, Factor: 1e-3, Symbol: "l", Metric: true}
+	UnitMile       = UnitDef{ID: "mi", Kind: UnitLength, Factor: 1609.344, Symbol: "mi", Metric: false}
+	UnitYard       = UnitDef{ID: "yd", Kind: UnitLength, Factor: 0.9144, Symbol: "yd", Metric: false}
+	UnitFeet       = UnitDef{ID: "ft", Kind: UnitLength, Factor: 0.3048, Symbol: "ft", Metric: false}
+	UnitInch       = UnitDef{ID: "inch", Kind: UnitLength, Factor: 0.0254, Symbol: "inch", Metric: false}
+	UnitLitre      = UnitDef{ID: "l", Kind: UnitVolume, Factor: 1e-3, Symbol: "l", Metric: true}
 	UnitMillilitre = UnitDef{ID: "ml", Kind: UnitVolume, Factor: 1e-6, Symbol: "ml", Metric: true}
-	UnitCelsius  = UnitDef{ID: "celsius", Kind: UnitTemperature, Factor: 1, Offset: 0, Symbol: "°C", Metric: true}
+	UnitCelsius    = UnitDef{ID: "celsius", Kind: UnitTemperature, Factor: 1, Offset: 0, Symbol: "°C", Metric: true}
 	UnitFahrenheit = UnitDef{ID: "fahrenheit", Kind: UnitTemperature, Factor: 5.0 / 9.0, Offset: -32 * 5.0 / 9.0, Symbol: "°F", Metric: false}
-	UnitKmh      = UnitDef{ID: "kmh", Kind: UnitSpeed, Factor: 1000.0 / 3600.0, Symbol: "km/h", Metric: true}
-	UnitMph      = UnitDef{ID: "mph", Kind: UnitSpeed, Factor: 1609.344 / 3600.0, Symbol: "mph", Metric: false}
+	UnitKmh        = UnitDef{ID: "kmh", Kind: UnitSpeed, Factor: 1000.0 / 3600.0, Symbol: "km/h", Metric: true}
+	UnitMph        = UnitDef{ID: "mph", Kind: UnitSpeed, Factor: 1609.344 / 3600.0, Symbol: "mph", Metric: false}
+	// Area / tonne (DE UnitConversionRule)
+	UnitSquareMetre = UnitDef{ID: "m2", Kind: UnitArea, Factor: 1, Symbol: "m²", Metric: true}
+	UnitHectare     = UnitDef{ID: "ha", Kind: UnitArea, Factor: 1e4, Symbol: "ha", Metric: true}
+	UnitSqFt        = UnitDef{ID: "sqft", Kind: UnitArea, Factor: 0.09290304, Symbol: "sq ft", Metric: false}
+	UnitTonne       = UnitDef{ID: "t", Kind: UnitMass, Factor: 1e3, Symbol: "t", Metric: true}
 )
 
 // UnitConversionMessage ports AbstractUnitConversionRule.Message.
@@ -66,20 +71,38 @@ const (
 )
 
 const (
-	unitNumberRegex = `(-?\d{1,32}(?:[.,]\d{1,32})?)`
-	unitWSLimit     = 5
+	unitNumberRegex    = `(-?\d{1,32}(?:[.,]\d{1,32})?)`
+	unitWSLimit        = 5
 	unitMaxSuggestions = 5
-	unitDelta       = 1e-2
+	unitDelta          = 1e-2
 )
+
+// convertedParenRE ports AbstractUnitConversionRule.convertedPatterns:
+// whitespace + (optional "ca. ") + number + unit body in parentheses, immediately after measure.
+var convertedParenRE = regexp.MustCompile(`(?i)^\s*\((?:ca\.\s*)?` + unitNumberRegex + `\s*([^)]+?)\s*\)`)
 
 // AbstractUnitConversionRule ports org.languagetool.rules.AbstractUnitConversionRule
 // without javax.measure — uses fixed SI conversion factors.
+// AbstractUnitConversionRule ports org.languagetool.rules.AbstractUnitConversionRule.
+// Java: STYLE, Style.
 type AbstractUnitConversionRule struct {
 	ID           string
 	Messages     map[string]string
+	// Category ports Rule.category (Java STYLE).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
 	unitPatterns []unitPattern
-	metricUnits  []UnitDef
-	antiPatterns []*regexp.Regexp
+	// specialPatterns ports Java specialPatterns (e.g. 5'6" → feet + inches).
+	specialPatterns []specialUnitPattern
+	metricUnits     []UnitDef
+	antiPatterns    []*regexp.Regexp
+	// FormatNumber formats converted values (default English-style). DE uses comma decimals.
+	FormatNumber func(v float64) string
+	// MessageFor optional override of GetMessage (language-specific).
+	MessageFor func(m UnitConversionMessage) string
+	// ParseNumber optional locale number parse (default: comma→dot only).
+	ParseNumber func(s string) (float64, error)
 }
 
 type unitPattern struct {
@@ -87,10 +110,19 @@ type unitPattern struct {
 	unit UnitDef
 }
 
+// specialUnitPattern is a full-match unit with custom value parser (groups 1..n).
+type specialUnitPattern struct {
+	re    *regexp.Regexp
+	unit  UnitDef
+	parse func(submatches []string) (float64, bool) // full match + groups
+}
+
 func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConversionRule {
 	r := &AbstractUnitConversionRule{
-		ID:       "UNIT_CONVERSION",
-		Messages: messages,
+		ID:        "UNIT_CONVERSION",
+		Messages:  messages,
+		Category:  CatStyle.GetCategory(messages),
+		IssueType: ITSStyle,
 		antiPatterns: []*regexp.Regexp{
 			regexp.MustCompile(`\s?\d+'\d{3}\s?`),
 			regexp.MustCompile(`\d+[-‐–]\d+`),
@@ -118,7 +150,47 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 	r.AddUnit(`ml`, UnitMillilitre, "ml", 1, true)
 	r.AddUnit(`°F`, UnitFahrenheit, "°F", 1, false)
 	r.AddUnit(`°C`, UnitCelsius, "°C", 1, true)
+
+	// Java specialPatterns: 5'6" / 5ft 6in → feet + inches as FEET value
+	// RE2 has no lookbehind; approximate with leading char / start of string.
+	parseFeetInch := func(subs []string) (float64, bool) {
+		// subs[0]=full, [1]=feet, [2]=inch (optional empty)
+		if len(subs) < 2 {
+			return 0, false
+		}
+		feet, err := r.parseNumber(subs[1])
+		if err != nil {
+			return 0, false
+		}
+		inch := 0.0
+		if len(subs) > 2 && subs[2] != "" {
+			if v, err2 := r.parseNumber(subs[2]); err2 == nil {
+				inch = v
+			}
+		}
+		return feet + inch/12.0, true
+	}
+	// with leading whitespace: " 5'6" or " 5ft 6"
+	r.specialPatterns = append(r.specialPatterns, specialUnitPattern{
+		re:    regexp.MustCompile(`(?:^|[^º°\d])\s(\d+)(?:ft|′|')\s*(\d+)\s*(?:in|"|″)?`),
+		unit:  UnitFeet,
+		parse: parseFeetInch,
+	})
+	// no leading space after non-digit non-space: "ist5'6"
+	r.specialPatterns = append(r.specialPatterns, specialUnitPattern{
+		re:    regexp.MustCompile(`(?:^|[^º°\d\s])(\d+)(?:ft|′|')\s*(\d+)\s*(?:in|"|″)?`),
+		unit:  UnitFeet,
+		parse: parseFeetInch,
+	})
 	return r
+}
+
+// AntiPatternsAppend adds a full-span anti-pattern (e.g. "Pfund Sterling").
+func (r *AbstractUnitConversionRule) AntiPatternsAppend(pattern string) {
+	if r == nil || pattern == "" {
+		return
+	}
+	r.antiPatterns = append(r.antiPatterns, regexp.MustCompile(`(?i)`+pattern))
 }
 
 // AddUnit registers a unit pattern (Java addUnit).
@@ -129,7 +201,8 @@ func (r *AbstractUnitConversionRule) AddUnit(pattern string, base UnitDef, symbo
 	u.Symbol = symbol
 	u.Metric = metric
 	ws := fmt.Sprintf(`[ \x{00A0}]{0,%d}`, unitWSLimit)
-	re := regexp.MustCompile(`(?i)` + unitNumberRegex + ws + pattern + `\b`)
+	// Use \p{L} boundaries — ASCII \b fails after non-ASCII letters (e.g. German ß in Fuß).
+	re := regexp.MustCompile(`(?i)` + unitNumberRegex + ws + `(?:` + pattern + `)(?:[^\p{L}]|$)`)
 	r.unitPatterns = append(r.unitPatterns, unitPattern{re: re, unit: u})
 	if metric {
 		for _, m := range r.metricUnits {
@@ -143,7 +216,24 @@ func (r *AbstractUnitConversionRule) AddUnit(pattern string, base UnitDef, symbo
 
 func (r *AbstractUnitConversionRule) GetID() string { return r.ID }
 
+func (r *AbstractUnitConversionRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *AbstractUnitConversionRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
 func (r *AbstractUnitConversionRule) GetMessage(m UnitConversionMessage) string {
+	if r != nil && r.MessageFor != nil {
+		return r.MessageFor(m)
+	}
 	switch m {
 	case UnitMsgCheck:
 		return "This unit conversion doesn't seem right. Do you want to correct it automatically?"
@@ -156,6 +246,21 @@ func (r *AbstractUnitConversionRule) GetMessage(m UnitConversionMessage) string 
 	default:
 		return "Unit conversion"
 	}
+}
+
+func (r *AbstractUnitConversionRule) formatNumber(v float64) string {
+	if r != nil && r.FormatNumber != nil {
+		return r.FormatNumber(v)
+	}
+	return formatUnitNumber(v)
+}
+
+func (r *AbstractUnitConversionRule) parseNumber(s string) (float64, error) {
+	if r != nil && r.ParseNumber != nil {
+		return r.ParseNumber(s)
+	}
+	s = strings.ReplaceAll(s, ",", ".")
+	return strconv.ParseFloat(s, 64)
 }
 
 // ToSI converts a value in unit to SI base.
@@ -247,14 +352,101 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 	if text == "" {
 		return nil, nil
 	}
-	for _, ap := range r.antiPatterns {
-		if ap.MatchString(text) {
-			// soft anti-pattern: still try, but Java skips whole spans — skip simple whole-match cases
-			_ = ap
+	var matches []*RuleMatch
+	// claimed spans: specialPatterns claim first so plain "5ft" does not double-hit "5ft 6in"
+	var claimed [][2]int
+	overlaps := func(a, b int) bool {
+		for _, c := range claimed {
+			// exclusive end; overlap if a < c1 && b > c0
+			if a < c[1] && b > c[0] {
+				return true
+			}
+		}
+		return false
+	}
+	claim := func(a, b int) { claimed = append(claimed, [2]int{a, b}) }
+
+	// specialPatterns first (Java: longer composite measures like 5'6")
+	for _, sp := range r.specialPatterns {
+		if sp.re == nil || sp.parse == nil {
+			continue
+		}
+		all := sp.re.FindAllStringSubmatchIndex(text, -1)
+		for _, loc := range all {
+			if len(loc) < 2 {
+				continue
+			}
+			// Build submatch strings (full + groups)
+			var subs []string
+			for g := 0; g*2+1 < len(loc); g++ {
+				a, b := loc[g*2], loc[g*2+1]
+				if a < 0 || b < 0 {
+					subs = append(subs, "")
+					continue
+				}
+				subs = append(subs, text[a:b])
+			}
+			// Trim leading boundary char from full match when pattern includes it
+			fullStart, fullEnd := loc[0], loc[1]
+			// Prefer numeric start for highlight (skip leading non-digit from boundary)
+			from := fullStart
+			for from < fullEnd {
+				c := text[from]
+				if c >= '0' && c <= '9' {
+					break
+				}
+				from++
+			}
+			if from >= fullEnd {
+				from = fullStart
+			}
+			if overlaps(from, fullEnd) {
+				continue
+			}
+			val, ok := sp.parse(subs)
+			if !ok {
+				continue
+			}
+			// Parenthetical conversion after special measure (CHECK path).
+			if cm := convertedParenRE.FindStringSubmatchIndex(text[fullEnd:]); cm != nil {
+				cFrom := fullEnd + cm[0]
+				cTo := fullEnd + cm[1]
+				numInParen := text[fullEnd+cm[2] : fullEnd+cm[3]]
+				unitBody := strings.TrimSpace(text[fullEnd+cm[4] : fullEnd+cm[5]])
+				if given, errG := r.parseNumber(numInParen); errG == nil {
+					highlight := text[from:fullEnd]
+					if check := r.checkParentheticalConversion(sentence, from, fullEnd, cFrom, cTo, val, sp.unit, given, unitBody, highlight); check != nil {
+						claim(from, cTo)
+						matches = append(matches, check)
+						continue
+					}
+					claim(from, cTo)
+					continue
+				}
+			}
+			if hasNearbyMetricInText(text, fullEnd) {
+				continue
+			}
+			equivs := r.GetMetricEquivalent(val, sp.unit)
+			if len(equivs) == 0 {
+				continue
+			}
+			claim(from, fullEnd)
+			highlight := text[from:fullEnd]
+			var suggs []string
+			for i, eq := range equivs {
+				if i >= unitMaxSuggestions {
+					break
+				}
+				conv := r.formatNumber(eq.Value) + " " + eq.Unit.Symbol
+				suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(highlight), conv))
+			}
+			m := NewRuleMatch(r, sentence, from, fullEnd, r.GetMessage(UnitMsgSuggestion))
+			m.SetSuggestedReplacements(suggs)
+			matches = append(matches, m)
 		}
 	}
-	var matches []*RuleMatch
-	seen := map[string]struct{}{}
+
 	for _, up := range r.unitPatterns {
 		if up.unit.Metric {
 			continue
@@ -266,13 +458,11 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			}
 			full := text[loc[0]:loc[1]]
 			numStr := text[loc[2]:loc[3]]
-			numStr = strings.ReplaceAll(numStr, ",", ".")
-			val, err := strconv.ParseFloat(numStr, 64)
+			val, err := r.parseNumber(numStr)
 			if err != nil {
 				continue
 			}
-			key := fmt.Sprintf("%d:%d", loc[0], loc[1])
-			if _, ok := seen[key]; ok {
+			if overlaps(loc[0], loc[1]) {
 				continue
 			}
 			// anti-pattern span check
@@ -286,17 +476,44 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			if skip {
 				continue
 			}
+			// Currency: "Pfund Sterling" is not mass.
+			if after := trailingContext(text, loc[1]); strings.Contains(strings.ToLower(after), "sterling") {
+				continue
+			}
+			// Existing conversion in parentheses, e.g. "6 Fuß (1,82 m)" — Java CHECK path.
+			if cm := convertedParenRE.FindStringSubmatchIndex(text[loc[1]:]); cm != nil {
+				// absolute positions
+				cFrom := loc[1] + cm[0]
+				cTo := loc[1] + cm[1]
+				numInParen := text[loc[1]+cm[2] : loc[1]+cm[3]]
+				unitBody := strings.TrimSpace(text[loc[1]+cm[4] : loc[1]+cm[5]])
+				given, errG := r.parseNumber(numInParen)
+				if errG == nil {
+					if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, val, up.unit, given, unitBody, full); check != nil {
+						claim(loc[0], cTo)
+						matches = append(matches, check)
+						continue
+					}
+					// conversion present and accepted → no suggestion
+					claim(loc[0], cTo)
+					continue
+				}
+			}
+			// Soft skip when metric nearby without parseable paren (legacy heuristic).
+			if hasNearbyMetricInText(text, loc[1]) {
+				continue
+			}
 			equivs := r.GetMetricEquivalent(val, up.unit)
 			if len(equivs) == 0 {
 				continue
 			}
-			seen[key] = struct{}{}
+			claim(loc[0], loc[1])
 			var suggs []string
 			for i, eq := range equivs {
 				if i >= unitMaxSuggestions {
 					break
 				}
-				conv := formatUnitNumber(eq.Value) + " " + eq.Unit.Symbol
+				conv := r.formatNumber(eq.Value) + " " + eq.Unit.Symbol
 				suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(full), conv))
 			}
 			m := NewRuleMatch(r, sentence, loc[0], loc[1], r.GetMessage(UnitMsgSuggestion))
@@ -305,4 +522,120 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 	}
 	return matches, nil
+}
+
+// checkParentheticalConversion ports the Java CHECK branch when a conversion already follows.
+// Returns a RuleMatch if the given conversion is wrong; nil if OK or not verifiable.
+func (r *AbstractUnitConversionRule) checkParentheticalConversion(
+	sentence *languagetool.AnalyzedSentence,
+	srcFrom, srcTo, convFrom, convTo int,
+	srcVal float64, srcUnit UnitDef,
+	given float64, unitBody, originalFull string,
+) *RuleMatch {
+	// Match unit body against known metric units (symbol or pattern fragment).
+	var convertedUnit *UnitDef
+	bodyLow := strings.ToLower(strings.TrimSpace(unitBody))
+	for i := range r.metricUnits {
+		u := r.metricUnits[i]
+		sym := strings.ToLower(u.Symbol)
+		if bodyLow == sym || strings.HasPrefix(bodyLow, sym+" ") || strings.HasPrefix(bodyLow, sym+")") {
+			convertedUnit = &u
+			break
+		}
+		// common DE long names
+		switch {
+		case bodyLow == "m" || bodyLow == "meter" || bodyLow == "metre" || bodyLow == "metern":
+			if u.ID == UnitMetre.ID {
+				convertedUnit = &u
+			}
+		case bodyLow == "km" || strings.HasPrefix(bodyLow, "kilometer") || strings.HasPrefix(bodyLow, "kilometre"):
+			if u.ID == UnitKilometre.ID {
+				convertedUnit = &u
+			}
+		case bodyLow == "cm" || strings.HasPrefix(bodyLow, "zentimeter"):
+			if u.ID == UnitCentimetre.ID {
+				convertedUnit = &u
+			}
+		case bodyLow == "mm" || strings.HasPrefix(bodyLow, "millimeter"):
+			if u.ID == UnitMillimetre.ID {
+				convertedUnit = &u
+			}
+		case bodyLow == "kg" || strings.HasPrefix(bodyLow, "kilogramm"):
+			if u.ID == UnitKilogram.ID {
+				convertedUnit = &u
+			}
+		}
+		if convertedUnit != nil {
+			break
+		}
+	}
+	if convertedUnit == nil {
+		// unknown unit in paren — Java CHECK_UNKNOWN_UNIT; report on paren span
+		m := NewRuleMatch(r, sentence, convFrom, convTo, r.GetMessage(UnitMsgCheckUnknownUnit))
+		return m
+	}
+	// same unit as source → leave alone (Java)
+	if convertedUnit.ID == srcUnit.ID && convertedUnit.Symbol == srcUnit.Symbol {
+		return nil
+	}
+	expected, ok := Convert(srcVal, srcUnit, *convertedUnit)
+	if !ok {
+		m := NewRuleMatch(r, sentence, convFrom, convTo, r.GetMessage(UnitMsgUnitMismatch))
+		return m
+	}
+	if math.Abs(expected-given) <= unitDelta*math.Max(1, math.Abs(expected)) {
+		// accurate enough
+		return nil
+	}
+	// also accept if given matches any formatted suggestion string number
+	equivs := r.GetMetricEquivalent(srcVal, srcUnit)
+	for _, eq := range equivs {
+		if eq.Unit.ID == convertedUnit.ID && math.Abs(eq.Value-given) <= unitDelta*math.Max(1, math.Abs(eq.Value)) {
+			return nil
+		}
+	}
+	m := NewRuleMatch(r, sentence, convFrom, convTo, r.GetMessage(UnitMsgCheck))
+	// suggest corrected number + unit
+	m.SetSuggestedReplacement(r.formatNumber(expected) + " " + convertedUnit.Symbol)
+	return m
+}
+
+func trailingContext(text string, pos int) string {
+	if pos < 0 || pos >= len(text) {
+		return ""
+	}
+	end := pos + 24
+	if end > len(text) {
+		end = len(text)
+	}
+	return text[pos:end]
+}
+
+// hasNearbyMetricInText reports metric unit tokens shortly after pos (parenthetical equivalents).
+func hasNearbyMetricInText(text string, pos int) bool {
+	if pos < 0 || pos >= len(text) {
+		return false
+	}
+	end := pos + 40
+	if end > len(text) {
+		end = len(text)
+	}
+	window := strings.ToLower(text[pos:end])
+	// strip non-breaking spaces
+	window = strings.ReplaceAll(window, "\u00a0", " ")
+	metrics := []string{
+		" m)", " m ", " m.", " meter", " metre", " km", "kilometer", "kilometre",
+		" kg", "kilogramm", " tonne", " tonnen", " m²", " m2", "quadratmeter",
+		" cm", " mm", " °c", " celsius",
+	}
+	for _, m := range metrics {
+		if strings.Contains(window, m) {
+			return true
+		}
+	}
+	// bare (1,82 m) style
+	if strings.Contains(window, "(") && (strings.Contains(window, " m)") || strings.Contains(window, "m)")) {
+		return true
+	}
+	return false
 }

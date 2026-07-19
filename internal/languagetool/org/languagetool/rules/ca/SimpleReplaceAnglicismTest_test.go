@@ -100,3 +100,28 @@ func TestSimpleReplaceAnglicism_Rule(t *testing.T) {
 	// surface only — no article/gender expansion
 	require.Equal(t, []string{"classe magistral", "classes magistrals"}, matches[0].GetSuggestedReplacements())
 }
+
+func TestSimpleReplaceAnglicism_EnglishIgnoreException(t *testing.T) {
+	rule := NewSimpleReplaceAnglicism(nil)
+	// "spam" is in replace_anglicism; with adjacent _english_ignore_ should skip.
+	sent := languagetool.AnalyzePlain("El spam is bad.")
+	// tokens: SENT_START, El, spam, is, bad, .
+	// mark spam + is with _english_ignore_ so startIndex and startIndex-1?
+	// Java: startIndex > 1 && tokens[startIndex]._english_ignore_ && tokens[startIndex-1]._english_ignore_
+	// For "spam" startIndex is spam; need prev also _english_ignore_
+	// Use "The spam is bad" with The and spam tagged
+	sent = languagetool.AnalyzePlain("The spam is bad.")
+	for _, tok := range sent.GetTokensWithoutWhitespace() {
+		low := tok.GetToken()
+		if low == "The" || low == "spam" || low == "is" || low == "bad" {
+			pos := "_english_ignore_"
+			tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &pos, nil), "test")
+		}
+	}
+	matches := rule.Match(sent)
+	require.Empty(t, matches, "english span should suppress anglicism match")
+
+	// without tags, spam still matches
+	matches = rule.Match(languagetool.AnalyzePlain("The spam is bad."))
+	require.NotEmpty(t, matches)
+}

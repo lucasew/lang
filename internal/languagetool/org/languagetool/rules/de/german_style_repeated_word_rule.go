@@ -1,174 +1,232 @@
 package de
 
 import (
+	"regexp"
 	"strings"
-	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// GermanStyleRepeatedWordRule is a surface stand-in for
-// org.languagetool.rules.de.GermanStyleRepeatedWordRule.
-// Without POS/lemmas, content-like words (letters, len≥4, not stopwords)
-// are matched by exact surface form across the same or adjacent sentences.
+// GermanStyleRepeatedWordRule ports org.languagetool.rules.de.GermanStyleRepeatedWordRule.
+// Default off (Java). Compound-part matching optional (testCompoundWords; default false).
 type GermanStyleRepeatedWordRule struct {
-	Messages               map[string]string
-	MaxDistanceOfSentences int
+	*rules.AbstractStyleRepeatedWordRule
+	TestCompoundWords bool
+	// IsCorrectSpell optional; used when TestCompoundWords (Java Morfologik).
+	IsCorrectSpell func(word string) bool
 }
+
+var styleLettersRE = regexp.MustCompile(`^[A-Za-zÄÖÜäöüß]+$`)
 
 func NewGermanStyleRepeatedWordRule(messages map[string]string) *GermanStyleRepeatedWordRule {
-	return &GermanStyleRepeatedWordRule{
-		Messages:               messages,
-		MaxDistanceOfSentences: 1,
+	base := rules.NewAbstractStyleRepeatedWordRule()
+	base.ID = "STYLE_REPEATED_WORD_RULE_DE"
+	base.Description = "Wiederholte Worte in aufeinanderfolgenden Sätzen"
+	base.MaxDistanceOfSentences = 1
+	base.ExcludeDirectSpeech = true
+	base.MessageSameSentence = func() string {
+		return "Mögliches Stilproblem: Das Wort wird noch einmal im selben Satz verwendet."
 	}
-}
-
-func (r *GermanStyleRepeatedWordRule) GetID() string { return "STYLE_REPEATED_WORD_RULE_DE" }
-
-// German function words / short closed class to reduce false positives.
-var styleRepeatStop = map[string]struct{}{
-	"der": {}, "die": {}, "das": {}, "den": {}, "dem": {}, "des": {},
-	"ein": {}, "eine": {}, "einen": {}, "einem": {}, "einer": {}, "eines": {},
-	"und": {}, "oder": {}, "aber": {}, "denn": {}, "weil": {}, "dass": {}, "daß": {},
-	"sich": {}, "nicht": {}, "noch": {}, "auch": {}, "nur": {}, "schon": {},
-	"mit": {}, "von": {}, "zu": {}, "zum": {}, "zur": {}, "bei": {}, "nach": {},
-	"aus": {}, "auf": {}, "für": {}, "über": {}, "unter": {}, "vor": {}, "hinter": {},
-	"ich": {}, "du": {}, "er": {}, "sie": {}, "es": {}, "wir": {}, "ihr": {},
-	"mir": {}, "dir": {}, "ihm": {}, "uns": {}, "euch": {},
-	"mein": {}, "dein": {}, "sein": {}, "unser": {}, "euer": {},
-	"ist": {}, "sind": {}, "war": {}, "waren": {}, "hat": {}, "haben": {},
-	"wird": {}, "werden": {}, "kann": {}, "muss": {}, "soll": {}, "will": {},
-	"als": {}, "wie": {}, "wenn": {}, "dann": {}, "so": {}, "am": {}, "im": {},
-	"in": {}, "an": {}, "um": {}, "ob": {}, "was": {}, "wer": {}, "wo": {},
-	"all": {}, "alle": {}, "allem": {}, "allen": {}, "aller": {}, "alles": {},
-	"diese": {}, "dieser": {}, "dieses": {}, "diesen": {}, "diesem": {},
-	"jene": {}, "jener": {}, "kein": {}, "keine": {}, "keinen": {},
-	"man": {}, "doch": {}, "sehr": {}, "mehr": {}, "hier": {},
-	"dort": {}, "da": {}, "nun": {}, "also": {}, "etwa": {}, "etwas": {},
-}
-
-func isStyleContentWord(tok string) bool {
-	if utf8.RuneCountInString(tok) < 4 {
-		return false
+	base.MessageSentenceBefore = func() string {
+		return "Mögliches Stilproblem: Das Wort wird bereits in einem vorhergehenden Satz verwendet."
 	}
-	lc := strings.ToLower(tok)
-	if _, stop := styleRepeatStop[lc]; stop {
-		return false
+	base.MessageSentenceAfter = func() string {
+		return "Mögliches Stilproblem: Das Wort wird auch in einem nachfolgenden Satz verwendet."
 	}
-	for _, r := range tok {
-		if !unicode.IsLetter(r) {
+	r := &GermanStyleRepeatedWordRule{AbstractStyleRepeatedWordRule: base}
+	base.IsTokenToCheck = r.isTokenToCheck
+	base.IsTokenPair = r.isTokenPair
+	base.IsPartOfWord = r.isPartOfWord
+	base.IsExceptionPair = r.isExceptionPair
+	// Java GermanStyleRepeatedWordRule.setURL → OpenThesaurus lemma/surface link.
+	base.SetURL = germanStyleRepeatedWordURL
+	// Java AbstractStyleRepeatedWordRule: STYLE + Style + defaultOff.
+	rules.InitStyleRepeatedWordMeta(base, messages)
+	// Java: MorfologikSpeller / LinguServices; without dict compound-part checks stay fail-closed.
+	r.IsCorrectSpell = func(word string) bool {
+		if !FilterDictAvailable() {
 			return false
 		}
+		return !FilterDictIsMisspelled(tools.UppercaseFirstChar(word))
+	}
+	return r
+}
+
+func (r *GermanStyleRepeatedWordRule) GetID() string {
+	if r != nil && r.AbstractStyleRepeatedWordRule != nil {
+		return r.AbstractStyleRepeatedWordRule.GetID()
+	}
+	return "STYLE_REPEATED_WORD_RULE_DE"
+}
+
+// germanStyleRepeatedWordURL ports GermanStyleRepeatedWordRule.setURL.
+// Java: SYNONYMS_URL + single lemma, else token surface.
+const germanOpenThesaurusURL = "https://www.openthesaurus.de/synonyme/"
+
+func germanStyleRepeatedWordURL(token *languagetool.AnalyzedTokenReadings) string {
+	if token == nil {
+		return ""
+	}
+	var lemmas []string
+	for _, rd := range token.GetReadings() {
+		if rd == nil {
+			continue
+		}
+		if l := rd.GetLemma(); l != nil && *l != "" {
+			lemmas = append(lemmas, *l)
+		}
+	}
+	if len(lemmas) == 1 {
+		return germanOpenThesaurusURL + lemmas[0]
+	}
+	return germanOpenThesaurusURL + token.GetToken()
+}
+
+// isUnknownWordStyle ports GermanStyleRepeatedWordRule.isUnknownWord:
+// isPosTagUnknown && len>2 && letters only (not invent !isTagged).
+func isUnknownWordStyle(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil || !token.IsPosTagUnknown() {
+		return false
+	}
+	s := token.GetToken()
+	// Java token.getToken().length() > 2 (UTF-16 units; same for DE letters).
+	return len([]rune(s)) > 2 && styleLettersRE.MatchString(s)
+}
+
+func (r *GermanStyleRepeatedWordRule) isTokenToCheck(tokens []*languagetool.AnalyzedTokenReadings, n int) bool {
+	// Java: Frau/Herr + next EIG/unknown → false; else (SUB|EIG|VER|ADJ without PRO/ART/ADV/AUX/MOD) || unknown
+	if n <= 0 || n >= len(tokens) || tokens[n] == nil {
+		return false
+	}
+	if n > 0 && n < len(tokens)-1 && tokens[n+1] != nil {
+		nextEIG := tokens[n+1].HasPosTagStartingWith("EIG") || isUnknownWordStyle(tokens[n+1])
+		if nextEIG {
+			switch tokens[n].GetToken() {
+			case "Frau", "Fräulein", "Herr", "Herrn", "Lady", "Mister":
+				return false
+			}
+		}
+	}
+	token := tokens[n]
+	ok := (token.MatchesPosTagRegex(`(SUB|EIG|VER|ADJ):.*`) &&
+		!token.MatchesPosTagRegex(`(PRO|A(RT|DV)|VER:(AUX|MOD)):.*`)) ||
+		isUnknownWordStyle(token)
+	if !ok {
+		return false
+	}
+	switch token.GetToken() {
+	case "sicher", "weit", "Sie", "Ich", "Euch", "Eure", "Der", "all":
+		return false
 	}
 	return true
 }
 
-func hasBreakTokenStyle(tokens []*languagetool.AnalyzedTokenReadings) bool {
-	n := len(tokens)
-	if n > 5 {
-		n = 5
-	}
-	for i := 0; i < n; i++ {
-		t := tokens[i].GetToken()
-		if t == "-" || t == "—" || t == "–" {
-			return true
+func (r *GermanStyleRepeatedWordRule) isTokenPair(tokens []*languagetool.AnalyzedTokenReadings, n int, before bool) bool {
+	if before {
+		if n > 2 && n < len(tokens) && tokens[n-2] != nil && tokens[n-1] != nil && tokens[n] != nil {
+			if (tokens[n-2].HasPosTagStartingWith("SUB") && tokens[n-1].HasPosTagStartingWith("PRP") &&
+				tokens[n].HasPosTagStartingWith("SUB")) ||
+				(tokens[n-2].GetToken() == "hart" && tokens[n-1].GetToken() == "auf" && tokens[n].GetToken() == "hart") ||
+				(tokens[n-2].GetToken() == "dicht" && tokens[n-1].GetToken() == "an" && tokens[n].GetToken() == "dicht") ||
+				(tokens[n-2].GetToken() == "fressen" && tokens[n-1].GetToken() == "und" && tokens[n].GetToken() == "gefressen") {
+				return true
+			}
+		}
+	} else {
+		if n > 0 && n < len(tokens)-2 && tokens[n] != nil && tokens[n+1] != nil && tokens[n+2] != nil {
+			if (tokens[n].HasPosTagStartingWith("SUB") && tokens[n+1].HasPosTagStartingWith("PRP") &&
+				tokens[n+2].HasPosTagStartingWith("SUB")) ||
+				(tokens[n].GetToken() == "hart" && tokens[n+1].GetToken() == "auf" && tokens[n+2].GetToken() == "hart") ||
+				(tokens[n].GetToken() == "dicht" && tokens[n+1].GetToken() == "an" && tokens[n+2].GetToken() == "dicht") ||
+				(tokens[n].GetToken() == "fressen" && tokens[n+1].GetToken() == "und" && tokens[n+2].GetToken() == "gefressen") {
+				return true
+			}
 		}
 	}
 	return false
 }
 
-func (r *GermanStyleRepeatedWordRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	maxDist := r.MaxDistanceOfSentences
-	if maxDist < 0 {
-		maxDist = 1
+func (r *GermanStyleRepeatedWordRule) isCorrectSpell(word string) bool {
+	if r != nil && r.IsCorrectSpell != nil {
+		return r.IsCorrectSpell(word)
 	}
-	// Precompute lowercase content tokens per sentence
-	type sentInfo struct {
-		tokens []*languagetool.AnalyzedTokenReadings
-		// lc form → indices of content tokens
-		forms map[string][]int
+	// Fail-closed without hook or dict (Java requires speller).
+	if !FilterDictAvailable() {
+		return false
 	}
-	infos := make([]sentInfo, len(sentences))
-	for si, s := range sentences {
-		toks := s.GetTokensWithoutWhitespace()
-		forms := map[string][]int{}
-		for i := 1; i < len(toks); i++ {
-			w := toks[i].GetToken()
-			if !isStyleContentWord(w) {
-				continue
-			}
-			lc := strings.ToLower(w)
-			forms[lc] = append(forms[lc], i)
-		}
-		infos[si] = sentInfo{tokens: toks, forms: forms}
-	}
+	return !FilterDictIsMisspelled(tools.UppercaseFirstChar(word))
+}
 
-	var matches []*rules.RuleMatch
-	pos := 0
-	for n, s := range sentences {
-		info := infos[n]
-		if hasBreakTokenStyle(info.tokens) {
-			pos += s.GetCorrectedTextLength()
-			continue
-		}
-		// For each content token, see if form repeats in window
-		seenInSent := map[string]int{} // first index in this sentence
-		for i := 1; i < len(info.tokens); i++ {
-			tok := info.tokens[i]
-			w := tok.GetToken()
-			if !isStyleContentWord(w) {
-				continue
-			}
-			lc := strings.ToLower(w)
-			isRepeated := 0 // 1 same, 2 before, 3 after
-			// same sentence: another occurrence
-			if idxs := info.forms[lc]; len(idxs) > 1 {
-				// ignore immediate adjacent identical (Java special-case)
-				for _, j := range idxs {
-					if j == i {
-						continue
-					}
-					if j == i-1 || j == i+1 {
-						continue
-					}
-					isRepeated = 1
-					break
-				}
-			}
-			for d := 1; isRepeated == 0 && d <= maxDist; d++ {
-				if n-d >= 0 {
-					if _, ok := infos[n-d].forms[lc]; ok {
-						isRepeated = 2
-					}
-				}
-			}
-			for d := 1; isRepeated == 0 && d <= maxDist; d++ {
-				if n+d < len(infos) {
-					if _, ok := infos[n+d].forms[lc]; ok {
-						isRepeated = 3
-					}
-				}
-			}
-			_ = seenInSent
-			if isRepeated == 0 {
-				continue
-			}
-			var msg string
-			switch isRepeated {
-			case 1:
-				msg = "Mögliches Stilproblem: Das Wort wird noch einmal im selben Satz verwendet."
-			case 2:
-				msg = "Mögliches Stilproblem: Das Wort wird bereits in einem vorhergehenden Satz verwendet."
-			default:
-				msg = "Mögliches Stilproblem: Das Wort wird auch in einem nachfolgenden Satz verwendet."
-			}
-			rm := rules.NewRuleMatch(r, s, pos+tok.GetStartPos(), pos+tok.GetEndPos(), msg)
-			rm.ShortMessage = "Wiederholtes Wort"
-			matches = append(matches, rm)
-		}
-		pos += s.GetCorrectedTextLength()
+func (r *GermanStyleRepeatedWordRule) isSecondPartOfWord(testTokenText, tokenText string) bool {
+	if len(testTokenText)-len(tokenText) < 3 {
+		return false
 	}
-	return matches
+	lowerTokenText := tools.LowercaseFirstChar(tokenText)
+	if lowerTokenText == "frei" ||
+		(lowerTokenText == "alten" && strings.HasSuffix(testTokenText, "halten")) {
+		return false
+	}
+	if strings.HasPrefix(tools.LowercaseFirstChar(testTokenText), lowerTokenText) {
+		word := testTokenText[len(tokenText):]
+		if r.isCorrectSpell(word) {
+			return true
+		}
+		if strings.HasPrefix(word, "s") {
+			word = word[1:]
+			if r.isCorrectSpell(word) {
+				return true
+			}
+		}
+		return false
+	} else if strings.HasSuffix(testTokenText, lowerTokenText) {
+		word := testTokenText[:len(testTokenText)-len(tokenText)]
+		if r.isCorrectSpell(word) {
+			return true
+		}
+		if strings.HasSuffix(word, "s") {
+			// Java: word = word.substring(word.length() - 1) — last char only (bug-for-bug)
+			word = word[len(word)-1:]
+			if r.isCorrectSpell(word) {
+				return true
+			}
+		}
+		return false
+	}
+	return false
+}
+
+func (r *GermanStyleRepeatedWordRule) isPartOfWord(testTokenText, tokenText string) bool {
+	if !r.TestCompoundWords || len(testTokenText) < 3 || len(tokenText) < 3 {
+		return false
+	}
+	if len(testTokenText) > len(tokenText) {
+		return r.isSecondPartOfWord(testTokenText, tokenText)
+	}
+	return r.isSecondPartOfWord(tokenText, testTokenText)
+}
+
+func (r *GermanStyleRepeatedWordRule) isExceptionPair(token1, token2 *languagetool.AnalyzedTokenReadings) bool {
+	if token1 == nil || token2 == nil {
+		return false
+	}
+	if (token1.HasAnyLemma("nah") && token1.HasAnyLemma("nächst") && !token2.HasAnyLemma("nächst")) ||
+		(token2.HasAnyLemma("nah") && token2.HasAnyLemma("nächst") && !token1.HasAnyLemma("nächst")) {
+		return true
+	}
+	if token1.HasAnyLemma("gut") &&
+		((strings.HasPrefix(token1.GetToken(), "gut") && !strings.HasPrefix(token2.GetToken(), "gut")) ||
+			(strings.HasPrefix(token2.GetToken(), "gut") && !strings.HasPrefix(token1.GetToken(), "gut"))) {
+		return true
+	}
+	return false
+}
+
+// MatchList delegates to abstract base.
+func (r *GermanStyleRepeatedWordRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || r.AbstractStyleRepeatedWordRule == nil {
+		return nil
+	}
+	return r.AbstractStyleRepeatedWordRule.MatchList(sentences)
 }

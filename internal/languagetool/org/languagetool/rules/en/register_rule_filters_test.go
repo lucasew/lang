@@ -23,7 +23,16 @@ func TestENRuleFiltersRegistered(t *testing.T) {
 		"org.languagetool.rules.en.EnglishSuppressMisspelledSuggestionsFilter",
 		"org.languagetool.rules.en.EnglishNumberInWordFilter",
 		"org.languagetool.rules.en.FindSuggestionsFilter",
+		"org.languagetool.rules.en.NoDisambiguationEnglishPartialPosTagFilter",
+		"org.languagetool.rules.en.EnglishConvertToSentenceCaseFilter",
 		"org.languagetool.rules.patterns.RegexAntiPatternFilter",
+		"org.languagetool.rules.DateRangeChecker",
+		"org.languagetool.rules.ConvertToSentenceCaseFilter",
+		"org.languagetool.rules.AdaptSuggestionsFilter",
+		"org.languagetool.rules.AddCommasFilter",
+		"org.languagetool.rules.IsEnglishWordFilter",
+		"org.languagetool.rules.CheckPostagsInSuggestionFilter",
+		"org.languagetool.rules.SuppressIfAnyRuleMatchesFilter",
 	} {
 		require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(class), class)
 		require.NotNil(t, patterns.GlobalRuleFilterCreator.GetFilter(class), class)

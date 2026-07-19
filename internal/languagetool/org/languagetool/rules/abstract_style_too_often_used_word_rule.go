@@ -1,117 +1,236 @@
 package rules
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// AbstractStyleTooOftenUsedWordRule is a surface stand-in for
-// org.languagetool.rules.AbstractStyleTooOftenUsedWordRule.
-// Languages supply IsCounted and LimitMessage; MinPercent 0 flags any repeated counted word.
+// AbstractStyleTooOftenUsedWordRule ports
+// org.languagetool.rules.AbstractStyleTooOftenUsedWordRule (text-level; default off).
+// MinWordCount is Java MIN_WORD_COUNT (100). MinPercent 0 is not Java (tests only).
+// Java ctor: CREATIVE_WRITING, Style; setDefaultOff when !defaultActive.
 type AbstractStyleTooOftenUsedWordRule struct {
-	Messages    map[string]string
-	ID          string
-	Description string
-	MinPercent  int // 0 = show all repeats of counted forms
-	MinWords    int // Java default 100; use 0 in tests
-	// IsCounted returns true if token should enter the frequency map.
-	IsCounted func(tok *languagetool.AnalyzedTokenReadings, index int, tokens []*languagetool.AnalyzedTokenReadings) bool
-	// Key maps a counted token to its map key (surface lower or lemma stand-in).
-	Key func(tok *languagetool.AnalyzedTokenReadings) string
-	// LimitMessage builds the match message for a key that exceeded the threshold.
+	Messages     map[string]string
+	ID           string
+	Description  string
+	MinPercent   int // threshold percent; Java defaults 5 for DE
+	MinWordCount int // Java 100; 0 disables gate for twin tests
+	// WithoutDirectSpeech when true excludes quoted spans (Java withoutDirectSpeech).
+	WithoutDirectSpeech bool
+	// Category ports Rule.category (Java CREATIVE_WRITING).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
+	// DefaultOff ports setDefaultOff (Java when defaultActive=false).
+	DefaultOff bool
+	// IsToCountedWord ports isToCountedWord.
+	IsToCountedWord func(tok *languagetool.AnalyzedTokenReadings) bool
+	// IsException ports isException(tokens, n).
+	IsException func(tokens []*languagetool.AnalyzedTokenReadings, n int) bool
+	// ToAddedLemma ports toAddedLemma (nil → skip token).
+	ToAddedLemma func(tok *languagetool.AnalyzedTokenReadings) string
+	// LimitMessage ports getLimitMessage(minPercent).
 	LimitMessage func(minPercent int) string
 }
 
+// InitStyleTooOftenUsedWordMeta applies Java AbstractStyleTooOftenUsedWordRule ctor metadata.
+func InitStyleTooOftenUsedWordMeta(r *AbstractStyleTooOftenUsedWordRule, messages map[string]string, defaultActive bool) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CreativeWritingCategory(messages)
+	}
+	if r.IssueType == "" {
+		r.IssueType = ITSStyle
+	}
+	if !defaultActive {
+		r.DefaultOff = true
+	}
+}
+
+func (r *AbstractStyleTooOftenUsedWordRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *AbstractStyleTooOftenUsedWordRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *AbstractStyleTooOftenUsedWordRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+var (
+	styleTooOftenOpenQ = regexp.MustCompile(`^["“„»«]$`)
+	styleTooOftenEndQ  = regexp.MustCompile(`^["“”»«]$`)
+)
+
+const styleTooOftenMinWordCountDefault = 100
+
 func (r *AbstractStyleTooOftenUsedWordRule) GetID() string {
-	if r.ID != "" {
+	if r != nil && r.ID != "" {
 		return r.ID
 	}
 	return "TOO_OFTEN_USED_WORD"
 }
 
+func (r *AbstractStyleTooOftenUsedWordRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return "Word used too often"
+}
+
+func (r *AbstractStyleTooOftenUsedWordRule) minWords() int {
+	if r == nil {
+		return styleTooOftenMinWordCountDefault
+	}
+	if r.MinWordCount < 0 {
+		return styleTooOftenMinWordCountDefault
+	}
+	return r.MinWordCount
+}
+
+// MatchList ports TextLevelRule match: fill word map, then flag tokens over threshold.
 func (r *AbstractStyleTooOftenUsedWordRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {
-	if r.IsCounted == nil || r.Key == nil {
+	if r == nil || r.IsToCountedWord == nil || r.ToAddedLemma == nil {
 		return nil
 	}
-	type occ struct {
-		sent *languagetool.AnalyzedSentence
-		from int
-		to   int
-		key  string
-	}
-	var all []occ
-	counts := map[string]int{}
-	pos := 0
-	totalCounted := 0
-	for _, s := range sentences {
-		tokens := s.GetTokensWithoutWhitespace()
-		for i := 1; i < len(tokens); i++ {
-			if !r.IsCounted(tokens[i], i, tokens) {
-				continue
-			}
-			k := r.Key(tokens[i])
-			if k == "" {
-				continue
-			}
-			counts[k]++
-			totalCounted++
-			all = append(all, occ{
-				sent: s,
-				from: pos + tokens[i].GetStartPos(),
-				to:   pos + tokens[i].GetEndPos(),
-				key:  k,
-			})
-		}
-		pos += s.GetCorrectedTextLength()
-	}
-	minWords := r.MinWords
-	if minWords <= 0 {
-		// allow short texts when MinPercent is 0 (show-all)
-		if r.MinPercent != 0 {
-			return nil
-		}
-	} else if totalCounted < minWords {
-		return nil
-	}
-	// which keys exceed threshold
-	over := map[string]bool{}
-	if r.MinPercent == 0 {
-		for k, c := range counts {
-			if c >= 2 {
-				over[k] = true
-			}
-		}
-	} else if totalCounted > 0 {
-		for k, c := range counts {
-			pct := 100.0 * float64(c) / float64(totalCounted)
-			if pct > float64(r.MinPercent) {
-				over[k] = true
-			}
-		}
-	}
-	if len(over) == 0 {
+	wordMap := r.fillWordMap(sentences)
+	tooOften := r.getTooOftenUsedWords(wordMap)
+	if len(tooOften) == 0 {
 		return nil
 	}
 	msgFn := r.LimitMessage
 	if msgFn == nil {
-		msgFn = func(p int) string {
-			return "Word used too often"
-		}
+		msgFn = func(p int) string { return "Word used too often" }
 	}
 	msg := msgFn(r.MinPercent)
-	var matches []*RuleMatch
-	for _, o := range all {
-		if !over[o.key] {
+	var out []*RuleMatch
+	pos := 0
+	excludeDS := r.WithoutDirectSpeech
+	isDirectSpeech := false
+	for _, sentence := range sentences {
+		if sentence == nil {
 			continue
 		}
-		// only flag second+ occurrence when show-all
-		rm := NewRuleMatch(r, o.sent, o.from, o.to, msg)
-		rm.ShortMessage = "too often used"
-		matches = append(matches, rm)
+		tokens := sentence.GetTokensWithoutWhitespace()
+		for n := 1; n < len(tokens); n++ {
+			token := tokens[n]
+			if token == nil {
+				continue
+			}
+			sToken := token.GetToken()
+			if excludeDS && !isDirectSpeech && styleTooOftenOpenQ.MatchString(sToken) &&
+				n < len(tokens)-1 && tokens[n+1] != nil && !tokens[n+1].IsWhitespaceBefore() {
+				isDirectSpeech = true
+			} else if excludeDS && isDirectSpeech && styleTooOftenEndQ.MatchString(sToken) &&
+				n > 1 && !token.IsWhitespaceBefore() {
+				isDirectSpeech = false
+			} else if !isDirectSpeech && !token.IsWhitespace() && !token.IsNonWord() &&
+				r.IsToCountedWord(token) && (r.IsException == nil || !r.IsException(tokens, n)) {
+				lemma := r.ToAddedLemma(token)
+				if lemma == "" {
+					continue
+				}
+				if _, over := tooOften[lemma]; over {
+					out = append(out, NewRuleMatch(r, sentence, token.GetStartPos()+pos, token.GetEndPos()+pos, msg))
+				}
+			}
+		}
+		pos += sentence.GetCorrectedTextLength()
 	}
-	_ = tools.StartsWithUppercase
-	_ = strings.ToLower
-	return matches
+	return out
+}
+
+func (r *AbstractStyleTooOftenUsedWordRule) fillWordMap(sentences []*languagetool.AnalyzedSentence) map[string]int {
+	wordMap := map[string]int{}
+	excludeDS := r.WithoutDirectSpeech
+	isDirectSpeech := false
+	for _, sentence := range sentences {
+		if sentence == nil {
+			continue
+		}
+		tokens := sentence.GetTokensWithoutWhitespace()
+		for n := 1; n < len(tokens); n++ {
+			token := tokens[n]
+			if token == nil {
+				continue
+			}
+			sToken := token.GetToken()
+			if excludeDS && !isDirectSpeech && styleTooOftenOpenQ.MatchString(sToken) &&
+				n < len(tokens)-1 && tokens[n+1] != nil && !tokens[n+1].IsWhitespaceBefore() {
+				isDirectSpeech = true
+			} else if excludeDS && isDirectSpeech && styleTooOftenEndQ.MatchString(sToken) &&
+				n > 1 && !token.IsWhitespaceBefore() {
+				isDirectSpeech = false
+			} else if !isDirectSpeech && !token.IsWhitespace() && !token.IsNonWord() &&
+				r.IsToCountedWord(token) && (r.IsException == nil || !r.IsException(tokens, n)) {
+				lemma := r.ToAddedLemma(token)
+				if lemma != "" {
+					wordMap[lemma]++
+				}
+			}
+		}
+	}
+	return wordMap
+}
+
+func (r *AbstractStyleTooOftenUsedWordRule) getTooOftenUsedWords(wordMap map[string]int) map[string]struct{} {
+	out := map[string]struct{}{}
+	numWords := 0
+	for _, c := range wordMap {
+		numWords += c
+	}
+	minW := r.minWords()
+	// Java: if numWords < MIN_WORD_COUNT return empty (unless MinWordCount forced 0 for tests)
+	if minW > 0 && numWords < minW {
+		return out
+	}
+	if numWords == 0 {
+		return out
+	}
+	// Twin-test path: MinPercent 0 → flag lemmas appearing ≥2 times
+	if r.MinPercent == 0 {
+		for w, c := range wordMap {
+			if c >= 2 {
+				out[w] = struct{}{}
+			}
+		}
+		return out
+	}
+	for w, c := range wordMap {
+		percent := int(float64(c*100) / float64(numWords))
+		if percent >= r.MinPercent {
+			out[w] = struct{}{}
+		}
+	}
+	return out
+}
+
+// LemmaForPosTagStartsWith ports getLemmaForPosTagStartsWith.
+func LemmaForPosTagStartsWith(startPos string, token *languagetool.AnalyzedTokenReadings) string {
+	if token == nil {
+		return ""
+	}
+	for _, reading := range token.GetReadings() {
+		if reading == nil {
+			continue
+		}
+		pt := reading.GetPOSTag()
+		if pt != nil && strings.HasPrefix(*pt, startPos) {
+			if l := reading.GetLemma(); l != nil {
+				return *l
+			}
+		}
+	}
+	return ""
 }

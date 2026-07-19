@@ -33,6 +33,23 @@ func TestGermanHelper_HasReadingOfType(t *testing.T) {
 	require.False(t, HasReadingOfType(readings, POSNomen))
 }
 
+func TestGermanHelper_PosTypeFromAnalyzedGermanToken(t *testing.T) {
+	// Java AnalyzedGermanToken type resolution
+	sub := "SUB:NOM:SIN:NEU"
+	require.Equal(t, POSNomen, posTypeFromAnalyzedGermanToken(&sub))
+	eig := "EIG:NOM:SIN:MAS"
+	require.Equal(t, POSProperNoun, posTypeFromAnalyzedGermanToken(&eig))
+	// PA2 overrides earlier type when present as a part
+	pa := "VER:PA2:SFT"
+	require.Equal(t, POSPartizip, posTypeFromAnalyzedGermanToken(&pa))
+	// short tags (<3 parts) → no type
+	adv := "ADV"
+	require.Equal(t, POSOther, posTypeFromAnalyzedGermanToken(&adv))
+	// ADJ not PA
+	adj := "ADJ:NOM:SIN:NEU:GRU:SOL"
+	require.Equal(t, POSAdjective, posTypeFromAnalyzedGermanToken(&adj))
+}
+
 func TestGermanHelper_GetNounFields(t *testing.T) {
 	require.Equal(t, "AKK", GetNounCase("SUB:AKK:SIN:NEU"))
 	require.Equal(t, "SIN", GetNounNumber("SUB:AKK:SIN:NEU"))

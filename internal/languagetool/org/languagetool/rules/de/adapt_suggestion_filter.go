@@ -1,228 +1,198 @@
 package de
 
 import (
+	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// AdaptSuggestionFilter ports surface determiner adaptation from
-// org.languagetool.rules.de.AdaptSuggestionFilter without a full synthesizer/tagger.
+// AdaptSuggestionFilter ports org.languagetool.rules.de.AdaptSuggestionFilter.
+// Java uses GermanTagger + GermanSynthesizer + AgreementRule SuggestionFilter.
 //
-// GenderOf looks up noun gender ("MAS"|"FEM"|"NEU"); when nil, a small built-in
-// table covers common test/demo nouns. Full GermanTagger integration is deferred.
+// GenderOf ports getNounGender (tag noun → MAS|FEM|NEU). Nil → fail-closed empty adapts.
+// Synthesize ports GermanSynthesizer.synthesize(token, postagRE, true). Nil → fail-closed.
+// FilterSuggestions ports SuggestionFilter.filter (optional; nil keeps adapted suggestions as-is).
 type AdaptSuggestionFilter struct {
-	GenderOf func(word string) string
+	GenderOf          func(word string) string
+	Synthesize        func(lemma, postagRE string) []string
+	FilterSuggestions func(suggs []string, template string) []string
 }
 
 func NewAdaptSuggestionFilter() *AdaptSuggestionFilter {
 	return &AdaptSuggestionFilter{}
 }
 
-// DetReading is a simplified AnalyzedToken for determiner adaptation tests.
+var (
+	masFemNeuPattern  = regexp.MustCompile(`MAS|FEM|NEU`)
+	artProBasePattern = regexp.MustCompile(`^(ART|PRO):`)
+)
+
+// DetReading is one determiner reading for unit tests of getAdaptedDet.
 type DetReading struct {
 	Token string
 	POS   string // e.g. ART:DEF:NOM:SIN:FEM
 	Lemma string
 }
 
-// AdaptedDet ports getAdaptedDet: returns determiner forms matching repl gender.
+// AdaptedDet ports getAdaptedDet for a simplified single-reading determiner.
 func (f *AdaptSuggestionFilter) AdaptedDet(det DetReading, repl string) []string {
-	gender := f.gender(repl)
-	if gender == "" || det.Lemma == "" {
+	if f == nil {
 		return nil
 	}
-	caseNum := parseCaseNumber(det.POS)
-	if caseNum == "" {
-		return nil
-	}
-	forms := synthesizeDet(det.Lemma, caseNum, gender)
-	var out []string
-	first, _ := utf8.DecodeRuneInString(det.Token)
-	for _, s := range forms {
-		if s == "" {
-			continue
-		}
-		// Keep possessive family: mein→mein*, not dein*.
-		sf, _ := utf8.DecodeRuneInString(s)
-		df := first
-		if unicode.IsUpper(first) {
-			if unicode.ToLower(sf) != unicode.ToLower(df) {
-				continue
-			}
-			out = append(out, uppercaseFirst(s))
-		} else {
-			if sf != df {
-				continue
-			}
-			out = append(out, s)
-		}
-	}
-	return uniqueStrings(out)
+	return f.getAdaptedDet(detReadingToATR(det), repl)
 }
 
 // SuggestWithDet rewrites "det + noun" suggestions when the previous token is a det.
-// prevToken is the surface determiner; replacements are candidate nouns.
-func (f *AdaptSuggestionFilter) SuggestWithDet(prevToken string, prevPOS string, prevLemma string, replacements []string) []string {
-	det := DetReading{Token: prevToken, POS: prevPOS, Lemma: prevLemma}
+func (f *AdaptSuggestionFilter) SuggestWithDet(prevToken, prevPOS, prevLemma string, replacements []string) []string {
+	if f == nil {
+		return nil
+	}
+	return f.SuggestWithDetFromATR(detReadingToATR(DetReading{Token: prevToken, POS: prevPOS, Lemma: prevLemma}), replacements)
+}
+
+// SuggestWithDetFromATR ports the detNoun branch suggestion building.
+func (f *AdaptSuggestionFilter) SuggestWithDetFromATR(prev *languagetool.AnalyzedTokenReadings, replacements []string) []string {
+	if f == nil || prev == nil {
+		return nil
+	}
 	var out []string
+	seen := map[string]struct{}{}
 	for _, repl := range replacements {
-		for _, ad := range f.AdaptedDet(det, repl) {
+		for _, ad := range f.getAdaptedDet(prev, repl) {
 			s := ad + " " + repl
+			if _, ok := seen[s]; ok {
+				continue
+			}
+			seen[s] = struct{}{}
 			out = append(out, s)
 		}
 	}
-	return uniqueStrings(out)
+	return out
 }
 
-func (f *AdaptSuggestionFilter) gender(word string) string {
-	if f.GenderOf != nil {
-		if g := f.GenderOf(word); g != "" {
-			return g
+// AcceptRuleMatch ports AdaptSuggestionFilter.acceptRuleMatch (active det+noun path only).
+// Java detAdjNoun branch is disabled (&& false) — not ported (would be invent).
+func (f *AdaptSuggestionFilter) AcceptRuleMatch(match *rules.RuleMatch, _ map[string]string, patternTokenPos int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	var newSugg []string
+	var newMatch *rules.RuleMatch
+	if patternTokenPos > 0 && match.Sentence != nil {
+		tokens := match.Sentence.GetTokensWithoutWhitespace()
+		if patternTokenPos-1 < len(tokens) {
+			prevToken := tokens[patternTokenPos-1]
+			if prevToken != nil && (prevToken.HasPosTagStartingWith("ART:") || prevToken.HasPosTagStartingWith("PRO:")) {
+				newMatch = rules.NewRuleMatch(match.GetRule(), match.Sentence, prevToken.GetStartPos(), match.GetToPos(), match.GetMessage())
+				newMatch.ShortMessage = match.ShortMessage
+				newSugg = f.SuggestWithDetFromATR(prevToken, match.GetSuggestedReplacements())
+				newMatch.SetSuggestedReplacements(newSugg)
+			}
 		}
 	}
-	return defaultNounGender(word)
+	// Java: SuggestionFilter via AgreementRule when newSugg non-empty.
+	if len(newSugg) > 0 && newMatch != nil {
+		if f.FilterSuggestions != nil {
+			tpl := "Das ist {}."
+			if tools.StartsWithUppercase(newSugg[0]) {
+				tpl = "{} ist das."
+			}
+			newSugg = f.FilterSuggestions(newSugg, tpl)
+			newMatch.SetSuggestedReplacements(newSugg)
+		}
+		return newMatch
+	}
+	return match
 }
 
-// defaultNounGender is a tiny surface stand-in for GermanTagger.
-func defaultNounGender(word string) string {
-	w := strings.TrimSpace(word)
-	// Common demo/test nouns from AdaptSuggestionFilterTest.
-	switch w {
-	case "Mann", "Plan", "Tisch", "Baum", "Hund", "Tag", "Name":
-		return "MAS"
-	case "Frau", "Idee", "Roadmap", "Katze", "Zeit", "Stadt", "Blume":
-		return "FEM"
-	case "Kind", "Verfahren", "Haus", "Buch", "Auto", "Mädchen", "Tier":
-		return "NEU"
+// getAdaptedDet ports AdaptSuggestionFilter.getAdaptedDet.
+func (f *AdaptSuggestionFilter) getAdaptedDet(detToken *languagetool.AnalyzedTokenReadings, repl string) []string {
+	if f == nil || detToken == nil || f.GenderOf == nil || f.Synthesize == nil {
+		return nil
 	}
-	// Heuristic suffixes (weak).
-	lw := strings.ToLower(w)
-	switch {
-	case strings.HasSuffix(lw, "ung"), strings.HasSuffix(lw, "heit"),
-		strings.HasSuffix(lw, "keit"), strings.HasSuffix(lw, "schaft"),
-		strings.HasSuffix(lw, "ion"), strings.HasSuffix(lw, "tät"),
-		strings.HasSuffix(lw, "ik"), strings.HasSuffix(lw, "ei"):
-		return "FEM"
-	case strings.HasSuffix(lw, "chen"), strings.HasSuffix(lw, "lein"),
-		strings.HasSuffix(lw, "ment"), strings.HasSuffix(lw, "tum"),
-		strings.HasSuffix(lw, "um"):
-		return "NEU"
-	case strings.HasSuffix(lw, "er"), strings.HasSuffix(lw, "ling"),
-		strings.HasSuffix(lw, "ismus"):
-		return "MAS"
+	oldDetBaseform := getBaseform(detToken, artProBasePattern)
+	replGender := f.GenderOf(repl)
+	if replGender == "" || oldDetBaseform == "" {
+		return nil
 	}
-	return ""
-}
+	var result []string
+	detSurface := detToken.GetToken()
+	isTitle := tools.StartsWithUppercase(detSurface)
+	firstRune, _ := utf8.DecodeRuneInString(detSurface)
+	firstStr := string(firstRune)
+	firstLower := strings.ToLower(firstStr)
 
-// parseCaseNumber extracts CASE:NUMBER from ART/PRO tags (…:NOM:SIN:FEM).
-func parseCaseNumber(pos string) string {
-	if pos == "" {
-		return ""
-	}
-	parts := strings.Split(pos, ":")
-	// ART:DEF:NOM:SIN:FEM or PRO:POS:NOM:SIN:MAS:BEG
-	if len(parts) < 5 {
-		return ""
-	}
-	// find CASE (NOM|AKK|GEN|DAT) and NUMBER (SIN|PLU)
-	var cas, num string
-	for _, p := range parts {
-		switch p {
-		case "NOM", "AKK", "GEN", "DAT":
-			cas = p
-		case "SIN", "PLU":
-			num = p
+	for _, reading := range detToken.GetReadings() {
+		if reading == nil || reading.GetPOSTag() == nil {
+			continue
+		}
+		pos := *reading.GetPOSTag()
+		if !strings.HasPrefix(pos, "ART:") && !strings.HasPrefix(pos, "PRO:") {
+			continue
+		}
+		// Java: replaceAll MAS|FEM|NEU with gender; BEG → (BEG|B/S); strip :STV
+		newDetPos := masFemNeuPattern.ReplaceAllString(pos, replGender)
+		newDetPos = strings.ReplaceAll(newDetPos, "BEG", "(BEG|B/S)")
+		newDetPos = strings.ReplaceAll(newDetPos, ":STV", "")
+		for _, s := range f.Synthesize(oldDetBaseform, newDetPos) {
+			if s == "" {
+				continue
+			}
+			if isTitle {
+				// Java: s.toLowerCase().startsWith(det first char lower)
+				if !strings.HasPrefix(strings.ToLower(s), firstLower) {
+					continue
+				}
+				result = append(result, tools.UppercaseFirstChar(s))
+			} else {
+				// Java: s.startsWith(detToken.getToken().substring(0, 1))
+				if firstStr != "" && !strings.HasPrefix(s, firstStr) {
+					continue
+				}
+				result = append(result, s)
+			}
 		}
 	}
-	if cas == "" || num == "" {
+	return uniqueStrings(result)
+}
+
+func detReadingToATR(det DetReading) *languagetool.AnalyzedTokenReadings {
+	var pos, lemma *string
+	if det.POS != "" {
+		p := det.POS
+		pos = &p
+	}
+	if det.Lemma != "" {
+		l := det.Lemma
+		lemma = &l
+	}
+	return languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken(det.Token, pos, lemma), 0)
+}
+
+// getBaseform ports AdaptSuggestionFilter.getBaseform(token, tagStartsWith regex).
+func getBaseform(token *languagetool.AnalyzedTokenReadings, tagStartsWith *regexp.Regexp) string {
+	if token == nil {
 		return ""
 	}
-	return cas + ":" + num
-}
-
-// synthesizeDet returns surface forms for common German dets/possessives.
-// lemma is the base (der, ein, mein, dein, …).
-func synthesizeDet(lemma, caseNum, gender string) []string {
-	key := lemma + "|" + caseNum + "|" + gender
-	if forms, ok := detSynthTable[key]; ok {
-		return append([]string(nil), forms...)
+	var baseform string
+	for _, reading := range token.GetReadings() {
+		if reading == nil || reading.GetPOSTag() == nil {
+			continue
+		}
+		pos := *reading.GetPOSTag()
+		if tagStartsWith.MatchString(pos) {
+			if reading.GetLemma() != nil {
+				baseform = *reading.GetLemma()
+			}
+		}
 	}
-	// Also try lower lemma
-	key = strings.ToLower(lemma) + "|" + caseNum + "|" + gender
-	if forms, ok := detSynthTable[key]; ok {
-		return append([]string(nil), forms...)
-	}
-	return nil
-}
-
-// detSynthTable approximates GermanSynthesizer for ART/PRO used in AdaptSuggestion tests.
-// Keys: lemma|CASE:NUM|GENDER → forms
-var detSynthTable = map[string][]string{
-	// definite article "der"
-	"der|NOM:SIN|MAS": {"der"},
-	"der|AKK:SIN|MAS": {"den"},
-	"der|GEN:SIN|MAS": {"des"},
-	"der|DAT:SIN|MAS": {"dem"},
-	"der|NOM:SIN|FEM": {"die"},
-	"der|AKK:SIN|FEM": {"die"},
-	"der|GEN:SIN|FEM": {"der"},
-	"der|DAT:SIN|FEM": {"der"},
-	"der|NOM:SIN|NEU": {"das"},
-	"der|AKK:SIN|NEU": {"das"},
-	"der|GEN:SIN|NEU": {"des"},
-	"der|DAT:SIN|NEU": {"dem"},
-	"der|NOM:PLU|MAS": {"die"}, "der|NOM:PLU|FEM": {"die"}, "der|NOM:PLU|NEU": {"die"},
-	"der|AKK:PLU|MAS": {"die"}, "der|AKK:PLU|FEM": {"die"}, "der|AKK:PLU|NEU": {"die"},
-	"der|DAT:PLU|MAS": {"den"}, "der|DAT:PLU|FEM": {"den"}, "der|DAT:PLU|NEU": {"den"},
-	"der|GEN:PLU|MAS": {"der"}, "der|GEN:PLU|FEM": {"der"}, "der|GEN:PLU|NEU": {"der"},
-
-	// indefinite "ein"
-	"ein|NOM:SIN|MAS": {"ein"},
-	"ein|AKK:SIN|MAS": {"einen"},
-	"ein|GEN:SIN|MAS": {"eines"},
-	"ein|DAT:SIN|MAS": {"einem"},
-	"ein|NOM:SIN|FEM": {"eine"},
-	"ein|AKK:SIN|FEM": {"eine"},
-	"ein|GEN:SIN|FEM": {"einer"},
-	"ein|DAT:SIN|FEM": {"einer"},
-	"ein|NOM:SIN|NEU": {"ein"},
-	"ein|AKK:SIN|NEU": {"ein"},
-	"ein|GEN:SIN|NEU": {"eines"},
-	"ein|DAT:SIN|NEU": {"einem"},
-
-	// possessives (lemma is the stem used by LT: mein/dein/sein/ihr/unser/euer)
-	"mein|NOM:SIN|MAS": {"mein"}, "mein|AKK:SIN|MAS": {"meinen"}, "mein|GEN:SIN|MAS": {"meines"}, "mein|DAT:SIN|MAS": {"meinem"},
-	"mein|NOM:SIN|FEM": {"meine"}, "mein|AKK:SIN|FEM": {"meine"}, "mein|GEN:SIN|FEM": {"meiner"}, "mein|DAT:SIN|FEM": {"meiner"},
-	"mein|NOM:SIN|NEU": {"mein"}, "mein|AKK:SIN|NEU": {"mein"}, "mein|GEN:SIN|NEU": {"meines"}, "mein|DAT:SIN|NEU": {"meinem"},
-
-	"dein|NOM:SIN|MAS": {"dein"}, "dein|AKK:SIN|MAS": {"deinen"}, "dein|GEN:SIN|MAS": {"deines"}, "dein|DAT:SIN|MAS": {"deinem"},
-	"dein|NOM:SIN|FEM": {"deine"}, "dein|AKK:SIN|FEM": {"deine"}, "dein|GEN:SIN|FEM": {"deiner"}, "dein|DAT:SIN|FEM": {"deiner"},
-	"dein|NOM:SIN|NEU": {"dein"}, "dein|AKK:SIN|NEU": {"dein"}, "dein|GEN:SIN|NEU": {"deines"}, "dein|DAT:SIN|NEU": {"deinem"},
-
-	"sein|NOM:SIN|MAS": {"sein"}, "sein|AKK:SIN|MAS": {"seinen"}, "sein|GEN:SIN|MAS": {"seines"}, "sein|DAT:SIN|MAS": {"seinem"},
-	"sein|NOM:SIN|FEM": {"seine"}, "sein|AKK:SIN|FEM": {"seine"}, "sein|GEN:SIN|FEM": {"seiner"}, "sein|DAT:SIN|FEM": {"seiner"},
-	"sein|NOM:SIN|NEU": {"sein"}, "sein|AKK:SIN|NEU": {"sein"}, "sein|GEN:SIN|NEU": {"seines"}, "sein|DAT:SIN|NEU": {"seinem"},
-
-	"ihr|NOM:SIN|MAS": {"ihr"}, "ihr|AKK:SIN|MAS": {"ihren"}, "ihr|GEN:SIN|MAS": {"ihres"}, "ihr|DAT:SIN|MAS": {"ihrem"},
-	"ihr|NOM:SIN|FEM": {"ihre"}, "ihr|AKK:SIN|FEM": {"ihre"}, "ihr|GEN:SIN|FEM": {"ihrer"}, "ihr|DAT:SIN|FEM": {"ihrer"},
-	"ihr|NOM:SIN|NEU": {"ihr"}, "ihr|AKK:SIN|NEU": {"ihr"}, "ihr|GEN:SIN|NEU": {"ihres"}, "ihr|DAT:SIN|NEU": {"ihrem"},
-
-	"unser|NOM:SIN|MAS": {"unser"}, "unser|AKK:SIN|MAS": {"unseren"}, "unser|GEN:SIN|MAS": {"unseres"}, "unser|DAT:SIN|MAS": {"unserem"},
-	"unser|NOM:SIN|FEM": {"unsere"}, "unser|AKK:SIN|FEM": {"unsere"}, "unser|GEN:SIN|FEM": {"unserer"}, "unser|DAT:SIN|FEM": {"unserer"},
-	"unser|NOM:SIN|NEU": {"unser"}, "unser|AKK:SIN|NEU": {"unser"}, "unser|GEN:SIN|NEU": {"unseres"}, "unser|DAT:SIN|NEU": {"unserem"},
-
-	"euer|NOM:SIN|MAS": {"euer"}, "euer|AKK:SIN|MAS": {"euren"}, "euer|GEN:SIN|MAS": {"eures"}, "euer|DAT:SIN|MAS": {"eurem"},
-	"euer|NOM:SIN|FEM": {"eure"}, "euer|AKK:SIN|FEM": {"eure"}, "euer|GEN:SIN|FEM": {"eurer"}, "euer|DAT:SIN|FEM": {"eurer"},
-	"euer|NOM:SIN|NEU": {"euer"}, "euer|AKK:SIN|NEU": {"euer"}, "euer|GEN:SIN|NEU": {"eures"}, "euer|DAT:SIN|NEU": {"eurem"},
-}
-
-func uppercaseFirst(s string) string {
-	if s == "" {
-		return s
-	}
-	r, size := utf8.DecodeRuneInString(s)
-	return string(unicode.ToUpper(r)) + s[size:]
+	return baseform
 }
 
 func uniqueStrings(in []string) []string {
@@ -236,73 +206,4 @@ func uniqueStrings(in []string) []string {
 		out = append(out, s)
 	}
 	return out
-}
-
-// SuggestWithDetAdj rewrites "det + adj + noun" suggestions (synthesizer soft-deferred).
-// Adjective is weakly inflected after a definite/indefinite determiner using a small ending table.
-func (f *AdaptSuggestionFilter) SuggestWithDetAdj(prevDet, prevDetPOS, prevDetLemma, prevAdj string, replacements []string) []string {
-	var out []string
-	for _, repl := range replacements {
-		dets := f.AdaptedDet(DetReading{Token: prevDet, POS: prevDetPOS, Lemma: prevDetLemma}, repl)
-		gender := f.gender(repl)
-		caseNum := parseCaseNumber(prevDetPOS)
-		adjForms := weakAdjForms(prevAdj, caseNum, gender)
-		if len(dets) == 0 {
-			dets = []string{prevDet}
-		}
-		if len(adjForms) == 0 {
-			adjForms = []string{prevAdj}
-		}
-		for _, d := range dets {
-			for _, a := range adjForms {
-				out = append(out, d+" "+a+" "+repl)
-			}
-		}
-	}
-	return uniqueStrings(out)
-}
-
-// weakAdjForms approximates weak adjective endings after a determiner.
-func weakAdjForms(adj, caseNum, gender string) []string {
-	stem := adjStem(adj)
-	if stem == "" || caseNum == "" || gender == "" {
-		return nil
-	}
-	end := weakAdjEnding(caseNum, gender)
-	if end == "" {
-		return nil
-	}
-	return []string{stem + end}
-}
-
-func adjStem(adj string) string {
-	// strip common strong/weak endings to get stem
-	for _, suf := range []string{"en", "em", "er", "es", "e"} {
-		if strings.HasSuffix(adj, suf) && len(adj) > len(suf)+2 {
-			return adj[:len(adj)-len(suf)]
-		}
-	}
-	return adj
-}
-
-func weakAdjEnding(caseNum, gender string) string {
-	// weak: after der/die/das/ein… typically -e or -en
-	switch caseNum {
-	case "NOM:SIN":
-		if gender == "MAS" || gender == "NEU" || gender == "FEM" {
-			return "e"
-		}
-	case "AKK:SIN":
-		if gender == "MAS" {
-			return "en"
-		}
-		return "e"
-	case "DAT:SIN", "GEN:SIN":
-		return "en"
-	case "NOM:PLU", "AKK:PLU":
-		return "en"
-	case "DAT:PLU", "GEN:PLU":
-		return "en"
-	}
-	return "e"
 }

@@ -9,8 +9,10 @@ import (
 )
 
 // DuUpperLowerCaseRule ports org.languagetool.rules.de.DuUpperLowerCaseRule.
+// Java: CASING, setUrl.
 type DuUpperLowerCaseRule struct {
 	Messages map[string]string
+	Category *rules.Category
 }
 
 var duLowerWords = map[string]struct{}{
@@ -26,10 +28,32 @@ var duSkipPrev = map[string]struct{}{
 }
 
 func NewDuUpperLowerCaseRule(messages map[string]string) *DuUpperLowerCaseRule {
-	return &DuUpperLowerCaseRule{Messages: messages}
+	return &DuUpperLowerCaseRule{
+		Messages: messages,
+		Category: rules.CatCasing.GetCategory(messages),
+	}
 }
 
 func (r *DuUpperLowerCaseRule) GetID() string { return "DE_DU_UPPER_LOWER" }
+
+func (r *DuUpperLowerCaseRule) GetDescription() string {
+	return "Einheitliche Verwendung von Du/du, Dir/dir etc."
+}
+
+// GetURL ports DuUpperLowerCaseRule constructor setUrl.
+func (r *DuUpperLowerCaseRule) GetURL() string {
+	return "https://languagetool.org/insights/de/beitrag/duzen-grossgeschrieben/"
+}
+
+func (r *DuUpperLowerCaseRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// MinToCheckParagraph ports TextLevelRule.minToCheckParagraph (Java returns -1).
+func (r *DuUpperLowerCaseRule) MinToCheckParagraph() int { return -1 }
 
 func (r *DuUpperLowerCaseRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	var firstUse string

@@ -4,6 +4,8 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // TextToNumberFilter ports org.languagetool.rules.AbstractTextToNumberFilter.
@@ -20,6 +22,31 @@ type TextToNumberFilter struct {
 	Tokenize func(s string) []string
 	// FormatResult post-processes the numeric string (CA: '.' → ','). Nil → identity.
 	FormatResult func(s string) string
+}
+
+// AcceptRuleMatch ports AbstractTextToNumberFilter.acceptRuleMatch.
+// Adds the numeric form as a suggested replacement and returns the match.
+func (f *TextToNumberFilter) AcceptRuleMatch(match *RuleMatch, _ map[string]string, _ int,
+	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *RuleMatch {
+	if f == nil || match == nil {
+		return nil
+	}
+	tokens := make([]string, len(patternTokens))
+	starts := make([]int, len(patternTokens))
+	ends := make([]int, len(patternTokens))
+	for i, t := range patternTokens {
+		if t == nil {
+			continue
+		}
+		tokens[i] = t.GetToken()
+		starts[i] = t.GetStartPos()
+		ends[i] = t.GetEndPos()
+	}
+	sugg := f.Convert(tokens, match.GetFromPos(), match.GetToPos(), starts, ends)
+	// Java: ruleMatch.addSuggestedReplacement(sugg)
+	reps := match.GetSuggestedReplacements()
+	match.SetSuggestedReplacements(append(append([]string(nil), reps...), sugg))
+	return match
 }
 
 // Convert parses written-out numbers inside a match span and returns the formatted

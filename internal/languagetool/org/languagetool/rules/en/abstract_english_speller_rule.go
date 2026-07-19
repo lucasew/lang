@@ -3,7 +3,11 @@ package en
 import (
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // English spelling resource paths used by AbstractEnglishSpellerRule.
@@ -13,15 +17,6 @@ const (
 	EnglishMultiwordsFile     = "/en/multiwords.txt"
 )
 
-// EnglishDoNotSuggestWords ports the NOSUGGEST / blocked list (subset).
-var EnglishDoNotSuggestWords = map[string]struct{}{
-	"asshole": {}, "assholes": {}, "bullshit": {}, "cunt": {},
-	"germane": {}, "double check": {}, "flat screen": {},
-	"full time": {}, "part time": {}, "java script": {}, "off topic": {},
-	"hard coding": {}, "hard coded": {}, "fine tune": {}, "fine tuned": {},
-	"fine tuning": {}, "hands free": {},
-}
-
 // AbstractEnglishSpellerRule ports
 // org.languagetool.rules.en.AbstractEnglishSpellerRule surface over MorfologikSpellerRule.
 type AbstractEnglishSpellerRule struct {
@@ -29,6 +24,10 @@ type AbstractEnglishSpellerRule struct {
 	LanguageShortCode string // e.g. "en"
 	// VariantCode for file paths (en-US etc.).
 	VariantCode string
+	// Synthesize optional English synthesizer for irregular-form suggestions (fail-closed when nil).
+	Synthesize SynthesizeFn
+	// IsValidInOtherVariantFn ports isValidInOtherVariant (variant spellers set this).
+	IsValidInOtherVariantFn func(word string) *VariantInfo
 }
 
 func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.MorfologikSpeller) *AbstractEnglishSpellerRule {
@@ -39,11 +38,102 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 		short = variantCode
 	}
 	base := morfologik.NewMorfologikSpellerRule(id, short, "", speller)
+	// Java AbstractEnglishSpellerRule: setCheckCompound(true) with default compoundRegex "-"
+	base.SetCheckCompound(true)
+	// Java AbstractEnglishSpellerRule: super.ignoreWordsWithLength = 1
+	// tokenizeNewWords() = false — re-load lists as whole-line ignores.
+	if base.SpellingCheckRule != nil {
+		base.IgnoreWordsWithLength = 1
+		base.DisableTokenizeNewWords = true
+		spelling.ReapplyDefaultSpellingWordLists(base.SpellingCheckRule)
+		// Java AbstractEnglishSpellerRule.filterNoSuggestWords (lcDoNotSuggestWords).
+		base.FilterNoSuggestWordsFn = filterEnglishNoSuggestWords
+		// Java filterSuggestions CONTAINS_TOKEN arm after super.
+		base.FilterSuggestionsExtraFn = filterEnglishContainsToken
+		// Java getOnlySuggestions early-return in calcSpellerSuggestions.
+		base.GetOnlySuggestionsFn = EnglishOnlySuggestions
+		// Java getAdditionalTopSuggestions curated maps + ys→ies.
+		base.GetAdditionalTopSuggestionsFn = func(existing []string, word string) []string {
+			return EnglishAdditionalTopSuggestions(word, base.IsMisspelled)
+		}
+		// Java addHyphenSuggestions for multi-part hyphenated misspellings.
+		base.AddHyphenSuggestionsFn = func(parts []string) []string {
+			return EnglishAddHyphenSuggestions(parts, base.IsMisspelled, func(w string) []string {
+				if base.Speller == nil {
+					return nil
+				}
+				return base.Speller.FindReplacements(w)
+			})
+		}
+	}
 	return &AbstractEnglishSpellerRule{
 		MorfologikSpellerRule: base,
 		LanguageShortCode:     short,
 		VariantCode:           variantCode,
 	}
+}
+
+// Match ports parent Match + getRuleMatches irregular forms / other-variant rewrite.
+func (r *AbstractEnglishSpellerRule) Match(sentence *languagetool.AnalyzedSentence) ([]*rules.RuleMatch, error) {
+	if r == nil || r.MorfologikSpellerRule == nil {
+		return nil, nil
+	}
+	base, err := r.MorfologikSpellerRule.Match(sentence)
+	if err != nil || len(base) == 0 {
+		return base, err
+	}
+	for _, m := range base {
+		if m == nil {
+			continue
+		}
+		word := matchSurfaceEN(m, sentence)
+		if word == "" {
+			continue
+		}
+		// Java: irregular forms preferred over dialect variant
+		if forms := EnglishIrregularForms(word, r.IsMisspelled, r.Synthesize); forms != nil && len(forms.Forms) > 0 {
+			m.SetSuggestedReplacements(append([]string(nil), forms.Forms...))
+			continue
+		}
+		if vi := r.isValidInOtherVariant(word); vi != nil {
+			sug := vi.GetOtherVariant()
+			if tools.StartsWithUppercase(word) {
+				sug = tools.UppercaseFirstChar(sug)
+			}
+			m.SetSuggestedReplacements([]string{sug})
+		}
+		// Java: setLazySuggestedReplacements(() -> cleanSuggestions(m))
+		if sugs := m.GetSuggestedReplacements(); len(sugs) > 0 {
+			m.SetSuggestedReplacements(EnglishCleanSuggestions(sugs))
+		}
+	}
+	return base, nil
+}
+
+func (r *AbstractEnglishSpellerRule) isValidInOtherVariant(word string) *VariantInfo {
+	if r == nil || r.IsValidInOtherVariantFn == nil {
+		return nil
+	}
+	return r.IsValidInOtherVariantFn(word)
+}
+
+func matchSurfaceEN(m *rules.RuleMatch, sent *languagetool.AnalyzedSentence) string {
+	if m == nil || sent == nil {
+		return ""
+	}
+	text := sent.GetText()
+	from, to := m.GetFromPos(), m.GetToPos()
+	if from < 0 || from >= to {
+		return ""
+	}
+	runes := []rune(text)
+	if to <= len(runes) {
+		return string(runes[from:to])
+	}
+	if to <= len(text) {
+		return text[from:to]
+	}
+	return ""
 }
 
 // GetAdditionalSpellingFileNames ports getAdditionalSpellingFileNames.
@@ -62,7 +152,7 @@ func IsDoNotSuggest(word string) bool {
 	return ok
 }
 
-// FilterSuggestions drops blocked suggestions.
+// FilterEnglishSuggestions drops blocked suggestions (NOSUGGEST list).
 func FilterEnglishSuggestions(suggestions []string) []string {
 	var out []string
 	for _, s := range suggestions {
@@ -72,4 +162,9 @@ func FilterEnglishSuggestions(suggestions []string) []string {
 		out = append(out, s)
 	}
 	return out
+}
+
+// filterEnglishNoSuggestWords ports AbstractEnglishSpellerRule.filterNoSuggestWords.
+func filterEnglishNoSuggestWords(suggestions []string) []string {
+	return FilterEnglishSuggestions(suggestions)
 }

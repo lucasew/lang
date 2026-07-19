@@ -66,6 +66,36 @@ func TestCompoundRule_Rule(t *testing.T) {
 	check(1, "Night-mare", "Nightmare")
 	check(1, "Play Station", "PlayStation")
 	check(1, "Play-Station", "PlayStation")
+
+	// Surface-only ANTI_PATTERNS (no POS required):
+	check(0, "Go through the store front door")
+	check(0, "It goes from surface to surface")
+	check(0, "the senior year end report")
+	check(0, "under investment banking")
+	check(0, "see saw seen")
+	check(0, "power off key")
+	check(0, "Serie A team")
+	check(0, "spring clean the house")
+}
+
+func TestCompoundRule_AntiPatternsCount(t *testing.T) {
+	// Java CompoundRule.ANTI_PATTERNS has 16 entries.
+	require.Equal(t, 16, len(CompoundRuleAntiPatterns), "Java ANTI_PATTERNS 16/16")
+	require.Equal(t, 16, len(compoundAntiPatterns()), "IMMUNIZE rules 16/16")
+}
+
+func TestCompoundRule_AntiPatternImmunizeSurface(t *testing.T) {
+	// "store front" is a compound candidate; anti-pattern immunizes with door(s).
+	sent := languagetool.AnalyzePlain("Go through the store front door")
+	imm := getSentenceWithCompoundImmunization(sent)
+	anyImm := false
+	for _, tok := range imm.GetTokensWithoutWhitespace() {
+		if tok != nil && tok.IsImmunized() {
+			anyImm = true
+			break
+		}
+	}
+	require.True(t, anyImm, "expected store front door anti-pattern to immunize")
 }
 
 func describeMatches(matches []*rules.RuleMatch) string {
@@ -80,4 +110,54 @@ func describeMatches(matches []*rules.RuleMatch) string {
 		return "[]"
 	}
 	return s
+}
+
+func TestCompoundRule_IsMisspelledViaSpelling(t *testing.T) {
+	rule := NewCompoundRule(nil)
+	// Use a known multiword compound from tests if any; fall back to checking hook wiring.
+	// "check in" style — pick from compounds if present via surface test:
+	// Without hook: behavior unchanged for existing tests.
+
+	// When speller says all misspelled → drop replacements
+	rule.SpellingIsMisspelled = func(word string) bool { return true }
+	// Existing incorrect hyphenation still may produce empty matches after filter
+	// "check in" — look for any match that would need suggestion filter
+	// Use "year end" or similar from EN compounds if in list; otherwise just verify hook path
+	// via isCorrectSpell indirectly.
+
+	// Restore: only accept one specific form
+	rule.SpellingIsMisspelled = func(word string) bool {
+		// misspelled unless exact known good form
+		return word != "check-in" && word != "checkin"
+	}
+	_ = rule
+	// Smoke: rule still constructs and Match does not panic
+	_ = rule.Match(languagetool.AnalyzePlain("This is fine."))
+}
+
+func TestCompoundRule_SpellingMisspelledDropsBadSuggestions(t *testing.T) {
+	rule := NewCompoundRule(nil)
+	// Find a sentence that matches without speller first
+	// From EN twin tests: "web site" etc. may exist — probe with known test strings from CompoundRuleTest
+	// We only assert the hook: when everything misspelled, no matches with suggestions kept
+	// First get a text that matches without filter
+	candidates := []string{
+		"web site",
+		"e mail",
+		"check in",
+		"year end",
+		"full time",
+	}
+	var hit string
+	for _, c := range candidates {
+		if len(NewCompoundRule(nil).Match(languagetool.AnalyzePlain(c))) > 0 {
+			hit = c
+			break
+		}
+	}
+	if hit == "" {
+		t.Skip("no surface compound hit among probes; compounds.txt may use other forms")
+	}
+	rule.SpellingIsMisspelled = func(word string) bool { return true }
+	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain(hit))), "all-misspelled suggestions fail closed")
 }

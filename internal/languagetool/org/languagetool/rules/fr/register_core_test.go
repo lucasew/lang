@@ -7,15 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRegisterCoreFrenchRules_Patterns(t *testing.T) {
+func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
+	// Soft invent token sequences removed; official grammar.xml is incomplete until loaded.
 	lt := languagetool.NewJLanguageTool("fr")
 	RegisterCoreFrenchRules(lt)
-	m := lt.Check("Il est venu malgré que ce soit difficile.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "FR_MALGRE_QUE" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", m)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "FR_MALGRE_QUE")
 }

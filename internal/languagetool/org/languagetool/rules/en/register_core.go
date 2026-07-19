@@ -12,6 +12,18 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	// Java English / BritishEnglish.getPriorityForId + filterRuleMatches (hooks from language init).
+	// en-GB uses BritishEnglish id2prio (Oxford spelling) then English super.
+	if languagetool.EnglishPriorityForIdForCodeHook != nil {
+		lt.PriorityForId = languagetool.EnglishPriorityForIdForCodeHook(lt.GetLanguageCode())
+	} else if languagetool.EnglishPriorityForIdHook != nil {
+		lt.PriorityForId = languagetool.EnglishPriorityForIdHook
+	}
+	// Java English.getDefaultRulePriorityForStyle() = -50
+	lt.DefaultRulePriorityForStyle = -50
+	if languagetool.FilterEnglishRuleMatchesHook != nil {
+		lt.FilterRuleMatches = languagetool.FilterEnglishRuleMatchesHook
+	}
 	rules.RegisterSharedLayoutRules(lt, "en")
 	wr := NewEnglishWordRepeatRule(map[string]string{"repetition": "Word repetition"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
@@ -76,6 +88,33 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
 	uq := NewEnglishUnpairedQuotesRule(nil)
 	lt.AddTextLevelRuleChecker(uq.GetID(), rules.AsTextLevelChecker(uq.MatchList))
+
+	// Java English variants createDefaultSpellingRule / Morfologik*SpellerRule.getId.
+	// Prefer CFSA2 hunspell/*.dict when present (same files as Java); else empty map
+	// Morfologik shell fails closed (no invent misspell flags).
+	code := strings.ToLower(lt.GetLanguageCode())
+	ruleID, dictFile := EnglishVariantSpellerMeta(code)
+	if p := DiscoverEnglishVariantDictFile(dictFile); p != "" {
+		if RegisterBinaryEnglishSpellerID(lt, p, ruleID, nil, nil) {
+			return
+		}
+	}
+	var esp *MorfologikVariantSpellerRule
+	switch {
+	case strings.Contains(code, "gb"):
+		esp = NewMorfologikBritishSpellerRule()
+	case strings.Contains(code, "-ca") || strings.HasSuffix(code, "_ca"):
+		esp = NewMorfologikCanadianSpellerRule()
+	case strings.Contains(code, "au"):
+		esp = NewMorfologikAustralianSpellerRule()
+	case strings.Contains(code, "nz"):
+		esp = NewMorfologikNewZealandSpellerRule()
+	case strings.Contains(code, "za"):
+		esp = NewMorfologikSouthAfricanSpellerRule()
+	default:
+		esp = NewMorfologikAmericanSpellerRule()
+	}
+	lt.AddRuleChecker(esp.GetID(), rules.AsSentenceChecker(esp.Match))
 }
 
 // RegisterPickyEnglishRules installs Java English picky-level rules (official data only).

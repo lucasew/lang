@@ -3,7 +3,6 @@ package fa
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // RegisterCorePersianRules installs shared layout + word-repeat + beginning.
@@ -19,9 +18,7 @@ func RegisterCorePersianRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "سه جمله پیاپی با یک کلمه آغاز می‌شوند.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "fa", []patterns.TokenSequenceSpec{
-		{ID: "FA_در_در", Tokens: []string{"در", "در"}, Message: "تکرار احتمالی «در».", Suggestion: "در"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)

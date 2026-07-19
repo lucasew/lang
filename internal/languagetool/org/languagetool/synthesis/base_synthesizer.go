@@ -48,19 +48,36 @@ func (s *BaseSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag
 	if lemma == "" {
 		lemma = token.GetToken()
 	}
-	var tags []string
 	if posTagRegExp {
 		re, err := regexp.Compile("^(?:" + posTag + ")$")
 		if err != nil {
 			return nil, err
 		}
-		for _, t := range s.allTags() {
-			if re.MatchString(t) {
-				tags = append(tags, t)
-			}
+		return s.SynthesizeForPosTags(lemma, re.MatchString), nil
+	}
+	// Exact POS: look up that tag directly (not filtered through possibleTags).
+	return collectForms(s, lemma, []string{posTag}), nil
+}
+
+// SynthesizeForPosTags ports BaseSynthesizer.synthesizeForPosTags (Java ≥5.3):
+// all forms for lemma where acceptTag returns true for the POS tag.
+// Used by SpellingData ß→ss expansion (accept all tags) and LineExpander (VER:*).
+func (s *BaseSynthesizer) SynthesizeForPosTags(lemma string, acceptTag func(string) bool) []string {
+	if s == nil || lemma == "" || acceptTag == nil {
+		return nil
+	}
+	var tags []string
+	for _, tag := range s.allTags() {
+		if acceptTag(tag) {
+			tags = append(tags, tag)
 		}
-	} else {
-		tags = []string{posTag}
+	}
+	return collectForms(s, lemma, tags)
+}
+
+func collectForms(s *BaseSynthesizer, lemma string, tags []string) []string {
+	if s == nil || lemma == "" {
+		return nil
 	}
 	var forms []string
 	seen := map[string]struct{}{}
@@ -76,7 +93,7 @@ func (s *BaseSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag
 			forms = append(forms, f)
 		}
 	}
-	return forms, nil
+	return forms
 }
 
 func (s *BaseSynthesizer) lookupForms(lemma, posTag string) []string {
@@ -124,6 +141,12 @@ func (s *BaseSynthesizer) GetTargetPosTag(posTags []string, posTag string) strin
 		return posTag
 	}
 	return posTags[0]
+}
+
+// GetPosTagCorrection ports BaseSynthesizer.getPosTagCorrection (identity).
+// Polish/Arabic override when setpos synthesizes regexp-rewritten tags.
+func (s *BaseSynthesizer) GetPosTagCorrection(posTag string) string {
+	return posTag
 }
 
 var _ Synthesizer = (*BaseSynthesizer)(nil)

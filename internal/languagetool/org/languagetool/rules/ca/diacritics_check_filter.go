@@ -40,9 +40,11 @@ type DiacriticsCheckFilter struct {
 func NewDiacriticsCheckFilter() *DiacriticsCheckFilter {
 	return &DiacriticsCheckFilter{
 		ConfusionCheckFilter: &rules.ConfusionCheckFilter{
-			Pairs:              loadCAConfusion(),
-			MessageDiacritic:   "s'escriu amb accent",
-			MessageNoDiacritic: "s'escriu d'una altra manera",
+			Pairs:                loadCAConfusion(),
+			MessageDiacritic:     "s'escriu amb accent",
+			MessageNoDiacritic:   "s'escriu d'una altra manera",
+			GenderProbes:         rules.CAGenderNumberProbes,
+			ExpandAllSuggestions: true, // CA rewrites every suggestion template
 		},
 	}
 }

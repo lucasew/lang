@@ -9,8 +9,13 @@ import (
 )
 
 // WordRepeatBeginningRule ports org.languagetool.rules.WordRepeatBeginningRule.
+// Java ctor: setCategory(REPETITIONS_STYLE), setLocQualityIssueType(Style).
 type WordRepeatBeginningRule struct {
 	Messages map[string]string
+	// Category ports Rule.category (Java REPETITIONS_STYLE).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Style).
+	IssueType ITSIssueType
 	// Hooks for language subclasses (EnglishWordRepeatBeginningRule).
 	IsAdverbFn          func(token *languagetool.AnalyzedTokenReadings) bool
 	// IsAdverbAtFn optional context-aware adverb check (e.g. "Sin embargo").
@@ -22,7 +27,11 @@ type WordRepeatBeginningRule struct {
 }
 
 func NewWordRepeatBeginningRule(messages map[string]string) *WordRepeatBeginningRule {
-	return &WordRepeatBeginningRule{Messages: messages}
+	return &WordRepeatBeginningRule{
+		Messages:  messages,
+		Category:  CatRepetitionsStyle.GetCategory(messages),
+		IssueType: ITSStyle,
+	}
 }
 
 func (r *WordRepeatBeginningRule) GetID() string {
@@ -30,6 +39,32 @@ func (r *WordRepeatBeginningRule) GetID() string {
 		return r.IDOverride
 	}
 	return "WORD_REPEAT_BEGINNING_RULE"
+}
+
+// GetDescription ports WordRepeatBeginningRule.getDescription (messages desc_repetition_beginning).
+func (r *WordRepeatBeginningRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_repetition_beginning"]; s != "" {
+			return s
+		}
+	}
+	return "Successive sentences beginning with the same word"
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *WordRepeatBeginningRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *WordRepeatBeginningRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
 }
 
 func (r *WordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {

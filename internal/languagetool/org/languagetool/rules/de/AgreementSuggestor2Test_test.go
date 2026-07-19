@@ -53,8 +53,10 @@ func TestAgreementSuggestor2_Suggestions(t *testing.T) {
 }
 
 func TestAgreementSuggestor2_SuggestionsHaus(t *testing.T) {
+	// Java skips edits==0; need PLU forms for both det and noun.
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
 		"das\tdas\tART:DEF:NOM:SIN:NEU\n" +
+			"die\tdas\tART:DEF:NOM:PLU:NEU\n" +
 			"Haus\tHaus\tSUB:NOM:SIN:NEU\n" +
 			"Häuser\tHaus\tSUB:NOM:PLU:NEU\n"))
 	require.NoError(t, err)
@@ -62,13 +64,18 @@ func TestAgreementSuggestor2_SuggestionsHaus(t *testing.T) {
 	d, n := detNounReadings("das", "das", "ART:DEF:NOM:SIN:NEU", "Haus", "Haus", "SUB:NOM:SIN:NEU")
 	sugs := NewAgreementSuggestor2(synth, d, n).GetSuggestions()
 	require.NotEmpty(t, sugs)
+	require.Contains(t, strings.Join(sugs, "|"), "Häuser")
 }
 
 func TestAgreementSuggestor2_DetAdjNounSuggestions(t *testing.T) {
+	// Alternate case so det changes (der→den) while adj/noun may stay.
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader(
 		"der\tder\tART:DEF:NOM:SIN:MAS\n" +
+			"den\tder\tART:DEF:AKK:SIN:MAS\n" +
 			"große\tgross\tADJ:NOM:SIN:MAS:GRU:DEF\n" +
-			"Hund\tHund\tSUB:NOM:SIN:MAS\n"))
+			"großen\tgross\tADJ:AKK:SIN:MAS:GRU:DEF\n" +
+			"Hund\tHund\tSUB:NOM:SIN:MAS\n" +
+			"Hund\tHund\tSUB:AKK:SIN:MAS\n"))
 	require.NoError(t, err)
 	synth := synthesis.NewBaseSynthesizer("de", manual)
 	d, n := detNounReadings("der", "der", "ART:DEF:NOM:SIN:MAS", "Hund", "Hund", "SUB:NOM:SIN:MAS")

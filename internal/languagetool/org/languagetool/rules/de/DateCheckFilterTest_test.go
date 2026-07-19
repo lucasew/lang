@@ -4,6 +4,7 @@ package de
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -69,12 +70,38 @@ func TestDateCheckFilter_GetMonth(t *testing.T) {
 }
 
 func TestDateCheckFilter_AcceptIncompleteArgs(t *testing.T) {
+	// Java getRequired("weekDay") throws when missing
 	f := NewDateCheckFilter()
-	_, err := f.AcceptRuleMatch(map[string]string{"year": "2014", "month": "8", "day": "23"})
-	require.Error(t, err)
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 5, "msg")
+	require.Panics(t, func() {
+		f.AcceptRuleMatch(m, map[string]string{"year": "2014", "month": "8", "day": "23"}, 0, nil, nil)
+	})
 }
 
-func TestDateCheckFilter_Accept(t *testing.T) {
-	// Full acceptRuleMatch calendar check deferred; ensure constructor works.
-	require.NotNil(t, NewDateCheckFilter())
+func TestDateCheckFilter_AcceptWrongWeekday(t *testing.T) {
+	// 2014-08-23 is Saturday; claiming Sonntag keeps the match
+	f := NewDateCheckFilter()
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 10, "wrong {realDay} not {day}")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"year": "2014", "month": "8", "day": "23", "weekDay": "Sonntag",
+	}, 0, nil, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetMessage(), "Samstag")
+}
+
+func TestDateCheckFilter_AcceptCorrectWeekday(t *testing.T) {
+	f := NewDateCheckFilter()
+	m := rules.NewRuleMatch(rules.NewFakeRule("D"), nil, 0, 10, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"year": "2014", "month": "8", "day": "23", "weekDay": "Samstag",
+	}, 0, nil, nil)
+	require.Nil(t, out)
+}
+
+func TestDateCheckFilter_AdjustSuggestion(t *testing.T) {
+	// Java: remove ".," only when index in (5,12); add ".," when short comma form
+	require.Equal(t, "Sonntag, den 1.", AdjustDateCheckSuggestion("Sonntag., den 1."))
+	require.Equal(t, "So., den 1.", AdjustDateCheckSuggestion("So, den 1."))
+	// short "So.," — ".," at index 2, not in (5,12) → unchanged
+	require.Equal(t, "So., den 1.", AdjustDateCheckSuggestion("So., den 1."))
 }

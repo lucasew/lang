@@ -6,15 +6,47 @@ import (
 )
 
 // MultipleWhitespaceRule ports org.languagetool.rules.MultipleWhitespaceRule.
+// MultipleWhitespaceRule ports org.languagetool.rules.MultipleWhitespaceRule.
+// Java: TYPOGRAPHY, Whitespace.
 type MultipleWhitespaceRule struct {
-	Messages map[string]string
+	Messages  map[string]string
+	Category  *Category
+	IssueType ITSIssueType
 }
 
 func NewMultipleWhitespaceRule(messages map[string]string) *MultipleWhitespaceRule {
-	return &MultipleWhitespaceRule{Messages: messages}
+	return &MultipleWhitespaceRule{
+		Messages:  messages,
+		Category:  CatTypography.GetCategory(messages),
+		IssueType: ITSWhitespace,
+	}
 }
 
 func (r *MultipleWhitespaceRule) GetID() string { return "WHITESPACE_RULE" }
+
+// GetDescription ports getDescription (desc_whitespacerepetition).
+func (r *MultipleWhitespaceRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_whitespacerepetition"]; s != "" {
+			return s
+		}
+	}
+	return "Whitespace repetition (bad formatting)"
+}
+
+func (r *MultipleWhitespaceRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *MultipleWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSWhitespace
+	}
+	return r.IssueType
+}
 
 func isFirstWhite(token *languagetool.AnalyzedTokenReadings) bool {
 	t := token.GetToken()

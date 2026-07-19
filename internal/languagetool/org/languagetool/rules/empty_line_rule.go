@@ -5,36 +5,55 @@ import (
 )
 
 // EmptyLineRule ports org.languagetool.rules.EmptyLineRule.
+// Java: STYLE, Style; default ctor setDefaultOff (defaultActive=false).
 type EmptyLineRule struct {
 	Messages                  map[string]string
 	SingleLineBreaksMarksPara bool
+	Category                  *Category
+	IssueType                 ITSIssueType
+	DefaultOff                bool
 }
 
 func NewEmptyLineRule(messages map[string]string) *EmptyLineRule {
-	return &EmptyLineRule{Messages: messages}
+	// Java EmptyLineRule(messages, lang) → defaultActive false → setDefaultOff().
+	return &EmptyLineRule{
+		Messages:   messages,
+		Category:   CatStyle.GetCategory(messages),
+		IssueType:  ITSStyle,
+		DefaultOff: true,
+	}
 }
 
 func (r *EmptyLineRule) GetID() string { return "EMPTY_LINE" }
 
+// GetDescription ports EmptyLineRule.getDescription (empty_line_rule_desc).
+func (r *EmptyLineRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["empty_line_rule_desc"]; s != "" {
+			return s
+		}
+	}
+	return "Empty line"
+}
+
+func (r *EmptyLineRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *EmptyLineRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *EmptyLineRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
 func (r *EmptyLineRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
-	if nTest >= len(sentences)-1 {
-		return true
-	}
-	text := sentences[nTest].GetText()
-	if r.SingleLineBreaksMarksPara {
-		if len(text) > 0 && text[len(text)-1] == '\n' {
-			return true
-		}
-	} else {
-		if hasSuf(text, "\n\n") || hasSuf(text, "\n\r\n\r") || hasSuf(text, "\r\n\r\n") {
-			return true
-		}
-	}
-	next := sentences[nTest+1].GetText()
-	if len(next) > 0 && (next[0] == '\n' || hasPre(next, "\r\n")) {
-		return true
-	}
-	return false
+	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
 func hasSuf(s, suf string) bool {

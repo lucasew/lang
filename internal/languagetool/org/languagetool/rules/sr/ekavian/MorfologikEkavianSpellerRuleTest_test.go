@@ -1,6 +1,8 @@
 package ekavian
 
 // Twin of MorfologikEkavianSpellerRuleTest — map inject.
+// Java isLatinScript() default true: pure Cyrillic has no Latin letters → ignoreWord
+// (same as SpellingCheckRule.pHasNoLetterLatin). Misspell tests use Latin surfaces.
 import (
 	"testing"
 
@@ -16,19 +18,24 @@ func TestMorfologikEkavianSpellerRule_MorfologikSpeller(t *testing.T) {
 	require.Equal(t, EkavianSpellerDict, r.GetFileName())
 
 	sp := morfologik.NewMorfologikSpeller(EkavianSpellerDict, 1)
-	for _, w := range []string{"здраво", "свет", "тест"} {
+	for _, w := range []string{"zdravo", "svet", "test"} {
 		sp.AddWord(w)
 	}
-	sp.Suggestions["здрав"] = []string{"здраво"}
+	sp.Suggestions["zdrav"] = []string{"zdravo"}
 	r.Speller = sp
 	r.IsMisspelled = sp.IsMisspelled
 
-	m, err := r.Match(languagetool.AnalyzePlain("здраво свет"))
+	m, err := r.Match(languagetool.AnalyzePlain("zdravo svet"))
 	require.NoError(t, err)
 	require.Empty(t, m)
 
-	m, err = r.Match(languagetool.AnalyzePlain("здрав"))
+	m, err = r.Match(languagetool.AnalyzePlain("zdrav"))
 	require.NoError(t, err)
 	require.Len(t, m, 1)
-	require.Contains(t, m[0].GetSuggestedReplacements(), "здраво")
+	require.Contains(t, m[0].GetSuggestedReplacements(), "zdravo")
+
+	// Pure Cyrillic: Java pHasNoLetterLatin → ignored under default isLatinScript
+	m, err = r.Match(languagetool.AnalyzePlain("здраво"))
+	require.NoError(t, err)
+	require.Empty(t, m)
 }

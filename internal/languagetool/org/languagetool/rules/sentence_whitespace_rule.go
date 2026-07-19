@@ -8,17 +8,26 @@ import (
 )
 
 // SentenceWhitespaceRule ports org.languagetool.rules.SentenceWhitespaceRule.
+// Java: TYPOGRAPHY, Whitespace.
 type SentenceWhitespaceRule struct {
 	Messages map[string]string
 	// RuleID overrides GetID when set (e.g. DE_SENTENCE_WHITESPACE).
 	RuleID string
+	// Category ports Rule.category (Java TYPOGRAPHY).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Whitespace).
+	IssueType ITSIssueType
 	// MessageAfterSentence / MessageAfterNumber override default messages.
 	MessageAfterSentence string
 	MessageAfterNumber   string
 }
 
 func NewSentenceWhitespaceRule(messages map[string]string) *SentenceWhitespaceRule {
-	return &SentenceWhitespaceRule{Messages: messages}
+	return &SentenceWhitespaceRule{
+		Messages:  messages,
+		Category:  CatTypography.GetCategory(messages),
+		IssueType: ITSWhitespace,
+	}
 }
 
 func (r *SentenceWhitespaceRule) GetID() string {
@@ -26,6 +35,31 @@ func (r *SentenceWhitespaceRule) GetID() string {
 		return r.RuleID
 	}
 	return "SENTENCE_WHITESPACE"
+}
+
+// GetDescription ports core getDescription (missing_space_between_sentences).
+// DE overrides with language-specific text.
+func (r *SentenceWhitespaceRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["missing_space_between_sentences"]; s != "" {
+			return s
+		}
+	}
+	return "Missing space between sentences"
+}
+
+func (r *SentenceWhitespaceRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *SentenceWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSWhitespace
+	}
+	return r.IssueType
 }
 
 func (r *SentenceWhitespaceRule) GetMessage(prevEndsWithNumber bool) string {

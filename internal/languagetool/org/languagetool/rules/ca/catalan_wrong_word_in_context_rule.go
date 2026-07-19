@@ -49,6 +49,8 @@ func NewCatalanWrongWordInContextRule(messages map[string]string) *CatalanWrongW
 		MatchLemmas:        true,
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: getCategoryString → "Z) Confusions"
+	rules.InitWrongWordInContextMeta(base, messages, "Z) Confusions")
 	return &CatalanWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

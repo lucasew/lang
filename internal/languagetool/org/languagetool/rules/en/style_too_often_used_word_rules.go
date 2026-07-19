@@ -12,11 +12,11 @@ const defaultStyleMinPercent = 5
 
 // NewStyleTooOftenUsedNounRule ports org.languagetool.rules.en.StyleTooOftenUsedNounRule.
 func NewStyleTooOftenUsedNounRule() *rules.AbstractStyleTooOftenUsedWordRule {
-	return &rules.AbstractStyleTooOftenUsedWordRule{
+	base := &rules.AbstractStyleTooOftenUsedWordRule{
 		ID:          "TOO_OFTEN_USED_NOUN_EN",
 		Description: "Statistical Style Analysis: Overused Noun",
 		MinPercent:  defaultStyleMinPercent,
-		IsCounted: func(tok *languagetool.AnalyzedTokenReadings, _ int, _ []*languagetool.AnalyzedTokenReadings) bool {
+		IsToCountedWord: func(tok *languagetool.AnalyzedTokenReadings) bool {
 			if !tok.HasPosTagStartingWith("NN") {
 				return false
 			}
@@ -27,22 +27,24 @@ func NewStyleTooOftenUsedNounRule() *rules.AbstractStyleTooOftenUsedWordRule {
 			}
 			return true
 		},
-		Key: func(tok *languagetool.AnalyzedTokenReadings) string {
+		ToAddedLemma: func(tok *languagetool.AnalyzedTokenReadings) string {
 			return lemmaForPosPrefix(tok, "NN")
 		},
 		LimitMessage: func(limit int) string {
 			return fmt.Sprintf("The noun is used more than %d%% times of all nouns. It may be better to replace it with a synonym.", limit)
 		},
 	}
+	rules.InitStyleTooOftenUsedWordMeta(base, nil, false)
+	return base
 }
 
 // NewStyleTooOftenUsedVerbRule ports org.languagetool.rules.en.StyleTooOftenUsedVerbRule.
 func NewStyleTooOftenUsedVerbRule() *rules.AbstractStyleTooOftenUsedWordRule {
-	return &rules.AbstractStyleTooOftenUsedWordRule{
+	base := &rules.AbstractStyleTooOftenUsedWordRule{
 		ID:          "TOO_OFTEN_USED_VERB_EN",
 		Description: "Statistical Style Analysis: Overused Verb",
 		MinPercent:  defaultStyleMinPercent,
-		IsCounted: func(tok *languagetool.AnalyzedTokenReadings, _ int, _ []*languagetool.AnalyzedTokenReadings) bool {
+		IsToCountedWord: func(tok *languagetool.AnalyzedTokenReadings) bool {
 			if !tok.HasPosTagStartingWith("VB") {
 				return false
 			}
@@ -52,22 +54,24 @@ func NewStyleTooOftenUsedVerbRule() *rules.AbstractStyleTooOftenUsedWordRule {
 			}
 			return true
 		},
-		Key: func(tok *languagetool.AnalyzedTokenReadings) string {
+		ToAddedLemma: func(tok *languagetool.AnalyzedTokenReadings) string {
 			return lemmaForPosPrefix(tok, "VB")
 		},
 		LimitMessage: func(limit int) string {
 			return fmt.Sprintf("The verb is used more than %d%% times of all verbs. It may be better to replace it with a synonym.", limit)
 		},
 	}
+	rules.InitStyleTooOftenUsedWordMeta(base, nil, false)
+	return base
 }
 
 // NewStyleTooOftenUsedAdjectiveRule ports org.languagetool.rules.en.StyleTooOftenUsedAdjectiveRule.
 func NewStyleTooOftenUsedAdjectiveRule() *rules.AbstractStyleTooOftenUsedWordRule {
-	return &rules.AbstractStyleTooOftenUsedWordRule{
+	base := &rules.AbstractStyleTooOftenUsedWordRule{
 		ID:          "TOO_OFTEN_USED_ADJECTIVE_EN",
 		Description: "Statistical Style Analysis: Overused Adjective",
 		MinPercent:  defaultStyleMinPercent,
-		IsCounted: func(tok *languagetool.AnalyzedTokenReadings, _ int, _ []*languagetool.AnalyzedTokenReadings) bool {
+		IsToCountedWord: func(tok *languagetool.AnalyzedTokenReadings) bool {
 			if !tok.HasPosTagStartingWith("JJ") {
 				return false
 			}
@@ -78,13 +82,15 @@ func NewStyleTooOftenUsedAdjectiveRule() *rules.AbstractStyleTooOftenUsedWordRul
 			}
 			return true
 		},
-		Key: func(tok *languagetool.AnalyzedTokenReadings) string {
+		ToAddedLemma: func(tok *languagetool.AnalyzedTokenReadings) string {
 			return lemmaForPosPrefix(tok, "JJ")
 		},
 		LimitMessage: func(limit int) string {
 			return fmt.Sprintf("The adjective is used more than %d%% times of all adjectives. It may be better to replace it with a synonym.", limit)
 		},
 	}
+	rules.InitStyleTooOftenUsedWordMeta(base, nil, false)
+	return base
 }
 
 func lemmaForPosPrefix(tok *languagetool.AnalyzedTokenReadings, prefix string) string {

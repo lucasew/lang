@@ -8,15 +8,46 @@ import (
 )
 
 // WhitespaceBeforePunctuationRule ports org.languagetool.rules.WhitespaceBeforePunctuationRule.
+// Java: TYPOGRAPHY, Whitespace.
 type WhitespaceBeforePunctuationRule struct {
-	Messages map[string]string
+	Messages  map[string]string
+	Category  *Category
+	IssueType ITSIssueType
 }
 
 func NewWhitespaceBeforePunctuationRule(messages map[string]string) *WhitespaceBeforePunctuationRule {
-	return &WhitespaceBeforePunctuationRule{Messages: messages}
+	return &WhitespaceBeforePunctuationRule{
+		Messages:  messages,
+		Category:  CatTypography.GetCategory(messages),
+		IssueType: ITSWhitespace,
+	}
 }
 
 func (r *WhitespaceBeforePunctuationRule) GetID() string { return "WHITESPACE_PUNCTUATION" }
+
+// GetDescription ports getDescription (desc_whitespace_before_punctuation).
+func (r *WhitespaceBeforePunctuationRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["desc_whitespace_before_punctuation"]; s != "" {
+			return s
+		}
+	}
+	return "Whitespace before punctuation"
+}
+
+func (r *WhitespaceBeforePunctuationRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *WhitespaceBeforePunctuationRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSWhitespace
+	}
+	return r.IssueType
+}
 
 func (r *WhitespaceBeforePunctuationRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {
 	var ruleMatches []*RuleMatch

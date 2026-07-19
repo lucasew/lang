@@ -1,13 +1,13 @@
 package es
 
 import (
-	"strings"
-
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
 // SpanishWordRepeatRule ports org.languagetool.rules.es.SpanishWordRepeatRule.
+// Ignore is POS-only (_allow_repeat); without tagger readings fail closed
+// (no surface invent for /a a or .ES es).
 type SpanishWordRepeatRule struct {
 	*rules.WordRepeatRule
 }
@@ -20,27 +20,18 @@ func NewSpanishWordRepeatRule(messages map[string]string) *SpanishWordRepeatRule
 	return r
 }
 
+// esIgnore ports SpanishWordRepeatRule.ignore; base then applies super.ignore.
 func (r *SpanishWordRepeatRule) esIgnore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
-	if position > 0 && (tokens[position].HasPosTag("_allow_repeat") || tokens[position-1].HasPosTag("_allow_repeat")) {
-		return true
+	if position <= 0 {
+		return false
 	}
-	// Surface stand-ins without Spanish tagger for common false alarms in tests.
-	if position > 0 {
-		prev, cur := tokens[position-1].GetToken(), tokens[position].GetToken()
-		// "Bienvenido/a a" → a after slash
-		if strings.EqualFold(prev, "a") && strings.EqualFold(cur, "a") && position >= 2 {
-			if tokens[position-2].GetToken() == "/" {
-				return true
-			}
-		}
-		// "HUCHA-GANGA.ES es" — token before "es" is often "ES" after domain split,
-		// but only when the previous token is uppercase TLD-like, not lowercase "es".
-		if prev == "ES" && strings.EqualFold(cur, "es") {
-			return true
-		}
-		if strings.HasSuffix(prev, ".ES") && strings.EqualFold(cur, "es") {
-			return true
-		}
+	cur, prev := tokens[position], tokens[position-1]
+	if cur == nil || prev == nil {
+		return false
+	}
+	// Java: hasPosTag("_allow_repeat") on cur or prev
+	if cur.HasPosTag("_allow_repeat") || prev.HasPosTag("_allow_repeat") {
+		return true
 	}
 	return false
 }

@@ -10,6 +10,8 @@ import (
 func TestEmptyLineRule_ViaCheck(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("en")
 	RegisterCoreEnglishRules(lt)
+	// Java EmptyLineRule is default-off; enable for check coverage.
+	lt.EnableRule("EMPTY_LINE")
 	// default mode: four newlines marks empty line
 	m := lt.Check("Hello world.\n\n\n\nNext para starts here.")
 	var has bool

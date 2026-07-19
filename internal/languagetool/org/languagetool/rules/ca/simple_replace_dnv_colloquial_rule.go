@@ -33,27 +33,28 @@ func loadDNVColloquial() map[string][]string {
 }
 
 // SimpleReplaceDNVColloquialRule ports org.languagetool.rules.ca.SimpleReplaceDNVColloquialRule
-// as a surface replace rule (lemma path needs Catalan tagger).
+// (AbstractSimpleReplaceLemmasRule). Without lemmas, fail closed (no surface invent).
 type SimpleReplaceDNVColloquialRule struct {
-	*rules.AbstractSimpleReplaceRule
+	*AbstractSimpleReplaceLemmasRule
 }
 
 func NewSimpleReplaceDNVColloquialRule(messages map[string]string) *SimpleReplaceDNVColloquialRule {
-	base := &rules.AbstractSimpleReplaceRule{
-		Messages:      messages,
-		WrongWords:    loadDNVColloquial(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
-		ID:            "CA_SIMPLE_REPLACE_DNV_COLLOQUIAL",
-		Description:   "Detecta paraules marcades com a col·loquials en el DNV.",
-		ShortMsg:      "Paraula o expressió col·loquial.",
+	base := &AbstractSimpleReplaceLemmasRule{
+		ID:          "CA_SIMPLE_REPLACE_DNV_COLLOQUIAL",
+		Description: "Detecta paraules marcades com a col·loquials en el DNV.",
+		ShortMsg:    "Paraula o expressió col·loquial.",
+		WrongLemmas: loadDNVColloquial(),
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Paraula o expressió col·loquial."
 		},
 	}
-	return &SimpleReplaceDNVColloquialRule{AbstractSimpleReplaceRule: base}
+	_ = messages
+	return &SimpleReplaceDNVColloquialRule{AbstractSimpleReplaceLemmasRule: base}
 }
 
 func (r *SimpleReplaceDNVColloquialRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.AbstractSimpleReplaceRule.Match(sentence)
+	if r == nil {
+		return nil
+	}
+	return r.AbstractSimpleReplaceLemmasRule.Match(sentence)
 }

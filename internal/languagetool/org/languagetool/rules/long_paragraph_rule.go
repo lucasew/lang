@@ -11,18 +11,57 @@ import (
 var nonWordRE = regexp.MustCompile(`^[.?!…:;,~’'"„“”»«‚‘›‹()\[\]\-–—*×∗·+÷/=]$`)
 
 // LongParagraphRule ports org.languagetool.rules.LongParagraphRule.
+// Java: STYLE, Style, setDefaultOff(), Tag.picky.
 type LongParagraphRule struct {
 	Messages map[string]string
 	MaxWords int
 	// SingleLineBreaksMarksPara matches Demo/SRX default false → need \n\n
 	SingleLineBreaksMarksPara bool
+	Category                  *Category
+	IssueType                 ITSIssueType
+	DefaultOff                bool
+	// Tags ports Rule.tags (Java picky).
+	Tags []Tag
 }
 
 func NewLongParagraphRule(messages map[string]string, maxWords int) *LongParagraphRule {
-	return &LongParagraphRule{Messages: messages, MaxWords: maxWords}
+	return &LongParagraphRule{
+		Messages:   messages,
+		MaxWords:   maxWords,
+		Category:   CatStyle.GetCategory(messages),
+		IssueType:  ITSStyle,
+		DefaultOff: true,
+		Tags:       []Tag{TagPicky},
+	}
 }
 
 func (r *LongParagraphRule) GetID() string { return "TOO_LONG_PARAGRAPH" }
+
+// GetDescription ports getDescription (long_paragraph_rule_desc).
+func (r *LongParagraphRule) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["long_paragraph_rule_desc"]; s != "" {
+			return s
+		}
+	}
+	return "Paragraph is too long"
+}
+
+func (r *LongParagraphRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *LongParagraphRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSStyle
+	}
+	return r.IssueType
+}
+
+func (r *LongParagraphRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
 
 func (r *LongParagraphRule) GetMessage() string {
 	msg := r.Messages["long_paragraph_rule_msg"]
@@ -36,24 +75,7 @@ func (r *LongParagraphRule) GetMessage() string {
 }
 
 func (r *LongParagraphRule) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
-	if nTest >= len(sentences)-1 {
-		return true
-	}
-	text := sentences[nTest].GetText()
-	if r.SingleLineBreaksMarksPara {
-		if strings.HasSuffix(text, "\n") || strings.HasSuffix(text, "\n\r") {
-			return true
-		}
-	} else {
-		if strings.HasSuffix(text, "\n\n") || strings.HasSuffix(text, "\n\r\n\r") || strings.HasSuffix(text, "\r\n\r\n") {
-			return true
-		}
-	}
-	next := sentences[nTest+1].GetText()
-	if strings.HasPrefix(next, "\n") || strings.HasPrefix(next, "\r\n") {
-		return true
-	}
-	return false
+	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
 // MatchList ports match(List<AnalyzedSentence>).

@@ -4,79 +4,92 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"unicode"
 )
 
-// DateFilterHelper ports org.languagetool.rules.ru.DateFilterHelper.
+// DateFilterHelper ports Russian DateCheckFilter day/month localization.
 type DateFilterHelper struct{}
 
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
+// GetDayOfWeek ports DateCheckFilter.getDayOfWeek(String).
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
-	day := strings.ToLower(trimSpecialRU(dayStr))
+	day := strings.ToLower(dayStr)
 	switch {
-	case strings.HasPrefix(day, "суб"), strings.HasPrefix(day, "сб"):
-		return time.Saturday, nil
-	case strings.HasPrefix(day, "вс"), strings.HasPrefix(day, "вос"):
-		return time.Sunday, nil
-	case strings.HasPrefix(day, "пн"), strings.HasPrefix(day, "пон"):
+	case strings.HasPrefix(day, "пн"), day == "понедельник":
 		return time.Monday, nil
 	case strings.HasPrefix(day, "вт"):
 		return time.Tuesday, nil
 	case strings.HasPrefix(day, "ср"):
 		return time.Wednesday, nil
-	case strings.HasPrefix(day, "чт"), strings.HasPrefix(day, "чет"):
+	case strings.HasPrefix(day, "чт"), day == "четверг":
 		return time.Thursday, nil
-	case strings.HasPrefix(day, "пт"), strings.HasPrefix(day, "пят"):
+	case day == "пт", strings.HasPrefix(day, "пятниц"):
 		return time.Friday, nil
+	case strings.HasPrefix(day, "сб"), strings.HasPrefix(day, "суббот"):
+		return time.Saturday, nil
+	case strings.HasPrefix(day, "вс"), day == "воскресенье":
+		return time.Sunday, nil
 	default:
 		return 0, fmt.Errorf("could not find day of week for %q", dayStr)
 	}
 }
 
+// GetMonth ports DateCheckFilter.getMonth.
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
-	mon := strings.ToLower(trimSpecialRU(monthStr))
-	switch {
-	case strings.HasPrefix(mon, "янв"):
+	// Roman numerals compared on original (Java monthStr.equals("I") …).
+	switch monthStr {
+	case "I":
 		return time.January, nil
-	case strings.HasPrefix(mon, "фев"):
+	case "II":
 		return time.February, nil
-	case strings.HasPrefix(mon, "мар"):
+	case "III":
 		return time.March, nil
-	case strings.HasPrefix(mon, "апр"):
+	case "IV":
 		return time.April, nil
-	case strings.HasPrefix(mon, "май"), strings.HasPrefix(mon, "мая"):
+	case "V":
 		return time.May, nil
-	case strings.HasPrefix(mon, "июн"):
+	case "VI":
 		return time.June, nil
-	case strings.HasPrefix(mon, "июл"):
+	case "VII":
 		return time.July, nil
-	case strings.HasPrefix(mon, "авг"):
+	case "VIII":
 		return time.August, nil
-	case strings.HasPrefix(mon, "сен"):
+	case "IX":
 		return time.September, nil
-	case strings.HasPrefix(mon, "окт"):
+	case "X":
 		return time.October, nil
-	case strings.HasPrefix(mon, "ноя"):
+	case "XI":
 		return time.November, nil
-	case strings.HasPrefix(mon, "дек"):
+	case "XII":
+		return time.December, nil
+	}
+	mon := strings.ToLower(monthStr)
+	switch mon {
+	case "январь", "января", "янв":
+		return time.January, nil
+	case "февраль", "февраля", "фев":
+		return time.February, nil
+	case "март", "марта", "мар":
+		return time.March, nil
+	case "апрель", "апреля", "апр":
+		return time.April, nil
+	case "май", "мая":
+		return time.May, nil
+	case "июнь", "июня", "ин":
+		return time.June, nil
+	case "июль", "июля", "ил":
+		return time.July, nil
+	case "август", "августа", "авг":
+		return time.August, nil
+	case "сентябрь", "сентября", "сен":
+		return time.September, nil
+	case "октябрь", "октября", "окт":
+		return time.October, nil
+	case "ноябрь", "ноября", "ноя":
+		return time.November, nil
+	case "декабрь", "декабря", "дек":
 		return time.December, nil
 	default:
 		return 0, fmt.Errorf("could not find month %q", monthStr)
 	}
-}
-
-func trimSpecialRU(s string) string {
-	return strings.Map(func(r rune) rune {
-		if unicode.IsLetter(r) || unicode.IsDigit(r) {
-			return r
-		}
-		if r == '\u00AD' || r == '.' {
-			return -1
-		}
-		if unicode.IsSpace(r) {
-			return -1
-		}
-		return r
-	}, s)
 }

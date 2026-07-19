@@ -2,8 +2,9 @@ package ru
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreRussianRules installs shared layout + Russian word-repeat + beginning.
@@ -11,6 +12,9 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	lt.PriorityForId = language.RussianPriorityForId
+	// Java Russian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave.
+	lt.IgnoredCharacters = languagetool.RussianIgnoredCharactersRegex
 	rules.RegisterSharedLayoutRules(lt, "ru")
 	// Simple adjacent is more reliable without full POS; advanced RU needs lemmas.
 	wr := NewRussianSimpleWordRepeatRule(map[string]string{"repetition": "Повтор слова"})
@@ -23,10 +27,7 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	patterns.RegisterTokenSequences(lt, "ru", []patterns.TokenSequenceSpec{
-		{ID: "RU_В_В", Tokens: []string{"в", "в"}, Message: "Возможный повтор предлога «в».", Suggestion: "в"},
-		{ID: "RU_И_И", Tokens: []string{"и", "и"}, Message: "Возможный повтор союза «и».", Suggestion: "и"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewRussianSimpleReplaceRule(nil)
@@ -41,4 +42,25 @@ func RegisterCoreRussianRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
 	sc := NewRussianSpecificCaseRule(nil)
 	lt.AddRuleChecker(sc.GetID(), rules.AsSentenceCheckerSimple(sc.Match))
+
+	// Java Russian.createDefaultSpellingRule → MorfologikRussianSpellerRule.
+	// Always full Match (ignoreToken letter-gate + filterNoSuggestWords).
+	sp := NewMorfologikRussianSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(RussianSpellerDict); p != "" {
+		if WireRussianFilterSpeller(p) {
+			sp.IsMisspelled = FilterDictIsMisspelled
+		}
+	}
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
+
+	// Java MorfologikRussianYOSpellerRule setDefaultOff (ё-only experimental).
+	yo := NewMorfologikRussianYOSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(RussianYOSpellerDict); p != "" {
+		// YO uses its own dict path; do not overwrite main RU filter wire.
+		// IsMisspelled stays map fail-closed unless Words loaded; incomplete without
+		// separate YO filter process state (no invent shared filter for yo).
+		_ = p
+	}
+	lt.AddRuleChecker(yo.GetID(), rules.AsSentenceChecker(yo.Match))
+	lt.MarkDefaultOff(MorfologikRussianYOSpellerRuleID)
 }

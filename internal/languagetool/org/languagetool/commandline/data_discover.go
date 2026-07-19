@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 )
 
 // WalkUpFind walks from start (or cwd) toward root looking for relPath.
@@ -77,31 +79,34 @@ func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 // DiscoverEnglishUSDict finds en_US.dict for the binary Morfologik speller.
 // Order: LANG_EN_US_DICT, --data-dir/en/hunspell/en_US.dict, walk-up third_party and inspiration.
 func DiscoverEnglishUSDict(opts *CommandLineOptions) string {
+	return DiscoverEnglishVariantDict(opts, "en-US")
+}
+
+// DiscoverEnglishVariantDict finds the CFSA2 hunspell dict for an English locale
+// (Java Morfologik*SpellerRule resource). Falls back to en_US when the variant
+// file is missing. LANG_EN_US_DICT still forces a path for any locale.
+func DiscoverEnglishVariantDict(opts *CommandLineOptions, lang string) string {
 	if p := os.Getenv("LANG_EN_US_DICT"); p != "" {
 		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
 			return p
 		}
 	}
+	_, dictFile := en.EnglishVariantSpellerMeta(lang)
 	if opts != nil && opts.GetDataDir() != "" {
-		cand := filepath.Join(opts.GetDataDir(), "en", "hunspell", "en_US.dict")
+		cand := filepath.Join(opts.GetDataDir(), "en", "hunspell", dictFile)
 		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
 			return cand
 		}
 		// also flat layout
-		cand = filepath.Join(opts.GetDataDir(), "en_US.dict")
+		cand = filepath.Join(opts.GetDataDir(), dictFile)
 		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
 			return cand
 		}
 	}
-	relPaths := []string{
-		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict"),
-		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "hunspell", "en_US.dict"),
+	if p := en.DiscoverEnglishVariantDictFile(dictFile); p != "" {
+		return p
 	}
-	for _, rel := range relPaths {
-		if p := WalkUpFind("", rel); p != "" {
-			return p
-		}
-	}
+	// No invent fallback to a different locale dict (wrong Java resource for rule ID).
 	return ""
 }
 
@@ -160,6 +165,111 @@ func DiscoverEnglishPOSDict(opts *CommandLineOptions) string {
 	relPaths := []string{
 		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "english.dict"),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "english.dict"),
+	}
+	for _, rel := range relPaths {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+// DiscoverEnglishSynthDict finds english_synth.dict for EnglishSynthesizer
+// (Java BaseSynthesizer resource /en/english_synth.dict).
+// Order: LANG_ENGLISH_SYNTH_DICT, --data-dir, walk-up third_party / inspiration.
+func DiscoverEnglishSynthDict(opts *CommandLineOptions) string {
+	if p := os.Getenv("LANG_ENGLISH_SYNTH_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), "en", "english_synth.dict"),
+			filepath.Join(opts.GetDataDir(), "english_synth.dict"),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	// Prefer sibling of POS dict when discovered
+	if pos := DiscoverEnglishPOSDict(opts); pos != "" {
+		cand := filepath.Join(filepath.Dir(pos), "english_synth.dict")
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+	}
+	relPaths := []string{
+		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "english_synth.dict"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "english_synth.dict"),
+	}
+	for _, rel := range relPaths {
+		if p := WalkUpFind("", rel); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+// languageSynthDictNames maps short code → official *_synth.dict basename (Java resource).
+var languageSynthDictNames = map[string]string{
+	"en": "english_synth.dict",
+	"pl": "polish_synth.dict",
+	"it": "italian_synth.dict",
+	"ru": "russian_synth.dict",
+	"ro": "romanian_synth.dict",
+	"sk": "slovak_synth.dict",
+	"sv": "swedish_synth.dict",
+	"el": "greek_synth.dict",
+	"gl": "galician_synth.dict",
+	"ar": "arabic_synth.dict",
+}
+
+// DiscoverLanguageSynthDict finds *_synth.dict for lang (Java createDefaultSynthesizer resource).
+// Order: LANG_{CODE}_SYNTH_DICT, sibling of POS dict, inspiration module resource.
+func DiscoverLanguageSynthDict(opts *CommandLineOptions, lang string) string {
+	base := lang
+	if i := strings.IndexByte(lang, '-'); i > 0 {
+		base = lang[:i]
+	}
+	base = strings.ToLower(base)
+	if base == "" {
+		return ""
+	}
+	if base == "en" {
+		return DiscoverEnglishSynthDict(opts)
+	}
+	envKey := "LANG_" + strings.ToUpper(base) + "_SYNTH_DICT"
+	if p := os.Getenv(envKey); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	name := languageSynthDictNames[base]
+	if name == "" {
+		return ""
+	}
+	// Sibling of POS dict directory
+	if pos := DiscoverLanguagePOSDict(opts, base); pos != "" {
+		cand := filepath.Join(filepath.Dir(pos), name)
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+	}
+	if opts != nil && opts.GetDataDir() != "" {
+		for _, rel := range []string{
+			filepath.Join(opts.GetDataDir(), base, name),
+			filepath.Join(opts.GetDataDir(), name),
+		} {
+			if st, err := os.Stat(rel); err == nil && st.Mode().IsRegular() {
+				return rel
+			}
+		}
+	}
+	relPaths := []string{
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
+			"src", "main", "resources", "org", "languagetool", "resource", base, name),
 	}
 	for _, rel := range relPaths {
 		if p := WalkUpFind("", rel); p != "" {

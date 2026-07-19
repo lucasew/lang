@@ -3,7 +3,8 @@ package ar
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/hunspell"
+	_ "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/ar/filters" // RuleFilter init
 )
 
 // RegisterCoreArabicRules installs shared layout + Arabic word-repeat + beginning.
@@ -18,9 +19,7 @@ func RegisterCoreArabicRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "ثلاث جمل متتالية تبدأ بنفس الكلمة.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "ar", []patterns.TokenSequenceSpec{
-		{ID: "AR_FI_FI", Tokens: []string{"في", "في"}, Message: "تكرار محتمل لحرف الجر «في».", Suggestion: "في"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace + coherency tables (embedded from upstream).
 	sr := NewArabicSimpleReplaceRule(nil)
@@ -43,4 +42,9 @@ func RegisterCoreArabicRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(ad.GetID(), rules.AsSentenceCheckerSimple(ad.Match))
 	ai := NewArabicInflectedOneWordReplaceRule(nil)
 	lt.AddRuleChecker(ai.GetID(), rules.AsSentenceCheckerSimple(ai.Match))
+
+	// Java Arabic.getRelevantRules → ArabicHunspellSpellerRule (HUNSPELL_RULE_AR).
+	// Opens official ar.dic when present; nil dict fails closed.
+	sp := NewArabicHunspellSpellerRule(hunspell.TryOpenFromClasspath(ArabicHunspellDictPath))
+	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
 }

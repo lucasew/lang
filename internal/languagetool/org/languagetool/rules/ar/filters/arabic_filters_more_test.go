@@ -3,7 +3,9 @@ package filters
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 	"github.com/stretchr/testify/require"
 )
 
@@ -48,4 +50,64 @@ func TestAdvancedSynthFilterConstruct(t *testing.T) {
 		return []string{lemma + ":" + postag}
 	})
 	require.NotNil(t, f.AbstractAdvancedSynthesizerFilter)
+}
+
+func TestArabicFiltersRegistered(t *testing.T) {
+	for _, class := range []string{
+		"org.languagetool.rules.ar.filters.ArabicDateCheckFilter",
+		"org.languagetool.rules.ar.filters.ArabicAdvancedSynthesizerFilter",
+		"org.languagetool.rules.ar.filters.ArabicNumberPhraseFilter",
+		"org.languagetool.rules.ar.filters.ArabicMasdarToVerbFilter",
+		"org.languagetool.rules.ar.filters.ArabicAdjectiveToExclamationFilter",
+		"org.languagetool.rules.ar.filters.ArabicVerbToMafoulMutlaqFilter",
+	} {
+		require.True(t, patterns.GlobalRuleFilterCreator.HasFilter(class), class)
+	}
+}
+
+func TestArabicNumberPhraseFilter_AcceptRuleMatch(t *testing.T) {
+	f := NewArabicNumberPhraseFilter()
+	// previous + number digits, unit at end (nextPos -1)
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("في", nil, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("3", nil, nil), 3),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("صندوق", nil, nil), 5),
+	}
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"previous": "في", "previousPos": "1", "nextPos": "-1",
+	}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.NotEmpty(t, out.GetSuggestedReplacements())
+	require.Contains(t, out.GetSuggestedReplacements()[0], "في")
+}
+
+func TestArabicAdjectiveExclamation_Accept(t *testing.T) {
+	f := NewArabicAdjectiveToExclamationFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("كم", nil, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("هو", nil, nil), 3),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("طويل", nil, nil), 6),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{
+		"adj": "طويل", "adj_pos": "3", "noun": "هو",
+	}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Contains(t, out.GetSuggestedReplacements(), "أطول"+"ه") // أطول + ه
+}
+
+func TestArabicVerbToMafoul_Accept(t *testing.T) {
+	f := NewArabicVerbToMafoulMutlaqFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	lem := "عَمِلَ"
+	pos := "V"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("يعمل", &pos, &lem), 0),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{"verb": "يعمل", "adj": "قوي"}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.NotEmpty(t, out.GetSuggestedReplacements())
+	require.Contains(t, out.GetSuggestedReplacements()[0], "يعمل")
+	require.Contains(t, out.GetSuggestedReplacements()[0], "عمل")
 }

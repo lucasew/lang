@@ -92,3 +92,19 @@ func TestSimplifyMathematical(t *testing.T) {
 	boldLower := "\U0001D42C\U0001D41E\U0001D41A\U0001D427\U0001D41A\U0001D42D\U0001D421\U0001D41A\U0001D422\U0001D42B"
 	require.Equal(t, "seanathair", SimplifyMathematical(boldLower))
 }
+
+func TestIsAllMathsChars(t *testing.T) {
+	require.True(t, IsAllMathsChars(""))
+	require.False(t, IsAllMathsChars("foo"))
+	boldUpper := "\U0001D412\U0001D404\U0001D400\U0001D40D"
+	require.True(t, IsAllMathsChars(boldUpper))
+	require.False(t, IsAllMathsChars("f\U0001D412"))
+}
+
+func TestHalfwidthLatin(t *testing.T) {
+	require.True(t, IsAllHalfWidthChars(""))
+	require.True(t, IsAllHalfWidthChars("ｔｏｒｒａｃｈ"))
+	require.False(t, IsAllHalfWidthChars("torrach"))
+	require.Equal(t, "torrach", HalfwidthLatinToLatin("ｔｏｒｒａｃｈ"))
+	require.Equal(t, "ABC", HalfwidthLatinToLatin("ＡＢＣ"))
+}

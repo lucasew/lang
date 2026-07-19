@@ -22,6 +22,10 @@ type GenericUnpairedQuotesRule struct {
 	StartSymbols []string
 	EndSymbols   []string
 	ruleID       string
+	// Optional language overrides (Java subclass isNotBeginning/EndingApostrophe).
+	// Nil → default GenericUnpairedQuotesRule logic.
+	IsNotBeginningApostropheFn func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
+	IsNotEndingApostropheFn    func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
 }
 
 var (
@@ -221,11 +225,17 @@ func (r *GenericUnpairedQuotesRule) isInchQuote(text string) bool {
 }
 
 func (r *GenericUnpairedQuotesRule) isNotBeginningApostrophe(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	if r != nil && r.IsNotBeginningApostropheFn != nil {
+		return r.IsNotBeginningApostropheFn(tokens, i)
+	}
 	return !possibleApostrophe.MatchString(tokens[i].GetToken()) ||
 		i >= len(tokens)-1 || tokens[i+1].IsNonWord() || tokens[i+1].IsWhitespaceBefore()
 }
 
 func (r *GenericUnpairedQuotesRule) isNotEndingApostrophe(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	if r != nil && r.IsNotEndingApostropheFn != nil {
+		return r.IsNotEndingApostropheFn(tokens, i)
+	}
 	return !possibleApostrophe.MatchString(tokens[i].GetToken()) ||
 		tokens[i].IsWhitespaceBefore() ||
 		tokens[i-1].IsNonWord()

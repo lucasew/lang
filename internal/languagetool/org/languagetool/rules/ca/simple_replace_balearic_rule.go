@@ -2,12 +2,10 @@ package ca
 
 import (
 	"embed"
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/replace_balearic.txt
@@ -34,8 +32,8 @@ func loadBalearicWords() map[string][]string {
 	return balearicWords
 }
 
-// SimpleReplaceBalearicRule ports org.languagetool.rules.ca.SimpleReplaceBalearicRule
-// without POS-tag NP immunization (surface heuristics for proper names).
+// SimpleReplaceBalearicRule ports org.languagetool.rules.ca.SimpleReplaceBalearicRule.
+// isTokenException is POS/immunize only (Java); no title-case surface invent.
 type SimpleReplaceBalearicRule struct {
 	*rules.AbstractSimpleReplaceRule
 }
@@ -52,24 +50,29 @@ func NewSimpleReplaceBalearicRule(messages map[string]string) *SimpleReplaceBale
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Possible error ortogràfic (forma verbal vàlida en la varietat balear)."
 		},
-		// Stand-in for NP / multiword proper-name exceptions (Prosper, Index, …).
-		TokenException: func(token *languagetool.AnalyzedTokenReadings) bool {
-			if token.IsImmunized() {
-				return true
-			}
-			t := token.GetToken()
-			// Title case (not ALL CAPS): treat as possible proper name / Latin title word.
-			// Java uses hasPosTagStartingWith("NP"); without a tagger this is surface-only.
-			if tools.IsCapitalizedWord(t) && !tools.IsAllUppercase(t) {
-				switch strings.ToLower(t) {
-				case "prosper", "index":
-					return true
-				}
-			}
-			return false
-		},
+		// Java isTokenException:
+		// hasPosTagStartingWith("NP") || isImmunized || isIgnoredBySpeller
+		// || hasPosTag("_english_ignore_") || hasPosTag("_Latin_")
+		// (IsIgnoredBySpeller also checked in AbstractSimpleReplaceRule.Match.)
+		TokenException: balearicTokenException,
 	}
 	return &SimpleReplaceBalearicRule{AbstractSimpleReplaceRule: base}
+}
+
+func balearicTokenException(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil {
+		return false
+	}
+	if token.IsImmunized() || token.IsIgnoredBySpeller() {
+		return true
+	}
+	if token.HasPosTagStartingWith("NP") {
+		return true
+	}
+	if token.HasPosTag("_english_ignore_") || token.HasPosTag("_Latin_") {
+		return true
+	}
+	return false
 }
 
 func (r *SimpleReplaceBalearicRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

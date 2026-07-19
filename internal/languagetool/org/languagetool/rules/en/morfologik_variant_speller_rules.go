@@ -3,6 +3,7 @@ package en
 import (
 	"strings"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
@@ -40,12 +41,24 @@ type MorfologikVariantSpellerRule struct {
 func newVariantSpeller(id, variantCode, dictPath, variantSpellingFile, otherName string, other map[string]string) *MorfologikVariantSpellerRule {
 	base := NewAbstractEnglishSpellerRule(id, variantCode, morfologik.NewMorfologikSpeller(dictPath, 1))
 	base.FileName = dictPath
-	return &MorfologikVariantSpellerRule{
+	// Java Morfologik*SpellerRule.getLanguageVariantSpellingFileName → plain-text accept list.
+	// ApplyDefaultSpellingWordLists used LanguageShortCode "en" only; load variant file here.
+	if base.SpellingCheckRule != nil {
+		// Prefer full variant (en-US) for LanguageVariantSpellingClasspath inside ApplyDefault.
+		base.SpellingCheckRule.LanguageCode = variantCode
+		spelling.ApplyDefaultSpellingWordLists(base.SpellingCheckRule)
+		// Explicit variant path (same as Java LANGUAGE_SPECIFIC_PLAIN_TEXT_DICT constant).
+		spelling.ApplyVariantSpellingFile(base.SpellingCheckRule, variantSpellingFile)
+	}
+	r := &MorfologikVariantSpellerRule{
 		AbstractEnglishSpellerRule:  base,
 		OtherVariant:                other,
 		OtherVariantName:            otherName,
 		LanguageVariantSpellingFile: variantSpellingFile,
 	}
+	// Java isValidInOtherVariant override used from getRuleMatches post-path.
+	r.IsValidInOtherVariantFn = r.IsValidInOtherVariant
+	return r
 }
 
 func (r *MorfologikVariantSpellerRule) GetFileName() string { return r.FileName }
@@ -66,34 +79,42 @@ func (r *MorfologikVariantSpellerRule) IsValidInOtherVariant(word string) *Varia
 	return nil
 }
 
+// usGbVariantMap loads en/en-US-GB.txt (US;GB). column 0: US→GB key; column 1: GB→US key.
+// Java loadWordlist(path, column).
+func usGbVariantMap(column int) map[string]string {
+	return LoadUSGBVariantMap(column)
+}
+
 func NewMorfologikAmericanSpellerRule() *MorfologikVariantSpellerRule {
+	// Java: loadWordlist("en/en-US-GB.txt", 1) — British form as key → American form
 	return newVariantSpeller(MorfologikAmericanSpellerRuleID, "en-US", AmericanSpellerDict,
-		AmericanVariantSpellingFile, "British English", nil)
+		AmericanVariantSpellingFile, "British English", usGbVariantMap(1))
 }
 
 func NewMorfologikBritishSpellerRule() *MorfologikVariantSpellerRule {
+	// Java: loadWordlist("en/en-US-GB.txt", 0) — American form as key → British form
 	return newVariantSpeller(MorfologikBritishSpellerRuleID, "en-GB", BritishSpellerDict,
-		BritishVariantSpellingFile, "American English", nil)
+		BritishVariantSpellingFile, "American English", usGbVariantMap(0))
 }
 
 func NewMorfologikCanadianSpellerRule() *MorfologikVariantSpellerRule {
 	return newVariantSpeller(MorfologikCanadianSpellerRuleID, "en-CA", CanadianSpellerDict,
-		CanadianVariantSpellingFile, "American English", nil)
+		CanadianVariantSpellingFile, "American English", usGbVariantMap(0))
 }
 
 func NewMorfologikAustralianSpellerRule() *MorfologikVariantSpellerRule {
 	return newVariantSpeller(MorfologikAustralianSpellerRuleID, "en-AU", AustralianSpellerDict,
-		AustralianVariantSpellingFile, "American English", nil)
+		AustralianVariantSpellingFile, "American English", usGbVariantMap(0))
 }
 
 func NewMorfologikNewZealandSpellerRule() *MorfologikVariantSpellerRule {
 	return newVariantSpeller(MorfologikNewZealandSpellerRuleID, "en-NZ", NewZealandSpellerDict,
-		NewZealandVariantSpellingFile, "American English", nil)
+		NewZealandVariantSpellingFile, "American English", usGbVariantMap(0))
 }
 
 func NewMorfologikSouthAfricanSpellerRule() *MorfologikVariantSpellerRule {
 	return newVariantSpeller(MorfologikSouthAfricanSpellerRuleID, "en-ZA", SouthAfricanSpellerDict,
-		SouthAfricanVariantSpellingFile, "American English", nil)
+		SouthAfricanVariantSpellingFile, "American English", usGbVariantMap(0))
 }
 
 // LoadOtherVariantMap loads "local\tother" lines; column 1 reverses mapping.

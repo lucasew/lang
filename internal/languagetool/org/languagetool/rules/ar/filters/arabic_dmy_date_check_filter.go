@@ -47,5 +47,5 @@ func (f *ArabicDMYDateCheckFilter) AcceptDMYRuleMatch(match *rules.RuleMatch, ar
 	expanded["day"] = d
 	expanded["month"] = m
 	expanded["year"] = y
-	return f.AcceptRuleMatch(match, expanded), nil
+	return f.AcceptRuleMatch(match, expanded, 0, nil, nil), nil
 }

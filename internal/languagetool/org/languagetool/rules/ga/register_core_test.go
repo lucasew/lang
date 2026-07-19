@@ -7,15 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRegisterCoreIrishRules_Patterns(t *testing.T) {
+func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
+	// Soft invent token sequences removed; official grammar.xml is incomplete until loaded.
 	lt := languagetool.NewJLanguageTool("ga")
 	RegisterCoreIrishRules(lt)
-	m := lt.Check("Bhí sé agus agus mé.")
-	found := false
-	for _, x := range m {
-		if x.RuleID == "GA_AGUS_AGUS" {
-			found = true
-		}
-	}
-	require.True(t, found, "%+v", m)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.NotContains(t, ids, "GA_AGUS_AGUS")
 }

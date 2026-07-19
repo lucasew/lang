@@ -7,16 +7,19 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UkrainianWordRepeatRule ports org.languagetool.rules.uk.UkrainianWordRepeatRule.
+// Ignore is POS-gated (date|time|number.*, abbr/initials); without tags, untagged
+// doubles are ignored (Java returns true when no non-initial POS) — no surface invent
+// of preposition lists.
 type UkrainianWordRepeatRule struct {
 	*rules.WordRepeatRule
 }
 
 var (
-	ukDateTimeNum = regexp.MustCompile(`date|time|number.*`)
+	// Java DATE_TIME_NUM_PATTERN = Pattern.compile("date|time|number.*") — full match on POS.
+	ukDateTimeNum = regexp.MustCompile(`^(?:date|time|number.*)$`)
 	ukAllowed     = map[string]bool{"ст.": true}
 	ukAllowedCaps = map[string]bool{"Джей": true, "Бі": true, "Сі": true, "Ла": true}
 )
@@ -30,121 +33,71 @@ func NewUkrainianWordRepeatRule(messages map[string]string) *UkrainianWordRepeat
 	return r
 }
 
+// ukIgnore ports UkrainianWordRepeatRule.ignore (does not call super — same as Java override).
 func (r *UkrainianWordRepeatRule) ukIgnore(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
+	if position < 0 || position >= len(tokens) || tokens[position] == nil {
+		return true
+	}
 	atr := tokens[position]
 	token := atr.GetToken()
 
-	if position > 2 && token == "добра" && strings.EqualFold(tokens[position-2].GetToken(), "від") {
+	// від добра добра не шукають
+	if position > 2 && token == "добра" &&
+		strings.EqualFold(tokens[position-2].GetToken(), "від") {
 		return true
 	}
-	if position > 1 && token == "що" && strings.EqualFold(tokens[position-2].GetToken(), "тому") {
+
+	// Тому що що?
+	if position > 1 && token == "що" &&
+		strings.EqualFold(tokens[position-2].GetToken(), "тому") {
 		return true
 	}
-	// "Що, що" — same as що after comma context in tests
-	if position > 1 && token == "що" && tokens[position-1].GetToken() == "що" {
-		// only ignore when preceded by "тому" (handled above) — "Що, що" needs comma
-	}
-	if position > 2 && token == "що" && tokens[position-2].GetToken() == "," {
-		// "Що, що, а кіно" — second що after comma, first was Що
-		return true
-	}
-	if position > 3 && token == "ні" && tokens[position-2].GetToken() == "," &&
+
+	// ні так, ні ні
+	if position > 3 && token == "ні" &&
+		tokens[position-2].GetToken() == "," &&
 		strings.EqualFold(tokens[position-3].GetToken(), "так") {
 		return true
 	}
+
 	if ukAllowed[strings.ToLower(token)] {
 		return true
 	}
 	if ukAllowedCaps[token] {
 		return true
 	}
-	if looksLikeNumberOrTime(token) {
+
+	// Java: PosTagHelper.hasPosTag(analyzedTokenReadings, DATE_TIME_NUM_PATTERN)
+	if hasPosTagRE(atr, ukDateTimeNum) {
 		return true
-	}
-	// Single capital letter initial before "."
-	if isUkrainianInitial(tokens, position) {
-		return true
-	}
-	// "ст." with period may be split as ст + .
-	if token == "ст" || token == "ст." {
-		return true
-	}
-	// Onomatopoeia / reduplication often untagged: бугіма бугіма
-	// Java relies on POS; without tags, allow identical non-function words only for known patterns:
-	if position > 0 && strings.EqualFold(tokens[position-1].GetToken(), token) {
-		// "В.Кандинського" → В . — handled as initial
 	}
 
-	// Java: if any POS tag is non-initial non-SENT_END → do not ignore (return false).
-	// If all tags null (no tagger) → Java returns true (ignore reduplication of unknowns).
-	// Soft Analyze attaches SENT_END on the last content token; that is not
-	// morphological POS and must not alone trigger "hasAnyPos → ignore".
-	// Without a tagger we still flag common function-word doubles ("без без").
-	hasAnyPos := false
-	for _, at := range atr.GetReadings() {
-		posTag := at.GetPOSTag()
+	// Java: for each reading, if posTag != null && !isInitial && !SENT_END → return false
+	// If no such reading (all null / initial / SENT_END) → return true
+	for _, analyzedToken := range atr.GetReadings() {
+		if analyzedToken == nil {
+			continue
+		}
+		posTag := analyzedToken.GetPOSTag()
 		if posTag == nil {
 			continue
 		}
-		if *posTag == languagetool.SentenceEndTagName || *posTag == languagetool.ParagraphEndTagName {
+		if *posTag == languagetool.SentenceEndTagName {
 			continue
 		}
-		hasAnyPos = true
-		if !isInitialReading(at, tokens, position) {
+		// Soft Analyze may attach SENT_END/PARA_END; skip those as non-morph POS
+		if *posTag == languagetool.ParagraphEndTagName {
+			continue
+		}
+		if !isInitialReading(analyzedToken, tokens, position) {
 			return false
 		}
-	}
-	if hasAnyPos {
-		return true
-	}
-	// no POS: ignore unless this is a doubled function word that should error
-	if ukFunctionWord[strings.ToLower(token)] {
-		return false
 	}
 	return true
 }
 
-// Common prepositions/particles where adjacent repetition is almost always an error.
-var ukFunctionWord = map[string]bool{
-	"без": true, "в": true, "у": true, "на": true, "з": true, "і": true, "та": true,
-	"або": true, "чи": true, "до": true, "від": true, "для": true, "про": true,
-	"по": true, "за": true, "під": true, "над": true, "при": true, "як": true,
-}
-
-func looksLikeNumberOrTime(token string) bool {
-	if tools.IsNumericSpace(token) {
-		return true
-	}
-	// 1.30, 3.20, 100
-	digit, dot := false, false
-	for _, r := range token {
-		if unicode.IsDigit(r) {
-			digit = true
-			continue
-		}
-		if r == '.' || r == ',' || r == ':' {
-			dot = true
-			continue
-		}
-		return false
-	}
-	return digit || (digit && dot)
-}
-
-func isUkrainianInitial(tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
-	tok := tokens[position].GetToken()
-	runes := []rune(tok)
-	if len(runes) != 1 || !unicode.IsUpper(runes[0]) {
-		return false
-	}
-	if position+1 < len(tokens) && tokens[position+1].GetToken() == "." {
-		return true
-	}
-	// also if previous pattern "в В." — current is В
-	return false
-}
-
 func isInitialReading(at *languagetool.AnalyzedToken, tokens []*languagetool.AnalyzedTokenReadings, position int) bool {
+	// Java: posTag contains "abbr" OR (len==1 && uppercase && next is ".")
 	pos := at.GetPOSTag()
 	if pos != nil && strings.Contains(*pos, "abbr") {
 		return true
@@ -152,7 +105,8 @@ func isInitialReading(at *languagetool.AnalyzedToken, tokens []*languagetool.Ana
 	tok := at.GetToken()
 	runes := []rune(tok)
 	if len(runes) == 1 && unicode.IsUpper(runes[0]) &&
-		position+1 < len(tokens) && tokens[position+1].GetToken() == "." {
+		position+1 < len(tokens) && tokens[position+1] != nil &&
+		tokens[position+1].GetToken() == "." {
 		return true
 	}
 	return false
@@ -169,7 +123,6 @@ func (r *UkrainianWordRepeatRule) createMatch(
 	if doubleI {
 		msg += " або, можливо, перша І має бути латинською."
 	}
-	// UTF-16 length of prevToken
 	n := 0
 	for _, rr := range prevToken {
 		if rr >= 0x10000 {

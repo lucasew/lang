@@ -39,7 +39,6 @@ type CompoundRule struct {
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                   messages,
 		ID:                         "GA_COMPOUNDS",
 		Description:                "Focail fhleiscínithe, e.g., Moltar 'ró-úsáid' seachas 'ró úsáid'",
 		WithHyphenMessage:          "Litrítear an focal seo le fleiscín de ghnáth.",
@@ -48,6 +47,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		ShortDesc:                  "Fadhb leis an bhfleiscíniú",
 		Data:                       loadCompounds(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

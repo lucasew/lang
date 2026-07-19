@@ -4,101 +4,193 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// DateCheckFilter ports language-local DateCheckFilter for pattern rules.
+// DateCheckFilter ports org.languagetool.rules.br.DateCheckFilter
+// (extends AbstractDateCheckFilter).
 type DateCheckFilter struct {
+	*rules.AbstractDateCheckFilter
 	helper *DateFilterHelper
 }
 
 func NewDateCheckFilter() *DateCheckFilter {
-	return &DateCheckFilter{helper: NewDateFilterHelper()}
-}
-
-func (f *DateCheckFilter) GetDayOfWeekJava(dayStr string) (int, error) {
-	wd, err := f.helper.GetDayOfWeek(dayStr)
-	if err != nil {
-		return 0, err
+	h := NewDateFilterHelper()
+	abs := &rules.AbstractDateCheckFilter{
+		GetDayOfWeekName: func(localized string) time.Weekday {
+			wd, err := h.GetDayOfWeek(localized)
+			if err != nil {
+				// Java throws RuntimeException on unknown weekday.
+				panic(err)
+			}
+			return wd
+		},
+		FormatDayOfWeek: func(t time.Time) string {
+			// Java maps Locale.UK LONG English → Breton.
+			switch t.Weekday() {
+			case time.Sunday:
+				return "Sul"
+			case time.Monday:
+				return "Lun"
+			case time.Tuesday:
+				return "Meurzh"
+			case time.Wednesday:
+				return "Merc’her"
+			case time.Thursday:
+				return "Yaou"
+			case time.Friday:
+				return "Gwener"
+			case time.Saturday:
+				return "Sadorn"
+			default:
+				return ""
+			}
+		},
+		GetMonth: func(localized string) int {
+			m, err := h.GetMonth(localized)
+			if err != nil {
+				return 0
+			}
+			return int(m)
+		},
+		GetDayOfMonthOptional: h.GetDayOfMonth,
 	}
-	return int(wd) + 1, nil
+	return &DateCheckFilter{AbstractDateCheckFilter: abs, helper: h}
 }
 
-func (f *DateCheckFilter) GetMonth(monthStr string) (int, error) {
-	m, err := f.helper.GetMonth(monthStr)
-	if err != nil {
-		return 0, err
+// AcceptRuleMatch ports DateCheckFilter.acceptRuleMatch via AbstractDateCheckFilter.
+func (f *DateCheckFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if f == nil || f.AbstractDateCheckFilter == nil {
+		return nil
 	}
-	return int(m), nil
+	return f.AbstractDateCheckFilter.AcceptRuleMatch(match, arguments)
 }
 
-func (f *DateCheckFilter) AcceptRuleMatch(args map[string]string) (string, error) {
-	if _, ok := args["weekDay"]; !ok {
-		return "", fmt.Errorf("incomplete args: weekDay required")
-	}
-	return "", nil
-}
-
-// DateFilterHelper localizes day/month names.
+// DateFilterHelper ports Breton day/month localization from DateCheckFilter.java.
 type DateFilterHelper struct{}
 
 func NewDateFilterHelper() *DateFilterHelper { return &DateFilterHelper{} }
 
+// GetDayOfWeek ports DateCheckFilter.getDayOfWeek(String).
 func (h *DateFilterHelper) GetDayOfWeek(dayStr string) (time.Weekday, error) {
-	d := strings.ToLower(dayStr)
-	// soft mutation t→d, p→b (Breton)
-	if strings.HasPrefix(d, "t") {
-		d = "d" + d[1:]
-	} else if strings.HasPrefix(d, "p") {
-		d = "b" + d[1:]
-	}
+	day := strings.ToLower(dayStr)
 	switch {
-	case d == "sul" || d == "sunday":
+	case strings.HasSuffix(day, "sul"):
 		return time.Sunday, nil
-	case d == "lun" || d == "monday":
+	case strings.HasSuffix(day, "lun"):
 		return time.Monday, nil
-	case d == "meurzh" || d == "tuesday":
+	case strings.HasSuffix(day, "meurzh"):
 		return time.Tuesday, nil
-	case strings.HasPrefix(d, "merc"), d == "wednesday":
+	// typographic apostrophe as in Java source (U+2019)
+	case strings.HasSuffix(day, "merc’her"), strings.HasSuffix(day, "merc'her"):
 		return time.Wednesday, nil
-	case d == "yaou" || d == "thursday":
+	case day == "yaou", day == "diriaou":
 		return time.Thursday, nil
-	case d == "gwener" || d == "friday":
+	case strings.HasSuffix(day, "gwener"):
 		return time.Friday, nil
-	case d == "sadorn" || d == "saturday":
+	case strings.HasSuffix(day, "sadorn"):
 		return time.Saturday, nil
 	default:
 		return 0, fmt.Errorf("could not find day of week for %q", dayStr)
 	}
 }
 
+// GetMonth ports DateCheckFilter.getMonth.
 func (h *DateFilterHelper) GetMonth(monthStr string) (time.Month, error) {
-	m := strings.ToLower(monthStr)
-	switch {
-	case strings.HasPrefix(m, "genver") || m == "1":
+	mon := strings.ToLower(monthStr)
+	switch mon {
+	case "genver":
 		return time.January, nil
-	case strings.Contains(m, "hwevrer"), strings.HasPrefix(m, "chwevrer"), m == "2":
+	case "c’hwevrer", "c'hwevrer":
 		return time.February, nil
-	case strings.HasPrefix(m, "meurzh") || m == "3":
+	case "meurzh":
 		return time.March, nil
-	case strings.HasPrefix(m, "ebrel") || m == "4":
+	case "ebrel":
 		return time.April, nil
-	case m == "mae" || m == "5":
+	case "mae":
 		return time.May, nil
-	case strings.HasPrefix(m, "mezheven") || m == "6":
+	case "mezheven", "even":
 		return time.June, nil
-	case strings.HasPrefix(m, "gouere") || m == "7":
+	case "gouere", "gouhere":
 		return time.July, nil
-	case strings.HasPrefix(m, "eost") || m == "8":
+	case "eost":
 		return time.August, nil
-	case strings.HasPrefix(m, "gwengolo") || m == "9":
+	case "gwengolo":
 		return time.September, nil
-	case strings.HasPrefix(m, "here") || m == "10":
+	case "here":
 		return time.October, nil
-	case m == "du" || m == "11":
+	case "du":
 		return time.November, nil
-	case strings.HasPrefix(m, "kerzu") || m == "12":
+	case "kerzu":
 		return time.December, nil
 	default:
 		return 0, fmt.Errorf("could not find month %q", monthStr)
+	}
+}
+
+// GetDayOfMonth ports DateCheckFilter.getDayOfMonth (spelled Breton day numbers).
+func (h *DateFilterHelper) GetDayOfMonth(dayStr string) int {
+	if dayStr == "" {
+		return 0
+	}
+	day := strings.ToLower(dayStr)
+	// soft mutation t→d, p→b (Java only in getDayOfMonth)
+	if day[0] == 't' {
+		day = "d" + day[1:]
+	}
+	if day[0] == 'p' {
+		day = "b" + day[1:]
+	}
+	if strings.HasSuffix(day, "vet") {
+		day = day[:len(day)-3]
+	}
+	switch day {
+	case "c’hentañ", "c'hentañ", "unan":
+		return 1
+	case "daou", "eil":
+		return 2
+	case "dri", "drede", "deir":
+		return 3
+	case "bevar":
+		return 4
+	case "bemp", "bem":
+		return 5
+	case "c’hwerc’h", "c'hwerc'h", "c’hwerc'h", "c'hwerc’h":
+		return 6
+	case "seizh":
+		return 7
+	case "eizh":
+		return 8
+	case "nav", "na":
+		return 9
+	case "dek":
+		return 10
+	case "unnek":
+		return 11
+	case "daouzek":
+		return 12
+	case "drizek":
+		return 13
+	case "bevarzek":
+		return 14
+	case "bemzek":
+		return 15
+	case "c’hwezek", "c'hwezek":
+		return 16
+	case "seitek":
+		return 17
+	case "driwec’h", "driwec'h":
+		return 18
+	case "naontek":
+		return 19
+	case "ugent":
+		return 20
+	case "dregont":
+		return 30
+	default:
+		return 0
 	}
 }

@@ -44,16 +44,22 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	// unpaired
 	require.NotEmpty(t, lt.Check("open (paren"))
 
-	// active rules include core ids
+	// active rules include core ids (Java default-off layout stays registered but inactive)
 	active := lt.GetAllActiveRuleIDs()
 	require.Contains(t, active, "WHITESPACE_RULE")
 	require.Contains(t, active, "EN_A_VS_AN")
 	require.Contains(t, active, "SENTENCE_WHITESPACE")
 	require.Contains(t, active, "WHITESPACE_PUNCTUATION")
-	require.Contains(t, active, "WHITESPACE_PARAGRAPH_BEGIN")
-	require.Contains(t, active, "WHITESPACE_PARAGRAPH")
-	require.Contains(t, active, "EMPTY_LINE")
-	require.Contains(t, active, "PUNCTUATION_PARAGRAPH_END")
+	registered := lt.GetAllRegisteredRuleIDs()
+	require.Contains(t, registered, "WHITESPACE_PARAGRAPH_BEGIN")
+	require.Contains(t, registered, "WHITESPACE_PARAGRAPH")
+	require.Contains(t, registered, "EMPTY_LINE")
+	require.Contains(t, registered, "PUNCTUATION_PARAGRAPH_END")
+	off := lt.GetDefaultOffRuleIDs()
+	require.Contains(t, off, "WHITESPACE_PARAGRAPH_BEGIN")
+	require.Contains(t, off, "WHITESPACE_PARAGRAPH")
+	require.Contains(t, off, "EMPTY_LINE")
+	require.Contains(t, off, "PUNCTUATION_PARAGRAPH_END")
 
 	// text-level sentence whitespace (missing space after period)
 	m = lt.Check("This is a text.And there's the next sentence.")
@@ -85,17 +91,27 @@ func TestToLocalMatches(t *testing.T) {
 	require.Len(t, lm, 1)
 	require.Equal(t, "X", lm[0].RuleID)
 	require.Equal(t, []string{"AB"}, lm[0].Suggestions)
+	require.Equal(t, "ab", lm[0].OriginalErrorStr)
 }
 
 func TestSharedLayout_ParagraphRules(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("en")
 	RegisterSharedLayoutRules(lt, "en")
-	active := lt.GetAllActiveRuleIDs()
-	require.Contains(t, active, "TOO_LONG_PARAGRAPH")
-	require.Contains(t, active, "PARAGRAPH_REPEAT_BEGINNING_RULE")
+	// Java setDefaultOff for these layout rules — registered but not active until EnableRule.
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.Contains(t, ids, "TOO_LONG_PARAGRAPH")
+	require.Contains(t, ids, "PARAGRAPH_REPEAT_BEGINNING_RULE")
+	off := lt.GetDefaultOffRuleIDs()
+	require.Contains(t, off, "TOO_LONG_PARAGRAPH")
+	require.Contains(t, off, "PARAGRAPH_REPEAT_BEGINNING_RULE")
+	require.Contains(t, off, "EMPTY_LINE")
+	require.Contains(t, off, "WHITESPACE_PARAGRAPH")
+	require.Contains(t, off, "WHITESPACE_PARAGRAPH_BEGIN")
+	require.Contains(t, off, "PUNCTUATION_PARAGRAPH_END")
 
 	// paragraph start repeat (need para boundary via leading newline on second sent)
 	// SRX may not split on \n\n alone; AnalyzeTextDemo-style double newline often works
+	lt.EnableRule("PARAGRAPH_REPEAT_BEGINNING_RULE")
 	text := "Wiederholung am Anfang.\n\nWiederholung am Ende."
 	m := lt.Check(text)
 	// soft: may or may not fire depending on tokenizer paragraph handling

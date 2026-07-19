@@ -11,11 +11,12 @@ type LongSentenceRule struct {
 }
 
 func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentenceRule {
+	// Java Dutch.getRelevantRules: new LongSentenceRule(messages, userConfig, 40)
+	// ID stays LongSentenceRule.RULE_ID = TOO_LONG_SENTENCE (not a language-suffixed invent).
 	if maxWords <= 0 {
 		maxWords = 40
 	}
 	base := rules.NewLongSentenceRule(messages, maxWords)
-	base.RuleID = "TOO_LONG_SENTENCE_NL"
 	base.ShortMsg = "Lange zin"
 	return &LongSentenceRule{LongSentenceRule: base}
 }

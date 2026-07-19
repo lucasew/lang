@@ -50,6 +50,24 @@ var (
 	frThinSpace    = regexp.MustCompile("\u202f ")
 )
 
+// GetOpeningDoubleQuote ports French.getOpeningDoubleQuote ("«").
+func (v FrenchVariant) GetOpeningDoubleQuote() string { return frOpenDouble }
+
+// GetClosingDoubleQuote ports French.getClosingDoubleQuote ("»").
+func (v FrenchVariant) GetClosingDoubleQuote() string { return frCloseDouble }
+
+// GetOpeningSingleQuote ports French.getOpeningSingleQuote ("‘").
+func (v FrenchVariant) GetOpeningSingleQuote() string { return frOpenSingle }
+
+// GetClosingSingleQuote ports French.getClosingSingleQuote ("’").
+func (v FrenchVariant) GetClosingSingleQuote() string { return frCloseSingle }
+
+// IsAdvancedTypographyEnabled ports French.isAdvancedTypographyEnabled (true).
+func (v FrenchVariant) IsAdvancedTypographyEnabled() bool { return true }
+
+// HasMinMatchesRules ports French.hasMinMatchesRules (true).
+func (v FrenchVariant) HasMinMatchesRules() bool { return true }
+
 // ToAdvancedTypography ports French.toAdvancedTypography (base Language + FR rules).
 func (v FrenchVariant) ToAdvancedTypography(input string) string {
 	return frenchAdvancedTypography(input)

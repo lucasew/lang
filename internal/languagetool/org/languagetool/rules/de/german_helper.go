@@ -16,6 +16,10 @@ const (
 	POSAdjective
 	POSDeterminer
 	POSPronoun
+	POSPartizip
+	POSProperNoun
+	// Remaining constants kept for callers that may reference them; not set by
+	// AnalyzedGermanToken parsing (Java leaves type null for ADV/KON/…).
 	POSParticle
 	POSAdverb
 	POSConjunction
@@ -54,53 +58,76 @@ func getIndexOrEmpty(posTag string, idx int) string {
 	return ""
 }
 
-// HasReadingOfType reports whether any reading matches the German POS type
-// (prefix-based stand-in for AnalyzedGermanToken.getType()).
+// HasReadingOfType ports GermanHelper.hasReadingOfType via AnalyzedGermanToken.getType().
 func HasReadingOfType(readings *languagetool.AnalyzedTokenReadings, typ POSType) bool {
 	if readings == nil {
 		return false
 	}
 	for _, tok := range readings.GetReadings() {
-		pt := tok.GetPOSTag()
-		if pt == nil {
+		if tok == nil {
 			continue
 		}
-		tag := *pt
-		if tag == languagetool.SentenceEndTagName || tag == languagetool.ParagraphEndTagName {
+		pt := tok.GetPOSTag()
+		if pt != nil &&
+			(*pt == languagetool.SentenceEndTagName || *pt == languagetool.ParagraphEndTagName) {
 			return false
 		}
-		if posTypeFromTag(tag) == typ {
+		if posTypeFromAnalyzedGermanToken(pt) == typ {
 			return true
 		}
 	}
 	return false
 }
 
-func posTypeFromTag(tag string) POSType {
-	switch {
-	case strings.HasPrefix(tag, "SUB"):
-		return POSNomen
-	case strings.HasPrefix(tag, "VER"):
-		return POSVerb
-	case strings.HasPrefix(tag, "ADJ") || strings.HasPrefix(tag, "PA"):
-		return POSAdjective
-	case strings.HasPrefix(tag, "ART"):
-		return POSDeterminer
-	case strings.HasPrefix(tag, "PRO"):
-		return POSPronoun
-	case strings.HasPrefix(tag, "ADV"):
-		return POSAdverb
-	case strings.HasPrefix(tag, "KON"):
-		return POSConjunction
-	case strings.HasPrefix(tag, "PRP") || strings.HasPrefix(tag, "APPR"):
-		return POSPreposition
-	case strings.HasPrefix(tag, "ZAL") || strings.HasPrefix(tag, "CARD"):
-		return POSNumeral
-	case strings.HasPrefix(tag, "ITJ"):
-		return POSInterjection
-	case strings.HasPrefix(tag, "PTK"):
-		return POSParticle
-	default:
+// posTypeFromAnalyzedGermanToken ports AnalyzedGermanToken constructor type resolution.
+// Java: only tags with ≥3 colon parts get a type; EIG/SUB/PA/VER/ADJ/PRO/ART map as below.
+func posTypeFromAnalyzedGermanToken(posTag *string) POSType {
+	if posTag == nil || *posTag == "" {
 		return POSOther
 	}
+	parts := strings.Split(*posTag, ":")
+	if len(parts) < 3 {
+		return POSOther
+	}
+	// Java AnalyzedGermanToken: tempType starts null; PA1/PA2 always assign; others only if null.
+	var temp *POSType
+	for _, part := range parts {
+		switch part {
+		case "EIG":
+			t := POSProperNoun
+			temp = &t
+		case "SUB":
+			if temp == nil {
+				t := POSNomen
+				temp = &t
+			}
+		case "PA1", "PA2":
+			t := POSPartizip
+			temp = &t
+		case "VER":
+			if temp == nil {
+				t := POSVerb
+				temp = &t
+			}
+		case "ADJ":
+			if temp == nil {
+				t := POSAdjective
+				temp = &t
+			}
+		case "PRO":
+			if temp == nil {
+				t := POSPronoun
+				temp = &t
+			}
+		case "ART":
+			if temp == nil {
+				t := POSDeterminer
+				temp = &t
+			}
+		}
+	}
+	if temp == nil {
+		return POSOther
+	}
+	return *temp
 }

@@ -24,4 +24,6 @@ func TestSentenceWhitespaceRule_Match(t *testing.T) {
 
 	require.Equal(t, 0, matchN("Am 28. September."))
 	require.Equal(t, 1, matchN("Am 28.September."))
+	require.Equal(t, "Fehlendes Leerzeichen zwischen Sätzen oder nach Ordnungszahlen", rule.GetDescription())
+	require.Contains(t, rule.GetURL(), "grammatik-leerzeichen")
 }

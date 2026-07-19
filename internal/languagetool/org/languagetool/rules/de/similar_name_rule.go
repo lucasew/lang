@@ -1,7 +1,6 @@
 package de
 
 import (
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -9,10 +8,13 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// SimilarNameRule ports org.languagetool.rules.de.SimilarNameRule.
-// Without a German name tagger, capitalized tokens of length ≥4 are treated as candidate names.
+// SimilarNameRule ports org.languagetool.rules.de.SimilarNameRule (default off).
+// Java: (EIG: && !:COU) || isPosTagUnknown — no letter-class invent.
+// Java: TYPOS, setDefaultOff().
 type SimilarNameRule struct {
-	Messages map[string]string
+	Messages   map[string]string
+	Category   *rules.Category
+	DefaultOff bool
 }
 
 const (
@@ -21,17 +23,37 @@ const (
 )
 
 func NewSimilarNameRule(messages map[string]string) *SimilarNameRule {
-	return &SimilarNameRule{Messages: messages}
+	return &SimilarNameRule{
+		Messages:   messages,
+		Category:   rules.CatTypos.GetCategory(messages),
+		DefaultOff: true,
+	}
 }
 
 func (r *SimilarNameRule) GetID() string { return "DE_SIMILAR_NAMES" }
+
+func (r *SimilarNameRule) GetDescription() string {
+	return "Mögliche Tippfehler in Namen finden"
+}
+
+func (r *SimilarNameRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *SimilarNameRule) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
+// MinToCheckParagraph ports SimilarNameRule.minToCheckParagraph (Java returns -1).
+func (r *SimilarNameRule) MinToCheckParagraph() int { return -1 }
 
 var similarNameExclude = map[string]struct{}{
 	"Dein": {}, "Deine": {}, "Deinen": {}, "Deiner": {}, "Deines": {}, "Deinem": {},
 	"Ihr": {}, "Ihre": {}, "Ihren": {}, "Ihrer": {}, "Ihres": {}, "Ihrem": {},
 }
 
-func levenshtein(a, b string) int {
+func levenshteinSimilar(a, b string) int {
 	ar, br := []rune(a), []rune(b)
 	la, lb := len(ar), len(br)
 	if la == 0 {
@@ -40,7 +62,6 @@ func levenshtein(a, b string) int {
 	if lb == 0 {
 		return la
 	}
-	// two-row DP
 	prev := make([]int, lb+1)
 	cur := make([]int, lb+1)
 	for j := 0; j <= lb; j++ {
@@ -53,30 +74,22 @@ func levenshtein(a, b string) int {
 			if ar[i-1] == br[j-1] {
 				cost = 0
 			}
-			ins := cur[j-1] + 1
-			del := prev[j] + 1
-			sub := prev[j-1] + cost
-			cur[j] = min3(ins, del, sub)
+			ins, del, sub := cur[j-1]+1, prev[j]+1, prev[j-1]+cost
+			m := ins
+			if del < m {
+				m = del
+			}
+			if sub < m {
+				m = sub
+			}
+			cur[j] = m
 		}
 		prev, cur = cur, prev
 	}
 	return prev[lb]
 }
 
-func min3(a, b, c int) int {
-	if a < b {
-		if a < c {
-			return a
-		}
-		return c
-	}
-	if b < c {
-		return b
-	}
-	return c
-}
-
-func absInt(x int) int {
+func absIntSimilar(x int) int {
 	if x < 0 {
 		return -x
 	}
@@ -88,27 +101,30 @@ func (r *SimilarNameRule) similarName(nameHere string, namesSoFar map[string]str
 		if name == nameHere {
 			continue
 		}
-		// genitive / dative endings
-		nameEndsWithS := endsWith(name, "s") && !endsWith(nameHere, "s")
-		otherEndsWithS := !endsWith(name, "s") && endsWith(nameHere, "s")
-		nameEndsWithN := endsWith(name, "n") && !endsWith(nameHere, "n")
-		otherEndsWithN := !endsWith(name, "n") && endsWith(nameHere, "n")
+		nameEndsWithS := endsWithStr(name, "s") && !endsWithStr(nameHere, "s")
+		otherEndsWithS := !endsWithStr(name, "s") && endsWithStr(nameHere, "s")
+		nameEndsWithN := endsWithStr(name, "n") && !endsWithStr(nameHere, "n")
+		otherEndsWithN := !endsWithStr(name, "n") && endsWithStr(nameHere, "n")
 		if nameEndsWithS || otherEndsWithS || nameEndsWithN || otherEndsWithN {
 			continue
 		}
-		lenDiff := absInt(utf8.RuneCountInString(name) - utf8.RuneCountInString(nameHere))
-		if lenDiff <= similarNameMaxDiff && levenshtein(name, nameHere) <= similarNameMaxDiff {
+		lenDiff := absIntSimilar(utf8.RuneCountInString(name) - utf8.RuneCountInString(nameHere))
+		if lenDiff <= similarNameMaxDiff && levenshteinSimilar(name, nameHere) <= similarNameMaxDiff {
 			return name
 		}
 	}
 	return ""
 }
 
-func endsWith(s, suf string) bool {
+func endsWithStr(s, suf string) bool {
 	return len(s) >= len(suf) && s[len(s)-len(suf):] == suf
 }
 
-func isMaybeNameSurface(word string) bool {
+func isMaybeName(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil {
+		return false
+	}
+	word := token.GetToken()
 	if utf8.RuneCountInString(word) < similarNameMinLen {
 		return false
 	}
@@ -118,13 +134,12 @@ func isMaybeNameSurface(word string) bool {
 	if !tools.StartsWithUppercase(word) {
 		return false
 	}
-	// require mostly letters
-	for _, r := range word {
-		if !unicode.IsLetter(r) && r != '-' {
-			return false
-		}
+	// Java: (EIG: && !:COU) || isPosTagUnknown
+	// isPosTagUnknown is not the same as !isTagged (multi-reading untagged ≠ unknown).
+	if token.HasPartialPosTag("EIG:") && !token.HasPartialPosTag(":COU") {
+		return true
 	}
-	return true
+	return token.IsPosTagUnknown()
 }
 
 func (r *SimilarNameRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
@@ -132,11 +147,14 @@ func (r *SimilarNameRule) MatchList(sentences []*languagetool.AnalyzedSentence) 
 	var ruleMatches []*rules.RuleMatch
 	pos := 0
 	for _, sentence := range sentences {
+		if sentence == nil {
+			continue
+		}
 		for _, token := range sentence.GetTokensWithoutWhitespace() {
-			word := token.GetToken()
-			if !isMaybeNameSurface(word) {
+			if !isMaybeName(token) {
 				continue
 			}
+			word := token.GetToken()
 			if similar := r.similarName(word, namesSoFar); similar != "" {
 				msg := "'" + word + "' ähnelt dem vorher benutzten '" + similar + "', handelt es sich evtl. um einen Tippfehler?"
 				rm := rules.NewRuleMatch(r, sentence, pos+token.GetStartPos(), pos+token.GetEndPos(), msg)

@@ -48,6 +48,8 @@ func NewPortugueseWrongWordInContextRule(messages map[string]string) *Portuguese
 		LanguageCode:       "pt",
 		Entries:            loadWrongWordInContext(),
 	}
+	// Java: getCategoryString → "Confusão de Palavras: $match"
+	rules.InitWrongWordInContextMeta(base, messages, "Confusão de Palavras: $match")
 	return &PortugueseWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

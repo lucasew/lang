@@ -179,9 +179,19 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 			if docBase < 0 {
 				docBase = searchFrom
 			}
+			sentTypoApos := sentenceHasTypographicApostrophe(s)
 			for _, m := range results[i].matches {
+				// Same as JLanguageTool.Check: keep sentence-local span before remap.
+				if m.FromPosSentence < 0 || m.ToPosSentence <= m.FromPosSentence {
+					m.FromPosSentence = m.FromPos
+					m.ToPosSentence = m.ToPos
+				}
 				m.FromPos += docBase
 				m.ToPos += docBase
+				if m.SentenceText == "" {
+					m.SentenceText = stext
+				}
+				m.HasTypographicApostropheInSentence = sentTypoApos
 				out = append(out, m)
 			}
 			searchFrom = docBase + len([]rune(stext))
@@ -201,6 +211,24 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 				out = append(out, tc.fn(sents)...)
 			}
 		}
+	}
+	// Same post-process as JLanguageTool.Check.
+	out = lt.applyRulePriorities(out)
+	out = CleanSameRuleGroupLocalMatches(out)
+	if en := lt.enabledRulesForFilters(); len(en) > 0 {
+		for i := range out {
+			out[i].EnabledRules = en
+		}
+	}
+	if lt.FilterRuleMatches != nil {
+		out = lt.FilterRuleMatches(out)
+	}
+	if !lt.disableCleanOverlapping {
+		hidePremium := lt.UserConfig != nil && lt.UserConfig.HidePremiumMatches
+		out = CleanOverlappingLocalMatchesOpts(out, CleanOverlapOpts{HidePremiumMatches: hidePremium})
+	}
+	if lt.FilterRuleMatchesAfterOverlapping != nil {
+		out = lt.FilterRuleMatchesAfterOverlapping(out)
 	}
 	return lt.filterMatchesByIgnore(text, out)
 }

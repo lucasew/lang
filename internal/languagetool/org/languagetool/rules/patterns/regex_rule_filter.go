@@ -6,17 +6,17 @@ import (
 )
 
 // RegexRuleFilter ports org.languagetool.rules.patterns.RegexRuleFilter.
-// patternMatcher is the full match string (Go has no java.util.regex.Matcher state).
+// groups mirrors Java Matcher: groups[0] full match, groups[1] capture group 1, …
 type RegexRuleFilter interface {
 	AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string,
-		sentence *languagetool.AnalyzedSentence, patternMatch string) *rules.RuleMatch
+		sentence *languagetool.AnalyzedSentence, groups []string) *rules.RuleMatch
 }
 
 // RegexRuleFilterFunc adapts a function.
 type RegexRuleFilterFunc func(match *rules.RuleMatch, arguments map[string]string,
-	sentence *languagetool.AnalyzedSentence, patternMatch string) *rules.RuleMatch
+	sentence *languagetool.AnalyzedSentence, groups []string) *rules.RuleMatch
 
 func (f RegexRuleFilterFunc) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string,
-	sentence *languagetool.AnalyzedSentence, patternMatch string) *rules.RuleMatch {
-	return f(match, arguments, sentence, patternMatch)
+	sentence *languagetool.AnalyzedSentence, groups []string) *rules.RuleMatch {
+	return f(match, arguments, sentence, groups)
 }

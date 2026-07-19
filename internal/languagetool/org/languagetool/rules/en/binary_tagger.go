@@ -7,6 +7,7 @@ import (
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
 )
 
 // enPunctPCTRE ports EN disambiguation UNKNOWN_PCT: [\.,;:…!\?] → add POS PCT.
@@ -22,7 +23,13 @@ func RegisterBinaryEnglishTagger(lt *languagetool.JLanguageTool, dictPath string
 	if err != nil || d == nil {
 		return false
 	}
-	lt.TagWord = BinaryEnglishTagWord(d)
+	tw := BinaryEnglishTagWord(d)
+	lt.TagWord = tw
+	// MatchState suppress_misspelled (Java lang.getTagger().tag on synthesized forms).
+	patterns.RegisterLanguageTagger("en", tw)
+	if lt.LanguageCode != "" {
+		patterns.RegisterLanguageTagger(lt.LanguageCode, tw)
+	}
 	return true
 }
 

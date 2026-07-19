@@ -1,12 +1,4 @@
 package ru
 
-import "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-
-// NoDisambiguationRussianPartialPosTagFilter wraps PartialPosTagFilter; full language tagger wiring is deferred.
-type NoDisambiguationRussianPartialPosTagFilter struct {
-	*rules.PartialPosTagFilter
-}
-
-func NewNoDisambiguationRussianPartialPosTagFilter(tag func(string) []string) *NoDisambiguationRussianPartialPosTagFilter {
-	return &NoDisambiguationRussianPartialPosTagFilter{PartialPosTagFilter: rules.NewPartialPosTagFilter(tag)}
-}
+// File kept for naming parity with NoDisambiguationRussianPartialPosTagFilter.java.
+// Implementation lives in russian_partial_pos_tag_filter.go.

@@ -39,7 +39,6 @@ type CompoundRule struct {
 
 func NewCompoundRule(messages map[string]string) *CompoundRule {
 	base := &rules.AbstractCompoundRule{
-		Messages:                    messages,
 		ID:                          "RO_COMPOUND",
 		Description:                 "Greșeală de scriere (cuvinte scrise legat sau cu cratimă)",
 		WithHyphenMessage:           "Cuvântul se scrie cu cratimă.",
@@ -49,6 +48,7 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
 	}
+	rules.InitCompoundRuleMeta(base, messages)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

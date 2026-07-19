@@ -1,0 +1,60 @@
+package de
+
+import (
+	"testing"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
+	"github.com/stretchr/testify/require"
+)
+
+func TestPartizip2_NonSepPraes(t *testing.T) {
+	// erstickt = er + stickt (VER:3:SIN:PRÄ:SFT)
+	wt := tagging.MapWordTagger{
+		"stickt": {tagging.NewTaggedWord("sticken", "VER:3:SIN:PRÄ:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"erstickt"})
+	tags := posTagsOf(got[0])
+	require.Contains(t, tags, "VER:PA2:SFT")
+	require.Contains(t, tags, "PA2:PRD:GRU:VER")
+}
+
+func TestPartizip2_Declined(t *testing.T) {
+	// erstickter = er + stickt + er
+	wt := tagging.MapWordTagger{
+		"stickt": {tagging.NewTaggedWord("sticken", "VER:3:SIN:PRÄ:SFT")},
+	}
+	tagger := NewGermanTagger(wt)
+	got := tagger.Tag([]string{"erstickter"})
+	tags := posTagsOf(got[0])
+	found := false
+	for _, tg := range tags {
+		if stringsHasPrefix(tg, "PA2:") && stringsHasSuffix(tg, ":VER") {
+			found = true
+			break
+		}
+	}
+	require.True(t, found, "expected declined PA2 tags, got %v", tags)
+}
+
+func TestSwissTagger_UsesSentenceContext(t *testing.T) {
+	// imperative short form needs multi-token sentence
+	wt := tagging.MapWordTagger{
+		"gehe": {tagging.NewTaggedWord("gehen", "VER:IMP:SIN:SFT")},
+	}
+	tagger := NewSwissGermanTagger(wt)
+	got := tagger.Tag([]string{"Geh", "bitte"})
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	require.True(t, stringsHasPrefix(*got[0].GetReadings()[0].GetPOSTag(), "VER:IMP:SIN"))
+}
+
+func TestSwissTagger_ssToEszett(t *testing.T) {
+	wt := tagging.MapWordTagger{
+		"Maß": {tagging.NewTaggedWord("Maß", "SUB:NOM:SIN:NEU")},
+	}
+	tagger := NewSwissGermanTagger(wt)
+	got := tagger.Tag([]string{"Mass"})
+	require.NotNil(t, got[0].GetReadings()[0].GetPOSTag())
+	// surface stays Swiss ss
+	require.Equal(t, "Mass", got[0].GetReadings()[0].GetToken())
+}

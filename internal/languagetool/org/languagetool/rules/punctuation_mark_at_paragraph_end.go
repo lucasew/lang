@@ -10,10 +10,16 @@ import (
 )
 
 // PunctuationMarkAtParagraphEnd ports org.languagetool.rules.PunctuationMarkAtParagraphEnd.
+// Java: PUNCTUATION, Grammar; setDefaultOff when !defaultActive; Tag.picky.
 type PunctuationMarkAtParagraphEnd struct {
 	Messages map[string]string
 	// SingleLineBreaksMarksPara matches Demo/SRX default false → need \n\n
 	SingleLineBreaksMarksPara bool
+	Category                  *Category
+	IssueType                 ITSIssueType
+	DefaultOff                bool
+	// Tags ports Rule.tags (Java picky).
+	Tags []Tag
 }
 
 var (
@@ -25,30 +31,46 @@ var (
 const maxURLLength = 30
 
 func NewPunctuationMarkAtParagraphEnd(messages map[string]string) *PunctuationMarkAtParagraphEnd {
-	return &PunctuationMarkAtParagraphEnd{Messages: messages}
+	// Java (messages, lang) → defaultActive false → setDefaultOff() + Tag.picky.
+	return &PunctuationMarkAtParagraphEnd{
+		Messages:   messages,
+		Category:   CatPunctuation.GetCategory(messages),
+		IssueType:  ITSGrammar,
+		DefaultOff: true,
+		Tags:       []Tag{TagPicky},
+	}
 }
 
 func (r *PunctuationMarkAtParagraphEnd) GetID() string { return "PUNCTUATION_PARAGRAPH_END" }
 
+// GetDescription ports getDescription (paragraph_end_desc).
+func (r *PunctuationMarkAtParagraphEnd) GetDescription() string {
+	if r != nil && r.Messages != nil {
+		if s := r.Messages["paragraph_end_desc"]; s != "" {
+			return s
+		}
+	}
+	return "No punctuation mark at the end of paragraph"
+}
+
+func (r *PunctuationMarkAtParagraphEnd) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+func (r *PunctuationMarkAtParagraphEnd) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSGrammar
+	}
+	return r.IssueType
+}
+
+func (r *PunctuationMarkAtParagraphEnd) IsDefaultOff() bool { return r != nil && r.DefaultOff }
+
 func (r *PunctuationMarkAtParagraphEnd) isParagraphEnd(sentences []*languagetool.AnalyzedSentence, nTest int) bool {
-	if nTest >= len(sentences)-1 {
-		return true
-	}
-	text := sentences[nTest].GetText()
-	if r.SingleLineBreaksMarksPara {
-		if strings.HasSuffix(text, "\n") || strings.HasSuffix(text, "\n\r") {
-			return true
-		}
-	} else {
-		if strings.HasSuffix(text, "\n\n") || strings.HasSuffix(text, "\n\r\n\r") || strings.HasSuffix(text, "\r\n\r\n") {
-			return true
-		}
-	}
-	next := sentences[nTest+1].GetText()
-	if strings.HasPrefix(next, "\n") || strings.HasPrefix(next, "\r\n") {
-		return true
-	}
-	return false
+	return languagetool.IsParagraphEnd(sentences, nTest, r.SingleLineBreaksMarksPara)
 }
 
 func stringEqualsAny(token string, any []string) bool {

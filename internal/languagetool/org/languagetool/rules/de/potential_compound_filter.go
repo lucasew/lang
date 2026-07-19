@@ -5,13 +5,19 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// PotentialCompoundFilter ports PotentialCompoundFilter suggestion building
-// without tagger/speller: prefers joined form when short, else hyphenated.
+// PotentialCompoundFilter ports org.languagetool.rules.de.PotentialCompoundFilter.
+//
+// Java: GermanyGerman.getDefaultSpellingRule().match(joinedSentence); matches.length==0 → joined valid.
+// JoinedIsValid overrides the process-wide filter speller when set (tests).
+// Without override and without WireGermanFilterSpeller → hyphenated only
+// (fail-closed: do not invent that a joined compound is spelled correctly).
 type PotentialCompoundFilter struct {
-	// JoinedIsValid optional; nil treats joined words as valid when len <= 20.
+	// JoinedIsValid optional override; nil uses !FilterDictIsMisspelled when dict wired.
 	JoinedIsValid func(joined string) bool
 }
 
@@ -19,7 +25,19 @@ func NewPotentialCompoundFilter() *PotentialCompoundFilter {
 	return &PotentialCompoundFilter{}
 }
 
-// Suggestions returns replacement strings for part1+part2.
+// joinedValid ports Java spelling-rule match (empty matches ⇒ valid joined form).
+func (f *PotentialCompoundFilter) joinedValid(joined string) bool {
+	if f != nil && f.JoinedIsValid != nil {
+		return f.JoinedIsValid(joined)
+	}
+	if FilterDictAvailable() {
+		// Java: RuleMatch[] matches = getDefaultSpellingRule().match(...); matches.length == 0
+		return !FilterDictIsMisspelled(joined)
+	}
+	return false
+}
+
+// Suggestions returns replacement strings for part1+part2 (Java twin).
 func (f *PotentialCompoundFilter) Suggestions(part1, part2 string) []string {
 	p1cap := capitalizeIfUniform(part1)
 	p2low, p2cap := part2, part2
@@ -32,19 +50,33 @@ func (f *PotentialCompoundFilter) Suggestions(part1, part2 string) []string {
 	}
 	joined := p1cap + p2low
 	hyphenated := p1cap + "-" + p2cap
-	valid := f.JoinedIsValid
-	if valid == nil {
-		valid = func(s string) bool { return utf8.RuneCountInString(s) <= 20 }
-	}
 	var out []string
-	if valid(joined) {
+	if f.joinedValid(joined) {
+		// Java: if joinedWord.length() > 20 also suggest hyphenated first
 		if utf8.RuneCountInString(joined) > 20 {
 			out = append(out, hyphenated)
 		}
 		out = append(out, joined)
 	} else {
+		// misspelled / no speller → hyphenated only
 		out = append(out, hyphenated)
 	}
+	return out
+}
+
+// AcceptRuleMatch ports PotentialCompoundFilter.acceptRuleMatch.
+func (f *PotentialCompoundFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
+	_ []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
+	if match == nil {
+		return nil
+	}
+	reps := f.Suggestions(arguments["part1"], arguments["part2"])
+	if len(reps) == 0 {
+		return nil
+	}
+	out := rules.NewRuleMatch(match.GetRule(), match.Sentence, match.GetFromPos(), match.GetToPos(), match.GetMessage())
+	out.ShortMessage = match.ShortMessage
+	out.SetSuggestedReplacements(reps)
 	return out
 }
 

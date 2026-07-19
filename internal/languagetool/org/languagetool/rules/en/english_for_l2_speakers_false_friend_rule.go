@@ -89,7 +89,8 @@ func (r *EnglishForL2SpeakersFalseFriendRule) Match(sentence *languagetool.Analy
 	}
 	var out []*rules.RuleMatch
 	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		if tok == nil || tok.IsSentenceStart() || tok.IsSentenceEnd() {
+		// Skip pure SENT_START only — last content word carries SENT_END in LT.
+		if tok == nil || tok.IsSentenceStart() {
 			continue
 		}
 		w := tok.GetToken()

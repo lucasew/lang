@@ -144,6 +144,10 @@ func includedAllAtOnce(rule any) bool {
 	return false
 }
 
+// isPunctuationOnlyChange ports CleanOverlappingFilter.isPunctuationOnlyChange:
+// first suggestion vs original surface; letters+digits equal ⇒ punctuation-only.
+// Original surface: OriginalErrorStr, else sentence[fromPosSentence:toPosSentence],
+// else sentence[fromPos:toPos] (Java order; fail-closed when unknown).
 func (f *CleanOverlappingFilter) isPunctuationOnlyChange(match *RuleMatch) bool {
 	if match == nil {
 		return false
@@ -153,23 +157,40 @@ func (f *CleanOverlappingFilter) isPunctuationOnlyChange(match *RuleMatch) bool 
 		return false
 	}
 	replacement := suggestions[0]
-	var original string
-	if match.Sentence != nil {
-		sentenceStr := match.Sentence.GetText()
-		from, to := match.FromPos, match.ToPos
-		// UTF-16 positions
-		if from > -1 && to > -1 && to <= utf16Len(sentenceStr) && from < to {
-			original = utf16Substring(sentenceStr, from, to)
-		} else {
+	original := match.GetOriginalErrorStr()
+	if original == "" {
+		if match.Sentence == nil {
 			return false
 		}
-	} else {
-		return false
+		sentenceStr := match.Sentence.GetText()
+		if sentenceStr == "" {
+			return false
+		}
+		// Java: prefer FromPosSentence/ToPosSentence, then FromPos/ToPos (UTF-16 code units).
+		original = sentenceSpanOriginal(sentenceStr, match.FromPosSentence, match.ToPosSentence)
+		if original == "" {
+			original = sentenceSpanOriginal(sentenceStr, match.FromPos, match.ToPos)
+		}
+		if original == "" {
+			return false
+		}
 	}
 	if replacement == original {
 		return false
 	}
 	return keepLettersAndDigits(original) == keepLettersAndDigits(replacement)
+}
+
+// sentenceSpanOriginal extracts sentence text for [from,to) using UTF-16 indices
+// (Java String.substring). Returns "" when indices are unset or out of range.
+func sentenceSpanOriginal(sentenceStr string, from, to int) string {
+	if from < 0 || to < 0 || from >= to {
+		return ""
+	}
+	if to > utf16Len(sentenceStr) {
+		return ""
+	}
+	return utf16Substring(sentenceStr, from, to)
 }
 
 func keepLettersAndDigits(s string) string {

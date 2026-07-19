@@ -36,4 +36,8 @@ func TestDashRule_Rule(t *testing.T) {
 	assertBad("Die große Diäten-Erhöhungs- Manie kam dann doch.")
 	assertBad("Die große Diäten- Erhöhungs-Manie kam dann doch.")
 	assertBad("MAZEDONIEN- SKOPJE Str.")
+
+	// Java: equalsAny exact "UND"|"ODER"|"BZW" only — lowercase "und" is skipped via isUpperCase gate.
+	require.Equal(t, "Keine Leerzeichen in Bindestrich-Komposita (wie z.B. in 'Diäten- Erhöhung')", rule.GetDescription())
+	require.NotEmpty(t, rule.GetURL())
 }

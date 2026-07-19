@@ -2,8 +2,9 @@ package ga
 
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
 // RegisterCoreIrishRules installs shared layout + word-repeat + beginning.
@@ -11,6 +12,7 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
+	lt.PriorityForId = language.IrishPriorityForId
 	rules.RegisterSharedLayoutRules(lt, "ga")
 	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Athrá"})
 	wr.IDOverride = "GA_WORD_REPEAT_RULE"
@@ -19,9 +21,7 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 		"desc_repetition_beginning_word": "Tosaíonn trí abairt as a chéile leis an bhfocal céanna.",
 	})
 	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
-	patterns.RegisterTokenSequences(lt, "ga", []patterns.TokenSequenceSpec{
-		{ID: "GA_AGUS_AGUS", Tokens: []string{"agus", "agus"}, Message: "Athrá indéanta ar 'agus'.", Suggestion: "agus"},
-	})
+	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
 
 	// Official replace tables (embedded from upstream).
 	ir := NewIrishReplaceRule(nil)
@@ -48,4 +48,13 @@ func RegisterCoreIrishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceCheckerSimple(sp.Match))
 	eh := NewEnglishHomophoneRule(nil)
 	lt.AddRuleChecker(eh.GetID(), rules.AsSentenceCheckerSimple(eh.Match))
+
+	// Java createDefaultSpellingRule → MorfologikIrishSpellerRule.
+	// Always full Match (hyphen tokenizing + maths/halfwidth isMisspelled).
+	ms := NewMorfologikIrishSpellerRule()
+	if p := morfologik.DiscoverLanguageDict(IrishSpellerDict); p != "" {
+		// Optional binary path; map Words stay fail-closed without invent.
+		_ = p
+	}
+	lt.AddRuleChecker(ms.GetID(), rules.AsSentenceChecker(ms.Match))
 }
