@@ -4,7 +4,6 @@ import (
 	"embed"
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -15,14 +14,13 @@ var transVerbFS embed.FS
 
 var (
 	transVerbOnce sync.Once
-	// lemma (with/without diacritics) → required preposition(s)
+	// lemma → required preposition(s) (from file; diacritic and stripped keys)
 	transVerbMap map[string][]string
 )
 
 func stripArabicDiacritics(s string) string {
 	var b strings.Builder
 	for _, r := range s {
-		// Arabic combining diacritics U+064B–U+065F, tatweel U+0640
 		if (r >= 0x064B && r <= 0x065F) || r == 0x0640 || r == 0x0670 {
 			continue
 		}
@@ -56,19 +54,23 @@ func loadTransVerbs() map[string][]string {
 				preps[i] = strings.TrimSpace(preps[i])
 			}
 			transVerbMap[lemma] = preps
+			// also index undiacritized for tagger lemmas without tashkeel
 			transVerbMap[stripArabicDiacritics(lemma)] = preps
 		}
 	})
 	return transVerbMap
 }
 
-// ArabicTransVerbRule is a surface stand-in for ArabicTransVerbRule.
-// Full fidelity needs Arabic tagger/synthesizer for attached pronouns.
-// Surface: if token starts with a listed verb lemma and is longer (clitic object),
-// and the next token is not the expected preposition, flag it.
+// ArabicTransVerbRule ports org.languagetool.rules.ar.ArabicTransVerbRule.
+// Match is POS+lemma gated (Java isAttachedTransitiveVerb); without POS/lemma fail closed.
+// Form hooks optional (Java synthesizer for unattached verb / preposition forms).
 type ArabicTransVerbRule struct {
 	Messages map[string]string
 	verbs    map[string][]string
+	// CorrectVerbForm ports generateUnattachedNewForm; nil → surface token.
+	CorrectVerbForm func(tok *languagetool.AnalyzedTokenReadings) string
+	// CorrectPrepForm ports getCorrectPrepositionForm; nil → bare preposition string.
+	CorrectPrepForm func(prep string, verbTok *languagetool.AnalyzedTokenReadings) string
 }
 
 func NewArabicTransVerbRule(messages map[string]string) *ArabicTransVerbRule {
@@ -77,60 +79,134 @@ func NewArabicTransVerbRule(messages map[string]string) *ArabicTransVerbRule {
 
 func (r *ArabicTransVerbRule) GetID() string { return "AR_VERB_TRANSITIVE_IINDIRECT" }
 
+func (r *ArabicTransVerbRule) GetDescription() string {
+	return "َTransitive verbs corrected to indirect transitive"
+}
+
+// Match ports ArabicTransVerbRule.match.
 func (r *ArabicTransVerbRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || sentence == nil || len(r.verbs) == 0 {
+		return nil
+	}
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var matches []*rules.RuleMatch
+	prevTokenIndex := 0
 	for i := 1; i < len(tokens); i++ {
-		tok := tokens[i]
-		word := tok.GetToken()
-		wordND := stripArabicDiacritics(word)
-		var preps []string
-		var lemma string
-		// longest lemma prefix match
-		for lem, p := range r.verbs {
-			lemND := stripArabicDiacritics(lem)
-			if lemND == "" {
-				continue
-			}
-			if wordND == lemND {
-				// unattached bare verb — not the "attached" case
-				continue
-			}
-			if strings.HasPrefix(wordND, lemND) && utf8.RuneCountInString(wordND) > utf8.RuneCountInString(lemND) {
-				if lemma == "" || utf8.RuneCountInString(lemND) > utf8.RuneCountInString(stripArabicDiacritics(lemma)) {
-					lemma = lem
-					preps = p
-				}
-			}
-		}
-		if lemma == "" || len(preps) == 0 {
+		token := tokens[i]
+		if token == nil {
 			continue
 		}
-		// next token should be the preposition; if missing or wrong, flag
-		okPrep := false
-		if i+1 < len(tokens) {
-			next := stripArabicDiacritics(tokens[i+1].GetToken())
-			for _, p := range preps {
-				if next == stripArabicDiacritics(p) || strings.HasPrefix(next, stripArabicDiacritics(p)) {
-					okPrep = true
-					break
-				}
+		var prevToken *languagetool.AnalyzedTokenReadings
+		var prevTokenStr string
+		if prevTokenIndex > 0 {
+			prevToken = tokens[prevTokenIndex]
+			prevTokenStr = prevToken.GetToken()
+		}
+		if prevTokenStr != "" {
+			isAttached := r.isAttachedTransitiveVerb(prevToken)
+			prepositions := r.getProperPrepositionForTransitiveVerb(prevToken)
+			isRight := r.isRightPreposition(token, prepositions)
+			if isAttached && !isRight && len(prepositions) > 0 {
+				verb := r.getCorrectVerbForm(prevToken)
+				newPrep := prepositions[0]
+				preposition := r.getCorrectPrepositionForm(newPrep, prevToken)
+				replacement := verb + " " + preposition
+				msg := "قل " + replacement + " بدلا من '" + prevTokenStr + "' لأنّ الفعل متعد بحرف."
+				rm := rules.NewRuleMatch(r, sentence, prevToken.GetStartPos(), token.GetEndPos(), msg)
+				rm.ShortMessage = "خطأ في الفعل المتعدي بحرف"
+				rm.SetSuggestedReplacement(replacement)
+				matches = append(matches, rm)
 			}
 		}
-		if okPrep {
-			continue
+		if r.isAttachedTransitiveVerb(token) {
+			prevTokenIndex = i
+		} else {
+			prevTokenIndex = 0
 		}
-		sug := lemma + " " + preps[0]
-		msg := "قل " + sug + " بدلا من '" + word + "' لأنّ الفعل متعد بحرف."
-		from := tok.GetStartPos()
-		to := tok.GetEndPos()
-		if i+1 < len(tokens) {
-			to = tokens[i+1].GetEndPos()
-		}
-		rm := rules.NewRuleMatch(r, sentence, from, to, msg)
-		rm.ShortMessage = "خطأ في الفعل المتعدي بحرف"
-		rm.SetSuggestedReplacement(sug)
-		matches = append(matches, rm)
 	}
 	return matches
+}
+
+// isAttachedTransitiveVerb ports Java: POS present and lemma in wrongWords.
+func (r *ArabicTransVerbRule) isAttachedTransitiveVerb(mytoken *languagetool.AnalyzedTokenReadings) bool {
+	if mytoken == nil {
+		return false
+	}
+	for _, verbTok := range mytoken.GetReadings() {
+		if verbTok == nil || verbTok.GetPOSTag() == nil {
+			continue
+		}
+		if verbTok.GetLemma() == nil || *verbTok.GetLemma() == "" {
+			continue
+		}
+		if _, ok := r.verbs[*verbTok.GetLemma()]; ok {
+			return true
+		}
+		// undiacritized lemma key
+		if _, ok := r.verbs[stripArabicDiacritics(*verbTok.GetLemma())]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+func (r *ArabicTransVerbRule) getProperPrepositionForTransitiveVerb(mytoken *languagetool.AnalyzedTokenReadings) []string {
+	if mytoken == nil {
+		return nil
+	}
+	for _, verbTok := range mytoken.GetReadings() {
+		if verbTok == nil || verbTok.GetPOSTag() == nil || verbTok.GetLemma() == nil {
+			continue
+		}
+		lemma := *verbTok.GetLemma()
+		if preps, ok := r.verbs[lemma]; ok {
+			return preps
+		}
+		if preps, ok := r.verbs[stripArabicDiacritics(lemma)]; ok {
+			return preps
+		}
+	}
+	return nil
+}
+
+// isRightPreposition ports Java: next token first reading lemma in preposition list.
+func (r *ArabicTransVerbRule) isRightPreposition(nextToken *languagetool.AnalyzedTokenReadings, prepositionList []string) bool {
+	if nextToken == nil || len(prepositionList) == 0 {
+		return false
+	}
+	rds := nextToken.GetReadings()
+	if len(rds) == 0 {
+		return false
+	}
+	var nextLemma string
+	if rds[0] != nil && rds[0].GetLemma() != nil {
+		nextLemma = *rds[0].GetLemma()
+	}
+	if nextLemma == "" {
+		// fail closed without lemma (Java uses getLemma on first reading)
+		return false
+	}
+	for _, p := range prepositionList {
+		if nextLemma == p || stripArabicDiacritics(nextLemma) == stripArabicDiacritics(p) {
+			return true
+		}
+	}
+	return false
+}
+
+func (r *ArabicTransVerbRule) getCorrectVerbForm(token *languagetool.AnalyzedTokenReadings) string {
+	if r.CorrectVerbForm != nil {
+		return r.CorrectVerbForm(token)
+	}
+	if token == nil {
+		return ""
+	}
+	return token.GetToken()
+}
+
+func (r *ArabicTransVerbRule) getCorrectPrepositionForm(prep string, verbTok *languagetool.AnalyzedTokenReadings) string {
+	if r.CorrectPrepForm != nil {
+		return r.CorrectPrepForm(prep, verbTok)
+	}
+	return prep
 }
