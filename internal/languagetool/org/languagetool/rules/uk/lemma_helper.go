@@ -271,6 +271,41 @@ func ReverseSearch(tokens []*languagetool.AnalyzedTokenReadings, pos, depth int,
 	return ReverseSearchIdx(tokens, pos, depth, lemmaRE, posRE) >= 0
 }
 
+// RevSearchIdx ports LemmaHelper.revSearchIdx: skip part/adv/pron then match at one index.
+// postagRegex is a Java PosTagHelper.hasPosTag(String) pattern (full tag match).
+func RevSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, startPos int, lemmaRE *regexp.Regexp, postagRegex string) int {
+	if tokens == nil || startPos < 0 || startPos >= len(tokens) {
+		return -1
+	}
+	pos := startPos
+	if pos > 0 && HasPosTagRE(tokens[pos], regexp.MustCompile(`^part`)) {
+		pos--
+	}
+	if pos > 0 && (HasPosTagRE(tokens[pos], regexp.MustCompile(`^adv(:.*)?$`)) || HasPosTagPart(tokens[pos], "pron")) {
+		pos--
+	}
+	if pos > 0 && HasPosTagRE(tokens[pos], regexp.MustCompile(`^part`)) {
+		pos--
+	}
+	if pos <= 0 {
+		return -1
+	}
+	if lemmaRE != nil && !HasLemmaTokenRE(tokens[pos], lemmaRE) {
+		return -1
+	}
+	if postagRegex != "" {
+		if !HasPosTagRE(tokens[pos], regexp.MustCompile(postagRegex)) {
+			return -1
+		}
+	}
+	return pos
+}
+
+// RevSearch ports LemmaHelper.revSearch.
+func RevSearch(tokens []*languagetool.AnalyzedTokenReadings, startPos int, lemmaRE *regexp.Regexp, postagRegex string) bool {
+	return RevSearchIdx(tokens, startPos, lemmaRE, postagRegex) >= 0
+}
+
 // ForwardLemmaSearchIdx ports LemmaHelper.forwardLemmaSearchIdx.
 func ForwardLemmaSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, pos, depth int, lemmaRE, posRE *regexp.Regexp) int {
 	if tokens == nil || pos < 0 {

@@ -213,3 +213,22 @@ func InflectionsIntersectIgnoreGender(master, slave []Inflection, masterGenderFi
 	}
 	return false
 }
+
+// GenderMatches ports TokenAgreementAdjNounExceptionHelper.genderMatches
+// (same gender; optional case filters on master/slave).
+func GenderMatches(master, slave []Inflection, masterCaseFilter, slaveCaseFilter string) bool {
+	for _, m := range master {
+		if masterCaseFilter != "" && m.Case != masterCaseFilter {
+			continue
+		}
+		for _, s := range slave {
+			if slaveCaseFilter != "" && s.Case != slaveCaseFilter {
+				continue
+			}
+			if s.Gender == m.Gender {
+				return true
+			}
+		}
+	}
+	return false
+}

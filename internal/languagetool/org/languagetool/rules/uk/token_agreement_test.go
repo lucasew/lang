@@ -656,3 +656,73 @@ func TestAdjNounException_ConjAndMore(t *testing.T) {
 		atr("а"), atrLemma("також", strPtr("також"), "adv"),
 	}, 0))
 }
+
+func TestAdjNounException_VerbRevAndColors(t *testing.T) {
+	// дев'яте травня
+	tr := "травень"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("дев'яте", "adj:n:v_naz:numr"), atrLemma("травня", &tr, "noun:inanim:m:v_rod"),
+	}, 0, 1))
+
+	// adjp:actv:bad
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("обмежуючий", "adj:m:v_naz:adjp:actv:bad"), atr("власність", "noun:inanim:f:v_zna"),
+	}, 0, 1))
+
+	// нічого + adj inflection overlap
+	nishcho := "ніщо"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("SENT"), atrLemma("нічого", &nishcho, "noun:inanim:n:v_rod"),
+		atr("поганого", "adj:n:v_rod"), atr("людям", "noun:anim:p:v_dav"),
+	}, 3, 4))
+
+	// визнання неконституційним закону — Java adjPos > 1, revSearch at adjPos-1
+	viz := "визнання"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("визнання", &viz, "noun:inanim:n:v_naz"),
+		atr("неконституційним", "adj:m:v_oru"),
+		atr("закону", "noun:inanim:m:v_rod"),
+	}, 2, 3))
+
+	// був змушений — revSearch needs startPos > 0 (SENT pad)
+	buti := "бути"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("був", &buti, "verb:imperf:past:m"),
+		atr("змушений", "adj:m:v_naz:adjp:pasv"),
+		atr("командир", "noun:anim:m:v_naz"),
+	}, 2, 3))
+
+	// помальована в біле кімната — adjPos > 2
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atr("помальована", "adj:f:v_naz:adjp:pasv"), atr("в", "prep"),
+		atr("біле", "adj:n:v_zna"), atr("кімната", "noun:inanim:f:v_naz"),
+	}, 3, 4))
+
+	// тисячу разів
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("повторена", "adj:f:v_naz:adjp:pasv"), atr("тисячу", "noun"), atr("разів", "noun"),
+	}, 0, 1))
+
+	// ще раз
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("покликана", "adj"), atr("ще"), atr("раз", "noun"),
+	}, 0, 2))
+
+	// порівняно з попереднім
+	poriv := "порівняно"
+	z := "з"
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("порівняно", &poriv, "adv"), atrLemma("з", &z, "prep"),
+		atr("попереднім", "adj:n:v_oru"), atr("рішенням", "noun"),
+	}, 3, 4))
+
+	// GenderMatches
+	require.True(t, GenderMatches(
+		[]Inflection{{Gender: "m", Case: "v_oru"}},
+		[]Inflection{{Gender: "m", Case: "v_rod"}},
+		"v_oru", "v_rod"))
+}

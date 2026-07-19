@@ -793,6 +793,144 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 			regexp.MustCompile(`^(?:ранку|дня|вечора|ночі|пополудня)$`).MatchString(noun.GetToken()) {
 			return true
 		}
+		// дев'яте травня
+		if HasPosTagPart(adj, ":n:") &&
+			HasLemmaWithPosRE(noun, MonthLemmas, regexp.MustCompile(`:v_rod`)) {
+			return true
+		}
+	}
+
+	// обмежуючий власність — adjp:actv:bad
+	if HasPosTagRE(adj, regexp.MustCompile(`.*?adjp:actv.*:bad.*`)) {
+		return true
+	}
+
+	// нічого протизаконного / щось подібне
+	if nounPos > 2 && nounPos <= len(tokens)-1 && adjPos > 0 &&
+		HasLemmaTokenAny(tokens[adjPos-1], []string{"ніщо", "щось", "ніхто", "хтось"}) &&
+		InflectionsIntersect(GetNounCaseInflections(CollectPOSTags(tokens[adjPos-1])), masterInfs) {
+		return true
+	}
+
+	// визнання неконституційним закону
+	if adjPos > 1 &&
+		RevSearch(tokens, adjPos-1, regexp.MustCompile(`.*(ння|ття)$`), "") &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*:v_oru.*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*:v_rod.*`)) &&
+		GenderMatches(masterInfs, slaveInfs, "v_oru", "v_rod") {
+		return true
+	}
+
+	// бути/стати/… + adjp:pasv / predicative oru
+	verbPos := RevSearchIdx(tokens, adjPos-1, regexp.MustCompile(`^(?:бути|ставати|стати|залишатися|залишитися)$`), "")
+	if verbPos != -1 {
+		if HasPosTagRE(adj, regexp.MustCompile(`adj.*v_naz.*adjp:pasv.*`)) {
+			if GenderMatches(masterInfs, slaveInfs, "v_naz", "v_naz") {
+				return true
+			}
+		} else if HasPosTagRE(adj, regexp.MustCompile(`adj.*v_oru.*`)) {
+			if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_naz.*`)) {
+				if GenderMatches(masterInfs, slaveInfs, "v_oru", "v_naz") {
+					if HasPosTagPart(tokens[verbPos], ":inf") ||
+						VerbInflectionsOverlap(CollectPOSTags(tokens[verbPos]), CollectPOSTags(noun)) {
+						return true
+					}
+				} else if nounPos < len(tokens)-1 &&
+					HasPosTagPart(adj, "adj:p:") &&
+					isConjForPluralWithComma(tokens[nounPos+1]) {
+					return true
+				}
+			} else if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_dav.*`)) {
+				if GenderMatches(masterInfs, slaveInfs, "v_oru", "v_dav") {
+					return true
+				}
+			}
+		}
+	}
+
+	// визнали справедливою наставники
+	verbPos = RevSearchIdx(tokens, adjPos-1, nil, "verb.*")
+	if verbPos != -1 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*v_oru.*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*v_naz.*`)) &&
+		VerbInflectionsOverlap(CollectPOSTags(tokens[verbPos]), CollectPOSTags(noun)) {
+		return true
+	}
+
+	// помальована в біле кімната
+	colorTokens := []string{"біле", "чорне", "оранжеве", "червоне", "жовте", "синє", "зелене", "фіолетове"}
+	if adjPos > 2 &&
+		containsStr(colorTokens, adj.GetToken()) &&
+		containsStr([]string{"в", "у"}, tokens[adjPos-1].GetToken()) &&
+		HasPosTagPart(tokens[adjPos-2], "adjp:pasv") {
+		prevAdj := GetAdjCaseInflections(CollectPOSTags(tokens[adjPos-2]))
+		if InflectionsIntersect(prevAdj, slaveInfs) {
+			return true
+		}
+	}
+	if adjPos > 3 &&
+		containsStr([]string{"біле", "чорне"}, adj.GetToken()) &&
+		containsStr([]string{"усе", "все"}, tokens[adjPos-1].GetToken()) &&
+		containsStr([]string{"в", "у"}, tokens[adjPos-2].GetToken()) &&
+		HasPosTagPart(tokens[adjPos-3], "adjp:pasv") {
+		prevAdj := GetAdjCaseInflections(CollectPOSTags(tokens[adjPos-3]))
+		if InflectionsIntersect(prevAdj, slaveInfs) {
+			return true
+		}
+	}
+
+	// повторена тисячу разів
+	if nounPos < len(tokens)-1 &&
+		HasPosTagPart(adj, "adjp:pasv") &&
+		containsStr([]string{"тисячу", "сотню", "десятки"}, noun.GetToken()) &&
+		containsStr([]string{"разів", "раз", "років"}, tokens[nounPos+1].GetToken()) {
+		return true
+	}
+	// покликана ще раз
+	if nounPos > 0 &&
+		strings.EqualFold(noun.GetCleanToken(), "раз") &&
+		strings.EqualFold(tokens[nounPos-1].GetToken(), "ще") {
+		return true
+	}
+
+	// порівняно з попереднім / аналогічно з …
+	if adjPos > 2 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*v_oru.*`)) &&
+		HasLemmaTokenAny(tokens[adjPos-2], []string{"порівняно", "аналогічно"}) &&
+		HasLemmaTokenRE(tokens[adjPos-1], regexp.MustCompile(`^(?:з|із|зі)$`)) {
+		return true
+	}
+
+	// наближена до сімейної форма — prep before adj
+	if adjPos > 2 && HasPosTagPart(tokens[adjPos-1], "prep") &&
+		HasPosTagRE(tokens[adjPos-2], regexp.MustCompile(`^(?:adj|verb|part|noun|adv)`)) {
+		govs := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadings(tokens[adjPos-1], "prep")
+		if len(govs) > 0 {
+			var list []string
+			for c := range govs {
+				list = append(list, c)
+			}
+			if HasVidmPosTag(list, adj) {
+				// відрізнялася (б) від нинішньої ситуація / поряд / відміну
+				prev2 := tokens[adjPos-2]
+				if (HasPosTagStart(prev2, "verb") || HasLemmaTokenAny(prev2, []string{"би", "б"}) ||
+					containsStr([]string{"поряд", "відміну", "порівнянні"}, CleanTokenLower(prev2))) &&
+					HasPosTagRE(noun, regexp.MustCompile(`noun.*v_(naz|zna|oru).*`)) {
+					return true
+				}
+				prevAdjInfs := GetAdjCaseInflections(CollectPOSTags(prev2))
+				if InflectionsIntersect(prevAdjInfs, slaveInfs) {
+					return true
+				}
+				// тотожні із загальносоюзними герб і прапор
+				if nounPos < len(tokens)-1 &&
+					HasPosTagPart(adj, "adj:p:") &&
+					isConjForPluralWithComma(tokens[nounPos+1]) &&
+					HasPosTagPart(prev2, "adj:p:") {
+					return true
+				}
+			}
+		}
 	}
 
 	return false
