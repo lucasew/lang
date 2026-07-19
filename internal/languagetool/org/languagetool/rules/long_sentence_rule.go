@@ -33,6 +33,8 @@ type LongSentenceRule struct {
 	IssueType ITSIssueType
 	// Tags ports Rule.tags (Java picky).
 	Tags []Tag
+	// URL ports Rule.url (Java setUrl; EN subclass sets splitting-long-sentences).
+	URL string
 }
 
 func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentenceRule {
@@ -83,6 +85,21 @@ func (r *LongSentenceRule) HasTag(tag Tag) bool {
 		}
 	}
 	return false
+}
+
+// GetURL ports Rule.getUrl.
+func (r *LongSentenceRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *LongSentenceRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
 }
 
 // EstimateContextForSureMatch ports TextLevelRule (Java always -1).

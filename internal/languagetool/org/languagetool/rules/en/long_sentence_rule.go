@@ -16,6 +16,8 @@ func NewLongSentenceRule(messages map[string]string, maxWords int) *LongSentence
 	}
 	base := rules.NewLongSentenceRule(messages, maxWords)
 	base.ShortMsg = "Long sentence"
+	// Java en.LongSentenceRule.setUrl splitting-long-sentences insights
+	base.URL = "https://languagetool.org/insights/post/splitting-long-sentences/"
 	return &LongSentenceRule{LongSentenceRule: base}
 }
 
