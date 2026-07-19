@@ -84,6 +84,22 @@ func TestCompoundRule_AntiPatternsCount(t *testing.T) {
 	require.Equal(t, 16, len(compoundAntiPatterns()), "IMMUNIZE rules 16/16")
 }
 
+// Java CompoundRule ctor: hyphen insights URL + part time → part-time example.
+func TestCompoundRule_Metadata(t *testing.T) {
+	rule := NewCompoundRule(nil)
+	require.Equal(t, "EN_COMPOUNDS", rule.GetID())
+	require.Equal(t, "Hyphenated words: $match", rule.GetDescription())
+	require.Contains(t, rule.GetURL(), "hyphen")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "MISC", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSMisspelling, rule.GetLocQualityIssueType())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "I now have a <marker>part time</marker> job.", inc[0].GetExample())
+	require.Equal(t, []string{"part-time"}, inc[0].GetCorrections())
+	require.Equal(t, "I now have a <marker>part-time</marker> job.", rule.GetCorrectExamples()[0].GetExample())
+}
+
 func TestCompoundRule_AntiPatternImmunizeSurface(t *testing.T) {
 	// "store front" is a compound candidate; anti-pattern immunizes with door(s).
 	sent := languagetool.AnalyzePlain("Go through the store front door")

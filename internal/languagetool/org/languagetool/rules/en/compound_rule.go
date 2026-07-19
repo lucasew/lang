@@ -55,6 +55,12 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 	}
 	base.UseSubRuleSpecificIDs()
 	rules.InitCompoundRuleMeta(base, messages)
+	// Java: setUrl hyphen insights; addExamplePair part time → part-time
+	base.URL = "https://languagetool.org/insights/post/hyphen/"
+	base.AddExamplePair(
+		rules.Wrong("I now have a <marker>part time</marker> job."),
+		rules.Fixed("I now have a <marker>part-time</marker> job."),
+	)
 	r := &CompoundRule{AbstractCompoundRule: base}
 	// Java CompoundRule.isMisspelled: english.getDefaultSpellingRule().isMisspelled(word)
 	base.IsMisspelled = func(word string) bool {

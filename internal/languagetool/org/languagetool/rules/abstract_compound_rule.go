@@ -29,6 +29,11 @@ type AbstractCompoundRule struct {
 	Category *Category
 	// IssueType ports getLocQualityIssueType (Java Misspelling).
 	IssueType ITSIssueType
+	// URL ports Rule.url (Java setUrl).
+	URL string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 	// SentenceStartsWithUpperCase uncapitalizes the first word when matching after SENT_START.
 	SentenceStartsWithUpperCase bool
 	SubRuleSpecificIDs          bool
@@ -74,6 +79,49 @@ func (r *AbstractCompoundRule) GetLocQualityIssueType() ITSIssueType {
 		return ITSMisspelling
 	}
 	return r.IssueType
+}
+
+// GetURL ports Rule.getUrl.
+func (r *AbstractCompoundRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *AbstractCompoundRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractCompoundRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractCompoundRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractCompoundRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *AbstractCompoundRule) GetCompoundRuleData() *CompoundRuleData {
