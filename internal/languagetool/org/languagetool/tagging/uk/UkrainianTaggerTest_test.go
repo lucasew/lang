@@ -172,14 +172,15 @@ func TestUkrainianTagger_DynamicTaggingFullTagMatch(t *testing.T) {
 	require.True(t, out[4].HasPosTag("intj") || out[4].HasPartialPosTag("intj"))
 }
 func TestUkrainianTagger_DynamicTaggingIntj(t *testing.T) {
-	// Java multi-hyphen intj requires intj on both parts in the dictionary.
+	// Java multi-hyphen intj requires intj on both parts; elongated collapses to dict + :alt.
 	wt := tagging.MapWordTagger{
-		"га": {tagging.NewTaggedWord("га", "intj")},
+		"га":  {tagging.NewTaggedWord("га", "intj")},
+		"гей": {tagging.NewTaggedWord("гей", "intj")},
 	}
 	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"га-га", "геееей"})
 	require.True(t, out[0].HasPosTag("intj") || out[0].HasPartialPosTag("intj"))
-	// elongated interjections use dynamic_adj_intj path when wired; smoke non-panic
+	// геееей → collapse to гей if pattern matches; or untagged fail closed without invent
 	_ = out[1]
 }
 func TestUkrainianTagger_CompoundUpperCase(t *testing.T) {

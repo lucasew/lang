@@ -59,13 +59,6 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
-		if lemma, ipos, ok := IntjReading(w); ok {
-			p, l := ipos, lemma
-			readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
-			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
-			continue
-		}
 		if dyn := FixedPartReadings(w); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
@@ -82,6 +75,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
 			for _, tw := range t.TagWord(lower) {
 				readings = append(readings, toTok(word, tw))
+			}
+		}
+		// Java elongated-vowel collapse after untagged (гаааа → га + :alt); needs dict.
+		if len(readings) == 0 {
+			if alt := ElongatedAltReadings(w, t.TagWord); len(alt) > 0 {
+				readings = alt
 			}
 		}
 		if len(readings) == 0 {

@@ -4,21 +4,47 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
 // Dynamic adjective patterns: X-подібний / X-вмісний with case endings.
+// (Java CompoundTagger / dynamic adj patterns — ending paradigms for those suffixes.)
 var (
 	rePodibny = regexp.MustCompile(`(?i)^(.+-подібн)(ий|ого|ому|им|ім|а|ої|ій|у|ою|е|і|их|ими)$`)
 	reVmisny  = regexp.MustCompile(`(?i)^(.+-вмісн)(ий|ого|ому|им|ім|а|ої|ій|у|ою|е|і|их|ими)$`)
-	// known interjection compounds
-	knownIntjHyphen = map[string]string{
-		"гей-но": "гей", "цить-но": "цить", "ану-бо": "ану",
-		"а-а": "а-а", "га-га": "га-га", "фу-фу": "фу-фу",
-		"гей-гей-гей": "гей-гей-гей", "ого-го-го-го": "ого-го-го-го",
-	}
-	// elongated interjection: same vowel/syllable run
-	reElongIntj = regexp.MustCompile(`(?i)^(га|го|гей|а|о|у|е|и|фу)([аеєиіїоуюяь]{2,})$`)
 )
+
+// ukVowels for elongated collapse (Java ([аеєиіїоуюя])\1{2,} — RE2 has no backrefs).
+const ukVowels = "аеєиіїоуюяАЕЄИІЇОУЮЯ"
+
+// collapseElongatedVowels replaces any vowel repeated 3+ times with a single copy.
+func collapseElongatedVowels(token string) (adjusted string, changed bool) {
+	if token == "" {
+		return token, false
+	}
+	var b strings.Builder
+	rs := []rune(token)
+	for i := 0; i < len(rs); {
+		r := rs[i]
+		b.WriteRune(r)
+		if strings.ContainsRune(ukVowels, r) {
+			j := i + 1
+			for j < len(rs) && rs[j] == r {
+				j++
+			}
+			if j-i >= 3 {
+				changed = true
+				// already wrote one; skip the rest of the run
+				i = j
+				continue
+			}
+		}
+		i++
+	}
+	return b.String(), changed
+}
 
 // ending → POS case list for adjectives (simplified soft paradigm)
 var adjEndingPOS = map[string][]string{
@@ -60,68 +86,56 @@ func DynamicAdjReadings(token string) []struct{ Lemma, POS string } {
 	return nil
 }
 
-// IntjReading returns intj POS for elongated or hyphenated interjections.
-func IntjReading(token string) (lemma, pos string, ok bool) {
-	low := strings.ToLower(token)
-	if base, found := knownIntjHyphen[low]; found {
-		return base, "intj", true
+// ElongatedAltReadings ports UkrainianTagger elongated-vowel collapse:
+// when surface has a vowel repeated 3+ times, re-tag the collapsed form and mark :alt.
+// Fail closed without dictionary hits (Java getAdjustedAnalyzedTokens; no invent intj list).
+// Skips "ііі" (often Latin number III) like Java.
+func ElongatedAltReadings(token string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
+	if tagWord == nil || token == "" {
+		return nil
 	}
-	// repeated hyphen syllables: га-га-га
-	if strings.Count(token, "-") >= 1 {
-		parts := strings.Split(low, "-")
-		allSame := true
-		for i := 1; i < len(parts); i++ {
-			if parts[i] != parts[0] {
-				allSame = false
-				break
-			}
-		}
-		if allSame && len(parts[0]) >= 1 && len(parts[0]) <= 5 && isCyrillicWord(parts[0]) {
-			return low, "intj", true
-		}
+	if strings.EqualFold(token, "ііі") {
+		return nil
 	}
-	// elongated: гаааа
-	if m := reElongIntj.FindStringSubmatch(token); m != nil {
-		return strings.ToLower(m[1]), "intj:alt", true
+	adjusted, changed := collapseElongatedVowels(token)
+	if !changed || adjusted == "" {
+		return nil
 	}
-	// pure vowel runs
-	if isElongatedVowelRun(low) {
-		r := []rune(low)[0]
-		return string(r), "intj:alt", true
-	}
-	return "", "", false
-}
-
-func isCyrillicWord(s string) bool {
-	for _, r := range s {
-		if !unicode.Is(unicode.Cyrillic, r) {
-			return false
+	// Java posTagRegex: (?!noun.*:prop|.*abbr).*
+	tws := tagWord(adjusted)
+	if len(tws) == 0 {
+		low := strings.ToLower(adjusted)
+		if low != adjusted {
+			tws = tagWord(low)
 		}
 	}
-	return s != ""
-}
-
-func isElongatedVowelRun(s string) bool {
-	if len([]rune(s)) < 3 {
-		return false
+	if len(tws) == 0 {
+		return nil
 	}
-	vowels := "аеєиіїоуюяь"
-	first := true
-	var base rune
-	for _, r := range s {
-		if !strings.ContainsRune(vowels, r) {
-			return false
-		}
-		if first {
-			base = r
-			first = false
+	var out []*languagetool.AnalyzedToken
+	for _, tw := range tws {
+		pos := tw.PosTag
+		if pos == "" {
 			continue
 		}
-		if r != base {
-			return false
+		// skip proper nouns and abbr (Java negative lookahead)
+		if strings.Contains(pos, "noun") && strings.Contains(pos, "prop") {
+			continue
 		}
+		if strings.Contains(pos, "abbr") {
+			continue
+		}
+		if !strings.Contains(pos, ":alt") {
+			pos = pos + ":alt"
+		}
+		lemma := tw.Lemma
+		if lemma == "" {
+			lemma = adjusted
+		}
+		p, l := pos, lemma
+		out = append(out, languagetool.NewAnalyzedToken(token, &p, &l))
 	}
-	return true
+	return out
 }
 
 func lowerFirst(s string) string {

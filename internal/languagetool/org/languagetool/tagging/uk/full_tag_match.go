@@ -99,6 +99,11 @@ func posFamily(pos string) string {
 		return "adv"
 	case strings.HasPrefix(pos, "numr"):
 		return "numr"
+	case strings.HasPrefix(pos, "intj"):
+		// Java CompoundTagger multi-hyphen intj match
+		return "intj"
+	case strings.HasPrefix(pos, "noninfl"):
+		return "noninfl"
 	default:
 		return ""
 	}
