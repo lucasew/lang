@@ -3,6 +3,7 @@ package server
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/commandline"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,6 +58,11 @@ func TestPipeline_CheckMultiLang(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.lang, func(t *testing.T) {
+			// UK word-repeat ignore is POS-gated (Java returns true without non-initial POS).
+			// Without a binary POS dict, doubles stay ignored — fail closed, not surface invent.
+			if tc.lang == "uk" && commandline.DiscoverLanguagePOSDict(nil, "uk") == "" {
+				t.Skip("UK POS dict missing; UKRAINIAN_WORD_REPEAT_RULE needs tags")
+			}
 			p := NewPipeline(NewPipelineSettings(tc.lang, "u"))
 			m := p.Check(tc.text)
 			require.NotEmpty(t, m)

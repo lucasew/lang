@@ -85,6 +85,9 @@ func (r *LongSentenceRule) HasTag(tag Tag) bool {
 	return false
 }
 
+// EstimateContextForSureMatch ports TextLevelRule (Java always -1).
+func (r *LongSentenceRule) EstimateContextForSureMatch() int { return -1 }
+
 // GetDescription ports LongSentenceRule.getDescription.
 // Default: MessageFormat(messages["long_sentence_rule_desc"], maxWords).
 func (r *LongSentenceRule) GetDescription() string {

@@ -71,7 +71,7 @@ func TestApiV2_MatchTypeAndContextForSure(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Contains(t, r.Body, `"typeName":"grammar"`)
-	// contextForSureMatch omitted when 0 (omitempty); style path uses -1
+	// contextForSureMatch omitted when 0 (omitempty); text-level rules (Java -1) serialize it
 	r2, err := api.Handle("check", map[string]string{
 		"language":   "en",
 		"text":       "word word word word word word word word.",
@@ -79,6 +79,7 @@ func TestApiV2_MatchTypeAndContextForSure(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Contains(t, r2.Body, "contextForSureMatch")
+	require.Contains(t, r2.Body, `"contextForSureMatch":-1`)
 }
 
 func TestApiV2_MatchRuleURL(t *testing.T) {

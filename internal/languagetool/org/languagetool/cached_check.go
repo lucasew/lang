@@ -17,7 +17,8 @@ func CachedCheck(cache *ResultCache, lt *JLanguageTool, text string) []LocalMatc
 	if len(sents) == 1 {
 		keySent = sents[0]
 	} else {
-		// soft multi-sentence key: whole text as one analyzed surface
+		// Multi-sentence cache key: whole text as one analyzed surface
+		// (full InputSentence multi-sentence keying deferred).
 		keySent = AnalyzePlain(text)
 	}
 	key := NewInputSentence(keySent, lt.LanguageCode, "", lt.DisabledRuleIDs, nil, nil, nil, nil, nil, string(lt.Mode), lt.Level, nil, nil)

@@ -159,7 +159,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			}
 		}
 		ignoreWords := commaSeparated(parameters["ignoreWords"])
-		// soft: merge in-memory user dictionary for username (or anon)
+		// Merge in-memory user dictionary for username (or anon) — Java premium DB path.
 		if a.UserDict != nil {
 			ignoreWords = append(ignoreWords, a.UserDict.All(parameters["username"])...)
 		}
@@ -168,7 +168,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			Enabled:        a.TextChecker.GetEnabledRuleIDs(parameters),
 			UseEnabledOnly: strings.EqualFold(parameters["enabledOnly"], "true") || qp.UseEnabledOnly,
 			MotherTongue:   parameters["motherTongue"],
-			// soft: undocumented ignoreWords CSV for user-dictionary style suppression
+			// ignoreWords CSV + user dictionary (Java user-config ignore list).
 			IgnoreWords: ignoreWords,
 			// category filters from disabledCategories / enabledCategories
 			DisabledCategories: qp.DisabledCategories,
@@ -193,7 +193,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 		if qp.AllowIncompleteResults && len(text) > 100_000 {
 			warnings = append(warnings, "allowIncompleteResults: text exceeds soft size threshold; results may be incomplete")
 		}
-		// soft multi-language: validate and soft-map foreign script spans to ignoreRanges
+		// Multi-language: validate altLanguages and map foreign-script spans to ignoreRanges.
 		altCSV := parameters["altLanguages"]
 		if altCSV != "" {
 			if err := ValidateAltLanguages(altCSV); err != nil {

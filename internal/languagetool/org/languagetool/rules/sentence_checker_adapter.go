@@ -98,6 +98,10 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 				lm.IsPremium = true
 			}
 		}
+		// Java Rule.estimateContextForSureMatch (default 0; TextLevelRuleBase → -1).
+		if g, ok := m.Rule.(interface{ EstimateContextForSureMatch() int }); ok {
+			lm.EstimateContextForSureMatch = g.EstimateContextForSureMatch()
+		}
 		// RuleMeta fallback when rule getters left category/ITS empty (CLI/API parity).
 		// Only apply known Java families — skip uncategorized invent for unknown IDs.
 		if lm.RuleID != "" && (lm.CategoryID == "" || lm.IssueType == "" || lm.Description == "" || lm.ShortMessage == "") {
@@ -153,12 +157,23 @@ func AsSentenceCheckerSimple(match func(*languagetool.AnalyzedSentence) []*RuleM
 
 // AsTextLevelChecker wraps MatchList(sentences) []*RuleMatch as TextLevelChecker.
 // Offsets are already document-relative (rules accumulate GetCorrectedTextLength).
+// Java TextLevelRule.estimateContextForSureMatch is always -1 — apply when the rule
+// object did not already set a value via EstimateContextForSureMatch().
 func AsTextLevelChecker(matchList func([]*languagetool.AnalyzedSentence) []*RuleMatch) languagetool.TextLevelChecker {
 	return func(sents []*languagetool.AnalyzedSentence) []languagetool.LocalMatch {
 		if matchList == nil {
 			return nil
 		}
-		return ToLocalMatches(matchList(sents))
+		ms := ToLocalMatches(matchList(sents))
+		for i := range ms {
+			// Default Java TextLevelRule → -1 when rule left zero (sentence-rule default).
+			// Rules that implement EstimateContextForSureMatch already filled the field.
+			if ms[i].EstimateContextForSureMatch == 0 {
+				// Distinguish unset 0 from explicit 0: text-level Java always returns -1.
+				ms[i].EstimateContextForSureMatch = -1
+			}
+		}
+		return ms
 	}
 }
 

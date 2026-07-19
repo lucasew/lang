@@ -67,7 +67,7 @@ type MatchInfo struct {
 	Length              int                 `json:"length"`
 	Replacements        []ReplacementInfo   `json:"replacements,omitempty"`
 	Context             ContextInfo         `json:"context"`
-	// ContextForSureMatch soft-ports LT's estimated context span for confident matches.
+	// ContextForSureMatch ports Rule.estimateContextForSureMatch (0 omitted; text-level -1).
 	ContextForSureMatch int                 `json:"contextForSureMatch,omitempty"`
 	// Type soft-ports the ITS type wrapper object from the Java JSON API.
 	Type                *MatchTypeInfo      `json:"type,omitempty"`

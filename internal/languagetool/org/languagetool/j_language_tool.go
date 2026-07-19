@@ -76,6 +76,9 @@ type LocalMatch struct {
 	ToPosSentence   int
 	// Priority used by CleanOverlappingLocalMatches (higher wins).
 	Priority int
+	// EstimateContextForSureMatch ports Rule.estimateContextForSureMatch (Java default 0;
+	// TextLevelRule always -1). Not invented from ITS issue type.
+	EstimateContextForSureMatch int
 	// IsPicky ports Rule tags containing Tag.picky (Java CleanOverlappingFilter demotion
 	// and German.filterRuleMatches picky-equality for AI_DE_GGEC merge).
 	IsPicky bool

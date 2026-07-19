@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSoftAttachSentenceEnd_SkipsTrailingLinebreak(t *testing.T) {
+func TestAttachSentenceEnd_SkipsTrailingLinebreak(t *testing.T) {
 	// Java: SENT_END on last non-whitespace; trailing \n stays whitespace-only.
 	s := AnalyzePlain("Hello\n")
 	toks := s.GetTokensWithoutWhitespace()
@@ -22,7 +22,7 @@ func TestSoftAttachSentenceEnd_SkipsTrailingLinebreak(t *testing.T) {
 		last.GetToken() == "Hello")
 }
 
-func TestSoftAttachSentenceEnd_ColonURLNonBlank(t *testing.T) {
+func TestAttachSentenceEnd_ColonURLNonBlank(t *testing.T) {
 	s := AnalyzePlain("Another one: https://languagetool.org/foo\n\n")
 	toks := s.GetTokensWithoutWhitespace()
 	require.GreaterOrEqual(t, len(toks), 3)

@@ -81,7 +81,7 @@ func AnalyzeWithTokenizerAndIgnore(text string, wt tokenizers.Tokenizer, ignore 
 	applySoftHyphenMetadata(readings, softMap)
 	// Soft: mirror LT analysis by tagging the last content token with SENT_END
 	// (POINT_DIALOGUE and other rules match postag SENT_END on the final word).
-	softAttachSentenceEnd(readings)
+	attachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }
 
@@ -106,7 +106,7 @@ func analyzeJapaneseEncoded(encoded []string) *AnalyzedSentence {
 		pos += tokenizers.UTF16Len(at.GetToken())
 		prev = at.GetToken()
 	}
-	softAttachSentenceEnd(readings)
+	attachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }
 
@@ -141,7 +141,7 @@ func analyzeChineseEncoded(encoded []string) *AnalyzedSentence {
 		pos += tokenizers.UTF16Len(at.GetToken())
 		prev = at.GetToken()
 	}
-	softAttachSentenceEnd(readings)
+	attachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }
 
@@ -165,11 +165,11 @@ func chineseAsAnalyzedToken(word string) *AnalyzedToken {
 	return NewAnalyzedToken(surface, &p, nil)
 }
 
-// softAttachSentenceEnd ports JLanguageTool.getAnalyzedSentence tail:
+// attachSentenceEnd ports JLanguageTool.getAnalyzedSentence tail:
 // SENT_END on the last non-whitespace token (not on trailing \n whitespace).
 // Trailing linebreak-only tokens stay pure whitespace → excluded from
 // getTokensWithoutWhitespace (unless they carry sent/para end).
-func softAttachSentenceEnd(readings []*AnalyzedTokenReadings) {
+func attachSentenceEnd(readings []*AnalyzedTokenReadings) {
 	if len(readings) < 2 {
 		return
 	}
@@ -199,7 +199,7 @@ func softAttachSentenceEnd(readings []*AnalyzedTokenReadings) {
 	}
 }
 
-// WordTokenizerForLanguage returns the language-specific soft word tokenizer.
+// WordTokenizerForLanguage returns the language-specific word tokenizer.
 // Falls back to the generic WordTokenizer when no language module is available.
 func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 	base := lang
@@ -208,7 +208,7 @@ func WordTokenizerForLanguage(lang string) tokenizers.Tokenizer {
 	}
 	switch strings.ToLower(base) {
 	case "ar", "fa":
-		// Arabic-script soft path; Persian uses the same digit/letter splits.
+		// Arabic-script tokenizers; Persian uses the same digit/letter splits.
 		if strings.EqualFold(base, "fa") {
 			return tokenizers.NewPersianWordTokenizer()
 		}
@@ -601,7 +601,7 @@ func AnalyzeWithTaggerTokenizerAndIgnore(text string, tagWord func(token string)
 		prev = tok
 	}
 	applySoftHyphenMetadata(readings, softMap)
-	softAttachSentenceEnd(readings)
+	attachSentenceEnd(readings)
 	return NewAnalyzedSentence(readings)
 }
 
