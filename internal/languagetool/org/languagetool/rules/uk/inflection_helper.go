@@ -14,13 +14,15 @@ type Inflection struct {
 
 var mfn = regexp.MustCompile(`^[mfn]$`)
 
+// genOrder ports InflectionHelper.GEN_ORDER (Java sort / formatInflections).
 var genOrder = map[string]int{
-	"m": 0, "f": 1, "n": 2, "p": 3, "s": 4,
+	"m": 0, "f": 1, "n": 3, "s": 4, "p": 5, "i": 6, "o": 7,
 }
 
+// vidmOrder ports InflectionHelper.VIDM_ORDER.
 var vidmOrder = map[string]int{
-	"v_naz": 0, "v_rod": 1, "v_dav": 2, "v_zna": 3,
-	"v_oru": 4, "v_mis": 5, "v_kly": 6,
+	"v_naz": 10, "v_rod": 20, "v_dav": 30, "v_zna": 40,
+	"v_oru": 50, "v_mis": 60, "v_kly": 70,
 }
 
 // Equals ports Inflection.equals with soft gender matching (s ≈ m/f/n).
@@ -156,7 +158,7 @@ func GetNounCaseInflections(posTags []string) []Inflection {
 }
 
 // GetNounInflectionsFromTags extracts noun gender/case/anim from POS tags.
-// ignoreRE, if non-nil, skips tags that match.
+// ignoreRE, if non-nil, skips tags that match (Java ignoreTag.matcher.find()).
 func GetNounInflectionsFromTags(posTags []string, ignoreRE *regexp.Regexp) []Inflection {
 	var out []Inflection
 	seen := map[string]struct{}{}
@@ -164,6 +166,7 @@ func GetNounInflectionsFromTags(posTags []string, ignoreRE *regexp.Regexp) []Inf
 		if posTag == "" {
 			continue
 		}
+		// Java: ignoreTag.matcher(posTag2).find() — substring find, not matches()
 		if ignoreRE != nil && ignoreRE.MatchString(posTag) {
 			continue
 		}

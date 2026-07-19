@@ -300,28 +300,14 @@ func formatVerbPersonInflections(infs []VerbInflection, noun bool) string {
 }
 
 func verbInflectionOrder(inf VerbInflection) int {
-	// InflectionHelper.GEN_ORDER: m=0,f=1,n=2,p=3,s=4; null gender → 0 in Java
+	// InflectionHelper.GEN_ORDER; null gender → 0 in Java compareTo
 	if inf.Gender == "" {
 		return 0
 	}
-	switch inf.Gender {
-	case "m":
-		return 0
-	case "f":
-		return 1
-	case "n":
-		return 2
-	case "p":
-		return 3
-	case "s":
-		return 4
-	case "i":
-		return 5
-	case "o":
-		return 6
-	default:
-		return 99
+	if o, ok := genOrder[inf.Gender]; ok {
+		return o
 	}
+	return 99
 }
 
 // collectNounVerbSubject ports the Java noun/яка state builder. ok=false → clear state.

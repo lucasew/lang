@@ -169,17 +169,17 @@ func TestTokenAgreementNounVerbRule_CaseGovernment(t *testing.T) {
 }
 func TestTokenAgreementNounVerbRule_RuleWithAdjOrKly(t *testing.T) {
 	r := NewTokenAgreementNounVerbRule()
-	// intervening adj currently resets subject span (full adj/kly tables deferred)
+	// Java: intervening pure-adj is not a verb → clears subject state (no flag across adj)
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("хлопець", "noun:anim:m:v_naz"),
 		atr("високий", "adj:m:v_naz"),
 		atr("читає", "verb:imperf:pres:s:3"),
 	})
-	require.Empty(t, r.Match(sent), "adj intervenes — soft no-flag across adj")
-	// vocative subject soft: v_kly still has noun reading → may check agreement
+	require.Empty(t, r.Match(sent), "adj intervenes — Java clears state, no pair flag")
+	// vocative-only subject: Java ignores v_kly-only readings → no subject installed
 	sentKly := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("друже", "noun:anim:m:v_kly"),
 		atr("читай", "verb:imperf:impr:s:2"),
 	})
-	_ = r.Match(sentKly) // exercise path
+	require.Empty(t, r.Match(sentKly), "v_kly-only is not a v_naz subject")
 }

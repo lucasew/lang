@@ -1499,7 +1499,8 @@ func HasPosTagStart(tok *languagetool.AnalyzedTokenReadings, prefix string) bool
 	return false
 }
 
-// hasPosWithoutPron is RE2-friendly stand-in for Java (?!.*pron) POS patterns.
+// hasPosWithoutPron is RE2-friendly stand-in for Java (?!.*pron) POS patterns
+// with Matcher.matches() on the base pattern (full tag).
 func hasPosWithoutPron(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
 	if tok == nil || re == nil {
 		return false
@@ -1508,6 +1509,12 @@ func hasPosWithoutPron(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regex
 		if strings.Contains(p, "pron") {
 			continue
 		}
+		// prefer full match when re can cover whole tag; else find (legacy partial patterns)
+		loc := re.FindStringIndex(p)
+		if loc != nil && loc[0] == 0 && loc[1] == len(p) {
+			return true
+		}
+		// patterns like `^noun` or `adj:.:v_rod` without trailing .* still used as prefix/find
 		if re.MatchString(p) {
 			return true
 		}
