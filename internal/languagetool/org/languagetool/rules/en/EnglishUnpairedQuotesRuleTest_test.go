@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -32,4 +33,19 @@ func TestEnglishUnpairedQuotesRule_FailClosedWithoutPOS(t *testing.T) {
 	// Apostrophe in I'm is not exempt without POS tags (Java POS-gated override).
 	n := len(rule.MatchList([]*languagetool.AnalyzedSentence{languagetool.AnalyzePlain("\"I'm over here, she said.")}))
 	require.Equal(t, 2, n)
+}
+
+// Java EnglishUnpairedQuotesRule: quotation-marks URL, PUNCTUATION, example pair.
+func TestEnglishUnpairedQuotesRule_Metadata(t *testing.T) {
+	rule := NewEnglishUnpairedQuotesRule(nil)
+	require.Equal(t, "EN_UNPAIRED_QUOTES", rule.GetID())
+	require.Contains(t, rule.GetURL(), "what-are-quotation-marks")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "PUNCTUATION", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSTypographical, rule.GetLocQualityIssueType())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "\"I'm over here,<marker></marker> she said.", inc[0].GetExample())
+	require.Equal(t, []string{"\""}, inc[0].GetCorrections())
+	require.Equal(t, "\"I'm over here,<marker>\"</marker> she said.", rule.GetCorrectExamples()[0].GetExample())
 }

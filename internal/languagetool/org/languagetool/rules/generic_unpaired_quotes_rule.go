@@ -17,11 +17,21 @@ type quoteSymbolLocator struct {
 }
 
 // GenericUnpairedQuotesRule ports org.languagetool.rules.GenericUnpairedQuotesRule.
+// Java: PUNCTUATION, Typographical.
 type GenericUnpairedQuotesRule struct {
 	Messages     map[string]string
 	StartSymbols []string
 	EndSymbols   []string
 	ruleID       string
+	// Category ports Rule.category (Java PUNCTUATION).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Typographical).
+	IssueType ITSIssueType
+	// URL ports Rule.url (Java setUrl).
+	URL string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 	// Optional language overrides (Java subclass isNotBeginning/EndingApostrophe).
 	// Nil → default GenericUnpairedQuotesRule logic.
 	IsNotBeginningApostropheFn func(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
@@ -59,12 +69,73 @@ func NewGenericUnpairedQuotesRule(messages map[string]string, start, end []strin
 		StartSymbols: start,
 		EndSymbols:   end,
 		ruleID:       "UNPAIRED_QUOTES",
+		Category:     CatPunctuation.GetCategory(messages),
+		IssueType:    ITSTypographical,
 	}
 }
 
 func (r *GenericUnpairedQuotesRule) GetID() string { return r.ruleID }
 
 func (r *GenericUnpairedQuotesRule) SetRuleID(id string) { r.ruleID = id }
+
+// GetCategory ports Rule.getCategory.
+func (r *GenericUnpairedQuotesRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *GenericUnpairedQuotesRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSTypographical
+	}
+	return r.IssueType
+}
+
+// GetURL ports Rule.getUrl.
+func (r *GenericUnpairedQuotesRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *GenericUnpairedQuotesRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *GenericUnpairedQuotesRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *GenericUnpairedQuotesRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *GenericUnpairedQuotesRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 // MatchList ports match(List<AnalyzedSentence>).
 func (r *GenericUnpairedQuotesRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*RuleMatch {

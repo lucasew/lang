@@ -16,6 +16,12 @@ func NewEnglishUnpairedQuotesRule(messages map[string]string) *EnglishUnpairedQu
 	end := []string{"”", "\"", "'", "’"}
 	base := rules.NewGenericUnpairedQuotesRule(messages, start, end)
 	base.SetRuleID("EN_UNPAIRED_QUOTES")
+	// Java setUrl quotation-marks insights; addExamplePair
+	base.URL = "https://languagetool.org/insights/post/punctuation-guide/#what-are-quotation-marks"
+	base.AddExamplePair(
+		rules.Wrong("\"I'm over here,<marker></marker> she said."),
+		rules.Fixed("\"I'm over here,<marker>\"</marker> she said."),
+	)
 	// Java EnglishUnpairedQuotesRule overrides isNotBeginning/EndingApostrophe.
 	base.IsNotBeginningApostropheFn = englishIsNotBeginningApostrophe
 	base.IsNotEndingApostropheFn = englishIsNotEndingApostrophe
