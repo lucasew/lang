@@ -23,6 +23,7 @@ func loadUSReplace() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
+		// Java AmericanReplaceRule: STYLE, LocaleViolation, crisps → chips example
 		base := &rules.AbstractSimpleReplaceRule2{
 			ID:                 "EN_US_SIMPLE_REPLACE",
 			Description:        "British words easily confused in American English: $match",
@@ -31,10 +32,16 @@ func loadUSReplace() *rules.AbstractSimpleReplaceRule2 {
 			CaseSens:           rules.CaseInsensitive,
 			LanguageCode:       "en-US",
 			SubRuleSpecificIDs: true,
+			Category:           rules.CatStyle.GetCategory(nil),
+			IssueType:          rules.ITSLocaleViolation,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/en-US/replace.txt"); err != nil {
 			panic(err)
 		}
+		base.AddExamplePair(
+			rules.Wrong("Are baked <marker>crisps</marker> healthy?"),
+			rules.Fixed("Are baked <marker>chips</marker> healthy?"),
+		)
 		usReplaceBase = base
 	})
 	return usReplaceBase
@@ -49,6 +56,8 @@ func NewAmericanReplaceRule(messages map[string]string) *AmericanReplaceRule {
 	base := loadUSReplace()
 	r := *base
 	r.Messages = messages
+	r.Category = rules.CatStyle.GetCategory(messages)
+	r.IssueType = rules.ITSLocaleViolation
 	return &AmericanReplaceRule{AbstractSimpleReplaceRule2: &r}
 }
 

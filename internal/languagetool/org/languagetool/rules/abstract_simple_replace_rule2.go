@@ -58,6 +58,9 @@ type AbstractSimpleReplaceRule2 struct {
 	// MatchShortAllUpperInCheckCase ports setIgnoreShortUppercaseWords(false):
 	// when true, short ALLCAPS tokens (len≤4) still match in CheckingCase mode (Dutch).
 	MatchShortAllUpperInCheckCase bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 
 	IsException          func(matchedText string) bool
 	IsTokenException     func(atr *languagetool.AnalyzedTokenReadings) bool
@@ -226,6 +229,34 @@ func (r *AbstractSimpleReplaceRule2) hasSuggestions() bool {
 		return *r.RuleHasSuggestions
 	}
 	return true
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractSimpleReplaceRule2) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractSimpleReplaceRule2) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractSimpleReplaceRule2) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // Match ports AbstractSimpleReplaceRule2.match.
