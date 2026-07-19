@@ -313,3 +313,43 @@ func TestMissingApostropheCandidates(t *testing.T) {
 	require.Contains(t, cands, "з'їзду")
 	require.Empty(t, MissingApostropheCandidates("з'їзду"))
 }
+
+func TestDynamicPoAdvReadings(t *testing.T) {
+	// Fail-closed without dict
+	require.Nil(t, DynamicPoAdvReadings("по-сибірськи", nil))
+
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "сибірський":
+			return []tagging.TaggedWord{{Lemma: "сибірський", PosTag: "adj:m:v_naz"}}
+		case "свинячому":
+			return []tagging.TaggedWord{{Lemma: "свинячий", PosTag: "adj:m:v_mis"}}
+		default:
+			return nil
+		}
+	}
+	// SKY path: right +й for dict lookup
+	rs := DynamicPoAdvReadings("по-сибірськи", tagWord)
+	require.NotEmpty(t, rs)
+	require.Equal(t, "adv", rs[0].POS)
+	require.Equal(t, "по-сибірськи", rs[0].Lemma)
+
+	// -ому path
+	rs2 := DynamicPoAdvReadings("по-свинячому", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Equal(t, "adv", rs2[0].POS)
+
+	// no invent without matching adj tags
+	require.Nil(t, DynamicPoAdvReadings("по-невідомо", tagWord))
+	require.Nil(t, DynamicPoAdvReadings("звичайний", tagWord))
+}
+
+func TestDynamicNumeric_MmParadigm(t *testing.T) {
+	rs := DynamicNumericReadings("5-мм", nil)
+	require.NotEmpty(t, rs)
+	// 3 genders × 6 cases (no v_kly)
+	require.Len(t, rs, 18)
+	require.Equal(t, "5-мм", rs[0].Lemma)
+	require.Contains(t, rs[0].POS, "adj:")
+	require.Contains(t, rs[0].POS, "v_")
+}

@@ -77,6 +77,11 @@ func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedW
 		return out
 	}
 
+	// Java: right "мм" → full adj paradigm (all genders × cases except v_kly); lemma = full word.
+	if strings.EqualFold(rightWord, "мм") {
+		return mmDigitAdjParadigm(token)
+	}
+
 	if tagWord == nil {
 		return nil
 	}
@@ -126,6 +131,21 @@ func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedW
 		}
 		seen[key] = struct{}{}
 		out = append(out, struct{ Lemma, POS string }{Lemma: lemma, POS: pos})
+	}
+	return out
+}
+
+// mmDigitAdjParadigm ports matchDigitCompound "мм" branch (PosTagHelper genders × vidminky).
+func mmDigitAdjParadigm(word string) []struct{ Lemma, POS string } {
+	genders := []string{"m", "f", "n"}
+	var out []struct{ Lemma, POS string }
+	for _, g := range genders {
+		for _, vid := range nvCases {
+			out = append(out, struct{ Lemma, POS string }{
+				Lemma: word,
+				POS:   "adj:" + g + ":" + vid,
+			})
+		}
 	}
 	return out
 }
