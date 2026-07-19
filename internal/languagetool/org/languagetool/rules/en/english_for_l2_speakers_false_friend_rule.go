@@ -29,14 +29,50 @@ type EnglishForL2SpeakersFalseFriendRule struct {
 	Language     string // target language, e.g. "en"
 	// Filenames are confusion set resources under the language resource dir.
 	Filenames []string
-	// ExampleWrong / ExampleFixed surface for documentation / tests.
+	// ExampleWrong / ExampleFixed surface for documentation / tests (may include markers).
 	ExampleWrong string
 	ExampleFixed string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 	// Pairs optional inject map for unit tests (Java uses FakeLanguageModel + confusion file).
 	Pairs []L2ConfusionPair
 }
 
 func (r *EnglishForL2SpeakersFalseFriendRule) GetID() string { return r.ID }
+
+// AddExamplePair ports Rule.addExamplePair and sets ExampleWrong/Fixed surfaces.
+func (r *EnglishForL2SpeakersFalseFriendRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+	r.ExampleWrong = incorrect.GetExample()
+	r.ExampleFixed = correct.GetExample()
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *EnglishForL2SpeakersFalseFriendRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *EnglishForL2SpeakersFalseFriendRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 func (r *EnglishForL2SpeakersFalseFriendRule) GetFilenames() []string {
 	return append([]string(nil), r.Filenames...)
 }
@@ -114,42 +150,64 @@ func (r *EnglishForL2SpeakersFalseFriendRule) Match(sentence *languagetool.Analy
 
 // NewEnglishForGermansFalseFriendRule ports EnglishForGermansFalseFriendRule metadata.
 func NewEnglishForGermansFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	return &EnglishForL2SpeakersFalseFriendRule{
+	r := &EnglishForL2SpeakersFalseFriendRule{
 		ID:           "EN_FOR_DE_SPEAKERS_FALSE_FRIENDS",
 		MotherTongue: "de",
 		Language:     "en",
 		Filenames:    []string{"confusion_sets_l2_de.txt"},
-		ExampleWrong: "My handy is broken.",
-		ExampleFixed: "My phone is broken.",
 	}
+	// Java: My <marker>handy</marker> → phone
+	r.AddExamplePair(
+		rules.Wrong("My <marker>handy</marker> is broken."),
+		rules.Fixed("My <marker>phone</marker> is broken."),
+	)
+	return r
 }
 
 // NewEnglishForFrenchFalseFriendRule ports EnglishForFrenchFalseFriendRule.
 func NewEnglishForFrenchFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	return &EnglishForL2SpeakersFalseFriendRule{
+	r := &EnglishForL2SpeakersFalseFriendRule{
 		ID:           "EN_FOR_FR_SPEAKERS_FALSE_FRIENDS",
 		MotherTongue: "fr",
 		Language:     "en",
 		Filenames:    []string{"confusion_sets_l2_fr.txt"},
 	}
+	// Java: achieve → complete
+	r.AddExamplePair(
+		rules.Wrong("She will <marker>achieve</marker> her task."),
+		rules.Fixed("She will <marker>complete</marker> her task."),
+	)
+	return r
 }
 
 // NewEnglishForSpaniardsFalseFriendRule ports EnglishForSpaniardsFalseFriendRule.
 func NewEnglishForSpaniardsFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	return &EnglishForL2SpeakersFalseFriendRule{
+	r := &EnglishForL2SpeakersFalseFriendRule{
 		ID:           "EN_FOR_ES_SPEAKERS_FALSE_FRIENDS",
 		MotherTongue: "es",
 		Language:     "en",
 		Filenames:    []string{"confusion_sets_l2_es.txt"},
 	}
+	// Java: realize → produce
+	r.AddExamplePair(
+		rules.Wrong("The factory will <marker>realize</marker> computer chips."),
+		rules.Fixed("The factory will <marker>produce</marker> computer chips."),
+	)
+	return r
 }
 
 // NewEnglishForDutchmenFalseFriendRule ports EnglishForDutchmenFalseFriendRule.
 func NewEnglishForDutchmenFalseFriendRule() *EnglishForL2SpeakersFalseFriendRule {
-	return &EnglishForL2SpeakersFalseFriendRule{
+	r := &EnglishForL2SpeakersFalseFriendRule{
 		ID:           "EN_FOR_NL_SPEAKERS_FALSE_FRIENDS",
 		MotherTongue: "nl",
 		Language:     "en",
 		Filenames:    []string{"confusion_sets_l2_nl.txt"},
 	}
+	// Java: want → wall
+	r.AddExamplePair(
+		rules.Wrong("The <marker>want</marker> should be painted green."),
+		rules.Fixed("The <marker>wall</marker> should be painted green."),
+	)
+	return r
 }

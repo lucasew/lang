@@ -61,3 +61,14 @@ func TestEnglishWrongWordInContextRule_Rule(t *testing.T) {
 	assertBad("The plane taxied to the hanger.")
 	assertGood("The plane taxied to the hangar.")
 }
+
+// Java EnglishWrongWordInContextRule: proscribed → prescribed example pair.
+func TestEnglishWrongWordInContextRule_Metadata(t *testing.T) {
+	rule := NewEnglishWrongWordInContextRule(nil)
+	require.Equal(t, "ENGLISH_WRONG_WORD_IN_CONTEXT", rule.GetID())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "I have <marker>proscribed</marker> you a course of antibiotics.", inc[0].GetExample())
+	require.Equal(t, []string{"prescribed"}, inc[0].GetCorrections())
+	require.Equal(t, "I have <marker>prescribed</marker> you a course of antibiotics.", rule.GetCorrectExamples()[0].GetExample())
+}

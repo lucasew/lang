@@ -36,6 +36,9 @@ type WrongWordInContextRule struct {
 	Category *Category
 	// IssueType ports getLocQualityIssueType (Java Misspelling).
 	IssueType ITSIssueType
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 // InitWrongWordInContextMeta ports WrongWordInContextRule constructor meta.
@@ -71,6 +74,34 @@ func (r *WrongWordInContextRule) GetLocQualityIssueType() ITSIssueType {
 		return ITSMisspelling
 	}
 	return r.IssueType
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *WrongWordInContextRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *WrongWordInContextRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *WrongWordInContextRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // LoadWrongWordInContext loads tab-separated context confusion entries.

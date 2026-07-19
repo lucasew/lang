@@ -50,6 +50,11 @@ func NewEnglishWrongWordInContextRule(messages map[string]string) *EnglishWrongW
 	}
 	// Java: getCategoryString → "Commonly Confused Words"
 	rules.InitWrongWordInContextMeta(base, messages, "Commonly Confused Words")
+	// Java: addExamplePair(proscribed → prescribed)
+	base.AddExamplePair(
+		rules.Wrong("I have <marker>proscribed</marker> you a course of antibiotics."),
+		rules.Fixed("I have <marker>prescribed</marker> you a course of antibiotics."),
+	)
 	return &EnglishWrongWordInContextRule{WrongWordInContextRule: base}
 }
 
