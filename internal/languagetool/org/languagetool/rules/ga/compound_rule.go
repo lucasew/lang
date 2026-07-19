@@ -48,6 +48,11 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		Data:                       loadCompounds(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
+	// Java: mí úsáid → mí-úsáid
+	base.AddExamplePair(
+		rules.Wrong("Tá <marker>mí úsáid</marker> fhisiciúil i gceist."),
+		rules.Fixed("Tá <marker>mí-úsáid</marker> fhisiciúil i gceist."),
+	)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

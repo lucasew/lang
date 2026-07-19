@@ -36,6 +36,11 @@ func loadWikipedia() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/es/wikipedia.txt"); err != nil {
 			panic(err)
 		}
+		// Java: a basto → abasto
+		base.AddExamplePair(
+			rules.Wrong("<marker>a basto</marker>"),
+			rules.Fixed("<marker>abasto</marker>"),
+		)
 		wikipediaBase = base
 	})
 	return wikipediaBase

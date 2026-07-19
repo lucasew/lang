@@ -51,6 +51,11 @@ func NewIrishSpecificCaseRule(messages map[string]string) *IrishSpecificCaseRule
 		OtherCapitalizationMessage: "If the term is a proper noun, use the suggested capitalization.",
 		ShortMsg:                   "Special capitalization",
 	}
+	// Java: mbéal Feirste → mBéal Feirste
+	base.AddExamplePair(
+		rules.Wrong("Rugadh agus tógadh i <marker>mbéal Feirste</marker> é."),
+		rules.Fixed("Rugadh agus tógadh i <marker>mBéal Feirste</marker> é."),
+	)
 	return &IrishSpecificCaseRule{AbstractSpecificCaseRule: base}
 }
 

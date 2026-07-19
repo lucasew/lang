@@ -50,6 +50,11 @@ func NewIrishReplaceRule(messages map[string]string) *IrishReplaceRule {
 			return "Litriú mícheart. An bhfuil «" + joinCommaGA(replacements) + "» i gceist agat?"
 		},
 	}
+	// Java: bhúr → bhur
+	base.AddExamplePair(
+		rules.Wrong("Níl beann agam oraibh, ar <marker>bhúr</marker> gcuid cainte."),
+		rules.Fixed("Níl beann agam oraibh, ar <marker>bhur</marker> gcuid cainte."),
+	)
 	return &IrishReplaceRule{AbstractSimpleReplaceRule: base}
 }
 

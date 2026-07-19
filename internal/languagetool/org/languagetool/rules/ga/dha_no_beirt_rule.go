@@ -62,14 +62,54 @@ func loadPeople() map[string]bool {
 // isPerson: surface toLower in people.txt OR lemma readings (Java) — no de-lenition invent.
 type DhaNoBeirtRule struct {
 	messages map[string]string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewDhaNoBeirtRule(messages map[string]string) *DhaNoBeirtRule {
 	_ = loadPeople()
-	return &DhaNoBeirtRule{messages: messages}
+	r := &DhaNoBeirtRule{messages: messages}
+	// Java: dhá → beirt
+	r.AddExamplePair(
+		rules.Wrong("Tá <marker>dhá</marker> dheartháireacha agam."),
+		rules.Fixed("Tá <marker>beirt</marker> dheartháireacha agam."),
+	)
+	return r
 }
 
 func (r *DhaNoBeirtRule) GetID() string { return "GA_DHA_NO_BEIRT" }
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *DhaNoBeirtRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *DhaNoBeirtRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *DhaNoBeirtRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 func (r *DhaNoBeirtRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	tokens := sentence.GetTokensWithoutWhitespace()

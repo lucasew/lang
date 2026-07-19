@@ -50,6 +50,11 @@ func NewEnglishHomophoneRule(messages map[string]string) *EnglishHomophoneRule {
 			return "Is é " + joinCommaGA(replacements) + " an litriú Gaelach ar \"" + tokenStr + "\""
 		},
 	}
+	// Java: sushi → súisí
+	base.AddExamplePair(
+		rules.Wrong("An bhialann <marker>sushi</marker> sin ba chúis leis."),
+		rules.Fixed("An bhialann <marker>súisí</marker> sin ba chúis leis."),
+	)
 	return &EnglishHomophoneRule{AbstractSimpleReplaceRule: base}
 }
 

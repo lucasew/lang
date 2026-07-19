@@ -50,6 +50,11 @@ func NewPrestandardReplaceRule(messages map[string]string) *PrestandardReplaceRu
 			return "Litriú réamhchaighdeánach:\"" + joinCommaGA(replacements) + "\"."
 		},
 	}
+	// Java: baoghal → baol
+	base.AddExamplePair(
+		rules.Wrong("“Ní <marker>baoghal</marker> daoibh,” ar sise."),
+		rules.Fixed("“Ní <marker>baol</marker> daoibh,” ar sise."),
+	)
 	return &PrestandardReplaceRule{AbstractSimpleReplaceRule: base}
 }
 

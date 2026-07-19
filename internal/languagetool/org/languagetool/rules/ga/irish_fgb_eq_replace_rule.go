@@ -50,6 +50,11 @@ func NewIrishFGBEqReplaceRule(messages map[string]string) *IrishFGBEqReplaceRule
 			return "Focal ceart ach tá \"" + joinCommaGA(replacements) + "\" níos coitianta."
 		},
 	}
+	// Java: urlamh → ullamh
+	base.AddExamplePair(
+		rules.Wrong("An bhfuil tú <marker>urlamh</marker>?"),
+		rules.Fixed("An bhfuil tú <marker>ullamh</marker>?"),
+	)
 	return &IrishFGBEqReplaceRule{AbstractSimpleReplaceRule: base}
 }
 

@@ -50,6 +50,11 @@ func NewPeopleRule(messages map[string]string) *PeopleRule {
 			return "Ainm Béarla. \"" + joinCommaGA(replacements) + "\"."
 		},
 	}
+	// Java: Damocles → Dámaicléas
+	base.AddExamplePair(
+		rules.Wrong("Bhí sí cosúil le claíomh <marker>Damocles</marker> ar crochadh sa spéir."),
+		rules.Fixed("Bhí sí cosúil le claíomh <marker>Dámaicléas</marker> ar crochadh sa spéir."),
+	)
 	return &PeopleRule{AbstractSimpleReplaceRule: base}
 }
 

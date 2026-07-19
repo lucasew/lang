@@ -48,6 +48,11 @@ func NewBretonCompoundRule(messages map[string]string) *BretonCompoundRule {
 		ShortDesc:                  "Kudenn barrennig-stagañ",
 		Data:                       loadCompounds(),
 	}
+	// Java: alc'hweder gwez → alc'hweder-gwez
+	base.AddExamplePair(
+		rules.Wrong("Gwelet em eus un <marker>alc'hweder gwez</marker> e-kerzh an dibenn-sizhun-mañ."),
+		rules.Fixed("Gwelet em eus un <marker>alc'hweder-gwez</marker> e-kerzh an dibenn-sizhun-mañ."),
+	)
 	return &BretonCompoundRule{AbstractCompoundRule: base}
 }
 

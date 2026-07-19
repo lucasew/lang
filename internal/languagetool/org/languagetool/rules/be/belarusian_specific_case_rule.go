@@ -51,6 +51,11 @@ func NewBelarusianSpecificCaseRule(messages map[string]string) *BelarusianSpecif
 		OtherCapitalizationMessage: "Калі гэта уласнае імя або назва, выкарыстоўвайце прапанаванае напісанне.",
 		ShortMsg:                   "Proper noun",
 	}
+	// Java: Вялікая айчынная Вайна → Вялікая Айчынная вайна
+	base.AddExamplePair(
+		rules.Wrong("<marker>Вялікая айчынная Вайна</marker> — гэта спецыфічны тэрмін савецкай гістарыяграфіі."),
+		rules.Fixed("<marker>Вялікая Айчынная вайна</marker> — гэта спецыфічны тэрмін савецкай гістарыяграфіі."),
+	)
 	return &BelarusianSpecificCaseRule{AbstractSpecificCaseRule: base}
 }
 

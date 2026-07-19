@@ -1,6 +1,7 @@
 package ekavian
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
@@ -17,6 +18,9 @@ const (
 // MorfologikEkavianSpellerRule ports rules.sr.ekavian.MorfologikEkavianSpellerRule.
 type MorfologikEkavianSpellerRule struct {
 	*morfologik.MorfologikSpellerRule
+	// incorrectExamples / correctExamples port Rule.addExamplePair (not on SpellingCheckRule).
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewMorfologikEkavianSpellerRule() *MorfologikEkavianSpellerRule {
@@ -28,7 +32,43 @@ func NewMorfologikEkavianSpellerRule() *MorfologikEkavianSpellerRule {
 	if r.SpellingCheckRule != nil {
 		spelling.ApplySpellingResourcePaths(r.SpellingCheckRule, EkavianIgnoreFile, EkavianSpellingFile, EkavianProhibitFile)
 	}
+	// Java: бткие → битке
+	r.AddExamplePair(
+		rules.Wrong("Изгубила све сам <marker>бткие</marker>, ал' још водим рат."),
+		rules.Fixed("Изгубила све сам <marker>битке</marker>, ал' још водим рат."),
+	)
 	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *MorfologikEkavianSpellerRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *MorfologikEkavianSpellerRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *MorfologikEkavianSpellerRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // GetIgnoreFileName ports getIgnoreFileName.

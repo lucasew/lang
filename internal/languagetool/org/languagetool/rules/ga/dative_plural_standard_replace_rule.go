@@ -83,6 +83,11 @@ func NewDativePluralStandardReplaceRule(messages map[string]string) *DativePlura
 				joinCommaGA(replacements) + "\" a bhí i gceist agat?"
 		},
 	}
+	// Java: mnáibh → mná
+	base.AddExamplePair(
+		rules.Wrong("Dá mba thruamhéalach é cás an sclábhaí fir, ba mheasa fós do na <marker>mnáibh</marker> a gcás siúd."),
+		rules.Fixed("Dá mba thruamhéalach é cás an sclábhaí fir, ba mheasa fós do na <marker>mná</marker> a gcás siúd."),
+	)
 	return &DativePluralStandardReplaceRule{AbstractSimpleReplaceRule: base}
 }
 
