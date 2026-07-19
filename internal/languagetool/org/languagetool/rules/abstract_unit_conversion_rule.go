@@ -616,81 +616,116 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 	}
 
-	for _, up := range r.unitPatterns {
-		if up.unit.Metric {
-			continue
-		}
-		locs := up.re.FindAllStringSubmatchIndex(text, -1)
-		for _, loc := range locs {
-			if len(loc) < 4 {
+	// Java match: first metric units (set ignore ranges for "10 km (5 miles)"), then non-metric.
+	// metricPass: CHECK parenthetical only (already metric → no SUGGESTION).
+	// nonMetricPass: SUGGESTION + CHECK.
+	for _, metricPass := range []bool{true, false} {
+		for _, up := range r.unitPatterns {
+			if up.unit.Metric != metricPass {
 				continue
 			}
-			full := text[loc[0]:loc[1]]
-			numStr := text[loc[2]:loc[3]]
-			// Java: range "1-5 miles" may capture "-5"; strip hyphen and convert end only.
-			numStr = adjustRangeNumber(text, loc[0], numStr)
-			val, err := r.parseNumber(numStr)
-			if err != nil {
-				continue
-			}
-			if overlaps(loc[0], loc[1]) {
-				continue
-			}
-			// Java removeAntiPatternMatches: drop when anti-pattern on full text covers match edges.
-			// Also drops hyphen ranges entirely when anti-pattern `\d+[-–]\d+` covers the span.
-			if unitHitByAntiPattern(text, loc[0], loc[1], r.antiPatterns) {
-				continue
-			}
-			// Currency: "Pfund Sterling" is not mass.
-			if after := trailingContext(text, loc[1]); strings.Contains(strings.ToLower(after), "sterling") {
-				continue
-			}
-			// Existing conversion in parentheses, e.g. "6 Fuß (1,82 m)" — Java CHECK path.
-			if cm := convertedParenRE.FindStringSubmatchIndex(text[loc[1]:]); cm != nil {
-				// absolute positions
-				cFrom := loc[1] + cm[0]
-				cTo := loc[1] + cm[1]
-				numInParen := text[loc[1]+cm[2] : loc[1]+cm[3]]
-				unitBody := strings.TrimSpace(text[loc[1]+cm[4] : loc[1]+cm[5]])
-				given, errG := r.parseNumber(numInParen)
-				if errG == nil {
-					if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, val, up.unit, given, unitBody, full); check != nil {
-						claim(loc[0], cTo)
-						matches = append(matches, check)
-						continue
-					}
-					// conversion present and accepted → no suggestion
-					claim(loc[0], cTo)
+			locs := up.re.FindAllStringSubmatchIndex(text, -1)
+			for _, loc := range locs {
+				if len(loc) < 4 {
 					continue
 				}
-			}
-			// Skip when metric unit already appears nearby (parenthetical / prose equivalent).
-			if hasNearbyMetricInText(text, loc[1]) {
-				continue
-			}
-			equivs := r.GetMetricEquivalent(val, up.unit)
-			if len(equivs) == 0 {
-				continue
-			}
-			claim(loc[0], loc[1])
-			var suggs []string
-			for _, eq := range equivs {
-				for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+				full := text[loc[0]:loc[1]]
+				numStr := text[loc[2]:loc[3]]
+				// Java: range "1-5 miles" may capture "-5"; strip hyphen and convert end only.
+				numStr = adjustRangeNumber(text, loc[0], numStr)
+				val, err := r.parseNumber(numStr)
+				if err != nil {
+					continue
+				}
+				if overlaps(loc[0], loc[1]) {
+					continue
+				}
+				// Java removeAntiPatternMatches: drop when anti-pattern covers match edges.
+				if unitHitByAntiPattern(text, loc[0], loc[1], r.antiPatterns) {
+					continue
+				}
+				// Currency: "Pfund Sterling" is not mass.
+				if after := trailingContext(text, loc[1]); strings.Contains(strings.ToLower(after), "sterling") {
+					continue
+				}
+				// Existing conversion in parentheses — Java CHECK path.
+				if cm := convertedParenRE.FindStringSubmatchIndex(text[loc[1]:]); cm != nil {
+					cFrom := loc[1] + cm[0]
+					cTo := loc[1] + cm[1]
+					numInParen := text[loc[1]+cm[2] : loc[1]+cm[3]]
+					unitBody := strings.TrimSpace(text[loc[1]+cm[4] : loc[1]+cm[5]])
+					given, errG := r.parseNumber(numInParen)
+					if errG == nil {
+						if check := r.checkParentheticalConversion(sentence, loc[0], loc[1], cFrom, cTo, val, up.unit, given, unitBody, full); check != nil {
+							claim(loc[0], cTo)
+							matches = append(matches, check)
+							continue
+						}
+						// conversion present and accepted → claim span (blocks secondary unit)
+						claim(loc[0], cTo)
+						continue
+					}
+				}
+				if metricPass {
+					// already metric, no parenthetical → nothing to suggest
+					continue
+				}
+				// Skip when metric unit already appears nearby.
+				if hasNearbyMetricInText(text, loc[1]) {
+					continue
+				}
+				equivs := r.GetMetricEquivalent(val, up.unit)
+				if len(equivs) == 0 {
+					continue
+				}
+				claim(loc[0], loc[1])
+				var suggs []string
+				for _, eq := range equivs {
+					for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+						if len(suggs) >= unitMaxSuggestions {
+							break
+						}
+						suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(full), conv))
+					}
 					if len(suggs) >= unitMaxSuggestions {
 						break
 					}
-					suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(full), conv))
 				}
-				if len(suggs) >= unitMaxSuggestions {
-					break
-				}
+				m := r.newUnitMatchWithURL(sentence, loc[0], loc[1], UnitMsgSuggestion, strings.TrimSpace(full))
+				m.SetSuggestedReplacements(suggs)
+				matches = append(matches, m)
 			}
-			m := r.newUnitMatchWithURL(sentence, loc[0], loc[1], UnitMsgSuggestion, strings.TrimSpace(full))
-			m.SetSuggestedReplacements(suggs)
-			matches = append(matches, m)
 		}
 	}
-	return matches, nil
+	// Java: deduplicate matches with equal start; longer match wins (miles per hour > miles).
+	return dedupeUnitMatchesByStart(matches), nil
+}
+
+// dedupeUnitMatchesByStart keeps the longest match for each FromPos (Java matchesByStart).
+func dedupeUnitMatchesByStart(matches []*RuleMatch) []*RuleMatch {
+	if len(matches) <= 1 {
+		return matches
+	}
+	byStart := map[int]*RuleMatch{}
+	order := []int{}
+	for _, m := range matches {
+		if m == nil {
+			continue
+		}
+		if prev, ok := byStart[m.FromPos]; ok {
+			if m.ToPos > prev.ToPos {
+				byStart[m.FromPos] = m
+			}
+			continue
+		}
+		byStart[m.FromPos] = m
+		order = append(order, m.FromPos)
+	}
+	out := make([]*RuleMatch, 0, len(order))
+	for _, from := range order {
+		out = append(out, byStart[from])
+	}
+	return out
 }
 
 // checkParentheticalConversion ports the Java CHECK branch when a conversion already follows.
@@ -701,50 +736,56 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	srcVal float64, srcUnit UnitDef,
 	given float64, unitBody, originalFull string,
 ) *RuleMatch {
-	// Match unit body against known metric units (symbol or pattern fragment).
+	// Java: match converted unit against unitPatterns (not only metricUnits).
+	// Include non-metric paren units (e.g. "10 km (6.21 mi)").
 	var convertedUnit *UnitDef
 	bodyLow := strings.ToLower(strings.TrimSpace(unitBody))
-	for i := range r.metricUnits {
-		u := r.metricUnits[i]
+	// Prefer longer symbol matches: scan all registered unit patterns.
+	for i := range r.unitPatterns {
+		u := r.unitPatterns[i].unit
 		sym := strings.ToLower(u.Symbol)
 		if bodyLow == sym || strings.HasPrefix(bodyLow, sym+" ") || strings.HasPrefix(bodyLow, sym+")") {
-			convertedUnit = &u
-			break
+			// keep longest symbol when multiple match
+			if convertedUnit == nil || len(sym) > len(convertedUnit.Symbol) {
+				uu := u
+				convertedUnit = &uu
+			}
+			continue
 		}
 		// common DE/EN/PT long names used in parenthetical CHECK path
+		matched := false
 		switch {
 		case bodyLow == "m" || bodyLow == "meter" || bodyLow == "metre" || bodyLow == "metern" ||
 			strings.HasPrefix(bodyLow, "metro"):
-			if u.ID == UnitMetre.ID || (u.Kind == UnitLength && u.Factor == 1 && u.Metric) {
-				convertedUnit = &u
-			}
+			matched = u.Kind == UnitLength && math.Abs(u.Factor-1) < 1e-12
 		case bodyLow == "km" || strings.HasPrefix(bodyLow, "kilometer") || strings.HasPrefix(bodyLow, "kilometre") ||
 			strings.HasPrefix(bodyLow, "quilômetro") || strings.HasPrefix(bodyLow, "quilometro"):
-			if u.ID == UnitKilometre.ID || (u.Kind == UnitLength && math.Abs(u.Factor-1e3) < 1e-9 && u.Metric) {
-				convertedUnit = &u
-			}
+			matched = u.Kind == UnitLength && math.Abs(u.Factor-1e3) < 1e-9
 		case bodyLow == "cm" || strings.HasPrefix(bodyLow, "zentimeter") || strings.HasPrefix(bodyLow, "centimeter") ||
 			strings.HasPrefix(bodyLow, "centímetro") || strings.HasPrefix(bodyLow, "centimetro"):
-			if u.ID == UnitCentimetre.ID || (u.Kind == UnitLength && math.Abs(u.Factor-1e-2) < 1e-12 && u.Metric) {
-				convertedUnit = &u
-			}
+			matched = u.Kind == UnitLength && math.Abs(u.Factor-1e-2) < 1e-12
 		case bodyLow == "mm" || strings.HasPrefix(bodyLow, "millimeter") || strings.HasPrefix(bodyLow, "milímetro") ||
 			strings.HasPrefix(bodyLow, "milimetro"):
-			if u.ID == UnitMillimetre.ID || (u.Kind == UnitLength && math.Abs(u.Factor-1e-3) < 1e-12 && u.Metric) {
-				convertedUnit = &u
-			}
+			matched = u.Kind == UnitLength && math.Abs(u.Factor-1e-3) < 1e-12
 		case bodyLow == "kg" || strings.HasPrefix(bodyLow, "kilogramm") || strings.HasPrefix(bodyLow, "kilogram") ||
 			strings.HasPrefix(bodyLow, "quilogram"):
-			if u.ID == UnitKilogram.ID || (u.Kind == UnitMass && u.Factor == 1 && u.Metric) {
-				convertedUnit = &u
-			}
+			matched = u.Kind == UnitMass && math.Abs(u.Factor-1) < 1e-12
 		case strings.HasPrefix(bodyLow, "tonelada") || bodyLow == "t" || strings.HasPrefix(bodyLow, "tonne"):
-			if u.ID == UnitTonne.ID || (u.Kind == UnitMass && math.Abs(u.Factor-1e3) < 1e-9 && u.Metric) {
-				convertedUnit = &u
-			}
+			matched = u.Kind == UnitMass && math.Abs(u.Factor-1e3) < 1e-9
+		case bodyLow == "mi" || strings.HasPrefix(bodyLow, "mile"):
+			matched = u.Kind == UnitLength && math.Abs(u.Factor-UnitMile.Factor) < 1e-6
+		case bodyLow == "ft" || bodyLow == "feet" || bodyLow == "foot" || bodyLow == "fuß" || bodyLow == "fuss":
+			matched = u.Kind == UnitLength && math.Abs(u.Factor-UnitFeet.Factor) < 1e-9
+		case bodyLow == "lb" || strings.HasPrefix(bodyLow, "pound") || bodyLow == "pfund" || strings.HasPrefix(bodyLow, "libra"):
+			matched = u.Kind == UnitMass && math.Abs(u.Factor-UnitPound.Factor) < 1e-9
 		}
-		if convertedUnit != nil {
-			break
+		if matched {
+			uu := u
+			convertedUnit = &uu
+			// don't break — prefer exact symbol match above; long-name first hit is ok
+			if bodyLow == sym {
+				break
+			}
 		}
 	}
 	if convertedUnit == nil {

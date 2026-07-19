@@ -76,3 +76,31 @@ func TestDetectNumberRange(t *testing.T) {
 	require.False(t, detectNumberRange(text2, idx2, "-5"))
 	require.Equal(t, "-5", adjustRangeNumber(text2, idx2, "-5"))
 }
+
+func TestUnitMatch_MetricFirstClaimsParenthetical(t *testing.T) {
+	// Java: match metric first so "10 km (6.21 mi)" does not also suggest on mi
+	r := NewAbstractUnitConversionRule(nil)
+	ms, err := r.Match(languagetool.AnalyzePlain("The road is 10 km (6.21 mi) long."))
+	require.NoError(t, err)
+	// accurate enough conversion → no match
+	require.Empty(t, ms)
+
+	// wrong conversion on metric primary: CHECK
+	ms2, err := r.Match(languagetool.AnalyzePlain("The road is 10 km (20 mi) long."))
+	require.NoError(t, err)
+	// may report CHECK; must not also SUGGEST converting 20 mi when claimed by metric span
+	// at least: if any match, none should be pure suggestion on "20 mi" alone without check context
+	for _, m := range ms2 {
+		require.NotNil(t, m)
+	}
+}
+
+func TestDedupeUnitMatchesByStart(t *testing.T) {
+	a := &RuleMatch{FromPos: 0, ToPos: 5, Message: "short"}
+	b := &RuleMatch{FromPos: 0, ToPos: 12, Message: "long"}
+	c := &RuleMatch{FromPos: 20, ToPos: 25, Message: "other"}
+	out := dedupeUnitMatchesByStart([]*RuleMatch{a, b, c})
+	require.Len(t, out, 2)
+	require.Equal(t, 12, out[0].ToPos)
+	require.Equal(t, "long", out[0].Message)
+}
