@@ -62,16 +62,16 @@ func (r *AvsAnRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.Rule
 		if equalsA || equalsAn {
 			// Java: only when prev token was DT (hasPosTag("DT"))
 			determiner := GetCorrectDeterminerFor(token)
-			var msg string
+			var msg, replacement string
 			if equalsA && determiner == DeterminerAN {
-				replacement := "an"
+				replacement = "an"
 				if tools.StartsWithUppercase(prevTokenStr) {
 					replacement = "An"
 				}
 				msg = "Use <suggestion>" + replacement + "</suggestion> instead of '" + prevTokenStr + "' if the following " +
 					"word starts with a vowel sound, e.g. 'an article', 'an hour'."
 			} else if equalsAn && determiner == DeterminerA {
-				replacement := "a"
+				replacement = "a"
 				if tools.StartsWithUppercase(prevTokenStr) {
 					replacement = "A"
 				}
@@ -81,6 +81,8 @@ func (r *AvsAnRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.Rule
 			if msg != "" {
 				prev := tokens[prevTokenIndex]
 				rm := rules.NewRuleMatch(r, sentence, prev.GetStartPos(), prev.GetEndPos(), msg)
+				rm.ShortMessage = "Wrong article"
+				rm.SetSuggestedReplacement(replacement)
 				ruleMatches = append(ruleMatches, rm)
 			}
 		}

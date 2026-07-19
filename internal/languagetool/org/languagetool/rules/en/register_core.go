@@ -27,7 +27,8 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	rules.RegisterSharedLayoutRules(lt, "en")
 	wr := NewEnglishWordRepeatRule(map[string]string{"repetition": "Word repetition"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	lt.AddRuleChecker("EN_A_VS_AN", languagetool.SimpleAvsAnChecker())
+	// Faithful AvsAnRule (official determiner lists); DT inject for untagged AnalyzePlain.
+	lt.AddRuleChecker("EN_A_VS_AN", AvsAnSentenceChecker())
 	// Soft invent PHRASE_REPLACE / token-sequence packs removed (faithful-port policy).
 	// Load official grammar.xml when the full pattern loader is ready — do not invent lists.
 	// Multi-sentence: three successive sentences starting with the same word/adverb.

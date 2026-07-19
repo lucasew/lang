@@ -1360,138 +1360,18 @@ func absInt(n int) int {
 	return n
 }
 
-// SimpleAvsAnChecker flags "a" before vowel-sound words and "an" before consonant-sound words.
-// Soft stand-in for EN_A_VS_AN with a small exception lexicon (not full phonetics).
+// PreferredAvsAnChecker is set by package en (init/register) to the faithful AvsAnRule
+// path with DT inject. When nil, SimpleAvsAnChecker fails closed (no soft invent lexicon).
+var PreferredAvsAnChecker SentenceChecker
+
+// SimpleAvsAnChecker returns the faithful EN_A_VS_AN checker when en has registered it.
+// Soft phonetic invent maps were removed — do not invent a/an exceptions here.
 func SimpleAvsAnChecker() SentenceChecker {
-	return func(sentence *AnalyzedSentence) []LocalMatch {
-		if sentence == nil {
-			return nil
-		}
-		toks := sentence.GetTokensWithoutWhitespace()
-		var out []LocalMatch
-		for i := 0; i < len(toks)-1; i++ {
-			cur, next := toks[i], toks[i+1]
-			if cur == nil || next == nil {
-				continue
-			}
-			a := strings.ToLower(cur.GetToken())
-			n := next.GetToken()
-			if n == "" || !hasLetterLocal(n) {
-				continue
-			}
-			vowel := startsWithVowelSound(n)
-			switch a {
-			case "a":
-				if vowel {
-					out = append(out, LocalMatch{
-						FromPos:      cur.GetStartPos(),
-						ToPos:        cur.GetEndPos(),
-						Message:      "Use \"an\" before a vowel sound",
-						ShortMessage: "Wrong article",
-						RuleID:       "EN_A_VS_AN",
-						Suggestions:  []string{"an"},
-					})
-				}
-			case "an":
-				if !vowel {
-					out = append(out, LocalMatch{
-						FromPos:      cur.GetStartPos(),
-						ToPos:        cur.GetEndPos(),
-						Message:      "Use \"a\" before a consonant sound",
-						ShortMessage: "Wrong article",
-						RuleID:       "EN_A_VS_AN",
-						Suggestions:  []string{"a"},
-					})
-				}
-			}
-		}
-		return out
+	if PreferredAvsAnChecker != nil {
+		return PreferredAvsAnChecker
 	}
-}
-
-// startsWithVowelSound reports whether article "an" is preferred before word.
-func startsWithVowelSound(word string) bool {
-	w := articleWordKey(word)
-	if w == "" {
-		return false
-	}
-	// silent-h / vowel sound despite consonant letter → "an"
-	if _, ok := anDespiteConsonantLetter[w]; ok {
-		return true
-	}
-	// consonant sound despite vowel letter → "a"
-	if _, ok := aDespiteVowelLetter[w]; ok {
-		return false
-	}
-	// prefix families (university, unique, european, one-…)
-	for _, p := range aDespiteVowelPrefixes {
-		if strings.HasPrefix(w, p) {
-			return false
-		}
-	}
-	first, _ := utf8DecodeFirst(w)
-	return isVowelLetter(first)
-}
-
-// articleWordKey lowercases and keeps the alphabetic prefix (one-time → one).
-func articleWordKey(word string) string {
-	low := strings.ToLower(strings.TrimSpace(word))
-	if low == "" {
-		return ""
-	}
-	var b strings.Builder
-	for _, r := range low {
-		if unicode.IsLetter(r) {
-			b.WriteRune(r)
-			continue
-		}
-		// stop at hyphen/digit/punct after some letters
-		if b.Len() > 0 {
-			break
-		}
-	}
-	return b.String()
-}
-
-// soft EN_A_VS_AN lexicon: silent h / historic vowel sound → take "an"
-var anDespiteConsonantLetter = map[string]struct{}{
-	"hour": {}, "hours": {}, "hourly": {},
-	"honest": {}, "honestly": {}, "honesty": {},
-	"honor": {}, "honors": {}, "honour": {}, "honours": {}, "honorable": {}, "honourable": {},
-	"heir": {}, "heirs": {}, "heiress": {},
-	"herb": {}, "herbs": {}, // US pronunciation
-}
-
-// soft: initial /juː/ or /w/ despite orthographic vowel → take "a"
-var aDespiteVowelLetter = map[string]struct{}{
-	"one": {}, "once": {}, "ones": {},
-	"european": {}, "europeans": {},
-	"ewe": {}, "ewes": {},
-	"u": {}, // "a U-turn" handled by prefix "u" + more letters via prefixes
-}
-
-// prefixes for university/unique/euro/user/… families
-// (avoid short prefixes like "one" that hit onerous, onerous-like words)
-var aDespiteVowelPrefixes = []string{
-	"uni",  // university, unique, united, uniform, union…
-	"euro", // european, eurozone
-	"user", "used", "useful", "usual", "usurp", "usurper",
-}
-
-func isVowelLetter(r rune) bool {
-	switch unicode.ToLower(r) {
-	case 'a', 'e', 'i', 'o', 'u':
-		return true
-	default:
-		return false
-	}
-}
-
-func utf8DecodeFirst(s string) (rune, int) {
-	for _, r := range s {
-		return r, 1
-	}
-	return 0, 0
+	// Fail closed without wired AvsAnRule (package en sets PreferredAvsAnChecker).
+	return func(*AnalyzedSentence) []LocalMatch { return nil }
 }
 
 // CorrectTextFromLocalMatches applies first suggestion of each match (byte offsets; ASCII-safe).
