@@ -52,7 +52,7 @@ func (d *UkrainianHybridDisambiguator) Disambiguate(in *languagetool.AnalyzedSen
 		DisambiguatePronPos(out)
 		RetagPluralProp(out)
 		RemoveVerbImpr(out)
-		PreferVocativeWhenBang(out)
+		// PreferVocativeWhenBang is not in Java preDisambiguate list (helper remains available).
 	}
 	// Java: disambiguator.disambiguate(chunker.disambiguate(input))
 	if d != nil && d.Chunker != nil {
