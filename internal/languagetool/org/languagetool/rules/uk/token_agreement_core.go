@@ -2255,6 +2255,145 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		return true
 	}
 
+	nounLower := CleanTokenLower(noun)
+
+	// плюс|мінус|…
+	if IsPlusMinusLemma(nounLower) {
+		return true
+	}
+	// закінчилося 18-го / дорогою / толком / …
+	if regexp.MustCompile(`^(?:[0-9]+-.+|дорогою|толком|дивом|чверть|третину|половину|святая)$`).MatchString(nounLower) {
+		return true
+	}
+	// сміялася всю дорогу / цілою дорогою
+	if nounPos < len(tokens)-1 &&
+		HasPosTagRE(noun, regexp.MustCompile(`adj:[fn]:v_(zna|oru).*`)) &&
+		HasLemmaWithPosRE(tokens[nounPos+1], []string{"дорога", "життя", "міра"}, regexp.MustCompile(`noun:inanim:[fn]:v_(zna|oru).*`)) {
+		return true
+	}
+	// запропоновано відділом
+	if HasPosTagPart(verb, "impers") && HasPosTagRE(noun, regexp.MustCompile(`.*v_oru.*`)) {
+		return true
+	}
+	// займаючись кожен
+	if HasLemmaWithPosRE(noun, []string{"кожний"}, regexp.MustCompile(`.*v_naz.*`)) {
+		return true
+	}
+	// звалося Подєбради
+	if HasLemmaTokenAny(verb, []string{"звати", "називати", "зватися", "називатися"}) &&
+		isUpperFirst(noun.GetCleanToken()) {
+		return true
+	}
+	// тривав довгих десять раундів
+	if HasLemmaTokenAny(verb, []string{"тривати", "протривати", "йти", "іти", "ходити", "їхати"}) &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:adj|numr|noun:inanim).*v_zna.*`)) {
+		return true
+	}
+	// ні сіло ні впало
+	if verbPos > 3 &&
+		strings.EqualFold(verb.GetCleanToken(), "впало") &&
+		tokens[verbPos-1] != nil && tokens[verbPos-1].GetCleanToken() == "ні" {
+		return true
+	}
+	// якщо не сказати слабка
+	if verbPos > 2 &&
+		strings.EqualFold(verb.GetCleanToken(), "сказати") &&
+		tokens[verbPos-1] != nil && tokens[verbPos-1].GetCleanToken() == "не" &&
+		HasPosTagPart(noun, "v_naz") {
+		return true
+	}
+	// потребувала мільйон — Java state.cases contains v_rod + numr/noun:numr v_zna
+	if hasCaseGovFromReadings(verb, "v_rod") &&
+		HasPosTagRE(noun, regexp.MustCompile(`numr.*?v_zna.*|noun.*v_zna.*numr.*`)) {
+		return true
+	}
+	// виростили сортів 10
+	if nounPos < len(tokens)-1 &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:noun|adj):.*:v_rod.*`)) &&
+		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`num.*`)) {
+		return true
+	}
+	// виростили сортів — 10
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:noun|adj):.*:v_rod.*`)) &&
+		IsDash(tokens[nounPos+1]) &&
+		HasPosTagRE(tokens[nounPos+2], regexp.MustCompile(`num.*`)) {
+		return true
+	}
+	// одержав хабарів на суму
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:noun:inanim|adj):.:v_rod.*`)) {
+		v2 := TokenSearch(tokens, nounPos+1, "", regexp.MustCompile(`^на$`), regexp.MustCompile(`^[a-z].*`), DirForward)
+		if v2 >= 0 && v2 <= nounPos+5 && v2 < len(tokens)-1 {
+			return true
+		}
+	}
+	// залучити інвестицій на 20
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*v_(rod|zna).*`)) &&
+		regexp.MustCompile(`^(?:на|з|із|зо|під)$`).MatchString(CleanTokenLower(tokens[nounPos+1])) &&
+		HasPosTagRE(tokens[nounPos+2], regexp.MustCompile(`number|numr.*v_zna.*`)) {
+		return true
+	}
+
+	// V_DAV block
+	if HasPosTagPart(noun, "v_dav") {
+		if HasPosTagPart(verb, ":inf") {
+			// як боротися підприємцям
+			if verbPos > 1 &&
+				HasLemmaTokenAny(tokens[verbPos-1], []string{"як", "куди", "де", "що", "чого", "чи"}) {
+				return true
+			}
+			// Квапитися їй нікуди
+			if nounPos < len(tokens)-1 &&
+				regexp.MustCompile(`^(?:ніколи|нікуди|нічого|нічим|ніде|немає?|не)$`).MatchString(CleanTokenLower(tokens[nounPos+1])) {
+				return true
+			}
+			// тут жити мешканцям
+			if HasLemmaTokenAny(verb, []string{"жити", "сидіти", "судити"}) {
+				return true
+			}
+			// нічим пишатися селянам
+			if verbPos > 1 &&
+				regexp.MustCompile(`^(?:ніколи|нікуди|нічого|нічим|ніде|де|немає?|не)$`).MatchString(CleanTokenLower(tokens[verbPos-1])) {
+				return true
+			}
+			// не бачити вам цирку
+			if verbPos > 1 && nounPos < len(tokens)-1 &&
+				regexp.MustCompile(`^(?:не|а?ні)$`).MatchString(CleanTokenLower(tokens[verbPos-1])) &&
+				HasPosTagPart(tokens[nounPos+1], "v_rod") {
+				return true
+			}
+			// слід проходити людям
+			if verbPos > 1 &&
+				regexp.MustCompile(`^(?:слід|снаги|силу)$`).MatchString(CleanTokenLower(tokens[verbPos-1])) {
+				return true
+			}
+		}
+		// розсміявся брату в обличчя
+		if nounPos < len(tokens)-2 &&
+			regexp.MustCompile(`^(?:в|у|на|від|під|по|до|і?з|з[іо]|над|з-під|перед|попід|поза|напереріз)$`).
+				MatchString(CleanTokenLower(tokens[nounPos+1])) &&
+			HasPosTagRE(tokens[nounPos+2], regexp.MustCompile(`(?:noun|adj).*`)) {
+			return true
+		}
+		if nounPos < len(tokens)-1 &&
+			HasPosTagRE(noun, regexp.MustCompile(`.*v_dav.*`)) &&
+			regexp.MustCompile(`^(?:назустріч|навперейми|навздогін|услід)$`).MatchString(CleanTokenLower(tokens[nounPos+1])) {
+			return true
+		}
+		// закружляли мені десь
+		if nounPos < len(tokens)-2 &&
+			HasPosTagRE(noun, regexp.MustCompile(`noun.*?v_dav.*:pron:(?:pers|refl).*`)) {
+			return true
+		}
+	}
+
+	// сміятися гріх
+	if HasPosTagPart(verb, ":inf") && strings.EqualFold(noun.GetCleanToken(), "гріх") {
+		return true
+	}
+
 	return false
 }
 

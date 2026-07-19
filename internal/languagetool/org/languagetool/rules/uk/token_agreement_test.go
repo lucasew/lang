@@ -765,3 +765,87 @@ func TestAdjNounException_FinalArms(t *testing.T) {
 		atr("a"), atr("b"), atr("c", "verb:imperf:pres:s:3"),
 	}, 1, "verb", nil, nil, DirForward))
 }
+
+func TestVerbNounException_MoreJavaArms(t *testing.T) {
+	// плюс/мінус
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("додав", "verb"), atr("плюс", "noun"),
+	}, 0, 1))
+
+	// 18-го surface
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("закінчилося", "verb"), atr("18-го", "adj"),
+	}, 0, 1))
+
+	// всю дорогу
+	dor := "дорога"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("сміялася", "verb"), atr("всю", "adj:f:v_zna"),
+		atrLemma("дорогу", &dor, "noun:inanim:f:v_zna"),
+	}, 0, 1))
+
+	// impers + v_oru
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("запропоновано", "verb:impers"), atr("відділом", "noun:inanim:m:v_oru"),
+	}, 0, 1))
+
+	// кожний v_naz
+	kozh := "кожний"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("займаючись", "verb"), atrLemma("кожен", &kozh, "adj:m:v_naz"),
+	}, 0, 1))
+
+	// звалося Proper
+	zv := "зватися"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("звалося", &zv, "verb"), atr("Подєбради", "noun:prop"),
+	}, 0, 1))
+
+	// тривав + v_zna
+	tryv := "тривати"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("тривав", &tryv, "verb"), atr("довгих", "adj:p:v_zna"),
+	}, 0, 1))
+
+	// ні впало
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("а"), atr("ні"), atr("сіло"), atr("ні"), atr("впало", "verb"),
+		atr("щось", "noun"),
+	}, 5, 6))
+
+	// не сказати + v_naz
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("якщо"), atr("не"), atr("сказати", "verb:inf"),
+		atr("слабка", "adj:f:v_naz"),
+	}, 3, 4))
+
+	// сортів 10
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("виростили", "verb"), atr("сортів", "noun:inanim:p:v_rod"), atr("10", "number"),
+	}, 0, 1))
+
+	// інвестицій на 20
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("залучити", "verb"), atr("інвестицій", "noun:inanim:p:v_rod"),
+		atr("на", "prep"), atr("20", "number"),
+	}, 0, 1))
+
+	// як боротися підприємцям — Java verbPos > 1
+	yak := "як"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("як", &yak, "adv"), atr("боротися", "verb:imperf:inf"),
+		atr("підприємцям", "noun:anim:p:v_dav"),
+	}, 2, 3))
+
+	// сміятися гріх
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("сміятися", "verb:imperf:inf"), atr("гріх", "noun"),
+	}, 0, 1))
+
+	// брату в обличчя
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("розсміявся", "verb"), atr("брату", "noun:anim:m:v_dav"),
+		atr("в", "prep"), atr("обличчя", "noun"),
+	}, 0, 1))
+}
