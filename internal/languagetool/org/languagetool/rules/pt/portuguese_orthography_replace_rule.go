@@ -2,7 +2,6 @@ package pt
 
 import (
 	"embed"
-	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -34,6 +33,8 @@ func loadOrthographyWords() map[string][]string {
 }
 
 // PortugueseOrthographyReplaceRule ports org.languagetool.rules.pt.PortugueseOrthographyReplaceRule.
+// Multiword immunization (e.g. Italian "sotto voce") is analysis/disambiguation owned;
+// without immunized tokens, "voce" still matches (fail closed — no surface invent skip).
 type PortugueseOrthographyReplaceRule struct {
 	*rules.AbstractSimpleReplaceRule
 }
@@ -47,6 +48,7 @@ func NewPortugueseOrthographyReplaceRule(messages map[string]string) *Portuguese
 		ID:            "PT_SIMPLE_REPLACE_ORTHOGRAPHY",
 		Description:   "Possible spelling mistake found.",
 		ShortMsg:      "Spelling mistake",
+		Category:      rules.CatTypos.GetCategory(messages),
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Possible spelling mistake found."
 		},
@@ -55,37 +57,5 @@ func NewPortugueseOrthographyReplaceRule(messages map[string]string) *Portuguese
 }
 
 func (r *PortugueseOrthographyReplaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	matches := r.AbstractSimpleReplaceRule.Match(sentence)
-	if len(matches) == 0 {
-		return matches
-	}
-	// Surface stand-in for multiword tagger immunization of Italian "sotto voce".
-	tokens := sentence.GetTokensWithoutWhitespace()
-	prevByStart := map[int]string{}
-	prev := ""
-	for _, tok := range tokens {
-		if tok.IsSentenceStart() {
-			continue
-		}
-		prevByStart[tok.GetStartPos()] = prev
-		prev = tok.GetToken()
-	}
-	out := matches[:0]
-	for _, m := range matches {
-		from := m.GetFromPos()
-		if strings.EqualFold(prevByStart[from], "sotto") {
-			skip := false
-			for _, tok := range tokens {
-				if tok.GetStartPos() == from && strings.EqualFold(tok.GetToken(), "voce") {
-					skip = true
-					break
-				}
-			}
-			if skip {
-				continue
-			}
-		}
-		out = append(out, m)
-	}
-	return out
+	return r.AbstractSimpleReplaceRule.Match(sentence)
 }

@@ -1,7 +1,8 @@
 package pt
 
-// Twin of languagetool-language-modules/pt/src/test/java/org/languagetool/rules/pt/PortugueseOrthographyReplaceRuleTest.java
+// Twin of PortugueseOrthographyReplaceRuleTest — immunization for multiword, not surface invent.
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -27,6 +28,16 @@ func TestPortugueseOrthographyReplaceRule_Rule(t *testing.T) {
 
 	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Gosto de você."))))
 	assertSingle("Gosto de voce.", "você")
-	// multi-token Italian expression (surface stand-in for multiwords.txt immunization)
-	require.Equal(t, 0, len(rule.Match(languagetool.AnalyzePlain("Disse-me sotto voce."))))
+
+	// Java: multiword analysis immunizes "voce" in "sotto voce"
+	sent := languagetool.AnalyzePlain("Disse-me sotto voce.")
+	for _, tok := range sent.GetTokensWithoutWhitespace() {
+		if strings.EqualFold(tok.GetToken(), "voce") {
+			tok.Immunize(0)
+		}
+	}
+	require.Equal(t, 0, len(rule.Match(sent)))
+
+	// without immunization, voce still matches (fail closed, no invent skip)
+	require.NotEmpty(t, rule.Match(languagetool.AnalyzePlain("Disse-me sotto voce.")))
 }

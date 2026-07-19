@@ -1,6 +1,6 @@
 package ca
 
-// Twin of languagetool-language-modules/ca/src/test/java/org/languagetool/rules/ca/PronomFebleDuplicateRuleTest.java
+// Twin of PronomFebleDuplicateRuleTest — POS-only pronouns (no surface invent).
 import (
 	"testing"
 
@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Port of PronomFebleDuplicateRuleTest.testRule — simplified POS-driven cases.
 func TestPronomFebleDuplicateRule_Rule(t *testing.T) {
 	r := NewPronomFebleDuplicateRule(nil)
 	require.Equal(t, "PRONOMS_FEBLES_DUPLICATS", r.GetID())
@@ -17,11 +16,15 @@ func TestPronomFebleDuplicateRule_Rule(t *testing.T) {
 	// em vaig-me → pronoun before + clitic after conjugated verb
 	ss := languagetool.SentenceStartTagName
 	vtag := "VMIP1S0"
+	p0 := "P01CN000" // matches P0.{6}
+	// enclitic -me: PP3..A00 style — use PP3CSA00 or P0
+	pMe := "P00CN000"
+
 	sent := buildPronomSentence(
 		tok("", &ss, 0, false),
-		tok("em", nil, 0, true),
+		tok("em", &p0, 0, true),
 		tok("vaig", &vtag, 3, true),
-		tok("-me", nil, 7, false),
+		tok("-me", &pMe, 7, false),
 	)
 	matches := r.Match(sent)
 	require.Len(t, matches, 1)
@@ -31,7 +34,7 @@ func TestPronomFebleDuplicateRule_Rule(t *testing.T) {
 	// only before: em vaig → no match
 	sent2 := buildPronomSentence(
 		tok("", &ss, 0, false),
-		tok("em", nil, 0, true),
+		tok("em", &p0, 0, true),
 		tok("vaig", &vtag, 3, true),
 	)
 	require.Empty(t, r.Match(sent2))
@@ -40,13 +43,22 @@ func TestPronomFebleDuplicateRule_Rule(t *testing.T) {
 	sent3 := buildPronomSentence(
 		tok("", &ss, 0, false),
 		tok("vaig", &vtag, 0, true),
-		tok("-me", nil, 4, false),
+		tok("-me", &pMe, 4, false),
 	)
 	require.Empty(t, r.Match(sent3))
+
+	// without pronoun POS: fail closed
+	sent4 := buildPronomSentence(
+		tok("", &ss, 0, false),
+		tok("em", nil, 0, true),
+		tok("vaig", &vtag, 3, true),
+		tok("-me", nil, 7, false),
+	)
+	require.Empty(t, r.Match(sent4))
 }
 
 func TestIsPronomFebleToken(t *testing.T) {
-	require.True(t, isPronomFebleToken(tok("em", nil, 0, true)))
+	require.False(t, isPronomFebleToken(tok("em", nil, 0, true)), "no surface invent")
 	tag := "P0000000"
 	require.True(t, isPronomFebleToken(tok("x", &tag, 0, true)))
 	require.False(t, isPronomFebleToken(tok("casa", nil, 0, true)))

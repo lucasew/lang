@@ -64,8 +64,12 @@ func loadCHCompoundData() *rules.CompoundRuleData {
 }
 
 // GermanCompoundRule ports org.languagetool.rules.de.GermanCompoundRule.
+// isMisspelled uses SpellingIsMisspelled (Java GermanyGerman default spelling rule).
+// Without SpellingIsMisspelled, isMisspelled is false (AbstractCompoundRule default).
 type GermanCompoundRule struct {
 	*rules.AbstractCompoundRule
+	// SpellingIsMisspelled ports getDefaultSpellingRule().isMisspelled; nil → misspelled=false.
+	SpellingIsMisspelled func(word string) bool
 }
 
 func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
@@ -80,7 +84,14 @@ func NewGermanCompoundRule(messages map[string]string) *GermanCompoundRule {
 		Data:                        loadDECompoundData(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
-	return &GermanCompoundRule{AbstractCompoundRule: base}
+	r := &GermanCompoundRule{AbstractCompoundRule: base}
+	base.IsMisspelled = func(word string) bool {
+		if r.SpellingIsMisspelled == nil {
+			return false
+		}
+		return r.SpellingIsMisspelled(word)
+	}
+	return r
 }
 
 // Match applies ANTI_PATTERNS immunization then AbstractCompoundRule.
@@ -90,9 +101,10 @@ func (r *GermanCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 }
 
 // SwissCompoundRule ports org.languagetool.rules.de.SwissCompoundRule.
-// Java extends GermanCompoundRule and inherits ANTI_PATTERNS.
+// Java extends GermanCompoundRule (inherits isMisspelled + ANTI_PATTERNS).
 type SwissCompoundRule struct {
 	*rules.AbstractCompoundRule
+	SpellingIsMisspelled func(word string) bool
 }
 
 func NewSwissCompoundRule(messages map[string]string) *SwissCompoundRule {
@@ -107,7 +119,14 @@ func NewSwissCompoundRule(messages map[string]string) *SwissCompoundRule {
 		Data:                        loadCHCompoundData(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
-	return &SwissCompoundRule{AbstractCompoundRule: base}
+	r := &SwissCompoundRule{AbstractCompoundRule: base}
+	base.IsMisspelled = func(word string) bool {
+		if r.SpellingIsMisspelled == nil {
+			return false
+		}
+		return r.SpellingIsMisspelled(word)
+	}
+	return r
 }
 
 func (r *SwissCompoundRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

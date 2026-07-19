@@ -1,12 +1,16 @@
 package ca
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
+
+// verbConjugatRE ports PronomFebleDuplicateRule.VERB_CONJUGAT = V.[SI].*
+var verbConjugatRE = regexp.MustCompile(`^V.[SI].*$`)
 
 // PronomFebleDuplicateRule ports org.languagetool.rules.ca.PronomFebleDuplicateRule (simplified).
 // Flags weak pronouns both before and after a verb group without whitespace after.
@@ -112,6 +116,7 @@ func (r *PronomFebleDuplicateRule) Match(sentence *languagetool.AnalyzedSentence
 }
 
 func isPronomFebleToken(tok *languagetool.AnalyzedTokenReadings) bool {
+	// Java getLemmaOfPronomFeble: PRONOM_FEBLE on POS only (fail closed without tags).
 	if tok == nil {
 		return false
 	}
@@ -123,17 +128,11 @@ func isPronomFebleToken(tok *languagetool.AnalyzedTokenReadings) bool {
 			return true
 		}
 	}
-	// surface fallbacks for common clitics without tags
-	t := strings.ToLower(tok.GetToken())
-	switch t {
-	case "em", "et", "es", "ens", "us", "el", "la", "els", "les", "en", "hi", "ho",
-		"m'", "t'", "s'", "n'", "l'", "-me", "-te", "-se", "-nos", "-vos", "-lo", "-la", "-los", "-les", "-ne", "-hi", "-ho":
-		return true
-	}
 	return false
 }
 
 func isConjugatedVerb(tok *languagetool.AnalyzedTokenReadings) bool {
+	// Java VERB_CONJUGAT = V.[SI].* (also GV chunk path incomplete without chunker).
 	if tok == nil {
 		return false
 	}
@@ -141,11 +140,7 @@ func isConjugatedVerb(tok *languagetool.AnalyzedTokenReadings) bool {
 		if r == nil || r.GetPOSTag() == nil {
 			continue
 		}
-		tag := *r.GetPOSTag()
-		if len(tag) >= 2 && tag[0] == 'V' && (tag[1] == 'S' || tag[1] == 'I' || tag[1] == '.') {
-			return true
-		}
-		if strings.HasPrefix(tag, "V") {
+		if verbConjugatRE.MatchString(*r.GetPOSTag()) {
 			return true
 		}
 	}
