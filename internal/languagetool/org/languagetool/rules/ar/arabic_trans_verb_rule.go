@@ -63,13 +63,14 @@ func loadTransVerbs() map[string][]string {
 
 // ArabicTransVerbRule ports org.languagetool.rules.ar.ArabicTransVerbRule.
 // Match is POS+lemma gated (Java isAttachedTransitiveVerb); without POS/lemma fail closed.
-// Form hooks optional (Java synthesizer for unattached verb / preposition forms).
+// Form hooks required for suggestions (Java ArabicSynthesizer generateUnattached/Attached);
+// without them Match skips the hit (no surface invent of unattached verb / bare prep).
 type ArabicTransVerbRule struct {
 	Messages map[string]string
 	verbs    map[string][]string
-	// CorrectVerbForm ports generateUnattachedNewForm; nil → surface token.
+	// CorrectVerbForm ports generateUnattachedNewForm (Java synthesizer).
 	CorrectVerbForm func(tok *languagetool.AnalyzedTokenReadings) string
-	// CorrectPrepForm ports getCorrectPrepositionForm; nil → bare preposition string.
+	// CorrectPrepForm ports getCorrectPrepositionForm / generateAttachedNewForm.
 	CorrectPrepForm func(prep string, verbTok *languagetool.AnalyzedTokenReadings) string
 }
 
@@ -106,16 +107,20 @@ func (r *ArabicTransVerbRule) Match(sentence *languagetool.AnalyzedSentence) []*
 			isAttached := r.isAttachedTransitiveVerb(prevToken)
 			prepositions := r.getProperPrepositionForTransitiveVerb(prevToken)
 			isRight := r.isRightPreposition(token, prepositions)
-			if isAttached && !isRight && len(prepositions) > 0 {
-				verb := r.getCorrectVerbForm(prevToken)
+			if isAttached && !isRight && len(prepositions) > 0 &&
+				r.CorrectVerbForm != nil && r.CorrectPrepForm != nil {
+				// Java always has synthesizer; without hooks fail closed (no surface invent).
+				verb := r.CorrectVerbForm(prevToken)
 				newPrep := prepositions[0]
-				preposition := r.getCorrectPrepositionForm(newPrep, prevToken)
-				replacement := verb + " " + preposition
-				msg := "قل " + replacement + " بدلا من '" + prevTokenStr + "' لأنّ الفعل متعد بحرف."
-				rm := rules.NewRuleMatch(r, sentence, prevToken.GetStartPos(), token.GetEndPos(), msg)
-				rm.ShortMessage = "خطأ في الفعل المتعدي بحرف"
-				rm.SetSuggestedReplacement(replacement)
-				matches = append(matches, rm)
+				preposition := r.CorrectPrepForm(newPrep, prevToken)
+				if verb != "" && preposition != "" {
+					replacement := verb + " " + preposition
+					msg := "قل " + replacement + " بدلا من '" + prevTokenStr + "' لأنّ الفعل متعد بحرف."
+					rm := rules.NewRuleMatch(r, sentence, prevToken.GetStartPos(), token.GetEndPos(), msg)
+					rm.ShortMessage = "خطأ في الفعل المتعدي بحرف"
+					rm.SetSuggestedReplacement(replacement)
+					matches = append(matches, rm)
+				}
 			}
 		}
 		if r.isAttachedTransitiveVerb(token) {
@@ -194,19 +199,4 @@ func (r *ArabicTransVerbRule) isRightPreposition(nextToken *languagetool.Analyze
 	return false
 }
 
-func (r *ArabicTransVerbRule) getCorrectVerbForm(token *languagetool.AnalyzedTokenReadings) string {
-	if r.CorrectVerbForm != nil {
-		return r.CorrectVerbForm(token)
-	}
-	if token == nil {
-		return ""
-	}
-	return token.GetToken()
-}
 
-func (r *ArabicTransVerbRule) getCorrectPrepositionForm(prep string, verbTok *languagetool.AnalyzedTokenReadings) string {
-	if r.CorrectPrepForm != nil {
-		return r.CorrectPrepForm(prep, verbTok)
-	}
-	return prep
-}

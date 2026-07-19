@@ -1,7 +1,9 @@
 package br
 
 import (
+	"bufio"
 	"embed"
+	"strings"
 	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -13,48 +15,159 @@ var topoFS embed.FS
 
 var (
 	topoOnce sync.Once
-	topoBase *rules.AbstractSimpleReplaceRule2
+	// wrongWords[n] maps (n+1)-word French place keys → Breton suggestions (Java loadWords).
+	topoWrongWords []map[string]string
 )
 
-func loadTopo() *rules.AbstractSimpleReplaceRule2 {
+func loadTopoWords() []map[string]string {
 	topoOnce.Do(func() {
 		f, err := topoFS.Open("data/topo.txt")
 		if err != nil {
 			panic(err)
 		}
 		defer f.Close()
-		base := &rules.AbstractSimpleReplaceRule2{
-			ID:                   "BR_TOPO",
-			Description:          "anvioù-lec’h e brezhoneg",
-			ShortMsg:             "Anv-lec'h",
-			MessageTemplate:      "Anv gallek: $match. Gwelloc'h eo ober gant $suggestions",
-			SuggestionsSeparator: " pe ",
-			// Java TopoReplaceRule.isCaseSensitive() == true
-			CaseSens:     rules.CaseSensitive,
-			LanguageCode: "br",
+		var list []map[string]string
+		sc := bufio.NewScanner(f)
+		// Raise scanner buffer for long lines if needed
+		for sc.Scan() {
+			line := strings.TrimSpace(sc.Text())
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) != 2 {
+				continue
+			}
+			wrongForms := strings.Split(parts[0], "|")
+			sug := strings.TrimSpace(parts[1])
+			for _, wrongForm := range wrongForms {
+				wrongForm = strings.TrimSpace(wrongForm)
+				if wrongForm == "" {
+					continue
+				}
+				wordCount := 0
+				for _, f := range strings.Fields(wrongForm) {
+					if f != "" {
+						wordCount++
+					}
+				}
+				if wordCount == 0 {
+					continue
+				}
+				for len(list) < wordCount {
+					list = append(list, map[string]string{})
+				}
+				list[wordCount-1][wrongForm] = sug
+			}
 		}
-		if err := base.LoadSimpleReplaceRule2Data(f, "/br/topo.txt"); err != nil {
+		if err := sc.Err(); err != nil {
 			panic(err)
 		}
-		topoBase = base
+		topoWrongWords = list
 	})
-	return topoBase
+	return topoWrongWords
 }
 
-// TopoReplaceRule ports org.languagetool.rules.br.TopoReplaceRule via ASR2 data load.
-// Java has custom longest-multiword Match; ASR2 is incomplete for some multiword
-// exceptions (e.g. channel name "France 3") until a full twin Match is ported.
+// TopoReplaceRule ports org.languagetool.rules.br.TopoReplaceRule.
+// Case-sensitive multiword longest-first Match (Java isCaseSensitive() == true).
 type TopoReplaceRule struct {
-	*rules.AbstractSimpleReplaceRule2
+	Messages map[string]string
+	Category *rules.Category
 }
 
 func NewTopoReplaceRule(messages map[string]string) *TopoReplaceRule {
-	base := loadTopo()
-	r := *base
-	r.Messages = messages
-	return &TopoReplaceRule{AbstractSimpleReplaceRule2: &r}
+	_ = loadTopoWords()
+	return &TopoReplaceRule{
+		Messages: messages,
+		Category: rules.CatMisc.GetCategory(messages),
+	}
 }
 
+func (r *TopoReplaceRule) GetID() string { return "BR_TOPO" }
+
+func (r *TopoReplaceRule) GetDescription() string {
+	return "anvioù-lec’h e brezhoneg"
+}
+
+func (r *TopoReplaceRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// Match ports TopoReplaceRule.match.
 func (r *TopoReplaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	return r.AbstractSimpleReplaceRule2.Match(sentence)
+	if r == nil || sentence == nil {
+		return nil
+	}
+	wrongWords := loadTopoWords()
+	if len(wrongWords) == 0 {
+		return nil
+	}
+	tokens := sentence.GetTokensWithoutWhitespace()
+	capQ := len(wrongWords)
+	prev := make([]*languagetool.AnalyzedTokenReadings, 0, capQ)
+	var ruleMatches []*rules.RuleMatch
+
+	for i := 1; i < len(tokens); i++ {
+		if len(prev) == capQ {
+			prev = prev[1:]
+		}
+		prev = append(prev, tokens[i])
+
+		// Longest phrase first: windows starting at offset 0..len-1 of prev.
+		for start := 0; start < len(prev); start++ {
+			if prev[start] == nil || prev[start].IsImmunized() {
+				continue
+			}
+			var b strings.Builder
+			for k := start; k < len(prev); k++ {
+				if k > start && prev[k] != nil && prev[k].IsWhitespaceBefore() {
+					b.WriteByte(' ')
+				}
+				if prev[k] != nil {
+					b.WriteString(prev[k].GetToken())
+				}
+			}
+			crt := b.String()
+			crtWordCount := len(prev) - start
+			if crtWordCount < 1 || crtWordCount > len(wrongWords) {
+				continue
+			}
+			// Java isCaseSensitive: exact key
+			crtMatch, ok := wrongWords[crtWordCount-1][crt]
+			if !ok {
+				continue
+			}
+			replacements := strings.Split(crtMatch, "|")
+			clean := make([]string, 0, len(replacements))
+			for _, rep := range replacements {
+				rep = strings.TrimSpace(rep)
+				if rep != "" {
+					clean = append(clean, rep)
+				}
+			}
+			msg := crt + " zo un anv lec’h gallek. Ha fellout a rae deoc’h skrivañ "
+			for k, rep := range clean {
+				if k > 0 {
+					if k == len(clean)-1 {
+						msg += " pe "
+					} else {
+						msg += ", "
+					}
+				}
+				msg += "<suggestion>" + rep + "</suggestion>"
+			}
+			msg += "?"
+			startPos := prev[start].GetStartPos()
+			endPos := prev[len(prev)-1].GetEndPos()
+			rm := rules.NewRuleMatch(r, sentence, startPos, endPos, msg)
+			rm.ShortMessage = "anvioù lec’h"
+			rm.SetSuggestedReplacements(clean)
+			ruleMatches = append(ruleMatches, rm)
+			break // first (longest) hit only, like Java
+		}
+	}
+	return ruleMatches
 }
