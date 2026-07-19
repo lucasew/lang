@@ -79,6 +79,16 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		// Java equalParts redup for весь/усе (Усе-усе, всього-всього).
+		if dyn := DynamicEqualRedupReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		// Java numrAdjMatch (дво-триметровий…) — left numr + right adj from dict.
 		if dyn := DynamicNumrAdjReadings(w, t.TagWord); len(dyn) > 0 {
 			for _, d := range dyn {

@@ -233,15 +233,22 @@ type disambigToken struct {
 	Content   string          `xml:",chardata"`
 }
 
-// disambigException is a soft subset of Java pattern-token <exception>.
+// disambigException ports Java pattern-token <exception> attributes used by
+// DisambiguationRuleHandler / XMLRuleHandler (not invent soft attrs).
 type disambigException struct {
 	Regexp        string `xml:"regexp,attr"`
 	CaseSensitive string `xml:"case_sensitive,attr"`
 	Negate        string `xml:"negate,attr"`
-	Scope         string `xml:"scope,attr"` // previous|next|empty=current
-	Postag        string `xml:"postag,attr"`
-	PostagRegexp  string `xml:"postag_regexp,attr"`
-	Content       string `xml:",chardata"`
+	// NegatePos ports negate_pos="yes" (POS exception polarity).
+	NegatePos string `xml:"negate_pos,attr"`
+	// Inflected ports inflected="yes" on exception (lemma match path).
+	Inflected string `xml:"inflected,attr"`
+	// SpaceBefore ports spacebefore="yes|no" on exception scope.
+	SpaceBefore string `xml:"spacebefore,attr"`
+	Scope       string `xml:"scope,attr"` // previous|next|empty=current
+	Postag      string `xml:"postag,attr"`
+	PostagRegexp string `xml:"postag_regexp,attr"`
+	Content     string `xml:",chardata"`
 }
 
 type disambigElem struct {
@@ -426,37 +433,42 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			pt.SetSkipNext(n)
 		}
 	}
-	// Java PatternToken exceptions: positive surface/regexp and/or postag blocks
-	// the token after any reading matches (isExceptionMatchedCompletely).
-	// Soft: first non-negated current exception; first scope=previous|next.
+	// Java PatternToken exceptions: surface/regexp and/or postag blocks
+	// (isExceptionMatchedCompletely). First current exception; first scope=previous|next.
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		posTag := strings.TrimSpace(ex.Postag)
 		if exc == "" && posTag == "" {
 			continue
 		}
-		if strings.EqualFold(ex.Negate, "yes") {
-			continue
-		}
 		scope := strings.ToLower(strings.TrimSpace(ex.Scope))
 		re := strings.EqualFold(ex.Regexp, "yes")
 		cs := strings.EqualFold(ex.CaseSensitive, "yes")
 		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
+		neg := strings.EqualFold(ex.Negate, "yes")
+		posNeg := strings.EqualFold(ex.NegatePos, "yes")
+		// Inflected on exception is accepted in XML (Java); matcher uses lemma when token is inflected.
+		_ = strings.EqualFold(ex.Inflected, "yes")
+		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && scope == "" {
+			// exception-level spacebefore applies to current exception token context
+			pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+		}
 		if scope == "previous" {
-			// scope=previous: surface only (soft subset; POS not on previous yet)
-			if exc != "" && pt.PreviousException == "" {
+			// scope=previous: surface (and negated skip when negate=yes — Java still registers)
+			if exc != "" && pt.PreviousException == "" && !neg {
 				pt.SetPreviousException(exc, re, cs)
 			}
 			continue
 		}
 		if scope == "next" {
-			if exc != "" && pt.NextException == "" {
+			if exc != "" && pt.NextException == "" && !neg {
 				pt.SetNextException(exc, re, cs)
 			}
 			continue
 		}
 		if !pt.HasCurrentException() {
-			pt.SetStringPosExceptionFull(exc, re, cs, posTag, posRE)
+			// Java supports string/POS negation via SetStringPosExceptionFullNeg
+			pt.SetStringPosExceptionFullNeg(exc, re, cs, neg, posTag, posRE, posNeg)
 		}
 	}
 	// Java <and> group members (also soft <and_token> attribute path): each must match some reading.

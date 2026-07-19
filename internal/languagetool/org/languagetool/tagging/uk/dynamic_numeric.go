@@ -9,8 +9,11 @@ import (
 
 // Dynamic numeric compounds: 100-й, 50-х, 100-річному, 100-відсотково, 100-річчя
 // (Java CompoundTagger.matchDigitCompound + LetterEndingForNumericHelper).
-// reNumLeft ports ADJ_PREFIX_NUMBER / digit left of matchDigitCompound (simplified; no Roman yet).
-var reNumLeft = regexp.MustCompile(`^[0-9]+([,][0-9]+)?([-–—][0-9]+([,][0-9]+)?)?%?$`)
+// reNumLeft ports ADJ_PREFIX_NUMBER digit/interval/% and Roman left of matchDigitCompound.
+// Java: [0-9]+(,[0-9]+)?([-–—][0-9]+(,[0-9]+)?)?%?|(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})|І{2,3}
+var reNumLeft = regexp.MustCompile(
+	`^(?:[0-9]+(?:,[0-9]+)?(?:[-–—][0-9]+(?:,[0-9]+)?)?%?|(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})|І{2,3})$`,
+)
 
 // Java CompoundTagger REQ_NUM_*_PATTERN + getTryPrefix.
 var (

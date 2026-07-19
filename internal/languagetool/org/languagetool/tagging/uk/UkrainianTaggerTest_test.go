@@ -613,3 +613,50 @@ func TestDynamicNapivDualReadings(t *testing.T) {
 	require.Contains(t, rs[0].Lemma, "напів")
 	require.Contains(t, rs[0].Lemma, "польськ")
 }
+
+func TestDynamicEqualRedupReadings(t *testing.T) {
+	require.Nil(t, DynamicEqualRedupReadings("Усе-усе", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "усе":
+			return []tagging.TaggedWord{
+				{Lemma: "увесь", PosTag: "adj:n:v_naz:pron:gen"},
+				{Lemma: "усе", PosTag: "adv"},
+			}
+		case "всього":
+			return []tagging.TaggedWord{
+				{Lemma: "весь", PosTag: "adj:m:v_rod:pron:gen"},
+				{Lemma: "ввесь", PosTag: "adj:m:v_rod:pron:gen"},
+			}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicEqualRedupReadings("Усе-усе", tagWord)
+	require.NotEmpty(t, rs)
+	// equalParts lemmas only (увесь-увесь, усе-усе)
+	for _, r := range rs {
+		require.True(t, equalParts(r.Lemma) || equalParts(strings.ToLower(r.Lemma)), r.Lemma)
+	}
+	joined := ""
+	for _, r := range rs {
+		joined += r.Lemma + " "
+	}
+	require.True(t, strings.Contains(joined, "увесь-увесь") || strings.Contains(joined, "усе-усе"))
+
+	rs2 := DynamicEqualRedupReadings("всього-всього", tagWord)
+	require.NotEmpty(t, rs2)
+
+	// not ves/us lemma: fail closed
+	require.Nil(t, DynamicEqualRedupReadings("кіт-кіт", func(s string) []tagging.TaggedWord {
+		return []tagging.TaggedWord{{Lemma: "кіт", PosTag: "noun:anim:m:v_naz"}}
+	}))
+}
+
+func TestDynamicNumeric_RomanLeft(t *testing.T) {
+	// Roman numeral left + short ending (Java ADJ_PREFIX_NUMBER)
+	rs := DynamicNumericReadings("XI-й", nil)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].POS, "numr")
+	require.Equal(t, "XI-й", rs[0].Lemma)
+}
