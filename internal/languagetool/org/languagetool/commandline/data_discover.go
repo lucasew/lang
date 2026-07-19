@@ -224,6 +224,8 @@ var languageSynthDictNames = map[string]string{
 	"el": "greek_synth.dict",
 	"gl": "galician_synth.dict",
 	"ar": "arabic_synth.dict",
+	// Java UkrainianSynthesizer.RESOURCE_FILENAME
+	"uk": "ukrainian_synth.dict",
 }
 
 // DiscoverLanguageSynthDict finds *_synth.dict for lang (Java createDefaultSynthesizer resource).
@@ -451,7 +453,6 @@ func DiscoverGermanMultitokenSuggest(opts *CommandLineOptions) string {
 		"src", "main", "resources", "org", "languagetool", "resource", "de", "multitoken-suggest.txt"))
 }
 
-
 // DiscoverEnglishL2GrammarXML finds EN L2 pattern rules for a mother tongue.
 // Java English.getRelevantRules: grammar-l2-de.xml / grammar-l2-fr.xml when motherTongue is de/fr.
 func DiscoverEnglishL2GrammarXML(opts *CommandLineOptions, motherTongue string) string {
@@ -527,10 +528,12 @@ var languageExtraRuleFiles = map[string][]string{
 }
 
 // DiscoverLanguagePatternRuleFiles ports Language.getRuleFileNames() path order:
-//   {lang}/grammar.xml, {lang}/style.xml (if any), {lang}/grammar_custom.xml (if any),
-//   language-specific RULE_FILES extras (uk/sk/sr, if present),
-//   and when lang has a country variant (e.g. en-US):
-//   {lang}/{variant}/grammar.xml, style.xml, grammar-premium.xml (each if present).
+//
+//	{lang}/grammar.xml, {lang}/style.xml (if any), {lang}/grammar_custom.xml (if any),
+//	language-specific RULE_FILES extras (uk/sk/sr, if present),
+//	and when lang has a country variant (e.g. en-US):
+//	{lang}/{variant}/grammar.xml, style.xml, grammar-premium.xml (each if present).
+//
 // Only existing official files are returned — no soft invent paths.
 func DiscoverLanguagePatternRuleFiles(opts *CommandLineOptions, lang string) []string {
 	base := languageBaseCode(lang)

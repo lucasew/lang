@@ -14,7 +14,8 @@ func TestUkrainianSynthesizer_NoTests(t *testing.T) {
 	manual, err := synthesis.NewManualSynthesizer(strings.NewReader("forms\tlemma\tTAG\n"))
 	require.NoError(t, err)
 	s := NewUkrainianSynthesizer(manual)
-	require.Equal(t, "/uk/uk_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/uk/ukrainian_synth.dict", s.ResourceFileName)
+	require.Equal(t, "/uk/ukrainian_tags.txt", s.TagFileName)
 	lemma, tag := "lemma", "TAG"
 	tok := languagetool.NewAnalyzedToken("lemma", &tag, &lemma)
 	got, err := s.Synthesize(tok, tag)

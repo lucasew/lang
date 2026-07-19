@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
 const TokenAgreementAdjNounRuleID = "UK_ADJ_NOUN_INFLECTION_AGREEMENT"
@@ -13,6 +14,8 @@ const TokenAgreementAdjNounRuleID = "UK_ADJ_NOUN_INFLECTION_AGREEMENT"
 // TokenAgreementAdjNounRule ports org.languagetool.rules.uk.TokenAgreementAdjNounRule.
 type TokenAgreementAdjNounRule struct {
 	*tokenAgreementMatch
+	// Synth optional (Java ukrainian.getSynthesizer()); nil → no suggestions.
+	Synth synthesis.Synthesizer
 }
 
 func NewTokenAgreementAdjNounRule() *TokenAgreementAdjNounRule {
@@ -179,7 +182,7 @@ func (r *TokenAgreementAdjNounRule) Match(sentence *languagetool.AnalyzedSentenc
 			}
 			msg := "Потенційна помилка: прикметник не узгоджений з іменником: \"" +
 				adjTok.GetToken() + "\" і \"" + tok.GetToken() + "\""
-			// Java message enrichments (no synthesizer suggestions yet)
+			// Java message enrichments
 			if HasPosTagPartInTags(adjTags, ":m:v_rod") &&
 				adjNounUYuyuRE.MatchString(tok.GetToken()) &&
 				HasPosTagRE(tok, adjNounDavNounRE) {
@@ -198,6 +201,18 @@ func (r *TokenAgreementAdjNounRule) Match(sentence *languagetool.AnalyzedSentenc
 			}
 			m := rules.NewRuleMatch(r, sentence, adjTok.GetStartPos(), tok.GetEndPos(), msg)
 			m.ShortMessage = r.shortMsg
+			if sugs := r.adjNounSuggestions(master, slave, adjTok, tok); len(sugs) > 0 {
+				m.SetSuggestedReplacements(sugs)
+			}
+			// Java: num dash message also adds "N M" surface
+			if strings.Contains(msg, "кількісного числівника") {
+				suggNum := regexp.MustCompile(`[-–]м[аи]$`).ReplaceAllString(cleanTokenSurface(adjTok), "") +
+					" " + tok.GetToken()
+				cur := m.GetSuggestedReplacements()
+				if !containsStr(cur, suggNum) {
+					m.SetSuggestedReplacements(append(cur, suggNum))
+				}
+			}
 			out = append(out, m)
 		}
 		adjPos = -1
@@ -238,4 +253,86 @@ func HasPosTagPartInTags(tags []string, substr string) bool {
 		}
 	}
 	return false
+}
+
+// adjNounSuggestions ports TokenAgreementAdjNounRule suggestion synthesis loops.
+// Requires Synth; returns nil when unset or on empty synthesis.
+func (r *TokenAgreementAdjNounRule) adjNounSuggestions(
+	master, slave []Inflection,
+	adjTok, nounTok *languagetool.AnalyzedTokenReadings,
+) []string {
+	if r == nil || r.Synth == nil || adjTok == nil || nounTok == nil {
+		return nil
+	}
+	seen := map[string]struct{}{}
+	var out []string
+	add := func(s string) {
+		if s == "" {
+			return
+		}
+		if _, ok := seen[s]; ok {
+			return
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	// noun forms matching adj gender/case
+	for _, adjInf := range master {
+		if adjInf.Case == "v_kly" {
+			continue
+		}
+		genderTag := ":" + adjInf.Gender + ":"
+		vidmTag := adjInf.Case
+		if adjInf.Gender != "p" && !HasPosTagPart(nounTok, genderTag) {
+			continue
+		}
+		for _, nr := range nounTok.GetReadings() {
+			if nr == nil || nr.GetPOSTag() == nil {
+				continue
+			}
+			old := *nr.GetPOSTag()
+			if !strings.HasPrefix(old, "noun") {
+				continue
+			}
+			if adjInf.animMatters() {
+				if adjInf.AnimTag != "" && !strings.Contains(old, ":"+adjInf.AnimTag) {
+					continue
+				}
+			}
+			newTag := regexp.MustCompile(`:.:v_...`).ReplaceAllString(old, genderTag+vidmTag)
+			forms, err := r.Synth.SynthesizeRE(nr, newTag, false)
+			if err != nil {
+				continue
+			}
+			for _, s := range forms {
+				add(adjTok.GetToken() + " " + s)
+			}
+		}
+	}
+	// adj forms matching noun gender/case
+	for _, nInf := range slave {
+		genderTag := ":" + nInf.Gender + ":"
+		vidmTag := nInf.Case
+		if nInf.animMatters() && nInf.AnimTag != "" {
+			vidmTag += ":r" + nInf.AnimTag
+		}
+		for _, ar := range adjTok.GetReadings() {
+			if ar == nil || ar.GetPOSTag() == nil {
+				continue
+			}
+			old := *ar.GetPOSTag()
+			if !strings.HasPrefix(old, "adj") {
+				continue
+			}
+			newTag := regexp.MustCompile(`:.:v_...(?::r(?:in)?anim)?`).ReplaceAllString(old, genderTag+vidmTag)
+			forms, err := r.Synth.SynthesizeRE(ar, newTag, false)
+			if err != nil {
+				continue
+			}
+			for _, s := range forms {
+				add(s + " " + nounTok.GetToken())
+			}
+		}
+	}
+	return out
 }
