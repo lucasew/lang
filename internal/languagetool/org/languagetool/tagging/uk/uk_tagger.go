@@ -99,6 +99,46 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		// Java BAD_SUFFIX (був-би) — left dict + :bad.
+		if dyn := DynamicBadSuffixReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
+		// Java left "аль" → tag Аль-right with :bad.
+		if dyn := DynamicAlPrefixReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
+		// Java Вибори-2014 / WORDS_WITH_YEAR.
+		if dyn := DynamicYearCompoundReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
+		// Java Формула-1 / WORDS_WITH_NUM.
+		if dyn := DynamicNumSuffixCompoundReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		// Java matchDigitCompound: short endings from LetterEndingForNumericHelper;
 		// longer right halves need wordTagger (pass TagWord; fail-closed without hits).
 		if dyn := DynamicNumericReadings(w, t.TagWord); len(dyn) > 0 {

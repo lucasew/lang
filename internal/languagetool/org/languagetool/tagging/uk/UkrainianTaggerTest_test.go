@@ -511,3 +511,61 @@ func TestDynamicDualPropReadings(t *testing.T) {
 	// not both capitalized
 	require.Nil(t, DynamicDualPropReadings("київ-прага", tagWord))
 }
+
+func TestDynamicBadSuffixReadings(t *testing.T) {
+	require.Nil(t, DynamicBadSuffixReadings("був-би", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		if strings.EqualFold(s, "був") {
+			return []tagging.TaggedWord{{Lemma: "бути", PosTag: "verb:past:m"}}
+		}
+		return nil
+	}
+	rs := DynamicBadSuffixReadings("був-би", tagWord)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].POS, ":bad")
+	require.Equal(t, "бути-би", rs[0].Lemma)
+	// м-б blocked (left length 1)
+	require.Nil(t, DynamicBadSuffixReadings("м-б", tagWord))
+}
+
+func TestDynamicYearAndNumCompounds(t *testing.T) {
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "вибори":
+			return []tagging.TaggedWord{{Lemma: "вибори", PosTag: "noun:inanim:p:v_naz:ns"}}
+		case "формула":
+			return []tagging.TaggedWord{{Lemma: "Формула", PosTag: "noun:inanim:f:v_naz:prop"}}
+		case "омега":
+			return []tagging.TaggedWord{{Lemma: "омега", PosTag: "noun:inanim:f:v_naz"}}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicYearCompoundReadings("Вибори-2014", tagWord)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].Lemma, "2014")
+	require.Contains(t, rs[0].POS, "noun:inanim")
+
+	rs2 := DynamicNumSuffixCompoundReadings("Формула-1", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Equal(t, "Формула-1", rs2[0].Lemma)
+
+	rs3 := DynamicNumSuffixCompoundReadings("омега-3", tagWord)
+	require.NotEmpty(t, rs3)
+	require.Equal(t, "омега-3", rs3[0].Lemma)
+
+	// random noun+year without WORDS_WITH_YEAR / prop: fail closed
+	require.Nil(t, DynamicYearCompoundReadings("стіл-2014", tagWord))
+}
+
+func TestDynamicAlPrefixReadings(t *testing.T) {
+	tagWord := func(s string) []tagging.TaggedWord {
+		if s == "Аль-Каїда" || strings.EqualFold(s, "аль-каїда") {
+			return []tagging.TaggedWord{{Lemma: "Аль-Каїда", PosTag: "noun:inanim:f:v_naz:prop"}}
+		}
+		return nil
+	}
+	rs := DynamicAlPrefixReadings("аль-Каїда", tagWord)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].POS, ":bad")
+}
