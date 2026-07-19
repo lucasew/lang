@@ -39,7 +39,8 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
-		if dyn := DynamicAdjReadings(w); len(dyn) > 0 {
+		// Java X-подібний / X-вмісний: right adj tags from wordTagger (no invent endings).
+		if dyn := DynamicAdjReadings(w, t.TagWord); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
@@ -130,7 +131,7 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if len(readings) == 0 {
 			for _, cand := range MissingHyphenCandidates(w) {
 				// re-tag hyphenated candidate via compound path specials
-				if dyn := DynamicAdjReadings(cand); len(dyn) > 0 {
+				if dyn := DynamicAdjReadings(cand, t.TagWord); len(dyn) > 0 {
 					for _, d := range dyn {
 						p, l := d.POS, d.Lemma
 						readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
