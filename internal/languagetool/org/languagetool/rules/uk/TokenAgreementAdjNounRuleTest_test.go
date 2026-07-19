@@ -129,20 +129,20 @@ func TestTokenAgreementAdjNounRule_ExceptionsPlural(t *testing.T) {
 	require.NotEmpty(t, r.Match(sentBad))
 }
 func TestTokenAgreementAdjNounRule_ExceptionsPluralConjAdv(t *testing.T) {
-	// conj "і" is ignorable intervening; last adj… actually adj then і then noun
+	// Java Match does not skip conj — non-noun intermediate clears adj state.
 	r := NewTokenAgreementAdjNounRule()
 	sentGood := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("великі", "adj:p:v_naz"),
 		atr("і", "conj"),
 		atr("будинки", "noun:inanim:p:v_naz"),
 	})
-	require.Empty(t, r.Match(sentGood), "conj between agreeing adj-noun passes")
+	require.Empty(t, r.Match(sentGood), "conj clears adj state — no pair")
 	sentBad := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("великий", "adj:m:v_naz"),
 		atr("і", "conj"),
 		atr("будинки", "noun:inanim:p:v_naz"),
 	})
-	require.NotEmpty(t, r.Match(sentBad), "conj does not hide number mismatch")
+	require.Empty(t, r.Match(sentBad), "conj clears adj state — no false flag either")
 }
 func TestTokenAgreementAdjNounRule_ExceptionsInsertPhrase(t *testing.T) {
 	// parenthetical / insert between adj and noun is not ignorable → no pair flag

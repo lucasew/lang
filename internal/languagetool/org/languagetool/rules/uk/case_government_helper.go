@@ -18,6 +18,9 @@ type CaseGovernmentHelper struct {
 	Map map[string]map[string]struct{}
 }
 
+// UsedUInsteadOfAMsg ports CaseGovernmentHelper.USED_U_INSTEAD_OF_A_MSG.
+const UsedUInsteadOfAMsg = ". Можливо, вжито невнормований родовий відмінок ч.р. з закінченням -у/-ю замість -а/-я (така тенденція є в сучасній мові)?"
+
 var (
 	caseGovOnce sync.Once
 	caseGov     *CaseGovernmentHelper
