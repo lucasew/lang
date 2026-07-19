@@ -111,30 +111,14 @@ func IsVerbNounExceptionSkip(tokens []*languagetool.AnalyzedTokenReadings, i int
 	return -1
 }
 
+// hasPosTagAllPartAdv ports hasPosTagAll(…, (part|adv).*) — every morph tag starts with part|adv.
 func hasPosTagAllPartAdv(tok *languagetool.AnalyzedTokenReadings) bool {
-	tags := CollectPOSTags(tok)
-	if len(tags) == 0 {
-		return false
-	}
-	for _, p := range tags {
-		if !strings.HasPrefix(p, "part") && !strings.HasPrefix(p, "adv") {
-			return false
-		}
-	}
-	return true
+	return HasPosTagAll(tok, regexp.MustCompile(`^(?:part|adv).*`))
 }
 
+// hasPosTagAllPartConjAdv ports hasPosTagAll(…, (part|conj|adv).*).
 func hasPosTagAllPartConjAdv(tok *languagetool.AnalyzedTokenReadings) bool {
-	tags := CollectPOSTags(tok)
-	if len(tags) == 0 {
-		return false
-	}
-	for _, p := range tags {
-		if !strings.HasPrefix(p, "part") && !strings.HasPrefix(p, "conj") && !strings.HasPrefix(p, "adv") {
-			return false
-		}
-	}
-	return true
+	return HasPosTagAll(tok, regexp.MustCompile(`^(?:part|conj|adv).*`))
 }
 
 // GetExceptionVerb ports isExceptionVerb (RuleException: exception clears state; skip keeps).

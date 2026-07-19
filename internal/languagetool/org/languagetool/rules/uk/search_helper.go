@@ -45,15 +45,17 @@ func (c SearchCondition) WithNegate() SearchCondition {
 	return c
 }
 
-// Matches ports Condition.matches.
+// Matches ports Condition.matches (POS/lemma Matcher.matches; token Pattern.matches).
 func (c SearchCondition) Matches(tok *languagetool.AnalyzedTokenReadings) bool {
 	if tok == nil {
 		return c.Negate
 	}
 	ok := true
-	if c.Postag != nil && !HasPosTagRE(tok, c.Postag) {
+	// Java PosTagHelper.hasPosTag(…, Pattern) = Matcher.matches
+	if c.Postag != nil && !HasPosTagMatches(tok, c.Postag) {
 		ok = false
 	}
+	// Java hasLemma(…, Pattern) = Matcher.matches on lemma
 	if ok && c.Lemma != nil && !HasLemmaTokenRE(tok, c.Lemma) {
 		ok = false
 	}
@@ -62,7 +64,9 @@ func (c SearchCondition) Matches(tok *languagetool.AnalyzedTokenReadings) bool {
 		if ct == "" {
 			ct = tok.GetToken()
 		}
-		if !c.TokenPattern.MatchString(ct) {
+		// Java token.matcher(clean).matches()
+		loc := c.TokenPattern.FindStringIndex(ct)
+		if loc == nil || loc[0] != 0 || loc[1] != len(ct) {
 			ok = false
 		}
 	}

@@ -525,9 +525,9 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 	if containsStr([]string{"таке", "такого"}, CleanTokenLower(adj)) &&
 		HasPosTagRE(noun, regexp.MustCompile(`noun.*:v_naz.*`)) &&
 		NewSearchMatch("").
-			Target(ConditionPostag(regexp.MustCompile(`verb.*`))).
+			Target(ConditionPostag(regexp.MustCompile(`^verb.*`))).
 			WithLimit(2).
-			Skip(ConditionPostag(regexp.MustCompile(`^(?:part|adv)`))).
+			Skip(ConditionPostag(regexp.MustCompile(`^(?:part|adv).*`))).
 			MAfterATR(tokens, nounPos+1) > 0 {
 		return true
 	}
@@ -1186,18 +1186,28 @@ func hasAdvNotAdvp(tok *languagetool.AnalyzedTokenReadings) bool {
 	return false
 }
 
-// hasPosTagAllAdvNotAdvp ports hasPosTagAll(readings, adv(?!p).*).
+// hasPosTagAllAdvNotAdvp ports hasPosTagAll(readings, Pattern.compile("adv(?!p).*")).
+// RE2 has no lookaround: adv prefix excluding advp; skips SENT/PARA ends.
 func hasPosTagAllAdvNotAdvp(tok *languagetool.AnalyzedTokenReadings) bool {
-	tags := CollectPOSTags(tok)
-	if len(tags) == 0 {
+	if tok == nil {
 		return false
 	}
-	for _, p := range tags {
+	found := false
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		p := *r.GetPOSTag()
+		if isSentenceOrParaEndTag(p) {
+			continue
+		}
+		// adv(?!p).* full-match stand-in
 		if !strings.HasPrefix(p, "adv") || strings.HasPrefix(p, "advp") {
 			return false
 		}
+		found = true
 	}
-	return true
+	return found
 }
 
 // IsPrepNounException ports TokenAgreementPrepNounExceptionHelper as a boolean
@@ -1454,18 +1464,56 @@ func GetPrepNounExceptionInfl(tokens []*languagetool.AnalyzedTokenReadings, prep
 	return NewRuleException(RuleExceptionNone)
 }
 
-// hasPosTagPartAll reports every POS tag contains substr (Java hasPosTagPartAll).
+// isSentenceOrParaEndTag ports JLanguageTool SENTENCE_END / PARAGRAPH_END skip in hasPosTag*All.
+func isSentenceOrParaEndTag(p string) bool {
+	return p == languagetool.SentenceEndTagName || p == languagetool.ParagraphEndTagName ||
+		p == "SENT_END" || p == "PARA_END" || p == "SENTENCE_END" || p == "PARAGRAPH_END"
+}
+
+// hasPosTagPartAll reports every non-SENT/PARA POS tag contains substr (Java hasPosTagPartAll).
+// Returns false when no morph tags found.
 func hasPosTagPartAll(tok *languagetool.AnalyzedTokenReadings, substr string) bool {
-	tags := CollectPOSTags(tok)
-	if len(tags) == 0 || substr == "" {
+	if tok == nil || substr == "" {
 		return false
 	}
-	for _, p := range tags {
+	found := false
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		p := *r.GetPOSTag()
+		if isSentenceOrParaEndTag(p) {
+			continue
+		}
 		if !strings.Contains(p, substr) {
 			return false
 		}
+		found = true
 	}
-	return true
+	return found
+}
+
+// HasPosTagAll reports every non-SENT/PARA POS tag full-matches re (Java hasPosTagAll + Matcher.matches).
+func HasPosTagAll(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
+	}
+	found := false
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		p := *r.GetPOSTag()
+		if isSentenceOrParaEndTag(p) {
+			continue
+		}
+		loc := re.FindStringIndex(p)
+		if loc == nil || loc[0] != 0 || loc[1] != len(p) {
+			return false
+		}
+		found = true
+	}
+	return found
 }
 
 // IsPlusMinusLemma ports LemmaHelper.PLUS_MINUS membership on surface lower.
@@ -2026,7 +2074,7 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 			nextVerbPos := NewSearchMatch("").
 				IgnoreInsertsOn().
 				WithLimit(8).
-				Target(ConditionPostag(regexp.MustCompile(`verb.*`))).
+				Target(ConditionPostag(regexp.MustCompile(`^verb.*`))).
 				MAfterATR(tokens, verbPos+1)
 			if nextVerbPos >= 0 &&
 				VerbInflectionsOverlap(CollectPOSTags(tokens[nextVerbPos]), CollectPOSTags(noun)) {
@@ -2567,7 +2615,7 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 	// TIME_PLUS after noun span (відбувається кожні два роки)
 	if TimePlusLemmasPattern != nil {
 		if (&SearchMatch{IgnoreQuotes: true}).
-			Skip(ConditionPostag(regexp.MustCompile(`.*v_(rod|zna|oru).*|part.*|number`))).
+			Skip(ConditionPostag(regexp.MustCompile(`^(?:.*v_(?:rod|zna|oru).*|part.*|number)$`))).
 			Target(ConditionLemma(TimePlusLemmasPattern)).
 			WithLimit(4).
 			MAfterATR(tokens, nounPos) > 0 {
@@ -2585,7 +2633,7 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 	}
 	// мова instrumental after noun
 	if (&SearchMatch{IgnoreQuotes: true}).
-		Skip(ConditionPostag(regexp.MustCompile(`.*v_oru.*|part.*|adv.*`))).
+		Skip(ConditionPostag(regexp.MustCompile(`^(?:.*v_oru.*|part.*|adv.*)$`))).
 		Target(SearchCondition{
 			Lemma:  regexp.MustCompile(`^мова$`),
 			Postag: regexp.MustCompile(`noun:inanim:.:v_oru.*`),

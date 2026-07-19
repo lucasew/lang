@@ -1136,3 +1136,24 @@ func TestNounVerbException_TailProps(t *testing.T) {
 		atr("підтвердився", "verb:perf:past:m"),
 	}, 2, 3))
 }
+
+func TestHasPosTagPartAll_SkipSentEnd(t *testing.T) {
+	// Java ignores SENT_END when checking all tags contain substr
+	tok := atr("дуже", "adv", "SENT_END")
+	require.True(t, hasPosTagPartAll(tok, "adv"))
+	// SENT_END alone → no morph tag found
+	tok2 := atr(".", "SENT_END")
+	require.False(t, hasPosTagPartAll(tok2, "adv"))
+	// mixed morph without substr → false
+	tok3 := atr("x", "adv", "noun:inanim:m:v_naz")
+	require.False(t, hasPosTagPartAll(tok3, "adv"))
+}
+
+func TestHasPosTagAll_FullMatch(t *testing.T) {
+	tok := atr("дуже", "adv")
+	require.True(t, HasPosTagAll(tok, regexp.MustCompile(`^adv.*`)))
+	require.False(t, HasPosTagAll(tok, regexp.MustCompile(`^adj.*`)))
+	// advp fails adv(?!p) stand-in
+	require.False(t, hasPosTagAllAdvNotAdvp(atr("йдучи", "advp:imperf")))
+	require.True(t, hasPosTagAllAdvNotAdvp(atr("дуже", "adv")))
+}
