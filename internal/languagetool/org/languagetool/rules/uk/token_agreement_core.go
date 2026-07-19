@@ -695,8 +695,56 @@ func isNameLemma(tok *languagetool.AnalyzedTokenReadings) bool {
 	return HasLemmaTokenAny(tok, []string{"ім'я", "прізвище"})
 }
 
-// IsNumrNounException ports TokenAgreementNumrNounExceptionHelper surface arms
-// (inflection-overlap arms deferred). Invalid layout → exception.
+// numrDva34Pattern ports TokenAgreementNumrNounRule.DVA_3_4_PATTERN (full-string).
+var numrDva34Pattern = regexp.MustCompile(`^(?:оби(?:два|дві)|(?:.+-)?(?:(?:два|дві)|три|чотири))$`)
+
+// numrManyObPattern / numrNounSoftSurface / numrLemmaSoftRE — Java String.matches surfaces.
+var (
+	numrManyObPattern = regexp.MustCompile(
+		`^(?:багать(?:ох|ом|ма)|обо(?:х|м|ма)|(?:дв|трь|чотирь)о[хм]|скільки(?:сь)?(?:-небудь)?|стільки)$`)
+	numrNounSoftSurface = regexp.MustCompile(
+		`^(?:плюс|мінус|ранку|вечора|ночі|тепла|морозу|родом|зростом|дивом|станом|вагою|слід|типу|формату|вартістю|році|населення)$`)
+	numrLemmaSoftRE = regexp.MustCompile(
+		`^(?:у?весь|який(?:сь)?|свій|сам|цей|решта|кількість|вартий|кожний|жодний|менший|більший|вищий|нижчий)$`)
+	numrPivtoraFullRE = regexp.MustCompile(`^(?:(?:один-|одне-)?півтора|(?:одна-)?півтори)$`)
+	numrArticlePrevRE = regexp.MustCompile(
+		`^(?:ч\.|ст\.|п\.|частина|стаття|пункт|підпункт|абзац|№|номер)$`)
+	numrFractHalfPrepRE = regexp.MustCompile(
+		`^(?:від|до|протягом|[ув]продовж|близько|після|для|більше|менше)$`)
+	numrObyeLikeRE = regexp.MustCompile(`^(?:обоє|двоє|троє|.+еро)$`)
+	numrObyeAnimRE = regexp.MustCompile(`^(?:обоє|обидвоє|троє)$`)
+	numrSyomaRE    = regexp.MustCompile(`^(?:сьома|дев.яноста)$`)
+	numrNextSoftRE = regexp.MustCompile(`^(?:[.,:;()«»—–-]|і|й|та)$`)
+)
+
+// hasAdjPRodNotNumr is RE2-friendly adj(?!.*numr).*:p:v_rod.*
+func hasAdjPRodNotNumr(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.Contains(p, "numr") {
+			continue
+		}
+		if strings.HasPrefix(p, "adj") && strings.Contains(p, ":p:v_rod") {
+			return true
+		}
+	}
+	return false
+}
+
+// isNumberToken reports Java state.number (number POS on numeral).
+func isNumberToken(tok *languagetool.AnalyzedTokenReadings) bool {
+	for _, p := range CollectPOSTags(tok) {
+		if taguk.IPOSNumber.Match(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// IsNumrNounException ports TokenAgreementNumrNounExceptionHelper.
+// Invalid layout → exception (no flag). Incomplete only where Java needs full tagger.
 func IsNumrNounException(tokens []*languagetool.AnalyzedTokenReadings, numrPos, nounPos int) bool {
 	if numrPos < 0 || nounPos <= numrPos || numrPos >= len(tokens) || nounPos >= len(tokens) {
 		return true
@@ -707,26 +755,48 @@ func IsNumrNounException(tokens []*languagetool.AnalyzedTokenReadings, numrPos, 
 	}
 	numrLower := CleanTokenLower(numr)
 	nounLower := CleanTokenLower(noun)
+	numrInfs := GetNumrCaseInflections(CollectPOSTags(numr))
 
 	// для багатьох/обох/двох/… — Java full-string matches
-	if regexp.MustCompile(`^(багать(ох|ом|ма)|обо(х|м|ма)|(дв|трь|чотирь)о[хм]|скільки(сь)?(-небудь)?|стільки)$`).MatchString(numrLower) {
+	if numrManyObPattern.MatchString(numrLower) {
 		return true
 	}
 	// плюс|мінус|ранку|…
-	if regexp.MustCompile(`^(плюс|мінус|ранку|вечора|ночі|тепла|морозу|родом|зростом|дивом|станом|вагою|слід|типу|формату|вартістю|році|населення)$`).MatchString(nounLower) {
+	if numrNounSoftSurface.MatchString(nounLower) {
 		return true
 	}
 	// lemma set on noun
-	if HasLemmaTokenRE(noun, regexp.MustCompile(`^(у?весь|який(сь)?|свій|сам|цей|решта|кількість|вартий|кожний|жодний|менший|більший|вищий|нижчий)$`)) {
+	if HasLemmaTokenRE(noun, numrLemmaSoftRE) {
 		return true
 	}
+
+	// хвилин п'ять люди / сотні дві персон — TIME_PLUS before numr, inflections overlap
+	if numrPos > 1 &&
+		HasLemmaWithPosRE(tokens[numrPos-1], TimePlusLemmaList(), regexp.MustCompile(`noun.*?.:v_(naz|rod).*`)) {
+		prevInfs := GetNounCaseInflections(CollectPOSTags(tokens[numrPos-1]))
+		if InflectionsIntersect(numrInfs, prevInfs) {
+			return true
+		}
+	}
+
 	// півтора + adj:p + noun:p:v_naz
 	if nounPos < len(tokens)-1 &&
-		regexp.MustCompile(`^(один-|одне-)?півтора|(одна-)?півтори$`).MatchString(CleanTokenLower(numr)) &&
+		numrPivtoraFullRE.MatchString(CleanTokenLower(numr)) &&
 		HasPosTagRE(noun, regexp.MustCompile(`adj:p:v_(naz|rod).*`)) &&
 		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*?:p:v_naz.*`)) {
 		return true
 	}
+
+	// хвилин зо п'ять люди — TIME_PLUS + prep + numr
+	if numrPos > 2 &&
+		HasPosTagStart(tokens[numrPos-1], "prep") &&
+		HasLemmaWithPosRE(tokens[numrPos-2], TimePlusLemmaList(), regexp.MustCompile(`noun.*?p:v_(naz|rod).*`)) {
+		prevInfs := GetNounCaseInflections(CollectPOSTags(tokens[numrPos-2]))
+		if InflectionsIntersect(numrInfs, prevInfs) {
+			return true
+		}
+	}
+
 	// У свої вісімдесят пан Василь
 	if numrPos > 2 &&
 		HasPosTagStart(tokens[numrPos-2], "prep") &&
@@ -735,15 +805,110 @@ func IsNumrNounException(tokens []*languagetool.AnalyzedTokenReadings, numrPos, 
 		HasPosTagRE(noun, regexp.MustCompile(`noun:anim:.:v_naz.*`)) {
 		return true
 	}
+
 	// два провінційного вигляду персонажі
 	// Java: noun:inanim:.:v_rod(?!.*pron) / noun(?!.*pron) — RE2 has no lookahead; filter :pron in Go.
 	if nounPos <= len(tokens)-3 &&
 		HasPosTagRE(noun, regexp.MustCompile(`adj:.:v_rod.*`)) &&
 		hasPosWithoutPron(tokens[nounPos+1], regexp.MustCompile(`noun:inanim:.:v_rod`)) &&
 		hasPosWithoutPron(tokens[nounPos+2], regexp.MustCompile(`^noun`)) {
+		adjG := gendersFromPos(noun, regexp.MustCompile(`adj:([mfnp]):v_rod`))
+		nounG := gendersFromPos(tokens[nounPos+1], regexp.MustCompile(`noun:inanim:([mfnp]):v_rod`))
+		if adjG != "" && nounG != "" && gendersOverlap(adjG, nounG) {
+			realInfs := GetNounCaseInflections(CollectPOSTags(tokens[nounPos+2]))
+			if InflectionsIntersect(numrInfs, realInfs) {
+				return true
+			}
+		}
+	}
+
+	// ,5 + тон|тис|коп or prep-ish left
+	if strings.HasSuffix(numrLower, ",5") {
+		if regexp.MustCompile(`^(?:тон|тис|коп)$`).MatchString(nounLower) {
+			return true
+		}
+		if numrPos > 1 && numrFractHalfPrepRE.MatchString(CleanTokenLower(tokens[numrPos-1])) {
+			return true
+		}
+	}
+
+	// обоє горбаті
+	if numrObyeLikeRE.MatchString(numrLower) &&
+		HasPosTagRE(noun, regexp.MustCompile(`adj:p:v_naz.*`)) &&
+		strings.HasSuffix(noun.GetToken(), "і") {
+		return true
+	}
+	// обоє режисери
+	if numrObyeAnimRE.MatchString(numrLower) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:anim:p:v_naz.*`)) {
 		return true
 	}
 
+	// 22 червня — number + MONTH :m:v_rod
+	if isNumberToken(numr) &&
+		HasLemmaWithPosRE(noun, MonthLemmas, regexp.MustCompile(`:m:v_rod`)) {
+		return true
+	}
+
+	// 3 / 4 понеділка
+	if numrPos > 2 && tokens[numrPos-1] != nil && tokens[numrPos-1].GetCleanToken() == "/" {
+		return true
+	}
+
+	// ч.|ст.|…|№ before numr
+	if numrPos > 1 {
+		prev := tokens[numrPos-1]
+		if prev != nil &&
+			(numrArticlePrevRE.MatchString(CleanTokenLower(prev)) || prev.GetCleanToken() == "№" ||
+				HasLemmaTokenAny(prev, []string{"частина", "стаття", "пункт", "підпункт", "абзац", "номер"})) {
+			return true
+		}
+	}
+
+	// двадцять перший; дві соті
+	if HasPosTagRE(noun, regexp.MustCompile(`adj.*numr.*`)) {
+		return true
+	}
+
+	// два нових горнятка / 2 хворих
+	if numrDva34Pattern.MatchString(numrLower) || isNumberToken(numr) {
+		if hasAdjPRodNotNumr(noun) {
+			if nounPos == len(tokens)-1 {
+				return true
+			}
+			next := tokens[nounPos+1]
+			if next != nil {
+				if hasAdjPRodNotNumr(next) ||
+					HasPosTagRE(next, regexp.MustCompile(`noun.*:p:v_naz.*`)) ||
+					HasPosTagStart(next, "prep") ||
+					!HasPosTagRE(next, regexp.MustCompile(`^(?:adj|noun)`)) ||
+					numrNextSoftRE.MatchString(next.GetCleanToken()) {
+					return true
+				}
+			}
+		}
+		if strings.HasSuffix(nounLower, "их") &&
+			HasPosTagRE(noun, regexp.MustCompile(`noun.*:p:v_rod.*`)) {
+			return true
+		}
+	}
+
+	// сьома вода
+	if numrSyomaRE.MatchString(numrLower) &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:noun:.*?|adj):[fp]:v_naz.*`)) {
+		return true
+	}
+
+	return false
+}
+
+// gendersOverlap reports whether gender letter sets share a character.
+func gendersOverlap(a, b string) bool {
+	for i := 0; i < len(a); i++ {
+		if strings.ContainsRune(b, rune(a[i])) {
+			return true
+		}
+	}
 	return false
 }
 
