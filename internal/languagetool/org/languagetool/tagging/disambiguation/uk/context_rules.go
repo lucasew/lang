@@ -784,11 +784,15 @@ func likelyVklyContext(tokens []*languagetool.AnalyzedTokenReadings, i int) bool
 }
 
 // RemoveLowerCaseHomonymsForAbbreviations drops non-abbr readings on ALL-CAPS abbr tokens.
+// RemoveLowerCaseHomonymsForAbbreviations ports removeLowerCaseHomonymsForAbbreviations.
+// ALL-CAPS + :abbr → drop non-abbr readings (keep SENT_END/PARA_END).
 func RemoveLowerCaseHomonymsForAbbreviations(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
 	}
-	for _, tok := range input.GetTokensWithoutWhitespace() {
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 1; i < len(tokens); i++ {
+		tok := tokens[i]
 		if tok == nil {
 			continue
 		}
@@ -796,15 +800,17 @@ func RemoveLowerCaseHomonymsForAbbreviations(input *languagetool.AnalyzedSentenc
 		if s == "" || !isAllUpperLetters(s) {
 			continue
 		}
-		if !tok.HasPartialPosTag("abbr") {
+		if !tok.HasPartialPosTag(":abbr") && !tok.HasPartialPosTag("abbr") {
 			continue
 		}
-		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+		readings := tok.GetReadings()
+		for j := len(readings) - 1; j >= 0; j-- {
+			r := readings[j]
 			if r == nil || r.GetPOSTag() == nil {
 				continue
 			}
 			pos := *r.GetPOSTag()
-			if strings.HasSuffix(pos, "_END") {
+			if pos == languagetool.SentenceEndTagName || pos == languagetool.ParagraphEndTagName {
 				continue
 			}
 			if !strings.Contains(pos, ":abbr") {
@@ -938,6 +944,12 @@ func hasLemmaPrepZ(tok *languagetool.AnalyzedTokenReadings) bool {
 }
 
 // RemoveLowerCaseBadForUpperCaseGood strips :bad readings when surface is capitalized prop.
+// propLemmaRE ports hasLemma(…, [А-ЯІЇЄҐ][а-яіїєґ'-].*, .*:prop)
+var propLemmaRE = regexp.MustCompile(`^[А-ЯІЇЄҐ][а-яіїєґ'’-].*$`)
+var propPOSRE = regexp.MustCompile(`.*:prop`)
+
+// RemoveLowerCaseBadForUpperCaseGood ports removeLowerCaseBadForUpperCaseGood.
+// For capitalized prop tokens, drop :bad readings whose lemma equals lowercased first lemma.
 func RemoveLowerCaseBadForUpperCaseGood(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -946,27 +958,52 @@ func RemoveLowerCaseBadForUpperCaseGood(input *languagetool.AnalyzedSentence) {
 		if tok == nil || len(tok.GetReadings()) < 2 {
 			continue
 		}
-		s := tok.GetToken()
-		if s == "" {
+		clean := tok.GetCleanToken()
+		if clean == "" {
+			clean = tok.GetToken()
+		}
+		if !rulesuk.IsCapitalized(clean) {
 			continue
 		}
-		rs := []rune(s)
-		if !unicode.IsUpper(rs[0]) {
+		// Java: hasLemma(token, capitalized lemma RE, prop POS RE)
+		if !hasLemmaMatching(tok, propLemmaRE, propPOSRE) {
 			continue
 		}
-		if !tok.HasPartialPosTag("prop") {
+		rds := tok.GetReadings()
+		if len(rds) == 0 || rds[0] == nil || rds[0].GetLemma() == nil {
 			continue
 		}
-		// drop readings with :bad whose lemma equals lowercased form of another lemma
-		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
-			if r == nil || r.GetPOSTag() == nil {
+		lowerLemmaToCheck := strings.ToLower(*rds[0].GetLemma())
+		for j := len(rds) - 1; j >= 0; j-- {
+			r := rds[j]
+			if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
 				continue
 			}
-			if strings.Contains(*r.GetPOSTag(), ":bad") {
+			if !strings.Contains(*r.GetPOSTag(), ":bad") {
+				continue
+			}
+			// Java: lowerLemmaToCheck.equals(analyzedToken.getLemma())
+			if *r.GetLemma() == lowerLemmaToCheck {
 				tok.RemoveReading(r, "lowercase_bad_vs_uppercase_good")
 			}
 		}
 	}
+}
+
+// hasLemmaMatching ports LemmaHelper.hasLemma(readings, lemmaRE, posRE).
+func hasLemmaMatching(tok *languagetool.AnalyzedTokenReadings, lemmaRE, posRE *regexp.Regexp) bool {
+	if tok == nil || lemmaRE == nil || posRE == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		if lemmaRE.MatchString(*r.GetLemma()) && posRE.MatchString(*r.GetPOSTag()) {
+			return true
+		}
+	}
+	return false
 }
 
 // RemoveVerbImpr drops verb:impr when token is also noun and previous adj agrees in case/gender soft.
