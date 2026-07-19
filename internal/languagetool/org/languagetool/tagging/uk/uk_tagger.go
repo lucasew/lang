@@ -394,17 +394,16 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = ur
 			}
 		}
-		// Java: skip tagMatch when solid no-dash form is already tagged (non-intj left)
-		// or upper-right returns null for non-noun pairs.
-		skipTagMatch := false
-		if strings.Contains(w, "-") {
-			if DynamicNoDashSolidHasTags(w, t.TagWord) || DynamicUpperRightBlocks(w, t.TagWord) {
-				skipTagMatch = true
-			}
-		}
-		if len(readings) == 0 && strings.Contains(w, "-") && !skipTagMatch {
+		// Java tagMatch only after pron/part guards, left len, no-dash solid, upper-right.
+		if len(readings) == 0 && strings.Contains(w, "-") && AllowFullTagMatch(w, t.TagWord) {
 			if ft := FullTagMatchReadings(w, t.TagWord); len(ft) > 0 {
 				readings = ft
+			}
+		}
+		// Java final tryOWithAdj after failed tagMatch
+		if len(readings) == 0 && strings.Contains(w, "-") {
+			if oadj := DynamicFinalOAdjReadings(w, t.TagWord); len(oadj) > 0 {
+				readings = oadj
 			}
 		}
 		if len(readings) == 0 {

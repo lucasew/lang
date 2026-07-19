@@ -50,8 +50,16 @@ func IsDashPrefixInvalid(left string) bool {
 	if _, ok := dashPrefixesInvalid[left]; ok {
 		return true
 	}
-	_, ok := dashPrefixesInvalid[strings.ToLower(left)]
-	return ok
+	low := strings.ToLower(left)
+	if _, ok := dashPrefixesInvalid[low]; ok {
+		return true
+	}
+	for k := range dashPrefixesInvalid {
+		if strings.EqualFold(k, left) {
+			return true
+		}
+	}
+	return false
 }
 
 func discoverUKResource(name string) string {
@@ -140,14 +148,22 @@ func loadSetInto(path string, set map[string]struct{}) {
 	}
 }
 
-// IsDashPrefix reports membership in official dash_prefixes.txt.
+// IsDashPrefix reports membership in official dash_prefixes.txt (case-insensitive).
 func IsDashPrefix(left string) bool {
 	loadDashPrefixResources()
 	if _, ok := dashPrefixes[left]; ok {
 		return true
 	}
-	_, ok := dashPrefixes[strings.ToLower(left)]
-	return ok
+	low := strings.ToLower(left)
+	if _, ok := dashPrefixes[low]; ok {
+		return true
+	}
+	for k := range dashPrefixes {
+		if strings.EqualFold(k, left) {
+			return true
+		}
+	}
+	return false
 }
 
 // DashPrefixExtraTag returns the map value for a dash prefix (may be empty).
@@ -156,8 +172,15 @@ func DashPrefixExtraTag(left string) (string, bool) {
 	if v, ok := dashPrefixes[left]; ok {
 		return v, true
 	}
-	v, ok := dashPrefixes[strings.ToLower(left)]
-	return v, ok
+	if v, ok := dashPrefixes[strings.ToLower(left)]; ok {
+		return v, true
+	}
+	for k, v := range dashPrefixes {
+		if strings.EqualFold(k, left) {
+			return v, true
+		}
+	}
+	return "", false
 }
 
 // NoDashPrefixList returns sorted-stable iteration order for no-dash prefix tries.
