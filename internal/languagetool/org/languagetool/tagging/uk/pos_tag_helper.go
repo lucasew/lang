@@ -5,6 +5,32 @@ import "strings"
 // PosTagHelper ports tagging.uk.PosTagHelper helpers for Ukrainian POS tags.
 type PosTagHelper struct{}
 
+// NoVidminokSubstr ports PosTagHelper.NO_VIDMINOK_SUBSTR.
+const NoVidminokSubstr = ":nv"
+
+// VidminkyMap ports PosTagHelper.VIDMINKY_MAP (case code → Ukrainian name).
+// Iteration order for messages matches Java LinkedHashMap insertion.
+var VidminkyMap = map[string]string{
+	"v_naz": "називний",
+	"v_rod": "родовий",
+	"v_dav": "давальний",
+	"v_zna": "знахідний",
+	"v_oru": "орудний",
+	"v_mis": "місцевий",
+	"v_kly": "кличний",
+}
+
+// VidminkyOrder is LinkedHashMap insertion order for VIDMINKY_MAP.
+var VidminkyOrder = []string{"v_naz", "v_rod", "v_dav", "v_zna", "v_oru", "v_mis", "v_kly"}
+
+// VidminokName returns the Ukrainian case name for a v_* code, or the code itself.
+func VidminokName(code string) string {
+	if n, ok := VidminkyMap[code]; ok {
+		return n
+	}
+	return code
+}
+
 // HasPos reports whether pos contains the given tag fragment (colon-separated).
 func HasPos(pos, fragment string) bool {
 	if pos == "" || fragment == "" {

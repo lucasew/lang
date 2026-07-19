@@ -364,11 +364,14 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 
 		if HasPosTagPart(tok, ":v_") {
 			// non-normative genitive personal pronouns (їх/його as rod without них form)
-			if flag, keep := prepPronRodMismatch(tok, clean, tokens, i, want); flag {
+			if flag, keep, skipTo := prepPronRodMismatch(tok, clean, tokens, i, prepTok); flag {
 				out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, ""))
 				prepPos = -1
 				continue
 			} else if keep {
+				continue
+			} else if skipTo >= 0 {
+				i = skipTo
 				continue
 			}
 
@@ -496,39 +499,138 @@ func filterReadings(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regex
 }
 
 // prepPronRodMismatch ports the non-normative rod personal-pronoun arm.
-// flag=true → emit match; keep=true → continue without clearing (next token).
-func prepPronRodMismatch(tok *languagetool.AnalyzedTokenReadings, clean string, tokens []*languagetool.AnalyzedTokenReadings, i int, _ []string) (flag, keep bool) {
+// flag=true → emit match; keep=true → continue without clearing (next token);
+// skipTo>=0 → jump i to insert end (Java findInsertEnd) without clearing prep.
+func prepPronRodMismatch(tok *languagetool.AnalyzedTokenReadings, clean string, tokens []*languagetool.AnalyzedTokenReadings, i int, prepTok *languagetool.AnalyzedTokenReadings) (flag, keep bool, skipTo int) {
+	skipTo = -1
 	prons := filterReadings(tok, prepNounPronRodRE, prepNounPronLemmas)
 	if len(prons) == 0 {
-		return false, false
+		return false, false, -1
 	}
 	lower := strings.ToLower(clean)
 	if prepNounNihRE.MatchString(lower) {
-		return false, false
+		return false, false, -1
 	}
 	if i < len(tokens)-1 && tokens[i+1] != nil {
 		next := tokens[i+1]
 		if HasPosTagRE(next, regexp.MustCompile(`^(?:noun|adj|adv|part|num|conj:coord|noninfl)`)) ||
 			regexp.MustCompile(`^["«„“/$€…]|[a-zA-Z'-]+$`).MatchString(cleanTokenSurface(next)) {
-			return false, true
+			return false, true, -1
 		}
 	}
-	return true, false
+	// Java: insertEndPos = findInsertEnd(prep, tokens, i+1, true)
+	if end := findPrepNounInsertEnd(prepTok, tokens, i+1, true); end > 0 {
+		return false, false, end
+	}
+	return true, false, -1
 }
 
-func prepNounMsg(prep *languagetool.AnalyzedTokenReadings, want []string, ziZnaRemoved bool) string {
+// findPrepNounInsertEnd ports TokenAgreementPrepNounRule.findInsertEnd.
+// lookForPart is accepted for signature parity (Java never uses it in the body).
+func findPrepNounInsertEnd(prepTok *languagetool.AnalyzedTokenReadings, tokens []*languagetool.AnalyzedTokenReadings, i int, lookForPart bool) int {
+	_ = prepTok
+	_ = lookForPart
+	if i >= len(tokens)-2 {
+		return -1
+	}
+	nextPos := i
+	tok := tokens[i]
+	if tok == nil {
+		return -1
+	}
+	// dead branch in Java (i > length-2 after i >= length-2); kept for twin structure
+	if i > len(tokens)-2 {
+		return -1
+	}
+	clean := cleanTokenSurface(tok)
+	if regexp.MustCompile(`^же?$`).MatchString(clean) {
+		nextPos = i + 1
+	}
+	if nextPos > len(tokens)-3 {
+		if nextPos == i {
+			return -1
+		}
+		return nextPos - 1
+	}
+	// re-read token at original i for comma/paren unknown-tag inserts
+	if tok.IsPosTagUnknown() && regexp.MustCompile(`^[,(]$`).MatchString(clean) {
+		commaPos := TokenSearch(tokens, i+1, "", regexp.MustCompile(`^[,)]$`), nil, DirForward)
+		if commaPos > i+1 && commaPos < i+6 && commaPos < len(tokens)-1 {
+			nextClean := cleanTokenSurface(tokens[commaPos])
+			open := strings.ReplaceAll(clean, "(", ")")
+			if open == nextClean {
+				if tokens[commaPos+1] == nil || cleanTokenSurface(tokens[commaPos+1]) != "що" {
+					return commaPos
+				}
+			}
+		}
+	}
+	if nextPos == i {
+		return -1
+	}
+	return nextPos - 1
+}
+
+func prepNounMsg(prep, tok *languagetool.AnalyzedTokenReadings, want []string, ziZnaRemoved bool) string {
 	prepTok := ""
 	if prep != nil {
 		prepTok = prep.GetToken()
 	}
-	msg := "Прийменник «" + prepTok + "» вимагає іншого відмінка"
-	if len(want) > 0 {
-		msg += ": " + strings.Join(want, ", ")
+	// Java MessageFormat: Прийменник «{0}» вимагає іншого відмінка: {1}, а знайдено: {2}
+	reqNames := make([]string, 0, len(want))
+	for _, v := range want {
+		reqNames = append(reqNames, taguk.VidminokName(v))
 	}
+	foundNames := foundVidminkyNames(tok)
+	msg := "Прийменник «" + prepTok + "» вимагає іншого відмінка: " +
+		strings.Join(reqNames, ", ") + ", а знайдено: " + strings.Join(foundNames, ", ")
 	if ziZnaRemoved {
 		msg += ". Але з.в. вимагається у випадках порівнянн предметів."
 	}
 	return msg
+}
+
+// foundVidminkyNames ports createRuleMatch foundVidminkyNames loop.
+func foundVidminkyNames(tok *languagetool.AnalyzedTokenReadings) []string {
+	if tok == nil {
+		return nil
+	}
+	var found []string
+	seen := map[string]bool{}
+	for _, ar := range tok.GetReadings() {
+		if ar == nil || ar.GetPOSTag() == nil {
+			continue
+		}
+		pos := *ar.GetPOSTag()
+		if !strings.Contains(pos, ":v_") {
+			continue
+		}
+		code := ""
+		for _, c := range taguk.VidminkyOrder {
+			if strings.Contains(pos, c) {
+				code = c
+				break
+			}
+		}
+		if code == "" {
+			continue
+		}
+		name := taguk.VidminokName(code)
+		if seen[name] {
+			// Java: duplicate + :p: → "name (мн.)"
+			if strings.Contains(pos, ":p:") {
+				name = name + " (мн.)"
+				if !seen[name] {
+					seen[name] = true
+					found = append(found, name)
+				}
+			}
+			continue
+		}
+		seen[name] = true
+		found = append(found, name)
+	}
+	return found
 }
 
 // newPrepNounMatch ports createRuleMatch (message + optional synthesizer suggestions).
@@ -539,7 +641,7 @@ func (r *TokenAgreementPrepNounRule) newPrepNounMatch(
 	ziZnaRemoved bool,
 	extraMsg string,
 ) *rules.RuleMatch {
-	msg := prepNounMsg(prepTok, want, ziZnaRemoved) + extraMsg
+	msg := prepNounMsg(prepTok, tok, want, ziZnaRemoved) + extraMsg
 	m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
 	m.ShortMessage = r.shortMsg
 	if sugs := r.prepNounSuggestions(want, tok); len(sugs) > 0 {
