@@ -77,3 +77,11 @@ func TestSearchMatch_CommaInsertSkip(t *testing.T) {
 	}
 	require.Equal(t, 4, m.MAfterATR(atrs, 0))
 }
+
+func TestSearchMatch_MNowSetsLimitZero(t *testing.T) {
+	// Java mNow = limit(0).mAfter permanently mutates Match.limit
+	m := NewSearchMatch("a").WithLimit(4)
+	atrs := []*languagetool.AnalyzedTokenReadings{atr("x"), atr("a")}
+	require.Equal(t, 1, m.MNowATR(atrs, 0))
+	require.Equal(t, 0, m.Limit)
+}

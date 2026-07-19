@@ -7,8 +7,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// Java LemmaHelper.QUOTES_PATTERN used by SearchHelper.Match
-var searchQuotesRE = regexp.MustCompile(`^[«»„""\x{201C}]$`)
+// searchQuotesRE ports LemmaHelper.QUOTES_PATTERN for SearchHelper.Match.ignoreQuotes
+// (Java: QUOTES_PATTERN.matcher(token.getToken()).matches() — full token is a quote char).
+// Prefer shared QuotesPattern (\p{Pi}\p{Pf}); keep explicit Ukrainian set as extra.
+var searchQuotesRE = regexp.MustCompile(`^[«»„""\x{201C}\x{201D}]$`)
 
 // SearchCondition ports SearchHelper.Condition.
 type SearchCondition struct {
@@ -297,11 +299,9 @@ func (m *SearchMatch) MBeforeATR(tokens []*languagetool.AnalyzedTokenReadings, p
 	return pos + 1 // Java return pos+1 after last match
 }
 
-// MNowATR ports Match.mNow (limit 0 mAfter).
+// MNowATR ports Match.mNow — Java limit(0).mAfter permanently sets this.limit = 0.
 func (m *SearchMatch) MNowATR(tokens []*languagetool.AnalyzedTokenReadings, pos int) int {
-	lim := m.Limit
 	m.Limit = 0
-	defer func() { m.Limit = lim }()
 	return m.MAfterATR(tokens, pos)
 }
 

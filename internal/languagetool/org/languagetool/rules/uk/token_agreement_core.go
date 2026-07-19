@@ -1173,12 +1173,14 @@ var (
 	prepNounLishRE = regexp.MustCompile(`^лиш(?:е(?:нь)?)?$`)
 )
 
-// hasAdvNotAdvp is RE2-friendly stand-in for Java adv(?!p).*.
+// hasAdvNotAdvp ports PosTagHelper.hasPosTag(…, Pattern.compile("adv(?!p).*")) — any reading.
+// RE2 has no lookaround: any tag with adv prefix that is not advp.
 func hasAdvNotAdvp(tok *languagetool.AnalyzedTokenReadings) bool {
 	if tok == nil {
 		return false
 	}
 	for _, p := range CollectPOSTags(tok) {
+		// Java Matcher.matches("adv(?!p).*") — full tag is adv… but not advp…
 		if strings.HasPrefix(p, "adv") && !strings.HasPrefix(p, "advp") {
 			return true
 		}
