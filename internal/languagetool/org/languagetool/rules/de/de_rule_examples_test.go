@@ -48,4 +48,6 @@ func TestDERule_ExamplePairs(t *testing.T) {
 	require.Equal(t, []string{"Kleines Haus"}, NewAgreementRule2(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"sind"}, NewSubjectVerbAgreementRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Contains(t, NewStyleRepeatedVeryShortSentences(nil).GetIncorrectExamples()[0].GetExample(), "näher.")
+	require.Equal(t, []string{"Helpdesks"}, NewCompoundCoherencyRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Contains(t, NewNonSignificantVerbsRule(nil).GetIncorrectExamples()[0].GetExample(), "machte")
 }

@@ -35,6 +35,11 @@ func NewNonSignificantVerbsRule(messages map[string]string) *NonSignificantVerbs
 	}
 	r.LimitMessage = r.getLimitMessage
 	rules.InitStatisticStyleMeta(r.AbstractStatisticStyleRule, messages, false)
+	// Java: machte … / fixed is a different sentence (illustrative)
+	r.AddExamplePair(
+		rules.Wrong("Er <marker>machte</marker> einen Kuchen."),
+		rules.Fixed("Das macht mir Angst."),
+	)
 	return r
 }
 

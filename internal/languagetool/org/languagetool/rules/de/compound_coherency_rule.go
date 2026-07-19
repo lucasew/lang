@@ -15,13 +15,22 @@ import (
 type CompoundCoherencyRule struct {
 	Messages map[string]string
 	Category *rules.Category
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewCompoundCoherencyRule(messages map[string]string) *CompoundCoherencyRule {
-	return &CompoundCoherencyRule{
+	r := &CompoundCoherencyRule{
 		Messages: messages,
 		Category: rules.CatStyle.GetCategory(messages),
 	}
+	// Java: Help-Desks → Helpdesks (match first form)
+	r.AddExamplePair(
+		rules.Wrong("Ein Helpdesk gliedert sich in verschiedene Level. Die Qualität des <marker>Help-Desks</marker> ist wichtig."),
+		rules.Fixed("Ein Helpdesk gliedert sich in verschiedene Level. Die Qualität des <marker>Helpdesks</marker> ist wichtig."),
+	)
+	return r
 }
 
 func (r *CompoundCoherencyRule) GetID() string { return "DE_COMPOUND_COHERENCY" }
@@ -36,6 +45,37 @@ func (r *CompoundCoherencyRule) GetCategory() *rules.Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *CompoundCoherencyRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *CompoundCoherencyRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *CompoundCoherencyRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // MinToCheckParagraph ports minToCheckParagraph (Java returns -1).

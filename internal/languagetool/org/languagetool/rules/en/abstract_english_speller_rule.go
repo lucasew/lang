@@ -28,6 +28,9 @@ type AbstractEnglishSpellerRule struct {
 	Synthesize SynthesizeFn
 	// IsValidInOtherVariantFn ports isValidInOtherVariant (variant spellers set this).
 	IsValidInOtherVariantFn func(word string) *VariantInfo
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.MorfologikSpeller) *AbstractEnglishSpellerRule {
@@ -66,11 +69,48 @@ func NewAbstractEnglishSpellerRule(id, variantCode string, speller *morfologik.M
 			})
 		}
 	}
-	return &AbstractEnglishSpellerRule{
+	r := &AbstractEnglishSpellerRule{
 		MorfologikSpellerRule: base,
 		LanguageShortCode:     short,
 		VariantCode:           variantCode,
 	}
+	// Java AbstractEnglishSpellerRule: sentenc → sentence
+	r.AddExamplePair(
+		rules.Wrong("This <marker>sentenc</marker> contains a spelling mistake."),
+		rules.Fixed("This <marker>sentence</marker> contains a spelling mistake."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractEnglishSpellerRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractEnglishSpellerRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractEnglishSpellerRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // Match ports parent Match + getRuleMatches irregular forms / other-variant rewrite.
