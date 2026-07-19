@@ -29,8 +29,8 @@ func loadTopo() *rules.AbstractSimpleReplaceRule2 {
 			ShortMsg:             "Anv-lec'h",
 			MessageTemplate:      "Anv gallek: $match. Gwelloc'h eo ober gant $suggestions",
 			SuggestionsSeparator: " pe ",
-			// Java TopoReplaceRule is case-sensitive for multiword maps; use CI for surface port.
-			CaseSens:     rules.CaseInsensitive,
+			// Java TopoReplaceRule.isCaseSensitive() == true
+			CaseSens:     rules.CaseSensitive,
 			LanguageCode: "br",
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/br/topo.txt"); err != nil {
@@ -41,7 +41,9 @@ func loadTopo() *rules.AbstractSimpleReplaceRule2 {
 	return topoBase
 }
 
-// TopoReplaceRule ports org.languagetool.rules.br.TopoReplaceRule (ASR2 multiword stand-in).
+// TopoReplaceRule ports org.languagetool.rules.br.TopoReplaceRule via ASR2 data load.
+// Java has custom longest-multiword Match; ASR2 is incomplete for some multiword
+// exceptions (e.g. channel name "France 3") until a full twin Match is ported.
 type TopoReplaceRule struct {
 	*rules.AbstractSimpleReplaceRule2
 }
