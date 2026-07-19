@@ -3,6 +3,7 @@ package uk
 import (
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -221,8 +222,8 @@ func IsAdjpException(adj *languagetool.AnalyzedTokenReadings) bool {
 
 // --- Exception helper stubs (full tables deferred) ---
 
-// IsAdjNounException ports TokenAgreementAdjNounExceptionHelper surface
-// (full exception tables deferred). FAKE_FEM uses Java lemma+partPos, not bare surface.
+// IsAdjNounException ports TokenAgreementAdjNounExceptionHelper early arms
+// (full 1300-line table still deferred). FAKE_FEM uses Java lemma+partPos.
 func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, nounPos int) bool {
 	if adjPos < 0 || nounPos < 0 || adjPos >= len(tokens) || nounPos >= len(tokens) {
 		return true
@@ -232,9 +233,123 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		return true
 	}
 	// Java: LemmaHelper.hasLemma(noun, FAKE_FEM_LIST, "noun:inanim:m:")
-	// (e.g. ступінь tagged m: inanim) — not invent-exception on surface alone.
 	if HasLemmaWithPartPos(tokens[nounPos], FakeFemList, "noun:inanim:m:") {
 		return true
+	}
+
+	adj := tokens[adjPos]
+	noun := tokens[nounPos]
+	if adj == nil || noun == nil {
+		return true
+	}
+
+	// схований всередині номера: intervening adv with case government matches noun case
+	if nounPos-adjPos > 1 {
+		mid := tokens[adjPos+1]
+		cases := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadings(mid, "adv")
+		if len(cases) > 0 {
+			var list []string
+			for c := range cases {
+				list = append(list, c)
+			}
+			if HasVidmPosTag(list, noun) {
+				return true
+			}
+		}
+	}
+
+	// Великий + Вітчизняний/Житомирський (capitalized), not війна
+	if adjPos > 1 {
+		prev := tokens[adjPos-1]
+		if prev != nil &&
+			IsCapitalized(adj.GetCleanToken()) && IsCapitalized(prev.GetCleanToken()) &&
+			(HasLemmaToken(adj, "вітчизняний") || HasLemmaToken(adj, "житомирський")) &&
+			HasLemmaToken(prev, "великий") &&
+			!HasLemmaToken(noun, "війна") {
+			return true
+		}
+		// Перший Національний (both uppercased first char)
+		if HasLemmaToken(adj, "національний") && HasLemmaToken(prev, "перший") {
+			at, pt := adj.GetToken(), prev.GetToken()
+			if at != "" && pt != "" && isUpperFirst(at) && isUpperFirst(pt) {
+				return true
+			}
+		}
+		// (ні)чого доброго
+		if CleanTokenLower(adj) == "доброго" {
+			if regexp.MustCompile(`^(ні)?чого$`).MatchString(CleanTokenLower(prev)) {
+				return true
+			}
+		}
+		// у/в середньому|цілому|основному|подальшому
+		if regexp.MustCompile(`(?iu)^(середньому|цілому|основному|подальшому)$`).MatchString(CleanTokenLower(adj)) &&
+			regexp.MustCompile(`(?iu)^[ву]$`).MatchString(CleanTokenLower(prev)) {
+			return true
+		}
+		// лава запасних
+		if adj.GetToken() == "запасних" && HasLemmaToken(prev, "лава") {
+			return true
+		}
+		// статтю 6-ту / num after стаття
+		if HasPosTagPart(adj, "num") && HasLemmaToken(prev, "стаття") {
+			return true
+		}
+	}
+
+	// голому сорочка
+	if strings.EqualFold(CleanTokenLower(adj), "голому") && strings.EqualFold(CleanTokenLower(noun), "сорочка") {
+		return true
+	}
+	// бережений бог
+	if HasLemmaWithPosRE(adj, []string{"бережений"}, regexp.MustCompile(`^adj:m:v_rod.*$`)) &&
+		HasLemmaWithPosRE(noun, []string{"бог"}, regexp.MustCompile(`^noun:anim:m:v_naz.*$`)) {
+		return true
+	}
+	// кожний + mass/quantity noun in instrumental
+	if HasLemmaWithPosRE(adj, []string{"кожний"}, regexp.MustCompile(`^adj:f:v_naz.*$`)) &&
+		HasLemmaWithPosRE(noun,
+			[]string{"вага", "маса", "вартість", "потужність", "тривалість", "чисельність", "номінал", "наклад"},
+			regexp.MustCompile(`^noun:inanim:.:v_oru.*$`)) {
+		return true
+	}
+	// Божий / Господній / Христовий capitalized
+	if HasLemmaTokenAny(adj, []string{"божий", "господній", "Христовий"}) && isUpperFirst(adj.GetToken()) {
+		return true
+	}
+	// 5-а клас
+	if regexp.MustCompile(`^([1-9]|1[0-2])[\x{2018}-][а-д]$`).MatchString(adj.GetToken()) && HasLemmaToken(noun, "клас") {
+		return true
+	}
+	// перший + not FAKE_FEM inanim:m
+	if nounPos > 1 && HasLemmaTokenAny(adj, []string{"перший"}) &&
+		!HasLemmaWithPartPos(noun, FakeFemList, "noun:inanim:m:") {
+		return true
+	}
+	// старший зміни/групи
+	if (CleanTokenLower(noun) == "зміни" || CleanTokenLower(noun) == "групи") && HasLemmaToken(adj, "старший") {
+		return true
+	}
+
+	return false
+}
+
+func isUpperFirst(s string) bool {
+	if s == "" {
+		return false
+	}
+	r := []rune(s)[0]
+	return unicode.IsUpper(r)
+}
+
+// HasPosTagPart reports whether any POS contains substr (Java PosTagHelper.hasPosTagPart).
+func HasPosTagPart(tok *languagetool.AnalyzedTokenReadings, substr string) bool {
+	if tok == nil || substr == "" {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.Contains(p, substr) {
+			return true
+		}
 	}
 	return false
 }

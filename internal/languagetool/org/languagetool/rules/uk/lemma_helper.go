@@ -154,6 +154,67 @@ func HasLemmaWithPartPos(tok *languagetool.AnalyzedTokenReadings, lemmas []strin
 	return false
 }
 
+// HasLemmaToken ports LemmaHelper.hasLemma(readings, lemma) for a single lemma string.
+func HasLemmaToken(tok *languagetool.AnalyzedTokenReadings, lemma string) bool {
+	if tok == nil || lemma == "" {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetLemma() != nil && *r.GetLemma() == lemma {
+			return true
+		}
+	}
+	return false
+}
+
+// HasLemmaTokenAny ports LemmaHelper.hasLemma(readings, Collection).
+func HasLemmaTokenAny(tok *languagetool.AnalyzedTokenReadings, lemmas []string) bool {
+	if tok == nil || len(lemmas) == 0 {
+		return false
+	}
+	want := setOf(lemmas...)
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetLemma() != nil {
+			if _, ok := want[*r.GetLemma()]; ok {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasLemmaWithPosRE ports LemmaHelper.hasLemma(readings, lemmas, posRegex) with full POS match.
+func HasLemmaWithPosRE(tok *languagetool.AnalyzedTokenReadings, lemmas []string, posRE *regexp.Regexp) bool {
+	if tok == nil || posRE == nil || len(lemmas) == 0 {
+		return false
+	}
+	want := setOf(lemmas...)
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		if !posRE.MatchString(*r.GetPOSTag()) {
+			continue
+		}
+		if _, ok := want[*r.GetLemma()]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+// CleanTokenLower returns lowercased clean token (Java getCleanToken().toLowerCase()).
+func CleanTokenLower(tok *languagetool.AnalyzedTokenReadings) string {
+	if tok == nil {
+		return ""
+	}
+	c := tok.GetCleanToken()
+	if c == "" {
+		c = tok.GetToken()
+	}
+	return strings.ToLower(c)
+}
+
 // CleanIgnoreChars strips soft hyphen / combining acute from a token.
 func CleanIgnoreChars(token string) string {
 	return strings.Map(func(r rune) rune {

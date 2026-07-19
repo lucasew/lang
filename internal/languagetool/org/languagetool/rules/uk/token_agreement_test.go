@@ -111,3 +111,37 @@ func TestVerbNounCaseAgreeHelper(t *testing.T) {
 	noun2 := atr("закордону", "noun:inanim:m:v_rod")
 	require.True(t, VerbNounCaseAgree(cg, verb, noun2))
 }
+
+func TestHasVidmPosTag(t *testing.T) {
+	// noun has v_oru among wanted
+	require.True(t, HasVidmPosTag([]string{"v_oru"}, atr("домі", "noun:inanim:m:v_oru")))
+	require.False(t, HasVidmPosTag([]string{"v_zna"}, atr("домі", "noun:inanim:m:v_oru")))
+	// :nv short-circuit
+	require.True(t, HasVidmPosTag([]string{"v_oru"}, atr("щось", "noun:inanim:n:v_naz:nv")))
+}
+
+func TestCaseGovernmentDerivativesMerged(t *testing.T) {
+	cg := LoadCaseGovernmentHelper()
+	// static Java override
+	require.True(t, cg.HasCaseGovernment("згідно з", "v_oru"))
+}
+
+func TestAdjNounException_EarlyArms(t *testing.T) {
+	// голому сорочка
+	sent := []*languagetool.AnalyzedTokenReadings{
+		atr("X"), // pad index 0 if needed
+		atr("голому", "adj:m:v_dav"),
+		atr("сорочка", "noun:inanim:f:v_naz"),
+	}
+	// tokens as sentence without SENT_START - positions 0,1
+	require.True(t, IsAdjNounException(sent[1:], 0, 1))
+
+	// перший + ordinary noun (not FakeFem inanim:m)
+	lem := "перший"
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		atr("pad"),
+		atrLemma("перший", &lem, "adj:m:v_naz:numr"),
+		atr("голодування", "noun:inanim:n:v_zna"),
+	}
+	require.True(t, IsAdjNounException(tokens, 1, 2))
+}

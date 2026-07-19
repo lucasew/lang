@@ -63,6 +63,42 @@ func NewTokenAgreementPrepNounRuleWithMessages(messages map[string]string) *Toke
 	return r
 }
 
+// HasVidmPosTag ports TokenAgreementPrepNounRule.hasVidmPosTag.
+// posTagsToFind are case substrings like "v_oru"; if no vidminok found on any reading, returns true
+// (Java incomplete dictionary path).
+func HasVidmPosTag(posTagsToFind []string, tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return true
+	}
+	rds := tok.GetReadings()
+	vidminokFound := false
+	for _, token := range rds {
+		if token == nil {
+			continue
+		}
+		pos := token.GetPOSTag()
+		if pos == nil {
+			if len(rds) == 1 {
+				return true
+			}
+			continue
+		}
+		// Java PosTagHelper.NO_VIDMINOK_SUBSTR
+		if strings.Contains(*pos, ":nv") {
+			return true
+		}
+		if strings.Contains(*pos, ":v_") {
+			vidminokFound = true
+			for _, want := range posTagsToFind {
+				if want != "" && strings.Contains(*pos, want) {
+					return true
+				}
+			}
+		}
+	}
+	return !vidminokFound
+}
+
 func prepNounAgree(cg *CaseGovernmentHelper, prep, noun *languagetool.AnalyzedTokenReadings) bool {
 	if cg == nil || prep == nil || noun == nil {
 		return true

@@ -5,6 +5,8 @@ import (
 	"embed"
 	"strings"
 	"sync"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 //go:embed data/case_government.txt
@@ -61,9 +63,68 @@ func LoadCaseGovernmentHelper() *CaseGovernmentHelper {
 		}
 		// static override from Java
 		m["згідно з"] = map[string]struct{}{"v_oru": {}}
+		// Java CaseGovernmentHelper static: merge DERIVATIVES_MAP into CASE_GOVERNMENT_MAP
+		// (derivative key inherits government of each base verb).
+		for deriv, verbs := range loadDerivats() {
+			set, ok := m[deriv]
+			if !ok {
+				set = map[string]struct{}{}
+				m[deriv] = set
+			}
+			for v := range verbs {
+				if rvs, ok := m[v]; ok {
+					for c := range rvs {
+						set[c] = struct{}{}
+					}
+				}
+			}
+		}
 		caseGov = &CaseGovernmentHelper{Map: m}
 	})
 	return caseGov
+}
+
+// GetCaseGovernmentsFromReadings ports CaseGovernmentHelper.getCaseGovernments(readings, startPosTag).
+// startPosTag is a POS prefix (e.g. "adv", "prep", "verb"); "verb" with advp first reading → "advp".
+func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadings(tok *languagetool.AnalyzedTokenReadings, startPosTag string) map[string]struct{} {
+	out := map[string]struct{}{}
+	if h == nil || tok == nil || startPosTag == "" {
+		return out
+	}
+	rds := tok.GetReadings()
+	if startPosTag == "verb" && len(rds) > 0 && rds[0] != nil && rds[0].GetPOSTag() != nil {
+		if strings.HasPrefix(*rds[0].GetPOSTag(), "advp") {
+			startPosTag = "advp"
+		}
+	}
+	for _, token := range rds {
+		if token == nil || token.GetLemma() == nil || token.GetPOSTag() == nil {
+			continue
+		}
+		pos := *token.GetPOSTag()
+		// Java: hasNoTag skip — Go has no hasNoTag; empty POS treated as none
+		if pos == "" {
+			continue
+		}
+		okStart := strings.HasPrefix(pos, startPosTag)
+		if startPosTag == "prep" && pos == "<prep>" {
+			okStart = true
+		}
+		if !okStart {
+			continue
+		}
+		lemma := *token.GetLemma()
+		if set, ok := h.Map[lemma]; ok {
+			for c := range set {
+				out[c] = struct{}{}
+			}
+		}
+		// Java: adjp:pasv adds v_oru
+		if strings.Contains(pos, "adjp:pasv") {
+			out["v_oru"] = struct{}{}
+		}
+	}
+	return out
 }
 
 // HasCaseGovernment reports whether lemma governs rvCase.
