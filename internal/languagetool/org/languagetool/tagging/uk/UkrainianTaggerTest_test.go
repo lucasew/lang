@@ -103,8 +103,10 @@ func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 	require.False(t, bare[1].IsTagged())
 }
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
-	// directional compounds: Java oAdjMatch needs right adj from wordTagger
+	// directional compounds: Java oAdjMatch needs left evidence + right adj from wordTagger
 	wt := tagging.MapWordTagger{
+		"південно":  {tagging.NewTaggedWord("південно", "adv")},
+		"північно":  {tagging.NewTaggedWord("північно", "adv")},
 		"Західній":  {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
 		"західній":  {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
 		"східного":  {tagging.NewTaggedWord("східний", "adj:m:v_rod")},
@@ -229,9 +231,13 @@ func TestDynamicDirectionalAdjReadings(t *testing.T) {
 	require.Nil(t, DynamicDirectionalAdjReadings("Південно-Західній", nil))
 	require.Nil(t, DynamicDirectionalAdjReadings("звичайний", nil))
 
-	// Dict-gated: right part "Західній" / "західній" provides adj tags.
+	// Dict-gated: left needs adv/adj evidence (oAdjMatch); right adj from dict.
 	tagWord := func(s string) []tagging.TaggedWord {
 		switch strings.ToLower(s) {
+		case "південно":
+			return []tagging.TaggedWord{{Lemma: "південно", PosTag: "adv"}}
+		case "південний": // oToYj fallback
+			return []tagging.TaggedWord{{Lemma: "південний", PosTag: "adj:m:v_naz"}}
 		case "західній", "західний":
 			return []tagging.TaggedWord{
 				{Lemma: "західний", PosTag: "adj:f:v_dav"},
@@ -252,6 +258,14 @@ func TestDynamicDirectionalAdjReadings(t *testing.T) {
 	require.Nil(t, DynamicDirectionalAdjReadings("звичайний", tagWord))
 	// Right unknown to dict: fail-closed
 	require.Nil(t, DynamicDirectionalAdjReadings("Південно-Невідомий", tagWord))
+	// Left without dict evidence: fail-closed
+	rightOnly := func(s string) []tagging.TaggedWord {
+		if strings.ToLower(s) == "західній" || strings.ToLower(s) == "західний" {
+			return []tagging.TaggedWord{{Lemma: "західний", PosTag: "adj:f:v_dav"}}
+		}
+		return nil
+	}
+	require.Nil(t, DynamicDirectionalAdjReadings("Південно-Західній", rightOnly))
 }
 
 func TestCompoundNumrPOS(t *testing.T) {
@@ -408,4 +422,35 @@ func TestDynamicNumrAdjReadings(t *testing.T) {
 	rs2 := DynamicNumrAdjReadings("три-метровий", tagWord)
 	require.NotEmpty(t, rs2)
 	require.Contains(t, rs2[0].POS, ":bad")
+}
+
+func TestDynamicNameSuffixReadings(t *testing.T) {
+	require.Nil(t, DynamicNameSuffixReadings("Мустафа-ага", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		if strings.EqualFold(s, "Мустафа") || s == "мустафа" {
+			return []tagging.TaggedWord{{Lemma: "Мустафа", PosTag: "noun:anim:m:v_naz:prop:fname"}}
+		}
+		return nil
+	}
+	rs := DynamicNameSuffixReadings("Мустафа-ага", tagWord)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].POS, "name")
+	require.Equal(t, "Мустафа-ага", rs[0].Lemma)
+	// no invent without name POS on left
+	require.Nil(t, DynamicNameSuffixReadings("Стіл-ага", tagWord))
+}
+
+func TestGuessOtherTagsReadings(t *testing.T) {
+	// Java: capitalized *штрассе / *дзе paradigms (length > 7)
+	rs := GuessOtherTagsReadings("Бранденштрассе")
+	require.NotEmpty(t, rs)
+	require.Contains(t, *rs[0].GetPOSTag(), "prop")
+	require.Contains(t, *rs[0].GetPOSTag(), "alt")
+
+	rs2 := GuessOtherTagsReadings("Бараташвілі")
+	require.NotEmpty(t, rs2)
+	require.Contains(t, *rs2[0].GetPOSTag(), "lname")
+
+	require.Empty(t, GuessOtherTagsReadings("звичайнеслово"))
+	require.Empty(t, GuessOtherTagsReadings("коротке"))
 }

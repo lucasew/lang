@@ -79,6 +79,16 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		// Java NAME_SUFFIX (Мустафа-ага) — left name POS + fixed suffix list.
+		if dyn := DynamicNameSuffixReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		// Java matchDigitCompound: short endings from LetterEndingForNumericHelper;
 		// longer right halves need wordTagger (pass TagWord; fail-closed without hits).
 		if dyn := DynamicNumericReadings(w, t.TagWord); len(dyn) > 0 {
@@ -112,6 +122,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 					p, l := d.POS, d.Lemma
 					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 				}
+			}
+		}
+		// Java guessOtherTags: capitalized *штрассе / *дзе / *швілі / *іані paradigms.
+		if len(readings) == 0 {
+			if other := GuessOtherTagsReadings(w); len(other) > 0 {
+				readings = other
 			}
 		}
 		// Java elongated-vowel collapse after untagged (гаааа → га + :alt); needs dict.

@@ -19,10 +19,92 @@ var leftOAdjInvalid = map[string]struct{}{
 	"ранньо": {}, "пізньо": {},
 }
 
+// leftOAdj ports CompoundTagger.LEFT_O_ADJ — left stems allowed without left-side dict tag.
+var leftOAdj = map[string]struct{}{
+	"австро": {}, "адиго": {}, "американо": {}, "англо": {}, "афро": {},
+	"еко": {}, "індо": {}, "іспано": {}, "італо": {}, "історико": {},
+	"києво": {}, "марокано": {}, "угро": {}, "японо": {}, "румуно": {},
+}
+
 // Directional left stems commonly produced by Java oAdjMatch for geo/direction compounds.
 var directionalLeft = map[string]struct{}{
 	"південно": {}, "північно": {}, "східно": {}, "західно": {},
 	"центрально": {}, "ранньо": {}, "пізньо": {},
+}
+
+// oToYj ports CompoundTagger.oToYj (кричуще → кричущий, ясно → ясний).
+func oToYj(leftWord string) string {
+	low := leftWord
+	if strings.HasSuffix(low, "ьо") {
+		return low[:len(low)-len("ьо")] + "ій"
+	}
+	if low == "" {
+		return low
+	}
+	// drop last rune (о/е) + "ий"
+	rs := []rune(low)
+	if len(rs) < 2 {
+		return low
+	}
+	return string(rs[:len(rs)-1]) + "ий"
+}
+
+// leftOAdjDictOK ports oAdjMatch left-side wordTagger checks when left ∉ LEFT_O_ADJ.
+func leftOAdjDictOK(leftWord string, tagWord func(string) []tagging.TaggedWord) bool {
+	if tagWord == nil {
+		return false
+	}
+	leftLow := strings.ToLower(leftWord)
+	if _, ok := leftOAdj[leftLow]; ok {
+		return true
+	}
+	// tagBothCases(left, ^adv.*|.*?numr.*)
+	if hasPOSPrefixOrContains(tagWord, leftWord, func(pos string) bool {
+		return strings.HasPrefix(pos, "adv") || strings.Contains(pos, "numr")
+	}) {
+		return true
+	}
+	// oToYj as adj
+	if hasPOSPrefixOrContains(tagWord, oToYj(leftLow), func(pos string) bool {
+		return strings.HasPrefix(pos, "adj")
+	}) {
+		return true
+	}
+	// leftBase as noun (drop final o/e)
+	rs := []rune(leftLow)
+	if len(rs) > 1 {
+		base := string(rs[:len(rs)-1])
+		if hasPOSPrefixOrContains(tagWord, base, func(pos string) bool {
+			return strings.HasPrefix(pos, "noun")
+		}) {
+			return true
+		}
+		// leftBase+"а" as noun:inanim:f:v_naz or numr
+		if hasPOSPrefixOrContains(tagWord, base+"а", func(pos string) bool {
+			return strings.HasPrefix(pos, "numr") ||
+				(strings.HasPrefix(pos, "noun") && strings.Contains(pos, "f:v_naz"))
+		}) {
+			return true
+		}
+	}
+	return false
+}
+
+func hasPOSPrefixOrContains(tagWord func(string) []tagging.TaggedWord, w string, ok func(string) bool) bool {
+	if w == "" {
+		return false
+	}
+	for _, form := range []string{w, strings.ToLower(w)} {
+		for _, tw := range tagWord(form) {
+			if ok(tw.PosTag) {
+				return true
+			}
+		}
+		if form == strings.ToLower(w) {
+			break
+		}
+	}
+	return false
 }
 
 // DynamicDirectionalAdjReadings ports CompoundTagger.oAdjMatch for directional lefts.
@@ -45,9 +127,17 @@ func DynamicDirectionalAdjReadings(token string, tagWord func(string) []tagging.
 		return nil
 	}
 	leftLow := strings.ToLower(leftWord)
-	// Gate shape: known directional left, or ends with о/е like Java O_ADJ_PATTERN.
+	// Gate shape: known directional left, LEFT_O_ADJ, or ends with о/е like Java O_ADJ_PATTERN.
 	if _, ok := directionalLeft[leftLow]; !ok {
-		if !strings.HasSuffix(leftLow, "о") && !strings.HasSuffix(leftLow, "е") {
+		if _, ok2 := leftOAdj[leftLow]; !ok2 {
+			if !strings.HasSuffix(leftLow, "о") && !strings.HasSuffix(leftLow, "е") {
+				return nil
+			}
+		}
+	}
+	// Java oAdjMatch: if left ∉ LEFT_O_ADJ, require left-side dict evidence (adv/adj/noun/numr).
+	if _, ok := leftOAdj[leftLow]; !ok {
+		if !leftOAdjDictOK(leftWord, tagWord) {
 			return nil
 		}
 	}
