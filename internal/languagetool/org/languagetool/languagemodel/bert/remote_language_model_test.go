@@ -25,3 +25,9 @@ func TestRemoteLanguageModel(t *testing.T) {
 	require.Len(t, batch, 2)
 	m.Shutdown()
 }
+
+func TestRemoteLanguageModel_NilScorer(t *testing.T) {
+	m := NewRemoteLanguageModel(nil)
+	_, err := m.Score(NewRequest("I has a cat", 2, 5, []string{"have", "had"}))
+	require.Error(t, err)
+}

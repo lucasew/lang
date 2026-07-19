@@ -103,11 +103,11 @@ func countFailOnMatches(matches []*rules.RuleMatch, failOn string) int {
 		if m == nil {
 			continue
 		}
-		// Prefer issue type from the match (set by the rule); SoftRuleMeta is fallback only.
+		// Prefer issue type from the match (set by the rule); RuleMeta is fallback only.
 		issue := m.IssueType
 		if issue == "" {
 			id := ruleIDOfMatch(m)
-			_, _, issue, _ = languagetool.SoftRuleMeta(id)
+			_, _, issue, _ = languagetool.RuleMeta(id)
 		}
 		sev := languagetool.SeverityFromIssueType(issue)
 		if severityRank(sev) >= threshold {

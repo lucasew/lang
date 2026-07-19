@@ -59,17 +59,17 @@ func TestSimplePhraseReplaceChecker_CaseInsensitive(t *testing.T) {
 	require.Equal(t, "BY ACCIDENT", m[0].Suggestions[0])
 }
 
-func TestSoftPreserveCase(t *testing.T) {
-	require.Equal(t, "by accident", SoftPreserveCase("on accident", "by accident"))
-	require.Equal(t, "By accident", SoftPreserveCase("On Accident", "by accident"))
-	require.Equal(t, "BY ACCIDENT", SoftPreserveCase("ON ACCIDENT", "by accident"))
-	require.Equal(t, "Anyway", SoftPreserveCase("Anyways", "anyway"))
+func TestPreserveCase(t *testing.T) {
+	require.Equal(t, "by accident", PreserveCase("on accident", "by accident"))
+	require.Equal(t, "By accident", PreserveCase("On Accident", "by accident"))
+	require.Equal(t, "BY ACCIDENT", PreserveCase("ON ACCIDENT", "by accident"))
+	require.Equal(t, "Anyway", PreserveCase("Anyways", "anyway"))
 	// multi-word match + shorter suggestion: do not force sentence capital
-	require.Equal(t, "are", SoftPreserveCase("They is", "are"))
-	require.Equal(t, "goes", SoftPreserveCase("He go", "goes"))
+	require.Equal(t, "are", PreserveCase("They is", "are"))
+	require.Equal(t, "goes", PreserveCase("He go", "goes"))
 	// full-phrase replacement still capitalizes
-	require.Equal(t, "You're welcome", SoftPreserveCase("Your welcome", "you're welcome"))
-	require.Equal(t, "Between you and me", SoftPreserveCase("Between you and I", "between you and me"))
+	require.Equal(t, "You're welcome", PreserveCase("Your welcome", "you're welcome"))
+	require.Equal(t, "Between you and me", PreserveCase("Between you and I", "between you and me"))
 }
 
 func TestCheckAnnotatedAndProject(t *testing.T) {

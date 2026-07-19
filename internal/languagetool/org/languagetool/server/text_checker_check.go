@@ -301,7 +301,7 @@ func (v *V2TextChecker) CheckAndBuildJSONWithOptions(text, langCode, langName st
 }
 
 // LocalMatchesToRemote maps cycle-free LocalMatch to API RemoteRuleMatch with context.
-// langCode drives SoftRuleURL (community rule page language).
+// langCode drives RuleURL (community rule page language).
 func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contextSize int, langCode string) []RemoteRuleMatch {
 	if len(matches) == 0 {
 		return nil
@@ -346,7 +346,7 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		}
 		rm := NewRemoteRuleMatch(ruleID, msg, ctx, from-start, from, to-from)
 		rm.ShortMessage = m.ShortMessage
-		catID, catName, issue, short := SoftRuleMeta(ruleID)
+		catID, catName, issue, short := RuleMeta(ruleID)
 		// Prefer metadata carried on LocalMatch (soft grammar XML categories).
 		if m.CategoryID != "" {
 			catID = m.CategoryID
@@ -364,13 +364,13 @@ func LocalMatchesToRemote(text string, matches []languagetool.LocalMatch, contex
 		if m.Description != "" {
 			rm.Description = m.Description
 		} else {
-			rm.Description = SoftRuleDescription(ruleID)
+			rm.Description = RuleDescription(ruleID)
 		}
 		if rm.ShortMessage == "" {
 			rm.ShortMessage = short
 		}
 		if rm.URL == "" {
-			rm.URL = languagetool.SoftRuleURL(ruleID, langCode)
+			rm.URL = languagetool.RuleURL(ruleID, langCode)
 		}
 		rm.Replacements = append([]string(nil), m.Suggestions...)
 		out = append(out, *rm)

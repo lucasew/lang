@@ -2,7 +2,7 @@ package languagetool
 
 import "strings"
 
-// FilterMatchesByCategories drops matches whose SoftRuleMeta / LocalMatch category
+// FilterMatchesByCategories drops matches whose RuleMeta / LocalMatch category
 // is disabled, or not in the enabled category set when any are listed.
 // Soft: --enablecategories alone restricts to those categories (does not require
 // --enabledonly, which is reserved for rule-id enable-only mode).
@@ -22,7 +22,7 @@ func FilterMatchesByCategories(ms []LocalMatch, disabled, enabled []string, enab
 	for _, m := range ms {
 		catID := m.CategoryID
 		if catID == "" {
-			catID, _, _, _ = SoftRuleMeta(m.RuleID)
+			catID, _, _, _ = RuleMeta(m.RuleID)
 		}
 		key := strings.ToUpper(catID)
 		if _, drop := dis[key]; drop {

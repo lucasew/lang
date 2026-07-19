@@ -30,9 +30,9 @@ func TestDefaultCoreLanguages_LongCode(t *testing.T) {
 	require.Contains(t, r.Body, "en-US")
 }
 
-func TestSoftForeignIgnoreRanges(t *testing.T) {
+func TestForeignScriptIgnoreRanges(t *testing.T) {
 	text := "Hello привет world"
-	ranges := SoftForeignIgnoreRanges(text, "en", []string{"ru-RU"})
+	ranges := ForeignScriptIgnoreRanges(text, "en", []string{"ru-RU"})
 	require.NotEmpty(t, ranges)
 	require.Equal(t, "ru-RU", ranges[0].Lang)
 	require.Greater(t, ranges[0].To, ranges[0].From)

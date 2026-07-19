@@ -28,7 +28,7 @@ type Finding struct {
 }
 
 // MatchesToFindings converts rule matches to SPEC findings.
-// lang is the check language code used for SoftRuleURL (defaults to en).
+// lang is the check language code used for RuleURL (defaults to en).
 func MatchesToFindings(matches []*rules.RuleMatch, text, filename, lang string) []Finding {
 	if filename == "" || filename == "-" {
 		filename = "stdin"
@@ -41,7 +41,7 @@ func MatchesToFindings(matches []*rules.RuleMatch, text, filename, lang string) 
 		id := ruleIDOfMatch(m)
 		issue := m.IssueType
 		if issue == "" {
-			_, _, issue, _ = languagetool.SoftRuleMeta(id)
+			_, _, issue, _ = languagetool.RuleMeta(id)
 		}
 		if issue == "" {
 			issue = "other"
@@ -62,7 +62,7 @@ func MatchesToFindings(matches []*rules.RuleMatch, text, filename, lang string) 
 			Message:     m.GetMessage(),
 			Location:    loc,
 			Suggestion:  sug,
-			URL:         languagetool.SoftRuleURL(id, lang),
+			URL:         languagetool.RuleURL(id, lang),
 			Offset:      m.FromPos,
 			Length:      m.ToPos - m.FromPos,
 			File:        filename,

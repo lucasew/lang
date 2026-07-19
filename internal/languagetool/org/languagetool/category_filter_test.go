@@ -24,7 +24,7 @@ func TestFilterMatchesByCategories(t *testing.T) {
 	require.Len(t, out, 1)
 	require.Equal(t, "MORFOLOGIK_RULE_EN_US", out[0].RuleID)
 
-	// LocalMatch CategoryID wins over SoftRuleMeta
+	// LocalMatch CategoryID wins over RuleMeta
 	ms2 := []LocalMatch{
 		{RuleID: "EN_SOFT_X", CategoryID: "STYLE", Message: "style"},
 		{RuleID: "EN_SOFT_Y", CategoryID: "CASING", Message: "case"},

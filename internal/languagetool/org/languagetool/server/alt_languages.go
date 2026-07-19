@@ -148,11 +148,6 @@ func pickAltForScript(kind string, alts []string) string {
 	return ""
 }
 
-// SoftForeignIgnoreRanges is a compatibility alias for ForeignScriptIgnoreRanges.
-func SoftForeignIgnoreRanges(text, primaryLang string, altLangs []string) []IgnoreRangeInfo {
-	return ForeignScriptIgnoreRanges(text, primaryLang, altLangs)
-}
-
 func baseLangCode(code string) string {
 	for i := 0; i < len(code); i++ {
 		if code[i] == '-' {

@@ -106,7 +106,7 @@ func PrintMatches(w io.Writer, ruleMatches []*rules.RuleMatch, prevMatches int, 
 		}
 		_, _ = fmt.Fprintln(w, output)
 		// Soft SPEC-aligned type/severity lines (ITS issue type + SARIF level).
-		_, _, issue, _ := languagetool.SoftRuleMeta(ruleID)
+		_, _, issue, _ := languagetool.RuleMeta(ruleID)
 		if issue == "" {
 			issue = "other"
 		}

@@ -14,15 +14,9 @@ type UserDictionary struct {
 	words map[string]map[string]struct{} // username → word set
 }
 
-// SoftUserDictionary is a compatibility alias for UserDictionary.
-type SoftUserDictionary = UserDictionary
-
 func NewUserDictionary() *UserDictionary {
 	return &UserDictionary{words: map[string]map[string]struct{}{}}
 }
-
-// NewSoftUserDictionary is a compatibility alias for NewUserDictionary.
-func NewSoftUserDictionary() *UserDictionary { return NewUserDictionary() }
 
 func (d *UserDictionary) key(username string) string {
 	u := strings.TrimSpace(username)

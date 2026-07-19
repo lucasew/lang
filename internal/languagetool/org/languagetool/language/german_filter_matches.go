@@ -160,10 +160,10 @@ func mergeGermanGGECMatches(match1, match2 languagetool.LocalMatch) languagetool
 			merged.IssueType = "grammar"
 		}
 	}
-	// SoftRuleMeta fill when category left empty (same SoftRule path as ToLocalMatches;
+	// RuleMeta fill when category left empty (same SoftRule path as ToLocalMatches;
 	// Java keeps match1 rule category — Soft only for empty LocalMatch metadata).
 	if merged.CategoryID == "" {
-		catID, catName, issue, _ := languagetool.SoftRuleMeta(merged.RuleID)
+		catID, catName, issue, _ := languagetool.RuleMeta(merged.RuleID)
 		if issue != "" && issue != "uncategorized" {
 			merged.CategoryID = catID
 			if merged.CategoryName == "" {
@@ -172,7 +172,7 @@ func mergeGermanGGECMatches(match1, match2 languagetool.LocalMatch) languagetool
 		}
 	}
 	if merged.Description == "" {
-		if d := languagetool.SoftRuleDescription(merged.RuleID); d != "" && d != merged.RuleID {
+		if d := languagetool.RuleDescription(merged.RuleID); d != "" && d != merged.RuleID {
 			merged.Description = d
 		}
 	}

@@ -200,11 +200,6 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 	}
 }
 
-// SoftRuleMeta is a compatibility alias for RuleMeta.
-func SoftRuleMeta(ruleID string) (categoryID, categoryName, issueType, short string) {
-	return RuleMeta(ruleID)
-}
-
 // RuleDescription returns a short description for known Java rule families.
 // Prefer rule.GetDescription() when available; this is CLI/API fallback only.
 func RuleDescription(ruleID string) string {
@@ -403,9 +398,6 @@ func RuleDescription(ruleID string) string {
 	}
 }
 
-// SoftRuleDescription is a compatibility alias for RuleDescription.
-func SoftRuleDescription(ruleID string) string { return RuleDescription(ruleID) }
-
 // SeverityFromIssueType maps ITS issue types to SARIF 2.1 result levels (SPEC §2.2).
 func SeverityFromIssueType(issueType string) string {
 	switch strings.ToLower(strings.TrimSpace(issueType)) {
@@ -439,9 +431,6 @@ func RuleURL(ruleID, lang string) string {
 	}
 	return "https://community.languagetool.org/rule/show/" + ruleID + "?lang=" + lang
 }
-
-// SoftRuleURL is a compatibility alias for RuleURL.
-func SoftRuleURL(ruleID, lang string) string { return RuleURL(ruleID, lang) }
 
 // RuleLangHint infers a language code from a rule ID prefix (e.g. DE_… → de).
 // Only known LT language codes; empty if unknown.
@@ -537,5 +526,4 @@ func knownLangCode(p string) string {
 	}
 }
 
-// SoftRuleLangHint is a compatibility alias for RuleLangHint.
-func SoftRuleLangHint(ruleID string) string { return RuleLangHint(ruleID) }
+

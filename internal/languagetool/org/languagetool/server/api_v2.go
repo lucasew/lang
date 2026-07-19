@@ -207,7 +207,7 @@ func (a *ApiV2) Handle(path string, parameters map[string]string) (HandleResult,
 			if annotated != nil {
 				plainForRanges = annotated.GetPlainText()
 			}
-			ignoreRanges = SoftForeignIgnoreRanges(plainForRanges, lang, alts)
+			ignoreRanges = ForeignScriptIgnoreRanges(plainForRanges, lang, alts)
 		}
 		var body string
 		checkStart := time.Now()
@@ -277,8 +277,8 @@ func (a *ApiV2) GetConfigurationInfoJSON(lang string) (string, error) {
 	}
 	rules := make([]ruleInfo, 0, len(ids))
 	for _, id := range ids {
-		catID, catName, issue, _ := SoftRuleMeta(id)
-		desc := SoftRuleDescription(id)
+		catID, catName, issue, _ := RuleMeta(id)
+		desc := RuleDescription(id)
 		if desc == "" {
 			desc = id
 		}

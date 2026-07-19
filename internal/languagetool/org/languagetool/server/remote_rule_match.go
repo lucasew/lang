@@ -97,7 +97,7 @@ func (m *RemoteRuleMatch) ToMatchInfo() MatchInfo {
 		},
 	}
 	if info.Rule.Description == "" {
-		info.Rule.Description = SoftRuleDescription(m.RuleID)
+		info.Rule.Description = RuleDescription(m.RuleID)
 	}
 	if info.Rule.Description == "" {
 		info.Rule.Description = m.Message
@@ -109,7 +109,7 @@ func (m *RemoteRuleMatch) ToMatchInfo() MatchInfo {
 	info.Rule.Category.Name = m.Category
 	url := m.URL
 	if url == "" {
-		url = languagetool.SoftRuleURL(m.RuleID, "")
+		url = languagetool.RuleURL(m.RuleID, "")
 	}
 	if url != "" {
 		info.Rule.Urls = append(info.Rule.Urls, struct {

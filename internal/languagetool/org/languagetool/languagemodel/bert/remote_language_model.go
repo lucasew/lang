@@ -62,8 +62,9 @@ func (m *RemoteLanguageModel) Score(req Request) ([]float64, error) {
 	m.mu.Unlock()
 
 	if m.Scorer == nil {
-		// identity fallback: inverse edit distance to original span
-		return editDistanceScores(req), nil
+		// Fail closed: Java needs a remote BERT service — do not invent edit-distance ranks.
+		// Tests/callers may pass EditDistanceScorer explicitly when that stand-in is intended.
+		return nil, fmt.Errorf("RemoteLanguageModel: no Scorer configured")
 	}
 	scores, err := m.Scorer(req)
 	if err != nil {

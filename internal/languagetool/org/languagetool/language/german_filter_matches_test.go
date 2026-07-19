@@ -259,7 +259,7 @@ func TestFilterGermanRuleMatches_MergeKeepsPicky(t *testing.T) {
 	require.True(t, out[0].IsPicky)
 }
 
-// SoftRuleMeta for AI_DE_MERGED_MATCH fills empty category (not invent for unknown ids).
+// RuleMeta for AI_DE_MERGED_MATCH fills empty category (not invent for unknown ids).
 func TestFilterGermanRuleMatches_MergeSoftRuleCategoryWhenEmpty(t *testing.T) {
 	in := []languagetool.LocalMatch{
 		{FromPos: 0, ToPos: 3, RuleID: "AI_DE_GGEC_A", IssueType: "grammar", Suggestions: []string{"a"}},
@@ -269,7 +269,7 @@ func TestFilterGermanRuleMatches_MergeSoftRuleCategoryWhenEmpty(t *testing.T) {
 	require.Len(t, out, 1)
 	require.Equal(t, "GRAMMAR", out[0].CategoryID)
 	require.Equal(t, "Grammatik", out[0].CategoryName)
-	// SoftRuleDescription for AI_DE_MERGED_MATCH matches Java merge message.
+	// RuleDescription for AI_DE_MERGED_MATCH matches Java merge message.
 	require.Equal(t, "Hier scheint es einen Fehler zu geben.", out[0].Description)
 }
 

@@ -54,7 +54,7 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 			continue
 		}
 		id := ruleIDOfMatch(m)
-		catID, catName, issue, short := languagetool.SoftRuleMeta(id)
+		catID, catName, issue, short := languagetool.RuleMeta(id)
 		if m.IssueType != "" {
 			issue = m.IssueType
 		}
@@ -64,7 +64,7 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 		if m.CategoryName != "" {
 			catName = m.CategoryName
 		}
-		desc := languagetool.SoftRuleDescription(id)
+		desc := languagetool.RuleDescription(id)
 		sm := m.GetShortMessage()
 		if sm == "" {
 			sm = short
@@ -81,7 +81,7 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 			CategoryID:            catID,
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
-			RuleURL:               languagetool.SoftRuleURL(id, languageCode),
+			RuleURL:               languagetool.RuleURL(id, languageCode),
 		})
 	}
 	s, err := ser.RuleMatchesToJSON(mj, text, 45)

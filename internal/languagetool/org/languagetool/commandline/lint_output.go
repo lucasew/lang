@@ -26,7 +26,7 @@ func WriteLintMatches(w io.Writer, matches []*rules.RuleMatch, text, filename st
 			continue
 		}
 		id := ruleIDOfMatch(m)
-		_, _, issue, _ := languagetool.SoftRuleMeta(id)
+		_, _, issue, _ := languagetool.RuleMeta(id)
 		sev := languagetool.SeverityFromIssueType(issue)
 		if issue == "" {
 			issue = "other"

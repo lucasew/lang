@@ -35,13 +35,13 @@ func TestToLocalMatches_RuleURLFallback(t *testing.T) {
 	require.Equal(t, "https://dict.leo.org/case", out[0].URL)
 }
 
-// bareIDRule exposes only GetID — SoftRuleMeta fills category/ITS when getters absent.
+// bareIDRule exposes only GetID — RuleMeta fills category/ITS when getters absent.
 type bareIDRule struct{ id string }
 
 func (r bareIDRule) GetID() string { return r.id }
 
-func TestToLocalMatches_SoftRuleMetaFallback(t *testing.T) {
-	// Java SoftRuleMeta: DE_AGREEMENT → GRAMMAR when rule has no GetCategory.
+func TestToLocalMatches_RuleMetaFallback(t *testing.T) {
+	// Java RuleMeta: DE_AGREEMENT → GRAMMAR when rule has no GetCategory.
 	sent := languagetool.AnalyzePlain("ab")
 	m := NewRuleMatch(bareIDRule{id: "DE_AGREEMENT"}, sent, 0, 2, "msg")
 	out := ToLocalMatches([]*RuleMatch{m})
@@ -52,7 +52,7 @@ func TestToLocalMatches_SoftRuleMetaFallback(t *testing.T) {
 	require.NotEmpty(t, out[0].Description)
 	require.NotEqual(t, "DE_AGREEMENT", out[0].Description)
 
-	// Unknown id: do not invent category (uncategorized SoftRuleMeta skipped).
+	// Unknown id: do not invent category (uncategorized RuleMeta skipped).
 	m2 := NewRuleMatch(bareIDRule{id: "TOTALLY_UNKNOWN_XYZ"}, sent, 0, 2, "msg")
 	out2 := ToLocalMatches([]*RuleMatch{m2})
 	require.Len(t, out2, 1)
@@ -97,7 +97,7 @@ func TestToLocalMatches_SpecificRuleIdPreferred(t *testing.T) {
 	out := ToLocalMatches([]*RuleMatch{m})
 	require.Len(t, out, 1)
 	require.Equal(t, "DE_REPEATEDWORDS_AUSSERDEM", out[0].RuleID)
-	// SoftRuleMeta still categorizes specific lemma suffix IDs
+	// RuleMeta still categorizes specific lemma suffix IDs
 	require.Equal(t, "REPETITIONS_STYLE", out[0].CategoryID)
 	require.Equal(t, "style", out[0].IssueType)
 }

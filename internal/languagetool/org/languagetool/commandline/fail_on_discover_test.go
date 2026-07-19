@@ -31,7 +31,7 @@ func TestWalkUpFind_Testdata(t *testing.T) {
 }
 
 func TestFailOnWarning_LongSentence(t *testing.T) {
-	// style long sentence is note by SoftRuleMeta; fail-on=warning should still exit 0 for note-only
+	// style long sentence is note by RuleMeta; fail-on=warning should still exit 0 for note-only
 	// Capitalize start to avoid UPPERCASE_SENTENCE_START (warning).
 	var out, errb bytes.Buffer
 	words := "Word " + strings.Repeat("word ", 11)

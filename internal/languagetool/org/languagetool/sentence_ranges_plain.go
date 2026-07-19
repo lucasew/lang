@@ -5,7 +5,7 @@ import (
 )
 
 // PlainSentenceRanges returns byte offsets of SRX sentences in plain text.
-// Soft stand-in for SentenceRange on unannotated documents.
+// Ports SentenceRange.getFrom/getTo ranges for plain (unannotated) documents via SRX.
 func PlainSentenceRanges(text, languageCode string) []SentenceRange {
 	if text == "" {
 		return nil

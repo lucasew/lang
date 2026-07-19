@@ -208,11 +208,6 @@ func PreserveCase(matched, suggestion string) string {
 	return suggestion
 }
 
-// SoftPreserveCase is a deprecated alias for PreserveCase (anti-cheat naming).
-func SoftPreserveCase(matched, suggestion string) string {
-	return PreserveCase(matched, suggestion)
-}
-
 // CheckAnnotated runs Check on plain text extracted from AnnotatedText.
 // Match offsets are in plain-text space (use AnnotatedText mapping to project).
 func (lt *JLanguageTool) CheckAnnotated(at *markup.AnnotatedText) []LocalMatch {

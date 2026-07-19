@@ -98,10 +98,10 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 				lm.IsPremium = true
 			}
 		}
-		// SoftRuleMeta fallback when rule getters left category/ITS empty (CLI/API parity).
+		// RuleMeta fallback when rule getters left category/ITS empty (CLI/API parity).
 		// Only apply known Java families — skip uncategorized invent for unknown IDs.
 		if lm.RuleID != "" && (lm.CategoryID == "" || lm.IssueType == "" || lm.Description == "" || lm.ShortMessage == "") {
-			catID, catName, issue, short := languagetool.SoftRuleMeta(lm.RuleID)
+			catID, catName, issue, short := languagetool.RuleMeta(lm.RuleID)
 			if issue != "" && issue != "uncategorized" {
 				if lm.CategoryID == "" {
 					lm.CategoryID = catID
@@ -116,7 +116,7 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 					lm.ShortMessage = short
 				}
 				if lm.Description == "" {
-					if d := languagetool.SoftRuleDescription(lm.RuleID); d != "" && d != lm.RuleID {
+					if d := languagetool.RuleDescription(lm.RuleID); d != "" && d != lm.RuleID {
 						lm.Description = d
 					}
 				}

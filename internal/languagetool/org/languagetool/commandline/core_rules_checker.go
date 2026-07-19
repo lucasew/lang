@@ -647,14 +647,14 @@ func CoreListRulesOpts(w io.Writer, opts *CommandLineOptions) error {
 	sort.Strings(ids)
 	offN := 0
 	for _, id := range ids {
-		cat, _, issue, _ := languagetool.SoftRuleMeta(id)
+		cat, _, issue, _ := languagetool.RuleMeta(id)
 		if cat == "" {
 			cat = "MISC"
 		}
 		if issue == "" {
 			issue = "uncategorized"
 		}
-		url := languagetool.SoftRuleURL(id, lang)
+		url := languagetool.RuleURL(id, lang)
 		// kind is always "core" once invent soft packs are gone; keep column for tooling.
 		kind := "core"
 		state := "on"
@@ -754,7 +754,7 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 		if g, ok := m.Rule.(interface{ GetID() string }); ok {
 			id = g.GetID()
 		}
-		catID, catName, issue, short := languagetool.SoftRuleMeta(id)
+		catID, catName, issue, short := languagetool.RuleMeta(id)
 		if m.IssueType != "" {
 			issue = m.IssueType
 		}
@@ -775,12 +775,12 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			ToPos:                 m.GetToPos(),
 			SuggestedReplacements: m.GetSuggestedReplacements(),
 			RuleID:                id,
-			RuleDescription:       languagetool.SoftRuleDescription(id),
+			RuleDescription:       languagetool.RuleDescription(id),
 			IssueType:             issue,
 			CategoryID:            catID,
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
-			RuleURL:               languagetool.SoftRuleURL(id, lang),
+			RuleURL:               languagetool.RuleURL(id, lang),
 		}
 		mj = append(mj, item)
 	}

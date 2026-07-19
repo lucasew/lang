@@ -54,7 +54,7 @@ type LocalMatch struct {
 	ShortMessage   string
 	RuleID         string
 	Suggestions    []string
-	// Optional rule metadata (from the rule or SoftRuleMeta fallback for known Java families).
+	// Optional rule metadata (from the rule or RuleMeta fallback for known Java families).
 	Description  string
 	CategoryID   string
 	CategoryName string
@@ -127,7 +127,7 @@ type JLanguageTool struct {
 	// only explicitly tracked IDs (not invent full registry scan).
 	EnabledRules map[string]struct{}
 	// DefaultOffRuleIDs are rules that registered with XML default="off" (optional packs).
-	// SOFT_OPTIONAL re-enables these in addition to SOFT_OPT_* inventeds.
+	// Level/picky flags re-enable these (Java default="off"); no soft invent packs.
 	DefaultOffRuleIDs map[string]struct{}
 	// Cancelled optional early exit for Check.
 	Cancelled CheckCancelledCallback
@@ -708,8 +708,10 @@ func isStyleIssueType(it string) bool {
 
 // collectUnknown ports JLanguageTool.rememberUnknownWords:
 // if (!reading.isTagged()) unknownWords.add(reading.getToken()).
-// Soft incomplete vs full Java DE tagger: when tokens stay untagged (no TagWord),
-// IsKnownWord acts as a soft “known lexicon” so soft tests without Morphy still work.
+// Incomplete without a real tagger: Java always tags via language tagger.
+// IsKnownWord is an optional inject for tests without Morphy (exact surface only —
+// not a soft invent lexicon). Without TagWord and without IsKnownWord, list nothing
+// (fail closed — do not invent unknown lists from every untagged surface).
 // Do not skip IsSentenceEnd — Java attaches SENT_END on the last content token
 // (hasNoTag), and still lists that surface when untagged (e.g. "description").
 func (lt *JLanguageTool) collectUnknown(s *AnalyzedSentence) {
@@ -725,12 +727,12 @@ func (lt *JLanguageTool) collectUnknown(s *AnalyzedSentence) {
 		if tok.IsTagged() {
 			continue
 		}
-		// Soft dict: treat as known when no real POS (fail-closed without invent tags).
+		// Optional inject dict: treat exact surface as known when no real POS.
 		if lt.IsKnownWord != nil && lt.IsKnownWord(w) {
 			continue
 		}
 		// Without TagWord and without IsKnownWord, listing everything untagged would
-		// spam every token — require a soft dict or real tags (Java always has tagger).
+		// spam every token — require inject dict or real tags (Java always has tagger).
 		if lt.IsKnownWord == nil && lt.TagWord == nil {
 			continue
 		}
@@ -1229,17 +1231,14 @@ func isWordRepeatToken(token string) bool {
 }
 
 // KnownWordSet builds an IsKnownWord from a set of dictionary forms (case-sensitive).
+// Exact surface only — no soft lowercase invent (callers list both cases when needed).
 func KnownWordSet(words ...string) func(string) bool {
 	m := map[string]struct{}{}
 	for _, w := range words {
 		m[w] = struct{}{}
 	}
 	return func(tok string) bool {
-		if _, ok := m[tok]; ok {
-			return true
-		}
-		// soft: lowercase probe
-		_, ok := m[strings.ToLower(tok)]
+		_, ok := m[tok]
 		return ok
 	}
 }

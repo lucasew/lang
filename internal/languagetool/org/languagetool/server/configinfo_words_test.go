@@ -57,8 +57,8 @@ func TestApiV2_WordsBatch(t *testing.T) {
 	require.Contains(t, r.Body, "beta")
 }
 
-func TestSoftUserDictionary(t *testing.T) {
-	d := NewSoftUserDictionary()
+func TestUserDictionary(t *testing.T) {
+	d := NewUserDictionary()
 	require.True(t, d.Add("", "foo"))
 	require.False(t, d.Add("", "foo"))
 	require.Equal(t, []string{"foo"}, d.List("", 0, 10))
