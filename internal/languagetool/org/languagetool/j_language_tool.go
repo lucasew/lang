@@ -1303,9 +1303,8 @@ func SimplePredicateSpellerChecker(ruleID string, isKnown func(string) bool, sug
 				RuleID:       ruleID,
 			}
 			if suggestions != nil {
+				// Exact surface key only — no soft lowercase invent on suggestion maps.
 				if s, ok := suggestions[w]; ok {
-					m.Suggestions = append([]string(nil), s...)
-				} else if s, ok := suggestions[strings.ToLower(w)]; ok {
 					m.Suggestions = append([]string(nil), s...)
 				}
 			}

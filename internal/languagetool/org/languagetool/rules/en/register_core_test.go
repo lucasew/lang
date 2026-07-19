@@ -51,6 +51,40 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 	require.True(t, hasLong, "%+v", m)
 
 	// Soft invent EN_COULD_OF pack removed; official grammar.xml load is the path for that rule.
+
+	// en-US core registers US unit conversion (not picky invent of both US+Imperial).
+	ids := map[string]struct{}{}
+	for _, id := range lt.GetAllRegisteredRuleIDs() {
+		ids[id] = struct{}{}
+	}
+	_, hasUS := ids["METRIC_UNITS_EN_US"]
+	_, hasImp := ids["METRIC_UNITS_EN_IMPERIAL"]
+	require.True(t, hasUS, "AmericanEnglish unit conversion")
+	require.False(t, hasImp, "Imperial not on en-US")
+}
+
+func TestRegisterEnglishVariantExtraRules(t *testing.T) {
+	us := languagetool.NewJLanguageTool("en-US")
+	RegisterEnglishVariantExtraRules(us)
+	require.Contains(t, us.GetAllRegisteredRuleIDs(), "METRIC_UNITS_EN_US")
+
+	gb := languagetool.NewJLanguageTool("en-GB")
+	RegisterEnglishVariantExtraRules(gb)
+	require.Contains(t, gb.GetAllRegisteredRuleIDs(), "METRIC_UNITS_EN_IMPERIAL")
+
+	za := languagetool.NewJLanguageTool("en-ZA")
+	RegisterEnglishVariantExtraRules(za)
+	for _, id := range za.GetAllRegisteredRuleIDs() {
+		require.NotEqual(t, "METRIC_UNITS_EN_US", id)
+		require.NotEqual(t, "METRIC_UNITS_EN_IMPERIAL", id)
+	}
+}
+
+func TestRegisterPickyEnglishRules_OnlyProfanity(t *testing.T) {
+	lt := languagetool.NewJLanguageTool("en-US")
+	RegisterPickyEnglishRules(lt)
+	ids := lt.GetAllRegisteredRuleIDs()
+	require.Equal(t, []string{"PROFANITY"}, ids)
 }
 
 func TestRegisterDemoEnglishSpeller(t *testing.T) {

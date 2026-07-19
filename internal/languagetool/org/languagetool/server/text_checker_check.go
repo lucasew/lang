@@ -244,8 +244,9 @@ func applyRuleValues(lang, text string, existing []languagetool.LocalMatch, raw 
 	return out
 }
 
-// applyLevelPickyBoost runs official picky-level rules when level is PICKY.
-// Java: English.getRelevantRules Tag.picky (profanity, unit conversion, …).
+// applyLevelPickyBoost runs official Tag.picky rules when level is PICKY.
+// Java: English.getRelevantRules Tag.picky (e.g. SimpleReplaceProfanityRule).
+// Unit conversion is locale default (RegisterEnglishVariantExtraRules), not picky.
 // Soft invent packs / picky-soft.xml are not loaded (faithful-port policy).
 func applyLevelPickyBoost(lang string, level CheckLevel, existing []languagetool.LocalMatch, text string) []languagetool.LocalMatch {
 	if !strings.EqualFold(string(level), string(CheckLevelPicky)) {

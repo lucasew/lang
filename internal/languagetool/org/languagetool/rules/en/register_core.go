@@ -90,6 +90,9 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	uq := NewEnglishUnpairedQuotesRule(nil)
 	lt.AddTextLevelRuleChecker(uq.GetID(), rules.AsTextLevelChecker(uq.MatchList))
 
+	// Locale unit conversion (Java AmericanEnglish / BritishEnglish / … getRelevantRules).
+	RegisterEnglishVariantExtraRules(lt)
+
 	// Java English variants createDefaultSpellingRule / Morfologik*SpellerRule.getId.
 	// Prefer CFSA2 hunspell/*.dict when present (same files as Java); else empty map
 	// Morfologik shell fails closed (no invent misspell flags).
@@ -118,8 +121,9 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(esp.GetID(), rules.AsSentenceChecker(esp.Match))
 }
 
-// RegisterPickyEnglishRules installs Java English picky-level rules (official data only).
+// RegisterPickyEnglishRules installs Java English Tag.picky rules (official data only).
 // Invent token-sequence packs (alot/irregardless/…) are not registered — use grammar.xml when wired.
+// Unit conversion is not picky — see RegisterEnglishVariantExtraRules (locale getRelevantRules).
 func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -127,11 +131,34 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 	// Official profanity list (Tag.picky in Java English.getRelevantRules).
 	pf := NewSimpleReplaceProfanityRule(nil)
 	lt.AddRuleChecker(pf.GetID(), rules.AsSentenceCheckerSimple(pf.Match))
-	// Variant unit conversion (imperial/US messages).
-	usU := NewUnitConversionRuleUS(nil)
-	lt.AddRuleChecker(usU.GetID(), rules.AsSentenceCheckerSimple(usU.Match))
-	imU := NewUnitConversionRuleImperial(nil)
-	lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
+}
+
+// RegisterEnglishVariantExtraRules installs locale extras from Java *English.getRelevantRules
+// beyond base English (unit conversion US vs Imperial). Not picky-level invent.
+//
+//	en-US / bare en → UnitConversionRuleUS
+//	en-GB, en-CA, en-AU, en-NZ → UnitConversionRuleImperial
+//	en-ZA → no unit conversion (Java SouthAfricanEnglish adds none)
+func RegisterEnglishVariantExtraRules(lt *languagetool.JLanguageTool) {
+	if lt == nil {
+		return
+	}
+	code := strings.ToLower(lt.GetLanguageCode())
+	switch {
+	case strings.Contains(code, "gb"),
+		strings.Contains(code, "-ca") || strings.HasSuffix(code, "_ca"),
+		strings.Contains(code, "au"),
+		strings.Contains(code, "nz"):
+		imU := NewUnitConversionRuleImperial(nil)
+		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
+	case strings.Contains(code, "za"):
+		// Java SouthAfricanEnglish.getRelevantRules: super only — no unit rule.
+		return
+	default:
+		// AmericanEnglish default (en, en-US, …).
+		usU := NewUnitConversionRuleUS(nil)
+		lt.AddRuleChecker(usU.GetID(), rules.AsSentenceCheckerSimple(usU.Match))
+	}
 }
 
 // RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject
@@ -203,7 +230,7 @@ func DemoEnglishTagWord() func(token string) []languagetool.TokenTag {
 
 // RegisterDemoEnglishTagger installs DemoEnglishTagWord on lt.TagWord for smoke demos
 // when binary POS dict is unavailable. Does not invent extra rules (unit conversion
-// lives on variant getRelevantRules / RegisterPickyEnglishRules US|Imperial).
+// lives on RegisterEnglishVariantExtraRules / locale getRelevantRules).
 func RegisterDemoEnglishTagger(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
