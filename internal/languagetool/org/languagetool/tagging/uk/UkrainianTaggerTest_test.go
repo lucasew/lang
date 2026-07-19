@@ -273,15 +273,37 @@ func TestDynamicNumericReadings(t *testing.T) {
 	require.Empty(t, DynamicNumericReadings("100-річному", nil))
 
 	tagWord := func(s string) []tagging.TaggedWord {
-		if strings.ToLower(s) == "річному" || strings.ToLower(s) == "річний" {
+		switch strings.ToLower(s) {
+		case "річному", "річний":
 			return []tagging.TaggedWord{{Lemma: "річний", PosTag: "adj:m:v_dav"}}
+		case "сторіччя":
+			// Java getTryPrefix("річчя") → "сто" + dict
+			return []tagging.TaggedWord{{Lemma: "сторіччя", PosTag: "noun:inanim:n:v_naz"}}
+		case "відсотково":
+			return []tagging.TaggedWord{{Lemma: "відсотково", PosTag: "adv"}}
+		default:
+			return nil
 		}
-		return nil
 	}
 	rs2 := DynamicNumericReadings("100-річному", tagWord)
 	require.NotEmpty(t, rs2)
 	require.Contains(t, rs2[0].POS, "adj")
 	require.Equal(t, "100-річний", rs2[0].Lemma)
+
+	// getTryPrefix: 100-річчя via сторіччя in dict
+	require.Equal(t, "сто", getTryPrefix("річчя"))
+	rs3 := DynamicNumericReadings("100-річчя", tagWord)
+	require.NotEmpty(t, rs3)
+	require.Equal(t, "100-річчя", rs3[0].Lemma)
+	require.Contains(t, rs3[0].POS, "noun")
+
+	// lemma відсотково allowed even without adj POS
+	rs4 := DynamicNumericReadings("100-відсотково", tagWord)
+	require.NotEmpty(t, rs4)
+	require.Equal(t, "100-відсотково", rs4[0].Lemma)
+
+	// bare noun right without adj/відсотково: fail closed
+	require.Empty(t, DynamicNumericReadings("10-хвилинка", tagWord))
 
 	require.Empty(t, DynamicNumericReadings("звичайний", tagWord))
 }

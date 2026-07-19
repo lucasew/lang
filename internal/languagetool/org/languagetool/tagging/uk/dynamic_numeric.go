@@ -7,14 +7,37 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
-// Dynamic numeric compounds: 100-й, 50-х, 100-річному, 100-відсотково
+// Dynamic numeric compounds: 100-й, 50-х, 100-річному, 100-відсотково, 100-річчя
 // (Java CompoundTagger.matchDigitCompound + LetterEndingForNumericHelper).
-// reNumLeft ports ADJ_PREFIX_NUMBER / digit left of matchDigitCompound (simplified).
+// reNumLeft ports ADJ_PREFIX_NUMBER / digit left of matchDigitCompound (simplified; no Roman yet).
 var reNumLeft = regexp.MustCompile(`^[0-9]+([,][0-9]+)?([-–—][0-9]+([,][0-9]+)?)?%?$`)
+
+// Java CompoundTagger REQ_NUM_*_PATTERN + getTryPrefix.
+var (
+	reReqNumSto    = regexp.MustCompile(`(?i)^(річч|літт|метрів|грамов|тисячник).{0,3}$`)
+	reReqNumDesyat = regexp.MustCompile(`(?i)^(класни[кц]|бальни[кц]|раундов|томн|томов|хвилин|десятиріч|кілометрів|річ).{0,4}$`)
+	reReqNumDva    = regexp.MustCompile(`(?i)^(місн|томник|поверхів).{0,4}$`)
+)
+
+// getTryPrefix ports CompoundTagger.getTryPrefix — prefix a dict-known base onto the right
+// half so "річчя" tags via "сторіччя", lemma strip back to "річчя".
+func getTryPrefix(rightWord string) string {
+	low := strings.ToLower(rightWord)
+	switch {
+	case reReqNumSto.MatchString(low):
+		return "сто"
+	case reReqNumDesyat.MatchString(low):
+		return "десяти"
+	case reReqNumDva.MatchString(low):
+		return "дво"
+	default:
+		return ""
+	}
+}
 
 // DynamicNumericReadings tags digit-hyphen ordinal/adj endings.
 // Short letter endings use official LetterEndingForNumericHelper maps only (no invent cases).
-// Longer right halves (100-річному) require tagWord hits (Java wordTagger) — fail-closed without dict.
+// Longer right halves require tagWord hits (Java wordTagger) — fail-closed without dict.
 func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedWord) []struct{ Lemma, POS string } {
 	t := strings.ReplaceAll(token, "–", "-")
 	t = strings.ReplaceAll(t, "—", "-")
@@ -54,17 +77,32 @@ func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedW
 		return out
 	}
 
-	// Java: e.g. 100-річному, 100-відсотково — right from wordTagger only
 	if tagWord == nil {
 		return nil
 	}
 	rightLow := strings.ToLower(rightWord)
+
+	// Java: 100-річчя via getTryPrefix + wordTagger.tag(prefix+right)
+	if pref := getTryPrefix(rightLow); pref != "" {
+		if out := numericTryPrefixReadings(leftWord, rightLow, pref, tagWord); len(out) > 0 {
+			return out
+		}
+	}
+
+	// Java: e.g. 100-річному, 100-відсотково — right from wordTagger;
+	// only adj POS or lemma "відсотково" (not bare noun invent).
 	tws := tagWord(rightWord)
 	if len(tws) == 0 && rightWord != rightLow {
 		tws = tagWord(rightLow)
 	}
 	if len(tws) == 0 {
 		return nil
+	}
+	// Java: empty or has pron → null
+	for _, tw := range tws {
+		if strings.Contains(tw.PosTag, "pron") {
+			return nil
+		}
 	}
 	var out []struct{ Lemma, POS string }
 	seen := map[string]struct{}{}
@@ -73,11 +111,49 @@ func DynamicNumericReadings(token string, tagWord func(string) []tagging.TaggedW
 		if pos == "" {
 			continue
 		}
-		// prefer adj / adv (Java matchDigitCompound filters)
-		if !strings.HasPrefix(pos, "adj") && !strings.HasPrefix(pos, "adv") && !strings.HasPrefix(pos, "noun") {
+		lemmaRight := tw.Lemma
+		if lemmaRight == "" {
+			lemmaRight = rightLow
+		}
+		// Java: adj* OR lemma "відсотково"
+		if !strings.HasPrefix(pos, "adj") && lemmaRight != "відсотково" {
 			continue
 		}
-		lemmaRight := tw.Lemma
+		lemma := leftWord + "-" + lemmaRight
+		key := lemma + "|" + pos
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, struct{ Lemma, POS string }{Lemma: lemma, POS: pos})
+	}
+	return out
+}
+
+// numericTryPrefixReadings ports getTryPrefix branch of matchDigitCompound.
+// Java: wordTagger.tag(prefix+right); lemma = left + "-" + dictLemma[len(prefix):]
+func numericTryPrefixReadings(leftWord, rightLow, pref string, tagWord func(string) []tagging.TaggedWord) []struct{ Lemma, POS string } {
+	tws := tagWord(pref + rightLow)
+	if len(tws) == 0 {
+		return nil
+	}
+	prefRunes := []rune(pref)
+	var out []struct{ Lemma, POS string }
+	seen := map[string]struct{}{}
+	for _, tw := range tws {
+		pos := tw.PosTag
+		if pos == "" {
+			continue
+		}
+		lemmaRight := rightLow
+		if tw.Lemma != "" {
+			rs := []rune(tw.Lemma)
+			if len(rs) >= len(prefRunes) && strings.EqualFold(string(rs[:len(prefRunes)]), pref) {
+				lemmaRight = string(rs[len(prefRunes):])
+			} else {
+				lemmaRight = tw.Lemma
+			}
+		}
 		if lemmaRight == "" {
 			lemmaRight = rightLow
 		}
