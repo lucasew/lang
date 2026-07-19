@@ -1060,9 +1060,120 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		if nl == "людина" || nl == "знаменитість" {
 			return true
 		}
+		if nounPos < len(tokens)-1 && CleanTokenLower(tokens[nounPos+1]) == "людина" {
+			return true
+		}
 	}
 	// мати + v_oru (має своїм наслідком) — partial Java arm
 	if HasLemmaTokenRE(verb, regexp.MustCompile(`^(мати|маючи|мавши)$`)) && HasPosTagPart(noun, "v_oru") {
+		return true
+	}
+
+	// --- SearchHelper.Match Condition arms (Java TokenAgreementVerbNounExceptionHelper) ---
+
+	vl := CleanTokenLower(verb)
+	// буде видно тільки супутники — predic between verb and noun
+	if (vl == "було" || vl == "буде") && verbPos+1 < nounPos {
+		lim := nounPos - verbPos
+		if lim < 1 {
+			lim = 1
+		}
+		if (&SearchMatch{IgnoreQuotes: true}).
+			Target(ConditionPostag(regexp.MustCompile(`.*predic.*`))).
+			WithLimit(lim).
+			MAfterATR(tokens, verbPos+1) >= 0 {
+			return true
+		}
+	}
+	// потрібно буде … — lemma треба|потрібно immediately before було/буде
+	if (vl == "було" || vl == "буде") && verbPos > 0 {
+		if (&SearchMatch{IgnoreQuotes: true}).
+			Target(ConditionLemma(regexp.MustCompile(`^(треба|потрібно)$`))).
+			MNowATR(tokens, verbPos-1) >= 0 {
+			return true
+		}
+	}
+	// Конкурс був … num
+	if verbPos > 1 && CleanTokenLower(tokens[verbPos-1]) == "конкурс" &&
+		HasLemmaWithPosRE(verb, []string{"бути"}, regexp.MustCompile(`verb.*(:s:3|past:m).*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`num.*`)) {
+		return true
+	}
+	// розподілятиметься пропорційно вкладеній праці — adv case gov between verb and noun
+	if nounPos-verbPos > 1 {
+		mid := tokens[nounPos-1]
+		// Java Pattern.compile("adv(?!p).*") — RE2: adv but not advp
+		cases := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadings(mid, "adv")
+		// drop if mid is advp-only without bare adv prefix case map
+		if len(cases) > 0 && !HasPosTagStart(mid, "advp") {
+			var list []string
+			for c := range cases {
+				list = append(list, c)
+			}
+			for ii := verbPos + 1; ii < nounPos; ii++ {
+				if HasVidmPosTag(list, tokens[ii]) {
+					return true
+				}
+			}
+		}
+	}
+	// TIME_PLUS after noun span (відбувається кожні два роки)
+	if TimePlusLemmasPattern != nil {
+		if (&SearchMatch{IgnoreQuotes: true}).
+			Skip(ConditionPostag(regexp.MustCompile(`.*v_(rod|zna|oru).*|part.*|number`))).
+			Target(ConditionLemma(TimePlusLemmasPattern)).
+			WithLimit(4).
+			MAfterATR(tokens, nounPos) > 0 {
+			return true
+		}
+		// йде три з половиною години
+		if nounPos < len(tokens)-3 && HasPosTagRE(noun, regexp.MustCompile(`numr.*v_zna.*`)) {
+			if (&SearchMatch{IgnoreQuotes: true}).
+				Target(ConditionLemma(TimePlusLemmasPattern)).
+				WithLimit(4).
+				MAfterATR(tokens, nounPos+1) > 0 {
+				return true
+			}
+		}
+	}
+	// мова instrumental after noun
+	if (&SearchMatch{IgnoreQuotes: true}).
+		Skip(ConditionPostag(regexp.MustCompile(`.*v_oru.*|part.*|adv.*`))).
+		Target(SearchCondition{
+			Lemma:  regexp.MustCompile(`^мова$`),
+			Postag: regexp.MustCompile(`noun:inanim:.:v_oru.*`),
+		}).
+		WithLimit(4).
+		MAfterATR(tokens, nounPos) > 0 {
+		return true
+	}
+	// став жовтого кольору
+	if nounPos < len(tokens)-1 &&
+		CleanTokenLower(tokens[nounPos+1]) == "кольору" &&
+		HasPosTagStart(noun, "adj:m:v_rod") {
+		return true
+	}
+	// fixed phrases (Java tokenLine mNow)
+	for _, phrase := range []string{
+		"не те щоб", "не те що", "не останньою чергою",
+		"світ за очі", "ні світ ні", "станом на", "страх як", "жах як",
+	} {
+		// mNow at nounPos: exact phrase starting at noun
+		if NewSearchMatch(phrase).MNowATR(tokens, nounPos) >= 0 {
+			return true
+		}
+		if NewSearchMatch(phrase).MNowATR(tokens, verbPos) >= 0 {
+			return true
+		}
+	}
+	// куди очі
+	if NewSearchMatch("куди очі").MNowATR(tokens, nounPos) >= 0 ||
+		NewSearchMatch("куди очі").MNowATR(tokens, verbPos) >= 0 {
+		return true
+	}
+	// не те, що — comma as separate token
+	if NewSearchMatch("не те , що").MNowATR(tokens, nounPos) >= 0 ||
+		NewSearchMatch("не те , що").MNowATR(tokens, verbPos) >= 0 {
 		return true
 	}
 

@@ -299,3 +299,33 @@ func TestNounVerbException_InfAgreementSearch(t *testing.T) {
 		atr("вважатися", "verb:imperf:inf:refl"),
 	}, 2, 3))
 }
+
+func TestVerbNounException_SearchHelperArms(t *testing.T) {
+	// потрібно буде склянку
+	treba := "потрібно"
+	buti := "бути"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("потрібно", &treba, "adv"),
+		atrLemma("буде", &buti, "verb:imperf:futr:s:3"),
+		atr("склянку", "noun:inanim:f:v_zna"),
+	}, 1, 2))
+
+	// буде видно супутники
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("буде", "verb:imperf:futr:s:3"),
+		atr("видно", "adv:predic"),
+		atr("супутники", "noun:inanim:p:v_naz"),
+	}, 0, 2))
+
+	// став жовтого кольору
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("став", "verb:perf:past:m"),
+		atr("жовтого", "adj:m:v_rod"),
+		atr("кольору", "noun:inanim:m:v_rod"),
+	}, 0, 1))
+
+	// станом на
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("станом", "noun"), atr("на", "prep"), atr("1", "number"),
+	}, 0, 2))
+}
