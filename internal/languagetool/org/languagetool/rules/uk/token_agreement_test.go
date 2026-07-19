@@ -1036,3 +1036,57 @@ func TestNounVerbException_MorePlural(t *testing.T) {
 		atr("сестра", "noun:anim:f:v_naz"), atr("мешкали", "verb:imperf:past:p"),
 	}, 3, 4))
 }
+
+func TestNounVerbException_PluralBlockMore(t *testing.T) {
+	// також coordination
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("розписи", "noun"), atr("а"), atr("також"),
+		atr("архітектура", "noun:inanim:f:v_naz"), atr("відрізняються", "verb:imperf:pres:p:3"),
+	}, 4, 5))
+
+	// comma list of countries
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("Бразилія", "noun:inanim:f:v_naz:prop"), atr(","),
+		atr("Мексика", "noun:inanim:f:v_naz:prop"), atr("збувають", "verb:imperf:pres:p:3"),
+	}, 3, 4))
+
+	// сотня + plural verb
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("сотня", strPtr("сотня"), "noun:inanim:f:v_naz"),
+		atr("отримали", "verb:perf:past:p"),
+	}, 0, 1))
+
+	// number not ending in 1
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("22", "number"), atr("депутати", "noun:anim:p:v_naz"),
+		atr("висловилися", "verb:perf:past:p"),
+	}, 2, 3))
+
+	// 100 чоловік
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("100", "numr"), atr("чоловік", "noun"),
+		atr("прийшли", "verb:perf:past:p"),
+	}, 2, 3))
+
+	// навіть before subject
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("душ", "noun"), atr("навіть"), atr("хлорка", "noun:inanim:f:v_naz"),
+		atr("допомогли", "verb:perf:past:p"),
+	}, 3, 4))
+
+	// geo prop after non-naz
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("села", "noun:inanim:n:v_rod"),
+		atr("Оляниця", "noun:inanim:f:v_naz:prop:geo"),
+		atr("вирішив", "verb:perf:past:m"),
+	}, 2, 3))
+
+	// Сейм Республіки Польща — Java nounPos > 3
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("pad"),
+		atr("Сейм", "noun:inanim:m:v_naz"),
+		atr("Республіки", "noun:inanim:f:v_rod"),
+		atr("Польща", "noun:inanim:f:v_naz:prop"),
+		atr("проігнорував", "verb:perf:past:m"),
+	}, 4, 5))
+}

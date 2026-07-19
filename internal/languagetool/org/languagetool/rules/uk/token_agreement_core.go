@@ -2025,7 +2025,7 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		}
 	}
 
-	// plural verb + coordination before subject
+	// plural verb + coordination before subject (Java verb.*:p block)
 	if HasPosTagRE(verb, regexp.MustCompile(`verb.*:p(?:$|:.*)`)) {
 		// Колесніков/Ахметов посилили
 		if nounPos > 2 &&
@@ -2065,11 +2065,11 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 					}
 					// як Німеччина, так і Україна — conj before left
 					if HasPosTagPart(tokens[pos0left-1], "conj") {
-						return true
+						pos0left--
 					}
 					// він особисто й …
 					if containsStr([]string{"особисто", "зокрема", "загалом"}, CleanTokenLower(tokens[pos0left-1])) {
-						return true
+						pos0left--
 					}
 					if containsStr([]string{"особисто", "зокрема", "загалом"}, CleanTokenLower(tokens[verbPos-1])) {
 						return true
@@ -2082,9 +2082,164 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 					if HasPosTagRE(tokens[pos0left-1], nounVNazPattern) {
 						return true
 					}
+					// І спочатку Білорусь, а тепер і Україна — adv + conj
+					if verbPos > 6 && pos0left > 2 &&
+						HasPosTagPart(tokens[pos0left-1], "adv") &&
+						HasPosTagPart(tokens[pos0left-2], "conj") {
+						pos0left -= 2
+					}
+					// strip trailing quotes/commas left of conj
+					for pos0left > 2 && tokens[pos0left-1] != nil &&
+						regexp.MustCompile(`^[,»“”"]$`).MatchString(tokens[pos0left-1].GetToken()) {
+						pos0left--
+					}
+				}
+				// моя мама й сестра / proper / number:latin
+				if pos0left > 1 {
+					left := tokens[pos0left-1]
+					if HasPosTagStart(left, "noun") ||
+						HasPosTagStart(left, "number:latin") ||
+						IsPossiblyProperNoun(left) {
+						return true
+					}
+					// біологічна і ядерна зброя стають
+					if HasPosTagRE(left, adjVNazPattern) {
+						return true
+					}
 				}
 			}
 		}
+
+		// Усі розписи, а також архітектура відрізняються
+		if pos3 := TokenSearch(tokens, verbPos-2, "", regexp.MustCompile(`(?i)^також$`),
+			regexp.MustCompile(`(?:noun|adj:.:v_naz|adv|part).*`), DirReverse); pos3 > 1 {
+			return true
+		}
+
+		// що пачка, що ковбаса коштують
+		if nounPos > 5 {
+			prev := strings.ToLower(tokens[nounPos-1].GetToken())
+			if prev == "що" || prev == "не" {
+				if TokenSearch(tokens, nounPos-3, "", regexp.MustCompile("(?i)^"+regexp.QuoteMeta(prev)+"$"),
+					regexp.MustCompile(`(?:noun|adj).*`), DirReverse) > nounPos-7 {
+					return true
+				}
+			}
+		}
+
+		// Бразилія, Мексика, Індія збувають
+		if pos1 := TokenSearch(tokens, nounPos-1, "", regexp.MustCompile(`^,$`),
+			regexp.MustCompile(`^adj.*`), DirReverse); pos1 > 1 {
+			if HasPosTagRE(tokens[pos1-1], nounVNazPattern) ||
+				(pos1 > 2 &&
+					HasPosTagRE(tokens[pos1-1], regexp.MustCompile(`noun.*:v_rod.*`)) &&
+					HasPosTagRE(tokens[pos1-2], nounVNazPattern)) {
+				return true
+			}
+		}
+
+		// Мустафа Джемілєв, Рефат Чубаров
+		if nounPos > 4 &&
+			IsCapitalized(noun.GetToken()) &&
+			(HasPosTagStart(tokens[nounPos-1], "noun:anim") || IsInitial(tokens[nounPos-1])) &&
+			isConjForPluralWithComma(tokens[nounPos-2]) &&
+			IsCapitalized(tokens[nounPos-3].GetToken()) &&
+			(HasPosTagStart(tokens[nounPos-4], "noun:anim") || IsInitial(tokens[nounPos-1])) {
+			return true
+		}
+
+		// закордонний депутат і прем'єр … / а також голова
+		idxM := &SearchMatch{IgnoreQuotes: true}
+		idxM.Target(ConditionTokenRE(conjForPluralTokenRE))
+		idxM.IgnoreInsertsOn()
+		idxM.Skip(
+			ConditionPostag(regexp.MustCompile(`(?:noun|adj).*?v_(?:naz|rod).*`)),
+			ConditionTokenRE(regexp.MustCompile(`^(?:і?з|зі|від|на|навіть|також|потім|згодом)$`)),
+		)
+		if idx := idxM.MBeforeATR(tokens, nounPos-1); idx > 0 {
+			if IsNonPluralA(tokens, idx) {
+				idx = -1
+			}
+			if idx > 1 &&
+				(HasPosTagRE(tokens[idx-1], nounVNazPattern) ||
+					IsCapitalized(tokens[idx-1].GetCleanToken()) ||
+					HasLemmaTokenAny(tokens[idx+1], []string{"навіть", "також", "потім", "згодом"}) ||
+					HasLemmaTokenAny(tokens[idx-1], []string{"потім", "згодом"})) {
+				return true
+			}
+		}
+
+		// понад сотня / тисяча
+		if (HasPosTagPart(noun, "numr") && !HasLemmaToken(noun, "один")) ||
+			HasLemmaTokenAny(noun, []string{"сотня", "тисяча", "десяток"}) {
+			return true
+		}
+		// 121 депутат (not ending in 1 unless 11)
+		if nounPos > 1 && HasPosTagPart(tokens[nounPos-1], "number") {
+			nt := tokens[nounPos-1].GetToken()
+			if !strings.HasSuffix(nt, "1") || strings.HasSuffix(nt, "11") {
+				return true
+			}
+		}
+		// 100 чоловік without жінка in sentence
+		if nounPos > 0 && HasPosTagPart(tokens[nounPos-1], "num") &&
+			noun.GetToken() == "чоловік" &&
+			TokenSearch(tokens, 1, "noun:anim:f:", regexp.MustCompile(`жінк[аи]`), regexp.MustCompile(`.*`), DirForward) == -1 {
+			return true
+		}
+		// 50%+1 / плюс
+		if nounPos > 1 &&
+			(strings.HasSuffix(tokens[nounPos-1].GetToken(), "+1") ||
+				TokenSearch(tokens, verbPos-2, "", regexp.MustCompile(`(?i)^плюс$`),
+					regexp.MustCompile(`(?:numr|adj).*.:v_naz.*`), DirReverse) > 0) {
+			return true
+		}
+		// Решта 121 депутат
+		if nounPos > 2 &&
+			HasLemmaToken(tokens[nounPos-2], "решта") &&
+			tokens[nounPos-1].GetToken() != "" &&
+			regexp.MustCompile(`.+1$`).MatchString(tokens[nounPos-1].GetToken()) {
+			return true
+		}
+		// дві групи, кожна виконували
+		if nounPos > 2 &&
+			HasLemmaToken(noun, "кожний") &&
+			HasPosTagRE(verb, regexp.MustCompile(`verb.*(?:past:p|:p:3).*`)) {
+			return true
+		}
+		// навіть / ані / жоден before subject
+		if nounPos > 2 &&
+			regexp.MustCompile(`^(?:а?ні|жодн.*|навіть)$`).MatchString(tokens[nounPos-1].GetToken()) {
+			return true
+		}
+		// ані … не + plural verb
+		if nounPos > 2 && verbPos > 0 &&
+			tokens[verbPos-1].GetToken() == "не" &&
+			ReverseSearch(tokens, nounPos-1, 5, regexp.MustCompile(`^а?ні$`), nil) {
+			return true
+		}
+		if nounPos > 3 && verbPos > 0 &&
+			tokens[verbPos-1].GetToken() == "не" &&
+			regexp.MustCompile(`^а?ні$`).MatchString(tokens[nounPos-2].GetToken()) &&
+			adjNounInflectionOverlap(tokens[nounPos-1], noun) {
+			return true
+		}
+	}
+
+	// Сейм Республіки Польща проігнорував — prop + v_rod + noun agrees with verb
+	if nounPos > 3 &&
+		HasPosTagPart(noun, ":prop") &&
+		HasPosTagRE(tokens[nounPos-1], regexp.MustCompile(`noun.*:v_rod.*`)) &&
+		VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(tokens[nounPos-2])) {
+		return true
+	}
+
+	// комітет … села Оляниця — geo prop after non-naz inanim
+	if nounPos > 1 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:inanim:[mnf]:v_naz:prop:geo.*`)) &&
+		hasPosWithoutPron(tokens[nounPos-1], regexp.MustCompile(`noun:inanim:[mnf]:v_`)) &&
+		!HasPosTagPart(tokens[nounPos-1], "v_naz") {
+		return true
 	}
 
 	return false
