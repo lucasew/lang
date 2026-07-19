@@ -9,16 +9,17 @@ import (
 
 // WordCoherencyData is the loaded variant map plus surface→base form mapping.
 type WordCoherencyData struct {
-	// WordMap maps a spelling (and expanded surfaces) to its alternatives.
+	// WordMap maps a spelling to its alternatives (exact file forms only).
 	WordMap map[string]map[string]struct{}
-	// ToBase maps a surface form to the uninflected form from the data file.
+	// ToBase maps a form to the uninflected form from the data file.
 	ToBase map[string]string
 }
 
 // LoadWordCoherencyData ports WordCoherencyDataLoader.loadWords.
-// expandInflections is legacy/soft-only: Java never invents suffixes — languages must
-// pass false and rely on tagger lemmas. Prefer false for all faithful ports.
+// expandInflections is ignored: Java never invents inflection suffixes (exact pairs only).
+// The parameter remains for call-site compatibility; always load exact semicolon pairs.
 func LoadWordCoherencyData(r io.Reader, path string, expandInflections bool) (*WordCoherencyData, error) {
+	_ = expandInflections
 	d := &WordCoherencyData{
 		WordMap: make(map[string]map[string]struct{}),
 		ToBase:  make(map[string]string),
@@ -46,11 +47,7 @@ func LoadWordCoherencyData(r io.Reader, path string, expandInflections bool) (*W
 		if a == "" || b == "" {
 			return nil, fmt.Errorf("Format error in file %s, line: %s", path, line)
 		}
-		if expandInflections {
-			expandCoherencyPair(d, a, b)
-		} else {
-			addCoherencyPair(d, a, b, a, b)
-		}
+		addCoherencyPair(d, a, b, a, b)
 	}
 	return d, sc.Err()
 }
@@ -87,52 +84,12 @@ func addCoherencyPair(d *WordCoherencyData, a, b, baseA, baseB string) {
 	}
 }
 
-func expandCoherencyPair(d *WordCoherencyData, a, b string) {
-	for _, fa := range coherencySurfaceForms(a) {
-		for _, fb := range coherencySurfaceForms(b) {
-			addCoherencyPair(d, fa, fb, a, b)
-		}
-	}
-}
-
-func coherencySurfaceForms(w string) []string {
-	out := []string{w, w + "s"}
-	if strings.HasSuffix(w, "e") {
-		out = append(out, w+"d", w[:len(w)-1]+"ing")
-	} else {
-		out = append(out, w+"ed", w+"ing")
-	}
-	// German adjective/noun full forms (lemma stand-in without a tagger).
-	for _, suf := range []string{
-		"e", "er", "es", "en", "em",
-		"ere", "erer", "eres", "eren", "erem",
-		"ste", "ster", "stes", "sten", "stem",
-	} {
-		out = append(out, w+suf)
-	}
-	// Polish noun case endings (blef → blefu, bluff → bluffem, …).
-	for _, suf := range []string{
-		"u", "owi", "em", "ie", "y", "ą", "ę",
-		"ów", "om", "ami", "ach", "ami",
-	} {
-		out = append(out, w+suf)
-	}
-	// Russian soft-sign nouns: нуль → нулю, ноль → ноля, …
-	if strings.HasSuffix(w, "ь") && len([]rune(w)) > 1 {
-		runes := []rune(w)
-		stem := string(runes[:len(runes)-1])
-		for _, suf := range []string{"я", "ю", "ем", "ём", "е", "и", "ей"} {
-			out = append(out, stem+suf)
-		}
-	}
-	return out
-}
-
 // WordCoherencyDataLoader ports org.languagetool.rules.WordCoherencyDataLoader.
+// ExpandInflections is deprecated and ignored (Java has no invent expansion).
 type WordCoherencyDataLoader struct {
 	ExpandInflections bool
 }
 
 func (l WordCoherencyDataLoader) LoadWords(r io.Reader, path string) (*WordCoherencyData, error) {
-	return LoadWordCoherencyData(r, path, l.ExpandInflections)
+	return LoadWordCoherencyData(r, path, false)
 }

@@ -1,6 +1,7 @@
 package pt
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -11,11 +12,22 @@ import (
 
 func TestPortugueseProclisisFilter(t *testing.T) {
 	f := NewPortugueseProclisisFilter()
+	// Without synth: fail closed
+	require.Empty(t, f.Suggest([]struct{ Token, POS string }{
+		{Token: "fazê-lo", POS: "VMN0000:PP3MSA00"},
+	}))
+
+	// SynthesizeVerb returns bare verb stem (stand-in for PortugueseSynthesizer)
+	f.SynthesizeVerb = func(token, verbTag string) string {
+		if i := strings.Index(token, "-"); i >= 0 {
+			return token[:i]
+		}
+		return token
+	}
 	got := f.Suggest([]struct{ Token, POS string }{
 		{Token: "fazê-lo", POS: "VMN0000:PP3MSA00"},
 	})
 	require.Contains(t, got, "o fazê")
-	// nos with plural verb ending
 	got = f.Suggest([]struct{ Token, POS string }{
 		{Token: "dizem-nos", POS: "VMIP3P0:PP1CPO00"},
 	})
@@ -25,6 +37,12 @@ func TestPortugueseProclisisFilter(t *testing.T) {
 
 func TestPortugueseProclisisFilter_AcceptRuleMatch(t *testing.T) {
 	f := NewPortugueseProclisisFilter()
+	f.SynthesizeVerb = func(token, verbTag string) string {
+		if i := strings.Index(token, "-"); i >= 0 {
+			return token[:i]
+		}
+		return token
+	}
 	pos := "VMIP1P0:PP3MSA00"
 	tok := languagetool.NewAnalyzedTokenReadingsAt(
 		languagetool.NewAnalyzedToken("bebemo-lo", &pos, nil), 0)
