@@ -24,6 +24,9 @@ type AbstractWordCoherencyRule struct {
 	MessageFn         func(word1, word2 string) string
 	ShortMsg          string // Java getShortMessage(); empty = null
 	CreateReplacement func(marked, token, otherSpelling string, tmpToken *languagetool.AnalyzedTokenReadings) string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 // InitWordCoherencyMeta applies Java AbstractWordCoherencyRule constructor metadata.
@@ -57,6 +60,34 @@ func (r *AbstractWordCoherencyRule) GetCategory() *Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractWordCoherencyRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractWordCoherencyRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractWordCoherencyRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // MinToCheckParagraph ports AbstractWordCoherencyRule.minToCheckParagraph (Java returns -1).

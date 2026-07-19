@@ -51,6 +51,11 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: addExamplePair(archeology → archaeology)
+	base.AddExamplePair(
+		rules.Wrong("He likes archaeology. Really? She likes <marker>archeology</marker>, too."),
+		rules.Fixed("He likes archaeology. Really? She likes <marker>archaeology</marker>, too."),
+	)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

@@ -126,6 +126,18 @@ func TestWordCoherencyRule_CallIndependence(t *testing.T) {
 	assertGood("She likes archeology, too.")
 }
 
+// Java WordCoherencyRule: EN_WORD_COHERENCY + archeology example pair.
+func TestWordCoherencyRule_Metadata(t *testing.T) {
+	rule := NewWordCoherencyRule(nil)
+	require.Equal(t, "EN_WORD_COHERENCY", rule.GetID())
+	require.Equal(t, "Coherent spelling of words with two admitted variants.", rule.GetDescription())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "He likes archaeology. Really? She likes <marker>archeology</marker>, too.", inc[0].GetExample())
+	require.Equal(t, []string{"archaeology"}, inc[0].GetCorrections())
+	require.Equal(t, "He likes archaeology. Really? She likes <marker>archaeology</marker>, too.", rule.GetCorrectExamples()[0].GetExample())
+}
+
 func TestWordCoherencyRule_MatchPosition(t *testing.T) {
 	rule := NewWordCoherencyRule(nil)
 	matches := rule.MatchList(analyzeCoherency("He likes archaeology. She likes archeology, too."))
