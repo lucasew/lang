@@ -54,6 +54,11 @@ func NewWordCoherencyValencianRule(messages map[string]string) *WordCoherencyVal
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java multi-marker: Este… aquest → Este… este
+	base.AddExamplePair(
+		rules.Wrong("<marker>Este</marker> home d'ací parla amb <marker>aquest</marker> altre ací."),
+		rules.Fixed("<marker>Este</marker> home d'ací parla amb <marker>este</marker> altre ací."),
+	)
 	r := &WordCoherencyValencianRule{AbstractWordCoherencyRule: base}
 	base.CreateReplacement = r.createReplacement
 	return r

@@ -51,13 +51,53 @@ func loadPreferredWords() []preferredPair {
 // PreferredWordRule ports org.languagetool.rules.nl.PreferredWordRule.
 type PreferredWordRule struct {
 	Messages map[string]string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewPreferredWordRule(messages map[string]string) *PreferredWordRule {
-	return &PreferredWordRule{Messages: messages}
+	r := &PreferredWordRule{Messages: messages}
+	// Java: rijwiel (fixed is a different sentence with fiets)
+	r.AddExamplePair(
+		rules.Wrong("Hij vindt <marker>rijwiel</marker> een ouderwets woord."),
+		rules.Fixed("En ik vind <marker>fiets</marker> ook beter."),
+	)
+	return r
 }
 
 func (r *PreferredWordRule) GetID() string { return "NL_PREFERRED_WORD_RULE" }
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *PreferredWordRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *PreferredWordRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *PreferredWordRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 func (r *PreferredWordRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	var out []*rules.RuleMatch

@@ -49,6 +49,11 @@ func NewCompoundRule(messages map[string]string) *CompoundRule {
 		Data:                        loadCompoundData(),
 	}
 	rules.InitCompoundRuleMeta(base, messages)
+	// Java: Rabce Zdroju → Rabce-Zdroju
+	base.AddExamplePair(
+		rules.Wrong("Witamy w <marker>Rabce Zdroju</marker>."),
+		rules.Fixed("Witamy w <marker>Rabce-Zdroju</marker>."),
+	)
 	return &CompoundRule{AbstractCompoundRule: base}
 }
 

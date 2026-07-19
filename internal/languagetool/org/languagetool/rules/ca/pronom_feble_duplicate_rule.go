@@ -16,16 +16,56 @@ var verbConjugatRE = regexp.MustCompile(`^V.[SI].*$`)
 // Flags weak pronouns both before and after a verb group without whitespace after.
 type PronomFebleDuplicateRule struct {
 	Messages map[string]string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewPronomFebleDuplicateRule(messages map[string]string) *PronomFebleDuplicateRule {
-	return &PronomFebleDuplicateRule{Messages: messages}
+	r := &PronomFebleDuplicateRule{Messages: messages}
+	// Java: S'ha de fer-se → S'ha de fer
+	r.AddExamplePair(
+		rules.Wrong("<marker>S'ha de fer-se</marker>."),
+		rules.Fixed("<marker>S'ha de fer</marker>."),
+	)
+	return r
 }
 
 func (r *PronomFebleDuplicateRule) GetID() string { return "PRONOMS_FEBLES_DUPLICATS" }
 
 func (r *PronomFebleDuplicateRule) GetDescription() string {
 	return "Pronoms febles duplicats"
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *PronomFebleDuplicateRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *PronomFebleDuplicateRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *PronomFebleDuplicateRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *PronomFebleDuplicateRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

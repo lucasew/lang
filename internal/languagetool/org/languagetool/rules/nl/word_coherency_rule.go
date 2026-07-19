@@ -49,6 +49,11 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java multi-marker: organogram / organigram consistency
+	base.AddExamplePair(
+		rules.Wrong("We raden af om in één tekst zowel <marker>organogram</marker> als <marker>organigram</marker> te schrijven."),
+		rules.Fixed("We raden af om in één tekst zowel <marker>organogram</marker> als <marker>organogram</marker> te schrijven."),
+	)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 
