@@ -94,7 +94,7 @@ func (r *PronomFebleDuplicateRule) Match(sentence *languagetool.AnalyzedSentence
 			}
 			continue
 		}
-		// verb-like: POS starts with V or chunk GV not available — use V.* tag or lowercase heuristic
+		// verb-like: Java VERB_CONJUGAT V.[SI].* (GV chunk path incomplete without chunker)
 		if isConjugatedVerb(tok) {
 			if len(before) > 0 {
 				if verbStart < 0 {

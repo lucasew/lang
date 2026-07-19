@@ -1,7 +1,8 @@
 package es
 
-// Twin of languagetool-language-modules/es/src/test/java/org/languagetool/rules/es/SpanishWordRepeatBeginningRuleTest.java
+// Twin of SpanishWordRepeatBeginningRuleTest — inject RG/LOC_ADV like FreeLing (no surface invent).
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -22,15 +23,17 @@ func TestSpanishWordRepeatBeginningRule_Rule(t *testing.T) {
 	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("Esto está bien. Esto es mejor, también."))))
 	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze("El coche. El profesor. El tercer elemento."))))
 
-	// sentence exceptions "por un" / "por otro"
 	long := "Por un lado, confirmó que la palabra solo no debe llevar tilde, " +
 		"según las reglas generales de acentuación, ni cuando es adverbio, ni cuando es adjetivo. Por otro lado, y este " +
 		"es el tema que hoy nos interesa, confirmó que los demostrativos este, ese o aquel, y sus formas femeninas y " +
 		"plurales, no llevarán tampoco tilde funcionando tanto como pronombres como determinantes."
 	require.Equal(t, 0, len(rule.MatchList(languagetool.SplitAndAnalyze(long))))
 
-	// three Mañana — adverb-like without POS: 2 matches (pairs of successive adverbs)
-	require.Equal(t, 2, len(rule.MatchList(languagetool.SplitAndAnalyze("Mañana me voy. Mañana vuelvo. Mañana se acabó todo."))))
+	// Mañana: Java FreeLing RG POS — inject
+	require.Equal(t, 2, len(rule.MatchList(analyzeESWRBSentences("Mañana me voy. Mañana vuelvo. Mañana se acabó todo."))))
+
+	// without RG, Mañana is not isAdverb; only third-sentence word path may still fire once
+	require.Equal(t, 1, len(rule.MatchList(languagetool.SplitAndAnalyze("Mañana me voy. Mañana vuelvo. Mañana se acabó todo."))))
 
 	matches1 := rule.MatchList(languagetool.SplitAndAnalyze("Yo creo. Yo he visto esto antes. Yo no lo creo."))
 	require.Equal(t, 1, len(matches1))
@@ -43,13 +46,37 @@ func TestSpanishWordRepeatBeginningRule_Rule(t *testing.T) {
 	require.Equal(t, "[Adicionalmente, Asimismo, Además, Igualmente, Así mismo]",
 		formatSugg(matches2[0].GetSuggestedReplacements()))
 
-	matches3 := rule.MatchList(languagetool.SplitAndAnalyze("Sin embargo, me gusta. Sin embargo, otros me gustan más."))
+	// Sin embargo: LOC_ADV inject on "Sin" (multiword chunk in Java)
+	matches3 := rule.MatchList(analyzeESWRBSentences("Sin embargo, me gusta. Sin embargo, otros me gustan más."))
 	require.Equal(t, 1, len(matches3))
 	require.Equal(t, "[]", formatSugg(matches3[0].GetSuggestedReplacements()))
 
 	matches4 := rule.MatchList(languagetool.SplitAndAnalyze("Pero me gusta. Pero otros me gustan más."))
 	require.Equal(t, 1, len(matches4))
 	require.Equal(t, "[Aun así, Por otra parte, Sin embargo]", formatSugg(matches4[0].GetSuggestedReplacements()))
+}
+
+func analyzeESWRBSentences(text string) []*languagetool.AnalyzedSentence {
+	parts := languagetool.SplitAndAnalyze(text)
+	for _, s := range parts {
+		for _, tok := range s.GetTokensWithoutWhitespace() {
+			if tok == nil || tok.IsSentenceStart() {
+				continue
+			}
+			// first content word only
+			t := tok.GetToken()
+			if strings.EqualFold(t, "mañana") {
+				pos := "RG"
+				tok.AddReading(languagetool.NewAnalyzedToken(t, &pos, nil), "test")
+			}
+			if t == "Sin" {
+				pos := "LOC_ADV"
+				tok.AddReading(languagetool.NewAnalyzedToken(t, &pos, nil), "test")
+			}
+			break
+		}
+	}
+	return parts
 }
 
 func formatSugg(s []string) string {

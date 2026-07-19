@@ -26,11 +26,8 @@ var (
 	esExplainAdverbs = map[string]bool{
 		"Específicamente": true, "Concretamente": true, "Particularmente": true, "Precisamente": true,
 	}
-	// Common sentence-start adverbs (POS RG in Java tagger; surface stand-in).
-	esExtraAdverbs = map[string]bool{
-		"Mañana": true, "Hoy": true, "Ayer": true, "Luego": true, "Después": true,
-		"Entonces": true, "Así": true, "Ahora": true, "Antes": true, "Pronto": true,
-	}
+	// Java isAdverb: RG/LOC_ADV POS or fixed ADD/CONTRAST/EMPHASIS/EXPLAIN lists only
+	// (no surface invent of Mañana/Hoy/…).
 	esAddExpressions      = []string{"Así mismo"}
 	esContrastExpressions = []string{"Aun así", "Por otra parte", "Sin embargo"}
 	esPersonalPronouns    = map[string]bool{
@@ -71,17 +68,14 @@ func (r *SpanishWordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTo
 		return true
 	}
 	tok := token.GetToken()
+	// Java surface lists (exact case as in Java Sets)
 	return esAddAdverbs[tok] || esContrastConj[tok] || esEmphasisAdverbs[tok] ||
-		esExplainAdverbs[tok] || esExtraAdverbs[tok]
+		esExplainAdverbs[tok]
 }
 
 func (r *SpanishWordRepeatBeginningRule) isAdverbAt(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	// Java only checks the first content token via isAdverb (LOC_ADV from multiword tagger).
 	if i >= 0 && i < len(tokens) && r.isAdverb(tokens[i]) {
-		return true
-	}
-	// Multiword "Sin embargo" (split by WordTokenizer).
-	if i >= 0 && i+1 < len(tokens) &&
-		tokens[i].GetToken() == "Sin" && tokens[i+1].GetToken() == "embargo" {
 		return true
 	}
 	return false
