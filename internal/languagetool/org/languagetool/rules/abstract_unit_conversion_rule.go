@@ -182,11 +182,13 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 		Category:  CatStyle.GetCategory(messages),
 		IssueType: ITSStyle,
 		antiPatterns: []*regexp.Regexp{
-			regexp.MustCompile(`\s?\d+'\d{3}\s?`),
-			regexp.MustCompile(`\d+[-‐–]\d+`),
-			regexp.MustCompile(`\d+/\d+`),
-			regexp.MustCompile(`\d+:\d+`),
-			regexp.MustCompile(`\d+⁄\d+`),
+			// Java AbstractUnitConversionRule.antiPatterns (order preserved)
+			regexp.MustCompile(`\s?\d+'\d{3}\s?`), // de-CH thousands "100'000"
+			regexp.MustCompile(`\d+[-‐–]\d+`),     // "3-5 pounds"
+			regexp.MustCompile(`\d+/\d+`),         // "1/4 mile"
+			regexp.MustCompile(`\d+:\d+`),         // "A 2:1 cup"
+			regexp.MustCompile(`Pfund Sterling`), // currency, not mass
+			regexp.MustCompile(`\d+⁄\d+`),         // "1⁄4 cup" non-standard slash
 		},
 	}
 	// default unit registrations (Java AbstractUnitConversionRule constructor; commented-out Java units omitted)
@@ -849,14 +851,15 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 		}
 		return m
 	}
-	if math.Abs(expected-given) <= unitDelta*math.Max(1, math.Abs(expected)) {
+	// Java DELTA is absolute 1e-2 (not relative).
+	if math.Abs(expected-given) < unitDelta {
 		// accurate enough
 		return nil
 	}
-	// also accept if given matches any formatted suggestion string number
+	// also accept if given matches any metric-equivalent candidate within DELTA
 	equivs := r.GetMetricEquivalent(srcVal, srcUnit)
 	for _, eq := range equivs {
-		if eq.Unit.ID == convertedUnit.ID && math.Abs(eq.Value-given) <= unitDelta*math.Max(1, math.Abs(eq.Value)) {
+		if eq.Unit.ID == convertedUnit.ID && math.Abs(eq.Value-given) < unitDelta {
 			return nil
 		}
 	}

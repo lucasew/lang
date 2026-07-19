@@ -105,6 +105,17 @@ func TestDedupeUnitMatchesByStart(t *testing.T) {
 	require.Equal(t, "long", out[0].Message)
 }
 
+// Java AbstractUnitConversionRule.antiPatterns includes "Pfund Sterling".
+func TestAbstractUnit_PfundSterlingAntiPattern(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	// Anti-pattern present; DE registers "Pfund" unit + same phrase.
+	// Span covering "Pfund" in "… Pfund Sterling" must be hit.
+	text := "1.800 Pfund Sterling"
+	from := strings.Index(text, "Pfund")
+	to := from + len("Pfund")
+	require.True(t, unitHitByAntiPattern(text, from, to, r.antiPatterns))
+}
+
 // Java: convertedMatcher matches "\\(\\d+ (feet|ft) \\d+ inch\\)" → skip CHECK
 // (would otherwise treat as just "2 ft").
 func TestCheckParenthetical_FeetInchCompositeSkipped(t *testing.T) {
