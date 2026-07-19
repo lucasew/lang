@@ -433,3 +433,66 @@ func TestNumrNounException_JavaArms(t *testing.T) {
 		atr("люди", "noun:anim:p:v_naz"),
 	}, 2, 3))
 }
+
+func TestPrepNounException_StrongAndNonInfl(t *testing.T) {
+	// до сьогодні
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("до", "prep"), atr("сьогодні", "adv"),
+	}, 0, 1))
+	// на завтра
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("на", "prep"), atr("завтра", "adv"),
+	}, 0, 1))
+	// за вчора
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("за", "prep"), atr("вчора", "adv"),
+	}, 0, 1))
+	// у нікуди
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("у", "prep"), atr("нікуди", "adv"),
+	}, 0, 1))
+	// не + adj
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("до", "prep"), atr("не", "part"), atr("властиву", "adj:f:v_zna"),
+	}, 0, 1))
+	// ADV_QUANT
+	chymalo := "чимало"
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("про", "prep"), atrLemma("чимало", &chymalo, "adv"), atr("обмежень", "noun"),
+	}, 0, 1))
+	// Z_ZI_IZ + pseudo num
+	sotnia := "сотня"
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("із", "prep"), atrLemma("сотня", &sotnia, "noun:inanim:f:v_naz"),
+	}, 0, 1))
+	// part insert
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("на", "prep"), atr("навіть", "part"), atr("день", "noun"),
+	}, 0, 1))
+	// лише
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("на", "prep"), atr("лише", "part"), atr("день", "noun"),
+	}, 0, 1))
+	// наприклад
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("в", "prep"), atr("наприклад", "insert"), atr("день", "noun"),
+	}, 0, 1))
+	// нічого не + adj
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("на", "prep"), atr("нічого", "noun"), atr("не", "part"), atr("вартий", "adj:m:v_naz"),
+	}, 0, 1))
+	// в дев'яносто восьмому — numr with both naz and rod readings
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("в", "prep"),
+		atr("дев'яносто", "numr:p:v_naz", "numr:p:v_rod"),
+		atr("восьмому", "numr:m:v_mis"),
+	}, 0, 1))
+	// замість inf
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("замість", "prep"), atr("йому", "noun"), atr("засвоїти", "verb:imperf:inf"),
+	}, 0, 1))
+	// не те before — SENT_START pad (Java mBefore > 0)
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("не"), atr("те"), atr("по", "prep"), atr("лихим", "adj"),
+	}, 3, 4))
+}

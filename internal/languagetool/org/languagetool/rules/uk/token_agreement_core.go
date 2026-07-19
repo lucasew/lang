@@ -476,8 +476,47 @@ func HasPosTagPart(tok *languagetool.AnalyzedTokenReadings, substr string) bool 
 	return false
 }
 
-// IsPrepNounException ports TokenAgreementPrepNounExceptionHelper early arms
-// (full table deferred). Invalid index layout is treated as exception (no flag).
+// prepNounTimeAdvRE* port getExceptionStrong time-adverb full-string matches.
+var (
+	prepNounTimeDoPoRE = regexp.MustCompile(
+		`^(?:сьогодні|[ву]чора|позавчора|(?:після)?завтра|тепер|зараз|нині|опівдня|опівночі|досі|навпаки)$`)
+	prepNounTimeNaVidProRE = regexp.MustCompile(
+		`^(?:сьогодні|[ву]чора|позавчора|(?:після)?завтра|тепер|зараз|нині|тоді|потім|щодень|повсякдень)$`)
+	prepNounTimeZaZRE = regexp.MustCompile(
+		`^(?:сьогодні|[ву]чора|позавчора|(?:після)?завтра)$`)
+	prepNounLishRE = regexp.MustCompile(`^лиш(?:е(?:нь)?)?$`)
+)
+
+// hasAdvNotAdvp is RE2-friendly stand-in for Java adv(?!p).*.
+func hasAdvNotAdvp(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.HasPrefix(p, "adv") && !strings.HasPrefix(p, "advp") {
+			return true
+		}
+	}
+	return false
+}
+
+// hasPosTagAllAdvNotAdvp ports hasPosTagAll(readings, adv(?!p).*).
+func hasPosTagAllAdvNotAdvp(tok *languagetool.AnalyzedTokenReadings) bool {
+	tags := CollectPOSTags(tok)
+	if len(tags) == 0 {
+		return false
+	}
+	for _, p := range tags {
+		if !strings.HasPrefix(p, "adv") || strings.HasPrefix(p, "advp") {
+			return false
+		}
+	}
+	return true
+}
+
+// IsPrepNounException ports TokenAgreementPrepNounExceptionHelper
+// (getExceptionInfl + getExceptionStrong + getExceptionNonInfl as soft skips).
+// Invalid index layout is treated as exception (no flag).
 func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, nounPos int) bool {
 	if prepPos < 0 || nounPos <= prepPos || prepPos >= len(tokens) || nounPos >= len(tokens) {
 		return true
@@ -493,6 +532,101 @@ func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, 
 	}
 	nounLower := strings.ToLower(nounClean)
 
+	// --- getExceptionStrong (time adverbs / inserts before infl checks in Java match loop) ---
+	if prepLower == "до" || prepLower == "по" {
+		if prepNounTimeDoPoRE.MatchString(nounLower) {
+			return true
+		}
+	}
+	if prepLower == "на" || prepLower == "від" || prepLower == "про" {
+		if prepNounTimeNaVidProRE.MatchString(nounLower) {
+			return true
+		}
+	}
+	if prepLower == "за" || prepLower == "з" || prepLower == "зі" || prepLower == "із" {
+		if prepNounTimeZaZRE.MatchString(nounLower) {
+			return true
+		}
+	}
+	if (prepLower == "в" || prepLower == "у") && nounLower == "нікуди" {
+		return true
+	}
+	// до не властиву — skip "не" when next is ad*
+	if nounClean == "не" && nounPos < len(tokens)-1 && HasPosTagStart(tokens[nounPos+1], "ad") {
+		return true
+	}
+	// про чимало — ADV_QUANT lemma + adv.*
+	if nounPos < len(tokens)-1 &&
+		HasLemmaTokenRE(noun, AdvQuantPattern) &&
+		HasPosTagRE(noun, regexp.MustCompile(`^adv`)) {
+		return true
+	}
+	// лежить із сотня — Z_ZI_IZ + PSEUDO_NUM_LEMMAS
+	if (prepLower == "з" || prepLower == "зі" || prepLower == "із") &&
+		HasLemmaTokenAny(noun, PseudoNumLemmas) {
+		return true
+	}
+	// за цілком (adv) / adv + собі
+	if hasPosTagAllAdvNotAdvp(noun) {
+		return true
+	}
+	if hasAdvNotAdvp(noun) && nounPos < len(tokens)-1 &&
+		tokens[nounPos+1] != nil && tokens[nounPos+1].GetCleanToken() == "собі" {
+		return true
+	}
+	// замість … inf within 4
+	if prepLower == "замість" {
+		if NewSearchMatch("").
+			Target(ConditionPostag(verbInfPattern)).
+			WithLimit(4).
+			Skip(ConditionToken("можна").WithNegate()).
+			MAfterATR(tokens, nounPos+1) > 0 {
+			return true
+		}
+	}
+	// Усупереч не те що — Java mBefore > 0 (SENT_START at 0)
+	if NewSearchMatch("не те").MBeforeATR(tokens, nounPos) > 0 {
+		return true
+	}
+
+	// --- getExceptionNonInfl ---
+	if HasPosTagStart(noun, "part") && PartInsertPattern.MatchString(nounLower) {
+		return true
+	}
+	if prepNounLishRE.MatchString(nounLower) || nounLower == "наприклад" {
+		return true
+	}
+	if hasAdvNotAdvp(noun) {
+		// по швидко напруженим — adv + adj → skip (RuleException(0) in Java still advances)
+		if nounPos < len(tokens)-1 && HasPosTagStart(tokens[nounPos+1], "adj") &&
+			hasPosTagPartAll(noun, "adv") {
+			return true
+		}
+		return true
+	}
+	if nounPos < len(tokens)-1 {
+		// на лише їм відомому — v_dav :pron + adj with case gov v_dav
+		if HasPosTagRE(noun, regexp.MustCompile(`noun:(?:un)?anim:.:v_dav.*:pron.*`)) {
+			next := tokens[nounPos+1]
+			if HasPosTagStart(next, "adj") && hasCaseGovFromReadings(next, "v_dav") {
+				return true
+			}
+			if nounPos < len(tokens)-2 &&
+				HasPosTagStart(next, "adv") &&
+				HasPosTagStart(tokens[nounPos+2], "adj") &&
+				hasCaseGovFromReadings(tokens[nounPos+2], "v_dav") {
+				return true
+			}
+		}
+	}
+	if nounPos < len(tokens)-2 &&
+		nounClean == "нічого" &&
+		tokens[nounPos+1] != nil && tokens[nounPos+1].GetToken() == "не" &&
+		HasPosTagStart(tokens[nounPos+2], "adj") {
+		return true
+	}
+
+	// --- getExceptionInfl ---
 	// на дивом уцілілій техніці
 	if nounClean == "дивом" {
 		return true
@@ -503,6 +637,13 @@ func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, 
 		if HasPosTagPart(next, "numr") || HasLemmaToken(next, "якийсь") {
 			return true
 		}
+	}
+	// в дев'яносто восьмому — numr v_naz with non-nom reading + next numr
+	if nounPos < len(tokens)-1 &&
+		HasPosTagPart(noun, "numr") && HasPosTagPart(noun, "v_naz") &&
+		HasPosTagPart(tokens[nounPos+1], "numr") &&
+		HasPosTagRE(noun, regexp.MustCompile(`.*v_(rod|dav|zna|oru|mis).*`)) {
+		return true
 	}
 
 	if prepLower == "на" {
@@ -609,6 +750,20 @@ func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, 
 	}
 
 	return false
+}
+
+// hasPosTagPartAll reports every POS tag contains substr (Java hasPosTagPartAll).
+func hasPosTagPartAll(tok *languagetool.AnalyzedTokenReadings, substr string) bool {
+	tags := CollectPOSTags(tok)
+	if len(tags) == 0 || substr == "" {
+		return false
+	}
+	for _, p := range tags {
+		if !strings.Contains(p, substr) {
+			return false
+		}
+	}
+	return true
 }
 
 // IsPlusMinusLemma ports LemmaHelper.PLUS_MINUS membership on surface lower.
