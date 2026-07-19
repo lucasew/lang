@@ -2,6 +2,7 @@ package uk
 
 // Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java
 import (
+	"regexp"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -121,7 +122,7 @@ func TestUkrainianHybridDisambiguation_DisambiguatorForInitials(t *testing.T) {
 func TestUkrainianHybridDisambiguation_DisambiguatorRemove(t *testing.T) {
 	// inject remove map: drop adj reading for "кривій" surface when lemma "кривий"
 	rm := map[string]*TokenMatcher{
-		"кривій": {Entries: []MatcherEntry{{Lemma: "кривий", POS: "adj"}}},
+		"кривій": {Entries: []MatcherEntry{{Lemma: "кривий", POS: regexp.MustCompile(`^adj.*`)}}},
 	}
 	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorWith(rm))
 	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
@@ -216,7 +217,7 @@ func TestUkrainianHybridDisambiguation_Yih(t *testing.T) {
 func TestUkrainianHybridDisambiguation_SimpleRemove(t *testing.T) {
 	// inject remove map (full disambig_remove.txt deferred)
 	rm := map[string]*TokenMatcher{
-		"була": {Entries: []MatcherEntry{{Lemma: "була", POS: "noun"}}},
+		"була": {Entries: []MatcherEntry{{Lemma: "була", POS: regexp.MustCompile(`^noun.*`)}}},
 	}
 	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorWith(rm))
 	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
@@ -237,7 +238,7 @@ func TestUkrainianHybridDisambiguation_SimpleRemove(t *testing.T) {
 func TestUkrainianHybridDisambiguation_DisambiguatorRemovePresentInDictionary(t *testing.T) {
 	// remove map only drops listed lemma+pos; non-listed reading stays
 	rm := map[string]*TokenMatcher{
-		"кривій": {Entries: []MatcherEntry{{Lemma: "кривий", POS: "adj"}}},
+		"кривій": {Entries: []MatcherEntry{{Lemma: "кривий", POS: regexp.MustCompile(`^adj.*`)}}},
 	}
 	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorWith(rm))
 	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{

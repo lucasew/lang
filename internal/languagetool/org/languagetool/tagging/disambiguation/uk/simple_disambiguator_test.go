@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -19,7 +20,8 @@ func atr(surface string, lemmasPOS [][2]string) *languagetool.AnalyzedTokenReadi
 func TestSimpleDisambiguator_RemoveRareForms(t *testing.T) {
 	// inject: for "була" remove non-verb readings
 	rm := map[string]*TokenMatcher{
-		"була": {Entries: []MatcherEntry{{Lemma: "була", POS: "noun"}}},
+		// Java MatcherEntry: full-string POS regex
+		"була": {Entries: []MatcherEntry{{Lemma: "була", POS: regexp.MustCompile(`^noun.*$`)}}},
 	}
 	d := NewSimpleDisambiguatorWith(rm)
 	sentStart := languagetool.NewAnalyzedTokenReadingsList(
@@ -82,4 +84,39 @@ func TestRemoveDuplicateLemmas(t *testing.T) {
 	require.True(t, tok.HasAnyLemma("весь"))
 	// ввесь removed
 	require.False(t, tok.HasAnyLemma("ввесь"))
+}
+
+func TestLoadOfficialDisambigMaps(t *testing.T) {
+	rm := LoadDisambigRemoveMap()
+	require.NotEmpty(t, rm)
+	// line: була булий adj:f:v_.*
+	tm, ok := rm["була"]
+	require.True(t, ok, "була in remove map")
+	require.NotNil(t, tm)
+
+	// reading with lemma булий and adj:f:v_naz should match
+	l, p := "булий", "adj:f:v_naz"
+	tok := languagetool.NewAnalyzedToken("була", &p, &l)
+	require.True(t, tm.Matches(tok))
+
+	dups := LoadDisambigDupsMap()
+	require.NotEmpty(t, dups)
+	require.Contains(t, dups, "весь")
+	require.Contains(t, dups["весь"], "ввесь")
+
+	// default constructor loads maps
+	d := NewSimpleDisambiguator()
+	require.NotEmpty(t, d.RemoveMap)
+	require.NotEmpty(t, d.DupsMap)
+
+	start := languagetool.NewAnalyzedTokenReadingsList(
+		[]*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil)}, 0)
+	bula := atr("була", [][2]string{
+		{"бути", "verb:imperf:past:f"},
+		{"булий", "adj:f:v_naz"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, bula})
+	out := d.Disambiguate(sent)
+	require.True(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("verb"))
+	require.False(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("adj"))
 }
