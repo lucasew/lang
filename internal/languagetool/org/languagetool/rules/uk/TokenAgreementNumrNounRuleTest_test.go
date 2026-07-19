@@ -38,12 +38,14 @@ func TestTokenAgreementNumrNounRule_RuleTN(t *testing.T) {
 
 func TestTokenAgreementNumrNounRule_RuleForceNoun(t *testing.T) {
 	r := NewTokenAgreementNumrNounRule()
-	// force-noun lemma "тон" skips gender clash
+	// Java always flags surface «тон» → suggest «тонн» (before force-pattern agreement path)
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("дві", "numr:f:v_naz"),
 		atr("тон", "noun:inanim:m:v_naz"),
 	})
-	require.Empty(t, r.Match(sent), "force-noun тон is exception")
+	require.NotEmpty(t, r.Match(sent), "тон surface suggests тонн")
+	// force-noun unit (кілобайт) still available via IsForceNounException helper
+	require.True(t, IsForceNounException(nil, atr("кілобайт", "noun:inanim:m:v_naz")))
 }
 func TestTokenAgreementNumrNounRule_RuleTon(t *testing.T) {
 	// Java NOUN_FORCE_PATTERN is Matcher.matches() full-string — "тон" yes, "тони" no invent.
