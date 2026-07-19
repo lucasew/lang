@@ -228,3 +228,39 @@ func TestRemoveLowerCaseBadForUpperCaseGood(t *testing.T) {
 	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("prop"))
 	require.False(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("bad"))
 }
+
+func TestRetagUnknownInitials(t *testing.T) {
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	// А. without name tag → noninfl:abbr
+	pBad := "noun:inanim:m:v_naz"
+	init := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("А.", &pBad, strPtr("а")),
+	}, 0)
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, init})
+	RetagUnknownInitials(sent)
+	tok := sent.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasPosTag("noninfl:abbr") || tok.HasPartialPosTag("noninfl:abbr"))
+	require.False(t, tok.HasPartialPosTag("noun"))
+}
+
+func TestRetagPluralProp(t *testing.T) {
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pNum := "numr:p:v_naz"
+	num := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("дві", &pNum, strPtr("два")),
+	}, 0)
+	// only rod prop, no naz — should retag to p:v_naz
+	pSg := "noun:inanim:f:v_rod:prop:geo"
+	name := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("Франції", &pSg, strPtr("Франція")),
+	}, 0)
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, num, name})
+	RetagPluralProp(sent)
+	tok := sent.GetTokensWithoutWhitespace()[2]
+	require.True(t, tok.HasPartialPosTag(":p:v_naz"))
+	require.True(t, tok.HasPartialPosTag("prop"))
+}

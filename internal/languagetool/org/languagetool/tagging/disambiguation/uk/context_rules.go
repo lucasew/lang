@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -86,7 +87,7 @@ func DisambiguatePronPos(input *languagetool.AnalyzedSentence) {
 		if tok == nil {
 			continue
 		}
-		low := strings.ToLower(tok.GetToken())
+		low := strings.ToLower(cleanOrToken(tok))
 		if low != "його" && low != "її" && low != "їх" {
 			continue
 		}
@@ -132,10 +133,89 @@ func DisambiguatePronPos(input *languagetool.AnalyzedSentence) {
 	}
 }
 
-// DisambiguateYih: "їх" + noun → object/gen pers (drop pos if any leftover).
+// DisambiguateYih ports removeYih (їх/його/її → drop adj.*pron when object-like).
 func DisambiguateYih(input *languagetool.AnalyzedSentence) {
-	// same surface family as PronPos; reuse
-	DisambiguatePronPos(input)
+	if input == nil {
+		return
+	}
+	adjPronRE := regexp.MustCompile(`adj.*pron.*`)
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 1; i < len(tokens); i++ {
+		main := tokens[i]
+		if main == nil {
+			continue
+		}
+		clean := strings.ToLower(cleanOrToken(main))
+		if clean != "їх" && clean != "його" && clean != "її" {
+			continue
+		}
+		if i < len(tokens)-1 && tokens[i+1] != nil {
+			nextClean := strings.ToLower(cleanOrToken(tokens[i+1]))
+			// їх кількість|розгляд|… or predic
+			if yihObjectLemmas[nextClean] || hasPosTagREMatch(tokens[i+1], `noninfl:predic.*`) {
+				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+				continue
+			}
+			// їх було — next verb only (not also adj/noun)
+			if hasPOSPrefix(tokens[i+1], "verb") &&
+				!hasPOSPrefix(tokens[i+1], "adj") && !hasPOSPrefix(tokens[i+1], "noun") {
+				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+				continue
+			}
+			// їх обох|ніхто|ніщо
+			if nextClean == "обох" || nextClean == "ніхто" || nextClean == "ніщо" {
+				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+				continue
+			}
+			// їх я / їх на… but not "їх з"
+			if (hasPosTagREMatch(tokens[i+1], `.*pron:pers.*`) || hasPOSPrefix(tokens[i+1], "prep")) &&
+				nextClean != "із" && nextClean != "з" {
+				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+				continue
+			}
+			// їх не було
+			if i < len(tokens)-2 && (nextClean == "не" || nextClean == "ні") &&
+				hasPOSPrefix(tokens[i+2], "verb") {
+				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+				continue
+			}
+		}
+	}
+}
+
+// lemmas after їх that force personal (object) reading — Java hasLemma list (lower surface/lemma).
+var yihObjectLemmas = map[string]bool{
+	"кількість": true, "розгляд": true, "обговорення": true, "використання": true,
+	"реалізація": true, "виконання": true, "звільнення": true, "виробництво": true,
+	"застосування": true, "проведення": true, "утримання": true, "вирішення": true,
+	"загибель": true, "аналоги": true, "однолітки": true, "перелік": true,
+	"затримання": true, "створення": true, "розміщення": true, "лікування": true,
+	"втілення": true, "арешт": true, "формування": true, "наявність": true, "збереження": true,
+}
+
+func cleanOrToken(tok *languagetool.AnalyzedTokenReadings) string {
+	if tok == nil {
+		return ""
+	}
+	c := tok.GetCleanToken()
+	if c == "" {
+		c = tok.GetToken()
+	}
+	return c
+}
+
+func removeReadingsMatching(main *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp, label string) {
+	if main == nil || posRE == nil {
+		return
+	}
+	for _, r := range append([]*languagetool.AnalyzedToken(nil), main.GetReadings()...) {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		if posRE.MatchString(*r.GetPOSTag()) {
+			main.RemoveReading(r, label)
+		}
+	}
 }
 
 // RetagInitials ports checkForInitialRetag / getInitialReadings:
@@ -630,6 +710,112 @@ func adjNounAgree(adj, noun *languagetool.AnalyzedTokenReadings) bool {
 					return true
 				}
 			}
+		}
+	}
+	return false
+}
+
+// RetagPluralProp ports retagPulralProp: дві Франції → invent p:v_naz prop from f/m/n v_rod prop.
+func RetagPluralProp(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	// Java PATTERN_3
+	numrRE := regexp.MustCompile(`^(?:два|дві|три|чотири)$`)
+	// PATTERN_5 = :[mfn]:v_rod → :p:v_naz
+	rodGenderRE := regexp.MustCompile(`:[mfn]:v_rod`)
+	tokens := input.GetTokensWithoutWhitespace()
+	for i := 2; i < len(tokens); i++ {
+		prop := tokens[i]
+		prev := tokens[i-1]
+		if prop == nil || prev == nil {
+			continue
+		}
+		if !numrRE.MatchString(strings.ToLower(prev.GetCleanToken())) {
+			// also try GetToken
+			if !numrRE.MatchString(strings.ToLower(prev.GetToken())) {
+				continue
+			}
+		}
+		// skip if already has plural or singular naz prop
+		if hasPosTagREMatch(prop, `noun.*:p:v_naz.*:prop.*`) ||
+			hasPosTagREMatch(prop, `noun.*:[mfn]:v_naz.*:prop.*`) {
+			continue
+		}
+		// filter noun:.*:[fmn]:v_rod.*prop.* with m: only if lemma ends with а/о
+		var propOnly []*languagetool.AnalyzedToken
+		for _, r := range prop.GetReadings() {
+			if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
+				continue
+			}
+			pos, lem := *r.GetPOSTag(), *r.GetLemma()
+			if !strings.HasPrefix(pos, "noun:") || !strings.Contains(pos, "prop") {
+				continue
+			}
+			if !regexp.MustCompile(`noun:.*:[fmn]:v_rod`).MatchString(pos) {
+				continue
+			}
+			if strings.Contains(pos, ":m:") && !strings.HasSuffix(lem, "а") && !strings.HasSuffix(lem, "о") {
+				continue
+			}
+			propOnly = append(propOnly, r)
+		}
+		if len(propOnly) == 0 {
+			continue
+		}
+		src := propOnly[0]
+		postag := rodGenderRE.ReplaceAllString(*src.GetPOSTag(), ":p:v_naz")
+		lemma := *src.GetLemma()
+		// clear readings
+		for _, r := range append([]*languagetool.AnalyzedToken(nil), prop.GetReadings()...) {
+			if r != nil {
+				prop.RemoveReading(r, "dis_plural_prop")
+			}
+		}
+		p, l := postag, lemma
+		prop.AddReading(languagetool.NewAnalyzedToken(prop.GetToken(), &p, &l), "dis_plural_prop")
+		i++ // Java i++ after retag
+	}
+}
+
+// RetagUnknownInitials ports retagUnknownInitials: А. without name → noninfl:abbr.
+func RetagUnknownInitials(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	// Java INITIAL_REGEX = [А-ЯІЇЄҐ]\.
+	initRE := regexp.MustCompile(`^[А-ЯІЇЄҐ]\.$`)
+	tokens := input.GetTokensWithoutWhitespace()
+	// Java uses getTokens() including whitespace tokens — we use without whitespace.
+	for i := 1; i < len(tokens); i++ {
+		tok := tokens[i]
+		if tok == nil {
+			continue
+		}
+		if !initRE.MatchString(tok.GetToken()) {
+			continue
+		}
+		if tok.HasPartialPosTag("name") {
+			continue
+		}
+		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+			if r != nil {
+				tok.RemoveReading(r, "dis_unknown_initials")
+			}
+		}
+		p := "noninfl:abbr"
+		tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &p, nil), "dis_unknown_initials")
+	}
+}
+
+func hasPosTagREMatch(tok *languagetool.AnalyzedTokenReadings, pattern string) bool {
+	if tok == nil {
+		return false
+	}
+	re := regexp.MustCompile(pattern)
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil && re.MatchString(*r.GetPOSTag()) {
+			return true
 		}
 	}
 	return false

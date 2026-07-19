@@ -32,31 +32,34 @@ func (d *UkrainianHybridDisambiguator) Disambiguate(in *languagetool.AnalyzedSen
 		return nil
 	}
 	out := in
-	// Java preDisambiguate: simpleDisambiguator.removeRareForms (+ more hybrid filters later)
+	// Java preDisambiguate BEFORE chunker/XML (UkrainianHybridDisambiguator.preDisambiguate).
 	if d != nil && d.Simple != nil {
 		out = d.Simple.Disambiguate(out)
 	}
+	if out != nil {
+		DisambiguateYih(out)
+		for _, tok := range out.GetTokensWithoutWhitespace() {
+			RemoveVmisReadings(tok)
+		}
+		RetagFemNames(out)
+		RetagInitials(out)
+		RetagUnknownInitials(out)
+		RemoveInanimVKly(out)
+		RemovePluralForNames(out)
+		RemoveLowerCaseHomonymsForAbbreviations(out)
+		RemoveLowerCaseBadForUpperCaseGood(out)
+		DisambiguateSt(out)
+		DisambiguatePronPos(out)
+		RetagPluralProp(out)
+		RemoveVerbImpr(out)
+		PreferVocativeWhenBang(out)
+	}
+	// Java: disambiguator.disambiguate(chunker.disambiguate(input))
 	if d != nil && d.Chunker != nil {
 		out = d.Chunker.Disambiguate(out)
 	}
 	if d != nil && d.Inner != nil {
 		out = d.Inner.Disambiguate(out)
-	}
-	// soft context rules (full XML disambig still optional via Inner)
-	if out != nil {
-		RetagInitials(out)
-		DisambiguateSt(out)
-		DisambiguatePronPos(out)
-		RetagFemNames(out)
-		RemoveInanimVKly(out)
-		RemoveLowerCaseHomonymsForAbbreviations(out)
-		RemoveLowerCaseBadForUpperCaseGood(out)
-		RemovePluralForNames(out)
-		RemoveVerbImpr(out)
-		PreferVocativeWhenBang(out)
-		for _, tok := range out.GetTokensWithoutWhitespace() {
-			RemoveVmisReadings(tok)
-		}
 	}
 	return out
 }
