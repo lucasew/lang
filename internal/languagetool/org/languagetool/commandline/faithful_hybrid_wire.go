@@ -10,8 +10,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/ca"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/de"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/es"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/fr"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/nl"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/pt"
 	disambigrules "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/rules"
 	ukdis "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation/uk"
@@ -104,13 +104,9 @@ func registerUkrainianHybrid(lt *languagetool.JLanguageTool, opts *CommandLineOp
 	h := ukdis.NewUkrainianHybridDisambiguator()
 	// Simple maps are loaded by NewUkrainianHybridDisambiguator (official disambig_remove/dups).
 
-	// Java: new UkrainianMultiwordChunker("/uk/multiwords.txt", true)
+	// Java: new UkrainianMultiwordChunker("/uk/multiwords.txt", true) — MultiWordChunker2 + /POS-regex
 	if p := DiscoverLanguageMultiwords(opts, "uk"); p != "" {
-		if c, err := openMultiWordChunker(p, disambiguation.MultiWordChunkerSettings{
-			AllowFirstCapitalized: true,
-			AllowAllUppercase:     false,
-			AllowTitlecase:        false,
-		}); err == nil && c != nil {
+		if c, err := ukdis.NewUkrainianMultiwordChunkerFromPath(p); err == nil && c != nil {
 			h.Chunker = c
 		}
 	}

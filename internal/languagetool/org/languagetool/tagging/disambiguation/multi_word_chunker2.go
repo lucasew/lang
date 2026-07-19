@@ -17,6 +17,8 @@ type MultiWordChunker2 struct {
 	RemoveOtherReadings   bool
 	WrapTag               bool
 	AddIgnoreSpelling     bool
+	// MatchesFn overrides matches() (Java protected hook; UK uses /POS-regex).
+	MatchesFn func(matchText string, tok *languagetool.AnalyzedTokenReadings) bool
 
 	mu             sync.Mutex
 	tokenToEntries map[string][]multiWordEntry
@@ -146,6 +148,9 @@ func (c *MultiWordChunker2) isMatching(inputTokens []*languagetool.AnalyzedToken
 }
 
 func (c *MultiWordChunker2) matches(matchText string, tok *languagetool.AnalyzedTokenReadings) bool {
+	if c != nil && c.MatchesFn != nil {
+		return c.MatchesFn(matchText, tok)
+	}
 	return matchText == tok.GetToken()
 }
 
