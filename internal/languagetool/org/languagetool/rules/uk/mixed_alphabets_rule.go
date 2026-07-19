@@ -37,7 +37,8 @@ func (r *MixedAlphabetsRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 	tokens := sentence.GetTokensWithoutWhitespace()
 	for i := 1; i < len(tokens); i++ {
 		tokenReadings := tokens[i]
-		tokenString := tokenReadings.GetToken() // clean token stand-in
+		// Java: tokenReadings.getCleanToken() (soft-hyphen / fixup surface).
+		tokenString := cleanToken(tokenReadings)
 		endReadings := tokenReadings
 		// Join "І" + "." (Java treats "І." as one token for Roman numeral I.)
 		if tokenString == "І" && i+1 < len(tokens) && tokens[i+1].GetToken() == "." && !tokens[i+1].IsWhitespaceBefore() {

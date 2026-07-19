@@ -5,10 +5,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// AdvancedSynthesizerFilter ports org.languagetool.rules.ca.AdvancedSynthesizerFilter
-// (empty subclass of AbstractAdvancedSynthesizerFilter).
+// AdvancedSynthesizerFilter ports org.languagetool.rules.ca.AdvancedSynthesizerFilter.
 //
-// Java uses language.getSynthesizer().synthesize(token, desiredPostag, true).
+// Java uses language.getSynthesizer().synthesize(token, desiredPostag, true)
+// and overrides getNewLemma → NounToVerbHelper.getVerbFromNoun.
 // Without a wired synthesizer, Accept fails closed (do not invent forms).
 type AdvancedSynthesizerFilter struct {
 	*rules.AbstractAdvancedSynthesizerFilter
@@ -29,7 +29,12 @@ func ClearDefaultSynthesize() {
 
 func NewAdvancedSynthesizerFilter() *AdvancedSynthesizerFilter {
 	f := &AdvancedSynthesizerFilter{
-		AbstractAdvancedSynthesizerFilter: &rules.AbstractAdvancedSynthesizerFilter{},
+		AbstractAdvancedSynthesizerFilter: &rules.AbstractAdvancedSynthesizerFilter{
+			// Java AdvancedSynthesizerFilter.getNewLemma → getVerbFromNoun(word)
+			GetNewLemma: func(word, newLemma string) string {
+				return NounToVerb(word)
+			},
+		},
 	}
 	if defaultSynth != nil {
 		f.Synthesize = resolveDefaultSynth

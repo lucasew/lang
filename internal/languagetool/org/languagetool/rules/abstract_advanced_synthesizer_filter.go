@@ -17,6 +17,10 @@ type AbstractAdvancedSynthesizerFilter struct {
 	// Synthesize(lemma, postag) → surface forms (Java synth.synthesize with regex postag).
 	// Nil → fail-closed (return nil; do not invent forms).
 	Synthesize func(lemma, postag string) []string
+	// GetNewLemma ports protected getNewLemma(word, newLemma) when newLemma starts with "_".
+	// Java base returns null (drop match). Language subclasses (e.g. CA) override.
+	// Empty string result means null — Accept returns nil.
+	GetNewLemma func(word, newLemma string) string
 	// IsSuggestionException optional; Java language overrides.
 	IsSuggestionException func(token, desiredPostag string) bool
 	// AdaptSuggestion optional language.adaptSuggestion.
@@ -70,10 +74,18 @@ func (f *AbstractAdvancedSynthesizerFilter) AcceptRuleMatch(match *RuleMatch, ar
 	desiredPostag := *posTok.GetPOSTag()
 	if newLemma != "" {
 		if strings.HasPrefix(newLemma, "_") {
-			desiredLemma = getNewLemma(desiredLemma, newLemma)
+			// Java: desiredLemma = getNewLemma(...); if null return null
+			if f.GetNewLemma != nil {
+				desiredLemma = f.GetNewLemma(desiredLemma, newLemma)
+			} else {
+				desiredLemma = "" // Java base getNewLemma returns null
+			}
 		} else {
 			desiredLemma = newLemma
 		}
+	}
+	if desiredLemma == "" {
+		return nil
 	}
 	if postagReplace != "" {
 		desiredPostag = getCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag, postagReplace)
@@ -185,22 +197,6 @@ func getCompositePostag(lemmaSelect, postagSelect, originalPostag, desiredPostag
 		}
 	}
 	return result
-}
-
-// getNewLemma ports newLemma starting with "_" (suffix/replace lemma morphology).
-// Incomplete without full Java getNewLemma — only simple "_" strip if no further logic.
-func getNewLemma(desiredLemma, newLemma string) string {
-	// Java has language-specific getNewLemma; without override, keep desiredLemma
-	// when newLemma is "_" + something we cannot invent.
-	if newLemma == "_" || newLemma == "" {
-		return desiredLemma
-	}
-	// conservative: if newLemma is "_suffix", append after lemma (common pattern)
-	if strings.HasPrefix(newLemma, "_") && len(newLemma) > 1 {
-		// do not invent morphology transforms — return desiredLemma fail-closed
-		return desiredLemma
-	}
-	return newLemma
 }
 
 func requireArg(args map[string]string, key string) string {
