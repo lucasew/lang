@@ -871,7 +871,66 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		return true
 	}
 
+	// можуть російськомовні громадяни вважатися — INF_ARGREEMENT before/after inf
+	// Java: reverseSearchIdx / forwardLemmaSearchIdx with INF_ARGREEMENT_PATTERN
+	if HasPosTagRE(verb, verbInfPattern) {
+		if nounPos > 1 {
+			foundIdx := ReverseSearchIdx(tokens, nounPos-1, 6, infAgreementPattern, nil)
+			if foundIdx >= 0 {
+				// if not adj, or adj/noun inflections overlap (simplified: always true when non-adj)
+				if !HasPosTagStart(tokens[foundIdx], "adj") {
+					return true
+				}
+				// adj: exception if genders/cases can overlap — use soft non-empty POS agree
+				if adjNounInflectionOverlap(tokens[foundIdx], noun) {
+					return true
+				}
+			}
+		}
+		if verbPos < len(tokens)-1 {
+			foundIdx := ForwardLemmaSearchIdx(tokens, verbPos+1, 7, infAgreementPattern, nil)
+			if foundIdx >= 0 {
+				if !HasPosTagStart(tokens[foundIdx], "adj") {
+					return true
+				}
+				if adjNounInflectionOverlap(tokens[foundIdx], noun) {
+					return true
+				}
+			}
+		}
+		// як навчила мене бабуся місити тісто — prev finite verb agrees with noun
+		if nounPos > 1 {
+			prevVerbIdx := ReverseSearchIdx(tokens, nounPos-1, 7, nil, regexp.MustCompile(`verb.*`))
+			if prevVerbIdx >= 0 && prevVerbIdx != verbPos {
+				// soft: if prev is finite verb, exception (full VerbInflection overlap deferred)
+				if !HasPosTagRE(tokens[prevVerbIdx], verbInfPattern) {
+					return true
+				}
+			}
+		}
+	}
+
 	return false
+}
+
+// Java TokenAgreementNounVerbExceptionHelper.INF_ARGREEMENT_PATTERN
+var infAgreementPattern = regexp.MustCompile(
+	`^(не)?(здатний|змушений|з?г[іо]дний|зобов'язаний|повинний|готовий|достойний|покликаний|спроможний|радий|налаштований|зацікавлений|повинно|змога|стан|можна)$`,
+)
+
+// adjNounInflectionOverlap is a simplified stand-in for Collections.disjoint on
+// noun/adj inflections (Java InflectionHelper) — true when case gender tags share a letter.
+func adjNounInflectionOverlap(adj, noun *languagetool.AnalyzedTokenReadings) bool {
+	if adj == nil || noun == nil {
+		return false
+	}
+	aInf := GetAdjCaseInflections(CollectPOSTags(adj))
+	nInf := GetNounCaseInflections(CollectPOSTags(noun))
+	if len(aInf) == 0 || len(nInf) == 0 {
+		// insufficient morph: Java may still exception for non-adj path only
+		return false
+	}
+	return InflectionsIntersect(aInf, nInf)
 }
 
 func isAllUpper(s string) bool {

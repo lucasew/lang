@@ -287,3 +287,14 @@ func TestVerbNounException_MoreArms(t *testing.T) {
 		atr("людина", "noun:anim:f:v_naz"),
 	}, 0, 1))
 }
+
+func TestNounVerbException_InfAgreementSearch(t *testing.T) {
+	// громадяни вважатися after здатні — Java reverseSearch requires nounPos > 1
+	zd := "здатний"
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"),
+		atrLemma("здатні", &zd, "adj:p:v_naz"),
+		atr("громадяни", "noun:anim:p:v_naz"),
+		atr("вважатися", "verb:imperf:inf:refl"),
+	}, 2, 3))
+}

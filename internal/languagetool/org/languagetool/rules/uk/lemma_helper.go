@@ -245,6 +245,65 @@ func addAll(dst map[string]struct{}, src []string) {
 	}
 }
 
+// ReverseSearchIdx ports LemmaHelper.reverseSearchIdx: scan back from pos for depth
+// tokens; lemmaRE/posRE may be nil (match any). Returns index or -1.
+func ReverseSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, pos, depth int, lemmaRE, posRE *regexp.Regexp) int {
+	if tokens == nil || pos < 0 {
+		return -1
+	}
+	for i := pos; i > pos-depth && i >= 0; i-- {
+		if i >= len(tokens) || tokens[i] == nil {
+			continue
+		}
+		if lemmaRE != nil && !HasLemmaTokenRE(tokens[i], lemmaRE) {
+			continue
+		}
+		if posRE != nil && !HasPosTagRE(tokens[i], posRE) {
+			continue
+		}
+		return i
+	}
+	return -1
+}
+
+// ReverseSearch ports LemmaHelper.reverseSearch.
+func ReverseSearch(tokens []*languagetool.AnalyzedTokenReadings, pos, depth int, lemmaRE, posRE *regexp.Regexp) bool {
+	return ReverseSearchIdx(tokens, pos, depth, lemmaRE, posRE) >= 0
+}
+
+// ForwardLemmaSearchIdx ports LemmaHelper.forwardLemmaSearchIdx.
+func ForwardLemmaSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, pos, depth int, lemmaRE, posRE *regexp.Regexp) int {
+	if tokens == nil || pos < 0 {
+		return -1
+	}
+	for i := pos; i < pos+depth && i < len(tokens); i++ {
+		if tokens[i] == nil {
+			continue
+		}
+		if lemmaRE != nil && !HasLemmaTokenRE(tokens[i], lemmaRE) {
+			continue
+		}
+		if posRE != nil && !HasPosTagRE(tokens[i], posRE) {
+			continue
+		}
+		return i
+	}
+	return -1
+}
+
+// ForwardPosTagSearch ports LemmaHelper.forwardPosTagSearch (substring POS part).
+func ForwardPosTagSearch(tokens []*languagetool.AnalyzedTokenReadings, pos int, posTag string, maxSkip int) bool {
+	if tokens == nil || pos < 0 {
+		return false
+	}
+	for i := pos; i < len(tokens) && i <= pos+maxSkip; i++ {
+		if HasPosTagPart(tokens[i], posTag) {
+			return true
+		}
+	}
+	return false
+}
+
 // IsCapitalized ports LemmaHelper.isCapitalized (Ukrainian title-case heuristics).
 func IsCapitalized(word string) bool {
 	if word == "" {
