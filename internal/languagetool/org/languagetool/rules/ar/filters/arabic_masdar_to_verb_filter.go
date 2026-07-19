@@ -1,7 +1,11 @@
 package filters
 
 import (
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -9,23 +13,76 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// Built-in masdar→verb lemma map (subset of Java ArabicMasdarToVerbFilter).
-// Full list also loads from /ar/arabic_masdar_verb.txt when wired.
-var defaultMasdar2Verb = map[string][]string{
-	"عمل":   {"عَمِلَ"},
-	"إعمال": {"أَعْمَلَ"},
-	"تعميل": {"عَمَّلَ"},
-	"ضرب":   {"ضَرَبَ"},
-	"أكل":   {"أَكَلَ"},
-	"إجابة": {"أَجَابَ"},
-}
+// Official /ar/arabic_masdar_verb.txt (Java ArabicMasdarToVerbFilter.FILE_NAME).
+// Java also has a dead inline map; Accept uses masdar2verbList from this file only.
+const arabicMasdarVerbRel = "inspiration/languagetool/languagetool-language-modules/ar/src/main/resources/org/languagetool/rules/ar/arabic_masdar_verb.txt"
 
 // Authorized auxiliary lemmas for قام-style constructions (Java authorizeLemma).
 var authorizeAuxLemma = map[string]struct{}{
 	"قَامَ": {},
 }
 
-var masdarTagMgr = ar_tag.NewArabicTagManager()
+var (
+	masdarTagMgr = ar_tag.NewArabicTagManager()
+	masdarMapOnce sync.Once
+	masdarMapData map[string][]string
+)
+
+func loadOfficialMasdarVerbMap() map[string][]string {
+	masdarMapOnce.Do(func() {
+		masdarMapData = map[string][]string{}
+		path := discoverArabicMasdarVerb()
+		if path == "" {
+			return
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			return
+		}
+		defer f.Close()
+		// Format: masdar=verb|verb2 (SimpleReplaceDataLoader)
+		m, err := rules.LoadSimpleReplaceWords(f)
+		if err != nil || m == nil {
+			return
+		}
+		masdarMapData = m
+	})
+	// copy for callers that mutate
+	out := make(map[string][]string, len(masdarMapData))
+	for k, v := range masdarMapData {
+		out[k] = append([]string(nil), v...)
+	}
+	return out
+}
+
+func discoverArabicMasdarVerb() string {
+	_, file, _, ok := runtime.Caller(0)
+	if ok {
+		// filters → ar → rules → languagetool → org → languagetool → internal → root
+		root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../../../"))
+		p := filepath.Join(root, arabicMasdarVerbRel)
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for {
+		cand := filepath.Join(dir, arabicMasdarVerbRel)
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
 
 // ArabicMasdarToVerbFilter ports org.languagetool.rules.ar.filters.ArabicMasdarToVerbFilter.
 // Accept uses patternTokens[0] verb lemmas + patternTokens[1] masdar lemmas (Java tagger),
@@ -37,14 +94,10 @@ type ArabicMasdarToVerbFilter struct {
 	InflectLemmaLike func(targetLemma string, source *languagetool.AnalyzedToken) []string
 }
 
+// NewArabicMasdarToVerbFilter loads official arabic_masdar_verb.txt (Java loadFromPath).
+// Empty map if the resource is missing (fail closed — no invent subset).
 func NewArabicMasdarToVerbFilter() *ArabicMasdarToVerbFilter {
-	m := map[string][]string{}
-	for k, v := range defaultMasdar2Verb {
-		cp := make([]string, len(v))
-		copy(cp, v)
-		m[k] = cp
-	}
-	return &ArabicMasdarToVerbFilter{Masdar2Verb: m}
+	return &ArabicMasdarToVerbFilter{Masdar2Verb: loadOfficialMasdarVerbMap()}
 }
 
 // LoadMasdarMap merges path-style replace data (lemma → replacements).
