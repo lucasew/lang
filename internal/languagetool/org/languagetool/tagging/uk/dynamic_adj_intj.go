@@ -46,7 +46,7 @@ func collapseElongatedVowels(token string) (adjusted string, changed bool) {
 	return b.String(), changed
 }
 
-// ending → POS case list for adjectives (simplified soft paradigm)
+// ending → POS case list for adjectives (case-ending paradigms for -подібний/-вмісний)
 var adjEndingPOS = map[string][]string{
 	"ий":  {":m:v_naz", ":m:v_zna:rinanim"},
 	"ого": {":m:v_rod", ":m:v_zna:ranim", ":n:v_rod"},

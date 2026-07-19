@@ -83,6 +83,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = alt
 			}
 		}
+		// Java ALLCAPS → capitalizeProperName + noun.*:prop|noninfl re-tag (needs dict).
+		if len(readings) == 0 {
+			if prop := AllCapsPropReadings(w, t.TagWord); len(prop) > 0 {
+				readings = prop
+			}
+		}
 		if len(readings) == 0 {
 			if pref := TryNoDashPrefixTags(w, func(right string) []*languagetool.AnalyzedToken {
 				var rs []*languagetool.AnalyzedToken

@@ -20,10 +20,23 @@ func TestNumberedEntityPOS(t *testing.T) {
 }
 
 func TestUkrainianTagger_ProperNameAllCaps(t *testing.T) {
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	// Java: ALLCAPS → capitalizeProperName + dict prop/noninfl (no invent without dict).
+	wt := tagging.MapWordTagger{
+		"Нато": {tagging.NewTaggedWord("Нато", "noun:inanim:m:v_naz:prop")},
+	}
+	tg := NewUkrainianTagger(wt)
 	got := tg.Tag([]string{"НАТО"})
 	require.True(t, got[0].IsTagged())
 	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "prop")
+	// without dict fails closed
+	tg2 := NewUkrainianTagger(tagging.MapWordTagger{})
+	require.False(t, tg2.Tag([]string{"НАТО"})[0].IsTagged())
+}
+
+func TestCapitalizeProperName(t *testing.T) {
+	require.Equal(t, "Нато", capitalizeProperName("НАТО"))
+	require.Equal(t, "Київ", capitalizeProperName("КИЇВ"))
+	require.Equal(t, "Івано-Франківськ", capitalizeProperName("ІВАНО-ФРАНКІВСЬК"))
 }
 
 func TestUkrainianTagger_NumberedEntities(t *testing.T) {

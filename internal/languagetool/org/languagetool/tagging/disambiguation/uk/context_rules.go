@@ -572,8 +572,8 @@ func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 		if !hasImpr {
 			continue
 		}
-		// soft: if adj and noun share gender letter or both plural
-		if adjNounSoftAgree(prev, tok) {
+		// Drop impr verb reading when adj+noun share gender/number (POS-gated, no surface invent).
+		if adjNounAgree(prev, tok) {
 			for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
 				if r != nil && r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "verb") && strings.Contains(*r.GetPOSTag(), "impr") {
 					tok.RemoveReading(r, "not_an_imperative_2")
@@ -583,8 +583,8 @@ func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 	}
 }
 
-func adjNounSoftAgree(adj, noun *languagetool.AnalyzedTokenReadings) bool {
-	// share :p: or same :m/f/n:
+func adjNounAgree(adj, noun *languagetool.AnalyzedTokenReadings) bool {
+	// share :p: or same :m/f/n: on adj and noun readings
 	for _, a := range adj.GetReadings() {
 		if a == nil || a.GetPOSTag() == nil {
 			continue

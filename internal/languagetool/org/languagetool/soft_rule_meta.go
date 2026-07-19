@@ -50,14 +50,14 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 	case id == "COMMA_PARENTHESIS_WHITESPACE" || id == "COMMA_WHITESPACE" ||
 		id == "SENTENCE_WHITESPACE" || strings.Contains(id, "WHITESPACE"):
 		// Java MultipleWhitespace / CommaWhitespace: TYPOGRAPHY + Whitespace
-		// DE soft uses Typografie for shared layout IDs registered under de packs
+		// DE uses Typografie for shared layout IDs registered under de packs
 		if id == "COMMA_PARENTHESIS_WHITESPACE" || id == "WHITESPACE_RULE" || id == "WHITESPACE_PUNCTUATION" {
 			return "TYPOGRAPHY", "Typografie", "whitespace", "Typografie"
 		}
 		return "TYPOGRAPHY", "Typography", "whitespace", "Typography"
 	case id == "EMPTY_LINE":
 		// Java EmptyLineRule: Categories.STYLE + ITSIssueType.Style
-		// Soft short from MessagesBundle_de empty_line_rule_desc
+		// Short from MessagesBundle_de empty_line_rule_desc
 		return "STYLE", "Stil", "style", "Leere Zeile"
 	case id == "PUNCTUATION_PARAGRAPH_END":
 		// Java PunctuationMarkAtParagraphEnd: Categories.PUNCTUATION + Grammar
@@ -84,7 +84,7 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 		id == "DE_SUBJECT_VERB_AGREEMENT" || id == "DE_VERBAGREEMENT" ||
 		id == "MISSING_VERB":
 		// Java AgreementRule / VerbAgreement / MissingVerbRule: Categories.GRAMMAR
-		// Soft short: DE "Kongruenz" (from getDescription family), category name MessagesBundle_de
+		// Short: DE "Kongruenz" (from getDescription family), category name MessagesBundle_de
 		return "GRAMMAR", "Grammatik", "grammar", "Kongruenz"
 	case id == "COMMA_IN_FRONT_RELATIVE_CLAUSE" || id == "COMMA_BEHIND_RELATIVE_CLAUSE":
 		// Java MissingCommaRelativeClauseRule: custom HILFESTELLUNG_KOMMASETZUNG
@@ -136,7 +136,7 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 		return "STYLE", "Stil", "style", "Maßeinheiten"
 	case id == "GERMAN_WRONG_WORD_IN_CONTEXT" || strings.HasPrefix(id, "GERMAN_WRONG_WORD_IN_CONTEXT_"):
 		// Java WrongWordInContextRule: CategoryIds.CONFUSED_WORDS + Misspelling
-		// Soft name: DE getCategoryString / MessagesBundle_de category_confused_words
+		// Name: DE getCategoryString / MessagesBundle_de category_confused_words
 		return "CONFUSED_WORDS", "Oft verwechselte Wörter", "misspelling", "Wortverwechslung"
 	case id == "DE_REPEATEDWORDS" || strings.HasPrefix(id, "DE_REPEATEDWORDS_"):
 		// Java AbstractRepeatedWordsRule: Categories.REPETITIONS_STYLE + Style
@@ -150,7 +150,7 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 		return "STYLE", "Stil", "style", "Absatzanfang"
 	case id == "AI_DE_MERGED_MATCH" ||
 		// Java remote AI families (German.getPriorityForId AI_DE_GGEC / HYDRA / KOMMA).
-		// Soft fallback when remote payload left category empty — not invent for unknown IDs.
+		// Fallback when remote payload left category empty — not invent for unknown IDs.
 		strings.HasPrefix(id, "AI_DE_GGEC") || strings.HasPrefix(id, "AI_DE_HYDRA") ||
 		strings.HasPrefix(id, "AI_DE_KOMMA"):
 		// Java German.mergeMatches short "Potenzieller Fehler"; GGEC/HYDRA default grammar.
@@ -163,13 +163,13 @@ func RuleMeta(ruleID string) (categoryID, categoryName, issueType, short string)
 		// Java Spanish.filterRuleMatches casing rewrite → Categories.CASING
 		return "CASING", "Mayúsculas y minúsculas", "typographical", "Mayúsculas y minúsculas"
 	case strings.HasPrefix(id, "AI_ES_GGEC") || strings.HasPrefix(id, "AI_ES_"):
-		// Soft fallback for Spanish remote AI (not invent for unknown non-AI ids).
+		// Fallback for Spanish remote AI (not invent for unknown non-AI ids).
 		return "GRAMMAR", "Gramática", "grammar", ""
 	case strings.HasPrefix(id, "AI_PT_GGEC") || strings.HasPrefix(id, "AI_PT_HYDRA") || strings.HasPrefix(id, "AI_PT_"):
-		// Soft fallback for Portuguese remote AI (Portuguese.getPriorityForId families).
+		// Fallback for Portuguese remote AI (Portuguese.getPriorityForId families).
 		return "GRAMMAR", "Gramática", "grammar", ""
 	case strings.HasPrefix(id, "AI_NL_HYDRA") || strings.HasPrefix(id, "AI_NL_"):
-		// Soft fallback for Dutch remote AI (Dutch.getPriorityForId families).
+		// Fallback for Dutch remote AI (Dutch.getPriorityForId families).
 		return "GRAMMAR", "Grammatica", "grammar", ""
 	case id == "DE_UNPAIRED_QUOTES" || id == "UNPAIRED_BRACKETS":
 		// MessagesBundle_de category_typography
@@ -275,7 +275,7 @@ func RuleDescription(ruleID string) string {
 	case id == "AI_DE_MERGED_MATCH" ||
 		strings.HasPrefix(id, "AI_DE_GGEC") || strings.HasPrefix(id, "AI_DE_HYDRA") ||
 		strings.HasPrefix(id, "AI_DE_KOMMA"):
-		// Java German.mergeMatches message; remote AI families use same soft fallback.
+		// Java German.mergeMatches message; remote AI families use same fallback.
 		return "Hier scheint es einen Fehler zu geben."
 	case strings.HasPrefix(id, "AI_FR_MERGED_MATCH") ||
 		strings.HasPrefix(id, "AI_FR_GGEC") || strings.HasPrefix(id, "AI_FR_HYDRA"):

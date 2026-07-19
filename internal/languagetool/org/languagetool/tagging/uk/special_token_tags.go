@@ -74,9 +74,8 @@ func SpecialPOSTag(token string) string {
 	if p := NameSuffixPOS(token); p != "" {
 		return p
 	}
-	if p := AllCapsProperPOS(token); p != "" {
-		return p
-	}
+	// ALLCAPS proper: Java re-tags via capitalizeProperName + dict (AllCapsPropReadings).
+	// Do not invent prop POS without dictionary.
 	return ""
 }
 

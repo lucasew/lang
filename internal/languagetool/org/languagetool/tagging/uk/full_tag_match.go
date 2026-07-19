@@ -183,8 +183,4 @@ func NebudMissingHyphenReadings(surface, hyphenated string, tagWord func(string)
 	return out
 }
 
-// NebudSoftReadings is a deprecated name for NebudMissingHyphenReadings without dict
-// (returns nil — fail closed). Prefer NebudMissingHyphenReadings with TagWord.
-func NebudSoftReadings(surface, hyphenated string) []*languagetool.AnalyzedToken {
-	return NebudMissingHyphenReadings(surface, hyphenated, nil)
-}
+
