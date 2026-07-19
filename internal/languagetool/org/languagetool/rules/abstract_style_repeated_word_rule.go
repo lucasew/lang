@@ -2,7 +2,6 @@ package rules
 
 import (
 	"regexp"
-	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -218,13 +217,10 @@ func (r *AbstractStyleRepeatedWordRule) isTokenInSentence(
 			i > 1 && !tokens[i].IsWhitespaceBefore() {
 			isDirectSpeech = false
 		} else if i != notCheck && !isDirectSpeech && !isInQuotesStyle(tokens, i) && r.isTokenToCheckDefault(tokens, i) {
+			// Java: (!lemmas.isEmpty() && hasAnyLemma && !exception) || isPartOfWord
+			// No surface EqualFold invent when lemmas are missing.
 			sameLemma := len(lemmas) > 0 && tokens[i].HasAnyLemma(lemmas...) && !r.isExceptionPair(testToken, tokens[i])
 			partOf := r.isPartOfWord(testToken.GetToken(), tokens[i].GetToken())
-			// surface fallback when no lemmas: equal ignore case
-			if !sameLemma && len(lemmas) == 0 &&
-				strings.EqualFold(testToken.GetToken(), tokens[i].GetToken()) {
-				sameLemma = true
-			}
 			if sameLemma || partOf {
 				if notCheck >= 0 {
 					if notCheck == i-2 {
