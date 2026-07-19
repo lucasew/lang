@@ -50,7 +50,15 @@ func NewEnglishSpecificCaseRule(messages map[string]string) *EnglishSpecificCase
 		InitialCapitalMessage:      "If the term is a proper noun, use initial capitals.",
 		OtherCapitalizationMessage: "If the term is a proper noun, use the suggested capitalization.",
 		ShortMsg:                   "Proper noun",
+		// Java EnglishSpecificCaseRule.setUrl capital-letters insights
+		URL: "https://languagetool.org/insights/post/spelling-capital-letters/",
 	}
+	rules.InitSpecificCaseMeta(base, messages)
+	// Java: addExamplePair(Harry potter → Harry Potter)
+	base.AddExamplePair(
+		rules.Wrong("I really like <marker>Harry potter</marker>."),
+		rules.Fixed("I really like <marker>Harry Potter</marker>."),
+	)
 	return &EnglishSpecificCaseRule{AbstractSpecificCaseRule: base}
 }
 

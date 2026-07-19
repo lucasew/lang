@@ -10,6 +10,7 @@ import (
 )
 
 // AbstractSpecificCaseRule ports org.languagetool.rules.AbstractSpecificCaseRule.
+// Java ctor: Categories.CASING, ITSIssueType.Misspelling.
 type AbstractSpecificCaseRule struct {
 	Messages                   map[string]string
 	LcToProper                 map[string]string
@@ -19,6 +20,29 @@ type AbstractSpecificCaseRule struct {
 	InitialCapitalMessage      string
 	OtherCapitalizationMessage string
 	ShortMsg                   string
+	// Category ports Rule.category (Java CASING).
+	Category *Category
+	// IssueType ports getLocQualityIssueType (Java Misspelling).
+	IssueType ITSIssueType
+	// URL ports Rule.url (Java setUrl).
+	URL string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
+}
+
+// InitSpecificCaseMeta applies Java AbstractSpecificCaseRule constructor metadata.
+func InitSpecificCaseMeta(r *AbstractSpecificCaseRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatCasing.GetCategory(messages)
+	}
+	if r.IssueType == "" {
+		r.IssueType = ITSMisspelling
+	}
 }
 
 // LoadSpecificCasePhrases loads phrase list: each non-comment line is the proper spelling.
@@ -45,6 +69,73 @@ func (r *AbstractSpecificCaseRule) GetID() string {
 		return r.ID
 	}
 	return "SPECIFIC_CASE"
+}
+
+// GetDescription ports Rule.getDescription.
+func (r *AbstractSpecificCaseRule) GetDescription() string {
+	if r == nil {
+		return ""
+	}
+	return r.Description
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *AbstractSpecificCaseRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AbstractSpecificCaseRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSMisspelling
+	}
+	return r.IssueType
+}
+
+// GetURL ports Rule.getUrl.
+func (r *AbstractSpecificCaseRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *AbstractSpecificCaseRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractSpecificCaseRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractSpecificCaseRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractSpecificCaseRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *AbstractSpecificCaseRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {

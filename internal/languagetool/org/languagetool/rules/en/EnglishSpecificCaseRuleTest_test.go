@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -38,4 +39,20 @@ func TestEnglishSpecificCaseRule_Rule(t *testing.T) {
 	require.Equal(t, 1, len(matches3))
 	require.Equal(t, 7, matches3[0].GetFromPos())
 	require.Equal(t, 20, matches3[0].GetToPos())
+}
+
+// Java EnglishSpecificCaseRule: CASING, Misspelling, capital-letters URL, Harry potter example.
+func TestEnglishSpecificCaseRule_Metadata(t *testing.T) {
+	rule := NewEnglishSpecificCaseRule(nil)
+	require.Equal(t, "EN_SPECIFIC_CASE", rule.GetID())
+	require.Equal(t, "Checks upper/lower case spelling of some proper nouns", rule.GetDescription())
+	require.Contains(t, rule.GetURL(), "spelling-capital-letters")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "CASING", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSMisspelling, rule.GetLocQualityIssueType())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "I really like <marker>Harry potter</marker>.", inc[0].GetExample())
+	require.Equal(t, []string{"Harry Potter"}, inc[0].GetCorrections())
+	require.Equal(t, "I really like <marker>Harry Potter</marker>.", rule.GetCorrectExamples()[0].GetExample())
 }
