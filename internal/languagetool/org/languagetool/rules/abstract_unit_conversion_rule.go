@@ -115,6 +115,8 @@ type AbstractUnitConversionRule struct {
 	FormatRounded func(s string) string
 	// MessageFor optional override of GetMessage (language-specific).
 	MessageFor func(m UnitConversionMessage) string
+	// ShortMessageFor optional override of GetShortMessage (language-specific).
+	ShortMessageFor func(m UnitConversionMessage) string
 	// ParseNumber optional locale number parse (default: comma→dot only).
 	ParseNumber func(s string) (float64, error)
 }
@@ -306,6 +308,34 @@ func (r *AbstractUnitConversionRule) GetMessage(m UnitConversionMessage) string 
 	default:
 		return "Unit conversion"
 	}
+}
+
+// GetShortMessage ports AbstractUnitConversionRule.getShortMessage.
+func (r *AbstractUnitConversionRule) GetShortMessage(m UnitConversionMessage) string {
+	if r != nil && r.ShortMessageFor != nil {
+		return r.ShortMessageFor(m)
+	}
+	switch m {
+	case UnitMsgCheck:
+		return "Incorrect unit conversion. Correct it?"
+	case UnitMsgSuggestion:
+		return "Add metric equivalent?"
+	case UnitMsgCheckUnknownUnit:
+		return "Unknown unit used in conversion."
+	case UnitMsgUnitMismatch:
+		return "Units incompatible."
+	default:
+		return "Unit conversion"
+	}
+}
+
+// newUnitMatch builds a RuleMatch with long + short messages (Java RuleMatch constructor).
+func (r *AbstractUnitConversionRule) newUnitMatch(
+	sentence *languagetool.AnalyzedSentence, from, to int, msg UnitConversionMessage,
+) *RuleMatch {
+	m := NewRuleMatch(r, sentence, from, to, r.GetMessage(msg))
+	m.SetShortMessage(r.GetShortMessage(msg))
+	return m
 }
 
 func (r *AbstractUnitConversionRule) formatNumber(v float64) string {
@@ -530,7 +560,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					break
 				}
 			}
-			m := NewRuleMatch(r, sentence, from, fullEnd, r.GetMessage(UnitMsgSuggestion))
+			m := r.newUnitMatch(sentence, from, fullEnd, UnitMsgSuggestion)
 			m.SetSuggestedReplacements(suggs)
 			matches = append(matches, m)
 		}
@@ -602,7 +632,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					break
 				}
 			}
-			m := NewRuleMatch(r, sentence, loc[0], loc[1], r.GetMessage(UnitMsgSuggestion))
+			m := r.newUnitMatch(sentence, loc[0], loc[1], UnitMsgSuggestion)
 			m.SetSuggestedReplacements(suggs)
 			matches = append(matches, m)
 		}
@@ -628,26 +658,35 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 			convertedUnit = &u
 			break
 		}
-		// common DE long names
+		// common DE/EN/PT long names used in parenthetical CHECK path
 		switch {
-		case bodyLow == "m" || bodyLow == "meter" || bodyLow == "metre" || bodyLow == "metern":
-			if u.ID == UnitMetre.ID {
+		case bodyLow == "m" || bodyLow == "meter" || bodyLow == "metre" || bodyLow == "metern" ||
+			strings.HasPrefix(bodyLow, "metro"):
+			if u.ID == UnitMetre.ID || (u.Kind == UnitLength && u.Factor == 1 && u.Metric) {
 				convertedUnit = &u
 			}
-		case bodyLow == "km" || strings.HasPrefix(bodyLow, "kilometer") || strings.HasPrefix(bodyLow, "kilometre"):
-			if u.ID == UnitKilometre.ID {
+		case bodyLow == "km" || strings.HasPrefix(bodyLow, "kilometer") || strings.HasPrefix(bodyLow, "kilometre") ||
+			strings.HasPrefix(bodyLow, "quilômetro") || strings.HasPrefix(bodyLow, "quilometro"):
+			if u.ID == UnitKilometre.ID || (u.Kind == UnitLength && math.Abs(u.Factor-1e3) < 1e-9 && u.Metric) {
 				convertedUnit = &u
 			}
-		case bodyLow == "cm" || strings.HasPrefix(bodyLow, "zentimeter"):
-			if u.ID == UnitCentimetre.ID {
+		case bodyLow == "cm" || strings.HasPrefix(bodyLow, "zentimeter") || strings.HasPrefix(bodyLow, "centimeter") ||
+			strings.HasPrefix(bodyLow, "centímetro") || strings.HasPrefix(bodyLow, "centimetro"):
+			if u.ID == UnitCentimetre.ID || (u.Kind == UnitLength && math.Abs(u.Factor-1e-2) < 1e-12 && u.Metric) {
 				convertedUnit = &u
 			}
-		case bodyLow == "mm" || strings.HasPrefix(bodyLow, "millimeter"):
-			if u.ID == UnitMillimetre.ID {
+		case bodyLow == "mm" || strings.HasPrefix(bodyLow, "millimeter") || strings.HasPrefix(bodyLow, "milímetro") ||
+			strings.HasPrefix(bodyLow, "milimetro"):
+			if u.ID == UnitMillimetre.ID || (u.Kind == UnitLength && math.Abs(u.Factor-1e-3) < 1e-12 && u.Metric) {
 				convertedUnit = &u
 			}
-		case bodyLow == "kg" || strings.HasPrefix(bodyLow, "kilogramm"):
-			if u.ID == UnitKilogram.ID {
+		case bodyLow == "kg" || strings.HasPrefix(bodyLow, "kilogramm") || strings.HasPrefix(bodyLow, "kilogram") ||
+			strings.HasPrefix(bodyLow, "quilogram"):
+			if u.ID == UnitKilogram.ID || (u.Kind == UnitMass && u.Factor == 1 && u.Metric) {
+				convertedUnit = &u
+			}
+		case strings.HasPrefix(bodyLow, "tonelada") || bodyLow == "t" || strings.HasPrefix(bodyLow, "tonne"):
+			if u.ID == UnitTonne.ID || (u.Kind == UnitMass && math.Abs(u.Factor-1e3) < 1e-9 && u.Metric) {
 				convertedUnit = &u
 			}
 		}
@@ -657,8 +696,7 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	}
 	if convertedUnit == nil {
 		// unknown unit in paren — Java CHECK_UNKNOWN_UNIT; report on paren span
-		m := NewRuleMatch(r, sentence, convFrom, convTo, r.GetMessage(UnitMsgCheckUnknownUnit))
-		return m
+		return r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheckUnknownUnit)
 	}
 	// same unit as source → leave alone (Java)
 	if convertedUnit.ID == srcUnit.ID && convertedUnit.Symbol == srcUnit.Symbol {
@@ -666,8 +704,7 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	}
 	expected, ok := Convert(srcVal, srcUnit, *convertedUnit)
 	if !ok {
-		m := NewRuleMatch(r, sentence, convFrom, convTo, r.GetMessage(UnitMsgUnitMismatch))
-		return m
+		return r.newUnitMatch(sentence, convFrom, convTo, UnitMsgUnitMismatch)
 	}
 	if math.Abs(expected-given) <= unitDelta*math.Max(1, math.Abs(expected)) {
 		// accurate enough
@@ -680,7 +717,7 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 			return nil
 		}
 	}
-	m := NewRuleMatch(r, sentence, convFrom, convTo, r.GetMessage(UnitMsgCheck))
+	m := r.newUnitMatch(sentence, convFrom, convTo, UnitMsgCheck)
 	// suggest corrected number + unit
 	m.SetSuggestedReplacement(r.formatNumber(expected) + " " + convertedUnit.Symbol)
 	return m

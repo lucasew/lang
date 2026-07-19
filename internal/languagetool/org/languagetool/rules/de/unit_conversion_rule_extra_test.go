@@ -18,4 +18,7 @@ func TestUnitConversionRule_FullJavaUnitsRegistered(t *testing.T) {
 	_ = r.Match(languagetool.AnalyzePlain("Das Volumen ist 2 Kubikmeter."))
 	// Java getMessage SUGGESTION
 	require.Contains(t, r.GetMessage(rules.UnitMsgSuggestion), "metrische")
+	// Java getShortMessage SUGGESTION
+	require.Equal(t, "Metrisches Äquivalent hinzufügen?", r.GetShortMessage(rules.UnitMsgSuggestion))
+	require.NotEmpty(t, ms[0].GetShortMessage())
 }

@@ -38,6 +38,21 @@ func NewPortugueseUnitConversionRule(messages map[string]string) *PortugueseUnit
 			return "Unidade"
 		}
 	}
+	// Java PortugueseUnitConversionRule.getShortMessage
+	base.ShortMessageFor = func(m rules.UnitConversionMessage) string {
+		switch m {
+		case rules.UnitMsgCheck:
+			return "Conversão incorreta. Corrigir?"
+		case rules.UnitMsgSuggestion:
+			return "Adicionar conversão ao sistema métrico?"
+		case rules.UnitMsgCheckUnknownUnit:
+			return "Unidade desconhecida."
+		case rules.UnitMsgUnitMismatch:
+			return "Unidade incompatível."
+		default:
+			return "Unidade"
+		}
+	}
 
 	// Java PortugueseUnitConversionRule unit registrations (order: longer phrases before shorter).
 	// Mass

@@ -37,6 +37,21 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 			return "Einheit"
 		}
 	}
+	// Java UnitConversionRule.getShortMessage
+	base.ShortMessageFor = func(m rules.UnitConversionMessage) string {
+		switch m {
+		case rules.UnitMsgCheck:
+			return "Falsche Umrechnung. Automatisch korrigieren?"
+		case rules.UnitMsgSuggestion:
+			return "Metrisches Äquivalent hinzufügen?"
+		case rules.UnitMsgCheckUnknownUnit:
+			return "Unbekannte Einheit."
+		case rules.UnitMsgUnitMismatch:
+			return "Inkompatible Einheiten."
+		default:
+			return "Einheit"
+		}
+	}
 	// Pfund Sterling anti-pattern (not a mass)
 	base.AntiPatternsAppend(`\d+[.,\d]*\s*Pfund\s+Sterling`)
 

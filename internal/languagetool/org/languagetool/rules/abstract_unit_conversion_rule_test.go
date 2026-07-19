@@ -39,3 +39,14 @@ func TestAbstractUnitConversionRule_FormatRounded(t *testing.T) {
 	require.Contains(t, forms, "ca. 2 m")
 	require.Contains(t, forms, "1.98 m")
 }
+
+func TestAbstractUnitConversionRule_ShortMessage(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	require.Equal(t, "Add metric equivalent?", r.GetShortMessage(UnitMsgSuggestion))
+	require.Equal(t, "Incorrect unit conversion. Correct it?", r.GetShortMessage(UnitMsgCheck))
+	// Match sets short message on RuleMatch
+	ms, err := r.Match(languagetool.AnalyzePlain("The trail is 10 mi long."))
+	require.NoError(t, err)
+	require.NotEmpty(t, ms)
+	require.Equal(t, "Add metric equivalent?", ms[0].GetShortMessage())
+}
