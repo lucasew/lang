@@ -1043,21 +1043,18 @@ func caseGovernmentMatches(adj *languagetool.AnalyzedTokenReadings, slave []Infl
 	return false
 }
 
-// tokenSearchPosRE is TokenSearch with a POS regex (Java tokenSearch Pattern posTag).
+// tokenSearchIgnoreLatinPOS ports the common Java posTagsToIgnore Pattern.compile("[a-z].*"):
+// skip-over tags starting with latin letters; break on other (e.g. untagged) tokens.
+var tokenSearchIgnoreLatinPOS = regexp.MustCompile(`^[a-z].*`)
+
+// tokenSearchPosRE is TokenSearch with a POS regex (Java tokenSearch Pattern posTag + ignore).
+// Uses TokenSearchPosRE so ignore semantics match LemmaHelper (skip-over vs break).
 func tokenSearchPosRE(tokens []*languagetool.AnalyzedTokenReadings, pos int, posRE *regexp.Regexp, dir Dir) int {
 	if tokens == nil || pos < 0 || posRE == nil {
 		return -1
 	}
-	step := 1
-	if dir == DirReverse {
-		step = -1
-	}
-	for i := pos; i < len(tokens) && i > 0; i += step {
-		if HasPosTagRE(tokens[i], posRE) {
-			return i
-		}
-	}
-	return -1
+	// Java VerbNoun paths: tokenSearch(..., VERB_PATTERN, null, [a-z].*, dir)
+	return TokenSearchPosRE(tokens, pos, posRE, nil, tokenSearchIgnoreLatinPOS, dir)
 }
 
 // hasCaseGovPosRE ports hasCaseGovernment(readings, posPattern, case).
@@ -2344,8 +2341,7 @@ var geoQualifiers = []string{
 	"вірус", "ураган",
 }
 
-// adjNounInflectionOverlap is a simplified stand-in for Collections.disjoint on
-// noun/adj inflections (Java InflectionHelper) — true when case gender tags share a letter.
+// adjNounInflectionOverlap ports !Collections.disjoint(getAdjInflections, getNounInflections).
 func adjNounInflectionOverlap(adj, noun *languagetool.AnalyzedTokenReadings) bool {
 	if adj == nil || noun == nil {
 		return false
@@ -2353,7 +2349,6 @@ func adjNounInflectionOverlap(adj, noun *languagetool.AnalyzedTokenReadings) boo
 	aInf := GetAdjCaseInflections(CollectPOSTags(adj))
 	nInf := GetNounCaseInflections(CollectPOSTags(noun))
 	if len(aInf) == 0 || len(nInf) == 0 {
-		// insufficient morph: Java may still exception for non-adj path only
 		return false
 	}
 	return InflectionsIntersect(aInf, nInf)

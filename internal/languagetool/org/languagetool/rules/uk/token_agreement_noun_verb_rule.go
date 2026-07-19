@@ -244,7 +244,7 @@ func (r *TokenAgreementNounVerbRule) Match(sentence *languagetool.AnalyzedSenten
 			if HasLemmaToken(nounTok, "який") {
 				kind = "займенник"
 			}
-			// Java formatInflections(master, true) / formatInflections(slave, false)
+			// Java: "Не узгоджено %s з дієсловом: \"%s\" (%s) і \"%s\" (%s)"
 			msg := "Не узгоджено " + kind + " з дієсловом: \"" + nounTok.GetToken() +
 				"\" (" + formatVerbPersonInflections(master, true) + ") і \"" + tok.GetToken() +
 				"\" (" + formatVerbPersonInflections(slave, false) + ")"

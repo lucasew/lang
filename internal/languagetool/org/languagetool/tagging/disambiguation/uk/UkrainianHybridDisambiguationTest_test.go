@@ -35,7 +35,7 @@ func TestUkrainianHybridDisambiguation_Disambiguator(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testDisambiguatorDups
 func TestUkrainianHybridDisambiguation_DisambiguatorDups(t *testing.T) {
-	// inject dups map (full disambig_dups.txt deferred)
+	// inject dups map (official data/disambig_dups.txt also embed-loaded by default)
 	dups := map[string][]string{"весь": {"ввесь"}}
 	d := NewUkrainianHybridDisambiguatorWith(nil, NewSimpleDisambiguatorFull(nil, dups))
 	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
@@ -215,7 +215,7 @@ func TestUkrainianHybridDisambiguation_Yih(t *testing.T) {
 
 // Port of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java :: UkrainianHybridDisambiguationTest.testSimpleRemove
 func TestUkrainianHybridDisambiguation_SimpleRemove(t *testing.T) {
-	// inject remove map (full disambig_remove.txt deferred)
+	// inject remove map (official data/disambig_remove.txt also embed-loaded by default)
 	rm := map[string]*TokenMatcher{
 		"була": {Entries: []MatcherEntry{{Lemma: "була", POS: regexp.MustCompile(`^noun.*`)}}},
 	}

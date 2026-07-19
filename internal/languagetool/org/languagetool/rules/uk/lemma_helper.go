@@ -273,19 +273,22 @@ func ReverseSearch(tokens []*languagetool.AnalyzedTokenReadings, pos, depth int,
 }
 
 // RevSearchIdx ports LemmaHelper.revSearchIdx: skip part/adv/pron then match at one index.
-// postagRegex is a Java PosTagHelper.hasPosTag(String) pattern (full tag match).
+// postagRegex is a Java PosTagHelper.hasPosTag(String) pattern (Matcher.matches full tag).
 func RevSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, startPos int, lemmaRE *regexp.Regexp, postagRegex string) int {
 	if tokens == nil || startPos < 0 || startPos >= len(tokens) {
 		return -1
 	}
 	pos := startPos
-	if pos > 0 && HasPosTagRE(tokens[pos], regexp.MustCompile(`^part`)) {
+	// Java: hasPosTag(..., "part.*") / "adv(:.*)?|.*pron.*" / "part.*"
+	partRE := regexp.MustCompile(`^part.*`)
+	advPronRE := regexp.MustCompile(`^(?:adv(?::.*)?|.*pron.*)$`)
+	if pos > 0 && HasPosTagMatches(tokens[pos], partRE) {
 		pos--
 	}
-	if pos > 0 && (HasPosTagRE(tokens[pos], regexp.MustCompile(`^adv(:.*)?$`)) || HasPosTagPart(tokens[pos], "pron")) {
+	if pos > 0 && HasPosTagMatches(tokens[pos], advPronRE) {
 		pos--
 	}
-	if pos > 0 && HasPosTagRE(tokens[pos], regexp.MustCompile(`^part`)) {
+	if pos > 0 && HasPosTagMatches(tokens[pos], partRE) {
 		pos--
 	}
 	if pos <= 0 {
@@ -295,7 +298,7 @@ func RevSearchIdx(tokens []*languagetool.AnalyzedTokenReadings, startPos int, le
 		return -1
 	}
 	if postagRegex != "" {
-		if !HasPosTagRE(tokens[pos], regexp.MustCompile(postagRegex)) {
+		if !HasPosTagMatches(tokens[pos], regexp.MustCompile(postagRegex)) {
 			return -1
 		}
 	}
@@ -374,7 +377,9 @@ func IsDash(tok *languagetool.AnalyzedTokenReadings) bool {
 	if c == "" {
 		c = tok.GetToken()
 	}
-	return DashesPattern.MatchString(c)
+	// Java DASHES_PATTERN.matcher(clean).matches() — full surface
+	loc := DashesPattern.FindStringIndex(c)
+	return loc != nil && loc[0] == 0 && loc[1] == len(c)
 }
 
 // Dir is LemmaHelper.Dir for TokenSearch.
@@ -428,7 +433,8 @@ func TokenSearch(tokens []*languagetool.AnalyzedTokenReadings, pos int, posTag s
 			if ct == "" {
 				ct = cur.GetToken()
 			}
-			if !HasPosTagRE(cur, posTagsToIgnore) && !lemmaQuotesRE.MatchString(ct) {
+			// Java hasPosTag(Pattern) for ignore = Matcher.matches()
+			if !HasPosTagMatches(cur, posTagsToIgnore) && !lemmaQuotesRE.MatchString(ct) {
 				break
 			}
 			continue
@@ -452,7 +458,8 @@ func TokenSearchPosRE(tokens []*languagetool.AnalyzedTokenReadings, pos int, pos
 		if cur == nil {
 			continue
 		}
-		hitPOS := posTagRE == nil || HasPosTagRE(cur, posTagRE)
+		// Java hasPosTag(Pattern) = matches(); ignore check also uses hasPosTag(Pattern)
+		hitPOS := posTagRE == nil || HasPosTagMatches(cur, posTagRE)
 		hitTok := true
 		if tokenRE != nil {
 			ct := cur.GetCleanToken()
@@ -471,7 +478,7 @@ func TokenSearchPosRE(tokens []*languagetool.AnalyzedTokenReadings, pos int, pos
 			if ct == "" {
 				ct = cur.GetToken()
 			}
-			if !HasPosTagRE(cur, posTagsToIgnore) && !lemmaQuotesRE.MatchString(ct) {
+			if !HasPosTagMatches(cur, posTagsToIgnore) && !lemmaQuotesRE.MatchString(ct) {
 				break
 			}
 			continue

@@ -182,11 +182,11 @@ func (r *TokenAgreementAdjNounRule) Match(sentence *languagetool.AnalyzedSentenc
 				adjPos = -1
 				continue
 			}
-			// Java: formatInflections(master, true) / formatInflections(slave, false)
+			// Java: "… \"%s\": [%s] і \"%s\": [%s]"
 			msg := "Потенційна помилка: прикметник не узгоджений з іменником: \"" +
-				adjTok.GetToken() + "\" (" + formatAdjNounInflections(master, true) + ") і \"" +
-				tok.GetToken() + "\" (" + formatAdjNounInflections(slave, false) + ")"
-			// Java message enrichments
+				adjTok.GetToken() + "\": [" + formatAdjNounInflections(master, true) + "] і \"" +
+				tok.GetToken() + "\": [" + formatAdjNounInflections(slave, false) + "]"
+			// Java message enrichments (else-if chain)
 			if HasPosTagPartInTags(adjTags, ":m:v_rod") &&
 				adjNounUYuyuRE.MatchString(tok.GetToken()) &&
 				HasPosTagRE(tok, adjNounDavNounRE) {
@@ -197,10 +197,10 @@ func (r *TokenAgreementAdjNounRule) Match(sentence *languagetool.AnalyzedSentenc
 				adjNounNumDashRE.MatchString(adjTok.GetToken()) {
 				msg += ". Можливо, вжито зайве літерне нарощення після кількісного числівника?"
 			} else if strings.HasPrefix(strings.ToLower(adjTok.GetToken()), "не") &&
-				HasPosTagPartInTags(nounTags, "v_oru") {
+				hasTagRE(nounTags, regexp.MustCompile(`noun.*?:v_oru.*`)) {
 				msg += ". Можливо, тут «не» потрібно писати окремо?"
-			} else if !HasPosTagPartInTags(adjTags, "v_mis") &&
-				HasPosTagPartInTags(nounTags, "v_mis") {
+			} else if !hasTagRE(adjTags, regexp.MustCompile(`adj.*?v_mis.*`)) &&
+				hasTagRE(nounTags, regexp.MustCompile(`noun.*?v_mis.*`)) {
 				msg += ". Можливо, пропущено прийменник на/в/у...?"
 			}
 			m := rules.NewRuleMatch(r, sentence, adjTok.GetStartPos(), tok.GetEndPos(), msg)

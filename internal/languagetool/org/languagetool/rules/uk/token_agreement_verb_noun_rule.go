@@ -289,30 +289,12 @@ func formatVerbCaseGov(cases map[string]struct{}) string {
 	return "вимагає: " + strings.Join(names, ", ")
 }
 
-// formatFoundCases lists case names present on object readings (simplified formatInflections list).
+// formatFoundCases lists case names on object readings (TokenAgreementAdjNounRule.formatInflections subset).
 func formatFoundCases(indirTags, nazTags []string) string {
-	seen := map[string]struct{}{}
-	var names []string
-	add := func(tags []string) {
-		for _, p := range tags {
-			for _, code := range taguk.VidminkyOrder {
-				if strings.Contains(p, code) {
-					if _, ok := seen[code]; ok {
-						break
-					}
-					seen[code] = struct{}{}
-					names = append(names, taguk.VidminokName(code))
-					break
-				}
-			}
-		}
-	}
-	add(indirTags)
-	add(nazTags)
-	if len(names) == 0 {
-		return ""
-	}
-	return strings.Join(names, ", ")
+	infs := GetNounInflectionsFromTags(append(append([]string{}, indirTags...), nazTags...), nil)
+	infs = append(infs, GetAdjCaseInflections(append(append([]string{}, indirTags...), nazTags...))...)
+	infs = dedupeInflections(infs)
+	return formatAdjNounInflections(infs, false)
 }
 
 // verbNounSuggestions ports TokenAgreementVerbNounRule.getSuggestions + surface wrap.
