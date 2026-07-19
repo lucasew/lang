@@ -684,40 +684,35 @@ func RemoveInanimVKly(input *languagetool.AnalyzedSentence) {
 	}
 }
 
+// punctAfterKlyRE ports PUNCT_AFTER_KLY_PATTERN = [!?,»"…]|[.!?]{2,3}
+var punctAfterKlyRE = regexp.MustCompile(`^(?:[!?,»"“”…]|[.!?]{2,3})$`)
+
+// adjVKlyRE ports PosTagHelper.ADJ_V_KLY_PATTERN.
+var adjVKlyRE = regexp.MustCompile(`^adj:.:v_kly.*$`)
+
 func likelyVklyContext(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
-	if tokens[i] == nil {
+	if i < 0 || i >= len(tokens) || tokens[i] == nil {
 		return false
 	}
 	if _, ok := likelyVklySurfaces[strings.ToLower(tokens[i].GetToken())]; ok {
 		return true
 	}
-	if i >= len(tokens)-1 {
+	if i >= len(tokens)-1 || tokens[i+1] == nil || i < 1 || tokens[i-1] == nil {
 		return false
 	}
-	next := tokens[i+1].GetToken()
-	if !isPunctAfterKly(next) {
+	// Java: (о || !prep) && punct && (adj:v_kly || о)
+	prev := tokens[i-1]
+	prevTok := strings.ToLower(prev.GetToken())
+	if !(prevTok == "о" || !hasPOSPrefix(prev, "prep")) {
 		return false
 	}
-	if i > 0 && tokens[i-1] != nil {
-		prev := strings.ToLower(tokens[i-1].GetToken())
-		if prev == "о" {
-			return true
-		}
-		if hasPOSPrefix(tokens[i-1], "adj") && tokens[i-1].HasPartialPosTag("v_kly") {
-			return true
-		}
+	if !punctAfterKlyRE.MatchString(tokens[i+1].GetToken()) {
+		return false
 	}
-	return false
-}
-
-func isPunctAfterKly(s string) bool {
-	if s == "!" || s == "?" || s == "," || s == "»" || s == "\"" || s == "…" {
+	if prevTok == "о" {
 		return true
 	}
-	if strings.HasPrefix(s, "..") || strings.HasPrefix(s, "...") {
-		return true
-	}
-	return false
+	return posTagFullMatchAny(prev, adjVKlyRE)
 }
 
 // RemoveLowerCaseHomonymsForAbbreviations drops non-abbr readings on ALL-CAPS abbr tokens.
@@ -765,6 +760,13 @@ func isAllUpperLetters(s string) bool {
 }
 
 // RemovePluralForNames drops plural proper-name readings unless plural context.
+// pluralNameRE ports PLURAL_NAME = noun:anim:p:.*:fname.*
+var pluralNameRE = regexp.MustCompile(`^noun:anim:p:.*:fname.*$`)
+
+// pluralLnameRE ports PLURAL_LNAME_PATTERN = noun:anim:p:.*:[lp]name.*
+var pluralLnameRE = regexp.MustCompile(`^noun:anim:p:.*:[lp]name.*$`)
+
+// RemovePluralForNames ports UkrainianHybridDisambiguator.removePluralForNames.
 func RemovePluralForNames(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -775,45 +777,49 @@ func RemovePluralForNames(input *languagetool.AnalyzedSentence) {
 		if tok == nil {
 			continue
 		}
-		// plural adj/numr/багато before → keep plural names
+		// keep plural names after plural adj / num / quant lemmas
 		if i > 1 && tokens[i-1] != nil {
 			prev := tokens[i-1]
-			if prev.HasPartialPosTag("adj:p") || prev.HasPartialPosTag("numr") || prev.HasPartialPosTag("number") ||
-				prev.HasPartialPosTag(":num") {
-				continue
-			}
-			switch strings.ToLower(prev.GetToken()) {
-			case "багато", "мало", "сотня", "півсотня", "два", "дві", "три", "чотири":
-				continue
-			}
-			// prep з/із before plural name (наймолодшого з Моцартів)
-			if isPrepZ(prev) {
+			if hasPOSPrefix(prev, "adj:p") || hasPOSPart(prev, "num") ||
+				hasAnyLemma(prev, []string{"багато", "мало", "півсотня", "сотня"}) {
 				continue
 			}
 		}
-		// next is plural lname → keep
-		if i+1 < len(tokens) && tokens[i+1] != nil && tokens[i+1].HasPartialPosTag(":lname") && tokens[i+1].HasPartialPosTag(":p:") {
+		// Юріїв Луценків — next plural lname/pname
+		if i < len(tokens)-1 && posTagFullMatchAny(tokens[i+1], pluralLnameRE) {
 			continue
 		}
+		// Андріїв Фартушняка й Варанкова
+		if i < len(tokens)-3 &&
+			hasPOSPart(tokens[i+1], ":lname") &&
+			tokens[i+3] != nil && hasPOSPart(tokens[i+3], ":lname") {
+			continue
+		}
+
 		var plurals []*languagetool.AnalyzedToken
 		other := false
 		for _, r := range tok.GetReadings() {
 			if r == nil || r.GetPOSTag() == nil {
-				continue
+				// Java: null posTag → break
+				break
 			}
 			pos := *r.GetPOSTag()
-			if strings.HasSuffix(pos, "_END") {
+			if pos == languagetool.SentenceEndTagName {
 				continue
 			}
-			// plural prop fname/lname
-			if strings.Contains(pos, ":prop") && (strings.Contains(pos, ":p:") || strings.Contains(pos, ":p:v_")) &&
-				(strings.Contains(pos, "fname") || strings.Contains(pos, "lname") || strings.Contains(pos, "geo")) {
+			// full match PLURAL_NAME
+			loc := pluralNameRE.FindStringIndex(pos)
+			if loc != nil && loc[0] == 0 && loc[1] == len(pos) {
 				plurals = append(plurals, r)
 			} else {
 				other = true
 			}
 		}
 		if len(plurals) > 0 && other {
+			// наймолодшого з Моцартів — keep if prev is prep з/із/зі
+			if i > 0 && tokens[i-1] != nil && hasLemmaPrepZ(tokens[i-1]) {
+				continue
+			}
 			for _, r := range plurals {
 				tok.RemoveReading(r, "plural_for_names")
 			}
@@ -821,12 +827,46 @@ func RemovePluralForNames(input *languagetool.AnalyzedSentence) {
 	}
 }
 
-func isPrepZ(tok *languagetool.AnalyzedTokenReadings) bool {
-	low := strings.ToLower(tok.GetToken())
-	if low == "з" || low == "із" || low == "зі" {
-		return true
+func posTagFullMatchAny(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
 	}
-	return tok.HasPartialPosTag("prep") && (low == "з" || low == "із" || low == "зі")
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		pos := *r.GetPOSTag()
+		loc := re.FindStringIndex(pos)
+		if loc != nil && loc[0] == 0 && loc[1] == len(pos) {
+			return true
+		}
+	}
+	return false
+}
+
+// hasLemmaPrepZ ports LemmaHelper.hasLemma(…, з|із|зі, "prep").
+func hasLemmaPrepZ(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		if !strings.HasPrefix(*r.GetPOSTag(), "prep") {
+			continue
+		}
+		switch strings.ToLower(*r.GetLemma()) {
+		case "з", "із", "зі":
+			return true
+		}
+	}
+	// surface fallback when lemma missing
+	switch strings.ToLower(tok.GetToken()) {
+	case "з", "із", "зі":
+		return hasPOSPart(tok, "prep") || hasPOSPrefix(tok, "prep")
+	}
+	return false
 }
 
 // RemoveLowerCaseBadForUpperCaseGood strips :bad readings when surface is capitalized prop.
