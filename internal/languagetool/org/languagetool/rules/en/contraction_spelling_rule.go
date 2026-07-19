@@ -48,10 +48,19 @@ func NewContractionSpellingRule(messages map[string]string) *ContractionSpelling
 		ID:            "EN_CONTRACTION_SPELLING",
 		Description:   "Spelling of English contractions",
 		ShortMsg:      "Spelling mistake",
+		// Java: Categories.TYPOS, Misspelling, grammar-contractions insights URL
+		Category:  rules.CatTypos.GetCategory(messages),
+		IssueType: rules.ITSMisspelling,
+		URL:       "https://languagetool.org/insights/post/grammar-contractions/",
 		MessageFn: func(tokenStr string, replacements []string) string {
 			return "Possible spelling mistake found."
 		},
 	}
+	// Java: addExamplePair(havent → haven't)
+	base.AddExamplePair(
+		rules.Wrong("We <marker>havent</marker> earned anything."),
+		rules.Fixed("We <marker>haven't</marker> earned anything."),
+	)
 	return &ContractionSpellingRule{AbstractSimpleReplaceRule: base}
 }
 

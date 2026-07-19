@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -48,6 +49,21 @@ func TestContractionSpellingRule_FailClosedWithoutDisambig(t *testing.T) {
 	matches := rule.Match(languagetool.AnalyzePlain("Never mind the whys and wherefores."))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, "why's", matches[0].GetSuggestedReplacements()[0])
+}
+
+// Java ContractionSpellingRule ctor: TYPOS, Misspelling, URL, example pair.
+func TestContractionSpellingRule_Metadata(t *testing.T) {
+	rule := NewContractionSpellingRule(nil)
+	require.Equal(t, "Spelling of English contractions", rule.GetDescription())
+	require.Contains(t, rule.GetURL(), "grammar-contractions")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "TYPOS", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSMisspelling, rule.GetLocQualityIssueType())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "We <marker>havent</marker> earned anything.", inc[0].GetExample())
+	require.Equal(t, []string{"haven't"}, inc[0].GetCorrections())
+	require.Equal(t, "We <marker>haven't</marker> earned anything.", rule.GetCorrectExamples()[0].GetExample())
 }
 
 func withIgnoreSpelling(text, surface string) *languagetool.AnalyzedSentence {

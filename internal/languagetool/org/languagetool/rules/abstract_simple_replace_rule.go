@@ -24,6 +24,13 @@ type AbstractSimpleReplaceRule struct {
 	ShortMsg          string
 	// Category ports Rule.category (Java MISC).
 	Category *Category
+	// URL ports Rule.url (Java setUrl).
+	URL string
+	// IssueType ports getLocQualityIssueType.
+	IssueType ITSIssueType
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 	// MessageFn custom message; if nil uses default.
 	MessageFn func(tokenStr string, replacements []string) string
 	// TokenException optional skip (ports isTokenException).
@@ -63,6 +70,57 @@ func (r *AbstractSimpleReplaceRule) GetDescription() string {
 		return r.Description
 	}
 	return ""
+}
+
+// GetURL ports Rule.getUrl.
+func (r *AbstractSimpleReplaceRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *AbstractSimpleReplaceRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AbstractSimpleReplaceRule) GetLocQualityIssueType() ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return ITSUncategorized
+	}
+	return r.IssueType
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractSimpleReplaceRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractSimpleReplaceRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractSimpleReplaceRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *AbstractSimpleReplaceRule) cleanup(word string) string {
