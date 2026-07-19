@@ -51,6 +51,11 @@ func NewGreekSpecificCaseRule(messages map[string]string) *GreekSpecificCaseRule
 		OtherCapitalizationMessage: "Η συγκεκριμένη έκφραση γράφεται σύμφωνα με την προτεινόμενη κεφαλαιοποίηση.",
 		ShortMsg:                   "Ειδική κεφαλαιοποίηση",
 	}
+	// Java: Ηνωμένες πολιτείες → Ηνωμένες Πολιτείες
+	base.AddExamplePair(
+		rules.Wrong("Κατοικώ στις <marker>Ηνωμένες πολιτείες</marker>."),
+		rules.Fixed("Κατοικώ στις <marker>Ηνωμένες Πολιτείες</marker>."),
+	)
 	return &GreekSpecificCaseRule{AbstractSpecificCaseRule: base}
 }
 

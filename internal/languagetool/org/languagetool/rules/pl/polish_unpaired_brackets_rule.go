@@ -15,6 +15,11 @@ func NewPolishUnpairedBracketsRule(messages map[string]string) *PolishUnpairedBr
 	end := []string{"]", ")", "}", "”", "«", "\""}
 	base := rules.NewGenericUnpairedBracketsRule(messages, start, end)
 	base.SetRuleID("PL_UNPAIRED_BRACKETS")
+	// Java: unpaired „ → close with ”
+	base.AddExamplePair(
+		rules.Wrong("To jest zdanie z <marker>„</marker>cudzysłowem."),
+		rules.Fixed("To jest zdanie z <marker>„</marker>cudzysłowem”."),
+	)
 	return &PolishUnpairedBracketsRule{GenericUnpairedBracketsRule: base}
 }
 

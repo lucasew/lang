@@ -52,6 +52,11 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 				strings.Join(replacements, ", ") + "."
 		},
 	}
+	// Java: sei → się
+	base.AddExamplePair(
+		rules.Wrong("Uspokój <marker>sei</marker>."),
+		rules.Fixed("Uspokój <marker>się</marker>."),
+	)
 	return &SimpleReplaceRule{AbstractSimpleReplaceRule: base}
 }
 

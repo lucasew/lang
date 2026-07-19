@@ -32,5 +32,10 @@ func NewPolishWordRepeatRule(messages map[string]string) *PolishWordRepeatRule {
 		ShortMessage:     "Powtórzenie wyrazu",
 	}
 	rules.InitAdvancedWordRepeatMeta(base, messages)
+	// Java: second długo → powoli (style synonym, not mere drop)
+	base.AddExamplePair(
+		rules.Wrong("Mówiła długo, bo lubiła robić wszystko <marker>długo</marker>."),
+		rules.Fixed("Mówiła długo, bo lubiła robić wszystko <marker>powoli</marker>."),
+	)
 	return &PolishWordRepeatRule{AdvancedWordRepeatRule: base}
 }

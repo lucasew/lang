@@ -45,13 +45,54 @@ type MorfologikPolishSpellerRule struct {
 	// TagPOS optional Polish tagger for isNotCompound adj compounds (adja / num:comp / adj:).
 	// Fail-closed when nil: only prefix-based compounds accepted without inventing POS.
 	TagPOS func(word string) []string
+	// incorrectExamples / correctExamples port Rule.addExamplePair (not on SpellingCheckRule:
+	// import cycle with rules package — same pattern as AbstractEnglishSpellerRule / RU).
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewMorfologikPolishSpellerRule() *MorfologikPolishSpellerRule {
-	return &MorfologikPolishSpellerRule{
+	r := &MorfologikPolishSpellerRule{
 		MorfologikSpellerRule: morfologik.NewMorfologikSpellerRule(
 			MorfologikPolishSpellerRuleID, "pl", PolishSpellerDict, nil),
 	}
+	// Java: bledem → błędem (wrong example omits trailing period, same as upstream)
+	r.AddExamplePair(
+		rules.Wrong("To jest zdanie z <marker>bledem</marker>"),
+		rules.Fixed("To jest zdanie z <marker>błędem</marker>."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *MorfologikPolishSpellerRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *MorfologikPolishSpellerRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *MorfologikPolishSpellerRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // Match ports parent Match with Polish getRuleMatches arms:

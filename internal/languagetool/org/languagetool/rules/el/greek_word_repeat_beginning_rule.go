@@ -25,6 +25,11 @@ var (
 func NewGreekWordRepeatBeginningRule(messages map[string]string) *GreekWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "GREEK_WORD_REPEAT_BEGINNING_RULE"
+	// Java: Επίσης → Επιπλέον
+	base.AddExamplePair(
+		rules.Wrong("Επίσης, παίζω ποδόσφαιρο. <marker>Επίσης</marker>, παίζω μπάσκετ."),
+		rules.Fixed("Επίσης, παίζω ποδόσφαιρο. <marker>Επιπλέον</marker>, παίζω μπάσκετ."),
+	)
 	r := &GreekWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsExceptionFn = r.isException
 	base.IsAdverbFn = r.isAdverb

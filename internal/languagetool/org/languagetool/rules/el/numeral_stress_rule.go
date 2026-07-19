@@ -14,6 +14,9 @@ type NumeralStressRule struct {
 	numeral        *regexp.Regexp
 	stressedNumber *regexp.Regexp
 	stressedSuffix *regexp.Regexp
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewNumeralStressRule(messages map[string]string) *NumeralStressRule {
@@ -34,7 +37,7 @@ func NewNumeralStressRule(messages map[string]string) *NumeralStressRule {
 		pattern += "|" + sfx
 	}
 	pattern += ")"
-	return &NumeralStressRule{
+	r := &NumeralStressRule{
 		Messages:  messages,
 		suffixMap: suffixMap,
 		numeral:   regexp.MustCompile("^" + pattern + "$"),
@@ -42,9 +45,46 @@ func NewNumeralStressRule(messages map[string]string) *NumeralStressRule {
 		stressedNumber: regexp.MustCompile(`^[0-9]*[02-9]0$`),
 		stressedSuffix: regexp.MustCompile("^(" + stressedRE + ")$"),
 	}
+	// Java: 20ος → 20ός
+	r.AddExamplePair(
+		rules.Wrong("Ο <marker>20ος</marker> αιώνας μαζί με τον 21ο αιώνα κατατάσσεται από τους ιστορικούς στη Σύγχρονη Ιστορία."),
+		rules.Fixed("Ο <marker>20ός</marker> αιώνας μαζί με τον 21ο αιώνα κατατάσσεται από τους ιστορικούς στη Σύγχρονη Ιστορία."),
+	)
+	return r
 }
 
 func (r *NumeralStressRule) GetID() string { return "GREEK_ORTHOGRAPHY_NUMERAL_STRESS" }
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *NumeralStressRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *NumeralStressRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *NumeralStressRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 func (r *NumeralStressRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	var out []*rules.RuleMatch

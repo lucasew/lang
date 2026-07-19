@@ -35,6 +35,11 @@ func loadRedundancy() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/el/redundancies.txt"); err != nil {
 			panic(err)
 		}
+		// Java: ανεβαίνω πάνω → ανεβαίνω
+		base.AddExamplePair(
+			rules.Wrong("Μου αρέσει να <marker>ανεβαίνω πάνω</marker> σε δέντρα."),
+			rules.Fixed("Μου αρέσει να <marker>ανεβαίνω</marker> σε δέντρα."),
+		)
 		redundancyBase = base
 	})
 	return redundancyBase

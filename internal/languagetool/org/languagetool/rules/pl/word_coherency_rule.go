@@ -51,6 +51,11 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: Grejpfrut → Grapefruit (coherency with earlier Grapefruity)
+	base.AddExamplePair(
+		rules.Wrong("Grapefruity są zdrowe. <marker>Grejpfrut</marker> smakuje najlepiej smażony."),
+		rules.Fixed("Grapefruity są zdrowe. <marker>Grapefruit</marker> smakuje najlepiej smażony."),
+	)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 
