@@ -24,6 +24,19 @@ colon:ok
 	require.Equal(t, "ok", m["colon"])
 }
 
+func TestLoadJavaProperties_ContinuationAndUnicode(t *testing.T) {
+	m, err := LoadJavaProperties(strings.NewReader(`
+long=hello \
+world
+unicode=\u0041\u0042
+escaped=a\=b
+`))
+	require.NoError(t, err)
+	require.Equal(t, "hello world", m["long"])
+	require.Equal(t, "AB", m["unicode"])
+	require.Equal(t, "a=b", m["escaped"])
+}
+
 func TestValidateTranslationKeys(t *testing.T) {
 	en := map[string]string{"a": "1", "b": "2"}
 	de := map[string]string{"a": "1"}

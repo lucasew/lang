@@ -163,8 +163,9 @@ func matchSpanTokens(s *languagetool.AnalyzedSentence, from, to int) []string {
 	return out
 }
 
-// expandPatternBackrefs replaces \1..\9 with span tokens (1-based). Unknown stays as-is.
-// Subset of Java PatternRuleMatcher.formatMatches backref handling.
+// expandPatternBackrefs replaces \1, \2, … (multi-digit) with span tokens (1-based).
+// Ports the digit-run scan in Java PatternRuleMatcher.formatMatches.
+// Unknown backrefs stay literal (do not invent empty replacements).
 func expandPatternBackrefs(sug string, spanToks []string) string {
 	if sug == "" || !strings.Contains(sug, `\`) {
 		return sug
@@ -172,19 +173,26 @@ func expandPatternBackrefs(sug string, spanToks []string) string {
 	var b strings.Builder
 	b.Grow(len(sug))
 	for i := 0; i < len(sug); i++ {
-		if sug[i] == '\\' && i+1 < len(sug) && sug[i+1] >= '1' && sug[i+1] <= '9' {
-			n := int(sug[i+1] - '0')
-			if n >= 1 && n <= len(spanToks) {
-				b.WriteString(spanToks[n-1])
-			} else {
-				// Unknown backref: leave literal (incomplete vs Java; do not invent empty).
-				b.WriteByte('\\')
-				b.WriteByte(sug[i+1])
-			}
-			i++
+		if sug[i] != '\\' || i+1 >= len(sug) || sug[i+1] < '1' || sug[i+1] > '9' {
+			b.WriteByte(sug[i])
 			continue
 		}
-		b.WriteByte(sug[i])
+		// Java: while Character.isDigit — multi-digit backrefs
+		j := i + 1
+		for j < len(sug) && sug[j] >= '0' && sug[j] <= '9' {
+			j++
+		}
+		n := 0
+		for k := i + 1; k < j; k++ {
+			n = n*10 + int(sug[k]-'0')
+		}
+		if n >= 1 && n <= len(spanToks) {
+			b.WriteString(spanToks[n-1])
+		} else {
+			// Unknown backref: leave literal (do not invent empty).
+			b.WriteString(sug[i:j])
+		}
+		i = j - 1
 	}
 	return b.String()
 }
