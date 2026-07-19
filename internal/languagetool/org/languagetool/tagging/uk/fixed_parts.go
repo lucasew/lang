@@ -116,18 +116,7 @@ func FixedPartReadings(token string, tagWord func(string) []tagging.TaggedWord) 
 	return out
 }
 
-// generateTokensForNv ports PosTagHelper.generateTokensForNv (lemma = surface).
+// generateTokensForNv delegates to GenerateTokensForNv (PosTagHelper twin).
 func generateTokensForNv(word, genders, extraTags string) []*languagetool.AnalyzedToken {
-	var out []*languagetool.AnalyzedToken
-	for _, gen := range genders {
-		for _, vidm := range nvCases {
-			pos := "noun:inanim:" + string(gen) + ":" + vidm + ":nv"
-			if extraTags != "" {
-				pos += extraTags
-			}
-			p, l := pos, word
-			out = append(out, languagetool.NewAnalyzedToken(word, &p, &l))
-		}
-	}
-	return out
+	return GenerateTokensForNv(word, genders, extraTags)
 }
