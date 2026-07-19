@@ -8,6 +8,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -157,6 +158,22 @@ func TestAvsAnRule_Positions(t *testing.T) {
 	matches = rule.Match(analyzeAvsAn("Like many \"an desperado\" before him, Bart headed south into Mexico."))
 	require.Equal(t, 11, matches[0].GetFromPos())
 	require.Equal(t, 13, matches[0].GetToPos())
+}
+
+// Java AvsAnRule ctor: setUrl, Categories.MISC, Misspelling, example pair, description.
+func TestAvsAnRule_Metadata(t *testing.T) {
+	rule := NewAvsAnRule(nil)
+	require.Equal(t, "Use of 'a' vs. 'an'", rule.GetDescription())
+	require.Contains(t, rule.GetURL(), "indefinite-articles")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "MISC", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSMisspelling, rule.GetLocQualityIssueType())
+	require.Equal(t, 1, rule.EstimateContextForSureMatch())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "The train arrived <marker>a hour</marker> ago.", inc[0].GetExample())
+	require.Equal(t, []string{"an hour"}, inc[0].GetCorrections())
+	require.Equal(t, "The train arrived <marker>an hour</marker> ago.", rule.GetCorrectExamples()[0].GetExample())
 }
 
 func getDeterminerFor(w string) Determiner {

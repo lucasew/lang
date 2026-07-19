@@ -23,13 +23,102 @@ const (
 // AvsAnRule ports org.languagetool.rules.en.AvsAnRule.
 type AvsAnRule struct {
 	Messages map[string]string
+	// URL ports Rule.url (Java setUrl indefinite-articles insights post).
+	URL string
+	// Category ports Rule.category (Java Categories.MISC).
+	Category *rules.Category
+	// IssueType ports getLocQualityIssueType (Java Misspelling).
+	IssueType rules.ITSIssueType
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewAvsAnRule(messages map[string]string) *AvsAnRule {
-	return &AvsAnRule{Messages: messages}
+	r := &AvsAnRule{
+		Messages:  messages,
+		URL:       "https://languagetool.org/insights/post/indefinite-articles/",
+		Category:  rules.CatMisc.GetCategory(messages),
+		IssueType: rules.ITSMisspelling,
+	}
+	// Java: addExamplePair(Example.wrong(...), Example.fixed(...))
+	r.AddExamplePair(
+		rules.Wrong("The train arrived <marker>a hour</marker> ago."),
+		rules.Fixed("The train arrived <marker>an hour</marker> ago."),
+	)
+	return r
 }
 
 func (r *AvsAnRule) GetID() string { return "EN_A_VS_AN" }
+
+// GetDescription ports AvsAnRule.getDescription.
+func (r *AvsAnRule) GetDescription() string { return "Use of 'a' vs. 'an'" }
+
+// GetURL ports Rule.getUrl.
+func (r *AvsAnRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *AvsAnRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// GetCategory ports Rule.getCategory.
+func (r *AvsAnRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType.
+func (r *AvsAnRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil {
+		return rules.ITSUncategorized
+	}
+	return r.IssueType
+}
+
+// EstimateContextForSureMatch ports AvsAnRule.estimateContextForSureMatch (Java 1).
+func (r *AvsAnRule) EstimateContextForSureMatch() int { return 1 }
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AvsAnRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	// Reuse BaseRule helper via temporary store on a BaseRule.
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AvsAnRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AvsAnRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 var (
 	cleanupPattern = regexp.MustCompile(`[^αa-zA-Z0-9.;,:']`)
