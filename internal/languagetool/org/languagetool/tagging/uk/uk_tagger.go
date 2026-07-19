@@ -24,6 +24,13 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 	for _, word := range sentenceTokens {
 		w := strings.ReplaceAll(word, "’", "'")
 		var readings []*languagetool.AnalyzedToken
+		// Java CompoundTagger.generateEntities from official /uk/entities.txt
+		if ents := EntityReadings(w); len(ents) > 0 {
+			readings = ents
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		if sp := SpecialPOSTag(w); sp != "" {
 			p := sp
 			lemma := w

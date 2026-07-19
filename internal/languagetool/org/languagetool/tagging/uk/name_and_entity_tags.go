@@ -10,11 +10,9 @@ import (
 )
 
 var (
-	// common Ukrainian surname suffixes
+	// common Ukrainian surname suffixes (unused for invent; surnames need dict)
 	reNameSuffix = regexp.MustCompile(`(?i).+(енко|єнко|ишин|ішин|ський|цький|івна|ович|евич|ів|їв)$`)
-	// numbered entities: Т-80, Ан-225, Як-42
-	reNumberedEntity = regexp.MustCompile(`^[\p{L}]{1,4}-?\d{1,4}[А-Яа-яA-Za-z]?$`)
-	// x-shaped: Т-подібний handled elsewhere; simple letter-dash-letter
+	// x-shaped: Т-подібний handled elsewhere
 	reXShaped = regexp.MustCompile(`(?i)^[\p{L}]-подібн`)
 )
 
@@ -27,22 +25,14 @@ func NameSuffixPOS(token string) string {
 	return ""
 }
 
-// NumberedEntityPOS tags military/aircraft style designations.
+// NumberedEntityPOS is deprecated invent-free: use EntityReadings (official entities.txt).
+// Returns first POS if any entity pattern matches, else "".
 func NumberedEntityPOS(token string) string {
-	if reNumberedEntity.MatchString(token) && strings.ContainsAny(token, "0123456789") {
-		// must have a letter part
-		hasL := false
-		for _, r := range token {
-			if unicode.IsLetter(r) {
-				hasL = true
-				break
-			}
-		}
-		if hasL {
-			return "noun:inanim:m:v_naz:prop:unanim"
-		}
+	rs := EntityReadings(token)
+	if len(rs) == 0 || rs[0].GetPOSTag() == nil {
+		return ""
 	}
-	return ""
+	return *rs[0].GetPOSTag()
 }
 
 // isAllUppercaseUk ports LemmaHelper.isAllUppercaseUk (allows - – ' combining marks).

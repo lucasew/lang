@@ -68,11 +68,8 @@ func SpecialPOSTag(token string) string {
 	if reNumber.MatchString(token) {
 		return "number"
 	}
-	if p := NumberedEntityPOS(token); p != "" {
-		return p
-	}
-	// Surnames (…енко) and ALLCAPS proper come from the dictionary / disambiguator
-	// (Java wordTagger + HybridDisambiguator :lname) — do not invent prop:lname POS.
+	// Numbered military/aircraft entities: EntityReadings from official entities.txt
+	// (not invent regex). Surnames/ALLCAPS: dictionary only.
 	return ""
 }
 
