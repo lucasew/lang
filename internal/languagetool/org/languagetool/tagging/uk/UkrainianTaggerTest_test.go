@@ -79,29 +79,50 @@ func TestUkrainianTagger_DynamicTaggingNumericPair(t *testing.T) {
 	_ = tg.Tag([]string{"три-чотири", "2-3"})
 }
 func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	// Short endings: LetterEndingForNumericHelper (no invent).
+	// Long right halves: Java wordTagger only — inject right lemmas.
+	wt := tagging.MapWordTagger{
+		"річному":     {tagging.NewTaggedWord("річний", "adj:m:v_dav")},
+		"відсотково": {tagging.NewTaggedWord("відсотково", "adv")},
+	}
+	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"100-й", "50-х", "11-ту", "100-річному", "100-відсотково", "10-хвилинка"})
 	require.True(t, out[0].HasPartialPosTag("adj"))
 	require.True(t, out[0].HasPartialPosTag("numr") || out[0].HasPosTagStartingWith("adj"))
 	require.True(t, out[1].HasPartialPosTag("adj"))
 	require.True(t, out[2].HasPartialPosTag("adj"))
 	require.True(t, out[3].HasPartialPosTag("adj"))
-	require.True(t, out[4].HasPosTag("adv"))
+	require.True(t, out[4].HasPosTag("adv") || out[4].HasPartialPosTag("adv"))
 	// 10-хвилинка: no invent bare noun POS without dict (fail closed)
 	require.False(t, out[5].IsTagged())
+
+	// Without right-side dict: long compounds fail closed
+	empty := NewUkrainianTagger(tagging.MapWordTagger{})
+	bare := empty.Tag([]string{"100-річному", "100-відсотково"})
+	require.False(t, bare[0].IsTagged())
+	require.False(t, bare[1].IsTagged())
 }
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
-	// directional compounds like Південно-Західній
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	// directional compounds: Java oAdjMatch needs right adj from wordTagger
+	wt := tagging.MapWordTagger{
+		"Західній":  {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
+		"західній":  {tagging.NewTaggedWord("західний", "adj:f:v_dav")},
+		"східного":  {tagging.NewTaggedWord("східний", "adj:m:v_rod")},
+	}
+	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"Південно-Західній", "північно-східного"})
 	require.True(t, out[0].IsTagged())
 	require.True(t, out[0].HasPartialPosTag("adj"))
 	require.True(t, out[1].IsTagged())
 	require.True(t, out[1].HasPartialPosTag("adj"))
-	// lemma lower with -ий
+	// lemma = left.lower + "-" + right lemma
 	lemma := out[0].GetReadings()[0].GetLemma()
 	require.NotNil(t, lemma)
 	require.Equal(t, "південно-західний", *lemma)
+
+	// Without dict: fail closed (no invent endings)
+	bare := NewUkrainianTagger(tagging.MapWordTagger{}).Tag([]string{"Південно-Західній"})
+	require.False(t, bare[0].IsTagged())
 }
 func TestUkrainianTagger_HypenAndQuote(t *testing.T) {
 	tg := NewUkrainianTagger(tagging.MapWordTagger{})
@@ -241,14 +262,28 @@ func TestCompoundNumrPOS(t *testing.T) {
 }
 
 func TestDynamicNumericReadings(t *testing.T) {
-	rs := DynamicNumericReadings("100-й")
+	// Short ordinal ending: official LetterEndingForNumericHelper map (no invent).
+	rs := DynamicNumericReadings("100-й", nil)
 	require.NotEmpty(t, rs)
 	require.Contains(t, rs[0].POS, "adj")
 	require.Contains(t, rs[0].POS, "numr")
-	rs2 := DynamicNumericReadings("100-річному")
+	require.Equal(t, "100-й", rs[0].Lemma)
+
+	// Long right half without dict: fail-closed (Java wordTagger required).
+	require.Empty(t, DynamicNumericReadings("100-річному", nil))
+
+	tagWord := func(s string) []tagging.TaggedWord {
+		if strings.ToLower(s) == "річному" || strings.ToLower(s) == "річний" {
+			return []tagging.TaggedWord{{Lemma: "річний", PosTag: "adj:m:v_dav"}}
+		}
+		return nil
+	}
+	rs2 := DynamicNumericReadings("100-річному", tagWord)
 	require.NotEmpty(t, rs2)
 	require.Contains(t, rs2[0].POS, "adj")
-	require.Empty(t, DynamicNumericReadings("звичайний"))
+	require.Equal(t, "100-річний", rs2[0].Lemma)
+
+	require.Empty(t, DynamicNumericReadings("звичайний", tagWord))
 }
 
 func TestMissingApostropheCandidates(t *testing.T) {

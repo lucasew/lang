@@ -48,7 +48,9 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
-		if dyn := DynamicNumericReadings(w); len(dyn) > 0 {
+		// Java matchDigitCompound: short endings from LetterEndingForNumericHelper;
+		// longer right halves need wordTagger (pass TagWord; fail-closed without hits).
+		if dyn := DynamicNumericReadings(w, t.TagWord); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
 				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
