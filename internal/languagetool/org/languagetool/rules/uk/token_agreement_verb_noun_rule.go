@@ -7,6 +7,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
 const TokenAgreementVerbNounRuleID = "UK_VERB_NOUN_INFLECTION_AGREEMENT"
@@ -224,9 +225,9 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 				continue
 			}
 
+			// Java: clear verb readings + break entire match loop (not continue)
 			if IsVerbNounException(tokens, verbPos, i) {
-				verbPos = -1
-				continue
+				break
 			}
 
 			// Java: flag when hasVidmPosTag(cases, indir) is false.
@@ -236,15 +237,17 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 					cases = r.caseGov().GetCaseGovernmentsFromReadings(verbTok, "verb")
 				}
 				if !hasVidmInTags(cases, indirTags) {
+					// "Не узгоджено дієслово з іменником: \"%s\" (%s) і \"%s\" (%s)"
 					msg := "Не узгоджено дієслово з іменником: \"" + verbTok.GetToken() +
-						"\" і \"" + tok.GetToken() + "\""
+						"\" (" + formatVerbCaseGov(cases) + ") і \"" + tok.GetToken() +
+						"\" (" + formatFoundCases(indirTags, nazTags) + ")"
 					verbReplace := ""
 					if vLem := lemmaOf(verbTok); vLem == "сипіти" {
 						msg += ". Можливо ви мали на увазі слово «си́пати», а не «сипі́ти»?"
 						verbReplace = "сипати"
 					} else if vLem == "сиплячи" {
 						msg += ". Можливо ви мали на увазі «сиплючи»?"
-						verbReplace = "сиплючи"
+						verbReplace = "сиплячи"
 					}
 					m := rules.NewRuleMatch(r, sentence, verbTok.GetStartPos(), tok.GetEndPos(), msg)
 					m.ShortMessage = r.shortMsg
@@ -258,6 +261,58 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 		verbPos = -1
 	}
 	return out
+}
+
+// formatVerbCaseGov ports TokenAgreementVerbNounRule.formatInflections(Set cases).
+func formatVerbCaseGov(cases map[string]struct{}) string {
+	if len(cases) == 0 {
+		return "неперех."
+	}
+	var names []string
+	for _, code := range taguk.VidminkyOrder {
+		if _, ok := cases[code]; ok {
+			names = append(names, taguk.VidminokIName(code))
+		}
+	}
+	if _, ok := cases["v_inf"]; ok {
+		names = append(names, taguk.VidminokIName("v_inf"))
+	}
+	// any leftover keys
+	for c := range cases {
+		if c == "v_inf" {
+			continue
+		}
+		if _, ok := taguk.VidminkyMap[c]; !ok {
+			names = append(names, taguk.VidminokIName(c))
+		}
+	}
+	return "вимагає: " + strings.Join(names, ", ")
+}
+
+// formatFoundCases lists case names present on object readings (simplified formatInflections list).
+func formatFoundCases(indirTags, nazTags []string) string {
+	seen := map[string]struct{}{}
+	var names []string
+	add := func(tags []string) {
+		for _, p := range tags {
+			for _, code := range taguk.VidminkyOrder {
+				if strings.Contains(p, code) {
+					if _, ok := seen[code]; ok {
+						break
+					}
+					seen[code] = struct{}{}
+					names = append(names, taguk.VidminokName(code))
+					break
+				}
+			}
+		}
+	}
+	add(indirTags)
+	add(nazTags)
+	if len(names) == 0 {
+		return ""
+	}
+	return strings.Join(names, ", ")
 }
 
 // verbNounSuggestions ports TokenAgreementVerbNounRule.getSuggestions + surface wrap.

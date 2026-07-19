@@ -220,7 +220,7 @@ func IsAdjpException(adj *languagetool.AnalyzedTokenReadings) bool {
 	return hasAdjp && !hasCaseAdj
 }
 
-// --- Exception helper stubs (full tables deferred) ---
+// --- Agreement exception helpers (logic in Is*Exception; thin twins in *_exception_helper.go) ---
 
 // IsAdjNounException ports TokenAgreementAdjNounExceptionHelper.isException
 // (surface/lemma/conj/case-gov arms; RE2-safe stand-ins for lookarounds).
@@ -2486,7 +2486,7 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 			return true
 		}
 	}
-	// мати + v_oru (має своїм наслідком) — partial Java arm
+	// мати + v_oru (має своїм наслідком) — Java SearchHelper arm is commented; active path is lemma+v_oru only
 	if HasLemmaTokenRE(verb, regexp.MustCompile(`^(мати|маючи|мавши)$`)) && HasPosTagPart(noun, "v_oru") {
 		return true
 	}

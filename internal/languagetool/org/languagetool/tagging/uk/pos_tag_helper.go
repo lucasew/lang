@@ -20,12 +20,66 @@ var VidminkyMap = map[string]string{
 	"v_kly": "кличний",
 }
 
+// VidminkyIMap ports PosTagHelper.VIDMINKY_I_MAP (includes v_inf for verb gov messages).
+var VidminkyIMap = map[string]string{
+	"v_naz": "називний",
+	"v_rod": "родовий",
+	"v_dav": "давальний",
+	"v_zna": "знахідний",
+	"v_oru": "орудний",
+	"v_mis": "місцевий",
+	"v_kly": "кличний",
+	"v_inf": "інфінітив",
+}
+
 // VidminkyOrder is LinkedHashMap insertion order for VIDMINKY_MAP.
 var VidminkyOrder = []string{"v_naz", "v_rod", "v_dav", "v_zna", "v_oru", "v_mis", "v_kly"}
 
 // VidminokName returns the Ukrainian case name for a v_* code, or the code itself.
 func VidminokName(code string) string {
 	if n, ok := VidminkyMap[code]; ok {
+		return n
+	}
+	return code
+}
+
+// VidminokIName returns VIDMINKY_I_MAP name (incl. інфінітив).
+func VidminokIName(code string) string {
+	if n, ok := VidminkyIMap[code]; ok {
+		return n
+	}
+	return code
+}
+
+// GenderMap ports PosTagHelper.GENDER_MAP.
+var GenderMap = map[string]string{
+	"m": "ч.р.",
+	"f": "ж.р.",
+	"n": "с.р.",
+	"p": "мн.",
+	"s": "одн.",
+	"i": "інф.",
+	"o": "безос. форма",
+}
+
+// GenderName returns the Ukrainian gender label, or the code itself.
+func GenderName(code string) string {
+	if n, ok := GenderMap[code]; ok {
+		return n
+	}
+	return code
+}
+
+// PersonMap ports PosTagHelper.PERSON_MAP.
+var PersonMap = map[string]string{
+	"1": "1-а особа",
+	"2": "2-а особа",
+	"3": "3-я особа",
+}
+
+// PersonName returns PERSON_MAP label or the code itself.
+func PersonName(code string) string {
+	if n, ok := PersonMap[code]; ok {
 		return n
 	}
 	return code

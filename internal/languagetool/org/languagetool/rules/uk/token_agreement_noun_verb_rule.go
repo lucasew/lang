@@ -235,17 +235,19 @@ func (r *TokenAgreementNounVerbRule) Match(sentence *languagetool.AnalyzedSenten
 		master := GetNounInflections(nounTags)
 		slave := GetVerbInflections(verbTags)
 		if !verbInflectionsOverlapLists(master, slave) {
+			// Java: clear subject + break entire match loop
 			if IsNounVerbException(tokens, nounPos, i) {
-				nounPos = -1
-				continue
+				break
 			}
 			// Java flags whenever Collections.disjoint — including empty master with non-empty slave
 			kind := "іменник"
 			if HasLemmaToken(nounTok, "який") {
 				kind = "займенник"
 			}
+			// Java formatInflections(master, true) / formatInflections(slave, false)
 			msg := "Не узгоджено " + kind + " з дієсловом: \"" + nounTok.GetToken() +
-				"\" і \"" + tok.GetToken() + "\""
+				"\" (" + formatVerbPersonInflections(master, true) + ") і \"" + tok.GetToken() +
+				"\" (" + formatVerbPersonInflections(slave, false) + ")"
 			m := rules.NewRuleMatch(r, sentence, nounTok.GetStartPos(), tok.GetEndPos(), msg)
 			m.ShortMessage = r.shortMsg
 			out = append(out, m)
@@ -253,6 +255,36 @@ func (r *TokenAgreementNounVerbRule) Match(sentence *languagetool.AnalyzedSenten
 		nounPos = -1
 	}
 	return out
+}
+
+// formatVerbPersonInflections ports TokenAgreementNounVerbRule.formatInflections.
+// noun flag is unused in Java body but kept for signature parity.
+func formatVerbPersonInflections(infs []VerbInflection, noun bool) string {
+	_ = noun
+	if len(infs) == 0 {
+		return ""
+	}
+	var list []string
+	for _, inf := range infs {
+		str := ""
+		if inf.Gender != "" {
+			str = taguk.GenderName(inf.Gender)
+		} else {
+			if inf.Person != "" {
+				str = taguk.PersonName(inf.Person)
+			}
+			if inf.Plural != "" {
+				if str != "" {
+					str += " "
+				}
+				str += taguk.GenderName(inf.Plural)
+			}
+		}
+		if str != "" {
+			list = append(list, str)
+		}
+	}
+	return strings.Join(list, ", ")
 }
 
 // collectNounVerbSubject ports the Java noun/яка state builder. ok=false → clear state.

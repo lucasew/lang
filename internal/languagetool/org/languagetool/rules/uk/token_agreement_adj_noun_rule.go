@@ -2,11 +2,13 @@ package uk
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
 const TokenAgreementAdjNounRuleID = "UK_ADJ_NOUN_INFLECTION_AGREEMENT"
@@ -180,8 +182,10 @@ func (r *TokenAgreementAdjNounRule) Match(sentence *languagetool.AnalyzedSentenc
 				adjPos = -1
 				continue
 			}
+			// Java: formatInflections(master, true) / formatInflections(slave, false)
 			msg := "Потенційна помилка: прикметник не узгоджений з іменником: \"" +
-				adjTok.GetToken() + "\" і \"" + tok.GetToken() + "\""
+				adjTok.GetToken() + "\" (" + formatAdjNounInflections(master, true) + ") і \"" +
+				tok.GetToken() + "\" (" + formatAdjNounInflections(slave, false) + ")"
 			// Java message enrichments
 			if HasPosTagPartInTags(adjTags, ":m:v_rod") &&
 				adjNounUYuyuRE.MatchString(tok.GetToken()) &&
@@ -218,6 +222,40 @@ func (r *TokenAgreementAdjNounRule) Match(sentence *languagetool.AnalyzedSentenc
 		adjPos = -1
 	}
 	return out
+}
+
+// formatAdjNounInflections ports TokenAgreementAdjNounRule.formatInflections.
+func formatAdjNounInflections(infs []Inflection, adj bool) string {
+	if len(infs) == 0 {
+		return ""
+	}
+	// sort by gender then case (Java Collections.sort)
+	sorted := append([]Inflection(nil), infs...)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].CompareTo(sorted[j]) < 0
+	})
+	// gender → case names (LinkedHashMap order ≈ first-seen gender)
+	var order []string
+	byGen := map[string][]string{}
+	for _, inf := range sorted {
+		caseStr := taguk.VidminokName(inf.Case)
+		if adj && inf.AnimTag != "" {
+			if inf.AnimTag == "anim" {
+				caseStr += " (іст.)"
+			} else {
+				caseStr += " (неіст.)"
+			}
+		}
+		if _, ok := byGen[inf.Gender]; !ok {
+			order = append(order, inf.Gender)
+		}
+		byGen[inf.Gender] = append(byGen[inf.Gender], caseStr)
+	}
+	var parts []string
+	for _, g := range order {
+		parts = append(parts, taguk.GenderName(g)+": "+strings.Join(byGen[g], ", "))
+	}
+	return strings.Join(parts, ", ")
 }
 
 // shouldSkipAdvBeforeNoun ports the Java adjp+adv soft skip before the noun check.
