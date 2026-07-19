@@ -424,40 +424,96 @@ func removeReadingsMatching(main *languagetool.AnalyzedTokenReadings, posRE *reg
 // RetagInitials ports checkForInitialRetag / getInitialReadings:
 // when next token has :prop:lname readings, retag the initial from those tags
 // (replace :prop:lname → :nv:abbr:prop:fname). Fail closed without lname POS.
+// initialRE ports INITIAL_REGEX = [А-ЯІЇЄҐ]\.
+var initialRE = regexp.MustCompile(`^[А-ЯІЇЄҐ]\.$`)
+
+// RetagInitials ports UkrainianHybridDisambiguator.retagInitials (getTokens + whitespace skip).
 func RetagInitials(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
 	}
-	tokens := input.GetTokensWithoutWhitespace()
-	for i := 1; i < len(tokens)-1; i++ {
+	// Java uses getTokens() (includes whitespace)
+	tokens := input.GetTokens()
+	if len(tokens) == 0 {
+		tokens = input.GetTokensWithoutWhitespace()
+	}
+	var initialsIdxs []int
+	var lastName *languagetool.AnalyzedTokenReadings
+	for i := 1; i < len(tokens); i++ {
 		tok := tokens[i]
-		if tok == nil {
+		if tok == nil || tok.IsWhitespace() {
 			continue
 		}
-		s := tok.GetToken()
-		if !isInitialSurface(s) {
-			continue
-		}
-		next := tokens[i+1]
-		if next == nil {
-			continue
-		}
-		// Java LAST_NAME_TAG = :prop:lname on following surname
-		newReadings := initialReadingsFromLname(s, next, "fname")
-		if len(newReadings) == 0 {
-			continue
-		}
-		// replace readings (Java assigns new AnalyzedTokenReadings)
-		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
-			if r != nil {
-				tok.RemoveReading(r, "dis_initials")
+		if tok.HasPartialPosTag(":prop:lname") {
+			lastName = tok
+			// split before next initial starts: "для Л.Кучма Л.Кравчук"
+			if len(initialsIdxs) > 0 {
+				checkForInitialRetag(lastName, initialsIdxs, tokens)
+				lastName = nil
+				initialsIdxs = nil
 			}
+			continue
 		}
-		for _, r := range newReadings {
-			tok.AddReading(r, "dis_initials")
+		if isInitialToken(tok) {
+			initialsIdxs = append(initialsIdxs, i)
+			continue
+		}
+		checkForInitialRetag(lastName, initialsIdxs, tokens)
+		lastName = nil
+		initialsIdxs = nil
+	}
+	checkForInitialRetag(lastName, initialsIdxs, tokens)
+}
+
+// checkForInitialRetag ports checkForInitialRetag (1–2 initials → fname/pname).
+func checkForInitialRetag(lastName *languagetool.AnalyzedTokenReadings, initialsIdxs []int, tokens []*languagetool.AnalyzedTokenReadings) {
+	if lastName == nil || (len(initialsIdxs) != 1 && len(initialsIdxs) != 2) {
+		return
+	}
+	fnamePos := initialsIdxs[0]
+	if fnamePos < 0 || fnamePos >= len(tokens) || tokens[fnamePos] == nil {
+		return
+	}
+	applyInitialReadings(tokens[fnamePos], lastName, "fname")
+	if len(initialsIdxs) == 2 {
+		pnamePos := initialsIdxs[1]
+		if pnamePos >= 0 && pnamePos < len(tokens) && tokens[pnamePos] != nil {
+			applyInitialReadings(tokens[pnamePos], lastName, "pname")
 		}
 	}
 }
+
+// applyInitialReadings replaces token readings with getInitialReadings output.
+func applyInitialReadings(initTok, lname *languagetool.AnalyzedTokenReadings, initialType string) {
+	if initTok == nil {
+		return
+	}
+	s := initTok.GetToken()
+	newReadings := initialReadingsFromLname(s, lname, initialType)
+	if len(newReadings) == 0 {
+		return
+	}
+	for _, r := range append([]*languagetool.AnalyzedToken(nil), initTok.GetReadings()...) {
+		if r != nil {
+			initTok.RemoveReading(r, "dis_initials")
+		}
+	}
+	for _, r := range newReadings {
+		initTok.AddReading(r, "dis_initials")
+	}
+}
+
+// isInitialToken ports isInitial (ends with . and INITIAL_REGEX).
+func isInitialToken(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	s := tok.GetToken()
+	return strings.HasSuffix(s, ".") && initialRE.MatchString(s)
+}
+
+// pattern4RE ports PATTERN_4 = :(alt|nv|up\d{2}|xp\d)
+var pattern4RE = regexp.MustCompile(`:(?:alt|nv|up\d{2}|xp\d)`)
 
 // initialReadingsFromLname ports getInitialReadings(initials, lname, initialType).
 func initialReadingsFromLname(initialSurface string, lname *languagetool.AnalyzedTokenReadings, initialType string) []*languagetool.AnalyzedToken {
@@ -465,36 +521,6 @@ func initialReadingsFromLname(initialSurface string, lname *languagetool.Analyze
 		return nil
 	}
 	const lastNameTag = ":prop:lname"
-	// Java PATTERN_4 strips :alt|:nv|:up\d{2}|:xp\d before replace
-	stripExtra := func(pos string) string {
-		for _, frag := range []string{":alt", ":nv"} {
-			pos = strings.ReplaceAll(pos, frag, "")
-		}
-		// strip :upNN :xpN
-		for {
-			i := strings.Index(pos, ":up")
-			if i < 0 {
-				break
-			}
-			j := i + 3
-			for j < len(pos) && pos[j] >= '0' && pos[j] <= '9' {
-				j++
-			}
-			pos = pos[:i] + pos[j:]
-		}
-		for {
-			i := strings.Index(pos, ":xp")
-			if i < 0 {
-				break
-			}
-			j := i + 3
-			for j < len(pos) && pos[j] >= '0' && pos[j] <= '9' {
-				j++
-			}
-			pos = pos[:i] + pos[j:]
-		}
-		return pos
-	}
 	var out []*languagetool.AnalyzedToken
 	for _, lr := range lname.GetReadings() {
 		if lr == nil || lr.GetPOSTag() == nil {
@@ -504,7 +530,7 @@ func initialReadingsFromLname(initialSurface string, lname *languagetool.Analyze
 		if !strings.Contains(pos, lastNameTag) {
 			continue
 		}
-		pos = stripExtra(pos)
+		pos = pattern4RE.ReplaceAllString(pos, "")
 		pos = strings.Replace(pos, lastNameTag, ":nv:abbr:prop:"+initialType, 1)
 		p, l := pos, initialSurface
 		out = append(out, languagetool.NewAnalyzedToken(initialSurface, &p, &l))
@@ -512,16 +538,9 @@ func initialReadingsFromLname(initialSurface string, lname *languagetool.Analyze
 	return out
 }
 
+// isInitialSurface kept for tests/helpers; same as INITIAL_REGEX.
 func isInitialSurface(s string) bool {
-	if !strings.HasSuffix(s, ".") {
-		return false
-	}
-	core := strings.TrimSuffix(s, ".")
-	rs := []rune(core)
-	if len(rs) != 1 {
-		return false
-	}
-	return unicode.Is(unicode.Cyrillic, rs[0]) || unicode.IsLetter(rs[0])
+	return strings.HasSuffix(s, ".") && initialRE.MatchString(s)
 }
 
 func hasPOSPrefix(tok *languagetool.AnalyzedTokenReadings, prefix string) bool {

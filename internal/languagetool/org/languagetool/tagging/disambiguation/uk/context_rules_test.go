@@ -105,6 +105,15 @@ func TestRetagInitials(t *testing.T) {
 	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, init2, atrSent("Марія", "noun:anim:f:v_naz:prop:fname")})
 	RetagInitials(sent2)
 	require.False(t, sent2.GetTokensWithoutWhitespace()[1].IsTagged())
+
+	// dual initials: А. Б. Коваленко → fname + pname
+	a := atrUntagged("А.")
+	b := atrUntagged("Б.")
+	kov := atrSent("Коваленко", "noun:anim:m:v_naz:prop:lname")
+	sent3 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, a, b, kov})
+	RetagInitials(sent3)
+	require.True(t, sent3.GetTokensWithoutWhitespace()[1].HasPartialPosTag("fname"))
+	require.True(t, sent3.GetTokensWithoutWhitespace()[2].HasPartialPosTag("pname"))
 }
 
 func TestHybridAppliesContextRules(t *testing.T) {
