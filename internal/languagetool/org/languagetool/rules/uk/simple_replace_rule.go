@@ -103,7 +103,7 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 		Messages:          messages,
 		WrongWords:        loadReplace(),
 		CaseSensitive:     false,
-		CheckLemmas:       false,
+		CheckLemmas:       true, // Java SimpleReplaceRule default checkLemmas true
 		IgnoreTaggedWords: true, // Java setIgnoreTaggedWords()
 		IsTagged:          ukSimpleReplaceIsTagged,
 		ID:                "UK_SIMPLE_REPLACE",

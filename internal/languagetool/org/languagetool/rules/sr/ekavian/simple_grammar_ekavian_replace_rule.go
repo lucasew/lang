@@ -42,7 +42,7 @@ func NewSimpleGrammarEkavianReplaceRule(messages map[string]string) *SimpleGramm
 		Messages:      messages,
 		WrongWords:    loadGrammar(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java default checkLemmas true
 		ID:            "SR_EKAVIAN_SIMPLE_GRAMMAR_REPLACE_RULE",
 		Description:   "Провера граматички погрешних речи или израза",
 		ShortMsg:      "Граматички погрешна реч тј. израз",

@@ -42,7 +42,7 @@ func NewPortugueseReplaceRule(messages map[string]string) *PortugueseReplaceRule
 		Messages:      messages,
 		WrongWords:    loadPTReplace(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java PortugueseReplaceRule keeps default checkLemmas true
 		ID:            "PT_SIMPLE_REPLACE",
 		Description:   "Palavras estrangeiras facilmente confundidas em Português",
 		ShortMsg:      "Estrangeirismo",

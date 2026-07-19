@@ -42,7 +42,7 @@ func NewSimpleStyleEkavianReplaceRule(messages map[string]string) *SimpleStyleEk
 		Messages:      messages,
 		WrongWords:    loadStyle(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java default checkLemmas true
 		ID:            "SR_EKAVIAN_SIMPLE_STYLE_REPLACE_RULE",
 		Description:   "Провера стилски лоших речи или израза",
 		ShortMsg:      "Стил",

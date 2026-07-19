@@ -44,7 +44,7 @@ func NewPortugueseOrthographyReplaceRule(messages map[string]string) *Portuguese
 		Messages:      messages,
 		WrongWords:    loadOrthographyWords(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java default checkLemmas true
 		ID:            "PT_SIMPLE_REPLACE_ORTHOGRAPHY",
 		Description:   "Possible spelling mistake found.",
 		ShortMsg:      "Spelling mistake",

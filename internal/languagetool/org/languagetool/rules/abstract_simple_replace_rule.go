@@ -10,11 +10,13 @@ import (
 
 // AbstractSimpleReplaceRule ports org.languagetool.rules.AbstractSimpleReplaceRule
 // for dictionary-based token replacements (checkLemmas path optional).
-// Java ctor: MISC category.
+// Java ctor: MISC category; checkLemmas defaults true (callers must set true unless
+// Java setCheckLemmas(false) — Go zero value is false, so do not leave unset invent).
 type AbstractSimpleReplaceRule struct {
 	Messages          map[string]string
 	WrongWords        map[string][]string
 	CaseSensitive     bool
+	// CheckLemmas ports isCheckLemmas(); Java default true.
 	CheckLemmas       bool
 	IgnoreTaggedWords bool
 	ID                string

@@ -23,9 +23,17 @@ func TestSimpleReplaceRule_Rule(t *testing.T) {
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, []string{"Нападник", "Нападальний", "Нападний"}, matches[0].GetSuggestedReplacements())
 
-	// Inflected surface not in replace.txt — needs adjp:actv:bad POS (Java tagger)
+	// Java: lemma "нападаючий" in replace.txt → dictionary path (checkLemmas true), not adjp message.
 	matches = rule.Match(analyzeUKTagged("Нападаючого", map[string][]languagetool.TokenTag{
 		"Нападаючого": {{POS: "adjp:actv:m:v_rod:bad", Lemma: "нападаючий"}},
+	}))
+	require.Equal(t, 1, len(matches))
+	require.Equal(t, []string{"Нападник", "Нападальний", "Нападний"}, matches[0].GetSuggestedReplacements())
+	require.Contains(t, matches[0].GetMessage(), "помилкове слово")
+
+	// adjp:actv:bad only when super.findMatches empty (lemma not in replace.txt)
+	matches = rule.Match(analyzeUKTagged("роблячий", map[string][]languagetool.TokenTag{
+		"роблячий": {{POS: "adjp:actv:m:v_naz:bad", Lemma: "роблячий"}},
 	}))
 	require.Equal(t, 1, len(matches))
 	require.Contains(t, matches[0].GetMessage(), "Активні дієприкметники")

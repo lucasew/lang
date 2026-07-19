@@ -42,7 +42,7 @@ func NewSimpleStyleJekavianReplaceRule(messages map[string]string) *SimpleStyleJ
 		Messages:      messages,
 		WrongWords:    loadStyle(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java default checkLemmas true
 		ID:            "SR_JEKAVIAN_SIMPLE_STYLE_REPLACE_RULE",
 		Description:   "Провера стилски лоших ријечи или израза",
 		ShortMsg:      "Стилски лоша ријеч тј. израз",

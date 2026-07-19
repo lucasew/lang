@@ -41,8 +41,8 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 	base := &rules.AbstractSimpleReplaceRule{
 		Messages:      messages,
 		WrongWords:    loadWords(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
+		CaseSensitive: false, // Java isCaseSensitive false
+		CheckLemmas:   true,  // Java AbstractSimpleReplaceRule default true
 		ID:            "GL_SIMPLE_REPLACE",
 		Description:   "Corrección de erros léxicos (barbarismos).",
 		ShortMsg:      "Erros léxicos",

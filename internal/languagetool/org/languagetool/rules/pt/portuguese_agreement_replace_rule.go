@@ -42,7 +42,7 @@ func NewPortugueseAgreementReplaceRule(messages map[string]string) *PortugueseAg
 		Messages:      messages,
 		WrongWords:    loadAOReplace(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java default checkLemmas true
 		ID:            "PT_AGREEMENT_REPLACE",
 		Description:   "Palavras alteradas pelo Acordo Ortográfico de 90",
 		ShortMsg:      "Forma do Acordo Ortográfico de 45.",

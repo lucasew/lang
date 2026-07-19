@@ -41,8 +41,8 @@ func NewCastWordsRule(messages map[string]string) *CastWordsRule {
 	base := &rules.AbstractSimpleReplaceRule{
 		Messages:      messages,
 		WrongWords:    loadSpanish(),
-		CaseSensitive: false,
-		CheckLemmas:   false,
+		CaseSensitive: false, // Java isCaseSensitive false
+		CheckLemmas:   true,  // Java AbstractSimpleReplaceRule default true
 		ID:            "GL_CAST_WORDS",
 		Description:   "Corrección de erros léxicos (castelanismos).",
 		ShortMsg:      "Castelanismos léxicos",

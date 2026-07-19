@@ -42,7 +42,7 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 		Messages:      messages,
 		WrongWords:    loadReplace(),
 		CaseSensitive: false,
-		CheckLemmas:   false,
+		CheckLemmas:   true, // Java default isCheckLemmas true
 		ID:            "FA_SIMPLE_REPLACE",
 		Description:   "اشتباه محتمل املائی",
 		ShortMsg:      "اشتباه محتمل املائی",
