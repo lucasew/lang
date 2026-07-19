@@ -210,6 +210,11 @@ func NewGermanConfusionProbabilityRuleWithLM(lm ngrams.LanguageModel) *GermanCon
 	base.SetWordToPairs(loadDEConfusionPairs())
 	// Java: ANTI_PATTERNS → DisambiguationPatternRule immunization (getSentenceWithImmunization).
 	base.IsCoveredByAntiPattern = deConfusionIsCoveredByAntiPattern
+	// Java: mir → mit
+	base.AddExamplePair(
+		rules.Wrong("Während Sie das Ganze <marker>mir</marker> einem Holzlöffel rühren…"),
+		rules.Fixed("Während Sie das Ganze <marker>mit</marker> einem Holzlöffel rühren…"),
+	)
 	return &GermanConfusionProbabilityRule{ConfusionProbabilityRule: base}
 }
 
