@@ -156,6 +156,16 @@ func TestRetagFemNames(t *testing.T) {
 	require.True(t, tok.HasPartialPosTag(":f:"))
 	require.True(t, tok.HasPartialPosTag("lname") || tok.HasPartialPosTag("prop"))
 	require.False(t, tok.HasPartialPosTag("noun:anim:m:v_naz:prop"))
+
+	// Олег П'ятниця — fname title + capitalized non-prop → lname
+	oleg := atrMulti("Олег", [][2]string{{"Олег", "noun:anim:m:v_naz:prop:fname"}})
+	pyat := atrMulti("П'ятниця", [][2]string{{"п'ятниця", "noun:inanim:f:v_naz"}})
+	verb2 := atrMulti("прийшов", [][2]string{{"прийти", "verb:perf:past:m"}})
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, oleg, pyat, verb2})
+	RetagFemNames(sent2)
+	tok2 := sent2.GetTokensWithoutWhitespace()[2]
+	require.True(t, tok2.HasPartialPosTag("prop:lname") || tok2.HasPartialPosTag(":lname"))
+	require.True(t, tok2.HasPartialPosTag("noun:anim:m:v_naz:prop"))
 }
 
 func TestRemoveInanimVKly(t *testing.T) {

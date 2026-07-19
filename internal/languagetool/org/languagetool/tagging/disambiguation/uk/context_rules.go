@@ -553,6 +553,7 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
 	}
+	const ruleApplied = "proper_name_gender_override"
 	tokens := input.GetTokensWithoutWhitespace()
 	for i := 1; i < len(tokens)-2; i++ {
 		title := tokens[i]
@@ -561,61 +562,109 @@ func RetagFemNames(input *languagetool.AnalyzedSentence) {
 		if title == nil || name == nil || verb == nil {
 			continue
 		}
-		// title lemma or surface
-		gen := ""
-		if titleHas(title, femTitles, "f") || hasPOSStart(title, "noun:anim:f:v_naz:prop:fname") {
-			gen = "f"
-		} else if titleHas(title, mascTitles, "m") || hasPOSStart(title, "noun:anim:m:v_naz:prop:fname") {
-			gen = "m"
-		} else {
-			continue
-		}
-		// past verb of same gender
-		if !hasPastGender(verb, gen) {
-			continue
-		}
-		prefix := "noun:anim:" + gen + ":v_naz:prop"
-		if hasPOSStart(name, prefix) {
-			// drop non-matching gender prop readings
-			for _, r := range append([]*languagetool.AnalyzedToken(nil), name.GetReadings()...) {
-				if r == nil || r.GetPOSTag() == nil {
-					continue
-				}
-				if !strings.HasPrefix(*r.GetPOSTag(), prefix) {
-					name.RemoveReading(r, "proper_name_gender_override")
-				}
+		// Java loops gen f then m
+		applied := false
+		for _, gen := range []string{"f", "m"} {
+			var titleSet map[string]struct{}
+			if gen == "f" {
+				titleSet = femTitles
+			} else {
+				titleSet = mascTitles
 			}
-		} else if gen == "f" && hasPOSStart(name, "noun:anim:m:v_naz:prop") {
-			// леді Черчилль → retag as fem lname
-			for _, r := range append([]*languagetool.AnalyzedToken(nil), name.GetReadings()...) {
-				name.RemoveReading(r, "proper_name_gender_override")
+			animProp := "noun:anim:" + gen + ":v_naz:prop"
+			fnamePrefix := animProp + ":fname"
+			// title lemma with noun:anim:GEN:v_naz.* OR fname prop start
+			if !titleHas(title, titleSet, gen) && !hasPOSStart(title, fnamePrefix) {
+				continue
 			}
-			p := "noun:anim:f:v_naz:prop:lname"
-			l := name.GetToken()
-			name.AddReading(languagetool.NewAnalyzedToken(name.GetToken(), &p, &l), "proper_name_gender_override")
+			// past verb same gender
+			if !hasPosTagREMatch(verb, `verb.*:past:`+gen) {
+				continue
+			}
+			if hasPOSStart(name, animProp) {
+				for _, r := range append([]*languagetool.AnalyzedToken(nil), name.GetReadings()...) {
+					if r == nil || r.GetPOSTag() == nil {
+						continue
+					}
+					if !strings.HasPrefix(*r.GetPOSTag(), animProp) {
+						name.RemoveReading(r, ruleApplied)
+					}
+				}
+				applied = true
+			} else if gen == "f" && hasPOSStart(name, "noun:anim:m:v_naz:prop") {
+				// леді Черчилль
+				for _, r := range append([]*languagetool.AnalyzedToken(nil), name.GetReadings()...) {
+					name.RemoveReading(r, ruleApplied)
+				}
+				p := "noun:anim:f:v_naz:prop:lname"
+				l := name.GetToken()
+				name.AddReading(languagetool.NewAnalyzedToken(name.GetToken(), &p, &l), ruleApplied)
+				applied = true
+			} else if isCapitalizedToken(name) &&
+				!hasPOSPart(name, ":prop") &&
+				hasPOSStart(title, fnamePrefix) {
+				// Олег П'ятниця — capitalized non-prop → lname of title gender
+				for _, r := range append([]*languagetool.AnalyzedToken(nil), name.GetReadings()...) {
+					name.RemoveReading(r, ruleApplied)
+				}
+				p := animProp + ":lname"
+				l := name.GetToken()
+				name.AddReading(languagetool.NewAnalyzedToken(name.GetToken(), &p, &l), ruleApplied)
+				applied = true
+			}
+			if applied {
+				i++ // Java i+=1 after match
+				break
+			}
 		}
-		i++ // skip name
 	}
 }
 
-func titleHas(tok *languagetool.AnalyzedTokenReadings, set map[string]struct{}, gen string) bool {
-	low := strings.ToLower(tok.GetToken())
-	if _, ok := set[low]; ok {
-		return true
+// isCapitalizedToken ports LemmaHelper.isCapitalized for name surfaces.
+func isCapitalizedToken(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
 	}
+	s := tok.GetCleanToken()
+	if s == "" {
+		s = tok.GetToken()
+	}
+	return rulesuk.IsCapitalized(s)
+}
+
+// titleHas ports LemmaHelper.hasLemma(title, prefixes, noun:anim:GEN:v_naz.*).
+func titleHas(tok *languagetool.AnalyzedTokenReadings, set map[string]struct{}, gen string) bool {
+	if tok == nil {
+		return false
+	}
+	posRE := regexp.MustCompile(`^noun:anim:` + gen + `:v_naz.*$`)
 	for _, r := range tok.GetReadings() {
-		if r == nil {
+		if r == nil || r.GetPOSTag() == nil {
 			continue
 		}
+		if !fullMatch(posRE, *r.GetPOSTag()) {
+			continue
+		}
+		lem := ""
 		if r.GetLemma() != nil {
-			if _, ok := set[strings.ToLower(*r.GetLemma())]; ok {
-				return true
-			}
+			lem = strings.ToLower(*r.GetLemma())
+		}
+		if _, ok := set[lem]; ok {
+			return true
+		}
+		if _, ok := set[strings.ToLower(tok.GetToken())]; ok {
+			return true
 		}
 	}
-	// also require anim gender hint soft
-	_ = gen
 	return false
+}
+
+func fullMatch(re *regexp.Regexp, s string) bool {
+	if re == nil {
+		return false
+	}
+	loc := re.FindStringIndex(s)
+	return loc != nil && loc[0] == 0 && loc[1] == len(s)
 }
 
 func hasPastGender(tok *languagetool.AnalyzedTokenReadings, gen string) bool {
@@ -902,6 +951,11 @@ func RemoveLowerCaseBadForUpperCaseGood(input *languagetool.AnalyzedSentence) {
 }
 
 // RemoveVerbImpr drops verb:impr when token is also noun and previous adj agrees in case/gender soft.
+// nounVZnaVarIgnore ports Pattern.compile("v_zna:var") for getNounInflections in removeVerbImpr.
+var nounVZnaVarIgnore = regexp.MustCompile(`v_zna:var`)
+
+// RemoveVerbImpr ports UkrainianHybridDisambiguator.removeVerbImpr.
+// adj + dual noun|verb.impr → drop impr when adj/noun case-gender inflections overlap.
 func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -912,50 +966,36 @@ func RemoveVerbImpr(input *languagetool.AnalyzedSentence) {
 		if tok == nil || prev == nil {
 			continue
 		}
-		if !hasPOSPrefix(tok, "verb") || !hasPOSPrefix(tok, "noun") || !hasPOSPrefix(prev, "adj") {
+		// Java: verb.*impr.* && noun.* && adj.*
+		if !hasPosTagREMatch(tok, `verb.*impr.*`) || !hasPOSPrefix(tok, "noun") || !hasPOSPrefix(prev, "adj") {
 			continue
 		}
-		hasImpr := false
+		var adjTags, nounTags []string
+		for _, r := range prev.GetReadings() {
+			if r != nil && r.GetPOSTag() != nil {
+				adjTags = append(adjTags, *r.GetPOSTag())
+			}
+		}
 		for _, r := range tok.GetReadings() {
-			if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), "impr") {
-				hasImpr = true
-				break
+			if r != nil && r.GetPOSTag() != nil {
+				nounTags = append(nounTags, *r.GetPOSTag())
 			}
 		}
-		if !hasImpr {
+		master := rulesuk.GetAdjCaseInflections(adjTags)
+		slave := rulesuk.GetNounInflectionsFromTags(nounTags, nounVZnaVarIgnore)
+		if !rulesuk.InflectionsIntersect(master, slave) {
 			continue
 		}
-		// Drop impr verb reading when adj+noun share gender/number (POS-gated, no surface invent).
-		if adjNounAgree(prev, tok) {
-			for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
-				if r != nil && r.GetPOSTag() != nil && strings.HasPrefix(*r.GetPOSTag(), "verb") && strings.Contains(*r.GetPOSTag(), "impr") {
-					tok.RemoveReading(r, "not_an_imperative_2")
-				}
-			}
-		}
-	}
-}
-
-func adjNounAgree(adj, noun *languagetool.AnalyzedTokenReadings) bool {
-	// share :p: or same :m/f/n: on adj and noun readings
-	for _, a := range adj.GetReadings() {
-		if a == nil || a.GetPOSTag() == nil {
-			continue
-		}
-		ap := *a.GetPOSTag()
-		for _, n := range noun.GetReadings() {
-			if n == nil || n.GetPOSTag() == nil || !strings.HasPrefix(*n.GetPOSTag(), "noun") {
+		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+			if r == nil || r.GetPOSTag() == nil {
 				continue
 			}
-			np := *n.GetPOSTag()
-			for _, g := range []string{":p:", ":m:", ":f:", ":n:"} {
-				if strings.Contains(ap, g) && strings.Contains(np, g) {
-					return true
-				}
+			pos := *r.GetPOSTag()
+			if strings.HasPrefix(pos, "verb") && strings.Contains(pos, "impr") {
+				tok.RemoveReading(r, "not_an_imperative_2")
 			}
 		}
 	}
-	return false
 }
 
 // RetagPluralProp ports retagPulralProp: дві Франції → invent p:v_naz prop from f/m/n v_rod prop.
