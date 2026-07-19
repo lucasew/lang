@@ -4,11 +4,9 @@ import (
 	"embed"
 	"strings"
 	"sync"
-	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
-	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 //go:embed data/replace_soft.txt
@@ -30,7 +28,7 @@ func loadSoftWords() map[string][]string {
 		if err != nil {
 			panic(err)
 		}
-		// lower-case keys for case-insensitive lookup
+		// lower-case keys for case-insensitive lookup (Java isCaseSensitive false)
 		out := make(map[string][]string, len(m))
 		for k, v := range m {
 			out[strings.ToLower(k)] = v
@@ -41,98 +39,84 @@ func loadSoftWords() map[string][]string {
 }
 
 // SimpleReplaceSoftRule ports org.languagetool.rules.uk.SimpleReplaceSoftRule
-// (surface match; no POS ignoreTaggedWords without a tagger).
-// Java: AbstractSimpleReplaceRule → MISC category; setLocQualityIssueType(Style).
+// (AbstractSimpleReplaceRule + ctx: contexts; Style ITS; no ignoreTaggedWords).
 type SimpleReplaceSoftRule struct {
-	messages  map[string]string
-	Category  *rules.Category
-	IssueType rules.ITSIssueType
+	*rules.AbstractSimpleReplaceRule
 }
 
 func NewSimpleReplaceSoftRule(messages map[string]string) *SimpleReplaceSoftRule {
-	_ = loadSoftWords()
-	return &SimpleReplaceSoftRule{
-		messages:  messages,
-		Category:  rules.CatMisc.GetCategory(messages),
-		IssueType: rules.ITSStyle,
+	words := loadSoftWords()
+	base := &rules.AbstractSimpleReplaceRule{
+		Messages:      messages,
+		WrongWords:    words,
+		CaseSensitive: false,
+		// Java AbstractSimpleReplaceRule default checkLemmas true; Soft does not override.
+		CheckLemmas: true,
+		// Java Soft does not call setIgnoreTaggedWords.
+		IgnoreTaggedWords: false,
+		ID:                "UK_SIMPLE_REPLACE_SOFT",
+		Description:       "Пошук нерекомендованих слів",
+		ShortMsg:          "Нерекомендоване слово",
+		IssueType:         rules.ITSStyle,
+		TokenException:    softTokenException,
+		MessageFn:         softMessage,
 	}
+	rules.InitSimpleReplaceMeta(base, messages)
+	return &SimpleReplaceSoftRule{AbstractSimpleReplaceRule: base}
 }
 
-func (r *SimpleReplaceSoftRule) GetID() string { return "UK_SIMPLE_REPLACE_SOFT" }
-
-func (r *SimpleReplaceSoftRule) GetDescription() string {
-	return "Пошук нерекомендованих слів"
+// softTokenException ports SimpleReplaceSoftRule.isTokenException (завидна + super).
+func softTokenException(atr *languagetool.AnalyzedTokenReadings) bool {
+	if atr == nil {
+		return false
+	}
+	// Java: "завидна".equals(atr.getCleanToken())
+	c := atr.GetCleanToken()
+	if c == "" {
+		c = atr.GetToken()
+	}
+	return strings.EqualFold(c, "завидна")
 }
 
-func (r *SimpleReplaceSoftRule) GetShort() string {
-	return "Нерекомендоване слово"
+// softMessage ports SimpleReplaceSoftRule.getMessage (ctx: + non-ctx suggestions).
+func softMessage(tokenStr string, replacements []string) string {
+	ctxs, suggestions := splitSoftReplacements(replacements)
+	if len(suggestions) == 0 {
+		return "«" + tokenStr + "» — нерекомендоване слово."
+	}
+	if len(ctxs) > 0 {
+		return "«" + tokenStr + "» вживається лише в таких контекстах: " + strings.Join(ctxs, ", ") +
+			", можливо, ви мали на увазі: " + strings.Join(suggestions, ", ") + "?"
+	}
+	return "«" + tokenStr + "» — нерекомендоване слово, кращий варіант: " + strings.Join(suggestions, ", ") + "."
 }
 
-// GetCategory ports Rule.getCategory (Java AbstractSimpleReplaceRule → MISC).
-func (r *SimpleReplaceSoftRule) GetCategory() *rules.Category {
-	if r == nil {
+// Match runs AbstractSimpleReplaceRule.match then retains only non-ctx suggestions
+// (Java getMessage: replacements.retainAll(repl.replacements)).
+func (r *SimpleReplaceSoftRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || r.AbstractSimpleReplaceRule == nil {
 		return nil
 	}
-	return r.Category
-}
-
-// GetLocQualityIssueType ports Rule.getLocQualityIssueType (Java Style).
-func (r *SimpleReplaceSoftRule) GetLocQualityIssueType() rules.ITSIssueType {
-	if r == nil || r.IssueType == "" {
-		return rules.ITSStyle
+	matches := r.AbstractSimpleReplaceRule.Match(sentence)
+	for _, m := range matches {
+		if m == nil {
+			continue
+		}
+		_, sugs := splitSoftReplacements(m.GetSuggestedReplacements())
+		m.SetSuggestedReplacements(sugs)
 	}
-	return r.IssueType
-}
-
-func (r *SimpleReplaceSoftRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
-	words := loadSoftWords()
-	var out []*rules.RuleMatch
-	for _, tok := range sentence.GetTokensWithoutWhitespace() {
-		if tok.IsSentenceStart() || tok.IsImmunized() {
-			continue
-		}
-		t := tok.GetToken()
-		if strings.EqualFold(t, "завидна") {
-			continue
-		}
-		reps, ok := words[strings.ToLower(t)]
-		if !ok || len(reps) == 0 {
-			continue
-		}
-		ctxs, suggestions := splitSoftReplacements(reps)
-		if len(suggestions) == 0 {
-			continue
-		}
-		// case-adjust suggestions
-		final := make([]string, 0, len(suggestions))
-		for _, s := range suggestions {
-			if tools.IsAllUppercase(t) {
-				final = append(final, strings.ToUpper(s))
-			} else if tools.StartsWithUppercase(t) {
-				final = append(final, tools.UppercaseFirstChar(s))
-			} else {
-				final = append(final, s)
-			}
-		}
-		msg := "«" + t + "» — нерекомендоване слово, кращий варіант: " + strings.Join(final, ", ") + "."
-		if len(ctxs) > 0 {
-			msg = "«" + t + "» вживається лише в таких контекстах: " + strings.Join(ctxs, ", ") +
-				", можливо, ви мали на увазі: " + strings.Join(final, ", ") + "?"
-		}
-		from := tok.GetStartPos()
-		to := from + utf16Len(t)
-		rm := rules.NewRuleMatch(r, sentence, from, to, msg)
-		rm.ShortMessage = "Нерекомендоване слово"
-		rm.SetSuggestedReplacements(final)
-		out = append(out, rm)
-	}
-	return out
+	return matches
 }
 
 func splitSoftReplacements(reps []string) (contexts, suggestions []string) {
 	for _, rep := range reps {
-		if strings.HasPrefix(rep, "ctx:") {
-			rest := strings.TrimSpace(strings.TrimPrefix(rep, "ctx:"))
+		lower := strings.ToLower(rep)
+		if strings.HasPrefix(lower, "ctx:") {
+			// strip any case of "ctx:" prefix
+			rest := rep
+			if i := strings.Index(lower, "ctx:"); i >= 0 {
+				rest = strings.TrimSpace(rep[i+4:])
+			}
 			for _, c := range strings.Split(rest, ",") {
 				c = strings.TrimSpace(c)
 				if c != "" {
@@ -144,12 +128,4 @@ func splitSoftReplacements(reps []string) (contexts, suggestions []string) {
 		suggestions = append(suggestions, rep)
 	}
 	return contexts, suggestions
-}
-
-func utf16Len(s string) int {
-	n := 0
-	for _, r := range s {
-		n += len(utf16.Encode([]rune{r}))
-	}
-	return n
 }
