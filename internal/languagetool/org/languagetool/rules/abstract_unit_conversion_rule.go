@@ -93,6 +93,11 @@ const (
 // whitespace + (optional "ca. " / "aprox. ") + number + unit body in parentheses.
 var convertedParenRE = regexp.MustCompile(`(?i)^\s*\((?:(?:ca\.|aprox\.)\s*)?` + unitNumberRegex + `\s*([^)]+?)\s*\)`)
 
+// numberRangePartRE ports AbstractUnitConversionRule.numberRangePart:
+// a number at the end of the text before a match that captured a leading "-".
+// Used for ranges like "1-5 miles" (GitHub languagetool#2170).
+var numberRangePartRE = regexp.MustCompile(unitNumberRegex + `$`)
+
 // AbstractUnitConversionRule ports org.languagetool.rules.AbstractUnitConversionRule
 // without javax.measure — uses fixed SI conversion factors.
 // AbstractUnitConversionRule ports org.languagetool.rules.AbstractUnitConversionRule.
@@ -390,6 +395,23 @@ func (r *AbstractUnitConversionRule) parseNumber(s string) (float64, error) {
 	return strconv.ParseFloat(s, 64)
 }
 
+// detectNumberRange ports AbstractUnitConversionRule.detectNumberRange.
+// True when numStr is a negative capture that is actually the end of a range (e.g. "1-5 miles").
+func detectNumberRange(text string, matchStart int, numStr string) bool {
+	if !strings.HasPrefix(numStr, "-") || matchStart <= 0 || matchStart > len(text) {
+		return false
+	}
+	return numberRangePartRE.MatchString(text[:matchStart])
+}
+
+// adjustRangeNumber strips a spurious leading hyphen from range ends (Java tryConversion).
+func adjustRangeNumber(text string, matchStart int, numStr string) string {
+	if detectNumberRange(text, matchStart, numStr) {
+		return numStr[1:]
+	}
+	return numStr
+}
+
 // ToSI converts a value in unit to SI base.
 func ToSI(value float64, u UnitDef) float64 {
 	return value*u.Factor + u.Offset
@@ -605,6 +627,8 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			}
 			full := text[loc[0]:loc[1]]
 			numStr := text[loc[2]:loc[3]]
+			// Java: range "1-5 miles" may capture "-5"; strip hyphen and convert end only.
+			numStr = adjustRangeNumber(text, loc[0], numStr)
 			val, err := r.parseNumber(numStr)
 			if err != nil {
 				continue
@@ -613,6 +637,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 				continue
 			}
 			// Java removeAntiPatternMatches: drop when anti-pattern on full text covers match edges.
+			// Also drops hyphen ranges entirely when anti-pattern `\d+[-–]\d+` covers the span.
 			if unitHitByAntiPattern(text, loc[0], loc[1], r.antiPatterns) {
 				continue
 			}

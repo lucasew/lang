@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -60,4 +61,18 @@ func TestNaturalnessJavaOrder(t *testing.T) {
 	require.Less(t, naturalness(50), naturalness(200))
 	// abs < 1: 1/(abs²*2) — smaller abs is larger (worse) score
 	require.Greater(t, naturalness(0.01), naturalness(0.5))
+}
+
+func TestDetectNumberRange(t *testing.T) {
+	// "1-5 miles" — if match starts at "-" of "-5", treat as range end
+	text := "about 1-5 miles"
+	// index of "-5" in text
+	idx := strings.Index(text, "-5")
+	require.True(t, detectNumberRange(text, idx, "-5"))
+	require.Equal(t, "5", adjustRangeNumber(text, idx, "-5"))
+	// true negative: "-5 miles" alone
+	text2 := "about -5 miles"
+	idx2 := strings.Index(text2, "-5")
+	require.False(t, detectNumberRange(text2, idx2, "-5"))
+	require.Equal(t, "-5", adjustRangeNumber(text2, idx2, "-5"))
 }
