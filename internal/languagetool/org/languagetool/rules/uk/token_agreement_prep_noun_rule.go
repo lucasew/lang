@@ -8,6 +8,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
@@ -18,6 +19,8 @@ const TokenAgreementPrepNounRuleID = "UK_PREP_NOUN_INFLECTION_AGREEMENT"
 type TokenAgreementPrepNounRule struct {
 	*tokenAgreementMatch
 	CaseGov *CaseGovernmentHelper
+	// Synth optional (Java ukrainian.getSynthesizer()); nil → no suggestions.
+	Synth synthesis.Synthesizer
 }
 
 func hasPrepReading(tok *languagetool.AnalyzedTokenReadings) bool {
@@ -364,10 +367,7 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 		if HasPosTagPart(tok, ":v_") {
 			// non-normative genitive personal pronouns (їх/його as rod without них form)
 			if flag, keep := prepPronRodMismatch(tok, clean, tokens, i, want); flag {
-				msg := prepNounMsg(prepTok, want, ziZnaRemoved)
-				m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-				m.ShortMessage = r.shortMsg
-				out = append(out, m)
+				out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, ""))
 				prepPos = -1
 				continue
 			} else if keep {
@@ -377,10 +377,7 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 			// possessive їх/його/її adj
 			if pronAdj := filterReadings(tok, prepNounPronPosRE, prepNounYihLemmas); len(pronAdj) > 0 {
 				if !hasVidmPosTagReadings(want, pronAdj) {
-					msg := prepNounMsg(prepTok, want, ziZnaRemoved)
-					m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-					m.ShortMessage = r.shortMsg
-					out = append(out, m)
+					out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, ""))
 					prepPos = -1
 					continue
 				}
@@ -388,11 +385,8 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 					continue // check next noun
 				}
 			} else if thisLower == "їх" {
-				msg := prepNounMsg(prepTok, want, ziZnaRemoved)
-				msg += ". Можливо, тут потрібно присвійний займенник «їхній» або нормативна форма р.в. «них»?"
-				m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-				m.ShortMessage = r.shortMsg
-				out = append(out, m)
+				extra := ". Можливо, тут потрібно присвійний займенник «їхній» або нормативна форма р.в. «них»?"
+				out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, extra))
 				prepPos = -1
 				continue
 			}
@@ -408,14 +402,12 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 				continue
 			}
 
-			msg := prepNounMsg(prepTok, want, ziZnaRemoved)
+			extra := ""
 			if containsStr(want, "v_rod") && prepNounUYuyuRE.MatchString(tok.GetToken()) &&
 				HasPosTagRE(tok, prepNounDavMRE) {
-				msg += UsedUInsteadOfAMsg
+				extra = UsedUInsteadOfAMsg
 			}
-			m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-			m.ShortMessage = r.shortMsg
-			out = append(out, m)
+			out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, extra))
 		}
 		// no :v_ — non-infl exception may apply; then always clear (Java)
 		prepPos = -1
@@ -518,6 +510,64 @@ func prepNounMsg(prep *languagetool.AnalyzedTokenReadings, want []string, ziZnaR
 		msg += ". Але з.в. вимагається у випадках порівнянн предметів."
 	}
 	return msg
+}
+
+// newPrepNounMatch ports createRuleMatch (message + optional synthesizer suggestions).
+func (r *TokenAgreementPrepNounRule) newPrepNounMatch(
+	sentence *languagetool.AnalyzedSentence,
+	prepTok, tok *languagetool.AnalyzedTokenReadings,
+	want []string,
+	ziZnaRemoved bool,
+	extraMsg string,
+) *rules.RuleMatch {
+	msg := prepNounMsg(prepTok, want, ziZnaRemoved) + extraMsg
+	m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
+	m.ShortMessage = r.shortMsg
+	if sugs := r.prepNounSuggestions(want, tok); len(sugs) > 0 {
+		m.SetSuggestedReplacements(sugs)
+	}
+	return m
+}
+
+// prepNounSuggestions ports createRuleMatch synthesizer loop (v_* remaps).
+func (r *TokenAgreementPrepNounRule) prepNounSuggestions(want []string, tok *languagetool.AnalyzedTokenReadings) []string {
+	if r == nil || r.Synth == nil || tok == nil || len(want) == 0 {
+		return nil
+	}
+	reqRE := ":(" + strings.Join(want, "|") + ")"
+	// Java: append optional or existing :r(in)?anim after case alt
+	reqAnim := regexp.MustCompile(`:r(?:in)?anim`)
+	seen := map[string]struct{}{}
+	var out []string
+	for _, ar := range tok.GetReadings() {
+		if ar == nil || ar.GetPOSTag() == nil {
+			continue
+		}
+		old := *ar.GetPOSTag()
+		apply := reqRE
+		if m := reqAnim.FindString(old); m != "" {
+			apply += m
+		} else {
+			// Java: (?:r(in)?anim)? — optional anim; RE2 uses (?:r(?:in)?anim)?
+			apply += `(?:r(?:in)?anim)?`
+		}
+		posTag := regexp.MustCompile(`:v_[a-z]+`).ReplaceAllString(old, apply)
+		syn, err := r.Synth.SynthesizeRE(ar, posTag, true)
+		if err != nil {
+			continue
+		}
+		for _, s := range syn {
+			if s == "" {
+				continue
+			}
+			if _, ok := seen[s]; ok {
+				continue
+			}
+			seen[s] = struct{}{}
+			out = append(out, s)
+		}
+	}
+	return out
 }
 
 // isLikelyApproxWithZi ports TokenAgreementPrepNounRule.isLikelyApproxWithZi.

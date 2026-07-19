@@ -6,6 +6,7 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
 const TokenAgreementVerbNounRuleID = "UK_VERB_NOUN_INFLECTION_AGREEMENT"
@@ -15,6 +16,8 @@ type TokenAgreementVerbNounRule struct {
 	*tokenAgreementMatch
 	// CaseGov optional inject; nil → LoadCaseGovernmentHelper().
 	CaseGov *CaseGovernmentHelper
+	// Synth optional (Java ukrainian.getSynthesizer()); nil → no suggestions.
+	Synth synthesis.Synthesizer
 }
 
 func NewTokenAgreementVerbNounRule() *TokenAgreementVerbNounRule {
@@ -235,13 +238,95 @@ func (r *TokenAgreementVerbNounRule) Match(sentence *languagetool.AnalyzedSenten
 				if !hasVidmInTags(cases, indirTags) {
 					msg := "Не узгоджено дієслово з іменником: \"" + verbTok.GetToken() +
 						"\" і \"" + tok.GetToken() + "\""
+					verbReplace := ""
+					if vLem := lemmaOf(verbTok); vLem == "сипіти" {
+						msg += ". Можливо ви мали на увазі слово «си́пати», а не «сипі́ти»?"
+						verbReplace = "сипати"
+					} else if vLem == "сиплячи" {
+						msg += ". Можливо ви мали на увазі «сиплючи»?"
+						verbReplace = "сиплючи"
+					}
 					m := rules.NewRuleMatch(r, sentence, verbTok.GetStartPos(), tok.GetEndPos(), msg)
 					m.ShortMessage = r.shortMsg
+					if sugs := r.verbNounSuggestions(cases, tokens, verbPos, i, verbTok, tok, verbReplace); len(sugs) > 0 {
+						m.SetSuggestedReplacements(sugs)
+					}
 					out = append(out, m)
 				}
 			}
 		}
 		verbPos = -1
+	}
+	return out
+}
+
+// verbNounSuggestions ports TokenAgreementVerbNounRule.getSuggestions + surface wrap.
+func (r *TokenAgreementVerbNounRule) verbNounSuggestions(
+	cases map[string]struct{},
+	tokens []*languagetool.AnalyzedTokenReadings,
+	verbPos, nounPos int,
+	verbTok, nounTok *languagetool.AnalyzedTokenReadings,
+	verbReplace string,
+) []string {
+	if r == nil || r.Synth == nil || nounTok == nil || verbTok == nil {
+		return nil
+	}
+	// Java getSuggestions: empty cases → empty list
+	if len(cases) == 0 {
+		return nil
+	}
+	var caseList []string
+	for c := range cases {
+		if c != "" {
+			caseList = append(caseList, c)
+		}
+	}
+	reqRE := ":(" + strings.Join(caseList, "|") + ")"
+	seen := map[string]struct{}{}
+	var forms []string
+	for _, ar := range nounTok.GetReadings() {
+		if ar == nil || ar.GetPOSTag() == nil {
+			continue
+		}
+		old := *ar.GetPOSTag()
+		if !strings.Contains(old, ":v_") {
+			continue
+		}
+		posTag := regexp.MustCompile(`:v_[a-z]+`).ReplaceAllString(old, reqRE)
+		syn, err := r.Synth.SynthesizeRE(ar, posTag, true)
+		if err != nil {
+			continue
+		}
+		for _, s := range syn {
+			if s == "" {
+				continue
+			}
+			if _, ok := seen[s]; ok {
+				continue
+			}
+			seen[s] = struct{}{}
+			forms = append(forms, s)
+		}
+	}
+	// піку → prefer піка
+	if strings.EqualFold(cleanTokenSurface(nounTok), "піку") && containsStr(forms, "піка") {
+		forms = []string{"піка"}
+	}
+	// middle tokens between verb and noun
+	var inside strings.Builder
+	for ii := verbPos + 1; ii < nounPos && ii < len(tokens); ii++ {
+		if tokens[ii] == nil {
+			continue
+		}
+		inside.WriteByte(' ')
+		inside.WriteString(tokens[ii].GetToken())
+	}
+	out := make([]string, 0, len(forms))
+	if verbReplace != "" {
+		return []string{verbReplace + inside.String() + " " + nounTok.GetToken()}
+	}
+	for _, s := range forms {
+		out = append(out, verbTok.GetToken()+inside.String()+" "+s)
 	}
 	return out
 }
