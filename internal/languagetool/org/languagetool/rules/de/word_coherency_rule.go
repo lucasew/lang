@@ -52,6 +52,11 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: Delphine → Delfine (consistent with first spelling)
+	base.AddExamplePair(
+		rules.Wrong("Die Delfine gehören zu den Zahnwalen. <marker>Delphine</marker> sind in allen Meeren verbreitet."),
+		rules.Fixed("Die Delfine gehören zu den Zahnwalen. <marker>Delfine</marker> sind in allen Meeren verbreitet."),
+	)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

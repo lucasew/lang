@@ -15,6 +15,12 @@ func NewGermanUnpairedQuotesRule(messages map[string]string) *GermanUnpairedQuot
 	end := []string{"“", "«", "»", "\"", "'", "‘", "‹", "›"}
 	base := rules.NewGenericUnpairedQuotesRule(messages, start, end)
 	base.SetRuleID("DE_UNPAIRED_QUOTES")
+	// Java setUrl + addExamplePair (nested › quote)
+	base.URL = "https://languagetool.org/insights/de/beitrag/klammern/"
+	base.AddExamplePair(
+		rules.Wrong("»Hallo Hans ist das dein <marker>›</marker>neues Auto?«, fragte er."),
+		rules.Fixed("»Hallo Hans ist das dein <marker>›</marker>neues‹ Auto?«, fragte er."),
+	)
 	return &GermanUnpairedQuotesRule{GenericUnpairedQuotesRule: base}
 }
 

@@ -18,6 +18,9 @@ type StyleRepeatedVeryShortSentences struct {
 	Category            *rules.Category
 	IssueType           rules.ITSIssueType
 	DefaultOff          bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 var (
@@ -27,7 +30,7 @@ var (
 
 func NewStyleRepeatedVeryShortSentences(messages map[string]string) *StyleRepeatedVeryShortSentences {
 	// Java: CREATIVE_WRITING category + setDefaultOff() + ITS Style.
-	return &StyleRepeatedVeryShortSentences{
+	r := &StyleRepeatedVeryShortSentences{
 		Messages:            messages,
 		MinWords:            4,
 		MinRepeated:         3,
@@ -36,6 +39,43 @@ func NewStyleRepeatedVeryShortSentences(messages map[string]string) *StyleRepeat
 		IssueType:           rules.ITSStyle,
 		DefaultOff:          true,
 	}
+	// Java multi-marker staccato demo (fixed has no markers).
+	r.AddExamplePair(
+		rules.Wrong("Das Auto kam <marker>näher.</marker> Der Hund <marker>schlief.</marker> Die Reifen <marker>quietschten.</marker>"),
+		rules.Fixed("Das Auto kam näher. Tief und fest schlief der Hund. Die Reifen quietschten."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *StyleRepeatedVeryShortSentences) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *StyleRepeatedVeryShortSentences) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *StyleRepeatedVeryShortSentences) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *StyleRepeatedVeryShortSentences) GetID() string { return "STYLE_REPEATED_SHORT_SENTENCES" }

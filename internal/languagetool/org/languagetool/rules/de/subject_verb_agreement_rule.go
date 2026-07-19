@@ -30,6 +30,9 @@ type SubjectVerbAgreementRule struct {
 	// LookupInfinitive ports GermanTagger.lookup(token.toLowerCase()) used to test VER:INF.
 	// When nil, containsOnlyInfinitivesToTheLeft is treated as false (never suppresses).
 	LookupInfinitive func(lowerWord string) bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 // SingularPluralPair ports Java SingularPluralPair.
@@ -70,7 +73,43 @@ func NewSubjectVerbAgreementRule(messages map[string]string) *SubjectVerbAgreeme
 		r.singular[p.Singular] = struct{}{}
 		r.plural[p.Plural] = struct{}{}
 	}
+	// Java: Die Autos ist → sind
+	r.AddExamplePair(
+		rules.Wrong("Die Autos <marker>ist</marker> schnell."),
+		rules.Fixed("Die Autos <marker>sind</marker> schnell."),
+	)
 	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *SubjectVerbAgreementRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *SubjectVerbAgreementRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *SubjectVerbAgreementRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // WithLookupInfinitive sets the tagger hook for containsOnlyInfinitivesToTheLeft.

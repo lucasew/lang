@@ -21,13 +21,53 @@ type AgreementRule2 struct {
 	Category *rules.Category
 	// Synth optional for ADJ:NOM suggestions (Java GermanSynthesizer.INSTANCE).
 	Synth synthesis.Synthesizer
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewAgreementRule2(messages map[string]string) *AgreementRule2 {
-	return &AgreementRule2{
+	r := &AgreementRule2{
 		Messages: messages,
 		Category: rules.CatGrammar.GetCategory(messages),
 	}
+	// Java: Kleiner Haus → Kleines Haus
+	r.AddExamplePair(
+		rules.Wrong("<marker>Kleiner Haus</marker> am Waldrand"),
+		rules.Fixed("<marker>Kleines Haus</marker> am Waldrand"),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AgreementRule2) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AgreementRule2) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AgreementRule2) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // WithSynth sets optional synthesizer for suggestions.

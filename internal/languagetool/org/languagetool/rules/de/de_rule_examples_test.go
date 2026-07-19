@@ -37,4 +37,15 @@ func TestDERule_ExamplePairs(t *testing.T) {
 	require.Equal(t, []string{"fehlt"}, NewMissingVerbRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"Das Haus"}, NewAgreementRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"bin"}, NewVerbAgreementRule(nil).GetIncorrectExamples()[0].GetCorrections())
+
+	// Quotes / coherency / compounds / names / phrases / style / agreement2 / SVA
+	require.Equal(t, []string{"›"}, NewGermanUnpairedQuotesRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Delfine"}, NewWordCoherencyRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Leerzeile"}, NewProhibitedCompoundRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Müller"}, NewSimilarNameRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, "Das ist <marker>allem Anschein nach</marker> eine Phrase.", NewUnnecessaryPhraseRule(nil).GetIncorrectExamples()[0].GetExample())
+	require.Contains(t, NewGermanStyleRepeatedWordRule(nil).GetIncorrectExamples()[0].GetExample(), "<marker>gehe</marker>")
+	require.Equal(t, []string{"Kleines Haus"}, NewAgreementRule2(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"sind"}, NewSubjectVerbAgreementRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Contains(t, NewStyleRepeatedVeryShortSentences(nil).GetIncorrectExamples()[0].GetExample(), "näher.")
 }

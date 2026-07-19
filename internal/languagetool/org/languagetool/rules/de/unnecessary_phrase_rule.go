@@ -58,6 +58,11 @@ func NewUnnecessaryPhraseRule(messages map[string]string) *UnnecessaryPhraseRule
 	}
 	r.LimitMessage = r.getLimitMessage
 	rules.InitStatisticStyleMeta(r.AbstractStatisticStyleRule, messages, false)
+	// Java: allem Anschein nach (fixed has no marker)
+	r.AddExamplePair(
+		rules.Wrong("Das ist <marker>allem Anschein nach</marker> eine Phrase."),
+		rules.Fixed("Das ist eine Phrase."),
+	)
 	return r
 }
 

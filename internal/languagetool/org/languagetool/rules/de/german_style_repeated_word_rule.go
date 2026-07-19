@@ -35,6 +35,11 @@ func NewGermanStyleRepeatedWordRule(messages map[string]string) *GermanStyleRepe
 	base.MessageSentenceAfter = func() string {
 		return "Mögliches Stilproblem: Das Wort wird auch in einem nachfolgenden Satz verwendet."
 	}
+	// Java: gehe … <marker>gehe</marker> (fixed drops second verb)
+	base.AddExamplePair(
+		rules.Wrong("Ich gehe zum Supermarkt, danach <marker>gehe</marker> ich nach Hause."),
+		rules.Fixed("Ich gehe zum Supermarkt, danach nach Hause."),
+	)
 	r := &GermanStyleRepeatedWordRule{AbstractStyleRepeatedWordRule: base}
 	base.IsTokenToCheck = r.isTokenToCheck
 	base.IsTokenPair = r.isTokenPair

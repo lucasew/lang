@@ -15,6 +15,9 @@ type SimilarNameRule struct {
 	Messages   map[string]string
 	Category   *rules.Category
 	DefaultOff bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 const (
@@ -23,11 +26,48 @@ const (
 )
 
 func NewSimilarNameRule(messages map[string]string) *SimilarNameRule {
-	return &SimilarNameRule{
+	r := &SimilarNameRule{
 		Messages:   messages,
 		Category:   rules.CatTypos.GetCategory(messages),
 		DefaultOff: true,
 	}
+	// Java: Miller → Müller
+	r.AddExamplePair(
+		rules.Wrong("Angela Müller ist CEO. <marker>Miller</marker> wurde in Hamburg geboren."),
+		rules.Fixed("Angela Müller ist CEO. <marker>Müller</marker> wurde in Hamburg geboren."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *SimilarNameRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *SimilarNameRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *SimilarNameRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *SimilarNameRule) GetID() string { return "DE_SIMILAR_NAMES" }
