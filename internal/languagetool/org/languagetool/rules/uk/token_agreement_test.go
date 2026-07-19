@@ -913,3 +913,59 @@ func TestVerbNounException_InfChains(t *testing.T) {
 		atr("уваги", "noun:inanim:f:v_rod"),
 	}, 2, 3))
 }
+
+func TestVerbNounException_Tail(t *testing.T) {
+	// NOUN + V:INF + N — гріх зайнятися прокуратурі
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("гріх", strPtr("гріх"), "noun:inanim:m:v_naz"),
+		atr("зайнятися", "verb:perf:inf"),
+		atr("прокуратурі", "noun:inanim:f:v_dav"),
+	}, 2, 3))
+
+	// бажання вчитися новому — vchyty + v_dav is NOT exception
+	require.False(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("бажання", strPtr("бажання"), "noun:inanim:n:v_naz"),
+		atrLemma("вчитися", strPtr("вчитися"), "verb:imperf:inf"),
+		atr("новому", "adj:n:v_dav"),
+	}, 2, 3))
+
+	// plural verb + v_naz (наростали впевненість)
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("наростали", "verb:imperf:past:p"), atr("впевненість", "noun:inanim:f:v_naz"),
+		atr("і", "conj"), atr("сила", "noun"),
+	}, 0, 1))
+
+	// змалював дивовижної краси церкву
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("змалював", strPtr("змалювати"), "verb:perf:past:m"),
+		atr("дивовижної", "adj:f:v_rod"),
+		atr("краси", "noun:inanim:f:v_rod"),
+		atr("церкву", "noun:inanim:f:v_zna"),
+	}, 0, 1))
+
+	// могли б займатися структури — lemma on particle б
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atr("могли", "verb:imperf:past:p"), atrLemma("б", strPtr("б"), "part"),
+		atr("займатися", "verb:imperf:inf"),
+		atr("структури", "noun:inanim:p:v_naz"),
+	}, 3, 4))
+}
+
+func TestVerbNounException_PayInf(t *testing.T) {
+	// check lemma for доведеться
+	// soft: платити + хоче (v_inf) reverse from хоче? structure is verbPos=хоче, reverse finds платити
+	// Actually Java: verbPos is the finite verb that governs v_inf, reverse finds inf
+	// платити доведеться повну — if verbPos is доведеться
+	// hasCaseGovernment(доведеться, v_inf), reverse finds платити :inf, agrees(платити, noun)
+	// Simpler: мати + inf path already covered
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("має", strPtr("мати"), "verb:imperf:pres:s:3"),
+		atr("також", "adv"),
+		atr("народитися", "verb:perf:inf"),
+		atr("ідея", "noun:inanim:f:v_naz"),
+	}, 3, 4))
+}

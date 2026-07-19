@@ -2578,6 +2578,72 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		return true
 	}
 
+	// NOUN + V:INF + N — гріх зайнятися Генеральній прокуратурі
+	if verbPos > 1 && HasPosTagPart(verb, ":inf") &&
+		(HasPosTagPart(noun, "v_dav") || HasPosTagPart(noun, "v_rod") ||
+			HasPosTagRE(noun, regexp.MustCompile(`adj:.:v_naz.*`))) {
+		v2 := tokenSearchPosRE(tokens, verbPos-1, nounVNazPattern, DirReverse)
+		if v2 >= 0 && v2 >= verbPos-3 && hasCaseGovPosRE(tokens[v2], nounVNazPattern, "v_inf") {
+			// exc: бажання вчитися новому
+			if HasPosTagPart(noun, "v_dav") && HasLemmaTokenRE(verb, verbNounVchytyRE) {
+				// Java: return false (not exception)
+			} else {
+				return true
+			}
+		}
+	}
+
+	// V:INF + V + N — платити доведеться повну вартість
+	// (verb at verbPos governs v_inf; reverse search finds :inf)
+	if verbPos > 1 && hasCaseGovPosRE(verb, verbPattern, "v_inf") {
+		v2 := tokenSearchPosRE(tokens, verbPos-1, verbPattern, DirReverse)
+		if v2 >= 0 && v2 >= verbPos-3 &&
+			HasPosTagPart(tokens[v2], ":inf") &&
+			verbNounAgrees(tokens[v2], noun) {
+			return true
+		}
+	}
+
+	// в мені наростали впевненість і …
+	if nounPos < len(tokens)-2 &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*:p(?:$|:.*)`)) &&
+		HasPosTagPart(noun, ":v_naz") {
+		return true
+	}
+
+	// змалював дивовижної краси церкву — adj:v_rod + noun:v_rod + noun/adj
+	// Java: adj:.:v_rod(?!.*pron) / noun:.*v_rod(?!.*pron) / (noun|adj)(?!.*pron)
+	if nounPos < len(tokens)-2 &&
+		hasPosWithoutPron(noun, regexp.MustCompile(`adj:.:v_rod`)) &&
+		hasPosWithoutPron(tokens[nounPos+1], regexp.MustCompile(`noun:.*v_rod`)) &&
+		hasPosWithoutPron(tokens[nounPos+2], regexp.MustCompile(`^(?:noun|adj)`)) {
+		// agrees with verb using v_naz readings of token+2, or case gov on non-v_naz
+		n2 := tokens[nounPos+2]
+		if VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(n2)) {
+			return true
+		}
+		// simplified: if any non-v_naz reading is case-governed by verb
+		cases := caseGovPosRESet(verb, verbAdvpPattern)
+		if len(cases) > 0 {
+			list := make([]string, 0, len(cases))
+			for c := range cases {
+				list = append(list, c)
+			}
+			if HasVidmPosTag(list, n2) {
+				return true
+			}
+		}
+	}
+
+	// могли б займатися структури / має також народитися / мати + inf
+	if verbPos > 2 && HasPosTagPart(verb, ":inf") &&
+		HasPosTagStart(tokens[verbPos-2], "verb") &&
+		(HasLemmaTokenAny(tokens[verbPos-1], []string{"б", "би"}) ||
+			hasAdvNotAdvp(tokens[verbPos-1]) ||
+			HasLemmaWithPartPos(tokens[verbPos-2], []string{"мати"}, "verb")) {
+		return true
+	}
+
 	return false
 }
 
@@ -2585,9 +2651,10 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 var (
 	verbNounVRodDriverRE = regexp.MustCompile(
 		`(?i)^(?:не|(?:на)?с[кт]ільки|(?:най)?більше|(?:най)?менше|(?:не|за)?багато|(?:не|чи|за)?мало|трохи|годі|неможливо|а?ніж|вдосталь|купу)$`)
-	verbNounVchytyRE = regexp.MustCompile(`.*вч[аи]ти(?:ся)?$`)
-	verbPattern      = regexp.MustCompile(`^verb.*`)
-	adjVNazPattern   = regexp.MustCompile(`^adj:.:v_naz.*`)
+	verbNounVchytyRE  = regexp.MustCompile(`.*вч[аи]ти(?:ся)?$`)
+	verbPattern       = regexp.MustCompile(`^verb.*`)
+	adjVNazPattern    = regexp.MustCompile(`^adj:.:v_naz.*`)
+	nounVNazPattern   = regexp.MustCompile(`noun.*:v_naz.*`)
 	advPredictPattern = regexp.MustCompile(`^(?:adv|noninfl:predic).*`)
 )
 
