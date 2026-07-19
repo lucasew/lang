@@ -28,11 +28,6 @@ var (
 	}
 	addExpressions      = []string{"In addition", "As well as"}
 	contrastExpressions = []string{"Even so", "On the other hand"}
-	// personal pronouns (surface fallback for PRP tag)
-	personalPronouns = map[string]bool{
-		"I": true, "You": true, "He": true, "She": true, "It": true, "We": true, "They": true,
-		"Me": true, "Him": true, "Her": true, "Us": true, "Them": true,
-	}
 )
 
 func NewEnglishWordRepeatBeginningRule(messages map[string]string) *EnglishWordRepeatBeginningRule {
@@ -49,14 +44,23 @@ func (r *EnglishWordRepeatBeginningRule) isException(token string) bool {
 	return token == "The" || token == "A" || token == "An"
 }
 
+// isAdverb ports Java EnglishWordRepeatBeginningRule.isAdverb (fixed adverb sets only).
 func (r *EnglishWordRepeatBeginningRule) isAdverb(token *languagetool.AnalyzedTokenReadings) bool {
+	if token == nil {
+		return false
+	}
 	tok := token.GetToken()
 	return addAdverbs[tok] || contrastAdverbs[tok] || emphasisAdverbs[tok] || explainAdverbs[tok]
 }
 
+// getSuggestions ports Java getSuggestions — personal pronouns only via PRP POS (no surface invent).
 func (r *EnglishWordRepeatBeginningRule) getSuggestions(token *languagetool.AnalyzedTokenReadings) []string {
+	if token == nil {
+		return nil
+	}
 	tok := token.GetToken()
-	if token.HasPosTag("PRP") || personalPronouns[tok] {
+	// Java: if (token.hasPosTag("PRP"))
+	if token.HasPosTag("PRP") {
 		adapted := tok
 		if tok != "I" {
 			adapted = strings.ToLower(tok)

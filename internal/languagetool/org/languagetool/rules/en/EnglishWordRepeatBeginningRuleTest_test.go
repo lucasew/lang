@@ -1,7 +1,8 @@
 package en
 
-// Twin of languagetool-language-modules/en/src/test/java/org/languagetool/rules/en/EnglishWordRepeatBeginningRuleTest.java
+// Twin of EnglishWordRepeatBeginningRuleTest — PRP inject for pronoun suggestions (Java).
 import (
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -10,8 +11,8 @@ import (
 
 func engWRBMessages() map[string]string {
 	return map[string]string{
-		"desc_repetition_beginning_adv":      "Three successive sentences begin with the same adverb.",
-		"desc_repetition_beginning_word":     "Three successive sentences begin with the same word.",
+		"desc_repetition_beginning_adv":       "Three successive sentences begin with the same adverb.",
+		"desc_repetition_beginning_word":      "Three successive sentences begin with the same word.",
 		"desc_repetition_beginning_thesaurus": "Consider using a thesaurus to find synonyms.",
 	}
 }
@@ -19,28 +20,29 @@ func engWRBMessages() map[string]string {
 func TestEnglishWordRepeatBeginningRule_Rule(t *testing.T) {
 	rule := NewEnglishWordRepeatBeginningRule(engWRBMessages())
 
-	// two successive sentences that start with the same non-adverb word.
 	matches := rule.MatchList(languagetool.SplitAndAnalyze("This is good. This is good, too."))
 	require.Equal(t, 0, len(matches))
-	// three successive sentences that start with the same exception word ("the").
 	matches = rule.MatchList(languagetool.SplitAndAnalyze("The car. The bicycle. The third sentence with 'the'."))
 	require.Equal(t, 0, len(matches))
 
-	// three successive sentences that start with personal pronoun "I"
-	matches = rule.MatchList(languagetool.SplitAndAnalyze("I think so. I have seen that before. I don't like it."))
+	// "I" / "He" need PRP POS for pronoun suggestions (Java hasPosTag("PRP"))
+	matches = rule.MatchList(analyzeENWRB("I think so. I have seen that before. I don't like it."))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, "Furthermore, I", matches[0].GetSuggestedReplacements()[0])
 	require.Equal(t, "Likewise, I", matches[0].GetSuggestedReplacements()[1])
 	require.Equal(t, "Not only that, but I", matches[0].GetSuggestedReplacements()[2])
 
-	// three successive with "He"
-	matches = rule.MatchList(languagetool.SplitAndAnalyze("He thinks so. He has seen that before. He doesn't like it."))
+	matches = rule.MatchList(analyzeENWRB("He thinks so. He has seen that before. He doesn't like it."))
 	require.Equal(t, 1, len(matches))
 	require.Equal(t, "Furthermore, he", matches[0].GetSuggestedReplacements()[0])
 	require.Equal(t, "Likewise, he", matches[0].GetSuggestedReplacements()[1])
 	require.Equal(t, "Not only that, but he", matches[0].GetSuggestedReplacements()[2])
 
-	// two successive sentences that start with adverb "Also"
+	// without PRP: still may match as word-repeat, but no pronoun-style suggestions
+	matches = rule.MatchList(languagetool.SplitAndAnalyze("I think so. I have seen that before. I don't like it."))
+	require.Equal(t, 1, len(matches))
+	require.Empty(t, matches[0].GetSuggestedReplacements())
+
 	matches = rule.MatchList(languagetool.SplitAndAnalyze("Also, I play football. Also, I play basketball."))
 	require.Equal(t, 1, len(matches))
 	suggs := matches[0].GetSuggestedReplacements()
@@ -58,4 +60,27 @@ func TestEnglishWordRepeatBeginningRule_Rule(t *testing.T) {
 	require.True(t, has("Moreover"))
 	require.True(t, has("In addition"))
 	require.True(t, has("As well as"))
+}
+
+// analyzeENWRB injects PRP on first content token of each sentence when surface is a personal pronoun form.
+func analyzeENWRB(text string) []*languagetool.AnalyzedSentence {
+	parts := languagetool.SplitAndAnalyze(text)
+	for _, s := range parts {
+		for _, tok := range s.GetTokensWithoutWhitespace() {
+			if tok == nil || tok.IsSentenceStart() {
+				continue
+			}
+			// first content word
+			t := tok.GetToken()
+			switch t {
+			case "I", "You", "He", "She", "It", "We", "They",
+				"Me", "Him", "Her", "Us", "Them":
+				pos := "PRP"
+				tok.AddReading(languagetool.NewAnalyzedToken(t, &pos, nil), "test")
+			}
+			_ = strings.ToLower
+			break
+		}
+	}
+	return parts
 }
