@@ -79,6 +79,13 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		// Java doGuessMultiHyphens merge/stretch (ва-ре-ни-ки, Та-а-ак) + 3-part entities.
+		if stretch := DynamicMultiHyphenStretchReadings(w, t.TagWord); len(stretch) > 0 {
+			readings = stretch
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		// Java equalParts redup for весь/усе (Усе-усе, всього-всього).
 		if dyn := DynamicEqualRedupReadings(w, t.TagWord); len(dyn) > 0 {
 			for _, d := range dyn {

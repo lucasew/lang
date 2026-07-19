@@ -11,20 +11,25 @@ import (
 
 // Official /uk/dash_prefixes.txt and dash_prefixes_invalid.txt (Java CompoundTagger).
 var (
-	dashPrefOnce   sync.Once
-	dashPrefixes   map[string]string // prefix → extra tag (may be empty or "alt")
-	noDashPrefixes map[string]struct{}
+	dashPrefOnce         sync.Once
+	dashPrefixes         map[string]string // prefix → extra tag (may be empty or "alt")
+	dashPrefixesInvalid  map[string]struct{}
+	noDashPrefixes       map[string]struct{}
 )
 
 func loadDashPrefixResources() {
 	dashPrefOnce.Do(func() {
 		dashPrefixes = map[string]string{}
+		dashPrefixesInvalid = map[string]struct{}{}
 		noDashPrefixes = map[string]struct{}{}
 		if p := discoverUKResource("dash_prefixes.txt"); p != "" {
 			loadDashPrefixesMap(p)
 		}
 		if p := discoverUKResource("dash_prefixes_invalid.txt"); p != "" {
-			loadSetInto(p, noDashPrefixes)
+			loadSetInto(p, dashPrefixesInvalid)
+			for k := range dashPrefixesInvalid {
+				noDashPrefixes[k] = struct{}{}
+			}
 		}
 		// Java: noDashPrefixes2019 = dash prefix keys whose value contains "alt"
 		for k, v := range dashPrefixes {
@@ -37,6 +42,16 @@ func loadDashPrefixResources() {
 		delete(noDashPrefixes, "поп")
 		delete(noDashPrefixes, "прес")
 	})
+}
+
+// IsDashPrefixInvalid reports membership in official dash_prefixes_invalid.txt.
+func IsDashPrefixInvalid(left string) bool {
+	loadDashPrefixResources()
+	if _, ok := dashPrefixesInvalid[left]; ok {
+		return true
+	}
+	_, ok := dashPrefixesInvalid[strings.ToLower(left)]
+	return ok
 }
 
 func discoverUKResource(name string) string {
