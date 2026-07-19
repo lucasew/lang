@@ -29,6 +29,21 @@ func TestConsistentApostrophesRule_Rule(t *testing.T) {
 	require.Equal(t, 0, len(rule.MatchList(one("It’s a nice idea. But it doesn’t work."))))
 }
 
+// Java ConsistentApostrophesRule: setDefaultTempOff, apostrophe URL, example pair, minParagraph -1.
+func TestConsistentApostrophesRule_Metadata(t *testing.T) {
+	rule := NewConsistentApostrophesRule(nil)
+	require.Equal(t, "EN_CONSISTENT_APOS", rule.GetID())
+	require.Contains(t, rule.GetDescription(), "apostrophes")
+	require.Contains(t, rule.GetURL(), "what-is-an-apostrophe")
+	require.True(t, rule.IsDefaultTempOff())
+	require.Equal(t, -1, rule.MinToCheckParagraph())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "It's nice, but it <marker>doesn’t</marker> work.", inc[0].GetExample())
+	require.Equal(t, []string{"doesn't"}, inc[0].GetCorrections())
+	require.Equal(t, "It's nice, but it <marker>doesn't</marker> work.", rule.GetCorrectExamples()[0].GetExample())
+}
+
 func formatOne(s []string) string {
 	if len(s) == 0 {
 		return "[]"

@@ -13,13 +13,89 @@ import (
 // ConsistentApostrophesRule ports org.languagetool.rules.en.ConsistentApostrophesRule.
 type ConsistentApostrophesRule struct {
 	Messages map[string]string
+	// URL ports Rule.url (Java setUrl punctuation-guide apostrophe).
+	URL string
+	// DefaultTempOff ports Rule.setDefaultTempOff (Java TODO still off by default).
+	DefaultTempOff bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewConsistentApostrophesRule(messages map[string]string) *ConsistentApostrophesRule {
-	return &ConsistentApostrophesRule{Messages: messages}
+	r := &ConsistentApostrophesRule{
+		Messages:       messages,
+		URL:            "https://languagetool.org/insights/post/punctuation-guide/#what-is-an-apostrophe",
+		DefaultTempOff: true, // Java setDefaultTempOff()
+	}
+	// Java: addExamplePair(doesn’t → doesn't) with mixed apostrophe styles
+	r.AddExamplePair(
+		rules.Wrong("It's nice, but it <marker>doesn’t</marker> work."),
+		rules.Fixed("It's nice, but it <marker>doesn't</marker> work."),
+	)
+	return r
 }
 
 func (r *ConsistentApostrophesRule) GetID() string { return "EN_CONSISTENT_APOS" }
+
+// GetDescription ports ConsistentApostrophesRule.getDescription.
+func (r *ConsistentApostrophesRule) GetDescription() string {
+	return "Checks if the two types of apostrophes (' and ’) are used consistently in a text."
+}
+
+// GetURL ports Rule.getUrl.
+func (r *ConsistentApostrophesRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *ConsistentApostrophesRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// IsDefaultTempOff ports Rule.isDefaultTempOff.
+func (r *ConsistentApostrophesRule) IsDefaultTempOff() bool {
+	return r != nil && r.DefaultTempOff
+}
+
+// MinToCheckParagraph ports TextLevelRule.minToCheckParagraph (Java -1 full text).
+func (r *ConsistentApostrophesRule) MinToCheckParagraph() int { return -1 }
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *ConsistentApostrophesRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *ConsistentApostrophesRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *ConsistentApostrophesRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
+}
 
 // MatchList ports match(List<AnalyzedSentence>).
 func (r *ConsistentApostrophesRule) MatchList(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
