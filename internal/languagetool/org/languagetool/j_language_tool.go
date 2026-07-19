@@ -1340,7 +1340,8 @@ func nearestKnownWords(word string, known map[string]struct{}, maxDist, maxN int
 		d := runeLevenshtein(low, kl)
 		if d > 0 && d <= maxDist {
 			seen[kl] = struct{}{}
-			cands = append(cands, cand{w: kl, dist: d})
+			// Keep dictionary surface form (no soft lowercase invent of suggestions).
+			cands = append(cands, cand{w: k, dist: d})
 		}
 	}
 	// sort by distance then alphabetically (stable, no import sort for tiny N)

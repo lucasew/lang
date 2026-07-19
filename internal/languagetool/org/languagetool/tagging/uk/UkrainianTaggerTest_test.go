@@ -137,7 +137,11 @@ func TestUkrainianTagger_DynamicMissingApostrophe(t *testing.T) {
 	require.False(t, out[1].IsTagged())
 }
 func TestUkrainianTagger_DynamicMissingHyphen(t *testing.T) {
-	wt := tagging.MapWordTagger{"тест": {tagging.NewTaggedWord("тест", "noun")}}
+	// Java MISSING_HYPHEN: tag base via dict with pron POS — inject якого (no soft invent).
+	wt := tagging.MapWordTagger{
+		"тест":  {tagging.NewTaggedWord("тест", "noun")},
+		"якого": {tagging.NewTaggedWord("який", "adj:m:v_rod:pron:int:rel:def")},
+	}
 	tg := NewUkrainianTagger(wt)
 	// missing hyphen after known prefix: мінітест → tag via міні-тест
 	out := tg.Tag([]string{"мінітест", "напівтест", "якогонебудь", "болнебудь"})
@@ -145,16 +149,19 @@ func TestUkrainianTagger_DynamicMissingHyphen(t *testing.T) {
 	require.True(t, out[1].IsTagged())
 	require.True(t, out[2].IsTagged())
 	require.True(t, out[2].HasPartialPosTag("bad") || out[2].HasPartialPosTag("adj"))
-	// "бол" is too short / not a real base — soft may still tag; require non-panic only
-	_ = out[3]
+	// "бол" without dict pronoun POS fails closed (Java болнебудь → null)
+	require.False(t, out[3].IsTagged(), "болнебудь needs pronoun base in dict")
 }
 func TestUkrainianTagger_DynamicTaggingFullTagMatch(t *testing.T) {
+	// Java CompoundTagger tags both sides via wordTagger — inject dict forms (no soft invent).
 	wt := tagging.MapWordTagger{
 		"жило":     {tagging.NewTaggedWord("жити", "verb:imperf:past:n")},
 		"було":     {tagging.NewTaggedWord("бути", "verb:imperf:past:n")},
 		"учиш":     {tagging.NewTaggedWord("учити", "verb:imperf:pres:s:2")},
+		"низенько": {tagging.NewTaggedWord("низенько", "adv")},
 		"лікар":    {tagging.NewTaggedWord("лікар", "noun:anim:m:v_naz")},
 		"гомеопат": {tagging.NewTaggedWord("гомеопат", "noun:anim:m:v_naz")},
+		"а":        {tagging.NewTaggedWord("а", "intj")},
 	}
 	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"жило-було", "учиш-учиш", "низенько-низенько", "лікар-гомеопат", "а-а"})
@@ -165,10 +172,15 @@ func TestUkrainianTagger_DynamicTaggingFullTagMatch(t *testing.T) {
 	require.True(t, out[4].HasPosTag("intj") || out[4].HasPartialPosTag("intj"))
 }
 func TestUkrainianTagger_DynamicTaggingIntj(t *testing.T) {
-	// covered in dynamic_adj_intj_test; keep integration smoke
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	// Java multi-hyphen intj requires intj on both parts in the dictionary.
+	wt := tagging.MapWordTagger{
+		"га": {tagging.NewTaggedWord("га", "intj")},
+	}
+	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"га-га", "геееей"})
 	require.True(t, out[0].HasPosTag("intj") || out[0].HasPartialPosTag("intj"))
+	// elongated interjections use dynamic_adj_intj path when wired; smoke non-panic
+	_ = out[1]
 }
 func TestUkrainianTagger_CompoundUpperCase(t *testing.T) {
 	wt := tagging.MapWordTagger{

@@ -3,6 +3,7 @@ package languagetool
 import "strings"
 
 // AddIgnoreWord records a surface form to suppress matches that cover only that token.
+// Exact surface only (Java SpellingCheckRule wordsToBeIgnored / PatternToken case-sensitive).
 func (lt *JLanguageTool) AddIgnoreWord(word string) {
 	if lt == nil || word == "" {
 		return
@@ -11,7 +12,6 @@ func (lt *JLanguageTool) AddIgnoreWord(word string) {
 		lt.IgnoreWords = map[string]struct{}{}
 	}
 	lt.IgnoreWords[word] = struct{}{}
-	lt.IgnoreWords[strings.ToLower(word)] = struct{}{}
 }
 
 // AddIgnoreWords records multiple ignore surface forms.
@@ -29,16 +29,14 @@ func (lt *JLanguageTool) filterMatchesByIgnore(text string, ms []LocalMatch) []L
 		(lt.UserConfig == nil || (len(lt.UserConfig.UserSpecificSpellerWords) == 0 && len(lt.UserConfig.AcceptedPhrases) == 0)) {
 		return ms
 	}
-	// build ignore set from IgnoreWords + user speller words
+	// build ignore set from IgnoreWords + user speller words (exact surface)
 	ign := map[string]struct{}{}
 	for w := range lt.IgnoreWords {
 		ign[w] = struct{}{}
-		ign[strings.ToLower(w)] = struct{}{}
 	}
 	if lt.UserConfig != nil {
 		for _, w := range lt.UserConfig.UserSpecificSpellerWords {
 			ign[w] = struct{}{}
-			ign[strings.ToLower(w)] = struct{}{}
 		}
 	}
 	out := make([]LocalMatch, 0, len(ms))
@@ -48,20 +46,14 @@ func (lt *JLanguageTool) filterMatchesByIgnore(text string, ms []LocalMatch) []L
 			continue
 		}
 		surface := text[m.FromPos:m.ToPos]
-		// drop spelling-like matches on ignored words
+		// drop spelling-like matches on ignored words (exact surface)
 		if isSpellRuleID(m.RuleID) {
 			if _, ok := ign[surface]; ok {
-				continue
-			}
-			if _, ok := ign[strings.ToLower(surface)]; ok {
 				continue
 			}
 		}
 		// drop any match fully covered by an accepted phrase
 		if lt.UserConfig != nil && lt.UserConfig.AcceptsPhrase(surface) {
-			continue
-		}
-		if lt.UserConfig != nil && lt.UserConfig.AcceptsPhrase(strings.ToLower(surface)) {
 			continue
 		}
 		out = append(out, m)

@@ -136,10 +136,10 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 					readings = pref
 					break
 				}
-				// -небудь indefinite pronouns (якогонебудь → adj:…:bad)
+				// -небудь indefinite pronouns (Java MISSING_HYPHEN + pronoun POS + :bad)
 				if strings.HasSuffix(strings.ToLower(cand), "-небудь") {
-					if soft := NebudSoftReadings(word, cand); len(soft) > 0 {
-						readings = soft
+					if nebud := NebudMissingHyphenReadings(word, cand, t.TagWord); len(nebud) > 0 {
+						readings = nebud
 						break
 					}
 				}
