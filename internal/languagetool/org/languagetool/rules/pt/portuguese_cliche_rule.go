@@ -36,6 +36,11 @@ func loadCliche() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/cliches.txt"); err != nil {
 			panic(err)
 		}
+		// Java: quente como uma fornalha → quente
+		base.AddExamplePair(
+			rules.Wrong("<marker>quente como uma fornalha</marker>"),
+			rules.Fixed("<marker>quente</marker>"),
+		)
 		clicheBase = base
 	})
 	return clicheBase

@@ -72,16 +72,56 @@ type ArabicTransVerbRule struct {
 	CorrectVerbForm func(tok *languagetool.AnalyzedTokenReadings) string
 	// CorrectPrepForm ports getCorrectPrepositionForm / generateAttachedNewForm.
 	CorrectPrepForm func(prep string, verbTok *languagetool.AnalyzedTokenReadings) string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewArabicTransVerbRule(messages map[string]string) *ArabicTransVerbRule {
-	return &ArabicTransVerbRule{Messages: messages, verbs: loadTransVerbs()}
+	r := &ArabicTransVerbRule{Messages: messages, verbs: loadTransVerbs()}
+	// Java demo is English placeholder (upstream as-is)
+	r.AddExamplePair(
+		rules.Wrong("The train arrived <marker>a hour</marker> ago."),
+		rules.Fixed("The train arrived <marker>an hour</marker> ago."),
+	)
+	return r
 }
 
 func (r *ArabicTransVerbRule) GetID() string { return "AR_VERB_TRANSITIVE_IINDIRECT" }
 
 func (r *ArabicTransVerbRule) GetDescription() string {
 	return "َTransitive verbs corrected to indirect transitive"
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *ArabicTransVerbRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *ArabicTransVerbRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *ArabicTransVerbRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // Match ports ArabicTransVerbRule.match.

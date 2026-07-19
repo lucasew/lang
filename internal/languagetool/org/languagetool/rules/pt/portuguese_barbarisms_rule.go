@@ -38,6 +38,11 @@ func loadBarbarismsBR() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/pt-BR/barbarisms.txt"); err != nil {
 			panic(err)
 		}
+		// Java: curriculum vitae → currículo
+		base.AddExamplePair(
+			rules.Wrong("<marker>curriculum vitae</marker>"),
+			rules.Fixed("<marker>currículo</marker>"),
+		)
 		barbarismsBRBase = base
 	})
 	return barbarismsBRBase

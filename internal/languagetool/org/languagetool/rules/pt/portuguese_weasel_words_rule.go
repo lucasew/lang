@@ -36,6 +36,11 @@ func loadWeasel() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/pt/weaselwords.txt"); err != nil {
 			panic(err)
 		}
+		// Java: Diz-se → XYZ dizem …
+		base.AddExamplePair(
+			rules.Wrong("<marker>Diz-se</marker> que programas gratuitos não têm qualidade."),
+			rules.Fixed("<marker>XYZ</marker> dizem que programas gratuitos não têm qualidade. Por isso vendem programas pagos."),
+		)
 		weaselBase = base
 	})
 	return weaselBase

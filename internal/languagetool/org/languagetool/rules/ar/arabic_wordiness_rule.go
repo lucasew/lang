@@ -35,6 +35,11 @@ func loadWordiness() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/ar/wordiness.txt"); err != nil {
 			panic(err)
 		}
+		// Java: هناك خطأ في العبارة → في العبارة خطأ
+		base.AddExamplePair(
+			rules.Wrong("<marker>هناك خطأ في العبارة</marker>"),
+			rules.Fixed("<marker>في العبارة خطأ</marker>"),
+		)
 		wordinessBase = base
 	})
 	return wordinessBase

@@ -52,6 +52,11 @@ func init() {
 func NewPortugueseWordRepeatBeginningRule(messages map[string]string) *PortugueseWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "PORTUGUESE_WORD_REPEAT_BEGINNING_RULE"
+	// Java: Além → Foi
+	base.AddExamplePair(
+		rules.Wrong("Além disso, a rua é quase completamente residêncial. <marker>Além</marker> disso, foi chamada em nome de um poeta."),
+		rules.Fixed("Além disso, a rua é quase completamente residêncial. <marker>Foi</marker> chamada em nome de um poeta."),
+	)
 	r := &PortugueseWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsAdverbFn = r.isAdverb
 	return r

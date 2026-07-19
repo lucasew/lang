@@ -68,19 +68,59 @@ type ArabicInflectedOneWordReplaceRule struct {
 	// When nil, Java tag-miss path is used: "["+lemma+"]" — not bare lemma as surface invent.
 	// Full clitic merge needs tagger (incomplete until wired).
 	InflectLemmaLike func(targetLemma string, source *languagetool.AnalyzedToken) []string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewArabicInflectedOneWordReplaceRule(messages map[string]string) *ArabicInflectedOneWordReplaceRule {
-	return &ArabicInflectedOneWordReplaceRule{
+	r := &ArabicInflectedOneWordReplaceRule{
 		Messages: messages,
 		words:    loadInflectedOneWord(),
 	}
+	// Java: أبحاثا → بحوثا (fixed adds trailing period, same as upstream)
+	r.AddExamplePair(
+		rules.Wrong("أجريت <marker>أبحاثا</marker> في المخبر"),
+		rules.Fixed("أجريت <marker>بحوثا</marker> في المخبر."),
+	)
+	return r
 }
 
 func (r *ArabicInflectedOneWordReplaceRule) GetID() string { return "AR_INFLECTED_ONE_WORD" }
 
 func (r *ArabicInflectedOneWordReplaceRule) GetDescription() string {
 	return "قاعدة تطابق الكلمات التي يجب تجنبها وتقترح تصويبا لها"
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *ArabicInflectedOneWordReplaceRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *ArabicInflectedOneWordReplaceRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *ArabicInflectedOneWordReplaceRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // Match ports ArabicInflectedOneWordReplaceRule.match.

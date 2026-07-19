@@ -35,6 +35,11 @@ func loadHomophones() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "ar/homophones.txt"); err != nil {
 			panic(err)
 		}
+		// Java: ضن → ظن
+		base.AddExamplePair(
+			rules.Wrong("<marker>ضن</marker>"),
+			rules.Fixed("<marker>ظن</marker>"),
+		)
 		homophonesBase = base
 	})
 	return homophonesBase

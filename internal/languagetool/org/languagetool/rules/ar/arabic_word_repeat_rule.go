@@ -15,6 +15,11 @@ type ArabicWordRepeatRule struct {
 func NewArabicWordRepeatRule(messages map[string]string) *ArabicWordRepeatRule {
 	base := rules.NewWordRepeatRule(messages)
 	base.IDOverride = "ARABIC_WORD_REPEAT_RULE"
+	// Java: فقط فقط → فقط
+	base.AddExamplePair(
+		rules.Wrong("هذا <marker>فقط فقط</marker> مثال."),
+		rules.Fixed("هذا <marker>فقط</marker> مثال."),
+	)
 	r := &ArabicWordRepeatRule{WordRepeatRule: base}
 	base.ExtraIgnore = r.arIgnore
 	return r

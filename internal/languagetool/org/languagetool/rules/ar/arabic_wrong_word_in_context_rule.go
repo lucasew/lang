@@ -50,6 +50,11 @@ func NewArabicWrongWordInContextRule(messages map[string]string) *ArabicWrongWor
 	}
 	// Java: getCategoryString → "كلمات متشابهة"
 	rules.InitWrongWordInContextMeta(base, messages, "كلمات متشابهة")
+	// Java: الضن → الظن
+	base.AddExamplePair(
+		rules.Wrong("من سوء <marker>الضن</marker> بالله ترك الأمر بالمعروف."),
+		rules.Fixed("من سوء <marker>الظن</marker> بالله ترك الأمر بالمعروف."),
+	)
 	return &ArabicWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

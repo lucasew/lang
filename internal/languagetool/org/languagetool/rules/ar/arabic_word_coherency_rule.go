@@ -49,6 +49,11 @@ func NewArabicWordCoherencyRule(messages map[string]string) *ArabicWordCoherency
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: شئون → شؤون (coherency with الشؤون)
+	base.AddExamplePair(
+		rules.Wrong("وزارة الشؤون الخارجية تهتم  بكل <marker>شئون</marker> العالم."),
+		rules.Fixed("وزارة الشؤون الخارجية تهتم  بكل <marker>شؤون</marker> العالم."),
+	)
 	return &ArabicWordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

@@ -35,6 +35,11 @@ func loadRedundancy() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/ar/redundancies.txt"); err != nil {
 			panic(err)
 		}
+		// Java: سوف لن → لن
+		base.AddExamplePair(
+			rules.Wrong("<marker>سوف لن</marker>"),
+			rules.Fixed("<marker>لن</marker>"),
+		)
 		redundancyBase = base
 	})
 	return redundancyBase

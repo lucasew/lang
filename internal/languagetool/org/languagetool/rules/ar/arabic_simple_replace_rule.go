@@ -35,6 +35,11 @@ func loadReplaces() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "ar/replaces.txt"); err != nil {
 			panic(err)
 		}
+		// Java: الى → إلى
+		base.AddExamplePair(
+			rules.Wrong("<marker>الى</marker>"),
+			rules.Fixed("<marker>إلى</marker>"),
+		)
 		replacesBase = base
 	})
 	return replacesBase

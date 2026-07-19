@@ -35,6 +35,11 @@ func loadDiacritics() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/ar/diacritics.txt"); err != nil {
 			panic(err)
 		}
+		// Java: تجربة → تجرِِبة (upstream spelling with double kasra)
+		base.AddExamplePair(
+			rules.Wrong("<marker>تجربة</marker>"),
+			rules.Fixed("<marker>تجرِِبة</marker>"),
+		)
 		diacriticsBase = base
 	})
 	return diacriticsBase

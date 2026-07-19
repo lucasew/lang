@@ -35,6 +35,11 @@ func loadDarja() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/ar/darja.txt"); err != nil {
 			panic(err)
 		}
+		// Java: طرشي → فلفل حلو
+		base.AddExamplePair(
+			rules.Wrong("<marker>طرشي</marker>"),
+			rules.Fixed("<marker>فلفل حلو</marker>"),
+		)
 		darjaBase = base
 	})
 	return darjaBase
