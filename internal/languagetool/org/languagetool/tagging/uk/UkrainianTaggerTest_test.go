@@ -454,3 +454,60 @@ func TestGuessOtherTagsReadings(t *testing.T) {
 	require.Empty(t, GuessOtherTagsReadings("звичайнеслово"))
 	require.Empty(t, GuessOtherTagsReadings("коротке"))
 }
+
+func TestDynamicRightParticleReadings(t *testing.T) {
+	require.Nil(t, DynamicRightParticleReadings("гей-но", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "гей":
+			return []tagging.TaggedWord{{Lemma: "гей", PosTag: "intj"}}
+		case "чекай":
+			return []tagging.TaggedWord{{Lemma: "чекати", PosTag: "verb:impr:s:2"}}
+		case "хто":
+			return []tagging.TaggedWord{{Lemma: "хто", PosTag: "noun:anim:m:v_naz:pron"}}
+		default:
+			return nil
+		}
+	}
+	// гей-но: intj matches "но" allowed set
+	rs := DynamicRightParticleReadings("гей-но", tagWord)
+	require.NotEmpty(t, rs)
+	require.Equal(t, "intj", rs[0].POS)
+	require.Equal(t, "гей", rs[0].Lemma)
+
+	// чекай-но: verb:impr
+	rs2 := DynamicRightParticleReadings("чекай-но", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Contains(t, rs2[0].POS, "verb")
+
+	// хто-то blocked
+	require.Nil(t, DynamicRightParticleReadings("хто-то", tagWord))
+}
+
+func TestDynamicDualPropReadings(t *testing.T) {
+	require.Nil(t, DynamicDualPropReadings("Київ-Прага", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "київ":
+			return []tagging.TaggedWord{{Lemma: "Київ", PosTag: "noun:inanim:m:v_naz:prop:geo"}}
+		case "прага":
+			return []tagging.TaggedWord{{Lemma: "Прага", PosTag: "noun:inanim:f:v_naz:prop:geo"}}
+		case "карпа":
+			return []tagging.TaggedWord{{Lemma: "Карпа", PosTag: "noun:anim:m:v_naz:prop:lname"}}
+		case "хансен":
+			return []tagging.TaggedWord{{Lemma: "Хансен", PosTag: "noun:anim:m:v_naz:prop:lname"}}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicDualPropReadings("Київ-Прага", tagWord)
+	require.NotEmpty(t, rs)
+	require.Equal(t, "noninfl:prop:geo", rs[0].POS)
+
+	rs2 := DynamicDualPropReadings("Карпа-Хансен", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Equal(t, "noninfl:prop:lname", rs2[0].POS)
+
+	// not both capitalized
+	require.Nil(t, DynamicDualPropReadings("київ-прага", tagWord))
+}

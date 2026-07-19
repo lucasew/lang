@@ -59,6 +59,16 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		// Java rightPartsWithLeftTagMap (гей-но, стривай-бо, …) — left POS from dict.
+		if dyn := DynamicRightParticleReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		// Java doGuessMultiHyphens intj redup (а-а, гей-гей-гей) — dict-gated.
 		if dyn := DynamicIntjRedupReadings(w, t.TagWord); len(dyn) > 0 {
 			for _, d := range dyn {
@@ -118,6 +128,15 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		// Java CompoundTagger.oAdjMatch: only after dict miss; right adj from wordTagger (no invent endings).
 		if len(readings) == 0 {
 			if dyn := DynamicDirectionalAdjReadings(w, t.TagWord); len(dyn) > 0 {
+				for _, d := range dyn {
+					p, l := d.POS, d.Lemma
+					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				}
+			}
+		}
+		// Java dual capitalized prop compounds (Київ-Прага, lname pairs).
+		if len(readings) == 0 {
+			if dyn := DynamicDualPropReadings(w, t.TagWord); len(dyn) > 0 {
 				for _, d := range dyn {
 					p, l := d.POS, d.Lemma
 					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
