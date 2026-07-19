@@ -6,8 +6,12 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	ar_tag "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/ar"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
+
+// adjTagMgr used for Java getLemmas(..., "adj") POS filter (isAdj → starts with NA).
+var adjTagMgr = ar_tag.NewArabicTagManager()
 
 // Default adjective → comparative map (Java ArabicAdjectiveToExclamationFilter built-in subset).
 // Full list also loads from /ar/arabic_adjective_exclamation.txt when wired.
@@ -34,13 +38,12 @@ func NewArabicAdjectiveToExclamationFilter() *ArabicAdjectiveToExclamationFilter
 
 // AcceptRuleMatch ports ArabicAdjectiveToExclamationFilter.acceptRuleMatch.
 // Args: adj, noun, adj_pos (1-based pattern token index for the adjective).
-// Without ArabicTagger, lemmas come from reading lemmas + surface adj (fail-closed empty if map misses).
+// Java: tagger.getLemmas(patternTokens[adj_pos], "adj") only — no surface invent.
 func (f *ArabicAdjectiveToExclamationFilter) AcceptRuleMatch(match *rules.RuleMatch, arguments map[string]string, _ int,
 	patternTokens []*languagetool.AnalyzedTokenReadings, _ []int) *rules.RuleMatch {
 	if f == nil || match == nil {
 		return nil
 	}
-	adj := arguments["adj"]
 	noun := arguments["noun"]
 	adjPosStr := arguments["adj_pos"]
 	adjTokenIndex, err := strconv.Atoi(adjPosStr)
@@ -49,10 +52,10 @@ func (f *ArabicAdjectiveToExclamationFilter) AcceptRuleMatch(match *rules.RuleMa
 	}
 	adjTokenIndex-- // 1-based → 0-based
 
-	// Collect adjective lemmas (Java: tagger.getLemmas(..., "adj")).
+	// Java: tagger.getLemmas(..., "adj") — reading lemmas only (no surface / args invent).
 	var adjLemmas []string
 	seen := map[string]struct{}{}
-	add := func(s string) {
+	addLemma := func(s string) {
 		if s == "" {
 			return
 		}
@@ -65,16 +68,17 @@ func (f *ArabicAdjectiveToExclamationFilter) AcceptRuleMatch(match *rules.RuleMa
 	if adjTokenIndex >= 0 && adjTokenIndex < len(patternTokens) && patternTokens[adjTokenIndex] != nil {
 		tok := patternTokens[adjTokenIndex]
 		for _, r := range tok.GetReadings() {
-			if r == nil {
+			if r == nil || r.GetLemma() == nil {
 				continue
 			}
-			if r.GetLemma() != nil {
-				add(*r.GetLemma())
+			// Java: tagmanager.isAdj(postag) && type.equals("adj")
+			pos := r.GetPOSTag()
+			if pos == nil || !adjTagMgr.IsAdj(*pos) {
+				continue
 			}
+			addLemma(*r.GetLemma())
 		}
-		add(tok.GetToken())
 	}
-	add(adj)
 
 	var compList []string
 	compSeen := map[string]struct{}{}
