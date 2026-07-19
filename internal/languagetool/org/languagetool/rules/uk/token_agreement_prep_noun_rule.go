@@ -352,15 +352,13 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 		}
 		want := mapKeys(posTagsToFind)
 
-		// strong exception via combined helper
-		if IsPrepNounException(tokens, prepPos, i) {
-			// Java strong may clear or skip; combined helper is soft exception → clear
-			// But "не" skip next should not clear like Java Type.skip — approximate: clear for now
-			// only if pure exception arms; skip-style "не" returns true too
-			if clean == "не" && i < len(tokens)-1 && HasPosTagStart(tokens[i+1], "ad") {
-				continue // keep state over "не"
-			}
+		// getExceptionStrong — exception clears prep; skip keeps prep and advances i
+		switch ex := GetPrepNounExceptionStrong(tokens, i, prepTok); ex.Type {
+		case RuleExceptionException:
 			prepPos = -1
+			continue
+		case RuleExceptionSkip:
+			i += ex.Skip
 			continue
 		}
 
@@ -396,9 +394,21 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 				continue
 			}
 
-			// infl/non-infl exceptions already partially covered; re-check pair helper
-			if IsPrepNounException(tokens, prepPos, i) {
+			// Java order after hasVidm fails: NonInfl then Infl
+			switch ex := GetPrepNounExceptionNonInfl(tokens, i); ex.Type {
+			case RuleExceptionException:
 				prepPos = -1
+				continue
+			case RuleExceptionSkip:
+				i += ex.Skip
+				continue
+			}
+			switch ex := GetPrepNounExceptionInfl(tokens, prepPos, i); ex.Type {
+			case RuleExceptionException:
+				prepPos = -1
+				continue
+			case RuleExceptionSkip:
+				i += ex.Skip
 				continue
 			}
 
@@ -408,8 +418,17 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 				extra = UsedUInsteadOfAMsg
 			}
 			out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, extra))
+		} else {
+			// no :v_ — NonInfl may skip (keep prep) or exception (clear); else fall through clear
+			switch ex := GetPrepNounExceptionNonInfl(tokens, i); ex.Type {
+			case RuleExceptionException:
+				prepPos = -1
+				continue
+			case RuleExceptionSkip:
+				i += ex.Skip
+				continue
+			}
 		}
-		// no :v_ — non-infl exception may apply; then always clear (Java)
 		prepPos = -1
 	}
 	return out

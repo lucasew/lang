@@ -1180,16 +1180,145 @@ func hasPosTagAllAdvNotAdvp(tok *languagetool.AnalyzedTokenReadings) bool {
 	return true
 }
 
-// IsPrepNounException ports TokenAgreementPrepNounExceptionHelper
-// (getExceptionInfl + getExceptionStrong + getExceptionNonInfl as soft skips).
-// Invalid index layout is treated as exception (no flag).
+// IsPrepNounException ports TokenAgreementPrepNounExceptionHelper as a boolean
+// (any Strong/NonInfl/Infl hit). Invalid index layout is treated as exception (no flag).
 func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, nounPos int) bool {
 	if prepPos < 0 || nounPos <= prepPos || prepPos >= len(tokens) || nounPos >= len(tokens) {
 		return true
 	}
-	prep, noun := tokens[prepPos], tokens[nounPos]
-	if prep == nil || noun == nil {
+	if GetPrepNounExceptionStrong(tokens, nounPos, tokens[prepPos]).Type != RuleExceptionNone {
 		return true
+	}
+	if GetPrepNounExceptionNonInfl(tokens, nounPos).Type != RuleExceptionNone {
+		return true
+	}
+	if GetPrepNounExceptionInfl(tokens, prepPos, nounPos).Type != RuleExceptionNone {
+		return true
+	}
+	return false
+}
+
+// GetPrepNounExceptionStrong ports getExceptionStrong (time/inserts; Skip keeps prep state).
+func GetPrepNounExceptionStrong(tokens []*languagetool.AnalyzedTokenReadings, i int, prepTok *languagetool.AnalyzedTokenReadings) RuleException {
+	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil || prepTok == nil {
+		return NewRuleException(RuleExceptionNone)
+	}
+	noun := tokens[i]
+	prepLower := CleanTokenLower(prepTok)
+	nounClean := noun.GetCleanToken()
+	if nounClean == "" {
+		nounClean = noun.GetToken()
+	}
+	nounLower := strings.ToLower(nounClean)
+
+	if prepLower == "до" || prepLower == "по" {
+		if prepNounTimeDoPoRE.MatchString(nounLower) {
+			return NewRuleException(RuleExceptionException)
+		}
+	}
+	if prepLower == "на" || prepLower == "від" || prepLower == "про" {
+		if prepNounTimeNaVidProRE.MatchString(nounLower) {
+			return NewRuleException(RuleExceptionException)
+		}
+	}
+	if prepLower == "за" || prepLower == "з" || prepLower == "зі" || prepLower == "із" {
+		if prepNounTimeZaZRE.MatchString(nounLower) {
+			return NewRuleException(RuleExceptionException)
+		}
+	}
+	if (prepLower == "в" || prepLower == "у") && nounLower == "нікуди" {
+		return NewRuleException(RuleExceptionException)
+	}
+	// до не властиву — Java RuleException(0) skip
+	if nounClean == "не" && i < len(tokens)-1 && HasPosTagStart(tokens[i+1], "ad") {
+		return NewRuleExceptionSkip(0)
+	}
+	// про чимало
+	if HasLemmaTokenRE(noun, AdvQuantPattern) && HasPosTagRE(noun, regexp.MustCompile(`^adv`)) {
+		return NewRuleException(RuleExceptionException)
+	}
+	// лежить із сотня
+	if (prepLower == "з" || prepLower == "зі" || prepLower == "із") && HasLemmaTokenAny(noun, PseudoNumLemmas) {
+		return NewRuleException(RuleExceptionException)
+	}
+	// adv all (not advp)
+	if hasPosTagAllAdvNotAdvp(noun) {
+		if i < len(tokens)-1 && tokens[i+1] != nil && tokens[i+1].GetCleanToken() == "собі" {
+			return NewRuleExceptionSkip(1)
+		}
+		return NewRuleExceptionSkip(0)
+	}
+	// замість … inf within 4
+	if prepLower == "замість" {
+		if NewSearchMatch("").
+			Target(ConditionPostag(verbInfPattern)).
+			WithLimit(4).
+			Skip(ConditionToken("можна").WithNegate()).
+			MAfterATR(tokens, i+1) > 0 {
+			return NewRuleException(RuleExceptionException)
+		}
+	}
+	if NewSearchMatch("не те").MBeforeATR(tokens, i) > 0 {
+		return NewRuleException(RuleExceptionException)
+	}
+	return NewRuleException(RuleExceptionNone)
+}
+
+// GetPrepNounExceptionNonInfl ports getExceptionNonInfl.
+func GetPrepNounExceptionNonInfl(tokens []*languagetool.AnalyzedTokenReadings, i int) RuleException {
+	if tokens == nil || i < 0 || i >= len(tokens) || tokens[i] == nil {
+		return NewRuleException(RuleExceptionNone)
+	}
+	noun := tokens[i]
+	nounClean := noun.GetCleanToken()
+	if nounClean == "" {
+		nounClean = noun.GetToken()
+	}
+	nounLower := strings.ToLower(nounClean)
+
+	if HasPosTagStart(noun, "part") && PartInsertPattern.MatchString(nounLower) {
+		return NewRuleExceptionSkip(0)
+	}
+	if prepNounLishRE.MatchString(nounLower) || nounLower == "наприклад" {
+		return NewRuleExceptionSkip(0)
+	}
+	if hasAdvNotAdvp(noun) {
+		if i < len(tokens)-1 && HasPosTagStart(tokens[i+1], "adj") && hasPosTagPartAll(noun, "adv") {
+			return NewRuleExceptionSkip(0)
+		}
+		return NewRuleException(RuleExceptionException)
+	}
+	if i < len(tokens)-1 {
+		if HasPosTagRE(noun, regexp.MustCompile(`noun:(?:un)?anim:.:v_dav.*:pron.*`)) {
+			next := tokens[i+1]
+			if HasPosTagStart(next, "adj") && hasCaseGovFromReadings(next, "v_dav") {
+				return NewRuleExceptionSkip(1)
+			}
+			if i < len(tokens)-2 &&
+				HasPosTagStart(next, "adv") &&
+				HasPosTagStart(tokens[i+2], "adj") &&
+				hasCaseGovFromReadings(tokens[i+2], "v_dav") {
+				return NewRuleExceptionSkip(2)
+			}
+		}
+	}
+	if i < len(tokens)-2 &&
+		nounClean == "нічого" &&
+		tokens[i+1] != nil && tokens[i+1].GetToken() == "не" &&
+		HasPosTagStart(tokens[i+2], "adj") {
+		return NewRuleExceptionSkip(1)
+	}
+	return NewRuleException(RuleExceptionNone)
+}
+
+// GetPrepNounExceptionInfl ports getExceptionInfl (after hasVidm fails).
+func GetPrepNounExceptionInfl(tokens []*languagetool.AnalyzedTokenReadings, prepPos, i int) RuleException {
+	if tokens == nil || prepPos < 0 || prepPos >= len(tokens) || i <= prepPos || i >= len(tokens) {
+		return NewRuleException(RuleExceptionNone)
+	}
+	prep, noun := tokens[prepPos], tokens[i]
+	if prep == nil || noun == nil {
+		return NewRuleException(RuleExceptionNone)
 	}
 	prepLower := CleanTokenLower(prep)
 	nounClean := noun.GetCleanToken()
@@ -1198,224 +1327,111 @@ func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, 
 	}
 	nounLower := strings.ToLower(nounClean)
 
-	// --- getExceptionStrong (time adverbs / inserts before infl checks in Java match loop) ---
-	if prepLower == "до" || prepLower == "по" {
-		if prepNounTimeDoPoRE.MatchString(nounLower) {
-			return true
-		}
-	}
-	if prepLower == "на" || prepLower == "від" || prepLower == "про" {
-		if prepNounTimeNaVidProRE.MatchString(nounLower) {
-			return true
-		}
-	}
-	if prepLower == "за" || prepLower == "з" || prepLower == "зі" || prepLower == "із" {
-		if prepNounTimeZaZRE.MatchString(nounLower) {
-			return true
-		}
-	}
-	if (prepLower == "в" || prepLower == "у") && nounLower == "нікуди" {
-		return true
-	}
-	// до не властиву — skip "не" when next is ad*
-	if nounClean == "не" && nounPos < len(tokens)-1 && HasPosTagStart(tokens[nounPos+1], "ad") {
-		return true
-	}
-	// про чимало — ADV_QUANT lemma + adv.*
-	if nounPos < len(tokens)-1 &&
-		HasLemmaTokenRE(noun, AdvQuantPattern) &&
-		HasPosTagRE(noun, regexp.MustCompile(`^adv`)) {
-		return true
-	}
-	// лежить із сотня — Z_ZI_IZ + PSEUDO_NUM_LEMMAS
-	if (prepLower == "з" || prepLower == "зі" || prepLower == "із") &&
-		HasLemmaTokenAny(noun, PseudoNumLemmas) {
-		return true
-	}
-	// за цілком (adv) / adv + собі
-	if hasPosTagAllAdvNotAdvp(noun) {
-		return true
-	}
-	if hasAdvNotAdvp(noun) && nounPos < len(tokens)-1 &&
-		tokens[nounPos+1] != nil && tokens[nounPos+1].GetCleanToken() == "собі" {
-		return true
-	}
-	// замість … inf within 4
-	if prepLower == "замість" {
-		if NewSearchMatch("").
-			Target(ConditionPostag(verbInfPattern)).
-			WithLimit(4).
-			Skip(ConditionToken("можна").WithNegate()).
-			MAfterATR(tokens, nounPos+1) > 0 {
-			return true
-		}
-	}
-	// Усупереч не те що — Java mBefore > 0 (SENT_START at 0)
-	if NewSearchMatch("не те").MBeforeATR(tokens, nounPos) > 0 {
-		return true
-	}
-
-	// --- getExceptionNonInfl ---
-	if HasPosTagStart(noun, "part") && PartInsertPattern.MatchString(nounLower) {
-		return true
-	}
-	if prepNounLishRE.MatchString(nounLower) || nounLower == "наприклад" {
-		return true
-	}
-	if hasAdvNotAdvp(noun) {
-		// по швидко напруженим — adv + adj → skip (RuleException(0) in Java still advances)
-		if nounPos < len(tokens)-1 && HasPosTagStart(tokens[nounPos+1], "adj") &&
-			hasPosTagPartAll(noun, "adv") {
-			return true
-		}
-		return true
-	}
-	if nounPos < len(tokens)-1 {
-		// на лише їм відомому — v_dav :pron + adj with case gov v_dav
-		if HasPosTagRE(noun, regexp.MustCompile(`noun:(?:un)?anim:.:v_dav.*:pron.*`)) {
-			next := tokens[nounPos+1]
-			if HasPosTagStart(next, "adj") && hasCaseGovFromReadings(next, "v_dav") {
-				return true
-			}
-			if nounPos < len(tokens)-2 &&
-				HasPosTagStart(next, "adv") &&
-				HasPosTagStart(tokens[nounPos+2], "adj") &&
-				hasCaseGovFromReadings(tokens[nounPos+2], "v_dav") {
-				return true
-			}
-		}
-	}
-	if nounPos < len(tokens)-2 &&
-		nounClean == "нічого" &&
-		tokens[nounPos+1] != nil && tokens[nounPos+1].GetToken() == "не" &&
-		HasPosTagStart(tokens[nounPos+2], "adj") {
-		return true
-	}
-
-	// --- getExceptionInfl ---
-	// на дивом уцілілій техніці
 	if nounClean == "дивом" {
-		return true
+		return NewRuleExceptionSkip(0)
 	}
-	// в тисяча шістсот …
-	if nounPos < len(tokens)-1 && nounClean == "тисяча" {
-		next := tokens[nounPos+1]
+	if i < len(tokens)-1 && nounClean == "тисяча" {
+		next := tokens[i+1]
 		if HasPosTagPart(next, "numr") || HasLemmaToken(next, "якийсь") {
-			return true
+			return NewRuleExceptionSkip(0)
 		}
 	}
-	// в дев'яносто восьмому — numr v_naz with non-nom reading + next numr
-	if nounPos < len(tokens)-1 &&
+	if i < len(tokens)-1 &&
 		HasPosTagPart(noun, "numr") && HasPosTagPart(noun, "v_naz") &&
-		HasPosTagPart(tokens[nounPos+1], "numr") &&
+		HasPosTagPart(tokens[i+1], "numr") &&
 		HasPosTagRE(noun, regexp.MustCompile(`.*v_(rod|dav|zna|oru|mis).*`)) {
-		return true
+		return NewRuleExceptionSkip(1)
 	}
 
 	if prepLower == "на" {
-		// на (свято) Купала — capitalized + v_rod
 		if IsCapitalized(nounClean) && HasPosTagRE(noun, regexp.MustCompile(`noun.*?:.:v_rod.*`)) {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
-		// на (ім'я/прізвище) …
 		if HasPosTagRE(noun, regexp.MustCompile(`noun:anim:.:v_naz:prop:[fl]name.*`)) {
 			if prepPos > 1 && (isNameToken(tokens[prepPos-1]) || (prepPos > 2 && isNameLemma(tokens[prepPos-2]))) {
-				return true
+				return NewRuleException(RuleExceptionException)
 			}
 		}
 		if nounLower == "ти" || nounLower == "ви" {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
-		if nounPos < len(tokens)-1 && nounClean == "Піп" && tokens[nounPos+1] != nil &&
-			tokens[nounPos+1].GetCleanToken() == "Іван" {
-			return true
+		if i < len(tokens)-1 && nounClean == "Піп" && tokens[i+1] != nil &&
+			tokens[i+1].GetCleanToken() == "Іван" {
+			return NewRuleException(RuleExceptionException)
 		}
 		if nounLower == "манер" {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
 	}
-	// справедливості заради
 	if prepPos > 0 && prepLower == "заради" {
 		prev := CleanTokenLower(tokens[prepPos-1])
-		// Java (?iu)справедливості|об.єктивності — CleanTokenLower already lowercases
 		if regexp.MustCompile(`^(справедливості|об.єктивності)$`).MatchString(prev) {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
 	}
-	// при їх …
 	if prepLower == "при" && nounClean == "їх" {
-		return true
+		return NewRuleException(RuleExceptionSkip) // Type.skip, Skip 0
 	}
-	// з рана
 	if prepLower == "з" && nounClean == "рана" {
-		return true
+		return NewRuleException(RuleExceptionException)
 	}
-	// від а/рана/корки/мала
 	if prepLower == "від" {
 		if strings.EqualFold(nounClean, "а") || nounClean == "рана" || nounClean == "корки" || nounClean == "мала" {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
 	}
-	// до я/корки/велика
 	if prepLower == "до" {
 		if strings.EqualFold(nounClean, "я") || nounClean == "корки" || nounClean == "велика" {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
 	}
 
-	if nounPos < len(tokens)-1 {
-		next := tokens[nounPos+1]
-		// від мінус 1 / плюс 1
+	if i < len(tokens)-1 {
+		next := tokens[i+1]
 		if (HasPosTagStart(next, "num") || (next != nil && next.GetToken() == "$")) &&
 			IsPlusMinusLemma(nounLower) {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
-		// на мохом стеленому — skip v_oru before adjp:pasv (Java RuleException(1) → treat as exception)
 		if HasPosTagRE(noun, regexp.MustCompile(`noun.*?:v_oru.*`)) &&
 			next != nil && next.HasPartialPosTag("adjp:pasv") {
-			return true
+			return NewRuleExceptionSkip(1)
 		}
 		if nounClean == "святая" && next != nil && next.GetToken() == "святих" {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
-		// через/на + TIME_PLUS p:v_rod|v_zna + num
 		if prepLower == "через" || prepLower == "на" {
 			if HasLemmaWithPosRE(noun, TimePlusLemmaList(), regexp.MustCompile(`noun:inanim:p:v_(rod|zna).*`)) &&
 				(next.HasPartialPosTag("num") ||
-					(nounPos < len(tokens)-2 &&
+					(i < len(tokens)-2 &&
 						HasLemmaTokenAny(next, []string{"зо", "з", "із"}) &&
-						tokens[nounPos+2] != nil && tokens[nounPos+2].HasPartialPosTag("num"))) {
-				return true
+						tokens[i+2] != nil && tokens[i+2].HasPartialPosTag("num"))) {
+				return NewRuleException(RuleExceptionException)
 			}
 		}
-		// noun v_dav refl/pers + подібн*
 		if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_dav.*:pron:(refl|pers).*`)) &&
 			strings.HasPrefix(CleanTokenLower(next), "подібн") {
-			return true
+			return NewRuleExceptionSkip(0)
 		}
 		if (nounClean == "усім" || nounClean == "всім") && strings.HasPrefix(CleanTokenLower(next), "відом") {
-			return true
+			return NewRuleExceptionSkip(0)
 		}
 		if prepLower == "до" && nounClean == "схід" && next != nil && next.GetCleanToken() == "сонця" {
-			return true
+			return NewRuleException(RuleExceptionException)
 		}
 	}
-	if nounPos < len(tokens)-2 {
-		// adj m/f/n v_rod + matching gender noun v_rod → skip (Java RuleException(1))
+	if i < len(tokens)-2 {
 		if HasPosTagRE(noun, regexp.MustCompile(`adj:[mfn]:v_rod.*`)) {
 			genders := gendersFromPos(noun, regexp.MustCompile(`adj:([mfn]):v_rod.*`))
-			if genders != "" && HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*?:[`+genders+`]:v_rod.*`)) {
-				return true
+			if genders != "" && HasPosTagRE(tokens[i+1], regexp.MustCompile(`noun.*?:[`+genders+`]:v_rod.*`)) {
+				return NewRuleExceptionSkip(1)
 			}
 		}
-		// нікому/ніким… + не
 		if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_(dav|oru).*:pron:neg.*`)) &&
-			tokens[nounPos+1] != nil && tokens[nounPos+1].GetCleanToken() == "не" {
-			return true
+			tokens[i+1] != nil && tokens[i+1].GetCleanToken() == "не" {
+			return NewRuleException(RuleExceptionSkip)
 		}
 	}
-
-	return false
+	return NewRuleException(RuleExceptionNone)
 }
 
 // hasPosTagPartAll reports every POS tag contains substr (Java hasPosTagPartAll).

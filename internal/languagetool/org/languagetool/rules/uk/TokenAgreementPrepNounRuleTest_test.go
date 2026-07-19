@@ -109,7 +109,8 @@ func TestTokenAgreementPrepNounRule_UnusualCharacters(t *testing.T) {
 }
 
 func TestTokenAgreementPrepNounRule_WithAdv(t *testing.T) {
-	// Intermediate non-noun resets pair (adv between prep and noun)
+	// Java getExceptionStrong: pure adv → RuleException(0) skip keeps prep;
+	// following wrong-case noun still flags (TokenAgreementPrepNounExceptionHelper L266–271).
 	r := NewTokenAgreementPrepNounRule()
 	lemma := "в"
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
@@ -117,8 +118,7 @@ func TestTokenAgreementPrepNounRule_WithAdv(t *testing.T) {
 		atr("дуже", "adv"),
 		atr("домі", "noun:inanim:m:v_oru"),
 	})
-	// core resets left on non-noun intermediate → no match
-	require.Empty(t, r.Match(sent))
+	require.NotEmpty(t, r.Match(sent), "adv skip keeps prep; wrong case noun still matches")
 }
 
 // Port of TokenAgreementPrepNounRuleTest.testIsCapitalized
