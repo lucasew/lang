@@ -10,15 +10,32 @@ import (
 )
 
 // TypographyRule ports org.languagetool.rules.uk.TypographyRule.
+// Java: setCategory(Categories.TYPOGRAPHY).
 type TypographyRule struct {
 	Messages map[string]string
+	Category *rules.Category
 }
 
 func NewTypographyRule(messages map[string]string) *TypographyRule {
-	return &TypographyRule{Messages: messages}
+	return &TypographyRule{
+		Messages: messages,
+		Category: rules.CatTypography.GetCategory(messages),
+	}
 }
 
 func (r *TypographyRule) GetID() string { return "DASH" }
+
+func (r *TypographyRule) GetDescription() string {
+	return "Коротка риска замість дефісу"
+}
+
+// GetCategory ports Rule.getCategory (Java TYPOGRAPHY).
+func (r *TypographyRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
 
 var (
 	typoCyrRE     = regexp.MustCompile(`[а-яїієґА-ЯІЇЄҐ]`)

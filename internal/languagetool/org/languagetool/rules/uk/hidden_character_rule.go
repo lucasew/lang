@@ -10,15 +10,36 @@ import (
 const hiddenChar = '\u00AD' // soft hyphen
 
 // HiddenCharacterRule ports org.languagetool.rules.uk.HiddenCharacterRule.
+// Java: setCategory(Categories.MISC).
 type HiddenCharacterRule struct {
 	Messages map[string]string
+	Category *rules.Category
 }
 
 func NewHiddenCharacterRule(messages map[string]string) *HiddenCharacterRule {
-	return &HiddenCharacterRule{Messages: messages}
+	return &HiddenCharacterRule{
+		Messages: messages,
+		Category: rules.CatMisc.GetCategory(messages),
+	}
 }
 
 func (r *HiddenCharacterRule) GetID() string { return "UK_HIDDEN_CHARS" }
+
+func (r *HiddenCharacterRule) GetDescription() string {
+	return "Приховані символи: знак м’якого перенесення"
+}
+
+func (r *HiddenCharacterRule) GetShort() string {
+	return "Приховані символи"
+}
+
+// GetCategory ports Rule.getCategory (Java MISC).
+func (r *HiddenCharacterRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
 
 func (r *HiddenCharacterRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	var ruleMatches []*rules.RuleMatch

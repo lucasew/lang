@@ -42,16 +42,47 @@ func loadSoftWords() map[string][]string {
 
 // SimpleReplaceSoftRule ports org.languagetool.rules.uk.SimpleReplaceSoftRule
 // (surface match; no POS ignoreTaggedWords without a tagger).
+// Java: AbstractSimpleReplaceRule → MISC category; setLocQualityIssueType(Style).
 type SimpleReplaceSoftRule struct {
-	messages map[string]string
+	messages  map[string]string
+	Category  *rules.Category
+	IssueType rules.ITSIssueType
 }
 
 func NewSimpleReplaceSoftRule(messages map[string]string) *SimpleReplaceSoftRule {
 	_ = loadSoftWords()
-	return &SimpleReplaceSoftRule{messages: messages}
+	return &SimpleReplaceSoftRule{
+		messages:  messages,
+		Category:  rules.CatMisc.GetCategory(messages),
+		IssueType: rules.ITSStyle,
+	}
 }
 
 func (r *SimpleReplaceSoftRule) GetID() string { return "UK_SIMPLE_REPLACE_SOFT" }
+
+func (r *SimpleReplaceSoftRule) GetDescription() string {
+	return "Пошук нерекомендованих слів"
+}
+
+func (r *SimpleReplaceSoftRule) GetShort() string {
+	return "Нерекомендоване слово"
+}
+
+// GetCategory ports Rule.getCategory (Java AbstractSimpleReplaceRule → MISC).
+func (r *SimpleReplaceSoftRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType (Java Style).
+func (r *SimpleReplaceSoftRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSStyle
+	}
+	return r.IssueType
+}
 
 func (r *SimpleReplaceSoftRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	words := loadSoftWords()

@@ -90,19 +90,32 @@ func splitRenamedJava(line string) []string {
 
 // SimpleReplaceRenamedRule ports org.languagetool.rules.uk.SimpleReplaceRenamedRule.
 // Match is lemma + GEO POS only (Java); without tags/lemmas fail closed (no surface invent).
+// Java: setLocQualityIssueType(ITSIssueType.Style).
 type SimpleReplaceRenamedRule struct {
-	messages map[string]string
+	messages  map[string]string
+	IssueType rules.ITSIssueType
 }
 
 func NewSimpleReplaceRenamedRule(messages map[string]string) *SimpleReplaceRenamedRule {
 	_ = loadRenamed()
-	return &SimpleReplaceRenamedRule{messages: messages}
+	return &SimpleReplaceRenamedRule{
+		messages:  messages,
+		IssueType: rules.ITSStyle,
+	}
 }
 
 func (r *SimpleReplaceRenamedRule) GetID() string { return "UK_SIMPLE_REPLACE_RENAMED" }
 
 func (r *SimpleReplaceRenamedRule) GetDescription() string {
 	return "Пропозиція поточної назви для перейменованих власних назв"
+}
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType (Java Style).
+func (r *SimpleReplaceRenamedRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSStyle
+	}
+	return r.IssueType
 }
 
 func (r *SimpleReplaceRenamedRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {

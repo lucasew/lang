@@ -11,15 +11,36 @@ import (
 )
 
 // MixedAlphabetsRule ports org.languagetool.rules.uk.MixedAlphabetsRule.
+// Java: setCategory(Categories.MISC).
 type MixedAlphabetsRule struct {
 	Messages map[string]string
+	Category *rules.Category
 }
 
 func NewMixedAlphabetsRule(messages map[string]string) *MixedAlphabetsRule {
-	return &MixedAlphabetsRule{Messages: messages}
+	return &MixedAlphabetsRule{
+		Messages: messages,
+		Category: rules.CatMisc.GetCategory(messages),
+	}
 }
 
 func (r *MixedAlphabetsRule) GetID() string { return "UK_MIXED_ALPHABETS" }
+
+func (r *MixedAlphabetsRule) GetDescription() string {
+	return "Змішування кирилиці й латиниці"
+}
+
+func (r *MixedAlphabetsRule) GetShort() string {
+	return "Мішанина розкладок"
+}
+
+// GetCategory ports Rule.getCategory (Java MISC).
+func (r *MixedAlphabetsRule) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
+}
 
 var (
 	likelyLatinNumber   = regexp.MustCompile(`[XVIХІ]{2,8}(-[а-яіїє]{1,3})?`)

@@ -76,15 +76,28 @@ type MissingHyphenRule struct {
 	// WordTagged ports wordTagger.tag(token).size() > 0 for the joined/hyphenated form.
 	// When nil, non-alt path never matches; alt path may still match via next :alt POS.
 	WordTagged func(word string) bool
+	// IssueType ports getLocQualityIssueType (Java Misspelling).
+	IssueType rules.ITSIssueType
 }
 
 func NewMissingHyphenRule(messages map[string]string) *MissingHyphenRule {
 	_ = loadDashPrefixes()
-	return &MissingHyphenRule{Messages: messages}
+	return &MissingHyphenRule{
+		Messages:  messages,
+		IssueType: rules.ITSMisspelling,
+	}
 }
 
 func (r *MissingHyphenRule) GetID() string          { return "UK_MISSING_HYPHEN" }
 func (r *MissingHyphenRule) GetDescription() string { return "Пропущений дефіс" }
+
+// GetLocQualityIssueType ports Rule.getLocQualityIssueType (Java Misspelling).
+func (r *MissingHyphenRule) GetLocQualityIssueType() rules.ITSIssueType {
+	if r == nil || r.IssueType == "" {
+		return rules.ITSMisspelling
+	}
+	return r.IssueType
+}
 
 func (r *MissingHyphenRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	if r == nil || sentence == nil {
