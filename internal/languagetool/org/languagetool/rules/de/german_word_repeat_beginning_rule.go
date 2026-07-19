@@ -19,6 +19,11 @@ var germanAdverbs = map[string]bool{
 func NewGermanWordRepeatBeginningRule(messages map[string]string) *GermanWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "GERMAN_WORD_REPEAT_BEGINNING_RULE"
+	// Java: Dann… Dann… <marker>Dann</marker> → Schließlich
+	base.AddExamplePair(
+		rules.Wrong("Dann hatten wir Freizeit. Dann gab es Essen. <marker>Dann</marker> gingen wir schlafen."),
+		rules.Fixed("Dann hatten wir Freizeit. Danach gab es Essen. <marker>Schließlich</marker> gingen wir schlafen."),
+	)
 	r := &GermanWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsAdverbFn = r.isAdverb
 	return r

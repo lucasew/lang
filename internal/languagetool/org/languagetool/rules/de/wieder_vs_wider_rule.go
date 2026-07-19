@@ -13,13 +13,22 @@ import (
 type WiederVsWiderRule struct {
 	Messages map[string]string
 	Category *rules.Category
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewWiederVsWiderRule(messages map[string]string) *WiederVsWiderRule {
-	return &WiederVsWiderRule{
+	r := &WiederVsWiderRule{
 		Messages: messages,
 		Category: rules.CatTypos.GetCategory(messages),
 	}
+	// Java: spiegeln … wieder → wider
+	r.AddExamplePair(
+		rules.Wrong("Das spiegelt die Situation in Deutschland <marker>wieder</marker>."),
+		rules.Fixed("Das spiegelt die Situation in Deutschland <marker>wider</marker>."),
+	)
+	return r
 }
 
 func (r *WiederVsWiderRule) GetID() string { return "DE_WIEDER_VS_WIDER" }
@@ -33,6 +42,37 @@ func (r *WiederVsWiderRule) GetCategory() *rules.Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *WiederVsWiderRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *WiederVsWiderRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *WiederVsWiderRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // EstimateContextForSureMatch ports WiederVsWiderRule.estimateContextForSureMatch → 0.

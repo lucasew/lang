@@ -24,6 +24,11 @@ func NewGermanWordRepeatRule(messages map[string]string) *GermanWordRepeatRule {
 	base.IDOverride = "GERMAN_WORD_REPEAT_RULE"
 	// Java GermanWordRepeatRule: super.setCategory(Categories.REDUNDANCY) (overrides base MISC).
 	base.Category = rules.CatRedundancy.GetCategory(messages)
+	// Java: ist ist → ist
+	base.AddExamplePair(
+		rules.Wrong("In diesem Satz <marker>ist ist</marker> ein Wort doppelt."),
+		rules.Fixed("In diesem Satz <marker>ist</marker> ein Wort doppelt."),
+	)
 	r := &GermanWordRepeatRule{WordRepeatRule: base}
 	base.ExtraIgnore = r.germanIgnore
 	return r

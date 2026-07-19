@@ -13,6 +13,9 @@ import (
 type DuUpperLowerCaseRule struct {
 	Messages map[string]string
 	Category *rules.Category
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 var duLowerWords = map[string]struct{}{
@@ -28,10 +31,16 @@ var duSkipPrev = map[string]struct{}{
 }
 
 func NewDuUpperLowerCaseRule(messages map[string]string) *DuUpperLowerCaseRule {
-	return &DuUpperLowerCaseRule{
+	r := &DuUpperLowerCaseRule{
 		Messages: messages,
 		Category: rules.CatCasing.GetCategory(messages),
 	}
+	// Java: Dir… <marker>du</marker> → Du
+	r.AddExamplePair(
+		rules.Wrong("Wie geht es Dir? Bist <marker>du</marker> wieder gesund?"),
+		rules.Fixed("Wie geht es Dir? Bist <marker>Du</marker> wieder gesund?"),
+	)
+	return r
 }
 
 func (r *DuUpperLowerCaseRule) GetID() string { return "DE_DU_UPPER_LOWER" }
@@ -50,6 +59,37 @@ func (r *DuUpperLowerCaseRule) GetCategory() *rules.Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *DuUpperLowerCaseRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *DuUpperLowerCaseRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *DuUpperLowerCaseRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // MinToCheckParagraph ports TextLevelRule.minToCheckParagraph (Java returns -1).

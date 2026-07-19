@@ -21,4 +21,11 @@ func TestDERule_ExamplePairs(t *testing.T) {
 	require.Equal(t, "COMPOUND_INFINITIV_RULE", inf.GetID())
 	require.Contains(t, inf.GetURL(), "zu-zusammen-oder-getrennt")
 	require.Equal(t, []string{"sicherzugehen"}, inf.GetIncorrectExamples()[0].GetCorrections())
+
+	// CaseRule / DuUpperLowerCase / WiederVsWider / word-repeat
+	require.Equal(t, []string{"Das Laufen"}, NewCaseRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Du"}, NewDuUpperLowerCaseRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"wider"}, NewWiederVsWiderRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"ist"}, NewGermanWordRepeatRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Schließlich"}, NewGermanWordRepeatBeginningRule(nil).GetIncorrectExamples()[0].GetCorrections())
 }

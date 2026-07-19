@@ -23,13 +23,22 @@ type CaseRule struct {
 	Category     *rules.Category
 	Lookup       func(word string) *languagetool.AnalyzedTokenReadings // GermanTagger.lookup
 	IsMisspelled func(lowerWord string) bool                           // default spelling rule
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewCaseRule(messages map[string]string) *CaseRule {
-	return &CaseRule{
+	r := &CaseRule{
 		Messages: messages,
 		Category: rules.CatCasing.GetCategory(messages),
 	}
+	// Java: Das laufen → Das Laufen
+	r.AddExamplePair(
+		rules.Wrong("<marker>Das laufen</marker> fällt mir schwer."),
+		rules.Fixed("<marker>Das Laufen</marker> fällt mir schwer."),
+	)
+	return r
 }
 
 func (r *CaseRule) GetID() string { return "DE_CASE" }
@@ -43,6 +52,37 @@ func (r *CaseRule) GetCategory() *rules.Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *CaseRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *CaseRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *CaseRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // EstimateContextForSureMatch ports CaseRule.estimateContextForSureMatch:
