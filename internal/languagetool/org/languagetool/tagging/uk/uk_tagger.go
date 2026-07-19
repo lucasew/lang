@@ -262,6 +262,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = other
 			}
 		}
+		// Java guessOtherTagsInternal no-dash prefixes (експрес-style solid compounds).
+		if len(readings) == 0 {
+			if nd := DynamicNoDashPrefixReadings(w, t.TagWord); len(nd) > 0 {
+				readings = nd
+			}
+		}
 		// Java elongated-vowel collapse after untagged (гаааа → га + :alt); needs dict.
 		if len(readings) == 0 {
 			if alt := ElongatedAltReadings(w, t.TagWord); len(alt) > 0 {

@@ -63,7 +63,7 @@ func TestDynamicMultiHyphen_skipDashPrefix(t *testing.T) {
 	loadDashPrefixResources()
 	var pref string
 	for k := range dashPrefixes {
-		if !strings.Contains(k, "-") {
+		if !strings.Contains(k, "-") && IsDashPrefix(k) {
 			pref = k
 			break
 		}
@@ -71,8 +71,10 @@ func TestDynamicMultiHyphen_skipDashPrefix(t *testing.T) {
 	if pref == "" {
 		t.Skip("no single-token dash prefix")
 	}
-	token := pref + "-а-б"
-	require.Nil(t, DynamicMultiHyphenStretchReadings(token, tag))
+	// avoid 3-part EntityReadings: use 4 parts so only merge/stretch arms apply
+	token := pref + "-а-б-в"
+	require.True(t, IsDashPrefix(pref))
+	require.Nil(t, DynamicMultiHyphenStretchReadings(token, tag), "prefix %q should skip merge", pref)
 }
 
 func TestTagBothCases(t *testing.T) {
