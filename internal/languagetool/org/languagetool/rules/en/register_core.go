@@ -193,7 +193,7 @@ func RegisterDemoEnglishTagger(lt *languagetool.JLanguageTool) {
 	}
 	lt.TagWord = DemoEnglishTagWord()
 
-	// Metric unit conversion (surface stand-in; official UnitConversionRule).
+	// Metric unit conversion (Java UnitConversionRule via AbstractUnitConversionRule).
 	uc := NewUnitConversionRule(nil)
 	lt.AddRuleChecker(uc.GetID(), rules.AsSentenceCheckerSimple(uc.Match))
 }

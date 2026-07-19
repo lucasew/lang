@@ -465,15 +465,8 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			if overlaps(loc[0], loc[1]) {
 				continue
 			}
-			// anti-pattern span check
-			skip := false
-			for _, ap := range r.antiPatterns {
-				if ap.MatchString(full) {
-					skip = true
-					break
-				}
-			}
-			if skip {
+			// Java removeAntiPatternMatches: drop when anti-pattern on full text covers match edges.
+			if unitHitByAntiPattern(text, loc[0], loc[1], r.antiPatterns) {
 				continue
 			}
 			// Currency: "Pfund Sterling" is not mass.
@@ -499,7 +492,7 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 					continue
 				}
 			}
-			// Soft skip when metric nearby without parseable paren (legacy heuristic).
+			// Skip when metric unit already appears nearby (parenthetical / prose equivalent).
 			if hasNearbyMetricInText(text, loc[1]) {
 				continue
 			}
@@ -609,6 +602,30 @@ func trailingContext(text string, pos int) string {
 		end = len(text)
 	}
 	return text[pos:end]
+}
+
+// unitHitByAntiPattern ports Java removeAntiPatternMatches for one candidate span.
+// Anti-patterns run on the full sentence text; a hit drops the unit match when the
+// anti-pattern range covers either match edge (Java entry removal conditions).
+func unitHitByAntiPattern(text string, from, to int, anti []*regexp.Regexp) bool {
+	for _, ap := range anti {
+		if ap == nil {
+			continue
+		}
+		all := ap.FindAllStringIndex(text, -1)
+		for _, loc := range all {
+			if len(loc) < 2 {
+				continue
+			}
+			a, b := loc[0], loc[1]
+			// Java: matcher.start() <= from && matcher.end() >= from ||
+			//       matcher.start() <= to && matcher.end() >= to
+			if (a <= from && b >= from) || (a <= to && b >= to) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // hasNearbyMetricInText reports metric unit tokens shortly after pos (parenthetical equivalents).
