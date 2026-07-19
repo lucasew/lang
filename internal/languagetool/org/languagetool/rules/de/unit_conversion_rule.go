@@ -40,16 +40,17 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	// Pfund Sterling anti-pattern (not a mass)
 	base.AntiPatternsAppend(`\d+[.,\d]*\s*Pfund\s+Sterling`)
 
-	// Java UnitConversionRule unit registrations (German names + SI factors)
+	// Java UnitConversionRule addUnit registrations (commented Java units omitted).
 	// Mass
 	base.AddUnit(`Kilo(?:gramm)?`, rules.UnitKilogram, "Kilogramm", 1, true)
 	base.AddUnit(`Gramm`, rules.UnitKilogram, "Gramm", 1e-3, true)
-	base.AddUnit(`Tonnen?`, rules.UnitTonne, "Tonnen", 1, true)
+	base.AddUnit(`Tonnen?`, rules.UnitKilogram, "Tonnen", 1e3, true)
 	base.AddUnit(`Pfund`, rules.UnitPound, "Pfund", 1, false)
 
-	// Length
+	// Length (imperial)
 	base.AddUnit(`Meilen?`, rules.UnitMile, "Meile", 1, false)
 	base.AddUnit(`Yard`, rules.UnitYard, "Yard", 1, false)
+	// Java "Fuß"; allow ss spelling common in ASCII contexts (same unit)
 	base.AddUnit(`Fu(?:ß|ss)`, rules.UnitFeet, "Fuß", 1, false)
 	base.AddUnit(`Zoll`, rules.UnitInch, "Zoll", 1, false)
 
@@ -57,11 +58,11 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	base.AddUnit(`(?:Kilometer pro Stunde|Stundenkilometer)`, rules.UnitKmh, "Kilometer pro Stunde", 1, true)
 	base.AddUnit(`Meilen pro Stunde`, rules.UnitMph, "Meilen pro Stunde", 1, false)
 
-	// Metric length names
+	// Metric length (Java uses METRE base + factor; Dezimeters commented out)
 	base.AddUnit(`Meter`, rules.UnitMetre, "Meter", 1, true)
-	base.AddUnit(`Kilometer`, rules.UnitKilometre, "Kilometer", 1, true)
-	base.AddUnit(`Zentimeter`, rules.UnitCentimetre, "Zentimeter", 1, true)
-	base.AddUnit(`Millimeter`, rules.UnitMillimetre, "Millimeter", 1, true)
+	base.AddUnit(`Kilometer`, rules.UnitMetre, "Kilometer", 1e3, true)
+	base.AddUnit(`Zentimeter`, rules.UnitMetre, "Zentimeter", 1e-2, true)
+	base.AddUnit(`Millimeter`, rules.UnitMetre, "Millimeter", 1e-3, true)
 	base.AddUnit(`Mikrometer`, rules.UnitMetre, "Mikrometer", 1e-6, true)
 	base.AddUnit(`Nanometer`, rules.UnitMetre, "Nanometer", 1e-9, true)
 	base.AddUnit(`Pikometer`, rules.UnitMetre, "Pikometer", 1e-12, true)
@@ -69,24 +70,28 @@ func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 
 	// Area
 	base.AddUnit(`Quadratmeter`, rules.UnitSquareMetre, "Quadratmeter", 1, true)
-	base.AddUnit(`Hektar`, rules.UnitHectare, "Hektar", 1, true)
+	base.AddUnit(`Hektar`, rules.UnitSquareMetre, "Hektar", 1e4, true)
 	base.AddUnit(`Ar`, rules.UnitSquareMetre, "Ar", 1e2, true)
 	base.AddUnit(`Quadratkilometer`, rules.UnitSquareMetre, "Quadratkilometer", 1e6, true)
 	base.AddUnit(`Quadratzentimeter`, rules.UnitSquareMetre, "Quadratzentimeter", 1e-4, true)
 	base.AddUnit(`Quadratmillimeter`, rules.UnitSquareMetre, "Quadratmillimeter", 1e-6, true)
-	base.AddUnit(`sq\s*ft`, rules.UnitSqFt, "sq ft", 1, false)
+	base.AddUnit(`Quadratmikrometer`, rules.UnitSquareMetre, "Quadratmikrometer", 1e-12, true)
+	base.AddUnit(`Quadratnanometer`, rules.UnitSquareMetre, "Quadratnanometer", 1e-18, true)
 
-	// Volume
+	// Volume (cubic)
+	base.AddUnit(`Kubikmeter`, rules.UnitCubicMetre, "Kubikmeter", 1, true)
+	base.AddUnit(`Kubikkilometer`, rules.UnitCubicMetre, "Kubikkilometer", 1e9, true)
+	base.AddUnit(`Kubikzentimeter`, rules.UnitCubicMetre, "Kubikzentimeter", 1e-6, true)
+	base.AddUnit(`Kubikmillimeter`, rules.UnitCubicMetre, "Kubikmillimeter", 1e-9, true)
+	base.AddUnit(`Kubikmikrometer`, rules.UnitCubicMetre, "Kubikmikrometer", 1e-18, true)
+	base.AddUnit(`Kubiknanometer`, rules.UnitCubicMetre, "Kubiknanometer", 1e-27, true)
+
 	base.AddUnit(`Liter`, rules.UnitLitre, "Liter", 1, true)
 	base.AddUnit(`Milliliter`, rules.UnitLitre, "Milliliter", 1e-3, true)
 
 	// Temperature
 	base.AddUnit(`(?:Grad\s*)?Fahrenheit`, rules.UnitFahrenheit, "Grad Fahrenheit", 1, false)
 	base.AddUnit(`(?:Grad\s*)?Celsius`, rules.UnitCelsius, "Grad Celsius", 1, true)
-
-	// English symbols still common
-	base.AddUnit(`ft`, rules.UnitFeet, "ft", 1, false)
-	base.AddUnit(`mi`, rules.UnitMile, "mi", 1, false)
 
 	return &UnitConversionRule{AbstractUnitConversionRule: base}
 }
