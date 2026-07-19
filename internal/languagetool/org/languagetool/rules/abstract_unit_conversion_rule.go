@@ -93,6 +93,11 @@ const (
 // whitespace + (optional "ca. " / "aprox. ") + number + unit body in parentheses.
 var convertedParenRE = regexp.MustCompile(`(?i)^\s*\((?:(?:ca\.|aprox\.)\s*)?` + unitNumberRegex + `\s*([^)]+?)\s*\)`)
 
+// feetInchParenBodyRE ports Java convertedMatcher.group().trim().matches(
+// "\\(\\d+ (feet|ft) \\d+ inch\\)") on the unit-body half after the number group.
+// e.g. "(2 ft 6 inch)" → unitBody "ft 6 inch" — skip CHECK (would misread as 2 ft).
+var feetInchParenBodyRE = regexp.MustCompile(`(?i)^(feet|ft)\s+\d+\s+inch$`)
+
 // numberRangePartRE ports AbstractUnitConversionRule.numberRangePart:
 // a number at the end of the text before a match that captured a leading "-".
 // Used for ranges like "1-5 miles" (GitHub languagetool#2170).
@@ -767,6 +772,11 @@ func (r *AbstractUnitConversionRule) checkParentheticalConversion(
 	srcVal float64, srcUnit UnitDef,
 	given float64, unitBody, originalFull string,
 ) *RuleMatch {
+	// Java: if convertedMatcher.group().trim().matches("\\(\\d+ (feet|ft) \\d+ inch\\)") return;
+	// e.g. "(2 ft 6 inch)" would be interpreted as just "2 ft", giving a wrong suggestion.
+	if feetInchParenBodyRE.MatchString(strings.TrimSpace(unitBody)) {
+		return nil
+	}
 	// Java: match converted unit against unitPatterns (not only metricUnits).
 	// Include non-metric paren units (e.g. "10 km (6.21 mi)").
 	var convertedUnit *UnitDef

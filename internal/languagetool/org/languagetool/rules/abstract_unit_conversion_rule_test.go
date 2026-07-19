@@ -104,3 +104,16 @@ func TestDedupeUnitMatchesByStart(t *testing.T) {
 	require.Equal(t, 12, out[0].ToPos)
 	require.Equal(t, "long", out[0].Message)
 }
+
+// Java: convertedMatcher matches "\\(\\d+ (feet|ft) \\d+ inch\\)" → skip CHECK
+// (would otherwise treat as just "2 ft").
+func TestCheckParenthetical_FeetInchCompositeSkipped(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	sent := languagetool.AnalyzePlain("x")
+	// unitBody half of "(2 ft 6 inch)" after number group
+	m := r.checkParentheticalConversion(sent, 0, 1, 2, 10, 1.9, UnitMetre, 2, "ft 6 inch", "1.9 m")
+	require.Nil(t, m)
+	// plain feet body still checked
+	m2 := r.checkParentheticalConversion(sent, 0, 1, 2, 10, 1.9, UnitMetre, 2, "ft", "1.9 m")
+	require.NotNil(t, m2)
+}
