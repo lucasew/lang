@@ -849,3 +849,67 @@ func TestVerbNounException_MoreJavaArms(t *testing.T) {
 		atr("в", "prep"), atr("обличчя", "noun"),
 	}, 0, 1))
 }
+
+func TestVerbNounException_MidBlock(t *testing.T) {
+	// дай Боже
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("дай", "verb:impr:s:2"), atr("Боже", "noun:anim:m:v_kly"),
+	}, 0, 1))
+
+	// fem verb + masc profession
+	lem := "лікар"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("повторила", "verb:perf:past:f"), atrLemma("лікар", &lem, "noun:anim:m:v_naz"),
+	}, 0, 1))
+
+	// не існувало + v_rod
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("існувало", "verb:imperf:past:n"), atr("конкуренції", "noun:inanim:f:v_rod"),
+	}, 0, 1))
+
+	// меншає людей
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("меншає", strPtr("меншати"), "verb:imperf:pres:s:3"),
+		atr("людей", "noun:anim:p:v_rod"),
+	}, 0, 1))
+
+	// газу менше
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("споживає", "verb"), atr("газу", "noun:inanim:m:v_rod"), atr("менше", "adv"),
+	}, 0, 1))
+
+	// небагато надходить книжок — driver before verb
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("небагато"), atr("надходить", "verb:imperf:pres:s:3"),
+		atr("книжок", "noun:inanim:p:v_rod"),
+	}, 2, 3))
+}
+
+func TestVerbNounException_InfChains(t *testing.T) {
+	// V:INF + N + не + V (v_inf gov) — робити прогнозів не вмію
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("робити", "verb:imperf:inf"), atr("прогнозів", "noun:inanim:p:v_rod"),
+		atr("не", "part"), atrLemma("вмію", strPtr("вміти"), "verb:imperf:pres:s:1"),
+	}, 0, 1))
+
+	// посміхаючись — Java verbPos > 1 (SENT pad); verbPos is the advp
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atr("пригадує", "verb:imperf:pres:s:3"), atr("посміхаючись", "advp"),
+		atr("Аскольд", "noun:anim:m:v_naz:prop"),
+	}, 2, 3))
+
+	// працювати неспроможні
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("працювати", "verb:imperf:inf"),
+		atrLemma("неспроможні", strPtr("неспроможний"), "adj:p:v_naz"),
+	}, 0, 1))
+
+	// ADJ + бути + N v_rod
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("вартий", strPtr("вартий"), "adj:m:v_naz"),
+		atrLemma("бути", strPtr("бути"), "verb:imperf:inf"),
+		atr("уваги", "noun:inanim:f:v_rod"),
+	}, 2, 3))
+}

@@ -2394,7 +2394,275 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		return true
 	}
 
+	// дай Боже
+	if HasPosTagPart(noun, "v_kly") && HasPosTagPart(verb, "impr") {
+		return true
+	}
+
+	// повторила прем'єр-міністр — masc profession + fem verb
+	if HasPosTagPart(noun, "noun:anim:m:v_naz") &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*:f(:.*|$)`)) &&
+		HasMascFemLemma(noun) {
+		return true
+	}
+
+	// не існувало конкуренції / не було мізків / стане сили
+	if HasPosTagPart(noun, "v_rod") &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*?(?:futr|past):(?:s:3.*|n(?:$|:.*))`)) {
+		return true
+	}
+
+	// меншає людей — Java (по)?меншати|(по)?більшати|стати + :[sn]
+	if HasLemmaTokenRE(verb, regexp.MustCompile(`^(?:(?:по)?меншати|(?:по)?більшати|стати)$`)) &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*:[sn](?:$|:.*)`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:noun|adj).*v_rod.*`)) {
+		return true
+	}
+
+	// споживає газу менше
+	if nounPos < len(tokens)-1 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:.*v_rod.*`)) &&
+		regexp.MustCompile(`^(?:менше|більше)$`).MatchString(CleanTokenLower(tokens[nounPos+1])) {
+		return true
+	}
+
+	// небагато надходить книжок — V_ROD_DRIVER reverse of verb
+	if verbPos > 1 && HasPosTagPart(noun, "v_rod") {
+		xpos := TokenSearch(tokens, verbPos-1, "", verbNounVRodDriverRE, regexp.MustCompile(`^[a-z].*`), DirReverse)
+		if xpos >= 0 && xpos >= verbPos-4 {
+			return true
+		}
+	}
+
+	// V + N + V:INF — verb governs v_inf, second verb agrees (simplified: second is :inf)
+	if nounPos < len(tokens)-1 && hasCaseGovPosRE(verb, verbAdvpPattern, "v_inf") {
+		v2 := tokenSearchPosRE(tokens, nounPos+1, verbPattern, DirForward)
+		if v2 >= 0 && v2 <= nounPos+5 &&
+			verbNounAgrees(tokens[v2], noun) {
+			return true
+		}
+	}
+
+	// V:INF + N + V — робити прогнозів не буду
+	if nounPos < len(tokens)-1 && HasPosTagPart(verb, ":inf") {
+		v2 := tokenSearchPosRE(tokens, nounPos+1, verbPattern, DirForward)
+		if v2 >= 0 && v2 <= nounPos+4 && hasCaseGovPosRE(tokens[v2], verbPattern, "v_inf") {
+			if verbNounAgrees(tokens[v2], noun) {
+				return true
+			}
+			if v2 > 0 && tokens[v2-1] != nil && tokens[v2-1].GetCleanToken() == "не" {
+				return true
+			}
+		}
+	}
+
+	// ADVP + N + V — резюмуючи політик наголосив
+	if nounPos < len(tokens)-1 && HasPosTagStart(verb, "advp") {
+		v2 := tokenSearchPosRE(tokens, nounPos+1, verbPattern, DirForward)
+		if v2 >= 0 && v2 <= nounPos+3 && verbNounAgrees(tokens[v2], noun) {
+			return true
+		}
+	}
+
+	// V + ADVP + N — пригадує посміхаючись Аскольд
+	if verbPos > 1 && HasPosTagStart(verb, "advp") &&
+		containsStr([]string{"посміхаючись", "сміючись"}, verb.GetCleanToken()) &&
+		HasPosTagStart(tokens[verbPos-1], "verb") &&
+		verbNounAgrees(tokens[verbPos-1], noun) {
+		return true
+	}
+
+	// V:INF + N + ADV/predic — розібратися людям важко
+	if nounPos < len(tokens)-1 && HasPosTagPart(verb, ":inf") &&
+		!HasLemmaTokenRE(verb, verbNounVchytyRE) {
+		for v2 := tokenSearchPosRE(tokens, nounPos+1, advPredictPattern, DirForward); v2 >= 0 && v2 <= nounPos+4; v2 = tokenSearchPosRE(tokens, v2+1, advPredictPattern, DirForward) {
+			cases := caseGovPosRESet(tokens[v2], advPredictPattern)
+			if len(cases) > 0 {
+				list := make([]string, 0, len(cases))
+				for c := range cases {
+					list = append(list, c)
+				}
+				if HasVidmPosTag(list, noun) {
+					return true
+				}
+			}
+		}
+	}
+
+	// V:INF + N + ADJ — працювати студенти готові
+	if nounPos < len(tokens)-1 && HasPosTagPart(verb, ":inf") {
+		v2 := tokenSearchPosRE(tokens, nounPos+1, adjVNazPattern, DirForward)
+		if v2 >= 0 && v2 <= nounPos+3 && hasCaseGovPosRE(tokens[v2], adjVNazPattern, "v_inf") {
+			if gendersOverlap(gendersFromNaz(noun), gendersFromNaz(tokens[v2])) {
+				return true
+			}
+		}
+	}
+
+	// V:INF + ADJ — працювати неспроможні
+	if HasPosTagPart(verb, ":inf") &&
+		HasPosTagRE(noun, adjVNazPattern) &&
+		hasCaseGovPosRE(noun, adjVNazPattern, "v_inf") {
+		return true
+	}
+
+	// V + V:INF + N — дають … мандрувати чотирьом
+	if verbPos > 1 && HasPosTagPart(verb, ":inf") {
+		lookupPos := verbPos - 1
+		if verbPos > 3 &&
+			HasLemmaTokenAny(tokens[verbPos-1], []string{"і", "й", "та"}) &&
+			HasPosTagPart(tokens[verbPos-2], ":inf") {
+			lookupPos = verbPos - 3
+		}
+		v2 := tokenSearchPosRE(tokens, lookupPos, verbAdvpPattern, DirReverse)
+		if v2 >= 0 && v2 >= verbPos-5 {
+			if hasCaseGovPosRE(tokens[v2], verbAdvpPattern, "v_inf") ||
+				regexp.MustCompile(`^(?:по)?їсти$`).MatchString(verb.GetCleanToken()) {
+				if verbNounAgrees(tokens[v2], noun) {
+					return true
+				}
+				if HasPosTagRE(tokens[v2], regexp.MustCompile(`verb.*:p(?:$|:.*)`)) &&
+					HasPosTagRE(noun, regexp.MustCompile(`.*v_naz.*`)) {
+					return true
+				}
+			}
+		}
+	}
+
+	// ADV + V:INF + N — важко розібратися багатьом
+	if verbPos > 1 && HasPosTagPart(verb, ":inf") {
+		for v2 := tokenSearchPosRE(tokens, verbPos-1, advPredictPattern, DirReverse); v2 >= 0 && v2 >= verbPos-3; v2 = tokenSearchPosRE(tokens, v2-1, advPredictPattern, DirReverse) {
+			if HasPosTagRE(tokens[v2], regexp.MustCompile(`noninfl:predic.*`)) && HasPosTagPart(noun, "v_naz") {
+				return true
+			}
+			cases := caseGovPosRESet(tokens[v2], advPredictPattern)
+			if len(cases) > 0 {
+				list := make([]string, 0, len(cases))
+				for c := range cases {
+					list = append(list, c)
+				}
+				if HasVidmPosTag(list, noun) {
+					return true
+				}
+			}
+		}
+	}
+
+	// ADJ + V:INF + N — зацікавлена перейняти угорська сторона
+	if verbPos > 1 && HasPosTagPart(verb, ":inf") && HasPosTagPart(noun, "v_naz") {
+		if regexp.MustCompile(`^(?:змозі|змогу|силі|силах)$`).MatchString(CleanTokenLower(tokens[verbPos-1])) {
+			return true
+		}
+		v2 := tokenSearchPosRE(tokens, verbPos-1, adjVNazPattern, DirReverse)
+		if v2 >= 0 && v2 >= verbPos-3 && hasCaseGovPosRE(tokens[v2], adjVNazPattern, "v_inf") {
+			if gendersOverlap(gendersFromNaz(noun), gendersFromNaz(tokens[v2])) {
+				return true
+			}
+		}
+	}
+
+	// ADJ + бути + N — adj v_naz governs v_rod
+	if verbPos > 1 &&
+		HasLemmaToken(verb, "бути") &&
+		HasPosTagRE(tokens[verbPos-1], regexp.MustCompile(`adj:.:v_naz.*`)) &&
+		hasCaseGovFromReadings(tokens[verbPos-1], "v_rod") &&
+		HasPosTagRE(noun, regexp.MustCompile(`(?:adj|noun).*v_rod.*`)) {
+		return true
+	}
+
+	// V:IMPERS + бути + N
+	if verbPos > 1 &&
+		HasLemmaToken(verb, "бути") &&
+		HasPosTagRE(tokens[verbPos-1], regexp.MustCompile(`verb.*impers.*`)) &&
+		verbNounAgrees(tokens[verbPos-1], noun) {
+		return true
+	}
+
 	return false
+}
+
+// Patterns for TokenAgreementVerbNounExceptionHelper.
+var (
+	verbNounVRodDriverRE = regexp.MustCompile(
+		`(?i)^(?:не|(?:на)?с[кт]ільки|(?:най)?більше|(?:най)?менше|(?:не|за)?багато|(?:не|чи|за)?мало|трохи|годі|неможливо|а?ніж|вдосталь|купу)$`)
+	verbNounVchytyRE = regexp.MustCompile(`.*вч[аи]ти(?:ся)?$`)
+	verbPattern      = regexp.MustCompile(`^verb.*`)
+	adjVNazPattern   = regexp.MustCompile(`^adj:.:v_naz.*`)
+	advPredictPattern = regexp.MustCompile(`^(?:adv|noninfl:predic).*`)
+)
+
+// verbNounAgrees is a simplified agrees(): verb–noun person/gender overlap or
+// verb case government matching noun vidminok (no full State).
+func verbNounAgrees(verb, noun *languagetool.AnalyzedTokenReadings) bool {
+	if verb == nil || noun == nil {
+		return false
+	}
+	if VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(noun)) {
+		return true
+	}
+	cases := caseGovPosRESet(verb, verbAdvpPattern)
+	if len(cases) == 0 {
+		return false
+	}
+	list := make([]string, 0, len(cases))
+	for c := range cases {
+		list = append(list, c)
+	}
+	return HasVidmPosTag(list, noun)
+}
+
+func caseGovPosRESet(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp) map[string]struct{} {
+	out := map[string]struct{}{}
+	if tok == nil || posRE == nil {
+		return out
+	}
+	cg := LoadCaseGovernmentHelper()
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
+			continue
+		}
+		if !posRE.MatchString(*r.GetPOSTag()) {
+			continue
+		}
+		if set, ok := cg.Map[*r.GetLemma()]; ok {
+			for c := range set {
+				out[c] = struct{}{}
+			}
+		}
+		if strings.Contains(*r.GetPOSTag(), "adjp:pasv") {
+			out["v_oru"] = struct{}{}
+		}
+	}
+	return out
+}
+
+// gendersFromNaz collects gender letters from noun/adj/numr v_naz readings.
+func gendersFromNaz(tok *languagetool.AnalyzedTokenReadings) string {
+	if tok == nil {
+		return ""
+	}
+	seen := map[byte]bool{}
+	var b strings.Builder
+	re := regexp.MustCompile(`(?:noun|adj|numr).*?:([mfnp]):v_naz|adj:([mfnp]):v_naz`)
+	for _, p := range CollectPOSTags(tok) {
+		m := re.FindStringSubmatch(p)
+		if m == nil {
+			continue
+		}
+		g := m[1]
+		if g == "" {
+			g = m[2]
+		}
+		if g == "" {
+			continue
+		}
+		c := g[0]
+		if !seen[c] {
+			seen[c] = true
+			b.WriteByte(c)
+		}
+	}
+	return b.String()
 }
 
 // hasPosWithoutRanim is RE2-friendly stand-in for adj:.:v_zna(?!:ranim).
