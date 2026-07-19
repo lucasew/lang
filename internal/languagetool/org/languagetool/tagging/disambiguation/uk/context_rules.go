@@ -6,6 +6,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	rulesuk "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 )
 
 // DisambiguateSt ports UkrainianHybridDisambiguator.disambiguateSt for "ст.".
@@ -151,8 +152,8 @@ func DisambiguateYih(input *languagetool.AnalyzedSentence) {
 		}
 		if i < len(tokens)-1 && tokens[i+1] != nil {
 			nextClean := strings.ToLower(cleanOrToken(tokens[i+1]))
-			// їх кількість|розгляд|… or predic
-			if yihObjectLemmas[nextClean] || hasPosTagREMatch(tokens[i+1], `noninfl:predic.*`) {
+			// їх кількість|розгляд|… or predic (Java hasLemma list)
+			if yihHasObjectLemma(tokens[i+1]) || hasPosTagREMatch(tokens[i+1], `noninfl:predic.*`) {
 				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
 				continue
 			}
@@ -179,11 +180,97 @@ func DisambiguateYih(input *languagetool.AnalyzedSentence) {
 				removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
 				continue
 			}
+			// exclude на його душу: next not adj|noun, verb governs v_rod|v_zna
+			if !hasPOSPrefix(tokens[i+1], "adj") && !hasPOSPrefix(tokens[i+1], "noun") {
+				govs := caseGovForPosRE(tokens[i+1], regexp.MustCompile(`^verb`))
+				if setHasAny(govs, "v_rod", "v_zna") {
+					removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+					continue
+				}
+			}
+		}
+		// посунув їх — prev verb/advp governs v_rod|v_zna
+		if i > 1 && tokens[i-1] != nil {
+			prevGovs := caseGovForPosRE(tokens[i-1], regexp.MustCompile(`^(?:verb|advp)`))
+			if setHasAny(prevGovs, "v_rod", "v_zna") {
+				// end of sentence / adv / prep / punct after
+				if i == len(tokens)-1 ||
+					(tokens[i+1] != nil && (hasPOSPrefix(tokens[i+1], "adv") || hasPOSPrefix(tokens[i+1], "prep") ||
+						regexp.MustCompile(`^[,.;\x{2013}\x{2014}-]$`).MatchString(tokens[i+1].GetToken()))) {
+					removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+					continue
+				}
+				// примусили їх сказати — next inf + prev also v_inf
+				if i < len(tokens)-1 && tokens[i+1] != nil &&
+					(hasPOSPrefix(tokens[i-1], "verb") || hasPOSPrefix(tokens[i-1], "advp")) &&
+					hasPosTagREMatch(tokens[i+1], `(?:verb).*:inf.*`) && setHasAny(prevGovs, "v_inf") {
+					removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
+					continue
+				}
+			}
 		}
 	}
 }
 
+func yihHasObjectLemma(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	// surface lower
+	if yihObjectLemmas[strings.ToLower(cleanOrToken(tok))] {
+		return true
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetLemma() != nil {
+			if yihObjectLemmas[strings.ToLower(*r.GetLemma())] {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// caseGovForPosRE collects case governments for readings whose POS matches re
+// (Java CaseGovernmentHelper.getCaseGovernments(readings, Pattern)).
+func caseGovForPosRE(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp) map[string]struct{} {
+	out := map[string]struct{}{}
+	if tok == nil || posRE == nil {
+		return out
+	}
+	cg := rulesuk.LoadCaseGovernmentHelper()
+	if cg == nil {
+		return out
+	}
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
+			continue
+		}
+		if !posRE.MatchString(*r.GetPOSTag()) {
+			continue
+		}
+		for _, c := range cg.GetCaseGovernments(*r.GetLemma()) {
+			out[c] = struct{}{}
+		}
+		// adjp:pasv adds v_oru (same as rules helper)
+		if strings.Contains(*r.GetPOSTag(), "adjp:pasv") {
+			out["v_oru"] = struct{}{}
+		}
+	}
+	return out
+}
+
+func setHasAny(set map[string]struct{}, keys ...string) bool {
+	for _, k := range keys {
+		if _, ok := set[k]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // lemmas after їх that force personal (object) reading — Java hasLemma list (lower surface/lemma).
+var verbOnlyRE = regexp.MustCompile(`^verb`)
+
 var yihObjectLemmas = map[string]bool{
 	"кількість": true, "розгляд": true, "обговорення": true, "використання": true,
 	"реалізація": true, "виконання": true, "звільнення": true, "виробництво": true,

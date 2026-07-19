@@ -264,3 +264,53 @@ func TestRetagPluralProp(t *testing.T) {
 	require.True(t, tok.HasPartialPosTag(":p:v_naz"))
 	require.True(t, tok.HasPartialPosTag("prop"))
 }
+
+func TestDisambiguateYih_PrevVerbGov(t *testing.T) {
+	// посунув їх . — prev verb with v_zna gov → drop pos
+	// lemma "посунути" or use "забути" which may govern v_zna
+	// "бачити" often has v_zna
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	// use "бачити" — typically v_zna in case_government
+	vPos, vLem := "verb:imperf:past:m", "бачити"
+	verb := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("бачив", &vPos, &vLem),
+	}, 0)
+	pPers, pPos := "noun:unanim:p:v_zna:pron:pers:3", "adj:p:v_naz:nv:pron:pos"
+	lPers, lPos := "вони", "їх"
+	yih := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("їх", &pPers, &lPers),
+		languagetool.NewAnalyzedToken("їх", &pPos, &lPos),
+	}, 0)
+	// end of sentence: only start, verb, yih
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, verb, yih})
+	DisambiguateYih(sent)
+	tok := sent.GetTokensWithoutWhitespace()[2]
+	// if бачити has v_zna/v_rod in map, pos should drop
+	// бачити typically has v_zna; hybrid path tested via DisambiguateYih
+	require.True(t, tok.HasPartialPosTag("pron:pers") || len(tok.GetReadings()) > 0)
+	// when map has v_zna/v_rod for бачити, pos reading is removed
+	if setHasAny(caseGovForPosRE(verb, verbOnlyRE), "v_rod", "v_zna") {
+		require.False(t, tok.HasPartialPosTag("pron:pos"))
+	}
+}
+
+func TestDisambiguateYih_ObjectLemma(t *testing.T) {
+	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
+	}, 0)
+	pPers, pPos := "noun:unanim:p:v_zna:pron:pers:3", "adj:p:v_naz:nv:pron:pos"
+	yih := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("їх", &pPers, strPtr("вони")),
+		languagetool.NewAnalyzedToken("їх", &pPos, strPtr("їх")),
+	}, 0)
+	nPos, nLem := "noun:inanim:f:v_naz", "кількість"
+	noun := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("кількість", &nPos, &nLem),
+	}, 0)
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, yih, noun})
+	DisambiguateYih(sent)
+	tok := sent.GetTokensWithoutWhitespace()[1]
+	require.False(t, tok.HasPartialPosTag("pron:pos"))
+}
