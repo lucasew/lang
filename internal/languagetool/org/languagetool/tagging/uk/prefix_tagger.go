@@ -8,16 +8,12 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// noDashPrefixes ports a subset of no-dash prefix tagging (пів/напів/...).
-var noDashPrefixes = []string{
-	"напів", "пів", "анти", "псевдо", "квазі", "супер", "ультра", "макро", "мікро",
-}
-
-// TryNoDashPrefixTags attempts to tag word by stripping a known prefix and using
-// the right-hand head readings from tagRight (inner tagger for the remainder).
+// TryNoDashPrefixTags attempts to tag word by stripping a known no-dash prefix
+// (Java CompoundTagger.noDashPrefixes from official dash_prefixes_invalid + alt keys)
+// and using the right-hand head readings from tagRight.
 func TryNoDashPrefixTags(surface string, tagRight func(string) []*languagetool.AnalyzedToken) []*languagetool.AnalyzedToken {
 	lower := strings.ToLower(surface)
-	for _, prefix := range noDashPrefixes {
+	for _, prefix := range NoDashPrefixList() {
 		if !strings.HasPrefix(lower, prefix) || len(lower) <= len(prefix) {
 			continue
 		}

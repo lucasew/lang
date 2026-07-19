@@ -6,13 +6,6 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// Known dash prefixes (subset of /uk/dash_prefixes.txt for green tests).
-var knownDashPrefixes = map[string]struct{}{
-	"міні": {}, "віце": {}, "екс": {}, "супер": {}, "ультра": {},
-	"анти": {}, "псевдо": {}, "квазі": {}, "макро": {}, "мікро": {},
-	"пів": {}, "напів": {},
-}
-
 // CompoundTagger ports tagging.uk.CompoundTagger: tags hyphenated compounds via parts.
 type CompoundTagger struct {
 	Inner *UkrainianTagger
@@ -82,8 +75,8 @@ func (t *CompoundTagger) tagCompoundParts(surface string, parts []string) []*lan
 			if r.GetLemma() != nil && *r.GetLemma() != "" {
 				lemma = *r.GetLemma()
 			}
-			// for known prefixes, annotate with :comp hint on pos when noun/adj
-			if _, ok := knownDashPrefixes[strings.ToLower(left)]; ok {
+			// official dash_prefixes.txt left parts (Java dashPrefixes map)
+			if IsDashPrefix(left) {
 				if !strings.Contains(pos, ":comp") {
 					pos = pos + ":comp"
 				}
