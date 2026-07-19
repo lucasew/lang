@@ -115,7 +115,8 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 
 // RegisterPickyEnglishRules installs Java English Tag.picky rules (official data only).
 // Invent token-sequence packs (alot/irregardless/…) are not registered — use grammar.xml when wired.
-// Unit conversion is not picky — see RegisterEnglishVariantExtraRules (locale getRelevantRules).
+// Unit conversion is Tag.picky in Java UnitConversionRule but registered via getRelevantRules
+// (locale-specific Imperial/US) in RegisterEnglishVariantExtraRules.
 func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -126,7 +127,7 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 }
 
 // RegisterEnglishVariantExtraRules installs locale extras from Java *English.getRelevantRules
-// beyond base English. Not picky-level invent — only the rules for this locale.
+// beyond base English. Unit conversion rules carry Tag.picky (Java UnitConversionRule.setTags).
 //
 //	en-US / bare en → AmericanReplaceRule + UnitConversionRuleUS
 //	en-GB → BritishReplaceRule + UnitConversionRuleImperial

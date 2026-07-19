@@ -7,8 +7,11 @@ import (
 
 // UnitConversionRule ports org.languagetool.rules.en.UnitConversionRule
 // (extends AbstractUnitConversionRule — not a surface stand-in Match).
+// Java UnitConversionRule.setTags(Tag.picky) applies to general + Imperial + US.
 type UnitConversionRule struct {
 	*rules.AbstractUnitConversionRule
+	// Tags ports Rule.tags (Java Tag.picky).
+	Tags []rules.Tag
 }
 
 // Imperial / US volume factors from Java AbstractUnitConversionRule (litre multiples).
@@ -28,27 +31,34 @@ const (
 	usFlOunceL  = usQuartL / 32
 )
 
-func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
+func newENUnitConversion(messages map[string]string, id string) *UnitConversionRule {
 	base := rules.NewAbstractUnitConversionRule(messages)
-	base.ID = "METRIC_UNITS_EN_GENERAL"
-	registerENGeneralUnits(base)
-	return &UnitConversionRule{AbstractUnitConversionRule: base}
+	base.ID = id
+	return &UnitConversionRule{
+		AbstractUnitConversionRule: base,
+		// Java: setTags(Arrays.asList(Tag.picky))
+		Tags: []rules.Tag{rules.TagPicky},
+	}
+}
+
+func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
+	r := newENUnitConversion(messages, "METRIC_UNITS_EN_GENERAL")
+	registerENGeneralUnits(r.AbstractUnitConversionRule)
+	return r
 }
 
 func NewUnitConversionRuleImperial(messages map[string]string) *UnitConversionRule {
-	base := rules.NewAbstractUnitConversionRule(messages)
-	base.ID = "METRIC_UNITS_EN_IMPERIAL"
-	registerENGeneralUnits(base)
-	registerENImperialUnits(base)
-	return &UnitConversionRule{AbstractUnitConversionRule: base}
+	r := newENUnitConversion(messages, "METRIC_UNITS_EN_IMPERIAL")
+	registerENGeneralUnits(r.AbstractUnitConversionRule)
+	registerENImperialUnits(r.AbstractUnitConversionRule)
+	return r
 }
 
 func NewUnitConversionRuleUS(messages map[string]string) *UnitConversionRule {
-	base := rules.NewAbstractUnitConversionRule(messages)
-	base.ID = "METRIC_UNITS_EN_US"
-	registerENGeneralUnits(base)
-	registerENUSUnits(base)
-	return &UnitConversionRule{AbstractUnitConversionRule: base}
+	r := newENUnitConversion(messages, "METRIC_UNITS_EN_US")
+	registerENGeneralUnits(r.AbstractUnitConversionRule)
+	registerENUSUnits(r.AbstractUnitConversionRule)
+	return r
 }
 
 // registerENGeneralUnits ports UnitConversionRule constructor addUnit calls only
@@ -194,4 +204,25 @@ func (r *UnitConversionRule) GetID() string {
 // GetDescription ports UnitConversionRule.getDescription.
 func (r *UnitConversionRule) GetDescription() string {
 	return "Suggests or checks conversion of units to their metric equivalents."
+}
+
+// GetTags ports Rule.getTags (Java Tag.picky).
+func (r *UnitConversionRule) GetTags() []rules.Tag {
+	if r == nil {
+		return nil
+	}
+	return r.Tags
+}
+
+// HasTag ports Rule.hasTag.
+func (r *UnitConversionRule) HasTag(tag rules.Tag) bool {
+	if r == nil {
+		return false
+	}
+	for _, t := range r.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
 }

@@ -5,15 +5,21 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
 func TestUnitConversionRule_IDsAndImperialUS(t *testing.T) {
-	require.Equal(t, "METRIC_UNITS_EN_GENERAL", NewUnitConversionRule(nil).GetID())
+	gen := NewUnitConversionRule(nil)
+	require.Equal(t, "METRIC_UNITS_EN_GENERAL", gen.GetID())
+	// Java UnitConversionRule.setTags(Tag.picky)
+	require.True(t, gen.HasTag(rules.TagPicky))
 	imp := NewUnitConversionRuleImperial(nil)
 	us := NewUnitConversionRuleUS(nil)
 	require.Equal(t, "METRIC_UNITS_EN_IMPERIAL", imp.GetID())
 	require.Equal(t, "METRIC_UNITS_EN_US", us.GetID())
+	require.True(t, imp.HasTag(rules.TagPicky))
+	require.True(t, us.HasTag(rules.TagPicky))
 
 	// Imperial pints still suggest metric
 	ms := imp.Match(languagetool.AnalyzePlain("I just drank 3 pints."))
