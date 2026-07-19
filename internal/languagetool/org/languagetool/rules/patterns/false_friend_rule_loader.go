@@ -62,9 +62,15 @@ type ffPattern struct {
 }
 
 type ffToken struct {
-	Inflected string `xml:"inflected,attr"`
-	Regexp    string `xml:"regexp,attr"`
-	Content   string `xml:",chardata"`
+	Inflected     string `xml:"inflected,attr"`
+	Regexp        string `xml:"regexp,attr"`
+	CaseSensitive string `xml:"case_sensitive,attr"`
+	Negate        string `xml:"negate,attr"`
+	Postag        string `xml:"postag,attr"`
+	PostagRegexp  string `xml:"postag_regexp,attr"`
+	// SpaceBefore ports spacebefore="yes|no" (rare on false friends).
+	SpaceBefore string `xml:"spacebefore,attr"`
+	Content     string `xml:",chardata"`
 }
 
 type ffTranslation struct {
@@ -111,7 +117,24 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		var tokens []*PatternToken
 		for _, xt := range xr.Pattern.Tokens {
 			content := strings.TrimSpace(xt.Content)
-			pt := NewPatternToken(content, false, strings.EqualFold(xt.Regexp, "yes"), strings.EqualFold(xt.Inflected, "yes"))
+			// SENT_START and empty surface + postag-only tokens are valid Java
+			cs := strings.EqualFold(xt.CaseSensitive, "yes")
+			re := strings.EqualFold(xt.Regexp, "yes")
+			inf := strings.EqualFold(xt.Inflected, "yes")
+			pt := NewPatternToken(content, cs, re, inf)
+			if strings.EqualFold(xt.Negate, "yes") {
+				pt.SetNegation(true)
+			}
+			if pos := strings.TrimSpace(xt.Postag); pos != "" {
+				pt.SetPosToken(PosToken{
+					PosTag: pos,
+					Regexp: strings.EqualFold(xt.PostagRegexp, "yes"),
+					Negate: false,
+				})
+			}
+			if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
+				pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+			}
 			tokens = append(tokens, pt)
 		}
 		// format message with hint template placeholders {0}=pattern, {1}=translations, {2}=mother name

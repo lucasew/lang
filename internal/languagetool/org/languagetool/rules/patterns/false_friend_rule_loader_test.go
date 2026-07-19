@@ -30,6 +30,44 @@ func TestFalseFriendRuleLoader(t *testing.T) {
 	require.Len(t, rules, 1)
 	require.Equal(t, "ABILITY", rules[0].ID)
 	require.Contains(t, rules[0].Message, "ability")
-	require.Contains(t, rules[0].Message, "aptitude")
+	// Java formatTranslations wraps translations in quotes
+	require.Contains(t, rules[0].Message, `"aptitude"`)
 	require.Contains(t, loader.SuggestionMap["ABILITY"], "aptitude")
+	require.True(t, rules[0].Tokens[0].MatchInflected)
+}
+
+func TestFalseFriendRuleLoader_PostagNegate(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="ACCORD">
+    <rule>
+      <pattern lang="en">
+        <token inflected="yes" postag="NN.*" postag_regexp="yes">accord</token>
+      </pattern>
+      <translation lang="fr">accord</translation>
+    </rule>
+    <rule>
+      <pattern lang="fr">
+        <token negate="yes">na</token>
+        <token>accord</token>
+      </pattern>
+      <translation lang="en">chord</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	loader := NewFalseFriendRuleLoader("", "")
+	// EN text, FR mother: first rule only
+	rules, err := loader.GetRulesFromString(xml, "en", "fr")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.NotNil(t, rules[0].Tokens[0].Pos)
+	require.Equal(t, "NN.*", rules[0].Tokens[0].Pos.PosTag)
+	require.True(t, rules[0].Tokens[0].Pos.Regexp)
+
+	// FR text, EN mother: second rule with negate token
+	rulesFR, err := loader.GetRulesFromString(xml, "fr", "en")
+	require.NoError(t, err)
+	require.Len(t, rulesFR, 1)
+	require.True(t, rulesFR[0].Tokens[0].Negation)
+	require.Equal(t, "na", rulesFR[0].Tokens[0].Token)
 }
