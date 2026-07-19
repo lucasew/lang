@@ -969,3 +969,70 @@ func TestVerbNounException_PayInf(t *testing.T) {
 		atr("ідея", "noun:inanim:f:v_naz"),
 	}, 3, 4))
 }
+
+func TestVerbNounHardAdjAndVerbSide(t *testing.T) {
+	// hard: такого роду
+	require.True(t, IsVerbNounHardAdjNoun([]*languagetool.AnalyzedTokenReadings{
+		atr("висміювати", "verb"), atr("такого", "adj:m:v_rod"), atr("роду", "noun"),
+	}, 1, 0) >= 0)
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("висміювати", "verb"), atr("такого", "adj:m:v_rod"), atr("роду", "noun"),
+	}, 0, 1))
+
+	// сам
+	require.Equal(t, 1, IsVerbNounHardAdjNoun([]*languagetool.AnalyzedTokenReadings{
+		atr("йшов", "verb"), atrLemma("сам", strPtr("сам"), "adj"),
+	}, 1, 0))
+
+	// станом на phrase
+	require.True(t, IsVerbNounHardAdjNoun([]*languagetool.AnalyzedTokenReadings{
+		atr("є", "verb"), atr("станом"), atr("на"), atr("1"),
+	}, 1, 0) >= 0)
+
+	// exception verb: може
+	require.True(t, IsExceptionVerb([]*languagetool.AnalyzedTokenReadings{
+		atr("може", "verb"),
+	}, 0))
+	// мусити
+	require.True(t, IsExceptionVerb([]*languagetool.AnalyzedTokenReadings{
+		atrLemma("мусить", strPtr("мусити"), "verb"),
+	}, 0))
+	// як є
+	require.True(t, IsExceptionVerb([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("як"), atr("є", "verb"),
+	}, 2))
+	// pluperfect
+	require.True(t, IsExceptionVerbSkip([]*languagetool.AnalyzedTokenReadings{
+		atr("розпочав", "verb:perf:past:m"), atr("був", "verb"),
+	}, 1))
+}
+
+func TestNounVerbException_MorePlural(t *testing.T) {
+	// 22 льотчики загинуло
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("22"), atr("льотчики", "noun:anim:p:v_naz"),
+		atr("загинуло", "verb:perf:past:n"),
+	}, 2, 3))
+
+	// це + impers
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("це", "part"), atr("передбачено", "verb:impers"),
+	}, 0, 1))
+
+	// dash + це
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("—"), atr("це", "part"), atr("були", "verb"), atr("невільники", "noun"),
+	}, 2, 3))
+
+	// slash coordination
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("Колесніков", "noun"), atr("/"), atr("Ахметов", "noun:anim:m:v_naz:prop"),
+		atr("посилили", "verb:perf:past:p"),
+	}, 3, 4))
+
+	// conj plural: мама й сестра
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("мама", "noun:anim:f:v_naz"), atr("й", "conj"),
+		atr("сестра", "noun:anim:f:v_naz"), atr("мешкали", "verb:imperf:past:p"),
+	}, 3, 4))
+}

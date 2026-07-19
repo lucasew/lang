@@ -1973,9 +1973,115 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		if nounPos > 1 {
 			prevVerbIdx := ReverseSearchIdx(tokens, nounPos-1, 7, nil, regexp.MustCompile(`verb.*`))
 			if prevVerbIdx >= 0 && prevVerbIdx != verbPos {
-				// soft: if prev is finite verb, exception (full VerbInflection overlap deferred)
-				if !HasPosTagRE(tokens[prevVerbIdx], verbInfPattern) {
+				if VerbInflectionsOverlap(CollectPOSTags(tokens[prevVerbIdx]), CollectPOSTags(noun)) {
 					return true
+				}
+			}
+		}
+		// громадяни проголосувати зможуть — next finite verb agrees
+		if verbPos < len(tokens)-1 {
+			nextVerbPos := NewSearchMatch("").
+				IgnoreInsertsOn().
+				WithLimit(8).
+				Target(ConditionPostag(regexp.MustCompile(`verb.*`))).
+				MAfterATR(tokens, verbPos+1)
+			if nextVerbPos >= 0 &&
+				VerbInflectionsOverlap(CollectPOSTags(tokens[nextVerbPos]), CollectPOSTags(noun)) {
+				return true
+			}
+		}
+	}
+
+	// — це були невільники
+	if nounPos > 1 && verbPos < len(tokens)-1 &&
+		noun.GetToken() == "це" &&
+		DashesPattern.MatchString(tokens[nounPos-1].GetToken()) {
+		return true
+	}
+	// це не передбачено
+	if noun.GetToken() == "це" && HasPosTagPart(verb, "impers") {
+		return true
+	}
+
+	// 22 льотчики загинуло / два сини народилося
+	if nounPos > 1 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*:p:v_naz.*`)) &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*?past:n.*`)) {
+		prev := tokens[nounPos-1].GetCleanToken()
+		if regexp.MustCompile(`^\d+[234]$`).MatchString(prev) ||
+			containsStr([]string{"два", "три", "чотири"}, prev) {
+			return true
+		}
+	}
+
+	// зіркова пара … вирішили
+	if HasPosTagRE(verb, regexp.MustCompile(`verb.*:[fp](?:$|:.*)`)) {
+		if NewSearchMatch("").
+			Target(ConditionToken("пара")).
+			Skip(ConditionTokenRE(conjForPluralTokenRE).WithNegate()).
+			WithLimit(10).
+			MBeforeATR(tokens, nounPos-1) > 0 {
+			return true
+		}
+	}
+
+	// plural verb + coordination before subject
+	if HasPosTagRE(verb, regexp.MustCompile(`verb.*:p(?:$|:.*)`)) {
+		// Колесніков/Ахметов посилили
+		if nounPos > 2 &&
+			(tokens[nounPos-1].GetToken() == "/" || tokens[nounPos-2].GetToken() == "/") {
+			return true
+		}
+		// кефаль, барабуля, хамса
+		if nounPos > 2 &&
+			isConjForPluralWithComma(tokens[nounPos-1]) &&
+			HasPosTagRE(tokens[nounPos-2], nounVNazPattern) {
+			return true
+		}
+		// його побут, життєва поведінка
+		if nounPos > 3 &&
+			isConjForPluralWithComma(tokens[nounPos-2]) &&
+			HasPosTagRE(tokens[nounPos-3], nounVNazPattern) &&
+			adjNounInflectionOverlap(tokens[nounPos-1], noun) {
+			return true
+		}
+		// моя мама й сестра мешкали — conj before subject
+		m := &SearchMatch{IgnoreQuotes: true, Limit: 7}
+		m.Target(ConditionTokenRE(conjForPluralTokenRE))
+		m.Skip(ConditionPostag(regexp.MustCompile(`(?:noun.*?v_naz|(?:adj|numr):.:v_naz|adv|part).*`)))
+		pos0left := m.MBeforeATR(tokens, nounPos-1)
+		if pos0left > 0 && !IsNonPluralA(tokens, pos0left) {
+			pos0right := pos0left
+			if pos0left > 1 && tokens[pos0left-1] != nil && tokens[pos0left-1].GetToken() == "," {
+				pos0left--
+			}
+			if pos0left > 1 {
+				if pos0right > 2 {
+					// і та й інша
+					if pos0left < len(tokens)-1 &&
+						HasLemmaToken(tokens[pos0right+1], "інший") &&
+						HasLemmaToken(tokens[pos0left-1], "той") {
+						return true
+					}
+					// як Німеччина, так і Україна — conj before left
+					if HasPosTagPart(tokens[pos0left-1], "conj") {
+						return true
+					}
+					// він особисто й …
+					if containsStr([]string{"особисто", "зокрема", "загалом"}, CleanTokenLower(tokens[pos0left-1])) {
+						return true
+					}
+					if containsStr([]string{"особисто", "зокрема", "загалом"}, CleanTokenLower(tokens[verbPos-1])) {
+						return true
+					}
+					// ) before conj
+					if tokens[pos0left-1].GetToken() == ")" {
+						return true
+					}
+					// і уряд … і президент
+					if HasPosTagRE(tokens[pos0left-1], nounVNazPattern) {
+						return true
+					}
 				}
 			}
 		}
@@ -1983,6 +2089,9 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 
 	return false
 }
+
+// conjForPluralTokenRE matches CONJ_FOR_PLURAL surfaces (full-string).
+var conjForPluralTokenRE = regexp.MustCompile(`^(?i:і|а|й|та|чи|або|ані|також|то|a|i)$`)
 
 // Java TokenAgreementNounVerbExceptionHelper.INF_ARGREEMENT_PATTERN
 var infAgreementPattern = regexp.MustCompile(
@@ -2027,7 +2136,8 @@ func isAllUpper(s string) bool {
 	return hasLetter
 }
 
-// IsVerbNounException ports TokenAgreementVerbNounExceptionHelper early arms.
+// IsVerbNounException ports TokenAgreementVerbNounExceptionHelper.isException
+// plus hard-adj / skip / verb-side soft paths usable from the pair matcher.
 func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, nounPos int) bool {
 	if verbPos < 0 || nounPos <= verbPos {
 		return true
@@ -2038,6 +2148,18 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 	verb, noun := tokens[verbPos], tokens[nounPos]
 	if verb == nil || noun == nil {
 		return false
+	}
+
+	// verb-side: мусити / може / як є / будь то / pluperfect / спати
+	if IsExceptionVerb(tokens, verbPos) || IsExceptionVerbSkip(tokens, verbPos) {
+		return true
+	}
+	// hard adj/noun and insert skips at object position
+	if IsVerbNounHardAdjNoun(tokens, nounPos, verbPos) >= 0 {
+		return true
+	}
+	if IsVerbNounExceptionSkip(tokens, nounPos) >= 0 {
+		return true
 	}
 
 	// numr v_naz / quant + s/n verb (боротиметься кілька / входило двоє)
