@@ -56,18 +56,17 @@ func (r *MixedAlphabetsRule) Match(sentence *languagetool.AnalyzedSentence) []*r
 			msg := "Вжито кириличну літеру замість латинської"
 			ruleMatches = append(ruleMatches, r.createRuleMatch(tokenReadings, []string{toLatin(tokenString)}, msg, sentence))
 		} else if tokenString == "І." &&
-			i > 1 && tokens[i-1].GetToken() != "Тому" && tokens[i-1].GetToken() != "Франко" &&
-			isCapitalizedUk(tokens[i-1].GetToken()) {
-			// fname stand-in: capitalized previous word (Петро/Миколая І.)
+			i > 1 && cleanToken(tokens[i-1]) != "Тому" && cleanToken(tokens[i-1]) != "Франко" &&
+			// Java: PosTagHelper.hasPosTag(prev, "(?!.*:abbr).*fname.*") — fail closed without fname POS
+			hasFnameNotAbbrPOS(tokens[i-1]) {
 			msg := "Вжито кириличну літеру замість латинської"
 			ruleMatches = append(ruleMatches, r.createRuleMatchSpan(tokenReadings, endReadings, []string{toLatin(tokenString)}, msg, sentence))
 			if endReadings != tokenReadings {
 				i++ // skip joined period
 			}
 		} else if commonCyrLetters.MatchString(tokenString) {
-			// prev lemma гепатит|група|турнір — surface: prev ends with those stems or is "група"/"гепатиту"
-			prev := tokens[i-1].GetToken()
-			if isHepatitisGroupTournament(prev) {
+			// Java: prev lemma matches гепатит|група|турнір (first reading lemma only)
+			if prevLemmaMatchesGroup(tokens[i-1]) {
 				msg := "Вжито кириличну літеру замість латинської"
 				ruleMatches = append(ruleMatches, r.createRuleMatch(tokenReadings, []string{toLatin(tokenString)}, msg, sentence))
 			}
@@ -133,20 +132,25 @@ func (r *MixedAlphabetsRule) createRuleMatchSpan(from, to *languagetool.Analyzed
 	return rm
 }
 
+// mixedGroupLemmaRE ports prevLemma.matches("гепатит|група|турнір")
+var mixedGroupLemmaRE = regexp.MustCompile(`^(?:гепатит|група|турнір)$`)
+
 func likelyBadLatinI(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
+	// Java: i > 1 && (capitalized(prev) || (prep POS && next not all-upper) || next in lists)
 	if i <= 1 {
 		return false
 	}
-	prev := tokens[i-1].GetToken()
-	if isCapitalizedUk(prev) {
+	prevClean := cleanToken(tokens[i-1])
+	if IsCapitalized(prevClean) {
 		return true
 	}
-	// prep stand-in: short all-upper-or-title prepositions without full tagger
-	if isLikelyPrep(prev) && i < len(tokens)-1 && !isAllUppercaseUk(tokens[i+1].GetToken()) {
+	// PosTagHelper.hasPosTagStart(prev, "prep") — fail closed without prep POS
+	if hasPosTagStart(tokens[i-1], "prep") && i < len(tokens)-1 &&
+		!isAllUppercaseUk(cleanToken(tokens[i+1])) {
 		return true
 	}
 	if i < len(tokens)-1 {
-		next := tokens[i+1].GetToken()
+		next := cleanToken(tokens[i+1])
 		if next == "ст." || next == "тис." {
 			return true
 		}
@@ -158,43 +162,46 @@ func likelyBadLatinI(tokens []*languagetool.AnalyzedTokenReadings, i int) bool {
 	return false
 }
 
-func isLikelyPrep(s string) bool {
-	switch strings.ToLower(s) {
-	case "у", "в", "на", "за", "до", "з", "із", "про", "від":
-		return true
+// prevLemmaMatchesGroup ports tokens[i-1].getAnalyzedToken(0).getLemma() regex.
+func prevLemmaMatchesGroup(prev *languagetool.AnalyzedTokenReadings) bool {
+	if prev == nil {
+		return false
+	}
+	rds := prev.GetReadings()
+	if len(rds) == 0 || rds[0] == nil || rds[0].GetLemma() == nil {
+		return false
+	}
+	return mixedGroupLemmaRE.MatchString(*rds[0].GetLemma())
+}
+
+// hasFnameNotAbbrPOS ports Java Pattern "(?!.*:abbr).*fname.*" (RE2 has no lookaround).
+func hasFnameNotAbbrPOS(atr *languagetool.AnalyzedTokenReadings) bool {
+	if atr == nil {
+		return false
+	}
+	for _, at := range atr.GetReadings() {
+		if at == nil || at.GetPOSTag() == nil {
+			continue
+		}
+		pos := *at.GetPOSTag()
+		if strings.Contains(pos, ":abbr") {
+			continue
+		}
+		if strings.Contains(pos, "fname") {
+			return true
+		}
 	}
 	return false
 }
 
-func isHepatitisGroupTournament(prev string) bool {
-	pl := strings.ToLower(prev)
-	return strings.Contains(pl, "гепатит") || pl == "група" || strings.Contains(pl, "турнір")
-}
-
-func isCapitalizedUk(s string) bool {
-	if s == "" {
-		return false
+func cleanToken(t *languagetool.AnalyzedTokenReadings) string {
+	if t == nil {
+		return ""
 	}
-	// Require a multi-letter name (not "В." initials).
-	letters := 0
-	for _, c := range s {
-		if unicode.IsLetter(c) {
-			letters++
-		}
+	if c := t.GetCleanToken(); c != "" {
+		return c
 	}
-	if letters < 2 {
-		return false
-	}
-	r, size := utf8.DecodeRuneInString(s)
-	if !unicode.IsUpper(r) {
-		return false
-	}
-	for _, c := range s[size:] {
-		if unicode.IsLetter(c) && !unicode.IsLower(c) {
-			return false
-		}
-	}
-	return true
+	return t.GetToken()
 }
 
 func isAllUppercaseUk(s string) bool {
