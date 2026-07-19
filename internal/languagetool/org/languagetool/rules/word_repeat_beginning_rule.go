@@ -24,6 +24,9 @@ type WordRepeatBeginningRule struct {
 	IsSentenceException func(sentence *languagetool.AnalyzedSentence) bool
 	GetSuggestionsFn    func(token *languagetool.AnalyzedTokenReadings) []string
 	IDOverride          string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 func NewWordRepeatBeginningRule(messages map[string]string) *WordRepeatBeginningRule {
@@ -57,6 +60,34 @@ func (r *WordRepeatBeginningRule) GetCategory() *Category {
 		return nil
 	}
 	return r.Category
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *WordRepeatBeginningRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *WordRepeatBeginningRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *WordRepeatBeginningRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // GetLocQualityIssueType ports Rule.getLocQualityIssueType.

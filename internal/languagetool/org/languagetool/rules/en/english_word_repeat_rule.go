@@ -23,6 +23,11 @@ var logSignRE = regexp.MustCompile(`log(ged|s)?|sign(ed|s)?`)
 func NewEnglishWordRepeatRule(messages map[string]string) *EnglishWordRepeatRule {
 	base := rules.NewWordRepeatRule(messages)
 	base.IDOverride = "ENGLISH_WORD_REPEAT_RULE"
+	// Java: addExamplePair(is is → is)
+	base.AddExamplePair(
+		rules.Wrong("This <marker>is is</marker> just an example sentence."),
+		rules.Fixed("This <marker>is</marker> just an example sentence."),
+	)
 	r := &EnglishWordRepeatRule{WordRepeatRule: base}
 	base.ExtraIgnore = r.englishIgnore
 	return r

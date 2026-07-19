@@ -62,6 +62,17 @@ func TestEnglishWordRepeatBeginningRule_Rule(t *testing.T) {
 	require.True(t, has("As well as"))
 }
 
+// Java EnglishWordRepeatBeginningRule: id + Moreover example pair.
+func TestEnglishWordRepeatBeginningRule_Metadata(t *testing.T) {
+	rule := NewEnglishWordRepeatBeginningRule(nil)
+	require.Equal(t, "ENGLISH_WORD_REPEAT_BEGINNING_RULE", rule.GetID())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "Moreover, the street is almost entirely residential. <marker>Moreover</marker>, it was named after a poet.", inc[0].GetExample())
+	require.Equal(t, []string{"It"}, inc[0].GetCorrections())
+	require.Equal(t, "Moreover, the street is almost entirely residential. <marker>It</marker> was named after a poet.", rule.GetCorrectExamples()[0].GetExample())
+}
+
 // analyzeENWRB injects PRP on first content token of each sentence when surface is a personal pronoun form.
 func analyzeENWRB(text string) []*languagetool.AnalyzedSentence {
 	parts := languagetool.SplitAndAnalyze(text)

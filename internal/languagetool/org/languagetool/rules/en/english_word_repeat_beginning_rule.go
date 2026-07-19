@@ -33,6 +33,11 @@ var (
 func NewEnglishWordRepeatBeginningRule(messages map[string]string) *EnglishWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "ENGLISH_WORD_REPEAT_BEGINNING_RULE"
+	// Java: addExamplePair(Moreover… Moreover → Moreover… It)
+	base.AddExamplePair(
+		rules.Wrong("Moreover, the street is almost entirely residential. <marker>Moreover</marker>, it was named after a poet."),
+		rules.Fixed("Moreover, the street is almost entirely residential. <marker>It</marker> was named after a poet."),
+	)
 	r := &EnglishWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsExceptionFn = r.isException
 	base.IsAdverbFn = r.isAdverb

@@ -88,6 +88,17 @@ func TestEnglishWordRepeatRule_PosIsInFailClosed(t *testing.T) {
 	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("The can can hold water."))))
 }
 
+// Java EnglishWordRepeatRule: ENGLISH_WORD_REPEAT_RULE id + is is example pair.
+func TestEnglishWordRepeatRule_Metadata(t *testing.T) {
+	rule := NewEnglishWordRepeatRule(nil)
+	require.Equal(t, "ENGLISH_WORD_REPEAT_RULE", rule.GetID())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "This <marker>is is</marker> just an example sentence.", inc[0].GetExample())
+	require.Equal(t, []string{"is"}, inc[0].GetCorrections())
+	require.Equal(t, "This <marker>is</marker> just an example sentence.", rule.GetCorrectExamples()[0].GetExample())
+}
+
 // injectPOSBySurface adds POS readings to every non-whitespace token whose surface
 // equals (case-insensitive) a map key — enough for Java posIsIn twin checks without a tagger.
 // Special: "can" only tags the first occurrence (noun can before modal can).

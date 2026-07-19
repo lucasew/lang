@@ -22,6 +22,9 @@ type WordRepeatRule struct {
 	CreateMatchFn func(r *WordRepeatRule, sentence *languagetool.AnalyzedSentence, prevToken, token string, prevPos, pos int, msg string) *RuleMatch
 	// IDOverride when non-empty replaces the default WORD_REPEAT_RULE id.
 	IDOverride string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 func NewWordRepeatRule(messages map[string]string) *WordRepeatRule {
@@ -63,6 +66,34 @@ func (r *WordRepeatRule) GetLocQualityIssueType() ITSIssueType {
 		return ITSDuplication
 	}
 	return r.IssueType
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *WordRepeatRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *WordRepeatRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *WordRepeatRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // EstimateContextForSureMatch ports estimateContextForSureMatch (Java returns 1).
