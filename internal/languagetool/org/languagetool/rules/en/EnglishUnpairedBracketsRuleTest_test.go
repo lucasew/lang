@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,4 +34,20 @@ func TestEnglishUnpairedBracketsRule_MultipleSentences(t *testing.T) {
 		languagetool.AnalyzePlain("Still fine."),
 	}
 	require.Equal(t, 0, len(rule.MatchList(sents)))
+}
+
+// Java EnglishUnpairedBracketsRule: EN_UNPAIRED_BRACKETS, parentheses URL, example pair.
+func TestEnglishUnpairedBracketsRule_Metadata(t *testing.T) {
+	rule := NewEnglishUnpairedBracketsRule(nil)
+	require.Equal(t, "EN_UNPAIRED_BRACKETS", rule.GetID())
+	require.Contains(t, rule.GetURL(), "what-are-parentheses")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "PUNCTUATION", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSTypographical, rule.GetLocQualityIssueType())
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "He lived in a <marker>(</marker>large house.", inc[0].GetExample())
+	// Java Rule.addExamplePair uses first fixed <marker> span as correction
+	require.Equal(t, []string{"("}, inc[0].GetCorrections())
+	require.Contains(t, rule.GetCorrectExamples()[0].GetExample(), "large")
 }
