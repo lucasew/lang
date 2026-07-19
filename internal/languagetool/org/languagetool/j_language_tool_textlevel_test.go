@@ -12,6 +12,13 @@ import (
 func TestEnglishCore_WordRepeatBeginning(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("en")
 	en.RegisterCoreEnglishLanguageRules(lt)
+	// Inject PRP on "I" (Java EnglishTagger); getSuggestions is PRP-gated (no surface invent).
+	lt.TagWord = func(token string) []languagetool.TokenTag {
+		if token == "I" {
+			return []languagetool.TokenTag{{POS: "PRP", Lemma: "I"}}
+		}
+		return nil
+	}
 	// three successive "I" starts → text-level match
 	m := lt.Check("I think so. I have seen that before. I don't like it.")
 	found := false

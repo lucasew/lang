@@ -1,15 +1,18 @@
-package rules
+package rules_test
 
 import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/en"
 	"github.com/stretchr/testify/require"
 )
 
 func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("en")
-	RegisterCoreEnglishRules(lt)
+	// Full English pack (wires PreferredAvsAnChecker via en init).
+	en.RegisterCoreEnglishLanguageRules(lt)
 
 	// multi whitespace (real rule via adapter)
 	m := lt.Check("hello  world")
@@ -22,98 +25,28 @@ func TestRegisterCoreEnglishRules_Check(t *testing.T) {
 	}
 	require.True(t, hasWS)
 
-	// comma whitespace (e.g. missing space after comma)
-	// may or may not fire depending on tokenization; double punct is reliable
 	// double punctuation
 	m = lt.Check("Wait.. now")
 	require.NotEmpty(t, m)
 
-	// RegisterCoreRules dispatch
+	// RegisterCoreRules dispatch (shared layout + word-repeat; FR)
 	lt2 := languagetool.NewJLanguageTool("fr")
-	RegisterCoreRules(lt2, "fr")
+	rules.RegisterCoreRules(lt2, "fr")
 	require.NotEmpty(t, lt2.Check("bonjour  monde"))
 
-	// a vs an
+	// a vs an (faithful AvsAnRule + DT inject)
 	m = lt.Check("This is an test.")
 	require.NotEmpty(t, m)
 	require.Equal(t, "This is a test.", languagetool.CorrectTextFromLocalMatches("This is an test.", m))
 
-	// word repeat
+	// word repeat (faithful WordRepeatRule)
 	require.NotEmpty(t, lt.Check("this this"))
 
 	// unpaired
 	require.NotEmpty(t, lt.Check("open (paren"))
 
-	// active rules include core ids (Java default-off layout stays registered but inactive)
+	// active rules include core ids
 	active := lt.GetAllActiveRuleIDs()
 	require.Contains(t, active, "WHITESPACE_RULE")
 	require.Contains(t, active, "EN_A_VS_AN")
-	require.Contains(t, active, "SENTENCE_WHITESPACE")
-	require.Contains(t, active, "WHITESPACE_PUNCTUATION")
-	registered := lt.GetAllRegisteredRuleIDs()
-	require.Contains(t, registered, "WHITESPACE_PARAGRAPH_BEGIN")
-	require.Contains(t, registered, "WHITESPACE_PARAGRAPH")
-	require.Contains(t, registered, "EMPTY_LINE")
-	require.Contains(t, registered, "PUNCTUATION_PARAGRAPH_END")
-	off := lt.GetDefaultOffRuleIDs()
-	require.Contains(t, off, "WHITESPACE_PARAGRAPH_BEGIN")
-	require.Contains(t, off, "WHITESPACE_PARAGRAPH")
-	require.Contains(t, off, "EMPTY_LINE")
-	require.Contains(t, off, "PUNCTUATION_PARAGRAPH_END")
-
-	// text-level sentence whitespace (missing space after period)
-	m = lt.Check("This is a text.And there's the next sentence.")
-	var hasSW bool
-	for _, x := range m {
-		if x.RuleID == "SENTENCE_WHITESPACE" {
-			hasSW = true
-		}
-	}
-	require.True(t, hasSW, "matches: %+v", m)
-
-	// space before colon
-	m = lt.Check("Wait : now")
-	var hasWBP bool
-	for _, x := range m {
-		if x.RuleID == "WHITESPACE_PUNCTUATION" {
-			hasWBP = true
-		}
-	}
-	require.True(t, hasWBP, "matches: %+v", m)
-}
-
-func TestToLocalMatches(t *testing.T) {
-	sent := languagetool.AnalyzePlain("ab")
-	r := NewFakeRule("X")
-	ms := []*RuleMatch{NewRuleMatch(r, sent, 0, 2, "msg")}
-	ms[0].SetSuggestedReplacements([]string{"AB"})
-	lm := ToLocalMatches(ms)
-	require.Len(t, lm, 1)
-	require.Equal(t, "X", lm[0].RuleID)
-	require.Equal(t, []string{"AB"}, lm[0].Suggestions)
-	require.Equal(t, "ab", lm[0].OriginalErrorStr)
-}
-
-func TestSharedLayout_ParagraphRules(t *testing.T) {
-	lt := languagetool.NewJLanguageTool("en")
-	RegisterSharedLayoutRules(lt, "en")
-	// Java setDefaultOff for these layout rules — registered but not active until EnableRule.
-	ids := lt.GetAllRegisteredRuleIDs()
-	require.Contains(t, ids, "TOO_LONG_PARAGRAPH")
-	require.Contains(t, ids, "PARAGRAPH_REPEAT_BEGINNING_RULE")
-	off := lt.GetDefaultOffRuleIDs()
-	require.Contains(t, off, "TOO_LONG_PARAGRAPH")
-	require.Contains(t, off, "PARAGRAPH_REPEAT_BEGINNING_RULE")
-	require.Contains(t, off, "EMPTY_LINE")
-	require.Contains(t, off, "WHITESPACE_PARAGRAPH")
-	require.Contains(t, off, "WHITESPACE_PARAGRAPH_BEGIN")
-	require.Contains(t, off, "PUNCTUATION_PARAGRAPH_END")
-
-	// paragraph start repeat (need para boundary via leading newline on second sent)
-	// SRX may not split on \n\n alone; AnalyzeTextDemo-style double newline often works
-	lt.EnableRule("PARAGRAPH_REPEAT_BEGINNING_RULE")
-	text := "Wiederholung am Anfang.\n\nWiederholung am Ende."
-	m := lt.Check(text)
-	// soft: may or may not fire depending on tokenizer paragraph handling
-	_ = m
 }

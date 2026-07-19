@@ -326,10 +326,12 @@ func RegisterCoreEnglishRules(lt *languagetool.JLanguageTool) {
 	wr := NewWordRepeatRule(map[string]string{"repetition": "Word repetition"})
 	lt.AddRuleChecker(wr.GetID(), AsSentenceCheckerSimple(wr.Match))
 
-	lt.AddRuleChecker("EN_A_VS_AN", languagetool.SimpleAvsAnChecker())
-	lt.AddRuleChecker("PHRASE_REPLACE", languagetool.SimplePhraseReplaceChecker("PHRASE_REPLACE", map[string]string{
-		"tot he": "to the",
-	}))
+	// Full EN AvsAn uses package en (PreferredAvsAnChecker). When en is not imported,
+	// skip rather than soft invent (RegisterCoreEnglishLanguageRules wires it).
+	if languagetool.PreferredAvsAnChecker != nil {
+		lt.AddRuleChecker("EN_A_VS_AN", languagetool.PreferredAvsAnChecker)
+	}
+	// Soft invent PHRASE_REPLACE packs removed (faithful-port: use grammar.xml when loaded).
 }
 
 // RegisterCoreRules picks a language-appropriate core pack (shared layout + base word-repeat).

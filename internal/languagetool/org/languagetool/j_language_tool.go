@@ -1133,50 +1133,18 @@ func sameRuleGroupOverlapLocal(match, next LocalMatch) bool {
 	return match.FromPos <= next.ToPos && match.ToPos >= next.FromPos
 }
 
-// SimpleWordRepeatChecker flags consecutive equal word tokens (case-sensitive surface).
-// Soft stand-in for GermanWordRepeatRule / WordRepeatRule inject.
+// PreferredWordRepeatFactory is set by package rules to the faithful WordRepeatRule
+// checker (Java equalsIgnoreCase + ignore list). When nil, SimpleWordRepeatChecker
+// fails closed (no soft case-sensitive invent).
+var PreferredWordRepeatFactory func(ruleID string) SentenceChecker
+
+// SimpleWordRepeatChecker returns the faithful WordRepeatRule path when wired.
+// Soft case-sensitive surface invent was removed.
 func SimpleWordRepeatChecker(ruleID string) SentenceChecker {
-	if ruleID == "" {
-		ruleID = "WORD_REPEAT_RULE"
+	if PreferredWordRepeatFactory != nil {
+		return PreferredWordRepeatFactory(ruleID)
 	}
-	return func(sentence *AnalyzedSentence) []LocalMatch {
-		if sentence == nil {
-			return nil
-		}
-		toks := sentence.GetTokensWithoutWhitespace()
-		var out []LocalMatch
-		var prevTok *AnalyzedTokenReadings
-		for _, tok := range toks {
-			if tok == nil || tok.IsSentenceStart() {
-				continue
-			}
-			// Content tokens may also carry SENT_END (Java last-token reading);
-			// only skip pure boundary markers without a word surface.
-			w := tok.GetToken()
-			if w == "" {
-				prevTok = nil
-				continue
-			}
-			if tok.IsSentenceEnd() && !hasLetterLocal(w) {
-				continue
-			}
-			if !hasLetterLocal(w) {
-				prevTok = nil
-				continue
-			}
-			if prevTok != nil && prevTok.GetToken() == w {
-				out = append(out, LocalMatch{
-					FromPos:      prevTok.GetStartPos(),
-					ToPos:        tok.GetEndPos(),
-					Message:      "Word repetition",
-					ShortMessage: "Word repetition",
-					RuleID:       ruleID,
-				})
-			}
-			prevTok = tok
-		}
-		return out
-	}
+	return func(*AnalyzedSentence) []LocalMatch { return nil }
 }
 
 // KnownWordSet builds an IsKnownWord from a set of dictionary forms (case-sensitive).
