@@ -543,8 +543,144 @@ func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, 
 	if prepLower == "з" && nounClean == "рана" {
 		return true
 	}
+	// від а/рана/корки/мала
+	if prepLower == "від" {
+		if strings.EqualFold(nounClean, "а") || nounClean == "рана" || nounClean == "корки" || nounClean == "мала" {
+			return true
+		}
+	}
+	// до я/корки/велика
+	if prepLower == "до" {
+		if strings.EqualFold(nounClean, "я") || nounClean == "корки" || nounClean == "велика" {
+			return true
+		}
+	}
+
+	if nounPos < len(tokens)-1 {
+		next := tokens[nounPos+1]
+		// від мінус 1 / плюс 1
+		if (HasPosTagStart(next, "num") || (next != nil && next.GetToken() == "$")) &&
+			IsPlusMinusLemma(nounLower) {
+			return true
+		}
+		// на мохом стеленому — skip v_oru before adjp:pasv (Java RuleException(1) → treat as exception)
+		if HasPosTagRE(noun, regexp.MustCompile(`noun.*?:v_oru.*`)) &&
+			next != nil && next.HasPartialPosTag("adjp:pasv") {
+			return true
+		}
+		if nounClean == "святая" && next != nil && next.GetToken() == "святих" {
+			return true
+		}
+		// через/на + TIME_PLUS p:v_rod|v_zna + num
+		if prepLower == "через" || prepLower == "на" {
+			if HasLemmaWithPosRE(noun, TimePlusLemmaList(), regexp.MustCompile(`noun:inanim:p:v_(rod|zna).*`)) &&
+				(next.HasPartialPosTag("num") ||
+					(nounPos < len(tokens)-2 &&
+						HasLemmaTokenAny(next, []string{"зо", "з", "із"}) &&
+						tokens[nounPos+2] != nil && tokens[nounPos+2].HasPartialPosTag("num"))) {
+				return true
+			}
+		}
+		// noun v_dav refl/pers + подібн*
+		if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_dav.*:pron:(refl|pers).*`)) &&
+			strings.HasPrefix(CleanTokenLower(next), "подібн") {
+			return true
+		}
+		if (nounClean == "усім" || nounClean == "всім") && strings.HasPrefix(CleanTokenLower(next), "відом") {
+			return true
+		}
+		if prepLower == "до" && nounClean == "схід" && next != nil && next.GetCleanToken() == "сонця" {
+			return true
+		}
+	}
+	if nounPos < len(tokens)-2 {
+		// adj m/f/n v_rod + matching gender noun v_rod → skip (Java RuleException(1))
+		if HasPosTagRE(noun, regexp.MustCompile(`adj:[mfn]:v_rod.*`)) {
+			genders := gendersFromPos(noun, regexp.MustCompile(`adj:([mfn]):v_rod.*`))
+			if genders != "" && HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*?:[`+genders+`]:v_rod.*`)) {
+				return true
+			}
+		}
+		// нікому/ніким… + не
+		if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_(dav|oru).*:pron:neg.*`)) &&
+			tokens[nounPos+1] != nil && tokens[nounPos+1].GetCleanToken() == "не" {
+			return true
+		}
+	}
 
 	return false
+}
+
+// IsPlusMinusLemma ports LemmaHelper.PLUS_MINUS membership on surface lower.
+func IsPlusMinusLemma(tokenLower string) bool {
+	switch tokenLower {
+	case "плюс", "мінус", "максимум", "мінімум":
+		return true
+	}
+	return false
+}
+
+// TimePlusLemmaList returns TIME_PLUS_LEMMAS as a slice for HasLemmaWithPosRE.
+func TimePlusLemmaList() []string {
+	out := make([]string, 0, len(TimePlusLemmas))
+	for s := range TimePlusLemmas {
+		out = append(out, s)
+	}
+	return out
+}
+
+// HasPosTagStart ports PosTagHelper.hasPosTagStart (any reading starts with prefix).
+func HasPosTagStart(tok *languagetool.AnalyzedTokenReadings, prefix string) bool {
+	if tok == nil || prefix == "" {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.HasPrefix(p, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// hasPosWithoutPron is RE2-friendly stand-in for Java (?!.*pron) POS patterns.
+func hasPosWithoutPron(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if strings.Contains(p, "pron") {
+			continue
+		}
+		if re.MatchString(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// gendersFromPos collects gender letters matching re with one capture group [mfn].
+func gendersFromPos(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) string {
+	if tok == nil || re == nil {
+		return ""
+	}
+	seen := map[byte]bool{}
+	var b strings.Builder
+	for _, p := range CollectPOSTags(tok) {
+		m := re.FindStringSubmatch(p)
+		if len(m) < 2 {
+			continue
+		}
+		g := m[1]
+		if g == "" {
+			continue
+		}
+		c := g[0]
+		if !seen[c] {
+			seen[c] = true
+			b.WriteByte(c)
+		}
+	}
+	return b.String()
 }
 
 func isNameToken(tok *languagetool.AnalyzedTokenReadings) bool {
@@ -559,9 +695,56 @@ func isNameLemma(tok *languagetool.AnalyzedTokenReadings) bool {
 	return HasLemmaTokenAny(tok, []string{"ім'я", "прізвище"})
 }
 
-// IsNumrNounException stub.
+// IsNumrNounException ports TokenAgreementNumrNounExceptionHelper surface arms
+// (inflection-overlap arms deferred). Invalid layout → exception.
 func IsNumrNounException(tokens []*languagetool.AnalyzedTokenReadings, numrPos, nounPos int) bool {
-	return numrPos < 0 || nounPos <= numrPos
+	if numrPos < 0 || nounPos <= numrPos || numrPos >= len(tokens) || nounPos >= len(tokens) {
+		return true
+	}
+	numr, noun := tokens[numrPos], tokens[nounPos]
+	if numr == nil || noun == nil {
+		return true
+	}
+	numrLower := CleanTokenLower(numr)
+	nounLower := CleanTokenLower(noun)
+
+	// для багатьох/обох/двох/… — Java full-string matches
+	if regexp.MustCompile(`^(багать(ох|ом|ма)|обо(х|м|ма)|(дв|трь|чотирь)о[хм]|скільки(сь)?(-небудь)?|стільки)$`).MatchString(numrLower) {
+		return true
+	}
+	// плюс|мінус|ранку|…
+	if regexp.MustCompile(`^(плюс|мінус|ранку|вечора|ночі|тепла|морозу|родом|зростом|дивом|станом|вагою|слід|типу|формату|вартістю|році|населення)$`).MatchString(nounLower) {
+		return true
+	}
+	// lemma set on noun
+	if HasLemmaTokenRE(noun, regexp.MustCompile(`^(у?весь|який(сь)?|свій|сам|цей|решта|кількість|вартий|кожний|жодний|менший|більший|вищий|нижчий)$`)) {
+		return true
+	}
+	// півтора + adj:p + noun:p:v_naz
+	if nounPos < len(tokens)-1 &&
+		regexp.MustCompile(`^(один-|одне-)?півтора|(одна-)?півтори$`).MatchString(CleanTokenLower(numr)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`adj:p:v_(naz|rod).*`)) &&
+		HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*?:p:v_naz.*`)) {
+		return true
+	}
+	// У свої вісімдесят пан Василь
+	if numrPos > 2 &&
+		HasPosTagStart(tokens[numrPos-2], "prep") &&
+		CleanTokenLower(tokens[numrPos-1]) == "свої" &&
+		HasPosTagRE(numr, regexp.MustCompile(`numr:p:v_zna.*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:anim:.:v_naz.*`)) {
+		return true
+	}
+	// два провінційного вигляду персонажі
+	// Java: noun:inanim:.:v_rod(?!.*pron) / noun(?!.*pron) — RE2 has no lookahead; filter :pron in Go.
+	if nounPos <= len(tokens)-3 &&
+		HasPosTagRE(noun, regexp.MustCompile(`adj:.:v_rod.*`)) &&
+		hasPosWithoutPron(tokens[nounPos+1], regexp.MustCompile(`noun:inanim:.:v_rod`)) &&
+		hasPosWithoutPron(tokens[nounPos+2], regexp.MustCompile(`^noun`)) {
+		return true
+	}
+
+	return false
 }
 
 // IsNounVerbException stub.

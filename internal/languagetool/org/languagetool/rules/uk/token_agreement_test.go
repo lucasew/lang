@@ -193,3 +193,29 @@ func TestPrepNounException_EarlyArms(t *testing.T) {
 		atr("домі", "noun:inanim:m:v_mis"),
 	}, 0, 1))
 }
+
+func TestPrepNounException_VidDoPlusMinus(t *testing.T) {
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("від", "prep"), atr("а", "part"),
+	}, 0, 1))
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("до", "prep"), atr("я", "noun"),
+	}, 0, 1))
+	// мінус 1
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("від", "prep"), atr("мінус", "noun"), atr("1", "num"),
+	}, 0, 1))
+}
+
+func TestNumrNounException_SurfaceArms(t *testing.T) {
+	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("багатьох", "numr:p:v_rod"), atr("людей", "noun:anim:p:v_rod"),
+	}, 0, 1))
+	require.True(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("дві", "numr:f:v_naz"), atr("ранку", "noun:inanim:m:v_rod"),
+	}, 0, 1))
+	// ordinary pair not covered by these surface arms
+	require.False(t, IsNumrNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("дві", "numr:f:v_naz"), atr("книги", "noun:inanim:f:v_naz"),
+	}, 0, 1))
+}
