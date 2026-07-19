@@ -38,9 +38,8 @@ func (d *UkrainianHybridDisambiguator) Disambiguate(in *languagetool.AnalyzedSen
 	}
 	if out != nil {
 		DisambiguateYih(out)
-		for _, tok := range out.GetTokensWithoutWhitespace() {
-			RemoveVmisReadings(tok)
-		}
+		// Java removeVmis is sentence-level (startCheck + V_MIS_PREPS early return)
+		RemoveVmis(out)
 		RetagFemNames(out)
 		RetagInitials(out)
 		RetagUnknownInitials(out)

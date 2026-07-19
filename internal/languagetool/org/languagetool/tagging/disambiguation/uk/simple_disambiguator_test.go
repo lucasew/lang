@@ -49,6 +49,30 @@ func TestSimpleDisambiguator_RemoveRareForms(t *testing.T) {
 	require.False(t, out2.GetTokensWithoutWhitespace()[1].HasPartialPosTag("noun"))
 }
 
+func TestRemoveVmis_SentenceLevel(t *testing.T) {
+	// Java: after prep "в" (v_mis prep) → return and leave later v_mis
+	start := atrSent("SENT_START", "SENT_START")
+	prep := atrSent("в", "prep")
+	// dual-case noun after v_mis prep should keep v_mis (early return)
+	noun := atrMulti("домі", [][2]string{
+		{"дім", "noun:inanim:m:v_mis"},
+		{"дім", "noun:inanim:m:v_dav"},
+	})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, prep, noun})
+	RemoveVmis(sent)
+	require.True(t, sent.GetTokensWithoutWhitespace()[2].HasPartialPosTag("v_mis"))
+
+	// without v_mis prep, capitalized start → drop v_mis when other cases present
+	noun2 := atrMulti("Зв'язку", [][2]string{
+		{"зв'язок", "noun:inanim:m:v_mis"},
+		{"зв'язок", "noun:inanim:m:v_rod"},
+	})
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, noun2})
+	RemoveVmis(sent2)
+	require.False(t, sent2.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_mis"))
+	require.True(t, sent2.GetTokensWithoutWhitespace()[1].HasPartialPosTag("v_rod"))
+}
+
 func TestRemoveVmisReadings(t *testing.T) {
 	a := atr("зв'язку", [][2]string{
 		{"зв'язок", "noun:inanim:m:v_mis"},

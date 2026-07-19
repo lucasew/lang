@@ -9,6 +9,7 @@ import (
 	"unicode"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	rulesuk "github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/uk"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/disambiguation"
 )
 
@@ -313,7 +314,7 @@ func lookupMatcher(token string, removeMap map[string]*TokenMatcher) *TokenMatch
 	return nil
 }
 
-// RemoveVmisReadings drops v_mis when another non-end reading remains (soft green).
+// RemoveVmisReadings drops v_mis when another non-end reading remains (token-local helper).
 func RemoveVmisReadings(atr *languagetool.AnalyzedTokenReadings) {
 	if atr == nil || !canRemoveVmis(atr.GetReadings()) {
 		return
@@ -343,4 +344,107 @@ func canRemoveVmis(analyzed []*languagetool.AnalyzedToken) bool {
 		}
 	}
 	return false
+}
+
+var (
+	vMisPrepOnce sync.Once
+	vMisPreps    map[string]struct{}
+	// Java PATTERN_1 for removeVmis startCheck
+	vMisStartWordRE = regexp.MustCompile(`^[а-яіїєґa-z0-9].*`)
+)
+
+// loadVMisPreps ports V_MIS_PREPS from CaseGovernmentHelper map + y/B.
+func loadVMisPreps() map[string]struct{} {
+	vMisPrepOnce.Do(func() {
+		out := map[string]struct{}{}
+		cg := rulesuk.LoadCaseGovernmentHelper()
+		if cg != nil {
+			for lemma, cases := range cg.Map {
+				if _, ok := cases["v_mis"]; ok {
+					out[strings.ToLower(lemma)] = struct{}{}
+				}
+			}
+		}
+		// Java static: Latin y/B often used instead of real prep
+		out["y"] = struct{}{}
+		out["b"] = struct{}{} // lower of "B"
+		out["B"] = struct{}{}
+		vMisPreps = out
+	})
+	return vMisPreps
+}
+
+// RemoveVmis ports UkrainianHybridDisambiguator.removeVmis (sentence-level).
+// Starts after first prep or capitalized word; aborts when a v_mis prep is seen.
+func RemoveVmis(input *languagetool.AnalyzedSentence) {
+	if input == nil {
+		return
+	}
+	preps := loadVMisPreps()
+	tokens := input.GetTokensWithoutWhitespace()
+	startCheck := false
+	for i := 1; i < len(tokens); i++ {
+		tok := tokens[i]
+		if tok == nil || tok.GetToken() == "" {
+			continue
+		}
+		lower := strings.ToLower(tok.GetToken())
+		hasPrep := hasPOSPart(tok, "prep")
+
+		if !startCheck {
+			if hasPrep {
+				startCheck = true
+			} else if vMisStartWordRE.MatchString(lower) {
+				// Java: all-lowercase non-prep → continue without startCheck
+				if isAllLowerCaseToken(tok.GetToken()) {
+					continue
+				}
+				startCheck = true
+			}
+		}
+
+		if hasPrep {
+			if _, ok := preps[lower]; ok {
+				return // Java: leave rest of sentence alone
+			}
+		}
+
+		if !startCheck {
+			continue
+		}
+		if !canRemoveVmis(tok.GetReadings()) {
+			continue
+		}
+		readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
+		for _, r := range readings {
+			if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), "v_mis") {
+				tok.RemoveReading(r, "dis_v_mis")
+			}
+		}
+	}
+}
+
+func hasPOSPart(tok *languagetool.AnalyzedTokenReadings, part string) bool {
+	if tok == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), part) {
+			return true
+		}
+	}
+	return false
+}
+
+func isAllLowerCaseToken(s string) bool {
+	hasLetter := false
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			hasLetter = true
+			if !unicode.IsLower(r) {
+				return false
+			}
+		}
+	}
+	return hasLetter
 }
