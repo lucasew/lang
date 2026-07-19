@@ -281,9 +281,9 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 				return true
 			}
 		}
-		// у/в середньому|цілому|основному|подальшому
-		if regexp.MustCompile(`(?iu)^(середньому|цілому|основному|подальшому)$`).MatchString(CleanTokenLower(adj)) &&
-			regexp.MustCompile(`(?iu)^[ву]$`).MatchString(CleanTokenLower(prev)) {
+		// у/в середньому|цілому|основному|подальшому (compare lowercased; RE2 has no (?iu))
+		if regexp.MustCompile(`^(середньому|цілому|основному|подальшому)$`).MatchString(CleanTokenLower(adj)) &&
+			regexp.MustCompile(`^[ву]$`).MatchString(CleanTokenLower(prev)) {
 			return true
 		}
 		// лава запасних
@@ -330,6 +330,128 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 		return true
 	}
 
+	// --- further TokenAgreementAdjNounExceptionHelper arms (surface/lemma; no invent) ---
+
+	// на повну людей
+	if adjPos > 1 && adj.GetToken() == "повну" && strings.EqualFold(tokens[adjPos-1].GetToken(), "на") {
+		return true
+	}
+	// у Другій світовій (f: + f:)
+	if adjPos > 1 &&
+		HasLemmaWithPartPos(adj, []string{"світовий"}, ":f:") &&
+		HasLemmaWithPartPos(tokens[adjPos-1], []string{"другий", "перший"}, ":f:") {
+		return true
+	}
+	// знайдений увечері понеділка
+	if nounPos > 1 &&
+		HasLemmaTokenAny(tokens[nounPos-1], []string{"увечері", "уранці", "ввечері", "вранці"}) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*v_rod.*`)) {
+		return true
+	}
+	// площею 100 кв. м / довжиною до 500
+	if nounPos < len(tokens)-1 {
+		nt := noun.GetToken()
+		for _, w := range []string{"площею", "об'ємом", "довжиною", "висотою", "зростом"} {
+			if nt == w && HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`prep.*|.*num.*`)) {
+				return true
+			}
+		}
+	}
+	// 10 метрів квадратних води
+	if adjPos > 1 &&
+		HasLemmaTokenRE(tokens[adjPos-1], regexp.MustCompile(`.*метр.*`)) &&
+		HasLemmaTokenRE(adj, regexp.MustCompile(`^(квадратний|кубічний)$`)) &&
+		HasPosTagPart(noun, "v_rod") {
+		return true
+	}
+	// 200% річних
+	if adjPos > 1 && strings.HasSuffix(tokens[adjPos-1].GetToken(), "%") && adj.GetToken() == "річних" {
+		return true
+	}
+	// пасли задніх / не мати рівних
+	if adjPos > 1 {
+		if HasLemmaToken(tokens[adjPos-1], "пасти") && adj.GetToken() == "задніх" {
+			return true
+		}
+		if HasLemmaToken(tokens[adjPos-1], "мати") && adj.GetToken() == "рівних" {
+			return true
+		}
+		// на манер
+		if CleanTokenLower(noun) == "манер" && strings.EqualFold(tokens[adjPos-1].GetToken(), "на") {
+			return true
+		}
+		// усі до єдиного
+		if adjPos > 2 && adj.GetToken() == "єдиного" && tokens[adjPos-1].GetToken() == "до" &&
+			HasLemmaWithPartPos(tokens[adjPos-2], []string{"весь", "увесь"}, ":p:") {
+			return true
+		}
+		// порядок денний
+		if HasLemmaToken(adj, "денний") && HasLemmaToken(tokens[adjPos-1], "порядок") {
+			return true
+		}
+	}
+	// сильні світу/миру (цього)
+	if nounPos < len(tokens)-1 {
+		nc := CleanTokenLower(noun)
+		if nc == "миру" || nc == "світу" {
+			if HasLemmaTokenAny(adj, []string{"сильний", "могутній", "великий"}) ||
+				HasLemmaWithPartPos(tokens[nounPos+1], []string{"цей", "сей"}, ":m:v_rod") {
+				return true
+			}
+		}
+	}
+	// колишня Маяковського
+	if HasLemmaWithPosRE(adj, []string{"колишній", "тодішній", "теперішній", "нинішній"}, regexp.MustCompile(`adj.*:f:.*`)) &&
+		isUpperFirst(noun.GetToken()) {
+		return true
+	}
+	// імені / ім. / ордена
+	if nounPos < len(tokens)-1 {
+		nt := noun.GetToken()
+		if nt == "ім." || nt == "імені" || nt == "ордена" {
+			return true
+		}
+	}
+	// на дівоче Анна
+	if adj.GetToken() == "дівоче" && HasPosTagPart(noun, "name") {
+		return true
+	}
+	// вольному/вільному воля
+	al := strings.ToLower(adj.GetToken())
+	if (al == "вольному" || al == "вільному") && noun.GetToken() == "воля" {
+		return true
+	}
+	// здатний / змушений / … (Java list)
+	if HasLemmaTokenAny(adj, []string{"здатний", "змушений", "винний", "повинний", "готовий", "спроможний"}) {
+		return true
+	}
+
+	return false
+}
+
+// HasPosTagRE reports whether any POS matches re (Java PosTagHelper.hasPosTag Pattern).
+func HasPosTagRE(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
+	}
+	for _, p := range CollectPOSTags(tok) {
+		if re.MatchString(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// HasLemmaTokenRE ports LemmaHelper.hasLemma(readings, lemmaRegex).
+func HasLemmaTokenRE(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
+	if tok == nil || re == nil {
+		return false
+	}
+	for _, r := range tok.GetReadings() {
+		if r != nil && r.GetLemma() != nil && re.MatchString(*r.GetLemma()) {
+			return true
+		}
+	}
 	return false
 }
 
@@ -354,9 +476,87 @@ func HasPosTagPart(tok *languagetool.AnalyzedTokenReadings, substr string) bool 
 	return false
 }
 
-// IsPrepNounException stub.
+// IsPrepNounException ports TokenAgreementPrepNounExceptionHelper early arms
+// (full table deferred). Invalid index layout is treated as exception (no flag).
 func IsPrepNounException(tokens []*languagetool.AnalyzedTokenReadings, prepPos, nounPos int) bool {
-	return prepPos < 0 || nounPos <= prepPos
+	if prepPos < 0 || nounPos <= prepPos || prepPos >= len(tokens) || nounPos >= len(tokens) {
+		return true
+	}
+	prep, noun := tokens[prepPos], tokens[nounPos]
+	if prep == nil || noun == nil {
+		return true
+	}
+	prepLower := CleanTokenLower(prep)
+	nounClean := noun.GetCleanToken()
+	if nounClean == "" {
+		nounClean = noun.GetToken()
+	}
+	nounLower := strings.ToLower(nounClean)
+
+	// на дивом уцілілій техніці
+	if nounClean == "дивом" {
+		return true
+	}
+	// в тисяча шістсот …
+	if nounPos < len(tokens)-1 && nounClean == "тисяча" {
+		next := tokens[nounPos+1]
+		if HasPosTagPart(next, "numr") || HasLemmaToken(next, "якийсь") {
+			return true
+		}
+	}
+
+	if prepLower == "на" {
+		// на (свято) Купала — capitalized + v_rod
+		if IsCapitalized(nounClean) && HasPosTagRE(noun, regexp.MustCompile(`noun.*?:.:v_rod.*`)) {
+			return true
+		}
+		// на (ім'я/прізвище) …
+		if HasPosTagRE(noun, regexp.MustCompile(`noun:anim:.:v_naz:prop:[fl]name.*`)) {
+			if prepPos > 1 && (isNameToken(tokens[prepPos-1]) || (prepPos > 2 && isNameLemma(tokens[prepPos-2]))) {
+				return true
+			}
+		}
+		if nounLower == "ти" || nounLower == "ви" {
+			return true
+		}
+		if nounPos < len(tokens)-1 && nounClean == "Піп" && tokens[nounPos+1] != nil &&
+			tokens[nounPos+1].GetCleanToken() == "Іван" {
+			return true
+		}
+		if nounLower == "манер" {
+			return true
+		}
+	}
+	// справедливості заради
+	if prepPos > 0 && prepLower == "заради" {
+		prev := CleanTokenLower(tokens[prepPos-1])
+		// Java (?iu)справедливості|об.єктивності — CleanTokenLower already lowercases
+		if regexp.MustCompile(`^(справедливості|об.єктивності)$`).MatchString(prev) {
+			return true
+		}
+	}
+	// при їх …
+	if prepLower == "при" && nounClean == "їх" {
+		return true
+	}
+	// з рана
+	if prepLower == "з" && nounClean == "рана" {
+		return true
+	}
+
+	return false
+}
+
+func isNameToken(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	t := tok.GetToken()
+	return t == "ім'я" || t == "прізвище"
+}
+
+func isNameLemma(tok *languagetool.AnalyzedTokenReadings) bool {
+	return HasLemmaTokenAny(tok, []string{"ім'я", "прізвище"})
 }
 
 // IsNumrNounException stub.

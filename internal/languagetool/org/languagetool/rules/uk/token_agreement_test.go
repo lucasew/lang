@@ -145,3 +145,51 @@ func TestAdjNounException_EarlyArms(t *testing.T) {
 	}
 	require.True(t, IsAdjNounException(tokens, 1, 2))
 }
+
+func TestAdjNounException_MoreArms(t *testing.T) {
+	// на повну
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		atr("X"),
+		atr("на", "prep"),
+		atr("повну", "adj:f:v_zna"),
+		atr("людей", "noun:anim:p:v_rod"),
+	}
+	require.True(t, IsAdjNounException(tokens, 2, 3))
+
+	// здатний
+	lem := "здатний"
+	tokens2 := []*languagetool.AnalyzedTokenReadings{
+		atrLemma("здатні", &lem, "adj:p:v_naz"),
+		atr("екскаватором", "noun:inanim:m:v_oru"),
+	}
+	require.True(t, IsAdjNounException(tokens2, 0, 1))
+
+	// вольному воля
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("вольному", "adj:m:v_dav"),
+		atr("воля", "noun:inanim:f:v_naz"),
+	}, 0, 1))
+}
+
+func TestPrepNounException_EarlyArms(t *testing.T) {
+	// на + capitalized v_rod
+	prep := "на"
+	name := "Купала"
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		atrLemma("на", &prep, "prep"),
+		atrLemma("Купала", &name, "noun:anim:m:v_rod:prop:lname"),
+	}
+	require.True(t, IsPrepNounException(tokens, 0, 1))
+
+	// при їх
+	require.True(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("при", "prep"),
+		atr("їх", "pron:pers:p:v_rod"),
+	}, 0, 1))
+
+	// normal pair not exception by these arms alone
+	require.False(t, IsPrepNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("в", "prep"),
+		atr("домі", "noun:inanim:m:v_mis"),
+	}, 0, 1))
+}
