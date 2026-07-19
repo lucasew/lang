@@ -364,10 +364,17 @@ func TestLemmaHelper_TokenSearchAndProper(t *testing.T) {
 	require.True(t, IsPossiblyProperNoun(atr("Київ")))
 	require.True(t, IsInitial(atr("А.")))
 	require.True(t, IsDash(atr("—")))
+	// Java: search from nounPos-1 reverse for «як», skip-over adj:v_naz only
 	tokens := []*languagetool.AnalyzedTokenReadings{
 		atr("SENT"), atr("як"), atr("австрієць", "noun:anim:m:v_naz"),
 	}
+	require.Equal(t, 1, TokenSearch(tokens, 1, "", regexp.MustCompile(`^[Яя]к$`),
+		regexp.MustCompile(`adj:.:v_naz.*`), DirReverse))
+	// starting on noun without ignore: no hit, keep scanning → finds як
 	require.Equal(t, 1, TokenSearch(tokens, 2, "", regexp.MustCompile(`^[Яя]к$`),
+		nil, DirReverse))
+	// ignore adj only: noun at 2 does not match ignore → break (no skip over noun)
+	require.Equal(t, -1, TokenSearch(tokens, 2, "", regexp.MustCompile(`^[Яя]к$`),
 		regexp.MustCompile(`adj:.:v_naz.*`), DirReverse))
 }
 

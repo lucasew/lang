@@ -2778,9 +2778,10 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 		}
 	}
 
-	// V + N + V:INF — verb governs v_inf, second verb agrees (simplified: second is :inf)
+	// V + N + V:INF — verb governs v_inf, second verb agrees (Java agrees on naz/indir of noun)
 	if nounPos < len(tokens)-1 && hasCaseGovPosRE(verb, verbAdvpPattern, "v_inf") {
 		v2 := tokenSearchPosRE(tokens, nounPos+1, verbPattern, DirForward)
+		// Java tokenSearch ignores [a-z].* POS; our tokenSearchPosRE is verb-only
 		if v2 >= 0 && v2 <= nounPos+5 &&
 			verbNounAgrees(tokens[v2], noun) {
 			return true
@@ -2957,25 +2958,13 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 
 	// змалював дивовижної краси церкву — adj:v_rod + noun:v_rod + noun/adj
 	// Java: adj:.:v_rod(?!.*pron) / noun:.*v_rod(?!.*pron) / (noun|adj)(?!.*pron)
+	// then agrees(verb, naz of n2, indir of n2)
 	if nounPos < len(tokens)-2 &&
 		hasPosWithoutPron(noun, regexp.MustCompile(`adj:.:v_rod`)) &&
 		hasPosWithoutPron(tokens[nounPos+1], regexp.MustCompile(`noun:.*v_rod`)) &&
 		hasPosWithoutPron(tokens[nounPos+2], regexp.MustCompile(`^(?:noun|adj)`)) {
-		// agrees with verb using v_naz readings of token+2, or case gov on non-v_naz
-		n2 := tokens[nounPos+2]
-		if VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(n2)) {
+		if verbNounAgrees(verb, tokens[nounPos+2]) {
 			return true
-		}
-		// simplified: if any non-v_naz reading is case-governed by verb
-		cases := caseGovPosRESet(verb, verbAdvpPattern)
-		if len(cases) > 0 {
-			list := make([]string, 0, len(cases))
-			for c := range cases {
-				list = append(list, c)
-			}
-			if HasVidmPosTag(list, n2) {
-				return true
-			}
 		}
 	}
 
@@ -3002,24 +2991,41 @@ var (
 	advPredictPattern = regexp.MustCompile(`^(?:adv|noninfl:predic).*`)
 )
 
-// verbNounAgrees is a simplified agrees(): verb–noun person/gender overlap or
-// verb case government matching noun vidminok (no full State).
+// verbNounAgrees ports TokenAgreementVerbNounExceptionHelper.agrees without State:
+// 1) v_naz readings: VerbInflectionHelper overlap with verb inflections
+// 2) non-v_naz (indir) readings: case government via VERB_ADVP_PATTERN
 func verbNounAgrees(verb, noun *languagetool.AnalyzedTokenReadings) bool {
 	if verb == nil || noun == nil {
 		return false
 	}
-	if VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(noun)) {
-		return true
+	var nazTags, indirTags []string
+	for _, p := range CollectPOSTags(noun) {
+		if p == "" {
+			continue
+		}
+		if strings.Contains(p, "v_naz") {
+			nazTags = append(nazTags, p)
+		} else if strings.Contains(p, ":v_") {
+			indirTags = append(indirTags, p)
+		}
 	}
-	cases := caseGovPosRESet(verb, verbAdvpPattern)
-	if len(cases) == 0 {
-		return false
+	// Java: if nounAdjNazInflections non-empty → check verb∩noun/adj naz
+	if len(nazTags) > 0 {
+		vInf := GetVerbInflections(CollectPOSTags(verb))
+		nInf := GetNounInflections(nazTags)
+		nInf = append(nInf, GetAdjInflections(nazTags)...)
+		if verbInflectionsOverlapLists(vInf, nInf) {
+			return true
+		}
 	}
-	list := make([]string, 0, len(cases))
-	for c := range cases {
-		list = append(list, c)
+	// Java: if indir non-empty → case gov on VERB_ADVP_PATTERN
+	if len(indirTags) > 0 {
+		cases := caseGovPosRESet(verb, verbAdvpPattern)
+		if len(cases) > 0 && hasVidmInTags(cases, indirTags) {
+			return true
+		}
 	}
-	return HasVidmPosTag(list, noun)
+	return false
 }
 
 func caseGovPosRESet(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp) map[string]struct{} {

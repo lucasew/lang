@@ -383,8 +383,15 @@ const (
 	DirReverse
 )
 
-// TokenSearch ports LemmaHelper.tokenSearch (posTag part, token pattern, ignore POS, direction).
+// quotesRE ports LemmaHelper.QUOTES used in tokenSearch skip-over.
+var lemmaQuotesRE = regexp.MustCompile(`^[«»„“\x{201C}]$`)
+
+// TokenSearch ports LemmaHelper.tokenSearch (String posTag part overload).
 // Returns index or -1. posTag empty means no POS part filter on the hit.
+//
+// Java semantics for posTagsToIgnore: after a non-hit token, if ignore is set,
+// only tokens whose POS matches ignore (or quote surfaces) may be skipped over;
+// any other token breaks the search. It is NOT "skip all matching forever".
 func TokenSearch(tokens []*languagetool.AnalyzedTokenReadings, pos int, posTag string, tokenRE, posTagsToIgnore *regexp.Regexp, dir Dir) int {
 	if tokens == nil || pos < 0 || pos >= len(tokens) {
 		return -1
@@ -398,23 +405,75 @@ func TokenSearch(tokens []*languagetool.AnalyzedTokenReadings, pos int, posTag s
 		if cur == nil {
 			continue
 		}
-		if posTagsToIgnore != nil && HasPosTagRE(cur, posTagsToIgnore) {
-			continue
-		}
+		// hit: (posTag null/empty || hasPosTagPart) && (token null || matches full)
+		hitPOS := posTag == "" || HasPosTagPart(cur, posTag)
+		hitTok := true
 		if tokenRE != nil {
 			ct := cur.GetCleanToken()
 			if ct == "" {
 				ct = cur.GetToken()
 			}
-			if !tokenRE.MatchString(ct) {
-				continue
-			}
+			// Java token.matcher(clean).matches() — entire string
+			loc := tokenRE.FindStringIndex(ct)
+			hitTok = loc != nil && loc[0] == 0 && loc[1] == len(ct)
 		}
-		if posTag != "" && !HasPosTagPart(cur, posTag) {
-			// Java passes (String)null for no posTag on hit — we use empty string
+		if hitPOS && hitTok {
+			return i
+		}
+		// skip-over only ignored POS / quotes; else stop
+		if posTagsToIgnore != nil {
+			ct := cur.GetCleanToken()
+			if ct == "" {
+				ct = cur.GetToken()
+			}
+			if !HasPosTagRE(cur, posTagsToIgnore) && !lemmaQuotesRE.MatchString(ct) {
+				break
+			}
 			continue
 		}
-		return i
+		// no ignore pattern: keep scanning (Java has no break when ignore is null)
+	}
+	return -1
+}
+
+// TokenSearchPosRE ports LemmaHelper.tokenSearch(Pattern posTag, Pattern token, …).
+func TokenSearchPosRE(tokens []*languagetool.AnalyzedTokenReadings, pos int, posTagRE, tokenRE, posTagsToIgnore *regexp.Regexp, dir Dir) int {
+	if tokens == nil || pos < 0 || pos >= len(tokens) {
+		return -1
+	}
+	step := 1
+	if dir == DirReverse {
+		step = -1
+	}
+	for i := pos; i < len(tokens) && i > 0; i += step {
+		cur := tokens[i]
+		if cur == nil {
+			continue
+		}
+		hitPOS := posTagRE == nil || HasPosTagRE(cur, posTagRE)
+		hitTok := true
+		if tokenRE != nil {
+			ct := cur.GetCleanToken()
+			if ct == "" {
+				ct = cur.GetToken()
+			}
+			if loc := tokenRE.FindStringIndex(ct); loc == nil || loc[0] != 0 || loc[1] != len(ct) {
+				hitTok = false
+			}
+		}
+		if hitPOS && hitTok {
+			return i
+		}
+		if posTagsToIgnore != nil {
+			ct := cur.GetCleanToken()
+			if ct == "" {
+				ct = cur.GetToken()
+			}
+			if !HasPosTagRE(cur, posTagsToIgnore) && !lemmaQuotesRE.MatchString(ct) {
+				break
+			}
+			continue
+		}
 	}
 	return -1
 }
