@@ -195,6 +195,18 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, toTok(word, tw))
 			}
 		}
+		// Java additionalTags / getAnalyzedTokens alt rewrites (CAPS_INSIDE, з→с, ї→і, convertTokens).
+		if len(readings) == 0 {
+			if alt := AltTagAdjustReadings(w, t.TagWord); len(alt) > 0 {
+				readings = alt
+			}
+		}
+		// Java analyzeAllCapitamizedAdj (Івано-Франківська as adj).
+		if len(readings) == 0 {
+			if adj := AnalyzeAllCapitalizedAdj(w, t.TagWord); len(adj) > 0 {
+				readings = adj
+			}
+		}
 		// Java CompoundTagger.oAdjMatch: only after dict miss; right adj from wordTagger (no invent endings).
 		if len(readings) == 0 {
 			if dyn := DynamicDirectionalAdjReadings(w, t.TagWord); len(dyn) > 0 {
@@ -250,12 +262,10 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		}
 		if len(readings) == 0 {
 			for _, cand := range MissingApostropheCandidates(w) {
-				for _, tw := range t.TagWord(cand) {
-					// mark :bad like Java dynamic missing apostrophe
+				// Java filter2: drop bad|arch|alt|abbr|slang|subst|short|long then add :bad
+				for _, tw := range filterMissingApoTags(t.TagWord(cand)) {
 					tw2 := tw
-					if tw2.PosTag != "" && !strings.Contains(tw2.PosTag, ":bad") {
-						tw2.PosTag = tw2.PosTag + ":bad"
-					}
+					tw2.PosTag = AddIfNotContains(tw2.PosTag, ":bad")
 					readings = append(readings, toTok(word, tw2))
 				}
 				if len(readings) > 0 {
