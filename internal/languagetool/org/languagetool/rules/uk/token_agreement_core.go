@@ -222,8 +222,8 @@ func IsAdjpException(adj *languagetool.AnalyzedTokenReadings) bool {
 
 // --- Exception helper stubs (full tables deferred) ---
 
-// IsAdjNounException ports TokenAgreementAdjNounExceptionHelper early arms
-// (full 1300-line table still deferred). FAKE_FEM uses Java lemma+partPos.
+// IsAdjNounException ports TokenAgreementAdjNounExceptionHelper.isException
+// (surface/lemma/conj/case-gov arms; RE2-safe stand-ins for lookarounds).
 func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, nounPos int) bool {
 	if adjPos < 0 || nounPos < 0 || adjPos >= len(tokens) || nounPos >= len(tokens) {
 		return true
@@ -926,13 +926,160 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 				if nounPos < len(tokens)-1 &&
 					HasPosTagPart(adj, "adj:p:") &&
 					isConjForPluralWithComma(tokens[nounPos+1]) &&
-					HasPosTagPart(prev2, "adj:p:") {
+					HasPosTagPart(prev2, "adj:p:") &&
+					InflectionsIntersectIgnoreGender(
+						GetAdjCaseInflections(CollectPOSTags(prev2)), slaveInfs, "p", "") {
 					return true
 				}
 			}
 		}
 	}
 
+	// підсвічений синім діамант — adjp:pasv + adj:v_oru
+	if adjPos > 1 &&
+		HasPosTagPart(tokens[adjPos-1], "adjp:pasv") &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*v_oru.*`)) &&
+		InflectionsIntersect(GetAdjCaseInflections(CollectPOSTags(tokens[adjPos-1])), slaveInfs) {
+		return true
+	}
+
+	// захищені законом / Змучений тягарем — adjp:pasv + noun v_oru
+	if HasPosTagPart(adj, "adjp:pasv") && HasPosTagPart(noun, "v_oru") {
+		return true
+	}
+
+	// Найнижчою частка таких є… — adj v_oru + noun v_zna|naz + nearby verb
+	if adjPos > 0 &&
+		!HasPosTagRE(tokens[adjPos-1], regexp.MustCompile(`.*adjp:pasv.*|^prep`)) &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj.*v_oru.*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*v_(zna|naz).*`)) {
+		vPos := TokenSearch(tokens, nounPos+1, "verb", nil, nil, DirForward)
+		if vPos > 0 && vPos <= nounPos+5 {
+			if HasPosTagRE(noun, regexp.MustCompile(`noun.*v_naz.*`)) ||
+				(hasCaseGovFromReadings(tokens[vPos], "v_zna") &&
+					GenderMatches(masterInfs, slaveInfs, "v_oru", "v_zna")) {
+				return true
+			}
+		}
+	}
+
+	// зроблять неможливою ротацію — verb/advp reverse + dual case gov
+	if adjPos > 1 &&
+		HasPosTagRE(adj, regexp.MustCompile(`adj:.:v_oru.*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`.*v_zna.*`)) &&
+		GenderMatches(masterInfs, slaveInfs, "v_oru", "v_zna") {
+		vPos := tokenSearchPosRE(tokens, adjPos-1, verbAdvpPattern, DirReverse)
+		if vPos > 0 && vPos >= adjPos-3 {
+			if hasCaseGovPosRE(tokens[vPos], verbAdvpPattern, "v_oru") &&
+				hasCaseGovPosRE(tokens[vPos], verbAdvpPattern, "v_zna") {
+				return true
+			}
+		}
+	}
+
+	// робив неймовірно високими шанси — verb + adv + adj:v_oru + noun:v_zna
+	if adjPos > 2 &&
+		hasAdvNotAdvp(tokens[adjPos-1]) &&
+		hasCaseGovPosRE(tokens[adjPos-2], verbAdvpPattern, "v_oru") &&
+		HasPosTagPart(adj, "v_oru") &&
+		HasPosTagRE(noun, regexp.MustCompile(`.*v_zna.*`)) &&
+		GenderMatches(masterInfs, slaveInfs, "v_oru", "v_zna") {
+		return true
+	}
+
+	// case government of adj on slave noun (вдячний редакторові …)
+	if caseGovernmentMatches(adj, slaveInfs) {
+		if nounPos < len(tokens)-1 && HasPosTagPart(tokens[nounPos+1], "noun:") {
+			if HasPosTagRE(tokens[nounPos+1], regexp.MustCompile(`noun.*v_(rod|oru|naz|dav).*`)) {
+				return true
+			}
+			slave2 := GetNounCaseInflections(CollectPOSTags(tokens[nounPos+1]))
+			if InflectionsIntersect(masterInfs, slave2) {
+				return true
+			}
+		} else {
+			return true
+		}
+	}
+
+	// альтернативну олігархічній модель — prev adj governs current adj cases
+	if adjPos > 1 && HasPosTagPart(tokens[adjPos-1], "adj") &&
+		caseGovernmentMatches(tokens[adjPos-1], masterInfs) {
+		preAdj := GetAdjCaseInflections(CollectPOSTags(tokens[adjPos-1]))
+		if InflectionsIntersect(preAdj, slaveInfs) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// verbAdvpPattern ports VERB_ADVP_PATTERN = (verb|advp).*
+var verbAdvpPattern = regexp.MustCompile(`^(?:verb|advp).*`)
+
+// caseGovernmentMatches ports TokenAgreementAdjNounExceptionHelper.caseGovernmentMatches.
+func caseGovernmentMatches(adj *languagetool.AnalyzedTokenReadings, slave []Inflection) bool {
+	if adj == nil || len(slave) == 0 {
+		return false
+	}
+	cg := LoadCaseGovernmentHelper()
+	seen := map[string]struct{}{}
+	for _, r := range adj.GetReadings() {
+		if r == nil || r.GetLemma() == nil {
+			continue
+		}
+		lemma := *r.GetLemma()
+		if _, ok := seen[lemma]; ok {
+			continue
+		}
+		seen[lemma] = struct{}{}
+		for _, s := range slave {
+			if cg.HasCaseGovernment(lemma, s.Case) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// tokenSearchPosRE is TokenSearch with a POS regex (Java tokenSearch Pattern posTag).
+func tokenSearchPosRE(tokens []*languagetool.AnalyzedTokenReadings, pos int, posRE *regexp.Regexp, dir Dir) int {
+	if tokens == nil || pos < 0 || posRE == nil {
+		return -1
+	}
+	step := 1
+	if dir == DirReverse {
+		step = -1
+	}
+	for i := pos; i < len(tokens) && i > 0; i += step {
+		if HasPosTagRE(tokens[i], posRE) {
+			return i
+		}
+	}
+	return -1
+}
+
+// hasCaseGovPosRE ports hasCaseGovernment(readings, posPattern, case).
+func hasCaseGovPosRE(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp, rvCase string) bool {
+	if tok == nil || posRE == nil || rvCase == "" {
+		return false
+	}
+	cg := LoadCaseGovernmentHelper()
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
+			continue
+		}
+		if !posRE.MatchString(*r.GetPOSTag()) {
+			continue
+		}
+		if cg.HasCaseGovernment(*r.GetLemma(), rvCase) {
+			return true
+		}
+		// adjp:pasv always adds v_oru
+		if rvCase == "v_oru" && strings.Contains(*r.GetPOSTag(), "adjp:pasv") {
+			return true
+		}
+	}
 	return false
 }
 

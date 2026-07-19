@@ -726,3 +726,42 @@ func TestAdjNounException_VerbRevAndColors(t *testing.T) {
 		[]Inflection{{Gender: "m", Case: "v_rod"}},
 		"v_oru", "v_rod"))
 }
+
+func TestAdjNounException_FinalArms(t *testing.T) {
+	// adjp:pasv + adj:v_oru
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atr("підсвічений", "adj:m:v_naz:adjp:pasv"),
+		atr("синім", "adj:n:v_oru"),
+		atr("діамант", "noun:inanim:m:v_naz"),
+	}, 2, 3))
+
+	// adjp:pasv + noun v_oru
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("захищені", "adj:p:v_naz:adjp:pasv"), atr("законом", "noun:inanim:m:v_oru"),
+	}, 0, 1))
+
+	// adj v_oru + noun v_naz + forward verb
+	require.True(t, IsAdjNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("і"),
+		atr("Найнижчою", "adj:f:v_oru"), atr("частка", "noun:inanim:f:v_naz"),
+		atr("є", "verb:imperf:pres:s:3"),
+	}, 2, 3))
+
+	// case government: вдячний + noun + next noun v_rod
+	// need adj lemma in case_government map - "вдячний" typically governs v_dav
+	// soft: if lemma not in map, caseGovernmentMatches false — use synthetic via HasCaseGovernment
+	// Skip if lemma not in map; test hasCaseGovPosRE / caseGovernmentMatches unit-style
+	require.True(t, caseGovernmentMatches(
+		atrLemma("вдячний", strPtr("вдячний"), "adj:m:v_naz"),
+		[]Inflection{{Gender: "m", Case: "v_dav"}}),
+		"вдячний should govern v_dav if in case_government map")
+
+	// prev adj governs
+	// only if first adj has government of second adj's cases — optional soft skip if map missing
+
+	// TokenSearch verb forward
+	require.Equal(t, 2, TokenSearch([]*languagetool.AnalyzedTokenReadings{
+		atr("a"), atr("b"), atr("c", "verb:imperf:pres:s:3"),
+	}, 1, "verb", nil, nil, DirForward))
+}
