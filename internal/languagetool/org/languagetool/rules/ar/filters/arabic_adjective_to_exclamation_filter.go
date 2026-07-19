@@ -13,27 +13,14 @@ import (
 // adjTagMgr used for Java getLemmas(..., "adj") POS filter (isAdj → starts with NA).
 var adjTagMgr = ar_tag.NewArabicTagManager()
 
-// Default adjective → comparative map (Java ArabicAdjectiveToExclamationFilter built-in subset).
-// Full list also loads from /ar/arabic_adjective_exclamation.txt when wired.
-var defaultAdj2Comp = map[string][]string{
-	"رشيد": {"أرشد"},
-	"طويل": {"أطول"},
-	"بديع": {"أبدع"},
-	"جميل": {"أجمل"},
-	"سعيد": {"أسعد"},
-}
-
 // ArabicAdjectiveToExclamationFilter ports org.languagetool.rules.ar.filters.ArabicAdjectiveToExclamationFilter.
+// Adj2Comp from official /ar/arabic_adjective_exclamation.txt (Java loadFromPath).
 type ArabicAdjectiveToExclamationFilter struct {
 	Adj2Comp map[string][]string
 }
 
 func NewArabicAdjectiveToExclamationFilter() *ArabicAdjectiveToExclamationFilter {
-	m := map[string][]string{}
-	for k, v := range defaultAdj2Comp {
-		m[k] = append([]string{}, v...)
-	}
-	return &ArabicAdjectiveToExclamationFilter{Adj2Comp: m}
+	return &ArabicAdjectiveToExclamationFilter{Adj2Comp: loadOfficialAdjExclamationMap()}
 }
 
 // AcceptRuleMatch ports ArabicAdjectiveToExclamationFilter.acceptRuleMatch.

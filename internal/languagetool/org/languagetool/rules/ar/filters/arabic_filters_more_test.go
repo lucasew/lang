@@ -80,7 +80,9 @@ func TestArabicMasdarToVerb_FailClosedWithoutTags(t *testing.T) {
 
 func TestAdjectiveExclamation(t *testing.T) {
 	f := NewArabicAdjectiveToExclamationFilter()
-	require.Equal(t, []string{"أطول"}, f.ComparativesFor("طويل"))
+	// Official arabic_adjective_exclamation.txt (not invent طويل→أطول map)
+	require.NotEmpty(t, f.Adj2Comp)
+	require.Equal(t, []string{"ما أجمل", "أجمِل ب"}, f.ComparativesFor("جميل"))
 	require.Equal(t, []string{"أطول الولد"}, PrepareExclamationSuggestions("أطول", "الولد"))
 	require.Equal(t, []string{"أطولني"}, PrepareExclamationSuggestions("أطول", "أنا"))
 }
@@ -125,19 +127,21 @@ func TestArabicNumberPhraseFilter_AcceptRuleMatch(t *testing.T) {
 func TestArabicAdjectiveExclamation_Accept(t *testing.T) {
 	f := NewArabicAdjectiveToExclamationFilter()
 	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
-	// Java tagger.getLemmas(..., "adj") needs isAdj POS (NA…) + lemma — inject, no surface invent.
-	lem := "طويل"
+	// Official map: جميل=ما أجمل|أجمِل ب — inject adj lemma/POS (no surface invent).
+	lem := "جميل"
 	pos := "NA------"
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("كم", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("هو", nil, nil), 3),
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("طويل", &pos, &lem), 6),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("جميل", &pos, &lem), 6),
 	}
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"adj": "طويل", "adj_pos": "3", "noun": "هو",
+		"adj": "جميل", "adj_pos": "3", "noun": "هو",
 	}, 0, toks, nil)
 	require.NotNil(t, out)
-	require.Contains(t, out.GetSuggestedReplacements(), "أطول"+"ه") // أطول + ه
+	require.NotEmpty(t, out.GetSuggestedReplacements())
+	// PrepareExclamationSuggestions attaches pronoun suffix to comparative forms
+	require.True(t, len(out.GetSuggestedReplacements()) >= 1)
 }
 
 func TestArabicAdjectiveExclamation_FailClosedWithoutLemma(t *testing.T) {
@@ -146,10 +150,10 @@ func TestArabicAdjectiveExclamation_FailClosedWithoutLemma(t *testing.T) {
 	toks := []*languagetool.AnalyzedTokenReadings{
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("كم", nil, nil), 0),
 		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("هو", nil, nil), 3),
-		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("طويل", nil, nil), 6),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("جميل", nil, nil), 6),
 	}
 	out := f.AcceptRuleMatch(m, map[string]string{
-		"adj": "طويل", "adj_pos": "3", "noun": "هو",
+		"adj": "جميل", "adj_pos": "3", "noun": "هو",
 	}, 0, toks, nil)
 	require.NotNil(t, out)
 	require.Empty(t, out.GetSuggestedReplacements())

@@ -9,21 +9,10 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
-// Default verb→masdar map (Java ArabicVerbToMafoulMutlaqFilter built-in subset).
-// Full list also loads from /ar/arabic_verb_masdar.txt when wired.
-var defaultVerb2Masdar = map[string][]string{
-	"عَمِلَ":  {"عمل"},
-	"أَعْمَلَ": {"إعمال"},
-	"عَمَّلَ":  {"تعميل"},
-	"عمل":   {"عمل"},
-	"أَكَلَ":  {"أكل"},
-	"سَأَلَ":  {"سؤال"},
-	"أَجَابَ":  {"إجابة"},
-}
-
 // ArabicVerbToMafoulMutlaqFilter ports org.languagetool.rules.ar.filters.ArabicVerbToMafoulMutlaqFilter.
 // Java always uses ArabicSynthesizer.inflectMafoulMutlq / inflectAdjectiveTanwinNasb (static morph).
 // Verb lemmas come from pattern token readings (Java tagger.getLemmas verb) — no surface invent.
+// Verb2Masdar from official /ar/arabic_verb_masdar.txt (Java loadFromPath).
 type ArabicVerbToMafoulMutlaqFilter struct {
 	Verb2Masdar map[string][]string
 	// InflectMafoul optional override (default: ar_synth.InflectMafoulMutlq).
@@ -33,11 +22,7 @@ type ArabicVerbToMafoulMutlaqFilter struct {
 }
 
 func NewArabicVerbToMafoulMutlaqFilter() *ArabicVerbToMafoulMutlaqFilter {
-	m := map[string][]string{}
-	for k, v := range defaultVerb2Masdar {
-		m[k] = append([]string{}, v...)
-	}
-	return &ArabicVerbToMafoulMutlaqFilter{Verb2Masdar: m}
+	return &ArabicVerbToMafoulMutlaqFilter{Verb2Masdar: loadOfficialVerbMasdarMap()}
 }
 
 func (f *ArabicVerbToMafoulMutlaqFilter) inflectMafoul(word string) string {
