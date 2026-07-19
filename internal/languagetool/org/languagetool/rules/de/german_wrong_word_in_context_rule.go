@@ -51,6 +51,11 @@ func NewGermanWrongWordInContextRule(messages map[string]string) *GermanWrongWor
 	// Java: Category(CONFUSED_WORDS, getCategoryString()) + Misspelling.
 	// getCategoryString → "Leicht zu verwechselnde Wörter".
 	rules.InitWrongWordInContextMeta(base, messages, "Leicht zu verwechselnde Wörter")
+	// Java: Miene → Mine
+	base.AddExamplePair(
+		rules.Wrong("Die <marker>Miene</marker> vom Kugelschreiber ist leer."),
+		rules.Fixed("Die <marker>Mine</marker> vom Kugelschreiber ist leer."),
+	)
 	return &GermanWrongWordInContextRule{WrongWordInContextRule: base}
 }
 

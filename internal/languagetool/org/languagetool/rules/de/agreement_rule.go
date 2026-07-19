@@ -28,13 +28,53 @@ type AgreementRule struct {
 	// CompoundPhraseValid ports lt.check in getRuleMatch for open compounds
 	// (Java: only DE_AGREEMENT + GERMAN_SPELLER enabled). Nil → fail-closed (no invent).
 	CompoundPhraseValid func(phrase string) bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewAgreementRule(messages map[string]string) *AgreementRule {
-	return &AgreementRule{
+	r := &AgreementRule{
 		Messages: messages,
 		Category: rules.CatGrammar.GetCategory(messages),
 	}
+	// Java: Der Haus → Das Haus
+	r.AddExamplePair(
+		rules.Wrong("<marker>Der Haus</marker> wurde letztes Jahr gebaut."),
+		rules.Fixed("<marker>Das Haus</marker> wurde letztes Jahr gebaut."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AgreementRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AgreementRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AgreementRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // WithSynth sets the synthesizer used by AgreementSuggestor2.

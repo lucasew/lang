@@ -18,6 +18,12 @@ func NewGermanUnpairedBracketsRule(messages map[string]string) *GermanUnpairedBr
 	// Java: getId returns UNPAIRED_BRACKETS (no DE_ prefix for compatibility)
 	if base != nil {
 		base.SetRuleID("UNPAIRED_BRACKETS")
+		// Java example: unclosed ( before DBV
+		base.URL = "https://languagetool.org/insights/de/beitrag/klammern/"
+		base.AddExamplePair(
+			rules.Wrong("Dem Präsidenten des Deutschen Bauernverbands <marker>(</marker>DBV zufolge habe die Dürre einen Schaden von 1,4 Millionen verursacht."),
+			rules.Fixed("Dem Präsidenten des Deutschen Bauernverbands <marker>(</marker>DBV) zufolge habe die Dürre einen Schaden von 1,4 Millionen verursacht."),
+		)
 	}
 	return &GermanUnpairedBracketsRule{GenericUnpairedBracketsRule: base}
 }

@@ -28,4 +28,13 @@ func TestDERule_ExamplePairs(t *testing.T) {
 	require.Equal(t, []string{"wider"}, NewWiederVsWiderRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"ist"}, NewGermanWordRepeatRule(nil).GetIncorrectExamples()[0].GetCorrections())
 	require.Equal(t, []string{"Schließlich"}, NewGermanWordRepeatBeginningRule(nil).GetIncorrectExamples()[0].GetCorrections())
+
+	// Whitespace / WWIC / punctuation / brackets / grammar
+	require.Equal(t, []string{" Das"}, NewSentenceWhitespaceRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Mine"}, NewGermanWrongWordInContextRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"a. D."}, NewGermanDoublePunctuationRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"("}, NewGermanUnpairedBracketsRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"fehlt"}, NewMissingVerbRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"Das Haus"}, NewAgreementRule(nil).GetIncorrectExamples()[0].GetCorrections())
+	require.Equal(t, []string{"bin"}, NewVerbAgreementRule(nil).GetIncorrectExamples()[0].GetCorrections())
 }

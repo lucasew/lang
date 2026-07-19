@@ -20,6 +20,9 @@ type SentenceWhitespaceRule struct {
 	// MessageAfterSentence / MessageAfterNumber override default messages.
 	MessageAfterSentence string
 	MessageAfterNumber   string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 func NewSentenceWhitespaceRule(messages map[string]string) *SentenceWhitespaceRule {
@@ -60,6 +63,34 @@ func (r *SentenceWhitespaceRule) GetLocQualityIssueType() ITSIssueType {
 		return ITSWhitespace
 	}
 	return r.IssueType
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *SentenceWhitespaceRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *SentenceWhitespaceRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *SentenceWhitespaceRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *SentenceWhitespaceRule) GetMessage(prevEndsWithNumber bool) string {

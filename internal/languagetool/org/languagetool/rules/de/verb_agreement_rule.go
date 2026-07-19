@@ -25,13 +25,53 @@ type VerbAgreementRule struct {
 	Category *rules.Category
 	// Synth optional for verb form suggestions (Java language.getSynthesizer()).
 	Synth synthesis.Synthesizer
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewVerbAgreementRule(messages map[string]string) *VerbAgreementRule {
-	return &VerbAgreementRule{
+	r := &VerbAgreementRule{
 		Messages: messages,
 		Category: rules.CatGrammar.GetCategory(messages),
 	}
+	// Java: Ich bist → Ich bin
+	r.AddExamplePair(
+		rules.Wrong("Ich <marker>bist</marker> über die Entwicklung sehr froh."),
+		rules.Fixed("Ich <marker>bin</marker> über die Entwicklung sehr froh."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *VerbAgreementRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *VerbAgreementRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *VerbAgreementRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // WithSynth sets synthesizer for morph-path suggestions.

@@ -19,6 +19,11 @@ func NewSentenceWhitespaceRule(messages map[string]string) *SentenceWhitespaceRu
 	base.IssueType = rules.ITSWhitespace
 	base.MessageAfterSentence = "Fügen Sie zwischen Sätzen ein Leerzeichen ein."
 	base.MessageAfterNumber = "Fügen Sie nach Ordnungszahlen (1., 2. usw.) ein Leerzeichen ein."
+	// Java: Satz.<marker>Das</marker> → Satz.<marker> Das</marker>
+	base.AddExamplePair(
+		rules.Wrong("Hier steht ein Satz.<marker>Das</marker> ist ein weiterer Satz."),
+		rules.Fixed("Hier steht ein Satz.<marker> Das</marker> ist ein weiterer Satz."),
+	)
 	return &SentenceWhitespaceRule{SentenceWhitespaceRule: base}
 }
 

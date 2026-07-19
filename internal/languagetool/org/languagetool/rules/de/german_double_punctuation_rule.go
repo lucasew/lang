@@ -15,6 +15,11 @@ func NewGermanDoublePunctuationRule(messages map[string]string) *GermanDoublePun
 	base.RuleID = "DE_DOUBLE_PUNCTUATION"
 	base.DotMessage = "Zwei aufeinander folgende Punkte. Auch wenn ein Satz mit einer Abkürzung endet, " +
 		"endet er nur mit einem Punkt (§103 Regelwerk)."
+	// Java: a. D.. → a. D.
+	base.AddExamplePair(
+		rules.Wrong("Sein Vater ist Regierungsrat <marker>a. D..</marker>"),
+		rules.Fixed("Sein Vater ist Regierungsrat <marker>a. D.</marker>"),
+	)
 	return &GermanDoublePunctuationRule{DoublePunctuationRule: base}
 }
 

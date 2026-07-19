@@ -20,16 +20,56 @@ type MissingVerbRule struct {
 	// TagFirstLowercased ports verbAtSentenceStart: tag lowercased first word.
 	// When nil, first-token uppercase workaround is skipped (fail-closed).
 	TagFirstLowercased func(lower string) bool
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 const missingVerbMinTokens = 5
 
 func NewMissingVerbRule(messages map[string]string) *MissingVerbRule {
-	return &MissingVerbRule{
+	r := &MissingVerbRule{
 		Messages:   messages,
 		Category:   rules.CatGrammar.GetCategory(messages),
 		DefaultOff: true,
 	}
+	// Java demo (fixed is illustrative, not a pure replacement of the marker).
+	r.AddExamplePair(
+		rules.Wrong("<marker>In diesem Satz kein Wort.</marker>"),
+		rules.Fixed("In diesem Satz <marker>fehlt</marker> kein Wort."),
+	)
+	return r
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *MissingVerbRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *MissingVerbRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *MissingVerbRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // WithTagFirstLowercased sets the sentence-start re-tag hook.

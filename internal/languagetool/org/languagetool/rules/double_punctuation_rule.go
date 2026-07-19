@@ -13,6 +13,9 @@ type DoublePunctuationRule struct {
 	CommaCharacter string // override comma character (Arabic/Persian "،")
 	Category       *Category
 	IssueType      ITSIssueType
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 }
 
 func NewDoublePunctuationRule(messages map[string]string) *DoublePunctuationRule {
@@ -35,6 +38,34 @@ func (r *DoublePunctuationRule) GetLocQualityIssueType() ITSIssueType {
 		return ITSTypographical
 	}
 	return r.IssueType
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *DoublePunctuationRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *DoublePunctuationRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *DoublePunctuationRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 func (r *DoublePunctuationRule) GetID() string {
