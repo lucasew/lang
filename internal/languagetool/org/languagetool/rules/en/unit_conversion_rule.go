@@ -12,6 +12,8 @@ type UnitConversionRule struct {
 	*rules.AbstractUnitConversionRule
 	// Tags ports Rule.tags (Java Tag.picky).
 	Tags []rules.Tag
+	// URL ports Rule.url (Java UnitConversionRuleUS.setUrl insights post).
+	URL string
 }
 
 // Imperial / US volume factors from Java AbstractUnitConversionRule (litre multiples).
@@ -58,6 +60,8 @@ func NewUnitConversionRuleUS(messages map[string]string) *UnitConversionRule {
 	r := newENUnitConversion(messages, "METRIC_UNITS_EN_US")
 	registerENGeneralUnits(r.AbstractUnitConversionRule)
 	registerENUSUnits(r.AbstractUnitConversionRule)
+	// Java UnitConversionRuleUS.setUrl(Tools.getUrl(...imperial-metric-system...))
+	r.URL = "https://languagetool.org/insights/post/imperial-metric-system/"
 	return r
 }
 
@@ -225,4 +229,19 @@ func (r *UnitConversionRule) HasTag(tag rules.Tag) bool {
 		}
 	}
 	return false
+}
+
+// GetURL ports Rule.getUrl (Java match URL falls back to rule URL when match URL empty).
+func (r *UnitConversionRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *UnitConversionRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
 }

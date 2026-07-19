@@ -20,6 +20,10 @@ func TestUnitConversionRule_IDsAndImperialUS(t *testing.T) {
 	require.Equal(t, "METRIC_UNITS_EN_US", us.GetID())
 	require.True(t, imp.HasTag(rules.TagPicky))
 	require.True(t, us.HasTag(rules.TagPicky))
+	// Java US setUrl insights post; general/imperial have no rule-level URL
+	require.Contains(t, us.GetURL(), "imperial-metric-system")
+	require.Empty(t, gen.GetURL())
+	require.Empty(t, imp.GetURL())
 
 	// Imperial pints still suggest metric
 	ms := imp.Match(languagetool.AnalyzePlain("I just drank 3 pints."))
