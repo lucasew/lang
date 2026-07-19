@@ -35,6 +35,11 @@ func loadRedundancy() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/gl/redundancies.txt"); err != nil {
 			panic(err)
 		}
+		// Java: duna de area → duna
+		base.AddExamplePair(
+			rules.Wrong("<marker>duna de area</marker>"),
+			rules.Fixed("<marker>duna</marker>"),
+		)
 		redundancyBase = base
 	})
 	return redundancyBase

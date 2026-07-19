@@ -50,6 +50,11 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 			return "اشتباه محتمل املائی پیداشده: " + joinPersian(replacements) + "."
 		},
 	}
+	// Java: حاظر → حاضر
+	base.AddExamplePair(
+		rules.Wrong("وی <marker>حاظر</marker> به همکاری شد."),
+		rules.Fixed("وی <marker>حاضر</marker> به همکاری شد."),
+	)
 	return &SimpleReplaceRule{AbstractSimpleReplaceRule: base}
 }
 

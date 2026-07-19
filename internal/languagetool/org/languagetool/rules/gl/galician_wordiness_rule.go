@@ -35,6 +35,11 @@ func loadWordiness() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/gl/wordiness.txt"); err != nil {
 			panic(err)
 		}
+		// Java: Raramente é o caso en que acontece → Raramente acontece
+		base.AddExamplePair(
+			rules.Wrong("<marker>Raramente é o caso en que acontece</marker> isto."),
+			rules.Fixed("<marker>Raramente acontece</marker> isto."),
+		)
 		wordinessBase = base
 	})
 	return wordinessBase

@@ -35,6 +35,11 @@ func loadWikipedia() *rules.AbstractSimpleReplaceRule2 {
 		if err := base.LoadSimpleReplaceRule2Data(f, "/gl/wikipedia.txt"); err != nil {
 			panic(err)
 		}
+		// Java: a efectos de → para os efectos de
+		base.AddExamplePair(
+			rules.Wrong("<marker>a efectos de</marker>"),
+			rules.Fixed("<marker>para os efectos de</marker>"),
+		)
 		wikipediaBase = base
 	})
 	return wikipediaBase

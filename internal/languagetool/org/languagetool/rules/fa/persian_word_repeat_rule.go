@@ -15,6 +15,11 @@ type PersianWordRepeatRule struct {
 func NewPersianWordRepeatRule(messages map[string]string) *PersianWordRepeatRule {
 	base := rules.NewWordRepeatRule(messages)
 	base.IDOverride = "PERSIAN_WORD_REPEAT_RULE"
+	// Java: برای برای → برای
+	base.AddExamplePair(
+		rules.Wrong("این کار <marker>برای برای</marker> تو بود."),
+		rules.Fixed("این کار <marker>برای</marker> تو بود."),
+	)
 	r := &PersianWordRepeatRule{WordRepeatRule: base}
 	base.ExtraIgnore = r.faIgnore
 	return r

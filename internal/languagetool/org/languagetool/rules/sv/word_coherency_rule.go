@@ -49,6 +49,11 @@ func NewWordCoherencyRule(messages map[string]string) *WordCoherencyRule {
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: multi-marker mejl/mail; first fixed marker = mejl
+	base.AddExamplePair(
+		rules.Wrong("Det är en blandning av <marker>mejl</marker> och <marker>mail</marker> i det du skriver."),
+		rules.Fixed("Om du använder enbart <marker>mejl</marker> när du skriver <marker>mejl</marker> blir det mer konsekvent."),
+	)
 	return &WordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

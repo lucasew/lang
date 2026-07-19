@@ -21,6 +21,11 @@ var persianAdverbs = map[string]bool{
 func NewPersianWordRepeatBeginningRule(messages map[string]string) *PersianWordRepeatBeginningRule {
 	base := rules.NewWordRepeatBeginningRule(messages)
 	base.IDOverride = "PERSIAN_WORD_REPEAT_BEGINNING_RULE"
+	// Java: همچنین → این خیابان
+	base.AddExamplePair(
+		rules.Wrong("همچنین، خیابان تقریباً کاملاً مسکونی است. <marker>همچنین</marker>، به افتخار یک شاعر نامگذاری شده‌است."),
+		rules.Fixed("همچنین، خیابان تقریباً مسکونی است. <marker>این خیابان</marker> به افتخار یک شاعر نامگذاری شده‌است."),
+	)
 	r := &PersianWordRepeatBeginningRule{WordRepeatBeginningRule: base}
 	base.IsAdverbFn = r.isAdverb
 	return r
