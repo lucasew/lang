@@ -1090,3 +1090,42 @@ func TestNounVerbException_PluralBlockMore(t *testing.T) {
 		atr("проігнорував", "verb:perf:past:m"),
 	}, 4, 5))
 }
+
+func TestNounVerbException_TailProps(t *testing.T) {
+	// prop + impers — Java nounPos > 1
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"), atr("pad"), atr("Техас", "noun:inanim:m:v_naz:prop"),
+		atr("запроваджено", "verb:impers"),
+	}, 2, 3))
+
+	// prep + adj + noun + prop
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT_START"),
+		atrLemma("на", strPtr("на"), "prep"),
+		atr("австралійський", "adj:m:v_zna:rinanim"),
+		atr("штат", "noun:inanim:m:v_zna"),
+		atr("Вікторія", "noun:inanim:f:v_naz:prop"),
+		atr("налетів", "verb:perf:past:m"),
+	}, 4, 5))
+
+	// Угорщина було пішла
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("Угорщина", "noun:inanim:f:v_naz:prop"),
+		atr("було", "verb:imperf:past:n"),
+		atr("пішла", "verb:perf:past:f"),
+	}, 0, 1))
+
+	// клан Рана було знищено
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("Рана", "noun:anim:m:v_naz:prop"),
+		atr("було", "verb"),
+		atr("знищено", "verb:impers"),
+	}, 0, 1))
+
+	// діагноз дизентерія підтвердився
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("діагноз", "noun:inanim:m:v_naz"),
+		atr("дизентерія", "noun:inanim:f:v_naz"),
+		atr("підтвердився", "verb:perf:past:m"),
+	}, 2, 3))
+}

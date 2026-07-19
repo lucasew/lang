@@ -1733,8 +1733,8 @@ func gendersOverlap(a, b string) bool {
 	return false
 }
 
-// IsNounVerbException ports TokenAgreementNounVerbExceptionHelper early arms
-// (full table deferred). Invalid layout → exception.
+// IsNounVerbException ports TokenAgreementNounVerbExceptionHelper.isException
+// (surface/lemma/conj/geo/impers arms; RE2-safe stand-ins for lookarounds).
 func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, verbPos int) bool {
 	// Invalid subject/verb order → exception (no flag). Missing tokens: only order check.
 	if nounPos < 0 || verbPos <= nounPos {
@@ -2239,6 +2239,57 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		HasPosTagRE(noun, regexp.MustCompile(`noun:inanim:[mnf]:v_naz:prop:geo.*`)) &&
 		hasPosWithoutPron(tokens[nounPos-1], regexp.MustCompile(`noun:inanim:[mnf]:v_`)) &&
 		!HasPosTagPart(tokens[nounPos-1], "v_naz") {
+		return true
+	}
+
+	// У штатах Техас … запроваджено — prop + impers
+	if nounPos > 1 &&
+		HasPosTagPart(noun, ":prop") &&
+		HasPosTagRE(verb, regexp.MustCompile(`verb.*:impers.*`)) {
+		return true
+	}
+
+	// на австралійський штат Вікторія налетів — prep+adj+noun + prop, prep gov both
+	if nounPos > 3 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:inanim:.:v_naz:prop.*`)) &&
+		HasPosTagRE(tokens[nounPos-1], regexp.MustCompile(`noun:inanim:.*`)) &&
+		HasPosTagRE(tokens[nounPos-2], regexp.MustCompile(`adj:.*`)) &&
+		HasPosTagPart(tokens[nounPos-3], "prep") {
+		govs := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadings(tokens[nounPos-3], "prep")
+		if len(govs) > 0 {
+			list := make([]string, 0, len(govs))
+			for c := range govs {
+				list = append(list, c)
+			}
+			if HasVidmPosTag(list, tokens[nounPos-1]) && HasVidmPosTag(list, tokens[nounPos-2]) {
+				return true
+			}
+		}
+	}
+
+	// Угорщина було пішла — було + later finite verb agreeing with subject
+	if verbPos < len(tokens)-1 && CleanTokenLower(verb) == "було" {
+		pos := TokenSearch(tokens, verbPos+1, "verb:", nil, regexp.MustCompile(`^adv.*`), DirForward)
+		if pos >= 0 &&
+			VerbInflectionsOverlap(CollectPOSTags(tokens[pos]), CollectPOSTags(noun)) {
+			return true
+		}
+	}
+
+	// клан Рана було знищено — prop + було + impers
+	if verbPos < len(tokens)-1 &&
+		HasPosTagPart(noun, ":prop") &&
+		CleanTokenLower(verb) == "було" &&
+		HasPosTagRE(tokens[verbPos+1], regexp.MustCompile(`verb.*:impers.*`)) {
+		return true
+	}
+
+	// діагноз дизентерія підтвердився — prev inanim v_naz (not pron) agrees with verb
+	if nounPos > 1 &&
+		HasPosTagRE(tokens[nounPos-1], regexp.MustCompile(`noun:inanim:.:v_naz.*`)) &&
+		!HasPosTagPart(tokens[nounPos-1], ":pron") &&
+		!HasPosTagRE(noun, regexp.MustCompile(`noun.*pron.*`)) &&
+		VerbInflectionsOverlap(CollectPOSTags(verb), CollectPOSTags(tokens[nounPos-1])) {
 		return true
 	}
 
