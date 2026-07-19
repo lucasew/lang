@@ -22,13 +22,12 @@ func NewRussianWordRepeatRule(messages map[string]string) *RussianWordRepeatRule
 		exc[w] = true
 	}
 	base := &rules.AdvancedWordRepeatRule{
-		ExcludedWords:      exc,
-		ExcludedNonWords:   regexp.MustCompile(`&quot|&gt|&lt|&amp|[0-9].*|M*(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$`),
-		ExcludedPos:        regexp.MustCompile(`INTERJECTION|PRDC|PREP|CONJ|PARTICLE|ABR|NumC:.*|Num:.*`),
-		ID:                 "RU_WORD_REPEAT",
-		Message:            "Повтор слов в предложении",
-		ShortMessage:       "Повтор слов в предложении",
-		AlsoExcludeSurface: false,
+		ExcludedWords:    exc,
+		ExcludedNonWords: regexp.MustCompile(`&quot|&gt|&lt|&amp|[0-9].*|M*(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$`),
+		ExcludedPos:      regexp.MustCompile(`INTERJECTION|PRDC|PREP|CONJ|PARTICLE|ABR|NumC:.*|Num:.*`),
+		ID:               "RU_WORD_REPEAT",
+		Message:          "Повтор слов в предложении",
+		ShortMessage:     "Повтор слов в предложении",
 	}
 	rules.InitAdvancedWordRepeatMeta(base, messages)
 	return &RussianWordRepeatRule{AdvancedWordRepeatRule: base}

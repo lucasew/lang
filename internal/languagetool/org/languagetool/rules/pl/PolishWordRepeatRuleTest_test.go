@@ -25,8 +25,10 @@ func TestPolishWordRepeatRule_Rule(t *testing.T) {
 
 func TestPolishWordRepeatRule_FailClosedWithoutPOS(t *testing.T) {
 	rule := NewPolishWordRepeatRule(nil)
-	// Without prep POS / lemma, "na" twice is a style repeat (fail closed).
-	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("Na dyskotece tańczył jeszcze, choć był na bani."))))
+	// Without prep POS, same surface "na" twice is a style repeat (fail closed).
+	// Java matches ExcludedWords/ExcludedPos on lemma/POS only — no surface invent.
+	// Untagged path is case-sensitive (Java getToken()); use same-case surfaces.
+	require.Equal(t, 1, len(rule.Match(languagetool.AnalyzePlain("tańczył na dyskotece choć był na bani."))))
 }
 
 func withLemma(text, surface, lemma string) *languagetool.AnalyzedSentence {

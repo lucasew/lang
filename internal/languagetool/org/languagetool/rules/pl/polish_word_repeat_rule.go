@@ -30,8 +30,6 @@ func NewPolishWordRepeatRule(messages map[string]string) *PolishWordRepeatRule {
 		ID:               "PL_WORD_REPEAT",
 		Message:          "Powtórzony wyraz w zdaniu",
 		ShortMessage:     "Powtórzenie wyrazu",
-		// Java only matches EXC_WORDS against lemmas, not surface.
-		AlsoExcludeSurface: false,
 	}
 	rules.InitAdvancedWordRepeatMeta(base, messages)
 	return &PolishWordRepeatRule{AdvancedWordRepeatRule: base}

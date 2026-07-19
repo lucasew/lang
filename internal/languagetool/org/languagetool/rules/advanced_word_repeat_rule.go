@@ -2,7 +2,6 @@ package rules
 
 import (
 	"regexp"
-	"strings"
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -12,6 +11,8 @@ import (
 // AdvancedWordRepeatRule ports org.languagetool.rules.AdvancedWordRepeatRule.
 // Detects same word/lemma anywhere in the sentence (not only adjacent).
 // Java ctor: setCategory(MISC), setDefaultOff(), setLocQualityIssueType(Style).
+// ExcludedWords match lemmas only (Java getExcludedWordsPattern); prep/pronoun
+// exclusions use ExcludedPos when tagged — no surface invent of POS lists.
 type AdvancedWordRepeatRule struct {
 	Messages         map[string]string
 	ExcludedWords    map[string]bool
@@ -26,10 +27,6 @@ type AdvancedWordRepeatRule struct {
 	IssueType ITSIssueType
 	// DefaultOff ports setDefaultOff() (Java true for this abstract rule).
 	DefaultOff bool
-	// AlsoExcludeSurface skips tokens whose lowercased surface is in ExcludedWords
-	// or ExtraSurfaceExcluded (stand-in for prep POS without a tagger).
-	AlsoExcludeSurface   bool
-	ExtraSurfaceExcluded map[string]bool
 }
 
 // InitAdvancedWordRepeatMeta applies Java AdvancedWordRepeatRule constructor metadata.
@@ -120,23 +117,21 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 				isWord = false
 			}
 		}
-		if isWord && (r.AlsoExcludeSurface || len(r.ExtraSurfaceExcluded) > 0) {
-			tl := strings.ToLower(token)
-			if r.ExcludedWords[tl] || r.ExtraSurfaceExcluded[tl] {
-				isWord = false
-			}
-		}
 
+		// Java: boolean notSentEnd misnamed — true when any reading is SENT_END.
 		repetition := false
 		prevLemma := ""
 		if isWord {
-			// Soft Analyze uses AddReading for SENT_END, which (like Java) drops a
-			// trailing null-POS reading. The last content word then has only SENT_END.
-			// Still count its surface so two-word sentences without "." match
-			// (server multi-lang "test test" / PL_WORD_REPEAT).
+			// Soft Analyze may leave only SENT_END on the last content word (null-POS
+			// reading dropped). Still track surface so untagged "test test" matches
+			// (incomplete vs full Java tagger, not surface invent of POS/lemma lists).
 			contentReadings := 0
+			isSentEnd := false
 			for _, analyzedToken := range tokens[i].GetReadings() {
 				pos := analyzedToken.GetPOSTag()
+				if pos != nil && *pos == languagetool.SentenceEndTagName {
+					isSentEnd = true
+				}
 				if pos != nil && (*pos == languagetool.SentenceEndTagName || *pos == languagetool.ParagraphEndTagName) {
 					continue
 				}
@@ -147,7 +142,8 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 						continue
 					}
 					curLemma := *lemmaPtr
-					if prevLemma != curLemma {
+					// Java: if (!prevLemma.equals(curLemma) && !notSentEnd)
+					if prevLemma != curLemma && !isSentEnd {
 						if inflectedWords[curLemma] && curToken != i {
 							repetition = true
 						} else {
@@ -157,22 +153,21 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 					}
 					prevLemma = curLemma
 				} else {
-					// Without lemmas, compare case-insensitively (Java lemmas are lowercased).
-					key := strings.ToLower(token)
-					if inflectedWords[key] {
-						repetition = true
-					} else {
-						inflectedWords[key] = true
+					// Java: inflectedWords.contains(tokens[i].getToken()) — exact surface.
+					if !isSentEnd {
+						if inflectedWords[token] {
+							repetition = true
+						} else {
+							inflectedWords[token] = true
+						}
 					}
 				}
 			}
 			if contentReadings == 0 && !hasLemma {
-				// Pure SENT_END annotation on last content word: still track surface.
-				key := strings.ToLower(token)
-				if inflectedWords[key] {
+				if inflectedWords[token] {
 					repetition = true
 				} else {
-					inflectedWords[key] = true
+					inflectedWords[token] = true
 				}
 			}
 		}
@@ -187,6 +182,8 @@ func (r *AdvancedWordRepeatRule) Match(sentence *languagetool.AnalyzedSentence) 
 			rm := NewRuleMatch(r, sentence, pos, end, msg)
 			rm.ShortMessage = r.ShortMessage
 			ruleMatches = append(ruleMatches, rm)
+			// Java resets repetition after each match.
+			repetition = false
 		}
 	}
 	return ruleMatches
