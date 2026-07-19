@@ -888,6 +888,73 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 	if pseudoPlural[CleanTokenLower(noun)] && HasPosTagRE(verb, regexp.MustCompile(`.*:[pn](:.*|$)`)) {
 		return true
 	}
+	// з Василем … разом брали
+	if nounPos+1 < len(tokens) && strings.EqualFold(CleanTokenLower(tokens[nounPos+1]), "разом") &&
+		HasPosTagRE(verb, regexp.MustCompile(`.*:p(:.*|$)`)) {
+		return true
+	}
+	// більше ніж будь-хто маємо
+	if nounPos > 2 && HasLemmaToken(tokens[nounPos-1], "ніж") {
+		return true
+	}
+	// моя ти зоре — ти + v_kly on "verb" slot (mis-tagged)
+	if nounPos > 1 && strings.EqualFold(noun.GetToken(), "ти") &&
+		HasPosTagRE(verb, regexp.MustCompile(`noun.*?v_kly.*`)) {
+		return true
+	}
+	// вона візьми та й скажи
+	if verbPos < len(tokens)-2 && verb.GetToken() == "візьми" &&
+		HasLemmaTokenAny(tokens[verbPos+1], []string{"і", "й", "та"}) {
+		return true
+	}
+	// GEO_QUALIFIERS + proper (в державі Україна / місті Біла Церква)
+	if nounPos > 1 && IsPossiblyProperNoun(noun) && HasLemmaTokenAny(tokens[nounPos-1], geoQualifiers) {
+		return true
+	}
+	if nounPos > 2 && IsPossiblyProperNoun(noun) && IsPossiblyProperNoun(tokens[nounPos-1]) &&
+		HasLemmaTokenAny(tokens[nounPos-2], geoQualifiers) {
+		return true
+	}
+	// У невизнаній республіці Південна Осетія
+	if nounPos > 3 &&
+		HasPosTagPart(noun, "v_naz:prop") &&
+		HasPosTagRE(tokens[nounPos-1], regexp.MustCompile(`adj:.:v_naz.*`)) &&
+		HasPosTagRE(tokens[nounPos-2], regexp.MustCompile(`noun.*:v_(rod|zna|mis).*`)) {
+		return true
+	}
+	// ми в державі Україна маємо — prep+noun:inanim before prop
+	if verbPos > 3 && HasPosTagRE(tokens[verbPos-1], regexp.MustCompile(`noun:inanim:.:v_naz:prop.*`)) {
+		vPos := verbPos
+		if IsCapitalized(tokens[nounPos-1].GetToken()) && HasPosTagStart(tokens[nounPos-1], "adj") {
+			vPos--
+		}
+		if vPos > 3 && HasPosTagStart(tokens[vPos-2], "noun:inanim") && HasPosTagPart(tokens[vPos-3], "prep") {
+			cases := LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadings(tokens[vPos-3], "prep")
+			if len(cases) > 0 {
+				var list []string
+				for c := range cases {
+					list = append(list, c)
+				}
+				if HasVidmPosTag(list, tokens[vPos-2]) {
+					return true
+				}
+			}
+		}
+	}
+	// чи готові ми сидіти — adj governing v_inf + agreement with noun
+	if nounPos > 1 && HasPosTagPart(tokens[nounPos-1], "adj") && HasPosTagRE(verb, verbInfPattern) {
+		if hasCaseGovFromReadings(tokens[nounPos-1], "v_inf") &&
+			adjNounInflectionOverlap(tokens[nounPos-1], noun) {
+			return true
+		}
+	}
+	// тому що, як австрієць маєте — reverse tokenSearch for Як/як
+	if HasPosTagRE(noun, regexp.MustCompile(`noun.*:v_naz.*`)) {
+		if TokenSearch(tokens, nounPos-1, "", regexp.MustCompile(`^[Яя]к$`),
+			regexp.MustCompile(`adj:.:v_naz.*`), DirReverse) != -1 {
+			return true
+		}
+	}
 
 	// можуть російськомовні громадяни вважатися — INF_ARGREEMENT before/after inf
 	// Java: reverseSearchIdx / forwardLemmaSearchIdx with INF_ARGREEMENT_PATTERN
@@ -935,6 +1002,13 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 var infAgreementPattern = regexp.MustCompile(
 	`^(не)?(здатний|змушений|з?г[іо]дний|зобов'язаний|повинний|готовий|достойний|покликаний|спроможний|радий|налаштований|зацікавлений|повинно|змога|стан|можна)$`,
 )
+
+// Java GEO_QUALIFIERS
+var geoQualifiers = []string{
+	"село", "селище", "місто", "містечко", "хутір", "республіка", "держава", "гора", "планета",
+	"мікрорайон", "райцентр", "заповідник", "мис", "м.", "с.", "п.", "штат", "округ", "графство",
+	"вірус", "ураган",
+}
 
 // adjNounInflectionOverlap is a simplified stand-in for Collections.disjoint on
 // noun/adj inflections (Java InflectionHelper) — true when case gender tags share a letter.

@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -328,4 +329,44 @@ func TestVerbNounException_SearchHelperArms(t *testing.T) {
 	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
 		atr("станом", "noun"), atr("на", "prep"), atr("1", "number"),
 	}, 0, 2))
+}
+
+func TestNounVerbException_GeoAndMore(t *testing.T) {
+	// GEO: місто + Kyiv capitalized
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("у", "prep"), atrLemma("місті", strPtr("місто"), "noun:inanim:n:v_mis"),
+		atr("Київ", "noun:inanim:m:v_naz:prop"),
+		atr("відбулося", "verb:perf:past:n"),
+	}, 2, 3))
+
+	// разом + p verb
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("вони", "noun"), atr("разом", "adv"), atr("брали", "verb:imperf:past:p"),
+	}, 0, 2))
+
+	// ніж — Java requires nounPos > 2
+	nizh := "ніж"
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("більше"), atrLemma("ніж", &nizh, "conj"), atr("будь-хто", "noun"),
+		atr("маємо", "verb:imperf:pres:p:1"),
+	}, 3, 4))
+
+	// візьми та — lemma on conj
+	ta := "та"
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("вона", "noun"), atr("візьми", "verb"), atrLemma("та", &ta, "conj"), atr("скажи", "verb"),
+	}, 0, 1))
+}
+
+func strPtr(s string) *string { return &s }
+
+func TestLemmaHelper_TokenSearchAndProper(t *testing.T) {
+	require.True(t, IsPossiblyProperNoun(atr("Київ")))
+	require.True(t, IsInitial(atr("А.")))
+	require.True(t, IsDash(atr("—")))
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		atr("SENT"), atr("як"), atr("австрієць", "noun:anim:m:v_naz"),
+	}
+	require.Equal(t, 1, TokenSearch(tokens, 2, "", regexp.MustCompile(`^[Яя]к$`),
+		regexp.MustCompile(`adj:.:v_naz.*`), DirReverse))
 }

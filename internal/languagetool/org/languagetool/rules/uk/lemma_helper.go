@@ -304,6 +304,86 @@ func ForwardPosTagSearch(tokens []*languagetool.AnalyzedTokenReadings, pos int, 
 	return false
 }
 
+// IsPossiblyProperNoun ports LemmaHelper.isPossiblyProperNoun (capitalized clean token).
+func IsPossiblyProperNoun(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	c := tok.GetCleanToken()
+	if c == "" {
+		c = tok.GetToken()
+	}
+	return IsCapitalized(c)
+}
+
+// IsInitial ports LemmaHelper.isInitial (single-letter initial with period).
+func IsInitial(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	c := tok.GetCleanToken()
+	if c == "" {
+		c = tok.GetToken()
+	}
+	return strings.HasSuffix(c, ".") && regexp.MustCompile(`^[А-ЯІЇЄҐA-Z]\.$`).MatchString(c)
+}
+
+// IsDash ports LemmaHelper.isDash.
+func IsDash(tok *languagetool.AnalyzedTokenReadings) bool {
+	if tok == nil {
+		return false
+	}
+	c := tok.GetCleanToken()
+	if c == "" {
+		c = tok.GetToken()
+	}
+	return DashesPattern.MatchString(c)
+}
+
+// Dir is LemmaHelper.Dir for TokenSearch.
+type Dir int
+
+const (
+	DirForward Dir = iota
+	DirReverse
+)
+
+// TokenSearch ports LemmaHelper.tokenSearch (posTag part, token pattern, ignore POS, direction).
+// Returns index or -1. posTag empty means no POS part filter on the hit.
+func TokenSearch(tokens []*languagetool.AnalyzedTokenReadings, pos int, posTag string, tokenRE, posTagsToIgnore *regexp.Regexp, dir Dir) int {
+	if tokens == nil || pos < 0 || pos >= len(tokens) {
+		return -1
+	}
+	step := 1
+	if dir == DirReverse {
+		step = -1
+	}
+	for i := pos; i < len(tokens) && i > 0; i += step {
+		cur := tokens[i]
+		if cur == nil {
+			continue
+		}
+		if posTagsToIgnore != nil && HasPosTagRE(cur, posTagsToIgnore) {
+			continue
+		}
+		if tokenRE != nil {
+			ct := cur.GetCleanToken()
+			if ct == "" {
+				ct = cur.GetToken()
+			}
+			if !tokenRE.MatchString(ct) {
+				continue
+			}
+		}
+		if posTag != "" && !HasPosTagPart(cur, posTag) {
+			// Java passes (String)null for no posTag on hit — we use empty string
+			continue
+		}
+		return i
+	}
+	return -1
+}
+
 // IsCapitalized ports LemmaHelper.isCapitalized (Ukrainian title-case heuristics).
 func IsCapitalized(word string) bool {
 	if word == "" {
