@@ -9,16 +9,22 @@ import (
 
 func TestDisambiguateSt(t *testing.T) {
 	start := atrSent("SENT_START", "SENT_START")
+	// Java: number before ст. (18 ст.)
+	num := atrSent("18", "number")
 	st := atrMulti("ст.", [][2]string{
-		{"ст.", "verb:imperf:inf"}, // noise
+		{"ст.", "verb:imperf:inf"}, // noise — removed
 		{"ст.", "noun:inanim:f:v_naz:nv:abbr:xp1"},
 	})
-	num := atrSent("208", "number")
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, st, num})
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, num, st})
 	DisambiguateSt(sent)
-	tok := sent.GetTokensWithoutWhitespace()[1]
+	tok := sent.GetTokensWithoutWhitespace()[2]
 	require.False(t, tok.HasPartialPosTag("verb"))
 	require.True(t, tok.HasPartialPosTag("noun") || tok.HasPartialPosTag("abbr"))
+	// untagged ст. stays untagged (no invent inject)
+	st2 := atrUntagged("ст.")
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, atrSent("18", "number"), st2})
+	DisambiguateSt(sent2)
+	require.False(t, sent2.GetTokensWithoutWhitespace()[2].IsTagged())
 }
 
 func TestDisambiguatePronPos(t *testing.T) {
@@ -51,11 +57,19 @@ func TestDisambiguatePronPos(t *testing.T) {
 func TestRetagInitials(t *testing.T) {
 	start := atrSent("SENT_START", "SENT_START")
 	init := atrUntagged("Є.")
+	// Java :prop:lname on surname drives initial tags
 	name := atrSent("Бакуліна", "noun:anim:f:v_naz:prop:lname")
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, init, name})
 	RetagInitials(sent)
-	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("fname"))
-	require.True(t, sent.GetTokensWithoutWhitespace()[1].HasPartialPosTag("abbr"))
+	tok := sent.GetTokensWithoutWhitespace()[1]
+	require.True(t, tok.HasPartialPosTag("fname"))
+	require.True(t, tok.HasPartialPosTag("abbr"))
+	require.True(t, tok.HasPartialPosTag("f:")) // gender from lname
+	// without lname fails closed
+	init2 := atrUntagged("Є.")
+	sent2 := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, init2, atrSent("Марія", "noun:anim:f:v_naz:prop:fname")})
+	RetagInitials(sent2)
+	require.False(t, sent2.GetTokensWithoutWhitespace()[1].IsTagged())
 }
 
 func TestHybridAppliesContextRules(t *testing.T) {
@@ -65,6 +79,7 @@ func TestHybridAppliesContextRules(t *testing.T) {
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, init, name})
 	out := NewUkrainianHybridDisambiguator().Disambiguate(sent)
 	require.True(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("fname"))
+	require.True(t, out.GetTokensWithoutWhitespace()[1].HasPartialPosTag("m:"))
 }
 
 func atrSent(token, pos string) *languagetool.AnalyzedTokenReadings {

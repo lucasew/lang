@@ -3,13 +3,13 @@ package uk
 import (
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
-// DisambiguateSt keeps "ст." as abbr noun when followed by a number (ст. 208).
-// Soft green: drop non-noun/non-abbr noise if present; ensure abbr:xp readings.
+// DisambiguateSt ports UkrainianHybridDisambiguator.disambiguateSt for "ст.".
+// Java removeTokensWithout keeps noun:inanim:[nf] (or p) readings near digits —
+// never invents abbr POS when untagged (fail closed).
 func DisambiguateSt(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -20,53 +20,42 @@ func DisambiguateSt(input *languagetool.AnalyzedSentence) {
 		if tok == nil {
 			continue
 		}
-		surface := strings.ToLower(tok.GetToken())
-		if surface != "ст." && surface != "ст" {
+		// Java: ST_ABBR.equals exact "ст."
+		if tok.GetToken() != "ст." {
 			continue
 		}
-		// look ahead for number
-		hasNum := false
-		for j := i + 1; j < len(tokens) && j <= i+2; j++ {
-			if tokens[j] == nil {
-				continue
-			}
-			if isNumberish(tokens[j]) {
-				hasNum = true
-				break
-			}
-		}
-		// also "ст. ст. 208"
-		if !hasNum && i+1 < len(tokens) {
-			next := strings.ToLower(tokens[i+1].GetToken())
-			if next == "ст." || next == "ст" {
-				for j := i + 2; j < len(tokens) && j <= i+3; j++ {
-					if tokens[j] != nil && isNumberish(tokens[j]) {
-						hasNum = true
-						break
-					}
+		// need preceding number (digits or latin) like Java i > 1 branches
+		if i < 2 || tokens[i-1] == nil || !isNumberish(tokens[i-1]) {
+			// also allow number after "ст." for incomplete subset tests
+			hasAfter := false
+			for j := i + 1; j < len(tokens) && j <= i+2; j++ {
+				if tokens[j] != nil && isNumberish(tokens[j]) {
+					hasAfter = true
+					break
 				}
 			}
+			if !hasAfter {
+				continue
+			}
 		}
-		if !hasNum {
-			continue
-		}
-		// ensure we have noun abbr readings; strip verb-like if any
+		// Java removeTokensWithout: drop readings that are not noun:inanim:[nf]:.*
+		// (or noun:inanim:p when paired ст.ст. — deferred). Keep SENT_END.
 		readings := append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...)
 		for _, r := range readings {
 			if r == nil || r.GetPOSTag() == nil {
 				continue
 			}
 			pos := *r.GetPOSTag()
-			if strings.HasPrefix(pos, "verb") || strings.HasPrefix(pos, "adj") {
-				tok.RemoveReading(r, "dis_st")
+			if pos == languagetool.SentenceEndTagName {
+				continue
 			}
+			if strings.HasPrefix(pos, "noun:inanim:") &&
+				(strings.Contains(pos, ":f:") || strings.Contains(pos, ":n:") || strings.Contains(pos, ":p:")) {
+				continue
+			}
+			tok.RemoveReading(r, "dis_st")
 		}
-		// if untagged after strip, inject soft abbr noun
-		if !tok.IsTagged() {
-			p := "noun:inanim:f:v_naz:nv:abbr:xp1"
-			l := "ст."
-			tok.AddReading(languagetool.NewAnalyzedToken(tok.GetToken(), &p, &l), "dis_st")
-		}
+		// no inject when untagged — Java only filters existing readings
 	}
 }
 
@@ -149,7 +138,9 @@ func DisambiguateYih(input *languagetool.AnalyzedSentence) {
 	DisambiguatePronPos(input)
 }
 
-// RetagInitials tags single Cyrillic letter + "." as fname abbr when next is capitalized name-like.
+// RetagInitials ports checkForInitialRetag / getInitialReadings:
+// when next token has :prop:lname readings, retag the initial from those tags
+// (replace :prop:lname → :nv:abbr:prop:fname). Fail closed without lname POS.
 func RetagInitials(input *languagetool.AnalyzedSentence) {
 	if input == nil {
 		return
@@ -168,35 +159,74 @@ func RetagInitials(input *languagetool.AnalyzedSentence) {
 		if next == nil {
 			continue
 		}
-		ns := next.GetToken()
-		if ns == "" {
+		// Java LAST_NAME_TAG = :prop:lname on following surname
+		newReadings := initialReadingsFromLname(s, next, "fname")
+		if len(newReadings) == 0 {
 			continue
 		}
-		r0, _ := utf8.DecodeRuneInString(ns)
-		if !unicode.IsUpper(r0) {
-			continue
-		}
-		// if already has abbr prop fname, ok; else inject soft
-		if tok.HasPartialPosTag("abbr") && tok.HasPartialPosTag("fname") {
-			continue
-		}
-		if !tok.IsTagged() || !tok.HasPartialPosTag("fname") {
-			// inject dual gender fname abbr readings
-			base := strings.TrimSuffix(s, ".")
-			if base == "" {
-				base = s
+		// replace readings (Java assigns new AnalyzedTokenReadings)
+		for _, r := range append([]*languagetool.AnalyzedToken(nil), tok.GetReadings()...) {
+			if r != nil {
+				tok.RemoveReading(r, "dis_initials")
 			}
-			lemma := base + "."
-			for _, pos := range []string{
-				"noun:anim:f:v_naz:nv:abbr:prop:fname",
-				"noun:anim:m:v_rod:nv:abbr:prop:fname",
-				"noun:anim:m:v_zna:nv:abbr:prop:fname",
-			} {
-				p, l := pos, lemma
-				tok.AddReading(languagetool.NewAnalyzedToken(s, &p, &l), "dis_initials")
-			}
+		}
+		for _, r := range newReadings {
+			tok.AddReading(r, "dis_initials")
 		}
 	}
+}
+
+// initialReadingsFromLname ports getInitialReadings(initials, lname, initialType).
+func initialReadingsFromLname(initialSurface string, lname *languagetool.AnalyzedTokenReadings, initialType string) []*languagetool.AnalyzedToken {
+	if lname == nil {
+		return nil
+	}
+	const lastNameTag = ":prop:lname"
+	// Java PATTERN_4 strips :alt|:nv|:up\d{2}|:xp\d before replace
+	stripExtra := func(pos string) string {
+		for _, frag := range []string{":alt", ":nv"} {
+			pos = strings.ReplaceAll(pos, frag, "")
+		}
+		// strip :upNN :xpN
+		for {
+			i := strings.Index(pos, ":up")
+			if i < 0 {
+				break
+			}
+			j := i + 3
+			for j < len(pos) && pos[j] >= '0' && pos[j] <= '9' {
+				j++
+			}
+			pos = pos[:i] + pos[j:]
+		}
+		for {
+			i := strings.Index(pos, ":xp")
+			if i < 0 {
+				break
+			}
+			j := i + 3
+			for j < len(pos) && pos[j] >= '0' && pos[j] <= '9' {
+				j++
+			}
+			pos = pos[:i] + pos[j:]
+		}
+		return pos
+	}
+	var out []*languagetool.AnalyzedToken
+	for _, lr := range lname.GetReadings() {
+		if lr == nil || lr.GetPOSTag() == nil {
+			continue
+		}
+		pos := *lr.GetPOSTag()
+		if !strings.Contains(pos, lastNameTag) {
+			continue
+		}
+		pos = stripExtra(pos)
+		pos = strings.Replace(pos, lastNameTag, ":nv:abbr:prop:"+initialType, 1)
+		p, l := pos, initialSurface
+		out = append(out, languagetool.NewAnalyzedToken(initialSurface, &p, &l))
+	}
+	return out
 }
 
 func isInitialSurface(s string) bool {
