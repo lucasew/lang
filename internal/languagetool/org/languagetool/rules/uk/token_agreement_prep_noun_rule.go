@@ -365,7 +365,7 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 		if HasPosTagPart(tok, ":v_") {
 			// non-normative genitive personal pronouns (їх/його as rod without них form)
 			if flag, keep, skipTo := prepPronRodMismatch(tok, clean, tokens, i, prepTok); flag {
-				out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, ""))
+				out = append(out, r.newPrepNounMatch(sentence, tokens, i, prepTok, tok, want, ziZnaRemoved, ""))
 				prepPos = -1
 				continue
 			} else if keep {
@@ -378,7 +378,7 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 			// possessive їх/його/її adj
 			if pronAdj := filterReadings(tok, prepNounPronPosRE, prepNounYihLemmas); len(pronAdj) > 0 {
 				if !hasVidmPosTagReadings(want, pronAdj) {
-					out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, ""))
+					out = append(out, r.newPrepNounMatch(sentence, tokens, i, prepTok, tok, want, ziZnaRemoved, ""))
 					prepPos = -1
 					continue
 				}
@@ -386,8 +386,9 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 					continue // check next noun
 				}
 			} else if thisLower == "їх" {
+				// Java createRuleMatch: їх + required tags
 				extra := ". Можливо, тут потрібно присвійний займенник «їхній» або нормативна форма р.в. «них»?"
-				out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, extra))
+				out = append(out, r.newPrepNounMatch(sentence, tokens, i, prepTok, tok, want, ziZnaRemoved, extra))
 				prepPos = -1
 				continue
 			}
@@ -415,12 +416,7 @@ func (r *TokenAgreementPrepNounRule) Match(sentence *languagetool.AnalyzedSenten
 				continue
 			}
 
-			extra := ""
-			if containsStr(want, "v_rod") && prepNounUYuyuRE.MatchString(tok.GetToken()) &&
-				HasPosTagRE(tok, prepNounDavMRE) {
-				extra = UsedUInsteadOfAMsg
-			}
-			out = append(out, r.newPrepNounMatch(sentence, prepTok, tok, want, ziZnaRemoved, extra))
+			out = append(out, r.newPrepNounMatch(sentence, tokens, i, prepTok, tok, want, ziZnaRemoved, ""))
 		} else {
 			// no :v_ — NonInfl may skip (keep prep) or exception (clear); else fall through clear
 			switch ex := GetPrepNounExceptionNonInfl(tokens, i); ex.Type {
@@ -634,20 +630,88 @@ func foundVidminkyNames(tok *languagetool.AnalyzedTokenReadings) []string {
 }
 
 // newPrepNounMatch ports createRuleMatch (message + optional synthesizer suggestions).
+// tokens/i enable Java post-message arms (його/її, о+kly).
 func (r *TokenAgreementPrepNounRule) newPrepNounMatch(
 	sentence *languagetool.AnalyzedSentence,
+	tokens []*languagetool.AnalyzedTokenReadings,
+	i int,
 	prepTok, tok *languagetool.AnalyzedTokenReadings,
 	want []string,
 	ziZnaRemoved bool,
 	extraMsg string,
 ) *rules.RuleMatch {
-	msg := prepNounMsg(prepTok, tok, want, ziZnaRemoved) + extraMsg
+	msg := prepNounMsg(prepTok, tok, want, ziZnaRemoved)
+	tokenLower := ""
+	if tok != nil {
+		tokenLower = strings.ToLower(cleanTokenSurface(tok))
+	}
+	sugs := r.prepNounSuggestions(want, tok)
+
+	// Java else-if chain after base msg (їх may arrive via extraMsg from call site)
+	switch {
+	case extraMsg != "":
+		msg += extraMsg
+	case containsStr(want, "v_rod") && tok != nil && prepNounUYuyuRE.MatchString(tok.GetToken()) &&
+		HasPosTagRE(tok, prepNounDavMRE):
+		msg += UsedUInsteadOfAMsg
+	case tokenLower == "їх" && len(want) > 0:
+		msg += ". Можливо, тут потрібно присвійний займенник «їхній» або нормативна форма р.в. «них»?"
+	case (tokenLower == "його" || tokenLower == "її") && len(want) > 0:
+		repl := "нього"
+		if tokenLower == "її" {
+			repl = "неї"
+		}
+		msg += ". Можливо, тут потрібно присвійний займенник «" + repl + "»?"
+		sugs = append(sugs, repl)
+	case prepTok != nil && strings.EqualFold(cleanTokenSurface(prepTok), "о") && tok != nil:
+		for _, ar := range tok.GetReadings() {
+			if ar == nil || ar.GetPOSTag() == nil {
+				continue
+			}
+			if !regexp.MustCompile(`noun:anim:.:v_naz`).MatchString(*ar.GetPOSTag()) {
+				continue
+			}
+			msg += ". Можливо, тут «о» — це вигук і потрібно кличний відмінок?"
+			if r != nil && r.Synth != nil {
+				newPos := strings.Replace(*ar.GetPOSTag(), "v_naz", "v_kly", 1)
+				if syn, err := r.Synth.Synthesize(ar, newPos); err == nil {
+					for _, s := range syn {
+						if s != "" && s != ar.GetToken() {
+							sugs = append(sugs, s)
+						}
+					}
+				}
+			}
+			break
+		}
+	}
+	// Java adv-merge ("Можливо, прийменник і прислівник…") needs tagger on prep+adv;
+	// deferred until Tag hook is wired on the rule.
+	_ = tokens
+	_ = i
+
 	m := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
 	m.ShortMessage = r.shortMsg
-	if sugs := r.prepNounSuggestions(want, tok); len(sugs) > 0 {
-		m.SetSuggestedReplacements(sugs)
+	if len(sugs) > 0 {
+		m.SetSuggestedReplacements(uniqPrepNounSugs(sugs))
 	}
 	return m
+}
+
+func uniqPrepNounSugs(in []string) []string {
+	seen := map[string]struct{}{}
+	var out []string
+	for _, s := range in {
+		if s == "" {
+			continue
+		}
+		if _, ok := seen[s]; ok {
+			continue
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	return out
 }
 
 // prepNounSuggestions ports createRuleMatch synthesizer loop (v_* remaps).
