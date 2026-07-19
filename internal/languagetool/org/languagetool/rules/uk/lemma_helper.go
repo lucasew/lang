@@ -9,7 +9,7 @@ import (
 )
 
 // LemmaHelper ports lemma sets and membership helpers from
-// org.languagetool.rules.uk.LemmaHelper (token-array search deferred).
+// org.languagetool.rules.uk.LemmaHelper (TokenSearch / ReverseSearch included).
 
 const ignoreChars = "\u00AD\u0301"
 

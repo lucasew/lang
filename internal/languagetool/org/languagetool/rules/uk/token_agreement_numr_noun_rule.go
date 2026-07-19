@@ -70,6 +70,9 @@ var (
 	numrAdjPZnaRE     = regexp.MustCompile(`^adj:p:v_zna.*`)
 	numrNounPRodRE    = regexp.MustCompile(`^noun:.*p:v_rod.*`)
 	numrDavMRE        = regexp.MustCompile(`noun.*?:m:v_dav.*`)
+	// Java DVA_PATTERN / DVI_PATTERN (case-insensitive full-string)
+	numrDvaGenderRE = regexp.MustCompile(`(?i)^(?:(?:оби)?два|.+-два)$`)
+	numrDviGenderRE = regexp.MustCompile(`(?i)^(?:(?:оби)?дві|.+-дві)$`)
 )
 
 func NewTokenAgreementNumrNounRule() *TokenAgreementNumrNounRule {
@@ -331,15 +334,31 @@ func (r *TokenAgreementNumrNounRule) Match(sentence *languagetool.AnalyzedSenten
 		// dedupe by String key
 		slave = dedupeInflections(slave)
 
-		if !InflectionsIntersect(master, slave) {
+		// genderOfPluralNotFound: два/дві + p:v_naz noun with no synth singular of expected gender
+		// (Java findSingulars needs synthesizer; without Synth leave empty — no false gender arm)
+		genderPlural := ""
+		if r != nil && r.Synth != nil {
+			genderPlural = detectGenderOfPluralNotFound(numrClean, master, tok, r.Synth)
+		}
+		disjoint := !InflectionsIntersect(master, slave)
+		if genderPlural != "" || disjoint {
 			if IsNumrNounException(tokens, numrPos, i) {
 				numrPos = -1
 				continue
 			}
-			msg := numrNounMsg(numrTok, numrClean, master, slave, tok, nounTags)
+			msg := numrNounMsgWithPluralGender(numrTok, numrClean, master, slave, tok, nounTags, genderPlural, disjoint)
 			m := rules.NewRuleMatch(r, sentence, numrTok.GetStartPos(), tok.GetEndPos(), msg)
 			m.ShortMessage = r.shortMsg
-			if sugs := r.numrNounSuggestions(master, tokens, numrPos, i, numrTok, tok, numrClean); len(sugs) > 0 {
+			if !disjoint && genderPlural != "" {
+				// Java: дві→два / два→дві surface suggestion
+				sugg1 := numrClean
+				if genderPlural == "f" {
+					sugg1 = regexp.MustCompile(`і$`).ReplaceAllString(numrClean, "а")
+				} else {
+					sugg1 = regexp.MustCompile(`а$`).ReplaceAllString(numrClean, "і")
+				}
+				m.SetSuggestedReplacements([]string{sugg1 + " " + tok.GetToken()})
+			} else if sugs := r.numrNounSuggestions(master, tokens, numrPos, i, numrTok, tok, numrClean); len(sugs) > 0 {
 				m.SetSuggestedReplacements(sugs)
 			}
 			out = append(out, m)
@@ -559,6 +578,20 @@ func adjustAlphaNumrMaster(master []Inflection, numrToken string, tokens []*lang
 }
 
 func numrNounMsg(numrTok *languagetool.AnalyzedTokenReadings, numrClean string, master, slave []Inflection, nounTok *languagetool.AnalyzedTokenReadings, nounTags []string) string {
+	return numrNounMsgWithPluralGender(numrTok, numrClean, master, slave, nounTok, nounTags, "", true)
+}
+
+// numrNounMsgWithPluralGender ports createRuleMatch message arms including genderOfPluralNotFound.
+// disjoint=false means inflections already overlap but plural gender mismatch still flags.
+func numrNounMsgWithPluralGender(
+	numrTok *languagetool.AnalyzedTokenReadings,
+	numrClean string,
+	master, slave []Inflection,
+	nounTok *languagetool.AnalyzedTokenReadings,
+	nounTags []string,
+	genderOfPluralNotFound string,
+	disjoint bool,
+) string {
 	numrSurf := ""
 	if numrTok != nil && len(numrTok.GetReadings()) > 0 {
 		numrSurf = numrTok.GetToken()
@@ -567,7 +600,10 @@ func numrNounMsg(numrTok *languagetool.AnalyzedTokenReadings, numrClean string, 
 	if nounTok != nil {
 		nounSurf = nounTok.GetToken()
 	}
-	msg := "Потенційна помилка: числівник не узгоджений з іменником: \"" + numrSurf + "\" і \"" + nounSurf + "\""
+	// Java: "… \"%s\" вимагає: [%s], а далі йде \"%s\": [%s]"
+	msg := "Потенційна помилка: числівник не узгоджений з іменником: \"" + numrSurf +
+		"\" вимагає: [" + formatAdjNounInflections(master, true) + "], а далі йде \"" + nounSurf +
+		"\": [" + formatAdjNounInflections(slave, false) + "]"
 	if numr1_5RE.MatchString(numrClean) {
 		return "Після «1,5» треба вживати родовий відмінок однини"
 	}
@@ -585,6 +621,12 @@ func numrNounMsg(numrTok *languagetool.AnalyzedTokenReadings, numrClean string, 
 	}
 	if hasInflection(master, "m", "v_rod") && numrUYuyuLike(nounTok) && hasTagRE(nounTags, numrDavMRE) {
 		msg += UsedUInsteadOfAMsg
+	} else if numrTok != nil && !HasPosTagRE(numrTok, regexp.MustCompile(`adj.*?v_mis.*`)) &&
+		hasTagRE(nounTags, regexp.MustCompile(`noun.*?v_mis.*`)) {
+		msg += ". Можливо, пропущено прийменник на/в/у...?"
+	}
+	if !disjoint && genderOfPluralNotFound != "" {
+		msg += ". Можливо, не збігається рід однини для множинної форми?"
 	}
 	return msg
 }
@@ -594,6 +636,122 @@ func numrUYuyuLike(tok *languagetool.AnalyzedTokenReadings) bool {
 		return false
 	}
 	return regexp.MustCompile(`.*[ую]$`).MatchString(tok.GetToken())
+}
+
+// detectGenderOfPluralNotFound ports genderOfPluralNotFound + findSingulars (needs Synth).
+// Returns "f" for дві/…, "mn" for два/…, or "" if not applicable / synth incomplete.
+func detectGenderOfPluralNotFound(numrToken string, master []Inflection, nounTok *languagetool.AnalyzedTokenReadings, synth synthesis.Synthesizer) string {
+	if synth == nil || nounTok == nil {
+		return ""
+	}
+	lookFor := ""
+	switch {
+	case numrDviGenderRE.MatchString(numrToken):
+		lookFor = ":f:"
+	case numrDvaGenderRE.MatchString(numrToken):
+		lookFor = ":[mn]:"
+	default:
+		return ""
+	}
+	// only after DVA_3_4 master path (has p:v_naz or p:v_zna)
+	hasP := false
+	for _, inf := range master {
+		if inf.Gender == "p" && (inf.Case == "v_naz" || inf.Case == "v_zna") {
+			hasP = true
+			break
+		}
+	}
+	if !hasP {
+		return ""
+	}
+	vidm := "naz"
+	if len(master) == 2 {
+		// Java: size==2 → (naz|zna)
+		vidm = "(naz|zna)"
+	}
+	var pattern *regexp.Regexp
+	var adjP *regexp.Regexp
+	if len(master) == 2 {
+		// RE2: no (?!:ns) — filter :ns in loop
+		pattern = regexp.MustCompile(`noun.*:p:v_` + vidm)
+		adjP = regexp.MustCompile(`adj:p:v_` + vidm)
+	} else {
+		pattern = regexp.MustCompile(`noun.*:p:v_` + vidm + `.*`)
+		adjP = regexp.MustCompile(`adj:p:v_` + vidm + `.*`)
+	}
+	if !HasPosTagRE(nounTok, pattern) || HasPosTagRE(nounTok, adjP) {
+		return ""
+	}
+	// also require no :ns for size==2 Java negative lookahead
+	if len(master) == 2 {
+		ok := false
+		for _, p := range CollectPOSTags(nounTok) {
+			if pattern.MatchString(p) && !strings.Contains(p, ":ns") {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			return ""
+		}
+	}
+	found, incomplete := findNumrSingulars(nounTok, pattern, lookFor, synth)
+	if incomplete {
+		return "" // Java returns null → do not set genderOfPluralNotFound
+	}
+	if len(found) == 0 {
+		if lookFor == ":f:" {
+			return "f"
+		}
+		return "mn"
+	}
+	return ""
+}
+
+// findNumrSingulars ports TokenAgreementNumrNounRule.findSingulars.
+// incomplete=true when dynamic tag has zero synth forms (Java return null).
+func findNumrSingulars(nounTok *languagetool.AnalyzedTokenReadings, pattern *regexp.Regexp, lookFor string, synth synthesis.Synthesizer) (found map[string]struct{}, incomplete bool) {
+	found = map[string]struct{}{}
+	if nounTok == nil || pattern == nil || synth == nil {
+		return found, false
+	}
+	seenLemma := map[string]struct{}{}
+	for _, tr := range nounTok.GetReadings() {
+		if tr == nil || tr.GetPOSTag() == nil {
+			continue
+		}
+		pos := *tr.GetPOSTag()
+		// Java hasPosTag(tr, pattern)
+		if !pattern.MatchString(pos) {
+			continue
+		}
+		// empty synth of current tag → dynamically tagged
+		cur, err := synth.Synthesize(tr, pos)
+		if err != nil || len(cur) == 0 {
+			return nil, true
+		}
+		lem := ""
+		if tr.GetLemma() != nil {
+			lem = *tr.GetLemma()
+		}
+		if _, ok := seenLemma[lem]; ok {
+			continue
+		}
+		seenLemma[lem] = struct{}{}
+		// singularTag = p → lookFor, strip :var|:bad|:arch → .*
+		singTag := strings.Replace(pos, ":p:", lookFor, 1)
+		singTag = regexp.MustCompile(`:(?:var|bad|arch)`).ReplaceAllString(singTag, ".*")
+		syn, err := synth.SynthesizeRE(tr, singTag, true)
+		if err != nil {
+			continue
+		}
+		for _, s := range syn {
+			if s != "" {
+				found[s] = struct{}{}
+			}
+		}
+	}
+	return found, false
 }
 
 func hasInflection(infs []Inflection, gender, cas string) bool {
