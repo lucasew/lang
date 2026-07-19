@@ -23,6 +23,11 @@ type AbstractDashRule struct {
 	Category *Category
 	// Tags ports Rule.tags (Java picky).
 	Tags []Tag
+	// URL ports Rule.url (Java setUrl).
+	URL string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []IncorrectExample
+	correctExamples   []CorrectExample
 	// IsLetter reports whether r is a word character for boundary checks.
 	// When nil, ASCII letters are used (EN/PL default). RU/PT override this.
 	IsLetter func(r rune) bool
@@ -66,6 +71,65 @@ func (r *AbstractDashRule) HasTag(tag Tag) bool {
 		}
 	}
 	return false
+}
+
+// GetURL ports Rule.getUrl.
+func (r *AbstractDashRule) GetURL() string {
+	if r == nil {
+		return ""
+	}
+	return r.URL
+}
+
+// SetURL ports Rule.setUrl.
+func (r *AbstractDashRule) SetURL(u string) {
+	if r != nil {
+		r.URL = u
+	}
+}
+
+// GetDescription ports Rule.getDescription.
+func (r *AbstractDashRule) GetDescription() string {
+	if r == nil {
+		return ""
+	}
+	return r.Description
+}
+
+// GetID ports Rule.getId.
+func (r *AbstractDashRule) GetID() string {
+	if r == nil || r.ID == "" {
+		return "DASH_RULE"
+	}
+	return r.ID
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *AbstractDashRule) AddExamplePair(incorrect IncorrectExample, correct CorrectExample) {
+	if r == nil {
+		return
+	}
+	appendExamplePair(&r.incorrectExamples, &r.correctExamples, incorrect, correct)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *AbstractDashRule) GetIncorrectExamples() []IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *AbstractDashRule) GetCorrectExamples() []CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 // LoadDashCompoundPatterns ports AbstractDashRule.loadCompoundFile variants.
@@ -116,13 +180,6 @@ func LoadDashCompoundPatterns(r io.Reader) ([]string, error) {
 		return patterns[i] < patterns[j]
 	})
 	return patterns, nil
-}
-
-func (r *AbstractDashRule) GetID() string {
-	if r.ID != "" {
-		return r.ID
-	}
-	return "DASH_RULE"
 }
 
 func (r *AbstractDashRule) Match(sentence *languagetool.AnalyzedSentence) []*RuleMatch {

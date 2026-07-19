@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -32,4 +33,20 @@ func TestEnglishDashRule_Rule(t *testing.T) {
 	check(1, "This works semi–automatically.", "semi-automatically")
 	check(1, "This works semi – automatically.", "semi-automatically")
 	check(1, "I sent you and e–mail.", "e-mail")
+}
+
+// Java EnglishDashRule ctor: hyphen URL, T—shirt example, TYPOGRAPHY + picky.
+func TestEnglishDashRule_Metadata(t *testing.T) {
+	rule := NewEnglishDashRule(nil)
+	require.Equal(t, "EN_DASH_RULE", rule.GetID())
+	require.Contains(t, rule.GetDescription(), "hyphenated words")
+	require.Contains(t, rule.GetURL(), "hyphen")
+	require.NotNil(t, rule.GetCategory())
+	require.Equal(t, "TYPOGRAPHY", rule.GetCategory().GetID().String())
+	require.True(t, rule.HasTag(rules.TagPicky))
+	inc := rule.GetIncorrectExamples()
+	require.Len(t, inc, 1)
+	require.Equal(t, "I'll buy a new <marker>T—shirt</marker>.", inc[0].GetExample())
+	require.Equal(t, []string{"T-shirt"}, inc[0].GetCorrections())
+	require.Equal(t, "I'll buy a new <marker>T-shirt</marker>.", rule.GetCorrectExamples()[0].GetExample())
 }

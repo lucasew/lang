@@ -42,9 +42,17 @@ func NewEnglishDashRule(messages map[string]string) *EnglishDashRule {
 		ID:               "EN_DASH_RULE",
 		CompoundPatterns: loadDashPatterns(),
 		Message:          "A dash was used instead of a hyphen.",
-		Description:      "Checks if hyphenated words were spelled with dashes",
+		// Java EnglishDashRule.getDescription
+		Description: "Checks if hyphenated words were spelled with dashes (e.g., 'T — shirt' instead 'T-shirt').",
+		// Java setUrl hyphen insights
+		URL: "https://languagetool.org/insights/post/hyphen/",
 	}
 	rules.InitDashRuleMeta(base, messages)
+	// Java: addExamplePair(T—shirt → T-shirt)
+	base.AddExamplePair(
+		rules.Wrong("I'll buy a new <marker>T—shirt</marker>."),
+		rules.Fixed("I'll buy a new <marker>T-shirt</marker>."),
+	)
 	return &EnglishDashRule{AbstractDashRule: base}
 }
 
