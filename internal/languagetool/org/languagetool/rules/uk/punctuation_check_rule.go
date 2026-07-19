@@ -29,6 +29,8 @@ func NewPunctuationCheckRule(messages map[string]string) *PunctuationCheckRule {
 			return ukPunctToken.MatchString(token)
 		},
 	}
+	// Java AbstractPunctuationCheckRule: Categories.PUNCTUATION + English description
+	rules.InitPunctuationCheckMeta(base, messages)
 	return &PunctuationCheckRule{AbstractPunctuationCheckRule: base}
 }
 

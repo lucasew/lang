@@ -44,6 +44,23 @@ func TestUK_SimpleReplaceMeta(t *testing.T) {
 	require.Equal(t, rules.NewCategoryId("MISC"), r.GetCategory().GetID())
 }
 
+func TestUK_PunctuationCheckMeta(t *testing.T) {
+	r := NewPunctuationCheckRule(nil)
+	require.Equal(t, "PUNCTUATION_GENERIC_CHECK", r.GetID())
+	require.Equal(t, "Use of unusual combination of punctuation characters", r.GetDescription())
+	require.Equal(t, rules.NewCategoryId("PUNCTUATION"), r.GetCategory().GetID())
+}
+
+func TestUK_FractionalNumrPatterns(t *testing.T) {
+	// Java String.matches surfaces
+	require.True(t, IsFractionalNumrException(atr("півтора", "numr"), nil))
+	require.True(t, IsFractionalNumrException(atr("один-півтора", "numr"), nil))
+	require.True(t, IsFractionalNumrException(atr("півтори", "numr"), nil))
+	require.True(t, IsFractionalNumrException(atr("пів", "numr"), nil))
+	require.True(t, IsFractionalNumrException(atr("1,5", "number"), nil))
+	require.False(t, IsFractionalNumrException(atr("три", "numr"), nil))
+}
+
 func TestUK_TokenAgreementMetadata(t *testing.T) {
 	adj := NewTokenAgreementAdjNounRule()
 	require.Equal(t, "UK_ADJ_NOUN_INFLECTION_AGREEMENT", adj.GetID())

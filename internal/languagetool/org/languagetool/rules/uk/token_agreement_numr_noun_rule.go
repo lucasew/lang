@@ -31,11 +31,19 @@ var nounForcePattern = regexp.MustCompile(
 	`^(?:чоловік|солдат|тон|(?:нано|мікро|мілі|дека|кіло|мега|гіга|тера|пета)?(?:герц|байт|біт|бар|бер|ват|вольт|децибел|рентген|моль|мікрон|грам|аршин|лат|карат))$`,
 )
 
-// FractionalNumrLemmas ports common fractional numeral heads used as soft exceptions
-// (Java half-related paths; incomplete vs full numeric patterns, not invent of new words).
-var FractionalNumrLemmas = map[string]struct{}{
-	"півтора": {}, "півтори": {}, "пів": {},
-}
+// Java TokenAgreementNumrNounRule surface patterns for fractional / half numerals
+// (Matcher.matches / String.matches — full-string). Incomplete vs full Java branch
+// messages; used only as soft skip on the simplified pair checker (no invent tokens).
+var (
+	// numrToken.matches("(один-|одне-)?півтора")
+	numrPivtoraRE = regexp.MustCompile(`^(?:один-|одне-)?півтора$`)
+	// numrToken.matches("(одн.+-)?півтори")
+	numrPivtoryRE = regexp.MustCompile(`^(?:одн.+-)?півтори$`)
+	// numrToken.matches("пів")
+	numrPivRE = regexp.MustCompile(`^пів$`)
+	// _FRACT = Pattern.compile(".*,[1-9]+")
+	numrFractRE = regexp.MustCompile(`,[1-9]+$`)
+)
 
 func NewTokenAgreementNumrNounRule() *TokenAgreementNumrNounRule {
 	return NewTokenAgreementNumrNounRuleWithMessages(nil)
@@ -79,19 +87,24 @@ func IsForceNounException(numr, noun *languagetool.AnalyzedTokenReadings) bool {
 	return nounForcePattern.MatchString(clean)
 }
 
-// IsFractionalNumrException soft-skips fractional numeral + noun pairs.
+// IsFractionalNumrException ports Java half/fractional numeral surfaces used before
+// special-case messaging (півтора / півтори / пів / decimal ,N). Simplified matcher
+// soft-skips those pairs; does not invent lemma lists beyond Java String.matches.
 func IsFractionalNumrException(numr, noun *languagetool.AnalyzedTokenReadings) bool {
 	if numr == nil {
 		return false
 	}
-	if _, ok := FractionalNumrLemmas[strings.ToLower(numr.GetToken())]; ok {
+	tok := strings.ToLower(numr.GetToken())
+	if numrPivtoraRE.MatchString(tok) || numrPivtoryRE.MatchString(tok) ||
+		numrPivRE.MatchString(tok) || numrFractRE.MatchString(tok) {
 		return true
 	}
-	for _, r := range numr.GetReadings() {
-		if r != nil && r.GetLemma() != nil {
-			if _, ok := FractionalNumrLemmas[strings.ToLower(*r.GetLemma())]; ok {
-				return true
-			}
+	// also try clean token (Java sometimes uses cleanToken for numeric paths)
+	clean := strings.ToLower(numr.GetCleanToken())
+	if clean != "" && clean != tok {
+		if numrPivtoraRE.MatchString(clean) || numrPivtoryRE.MatchString(clean) ||
+			numrPivRE.MatchString(clean) || numrFractRE.MatchString(clean) {
+			return true
 		}
 	}
 	return false

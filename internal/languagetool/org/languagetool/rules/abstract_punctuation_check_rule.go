@@ -5,13 +5,32 @@ import (
 )
 
 // AbstractPunctuationCheckRule ports org.languagetool.rules.AbstractPunctuationCheckRule.
+// Java ctor: setCategory(Categories.PUNCTUATION).
 type AbstractPunctuationCheckRule struct {
 	Messages map[string]string
 	ID       string
+	// Description ports getDescription (Java default English string).
+	Description string
+	// Category ports Rule.category (Java PUNCTUATION).
+	Category *Category
 	// IsPunctsJoinOk reports whether a run of punctuation tokens is allowed.
 	IsPunctsJoinOk func(tokens string) bool
 	// IsPunctuation reports whether a single token is punctuation for this rule.
 	IsPunctuation func(token string) bool
+}
+
+// InitPunctuationCheckMeta applies Java AbstractPunctuationCheckRule constructor metadata.
+func InitPunctuationCheckMeta(r *AbstractPunctuationCheckRule, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	r.Messages = messages
+	if r.Category == nil {
+		r.Category = CatPunctuation.GetCategory(messages)
+	}
+	if r.Description == "" {
+		r.Description = "Use of unusual combination of punctuation characters"
+	}
 }
 
 func (r *AbstractPunctuationCheckRule) GetID() string {
@@ -19,6 +38,21 @@ func (r *AbstractPunctuationCheckRule) GetID() string {
 		return r.ID
 	}
 	return "PUNCTUATION_GENERIC_CHECK"
+}
+
+func (r *AbstractPunctuationCheckRule) GetDescription() string {
+	if r != nil && r.Description != "" {
+		return r.Description
+	}
+	return "Use of unusual combination of punctuation characters"
+}
+
+// GetCategory ports Rule.getCategory (Java PUNCTUATION).
+func (r *AbstractPunctuationCheckRule) GetCategory() *Category {
+	if r == nil {
+		return nil
+	}
+	return r.Category
 }
 
 // Match ports AbstractPunctuationCheckRule.match (uses tokens *with* whitespace).
