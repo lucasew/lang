@@ -353,3 +353,59 @@ func TestDynamicNumeric_MmParadigm(t *testing.T) {
 	require.Contains(t, rs[0].POS, "adj:")
 	require.Contains(t, rs[0].POS, "v_")
 }
+
+func TestDynamicIntjRedupReadings(t *testing.T) {
+	require.Nil(t, DynamicIntjRedupReadings("а-а", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "а":
+			return []tagging.TaggedWord{{Lemma: "а", PosTag: "intj"}}
+		case "га":
+			return []tagging.TaggedWord{{Lemma: "га", PosTag: "intj"}}
+		case "гей":
+			return []tagging.TaggedWord{{Lemma: "гей", PosTag: "intj"}}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicIntjRedupReadings("а-а", tagWord)
+	require.NotEmpty(t, rs)
+	require.Equal(t, "intj", rs[0].POS)
+	require.Equal(t, "а-а", rs[0].Lemma)
+
+	rs2 := DynamicIntjRedupReadings("Гей-гей-гей", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Equal(t, "гей-гей-гей", rs2[0].Lemma)
+
+	// mixed non-intj: fail closed
+	require.Nil(t, DynamicIntjRedupReadings("кіт-пес", tagWord))
+}
+
+func TestDynamicNumrAdjReadings(t *testing.T) {
+	require.Nil(t, DynamicNumrAdjReadings("двох-триметровий", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "двох":
+			return []tagging.TaggedWord{{Lemma: "два", PosTag: "numr:p:v_rod"}}
+		case "триметровий":
+			return []tagging.TaggedWord{{Lemma: "триметровий", PosTag: "adj:m:v_naz"}}
+		case "метровий":
+			return []tagging.TaggedWord{{Lemma: "метровий", PosTag: "adj:m:v_naz"}}
+		case "три":
+			return []tagging.TaggedWord{{Lemma: "три", PosTag: "numr:p:v_naz"}}
+		default:
+			return nil
+		}
+	}
+	// Java: left ".*?(двох|трьох|чотирьох)" → :bad even when right starts with три
+	rs := DynamicNumrAdjReadings("двох-триметровий", tagWord)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].POS, "adj")
+	require.Contains(t, rs[0].POS, ":bad")
+	require.Equal(t, "двох-триметровий", rs[0].Lemma)
+
+	// три-метровий: left ends with "и" (NUMR_ADJ_PATTERN); right not дво|три|… → :bad
+	rs2 := DynamicNumrAdjReadings("три-метровий", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Contains(t, rs2[0].POS, ":bad")
+}
