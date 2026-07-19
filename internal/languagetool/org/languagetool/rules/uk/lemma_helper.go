@@ -4,6 +4,8 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // LemmaHelper ports lemma sets and membership helpers from
@@ -125,6 +127,27 @@ func HasLemmaInList(lemmas, want []string) bool {
 func HasLemmaString(lemmas []string, want string) bool {
 	for _, l := range lemmas {
 		if l == want {
+			return true
+		}
+	}
+	return false
+}
+
+// HasLemmaWithPartPos ports LemmaHelper.hasLemma(readings, lemmas, partPos):
+// lemma equals one of lemmas AND POS tag contains partPos (Java String.contains).
+func HasLemmaWithPartPos(tok *languagetool.AnalyzedTokenReadings, lemmas []string, partPos string) bool {
+	if tok == nil || partPos == "" || len(lemmas) == 0 {
+		return false
+	}
+	want := setOf(lemmas...)
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		if _, ok := want[*r.GetLemma()]; !ok {
+			continue
+		}
+		if strings.Contains(*r.GetPOSTag(), partPos) {
 			return true
 		}
 	}

@@ -221,7 +221,8 @@ func IsAdjpException(adj *languagetool.AnalyzedTokenReadings) bool {
 
 // --- Exception helper stubs (full tables deferred) ---
 
-// IsAdjNounException ports TokenAgreementAdjNounExceptionHelper surface.
+// IsAdjNounException ports TokenAgreementAdjNounExceptionHelper surface
+// (full exception tables deferred). FAKE_FEM uses Java lemma+partPos, not bare surface.
 func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, nounPos int) bool {
 	if adjPos < 0 || nounPos < 0 || adjPos >= len(tokens) || nounPos >= len(tokens) {
 		return true
@@ -230,14 +231,10 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 	if adjPos == nounPos {
 		return true
 	}
-	// fake feminine nouns often mismatch gender with fem adj — treat as exception list presence on noun lemma
-	if tokens[nounPos] != nil {
-		w := tokens[nounPos].GetToken()
-		for _, f := range FakeFemList {
-			if w == f {
-				return true
-			}
-		}
+	// Java: LemmaHelper.hasLemma(noun, FAKE_FEM_LIST, "noun:inanim:m:")
+	// (e.g. ступінь tagged m: inanim) — not invent-exception on surface alone.
+	if HasLemmaWithPartPos(tokens[nounPos], FakeFemList, "noun:inanim:m:") {
+		return true
 	}
 	return false
 }

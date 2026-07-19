@@ -38,14 +38,11 @@ func TestTokenAgreementAdjNounRule_Rule(t *testing.T) {
 }
 
 func TestTokenAgreementAdjNounRule_Exceptions(t *testing.T) {
-	// FakeFemList nouns still exercise path (exceptions deferred → may flag)
-	r := NewTokenAgreementAdjNounRule()
 	require.Contains(t, FakeFemList, "собака")
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
-		atr("великий", "adj:m:v_naz"),
-		atr("собака", "noun:anim:f:v_naz"),
-	})
-	_ = r.Match(sent)
+	// Java FAKE_FEM needs lemma + "noun:inanim:m:" — f:anim alone is not enough.
+	require.False(t, HasLemmaWithPartPos(atr("собака", "noun:anim:f:v_naz"), FakeFemList, "noun:inanim:m:"))
+	lem := "собака"
+	require.True(t, HasLemmaWithPartPos(atrLemma("собака", &lem, "noun:inanim:m:v_naz"), FakeFemList, "noun:inanim:m:"))
 }
 
 func TestTokenAgreementAdjNounRule_ExceptionsNumbers(t *testing.T) {
@@ -60,14 +57,14 @@ func TestTokenAgreementAdjNounRule_ExceptionsNumbers(t *testing.T) {
 }
 
 func TestTokenAgreementAdjNounRule_ExceptionsOther(t *testing.T) {
-	// FakeFemList path already exercises exception helper
 	r := NewTokenAgreementAdjNounRule()
+	// FAKE_FEM with Java partPos noun:inanim:m: → exception (no match)
+	lem := "собака"
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("великий", "adj:m:v_naz"),
-		atr("собака", "noun:anim:f:v_naz"),
+		atrLemma("собака", &lem, "noun:inanim:m:v_naz"),
 	})
-	// собака is FakeFemList → exception → no match
-	require.Empty(t, r.Match(sent))
+	require.Empty(t, r.Match(sent), "FakeFem with inanim:m: is exception")
 }
 func TestTokenAgreementAdjNounRule_ExceptionsPredic(t *testing.T) {
 	r := NewTokenAgreementAdjNounRule()
