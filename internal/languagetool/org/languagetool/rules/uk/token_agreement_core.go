@@ -1978,11 +1978,10 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		if nounPos > 1 {
 			foundIdx := ReverseSearchIdx(tokens, nounPos-1, 6, infAgreementPattern, nil)
 			if foundIdx >= 0 {
-				// if not adj, or adj/noun inflections overlap (simplified: always true when non-adj)
+				// Java: non-adj → exception; adj → !disjoint(adjInflections, nounInflections)
 				if !HasPosTagStart(tokens[foundIdx], "adj") {
 					return true
 				}
-				// adj: exception if genders/cases can overlap — use soft non-empty POS agree
 				if adjNounInflectionOverlap(tokens[foundIdx], noun) {
 					return true
 				}
@@ -3041,28 +3040,8 @@ func verbNounAgrees(verb, noun *languagetool.AnalyzedTokenReadings) bool {
 }
 
 func caseGovPosRESet(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp) map[string]struct{} {
-	out := map[string]struct{}{}
-	if tok == nil || posRE == nil {
-		return out
-	}
-	cg := LoadCaseGovernmentHelper()
-	for _, r := range tok.GetReadings() {
-		if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
-			continue
-		}
-		if !posRE.MatchString(*r.GetPOSTag()) {
-			continue
-		}
-		if set, ok := cg.Map[*r.GetLemma()]; ok {
-			for c := range set {
-				out[c] = struct{}{}
-			}
-		}
-		if strings.Contains(*r.GetPOSTag(), "adjp:pasv") {
-			out["v_oru"] = struct{}{}
-		}
-	}
-	return out
+	// Java getCaseGovernments(readings, Pattern) — custom govs + advp lemma map + adjp:pasv
+	return LoadCaseGovernmentHelper().GetCaseGovernmentsFromReadingsRE(tok, posRE)
 }
 
 // gendersFromNaz collects gender letters from noun/adj/numr v_naz readings.

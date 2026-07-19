@@ -2,6 +2,7 @@ package uk
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -264,8 +265,14 @@ func formatVerbPersonInflections(infs []VerbInflection, noun bool) string {
 	if len(infs) == 0 {
 		return ""
 	}
+	// Java Collections.sort by gender GEN_ORDER
+	sorted := append([]VerbInflection(nil), infs...)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return verbInflectionOrder(sorted[i]) < verbInflectionOrder(sorted[j])
+	})
+	seen := map[string]struct{}{}
 	var list []string
-	for _, inf := range infs {
+	for _, inf := range sorted {
 		str := ""
 		if inf.Gender != "" {
 			str = taguk.GenderName(inf.Gender)
@@ -280,11 +287,41 @@ func formatVerbPersonInflections(infs []VerbInflection, noun bool) string {
 				str += taguk.GenderName(inf.Plural)
 			}
 		}
-		if str != "" {
-			list = append(list, str)
+		if str == "" {
+			continue
 		}
+		if _, ok := seen[str]; ok {
+			continue
+		}
+		seen[str] = struct{}{}
+		list = append(list, str)
 	}
 	return strings.Join(list, ", ")
+}
+
+func verbInflectionOrder(inf VerbInflection) int {
+	// InflectionHelper.GEN_ORDER: m=0,f=1,n=2,p=3,s=4; null gender → 0 in Java
+	if inf.Gender == "" {
+		return 0
+	}
+	switch inf.Gender {
+	case "m":
+		return 0
+	case "f":
+		return 1
+	case "n":
+		return 2
+	case "p":
+		return 3
+	case "s":
+		return 4
+	case "i":
+		return 5
+	case "o":
+		return 6
+	default:
+		return 99
+	}
 }
 
 // collectNounVerbSubject ports the Java noun/яка state builder. ok=false → clear state.

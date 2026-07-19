@@ -21,3 +21,35 @@ func TestCaseGovernmentHelper(t *testing.T) {
 	}
 	require.True(t, found, "expected at least one non-empty government map entry")
 }
+
+func TestGetCustomCaseGovs_MatiButi(t *testing.T) {
+	// мати:imperf:pres → v_inf
+	mati := "мати"
+	tok := atrLemma("має", &mati, "verb:imperf:pres:s:3")
+	require.Contains(t, getCustomCaseGovs(tok), "v_inf")
+
+	// бути past:n → v_inf
+	buti := "бути"
+	tok2 := atrLemma("було", &buti, "verb:imperf:past:n")
+	require.Contains(t, getCustomCaseGovs(tok2), "v_inf")
+
+	// (по)меншати → v_rod
+	men := "меншати"
+	tok3 := atrLemma("меншає", &men, "verb:imperf:pres:s:3")
+	require.Contains(t, getCustomCaseGovs(tok3), "v_rod")
+
+	// wired into GetCaseGovernmentsFromReadings
+	h := LoadCaseGovernmentHelper()
+	govs := h.GetCaseGovernmentsFromReadings(tok, "verb")
+	_, ok := govs["v_inf"]
+	require.True(t, ok, "custom v_inf from мати should appear in readings lookup")
+}
+
+func TestAdvpVerbLemma(t *testing.T) {
+	l := "даючи"
+	at := atrLemma("даючи", &l, "advp:imperf")
+	require.Equal(t, "давати", advpVerbLemma(at.GetReadings()[0]))
+	l2 := "роблячи"
+	at2 := atrLemma("роблячи", &l2, "advp")
+	require.Equal(t, "робити", advpVerbLemma(at2.GetReadings()[0]))
+}

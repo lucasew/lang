@@ -3,6 +3,7 @@ package uk
 import (
 	"bufio"
 	"embed"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -99,6 +100,10 @@ func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadings(tok *languagetool.
 	if h == nil || tok == nil || startPosTag == "" {
 		return out
 	}
+	// Java: always merge getCustomGovs first
+	for _, c := range getCustomCaseGovs(tok) {
+		out[c] = struct{}{}
+	}
 	rds := tok.GetReadings()
 	if startPosTag == "verb" && len(rds) > 0 && rds[0] != nil && rds[0].GetPOSTag() != nil {
 		if strings.HasPrefix(*rds[0].GetPOSTag(), "advp") {
@@ -119,6 +124,8 @@ func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadings(tok *languagetool.
 			okStart = true
 		}
 		if !okStart {
+			// still check adjp:pasv on every reading (Java Pattern overload always; String path only when okStart)
+			// String overload: adjp:pasv is inside the startPosTag-matched loop in Java
 			continue
 		}
 		lemma := *token.GetLemma()
@@ -127,12 +134,119 @@ func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadings(tok *languagetool.
 				out[c] = struct{}{}
 			}
 		}
-		// Java: adjp:pasv adds v_oru
+		// Java String overload: adjp:pasv adds v_oru inside matched loop
 		if strings.Contains(pos, "adjp:pasv") {
 			out["v_oru"] = struct{}{}
 		}
 	}
 	return out
+}
+
+// GetCaseGovernmentsFromReadingsRE ports getCaseGovernments(readings, Pattern).
+// POS filter uses Matcher.matches(); missing map lemmas on advp resolve via getAdvpVerbLemma.
+func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadingsRE(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp) map[string]struct{} {
+	out := map[string]struct{}{}
+	if h == nil || tok == nil {
+		return out
+	}
+	for _, c := range getCustomCaseGovs(tok) {
+		out[c] = struct{}{}
+	}
+	for _, token := range tok.GetReadings() {
+		if token == nil || token.GetPOSTag() == nil {
+			continue
+		}
+		pos := *token.GetPOSTag()
+		if pos == "" {
+			continue
+		}
+		// Java: posTag == null || matches
+		if posRE != nil {
+			loc := posRE.FindStringIndex(pos)
+			if loc == nil || loc[0] != 0 || loc[1] != len(pos) {
+				// still may add v_oru for adjp:pasv below
+				if strings.Contains(pos, "adjp:pasv") {
+					out["v_oru"] = struct{}{}
+				}
+				continue
+			}
+		}
+		lemma := ""
+		if token.GetLemma() != nil {
+			lemma = *token.GetLemma()
+		}
+		if lemma != "" {
+			if _, ok := h.Map[lemma]; !ok && strings.HasPrefix(pos, "advp") {
+				lemma = advpVerbLemma(token)
+			}
+			if set, ok := h.Map[lemma]; ok {
+				for c := range set {
+					out[c] = struct{}{}
+				}
+			}
+		}
+		if strings.Contains(pos, "adjp:pasv") {
+			out["v_oru"] = struct{}{}
+		}
+	}
+	return out
+}
+
+var (
+	cgMatiPosRE = regexp.MustCompile(`^verb:imperf:(?:futr|past|pres).*`)
+	cgButiPosRE = regexp.MustCompile(`^verb:imperf:(?:futr|past:n|pres:s:3).*`)
+	cgImpersVInfRE = regexp.MustCompile(`^verb.*(?:pres:s:3|futr:s:3|past:n).*`)
+	cgNalezhytyInfRE = regexp.MustCompile(`^verb:imperf:inf.*`)
+	cgBilshMenshRE = regexp.MustCompile(`^(?:по)?більшати|(?:по)?меншати$`)
+	cgBilshMenshPosRE = regexp.MustCompile(`^verb.*(?:inf|pres:s:3|futr:s:3|past:n).*`)
+)
+
+// getCustomCaseGovs ports CaseGovernmentHelper.getCustomGovs (special inflection governments).
+func getCustomCaseGovs(tok *languagetool.AnalyzedTokenReadings) []string {
+	if tok == nil {
+		return nil
+	}
+	var list []string
+	if HasLemmaWithPosRE(tok, []string{"мати"}, cgMatiPosRE) {
+		list = append(list, "v_inf")
+	} else if HasLemmaWithPosRE(tok, []string{"бути"}, cgButiPosRE) {
+		list = append(list, "v_inf")
+	} else if HasLemmaWithPosRE(tok, []string{
+		"вимагатися", "випадати", "випасти", "личити", "належати", "тягнути", "щастити",
+		"плануватися", "рекомендуватися", "пропонуватися", "сподобатися", "прийтися",
+		"удатися", "годитися", "доводитися",
+	}, cgImpersVInfRE) {
+		list = append(list, "v_inf")
+	} else if HasLemmaWithPosRE(tok, []string{"належить"}, cgNalezhytyInfRE) {
+		// Java list is surface "належить" as lemma list — keep twin
+		list = append(list, "v_inf")
+	} else if HasLemmaTokenRE(tok, cgBilshMenshRE) && HasPosTagMatches(tok, cgBilshMenshPosRE) {
+		list = append(list, "v_rod")
+	}
+	return list
+}
+
+// advpVerbLemma ports getAdvpVerbLemma (map missing advp lemma → base verb).
+func advpVerbLemma(token *languagetool.AnalyzedToken) string {
+	if token == nil || token.GetLemma() == nil {
+		return ""
+	}
+	v := *token.GetLemma()
+	switch v {
+	case "даючи":
+		return "давати"
+	case "змушуючи":
+		return "змушувати"
+	}
+	// replaceFirst("лячи(с[яь])?", "ити$1")
+	if re := regexp.MustCompile(`лячи(с[яь])?$`); re.MatchString(v) {
+		return re.ReplaceAllString(v, "ити$1")
+	}
+	// replaceFirst("(ючи|вши)(с[яь])?", "ти$2")
+	if re := regexp.MustCompile(`(ючи|вши)(с[яь])?$`); re.MatchString(v) {
+		return re.ReplaceAllString(v, "ти$2")
+	}
+	return v
 }
 
 // HasCaseGovernment reports whether lemma governs rvCase.
