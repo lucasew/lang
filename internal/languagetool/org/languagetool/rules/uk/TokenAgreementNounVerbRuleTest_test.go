@@ -132,12 +132,17 @@ func TestTokenAgreementNounVerbRule_MascFem(t *testing.T) {
 	_ = matches // green: exercise path
 }
 func TestTokenAgreementNounVerbRule_IgnoreByIntent(t *testing.T) {
-	// helper inject: Exception returns true → pair ignored
+	// Helper delegates to IsNounVerbException (invalid order → true / no flag).
 	h := NewTokenAgreementNounVerbExceptionHelper()
-	h.IsException = func(tokens []string, a, b int) bool { return true }
-	require.True(t, h.Exception([]string{"a", "b"}, 0, 1))
-	h2 := NewTokenAgreementNounVerbExceptionHelper()
-	require.False(t, h2.Exception([]string{"a", "b"}, 0, 1))
+	require.True(t, h.Exception(nil, -1, 0))
+	// valid order, empty tokens → false
+	require.False(t, h.Exception(nil, 0, 2))
+	// known soft arm: правда + verb
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		atr("правда", "noun:inanim:f:v_naz"),
+		atr("було", "verb:imperf:past:n"),
+	}
+	require.True(t, h.Exception(tokens, 0, 1))
 }
 func TestTokenAgreementNounVerbRule_OverTheWord(t *testing.T) {
 	// Java keeps subject state across pure-adv (hasPosTagPartAll "adv" → continue).

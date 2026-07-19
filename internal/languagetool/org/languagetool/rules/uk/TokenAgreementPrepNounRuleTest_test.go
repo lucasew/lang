@@ -121,6 +121,13 @@ func TestTokenAgreementPrepNounRule_WithAdv(t *testing.T) {
 	require.NotEmpty(t, r.Match(sent), "adv skip keeps prep; wrong case noun still matches")
 }
 
+func TestMapKeys_VidminkyOrder(t *testing.T) {
+	// Stable case-list order for createRuleMatch messages (VIDMINKY_MAP).
+	m := map[string]struct{}{"v_oru": {}, "v_rod": {}, "v_mis": {}}
+	got := mapKeys(m)
+	require.Equal(t, []string{"v_rod", "v_oru", "v_mis"}, got)
+}
+
 func TestTokenAgreementPrepNounRule_AdvMergeMessage(t *testing.T) {
 	// Java createRuleMatch: prep + prior adv, tagger says merged is adv → merge hint.
 	// Synthetic: у + двічі + дешевша(adj wrong case) with Tag returning adv for "удвічі".

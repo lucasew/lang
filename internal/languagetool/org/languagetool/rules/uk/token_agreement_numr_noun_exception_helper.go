@@ -1,18 +1,16 @@
 package uk
 
-// TokenAgreementNumrNounExceptionHelper ports org.languagetool.rules.uk.TokenAgreementNumrNounExceptionHelper (exception surface).
-// Full dictionary-driven exception tables are deferred; callers can inject IsException.
-type TokenAgreementNumrNounExceptionHelper struct {
-	// IsException optional override for tests / full port.
-	IsException func(tokens []string, a, b int) bool
+import "github.com/lucasew/lang/internal/languagetool/org/languagetool"
+
+// TokenAgreementNumrNounExceptionHelper anchors the Java twin name.
+// Logic lives in IsNumrNounException (token_agreement_core.go).
+type TokenAgreementNumrNounExceptionHelper struct{}
+
+func NewTokenAgreementNumrNounExceptionHelper() *TokenAgreementNumrNounExceptionHelper {
+	return &TokenAgreementNumrNounExceptionHelper{}
 }
 
-func NewTokenAgreementNumrNounExceptionHelper() *TokenAgreementNumrNounExceptionHelper { return &TokenAgreementNumrNounExceptionHelper{} }
-
-// Exception reports whether the pair at positions should be ignored.
-func (h *TokenAgreementNumrNounExceptionHelper) Exception(tokens []string, a, b int) bool {
-	if h != nil && h.IsException != nil {
-		return h.IsException(tokens, a, b)
-	}
-	return false
+// Exception ports isException(tokens, numrPos, nounPos) boolean form.
+func (TokenAgreementNumrNounExceptionHelper) Exception(tokens []*languagetool.AnalyzedTokenReadings, numrPos, nounPos int) bool {
+	return IsNumrNounException(tokens, numrPos, nounPos)
 }

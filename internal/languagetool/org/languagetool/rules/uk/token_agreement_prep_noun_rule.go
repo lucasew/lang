@@ -2,6 +2,7 @@ package uk
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -462,12 +463,27 @@ func getPrepMultiwordToken(tok *languagetool.AnalyzedTokenReadings) *languagetoo
 	return nil
 }
 
+// mapKeys returns case tags in VIDMINKY_MAP order (stable; Java LinkedHashSet is insertion-ordered).
 func mapKeys(m map[string]struct{}) []string {
-	out := make([]string, 0, len(m))
-	for k := range m {
-		out = append(out, k)
+	if len(m) == 0 {
+		return nil
 	}
-	return out
+	out := make([]string, 0, len(m))
+	seen := map[string]struct{}{}
+	for _, k := range taguk.VidminkyOrder {
+		if _, ok := m[k]; ok {
+			out = append(out, k)
+			seen[k] = struct{}{}
+		}
+	}
+	var extra []string
+	for k := range m {
+		if _, ok := seen[k]; !ok {
+			extra = append(extra, k)
+		}
+	}
+	sort.Strings(extra)
+	return append(out, extra...)
 }
 
 func filterReadings(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Regexp, lemmas map[string]struct{}) []*languagetool.AnalyzedToken {
