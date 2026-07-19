@@ -140,15 +140,21 @@ func TestTokenAgreementNounVerbRule_IgnoreByIntent(t *testing.T) {
 	require.False(t, h2.Exception([]string{"a", "b"}, 0, 1))
 }
 func TestTokenAgreementNounVerbRule_OverTheWord(t *testing.T) {
-	// multiword: particle intervening already greened; extra non-noun/verb resets left
+	// Java keeps subject state across pure-adv (hasPosTagPartAll "adv" → continue).
+	// Number mismatch still flags after adverb.
 	r := NewTokenAgreementNounVerbRule()
 	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
 		atr("хлопці", "noun:anim:p:v_naz"),
 		atr("вчора", "adv"),
 		atr("читає", "verb:imperf:pres:s:3"),
 	})
-	// adv resets left subject → no flag across span (full multiword exception list deferred)
-	require.Empty(t, r.Match(sent))
+	require.NotEmpty(t, r.Match(sent), "adv skip keeps state — plural/singular still flags")
+	sentOK := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{
+		atr("хлопці", "noun:anim:p:v_naz"),
+		atr("вчора", "adv"),
+		atr("читають", "verb:imperf:pres:p:3"),
+	})
+	require.Empty(t, r.Match(sentOK))
 }
 func TestTokenAgreementNounVerbRule_CaseGovernment(t *testing.T) {
 	// case government is verb-noun territory; noun-verb exception stub is positional only
