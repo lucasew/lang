@@ -51,6 +51,11 @@ func NewRussianWordCoherencyRule(messages map[string]string) *RussianWordCoheren
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: офлайн → оффлайн (coherency with earlier «оффлайн»)
+	base.AddExamplePair(
+		rules.Wrong("Понятие «оффлайн» тоже имеет английские корни и связано со словом «offline», что означает «вне сети». Принтер перешёл в состояние <marker>офлайн</marker>."),
+		rules.Fixed("Понятие «оффлайн» тоже имеет английские корни и связано со словом «offline», что означает «вне сети». Принтер перешёл в состояние <marker>оффлайн</marker>."),
+	)
 	return &RussianWordCoherencyRule{AbstractWordCoherencyRule: base}
 }
 

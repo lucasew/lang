@@ -30,5 +30,10 @@ func NewRussianWordRepeatRule(messages map[string]string) *RussianWordRepeatRule
 		ShortMessage:     "Повтор слов в предложении",
 	}
 	rules.InitAdvancedWordRepeatMeta(base, messages)
+	// Java: доме доме → доме
+	base.AddExamplePair(
+		rules.Wrong("Всё смешалось в <marker>доме доме</marker> Облонских."),
+		rules.Fixed("Всё смешалось в <marker>доме</marker> Облонских."),
+	)
 	return &RussianWordRepeatRule{AdvancedWordRepeatRule: base}
 }

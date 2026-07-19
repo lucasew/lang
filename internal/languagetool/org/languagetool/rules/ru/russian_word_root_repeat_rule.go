@@ -50,6 +50,11 @@ func NewRussianWordRootRepeatRule(messages map[string]string) *RussianWordRootRe
 		},
 	}
 	rules.InitWordCoherencyMeta(base, messages)
+	// Java: абрикосный → абрикосов (root-repeat style fix)
+	base.AddExamplePair(
+		rules.Wrong("Абрикос рос в саду. У меня на столе стоит <marker>абрикосный</marker> сок."),
+		rules.Fixed("Абрикос рос в саду. У меня на столе стоит сок из <marker>абрикосов</marker>."),
+	)
 	return &RussianWordRootRepeatRule{AbstractWordCoherencyRule: base}
 }
 

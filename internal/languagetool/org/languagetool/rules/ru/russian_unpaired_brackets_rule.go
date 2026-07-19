@@ -15,6 +15,11 @@ func NewRussianUnpairedBracketsRule(messages map[string]string) *RussianUnpaired
 	start := []string{"(", "{", "„", "\"", "'", "“"}
 	end := []string{")", "}", "“", "\"", "'", "”"}
 	base := rules.NewGenericUnpairedBracketsRule(messages, start, end)
+	// Java: unpaired ( → add closing )
+	base.AddExamplePair(
+		rules.Wrong("Самоотверженный поступок Оленина <marker>(</marker>подарок Лукашке коня вызывает лишь удивление и усиливает недоверие к нему станичников."),
+		rules.Fixed("Самоотверженный поступок Оленина <marker>(</marker>подарок Лукашке коня) вызывает лишь удивление и усиливает недоверие к нему станичников."),
+	)
 	return &RussianUnpairedBracketsRule{GenericUnpairedBracketsRule: base}
 }
 

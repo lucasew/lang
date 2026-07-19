@@ -51,6 +51,11 @@ func NewRussianSpecificCaseRule(messages map[string]string) *RussianSpecificCase
 		OtherCapitalizationMessage: "Для специальных наименований используйте предложенное написание заглавных букв.",
 		ShortMsg:                   "Специальное написание",
 	}
+	// Java: рытый банк → Рытый Банк (fixed example omits trailing period, same as upstream)
+	base.AddExamplePair(
+		rules.Wrong("Река <marker>рытый банк</marker> находится в Прикаспийской низменности."),
+		rules.Fixed("Река <marker>Рытый Банк</marker> находится в Прикаспийской низменности"),
+	)
 	return &RussianSpecificCaseRule{AbstractSpecificCaseRule: base}
 }
 

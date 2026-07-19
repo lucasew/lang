@@ -1,6 +1,7 @@
 package ru
 
 import (
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
@@ -37,6 +38,11 @@ func NewMorfologikRussianYOSpellerRule() *MorfologikRussianYOSpellerRule {
 		base.FilterNoSuggestWordsFn = base.filterNoSuggestWords
 	}
 	base.IgnoreTokenFn = base.ruIgnoreToken
+	// Java YO ctor: same demos as base speller (каждя → каждая)
+	base.AddExamplePair(
+		rules.Wrong("Все счастливые семьи похожи друг на друга, <marker>каждя</marker> несчастливая семья несчастлива по-своему."),
+		rules.Fixed("Все счастливые семьи похожи друг на друга, <marker>каждая</marker> несчастливая семья несчастлива по-своему."),
+	)
 	return &MorfologikRussianYOSpellerRule{MorfologikRussianSpellerRule: base}
 }
 

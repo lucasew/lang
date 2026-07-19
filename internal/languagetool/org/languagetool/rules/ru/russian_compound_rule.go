@@ -48,6 +48,11 @@ func NewRussianCompoundRule(messages map[string]string) *RussianCompoundRule {
 		SentenceStartsWithUpperCase: true,
 		Data:                        loadCompoundData(),
 	}
+	// Java: конференц зале → конференц-зале
+	base.AddExamplePair(
+		rules.Wrong("Собрание состоится в <marker>конференц зале</marker>."),
+		rules.Fixed("Собрание состоится в <marker>конференц-зале</marker>."),
+	)
 	return &RussianCompoundRule{AbstractCompoundRule: base}
 }
 

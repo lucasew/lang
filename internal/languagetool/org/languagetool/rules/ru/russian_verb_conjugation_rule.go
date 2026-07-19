@@ -11,10 +11,19 @@ import (
 // Checks personal pronoun + verb agreement (present/future and past).
 type RussianVerbConjugationRule struct {
 	Messages map[string]string
+	// incorrectExamples / correctExamples port Rule.addExamplePair.
+	incorrectExamples []rules.IncorrectExample
+	correctExamples   []rules.CorrectExample
 }
 
 func NewRussianVerbConjugationRule(messages map[string]string) *RussianVerbConjugationRule {
-	return &RussianVerbConjugationRule{Messages: messages}
+	r := &RussianVerbConjugationRule{Messages: messages}
+	// Java: Я идёт → Я иду
+	r.AddExamplePair(
+		rules.Wrong("<marker>Я идёт</marker>."),
+		rules.Fixed("<marker>Я иду</marker>."),
+	)
+	return r
 }
 
 func (r *RussianVerbConjugationRule) GetID() string { return "RU_VERB_CONJUGATION" }
@@ -25,6 +34,37 @@ func (r *RussianVerbConjugationRule) GetDescription() string {
 
 func (r *RussianVerbConjugationRule) GetShort() string {
 	return "Неверное спряжение глагола"
+}
+
+// AddExamplePair ports Rule.addExamplePair.
+func (r *RussianVerbConjugationRule) AddExamplePair(incorrect rules.IncorrectExample, correct rules.CorrectExample) {
+	if r == nil {
+		return
+	}
+	var br rules.BaseRule
+	br.AddExamplePair(incorrect, correct)
+	r.incorrectExamples = append(r.incorrectExamples, br.GetIncorrectExamples()...)
+	r.correctExamples = append(r.correctExamples, br.GetCorrectExamples()...)
+}
+
+// GetIncorrectExamples ports Rule.getIncorrectExamples.
+func (r *RussianVerbConjugationRule) GetIncorrectExamples() []rules.IncorrectExample {
+	if r == nil || len(r.incorrectExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.IncorrectExample, len(r.incorrectExamples))
+	copy(out, r.incorrectExamples)
+	return out
+}
+
+// GetCorrectExamples ports Rule.getCorrectExamples.
+func (r *RussianVerbConjugationRule) GetCorrectExamples() []rules.CorrectExample {
+	if r == nil || len(r.correctExamples) == 0 {
+		return nil
+	}
+	out := make([]rules.CorrectExample, len(r.correctExamples))
+	copy(out, r.correctExamples)
+	return out
 }
 
 var (
