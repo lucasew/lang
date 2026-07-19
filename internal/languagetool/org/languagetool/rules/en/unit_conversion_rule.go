@@ -11,6 +11,23 @@ type UnitConversionRule struct {
 	*rules.AbstractUnitConversionRule
 }
 
+// Imperial / US volume factors from Java AbstractUnitConversionRule (litre multiples).
+const (
+	// Java: OUNCE = POUND.divide(12)
+	enOunceOnPound = 1.0 / 12.0
+	// Imperial volume (Java IMP_*)
+	impPintL     = 0.5682612532
+	impQuartL    = impPintL * 2
+	impGallonL   = impQuartL * 4
+	impFlOunceL  = impPintL / 20
+	// US volume (Java US_*)
+	usQuartL    = 0.946352946
+	usGallonL   = usQuartL * 4
+	usPintL     = usQuartL / 2
+	usCupL      = usQuartL / 4
+	usFlOunceL  = usQuartL / 32
+)
+
 func NewUnitConversionRule(messages map[string]string) *UnitConversionRule {
 	base := rules.NewAbstractUnitConversionRule(messages)
 	base.ID = "METRIC_UNITS_EN_GENERAL"
@@ -34,87 +51,125 @@ func NewUnitConversionRuleUS(messages map[string]string) *UnitConversionRule {
 	return &UnitConversionRule{AbstractUnitConversionRule: base}
 }
 
-// registerENGeneralUnits ports UnitConversionRule constructor addUnit calls.
+// registerENGeneralUnits ports UnitConversionRule constructor addUnit calls only
+// (Java UnitConversionRule; abstract defaults already supply kg/mi/°F/…).
 func registerENGeneralUnits(base *rules.AbstractUnitConversionRule) {
 	if base == nil {
 		return
 	}
-	// Java: setTags(Tag.picky) handled by rule registry; units:
+	// Java: setTags(Tag.picky) handled by rule registry
 	base.AddUnit(`miles per hour`, rules.UnitMph, "miles per hour", 1, false)
 
 	base.AddUnit(`kilograms?`, rules.UnitKilogram, "kilogram", 1, true)
-	base.AddUnit(`grams?`, rules.UnitGram, "gram", 1, true)
-	base.AddUnit(`tons?`, rules.UnitTonne, "ton", 1, true)
+	base.AddUnit(`grams?`, rules.UnitKilogram, "gram", 1e-3, true)
+	base.AddUnit(`tons?`, rules.UnitKilogram, "ton", 1e3, true)
 
 	base.AddUnit(`pounds?`, rules.UnitPound, "pounds", 1, false)
-	// Java ounces? → OUNCE mass (1/16 lb)
-	base.AddUnit(`ounces?`, rules.UnitPound, "ounces", 1.0/16.0, false)
+	// Java OUNCE = POUND.divide(12)
+	base.AddUnit(`ounces?`, rules.UnitPound, "ounces", enOunceOnPound, false)
 
 	base.AddUnit(`feet`, rules.UnitFeet, "feet", 1, false)
 	base.AddUnit(`miles?`, rules.UnitMile, "miles", 1, false)
 	base.AddUnit(`yards?`, rules.UnitYard, "yards", 1, false)
 	base.AddUnit(`inch(?:es)?`, rules.UnitInch, "inches", 1, false)
 
-	// Fahrenheit / Celsius word forms (abstract already has °F / °C)
 	base.AddUnit(`(?:degrees?)?\s*Fahrenheit`, rules.UnitFahrenheit, "degree Fahrenheit", 1, false)
 	base.AddUnit(`(?:degrees?)?\s*Celsius`, rules.UnitCelsius, "degree Celsius", 1, true)
-
-	// Java AbstractUnitConversionRule defaults also include sq ft (area)
-	base.AddUnit(`(?:sq|square)\s+(?:ft|feet|foot)`, rules.UnitSqFt, "sq ft", 1, false)
-	base.AddUnit(`sf`, rules.UnitSqFt, "sf", 1, false)
-	base.AddUnit(`ft(?:\^2|2|²)`, rules.UnitSqFt, "ft²", 1, false)
-	base.AddUnit(`m(?:\^2|2|²)`, rules.UnitSquareMetre, "m²", 1, true)
 }
 
-// registerENImperialUnits ports UnitConversionRuleImperial extra units (UK spelling + imperial volume).
+// registerENImperialUnits ports UnitConversionRuleImperial addUnit list.
 func registerENImperialUnits(base *rules.AbstractUnitConversionRule) {
 	if base == nil {
 		return
 	}
 	base.AddUnit(`(?:kilometre|kilometer)s?\s+per\s+hour`, rules.UnitKmh, "kilometres per hour", 1, true)
 
-	base.AddUnit(`kilomet(?:re|er)s?`, rules.UnitKilometre, "kilometres", 1, true)
+	base.AddUnit(`kilomet(?:re|er)s?`, rules.UnitMetre, "kilometres", 1e3, true)
 	base.AddUnit(`met(?:re|er)s?`, rules.UnitMetre, "metres", 1, true)
-	base.AddUnit(`centimet(?:re|er)s?`, rules.UnitCentimetre, "centimetres", 1, true)
-	base.AddUnit(`millimet(?:re|er)s?`, rules.UnitMillimetre, "millimetres", 1, true)
+	base.AddUnit(`decimet(?:re|er)s?`, rules.UnitMetre, "decimetres", 1e-1, false)
+	base.AddUnit(`centimet(?:re|er)s?`, rules.UnitMetre, "centimetres", 1e-2, true)
+	// Java symbol for mm is "micrometres" (upstream typo); keep millimetres spelling for factor 1e-3
+	base.AddUnit(`millimet(?:re|er)s?`, rules.UnitMetre, "millimetres", 1e-3, true)
+	base.AddUnit(`micromet(?:re|er)s?`, rules.UnitMetre, "micrometres", 1e-6, true)
+	base.AddUnit(`nanomet(?:re|er)s?`, rules.UnitMetre, "nanometres", 1e-9, true)
 
 	base.AddUnit(`square\s+met(?:re|er)s?`, rules.UnitSquareMetre, "square metres", 1, true)
-	base.AddUnit(`lit(?:re|er)s?`, rules.UnitLitre, "litres", 1, true)
-	base.AddUnit(`millilit(?:re|er)s?`, rules.UnitMillilitre, "millilitres", 1, true)
+	base.AddUnit(`square\s+kilomet(?:re|er)s?`, rules.UnitSquareMetre, "square kilometres", 1e6, true)
+	base.AddUnit(`square\s+decimet(?:re|er)s?`, rules.UnitSquareMetre, "square decimetres", 1e-2, false)
+	base.AddUnit(`square\s+centimet(?:re|er)s?`, rules.UnitSquareMetre, "square centimetres", 1e-4, true)
+	base.AddUnit(`square\s+millimet(?:re|er)s?`, rules.UnitSquareMetre, "square millimetres", 1e-6, true)
+	base.AddUnit(`square\s+micromet(?:re|er)s?`, rules.UnitSquareMetre, "square micrometres", 1e-12, true)
+	base.AddUnit(`square\s+nanomet(?:re|er)s?`, rules.UnitSquareMetre, "square nanometres", 1e-18, true)
 
-	// Imperial pint ≈ 0.56826125 L (UnitLitre base factor 1e-3 m³)
-	base.AddUnit(`pints?`, rules.UnitLitre, "pints", 0.56826125, false)
-	base.AddUnit(`pt`, rules.UnitLitre, "pt", 0.56826125, false)
-	// Imperial fluid ounce ≈ 0.0284130625 L
-	base.AddUnit(`(?:fluid\s+)?ounces?`, rules.UnitLitre, "fluid ounces", 0.0284130625, false)
-	base.AddUnit(`gallons?`, rules.UnitLitre, "gallons", 4.54609, false)
-	base.AddUnit(`quarts?`, rules.UnitLitre, "quarts", 1.1365225, false)
+	base.AddUnit(`cubic\s+met(?:re|er)s?`, rules.UnitCubicMetre, "cubic metres", 1, true)
+	base.AddUnit(`cubic\s+kilomet(?:re|er)s?`, rules.UnitCubicMetre, "cubic kilometres", 1e9, true)
+	base.AddUnit(`cubic\s+decimet(?:re|er)s?`, rules.UnitCubicMetre, "cubic decimetres", 1e-3, false)
+	base.AddUnit(`cubic\s+centimet(?:re|er)s?`, rules.UnitCubicMetre, "cubic centimetres", 1e-6, true)
+	base.AddUnit(`cubic\s+millimet(?:re|er)s?`, rules.UnitCubicMetre, "cubic millimetres", 1e-9, true)
+	base.AddUnit(`cubic\s+micromet(?:re|er)s?`, rules.UnitCubicMetre, "cubic micrometres", 1e-18, true)
+	base.AddUnit(`cubic\s+nanomet(?:re|er)s?`, rules.UnitCubicMetre, "cubic nanometres", 1e-27, true)
+
+	base.AddUnit(`lit(?:re|er)s?`, rules.UnitLitre, "litres", 1, true)
+	base.AddUnit(`millilit(?:re|er)s?`, rules.UnitLitre, "millilitres", 1e-3, true)
+
+	// Imperial volume abbreviations + long forms (Java IMP_*)
+	base.AddUnit(`qt\.`, rules.UnitLitre, "qt.", impQuartL, false)
+	base.AddUnit(`gal`, rules.UnitLitre, "gal", impGallonL, false)
+	base.AddUnit(`pt`, rules.UnitLitre, "pt", impPintL, false)
+	base.AddUnit(`(?:fl\.?\s*oz\.?|oz\.\s*fl\.)`, rules.UnitLitre, "fl oz", impFlOunceL, false)
+
+	base.AddUnit(`quarts?`, rules.UnitLitre, "quarts", impQuartL, false)
+	base.AddUnit(`gallons?`, rules.UnitLitre, "gallons", impGallonL, false)
+	base.AddUnit(`pints?`, rules.UnitLitre, "pints", impPintL, false)
+	base.AddUnit(`(?:fluid\s+)?ounces?`, rules.UnitLitre, "fluid ounces", impFlOunceL, false)
 }
 
-// registerENUSUnits ports UnitConversionRuleUS extra units (US spelling + US volume).
+// registerENUSUnits ports UnitConversionRuleUS addUnit list.
 func registerENUSUnits(base *rules.AbstractUnitConversionRule) {
 	if base == nil {
 		return
 	}
 	base.AddUnit(`(?:kilometre|kilometer)s?\s+per\s+hour`, rules.UnitKmh, "kilometers per hour", 1, true)
 
-	base.AddUnit(`kilomet(?:re|er)s?`, rules.UnitKilometre, "kilometers", 1, true)
+	base.AddUnit(`kilomet(?:re|er)s?`, rules.UnitMetre, "kilometers", 1e3, true)
 	base.AddUnit(`met(?:re|er)s?`, rules.UnitMetre, "meters", 1, true)
-	base.AddUnit(`centimet(?:re|er)s?`, rules.UnitCentimetre, "centimeters", 1, true)
-	base.AddUnit(`millimet(?:re|er)s?`, rules.UnitMillimetre, "millimeters", 1, true)
+	base.AddUnit(`decimet(?:re|er)s?`, rules.UnitMetre, "decimeters", 1e-1, false)
+	base.AddUnit(`centimet(?:re|er)s?`, rules.UnitMetre, "centimeters", 1e-2, true)
+	base.AddUnit(`millimet(?:re|er)s?`, rules.UnitMetre, "millimeters", 1e-3, true)
+	base.AddUnit(`micromet(?:re|er)s?`, rules.UnitMetre, "micrometers", 1e-6, true)
+	base.AddUnit(`nanomet(?:re|er)s?`, rules.UnitMetre, "nanometers", 1e-9, true)
 
 	base.AddUnit(`square\s+met(?:re|er)s?`, rules.UnitSquareMetre, "square meters", 1, true)
-	base.AddUnit(`lit(?:re|er)s?`, rules.UnitLitre, "liters", 1, true)
-	base.AddUnit(`millilit(?:re|er)s?`, rules.UnitMillilitre, "milliliters", 1, true)
+	base.AddUnit(`square\s+kilomet(?:re|er)s?`, rules.UnitSquareMetre, "square kilometers", 1e6, true)
+	base.AddUnit(`square\s+decimet(?:re|er)s?`, rules.UnitSquareMetre, "square decimeters", 1e-2, false)
+	base.AddUnit(`square\s+centimet(?:re|er)s?`, rules.UnitSquareMetre, "square centimeters", 1e-4, true)
+	base.AddUnit(`square\s+millimet(?:re|er)s?`, rules.UnitSquareMetre, "square millimeters", 1e-6, true)
+	base.AddUnit(`square\s+micromet(?:re|er)s?`, rules.UnitSquareMetre, "square micrometers", 1e-12, true)
+	base.AddUnit(`square\s+nanomet(?:re|er)s?`, rules.UnitSquareMetre, "square nanometers", 1e-18, true)
 
-	// US liquid pint ≈ 0.473176473 L
-	base.AddUnit(`pints?`, rules.UnitLitre, "pints", 0.473176473, false)
-	base.AddUnit(`pt`, rules.UnitLitre, "pt", 0.473176473, false)
-	// US fluid ounce ≈ 0.0295735295625 L
-	base.AddUnit(`(?:fluid\s+)?ounces?`, rules.UnitLitre, "fluid ounces", 0.0295735295625, false)
-	base.AddUnit(`gallons?`, rules.UnitLitre, "gallons", 3.785411784, false)
-	base.AddUnit(`quarts?`, rules.UnitLitre, "quarts", 0.946352946, false)
-	base.AddUnit(`cups?`, rules.UnitLitre, "cups", 0.2365882365, false)
+	base.AddUnit(`cubic\s+met(?:re|er)s?`, rules.UnitCubicMetre, "cubic meters", 1, true)
+	base.AddUnit(`cubic\s+kilomet(?:re|er)s?`, rules.UnitCubicMetre, "cubic kilometers", 1e9, true)
+	base.AddUnit(`cubic\s+decimet(?:re|er)s?`, rules.UnitCubicMetre, "cubic decimeters", 1e-3, false)
+	base.AddUnit(`cubic\s+centimet(?:re|er)s?`, rules.UnitCubicMetre, "cubic centimeters", 1e-6, true)
+	base.AddUnit(`cubic\s+millimet(?:re|er)s?`, rules.UnitCubicMetre, "cubic millimeters", 1e-9, true)
+	base.AddUnit(`cubic\s+micromet(?:re|er)s?`, rules.UnitCubicMetre, "cubic micrometers", 1e-18, true)
+	base.AddUnit(`cubic\s+nanomet(?:re|er)s?`, rules.UnitCubicMetre, "cubic nanometers", 1e-27, true)
+
+	base.AddUnit(`lit(?:re|er)s?`, rules.UnitLitre, "liters", 1, true)
+	base.AddUnit(`millilit(?:re|er)s?`, rules.UnitLitre, "milliliters", 1e-3, true)
+
+	// US volume abbreviations + long forms (Java US_*)
+	base.AddUnit(`qt\.`, rules.UnitLitre, "qt.", usQuartL, false)
+	base.AddUnit(`gal`, rules.UnitLitre, "gal", usGallonL, false)
+	base.AddUnit(`pt`, rules.UnitLitre, "pt", usPintL, false)
+	base.AddUnit(`cup`, rules.UnitLitre, "cups", usCupL, false)
+	base.AddUnit(`(?:fl\.?\s*oz\.?|oz\.\s*fl\.)`, rules.UnitLitre, "fl oz", usFlOunceL, false)
+
+	base.AddUnit(`quarts?`, rules.UnitLitre, "quarts", usQuartL, false)
+	base.AddUnit(`gallons?`, rules.UnitLitre, "gallons", usGallonL, false)
+	base.AddUnit(`pints?`, rules.UnitLitre, "pints", usPintL, false)
+	base.AddUnit(`cups?`, rules.UnitLitre, "cups", usCupL, false)
+	base.AddUnit(`(?:fluid\s+)?ounces?`, rules.UnitLitre, "fluid ounces", usFlOunceL, false)
 }
 
 func (r *UnitConversionRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
@@ -134,4 +189,9 @@ func (r *UnitConversionRule) GetID() string {
 		return "METRIC_UNITS_EN_GENERAL"
 	}
 	return r.AbstractUnitConversionRule.GetID()
+}
+
+// GetDescription ports UnitConversionRule.getDescription.
+func (r *UnitConversionRule) GetDescription() string {
+	return "Suggests or checks conversion of units to their metric equivalents."
 }
