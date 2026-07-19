@@ -1247,14 +1247,13 @@ func KnownWordSet(words ...string) func(string) bool {
 }
 
 // SimpleMapSpellerChecker flags letter tokens not in known; optional suggestion map.
-// Does not invent edit-distance peers from the known set (pass nearestKnown via
-// SimplePredicateSpellerChecker when a real dict SuggestEdits path is wired).
+// Known lookup is exact surface only (no soft lowercase invent — list both cases in
+// known when needed). Does not invent edit-distance peers from the known set
+// (pass nearestKnown via SimplePredicateSpellerChecker when a real dict SuggestEdits
+// path is wired).
 func SimpleMapSpellerChecker(ruleID string, known map[string]struct{}, suggestions map[string][]string) SentenceChecker {
 	isKnown := func(w string) bool {
-		if _, ok := known[w]; ok {
-			return true
-		}
-		_, ok := known[strings.ToLower(w)]
+		_, ok := known[w]
 		return ok
 	}
 	return SimplePredicateSpellerChecker(ruleID, isKnown, suggestions, nil, nil)

@@ -86,9 +86,7 @@ func TestRegisterDemoEnglishTagger(t *testing.T) {
 	require.NotEmpty(t, sents)
 	foundDT := false
 	for _, tok := range sents[0].GetTokensWithoutWhitespace() {
-		if tok.GetToken() == "The" || tok.GetToken() == "the" {
-			// TagWord lowercases The → the
-		}
+		// Exact surface "The" / "the" both listed in DemoEnglishTagWord (no lowercase invent).
 		if strings.EqualFold(tok.GetToken(), "the") {
 			rd := tok.GetReadings()
 			if len(rd) > 0 && rd[0].GetPOSTag() != nil && *rd[0].GetPOSTag() == "DT" {

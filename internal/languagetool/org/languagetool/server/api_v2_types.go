@@ -129,7 +129,7 @@ func LanguageNameForCode(code string) string {
 	}
 	for _, li := range DefaultCoreLanguages() {
 		if equalFoldASCII(li.Code, base) {
-			// strip soft variant suffix "English (US)" → "English"
+			// Strip variant parenthetical "English (US)" → "English" (display name only).
 			name := li.Name
 			if j := indexByte(name, '('); j > 0 {
 				name = trimSpace(name[:j])
@@ -140,8 +140,8 @@ func LanguageNameForCode(code string) string {
 			return li.Name
 		}
 	}
-	// soft: title-case base
-	if len(base) >= 2 {
+	// Unknown code: return base as-is (fail closed — no invent display name).
+	if base != "" {
 		return base
 	}
 	return low

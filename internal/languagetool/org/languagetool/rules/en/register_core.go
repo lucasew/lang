@@ -134,8 +134,9 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 	lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
 }
 
-// RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject.
-// known may be nil (no-op). Soft stand-in until binary dictionaries are ported.
+// RegisterDemoEnglishSpeller installs a map-backed MORFOLOGIK_RULE_EN_US inject
+// for smoke demos when binary hunspell/*.dict is unavailable (LANG_DEMO_SPELLER).
+// known may be nil (no-op). Prefer RegisterBinaryEnglishSpeller when a dict exists.
 func RegisterDemoEnglishSpeller(lt *languagetool.JLanguageTool, known map[string]struct{}, suggestions map[string][]string) {
 	if lt == nil || known == nil {
 		return
@@ -147,6 +148,7 @@ func RegisterDemoEnglishSpeller(lt *languagetool.JLanguageTool, known map[string
 }
 
 // DemoEnglishKnownWords is a tiny inject dictionary for smoke/demo checks.
+// Lists both casings explicitly where needed (no lookup-time lowercase invent).
 func DemoEnglishKnownWords() map[string]struct{} {
 	words := []string{
 		"I", "you", "he", "she", "it", "we", "they", "a", "an", "the", "is", "are", "was", "were",
@@ -160,16 +162,32 @@ func DemoEnglishKnownWords() map[string]struct{} {
 	m := make(map[string]struct{}, len(words)*2)
 	for _, w := range words {
 		m[w] = struct{}{}
-		m[strings.ToLower(w)] = struct{}{}
+		// Explicit second casing for sentence-start / closed-class surfaces.
+		if low := strings.ToLower(w); low != w {
+			m[low] = struct{}{}
+		}
+		if len(w) > 0 {
+			// Title-case form for sentence starts (e.g. "the" → "The").
+			rs := []rune(w)
+			if rs[0] >= 'a' && rs[0] <= 'z' {
+				rs[0] = rs[0] - ('a' - 'A')
+				m[string(rs)] = struct{}{}
+			}
+		}
 	}
 	return m
 }
 
 // DemoEnglishTagWord returns a tiny closed-class POS inject for smoke tests.
+// Exact surface only — no soft lowercase invent (list title-case forms explicitly).
 func DemoEnglishTagWord() func(token string) []languagetool.TokenTag {
 	m := map[string]languagetool.TokenTag{
-		"the": {POS: "DT", Lemma: "the"}, "a": {POS: "DT", Lemma: "a"}, "an": {POS: "DT", Lemma: "an"},
-		"is": {POS: "VBZ", Lemma: "be"}, "are": {POS: "VBP", Lemma: "be"}, "was": {POS: "VBD", Lemma: "be"},
+		"the": {POS: "DT", Lemma: "the"}, "The": {POS: "DT", Lemma: "the"},
+		"a": {POS: "DT", Lemma: "a"}, "A": {POS: "DT", Lemma: "a"},
+		"an": {POS: "DT", Lemma: "an"}, "An": {POS: "DT", Lemma: "an"},
+		"is": {POS: "VBZ", Lemma: "be"}, "Is": {POS: "VBZ", Lemma: "be"},
+		"are": {POS: "VBP", Lemma: "be"}, "Are": {POS: "VBP", Lemma: "be"},
+		"was": {POS: "VBD", Lemma: "be"}, "Was": {POS: "VBD", Lemma: "be"},
 		"and": {POS: "CC", Lemma: "and"}, "of": {POS: "IN", Lemma: "of"}, "to": {POS: "TO", Lemma: "to"},
 		"I": {POS: "PRP", Lemma: "I"}, "you": {POS: "PRP", Lemma: "you"}, "he": {POS: "PRP", Lemma: "he"},
 		"she": {POS: "PRP", Lemma: "she"}, "it": {POS: "PRP", Lemma: "it"}, "we": {POS: "PRP", Lemma: "we"},
@@ -179,22 +197,16 @@ func DemoEnglishTagWord() func(token string) []languagetool.TokenTag {
 		if tg, ok := m[token]; ok {
 			return []languagetool.TokenTag{tg}
 		}
-		low := strings.ToLower(token)
-		if tg, ok := m[low]; ok {
-			return []languagetool.TokenTag{tg}
-		}
 		return nil
 	}
 }
 
-// RegisterDemoEnglishTagger installs DemoEnglishTagWord on lt.TagWord.
+// RegisterDemoEnglishTagger installs DemoEnglishTagWord on lt.TagWord for smoke demos
+// when binary POS dict is unavailable. Does not invent extra rules (unit conversion
+// lives on variant getRelevantRules / RegisterPickyEnglishRules US|Imperial).
 func RegisterDemoEnglishTagger(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	lt.TagWord = DemoEnglishTagWord()
-
-	// Metric unit conversion (Java UnitConversionRule via AbstractUnitConversionRule).
-	uc := NewUnitConversionRule(nil)
-	lt.AddRuleChecker(uc.GetID(), rules.AsSentenceCheckerSimple(uc.Match))
 }

@@ -81,7 +81,7 @@ func (g *GRPCServer) Analyze(opt ProcessingOptions, text string) (lang string, t
 			n++
 		}
 	}
-	// soft: also run check engine to warm path (discard matches)
+	// Warm check path (discard matches) — optional gRPC health probe.
 	_ = pl.Check(text)
 	return lang, n, nil
 }

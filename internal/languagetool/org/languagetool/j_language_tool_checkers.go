@@ -244,11 +244,9 @@ func (lt *JLanguageTool) RegisterDemoEnglishCheckers(known map[string]struct{}, 
 	lt.AddRuleChecker("WHITESPACE_RULE", SimpleMultipleWhitespaceChecker())
 	lt.AddRuleChecker("UNPAIRED_BRACKETS", SimpleUnpairedBracketsChecker())
 	if known != nil {
+		// Exact surface only — no soft lowercase invent (DemoEnglishKnownWords dual-cases).
 		isKnown := func(w string) bool {
-			if _, ok := known[w]; ok {
-				return true
-			}
-			_, ok := known[strings.ToLower(w)]
+			_, ok := known[w]
 			return ok
 		}
 		// Explicit suggestion map only — no soft edit-distance invent when map miss.
