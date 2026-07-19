@@ -114,8 +114,11 @@ func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadings(tok *languagetool.
 		if token == nil || token.GetLemma() == nil || token.GetPOSTag() == nil {
 			continue
 		}
+		// Java: if token.hasNoTag() continue
+		if token.HasNoTag() {
+			continue
+		}
 		pos := *token.GetPOSTag()
-		// Java: hasNoTag skip — Go has no hasNoTag; empty POS treated as none
 		if pos == "" {
 			continue
 		}
@@ -154,6 +157,10 @@ func (h *CaseGovernmentHelper) GetCaseGovernmentsFromReadingsRE(tok *languagetoo
 	}
 	for _, token := range tok.GetReadings() {
 		if token == nil || token.GetPOSTag() == nil {
+			continue
+		}
+		// Java: if token.hasNoTag() continue
+		if token.HasNoTag() {
 			continue
 		}
 		pos := *token.GetPOSTag()

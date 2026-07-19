@@ -183,9 +183,13 @@ func HasLemmaTokenAny(tok *languagetool.AnalyzedTokenReadings, lemmas []string) 
 	return false
 }
 
-// HasLemmaWithPosRE ports LemmaHelper.hasLemma(readings, lemmas, posRegex) with full POS match.
+// HasLemmaWithPosRE ports LemmaHelper.hasLemma(readings, lemmas, posRegex) —
+// posRegex uses Matcher.matches() (full POS tag).
 func HasLemmaWithPosRE(tok *languagetool.AnalyzedTokenReadings, lemmas []string, posRE *regexp.Regexp) bool {
 	if tok == nil || posRE == nil || len(lemmas) == 0 {
+		return false
+	}
+	if !tok.HasReading() {
 		return false
 	}
 	want := setOf(lemmas...)
@@ -193,11 +197,43 @@ func HasLemmaWithPosRE(tok *languagetool.AnalyzedTokenReadings, lemmas []string,
 		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
 			continue
 		}
-		if !posRE.MatchString(*r.GetPOSTag()) {
+		// Java posRegex.matcher(pos).matches()
+		loc := posRE.FindStringIndex(*r.GetPOSTag())
+		if loc == nil || loc[0] != 0 || loc[1] != len(*r.GetPOSTag()) {
 			continue
 		}
 		if _, ok := want[*r.GetLemma()]; ok {
 			return true
+		}
+	}
+	return false
+}
+
+// HasLemmaBase ports LemmaHelper.hasLemmaBase (lemma or first hyphen segment).
+func HasLemmaBase(tok *languagetool.AnalyzedTokenReadings, lemmas []string, posRE *regexp.Regexp) bool {
+	if tok == nil || posRE == nil || len(lemmas) == 0 {
+		return false
+	}
+	if !tok.HasReading() {
+		return false
+	}
+	want := setOf(lemmas...)
+	for _, r := range tok.GetReadings() {
+		if r == nil || r.GetLemma() == nil || r.GetPOSTag() == nil {
+			continue
+		}
+		loc := posRE.FindStringIndex(*r.GetPOSTag())
+		if loc == nil || loc[0] != 0 || loc[1] != len(*r.GetPOSTag()) {
+			continue
+		}
+		lemma := *r.GetLemma()
+		if _, ok := want[lemma]; ok {
+			return true
+		}
+		if idx := strings.Index(lemma, "-"); idx > 2 && idx < len(lemma)-1 {
+			if _, ok := want[lemma[:idx]]; ok {
+				return true
+			}
 		}
 	}
 	return false

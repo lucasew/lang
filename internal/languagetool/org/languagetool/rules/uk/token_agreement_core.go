@@ -794,9 +794,9 @@ func IsAdjNounException(tokens []*languagetool.AnalyzedTokenReadings, adjPos, no
 			regexp.MustCompile(`^(?:ранку|дня|вечора|ночі|пополудня)$`).MatchString(noun.GetToken()) {
 			return true
 		}
-		// дев'яте травня
+		// дев'яте травня — Java hasLemma(…, MONTH_LEMMAS, ":v_rod") part-contains
 		if HasPosTagPart(adj, ":n:") &&
-			HasLemmaWithPosRE(noun, MonthLemmas, regexp.MustCompile(`:v_rod`)) {
+			HasLemmaWithPartPos(noun, MonthLemmas, ":v_rod") {
 			return true
 		}
 	}
@@ -1123,12 +1123,18 @@ func HasPosTagMatches(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp
 }
 
 // HasLemmaTokenRE ports LemmaHelper.hasLemma(readings, lemmaRegex).
+// HasLemmaTokenRE ports LemmaHelper.hasLemma(readings, Pattern) — Matcher.matches() on lemma.
 func HasLemmaTokenRE(tok *languagetool.AnalyzedTokenReadings, re *regexp.Regexp) bool {
 	if tok == nil || re == nil {
 		return false
 	}
 	for _, r := range tok.GetReadings() {
-		if r != nil && r.GetLemma() != nil && re.MatchString(*r.GetLemma()) {
+		if r == nil || r.GetLemma() == nil {
+			continue
+		}
+		lem := *r.GetLemma()
+		loc := re.FindStringIndex(lem)
+		if loc != nil && loc[0] == 0 && loc[1] == len(lem) {
 			return true
 		}
 	}
@@ -1695,9 +1701,9 @@ func IsNumrNounException(tokens []*languagetool.AnalyzedTokenReadings, numrPos, 
 		return true
 	}
 
-	// 22 червня — number + MONTH :m:v_rod
+	// 22 червня — number + MONTH :m:v_rod (Java hasLemma part-contains, not Pattern)
 	if isNumberToken(numr) &&
-		HasLemmaWithPosRE(noun, MonthLemmas, regexp.MustCompile(`:m:v_rod`)) {
+		HasLemmaWithPartPos(noun, MonthLemmas, ":m:v_rod") {
 		return true
 	}
 
