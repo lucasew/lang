@@ -1117,39 +1117,22 @@ func hasCaseGovFromReadings(tok *languagetool.AnalyzedTokenReadings, rvCase stri
 	return cg.HasCaseGovernment(lemmaOf(tok), rvCase)
 }
 
-// tokenLineBefore reports whether tokens ending just before pos form the given surface line.
+// tokenLineBefore ports new Match().tokenLine(line).mBefore(tokens, pos) >= 0
+// (Java starts matching the last line token at pos and walks backward).
 func tokenLineBefore(tokens []*languagetool.AnalyzedTokenReadings, pos int, words ...string) bool {
-	if pos < len(words) {
+	if pos < 0 || len(words) == 0 {
 		return false
 	}
-	start := pos - len(words)
-	for i, w := range words {
-		if tokens[start+i] == nil {
-			return false
-		}
-		if !strings.EqualFold(CleanTokenLower(tokens[start+i]), w) &&
-			!strings.EqualFold(tokens[start+i].GetToken(), w) {
-			// allow case-insensitive clean match only
-			if CleanTokenLower(tokens[start+i]) != strings.ToLower(w) {
-				return false
-			}
-		}
-	}
-	return true
+	line := strings.Join(words, " ")
+	return NewSearchMatch(line).MBeforeATR(tokens, pos) >= 0
 }
 
-// tokenLineAfter reports whether tokens starting at pos form the given surface line.
+// tokenLineAfter reports whether the surface line appears at or after pos
+// (Java mAfter(tokens, pos) >= 0 / mAfter >= 1).
 func tokenLineAfter(tokens []*languagetool.AnalyzedTokenReadings, pos int, words ...string) bool {
-	if pos < 0 || pos+len(words) > len(tokens) {
+	if pos < 0 || len(words) == 0 {
 		return false
 	}
-	for i, w := range words {
-		if tokens[pos+i] == nil {
-			return false
-		}
-		if CleanTokenLower(tokens[pos+i]) != strings.ToLower(w) {
-			return false
-		}
-	}
-	return true
+	line := strings.Join(words, " ")
+	return NewSearchMatch(line).MAfterATR(tokens, pos) >= 0
 }

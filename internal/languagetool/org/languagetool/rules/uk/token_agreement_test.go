@@ -226,10 +226,11 @@ func TestNounVerbException_EarlyArms(t *testing.T) {
 		atr("правда", "noun:inanim:f:v_naz"),
 		atr("було", "verb:imperf:past:n"),
 	}, 0, 1))
-	// під три чорти
+	// під три чорти — Java mBefore needs room for iCond (SENT_START pad like LT tokens[0])
 	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
-		atr("під", "prep"), atr("три", "numr"), atr("чорти", "noun"),
-		atr("люди", "noun:anim:p:v_naz"), atr("йдуть", "verb:imperf:pres:p:3"),
+		atr("SENT_START"),
+		atr("під", "prep"), atr("три", "numr"), atr("чорти", "noun:anim:p:v_naz"),
+		atr("йдуть", "verb:imperf:pres:p:3"),
 	}, 3, 4))
 	// normal disagree pair not exception
 	require.False(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
