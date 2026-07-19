@@ -28,7 +28,8 @@ func TestMasdarToVerbAndMafoul(t *testing.T) {
 	f := NewArabicMasdarToVerbFilter()
 	require.Equal(t, []string{"عَمِلَ"}, f.SuggestVerbsForMasdar("عمل"))
 	require.Contains(t, f.SuggestionsFromArgs(map[string]string{"noun": "عمل"}), "عَمِلَ")
-	require.Equal(t, []string{"قَامَ"}, FilterAuxLemmas([]string{"قَامَ", "ذهب"}))
+	// Java authorizeLemma is exact "قَامَ" only
+	require.Equal(t, []string{"قَامَ"}, FilterAuxLemmas([]string{"قَامَ", "ذهب", "قام"}))
 
 	m := rules.NewRuleMatch("r", nil, 0, 1, "msg")
 	ApplySuggestions(m, []string{"أ", "ب"})
@@ -38,6 +39,43 @@ func TestMasdarToVerbAndMafoul(t *testing.T) {
 	sug := v.SuggestMafoulMutlaq("عَمِلَ")
 	// Java inflectMafoulMutlq: عمل + fathatan + alef
 	require.Contains(t, sug, ar_synth.InflectMafoulMutlq("عمل"))
+}
+
+func TestArabicMasdarToVerb_Accept(t *testing.T) {
+	f := NewArabicMasdarToVerbFilter()
+	// Without InflectLemmaLike: fail closed
+	vpos, mpos := "V", "NM------"
+	auxLem, masdLem := "قَامَ", "عمل"
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("قام", &vpos, &auxLem), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("بالأكل", &mpos, &masdLem), 4),
+	}
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{"verb": "قام", "noun": "أكل"}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Empty(t, out.GetSuggestedReplacements())
+
+	// With InflectLemmaLike stub (stand-in for ArabicSynthesizer)
+	f.InflectLemmaLike = func(targetLemma string, source *languagetool.AnalyzedToken) []string {
+		return []string{targetLemma}
+	}
+	out = f.AcceptRuleMatch(m, map[string]string{"verb": "قام", "noun": "أكل"}, 0, toks, nil)
+	require.Contains(t, out.GetSuggestedReplacements(), "عَمِلَ")
+}
+
+func TestArabicMasdarToVerb_FailClosedWithoutTags(t *testing.T) {
+	f := NewArabicMasdarToVerbFilter()
+	f.InflectLemmaLike = func(targetLemma string, source *languagetool.AnalyzedToken) []string {
+		return []string{targetLemma}
+	}
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("قام", nil, nil), 0),
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("بالأكل", nil, nil), 4),
+	}
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	out := f.AcceptRuleMatch(m, map[string]string{"verb": "قام", "noun": "أكل"}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Empty(t, out.GetSuggestedReplacements())
 }
 
 func TestAdjectiveExclamation(t *testing.T) {
