@@ -110,6 +110,60 @@ func TestDiscoverLanguagePatternRuleFiles_ENUS_Variant(t *testing.T) {
 	require.True(t, hasVariantGrammar, "files=%v", files)
 }
 
+func TestDiscoverLanguagePatternRuleFiles_UK_ExtraRuleFiles(t *testing.T) {
+	// Java Ukrainian.RULE_FILES after super.getRuleFileNames() (grammar.xml first).
+	files := DiscoverLanguagePatternRuleFiles(nil, "uk")
+	require.NotEmpty(t, files)
+	require.Contains(t, files[0], "grammar.xml")
+	require.NotContains(t, files[0], "grammar-grammar.xml")
+	want := []string{
+		"grammar-spelling.xml",
+		"grammar-grammar.xml",
+		"grammar-barbarism.xml",
+		"grammar-style.xml",
+		"grammar-punctuation.xml",
+	}
+	for _, name := range want {
+		found := false
+		for _, f := range files {
+			require.NotContains(t, f, "soft")
+			if strings.HasSuffix(f, name) || strings.Contains(f, "/"+name) {
+				found = true
+				break
+			}
+		}
+		require.True(t, found, "missing %s in %v", name, files)
+	}
+	// order: extras after grammar.xml (and optional style/custom)
+	idx := map[string]int{}
+	for i, f := range files {
+		for _, name := range want {
+			if strings.Contains(f, name) {
+				if _, ok := idx[name]; !ok {
+					idx[name] = i
+				}
+			}
+		}
+	}
+	require.Less(t, idx["grammar-spelling.xml"], idx["grammar-grammar.xml"])
+	require.Less(t, idx["grammar-grammar.xml"], idx["grammar-barbarism.xml"])
+	require.Less(t, idx["grammar-barbarism.xml"], idx["grammar-style.xml"])
+	require.Less(t, idx["grammar-style.xml"], idx["grammar-punctuation.xml"])
+}
+
+func TestDiscoverLanguagePatternRuleFiles_SK_Typography(t *testing.T) {
+	files := DiscoverLanguagePatternRuleFiles(nil, "sk")
+	require.NotEmpty(t, files)
+	require.Contains(t, files[0], "grammar.xml")
+	var hasTypo bool
+	for _, f := range files {
+		if strings.Contains(f, "grammar-typography.xml") {
+			hasTypo = true
+		}
+	}
+	require.True(t, hasTypo, "files=%v", files)
+}
+
 func TestConfigureCoreLT_LoadsOfficialGrammarWhenEnabled(t *testing.T) {
 	t.Setenv("LANG_USE_UPSTREAM_GRAMMAR", "1")
 	lt, err := configureCoreLT("en", &CommandLineOptions{Language: "en"})

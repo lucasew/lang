@@ -500,8 +500,35 @@ func DiscoverLanguageStyleXML(opts *CommandLineOptions, lang string) string {
 	return discoverLanguageRuleXML(opts, lang, "style.xml", "STYLE")
 }
 
+// languageExtraRuleFiles ports Language subclasses that append RULE_FILES after
+// super.getRuleFileNames() (grammar.xml / style.xml / …). Only existing files
+// are discovered — no invent. Order matches Java Arrays.asList order.
+var languageExtraRuleFiles = map[string][]string{
+	// Ukrainian.RULE_FILES
+	"uk": {
+		"grammar-spelling.xml",
+		"grammar-grammar.xml",
+		"grammar-barbarism.xml",
+		"grammar-style.xml",
+		"grammar-punctuation.xml",
+	},
+	// Slovak.RULE_FILES
+	"sk": {
+		"grammar-typography.xml",
+	},
+	// Serbian.RULE_FILES
+	"sr": {
+		"grammar-barbarism.xml",
+		"grammar-logical.xml",
+		"grammar-punctuation.xml",
+		"grammar-spelling.xml",
+		"grammar-style.xml",
+	},
+}
+
 // DiscoverLanguagePatternRuleFiles ports Language.getRuleFileNames() path order:
 //   {lang}/grammar.xml, {lang}/style.xml (if any), {lang}/grammar_custom.xml (if any),
+//   language-specific RULE_FILES extras (uk/sk/sr, if present),
 //   and when lang has a country variant (e.g. en-US):
 //   {lang}/{variant}/grammar.xml, style.xml, grammar-premium.xml (each if present).
 // Only existing official files are returned — no soft invent paths.
@@ -529,6 +556,13 @@ func DiscoverLanguagePatternRuleFiles(opts *CommandLineOptions, lang string) []s
 	}
 	if p := discoverLanguageRuleXML(opts, base, "grammar_custom.xml", ""); p != "" {
 		add(p)
+	}
+	// Java Language overrides (Ukrainian/Slovak/Serbian) append RULE_FILES next.
+	for _, name := range languageExtraRuleFiles[base] {
+		// empty env suffix — no per-file LANG_*_GRAMMAR invent
+		if p := discoverLanguageRuleXML(opts, base, name, ""); p != "" {
+			add(p)
+		}
 	}
 	// Variant files: shortCodeWithCountryAndVariant length > 2 in Java.
 	variant := languageVariantCode(lang)
