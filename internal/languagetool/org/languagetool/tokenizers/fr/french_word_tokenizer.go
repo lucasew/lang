@@ -27,31 +27,19 @@ var (
 	spaceDigits      = regexp.MustCompile(`(?i)([\d]) ([\d][\d][\d])\b`)
 	spaceDigits2     = regexp.MustCompile(`(?i)([\d]) ([\d][\d][\d]) ([\d][\d][\d])\b`)
 
+	// Java FrenchWordTokenizer.doNotSplit only (hyphen compounds not in this list
+	// are kept whole only when FrenchTagger marks them tagged — see IsTaggedFR).
 	doNotSplit = map[string]bool{
 		"mers-cov": true, "mcgraw-hill": true, "sars-cov-2": true, "sars-cov": true,
 		"ph-metre": true, "ph-metres": true, "anti-ivg": true, "anti-uv": true,
 		"anti-vih": true, "al-qaïda": true, "c'est-à-dire": true, "add-on": true, "add-ons": true,
 		"rendez-vous": true, "garde-à-vous": true, "chez-eux": true, "chez-moi": true,
 		"chez-nous": true, "chez-soi": true, "chez-toi": true, "chez-vous": true, "m'as-tu-vu": true,
-		// Soft stand-in for FrenchTagger dictionary hits used by Java wordsToAdd.
-		"strauss-kahn": true, "petit-déjeunes": true,
-		// Keep hyphenated surface so rules like A_PLEIN_TEMPS match "plein-temps".
-		"plein-temps": true,
-		// Residual soft-pack compounds (AMANITE, AVANT-MIDI, INTER-CLUB, …)
-		"tue-mouches": true, "tue-mouche": true,
-
-		"pare-chocs": true, "pare-choc": true,
-		"sous-contracteur": true, "sous-contracteurs": true,
-		"lui-même": true, "elle-même": true, "eux-mêmes": true, "elles-mêmes": true,
-		"moi-même": true, "toi-même": true, "nous-mêmes": true, "vous-mêmes": true,
-		"grand-mère": true, "grand-mères": true, "grand-père": true, "grand-pères": true,
-		"petit-fils": true, "petite-fille": true, "petites-filles": true,
-		"répondit-il": true, "demanda-t-il": true,
-		"avant-midi": true, "avants-midis": true, "avant-midis": true, "avants-midi": true,
-		"inter-club": true, "inter-clubs": true,
-		"vice-président": true, "vice-présidente": true, "vice-présidents": true, "vice-présidentes": true,
-		"vice-president": true, "vice-presidente": true,
 	}
+
+	// IsTaggedFR optional FrenchTagger.INSTANCE.tag(...).isTagged() hook.
+	// Nil / false → split unlisted hyphens (Java splits untagged forms).
+	IsTaggedFR func(s string) bool
 
 	frPatterns = []*regexp.Regexp{
 		regexp.MustCompile(`(?i)^(c['’]te?|m['’]as-tu-vu|c['’]est-à-dire|add-on|add-ons|rendez-vous|garde-à-vous|chez-eux|chez-moi|chez-nous|chez-soi|chez-toi|chez-vous)$`),
@@ -167,9 +155,10 @@ func wordsToAddFR(s string) []string {
 }
 
 func isTaggedFR(s string) bool {
-	// Without FrenchTagger POS data, treat dictionary lookup as a miss so
-	// wordsToAdd splits hyphens (Java splits untagged forms). Soft-hyphen
-	// compounds and doNotSplit entries are handled by wordsToAdd callers.
-	_ = s
+	// Java: FrenchTagger.INSTANCE.tag(...).isTagged(). Without a tagger, miss
+	// (split hyphens) — do not invent a soft compound lexicon.
+	if IsTaggedFR != nil {
+		return IsTaggedFR(s)
+	}
 	return false
 }

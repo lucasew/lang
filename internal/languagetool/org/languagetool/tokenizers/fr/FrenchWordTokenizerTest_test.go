@@ -13,6 +13,19 @@ func tokStr(tokens []string) string {
 
 func TestFrenchWordTokenizer_Tokenize(t *testing.T) {
 	w := NewFrenchWordTokenizer()
+	// Java keeps dictionary-tagged hyphen compounds whole via FrenchTagger.
+	// Inject IsTaggedFR for those surfaces — no soft invent doNotSplit list.
+	prev := IsTaggedFR
+	IsTaggedFR = func(s string) bool {
+		switch strings.ToLower(s) {
+		case "strauss-kahn", "petit-déjeunes":
+			return true
+		default:
+			return false
+		}
+	}
+	t.Cleanup(func() { IsTaggedFR = prev })
+
 	require.Equal(t, 1, len(w.Tokenize("name@example.com")))
 	require.Equal(t, 2, len(w.Tokenize("name@example.com.")))
 	require.Equal(t, 2, len(w.Tokenize("name@example.com:")))
