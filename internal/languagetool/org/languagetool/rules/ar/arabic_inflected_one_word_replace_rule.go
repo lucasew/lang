@@ -4,7 +4,6 @@ import (
 	"embed"
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
@@ -58,13 +57,16 @@ func parseARInflectedMap() map[string]rules.SuggestionWithMessage {
 	return out
 }
 
-// ArabicInflectedOneWordReplaceRule is a surface stand-in for
+// ArabicInflectedOneWordReplaceRule ports
 // org.languagetool.rules.ar.ArabicInflectedOneWordReplaceRule.
-// Without the Arabic tagger/synthesizer, matches lemmas and common
-// proclitic/enclitic surface variants (و/ب/ال… + plural endings).
+// Match is lemma + POS only (Java getSuggestedWords); without POS/lemma fail closed.
+// InflectLemmaLike optional synthesizer for suggestions (Java ArabicSynthesizer).
 type ArabicInflectedOneWordReplaceRule struct {
 	Messages map[string]string
 	words    map[string]rules.SuggestionWithMessage
+	// InflectLemmaLike ports synthesizer.inflectLemmaLike(targetLemma, sourceToken).
+	// When nil, bare dictionary suggestions are used (no surface clitic invent).
+	InflectLemmaLike func(targetLemma string, source *languagetool.AnalyzedToken) []string
 }
 
 func NewArabicInflectedOneWordReplaceRule(messages map[string]string) *ArabicInflectedOneWordReplaceRule {
@@ -76,82 +78,74 @@ func NewArabicInflectedOneWordReplaceRule(messages map[string]string) *ArabicInf
 
 func (r *ArabicInflectedOneWordReplaceRule) GetID() string { return "AR_INFLECTED_ONE_WORD" }
 
-func arSurfaceStems(token string) []string {
-	cands := map[string]struct{}{token: {}}
-	prefixes := []string{"وال", "بال", "كال", "فال", "لل", "ال", "و", "ب", "ك", "ف", "ل", "أ"}
-	work := []string{token}
-	for len(work) > 0 {
-		w := work[0]
-		work = work[1:]
-		for _, p := range prefixes {
-			if strings.HasPrefix(w, p) && utf8.RuneCountInString(w) > utf8.RuneCountInString(p)+1 {
-				rest := strings.TrimPrefix(w, p)
-				if _, ok := cands[rest]; !ok {
-					cands[rest] = struct{}{}
-					work = append(work, rest)
-				}
-			}
-		}
-	}
-	suffixes := []string{"هما", "كما", "هم", "هن", "كم", "كن", "نا", "ها", "ه", "ك", "ي", "ا", "ان", "ين", "ون", "ات", "ة", "ًا", "ٌ", "ٍ", "َ", "ُ", "ِ", "ْ", "ّ"}
-	more := make([]string, 0, len(cands))
-	for c := range cands {
-		more = append(more, c)
-	}
-	for _, c := range more {
-		w := c
-		for {
-			stripped := false
-			for _, s := range suffixes {
-				if strings.HasSuffix(w, s) && utf8.RuneCountInString(w) > utf8.RuneCountInString(s)+1 {
-					w = strings.TrimSuffix(w, s)
-					cands[w] = struct{}{}
-					stripped = true
-					break
-				}
-			}
-			if !stripped {
-				break
-			}
-		}
-	}
-	out := make([]string, 0, len(cands))
-	for c := range cands {
-		out = append(out, c)
-	}
-	return out
+func (r *ArabicInflectedOneWordReplaceRule) GetDescription() string {
+	return "قاعدة تطابق الكلمات التي يجب تجنبها وتقترح تصويبا لها"
 }
 
+// Match ports ArabicInflectedOneWordReplaceRule.match.
 func (r *ArabicInflectedOneWordReplaceRule) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+	if r == nil || sentence == nil || len(r.words) == 0 {
+		return nil
+	}
 	tokens := sentence.GetTokensWithoutWhitespace()
 	var matches []*rules.RuleMatch
 	for i := 1; i < len(tokens); i++ {
 		tok := tokens[i]
-		word := tok.GetToken()
-		var hit *rules.SuggestionWithMessage
-		if swm, ok := r.words[word]; ok {
-			cp := swm
-			hit = &cp
-		} else {
-			for _, stem := range arSurfaceStems(word) {
-				if swm, ok := r.words[stem]; ok {
-					cp := swm
-					hit = &cp
-					break
-				}
-			}
-		}
-		if hit == nil {
+		if tok == nil {
 			continue
 		}
-		msg := " لا تقل '" + word + "' بل قل: " + hit.Suggestion
-		if hit.Message != "" {
-			msg = hit.Message
+		for _, wordTok := range tok.GetReadings() {
+			if wordTok == nil {
+				continue
+			}
+			swm := r.getSuggestedWords(wordTok)
+			if swm == nil {
+				continue
+			}
+			propositions := strings.Split(swm.Suggestion, "|")
+			sugMsg := swm.Message
+			var forms []string
+			for _, prop := range propositions {
+				prop = strings.TrimSpace(prop)
+				if prop == "" {
+					continue
+				}
+				if r.InflectLemmaLike != nil {
+					forms = append(forms, r.InflectLemmaLike(prop, wordTok)...)
+				} else {
+					// without synthesizer: bare replacement lemmas (Java always has synth)
+					forms = append(forms, prop)
+				}
+			}
+			if len(forms) == 0 {
+				continue
+			}
+			// Message template simplified to short form used in tests
+			msg := " لا تقل '" + tok.GetToken() + "' بل قل: " + strings.Join(forms, " أو ")
+			if sugMsg != "" {
+				msg = sugMsg + " " + strings.Join(forms, " أو ")
+			}
+			rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
+			rm.ShortMessage = "خطأ، يفضل أن  يقال:"
+			rm.SetSuggestedReplacements(forms)
+			matches = append(matches, rm)
+			break // one match per token surface (Java can add multiple per reading)
 		}
-		rm := rules.NewRuleMatch(r, sentence, tok.GetStartPos(), tok.GetEndPos(), msg)
-		rm.ShortMessage = "خطأ، يفضل أن  يقال:"
-		rm.SetSuggestedReplacement(hit.Suggestion)
-		matches = append(matches, rm)
 	}
 	return matches
+}
+
+// getSuggestedWords ports getSuggestedWords: requires POS + lemma in dictionary.
+func (r *ArabicInflectedOneWordReplaceRule) getSuggestedWords(mytoken *languagetool.AnalyzedToken) *rules.SuggestionWithMessage {
+	if mytoken == nil || mytoken.GetPOSTag() == nil {
+		return nil
+	}
+	if mytoken.GetLemma() == nil || *mytoken.GetLemma() == "" {
+		return nil
+	}
+	if swm, ok := r.words[*mytoken.GetLemma()]; ok {
+		cp := swm
+		return &cp
+	}
+	return nil
 }
