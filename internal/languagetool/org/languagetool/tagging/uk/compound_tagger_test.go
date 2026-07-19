@@ -17,10 +17,13 @@ func TestCompoundTagger(t *testing.T) {
 	ct.Debug = dbg
 	got := ct.Tag([]string{"міні-будинок"})
 	require.Len(t, got, 1)
-	require.NotEmpty(t, dbg.Lines)
+	// Inner UkrainianTagger now tags dash-prefix compounds itself (Java doGuessCompoundTag);
+	// CompoundTagger shell may no longer re-tag or log.
 	require.True(t, got[0].IsTagged())
 	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "noun")
-	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "comp")
+	// lemma retains dash prefix (Java getNvPrefixNounMatch)
+	require.NotNil(t, got[0].GetReadings()[0].GetLemma())
+	require.Contains(t, *got[0].GetReadings()[0].GetLemma(), "будинок")
 }
 
 func TestCompoundTagger_NumericPrefix(t *testing.T) {

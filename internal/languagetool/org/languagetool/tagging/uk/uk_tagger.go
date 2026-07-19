@@ -360,6 +360,22 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = two
 			}
 		}
+		// Java single-dash: з-за… alt, invalid prefixes, dash_prefixes / LAT / top-numr.
+		if len(readings) == 0 && strings.Contains(w, "-") {
+			if one := DynamicSingleLetterRedupReadings(w, t.TagWord); len(one) > 0 {
+				readings = one
+			}
+		}
+		if len(readings) == 0 && strings.Contains(w, "-") {
+			if inv := DynamicInvalidDashPrefixReadings(w, t.TagWord); len(inv) > 0 {
+				readings = inv
+			}
+		}
+		if len(readings) == 0 && strings.Contains(w, "-") {
+			if dp := DynamicDashPrefixReadings(w, t.TagWord); len(dp) > 0 {
+				readings = dp
+			}
+		}
 		if len(readings) == 0 && strings.Contains(w, "-") {
 			if ft := FullTagMatchReadings(w, t.TagWord); len(ft) > 0 {
 				readings = ft
