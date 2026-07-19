@@ -53,11 +53,18 @@ var (
 	UnitFahrenheit = UnitDef{ID: "fahrenheit", Kind: UnitTemperature, Factor: 5.0 / 9.0, Offset: -32 * 5.0 / 9.0, Symbol: "°F", Metric: false}
 	UnitKmh        = UnitDef{ID: "kmh", Kind: UnitSpeed, Factor: 1000.0 / 3600.0, Symbol: "km/h", Metric: true}
 	UnitMph        = UnitDef{ID: "mph", Kind: UnitSpeed, Factor: 1609.344 / 3600.0, Symbol: "mph", Metric: false}
-	// Area / tonne (DE UnitConversionRule)
+	// Area / tonne (DE UnitConversionRule / AbstractUnitConversionRule defaults)
 	UnitSquareMetre = UnitDef{ID: "m2", Kind: UnitArea, Factor: 1, Symbol: "m²", Metric: true}
 	UnitHectare     = UnitDef{ID: "ha", Kind: UnitArea, Factor: 1e4, Symbol: "ha", Metric: true}
 	UnitSqFt        = UnitDef{ID: "sqft", Kind: UnitArea, Factor: 0.09290304, Symbol: "sq ft", Metric: false}
+	UnitSqIn        = UnitDef{ID: "sqin", Kind: UnitArea, Factor: 0.0254 * 0.0254, Symbol: "sq in", Metric: false}
+	UnitSqYd        = UnitDef{ID: "sqyd", Kind: UnitArea, Factor: 0.9144 * 0.9144, Symbol: "sq yd", Metric: false}
 	UnitTonne       = UnitDef{ID: "t", Kind: UnitMass, Factor: 1e3, Symbol: "t", Metric: true}
+	// Cubic (Java CUBIC_METRE / ft³ / in³ / yd³)
+	UnitCubicMetre = UnitDef{ID: "m3", Kind: UnitVolume, Factor: 1, Symbol: "m³", Metric: true}
+	UnitCubicFeet  = UnitDef{ID: "ft3", Kind: UnitVolume, Factor: 0.3048 * 0.3048 * 0.3048, Symbol: "ft³", Metric: false}
+	UnitCubicInch  = UnitDef{ID: "in3", Kind: UnitVolume, Factor: 0.0254 * 0.0254 * 0.0254, Symbol: "inch³", Metric: false}
+	UnitCubicYard  = UnitDef{ID: "yd3", Kind: UnitVolume, Factor: 0.9144 * 0.9144 * 0.9144, Symbol: "yard³", Metric: false}
 )
 
 // UnitConversionMessage ports AbstractUnitConversionRule.Message.
@@ -71,7 +78,9 @@ const (
 )
 
 const (
-	unitNumberRegex    = `(-?\d{1,32}(?:[.,]\d{1,32})?)`
+	// Java AbstractUnitConversionRule.NUMBER_REGEX / NUMBER_REGEX_WITH_BOUNDARY body
+	// (allows thousands separators: 10.000,75 or 10,000.75).
+	unitNumberRegex    = `(-?\d{1,32}[\d,.]{0,32})`
 	unitWSLimit        = 5
 	unitMaxSuggestions = 5
 	unitDelta          = 1e-2
@@ -131,23 +140,69 @@ func NewAbstractUnitConversionRule(messages map[string]string) *AbstractUnitConv
 			regexp.MustCompile(`\d+⁄\d+`),
 		},
 	}
-	// default unit registrations (subset of Java defaults)
+	// default unit registrations (Java AbstractUnitConversionRule constructor; commented-out Java units omitted)
 	r.AddUnit(`kg`, UnitKilogram, "kg", 1, true)
 	r.AddUnit(`g`, UnitGram, "g", 1, true)
+	r.AddUnit(`t`, UnitTonne, "t", 1, true)
+
 	r.AddUnit(`lb`, UnitPound, "lb", 1, false)
+	// Java: //addUnit("oz", OUNCE, ...) commented out
+
 	r.AddUnit(`mi`, UnitMile, "mi", 1, false)
 	r.AddUnit(`yd`, UnitYard, "yd", 1, false)
 	// RE2 has no lookahead; use simple unit tokens (Java uses negative lookahead).
-	r.AddUnit(`ft`, UnitFeet, "ft", 1, false)
-	r.AddUnit(`inch`, UnitInch, "inch", 1, false)
+	r.AddUnit(`(?:ft|′|')`, UnitFeet, "ft", 1, false)
+	r.AddUnit(`(?:inch|″)`, UnitInch, "inch", 1, false)
+
 	r.AddUnit(`(?:km/h|kmh)`, UnitKmh, "km/h", 1, true)
 	r.AddUnit(`mph`, UnitMph, "mph", 1, false)
-	r.AddUnit(`km`, UnitKilometre, "km", 1, true)
+
+	r.AddUnit(`km`, UnitMetre, "km", 1e3, true)
 	r.AddUnit(`m`, UnitMetre, "m", 1, true)
-	r.AddUnit(`cm`, UnitCentimetre, "cm", 1, true)
-	r.AddUnit(`mm`, UnitMillimetre, "mm", 1, true)
+	// Java: //addUnit("dm", ...) commented out
+	r.AddUnit(`cm`, UnitMetre, "cm", 1e-2, true)
+	r.AddUnit(`mm`, UnitMetre, "mm", 1e-3, true)
+	r.AddUnit(`µm`, UnitMetre, "µm", 1e-6, true)
+	r.AddUnit(`nm`, UnitMetre, "nm", 1e-9, true)
+
+	r.AddUnit(`m(?:\^2|2|²)`, UnitSquareMetre, "m²", 1, true)
+	r.AddUnit(`ha`, UnitSquareMetre, "ha", 1e4, true)
+	r.AddUnit(`a`, UnitSquareMetre, "a", 1e2, true)
+	r.AddUnit(`km(?:\^2|2|²)`, UnitSquareMetre, "km²", 1e6, true)
+	r.AddUnit(`cm(?:\^2|2|²)`, UnitSquareMetre, "cm²", 1e-4, true)
+	r.AddUnit(`mm(?:\^2|2|²)`, UnitSquareMetre, "mm²", 1e-6, true)
+	r.AddUnit(`µm(?:\^2|2|²)`, UnitSquareMetre, "µm²", 1e-12, true)
+	r.AddUnit(`nm(?:\^2|2|²)`, UnitSquareMetre, "nm²", 1e-18, true)
+
+	r.AddUnit(`(?:sq|square) (?:in(?:ch)?|inches)`, UnitSqIn, "sq in", 1, false)
+	r.AddUnit(`(?:inches|in|inch) (?:\^2|2|²)`, UnitSqIn, "in²", 1, false)
+
+	r.AddUnit(`(?:sq|square) (?:ft|feet|foot)`, UnitSqFt, "sq ft", 1, false)
+	r.AddUnit(`sf`, UnitSqFt, "sf", 1, false)
+	r.AddUnit(`ft(?:\^2|2|²)`, UnitSqFt, "ft²", 1, false)
+
+	r.AddUnit(`(?:sq|square) (?:yds?|yards?)`, UnitSqYd, "sq yd", 1, false)
+	r.AddUnit(`(?:yards?|yds?)(?:\^2|2|²)`, UnitSqYd, "yd²", 1, false)
+
+	r.AddUnit(`m(?:\^3|3|³)`, UnitCubicMetre, "m³", 1, true)
+	r.AddUnit(`km(?:\^3|3|³)`, UnitCubicMetre, "km³", 1e9, true)
+	r.AddUnit(`cm(?:\^3|3|³)`, UnitCubicMetre, "cm³", 1e-6, true)
+	r.AddUnit(`mm(?:\^3|3|³)`, UnitCubicMetre, "mm³", 1e-9, true)
+	r.AddUnit(`µm(?:\^3|3|³)`, UnitCubicMetre, "µm³", 1e-18, true)
+	r.AddUnit(`nm(?:\^3|3|³)`, UnitCubicMetre, "nm³", 1e-27, true)
+
+	r.AddUnit(`(?:cubic|cu) (?:feet|ft|foot)`, UnitCubicFeet, "cubic feet", 1, false)
+	r.AddUnit(`(?:feet|ft|foot)(?:\^3|3|³)`, UnitCubicFeet, "ft³", 1, false)
+
+	r.AddUnit(`(?:cubic|cu) (?:inch|in|inches)`, UnitCubicInch, "cubic inch", 1, false)
+	r.AddUnit(`(?:inch|in)(?:\^3|3|³)`, UnitCubicInch, "inch³", 1, false)
+
+	r.AddUnit(`(?:cubic|cu) (?:yards?|yds?)`, UnitCubicYard, "cubic yard", 1, false)
+	r.AddUnit(`(?:yard|yd)(?:\^3|3|³)`, UnitCubicYard, "yard³", 1, false)
+
 	r.AddUnit(`l`, UnitLitre, "l", 1, true)
-	r.AddUnit(`ml`, UnitMillilitre, "ml", 1, true)
+	r.AddUnit(`ml`, UnitLitre, "ml", 1e-3, true)
+
 	r.AddUnit(`°F`, UnitFahrenheit, "°F", 1, false)
 	r.AddUnit(`°C`, UnitCelsius, "°C", 1, true)
 

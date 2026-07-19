@@ -10,16 +10,29 @@ import (
 
 func TestPortugueseUnitConversionRule_ID(t *testing.T) {
 	r := NewPortugueseUnitConversionRule(nil)
-	require.Equal(t, "UNITS_PT", r.GetID())
+	// Java PortugueseUnitConversionRule.getId
+	require.Equal(t, "UNIDADES_METRICAS", r.GetID())
 }
 
 func TestPortugueseUnitConversionRule_MatchMiles(t *testing.T) {
 	r := NewPortugueseUnitConversionRule(nil)
-	// plain number + unit tokens
-	sent := languagetool.AnalyzePlain("10 milhas")
+	// Java assertMatches: "A via tem 100 milhas de comprimento." → suggestion with quilômetros
+	sent := languagetool.AnalyzePlain("A via tem 100 milhas de comprimento.")
 	matches := r.Match(sent)
-	// may or may not match depending on abstract scanner; at least no panic
-	_ = matches
+	require.NotEmpty(t, matches)
+	require.NotEmpty(t, matches[0].GetSuggestedReplacements())
+	joined := strings.Join(matches[0].GetSuggestedReplacements(), " ")
+	require.Contains(t, joined, "quilômetros")
+}
+
+func TestPortugueseUnitConversionRule_MatchPounds(t *testing.T) {
+	r := NewPortugueseUnitConversionRule(nil)
+	// Java: "A carga é de 10.000 libras." → toneladas (Locale.GERMANY thousands)
+	sent := languagetool.AnalyzePlain("A carga é de 10.000 libras.")
+	matches := r.Match(sent)
+	require.NotEmpty(t, matches)
+	joined := strings.Join(matches[0].GetSuggestedReplacements(), " ")
+	require.Contains(t, joined, "toneladas")
 }
 
 func TestBrazilianToponymMapLoader(t *testing.T) {
