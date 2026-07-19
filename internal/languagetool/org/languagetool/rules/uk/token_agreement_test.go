@@ -252,3 +252,38 @@ func TestVerbNounException_EarlyArms(t *testing.T) {
 		atr("силою", "noun:inanim:f:v_oru"),
 	}, 1, 2))
 }
+
+func TestNounVerbException_MoreArms(t *testing.T) {
+	// both capitalized
+	require.True(t, IsCapitalized("Андрій") && IsCapitalized("Качала"))
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("Андрій", "noun:anim:m:v_naz:prop:fname"),
+		atr("Качала", "verb:imperf:past:m"),
+	}, 0, 1))
+	// all-upper verb
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("Тарас", "noun:anim:m:v_naz:prop:fname"),
+		atr("ЗАКУСИЛО", "verb:imperf:past:n"),
+	}, 0, 1))
+	// кандидат в президенти — prep lemma required for HasLemmaTokenAny
+	prep := "в"
+	require.True(t, IsNounVerbException([]*languagetool.AnalyzedTokenReadings{
+		atr("кандидат", "noun"), atrLemma("в", &prep, "prep"),
+		atr("президенти", "noun:anim:p:v_naz"),
+		atr("поїхав", "verb:perf:past:m"),
+	}, 2, 3))
+}
+
+func TestVerbNounException_MoreArms(t *testing.T) {
+	// що є сил — Java requires verbPos > 1
+	but := "бути"
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("от", "part"), atr("що", "conj"), atrLemma("є", &but, "verb:imperf:pres:s:3"),
+		atr("сил", "noun:inanim:p:v_rod"),
+	}, 2, 3))
+	// був людина
+	require.True(t, IsVerbNounException([]*languagetool.AnalyzedTokenReadings{
+		atr("був", "verb:imperf:past:m"),
+		atr("людина", "noun:anim:f:v_naz"),
+	}, 0, 1))
+}

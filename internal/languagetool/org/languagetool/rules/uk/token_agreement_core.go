@@ -820,7 +820,74 @@ func IsNounVerbException(tokens []*languagetool.AnalyzedTokenReadings, nounPos, 
 		return true
 	}
 
+	// кандидат в президенти поїхав
+	vPrezPrep := []string{"в", "у", "між", "межи", "поміж", "на"}
+	if nounPos > 1 && HasPosTagStart(noun, "noun:anim:p:v_naz") &&
+		HasLemmaTokenAny(tokens[nounPos-1], vPrezPrep) {
+		return true
+	}
+	// кандидат в народні депутати
+	if nounPos > 2 && HasPosTagStart(noun, "noun:anim:p:v_naz") &&
+		HasPosTagStart(tokens[nounPos-1], "adj:p:v_zna:rinanim") &&
+		HasLemmaTokenAny(tokens[nounPos-2], vPrezPrep) {
+		return true
+	}
+	// both capitalized (unknown surname as verb)
+	if IsCapitalized(verb.GetToken()) && IsCapitalized(noun.GetToken()) {
+		return true
+	}
+	// на прізвисько Михайло
+	if nounPos > 1 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun:anim:.:v_naz:prop:[fl]name.*`)) {
+		pl := CleanTokenLower(tokens[nounPos-1])
+		if pl == "ім'я" || pl == "прізвище" || pl == "прізвисько" {
+			return true
+		}
+	}
+	// матч Туреччина — Україна
+	if nounPos > 2 &&
+		HasPosTagRE(noun, regexp.MustCompile(`noun.*:v_naz.*prop.*`)) &&
+		tokens[nounPos-1] != nil &&
+		regexp.MustCompile(`^[-\x{2013}\x{2014}]$`).MatchString(CleanTokenLower(tokens[nounPos-1])) &&
+		HasPosTagRE(tokens[nounPos-2], regexp.MustCompile(`noun.*:v_naz.*prop.*`)) {
+		return true
+	}
+	// Тарас ЗАКУСИЛО (all-upper verb)
+	if isAllUpper(verb.GetToken()) {
+		return true
+	}
+	// Збережені Я позбудуться
+	if nounPos > 1 && noun.GetToken() == "Я" {
+		return true
+	}
+	// а він давай пити
+	if verbPos > 2 && verbPos < len(tokens)-1 && verb.GetToken() == "давай" {
+		return true
+	}
+	// Ви може образились (може not before inf)
+	if verbPos > 1 && verbPos < len(tokens)-1 && verb.GetToken() == "може" &&
+		tokens[verbPos-1].GetToken() != "не" &&
+		!HasPosTagRE(tokens[verbPos+1], verbInfPattern) {
+		return true
+	}
+
 	return false
+}
+
+func isAllUpper(s string) bool {
+	if s == "" {
+		return false
+	}
+	hasLetter := false
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			hasLetter = true
+			if !unicode.IsUpper(r) {
+				return false
+			}
+		}
+	}
+	return hasLetter
 }
 
 // IsVerbNounException ports TokenAgreementVerbNounExceptionHelper early arms.
@@ -885,6 +952,60 @@ func IsVerbNounException(tokens []*languagetool.AnalyzedTokenReadings, verbPos, 
 	if HasLemmaToken(verb, "хотіти") && HasPosTagPart(noun, "v_oru") {
 		return true
 	}
+	// були б іншої думки
+	if HasLemmaTokenRE(verb, regexp.MustCompile(`^бути$`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`(adj|numr).*v_rod.*`)) {
+		return true
+	}
+	// що є сил
+	if verbPos > 1 && CleanTokenLower(tokens[verbPos-1]) == "що" &&
+		HasLemmaWithPosRE(verb, []string{"бути"}, regexp.MustCompile(`verb.*(:s:3|past:n).*`)) &&
+		HasPosTagRE(noun, regexp.MustCompile(`(adj|noun).*v_rod.*`)) {
+		return true
+	}
+	// навіщо було …
+	if verbPos > 1 && CleanTokenLower(verb) == "було" && CleanTokenLower(tokens[verbPos-1]) == "навіщо" {
+		return true
+	}
+	// чесніше було б / predic + було
+	if CleanTokenLower(verb) == "було" && verbPos > 1 {
+		if HasPosTagRE(tokens[verbPos-1], regexp.MustCompile(`(adv:comp[cs].*|.*predic.*)`)) {
+			return true
+		}
+		if verbPos > 2 && regexp.MustCompile(`^би?$`).MatchString(CleanTokenLower(tokens[verbPos-1])) &&
+			HasPosTagRE(tokens[verbPos-2], regexp.MustCompile(`(adv:comp[cs].*|.*predic.*)`)) {
+			return true
+		}
+		// квітне притухлий було пафос
+		if HasPosTagRE(noun, regexp.MustCompile(`.*v_naz.*`)) &&
+			HasPosTagRE(tokens[verbPos-1], regexp.MustCompile(`adj:.:v_naz.*:adjp:.*:perf.*`)) {
+			return true
+		}
+	}
+	// підстрахуватися не зайве
+	if nounLower := CleanTokenLower(noun); nounLower == "зайве" || nounLower == "резон" {
+		return true
+	}
+	// далі + v_rod
+	if nounPos > 0 && CleanTokenLower(tokens[nounPos-1]) == "далі" && HasPosTagPart(noun, "v_rod") {
+		return true
+	}
+	// було всі 90-ті
+	if regexp.MustCompile(`^(було|буде)$`).MatchString(CleanTokenLower(verb)) &&
+		HasLemmaWithPosRE(noun, []string{"весь"}, regexp.MustCompile(`.*v_zna.*`)) {
+		return true
+	}
+	// він був талановита людина
+	if CleanTokenLower(verb) == "був" {
+		nl := CleanTokenLower(noun)
+		if nl == "людина" || nl == "знаменитість" {
+			return true
+		}
+	}
+	// мати + v_oru (має своїм наслідком) — partial Java arm
+	if HasLemmaTokenRE(verb, regexp.MustCompile(`^(мати|маючи|мавши)$`)) && HasPosTagPart(noun, "v_oru") {
+		return true
+	}
 
 	return false
 }
@@ -905,7 +1026,8 @@ func hasPosWithoutRanim(tok *languagetool.AnalyzedTokenReadings, re *regexp.Rege
 	return false
 }
 
-var verbInfPattern = regexp.MustCompile(`verb.*inf.*|inf:`)
+// Java PosTagHelper.VERB_INF_PATTERN = verb.*:inf.*
+var verbInfPattern = regexp.MustCompile(`verb.*:inf.*`)
 
 // lemmaOf returns first non-empty lemma or clean token lower.
 func lemmaOf(tok *languagetool.AnalyzedTokenReadings) string {
