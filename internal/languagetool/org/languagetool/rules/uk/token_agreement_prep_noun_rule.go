@@ -8,7 +8,8 @@ import (
 	taguk "github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging/uk"
 )
 
-const TokenAgreementPrepNounRuleID = "UK_PREP_NOUN_CASE_AGREEMENT"
+// Java TokenAgreementPrepNounRule.getId()
+const TokenAgreementPrepNounRuleID = "UK_PREP_NOUN_INFLECTION_AGREEMENT"
 
 // TokenAgreementPrepNounRule ports prep→noun case government check.
 type TokenAgreementPrepNounRule struct {
@@ -39,11 +40,17 @@ func HasNounOrPronObjectReading(tok *languagetool.AnalyzedTokenReadings) bool {
 }
 
 func NewTokenAgreementPrepNounRule() *TokenAgreementPrepNounRule {
+	return NewTokenAgreementPrepNounRuleWithMessages(nil)
+}
+
+// NewTokenAgreementPrepNounRuleWithMessages ports the Java ctor (ResourceBundle messages).
+func NewTokenAgreementPrepNounRuleWithMessages(messages map[string]string) *TokenAgreementPrepNounRule {
 	cg := LoadCaseGovernmentHelper()
 	r := &TokenAgreementPrepNounRule{CaseGov: cg}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
-		ruleID:       TokenAgreementPrepNounRuleID,
-		description:  "Узгодження прийменника та іменника (керування відмінком)",
+		ruleID: TokenAgreementPrepNounRuleID,
+		// Java getDescription / getShort
+		description:  "Узгодження прийменника та іменника у реченні",
 		shortMsg:     "Узгодження прийменника та іменника",
 		isLeftToken:  hasPrepReading,
 		isRightToken: HasNounOrPronObjectReading,
@@ -52,6 +59,7 @@ func NewTokenAgreementPrepNounRule() *TokenAgreementPrepNounRule {
 		},
 		exception: IsPrepNounException,
 	}
+	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
 }
 

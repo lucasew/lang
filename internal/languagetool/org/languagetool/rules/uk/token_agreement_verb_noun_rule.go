@@ -17,16 +17,23 @@ type TokenAgreementVerbNounRule struct {
 }
 
 func NewTokenAgreementVerbNounRule() *TokenAgreementVerbNounRule {
+	return NewTokenAgreementVerbNounRuleWithMessages(nil)
+}
+
+// NewTokenAgreementVerbNounRuleWithMessages ports the Java ctor (ResourceBundle messages).
+func NewTokenAgreementVerbNounRuleWithMessages(messages map[string]string) *TokenAgreementVerbNounRule {
 	r := &TokenAgreementVerbNounRule{}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
-		ruleID:       TokenAgreementVerbNounRuleID,
-		description:  "Узгодження дієслова та іменника",
-		shortMsg:     "Узгодження дієслова та іменника",
+		ruleID: TokenAgreementVerbNounRuleID,
+		// Java getDescription / getShort
+		description:  "Узгодження дієслова з іменником",
+		shortMsg:     "Узгодження дієслова з іменником",
 		isLeftToken:  hasVerbReading,
 		isRightToken: HasNounReading,
 		pairChecker:  r.verbNounAgree,
 		exception:    IsVerbNounException,
 	}
+	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
 }
 

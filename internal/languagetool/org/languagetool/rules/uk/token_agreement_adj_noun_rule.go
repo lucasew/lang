@@ -13,6 +13,11 @@ type TokenAgreementAdjNounRule struct {
 }
 
 func NewTokenAgreementAdjNounRule() *TokenAgreementAdjNounRule {
+	return NewTokenAgreementAdjNounRuleWithMessages(nil)
+}
+
+// NewTokenAgreementAdjNounRuleWithMessages ports the Java ctor (ResourceBundle messages).
+func NewTokenAgreementAdjNounRuleWithMessages(messages map[string]string) *TokenAgreementAdjNounRule {
 	r := &TokenAgreementAdjNounRule{}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
 		ruleID:       TokenAgreementAdjNounRuleID,
@@ -28,6 +33,7 @@ func NewTokenAgreementAdjNounRule() *TokenAgreementAdjNounRule {
 		},
 		exception: IsAdjNounException,
 	}
+	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
 }
 

@@ -90,10 +90,13 @@ func NumrNounAgree(numrTags, nounTags []string) bool {
 }
 
 // tokenAgreementMatch is shared match infrastructure.
+// Java TokenAgreement* rules: setCategory(Categories.MISC).
 type tokenAgreementMatch struct {
 	ruleID      string
 	description string
 	shortMsg    string
+	// Category ports Rule.category (Java MISC).
+	category *rules.Category
 	// pairChecker returns false when the pair disagrees
 	pairChecker func(left, right *languagetool.AnalyzedTokenReadings) bool
 	// isLeftToken identifies the "master" token class
@@ -106,6 +109,25 @@ type tokenAgreementMatch struct {
 
 func (r *tokenAgreementMatch) GetID() string          { return r.ruleID }
 func (r *tokenAgreementMatch) GetDescription() string { return r.description }
+func (r *tokenAgreementMatch) GetShort() string       { return r.shortMsg }
+
+// GetCategory ports Rule.getCategory (Java MISC).
+func (r *tokenAgreementMatch) GetCategory() *rules.Category {
+	if r == nil {
+		return nil
+	}
+	return r.category
+}
+
+// initTokenAgreementMeta applies Java TokenAgreement* constructor metadata (MISC category).
+func initTokenAgreementMeta(r *tokenAgreementMatch, messages map[string]string) {
+	if r == nil {
+		return
+	}
+	if r.category == nil {
+		r.category = rules.CatMisc.GetCategory(messages)
+	}
+}
 
 func (r *tokenAgreementMatch) Match(sentence *languagetool.AnalyzedSentence) []*rules.RuleMatch {
 	if sentence == nil || r.pairChecker == nil {

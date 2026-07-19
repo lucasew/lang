@@ -35,10 +35,16 @@ var FractionalNumrLemmas = map[string]struct{}{
 }
 
 func NewTokenAgreementNumrNounRule() *TokenAgreementNumrNounRule {
+	return NewTokenAgreementNumrNounRuleWithMessages(nil)
+}
+
+// NewTokenAgreementNumrNounRuleWithMessages ports the Java ctor (ResourceBundle messages).
+func NewTokenAgreementNumrNounRuleWithMessages(messages map[string]string) *TokenAgreementNumrNounRule {
 	r := &TokenAgreementNumrNounRule{}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
-		ruleID:       TokenAgreementNumrNounRuleID,
-		description:  "Узгодження числівника та іменника",
+		ruleID: TokenAgreementNumrNounRuleID,
+		// Java getDescription / getShort
+		description:  "Узгодження відмінків, роду і числа числівника та іменника",
 		shortMsg:     "Узгодження числівника та іменника",
 		isLeftToken:  hasNumrReading,
 		isRightToken: HasNounReading,
@@ -53,6 +59,7 @@ func NewTokenAgreementNumrNounRule() *TokenAgreementNumrNounRule {
 		},
 		exception: IsNumrNounException,
 	}
+	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
 }
 

@@ -25,16 +25,23 @@ func hasVerbReading(tok *languagetool.AnalyzedTokenReadings) bool {
 }
 
 func NewTokenAgreementNounVerbRule() *TokenAgreementNounVerbRule {
+	return NewTokenAgreementNounVerbRuleWithMessages(nil)
+}
+
+// NewTokenAgreementNounVerbRuleWithMessages ports the Java ctor (ResourceBundle messages).
+func NewTokenAgreementNounVerbRuleWithMessages(messages map[string]string) *TokenAgreementNounVerbRule {
 	r := &TokenAgreementNounVerbRule{}
 	r.tokenAgreementMatch = &tokenAgreementMatch{
 		ruleID:       TokenAgreementNounVerbRuleID,
-		description:  "Узгодження іменника-підмета та дієслова",
-		shortMsg:     "Узгодження іменника та дієслова",
+		// Java getDescription / getShort
+		description:  "Узгодження іменника та дієслова за родом, числом та особою",
+		shortMsg:     "Узгодження іменника з дієсловом",
 		isLeftToken:  HasNounOrPronSubjectReading,
 		isRightToken: hasVerbReading,
 		pairChecker:  nounVerbAgree,
 		exception:    IsNounVerbException,
 	}
+	initTokenAgreementMeta(r.tokenAgreementMatch, messages)
 	return r
 }
 
