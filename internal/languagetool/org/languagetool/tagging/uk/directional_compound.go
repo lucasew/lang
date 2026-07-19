@@ -4,43 +4,129 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+	"unicode/utf8"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
-// Південно-Західній style directional compounds
-var reDirectional = regexp.MustCompile(
-	`(?i)^(південно|північно|східно|західно)-(західн|східн|північн|південн)(ий|ій|ого|ому|им|ім|а|ої|у|ою|е|і|их|ими)$`,
-)
+// leftOAdjInvalid ports CompoundTagger.LEFT_O_ADJ_INVALID — directional / degree
+// prefixes that normally write solid; hyphen form is :bad unless both parts are
+// capitalized and the full lower compound is already an adj in the dict.
+var leftOAdjInvalid = map[string]struct{}{
+	"багато": {}, "мало": {}, "високо": {}, "низько": {}, "старо": {}, "важко": {},
+	"зовнішньо": {}, "внутрішньо": {}, "ново": {}, "середньо": {},
+	"південно": {}, "північно": {}, "західно": {}, "східно": {}, "центрально": {},
+	"ранньо": {}, "пізньо": {},
+}
 
-// DynamicDirectionalAdjReadings tags capitalized directional compounds.
-func DynamicDirectionalAdjReadings(token string) []struct{ Lemma, POS string } {
-	m := reDirectional.FindStringSubmatch(token)
-	if m == nil {
+// Directional left stems commonly produced by Java oAdjMatch for geo/direction compounds.
+var directionalLeft = map[string]struct{}{
+	"південно": {}, "північно": {}, "східно": {}, "західно": {},
+	"центрально": {}, "ранньо": {}, "пізньо": {},
+}
+
+// DynamicDirectionalAdjReadings ports CompoundTagger.oAdjMatch for directional lefts.
+// Requires tagWord hits on the right part as adj (Java wordTagger); fail-closed without dict.
+// Does not invent case endings from surface alone.
+func DynamicDirectionalAdjReadings(token string, tagWord func(string) []tagging.TaggedWord) []struct{ Lemma, POS string } {
+	if tagWord == nil || token == "" || !strings.Contains(token, "-") {
 		return nil
 	}
-	// lemma: full lower with -ий
-	stem := strings.ToLower(m[1] + "-" + m[2])
-	lemma := stem + "ий"
-	end := strings.ToLower(m[3])
-	// map ій as soft ending for m/f
-	cases := adjEndingPOS[end]
-	if end == "ій" {
-		// can be f:v_dav/mis or m:v_naz bad forms — include both
-		cases = append(cases, ":f:v_dav", ":f:v_mis", ":m:v_naz", ":m:v_zna:rinanim")
+	if strings.Count(token, "-") != 1 {
+		return nil
 	}
-	if len(cases) == 0 {
-		cases = []string{":m:v_naz"}
+	dash := strings.LastIndex(token, "-")
+	if dash <= 0 || dash == len(token)-1 {
+		return nil
 	}
+	leftWord := token[:dash]
+	rightWord := token[dash+1:]
+	if utf8.RuneCountInString(leftWord) < 3 {
+		return nil
+	}
+	leftLow := strings.ToLower(leftWord)
+	// Gate shape: known directional left, or ends with о/е like Java O_ADJ_PATTERN.
+	if _, ok := directionalLeft[leftLow]; !ok {
+		if !strings.HasSuffix(leftLow, "о") && !strings.HasSuffix(leftLow, "е") {
+			return nil
+		}
+	}
+
+	tws := tagWord(rightWord)
+	if len(tws) == 0 {
+		low := strings.ToLower(rightWord)
+		if low != rightWord {
+			tws = tagWord(low)
+		}
+	}
+	if len(tws) == 0 {
+		return nil
+	}
+
+	// Java analyzeAllCapitamizedAdj: both parts capitalized → if full lower is adj, skip :bad.
+	skipBadForInvalid := false
+	if isCapitalizedWord(leftWord) && isCapitalizedWord(rightWord) {
+		for _, tw := range tagWord(strings.ToLower(token)) {
+			if strings.HasPrefix(tw.PosTag, "adj") {
+				skipBadForInvalid = true
+				break
+			}
+		}
+	}
+
+	_, leftInvalid := leftOAdjInvalid[leftLow]
+	extraBad := leftInvalid && !skipBadForInvalid
+
 	var out []struct{ Lemma, POS string }
 	seen := map[string]struct{}{}
-	for _, c := range cases {
-		pos := "adj" + c
-		if _, ok := seen[pos]; ok {
+	for _, tw := range tws {
+		pos := tw.PosTag
+		if pos == "" || !strings.HasPrefix(pos, "adj") {
 			continue
 		}
-		seen[pos] = struct{}{}
+		// Java: drop :comp. from right before combining
+		if i := strings.Index(pos, ":comp"); i >= 0 {
+			end := i + len(":comp")
+			for end < len(pos) && pos[end] != ':' {
+				end++
+			}
+			pos = pos[:i] + pos[end:]
+		}
+		if extraBad {
+			pos = strings.ReplaceAll(pos, ":arch", "")
+			if !strings.Contains(pos, ":bad") {
+				pos = pos + ":bad"
+			}
+		}
+		rightLemma := tw.Lemma
+		if rightLemma == "" {
+			rightLemma = strings.ToLower(rightWord)
+		}
+		lemma := leftLow + "-" + rightLemma
+		key := lemma + "|" + pos
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
 		out = append(out, struct{ Lemma, POS string }{Lemma: lemma, POS: pos})
 	}
 	return out
+}
+
+func isCapitalizedWord(s string) bool {
+	if s == "" {
+		return false
+	}
+	rs := []rune(s)
+	if !unicode.IsUpper(rs[0]) {
+		return false
+	}
+	for _, r := range rs[1:] {
+		if unicode.IsLetter(r) && !unicode.IsLower(r) {
+			return false
+		}
+	}
+	return true
 }
 
 // MissingHyphenCandidates returns alternate surfaces to try when word is untagged
@@ -55,13 +141,11 @@ func MissingHyphenCandidates(token string) []string {
 		if !strings.HasPrefix(lower, prefix) || len(lower) <= len(prefix)+1 {
 			continue
 		}
-		// insert hyphen after prefix
 		rs := []rune(token)
 		pr := []rune(prefix)
 		if len(rs) <= len(pr) {
 			continue
 		}
-		// only if next char is uppercase (missing hyphen after prefix before proper) or letter
 		next := rs[len(pr)]
 		if !unicode.IsLetter(next) {
 			continue
@@ -69,7 +153,6 @@ func MissingHyphenCandidates(token string) []string {
 		cand := string(rs[:len(pr)]) + "-" + string(rs[len(pr):])
 		out = append(out, cand)
 	}
-	// indefinite -небудь compounds: якогонебудь → якого-небудь
 	if strings.HasSuffix(lower, "небудь") && len([]rune(lower)) > len([]rune("небудь"))+2 {
 		rs := []rune(token)
 		suf := []rune("небудь")
@@ -84,7 +167,6 @@ var reCompoundNumr = regexp.MustCompile(`^(\d+)([-–])?(х|ом|им|и|а|е|�
 
 func CompoundNumrPOS(token string) string {
 	if reCompoundNumr.MatchString(token) && strings.ContainsAny(token, "0123456789") {
-		// require letter ending for numr-like
 		hasLetter := false
 		for _, r := range token {
 			if unicode.IsLetter(r) {

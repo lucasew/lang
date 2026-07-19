@@ -204,11 +204,33 @@ func TestUkrainianTagger_CompoundUpperCase(t *testing.T) {
 }
 
 func TestDynamicDirectionalAdjReadings(t *testing.T) {
-	rs := DynamicDirectionalAdjReadings("Південно-Західній")
+	// Fail-closed without wordTagger (Java oAdjMatch needs right adj from dict).
+	require.Nil(t, DynamicDirectionalAdjReadings("Південно-Західній", nil))
+	require.Nil(t, DynamicDirectionalAdjReadings("звичайний", nil))
+
+	// Dict-gated: right part "Західній" / "західній" provides adj tags.
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "західній", "західний":
+			return []tagging.TaggedWord{
+				{Lemma: "західний", PosTag: "adj:f:v_dav"},
+				{Lemma: "західний", PosTag: "adj:f:v_mis"},
+			}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicDirectionalAdjReadings("Південно-Західній", tagWord)
 	require.NotEmpty(t, rs)
 	require.Equal(t, "південно-західний", rs[0].Lemma)
 	require.Contains(t, rs[0].POS, "adj")
-	require.Nil(t, DynamicDirectionalAdjReadings("звичайний"))
+	// LEFT_O_ADJ_INVALID + not full-compound adj → :bad (Java)
+	require.Contains(t, rs[0].POS, ":bad")
+
+	// Non-compound surface: no invent
+	require.Nil(t, DynamicDirectionalAdjReadings("звичайний", tagWord))
+	// Right unknown to dict: fail-closed
+	require.Nil(t, DynamicDirectionalAdjReadings("Південно-Невідомий", tagWord))
 }
 
 func TestCompoundNumrPOS(t *testing.T) {

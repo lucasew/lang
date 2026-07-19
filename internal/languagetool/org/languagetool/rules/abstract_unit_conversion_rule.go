@@ -84,11 +84,13 @@ const (
 	unitWSLimit        = 5
 	unitMaxSuggestions = 5
 	unitDelta          = 1e-2
+	// Java AbstractUnitConversionRule.ROUNDING_DELTA
+	unitRoundingDelta = 0.05
 )
 
 // convertedParenRE ports AbstractUnitConversionRule.convertedPatterns:
-// whitespace + (optional "ca. ") + number + unit body in parentheses, immediately after measure.
-var convertedParenRE = regexp.MustCompile(`(?i)^\s*\((?:ca\.\s*)?` + unitNumberRegex + `\s*([^)]+?)\s*\)`)
+// whitespace + (optional "ca. " / "aprox. ") + number + unit body in parentheses.
+var convertedParenRE = regexp.MustCompile(`(?i)^\s*\((?:(?:ca\.|aprox\.)\s*)?` + unitNumberRegex + `\s*([^)]+?)\s*\)`)
 
 // AbstractUnitConversionRule ports org.languagetool.rules.AbstractUnitConversionRule
 // without javax.measure — uses fixed SI conversion factors.
@@ -108,6 +110,9 @@ type AbstractUnitConversionRule struct {
 	antiPatterns    []*regexp.Regexp
 	// FormatNumber formats converted values (default English-style). DE uses comma decimals.
 	FormatNumber func(v float64) string
+	// FormatRounded ports formatRounded — prefix for near-integer suggestions (default "ca. ").
+	// PT uses "aprox. ".
+	FormatRounded func(s string) string
 	// MessageFor optional override of GetMessage (language-specific).
 	MessageFor func(m UnitConversionMessage) string
 	// ParseNumber optional locale number parse (default: comma→dot only).
@@ -310,6 +315,31 @@ func (r *AbstractUnitConversionRule) formatNumber(v float64) string {
 	return formatUnitNumber(v)
 }
 
+// formatRounded ports AbstractUnitConversionRule.formatRounded (default "ca. ").
+func (r *AbstractUnitConversionRule) formatRounded(s string) string {
+	if r != nil && r.FormatRounded != nil {
+		return r.FormatRounded(s)
+	}
+	return "ca. " + s
+}
+
+// formatConversionSuggestion ports Java getFormattedConversions for one unit value:
+// optional near-integer rounded form + exact formatNumber form.
+func (r *AbstractUnitConversionRule) formatConversionSuggestion(value float64, symbol string) []string {
+	var out []string
+	rounded := math.Round(value)
+	if rounded != 0 && math.Abs(value) > 0 {
+		if math.Abs(value-rounded)/math.Abs(value) < unitRoundingDelta {
+			out = append(out, r.formatRounded(r.formatNumber(rounded)+" "+symbol))
+		}
+	}
+	num := r.formatNumber(value)
+	if num != "0" {
+		out = append(out, num+" "+symbol)
+	}
+	return out
+}
+
 func (r *AbstractUnitConversionRule) parseNumber(s string) (float64, error) {
 	if r != nil && r.ParseNumber != nil {
 		return r.ParseNumber(s)
@@ -489,12 +519,16 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			claim(from, fullEnd)
 			highlight := text[from:fullEnd]
 			var suggs []string
-			for i, eq := range equivs {
-				if i >= unitMaxSuggestions {
+			for _, eq := range equivs {
+				for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+					if len(suggs) >= unitMaxSuggestions {
+						break
+					}
+					suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(highlight), conv))
+				}
+				if len(suggs) >= unitMaxSuggestions {
 					break
 				}
-				conv := r.formatNumber(eq.Value) + " " + eq.Unit.Symbol
-				suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(highlight), conv))
 			}
 			m := NewRuleMatch(r, sentence, from, fullEnd, r.GetMessage(UnitMsgSuggestion))
 			m.SetSuggestedReplacements(suggs)
@@ -557,12 +591,16 @@ func (r *AbstractUnitConversionRule) Match(sentence *languagetool.AnalyzedSenten
 			}
 			claim(loc[0], loc[1])
 			var suggs []string
-			for i, eq := range equivs {
-				if i >= unitMaxSuggestions {
+			for _, eq := range equivs {
+				for _, conv := range r.formatConversionSuggestion(eq.Value, eq.Unit.Symbol) {
+					if len(suggs) >= unitMaxSuggestions {
+						break
+					}
+					suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(full), conv))
+				}
+				if len(suggs) >= unitMaxSuggestions {
 					break
 				}
-				conv := r.formatNumber(eq.Value) + " " + eq.Unit.Symbol
-				suggs = append(suggs, r.FormatSuggestion(strings.TrimSpace(full), conv))
 			}
 			m := NewRuleMatch(r, sentence, loc[0], loc[1], r.GetMessage(UnitMsgSuggestion))
 			m.SetSuggestedReplacements(suggs)

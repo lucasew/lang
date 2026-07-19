@@ -22,6 +22,8 @@ func NewPortugueseUnitConversionRule(messages map[string]string) *PortugueseUnit
 	// Java: NumberFormat.getNumberInstance(Locale.GERMANY), max 2 fraction digits, HALF_UP
 	base.FormatNumber = formatPTUnitNumber
 	base.ParseNumber = parsePTUnitNumber
+	// Java PortugueseUnitConversionRule.formatRounded
+	base.FormatRounded = func(s string) string { return "aprox. " + s }
 	base.MessageFor = func(m rules.UnitConversionMessage) string {
 		switch m {
 		case rules.UnitMsgCheck:

@@ -29,3 +29,13 @@ func TestAbstractUnitConversionRule_Match(t *testing.T) {
 	require.NotEmpty(t, ms[0].GetSuggestedReplacements())
 	require.Contains(t, ms[0].GetSuggestedReplacements()[0], "km")
 }
+
+func TestAbstractUnitConversionRule_FormatRounded(t *testing.T) {
+	r := NewAbstractUnitConversionRule(nil)
+	// default Java formatRounded prefix
+	require.Equal(t, "ca. 2 m", r.formatRounded("2 m"))
+	// near-integer (within ROUNDING_DELTA 0.05) emits rounded + exact forms
+	forms := r.formatConversionSuggestion(1.98, "m")
+	require.Contains(t, forms, "ca. 2 m")
+	require.Contains(t, forms, "1.98 m")
+}

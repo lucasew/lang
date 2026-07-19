@@ -48,15 +48,6 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
-		if dyn := DynamicDirectionalAdjReadings(w); len(dyn) > 0 {
-			for _, d := range dyn {
-				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
-			}
-			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
-			pos += len([]rune(word))
-			continue
-		}
 		if dyn := DynamicNumericReadings(w); len(dyn) > 0 {
 			for _, d := range dyn {
 				p, l := d.POS, d.Lemma
@@ -79,6 +70,15 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 		if len(readings) == 0 && w != lower && !tools.IsMixedCase(w) {
 			for _, tw := range t.TagWord(lower) {
 				readings = append(readings, toTok(word, tw))
+			}
+		}
+		// Java CompoundTagger.oAdjMatch: only after dict miss; right adj from wordTagger (no invent endings).
+		if len(readings) == 0 {
+			if dyn := DynamicDirectionalAdjReadings(w, t.TagWord); len(dyn) > 0 {
+				for _, d := range dyn {
+					p, l := d.POS, d.Lemma
+					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+				}
 			}
 		}
 		// Java elongated-vowel collapse after untagged (гаааа → га + :alt); needs dict.
