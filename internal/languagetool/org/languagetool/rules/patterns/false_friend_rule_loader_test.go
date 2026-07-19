@@ -71,3 +71,23 @@ func TestFalseFriendRuleLoader_PostagNegate(t *testing.T) {
 	require.True(t, rulesFR[0].Tokens[0].Negation)
 	require.Equal(t, "na", rulesFR[0].Tokens[0].Token)
 }
+
+// false-friends.xml has skip="-1" on PL pracować; load into PatternToken.SkipNext.
+func TestFalseFriendRuleLoader_Skip(t *testing.T) {
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="WORK">
+    <rule>
+      <pattern lang="pl">
+        <token inflected="yes" skip="-1">pracować</token>
+      </pattern>
+      <translation lang="en">work</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	loader := NewFalseFriendRuleLoader("", "")
+	rules, err := loader.GetRulesFromString(xml, "pl", "en")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Equal(t, -1, rules[0].Tokens[0].SkipNext)
+}

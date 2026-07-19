@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 )
 
@@ -70,7 +71,9 @@ type ffToken struct {
 	PostagRegexp  string `xml:"postag_regexp,attr"`
 	// SpaceBefore ports spacebefore="yes|no" (rare on false friends).
 	SpaceBefore string `xml:"spacebefore,attr"`
-	Content     string `xml:",chardata"`
+	// Skip ports skip="N" (Java PatternToken skip; e.g. skip="-1" in false-friends.xml).
+	Skip    string `xml:"skip,attr"`
+	Content string `xml:",chardata"`
 }
 
 type ffTranslation struct {
@@ -134,6 +137,11 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 			}
 			if sb := strings.TrimSpace(xt.SpaceBefore); sb != "" {
 				pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
+			}
+			if sk := strings.TrimSpace(xt.Skip); sk != "" {
+				if n, err := strconv.Atoi(sk); err == nil {
+					pt.SetSkipNext(n)
+				}
 			}
 			tokens = append(tokens, pt)
 		}
