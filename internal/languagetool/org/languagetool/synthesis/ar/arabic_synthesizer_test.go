@@ -6,8 +6,22 @@ import (
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 	"github.com/stretchr/testify/require"
 )
+
+func TestInflectMafoulAndTanwin(t *testing.T) {
+	// Java ArabicSynthesizer.inflectMafoulMutlq / inflectAdjectiveTanwinNasb
+	m := InflectMafoulMutlq("عمل")
+	require.True(t, strings.HasPrefix(m, "عمل"))
+	require.Contains(t, m, string(tools.ArabicFathatan))
+	require.True(t, strings.HasSuffix(m, string(tools.ArabicAlef)))
+
+	masc := InflectAdjectiveTanwinNasb("قوي", false)
+	require.Contains(t, masc, string(tools.ArabicFathatan))
+	fem := InflectAdjectiveTanwinNasb("قوي", true)
+	require.Contains(t, fem, string(tools.ArabicTehMarbuta))
+}
 
 func TestArabicSynthesizer(t *testing.T) {
 	man, err := synthesis.NewManualSynthesizer(strings.NewReader("كتب\tكتب\tNxx\n"))

@@ -6,6 +6,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	ar_synth "github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis/ar"
 	"github.com/stretchr/testify/require"
 )
 
@@ -35,7 +36,8 @@ func TestMasdarToVerbAndMafoul(t *testing.T) {
 
 	v := NewArabicVerbToMafoulMutlaqFilter()
 	sug := v.SuggestMafoulMutlaq("عَمِلَ")
-	require.Contains(t, sug, "عمل")
+	// Java inflectMafoulMutlq: عمل + fathatan + alef
+	require.Contains(t, sug, ar_synth.InflectMafoulMutlq("عمل"))
 }
 
 func TestAdjectiveExclamation(t *testing.T) {
@@ -108,6 +110,19 @@ func TestArabicVerbToMafoul_Accept(t *testing.T) {
 	out := f.AcceptRuleMatch(m, map[string]string{"verb": "يعمل", "adj": "قوي"}, 0, toks, nil)
 	require.NotNil(t, out)
 	require.NotEmpty(t, out.GetSuggestedReplacements())
-	require.Contains(t, out.GetSuggestedReplacements()[0], "يعمل")
-	require.Contains(t, out.GetSuggestedReplacements()[0], "عمل")
+	// Java: verb + inflectMafoulMutlq(masdar) + inflectAdjectiveTanwinNasb(adj)
+	want := "يعمل " + ar_synth.InflectMafoulMutlq("عمل") + " " + ar_synth.InflectAdjectiveTanwinNasb("قوي", false)
+	require.Contains(t, out.GetSuggestedReplacements(), want)
+}
+
+func TestArabicVerbToMafoul_FailClosedWithoutLemma(t *testing.T) {
+	f := NewArabicVerbToMafoulMutlaqFilter()
+	m := rules.NewRuleMatch(nil, nil, 0, 10, "msg")
+	// Surface token only — Java tagger.getLemmas empty → no invent from surface.
+	toks := []*languagetool.AnalyzedTokenReadings{
+		languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("يعمل", nil, nil), 0),
+	}
+	out := f.AcceptRuleMatch(m, map[string]string{"verb": "يعمل", "adj": "قوي"}, 0, toks, nil)
+	require.NotNil(t, out)
+	require.Empty(t, out.GetSuggestedReplacements())
 }
