@@ -569,3 +569,47 @@ func TestDynamicAlPrefixReadings(t *testing.T) {
 	require.NotEmpty(t, rs)
 	require.Contains(t, rs[0].POS, ":bad")
 }
+
+func TestDynamicPreRedupReadings(t *testing.T) {
+	require.Nil(t, DynamicPreRedupReadings("гірко-прегірко", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "гірко":
+			return []tagging.TaggedWord{{Lemma: "гірко", PosTag: "adv"}}
+		case "гіркий":
+			return []tagging.TaggedWord{{Lemma: "гіркий", PosTag: "adj:m:v_naz"}}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicPreRedupReadings("гірко-прегірко", tagWord)
+	require.NotEmpty(t, rs)
+	require.Equal(t, "adv", rs[0].POS)
+	require.Equal(t, "гірко-прегірко", rs[0].Lemma)
+
+	rs2 := DynamicPreRedupReadings("гіркий-прегіркий", tagWord)
+	require.NotEmpty(t, rs2)
+	require.Equal(t, "гіркий-прегіркий", rs2[0].Lemma)
+	require.Contains(t, rs2[0].POS, "adj")
+
+	require.Nil(t, DynamicPreRedupReadings("гірко-пресолодко", tagWord))
+}
+
+func TestDynamicNapivDualReadings(t *testing.T) {
+	require.Nil(t, DynamicNapivDualReadings("напівпольської-напіванглійської", nil))
+	tagWord := func(s string) []tagging.TaggedWord {
+		switch strings.ToLower(s) {
+		case "польської":
+			return []tagging.TaggedWord{{Lemma: "польський", PosTag: "adj:f:v_rod"}}
+		case "англійської":
+			return []tagging.TaggedWord{{Lemma: "англійський", PosTag: "adj:f:v_rod"}}
+		default:
+			return nil
+		}
+	}
+	rs := DynamicNapivDualReadings("напівпольської-напіванглійської", tagWord)
+	require.NotEmpty(t, rs)
+	require.Contains(t, rs[0].POS, "adj")
+	require.Contains(t, rs[0].Lemma, "напів")
+	require.Contains(t, rs[0].Lemma, "польськ")
+}

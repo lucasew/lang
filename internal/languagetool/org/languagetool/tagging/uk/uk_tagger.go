@@ -139,6 +139,26 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
+		// Java гірко-прегірко / гіркий-прегіркий (right пре+left).
+		if dyn := DynamicPreRedupReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
+		// Java напівX-напівY dual compounds.
+		if dyn := DynamicNapivDualReadings(w, t.TagWord); len(dyn) > 0 {
+			for _, d := range dyn {
+				p, l := d.POS, d.Lemma
+				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
+			}
+			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
+			pos += len([]rune(word))
+			continue
+		}
 		// Java matchDigitCompound: short endings from LetterEndingForNumericHelper;
 		// longer right halves need wordTagger (pass TagWord; fail-closed without hits).
 		if dyn := DynamicNumericReadings(w, t.TagWord); len(dyn) > 0 {
