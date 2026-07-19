@@ -23,6 +23,7 @@ func loadPlainEnglish() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
+		// Java EnglishPlainEnglishRule: PLAIN_ENGLISH, Style, fatal outcome → death
 		base := &rules.AbstractSimpleReplaceRule2{
 			ID:                   "EN_PLAIN_ENGLISH_REPLACE",
 			Description:          "1. Wordiness (General)",
@@ -31,10 +32,16 @@ func loadPlainEnglish() *rules.AbstractSimpleReplaceRule2 {
 			SuggestionsSeparator: " or ",
 			CaseSens:             rules.CaseInsensitive,
 			LanguageCode:         "en",
+			Category:             rules.CatPlainEnglish.GetCategory(nil),
+			IssueType:            rules.ITSStyle,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/wordiness.txt"); err != nil {
 			panic(err)
 		}
+		base.AddExamplePair(
+			rules.Wrong("<marker>fatal outcome</marker>"),
+			rules.Fixed("<marker>death</marker>"),
+		)
 		plainBase = base
 	})
 	return plainBase
@@ -49,6 +56,8 @@ func NewEnglishPlainEnglishRule(messages map[string]string) *EnglishPlainEnglish
 	base := loadPlainEnglish()
 	r := *base
 	r.Messages = messages
+	r.Category = rules.CatPlainEnglish.GetCategory(messages)
+	r.IssueType = rules.ITSStyle
 	return &EnglishPlainEnglishRule{AbstractSimpleReplaceRule2: &r}
 }
 

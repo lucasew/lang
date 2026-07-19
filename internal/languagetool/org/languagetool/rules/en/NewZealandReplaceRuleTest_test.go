@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,4 +22,13 @@ func TestNewZealandReplaceRule_Rule(t *testing.T) {
 	}
 	check("Sidewalk is not a place to park your car!", "Footpath")
 	check("I walked on the sidewalk", "footpath")
+}
+
+// Java NewZealandReplaceRule: STYLE, LocaleViolation, sidewalk → footpath.
+func TestNewZealandReplaceRule_Metadata(t *testing.T) {
+	rule := NewNewZealandReplaceRule(nil)
+	require.Equal(t, "EN_NZ_SIMPLE_REPLACE", rule.GetID())
+	require.Equal(t, "STYLE", rule.GetCategory().GetID().String())
+	require.Equal(t, rules.ITSLocaleViolation, rule.GetLocQualityIssueType())
+	require.Equal(t, []string{"footpath"}, rule.GetIncorrectExamples()[0].GetCorrections())
 }

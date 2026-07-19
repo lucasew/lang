@@ -23,6 +23,7 @@ func loadDiacritics() *rules.AbstractSimpleReplaceRule2 {
 			panic(err)
 		}
 		defer f.Close()
+		// Java EnglishDiacriticsRule: TYPOS, Misspelling, blase → blasé
 		base := &rules.AbstractSimpleReplaceRule2{
 			ID:                   "EN_DIACRITICS_REPLACE",
 			Description:          "Suggest diacritics for '$match'",
@@ -32,10 +33,16 @@ func loadDiacritics() *rules.AbstractSimpleReplaceRule2 {
 			CaseSens:             rules.CaseInsensitive,
 			LanguageCode:         "en",
 			SubRuleSpecificIDs:   true,
+			Category:             rules.CatTypos.GetCategory(nil),
+			IssueType:            rules.ITSMisspelling,
 		}
 		if err := base.LoadSimpleReplaceRule2Data(f, "/en/diacritics.txt"); err != nil {
 			panic(err)
 		}
+		base.AddExamplePair(
+			rules.Wrong("<marker>blase</marker>"),
+			rules.Fixed("<marker>blasé</marker>"),
+		)
 		diacriticsBase = base
 	})
 	return diacriticsBase
@@ -50,6 +57,8 @@ func NewEnglishDiacriticsRule(messages map[string]string) *EnglishDiacriticsRule
 	base := loadDiacritics()
 	r := *base
 	r.Messages = messages
+	r.Category = rules.CatTypos.GetCategory(messages)
+	r.IssueType = rules.ITSMisspelling
 	return &EnglishDiacriticsRule{AbstractSimpleReplaceRule2: &r}
 }
 
