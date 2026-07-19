@@ -8,9 +8,10 @@ import (
 )
 
 func TestNameSuffixPOS(t *testing.T) {
-	require.Equal(t, "noun:anim:m:v_naz:prop:lname", NameSuffixPOS("Петренко"))
-	require.Equal(t, "noun:anim:m:v_naz:prop:lname", NameSuffixPOS("Тимошенко"))
-	require.Equal(t, "", NameSuffixPOS("петренко")) // not capitalized
+	// Fail closed: no invent prop:lname from surface suffix without dictionary.
+	require.Equal(t, "", NameSuffixPOS("Петренко"))
+	require.Equal(t, "", NameSuffixPOS("Тимошенко"))
+	require.Equal(t, "", NameSuffixPOS("петренко"))
 	require.Equal(t, "", NameSuffixPOS("дім"))
 }
 
@@ -46,8 +47,14 @@ func TestUkrainianTagger_NumberedEntities(t *testing.T) {
 }
 
 func TestUkrainianTagger_NameSuffix(t *testing.T) {
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	// Java: surnames from dictionary, not surface invent.
+	wt := tagging.MapWordTagger{
+		"Шевченко": {tagging.NewTaggedWord("Шевченко", "noun:anim:m:v_naz:prop:lname")},
+	}
+	tg := NewUkrainianTagger(wt)
 	got := tg.Tag([]string{"Шевченко"})
 	require.True(t, got[0].IsTagged())
 	require.Contains(t, *got[0].GetReadings()[0].GetPOSTag(), "lname")
+	// without dict fails closed
+	require.False(t, NewUkrainianTagger(tagging.MapWordTagger{}).Tag([]string{"Шевченко"})[0].IsTagged())
 }

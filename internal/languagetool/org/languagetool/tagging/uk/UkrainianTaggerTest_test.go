@@ -87,7 +87,8 @@ func TestUkrainianTagger_DynamicTaggingNumbers(t *testing.T) {
 	require.True(t, out[2].HasPartialPosTag("adj"))
 	require.True(t, out[3].HasPartialPosTag("adj"))
 	require.True(t, out[4].HasPosTag("adv"))
-	require.True(t, out[5].IsTagged())
+	// 10-хвилинка: no invent bare noun POS without dict (fail closed)
+	require.False(t, out[5].IsTagged())
 }
 func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
 	// directional compounds like Південно-Західній

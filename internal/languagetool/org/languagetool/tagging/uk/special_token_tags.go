@@ -71,11 +71,8 @@ func SpecialPOSTag(token string) string {
 	if p := NumberedEntityPOS(token); p != "" {
 		return p
 	}
-	if p := NameSuffixPOS(token); p != "" {
-		return p
-	}
-	// ALLCAPS proper: Java re-tags via capitalizeProperName + dict (AllCapsPropReadings).
-	// Do not invent prop POS without dictionary.
+	// Surnames (…енко) and ALLCAPS proper come from the dictionary / disambiguator
+	// (Java wordTagger + HybridDisambiguator :lname) — do not invent prop:lname POS.
 	return ""
 }
 

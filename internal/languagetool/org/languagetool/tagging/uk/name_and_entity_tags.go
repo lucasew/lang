@@ -18,17 +18,13 @@ var (
 	reXShaped = regexp.MustCompile(`(?i)^[\p{L}]-подібн`)
 )
 
-// NameSuffixPOS returns a prop name POS for surname-like tokens, or "".
+// NameSuffixPOS is intentionally empty: Java tags surnames via the dictionary
+// (…енко etc. are in uk.dict), not by inventing prop:lname from surface suffixes.
+// Kept for call-site compatibility / tests that document fail-closed behavior.
 func NameSuffixPOS(token string) string {
-	if !reNameSuffix.MatchString(token) {
-		return ""
-	}
-	// require initial capital for prop names
-	r, _ := utf8Decode(token)
-	if !unicode.IsUpper(r) {
-		return ""
-	}
-	return "noun:anim:m:v_naz:prop:lname"
+	_ = token
+	_ = reNameSuffix
+	return ""
 }
 
 // NumberedEntityPOS tags military/aircraft style designations.

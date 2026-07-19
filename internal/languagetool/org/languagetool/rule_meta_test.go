@@ -618,7 +618,7 @@ func TestRuleURL(t *testing.T) {
 	require.Contains(t, RuleURL("DE_CH_COMPOUNDS", ""), "lang=de")
 }
 
-func TestSoftRule_DEPhraseRepetition(t *testing.T) {
+func TestRuleMeta_DEPhraseRepetition(t *testing.T) {
 	id, name, issue, short := RuleMeta("DE_PHRASE_REPETITION")
 	require.Equal(t, "GRAMMAR", id)
 	require.Equal(t, "Grammatik", name)
@@ -630,7 +630,7 @@ func TestSoftRule_DEPhraseRepetition(t *testing.T) {
 }
 
 // Java AbstractRepeatedWordsRule setSpecificRuleId(ruleId + "_" + toId(lemma))
-func TestSoftRule_DERepeatedWordsSpecificId(t *testing.T) {
+func TestRuleMeta_DERepeatedWordsSpecificId(t *testing.T) {
 	id, name, issue, short := RuleMeta("DE_REPEATEDWORDS_AUSSERDEM")
 	require.Equal(t, "REPETITIONS_STYLE", id)
 	require.Equal(t, "Wiederholungen", name)

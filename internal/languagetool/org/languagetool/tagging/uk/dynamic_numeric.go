@@ -6,7 +6,8 @@ import (
 	"unicode"
 )
 
-// Dynamic numeric compounds: 100-й, 50-х, 100-річному, 100-відсотково (soft).
+// Dynamic numeric compounds: 100-й, 50-х, 100-річному, 100-відсотково
+// (Java LetterEndingForNumericHelper / digit compounds — ending paradigms only).
 var (
 	// number(+optional %)+hyphen+short letter ending (ordinal-like)
 	reNumOrd = regexp.MustCompile(`^(\d+(?:-\d+)?)(%?)[-–]([а-яіїєґА-ЯІЇЄҐ]+)$`)
@@ -34,7 +35,8 @@ var numrOrdExtra = map[string][]string{
 	"й":   {":m:v_naz", ":m:v_zna:rinanim", ":f:v_dav", ":f:v_mis"},
 }
 
-// DynamicNumericReadings tags digit-hyphen compounds without a full dict.
+// DynamicNumericReadings tags digit-hyphen ordinal/adj endings (100-й, 100-річному).
+// Does not invent bare noun POS for arbitrary right halves (10-хвилинка needs dict).
 func DynamicNumericReadings(token string) []struct{ Lemma, POS string } {
 	t := strings.ReplaceAll(token, "–", "-")
 	t = strings.ReplaceAll(t, "—", "-")
@@ -63,28 +65,23 @@ func DynamicNumericReadings(token string) []struct{ Lemma, POS string } {
 		if adj := numericAdjReadings(num, right); len(adj) > 0 {
 			return adj
 		}
-		// adv: ends with -о
+		// adv: ends with -о (Java digit-adv compounds like 100-відсотково)
 		low := strings.ToLower(right)
 		if strings.HasSuffix(low, "о") && len([]rune(right)) > 3 {
 			lemma := num + "-" + low
 			return []struct{ Lemma, POS string }{{Lemma: lemma, POS: "adv"}}
 		}
-		// noun soft
-		if hasLetter(right) {
-			lemma := num + "-" + low
-			return []struct{ Lemma, POS string }{
-				{Lemma: lemma, POS: "noun:inanim:m:v_naz"},
-				{Lemma: lemma, POS: "noun:inanim:m:v_zna"},
-			}
-		}
+		// no invent noun:inanim for arbitrary "N-word" (fail closed without dict)
 	}
 	return nil
 }
 
 func numericAdjReadings(num, right string) []struct{ Lemma, POS string } {
 	low := strings.ToLower(right)
-	// longest-first endings
-	ends := []string{"ому", "ого", "ими", "их", "им", "ім", "ої", "ою", "ій", "ий", "а", "у", "е", "і"}
+	// Longest-first multi-letter adj endings only (ому/ого/…/ий).
+	// Single-letter endings (а/у/е/і) invent too many noun surfaces as adj — fail closed.
+	// Short ordinals (й/х/ту) use reNumOrd + numrOrdExtra instead.
+	ends := []string{"ому", "ого", "ими", "их", "им", "ім", "ої", "ою", "ій", "ий"}
 	for _, end := range ends {
 		if !strings.HasSuffix(low, end) {
 			continue
@@ -98,7 +95,7 @@ func numericAdjReadings(num, right string) []struct{ Lemma, POS string } {
 		if len(rs) <= len(ers)+1 {
 			continue
 		}
-		// require stem to look like adj base (ends with н/к/в/л/т/с/ч)
+		// require stem to look like adj base (ends with typical adj consonants)
 		stemRunes := rs[:len(rs)-len(ers)]
 		last := stemRunes[len(stemRunes)-1]
 		if !strings.ContainsRune("нквлтсчгжшщрмдпбфц", unicode.ToLower(last)) {
@@ -112,15 +109,6 @@ func numericAdjReadings(num, right string) []struct{ Lemma, POS string } {
 		return out
 	}
 	return nil
-}
-
-func hasLetter(s string) bool {
-	for _, r := range s {
-		if unicode.IsLetter(r) {
-			return true
-		}
-	}
-	return false
 }
 
 // MissingApostropheCandidates inserts ' before ї/є/ю/я after a consonant.
