@@ -36,6 +36,14 @@ func TestUK_RuleMetadata(t *testing.T) {
 	require.Equal(t, rules.NewCategoryId("TYPOGRAPHY"), typo.GetCategory().GetID())
 }
 
+func TestUK_SimpleReplaceMeta(t *testing.T) {
+	r := NewSimpleReplaceRule(nil)
+	require.Equal(t, "UK_SIMPLE_REPLACE", r.GetID())
+	require.Equal(t, "Пошук помилкових слів", r.GetDescription())
+	require.NotNil(t, r.GetCategory())
+	require.Equal(t, rules.NewCategoryId("MISC"), r.GetCategory().GetID())
+}
+
 func TestUK_TokenAgreementMetadata(t *testing.T) {
 	adj := NewTokenAgreementAdjNounRule()
 	require.Equal(t, "UK_ADJ_NOUN_INFLECTION_AGREEMENT", adj.GetID())

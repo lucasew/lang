@@ -1,6 +1,7 @@
 package uk
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -24,12 +25,14 @@ func hasNumrReading(tok *languagetool.AnalyzedTokenReadings) bool {
 	return false
 }
 
-// ForceNounLemmas soft-skip special measure nouns (тон/…) with numr.
-var ForceNounLemmas = map[string]struct{}{
-	"тон": {}, "тони": {},
-}
+// nounForcePattern ports TokenAgreementNumrNounRule.NOUN_FORCE_PATTERN (Java Matcher.matches).
+// Full-string only — do not invent extra plurals like "тони" beyond the Java regex.
+var nounForcePattern = regexp.MustCompile(
+	`^(?:чоловік|солдат|тон|(?:нано|мікро|мілі|дека|кіло|мега|гіга|тера|пета)?(?:герц|байт|біт|бар|бер|ват|вольт|децибел|рентген|моль|мікрон|грам|аршин|лат|карат))$`,
+)
 
-// FractionalNumrLemmas soft fractional heads.
+// FractionalNumrLemmas ports common fractional numeral heads used as soft exceptions
+// (Java half-related paths; incomplete vs full numeric patterns, not invent of new words).
 var FractionalNumrLemmas = map[string]struct{}{
 	"півтора": {}, "півтори": {}, "пів": {},
 }
@@ -63,23 +66,17 @@ func NewTokenAgreementNumrNounRuleWithMessages(messages map[string]string) *Toke
 	return r
 }
 
-// IsForceNounException soft-skips agreement for known force-noun lemmas.
+// IsForceNounException ports Java NOUN_FORCE_PATTERN.matcher(cleanTokenLower).matches().
 func IsForceNounException(numr, noun *languagetool.AnalyzedTokenReadings) bool {
 	if noun == nil {
 		return false
 	}
-	// surface or lemma in force list
-	if _, ok := ForceNounLemmas[strings.ToLower(noun.GetToken())]; ok {
-		return true
+	// Java uses getCleanToken().toLowerCase() on the noun surface.
+	clean := strings.ToLower(noun.GetCleanToken())
+	if clean == "" {
+		clean = strings.ToLower(noun.GetToken())
 	}
-	for _, r := range noun.GetReadings() {
-		if r != nil && r.GetLemma() != nil {
-			if _, ok := ForceNounLemmas[strings.ToLower(*r.GetLemma())]; ok {
-				return true
-			}
-		}
-	}
-	return false
+	return nounForcePattern.MatchString(clean)
 }
 
 // IsFractionalNumrException soft-skips fractional numeral + noun pairs.

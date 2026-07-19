@@ -46,8 +46,13 @@ func TestTokenAgreementNumrNounRule_RuleForceNoun(t *testing.T) {
 	require.Empty(t, r.Match(sent), "force-noun тон is exception")
 }
 func TestTokenAgreementNumrNounRule_RuleTon(t *testing.T) {
-	require.True(t, IsForceNounException(nil, atr("тони", "noun:inanim:p:v_naz")))
+	// Java NOUN_FORCE_PATTERN is Matcher.matches() full-string — "тон" yes, "тони" no invent.
+	require.True(t, IsForceNounException(nil, atr("тон", "noun:inanim:m:v_naz")))
+	require.False(t, IsForceNounException(nil, atr("тони", "noun:inanim:p:v_naz")))
 	require.False(t, IsForceNounException(nil, atr("дні", "noun:inanim:m:v_naz")))
+	// SI/measure units from Java pattern
+	require.True(t, IsForceNounException(nil, atr("кілобайт", "noun:inanim:m:v_naz")))
+	require.True(t, IsForceNounException(nil, atr("чоловік", "noun:anim:m:v_naz")))
 }
 func TestTokenAgreementNumrNounRule_RuleFract(t *testing.T) {
 	r := NewTokenAgreementNumrNounRule()

@@ -113,6 +113,8 @@ func NewSimpleReplaceRule(messages map[string]string) *SimpleReplaceRule {
 			return "«" + tokenStr + "» - помилкове слово, виправлення: " + joinCommaUK(replacements) + "."
 		},
 	}
+	// Java AbstractSimpleReplaceRule: Categories.MISC
+	rules.InitSimpleReplaceMeta(base, messages)
 	return &SimpleReplaceRule{AbstractSimpleReplaceRule: base}
 }
 
