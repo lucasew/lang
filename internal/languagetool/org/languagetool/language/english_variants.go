@@ -46,18 +46,25 @@ var (
 	CanadianEnglish = EnglishVariant{
 		ShortCode: "en-CA", Name: "English (Canadian)", Countries: []string{"CA"},
 		SpellerRuleID: "MORFOLOGIK_RULE_EN_CA",
+		// Java CanadianEnglish: UnitConversionRuleImperial only.
+		RelevantExtraRuleIDs: []string{"METRIC_UNITS_EN_IMPERIAL"},
 	}
 	AustralianEnglish = EnglishVariant{
 		ShortCode: "en-AU", Name: "English (Australian)", Countries: []string{"AU"},
 		SpellerRuleID: "MORFOLOGIK_RULE_EN_AU",
+		// Java AustralianEnglish: UnitConversionRuleImperial only.
+		RelevantExtraRuleIDs: []string{"METRIC_UNITS_EN_IMPERIAL"},
 	}
 	NewZealandEnglish = EnglishVariant{
 		ShortCode: "en-NZ", Name: "English (New Zealand)", Countries: []string{"NZ"},
 		SpellerRuleID: "MORFOLOGIK_RULE_EN_NZ",
+		// Java NewZealandEnglish: NewZealandReplaceRule + UnitConversionRuleImperial.
+		RelevantExtraRuleIDs: []string{"EN_NZ_SIMPLE_REPLACE", "METRIC_UNITS_EN_IMPERIAL"},
 	}
 	SouthAfricanEnglish = EnglishVariant{
 		ShortCode: "en-ZA", Name: "English (South African)", Countries: []string{"ZA"},
 		SpellerRuleID: "MORFOLOGIK_RULE_EN_ZA",
+		// Java SouthAfricanEnglish: super only — no extras.
 	}
 )
 

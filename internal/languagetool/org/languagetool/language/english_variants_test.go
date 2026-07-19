@@ -32,6 +32,15 @@ func TestEnglishRelevantRuleIDs(t *testing.T) {
 	require.Contains(t, gb, "EN_GB_SIMPLE_REPLACE")
 	require.Contains(t, gb, "METRIC_UNITS_EN_IMPERIAL")
 	require.Equal(t, len(ids)+2, len(gb))
-	// Canadian has no extras
-	require.Equal(t, ids, CanadianEnglish.GetRelevantRuleIDs())
+	// Canadian / Australian: Imperial unit conversion only
+	ca := CanadianEnglish.GetRelevantRuleIDs()
+	require.Contains(t, ca, "METRIC_UNITS_EN_IMPERIAL")
+	require.Equal(t, len(ids)+1, len(ca))
+	// NZ: replace + Imperial
+	nz := NewZealandEnglish.GetRelevantRuleIDs()
+	require.Contains(t, nz, "EN_NZ_SIMPLE_REPLACE")
+	require.Contains(t, nz, "METRIC_UNITS_EN_IMPERIAL")
+	require.Equal(t, len(ids)+2, len(nz))
+	// ZA: super only
+	require.Equal(t, ids, SouthAfricanEnglish.GetRelevantRuleIDs())
 }

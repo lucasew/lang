@@ -62,11 +62,6 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	// Dash compounds (en-dash/em-dash vs hyphen) from compounds.txt patterns.
 	dr := NewEnglishDashRule(nil)
 	lt.AddRuleChecker(dr.GetID(), rules.AsSentenceCheckerSimple(dr.Match))
-	// Regional replace tables (British→American and American→British).
-	us := NewAmericanReplaceRule(nil)
-	lt.AddRuleChecker(us.GetID(), rules.AsSentenceCheckerSimple(us.Match))
-	gb := NewBritishReplaceRule(nil)
-	lt.AddRuleChecker(gb.GetID(), rules.AsSentenceCheckerSimple(gb.Match))
 	// Style tables: redundancies + plain-English/wordiness (official data).
 	rd := NewEnglishRedundancyRule(nil)
 	lt.AddRuleChecker(rd.GetID(), rules.AsSentenceCheckerSimple(rd.Match))
@@ -78,9 +73,6 @@ func RegisterCoreEnglishLanguageRules(lt *languagetool.JLanguageTool) {
 	// Coherent spelling of dual-admitted variants (official coherency.txt; text-level).
 	wc := NewWordCoherencyRule(nil)
 	lt.AddTextLevelRuleChecker(wc.GetID(), rules.AsTextLevelChecker(wc.MatchList))
-	// New Zealand regional replace table (en-NZ/replace.txt).
-	nz := NewNewZealandReplaceRule(nil)
-	lt.AddRuleChecker(nz.GetID(), rules.AsSentenceCheckerSimple(nz.Match))
 	// Repeated words with synonym suggestions (official synonyms.txt; text-level).
 	rw := NewEnglishRepeatedWordsRule(nil)
 	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
@@ -134,28 +126,40 @@ func RegisterPickyEnglishRules(lt *languagetool.JLanguageTool) {
 }
 
 // RegisterEnglishVariantExtraRules installs locale extras from Java *English.getRelevantRules
-// beyond base English (unit conversion US vs Imperial). Not picky-level invent.
+// beyond base English. Not picky-level invent — only the rules for this locale.
 //
-//	en-US / bare en → UnitConversionRuleUS
-//	en-GB, en-CA, en-AU, en-NZ → UnitConversionRuleImperial
-//	en-ZA → no unit conversion (Java SouthAfricanEnglish adds none)
+//	en-US / bare en → AmericanReplaceRule + UnitConversionRuleUS
+//	en-GB → BritishReplaceRule + UnitConversionRuleImperial
+//	en-CA, en-AU → UnitConversionRuleImperial only
+//	en-NZ → NewZealandReplaceRule + UnitConversionRuleImperial
+//	en-ZA → none (Java SouthAfricanEnglish adds none)
 func RegisterEnglishVariantExtraRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
 	code := strings.ToLower(lt.GetLanguageCode())
 	switch {
-	case strings.Contains(code, "gb"),
-		strings.Contains(code, "-ca") || strings.HasSuffix(code, "_ca"),
-		strings.Contains(code, "au"),
-		strings.Contains(code, "nz"):
+	case strings.Contains(code, "gb"):
+		gb := NewBritishReplaceRule(nil)
+		lt.AddRuleChecker(gb.GetID(), rules.AsSentenceCheckerSimple(gb.Match))
+		imU := NewUnitConversionRuleImperial(nil)
+		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
+	case strings.Contains(code, "nz"):
+		nz := NewNewZealandReplaceRule(nil)
+		lt.AddRuleChecker(nz.GetID(), rules.AsSentenceCheckerSimple(nz.Match))
+		imU := NewUnitConversionRuleImperial(nil)
+		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
+	case strings.Contains(code, "-ca") || strings.HasSuffix(code, "_ca"),
+		strings.Contains(code, "au"):
 		imU := NewUnitConversionRuleImperial(nil)
 		lt.AddRuleChecker(imU.GetID(), rules.AsSentenceCheckerSimple(imU.Match))
 	case strings.Contains(code, "za"):
-		// Java SouthAfricanEnglish.getRelevantRules: super only — no unit rule.
+		// Java SouthAfricanEnglish.getRelevantRules: super only.
 		return
 	default:
 		// AmericanEnglish default (en, en-US, …).
+		us := NewAmericanReplaceRule(nil)
+		lt.AddRuleChecker(us.GetID(), rules.AsSentenceCheckerSimple(us.Match))
 		usU := NewUnitConversionRuleUS(nil)
 		lt.AddRuleChecker(usU.GetID(), rules.AsSentenceCheckerSimple(usU.Match))
 	}

@@ -52,31 +52,49 @@ func TestRegisterCoreEnglishLanguageRules_Check(t *testing.T) {
 
 	// Soft invent EN_COULD_OF pack removed; official grammar.xml load is the path for that rule.
 
-	// en-US core registers US unit conversion (not picky invent of both US+Imperial).
+	// en-US core registers American extras only (not invent GB/NZ replace on all locales).
 	ids := map[string]struct{}{}
 	for _, id := range lt.GetAllRegisteredRuleIDs() {
 		ids[id] = struct{}{}
 	}
-	_, hasUS := ids["METRIC_UNITS_EN_US"]
+	require.Contains(t, ids, "METRIC_UNITS_EN_US")
+	require.Contains(t, ids, "EN_US_SIMPLE_REPLACE")
 	_, hasImp := ids["METRIC_UNITS_EN_IMPERIAL"]
-	require.True(t, hasUS, "AmericanEnglish unit conversion")
+	_, hasGB := ids["EN_GB_SIMPLE_REPLACE"]
+	_, hasNZ := ids["EN_NZ_SIMPLE_REPLACE"]
 	require.False(t, hasImp, "Imperial not on en-US")
+	require.False(t, hasGB, "British replace not on en-US")
+	require.False(t, hasNZ, "NZ replace not on en-US")
 }
 
 func TestRegisterEnglishVariantExtraRules(t *testing.T) {
 	us := languagetool.NewJLanguageTool("en-US")
 	RegisterEnglishVariantExtraRules(us)
-	require.Contains(t, us.GetAllRegisteredRuleIDs(), "METRIC_UNITS_EN_US")
+	usIDs := us.GetAllRegisteredRuleIDs()
+	require.Contains(t, usIDs, "METRIC_UNITS_EN_US")
+	require.Contains(t, usIDs, "EN_US_SIMPLE_REPLACE")
 
 	gb := languagetool.NewJLanguageTool("en-GB")
 	RegisterEnglishVariantExtraRules(gb)
-	require.Contains(t, gb.GetAllRegisteredRuleIDs(), "METRIC_UNITS_EN_IMPERIAL")
+	gbIDs := gb.GetAllRegisteredRuleIDs()
+	require.Contains(t, gbIDs, "METRIC_UNITS_EN_IMPERIAL")
+	require.Contains(t, gbIDs, "EN_GB_SIMPLE_REPLACE")
+	require.NotContains(t, gbIDs, "EN_US_SIMPLE_REPLACE")
+
+	nz := languagetool.NewJLanguageTool("en-NZ")
+	RegisterEnglishVariantExtraRules(nz)
+	nzIDs := nz.GetAllRegisteredRuleIDs()
+	require.Contains(t, nzIDs, "EN_NZ_SIMPLE_REPLACE")
+	require.Contains(t, nzIDs, "METRIC_UNITS_EN_IMPERIAL")
 
 	za := languagetool.NewJLanguageTool("en-ZA")
 	RegisterEnglishVariantExtraRules(za)
 	for _, id := range za.GetAllRegisteredRuleIDs() {
 		require.NotEqual(t, "METRIC_UNITS_EN_US", id)
 		require.NotEqual(t, "METRIC_UNITS_EN_IMPERIAL", id)
+		require.NotEqual(t, "EN_US_SIMPLE_REPLACE", id)
+		require.NotEqual(t, "EN_GB_SIMPLE_REPLACE", id)
+		require.NotEqual(t, "EN_NZ_SIMPLE_REPLACE", id)
 	}
 }
 
