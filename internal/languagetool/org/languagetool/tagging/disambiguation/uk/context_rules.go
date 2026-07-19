@@ -298,7 +298,8 @@ func DisambiguateYih(input *languagetool.AnalyzedSentence) {
 			}
 			// exclude на його душу: next not adj|noun, verb governs v_rod|v_zna
 			if !hasPOSPrefix(tokens[i+1], "adj") && !hasPOSPrefix(tokens[i+1], "noun") {
-				govs := caseGovForPosRE(tokens[i+1], regexp.MustCompile(`^verb`))
+				// Java: Pattern.compile("verb.*")
+				govs := caseGovForPosRE(tokens[i+1], regexp.MustCompile(`verb.*`))
 				if setHasAny(govs, "v_rod", "v_zna") {
 					removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
 					continue
@@ -307,7 +308,8 @@ func DisambiguateYih(input *languagetool.AnalyzedSentence) {
 		}
 		// посунув їх — prev verb/advp governs v_rod|v_zna
 		if i > 1 && tokens[i-1] != nil {
-			prevGovs := caseGovForPosRE(tokens[i-1], regexp.MustCompile(`^(?:verb|advp)`))
+			// Java: Pattern.compile("(verb|advp).*")
+			prevGovs := caseGovForPosRE(tokens[i-1], regexp.MustCompile(`(?:verb|advp).*`))
 			if setHasAny(prevGovs, "v_rod", "v_zna") {
 				// end of sentence / adv / prep / punct after
 				if i == len(tokens)-1 ||
@@ -319,7 +321,7 @@ func DisambiguateYih(input *languagetool.AnalyzedSentence) {
 				// примусили їх сказати — next inf + prev also v_inf
 				if i < len(tokens)-1 && tokens[i+1] != nil &&
 					(hasPOSPrefix(tokens[i-1], "verb") || hasPOSPrefix(tokens[i-1], "advp")) &&
-					hasPosTagREMatch(tokens[i+1], `(?:verb).*:inf.*`) && setHasAny(prevGovs, "v_inf") {
+					hasPosTagREMatch(tokens[i+1], `verb.*:inf.*`) && setHasAny(prevGovs, "v_inf") {
 					removeReadingsMatching(main, adjPronRE, "dis_yih_pron_pos")
 					continue
 				}
@@ -361,7 +363,8 @@ func caseGovForPosRE(tok *languagetool.AnalyzedTokenReadings, posRE *regexp.Rege
 		if r == nil || r.GetPOSTag() == nil || r.GetLemma() == nil {
 			continue
 		}
-		if !posRE.MatchString(*r.GetPOSTag()) {
+		// Java Pattern.matcher(pos).matches() — full string
+		if !fullMatch(posRE, *r.GetPOSTag()) {
 			continue
 		}
 		for _, c := range cg.GetCaseGovernments(*r.GetLemma()) {
@@ -415,7 +418,8 @@ func removeReadingsMatching(main *languagetool.AnalyzedTokenReadings, posRE *reg
 		if r == nil || r.GetPOSTag() == nil {
 			continue
 		}
-		if posRE.MatchString(*r.GetPOSTag()) {
+		// Java PosTagHelper.hasPosTag(token, Pattern) → Matcher.matches()
+		if fullMatch(posRE, *r.GetPOSTag()) {
 			main.RemoveReading(r, label)
 		}
 	}
@@ -1147,13 +1151,14 @@ func RetagUnknownInitials(input *languagetool.AnalyzedSentence) {
 	}
 }
 
+// hasPosTagREMatch ports PosTagHelper.hasPosTag(…, Pattern) — Matcher.matches() full string.
 func hasPosTagREMatch(tok *languagetool.AnalyzedTokenReadings, pattern string) bool {
 	if tok == nil {
 		return false
 	}
 	re := regexp.MustCompile(pattern)
 	for _, r := range tok.GetReadings() {
-		if r != nil && r.GetPOSTag() != nil && re.MatchString(*r.GetPOSTag()) {
+		if r != nil && r.GetPOSTag() != nil && fullMatch(re, *r.GetPOSTag()) {
 			return true
 		}
 	}
