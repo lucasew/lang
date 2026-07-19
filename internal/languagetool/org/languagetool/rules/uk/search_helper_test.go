@@ -56,3 +56,24 @@ func TestSearchMatch_TargetPostag(t *testing.T) {
 	}
 	require.Equal(t, 1, m.MAfterATR(tokens, 0))
 }
+
+func TestSearchMatch_ParenInsertFallThrough(t *testing.T) {
+	// Java: on "(" with ignoreInserts, jump to ")", then evaluate condition at that token
+	// (does not continue past the closing paren without a match attempt).
+	m := (&SearchMatch{IgnoreQuotes: true, IgnoreInserts: true, Limit: -1}).
+		Target(ConditionToken(")"))
+	tokens := []*languagetool.AnalyzedTokenReadings{
+		atr("("), atr("ще", "adv"), atr(")"), atr("і", "conj"),
+	}
+	// starting at "(" → jump to ")" → match target
+	require.Equal(t, 2, m.MAfterATR(tokens, 0))
+}
+
+func TestSearchMatch_CommaInsertSkip(t *testing.T) {
+	m := NewSearchMatch("a b").IgnoreInsertsOn()
+	// a , зокрема , b — lemma-based insert skip (Java hasLemma зокрема|відповідно)
+	atrs := []*languagetool.AnalyzedTokenReadings{
+		atr("a"), atr(","), atrLemma("зокрема", strPtr("зокрема"), "adv"), atr(","), atr("b"),
+	}
+	require.Equal(t, 4, m.MAfterATR(atrs, 0))
+}

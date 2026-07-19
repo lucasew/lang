@@ -193,19 +193,28 @@ func (m *SearchMatch) MAfterATR(tokens []*languagetool.AnalyzedTokenReadings, po
 			pos++
 			continue
 		}
+		// Java: ignoreInserts && "(" → jump pos to matching ")", then fall through to matches
 		if m.IgnoreInserts && tokStr == "(" {
 			for i := pos + 1; i < len(tokens); i++ {
 				if tokens[i] != nil && tokens[i].GetToken() == ")" {
 					pos = i
-					break
+					// Java continue is only on the inner for (keeps scanning for more ")")
+					// after loop, outer falls through with pos at last ")"
 				}
 			}
-			pos++
-			continue
+			// re-bind current token after jump
+			if pos < 0 || pos >= len(tokens) || tokens[pos] == nil {
+				return -1
+			}
+			cur = tokens[pos]
+			tokStr = cur.GetToken()
 		}
-		// comma-insert: , insert ,
+		// Java ignoreInserts(tokens, pos, +1): pos+=2 then for pos++ → skip 3 tokens
 		if m.ignoreCommaInsert(tokens, pos, +1) {
-			pos += 3
+			pos += 2
+			// next loop iteration advances one more (manual pos++ below only on match/skip)
+			// mirror Java: after pos+=2, for does pos++ → net +3 from original start of insert
+			pos++
 			continue
 		}
 		if !conds[iCond].Matches(cur) {
@@ -251,18 +260,24 @@ func (m *SearchMatch) MBeforeATR(tokens []*languagetool.AnalyzedTokenReadings, p
 			pos--
 			continue
 		}
+		// Java: ignoreInserts && ")" → jump pos to matching "(", then fall through
 		if m.IgnoreInserts && tokStr == ")" {
 			for i := pos - 1; i >= 1; i-- {
 				if tokens[i] != nil && tokens[i].GetToken() == "(" {
 					pos = i
-					break
+					// fall through like mAfter paren arm
 				}
 			}
-			pos--
-			continue
+			if pos < 0 || pos >= len(tokens) || tokens[pos] == nil {
+				return -1
+			}
+			cur = tokens[pos]
+			tokStr = cur.GetToken()
 		}
+		// Java ignoreInserts reverse: pos += 2*dir with dir=-1 → pos-=2 then for pos-- → net -3
 		if m.ignoreCommaInsert(tokens, pos, -1) {
-			pos -= 3
+			pos -= 2
+			pos--
 			continue
 		}
 		if !conds[iCond].Matches(cur) {
