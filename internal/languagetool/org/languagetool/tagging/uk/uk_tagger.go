@@ -59,11 +59,8 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 			pos += len([]rune(word))
 			continue
 		}
-		if dyn := FixedPartReadings(w); len(dyn) > 0 {
-			for _, d := range dyn {
-				p, l := d.POS, d.Lemma
-				readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
-			}
+		if dyn := FixedPartReadings(w, t.TagWord); len(dyn) > 0 {
+			readings = dyn
 			out = append(out, languagetool.NewAnalyzedTokenReadingsList(readings, pos))
 			pos += len([]rune(word))
 			continue

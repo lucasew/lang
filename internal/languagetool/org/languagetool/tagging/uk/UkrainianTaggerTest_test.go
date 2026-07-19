@@ -114,15 +114,22 @@ func TestUkrainianTagger_HypenPrefixes(t *testing.T) {
 	require.True(t, got[0].IsTagged())
 }
 func TestUkrainianTagger_DynamicTaggingFixedParts(t *testing.T) {
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
+	// Java: пів- needs right-side dict (v_rod); street suffixes use CITY_AVENU list.
+	wt := tagging.MapWordTagger{
+		"України": {tagging.NewTaggedWord("Україна", "noun:inanim:f:v_rod:prop:geo")},
+		"години":  {tagging.NewTaggedWord("година", "noun:inanim:f:v_rod")},
+	}
+	tg := NewUkrainianTagger(wt)
 	out := tg.Tag([]string{"пів-України", "пів-години", "Уолл-стрит", "Пенсильванія-авеню"})
 	require.True(t, out[0].IsTagged())
-	require.True(t, out[0].HasPartialPosTag("prop") || out[0].HasPartialPosTag("geo"))
+	require.True(t, out[0].HasPartialPosTag("alt") || out[0].HasPartialPosTag("noun"))
 	require.True(t, out[1].IsTagged())
 	require.True(t, out[1].HasPartialPosTag("bad") || out[1].HasPartialPosTag("noun"))
 	require.True(t, out[2].IsTagged())
 	require.True(t, out[2].HasPartialPosTag("prop"))
 	require.True(t, out[3].IsTagged())
+	// пів without dict on right fails closed
+	require.False(t, NewUkrainianTagger(tagging.MapWordTagger{}).Tag([]string{"пів-України"})[0].IsTagged())
 }
 func TestUkrainianTagger_DynamicMissingApostrophe(t *testing.T) {
 	// inject apostrophized form; surface without ' should pick :bad

@@ -3,23 +3,26 @@ package uk
 import (
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 )
 
-// Street / avenue right-hand fixed parts (Java CompoundTagger street suffixes).
-var fixedRightParts = map[string]string{
-	"авеню": "f",
-	"стрит": "f",
-	"стріт": "f",
-	"сквер": "m",
-	"плаза": "f",
+// cityAvenu ports LemmaHelper.CITY_AVENU (Java CompoundTagger street/avenue right parts).
+// All generateTokensForNv with gender "f" + :prop.
+var cityAvenu = map[string]struct{}{
+	"сіті": {}, "ситі": {}, "стріт": {}, "стрит": {},
+	"рівер": {}, "ривер": {}, "авеню": {},
+	"штрасе": {}, "штрассе": {}, "сьоркл": {}, "сквер": {}, "плац": {},
 }
 
-var nvCasesF = []string{":f:v_dav:nv", ":f:v_mis:nv", ":f:v_naz:nv", ":f:v_oru:nv", ":f:v_rod:nv", ":f:v_zna:nv"}
-var nvCasesP = []string{":p:v_dav:nv", ":p:v_mis:nv", ":p:v_naz:nv", ":p:v_oru:nv", ":p:v_rod:nv", ":p:v_zna:nv"}
-var nvCasesM = []string{":m:v_dav:nv", ":m:v_mis:nv", ":m:v_naz:nv", ":m:v_oru:nv", ":m:v_rod:nv", ":m:v_zna:nv"}
+// nvCases ports PosTagHelper.VIDMINKY_MAP without v_kly (Java generateTokensForNv).
+var nvCases = []string{"v_naz", "v_rod", "v_dav", "v_zna", "v_oru", "v_mis"}
 
-// FixedPartReadings tags пів-X and Name-авеню/стрит style compounds without full dict.
-func FixedPartReadings(token string) []struct{ Lemma, POS string } {
+// FixedPartReadings ports CompoundTagger city-avenue and пів- compounds.
+// Street suffixes use official CITY_AVENU list. пів- needs dictionary readings
+// on the right (Java tagEitherCase + addPluralNvTokens) — fail closed without tags.
+func FixedPartReadings(token string, tagWord func(string) []tagging.TaggedWord) []*languagetool.AnalyzedToken {
 	t := strings.ReplaceAll(token, "–", "-")
 	t = strings.ReplaceAll(t, "—", "-")
 	rs := []rune(t)
@@ -27,48 +30,104 @@ func FixedPartReadings(token string) []struct{ Lemma, POS string } {
 		return nil
 	}
 
-	// пів-України / пів-години
-	if strings.HasPrefix(strings.ToLower(string(rs[:4])), "пів-") || (len(rs) >= 4 && strings.EqualFold(string(rs[:3]), "пів") && rs[3] == '-') {
-		// split after first hyphen following пів
-		idx := -1
-		for i, r := range rs {
-			if r == '-' {
-				idx = i
-				break
+	// Пенсильванія-авеню / Уолл-стрит (Java CITY_AVENU + generateTokensForNv f :prop)
+	if i := strings.LastIndex(t, "-"); i > 0 {
+		left, right := t[:i], t[i+1:]
+		if left != "" && unicode.IsUpper([]rune(left)[0]) {
+			lowR := strings.ToLower(right)
+			if _, ok := cityAvenu[lowR]; ok {
+				addPos := ""
+				if lowR == "штрассе" {
+					addPos = ":alt"
+				}
+				return generateTokensForNv(token, "f", ":prop"+addPos)
 			}
-		}
-		if idx > 0 && idx+1 < len(rs) {
-			right := string(rs[idx+1:])
-			lemma := strings.ToLower(t)
-			extra := ":bad"
-			if rr := []rune(right); len(rr) > 0 && unicode.IsUpper(rr[0]) {
-				extra = ":prop:geo:alt"
-			}
-			var out []struct{ Lemma, POS string }
-			for _, c := range nvCasesP {
-				out = append(out, struct{ Lemma, POS string }{Lemma: lemma, POS: "noun:inanim" + c + extra})
-			}
-			return out
 		}
 	}
 
-	// Name-авеню / Name-стрит
-	if i := strings.LastIndex(t, "-"); i > 0 {
-		right := strings.ToLower(t[i+1:])
-		gender, ok := fixedRightParts[right]
-		if !ok {
-			return nil
-		}
-		cases := nvCasesF
-		if gender == "m" {
-			cases = nvCasesM
-		}
-		lemma := t
-		var out []struct{ Lemma, POS string }
-		for _, c := range cases {
-			out = append(out, struct{ Lemma, POS string }{Lemma: lemma, POS: "noun:inanim" + c + ":prop"})
-		}
-		return out
+	// пів-… (Java left "пів" / startsWith "пів-")
+	if !strings.HasPrefix(strings.ToLower(t), "пів-") {
+		return nil
 	}
-	return nil
+	idx := strings.Index(t, "-")
+	if idx <= 0 || idx+1 >= len(t) {
+		return nil
+	}
+	right := t[idx+1:]
+	if right == "" || tagWord == nil {
+		return nil
+	}
+	// Java tagEitherCase(rightWord)
+	tws := tagWord(right)
+	if len(tws) == 0 {
+		low := strings.ToLower(right)
+		if low != right {
+			tws = tagWord(low)
+		}
+	}
+	if len(tws) == 0 {
+		return nil
+	}
+	// addTag: Upper right → :alt (пів-України); lower → :bad (пів-години)
+	addTag := ":bad"
+	if unicode.IsUpper([]rune(right)[0]) {
+		addTag = ":alt"
+	}
+	// Java addPluralNvTokens: only noun sing v_rod readings
+	var out []*languagetool.AnalyzedToken
+	seen := map[string]struct{}{}
+	for _, tw := range tws {
+		pos := tw.PosTag
+		if pos == "" || !strings.HasPrefix(pos, "noun") {
+			continue
+		}
+		if !strings.Contains(pos, "v_rod") {
+			continue
+		}
+		// must be singular :m: / :f: / :n: before v_rod
+		if strings.Contains(pos, ":p:") {
+			continue
+		}
+		for _, vid := range nvCases {
+			// replace v_rod with vid and force plural :p:
+			np := pos
+			np = strings.Replace(np, "v_rod", vid, 1)
+			// :m:v_ / :f:v_ / :n:v_ → :p:v_
+			for _, g := range []string{":m:v_", ":f:v_", ":n:v_"} {
+				if strings.Contains(np, g) {
+					np = strings.Replace(np, g, ":p:v_", 1)
+					break
+				}
+			}
+			if !strings.Contains(np, ":nv") {
+				np = np + ":nv"
+			}
+			if addTag != "" && !strings.Contains(np, addTag) {
+				np = np + addTag
+			}
+			if _, ok := seen[np]; ok {
+				continue
+			}
+			seen[np] = struct{}{}
+			p, l := np, token
+			out = append(out, languagetool.NewAnalyzedToken(token, &p, &l))
+		}
+	}
+	return out
+}
+
+// generateTokensForNv ports PosTagHelper.generateTokensForNv (lemma = surface).
+func generateTokensForNv(word, genders, extraTags string) []*languagetool.AnalyzedToken {
+	var out []*languagetool.AnalyzedToken
+	for _, gen := range genders {
+		for _, vidm := range nvCases {
+			pos := "noun:inanim:" + string(gen) + ":" + vidm + ":nv"
+			if extraTags != "" {
+				pos += extraTags
+			}
+			p, l := pos, word
+			out = append(out, languagetool.NewAnalyzedToken(word, &p, &l))
+		}
+	}
+	return out
 }
