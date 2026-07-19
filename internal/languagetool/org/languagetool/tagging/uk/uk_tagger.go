@@ -195,10 +195,28 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = append(readings, toTok(word, tw))
 			}
 		}
+		// Java getAnalyzedTokens: en-dash U+2013 → hyphen re-tag (+ null reading for surface).
+		if len(readings) == 0 {
+			if alt := AltDashReadings(w, t.TagWord); len(alt) > 0 {
+				readings = alt
+			}
+		}
 		// Java additionalTags / getAnalyzedTokens alt rewrites (CAPS_INSIDE, з→с, ї→і, convertTokens).
 		if len(readings) == 0 {
 			if alt := AltTagAdjustReadings(w, t.TagWord); len(alt) > 0 {
 				readings = alt
+			}
+		}
+		// Java solid LEFT_O_ADJ_INVALID_PATTERN (len≥9, no hyphen) → adj rest + prefix lemma.
+		if len(readings) == 0 {
+			if sol := SolidLeftOAdjInvalidReadings(w, t.TagWord); len(sol) > 0 {
+				readings = sol
+			}
+		}
+		// Java strip [] → :alt when WORDS_WITH_BRACKETS-like.
+		if len(readings) == 0 {
+			if br := BracketAltReadings(w, t.TagWord); len(br) > 0 {
+				readings = br
 			}
 		}
 		// Java analyzeAllCapitamizedAdj (Івано-Франківська as adj).
@@ -214,6 +232,12 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 					p, l := d.POS, d.Lemma
 					readings = append(readings, languagetool.NewAnalyzedToken(word, &p, &l))
 				}
+			}
+		}
+		// Java additionalTags RICCHA / OTYI (стодвадцятиріччя, …мільйонний).
+		if len(readings) == 0 {
+			if num := NumericLongFormReadings(w, t.TagWord); len(num) > 0 {
+				readings = num
 			}
 		}
 		// Java dual capitalized prop compounds (Київ-Прага, lname pairs).
