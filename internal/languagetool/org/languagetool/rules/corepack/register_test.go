@@ -146,3 +146,35 @@ func TestRegister_Belarusian_NoInventWordRepeatBeginning(t *testing.T) {
 	// Shared layout still has paragraph-level beginning rule when registered
 	require.Contains(t, ids, "PARAGRAPH_REPEAT_BEGINNING_RULE")
 }
+
+// Invent lang-prefixed WordRepeat IDs must not reappear (Java uses WORD_REPEAT_RULE
+// or language-specific Java class getId; da/gl/br have no word-repeat at all).
+func TestRegister_NoInventLangPrefixedWordRepeatIDs(t *testing.T) {
+	bad := []string{
+		"DA_WORD_REPEAT_RULE", "DA_WORD_REPEAT_BEGINNING_RULE",
+		"GL_WORD_REPEAT_RULE", "GL_WORD_REPEAT_BEGINNING_RULE",
+		"BR_WORD_REPEAT_BEGINNING_RULE",
+		"GA_WORD_REPEAT_RULE", "GA_WORD_REPEAT_BEGINNING_RULE",
+		"EL_WORD_REPEAT_RULE",
+		"SK_WORD_REPEAT_RULE", "SK_WORD_REPEAT_BEGINNING_RULE",
+		"SV_WORD_REPEAT_RULE", "SV_WORD_REPEAT_BEGINNING_RULE",
+		"RO_WORD_REPEAT_RULE",
+		"PL_WORD_REPEAT_BEGINNING_RULE",
+		"SL_WORD_REPEAT_BEGINNING_RULE",
+		"IT_WORD_REPEAT_BEGINNING_RULE",
+		"RU_WORD_REPEAT_BEGINNING_RULE",
+		"UK_WORD_REPEAT_BEGINNING_RULE",
+		"AR_WORD_REPEAT_BEGINNING_RULE",
+		"KM_WORD_REPEAT_BEGINNING_RULE",
+		"FR_WORD_REPEAT_RULE", "FR_WORD_REPEAT_BEGINNING_RULE",
+		"NL_WORD_REPEAT_RULE", "NL_WORD_REPEAT_BEGINNING_RULE",
+	}
+	for _, code := range []string{"da", "gl", "br", "ga", "el", "sk", "sv", "ro", "pl", "sl", "it", "ru", "uk", "ar", "km", "fr", "nl"} {
+		lt := languagetool.NewJLanguageTool(code)
+		corepack.Register(lt, code)
+		ids := lt.GetAllRegisteredRuleIDs()
+		for _, b := range bad {
+			require.NotContains(t, ids, b, "lang %s invent id %s", code, b)
+		}
+	}
+}
