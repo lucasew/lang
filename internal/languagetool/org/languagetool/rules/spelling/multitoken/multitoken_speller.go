@@ -5,7 +5,9 @@ import (
 	"io"
 	"strings"
 	"sync"
-	"unicode"
+	"unicode/utf16"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 const maxLengthDiff = 3
@@ -31,8 +33,11 @@ type MultitokenSpeller struct {
 	// GetAdditionalSuggestions ports getAdditionalSuggestions (e.g. Catalan Morfologik).
 	// If any additional word equals originalWord, Java returns empty list (exact hit).
 	GetAdditionalSuggestions func(originalWord string) []WeightedSuggestion
-	mu                       sync.RWMutex
-	cache                    map[string][]string
+	// IsMisspelledToken ports SpellingCheckRule.isMisspelled for discardRunOnWords.
+	// Nil → discardRunOnWords returns false (cannot detect run-ons without a speller).
+	IsMisspelledToken func(token string) bool
+	mu                sync.RWMutex
+	cache             map[string][]string
 }
 
 func NewMultitokenSpeller() *MultitokenSpeller {
@@ -112,8 +117,13 @@ type weighted struct {
 }
 
 func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcceptedBySpeller bool) []string {
+	// Java: word = originalWord.replace("- ", "-").replace(" -", "-");
 	word := strings.ReplaceAll(strings.ReplaceAll(originalWord, "- ", "-"), " -", "-")
 	if word == "" {
+		return nil
+	}
+	// Java discardRunOnWords(word)
+	if m.discardRunOnWords(word) {
 		return nil
 	}
 	normalizedWord := getNormalizeKey(word)
@@ -133,6 +143,8 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 			weightedCandidates = append(weightedCandidates, weighted{c, 0})
 		}
 	}
+	// Java: Character firstChar = normalizedWord.charAt(0); String UTF-16
+	// Use first rune for non-BMP safety (same for BMP multiword lists).
 	first := []rune(normalizedWord)[0]
 	byChar := m.byFirstChar[first]
 	if len(weightedCandidates) == 0 && byChar != nil {
@@ -141,17 +153,50 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 				m.mu.RUnlock()
 				return nil
 			}
-			if abs(len(normalizedCandidate)-len(word)) > maxLengthDiff {
+			// Java: Math.abs(normalizedCandidate.length() - word.length()) — UTF-16 lengths
+			if abs(utf16Len(normalizedCandidate)-utf16Len(word)) > maxLengthDiff {
 				continue
 			}
-			dist := levenshtein(normalizedCandidate, normalizedWord)
-			// short candidates: only exact (dist 0 after normalize)
-			if len(normalizedCandidate) < 7 && dist > 0 {
-				continue
+			candidateParts := splitBySpace(normalizedCandidate)
+			wordParts := splitBySpace(normalizedWord)
+			distances := distancesPerWord(candidateParts, wordParts, normalizedCandidate, normalizedWord)
+			totalDistance := 0
+			for _, d := range distances {
+				totalDistance += d
 			}
-			if dist <= maxEditDistance(normalizedCandidate, normalizedWord) {
+			if totalDistance < 1 {
 				for _, c := range candidates {
-					weightedCandidates = append(weightedCandidates, weighted{c, dist})
+					weightedCandidates = append(weightedCandidates, weighted{c, 0})
+				}
+				// Java: "continue" allows several candidates with different casing
+				if len(weightedCandidates) == 2 {
+					break
+				}
+				continue
+			}
+			// for very short candidates, allow only distance=0
+			if utf16Len(normalizedCandidate) < 7 {
+				continue
+			}
+			exceedsMaxDistancePerToken := false
+			for i := 0; i < len(distances); i++ {
+				// usually 2, but 1 for short words
+				maxDist := 1
+				if i < len(wordParts) && i < len(candidateParts) &&
+					utf16Len(wordParts[i]) > 5 && utf16Len(candidateParts[i]) > 4 {
+					maxDist = 2
+				}
+				if distances[i] > maxDist {
+					exceedsMaxDistancePerToken = true
+					break
+				}
+			}
+			if exceedsMaxDistancePerToken {
+				continue
+			}
+			if totalDistance <= maxEditDistance(normalizedCandidate, normalizedWord) {
+				for _, c := range candidates {
+					weightedCandidates = append(weightedCandidates, weighted{c, totalDistance})
 				}
 			}
 		}
@@ -175,7 +220,7 @@ func (m *MultitokenSpeller) computeSuggestions(originalWord string, areTokensAcc
 	if len(weightedCandidates) == 0 {
 		return nil
 	}
-	// sort by weight
+	// sort by weight (stable enough for twin tests)
 	for i := 0; i < len(weightedCandidates); i++ {
 		for j := i + 1; j < len(weightedCandidates); j++ {
 			if weightedCandidates[j].weight < weightedCandidates[i].weight {
@@ -213,80 +258,146 @@ func (m *MultitokenSpeller) stopSearching(candidates []string, originalWord stri
 		}
 	}
 	for _, candidate := range candidates {
-		if candidate == strings.ToLower(candidate) && titleCase(candidate) == originalWord {
+		// Java: convertToTitleCaseIteratingChars
+		if candidate == strings.ToLower(candidate) &&
+			tools.ConvertToTitleCaseIteratingChars(candidate) == originalWord {
 			return true
 		}
 	}
 	return false
 }
 
-func maxEditDistance(normalizedCandidate, normalizedWord string) int {
-	totalLength := len(normalizedWord)
-	correctLength := totalLength // simplified vs Java numberOfCorrectChars
-	_ = normalizedCandidate
-	if correctLength <= 7 {
-		return 2
+// discardRunOnWords ports MultitokenSpeller.discardRunOnWords.
+// Requires IsMisspelledToken (Java SpellingCheckRule); nil → false.
+func (m *MultitokenSpeller) discardRunOnWords(underlinedError string) bool {
+	if m == nil || m.IsMisspelledToken == nil {
+		return false
 	}
-	return 2 + int(0.25*float64(correctLength-7))
+	parts := splitBySpace(underlinedError)
+	if len(parts) != 2 {
+		return false
+	}
+	if tools.IsCapitalizedWord(parts[1]) {
+		return false
+	}
+	if parts[0] == "" || parts[1] == "" {
+		return true
+	}
+	// sugg1a + sugg1b: last char of first token moved to second (Java substring UTF-16)
+	r0 := []rune(parts[0])
+	if len(r0) == 0 {
+		return true
+	}
+	sugg1a := string(r0[:len(r0)-1])
+	sugg1b := string(r0[len(r0)-1:]) + parts[1]
+	if !m.IsMisspelledToken(sugg1a) && !m.IsMisspelledToken(sugg1b) {
+		return true
+	}
+	// sugg2a + sugg2b: first char of second moved to first
+	r1 := []rune(parts[1])
+	if len(r1) == 0 {
+		return true
+	}
+	sugg2a := parts[0] + string(r1[0])
+	sugg2b := string(r1[1:])
+	return !m.IsMisspelledToken(sugg2a) && !m.IsMisspelledToken(sugg2b)
+}
+
+// distancesPerWord ports MultitokenSpeller.distancesPerWord.
+func distancesPerWord(parts1, parts2 []string, s1, s2 string) []int {
+	if len(parts1) == len(parts2) && len(parts1) > 1 {
+		out := make([]int, len(parts1))
+		for i := range parts1 {
+			out[i] = levenshteinDistance(parts1[i], parts2[i])
+		}
+		return out
+	}
+	return []int{levenshteinDistance(s1, s2)}
+}
+
+// maxEditDistance ports MultitokenSpeller.maxEditDistance.
+func maxEditDistance(normalizedCandidate, normalizedWord string) int {
+	totalLength := utf16Len(normalizedWord)
+	correctLength := totalLength - numberOfCorrectChars(normalizedCandidate, normalizedWord)
+	firstCharWrong := float64(0)
+	for _, d := range firstCharacterDistances(normalizedCandidate, normalizedWord) {
+		firstCharWrong += d
+	}
+	if correctLength <= 7 {
+		return int(2 - firstCharWrong)
+	}
+	return int(2 + 0.25*float64(correctLength-7) - 0.6*firstCharWrong)
+}
+
+func firstCharacterDistances(s1, s2 string) []float64 {
+	parts1 := splitBySpace(s1)
+	parts2 := splitBySpace(s2)
+	// for now, only phrase with two tokens
+	if len(parts1) == len(parts2) && len(parts1) == 2 {
+		out := make([]float64, 2)
+		for i := 0; i < 2; i++ {
+			if parts1[i] == "" || parts2[i] == "" {
+				out[i] = 1
+				continue
+			}
+			// Java charAt(0) — first UTF-16 code unit; for BMP same as first rune
+			r1 := []rune(parts1[i])[0]
+			r2 := []rune(parts2[i])[0]
+			out[i] = charDistance(r1, r2)
+		}
+		return out
+	}
+	return []float64{0}
+}
+
+func charDistance(a, b rune) float64 {
+	if a == b {
+		return 0
+	}
+	if (a == 's' && b == 'z') || (a == 'z' && b == 's') {
+		return 0.2
+	}
+	if (a == 'b' && b == 'v') || (a == 'v' && b == 'b') {
+		return 0.2
+	}
+	if (a == 'i' && b == 'y') || (a == 'y' && b == 'i') {
+		return 0
+	}
+	return 1
+}
+
+func numberOfCorrectChars(s1, s2 string) int {
+	parts1 := strings.Split(s1, " ")
+	parts2 := strings.Split(s2, " ")
+	correct := 0
+	if len(parts1) == len(parts2) && len(parts1) > 1 {
+		for i := range parts1 {
+			if parts1[i] == parts2[i] {
+				correct += utf16Len(parts1[i])
+			}
+		}
+	}
+	return correct
+}
+
+func splitBySpace(s string) []string {
+	// Java StringUtils.split(s, ' ') — omit empty
+	return strings.Fields(s)
 }
 
 func getNormalizeKey(word string) string {
-	s := strings.ToLower(word)
-	s = removeDiacritics(s)
-	s = strings.ReplaceAll(s, "-", " ")
-	return collapseWhitespace(s)
+	// Java: removeDiacritics(word.toLowerCase()).replace("-", " ") — no collapse
+	s := tools.RemoveDiacritics(strings.ToLower(word))
+	return strings.ReplaceAll(s, "-", " ")
+}
+
+// utf16Len ports Java String.length() for length comparisons in MultitokenSpeller.
+func utf16Len(s string) int {
+	return len([]uint16(utf16.Encode([]rune(s))))
 }
 
 func collapseWhitespace(s string) string {
 	return strings.Join(strings.Fields(s), " ")
-}
-
-func removeDiacritics(s string) string {
-	// Lightweight surface: drop common combining marks and map a few precomposed chars.
-	// Full NFD needs golang.org/x/text; this covers Romance diacritics used in multiword lists.
-	var b strings.Builder
-	for _, r := range s {
-		switch r {
-		case 'á', 'à', 'â', 'ä', 'ã', 'å':
-			b.WriteByte('a')
-		case 'é', 'è', 'ê', 'ë':
-			b.WriteByte('e')
-		case 'í', 'ì', 'î', 'ï':
-			b.WriteByte('i')
-		case 'ó', 'ò', 'ô', 'ö', 'õ':
-			b.WriteByte('o')
-		case 'ú', 'ù', 'û', 'ü':
-			b.WriteByte('u')
-		case 'ý', 'ÿ':
-			b.WriteByte('y')
-		case 'ç':
-			b.WriteByte('c')
-		case 'ñ':
-			b.WriteByte('n')
-		case 'Á', 'À', 'Â', 'Ä', 'Ã', 'Å':
-			b.WriteByte('A')
-		case 'É', 'È', 'Ê', 'Ë':
-			b.WriteByte('E')
-		case 'Í', 'Ì', 'Î', 'Ï':
-			b.WriteByte('I')
-		case 'Ó', 'Ò', 'Ô', 'Ö', 'Õ':
-			b.WriteByte('O')
-		case 'Ú', 'Ù', 'Û', 'Ü':
-			b.WriteByte('U')
-		case 'Ý':
-			b.WriteByte('Y')
-		case 'Ç':
-			b.WriteByte('C')
-		case 'Ñ':
-			b.WriteByte('N')
-		default:
-			if unicode.Is(unicode.Mn, r) {
-				continue
-			}
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
 }
 
 func addToMap(m map[string][]string, key, value string) {
@@ -298,15 +409,6 @@ func addToMap(m map[string][]string, key, value string) {
 	m[key] = append(m[key], value)
 }
 
-func titleCase(s string) string {
-	if s == "" {
-		return s
-	}
-	rs := []rune(s)
-	rs[0] = unicode.ToUpper(rs[0])
-	return string(rs)
-}
-
 func abs(n int) int {
 	if n < 0 {
 		return -n
@@ -314,12 +416,43 @@ func abs(n int) int {
 	return n
 }
 
-func levenshtein(a, b string) int {
-	if strings.ReplaceAll(a, " ", "") == strings.ReplaceAll(b, " ", "") {
+// levenshteinDistance ports MultitokenSpeller.levenshteinDistance
+// (Levenshtein + normalizeSimilarChars min + anagram tweaks).
+func levenshteinDistance(s1, s2 string) int {
+	if strings.ReplaceAll(s1, " ", "") == strings.ReplaceAll(s2, " ", "") {
 		return 0
 	}
+	distance := rawLevenshtein(s1, s2)
+	ns1 := normalizeSimilarChars(s1)
+	ns2 := normalizeSimilarChars(s2)
+	if s1 != ns1 || s2 != ns2 {
+		if d2 := rawLevenshtein(ns1, ns2); d2 < distance {
+			distance = d2
+		}
+	}
+	anagram := tools.IsAnagram(s1, s2)
+	// consider transpositions without having a Damerau-Levenshtein method
+	if distance > 1 && anagram {
+		distance--
+	}
+	if distance > 0 && utf16Len(s1) == utf16Len(s2) && anagram {
+		distance = 1
+	}
+	return distance
+}
+
+func normalizeSimilarChars(s string) string {
+	// Java: s.replace("y", "i").replace("ko", "co").replace("ka", "ca")
+	s = strings.ReplaceAll(s, "y", "i")
+	s = strings.ReplaceAll(s, "ko", "co")
+	s = strings.ReplaceAll(s, "ka", "ca")
+	return s
+}
+
+func rawLevenshtein(a, b string) int {
+	// Apache commons LevenshteinDistance uses UTF-16 code units in Java;
+	// for multitoken Latin lists, rune-based distance matches in practice.
 	ra, rb := []rune(a), []rune(b)
-	// classic DP
 	la, lb := len(ra), len(rb)
 	if la == 0 {
 		return lb
@@ -361,3 +494,4 @@ func min3(a, b, c int) int {
 	}
 	return c
 }
+
