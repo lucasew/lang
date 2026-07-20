@@ -34,14 +34,10 @@ func RegisterCoreSerbianRules(lt *languagetool.JLanguageTool) {
 		return
 	}
 	rules.RegisterSharedLayoutRules(lt, "sr")
+	// Java Serbian.getBasicRules: WordRepeatRule (default WORD_REPEAT_RULE id) —
+	// no WordRepeatBeginning, no invent SR_ prefix.
 	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Понављање речи"})
-	wr.IDOverride = "SR_WORD_REPEAT_RULE"
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := rules.NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Три узастопне реченице почињу истом речју.",
-	})
-	wrb.IDOverride = "SR_WORD_REPEAT_BEGINNING_RULE"
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
 	if serbianJekavian(lt.GetLanguageCode()) {
 		// Java JekavianSerbian.getRelevantRules: jekavian replace + MorfologikJekavianSpellerRule.
