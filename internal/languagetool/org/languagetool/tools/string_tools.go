@@ -251,6 +251,25 @@ func TrimWhitespace(s string) string {
 	return out
 }
 
+// CharacterIsWhitespace ports java.lang.Character.isWhitespace(int) used by
+// String.stripLeading and the single-char branch of StringTools.isWhitespace.
+//
+// Includes SPACE/LINE/PARAGRAPH separators and ISO control white space, but
+// excludes non-breaking Zs U+00A0, U+2007, U+202F (unlike unicode.IsSpace / Zs).
+func CharacterIsWhitespace(r rune) bool {
+	switch r {
+	case '\t', '\n', '\u000B', '\f', '\r':
+		return true
+	case 0x1C, 0x1D, 0x1E, 0x1F:
+		return true
+	}
+	// Java: SPACE_SEPARATOR etc. but not also a non-breaking space
+	if r == '\u00A0' || r == '\u2007' || r == '\u202F' {
+		return false
+	}
+	return unicode.Is(unicode.Zs, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r)
+}
+
 // IsWhitespace ports StringTools.isWhitespace.
 func IsWhitespace(str string) bool {
 	if str == "\u0002" || str == "\u0001" {
@@ -264,11 +283,12 @@ func IsWhitespace(str string) bool {
 		return true
 	}
 	if len([]rune(trimStr)) == 1 {
+		// Java special-cases full str (not only trimStr) for these
 		if str == "\u200B" || str == "\u00A0" || str == "\u202F" {
 			return true
 		}
 		r := []rune(trimStr)[0]
-		return unicode.IsSpace(r)
+		return CharacterIsWhitespace(r)
 	}
 	return false
 }

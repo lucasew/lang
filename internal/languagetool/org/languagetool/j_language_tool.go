@@ -11,6 +11,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // Constants and enums from org.languagetool.JLanguageTool.
@@ -155,7 +156,7 @@ func stripLeadingJava(s string) string {
 		if size <= 0 {
 			break
 		}
-		if !javaIsWhitespace(r) {
+		if !tools.CharacterIsWhitespace(r) {
 			break
 		}
 		i += size
@@ -185,18 +186,6 @@ func javaTrim(s string) string {
 		end = i
 	}
 	return s[start:end]
-}
-
-// javaIsWhitespace approximates Character.isWhitespace for stripLeading.
-func javaIsWhitespace(r rune) bool {
-	switch r {
-	case ' ', '\t', '\n', '\r', '\f', 0x0B:
-		return true
-	}
-	if r == 0x1C || r == 0x1D || r == 0x1E || r == 0x1F {
-		return true
-	}
-	return unicode.Is(unicode.Zs, r) || r == '\u2028' || r == '\u2029'
 }
 
 // LocalMatch is a cycle-free rule-match surface for JLanguageTool.Check

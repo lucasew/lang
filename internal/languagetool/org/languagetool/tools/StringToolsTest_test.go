@@ -127,6 +127,22 @@ func TestStringTools_IsWhitespace(t *testing.T) {
 	require.Equal(t, true, IsWhitespace("\u202F"))
 }
 
+// Twin of java.lang.Character.isWhitespace (used by String.stripLeading).
+func TestCharacterIsWhitespace(t *testing.T) {
+	require.True(t, CharacterIsWhitespace(' '))
+	require.True(t, CharacterIsWhitespace('\t'))
+	require.True(t, CharacterIsWhitespace('\n'))
+	require.True(t, CharacterIsWhitespace('\u2002')) // EN SPACE (Zs)
+	require.True(t, CharacterIsWhitespace('\u2028')) // LINE SEPARATOR
+	// Non-breaking Zs are NOT Character.isWhitespace (StringTools.isWhitespace special-cases them)
+	require.False(t, CharacterIsWhitespace('\u00A0'))
+	require.False(t, CharacterIsWhitespace('\u2007'))
+	require.False(t, CharacterIsWhitespace('\u202F'))
+	require.False(t, CharacterIsWhitespace('a'))
+	require.False(t, CharacterIsWhitespace('\u0001'))
+	require.False(t, CharacterIsWhitespace('\uFEFF'))
+}
+
 func TestStringTools_IsPositiveNumber(t *testing.T) {
 	// Twin of StringToolsTest.testIsPositiveNumber + Java body ch >= '1' && ch <= '9'
 	require.Equal(t, true, IsPositiveNumber('3'))
