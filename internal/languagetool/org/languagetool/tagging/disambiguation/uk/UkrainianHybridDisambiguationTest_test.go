@@ -3,6 +3,7 @@ package uk
 // Twin of languagetool-language-modules/uk/src/test/java/org/languagetool/tagging/disambiguation/uk/UkrainianHybridDisambiguationTest.java
 import (
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -258,21 +259,52 @@ func TestUkrainianHybridDisambiguation_DisambiguatorRemovePresentInDictionary(t 
 
 // Port of UkrainianHybridDisambiguationTest.testChunker
 func TestUkrainianHybridDisambiguation_Chunker(t *testing.T) {
-	// inject multiword chunker lines
-	ch := NewUkrainianMultiwordChunker([]string{"Київ\tB-geo"})
+	// Java: "Для  годиться." → both content tokens gain <adv> from multiwords "для годиться\tadv"
+	ch := NewDefaultUkrainianMultiwordChunker()
 	require.NotNil(t, ch)
-	start := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
-		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), nil),
-	}, 0)
-	p, l := "noun:inanim:m:v_naz:prop:geo", "Київ"
-	tok := languagetool.NewAnalyzedTokenReadingsList([]*languagetool.AnalyzedToken{
-		languagetool.NewAnalyzedToken("Київ", &p, &l),
-	}, 0)
-	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tok})
+	startPos := languagetool.SentenceStartTagName
+	start := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("", &startPos, nil))
+	// prep/noun placeholders (dict not required for chunker match)
+	posA, lemA := "prep", "для"
+	posB, lemB := "verb:imperf:pres:s:3", "годитися"
+	tokA := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("Для", &posA, &lemA))
+	ws := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("  ", nil, nil))
+	tokB := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("годиться", &posB, &lemB))
+	sent := languagetool.NewAnalyzedSentence([]*languagetool.AnalyzedTokenReadings{start, tokA, ws, tokB})
 	out := ch.Disambiguate(sent)
 	require.NotNil(t, out)
-	// hybrid still runs with default chunker
+	tokens := out.GetTokens()
+	// tokens[1]=Для, tokens[3]=годиться (with whitespace at 2)
+	require.True(t, readingsContain(tokens[1], "<adv>"), "Для readings: %v", readingsStr(tokens[1]))
+	require.True(t, readingsContain(tokens[3], "<adv>"), "годиться readings: %v", readingsStr(tokens[3]))
+	// hybrid default still constructs
 	require.NotNil(t, NewUkrainianHybridDisambiguator().Disambiguate(sent))
+}
+
+func readingsContain(atr *languagetool.AnalyzedTokenReadings, sub string) bool {
+	if atr == nil {
+		return false
+	}
+	for _, r := range atr.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), sub) {
+			return true
+		}
+	}
+	return false
+}
+
+func readingsStr(atr *languagetool.AnalyzedTokenReadings) string {
+	if atr == nil {
+		return ""
+	}
+	var b strings.Builder
+	for _, r := range atr.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil {
+			b.WriteString(*r.GetPOSTag())
+			b.WriteByte(' ')
+		}
+	}
+	return b.String()
 }
 
 // Port of UkrainianHybridDisambiguationTest.testIgnoredCharacters

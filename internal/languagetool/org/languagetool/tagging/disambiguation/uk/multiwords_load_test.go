@@ -43,13 +43,39 @@ func TestNormalizeUkrainianMultiwordLine(t *testing.T) {
 func TestDefaultChunker_DisambiguatePhrase(t *testing.T) {
 	c := NewDefaultUkrainianMultiwordChunker()
 	require.NotNil(t, c)
-	// "на жаль" should chunk
+	// "на жаль" → <insert> on both tokens (Java MultiWordChunker2 wrap)
 	sent := atrSent2("на", "жаль")
 	out := c.Disambiguate(sent)
 	require.NotNil(t, out)
-	// chunker typically adds multiword readings / markers — at least does not panic
-	// and tokens remain
-	require.GreaterOrEqual(t, len(out.GetTokensWithoutWhitespace()), 2)
+	toks := out.GetTokensWithoutWhitespace()
+	require.GreaterOrEqual(t, len(toks), 3) // SENT_START + 2
+	require.True(t, hasPOSSub(toks[1], "<insert>"), readingsDump(toks[1]))
+	require.True(t, hasPOSSub(toks[2], "<insert>"), readingsDump(toks[2]))
+}
+
+func hasPOSSub(atr *languagetool.AnalyzedTokenReadings, sub string) bool {
+	if atr == nil {
+		return false
+	}
+	for _, r := range atr.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil && strings.Contains(*r.GetPOSTag(), sub) {
+			return true
+		}
+	}
+	return false
+}
+
+func readingsDump(atr *languagetool.AnalyzedTokenReadings) string {
+	if atr == nil {
+		return ""
+	}
+	var b []string
+	for _, r := range atr.GetReadings() {
+		if r != nil && r.GetPOSTag() != nil {
+			b = append(b, *r.GetPOSTag())
+		}
+	}
+	return strings.Join(b, ",")
 }
 
 func TestNewUkrainianHybrid_LoadsMultiwords(t *testing.T) {
