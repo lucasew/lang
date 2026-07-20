@@ -8,6 +8,7 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/patterns"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
 // DisambiguatorAction ports DisambiguationPatternRule.DisambiguatorAction.
@@ -38,7 +39,8 @@ type DisambiguationPatternRule struct {
 	// AntiPatterns ports Java DisambiguationPatternRule anti-patterns
 	// (keepByDisambig overlap suppression).
 	AntiPatterns []*patterns.AbstractTokenBasedRule
-	// UnifyFeatures are Java <unify><feature id="…"/> names (soft UNIFY).
+	// UnifyFeatures are disambig action="unify" features= attr (legacy path when
+	// pattern tokens lack UniFeatures; primary UNIFY uses match-time unifiedTokens).
 	UnifyFeatures []string
 	// UnifierConfig is the language-level equivalence table (shared).
 	UnifierConfig *patterns.UnifierConfiguration
@@ -105,6 +107,15 @@ func (r *DisambiguationPatternRule) GetTokenHints() []patterns.TokenHint {
 		return nil
 	}
 	return r.AbstractTokenBasedRule.GetTokenHints()
+}
+
+// synthesizer ports rule.getLanguage().getSynthesizer() for MatchState in FILTER/REPLACE.
+// Uses LanguageSynthesizer registry (wired by language modules); nil when unregistered.
+func (r *DisambiguationPatternRule) synthesizer() synthesis.Synthesizer {
+	if r == nil || r.PatternRule == nil {
+		return nil
+	}
+	return patterns.LanguageSynthesizer(r.LanguageCode)
 }
 
 // Replace applies the disambiguation pattern to the sentence.
@@ -400,7 +411,7 @@ func (r *DisambiguationPatternRule) applyFilterAll(
 				continue
 			}
 			tmpMatch := patterns.NewMatch(pt.Pos.PosTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
-			ms := tmpMatch.CreateStateWithSynth(nil, nws[pos])
+			ms := tmpMatch.CreateStateWithSynth(r.synthesizer(), nws[pos])
 			if filtered := ms.FilterReadings(); filtered != nil {
 				// Java: whTokens[position] = new AnalyzedTokenReadings(old, filtered, id)
 				setNWS(nws, fullIdx, whTokens, pos, languagetool.NewAnalyzedTokenReadingsFromOld(nws[pos], filtered.GetReadings(), r.ID))
@@ -433,7 +444,7 @@ func (r *DisambiguationPatternRule) applyFilterAll(
 		}
 		// Java: new Match(pToken.getPOStag(), null, true, pToken.getPOStag(), null, …)
 		tmpMatch := patterns.NewMatch(pToken.Pos.PosTag, "", true, "", "", patterns.CaseNone, false, false, patterns.IncludeNone)
-		ms := tmpMatch.CreateStateWithSynth(nil, nws[position])
+		ms := tmpMatch.CreateStateWithSynth(r.synthesizer(), nws[position])
 		if filtered := ms.FilterReadings(); filtered != nil {
 			setNWS(nws, fullIdx, whTokens, position, languagetool.NewAnalyzedTokenReadingsFromOld(nws[position], filtered.GetReadings(), r.ID))
 		}
@@ -571,7 +582,7 @@ func (r *DisambiguationPatternRule) applyAction(
 		if r.MatchElement != nil {
 			// Java: matchElement.createState(synth, whTokens[fromPos]).filterReadings()
 			// then whTokens[fromPos] = new AnalyzedTokenReadings(old, filtered, id)
-			ms := r.MatchElement.CreateStateWithSynth(nil, nws[first])
+			ms := r.MatchElement.CreateStateWithSynth(r.synthesizer(), nws[first])
 			filtered := ms.FilterReadings()
 			if filtered != nil {
 				setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], filtered.GetReadings(), r.ID))
@@ -605,7 +616,7 @@ func (r *DisambiguationPatternRule) applyAction(
 			if first < 0 || first >= len(nws) || nws[first] == nil {
 				return
 			}
-			ms := r.MatchElement.CreateStateWithSynth(nil, nws[first])
+			ms := r.MatchElement.CreateStateWithSynth(r.synthesizer(), nws[first])
 			filtered := ms.FilterReadings()
 			if filtered != nil {
 				setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], filtered.GetReadings(), r.ID))
@@ -635,7 +646,7 @@ func (r *DisambiguationPatternRule) applyAction(
 		if !newPOSmatches {
 			return
 		}
-		ms := tmpMatch.CreateStateWithSynth(nil, nws[first])
+		ms := tmpMatch.CreateStateWithSynth(r.synthesizer(), nws[first])
 		filtered := ms.FilterReadings()
 		if filtered != nil {
 			setNWS(nws, fullIdx, whTokens, first, languagetool.NewAnalyzedTokenReadingsFromOld(nws[first], filtered.GetReadings(), r.ID))
