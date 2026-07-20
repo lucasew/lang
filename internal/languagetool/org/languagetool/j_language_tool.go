@@ -251,10 +251,13 @@ type LocalMatch struct {
 	HasTypographicApostropheInSentence bool
 	// Line/EndLine/Column/EndColumn port RuleMatch line/column after adjustRuleMatchPos
 	// (zero-based; default -1 when unset).
-	Line, EndLine       int
-	Column, EndColumn   int
+	Line, EndLine     int
+	Column, EndColumn int
 	// PatternFromPos/PatternToPos port RuleMatch patternPosition (document-relative after adjust).
 	PatternFromPos, PatternToPos int
+	// NewLanguageMatches ports RuleMatch.newLanguageMatches (lang code → confidence).
+	// When non-empty, TextCheckCallable adds ignore Ranges + updates ExtendedSentenceRange rates.
+	NewLanguageMatches map[string]float32
 }
 
 // SentenceChecker returns matches for one analyzed sentence (offsets relative to sentence text).
@@ -820,9 +823,10 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 	// ONLYNONPARA → getTextLevelRuleMatches skips text-level rules.
 	runSentence := lt.Mode != ModeTextLevelOnly && lt.paraModeOrNormal() != ParagraphOnlyPara
 	runTextLevel := lt.Mode != ModeAllButTextLevel && lt.paraModeOrNormal() != ParagraphOnlyNonPara
+	// Shared SentenceData for sentence remap + text-level line/column (TextCheckCallable).
+	data := sentenceDataFromAnalyzed(sents)
 
 	if runSentence {
-		data := sentenceDataFromAnalyzed(sents)
 		for _, sd := range data {
 			if lt.Cancelled != nil && lt.Cancelled() {
 				break
@@ -854,7 +858,10 @@ func (lt *JLanguageTool) Check(text string) []LocalMatch {
 				if tc.id != "" && lt.isRuleDisabled(tc.id) {
 					continue
 				}
-				out = append(out, tc.fn(sents)...)
+				for _, m := range tc.fn(sents) {
+					// getTextLevelRuleMatches: findLineColumn + optional annotated mapping
+					out = append(out, AdaptTextLevelLocalMatch(m, data, nil))
+				}
 			}
 		}
 	}

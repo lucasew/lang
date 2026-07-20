@@ -246,8 +246,8 @@ func ProjectMatchesToOriginal(at *markup.AnnotatedText, matches []LocalMatch) []
 
 // CheckWithResults ports TextCheckCallable.call() surface for plain text:
 // runs Check (mode-filtered matches), builds ExtendedSentenceRanges via
-// computeSentenceData + whitespace-fix ranges, and applies maxErrorsPerWordRate.
-// IgnoredRanges stay empty until language-detection matches are wired.
+// computeSentenceData + whitespace-fix ranges, applies maxErrorsPerWordRate,
+// and collects ignore Ranges from LocalMatch.NewLanguageMatches.
 func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
 	if lt == nil {
 		return NewCheckResults(nil, nil), nil
@@ -256,14 +256,7 @@ func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
 
 	// Sentence texts + analysis for ExtendedSentenceRange (TextCheckCallable path).
 	sents := lt.Analyze(text)
-	texts := make([]string, len(sents))
-	for i, s := range sents {
-		if s != nil {
-			texts[i] = s.GetText()
-		}
-	}
-	// Default SRX uses singleLineBreaksMarksPara=false.
-	data := ComputeSentenceData(sents, texts, false)
+	data := sentenceDataFromAnalyzed(sents)
 	lang := lt.LanguageCode
 	if lang == "" {
 		lang = "?"
@@ -279,6 +272,25 @@ func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
 		ext = append(ext, BuildExtendedSentenceRange(sd, short))
 		wordCounter += sd.WordCount
 	}
+	// getOtherRuleMatches: NewLanguageMatches → ignore range + confidence update
+	var ignore []Range
+	for _, m := range matches {
+		if len(m.NewLanguageMatches) == 0 || len(data) == 0 {
+			continue
+		}
+		sd := findSentenceContaining(data, m.FromPos)
+		from := sd.StartOffset
+		to := sd.StartOffset + utf16Len(sd.Text)
+		// Match ExtendedSentenceRange for this sentence (by start offset when possible).
+		var extPtr *ExtendedSentenceRange
+		for i := range ext {
+			if ext[i].FromPos == from || (ext[i].FromPos <= m.FromPos && m.FromPos < ext[i].ToPos) {
+				extPtr = &ext[i]
+				break
+			}
+		}
+		ignore = ApplyNewLanguageMatchesToSentence(ignore, extPtr, from, to, m.NewLanguageMatches)
+	}
 	name := lt.LanguageName
 	if name == "" {
 		name = lang
@@ -290,7 +302,7 @@ func (lt *JLanguageTool) CheckWithResults(text string) (*CheckResults, error) {
 	for i := range matches {
 		anyMatches[i] = matches[i]
 	}
-	return NewCheckResultsFull(anyMatches, nil, ext), nil
+	return NewCheckResultsFull(anyMatches, ignore, ext), nil
 }
 
 // LocalMatchesFromCheckResults unpacks LocalMatch values from CheckResults.RuleMatches.

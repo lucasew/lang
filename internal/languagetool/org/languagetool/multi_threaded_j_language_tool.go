@@ -310,11 +310,15 @@ func (lt *MultiThreadedJLanguageTool) Check(text string) []LocalMatch {
 
 	if runTextLevel && len(lt.textLevelCheckers) > 0 {
 		if lt.Cancelled == nil || !lt.Cancelled() {
+			// Reuse sentence data for text-level line/column (same as single-thread Check).
+			tlData := sentenceDataFromAnalyzed(sents)
 			for _, tc := range lt.textLevelCheckers {
 				if tc.id != "" && lt.isRuleDisabled(tc.id) {
 					continue
 				}
-				out = append(out, tc.fn(sents)...)
+				for _, m := range tc.fn(sents) {
+					out = append(out, AdaptTextLevelLocalMatch(m, tlData, nil))
+				}
 			}
 		}
 	}
