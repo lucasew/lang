@@ -47,3 +47,9 @@ func GetStreamWithHash(path, requiredHash string) (io.ReadCloser, error) {
 	}
 	return io.NopCloser(bytes.NewReader(data)), nil
 }
+
+// UseDataBroker wires AsStream to a ResourceDataBroker.GetAsStream-compatible opener.
+// Ports the Tools.getStream → JLanguageTool.getDataBroker().getAsStream path.
+func UseDataBroker(getAsStream func(path string) (io.ReadCloser, error)) {
+	AsStream = getAsStream
+}

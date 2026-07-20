@@ -58,3 +58,21 @@ func TestIsExternSpeller(t *testing.T) {
 	require.NotNil(t, GetLinguisticServices())
 	SetLinguisticServices(nil)
 }
+
+func TestGetURL(t *testing.T) {
+	require.Equal(t, "https://example.com/path", GetURL("https://example.com/path"))
+	require.Panics(t, func() { GetURL("not-a-url") })
+	require.Panics(t, func() { GetURL("://bad") })
+}
+
+func TestUseDataBroker(t *testing.T) {
+	prev := AsStream
+	t.Cleanup(func() { AsStream = prev })
+	UseDataBroker(func(path string) (io.ReadCloser, error) {
+		return io.NopCloser(strings.NewReader("via-broker")), nil
+	})
+	rc, err := GetStream("any")
+	require.NoError(t, err)
+	b, _ := io.ReadAll(rc)
+	require.Equal(t, "via-broker", string(b))
+}

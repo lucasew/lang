@@ -3,6 +3,7 @@ package en
 import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
 // UnitConversionRule ports org.languagetool.rules.en.UnitConversionRule
@@ -61,7 +62,7 @@ func NewUnitConversionRuleUS(messages map[string]string) *UnitConversionRule {
 	registerENGeneralUnits(r.AbstractUnitConversionRule)
 	registerENUSUnits(r.AbstractUnitConversionRule)
 	// Java UnitConversionRuleUS.setUrl(Tools.getUrl(...imperial-metric-system...))
-	r.URL = "https://languagetool.org/insights/post/imperial-metric-system/"
+	r.URL = tools.GetURL("https://languagetool.org/insights/post/imperial-metric-system/")
 	return r
 }
 
