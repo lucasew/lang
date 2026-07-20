@@ -59,10 +59,7 @@ func loadDashPrefixes() map[string]string {
 			}
 			m[strings.ToLower(key)] = tag
 		}
-		// ensure special-case тайм for "тайм аут"
-		if _, ok := m["тайм"]; !ok {
-			m["тайм"] = ""
-		}
+		// Java: only prefixes from dash_prefixes.txt after filters (no invent "тайм")
 		dashPrefixes = m
 	})
 	return dashPrefixes
@@ -133,15 +130,13 @@ func (r *MissingHyphenRule) Match(sentence *languagetool.AnalyzedSentence) []*ru
 		isCap := IsCapitalized(curClean)
 
 		extraTag, ok := getPrefixExtraTag(prefixes, tokenReadings, isCap)
-		// special: тайм + lemma аут
-		if !ok && strings.EqualFold(curClean, "тайм") && nextTokenReadings.HasLemma("аут") {
-			ok = true
-			extraTag = ""
-		}
-		// without lemma, surface аут still allowed for tests when token is аут (Java has lemma)
-		if !ok && strings.EqualFold(curClean, "тайм") && strings.EqualFold(nextClean, "аут") {
-			ok = true
-			extraTag = ""
+		// Java: тайм + first-reading lemma "аут" (not from dash_prefixes map)
+		if !ok && strings.EqualFold(curClean, "тайм") {
+			if rds := nextTokenReadings.GetReadings(); len(rds) > 0 && rds[0] != nil &&
+				rds[0].GetLemma() != nil && *rds[0].GetLemma() == "аут" {
+				ok = true
+				extraTag = ""
+			}
 		}
 		if !ok {
 			continue
