@@ -354,6 +354,9 @@ type JLanguageTool struct {
 	// IgnoredCharacters ports Language.getIgnoredCharactersRegex (applied per word token
 	// after tokenize, Java replaceSoftHyphens). Nil = no strip. German uses [\u00AD].
 	IgnoredCharacters *regexp.Regexp
+	// Cache ports JLanguageTool ResultCache for getAnalyzedSentence (SimpleInputSentence keys).
+	// Nil = caching disabled (Java null cache).
+	Cache *ResultCache
 	// MaxErrorsPerWordRate ports JLanguageTool.maxErrorsPerWordRate (0 = disabled).
 	// TextCheckCallable throws ErrorRateTooHighException when exceeded after >25 words.
 	MaxErrorsPerWordRate float64
@@ -537,12 +540,19 @@ func AdaptSuggestionForLanguage(langCode string) func(replacement, originalError
 }
 
 func NewJLanguageTool(languageCode string) *JLanguageTool {
+	return NewJLanguageToolWithCache(languageCode, nil)
+}
+
+// NewJLanguageToolWithCache ports JLanguageTool(Language, ResultCache) constructors.
+// cache may be nil to disable sentence analysis caching (Java null cache).
+func NewJLanguageToolWithCache(languageCode string, cache *ResultCache) *JLanguageTool {
 	lt := &JLanguageTool{
 		LanguageCode:    languageCode,
 		Mode:            ModeAll,
 		Level:           LevelDefault,
 		DisabledRuleIDs: map[string]struct{}{},
 		EnabledRules:    map[string]struct{}{},
+		Cache:           cache,
 	}
 	// Java activateDefaultPatternRules: apply variant default on/off lists.
 	lt.applyVariantDefaultRules()
@@ -929,7 +939,18 @@ func (lt *JLanguageTool) GetRawAnalyzedSentence(sentence string) *AnalyzedSenten
 // GetAnalyzedSentence ports JLanguageTool.getAnalyzedSentence:
 // getRawAnalyzedSentence + disambiguator + preDisambig tokens + post chunker.
 // Does not SRX-split the string (callers that need multi-sentence use Analyze).
+// When Cache is set, uses SimpleInputSentence(text, language) like Java ResultCache.
 func (lt *JLanguageTool) GetAnalyzedSentence(sentence string) *AnalyzedSentence {
+	lang := ""
+	if lt != nil {
+		lang = lt.LanguageCode
+	}
+	if lt != nil && lt.Cache != nil && lang != "" {
+		key := NewSimpleInputSentence(sentence, lang)
+		if cached, ok := lt.Cache.GetSentenceIfPresent(key); ok && cached != nil {
+			return cached
+		}
+	}
 	raw := lt.GetRawAnalyzedSentence(sentence)
 	if raw == nil {
 		return nil
@@ -949,6 +970,9 @@ func (lt *JLanguageTool) GetAnalyzedSentence(sentence string) *AnalyzedSentence 
 	// Java getAnalyzedSentence: optional post-disambiguation chunker.
 	if s != nil && lt != nil && lt.PostDisambiguationChunker != nil {
 		lt.PostDisambiguationChunker.AddChunkTags(s.GetTokens())
+	}
+	if s != nil && lt != nil && lt.Cache != nil && lang != "" {
+		lt.Cache.PutSentence(NewSimpleInputSentence(sentence, lang), s)
 	}
 	return s
 }

@@ -49,3 +49,24 @@ type panickingDisambiguator struct{}
 func (panickingDisambiguator) Disambiguate(s *AnalyzedSentence) *AnalyzedSentence {
 	panic("disambiguator must not run on GetRawAnalyzedSentence")
 }
+
+// Twin of JLanguageTool.getAnalyzedSentence ResultCache path (ToolsTest cache != null).
+func TestGetAnalyzedSentence_ResultCache(t *testing.T) {
+	cache := NewResultCache(100)
+	lt := NewJLanguageToolWithCache("en", cache)
+	// First call: miss + put
+	a1 := lt.GetAnalyzedSentence("Hello world.")
+	require.NotNil(t, a1)
+	// Second call: hit same pointer path via cache
+	a2 := lt.GetAnalyzedSentence("Hello world.")
+	require.NotNil(t, a2)
+	require.Equal(t, a1.GetText(), a2.GetText())
+	require.GreaterOrEqual(t, cache.HitCount(), int64(1))
+	// Different text misses
+	a3 := lt.GetAnalyzedSentence("Other text.")
+	require.NotNil(t, a3)
+	require.NotEqual(t, a1.GetText(), a3.GetText())
+	// Nil cache still works
+	lt2 := NewJLanguageTool("en")
+	require.NotNil(t, lt2.GetAnalyzedSentence("x"))
+}
