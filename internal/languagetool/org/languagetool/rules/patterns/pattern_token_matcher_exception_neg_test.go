@@ -148,3 +148,37 @@ func TestIsMatched_NegationAndPosNegationXOR(t *testing.T) {
 	// "two"/CD: (false^true)=true && (true^true)=false → false
 	require.False(t, m.IsMatched(languagetool.NewAnalyzedToken("two", &cd, nil)))
 }
+
+// Twin of AbstractPatternRulePerformer and-group chunk: always exact contains, never regexp.
+func TestAndGroup_ChunkExactOnly(t *testing.T) {
+	// Base matches anything; and-group requires exact chunk "B-NP" even if regexp flag set on and member.
+	base := Token("the")
+	andMem := Token("")
+	andMem.ChunkTag = "B-NP"
+	andMem.ChunkTagRegexp = true // Java ignores isRegexp for and-group chunk
+	base.AndGroup = []*PatternToken{andMem}
+
+	atr := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("the", nil, nil), 0)
+	atr.SetChunkTags([]string{"B-NP-singular"}) // would match regexp B-NP.* but not exact B-NP
+
+	m := NewPatternTokenMatcher(base)
+	require.False(t, m.IsMatchedReadings(atr), "and-group chunk is exact only — B-NP-singular ≠ B-NP")
+
+	atr.SetChunkTags([]string{"B-NP"})
+	require.True(t, m.IsMatchedReadings(atr))
+}
+
+// Twin of own-token chunk_re full match.
+func TestChunkTag_RegexpFullMatch(t *testing.T) {
+	pt := Token("dogs")
+	pt.ChunkTag = "NP"
+	pt.ChunkTagRegexp = true
+	atr := languagetool.NewAnalyzedTokenReadingsAt(languagetool.NewAnalyzedToken("dogs", nil, nil), 0)
+	atr.SetChunkTags([]string{"B-NP-singular"})
+	m := NewPatternTokenMatcher(pt)
+	// "NP" as full match does not match "B-NP-singular"
+	require.False(t, m.IsMatchedReadings(atr))
+	pt.ChunkTag = ".*NP.*"
+	m2 := NewPatternTokenMatcher(pt)
+	require.True(t, m2.IsMatchedReadings(atr))
+}

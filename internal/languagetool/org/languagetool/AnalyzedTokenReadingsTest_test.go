@@ -159,3 +159,16 @@ func TestAnalyzedTokenReadings_Equals(t *testing.T) {
 	a.IgnoreSpelling()
 	require.False(t, a.Equals(b))
 }
+
+// Twin of AbstractPatternRulePerformer chunk_re: String.matches is full-string only.
+func TestMatchesChunkRegex_FullStringLikeJava(t *testing.T) {
+	r := NewAnalyzedTokenReadingsAt(NewAnalyzedToken("dogs", nil, nil), 0)
+	r.SetChunkTags([]string{"B-NP-singular", "E-NP-singular"})
+	// Unanchored "NP" must NOT match "B-NP-singular" (Java String.matches)
+	require.False(t, r.MatchesChunkRegex("NP"))
+	// Full pattern matches
+	require.True(t, r.MatchesChunkRegex("B-NP-singular"))
+	require.True(t, r.MatchesChunkRegex("B-NP.*"))
+	require.True(t, r.MatchesChunkRegex(".*NP.*"))
+	require.False(t, r.MatchesChunkRegex("B-VP"))
+}

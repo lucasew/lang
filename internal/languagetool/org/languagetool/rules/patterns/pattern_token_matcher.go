@@ -646,17 +646,19 @@ func (m *PatternTokenMatcher) IsMatchedReadings(atr *languagetool.AnalyzedTokenR
 		}
 	}
 
-	// Java: anyMatched &= chunkMatch ^ getNegation()
+	// Java AbstractPatternRulePerformer: anyMatched &= chunkMatch ^ getNegation()
+	// Own chunk: isRegexp → String.matches (full); else List.contains (exact ChunkTag equals).
 	if pt.ChunkTag != "" {
 		chunkOK := chunkTagMatches(atr, pt.ChunkTag, pt.ChunkTagRegexp)
 		anyMatched = anyMatched && (chunkOK != pt.Negation)
 	}
-	// Java: and-group chunk tags with XOR negation
+	// Java and-group: only contains(e.getChunkTag()) — exact equality, never regexp branch
+	// (bug-for-bug: isRegexp on and members is ignored).
 	for _, andTok := range pt.AndGroup {
 		if andTok == nil || andTok.ChunkTag == "" {
 			continue
 		}
-		chunkOK := chunkTagMatches(atr, andTok.ChunkTag, andTok.ChunkTagRegexp)
+		chunkOK := chunkTagMatches(atr, andTok.ChunkTag, false)
 		anyMatched = anyMatched && (chunkOK != andTok.Negation)
 	}
 	return anyMatched

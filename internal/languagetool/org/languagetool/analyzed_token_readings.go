@@ -791,12 +791,15 @@ func (r *AnalyzedTokenReadings) GetChunkTags() []string {
 	return r.chunkTags
 }
 
-// MatchesChunkRegex reports whether any chunk tag matches the regex.
+// MatchesChunkRegex ports AbstractPatternRulePerformer chunk_re path:
+// Java String.matches(chunkTag.getChunkTag()) — full-string match, not find().
+// Unanchored MatchString would invent hits for substring patterns (e.g. "NP" vs "B-NP").
 func (r *AnalyzedTokenReadings) MatchesChunkRegex(chunkRegex string) bool {
 	if r == nil || chunkRegex == "" {
 		return false
 	}
-	re, err := regexp.Compile(chunkRegex)
+	// Anchor like Java String.matches (entire input must match).
+	re, err := regexp.Compile("^(?:" + chunkRegex + ")$")
 	if err != nil {
 		return false
 	}
