@@ -216,3 +216,33 @@ func TestDiscoverLanguageMultiwords_UK(t *testing.T) {
 		"path=%s", p)
 	require.NotContains(t, p, "soft")
 }
+
+// Java king: Discover* must prefer inspiration LT modules over incomplete testdata extracts.
+// Regression: testdata-first caused PT disambiguation.xml without entities → empty NUMBER
+// regexps matching every token (including SENT_START).
+func TestDiscoverPrefersInspirationOverTestdata(t *testing.T) {
+	cases := []struct {
+		name string
+		path string
+	}{
+		{"en multiwords", DiscoverEnglishMultiwords(nil)},
+		{"pt multiwords", DiscoverLanguageMultiwords(nil, "pt")},
+		{"en disambiguation", DiscoverLanguageDisambiguationXML(nil, "en")},
+		{"pt disambiguation", DiscoverLanguageDisambiguationXML(nil, "pt")},
+		{"en grammar", DiscoverLanguageGrammarXML(nil, "en")},
+		{"false-friends", DiscoverFalseFriendsFile(nil)},
+		{"spelling_global", DiscoverSpellingGlobal(nil)},
+		{"disambiguation-global", DiscoverGlobalDisambiguationXML(nil)},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.path == "" {
+				t.Skip("resource not present in workspace")
+			}
+			require.Contains(t, tc.path, "inspiration",
+				"want Java inspiration path, got %s", tc.path)
+			require.NotContains(t, tc.path, "testdata"+string('/'),
+				"must not prefer testdata extract over inspiration")
+		})
+	}
+}

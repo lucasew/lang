@@ -47,10 +47,11 @@ func DiscoverFalseFriendsFile(opts *CommandLineOptions) string {
 			return p
 		}
 	}
+	// Prefer Java classpath resource over testdata extracts (may drop DTD / lag upstream).
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", "false-friends-nodtd.xml"),
-		filepath.Join("testdata", "upstream", "false-friends.xml"),
 		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources", "org", "languagetool", "rules", "false-friends.xml"),
+		filepath.Join("testdata", "upstream", "false-friends.xml"),
+		filepath.Join("testdata", "upstream", "false-friends-nodtd.xml"),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
@@ -113,11 +114,12 @@ func DiscoverEnglishMultiwords(opts *CommandLineOptions) string {
 			}
 		}
 	}
+	// Prefer inspiration (Java module multiwords.txt) over testdata extracts.
 	relPaths := []string{
-		filepath.Join("testdata", "upstream", "en", "resource", "multiwords.txt"),
-		filepath.Join("testdata", "disambiguation", "en-multiwords-upstream.txt"),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en", "src", "main", "resources", "org", "languagetool", "resource", "en", "multiwords.txt"),
 		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "multiwords.txt"),
+		filepath.Join("testdata", "upstream", "en", "resource", "multiwords.txt"),
+		filepath.Join("testdata", "disambiguation", "en-multiwords-upstream.txt"),
 	}
 	for _, rel := range relPaths {
 		if p := WalkUpFind("", rel); p != "" {
@@ -401,11 +403,12 @@ func DiscoverLanguageMultiwords(opts *CommandLineOptions, lang string) string {
 			}
 		}
 	}
+	// Prefer inspiration Java multiwords.txt over incomplete testdata copies.
 	for _, rel := range []string{
-		filepath.Join("testdata", "disambiguation", base+"-multiwords-upstream.txt"),
-		filepath.Join("testdata", "upstream", base, "resource", "multiwords.txt"),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
 			"src", "main", "resources", "org", "languagetool", "resource", base, "multiwords.txt"),
+		filepath.Join("testdata", "upstream", base, "resource", "multiwords.txt"),
+		filepath.Join("testdata", "disambiguation", base+"-multiwords-upstream.txt"),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
@@ -470,10 +473,11 @@ func DiscoverEnglishL2GrammarXML(opts *CommandLineOptions, motherTongue string) 
 			}
 		}
 	}
+	// Prefer inspiration Java rules/{en}/ over testdata (SYSTEM .ent + full grammar).
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", "en", "rules", fileName),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en",
 			"src", "main", "resources", "org", "languagetool", "rules", "en", fileName),
+		filepath.Join("testdata", "upstream", "en", "rules", fileName),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
@@ -615,10 +619,11 @@ func discoverLanguageRuleXML(opts *CommandLineOptions, lang, fileName, envSuffix
 			}
 		}
 	}
+	// Prefer inspiration Java rules over testdata extracts (entities + currency).
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", base, "rules", fileName),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
 			"src", "main", "resources", "org", "languagetool", "rules", base, fileName),
+		filepath.Join("testdata", "upstream", base, "rules", fileName),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
@@ -645,9 +650,9 @@ func discoverLanguageVariantRuleXML(opts *CommandLineOptions, base, variant, fil
 		}
 	}
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", base, "rules", variant, fileName),
 		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", base,
 			"src", "main", "resources", "org", "languagetool", "rules", base, variant, fileName),
+		filepath.Join("testdata", "upstream", base, "rules", variant, fileName),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p

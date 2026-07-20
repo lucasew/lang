@@ -652,10 +652,11 @@ func DiscoverSpellingGlobal(opts *CommandLineOptions) string {
 			}
 		}
 	}
+	// Prefer Java core spelling_global.txt over testdata extract.
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", "spelling_global.txt"),
 		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
 			"org", "languagetool", "resource", "spelling_global.txt"),
+		filepath.Join("testdata", "upstream", "spelling_global.txt"),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
@@ -727,10 +728,11 @@ func DiscoverGlobalDisambiguationXML(opts *CommandLineOptions) string {
 			}
 		}
 	}
+	// Prefer Java core disambiguation-global.xml over testdata extract.
 	for _, rel := range []string{
-		filepath.Join("testdata", "upstream", "resource", "disambiguation-global.xml"),
 		filepath.Join("inspiration", "languagetool", "languagetool-core", "src", "main", "resources",
 			"org", "languagetool", "resource", "disambiguation-global.xml"),
+		filepath.Join("testdata", "upstream", "resource", "disambiguation-global.xml"),
 	} {
 		if p := WalkUpFind("", rel); p != "" {
 			return p
