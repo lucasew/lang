@@ -7,10 +7,9 @@ type Range struct {
 	Lang    string
 }
 
+// NewRange ports Range(int, int, String). Java only rejects null lang
+// (Objects.requireNonNull); empty string is allowed.
 func NewRange(fromPos, toPos int, lang string) Range {
-	if lang == "" {
-		panic("lang required")
-	}
 	return Range{FromPos: fromPos, ToPos: toPos, Lang: lang}
 }
 

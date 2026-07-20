@@ -13,12 +13,16 @@ type AnalyzedToken struct {
 // NewAnalyzedToken ports AnalyzedToken(String token, String posTag, String lemma).
 // Empty posTag with useNilPosTag/lemma: pass nil pointers via NewAnalyzedTokenPtr.
 func NewAnalyzedToken(token string, posTag, lemma *string) *AnalyzedToken {
-	if token == "" && token != "" {
-		panic("unreachable")
-	}
-	// Java: Objects.requireNonNull(token)
-	// empty string is allowed; null is not — Go string cannot be null
+	// Java: Objects.requireNonNull(token) — empty string is allowed; null is not
+	// (Go string cannot be null).
 	t := &AnalyzedToken{token: token}
+	// hasNoPOSTag uses the *original* posTag parameter (before trim), matching Java:
+	//   hasNoPOSTag = (posTag == null
+	//       || SENTENCE_END_TAGNAME.equals(posTag)
+	//       || PARAGRAPH_END_TAGNAME.equals(posTag));
+	// Note: equals is on the constant, so null-safe; whitespace-padded special tags
+	// do not count as "no tag" in Java even after this.posTag is trimmed.
+	rawPos := posTag
 	if posTag != nil {
 		// Java: posTag != null ? intern(posTag.trim()) : null
 		p := trimSpace(*posTag)
@@ -33,8 +37,8 @@ func NewAnalyzedToken(token string, posTag, lemma *string) *AnalyzedToken {
 	} else {
 		t.lemmaOrToken = *t.lemma
 	}
-	t.hasNoPOSTag = t.posTag == nil ||
-		(t.posTag != nil && (*t.posTag == SentenceEndTagName || *t.posTag == ParagraphEndTagName))
+	t.hasNoPOSTag = rawPos == nil ||
+		(rawPos != nil && (*rawPos == SentenceEndTagName || *rawPos == ParagraphEndTagName))
 	return t
 }
 

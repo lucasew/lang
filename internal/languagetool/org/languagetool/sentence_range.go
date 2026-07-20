@@ -23,6 +23,22 @@ func (r SentenceRange) GetFromPos() int { return r.FromPos }
 func (r SentenceRange) GetToPos() int   { return r.ToPos }
 func (r SentenceRange) String() string  { return fmt.Sprintf("%d-%d", r.FromPos, r.ToPos) }
 
+// Equal ports SentenceRange.equals (fromPos + toPos only).
+func (r SentenceRange) Equal(o SentenceRange) bool {
+	return r.FromPos == o.FromPos && r.ToPos == o.ToPos
+}
+
+// CompareTo ports SentenceRange.compareTo (order by fromPos).
+func (r SentenceRange) CompareTo(o SentenceRange) int {
+	if r.FromPos < o.FromPos {
+		return -1
+	}
+	if r.FromPos > o.FromPos {
+		return 1
+	}
+	return 0
+}
+
 var (
 	beginsWithSpace = regexp.MustCompile(`^\s*`)
 	endsWithSpace   = regexp.MustCompile(`\s+$`)

@@ -12,3 +12,8 @@ func NewStringPair(source, target string) StringPair {
 
 func (p StringPair) GetSource() string { return p.source }
 func (p StringPair) GetTarget() string { return p.target }
+
+// String ports StringPair.toString: source + " & " + target.
+func (p StringPair) String() string {
+	return p.source + " & " + p.target
+}

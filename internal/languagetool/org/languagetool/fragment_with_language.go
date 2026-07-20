@@ -6,10 +6,9 @@ type FragmentWithLanguage struct {
 	Fragment string
 }
 
+// NewFragmentWithLanguage ports FragmentWithLanguage(String, String).
+// Java only rejects null (Objects.requireNonNull); empty strings are allowed.
 func NewFragmentWithLanguage(langCode, fragment string) FragmentWithLanguage {
-	if langCode == "" || fragment == "" {
-		panic("langCode and fragment required")
-	}
 	return FragmentWithLanguage{LangCode: langCode, Fragment: fragment}
 }
 

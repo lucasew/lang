@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode/utf16"
 )
 
 // pairParser converts a line into a StringPair (nil line → nil pair).
@@ -53,9 +54,7 @@ func newTabBitextReader(filename string, parse pairParser) (*TabBitextReader, er
 }
 
 func defaultTabParse(line string) (*StringPair, error) {
-	if line == "" && line != "" {
-		return nil, nil
-	}
+	// Java tab2StringPair: null line → null; else split on tab
 	fields := strings.Split(line, "\t")
 	if len(fields) < 2 {
 		return nil, fmt.Errorf("Unexpected format, expected two tab-separated columns: %s", line)
@@ -69,11 +68,13 @@ func (r *TabBitextReader) HasNext() bool {
 }
 
 func (r *TabBitextReader) Next() (StringPair, bool, error) {
+	// Ports TabBitextReader.TabReader.next
 	if r.nextLine == nil || r.nextPair == nil {
 		return StringPair{}, false, nil
 	}
 	result := *r.nextPair
-	r.sentencePos = len([]rune(result.GetSource())) + 1
+	// Java String.length() is UTF-16 code units
+	r.sentencePos = utf16LenBitext(result.GetSource()) + 1
 	r.prevLine = *r.nextLine
 	if r.scanner.Scan() {
 		line := r.scanner.Text()
@@ -96,5 +97,12 @@ func (r *TabBitextReader) Next() (StringPair, bool, error) {
 	return result, true, nil
 }
 
-func (r *TabBitextReader) GetLineCount() int { return r.lineCount }
-func (r *TabBitextReader) GetCurrentLine() string { return r.prevLine }
+func (r *TabBitextReader) GetColumnCount() int       { return r.sentencePos }
+func (r *TabBitextReader) GetTargetColumnCount() int { return 1 }
+func (r *TabBitextReader) GetLineCount() int         { return r.lineCount }
+func (r *TabBitextReader) GetSentencePosition() int  { return r.sentencePos }
+func (r *TabBitextReader) GetCurrentLine() string    { return r.prevLine }
+
+func utf16LenBitext(s string) int {
+	return len(utf16.Encode([]rune(s)))
+}

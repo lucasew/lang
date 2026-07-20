@@ -11,6 +11,18 @@ import (
 
 // Port of org.languagetool.SentenceRangeTest.
 
+func TestSentenceRange_EqualsCompareToString(t *testing.T) {
+	a := NewSentenceRange(1, 5)
+	b := NewSentenceRange(1, 5)
+	c := NewSentenceRange(2, 5)
+	require.True(t, a.Equal(b))
+	require.False(t, a.Equal(c))
+	require.Equal(t, 0, a.CompareTo(b))
+	require.Equal(t, -1, a.CompareTo(c))
+	require.Equal(t, 1, c.CompareTo(a))
+	require.Equal(t, "1-5", a.String())
+}
+
 func TestSentenceRange_CorrectSentenceRange(t *testing.T) {
 	sentences := []string{
 		"Hallo,\n\n",

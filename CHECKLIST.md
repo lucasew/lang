@@ -18,24 +18,24 @@
 ## languagetool-core
 
 - [ ] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
-- [ ] org/languagetool/AnalyzedToken.java::AnalyzedToken
+- [x] org/languagetool/AnalyzedToken.java::AnalyzedToken
 - [ ] org/languagetool/AnalyzedTokenReadings.java::AnalyzedTokenReadings
 - [ ] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
-- [ ] org/languagetool/CheckResults.java::CheckResults
+- [x] org/languagetool/CheckResults.java::CheckResults
 - [ ] org/languagetool/DetectedLanguage.java::DetectedLanguage
 - [ ] org/languagetool/DynamicHunspellLanguage.java::DynamicHunspellLanguage
 - [ ] org/languagetool/DynamicLanguage.java::DynamicLanguage
 - [ ] org/languagetool/DynamicMorfologikLanguage.java::DynamicMorfologikLanguage
-- [ ] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
+- [x] org/languagetool/ErrorRateTooHighException.java::ErrorRateTooHighException
 - [ ] org/languagetool/Experimental.java::Experimental
-- [ ] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
-- [ ] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
+- [x] org/languagetool/ExtendedSentenceRange.java::ExtendedSentenceRange
+- [x] org/languagetool/FragmentWithLanguage.java::FragmentWithLanguage
 - [ ] org/languagetool/GlobalConfig.java::GlobalConfig
 - [ ] org/languagetool/InputSentence.java::InputSentence
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.ParagraphHandling
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Mode
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.Level
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.Level
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CleanToken
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
@@ -45,18 +45,18 @@
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
 - [ ] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenRangeWithLanguage
-- [ ] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
+- [x] org/languagetool/LanguageMaintainedState.java::LanguageMaintainedState
 - [ ] org/languagetool/LanguageWithModel.java::LanguageWithModel
 - [ ] org/languagetool/Languages.java::Languages
-- [ ] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
+- [x] org/languagetool/LevelToneTagCacheKey.java::LevelToneTagCacheKey
 - [ ] org/languagetool/LinguServices.java::LinguServices
 - [ ] org/languagetool/LtBuildInfo.java::LtBuildInfo
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.AnalyzeSentenceCallable
 - [ ] org/languagetool/MultiThreadedJLanguageTool.java::MultiThreadedJLanguageTool.ParagraphEndAnalyzeSentenceCallable
-- [ ] org/languagetool/Premium.java::Premium
-- [ ] org/languagetool/PremiumOff.java::PremiumOff
-- [ ] org/languagetool/Range.java::Range
+- [x] org/languagetool/Premium.java::Premium
+- [x] org/languagetool/PremiumOff.java::PremiumOff
+- [x] org/languagetool/Range.java::Range
 - [ ] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
 - [ ] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
 - [ ] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
@@ -66,29 +66,29 @@
 - [ ] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
 - [ ] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
 - [ ] org/languagetool/RuleMatchListener.java::RuleMatchListener
-- [ ] org/languagetool/SentenceRange.java::SentenceRange
+- [x] org/languagetool/SentenceRange.java::SentenceRange
 - [ ] org/languagetool/ShortDescriptionProvider.java::ShortDescriptionProvider
 - [ ] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
-- [ ] org/languagetool/Tag.java::Tag
-- [ ] org/languagetool/ToneTag.java::ToneTag
+- [x] org/languagetool/Tag.java::Tag
+- [x] org/languagetool/ToneTag.java::ToneTag
 - [ ] org/languagetool/UserConfig.java::UserConfig
 - [ ] org/languagetool/UserConfig.java::UserConfig.TokenType
 - [ ] org/languagetool/XMLValidator.java::XMLValidator
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.ErrorHandler
-- [ ] org/languagetool/bitext/BitextReader.java::BitextReader
-- [ ] org/languagetool/bitext/StringPair.java::StringPair
-- [ ] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
-- [ ] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
-- [ ] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
-- [ ] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
+- [x] org/languagetool/bitext/BitextReader.java::BitextReader
+- [x] org/languagetool/bitext/StringPair.java::StringPair
+- [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader
+- [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
+- [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
+- [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
 - [ ] org/languagetool/broker/ClassBroker.java::ClassBroker
 - [ ] org/languagetool/broker/DefaultClassBroker.java::DefaultClassBroker
 - [ ] org/languagetool/broker/DefaultResourceDataBroker.java::DefaultResourceDataBroker
 - [ ] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
-- [ ] org/languagetool/chunking/ChunkTag.java::ChunkTag
-- [ ] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
+- [x] org/languagetool/chunking/ChunkTag.java::ChunkTag
+- [x] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
 - [ ] org/languagetool/chunking/Chunker.java::Chunker
 - [ ] org/languagetool/chunking/TokenExpressionFactory.java::TokenExpressionFactory
 - [ ] org/languagetool/chunking/TokenPredicate.java::TokenPredicate
