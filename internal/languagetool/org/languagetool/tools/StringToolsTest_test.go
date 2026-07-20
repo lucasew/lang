@@ -286,6 +286,9 @@ func TestStringTools_ConvertToTitleCaseIteratingChars(t *testing.T) {
 	require.Equal(t, "France", ConvertToTitleCaseIteratingChars("france"))
 	require.Equal(t, "Saint-Étienne", ConvertToTitleCaseIteratingChars("saint-étienne"))
 	require.Equal(t, "A-B", ConvertToTitleCaseIteratingChars("a-b"))
+	// Java: for (char ch : text.toCharArray()) — UTF-16 units; surrogates not cased
+	require.Equal(t, "😀 Hello", ConvertToTitleCaseIteratingChars("😀 hello"))
+	require.Equal(t, "A-B C", ConvertToTitleCaseIteratingChars("a-b c"))
 }
 
 func TestStringTools_NormalizeNFC(t *testing.T) {

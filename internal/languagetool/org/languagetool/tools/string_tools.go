@@ -140,29 +140,39 @@ func LowercaseFirstChar(str string) string {
 }
 
 // ConvertToTitleCaseIteratingChars ports StringTools.convertToTitleCaseIteratingChars.
-// Title-cases the first letter of each space- or hyphen-separated segment; lowercases the rest.
+// Java iterates text.toCharArray() (UTF-16 units), not Unicode code points.
 func ConvertToTitleCaseIteratingChars(text string) string {
 	if text == "" {
 		return text
 	}
-	var b strings.Builder
-	b.Grow(len(text))
+	u := utf16Units(text)
+	out := make([]uint16, len(u))
 	convertNext := true
-	for _, ch := range text {
-		// Java Character.isSpaceChar (Zs) or '-'
+	for i, cu := range u {
+		ch := rune(cu)
+		// Character.isSpaceChar(ch) || ch == '-'
 		if unicode.Is(unicode.Zs, ch) || ch == '-' {
 			convertNext = true
-			b.WriteRune(ch)
+			out[i] = cu
 			continue
 		}
 		if convertNext {
-			b.WriteRune(unicode.ToTitle(ch))
+			// Character.toTitleCase(char) — non-letters (incl. surrogates) unchanged
+			if unicode.IsLetter(ch) {
+				out[i] = uint16(unicode.ToTitle(ch))
+			} else {
+				out[i] = cu
+			}
 			convertNext = false
 		} else {
-			b.WriteRune(unicode.ToLower(ch))
+			if unicode.IsLetter(ch) {
+				out[i] = uint16(unicode.ToLower(ch))
+			} else {
+				out[i] = cu
+			}
 		}
 	}
-	return b.String()
+	return utf16ToString(out)
 }
 
 // NormalizeNFC ports StringTools.normalizeNFC.
