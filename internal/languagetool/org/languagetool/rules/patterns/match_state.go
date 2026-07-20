@@ -86,6 +86,147 @@ func (s *MatchState) ConvertCase(str, sample, langShortCode string) string {
 	return ConvertCaseLang(s.Match.GetCaseConversionType(), str, sample, langShortCode)
 }
 
+// FilterReadings ports MatchState.filterReadings — rewrite readings for
+// disambiguation FILTER/FILTERALL/REPLACE with <match> (setpos / postag).
+// Returns formattedToken unchanged when no POS rewrite applies.
+func (s *MatchState) FilterReadings() *languagetool.AnalyzedTokenReadings {
+	if s == nil || s.Match == nil || s.FormattedToken == nil {
+		if s != nil {
+			return s.FormattedToken
+		}
+		return nil
+	}
+	if s.Match.IsStaticLemma() {
+		// Java: leaveReading with first reading surface + match posTag + static lemma token
+		if s.MatchedToken != nil {
+			surface := ""
+			if r0 := s.MatchedToken.GetAnalyzedToken(0); r0 != nil {
+				surface = r0.GetToken()
+			}
+			pos := s.Match.GetPosTag()
+			var p *string
+			if pos != "" {
+				p = &pos
+			}
+			lemma := s.FormattedToken.GetToken()
+			s.MatchedToken.LeaveReading(languagetool.NewAnalyzedToken(surface, p, &lemma))
+			s.FormattedToken = s.MatchedToken
+		}
+	}
+	// surface from first reading (without ignored characters — Java getAnalyzedToken(0))
+	token := ""
+	if r0 := s.FormattedToken.GetAnalyzedToken(0); r0 != nil {
+		token = r0.GetToken()
+	} else {
+		token = s.FormattedToken.GetToken()
+	}
+	if re := s.Match.GetRegexMatch(); re != nil {
+		if rep := s.Match.GetRegexReplace(); rep != "" || s.Match.RegexReplace != "" {
+			// Java: only replace when regexReplace is set (non-null)
+			replace := s.Match.GetRegexReplace()
+			token = re.ReplaceAllString(token, replace)
+		}
+	}
+	// Java filterReadings: convertCase(token, token, null)
+	token = s.ConvertCase(token, token, "")
+
+	posTag := s.Match.GetPosTag()
+	if posTag == "" {
+		return s.FormattedToken
+	}
+	var list []*languagetool.AnalyzedToken
+	numRead := len(s.FormattedToken.GetReadings())
+	if s.Match.IsPostagRegexp() {
+		pPos := s.Match.GetPosRegexMatch()
+		posTagReplace := s.Match.GetPosTagReplace()
+		for i := 0; i < numRead; i++ {
+			at := s.FormattedToken.GetAnalyzedToken(i)
+			if at == nil {
+				continue
+			}
+			testTag := ""
+			if p := at.GetPOSTag(); p != nil {
+				testTag = *p
+			}
+			if testTag != "" && pPos != nil && reFullMatch(pPos, testTag) {
+				targetPosTag := testTag
+				if posTagReplace != "" {
+					targetPosTag = pPos.ReplaceAllString(targetPosTag, posTagReplace)
+				}
+				lemma := at.GetLemma()
+				nt := languagetool.NewAnalyzedToken(token, &targetPosTag, lemma)
+				nt.SetWhitespaceBefore(s.FormattedToken.IsWhitespaceBefore())
+				list = append(list, nt)
+			}
+		}
+		if len(list) == 0 {
+			list = append(list, s.getNewToken(numRead, token)...)
+		}
+	} else {
+		list = append(list, s.getNewToken(numRead, token)...)
+	}
+	// Preserve sentence/paragraph ends
+	var lemma0 *string
+	if at0 := s.FormattedToken.GetAnalyzedToken(0); at0 != nil {
+		lemma0 = at0.GetLemma()
+	}
+	if s.FormattedToken.IsSentenceEnd() {
+		sent := languagetool.SentenceEndTagName
+		list = append(list, languagetool.NewAnalyzedToken(s.FormattedToken.GetToken(), &sent, lemma0))
+	}
+	if s.FormattedToken.IsParagraphEnd() {
+		para := languagetool.ParagraphEndTagName
+		list = append(list, languagetool.NewAnalyzedToken(s.FormattedToken.GetToken(), &para, lemma0))
+	}
+	if len(list) == 0 {
+		return s.FormattedToken
+	}
+	out := languagetool.NewAnalyzedTokenReadingsFromOld(s.FormattedToken, list, "")
+	out.SetWhitespaceBefore(s.FormattedToken.IsWhitespaceBefore())
+	if tags := s.FormattedToken.GetChunkTags(); len(tags) > 0 {
+		out.SetChunkTags(tags)
+	}
+	// NewAnalyzedTokenReadingsFromOld already copies immunization when present.
+	return out
+}
+
+// getNewToken ports MatchState.getNewToken.
+func (s *MatchState) getNewToken(numRead int, token string) []*languagetool.AnalyzedToken {
+	if s == nil || s.Match == nil || s.FormattedToken == nil {
+		return nil
+	}
+	posTag := s.Match.GetPosTag()
+	var list []*languagetool.AnalyzedToken
+	lemma := ""
+	for j := 0; j < numRead; j++ {
+		at := s.FormattedToken.GetAnalyzedToken(j)
+		if at == nil {
+			continue
+		}
+		tempPosTag := at.GetPOSTag()
+		if tempPosTag == nil {
+			continue
+		}
+		if *tempPosTag == posTag && at.GetLemma() != nil {
+			lemma = *at.GetLemma()
+		}
+		if lemma == "" {
+			if at0 := s.FormattedToken.GetAnalyzedToken(0); at0 != nil && at0.GetLemma() != nil {
+				lemma = *at0.GetLemma()
+			}
+		}
+		p := posTag
+		var lem *string
+		if lemma != "" {
+			lem = &lemma
+		}
+		nt := languagetool.NewAnalyzedToken(token, &p, lem)
+		nt.SetWhitespaceBefore(s.FormattedToken.IsWhitespaceBefore())
+		list = append(list, nt)
+	}
+	return list
+}
+
 // ToFinalString ports MatchState.toFinalString.
 // When Synthesizer is nil and postag is set, returns surface after regex (Java synthesizer==null).
 // Empty synthesis yields "(token)" like Java — not an invent form.
@@ -238,13 +379,22 @@ func sortedFormsOrParen(wordForms map[string]struct{}, token string) []string {
 }
 
 // reFullMatch ports Java Matcher.matches() / String.matches (entire string).
+// Go's MatchString/FindString are unanchored substring matches; RE2 also picks
+// the left-most alternative ("NN" matches a prefix of "NNS"), so we re-anchor.
 func reFullMatch(re *regexp.Regexp, s string) bool {
 	if re == nil {
 		return false
 	}
-	loc := re.FindStringIndex(s)
-	return loc != nil && loc[0] == 0 && loc[1] == len(s)
+	// Cache-free: patterns are short POS tags; compile cost is acceptable.
+	anchored, err := regexp.Compile("^(?:" + re.String() + ")$")
+	if err != nil {
+		return false
+	}
+	return anchored.MatchString(s)
 }
+
+// ReFullMatch is the exported form of reFullMatch for FILTER gates outside this package.
+func ReFullMatch(re *regexp.Regexp, s string) bool { return reFullMatch(re, s) }
 
 // GetTargetPosTag ports MatchState.getTargetPosTag including getPosTagCorrection when setpos.
 func (s *MatchState) GetTargetPosTag() string {
