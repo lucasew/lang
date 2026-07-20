@@ -17,7 +17,7 @@
 
 ## languagetool-core
 
-- [ ] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
+- [x] org/languagetool/AnalyzedSentence.java::AnalyzedSentence
 - [x] org/languagetool/AnalyzedToken.java::AnalyzedToken
 - [ ] org/languagetool/AnalyzedTokenReadings.java::AnalyzedTokenReadings
 - [x] org/languagetool/ApiCleanupNeeded.java::ApiCleanupNeeded
@@ -40,7 +40,7 @@
 - [x] org/languagetool/JLanguageTool.java::JLanguageTool.CheckCancelledCallback
 - [x] org/languagetool/JLanguageTool.java::JLanguageTool.SentenceData
 - [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable
-- [ ] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
+- [x] org/languagetool/JLanguageTool.java::JLanguageTool.TextCheckCallable.LineColumnPosition
 - [ ] org/languagetool/Language.java::Language
 - [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator
 - [x] org/languagetool/LanguageAnnotator.java::LanguageAnnotator.TokenWithLanguages
@@ -131,7 +131,7 @@
 - [x] org/languagetool/languagemodel/LanguageModel.java::LanguageModel
 - [x] org/languagetool/languagemodel/LuceneLanguageModel.java::LuceneLanguageModel
 - [x] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel
-- [ ] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
+- [x] org/languagetool/languagemodel/LuceneSingleIndexLanguageModel.java::LuceneSingleIndexLanguageModel.LuceneSearcher
 - [x] org/languagetool/languagemodel/MultiLanguageModel.java::MultiLanguageModel
 - [x] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel
 - [x] org/languagetool/languagemodel/bert/RemoteLanguageModel.java::RemoteLanguageModel.Request

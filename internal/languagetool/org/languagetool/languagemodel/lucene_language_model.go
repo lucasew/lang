@@ -176,3 +176,93 @@ var (
 	_ CountProvider = (*LuceneLanguageModel)(nil)
 	_ LanguageModel = (*LuceneLanguageModel)(nil)
 )
+
+// LuceneSearcher ports LuceneSingleIndexLanguageModel.LuceneSearcher —
+// a cached count backend bound to an index directory (map-backed without Lucene).
+type LuceneSearcher struct {
+	Dir    string
+	Counts *MapCountProvider
+}
+
+// Global cache: static dir → searcher (Java dirToSearcherMap).
+var luceneDirToSearcher = map[string]*LuceneSearcher{}
+
+// GetCachedLuceneSearcher ports getCachedLuceneSearcher(indexDir).
+func GetCachedLuceneSearcher(indexDir string, counts *MapCountProvider) *LuceneSearcher {
+	if s, ok := luceneDirToSearcher[indexDir]; ok {
+		return s
+	}
+	if counts == nil {
+		counts = &MapCountProvider{Counts: map[string]int64{}}
+	}
+	s := &LuceneSearcher{Dir: indexDir, Counts: counts}
+	luceneDirToSearcher[indexDir] = s
+	return s
+}
+
+// ClearLuceneSearcherCache clears the static cache (tests).
+func ClearLuceneSearcherCache() {
+	luceneDirToSearcher = map[string]*LuceneSearcher{}
+}
+
+// GetCount ports searcher count for a token sequence.
+func (s *LuceneSearcher) GetCount(tokens []string) int64 {
+	if s == nil || s.Counts == nil {
+		return 0
+	}
+	return s.Counts.GetCount(tokens)
+}
+
+func (s *LuceneSearcher) GetCountToken(token string) int64 {
+	if s == nil || s.Counts == nil {
+		return 0
+	}
+	return s.Counts.GetCountToken(token)
+}
+
+func (s *LuceneSearcher) GetTotalTokenCount() int64 {
+	if s == nil || s.Counts == nil {
+		return 0
+	}
+	return s.Counts.GetTotalTokenCount()
+}
+
+// LuceneSingleIndexLanguageModel ports org.languagetool.languagemodel.LuceneSingleIndexLanguageModel
+// as an IndexLanguageModel with ngram-size → LuceneSearcher map.
+type LuceneSingleIndexLanguageModel struct {
+	*IndexLanguageModel
+	TopIndexDir string
+	Searchers   map[int]*LuceneSearcher // ngram size → searcher
+}
+
+// ValidateSingleIndexDirectory ports LuceneSingleIndexLanguageModel.validateDirectory.
+func ValidateSingleIndexDirectory(topIndexDir string) error {
+	fi, err := os.Stat(topIndexDir)
+	if err != nil || !fi.IsDir() {
+		return fmt.Errorf("Not found or is not a directory:\n%s\nAs ngram directory, please select the directory that has a subdirectory like 'en'\n(or whatever language code you're using).", topIndexDir)
+	}
+	entries, err := os.ReadDir(topIndexDir)
+	if err != nil {
+		return err
+	}
+	var dirs []string
+	for _, e := range entries {
+		if e.IsDir() && (e.Name() == "1grams" || e.Name() == "2grams" || e.Name() == "3grams") {
+			dirs = append(dirs, e.Name())
+		}
+	}
+	if len(dirs) == 0 {
+		return fmt.Errorf("%s does not contain 1grams/2grams/3grams subdirectories", topIndexDir)
+	}
+	return nil
+}
+
+// NewLuceneSingleIndexLanguageModelMap builds a map-backed single-index LM.
+func NewLuceneSingleIndexLanguageModelMap(top string, counts *MapCountProvider) *LuceneSingleIndexLanguageModel {
+	s := GetCachedLuceneSearcher(top, counts)
+	return &LuceneSingleIndexLanguageModel{
+		IndexLanguageModel: NewIndexLanguageModel(top, s.Counts),
+		TopIndexDir:        top,
+		Searchers:          map[int]*LuceneSearcher{1: s},
+	}
+}

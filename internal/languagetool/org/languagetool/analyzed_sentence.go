@@ -52,8 +52,32 @@ func getNonBlankReadings(tokens []*AnalyzedTokenReadings, mapping []int) []*Anal
 
 func (s *AnalyzedSentence) GetTokens() []*AnalyzedTokenReadings { return s.tokens }
 
+// GetPreDisambigTokens ports getPreDisambigTokens.
+func (s *AnalyzedSentence) GetPreDisambigTokens() []*AnalyzedTokenReadings {
+	if s == nil {
+		return nil
+	}
+	return s.preDisambigTokens
+}
+
 func (s *AnalyzedSentence) GetTokensWithoutWhitespace() []*AnalyzedTokenReadings {
 	return s.nonBlankTokens
+}
+
+// GetNonWhitespaceTokenCount ports getNonWhitespaceTokenCount.
+func (s *AnalyzedSentence) GetNonWhitespaceTokenCount() int {
+	if s == nil {
+		return 0
+	}
+	return len(s.nonBlankTokens)
+}
+
+// GetOriginalPosition ports getOriginalPosition(nonWhPosition) via whPositions mapping.
+func (s *AnalyzedSentence) GetOriginalPosition(nonWhPosition int) int {
+	if s == nil || nonWhPosition < 0 || nonWhPosition >= len(s.whPositions) {
+		return -1
+	}
+	return s.whPositions[nonWhPosition]
 }
 
 func (s *AnalyzedSentence) GetPreDisambigTokensWithoutWhitespace() []*AnalyzedTokenReadings {
@@ -278,6 +302,65 @@ func (s *AnalyzedSentence) GetText() string {
 	var b strings.Builder
 	for _, element := range s.tokens {
 		b.WriteString(element.GetToken())
+	}
+	return b.String()
+}
+
+// GetTokenSet ports getTokenSet — lowercased unique tokens (non-whitespace).
+func (s *AnalyzedSentence) GetTokenSet() map[string]struct{} {
+	out := map[string]struct{}{}
+	if s == nil {
+		return out
+	}
+	for _, t := range s.nonBlankTokens {
+		if t == nil {
+			continue
+		}
+		out[strings.ToLower(t.GetToken())] = struct{}{}
+	}
+	return out
+}
+
+// GetLemmaSet ports getLemmaSet — lowercased unique lemmas.
+func (s *AnalyzedSentence) GetLemmaSet() map[string]struct{} {
+	out := map[string]struct{}{}
+	if s == nil {
+		return out
+	}
+	for _, t := range s.nonBlankTokens {
+		if t == nil {
+			continue
+		}
+		for _, r := range t.GetReadings() {
+			if r == nil {
+				continue
+			}
+			if l := r.GetLemma(); l != nil && *l != "" {
+				out[strings.ToLower(*l)] = struct{}{}
+			}
+		}
+	}
+	return out
+}
+
+// ToShortString ports toShortString(readingDelimiter).
+func (s *AnalyzedSentence) ToShortString(readingDelimiter string) string {
+	return s.ToStringDelim(readingDelimiter)
+}
+
+// GetAnnotations ports getAnnotations — disambiguator annotation dump (best-effort).
+func (s *AnalyzedSentence) GetAnnotations() string {
+	if s == nil {
+		return ""
+	}
+	var b strings.Builder
+	for _, t := range s.tokens {
+		if t == nil {
+			continue
+		}
+		if a := t.GetHistoricalAnnotations(); a != "" {
+			b.WriteString(a)
+		}
 	}
 	return b.String()
 }

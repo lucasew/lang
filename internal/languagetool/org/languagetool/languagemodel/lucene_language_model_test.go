@@ -22,3 +22,14 @@ func TestLuceneLanguageModelMergeCounts(t *testing.T) {
 	require.Greater(t, p.GetProb(), 0.0)
 	require.NoError(t, lm.Close())
 }
+
+func TestLuceneSearcherCache(t *testing.T) {
+	ClearLuceneSearcherCache()
+	c := &MapCountProvider{Counts: map[string]int64{"a": 3}, Total: 3}
+	s1 := GetCachedLuceneSearcher("/tmp/idx", c)
+	s2 := GetCachedLuceneSearcher("/tmp/idx", nil)
+	require.Same(t, s1, s2)
+	require.Equal(t, int64(3), s1.GetCountToken("a"))
+	lm := NewLuceneSingleIndexLanguageModelMap("/tmp/idx", c)
+	require.Equal(t, int64(3), lm.GetCountToken("a"))
+}

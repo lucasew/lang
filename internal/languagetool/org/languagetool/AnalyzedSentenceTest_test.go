@@ -39,3 +39,16 @@ func TestAnalyzedSentence_Copy(t *testing.T) {
 	require.Equal(t, "<S> word[lemma/POS{!}].[./INTERP,</S>]", sentence.String())
 	require.False(t, sentence.Equals(copySentence))
 }
+
+func TestAnalyzedSentence_SetsAndPosition(t *testing.T) {
+	tok := NewAnalyzedTokenReadings(NewAnalyzedToken("Hello", nil, nil))
+	sp := NewAnalyzedTokenReadings(NewAnalyzedToken(" ", nil, nil))
+	// need whitespace flag - AnalyzePlain is easier
+	s := AnalyzePlain("Hi there")
+	require.NotNil(t, s.GetPreDisambigTokens())
+	require.Greater(t, s.GetNonWhitespaceTokenCount(), 0)
+	set := s.GetTokenSet()
+	require.NotEmpty(t, set)
+	_ = tok
+	_ = sp
+}
