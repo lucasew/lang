@@ -1,7 +1,10 @@
 package en
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
+	"sync"
 	"unicode/utf16"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -153,7 +156,10 @@ func hasTwoApostropheTypes(sentences []*languagetool.AnalyzedSentence) bool {
 }
 
 // AnalyzeEnglishPlain analyzes text with EnglishWordTokenizer (contraction splits).
+// Java EnglishWordTokenizer.wordsToAdd uses EnglishTagger.INSTANCE so "'s"/"n't"
+// stay intact; without a tagger they split on the apostrophe and positions diverge.
 func AnalyzeEnglishPlain(text string) *languagetool.AnalyzedSentence {
+	ensureEnglishTokenizerTagger()
 	wt := enTok.NewEnglishWordTokenizer()
 	raw := wt.Tokenize(text)
 	positions := tokenizers.BuildPositions(raw)
@@ -174,6 +180,61 @@ func AnalyzeEnglishPlain(text string) *languagetool.AnalyzedSentence {
 		prev = tok
 	}
 	return languagetool.NewAnalyzedSentence(readings)
+}
+
+var enTokTaggerMu sync.Mutex
+
+// ensureEnglishTokenizerTagger wires EnglishTagger for EnglishWordTokenizer.wordsToAdd
+// (Java: EnglishTagger.INSTANCE). Idempotent; no-op if already set or dict missing.
+// Re-wires after ClearEnglishFilterTagger / tests that nil IsTaggedEN.
+func ensureEnglishTokenizerTagger() {
+	if enTok.IsTaggedEN != nil {
+		return
+	}
+	enTokTaggerMu.Lock()
+	defer enTokTaggerMu.Unlock()
+	if enTok.IsTaggedEN != nil {
+		return
+	}
+	p := discoverEnglishPOSDictForTokenizer()
+	if p == "" {
+		return
+	}
+	// Reuse RegisterBinaryEnglishTagger wiring (dict + manuals + IsTaggedEN).
+	lt := languagetool.NewJLanguageTool("en")
+	_ = RegisterBinaryEnglishTagger(lt, p)
+}
+
+func discoverEnglishPOSDictForTokenizer() string {
+	if p := os.Getenv("LANG_ENGLISH_DICT"); p != "" {
+		if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+			return p
+		}
+	}
+	relPaths := []string{
+		filepath.Join("third_party", "english-pos-dict", "org", "languagetool", "resource", "en", "english.dict"),
+		filepath.Join("inspiration", "languagetool", "languagetool-language-modules", "en",
+			"src", "main", "resources", "org", "languagetool", "resource", "en", "english.dict"),
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for i := 0; i < 12; i++ {
+		for _, rel := range relPaths {
+			cand := filepath.Join(dir, rel)
+			if st, e := os.Stat(cand); e == nil && st.Mode().IsRegular() {
+				return cand
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
 }
 
 // AnalyzeEnglishText splits into sentences and analyzes each with EnglishWordTokenizer.
