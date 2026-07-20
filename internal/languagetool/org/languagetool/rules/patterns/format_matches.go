@@ -146,7 +146,12 @@ func matchFromAttrs(attrs map[string]string) *Match {
 	}
 	setPos := strings.EqualFold(attrs["setpos"], "yes")
 	suppress := strings.EqualFold(attrs["suppress_misspelled"], "yes")
-	return NewMatch(postag, postagReplace, postagRE, regexMatch, regexReplace, caseConv, setPos, suppress, include)
+	m := NewMatch(postag, postagReplace, postagRE, regexMatch, regexReplace, caseConv, setPos, suppress, include)
+	// Java attrs.getValue("regexp_replace") null when attribute absent.
+	if _, ok := attrs["regexp_replace"]; ok {
+		m.RegexReplacePresent = true
+	}
+	return m
 }
 
 // parseXMLAttrs pulls attr="value" pairs from a start tag fragment.

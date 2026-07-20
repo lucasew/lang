@@ -13,6 +13,9 @@ type Match struct {
 	PosTag             string
 	SuppressMisspelled bool
 	RegexReplace       string
+	// RegexReplacePresent is true when Java regexReplace != null (attr present).
+	// filterReadings only replaces when both regexp_match and regexp_replace are non-null.
+	RegexReplacePresent bool
 	PosTagReplace      string
 	CaseConversionType CaseConversion
 	IncludeSkipped     IncludeRange
@@ -77,10 +80,13 @@ func NewMatch(
 		PostagRegexp:       postagRegexp,
 		RegexMatch:         regexMatch,
 		RegexReplace:       regexReplace,
-		CaseConversionType: caseConversionType,
-		SetPos:             setPOS,
-		SuppressMisspelled: suppressMisspelled,
-		IncludeSkipped:     includeSkipped,
+		// Non-empty replace implies attr present; empty replace with match-only → Present false
+		// (callers that need empty-string replace set RegexReplacePresent after NewMatch).
+		RegexReplacePresent: regexReplace != "",
+		CaseConversionType:  caseConversionType,
+		SetPos:              setPOS,
+		SuppressMisspelled:  suppressMisspelled,
+		IncludeSkipped:      includeSkipped,
 	}
 	if regexMatch != "" {
 		m.regexCompiled, m.regexJavaRE = compileMatchPattern(regexMatch)
@@ -120,6 +126,11 @@ func (m *Match) HasSurfaceRegexp() bool {
 	return m != nil && (m.regexCompiled != nil || m.regexJavaRE != nil)
 }
 
+// HasSurfaceReplace ports filterReadings gate: regexMatch != null && regexReplace != null.
+func (m *Match) HasSurfaceReplace() bool {
+	return m.HasSurfaceRegexp() && m.RegexReplacePresent
+}
+
 // PosFullMatch ports Java Matcher.matches() against the POS pattern.
 func (m *Match) PosFullMatch(s string) bool {
 	if m == nil {
@@ -134,10 +145,11 @@ func (m *Match) PosFullMatch(s string) bool {
 	return false
 }
 
-// SurfaceReplace applies regexp_match/replace when RE2-backed; lookaround surface
-// patterns without replace still full-match for presence checks only.
+// SurfaceReplace applies regexp_match/replace when RE2-backed and replace is present.
+// Java filterReadings requires both non-null; toFinalString only checks match != null
+// (null replace would NPE — Present false skips invent empty-replace wipe).
 func (m *Match) SurfaceReplace(s string) string {
-	if m == nil {
+	if m == nil || !m.RegexReplacePresent {
 		return s
 	}
 	if m.regexCompiled != nil {

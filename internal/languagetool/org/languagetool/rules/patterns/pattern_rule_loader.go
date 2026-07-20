@@ -812,16 +812,16 @@ type xmlToken struct {
 
 // xmlTokenMatch ports pattern-token <match> (backward reference / setpos).
 type xmlTokenMatch struct {
-	No             string `xml:"no,attr"`
-	Postag         string `xml:"postag,attr"`
-	PostagRegexp   string `xml:"postag_regexp,attr"`
-	PostagReplace  string `xml:"postag_replace,attr"`
-	RegexpMatch    string `xml:"regexp_match,attr"`
-	RegexpReplace  string `xml:"regexp_replace,attr"`
-	CaseConversion string `xml:"case_conversion,attr"`
-	SetPos         string `xml:"setpos,attr"`
-	IncludeSkipped string `xml:"include_skipped,attr"`
-	Content        string `xml:",chardata"`
+	No             string  `xml:"no,attr"`
+	Postag         string  `xml:"postag,attr"`
+	PostagRegexp   string  `xml:"postag_regexp,attr"`
+	PostagReplace  string  `xml:"postag_replace,attr"`
+	RegexpMatch    string  `xml:"regexp_match,attr"`
+	RegexpReplace  *string `xml:"regexp_replace,attr"` // nil when attr absent (Java null)
+	CaseConversion string  `xml:"case_conversion,attr"`
+	SetPos         string  `xml:"setpos,attr"`
+	IncludeSkipped string  `xml:"include_skipped,attr"`
+	Content        string  `xml:",chardata"`
 }
 
 type xmlException struct {
@@ -1407,17 +1407,23 @@ func matchFromTokenMatchXML(xm *xmlTokenMatch) *Match {
 			include = ir
 		}
 	}
+	regexReplace := ""
+	if xm.RegexpReplace != nil {
+		regexReplace = *xm.RegexpReplace
+	}
 	m := NewMatch(
 		xm.Postag,
 		xm.PostagReplace,
 		strings.EqualFold(xm.PostagRegexp, "yes"),
 		xm.RegexpMatch,
-		xm.RegexpReplace,
+		regexReplace,
 		caseConv,
 		strings.EqualFold(xm.SetPos, "yes"),
 		false,
 		include,
 	)
+	// Java attrs.getValue("regexp_replace") null when attribute absent.
+	m.RegexReplacePresent = xm.RegexpReplace != nil
 	// Java: TokenRef is the raw no= value (offset from firstMatchToken, not 1-based message index).
 	if no := strings.TrimSpace(xm.No); no != "" {
 		var n int

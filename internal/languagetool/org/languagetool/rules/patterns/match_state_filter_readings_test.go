@@ -62,6 +62,30 @@ func TestMatchState_FilterReadings_NoPosTag(t *testing.T) {
 	require.Equal(t, atr, out) // unchanged
 }
 
+// Twin of MatchState.filterReadings: surface replace only when both
+// regexMatch and regexReplace are non-null (not invent wipe with empty replace).
+func TestMatchState_FilterReadings_SurfaceReplaceRequiresBoth(t *testing.T) {
+	pos := "NN"
+	lem := "food"
+	atr := languagetool.NewAnalyzedTokenReadingsAt(
+		languagetool.NewAnalyzedToken("food", &pos, &lem), 0)
+
+	// regexp_match only — no replace attr → leave surface in rewritten readings
+	mMatchOnly := NewMatch("NN", "", false, "foo", "", CaseNone, false, false, IncludeNone)
+	require.False(t, mMatchOnly.RegexReplacePresent)
+	require.False(t, mMatchOnly.HasSurfaceReplace())
+	ms1 := mMatchOnly.CreateStateWithSynth(nil, atr)
+	out1 := ms1.FilterReadings()
+	require.Equal(t, "food", out1.GetAnalyzedToken(0).GetToken()) // not invent-stripped to "d"
+
+	// both present → replace into new reading surface
+	mBoth := NewMatch("NN", "", false, "foo", "bar", CaseNone, false, false, IncludeNone)
+	require.True(t, mBoth.HasSurfaceReplace())
+	ms2 := mBoth.CreateStateWithSynth(nil, atr)
+	out2 := ms2.FilterReadings()
+	require.Equal(t, "bard", out2.GetAnalyzedToken(0).GetToken())
+}
+
 func TestMatch_PosFullMatch_Lookaround(t *testing.T) {
 	// UK-style: noun without :alt (RE2 cannot compile (?!...))
 	m := NewMatch(`noun(?!.*alt).*`, "", true, "", "", CaseNone, false, false, IncludeNone)

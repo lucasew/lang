@@ -120,8 +120,8 @@ func (s *MatchState) FilterReadings() *languagetool.AnalyzedTokenReadings {
 	} else {
 		token = s.FormattedToken.GetToken()
 	}
-	if s.Match.HasSurfaceRegexp() {
-		// Java: only replace when regexMatch != null (regexReplace may be empty)
+	if s.Match.HasSurfaceReplace() {
+		// Java filterReadings: regexMatch != null && regexReplace != null
 		token = s.Match.SurfaceReplace(token)
 	}
 	// Java filterReadings: convertCase(token, token, null)
@@ -236,11 +236,15 @@ func (s *MatchState) ToFinalString(langCode string) []string {
 	if s.FormattedToken != nil {
 		surface := s.FormattedToken.GetToken()
 		if s.Match != nil {
+			// Java toFinalString: if (pRegexMatch != null) replaceAll(regexReplace)
+			// We require Present to avoid invent wipe when replace attr is missing.
 			if s.Match.HasSurfaceRegexp() {
 				if langCode == "ar" {
 					surface = tools.RemoveTashkeel(surface)
 				}
-				surface = s.Match.SurfaceReplace(surface)
+				if s.Match.RegexReplacePresent {
+					surface = s.Match.SurfaceReplace(surface)
+				}
 			}
 			posTag := s.Match.GetPosTag()
 			if posTag != "" {
