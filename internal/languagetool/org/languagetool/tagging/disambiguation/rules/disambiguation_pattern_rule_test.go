@@ -135,6 +135,7 @@ func TestDisambiguationPatternRule_IgnoreSpelling(t *testing.T) {
 }
 
 func TestDisambiguationPatternRule_AddChunk(t *testing.T) {
+	// Java ADDCHUNK requires <wd pos=…/> list matching marker span length.
 	posNN := "NN"
 	toks := []*languagetool.AnalyzedTokenReadings{
 		sentStart(),
@@ -145,18 +146,31 @@ func TestDisambiguationPatternRule_AddChunk(t *testing.T) {
 	rule := NewDisambiguationPatternRule(
 		"D4", "chunk NP", "en",
 		[]*patterns.PatternToken{patterns.Token("New"), patterns.Token("York")},
-		"B-NP", nil, ActionAddChunk,
+		"", nil, ActionAddChunk,
 	)
+	bnp, inp := "B-NP", "I-NP"
+	rule.SetNewInterpretations([]*languagetool.AnalyzedToken{
+		languagetool.NewAnalyzedToken("", &bnp, nil),
+		languagetool.NewAnalyzedToken("", &inp, nil),
+	})
 	out := rule.Replace(sent)
-	found := false
+	foundB, foundI := false, false
 	for _, tok := range out.GetTokensWithoutWhitespace() {
 		if tok.GetToken() == "New" {
 			for _, c := range tok.GetChunkTags() {
 				if c == "B-NP" {
-					found = true
+					foundB = true
+				}
+			}
+		}
+		if tok.GetToken() == "York" {
+			for _, c := range tok.GetChunkTags() {
+				if c == "I-NP" {
+					foundI = true
 				}
 			}
 		}
 	}
-	require.True(t, found, "expected B-NP chunk on New")
+	require.True(t, foundB, "expected B-NP chunk on New")
+	require.True(t, foundI, "expected I-NP chunk on York")
 }

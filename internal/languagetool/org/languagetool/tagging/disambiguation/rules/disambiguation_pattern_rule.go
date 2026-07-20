@@ -99,6 +99,14 @@ func (r *DisambiguationPatternRule) SetAntiPatterns(aps []*patterns.AbstractToke
 	r.AntiPatterns = append(r.AntiPatterns, aps...)
 }
 
+// GetTokenHints exposes embedded AbstractTokenBasedRule.tokenHints for RuleSet.textHinted.
+func (r *DisambiguationPatternRule) GetTokenHints() []patterns.TokenHint {
+	if r == nil || r.AbstractTokenBasedRule == nil {
+		return nil
+	}
+	return r.AbstractTokenBasedRule.GetTokenHints()
+}
+
 // Replace applies the disambiguation pattern to the sentence.
 // Ports DisambiguationPatternRuleReplacer.replace + executeAction span math.
 func (r *DisambiguationPatternRule) Replace(sentence *languagetool.AnalyzedSentence) *languagetool.AnalyzedSentence {
@@ -491,42 +499,36 @@ func (r *DisambiguationPatternRule) applyAction(
 			}
 		}
 	case ActionAdd:
-		// Java ADD (DisambiguationPatternRuleReplacer): <wd> list only when
-		// length equals marker-span count; empty wd surface uses matched token.
-		// Bare postag adds that POS to each matched token without a wd list.
-		if len(r.NewTokenReadings) > 0 {
-			span := 0
-			if last >= first && first >= 0 {
-				span = last - first + 1
-			}
-			if span == 0 || len(r.NewTokenReadings) != span {
-				return
-			}
-			for i := first; i <= last && i < len(nws); i++ {
-				rel := i - first
-				if nws[i] == nil || r.NewTokenReadings[rel] == nil {
-					continue
-				}
-				base := r.NewTokenReadings[rel]
-				surface := nws[i].GetToken()
-				if base.GetToken() != "" {
-					surface = base.GetToken()
-				}
-				tok := languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), base.GetLemma())
-				nws[i].AddReading(tok, r.ID)
-			}
+		// Java ADD: only when newTokenReadings length equals marker span.
+		// Empty wd surface uses matched token; empty lemma defaults to surface.
+		// No bare postag-only path (that was soft invent).
+		if len(r.NewTokenReadings) == 0 {
 			return
 		}
-		if r.DisambiguatedPOS == "" {
+		span := 0
+		if last >= first && first >= 0 {
+			span = last - first + 1
+		}
+		if span == 0 || len(r.NewTokenReadings) != span {
 			return
 		}
-		pos := r.DisambiguatedPOS
 		for i := first; i <= last && i < len(nws); i++ {
-			if nws[i] == nil {
+			rel := i - first
+			if nws[i] == nil || r.NewTokenReadings[rel] == nil {
 				continue
 			}
+			base := r.NewTokenReadings[rel]
 			surface := nws[i].GetToken()
-			nws[i].AddReading(languagetool.NewAnalyzedToken(surface, &pos, nil), r.ID)
+			if base.GetToken() != "" {
+				surface = base.GetToken()
+			}
+			lemma := base.GetLemma()
+			if lemma == nil {
+				// Java: lemma = token when getLemma() == null
+				lemma = &surface
+			}
+			tok := languagetool.NewAnalyzedToken(surface, base.GetPOSTag(), lemma)
+			nws[i].AddReading(tok, r.ID)
 		}
 	case ActionReplace:
 		// Java REPLACE with <wd> list: only when length equals marker-span count
@@ -650,58 +652,37 @@ func (r *DisambiguationPatternRule) applyAction(
 			}
 		}
 	case ActionAddChunk:
-		// Java ADDCHUNK: each <wd pos="…"/> is a ChunkTag appended to the
-		// matching marker-span token (length must equal span). Soft also
-		// accepts a single DisambiguatedPOS when no <wd> list is present.
-		if len(r.NewTokenReadings) > 0 {
-			span := 0
-			if last >= first && first >= 0 {
-				span = last - first + 1
-			}
-			if span == 0 || len(r.NewTokenReadings) != span {
-				return
-			}
-			for i := first; i <= last && i < len(nws); i++ {
-				rel := i - first
-				if nws[i] == nil || r.NewTokenReadings[rel] == nil {
-					continue
-				}
-				pos := r.NewTokenReadings[rel].GetPOSTag()
-				if pos == nil || *pos == "" {
-					continue
-				}
-				tags := append([]string(nil), nws[i].GetChunkTags()...)
-				dup := false
-				for _, t := range tags {
-					if t == *pos {
-						dup = true
-						break
-					}
-				}
-				if !dup {
-					tags = append(tags, *pos)
-				}
-				nws[i].SetChunkTags(tags)
-			}
+		// Java ADDCHUNK: only when newTokenReadings length equals marker span;
+		// POS of each <wd> is added as ChunkTag (no bare postag invent path).
+		if len(r.NewTokenReadings) == 0 {
 			return
 		}
-		if r.DisambiguatedPOS == "" {
+		span := 0
+		if last >= first && first >= 0 {
+			span = last - first + 1
+		}
+		if span == 0 || len(r.NewTokenReadings) != span {
 			return
 		}
 		for i := first; i <= last && i < len(nws); i++ {
-			if nws[i] == nil {
+			rel := i - first
+			if nws[i] == nil || r.NewTokenReadings[rel] == nil {
+				continue
+			}
+			pos := r.NewTokenReadings[rel].GetPOSTag()
+			if pos == nil || *pos == "" {
 				continue
 			}
 			tags := append([]string(nil), nws[i].GetChunkTags()...)
 			dup := false
 			for _, t := range tags {
-				if t == r.DisambiguatedPOS {
+				if t == *pos {
 					dup = true
 					break
 				}
 			}
 			if !dup {
-				tags = append(tags, r.DisambiguatedPOS)
+				tags = append(tags, *pos)
 			}
 			nws[i].SetChunkTags(tags)
 		}
