@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	atticmorfo "github.com/lucasew/lang/internal/attic/morfologik"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling"
 )
 
 // portuguese_filter_speller wires the official Portuguese Morfologik speller dict into
@@ -30,6 +31,27 @@ func WirePortugueseFilterSpeller(dictPath string) bool {
 	filterDict = d
 	filterDictMu.Unlock()
 	return true
+}
+
+// TryWirePortugueseFilterSpeller discovers Java MorfologikPortugueseSpellerRule
+// dictionaries (/pt/spelling/pt-PT-90.dict, pt-BR.dict, …) and wires the first openable.
+func TryWirePortugueseFilterSpeller() bool {
+	if FilterDictAvailable() {
+		return true
+	}
+	// Order: pt-PT-90 (default Portuguese), then BR, then other variants if present.
+	for _, rel := range []string{
+		"pt/spelling/pt-PT-90.dict",
+		"pt/spelling/pt-BR.dict",
+		"pt/spelling/pt-PT-45.dict",
+		"pt/spelling/pt-AO.dict",
+	} {
+		p := spelling.DiscoverSpellingResource(rel)
+		if p != "" && WirePortugueseFilterSpeller(p) {
+			return true
+		}
+	}
+	return false
 }
 
 // ClearPortugueseFilterSpeller clears the process-wide filter dictionary (tests).

@@ -269,6 +269,11 @@ func configureCoreLT(lang string, opts *CommandLineOptions) (*languagetool.JLang
 			if strings.EqualFold(base, "nl") {
 				wireDutchMultitokenSpeller(opts)
 			}
+			// Portuguese multitoken speller (Java PortugueseMultitokenSpeller.INSTANCE;
+			// MultitokenSpellerFilter shortCode gate includes "pt").
+			if strings.EqualFold(base, "pt") {
+				wirePortugueseMultitokenSpeller(opts)
+			}
 		}
 		// Pattern rule files after multitoken speller so MultitokenSpellerFilter can use the dict.
 		// Java Language.getRuleFileNames(): grammar, style, custom, then variant files.
@@ -391,6 +396,26 @@ func wireDutchMultitokenSpeller(opts *CommandLineOptions) {
 	var isMiss func(string) bool
 	if rulesnl.FilterDictAvailable() {
 		isMiss = rulesnl.FilterDictIsMisspelled
+	}
+	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
+}
+
+// wirePortugueseMultitokenSpeller ports Portuguese.getMultitokenSpeller resource load
+// (/pt/multiwords.txt + /spelling_global.txt + /pt/hyphenated_words.txt).
+// Java MultitokenSpellerFilter shortCode gate includes "pt".
+func wirePortugueseMultitokenSpeller(opts *CommandLineOptions) {
+	// Wire default spelling dict for MultitokenSpellerFilter.isMisspelled when present.
+	_ = rulespt.TryWirePortugueseFilterSpeller()
+	// Discover covers multiwords + spelling_global + hyphenated (Java Arrays.asList order).
+	// CLI data-dir paths are also found by spelling.Discover* walk.
+	_ = opts
+	sp := rulespt.DiscoverAndLoadPortugueseMultitokenSpeller()
+	if sp == nil || sp.MultitokenSpeller == nil {
+		return
+	}
+	var isMiss func(string) bool
+	if rulespt.FilterDictAvailable() {
+		isMiss = rulespt.FilterDictIsMisspelled
 	}
 	patterns.SetDefaultMultitokenSpeller(sp.MultitokenSpeller, isMiss)
 }
