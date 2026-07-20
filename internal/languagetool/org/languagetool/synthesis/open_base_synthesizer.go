@@ -28,8 +28,11 @@ func OpenBaseSynthesizerFromDir(langShort, resourceDir string) *BaseSynthesizer 
 	)
 	base := NewBaseSynthesizer(langShort, manual)
 	base.ResourceFileName = filepath.Base(dictPath)
+	// Java sor path is language-specific (e.g. /en/en.sor, /de/de.sor).
+	base.SorFileName = "/" + langShort + "/" + langShort + ".sor"
 	base.Lookup = lookup
 	base.Removal = removal
+	base.LoadNumberSpellersFromDir(resourceDir)
 	if tags := findTagsFileInDir(resourceDir); tags != "" {
 		if list, err := LoadPossibleTagsFile(tags); err == nil && len(list) > 0 {
 			base.PossibleTags = list

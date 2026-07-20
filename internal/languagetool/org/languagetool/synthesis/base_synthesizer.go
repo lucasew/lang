@@ -1,7 +1,10 @@
 package synthesis
 
 import (
+	"os"
+	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
@@ -14,12 +17,13 @@ const (
 )
 
 // BaseSynthesizer ports the non-Morfologik surface of
-// org.languagetool.synthesis.BaseSynthesizer — ManualSynthesizer-backed forms.
+// org.languagetool.synthesis.BaseSynthesizer — ManualSynthesizer-backed forms
+// plus Soros number/Roman spelling.
 type BaseSynthesizer struct {
 	LangShortCode    string
 	ResourceFileName string
 	TagFileName      string
-	// SorFileName optional removal/stemmer SOR resource (Java BaseSynthesizer first ctor arg).
+	// SorFileName optional SOR resource (Java BaseSynthesizer first ctor arg, e.g. /en/en.sor).
 	SorFileName string
 	Manual      *ManualSynthesizer
 	Removal     *ManualSynthesizer
@@ -27,21 +31,147 @@ type BaseSynthesizer struct {
 	Lookup func(lemma, posTag string) []string
 	// PossibleTags lists known POS tags when loaded.
 	PossibleTags []string
+	// NumberSpeller ports Soros from lang.sor (Java createNumberSpeller).
+	NumberSpeller *Soros
+	// RomanNumberer ports Soros from Roman.sor (Java createRomanNumberer).
+	RomanNumberer *Soros
 }
 
 func NewBaseSynthesizer(langShortCode string, manual *ManualSynthesizer) *BaseSynthesizer {
 	return &BaseSynthesizer{LangShortCode: langShortCode, Manual: manual}
 }
 
-// Synthesize ports BaseSynthesizer.synthesize for exact POS tags.
-func (s *BaseSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
-	return s.SynthesizeRE(token, posTag, false)
+// SetNumberSpellerFromSource compiles lang.sor program (Java createNumberSpeller).
+func (s *BaseSynthesizer) SetNumberSpellerFromSource(source, lang string) {
+	if s == nil {
+		return
+	}
+	if lang == "" {
+		lang = s.LangShortCode
+	}
+	s.NumberSpeller = NewSoros(source, lang)
 }
 
-// SynthesizeRE ports synthesize with optional POS regexp.
-func (s *BaseSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag string, posTagRegExp bool) ([]string, error) {
+// SetRomanNumbererFromSource compiles Roman.sor program.
+func (s *BaseSynthesizer) SetRomanNumbererFromSource(source string) {
+	if s == nil {
+		return
+	}
+	s.RomanNumberer = NewSoros(source, "Roman")
+}
+
+// LoadNumberSpellersFromDir loads {lang}.sor (or SorFileName basename) and Roman.sor
+// from resourceDir / walk-up inspiration paths. Fail-closed (nil) when missing.
+func (s *BaseSynthesizer) LoadNumberSpellersFromDir(resourceDir string) {
+	if s == nil {
+		return
+	}
+	lang := s.LangShortCode
+	if lang == "" {
+		lang = "en"
+	}
+	// Language SOR
+	var sorPath string
+	if s.SorFileName != "" {
+		base := filepath.Base(s.SorFileName)
+		if resourceDir != "" {
+			cand := filepath.Join(resourceDir, base)
+			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+				sorPath = cand
+			}
+		}
+	}
+	if sorPath == "" && resourceDir != "" {
+		for _, name := range []string{lang + ".sor", filepath.Base(s.SorFileName)} {
+			if name == "" || name == "." {
+				continue
+			}
+			cand := filepath.Join(resourceDir, name)
+			if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+				sorPath = cand
+				break
+			}
+		}
+	}
+	if sorPath == "" {
+		// walk-up inspiration module
+		rel := filepath.Join("inspiration", "languagetool", "languagetool-language-modules", lang,
+			"src", "main", "resources", "org", "languagetool", "resource", lang, lang+".sor")
+		sorPath = walkUpFile(rel)
+		if sorPath == "" && s.SorFileName != "" {
+			// e.g. /en/en.sor → en/en.sor under resource
+			clean := strings.TrimPrefix(s.SorFileName, "/")
+			rel = filepath.Join("inspiration", "languagetool", "languagetool-language-modules", lang,
+				"src", "main", "resources", "org", "languagetool", "resource", clean)
+			sorPath = walkUpFile(rel)
+		}
+	}
+	if sorPath != "" {
+		if b, err := os.ReadFile(sorPath); err == nil {
+			s.SetNumberSpellerFromSource(string(b), lang)
+		}
+	}
+	// Roman.sor from core resources
+	roman := walkUpFile(filepath.Join("inspiration", "languagetool", "languagetool-core",
+		"src", "main", "resources", "org", "languagetool", "resource", "Roman.sor"))
+	if roman == "" && resourceDir != "" {
+		cand := filepath.Join(resourceDir, "Roman.sor")
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			roman = cand
+		}
+	}
+	if roman != "" {
+		if b, err := os.ReadFile(roman); err == nil {
+			s.SetRomanNumbererFromSource(string(b))
+		}
+	}
+}
+
+func walkUpFile(rel string) string {
+	dir, _ := os.Getwd()
+	for i := 0; i < 14; i++ {
+		cand := filepath.Join(dir, rel)
+		if st, err := os.Stat(cand); err == nil && st.Mode().IsRegular() {
+			return cand
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
+}
+
+// GetSpelledNumber ports BaseSynthesizer.getSpelledNumber.
+func (s *BaseSynthesizer) GetSpelledNumber(arabicNumeral string) string {
+	if s != nil && s.NumberSpeller != nil {
+		return s.NumberSpeller.Run(arabicNumeral)
+	}
+	return arabicNumeral
+}
+
+// GetRomanNumber ports BaseSynthesizer.getRomanNumber.
+func (s *BaseSynthesizer) GetRomanNumber(arabicNumeral string) string {
+	if s != nil && s.RomanNumberer != nil {
+		return s.RomanNumberer.Run(arabicNumeral)
+	}
+	return arabicNumeral
+}
+
+// Synthesize ports BaseSynthesizer.synthesize for exact POS tags including spell-number tags.
+func (s *BaseSynthesizer) Synthesize(token *languagetool.AnalyzedToken, posTag string) ([]string, error) {
 	if token == nil {
 		return nil, nil
+	}
+	// Java: spell tags use token.getToken() (surface), not lemma.
+	switch posTag {
+	case SpellNumberTag:
+		return []string{s.GetSpelledNumber(token.GetToken())}, nil
+	case SpellNumberFeminineTag:
+		return []string{s.GetSpelledNumber("feminine " + token.GetToken())}, nil
+	case SpellNumberRomanTag:
+		return []string{s.GetRomanNumber(token.GetToken())}, nil
 	}
 	lemma := ""
 	if token.GetLemma() != nil {
@@ -50,20 +180,33 @@ func (s *BaseSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag
 	if lemma == "" {
 		lemma = token.GetToken()
 	}
-	if posTagRegExp {
-		re, err := regexp.Compile("^(?:" + posTag + ")$")
-		if err != nil {
-			return nil, err
-		}
-		return s.SynthesizeForPosTags(lemma, re.MatchString), nil
-	}
-	// Exact POS: look up that tag directly (not filtered through possibleTags).
 	return collectForms(s, lemma, []string{posTag}), nil
 }
 
-// SynthesizeForPosTags ports BaseSynthesizer.synthesizeForPosTags (Java ≥5.3):
-// all forms for lemma where acceptTag returns true for the POS tag.
-// Used by SpellingData ß→ss expansion (accept all tags) and LineExpander (VER:*).
+// SynthesizeRE ports synthesize with optional POS regexp.
+// Spell-number tags only apply on the non-regexp path (Java BaseSynthesizer).
+func (s *BaseSynthesizer) SynthesizeRE(token *languagetool.AnalyzedToken, posTag string, posTagRegExp bool) ([]string, error) {
+	if token == nil {
+		return nil, nil
+	}
+	if !posTagRegExp {
+		return s.Synthesize(token, posTag)
+	}
+	lemma := ""
+	if token.GetLemma() != nil {
+		lemma = *token.GetLemma()
+	}
+	if lemma == "" {
+		lemma = token.GetToken()
+	}
+	re, err := regexp.Compile("^(?:" + posTag + ")$")
+	if err != nil {
+		return nil, err
+	}
+	return s.SynthesizeForPosTags(lemma, re.MatchString), nil
+}
+
+// SynthesizeForPosTags ports BaseSynthesizer.synthesizeForPosTags (Java ≥5.3).
 func (s *BaseSynthesizer) SynthesizeForPosTags(lemma string, acceptTag func(string) bool) []string {
 	if s == nil || lemma == "" || acceptTag == nil {
 		return nil
@@ -137,16 +280,16 @@ func (s *BaseSynthesizer) allTags() []string {
 	return nil
 }
 
-// GetTargetPosTag is a stub for language-specific POS selection.
+// GetTargetPosTag ports BaseSynthesizer.getTargetPosTag (last tag when non-empty list).
 func (s *BaseSynthesizer) GetTargetPosTag(posTags []string, posTag string) string {
 	if len(posTags) == 0 {
 		return posTag
 	}
-	return posTags[0]
+	// Java: return the last one to keep the previous results
+	return posTags[len(posTags)-1]
 }
 
 // GetPosTagCorrection ports BaseSynthesizer.getPosTagCorrection (identity).
-// Polish/Arabic override when setpos synthesizes regexp-rewritten tags.
 func (s *BaseSynthesizer) GetPosTagCorrection(posTag string) string {
 	return posTag
 }

@@ -32,6 +32,9 @@ func OpenEnglishSynthesizerFromDir(resourceDir string) *EnglishSynthesizer {
 	if tags, err := synthesis.LoadPossibleTagsFile(filepath.Join(resourceDir, "english_tags.txt")); err == nil && len(tags) > 0 {
 		s.PossibleTags = tags
 	}
+	// Java BaseSynthesizer createNumberSpeller / createRomanNumberer
+	s.SorFileName = EnglishSorFile
+	s.LoadNumberSpellersFromDir(resourceDir)
 	return s
 }
 

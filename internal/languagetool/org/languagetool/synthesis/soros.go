@@ -2,13 +2,12 @@ package synthesis
 
 import (
 	"regexp"
-	"strconv"
 	"strings"
 )
 
 // Soros ports org.languagetool.synthesis.Soros (numbertext interpreter).
-// Supports a practical subset of the Java interpreter sufficient for
-// simple rewrite rules and left-zero stripping from __numbertext__.
+// Compile once; Run applies the first matching rule and expands $() recursively
+// (Java single-match return — not multi-step rewrite loops).
 type Soros struct {
 	patterns []*regexp.Regexp
 	values   []string
@@ -16,42 +15,102 @@ type Soros struct {
 	ends     []bool
 }
 
-const (
-	pu0 = '\uE000'
-	pu1 = '\uE001'
-	pu2 = '\uE002'
-	pu3 = '\uE003' // pipe marker
-)
+// NewSoros ports the Java Soros(String source, String lang) constructor.
+func NewSoros(raw, lang string) *Soros {
+	if lang == "" {
+		lang = "en"
+	}
+	// 1) Escape \\ \" \; \# → \uE000..\uE003
+	// Java m = "\\\";#" → chars \, ", ;, #
+	source := translateDelim(raw, string([]byte{'\\', '"', ';', '#'}), "\uE000\uE001\uE002\uE003", `\`)
 
-// NewSoros compiles a Soros program for lang (e.g. "en").
-func NewSoros(source, lang string) *Soros {
-	// strip comments and normalize separators
-	source = stripSorosComments(source, lang)
+	// 2) Country-dependent lines
+	lang = strings.ReplaceAll(lang, "_", "-")
+	// switch off country lines, then enable requested lang
+	reOff := regexp.MustCompile(`(^|[\n;])([^\n;#]*#[^\n]*\[:[^\n:\]]*:][^\n]*)`)
+	source = reOff.ReplaceAllString(source, "${1}#${2}")
+	reOn := regexp.MustCompile(`(^|[\n;])#([^\n;#]*#[^\n]*\[:` + regexp.QuoteMeta(lang) + `:][^\n]*)`)
+	source = reOn.ReplaceAllString(source, "${1}${2}")
+	// comments → ;
+	reCmt := regexp.MustCompile(`(#[^\n]*)?(\n|$)`)
+	source = reCmt.ReplaceAllString(source, ";")
+
 	if !strings.Contains(source, "__numbertext__") {
 		source = "__numbertext__;" + source
 	}
 	source = strings.ReplaceAll(source, "__numbertext__",
-		`"([a-z][-a-z]* )?0+(0|[1-9]\d*)" $1$2;`+
-			// empty rule for failed separator (noop pattern not added if empty replacement-only)
-			`"__noop_unused__" x`)
+		`"([a-z][-a-z]* )?0+(0|[1-9]\d*)" $(\1\2);`+
+			`"`+"\uE00A"+`(.*)`+"\uE00A"+`(.+)`+"\uE00A"+`(.*)" \1\2\3;`+
+			`"`+"\uE00A"+`.*`+"\uE00A\uE00A"+`.*"`)
 
+	lineRE := regexp.MustCompile(`^\s*("[^"]*"|[^\s]*)\s*(.*[^\s])?\s*$`)
+	macroRE := regexp.MustCompile(`== *(.*[^ ]?) ==`)
+	prefix := ""
 	s := &Soros{}
-	lineRE := regexp.MustCompile(`^\s*("(?:\\.|[^"])*"|[^\s]*)\s*(.*)?\s*$`)
-	for _, line := range strings.Split(source, ";") {
-		line = strings.TrimSpace(line)
-		if line == "" || line == `"__noop_unused__" x` {
+	for _, part := range strings.Split(source, ";") {
+		part = strings.TrimSpace(part)
+		if part == "" {
 			continue
 		}
-		sp := lineRE.FindStringSubmatch(line)
+		if mm := macroRE.FindStringSubmatch(part); mm != nil {
+			prefix = mm[1]
+			continue
+		}
+		sp := lineRE.FindStringSubmatch(part)
 		if sp == nil {
 			continue
 		}
-		pat := unquoteSoros(sp[1])
-		repl := ""
-		if len(sp) > 2 {
-			repl = strings.TrimSpace(sp[2])
-			repl = unquoteSoros(repl)
+		if prefix != "" {
+			pat0 := unquoteRule(sp[1])
+			repl0 := ""
+			if len(sp) > 2 {
+				repl0 = sp[2]
+			}
+			caret := ""
+			body := pat0
+			if strings.HasPrefix(body, "^") {
+				caret = "^"
+				body = body[1:]
+			}
+			space := ""
+			if body != "" {
+				space = " "
+			}
+			part = `"` + caret + prefix + space + body + `" ` + repl0
+			sp = lineRE.FindStringSubmatch(part)
+			if sp == nil {
+				continue
+			}
 		}
+
+		pat := unquoteRule(sp[1])
+		// translate(s, c.substring(1), m.substring(1), "") — restore ", ;, #
+		pat = strings.NewReplacer("\uE001", `"`, "\uE002", `;`, "\uE003", `#`).Replace(pat)
+		pat = strings.ReplaceAll(pat, "\uE000", `\\`)
+
+		repl := ""
+		if len(sp) > 2 && strings.TrimSpace(sp[2]) != "" {
+			repl = strings.TrimSpace(sp[2])
+			if len(repl) >= 2 && repl[0] == '"' && repl[len(repl)-1] == '"' {
+				repl = repl[1 : len(repl)-1]
+			}
+		}
+		// translate(s2, m2, c2, "\\") m2="$()|[]" — only escaped forms
+		repl = translateDelim(repl, `$()|[]`, "\uE004\uE005\uE006\uE007\uE008\uE009", `\`)
+		// Java optional-bracket rewrite on bare $ / [ (not c2 markers)
+		repl = convertOptionalBrackets(repl)
+		// translate(s2, c, m, "") — restore \, ", ;, # from pattern-side escapes in repl
+		repl = strings.NewReplacer(
+			"\uE000", `\`, "\uE001", `"`, "\uE002", `;`, "\uE003", `#`,
+		).Replace(repl)
+		// translate(s2, m2[0:4], c, "") — bare $, (, ), | → E000..E003
+		repl = strings.NewReplacer("$", "\uE000", "(", "\uE001", ")", "\uE002", "|", "\uE003").Replace(repl)
+		// translate(s2, c2, m2, "") — restore any escaped $()|[] from c2
+		repl = strings.NewReplacer(
+			"\uE004", "$", "\uE005", "(", "\uE006", ")", "\uE007", "|", "\uE008", "[", "\uE009", "]",
+		).Replace(repl)
+		repl = transformReplacement(repl)
+
 		begin := strings.HasPrefix(pat, "^")
 		end := strings.HasSuffix(pat, "$")
 		core := strings.TrimPrefix(pat, "^")
@@ -68,28 +127,62 @@ func NewSoros(source, lang string) *Soros {
 	return s
 }
 
-func stripSorosComments(source, lang string) string {
-	// remove # comments to end of line; keep ; as rule separator
-	var b strings.Builder
-	for _, line := range strings.Split(source, "\n") {
-		if i := strings.Index(line, "#"); i >= 0 {
-			// keep country selectors roughly: #[:en:] lines handled by enabling
-			line = line[:i]
-		}
-		line = strings.TrimSpace(line)
-		if line == "" {
+func transformReplacement(repl string) string {
+	// \uE000(\d) → \uE000\uE001$\d\uE002  ( $n → $($n) with markers )
+	var out []rune
+	r := []rune(repl)
+	for i := 0; i < len(r); i++ {
+		if r[i] == '\uE000' && i+1 < len(r) && r[i+1] >= '0' && r[i+1] <= '9' {
+			out = append(out, '\uE000', '\uE001', '$', r[i+1], '\uE002')
+			i++
 			continue
 		}
-		if b.Len() > 0 {
-			b.WriteByte(';')
-		}
-		b.WriteString(line)
+		out = append(out, r[i])
 	}
-	_ = lang
-	return b.String()
+	repl = string(out)
+	// \\(\d) → $digit
+	reBD := regexp.MustCompile(`\\(\d)`)
+	repl = reBD.ReplaceAllStringFunc(repl, func(m string) string {
+		return "$" + m[1:]
+	})
+	repl = strings.ReplaceAll(repl, `\n`, "\n")
+	return repl
 }
 
-func unquoteSoros(s string) string {
+func convertOptionalBrackets(s2 string) string {
+	// Java (on bare $ / [ / ]):
+	// ^[$](\d\d?|\([^)]+\)) with leading \[  → $(\uE00A\uE00A|$…\uE00A
+	// \[([^$\[\\]*)[$](\d…) → $(\uE00A$1\uE00A$…\uE00A
+	// \uE00A\]$ → |\uE00A)
+	// ] → )
+	// ($d|)|\ $ → $1||$
+	const ea = "\uE00A"
+	re1 := regexp.MustCompile(`^\[\$(\d\d?|\([^)]+\))`)
+	s2 = re1.ReplaceAllString(s2, `$(`+ea+ea+`|$$${1}`+ea)
+	re2 := regexp.MustCompile(`\[([^$\[\\]*)\$(\d\d?|\([^)]+\))`)
+	s2 = re2.ReplaceAllString(s2, `$(`+ea+`${1}`+ea+`$$${2}`+ea)
+	re3 := regexp.MustCompile(ea + `\]$`)
+	s2 = re3.ReplaceAllString(s2, `|`+ea+`)`)
+	s2 = strings.ReplaceAll(s2, "]", ")")
+	re4 := regexp.MustCompile(`(\$\d|\))\|\$`)
+	s2 = re4.ReplaceAllString(s2, `${1}||$`)
+	return s2
+}
+
+func translateDelim(s, chars, chars2, delim string) string {
+	cr := []rune(chars)
+	c2 := []rune(chars2)
+	n := len(cr)
+	if len(c2) < n {
+		n = len(c2)
+	}
+	for i := 0; i < n; i++ {
+		s = strings.ReplaceAll(s, delim+string(cr[i]), string(c2[i]))
+	}
+	return s
+}
+
+func unquoteRule(s string) string {
 	s = strings.TrimSpace(s)
 	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
 		return s[1 : len(s)-1]
@@ -97,104 +190,110 @@ func unquoteSoros(s string) string {
 	return s
 }
 
-// Run applies the Soros program to input.
+// Run ports Soros.run(input).
 func (s *Soros) Run(input string) string {
+	if s == nil {
+		return input
+	}
 	return s.run(input, true, true)
 }
 
 func (s *Soros) run(input string, begin, end bool) string {
-	// iterate until stable (zero-strip then rewrite), max few steps
-	cur := input
-	for step := 0; step < 8; step++ {
-		matched := false
-		for i, p := range s.patterns {
-			if (!begin && s.begins[i]) || (!end && s.ends[i]) {
-				continue
-			}
-			sub := p.FindStringSubmatchIndex(cur)
-			if sub == nil {
-				continue
-			}
-			cur = expandBackrefs(s.values[i], cur, sub)
-			// expand $() calls
-			cur = s.expandCalls(cur, begin, end)
-			matched = true
-			break
+	for i, p := range s.patterns {
+		if (!begin && s.begins[i]) || (!end && s.ends[i]) {
+			continue
 		}
-		if !matched {
-			break
+		m := p.FindStringSubmatch(input)
+		if m == nil {
+			continue
 		}
-		// if we produced empty and had a match that is terminal
-		if cur == "" {
-			return ""
-		}
+		repl := expandJavaGroups(s.values[i], m)
+		repl = s.expandFuncs(repl, begin, end)
+		return repl
 	}
-	// if still original after no match rules for digit rewrite, return ""
-	// Java returns "" when no rule matches at all
-	if cur == input {
-		// check if any rule matched would have changed - if input never matched any, return ""
-		for i, p := range s.patterns {
-			if (!begin && s.begins[i]) || (!end && s.ends[i]) {
-				continue
-			}
-			if p.MatchString(input) {
-				return cur
-			}
-		}
-		return ""
-	}
-	return cur
+	return ""
 }
 
-var callRE = regexp.MustCompile(`\$\(([^()]*)\)`)
+// func: (?:\|?(?:\$\()+)?(\|?\$\(([^()]*)\)\|?)(?:\)+\|?)?
+// with $ ( ) | as \uE000 \uE001 \uE002 \uE003
+var funcRE = regexp.MustCompile(
+	`(?:` + "\uE003" + `?(?:` + "\uE000\uE001" + `)+)?` +
+		`(` + "\uE003" + `?` + "\uE000\uE001" + `([^` + "\uE001\uE002" + `]*)` + "\uE002" + "\uE003" + `?)` +
+		`(?:` + "\uE002" + `+` + "\uE003" + `?)?`,
+)
 
-func (s *Soros) expandCalls(str string, begin, end bool) string {
+func (s *Soros) expandFuncs(str string, begin, end bool) string {
 	for {
-		loc := callRE.FindStringSubmatchIndex(str)
+		loc := funcRE.FindStringSubmatchIndex(str)
 		if loc == nil {
 			break
 		}
-		inner := str[loc[2]:loc[3]]
-		// recursive run on inner
-		repl := s.run(inner, begin, end)
-		str = str[:loc[0]] + repl + str[loc[1]:]
+		fullStart, fullEnd := loc[2], loc[3]
+		inner := str[loc[4]:loc[5]]
+		g1 := str[fullStart:fullEnd]
+		whole := str[loc[0]:loc[1]]
+		b, e := false, false
+		if strings.HasPrefix(g1, "\uE003") || strings.HasPrefix(whole, "\uE003") {
+			b = true
+		} else if loc[0] == 0 {
+			b = begin
+		}
+		if strings.HasSuffix(g1, "\uE003") || strings.HasSuffix(whole, "\uE003") {
+			e = true
+		} else if loc[1] == len(str) {
+			e = end
+		}
+		repl := s.run(inner, b, e)
+		str = str[:fullStart] + repl + str[fullEnd:]
 	}
 	return str
 }
 
-func expandBackrefs(tmpl, input string, sub []int) string {
-	// $0, $1, \1 style
+func expandJavaGroups(tmpl string, groups []string) string {
 	var b strings.Builder
-	for i := 0; i < len(tmpl); i++ {
-		c := tmpl[i]
-		if (c == '$' || c == '\\') && i+1 < len(tmpl) {
-			j := i + 1
-			if tmpl[j] == '{' {
-				k := strings.IndexByte(tmpl[j+1:], '}')
-				if k >= 0 {
-					n, err := strconv.Atoi(tmpl[j+1 : j+1+k])
-					if err == nil {
-						b.WriteString(groupAt(input, sub, n))
-						i = j + 1 + k
-						continue
+	r := []rune(tmpl)
+	for i := 0; i < len(r); i++ {
+		// leave \uE000… sequences for expandFuncs (function call markers)
+		if r[i] == '\uE000' || r[i] == '\uE001' || r[i] == '\uE002' || r[i] == '\uE003' {
+			b.WriteRune(r[i])
+			continue
+		}
+		if r[i] == '$' && i+1 < len(r) {
+			if r[i+1] == '{' {
+				j := i + 2
+				for j < len(r) && r[j] >= '0' && r[j] <= '9' {
+					j++
+				}
+				if j < len(r) && r[j] == '}' {
+					n := 0
+					for _, c := range r[i+2 : j] {
+						n = n*10 + int(c-'0')
 					}
+					if n >= 0 && n < len(groups) {
+						b.WriteString(groups[n])
+					}
+					i = j
+					continue
 				}
 			}
-			if tmpl[j] >= '0' && tmpl[j] <= '9' {
-				n := int(tmpl[j] - '0')
-				b.WriteString(groupAt(input, sub, n))
-				i = j
+			if r[i+1] >= '0' && r[i+1] <= '9' {
+				n := int(r[i+1] - '0')
+				if n >= 0 && n < len(groups) {
+					b.WriteString(groups[n])
+				}
+				i++
 				continue
 			}
 		}
-		b.WriteByte(c)
+		if r[i] == '\\' && i+1 < len(r) && r[i+1] >= '0' && r[i+1] <= '9' {
+			n := int(r[i+1] - '0')
+			if n >= 0 && n < len(groups) {
+				b.WriteString(groups[n])
+			}
+			i++
+			continue
+		}
+		b.WriteRune(r[i])
 	}
 	return b.String()
-}
-
-func groupAt(input string, sub []int, n int) string {
-	if 2*n+1 >= len(sub) || sub[2*n] < 0 {
-		return ""
-	}
-	return input[sub[2*n]:sub[2*n+1]]
 }

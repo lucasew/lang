@@ -102,4 +102,15 @@ func TestEnglishSynthesizer_SynthesizeStringString(t *testing.T) {
 	got, err = synth.Synthesize(dummyToken("mix", "mix"), "VBD")
 	require.NoError(t, err)
 	require.Equal(t, []string{"mixed"}, got)
+
+	// Java EnglishSynthesizerTest spell-number via en.sor
+	synth.LoadNumberSpellersFromDir("")
+	if synth.NumberSpeller != nil {
+		got, err = synth.Synthesize(dummyToken("12", "12"), synthesis.SpellNumberTag)
+		require.NoError(t, err)
+		require.Equal(t, []string{"twelve"}, got)
+		got, err = synth.Synthesize(dummyToken("1243", "1243"), synthesis.SpellNumberTag)
+		require.NoError(t, err)
+		require.Equal(t, []string{"one thousand two hundred forty-three"}, got)
+	}
 }
