@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/symspell/implementation"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tools"
 )
 
@@ -380,75 +381,19 @@ func distinctFS(in []string) []string {
 	return out
 }
 
-// stringComparatorLess ports StringComparator with simple Levenshtein (maxDistance 4).
+// stringComparatorLess ports AbstractFindSuggestionsFilter.StringComparator
+// (EditDistance Damerau, maxDistance 4; over-max → 2*maxDistance).
+// Uses the Java twin EditDistance — not invent plain Levenshtein.
 func stringComparatorLess(word, o1, o2 string) bool {
-	d1 := levCapped(word, o1, 4)
-	d2 := levCapped(word, o2, 4)
+	ed := implementation.NewEditDistance(word, implementation.Damerau)
+	const maxDistance = 4
+	d1 := ed.Compare(o1, maxDistance)
+	d2 := ed.Compare(o2, maxDistance)
 	if d1 < 0 {
-		d1 = 8
+		d1 = 2 * maxDistance
 	}
 	if d2 < 0 {
-		d2 = 8
+		d2 = 2 * maxDistance
 	}
 	return d1 < d2
-}
-
-func levCapped(a, b string, max int) int {
-	// simple rune Levenshtein; return -1 if > max (like Damerau compare)
-	ar, br := []rune(a), []rune(b)
-	if abs(len(ar)-len(br)) > max {
-		return -1
-	}
-	// DP
-	prev := make([]int, len(br)+1)
-	cur := make([]int, len(br)+1)
-	for j := range prev {
-		prev[j] = j
-	}
-	for i := 1; i <= len(ar); i++ {
-		cur[0] = i
-		rowMin := cur[0]
-		for j := 1; j <= len(br); j++ {
-			cost := 1
-			if ar[i-1] == br[j-1] {
-				cost = 0
-			}
-			del := prev[j] + 1
-			ins := cur[j-1] + 1
-			sub := prev[j-1] + cost
-			cur[j] = min3(del, ins, sub)
-			if cur[j] < rowMin {
-				rowMin = cur[j]
-			}
-		}
-		if rowMin > max {
-			return -1
-		}
-		prev, cur = cur, prev
-	}
-	d := prev[len(br)]
-	if d > max {
-		return -1
-	}
-	return d
-}
-
-func min3(a, b, c int) int {
-	if a < b {
-		if a < c {
-			return a
-		}
-		return c
-	}
-	if b < c {
-		return b
-	}
-	return c
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
 }

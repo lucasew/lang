@@ -22,8 +22,11 @@ func NewEditDistance(baseString string, algorithm DistanceAlgorithm) *EditDistan
 		return e
 	}
 	if algorithm == Damerau {
-		e.v0 = make([]int, len(baseString))
-		e.v2 = make([]int, len(baseString))
+		// Java: new int[baseString.length()] — UTF-16 units; for BMP LT tags/tokens
+		// runes match Java char counts. Size by runes (not UTF-8 bytes).
+		n := len([]rune(baseString))
+		e.v0 = make([]int, n)
+		e.v2 = make([]int, n)
 	}
 	return e
 }
@@ -43,14 +46,15 @@ func (e *EditDistance) Compare(string2 string, maxDistance int) int {
 
 // DamerauLevenshteinDistance ports the SymSpell optimized Damerau-Levenshtein.
 func (e *EditDistance) DamerauLevenshteinDistance(string2 string, maxDistance int) int {
+	// Java String.length is UTF-16; LT spelling words are BMP — use runes, not UTF-8 bytes.
 	if e.baseString == "" {
 		if string2 == "" {
 			return 0
 		}
-		return len(string2)
+		return len([]rune(string2))
 	}
 	if string2 == "" {
-		return len(e.baseString)
+		return len([]rune(e.baseString))
 	}
 	if maxDistance == 0 {
 		if e.baseString == string2 {

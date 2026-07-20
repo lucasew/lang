@@ -76,6 +76,15 @@ func TestEqualWithoutDiacritics(t *testing.T) {
 	require.False(t, equalWithoutDiacritics("casa", "cosa"))
 }
 
+func TestStringComparatorLess_DamerauTransposition(t *testing.T) {
+	// Damerau: "ab" → "ba" is distance 1 (transposition); plain Levenshtein invent is 2.
+	// Closer candidate should sort first when only one is a transposition of word.
+	require.True(t, stringComparatorLess("ab", "ba", "xy"),
+		"transposition ba must be closer than unrelated xy")
+	// Equal distances: comparator is strict less; equal → false either order is OK for sort stability
+	require.False(t, stringComparatorLess("test", "test", "test"))
+}
+
 func TestAbstractFindSuggestionsFilter_RemoveSuggestionsRegexpCaseSensitive(t *testing.T) {
 	// Java UNICODE_CASE without CASE_INSENSITIVE → case-sensitive matches().
 	f := &AbstractFindSuggestionsFilter{
