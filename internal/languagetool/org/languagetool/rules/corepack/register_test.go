@@ -17,7 +17,7 @@ func TestRegister_MultiLang(t *testing.T) {
 		{"en", "This is an test.", "EN_A_VS_AN"},
 		{"de", "Ein Test Test.", "GERMAN_WORD_REPEAT_RULE"},
 		{"sv", "hej hej", "SV_WORD_REPEAT_RULE"},
-		{"da", "hej hej", "DA_WORD_REPEAT_RULE"},
+		// da: Java WORD_REPEAT only via grammar.xml — no class WordRepeat in getRelevantRules
 		{"gl", "ola ola", "GL_WORD_REPEAT_RULE"},
 		{"sk", "test test", "SK_WORD_REPEAT_RULE"},
 		{"el", "γεια γεια", "EL_WORD_REPEAT_RULE"},
@@ -62,8 +62,8 @@ func TestRegister_WordRepeatBeginning(t *testing.T) {
 }
 
 func TestRegister_GenericPacks(t *testing.T) {
-	// be/eo/sr still have word-repeat; zh/ja match Java layout-only getRelevantRules
-	for _, code := range []string{"be", "eo", "sr"} {
+	// eo/sr still have word-repeat; be has no Java WordRepeat (replace/speller only)
+	for _, code := range []string{"eo", "sr"} {
 		t.Run(code, func(t *testing.T) {
 			lt := languagetool.NewJLanguageTool(code)
 			corepack.Register(lt, code)
@@ -72,6 +72,15 @@ func TestRegister_GenericPacks(t *testing.T) {
 			require.NotEmpty(t, m)
 		})
 	}
+	t.Run("be", func(t *testing.T) {
+		lt := languagetool.NewJLanguageTool("be")
+		corepack.Register(lt, "be")
+		require.NotEmpty(t, lt.Check("a  b"))
+		// No invent word-repeat
+		for _, m := range lt.Check("test test") {
+			require.NotContains(t, m.RuleID, "WORD_REPEAT")
+		}
+	})
 }
 
 // Java Chinese/Japanese.getRelevantRules: DOUBLE_PUNCTUATION + WHITESPACE_RULE only.
@@ -114,24 +123,13 @@ func TestRegister_SupportedList(t *testing.T) {
 	require.True(t, codes["en"] && codes["zh"] && codes["be"])
 }
 
-func TestRegister_GenericBeginning(t *testing.T) {
+// Java Belarusian has ParagraphRepeatBeginningRule (layout), not WordRepeatBeginning.
+func TestRegister_Belarusian_NoInventWordRepeatBeginning(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("be")
 	corepack.Register(lt, "be")
 	ids := lt.GetAllRegisteredRuleIDs()
-	found := false
-	for _, id := range ids {
-		if id == "BE_WORD_REPEAT_BEGINNING_RULE" {
-			found = true
-		}
-	}
-	require.True(t, found, "%v", ids)
-	// three successive same starts
-	m := lt.Check("Test one. Test two. Test three.")
-	foundMatch := false
-	for _, x := range m {
-		if x.RuleID == "BE_WORD_REPEAT_BEGINNING_RULE" {
-			foundMatch = true
-		}
-	}
-	require.True(t, foundMatch, "%+v", m)
+	require.NotContains(t, ids, "BE_WORD_REPEAT_BEGINNING_RULE")
+	require.NotContains(t, ids, "BE_WORD_REPEAT_RULE")
+	// Shared layout still has paragraph-level beginning rule when registered
+	require.Contains(t, ids, "PARAGRAPH_REPEAT_BEGINNING_RULE")
 }

@@ -6,7 +6,8 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules"
 )
 
-// RegisterCoreBelarusianRules installs shared layout + official replace and specific-case tables.
+// RegisterCoreBelarusianRules ports Belarusian.getRelevantRules (+ priority / ignored chars).
+// Java has no WordRepeatRule / WordRepeatBeginning — only ParagraphRepeatBeginning via layout.
 func RegisterCoreBelarusianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -15,14 +16,6 @@ func RegisterCoreBelarusianRules(lt *languagetool.JLanguageTool) {
 	// Java Belarusian.getIgnoredCharactersRegex: soft hyphen + combining acute/grave.
 	lt.IgnoredCharacters = languagetool.BelarusianIgnoredCharactersRegex
 	rules.RegisterSharedLayoutRules(lt, "be")
-	wr := rules.NewWordRepeatRule(map[string]string{"repetition": "Паўтор слова"})
-	wr.IDOverride = "BE_WORD_REPEAT_RULE"
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := rules.NewWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Тры сказы запар пачынаюцца адным словам.",
-	})
-	wrb.IDOverride = "BE_WORD_REPEAT_BEGINNING_RULE"
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
 	// Official replace.txt / specific_case.txt (embedded from upstream).
 	sr := NewSimpleReplaceRule(nil)
