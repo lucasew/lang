@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"sync"
@@ -9,7 +10,8 @@ import (
 )
 
 // CheckPostagsInSuggestionFilter ports org.languagetool.rules.CheckPostagsInSuggestionFilter.
-// TagToken returns POS tags for a single token; nil → fail-closed (suppress).
+// TagToken returns POS tags for a single token (Java Tagger.tag → readings POS).
+// Nil tagger: Java throws IOException; Go panics with the same intent.
 type CheckPostagsInSuggestionFilter struct {
 	TagToken func(token string) []string
 }
@@ -19,8 +21,10 @@ func NewCheckPostagsInSuggestionFilter(tag func(string) []string) *CheckPostagsI
 }
 
 var (
-	checkPostagsTagMu sync.RWMutex
+	checkPostagsTagMu      sync.RWMutex
 	defaultCheckPostagsTag func(string) []string
+	// javaSplitWS ports String.split("\\s+") (limit 0: trailing empties discarded).
+	javaSplitWS = regexp.MustCompile(`\s+`)
 )
 
 // SetDefaultCheckPostagsTagger wires language tagger for CheckPostagsInSuggestionFilter
@@ -44,8 +48,8 @@ func (f *CheckPostagsInSuggestionFilter) AcceptRuleMatch(match *RuleMatch, argum
 		checkPostagsTagMu.RUnlock()
 	}
 	if tag == nil {
-		// Java throws if tagger missing; fail-closed drop match (do not invent POS).
-		return nil
+		// Java: throw new IOException("Language tagger not available in rule …")
+		panic("Language tagger not available in CheckPostagsInSuggestionFilter")
 	}
 	postagsListStr, ok := arguments["PostagsList"]
 	if !ok {
@@ -59,50 +63,58 @@ func (f *CheckPostagsInSuggestionFilter) AcceptRuleMatch(match *RuleMatch, argum
 	return match
 }
 
-// Filter keeps multi-token suggestions whose tokens match postagsList (comma-separated regexes).
-// Returns nil when none match (caller should suppress the rule match).
+// Filter keeps suggestions whose tokens match postagsList (comma-separated regexes).
+// Java: replacement.split("\\s+"); tagger.tag; matchesPosTagRegex; empty list → null match.
+// Token/tag count mismatch throws (do not invent skip).
 func (f *CheckPostagsInSuggestionFilter) Filter(replacements []string, postagsListStr string) []string {
 	if f.TagToken == nil {
-		return nil
+		panic("Language tagger not available in CheckPostagsInSuggestionFilter")
 	}
+	// Java: postagsListStr.split(",") — no invent TrimSpace on each tag regex.
 	postagsList := strings.Split(postagsListStr, ",")
-	if len(postagsList) == 0 || (len(postagsList) == 1 && postagsList[0] == "") {
-		return nil
-	}
-	var res []*regexp.Regexp
-	for _, p := range postagsList {
-		re, err := regexp.Compile(strings.TrimSpace(p))
-		if err != nil {
-			return nil
-		}
-		res = append(res, re)
-	}
 	var out []string
 	for _, replacement := range replacements {
-		tokens := strings.Fields(replacement)
-		if len(tokens) != len(res) {
-			// Java throws on mismatch; skip (fail-closed for that replacement).
-			continue
+		tokens := javaSplitWhitespace(replacement)
+		if len(tokens) != len(postagsList) || len(postagsList) == 0 {
+			// Java throws IOException — panic for twin (do not invent continue).
+			panic(fmt.Sprintf("Mismatch between number of tokens and number of tags: %v vs %v", tokens, postagsList))
 		}
-		ok := true
+		postagsMatch := true
 		for i, tok := range tokens {
-			tags := f.TagToken(tok)
-			match := false
-			for _, tag := range tags {
-				// Java: matchesPosTagRegex (substring/full per ATR); use MatchString on tags.
-				if res[i].MatchString(tag) {
-					match = true
-					break
-				}
-			}
-			if !match {
-				ok = false
+			if !tokenMatchesPosTagRegex(f.TagToken(tok), postagsList[i]) {
+				postagsMatch = false
 				break
 			}
 		}
-		if ok {
+		if postagsMatch {
 			out = append(out, replacement)
 		}
 	}
 	return out
+}
+
+// javaSplitWhitespace ports Java String.split("\\s+") with default limit 0
+// (trailing empty strings discarded; leading empty kept if string starts with WS).
+func javaSplitWhitespace(s string) []string {
+	parts := javaSplitWS.Split(s, -1)
+	for len(parts) > 0 && parts[len(parts)-1] == "" {
+		parts = parts[:len(parts)-1]
+	}
+	return parts
+}
+
+// tokenMatchesPosTagRegex ports AnalyzedTokenReadings.matchesPosTagRegex:
+// Pattern.matcher(posTag).matches() on any reading (full region).
+func tokenMatchesPosTagRegex(tags []string, posTagRegex string) bool {
+	re, err := regexp.Compile(`\A(?:` + posTagRegex + `)\z`)
+	if err != nil {
+		// Java Pattern.compile throws; treat as no match for this token
+		return false
+	}
+	for _, tag := range tags {
+		if re.MatchString(tag) {
+			return true
+		}
+	}
+	return false
 }
