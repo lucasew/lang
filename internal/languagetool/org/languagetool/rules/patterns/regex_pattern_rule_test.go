@@ -2,6 +2,7 @@ package patterns
 
 import (
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
@@ -48,6 +49,37 @@ func TestRegexPatternRuleMarkGroup(t *testing.T) {
 	require.Len(t, matches, 1)
 	require.Equal(t, 8, matches[0].FromPos)
 	require.Equal(t, 11, matches[0].ToPos)
+}
+
+func TestRegexPatternRule_RequiredSubstringsAndUTF16(t *testing.T) {
+	re := regexp.MustCompile(`hello world`)
+	rule := NewRegexPatternRule("R", "d", "m", "", "", "en", re, 0)
+	require.NotNil(t, rule.RequiredSubstrings)
+	require.Contains(t, rule.RequiredSubstrings.String(), "hello")
+
+	// Over UTF-16 MaxSentLength → no matches (Java text.length()).
+	// Use BMP runes so rune count == UTF-16 length.
+	long := strings.Repeat("a", MaxSentLength+1)
+	tok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken(long, nil, nil))
+	sent := testSentence(tok)
+	matches, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Empty(t, matches)
+}
+
+func TestRegexPatternRule_ProcessMessageMatchReplace(t *testing.T) {
+	re := regexp.MustCompile(`(foo)`)
+	rule := NewRegexPatternRule("R", "d", `use <suggestion>\1</suggestion>`, "", "", "en", re, 0)
+	// Java processMessage: Match with regexReplace on backref
+	mw := NewMatch("", "", false, "f(.*)", "F$1", CaseAllUpper, false, false, IncludeNone)
+	rule.SuggestionMatches = []*Match{mw}
+	tok := languagetool.NewAnalyzedTokenReadings(languagetool.NewAnalyzedToken("foo", nil, nil))
+	sent := testSentence(tok)
+	matches, err := rule.Match(sent)
+	require.NoError(t, err)
+	require.Len(t, matches, 1)
+	// replace f(.*) → F$1 on "foo" → "Foo", then ALLUPPER → "FOO"
+	require.Contains(t, matches[0].GetSuggestedReplacements()[0], "FOO")
 }
 
 func TestPatternRuleTransformer(t *testing.T) {

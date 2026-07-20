@@ -152,8 +152,13 @@ func GetPossibleRegexpValues(regexp string) map[string]struct{} {
 	return getPossibleRegexpValues(regexp)
 }
 
-func getPossibleRegexpValues(re string) map[string]struct{} {
-	// strip common anchors
+// GetRequiredSubstrings ports StringMatcher.getRequiredSubstrings.
+// Returns nil when no necessary substrings can be proven.
+func GetRequiredSubstrings(regexp string) *Substrings {
+	return getRequiredSubstrings(regexp)
+}
+
+func stripRegexpAnchors(re string) string {
 	if strings.HasPrefix(re, "\\b") {
 		re = re[2:]
 	}
@@ -166,6 +171,11 @@ func getPossibleRegexpValues(re string) map[string]struct{} {
 	if strings.HasSuffix(re, "$") && !strings.HasSuffix(re, "\\$") {
 		re = re[:len(re)-1]
 	}
+	return re
+}
+
+func getPossibleRegexpValues(re string) map[string]struct{} {
+	re = stripRegexpAnchors(re)
 	vals, ok := parseRegexpAlternatives(re)
 	if !ok {
 		return nil
@@ -175,6 +185,233 @@ func getPossibleRegexpValues(re string) map[string]struct{} {
 		out[v] = struct{}{}
 	}
 	return out
+}
+
+// unknownSubstrings ports Java Substrings UNKNOWN (no fixed fragments).
+func unknownSubstrings() Substrings {
+	return NewSubstrings(false, false, nil)
+}
+
+func getRequiredSubstrings(re string) *Substrings {
+	re = stripRegexpAnchors(re)
+	p := &subParser{s: re}
+	result, ok := p.disjunction()
+	if !ok || p.pos != len(p.s) {
+		return nil
+	}
+	if len(result.Substrings) == 0 {
+		return nil
+	}
+	cp := result
+	return &cp
+}
+
+// subParser ports RegexpParser<Substrings> for getRequiredSubstrings.
+type subParser struct {
+	s   string
+	pos int
+}
+
+func (p *subParser) disjunction() (Substrings, bool) {
+	left, ok := p.concatenation()
+	if !ok {
+		return Substrings{}, false
+	}
+	if p.pos >= len(p.s) || p.s[p.pos] != '|' {
+		return left, true
+	}
+	// any top-level | → UNKNOWN (Java handleOr)
+	for p.pos < len(p.s) && p.s[p.pos] == '|' {
+		p.pos++
+		if _, ok := p.concatenation(); !ok {
+			return Substrings{}, false
+		}
+	}
+	return unknownSubstrings(), true
+}
+
+func (p *subParser) concatenation() (Substrings, bool) {
+	left, ok := p.postfix()
+	if !ok {
+		return Substrings{}, false
+	}
+	for p.pos < len(p.s) {
+		c := p.s[p.pos]
+		if c == ')' || c == '|' {
+			break
+		}
+		if strings.ContainsRune("?$^{}*+", rune(c)) {
+			return Substrings{}, false
+		}
+		right, ok := p.postfix()
+		if !ok {
+			return Substrings{}, false
+		}
+		left = left.Concat(right)
+	}
+	return left, true
+}
+
+func (p *subParser) postfix() (Substrings, bool) {
+	base, ok := p.atom()
+	if !ok {
+		return Substrings{}, false
+	}
+	if p.pos < len(p.s) {
+		next := p.s[p.pos]
+		if next == '{' {
+			closing := strings.IndexByte(p.s[p.pos+1:], '}')
+			if closing < 0 {
+				return Substrings{}, false
+			}
+			p.pos += closing + 2
+			base = unknownSubstrings()
+			if p.pos >= len(p.s) {
+				return base, true
+			}
+			next = p.s[p.pos]
+		}
+		if next == '?' || next == '*' || next == '+' {
+			p.pos++
+			// Java optional → UNKNOWN for required-substrings mode
+			return unknownSubstrings(), true
+		}
+	}
+	return base, true
+}
+
+func (p *subParser) atom() (Substrings, bool) {
+	if p.pos >= len(p.s) {
+		return NewSubstrings(true, true, []string{""}), true
+	}
+	switch p.s[p.pos] {
+	case '(':
+		p.pos++
+		if p.pos < len(p.s) && p.s[p.pos] == '?' {
+			p.pos++
+			if p.pos >= len(p.s) || p.s[p.pos] != ':' {
+				return Substrings{}, false
+			}
+			p.pos++
+		}
+		inner, ok := p.disjunction()
+		if !ok {
+			return Substrings{}, false
+		}
+		if p.pos >= len(p.s) || p.s[p.pos] != ')' {
+			return Substrings{}, false
+		}
+		p.pos++
+		return inner, true
+	case '[':
+		return p.charClass()
+	case '\\':
+		p.pos++
+		ch, ok := p.escape()
+		if !ok {
+			return Substrings{}, false
+		}
+		if ch == nil {
+			return unknownSubstrings(), true
+		}
+		return NewSubstrings(true, true, []string{string(*ch)}), true
+	case '.':
+		p.pos++
+		return unknownSubstrings(), true
+	default:
+		start := p.pos
+		for p.pos < len(p.s) {
+			c := p.s[p.pos]
+			if strings.ContainsRune(")|?$^{}*+([\\.", rune(c)) {
+				break
+			}
+			p.pos++
+		}
+		if start+1 < p.pos && p.pos < len(p.s) && p.s[p.pos] == '?' {
+			p.pos--
+		}
+		return NewSubstrings(true, true, []string{p.s[start:p.pos]}), true
+	}
+}
+
+func (p *subParser) charClass() (Substrings, bool) {
+	p.pos++ // skip [
+	start := p.pos
+	var options []rune
+	negated := false
+	okOptions := true
+	for p.pos < len(p.s) {
+		c := rune(p.s[p.pos])
+		p.pos++
+		if c == ']' {
+			break
+		}
+		if c == '^' && p.pos == start+1 {
+			negated = true
+			okOptions = false
+			options = nil
+			continue
+		}
+		if c == '-' && len(options) > 0 && p.pos < len(p.s) && p.s[p.pos] != ']' {
+			last := options[len(options)-1]
+			next := rune(p.s[p.pos])
+			p.pos++
+			if next == '\\' || int(next)-int(last) > 10 {
+				okOptions = false
+				options = nil
+			}
+			if okOptions {
+				for r := last + 1; r <= next; r++ {
+					options = append(options, r)
+				}
+			}
+			continue
+		}
+		if c == '[' {
+			return Substrings{}, false
+		}
+		if c == '\\' {
+			ch, eok := p.escape()
+			if !eok {
+				return Substrings{}, false
+			}
+			if ch == nil {
+				okOptions = false
+				options = nil
+				continue
+			}
+			if okOptions {
+				options = append(options, *ch)
+			}
+			continue
+		}
+		if okOptions {
+			options = append(options, c)
+		}
+	}
+	if negated || !okOptions || len(options) == 0 {
+		return unknownSubstrings(), true
+	}
+	if len(options) == 1 {
+		return NewSubstrings(true, true, []string{string(options[0])}), true
+	}
+	// multi-char class → handleOr → UNKNOWN
+	return unknownSubstrings(), true
+}
+
+func (p *subParser) escape() (*rune, bool) {
+	if p.pos >= len(p.s) {
+		return nil, false
+	}
+	next := rune(p.s[p.pos])
+	p.pos++
+	if strings.ContainsRune("0xucpP", next) {
+		return nil, false
+	}
+	if unicode.IsLetter(next) || unicode.IsDigit(next) {
+		return nil, true // class escape → unknown
+	}
+	return &next, true
 }
 
 // parseRegexpAlternatives enumerates finite languages for a subset of RE syntax.
