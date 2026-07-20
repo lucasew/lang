@@ -11,6 +11,7 @@ func TestFindSuggestionsFilter_WiresTagAndSynthesize(t *testing.T) {
 	ClearFrenchFindSuggestionsTagger()
 	f := NewFindSuggestionsFilter()
 	require.NotNil(t, f.Tag)
+	// Java FR overrides getSynthesizer() → FrenchSynthesizer.INSTANCE
 	require.NotNil(t, f.Synthesize)
 	require.Nil(t, f.Tag("maison")) // unwired fail-closed
 }

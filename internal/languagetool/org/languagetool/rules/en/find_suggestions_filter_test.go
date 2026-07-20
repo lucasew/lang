@@ -10,11 +10,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFindSuggestionsFilter_WiresTagAndSynthesize(t *testing.T) {
+func TestFindSuggestionsFilter_WiresTagNoSynthesize(t *testing.T) {
 	ClearEnglishFilterTagger()
 	f := NewFindSuggestionsFilter()
 	require.NotNil(t, f.Tag)
-	require.NotNil(t, f.Synthesize)
+	// Java FindSuggestionsFilter does not override getSynthesizer() → null
+	require.Nil(t, f.Synthesize)
 	// Without WireEnglishFilterTagger, Tag returns nil (fail-closed)
 	require.Nil(t, f.Tag("house"))
 }
@@ -46,7 +47,7 @@ func TestFindSuggestionsFilter_Registered(t *testing.T) {
 	fs, ok := f.(*FindSuggestionsFilter)
 	if ok {
 		require.NotNil(t, fs.Tag)
-		require.NotNil(t, fs.Synthesize)
+		require.Nil(t, fs.Synthesize) // Java getSynthesizer default null
 	}
 }
 

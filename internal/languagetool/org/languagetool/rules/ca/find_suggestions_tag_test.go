@@ -7,11 +7,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFindSuggestionsFilter_WiresTagAndSynthesize(t *testing.T) {
+func TestFindSuggestionsFilter_WiresTagNoSynthesize(t *testing.T) {
 	ClearCatalanFindSuggestionsTagger()
 	f := NewFindSuggestionsFilter()
 	require.NotNil(t, f.Tag)
-	require.NotNil(t, f.Synthesize)
+	// Java CA getSynthesizer override is commented out → null
+	require.Nil(t, f.Synthesize)
 	require.Nil(t, f.Tag("casa"))
 }
 

@@ -24,7 +24,12 @@ type FindSuggestionsEsFilter struct {
 }
 
 func NewFindSuggestionsEsFilter() *FindSuggestionsEsFilter {
-	return &FindSuggestionsEsFilter{MaxSuggestions: 10}
+	return &FindSuggestionsEsFilter{
+		MaxSuggestions: 10,
+		// Java: inherits speller + getTagger() from FindSuggestionsFilter
+		SpellingSuggestions: defaultCASpellingSuggestions,
+		Tag:                 FilterTagWord,
+	}
 }
 
 // Java patterns (Matcher.matches = full string).
