@@ -5,9 +5,11 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers"
 )
 
-// MaxMatchLength ports StringMatcher.MAX_MATCH_LENGTH.
+// MaxMatchLength ports StringMatcher.MAX_MATCH_LENGTH (Java s.length() = UTF-16 units).
 const MaxMatchLength = 250
 
 // StringMatcher ports org.languagetool.rules.patterns.StringMatcher.
@@ -20,8 +22,12 @@ type StringMatcher struct {
 	possibleValues map[string]struct{}
 	// possibleSorted used for case-insensitive set membership via binary search
 	possibleSorted []string
-	// re is used when possible values cannot be enumerated
+	// re is used when possible values cannot be enumerated and substrings are not sufficient
 	re *regexp.Regexp
+	// required ports getRequiredSubstrings filter (and checkCanReplaceRegex when sufficient)
+	required *Substrings
+	// substringsSufficient when true, required alone decides matches (no regex)
+	substringsSufficient bool
 }
 
 // NewStringMatcherRegexp creates a case-sensitive regexp matcher.
@@ -75,12 +81,30 @@ func NewStringMatcher(pattern string, isRegExp, caseSensitive bool) *StringMatch
 			possibleValues: vals,
 		}
 	}
-	return &StringMatcher{
-		Pattern:       pattern,
-		CaseSensitive: caseSensitive,
-		IsRegExp:      true,
-		re:            re,
+
+	// Java: required substrings + checkCanReplaceRegex for exhaustive path
+	required := getRequiredSubstrings(pattern)
+	var substrings *Substrings
+	sufficient := false
+	if required != nil {
+		if exhaustive := required.CheckCanReplaceRegex(pattern); exhaustive != nil {
+			substrings = exhaustive
+			sufficient = true
+		} else {
+			substrings = required
+		}
 	}
+	m := &StringMatcher{
+		Pattern:              pattern,
+		CaseSensitive:        caseSensitive,
+		IsRegExp:             true,
+		required:             substrings,
+		substringsSufficient: sufficient,
+	}
+	if !sufficient {
+		m.re = re
+	}
+	return m
 }
 
 func stringEqualsMatcher(pattern string, isRegExp, caseSensitive bool) *StringMatcher {
@@ -107,21 +131,21 @@ func (m *StringMatcher) GetPossibleValues() map[string]struct{} {
 	return out
 }
 
-// Matches reports whether s is accepted.
+// Matches ports StringMatcher.matches.
 func (m *StringMatcher) Matches(s string) bool {
 	if m == nil {
 		return false
 	}
-	if len(s) > MaxMatchLength {
+	// Java: s.length() > MAX_MATCH_LENGTH (UTF-16 code units)
+	if tokenizers.UTF16Len(s) > MaxMatchLength {
 		return false
 	}
-	if m.possibleValues != nil && m.re == nil {
+	if m.possibleValues != nil {
 		if m.CaseSensitive {
 			_, ok := m.possibleValues[s]
 			return ok
 		}
 		if m.possibleSorted != nil {
-			// binary search case-insensitive
 			i := sort.Search(len(m.possibleSorted), func(i int) bool {
 				return strings.ToLower(m.possibleSorted[i]) >= strings.ToLower(s)
 			})
@@ -136,6 +160,13 @@ func (m *StringMatcher) Matches(s string) bool {
 			}
 		}
 		return false
+	}
+	// required-substring prefilter (and full decision when checkCanReplaceRegex succeeded)
+	if m.required != nil && !m.required.Matches(s, m.CaseSensitive) {
+		return false
+	}
+	if m.substringsSufficient {
+		return true
 	}
 	if m.re != nil {
 		return m.re.MatchString(s)

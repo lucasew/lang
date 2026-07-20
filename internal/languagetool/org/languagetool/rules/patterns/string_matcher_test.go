@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -51,6 +52,38 @@ func TestStringMatcherMaxLengthPort(t *testing.T) {
 
 func TestStringMatcherInvalidSyntaxPort(t *testing.T) {
 	require.Panics(t, func() { NewStringMatcherRegexp("tú|?") })
+}
+
+func TestStringMatcher_RequiredSubstringsMatches(t *testing.T) {
+	// Java create path: required prefilter + checkCanReplaceRegex exhaustive.
+	// PRP.+ → exhaustive [PRP) with minLength+1 for +
+	m := NewStringMatcherRegexp("PRP.+")
+	require.True(t, m.substringsSufficient)
+	require.NotNil(t, m.required)
+	require.Nil(t, m.re)
+	require.True(t, m.Matches("PRPfoo"))
+	require.True(t, m.Matches("PRPx"))
+	require.False(t, m.Matches("PRP")) // + needs at least one more char
+	require.False(t, m.Matches("XPRPfoo"))
+
+	// foo.*bar exhaustive when MustStart+MustEnd
+	m2 := NewStringMatcherRegexp("foo.*bar")
+	require.True(t, m2.substringsSufficient)
+	require.True(t, m2.Matches("foobar"))
+	require.True(t, m2.Matches("fooXbar"))
+	require.False(t, m2.Matches("foXbar"))
+	require.False(t, m2.Matches("fooXba"))
+
+	// unbounded that is not substring-sufficient still uses regex
+	m3 := NewStringMatcherRegexp("x.+y")
+	// a.+b form is sufficient; x.+y same
+	require.True(t, m3.Matches("xay"))
+	require.False(t, m3.Matches("xy")) // + needs content between? x.+y means x, one+, y — "xy" fails
+	require.False(t, m3.Matches("xaz"))
+
+	// MaxMatchLength uses UTF-16 length (Java s.length())
+	long := strings.Repeat("a", MaxMatchLength+1)
+	require.False(t, NewStringMatcher("a+", true, true).Matches(long))
 }
 
 func TestStringMatcher_GetRequiredSubstrings(t *testing.T) {
