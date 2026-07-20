@@ -62,3 +62,16 @@ func TestAbstractSuppressMisspelled_CustomTokenize(t *testing.T) {
 	require.NotNil(t, out)
 	require.Equal(t, []string{"good"}, out.GetSuggestedReplacements())
 }
+
+// Twin of Java RuleFilter.getRequired("suppressMatch") — throws when absent.
+func TestAbstractSuppressMisspelled_RequiresSuppressMatch(t *testing.T) {
+	f := &AbstractSuppressMisspelledSuggestionsFilter{}
+	m := NewRuleMatch(NewFakeRule("R"), nil, 0, 3, "msg")
+	m.SetSuggestedReplacements([]string{"ok"})
+	require.PanicsWithValue(t, "Missing key 'suppressMatch'", func() {
+		f.AcceptRuleMatch(m, map[string]string{})
+	})
+	require.PanicsWithValue(t, "Missing key 'suppressMatch'", func() {
+		f.AcceptRuleMatch(m, nil)
+	})
+}

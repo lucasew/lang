@@ -59,8 +59,13 @@ func (f *AbstractSuppressMisspelledSuggestionsFilter) AcceptRuleMatch(
 			newReplacements = append(newReplacements, rep)
 		}
 	}
+	// Java getRequired("suppressMatch") — no soft default.
+	suppressMatch, ok := arguments["suppressMatch"]
+	if !ok {
+		panic("Missing key 'suppressMatch'")
+	}
 	bSuppressMatch := true
-	if sm, ok := arguments["suppressMatch"]; ok && strings.EqualFold(sm, "false") {
+	if strings.EqualFold(suppressMatch, "false") {
 		bSuppressMatch = false
 	}
 	if len(newReplacements) == 0 && bSuppressMatch {
