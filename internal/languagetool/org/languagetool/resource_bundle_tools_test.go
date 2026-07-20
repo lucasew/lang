@@ -25,4 +25,17 @@ func TestResourceBundleTools(t *testing.T) {
 	// unknown lang falls back to en via merge
 	xx := tools.GetMessageBundleFor("xx")
 	require.Equal(t, "Hello", xx.GetString("hello"))
+	// system default
+	require.Equal(t, "Hello", tools.GetMessageBundle().GetString("hello"))
+}
+
+func TestIsValidBundleFor(t *testing.T) {
+	require.True(t, isValidBundleFor("en-US", BundleWithLocale{
+		Bundle: MessageBundle{"a": "b"},
+		Lang:   "en",
+	}))
+	require.False(t, isValidBundleFor("de", BundleWithLocale{
+		Bundle: MessageBundle{"a": "b"},
+		Lang:   "en",
+	}))
 }

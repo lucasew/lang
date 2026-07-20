@@ -4,33 +4,70 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 )
 
 // ResultCache ports org.languagetool.ResultCache with a simple bounded map.
 // Match values are stored as any (typically []*rules.RuleMatch) to avoid an
-// import cycle with the rules package.
+// import cycle with the rules package. Guava CacheBuilder expire/stats are
+// approximated (access-time expiry optional; hit/miss counters).
 type ResultCache struct {
 	mu            sync.Mutex
 	maxSize       int
-	matches       map[string]any // InputSentence key → match list
-	sentences     map[string]*AnalyzedSentence
-	remoteMatches map[string]any
-	hits, misses  int64
+	expireAfter   time.Duration // 0 = no expiry (still size-bounded)
+	matches       map[string]cacheEntry
+	sentences     map[string]sentenceEntry
+	remoteMatches map[string]cacheEntry
+	// separate stats like Java matchesCache + sentenceCache for hitRate average
+	matchHits, matchMisses, sentHits, sentMisses, remoteHits, remoteMisses int64
 }
 
+type cacheEntry struct {
+	val      any
+	lastRead time.Time
+}
+
+type sentenceEntry struct {
+	val      *AnalyzedSentence
+	lastRead time.Time
+}
+
+// NewResultCache ports ResultCache(long maxSize) — expire 5 minutes after access.
 func NewResultCache(maxSize int) *ResultCache {
+	return NewResultCacheExpire(maxSize, 5*time.Minute)
+}
+
+// NewResultCacheExpire ports ResultCache(maxSize, expireAfter, timeUnit).
+func NewResultCacheExpire(maxSize int, expireAfter time.Duration) *ResultCache {
 	if maxSize < 0 {
-		panic("Result cache size must be >= 0")
+		panic("Result cache size must be >= 0: " + itoa64(int64(maxSize)))
 	}
 	return &ResultCache{
 		maxSize:       maxSize,
-		matches:       map[string]any{},
-		sentences:     map[string]*AnalyzedSentence{},
-		remoteMatches: map[string]any{},
+		expireAfter:   expireAfter,
+		matches:       map[string]cacheEntry{},
+		sentences:     map[string]sentenceEntry{},
+		remoteMatches: map[string]cacheEntry{},
 	}
 }
 
-// inputSentenceKey mirrors InputSentence.Equal dimensions used as a Guava cache key.
+// MatchesWeigh ports MatchesWeigher.weigh.
+// return 1 + sentence text length/75 + matches.size()
+func MatchesWeigh(sentenceText string, matchCount int) int {
+	return 1 + len(sentenceText)/75 + matchCount
+}
+
+// RemoteMatchesWeigh ports RemoteMatchesWeigher.weigh.
+func RemoteMatchesWeigh(sentenceText string) int {
+	return 1 + len(sentenceText)/75
+}
+
+// SentenceWeigh ports SentenceWeigher.weigh.
+func SentenceWeigh(text string) int {
+	return 1 + len(text)/75
+}
+
+// inputSentenceKey mirrors InputSentence.equal dimensions used as a Guava cache key.
 func inputSentenceKey(s InputSentence) string {
 	text := ""
 	if s.Analyzed != nil {
@@ -61,7 +98,6 @@ func inputSentenceKey(s InputSentence) string {
 		b.WriteString(itoa64(*s.TextSessionID))
 	}
 	b.WriteByte(0)
-	// tone tags
 	if len(s.ToneTags) > 0 {
 		keys := make([]string, 0, len(s.ToneTags))
 		for t := range s.ToneTags {
@@ -86,7 +122,6 @@ func sortedSetKey(m map[string]struct{}) string {
 }
 
 func itoa64(n int64) string {
-	// small helper without strconv import pull for negatives
 	if n == 0 {
 		return "0"
 	}
@@ -112,17 +147,30 @@ func simpleInputKey(s SimpleInputSentence) string {
 	return s.Text + "\x00" + s.LanguageCode
 }
 
+func (c *ResultCache) expired(t time.Time) bool {
+	if c.expireAfter <= 0 {
+		return false
+	}
+	return time.Since(t) > c.expireAfter
+}
+
 // GetMatchesIfPresent returns the cached matches (any) if present.
 func (c *ResultCache) GetMatchesIfPresent(key InputSentence) (any, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	v, ok := c.matches[inputSentenceKey(key)]
-	if ok {
-		c.hits++
-	} else {
-		c.misses++
+	k := inputSentenceKey(key)
+	e, ok := c.matches[k]
+	if ok && !c.expired(e.lastRead) {
+		e.lastRead = time.Now()
+		c.matches[k] = e
+		c.matchHits++
+		return e.val, true
 	}
-	return v, ok
+	if ok {
+		delete(c.matches, k)
+	}
+	c.matchMisses++
+	return nil, false
 }
 
 // PutMatches stores match results for a sentence key.
@@ -132,25 +180,36 @@ func (c *ResultCache) PutMatches(key InputSentence, matches any) {
 	if c.maxSize == 0 {
 		return
 	}
-	if len(c.matches) >= c.maxSize {
+	// Java maximumWeight = maxSize/2 for each cache
+	limit := c.maxSize / 2
+	if limit < 1 {
+		limit = c.maxSize
+	}
+	for len(c.matches) >= limit {
 		for k := range c.matches {
 			delete(c.matches, k)
 			break
 		}
 	}
-	c.matches[inputSentenceKey(key)] = matches
+	c.matches[inputSentenceKey(key)] = cacheEntry{val: matches, lastRead: time.Now()}
 }
 
 func (c *ResultCache) GetSentenceIfPresent(key SimpleInputSentence) (*AnalyzedSentence, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	v, ok := c.sentences[simpleInputKey(key)]
-	if ok {
-		c.hits++
-	} else {
-		c.misses++
+	k := simpleInputKey(key)
+	e, ok := c.sentences[k]
+	if ok && !c.expired(e.lastRead) {
+		e.lastRead = time.Now()
+		c.sentences[k] = e
+		c.sentHits++
+		return e.val, true
 	}
-	return v, ok
+	if ok {
+		delete(c.sentences, k)
+	}
+	c.sentMisses++
+	return nil, false
 }
 
 func (c *ResultCache) PutSentence(key SimpleInputSentence, a *AnalyzedSentence) {
@@ -159,68 +218,85 @@ func (c *ResultCache) PutSentence(key SimpleInputSentence, a *AnalyzedSentence) 
 	if c.maxSize == 0 {
 		return
 	}
-	if len(c.sentences) >= c.maxSize {
+	limit := c.maxSize / 2
+	if limit < 1 {
+		limit = c.maxSize
+	}
+	for len(c.sentences) >= limit {
 		for k := range c.sentences {
 			delete(c.sentences, k)
 			break
 		}
 	}
-	c.sentences[simpleInputKey(key)] = a
+	c.sentences[simpleInputKey(key)] = sentenceEntry{val: a, lastRead: time.Now()}
 }
 
-// remoteMatchKey is language-agnostic text key for remote-rule match caching
-// (Java ResultCache remote matches keyed by analyzed sentence content).
 func remoteMatchKey(sentenceText, ruleID string) string {
 	return sentenceText + "\x00" + ruleID
 }
 
-// GetRemoteMatchesIfPresent returns cached remote matches for a sentence text + rule id.
 func (c *ResultCache) GetRemoteMatchesIfPresent(sentenceText, ruleID string) (any, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	v, ok := c.remoteMatches[remoteMatchKey(sentenceText, ruleID)]
-	if ok {
-		c.hits++
-	} else {
-		c.misses++
+	k := remoteMatchKey(sentenceText, ruleID)
+	e, ok := c.remoteMatches[k]
+	if ok && !c.expired(e.lastRead) {
+		e.lastRead = time.Now()
+		c.remoteMatches[k] = e
+		c.remoteHits++
+		return e.val, true
 	}
-	return v, ok
+	if ok {
+		delete(c.remoteMatches, k)
+	}
+	c.remoteMisses++
+	return nil, false
 }
 
-// PutRemoteMatches stores remote-rule match results for a sentence text + rule id.
 func (c *ResultCache) PutRemoteMatches(sentenceText, ruleID string, matches any) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.maxSize == 0 {
 		return
 	}
-	if len(c.remoteMatches) >= c.maxSize {
+	limit := c.maxSize / 2
+	if limit < 1 {
+		limit = c.maxSize
+	}
+	for len(c.remoteMatches) >= limit {
 		for k := range c.remoteMatches {
 			delete(c.remoteMatches, k)
 			break
 		}
 	}
-	c.remoteMatches[remoteMatchKey(sentenceText, ruleID)] = matches
+	c.remoteMatches[remoteMatchKey(sentenceText, ruleID)] = cacheEntry{val: matches, lastRead: time.Now()}
 }
 
+// HitCount ports hitCount — matches + sentence cache hit counts.
 func (c *ResultCache) HitCount() int64 {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.hits
+	return c.matchHits + c.sentHits + c.remoteHits
 }
 
+// RequestCount ports requestCount.
 func (c *ResultCache) RequestCount() int64 {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.hits + c.misses
+	return c.matchHits + c.matchMisses + c.sentHits + c.sentMisses + c.remoteHits + c.remoteMisses
 }
 
+// HitRate ports hitRate — average of matches and sentence cache hit rates.
 func (c *ResultCache) HitRate() float64 {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	total := c.hits + c.misses
-	if total == 0 {
-		return 0
+	var mRate, sRate float64
+	if mt := c.matchHits + c.matchMisses; mt > 0 {
+		mRate = float64(c.matchHits) / float64(mt)
 	}
-	return float64(c.hits) / float64(total)
+	if st := c.sentHits + c.sentMisses; st > 0 {
+		sRate = float64(c.sentHits) / float64(st)
+	}
+	// Java always averages the two stats.hitRate() values (0 if empty)
+	return (mRate + sRate) / 2.0
 }

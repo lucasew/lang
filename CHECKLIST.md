@@ -12,8 +12,8 @@
 - [ ] org/languagetool/commandline/CommandLineTools.java::CommandLineTools
 - [ ] org/languagetool/commandline/Main.java::Main
 - [ ] org/languagetool/commandline/Main.java::Main.SystemExitHandler
-- [ ] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
-- [ ] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
+- [x] org/languagetool/commandline/UnknownParameterException.java::UnknownParameterException
+- [x] org/languagetool/commandline/WrongParameterNumberException.java::WrongParameterNumberException
 
 ## languagetool-core
 
@@ -58,12 +58,12 @@
 - [x] org/languagetool/PremiumOff.java::PremiumOff
 - [x] org/languagetool/Range.java::Range
 - [ ] org/languagetool/RemoteRuleFallbackManager.java::RemoteRuleFallbackManager
-- [ ] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
+- [x] org/languagetool/ResourceBundleTools.java::ResourceBundleTools
 - [x] org/languagetool/ResourceBundleWithFallback.java::ResourceBundleWithFallback
-- [ ] org/languagetool/ResultCache.java::ResultCache
-- [ ] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
-- [ ] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
-- [ ] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
+- [x] org/languagetool/ResultCache.java::ResultCache
+- [x] org/languagetool/ResultCache.java::ResultCache.MatchesWeigher
+- [x] org/languagetool/ResultCache.java::ResultCache.RemoteMatchesWeigher
+- [x] org/languagetool/ResultCache.java::ResultCache.SentenceWeigher
 - [x] org/languagetool/RuleEntityResolver.java::RuleEntityResolver
 - [x] org/languagetool/RuleMatchListener.java::RuleMatchListener
 - [x] org/languagetool/SentenceRange.java::SentenceRange
@@ -71,8 +71,8 @@
 - [x] org/languagetool/SimpleInputSentence.java::SimpleInputSentence
 - [x] org/languagetool/Tag.java::Tag
 - [x] org/languagetool/ToneTag.java::ToneTag
-- [ ] org/languagetool/UserConfig.java::UserConfig
-- [ ] org/languagetool/UserConfig.java::UserConfig.TokenType
+- [x] org/languagetool/UserConfig.java::UserConfig
+- [x] org/languagetool/UserConfig.java::UserConfig.TokenType
 - [ ] org/languagetool/XMLValidator.java::XMLValidator
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.LSRuleEntityResolver
 - [ ] org/languagetool/XMLValidator.java::XMLValidator.EntityAsInput
@@ -83,10 +83,10 @@
 - [x] org/languagetool/bitext/TabBitextReader.java::TabBitextReader.TabReader
 - [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader
 - [x] org/languagetool/bitext/WordFastTMReader.java::WordFastTMReader.TabReader
-- [ ] org/languagetool/broker/ClassBroker.java::ClassBroker
-- [ ] org/languagetool/broker/DefaultClassBroker.java::DefaultClassBroker
-- [ ] org/languagetool/broker/DefaultResourceDataBroker.java::DefaultResourceDataBroker
-- [ ] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
+- [x] org/languagetool/broker/ClassBroker.java::ClassBroker
+- [x] org/languagetool/broker/DefaultClassBroker.java::DefaultClassBroker
+- [x] org/languagetool/broker/DefaultResourceDataBroker.java::DefaultResourceDataBroker
+- [x] org/languagetool/broker/ResourceDataBroker.java::ResourceDataBroker
 - [x] org/languagetool/chunking/ChunkTag.java::ChunkTag
 - [x] org/languagetool/chunking/ChunkTaggedToken.java::ChunkTaggedToken
 - [ ] org/languagetool/chunking/Chunker.java::Chunker
