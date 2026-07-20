@@ -2,6 +2,7 @@ package ca
 
 // Twin of ReplaceOperationNamesRuleTest — POS-gated Match (Java FreeLing tags injected).
 import (
+	"regexp"
 	"strings"
 	"testing"
 
@@ -9,6 +10,9 @@ import (
 	catok "github.com/lucasew/lang/internal/languagetool/org/languagetool/tokenizers/ca"
 	"github.com/stretchr/testify/require"
 )
+
+// Java CatalanTagger keeps proclitic forms as single tokens in CatalanWordTokenizer.wordsToAdd.
+var opNamesProclitic = regexp.MustCompile(`(?i)^[lnmtsd]['’]$`)
 
 // opNamesTagWord injects FreeLing-style tags used by ReplaceOperationNamesRule gates.
 // Only tokens that participate in prev/next/exception checks need tags.
@@ -58,6 +62,12 @@ func opNamesTagWord(token string) []languagetool.TokenTag {
 }
 
 func analyzeOpNames(s string) *languagetool.AnalyzedSentence {
+	// Java CatalanWordTokenizer.wordsToAdd uses CatalanTagger.INSTANCE_CAT.isTagged so
+	// proclitics (d', l', …) stay one token. Without a dict, wire the same proclitic
+	// surfaces Java's tagger keeps (matches CatalanWordTokenizerTest twin hook).
+	prev := catok.IsTaggedCA
+	catok.IsTaggedCA = func(tok string) bool { return opNamesProclitic.MatchString(tok) }
+	defer func() { catok.IsTaggedCA = prev }()
 	return languagetool.AnalyzeWithTaggerAndTokenizer(s, opNamesTagWord, catok.NewCatalanWordTokenizer())
 }
 
