@@ -366,6 +366,19 @@ func (t *UkrainianTagger) Tag(sentenceTokens []string) []*languagetool.AnalyzedT
 				readings = []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(word, &p, &l)}
 			}
 		}
+		// Java additionalTags COMPOUND_WITH_QUOTES (екс-«депутат») before guessCompoundTag.
+		if len(readings) == 0 && (strings.Contains(w, "-") || strings.Contains(w, "\u2013")) {
+			if cq := CompoundWithQuotesReadings(w, func(adj string) []*languagetool.AnalyzedToken {
+				// Re-enter Tag on quote-stripped form (no quotes → no recursion).
+				rs := t.Tag([]string{adj})
+				if len(rs) == 0 || rs[0] == nil {
+					return nil
+				}
+				return rs[0].GetReadings()
+			}); len(cq) > 0 {
+				readings = cq
+			}
+		}
 		// Java doGuessTwoHyphens (exactly two dashes) before/alongside single-dash tagMatch.
 		if len(readings) == 0 && strings.Count(strings.ReplaceAll(strings.ReplaceAll(w, "–", "-"), "—", "-"), "-") == 2 {
 			if two := DynamicTwoHyphenReadings(w, t.TagWord); len(two) > 0 {

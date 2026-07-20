@@ -14,6 +14,55 @@ var altDashesInWordRE = regexp.MustCompile(
 	`(?i)[а-яіїєґ0-9a-z]\x{2013}[а-яіїєґ]|[а-яіїєґ]\x{2013}[0-9]`,
 )
 
+// Java COMPOUND_WITH_QUOTES_REGEX / COMPOUND_WITH_QUOTES_REGEX2 / QUOTES.
+var (
+	compoundWithQuotesRE  = regexp.MustCompile(`[\-\x{2013}][«"„]`)
+	compoundWithQuotes2RE = regexp.MustCompile(`[»"“][\-\x{2013}]`)
+	ukCompoundQuotesRE    = regexp.MustCompile(`[«»"„“]`)
+)
+
+// CompoundWithQuotesReadings ports UkrainianTagger additionalTags for
+// екс-«депутат» / "заступницю"-колаборантку: strip quotes and re-tag adjusted form.
+// Fail-closed without retag hits (Java getAdjustedAnalyzedTokens).
+func CompoundWithQuotesReadings(word string, retag func(adjusted string) []*languagetool.AnalyzedToken) []*languagetool.AnalyzedToken {
+	if retag == nil || word == "" {
+		return nil
+	}
+	// Java: length >= 6 inside hyphen branch (length >= 3 && indexOf('-') > 0)
+	if utf8.RuneCountInString(word) < 6 {
+		return nil
+	}
+	if !strings.Contains(word, "-") && !strings.Contains(word, "\u2013") {
+		return nil
+	}
+	if !compoundWithQuotesRE.MatchString(word) && !compoundWithQuotes2RE.MatchString(word) {
+		return nil
+	}
+	adjusted := ukCompoundQuotesRE.ReplaceAllString(word, "")
+	if adjusted == "" || adjusted == word {
+		return nil
+	}
+	tagged := retag(adjusted)
+	if len(tagged) == 0 || tagged[0] == nil || tagged[0].HasNoTag() {
+		return nil
+	}
+	var out []*languagetool.AnalyzedToken
+	for _, tok := range tagged {
+		if tok == nil {
+			continue
+		}
+		// Java: adjustedWord.equals(analyzedToken.getToken())
+		if tok.GetToken() != adjusted {
+			continue
+		}
+		if tok.HasNoTag() {
+			continue
+		}
+		out = append(out, languagetool.NewAnalyzedToken(word, tok.GetPOSTag(), tok.GetLemma()))
+	}
+	return out
+}
+
 // WordsWithBrackets approximates UkrainianWordTokenizer.WORDS_WITH_BRACKETS_PATTERN.
 // Java tags adjusted word after stripping [] when this matches.
 var wordsWithBracketsRE = regexp.MustCompile(`\[[^\]]+\]`)

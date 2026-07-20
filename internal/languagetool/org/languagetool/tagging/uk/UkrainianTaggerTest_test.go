@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/tagging"
 	"github.com/stretchr/testify/require"
 )
@@ -127,8 +128,37 @@ func TestUkrainianTagger_DynamicTaggingParts(t *testing.T) {
 	require.False(t, bare[0].IsTagged())
 }
 func TestUkrainianTagger_HypenAndQuote(t *testing.T) {
-	tg := NewUkrainianTagger(tagging.MapWordTagger{})
-	_ = tg.Tag([]string{"м'ясо"})
+	// Java: екс-«депутат» → lemma екс-депутат + noun…:alt (quotes stripped, dash prefix)
+	wt := tagging.MapWordTagger{
+		"депутат": {tagging.NewTaggedWord("депутат", "noun:anim:m:v_naz")},
+	}
+	tg := NewUkrainianTagger(wt)
+	out := tg.Tag([]string{"екс-«депутат»"})
+	require.True(t, out[0].IsTagged())
+	require.True(t, out[0].HasPartialPosTag("noun"))
+	// surface kept with quotes
+	require.Equal(t, "екс-«депутат»", out[0].GetToken())
+	lem := out[0].GetReadings()[0].GetLemma()
+	require.NotNil(t, lem)
+	require.Equal(t, "екс-депутат", *lem)
+	// fail-closed without right-side dict
+	require.False(t, NewUkrainianTagger(tagging.MapWordTagger{}).Tag([]string{"екс-«депутат»"})[0].IsTagged())
+}
+
+func TestCompoundWithQuotesReadings_unit(t *testing.T) {
+	p, l := "noun:anim:m:v_naz:alt", "екс-депутат"
+	retag := func(adj string) []*languagetool.AnalyzedToken {
+		require.Equal(t, "екс-депутат", adj)
+		return []*languagetool.AnalyzedToken{languagetool.NewAnalyzedToken(adj, &p, &l)}
+	}
+	out := CompoundWithQuotesReadings("екс-«депутат»", retag)
+	require.Len(t, out, 1)
+	require.Equal(t, "екс-«депутат»", out[0].GetToken())
+	require.Equal(t, "екс-депутат", *out[0].GetLemma())
+	// no quote pattern
+	require.Empty(t, CompoundWithQuotesReadings("екс-депутат", retag))
+	// too short
+	require.Empty(t, CompoundWithQuotesReadings("а-«б»", retag))
 }
 func TestUkrainianTagger_HypenPrefixes(t *testing.T) {
 	wt := tagging.MapWordTagger{"тест": {tagging.NewTaggedWord("тест", "noun")}}
