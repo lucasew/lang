@@ -137,10 +137,15 @@ func TestToLocalMatches_PickyAndAllAtOnce(t *testing.T) {
 	out := ToLocalMatches([]*RuleMatch{m})
 	require.Len(t, out, 1)
 	require.True(t, out[0].IsPicky)
+	require.Equal(t, []string{"picky"}, out[0].Tags)
 	require.True(t, out[0].IncludedInErrorsCorrectedAllAtOnce)
 	require.Equal(t, 0, out[0].FromPosSentence)
 	require.Equal(t, 6, out[0].ToPosSentence)
 	require.Equal(t, "Hallo,", out[0].OriginalErrorStr)
+	// Round-trip: FromLocalMatches must reattach tags on FakeRule for JSON rule.tags.
+	back := FromLocalMatches(out, sent)
+	require.Len(t, back, 1)
+	require.Equal(t, []Tag{TagPicky}, back[0].Rule.(interface{ GetTags() []Tag }).GetTags())
 }
 
 func TestToLocalMatches_NotPickyByDefault(t *testing.T) {
@@ -149,6 +154,7 @@ func TestToLocalMatches_NotPickyByDefault(t *testing.T) {
 	out := ToLocalMatches([]*RuleMatch{m})
 	require.Len(t, out, 1)
 	require.False(t, out[0].IsPicky)
+	require.Empty(t, out[0].Tags)
 	require.False(t, out[0].IncludedInErrorsCorrectedAllAtOnce)
 }
 

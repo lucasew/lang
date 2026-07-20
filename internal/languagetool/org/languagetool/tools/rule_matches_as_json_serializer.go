@@ -28,6 +28,8 @@ type MatchForJSON struct {
 	Severity string
 	// RuleURL is a soft community documentation link (serialized as rule.urls).
 	RuleURL string
+	// Tags ports Rule.getTags() → JSON rule.tags (e.g. "picky"); empty omits the field.
+	Tags []string
 }
 
 // RuleMatchesAsJsonSerializer ports org.languagetool.tools.RuleMatchesAsJsonSerializer
@@ -74,6 +76,8 @@ type RuleJSON struct {
 	Category    *CategoryJSON `json:"category,omitempty"`
 	// Urls soft documentation links (community rule pages).
 	Urls []URLJSON `json:"urls,omitempty"`
+	// Tags ports Rule.getTags() (Java writeRule: only when non-empty).
+	Tags []string `json:"tags,omitempty"`
 }
 
 // URLJSON is a rule documentation link object (LT API shape).
@@ -165,6 +169,10 @@ func (s *RuleMatchesAsJsonSerializer) RuleMatchesToJSONWithReason(matches []Matc
 		}
 		if m.RuleURL != "" {
 			mj.Rule.Urls = []URLJSON{{Value: m.RuleURL}}
+		}
+		// Java writeRule: if (rule.getTags().size() > 0) write tags array of tag.name().
+		if len(m.Tags) > 0 {
+			mj.Rule.Tags = append([]string(nil), m.Tags...)
 		}
 		for _, r := range m.SuggestedReplacements {
 			mj.Replacements = append(mj.Replacements, ReplacementJSON{Value: r})

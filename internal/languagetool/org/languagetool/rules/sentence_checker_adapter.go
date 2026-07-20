@@ -69,15 +69,21 @@ func ToLocalMatches(ms []*RuleMatch) []languagetool.LocalMatch {
 				lm.URL = g.GetURL()
 			}
 		}
-		// Tag.picky for CleanOverlappingLocalMatches demotion + German AI merge equality.
-		if g, ok := m.Rule.(interface{ HasTag(Tag) bool }); ok {
-			lm.IsPicky = g.HasTag(TagPicky)
-		} else if g, ok := m.Rule.(interface{ GetTags() []Tag }); ok {
-			for _, t := range g.GetTags() {
-				if t == TagPicky {
-					lm.IsPicky = true
-					break
+		// Rule.getTags → LocalMatch.Tags (JSON rule.tags) + IsPicky for demotion/merge.
+		if g, ok := m.Rule.(interface{ GetTags() []Tag }); ok {
+			if tags := g.GetTags(); len(tags) > 0 {
+				lm.Tags = make([]string, len(tags))
+				for i, t := range tags {
+					lm.Tags[i] = string(t)
+					if t == TagPicky {
+						lm.IsPicky = true
+					}
 				}
+			}
+		} else if g, ok := m.Rule.(interface{ HasTag(Tag) bool }); ok {
+			lm.IsPicky = g.HasTag(TagPicky)
+			if lm.IsPicky {
+				lm.Tags = []string{string(TagPicky)}
 			}
 		}
 		// Java Rule.isIncludedInErrorsCorrectedAllAtOnce for punctuation-only overlap preference.

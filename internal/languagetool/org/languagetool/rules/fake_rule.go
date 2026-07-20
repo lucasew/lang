@@ -45,7 +45,24 @@ func (r *FakeRule) GetURL() string {
 	return r.url
 }
 
-func (r *FakeRule) GetTags() []Tag { return r.tags }
+func (r *FakeRule) GetTags() []Tag {
+	if r == nil || len(r.tags) == 0 {
+		return nil
+	}
+	return append([]Tag(nil), r.tags...)
+}
+
+// SetTags ports Rule.setTags (used by FromLocalMatches + tests).
+func (r *FakeRule) SetTags(tags []Tag) {
+	if r == nil {
+		return
+	}
+	if len(tags) == 0 {
+		r.tags = nil
+		return
+	}
+	r.tags = append([]Tag(nil), tags...)
+}
 
 func (r *FakeRule) HasTag(tag Tag) bool {
 	for _, t := range r.tags {

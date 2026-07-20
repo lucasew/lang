@@ -14,7 +14,18 @@ func FromLocalMatches(ms []languagetool.LocalMatch, sentence *languagetool.Analy
 		if id == "" {
 			id = "LOCAL_MATCH"
 		}
-		rm := NewRuleMatch(NewFakeRule(id), sentence, m.FromPos, m.ToPos, m.Message)
+		fr := NewFakeRule(id)
+		// Preserve Rule.getTags so JSON rule.tags / CLI Tags survive the bridge.
+		if len(m.Tags) > 0 {
+			tags := make([]Tag, len(m.Tags))
+			for i, t := range m.Tags {
+				tags[i] = Tag(t)
+			}
+			fr.SetTags(tags)
+		} else if m.IsPicky {
+			fr.SetTags([]Tag{TagPicky})
+		}
+		rm := NewRuleMatch(fr, sentence, m.FromPos, m.ToPos, m.Message)
 		if len(m.Suggestions) > 0 {
 			rm.SetSuggestedReplacements(m.Suggestions)
 		}

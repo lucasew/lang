@@ -389,12 +389,27 @@ func matchURL(m *rules.RuleMatch) string {
 	return ""
 }
 
+// ruleTagsOf ports Rule.getTags() as string names for JSON rule.tags / CLI "Tags:".
 func ruleTagsOf(m *rules.RuleMatch) []string {
 	if m == nil || m.Rule == nil {
 		return nil
 	}
-	type tagger interface{ GetTags() []string }
+	// Prefer []rules.Tag (FakeRule, PatternRule, SpecificIdRule, …).
+	type tagger interface{ GetTags() []rules.Tag }
 	if r, ok := m.Rule.(tagger); ok {
+		tags := r.GetTags()
+		if len(tags) == 0 {
+			return nil
+		}
+		out := make([]string, len(tags))
+		for i, t := range tags {
+			out[i] = string(t)
+		}
+		return out
+	}
+	// Fallback string surface (e.g. older stubs).
+	type stringTagger interface{ GetTags() []string }
+	if r, ok := m.Rule.(stringTagger); ok {
 		return r.GetTags()
 	}
 	return nil

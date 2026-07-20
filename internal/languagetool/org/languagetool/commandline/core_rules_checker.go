@@ -781,6 +781,7 @@ func ruleMatchesToJSON(matches []*rules.RuleMatch, contents string, contextSize 
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
 			RuleURL:               languagetool.RuleURL(id, lang),
+			Tags:                  ruleTagsOf(m),
 		}
 		mj = append(mj, item)
 	}

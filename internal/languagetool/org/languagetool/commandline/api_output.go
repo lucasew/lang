@@ -82,6 +82,7 @@ func MatchesAsJSON(matches []*rules.RuleMatch, languageCode, text string) string
 			CategoryName:          catName,
 			Severity:              languagetool.SeverityFromIssueType(issue),
 			RuleURL:               languagetool.RuleURL(id, languageCode),
+			Tags:                  ruleTagsOf(m),
 		})
 	}
 	s, err := ser.RuleMatchesToJSON(mj, text, 45)

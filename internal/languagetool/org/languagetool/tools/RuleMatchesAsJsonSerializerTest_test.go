@@ -39,23 +39,22 @@ func TestRuleMatchesAsJsonSerializer_Json(t *testing.T) {
 
 // Port of RuleMatchesAsJsonSerializerTest.testJsonWithTags
 func TestRuleMatchesAsJsonSerializer_JsonWithTags(t *testing.T) {
-	// Tags field not yet on MatchForJSON; ensure base serialization still works
-	// and does not invent picky tags when unset.
 	s := NewRuleMatchesAsJsonSerializer()
 	s.LanguageCode = "xx-XX"
 	s.LanguageName = "Testlanguage"
+	// Java: FakeRule.setTags(Arrays.asList(Tag.picky))
 	m := MatchForJSON{
 		Message:         "msg",
 		FromPos:         0,
 		ToPos:           1,
 		RuleID:          "FAKE_ID",
 		RuleDescription: "desc",
+		Tags:            []string{"picky"},
 	}
 	json, err := s.RuleMatchesToJSON([]MatchForJSON{m}, "x", 2)
 	require.NoError(t, err)
 	require.Contains(t, json, "FAKE_ID")
-	// full tags:["picky"] deferred until MatchForJSON carries Tag list
-	_ = json
+	require.Contains(t, json, `"tags":["picky"]`)
 }
 
 // Port of RuleMatchesAsJsonSerializerTest.testJsonWithUnixLinebreak

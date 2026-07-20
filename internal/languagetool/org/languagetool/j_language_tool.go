@@ -234,6 +234,9 @@ type LocalMatch struct {
 	// IsPicky ports Rule tags containing Tag.picky (Java CleanOverlappingFilter demotion
 	// and German.filterRuleMatches picky-equality for AI_DE_GGEC merge).
 	IsPicky bool
+	// Tags ports Rule.getTags() string names (e.g. "picky") for JSON rule.tags / CLI Tags.
+	// Empty when the rule has no tags; IsPicky remains the demotion flag derived from picky.
+	Tags []string
 	// IncludedInErrorsCorrectedAllAtOnce ports Rule.isIncludedInErrorsCorrectedAllAtOnce
 	// (Java CleanOverlappingFilter punctuation-only preference).
 	IncludedInErrorsCorrectedAllAtOnce bool
