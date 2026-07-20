@@ -202,17 +202,54 @@ func (m *PatternTokenMatcher) IsMatched(token *languagetool.AnalyzedToken) bool 
 	return matched
 }
 
-// IsMatchedByPreviousException ports PatternToken.isMatchedByPreviousException.
+// IsMatchedByPreviousException ports PatternToken.isMatchedByPreviousException
+// (AnalyzedTokenReadings overload): any reading matching any previous exception.
 func (m *PatternTokenMatcher) IsMatchedByPreviousException(prev *languagetool.AnalyzedTokenReadings) bool {
-	if m == nil || m.Base == nil || prev == nil || m.Base.PreviousException == "" {
+	if m == nil || m.Base == nil || prev == nil || !m.Base.HasPreviousException() {
 		return false
 	}
+	if len(m.Base.PreviousExceptions) > 0 {
+		for _, r := range prev.GetReadings() {
+			if r == nil {
+				continue
+			}
+			for _, ex := range m.Base.PreviousExceptions {
+				if ex == nil {
+					continue
+				}
+				// Java: !testException.hasNextException() — previous list never has next flag.
+				if NewPatternTokenMatcher(ex).IsMatched(r) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+	// Legacy single surface field
 	return matchExceptionOnReadings(prev, m.Base.PreviousException, m.Base.PreviousExceptionRE, m.Base.PreviousExceptionCaseSensitive)
 }
 
-// IsMatchedByNextException ports PatternToken next-scope exception (surface).
+// IsMatchedByNextException ports isMatchedByScopeNextException over readings:
+// any reading matching any next-scope exception (Java often probes first reading only
+// at call sites; scanning all readings is a safe superset for AnalyzedTokenReadings API).
 func (m *PatternTokenMatcher) IsMatchedByNextException(next *languagetool.AnalyzedTokenReadings) bool {
-	if m == nil || m.Base == nil || next == nil || m.Base.NextException == "" {
+	if m == nil || m.Base == nil || next == nil || !m.Base.HasNextException() {
+		return false
+	}
+	if len(m.Base.NextExceptions) > 0 {
+		for _, r := range next.GetReadings() {
+			if r == nil {
+				continue
+			}
+			for _, ex := range m.Base.NextExceptions {
+				if ex == nil {
+					continue
+				}
+				if NewPatternTokenMatcher(ex).IsMatched(r) {
+					return true
+				}
+			}
+		}
 		return false
 	}
 	return matchExceptionOnReadings(next, m.Base.NextException, m.Base.NextExceptionRE, m.Base.NextExceptionCaseSensitive)

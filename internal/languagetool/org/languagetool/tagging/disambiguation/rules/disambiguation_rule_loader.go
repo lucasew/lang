@@ -433,8 +433,8 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 			pt.SetSkipNext(n)
 		}
 	}
-	// Java PatternToken exceptions: surface/regexp and/or postag blocks
-	// (isExceptionMatchedCompletely). First current exception; first scope=previous|next.
+	// Java PatternToken exceptions: setStringPosException → addException by scope.
+	// previous/next: multi PatternToken exceptions; current: first-wins TokenException*.
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		posTag := strings.TrimSpace(ex.Postag)
@@ -447,23 +447,27 @@ func disambigTokenFromXML(xt disambigToken, patternHasMarker bool) *patterns.Pat
 		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
 		neg := strings.EqualFold(ex.Negate, "yes")
 		posNeg := strings.EqualFold(ex.NegatePos, "yes")
-		// Inflected on exception is accepted in XML (Java); matcher uses lemma when token is inflected.
-		_ = strings.EqualFold(ex.Inflected, "yes")
+		infl := strings.EqualFold(ex.Inflected, "yes")
 		if sb := strings.TrimSpace(ex.SpaceBefore); sb != "" && scope == "" {
 			// exception-level spacebefore applies to current exception token context
 			pt.SetWhitespaceBefore(strings.EqualFold(sb, "yes"))
 		}
 		if scope == "previous" {
-			// scope=previous: surface (and negated skip when negate=yes — Java still registers)
-			if exc != "" && pt.PreviousException == "" && !neg {
-				pt.SetPreviousException(exc, re, cs)
+			exTok := patterns.NewPatternToken(exc, cs, re, infl)
+			exTok.SetNegation(neg)
+			if posTag != "" {
+				exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 			}
+			pt.AddPreviousException(exTok)
 			continue
 		}
 		if scope == "next" {
-			if exc != "" && pt.NextException == "" && !neg {
-				pt.SetNextException(exc, re, cs)
+			exTok := patterns.NewPatternToken(exc, cs, re, infl)
+			exTok.SetNegation(neg)
+			if posTag != "" {
+				exTok.SetPosToken(patterns.PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 			}
+			pt.AddNextException(exTok)
 			continue
 		}
 		if !pt.HasCurrentException() {

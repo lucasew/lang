@@ -764,7 +764,9 @@ type xmlException struct {
 	Scope         string `xml:"scope,attr"` // previous|next|empty=current
 	Postag        string `xml:"postag,attr"`
 	PostagRegexp  string `xml:"postag_regexp,attr"`
-	Content       string `xml:",chardata"`
+	// Inflected ports exception inflected="yes" (Java PatternToken matchInflected).
+	Inflected string `xml:"inflected,attr"`
+	Content   string `xml:",chardata"`
 }
 
 func (l *PatternRuleLoader) parseRulesXML(data []byte, languageCode, filename string) ([]*AbstractPatternRule, error) {
@@ -1389,8 +1391,9 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		pt.SetChunkTag(ch, false)
 	}
 	// Current exception (surface and/or postag) + scope previous/next.
-	// Java: isExceptionMatchedCompletely after any reading matches the token;
-	// exception negate / negate_pos use PatternToken.isMatched XOR semantics.
+	// Java PatternToken.setStringPosException → addException(scopeNext, scopePrevious, exceptionToken).
+	// previous/next: multi exceptions via PreviousExceptions / NextExceptions lists.
+	// current: still first-wins on TokenException* fields (multi current list TBD).
 	for _, ex := range xt.Exceptions {
 		exc := strings.TrimSpace(ex.Content)
 		posTag := strings.TrimSpace(ex.Postag)
@@ -1403,16 +1406,23 @@ func tokenFromXML(xt xmlToken) *PatternToken {
 		posRE := strings.EqualFold(ex.PostagRegexp, "yes")
 		neg := strings.EqualFold(ex.Negate, "yes")
 		posNeg := strings.EqualFold(ex.NegatePos, "yes")
+		infl := strings.EqualFold(ex.Inflected, "yes")
 		switch scope {
 		case "previous":
-			// previous/next: surface only for now; negation on previous not yet multi-exception
-			if exc != "" && pt.PreviousException == "" && !neg && !posNeg {
-				pt.SetPreviousException(exc, re, cs)
+			// Java: new PatternToken + setNegation + setPosToken + addException(prev).
+			exTok := NewPatternToken(exc, cs, re, infl)
+			exTok.SetNegation(neg)
+			if posTag != "" {
+				exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 			}
+			pt.AddPreviousException(exTok)
 		case "next":
-			if exc != "" && pt.NextException == "" && !neg && !posNeg {
-				pt.SetNextException(exc, re, cs)
+			exTok := NewPatternToken(exc, cs, re, infl)
+			exTok.SetNegation(neg)
+			if posTag != "" {
+				exTok.SetPosToken(PosToken{PosTag: posTag, Regexp: posRE, Negate: posNeg})
 			}
+			pt.AddNextException(exTok)
 		default:
 			if !pt.HasCurrentException() {
 				pt.SetStringPosExceptionFullNeg(exc, re, cs, neg, posTag, posRE, posNeg)

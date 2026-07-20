@@ -43,13 +43,19 @@ type PatternToken struct {
 	// TokenExceptionNegation / PosNegation port exception negate / negate_pos.
 	TokenExceptionNegation    bool
 	TokenExceptionPosNegation bool
-	// PreviousException ports Java exception scope="previous" (soft surface/regexp).
-	PreviousException             string
-	PreviousExceptionRE           bool
+	// PreviousExceptions ports Java rareFields.previousExceptions (scope="previous").
+	// Each element is a full exception PatternToken (surface/POS/negation/inflected).
+	PreviousExceptions []*PatternToken
+	// NextExceptions ports next-scope entries of rareFields.currentAndNextExceptions
+	// (exception PatternTokens with EXCEPTION_VALID_NEXT).
+	NextExceptions []*PatternToken
+	// PreviousException / NextException are convenience surfaces for the first
+	// scope=previous/next exception (tests + simple builders). Prefer lists.
+	PreviousException              string
+	PreviousExceptionRE            bool
 	PreviousExceptionCaseSensitive bool
-	// NextException ports Java exception scope="next" (soft surface/regexp).
-	NextException             string
-	NextExceptionRE           bool
+	NextException              string
+	NextExceptionRE            bool
 	NextExceptionCaseSensitive bool
 	// UniFeatures ports Java PatternToken unificationFeatures (feature → types).
 	// Non-nil means the token participates in unification (isUnified).
@@ -152,28 +158,66 @@ func (p *PatternToken) HasCurrentException() bool {
 	return p != nil && (p.TokenException != "" || p.TokenExceptionPosTag != "")
 }
 
-// SetPreviousException ports Java exception scope="previous" (soft surface/regexp).
+// AddPreviousException ports PatternToken.addException(..., scopePrevious=true).
+func (p *PatternToken) AddPreviousException(ex *PatternToken) {
+	if p == nil || ex == nil {
+		return
+	}
+	p.PreviousExceptions = append(p.PreviousExceptions, ex)
+	// Keep first-exception surface fields for simple getters/tests.
+	if p.PreviousException == "" && ex.Token != "" {
+		p.PreviousException = ex.Token
+		p.PreviousExceptionRE = ex.Regexp
+		p.PreviousExceptionCaseSensitive = ex.CaseSensitive
+	}
+}
+
+// SetPreviousException ports a simple surface-only scope=previous exception.
+// Prefer AddPreviousException for full POS/negation/multi support.
 func (p *PatternToken) SetPreviousException(tokenException string, regexp, caseSensitive bool) {
-	p.PreviousException = tokenException
-	p.PreviousExceptionRE = regexp
-	p.PreviousExceptionCaseSensitive = caseSensitive
+	if p == nil {
+		return
+	}
+	ex := NewPatternToken(tokenException, caseSensitive, regexp, false)
+	p.AddPreviousException(ex)
 }
 
-// HasPreviousException reports whether a scope=previous exception is set.
+// HasPreviousException ports PatternToken.hasPreviousException.
 func (p *PatternToken) HasPreviousException() bool {
-	return p != nil && p.PreviousException != ""
+	if p == nil {
+		return false
+	}
+	return len(p.PreviousExceptions) > 0 || p.PreviousException != ""
 }
 
-// SetNextException ports Java exception scope="next" (soft surface/regexp).
+// AddNextException ports PatternToken.addException(scopeNext=true, ...).
+func (p *PatternToken) AddNextException(ex *PatternToken) {
+	if p == nil || ex == nil {
+		return
+	}
+	p.NextExceptions = append(p.NextExceptions, ex)
+	if p.NextException == "" && ex.Token != "" {
+		p.NextException = ex.Token
+		p.NextExceptionRE = ex.Regexp
+		p.NextExceptionCaseSensitive = ex.CaseSensitive
+	}
+}
+
+// SetNextException ports a simple surface-only scope=next exception.
 func (p *PatternToken) SetNextException(tokenException string, regexp, caseSensitive bool) {
-	p.NextException = tokenException
-	p.NextExceptionRE = regexp
-	p.NextExceptionCaseSensitive = caseSensitive
+	if p == nil {
+		return
+	}
+	ex := NewPatternToken(tokenException, caseSensitive, regexp, false)
+	p.AddNextException(ex)
 }
 
-// HasNextException reports whether a scope=next exception is set.
+// HasNextException reports whether any scope=next exception is set.
 func (p *PatternToken) HasNextException() bool {
-	return p != nil && p.NextException != ""
+	if p == nil {
+		return false
+	}
+	return len(p.NextExceptions) > 0 || p.NextException != ""
 }
 
 // IsMatched ports PatternToken.isMatched for a single AnalyzedToken reading.

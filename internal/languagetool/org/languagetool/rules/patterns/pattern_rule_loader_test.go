@@ -823,14 +823,97 @@ func TestPatternRuleLoader_PreviousNextException(t *testing.T) {
       <message>m</message>
       <short>s</short>
     </rule>
+    <rule id="MULTI_PREV" name="multi">
+      <pattern>
+        <token>that
+          <exception scope="previous" postag="SENT_START"/>
+          <exception scope="previous">nor</exception>
+          <exception scope="previous" regexp="yes">buzz|word</exception>
+        </token>
+      </pattern>
+      <message>m</message>
+      <short>s</short>
+    </rule>
+    <rule id="PREV_NEG_POS" name="negpos">
+      <pattern>
+        <token>one
+          <exception scope="previous" postag="CD" negate="yes">one</exception>
+        </token>
+      </pattern>
+      <message>m</message>
+      <short>s</short>
+    </rule>
   </category>
 </rules>`
 	rules, err := NewPatternRuleLoader().GetRulesFromString(xml, "t.xml", "en")
 	require.NoError(t, err)
-	require.Len(t, rules, 2)
+	require.Len(t, rules, 4)
 	require.Equal(t, "not", rules[0].PatternTokens[0].PreviousException)
+	require.Len(t, rules[0].PatternTokens[0].PreviousExceptions, 1)
 	require.Equal(t, "be|do", rules[1].PatternTokens[0].NextException)
 	require.True(t, rules[1].PatternTokens[0].NextExceptionRE)
+	require.Len(t, rules[1].PatternTokens[0].NextExceptions, 1)
+
+	// Multi previous exceptions (Java rareFields.previousExceptions)
+	multi := rules[2].PatternTokens[0]
+	require.Len(t, multi.PreviousExceptions, 3)
+	require.Equal(t, "SENT_START", multi.PreviousExceptions[0].Pos.PosTag)
+	require.Equal(t, "nor", multi.PreviousExceptions[1].Token)
+	require.True(t, multi.PreviousExceptions[2].Regexp)
+
+	// previous with surface + postag + negate (Java PatternToken exception isMatched)
+	negPrev := rules[3].PatternTokens[0]
+	require.Len(t, negPrev.PreviousExceptions, 1)
+	ex := negPrev.PreviousExceptions[0]
+	require.Equal(t, "one", ex.Token)
+	require.True(t, ex.Negation)
+	require.Equal(t, "CD", ex.Pos.PosTag)
+	require.False(t, ex.Pos.Negate)
+}
+
+// Java isMatchedByPreviousException: any previous exception PatternToken.isMatched.
+func TestPatternTokenMatcher_MultiPreviousException(t *testing.T) {
+	pt := NewPatternToken("that", false, false, false)
+	pt.AddPreviousException(NewPatternToken("nor", false, false, false))
+	sentStart := NewPatternToken("", false, false, false)
+	sentStart.SetPosToken(PosToken{PosTag: "SENT_START", Regexp: false, Negate: false})
+	pt.AddPreviousException(sentStart)
+
+	m := NewPatternTokenMatcher(pt)
+	// previous surface "nor" → exception fires
+	prevNor := languagetool.NewAnalyzedTokenReadings(
+		languagetool.NewAnalyzedToken("nor", strPtr("CC"), strPtr("nor")),
+	)
+	require.True(t, m.IsMatchedByPreviousException(prevNor))
+	// previous with SENT_START POS
+	prevSS := languagetool.NewAnalyzedTokenReadings(
+		languagetool.NewAnalyzedToken("", strPtr("SENT_START"), strPtr("")),
+	)
+	require.True(t, m.IsMatchedByPreviousException(prevSS))
+	// unrelated previous
+	prevOther := languagetool.NewAnalyzedTokenReadings(
+		languagetool.NewAnalyzedToken("hello", strPtr("NN"), strPtr("hello")),
+	)
+	require.False(t, m.IsMatchedByPreviousException(prevOther))
+
+	// negate=yes surface: exception matches when surface does NOT equal "one"
+	// Java: exception.setNegation(true) → isMatched flips surface match
+	pt2 := NewPatternToken("x", false, false, false)
+	exNeg := NewPatternToken("one", false, false, false)
+	exNeg.SetNegation(true)
+	exNeg.SetPosToken(PosToken{PosTag: "CD", Regexp: false, Negate: false})
+	pt2.AddPreviousException(exNeg)
+	m2 := NewPatternTokenMatcher(pt2)
+	// reading "two"/CD: surface != one (negation → true) AND pos CD → exception fires
+	two := languagetool.NewAnalyzedTokenReadings(
+		languagetool.NewAnalyzedToken("two", strPtr("CD"), strPtr("two")),
+	)
+	require.True(t, m2.IsMatchedByPreviousException(two))
+	// reading "one"/CD: surface matches, negation flips → surface false → no match
+	one := languagetool.NewAnalyzedTokenReadings(
+		languagetool.NewAnalyzedToken("one", strPtr("CD"), strPtr("one")),
+	)
+	require.False(t, m2.IsMatchedByPreviousException(one))
 }
 
 func TestPatternRuleLoader_ToneTagsAndPicky(t *testing.T) {
