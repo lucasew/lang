@@ -443,7 +443,13 @@ func (r *AbstractSimpleReplaceRule2) createMatch(
 		return
 	}
 
+	// Java: URL-as-message is nullled before template rebuild; url = msg after null is always null
+	// (upstream bug) — skip invent setUrl from that branch.
 	msg := swm.Message
+	if msg != "" && (strings.HasPrefix(msg, "http://") || strings.HasPrefix(msg, "https://")) {
+		// Java: msg = null; url = msg; → rebuild from getMessage()
+		msg = ""
+	}
 	if msg == "" {
 		var msgSuggestions strings.Builder
 		for k, rep := range replacements {
@@ -464,20 +470,36 @@ func (r *AbstractSimpleReplaceRule2) createMatch(
 		}
 		tmpl := r.MessageTemplate
 		if tmpl == "" {
+			// Java abstract getMessage() is abstract — language rules set MessageTemplate.
 			tmpl = "'$match' is incorrect."
 		}
+		// Java replaceFirst("\\$match", …) / replaceFirst("\\$suggestions", …) — first only.
 		msg = strings.Replace(tmpl, "$match", originalStr, 1)
 		msg = strings.Replace(msg, "$suggestions", msgSuggestions.String(), 1)
 	}
 
-	ruleMatch := NewRuleMatch(r, sentence, fromPos, toPos, msg)
-	ruleMatch.ShortMessage = r.ShortMsg
+	short := r.ShortMsg
+	var ruleMatch *RuleMatch
+	if r.SubRuleSpecificIDs {
+		// Java: StringTools.toId(getId() + "_" + originalStr, language);
+		// getDescription().replace("$match", originalStr) — all occurrences.
+		lang := r.LanguageCode
+		id := tools.ToId(r.GetID()+"_"+originalStr, lang)
+		desc := strings.ReplaceAll(r.GetDescription(), "$match", originalStr)
+		// isPremium: Rule default false unless language sets Premium on base (not on Rule2 field).
+		idRule := NewSpecificIdRule(id, desc, false, r.GetCategory(), r.GetLocQualityIssueType(), r.GetTags())
+		ruleMatch = NewRuleMatch(idRule, sentence, fromPos, toPos, msg)
+	} else {
+		ruleMatch = NewRuleMatch(r, sentence, fromPos, toPos, msg)
+	}
+	ruleMatch.ShortMessage = short
 	if r.hasSuggestions() {
 		ruleMatch.SetSuggestedReplacements(finalReplacements)
 	}
 	if r.IsRuleMatchException != nil && r.IsRuleMatchException(ruleMatch) {
 		return
 	}
+	// keep only the longest match — Java removes last if nested inside current
 	if len(*ruleMatches) > 0 {
 		last := (*ruleMatches)[len(*ruleMatches)-1]
 		if last.GetFromPos() >= fromPos && last.GetToPos() <= toPos {
