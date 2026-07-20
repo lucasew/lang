@@ -49,7 +49,7 @@ func getOpenNLPEnglishPipeline() (tok *TokenizerME, pos *POSTaggerME, chunk *Chu
 }
 
 // tryOpenNLPChunks runs the full Java EnglishChunker OpenNLP pipeline when models load.
-// Returns false to fall back to POS→BIO interim path.
+// Returns false when models are missing or the pipeline cannot run — incomplete, not invent.
 func (c *EnglishChunker) tryOpenNLPChunks(tokens []*languagetool.AnalyzedTokenReadings) bool {
 	tokME, posME, chunkME, ok := getOpenNLPEnglishPipeline()
 	if !ok || tokME == nil || posME == nil || chunkME == nil || len(tokens) == 0 {
