@@ -9,8 +9,8 @@ import (
 )
 
 // GermanChunker ports org.languagetool.chunking.GermanChunker.
-// REGEXES1 (basic OpenNLP-like B-NP/I-NP) is implemented from Java GermanChunker.REGEXES1
-// with sequential POS/surface matchers — not invent. REGEXES2 (NPS/NPP/PP OpenRegex)
+// REGEXES1 runs Java OpenRegex patterns via CompileOpenRegex
+// REGEXES2 (NPS/NPP/PP OpenRegex)
 // is a growing faithful subset; remaining OpenRegex-only paths stay incomplete.
 // No POS→BIO fallback: Java only runs REGEXES1 then REGEXES2 (tokens start as O).
 type GermanChunker struct{}
@@ -31,13 +31,24 @@ func germanContentTokens(tokens []*languagetool.AnalyzedTokenReadings) []*langua
 	return content
 }
 
-// applyRegexes1 runs Java REGEXES1 matchers into tags (B-NP/I-NP overwrite spans).
+// Java GermanChunker.REGEXES1 OpenRegex patterns (order matters; later overwrite).
+var germanRegexes1 = []string{
+	`(<posre=^ART.*>|<pos=PRO>)? <pos=ADV>* <pos=PA2>* <pos=ADJ>* <pos=SUB>+`,
+	`<pos=SUB> (<und|oder>|(<bzw> <.>)) <pos=SUB>`,
+	`<pos=ADJ> (<und|oder>|(<bzw> <.>)) <pos=PA2> <pos=SUB>`,
+	`<pos=ADJ> (<und|oder>|(<bzw> <.>)) <pos=ADJ> <pos=SUB>`,
+	`<posre=^ART.*> <pos=ADV>* <pos=ADJ>* <regexCS=[A-ZÖÄÜ][a-zöäü]+>`,
+	`<pos=PRO>? <pos=ZAL> <pos=SUB>`,
+	`<Herr|Herrn|Frau> <pos=EIG>+`,
+	`<Herr|Herrn|Frau> <regexCS=[A-ZÖÄÜ][a-zöäü-]+>+`,
+	`<der>`,
+}
+
+// applyRegexes1 runs Java REGEXES1 via OpenRegex into tags (B-NP/I-NP overwrite spans).
 func applyRegexes1(content []*languagetool.AnalyzedTokenReadings, tags [][]string) {
 	if len(content) == 0 {
 		return
 	}
-	// Java doApplyRegex: each REGEXES1 match assigns B-NP/I-NP over the full span
-	// (later patterns may overwrite earlier assignments on the same tokens).
 	applyNP := func(start, end int) {
 		if start < 0 || end <= start || end > len(content) {
 			return
@@ -50,28 +61,24 @@ func applyRegexes1(content []*languagetool.AnalyzedTokenReadings, tags [][]strin
 			}
 		}
 	}
-	// REGEXES1 patterns from Java GermanChunker (in order).
-	matchers := []func([]*languagetool.AnalyzedTokenReadings, int) int{
-		matchArtProAdvPa2AdjSub, // (ART|PRO)? ADV* PA2* ADJ* SUB+
-		matchSubConjSub,         // SUB und|oder SUB
-		matchAdjConjPa2Sub,      // ADJ und|oder PA2 SUB
-		matchAdjConjAdjSub,      // ADJ und|oder ADJ SUB
-		matchArtAdvAdjCapital,   // ART ADV* ADJ* Capitalized
-		matchProZalSub,          // PRO? ZAL SUB
-		matchTitleEig,           // Herr|Herrn|Frau EIG+
-		matchTitleCapital,       // Herr|Herrn|Frau Capitalized+
-		matchDerAlone,           // der
+	factory := NewChunkTokenFactory(false)
+	// Side list like Java getBasicChunks (chunk starts as O; REGEXES1 uses POS/surface).
+	toks := make([]ChunkTaggedToken, len(content))
+	for i, t := range content {
+		toks[i] = NewChunkTaggedToken(t.GetToken(), []ChunkTag{NewChunkTag("O")}, t)
 	}
-	for _, m := range matchers {
-		// Java findAll: scan whole sequence; do not skip already-tagged starts.
-		for i := 0; i < len(content); {
-			end := m(content, i)
-			if end > i {
-				applyNP(i, end)
-				i = end
-				continue
+	for _, pat := range germanRegexes1 {
+		re := CompileOpenRegex(ExpandGermanChunkSyntax(pat), factory)
+		for _, m := range re.FindAll(toks) {
+			applyNP(m.Start, m.End)
+			// Keep toks chunk tags in sync for patterns that read chunk= (REGEXES1 mostly POS).
+			for i := m.Start; i < m.End; i++ {
+				if i == m.Start {
+					toks[i].ChunkTags = []ChunkTag{NewChunkTag("B-NP")}
+				} else {
+					toks[i].ChunkTags = []ChunkTag{NewChunkTag("I-NP")}
+				}
 			}
-			i++
 		}
 	}
 }
@@ -1719,153 +1726,3 @@ func isCapitalizedGerman(s string) bool {
 	return true
 }
 
-// --- REGEXES1 matchers: return end exclusive or -1 ---
-
-// (<posre=^ART.*>|<pos=PRO>)? <pos=ADV>* <pos=PA2>* <pos=ADJ>* <pos=SUB>+
-func matchArtProAdvPa2AdjSub(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	j := i
-	if j < len(toks) && (posPrefix(toks[j], "ART") || posContains(toks[j], "PRO")) {
-		j++
-	}
-	for j < len(toks) && posContains(toks[j], "ADV") {
-		j++
-	}
-	for j < len(toks) && posContains(toks[j], "PA2") {
-		j++
-	}
-	for j < len(toks) && posContains(toks[j], "ADJ") {
-		j++
-	}
-	subStart := j
-	for j < len(toks) && posContains(toks[j], "SUB") {
-		j++
-	}
-	if j > subStart {
-		return j
-	}
-	return -1
-}
-
-// <pos=SUB> (<und|oder>|(<bzw> <.>)) <pos=SUB> — Java buildExpanded + undOderBzw form hints.
-func matchSubConjSub(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i >= len(toks) || !posContains(toks[i], "SUB") {
-		return -1
-	}
-	// und|oder
-	if i+2 < len(toks) && surfaceEq(toks[i+1], "und", "oder") && posContains(toks[i+2], "SUB") {
-		return i + 3
-	}
-	// bzw .
-	if i+3 < len(toks) && surfaceEq(toks[i+1], "bzw") && toks[i+2].GetToken() == "." && posContains(toks[i+3], "SUB") {
-		return i + 4
-	}
-	return -1
-}
-
-// <pos=ADJ> (<und|oder>|(<bzw> <.>)) <pos=PA2> <pos=SUB>
-func matchAdjConjPa2Sub(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i >= len(toks) || !posContains(toks[i], "ADJ") {
-		return -1
-	}
-	if i+3 < len(toks) && surfaceEq(toks[i+1], "und", "oder") &&
-		posContains(toks[i+2], "PA2") && posContains(toks[i+3], "SUB") {
-		return i + 4
-	}
-	if i+4 < len(toks) && surfaceEq(toks[i+1], "bzw") && toks[i+2].GetToken() == "." &&
-		posContains(toks[i+3], "PA2") && posContains(toks[i+4], "SUB") {
-		return i + 5
-	}
-	return -1
-}
-
-// <pos=ADJ> (<und|oder>|(<bzw> <.>)) <pos=ADJ> <pos=SUB>
-func matchAdjConjAdjSub(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i >= len(toks) || !posContains(toks[i], "ADJ") {
-		return -1
-	}
-	if i+3 < len(toks) && surfaceEq(toks[i+1], "und", "oder") &&
-		posContains(toks[i+2], "ADJ") && posContains(toks[i+3], "SUB") {
-		return i + 4
-	}
-	if i+4 < len(toks) && surfaceEq(toks[i+1], "bzw") && toks[i+2].GetToken() == "." &&
-		posContains(toks[i+3], "ADJ") && posContains(toks[i+4], "SUB") {
-		return i + 5
-	}
-	return -1
-}
-
-// <posre=^ART.*> <pos=ADV>* <pos=ADJ>* <regexCS=[A-ZÖÄÜ][a-zöäü]+>
-func matchArtAdvAdjCapital(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i >= len(toks) || !posPrefix(toks[i], "ART") {
-		return -1
-	}
-	j := i + 1
-	for j < len(toks) && posContains(toks[j], "ADV") {
-		j++
-	}
-	for j < len(toks) && posContains(toks[j], "ADJ") {
-		j++
-	}
-	if j < len(toks) && isCapitalizedGerman(toks[j].GetToken()) {
-		return j + 1
-	}
-	return -1
-}
-
-// <pos=PRO>? <pos=ZAL> <pos=SUB>
-func matchProZalSub(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	j := i
-	if j < len(toks) && posContains(toks[j], "PRO") {
-		j++
-	}
-	if j >= len(toks) || !posContains(toks[j], "ZAL") {
-		return -1
-	}
-	j++
-	if j >= len(toks) || !posContains(toks[j], "SUB") {
-		return -1
-	}
-	return j + 1
-}
-
-// <Herr|Herrn|Frau> <pos=EIG>+
-func matchTitleEig(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i >= len(toks) || !surfaceEq(toks[i], "Herr", "Herrn", "Frau") {
-		return -1
-	}
-	j := i + 1
-	start := j
-	for j < len(toks) && posContains(toks[j], "EIG") {
-		j++
-	}
-	if j > start {
-		return j
-	}
-	return -1
-}
-
-// <Herr|Herrn|Frau> <regexCS capitalized surname>+
-func matchTitleCapital(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i >= len(toks) || !surfaceEq(toks[i], "Herr", "Herrn", "Frau") {
-		return -1
-	}
-	j := i + 1
-	start := j
-	for j < len(toks) && isCapitalizedGerman(toks[j].GetToken()) {
-		j++
-	}
-	if j > start {
-		return j
-	}
-	return -1
-}
-
-// <der>
-func matchDerAlone(toks []*languagetool.AnalyzedTokenReadings, i int) int {
-	if i < len(toks) && surfaceEq(toks[i], "der") {
-		return i + 1
-	}
-	return -1
-}
-
-var _ Chunker = (*GermanChunker)(nil)
