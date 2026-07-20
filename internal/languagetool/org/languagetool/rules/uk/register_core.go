@@ -10,9 +10,9 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/synthesis"
 )
 
-// RegisterCoreUkrainianRules installs Java Ukrainian.getRelevantRules ports
-// (layout, token agreement, replace, speller). Pattern grammar.xml still
-// loaded separately via GetRuleFileNames when UseUpstreamGrammar (default on).
+// RegisterCoreUkrainianRules ports Ukrainian.getRelevantRules.
+// Java list only — no invent SharedLayout extras (no double-punct / unpaired /
+// sentence-whitespace / empty-line / long-paragraph / paragraph-repeat / etc.).
 func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
@@ -20,31 +20,33 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	// Java Ukrainian.IGNORED_CHARS: soft hyphen + combining acute.
 	lt.IgnoredCharacters = languagetool.UkrainianIgnoredCharactersRegex
 
-	// Layout: Java skips DoublePunctuationRule; UK comma exceptions for en/em dash;
-	// Ukrainian uppercase list-item а) б) exceptions.
+	// lower priority
 	ukComma := NewUkrainianCommaWhitespaceRule(nil)
-	ukUpper := NewUkrainianUppercaseSentenceStartRule(nil)
-	rules.RegisterSharedLayoutRulesWithOptions(lt, "uk", rules.SharedLayoutOptions{
-		// Java getRelevantRules does not include DoublePunctuationRule (TODO in Java).
-		SkipDoublePunctuation: true,
-		CommaException:        ukComma.IsException,
-		UppercaseMatchList: func(sentences []*languagetool.AnalyzedSentence) []*rules.RuleMatch {
-			return ukUpper.MatchList(sentences)
-		},
-	})
+	lt.AddRuleChecker(ukComma.GetID(), rules.AsSentenceCheckerSimple(ukComma.Match))
 
-	// Java Ukrainian.getRelevantRules: UkrainianWordRepeatRule only (no WordRepeatBeginning).
+	ukUpper := NewUkrainianUppercaseSentenceStartRule(nil)
+	lt.AddRuleChecker(ukUpper.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ukUpper.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	// Java UkrainianWordRepeatRule only — no WordRepeatBeginning.
 	wr := NewUkrainianWordRepeatRule(map[string]string{"repetition": "Повтор слова"})
 	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
 
-	// medium/high priority Java rules
 	typo := NewTypographyRule(nil)
 	lt.AddRuleChecker(typo.GetID(), rules.AsSentenceCheckerSimple(typo.Match))
 
 	hidden := NewHiddenCharacterRule(nil)
 	lt.AddRuleChecker(hidden.GetID(), rules.AsSentenceCheckerSimple(hidden.Match))
 
-	// Java createDefaultSpellingRule → MorfologikUkrainianSpellerRule.
+	// medium priority — Java createDefaultSpellingRule → MorfologikUkrainianSpellerRule.
 	sp := NewMorfologikUkrainianSpellerRule()
 	if p := morfologik.DiscoverLanguageDict(UkrainianSpellerDict); p != "" {
 		if WireUkrainianFilterSpeller(p) {
@@ -60,10 +62,8 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	hyphen := NewMissingHyphenRule(nil)
 	lt.AddRuleChecker(hyphen.GetID(), rules.AsSentenceCheckerSimple(hyphen.Match))
 
-	// Java createDefaultSynthesizer → UkrainianSynthesizer for agreement suggestions.
 	synth := discoverUkrainianSynthesizer()
 
-	// Token agreement (Java order: VerbNoun, NounVerb, AdjNoun, PrepNoun, NumrNoun)
 	vn := NewTokenAgreementVerbNounRule()
 	vn.Synth = synth
 	lt.AddRuleChecker(vn.GetID(), rules.AsSentenceCheckerSimple(vn.Match))
@@ -86,7 +86,6 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 	mixed := NewMixedAlphabetsRule(nil)
 	lt.AddRuleChecker(mixed.GetID(), rules.AsSentenceCheckerSimple(mixed.Match))
 
-	// Official replace tables (Java order: Soft, Renamed, SimpleReplace).
 	ss := NewSimpleReplaceSoftRule(nil)
 	lt.AddRuleChecker(ss.GetID(), rules.AsSentenceCheckerSimple(ss.Match))
 	rn := NewSimpleReplaceRenamedRule(nil)
@@ -96,14 +95,12 @@ func RegisterCoreUkrainianRules(lt *languagetool.JLanguageTool) {
 }
 
 // discoverUkrainianSynthesizer finds ukrainian_synth.dict (Java RESOURCE_FILENAME).
-// Order: LANG_UK_SYNTH_DICT env, sibling of POS/speller dict dir.
 func discoverUkrainianSynthesizer() synthesis.Synthesizer {
 	if p := os.Getenv("LANG_UK_SYNTH_DICT"); p != "" {
 		if s := synthesis.OpenBaseSynthesizerFromDictPath("uk", p); s != nil {
 			return s
 		}
 	}
-	// Sibling of official morfologik POS / speller resource dir
 	for _, dictName := range []string{UkrainianSpellerDict, "ukrainian.dict"} {
 		if pos := morfologik.DiscoverLanguageDict(dictName); pos != "" {
 			cand := filepath.Join(filepath.Dir(pos), "ukrainian_synth.dict")

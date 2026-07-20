@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool/language"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,32 +16,16 @@ func TestRegisterCoreRules_NoSoftInventSequences(t *testing.T) {
 	require.NotContains(t, ids, "UK_В_В")
 }
 
-func TestRegisterCoreRules_JavaRelevantRules(t *testing.T) {
+// Java Ukrainian.getRelevantRules exact ID set.
+func TestRegisterCoreUkrainianRules_JavaRelevantOnly(t *testing.T) {
 	lt := languagetool.NewJLanguageTool("uk")
 	RegisterCoreUkrainianRules(lt)
-	ids := lt.GetAllRegisteredRuleIDs()
-	// Ports of Ukrainian.getRelevantRules (non-XML)
-	for _, id := range []string{
-		TokenAgreementVerbNounRuleID,
-		TokenAgreementNounVerbRuleID,
-		TokenAgreementAdjNounRuleID,
-		TokenAgreementPrepNounRuleID,
-		TokenAgreementNumrNounRuleID,
-		"UK_SIMPLE_REPLACE",
-		"UK_SIMPLE_REPLACE_SOFT",
-		"UK_SIMPLE_REPLACE_RENAMED",
-		"UK_HIDDEN_CHARS",
-		"DASH", // TypographyRule
-		"UK_MIXED_ALPHABETS",
-		"UK_MISSING_HYPHEN",
-		"UKRAINIAN_WORD_REPEAT_RULE",
-		"MORFOLOGIK_RULE_UK_UA",
-		"UPPERCASE_SENTENCE_START",
-		// Java CommaWhitespaceRule / UkrainianCommaWhitespaceRule getId()
-		"COMMA_PARENTHESIS_WHITESPACE",
+	require.ElementsMatch(t, language.UkrainianRelevantRuleIDs(), lt.GetAllRegisteredRuleIDs())
+	for _, bad := range []string{
+		"DOUBLE_PUNCTUATION", "UNPAIRED_BRACKETS", "SENTENCE_WHITESPACE",
+		"EMPTY_LINE", "TOO_LONG_PARAGRAPH", "WHITESPACE_PUNCTUATION",
+		"PARAGRAPH_REPEAT_BEGINNING_RULE", "WHITESPACE_PARAGRAPH",
 	} {
-		require.Contains(t, ids, id, "missing rule %s", id)
+		require.NotContains(t, lt.GetAllRegisteredRuleIDs(), bad)
 	}
-	// Java intentionally omits DoublePunctuationRule
-	require.NotContains(t, ids, "DOUBLE_PUNCTUATION")
 }

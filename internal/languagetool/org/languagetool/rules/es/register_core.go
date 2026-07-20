@@ -7,57 +7,39 @@ import (
 	"github.com/lucasew/lang/internal/languagetool/org/languagetool/rules/spelling/morfologik"
 )
 
-// RegisterCoreSpanishRules installs shared layout + Spanish word-repeat + beginning.
+// RegisterCoreSpanishRules ports Spanish.getRelevantRules / createDefaultSpellingRule.
+// Java list only — no invent SharedLayout extras (no empty-line / sentence-whitespace /
+// whitespace-before-punct / invent TOO_LONG_SENTENCE_ES).
 func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 	if lt == nil {
 		return
 	}
-	// Java Spanish.getPriorityForId on Check priorities.
 	lt.PriorityForId = language.SpanishPriorityForId
-	// Java Spanish.adaptSuggestion for AdaptSuggestionsFilter (pattern rules).
 	languagetool.LanguageAdaptSuggestionByCode["es"] = language.SpanishAdaptSuggestion
-	// Java Spanish.filterRuleMatches (AI_ES_GGEC). Hook from language init (cycle-safe).
 	if languagetool.FilterSpanishRuleMatchesHook != nil {
 		lt.FilterRuleMatches = languagetool.FilterSpanishRuleMatchesHook
 	}
-	// Java getTagger() for voseo suggestion drop — wire POS dict when available
-	// (fail-closed empty tagger if spanish.dict not on disk).
 	_ = language.TryWireSpanishVoseoWordTagger()
-	rules.RegisterSharedLayoutRules(lt, "es")
-	wr := NewSpanishWordRepeatRule(map[string]string{"repetition": "Repetición de palabra"})
-	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
-	wrb := NewSpanishWordRepeatBeginningRule(map[string]string{
-		"desc_repetition_beginning_word": "Tres oraciones sucesivas comienzan con la misma palabra.",
-		"desc_repetition_beginning_adv":  "Tres oraciones sucesivas comienzan con el mismo adverbio.",
-	})
-	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
 
-	// Soft invent token sequences removed (faithful-port): incomplete without grammar.xml, not invented.
+	cw := rules.NewCommaWhitespaceRule(nil)
+	lt.AddRuleChecker(cw.GetID(), rules.AsSentenceCheckerSimple(cw.Match))
 
-	// Official replace.txt / replace_custom.txt (embedded from upstream).
-	sr := NewSimpleReplaceRule(nil)
-	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
-	// Official compounds + synonym repeated-words (embedded).
-	cr := NewCompoundRule(nil)
-	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
-	rw := NewSpanishRepeatedWordsRule(nil)
-	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
+	dp := rules.NewDoublePunctuationRule(nil)
+	lt.AddRuleChecker(dp.GetID(), rules.AsSentenceCheckerSimple(dp.Match))
 
-	// Official wrong-word-in-context + verb replace tables.
-	ww := NewSpanishWrongWordInContextRule(nil)
-	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
-	vr := NewSimpleReplaceVerbsRule(nil)
-	lt.AddRuleChecker(vr.GetID(), rules.AsSentenceCheckerSimple(vr.Match))
+	ub := NewSpanishUnpairedBracketsRule(nil)
+	lt.AddTextLevelRuleChecker(ub.GetID(), rules.AsTextLevelChecker(ub.MatchList))
 
-	// Java createDefaultSpellingRule → MorfologikSpanishSpellerRule.
-	// Always register full Match (orderSuggestions + pronoun/digit tops via TagPOS).
+	// Java QuestionMarkRule (text-level match(List<AnalyzedSentence>)).
+	qm := NewQuestionMarkRule(nil)
+	lt.AddTextLevelRuleChecker(qm.GetID(), rules.AsTextLevelChecker(qm.MatchList))
+
 	sp := NewMorfologikSpanishSpellerRule()
 	if p := morfologik.DiscoverLanguageDict(SpanishSpellerDict); p != "" {
 		if WireSpanishFilterSpeller(p) {
 			sp.IsMisspelled = FilterDictIsMisspelled
 		}
 	}
-	// Late-bind TagPOS to lt.TagWord (POS may be installed after RegisterCore).
 	ltRef := lt
 	WireSpanishSpellerTagPOS(sp, func(token string) []languagetool.TokenTag {
 		if ltRef.TagWord == nil {
@@ -66,4 +48,59 @@ func RegisterCoreSpanishRules(lt *languagetool.JLanguageTool) {
 		return ltRef.TagWord(token)
 	})
 	lt.AddRuleChecker(sp.GetID(), rules.AsSentenceChecker(sp.Match))
+
+	up := rules.NewUppercaseSentenceStartRule(nil, "es")
+	lt.AddRuleChecker(up.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return up.MatchList([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	wr := NewSpanishWordRepeatRule(map[string]string{"repetition": "Repetición de palabra"})
+	lt.AddRuleChecker(wr.GetID(), rules.AsSentenceCheckerSimple(wr.Match))
+
+	ws := rules.NewMultipleWhitespaceRule(map[string]string{
+		"whitespace_repetition": "Possible typo: you repeated a whitespace",
+	})
+	lt.AddRuleChecker(ws.GetID(), rules.AsSentenceCheckerSimple(func(s *languagetool.AnalyzedSentence) []*rules.RuleMatch {
+		return ws.Match([]*languagetool.AnalyzedSentence{s})
+	}))
+
+	// Java SpanishWikipediaRule — was missing from prior invent registration.
+	wiki := NewSpanishWikipediaRule(nil)
+	lt.AddRuleChecker(wiki.GetID(), rules.AsSentenceCheckerSimple(wiki.Match))
+
+	ww := NewSpanishWrongWordInContextRule(nil)
+	lt.AddRuleChecker(ww.GetID(), rules.AsSentenceCheckerSimple(ww.Match))
+
+	// Java LongSentenceRule(messages, userConfig, 60) → TOO_LONG_SENTENCE.
+	ls := rules.NewLongSentenceRule(map[string]string{
+		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
+	}, 60)
+	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
+
+	// Java LongParagraphRule(messages, this, userConfig) → maxWords 220, defaultOff.
+	lp := rules.NewLongParagraphRule(map[string]string{
+		"long_paragraph_rule_msg": "This paragraph is too long (%d words)",
+	}, 220)
+	lt.AddTextLevelRuleChecker(lp.GetID(), rules.AsTextLevelChecker(lp.MatchList))
+	if lp.IsDefaultOff() {
+		lt.MarkDefaultOff(lp.GetID())
+	}
+
+	sr := NewSimpleReplaceRule(nil)
+	lt.AddRuleChecker(sr.GetID(), rules.AsSentenceCheckerSimple(sr.Match))
+
+	vr := NewSimpleReplaceVerbsRule(nil)
+	lt.AddRuleChecker(vr.GetID(), rules.AsSentenceCheckerSimple(vr.Match))
+
+	wrb := NewSpanishWordRepeatBeginningRule(map[string]string{
+		"desc_repetition_beginning_word": "Tres oraciones sucesivas comienzan con la misma palabra.",
+		"desc_repetition_beginning_adv":  "Tres oraciones sucesivas comienzan con el mismo adverbio.",
+	})
+	lt.AddTextLevelRuleChecker(wrb.GetID(), rules.AsTextLevelChecker(wrb.MatchList))
+
+	cr := NewCompoundRule(nil)
+	lt.AddRuleChecker(cr.GetID(), rules.AsSentenceCheckerSimple(cr.Match))
+
+	rw := NewSpanishRepeatedWordsRule(nil)
+	lt.AddTextLevelRuleChecker(rw.GetID(), rules.AsTextLevelChecker(rw.MatchList))
 }
