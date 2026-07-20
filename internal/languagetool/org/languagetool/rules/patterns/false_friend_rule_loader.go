@@ -1,11 +1,16 @@
 package patterns
 
 import (
+	"bufio"
 	"encoding/xml"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 )
 
 // FalseFriendRuleLoader ports org.languagetool.rules.patterns.FalseFriendRuleLoader
@@ -15,6 +20,9 @@ type FalseFriendRuleLoader struct {
 	FalseFriendSugg string
 	// SuggestionMap is rule ID → translation strings (mother-tongue side).
 	SuggestionMap map[string][]string
+	// DescProvider ports Java ShortDescriptionProvider used in getRules second pass.
+	// Nil → bare <suggestion> only (same as missing word_definitions resource).
+	DescProvider *languagetool.ShortDescriptionProvider
 }
 
 // Official EN MessagesBundle keys (Java FalseFriendRuleLoader(Language) loads mother-tongue
@@ -31,11 +39,75 @@ func NewFalseFriendRuleLoader(hint, sugg string) *FalseFriendRuleLoader {
 	if sugg == "" {
 		sugg = messagesFalseFriendSugg
 	}
+	desc := languagetool.NewShortDescriptionProvider()
+	desc.LoadLines = loadWordDefinitionLines
 	return &FalseFriendRuleLoader{
 		FalseFriendHint: hint,
 		FalseFriendSugg: sugg,
 		SuggestionMap:   map[string][]string{},
+		DescProvider:    desc,
 	}
+}
+
+// loadWordDefinitionLines loads /{lang}/word_definitions.txt from official LT resource paths
+// (Java ResourceDataBroker.getFromResourceDirAsLines). Avoids importing spelling (import cycle).
+func loadWordDefinitionLines(path string) ([]string, error) {
+	// path is "/en/word_definitions.txt"
+	rel := strings.TrimPrefix(path, "/")
+	if rel == "" {
+		return nil, fmt.Errorf("empty word_definitions path")
+	}
+	abs := discoverWordDefinitionsFile(rel)
+	if abs == "" {
+		// Java resourceExists false → empty map (not an error for ShortDescriptionProvider)
+		return nil, fmt.Errorf("resource missing: %s", path)
+	}
+	f, err := os.Open(abs)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	var lines []string
+	sc := bufio.NewScanner(f)
+	sc.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+	for sc.Scan() {
+		lines = append(lines, sc.Text())
+	}
+	return lines, sc.Err()
+}
+
+func discoverWordDefinitionsFile(rel string) string {
+	wd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	dir := wd
+	for {
+		var candidates []string
+		if lang, rest, ok := strings.Cut(rel, "/"); ok && lang != "" && rest != "" {
+			candidates = append(candidates,
+				filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", lang,
+					"src", "main", "resources", "org", "languagetool", "resource", lang, rest),
+				filepath.Join(dir, "inspiration", "languagetool", "languagetool-language-modules", lang,
+					"src", "main", "resources", "org", "languagetool", "resource", rel),
+			)
+		}
+		candidates = append(candidates,
+			filepath.Join(dir, "inspiration", "languagetool", "languagetool-core",
+				"src", "main", "resources", "org", "languagetool", "resource", rel),
+		)
+		for _, p := range candidates {
+			if st, err := os.Stat(p); err == nil && st.Mode().IsRegular() {
+				return p
+			}
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return ""
 }
 
 // GetRulesFromReader loads FalseFriendPatternRules for textLang when mother tongue is motherLang.
@@ -164,14 +236,20 @@ func (l *FalseFriendRuleLoader) parse(data []byte, textLang, motherLang string) 
 		transStr := FormatTranslations(motherTranslations)
 		h := NewFalseFriendRuleHandler(textLang, motherLang, l.FalseFriendHint)
 		msg := h.FormatHint(tokensStr, englishLangName(textLang), transStr, englishLangName(motherLang))
-		// Java: skip suggestion when patternStr.equalsIgnoreCase(suggestion)
+		// Java: skip suggestion when patternStr.equalsIgnoreCase(suggestion);
+		// ShortDescriptionProvider.getShortDescription(suggestion, textLanguage).
 		var formatted []string
 		for _, s := range motherTranslations {
 			if s == "" || strings.EqualFold(s, tokensStr) {
 				continue
 			}
-			// ShortDescriptionProvider optional desc not wired yet — bare <suggestion>
-			formatted = append(formatted, "<suggestion>"+s+"</suggestion>")
+			item := "<suggestion>" + s + "</suggestion>"
+			if l.DescProvider != nil {
+				if desc := l.DescProvider.GetShortDescription(s, textLang); desc != "" {
+					item = item + " (" + desc + ")"
+				}
+			}
+			formatted = append(formatted, item)
 		}
 		// Java: if (formattedSuggestions.size() > 0) { setMessage; filteredRules.add }
 		// else drop the rule entirely (e.g. en "gift" / de "Gift").

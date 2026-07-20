@@ -3,6 +3,7 @@ package patterns
 import (
 	"testing"
 
+	"github.com/lucasew/lang/internal/languagetool/org/languagetool"
 	"github.com/stretchr/testify/require"
 )
 
@@ -98,6 +99,34 @@ func TestFalseFriendRuleLoader_MessagesBundleDefaults(t *testing.T) {
 	// Distinct surface → Did you mean {0}?
 	require.Contains(t, rules[0].Message, "Did you mean")
 	require.NotContains(t, rules[0].Message, "Possible false friend")
+}
+
+// Twin of Java ShortDescriptionProvider in FalseFriendRuleLoader.getRules:
+// suggestion with a known word_definitions entry gets " (desc)" suffix.
+func TestFalseFriendRuleLoader_ShortDescriptionOnSuggestion(t *testing.T) {
+	loader := NewFalseFriendRuleLoader("", "")
+	// Inject defs for text language (Java: getShortDescription(sugg, textLanguage)).
+	loader.DescProvider = languagetool.NewShortDescriptionProvider()
+	loader.DescProvider.LoadLines = func(path string) ([]string, error) {
+		require.Equal(t, "/en/word_definitions.txt", path)
+		return []string{
+			"skill\ta talent or ability",
+		}, nil
+	}
+	xml := `<?xml version="1.0"?>
+<rules>
+  <rulegroup id="ABILITY">
+    <rule>
+      <pattern lang="en"><token>ability</token></pattern>
+      <translation lang="fr">skill</translation>
+    </rule>
+  </rulegroup>
+</rules>`
+	// text=en mother=fr → suggestion "skill" looked up in en word_definitions
+	rules, err := loader.GetRulesFromString(xml, "en", "fr")
+	require.NoError(t, err)
+	require.Len(t, rules, 1)
+	require.Contains(t, rules[0].Message, `<suggestion>skill</suggestion> (a talent or ability)`)
 }
 
 // Twin of FalseFriendRuleLoader.getRules: drop rules when every suggestion
