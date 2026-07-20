@@ -225,7 +225,10 @@ func applyRuleValues(lang, text string, existing []languagetool.LocalMatch, raw 
 	ls := rules.NewLongSentenceRule(map[string]string{
 		"long_sentence_rule_msg2": "This sentence is too long (%d words)",
 	}, maxWords)
+	// Default LongSentenceRule is Tag.picky; ruleValues re-run is an explicit
+	// user threshold so use Level.PICKY (Java UserConfig max-words still picky).
 	lt := languagetool.NewJLanguageTool(lang)
+	lt.Level = languagetool.LevelPicky
 	lt.AddTextLevelRuleChecker(ls.GetID(), rules.AsTextLevelChecker(ls.MatchList))
 	// Disable all other rules so only long-sentence fires
 	for _, id := range lt.GetAllRegisteredRuleIDs() {

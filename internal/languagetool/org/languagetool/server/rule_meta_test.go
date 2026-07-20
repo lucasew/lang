@@ -47,17 +47,18 @@ func TestApiV2_EnabledCategoriesOnly(t *testing.T) {
 }
 
 func TestFilterLocalsByCategories(t *testing.T) {
+	// Java AvsAnRule → Categories.MISC; Morfologik speller → TYPOS.
 	ms := []languagetool.LocalMatch{
 		{RuleID: "EN_A_VS_AN", Message: "a/an"},
 		{RuleID: "MORFOLOGIK_RULE_EN_US", Message: "spell"},
 	}
-	out := filterLocalsByCategories(ms, CheckOptions{DisabledCategories: []string{"GRAMMAR"}})
+	out := filterLocalsByCategories(ms, CheckOptions{DisabledCategories: []string{"MISC"}})
 	require.Len(t, out, 1)
 	require.Equal(t, "MORFOLOGIK_RULE_EN_US", out[0].RuleID)
 
 	out = filterLocalsByCategories(ms, CheckOptions{
 		UseEnabledOnly:    true,
-		EnabledCategories: []string{"GRAMMAR"},
+		EnabledCategories: []string{"MISC"},
 	})
 	require.Len(t, out, 1)
 	require.Equal(t, "EN_A_VS_AN", out[0].RuleID)
@@ -70,10 +71,13 @@ func TestApiV2_MatchTypeAndContextForSure(t *testing.T) {
 		"text":     "This is an test.",
 	})
 	require.NoError(t, err)
-	require.Contains(t, r.Body, `"typeName":"grammar"`)
-	// contextForSureMatch omitted when 0 (omitempty); text-level rules (Java -1) serialize it
+	// Java AvsAnRule: ITSIssueType.Misspelling
+	require.Contains(t, r.Body, `"typeName":"misspelling"`)
+	// contextForSureMatch omitted when 0 (omitempty); text-level rules (Java -1) serialize it.
+	// LongSentenceRule is Tag.picky — enable Level.PICKY so the match is kept.
 	r2, err := api.Handle("check", map[string]string{
 		"language":   "en",
+		"level":      "picky",
 		"text":       "word word word word word word word word.",
 		"ruleValues": "TOO_LONG_SENTENCE:3",
 	})

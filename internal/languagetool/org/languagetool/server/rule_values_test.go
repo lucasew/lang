@@ -19,11 +19,12 @@ func TestParseRuleValues(t *testing.T) {
 
 func TestApiV2_RuleValuesLongSentence(t *testing.T) {
 	api := NewApiV2(nil, nil)
-	// short threshold so a modest sentence triggers
+	// short threshold so a modest sentence triggers; LongSentenceRule is Tag.picky.
 	words := strings.Repeat("word ", 12)
 	text := strings.TrimSpace(words) + "."
 	r, err := api.Handle("check", map[string]string{
 		"language":   "en",
+		"level":      "picky",
 		"text":       text,
 		"ruleValues": "TOO_LONG_SENTENCE:5",
 	})
